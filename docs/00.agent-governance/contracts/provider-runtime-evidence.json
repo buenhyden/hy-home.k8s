@@ -4,6 +4,7 @@
   "contractId": "provider-runtime-evidence",
   "contractVersion": "1.0.0",
   "owner": "docs/03.specs/0042-provider-native-runtime-and-model-evidence/spec.md",
+  "capabilityEvidenceOwner": "docs/00.agent-governance/contracts/provider-runtime-evidence.json",
   "cutoff": {
     "localTime": "2026-07-10T10:00:00+09:00",
     "utc": "2026-07-10T01:00:00Z",
@@ -175,6 +176,11 @@
         {
           "path": ".agents/GEMINI.md",
           "kind": "provider-adapter",
+          "state": "current"
+        },
+        {
+          "path": ".agents/hooks.json",
+          "kind": "compatibility-hook-graph",
           "state": "current"
         },
         {
@@ -428,6 +434,11 @@
           "state": "absent"
         },
         {
+          "path": ".codex/hooks.json",
+          "kind": "compatibility-hook-graph",
+          "state": "current"
+        },
+        {
           "path": "AGENTS.md",
           "kind": "provider-shim",
           "state": "current"
@@ -661,6 +672,38 @@
           }
         }
       ]
+    }
+  ],
+  "hookGraphs": [
+    {
+      "id": "local-compatibility-hook-graph",
+      "providerId": "local",
+      "path": ".agents/hooks.json",
+      "classification": "custom-compatibility-bridge",
+      "evidenceClass": "repo-static",
+      "runtimeSupport": "unsupported",
+      "deliveryVerdict": "ABSENT",
+      "owner": "platform",
+      "limitation": "No provider-native runtime owns or consumes .agents/hooks.json; the retained Claude-shaped graph requires an explicitly approved custom compatibility consumer.",
+      "retryTrigger": "Identify and approve a bounded local compatibility runtime, then capture separate discovery and event-delivery evidence.",
+      "claimBoundary": "Tracked graph shape and shared-script references are repository-static evidence only; they do not establish Gemini CLI or any other provider event delivery.",
+      "embeddedDeclaration": "Repo-static custom compatibility bridge only; retained hook shape does not prove native discovery or event delivery.",
+      "contentSha256": "03f1ce8362178ff638e6d54df9f6ed3532df262f5cd63767b0522ef4cda56cfe"
+    },
+    {
+      "id": "codex-compatibility-hook-graph",
+      "providerId": "codex",
+      "path": ".codex/hooks.json",
+      "classification": "custom-compatibility-bridge",
+      "evidenceClass": "repo-static",
+      "runtimeSupport": "unverified",
+      "deliveryVerdict": "DEFER",
+      "owner": "platform",
+      "limitation": "The retained graph has not been parsed, trusted, or dispatched by the locally observed Codex runtime in a controlled canary.",
+      "retryTrigger": "Approve and run a secret-free Codex hook discovery and event-delivery canary for the intended client and feature configuration.",
+      "claimBoundary": "Tracked graph shape and shared-script references are repository-static compatibility evidence only; current provider capability does not prove this repository's native event delivery.",
+      "embeddedDeclaration": "Repo-static custom compatibility bridge only; retained hook shape does not prove native discovery or event delivery.",
+      "contentSha256": "666654f83dd15944e16828e30baa1c396f2884a50f001df38a47de476b096c9f"
     }
   ],
   "mcpInventory": [

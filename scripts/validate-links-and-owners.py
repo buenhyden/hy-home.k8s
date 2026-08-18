@@ -97,6 +97,28 @@ WORK109_MIGRATION_PATH = PurePosixPath(
     "docs/98.archive/migrations/"
     "mig-0002-sdlc-document-and-governance-consolidation.md"
 )
+WORK054_MIGRATION_PATH = PurePosixPath(
+    "docs/98.archive/migrations/"
+    "mig-0003-agent-governance-control-plane-consolidation.md"
+)
+WORK054_MIGRATION_SHA256 = (
+    "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42"  # pragma: allowlist secret
+)
+WORK054_HISTORICAL_SOURCE_BLOBS = {
+    PurePosixPath("docs/03.specs/0015-agent-governance-contract-normalization/plan.md"): "a93360fd3315fa3ff490485157caa323357bb67f",
+    PurePosixPath("docs/03.specs/0015-agent-governance-contract-normalization/spec.md"): "47c45671ac536bf2298251f55286395ac02e0b0e",
+    PurePosixPath("docs/03.specs/0017-workspace-engineering-research-pack/spec.md"): "70c88e6f657ade6416eee00e41372a768d1e7db7",
+    PurePosixPath("docs/03.specs/0018-workspace-engineering-implementation-audit-pack/spec.md"): "d9b4edf7203dcfefb9c5cee9256c3b2dc115399a",
+    PurePosixPath("docs/90.references/audits/2026-07-02-whia/harness-loop-implementation-audit.md"): "39f7d5dbc4d69e53485fb0b9d482a151e9b44b86",
+    PurePosixPath("docs/90.references/audits/2026-07-02-whia/provider-harness-loop-implementation-audit.md"): "0403e861994bc322fbcaaabfceb1b5c8ada02572",
+    PurePosixPath("docs/90.references/audits/2026-07-02-whia/workspace-governance-implementation-audit.md"): "0965758eccd42bba5e884f01270ed738c9d6410a",
+    PurePosixPath("docs/90.references/audits/2026-07-05-wea/governance-harness-loop-providers.md"): "84830e0fa7178f820bfb189d9f129fd34209af18",
+    PurePosixPath("docs/90.references/audits/2026-07-05-wea/implementation-roadmap-and-automation-opportunities.md"): "5cf2c6b9b24ab510b3cfa48eca6f7afa7d0feec5",
+    PurePosixPath("docs/90.references/audits/2026-07-11-weia/governance-harness-loop-providers.md"): "b35dce197ca96bb9341b590ef505040e86d18577",
+}
+WORK054_HISTORICAL_SOURCE_COUNT = 10
+WORK054_HISTORICAL_OCCURRENCE_COUNT = 41
+WORK054_HISTORICAL_EDGE_COUNT = 15
 ARCHIVE_INDEX_BOUNDARY = "docs/98.archive/README.md#document-index"
 ARCHIVE_INDEX_PATH = PurePosixPath("docs/98.archive/README.md")
 DOCUMENT_TAXONOMY_SOURCE_COMMIT = (
@@ -3126,6 +3148,96 @@ def _work109_four_digit_aliases(
     return aliases
 
 
+def _work054_wp003_owner_merges(
+    context: Context,
+) -> dict[PurePosixPath, PurePosixPath]:
+    """Return only the exact Stage 00 legacy owner merges from MIG-0003."""
+
+    if (
+        WORK054_MIGRATION_PATH not in context.paths
+        or WORK054_MIGRATION_PATH not in context.tracked_regular_paths
+    ):
+        raise ConfigurationError("WORK-054 WP-003 migration ledger is unavailable")
+    text = context.texts.get(WORK054_MIGRATION_PATH)
+    if (
+        text is None
+        or hashlib.sha256(text.encode("utf-8")).hexdigest()
+        != WORK054_MIGRATION_SHA256
+    ):
+        raise ConfigurationError("WORK-054 WP-003 migration ledger differs")
+    metadata = context.metadata.get(WORK054_MIGRATION_PATH, {})
+    if (
+        metadata.get("artifact_id") != "MIG-0003"
+        or metadata.get("migration_id") != "MIG-0003"
+        or metadata.get("status") != "accepted"
+    ):
+        raise ConfigurationError("WORK-054 WP-003 migration ledger identity differs")
+    marker = f"{WORK109_LEDGER_MARKER}\n\n```json\n"
+    if text.count(marker) != 1:
+        raise ConfigurationError("WORK-054 WP-003 migration ledger contract differs")
+    _prefix, remainder = text.split(marker, 1)
+    if remainder.count("\n```") != 1:
+        raise ConfigurationError("WORK-054 WP-003 migration ledger contract differs")
+    raw, suffix = remainder.split("\n```", 1)
+    if not suffix.startswith("\n\n## Recovery\n"):
+        raise ConfigurationError("WORK-054 WP-003 migration ledger contract differs")
+    try:
+        rows = json.loads(raw)
+    except (json.JSONDecodeError, UnicodeError) as exc:
+        raise ConfigurationError(
+            "WORK-054 WP-003 migration ledger contract differs"
+        ) from exc
+    expected = {
+        PurePosixPath("docs/00.agent-governance/common-governance.md"): PurePosixPath(
+            "docs/00.agent-governance/harness-catalog.md"
+        ),
+        PurePosixPath(
+            "docs/00.agent-governance/harness-implementation-map.md"
+        ): PurePosixPath("docs/00.agent-governance/harness-catalog.md"),
+        PurePosixPath("docs/00.agent-governance/providers/agents-md.md"): PurePosixPath(
+            "docs/00.agent-governance/providers/codex.md"
+        ),
+    }
+    result: dict[PurePosixPath, PurePosixPath] = {}
+    if not isinstance(rows, list) or len(rows) != len(expected):
+        raise ConfigurationError("WORK-054 WP-003 migration ledger coverage differs")
+    for row in rows:
+        if (
+            not isinstance(row, Mapping)
+            or tuple(row) != WORK109_LEDGER_FIELDS
+            or row.get("stable_path") is not None
+            or row.get("artifact_id") is not None
+            or row.get("action") != "merged"
+            or not isinstance(row.get("legacy_path"), str)
+            or not isinstance(row.get("replacement"), str)
+            or not isinstance(row.get("source_commit"), str)
+            or re.fullmatch(r"[0-9a-f]{40}", row["source_commit"]) is None
+            or not isinstance(row.get("source_blob"), str)
+            or re.fullmatch(r"[0-9a-f]{40}", row["source_blob"]) is None
+            or not isinstance(row.get("content_sha256"), str)
+            or re.fullmatch(r"[0-9a-f]{64}", row["content_sha256"]) is None
+            or not isinstance(row.get("reason"), str)
+            or not row["reason"].strip()
+        ):
+            raise ConfigurationError("WORK-054 WP-003 migration ledger entry differs")
+        legacy = PurePosixPath(row["legacy_path"])
+        replacement = PurePosixPath(row["replacement"])
+        if (
+            expected.get(legacy) != replacement
+            or replacement not in context.tracked_regular_paths
+            or not _path_exists_without_dereference(
+                context.root,
+                replacement,
+                context.adapter_targets,
+            )
+        ):
+            raise ConfigurationError("WORK-054 WP-003 migration ledger target differs")
+        result[legacy] = replacement
+    if result != expected:
+        raise ConfigurationError("WORK-054 WP-003 migration ledger coverage differs")
+    return result
+
+
 @lru_cache(maxsize=1)
 def _load_document_taxonomy_migration() -> Any:
     """Load the reviewed migration tool under one private canonical identity."""
@@ -3492,6 +3604,8 @@ def _reviewed_source_pinned_alias_edges(
     expected_edge_count: int,
     contract_name: str,
     append_only_prefix_bytes: Mapping[PurePosixPath, int] | None = None,
+    exact_redirects: Mapping[PurePosixPath, PurePosixPath] | None = None,
+    expected_occurrence_count: int | None = None,
 ) -> dict[ArchiveTransitionEdge, PurePosixPath]:
     """Resolve a closed source/blob/edge-pinned historical alias set."""
 
@@ -3505,9 +3619,14 @@ def _reviewed_source_pinned_alias_edges(
         raise ConfigurationError(
             f"{contract_name} append-only prefix contract differs"
         )
-    redirects = _immutable_historical_redirects(context, move_targets)
+    redirects = (
+        dict(exact_redirects)
+        if exact_redirects is not None
+        else _immutable_historical_redirects(context, move_targets)
+    )
     edges: dict[ArchiveTransitionEdge, PurePosixPath] = {}
     contributing_sources: set[PurePosixPath] = set()
+    occurrence_count = 0
     for source, expected_blob in source_blobs.items():
         text = context.texts.get(source)
         content = text.encode("utf-8") if text is not None else b""
@@ -3551,13 +3670,38 @@ def _reviewed_source_pinned_alias_edges(
                 )
             edges[ArchiveTransitionEdge(source, target)] = replacement
             contributing_sources.add(source)
+            occurrence_count += 1
     if (
         len(source_blobs) != expected_source_count
         or contributing_sources != set(source_blobs)
         or len(edges) != expected_edge_count
+        or (
+            expected_occurrence_count is not None
+            and occurrence_count != expected_occurrence_count
+        )
     ):
         raise ConfigurationError(f"{contract_name} edge set differs")
     return edges
+
+
+def _reviewed_work054_historical_owner_edges(
+    context: Context,
+    move_targets: Mapping[PurePosixPath, PurePosixPath],
+) -> dict[ArchiveTransitionEdge, PurePosixPath]:
+    """Resolve only the exact source-pinned links retired by MIG-0003."""
+
+    if context.route_state != "transition":
+        return {}
+    return _reviewed_source_pinned_alias_edges(
+        context,
+        move_targets,
+        source_blobs=WORK054_HISTORICAL_SOURCE_BLOBS,
+        expected_source_count=WORK054_HISTORICAL_SOURCE_COUNT,
+        expected_edge_count=WORK054_HISTORICAL_EDGE_COUNT,
+        contract_name="WORK-054 historical owner",
+        exact_redirects=_work054_wp003_owner_merges(context),
+        expected_occurrence_count=WORK054_HISTORICAL_OCCURRENCE_COUNT,
+    )
 
 
 def _link_diagnostics(context: Context) -> list[Diagnostic]:
@@ -3576,6 +3720,10 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
     )
     reviewed_completed_history_alias_edges = (
         _reviewed_completed_history_alias_edges(context, move_targets)
+    )
+    reviewed_work054_owner_edges = _reviewed_work054_historical_owner_edges(
+        context,
+        move_targets,
     )
     for source in context.paths:
         profile = context.profiles[source].profile_id
@@ -3611,6 +3759,11 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
                 if (
                     ArchiveTransitionEdge(source, target)
                     in reviewed_completed_history_alias_edges
+                ):
+                    continue
+                if (
+                    ArchiveTransitionEdge(source, target)
+                    in reviewed_work054_owner_edges
                 ):
                     continue
                 if ArchiveTransitionEdge(source, target) in reviewed_stage90_move_edges:
@@ -7200,6 +7353,7 @@ def _ledger_diagnostics(context: Context) -> list[Diagnostic]:
                 **work109_replacements,
                 **work109_merges,
             }
+            work109_targets.update(_work054_wp003_owner_merges(context))
             if all(
                 target in context.tracked_regular_paths
                 and _path_exists_without_dereference(

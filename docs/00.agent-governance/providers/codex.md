@@ -3,7 +3,7 @@ title: 'Reference: Codex Provider Notes'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-08-01
+updated: 2026-08-14
 ---
 
 # Codex Provider Notes
@@ -21,11 +21,17 @@ Codex sessions act as a peer provider to Claude and Gemini. This document define
 ### Permission & Hook Boundary
 
 Codex uses official `AGENTS.md`, configuration, sandbox, and approval-mode
-surfaces for its native execution boundary. Unlike Claude's `settings.json`,
-`.codex/hooks.json` is a context/validation bridge only. It can orchestrate
-validation events (e.g., `pre-validate`, `post-validate`) where supported, but
-the Codex agent must still honor governance constraints and run explicit
-repo-backed validation before handoff.
+surfaces for its native execution boundary. `AGENTS.md` is the thin Codex/GPT
+gateway; shared policy belongs under `rules/` or `scopes/`, roster semantics
+belong in `contracts/harness-contract.json`, and readable adapter status belongs
+in `harness-catalog.md` and `subagent-protocol.md`. Claude and Gemini use their
+own root shims and do not import `AGENTS.md`.
+
+`.codex/hooks.json` is a retained custom compatibility bridge. Its tracked
+event graph is repo-static configuration only: current provider capability does
+not prove local parsing, feature enablement, trust, client dispatch, or event
+delivery. Delivery remains `DEFER` until a controlled canary proves the
+intended client path, and explicit validation remains required before handoff.
 
 Codex subagents are explicit orchestration only when requested by the user; use
 `.codex/agents/*.toml` role adapters and do not inline full role definitions
@@ -51,6 +57,7 @@ Cutoff-sensitive capability evidence was reconciled against
 - Codex custom instructions with `AGENTS.md`: <https://learn.chatgpt.com/docs/agent-configuration/agents-md>
 - Codex subagents: <https://learn.chatgpt.com/docs/agent-configuration/subagents>
 - Codex configuration and approval surfaces: <https://learn.chatgpt.com/docs/config-file/config-reference>
+- Codex hooks: <https://developers.openai.com/codex/hooks>
 
 The cutoff ledger records stable `0.144.1` and prerelease
 `0.145.0-alpha.2` as published before the cutoff. The current config reference
@@ -71,8 +78,9 @@ delegated execution.
 ### Context Strategy
 
 - Codex uses `.codex/agents/*.toml` as provider-native role adapters for the local agent roster.
-- Hook event wiring is defined in `.codex/hooks.json`, which points to the repository's shared lifecycle hook implementations where the runtime consumes that file.
-- `.codex/hooks.json` is strictly for event wiring (context and validation) and is **not** a permission gate.
+- `.codex/hooks.json` retains a custom compatibility graph that points to shared
+  lifecycle scripts. Its presence establishes neither native parsing nor event
+  delivery and it is **not** a permission gate.
 - Shared skills, workflows, and output styles resolve through `.codex/{skills,workflows,output-styles}` symlinks to the `.agents/` SSoT. Codex-specific rules stay in this provider note and Stage 00 rules; `.codex/rules/` is only a placeholder/adapter surface unless populated by a future approved adapter change.
 - Treat provider- or user-local recall as `provider-local-auxiliary`, ignored
   `.agent-work/checkpoint.json` as `working-short-term`,
@@ -114,6 +122,10 @@ delegated execution.
   same-suite evaluation and final admission remain `DEFER`.
 - Keep `repo-static`, `provider-runtime`, `ci`, and `remote-live` evidence
   separate. A result in one class never proves another.
+- `contracts/provider-runtime-evidence.json` is the singular machine owner for
+  provider capability evidence, retained hook-graph classification, and
+  delivery verdicts. Unsupported or absent runtimes cannot receive runtime
+  `PASS`.
 - Spec 045 retired the former role-semantics compatibility inputs after
   zero-consumer proof; the harness contract and harness-semantics validator
   are the current semantic owners.
@@ -154,7 +166,6 @@ establish native discovery, sandbox enforcement, or event delivery.
 
 ## Related Documents
 
-- [AGENTS.md Provider Notes](agents-md.md)
 - [Bootstrap Governance](../rules/bootstrap.md)
 - [Local Harness Catalog](../harness-catalog.md)
 - [Model Selection Policy](../model-policy.md)

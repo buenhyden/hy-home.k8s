@@ -112,5 +112,5 @@ high-risk command 예시를 스캔해 boundary marker가 없는 경우 실패한
 - [Reference Maintenance Runbook](./runbooks/0011-reference-maintenance-runbook.md)
 - [Document Stage Routing](../00.agent-governance/rules/document-authoring.md)
 - [Templates README](../99.templates/README.md)
-- [Harness Implementation Map](../00.agent-governance/harness-implementation-map.md)
+- [Local Harness Catalog](../00.agent-governance/harness-catalog.md)
 - [Approval Boundaries](../00.agent-governance/rules/approval-boundaries.md)

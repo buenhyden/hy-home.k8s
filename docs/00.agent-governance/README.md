@@ -59,11 +59,8 @@ status, uniqueness, and order.
 
 | Document | Lifecycle |
 | --- | --- |
-| [`common-governance.md`](common-governance.md) | `active` |
 | [`harness-catalog.md`](harness-catalog.md) | `active` |
-| [`harness-implementation-map.md`](harness-implementation-map.md) | `active` |
 | [`model-policy.md`](model-policy.md) | `active` |
-| [`agents-md.md`](providers/agents-md.md) | `active` |
 | [`claude.md`](providers/claude.md) | `active` |
 | [`codex.md`](providers/codex.md) | `active` |
 | [`gemini.md`](providers/gemini.md) | `active` |
@@ -106,7 +103,6 @@ docs/00.agent-governance/
 ├── providers/          # Provider-specific notes for Claude, Gemini, and gateways
 ├── hooks/              # Shared lifecycle/edit hook scripts reused by providers
 ├── memory/             # Reusable lessons and operational findings
-├── common-governance.md
 ├── harness-catalog.md  # Canonical runtime roster for local agents and skills
 ├── model-policy.md     # Cross-provider model tier and effort policy
 ├── subagent-protocol.md
@@ -136,7 +132,6 @@ Links in this README are relative to `docs/00.agent-governance/`.
 
 ### Governance Entry Points
 
-- [Common Governance & Mappings](common-governance.md)
 - [Model Policy](model-policy.md)
 - [Preflight Checklist](rules/preflight-checklist.md)
 - [Postflight Checklist](rules/postflight-checklist.md)

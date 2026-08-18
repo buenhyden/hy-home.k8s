@@ -186,6 +186,55 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
             )
             self.assertEqual(len(replacements), 144)
 
+    def test_mig0003_archive_inventory_control_is_exact_and_finite(self) -> None:
+        validator = load_validator()
+        migration_path = validator.WORK054_WP003_MIGRATION_PATH
+        valid = (ROOT / migration_path).read_bytes()
+        rogue_path = "docs/98.archive/migrations/mig-9999-rogue.md"
+
+        self.assertEqual(
+            hashlib.sha256(valid).hexdigest(),
+            validator.WORK054_WP003_MIGRATION_DOCUMENT_SHA256,
+        )
+        with tempfile.TemporaryDirectory(prefix="active-mig0003-index-") as temporary:
+            root = pathlib.Path(temporary)
+            subprocess.run(["git", "init", "--quiet"], cwd=root, check=True)
+            target = root / migration_path
+            target.parent.mkdir(parents=True)
+            target.write_bytes(valid)
+            subprocess.run(
+                ["git", "add", "--", migration_path], cwd=root, check=True
+            )
+
+            validator._validate_archive_inventory(
+                root,
+                (migration_path,),
+                frozenset(),
+                frozenset(),
+            )
+
+            with self.assertRaises(validator.MigrationError) as raised:
+                validator._validate_archive_inventory(
+                    root,
+                    (migration_path, rogue_path),
+                    frozenset(),
+                    frozenset(),
+                )
+            self.assertEqual(raised.exception.code, "MIGRATION-ROGUE-ARCHIVE")
+
+            target.write_bytes(valid + b"\n")
+            subprocess.run(
+                ["git", "add", "--", migration_path], cwd=root, check=True
+            )
+            with self.assertRaises(validator.MigrationError) as raised:
+                validator._validate_archive_inventory(
+                    root,
+                    (migration_path,),
+                    frozenset(),
+                    frozenset(),
+                )
+            self.assertEqual(raised.exception.code, "MIGRATION-ROGUE-ARCHIVE")
+
     def test_work107_stable_archive_aliases_are_exact_and_complete(self) -> None:
         validator = load_validator()
         aliases = validator._work107_stable_archive_aliases(ROOT)

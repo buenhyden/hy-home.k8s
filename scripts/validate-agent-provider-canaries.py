@@ -201,6 +201,10 @@ def apply_mutation(contract: dict[str, Any], name: str) -> None:
         contract["canaryRecords"][5]["verdict"] = "PASS"
         contract["providers"][1]["evidenceLanes"][2]["verdict"] = "PASS"
         contract["providers"][1]["runtimeVerdicts"]["authenticatedRun"] = "PASS"
+    elif name == "absent-runtime-native-pass":
+        contract["canaryRecords"][10]["verdict"] = "PASS"
+        contract["providers"][3]["evidenceLanes"][1]["verdict"] = "PASS"
+        contract["providers"][3]["runtimeVerdicts"]["nativeDiscovery"] = "PASS"
     else:
         fail("PNME-FIXTURE", f"unknown canary mutation {name}")
 

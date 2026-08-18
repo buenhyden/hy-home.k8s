@@ -23,7 +23,7 @@ CONTRACT_PATH = (
 )
 SCHEMA_PATH = CONTRACT_PATH.with_name("agent-governance-closure.schema.json")
 FIXTURE_PATH = REPO_ROOT / "tests/fixtures/agent-governance-closure.json"
-EXPECTED_WP002_PREDECESSOR_DIGESTS = {
+EXPECTED_CLOSED_PREDECESSOR_DIGESTS = {
     "docs/01.requirements/0003-workspace-agent-governance-platform.md": (
         "PRD-0003",
         "3974bd28ba0c39220ff1a79e1bedfc7a88bb85a380860cf15924f90df1454aa2",  # pragma: allowlist secret
@@ -69,11 +69,11 @@ EXPECTED_WP002_PREDECESSOR_DIGESTS = {
         "f28774169c39bd01dab095ad52363952edc19dd5a73dcd3c5c4402c1312e5565",  # pragma: allowlist secret
     ),
 }
-EXPECTED_WP002_PROVIDER_DIGEST = (
-    "4dd9f4889873d98c754864aae5655b422008ac7d0b7447fbc7975930cd06df50"  # pragma: allowlist secret
+EXPECTED_WP003_PROVIDER_SOURCE_DIGEST = (
+    "07be20ae5b918ae64614c3354be589d99b19cb8c84e9c9acba590df2545b8c77"  # pragma: allowlist secret
 )
-EXPECTED_WP002_MODEL_DIGEST = (
-    "4ebae0fab7f51ef41acdb1f5db4bc7a454cbdd2d0526583d601579d0f001ffd1"  # pragma: allowlist secret
+EXPECTED_WP003_MODEL_SOURCE_DIGEST = (
+    "d384f71ca268297261a63fc3b716afe4eaa5cc57b8031fc0d0e28a7e9985c398"  # pragma: allowlist secret
 )
 
 
@@ -457,7 +457,9 @@ class AgentGovernanceClosureTests(unittest.TestCase):
                 ):
                     self.assertEqual(validator(REPO_ROOT, contract), [expected])
 
-    def test_wp002_current_source_digests_are_exact(self) -> None:
+    def test_wp003_rebases_live_sources_without_changing_closed_predecessors(
+        self,
+    ) -> None:
         contract = json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))
         fixture_rows = {
             row["owner"]: row["evidenceSha256"]
@@ -469,11 +471,11 @@ class AgentGovernanceClosureTests(unittest.TestCase):
         }
         validator_rows = {row[1]: row[4] for row in self.module.EXPECTED_PREDECESSORS}
         self.assertEqual(
-            set(EXPECTED_WP002_PREDECESSOR_DIGESTS),
+            set(EXPECTED_CLOSED_PREDECESSOR_DIGESTS),
             set(fixture_rows),
         )
         for owner, (artifact_id, expected_digest) in (
-            EXPECTED_WP002_PREDECESSOR_DIGESTS.items()
+            EXPECTED_CLOSED_PREDECESSOR_DIGESTS.items()
         ):
             source = (REPO_ROOT / owner).read_bytes()
             artifact_line = f'artifact_id: "{artifact_id}"\n'.encode("ascii")
@@ -488,12 +490,12 @@ class AgentGovernanceClosureTests(unittest.TestCase):
         for relative_path, expected_digest, validator_digest in (
             (
                 self.module.PROVIDER_SOURCE_PATH,
-                EXPECTED_WP002_PROVIDER_DIGEST,
+                EXPECTED_WP003_PROVIDER_SOURCE_DIGEST,
                 self.module.PROVIDER_SOURCE_SHA256,
             ),
             (
                 self.module.MODEL_SOURCE_PATH,
-                EXPECTED_WP002_MODEL_DIGEST,
+                EXPECTED_WP003_MODEL_SOURCE_DIGEST,
                 self.module.MODEL_SOURCE_SHA256,
             ),
         ):
@@ -507,14 +509,28 @@ class AgentGovernanceClosureTests(unittest.TestCase):
             self.schema["properties"]["modelProfileSummary"]["properties"][
                 "sourceSha256"
             ]["const"],
-            EXPECTED_WP002_MODEL_DIGEST,
+            EXPECTED_WP003_MODEL_SOURCE_DIGEST,
         )
         self.assertEqual(
             self.schema["$defs"]["providerCanary"]["properties"]["sourceSha256"][
                 "const"
             ],
-            EXPECTED_WP002_PROVIDER_DIGEST,
+            EXPECTED_WP003_PROVIDER_SOURCE_DIGEST,
         )
+
+    def test_each_current_source_contract_digest_mutation_is_rejected(self) -> None:
+        for index, row in enumerate(self.fixture["providerCanaries"]):
+            contract = copy.deepcopy(self.fixture)
+            contract["providerCanaries"][index]["sourceSha256"] = "0" * 64
+            with self.subTest(provider=row["provider"]):
+                self.assertRejected(
+                    contract,
+                    "provider canary detail boundary differs",
+                )
+
+        contract = copy.deepcopy(self.fixture)
+        contract["modelProfileSummary"]["sourceSha256"] = "0" * 64
+        self.assertRejected(contract, "model mapping-readiness summary differs")
 
     def test_each_predecessor_contract_digest_mutation_is_rejected(self) -> None:
         for index, row in enumerate(self.fixture["predecessorCriteria"]):

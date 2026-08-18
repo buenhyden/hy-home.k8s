@@ -97,6 +97,71 @@ REPLACEMENT_SURFACES = (
     "tests/fixtures/agent-harness-semantics.json",
     ".github/README.md",
 )
+WORK054_MIGRATION_PATH = (
+    "docs/98.archive/migrations/"
+    "mig-0003-agent-governance-control-plane-consolidation.md"
+)
+WORK054_MIGRATION_SHA256 = (
+    "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42"  # pragma: allowlist secret
+)
+WORK054_OWNER_RETIREMENTS = (
+    {
+        "legacy_path": "docs/00.agent-governance/common-governance.md",
+        "stable_path": None,
+        "artifact_id": None,
+        "action": "merged",
+        "replacement": "docs/00.agent-governance/harness-catalog.md",
+        "source_commit": "128beada377f18bc9f942c8ebb3e27e1f2fdcfae",  # pragma: allowlist secret
+        "source_blob": "de7e7edfe177ff349cd3824aebd82418adff95d7",  # pragma: allowlist secret
+        "content_sha256": "c5da620d5f6c1aa26f2e0d99769872b90c6d2ec2fdb3c03813be27992f43e4ba",  # pragma: allowlist secret
+    },
+    {
+        "legacy_path": "docs/00.agent-governance/harness-implementation-map.md",
+        "stable_path": None,
+        "artifact_id": None,
+        "action": "merged",
+        "replacement": "docs/00.agent-governance/harness-catalog.md",
+        "source_commit": "128beada377f18bc9f942c8ebb3e27e1f2fdcfae",  # pragma: allowlist secret
+        "source_blob": "7e7a6d64a05be91658cc6657cd640491153a615a",  # pragma: allowlist secret
+        "content_sha256": "3ea2f89c3ba17fbf0bac64533cbb5a378a85c062a020881a3844cfa190c9c218",  # pragma: allowlist secret
+    },
+    {
+        "legacy_path": "docs/00.agent-governance/providers/agents-md.md",
+        "stable_path": None,
+        "artifact_id": None,
+        "action": "merged",
+        "replacement": "docs/00.agent-governance/providers/codex.md",
+        "source_commit": "128beada377f18bc9f942c8ebb3e27e1f2fdcfae",  # pragma: allowlist secret
+        "source_blob": "06d9a7a5453ac8b6e28268850467e3e96de06dc9",  # pragma: allowlist secret
+        "content_sha256": "5ea07c187ea54061f5ecc770a58a99edf40dfd73372ba8fc9e1d4ab14bf85bae",  # pragma: allowlist secret
+    },
+)
+WORK054_CONTROL_REFERENCE_FILES = (
+    "scripts/validate-agent-legacy-cutover.py",
+    "scripts/validate-links-and-owners.py",
+    "tests/test_validate_agent_legacy_cutover.py",
+    WORK054_MIGRATION_PATH,
+    "scripts/validate-document-lifecycle.py",
+)
+WORK054_LIFECYCLE_CONTROL_PATH = "scripts/validate-document-lifecycle.py"
+WORK054_PINNED_REFERENCE_FILES = {
+    "docs/00.agent-governance/memory/progress.md": {
+        "counts": (0, 1, 0),
+        "prefixLength": 768_684,
+        "prefixSha256": "18fa6c984acadfd2bb85db9100dd81a8023c3af3a1c4016225613b8ea816e709",  # pragma: allowlist secret
+    },
+}
+WORK054_LEDGER_FIELDS = (
+    "legacy_path",
+    "stable_path",
+    "artifact_id",
+    "action",
+    "replacement",
+    "source_commit",
+    "source_blob",
+    "content_sha256",
+    "reason",
+)
 HARNESS_CUTOVER = {
     "contractPath": REPLACEMENT_SURFACES[0],
     "schemaPath": REPLACEMENT_SURFACES[1],
@@ -151,6 +216,7 @@ PACKAGE_REFERENCES = (
 MIGRATION_REFERENCES = (
     OWNER_SPEC,
     "docs/00.agent-governance/memory/progress.md",
+    WORK054_MIGRATION_PATH,
 )
 ALLOWED_REFERENCE_COUNTS = (
     (CONTRACT_PATH.as_posix(), (1, 1, 1, 2, 7)),
@@ -171,6 +237,7 @@ ALLOWED_REFERENCE_COUNTS = (
     ("tests/test_reference_information_architecture.py", (0, 0, 0, 0, 4)),
     (OWNER_SPEC, (1, 0, 1, 1, 4)),
     ("docs/00.agent-governance/memory/progress.md", (0, 0, 0, 0, 9)),
+    (WORK054_MIGRATION_PATH, (0, 0, 0, 0, 0)),
 )
 PROTECTED_EVIDENCE_FILES = (
     {
@@ -246,6 +313,7 @@ EXCLUDED_ROOTS = (
     ".venv",
     ".worktrees",
     "__pycache__",
+    "graphify-out",
     "node_modules",
 )
 ALWAYS_ACTIVE_PREFIXES = (
@@ -981,6 +1049,69 @@ def _validate_harness(reader: _RepositoryReader) -> None:
         )
 
 
+def _load_migration_rows(reader: _RepositoryReader) -> tuple[dict[str, Any], ...]:
+    raw = reader.read_bytes(
+        WORK054_MIGRATION_PATH,
+        missing_rule="AGQC-LEGACY-MIGRATION",
+    )
+    if hashlib.sha256(raw).hexdigest() != WORK054_MIGRATION_SHA256:
+        fail("AGQC-LEGACY-MIGRATION", "WORK-054 migration digest differs")
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeError as exc:
+        fail("AGQC-LEGACY-MIGRATION", f"WORK-054 migration is not UTF-8: {exc}")
+    marker = "<!-- archive-migration-ledger:v1 format=json -->\n\n```json\n"
+    if text.count(marker) != 1:
+        fail("AGQC-LEGACY-MIGRATION", "WORK-054 migration marker differs")
+    _prefix, remainder = text.split(marker, 1)
+    if remainder.count("\n```") != 1:
+        fail("AGQC-LEGACY-MIGRATION", "WORK-054 migration fence differs")
+    raw_rows, suffix = remainder.split("\n```", 1)
+    if not suffix.startswith("\n\n## Recovery\n"):
+        fail("AGQC-LEGACY-MIGRATION", "WORK-054 migration recovery section differs")
+    try:
+        rows = json.loads(raw_rows)
+    except json.JSONDecodeError as exc:
+        fail("AGQC-LEGACY-MIGRATION", f"WORK-054 migration JSON differs: {exc}")
+    if not isinstance(rows, list) or not all(isinstance(row, dict) for row in rows):
+        fail("AGQC-LEGACY-MIGRATION", "WORK-054 migration rows must be objects")
+    return tuple(rows)
+
+
+def _validate_work054_retirements(
+    reader: _RepositoryReader,
+    candidates: set[str],
+) -> int:
+    if WORK054_MIGRATION_PATH not in candidates:
+        fail(
+            "AGQC-LEGACY-MIGRATION",
+            f"WORK-054 migration is absent from the Git index: {WORK054_MIGRATION_PATH}",
+        )
+    rows = _load_migration_rows(reader)
+    expected_rows = WORK054_OWNER_RETIREMENTS
+    if len(rows) != len(expected_rows):
+        fail("AGQC-LEGACY-MIGRATION", "WORK-054 migration row count differs")
+    for row, expected in zip(rows, expected_rows, strict=True):
+        if tuple(row) != WORK054_LEDGER_FIELDS:
+            fail("AGQC-LEGACY-MIGRATION", "WORK-054 migration field order differs")
+        for key, value in expected.items():
+            if row.get(key) != value:
+                fail("AGQC-LEGACY-MIGRATION", f"WORK-054 migration differs: {key}")
+        if not isinstance(row.get("reason"), str) or not row["reason"].strip():
+            fail("AGQC-LEGACY-MIGRATION", "WORK-054 migration reason is empty")
+        legacy = row["legacy_path"]
+        replacement = row["replacement"]
+        if legacy in candidates:
+            fail("AGQC-LEGACY-RETIRED", f"WORK-054 owner remains: {legacy}")
+        if replacement not in candidates:
+            fail(
+                "AGQC-LEGACY-MIGRATION",
+                f"WORK-054 replacement is absent from the Git index: {replacement}",
+            )
+        reader.read_text(replacement, missing_rule="AGQC-LEGACY-MIGRATION")
+    return len(rows)
+
+
 def _under_prefix(value: str, prefix: str) -> bool:
     return value == prefix or value.startswith(prefix + "/")
 
@@ -1318,6 +1449,166 @@ def _require_candidate(
         )
 
 
+def _is_exact_work054_lifecycle_control(
+    relative: str,
+    raw: bytes,
+    observed_counts: tuple[int, ...],
+) -> bool:
+    """Admit only the exact MIG-0003 projection embedded in lifecycle control."""
+
+    if (
+        relative != WORK054_LIFECYCLE_CONTROL_PATH
+        or observed_counts != (1, 1, 1)
+    ):
+        return False
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeError:
+        return False
+    sha_declaration = (
+        'WORK054_WP003_MIGRATION_SHA256 = (\n'
+        f'    "{WORK054_MIGRATION_SHA256}"'
+    )
+    base_declaration = (
+        'WORK054_WP003_BASE_COMMIT = '
+        f'"{WORK054_OWNER_RETIREMENTS[0]["source_commit"]}"'
+    )
+    start_marker = "WORK054_WP003_OWNER_RETIREMENTS = (\n"
+    end_marker = "\n)\n\n\n"
+    if (
+        text.count(sha_declaration) != 1
+        or text.count(base_declaration) != 1
+        or text.count(start_marker) != 1
+    ):
+        return False
+    _prefix, remainder = text.split(start_marker, 1)
+    if end_marker not in remainder:
+        return False
+    block, _suffix = remainder.split(end_marker, 1)
+    if block.count('"legacy_path":') != len(WORK054_OWNER_RETIREMENTS):
+        return False
+    for row in WORK054_OWNER_RETIREMENTS:
+        required = (
+            f'"legacy_path": "{row["legacy_path"]}"',
+            f'"source_blob": "{row["source_blob"]}"',
+            f'"content_sha256": "{row["content_sha256"]}"',
+        )
+        if any(block.count(value) != 1 for value in required):
+            return False
+    expected_replacements = {
+        str(row["replacement"]): sum(
+            candidate["replacement"] == row["replacement"]
+            for candidate in WORK054_OWNER_RETIREMENTS
+        )
+        for row in WORK054_OWNER_RETIREMENTS
+    }
+    if any(
+        block.count(f'"replacement": "{replacement}"') != expected_count
+        for replacement, expected_count in expected_replacements.items()
+    ):
+        return False
+    return (
+        block.count('"stable_path": None') == len(WORK054_OWNER_RETIREMENTS)
+        and block.count('"artifact_id": None') == len(WORK054_OWNER_RETIREMENTS)
+        and block.count('"action": "merged"') == len(WORK054_OWNER_RETIREMENTS)
+        and block.count('"source_commit": WORK054_WP003_BASE_COMMIT')
+        == len(WORK054_OWNER_RETIREMENTS)
+    )
+
+
+def _is_exact_work054_control_reference(
+    relative: str,
+    raw: bytes,
+    observed_counts: tuple[int, ...],
+) -> bool:
+    """Admit only the known, structurally pinned WORK-054 controls."""
+
+    if (
+        relative not in WORK054_CONTROL_REFERENCE_FILES
+        or observed_counts != (1, 1, 1)
+    ):
+        return False
+    if relative == WORK054_MIGRATION_PATH:
+        return hashlib.sha256(raw).hexdigest() == WORK054_MIGRATION_SHA256
+    if relative == WORK054_LIFECYCLE_CONTROL_PATH:
+        return _is_exact_work054_lifecycle_control(
+            relative,
+            raw,
+            observed_counts,
+        )
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeError:
+        return False
+    if relative == "tests/test_validate_agent_legacy_cutover.py":
+        return (
+            text.count("WORK054_OWNER_RETIREMENTS = (\n") == 1
+            and all(
+                text.count(f'Path("{row["legacy_path"]}")') == 1
+                for row in WORK054_OWNER_RETIREMENTS
+            )
+        )
+    if relative == "scripts/validate-links-and-owners.py":
+        if text.count(WORK054_MIGRATION_SHA256) != 1:
+            return False
+        return all(
+            len(
+                re.findall(
+                    r'PurePosixPath\(\s*"'
+                    + re.escape(str(row["legacy_path"]))
+                    + r'"\s*\)',
+                    text,
+                )
+            )
+            == 1
+            for row in WORK054_OWNER_RETIREMENTS
+        )
+    if relative == "scripts/validate-agent-legacy-cutover.py":
+        if (
+            text.count("WORK054_OWNER_RETIREMENTS = (\n") != 1
+            or text.count(WORK054_MIGRATION_SHA256) != 1
+        ):
+            return False
+        _prefix, block = text.split("WORK054_OWNER_RETIREMENTS = (\n", 1)
+        end_marker = "\n)\nWORK054_CONTROL_REFERENCE_FILES = ("
+        if end_marker not in block:
+            return False
+        block, _suffix = block.split(end_marker, 1)
+        for row in WORK054_OWNER_RETIREMENTS:
+            required = (
+                f'"legacy_path": "{row["legacy_path"]}"',
+                f'"source_blob": "{row["source_blob"]}"',
+                f'"content_sha256": "{row["content_sha256"]}"',
+            )
+            if any(block.count(value) != 1 for value in required):
+                return False
+        return (
+            block.count('"action": "merged"')
+            == len(WORK054_OWNER_RETIREMENTS)
+            and block.count(
+                f'"source_commit": "{WORK054_OWNER_RETIREMENTS[0]["source_commit"]}"'
+            )
+            == len(WORK054_OWNER_RETIREMENTS)
+        )
+    return False
+
+
+def _is_exact_work054_pinned_reference(
+    relative: str,
+    raw: bytes,
+    observed_counts: tuple[int, ...],
+) -> bool:
+    """Admit an append-only historical reference only at its pinned blob."""
+
+    record = WORK054_PINNED_REFERENCE_FILES.get(relative)
+    if record is None or observed_counts != record["counts"]:
+        return False
+    prefix_length = int(record["prefixLength"])
+    return len(raw) >= prefix_length and hashlib.sha256(
+        raw[:prefix_length]
+    ).hexdigest() == record["prefixSha256"]
+
+
 def _scan_consumers_with_reader(
     reader: _RepositoryReader,
     candidates: tuple[str, ...] | None = None,
@@ -1355,11 +1646,53 @@ def _scan_consumers_with_reader(
             raw.count(token.encode("utf-8"))
             for token in RETIRED_SURFACES
         )
+        work054_counts = tuple(
+            raw.count(str(row["legacy_path"]).encode("utf-8"))
+            for row in WORK054_OWNER_RETIREMENTS
+        )
         retired = [
             token
             for token, count in zip(RETIRED_SURFACES, observed_counts)
             if count
         ]
+        work054_evidence = False
+        if any(work054_counts):
+            allowed_work054_evidence = (
+                _is_exact_work054_control_reference(
+                    relative,
+                    raw,
+                    work054_counts,
+                )
+                or _is_exact_work054_pinned_reference(
+                    relative,
+                    raw,
+                    work054_counts,
+                )
+                or relative.startswith("docs/90.references/")
+                or relative.startswith("docs/98.archive/")
+            )
+            if allowed_work054_evidence:
+                work054_evidence = True
+            else:
+                try:
+                    text = raw.decode("utf-8")
+                except UnicodeError as exc:
+                    fail(
+                        "AGQC-LEGACY-INPUT",
+                        f"candidate consumer is not UTF-8 {relative}: {exc}",
+                    )
+                if _is_terminal_document(text):
+                    work054_evidence = True
+                else:
+                    legacy = next(
+                        str(row["legacy_path"])
+                        for row, count in zip(
+                            WORK054_OWNER_RETIREMENTS,
+                            work054_counts,
+                        )
+                        if count
+                    )
+                    consumers.append(f"{relative}:{legacy}")
         expected_counts = allowed_counts.get(relative)
         if expected_counts is not None:
             if observed_counts == expected_counts:
@@ -1388,6 +1721,8 @@ def _scan_consumers_with_reader(
             else:
                 evidence += 1
             continue
+        if work054_evidence:
+            evidence += 1
         if not retired:
             continue
         try:
@@ -1431,6 +1766,7 @@ def validate_repository(root: Path) -> dict[str, int]:
         validate_contract_data(contract, schema)
         _validate_replacements(reader, candidate_set)
         _validate_harness(reader)
+        work054_rows = _validate_work054_retirements(reader, candidate_set)
         scanned, evidence, consumers = _scan_consumers_with_reader(
             reader,
             candidates,
@@ -1446,6 +1782,8 @@ def validate_repository(root: Path) -> dict[str, int]:
         "activeConsumers": len(consumers),
         "scannedFiles": scanned,
         "evidenceReferences": evidence,
+        "work054RetiredOwners": len(WORK054_OWNER_RETIREMENTS),
+        "work054MigrationRows": work054_rows,
     }
 
 
@@ -1548,6 +1886,8 @@ def _create_baseline(
     _write_text(target_root, REPLACEMENT_SURFACES[2], "replacement\n")
     _write_text(target_root, REPLACEMENT_SURFACES[3], "{}\n")
     _write_text(target_root, REPLACEMENT_SURFACES[4], "replacement hub\n")
+    for row in WORK054_OWNER_RETIREMENTS:
+        _write_text(target_root, str(row["replacement"]), "work054 replacement\n")
     _synthetic_git(target_root, ("init", "--quiet"))
     _synthetic_git(target_root, ("add", "--all"))
 

@@ -428,6 +428,48 @@ WORK054_WP002_SPEC_PATTERN = re.compile(
     r"(?P<name>spec|plan|tasks|agent-design)\.md"
 )
 
+WORK054_WP003_BASE_COMMIT = "128beada377f18bc9f942c8ebb3e27e1f2fdcfae"
+WORK054_WP003_MIGRATION_PATH = PurePosixPath(
+    "docs/98.archive/migrations/"
+    "mig-0003-agent-governance-control-plane-consolidation.md"
+)
+WORK054_WP003_MIGRATION_SHA256 = (
+    "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42"  # pragma: allowlist secret
+)
+WORK054_WP003_LEDGER_KEYS = WORK054_WP002_LEDGER_KEYS
+WORK054_WP003_OWNER_RETIREMENTS = (
+    {
+        "legacy_path": "docs/00.agent-governance/common-governance.md",
+        "stable_path": None,
+        "artifact_id": None,
+        "action": "merged",
+        "replacement": "docs/00.agent-governance/harness-catalog.md",
+        "source_commit": WORK054_WP003_BASE_COMMIT,
+        "source_blob": "de7e7edfe177ff349cd3824aebd82418adff95d7",  # pragma: allowlist secret
+        "content_sha256": "c5da620d5f6c1aa26f2e0d99769872b90c6d2ec2fdb3c03813be27992f43e4ba",  # pragma: allowlist secret
+    },
+    {
+        "legacy_path": "docs/00.agent-governance/harness-implementation-map.md",
+        "stable_path": None,
+        "artifact_id": None,
+        "action": "merged",
+        "replacement": "docs/00.agent-governance/harness-catalog.md",
+        "source_commit": WORK054_WP003_BASE_COMMIT,
+        "source_blob": "7e7a6d64a05be91658cc6657cd640491153a615a",  # pragma: allowlist secret
+        "content_sha256": "3ea2f89c3ba17fbf0bac64533cbb5a378a85c062a020881a3844cfa190c9c218",  # pragma: allowlist secret
+    },
+    {
+        "legacy_path": "docs/00.agent-governance/providers/agents-md.md",
+        "stable_path": None,
+        "artifact_id": None,
+        "action": "merged",
+        "replacement": "docs/00.agent-governance/providers/codex.md",
+        "source_commit": WORK054_WP003_BASE_COMMIT,
+        "source_blob": "06d9a7a5453ac8b6e28268850467e3e96de06dc9",  # pragma: allowlist secret
+        "content_sha256": "5ea07c187ea54061f5ecc770a58a99edf40dfd73372ba8fc9e1d4ab14bf85bae",  # pragma: allowlist secret
+    },
+)
+
 
 def _registry_profile_ids(raw_registry: Mapping[str, object]) -> frozenset[str]:
     profiles = raw_registry.get("profiles")
@@ -1176,6 +1218,70 @@ def finite_work054_wp002_transition_paths(
         return frozenset()
     consumed.add(WORK054_WP002_DECISION_PATH)
     return frozenset(consumed) if len(consumed) == 303 else frozenset()
+
+
+def finite_work054_wp003_agent_governance_paths(
+    *,
+    root: Path,
+    mode: str,
+    base_commit: str,
+    base_blobs: Mapping[PurePosixPath, str],
+    proposed_blobs: Mapping[PurePosixPath, str],
+) -> frozenset[PurePosixPath]:
+    """Admit only the exact WORK-054 WP-003 legacy owner retirements."""
+
+    if mode not in {"staged", "ci"} or base_commit != WORK054_WP003_BASE_COMMIT:
+        return frozenset()
+    migration_oid = proposed_blobs.get(WORK054_WP003_MIGRATION_PATH)
+    if (
+        WORK054_WP003_MIGRATION_PATH in base_blobs
+        or migration_oid is None
+    ):
+        return frozenset()
+    try:
+        migration_bytes = _blob_bytes(root, migration_oid)
+        migration_text = migration_bytes.decode("utf-8")
+    except (InvocationError, OSError, UnicodeDecodeError):
+        return frozenset()
+    if hashlib.sha256(migration_bytes).hexdigest() != WORK054_WP003_MIGRATION_SHA256:
+        return frozenset()
+    marker = "<!-- archive-migration-ledger:v1 format=json -->\n\n```json\n"
+    if migration_text.count(marker) != 1:
+        return frozenset()
+    _prefix, remainder = migration_text.split(marker, 1)
+    if remainder.count("\n```") != 1:
+        return frozenset()
+    raw_rows, suffix = remainder.split("\n```", 1)
+    if not suffix.startswith("\n\n## Recovery\n"):
+        return frozenset()
+    try:
+        rows = json.loads(raw_rows)
+    except json.JSONDecodeError:
+        return frozenset()
+    if (
+        not isinstance(rows, list)
+        or len(rows) != len(WORK054_WP003_OWNER_RETIREMENTS)
+    ):
+        return frozenset()
+    consumed: set[PurePosixPath] = {WORK054_WP003_MIGRATION_PATH}
+    for row, expected in zip(rows, WORK054_WP003_OWNER_RETIREMENTS, strict=True):
+        if not isinstance(row, Mapping) or tuple(row) != WORK054_WP003_LEDGER_KEYS:
+            return frozenset()
+        for key, value in expected.items():
+            if row.get(key) != value:
+                return frozenset()
+        if not isinstance(row.get("reason"), str) or not row["reason"].strip():
+            return frozenset()
+        legacy = PurePosixPath(str(row["legacy_path"]))
+        replacement = PurePosixPath(str(row["replacement"]))
+        if (
+            base_blobs.get(legacy) != row["source_blob"]
+            or legacy in proposed_blobs
+            or replacement not in proposed_blobs
+        ):
+            return frozenset()
+        consumed.add(legacy)
+    return frozenset(consumed) if len(consumed) == 4 else frozenset()
 
 
 def finite_archive_cutover_paths(
@@ -3664,6 +3770,13 @@ def _evaluate_comparison(
         base_blobs=base_blobs,
         proposed_blobs=proposed_blobs,
     )
+    work054_wp003_consumed_paths = finite_work054_wp003_agent_governance_paths(
+        root=root,
+        mode=mode,
+        base_commit=base_commit,
+        base_blobs=base_blobs,
+        proposed_blobs=proposed_blobs,
+    )
 
     work107_consumed_paths = finite_work107_archive_rehome_paths(
         root=root,
@@ -3773,6 +3886,7 @@ def _evaluate_comparison(
             )
     consumed_paths = (
         work054_wp002_consumed_paths
+        | work054_wp003_consumed_paths
         | work105_consumed_paths
         | work107_consumed_paths
         | work108_consumed_paths

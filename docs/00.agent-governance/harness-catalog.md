@@ -41,7 +41,8 @@ and pattern families used by the shared local runtime bridge (`.claude/`,
 ### Runtime Principles
 
 - The local runtime is cluster-specific and GitOps-first.
-- Supervising agents use the `top` model tier; task and worker agents use the `worker` model tier by default (see Model Tier Mapping below).
+- Resolve every role's capability tier from the model-fitness contract; role
+  and permission labels do not assign a tier (see Model Tier Mapping below).
 - Agent files are thin native or local adapter surfaces and must not duplicate governance policy.
 - Local adapter parity means role parity plus validation evidence: the same role,
   scope imports, guardrails, handoff, and postflight contract expressed through
@@ -116,7 +117,7 @@ same policy in different words.
 | ----------------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | Role semantics, roster, permissions, memory, and evidence classes | `contracts/harness-contract.json` | `.claude/agents/*.md`, `.agents/agents/*.md`, `.codex/agents/*.toml`, `.gemini/agents/*.md` | Harness contract, harness-semantics, roster-currentness, and affected-surface validators |
 | Governance rules and execution checklists | `docs/00.agent-governance/rules/**`                                               | `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, provider notes                           | `scripts/validate-repo-quality-gates.sh`                                           |
-| Model tier vocabulary and per-tuple state | `model-policy.md` owns `top` / `worker` and reasoning vocabulary; `contracts/agent-model-fitness.json` owns each role/provider incumbent, configured and observed value, candidate, reasoning, fallback, and decision state; `contracts/provider-runtime-evidence.json` owns cutoff/current source confidence | `.claude/agents/*.md`, `.agents/agents/*.md` (local), `.codex/agents/*.toml`; Gemini project-agent frontmatter has no `model` field | Agent adapter/model-fitness checks plus provider config/canary checks; Gemini CLI resolution is `DEFER` |
+| Model tier vocabulary, role membership, and per-tuple state | `model-policy.md` owns `top` / `worker` and reasoning vocabulary; `contracts/agent-model-fitness.json` owns each role's capability tier plus each role/provider incumbent, configured and observed value, candidate, reasoning, fallback, and decision state; `contracts/provider-runtime-evidence.json` owns cutoff/current source confidence | The harness contract keeps reference-only tier links; provider adapters project configured incumbents | Model-fitness checks plus provider config/canary checks; Gemini CLI resolution is `DEFER` |
 | Shared skills, workflows, output styles   | `.agents/{skills,workflows,output-styles}/`                                       | `.claude/{skills,workflows,output-styles}` and `.codex/{skills,workflows,output-styles}` symlink views | Skill mirror checks, task-to-skill routing, and `.agents/**` repo-quality triggers |
 | Hook scripts                              | `docs/00.agent-governance/hooks/*.sh`                                             | `.claude/settings.json`, `.agents/hooks.json` local wiring, `.codex/hooks.json` | Hook payload simulation and shell syntax checks; Gemini CLI delivery is `DEFER`     |
 | Validation selection and handoff evidence | `contracts/validation-surfaces.json`, `rules/quality-standards.md`                 | Local hooks, pre-commit, CI selector, provider handoffs                         | Affected-surface, role-semantic, native metadata, roster, and program-closure validators |
@@ -127,11 +128,9 @@ same policy in different words.
 ### Model Tier Mapping
 
 Model allocation is provider-agnostic at the tier level and provider-specific
-at the concrete model level. The `top` tier serves planning and supervising
-roles plus the two high-risk specialist profiles selected by Spec 044; the
-`worker` tier serves the other bounded delegated roles. This table records the
-readable roster-to-tier projection; `model-policy.md` owns the tier vocabulary.
-`contracts/agent-model-fitness.json` version `1.1.0` owns the exact incumbent,
+at the concrete model level. `model-policy.md` owns the tier vocabulary, and
+`contracts/agent-model-fitness.json` version `1.1.0` is the only exact owner of
+role-to-tier membership plus the incumbent,
 configured and observed values, candidate, reasoning, fallback, and decision
 state for every role/provider tuple. Its completed AREA-004 repository-static
 result covers exactly `12 roles / 4 providers / 48 tuples`: mapping readiness
@@ -139,10 +138,10 @@ is `PASS` for 21 and `DEFER` for 27, while observed fitness, threshold,
 promotion, canary, and runtime are `DEFER` for all 48. Configured incumbents
 remain unchanged until a future authorized, evidence-backed promotion.
 
-| Tier | Current role profiles | Routing meaning | Exact model/reasoning state owner |
-| --- | --- | --- | --- |
-| `top` | `supervisor`, `incident-responder`, `security-auditor` | Planning, synthesis, and high-risk specialist work | `contracts/agent-model-fitness.json` |
-| `worker` | The other nine canonical roles | Bounded delegated work, with explicit task-level escalation when required | `contracts/agent-model-fitness.json` |
+| Tier | Routing meaning | Exact membership and model/reasoning state owner |
+| --- | --- | --- |
+| `top` | Planning, synthesis, and selected high-risk specialist work | `contracts/agent-model-fitness.json` |
+| `worker` | Bounded delegated work, with explicit task-level escalation when required | `contracts/agent-model-fitness.json` |
 
 - Tier membership is a role-profile property; task-level escalation does not
   rewrite it.
@@ -571,16 +570,16 @@ its agent prompt. Do not duplicate the same rule across all three layers.
 - `.claude/*.local.md` files must stay ignored and untracked; Hookify local rules are advisory only and must not replace tracked validators.
 - Document-generation workflows must use `.agents/skills/docs-stage-routing/skill.md` or a provider symlink view before proposing new authored-document paths.
 - Any new local agent or skill must be added here in the same change set.
-- New harness surfaces must be reflected in [`harness-implementation-map.md`](harness-implementation-map.md) and the approval matrix in [`rules/approval-boundaries.md`](rules/approval-boundaries.md) in the same change set.
+- New harness surfaces must be reflected in the approval matrix in
+  [`rules/approval-boundaries.md`](rules/approval-boundaries.md) in the same
+  change set.
 
 ## Related Documents
 
 - [AGENTS.md](../../AGENTS.md)
-- [Harness Implementation Map](harness-implementation-map.md)
 - [Approval Boundaries](rules/approval-boundaries.md)
 - [Runtime Baseline](../../.claude/CLAUDE.md)
 - [Codex Runtime Baseline](../../.codex/CODEX.md)
-- [Common Governance](./common-governance.md)
 - [Model Policy](./model-policy.md)
 - [Subagent Protocol](./subagent-protocol.md)
 - [Claude Provider Notes](./providers/claude.md)

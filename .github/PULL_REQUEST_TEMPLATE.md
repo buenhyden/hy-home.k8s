@@ -100,4 +100,4 @@ Secret handling:
 - [ ] No secret values, Vault tokens, private keys, or credential material are included
 - [ ] Secret-related changes record only path, key, property, mount, and redacted evidence
 
-See [Approval Boundaries](../docs/00.agent-governance/rules/approval-boundaries.md) and the [Harness Implementation Map](../docs/00.agent-governance/harness-implementation-map.md).
+See [Approval Boundaries](../docs/00.agent-governance/rules/approval-boundaries.md) and the [Local Harness Catalog](../docs/00.agent-governance/harness-catalog.md).

@@ -120,7 +120,7 @@
       "required": ["sourceRef", "sourceSha256", "validatorPassMeaning", "roleCount", "providerCount", "tupleCount", "mappingReady", "mappingDeferred", "fitnessDeferred", "thresholdDeferred", "promotionDeferred", "canaryDeferred", "runtimeDeferred", "configuredProfileResult", "actualFitnessResult", "actualPromotionResult", "owner", "limitation", "retryTrigger"],
       "properties": {
         "sourceRef": {"const": "docs/00.agent-governance/contracts/agent-model-fitness.json"},
-        "sourceSha256": {"const": "4ebae0fab7f51ef41acdb1f5db4bc7a454cbdd2d0526583d601579d0f001ffd1"},
+        "sourceSha256": {"const": "d384f71ca268297261a63fc3b716afe4eaa5cc57b8031fc0d0e28a7e9985c398", "description": "Live SHA-256 binding to the current canonical model-fitness source; evaluation and cutoff fields retain their historical evidence semantics."},
         "validatorPassMeaning": {"const": "mapping-readiness-only"},
         "roleCount": {"const": 12},
         "providerCount": {"const": 4},
@@ -218,7 +218,7 @@
         "observedAt": {"const": "2026-07-28"},
         "sourceCutoff": {"const": "2026-07-10T10:00:00+09:00"},
         "sourceRef": {"const": "docs/00.agent-governance/contracts/provider-runtime-evidence.json"},
-        "sourceSha256": {"const": "4dd9f4889873d98c754864aae5655b422008ac7d0b7447fbc7975930cd06df50"},
+        "sourceSha256": {"const": "07be20ae5b918ae64614c3354be589d99b19cb8c84e9c9acba590df2545b8c77", "description": "Live SHA-256 binding to current canonical provider evidence; observedAt and sourceCutoff retain the historical observation boundary."},
         "instructionSources": {"type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 160}},
         "discoveredRoleSurface": {"type": "string", "minLength": 1, "maxLength": 240},
         "configuredModel": {"const": "role-specific-current-policy"},

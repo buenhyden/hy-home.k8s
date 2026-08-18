@@ -40,6 +40,20 @@ REPLACEMENTS = (
     Path(".github/README.md"),
 )
 
+WORK054_OWNER_RETIREMENTS = (
+    Path("docs/00.agent-governance/common-governance.md"),
+    Path("docs/00.agent-governance/harness-implementation-map.md"),
+    Path("docs/00.agent-governance/providers/agents-md.md"),
+)
+WORK054_MIGRATION = Path(
+    "docs/98.archive/migrations/"
+    "mig-0003-agent-governance-control-plane-consolidation.md"
+)
+WORK054_REPLACEMENTS = (
+    Path("docs/00.agent-governance/harness-catalog.md"),
+    Path("docs/00.agent-governance/providers/codex.md"),
+)
+
 
 def load_validator():
     spec = importlib.util.spec_from_file_location(
@@ -62,6 +76,18 @@ class AgentLegacyCutoverArtifactTests(unittest.TestCase):
             if not path.is_file()
         ]
         self.assertEqual(missing, [])
+
+    def test_work054_owner_retirement_contract_is_closed(self) -> None:
+        validator = load_validator()
+        self.assertEqual(
+            tuple(Path(row["legacy_path"]) for row in validator.WORK054_OWNER_RETIREMENTS),
+            WORK054_OWNER_RETIREMENTS,
+        )
+        self.assertEqual(Path(validator.WORK054_MIGRATION_PATH), WORK054_MIGRATION)
+        self.assertEqual(
+            {row["action"] for row in validator.WORK054_OWNER_RETIREMENTS},
+            {"merged"},
+        )
 
 
 @unittest.skipUnless(
@@ -119,6 +145,10 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
                 target.write_text("{}\n", encoding="utf-8")
             else:
                 target.write_text("canonical replacement\n", encoding="utf-8")
+        for relative in WORK054_REPLACEMENTS:
+            target = root / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text("work054 replacement\n", encoding="utf-8")
         subprocess.run(
             ["/usr/bin/git", "init", "--quiet"],
             cwd=root,
@@ -157,6 +187,119 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
         self.assertEqual(counts["retiredSurfaces"], 5)
         self.assertEqual(counts["replacementSurfaces"], 5)
         self.assertEqual(counts["activeConsumers"], 0)
+        self.assertEqual(counts["work054RetiredOwners"], 3)
+        self.assertEqual(counts["work054MigrationRows"], 3)
+
+    def test_work054_retired_owner_path_and_current_consumer_fail_closed(self) -> None:
+        root = self.make_valid_root()
+        retained = root / WORK054_OWNER_RETIREMENTS[0]
+        retained.parent.mkdir(parents=True, exist_ok=True)
+        retained.write_text("retained legacy owner\n", encoding="utf-8")
+        self.stage(root, retained.relative_to(root))
+        self.assert_rule(root, "AGQC-LEGACY-RETIRED")
+
+        root = self.make_valid_root()
+        consumer = root / "README.md"
+        consumer.write_text(
+            f"use {WORK054_OWNER_RETIREMENTS[0].as_posix()}\n",
+            encoding="utf-8",
+        )
+        self.stage(root, consumer.relative_to(root))
+        self.assert_rule(root, "AGQC-LEGACY-CONSUMER")
+
+    def test_work054_migration_blob_or_digest_drift_fails_closed(self) -> None:
+        root = self.make_valid_root()
+        migration = root / WORK054_MIGRATION
+        migration.write_bytes(migration.read_bytes() + b"\n")
+        self.stage(root, migration.relative_to(root))
+        self.assert_rule(root, "AGQC-LEGACY-MIGRATION")
+
+    def test_work054_lifecycle_control_allows_only_exact_projection(self) -> None:
+        path = REPO_ROOT / self.validator.WORK054_LIFECYCLE_CONTROL_PATH
+        raw = path.read_bytes()
+        counts = tuple(
+            raw.count(str(row["legacy_path"]).encode("utf-8"))
+            for row in self.validator.WORK054_OWNER_RETIREMENTS
+        )
+        self.assertTrue(
+            self.validator._is_exact_work054_lifecycle_control(
+                self.validator.WORK054_LIFECYCLE_CONTROL_PATH,
+                raw,
+                counts,
+            )
+        )
+        ordinary_use = raw + (
+            b"\n# use "
+            + str(
+                self.validator.WORK054_OWNER_RETIREMENTS[0]["legacy_path"]
+            ).encode("utf-8")
+            + b"\n"
+        )
+        drifted_sha = raw.replace(
+            self.validator.WORK054_MIGRATION_SHA256.encode("ascii"),
+            b"0" * 64,
+            1,
+        )
+        for name, candidate in (
+            ("ordinary-active-use", ordinary_use),
+            ("migration-sha-drift", drifted_sha),
+        ):
+            with self.subTest(name=name):
+                candidate_counts = tuple(
+                    candidate.count(str(row["legacy_path"]).encode("utf-8"))
+                    for row in self.validator.WORK054_OWNER_RETIREMENTS
+                )
+                self.assertFalse(
+                    self.validator._is_exact_work054_lifecycle_control(
+                        self.validator.WORK054_LIFECYCLE_CONTROL_PATH,
+                        candidate,
+                        candidate_counts,
+                    )
+                )
+
+    def test_work054_growth_in_allowed_reference_fails_closed(self) -> None:
+        root = self.make_valid_root()
+        relative = Path("scripts/validate-links-and-owners.py")
+        path = root / relative
+        path.write_bytes(
+            path.read_bytes()
+            + b"\n# ordinary active use: "
+            + str(
+                self.validator.WORK054_OWNER_RETIREMENTS[0]["legacy_path"]
+            ).encode("utf-8")
+            + b"\n"
+        )
+        self.stage(root, relative)
+        self.assert_rule(root, "AGQC-LEGACY-CONSUMER")
+
+    def test_work054_pinned_progress_reference_allows_safe_append(self) -> None:
+        root = self.make_valid_root()
+        relative = Path("docs/00.agent-governance/memory/progress.md")
+        path = root / relative
+        path.write_bytes(path.read_bytes() + b"\nappend-only safe progress\n")
+        self.stage(root, relative)
+        counts = self.validator.validate_repository(root)
+        self.assertEqual(counts["activeConsumers"], 0)
+
+    def test_work054_pinned_progress_reference_rejects_drift(self) -> None:
+        root = self.make_valid_root()
+        relative = Path("docs/00.agent-governance/memory/progress.md")
+        path = root / relative
+        original = path.read_bytes()
+        candidates = (
+            b"X" + original[1:],
+            original
+            + b"\n"
+            + str(
+                self.validator.WORK054_OWNER_RETIREMENTS[0]["legacy_path"]
+            ).encode("utf-8")
+            + b"\n",
+        )
+        for candidate in candidates:
+            with self.subTest(candidate_length=len(candidate)):
+                path.write_bytes(candidate)
+                self.stage(root, relative)
+                self.assert_rule(root, "AGQC-LEGACY-CONSUMER")
 
     def test_self_test_is_deterministic_and_repo_is_unchanged(self) -> None:
         before = CONTRACT_PATH.read_bytes()

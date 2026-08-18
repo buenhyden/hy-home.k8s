@@ -248,19 +248,38 @@ _WORK109_MIGRATION_PATH = (
     "docs/98.archive/migrations/"
     "mig-0002-sdlc-document-and-governance-consolidation.md"
 )
+_WORK054_WP003_MIGRATION_PATH = (
+    "docs/98.archive/migrations/"
+    "mig-0003-agent-governance-control-plane-consolidation.md"
+)
 MIGRATION_DOCUMENT_MAX_BYTES = 128 * 1024
 MIG0002_DOCUMENT_SHA256 = (
     "67032c0b86acbee04a1e713053d164df2e99f4486df79df5161d53975fb82a7a"  # pragma: allowlist secret
+)
+MIG0003_DOCUMENT_SHA256 = (
+    "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42"  # pragma: allowlist secret
 )
 _MIGRATION_LEDGER_PREFIX = (
     b"<!-- archive-migration-ledger:v1 format=json -->\n\n```json\n"
 )
 _ARCHIVE_MIGRATION_CONTROLS = {
-    WORK107_MIGRATION_PATH: ("MIG-0001", 93, {"moved": 93}),
+    WORK107_MIGRATION_PATH: (
+        "MIG-0001",
+        93,
+        {"moved": 93},
+        "4e62cb6ba2a394cd9ae546543c85a58c8f105cb5d1ff48cfd8dab8b8b1082206",
+    ),
     _WORK109_MIGRATION_PATH: (
         "MIG-0002",
         154,
         {"moved": 141, "replaced": 3, "merged": 10},
+        MIG0002_DOCUMENT_SHA256,
+    ),
+    _WORK054_WP003_MIGRATION_PATH: (
+        "MIG-0003",
+        3,
+        {"merged": 3},
+        MIG0003_DOCUMENT_SHA256,
     ),
 }
 _MIGRATION_FRONTMATTER_KEYS = (
@@ -305,8 +324,10 @@ def _migration_control_diagnostics(
     contract = _ARCHIVE_MIGRATION_CONTROLS.get(path)
     if contract is None:
         return (_diagnostic("ARCHIVE-MIGRATION-CONTROL", path),)
-    expected_id, expected_rows, expected_actions = contract
+    expected_id, expected_rows, expected_actions, expected_sha256 = contract
     try:
+        if hashlib.sha256(content).hexdigest() != expected_sha256:
+            raise ValueError
         text = content.decode("utf-8", errors="strict")
         lines = text.splitlines()
         if not lines or lines[0] != "---":
@@ -360,13 +381,12 @@ def parse_pinned_migration_control(
     path: str,
     content: bytes,
 ) -> tuple[dict[str, object], ...]:
-    """Parse MIG-0002 only when its complete reviewed document is byte-exact."""
+    """Parse one declared migration only when its reviewed bytes are exact."""
 
     if (
-        path != _WORK109_MIGRATION_PATH
+        path not in _ARCHIVE_MIGRATION_CONTROLS
         or type(content) is not bytes
         or len(content) > MIGRATION_DOCUMENT_MAX_BYTES
-        or hashlib.sha256(content).hexdigest() != MIG0002_DOCUMENT_SHA256
         or _migration_control_diagnostics(path, content)
     ):
         raise ArchiveContractError(
@@ -385,6 +405,101 @@ def parse_pinned_migration_control(
             "ARCHIVE-MIGRATION-PROFILE", "migration control differs"
         )
     return tuple(rows)
+
+
+def validate_pinned_migration_recovery(
+    repository_root: str | Path,
+    path: str,
+    content: bytes,
+) -> tuple[dict[str, object], ...]:
+    """Verify the MIG-0003 source tuples against the exact Git object graph."""
+
+    if path != _WORK054_WP003_MIGRATION_PATH:
+        raise ArchiveContractError(
+            "ARCHIVE-MIGRATION-PROFILE",
+            "migration recovery is not declared for this control",
+        )
+    rows = parse_pinned_migration_control(path, content)
+    try:
+        root = Path(repository_root).resolve(strict=True)
+        object_id_length = _repository_identity(root)
+        by_commit: dict[str, list[dict[str, object]]] = {}
+        seen_paths: set[str] = set()
+        for row in rows:
+            legacy_path = row.get("legacy_path")
+            source_commit = row.get("source_commit")
+            source_blob = row.get("source_blob")
+            content_sha256 = row.get("content_sha256")
+            canonical = _canonical_path(legacy_path)
+            if (
+                canonical is None
+                or canonical != legacy_path
+                or canonical in seen_paths
+                or not isinstance(source_commit, str)
+                or len(source_commit) != object_id_length
+                or _FULL_OBJECT_ID.fullmatch(source_commit) is None
+                or not isinstance(source_blob, str)
+                or len(source_blob) != object_id_length
+                or _FULL_OBJECT_ID.fullmatch(source_blob) is None
+                or not isinstance(content_sha256, str)
+                or re.fullmatch(r"[0-9a-f]{64}", content_sha256) is None
+            ):
+                raise ArchiveContractError(
+                    "RECOVERY-MIGRATION-ROW", "migration source tuple is invalid"
+                )
+            seen_paths.add(canonical)
+            by_commit.setdefault(source_commit, []).append(row)
+
+        commit_types = _commit_types(root, tuple(sorted(by_commit)))
+        if any(commit_types.get(commit) != "commit" for commit in by_commit):
+            raise ArchiveContractError(
+                "RECOVERY-OBJECT-NOT-COMMIT", "migration commit is unavailable"
+            )
+        members = _batch_commit_path_members(
+            root,
+            {
+                commit: tuple(
+                    sorted(str(row["legacy_path"]) for row in commit_rows)
+                )
+                for commit, commit_rows in by_commit.items()
+            },
+            object_id_length,
+        )
+        expected_blobs: set[str] = set()
+        for commit, commit_rows in by_commit.items():
+            commit_members = members.get(commit, {})
+            for row in commit_rows:
+                member = commit_members.get(str(row["legacy_path"]))
+                if (
+                    member is None
+                    or member.kind != "blob"
+                    or member.object_id != row["source_blob"]
+                ):
+                    raise ArchiveContractError(
+                        "RECOVERY-MIGRATION-BLOB",
+                        "migration source blob differs",
+                    )
+                expected_blobs.add(member.object_id)
+        blobs = _batch_blob_bytes(root, tuple(sorted(expected_blobs)))
+        for commit_rows in by_commit.values():
+            for row in commit_rows:
+                source = blobs.get(str(row["source_blob"]))
+                if (
+                    source is None
+                    or hashlib.sha256(source).hexdigest()
+                    != row["content_sha256"]
+                ):
+                    raise ArchiveContractError(
+                        "RECOVERY-MIGRATION-CONTENT",
+                        "migration source content differs",
+                    )
+    except ArchiveContractError:
+        raise
+    except (OSError, RuntimeError, TypeError, ValueError) as exc:
+        raise ArchiveContractError(
+            "RECOVERY-MIGRATION-INPUT", "migration recovery input is invalid"
+        ) from exc
+    return rows
 
 
 def read_staged_blob_bounded(
@@ -497,6 +612,7 @@ def _repository_archive_records(
     root: Path,
 ) -> tuple[dict[str, bytes], list[ArchiveDiagnostic]]:
     records: dict[str, bytes] = {}
+    migration_controls: dict[str, bytes] = {}
     diagnostics: list[ArchiveDiagnostic] = []
     archive_root = root / ARCHIVE_ROOT
     try:
@@ -564,6 +680,7 @@ def _repository_archive_records(
                     continue
                 content = read_record(directory_fd, name, relative)
                 if relative in _ARCHIVE_MIGRATION_CONTROLS:
+                    migration_controls[relative] = content
                     diagnostics.extend(
                         _migration_control_diagnostics(relative, content)
                     )
@@ -592,6 +709,24 @@ def _repository_archive_records(
                 diagnostics.append(
                     _diagnostic("ARCHIVE-INVENTORY-READ", ARCHIVE_ROOT.as_posix())
                 )
+    migration_content = migration_controls.get(_WORK054_WP003_MIGRATION_PATH)
+    if (
+        migration_content is not None
+        and not _migration_control_diagnostics(
+            _WORK054_WP003_MIGRATION_PATH,
+            migration_content,
+        )
+    ):
+        try:
+            validate_pinned_migration_recovery(
+                root,
+                _WORK054_WP003_MIGRATION_PATH,
+                migration_content,
+            )
+        except ArchiveContractError as exc:
+            diagnostics.append(
+                _diagnostic(exc.code, _WORK054_WP003_MIGRATION_PATH)
+            )
     return records, diagnostics
 
 

@@ -532,6 +532,88 @@ class FiniteWork054Wp002TransitionAdmissionTest(unittest.TestCase):
                 VALIDATOR._work054_wp002_migration_rows(candidate)
 
 
+class FiniteWork054Wp003AgentGovernanceAdmissionTest(unittest.TestCase):
+    """MIG-0003 admits only its three exact legacy owner deletions."""
+
+    migration_path = VALIDATOR.WORK054_WP003_MIGRATION_PATH
+
+    def _snapshot(self):
+        raw = (ROOT / self.migration_path).read_bytes()
+        base = {
+            PurePosixPath(str(row["legacy_path"])): str(row["source_blob"])
+            for row in VALIDATOR.WORK054_WP003_OWNER_RETIREMENTS
+        }
+        proposed = {self.migration_path: VALIDATOR._git_blob_oid(raw)}
+        proposed.update(
+            {
+                PurePosixPath(str(row["replacement"])): "f" * 40
+                for row in VALIDATOR.WORK054_WP003_OWNER_RETIREMENTS
+            }
+        )
+        return raw, base, proposed
+
+    def _admit(
+        self,
+        *,
+        base_commit: str = VALIDATOR.WORK054_WP003_BASE_COMMIT,
+        base_blobs=None,
+        proposed_blobs=None,
+    ):
+        _raw, exact_base, exact_proposed = self._snapshot()
+        return VALIDATOR.finite_work054_wp003_agent_governance_paths(
+            root=ROOT,
+            mode="staged",
+            base_commit=base_commit,
+            base_blobs=base_blobs if base_blobs is not None else exact_base,
+            proposed_blobs=(
+                proposed_blobs if proposed_blobs is not None else exact_proposed
+            ),
+        )
+
+    def test_exact_projection_admits_only_four_paths(self):
+        _raw, base, _proposed = self._snapshot()
+        expected = frozenset({self.migration_path, *base})
+        self.assertEqual(self._admit(), expected)
+        self.assertEqual(len(expected), 4)
+
+    def test_authority_digest_and_endpoint_drift_fail_closed(self):
+        raw, base, proposed = self._snapshot()
+        legacy = next(iter(base))
+        replacement = PurePosixPath(
+            str(VALIDATOR.WORK054_WP003_OWNER_RETIREMENTS[0]["replacement"])
+        )
+        mutations = {
+            "wrong-base": {
+                "base_commit": "0" * 40,
+                "base_blobs": base,
+                "proposed_blobs": proposed,
+            },
+            "partial-legacy-retention": {
+                "base_blobs": base,
+                "proposed_blobs": {**proposed, legacy: base[legacy]},
+            },
+            "missing-replacement": {
+                "base_blobs": base,
+                "proposed_blobs": {
+                    path: oid
+                    for path, oid in proposed.items()
+                    if path != replacement
+                },
+            },
+        }
+        for name, kwargs in mutations.items():
+            with self.subTest(name=name):
+                self.assertFalse(self._admit(**kwargs))
+        with self.subTest(name="migration-digest-drift"), mock.patch.object(
+            VALIDATOR,
+            "_blob_bytes",
+            return_value=raw + b"\n",
+        ):
+            self.assertFalse(
+                self._admit(base_blobs=base, proposed_blobs=proposed)
+            )
+
+
 class FiniteWork108ArtifactIdentityAdmissionTest(unittest.TestCase):
     @staticmethod
     def _git_bytes(specifier: str) -> bytes:

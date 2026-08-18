@@ -225,4 +225,4 @@ runtime discovered, loaded, or enforced that adapter.
 - [Validation Surface Contract](../contracts/validation-surfaces.json)
 - [Harness Approval Boundaries](approval-boundaries.md)
 - [Postflight Checklist](postflight-checklist.md)
-- [Harness Implementation Map](../harness-implementation-map.md)
+- [Local Harness Catalog](../harness-catalog.md)

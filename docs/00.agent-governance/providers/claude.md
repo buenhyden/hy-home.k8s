@@ -3,7 +3,7 @@ title: 'Reference: Claude Provider Notes'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-08-01
+updated: 2026-08-14
 ---
 
 # Claude Provider Notes
@@ -16,11 +16,14 @@ Claude-specific guidance for `hy-home.k8s`.
 
 ### Native Boundary
 
-- `.claude/settings.json` owns Claude native permissions and hook wiring.
+- Claude's documented native project surface for permissions and hook
+  declarations is `.claude/settings.json`; the tracked file is the repository
+  projection of that configuration.
 - `.claude/agents/*.md` owns Claude subagent metadata, including `name`,
   `description`, `model`, and least-privilege `tools:`.
-- Claude hooks may block objective repo-state failures when wired through
-  settings; they do not prove live runtime readiness.
+- Claude hooks may block objective repo-state failures only when an admitted
+  runtime loads and dispatches the tracked settings. Repository presence does
+  not prove hook delivery or live runtime readiness.
 - Claude native tools and permissions must not weaken the repository's
   GitOps-first, no-live-mutation, and secret-handling boundaries.
 
@@ -111,6 +114,9 @@ resolution, hooks, or delegated execution.
   admission remain `DEFER`.
 - Keep `repo-static`, `provider-runtime`, `ci`, and `remote-live` evidence
   separate. A result in one class never proves another.
+- `contracts/provider-runtime-evidence.json` is the singular machine owner for
+  provider capability evidence and runtime verdicts. Unsupported or absent
+  runtimes cannot receive runtime `PASS`.
 - Spec 045 retired the former role-semantics compatibility inputs after
   zero-consumer proof; the harness contract and harness-semantics validator
   are the current semantic owners.

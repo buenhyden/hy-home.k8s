@@ -5261,11 +5261,8 @@
       "accepted"
     ],
     "paths": [
-      "docs/00.agent-governance/common-governance.md",
       "docs/00.agent-governance/harness-catalog.md",
-      "docs/00.agent-governance/harness-implementation-map.md",
       "docs/00.agent-governance/model-policy.md",
-      "docs/00.agent-governance/providers/agents-md.md",
       "docs/00.agent-governance/providers/claude.md",
       "docs/00.agent-governance/providers/codex.md",
       "docs/00.agent-governance/providers/gemini.md",

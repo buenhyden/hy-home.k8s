@@ -9,7 +9,7 @@
     "targetProjections": 48,
     "evidenceClasses": 4,
     "memoryClasses": 4,
-    "consumers": 14
+    "consumers": 12
   },
   "mutations": [
     {
@@ -75,6 +75,10 @@
     {
       "name": "target-adapter-state-drift",
       "expectedRule": "HARNESS-ADAPTER-SEMANTICS"
+    },
+    {
+      "name": "capability-tier-reference-drift",
+      "expectedRule": "HARNESS-MODEL-POLICY"
     },
     {
       "name": "unbounded-stop-rules",
@@ -161,5 +165,5 @@
       "expectedRule": "HARNESS-SCHEMA"
     }
   ],
-  "expectedCaseCount": 38
+  "expectedCaseCount": 39
 }

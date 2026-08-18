@@ -75,6 +75,13 @@ WORK109_MIGRATION_PATH = (
     "docs/98.archive/migrations/"
     "mig-0002-sdlc-document-and-governance-consolidation.md"
 )
+WORK054_WP003_MIGRATION_PATH = (
+    "docs/98.archive/migrations/"
+    "mig-0003-agent-governance-control-plane-consolidation.md"
+)
+WORK054_WP003_MIGRATION_DOCUMENT_SHA256 = (
+    "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42"  # pragma: allowlist secret
+)
 WORK109_SOURCE_COMMIT = "160ce006969ddb49965c8af193f3e9ee290e18a8"  # pragma: allowlist secret
 WORK109_LEDGER_MARKER = (
     b"<!-- archive-migration-ledger:v1 format=json -->\n\n```json\n"
@@ -959,21 +966,41 @@ def _git_paths(root: Path) -> tuple[str, ...]:
 
 
 def _validate_archive_inventory(
+    root: Path,
     paths: Sequence[str],
     individual_paths: frozenset[str],
     repository_paths: frozenset[str],
 ) -> None:
+    migration_controls = {
+        ARCHIVE_INDEX_PATH,
+        archive_validation_module.WORK107_MIGRATION_PATH,
+        WORK109_MIGRATION_PATH,
+    }
+    if WORK054_WP003_MIGRATION_PATH in paths:
+        try:
+            content = read_staged_blob_bounded(
+                root,
+                WORK054_WP003_MIGRATION_PATH,
+                max_bytes=MIGRATION_DOCUMENT_MAX_BYTES,
+            )
+            rows = parse_pinned_migration_control(
+                WORK054_WP003_MIGRATION_PATH, content
+            )
+        except (ArchiveContractError, OSError, ValueError):
+            _fail("MIGRATION-ROGUE-ARCHIVE", WORK054_WP003_MIGRATION_PATH)
+        if (
+            hashlib.sha256(content).hexdigest()
+            != WORK054_WP003_MIGRATION_DOCUMENT_SHA256
+            or len(rows) != 3
+        ):
+            _fail("MIGRATION-ROGUE-ARCHIVE", WORK054_WP003_MIGRATION_PATH)
+        migration_controls.add(WORK054_WP003_MIGRATION_PATH)
     actual = frozenset(
         path
         for path in paths
         if path.startswith("docs/98.archive/")
         and path.endswith(".md")
-        and path
-        not in {
-            ARCHIVE_INDEX_PATH,
-            archive_validation_module.WORK107_MIGRATION_PATH,
-            WORK109_MIGRATION_PATH,
-        }
+        and path not in migration_controls
     )
     if not individual_paths <= actual or actual != repository_paths:
         _fail("MIGRATION-ROGUE-ARCHIVE", ARCHIVE_INDEX_PATH)
@@ -1446,7 +1473,7 @@ def validate_active_corpus_migrations(repository_root: str | Path) -> dict[str, 
     )
     current_paths = set(_git_paths(root))
     _validate_archive_inventory(
-        tuple(current_paths), individual_paths, repository_paths
+        root, tuple(current_paths), individual_paths, repository_paths
     )
     with _closed_git_environment():
         current_report = validate_current_archive_authority(
@@ -1731,6 +1758,7 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
     )
     try:
         _validate_archive_inventory(
+            root,
             (*individual_paths, "docs/98.archive/04.execution/plans/rogue-extra.md"),
             individual_paths,
             individual_paths,

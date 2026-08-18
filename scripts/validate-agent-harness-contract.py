@@ -33,6 +33,9 @@ LOOP_LIFECYCLE_SPEC = PurePosixPath(
     "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
 )
 MODEL_POLICY_PATH = "docs/00.agent-governance/model-policy.md"
+MODEL_FITNESS_PATH = (
+    "docs/00.agent-governance/contracts/agent-model-fitness.json"
+)
 EVAL_OWNER_SPEC = (
     "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md"
 )
@@ -107,8 +110,6 @@ ADAPTER_SEMANTIC_FIELDS = (
     "prohibitedActions",
     "stopConditions",
     "handoffs",
-    "capabilityTier",
-    "capabilityTierClaim",
     "requiredEvidence",
 )
 PROHIBITED_CONTENT = (
@@ -169,20 +170,6 @@ CONSUMERS = (
     (
         "harness-catalog",
         "docs/00.agent-governance/harness-catalog.md",
-        "harness-contract",
-        "1.0.0",
-        "current",
-    ),
-    (
-        "harness-implementation-map",
-        "docs/00.agent-governance/harness-implementation-map.md",
-        "harness-contract",
-        "1.0.0",
-        "current",
-    ),
-    (
-        "provider-agents-md-note",
-        "docs/00.agent-governance/providers/agents-md.md",
         "harness-contract",
         "1.0.0",
         "current",
@@ -904,7 +891,7 @@ def _validate_roles(root: Path, contract: dict[str, Any]) -> None:
         permission["id"] for permission in contract["permissionClasses"]
     }
     adapter_anchors: dict[str, tuple[str, str]] = {}
-    for role in roles:
+    for role_index, role in enumerate(roles):
         role_id = role["id"]
         expected_state = (
             "current" if role_id in CURRENT_ROLES else "target-only"
@@ -920,24 +907,21 @@ def _validate_roles(root: Path, contract: dict[str, Any]) -> None:
                 f"{role_id} references an unknown permission class",
             )
         adapter_semantics = role["adapterSemantics"]
-        expected_tier = "top" if role_id == "supervisor" else "worker"
-        if (
-            adapter_semantics["admissionState"] != expected_state
-            or adapter_semantics["capabilityTier"] != expected_tier
-        ):
+        if adapter_semantics["admissionState"] != expected_state:
             fail(
                 "HARNESS-ADAPTER-SEMANTICS",
-                f"{role_id} adapter semantics state or capability tier differs",
+                f"{role_id} adapter semantics state differs",
+            )
+        expected_tier_ref = (
+            f"{MODEL_FITNESS_PATH}#/roleProfiles/{role_index}/capabilityTier"
+        )
+        if role["capabilityTierRef"] != expected_tier_ref:
+            fail(
+                "HARNESS-MODEL-POLICY",
+                f"{role_id} capability tier reference differs",
             )
         for field in ADAPTER_SEMANTIC_FIELDS:
-            if field == "capabilityTier":
-                continue
-            values = (
-                [adapter_semantics[field]]
-                if field == "capabilityTierClaim"
-                else adapter_semantics[field]
-            )
-            for value in values:
+            for value in adapter_semantics[field]:
                 if " ".join(value.split()) != value:
                     fail(
                         "HARNESS-ADAPTER-SEMANTICS",
@@ -976,6 +960,12 @@ def _validate_roles(root: Path, contract: dict[str, Any]) -> None:
         MODEL_POLICY_PATH,
         "HARNESS-MODEL-POLICY",
         "canonical model policy",
+    )
+    _safe_repo_regular_file(
+        root,
+        MODEL_FITNESS_PATH,
+        "HARNESS-MODEL-POLICY",
+        "canonical model fitness contract",
     )
     _safe_repo_regular_file(
         root,
@@ -1402,6 +1392,10 @@ def _apply_mutation(contract: dict[str, Any], name: str) -> None:
         contract["canonicalRoles"][-1]["adapterSemantics"][
             "admissionState"
         ] = "target-only"
+    elif name == "capability-tier-reference-drift":
+        contract["canonicalRoles"][0]["capabilityTierRef"] = (
+            f"{MODEL_FITNESS_PATH}#/roleProfiles/1/capabilityTier"
+        )
     elif name == "unbounded-stop-rules":
         contract["canonicalRoles"][0]["stopConditions"] = [
             f"synthetic bounded fixture condition {index}"
@@ -1551,7 +1545,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(
                 "[PASS] agent harness contract self-test passed: "
                 f"cases={cases} current=12/4/48 target=12/4/48 "
-                "evidence=4 memory=4 consumers=14"
+                "evidence=4 memory=4 consumers=12"
             )
             return 0
         counts = validate_contract(root)

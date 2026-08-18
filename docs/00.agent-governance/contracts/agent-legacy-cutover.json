@@ -74,7 +74,8 @@
     ],
     "migrationReferences": [
       "docs/03.specs/0045-agent-governance-ci-qa-cutover/spec.md",
-      "docs/00.agent-governance/memory/progress.md"
+      "docs/00.agent-governance/memory/progress.md",
+      "docs/98.archive/migrations/mig-0003-agent-governance-control-plane-consolidation.md"
     ],
     "allowedReferenceCounts": [
       {
@@ -124,6 +125,10 @@
       {
         "path": "docs/00.agent-governance/memory/progress.md",
         "counts": [0, 0, 0, 0, 9]
+      },
+      {
+        "path": "docs/98.archive/migrations/mig-0003-agent-governance-control-plane-consolidation.md",
+        "counts": [0, 0, 0, 0, 0]
       }
     ],
     "protectedEvidenceFiles": [
@@ -194,6 +199,7 @@
       ".venv",
       ".worktrees",
       "__pycache__",
+      "graphify-out",
       "node_modules"
     ],
     "candidateSource": "git-ls-files-z-cached",

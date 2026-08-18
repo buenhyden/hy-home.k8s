@@ -29,6 +29,141 @@ SCHEMA_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/harness-contract.schema.json"
 )
 FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-harness-semantics.json")
+PROVIDER_BASELINE_PATHS = {
+    "local": PurePosixPath(".agents/GEMINI.md"),
+    "claude": PurePosixPath(".claude/CLAUDE.md"),
+    "codex": PurePosixPath(".codex/CODEX.md"),
+}
+PROVIDER_BASELINE_HEADING_ORDER = (
+    "Purpose",
+    "Loading Order",
+    "Provider Metadata",
+    "Canonical References",
+    "Evidence Boundary",
+)
+PROVIDER_BASELINE_HEADINGS = frozenset(PROVIDER_BASELINE_HEADING_ORDER)
+ROLE_ADAPTER_HEADING_ORDER = (
+    "Runtime Bootstrap",
+    "Role",
+    "When to Use",
+    "Inputs",
+    "Outputs",
+    "Guardrails",
+    "Capability and Evidence",
+    "Handoff / Escalation",
+    "Postflight",
+)
+ROLE_ADAPTER_HEADINGS = ROLE_ADAPTER_HEADING_ORDER
+ROLE_SCOPE_IMPORTS = {
+    "supervisor": ("docs/00.agent-governance/scopes/meta.md",),
+    "code-reviewer": ("docs/00.agent-governance/scopes/architecture.md",),
+    "doc-writer": ("docs/00.agent-governance/scopes/docs.md",),
+    "gitops-reviewer": ("docs/00.agent-governance/scopes/infra.md",),
+    "incident-responder": (
+        "docs/00.agent-governance/scopes/ops.md",
+        "docs/00.agent-governance/scopes/infra.md",
+    ),
+    "k8s-implementer": ("docs/00.agent-governance/scopes/infra.md",),
+    "network-reviewer": ("docs/00.agent-governance/scopes/infra.md",),
+    "observability-reviewer": ("docs/00.agent-governance/scopes/infra.md",),
+    "security-auditor": ("docs/00.agent-governance/scopes/security.md",),
+    "wiki-curator": ("docs/00.agent-governance/scopes/docs.md",),
+    "docs-researcher": ("docs/00.agent-governance/scopes/docs.md",),
+    "quality-engineer": ("docs/00.agent-governance/scopes/qa.md",),
+}
+SURFACE_BOOTSTRAP_UNITS = {
+    "local": (
+        "Load `GEMINI.md`, `.agents/GEMINI.md`, and this agent's imported scope before work.",
+        "Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.",
+    ),
+    "claude": (
+        "Load `CLAUDE.md`, `.claude/CLAUDE.md`, and this agent's imported scope before work.",
+        "Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.",
+    ),
+    "codex": (
+        "Load `AGENTS.md`, `.codex/CODEX.md`, and this agent's imported scope before work.",
+        "Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.",
+    ),
+    "gemini": (
+        "Load `GEMINI.md` and this Gemini-native agent file before work.",
+        "Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.",
+    ),
+}
+CLAUDE_PERMISSION_TOOLS = {
+    "read-only-evidence": {
+        "default": "Read, Grep, Glob, Bash",
+        "docs-researcher": "Read, Grep, Glob, WebFetch, WebSearch",
+    },
+    "scoped-authoring": {
+        "default": "Read, Write, Edit, Grep, Glob, Bash",
+    },
+    "orchestration": {
+        "default": "Read, Grep, Glob, Task",
+    },
+}
+POSTFLIGHT_UNIT = (
+    "Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results."
+)
+BASELINE_COMMON_REFERENCES = (
+    "Common execution policy: `docs/00.agent-governance/rules/agentic.md`.",
+    "Provider facts: `docs/00.agent-governance/providers/{provider}.md`.",
+    "Role inventory and semantics: `docs/00.agent-governance/harness-catalog.md` and `docs/00.agent-governance/contracts/harness-contract.json`.",
+    "Validation lanes and handoff: `docs/00.agent-governance/rules/quality-standards.md`.",
+    "Shell guidance: `RTK.md`.",
+)
+PROVIDER_BASELINE_PROFILES = {
+    "local": {
+        "heading": "Local Adapter Baseline (Antigravity / Gemini-Family)",
+        "Purpose": (
+            "Thin repository-static baseline for the local/Antigravity `.agents/**` surface. It routes durable policy to Stage 00 and is not Gemini CLI native configuration.",
+        ),
+        "Loading Order": (
+            "Load root `GEMINI.md`, then follow the JIT sequence in `docs/00.agent-governance/rules/bootstrap.md` with the Gemini provider note and the relevant scope.",
+        ),
+        "Provider Metadata": (
+            "Local role adapters: `.agents/agents/*.md`.",
+            "Shared assets: `.agents/{skills,workflows,output-styles}/`.",
+            "Behavioral wiring: `.agents/hooks.json`; it is neither Gemini CLI settings nor a Claude-style permission gate.",
+        ),
+        "Evidence Boundary": (
+            "Tracked local adapters and hooks prove repository configuration only. They do not prove Gemini CLI discovery, policy loading, event delivery, authentication, model resolution, or execution.",
+        ),
+    },
+    "claude": {
+        "heading": "Local Runtime Baseline (Claude)",
+        "Purpose": (
+            "Thin baseline for the tracked Claude-native `.claude/**` surface. Durable common policy remains in Stage 00.",
+        ),
+        "Loading Order": (
+            "Load root `CLAUDE.md`, then follow the JIT sequence in `docs/00.agent-governance/rules/bootstrap.md` with the Claude provider note and the relevant scope.",
+        ),
+        "Provider Metadata": (
+            "Native role adapters: `.claude/agents/*.md` with provider-owned model and least-privilege tool metadata.",
+            "Native permission and event wiring: `.claude/settings.json`.",
+            "Shared asset views: `.claude/{skills,workflows,output-styles}/` symlinks to `.agents/**`.",
+        ),
+        "Evidence Boundary": (
+            "Tracked Claude adapters and settings prove repository configuration only. They do not prove native discovery, hook delivery, authentication, model resolution, permission enforcement, or execution.",
+        ),
+    },
+    "codex": {
+        "heading": "Local Runtime Baseline (Codex)",
+        "Purpose": (
+            "Thin baseline for the tracked Codex-native `.codex/**` surface. Durable common policy remains in Stage 00.",
+        ),
+        "Loading Order": (
+            "Load root `AGENTS.md`, then follow the JIT sequence in `docs/00.agent-governance/rules/bootstrap.md` with the Codex provider note and the relevant scope.",
+        ),
+        "Provider Metadata": (
+            "Native role adapters: `.codex/agents/*.toml` with provider-owned model and reasoning-effort metadata.",
+            "Context and validation wiring: `.codex/hooks.json`; it is not a Claude-style permission gate.",
+            "Shared asset views: `.codex/{skills,workflows,output-styles}/` symlinks to `.agents/**`.",
+        ),
+        "Evidence Boundary": (
+            "Tracked Codex adapters and hooks prove repository configuration only. They do not prove native discovery, context delivery, authentication, model resolution, sandbox or approval enforcement, or execution.",
+        ),
+    },
+}
 CONTRACT_VERSION = "1.0.0"
 CONSUMER_ID = "harness-semantics-validator"
 ALLOWED_EXTENSIONS = frozenset({".md", ".toml"})
@@ -57,7 +192,7 @@ CATEGORY_RULES = {
     "prohibitedActions": "ROLE-PROHIBITED",
     "stopConditions": "ROLE-STOP",
     "handoffs": "ROLE-HANDOFF",
-    "capabilityTier": "ROLE-CAPABILITY-TIER",
+    "capabilityTierRef": "ROLE-CAPABILITY-TIER-REF",
     "requiredEvidence": "ROLE-EVIDENCE",
     "adapterStem": "ROLE-ADAPTER-STEM",
 }
@@ -70,7 +205,7 @@ CATEGORY_SECTIONS = {
     "prohibitedActions": "Guardrails",
     "stopConditions": "Guardrails",
     "handoffs": "Handoff / Escalation",
-    "capabilityTier": "Capability and Evidence",
+    "capabilityTierRef": "Capability and Evidence",
     "requiredEvidence": "Capability and Evidence",
 }
 FORBIDDEN_COMMON_FIELDS = ("model", "tools", "modelReasoningEffort")
@@ -161,8 +296,8 @@ ADVERSARIAL_SCHEMA = {
         "ROLE-HANDOFF",
     ),
     "commented-capability": (
-        "claude", "supervisor", "capabilityTier", "htmlComment",
-        "ROLE-CAPABILITY-TIER",
+        "claude", "supervisor", "capabilityTierRef", "htmlComment",
+        "ROLE-CAPABILITY-TIER-REF",
     ),
     "fenced-evidence": (
         "codex", "wiki-curator", "requiredEvidence", "fenced",
@@ -196,8 +331,8 @@ ADVERSARIAL_SCHEMA = {
         "ROLE-HANDOFF",
     ),
     "lazy-quoted-capability": (
-        "codex", "network-reviewer", "capabilityTier", "lazyBlockquote",
-        "ROLE-CAPABILITY-TIER",
+        "codex", "network-reviewer", "capabilityTierRef", "lazyBlockquote",
+        "ROLE-CAPABILITY-TIER-REF",
     ),
     "quoted-evidence": (
         "local", "observability-reviewer", "requiredEvidence", "blockquote",
@@ -228,8 +363,8 @@ ADVERSARIAL_SCHEMA = {
         "ROLE-OUTPUT",
     ),
     "inline-code-only-capability": (
-        "local", "k8s-implementer", "capabilityTier", "inlineCodeOnly",
-        "ROLE-CAPABILITY-TIER",
+        "local", "k8s-implementer", "capabilityTierRef", "inlineCodeOnly",
+        "ROLE-CAPABILITY-TIER-REF",
     ),
     "list-contained-blockquote": (
         "claude", "network-reviewer", "handoffs", "listBlockquote",
@@ -321,7 +456,11 @@ class Adapter:
     path: str
     path_stem: str
     declared_name: str
+    description: str
+    provider_metadata: dict[str, Any]
+    raw_body: str
     heading: str
+    section_headings: tuple[str, ...]
     section_units: dict[str, tuple[str, ...]]
 
 
@@ -493,8 +632,6 @@ def select_current_harness(contract: dict[str, Any]) -> HarnessSelection:
         "prohibitedActions",
         "stopConditions",
         "handoffs",
-        "capabilityTier",
-        "capabilityTierClaim",
         "requiredEvidence",
     }
     roles: dict[str, dict[str, Any]] = {}
@@ -509,6 +646,10 @@ def select_current_harness(contract: dict[str, Any]) -> HarnessSelection:
             fail("ROLE-CATEGORIES", f"{role_id} adapter semantics are not current")
         roles[role_id] = {
             "id": role_id,
+            "purpose": role.get("purpose"),
+            "inputs": copy.deepcopy(role.get("inputs")),
+            "permissionClass": role.get("permissionClass"),
+            "capabilityTierRef": role.get("capabilityTierRef"),
             **{
                 key: copy.deepcopy(value)
                 for key, value in semantics.items()
@@ -610,15 +751,19 @@ def validate_contract(
     anchors: dict[str, tuple[str, str]] = {}
     for role in selection.roles.values():
         role_id = role["id"]
-        if role["capabilityTier"] not in {"top", "worker"}:
+        if not isinstance(role["capabilityTierRef"], str) or not re.fullmatch(
+            r"docs/00\.agent-governance/contracts/agent-model-fitness\.json"
+            r"#/roleProfiles/\d+/capabilityTier",
+            role["capabilityTierRef"],
+        ):
             fail(
-                "ROLE-CAPABILITY-TIER",
-                f"{role_id} declares an unsupported capability tier",
+                "ROLE-CAPABILITY-TIER-REF",
+                f"{role_id} capability tier reference differs",
             )
         for category in CONTRACT_CATEGORIES:
             claims = (
-                [role["capabilityTierClaim"]]
-                if category == "capabilityTier"
+                [f"Capability tier reference: `{role['capabilityTierRef']}`."]
+                if category == "capabilityTierRef"
                 else role[category]
             )
             for claim in claims:
@@ -663,7 +808,30 @@ def parse_frontmatter(text: str, path: str) -> tuple[dict[str, Any], str]:
             "ROLE-ADAPTER-PARSE",
             f"{path}: YAML frontmatter name must be a string scalar",
         )
-    return metadata, body
+    return metadata, body.removeprefix("\n")
+
+
+def canonical_yaml_frontmatter(raw_frontmatter: str, path: str) -> str:
+    if not raw_frontmatter or any(
+        not line or line.startswith((" ", "\t", "#")) or ": " not in line
+        for line in raw_frontmatter.splitlines()
+    ):
+        fail("ROLE-ADAPTER-BOUNDS", f"{path}: YAML metadata is not canonical")
+    return raw_frontmatter
+
+
+def canonical_codex_metadata(text: str, body: str, path: str) -> None:
+    escaped_body = f'developer_instructions = """\n{body}"""'
+    if text.count(escaped_body) != 1:
+        fail("ROLE-ADAPTER-BOUNDS", f"{path}: Codex body boundary differs")
+    metadata = text.replace(escaped_body, "", 1)
+    metadata_lines = [line for line in metadata.splitlines() if line]
+    if any(
+        line.startswith((" ", "\t", "#"))
+        or not re.fullmatch(r"[a-z_]+ = \"[^\n\"]*\"", line)
+        for line in metadata_lines
+    ):
+        fail("ROLE-ADAPTER-BOUNDS", f"{path}: Codex metadata is not canonical")
 
 
 def _without_html_comments(body: str, path: str) -> str:
@@ -857,6 +1025,10 @@ def extract_heading(body: str) -> str:
     return headings[0].strip() if len(headings) == 1 else ""
 
 
+def extract_section_headings(body: str) -> tuple[str, ...]:
+    return tuple(re.findall(r"(?m)^## ([^\n]+?)\s*$", body))
+
+
 def validate_gemini_frontmatter(
     metadata: dict[str, Any],
     relative_path: PurePosixPath,
@@ -907,9 +1079,24 @@ def parse_adapter_text(
     suffix = relative_path.suffix
     if suffix == ".md":
         metadata, body = parse_frontmatter(text, relative_path.as_posix())
+        frontmatter_end = text.find("\n---\n", 4)
+        canonical_yaml_frontmatter(
+            text[4:frontmatter_end], relative_path.as_posix()
+        )
         declared_name = metadata["name"]
+        description = metadata.get("description")
+        expected_metadata_keys = {
+            "local": ("name", "description", "model"),
+            "claude": ("name", "description", "model", "tools"),
+            "gemini": GEMINI_FRONTMATTER_KEYS,
+        }
         if surface == "gemini":
             validate_gemini_frontmatter(metadata, relative_path)
+        if tuple(metadata) != expected_metadata_keys.get(surface, ()):
+            fail(
+                "ROLE-ADAPTER-BOUNDS",
+                f"{relative_path}: metadata keys or order differ",
+            )
     else:
         try:
             data = tomllib.loads(text)
@@ -922,9 +1109,22 @@ def parse_adapter_text(
                 f"{relative_path}: developer_instructions must be a string",
             )
         declared_name = data.get("name", "")
+        description = data.get("description")
         if not isinstance(declared_name, str):
             fail("ROLE-ADAPTER-PARSE", f"{relative_path}: name must be a string")
+        if tuple(data) != (
+            "description",
+            "developer_instructions",
+            "name",
+            "model",
+            "model_reasoning_effort",
+        ):
+            fail(
+                "ROLE-ADAPTER-BOUNDS",
+                f"{relative_path}: Codex metadata keys or order differ",
+            )
         body = body_value
+        canonical_codex_metadata(text, body, relative_path.as_posix())
 
     operative_body = operative_markdown(body, relative_path.as_posix())
     return Adapter(
@@ -932,7 +1132,11 @@ def parse_adapter_text(
         path=relative_path.as_posix(),
         path_stem=relative_path.stem,
         declared_name=declared_name,
+        raw_body=body.rstrip("\n") + "\n",
+        description=description if isinstance(description, str) else "",
+        provider_metadata=copy.deepcopy(metadata if suffix == ".md" else data),
         heading=extract_heading(operative_body),
+        section_headings=extract_section_headings(operative_body),
         section_units=extract_section_units(operative_body),
     )
 
@@ -964,6 +1168,63 @@ def _missing_claims(
     return [claim for claim in claims if claim not in operative_units]
 
 
+def expected_adapter_section_units(
+    role: dict[str, Any], surface: str
+) -> dict[str, tuple[str, ...]]:
+    role_id = role["id"]
+    try:
+        bootstrap = SURFACE_BOOTSTRAP_UNITS[surface]
+        scope_imports = ROLE_SCOPE_IMPORTS[role_id]
+    except KeyError as exc:
+        fail("ROLE-ADAPTER-BOUNDS", f"unknown closed adapter profile: {exc}")
+    return {
+        "Runtime Bootstrap": bootstrap
+        + tuple(f"@import {path}" for path in scope_imports),
+        "Role": tuple(role["responsibilities"]),
+        "When to Use": (role["purpose"],),
+        "Inputs": tuple(role["inputs"]),
+        "Outputs": tuple(role["outputs"]),
+        "Guardrails": tuple(role["prohibitedActions"])
+        + tuple(role["stopConditions"]),
+        "Capability and Evidence": (
+            f"Capability tier reference: `{role['capabilityTierRef']}`.",
+            *role["requiredEvidence"],
+        ),
+        "Handoff / Escalation": tuple(role["handoffs"]),
+        "Postflight": (POSTFLIGHT_UNIT,),
+    }
+
+
+def render_adapter_body(role: dict[str, Any], surface: str) -> str:
+    units = expected_adapter_section_units(role, surface)
+    paragraph_sections = {"Role", "When to Use", "Postflight"}
+    lines = [f"# {role['id']}", ""]
+    for heading in ROLE_ADAPTER_HEADING_ORDER:
+        lines.extend((f"## {heading}", ""))
+        for unit in units[heading]:
+            lines.append(
+                unit
+                if unit.startswith("@import ") or heading in paragraph_sections
+                else f"- {unit}"
+            )
+            if unit.startswith("Follow `bootstrap ->"):
+                lines.append("")
+        lines.append("")
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def _all_contract_claims_present(role: dict[str, Any], adapter: Adapter) -> bool:
+    for category in CONTRACT_CATEGORIES:
+        claims = (
+            [f"Capability tier reference: `{role['capabilityTierRef']}`."]
+            if category == "capabilityTierRef"
+            else role[category]
+        )
+        if _missing_claims(adapter, category, claims):
+            return False
+    return True
+
+
 def validate_adapter(role: dict[str, Any], adapter: Adapter) -> list[Diagnostic]:
     diagnostics: list[Diagnostic] = []
     role_id = role["id"]
@@ -978,10 +1239,58 @@ def validate_adapter(role: dict[str, Any], adapter: Adapter) -> list[Diagnostic]
             )
         )
 
+    expected_description = f"{role['purpose']}"
+    if adapter.description != expected_description:
+        diagnostics.append(
+            Diagnostic(
+                "ROLE-ADAPTER-BOUNDS",
+                adapter.path,
+                role_id,
+                "description must equal the canonical role purpose",
+            )
+        )
+
+    if adapter.surface == "claude":
+        permission_class = role["permissionClass"]
+        tool_profiles = CLAUDE_PERMISSION_TOOLS.get(permission_class, {})
+        expected_tools = tool_profiles.get(
+            role_id,
+            tool_profiles.get("default"),
+        )
+        if adapter.provider_metadata.get("tools") != expected_tools:
+            diagnostics.append(
+                Diagnostic(
+                    "ROLE-ADAPTER-BOUNDS",
+                    adapter.path,
+                    role_id,
+                    "Claude tools exceed or differ from the permission-class projection",
+                )
+            )
+
+    expected_units = expected_adapter_section_units(role, adapter.surface)
+    expected_body = render_adapter_body(role, adapter.surface)
+    claims_present = _all_contract_claims_present(role, adapter)
+    if stem_values == (role_id, role_id, role_id) and (
+        claims_present
+        and (
+            adapter.raw_body != expected_body
+            or adapter.section_headings != ROLE_ADAPTER_HEADING_ORDER
+            or adapter.section_units != expected_units
+        )
+    ):
+        diagnostics.append(
+            Diagnostic(
+                "ROLE-ADAPTER-BOUNDS",
+                adapter.path,
+                role_id,
+                "operative H2 sections must equal the closed role adapter set",
+            )
+        )
+
     for category in CONTRACT_CATEGORIES:
         claims = (
-            [role["capabilityTierClaim"]]
-            if category == "capabilityTier"
+            [f"Capability tier reference: `{role['capabilityTierRef']}`."]
+            if category == "capabilityTierRef"
             else role[category]
         )
         missing = _missing_claims(adapter, category, claims)
@@ -993,6 +1302,54 @@ def validate_adapter(role: dict[str, Any], adapter: Adapter) -> list[Diagnostic]
                     role_id,
                     f"missing {category} claim: {missing[0]}",
                 )
+            )
+    return diagnostics
+
+
+def validate_provider_baseline_text(
+    surface: str,
+    relative_path: PurePosixPath,
+    source: str,
+) -> list[str]:
+    if surface not in PROVIDER_BASELINE_PATHS:
+        return ["PROVIDER-BASELINE-BOUNDS"]
+    operative = operative_markdown(source, relative_path.as_posix())
+    headings = extract_section_headings(operative)
+    profile = PROVIDER_BASELINE_PROFILES[surface]
+    provider = "gemini" if surface == "local" else surface
+    expected_units = {
+        heading: (
+            tuple(
+                unit.format(provider=provider)
+                for unit in BASELINE_COMMON_REFERENCES
+            )
+            if heading == "Canonical References"
+            else profile[heading]
+        )
+        for heading in PROVIDER_BASELINE_HEADING_ORDER
+    }
+    if (
+        operative != source.rstrip("\n")
+        or extract_heading(operative) != profile["heading"]
+        or headings != PROVIDER_BASELINE_HEADING_ORDER
+        or extract_section_units(operative) != expected_units
+    ):
+        return ["PROVIDER-BASELINE-BOUNDS"]
+    return []
+
+
+def validate_provider_baselines(root: Path) -> list[Diagnostic]:
+    diagnostics: list[Diagnostic] = []
+    for surface, relative in PROVIDER_BASELINE_PATHS.items():
+        try:
+            source = safe_repo_path(
+                root, relative, final_kind="file", code="PROVIDER-BASELINE-PARSE"
+            ).read_text(encoding="utf-8")
+        except OSError as exc:
+            fail("PROVIDER-BASELINE-PARSE", f"{relative}: {exc}")
+        for code in validate_provider_baseline_text(surface, relative, source):
+            diagnostics.append(
+                Diagnostic(code, relative.as_posix(), surface, "baseline is unbounded")
             )
     return diagnostics
 
@@ -1020,7 +1377,7 @@ def validate_repository(root: Path) -> list[Diagnostic]:
         for diagnostic in validate_adapter(
             selection.roles[role_id], adapters[(surface, role_id)]
         )
-    ]
+    ] + validate_provider_baselines(root)
 
 
 def validate_fixture(
@@ -1090,8 +1447,8 @@ def category_anchor(
     if category == "adapterStem":
         return f"# {role['id']}"
     claims = (
-        [role["capabilityTierClaim"]]
-        if category == "capabilityTier"
+        [f"Capability tier reference: `{role['capabilityTierRef']}`."]
+        if category == "capabilityTierRef"
         else role[category]
     )
     return claims[0]

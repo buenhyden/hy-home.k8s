@@ -61,6 +61,9 @@ HARNESS_PATH = (
     REPOSITORY_ROOT
     / "docs/00.agent-governance/contracts/harness-contract.json"
 )
+HARNESS_VALIDATOR_PATH = (
+    REPOSITORY_ROOT / "scripts/validate-agent-harness-contract.py"
+)
 GOVERNED_INPUTS = (
     CONTRACT_PATH,
     SCHEMA_PATH,
@@ -239,6 +242,67 @@ class ModelFitnessContractTests(unittest.TestCase):
                 self.assertEqual(
                     item["evaluation"]["thresholdResult"], "DEFER"
                 )
+
+    def test_model_fitness_is_singular_capability_tier_owner(self) -> None:
+        validator_results = (
+            subprocess.run(
+                [
+                    sys.executable,
+                    str(HARNESS_VALIDATOR_PATH),
+                    "--root",
+                    str(REPOSITORY_ROOT),
+                ],
+                text=True,
+                capture_output=True,
+                check=False,
+            ),
+            subprocess.run(
+                [
+                    sys.executable,
+                    str(SCRIPT_PATH),
+                    "--root",
+                    str(REPOSITORY_ROOT),
+                ],
+                text=True,
+                capture_output=True,
+                check=False,
+            ),
+        )
+        for result in validator_results:
+            self.assertEqual(result.returncode, 0, result.stderr)
+
+        harness = json.loads(HARNESS_PATH.read_text(encoding="utf-8"))
+        profiles = {
+            profile["roleId"]: profile
+            for profile in self.contract["roleProfiles"]
+        }
+        duplicated_conflicts = {
+            role["id"]: (
+                role["adapterSemantics"]["capabilityTier"],
+                profiles[role["id"]]["capabilityTier"],
+            )
+            for role in harness["canonicalRoles"]
+            if "capabilityTier" in role["adapterSemantics"]
+            and role["adapterSemantics"]["capabilityTier"]
+            != profiles[role["id"]]["capabilityTier"]
+        }
+        self.assertEqual(duplicated_conflicts, {})
+
+        for index, role in enumerate(harness["canonicalRoles"]):
+            semantics = role["adapterSemantics"]
+            self.assertNotIn("capabilityTier", semantics)
+            self.assertNotIn("capabilityTierClaim", semantics)
+            self.assertEqual(
+                role["capabilityTierRef"],
+                (
+                    "docs/00.agent-governance/contracts/"
+                    f"agent-model-fitness.json#/roleProfiles/{index}/"
+                    "capabilityTier"
+                ),
+            )
+
+        self.assertEqual(profiles["incident-responder"]["capabilityTier"], "top")
+        self.assertEqual(profiles["security-auditor"]["capabilityTier"], "top")
 
     def test_current_only_candidate_mapping_pass_fails_closed(self) -> None:
         mutated = self.contract_copy()
@@ -777,6 +841,14 @@ class ModelFitnessContractTests(unittest.TestCase):
                 "roleSpecificRuntimeEvidence"
             ],
             "DEFER",
+        )
+        self.assertEqual(
+            self.contract["authorityBoundaries"]["capabilityTierAuthority"],
+            "roleProfiles",
+        )
+        self.assertEqual(
+            self.contract["authorityBoundaries"]["harnessCapabilityTierUse"],
+            "reference-only",
         )
 
     def test_gemini_native_surface_fails_closed_without_fabricated_model(

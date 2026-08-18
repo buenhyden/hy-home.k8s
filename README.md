@@ -247,7 +247,7 @@ bash scripts/validate-policy-gates.sh .
 find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' -exec bash -n {} +
 ```
 
-하네스 표면 변경은 위 repo-static 게이트를 묶은 `bash scripts/validate-harness.sh`로 한 번에 검증한다. 표면별 승인 경계와 구현 지도는 [`harness-implementation-map.md`](docs/00.agent-governance/harness-implementation-map.md)와 [`approval-boundaries.md`](docs/00.agent-governance/rules/approval-boundaries.md)를 참조한다. live k3d/ArgoCD/Vault 검증은 기본 경로가 아니라 승인된 운영 runbook에서만 실행한다.
+하네스 표면 변경은 위 repo-static 게이트를 묶은 `bash scripts/validate-harness.sh`로 한 번에 검증한다. 표면별 승인 경계는 [`approval-boundaries.md`](docs/00.agent-governance/rules/approval-boundaries.md)를 참조하고, agent roster와 adapter 구현 위치는 [`harness-catalog.md`](docs/00.agent-governance/harness-catalog.md)를 참조한다. live k3d/ArgoCD/Vault 검증은 기본 경로가 아니라 승인된 운영 runbook에서만 실행한다.
 
 `validate-repo-quality-gates.sh`는 authored docs에서 bare/main direct push 예시와 PR-flow 문맥 없는 push 예시 회귀를 차단하고, README/examples 등 broader Markdown roots에서는 bare/main direct push 예시를 차단한다. 또한 `generate-llm-wiki-index.sh --check`로 LLM WIKI generated index freshness를 확인한다. `pre-commit`, `kube-linter`, `zizmor`, `actionlint`, `shellcheck`는 로컬에 있으면 사용한다. 로컬 `PATH`에 없을 때는 위의 repo-backed 검증을 먼저 실행하고, 전체 hook/tool matrix는 GitHub Actions에서 확인한다.
 

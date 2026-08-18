@@ -3471,22 +3471,16 @@ if not has_cloud_example_snapshot_preservation_prompt(pr_template_text):
 # Harness implementation surfaces: existence and cross-reference contracts only.
 # Wrapper script existence is already enforced by the scripts inventory, so it
 # is not re-validated here.
-harness_map_path = root / "docs/00.agent-governance/harness-implementation-map.md"
-if not harness_map_path.exists():
-    fail(f"required harness surface is missing: {rel(harness_map_path)}")
 approval_boundaries_path = root / "docs/00.agent-governance/rules/approval-boundaries.md"
 if not approval_boundaries_path.exists():
     fail(f"required harness surface is missing: {rel(approval_boundaries_path)}")
 if "## 8. Harness Impact" not in pr_template_text:
     fail(f"{rel(pr_template_path)} missing Harness Impact section heading: ## 8. Harness Impact")
 harness_catalog_map_text = read_text(root / "docs/00.agent-governance/harness-catalog.md")
-if (
-    "harness-implementation-map.md" not in harness_catalog_map_text
-    and "approval-boundaries.md" not in harness_catalog_map_text
-):
+if "approval-boundaries.md" not in harness_catalog_map_text:
     fail(
         "docs/00.agent-governance/harness-catalog.md must reference the harness "
-        "implementation map or approval boundaries"
+        "approval boundaries"
     )
 canonical_task_form_text = read_text(
     root / "docs/99.templates/templates/sdlc/execution/task.template.md"

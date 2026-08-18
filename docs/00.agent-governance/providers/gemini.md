@@ -3,7 +3,7 @@ title: 'Reference: Gemini Provider Notes'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-08-01
+updated: 2026-08-14
 ---
 
 # Gemini Provider Notes
@@ -68,7 +68,11 @@ and output styles. It is not the Gemini CLI native configuration directory.
 - **Rules (`.agents/rules/`)**: Contains local/Antigravity workflow and behavior rules (e.g., `workspace-rules.md`); these are not Gemini CLI native policy files.
 - **Workflows (`.agents/workflows/`)**: Defines orchestrated workflows (e.g., `qa-cicd-workflow.md` for pre/post-edit validation).
 - **Skills (`.agents/skills/`)**: Houses provider-neutral shared skill definitions for the tracked local adapters; Gemini CLI native discovery or consumption is not established.
-- **Hooks (`.agents/hooks.json`)**: Declares local/Antigravity behavioral wiring where a compatible runtime honors it. It invokes shared `docs/00.agent-governance/hooks/*.sh` scripts for Template-First routing and QA/CI/static validation, but it is neither a Claude-style permission gate nor Gemini CLI native settings.
+- **Hooks (`.agents/hooks.json`)**: Retains a Claude-shaped custom
+  compatibility graph. Its `PreToolUse`, `PostToolUse`, and `PreCompact` names
+  are not Gemini CLI's documented native `BeforeTool`, `AfterTool`, and
+  `PreCompress` settings contract. It is repo-static only: neither a permission
+  gate nor Gemini CLI event configuration or delivery evidence.
 - **Agents (`.agents/agents/*.md`)**: Local/Antigravity role adapters with
   `name`, `description`, and `model` frontmatter. They preserve role parity
   with Claude and Codex adapters without requiring Claude-style `tools:`
@@ -154,6 +158,10 @@ or model resolution.
 - Keep the harness evidence classes `repo-static`, `provider-runtime`, `ci`,
   and `remote-live` separate. A tracked local adapter is repo-static evidence
   only and never proves Gemini CLI runtime discovery or use.
+- `contracts/provider-runtime-evidence.json` is the singular machine owner for
+  provider capability evidence, retained compatibility-hook classification,
+  and delivery verdicts. The locally absent Gemini runtime cannot receive
+  native-discovery, authenticated-run, or hook-delivery `PASS`.
 - Spec 045 retired the former role-semantics compatibility inputs after
   zero-consumer proof; the harness contract and harness-semantics validator
   are the current semantic owners.

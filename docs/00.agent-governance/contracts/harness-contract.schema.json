@@ -84,8 +84,8 @@
     },
     "consumers": {
       "type": "array",
-      "minItems": 14,
-      "maxItems": 14,
+      "minItems": 12,
+      "maxItems": 12,
       "items": {
         "$ref": "#/$defs/consumer"
       }
@@ -317,6 +317,7 @@
         "stopConditions",
         "handoffs",
         "requiredEvidence",
+        "capabilityTierRef",
         "adapterSemantics",
         "evalSuite",
         "modelPolicyRef"
@@ -382,6 +383,10 @@
         "requiredEvidence": {
           "$ref": "#/$defs/claims"
         },
+        "capabilityTierRef": {
+          "type": "string",
+          "pattern": "^docs/00\\.agent-governance/contracts/agent-model-fitness\\.json#/roleProfiles/(?:0|1|2|3|4|5|6|7|8|9|10|11)/capabilityTier$"
+        },
         "adapterSemantics": {
           "$ref": "#/$defs/adapterSemantics"
         },
@@ -403,8 +408,6 @@
         "prohibitedActions",
         "stopConditions",
         "handoffs",
-        "capabilityTier",
-        "capabilityTierClaim",
         "requiredEvidence"
       ],
       "properties": {
@@ -428,17 +431,6 @@
         },
         "handoffs": {
           "$ref": "#/$defs/claims"
-        },
-        "capabilityTier": {
-          "enum": [
-            "top",
-            "worker"
-          ]
-        },
-        "capabilityTierClaim": {
-          "type": "string",
-          "minLength": 20,
-          "maxLength": 400
         },
         "requiredEvidence": {
           "$ref": "#/$defs/claims"

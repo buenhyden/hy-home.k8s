@@ -58,12 +58,13 @@ scoping.
 
 ### Model Hierarchy
 
-- `supervisor.md` uses the `top` model tier; all worker agents use the `worker` tier.
-- The Model Tier Mapping in `docs/00.agent-governance/harness-catalog.md`
-  records incumbent tier defaults. Pending per-role provider candidates and
-  reasoning effort are owned by
-  `contracts/agent-model-fitness.json`; a tracked candidate declaration is not
-  a promotion or provider-resolution result.
+- Resolve every role's capability tier from
+  `contracts/agent-model-fitness.json`; do not infer tier membership from a
+  supervisor, worker, permission, or behavioral label.
+- `model-policy.md` owns the shared tier and reasoning vocabulary. Per-role
+  tier membership, provider candidates, and reasoning state are owned by the
+  model-fitness contract; a tracked candidate declaration is not a promotion
+  or provider-resolution result.
 
 ### Catalog Reference
 

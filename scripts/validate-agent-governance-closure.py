@@ -27,8 +27,10 @@ FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-governance-closure.json")
 PROVIDER_SOURCE_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/provider-runtime-evidence.json"
 )
+# These are live bindings to the current canonical source bytes. Historical
+# observation and cutoff semantics remain in the closure record fields.
 PROVIDER_SOURCE_SHA256 = (
-    "4dd9f488-9873d98c-754864aa-e5655b42-2008ac7d-0b7447fb-c7975930-cd06df50".replace(
+    "07be20ae-5b918ae6-4614c335-4be589d9-9b19cb8c-84e9c9ac-ba590df2-545b8c77".replace(
         "-", ""
     )
 )
@@ -36,7 +38,7 @@ MODEL_SOURCE_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/agent-model-fitness.json"
 )
 MODEL_SOURCE_SHA256 = (
-    "4ebae0fa-b7f51ef4-1acdb1f5-db4bc7a4-54cbdd2d-0526583d-601579d0-f001ffd1".replace(
+    "d384f71c-a2682972-61a63fc3-b716afe4-eaa5cc57-b8031fc0-d0e28a7e-9985c398".replace(
         "-", ""
     )
 )

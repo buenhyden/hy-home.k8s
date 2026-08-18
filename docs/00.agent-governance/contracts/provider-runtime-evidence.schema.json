@@ -9,10 +9,12 @@
     "contractId",
     "contractVersion",
     "owner",
+    "capabilityEvidenceOwner",
     "cutoff",
     "sourceLedger",
     "observationHistory",
     "providers",
+    "hookGraphs",
     "mcpInventory",
     "canaryRecordContract",
     "canaryRecords",
@@ -33,6 +35,9 @@
     },
     "owner": {
       "const": "docs/03.specs/0042-provider-native-runtime-and-model-evidence/spec.md"
+    },
+    "capabilityEvidenceOwner": {
+      "const": "docs/00.agent-governance/contracts/provider-runtime-evidence.json"
     },
     "cutoff": {
       "type": "object",
@@ -75,6 +80,14 @@
       "maxItems": 4,
       "items": {
         "$ref": "#/$defs/provider"
+      }
+    },
+    "hookGraphs": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "$ref": "#/$defs/hookGraph"
       }
     },
     "mcpInventory": {
@@ -385,7 +398,8 @@
             "role-directory",
             "provider-adapter",
             "provider-shim",
-            "tracked-settings"
+            "tracked-settings",
+            "compatibility-hook-graph"
           ]
         },
         "state": {
@@ -463,6 +477,80 @@
         },
         "authenticatedRun": {
           "$ref": "#/$defs/verdict"
+        }
+      }
+    },
+    "hookGraph": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "providerId",
+        "path",
+        "classification",
+        "evidenceClass",
+        "runtimeSupport",
+        "deliveryVerdict",
+        "owner",
+        "limitation",
+        "retryTrigger",
+        "claimBoundary",
+        "embeddedDeclaration",
+        "contentSha256"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "providerId": {
+          "enum": [
+            "local",
+            "codex"
+          ]
+        },
+        "path": {
+          "$ref": "#/$defs/repoPath"
+        },
+        "classification": {
+          "const": "custom-compatibility-bridge"
+        },
+        "evidenceClass": {
+          "const": "repo-static"
+        },
+        "runtimeSupport": {
+          "enum": [
+            "supported",
+            "unsupported",
+            "unverified"
+          ]
+        },
+        "deliveryVerdict": {
+          "$ref": "#/$defs/verdict"
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "limitation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retryTrigger": {
+          "type": "string",
+          "minLength": 1
+        },
+        "claimBoundary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "embeddedDeclaration": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
         }
       }
     },

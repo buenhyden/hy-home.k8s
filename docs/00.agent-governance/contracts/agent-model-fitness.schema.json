@@ -153,6 +153,8 @@
         "providerRuntimeEvidenceAuthority",
         "providerEvidenceGranularity",
         "roleSpecificRuntimeEvidence",
+        "capabilityTierAuthority",
+        "harnessCapabilityTierUse",
         "harnessObservationRef",
         "harnessObservationUse",
         "harnessProviderModelAuthority"
@@ -166,6 +168,12 @@
         },
         "roleSpecificRuntimeEvidence": {
           "const": "DEFER"
+        },
+        "capabilityTierAuthority": {
+          "const": "roleProfiles"
+        },
+        "harnessCapabilityTierUse": {
+          "const": "reference-only"
         },
         "harnessObservationRef": {
           "type": "string",

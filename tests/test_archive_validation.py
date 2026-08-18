@@ -658,6 +658,58 @@ class ArchiveValidationTest(unittest.TestCase):
             "mig-0002-sdlc-document-and-governance-consolidation.md",
             records,
         )
+        self.assertNotIn(
+            "docs/98.archive/migrations/"
+            "mig-0003-agent-governance-control-plane-consolidation.md",
+            records,
+        )
+
+    def test_mig0003_recovery_is_integrated_and_source_pinned(self) -> None:
+        migration_path = (
+            "docs/98.archive/migrations/"
+            "mig-0003-agent-governance-control-plane-consolidation.md"
+        )
+        migration_bytes = (ROOT / migration_path).read_bytes()
+
+        rows = archive_validation.validate_pinned_migration_recovery(
+            ROOT,
+            migration_path,
+            migration_bytes,
+        )
+
+        self.assertEqual(len(rows), 3)
+        with self.assertRaisesRegex(
+            archive_validation.ArchiveContractError,
+            "ARCHIVE-MIGRATION-PROFILE",
+        ):
+            archive_validation.validate_pinned_migration_recovery(
+                ROOT,
+                "docs/98.archive/migrations/"
+                "mig-0002-sdlc-document-and-governance-consolidation.md",
+                (
+                    ROOT
+                    / "docs/98.archive/migrations/"
+                    "mig-0002-sdlc-document-and-governance-consolidation.md"
+                ).read_bytes(),
+            )
+
+        with tempfile.TemporaryDirectory(prefix="mig0003-recovery-") as temporary:
+            root = Path(temporary)
+            fixture = GitFixture(root)
+            target = root / migration_path
+            target.parent.mkdir(parents=True)
+            target.write_bytes(migration_bytes)
+            fixture.run("add", "--", migration_path)
+
+            records, diagnostics = archive_validation._repository_archive_records(  # noqa: SLF001
+                root
+            )
+
+            self.assertEqual(records, {})
+            self.assertIn(
+                "RECOVERY-OBJECT-NOT-COMMIT",
+                self.codes(types.SimpleNamespace(diagnostics=diagnostics)),
+            )
 
     def test_repository_inventory_rejects_unknown_or_drifted_migration_profiles(
         self,
@@ -924,7 +976,7 @@ class ArchiveValidationTest(unittest.TestCase):
             command = args[0] if args else kwargs.get("args", ())
             if command and command[0] == "git":
                 git_calls += 1
-                if git_calls > 24:
+                if git_calls > 29:
                     raise AssertionError("repository archive exceeded Git subprocess budget")
             return real_popen(*args, **kwargs)
 
@@ -936,7 +988,9 @@ class ArchiveValidationTest(unittest.TestCase):
         elapsed = time.monotonic() - started
 
         self.assertTrue(report.valid, report.diagnostics)
-        self.assertLessEqual(git_calls, 24)
+        # MIG-0003 adds five bounded calls: repository identity (2), commit
+        # types, exact commit:path members, and one three-blob content batch.
+        self.assertLessEqual(git_calls, 29)
         self.assertLess(elapsed, 60.0)
 
     def test_work107_stable_ledger_digest_is_pinned_without_git_reconstruction(
@@ -1193,6 +1247,57 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         self.assertNotIn(
             "LEDGER-UNKNOWN-PATH",
             {item.rule_id for item in diagnostics},
+        )
+
+    def test_work054_mig0003_historical_projection_is_byte_exact(self) -> None:
+        projection = self.validator._work054_wp003_owner_merges(self.context)
+        self.assertEqual(len(projection), 3)
+
+        path = self.validator.WORK054_MIGRATION_PATH
+        original = self.context.texts[path]
+        for name, changed in (
+            ("document-sha", original + "\n"),
+            (
+                "replacement",
+                original.replace(
+                    '"replacement": "docs/00.agent-governance/providers/codex.md"',
+                    '"replacement": "docs/00.agent-governance/harness-catalog.md"',
+                    1,
+                ),
+            ),
+        ):
+            with self.subTest(name=name):
+                context = dataclasses.replace(
+                    self.context,
+                    texts={**self.context.texts, path: changed},
+                )
+                with self.assertRaises(self.validator.ConfigurationError):
+                    self.validator._work054_wp003_owner_merges(context)
+
+    def test_work054_historical_edges_are_limited_to_mig0003_merges(self) -> None:
+        _aliases, move_targets, _replacements = (
+            self.validator._document_taxonomy_transition_manifest(self.context)
+        )
+        edges = self.validator._reviewed_work054_historical_owner_edges(
+            self.context,
+            move_targets,
+        )
+
+        self.assertEqual(self.validator.WORK054_HISTORICAL_OCCURRENCE_COUNT, 41)
+        self.assertEqual(len(edges), 15)
+        self.assertEqual(len({edge.source for edge in edges}), 10)
+        self.assertEqual(
+            {edge.target for edge in edges},
+            set(self.validator._work054_wp003_owner_merges(self.context)),
+        )
+        self.assertNotIn(
+            self.validator.ArchiveTransitionEdge(
+                PurePosixPath(
+                    "docs/03.specs/0015-agent-governance-contract-normalization/spec.md"
+                ),
+                PurePosixPath("docs/99.templates/support/template-routing.md"),
+            ),
+            edges,
         )
 
     def test_standalone_approval_statements_are_relation_specific(self) -> None:
