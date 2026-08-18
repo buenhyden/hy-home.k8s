@@ -77,9 +77,9 @@ workload_images:
     note: 'ClusterRole은 이 버전의 DefaultResources 28개와 정확히 일치해야 한다. 버전을 올릴 때 pkg/options/resource.go 를 함께 확인한다.'
   grafana-alloy:
     image: 'docker.io/grafana/alloy'
-    version: 'v1.13.1'
+    version: 'v1.18.1'
     declaredBy: 'gitops/platform/monitoring/alloy-k8s-logs.yaml'
-    note: '업그레이드 이연. 상위 v1.18.1 대비 마이너 5개 뒤짐.'
+    note: 'v1.13.1에서 올렸다. 이 워크로드가 쓰는 컴포넌트는 loki.source.kubernetes / loki.source.kubernetes_events / loki.process(stage.static_labels) / loki.write / discovery.* 뿐이며, v1.14.0~v1.18.1의 breaking change는 모두 otelcol.* 와 loki.secretfilter 에만 있다. 버전을 올릴 때 CHANGELOG의 breaking change가 이 컴포넌트 목록에 걸리는지 확인한다.'
   adminer:
     image: 'adminer'
     version: '4.8.1'
