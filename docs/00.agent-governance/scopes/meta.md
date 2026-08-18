@@ -16,17 +16,20 @@ Persona: Governance Steward
 
 ### File Ownership
 
-| Path                          | Owner | Notes                                           |
-| ----------------------------- | ----- | ----------------------------------------------- |
-| `docs/00.agent-governance/**` | meta  | All governance policy, rules, scopes, providers |
-| `AGENTS.md`                   | meta  | Gateway contract                                |
-| `CLAUDE.md`                   | meta  | Claude provider overlay                         |
-| `GEMINI.md`                   | meta  | Gemini provider overlay                         |
-| `.claude/settings.json`       | meta  | Team settings (git tracked)                     |
-| `docs/00.agent-governance/hooks/**` | meta  | Shared runtime hook contracts                   |
-| `.agents/skills/**`           | meta  | Repo-backed shared skill source of truth        |
-| `.claude/skills/**`           | meta  | Claude symlink view of shared skills            |
-| `.codex/**`                   | meta  | Codex role adapters and hook wiring             |
+| Path                                | Owner                   | Notes                                                                                                                                                   |
+| ----------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `docs/00.agent-governance/**`       | meta                    | All governance policy, rules, scopes, providers                                                                                                         |
+| `AGENTS.md`                         | meta                    | Gateway contract                                                                                                                                        |
+| `CLAUDE.md`                         | meta                    | Claude provider overlay                                                                                                                                 |
+| `GEMINI.md`                         | meta                    | Gemini provider overlay                                                                                                                                 |
+| `.claude/settings.json`             | meta                    | Team settings (git tracked)                                                                                                                             |
+| `docs/00.agent-governance/hooks/**` | meta                    | Shared runtime hook contracts                                                                                                                           |
+| `.agents/skills/**`                 | meta                    | Repo-backed shared skill source of truth                                                                                                                |
+| `.claude/skills/**`                 | meta                    | Claude symlink view of shared skills                                                                                                                    |
+| `.codex/**`                         | meta                    | Codex role adapters and hook wiring                                                                                                                     |
+| `.github/**`                        | meta                    | Repository governance surface: issue and pull request templates, `CODEOWNERS`, `dependabot.yml`, `labeler.yml`, `SECURITY.md`, and the `.github` README |
+| `.github/workflows/**`              | meta + quality-engineer | Meta owns the surface and its wiring; `quality-engineer` owns lane content, because these workflows execute the validators QA owns                      |
+| `.github/requirements/**`           | meta + quality-engineer | Pinned Python dependencies for the CI validation lane; same split as the workflows above                                                                |
 
 Meta scope owns native/local agent roster and role-adapter contract shape
 through `harness-catalog.md` and `subagent-protocol.md`; imported scope files

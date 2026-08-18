@@ -16,17 +16,22 @@ Persona: QA Engineer
 
 ### File Ownership
 
-| Path | Owner | Notes |
-| --- | --- | --- |
-| `tests/**` | quality-engineer | Deterministic fixtures and focused regression tests |
-| `scripts/validate-*.py` | quality-engineer | Python validation gates within an explicitly delegated QA task |
-| `docs/00.agent-governance/contracts/**` | platform + quality-engineer | Contract fixtures and evaluation evidence only; policy remains platform-owned |
+| Path                                    | Owner                       | Notes                                                                                                                        |
+| --------------------------------------- | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `tests/**`                              | quality-engineer            | Deterministic fixtures and focused regression tests                                                                          |
+| `scripts/validate-*.py`                 | quality-engineer            | Python validation gates within an explicitly delegated QA task                                                               |
+| `docs/00.agent-governance/contracts/**` | platform + quality-engineer | Contract fixtures and evaluation evidence only; policy remains platform-owned                                                |
+| `.github/workflows/**`                  | meta + quality-engineer     | Lane content only — which validators run and how they are invoked. Meta owns the workflow surface, triggers, and permissions |
+| `.github/requirements/**`               | meta + quality-engineer     | Pinned Python dependencies for the CI validation lane, on the same split                                                     |
 
 The `quality-engineer` may read plans, tasks, incidents, operations guides,
 infrastructure tests, shell validators, CI workflows, and manifests as QA
 inputs, but those paths are not writable through this scope. It does **not**
 own `gitops/` manifests, product implementation, security sign-off, shell
-validators, CI workflows, or Stage 00 policy prose. Broader authoring requires
+validators, or Stage 00 policy prose. CI workflows are the one shared surface:
+`quality-engineer` may change which validators a lane runs and how they are
+invoked, while the workflow surface itself — triggers, permissions, concurrency,
+and every non-lane job — remains meta-owned. Broader authoring requires
 a separately approved owner and scope change; a task instruction alone cannot
 expand this contract.
 
