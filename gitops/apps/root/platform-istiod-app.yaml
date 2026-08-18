@@ -14,6 +14,10 @@ spec:
     helm:
       releaseName: istiod
       values: |
+        # istiod 차트는 seccompProfile: {} 를 기본으로 두어 블록이 렌더되지 않는다.
+        # 이 단일 키가 istiod를 Restricted로 올리는 유일한 잔여 항목이다.
+        seccompProfile:
+          type: RuntimeDefault
         pilot:
           resources:
             requests:

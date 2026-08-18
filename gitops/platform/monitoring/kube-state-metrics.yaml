@@ -120,6 +120,10 @@ spec:
         runAsNonRoot: true
         runAsUser: 65534
         fsGroup: 65534
+        # Restricted 프로파일이 요구하는 유일한 잔여 항목이다. Baseline은 요구하지
+        # 않으므로, 이 항목만 빠진 워크로드는 잘 하드닝된 것처럼 보인다.
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: kube-state-metrics
           image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.14.0

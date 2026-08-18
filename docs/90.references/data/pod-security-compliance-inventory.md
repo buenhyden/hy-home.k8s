@@ -27,8 +27,8 @@ PSS 라벨을 붙이기 전에 무엇이 통과하고 무엇이 걸리는지 알
 것은 차트도 워크로드도 아니고, Istio가 `apps`와 `ingress-nginx`의 pod에 주입하는
 `istio-init` init container 하나뿐이다.
 
-Restricted에서는 5개 워크로드가 걸리며, 그중 4개는 `seccompProfile` 하나만
-부족하다. `seccompProfile`은 Restricted에만 있고 Baseline에는 없는 통제라, 잘
+Restricted에서는 2개 워크로드가 걸린다. `seccompProfile`만 부족했던 워크로드는
+모두 닫혔고, 남은 둘은 그 밖의 통제도 함께 부족하다. `seccompProfile`은 Restricted에만 있고 Baseline에는 없는 통제라, 잘
 하드닝된 것처럼 보이는 워크로드가 정확히 여기서 갈린다.
 
 ## Reference Type
@@ -107,6 +107,8 @@ capabilities 통제는 `spec.initContainers[*].securityContext.capabilities.add`
 | `argo-rollouts`    | `argo-rollouts` 2.40.9 controller                                         | 1           |
 | `argo-rollouts` | `argo-rollouts` 2.40.9 dashboard (이 저장소 values로 하드닝) | 1 |
 | `argocd`           | `argo-cd` 10.4.0 (10개 워크로드, `copyutil` init container 2개 포함)      | 10          |
+| `monitoring` | 저장소 저작 `kube-state-metrics`, `alloy-k8s-logs` (seccompProfile 추가) | 2 |
+| `istio-system` | `istiod` 1.25.2 (이 저장소 values로 seccompProfile 추가) | 1 |
 
 `argo-cd` 10.4.0은 조사한 차트 중 유일하게 모든 기본 워크로드가
 `seccompProfile.type: RuntimeDefault`를 명시한다.
@@ -115,9 +117,6 @@ capabilities 통제는 `spec.initContainers[*].securityContext.capabilities.add`
 
 | 네임스페이스    | 워크로드                | 차단 사유                                                              | 해결 경로                                          |
 | --------------- | ----------------------- | ---------------------------------------------------------------------- | -------------------------------------------------- |
-| `monitoring`    | `kube-state-metrics`    | `seccompProfile`                                                       | 저장소 매니페스트 편집                             |
-| `monitoring`    | `alloy-k8s-logs`        | `seccompProfile`                                                       | 저장소 매니페스트 편집                             |
-| `istio-system`  | `istiod` 1.25.2         | `seccompProfile`                                                       | `seccompProfile.type=RuntimeDefault` 단일 키       |
 | `istio-system`  | `kiali-operator` 2.10.0 | `seccompProfile`                                                       | `securityContext` **전체 재기술** (아래 함정 참조) |
 | `headlamp`      | `headlamp` 0.41.0       | `allowPrivilegeEscalation`, `drop!=ALL`, `seccompProfile`              | `securityContext`를 비우면 내장 하드닝 기본값 적용 |
 | `apps`          | `adminer`               | `runAsNonRoot`/`runAsUser`, `readOnlyRootFilesystem`, `seccompProfile` | Spec 060에 전제조건과 함께 이연 기록               |
