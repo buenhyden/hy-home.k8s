@@ -93,8 +93,11 @@ outstanding verification into an observable rather than an inspection.
 
 - This decision does not enforce on any injected namespace, and does not claim the
   CNI adoption succeeded.
-- It does not add the pod-level `seccompProfile` that `adminer` and the
-  `ingress-nginx` controller would need for Restricted; that is a separate change.
+- It did not add the pod-level `seccompProfile` that `adminer` and the
+  `ingress-nginx` controller need for Restricted; that was named as a separate
+  change and has since been made. With it, both namespaces satisfy Restricted on
+  the manifest, and the remaining barrier to raising them is the live CNI
+  verification alone rather than two barriers.
 - It does not label `argocd`, and does not resolve that namespace's pre-GitOps
   ownership gap.
 - It does not assess the Kiali operand, cert-manager ACME solver pods, or any

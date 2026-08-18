@@ -170,6 +170,31 @@ Restricted를 통과한다. 세 항목 모두 이미지 정의와 포트만으�
 `/home/argo-rollouts/plugin-bin`에 emptyDir을 함께 마운트하는 반면 대시보드에는
 볼륨이 없다. 켜려면 어느 경로에 쓰기가 필요한지 관측이 선행되어야 한다.
 
+### 주입 네임스페이스와 pod-level seccompProfile
+
+Istio 주입은 워크로드의 pod spec에 컨테이너를 추가하므로, 주입 네임스페이스의
+Restricted 판정은 워크로드 자신의 설정만으로 결정되지 않는다.
+
+**Istio는 `seccompProfile`을 gateway 템플릿에만 설정한다.** 주입되는
+`istio-proxy`와 `istio-validation`에는 설정하지 않는다. Restricted의 seccomp
+규칙은 pod 레벨 값 하나 또는 _모든_ 컨테이너의 값을 요구하므로, 주입 pod는
+**pod 레벨 `seccompProfile`이 있어야만** 도달한다. 컨테이너 레벨에만 두면 주입된
+컨테이너가 채우지 못해 pod 전체가 탈락한다.
+
+나머지 통제는 주입 컨테이너가 이미 만족한다. 기본 경로(`REDIRECT` 인터셉션,
+`capNetBindService` 미사용, `IPTABLES_TRACE_LOGGING` 미설정)에서 `istio-proxy`는
+`capabilities.drop: [ALL]`에 `add` 없음, `allowPrivilegeEscalation: false`,
+`privileged: false`, `readOnlyRootFilesystem: true`, `runAsNonRoot: true`,
+`runAsUser: 1337`이다. `istio-validation`도 같다. 단 `TPROXY` 인터셉션이나
+`capNetBindService` 주석을 쓰면 `runAsUser: 0`으로 바뀌어 Restricted에서 탈락한다.
+
+**조치 완료.** `adminer`는 `seccompProfile`을 컨테이너 레벨에서 pod 레벨로 옮겼고,
+`ingress-nginx`는 `controller.podSecurityContext`와
+`controller.admissionWebhooks.patch.securityContext`에 추가했다. 후자는 admission
+webhook Job 두 개의 pod 레벨 키다. `controller.containerSecurityContext`는 건드리지
+않았다 — 그 키는 helper 출력 전체를 대체하므로 지정하면 차트가 넣던
+`drop: [ALL]`과 `add: [NET_BIND_SERVICE]`가 사라진다.
+
 ### values 재정의 함정
 
 세 차트는 `securityContext` 키를 **병합이 아니라 전체 대체**로 처리한다. 부분

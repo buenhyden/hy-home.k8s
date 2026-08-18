@@ -17,6 +17,26 @@ spec:
         controller:
           service:
             type: LoadBalancer
+          # 이 차트는 `if or podSecurityContext sysctls` 가드를 쓰는데 둘 다 기본이
+          # 비어 있어 pod securityContext 자체가 렌더되지 않는다. 이 네임스페이스는
+          # istio-injection이 켜져 있고 Istio는 seccompProfile을 gateway 템플릿에만
+          # 설정하므로, 주입되는 istio-proxy/istio-validation을 덮으려면 pod 레벨
+          # 값이 필요하다. 컨테이너 레벨 값은 차트가 이미 갖고 있다.
+          #
+          # containerSecurityContext는 건드리지 않는다. 그 키는 병합이 아니라 helper
+          # 출력 전체를 대체하므로, 지정하면 차트가 넣던 drop:[ALL]과
+          # add:[NET_BIND_SERVICE]가 사라진다.
+          podSecurityContext:
+            seccompProfile:
+              type: RuntimeDefault
+          # admission webhook Job도 같은 네임스페이스에서 주입 대상이 된다. 이 키가
+          # 그 Job들의 pod 레벨 securityContext다(컨테이너 레벨은 createSecretJob /
+          # patchWebhookJob 쪽 키로 따로 있으며 이미 하드닝되어 있다).
+          admissionWebhooks:
+            patch:
+              securityContext:
+                seccompProfile:
+                  type: RuntimeDefault
   destination:
     server: https://kubernetes.default.svc
     namespace: ingress-nginx
