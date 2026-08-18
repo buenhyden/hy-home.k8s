@@ -51,7 +51,7 @@ without a separate typed owner.
 
 ## Consequences
 
-Spec 053, Spec 054, Spec 055, Spec 056, Spec 057, Spec 058, and Spec 059, with each exact Plan/Task pair, gain
+Spec 053, Spec 054, Spec 055, Spec 056, Spec 057, Spec 058, Spec 059, and Spec 060, with each exact Plan/Task pair, gain
 deterministic registry ownership without a fabricated program component. Validators accept
 an exact ISO-date direct-approval statement, reject invalid calendar dates,
 missing approval fields, identity overlap, wrong owners or states, incomplete
@@ -83,3 +83,4 @@ false upstream authority.
 | Direct human approval recorded in the Spec body | N/A — fifth typed standalone-execution relation; reuses the same closed approval and ownership semantics  | [Spec 057](../../03.specs/057-workspace-research-consistency-and-partial-refresh/spec.md)      |
 | Direct human approval recorded in the Spec body | N/A — sixth typed standalone-execution relation; reuses the same closed approval and ownership semantics  | [Spec 058](../../03.specs/058-workspace-research-full-corpus-refresh/spec.md)                   |
 | Direct human approval recorded in the Spec body | N/A — seventh typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 059](../../03.specs/059-platform-currency-defect-closure/spec.md)                         |
+| Direct human approval recorded in the Spec body | N/A — eighth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 060](../../03.specs/060-workload-security-context-baseline/spec.md)                       |
