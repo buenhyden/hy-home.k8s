@@ -47,7 +47,7 @@ implementation evidence and deeper evidence that remains `DEFER`.
 - Re-audit every requested category only to decide whether it satisfies the
   gap-only admission rule; do not re-research a category that already has an
   adequate official-source basis.
-- Research the currently admitted document-family questions: PRD, ARD,
+- Research the currently admitted document-family questions: PRD, AD,
   Policy, Runbook, and Release approval/evidence semantics beyond version
   numbering.
 - Research explicit Verification versus Validation terminology, responsibility,
@@ -159,7 +159,7 @@ admission lane yields no content change.
 
 | Requested area | Initial design classification | Admission question |
 | --- | --- | --- |
-| PRD and ARD | `admit-under-sourced-partial` | Do official product and architecture requirement sources add semantics that the current local-only rows do not establish? |
+| PRD and AD | `admit-under-sourced-partial` | Do official product and architecture requirement sources add semantics that the current local-only rows do not establish? |
 | Policy and Runbook | `admit-under-sourced-partial` | Do official control/procedure sources add owner, exception, rehearsal, recovery, or evidence rules absent from the current local-only rows? |
 | Release | `admit-under-sourced-partial` | Which approval, evidence, traceability, and rollback record semantics are distinct from SemVer and from the approved local no-release-notes decision? |
 | Verification and Validation | `admit-unresearched` | Which external definition cleanly separates conformance to design from fitness or requirement satisfaction, and how does it map to current workspace lanes? |
@@ -176,7 +176,7 @@ record the final admission result for every requested category.
 | Existing owner | Bounded addition |
 | --- | --- |
 | `README.md` | Add a `2026-08-10` gap-only refresh boundary; add or reconcile the explicit Verification/Validation request owner; update only source/status cells whose admitted evidence changed. |
-| `spec-driven-sdlc-and-document-contracts.md` | Add official external semantics for admitted PRD, ARD, Policy, Runbook, and broader Release-record questions; preserve local profile/lifecycle facts and the Spec 052 DOC-G1/DOC-G5 decisions. |
+| `spec-driven-sdlc-and-document-contracts.md` | Add official external semantics for admitted PRD, AD, Policy, Runbook, and broader Release-record questions; preserve local profile/lifecycle facts and the Spec 052 DOC-G1/DOC-G5 decisions. |
 | `ci-cd-github-actions-and-qa.md` | Add the externally sourced Verification/Validation distinction and a responsibility/evidence/failure matrix across SDLC, QA, delivery, and operations. |
 | `kubernetes-infrastructure-and-security.md` | Add only line-level admitted security deltas after proving the current report does not already close the question. |
 | `source-coverage-and-migration-ledger.md` | Append only new source and claim rows, including checked date, adoption boundary, rejected inference, refresh trigger, workspace evidence, uncertainty, and owner link. |
@@ -367,7 +367,7 @@ credential-bearing, or live success.
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
-| N/A — direct human approval on 2026-08-09 authorizes this standalone gap-admission design; no separate PRD/ARD program owner is asserted | VAL-WERG-001 | Written Spec review and exact admission inventory |
+| N/A — direct human approval on 2026-08-09 authorizes this standalone gap-admission design; no separate PRD/AD program owner is asserted | VAL-WERG-001 | Written Spec review and exact admission inventory |
 | N/A — the same direct approval governs in-place integration into the existing pack | VAL-WERG-002 | Exact changed-path scope and pack-owner review |
 | N/A — the same direct approval governs primary-source provenance | VAL-WERG-003 | Source-register parser and primary-source review |
 | N/A — the same direct approval governs exact workspace reconciliation | VAL-WERG-004 | Claim, path, and selector verification |

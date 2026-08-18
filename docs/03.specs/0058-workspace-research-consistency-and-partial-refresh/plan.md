@@ -205,7 +205,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
     "plan": "docs/04.execution/plans/2026-08-14-workspace-research-consistency-and-partial-refresh.md",
     "task": "docs/04.execution/tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md",
     "state": "active",
-    "reason": "Direct human-approved combined constraint-consistency and Partial re-observation cycle over the existing 2026-08-08 WER pack without separate PRD/ARD authority",
+    "reason": "Direct human-approved combined constraint-consistency and Partial re-observation cycle over the existing 2026-08-08 WER pack without separate PRD/AD authority",
     "decision": "0022",
     "approvalMode": "spec-body-record"
   }
@@ -277,7 +277,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
   | Infrastructure                                   | `REQ-WERPC-009` | refresh-partial    |
   | SDLC                                             | `REQ-WERPC-010` | reconfirm-verified |
   | PRD                                              | `REQ-WERPC-011` | reconfirm-verified |
-  | ARD                                              | `REQ-WERPC-012` | reconfirm-verified |
+  | AD                                              | `REQ-WERPC-012` | reconfirm-verified |
   | ADR                                              | `REQ-WERPC-013` | reconfirm-verified |
   | Guide                                            | `REQ-WERPC-014` | refresh-partial    |
   | Incident                                         | `REQ-WERPC-015` | reconfirm-verified |

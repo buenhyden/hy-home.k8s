@@ -143,12 +143,9 @@ WORK109_SOURCE_COMMIT = "160ce006969ddb49965c8af193f3e9ee290e18a8"
 WORK109_MIGRATION_DOCUMENT_SHA256 = MIG0002_DOCUMENT_SHA256
 WORK109_GIT_TREE_MAX_BYTES = 2 * 1024 * 1024
 WORK109_MIGRATION_LEDGER_PATH = PurePosixPath(
-    "docs/98.archive/migrations/"
-    "mig-0002-sdlc-document-and-governance-consolidation.md"
+    "docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md"
 )
-WORK109_MIGRATION_LEDGER_MARKER = (
-    "<!-- archive-migration-ledger:v1 format=json -->"
-)
+WORK109_MIGRATION_LEDGER_MARKER = "<!-- archive-migration-ledger:v1 format=json -->"
 WORK109_MIGRATION_LEDGER_FIELDS = frozenset(
     {
         "legacy_path",
@@ -190,12 +187,10 @@ WORK109_MANIFEST_PATH = "scripts/document-taxonomy-migration.json"
 WORK109_STANDALONE_ROW = {
     "spec": "0054",
     "plan": (
-        "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/"
-        "plan.md"
+        "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/plan.md"
     ),
     "task": (
-        "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/"
-        "tasks.md"
+        "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks.md"
     ),
     "state": "active",
     "reason": (
@@ -226,6 +221,35 @@ WORK109_ADR_CURRENT_TRACE_ROWS = (
     "| Direct human approval recorded in the Spec body | B-scope SDLC and "
     "AI-agent governance consolidation including Stage 90 | [Spec 054](../../"
     "03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |"
+    "\n"
+    "| Direct human approval recorded in the Spec body | N/A — third typed "
+    "standalone-execution relation; reuses the same closed approval and "
+    "ownership semantics | [Spec 0055](../../03.specs/0055-workspace-"
+    "governance-audit-and-remediation/spec.md) |\n"
+    "| Direct human approval recorded in the Spec body | N/A — fourth typed "
+    "standalone-execution relation; reuses the same closed approval and "
+    "ownership semantics | [Spec 0056](../../03.specs/0056-workspace-"
+    "engineering-gap-only-refresh/spec.md) |\n"
+    "| Direct human approval recorded in the Spec body | N/A — fifth typed "
+    "standalone-execution relation; reuses the same closed approval and "
+    "ownership semantics | [Spec 0057](../../03.specs/0057-workspace-"
+    "engineering-partial-defer-incremental-refresh/spec.md) |\n"
+    "| Direct human approval recorded in the Spec body | N/A — sixth typed "
+    "standalone-execution relation; reuses the same closed approval and "
+    "ownership semantics | [Spec 0058](../../03.specs/0058-workspace-"
+    "research-consistency-and-partial-refresh/spec.md) |\n"
+    "| Direct human approval recorded in the Spec body | N/A — seventh typed "
+    "standalone-execution relation; reuses the same closed approval and "
+    "ownership semantics | [Spec 0059](../../03.specs/0059-workspace-"
+    "research-full-corpus-refresh/spec.md) |\n"
+    "| Direct human approval recorded in the Spec body | N/A — eighth typed "
+    "standalone-execution relation; reuses the same closed approval and "
+    "ownership semantics | [Spec 0060](../../03.specs/0060-platform-currency-"
+    "defect-closure/spec.md) |\n"
+    "| Direct human approval recorded in the Spec body | N/A — ninth typed "
+    "standalone-execution relation; reuses the same closed approval and "
+    "ownership semantics | [Spec 0061](../../03.specs/0061-workload-security-"
+    "context-baseline/spec.md) |"
 )
 
 
@@ -235,6 +259,8 @@ class Work106ArtifactIdentity:
     change_id: str | None = None
     migration_id: str | None = None
     record_kind: str | None = None
+
+
 WORK105_STAGED_INVENTORY_BYTES = 4 * 1024 * 1024
 WORK105_STAGED_ENTRY_LIMIT = 20_000
 WORK105_STAGED_PATH_BYTES = 4096
@@ -243,9 +269,7 @@ WORK105_STAGED_AGGREGATE_BYTES = 64 * 1024 * 1024
 WORK105_STAGED_OBJECT_LIMIT = 20_000
 WORK105_GIT_HEADER_BYTES = 256
 WORK105_OBJECT_ID = re.compile(rb"[0-9a-f]{40}|[0-9a-f]{64}")
-WORK105_SEMANTIC_BOUNDARY = re.compile(
-    r'(?<!\\)"|[,;:|<>{}\[\]\t]|[.!?](?=\s)'
-)
+WORK105_SEMANTIC_BOUNDARY = re.compile(r'(?<!\\)"|[,;:|<>{}\[\]\t]|[.!?](?=\s)')
 WORK105_WIKI_GENERATOR_PATH = "scripts/generate-llm-wiki-index.sh"
 WORK105_WIKI_GENERATOR_BASE_ROW = (
     "| Architecture requirements | [Architecture Requirements README]"
@@ -279,7 +303,7 @@ WORK105_WIKI_GENERATOR_PROJECTION_LINES = (
     "    }",
     "    { print }",
     "    END { if (replacements != 1) exit 1 }",
-    "  ' \"$OUTPUT_PATH\" >\"$projection\" || return 1",
+    '  \' "$OUTPUT_PATH" >"$projection" || return 1',
     '  [[ "$(blob_oid "$projection")" == "$TRANSITION_CURRENT_OUTPUT_OID" ]] '
     "|| return 1",
     '  cmp -s "$projection" "$generated"',
@@ -347,10 +371,8 @@ WORK105_PINNED_LEGACY_HISTORY_PATHS = frozenset(
     }
 )
 WORK109_PINNED_BASE_PATH_ALIASES = {
-    "docs/03.specs/0019-template-path-numbering-contract/plan.md":
-        "docs/03.specs/019-template-path-numbering-contract/plan.md",
-    "docs/03.specs/0019-template-path-numbering-contract/spec.md":
-        "docs/03.specs/019-template-path-numbering-contract/spec.md",
+    "docs/03.specs/0019-template-path-numbering-contract/plan.md": "docs/03.specs/019-template-path-numbering-contract/plan.md",
+    "docs/03.specs/0019-template-path-numbering-contract/spec.md": "docs/03.specs/019-template-path-numbering-contract/spec.md",
 }
 PRD_008_IMMUTABLE_PROJECTION = (
     "0008",
@@ -1113,9 +1135,7 @@ def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path.cwd())
     parser.add_argument("--mode", choices=("strict",), default="strict")
-    parser.add_argument(
-        "--route-state", choices=("legacy", "transition", "terminal")
-    )
+    parser.add_argument("--route-state", choices=("legacy", "transition", "terminal"))
     parser.add_argument("--profile")
     parser.add_argument(
         "--include-path",
@@ -2641,9 +2661,7 @@ def _assert_program_lineage_projection(
             ),
             (),
         ),
-        (
-            *fixture_prd_008_projection,
-        ),
+        (*fixture_prd_008_projection,),
     )
 
     if fixture_prd_008_projection != PRD_008_IMMUTABLE_PROJECTION:
@@ -4360,7 +4378,9 @@ def _assert_template_source_parity(registry: Any) -> None:
             source_required = tuple(
                 key for key in source_required if key != "artifact_id"
             )
-            source_allowed = tuple(key for key in source_allowed if key != "artifact_id")
+            source_allowed = tuple(
+                key for key in source_allowed if key != "artifact_id"
+            )
             source_order = tuple(key for key in source_order if key != "artifact_id")
             source_value_contract = replace(
                 source_value_contract,
@@ -4636,10 +4656,14 @@ def _assert_positive_coverage(
                 source_frontmatter = replace(
                     source_frontmatter,
                     required=tuple(
-                        key for key in source_frontmatter.required if key != "artifact_id"
+                        key
+                        for key in source_frontmatter.required
+                        if key != "artifact_id"
                     ),
                     allowed=tuple(
-                        key for key in source_frontmatter.allowed if key != "artifact_id"
+                        key
+                        for key in source_frontmatter.allowed
+                        if key != "artifact_id"
                     ),
                     order=tuple(
                         key for key in source_frontmatter.order if key != "artifact_id"
@@ -4875,8 +4899,8 @@ def _assert_readme_family_contract(
         set(retired_order)
     ):
         raise AssertionError("README retiredPaths must be sorted and unique")
-    if len(active_rows) != 48 or len(retired_rows) != 26:
-        raise AssertionError("README fixture must contain exact active48 and retired26")
+    if len(active_rows) != 49 or len(retired_rows) != 26:
+        raise AssertionError("README fixture must contain exact active49 and retired26")
 
     active_keys = {"path", "profile", "requiredH2", "allowedH2", "new"}
     retired_keys = active_keys | {"retiredBy", "destination"}
@@ -4912,12 +4936,15 @@ def _assert_readme_family_contract(
         path for path in inventory.baseline_paths if _is_readme_path(path)
     }
     work105_readme_renames = {
-        PurePosixPath("docs/02.architecture/requirements/README.md"):
-            PurePosixPath("docs/02.architecture/descriptions/README.md"),
-        PurePosixPath("examples/aws/docs/02.architecture/requirements/README.md"):
-            PurePosixPath("examples/aws/docs/02.architecture/descriptions/README.md"),
-        PurePosixPath("examples/azure/docs/02.architecture/requirements/README.md"):
-            PurePosixPath("examples/azure/docs/02.architecture/descriptions/README.md"),
+        PurePosixPath("docs/02.architecture/requirements/README.md"): PurePosixPath(
+            "docs/02.architecture/descriptions/README.md"
+        ),
+        PurePosixPath(
+            "examples/aws/docs/02.architecture/requirements/README.md"
+        ): PurePosixPath("examples/aws/docs/02.architecture/descriptions/README.md"),
+        PurePosixPath(
+            "examples/azure/docs/02.architecture/requirements/README.md"
+        ): PurePosixPath("examples/azure/docs/02.architecture/descriptions/README.md"),
     }
     conceptual_baseline_readmes = {
         work105_readme_renames.get(path, path) for path in baseline_readmes
@@ -5054,12 +5081,17 @@ def _assert_readme_family_contract(
                         "docs/90.references/research/2026-08-07-wer/README.md"
                     ),
                 }
-                if path not in expected_paths or destination_path != expected_destination:
+                if (
+                    path not in expected_paths
+                    or destination_path != expected_destination
+                ):
                     raise AssertionError(
                         f"{path}: WERPC README retirement destination is invalid"
                     )
                 if path in tracked_readmes or (root / path).exists():
-                    raise AssertionError(f"README retired path is still current: {path}")
+                    raise AssertionError(
+                        f"README retired path is still current: {path}"
+                    )
                 continue
             if row["retiredBy"] == "WORK-054-002":
                 expected = work109_retired_readmes.get(path)
@@ -5068,7 +5100,9 @@ def _assert_readme_family_contract(
                         f"{path}: WORK-054-002 README retirement destination is invalid"
                     )
                 if path in tracked_readmes or (root / path).exists():
-                    raise AssertionError(f"README retired path is still current: {path}")
+                    raise AssertionError(
+                        f"README retired path is still current: {path}"
+                    )
                 continue
             if row["retiredBy"] != "ADM-006":
                 raise AssertionError(
@@ -5101,12 +5135,12 @@ def _assert_readme_family_contract(
     retired_program_created = retired_paths - conceptual_baseline_readmes
     if (
         len(active_baseline) != 42
-        or len(active_program_created) != 6
+        or len(active_program_created) != 7
         or len(retired_baseline) != 25
         or len(retired_program_created) != 1
     ):
         raise AssertionError(
-            "README handoff must contain active42+new6 and retired25+new1"
+            "README handoff must contain active42+new7 and retired25+new1"
         )
     if active_baseline | retired_baseline != conceptual_baseline_readmes:
         raise AssertionError(
@@ -5327,9 +5361,9 @@ def _assert_readme_fixture_mutation_proofs(
         ),
         key=lambda path: path.as_posix(),
     )
-    if len(declared_new_paths) != 6:
+    if len(declared_new_paths) != 7:
         raise AssertionError(
-            "README fixture mutation proof requires exact six active program-created paths"
+            "README fixture mutation proof requires exact seven active program-created paths"
         )
     missing_paths = set(declared_new_paths[:2])
     missing_declared_inventory = TargetInventory(
@@ -5492,23 +5526,20 @@ def _work105_consumer_disposition(
         and r"ambiguous\s*=\s*" in strict_case_context
         and "historical " + "ARD" + " remains current" in strict_case_context
     )
-    strict_occurrence_control = (
-        path == "tests/test_document_strict_cutover.py"
-        and (
-            re.fullmatch(
-                r'ambiguous\s*=\s*["\']?historical ARD remains current '
-                r'sdlc/ard["\']?',
-                strict_case_context,
-            )
-            is not None
-            or re.fullmatch(
-                r'\(?\s*["\']?ard["\']?\s*,\s*'
-                r'["\']?consumer\.json["\']?\s*,\s*'
-                r'["\']?no WORK-105 token is present["\']?\s*\)?',
-                strict_case_context,
-            )
-            is not None
+    strict_occurrence_control = path == "tests/test_document_strict_cutover.py" and (
+        re.fullmatch(
+            r'ambiguous\s*=\s*["\']?historical ARD remains current '
+            r'sdlc/ard["\']?',
+            strict_case_context,
         )
+        is not None
+        or re.fullmatch(
+            r'\(?\s*["\']?ard["\']?\s*,\s*'
+            r'["\']?consumer\.json["\']?\s*,\s*'
+            r'["\']?no WORK-105 token is present["\']?\s*\)?',
+            strict_case_context,
+        )
+        is not None
     )
     if validator_occurrence_control or strict_occurrence_control:
         return (
@@ -5673,26 +5704,23 @@ def _work105_consumer_disposition(
         is not None
     )
     active_migration_compatibility_control = (
-        (
-            path == "scripts/validate-active-corpus-migrations.py"
-            and line_context is not None
-            and re.fullmatch(
-                r'LEGACY_PROGRAM_ARCHITECTURE_KEY\s*=\s*["\']ard["\']',
-                line_context.strip(),
+        path == "scripts/validate-active-corpus-migrations.py"
+        and line_context is not None
+        and re.fullmatch(
+            r'LEGACY_PROGRAM_ARCHITECTURE_KEY\s*=\s*["\']ard["\']',
+            line_context.strip(),
+        )
+        is not None
+    ) or (
+        path == "tests/test_active_corpus_migrations.py"
+        and line_context is not None
+        and (
+            '"ard": "0009"' in line_context
+            or re.search(
+                r"assertEqual\(validator\.LEGACY_PROGRAM_ARCHITECTURE_KEY,\s*[\"']ard[\"']\)",
+                line_context,
             )
             is not None
-        )
-        or (
-            path == "tests/test_active_corpus_migrations.py"
-            and line_context is not None
-            and (
-                '"ard": "0009"' in line_context
-                or re.search(
-                    r"assertEqual\(validator\.LEGACY_PROGRAM_ARCHITECTURE_KEY,\s*[\"']ard[\"']\)",
-                    line_context,
-                )
-                is not None
-            )
         )
     )
     links_fixture_control = (
@@ -5805,10 +5833,7 @@ def _work105_markdown_contexts(lines: list[str]) -> tuple[str, ...]:
                 contexts[index] = f"{header} {lines[index].strip()}"
             cursor = end
             continue
-        if (
-            not lines[cursor].strip()
-            or lines[cursor].lstrip().startswith(("#", "```"))
-        ):
+        if not lines[cursor].strip() or lines[cursor].lstrip().startswith(("#", "```")):
             cursor += 1
             continue
         end = cursor + 1
@@ -5919,8 +5944,8 @@ def _work105_base_consumer_records(
         if occurrence_count < 1:
             raise AssertionError("WORK-105 pinned consumer occurrence count is empty")
         try:
-            consumer_class, disposition, target, reason = (
-                _work105_record_disposition(occurrence_dispositions)
+            consumer_class, disposition, target, reason = _work105_record_disposition(
+                occurrence_dispositions
             )
         except AssertionError as exc:
             raise AssertionError(
@@ -6078,7 +6103,9 @@ def _work105_read_blob_batch_protocol(
         except ValueError as exc:
             raise AssertionError("WORK-105 staged blob size is malformed") from exc
         if size < 0 or size > per_blob_limit or aggregate + size > aggregate_limit:
-            raise AssertionError("WORK-105 staged blob bytes exceed their resource budget")
+            raise AssertionError(
+                "WORK-105 staged blob bytes exceed their resource budget"
+            )
         blobs_by_id[expected_id] = _work105_read_exact(stream, size)
         if stream.read(1) != b"\n":
             raise AssertionError("WORK-105 staged blob response is malformed")
@@ -6193,6 +6220,39 @@ def _work109_expected_direct_approval_adr(root: Path) -> bytes:
             "Add Spec 053 to PRD-008/ARD-0011 `programLineage`",
             "Add Spec 053 to PRD-0008/ARD-0011 `programLineage`",
         ),
+        (
+            "Spec 053 was approved directly by the human on 2026-08-08 with an "
+            "explicit\nno-separate-PRD/ARD boundary. The existing "
+            "`programLineage` contract correctly\nrequires PRD/ARD-backed "
+            "program membership and must remain unchanged, while the\n"
+            "unowned-active-component gate correctly rejects the Spec 053 "
+            "Plan/Task pair",
+            "Spec 053 was approved directly by the human on 2026-08-08, while "
+            "Spec 054 and\nSpec 055 were approved directly on 2026-08-09, each "
+            "with an explicit\nno-separate-PRD/ARD boundary. The existing "
+            "`programLineage` contract correctly requires\nPRD/ARD-backed "
+            "program membership and must remain unchanged, while the\n"
+            "unowned-active-component gate correctly rejects either active "
+            "Plan/Task pair",
+        ),
+        (
+            "Spec 053 and its exact WERPC Plan/Task pair gain deterministic "
+            "registry\nownership while remaining independent from the Spec 052 "
+            "program component.\nValidators reject missing approval fields, "
+            "identity overlap, wrong owners or\nstates, incomplete reciprocal "
+            "evidence, foreign-Spec links, and extra active\ncomponent nodes. "
+            "Terminal standalone relations can support later archival\n"
+            "eligibility without false upstream authority.",
+            "Spec 053, Spec 054, Spec 055, Spec 056, Spec 057, Spec 058, "
+            "Spec 059, and Spec 060, with each exact Plan/Task pair, gain\n"
+            "deterministic registry ownership without a fabricated program "
+            "component. Validators accept\nan exact ISO-date direct-approval "
+            "statement, reject invalid calendar dates,\nmissing approval "
+            "fields, identity overlap, wrong owners or states, incomplete\n"
+            "reciprocal evidence, foreign-Spec links, and extra active "
+            "component nodes.\nTerminal standalone relations can support later "
+            "archival eligibility without\nfalse upstream authority.",
+        ),
         (WORK109_ADR_BASE_TRACE_ROW, WORK109_ADR_CURRENT_TRACE_ROWS),
     )
     for old, new in replacements:
@@ -6255,17 +6315,14 @@ def _work109_direct_approval_history_transition(
         raise AssertionError("WORK-109 registry authority is not UTF-8") from exc
     registry = _work109_parse_unique_json(registry_text)
     standalone = (
-        registry.get("standaloneExecutions")
-        if isinstance(registry, Mapping)
-        else None
+        registry.get("standaloneExecutions") if isinstance(registry, Mapping) else None
     )
     if (
         not isinstance(standalone, list)
         or not standalone
         or standalone[-1] != WORK109_STANDALONE_ROW
         or sum(
-            isinstance(row, Mapping) and row.get("spec") == "0054"
-            for row in standalone
+            isinstance(row, Mapping) and row.get("spec") == "0054" for row in standalone
         )
         != 1
     ):
@@ -6321,10 +6378,7 @@ def _work105_post_state(
             completed_history = raw == pinned or (
                 _work108_without_outer_artifact_id(relative, raw) == pinned
             )
-            if (
-                not completed_history
-                and relative == WORK109_DIRECT_APPROVAL_ADR_PATH
-            ):
+            if not completed_history and relative == WORK109_DIRECT_APPROVAL_ADR_PATH:
                 completed_history = _work109_direct_approval_history_transition(
                     root,
                     raw,
@@ -6404,13 +6458,19 @@ def _assert_work105_consumer_disposition(root: Path, fixture: dict[str, Any]) ->
         raise AssertionError("WORK-105 consumer-disposition base commit differs")
     expected_patterns = tuple(copy.deepcopy(WORK105_CONSUMER_PATTERNS))
     actual_patterns = section["patterns"]
-    if not isinstance(actual_patterns, list) or tuple(actual_patterns) != expected_patterns:
+    if (
+        not isinstance(actual_patterns, list)
+        or tuple(actual_patterns) != expected_patterns
+    ):
         raise AssertionError("WORK-105 consumer-disposition patterns differ")
     records = section["records"]
     if (
         not isinstance(records, list)
         or not records
-        or any(not isinstance(record, dict) or set(record) != WORK105_CONSUMER_RECORD_KEYS for record in records)
+        or any(
+            not isinstance(record, dict) or set(record) != WORK105_CONSUMER_RECORD_KEYS
+            for record in records
+        )
     ):
         raise AssertionError("WORK-105 consumer-disposition records differ")
     generated = _work105_base_consumer_records(root, expected_patterns)
@@ -6424,7 +6484,9 @@ def _assert_work105_consumer_disposition(root: Path, fixture: dict[str, Any]) ->
         "authoredApiSpec": {"instances": 0, "live": 0, "unclassified": 0},
     }
     if section["postState"] != expected_post_state:
-        raise AssertionError("WORK-105 consumer-disposition declared post-state differs")
+        raise AssertionError(
+            "WORK-105 consumer-disposition declared post-state differs"
+        )
     actual_post_state = _work105_post_state(root, expected_patterns)
     if actual_post_state != expected_post_state:
         raise AssertionError(
@@ -6529,7 +6591,9 @@ def _work106_derive_artifact_identity(
         body = tombstone.group("body")
         for type_token in sorted(allowed_types, key=len, reverse=True):
             prefix = type_token.lower() + "-"
-            if body.startswith(prefix) and re.fullmatch(slug, body.removeprefix(prefix)):
+            if body.startswith(prefix) and re.fullmatch(
+                slug, body.removeprefix(prefix)
+            ):
                 return Work106ArtifactIdentity(
                     f"TMB-{type_token}-{body.removeprefix(prefix).upper()}",
                     record_kind="tombstone",
@@ -6557,9 +6621,15 @@ def _work106_artifact_diagnostics(
                 diagnostics.append(f"ARTIFACT-ID-MISSING:{path}")
         elif not isinstance(declared, str) or declared != identity.artifact_id:
             diagnostics.append(f"ARTIFACT-ID-PATH:{path}")
-        if identity.change_id is not None and metadata.get("change_id") != identity.change_id:
+        if (
+            identity.change_id is not None
+            and metadata.get("change_id") != identity.change_id
+        ):
             diagnostics.append(f"ARTIFACT-CHANGE-ID:{path}")
-        if identity.migration_id is not None and metadata.get("migration_id") != identity.migration_id:
+        if (
+            identity.migration_id is not None
+            and metadata.get("migration_id") != identity.migration_id
+        ):
             diagnostics.append(f"ARTIFACT-MIGRATION-ID:{path}")
     for artifact_id, paths in owners.items():
         if len(paths) > 1:
@@ -6585,9 +6655,13 @@ def _work106_legacy_tombstone_token(legacy_path: str, source_blob: str) -> str:
         raise ValueError("legacy path is not canonical")
     if WORK106_OBJECT_ID.fullmatch(source_blob) is None:
         raise ValueError("source blob is not a lowercase Git object ID")
-    digest = hashlib.sha256(
-        legacy_path.encode("utf-8") + b"\0" + source_blob.encode("ascii")
-    ).hexdigest().upper()
+    digest = (
+        hashlib.sha256(
+            legacy_path.encode("utf-8") + b"\0" + source_blob.encode("ascii")
+        )
+        .hexdigest()
+        .upper()
+    )
     return f"LEGACY-{digest}"
 
 
@@ -6624,16 +6698,19 @@ def _work106_tombstone_artifact_id(
 def _work106_is_canonical_artifact_id(value: object) -> bool:
     if not isinstance(value, str):
         return False
-    return re.fullmatch(
-        r"(?:PRD|SRS|AD|ADR|SPEC|AGENT-DESIGN|DATA-MODEL|TESTS|PLAN|TASK)-[0-9]{4}"
-        r"|IFC-[0-9]{4}-[A-Z0-9]+(?:-[A-Z0-9]+)*"
-        r"|(?:GUIDE|POLICY|RUNBOOK)-[0-9]{4}"
-        r"|(?:INC|POSTMORTEM)-[0-9]{4}-[0-9]{4}"
-        r"|(?:PLAN|TASK)-CHG-[0-9]{4}"
-        r"|MIG-[0-9]{4}"
-        r"|TMB-[A-Z]+(?:-[A-Z]+)*-[A-Z0-9]+(?:-[A-Z0-9]+)*",
-        value,
-    ) is not None
+    return (
+        re.fullmatch(
+            r"(?:PRD|SRS|AD|ADR|SPEC|AGENT-DESIGN|DATA-MODEL|TESTS|PLAN|TASK)-[0-9]{4}"
+            r"|IFC-[0-9]{4}-[A-Z0-9]+(?:-[A-Z0-9]+)*"
+            r"|(?:GUIDE|POLICY|RUNBOOK)-[0-9]{4}"
+            r"|(?:INC|POSTMORTEM)-[0-9]{4}-[0-9]{4}"
+            r"|(?:PLAN|TASK)-CHG-[0-9]{4}"
+            r"|MIG-[0-9]{4}"
+            r"|TMB-[A-Z]+(?:-[A-Z]+)*-[A-Z0-9]+(?:-[A-Z0-9]+)*",
+            value,
+        )
+        is not None
+    )
 
 
 def _work106_ledger_diagnostics(
@@ -6651,15 +6728,25 @@ def _work106_ledger_diagnostics(
             diagnostics.append(f"LEDGER-FIELDS:{label}")
             continue
         migration_id = row["migration_id"]
-        if row["schema_version"] != 1 or not isinstance(migration_id, str) or WORK106_MIGRATION_ID.fullmatch(migration_id) is None:
+        if (
+            row["schema_version"] != 1
+            or not isinstance(migration_id, str)
+            or WORK106_MIGRATION_ID.fullmatch(migration_id) is None
+        ):
             diagnostics.append(f"LEDGER-SCHEMA:{label}")
         legacy_path = row["legacy_path"]
-        if not isinstance(legacy_path, str) or not _work106_canonical_legacy_path(legacy_path):
+        if not isinstance(legacy_path, str) or not _work106_canonical_legacy_path(
+            legacy_path
+        ):
             diagnostics.append(f"LEDGER-LEGACY-PATH:{label}")
         else:
             legacy_owners.setdefault(legacy_path, []).append(index)
         stable_path = row["stable_path"]
-        identity = _work106_derive_artifact_identity(stable_path) if isinstance(stable_path, str) else None
+        identity = (
+            _work106_derive_artifact_identity(stable_path)
+            if isinstance(stable_path, str)
+            else None
+        )
         if identity is None:
             diagnostics.append(f"LEDGER-STABLE-PATH:{label}")
         elif row["artifact_id"] != identity.artifact_id:
@@ -6677,9 +6764,15 @@ def _work106_ledger_diagnostics(
             "legacy_envelope_blob",
             "source_blob",
         ):
-            if not isinstance(row[field], str) or WORK106_OBJECT_ID.fullmatch(row[field]) is None:
+            if (
+                not isinstance(row[field], str)
+                or WORK106_OBJECT_ID.fullmatch(row[field]) is None
+            ):
                 diagnostics.append(f"LEDGER-GIT-OBJECT:{label}:{field}")
-        if not isinstance(row["content_sha256"], str) or WORK106_CONTENT_DIGEST.fullmatch(row["content_sha256"]) is None:
+        if (
+            not isinstance(row["content_sha256"], str)
+            or WORK106_CONTENT_DIGEST.fullmatch(row["content_sha256"]) is None
+        ):
             diagnostics.append(f"LEDGER-CONTENT-DIGEST:{label}")
         if not isinstance(row["reason"], str) or not row["reason"].strip():
             diagnostics.append(f"LEDGER-REASON:{label}")
@@ -6695,12 +6788,18 @@ def _work106_ledger_diagnostics(
             ):
                 diagnostics.append(f"LEDGER-ACTION-REPLACEMENT:{label}")
         elif action == "deleted":
-            if identity is None or identity.record_kind != "tombstone" or replacement is not None:
+            if (
+                identity is None
+                or identity.record_kind != "tombstone"
+                or replacement is not None
+            ):
                 diagnostics.append(f"LEDGER-ACTION-REPLACEMENT:{label}")
         else:
             diagnostics.append(f"LEDGER-ACTION:{label}")
         if identity is not None and identity.change_id is not None:
-            change_leaves.setdefault(identity.change_id, set()).add(identity.record_kind or "")
+            change_leaves.setdefault(identity.change_id, set()).add(
+                identity.record_kind or ""
+            )
         if identity is not None and identity.record_kind == "tombstone":
             stage = stable_path.split("/", 4)[3]
             tombstone_stages[stage] = tombstone_stages.get(stage, 0) + 1
@@ -6715,8 +6814,7 @@ def _work106_ledger_diagnostics(
             diagnostics.append(f"LEDGER-ARTIFACT-ID-DUPLICATE:{artifact_id}")
     if current:
         if len(rows) != 93 or any(
-            not isinstance(row, Mapping) or row.get("action") != "moved"
-            for row in rows
+            not isinstance(row, Mapping) or row.get("action") != "moved" for row in rows
         ):
             diagnostics.append("LEDGER-CURRENT-CENSUS")
         pair_counts = {
@@ -6822,7 +6920,9 @@ def _work106_synthetic_current_ledger() -> tuple[dict[str, Any], ...]:
             leaves = leaves[1:]
         for leaf, prefix, kind in leaves:
             path = f"docs/98.archive/changes/chg-{change:04d}-record-{change:04d}/{leaf}.md"
-            rows.append(_work106_ledger_row(ordinal, path, f"{prefix}-CHG-{change:04d}", kind))
+            rows.append(
+                _work106_ledger_row(ordinal, path, f"{prefix}-CHG-{change:04d}", kind)
+            )
             ordinal += 1
     tombstone_groups = (
         ("01.requirements", "prd", 3),
@@ -6872,16 +6972,23 @@ def _assert_work106_transition_contract(
         identity = _work106_derive_artifact_identity(case["path"])
         if identity is None or identity.artifact_id != case.get("artifactId"):
             raise AssertionError("WORK-106 artifact identity fixture differs")
-        if identity.change_id != case.get("changeId") or identity.migration_id != case.get("migrationId"):
+        if identity.change_id != case.get(
+            "changeId"
+        ) or identity.migration_id != case.get("migrationId"):
             raise AssertionError("WORK-106 artifact identity fixture differs")
-    if not isinstance(ledger_fixture, dict) or set(ledger_fixture) != {"row", "negativeMutations"}:
+    if not isinstance(ledger_fixture, dict) or set(ledger_fixture) != {
+        "row",
+        "negativeMutations",
+    }:
         raise AssertionError("WORK-106 migration ledger fixture differs")
     row = ledger_fixture["row"]
     mutations = ledger_fixture["negativeMutations"]
     if _work106_ledger_diagnostics((row,), current=False):
         raise AssertionError("WORK-106 migration ledger positive fixture differs")
     if not isinstance(mutations, list) or any(
-        not _work106_ledger_diagnostics(_work106_mutated_ledger_rows(row, mutation), current=False)
+        not _work106_ledger_diagnostics(
+            _work106_mutated_ledger_rows(row, mutation), current=False
+        )
         for mutation in mutations
     ):
         raise AssertionError("WORK-106 migration ledger negative fixture differs")
@@ -7178,9 +7285,7 @@ def _load_migration_tool(root: Path) -> Any:
     return module
 
 
-def _classify_retired_route_hit(
-    raw_registry: Any, path: PurePosixPath
-) -> str | None:
+def _classify_retired_route_hit(raw_registry: Any, path: PurePosixPath) -> str | None:
     """Return one explicit immutable evidence profile, or fail closed."""
     if not isinstance(raw_registry, dict):
         return None
@@ -7200,7 +7305,11 @@ def _classify_retired_route_hit(
             "stage90/immutable-retired-route-evidence": "docs/90.references/",
             "stage98/immutable-retired-route-evidence": "docs/98.archive/",
         }.get(profile_id)
-        if expected_prefix is None or not isinstance(profile.get("paths"), list) or not isinstance(profile.get("routes"), list):
+        if (
+            expected_prefix is None
+            or not isinstance(profile.get("paths"), list)
+            or not isinstance(profile.get("routes"), list)
+        ):
             return None
         selected = path_text in profile["paths"]
         for route in profile["routes"]:
@@ -7230,7 +7339,9 @@ def _terminal_route_contract_diagnostics(
     manifest_path = PurePosixPath("scripts/document-taxonomy-migration.json")
     if (root / manifest_path).exists():
         diagnostics.append("TERMINAL-MIGRATION-FILE")
-    profiles = raw_registry.get("profiles", []) if isinstance(raw_registry, dict) else []
+    profiles = (
+        raw_registry.get("profiles", []) if isinstance(raw_registry, dict) else []
+    )
     if any(
         isinstance(profile, dict)
         and profile.get("id") == "native/document-migration-manifest"
@@ -7249,7 +7360,10 @@ def _terminal_route_contract_diagnostics(
     ):
         diagnostics.append("TERMINAL-MIGRATION-ROUTE")
     definitions = raw_schema.get("$defs", {}) if isinstance(raw_schema, dict) else {}
-    if any(name in definitions for name in ("documentMigrationManifest", "documentMigrationEntry")):
+    if any(
+        name in definitions
+        for name in ("documentMigrationManifest", "documentMigrationEntry")
+    ):
         diagnostics.append("TERMINAL-MIGRATION-SCHEMA")
     for path in retired_route_hits:
         if _classify_retired_route_hit(raw_registry, path) is None:
@@ -7297,8 +7411,7 @@ def _work109_ledger_rows(contents: bytes) -> tuple[Mapping[str, Any], ...]:
             or action not in action_counts
             or row.get("source_commit") != WORK109_SOURCE_COMMIT
             or WORK109_OBJECT_ID.fullmatch(str(row.get("source_blob"))) is None
-            or WORK109_CONTENT_DIGEST.fullmatch(str(row.get("content_sha256")))
-            is None
+            or WORK109_CONTENT_DIGEST.fullmatch(str(row.get("content_sha256"))) is None
             or not isinstance(row.get("reason"), str)
             or not row["reason"].strip()
         ):
@@ -7456,7 +7569,9 @@ def _work109_transition_manifest_projection(
                 )
             source = row.get("source")
             if not isinstance(source, str) or (root / source).exists():
-                raise AssertionError("transition manifest source endpoint is not retired")
+                raise AssertionError(
+                    "transition manifest source endpoint is not retired"
+                )
             if (root / legacy_target).exists():
                 raise AssertionError("transition manifest legacy target remains active")
             stable_path = root / stable_target
@@ -7496,7 +7611,9 @@ def _work109_transition_manifest_projection(
         or len(work_units) != 41
         or any(names != {"plan", "tasks"} for names in work_units.values())
     ):
-        raise AssertionError("transition manifest projected work-unit inventory differs")
+        raise AssertionError(
+            "transition manifest projected work-unit inventory differs"
+        )
     return tuple(projected)
 
 
@@ -7539,7 +7656,9 @@ def _assert_route_state(root: Path, registry: Any, requested: str | None) -> Non
         tool = _load_migration_tool(root)
         document = tool.load_manifest_document(root / manifest_path)
         if document.source_commit != tool.EXPECTED_SOURCE_COMMIT:
-            raise AssertionError("migration manifest source commit is not the reviewed base")
+            raise AssertionError(
+                "migration manifest source commit is not the reviewed base"
+            )
         entries = document.entries
         projected_entries = _work109_transition_manifest_projection(
             root,
@@ -7551,7 +7670,9 @@ def _assert_route_state(root: Path, registry: Any, requested: str | None) -> Non
             entries
         )
         if diagnostics != expected_legacy_diagnostics:
-            raise AssertionError("migration manifest invalid: " + ", ".join(diagnostics))
+            raise AssertionError(
+                "migration manifest invalid: " + ", ".join(diagnostics)
+            )
         tool.validate_counts(
             move_count=sum(
                 row["disposition"] == "move-current" for row in projected_entries

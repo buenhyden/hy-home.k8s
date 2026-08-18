@@ -16507,7 +16507,7 @@ newly attained state.
   `active`-to-`done` transition per family, and zero `archived` use still holds.
   Neither limitation carries into a successor cycle.
 - **Reusable lesson: label unverified counts as unverified.** The research
-  package verbally reported nine ARD, eighteen ADR, and ten Runbook instances;
+  package verbally reported nine AD, eighteen ADR, and ten Runbook instances;
   direct enumeration returns eight, seventeen, and nine, each inflated by one
   because `README.md` was counted as a dated instance. Those numbers never
   reached the repository only because the cycle contract required them to be

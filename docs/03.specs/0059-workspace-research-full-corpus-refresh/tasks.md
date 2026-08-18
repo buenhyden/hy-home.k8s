@@ -42,7 +42,7 @@ through `036`, with zero duplicate identifiers and zero numbering gaps.
 
 The twenty-three human request lines expand onto exactly those thirty-six
 owners. Two request-line pairs are duplicates of each other: the line naming the
-SDLC document set and the line naming `SPEC, TASK, PLAN, PRD, ARD, ADR` resolve
+SDLC document set and the line naming `SPEC, TASK, PLAN, PRD, AD, ADR` resolve
 to the same six owners, and the line naming the operations document set and the
 line naming `guide, incident, postmortem, policy, release, runbook` resolve to
 the same six owners. Two further lines each expand onto more than one owner: the
@@ -284,7 +284,7 @@ These findings do not map onto any of the thirty-six owner rows, so under
   `archived` use in any of the three families still holds, so no pack claim is
   contradicted.
 - **One reporting defect was found and did not reach the repository.** The
-  `WRFC-004` package verbally reported nine ARD, eighteen ADR, and ten Runbook
+  `WRFC-004` package verbally reported nine AD, eighteen ADR, and ten Runbook
   dated instances. Direct enumeration returns eight, seventeen, and nine; each
   count was inflated by one because `README.md` was counted as a dated instance.
   Because `C-WRFC-002` required those tallies to be recorded as not re-verified

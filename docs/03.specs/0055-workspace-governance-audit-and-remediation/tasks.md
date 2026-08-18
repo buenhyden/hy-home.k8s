@@ -63,7 +63,7 @@ limitations, logical commits, and unresolved blockers.
 - **Forbidden Paths**: every existing `docs/98.archive/**` payload, digest,
   envelope, and record; unrelated user changes; user/global provider config;
   secret values; remote or live resources.
-- **Approval Required**: any change to approved PRD/ARD/accepted ADR/operations
+- **Approval Required**: any change to approved PRD/AD/accepted ADR/operations
   policy, ambiguous architecture or authority, live/provider/hosted/remote
   action, credential handling, destructive external action, push, PR, or merge.
 - **Static Validation**: exact work-package checks plus strict registry,

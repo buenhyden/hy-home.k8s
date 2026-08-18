@@ -47,7 +47,7 @@ to its reciprocal
 [Task](tasks.md).
 The typed relation is governed by
 [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md),
-and no separate PRD or ARD program authority is asserted.
+and no separate PRD or AD program authority is asserted.
 
 ### Global Constraints
 
@@ -222,7 +222,7 @@ Spec/Plan/Task ownership, Task rows PDRR-000..007, and durable activation proof.
   `python3 scripts/validate-links-and-owners.py --root . --mode strict`. Record
   the exact PASS or RED; do not fabricate failure when draft state is valid.
 - [x] **Step 3: Apply reciprocal active state.** Change Spec/Plan to `active`;
-  add direct-approval and no-PRD/ARD statements; add rendered Spec/Plan/Task/ADR
+  add direct-approval and no-PRD/AD statements; add rendered Spec/Plan/Task/ADR
   links; activate Task; update three indexes and ADR-0022 with the fourth typed
   relation; append this sorted registry object:
 
@@ -232,7 +232,7 @@ Spec/Plan/Task ownership, Task rows PDRR-000..007, and durable activation proof.
     "plan": "docs/04.execution/plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md",
     "task": "docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md",
     "state": "active",
-    "reason": "Direct human-approved Partial/DEFER closed-ledger incremental refresh of the existing 2026-08-08 WER pack with bounded read-only GitHub metadata evidence and no separate PRD/ARD authority",
+    "reason": "Direct human-approved Partial/DEFER closed-ledger incremental refresh of the existing 2026-08-08 WER pack with bounded read-only GitHub metadata evidence and no separate PRD/AD authority",
     "decision": "0022",
     "approvalMode": "spec-body-record"
   }
@@ -245,7 +245,7 @@ Spec/Plan/Task ownership, Task rows PDRR-000..007, and durable activation proof.
   strict, links strict, `git diff --check`, and cached diff check. Expected:
   exit 0, zero uncovered/ambiguous paths, zero Markdown violations.
 - [x] **Step 6: Obtain content and quality approval.** Review approval wording,
-  no-PRD/ARD boundary, links, sorted registry shape, lifecycle equality, exact
+  no-PRD/AD boundary, links, sorted registry shape, lifecycle equality, exact
   path scope, and no research start. Fix all Critical/Important findings.
 - [x] **Step 7: Run the logical work-package completion lane and commit.** Use
   the exact affected/staged/plain-pre-commit procedure under Verification Plan,

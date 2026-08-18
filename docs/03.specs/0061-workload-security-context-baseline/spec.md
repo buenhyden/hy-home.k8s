@@ -196,7 +196,7 @@ python3 scripts/validate-affected-surfaces.py --root .
 
 ## Traceability
 
-This Spec has no PRD or ARD. Its authority is the direct human approval recorded
+This Spec has no PRD or AD. Its authority is the direct human approval recorded
 in `## Overview`, registered through the `standaloneExecutions` entry in
 `docs/99.templates/support/document-profiles.json` and the lineage row in
 ADR 0022.

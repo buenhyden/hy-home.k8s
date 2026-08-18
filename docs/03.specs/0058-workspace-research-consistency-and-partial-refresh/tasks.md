@@ -58,7 +58,7 @@ Task 7 creates the three new owner rows; this ledger only records them.
 | Infrastructure                                   | `REQ-WERPC-009` | refresh-partial    |
 | SDLC                                             | `REQ-WERPC-010` | reconfirm-verified |
 | PRD                                              | `REQ-WERPC-011` | reconfirm-verified |
-| ARD                                              | `REQ-WERPC-012` | reconfirm-verified |
+| AD                                              | `REQ-WERPC-012` | reconfirm-verified |
 | ADR                                              | `REQ-WERPC-013` | reconfirm-verified |
 | Guide                                            | `REQ-WERPC-014` | refresh-partial    |
 | Incident                                         | `REQ-WERPC-015` | reconfirm-verified |

@@ -101,7 +101,7 @@ their Spec/index owners, and the exact ADR-0022 standalone relation atomically.
 
 - The pack contains one README plus twelve existing references.
 - The README has 32 sequential `REQ-WERPC-*` rows.
-- PRD, ARD, Policy, and Runbook currently rely primarily on local
+- PRD, AD, Policy, and Runbook currently rely primarily on local
   profile/template/validator evidence.
 - Release currently uses SemVer plus a verified local profile/template absence
   result; the report distinguishes a broader release record from release notes
@@ -114,7 +114,7 @@ their Spec/index owners, and the exact ADR-0022 standalone relation atomically.
 
 ### Canonical workspace comparison owners
 
-- PRD and ARD profile, lifecycle, and template facts:
+- PRD and AD profile, lifecycle, and template facts:
   `docs/99.templates/support/document-profiles.json` and
   `docs/99.templates/templates/sdlc/**`.
 - Current document decisions, including Guide taxonomy and the narrow
@@ -137,7 +137,7 @@ Workers must verify the exact current official pages before accepting any
 claim. The candidate owners are:
 
 - ISO/IEC/IEEE requirements-engineering and architecture-description
-  standards for PRD/ARD semantics;
+  standards for PRD/AD semantics;
 - NIST CSF, SP 800-53, SSDF, and other directly relevant official guidance for
   policy, assurance, release evidence, and control verification;
 - Google SRE official books/workbook for repeatable operational procedure,
@@ -161,7 +161,7 @@ that directly supports the claim.
   approval and without changing `programLineage`.
 - Produce a complete, reviewable admission result for every original requested
   category plus the newly explicit Verification/Validation request.
-- Strengthen admitted PRD, ARD, Policy, Runbook, and Release semantics with
+- Strengthen admitted PRD, AD, Policy, Runbook, and Release semantics with
   official external evidence while preserving local facts and accepted
   decisions.
 - Add explicit, externally sourced Verification/Validation definitions and a
@@ -253,7 +253,7 @@ Use `apply_patch` to:
 
 1. set Spec, Plan, and Task frontmatter to `status: active`;
 1. replace pending Plan/Task text in Spec 055 with reciprocal rendered links;
-1. record the exact direct-human approval and no-separate-PRD/ARD standalone
+1. record the exact direct-human approval and no-separate-PRD/AD standalone
    lifecycle statements in Spec 055;
 1. add the reciprocal Spec 055 traceability row to ADR-0022;
 1. mark all three README index rows `Active`;
@@ -265,7 +265,7 @@ Use `apply_patch` to:
   "plan": "docs/04.execution/plans/2026-08-09-workspace-engineering-gap-only-refresh.md",
   "task": "docs/04.execution/tasks/2026-08-09-workspace-engineering-gap-only-refresh.md",
   "state": "active",
-  "reason": "Direct human-approved gap-only external-source refresh of the existing 2026-08-08 WER pack without separate PRD/ARD authority",
+  "reason": "Direct human-approved gap-only external-source refresh of the existing 2026-08-08 WER pack without separate PRD/AD authority",
   "decision": "0022",
   "approvalMode": "spec-body-record"
 }
@@ -419,7 +419,7 @@ python3 /tmp/werg-gap-refresh-check.py evidence --root . --baseline-ref "$WERG_A
 
 The command emits exact missing field and owner identifiers while showing:
 
-- PRD, ARD, Policy, and Runbook README rows use local-only source wording;
+- PRD, AD, Policy, and Runbook README rows use local-only source wording;
 - Release uses SemVer plus local absence evidence but no broader approval and
   evidence source; and
 - the QA owner has no externally sourced definition table whose columns are

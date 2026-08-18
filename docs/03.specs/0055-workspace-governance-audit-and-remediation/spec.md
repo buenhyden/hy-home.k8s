@@ -40,7 +40,7 @@ and
 [Task](tasks.md).
 The active direct-approval standalone execution relation is governed by
 [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md);
-No separate PRD or ARD program authority is asserted.
+No separate PRD or AD program authority is asserted.
 
 ## Strategic Boundaries & Non-goals
 
@@ -78,7 +78,7 @@ No separate PRD or ARD program authority is asserted.
   workflows, scripts, agents, memory, or security controls.
 - A file is not Legacy, Deprecated, or one-shot merely because its name,
   fixture, validator, or evidence text contains one of those words.
-- No approved PRD, ARD, ADR, Spec, or operations policy is silently overturned.
+- No approved PRD, AD, ADR, Spec, or operations policy is silently overturned.
   A genuine decision conflict becomes an explicit blocker and human escalation.
 - No live Kubernetes, Argo CD, Vault, ESO, cloud, provider-runtime, hosted-CI,
   remote, credential-bearing, secret-reading, push, merge, or publication
@@ -418,7 +418,7 @@ claims. Presence alone is not coverage.
 
 | Failure mode | Safe fallback | Human escalation condition |
 | --- | --- | --- |
-| Existing approved documents mandate incompatible owners or outcomes | Preserve both unchanged, mark `Conflict`, and stop that remediation. | The conflict requires changing a PRD, ARD, accepted ADR, active Spec, or operations policy. |
+| Existing approved documents mandate incompatible owners or outcomes | Preserve both unchanged, mark `Conflict`, and stop that remediation. | The conflict requires changing a PRD, AD, accepted ADR, active Spec, or operations policy. |
 | RIA cannot represent the new Current transition without weakening snapshot integrity | Keep the prior Current pointer and produce the new pack as non-current draft evidence. | A schema or lifecycle decision is required rather than a bounded projection extension. |
 | Legacy/Deprecated/one-shot candidate lacks complete consumer proof | Retain the file with `DEFER` and record the missing evidence. | Deletion is required for another load-bearing task or current security property. |
 | Dormant formatter or QA control has unsafe overlap | Retain it as dormant with an explicit non-coverage statement until a decision is approved. | Activation or removal changes a protected workflow or broad authored corpus. |
@@ -535,7 +535,7 @@ live results remain `DEFER` unless independently observed and approved.
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
-| N/A — direct human approval and Spec approval on 2026-08-09 authorize this standalone design and active execution; no separate PRD/ARD program owner is asserted | VAL-WGA-001 | Exact ten-file pack and 30-row coverage audit. |
+| N/A — direct human approval and Spec approval on 2026-08-09 authorize this standalone design and active execution; no separate PRD/AD program owner is asserted | VAL-WGA-001 | Exact ten-file pack and 30-row coverage audit. |
 | N/A — the same direct approval governs this standalone design | VAL-WGA-002 | Finding-field completeness audit and independent content review. |
 | N/A — the same direct approval governs this standalone design | VAL-WGA-003 | Purpose, authority, operating-contract, and canonical-owner evidence. |
 | N/A — the same direct approval governs this standalone design | VAL-WGA-004 | Registry, template/source, Markdown profile, and SDLC evidence. |

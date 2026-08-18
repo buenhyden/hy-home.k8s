@@ -191,7 +191,7 @@ alternatives, decision, consequences, and supersession under stable
 decision log and links reciprocally to its successor; it is not deleted or
 moved to Archive.
 
-`docs/02.architecture/requirements/` is not an active terminal owner. Any
+The retired Stage 02 requirements route is not an active terminal owner. Any
 remaining record is merged into a Requirement Package, converted to an
 Architecture Description, or dispositioned as historical evidence.
 

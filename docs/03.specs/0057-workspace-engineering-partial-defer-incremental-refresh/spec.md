@@ -39,7 +39,7 @@ and
 [Task](tasks.md).
 The active direct-approval standalone execution relation is governed by
 [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md);
-no separate PRD or ARD program authority is asserted.
+no separate PRD or AD program authority is asserted.
 
 ## Strategic Boundaries & Non-goals
 
@@ -327,7 +327,7 @@ recorded time. Their failure proves only that the query was unavailable.
 ## Traceability
 
 This draft is a research-only design requested directly by the human. It does
-not create a PRD or ARD, activate an execution Plan, or authorize external
+not create a PRD or AD, activate an execution Plan, or authorize external
 research until the written Spec is separately approved. After approval, a
 reciprocal Plan and Task may be authored under the repository's standalone
 execution rules.

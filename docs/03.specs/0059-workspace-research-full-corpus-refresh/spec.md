@@ -15,7 +15,7 @@ This specification designs the fifth refresh cycle over the existing
 [`2026-08-08-wer`](../../90.references/research/2026-08-08-wer/README.md)
 research pack. The direct human request enumerated twenty-three research
 topics. Because several request lines name more than one document family — one
-line names Spec, Task, Plan, PRD, ARD, and ADR, another names six operations
+line names Spec, Task, Plan, PRD, AD, and ADR, another names six operations
 document types — those twenty-three lines expand onto the thirty-six
 `REQ-WERPC` owner rows the pack already registers. Every request line maps onto
 an existing owner, so this cycle creates no new research pack, no new topic
@@ -383,7 +383,7 @@ results are evidence of no regression, not of a newly attained state.
 
 This Spec is a research-and-refresh design requested directly by the human, who
 approved full-corpus scope and the full Spec/Plan/Task lifecycle before
-authoring. It creates no PRD or ARD and authorizes no live, hosted, or
+authoring. It creates no PRD or AD and authorizes no live, hosted, or
 provider-runtime observation. It is the sixth typed standalone-execution relation
 under ADR 0022, with a reciprocal
 [Plan](plan.md)

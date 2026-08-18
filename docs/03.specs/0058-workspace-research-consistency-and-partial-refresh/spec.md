@@ -22,7 +22,7 @@ The direct human request enumerated twenty-three research topics. All but three
 map onto an existing `REQ-WERPC` owner in the active pack, so this cycle
 creates no new research pack and no new topic report. Because several request
 lines name more than one document-family or document-type owner — one line
-names the Spec, Task, Plan, PRD, ARD, and ADR families, another names six
+names the Spec, Task, Plan, PRD, AD, and ADR families, another names six
 operations document types — the twenty-three request lines expand onto
 thirty-six owner rows in the topic ledger. It refreshes and reconciles what
 the pack already owns.
@@ -342,7 +342,7 @@ proves only that the fetch was unavailable, never that a control is absent.
 
 This Spec is a research-and-reconciliation design requested directly by the
 human, who approved the combined workstream and the two deletion targets before
-authoring. It creates no PRD or ARD, activates no execution Plan, and
+authoring. It creates no PRD or AD, activates no execution Plan, and
 authorizes no external research until the written Spec is separately approved.
 After approval, a reciprocal Plan and Task are authored under the repository's
 standalone execution rules.

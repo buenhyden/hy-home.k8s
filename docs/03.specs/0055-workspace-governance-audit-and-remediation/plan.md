@@ -110,7 +110,7 @@ it as a documented `DEFER`. Presence is not enforcement evidence.
 
 [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
 governs the direct-approval relation for this exact Spec/Plan/Task pair. No PRD
-or ARD authority is asserted by this Plan.
+or AD authority is asserted by this Plan.
 
 ## Goals & In-Scope
 
@@ -137,7 +137,7 @@ or ARD authority is asserted by this Plan.
   `validator` as deletion evidence.
 - Creating a new machine contract when an existing RIA, document-profile, or
   validation-surface interface can express the invariant.
-- Changing approved PRD, ARD, accepted ADR, active Spec, operations policy, or
+- Changing approved PRD, AD, accepted ADR, active Spec, operations policy, or
   permission model without a separate human decision.
 - Claiming provider discovery, authentication, model resolution, hosted run,
   cluster state, GitOps convergence, Vault/ESO behavior, or deployment
@@ -351,7 +351,7 @@ progress evidence.
 **Files:** `spec-driven-sdlc-documentation-and-templates.md`, README coverage,
 roadmap/ledger rows, Task and progress evidence.
 
-- [x] Inventory Stage 01-05 routes, PRD/ARD/ADR/Spec/Plan/Task/Guide/Incident/
+- [x] Inventory Stage 01-05 routes, PRD/AD/ADR/Spec/Plan/Task/Guide/Incident/
   Postmortem/Policy/Release/Runbook roles, lifecycle rules, indexes, and owners.
 - [x] Compare document profiles, schema, templates, source/template parity,
   README rules, integration guides, Diataxis routing, and generated documents.

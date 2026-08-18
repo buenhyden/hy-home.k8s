@@ -235,7 +235,7 @@ git diff --check
 
 This Spec is a bounded remediation design requested directly by the human, who
 approved the scope and then confirmed the concrete change set before any manifest
-was edited. It creates no PRD or ARD. It is the seventh typed
+was edited. It creates no PRD or AD. It is the seventh typed
 standalone-execution relation under ADR 0022, with a reciprocal
 [Plan](plan.md)
 and [Task](tasks.md).
