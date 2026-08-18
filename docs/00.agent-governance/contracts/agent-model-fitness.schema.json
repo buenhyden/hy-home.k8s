@@ -37,7 +37,7 @@
       "const": "1.1.0"
     },
     "ownerSpec": {
-      "const": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md"
+      "const": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md"
     },
     "contractMode": {
       "const": "repository-static-fitness-readiness"
@@ -153,6 +153,8 @@
         "providerRuntimeEvidenceAuthority",
         "providerEvidenceGranularity",
         "roleSpecificRuntimeEvidence",
+        "capabilityTierAuthority",
+        "harnessCapabilityTierUse",
         "harnessObservationRef",
         "harnessObservationUse",
         "harnessProviderModelAuthority"
@@ -166,6 +168,12 @@
         },
         "roleSpecificRuntimeEvidence": {
           "const": "DEFER"
+        },
+        "capabilityTierAuthority": {
+          "const": "roleProfiles"
+        },
+        "harnessCapabilityTierUse": {
+          "const": "reference-only"
         },
         "harnessObservationRef": {
           "type": "string",

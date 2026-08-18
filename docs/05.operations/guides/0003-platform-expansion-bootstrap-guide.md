@@ -4,6 +4,7 @@ type: sdlc/guide
 status: active
 owner: platform
 updated: 2026-06-02
+artifact_id: "GUIDE-0003"
 ---
 
 # Platform Expansion Bootstrap Guide
@@ -246,7 +247,7 @@ kubectl -n headlamp create token headlamp-admin --duration=1h
 
 ## Traceability
 
-- **Spec**: [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
+- **Spec**: [`../../03.specs/0008-current-local-gitops-platform/spec.md`](../../03.specs/0008-current-local-gitops-platform/spec.md)
 - **Operation**: [`../policies/0003-service-mesh-cert-manager-policy.md`](../policies/0003-service-mesh-cert-manager-policy.md)
 - **Runbook**: [`../runbooks/0003-platform-expansion-bootstrap-runbook.md`](../runbooks/0003-platform-expansion-bootstrap-runbook.md)
 - **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)

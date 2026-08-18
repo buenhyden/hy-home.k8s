@@ -217,7 +217,7 @@ runtime discovered, loaded, or enforced that adapter.
 - Root shim link checks for `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`.
 - Affected-surface and provider-neutral role-semantic validators pass alongside
   native/local adapter metadata and roster-currentness checks.
-- Checklist references remain valid (`preflight`, `postflight`, `stage-authoring-matrix`, `stage-checklists`).
+- Checklist references remain valid (`preflight`, `postflight`, and the consolidated `document-authoring` contract).
 - Diff check confirms no unintended edits outside the approved change scope.
 
 ## Related Documents
@@ -225,4 +225,4 @@ runtime discovered, loaded, or enforced that adapter.
 - [Validation Surface Contract](../contracts/validation-surfaces.json)
 - [Harness Approval Boundaries](approval-boundaries.md)
 - [Postflight Checklist](postflight-checklist.md)
-- [Harness Implementation Map](../harness-implementation-map.md)
+- [Local Harness Catalog](../harness-catalog.md)

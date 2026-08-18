@@ -21,7 +21,7 @@
     "prohibitedActions": "ROLE-PROHIBITED",
     "stopConditions": "ROLE-STOP",
     "handoffs": "ROLE-HANDOFF",
-    "capabilityTier": "ROLE-CAPABILITY-TIER",
+    "capabilityTierRef": "ROLE-CAPABILITY-TIER-REF",
     "requiredEvidence": "ROLE-EVIDENCE",
     "adapterStem": "ROLE-ADAPTER-STEM"
   },
@@ -119,9 +119,9 @@
       "name": "commented-capability",
       "adapterSurface": "claude",
       "role": "supervisor",
-      "category": "capabilityTier",
+      "category": "capabilityTierRef",
       "mutation": "htmlComment",
-      "expectedRule": "ROLE-CAPABILITY-TIER"
+      "expectedRule": "ROLE-CAPABILITY-TIER-REF"
     },
     {
       "name": "fenced-evidence",
@@ -191,9 +191,9 @@
       "name": "lazy-quoted-capability",
       "adapterSurface": "codex",
       "role": "network-reviewer",
-      "category": "capabilityTier",
+      "category": "capabilityTierRef",
       "mutation": "lazyBlockquote",
-      "expectedRule": "ROLE-CAPABILITY-TIER"
+      "expectedRule": "ROLE-CAPABILITY-TIER-REF"
     },
     {
       "name": "quoted-evidence",
@@ -255,9 +255,9 @@
       "name": "inline-code-only-capability",
       "adapterSurface": "local",
       "role": "k8s-implementer",
-      "category": "capabilityTier",
+      "category": "capabilityTierRef",
       "mutation": "inlineCodeOnly",
-      "expectedRule": "ROLE-CAPABILITY-TIER"
+      "expectedRule": "ROLE-CAPABILITY-TIER-REF"
     },
     {
       "name": "list-contained-blockquote",

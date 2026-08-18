@@ -26,10 +26,12 @@ This document defines the canonical model selection policy for agents running in
 This file owns the shared `top` / `worker` tier vocabulary, the
 `medium` / `high` / `xhigh` reasoning-intent vocabulary, and escalation policy.
 [`contracts/agent-model-fitness.json`](contracts/agent-model-fitness.json) owns
-each role/provider tuple's incumbent, configured and observed values,
-candidate, reasoning state, mapping rationale, fallback, and decisions.
+each role's capability-tier membership and each role/provider tuple's
+incumbent, configured and observed values, candidate, reasoning state, mapping
+rationale, fallback, and decisions.
 [`contracts/harness-contract.json`](contracts/harness-contract.json) owns the
-adapter inventory, while
+adapter inventory, permission classes, and role behavior; it references each
+role's fitness-owned capability tier and does not restate a tier literal.
 [`contracts/provider-runtime-evidence.json`](contracts/provider-runtime-evidence.json)
 owns provider source cutoff/currentness and runtime evidence. Provider-native
 availability, entitlement, and enforcement remain outside repository-static

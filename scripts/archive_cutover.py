@@ -17,7 +17,7 @@ import re
 import shutil
 import stat
 import subprocess
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import lru_cache
 from pathlib import Path, PurePosixPath
 from types import MappingProxyType, ModuleType
@@ -35,7 +35,14 @@ if __package__:
     )
     from scripts.archive_recovery import (
         ArchiveContractError,
+        WORK107_LEGACY_INDEX_OVERVIEW,
+        WORK107_MIGRATION_PATH,
+        WORK107_STABLE_INDEX_OVERVIEW,
+        build_work107_migration_rows,
         parse_archive_envelope,
+        render_work107_migration_document,
+        render_work107_stable_envelope,
+        validate_work107_migration_rows,
     )
     from scripts.document_contracts import (
         DocumentContractError,
@@ -45,10 +52,13 @@ if __package__:
     )
     from scripts.document_lifecycle import document_from_text
     from scripts.archive_validation import (
-        ArchiveRecord,
         CurrentMarkdownDocument,
-        validate_archive_records,
+        MIG0002_DOCUMENT_SHA256,
+        MIGRATION_DOCUMENT_MAX_BYTES,
+        parse_pinned_migration_control,
+        read_staged_blob_bounded,
         validate_current_archive_authority,
+        validate_repository_archive,
     )
 else:
     from archive_cutover_manifest import (  # type: ignore[no-redef]
@@ -60,7 +70,14 @@ else:
     )
     from archive_recovery import (  # type: ignore[no-redef]
         ArchiveContractError,
+        WORK107_LEGACY_INDEX_OVERVIEW,
+        WORK107_MIGRATION_PATH,
+        WORK107_STABLE_INDEX_OVERVIEW,
+        build_work107_migration_rows,
         parse_archive_envelope,
+        render_work107_migration_document,
+        render_work107_stable_envelope,
+        validate_work107_migration_rows,
     )
     from document_contracts import (  # type: ignore[no-redef]
         DocumentContractError,
@@ -70,15 +87,37 @@ else:
     )
     from document_lifecycle import document_from_text  # type: ignore[no-redef]
     from archive_validation import (  # type: ignore[no-redef]
-        ArchiveRecord,
         CurrentMarkdownDocument,
-        validate_archive_records,
+        MIG0002_DOCUMENT_SHA256,
+        MIGRATION_DOCUMENT_MAX_BYTES,
+        parse_pinned_migration_control,
+        read_staged_blob_bounded,
         validate_current_archive_authority,
+        validate_repository_archive,
     )
 
 
 EXPECTED_HISTORICAL_LINKS = 202
 MIGRATION_RESULTS_PATH = "docs/90.references/data/active-corpus-migration-results.json"
+WORK054_MIGRATION_PATH = (
+    "docs/98.archive/migrations/"
+    "mig-0002-sdlc-document-and-governance-consolidation.md"
+)
+WORK054_MIGRATION_SHA256 = MIG0002_DOCUMENT_SHA256
+WORK054_SOURCE_COMMIT = (
+    "160ce006969ddb49965c8af193f3e9ee290e18a8"  # pragma: allowlist secret
+)
+WORK054_LEDGER_FIELDS = (
+    "legacy_path",
+    "stable_path",
+    "artifact_id",
+    "action",
+    "replacement",
+    "source_commit",
+    "source_blob",
+    "content_sha256",
+    "reason",
+)
 FIRST_SOURCE_COMMIT = (
     "5e0221525450dbdacb585e6c98ade3f060ddc827"  # pragma: allowlist secret
 )
@@ -91,6 +130,7 @@ CURRENT_REPLACEMENT_STATUSES = frozenset({"active", "accepted", "done"})
 SECRET_DETECTED_EXIT = 17
 SECRET_TIMEOUT_SECONDS = 10
 MAX_REPLACEMENT_BLOB_BYTES = 2_000_000
+GITLEAKS_EXECUTABLE_ENV = "HY_HOME_K8S_GITLEAKS_EXECUTABLE"
 _RETIRED_WORD = "tomb" + "stone"
 _RETIRED_PROFILE_TOKEN = "archive-" + _RETIRED_WORD
 _FULL_OBJECT_ID = re.compile(r"(?:[0-9a-f]{40}|[0-9a-f]{64})\Z")
@@ -119,7 +159,7 @@ STALE_CONTRACT_SURFACES = (
     "docs/01.requirements/README.md",
     "docs/02.architecture/README.md",
     "docs/02.architecture/decisions/README.md",
-    "docs/02.architecture/requirements/README.md",
+    "docs/02.architecture/descriptions/README.md",
     "docs/03.specs/README.md",
     "docs/04.execution/plans/README.md",
     "docs/04.execution/tasks/README.md",
@@ -181,6 +221,59 @@ class ArchiveIndexRow:
     historical_links: int
     replacement: str | None
     reason: str
+
+
+@dataclass(frozen=True)
+class Work054MigrationProjection:
+    """Exact historical-to-current aliases admitted by MIG-0002."""
+
+    current_by_legacy: Mapping[str, str]
+    action_counts: tuple[tuple[str, int], ...]
+
+
+_WORK105_CURRENT_AD = (
+    "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md"
+)
+_WORK105_LEGACY_REPLACEMENT = (
+    "docs/02.architecture/requirements/0007-current-local-gitops-platform.md"
+)
+_WORK105_REPLACEMENT_PROOFS = MappingProxyType(
+    {
+        "docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md": ArchiveIndexRow(
+            archive_path="docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+            original_path="docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+            original_type="ard",
+            source_commit=FIRST_SOURCE_COMMIT,
+            source_blob="9001b10b9657396fe85d6d7b98112dcc6b310e4f",
+            content_sha256="cbf08950c2da952a6ca7feaa122085700c5984c5b177a97d90277f3fcca4b44b",
+            historical_links=7,
+            replacement=_WORK105_LEGACY_REPLACEMENT,
+            reason="superseded",
+        ),
+        "docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md": ArchiveIndexRow(
+            archive_path="docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+            original_path="docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+            original_type="ard",
+            source_commit=FIRST_SOURCE_COMMIT,
+            source_blob="37857c69bd334b3acc59705a701233a303c2bcb2",
+            content_sha256="4a0902cee5048f2192e16c3688e9bf1e992e60fde4fe3865abb1fcd45767f59f",
+            historical_links=4,
+            replacement=_WORK105_LEGACY_REPLACEMENT,
+            reason="superseded",
+        ),
+        "docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md": ArchiveIndexRow(
+            archive_path="docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+            original_path="docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+            original_type="ard",
+            source_commit=FIRST_SOURCE_COMMIT,
+            source_blob="4d38947d216e84dfc9430f4f632966292b602017",
+            content_sha256="dfc0cd13ede805828a19909b2e525648c892dea9fc25d505d7becf8c27acd6b2",
+            historical_links=9,
+            replacement=_WORK105_LEGACY_REPLACEMENT,
+            reason="superseded",
+        ),
+    }
+)
 
 
 def _diagnostic(code: str, path: str) -> CutoverDiagnostic:
@@ -316,6 +409,108 @@ def _tracked_regular_blobs(root: Path) -> Mapping[str, str]:
     return MappingProxyType(blobs)
 
 
+def _canonical_document_path(value: object) -> str | None:
+    if not isinstance(value, str):
+        return None
+    path = PurePosixPath(value)
+    if (
+        not value.startswith("docs/")
+        or "\\" in value
+        or any(ord(character) < 32 or ord(character) == 127 for character in value)
+        or path.is_absolute()
+        or any(part in {".", ".."} for part in path.parts)
+        or path.as_posix() != value
+    ):
+        return None
+    return value
+
+
+def _work054_migration_projection(
+    root: Path,
+    tracked_regular_blobs: Mapping[str, str],
+) -> Work054MigrationProjection:
+    """Consume only the exact MIG-0002 bytes and validate every current target."""
+
+    failure = "WORK-054 migration ledger is unavailable"
+    object_id = tracked_regular_blobs.get(WORK054_MIGRATION_PATH)
+    try:
+        content = (root / WORK054_MIGRATION_PATH).read_bytes()
+        if (
+            object_id is None
+            or not _regular_file(root, WORK054_MIGRATION_PATH)
+            or len(content) > MIGRATION_DOCUMENT_MAX_BYTES
+        ):
+            raise ValueError
+        staged = read_staged_blob_bounded(
+            root,
+            WORK054_MIGRATION_PATH,
+            max_bytes=MIGRATION_DOCUMENT_MAX_BYTES,
+        )
+        if staged != content:
+            raise ValueError
+        rows = parse_pinned_migration_control(WORK054_MIGRATION_PATH, staged)
+    except (ArchiveContractError, OSError, RuntimeError, ValueError):
+        raise RuntimeError(failure) from None
+    if len(rows) != 154:
+        raise RuntimeError(failure)
+
+    current_by_legacy: dict[str, str] = {}
+    stable_paths: set[str] = set()
+    action_counts = {"merged": 0, "moved": 0, "replaced": 0}
+    previous_legacy = ""
+    for row in rows:
+        if type(row) is not dict or tuple(row) != WORK054_LEDGER_FIELDS:
+            raise RuntimeError(failure)
+        legacy = _canonical_document_path(row.get("legacy_path"))
+        action = row.get("action")
+        if (
+            legacy is None
+            or legacy <= previous_legacy
+            or action not in action_counts
+            or row.get("source_commit") != WORK054_SOURCE_COMMIT
+            or _FULL_OBJECT_ID.fullmatch(str(row.get("source_blob", ""))) is None
+            or re.fullmatch(r"[0-9a-f]{64}", str(row.get("content_sha256", "")))
+            is None
+            or not isinstance(row.get("reason"), str)
+            or not row["reason"].strip()
+            or legacy in tracked_regular_blobs
+            or _regular_file(root, legacy)
+        ):
+            raise RuntimeError(failure)
+        previous_legacy = legacy
+        action_counts[action] += 1
+
+        if action == "moved":
+            current = _canonical_document_path(row.get("stable_path"))
+            if (
+                current is None
+                or row.get("replacement") is not None
+                or not isinstance(row.get("artifact_id"), str)
+                or not row["artifact_id"]
+                or current in stable_paths
+            ):
+                raise RuntimeError(failure)
+            stable_paths.add(current)
+        else:
+            current = _canonical_document_path(row.get("replacement"))
+            if (
+                current is None
+                or row.get("stable_path") is not None
+                or row.get("artifact_id") is not None
+            ):
+                raise RuntimeError(failure)
+        if current not in tracked_regular_blobs or not _regular_file(root, current):
+            raise RuntimeError(failure)
+        current_by_legacy[legacy] = current
+
+    if action_counts != {"merged": 10, "moved": 141, "replaced": 3}:
+        raise RuntimeError(failure)
+    return Work054MigrationProjection(
+        current_by_legacy=MappingProxyType(current_by_legacy),
+        action_counts=tuple(sorted(action_counts.items())),
+    )
+
+
 def _index_blob_bytes(root: Path, object_id: str) -> bytes:
     """Read one bounded exact index blob without worktree substitution."""
 
@@ -397,7 +592,24 @@ def _secret_classifier(
     archive_path: str,
     payload: bytes,
 ) -> CutoverDiagnostic | None:
-    executable = shutil.which("gitleaks")
+    executable = None
+    hint = os.environ.get(GITLEAKS_EXECUTABLE_ENV)
+    if hint is not None:
+        try:
+            metadata = os.lstat(hint)
+        except OSError:
+            metadata = None
+        candidate = Path(hint)
+        if (
+            candidate.is_absolute()
+            and candidate.name == "gitleaks"
+            and metadata is not None
+            and stat.S_ISREG(metadata.st_mode)
+            and metadata.st_mode & 0o111
+        ):
+            executable = hint
+    else:
+        executable = shutil.which("gitleaks")
     if executable is None:
         return _diagnostic("ARCHIVE-SECRET-CLASSIFIER-UNAVAILABLE", archive_path)
     try:
@@ -516,6 +728,30 @@ def _replacement_target_diagnostic(
     return None
 
 
+def _work105_replacement_target(
+    archive_path: str,
+    index_row: ArchiveIndexRow,
+    archive_metadata: Mapping[str, object],
+) -> str | None:
+    """Resolve the three immutable ARD rows through the exact WORK-105 AD move."""
+
+    expected = _WORK105_REPLACEMENT_PROOFS.get(archive_path)
+    if expected is None or index_row != expected:
+        return index_row.replacement
+    metadata_proof = (
+        ("original_path", expected.original_path),
+        ("original_type", expected.original_type),
+        ("source_commit", expected.source_commit),
+        ("source_blob", expected.source_blob),
+        ("content_sha256", expected.content_sha256),
+        ("replacement", expected.replacement),
+        ("archive_reason", expected.reason),
+    )
+    if any(archive_metadata.get(key) != value for key, value in metadata_proof):
+        return index_row.replacement
+    return _WORK105_CURRENT_AD
+
+
 @lru_cache(maxsize=1)
 def _load_migration_validator() -> ModuleType:
     """Load the additive ACER validator from its canonical CLI module."""
@@ -575,8 +811,6 @@ def _parse_index_row(line: str) -> ArchiveIndexRow | None:
     reason = reason_match.group("value")
     if cells[7] == "`null`":
         replacement = None
-        if reason != "completed-lineage":
-            return None
     else:
         replacement_match = _MARKDOWN_LINK.fullmatch(cells[7])
         if replacement_match is None or reason not in {
@@ -590,7 +824,6 @@ def _parse_index_row(line: str) -> ArchiveIndexRow | None:
         )
     if (
         archive_path is None
-        or (reason != "completed-lineage" and replacement is None)
         or record_match.group("label") != archive_path.removeprefix("docs/98.archive/")
     ):
         return None
@@ -710,32 +943,89 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
             secret_clean_count=0,
         )
     diagnostics: list[CutoverDiagnostic] = list(_finite_cutover_base_diagnostics(root))
+    registry_path = root / "docs/99.templates/support/document-profiles.json"
     try:
-        migration_rows, migration_counts = _migration_projection(root)
+        loaded_registry = json.loads(registry_path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        loaded_registry = {}
+    if isinstance(loaded_registry, dict):
+        registry = loaded_registry
+    else:
+        registry = {}
+    generic_report = validate_repository_archive(root, registry)
+    diagnostics.extend(
+        _diagnostic(item.code, item.path) for item in generic_report.diagnostics
+    )
+    try:
+        tracked_regular_blobs = _tracked_regular_blobs(root)
+    except RuntimeError:
+        tracked_regular_blobs = MappingProxyType({})
+        diagnostics.append(_diagnostic("ARCHIVE-CURRENT-INVENTORY", "docs"))
+    try:
+        work054_projection = _work054_migration_projection(
+            root,
+            tracked_regular_blobs,
+        )
+    except RuntimeError:
+        work054_projection = Work054MigrationProjection(
+            current_by_legacy=MappingProxyType({}),
+            action_counts=(),
+        )
+        diagnostics.append(
+            _diagnostic("ARCHIVE-MIGRATION-LEDGER", WORK054_MIGRATION_PATH)
+        )
+    repository_paths = frozenset(
+        path
+        for namespace in registry.get("archiveNamespaces", ())
+        if isinstance(namespace, dict)
+        for path in namespace.get("records", ())
+        if isinstance(path, str)
+    )
+    try:
+        work107_rows = build_work107_migration_rows(root)
+        work107_by_stable = {
+            str(row["stable_path"]): row for row in work107_rows
+        }
+        work107_legacy_to_stable = {
+            str(row["legacy_path"]): str(row["stable_path"])
+            for row in work107_rows
+        }
+    except (ArchiveContractError, OSError, RuntimeError, TypeError, ValueError):
+        work107_by_stable = {}
+        work107_legacy_to_stable = {}
+        diagnostics.append(
+            _diagnostic("ARCHIVE-MIGRATION-LEDGER", WORK107_MIGRATION_PATH)
+        )
+    try:
+        migration_rows = _migration_projection(root)[0]
     except Exception:
         migration_rows = {}
-        migration_counts = {
-            "records": 0,
-            "historicalLinksAdded": 0,
-        }
         diagnostics.append(
             _diagnostic("ARCHIVE-MIGRATION-LEDGER", MIGRATION_RESULTS_PATH)
         )
-    base_paths = frozenset(EXPECTED_ARCHIVE_PATHS)
-    expected_paths = base_paths | frozenset(migration_rows)
-    expected_records = EXPECTED_ARCHIVE_RECORDS + migration_counts["records"]
-    expected_historical_links = (
-        EXPECTED_HISTORICAL_LINKS + migration_counts["historicalLinksAdded"]
+    legacy_base_paths = frozenset(EXPECTED_ARCHIVE_PATHS)
+    legacy_acer_paths = legacy_base_paths | frozenset(migration_rows)
+    base_paths = frozenset(
+        work107_legacy_to_stable.get(path, path) for path in legacy_base_paths
     )
+    acer_paths = frozenset(
+        work107_legacy_to_stable.get(path, path) for path in legacy_acer_paths
+    )
+    expected_paths = repository_paths
+    expected_records = len(repository_paths)
+    expected_historical_links = generic_report.historical_link_count
     present_paths = frozenset(
         path for path in expected_paths if _regular_file(root, path)
     )
     if present_paths != expected_paths:
         diagnostics.append(_diagnostic("ARCHIVE-CORPUS-INCOMPLETE", ARCHIVE_INDEX))
 
-    records: list[ArchiveRecord] = []
+    record_link_counts = dict(generic_report.record_link_counts)
+    reviewed_manifest_rows = {
+        row.target: row for row in generic_report.reviewed_manifest_records
+    }
+    payloads: list[bytes] = []
     metadata_rows: list[tuple[str, dict[str, object], int]] = []
-    secret_clean_count = 0
     for archive_path in sorted(expected_paths):
         if archive_path not in present_paths:
             continue
@@ -746,10 +1036,24 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
             diagnostics.append(_diagnostic("ARCHIVE-ENVELOPE-INVALID", archive_path))
             continue
         original_path = parsed.metadata.get("original_path")
+        stable_row = work107_by_stable.get(archive_path)
+        legacy_archive_path = (
+            str(stable_row["legacy_path"]) if stable_row is not None else archive_path
+        )
         expected_source_commit = (
-            migration_rows[archive_path].get("sourceCommit")
+            stable_row.get("source_commit")
+            if stable_row is not None
+            else migration_rows[archive_path].get("sourceCommit")
             if archive_path in migration_rows
-            else _source_commit(str(original_path))
+            else (
+                _source_commit(str(original_path))
+                if archive_path in base_paths
+                else (
+                    reviewed_manifest_rows[archive_path].source_commit
+                    if archive_path in reviewed_manifest_rows
+                    else None
+                )
+            )
         )
         if (
             not isinstance(original_path, str)
@@ -757,49 +1061,72 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         ):
             diagnostics.append(_diagnostic("ARCHIVE-SOURCE-OWNERSHIP", archive_path))
             continue
-        secret_diagnostic = _secret_classifier(root, archive_path, parsed.payload)
-        if secret_diagnostic is not None:
-            diagnostics.append(secret_diagnostic)
-            continue
-        secret_clean_count += 1
-        record = ArchiveRecord(path=archive_path, content=content)
-        records.append(record)
-        focused = validate_archive_records(root, (record,))
-        if not focused.valid:
-            diagnostics.extend(
-                _diagnostic(item.code, item.path) for item in focused.diagnostics
-            )
-            continue
+        payloads.append(parsed.payload)
         metadata_rows.append(
-            (archive_path, dict(parsed.metadata), focused.historical_link_count)
+            (
+                archive_path,
+                dict(parsed.metadata),
+                record_link_counts.get(archive_path, -1),
+            )
         )
 
-    archive_report = validate_archive_records(root, tuple(records))
-    diagnostics.extend(
-        _diagnostic(item.code, item.path) for item in archive_report.diagnostics
-    )
+    secret_clean_count = 0
+    if payloads:
+        secret_diagnostic = _secret_classifier(
+            root,
+            ARCHIVE_INDEX,
+            b"\n\n".join(payloads),
+        )
+        if secret_diagnostic is not None:
+            diagnostics.append(secret_diagnostic)
+        else:
+            secret_clean_count = len(payloads)
     if (
-        len(records) != expected_records
-        or archive_report.historical_link_count != expected_historical_links
+        len(metadata_rows) != expected_records
+        or frozenset(record_link_counts) != expected_paths
+        or generic_report.historical_link_count != expected_historical_links
+        or sum(record_link_counts.values()) != expected_historical_links
     ):
         diagnostics.append(_diagnostic("ARCHIVE-EVIDENCE-COUNT", ARCHIVE_INDEX))
-    base_report = validate_archive_records(
-        root,
-        tuple(record for record in records if record.path in base_paths),
-    )
+    namespace_paths = {
+        str(namespace.get("id")): frozenset(
+            path
+            for path in namespace.get("records", ())
+            if isinstance(path, str)
+        )
+        for namespace in registry.get("archiveNamespaces", ())
+        if isinstance(namespace, dict)
+    }
+    arwb_paths = namespace_paths.get("arwb-base", frozenset())
+    acer_additive_paths = namespace_paths.get("acer-additive", frozenset())
     if (
-        not base_report.valid
-        or len(tuple(record for record in records if record.path in base_paths))
-        != EXPECTED_ARCHIVE_RECORDS
-        or base_report.historical_link_count != EXPECTED_HISTORICAL_LINKS
+        arwb_paths != base_paths
+        or len(arwb_paths) != EXPECTED_ARCHIVE_RECORDS
+        or sum(record_link_counts.get(path, -1) for path in arwb_paths)
+        != EXPECTED_HISTORICAL_LINKS
     ):
         diagnostics.append(_diagnostic("ARCHIVE-FINITE-BASE", ARCHIVE_INDEX))
+    if (
+        arwb_paths | acer_additive_paths != acer_paths
+        or len(arwb_paths | acer_additive_paths) != 43
+        or sum(
+            record_link_counts.get(path, -1)
+            for path in arwb_paths | acer_additive_paths
+        )
+        != 362
+    ):
+        diagnostics.append(_diagnostic("ARCHIVE-ACER-SUBSET", ARCHIVE_INDEX))
 
     original_paths = [row[1].get("original_path") for row in metadata_rows]
     if len(original_paths) != len(set(original_paths)):
         diagnostics.append(
             _diagnostic("ARCHIVE-ORIGINAL-OWNER-DUPLICATE", ARCHIVE_INDEX)
         )
+    archived_original_paths = frozenset(
+        str(metadata.get("original_path"))
+        for _archive_path, metadata, _link_count in metadata_rows
+        if isinstance(metadata.get("original_path"), str)
+    )
     for archive_path, metadata, _link_count in metadata_rows:
         original_path = metadata.get("original_path")
         replacement = metadata.get("replacement")
@@ -809,32 +1136,36 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
             )
         reason = metadata.get("archive_reason")
         if reason == "completed-lineage":
-            migration = migration_rows.get(archive_path)
+            stable_row = work107_by_stable.get(archive_path)
+            legacy_archive_path = (
+                str(stable_row["legacy_path"])
+                if stable_row is not None
+                else archive_path
+            )
+            migration = migration_rows.get(legacy_archive_path)
+            closure_owner = (
+                migration.get("_currentClosureOwner")
+                if migration is not None
+                else None
+            )
+            current_closure_owner = work054_projection.current_by_legacy.get(
+                str(closure_owner),
+                str(closure_owner),
+            )
             if (
                 replacement is not None
                 or migration is None
-                or not _regular_file(
-                    root,
-                    str(migration.get("_currentClosureOwner", "<invalid-path>")),
-                )
+                or not _regular_file(root, current_closure_owner)
                 or migration.get("_archiveNavigationBoundary")
                 != f"{ARCHIVE_INDEX}#document-index"
             ):
                 diagnostics.append(
                     _diagnostic("ARCHIVE-REPLACEMENT-MISSING", archive_path)
                 )
-        elif not isinstance(replacement, str):
+        elif reason in {"superseded", "consolidated", "duplicate"} and not isinstance(
+            replacement, str
+        ):
             diagnostics.append(_diagnostic("ARCHIVE-REPLACEMENT-MISSING", archive_path))
-
-    registry_path = root / "docs/99.templates/support/document-profiles.json"
-    try:
-        loaded_registry = json.loads(registry_path.read_text(encoding="utf-8"))
-    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
-        loaded_registry = {}
-    if isinstance(loaded_registry, dict):
-        registry = loaded_registry
-    else:
-        registry = {}
     profiles = registry.get("profiles", ())
     profile_ids = [
         profile.get("id") for profile in profiles if isinstance(profile, dict)
@@ -843,7 +1174,8 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         registry.get("schemaVersion") != 8
         or profile_ids.count(ARCHIVE_PROFILE) != 1
         or profile_ids.count(ARCHIVE_TEMPLATE_PROFILE) != 1
-        or _RETIRED_WORD in json.dumps(registry, ensure_ascii=False).lower()
+        or _RETIRED_PROFILE_TOKEN
+        in json.dumps(registry, ensure_ascii=False).lower()
         or not _regular_file(root, ARCHIVE_TEMPLATE)
         or (
             root
@@ -868,12 +1200,6 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
             )
         )
     try:
-        tracked_regular_blobs = _tracked_regular_blobs(root)
-    except RuntimeError:
-        tracked_regular_blobs = MappingProxyType({})
-        diagnostics.append(_diagnostic("ARCHIVE-CURRENT-INVENTORY", "docs"))
-
-    try:
         index_text = (root / ARCHIVE_INDEX).read_text(encoding="utf-8")
     except OSError:
         index_text = ""
@@ -891,14 +1217,39 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         diagnostics.append(_diagnostic("ARCHIVE-INDEX-MANIFEST", ARCHIVE_INDEX))
     if index_structure_failure or frozenset(index_rows) != expected_paths:
         diagnostics.append(_diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX))
+    archive_metadata = {
+        archive_path: metadata for archive_path, metadata, _link_count in metadata_rows
+    }
     if typed_registry is not None:
         for archive_path, index_row in index_rows.items():
             if index_row.replacement is None:
                 continue
+            stable_row = work107_by_stable.get(archive_path)
+            legacy_archive_path = (
+                str(stable_row["legacy_path"])
+                if stable_row is not None
+                else archive_path
+            )
+            legacy_index_row = (
+                replace(index_row, archive_path=legacy_archive_path)
+                if legacy_archive_path != archive_path
+                else index_row
+            )
+            replacement_target = _work105_replacement_target(
+                legacy_archive_path,
+                legacy_index_row,
+                archive_metadata.get(archive_path, {}),
+            )
+            if replacement_target is None:
+                continue
+            replacement_target = work054_projection.current_by_legacy.get(
+                replacement_target,
+                replacement_target,
+            )
             replacement_failure = _replacement_target_diagnostic(
                 root,
                 typed_registry,
-                index_row.replacement,
+                replacement_target,
                 tracked_regular_blobs,
             )
             if replacement_failure is not None:
@@ -920,6 +1271,16 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         )
         if index_row != expected_row:
             diagnostics.append(_diagnostic("ARCHIVE-INDEX-MEMBER", archive_path))
+        if (
+            index_row is not None
+            and index_row.replacement is None
+            and metadata.get("archive_reason")
+            in {"superseded", "consolidated", "duplicate"}
+            and metadata.get("replacement") not in archived_original_paths
+        ):
+            diagnostics.append(
+                _diagnostic("ARCHIVE-REPLACEMENT-MISSING", archive_path)
+            )
 
     current_documents: list[CurrentMarkdownDocument] = []
     try:
@@ -931,6 +1292,7 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         if (
             not raw_path.endswith(".md")
             or raw_path == ARCHIVE_INDEX
+            or raw_path == WORK107_MIGRATION_PATH
             or raw_path in expected_paths
             or raw_path.startswith("docs/99.templates/templates/")
             or not _regular_file(root, raw_path)
@@ -959,6 +1321,8 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
     )
 
     for raw_path in STALE_CONTRACT_SURFACES:
+        if raw_path in work054_projection.current_by_legacy:
+            continue
         try:
             text = (root / raw_path).read_text(encoding="utf-8")
         except OSError:
@@ -982,20 +1346,179 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         )
     return CutoverReport(
         diagnostics=unique,
-        record_count=len(records),
-        historical_link_count=archive_report.historical_link_count,
+        record_count=len(metadata_rows),
+        historical_link_count=generic_report.historical_link_count,
         secret_clean_count=secret_clean_count,
     )
+
+
+def _work107_stable_index(
+    legacy_index: str,
+    rows: Sequence[Mapping[str, object]],
+) -> str:
+    """Apply the reviewed stable overview and 93 inventory link projection."""
+
+    result = legacy_index
+    if result.count(WORK107_LEGACY_INDEX_OVERVIEW) != 1:
+        raise ArchiveContractError(
+            "ARCHIVE-MIGRATION-INDEX", "legacy index overview differs"
+        )
+    result = result.replace(
+        WORK107_LEGACY_INDEX_OVERVIEW,
+        WORK107_STABLE_INDEX_OVERVIEW,
+        1,
+    )
+    for row in rows:
+        legacy = str(row["legacy_path"]).removeprefix("docs/98.archive/")
+        stable = str(row["stable_path"]).removeprefix("docs/98.archive/")
+        source = f"[`{legacy}`](./{legacy})"
+        target = f"[`{stable}`](./{stable})"
+        if result.count(source) != 1:
+            raise ArchiveContractError(
+                "ARCHIVE-MIGRATION-INDEX", "legacy index member differs"
+            )
+        result = result.replace(source, target, 1)
+    return result
+
+
+def _work107_stable_registry(
+    legacy_registry: bytes,
+    rows: Sequence[Mapping[str, object]],
+) -> bytes:
+    """Project archive namespace membership through the exact reviewed bijection."""
+
+    try:
+        registry = json.loads(legacy_registry.decode("utf-8"))
+        namespaces = registry["archiveNamespaces"]
+    except (KeyError, TypeError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ArchiveContractError(
+            "ARCHIVE-MIGRATION-REGISTRY", "archive registry differs"
+        ) from exc
+    mapping = {str(row["legacy_path"]): str(row["stable_path"]) for row in rows}
+    seen: set[str] = set()
+    for namespace in namespaces:
+        records = namespace.get("records") if isinstance(namespace, dict) else None
+        if not isinstance(records, list):
+            raise ArchiveContractError(
+                "ARCHIVE-MIGRATION-REGISTRY", "archive namespace differs"
+            )
+        projected: list[str] = []
+        for path in records:
+            if path not in mapping or path in seen:
+                raise ArchiveContractError(
+                    "ARCHIVE-MIGRATION-REGISTRY", "archive namespace member differs"
+                )
+            seen.add(path)
+            projected.append(mapping[path])
+        namespace["records"] = sorted(projected)
+    if seen != set(mapping):
+        raise ArchiveContractError(
+            "ARCHIVE-MIGRATION-REGISTRY", "archive namespace census differs"
+        )
+    return (json.dumps(registry, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
+
+
+def apply_work107_stable_rehome(repository_root: str | Path) -> int:
+    """Apply the reviewed stable rehome with rollback on any partial write."""
+
+    root = Path(repository_root).resolve(strict=True)
+    rows = validate_work107_migration_rows(root, build_work107_migration_rows(root))
+    index_path = root / ARCHIVE_INDEX
+    registry_path = root / "docs/99.templates/support/document-profiles.json"
+    migration_path = root / WORK107_MIGRATION_PATH
+    original_index = index_path.read_bytes()
+    original_registry = registry_path.read_bytes()
+    legacy_bytes: dict[Path, bytes] = {}
+    stable_bytes: dict[Path, bytes] = {}
+    for row in rows:
+        legacy = root / str(row["legacy_path"])
+        stable = root / str(row["stable_path"])
+        if not legacy.is_file() or legacy.is_symlink() or stable.exists():
+            raise ArchiveContractError(
+                "ARCHIVE-MIGRATION-PRECONDITION", "legacy/stable path state differs"
+            )
+        content = legacy.read_bytes()
+        recovered = parse_archive_envelope(content)
+        if (
+            recovered.metadata.get("source_commit") != row["source_commit"]
+            or recovered.metadata.get("source_blob") != row["source_blob"]
+            or recovered.metadata.get("content_sha256") != row["content_sha256"]
+        ):
+            raise ArchiveContractError(
+                "ARCHIVE-MIGRATION-PROVENANCE", "legacy envelope metadata differs"
+            )
+        legacy_bytes[legacy] = content
+        stable_bytes[stable] = render_work107_stable_envelope(content, row)
+    if migration_path.exists():
+        raise ArchiveContractError(
+            "ARCHIVE-MIGRATION-PRECONDITION", "migration control record already exists"
+        )
+    desired_index = _work107_stable_index(original_index.decode("utf-8"), rows).encode(
+        "utf-8"
+    )
+    desired_registry = _work107_stable_registry(original_registry, rows)
+    desired_migration = render_work107_migration_document(rows)
+
+    created: list[Path] = []
+    removed: list[Path] = []
+    try:
+        for path, content in stable_bytes.items():
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(content)
+            created.append(path)
+        migration_path.parent.mkdir(parents=True, exist_ok=True)
+        migration_path.write_bytes(desired_migration)
+        created.append(migration_path)
+        index_path.write_bytes(desired_index)
+        registry_path.write_bytes(desired_registry)
+        for path in legacy_bytes:
+            path.unlink()
+            removed.append(path)
+        for directory in sorted(
+            {
+                parent
+                for path in legacy_bytes
+                for parent in path.parents
+                if parent != root and parent.is_relative_to(root / "docs/98.archive")
+            },
+            key=lambda item: len(item.parts),
+            reverse=True,
+        ):
+            try:
+                directory.rmdir()
+            except OSError:
+                pass
+    except Exception:
+        index_path.write_bytes(original_index)
+        registry_path.write_bytes(original_registry)
+        for path, content in legacy_bytes.items():
+            if not path.exists():
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(content)
+        for path in reversed(created):
+            path.unlink(missing_ok=True)
+        raise
+    return len(rows)
 
 
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", default=".")
+    parser.add_argument("--apply-work107", action="store_true")
     return parser
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = _parser().parse_args(argv)
+    if args.apply_work107:
+        try:
+            count = apply_work107_stable_rehome(args.root)
+        except (ArchiveContractError, OSError, RuntimeError, ValueError) as exc:
+            code = exc.code if isinstance(exc, ArchiveContractError) else "ARCHIVE-MIGRATION-APPLY"
+            print(f"FAIL {code} path=docs/98.archive")
+            return 1
+        print(f"PASS archive stable rehome records={count}")
+        return 0
     report = validate_repository_cutover(args.root)
     if report.valid:
         print(

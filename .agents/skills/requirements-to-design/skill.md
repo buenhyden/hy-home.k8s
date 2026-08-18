@@ -1,6 +1,6 @@
 ---
 name: requirements-to-design
-description: Use when connecting requirement documents to architecture or design documents, verifying docs/01→02 traceability, or ensuring PRD requirements map to ARD/ADR artifacts in hy-home.k8s.
+description: Use when connecting requirement documents to architecture or design documents, verifying docs/01→02 traceability, or ensuring PRD requirements map to AD/ADR artifacts in hy-home.k8s.
 ---
 
 # requirements-to-design
@@ -21,8 +21,8 @@ architecture artifacts (`docs/02.architecture/`) in this repository's SDD lifecy
 
 ## When to Use
 
-- Creating or updating an ARD and needing to confirm which PRD requirements it satisfies.
-- Creating an ADR and needing to reference the driving requirement or ARD.
+- Creating or updating an AD and needing to confirm which PRD requirements it satisfies.
+- Creating an ADR and needing to reference the driving requirement or AD.
 - Auditing whether all PRD requirements have a corresponding architecture artifact.
 - Reviewing a new feature request to identify which existing architecture decisions apply.
 
@@ -35,18 +35,18 @@ architecture artifacts (`docs/02.architecture/`) in this repository's SDD lifecy
 ## Workflow Steps
 
 1. Read the target PRD (`docs/01.requirements/`) to extract numbered requirements.
-2. Scan `docs/02.architecture/requirements/` for ARDs that reference those requirements.
-3. Scan `docs/02.architecture/decisions/` for ADRs that reference the PRD or ARD.
-4. Build a coverage matrix: Requirement → ARD → ADR (with status: covered, partial, missing).
+2. Scan `docs/02.architecture/descriptions/` for ADs that reference those requirements.
+3. Scan `docs/02.architecture/decisions/` for ADRs that reference the PRD or AD.
+4. Build a coverage matrix: Requirement → AD → ADR (with status: covered, partial, missing).
 5. For each missing or partial coverage, record the gap with the requirement ID and the
    nearest existing artifact that partially addresses it.
 6. Report the coverage matrix and gaps. Do not auto-create architecture artifacts;
    present the gap list and recommend which template to use.
-7. Update `## Related Documents` in the PRD to list confirmed ARD/ADR links.
+7. Update `## Related Documents` in the PRD to list confirmed AD/ADR links.
 
 ## Coverage Matrix Format
 
-| Requirement | Covered By (ARD/ADR) | Status  | Gap / Note                                                 |
+| Requirement | Covered By (AD/ADR) | Status  | Gap / Note                                                 |
 | ----------- | -------------------- | ------- | ---------------------------------------------------------- |
-| REQ-001     | ARD-0001, ADR-0003   | covered | —                                                          |
-| REQ-002     | —                    | missing | No ARD addresses scalability under WSL2 memory constraints |
+| REQ-001     | AD-0001, ADR-0003    | covered | —                                                          |
+| REQ-002     | —                    | missing | No AD addresses scalability under WSL2 memory constraints  |

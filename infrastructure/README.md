@@ -147,8 +147,8 @@ result boundaries recorded in the inventory below.
 
 ### Reference Links
 
-- [PRD](../docs/01.requirements/004-current-local-gitops-platform.md)
-- [Spec](../docs/03.specs/008-current-local-gitops-platform/spec.md)
+- [PRD](../docs/01.requirements/0004-current-local-gitops-platform.md)
+- [Spec](../docs/03.specs/0008-current-local-gitops-platform/spec.md)
 - [Runbook](../docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)
 - [GitOps README](../gitops/README.md)
 - [Tech Stack Version Inventory](../docs/90.references/data/tech-stack-version-inventory.md)
@@ -197,5 +197,5 @@ rollback은 백업 파일을 `~/.kube/config`로 되돌리는 방식이다.
 
 ## Related Documents
 
-- [Infrastructure Spec](../docs/03.specs/008-current-local-gitops-platform/spec.md)
+- [Infrastructure Spec](../docs/03.specs/0008-current-local-gitops-platform/spec.md)
 - [Platform bootstrap runbook](../docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)

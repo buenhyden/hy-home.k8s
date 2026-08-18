@@ -9,7 +9,7 @@
     "targetProjections": 48,
     "evidenceClasses": 4,
     "memoryClasses": 4,
-    "consumers": 14
+    "consumers": 12
   },
   "mutations": [
     {
@@ -77,6 +77,10 @@
       "expectedRule": "HARNESS-ADAPTER-SEMANTICS"
     },
     {
+      "name": "capability-tier-reference-drift",
+      "expectedRule": "HARNESS-MODEL-POLICY"
+    },
+    {
       "name": "unbounded-stop-rules",
       "expectedRule": "HARNESS-SCHEMA"
     },
@@ -99,6 +103,10 @@
     {
       "name": "memory-sensitivity-drift",
       "expectedRule": "HARNESS-MEMORY-SENSITIVITY"
+    },
+    {
+      "name": "duplicate-lifecycle-policy-ref",
+      "expectedRule": "HARNESS-SCHEMA"
     },
     {
       "name": "sensitive-payload",
@@ -157,5 +165,5 @@
       "expectedRule": "HARNESS-SCHEMA"
     }
   ],
-  "expectedCaseCount": 37
+  "expectedCaseCount": 39
 }

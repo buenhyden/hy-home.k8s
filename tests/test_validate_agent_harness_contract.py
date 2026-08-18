@@ -85,7 +85,7 @@ class AgentHarnessContractTests(unittest.TestCase):
                 "targetProjections": 48,
                 "evidenceClasses": 4,
                 "memoryClasses": 4,
-                "consumers": 14,
+                "consumers": 12,
             },
         )
 
@@ -239,6 +239,20 @@ class AgentHarnessContractTests(unittest.TestCase):
                 "stale-eval-admission-state": "HARNESS-EVAL",
             },
         )
+
+    def test_harness_references_model_fitness_without_tier_literals(self) -> None:
+        for index, role in enumerate(self.contract["canonicalRoles"]):
+            semantics = role["adapterSemantics"]
+            self.assertNotIn("capabilityTier", semantics)
+            self.assertNotIn("capabilityTierClaim", semantics)
+            self.assertEqual(
+                role["capabilityTierRef"],
+                (
+                    "docs/00.agent-governance/contracts/"
+                    f"agent-model-fitness.json#/roleProfiles/{index}/"
+                    "capabilityTier"
+                ),
+            )
 
     def test_projection_order_is_exact_role_by_surface_product(self) -> None:
         for inventory_name, roles, surfaces, state in (
@@ -634,6 +648,18 @@ class AgentHarnessContractTests(unittest.TestCase):
                 memory_class["lifecyclePolicyRefs"],
             )
 
+    def test_domain_memory_lifecycle_refs_dedupe_converged_routes(self) -> None:
+        classes = {
+            item["id"]: item for item in self.contract["memory"]["classes"]
+        }
+        self.assertEqual(
+            classes["domain-scoped"]["lifecyclePolicyRefs"],
+            [
+                "docs/00.agent-governance/rules/document-authoring.md",
+                self.validator.LOOP_LIFECYCLE_SPEC.as_posix(),
+            ],
+        )
+
     def test_policy_labels_do_not_trigger_sensitive_payload_detection(self) -> None:
         policy_only = {
             "prohibitedActions": [
@@ -826,7 +852,7 @@ class AgentHarnessContractTests(unittest.TestCase):
                 ["--root", str(REPOSITORY_ROOT), "--self-test"]
             )
         self.assertEqual(self_test, 0)
-        self.assertIn("cases=37", stdout.getvalue())
+        self.assertIn("cases=39", stdout.getvalue())
 
 
 if __name__ == "__main__":

@@ -43,7 +43,7 @@ Run this checklist before making substantial edits.
 
 ### 3. Stage and Source Mapping
 
-- [ ] Stage ownership confirmed using `stage-authoring-matrix.md`.
+- [ ] Stage ownership confirmed using `document-authoring.md`.
 - [ ] Authoritative input documents identified.
 - [ ] Required output documents identified.
 
@@ -71,5 +71,5 @@ the active Task or handoff before proceeding.
 
 - [Bootstrap Governance](bootstrap.md)
 - [Persona Protocol](persona.md)
-- [Stage Authoring Matrix](stage-authoring-matrix.md)
+- [Stage Authoring Matrix](document-authoring.md)
 - [Agent Quality Standards](quality-standards.md)

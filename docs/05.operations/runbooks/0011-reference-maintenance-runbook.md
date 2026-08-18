@@ -4,6 +4,7 @@ type: sdlc/runbook
 status: active
 owner: platform
 updated: 2026-05-17
+artifact_id: "RUNBOOK-0011"
 ---
 
 # Reference Maintenance Runbook
@@ -146,10 +147,10 @@ git diff --check
 - **Reference**: [LLM WIKI README](../../90.references/llm-wiki/README.md)
 - **Guide**: [LLM Wiki Curation Guide](../guides/0009-llm-wiki-curation-guide.md)
 - **Template**: [Reference Template](../../99.templates/templates/common/reference.template.md)
-- [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)
+- [Document Stage Routing Rules](../../00.agent-governance/rules/document-authoring.md)
 
 ### Lifecycle Traceability
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
-| [Workspace Engineering Research Pack Spec](../../03.specs/017-workspace-engineering-research-pack/spec.md) | A durable reference, version snapshot, category/index route, or generated LLM Wiki owner link changes and must remain separated from policy and procedure authority. | Documentation owner records changed indexes and reference facts; wiki-curator owns generator/currentness evidence, and the change owner corrects or reverts stale facts and links. |
+| [Workspace Engineering Research Pack Spec](../../03.specs/0017-workspace-engineering-research-pack/spec.md) | A durable reference, version snapshot, category/index route, or generated LLM Wiki owner link changes and must remain separated from policy and procedure authority. | Documentation owner records changed indexes and reference facts; wiki-curator owns generator/currentness evidence, and the change owner corrects or reverts stale facts and links. |

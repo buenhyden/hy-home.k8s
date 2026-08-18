@@ -60,4 +60,4 @@ coverage gaps across `docs/00.agent-governance/` and stage directories.
 | File                                          | Expected Link Target                           | Status  | Recommended Fix               |
 | --------------------------------------------- | ---------------------------------------------- | ------- | ----------------------------- |
 | `docs/00.agent-governance/harness-catalog.md` | `.agents/skills/new-skill/skill.md`            | missing | Add row to Skills table       |
-| `docs/01.requirements/prd-001.md`             | `docs/02.architecture/requirements/ard-001.md` | stale   | Update Related Documents link |
+| `docs/01.requirements/prd-001.md`             | `docs/ard-001.md` | stale   | Update Related Documents link |

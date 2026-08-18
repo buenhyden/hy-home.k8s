@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "contractId": "hy-home.k8s/agent-roster-admission",
   "contractVersion": "1.0.0",
-  "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+  "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
   "state": "repository-static-projected",
   "fixedSourceCutoff": {
     "localTime": "2026-07-10 10:00 Asia/Seoul",

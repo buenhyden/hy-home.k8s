@@ -22,9 +22,35 @@ INPUT_COMMIT = "2ab01b05f0e3f91368b10cc2c30046050f081a6b"  # pragma: allowlist s
 LEDGER_PATH = "docs/90.references/data/active-corpus-role-audit.json"
 SCRIPT_PATH = "scripts/validate-active-corpus-role-audit.py"
 AGGREGATE_PATH = "scripts/validate-repo-quality-gates.sh"
-OWNER_SPEC = "docs/03.specs/037-active-corpus-and-execution-retention/spec.md"
-EXECUTION_TRACKER = (
+MIGRATION_PATH = (
+    "docs/98.archive/migrations/"
+    "mig-0002-sdlc-document-and-governance-consolidation.md"
+)
+FROZEN_OWNER_SPEC = "docs/03.specs/037-active-corpus-and-execution-retention/spec.md"
+CURRENT_OWNER_SPEC = "docs/03.specs/0037-active-corpus-and-execution-retention/spec.md"
+FROZEN_EXECUTION_TRACKER = (
     "docs/04.execution/tasks/2026-07-18-active-corpus-and-execution-retention.md"
+)
+FROZEN_EXECUTION_TARGET = (
+    "docs/03.specs/037-active-corpus-and-execution-retention/tasks.md"
+)
+CURRENT_EXECUTION_TRACKER = (
+    "docs/03.specs/0037-active-corpus-and-execution-retention/tasks.md"
+)
+OWNER_SPEC = FROZEN_OWNER_SPEC
+EXECUTION_TRACKER = FROZEN_EXECUTION_TRACKER
+MIGRATION_SOURCE_COMMIT = "160ce006969ddb49965c8af193f3e9ee290e18a8"  # pragma: allowlist secret
+MIGRATION_MARKER = "<!-- archive-migration-ledger:v1 format=json -->\n\n```json\n"
+MIGRATION_FIELDS = (
+    "legacy_path",
+    "stable_path",
+    "artifact_id",
+    "action",
+    "replacement",
+    "source_commit",
+    "source_blob",
+    "content_sha256",
+    "reason",
 )
 STAGE05_ROOT = "docs/05.operations"
 TESTS_ROOT = "tests"
@@ -294,6 +320,9 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "regression-test",
     ),
 }
+TRANSITION_ONLY_HELPER_MANIFEST = {
+    "tests/test_migrate_document_work_units.py": ("python", "regression-test"),
+}
 README_ADDITIONS = [
     "tests/fixtures/document-contracts/template-source-parity.json",
     "tests/fixtures/document-lifecycle.json",
@@ -373,6 +402,15 @@ def _git_arguments_allowed(arguments: tuple[str, ...]) -> bool:
         ("ls-files", "-z", "--stage", "--", STAGE05_ROOT),
         ("ls-files", "-z", "--stage", "--", TESTS_ROOT),
         ("ls-files", "-z", "--stage", "--", LEDGER_PATH, SCRIPT_PATH, AGGREGATE_PATH),
+        (
+            "ls-files",
+            "-z",
+            "--stage",
+            "--",
+            MIGRATION_PATH,
+            CURRENT_OWNER_SPEC,
+            CURRENT_EXECUTION_TRACKER,
+        ),
     }:
         return True
     return (
@@ -720,7 +758,10 @@ def _helper_format_role(path: str) -> tuple[str, str]:
         raise RoleAuditError("ROLE-AUDIT-HELPER-FORMAT", path)
     if path in FROZEN_HELPER_PATHS:
         return derived
-    admitted = POST_CLOSURE_HELPER_MANIFEST.get(path)
+    admitted = {
+        **POST_CLOSURE_HELPER_MANIFEST,
+        **TRANSITION_ONLY_HELPER_MANIFEST,
+    }.get(path)
     if admitted is None or admitted != derived:
         raise RoleAuditError("ROLE-AUDIT-HELPER-ADMISSION", path)
     return admitted
@@ -797,7 +838,9 @@ def _expected_frozen_helper_entries() -> list[dict[str, str]]:
 def _expected_post_closure_helper_entries() -> list[dict[str, str]]:
     return [
         {"path": path, "format": helper_format, "role": role}
-        for path, (helper_format, role) in sorted(POST_CLOSURE_HELPER_MANIFEST.items())
+        for path, (helper_format, role) in sorted(
+            {**POST_CLOSURE_HELPER_MANIFEST, **TRANSITION_ONLY_HELPER_MANIFEST}.items()
+        )
     ]
 
 
@@ -919,6 +962,152 @@ def _duplicates(entries: Any, code: str) -> None:
         raise RoleAuditError(f"{code}-DUPLICATE")
     if paths != sorted(paths):
         raise RoleAuditError(f"{code}-ORDER")
+
+
+def _expected_moved_path(legacy: str) -> str | None:
+    requirement = re.fullmatch(
+        r"docs/01\.requirements/(?P<id>[0-9]{3})"
+        r"(?P<tail>-[a-z0-9]+(?:-[a-z0-9]+)*\.md)",
+        legacy,
+    )
+    if requirement is not None:
+        return (
+            "docs/01.requirements/"
+            f"{int(requirement.group('id')):04d}{requirement.group('tail')}"
+        )
+    work_unit = re.fullmatch(
+        r"docs/03\.specs/(?P<id>[0-9]{3})"
+        r"(?P<tail>-[a-z0-9]+(?:-[a-z0-9]+)*/"
+        r"[a-z][a-z0-9]*(?:-[a-z0-9]+)*\.md)",
+        legacy,
+    )
+    if work_unit is None:
+        return None
+    return (
+        "docs/03.specs/"
+        f"{int(work_unit.group('id')):04d}{work_unit.group('tail')}"
+    )
+
+
+def validate_authority_projection(
+    migration_text: str, current_paths: set[str]
+) -> dict[str, str]:
+    """Resolve frozen ACER-004 routes through the exact MIG-0002 projection."""
+
+    try:
+        metadata = _frontmatter(migration_text, MIGRATION_PATH)
+        if (
+            metadata.get("artifact_id") != "MIG-0002"
+            or metadata.get("migration_id") != "MIG-0002"
+            or metadata.get("status") != "accepted"
+            or migration_text.count(MIGRATION_MARKER) != 1
+        ):
+            raise ValueError
+        _prefix, remainder = migration_text.split(MIGRATION_MARKER, 1)
+        raw_rows, fence, _suffix = remainder.partition("\n```\n")
+        if not fence:
+            raise ValueError
+        rows = json.loads(raw_rows, object_pairs_hook=_reject_duplicate_pairs)
+    except (RoleAuditError, UnicodeError, ValueError, json.JSONDecodeError) as exc:
+        raise RoleAuditError("ROLE-AUDIT-AUTHORITY", MIGRATION_PATH) from exc
+    if not isinstance(rows, list) or len(rows) != 154:
+        raise RoleAuditError("ROLE-AUDIT-AUTHORITY", MIGRATION_PATH)
+
+    legacy_paths: list[str] = []
+    stable_paths: set[str] = set()
+    moved: dict[str, str] = {}
+    action_counts = {"moved": 0, "replaced": 0, "merged": 0}
+    for row in rows:
+        if not isinstance(row, Mapping) or tuple(row) != MIGRATION_FIELDS:
+            raise RoleAuditError("ROLE-AUDIT-AUTHORITY", MIGRATION_PATH)
+        legacy = row.get("legacy_path")
+        action = row.get("action")
+        if (
+            not is_safe_path(legacy)
+            or action not in action_counts
+            or row.get("source_commit") != MIGRATION_SOURCE_COMMIT
+            or not isinstance(row.get("source_blob"), str)
+            or FULL_OID.fullmatch(row["source_blob"]) is None
+            or not isinstance(row.get("content_sha256"), str)
+            or re.fullmatch(r"[0-9a-f]{64}", row["content_sha256"]) is None
+            or not isinstance(row.get("reason"), str)
+            or not row["reason"].strip()
+        ):
+            raise RoleAuditError("ROLE-AUDIT-AUTHORITY", MIGRATION_PATH)
+        legacy_paths.append(legacy)
+        action_counts[action] += 1
+        if action == "moved":
+            stable = row.get("stable_path")
+            if (
+                not is_safe_path(stable)
+                or stable != _expected_moved_path(legacy)
+                or stable in stable_paths
+                or row.get("replacement") is not None
+                or not isinstance(row.get("artifact_id"), str)
+                or not row["artifact_id"]
+            ):
+                raise RoleAuditError("ROLE-AUDIT-AUTHORITY", MIGRATION_PATH)
+            moved[legacy] = stable
+            stable_paths.add(stable)
+        elif (
+            row.get("stable_path") is not None
+            or row.get("artifact_id") is not None
+            or not is_safe_path(row.get("replacement"))
+        ):
+            raise RoleAuditError("ROLE-AUDIT-AUTHORITY", MIGRATION_PATH)
+
+    if (
+        legacy_paths != sorted(legacy_paths)
+        or len(legacy_paths) != len(set(legacy_paths))
+        or action_counts != {"moved": 141, "replaced": 3, "merged": 10}
+        or moved.get(FROZEN_OWNER_SPEC) != CURRENT_OWNER_SPEC
+        or moved.get(FROZEN_EXECUTION_TARGET) != CURRENT_EXECUTION_TRACKER
+        or {CURRENT_OWNER_SPEC, CURRENT_EXECUTION_TRACKER} - current_paths
+    ):
+        raise RoleAuditError("ROLE-AUDIT-AUTHORITY", MIGRATION_PATH)
+    return {
+        FROZEN_OWNER_SPEC: CURRENT_OWNER_SPEC,
+        FROZEN_EXECUTION_TRACKER: CURRENT_EXECUTION_TRACKER,
+    }
+
+
+def verify_authority_projection(
+    root: str | os.PathLike[str],
+    runner: GitRunner = _run_git,
+    *,
+    enforce_index: bool = True,
+) -> dict[str, str]:
+    normalized = _normalize_root(root)
+    paths = {MIGRATION_PATH, CURRENT_OWNER_SPEC, CURRENT_EXECUTION_TRACKER}
+    if enforce_index:
+        index = _parse_modes(
+            _git(
+                normalized,
+                (
+                    "ls-files",
+                    "-z",
+                    "--stage",
+                    "--",
+                    MIGRATION_PATH,
+                    CURRENT_OWNER_SPEC,
+                    CURRENT_EXECUTION_TRACKER,
+                ),
+                runner,
+            ),
+            allowed_paths=paths,
+        )
+        if set(index) != paths:
+            raise RoleAuditError("ROLE-AUDIT-AUTHORITY", MIGRATION_PATH)
+        migration_text = _authoritative_text(
+            normalized, MIGRATION_PATH, index, runner
+        )
+        for path in (CURRENT_OWNER_SPEC, CURRENT_EXECUTION_TRACKER):
+            _authoritative_bytes(normalized, path, index, runner)
+    else:
+        migration_text = _worktree_text(normalized, MIGRATION_PATH)
+        for path in (CURRENT_OWNER_SPEC, CURRENT_EXECUTION_TRACKER):
+            _read_worktree_bytes(normalized, path)
+    return validate_authority_projection(migration_text, paths)
 
 
 def validate_ledger(ledger: Any, observed: Mapping[str, Any]) -> dict[str, int]:
@@ -1074,6 +1263,11 @@ def validate_active_corpus_role_audit(
         ),
         observed,
     )
+    verify_authority_projection(
+        normalized,
+        runner,
+        enforce_index=enforce_index,
+    )
     return {
         "stage05": observed["stage05"]["counts"]["total"],
         "guides": observed["stage05"]["counts"]["guide"],
@@ -1144,6 +1338,7 @@ def run_self_test() -> int:
             [
                 *FROZEN_HELPER_PATHS,
                 *POST_CLOSURE_HELPER_MANIFEST,
+                *TRANSITION_ONLY_HELPER_MANIFEST,
             ]
         )
         for path in helper_paths:

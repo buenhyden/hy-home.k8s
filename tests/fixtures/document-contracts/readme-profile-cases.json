@@ -145,7 +145,7 @@
       "new": false
     },
     {
-      "path": "docs/02.architecture/requirements/README.md",
+      "path": "docs/02.architecture/descriptions/README.md",
       "profile": "readme/collection-index",
       "requiredH2": [
         "Overview",
@@ -181,66 +181,6 @@
         "Authoring Workflow",
         "Related Documents",
         "Lifecycle Handoff"
-      ],
-      "new": false
-    },
-    {
-      "path": "docs/04.execution/README.md",
-      "profile": "readme/stage-index",
-      "requiredH2": [
-        "Overview",
-        "Stage Contract",
-        "Document Index",
-        "Authoring Workflow",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Stage Contract",
-        "Document Index",
-        "Authoring Workflow",
-        "Related Documents",
-        "Lifecycle Handoff"
-      ],
-      "new": false
-    },
-    {
-      "path": "docs/04.execution/plans/README.md",
-      "profile": "readme/collection-index",
-      "requiredH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents",
-        "Selection Rules"
-      ],
-      "new": false
-    },
-    {
-      "path": "docs/04.execution/tasks/README.md",
-      "profile": "readme/collection-index",
-      "requiredH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents",
-        "Selection Rules"
       ],
       "new": false
     },
@@ -1106,6 +1046,72 @@
   ],
   "retiredPaths": [
     {
+      "path": "docs/04.execution/README.md",
+      "profile": "readme/stage-index",
+      "requiredH2": [
+        "Overview",
+        "Stage Contract",
+        "Document Index",
+        "Authoring Workflow",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Stage Contract",
+        "Document Index",
+        "Authoring Workflow",
+        "Related Documents",
+        "Lifecycle Handoff"
+      ],
+      "new": false,
+      "retiredBy": "WORK-054-002",
+      "destination": "docs/03.specs/README.md"
+    },
+    {
+      "path": "docs/04.execution/plans/README.md",
+      "profile": "readme/collection-index",
+      "requiredH2": [
+        "Overview",
+        "Scope",
+        "Item Index",
+        "Add and Find",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Scope",
+        "Item Index",
+        "Add and Find",
+        "Related Documents",
+        "Selection Rules"
+      ],
+      "new": false,
+      "retiredBy": "WORK-054-002",
+      "destination": "docs/99.templates/templates/sdlc/execution/plan.template.md"
+    },
+    {
+      "path": "docs/04.execution/tasks/README.md",
+      "profile": "readme/collection-index",
+      "requiredH2": [
+        "Overview",
+        "Scope",
+        "Item Index",
+        "Add and Find",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Scope",
+        "Item Index",
+        "Add and Find",
+        "Related Documents",
+        "Selection Rules"
+      ],
+      "new": false,
+      "retiredBy": "WORK-054-002",
+      "destination": "docs/99.templates/templates/sdlc/execution/task.template.md"
+    },
+    {
       "path": "docs/90.references/research/2026-07-04-wer/README.md",
       "profile": "readme/snapshot-pack",
       "requiredH2": [
@@ -1226,7 +1232,7 @@
       "destination": "docs/90.references/cloud-examples/aws/2026-07-12-aws-example-snapshot.md"
     },
     {
-      "path": "examples/aws/docs/02.architecture/requirements/README.md",
+      "path": "examples/aws/docs/02.architecture/descriptions/README.md",
       "profile": "readme/snapshot-pack",
       "requiredH2": [
         "Overview",
@@ -1466,7 +1472,7 @@
       "destination": "docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md"
     },
     {
-      "path": "examples/azure/docs/02.architecture/requirements/README.md",
+      "path": "examples/azure/docs/02.architecture/descriptions/README.md",
       "profile": "readme/snapshot-pack",
       "requiredH2": [
         "Overview",

@@ -4,6 +4,7 @@ type: sdlc/guide
 status: active
 owner: platform
 updated: 2026-05-09
+artifact_id: "GUIDE-0006"
 ---
 
 # ArgoCD Prometheus 메트릭 수집 및 Grafana 대시보드 가이드

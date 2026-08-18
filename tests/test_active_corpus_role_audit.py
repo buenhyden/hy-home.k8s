@@ -67,6 +67,7 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
             [
                 *self.validator.FROZEN_HELPER_PATHS,
                 *self.validator.POST_CLOSURE_HELPER_MANIFEST,
+                *self.validator.TRANSITION_ONLY_HELPER_MANIFEST,
             ]
         )
         proposal_path = "tests/test_reference_information_architecture.py"
@@ -124,10 +125,10 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 "runbooks": 9,
                 "incidents": 0,
                 "postmortems": 0,
-                "helpers": 67,
+                "helpers": 68,
                 "frozenHelpers": 33,
-                "postClosureHelpers": 34,
-                "python": 29,
+                "postClosureHelpers": 35,
+                "python": 30,
                 "json": 31,
                 "yaml": 6,
                 "readme": 1,
@@ -176,10 +177,79 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
         self.assertNotIn("execution-tracker", roles)
         self.assertIs(self.ledger["helperTests"]["executionTracker"], False)
 
+    def test_frozen_authority_routes_project_through_mig_0002(self) -> None:
+        self.assertEqual(
+            self.ledger["authority"]["ownerSpec"],
+            "docs/03.specs/037-active-corpus-and-execution-retention/spec.md",
+        )
+        self.assertEqual(
+            self.ledger["inventoryBoundary"]["executionTracker"],
+            "docs/04.execution/tasks/"
+            "2026-07-18-active-corpus-and-execution-retention.md",
+        )
+        migration = (REPOSITORY_ROOT / self.validator.MIGRATION_PATH).read_text(
+            encoding="utf-8"
+        )
+        projection = self.validator.validate_authority_projection(
+            migration,
+            {
+                self.validator.CURRENT_OWNER_SPEC,
+                self.validator.CURRENT_EXECUTION_TRACKER,
+            },
+        )
+        self.assertEqual(
+            projection,
+            {
+                self.validator.FROZEN_OWNER_SPEC: self.validator.CURRENT_OWNER_SPEC,
+                self.validator.FROZEN_EXECUTION_TRACKER: (
+                    self.validator.CURRENT_EXECUTION_TRACKER
+                ),
+            },
+        )
+
+    def test_missing_or_drifted_mig_0002_authority_projection_fails(self) -> None:
+        migration = (REPOSITORY_ROOT / self.validator.MIGRATION_PATH).read_text(
+            encoding="utf-8"
+        )
+        owner_row = (
+            '"legacy_path": "docs/03.specs/037-active-corpus-and-execution-retention/'
+            'spec.md"'
+        )
+        current_owner = (
+            '"stable_path": "docs/03.specs/0037-active-corpus-and-execution-'
+            'retention/spec.md"'
+        )
+        candidates = {
+            "missing legacy authority": migration.replace(
+                owner_row, owner_row.replace("037-", "038-"), 1
+            ),
+            "drifted current authority": migration.replace(
+                current_owner, current_owner.replace("0037-", "0038-"), 1
+            ),
+        }
+        for name, candidate in candidates.items():
+            with self.subTest(name=name):
+                with self.assertRaises(self.validator.RoleAuditError) as raised:
+                    self.validator.validate_authority_projection(
+                        candidate,
+                        {
+                            self.validator.CURRENT_OWNER_SPEC,
+                            self.validator.CURRENT_EXECUTION_TRACKER,
+                        },
+                    )
+                self.assertEqual(raised.exception.code, "ROLE-AUDIT-AUTHORITY")
+
+        with self.assertRaises(self.validator.RoleAuditError) as raised:
+            self.validator.validate_authority_projection(
+                migration,
+                {self.validator.CURRENT_OWNER_SPEC},
+            )
+        self.assertEqual(raised.exception.code, "ROLE-AUDIT-AUTHORITY")
+
     def test_readme_inventory_is_exact_and_closed(self) -> None:
         actual = [entry["path"] for entry in self.observed["helperTests"]["entries"]]
         self.assertEqual(self.observed["readmeInventory"], actual)
-        self.assertEqual(len(actual), 67)
+        self.assertEqual(len(actual), 68)
         self.assertEqual(len(self.ledger["readmeRemediation"]["finalInventory"]), 33)
 
     def test_post_closure_manifest_is_exact_and_identity_bound(self) -> None:
@@ -324,12 +394,21 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 ),
             },
         )
+        self.assertEqual(
+            self.validator.TRANSITION_ONLY_HELPER_MANIFEST,
+            {
+                "tests/test_migrate_document_work_units.py": (
+                    "python",
+                    "regression-test",
+                )
+            },
+        )
 
     def test_frozen_helpers_are_an_exact_subset_with_safe_post_closure_additions(
         self,
     ) -> None:
         partition = self.validator.validate_ledger(self.ledger, self.observed)
-        self.assertEqual(partition, {"frozen": 33, "postClosure": 34})
+        self.assertEqual(partition, {"frozen": 33, "postClosure": 35})
         self.assertEqual(
             self.ledger["helperTests"]["entries"],
             self.validator._expected_frozen_helper_entries(),
@@ -441,6 +520,11 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 },
                 {
                     "path": "tests/test_k8s_pre_edit_hook.py",
+                    "format": "python",
+                    "role": "regression-test",
+                },
+                {
+                    "path": "tests/test_migrate_document_work_units.py",
                     "format": "python",
                     "role": "regression-test",
                 },

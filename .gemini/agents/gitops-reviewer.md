@@ -1,6 +1,6 @@
 ---
 name: gitops-reviewer
-description: Worker agent for reviewing GitOps desired state, Kustomize structure, and ArgoCD rollout safety.
+description: Review desired-state changes for Kustomize structure, Argo CD target correctness, and rollout safety.
 kind: local
 max_turns: 8
 timeout_mins: 20
@@ -21,39 +21,29 @@ Review GitOps changes for target correctness, Kustomize structure, and ArgoCD-sa
 
 ## When to Use
 
-- A change touches `gitops/`, Helm values, Kustomize overlays, or ArgoCD application wiring.
-- A release path needs static desired-state review before merge or sync.
-- A worker is needed to evaluate rollback, pruning, or ownership impact.
+Review desired-state changes for Kustomize structure, Argo CD target correctness, and rollout safety.
 
 ## Inputs
 
-- Changed GitOps paths
-- Application, project, or overlay context
-- Static validation output and rollout constraints
+- Changed desired-state paths, rendered or static output, application hierarchy, and release constraints.
 
 ## Outputs
 
 - Structured findings about sync targets, Kustomize layout, and release risk
-- Rollback or follow-up recommendations
-- Evidence class for every conclusion
 
 ## Guardrails
 
 - Enforce GitOps-first boundaries; no direct cluster mutation is allowed in this role.
-- Do not approve plaintext secrets or unmanaged desired-state drift.
-- Do not infer live ArgoCD sync status from repository files.
 - Stop the review when a sync target is missing or ambiguous, rollout safety cannot be established, or a sensitive-data boundary is crossed.
 
 ## Capability and Evidence
 
-- Capability tier: `worker`; perform bounded GitOps and ArgoCD review without implementation or live-sync authority.
+- Capability tier reference: `docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles/3/capabilityTier`.
 - Required evidence: identify each affected sync target, Kustomize path, rollout risk, and repository-backed validation result.
 
 ## Handoff / Escalation
 
 - Escalate implementation tasks to `k8s-implementer.md`.
-- Escalate security findings to `security-auditor.md`.
-- Escalate ambiguous release ownership to `supervisor.md`.
 
 ## Postflight
 

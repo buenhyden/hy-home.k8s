@@ -18,7 +18,7 @@ Persona: System Architect
 
 | Path               | Owner        | Notes                              |
 | ------------------ | ------------ | ---------------------------------- |
-| `docs/02.architecture/requirements/**`   | architecture | Architecture Requirement Documents |
+| `docs/**`   | architecture | Architecture Description documents |
 | `docs/02.architecture/decisions/**`   | architecture | Architecture Decision Records      |
 | `docs/03.specs/**` | architecture | Technical specifications           |
 
@@ -28,7 +28,7 @@ Architecture scope does **not** own infrastructure (`gitops/`, `infrastructure/`
 
 ### Source of Truth
 
-- `docs/02.architecture/requirements/`
+- `docs/02.architecture/descriptions/`
 - `docs/02.architecture/decisions/`
 - `docs/03.specs/`
 
@@ -36,7 +36,7 @@ Architecture scope does **not** own infrastructure (`gitops/`, `infrastructure/`
 
 ### Responsibilities
 
-- Maintain architecture consistency across ARD, ADR, and specs.
+- Maintain architecture consistency across AD, ADR, and specs.
 - Ensure major design changes are recorded as ADRs.
 - Keep architecture-level constraints explicit for implementation layers.
 
@@ -58,6 +58,6 @@ inline a full role definition when an applicable native or local adapter exists.
 ## Related Documents
 
 - [Persona Protocol](../rules/persona.md)
-- [Stage Authoring Matrix](../rules/stage-authoring-matrix.md)
+- [Stage Authoring Matrix](../rules/document-authoring.md)
 - [Architecture Index](../../02.architecture/README.md)
 - [Specifications Index](../../03.specs/README.md)

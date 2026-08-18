@@ -48,7 +48,7 @@ HARNESS_PATH = PurePosixPath(
 )
 FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-model-fitness.json")
 
-OWNER_SPEC = "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md"
+OWNER_SPEC = "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md"
 AUTHORITATIVE_CUTOFF_REF = (
     "docs/00.agent-governance/contracts/"
     "provider-runtime-evidence.json#/cutoff"
@@ -167,6 +167,7 @@ NEGATIVE_MUTATIONS = (
     "rollback-weakening",
     "scope-escape",
     "harness-cutoff-authority",
+    "harness-tier-authority",
     "cutoff-mismatch",
     "secret-like-value",
 )
@@ -485,6 +486,14 @@ def _validate_authority_boundary(contract: dict[str, Any]) -> None:
             "provider-runtime-evidence must remain cutoff authority",
         )
     if (
+        boundaries.get("capabilityTierAuthority") != "roleProfiles"
+        or boundaries.get("harnessCapabilityTierUse") != "reference-only"
+    ):
+        fail(
+            "AREA-FIT-TIER-AUTHORITY",
+            "roleProfiles must remain the capability-tier authority",
+        )
+    if (
         boundaries.get("harnessObservationUse")
         != "repository-observation-only"
         or boundaries.get("harnessProviderModelAuthority") is not False
@@ -578,6 +587,33 @@ def _validate_harness(harness: dict[str, Any]) -> None:
         "AREA-FIT-HARNESS",
         "target surfaceIds",
     )
+    roles = harness.get("canonicalRoles")
+    if not isinstance(roles, list):
+        fail("AREA-FIT-HARNESS", "canonical roles must be an array")
+    _require_exact_sequence(
+        [role.get("id") for role in roles if isinstance(role, dict)],
+        ROLE_IDS,
+        "AREA-FIT-HARNESS",
+        "canonical roleIds",
+    )
+    for role_index, role in enumerate(roles):
+        semantics = role.get("adapterSemantics")
+        expected_ref = (
+            f"{HARNESS_PATH.parent.as_posix()}/agent-model-fitness.json"
+            f"#/roleProfiles/{role_index}/capabilityTier"
+        )
+        if not isinstance(semantics, dict):
+            fail("AREA-FIT-HARNESS", "adapter semantics must be an object")
+        if {"capabilityTier", "capabilityTierClaim"} & set(semantics):
+            fail(
+                "AREA-FIT-TIER-AUTHORITY",
+                f"{role['id']} harness semantics duplicate capability tier",
+            )
+        if role.get("capabilityTierRef") != expected_ref:
+            fail(
+                "AREA-FIT-TIER-AUTHORITY",
+                f"{role['id']} harness capability tier reference drifted",
+            )
     expected_pairs = {
         (role_id, provider_id)
         for role_id in ROLE_IDS
@@ -1803,6 +1839,10 @@ def apply_fixture_mutation(contract: dict[str, Any], name: str) -> None:
             "harnessObservationUse"
         ] = "provider-model-authority"
         contract["authorityBoundaries"]["harnessProviderModelAuthority"] = True
+    elif name == "harness-tier-authority":
+        contract["authorityBoundaries"][
+            "harnessCapabilityTierUse"
+        ] = "literal-owner"
     elif name == "cutoff-mismatch":
         contract["authoritativeCutoff"]["utc"] = "2026-07-10T01:00:01Z"
     elif name == "secret-like-value":

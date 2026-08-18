@@ -8,7 +8,7 @@
 ## Overview
 
 `02.architecture/`는 요구사항을 시스템 구조와 의사결정으로 연결하는 아키텍처 허브다.
-아키텍처 요구사항은 `requirements/`에, 결정 기록은 `decisions/`에 둔다.
+Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에 둔다.
 
 이 stage는 현재 실행계약을 보존한다. 현재 repo-backed 실행계약은
 [`gitops/`](../../gitops/README.md), [`infrastructure/tests/verify-contracts-static.sh`](../../infrastructure/tests/verify-contracts-static.sh),
@@ -19,7 +19,7 @@
 | 찾는 것 | 먼저 볼 위치 | 판단 기준 |
 | --- | --- | --- |
 | 현재 외부 서비스, Headlamp, `172.18.x` 계약 | [`gitops/platform/external-services/`](../../gitops/platform/external-services/), [`gitops/platform/network-policies/`](../../gitops/platform/network-policies/), [`verify-contracts-static.sh`](../../infrastructure/tests/verify-contracts-static.sh) | 현재 desired state와 정적 계약 검증이 우선한다. |
-| 시스템 경계와 품질 속성 | [`requirements/`](./requirements/README.md) | ARD는 PRD를 아키텍처 요구와 참조 구조로 확장한다. |
+| 시스템 경계와 품질 속성 | [`descriptions/`](./descriptions/README.md) | AD는 PRD를 아키텍처 설명과 참조 구조로 확장한다. |
 | 기술 선택과 현재 decision record | [`decisions/`](./decisions/README.md) | ADR은 현재 구현 기준의 결정, 대안, 결과를 보존한다. |
 | 구현자가 따라야 할 계약 | [`../03.specs/`](../03.specs/README.md) | 파일/manifest/API 수준 상세 설계는 Spec stage가 소유한다. |
 | 운영 정책과 복구 절차 | [`../05.operations/`](../05.operations/README.md) | 실행 절차, 정책, runbook은 Operations stage가 소유한다. |
@@ -50,17 +50,17 @@
 
 ```text
 02.architecture/
-├── requirements/  # Architecture requirements and reference models
+├── descriptions/  # Architecture Descriptions and reference models
 ├── decisions/     # Architecture decision records
 └── README.md
 ```
 
 ## Authoring Workflow
 
-1. 요구사항을 시스템 경계와 품질 속성으로 확장할 때는 `requirements/`를 갱신한다.
+1. 요구사항을 시스템 경계와 품질 속성으로 확장할 때는 `descriptions/`를 갱신한다.
 2. 기술 선택이나 운영 모델 결정은 `decisions/`에 ADR로 기록한다.
-3. ARD target은 `docs/02.architecture/requirements/####-<system-or-domain>.md`, ADR target은 `docs/02.architecture/decisions/####-<short-title>.md`를 따른다.
-4. 현재 구현과 상충하는 old ARD/ADR은 bulk note로 보존하지 않고 provenance가 검증된 Archive Record로 이동한다.
+3. AD target은 `docs/02.architecture/descriptions/ad-####-<system-or-domain>.md`, ADR target은 `docs/02.architecture/decisions/####-<short-title>.md`를 따른다.
+4. 현재 구현과 상충하는 old AD/ADR은 bulk note로 보존하지 않고 provenance가 검증된 Archive Record로 이동한다.
 5. 구현자가 따라야 할 상세 계약은 `../03.specs/`로 넘긴다.
 6. 운영 정책이나 복구 절차는 `../05.operations/`로 넘긴다.
 
@@ -68,18 +68,18 @@
 
 이 README의 링크 기준 위치는 `docs/02.architecture/`다.
 
-- 하위 아키텍처 폴더는 `./requirements/`, `./decisions/`로 연결한다.
+- 하위 아키텍처 폴더는 `./descriptions/`, `./decisions/`로 연결한다.
 - 인접 stage는 `../01.requirements/`, `../03.specs/`, `../05.operations/`로 연결한다.
 - root-level 구현 경로는 `../../gitops/`, `../../infrastructure/`처럼 repository root 기준으로 올라간다.
-- ARD/ADR 문서 안의 링크는 각 하위 폴더의 최종 문서 위치 기준으로 다시 계산한다.
+- AD/ADR 문서 안의 링크는 각 하위 폴더의 최종 문서 위치 기준으로 다시 계산한다.
 
 ## Related Documents
 
 - [Requirements README](../01.requirements/README.md)
-- [Architecture Requirements](./requirements/README.md)
+- [Architecture Descriptions](./descriptions/README.md)
 - [Architecture Decisions](./decisions/README.md)
 - [Specs README](../03.specs/README.md)
 - [Operations README](../05.operations/README.md)
-- [Document Stage Routing](../00.agent-governance/rules/document-stage-routing.md)
+- [Document Stage Routing](../00.agent-governance/rules/document-authoring.md)
 - [Templates README](../99.templates/README.md)
 - [Archive Index](../98.archive/README.md)

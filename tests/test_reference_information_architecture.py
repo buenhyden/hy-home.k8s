@@ -163,7 +163,9 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         contract["generatedAssets"] = relations
         return contract
 
-    def _generator_repository(self) -> Path:
+    def _generator_repository(
+        self, *, preserve_production_output: bool = False
+    ) -> Path:
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         root = Path(temporary.name)
@@ -173,19 +175,50 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             Path("docs/90.references/llm-wiki/wiki-index.md"),
             Path("docs/00.agent-governance/README.md"),
             Path("docs/00.agent-governance/harness-catalog.md"),
-            Path("docs/00.agent-governance/rules/document-stage-routing.md"),
+            Path("docs/00.agent-governance/rules/document-authoring.md"),
             Path("docs/README.md"),
             Path("scripts/README.md"),
             Path("docs/90.references/README.md"),
             Path("docs/90.references/data/README.md"),
+            ria.REGISTRY_PATH,
+            ria.DOCUMENT_TAXONOMY_MANIFEST_PATH,
+            ria.ARCHIVE_MIGRATION_PATH,
+            ria.SDLC_CONSOLIDATION_MIGRATION_PATH,
         )
         for path in paths:
             destination = root / path
             destination.parent.mkdir(parents=True, exist_ok=True)
             destination.write_bytes((REPOSITORY_ROOT / path).read_bytes())
+        if not preserve_production_output:
+            generated = subprocess.run(
+                [ria.GENERATOR_EXECUTABLE, ria.GENERATOR_PATH.as_posix()],
+                cwd=root,
+                env=ria.CLOSED_GENERATOR_ENVIRONMENT,
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=False,
+            )
+            self.assertEqual(generated.returncode, 0, generated.stderr)
         self._git_in(root, "init", "--quiet")
         self._git_in(root, "add", "--", *(path.as_posix() for path in paths))
         return root
+
+    def _run_generator_check(self, root: Path) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            [
+                ria.GENERATOR_EXECUTABLE,
+                ria.GENERATOR_PATH.as_posix(),
+                "--check",
+            ],
+            cwd=root,
+            env=ria.CLOSED_GENERATOR_ENVIRONMENT,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=False,
+        )
 
     def _replace_generator(self, root: Path, payload: bytes) -> None:
         path = Path("scripts/generate-llm-wiki-index.sh")
@@ -1361,6 +1394,256 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 root, self._generator_contract([stale_owner])
             )
         )
+
+    def test_generator_transition_overlay_is_exact_and_fail_closed(self) -> None:
+        generator = (REPOSITORY_ROOT / ria.GENERATOR_PATH).read_bytes()
+        output = (REPOSITORY_ROOT / ria.GENERATOR_OUTPUT_PATH).read_bytes()
+        rule = ria.GENERATOR_TRANSITION_RULE
+        self.assertEqual(
+            rule,
+            {
+                "baseOutputOid": "5a1482bd94df7f52d3ba22f20e9304c29d61862c",
+                "currentOutputOid": "add8ff6c918674aad36e55ebff188f582bb9cd03",
+                "currentGeneratorOid": "4a6657a4e7526bce32127373300261878666b6a1",
+                "semanticMappings": (
+                    {
+                        "base": "| Architecture requirements | [Architecture Requirements README](../../02.architecture/requirements/README.md) | Owns ARD-style architecture requirement index | Architecture requirement changes |",
+                        "current": "| Architecture descriptions | [Architecture Descriptions README](../../02.architecture/descriptions/README.md) | Owns the AD architecture-description index | Architecture-description changes |",
+                        "count": 1,
+                    },
+                ),
+            },
+        )
+        self.assertTrue(
+            ria._generator_transition_overlay_matches(  # noqa: SLF001
+                generator,
+                output,
+                transition_active=True,
+            )
+        )
+
+        mutations = (
+            ("terminal-state", generator, output, False, rule),
+            ("future-generator", generator + b"\n", output, True, rule),
+            ("future-output", generator, output + b"\n", True, rule),
+            (
+                "base-blob-pin",
+                generator,
+                output,
+                True,
+                {**rule, "baseOutputOid": "0" * 40},
+            ),
+            (
+                "current-output-pin",
+                generator,
+                output,
+                True,
+                {**rule, "currentOutputOid": "0" * 40},
+            ),
+            (
+                "current-generator-pin",
+                generator,
+                output,
+                True,
+                {**rule, "currentGeneratorOid": "0" * 40},
+            ),
+            (
+                "semantic-mapping",
+                generator,
+                output,
+                True,
+                {
+                    **rule,
+                    "semanticMappings": (
+                        {
+                            **rule["semanticMappings"][0],
+                            "current": rule["semanticMappings"][0]["current"]
+                            + " drift",
+                        },
+                    ),
+                },
+            ),
+        )
+        for (
+            name,
+            candidate_generator,
+            candidate_output,
+            active,
+            candidate_rule,
+        ) in mutations:
+            with (
+                self.subTest(case=name),
+                mock.patch.object(ria, "GENERATOR_TRANSITION_RULE", candidate_rule),
+            ):
+                self.assertFalse(
+                    ria._generator_transition_overlay_matches(  # noqa: SLF001
+                        candidate_generator,
+                        candidate_output,
+                        transition_active=active,
+                    )
+                )
+
+    def test_generator_transition_suppresses_only_expected_stale_exit(self) -> None:
+        contract = json.loads(
+            (REPOSITORY_ROOT / ria.DEFAULT_CONTRACT_PATH).read_text(encoding="utf-8")
+        )
+        root = self._generator_repository(preserve_production_output=True)
+        active_sources = frozenset({"docs/04.execution/plans/reviewed.md"})
+        with (
+            mock.patch.object(
+                ria,
+                "_load_taxonomy_archive_transition",
+                return_value=active_sources,
+            ),
+            mock.patch.object(
+                ria,
+                "_run_generator_check",
+                return_value="transition",
+            ),
+        ):
+            self.assertEqual(
+                ria.validate_generated_assets(root, contract),
+                [],
+            )
+
+        with (
+            mock.patch.object(
+                ria,
+                "_load_taxonomy_archive_transition",
+                return_value=active_sources,
+            ),
+            mock.patch.object(
+                ria,
+                "_run_generator_check",
+                side_effect=ria._GeneratorError("generator output is stale"),  # noqa: SLF001
+            ),
+        ):
+            self.assertEqual(ria.validate_generated_assets(root, contract), [])
+
+        for name, sources, result, message in (
+            ("terminal-state", frozenset(), "transition", None),
+            (
+                "stale-without-taxonomy-transition",
+                frozenset(),
+                None,
+                "generator output is stale",
+            ),
+            ("unknown-success", active_sources, "unknown", None),
+            ("generic-nonzero", active_sources, None, "generator command failed"),
+            ("timeout", active_sources, None, "generator command timed out"),
+            ("unavailable", active_sources, None, "generator executable is unavailable"),
+        ):
+            generator_result = (
+                {"return_value": result}
+                if message is None
+                else {"side_effect": ria._GeneratorError(message)}  # noqa: SLF001
+            )
+            with (
+                self.subTest(case=name),
+                mock.patch.object(
+                    ria,
+                    "_load_taxonomy_archive_transition",
+                    return_value=sources,
+                ),
+                mock.patch.object(
+                    ria,
+                    "_run_generator_check",
+                    **generator_result,
+                ),
+            ):
+                findings = ria.validate_generated_assets(root, contract)
+                self.assertEqual(
+                    findings,
+                    [
+                        ria.Finding(
+                            "RIA-GENERATOR",
+                            ria.GENERATOR_OUTPUT_PATH.as_posix(),
+                            "generated output check failed",
+                        )
+                    ],
+                )
+
+    def test_direct_generator_check_fails_closed_after_mig0002_projection(self) -> None:
+        output_path = ria.GENERATOR_OUTPUT_PATH
+        root = self._generator_repository(preserve_production_output=True)
+        before = (root / output_path).read_bytes()
+        result = self._run_generator_check(root)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("generated LLM WIKI index is stale", result.stderr)
+        self.assertEqual((root / output_path).read_bytes(), before)
+        self.assertEqual(
+            ria._blob_sha1(before),  # noqa: SLF001
+            "5a1482bd94df7f52d3ba22f20e9304c29d61862c",  # pragma: allowlist secret
+        )
+
+        def mutate_output(candidate: Path) -> None:
+            target = candidate / output_path
+            target.write_bytes(target.read_bytes() + b"future output\n")
+
+        def mutate_generated_content(candidate: Path) -> None:
+            target = candidate / ria.GENERATOR_PATH
+            payload = target.read_bytes()
+            original = b"| Specifications | [03.specs README]"
+            replacement = b"| Future specifications | [03.specs README]"
+            self.assertEqual(payload.count(original), 1)
+            target.write_bytes(payload.replace(original, replacement, 1))
+
+        def mutate_semantic_pin(candidate: Path) -> None:
+            target = candidate / ria.GENERATOR_PATH
+            payload = target.read_bytes()
+            original = b"| Architecture requirements | [Architecture Requirements README]"
+            replacement = b"| Drifted requirements | [Architecture Requirements README]"
+            self.assertEqual(payload.count(original), 1)
+            target.write_bytes(payload.replace(original, replacement, 1))
+
+        def mutate_output_pin(candidate: Path) -> None:
+            target = candidate / ria.GENERATOR_PATH
+            payload = target.read_bytes()
+            original = b"5a1482bd94df7f52d3ba22f20e9304c29d61862c"  # pragma: allowlist secret
+            self.assertEqual(payload.count(original), 1)
+            target.write_bytes(payload.replace(original, b"0" * 40, 1))
+
+        def mutate_terminal_state(candidate: Path) -> None:
+            target = candidate / ria.REGISTRY_PATH
+            payload = target.read_bytes()
+            self.assertEqual(payload.count(b'"routeState": "transition"'), 1)
+            target.write_bytes(
+                payload.replace(
+                    b'"routeState": "transition"',
+                    b'"routeState": "terminal"',
+                    1,
+                )
+            )
+
+        def mutate_future_manifest(candidate: Path) -> None:
+            target = candidate / ria.DOCUMENT_TAXONOMY_MANIFEST_PATH
+            target.write_bytes(target.read_bytes() + b"\n")
+
+        def mutate_archive_migration(candidate: Path) -> None:
+            target = candidate / ria.ARCHIVE_MIGRATION_PATH
+            target.write_bytes(target.read_bytes() + b"\n")
+
+        mutations = (
+            ("output-bytes", mutate_output),
+            ("generated-bytes", mutate_generated_content),
+            ("semantic-pin", mutate_semantic_pin),
+            ("output-pin", mutate_output_pin),
+            ("terminal-state", mutate_terminal_state),
+            ("future-manifest", mutate_future_manifest),
+            ("future-archive-migration", mutate_archive_migration),
+        )
+        for name, mutation in mutations:
+            with self.subTest(case=name):
+                candidate = self._generator_repository(
+                    preserve_production_output=True
+                )
+                mutation(candidate)
+                candidate_before = (candidate / output_path).read_bytes()
+                rejected = self._run_generator_check(candidate)
+                self.assertNotEqual(rejected.returncode, 0)
+                self.assertEqual(
+                    (candidate / output_path).read_bytes(), candidate_before
+                )
 
     def test_duplicate_current_and_generated_manual_owners_fail(self) -> None:
         root, contract, owners, _copies = self._duplicate_repository()
@@ -3455,6 +3738,138 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 wrong_section, Path(projection["path"]), projection
             )
 
+    def taxonomy_overlay_payloads(self):
+        root = REPOSITORY_ROOT
+        contract = load_contract(root, root / ria.DEFAULT_CONTRACT_PATH)
+        context = ria._build_context(root, contract)  # noqa: SLF001
+        baselines = ria._encoded_baselines(contract)  # noqa: SLF001
+        result = {}
+        for path in ria.TAXONOMY_OVERLAY_RULES:
+            if path in context.proposed_bytes:
+                pack = next(
+                    pack
+                    for pack in context.proposed_registry.packs
+                    if path == pack.readme_path or path in pack.member_paths
+                )
+                baseline = context.baseline_bytes[(baselines[pack.pack_id], path)]
+                proposed = context.proposed_bytes[path]
+            else:
+                encoded = baselines[ria.AUDIT_PACK_ID]
+                baseline = ria._read_commit_path(  # noqa: SLF001
+                    root, context.baseline_oids[encoded], path
+                )
+                proposed = ria._proposed_path(root, path, None, None)  # noqa: SLF001
+            result[path] = (baseline, proposed)
+        return result
+
+    def test_taxonomy_archive_overlay_is_exactly_the_seven_reviewed_paths(
+        self,
+    ) -> None:
+        sources = ria._load_taxonomy_archive_transition(  # noqa: SLF001
+            REPOSITORY_ROOT, proposed_oid=None, runner=None
+        )
+        payloads = self.taxonomy_overlay_payloads()
+        self.assertEqual(len(ria.TAXONOMY_OVERLAY_RULES), 7)
+        self.assertEqual(set(payloads), set(ria.TAXONOMY_OVERLAY_PATHS))
+        for path, (baseline, proposed) in payloads.items():
+            self.assertTrue(
+                ria._taxonomy_overlay_matches(  # noqa: SLF001
+                    path, baseline, proposed, sources
+                )
+            )
+
+    def test_taxonomy_archive_overlay_rejects_membership_oid_and_semantic_drift(
+        self,
+    ) -> None:
+        sources = ria._load_taxonomy_archive_transition(  # noqa: SLF001
+            REPOSITORY_ROOT, proposed_oid=None, runner=None
+        )
+        path, (baseline, proposed) = next(
+            iter(self.taxonomy_overlay_payloads().items())
+        )
+        self.assertFalse(
+            ria._taxonomy_overlay_matches(  # noqa: SLF001
+                path, baseline + b"x", proposed, sources
+            )
+        )
+        self.assertFalse(
+            ria._taxonomy_overlay_matches(  # noqa: SLF001
+                path, baseline, proposed + b"x", sources
+            )
+        )
+        rule = ria.TAXONOMY_OVERLAY_RULES[path]
+        retired_source = next(iter(rule["retiredLinks"]))
+        index_target = os.path.relpath(
+            "docs/98.archive/README.md", path.parent.as_posix()
+        ) + "#document-index"
+        retired_target = os.path.relpath(retired_source, path.parent.as_posix())
+        semantic_drift = proposed.replace(
+            f"]({index_target})".encode(),
+            f"]({retired_target})".encode(),
+            1,
+        )
+        self.assertFalse(
+            ria._taxonomy_overlay_matches(  # noqa: SLF001
+                path, baseline, semantic_drift, sources
+            )
+        )
+        with mock.patch.object(
+            ria,
+            "TAXONOMY_OVERLAY_RULES",
+            {
+                key: value
+                for key, value in ria.TAXONOMY_OVERLAY_RULES.items()
+                if key != path
+            },
+        ):
+            self.assertFalse(
+                ria._taxonomy_overlay_matches(  # noqa: SLF001
+                    path, baseline, proposed, sources
+                )
+            )
+        with mock.patch.object(
+            ria,
+            "TAXONOMY_OVERLAY_RULES",
+            {
+                **ria.TAXONOMY_OVERLAY_RULES,
+                Path("docs/90.references/audits/rogue.md"): rule,
+            },
+        ):
+            self.assertFalse(
+                ria._taxonomy_overlay_matches(  # noqa: SLF001
+                    path, baseline, proposed, sources
+                )
+            )
+
+    def test_taxonomy_archive_overlay_is_disabled_in_terminal_state(self) -> None:
+        registry = json.loads(
+            (REPOSITORY_ROOT / ria.REGISTRY_PATH).read_text(encoding="utf-8")
+        )
+        manifest = json.loads(
+            (REPOSITORY_ROOT / ria.DOCUMENT_TAXONOMY_MANIFEST_PATH).read_text(
+                encoding="utf-8"
+            )
+        )
+        migration_document = (
+            REPOSITORY_ROOT / ria.ARCHIVE_MIGRATION_PATH
+        ).read_bytes()
+        self.assertEqual(
+            len(
+                ria._taxonomy_transition_sources(  # noqa: SLF001
+                    registry, manifest, migration_document
+                )
+            ),
+            50,
+        )
+        registry["routeState"] = "terminal"
+        manifest["state"] = "terminal"
+        self.assertEqual(
+            ria._taxonomy_transition_sources(  # noqa: SLF001
+                registry, manifest, migration_document
+            ),
+            frozenset(),
+        )
+
     def test_complete_body_projection_preserves_frontmatter(self) -> None:
         projection = {
             "path": "docs/90.references/audits/2026-07-11-weia/README.md",
@@ -3530,6 +3945,14 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                     )
 
     def test_agent_cutover_projection_authority_is_fully_pinned(self) -> None:
+        self.assertEqual(
+            ria.AGENT_LEGACY_CUTOVER_SHA256,
+            "9476b45d66e0861c1a877c166733bd6530ce8b3b94dabfdabad2cc130b7287cb",  # pragma: allowlist secret
+        )
+        self.assertEqual(
+            ria.AGENT_LEGACY_CUTOVER_SCHEMA_SHA256,
+            "02e5f38b9b04974a0e83193ff29451111658529a8cb043160529a2fadd566da1",  # pragma: allowlist secret
+        )
         projections = ria.load_agent_cutover_projections(
             REPOSITORY_ROOT,
             None,
@@ -3556,6 +3979,32 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                             REPOSITORY_ROOT,
                             None,
                         )
+
+    def test_generator_route_projection_is_exactly_pinned_to_mig0002(self) -> None:
+        expected = {
+            Path("docs/00.agent-governance/rules/document-stage-routing.md"): Path(
+                "docs/00.agent-governance/rules/document-authoring.md"
+            )
+        }
+        self.assertEqual(
+            ria.load_sdlc_consolidation_route_projections(
+                REPOSITORY_ROOT,
+                proposed_oid=None,
+                runner=None,
+            ),
+            expected,
+        )
+        with mock.patch.object(
+            ria,
+            "SDLC_CONSOLIDATION_MIGRATION_SHA256",
+            "0" * 64,
+        ):
+            with self.assertRaises(ria._GitError):  # noqa: SLF001
+                ria.load_sdlc_consolidation_route_projections(
+                    REPOSITORY_ROOT,
+                    proposed_oid=None,
+                    runner=None,
+                )
 
     def test_open_transition_matrix_is_closed(self) -> None:
         contract = self._minimal_contract()

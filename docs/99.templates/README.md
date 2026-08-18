@@ -24,15 +24,17 @@ README는 해당 machine contract를 복제하지 않고 사람이 올바른 소
 | Forms | 작성자가 복사한 뒤 topic-specific 사실과 증거로 채우는 최소 구조를 제공한다. | [`templates/`](./templates/README.md) |
 | Authored documents | 요구, 결정, 명세, 실행, 운영, 참조, 보존 증거를 소유한다. | `docs/01.requirements`부터 `docs/05.operations`, `docs/90.references`, `docs/98.archive` |
 
-이 stage는 실제 PRD, ARD, ADR, Spec, Plan, Task, 운영 기록이나 기능별 구현
+이 stage는 실제 PRD, AD, ADR, Spec, Plan, Task, 운영 기록이나 기능별 구현
 계약을 소유하지 않는다. Form에는 재사용 가능한 구조만 두고, 공통 규칙은 support
 또는 Stage 00 governance로 돌려보낸다.
 
 ### Form Family Inventory
 
 - **Common forms**: README profile, governance reference, durable reference,
-  archive record, memory, progress entry를 위한 Markdown form이다.
-- **Core SDLC forms**: PRD, ARD, ADR, Spec, Plan, Task의 단계별 책임과
+  archive record, archive migration control, memory, progress entry를 위한
+  Markdown form이다.
+- **Core SDLC forms**: PRD, optional SRS, optional Interface Requirement, AD,
+  ADR, Spec, Plan, Task의 단계별 책임과
   handoff를 기록한다.
 - **Spec helper and native forms**: API, agent, data model, test 보조 문서와
   OpenAPI, GraphQL, protobuf 계약을 feature Spec 아래에 둔다.
@@ -60,12 +62,8 @@ progress 책임을 지원한다.
 
 - [Template Support Contracts](./support/README.md)
 - [Template Forms](./templates/README.md)
-- [Documentation Contract](./support/documentation-contract.md)
-- [SDLC Governance](./support/sdlc-governance.md)
-- [Common Documentation Governance](./support/common-documentation-governance.md)
-- [Frontmatter Schema](./support/frontmatter-schema.md)
-- [Template Routing](./support/template-routing.md)
-- [Legacy Cleanup Rules](./support/legacy-cleanup-rules.md)
+- [Document Contract](./support/document-contract.md)
+- [Document Lifecycle](./support/document-lifecycle.md)
 
 ## Authoring Workflow
 
@@ -79,16 +77,14 @@ progress 책임을 지원한다.
 4. **Validate**: registry, Markdown profile, link/owner 검증과 repository quality
    gate를 실행하고 repo-static 결과와 remote/live 결과를 구분해 기록한다.
 
-Template 선택과 경로 변경 절차는 [Template Routing](./support/template-routing.md),
-다섯 frontmatter key의 의미는 [Frontmatter Schema](./support/frontmatter-schema.md),
-역할·번호·handoff·feedback 규칙은 [SDLC
-Governance](./support/sdlc-governance.md)를 따른다. README는 frontmatter-free이며
-선택된 README profile의 heading contract만 따른다.
+Template 선택, form/body/frontmatter rationale은 [Document
+Contract](./support/document-contract.md)를 따르고, lifecycle·supersession·retention·archive
+및 legacy disposition은 [Document Lifecycle](./support/document-lifecycle.md)을 따른다.
+README는 frontmatter-free이며 선택된 README profile의 heading contract만 따른다.
 
 ## Related Documents
 
 - [Docs README](../README.md)
 - [Agent Governance Hub](../00.agent-governance/README.md)
-- [Documentation Protocol](../00.agent-governance/rules/documentation-protocol.md)
-- [Stage Authoring Matrix](../00.agent-governance/rules/stage-authoring-matrix.md)
+- [Document Authoring Policy](../00.agent-governance/rules/document-authoring.md)
 - [Template Support Contracts](./support/README.md)

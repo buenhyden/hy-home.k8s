@@ -51,6 +51,22 @@
     {
       "name": "secret-like-contract-value",
       "expectedRule": "PNME-SENSITIVE-CONTENT"
+    },
+    {
+      "name": "hook-graph-unclassified",
+      "expectedRule": "PNME-SCHEMA"
+    },
+    {
+      "name": "hook-graph-runtime-pass",
+      "expectedRule": "PNME-HOOK-BOUNDARY"
+    },
+    {
+      "name": "hook-graph-digest-drift",
+      "expectedRule": "PNME-HOOK-BOUNDARY"
+    },
+    {
+      "name": "absent-runtime-native-pass",
+      "expectedRule": "PNME-UNSUPPORTED-RUNTIME"
     }
   ],
   "canaryMutations": [
@@ -85,6 +101,10 @@
     {
       "name": "authenticated-pass-without-discovery",
       "expectedRule": "PNME-CANARY-ORDER"
+    },
+    {
+      "name": "absent-runtime-native-pass",
+      "expectedRule": "PNME-UNSUPPORTED-RUNTIME"
     }
   ]
 }

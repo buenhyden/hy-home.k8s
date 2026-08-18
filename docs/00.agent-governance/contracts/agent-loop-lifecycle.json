@@ -10,7 +10,7 @@
   },
   "providerNeutral": true,
   "authority": {
-    "spec": "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md",
+    "spec": "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md",
     "implementationScope": "AHLL-001",
     "acceptanceCriteria": [
       "VAL-AHLL-001",
@@ -318,11 +318,11 @@
       },
       {
         "id": "role-evaluation-case",
-        "ownerRef": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md"
+        "ownerRef": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md"
       },
       {
         "id": "owned-external-limitation",
-        "ownerRef": "docs/04.execution/tasks/2026-07-29-agent-harness-loop-lifecycle.md"
+        "ownerRef": "docs/03.specs/0043-agent-harness-loop-lifecycle/tasks.md"
       }
     ]
   },

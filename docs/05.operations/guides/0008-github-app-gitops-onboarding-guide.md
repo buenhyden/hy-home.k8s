@@ -4,6 +4,7 @@ type: sdlc/guide
 status: active
 owner: platform
 updated: 2026-05-26
+artifact_id: "GUIDE-0008"
 ---
 
 # GitHub 앱 GitOps 온보딩 가이드

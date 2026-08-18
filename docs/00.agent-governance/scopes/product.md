@@ -19,7 +19,7 @@ Persona: Product Manager
 | Path               | Owner   | Notes                                 |
 | ------------------ | ------- | ------------------------------------- |
 | `docs/01.requirements/**`   | product | Product Requirement Documents         |
-| `docs/04.execution/plans/**` | product | Implementation plans (shared with qa) |
+| `docs/03.specs/*/plan.md` | product | Feature-local implementation plans (shared with qa) |
 
 Product scope does **not** own infra manifests, governance files, or authored specs downstream of PRD.
 
@@ -28,7 +28,7 @@ Product scope does **not** own infra manifests, governance files, or authored sp
 ### Source of Truth
 
 - `docs/01.requirements/`
-- `docs/04.execution/plans/`
+- `docs/03.specs/*/plan.md`
 
 ## Current Contract
 
@@ -56,6 +56,6 @@ inline a full role definition when an applicable native or local adapter exists.
 ## Related Documents
 
 - [Persona Protocol](../rules/persona.md)
-- [Stage Authoring Matrix](../rules/stage-authoring-matrix.md)
+- [Stage Authoring Matrix](../rules/document-authoring.md)
 - [Requirements Index](../../01.requirements/README.md)
-- [Execution Index](../../04.execution/README.md)
+- [Spec Work-Unit Index](../../03.specs/README.md)

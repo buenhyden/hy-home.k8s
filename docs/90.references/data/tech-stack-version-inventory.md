@@ -71,7 +71,7 @@ updated: 2026-07-30
 # v0.27.4 -> v0.28.4, coredns v1.13.1 -> v1.14.6, metrics-server v0.8.0 -> v0.9.0, kine
 # v0.14.9 -> v0.16.3 (minor), 그리고 traefik v3.5.1 -> v3.7.8 (--disable=traefik 이므로 무관).
 # 즉 버전 문자열이 변경 규모를 실제보다 작게 보이게 한다. 특히 flannel minor는 Istio CNI가
-# conflist를 체이닝하는 바로 그 표면이며, 그 도입은 아직 live 검증되지 않았다(ADR 0025).
+# conflist를 체이닝하는 바로 그 표면이며, 그 도입은 아직 live 검증되지 않았다(ADR-0028).
 # 순서: Istio CNI의 Baseline warning 채널이 깨끗하게 확인된 뒤에 이 핀을 올린다.
 # k3d에는 upgrade 명령이 없어 이 값의 변경은 delete-and-recreate를 의미한다. 매니페스트
 # 편집이 아니라 운영 절차이며, 현재 저장소에는 그 재생성 절차 문서가 없다.

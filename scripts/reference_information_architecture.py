@@ -35,8 +35,8 @@ AGENT_LEGACY_CUTOVER_PATH = Path(
 AGENT_LEGACY_CUTOVER_SCHEMA_PATH = Path(
     "docs/00.agent-governance/contracts/agent-legacy-cutover.schema.json"
 )
-AGENT_LEGACY_CUTOVER_SHA256 = "3284adc4d41dc4c430ed36c50055800c8b1f9cd61b5af8cde67abe71edc6f0aa"  # pragma: allowlist secret
-AGENT_LEGACY_CUTOVER_SCHEMA_SHA256 = "cc47f9265e4c3f5bf5d305c232b395940ff691940f4ff8407dc1f8c8ebe0e42e"  # pragma: allowlist secret
+AGENT_LEGACY_CUTOVER_SHA256 = "9476b45d66e0861c1a877c166733bd6530ce8b3b94dabfdabad2cc130b7287cb"  # pragma: allowlist secret
+AGENT_LEGACY_CUTOVER_SCHEMA_SHA256 = "02e5f38b9b04974a0e83193ff29451111658529a8cb043160529a2fadd566da1"  # pragma: allowlist secret
 CANONICAL_SCHEMA_PATH = Path(
     "docs/90.references/data/reference-information-architecture.schema.json"
 )
@@ -44,6 +44,29 @@ DATA_ASSET_ROOT = Path("docs/90.references/data")
 DATA_ASSET_README = DATA_ASSET_ROOT / "README.md"
 REFERENCE_ROOT = Path("docs/90.references")
 REGISTRY_PATH = Path("docs/99.templates/support/document-profiles.json")
+DOCUMENT_TAXONOMY_MANIFEST_PATH = Path("scripts/document-taxonomy-migration.json")
+ARCHIVE_MIGRATION_PATH = Path(
+    "docs/98.archive/migrations/mig-0001-sdlc-taxonomy-convergence.md"
+)
+ARCHIVE_MIGRATION_SHA256 = (
+    "4e62cb6ba2a394cd9ae546543c85a58c8f105cb5d1ff48cfd8dab8b8b1082206"  # pragma: allowlist secret
+)
+SDLC_CONSOLIDATION_MIGRATION_PATH = Path(
+    "docs/98.archive/migrations/"
+    "mig-0002-sdlc-document-and-governance-consolidation.md"
+)
+SDLC_CONSOLIDATION_MIGRATION_SHA256 = (
+    "67032c0b86acbee04a1e713053d164df2e99f4486df79df5161d53975fb82a7a"  # pragma: allowlist secret
+)
+GENERATOR_ROUTE_LEGACY_PATH = Path(
+    "docs/00.agent-governance/rules/document-stage-routing.md"
+)
+GENERATOR_ROUTE_CURRENT_PATH = Path(
+    "docs/00.agent-governance/rules/document-authoring.md"
+)
+DOCUMENT_TAXONOMY_SOURCE_COMMIT = (
+    "713dff1fc3de58a2d1682970a7f24faa39c14263"  # pragma: allowlist secret
+)
 ALLOWED_PATH_ROOTS = frozenset({"docs", "scripts", "tests"})
 GIT_SHA1_PATTERN = re.compile(r"^git-sha1:([0-9a-f]{40})$")
 OID_PATTERN = re.compile(r"^[0-9a-f]{40}$")
@@ -134,6 +157,101 @@ AGENT_CUTOVER_CURRENT_PATH_COUNTS = (
         1,
     ),
 )
+TAXONOMY_OVERLAY_PATHS = frozenset(
+    {
+        Path("docs/90.references/audits/2026-07-11-weia/README.md"),
+        Path(
+            "docs/90.references/audits/2026-07-11-weia/"
+            "ai-agents-model-routing-vibe-coding.md"
+        ),
+        Path(
+            "docs/90.references/audits/2026-07-11-weia/"
+            "ci-qa-automation-pipeline-workflow.md"
+        ),
+        Path(
+            "docs/90.references/audits/2026-07-11-weia/"
+            "governance-harness-loop-providers.md"
+        ),
+        Path(
+            "docs/90.references/audits/2026-07-11-weia/"
+            "kubernetes-infrastructure-security.md"
+        ),
+        Path(
+            "docs/90.references/audits/2026-07-11-weia/"
+            "sdlc-document-lifecycle-frontmatter.md"
+        ),
+        Path("docs/90.references/audits/README.md"),
+    }
+)
+_WEIA_PLAN = (
+    "docs/04.execution/plans/"
+    "2026-07-11-workspace-engineering-research-audit-integration.md"
+)
+_WEIA_TASK = (
+    "docs/04.execution/tasks/"
+    "2026-07-11-workspace-engineering-research-audit-integration.md"
+)
+TAXONOMY_OVERLAY_RULES: Mapping[Path, Mapping[str, object]] = MappingProxyType(
+    {
+        Path("docs/90.references/audits/2026-07-11-weia/README.md"): {
+            "oldOid": "84b4cdae06e3882cee4b9f60cec30b01dfada873",  # pragma: allowlist secret
+            "currentOid": "dbeb6c063b36c98d620d09562a5100d5923343b5",
+            "retiredLinks": MappingProxyType({_WEIA_PLAN: 5, _WEIA_TASK: 4}),
+            "archiveIndexLinks": 8,
+        },
+        Path(
+            "docs/90.references/audits/2026-07-11-weia/"
+            "ai-agents-model-routing-vibe-coding.md"
+        ): {
+            "oldOid": "bdeb41f2cb5d7aa0b9822f7c7ffc0674c6abc895",  # pragma: allowlist secret
+            "currentOid": "71fdb66e9ff080aa505374dc4ab0424065153edc",
+            "retiredLinks": MappingProxyType({_WEIA_PLAN: 1}),
+            "archiveIndexLinks": 1,
+        },
+        Path(
+            "docs/90.references/audits/2026-07-11-weia/"
+            "ci-qa-automation-pipeline-workflow.md"
+        ): {
+            "oldOid": "b469ca00ffc7e226fa2f51b40c8a5bb2347a0f03",  # pragma: allowlist secret
+            "currentOid": "4cad1c4330c41d721b7fe6aa9eebb90c702e2f8f",
+            "retiredLinks": MappingProxyType({_WEIA_PLAN: 1}),
+            "archiveIndexLinks": 1,
+        },
+        Path(
+            "docs/90.references/audits/2026-07-11-weia/"
+            "governance-harness-loop-providers.md"
+        ): {
+            "oldOid": "859dd01de058474939e734ca6e5cf6c1678ff18d",  # pragma: allowlist secret
+            "currentOid": "b35dce197ca96bb9341b590ef505040e86d18577",
+            "retiredLinks": MappingProxyType({_WEIA_PLAN: 1}),
+            "archiveIndexLinks": 1,
+        },
+        Path(
+            "docs/90.references/audits/2026-07-11-weia/"
+            "kubernetes-infrastructure-security.md"
+        ): {
+            "oldOid": "8d706c7b2f09a030cc3d9bf1ca9cf856779288a1",  # pragma: allowlist secret
+            "currentOid": "f8cec478bbff2ee542c0738521bdb54de2fc6e38",
+            "retiredLinks": MappingProxyType({_WEIA_PLAN: 2}),
+            "archiveIndexLinks": 2,
+        },
+        Path(
+            "docs/90.references/audits/2026-07-11-weia/"
+            "sdlc-document-lifecycle-frontmatter.md"
+        ): {
+            "oldOid": "fa3178eab2ad0371652188b16ec9ed8d456ee21b",  # pragma: allowlist secret
+            "currentOid": "39cdc99f265ca91c35f1f0ede114cf626359837e",
+            "retiredLinks": MappingProxyType({_WEIA_PLAN: 1}),
+            "archiveIndexLinks": 1,
+        },
+        Path("docs/90.references/audits/README.md"): {
+            "oldOid": "6020fd85b8e21578ba93fba61c03b17599118a87",  # pragma: allowlist secret
+            "currentOid": "16f671253013bbdda6605049bd08981b0d40556f",
+            "retiredLinks": MappingProxyType({_WEIA_PLAN: 2, _WEIA_TASK: 2}),
+            "archiveIndexLinks": 4,
+        },
+    }
+)
 DATA_ASSET_FIELDS = frozenset({"id", "repositoryEvidence", "refreshTrigger", "sources"})
 SOURCE_RECORD_FIELDS = frozenset({"url", "checkedOn", "adoptedScope", "rejectedScope"})
 GENERATED_ASSET_FIELDS = frozenset(
@@ -160,6 +278,22 @@ GENERATOR_INPUT_ROOTS = (
 )
 GENERATOR_OUTPUT_PATH = Path("docs/90.references/llm-wiki/wiki-index.md")
 GENERATOR_CANONICAL_OWNER_PATH = Path("docs/90.references/llm-wiki/README.md")
+GENERATOR_TRANSITION_RULE: Mapping[str, object] = MappingProxyType(
+    {
+        "baseOutputOid": "5a1482bd94df7f52d3ba22f20e9304c29d61862c",
+        "currentOutputOid": "add8ff6c918674aad36e55ebff188f582bb9cd03",
+        "currentGeneratorOid": "4a6657a4e7526bce32127373300261878666b6a1",
+        "semanticMappings": (
+            MappingProxyType(
+                {
+                    "base": "| Architecture requirements | [Architecture Requirements README](../../02.architecture/requirements/README.md) | Owns ARD-style architecture requirement index | Architecture requirement changes |",
+                    "current": "| Architecture descriptions | [Architecture Descriptions README](../../02.architecture/descriptions/README.md) | Owns the AD architecture-description index | Architecture-description changes |",
+                    "count": 1,
+                }
+            ),
+        ),
+    }
+)
 GENERATOR_RELATIONS: Mapping[
     str,
     tuple[tuple[str, ...], str, Path, tuple[Path, ...], Path, Path],
@@ -673,7 +807,7 @@ def _run_git(
     return bytes(buffers["stdout"])
 
 
-def _run_generator_check(root: Path, check_command: object) -> None:
+def _run_generator_check(root: Path, check_command: object) -> str:
     """Run the one mapped generator check with bounded, discarded output."""
 
     if not isinstance(check_command, str):
@@ -787,7 +921,22 @@ def _run_generator_check(root: Path, check_command: object) -> None:
                 stream.close()
             except OSError:
                 pass
+    if returncode == 0:
+        stdout = bytes(buffers["stdout"])
+        if stdout == b"[PASS] LLM WIKI generated index is current\n":
+            return "current"
+        if stdout == b"[PASS] LLM WIKI generated index transition overlay is current\n":
+            return "transition"
+        raise _GeneratorError("generator success output differs")
     if returncode != 0:
+        expected_stale_prefix = (
+            "ERR generated LLM WIKI index is stale: "
+            f"{root.absolute() / GENERATOR_OUTPUT_PATH}\n"
+        ).encode("utf-8")
+        if returncode == 1 and bytes(buffers["stderr"]).startswith(
+            expected_stale_prefix
+        ):
+            raise _GeneratorError("generator output is stale")
         raise _GeneratorError("generator command failed")
 
 
@@ -1904,6 +2053,65 @@ def _output_links_to_owner(
     )
 
 
+def _generator_transition_overlay_matches(
+    generator: bytes,
+    output: bytes,
+    *,
+    transition_active: bool,
+) -> bool:
+    """Admit only the reviewed AD-row generator transition over frozen Stage 90."""
+
+    rule = GENERATOR_TRANSITION_RULE
+    if (
+        not transition_active
+        or set(rule)
+        != {
+            "baseOutputOid",
+            "currentOutputOid",
+            "currentGeneratorOid",
+            "semanticMappings",
+        }
+        or _blob_sha1(generator) != rule.get("currentGeneratorOid")
+        or _blob_sha1(output) != rule.get("baseOutputOid")
+    ):
+        return False
+    mappings = rule.get("semanticMappings")
+    if not isinstance(mappings, tuple) or not mappings:
+        return False
+    try:
+        output_text = output.decode("utf-8", "strict")
+    except UnicodeDecodeError:
+        return False
+    reconstructed_current = output_text
+    for mapping in mappings:
+        if not isinstance(mapping, Mapping) or set(mapping) != {
+            "base",
+            "current",
+            "count",
+        }:
+            return False
+        base = mapping.get("base")
+        current = mapping.get("current")
+        count = mapping.get("count")
+        if (
+            not isinstance(base, str)
+            or not base
+            or not isinstance(current, str)
+            or not current
+            or base == current
+            or not isinstance(count, int)
+            or isinstance(count, bool)
+            or count < 1
+            or output_text.count(base) != count
+            or output_text.count(current) != 0
+        ):
+            return False
+        reconstructed_current = reconstructed_current.replace(base, current, count)
+    return _blob_sha1(reconstructed_current.encode("utf-8")) == rule.get(
+        "currentOutputOid"
+    )
+
+
 def validate_generated_assets(
     root: Path,
     contract: Mapping[str, object],
@@ -2108,6 +2316,20 @@ def validate_generated_assets(
 
     root = root.absolute()
     authoritative: dict[Path, bytes] = {}
+    try:
+        route_projections = load_sdlc_consolidation_route_projections(
+            root,
+            proposed_oid=commit_oid,
+            runner=runner,
+        )
+    except _GitError:
+        return [
+            Finding(
+                "RIA-GENERATOR",
+                SDLC_CONSOLIDATION_MIGRATION_PATH.as_posix(),
+                "generator route projection authority is unavailable",
+            )
+        ]
     paths = {
         path
         for relation in relations
@@ -2119,11 +2341,12 @@ def validate_generated_assets(
         )
     }
     for path in sorted(paths):
+        authority_path = route_projections.get(path, path)
         try:
             authoritative[path] = (
-                read_proposed_regular_file(root, path, runner)
+                read_proposed_regular_file(root, authority_path, runner)
                 if commit_oid is None
-                else _read_commit_path(root, commit_oid, path, runner)
+                else _read_commit_path(root, commit_oid, authority_path, runner)
             )
         except (ContractError, _GitError):
             findings.append(
@@ -2154,8 +2377,58 @@ def validate_generated_assets(
 
     for relation in relations:
         try:
-            _run_generator_check(root, relation.check_command)
-        except _GeneratorError:
+            generator_result = _run_generator_check(root, relation.check_command)
+        except _GeneratorError as error:
+            transition_active = False
+            if str(error) == "generator output is stale":
+                try:
+                    transition_active = bool(
+                        _load_taxonomy_archive_transition(
+                            root,
+                            proposed_oid=None,
+                            runner=runner,
+                        )
+                    )
+                except (ContractError, _GitError):
+                    transition_active = False
+            if (
+                transition_active
+                and route_projections
+                == {GENERATOR_ROUTE_LEGACY_PATH: GENERATOR_ROUTE_CURRENT_PATH}
+                and _generator_transition_overlay_matches(
+                    authoritative[relation.generator_path],
+                    authoritative[relation.output_path],
+                    transition_active=True,
+                )
+            ):
+                continue
+            findings.append(
+                Finding(
+                    "RIA-GENERATOR",
+                    relation.output_path.as_posix(),
+                    "generated output check failed",
+                )
+            )
+            continue
+        if generator_result == "current":
+            continue
+        transition_active = False
+        if generator_result == "transition":
+            try:
+                transition_active = bool(
+                    _load_taxonomy_archive_transition(
+                        root,
+                        proposed_oid=None,
+                        runner=runner,
+                    )
+                )
+            except (ContractError, _GitError):
+                transition_active = False
+        if not _generator_transition_overlay_matches(
+            authoritative[relation.generator_path],
+            authoritative[relation.output_path],
+            transition_active=transition_active,
+        ):
             findings.append(
                 Finding(
                     "RIA-GENERATOR",
@@ -2243,6 +2516,305 @@ def _proposed_path(
     if proposed_oid is not None:
         return _read_commit_path(root, proposed_oid, path, runner)
     return read_proposed_regular_file(root, path, runner)
+
+
+def load_sdlc_consolidation_route_projections(
+    root: Path,
+    *,
+    proposed_oid: str | None,
+    runner: GitRunner | None,
+) -> dict[Path, Path]:
+    """Load the one generator route merged by the exact MIG-0002 authority."""
+
+    root = root.absolute()
+    if proposed_oid is None:
+        authority = root / SDLC_CONSOLIDATION_MIGRATION_PATH
+        try:
+            mode = authority.lstat().st_mode
+        except FileNotFoundError:
+            return {}
+        except OSError as error:
+            raise _GitError("SDLC consolidation route authority is unavailable") from error
+        if not stat.S_ISREG(mode):
+            raise _GitError("SDLC consolidation route authority is not regular")
+    try:
+        payload = _proposed_path(
+            root,
+            SDLC_CONSOLIDATION_MIGRATION_PATH,
+            proposed_oid,
+            runner,
+        )
+    except (ContractError, _GitError) as error:
+        if proposed_oid is not None:
+            return {}
+        raise _GitError("SDLC consolidation route authority is unavailable") from error
+    if hashlib.sha256(payload).hexdigest() != SDLC_CONSOLIDATION_MIGRATION_SHA256:
+        raise _GitError("SDLC consolidation route authority differs")
+    marker = b"<!-- archive-migration-ledger:v1 format=json -->\n\n```json\n"
+    if payload.count(marker) != 1 or payload.count(b"\n```\n") != 1:
+        raise _GitError("SDLC consolidation route authority differs")
+    raw = payload.split(marker, 1)[1].split(b"\n```\n", 1)[0]
+    try:
+        rows = json.loads(
+            raw.decode("utf-8", "strict"),
+            object_pairs_hook=_reject_duplicate_keys,
+        )
+    except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as error:
+        raise _GitError("SDLC consolidation route authority differs") from error
+    expected = {
+        "legacy_path": GENERATOR_ROUTE_LEGACY_PATH.as_posix(),
+        "stable_path": None,
+        "artifact_id": None,
+        "action": "merged",
+        "replacement": GENERATOR_ROUTE_CURRENT_PATH.as_posix(),
+        "source_commit": "160ce006969ddb49965c8af193f3e9ee290e18a8",  # pragma: allowlist secret
+        "source_blob": "f2169c842ca1f973118433db40e136e7e387e60d",  # pragma: allowlist secret
+        "content_sha256": (
+            "4af764cf03a18ac3f5db907359f2fb72826559664d30a0e04670822d4effdd41"  # pragma: allowlist secret
+        ),
+        "reason": (
+            "Merge duplicate route-sensitive authoring guidance into the "
+            "canonical Stage 00 document-authoring owner."
+        ),
+    }
+    if (
+        not isinstance(rows, list)
+        or len(rows) != 154
+        or sum(row == expected for row in rows) != 1
+    ):
+        raise _GitError("SDLC consolidation route authority differs")
+    return {GENERATOR_ROUTE_LEGACY_PATH: GENERATOR_ROUTE_CURRENT_PATH}
+
+
+def _work107_archive_aliases(content: bytes) -> dict[str, str]:
+    """Parse the exact reviewed 93-row legacy-to-stable archive ledger."""
+
+    if hashlib.sha256(content).hexdigest() != ARCHIVE_MIGRATION_SHA256:
+        raise _GitError("archive migration document differs")
+    marker = b"<!-- archive-migration-ledger:v1 format=json -->\n\n```json\n"
+    if content.count(marker) != 1:
+        raise _GitError("archive migration document differs")
+    raw = content.split(marker, 1)[1].split(b"\n```", 1)[0]
+    try:
+        rows = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise _GitError("archive migration document differs") from exc
+    fields = (
+        "schema_version",
+        "migration_id",
+        "legacy_path",
+        "stable_path",
+        "artifact_id",
+        "action",
+        "replacement",
+        "source_commit",
+        "legacy_archive_commit",
+        "legacy_envelope_blob",
+        "source_blob",
+        "content_sha256",
+        "record_kind",
+        "reason",
+    )
+    if not isinstance(rows, list) or len(rows) != 93:
+        raise _GitError("archive migration document differs")
+    aliases: dict[str, str] = {}
+    stable_paths: set[str] = set()
+    for row in rows:
+        if (
+            not isinstance(row, Mapping)
+            or tuple(row) != fields
+            or row.get("schema_version") != 1
+            or row.get("migration_id") != "MIG-0001"
+            or row.get("action") != "moved"
+            or row.get("replacement") is not None
+            or not isinstance(row.get("legacy_path"), str)
+            or not _safe_git_path(row["legacy_path"])
+            or not isinstance(row.get("stable_path"), str)
+            or not _safe_git_path(row["stable_path"])
+            or row["legacy_path"] in aliases
+            or row["stable_path"] in stable_paths
+        ):
+            raise _GitError("archive migration document differs")
+        aliases[row["legacy_path"]] = row["stable_path"]
+        stable_paths.add(row["stable_path"])
+    return aliases
+
+
+def _taxonomy_transition_sources(
+    registry: Mapping[str, object],
+    manifest: Mapping[str, object],
+    migration_document: bytes,
+) -> frozenset[str]:
+    route_state = registry.get("routeState")
+    manifest_state = manifest.get("state")
+    if route_state == "terminal":
+        if manifest_state != "terminal":
+            raise _GitError("taxonomy transition state differs")
+        return frozenset()
+    if route_state != "transition" or manifest_state != "transition":
+        raise _GitError("taxonomy transition state differs")
+    namespaces = registry.get("archiveNamespaces")
+    namespace_contract = (
+        ("arwb-base", "exact-immutable", 31),
+        ("acer-additive", "exact-immutable", 12),
+        ("wdtc-execution", "exact-reviewed-manifest", 50),
+        ("progress-snapshot", "append-only-unique", 0),
+    )
+    if (
+        registry.get("archiveContractVersion") != 2
+        or not isinstance(namespaces, list)
+        or len(namespaces) != len(namespace_contract)
+    ):
+        raise _GitError("taxonomy archive namespace differs")
+    namespace_records: dict[str, frozenset[str]] = {}
+    for raw, (expected_id, expected_policy, expected_count) in zip(
+        namespaces, namespace_contract, strict=True
+    ):
+        if (
+            not isinstance(raw, Mapping)
+            or set(raw) != {"id", "policy", "records"}
+            or raw.get("id") != expected_id
+            or raw.get("policy") != expected_policy
+            or not isinstance(raw.get("records"), list)
+            or len(raw["records"]) != expected_count
+            or any(
+                not isinstance(path, str) or not _safe_git_path(path)
+                for path in raw["records"]
+            )
+            or len(set(raw["records"])) != expected_count
+        ):
+            raise _GitError("taxonomy archive namespace differs")
+        namespace_records[expected_id] = frozenset(raw["records"])
+    archive_aliases = _work107_archive_aliases(migration_document)
+    if set(archive_aliases.values()) != set().union(*namespace_records.values()):
+        raise _GitError("taxonomy archive namespace differs")
+    entries = manifest.get("entries")
+    if (
+        set(manifest) != {"state", "sourceCommit", "entries"}
+        or manifest.get("sourceCommit") != DOCUMENT_TAXONOMY_SOURCE_COMMIT
+        or not isinstance(entries, list)
+        or len(entries) != 132
+    ):
+        raise _GitError("taxonomy manifest differs")
+    entry_keys = {
+        "source",
+        "target",
+        "workUnit",
+        "disposition",
+        "sourceBlob",
+        "reviewed",
+    }
+    sources: set[str] = set()
+    targets: set[str] = set()
+    archive_sources: set[str] = set()
+    archive_targets: set[str] = set()
+    dispositions: Counter[str] = Counter()
+    for entry in entries:
+        if (
+            not isinstance(entry, Mapping)
+            or set(entry) != entry_keys
+            or not isinstance(entry.get("source"), str)
+            or not _safe_git_path(entry["source"])
+            or not isinstance(entry.get("target"), str)
+            or not _safe_git_path(entry["target"])
+            or not isinstance(entry.get("workUnit"), str)
+            or not entry["workUnit"]
+            or entry.get("disposition") not in {"move-current", "archive-unique"}
+            or not isinstance(entry.get("sourceBlob"), str)
+            or OID_PATTERN.fullmatch(entry["sourceBlob"]) is None
+            or entry.get("reviewed") is not True
+            or entry["source"] in sources
+            or entry["target"] in targets
+        ):
+            raise _GitError("taxonomy manifest differs")
+        source = entry["source"]
+        target = entry["target"]
+        sources.add(source)
+        targets.add(target)
+        dispositions[entry["disposition"]] += 1
+        if entry["disposition"] == "archive-unique":
+            if target != source.replace("docs/", "docs/98.archive/", 1):
+                raise _GitError("taxonomy manifest archive route differs")
+            archive_sources.add(source)
+            archive_targets.add(target)
+    if (
+        dispositions != Counter({"move-current": 82, "archive-unique": 50})
+        or {archive_aliases.get(path) for path in archive_targets}
+        != set(namespace_records["wdtc-execution"])
+    ):
+        raise _GitError("taxonomy manifest membership differs")
+    return frozenset(archive_sources)
+
+
+def _load_taxonomy_archive_transition(
+    root: Path,
+    *,
+    proposed_oid: str | None,
+    runner: GitRunner | None,
+) -> frozenset[str]:
+    registry = _decode_json_bytes(
+        _proposed_path(root, REGISTRY_PATH, proposed_oid, runner),
+        field=REGISTRY_PATH.as_posix(),
+    )
+    manifest = _decode_json_bytes(
+        _proposed_path(
+            root, DOCUMENT_TAXONOMY_MANIFEST_PATH, proposed_oid, runner
+        ),
+        field=DOCUMENT_TAXONOMY_MANIFEST_PATH.as_posix(),
+    )
+    migration_document = _proposed_path(
+        root, ARCHIVE_MIGRATION_PATH, proposed_oid, runner
+    )
+    return _taxonomy_transition_sources(registry, manifest, migration_document)
+
+
+def _blob_sha1(payload: bytes) -> str:
+    return hashlib.sha1(
+        f"blob {len(payload)}\0".encode("ascii") + payload
+    ).hexdigest()
+
+
+def _taxonomy_overlay_matches(
+    path: Path,
+    baseline: bytes,
+    proposed: bytes,
+    taxonomy_sources: frozenset[str],
+) -> bool:
+    if set(TAXONOMY_OVERLAY_RULES) != set(TAXONOMY_OVERLAY_PATHS):
+        return False
+    rule = TAXONOMY_OVERLAY_RULES.get(path)
+    if rule is None or not taxonomy_sources:
+        return False
+    retired_links = rule.get("retiredLinks")
+    if (
+        not isinstance(retired_links, Mapping)
+        or _blob_sha1(baseline) != rule.get("oldOid")
+        or _blob_sha1(proposed) != rule.get("currentOid")
+        or any(source not in taxonomy_sources for source in retired_links)
+    ):
+        return False
+    try:
+        baseline_text = baseline.decode("utf-8", errors="strict")
+        proposed_text = proposed.decode("utf-8", errors="strict")
+    except UnicodeDecodeError:
+        return False
+    for source, expected_count in retired_links.items():
+        if not isinstance(source, str) or not isinstance(expected_count, int):
+            return False
+        target = os.path.relpath(source, path.parent.as_posix())
+        marker = f"]({target})"
+        if (
+            baseline_text.count(marker) != expected_count
+            or proposed_text.count(marker) != 0
+        ):
+            return False
+    archive_index = (
+        os.path.relpath("docs/98.archive/README.md", path.parent.as_posix())
+        + "#document-index"
+    )
+    return proposed_text.count(f"]({archive_index})") == rule.get(
+        "archiveIndexLinks"
+    )
 
 
 def _build_context(
@@ -4981,7 +5553,7 @@ def load_agent_cutover_projections(
     if (
         cutover.get("schemaVersion") != 1
         or cutover.get("currentOwnerSpec")
-        != "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md"
+        != "docs/03.specs/0045-agent-governance-ci-qa-cutover/spec.md"
         or cutover.get("currentAuthorityMigrations") != expected
     ):
         raise _GitError("agent cutover projection authority differs")
@@ -5036,6 +5608,12 @@ def validate_overlay_guards(
     baselines = _encoded_baselines(contract)
     projections = _projection_map(contract)
     try:
+        taxonomy_sources = _load_taxonomy_archive_transition(
+            root.absolute(), proposed_oid=proposed_oid, runner=runner
+        )
+    except (ContractError, _GitError):
+        taxonomy_sources = frozenset()
+    try:
         cutover_projections = load_agent_cutover_projections(
             root.absolute(),
             runner,
@@ -5069,6 +5647,8 @@ def validate_overlay_guards(
         for path in (pack.readme_path, *pack.member_paths):
             baseline = context.baseline_bytes[(encoded, path)]
             proposed = context.proposed_bytes[path]
+            raw_baseline = baseline
+            raw_proposed = proposed
             projection = projections.get(path)
             if path == transition_path:
                 digest = transition.get("targetSha256") if transition else None
@@ -5112,11 +5692,16 @@ def validate_overlay_guards(
                 )
                 continue
             if hashlib.sha256(proposed).digest() != hashlib.sha256(baseline).digest():
-                findings.append(
-                    Finding(
-                        "RIA-OVERLAY", path.as_posix(), "protected Current bytes differ"
+                if not _taxonomy_overlay_matches(
+                    path, raw_baseline, raw_proposed, taxonomy_sources
+                ):
+                    findings.append(
+                        Finding(
+                            "RIA-OVERLAY",
+                            path.as_posix(),
+                            "protected Current bytes differ",
+                        )
                     )
-                )
     current_paths = set(context.proposed_registry.paths)
     for path, projection in projections.items():
         if path in current_paths:
@@ -5153,6 +5738,8 @@ def validate_overlay_guards(
         try:
             baseline = _read_commit_path(root.absolute(), oid, path, runner)
             proposed = _proposed_path(root.absolute(), path, proposed_oid, runner)
+            raw_baseline = baseline
+            raw_proposed = proposed
             baseline = _projection_mask(
                 baseline,
                 path,
@@ -5173,9 +5760,16 @@ def validate_overlay_guards(
             )
             continue
         if hashlib.sha256(proposed).digest() != hashlib.sha256(baseline).digest():
-            findings.append(
-                Finding("RIA-OVERLAY", path.as_posix(), "protected index bytes differ")
-            )
+            if not _taxonomy_overlay_matches(
+                path, raw_baseline, raw_proposed, taxonomy_sources
+            ):
+                findings.append(
+                    Finding(
+                        "RIA-OVERLAY",
+                        path.as_posix(),
+                        "protected index bytes differ",
+                    )
+                )
     return sorted(set(findings))
 
 

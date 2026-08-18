@@ -65,7 +65,24 @@ from document_lifecycle import (
     lifecycle_diagnostic_sort_key,
     validate_snapshot_documents,
 )
-from archive_validation import validate_archive_immutability
+from archive_validation import (
+    MIG0002_DOCUMENT_SHA256,
+    MIGRATION_DOCUMENT_MAX_BYTES,
+    parse_pinned_migration_control,
+    read_staged_blob_bounded,
+    validate_archive_immutability,
+)
+from archive_recovery import (
+    ArchiveContractError,
+    WORK107_LEGACY_ARCHIVE_COMMIT,
+    WORK107_MIGRATION_PATH,
+    build_work107_migration_rows,
+    parse_work107_migration_document,
+    render_work107_migration_document,
+    render_work107_stable_envelope,
+    validate_work107_migration_rows,
+    _git_capture_bounded,
+)
 
 
 FIXTURE_PATH = PurePosixPath("tests/fixtures/document-lifecycle.json")
@@ -91,10 +108,17 @@ GIT_GLOBAL_ARGUMENTS = (
     "-c",
     f"core.hooksPath={os.devnull}",
     "-c",
+    "user.name=Lifecycle Self Test",
+    "-c",
+    "user.email=lifecycle@example.invalid",
+    "-c",
     "diff.renameLimit=0",
     "-c",
     "diff.renames=true",
 )
+GIT_CAPTURE_MAX_BYTES = 2 * 1024 * 1024
+GIT_SIZE_OUTPUT_MAX_BYTES = 64
+DOCUMENT_BLOB_MAX_BYTES = 1024 * 1024
 EXPECTED_ENTRYPOINTS = (
     "scripts/document_lifecycle.py",
     "scripts/validate-document-lifecycle.py",
@@ -205,6 +229,247 @@ AGENT_ROSTER_CONTRACT_BLOB_MUTATIONS = (
     "duplicate-key",
 )
 
+WORK105_CUTOVER_BASE_COMMIT = "a6fa1806364ea0472baaad0906e1b5e4ddac8602"
+WORK105_BASE_REGISTRY_BLOB_OID = "fc9ba039906ef240d076de5eeb6c584b681ae09f"
+WORK105_PROPOSED_REGISTRY_BLOB_OID = "fd842f60e801a39435600f35a27f22e1c659f1bd"
+WORK105_BASE_REGISTRY_PROJECTION_SHA256 = (
+    "ef2e31327be14a3117898a8c0eb661f022fd96cac4e1d3f9362925e189c63daf"  # pragma: allowlist secret
+)
+WORK105_PROPOSED_REGISTRY_PROJECTION_SHA256 = (
+    "17d49aa94403200ea9795d8c14f3fb9137e4f266ebb91e0449b937eecea6ff50"  # pragma: allowlist secret
+)
+WORK105_RETIRED_PROFILE_IDS = frozenset(
+    {
+        "sdlc/ard",  # Retired WORK-105 base input.
+        "template/sdlc/ard",  # Retired WORK-105 base input.
+        "sdlc/api-spec",  # Retired WORK-105 base input.
+        "template/sdlc/api-spec",  # Retired WORK-105 base input.
+    }
+)
+WORK105_TERMINAL_PROFILE_IDS = frozenset(
+    {
+        "sdlc/ad",
+        "template/sdlc/ad",
+        "sdlc/interface",
+        "template/sdlc/interface",
+        "sdlc/srs",
+        "template/sdlc/srs",
+    }
+)
+WORK105_AD_CUTOVER = (
+    ("0004-argo-rollouts-progressive-delivery", "active"),
+    ("0005-argo-notifications-slack", "active"),
+    ("0006-workspace-agent-governance-platform", "active"),
+    ("0007-current-local-gitops-platform", "active"),
+    ("0008-workspace-document-assurance-operating-model", "accepted"),
+    ("0009-document-lifecycle-evidence-operating-model", "accepted"),
+    ("0010-repository-delivery-evidence-architecture", "active"),
+    ("0011-document-taxonomy-consolidation-architecture", "active"),
+)
+WORK105_ADR0023_PATH = PurePosixPath(
+    "docs/02.architecture/decisions/"
+    "0023-work-unit-document-taxonomy-and-governance-authority.md"
+)
+WORK105_ADR0024_PATH = PurePosixPath(
+    "docs/02.architecture/decisions/"
+    "0024-terminal-artifact-identity-and-archive-layout.md"
+)
+WORK105_LEGACY_AD0011_PATH = PurePosixPath(
+    "docs/02.architecture/requirements/"
+    "0011-document-taxonomy-consolidation-architecture.md"
+)
+WORK105_ADR0023_BASE_BLOB_OID = "6424c13f4728ff6418bcdac9796df9c5673d2124"
+WORK105_ADR0023_PROPOSED_BLOB_OID = "7200ec9eb873c971876583b5ba41921d0fdfb24d"
+WORK105_ADR0023_BASE_SHA256 = (
+    "fadbd95c581a0874797666e200f283d0f5fdc6c103643cc653e387062adbe53a"  # pragma: allowlist secret
+)
+WORK105_ADR0023_PROPOSED_SHA256 = (
+    "717714ce153cbd75ca5a77beb42a24cd1b146f25b1112d492e30d9fd214348d5"  # pragma: allowlist secret
+)
+WORK105_ADR0023_RECIPROCAL_ROW = (
+    "| [ADR-0024](./0024-terminal-artifact-identity-and-archive-layout.md) | "
+    "Partially supersedes only terminal Stage 98 date/mirror-path immutability; "
+    "preserves transition safety, Stage 05 stability, Release exclusion, and "
+    "every unrelated decision | "
+    "[Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md) |"
+)
+
+WORK107_BASE_REGISTRY_BLOB_OID = "fd842f60e801a39435600f35a27f22e1c659f1bd"
+WORK107_PROPOSED_REGISTRY_BLOB_OID = "7182c40ab8ee6b40173b408ec2c366314916f1e3"
+WORK107_MIGRATION_BLOB_OID = "619ddc09b38c0a0a5c8254de6fbdcf3c1deb60d6"
+WORK107_MIGRATION_DOCUMENT_SHA256 = (
+    "7049f8b94bdb80566ad94be5d9e9e899d7d06e1b9d31191ad769cd905717de5e"  # pragma: allowlist secret
+)
+WORK107_MIGRATION_TEMPLATE_PATH = PurePosixPath(
+    "docs/99.templates/templates/common/archive-migration.template.md"
+)
+WORK107_MIGRATION_TEMPLATE_BLOB_OID = "dc3164eafd322e8139164cc16342de43fc3a72e8"
+WORK108_BASE_COMMIT = "db320b596904b52e184f01cd1b56467132ac9117"
+WORK108_BASE_REGISTRY_BLOB_OID = "7182c40ab8ee6b40173b408ec2c366314916f1e3"
+WORK108_PROPOSED_REGISTRY_BLOB_OID = "ce8da8f205cee1bba075bef7b26079a0708324b1"
+WORK108_BASE_MIGRATION_BLOB_OID = "619ddc09b38c0a0a5c8254de6fbdcf3c1deb60d6"
+WORK108_PROPOSED_MIGRATION_BLOB_OID = "b304c92c9c9032ebfe3be9156bd3f808ed1f5fb9"
+
+WORK054_WP002_BASE_COMMIT = "de72eb7d1828aeecf36bfe4ce35a892f9a8be729"
+WORK054_WP002_SOURCE_COMMIT = "160ce006969ddb49965c8af193f3e9ee290e18a8"
+WORK054_WP002_MIGRATION_PATH = PurePosixPath(
+    "docs/98.archive/migrations/"
+    "mig-0002-sdlc-document-and-governance-consolidation.md"
+)
+WORK054_WP002_MIGRATION_SHA256 = MIG0002_DOCUMENT_SHA256
+WORK054_WP002_SPEC_ROOT = PurePosixPath(
+    "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation"
+)
+WORK054_WP002_SPEC_PATHS = (
+    WORK054_WP002_SPEC_ROOT / "spec.md",
+    WORK054_WP002_SPEC_ROOT / "plan.md",
+    WORK054_WP002_SPEC_ROOT / "tasks.md",
+)
+WORK054_WP002_DECISION_PATH = PurePosixPath(
+    "docs/02.architecture/decisions/0025-four-digit-document-path-identity.md"
+)
+WORK054_WP002_DECISION_SHA256 = (
+    "b35d625a98e1c1d3089d20b8ea56669dbbbee32934a21112a8a29e70744ed5c4"  # pragma: allowlist secret
+)
+WORK054_WP002_LEDGER_KEYS = (
+    "legacy_path",
+    "stable_path",
+    "artifact_id",
+    "action",
+    "replacement",
+    "source_commit",
+    "source_blob",
+    "content_sha256",
+    "reason",
+)
+WORK054_WP002_MOVE_REASON = (
+    "Normalize the active SDLC path identity from three digits to four digits "
+    "without changing the artifact meaning."
+)
+WORK054_WP002_STAGE04_REASON = (
+    "Retire the Stage 04 navigation owner after co-locating Plan and Tasks "
+    "with the Stage 03 work unit."
+)
+WORK054_WP002_STAGE00_MERGE_REASON = (
+    "Merge duplicate route-sensitive authoring guidance into the canonical "
+    "Stage 00 document-authoring owner."
+)
+WORK054_WP002_LIFECYCLE_MERGE_REASON = (
+    "Merge common lifecycle and legacy-disposition guidance into the canonical "
+    "Stage 99 document-lifecycle owner."
+)
+WORK054_WP002_CONTRACT_MERGE_REASON = (
+    "Merge route, frontmatter, and profile-selection guidance into the canonical "
+    "Stage 99 document-contract owner."
+)
+WORK054_WP002_LEDGER_OVERVIEW = (
+    "It records 141 three-to-four-digit moves, the three Stage 04 index "
+    "replacements, and ten route-sensitive Stage 00/99 owner merges."
+)
+WORK054_WP002_STAGE04_REPLACEMENTS = MappingProxyType(
+    {
+        "docs/04.execution/README.md": "docs/03.specs/README.md",
+        "docs/04.execution/plans/README.md": (
+            "docs/99.templates/templates/sdlc/execution/plan.template.md"
+        ),
+        "docs/04.execution/tasks/README.md": (
+            "docs/99.templates/templates/sdlc/execution/task.template.md"
+        ),
+    }
+)
+WORK054_WP002_GOVERNANCE_MERGES = MappingProxyType(
+    {
+        "docs/00.agent-governance/rules/document-stage-routing.md": (
+            "docs/00.agent-governance/rules/document-authoring.md"
+        ),
+        "docs/00.agent-governance/rules/documentation-protocol.md": (
+            "docs/00.agent-governance/rules/document-authoring.md"
+        ),
+        "docs/00.agent-governance/rules/stage-authoring-matrix.md": (
+            "docs/00.agent-governance/rules/document-authoring.md"
+        ),
+        "docs/00.agent-governance/rules/stage-checklists.md": (
+            "docs/00.agent-governance/rules/document-authoring.md"
+        ),
+        "docs/99.templates/support/common-documentation-governance.md": (
+            "docs/99.templates/support/document-lifecycle.md"
+        ),
+        "docs/99.templates/support/documentation-contract.md": (
+            "docs/99.templates/support/document-contract.md"
+        ),
+        "docs/99.templates/support/frontmatter-schema.md": (
+            "docs/99.templates/support/document-contract.md"
+        ),
+        "docs/99.templates/support/legacy-cleanup-rules.md": (
+            "docs/99.templates/support/document-lifecycle.md"
+        ),
+        "docs/99.templates/support/sdlc-governance.md": (
+            "docs/99.templates/support/document-lifecycle.md"
+        ),
+        "docs/99.templates/support/template-routing.md": (
+            "docs/99.templates/support/document-contract.md"
+        ),
+    }
+)
+WORK054_WP002_STANDALONE_REASON = (
+    "Direct human-approved B-scope SDLC and AI-agent governance consolidation "
+    "including Stage 90"
+)
+WORK054_WP002_LEDGER_PATTERN = re.compile(
+    r"<!-- archive-migration-ledger:v1 format=json -->\n\n"
+    r"```json\n(?P<ledger>\[.*?\])\n```",
+    re.DOTALL,
+)
+WORK054_WP002_REQUIREMENT_PATTERN = re.compile(
+    r"docs/01\.requirements/(?P<id>[0-9]{3})(?P<tail>-[a-z0-9-]+\.md)"
+)
+WORK054_WP002_SPEC_PATTERN = re.compile(
+    r"docs/03\.specs/(?P<id>[0-9]{3})(?P<tail>-[a-z0-9-]+)/"
+    r"(?P<name>spec|plan|tasks|agent-design)\.md"
+)
+
+WORK054_WP003_BASE_COMMIT = "128beada377f18bc9f942c8ebb3e27e1f2fdcfae"
+WORK054_WP003_MIGRATION_PATH = PurePosixPath(
+    "docs/98.archive/migrations/"
+    "mig-0003-agent-governance-control-plane-consolidation.md"
+)
+WORK054_WP003_MIGRATION_SHA256 = (
+    "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42"  # pragma: allowlist secret
+)
+WORK054_WP003_LEDGER_KEYS = WORK054_WP002_LEDGER_KEYS
+WORK054_WP003_OWNER_RETIREMENTS = (
+    {
+        "legacy_path": "docs/00.agent-governance/common-governance.md",
+        "stable_path": None,
+        "artifact_id": None,
+        "action": "merged",
+        "replacement": "docs/00.agent-governance/harness-catalog.md",
+        "source_commit": WORK054_WP003_BASE_COMMIT,
+        "source_blob": "de7e7edfe177ff349cd3824aebd82418adff95d7",  # pragma: allowlist secret
+        "content_sha256": "c5da620d5f6c1aa26f2e0d99769872b90c6d2ec2fdb3c03813be27992f43e4ba",  # pragma: allowlist secret
+    },
+    {
+        "legacy_path": "docs/00.agent-governance/harness-implementation-map.md",
+        "stable_path": None,
+        "artifact_id": None,
+        "action": "merged",
+        "replacement": "docs/00.agent-governance/harness-catalog.md",
+        "source_commit": WORK054_WP003_BASE_COMMIT,
+        "source_blob": "7e7a6d64a05be91658cc6657cd640491153a615a",  # pragma: allowlist secret
+        "content_sha256": "3ea2f89c3ba17fbf0bac64533cbb5a378a85c062a020881a3844cfa190c9c218",  # pragma: allowlist secret
+    },
+    {
+        "legacy_path": "docs/00.agent-governance/providers/agents-md.md",
+        "stable_path": None,
+        "artifact_id": None,
+        "action": "merged",
+        "replacement": "docs/00.agent-governance/providers/codex.md",
+        "source_commit": WORK054_WP003_BASE_COMMIT,
+        "source_blob": "06d9a7a5453ac8b6e28268850467e3e96de06dc9",  # pragma: allowlist secret
+        "content_sha256": "5ea07c187ea54061f5ecc770a58a99edf40dfd73372ba8fc9e1d4ab14bf85bae",  # pragma: allowlist secret
+    },
+)
+
 
 def _registry_profile_ids(raw_registry: Mapping[str, object]) -> frozenset[str]:
     profiles = raw_registry.get("profiles")
@@ -215,6 +480,808 @@ def _registry_profile_ids(raw_registry: Mapping[str, object]) -> frozenset[str]:
         for profile in profiles
         if isinstance(profile, dict) and isinstance(profile.get("id"), str)
     )
+
+
+def _work105_registry_projection_sha256(
+    raw_registry: Mapping[str, object],
+) -> str:
+    return hashlib.sha256(
+        json.dumps(
+            dict(raw_registry),
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    ).hexdigest()
+
+
+def finite_work105_form_cutover_paths(
+    *,
+    mode: str,
+    base_commit: str,
+    base_registry_oid: str,
+    proposed_registry_oid: str,
+    base_registry: Mapping[str, object],
+    proposed_registry: Mapping[str, object],
+    base_documents: Mapping[PurePosixPath, LifecycleDocument],
+    proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
+) -> frozenset[PurePosixPath]:
+    """Admit only the pinned, complete WORK-105 form migration event set."""
+
+    if (
+        mode not in {"staged", "ci"}
+        or base_commit != WORK105_CUTOVER_BASE_COMMIT
+        or base_registry_oid != WORK105_BASE_REGISTRY_BLOB_OID
+        or proposed_registry_oid != WORK105_PROPOSED_REGISTRY_BLOB_OID
+    ):
+        return frozenset()
+    if any(
+        registry.get("$id")
+        != "https://hy-home.k8s/schemas/document-profiles-8.schema.json"
+        or registry.get("schemaVersion") != 8
+        or registry.get("routeState") != "transition"
+        for registry in (base_registry, proposed_registry)
+    ):
+        return frozenset()
+    if (
+        _work105_registry_projection_sha256(base_registry)
+        != WORK105_BASE_REGISTRY_PROJECTION_SHA256
+        or _work105_registry_projection_sha256(proposed_registry)
+        != WORK105_PROPOSED_REGISTRY_PROJECTION_SHA256
+    ):
+        return frozenset()
+    base_profile_ids = _registry_profile_ids(base_registry)
+    proposed_profile_ids = _registry_profile_ids(proposed_registry)
+    if (
+        base_profile_ids - proposed_profile_ids != WORK105_RETIRED_PROFILE_IDS
+        or proposed_profile_ids - base_profile_ids != WORK105_TERMINAL_PROFILE_IDS
+    ):
+        return frozenset()
+
+    consumed: set[PurePosixPath] = set()
+    old_ad_paths: set[PurePosixPath] = set()
+    new_ad_paths: set[PurePosixPath] = set()
+    for token, status in WORK105_AD_CUTOVER:
+        old_path = PurePosixPath(  # Retired WORK-105 base route.
+            f"docs/02.architecture/requirements/{token}.md"  # Retired base route.
+        )
+        new_path = PurePosixPath(f"docs/02.architecture/descriptions/ad-{token}.md")
+        if (
+            base_documents.get(old_path)
+            != LifecycleDocument(old_path, "sdlc/ard", status)  # Retired base type.
+            or old_path in proposed_documents
+            or new_path in base_documents
+            or proposed_documents.get(new_path)
+            != LifecycleDocument(new_path, "sdlc/ad", status)
+        ):
+            return frozenset()
+        old_ad_paths.add(old_path)
+        new_ad_paths.add(new_path)
+        consumed.update((old_path, new_path))
+
+    if (
+        {
+            path
+            for path, document in base_documents.items()
+            if document.profile_id == "sdlc/ard"  # Retired WORK-105 base type.
+        }
+        != old_ad_paths
+        or {
+            path
+            for path, document in proposed_documents.items()
+            if document.profile_id == "sdlc/ad"
+        }
+        != new_ad_paths
+        or any(
+            document.profile_id == "sdlc/api-spec"  # Retired authored base type.
+            for document in (*base_documents.values(), *proposed_documents.values())
+        )
+    ):
+        return frozenset()
+
+    exact_forms = (
+        (
+            "docs/02.architecture/requirements/README.md",  # Retired base route.
+            "readme/collection-index",
+            "base",
+        ),
+        (
+            "docs/02.architecture/descriptions/README.md",
+            "readme/collection-index",
+            "proposed",
+        ),
+        (
+            "docs/99.templates/templates/sdlc/architecture/ard.template.md",  # Retired.
+            "template/sdlc/ard",  # Retired WORK-105 base type.
+            "base",
+        ),
+        (
+            "docs/99.templates/templates/sdlc/architecture/ad.template.md",
+            "template/sdlc/ad",
+            "proposed",
+        ),
+        (
+            "docs/99.templates/templates/sdlc/specs/api-spec.template.md",  # Retired.
+            "template/sdlc/api-spec",  # Retired authored base type.
+            "base",
+        ),
+        (
+            "docs/99.templates/templates/sdlc/requirements/interface.template.md",
+            "template/sdlc/interface",
+            "proposed",
+        ),
+        (
+            "docs/99.templates/templates/sdlc/requirements/srs.template.md",
+            "template/sdlc/srs",
+            "proposed",
+        ),
+    )
+    for raw_path, profile_id, side in exact_forms:
+        path = PurePosixPath(raw_path)
+        present = base_documents if side == "base" else proposed_documents
+        absent = proposed_documents if side == "base" else base_documents
+        if (
+            present.get(path) != LifecycleDocument(path, profile_id, None)
+            or path in absent
+        ):
+            return frozenset()
+        consumed.add(path)
+    return frozenset(consumed)
+
+
+def _git_blob_oid(content: bytes) -> str:
+    header = f"blob {len(content)}\0".encode("ascii")
+    return hashlib.sha1(header + content).hexdigest()  # noqa: S324 - Git identity
+
+
+def _work107_without_outer_artifact_id(
+    content: bytes, expected_artifact_id: str
+) -> bytes | None:
+    expected = f'artifact_id: "{expected_artifact_id}"'.encode("ascii")
+    lines = content.splitlines(keepends=True)
+    matches = [
+        index
+        for index, line in enumerate(lines)
+        if line.rstrip(b"\r\n") == expected
+    ]
+    if len(matches) != 1 or matches[0] == 0:
+        return None
+    index = matches[0]
+    if not lines[index - 1].startswith(b"updated:"):
+        return None
+    return b"".join(lines[:index] + lines[index + 1 :])
+
+
+def finite_work107_archive_rehome_paths(
+    *,
+    root: Path,
+    mode: str,
+    base_commit: str,
+    base_registry_oid: str,
+    proposed_registry_oid: str,
+    base_blobs: Mapping[PurePosixPath, str],
+    proposed_blobs: Mapping[PurePosixPath, str],
+) -> frozenset[PurePosixPath]:
+    """Admit only the reviewed 93-to-93 WORK-107 stable archive rehome."""
+
+    if (
+        mode not in {"staged", "ci"}
+        or base_commit != WORK107_LEGACY_ARCHIVE_COMMIT
+        or base_registry_oid != WORK107_BASE_REGISTRY_BLOB_OID
+        or proposed_registry_oid != WORK107_PROPOSED_REGISTRY_BLOB_OID
+    ):
+        return frozenset()
+
+    migration_path = PurePosixPath(WORK107_MIGRATION_PATH)
+    if (
+        migration_path in base_blobs
+        or proposed_blobs.get(migration_path) != WORK107_MIGRATION_BLOB_OID
+        or WORK107_MIGRATION_TEMPLATE_PATH in base_blobs
+        or proposed_blobs.get(WORK107_MIGRATION_TEMPLATE_PATH)
+        != WORK107_MIGRATION_TEMPLATE_BLOB_OID
+    ):
+        return frozenset()
+    migration_bytes = _blob_bytes(root, WORK107_MIGRATION_BLOB_OID)
+    if (
+        hashlib.sha256(migration_bytes).hexdigest()
+        != WORK107_MIGRATION_DOCUMENT_SHA256
+    ):
+        return frozenset()
+    rows = build_work107_migration_rows(root)
+    expected_migration = _work107_without_outer_artifact_id(
+        render_work107_migration_document(rows),
+        "MIG-0001",
+    )
+    if expected_migration != migration_bytes:
+        return frozenset()
+
+    consumed: set[PurePosixPath] = {
+        migration_path,
+        WORK107_MIGRATION_TEMPLATE_PATH,
+    }
+    for row in rows:
+        legacy_path = PurePosixPath(str(row["legacy_path"]))
+        stable_path = PurePosixPath(str(row["stable_path"]))
+        legacy_oid = str(row["legacy_envelope_blob"])
+        if (
+            base_blobs.get(legacy_path) != legacy_oid
+            or legacy_path in proposed_blobs
+            or stable_path in base_blobs
+        ):
+            return frozenset()
+        stable_bytes = _work107_without_outer_artifact_id(
+            render_work107_stable_envelope(
+                _blob_bytes(root, legacy_oid),
+                row,
+            ),
+            str(row["artifact_id"]),
+        )
+        if stable_bytes is None:
+            return frozenset()
+        if proposed_blobs.get(stable_path) != _git_blob_oid(stable_bytes):
+            return frozenset()
+        consumed.update((legacy_path, stable_path))
+    if len(consumed) != 188:
+        return frozenset()
+    return frozenset(consumed)
+
+
+def _work108_artifact_projection(
+    path: str, base: bytes, proposed: bytes, expected_artifact_id: str
+) -> bool:
+    expected = f'artifact_id: "{expected_artifact_id}"'.encode("ascii")
+    lines = proposed.splitlines(keepends=True)
+    if not lines or lines[0].rstrip(b"\r\n") != b"---":
+        return False
+    try:
+        frontmatter_end = next(
+            index
+            for index, line in enumerate(lines[1:], 1)
+            if line.rstrip(b"\r\n") == b"---"
+        )
+    except StopIteration:
+        return False
+    matches = [
+        index
+        for index, line in enumerate(lines[:frontmatter_end])
+        if line.rstrip(b"\r\n") == expected
+    ]
+    if len(matches) != 1:
+        return False
+    index = matches[0]
+    return (
+        index > 0
+        and lines[index - 1].startswith(b"updated:")
+        and b"".join(lines[:index] + lines[index + 1 :]) == base
+        and PurePosixPath(path).as_posix() == path
+    )
+
+
+def finite_work108_artifact_identity_paths(
+    *,
+    root: Path,
+    mode: str,
+    base_commit: str,
+    base_registry_oid: str,
+    proposed_registry_oid: str,
+    base_blobs: Mapping[PurePosixPath, str],
+    proposed_blobs: Mapping[PurePosixPath, str],
+) -> frozenset[PurePosixPath]:
+    """Admit only the reviewed WORK-108 outer artifact-ID insertion."""
+
+    if (
+        mode not in {"staged", "ci"}
+        or base_commit != WORK108_BASE_COMMIT
+        or base_registry_oid != WORK108_BASE_REGISTRY_BLOB_OID
+        or proposed_registry_oid != WORK108_PROPOSED_REGISTRY_BLOB_OID
+    ):
+        return frozenset()
+    migration_path = PurePosixPath(WORK107_MIGRATION_PATH)
+    if (
+        base_blobs.get(migration_path) != WORK108_BASE_MIGRATION_BLOB_OID
+        or proposed_blobs.get(migration_path) != WORK108_PROPOSED_MIGRATION_BLOB_OID
+    ):
+        return frozenset()
+    base_migration = _blob_bytes(root, WORK108_BASE_MIGRATION_BLOB_OID)
+    proposed_migration = _blob_bytes(root, WORK108_PROPOSED_MIGRATION_BLOB_OID)
+    if not _work108_artifact_projection(
+        migration_path.as_posix(),
+        base_migration,
+        proposed_migration,
+        "MIG-0001",
+    ):
+        return frozenset()
+    try:
+        rows = validate_work107_migration_rows(
+            root,
+            parse_work107_migration_document(proposed_migration),
+        )
+    except ArchiveContractError:
+        return frozenset()
+    consumed = {migration_path}
+    for row in rows:
+        path = PurePosixPath(str(row["stable_path"]))
+        base_oid = base_blobs.get(path)
+        proposed_oid = proposed_blobs.get(path)
+        if base_oid is None or proposed_oid is None or base_oid == proposed_oid:
+            return frozenset()
+        if not _work108_artifact_projection(
+            path.as_posix(),
+            _blob_bytes(root, base_oid),
+            _blob_bytes(root, proposed_oid),
+            str(row["artifact_id"]),
+        ):
+            return frozenset()
+        consumed.add(path)
+    if len(consumed) != 94:
+        return frozenset()
+    return frozenset(consumed)
+
+
+def _work054_wp002_frontmatter_value(raw: bytes, key: str) -> str | None:
+    try:
+        lines = raw.decode("utf-8").splitlines()
+    except UnicodeDecodeError:
+        return None
+    if not lines or lines[0] != "---":
+        return None
+    try:
+        end = lines.index("---", 1)
+    except ValueError:
+        return None
+    matches: list[str] = []
+    prefix = f"{key}:"
+    for line in lines[1:end]:
+        if not line.startswith(prefix):
+            continue
+        value = line[len(prefix) :].strip()
+        if (
+            len(value) >= 2
+            and value[0] == value[-1]
+            and value[0] in {'"', "'"}
+        ):
+            value = value[1:-1]
+        matches.append(value)
+    return matches[0] if len(matches) == 1 else None
+
+
+def _work054_wp002_migration_rows(raw: bytes) -> tuple[dict[str, object], ...]:
+    """Load only the complete, independently pinned MIG-0002 document."""
+
+    try:
+        loaded = parse_pinned_migration_control(
+            WORK054_WP002_MIGRATION_PATH.as_posix(), raw
+        )
+    except ArchiveContractError as exc:
+        raise InvocationError("WORK-054 WP-002 migration document differs") from exc
+    if not all(
+        isinstance(row, dict) for row in loaded
+    ):
+        raise InvocationError("WORK-054 WP-002 migration ledger is not a row list")
+    return tuple(loaded)
+
+
+def _work054_wp002_render_migration_rows(
+    raw: bytes, rows: Sequence[Mapping[str, object]]
+) -> bytes:
+    text = raw.decode("utf-8")
+    matches = tuple(WORK054_WP002_LEDGER_PATTERN.finditer(text))
+    if len(matches) != 1:
+        raise InvocationError("WORK-054 WP-002 migration ledger is ambiguous")
+    rendered = json.dumps(list(rows), ensure_ascii=False, indent=2)
+    start, end = matches[0].span("ledger")
+    return (text[:start] + rendered + text[end:]).encode("utf-8")
+
+
+def _work054_wp002_artifact_id(path: PurePosixPath) -> str | None:
+    requirement = WORK054_WP002_REQUIREMENT_PATTERN.fullmatch(path.as_posix())
+    if requirement is not None:
+        return f"PRD-0{requirement.group('id')}"
+    specification = WORK054_WP002_SPEC_PATTERN.fullmatch(path.as_posix())
+    if specification is None:
+        return None
+    prefixes = {
+        "spec": "SPEC",
+        "plan": "PLAN",
+        "tasks": "TASK",
+        "agent-design": "AGENT-DESIGN",
+    }
+    return f"{prefixes[specification.group('name')]}-0{specification.group('id')}"
+
+
+def _work054_wp002_moved_paths(
+    source_blobs: Mapping[PurePosixPath, str],
+) -> dict[PurePosixPath, PurePosixPath]:
+    result: dict[PurePosixPath, PurePosixPath] = {}
+    requirement_count = 0
+    specification_count = 0
+    for path in source_blobs:
+        raw_path = path.as_posix()
+        requirement = WORK054_WP002_REQUIREMENT_PATTERN.fullmatch(raw_path)
+        if requirement is not None:
+            result[path] = PurePosixPath(
+                "docs/01.requirements/"
+                f"0{requirement.group('id')}{requirement.group('tail')}"
+            )
+            requirement_count += 1
+            continue
+        specification = WORK054_WP002_SPEC_PATTERN.fullmatch(raw_path)
+        if specification is not None:
+            result[path] = PurePosixPath(
+                "docs/03.specs/"
+                f"0{specification.group('id')}{specification.group('tail')}/"
+                f"{specification.group('name')}.md"
+            )
+            specification_count += 1
+    if (requirement_count, specification_count, len(result)) != (8, 133, 141):
+        return {}
+    return result
+
+
+def _work054_wp002_expected_rows(
+    root: Path,
+    source_blobs: Mapping[PurePosixPath, str],
+) -> tuple[dict[str, object], ...]:
+    moved = _work054_wp002_moved_paths(source_blobs)
+    if len(moved) != 141:
+        return ()
+    expected: list[dict[str, object]] = []
+    dispositions: dict[str, tuple[str, str | None, str | None, str | None, str]] = {
+        legacy.as_posix(): (
+            "moved",
+            stable.as_posix(),
+            _work054_wp002_artifact_id(legacy),
+            None,
+            WORK054_WP002_MOVE_REASON,
+        )
+        for legacy, stable in moved.items()
+    }
+    dispositions.update(
+        {
+            legacy: (
+                "replaced",
+                None,
+                None,
+                replacement,
+                WORK054_WP002_STAGE04_REASON,
+            )
+            for legacy, replacement in WORK054_WP002_STAGE04_REPLACEMENTS.items()
+        }
+    )
+    dispositions.update(
+        {
+            legacy: (
+                "merged",
+                None,
+                None,
+                replacement,
+                (
+                    WORK054_WP002_STAGE00_MERGE_REASON
+                    if legacy.startswith("docs/00.agent-governance/")
+                    else (
+                        WORK054_WP002_LIFECYCLE_MERGE_REASON
+                        if replacement.endswith("document-lifecycle.md")
+                        else WORK054_WP002_CONTRACT_MERGE_REASON
+                    )
+                ),
+            )
+            for legacy, replacement in WORK054_WP002_GOVERNANCE_MERGES.items()
+        }
+    )
+    if len(dispositions) != 154:
+        return ()
+    for legacy_path in sorted(dispositions):
+        path = PurePosixPath(legacy_path)
+        source_oid = source_blobs.get(path)
+        if source_oid is None:
+            return ()
+        try:
+            source = _blob_bytes(root, source_oid)
+        except (InvocationError, OSError):
+            return ()
+        action, stable_path, artifact_id, replacement, reason = dispositions[
+            legacy_path
+        ]
+        expected.append(
+            {
+                "legacy_path": legacy_path,
+                "stable_path": stable_path,
+                "artifact_id": artifact_id,
+                "action": action,
+                "replacement": replacement,
+                "source_commit": WORK054_WP002_SOURCE_COMMIT,
+                "source_blob": source_oid,
+                "content_sha256": hashlib.sha256(source).hexdigest(),
+                "reason": reason,
+            }
+        )
+    return tuple(expected)
+
+
+def _work054_wp002_standalone_lineage_matches(
+    base_registry_raw: Mapping[str, object],
+    proposed_registry_raw: Mapping[str, object],
+) -> bool:
+    def selected(registry: Mapping[str, object]) -> tuple[Mapping[str, object], ...]:
+        executions = registry.get("standaloneExecutions")
+        if not isinstance(executions, list):
+            return ()
+        return tuple(
+            item
+            for item in executions
+            if isinstance(item, Mapping) and item.get("spec") == "0054"
+        )
+
+    base = selected(base_registry_raw)
+    proposed = selected(proposed_registry_raw)
+    if base or len(proposed) != 1:
+        return False
+    relation = proposed[0]
+    return relation == {
+        "spec": "0054",
+        "plan": WORK054_WP002_SPEC_PATHS[1].as_posix(),
+        "task": WORK054_WP002_SPEC_PATHS[2].as_posix(),
+        "state": "active",
+        "reason": WORK054_WP002_STANDALONE_REASON,
+        "decision": "0022",
+        "approvalMode": "spec-body-record",
+    }
+
+
+def finite_work054_wp002_transition_paths(
+    *,
+    root: Path,
+    mode: str,
+    base_commit: str,
+    base_registry: Registry,
+    proposed_registry: Registry,
+    base_registry_raw: Mapping[str, object],
+    proposed_registry_raw: Mapping[str, object],
+    base_blobs: Mapping[PurePosixPath, str],
+    proposed_blobs: Mapping[PurePosixPath, str],
+    migration_bytes: bytes | None = None,
+    decision_bytes: bytes | None = None,
+) -> frozenset[PurePosixPath]:
+    """Admit only the evidence-complete WORK-054 WP-002 topology transition."""
+
+    if (
+        mode not in {"staged", "ci"}
+        or base_commit != WORK054_WP002_BASE_COMMIT
+        or not _work054_wp002_standalone_lineage_matches(
+            base_registry_raw, proposed_registry_raw
+        )
+    ):
+        return frozenset()
+    try:
+        source_blobs = _tree_blob_map(root, WORK054_WP002_SOURCE_COMMIT)
+    except (InvocationError, OSError):
+        return frozenset()
+    expected_rows = _work054_wp002_expected_rows(root, source_blobs)
+    if len(expected_rows) != 154:
+        return frozenset()
+
+    migration_oid = proposed_blobs.get(WORK054_WP002_MIGRATION_PATH)
+    if (
+        WORK054_WP002_MIGRATION_PATH in base_blobs
+        or migration_oid is None
+    ):
+        return frozenset()
+    try:
+        if migration_bytes is not None:
+            raw_migration = migration_bytes
+        elif mode == "staged":
+            raw_migration = read_staged_blob_bounded(
+                root,
+                WORK054_WP002_MIGRATION_PATH.as_posix(),
+                max_bytes=MIGRATION_DOCUMENT_MAX_BYTES,
+            )
+        else:
+            raw_migration = _blob_bytes(
+                root, migration_oid, max_bytes=MIGRATION_DOCUMENT_MAX_BYTES
+            )
+        rows = _work054_wp002_migration_rows(raw_migration)
+    except (ArchiveContractError, InvocationError, OSError):
+        return frozenset()
+    if _git_blob_oid(raw_migration) != migration_oid or rows != expected_rows:
+        return frozenset()
+
+    consumed: set[PurePosixPath] = {WORK054_WP002_MIGRATION_PATH}
+    for row in rows:
+        if tuple(row) != WORK054_WP002_LEDGER_KEYS:
+            return frozenset()
+        legacy = PurePosixPath(str(row["legacy_path"]))
+        source_oid = str(row["source_blob"])
+        if (
+            base_blobs.get(legacy) != source_oid
+            or source_blobs.get(legacy) != source_oid
+            or legacy in proposed_blobs
+        ):
+            return frozenset()
+        consumed.add(legacy)
+        if row["action"] == "moved":
+            stable = PurePosixPath(str(row["stable_path"]))
+            target_oid = proposed_blobs.get(stable)
+            if stable in base_blobs or target_oid is None:
+                return frozenset()
+            try:
+                base_text = _blob_text(root, source_oid, legacy)
+                proposed_text = _blob_text(root, target_oid, stable)
+                target_bytes = _blob_bytes(root, target_oid)
+                base_document = (
+                    None
+                    if base_text is None
+                    else document_from_text(base_registry, legacy, base_text)
+                )
+                proposed_document = (
+                    None
+                    if proposed_text is None
+                    else document_from_text(proposed_registry, stable, proposed_text)
+                )
+            except (DocumentContractError, InvocationError, OSError):
+                return frozenset()
+            if (
+                base_document is None
+                or proposed_document is None
+                or base_document.profile_id != proposed_document.profile_id
+                or base_document.status != proposed_document.status
+                or _work054_wp002_frontmatter_value(target_bytes, "artifact_id")
+                != row["artifact_id"]
+            ):
+                return frozenset()
+            consumed.add(stable)
+        else:
+            replacement = PurePosixPath(str(row["replacement"]))
+            if replacement not in proposed_blobs:
+                return frozenset()
+            if replacement not in base_blobs:
+                consumed.add(replacement)
+
+    expected_spec_states = (
+        ("sdlc/spec", "draft", "active", "SPEC-0054"),
+        ("sdlc/plan", "active", "active", "PLAN-0054"),
+        ("sdlc/task", "active", "active", "TASK-0054"),
+    )
+    for path, (profile_id, base_state, proposed_state, artifact_id) in zip(
+        WORK054_WP002_SPEC_PATHS, expected_spec_states, strict=True
+    ):
+        base_oid = base_blobs.get(path)
+        proposed_oid = proposed_blobs.get(path)
+        if base_oid is None or proposed_oid is None:
+            return frozenset()
+        try:
+            base_text = _blob_text(root, base_oid, path)
+            proposed_text = _blob_text(root, proposed_oid, path)
+            proposed_bytes = _blob_bytes(root, proposed_oid)
+            base_document = (
+                None
+                if base_text is None
+                else document_from_text(proposed_registry, path, base_text)
+            )
+            proposed_document = (
+                None
+                if proposed_text is None
+                else document_from_text(proposed_registry, path, proposed_text)
+            )
+        except (DocumentContractError, InvocationError, OSError):
+            return frozenset()
+        if (
+            base_document != LifecycleDocument(path, profile_id, base_state)
+            or proposed_document != LifecycleDocument(path, profile_id, proposed_state)
+            or _work054_wp002_frontmatter_value(proposed_bytes, "artifact_id")
+            != artifact_id
+        ):
+            return frozenset()
+    consumed.update(WORK054_WP002_SPEC_PATHS)
+
+    decision_oid = proposed_blobs.get(WORK054_WP002_DECISION_PATH)
+    if (
+        WORK054_WP002_DECISION_PATH in base_blobs
+        or decision_oid is None
+    ):
+        return frozenset()
+    try:
+        raw_decision = (
+            decision_bytes
+            if decision_bytes is not None
+            else _blob_bytes(root, decision_oid)
+        )
+        decision_text = raw_decision.decode("utf-8")
+        decision_document = document_from_text(
+            proposed_registry,
+            WORK054_WP002_DECISION_PATH,
+            decision_text,
+        )
+    except (DocumentContractError, InvocationError, OSError, UnicodeDecodeError):
+        return frozenset()
+    required_decision_links = (
+        "./0024-terminal-artifact-identity-and-archive-layout.md",
+        "../../03.specs/0052-document-taxonomy-consolidation/spec.md",
+        (
+            "../../03.specs/0054-sdlc-document-and-agent-governance-"
+            "consolidation/spec.md"
+        ),
+    )
+    if (
+        _git_blob_oid(raw_decision) != decision_oid
+        or hashlib.sha256(raw_decision).hexdigest()
+        != WORK054_WP002_DECISION_SHA256
+        or decision_document
+        != LifecycleDocument(
+            WORK054_WP002_DECISION_PATH,
+            "sdlc/adr",
+            "accepted",
+        )
+        or _work054_wp002_frontmatter_value(raw_decision, "artifact_id")
+        != "ADR-0025"
+        or any(decision_text.count(link) < 1 for link in required_decision_links)
+    ):
+        return frozenset()
+    consumed.add(WORK054_WP002_DECISION_PATH)
+    return frozenset(consumed) if len(consumed) == 303 else frozenset()
+
+
+def finite_work054_wp003_agent_governance_paths(
+    *,
+    root: Path,
+    mode: str,
+    base_commit: str,
+    base_blobs: Mapping[PurePosixPath, str],
+    proposed_blobs: Mapping[PurePosixPath, str],
+) -> frozenset[PurePosixPath]:
+    """Admit only the exact WORK-054 WP-003 legacy owner retirements."""
+
+    if mode not in {"staged", "ci"} or base_commit != WORK054_WP003_BASE_COMMIT:
+        return frozenset()
+    migration_oid = proposed_blobs.get(WORK054_WP003_MIGRATION_PATH)
+    if (
+        WORK054_WP003_MIGRATION_PATH in base_blobs
+        or migration_oid is None
+    ):
+        return frozenset()
+    try:
+        migration_bytes = _blob_bytes(root, migration_oid)
+        migration_text = migration_bytes.decode("utf-8")
+    except (InvocationError, OSError, UnicodeDecodeError):
+        return frozenset()
+    if hashlib.sha256(migration_bytes).hexdigest() != WORK054_WP003_MIGRATION_SHA256:
+        return frozenset()
+    marker = "<!-- archive-migration-ledger:v1 format=json -->\n\n```json\n"
+    if migration_text.count(marker) != 1:
+        return frozenset()
+    _prefix, remainder = migration_text.split(marker, 1)
+    if remainder.count("\n```") != 1:
+        return frozenset()
+    raw_rows, suffix = remainder.split("\n```", 1)
+    if not suffix.startswith("\n\n## Recovery\n"):
+        return frozenset()
+    try:
+        rows = json.loads(raw_rows)
+    except json.JSONDecodeError:
+        return frozenset()
+    if (
+        not isinstance(rows, list)
+        or len(rows) != len(WORK054_WP003_OWNER_RETIREMENTS)
+    ):
+        return frozenset()
+    consumed: set[PurePosixPath] = {WORK054_WP003_MIGRATION_PATH}
+    for row, expected in zip(rows, WORK054_WP003_OWNER_RETIREMENTS, strict=True):
+        if not isinstance(row, Mapping) or tuple(row) != WORK054_WP003_LEDGER_KEYS:
+            return frozenset()
+        for key, value in expected.items():
+            if row.get(key) != value:
+                return frozenset()
+        if not isinstance(row.get("reason"), str) or not row["reason"].strip():
+            return frozenset()
+        legacy = PurePosixPath(str(row["legacy_path"]))
+        replacement = PurePosixPath(str(row["replacement"]))
+        if (
+            base_blobs.get(legacy) != row["source_blob"]
+            or legacy in proposed_blobs
+            or replacement not in proposed_blobs
+        ):
+            return frozenset()
+        consumed.add(legacy)
+    return frozenset(consumed) if len(consumed) == 4 else frozenset()
 
 
 def finite_archive_cutover_paths(
@@ -1061,7 +2128,7 @@ def _archive_cutover_fixture_inputs(
     elif mutation == "missing-registry-profile":
         proposed_registry["profiles"] = [{"id": ARCHIVE_PROFILE}]
     elif mutation == "unrelated-profile-change":
-        unrelated = PurePosixPath("docs/03.specs/999-unrelated/spec.md")
+        unrelated = PurePosixPath("docs/03.specs/0999-unrelated/spec.md")
         base_documents[unrelated] = LifecycleDocument(unrelated, "sdlc/spec", "active")
         proposed_documents[unrelated] = LifecycleDocument(
             unrelated, "sdlc/guide", "active"
@@ -1077,6 +2144,314 @@ def _archive_cutover_fixture_inputs(
         "proposed_registry": proposed_registry,
         "base_documents": base_documents,
         "proposed_documents": proposed_documents,
+    }
+
+
+def _work054_wp002_transition_fixture_inputs(
+    root: Path, mode: str, mutation: str
+) -> dict[str, object]:
+    base_blobs = dict(_tree_blob_map(root, WORK054_WP002_BASE_COMMIT))
+    proposed_blobs = dict(_index_blob_map(root))
+    production_registry = load_registry(root)
+    base_registry_raw = dict(
+        _registry_blob(
+            root,
+            _tree_blob_oid(root, WORK054_WP002_BASE_COMMIT, REGISTRY_PATH),
+        )
+    )
+    proposed_registry_raw = dict(
+        _registry_blob(root, _index_blob_oid(root, REGISTRY_PATH))
+    )
+    base_registry = _classification_registry(
+        production_registry,
+        base_registry_raw,
+    )
+    proposed_registry = _classification_registry(
+        production_registry,
+        proposed_registry_raw,
+    )
+    migration_oid = proposed_blobs.get(WORK054_WP002_MIGRATION_PATH)
+    migration_bytes = (
+        b"" if migration_oid is None else _blob_bytes(root, migration_oid)
+    )
+    decision_oid = proposed_blobs.get(WORK054_WP002_DECISION_PATH)
+    decision_bytes = b"" if decision_oid is None else _blob_bytes(root, decision_oid)
+
+    def loose_rows(raw: bytes) -> list[dict[str, object]]:
+        text = raw.decode("utf-8")
+        matches = tuple(WORK054_WP002_LEDGER_PATTERN.finditer(text))
+        if len(matches) != 1:
+            return []
+        loaded = json.loads(
+            matches[0].group("ledger"), object_pairs_hook=_unique_json_object
+        )
+        return loaded if isinstance(loaded, list) else []
+
+    def update_migration(rows: Sequence[Mapping[str, object]]) -> None:
+        nonlocal migration_bytes
+        migration_bytes = _work054_wp002_render_migration_rows(
+            migration_bytes, rows
+        )
+        proposed_blobs[WORK054_WP002_MIGRATION_PATH] = _git_blob_oid(
+            migration_bytes
+        )
+
+    base_commit = WORK054_WP002_BASE_COMMIT
+    if mutation == "wrong-base":
+        base_commit = "0" * 40
+    elif mutation == "missing-migration":
+        proposed_blobs.pop(WORK054_WP002_MIGRATION_PATH, None)
+    elif mutation in {
+        "missing-ledger-row",
+        "extra-ledger-row",
+        "source-blob-drift",
+        "source-digest-drift",
+        "replacement-drift",
+        "target-artifact-drift",
+    }:
+        rows = loose_rows(migration_bytes)
+        if mutation == "missing-ledger-row" and rows:
+            rows.pop(0)
+        elif mutation == "extra-ledger-row" and rows:
+            extra = dict(rows[0])
+            extra["legacy_path"] = "docs/README.md"
+            rows.append(extra)
+        elif mutation == "source-blob-drift" and rows:
+            rows[0]["source_blob"] = "0" * 40
+        elif mutation == "source-digest-drift" and rows:
+            rows[0]["content_sha256"] = "0" * 64
+        elif mutation == "replacement-drift":
+            merged = next(
+                (row for row in rows if row.get("action") == "merged"), None
+            )
+            if merged is not None:
+                merged["replacement"] = "docs/README.md"
+        elif mutation == "target-artifact-drift":
+            moved = next(
+                (row for row in rows if row.get("action") == "moved"), None
+            )
+            if moved is not None:
+                moved["artifact_id"] = "SPEC-9999"
+        update_migration(rows)
+    elif mutation == "standalone-lineage-drift":
+        proposed_registry_raw["standaloneExecutions"] = [
+            item
+            for item in proposed_registry_raw.get("standaloneExecutions", [])
+            if isinstance(item, Mapping) and item.get("spec") != "0054"
+        ]
+    elif mutation == "missing-spec-transition":
+        proposed_blobs.pop(WORK054_WP002_SPEC_PATHS[0], None)
+    elif mutation == "missing-decision":
+        proposed_blobs.pop(WORK054_WP002_DECISION_PATH, None)
+    elif mutation == "decision-blob-drift":
+        decision_bytes += b"\n"
+        proposed_blobs[WORK054_WP002_DECISION_PATH] = _git_blob_oid(decision_bytes)
+    elif mutation != "exact":
+        raise ValueError(f"unknown WORK-054 WP-002 mutation: {mutation}")
+    return {
+        "root": root,
+        "mode": mode,
+        "base_commit": base_commit,
+        "base_registry": base_registry,
+        "proposed_registry": proposed_registry,
+        "base_registry_raw": base_registry_raw,
+        "proposed_registry_raw": proposed_registry_raw,
+        "base_blobs": base_blobs,
+        "proposed_blobs": proposed_blobs,
+        "migration_bytes": migration_bytes,
+        "decision_bytes": decision_bytes,
+    }
+
+
+def _work105_form_cutover_fixture_inputs(
+    root: Path,
+    mode: str,
+    mutation: str,
+) -> dict[str, object]:
+    base_registry = dict(_registry_blob(root, WORK105_BASE_REGISTRY_BLOB_OID))
+    proposed_registry = dict(
+        _registry_blob(root, WORK105_PROPOSED_REGISTRY_BLOB_OID)
+    )
+    base_documents: dict[PurePosixPath, LifecycleDocument] = {}
+    proposed_documents: dict[PurePosixPath, LifecycleDocument] = {}
+    for token, status in WORK105_AD_CUTOVER:
+        old_path = PurePosixPath(
+            f"docs/02.architecture/requirements/{token}.md"
+        )
+        new_path = PurePosixPath(
+            f"docs/02.architecture/descriptions/ad-{token}.md"
+        )
+        base_documents[old_path] = LifecycleDocument(old_path, "sdlc/ard", status)
+        proposed_documents[new_path] = LifecycleDocument(new_path, "sdlc/ad", status)
+
+    exact_forms = (
+        (
+            PurePosixPath("docs/02.architecture/requirements/README.md"),
+            "readme/collection-index",
+            base_documents,
+        ),
+        (
+            PurePosixPath("docs/02.architecture/descriptions/README.md"),
+            "readme/collection-index",
+            proposed_documents,
+        ),
+        (
+            PurePosixPath(
+                "docs/99.templates/templates/sdlc/architecture/ard.template.md"
+            ),
+            "template/sdlc/ard",
+            base_documents,
+        ),
+        (
+            PurePosixPath(
+                "docs/99.templates/templates/sdlc/architecture/ad.template.md"
+            ),
+            "template/sdlc/ad",
+            proposed_documents,
+        ),
+        (
+            PurePosixPath(
+                "docs/99.templates/templates/sdlc/specs/api-spec.template.md"
+            ),
+            "template/sdlc/api-spec",
+            base_documents,
+        ),
+        (
+            PurePosixPath(
+                "docs/99.templates/templates/sdlc/requirements/interface.template.md"
+            ),
+            "template/sdlc/interface",
+            proposed_documents,
+        ),
+        (
+            PurePosixPath(
+                "docs/99.templates/templates/sdlc/requirements/srs.template.md"
+            ),
+            "template/sdlc/srs",
+            proposed_documents,
+        ),
+    )
+    for path, profile_id, documents in exact_forms:
+        documents[path] = LifecycleDocument(path, profile_id, None)
+
+    base_commit = WORK105_CUTOVER_BASE_COMMIT
+    base_registry_oid = WORK105_BASE_REGISTRY_BLOB_OID
+    proposed_registry_oid = WORK105_PROPOSED_REGISTRY_BLOB_OID
+    if mutation == "wrong-base":
+        base_commit = "0" * 40
+    elif mutation == "wrong-base-registry-oid":
+        base_registry_oid = "0" * 40
+    elif mutation == "wrong-proposed-registry-oid":
+        proposed_registry_oid = "0" * 40
+    elif mutation == "wrong-base-schema":
+        base_registry["schemaVersion"] = 9
+    elif mutation == "wrong-proposed-schema":
+        proposed_registry["schemaVersion"] = 9
+    elif mutation == "wrong-base-id":
+        base_registry["$id"] = "https://example.invalid/base"
+    elif mutation == "wrong-proposed-id":
+        proposed_registry["$id"] = "https://example.invalid/proposed"
+    elif mutation == "wrong-base-route-state":
+        base_registry["routeState"] = "terminal"
+    elif mutation == "wrong-proposed-route-state":
+        proposed_registry["routeState"] = "terminal"
+    elif mutation == "base-projection-drift":
+        base_registry["unexpectedProjection"] = True
+    elif mutation == "proposed-projection-drift":
+        proposed_registry["unexpectedProjection"] = True
+    elif mutation == "missing-ad":
+        proposed_documents.pop(
+            PurePosixPath(
+                "docs/02.architecture/descriptions/"
+                "ad-0004-argo-rollouts-progressive-delivery.md"
+            )
+        )
+    elif mutation == "extra-ad":
+        path = PurePosixPath("docs/02.architecture/descriptions/ad-9999-extra.md")
+        proposed_documents[path] = LifecycleDocument(path, "sdlc/ad", "active")
+    elif mutation == "wrong-status":
+        path = PurePosixPath(
+            "docs/02.architecture/descriptions/"
+            "ad-0004-argo-rollouts-progressive-delivery.md"
+        )
+        proposed_documents[path] = LifecycleDocument(path, "sdlc/ad", "accepted")
+    elif mutation == "missing-form":
+        proposed_documents.pop(
+            PurePosixPath(
+                "docs/99.templates/templates/sdlc/requirements/srs.template.md"
+            )
+        )
+    elif mutation == "wrong-form-profile":
+        path = PurePosixPath(
+            "docs/99.templates/templates/sdlc/requirements/srs.template.md"
+        )
+        proposed_documents[path] = LifecycleDocument(
+            path, "template/sdlc/interface", None
+        )
+    elif mutation == "authored-api-instance":
+        path = PurePosixPath("docs/03.specs/999-extra/api-spec.md")
+        base_documents[path] = LifecycleDocument(path, "sdlc/api-spec", "active")
+    elif mutation != "exact":
+        raise ValueError(f"unknown WORK-105 form cutover mutation: {mutation}")
+    return {
+        "mode": mode,
+        "base_commit": base_commit,
+        "base_registry_oid": base_registry_oid,
+        "proposed_registry_oid": proposed_registry_oid,
+        "base_registry": base_registry,
+        "proposed_registry": proposed_registry,
+        "base_documents": base_documents,
+        "proposed_documents": proposed_documents,
+    }
+
+
+def _work105_decision_evidence_fixture_inputs(
+    root: Path, mutation: str
+) -> dict[str, object]:
+    base_text = _blob_text(
+        root, WORK105_ADR0023_BASE_BLOB_OID, WORK105_ADR0023_PATH
+    )
+    proposed_text = _blob_text(
+        root, WORK105_ADR0023_PROPOSED_BLOB_OID, WORK105_ADR0023_PATH
+    )
+    assert base_text is not None and proposed_text is not None
+    exact_document = LifecycleDocument(WORK105_ADR0023_PATH, "sdlc/adr", "accepted")
+    path = WORK105_ADR0023_PATH
+    base_document: LifecycleDocument | None = exact_document
+    proposed_document = exact_document
+    relationship_links = (WORK105_ADR0024_PATH,)
+    unresolved_links = (WORK105_LEGACY_AD0011_PATH,)
+    body_table_links = (WORK105_ADR0024_PATH,)
+
+    if mutation == "wrong-owner":
+        path = WORK105_ADR0024_PATH
+    elif mutation == "wrong-base-profile":
+        base_document = replace(exact_document, profile_id="sdlc/ad")
+    elif mutation == "wrong-proposed-status":
+        proposed_document = replace(exact_document, status="active")
+    elif mutation == "base-blob-drift":
+        base_text += "\n"
+    elif mutation == "proposed-blob-drift":
+        proposed_text += "\n"
+    elif mutation == "missing-reciprocal-row":
+        proposed_text = proposed_text.replace(WORK105_ADR0023_RECIPROCAL_ROW, "")
+    elif mutation == "missing-resolved-successor":
+        relationship_links = ()
+    elif mutation == "missing-table-successor":
+        body_table_links = ()
+    elif mutation == "extra-unresolved":
+        unresolved_links += (PurePosixPath("docs/02.architecture/decisions/9999.md"),)
+    elif mutation != "exact":
+        raise ValueError(f"unknown WORK-105 decision evidence mutation: {mutation}")
+    return {
+        "path": path,
+        "base_document": base_document,
+        "proposed_document": proposed_document,
+        "base_text": base_text,
+        "proposed_text": proposed_text,
+        "relationship_links": relationship_links,
+        "unresolved_links": unresolved_links,
+        "body_table_links": body_table_links,
     }
 
 
@@ -1210,8 +2585,112 @@ EXPECTED_ARCHIVE_CUTOVER_MUTATIONS = frozenset(
         "unrelated-profile-change",
     }
 )
-FIXTURE_MUTATION_COUNT = 24
-EXPECTED_EVIDENCE_ASSERTION_SHA256 = "beb430e079bf603ebd5164666218fa178c6e27550f425c62f3fd739c31675892"  # pragma: allowlist secret
+EXPECTED_WORK105_FORM_CUTOVER_CASE_NAMES = (
+    "exact-staged",
+    "exact-ci",
+    "wrong-mode",
+    "wrong-base",
+    "wrong-base-registry-oid",
+    "wrong-proposed-registry-oid",
+    "wrong-base-schema",
+    "wrong-proposed-schema",
+    "wrong-base-id",
+    "wrong-proposed-id",
+    "wrong-base-route-state",
+    "wrong-proposed-route-state",
+    "base-projection-drift",
+    "proposed-projection-drift",
+    "missing-ad",
+    "extra-ad",
+    "wrong-status",
+    "missing-form",
+    "wrong-form-profile",
+    "authored-api-instance",
+)
+EXPECTED_WORK105_FORM_CUTOVER_MUTATIONS = frozenset(
+    {
+        "exact",
+        "wrong-base",
+        "wrong-base-registry-oid",
+        "wrong-proposed-registry-oid",
+        "wrong-base-schema",
+        "wrong-proposed-schema",
+        "wrong-base-id",
+        "wrong-proposed-id",
+        "wrong-base-route-state",
+        "wrong-proposed-route-state",
+        "base-projection-drift",
+        "proposed-projection-drift",
+        "missing-ad",
+        "extra-ad",
+        "wrong-status",
+        "missing-form",
+        "wrong-form-profile",
+        "authored-api-instance",
+    }
+)
+EXPECTED_WORK105_DECISION_EVIDENCE_CASE_NAMES = (
+    "exact-reciprocal-predecessor",
+    "wrong-owner",
+    "wrong-base-profile",
+    "wrong-proposed-status",
+    "base-blob-drift",
+    "proposed-blob-drift",
+    "missing-reciprocal-row",
+    "missing-resolved-successor",
+    "missing-table-successor",
+    "extra-unresolved",
+)
+EXPECTED_WORK105_DECISION_EVIDENCE_MUTATIONS = frozenset(
+    {
+        "exact",
+        "wrong-owner",
+        "wrong-base-profile",
+        "wrong-proposed-status",
+        "base-blob-drift",
+        "proposed-blob-drift",
+        "missing-reciprocal-row",
+        "missing-resolved-successor",
+        "missing-table-successor",
+        "extra-unresolved",
+    }
+)
+EXPECTED_WORK054_WP002_TRANSITION_CASE_NAMES = (
+    "exact-staged",
+    "exact-ci",
+    "wrong-mode",
+    "wrong-base",
+    "missing-migration",
+    "missing-ledger-row",
+    "extra-ledger-row",
+    "source-blob-drift",
+    "source-digest-drift",
+    "replacement-drift",
+    "target-artifact-drift",
+    "standalone-lineage-drift",
+    "missing-spec-transition",
+    "missing-decision",
+    "decision-blob-drift",
+)
+EXPECTED_WORK054_WP002_TRANSITION_MUTATIONS = frozenset(
+    {
+        "exact",
+        "wrong-base",
+        "missing-migration",
+        "missing-ledger-row",
+        "extra-ledger-row",
+        "source-blob-drift",
+        "source-digest-drift",
+        "replacement-drift",
+        "target-artifact-drift",
+        "standalone-lineage-drift",
+        "missing-spec-transition",
+        "missing-decision",
+        "decision-blob-drift",
+    }
+)
+FIXTURE_MUTATION_COUNT = 27
+EXPECTED_EVIDENCE_ASSERTION_SHA256 = "6bd2461086ea6ff7b5aa63577f77a10441d0a3bc126ab7f6122793989c461453"  # pragma: allowlist secret
 EXPECTED_EVIDENCE_VARIANTS = (
     "positive",
     "missing",
@@ -1234,10 +2713,10 @@ def _dependency_ready_tranche_window(
     """Return the current original-tranche ready identity, state, and successor."""
 
     programs = [
-        program for program in registry.program_lineage if program.prd_id == "006"
+        program for program in registry.program_lineage if program.prd_id == "0006"
     ]
     if len(programs) != 1:
-        raise ValueError("PRD-006 does not resolve one program lineage")
+        raise ValueError("PRD-0006 does not resolve one program lineage")
     program = programs[0]
     completed_count = sum(relation.state == "done" for relation in program.tranches)
     expected_states = tuple(
@@ -1247,11 +2726,11 @@ def _dependency_ready_tranche_window(
     actual_states = tuple(relation.state for relation in program.tranches)
     if actual_states != expected_states:
         raise ValueError(
-            "PRD-006 original tranche is not one contiguous done prefix "
+            "PRD-0006 original tranche is not one contiguous done prefix "
             "followed by an active suffix"
         )
     if completed_count == len(program.tranches):
-        raise ValueError("PRD-006 has no dependency-ready original tranche")
+        raise ValueError("PRD-0006 has no dependency-ready original tranche")
     ready = program.tranches[completed_count]
     blocked = (
         program.tranches[completed_count + 1]
@@ -1269,7 +2748,7 @@ def _registry_with_ready_spec(registry: Registry, ready_spec_id: str) -> Registr
     """Build an isolated typed registry at one supported rollover boundary."""
 
     program = next(
-        program for program in registry.program_lineage if program.prd_id == "006"
+        program for program in registry.program_lineage if program.prd_id == "0006"
     )
     ready_order = next(
         relation.order
@@ -1289,7 +2768,7 @@ def _registry_with_ready_spec(registry: Registry, ready_spec_id: str) -> Registr
     return replace(
         registry,
         program_lineage=tuple(
-            candidate_program if item.prd_id == "006" else item
+            candidate_program if item.prd_id == "0006" else item
             for item in registry.program_lineage
         ),
     )
@@ -1301,10 +2780,10 @@ def _self_test_dependency_ready_registry(registry: Registry) -> Registry:
     try:
         _dependency_ready_tranche_window(registry)
     except ValueError as exc:
-        if str(exc) != "PRD-006 has no dependency-ready original tranche":
+        if str(exc) != "PRD-0006 has no dependency-ready original tranche":
             raise
         program = next(
-            program for program in registry.program_lineage if program.prd_id == "006"
+            program for program in registry.program_lineage if program.prd_id == "0006"
         )
         if not program.tranches or any(
             relation.state != "done" for relation in program.tranches
@@ -1320,9 +2799,6 @@ class InvocationError(ValueError):
 
 class ArgumentParser(argparse.ArgumentParser):
     """Argument parser that returns deterministic exit 2 through ``main``."""
-
-    def error(self, message: str) -> None:
-        raise InvocationError(message)
 
 
 @dataclass(frozen=True)
@@ -1388,16 +2864,21 @@ def _git_process(
     arguments: Sequence[str],
     *,
     input_bytes: bytes | None = None,
+    output_limit: int = GIT_CAPTURE_MAX_BYTES,
 ) -> subprocess.CompletedProcess[bytes]:
-    return subprocess.run(
-        ["git", *GIT_GLOBAL_ARGUMENTS, *arguments],
-        cwd=root,
-        input=input_bytes,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        check=False,
-        env=_sanitized_git_environment(),
-    )
+    try:
+        return _git_capture_bounded(
+            root,
+            *GIT_GLOBAL_ARGUMENTS,
+            *arguments,
+            stdout_limit=output_limit,
+            input_bytes=input_bytes,
+        )
+    except ArchiveContractError as exc:
+        raise InvocationError(
+            f"bounded git provenance failed for "
+            f"{arguments[0] if arguments else 'command'}"
+        ) from exc
 
 
 def _run_git(
@@ -1406,8 +2887,14 @@ def _run_git(
     *,
     input_bytes: bytes | None = None,
     allow_stderr: bool = False,
+    output_limit: int = GIT_CAPTURE_MAX_BYTES,
 ) -> bytes:
-    completed = _git_process(root, arguments, input_bytes=input_bytes)
+    completed = _git_process(
+        root,
+        arguments,
+        input_bytes=input_bytes,
+        output_limit=output_limit,
+    )
     if completed.returncode != 0 or (completed.stderr and not allow_stderr):
         raise InvocationError(
             f"git provenance failed for {arguments[0] if arguments else 'command'}"
@@ -1488,14 +2975,22 @@ def _normalize_include_paths(
 def _resolve_commit(root: Path, reference: str, label: str) -> str:
     if not reference:
         raise InvocationError(f"{label} must not be empty")
+    matching_refs = _git_process(
+        root,
+        ("show-ref", "--", reference),
+        output_limit=512,
+    )
     completed = _git_process(
         root,
         ("rev-parse", "--verify", "--end-of-options", reference),
+        output_limit=GIT_SIZE_OUTPUT_MAX_BYTES,
     )
     lines = completed.stdout.decode("ascii", errors="ignore").splitlines()
+    ref_lines = matching_refs.stdout.splitlines()
     if (
-        completed.returncode != 0
-        or completed.stderr
+        matching_refs.returncode not in {0, 1}
+        or len(ref_lines) > 1
+        or completed.returncode != 0
         or len(lines) != 1
         or OBJECT_ID.fullmatch(lines[0]) is None
     ):
@@ -1708,10 +3203,40 @@ def _blob_text(
         raise InvocationError(f"document blob is not UTF-8: {path.as_posix()}") from exc
 
 
-def _blob_bytes(root: Path, oid: str) -> bytes:
+def _blob_bytes(
+    root: Path,
+    oid: str,
+    *,
+    max_bytes: int = DOCUMENT_BLOB_MAX_BYTES,
+) -> bytes:
     """Read one exact Git blob without decoding or worktree substitution."""
 
-    return _run_git(root, ("cat-file", "blob", oid))
+    if (
+        not isinstance(max_bytes, int)
+        or isinstance(max_bytes, bool)
+        or max_bytes < 0
+        or max_bytes > DOCUMENT_BLOB_MAX_BYTES
+    ):
+        raise InvocationError("Git blob byte budget is invalid")
+    size_bytes = _run_git(
+        root,
+        ("cat-file", "-s", oid),
+        output_limit=GIT_SIZE_OUTPUT_MAX_BYTES,
+    )
+    try:
+        size = int(size_bytes.decode("ascii", errors="strict").strip())
+    except (UnicodeDecodeError, ValueError) as exc:
+        raise InvocationError("Git blob size is malformed") from exc
+    if size < 0 or size > max_bytes:
+        raise InvocationError("Git blob exceeds its byte budget")
+    payload = _run_git(
+        root,
+        ("cat-file", "blob", oid),
+        output_limit=max_bytes,
+    )
+    if len(payload) != size:
+        raise InvocationError("Git blob size changed during bounded read")
+    return payload
 
 
 def _archive_immutability_diagnostics(
@@ -1721,6 +3246,7 @@ def _archive_immutability_diagnostics(
     proposed_blobs: Mapping[PurePosixPath, str],
     *,
     mode: str,
+    admitted_rehome_paths: frozenset[PurePosixPath] = frozenset(),
 ) -> tuple[LifecycleDiagnostic, ...]:
     """Compare exact bytes for every base-selected ArchiveEnvelope record."""
 
@@ -1732,6 +3258,8 @@ def _archive_immutability_diagnostics(
         except DocumentContractError:
             continue
         if profile.profile_id != ARCHIVE_PROFILE:
+            continue
+        if path in admitted_rehome_paths:
             continue
         canonical = path.as_posix()
         baseline[canonical] = _blob_bytes(root, oid)
@@ -1847,6 +3375,10 @@ def _classification_registry(
     aliases = {
         LEGACY_ARCHIVE_PROFILE: ARCHIVE_PROFILE,
         LEGACY_ARCHIVE_TEMPLATE_PROFILE: ARCHIVE_TEMPLATE_PROFILE,
+        "sdlc/ard": "sdlc/ad",  # Retired WORK-105 comparison alias.
+        "template/sdlc/ard": "template/sdlc/ad",  # Retired comparison alias.
+        "sdlc/api-spec": "sdlc/interface",  # Retired comparison alias.
+        "template/sdlc/api-spec": "template/sdlc/interface",  # Retired alias.
     }
     projected: list[DocumentProfile] = []
     for raw_profile in raw_profiles:
@@ -1924,6 +3456,36 @@ def _body_text(text: str) -> str:
     return text if closing < 0 else text[closing + 5 :]
 
 
+def _work105_predecessor_unresolved_links(
+    *,
+    path: PurePosixPath,
+    base_document: LifecycleDocument | None,
+    proposed_document: LifecycleDocument,
+    base_text: str,
+    proposed_text: str,
+    relationship_links: tuple[PurePosixPath, ...],
+    unresolved_links: tuple[PurePosixPath, ...],
+    body_table_links: tuple[PurePosixPath, ...],
+) -> tuple[PurePosixPath, ...]:
+    """Admit only WORK-105's blob-pinned reciprocal predecessor evidence."""
+
+    exact_document = LifecycleDocument(WORK105_ADR0023_PATH, "sdlc/adr", "accepted")
+    exact = (
+        path == WORK105_ADR0023_PATH
+        and base_document == exact_document
+        and proposed_document == exact_document
+        and hashlib.sha256(base_text.encode("utf-8")).hexdigest()
+        == WORK105_ADR0023_BASE_SHA256
+        and hashlib.sha256(proposed_text.encode("utf-8")).hexdigest()
+        == WORK105_ADR0023_PROPOSED_SHA256
+        and proposed_text.count(WORK105_ADR0023_RECIPROCAL_ROW) == 1
+        and WORK105_ADR0024_PATH in relationship_links
+        and WORK105_ADR0024_PATH in body_table_links
+        and unresolved_links == (WORK105_LEGACY_AD0011_PATH,)
+    )
+    return () if exact else unresolved_links
+
+
 def _evidence_context(
     registry: Registry,
     base_documents: Mapping[PurePosixPath, LifecycleDocument],
@@ -1954,11 +3516,21 @@ def _evidence_context(
         rendered = adapter.lifecycle_markdown_evidence(
             path, proposed_texts[path], profile, snapshot_profiles
         )
+        unresolved_links = _work105_predecessor_unresolved_links(
+            path=path,
+            base_document=base_documents.get(path),
+            proposed_document=document,
+            base_text=base_texts.get(path, ""),
+            proposed_text=proposed_texts[path],
+            relationship_links=rendered.relationship_links,
+            unresolved_links=rendered.unresolved_relationship_links,
+            body_table_links=rendered.body_table_links,
+        )
         views[path] = LifecycleEvidenceDocument(
             document=document,
             all_local_links=rendered.all_local_links,
             relationship_links=rendered.relationship_links,
-            unresolved_relationship_links=rendered.unresolved_relationship_links,
+            unresolved_relationship_links=unresolved_links,
             body_table_links=rendered.body_table_links,
             relationship_section_valid=rendered.relationship_section_valid,
             body_contract_valid=rendered.body_contract_valid,
@@ -2187,12 +3759,51 @@ def _evaluate_comparison(
         registry, proposed_registry_raw
     )
 
+    work054_wp002_consumed_paths = finite_work054_wp002_transition_paths(
+        root=root,
+        mode=mode,
+        base_commit=base_commit,
+        base_registry=base_classification_registry,
+        proposed_registry=proposed_classification_registry,
+        base_registry_raw=base_registry_raw,
+        proposed_registry_raw=proposed_registry_raw,
+        base_blobs=base_blobs,
+        proposed_blobs=proposed_blobs,
+    )
+    work054_wp003_consumed_paths = finite_work054_wp003_agent_governance_paths(
+        root=root,
+        mode=mode,
+        base_commit=base_commit,
+        base_blobs=base_blobs,
+        proposed_blobs=proposed_blobs,
+    )
+
+    work107_consumed_paths = finite_work107_archive_rehome_paths(
+        root=root,
+        mode=mode,
+        base_commit=base_commit,
+        base_registry_oid=base_registry_oid or "",
+        proposed_registry_oid=proposed_registry_oid or "",
+        base_blobs=base_blobs,
+        proposed_blobs=proposed_blobs,
+    )
+    work108_consumed_paths = finite_work108_artifact_identity_paths(
+        root=root,
+        mode=mode,
+        base_commit=base_commit,
+        base_registry_oid=base_registry_oid or "",
+        proposed_registry_oid=proposed_registry_oid or "",
+        base_blobs=base_blobs,
+        proposed_blobs=proposed_blobs,
+    )
+
     immutability_diagnostics = _archive_immutability_diagnostics(
         root,
         base_classification_registry,
         base_blobs,
         proposed_blobs,
         mode=mode,
+        admitted_rehome_paths=work107_consumed_paths | work108_consumed_paths,
     )
     if immutability_diagnostics:
         return immutability_diagnostics
@@ -2216,6 +3827,22 @@ def _evaluate_comparison(
         selected,
         base_oid=base_oid,
         proposed_oid=proposed_oid,
+    )
+    base_snapshot, base_texts = _snapshot_projection(
+        root, base_classification_registry, base_blobs
+    )
+    proposed_snapshot, proposed_texts = _snapshot_projection(
+        root, proposed_classification_registry, proposed_blobs
+    )
+    work105_consumed_paths = finite_work105_form_cutover_paths(
+        mode=mode,
+        base_commit=base_commit,
+        base_registry_oid=base_registry_oid or "",
+        proposed_registry_oid=proposed_registry_oid or "",
+        base_registry=base_registry_raw,
+        proposed_registry=proposed_registry_raw,
+        base_documents=base_snapshot,
+        proposed_documents=proposed_snapshot,
     )
     archive_consumed_paths = finite_archive_cutover_paths(
         mode=mode,
@@ -2257,7 +3884,15 @@ def _evaluate_comparison(
                 base_harness=base_harness,
                 proposed_harness=proposed_harness,
             )
-    consumed_paths = archive_consumed_paths | agent_consumed_paths
+    consumed_paths = (
+        work054_wp002_consumed_paths
+        | work054_wp003_consumed_paths
+        | work105_consumed_paths
+        | work107_consumed_paths
+        | work108_consumed_paths
+        | archive_consumed_paths
+        | agent_consumed_paths
+    )
 
     def consume_finite_cutover(
         diagnostics: Sequence[LifecycleDiagnostic],
@@ -2282,12 +3917,6 @@ def _evaluate_comparison(
                 base_mode=mode,  # type: ignore[arg-type]
             )
         )
-    base_snapshot, base_texts = _snapshot_projection(
-        root, base_classification_registry, base_blobs
-    )
-    proposed_snapshot, proposed_texts = _snapshot_projection(
-        root, proposed_classification_registry, proposed_blobs
-    )
     evidence = evidence_context_factory(
         proposed_classification_registry,
         base_snapshot,
@@ -2341,7 +3970,7 @@ def _validate_arguments(args: argparse.Namespace) -> None:
     refs = (args.from_ref, args.base_ref, args.to_ref)
     if args.self_test:
         if (
-            args.mode is not None
+            args.mode != "strict"
             or any(ref is not None for ref in refs)
             or args.include_path
         ):
@@ -2349,7 +3978,9 @@ def _validate_arguments(args: argparse.Namespace) -> None:
         return
     if args.mode is None:
         raise InvocationError("--mode is required unless --self-test is selected")
-    if args.mode in {"staged", "snapshot"} and any(ref is not None for ref in refs):
+    if args.mode in {"strict", "staged", "snapshot"} and any(
+        ref is not None for ref in refs
+    ):
         raise InvocationError(f"{args.mode} mode forbids ref flags")
     if args.mode == "ci" and (
         args.base_ref is None or args.to_ref is None or args.from_ref is not None
@@ -2364,7 +3995,11 @@ def _validate_arguments(args: argparse.Namespace) -> None:
 def _parser() -> ArgumentParser:
     parser = ArgumentParser(description=__doc__)
     parser.add_argument("--root", default=".")
-    parser.add_argument("--mode", choices=("staged", "ci", "explicit-ref", "snapshot"))
+    parser.add_argument(
+        "--mode",
+        choices=("strict", "staged", "ci", "explicit-ref", "snapshot"),
+        default="strict",
+    )
     parser.add_argument("--from-ref")
     parser.add_argument("--base-ref")
     parser.add_argument("--to-ref")
@@ -2546,7 +4181,13 @@ def _evidence_target_path(
     profile_id: str, predicate_id: str, case_index: int
 ) -> PurePosixPath:
     if predicate_id == "complete-product-program":
-        return PurePosixPath("docs/01.requirements/006-evidence-fixture.md")
+        if profile_id == "sdlc/srs":
+            return PurePosixPath("docs/01.requirements/srs-006-evidence-fixture.md")
+        if profile_id == "sdlc/interface":
+            return PurePosixPath(
+                "docs/01.requirements/ifc-006-evidence-fixture.md"
+            )
+        return PurePosixPath("docs/01.requirements/0006-evidence-fixture.md")
     if profile_id == "sdlc/plan":
         return PurePosixPath(
             f"docs/04.execution/plans/2099-01-01-edge-{case_index:02d}.md"
@@ -2589,6 +4230,7 @@ def _evidence_case_context(
     primary_evidence: list[PurePosixPath] = []
     pair_paths: tuple[PurePosixPath, PurePosixPath] | None = None
     spec_identity: PurePosixPath | None = None
+    program_owner_path: PurePosixPath | None = None
 
     if predicate_id == "accept-architecture":
         adr = add(
@@ -2603,8 +4245,18 @@ def _evidence_case_context(
         primary_evidence.append(adr)
     elif predicate_id == "complete-product-program":
         program = next(
-            program for program in registry.program_lineage if program.prd_id == "006"
+            program for program in registry.program_lineage if program.prd_id == "0006"
         )
+        program_owner = target_path
+        if profile_id != "sdlc/prd":
+            program_owner = add(
+                PurePosixPath("docs/01.requirements/0006-evidence-fixture.md"),
+                "sdlc/prd",
+                "active",
+            )
+            relationships[target_path].append(program_owner)
+            relationships[program_owner].append(target_path)
+        program_owner_path = program_owner
         relation_paths: list[PurePosixPath] = []
         for relation in (*program.tranches, *program.follow_ups):
             relation_path = add(
@@ -2615,7 +4267,7 @@ def _evidence_case_context(
                 "done",
             )
             relation_paths.append(relation_path)
-        relationships[target_path].extend(relation_paths)
+        relationships[program_owner].extend(relation_paths)
         primary_evidence.extend(relation_paths)
     elif predicate_id in {
         "activate-execution-pair",
@@ -2630,7 +4282,6 @@ def _evidence_case_context(
             if profile_id
             in {
                 "sdlc/spec",
-                "sdlc/api-spec",
                 "sdlc/agent-design",
                 "sdlc/data-model",
                 "sdlc/tests",
@@ -2678,7 +4329,7 @@ def _evidence_case_context(
             table_targets[task].append(target_path)
     else:
         if predicate_id in {"activate-heading-profile", "accept-decision-self"}:
-            support_profile = "sdlc/ard" if profile_id == "sdlc/adr" else "sdlc/spec"
+            support_profile = "sdlc/ad" if profile_id == "sdlc/adr" else "sdlc/spec"
             support = add(
                 PurePosixPath(
                     f"docs/__lifecycle_evidence__/{case_index:02d}-support.md"
@@ -2753,8 +4404,9 @@ def _evidence_case_context(
                 ]
         elif predicate_id == "complete-product-program" and primary_evidence:
             removed = primary_evidence[-1]
-            relationships[target_path] = [
-                path for path in relationships[target_path] if path != removed
+            owner = program_owner_path or target_path
+            relationships[owner] = [
+                path for path in relationships[owner] if path != removed
             ]
         elif predicate_id == "accept-architecture" and primary_evidence:
             removed = primary_evidence[0]
@@ -2853,7 +4505,7 @@ def _evidence_case_context(
                 "sdlc/spec",
                 "done",
             )
-            relationships[target_path].append(duplicate)
+            relationships[program_owner_path or target_path].append(duplicate)
         elif relationships.get(target_path):
             relationships[target_path].append(relationships[target_path][0])
         else:
@@ -3023,7 +4675,7 @@ def _fixture_document_text(
     execution_spec_path: PurePosixPath | None = None,
 ) -> str:
     execution_spec = execution_spec_path or PurePosixPath(
-        "docs/03.specs/900-lifecycle-fixture/spec.md"
+        "docs/03.specs/0900-lifecycle-fixture/spec.md"
     )
     heading_sets = {
         "sdlc/spec": (
@@ -3073,16 +4725,12 @@ def _fixture_document_text(
                     (
                         _fixture_link(
                             owner,
-                            PurePosixPath(
-                                "docs/04.execution/plans/2099-01-01-example.md"
-                            ),
+                            execution_spec.with_name("plan.md"),
                             "Plan backlink",
                         ),
                         _fixture_link(
                             owner,
-                            PurePosixPath(
-                                "docs/04.execution/tasks/2099-01-01-example.md"
-                            ),
+                            execution_spec.with_name("tasks.md"),
                             "Task backlink",
                         ),
                     )
@@ -3107,7 +4755,7 @@ def _fixture_document_text(
             body_parts.append(
                 "| Spec criterion | Work package | Expected Task |\n"
                 "| --- | --- | --- |\n"
-                f"| {_fixture_link(PurePosixPath(path), execution_spec, 'VAL-FIX-001')} | FIX-001 | [Task](../tasks/2099-01-01-example.md) |"
+                f"| {_fixture_link(PurePosixPath(path), execution_spec, 'VAL-FIX-001')} | FIX-001 | [Task](tasks.md) |"
             )
         elif profile_id == "sdlc/task":
             spec_link = _fixture_link(
@@ -3117,7 +4765,7 @@ def _fixture_document_text(
                 "| Criterion / work item | Result | Evidence |\n"
                 "| --- | --- | --- |\n"
                 f"| {_fixture_link(PurePosixPath(path), execution_spec, 'FIX-001')} | Verified | {spec_link} |\n"
-                f"| [FIX-002](../plans/2099-01-01-example.md) | Verified | {spec_link} |"
+                f"| [FIX-002](plan.md) | Verified | {spec_link} |"
             )
     body = "\n\n".join(body_parts)
     return (
@@ -3204,11 +4852,11 @@ def _write_architecture_evidence_pair(
     linked: bool,
 ) -> tuple[str, str]:
     ard_path = PurePosixPath(
-        "docs/02.architecture/requirements/0900-evidence-fixture.md"
+        "docs/02.architecture/descriptions/ad-0900-evidence-fixture.md"
     )
     adr_path = PurePosixPath("docs/02.architecture/decisions/0900-evidence-fixture.md")
     documents = {
-        ard_path: LifecycleDocument(ard_path, "sdlc/ard", ard_status),
+        ard_path: LifecycleDocument(ard_path, "sdlc/ad", ard_status),
         adr_path: LifecycleDocument(adr_path, "sdlc/adr", adr_status),
     }
     snapshot_profiles = MappingProxyType(
@@ -3244,7 +4892,7 @@ def _git_case(
     fixture_registry = root / REGISTRY_PATH
     fixture_registry.parent.mkdir(parents=True, exist_ok=True)
     fixture_registry.write_bytes((contract_root / REGISTRY_PATH).read_bytes())
-    spec_path = "docs/03.specs/900-example/spec.md"
+    spec_path = "docs/03.specs/0900-example/spec.md"
     case_registry = registry
     ready_spec_id, ready_spec_state, blocked_spec_id = _dependency_ready_tranche_window(
         case_registry
@@ -3256,10 +4904,10 @@ def _git_case(
         programs = [
             program
             for program in registry.program_lineage
-            if program.prd_id == "006"
+            if program.prd_id == "0006"
         ]
         if len(programs) != 1:
-            raise ValueError("negative pair fixture requires one PRD-006 program")
+            raise ValueError("negative pair fixture requires one PRD-0006 program")
         tranche_ids = tuple(relation.spec_id for relation in programs[0].tranches)
         try:
             ready_index = tranche_ids.index(ready_spec_id)
@@ -3356,7 +5004,7 @@ def _git_case(
     if name == "include-does-not-filter-violation":
         _write_fixture_document(
             root,
-            "docs/03.specs/901-clean/spec.md",
+            "docs/03.specs/0901-clean/spec.md",
             "sdlc/spec",
             "draft",
         )
@@ -3386,12 +5034,12 @@ def _git_case(
         _git_fixture(root, "add", "--all")
         diagnostics = _evaluate_comparison(root, registry, mode="staged")
     elif name == "staged-exact-rename":
-        new_path = "docs/03.specs/901-example/spec.md"
+        new_path = "docs/03.specs/0901-example/spec.md"
         (root / new_path).parent.mkdir(parents=True, exist_ok=True)
         _git_fixture(root, "mv", spec_path, new_path)
         diagnostics = _evaluate_comparison(root, registry, mode="staged")
     elif name == "staged-modified-rename":
-        new_path = "docs/03.specs/901-example/spec.md"
+        new_path = "docs/03.specs/0901-example/spec.md"
         (root / new_path).parent.mkdir(parents=True, exist_ok=True)
         _git_fixture(root, "mv", spec_path, new_path)
         _write_fixture_document(root, new_path, "sdlc/spec", "active")
@@ -3469,14 +5117,14 @@ def _git_case(
     }:
         _write_fixture_document(
             root,
-            "docs/04.execution/plans/2099-01-01-example.md",
+            ready_spec_path.with_name("plan.md").as_posix(),
             "sdlc/plan",
             "active",
             execution_spec_path=ready_spec_path,
         )
         _write_fixture_document(
             root,
-            "docs/04.execution/tasks/2099-01-01-example.md",
+            ready_spec_path.with_name("tasks.md").as_posix(),
             "sdlc/task",
             "active",
             execution_spec_path=ready_spec_path,
@@ -3484,9 +5132,9 @@ def _git_case(
         _git_fixture(root, "add", "--all")
         diagnostics = _evaluate_comparison(root, registry, mode="staged")
     elif name == "staged-paired-create-blocked-spec":
-        plan_path = "docs/04.execution/plans/2099-01-01-example.md"
-        task_path = "docs/04.execution/tasks/2099-01-01-example.md"
         assert blocked_spec_path is not None
+        plan_path = blocked_spec_path.with_name("plan.md").as_posix()
+        task_path = blocked_spec_path.with_name("tasks.md").as_posix()
         _write_fixture_document(
             root,
             plan_path,
@@ -3504,9 +5152,9 @@ def _git_case(
         _git_fixture(root, "add", "--all")
         diagnostics = _evaluate_comparison(root, case_registry, mode="staged")
     elif name == "staged-paired-create-split-spec":
-        plan_path = "docs/04.execution/plans/2099-01-01-example.md"
-        task_path = "docs/04.execution/tasks/2099-01-01-example.md"
         assert blocked_spec_path is not None
+        plan_path = ready_spec_path.with_name("plan.md").as_posix()
+        task_path = blocked_spec_path.with_name("tasks.md").as_posix()
         _write_fixture_document(
             root,
             plan_path,
@@ -3540,7 +5188,7 @@ def _git_case(
             root,
             registry,
             mode="staged",
-            include_paths=(PurePosixPath("docs/03.specs/901-clean/spec.md"),),
+            include_paths=(PurePosixPath("docs/03.specs/0901-clean/spec.md"),),
         )
     elif name == "staged-submodule-ignore-all":
         _git_fixture(
@@ -3913,6 +5561,9 @@ def _fixture_contract_failures(fixture: object, registry: Registry) -> list[str]
         "includePathCases",
         "evidenceCases",
         "archiveCutoverCases",
+        "work054Wp002TransitionCases",
+        "work105FormCutoverCases",
+        "work105DecisionEvidenceCases",
         "snapshotCase",
     }
     if set(fixture) != expected_root_keys:
@@ -3970,6 +5621,21 @@ def _fixture_contract_failures(fixture: object, registry: Registry) -> list[str]
             EXPECTED_ARCHIVE_CUTOVER_CASE_NAMES,
             {"name", "mode", "mutation", "expectedAdmittedCount"},
         ),
+        (
+            "work054Wp002TransitionCases",
+            EXPECTED_WORK054_WP002_TRANSITION_CASE_NAMES,
+            {"name", "mode", "mutation", "expectedAdmittedCount"},
+        ),
+        (
+            "work105FormCutoverCases",
+            EXPECTED_WORK105_FORM_CUTOVER_CASE_NAMES,
+            {"name", "mode", "mutation", "expectedAdmittedCount"},
+        ),
+        (
+            "work105DecisionEvidenceCases",
+            EXPECTED_WORK105_DECISION_EVIDENCE_CASE_NAMES,
+            {"name", "mutation", "expectedUnresolvedCount"},
+        ),
     )
     for group_name, expected_names, expected_keys in group_contracts:
         cases = fixture.get(group_name)
@@ -4025,7 +5691,13 @@ def _fixture_contract_failures(fixture: object, registry: Registry) -> list[str]
                 expected_rules = case.get("expectedRuleIds")
                 if not _is_rule_id_list(expected_rules):
                     failures.append(f"argumentCases rule IDs differ: {case_name}")
-                elif expected_rules != ["LIFECYCLE-BASE"]:
+                elif (
+                    expected_rules != ["LIFECYCLE-BASE"]
+                    and not (
+                        case_name == "invalid-mode"
+                        and expected_rules == []
+                    )
+                ):
                     failures.append(f"argumentCases base rule differs: {case_name}")
                 expected_base_mode = case.get("expectedBaseMode")
                 if not isinstance(
@@ -4036,7 +5708,10 @@ def _fixture_contract_failures(fixture: object, registry: Registry) -> list[str]
                     "explicit-ref",
                     "snapshot",
                     "unknown",
+                    "argparse",
                 }:
+                    failures.append(f"argumentCases base mode differs: {case_name}")
+                elif case_name != "invalid-mode" and expected_base_mode == "argparse":
                     failures.append(f"argumentCases base mode differs: {case_name}")
             elif group_name == "includePathCases":
                 if not _is_string_list(case.get("values"), nonempty=True):
@@ -4057,6 +5732,61 @@ def _fixture_contract_failures(fixture: object, registry: Registry) -> list[str]
                     )
                 if case.get("expectedAdmittedCount") not in {0, 33}:
                     failures.append(f"archiveCutoverCases count differs: {case_name}")
+            elif group_name == "work105FormCutoverCases":
+                if case.get("mode") not in {
+                    "staged",
+                    "ci",
+                    "snapshot",
+                    "explicit-ref",
+                }:
+                    failures.append(
+                        f"work105FormCutoverCases mode differs: {case_name}"
+                    )
+                if (
+                    case.get("mutation")
+                    not in EXPECTED_WORK105_FORM_CUTOVER_MUTATIONS
+                ):
+                    failures.append(
+                        f"work105FormCutoverCases mutation differs: {case_name}"
+                    )
+                if case.get("expectedAdmittedCount") not in {0, 23}:
+                    failures.append(
+                        f"work105FormCutoverCases count differs: {case_name}"
+                    )
+            elif group_name == "work054Wp002TransitionCases":
+                if case.get("mode") not in {
+                    "staged",
+                    "ci",
+                    "snapshot",
+                    "explicit-ref",
+                }:
+                    failures.append(
+                        f"work054Wp002TransitionCases mode differs: {case_name}"
+                    )
+                if (
+                    case.get("mutation")
+                    not in EXPECTED_WORK054_WP002_TRANSITION_MUTATIONS
+                ):
+                    failures.append(
+                        "work054Wp002TransitionCases mutation differs: "
+                        f"{case_name}"
+                    )
+                if case.get("expectedAdmittedCount") not in {0, 303}:
+                    failures.append(
+                        f"work054Wp002TransitionCases count differs: {case_name}"
+                    )
+            elif group_name == "work105DecisionEvidenceCases":
+                if (
+                    case.get("mutation")
+                    not in EXPECTED_WORK105_DECISION_EVIDENCE_MUTATIONS
+                ):
+                    failures.append(
+                        f"work105DecisionEvidenceCases mutation differs: {case_name}"
+                    )
+                if case.get("expectedUnresolvedCount") not in {0, 1, 2}:
+                    failures.append(
+                        f"work105DecisionEvidenceCases count differs: {case_name}"
+                    )
 
     admission_cases = fixture.get("admissionCases")
     if not isinstance(admission_cases, list):
@@ -4182,10 +5912,10 @@ def _fixture_contract_failures(fixture: object, registry: Registry) -> list[str]
         failures.append("fixture evidence edge projection contains duplicates")
     if evidence_projection != production_evidence_projection:
         failures.append("fixture evidence edge projection differs from production")
-    if len(evidence_projection) != 42 or len(registry.evidence_predicates) != 11:
-        failures.append("production evidence inventory is not 42 edges/11 predicates")
-    if len({item[0] for item in evidence_projection}) != 19:
-        failures.append("production evidence profile inventory is not 19")
+    if len(evidence_projection) != 44 or len(registry.evidence_predicates) != 11:
+        failures.append("production evidence inventory is not 44 edges/11 predicates")
+    if len({item[0] for item in evidence_projection}) != 20:
+        failures.append("production evidence profile inventory is not 20")
     return failures
 
 
@@ -4225,6 +5955,39 @@ def _fixture_mutation_probe_failures(
         if case["name"] != "partial-record-set"
     ]
     probes.append(("missing archive cutover denial", missing_archive_cutover))
+
+    missing_work054_transition = copy.deepcopy(fixture)
+    missing_work054_transition["work054Wp002TransitionCases"] = [
+        case
+        for case in missing_work054_transition["work054Wp002TransitionCases"]
+        if case["name"] != "source-digest-drift"
+    ]
+    probes.append(
+        ("missing WORK-054 WP-002 transition denial", missing_work054_transition)
+    )
+
+    missing_work105_cutover = copy.deepcopy(fixture)
+    missing_work105_cutover["work105FormCutoverCases"] = [
+        case
+        for case in missing_work105_cutover["work105FormCutoverCases"]
+        if case["name"] != "wrong-proposed-registry-oid"
+    ]
+    probes.append(("missing WORK-105 form cutover denial", missing_work105_cutover))
+
+    missing_work105_decision_evidence = copy.deepcopy(fixture)
+    missing_work105_decision_evidence["work105DecisionEvidenceCases"] = [
+        case
+        for case in missing_work105_decision_evidence[
+            "work105DecisionEvidenceCases"
+        ]
+        if case["name"] != "extra-unresolved"
+    ]
+    probes.append(
+        (
+            "missing WORK-105 decision evidence denial",
+            missing_work105_decision_evidence,
+        )
+    )
 
     duplicate_case = copy.deepcopy(fixture)
     duplicate_case["gitCases"].append(copy.deepcopy(duplicate_case["gitCases"][0]))
@@ -4355,8 +6118,8 @@ def _evidence_regression_failures(
             task_terminal_evidence_valid=rendered.task_terminal_evidence_valid,
         )
 
-    prd_path = PurePosixPath("docs/01.requirements/999-reciprocal-fixture.md")
-    spec_path = PurePosixPath("docs/03.specs/999-reciprocal-fixture/spec.md")
+    prd_path = PurePosixPath("docs/01.requirements/0999-reciprocal-fixture.md")
+    spec_path = PurePosixPath("docs/03.specs/0999-reciprocal-fixture/spec.md")
     prd = LifecycleDocument(prd_path, "sdlc/prd", "active")
     spec = LifecycleDocument(spec_path, "sdlc/spec", "active")
     snapshot_profiles = MappingProxyType(
@@ -4467,7 +6230,7 @@ def _evidence_regression_failures(
     reference_path = PurePosixPath(
         "docs/90.references/research/2099-01-01-heading-fixture.md"
     )
-    support_path = PurePosixPath("docs/03.specs/998-heading-fixture/spec.md")
+    support_path = PurePosixPath("docs/03.specs/0998-heading-fixture/spec.md")
     reference = LifecycleDocument(reference_path, "content/reference", "active")
     support = LifecycleDocument(support_path, "sdlc/spec", "active")
     heading_profiles = MappingProxyType(
@@ -4712,9 +6475,9 @@ def _ambiguous_base_edge_failures(
                     f"evidence {case['name']}/ambiguous-base: "
                     f"resolver calls {resolver_calls}"
                 )
-    if invoked_edges != expected_edges or len(set(invoked_edges)) != 42:
+    if invoked_edges != expected_edges or len(set(invoked_edges)) != 44:
         failures.append(
-            "ambiguous-base did not invoke the exact 42 unique profile/state edges"
+            "ambiguous-base did not invoke the exact 44 unique profile/state edges"
         )
     return failures
 
@@ -4723,7 +6486,7 @@ def _evidence_assertion_run(
     registry: Registry,
     evidence_cases: Sequence[Mapping[str, object]],
 ) -> tuple[list[dict[str, object]], list[str], list[str]]:
-    """Build the exact 504-case diagnostic projection for one lineage state."""
+    """Build the exact 528-case diagnostic projection for one lineage state."""
 
     projection: list[dict[str, object]] = []
     ambiguous_controls: list[str] = []
@@ -4873,13 +6636,13 @@ def _run_self_test(root: Path) -> list[str]:
         evidence_assertion_failures,
     ) = _evidence_assertion_run(evidence_registry, evidence_cases)
     failures.extend(evidence_assertion_failures)
-    if len(ambiguous_edge_controls) != 42 or len(set(ambiguous_edge_controls)) != 42:
-        failures.append("ambiguous-base edge projection is not exactly 42 unique edges")
+    if len(ambiguous_edge_controls) != 44 or len(set(ambiguous_edge_controls)) != 44:
+        failures.append("ambiguous-base edge projection is not exactly 44 unique edges")
     evidence_assertion_sha256 = _evidence_assertion_sha256(
         evidence_assertion_projection
     )
     if (
-        len(evidence_assertion_projection) != 504
+        len(evidence_assertion_projection) != 528
         or evidence_assertion_sha256 != EXPECTED_EVIDENCE_ASSERTION_SHA256
     ):
         failures.append(
@@ -4896,7 +6659,7 @@ def _run_self_test(root: Path) -> list[str]:
     # The main projection above and named staged-paired-create case below prove
     # the current boundary.  Fixed 035/036 proofs that are not current still
     # run; after production advances to 037 or later, both fixed proofs run.
-    fixed_proof_ids = {"035", "036"} - {current_ready_spec_id}
+    fixed_proof_ids = {"0035", "0036"} - {current_ready_spec_id}
     for ready_spec_id in sorted(fixed_proof_ids):
         rollover_registry = _registry_with_ready_spec(registry, ready_spec_id)
         actual_ready_spec_id, actual_ready_state, _ = _dependency_ready_tranche_window(
@@ -4918,10 +6681,10 @@ def _run_self_test(root: Path) -> list[str]:
             )
         rollover_sha256 = _evidence_assertion_sha256(rollover_projection)
         if (
-            len(rollover_projection) != 504
+            len(rollover_projection) != 528
             or rollover_sha256 != EXPECTED_EVIDENCE_ASSERTION_SHA256
-            or len(rollover_controls) != 42
-            or len(set(rollover_controls)) != 42
+            or len(rollover_controls) != 44
+            or len(set(rollover_controls)) != 44
         ):
             failures.append(
                 f"rollover {ready_spec_id}: evidence exact assertion projection "
@@ -4945,7 +6708,7 @@ def _run_self_test(root: Path) -> list[str]:
                         f"exit={pair_exit} rules={pair_rules}"
                     )
     prd006_program = next(
-        program for program in registry.program_lineage if program.prd_id == "006"
+        program for program in registry.program_lineage if program.prd_id == "0006"
     )
     final_tranche_registry = _registry_with_ready_spec(
         registry, prd006_program.tranches[-1].spec_id
@@ -4984,6 +6747,40 @@ def _run_self_test(root: Path) -> list[str]:
             failures.append(
                 f"archive cutover {case['name']}: expected admitted count "
                 f"{case['expectedAdmittedCount']}, actual {len(admitted)}"
+            )
+
+    for case in fixture.get("work054Wp002TransitionCases", []):
+        admitted = finite_work054_wp002_transition_paths(
+            **_work054_wp002_transition_fixture_inputs(
+                root, case["mode"], case["mutation"]
+            )
+        )
+        if len(admitted) != case["expectedAdmittedCount"]:
+            failures.append(
+                f"WORK-054 WP-002 transition {case['name']}: expected admitted "
+                f"count {case['expectedAdmittedCount']}, actual {len(admitted)}"
+            )
+
+    for case in fixture.get("work105FormCutoverCases", []):
+        admitted = finite_work105_form_cutover_paths(
+            **_work105_form_cutover_fixture_inputs(
+                root, case["mode"], case["mutation"]
+            )
+        )
+        if len(admitted) != case["expectedAdmittedCount"]:
+            failures.append(
+                f"WORK-105 form cutover {case['name']}: expected admitted count "
+                f"{case['expectedAdmittedCount']}, actual {len(admitted)}"
+            )
+
+    for case in fixture.get("work105DecisionEvidenceCases", []):
+        unresolved = _work105_predecessor_unresolved_links(
+            **_work105_decision_evidence_fixture_inputs(root, case["mutation"])
+        )
+        if len(unresolved) != case["expectedUnresolvedCount"]:
+            failures.append(
+                f"WORK-105 decision evidence {case['name']}: expected unresolved "
+                f"count {case['expectedUnresolvedCount']}, actual {len(unresolved)}"
             )
 
     for mutation in AGENT_ROSTER_CUTOVER_MUTATIONS:
@@ -5090,13 +6887,24 @@ def _run_self_test(root: Path) -> list[str]:
         stdout = io.StringIO()
         stderr = io.StringIO()
         with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
-            actual_exit = main(["--root", str(root), *case["argv"]])
+            try:
+                actual_exit = main(["--root", str(root), *case["argv"]])
+            except SystemExit as exc:
+                actual_exit = int(exc.code) if isinstance(exc.code, int) else 2
         if actual_exit != case["expectedExit"]:
             failures.append(
                 f"argument {case['name']}: expected exit {case['expectedExit']}, actual {actual_exit}"
             )
         error_line = stderr.getvalue().strip()
-        if (
+        if case["expectedBaseMode"] == "argparse":
+            if (
+                not error_line.startswith("usage:")
+                or "invalid choice" not in error_line
+            ):
+                failures.append(
+                    f"argument {case['name']}: argparse diagnostic differs"
+                )
+        elif (
             not error_line.startswith("FAIL LIFECYCLE-BASE . ")
             or f"base_mode={json.dumps(case['expectedBaseMode'])}" not in error_line
             or "profile=" not in error_line
@@ -5171,6 +6979,9 @@ def _execute(root: Path, args: argparse.Namespace) -> int:
             + len(fixture["argumentCases"])
             + len(fixture["includePathCases"])
             + len(fixture["archiveCutoverCases"])
+            + len(fixture["work054Wp002TransitionCases"])
+            + len(fixture["work105FormCutoverCases"])
+            + len(fixture["work105DecisionEvidenceCases"])
             + len(AGENT_ROSTER_CUTOVER_MUTATIONS)
             + len(AGENT_ROSTER_CONTRACT_BLOB_MUTATIONS)
             + 1
@@ -5188,6 +6999,10 @@ def _execute(root: Path, args: argparse.Namespace) -> int:
             f"{len(fixture['argumentCases'])} arguments, "
             f"{len(fixture['includePathCases'])} includes, 1 snapshot, "
             f"{len(fixture['archiveCutoverCases'])} archive cutovers, "
+            f"{len(fixture['work054Wp002TransitionCases'])} WORK-054 WP-002 "
+            "transitions, "
+            f"{len(fixture['work105FormCutoverCases'])} WORK-105 form cutovers, "
+            f"{len(fixture['work105DecisionEvidenceCases'])} WORK-105 decision evidence cases, "
             f"{len(AGENT_ROSTER_CUTOVER_MUTATIONS)} agent roster cutovers, "
             f"{len(AGENT_ROSTER_CONTRACT_BLOB_MUTATIONS)} agent contract "
             "blob controls, "
@@ -5202,10 +7017,11 @@ def _execute(root: Path, args: argparse.Namespace) -> int:
     if args.mode == "snapshot":
         diagnostics = _evaluate_snapshot(root, registry, include_paths)
     else:
+        comparison_mode = "staged" if args.mode == "strict" else args.mode
         diagnostics = _evaluate_comparison(
             root,
             registry,
-            mode=args.mode,
+            mode=comparison_mode,
             from_ref=args.from_ref,
             base_ref=args.base_ref,
             to_ref=args.to_ref,
@@ -5223,7 +7039,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     error_mode = "unknown"
     try:
         args = _parser().parse_args(argv)
-        if args.mode in {"staged", "ci", "explicit-ref", "snapshot"}:
+        if args.mode in {"strict", "staged", "ci", "explicit-ref", "snapshot"}:
             error_mode = args.mode
         _validate_arguments(args)
         root = Path(args.root).resolve()

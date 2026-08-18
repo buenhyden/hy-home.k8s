@@ -37,19 +37,19 @@ change, to the human requester.
 | Persona | Layer | Primary SSoT |
 | --- | --- | --- |
 | Product Manager | product | `docs/01.requirements/` |
-| System Architect | architecture | `docs/02.architecture/requirements/`, `docs/02.architecture/decisions/` |
+| System Architect | architecture | `docs/`, `docs/02.architecture/decisions/` |
 | Backend Engineer | backend | `docs/03.specs/` |
 | Frontend Engineer | frontend | `docs/03.specs/` |
 | Infra Engineer | infra | `docs/05.operations/policies/`, `docs/05.operations/runbooks/` |
 | Operations Engineer | ops | `docs/05.operations/policies/`, `docs/05.operations/incidents/` |
 | Security Engineer | security | `docs/03.specs/`, `docs/05.operations/incidents/` |
-| QA Engineer | qa | `docs/04.execution/plans/`, `docs/04.execution/tasks/`, `docs/05.operations/incidents/` |
+| QA Engineer | qa | `docs/03.specs/*/plan.md`, `docs/03.specs/*/tasks.md`, `docs/05.operations/incidents/` |
 | Technical Writer | docs | `docs/05.operations/guides/`, `docs/90.references/` |
 | Governance Steward | meta | `docs/00.agent-governance/` |
 
 ### Stage Mapping
 
-Use [stage-authoring-matrix.md](stage-authoring-matrix.md) for canonical taxonomy authoring timing, inputs, outputs, templates, and completion criteria.
+Use [document-authoring.md](document-authoring.md) for canonical taxonomy authoring timing, inputs, outputs, templates, and completion criteria.
 
 ## Current Contract
 
@@ -74,5 +74,5 @@ when a stage owner, scope file, or provider role roster changes.
 
 - [Bootstrap Governance](bootstrap.md)
 - [Preflight Checklist](preflight-checklist.md)
-- [Stage Authoring Matrix](stage-authoring-matrix.md)
+- [Stage Authoring Matrix](document-authoring.md)
 - [Subagent Protocol](../subagent-protocol.md)

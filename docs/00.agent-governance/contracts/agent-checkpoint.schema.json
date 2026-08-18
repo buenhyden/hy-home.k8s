@@ -228,7 +228,7 @@
           "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$"
         },
         "specRef": {
-          "const": "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md"
+          "const": "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
         },
         "worktreeId": {
           "$ref": "#/$defs/digest"

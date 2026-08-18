@@ -25,7 +25,7 @@
 
 - 중요한 기술 결정 1건을 다루는 ADR
 - 맥락, 결정, 비목표, 대안, 결과
-- 관련 PRD/ARD/Spec/Plan/Operations 링크
+- 관련 PRD/AD/Spec/Plan/Operations 링크
 
 ### Out of Scope
 
@@ -54,16 +54,19 @@
 ├── 0020-document-lifecycle-program-closure-evidence.md
 ├── 0021-canonical-surface-routing-and-evidence-depth.md
 ├── 0022-direct-approval-standalone-execution-lineage.md
-├── 0023-argo-cd-source-integrity-non-adoption.md
-├── 0024-pod-security-standards-staged-adoption.md
-├── 0025-pod-security-admission-per-namespace-adoption.md
-├── 0026-mutable-target-revision-retention.md
+├── 0023-work-unit-document-taxonomy-and-governance-authority.md
+├── 0024-terminal-artifact-identity-and-archive-layout.md
+├── 0025-four-digit-document-path-identity.md
+├── 0026-argo-cd-source-integrity-non-adoption.md
+├── 0027-pod-security-standards-staged-adoption.md
+├── 0028-pod-security-admission-per-namespace-adoption.md
+├── 0029-mutable-target-revision-retention.md
 └── README.md
 ```
 
 ## Add and Find
 
-1. 결정의 상위 요구와 참조 구조를 `01.requirements/`, `02.architecture/requirements/`에서 확인한다.
+1. 결정의 상위 요구와 참조 구조를 `01.requirements/`, `../descriptions/`에서 확인한다.
 2. 새 ADR은 `../../99.templates/templates/sdlc/architecture/adr.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/decisions/####-<short-title>.md`다.
 3. 현재 구현과 상충하는 superseded/deprecated-only 결정은 full-body Archive Record로 보존하고 `../../98.archive/README.md`에만 인덱싱한다.
 4. `Accepted` ADR의 현재 런타임 값은 GitOps manifest, 정적 검증 스크립트, current baseline ADR과 일치해야 한다.
@@ -74,7 +77,7 @@
 이 README의 링크 기준 위치는 `docs/02.architecture/decisions/`다.
 
 - 같은 폴더의 ADR 문서는 `./`로 시작한다.
-- sibling ARD stage는 `../requirements/`로 연결한다.
+- sibling AD stage는 `../descriptions/`로 연결한다.
 - upstream/downstream docs stage는 `../../01.requirements/`, `../../03.specs/`, `../../04.execution/`, `../../05.operations/`로 연결한다.
 - 새 ADR의 실제 Markdown 링크는 최종 ADR 파일 위치 기준으로 다시 계산하고, placeholder target은 code literal로 남긴다.
 
@@ -96,18 +99,21 @@
 | [`./0017-program-follow-up-lineage-semantics.md`](./0017-program-follow-up-lineage-semantics.md) | Original tranche와 program follow-up 계보 분리 결정 | Accepted | ADR-0016의 seven-tranche 사실을 보존하면서 Spec 033과 이후 follow-up의 별도 관계를 정의한다. |
 | [`./0018-full-body-archive-record-and-retention.md`](./0018-full-body-archive-record-and-retention.md) | Full-body archive record와 provenance 결정 | Accepted | 이전 metadata-only archive 표면을 단일 immutable `content/archive` envelope/payload로 대체하고, archive-time replacement provenance와 index-only current replacement authority를 분리한다. |
 | [`./0019-provider-native-agent-harness-and-loop-model.md`](./0019-provider-native-agent-harness-and-loop-model.md) | Provider-native agent harness, bounded loop, model/evidence 전이 결정 | Accepted | Four-surface native contract, 12-role/48-adapter roster, provider별 독립 canary classification, eval readiness 및 CI/QA cutover의 current decision이다. Provider/runtime/hosted/actual/remote/live lane과 AGPC-005 local integration은 별도 evidence boundary로 남는다. |
-| [`./0020-document-lifecycle-program-closure-evidence.md`](./0020-document-lifecycle-program-closure-evidence.md) | PRD-006 / ARD-0009 문서 수명주기 프로그램 closure evidence 결정 | Accepted | 2026-07-28 exact terminal closure commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9`에서 ARD-0009와 reciprocal same-diff accepted role-decision evidence를 제공한다. ADR-0017/0018은 변경 없는 accepted history이며 reviewed digest `e146fb13fb3a62db014e6317992a4f519b79ba330253c4c5fe89834dc67e1888`은 terminal requirements/quality/security approval을 받았다. Parent `35d8552ba423e3e2d92294ddeb81674392b8f333`부터 closure까지 explicit-ref와 clean-tree aggregate는 PASS이며 evidence-update commit 자체와 hosted/provider/remote/live 결과는 주장하지 않는다. |
+| [`./0020-document-lifecycle-program-closure-evidence.md`](./0020-document-lifecycle-program-closure-evidence.md) | PRD-0006 / AD-0009 문서 수명주기 프로그램 closure evidence 결정 | Accepted | 2026-07-28 exact terminal closure commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9`에서 AD-0009와 reciprocal same-diff accepted role-decision evidence를 제공한다. ADR-0017/0018은 변경 없는 accepted history이며 reviewed digest `e146fb13fb3a62db014e6317992a4f519b79ba330253c4c5fe89834dc67e1888`은 terminal requirements/quality/security approval을 받았다. Parent `35d8552ba423e3e2d92294ddeb81674392b8f333`부터 closure까지 explicit-ref와 clean-tree aggregate는 PASS이며 evidence-update commit 자체와 hosted/provider/remote/live 결과는 주장하지 않는다. |
 | [`./0021-canonical-surface-routing-and-evidence-depth.md`](./0021-canonical-surface-routing-and-evidence-depth.md) | Canonical affected-surface references, GitHub projections, and layered platform evidence decision | Accepted | Existing platform topology and validation-surface owners are preserved; active Spec 047 and planned Specs 048–051 implement the reference-based projections and evidence-depth model without remote/live mutation. |
-| [`./0022-direct-approval-standalone-execution-lineage.md`](./0022-direct-approval-standalone-execution-lineage.md) | Direct human-approved standalone Spec/Plan/Task lineage decision | Accepted | Registry schema v8 owns the closed optional standalone relation while preserving every existing PRD/ARD-backed program-lineage rule. |
-| [`./0023-argo-cd-source-integrity-non-adoption.md`](./0023-argo-cd-source-integrity-non-adoption.md)               | Argo CD source-integrity 미채택 결정                                  | Accepted | 서명 검증은 가변 `targetRevision: main`의 tip 커밋만 인증하므로 기록된 identity gap의 원인을 해결하지 못한다. 선호 대안은 commit-SHA 핀이며 실행하지 않는다. Helm/OCI 범위 확장, warn 모드 문서화, 또는 독립적 이유의 commit signing 도입 시 재검토한다. |
-| [`./0024-pod-security-standards-staged-adoption.md`](./0024-pod-security-standards-staged-adoption.md) | Pod Security Standards 단계 도입 결정 | Accepted | 라벨을 지금 붙이지 않는다. Baseline capabilities 제어가 initContainers를 포함하고 `NET_ADMIN`·`NET_RAW`를 허용하지 않는 반면 `istio-cni` 없는 Istio 1.25.2는 `istio-init`에 그 둘을 요구하므로, 구속 조건은 워크로드가 아니라 mesh 네트워킹이다. 도입 순서는 CNI → warn/audit=baseline → 네임스페이스별 enforce로 기록한다. |
-| [`./0025-pod-security-admission-per-namespace-adoption.md`](./0025-pod-security-admission-per-namespace-adoption.md) | Pod Security Admission 네임스페이스별 도입 결정 | Accepted | ADR 0024의 역전 조건 발화 후 재판단이다. 네임스페이스마다 자체 증거가 뒷받침하는 최대 강도를 부여한다: `istio-system`은 CNI DaemonSet 때문에 영구 `privileged`, `monitoring`/`platform`은 `enforce=restricted`, Helm 소유 4곳은 차트 버전 종속이라 `audit`/`warn`만, 주입 2곳은 CNI 라이브 미검증이라 `baseline` warn/audit을 검증 신호로 쓴다. `enforce`만 버전 고정한다. |
-| [`./0026-mutable-target-revision-retention.md`](./0026-mutable-target-revision-retention.md) | 가변 targetRevision 유지 결정 | Accepted | ADR 0023이 선호 통제로 남긴 commit-SHA 핀을 기각한다. 12개 선언은 모두 이 저장소 자신을 가리키며 외부 차트는 이미 버전 핀이다. 핀은 하드닝이 아니라 자동 reconcile을 수동 promotion으로 바꾸는 배포 모델 변경이고, 핀 커밋은 자기 자신을 참조할 수 없어 구조적으로 한 커밋 뒤처진다. 운영자 추가·환경 추가·force-push 워크플로 도입 시 재검토한다. |
+| [`./0022-direct-approval-standalone-execution-lineage.md`](./0022-direct-approval-standalone-execution-lineage.md) | Direct human-approved standalone Spec/Plan/Task lineage decision | Accepted | Registry schema v8 owns the closed optional standalone relation while preserving every existing PRD/AD-backed program-lineage rule. |
+| [`./0023-work-unit-document-taxonomy-and-governance-authority.md`](./0023-work-unit-document-taxonomy-and-governance-authority.md) | Work-unit document topology, stable Stage 05, and governance-authority decision | Accepted | Accepted PRD-0008 transition predecessor; ADR-0024 supersedes only the terminal archive-layout and program-projection portions while preserving this record's transition safety and unrelated decisions. |
+| [`./0024-terminal-artifact-identity-and-archive-layout.md`](./0024-terminal-artifact-identity-and-archive-layout.md) | Architecture Description activation, complete legacy-form retirement, two-gate authored API Spec retirement, closed mandatory/prohibited artifact identity, virtual Stage 98 change identity, stable archive, and exact script-disposition successor | Accepted | WORK-105 converted the exact active/accepted AD-0004 through AD-0011 census one-to-one, preserved IDs/slugs/statuses, closed live/unclassified legacy-form consumers, and passed the separate AD-0011 invariant/ADR-0024 acceptance/PRD-0008 projection gate. API Spec instance/consumer closure and native/history preservation also passed. ADR-0023 remains the accepted transition predecessor. |
+| [`./0025-four-digit-document-path-identity.md`](./0025-four-digit-document-path-identity.md) | Four-digit current document path identity and lowercase Incident directory grammar | Accepted | Partially supersedes ADR-0024 only for PRD, Stage 03, and Incident numeric path/ID grammar; WORK-109 owns the atomic cutover. |
+| [`./0026-argo-cd-source-integrity-non-adoption.md`](./0026-argo-cd-source-integrity-non-adoption.md)               | Argo CD source-integrity 미채택 결정                                  | Accepted | 서명 검증은 가변 `targetRevision: main`의 tip 커밋만 인증하므로 기록된 identity gap의 원인을 해결하지 못한다. 선호 대안은 commit-SHA 핀이며 실행하지 않는다. Helm/OCI 범위 확장, warn 모드 문서화, 또는 독립적 이유의 commit signing 도입 시 재검토한다. |
+| [`./0027-pod-security-standards-staged-adoption.md`](./0027-pod-security-standards-staged-adoption.md) | Pod Security Standards 단계 도입 결정 | Accepted | 라벨을 지금 붙이지 않는다. Baseline capabilities 제어가 initContainers를 포함하고 `NET_ADMIN`·`NET_RAW`를 허용하지 않는 반면 `istio-cni` 없는 Istio 1.25.2는 `istio-init`에 그 둘을 요구하므로, 구속 조건은 워크로드가 아니라 mesh 네트워킹이다. 도입 순서는 CNI → warn/audit=baseline → 네임스페이스별 enforce로 기록한다. |
+| [`./0028-pod-security-admission-per-namespace-adoption.md`](./0028-pod-security-admission-per-namespace-adoption.md) | Pod Security Admission 네임스페이스별 도입 결정 | Accepted | ADR-0027의 역전 조건 발화 후 재판단이다. 네임스페이스마다 자체 증거가 뒷받침하는 최대 강도를 부여한다: `istio-system`은 CNI DaemonSet 때문에 영구 `privileged`, `monitoring`/`platform`은 `enforce=restricted`, Helm 소유 4곳은 차트 버전 종속이라 `audit`/`warn`만, 주입 2곳은 CNI 라이브 미검증이라 `baseline` warn/audit을 검증 신호로 쓴다. `enforce`만 버전 고정한다. |
+| [`./0029-mutable-target-revision-retention.md`](./0029-mutable-target-revision-retention.md) | 가변 targetRevision 유지 결정 | Accepted | ADR-0026이 선호 통제로 남긴 commit-SHA 핀을 기각한다. 12개 선언은 모두 이 저장소 자신을 가리키며 외부 차트는 이미 버전 핀이다. 핀은 하드닝이 아니라 자동 reconcile을 수동 promotion으로 바꾸는 배포 모델 변경이고, 핀 커밋은 자기 자신을 참조할 수 없어 구조적으로 한 커밋 뒤처진다. 운영자 추가·환경 추가·force-push 워크플로 도입 시 재검토한다. |
 
 ## Related Documents
 
 - [Architecture README](../README.md)
-- [02.architecture/requirements](../requirements/README.md)
+- [02.architecture/descriptions](../descriptions/README.md)
 - [03.specs](../../03.specs/README.md)
 - [05.operations/policies](../../05.operations/policies/README.md)
 - [99.templates ADR Template](../../99.templates/templates/sdlc/architecture/adr.template.md)

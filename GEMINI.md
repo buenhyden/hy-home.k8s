@@ -10,7 +10,7 @@ Thin Gemini provider shim for `hy-home.k8s`.
 - Runtime and role roster: `docs/00.agent-governance/harness-catalog.md`
 - Validation lanes, results, and handoff evidence: `docs/00.agent-governance/rules/quality-standards.md`
 - Completion checklist: `docs/00.agent-governance/rules/postflight-checklist.md`
-- Template selection: `docs/99.templates/support/template-routing.md`
+- Template selection: `docs/99.templates/support/document-contract.md`
 
 Tracked `.agents/**` adapters are local/Antigravity repo-static configuration,
 not Gemini CLI native surfaces. Tracked `.gemini/agents/**` and

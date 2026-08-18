@@ -58,7 +58,7 @@ docs/05.operations/guides/
 
 ## Add and Find
 
-1. 먼저 관련 Spec/Policy/Runbook을 확인한다. 기본 플랫폼 계약은 [Current Local GitOps Platform Spec](../../03.specs/008-current-local-gitops-platform/spec.md)을 기준으로 삼는다.
+1. 먼저 관련 Spec/Policy/Runbook을 확인한다. 기본 플랫폼 계약은 [Current Local GitOps Platform Spec](../../03.specs/0008-current-local-gitops-platform/spec.md)을 기준으로 삼는다.
 2. 새 가이드 추가/수정 시 [guide.template.md](../../99.templates/templates/sdlc/operations/guide.template.md)를 기반으로 작성한다.
 3. 실행 명령은 복붙 가능한 형태로 유지하고, 시크릿 값은 절대 직접 기재하지 않는다.
 4. 문서 변경 시 이 README의 인덱스(상태/설명/수정일)를 함께 갱신한다.
@@ -77,7 +77,7 @@ docs/05.operations/guides/
 
 Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 
-- upstream 요구사항/아키텍처/스펙: PRD, ARD, ADR, Spec, Plan
+- upstream 요구사항/아키텍처/스펙: PRD, AD, ADR, Spec, Plan
 - sibling 운영 문서: 관련 Policy, Runbook, Incident 경로
 - 하위 실행 증적: Task 또는 validation guide
 
@@ -96,11 +96,11 @@ Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 - [05.operations/policies](../policies/README.md)
 - [05.operations/runbooks](../runbooks/README.md)
 - [05.operations/incidents](../incidents/README.md)
-- [PRD](../../01.requirements/004-current-local-gitops-platform.md)
-- [ARD](../../02.architecture/requirements/0007-current-local-gitops-platform.md)
-- [Spec](../../03.specs/008-current-local-gitops-platform/spec.md)
-- [Plan](../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md)
-- [Task](../../04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md)
+- [PRD](../../01.requirements/0004-current-local-gitops-platform.md)
+- [AD](../../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md)
+- [Spec](../../03.specs/0008-current-local-gitops-platform/spec.md)
+- [Plan](../../98.archive/README.md#document-index)
+- [Archive Index](../../98.archive/README.md#document-index)
 - [Guide Template](../../99.templates/templates/sdlc/operations/guide.template.md)
 - [Collection Index README Form](../../99.templates/templates/common/readme-collection-index.template.md)
 

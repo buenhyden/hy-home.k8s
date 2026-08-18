@@ -139,18 +139,17 @@
         "handoffs": [
           "Escalate to the user when a requested action conflicts with governance or carries unapproved destructive risk."
         ],
-        "capabilityTier": "top",
-        "capabilityTierClaim": "Capability tier: `top`; orchestrate and synthesize cross-role work while preserving each worker's bounded authority.",
         "requiredEvidence": [
           "Required evidence: record selected roles, routing rationale, delegated results, unresolved conflicts, completion gates, and escalation decisions."
         ]
       },
       "evalSuite": {
         "id": "eval/supervisor/v1",
-        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "admissionState": "repository-static-evaluation-ready"
       },
-      "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
+      "modelPolicyRef": "docs/00.agent-governance/model-policy.md",
+      "capabilityTierRef": "docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles/0/capabilityTier"
     },
     {
       "id": "code-reviewer",
@@ -197,18 +196,17 @@
         "handoffs": [
           "Escalate to `security-auditor.md` for secret exposure, RBAC risk, or network isolation findings."
         ],
-        "capabilityTier": "worker",
-        "capabilityTierClaim": "Capability tier: `worker`; perform bounded architecture-aware review and do not assume supervisor or implementation authority.",
         "requiredEvidence": [
           "Required evidence: cite each finding with a repository `file:line`, severity, and the observed policy or pattern."
         ]
       },
       "evalSuite": {
         "id": "eval/code-reviewer/v1",
-        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "admissionState": "repository-static-evaluation-ready"
       },
-      "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
+      "modelPolicyRef": "docs/00.agent-governance/model-policy.md",
+      "capabilityTierRef": "docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles/1/capabilityTier"
     },
     {
       "id": "doc-writer",
@@ -256,18 +254,17 @@
         "handoffs": [
           "Escalate to `supervisor.md` when the correct document type or ownership path is unclear."
         ],
-        "capabilityTier": "worker",
-        "capabilityTierClaim": "Capability tier: `worker`; perform only bounded, delegated documentation routing and authoring work.",
         "requiredEvidence": [
           "Required evidence: report the canonical target, template path, upstream references, and each validation result or limitation."
         ]
       },
       "evalSuite": {
         "id": "eval/doc-writer/v1",
-        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "admissionState": "repository-static-evaluation-ready"
       },
-      "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
+      "modelPolicyRef": "docs/00.agent-governance/model-policy.md",
+      "capabilityTierRef": "docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles/2/capabilityTier"
     },
     {
       "id": "gitops-reviewer",
@@ -315,18 +312,17 @@
         "handoffs": [
           "Escalate implementation tasks to `k8s-implementer.md`."
         ],
-        "capabilityTier": "worker",
-        "capabilityTierClaim": "Capability tier: `worker`; perform bounded GitOps and ArgoCD review without implementation or live-sync authority.",
         "requiredEvidence": [
           "Required evidence: identify each affected sync target, Kustomize path, rollout risk, and repository-backed validation result."
         ]
       },
       "evalSuite": {
         "id": "eval/gitops-reviewer/v1",
-        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "admissionState": "repository-static-evaluation-ready"
       },
-      "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
+      "modelPolicyRef": "docs/00.agent-governance/model-policy.md",
+      "capabilityTierRef": "docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles/3/capabilityTier"
     },
     {
       "id": "incident-responder",
@@ -374,18 +370,17 @@
         "handoffs": [
           "Escalate security-breach indicators to `security-auditor.md`."
         ],
-        "capabilityTier": "worker",
-        "capabilityTierClaim": "Capability tier: `worker`; perform bounded incident reconstruction and planning without live remediation authority.",
         "requiredEvidence": [
           "Required evidence: preserve timestamped observations, affected scope, impact, confidence, and approved-source references for every conclusion."
         ]
       },
       "evalSuite": {
         "id": "eval/incident-responder/v1",
-        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "admissionState": "repository-static-evaluation-ready"
       },
-      "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
+      "modelPolicyRef": "docs/00.agent-governance/model-policy.md",
+      "capabilityTierRef": "docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles/4/capabilityTier"
     },
     {
       "id": "k8s-implementer",
@@ -433,18 +428,17 @@
         "handoffs": [
           "Hand off to `gitops-reviewer.md` for release and structure review."
         ],
-        "capabilityTier": "worker",
-        "capabilityTierClaim": "Capability tier: `worker`; implement only bounded repository desired-state changes and never assume deployment authority.",
         "requiredEvidence": [
           "Required evidence: list changed manifest paths, rendered or static validation results, policy checks, and the GitOps review handoff."
         ]
       },
       "evalSuite": {
         "id": "eval/k8s-implementer/v1",
-        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "admissionState": "repository-static-evaluation-ready"
       },
-      "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
+      "modelPolicyRef": "docs/00.agent-governance/model-policy.md",
+      "capabilityTierRef": "docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles/5/capabilityTier"
     },
     {
       "id": "network-reviewer",
@@ -492,18 +486,17 @@
         "handoffs": [
           "Escalate secret, RBAC, or network-isolation findings to `security-auditor.md`."
         ],
-        "capabilityTier": "worker",
-        "capabilityTierClaim": "Capability tier: `worker`; perform bounded manifest-static network review without live probe or security-audit authority.",
         "requiredEvidence": [
           "Required evidence: cite `file:line` routing, policy, DNS, or TLS findings and the static command or manifest relationship supporting each one."
         ]
       },
       "evalSuite": {
         "id": "eval/network-reviewer/v1",
-        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "admissionState": "repository-static-evaluation-ready"
       },
-      "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
+      "modelPolicyRef": "docs/00.agent-governance/model-policy.md",
+      "capabilityTierRef": "docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles/6/capabilityTier"
     },
     {
       "id": "observability-reviewer",
@@ -551,18 +544,17 @@
         "handoffs": [
           "Escalate GitOps sync-structure or release concerns to `gitops-reviewer.md`."
         ],
-        "capabilityTier": "worker",
-        "capabilityTierClaim": "Capability tier: `worker`; perform bounded observability and SLO review without live-query or implementation authority.",
         "requiredEvidence": [
           "Required evidence: cite `file:line` scrape, alert, dashboard, or SLO findings and identify the static source supporting each conclusion."
         ]
       },
       "evalSuite": {
         "id": "eval/observability-reviewer/v1",
-        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "admissionState": "repository-static-evaluation-ready"
       },
-      "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
+      "modelPolicyRef": "docs/00.agent-governance/model-policy.md",
+      "capabilityTierRef": "docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles/7/capabilityTier"
     },
     {
       "id": "security-auditor",
@@ -609,18 +601,17 @@
         "handoffs": [
           "Escalate implementation work to `k8s-implementer.md` only after findings are clear."
         ],
-        "capabilityTier": "worker",
-        "capabilityTierClaim": "Capability tier: `worker`; perform bounded security audit and recommendation work without remediation or exception authority.",
         "requiredEvidence": [
           "Required evidence: cite each RBAC, NetworkPolicy, or secret-handling finding with `file:line`, severity, control impact, and remediation basis."
         ]
       },
       "evalSuite": {
         "id": "eval/security-auditor/v1",
-        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "admissionState": "repository-static-evaluation-ready"
       },
-      "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
+      "modelPolicyRef": "docs/00.agent-governance/model-policy.md",
+      "capabilityTierRef": "docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles/8/capabilityTier"
     },
     {
       "id": "wiki-curator",
@@ -667,18 +658,17 @@
         "handoffs": [
           "Escalate to `doc-writer.md` when a new operations guide, runbook, incident note, or template-aligned document is needed."
         ],
-        "capabilityTier": "worker",
-        "capabilityTierClaim": "Capability tier: `worker`; perform bounded wiki entrypoint and link-map curation without policy or runtime ownership.",
         "requiredEvidence": [
           "Required evidence: identify each changed entrypoint, canonical owner target, stale-link result, and generated-index validation outcome."
         ]
       },
       "evalSuite": {
         "id": "eval/wiki-curator/v1",
-        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "admissionState": "repository-static-evaluation-ready"
       },
-      "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
+      "modelPolicyRef": "docs/00.agent-governance/model-policy.md",
+      "capabilityTierRef": "docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles/9/capabilityTier"
     },
     {
       "id": "docs-researcher",
@@ -725,18 +715,17 @@
         "handoffs": [
           "Hand off accepted research to `doc-writer.md` and unresolved authority conflicts to `supervisor.md`."
         ],
-        "capabilityTier": "worker",
-        "capabilityTierClaim": "Capability tier: `worker`; perform bounded primary-source research without implementation, policy, or external-write authority.",
         "requiredEvidence": [
           "Required evidence: record source identity, direct link, observation date, supported claim, conflicts, inference labels, and remaining uncertainty."
         ]
       },
       "evalSuite": {
         "id": "eval/docs-researcher/v1",
-        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "admissionState": "repository-static-evaluation-ready"
       },
-      "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
+      "modelPolicyRef": "docs/00.agent-governance/model-policy.md",
+      "capabilityTierRef": "docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles/10/capabilityTier"
     },
     {
       "id": "quality-engineer",
@@ -784,18 +773,17 @@
         "handoffs": [
           "Hand off correctness findings to `code-reviewer.md`, security findings to `security-auditor.md`, and unresolved gates to `supervisor.md`."
         ],
-        "capabilityTier": "worker",
-        "capabilityTierClaim": "Capability tier: `worker`; design and run only bounded repository QA without waiver, deployment, or cross-evidence authority.",
         "requiredEvidence": [
           "Required evidence: record fixture identity, command, environment boundary, expected and actual rule, result class, and repeatability."
         ]
       },
       "evalSuite": {
         "id": "eval/quality-engineer/v1",
-        "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+        "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
         "admissionState": "repository-static-evaluation-ready"
       },
-      "modelPolicyRef": "docs/00.agent-governance/model-policy.md"
+      "modelPolicyRef": "docs/00.agent-governance/model-policy.md",
+      "capabilityTierRef": "docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles/11/capabilityTier"
     }
   ],
   "surfaces": [
@@ -1154,7 +1142,7 @@
   },
   "targetInventory": {
     "state": "achieved",
-    "promotionOwnerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+    "promotionOwnerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
     "expectedRoleCount": 12,
     "expectedSurfaceCount": 4,
     "expectedProjectionCount": 48,
@@ -1527,22 +1515,6 @@
       "evidenceClass": "repo-static"
     },
     {
-      "id": "harness-implementation-map",
-      "path": "docs/00.agent-governance/harness-implementation-map.md",
-      "selectedContract": "harness-contract",
-      "selectedVersion": "1.0.0",
-      "migrationState": "current",
-      "evidenceClass": "repo-static"
-    },
-    {
-      "id": "provider-agents-md-note",
-      "path": "docs/00.agent-governance/providers/agents-md.md",
-      "selectedContract": "harness-contract",
-      "selectedVersion": "1.0.0",
-      "migrationState": "current",
-      "evidenceClass": "repo-static"
-    },
-    {
       "id": "provider-claude-note",
       "path": "docs/00.agent-governance/providers/claude.md",
       "selectedContract": "harness-contract",
@@ -1586,7 +1558,7 @@
   "memory": {
     "canonicalDurableSharedPath": "docs/00.agent-governance/memory/progress.md",
     "transientCheckpointPath": ".agent-work/checkpoint.json",
-    "executableLifecycleOwner": "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md",
+    "executableLifecycleOwner": "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md",
     "classes": [
       {
         "id": "working-short-term",
@@ -1616,7 +1588,7 @@
           "reviewRequired": true
         },
         "lifecyclePolicyRefs": [
-          "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md",
+          "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md",
           "docs/00.agent-governance/rules/postflight-checklist.md"
         ],
         "conflictBoundary": "Observed repository state and canonical SDLC owners always override temporary context after compaction, resume, or handoff.",
@@ -1663,8 +1635,8 @@
         },
         "lifecyclePolicyRefs": [
           "docs/00.agent-governance/memory/README.md",
-          "docs/00.agent-governance/rules/documentation-protocol.md",
-          "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md"
+          "docs/00.agent-governance/rules/document-authoring.md",
+          "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
         ],
         "conflictBoundary": "The document-type current owner outranks the progress ledger, and newer reviewed repository evidence must explicitly reconcile older durable memory.",
         "prohibitedContent": [
@@ -1709,9 +1681,8 @@
           "reviewRequired": true
         },
         "lifecyclePolicyRefs": [
-          "docs/00.agent-governance/rules/document-stage-routing.md",
-          "docs/00.agent-governance/rules/documentation-protocol.md",
-          "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md"
+          "docs/00.agent-governance/rules/document-authoring.md",
+          "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
         ],
         "conflictBoundary": "The canonical owner for the affected domain wins; cross-domain conflict must be escalated to the shared SDLC owner instead of copied locally.",
         "prohibitedContent": [
@@ -1756,7 +1727,7 @@
         },
         "lifecyclePolicyRefs": [
           "docs/00.agent-governance/harness-catalog.md",
-          "docs/03.specs/043-agent-harness-loop-lifecycle/spec.md"
+          "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
         ],
         "conflictBoundary": "Provider-local context loses every conflict with observed repository state, canonical decisions, Task status, or durable handoff evidence.",
         "prohibitedContent": [

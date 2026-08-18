@@ -3,7 +3,7 @@
   "schemaVersion": 2,
   "contractId": "hy-home.k8s/agent-model-fitness",
   "contractVersion": "1.1.0",
-  "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+  "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
   "contractMode": "repository-static-fitness-readiness",
   "evidenceClass": "repository-static",
   "lifecycleState": "repository-static-fitness-ready",
@@ -31,6 +31,8 @@
     "providerRuntimeEvidenceAuthority": true,
     "providerEvidenceGranularity": "two-role-class-candidates-per-provider",
     "roleSpecificRuntimeEvidence": "DEFER",
+    "capabilityTierAuthority": "roleProfiles",
+    "harnessCapabilityTierUse": "reference-only",
     "harnessObservationRef": "docs/00.agent-governance/contracts/harness-contract.json#/sourceObservationCutoff",
     "harnessObservationUse": "repository-observation-only",
     "harnessProviderModelAuthority": false

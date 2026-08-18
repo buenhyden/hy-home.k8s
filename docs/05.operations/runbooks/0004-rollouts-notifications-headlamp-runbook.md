@@ -4,6 +4,7 @@ type: sdlc/runbook
 status: active
 owner: platform
 updated: 2026-05-09
+artifact_id: "RUNBOOK-0004"
 ---
 
 # Argo Rollouts, Notifications & Headlamp Runbook
@@ -191,14 +192,14 @@ curl -ksS -o /dev/null -w '%{http_code}' https://rollouts.127.0.0.1.nip.io/
 - **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - **ADR-0011**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md)
 - **ADR-0012**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md)
-- **Rollouts Spec**: [`../../03.specs/004-argo-rollouts-progressive-delivery/spec.md`](../../03.specs/004-argo-rollouts-progressive-delivery/spec.md)
-- **Notifications Spec**: [`../../03.specs/005-argo-notifications-slack/spec.md`](../../03.specs/005-argo-notifications-slack/spec.md)
-- **Rollouts Task**: [`../../04.execution/tasks/2026-05-18-argo-rollouts-progressive-delivery.md`](../../04.execution/tasks/2026-05-18-argo-rollouts-progressive-delivery.md)
-- **Notifications Task**: [`../../04.execution/tasks/2026-05-18-argo-notifications-slack.md`](../../04.execution/tasks/2026-05-18-argo-notifications-slack.md)
+- **Rollouts Spec**: [`../../03.specs/0004-argo-rollouts-progressive-delivery/spec.md`](../../03.specs/0004-argo-rollouts-progressive-delivery/spec.md)
+- **Notifications Spec**: [`../../03.specs/0005-argo-notifications-slack/spec.md`](../../03.specs/0005-argo-notifications-slack/spec.md)
+- **Rollouts Task**: [`../../03.specs/0004-argo-rollouts-progressive-delivery/tasks.md`](../../03.specs/0004-argo-rollouts-progressive-delivery/tasks.md)
+- **Notifications Task**: [`../../03.specs/0005-argo-notifications-slack/tasks.md`](../../03.specs/0005-argo-notifications-slack/tasks.md)
 
 ### Lifecycle Traceability
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
-| [Argo Rollouts Progressive Delivery Spec](../../03.specs/004-argo-rollouts-progressive-delivery/spec.md) | Rollouts controller, CRDs, dashboard, promotion, analysis, or workload rollback needs bootstrap, diagnosis, or verification. | Platform operator records controller/CRD/Rollout/dashboard evidence and owns approved promotion or workload rollback. |
-| [Argo Notifications Slack Spec](../../03.specs/005-argo-notifications-slack/spec.md) | Notifications delivery or the ESO-backed Slack secret is missing or degraded without exposing credential values. | Platform operator records controller, ConfigMap, ExternalSecret, and redacted send/error evidence; secret owner restores the Vault input. |
+| [Argo Rollouts Progressive Delivery Spec](../../03.specs/0004-argo-rollouts-progressive-delivery/spec.md) | Rollouts controller, CRDs, dashboard, promotion, analysis, or workload rollback needs bootstrap, diagnosis, or verification. | Platform operator records controller/CRD/Rollout/dashboard evidence and owns approved promotion or workload rollback. |
+| [Argo Notifications Slack Spec](../../03.specs/0005-argo-notifications-slack/spec.md) | Notifications delivery or the ESO-backed Slack secret is missing or degraded without exposing credential values. | Platform operator records controller, ConfigMap, ExternalSecret, and redacted send/error evidence; secret owner restores the Vault input. |

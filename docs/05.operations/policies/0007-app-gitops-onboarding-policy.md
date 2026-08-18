@@ -4,6 +4,7 @@ type: sdlc/policy
 status: active
 owner: platform
 updated: 2026-06-04
+artifact_id: "POLICY-0007"
 ---
 
 # 앱 GitOps 온보딩 정책

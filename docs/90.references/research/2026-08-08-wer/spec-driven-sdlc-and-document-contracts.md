@@ -412,7 +412,7 @@ to its label before pattern-matching. Verified directly against this
 cycle's own authored documents rather than assumed: the reciprocal
 [Plan](../../../04.execution/plans/2026-08-14-workspace-research-consistency-and-partial-refresh.md#traceability)'s
 `Spec criterion` column (lines 843–855) renders every non-excluded row as
-`[VAL-WRCP-0NN](../../03.specs/057-workspace-research-consistency-and-partial-refresh/spec.md)` —
+`[VAL-WRCP-0NN](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md)` —
 a plain markdown link whose visible label is the bare `VAL-` identifier, no
 backticks — and this
 [Task](../../../04.execution/tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md#lifecycle-traceability)'s
@@ -422,7 +422,7 @@ confirms, the brief's illustrative example**: `sdlc/spec` itself does not
 carry this coupling, because its `sourceLinkColumn` is `PRD requirement`,
 not `Spec criterion` — `Spec criterion` is identifier-checked only. Verified
 against Spec 057's own Traceability table
-(`docs/03.specs/057-workspace-research-consistency-and-partial-refresh/spec.md`
+(`docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md`
 lines 339–352): its `Spec criterion` column holds twelve plain bare values
 (`VAL-WRCP-001` … `VAL-WRCP-012`, no backticks, no links, since that column
 is never a link column for `sdlc/spec`), while its `PRD requirement` column

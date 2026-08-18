@@ -16,8 +16,8 @@ Global standards for all agents in this repository.
 
 ### Documentation Boundary Policy
 
-- Treat `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/98.archive`, and `docs/99.templates` as authored source of truth by default.
-- Changes to `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/98.archive`, and `docs/99.templates` must be explicitly requested by a human.
+- Treat `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/05.operations`, `docs/90.references`, `docs/98.archive`, and `docs/99.templates` as authored source of truth by default.
+- Changes to `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/05.operations`, `docs/90.references`, `docs/98.archive`, and `docs/99.templates` must be explicitly requested by a human.
 - Route governance evolution to `docs/00.agent-governance/*`.
 - Do not introduce parallel authored trees such as `docs/superpowers/**`; route outputs into the official stage folders.
 
@@ -76,8 +76,8 @@ execution remain separately evidenced.
 - User-facing responses: Korean only.
 - Human-facing top-level docs (`README.md`, `docs/README.md`, stage READMEs): Korean.
 - Technical specs under `docs/03.specs/**/spec.md`: English.
-- Execution plans under `docs/04.execution/plans/*.md`: English.
-- Task records under `docs/04.execution/tasks/*.md`: English.
+- Feature-local execution plans under `docs/03.specs/<id>-<slug>/plan.md`: English.
+- Feature-local task records under `docs/03.specs/<id>-<slug>/tasks.md`: English.
 - Operations guides, policies, runbooks, and incident records may use Korean
   for human readers, but AI-agent execution sections and tool/prompt contracts
   inside them must remain English.
@@ -91,8 +91,8 @@ execution remain separately evidenced.
 - Always keep checklist and matrix references valid:
   - `rules/preflight-checklist.md`
   - `rules/postflight-checklist.md`
-  - `rules/stage-authoring-matrix.md`
-  - `rules/stage-checklists.md`
+  - `rules/document-authoring.md`
+  - `rules/document-authoring.md`
 - Keep scope and provider docs action-oriented and non-duplicative.
 - In-place refactor only; no file proliferation without explicit human request.
 
@@ -108,6 +108,6 @@ evidence.
 ## Related Documents
 
 - [Bootstrap Governance](bootstrap.md)
-- [Documentation Protocol](documentation-protocol.md)
+- [Documentation Protocol](document-authoring.md)
 - [Agent Quality Standards](quality-standards.md)
 - [Agentic Execution Rules](agentic.md)

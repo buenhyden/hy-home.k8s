@@ -4,6 +4,7 @@ type: sdlc/adr
 status: accepted
 owner: platform
 updated: 2026-05-18
+artifact_id: "ADR-0006"
 ---
 
 # ADR-0006: cert-manager with mkcert CA as ClusterIssuer

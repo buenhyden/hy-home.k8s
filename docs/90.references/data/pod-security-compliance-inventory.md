@@ -12,7 +12,7 @@ updated: 2026-08-18
 
 이 문서는 `hy-home.k8s`가 배포하는 모든 워크로드를 Kubernetes Pod Security
 Standards의 **Baseline**과 **Restricted** 프로파일에 대해 판정한 인벤토리다.
-[ADR 0024](../../02.architecture/decisions/0024-pod-security-standards-staged-adoption.md)가
+[ADR 0027](../../02.architecture/decisions/0027-pod-security-standards-staged-adoption.md)가
 "Helm 소유 네임스페이스의 준수 여부는 조사되지 않았다"고 명시적으로 남긴 공백을 채운다.
 
 ### Purpose
@@ -244,7 +244,7 @@ k3d 홈랩에서 흔한 `hostPort.enabled` / `hostNetwork: true` 단축 경로�
 
 ## Related Documents
 
-- [ADR 0024 — Pod Security Standards 단계 도입](../../02.architecture/decisions/0024-pod-security-standards-staged-adoption.md)
+- [ADR-0027 — Pod Security Standards 단계 도입](../../02.architecture/decisions/0027-pod-security-standards-staged-adoption.md)
 - [Istio CNI 도입 평가](./istio-cni-adoption-evaluation.md)
-- [Spec 060 — workload security context baseline](../../03.specs/060-workload-security-context-baseline/spec.md)
+- [Spec 060 — workload security context baseline](../../03.specs/0061-workload-security-context-baseline/spec.md)
 - [Tech Stack Version Inventory](./tech-stack-version-inventory.md)

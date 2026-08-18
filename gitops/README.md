@@ -197,7 +197,7 @@ otherwise unavailable parent.
 
 ### Working Procedure
 
-1. 플랫폼 계약은 먼저 [Spec](../docs/03.specs/008-current-local-gitops-platform/spec.md)과 [Operations Policy](../docs/05.operations/policies/0001-k8s-gitops-operations-policy.md)에서 확인한다.
+1. 플랫폼 계약은 먼저 [Spec](../docs/03.specs/0008-current-local-gitops-platform/spec.md)과 [Operations Policy](../docs/05.operations/policies/0001-k8s-gitops-operations-policy.md)에서 확인한다.
 2. 새 앱은 [examples/sample-app](../examples/sample-app/README.md)을 복사해 `gitops/workloads/<appname>/`에서 시작한다.
 3. 변경은 feature branch와 PR review를 거쳐 `main`에 병합하고, ArgoCD가 Git 상태를 reconcile하도록 둔다.
 4. 매니페스트 변경 후 `python3 scripts/validate-gitops-change-set.py --root . --base-ref HEAD`, `bash scripts/validate-gitops-structure.sh`, `bash scripts/validate-k8s-manifests.sh .`, `bash scripts/check-secret-handling.sh .`를 실행한다.
@@ -232,6 +232,6 @@ otherwise unavailable parent.
 
 - [ADR-0002](../docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md)
 - [ADR-0014](../docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
-- [Spec](../docs/03.specs/008-current-local-gitops-platform/spec.md)
+- [Spec](../docs/03.specs/0008-current-local-gitops-platform/spec.md)
 - [Workloads README](./workloads/README.md)
 - [Examples README](../examples/README.md)

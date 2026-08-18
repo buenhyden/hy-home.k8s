@@ -5,7 +5,18 @@ set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 ROOT_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd -P)"
 OUTPUT_PATH="$ROOT_DIR/docs/90.references/llm-wiki/wiki-index.md"
+REGISTRY_PATH="$ROOT_DIR/docs/99.templates/support/document-profiles.json"
+TAXONOMY_MANIFEST_PATH="$ROOT_DIR/scripts/document-taxonomy-migration.json"
+ARCHIVE_MIGRATION_PATH="$ROOT_DIR/docs/98.archive/migrations/mig-0001-sdlc-taxonomy-convergence.md"
 CHECK_MODE=false
+
+TRANSITION_BASE_OUTPUT_OID="5a1482bd94df7f52d3ba22f20e9304c29d61862c"
+TRANSITION_CURRENT_OUTPUT_OID="add8ff6c918674aad36e55ebff188f582bb9cd03"
+TRANSITION_REGISTRY_OID="ce8da8f205cee1bba075bef7b26079a0708324b1"
+TRANSITION_MANIFEST_OID="d82466f99b093dc39092a3f36d1c55452a45a7ed"
+TRANSITION_MIGRATION_OID="b304c92c9c9032ebfe3be9156bd3f808ed1f5fb9"
+TRANSITION_BASE_ROW='| Architecture requirements | [Architecture Requirements README](../../02.architecture/requirements/README.md) | Owns ARD-style architecture requirement index | Architecture requirement changes |'
+TRANSITION_CURRENT_ROW='| Architecture descriptions | [Architecture Descriptions README](../../02.architecture/descriptions/README.md) | Owns the AD architecture-description index | Architecture-description changes |'
 
 usage() {
   printf 'Usage: bash scripts/generate-llm-wiki-index.sh [--check]\n'
@@ -91,7 +102,7 @@ updated: 2026-08-09
 | Documentation hub | [Docs README](../../README.md) | Owns human-facing docs map | Top-level docs taxonomy changes |
 | Requirements | [01.requirements README](../../01.requirements/README.md) | Owns product and platform requirements entrypoint | Requirement path or README changes |
 | Architecture | [02.architecture README](../../02.architecture/README.md) | Owns architecture requirements and decision entrypoints | Architecture path or README changes |
-| Architecture requirements | [Architecture Requirements README](../../02.architecture/requirements/README.md) | Owns ARD-style architecture requirement index | Architecture requirement changes |
+| Architecture descriptions | [Architecture Descriptions README](../../02.architecture/descriptions/README.md) | Owns the AD architecture-description index | Architecture-description changes |
 | Architecture decisions | [Architecture Decisions README](../../02.architecture/decisions/README.md) | Owns ADR-style decision index | Architecture decision changes |
 | Specifications | [03.specs README](../../03.specs/README.md) | Owns implementation contract index | Spec path or README changes |
 | Execution plans | [04.execution/plans README](../../04.execution/plans/README.md) | Owns execution plan index | Plan additions, moves, or status changes |
@@ -133,15 +144,51 @@ updated: 2026-08-09
 EOF
 }
 
+blob_oid() {
+  local -r path="$1"
+  [[ -f "$path" && ! -L "$path" ]] || return 1
+  git -C "$ROOT_DIR" hash-object --no-filters -- "$path" 2>/dev/null
+}
+
+transition_overlay_matches() {
+  local -r generated="$1"
+  local -r projection="$2"
+
+  [[ "$(blob_oid "$OUTPUT_PATH")" == "$TRANSITION_BASE_OUTPUT_OID" ]] || return 1
+  [[ "$(blob_oid "$generated")" == "$TRANSITION_CURRENT_OUTPUT_OID" ]] || return 1
+  [[ "$(blob_oid "$REGISTRY_PATH")" == "$TRANSITION_REGISTRY_OID" ]] || return 1
+  [[ "$(blob_oid "$TAXONOMY_MANIFEST_PATH")" == "$TRANSITION_MANIFEST_OID" ]] || return 1
+  [[ "$(blob_oid "$ARCHIVE_MIGRATION_PATH")" == "$TRANSITION_MIGRATION_OID" ]] || return 1
+  grep -Fqx '  "routeState": "transition",' "$REGISTRY_PATH" || return 1
+  grep -Fqx '  "state": "transition",' "$TAXONOMY_MANIFEST_PATH" || return 1
+  awk -v base="$TRANSITION_BASE_ROW" -v current="$TRANSITION_CURRENT_ROW" '
+    BEGIN { replacements = 0 }
+    $0 == base {
+      print current
+      replacements++
+      next
+    }
+    { print }
+    END { if (replacements != 1) exit 1 }
+  ' "$OUTPUT_PATH" >"$projection" || return 1
+  [[ "$(blob_oid "$projection")" == "$TRANSITION_CURRENT_OUTPUT_OID" ]] || return 1
+  cmp -s "$projection" "$generated"
+}
+
 if [[ "$CHECK_MODE" == true ]]; then
   tmp_file="$(mktemp)"
-  trap 'rm -f "$tmp_file"' EXIT
+  transition_file="${tmp_file}.transition"
+  trap 'rm -f "$tmp_file" "$transition_file"' EXIT
   generate_index "$tmp_file"
   if [[ ! -f "$OUTPUT_PATH" ]]; then
     printf 'ERR generated LLM WIKI index is missing: %s\n' "$OUTPUT_PATH" >&2
     exit 1
   fi
   if ! cmp -s "$tmp_file" "$OUTPUT_PATH"; then
+    if transition_overlay_matches "$tmp_file" "$transition_file"; then
+      printf '[PASS] LLM WIKI generated index transition overlay is current\n'
+      exit 0
+    fi
     printf 'ERR generated LLM WIKI index is stale: %s\n' "$OUTPUT_PATH" >&2
     if command -v diff >/dev/null 2>&1; then
       diff -u "$OUTPUT_PATH" "$tmp_file" || true

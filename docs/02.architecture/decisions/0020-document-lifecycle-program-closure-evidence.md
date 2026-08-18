@@ -4,6 +4,7 @@ type: sdlc/adr
 status: accepted
 owner: platform
 updated: 2026-07-28
+artifact_id: "ADR-0020"
 ---
 
 # ADR-0020: Document Lifecycle Program Closure Evidence

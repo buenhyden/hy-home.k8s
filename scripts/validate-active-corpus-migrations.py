@@ -25,25 +25,40 @@ from pathlib import Path, PurePosixPath
 from typing import Any, Mapping, Sequence
 
 try:
+    from scripts import archive_validation as archive_validation_module
     from scripts.archive_cutover_manifest import EXPECTED_ARCHIVE_PATHS
-    from scripts.archive_recovery import ArchiveContractError, parse_archive_envelope
+    from scripts.archive_recovery import (
+        ArchiveContractError,
+        _git_capture_bounded,
+        parse_archive_envelope,
+    )
     from scripts.archive_validation import (
         ArchiveRecord,
         CurrentMarkdownDocument,
+        MIGRATION_DOCUMENT_MAX_BYTES,
+        parse_pinned_migration_control,
+        read_staged_blob_bounded,
         validate_archive_records,
         validate_current_archive_authority,
+        validate_repository_archive,
     )
 except ModuleNotFoundError:  # Direct execution from scripts/.
+    import archive_validation as archive_validation_module  # type: ignore[no-redef]
     from archive_cutover_manifest import EXPECTED_ARCHIVE_PATHS  # type: ignore[no-redef]
     from archive_recovery import (  # type: ignore[no-redef]
         ArchiveContractError,
+        _git_capture_bounded,
         parse_archive_envelope,
     )
     from archive_validation import (  # type: ignore[no-redef]
         ArchiveRecord,
         CurrentMarkdownDocument,
+        MIGRATION_DOCUMENT_MAX_BYTES,
+        parse_pinned_migration_control,
+        read_staged_blob_bounded,
         validate_archive_records,
         validate_current_archive_authority,
+        validate_repository_archive,
     )
 
 
@@ -53,8 +68,44 @@ LEDGER_PATH = "docs/90.references/data/active-corpus-migration-results.json"
 CENSUS_PATH = "docs/90.references/data/active-corpus-retention-census.json"
 ELIGIBILITY_PATH = "docs/90.references/data/active-corpus-eligibility-ledger.json"
 ARCHIVE_INDEX_PATH = "docs/98.archive/README.md"
+REGISTRY_PATH = "docs/99.templates/support/document-profiles.json"
 ARCHIVE_INDEX_ANCHOR = f"{ARCHIVE_INDEX_PATH}#document-index"
 OWNER_SPEC = "docs/03.specs/037-active-corpus-and-execution-retention/spec.md"
+WORK109_MIGRATION_PATH = (
+    "docs/98.archive/migrations/"
+    "mig-0002-sdlc-document-and-governance-consolidation.md"
+)
+WORK054_WP003_MIGRATION_PATH = (
+    "docs/98.archive/migrations/"
+    "mig-0003-agent-governance-control-plane-consolidation.md"
+)
+WORK054_WP003_MIGRATION_DOCUMENT_SHA256 = (
+    "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42"  # pragma: allowlist secret
+)
+WORK109_SOURCE_COMMIT = "160ce006969ddb49965c8af193f3e9ee290e18a8"  # pragma: allowlist secret
+WORK109_LEDGER_MARKER = (
+    b"<!-- archive-migration-ledger:v1 format=json -->\n\n```json\n"
+)
+WORK109_LEDGER_FIELDS = (
+    "legacy_path",
+    "stable_path",
+    "artifact_id",
+    "action",
+    "replacement",
+    "source_commit",
+    "source_blob",
+    "content_sha256",
+    "reason",
+)
+WORK109_REPLACEMENTS = {
+    "docs/04.execution/README.md": "docs/03.specs/README.md",
+    "docs/04.execution/plans/README.md": (
+        "docs/99.templates/templates/sdlc/execution/plan.template.md"
+    ),
+    "docs/04.execution/tasks/README.md": (
+        "docs/99.templates/templates/sdlc/execution/task.template.md"
+    ),
+}
 CANDIDATE_SOURCE_COMMIT = "a12aedfb71ccabd329dabc83bd2863474d1126b0"  # pragma: allowlist secret
 ELIGIBILITY_CONTENT_COMMIT = "414905ce4219a6c98088115485b37ad084e2951a"  # pragma: allowlist secret
 ELIGIBILITY_EVIDENCE_COMMIT = "e251915f216ef7cf3c7eb9945cdab6cb429ab6e6"  # pragma: allowlist secret
@@ -68,10 +119,10 @@ FIVE_BATCH_PREFIX_SHA256 = (
     "49c48db3bd1fbe975f91881a7e47ba857661e467b6cde210abc6efb1f9e95fb0"  # pragma: allowlist secret
 )
 ACCEPTED_BATCHES = 6
+MANAGED_ARCHIVE_RECORDS = 43
 BASE_RECORDS = 31
 BASE_HISTORICAL_LINKS = 202
-GIT_EXECUTABLE = "/usr/bin/git"
-GIT_TIMEOUT_SECONDS = 20
+GIT_CAPTURE_MAX_BYTES = 2 * 1024 * 1024
 GITLEAKS_EXECUTABLE_ENV = "HY_HOME_K8S_GITLEAKS_EXECUTABLE"
 SYSTEM_GITLEAKS_CANDIDATES = tuple(
     Path(directory) / "gitleaks"
@@ -138,10 +189,17 @@ TOP_KEYS = (
     "eligibilityEvidenceSnapshotCommit",
     "archiveBase",
     "archiveIndex",
+    "repositoryArchive",
     "counts",
     "batches",
 )
 BASE_KEYS = ("proof", "records", "historicalLinks")
+REPOSITORY_ARCHIVE_KEYS = (
+    "contractVersion",
+    "managedNamespaces",
+    "managedRecords",
+    "repositoryRecords",
+)
 COUNT_KEYS = (
     "batches",
     "records",
@@ -164,7 +222,13 @@ BATCH_KEYS = (
     "validationResult",
     "records",
 )
-PROGRAM_KEYS = ("prd", "ard", "lineage")
+# Compatibility is limited to the six immutable ACER-003 result batches. Their
+# historical schema predates the terminal AD rename and must remain byte-exact.
+LEGACY_PROGRAM_ARCHITECTURE_KEY = "ard"
+LEGACY_PROGRAM_ARCHITECTURE_BATCH_IDS = frozenset(
+    f"ACER-003-{sequence:03d}" for sequence in range(1, ACCEPTED_BATCHES + 1)
+)
+PROGRAM_KEYS = ("prd", LEGACY_PROGRAM_ARCHITECTURE_KEY, "lineage")
 RECORD_KEYS = (
     "kind",
     "originalPath",
@@ -368,22 +432,14 @@ def _closed_git_environment():
 
 def _git(root: Path, *args: str) -> subprocess.CompletedProcess[bytes]:
     try:
-        return subprocess.run(
-            [
-                GIT_EXECUTABLE,
-                "--no-replace-objects",
-                "--literal-pathspecs",
-                "-C",
-                str(root),
-                *args,
-            ],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL,
-            check=False,
-            timeout=GIT_TIMEOUT_SECONDS,
-            env=safe_git_environment(),
+        return _git_capture_bounded(
+            root,
+            "--no-replace-objects",
+            "--literal-pathspecs",
+            *args,
+            stdout_limit=GIT_CAPTURE_MAX_BYTES,
         )
-    except (OSError, subprocess.TimeoutExpired):
+    except (ArchiveContractError, OSError):
         _fail("MIGRATION-GIT")
 
 
@@ -508,6 +564,16 @@ def validate_ledger_document(
         "historicalLinks": BASE_HISTORICAL_LINKS,
     }:
         _fail("MIGRATION-BASE")
+    repository_archive = _exact_keys(
+        top["repositoryArchive"], REPOSITORY_ARCHIVE_KEYS, "MIGRATION-SCHEMA"
+    )
+    if repository_archive != {
+        "contractVersion": 2,
+        "managedNamespaces": ["arwb-base", "acer-additive"],
+        "managedRecords": MANAGED_ARCHIVE_RECORDS,
+        "repositoryRecords": 93,
+    }:
+        _fail("MIGRATION-REPOSITORY-ARCHIVE")
     counts = _exact_keys(top["counts"], COUNT_KEYS, "MIGRATION-SCHEMA")
     batches = _exact_list(top["batches"], "MIGRATION-SCHEMA")
     if len(batches) != ACCEPTED_BATCHES:
@@ -530,6 +596,7 @@ def validate_ledger_document(
         if (
             batch["sequence"] != offset
             or batch["batchId"] != f"ACER-003-{offset:03d}"
+            or batch["batchId"] not in LEGACY_PROGRAM_ARCHITECTURE_BATCH_IDS
             or batch["status"] != "complete"
             or not isinstance(batch["completedOn"], str)
             or DATE.fullmatch(batch["completedOn"]) is None
@@ -592,7 +659,9 @@ def validate_ledger_document(
                 or program
                 != {
                     "prd": upstream.get("prd"),
-                    "ard": upstream.get("ard"),
+                    LEGACY_PROGRAM_ARCHITECTURE_KEY: upstream.get(
+                        LEGACY_PROGRAM_ARCHITECTURE_KEY
+                    ),
                     "lineage": upstream.get("state"),
                 }
             ):
@@ -706,8 +775,6 @@ def _parse_index_row(line: str) -> dict[str, Any] | None:
     reason = reason_match.group("value")
     replacement: str | None
     if cells[7] == "`null`":
-        if reason != "completed-lineage":
-            return None
         replacement = None
     else:
         replacement_match = MARKDOWN_LINK.fullmatch(cells[7])
@@ -771,16 +838,70 @@ def _parse_archive_index(text: str) -> tuple[dict[str, Mapping[str, Any]], int, 
     return rows, record_count, link_count
 
 
+def _work107_stable_archive_aliases(root: Path) -> dict[str, str]:
+    """Load the exact reviewed legacy-to-stable Stage 98 bijection."""
+
+    migration_path = archive_validation_module.WORK107_MIGRATION_PATH
+    path = root / migration_path
+    try:
+        content = path.read_bytes()
+        if (
+            hashlib.sha256(content).hexdigest()
+            != archive_validation_module.WORK107_MIGRATION_DOCUMENT_SHA256
+        ):
+            _fail("MIGRATION-WORK107-LEDGER", migration_path)
+        rows = archive_validation_module.parse_work107_migration_document(content)
+    except (ArchiveContractError, OSError):
+        _fail("MIGRATION-WORK107-LEDGER", migration_path)
+    aliases = {
+        str(row["legacy_path"]): str(row["stable_path"])
+        for row in rows
+    }
+    if len(aliases) != 93 or len(set(aliases.values())) != 93:
+        _fail("MIGRATION-WORK107-LEDGER", migration_path)
+    return aliases
+
+
 def _validate_index(
+    root: Path,
     text: str,
     document: Mapping[str, Any],
+    archive_aliases: Mapping[str, str] | None = None,
 ) -> tuple[int, int]:
+    aliases = (
+        _work107_stable_archive_aliases(root)
+        if archive_aliases is None
+        else dict(archive_aliases)
+    )
     rows, records, links = _parse_archive_index(text)
+    archived_original_paths = frozenset(
+        str(row["originalPath"]) for row in rows.values()
+    )
+    for archive_path, row in rows.items():
+        if row["replacement"] is not None or row["archiveReason"] not in {
+            "superseded",
+            "consolidated",
+            "duplicate",
+        }:
+            continue
+        try:
+            parsed = parse_archive_envelope((root / archive_path).read_bytes())
+        except (OSError, ArchiveContractError):
+            _fail("MIGRATION-INDEX-MEMBER", archive_path)
+        immutable_replacement = parsed.metadata.get("replacement")
+        if (
+            not isinstance(immutable_replacement, str)
+            or immutable_replacement not in archived_original_paths
+        ):
+            _fail("MIGRATION-INDEX-MEMBER", archive_path)
     migration_rows = _record_rows(document)
-    expected_paths = set(EXPECTED_ARCHIVE_PATHS) | {
-        str(row["archivePath"]) for row in migration_rows
+    expected_paths = {
+        aliases.get(path, path) for path in EXPECTED_ARCHIVE_PATHS
+    } | {
+        aliases.get(str(row["archivePath"]), str(row["archivePath"]))
+        for row in migration_rows
     }
-    if set(rows) != expected_paths:
+    if not expected_paths <= set(rows):
         _fail("MIGRATION-INDEX-SET", ARCHIVE_INDEX_PATH)
     for record in migration_rows:
         expected = {
@@ -797,12 +918,23 @@ def _validate_index(
                 "archiveReason",
             )
         }
-        if rows.get(str(record["archivePath"])) != expected:
-            _fail("MIGRATION-INDEX-MEMBER", str(record["archivePath"]))
+        physical_path = aliases.get(
+            str(record["archivePath"]), str(record["archivePath"])
+        )
+        expected["archivePath"] = physical_path
+        if rows.get(physical_path) != expected:
+            _fail("MIGRATION-INDEX-MEMBER", physical_path)
     counts = document["counts"]
-    if records != counts["archiveRecords"] or links != counts["historicalLinks"]:
+    managed_records = len(expected_paths)
+    managed_links = sum(
+        int(rows[path]["historicalLinks"]) for path in expected_paths
+    )
+    if (
+        managed_records != counts["archiveRecords"]
+        or managed_links != counts["historicalLinks"]
+    ):
         _fail("MIGRATION-INDEX-COUNTS", ARCHIVE_INDEX_PATH)
-    return records, links
+    return managed_records, managed_links
 
 
 def _git_paths(root: Path) -> tuple[str, ...]:
@@ -834,21 +966,50 @@ def _git_paths(root: Path) -> tuple[str, ...]:
 
 
 def _validate_archive_inventory(
-    paths: Sequence[str], individual_paths: frozenset[str]
+    root: Path,
+    paths: Sequence[str],
+    individual_paths: frozenset[str],
+    repository_paths: frozenset[str],
 ) -> None:
+    migration_controls = {
+        ARCHIVE_INDEX_PATH,
+        archive_validation_module.WORK107_MIGRATION_PATH,
+        WORK109_MIGRATION_PATH,
+    }
+    if WORK054_WP003_MIGRATION_PATH in paths:
+        try:
+            content = read_staged_blob_bounded(
+                root,
+                WORK054_WP003_MIGRATION_PATH,
+                max_bytes=MIGRATION_DOCUMENT_MAX_BYTES,
+            )
+            rows = parse_pinned_migration_control(
+                WORK054_WP003_MIGRATION_PATH, content
+            )
+        except (ArchiveContractError, OSError, ValueError):
+            _fail("MIGRATION-ROGUE-ARCHIVE", WORK054_WP003_MIGRATION_PATH)
+        if (
+            hashlib.sha256(content).hexdigest()
+            != WORK054_WP003_MIGRATION_DOCUMENT_SHA256
+            or len(rows) != 3
+        ):
+            _fail("MIGRATION-ROGUE-ARCHIVE", WORK054_WP003_MIGRATION_PATH)
+        migration_controls.add(WORK054_WP003_MIGRATION_PATH)
     actual = frozenset(
         path
         for path in paths
         if path.startswith("docs/98.archive/")
         and path.endswith(".md")
-        and path != ARCHIVE_INDEX_PATH
+        and path not in migration_controls
     )
-    if actual != individual_paths:
+    if not individual_paths <= actual or actual != repository_paths:
         _fail("MIGRATION-ROGUE-ARCHIVE", ARCHIVE_INDEX_PATH)
 
 
 def _validate_repaired_consumer_inventory(
-    document: Mapping[str, Any], current_paths: set[str]
+    document: Mapping[str, Any],
+    current_paths: set[str],
+    current_replacements: Mapping[str, str] | None = None,
 ) -> set[str]:
     """Allow repaired consumers only while current or ledger-owned originals."""
 
@@ -860,9 +1021,153 @@ def _validate_repaired_consumer_inventory(
         for batch in document["batches"]
         for path in batch["repairedConsumers"]
     }
-    if not repaired <= current_paths | migrated_original_paths:
+    replacements = current_replacements or {}
+    replaced_current_paths = {
+        source for source, target in replacements.items() if target in current_paths
+    }
+    if not repaired <= current_paths | migrated_original_paths | replaced_current_paths:
         _fail("MIGRATION-CONSUMERS")
     return repaired
+
+
+def _work109_expected_current_path(legacy: str) -> str | None:
+    """Project only the two three-digit active families admitted by MIG-0002."""
+
+    requirement = re.fullmatch(
+        r"docs/" r"01\.requirements/(?P<id>[0-9]{3})"
+        r"(?P<tail>-[a-z0-9]+(?:-[a-z0-9]+)*\.md)",
+        legacy,
+    )
+    if requirement is not None:
+        return (
+            "docs/" "01.requirements/"
+            f"{int(requirement.group('id')):04d}{requirement.group('tail')}"
+        )
+    work_unit = re.fullmatch(
+        r"docs/03\.specs/(?P<id>[0-9]{3})"
+        r"(?P<tail>-[a-z0-9]+(?:-[a-z0-9]+)*/"
+        r"[a-z][a-z0-9]*(?:-[a-z0-9]+)*\.md)",
+        legacy,
+    )
+    if work_unit is None:
+        return None
+    return (
+        "docs/03.specs/"
+        f"{int(work_unit.group('id')):04d}{work_unit.group('tail')}"
+    )
+
+
+def _work109_current_replacements(
+    root: Path, current_paths: set[str]
+) -> dict[str, str]:
+    """Load exact historical-to-current aliases from reviewed MIG-0002."""
+
+    try:
+        content = read_staged_blob_bounded(
+            root,
+            WORK109_MIGRATION_PATH,
+            max_bytes=MIGRATION_DOCUMENT_MAX_BYTES,
+        )
+        rows = parse_pinned_migration_control(WORK109_MIGRATION_PATH, content)
+    except (ArchiveContractError, OSError, ValueError):
+        _fail("MIGRATION-CONSUMERS")
+    if len(rows) != 154:
+        _fail("MIGRATION-CONSUMERS")
+
+    replacements: dict[str, str] = {}
+    stable_paths: set[str] = set()
+    action_counts = {"moved": 0, "replaced": 0, "merged": 0}
+    legacy_paths: list[str] = []
+    for raw_row in rows:
+        if not isinstance(raw_row, Mapping) or tuple(raw_row) != WORK109_LEDGER_FIELDS:
+            _fail("MIGRATION-CONSUMERS")
+        legacy = validate_path(raw_row["legacy_path"])
+        legacy_paths.append(legacy)
+        action = raw_row["action"]
+        if (
+            action not in action_counts
+            or raw_row["source_commit"] != WORK109_SOURCE_COMMIT
+            or not isinstance(raw_row["source_blob"], str)
+            or FULL_OID.fullmatch(raw_row["source_blob"]) is None
+            or not isinstance(raw_row["content_sha256"], str)
+            or re.fullmatch(r"[0-9a-f]{64}", raw_row["content_sha256"]) is None
+            or not isinstance(raw_row["reason"], str)
+            or not raw_row["reason"].strip()
+            or legacy in current_paths
+        ):
+            _fail("MIGRATION-CONSUMERS")
+        action_counts[str(action)] += 1
+
+        if action == "moved":
+            stable = validate_path(raw_row["stable_path"])
+            expected = _work109_expected_current_path(legacy)
+            if (
+                stable != expected
+                or raw_row["replacement"] is not None
+                or not isinstance(raw_row["artifact_id"], str)
+                or not raw_row["artifact_id"]
+                or stable in stable_paths
+                or stable not in current_paths
+            ):
+                _fail("MIGRATION-CONSUMERS")
+            replacements[legacy] = stable
+            stable_paths.add(stable)
+            continue
+
+        replacement = validate_path(raw_row["replacement"])
+        if (
+            raw_row["stable_path"] is not None
+            or raw_row["artifact_id"] is not None
+            or replacement not in current_paths
+            or (
+                action == "replaced"
+                and WORK109_REPLACEMENTS.get(legacy) != replacement
+            )
+        ):
+            _fail("MIGRATION-CONSUMERS")
+        if action == "replaced":
+            replacements[legacy] = replacement
+
+    if (
+        legacy_paths != sorted(legacy_paths)
+        or len(set(legacy_paths)) != len(legacy_paths)
+        or action_counts != {"moved": 141, "replaced": 3, "merged": 10}
+        or len(replacements) != 144
+    ):
+        _fail("MIGRATION-CONSUMERS")
+    return replacements
+
+
+def _reviewed_move_current_replacements(
+    root: Path, current_paths: set[str]
+) -> dict[str, str]:
+    """Compose the reviewed Stage 04 moves through exact MIG-0002 aliases."""
+
+    try:
+        module = archive_validation_module._load_migration_module()
+        snapshot = module.load_reviewed_manifest_snapshot(
+            root, validate_repository=False
+        )
+    except Exception:
+        _fail("MIGRATION-CONSUMERS")
+
+    replacements = _work109_current_replacements(root, current_paths)
+    for entry in snapshot.document.entries:
+        if entry["disposition"] != "move-current":
+            continue
+        source = validate_path(entry["source"])
+        target = validate_path(entry["target"])
+        current_target = replacements.get(target, target)
+        if (
+            source in current_paths
+            or current_target not in current_paths
+            or source in replacements
+        ):
+            _fail("MIGRATION-CONSUMERS")
+        replacements[source] = current_target
+    if len(replacements) != 226:
+        _fail("MIGRATION-CONSUMERS")
+    return replacements
 
 
 def _current_documents(
@@ -889,8 +1194,16 @@ def _current_documents(
             CurrentMarkdownDocument(
                 path=path,
                 markdown=markdown,
-                profile="content/reference",
-                status="active",
+                profile=(
+                    "content/archive-migration"
+                    if path in archive_validation_module._ARCHIVE_MIGRATION_CONTROLS
+                    else "content/reference"
+                ),
+                status=(
+                    "accepted"
+                    if path in archive_validation_module._ARCHIVE_MIGRATION_CONTROLS
+                    else "active"
+                ),
             )
         )
     return tuple(documents)
@@ -1042,12 +1355,14 @@ def _validate_archive_payload(
     root: Path,
     row: Mapping[str, Any],
     content: bytes,
+    *,
+    archive_path: str | None = None,
 ) -> ArchiveRecord:
-    archive_path = str(row["archivePath"])
+    physical_path = archive_path or str(row["archivePath"])
     try:
         parsed = parse_archive_envelope(content)
     except ArchiveContractError:
-        _fail("MIGRATION-ARCHIVE-PAYLOAD", archive_path)
+        _fail("MIGRATION-ARCHIVE-PAYLOAD", physical_path)
     metadata = parsed.metadata
     expected = {
         "original_type": row["originalType"],
@@ -1059,10 +1374,10 @@ def _validate_archive_payload(
         "content_sha256": row["payloadSha256"],
     }
     if any(metadata.get(key) != value for key, value in expected.items()):
-        _fail("MIGRATION-ARCHIVE-METADATA", archive_path)
+        _fail("MIGRATION-ARCHIVE-METADATA", physical_path)
     if len(parsed.payload) != row["payloadBytes"]:
-        _fail("MIGRATION-ARCHIVE-PAYLOAD", archive_path)
-    return ArchiveRecord(path=archive_path, content=content)
+        _fail("MIGRATION-ARCHIVE-PAYLOAD", physical_path)
+    return ArchiveRecord(path=physical_path, content=content)
 
 
 def validate_active_corpus_migrations(repository_root: str | Path) -> dict[str, int]:
@@ -1072,25 +1387,33 @@ def validate_active_corpus_migrations(repository_root: str | Path) -> dict[str, 
     _verify_immutable_input(root, ELIGIBILITY_CONTENT_COMMIT, CENSUS_PATH)
     _verify_immutable_input(root, ELIGIBILITY_CONTENT_COMMIT, ELIGIBILITY_PATH)
     rows = _record_rows(document)
+    archive_aliases = _work107_stable_archive_aliases(root)
     _validate_source_absence(root, rows)
 
     records: list[ArchiveRecord] = []
     secret_clean = 0
     for row in rows:
-        archive_path = str(row["archivePath"])
+        legacy_archive_path = str(row["archivePath"])
+        archive_path = archive_aliases.get(legacy_archive_path, legacy_archive_path)
         if not _regular_file(root, archive_path):
             _fail("MIGRATION-ARCHIVE-MISSING", archive_path)
         try:
             content = (root / archive_path).read_bytes()
         except OSError:
             _fail("MIGRATION-ARCHIVE-MISSING", archive_path)
-        record = _validate_archive_payload(root, row, content)
+        record = _validate_archive_payload(
+            root, row, content, archive_path=archive_path
+        )
         _secret_clean(root, archive_path, parse_archive_envelope(content).payload)
         secret_clean += 1
         records.append(record)
 
     with _closed_git_environment():
-        archive_report = validate_archive_records(root, tuple(records))
+        archive_report = validate_archive_records(
+            root,
+            tuple(records),
+            stable_archive_paths=frozenset(archive_aliases.values()),
+        )
     if not archive_report.valid:
         first = archive_report.diagnostics[0]
         _fail(first.code, first.path)
@@ -1098,7 +1421,8 @@ def validate_active_corpus_migrations(repository_root: str | Path) -> dict[str, 
         _fail("MIGRATION-HISTORICAL-LINKS", ARCHIVE_INDEX_PATH)
 
     base_originals: set[str] = set()
-    for archive_path in EXPECTED_ARCHIVE_PATHS:
+    for legacy_archive_path in EXPECTED_ARCHIVE_PATHS:
+        archive_path = archive_aliases.get(legacy_archive_path, legacy_archive_path)
         try:
             parsed = parse_archive_envelope((root / archive_path).read_bytes())
         except (OSError, ArchiveContractError):
@@ -1115,29 +1439,63 @@ def validate_active_corpus_migrations(repository_root: str | Path) -> dict[str, 
         index_text = (root / ARCHIVE_INDEX_PATH).read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError):
         _fail("MIGRATION-INDEX-READ", ARCHIVE_INDEX_PATH)
-    archive_records, historical_links = _validate_index(index_text, document)
+    archive_records, historical_links = _validate_index(
+        root, index_text, document, archive_aliases
+    )
 
-    individual_paths = frozenset(EXPECTED_ARCHIVE_PATHS) | frozenset(
-        str(row["archivePath"]) for row in rows
+    individual_paths = frozenset(
+        archive_aliases.get(path, path) for path in EXPECTED_ARCHIVE_PATHS
+    ) | frozenset(
+        archive_aliases.get(str(row["archivePath"]), str(row["archivePath"]))
+        for row in rows
+    )
+    try:
+        registry = _load_json(root / REGISTRY_PATH)
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        _fail("MIGRATION-REPOSITORY-ARCHIVE", REGISTRY_PATH)
+    with _closed_git_environment():
+        repository_report = validate_repository_archive(root, registry)
+    if not repository_report.valid:
+        first = repository_report.diagnostics[0]
+        _fail(first.code, first.path)
+    namespace_counts = dict(repository_report.namespace_counts)
+    if namespace_counts != {
+        "arwb-base": 31,
+        "acer-additive": 12,
+        "wdtc-execution": 50,
+        "progress-snapshot": 0,
+    }:
+        _fail("MIGRATION-REPOSITORY-ARCHIVE", REGISTRY_PATH)
+    repository_paths = frozenset(
+        path
+        for namespace in registry["archiveNamespaces"]
+        for path in namespace["records"]
     )
     current_paths = set(_git_paths(root))
-    _validate_archive_inventory(tuple(current_paths), individual_paths)
+    _validate_archive_inventory(
+        root, tuple(current_paths), individual_paths, repository_paths
+    )
     with _closed_git_environment():
         current_report = validate_current_archive_authority(
-            _current_documents(root, individual_paths),
-            individual_archive_paths=individual_paths,
+            _current_documents(root, repository_paths),
+            individual_archive_paths=repository_paths,
         )
     if not current_report.valid:
         first = current_report.diagnostics[0]
         _fail(first.code, first.path)
 
-    repaired = _validate_repaired_consumer_inventory(document, current_paths)
+    current_replacements = _reviewed_move_current_replacements(root, current_paths)
+    repaired = _validate_repaired_consumer_inventory(
+        document, current_paths, current_replacements
+    )
 
     return {
         "batches": counts["batches"],
         "records": counts["records"],
         "baseRecords": BASE_RECORDS,
         "archiveRecords": archive_records,
+        "managedArchiveRecords": MANAGED_ARCHIVE_RECORDS,
+        "repositoryArchiveRecords": repository_report.record_count,
         "baseHistoricalLinks": BASE_HISTORICAL_LINKS,
         "addedHistoricalLinks": counts["historicalLinksAdded"],
         "historicalLinks": historical_links,
@@ -1151,6 +1509,7 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
 
     root = _require_root(repository_root)
     eligibility, document = load_documents(root)
+    archive_aliases = _work107_stable_archive_aliases(root)
     executed: set[str] = set()
 
     def ledger_case(name: str, mutate, expected: str) -> None:
@@ -1346,10 +1705,13 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
     executed.add("source-still-current")
 
     drift_row = rows[8]
-    original_content = (root / str(drift_row["archivePath"])).read_bytes()
+    drift_path = archive_aliases.get(
+        str(drift_row["archivePath"]), str(drift_row["archivePath"])
+    )
+    original_content = (root / drift_path).read_bytes()
     drifted = original_content[:-1] + bytes([original_content[-1] ^ 1])
     try:
-        _validate_archive_payload(root, drift_row, drifted)
+        _validate_archive_payload(root, drift_row, drifted, archive_path=drift_path)
     except MigrationError as error:
         if error.code != "MIGRATION-ARCHIVE-PAYLOAD":
             _fail("MIGRATION-SELF-TEST")
@@ -1359,10 +1721,13 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
 
     index_text = (root / ARCHIVE_INDEX_PATH).read_text(encoding="utf-8")
     first_row = rows[0]
+    first_archive_path = archive_aliases.get(
+        str(first_row["archivePath"]), str(first_row["archivePath"])
+    )
     additive_line = next(
         line
         for line in index_text.splitlines(keepends=True)
-        if str(first_row["archivePath"]).removeprefix("docs/98.archive/") in line
+        if first_archive_path.removeprefix("docs/98.archive/") in line
         and line.startswith("| [`")
     )
     for name, candidate in (
@@ -1373,7 +1738,7 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
         ),
     ):
         try:
-            _validate_index(candidate, document)
+            _validate_index(root, candidate, document, archive_aliases)
         except MigrationError as error:
             if error.code not in {
                 "MIGRATION-INDEX-STRUCTURE",
@@ -1385,12 +1750,17 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
             _fail("MIGRATION-SELF-TEST")
         executed.add(name)
 
-    individual_paths = frozenset(EXPECTED_ARCHIVE_PATHS) | frozenset(
-        str(row["archivePath"]) for row in rows
+    individual_paths = frozenset(
+        archive_aliases.get(path, path) for path in EXPECTED_ARCHIVE_PATHS
+    ) | frozenset(
+        archive_aliases.get(str(row["archivePath"]), str(row["archivePath"]))
+        for row in rows
     )
     try:
         _validate_archive_inventory(
+            root,
             (*individual_paths, "docs/98.archive/04.execution/plans/rogue-extra.md"),
+            individual_paths,
             individual_paths,
         )
     except MigrationError as error:
@@ -1400,12 +1770,10 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
         _fail("MIGRATION-SELF-TEST")
     executed.add("rogue-extra-archive")
 
+    direct_target = first_archive_path.removeprefix("docs/")
     direct = CurrentMarkdownDocument(
         path="docs/current.md",
-        markdown=(
-            "[history](98.archive/04.execution/plans/"
-            "2026-07-16-document-schema-and-lifecycle-contract.md)\n"
-        ),
+        markdown=f"[history]({direct_target})\n",
         profile="content/reference",
         status="active",
     )

@@ -4,6 +4,7 @@ type: sdlc/adr
 status: accepted
 owner: platform
 updated: 2026-08-02
+artifact_id: "ADR-0021"
 ---
 
 # ADR-0021: Canonical Surface Routing and Evidence-Depth Architecture

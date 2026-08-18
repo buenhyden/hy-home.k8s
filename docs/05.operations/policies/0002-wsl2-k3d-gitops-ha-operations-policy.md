@@ -4,6 +4,7 @@ type: sdlc/policy
 status: active
 owner: platform
 updated: 2026-06-02
+artifact_id: "POLICY-0002"
 ---
 
 # WSL2 k3d/k3s GitOps HA Operations Policy
@@ -127,8 +128,8 @@ updated: 2026-06-02
 
 ## Traceability
 
-- **ARD**: [`../../02.architecture/requirements/0007-current-local-gitops-platform.md`](../../02.architecture/requirements/0007-current-local-gitops-platform.md)
-- **Spec**: [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
+- **AD**: [`../../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md`](../../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md)
+- **Spec**: [`../../03.specs/0008-current-local-gitops-platform/spec.md`](../../03.specs/0008-current-local-gitops-platform/spec.md)
 - **Guide**: [`../guides/0002-wsl2-k3d-argocd-ha-setup-guide.md`](../guides/0002-wsl2-k3d-argocd-ha-setup-guide.md)
 - **Runbook**: [`../runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)
 

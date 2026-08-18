@@ -8,6 +8,10 @@
     "$schema",
     "$id",
     "schemaVersion",
+    "routeState",
+    "archiveContractVersion",
+    "archiveNamespaces",
+    "retiredRouteEvidence",
     "baseline",
     "target",
     "profiles",
@@ -25,6 +29,18 @@
     },
     "schemaVersion": {
       "const": 8
+    },
+    "routeState": {
+      "enum": ["legacy", "transition", "terminal"]
+    },
+    "archiveContractVersion": {
+      "const": 2
+    },
+    "archiveNamespaces": {
+      "$ref": "#/$defs/archiveNamespaces"
+    },
+    "retiredRouteEvidence": {
+      "$ref": "#/$defs/retiredRouteEvidence"
     },
     "baseline": {
       "$ref": "#/$defs/baseline"
@@ -59,6 +75,152 @@
     }
   },
   "$defs": {
+    "archiveNamespaces": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "prefixItems": [
+        { "$ref": "#/$defs/arwbArchiveNamespace" },
+        { "$ref": "#/$defs/acerArchiveNamespace" },
+        { "$ref": "#/$defs/wdtcArchiveNamespace" },
+        { "$ref": "#/$defs/progressArchiveNamespace" }
+      ]
+    },
+    "archiveNamespaceRecords": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^docs/98\\.archive/(?!README\\.md$).+\\.md$"
+      }
+    },
+    "arwbArchiveNamespace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "policy", "records"],
+      "properties": {
+        "id": { "const": "arwb-base" },
+        "policy": { "const": "exact-immutable" },
+        "records": {
+          "allOf": [
+            { "$ref": "#/$defs/archiveNamespaceRecords" },
+            { "minItems": 31, "maxItems": 31 }
+          ]
+        }
+      }
+    },
+    "acerArchiveNamespace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "policy", "records"],
+      "properties": {
+        "id": { "const": "acer-additive" },
+        "policy": { "const": "exact-immutable" },
+        "records": {
+          "allOf": [
+            { "$ref": "#/$defs/archiveNamespaceRecords" },
+            { "minItems": 12, "maxItems": 12 }
+          ]
+        }
+      }
+    },
+    "wdtcArchiveNamespace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "policy", "records"],
+      "properties": {
+        "id": { "const": "wdtc-execution" },
+        "policy": { "const": "exact-reviewed-manifest" },
+        "records": {
+          "allOf": [
+            { "$ref": "#/$defs/archiveNamespaceRecords" },
+            { "minItems": 50, "maxItems": 50 }
+          ]
+        }
+      }
+    },
+    "progressArchiveNamespace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "policy", "records"],
+      "properties": {
+        "id": { "const": "progress-snapshot" },
+        "policy": { "const": "append-only-unique" },
+        "records": {
+          "allOf": [
+            { "$ref": "#/$defs/archiveNamespaceRecords" },
+            { "maxItems": 1 }
+          ]
+        }
+      }
+    },
+    "retiredRouteEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["routeSegment", "profiles"],
+      "properties": {
+        "routeSegment": { "const": "04.execution" },
+        "profiles": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "$ref": "#/$defs/retiredRouteEvidenceProfile" },
+            { "$ref": "#/$defs/retiredRouteEvidenceProfile" }
+          ]
+        }
+      }
+    },
+    "retiredRouteEvidenceProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "paths", "routes"],
+      "properties": {
+        "id": {
+          "enum": [
+            "stage90/immutable-retired-route-evidence",
+            "stage98/immutable-retired-route-evidence"
+          ]
+        },
+        "paths": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^docs/(?:90\\.references|98\\.archive)/" }
+        },
+        "routes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/route" }
+        }
+      }
+    },
+    "documentMigrationManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "sourceCommit", "entries"],
+      "properties": {
+        "state": { "const": "transition" },
+        "sourceCommit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "entries": {
+          "type": "array",
+          "minItems": 132,
+          "maxItems": 132,
+          "items": { "$ref": "#/$defs/documentMigrationEntry" }
+        }
+      }
+    },
+    "documentMigrationEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "target", "workUnit", "disposition", "sourceBlob", "reviewed"],
+      "properties": {
+        "source": { "type": "string", "pattern": "^docs/04\\.execution/(?:plans|tasks)/.+\\.md$" },
+        "target": { "type": "string", "pattern": "^docs/(?:03\\.specs|98\\.archive)/.+\\.md$" },
+        "workUnit": { "type": "string", "minLength": 1 },
+        "disposition": { "enum": ["move-current", "archive-unique"] },
+        "sourceBlob": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "reviewed": { "const": true }
+      }
+    },
     "stringArray": {
       "type": "array",
       "uniqueItems": true,
@@ -190,13 +352,13 @@
     "program": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["prd", "ard", "tranches", "followUps"],
+      "required": ["prd", "ad", "tranches", "followUps"],
       "properties": {
         "prd": {
           "type": "string",
-          "pattern": "^[0-9]{3}$"
+          "pattern": "^[0-9]{4}$"
         },
-        "ard": {
+        "ad": {
           "type": "string",
           "pattern": "^[0-9]{4}$"
         },
@@ -222,15 +384,15 @@
       "properties": {
         "spec": {
           "type": "string",
-          "pattern": "^[0-9]{3}$"
+          "pattern": "^[0-9]{4}$"
         },
         "plan": {
           "type": "string",
-          "pattern": "^docs/04\\.execution/plans/[0-9]{4}-[0-9]{2}-[0-9]{2}-[A-Za-z0-9][A-Za-z0-9._-]*\\.md$"
+          "pattern": "^docs/03\\.specs/[0-9]{4}-[A-Za-z0-9][A-Za-z0-9._-]*/plan\\.md$"
         },
         "task": {
           "type": "string",
-          "pattern": "^docs/04\\.execution/tasks/[0-9]{4}-[0-9]{2}-[0-9]{2}-[A-Za-z0-9][A-Za-z0-9._-]*\\.md$"
+          "pattern": "^docs/03\\.specs/[0-9]{4}-[A-Za-z0-9][A-Za-z0-9._-]*/tasks\\.md$"
         },
         "state": {
           "enum": ["active", "done", "archived"]
@@ -255,7 +417,7 @@
       "properties": {
         "spec": {
           "type": "string",
-          "pattern": "^[0-9]{3}$"
+          "pattern": "^[0-9]{4}$"
         },
         "order": {
           "type": "integer",
@@ -281,7 +443,7 @@
       "properties": {
         "spec": {
           "type": "string",
-          "pattern": "^[0-9]{3}$"
+          "pattern": "^[0-9]{4}$"
         },
         "order": {
           "type": "integer",

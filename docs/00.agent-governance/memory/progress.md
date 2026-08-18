@@ -8,1826 +8,924 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
-### 2026-08-13 - Partial/DEFER incremental refresh final review closure
-
-#### Metadata
-
-- **Date**: 2026-08-13
-- **Layer**: docs, research, ci, github-actions, qa, governance
-- **Status**: complete
-- **Tags**: #pdrr #research #ci-cd #github-actions #qa #closure #independent-review
-- **Owner**: PDRR-005 through PDRR-007 primary agent and final independent reviewers
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`
-- **Provenance**: Spec 056, its reciprocal Plan, ADR-0022, the human amendment
-  approved on 2026-08-12 after task-local artifact loss, original closure
-  `8fa60bb5`, local main merge `a5d2dfbb`, and the 2026-08-13 independent
-  whole-branch review wave.
-
-#### Progress
-
-PDRR-004 refreshed the Guide and Diátaxis rows, then a session boundary
-destroyed every task-local `/tmp` artifact mid-PDRR-005: the guarded checker,
-the sanitized GitHub summary, the baseline ledger snapshot, all three proposal
-files, and two previously unresolved residues. The human approved a reduced
-rebuild rather than a full reconstruction or a GitHub re-collection.
-
-PDRR-005 then closed rows 022, 023, and 033 with a dated CI/CD section.
-PDRR-006 reconciled the shared projections atomically, adding
-`SRC-WERPC-068`–`073` and the `WERPD-001` claim register
-`CLM-WERPC-009-01`–`12`, updating the pack README and scope index, and closing
-the last nine `Pending` dispositions. PDRR-007 ran the branch gates and closed
-the lifecycle in `8fa60bb5`, but its independent-review evidence was
-provisional. The topic branch was then locally merged to `main` in
-`a5d2dfbb`, and its worktree and branch were cleaned up. On 2026-08-13,
-independent specification/content, quality, and security reviewers completed
-the whole-branch review. This corrective fix wave resolves the specification
-reviewer's Critical closure contradiction and Important stale handoff. The
-quality reviewer approved counts, identifiers, and gates; the security reviewer
-approved the bounded GitHub remote boundary and identified the ignored SDD
-review workspace as controller-owned residue. All twelve admitted candidates
-still end as `Partial`; none was promoted.
-
-#### Memory
-
-Task-local evidence that lives only in `/tmp` does not survive a session
-boundary, so a resumable package needs each artifact classified by whether it
-can be re-derived from tracked content. The baseline ledger snapshot was
-recovered byte-exact from the tracked ledger, and the lost proposal files were
-superseded because the committed dated report sections already carry every
-admitted source and claim. The guarded remote summary was unrecoverable, which
-is why bounded remote observations must be written into a tracked owner in the
-same work unit that collects them.
-
-A successor checker changes its own SHA-256, so it must never be presented as
-retroactive validation of work the original checker gated. Keeping the retired
-subcommands unimplemented makes that boundary enforceable rather than merely
-stated.
-
-#### Evidence
-
-- Successor checker SHA-256
-  `3aa05aa08945439ff07c41890ace699fda6b018754fa9534e4e42bb404f17200`, mode
-  `0600`, 34 named self-test PASS and zero FAIL.
-- Baseline ledger snapshot recovered byte-exact at 752,987 bytes with pinned
-  SHA-256 `af8b1d447caed589c5f6ec77b8e6d7215c8b39c9727804094bac816b82ebe297`.
-- Integration GREEN: 14 Markdown files, 33 unique requests, 132 byte-preserved
-  baseline rows, 18 new rows.
-- Branch gates: fifteen affected validators PASS, aggregate quality gate exit 0
-  with 53 PASS, `pre-commit run --all-files` clean, both diff checks clean,
-  protected-surface diff unchanged, twelve non-empty logical commits.
-- Residue: all eight enumerated one-off `/tmp/pdrr-*` paths proven absent.
-- Original provisional limitation: independent review was not dispatched for
-  PDRR-005 through PDRR-007 before closure `8fa60bb5`. The 2026-08-13
-  whole-branch specification/content, quality, and security reviews close that
-  review criterion before the corrective closure commit.
-- The ignored PDRR SDD workspace is retained as controller-owned review
-  evidence until scoped re-review is clean; it is not a prohibited
-  `/tmp/pdrr-*` artifact and this worker does not delete it.
-- Prohibited evidence: no additional GitHub query, remote mutation, secret or
-  variable read, provider authentication, cluster access, or live validation
-  occurred.
-
-#### Handoff
-
-Next owner is none. Local integration is complete on `main` at merge
-`a5d2dfbb`; the topic worktree and branch are already cleaned up, and the
-2026-08-13 independent whole-branch review is complete. The controller may
-delete the ignored SDD workspace only after its scoped re-review is clean.
-Hosted-runtime, provider-runtime, product and stakeholder validation, cluster,
-and live evidence remain `DEFER`.
-
-### 2026-08-12 - PDRR-003 Kubernetes and security evidence refreshed
-
-#### Metadata
-
-- **Date**: 2026-08-12
-- **Layer**: docs, research, kubernetes, infrastructure, security, qa
-- **Status**: complete
-- **Tags**: #pdrr #kubernetes #infrastructure #security #supply-chain
-- **Owner**: PDRR-003 assigned worker
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`
-- **Provenance**: PDRR-001 admission baseline; rows REQ-WERPC-008,
-  REQ-WERPC-009, and REQ-WERPC-025; official primary sources checked
-  2026-08-12; proposal SHA-256
-  `ca79849fa9c2f60eec8fa9fbeba421f0b76432fa6c82f7ce5584861fb1c38744`
-- **Sensitivity**: non-sensitive-redacted
-- **Retention / Expiry**: Retain through PDRR-007 closure or a superseding
-  reviewed refresh. Recheck cited sources and exact selectors before use.
-- **Next Owner**: PDRR-004 assigned worker after the PDRR-003 logical commit
-
-#### Progress
-
-PDRR-003 appended one bounded refresh section to the Kubernetes,
-infrastructure, and security owner. Rows 008, 009, and 025 remain `Partial`;
-row 009 remains repository-static only, and controller need, effective RBAC,
-admission, compatibility, reconciliation, external Vault role, artifact trust,
-signature, attestation, provenance, recovery, and all runtime outcomes remain
-explicit `DEFER`. The shared source/claim ledger was not changed; its
-pre-integration `Pending` values remain owned by PDRR-006.
-
-The initial exact RED was the absent canonical proposal. Final GREEN is
-`PASS workstream name=kubernetes-infrastructure-security canonical=PDRR-003`.
-The checker owner repaired an independently found shortened Kubernetes
-proposal-path mismatch; final checker SHA-256 is
-`f31ea27182d99758efbab101e5afbee44027ca9a95904e17544f24c5601e97ff`
-with 106 named self-test PASS results.
-
-#### Memory
-
-An exact controller page can narrow controller behavior without proving every
-permission in a combined local RBAC rule. Kubernetes now explicitly treats
-`get` on `nodes/proxy` as privileged, so least-privilege review must map
-each exact configured component before removal and verify effective
-authorization separately. Desired state, controller need, admission, Git/chart
-or image identity, signature, attestation, provenance, and runtime are separate
-evidence types. A checked source named in the owner table must also appear in
-the guarded proposal even when it is retained unchanged.
-
-#### Evidence
-
-- The proposal is current-user regular mode `0600`, schema version 1,
-  canonical `PDRR-003`, exact requests 008/009/025, twelve source proposals,
-  five claim proposals, four limitations, no final IDs, and no raw payload,
-  Secret, credential, provider/live result, or artifact content.
-- Source fidelity opened one Important source/proposal mismatch; fix round 1
-  added Helm v3 provenance and NIST source records and then approved with zero
-  findings. Content/security approved at zero. Quality opened one Important
-  checker canonical-path mismatch; the checker owner repaired and independently
-  approved it, and final quality re-review approved at zero.
-- Focused workstream, 106-case checker self-test, strict Markdown and links,
-  GitOps structure, infrastructure static contracts, Kubernetes
-  manifest/kube-linter, secret handling, Vault/ESO contracts, and diff checks
-  passed. Exact logical completion evidence is in the ignored task-4 report.
-- No Secret, cluster API, registry/artifact, cloud, gateway, hosted CI,
-  credential, provider runtime, trust store, recovery execution, or
-  remote/live mutation occurred.
-
-#### Handoff
-
-The containing logical commit and ignored task-4 report own the exact
-completion-lane evidence. PDRR-004 receives only its separately admitted rows;
-PDRR-006 later validates these proposals, assigns contiguous IDs, and updates
-the shared projections atomically.
-
-### 2026-08-12 - PDRR-002 agent, model, and memory evidence refreshed
-
-#### Metadata
-
-- **Date**: 2026-08-12
-- **Layer**: docs, research, qa, security
-- **Status**: complete
-- **Tags**: #pdrr #agents #models #memory #source-fidelity
-- **Owner**: PDRR-002 assigned worker
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`
-- **Provenance**: PDRR-001 admission baseline; rows REQ-WERPC-006,
-  REQ-WERPC-026, REQ-WERPC-028, and REQ-WERPC-032; official public sources
-  checked 2026-08-12; proposal SHA-256
-  `76264946aad35c59cfb3210df9581fd13aa93c9957995c1c262fc46fce7c877e`
-- **Sensitivity**: non-sensitive-redacted
-- **Retention / Expiry**: Retain through PDRR-007 closure or a superseding
-  reviewed refresh. Re-observe every cited provider/MCP contract and named
-  repository selector before use.
-- **Next Owner**: PDRR-003 assigned worker after the PDRR-002 logical commit
-
-#### Progress
-
-PDRR-002 appended one bounded refresh section to each of the four admitted
-research owners. Rows 006, 026, 028, and 032 remain `Partial`; provider
-discovery, execution, effective permissions, model parsing/resolution/fitness,
-cost, latency, promotion, retention/deletion behavior, connected-resource
-retrieval, and other runtime/effectiveness evidence remain explicit `DEFER`.
-The shared source/claim ledger and conditional provider-status owner were not
-changed. Gap Ledger `Pending` remains the legal pre-integration state until
-PDRR-006 assigns final IDs and reconciles shared projections.
-
-The initial exact workstream RED exited 1 with
-`ERROR missing guarded file: /tmp/pdrr-agent-proposals.json`. A first GREEN
-attempt then exposed the Plan/checker identity mismatch
-`ERROR proposal-file identity mismatch`; the independently reviewed checker
-repair maps only the exact Plan alias to canonical `PDRR-002`. Final GREEN is
-`PASS workstream name=agent-provider-model-memory canonical=PDRR-002`, and the
-repaired checker self-test has 103 named PASS results.
-
-#### Memory
-
-Undated official provider pages support present, observation-time contract
-facts, not a historical change date. A `Partial` proposal is integration-ready
-only when its existing schema fields carry exact repo-relative selectors,
-evidence depth, rejected inference and uncertainty, bounded follow-up owner,
-required authority and safe collection boundary, plus a refresh trigger. A
-Plan-mandated H3 belongs under the existing `## Review and Freshness` profile
-owner rather than under the final relationship list or a new unsupported H2.
-
-#### Evidence
-
-- Official sources checked 2026-08-12:
-  [Codex AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md),
-  [Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents),
-  [Codex configuration](https://learn.chatgpt.com/docs/config-file/config-reference),
-  [Codex memories](https://learn.chatgpt.com/docs/customization/memories),
-  [OpenAI Agents SDK sessions](https://openai.github.io/openai-agents-python/sessions/),
-  [Claude Code subagents](https://code.claude.com/docs/en/sub-agents),
-  [Claude Code memory](https://code.claude.com/docs/en/memory),
-  [MCP versioning](https://modelcontextprotocol.io/specification/versioning),
-  and [MCP 2026-07-28 Resources](https://modelcontextprotocol.io/specification/2026-07-28/server/resources).
-- The proposal is a current-user regular mode-`0600` file with schema version
-  1, canonical `PDRR-002`, exact requests 006/026/028/032, nine reviewed source
-  proposals, four reviewed claim proposals, three global limitations, no final
-  IDs, and no raw body/payload, secret, provider state, or runtime evidence.
-- Focused workstream, strict Markdown, strict links, harness `12/4/48`, roster
-  currentness, evaluation `12/48`, model-fitness `48`-tuple, checkpoint-schema
-  110-mutation, and diff checks passed. Exact logical completion evidence is
-  retained in the ignored task-3 report.
-- Source fidelity opened one Important historical-inference finding; fix round
-  1 closed it. Content/spec approved with zero findings. Quality/security
-  opened two Important completeness/hierarchy findings and one Minor metadata
-  question; fix rounds 2 and 3 closed both Important findings and accepted the
-  append-only metadata boundary. All three final reviews are approved at zero
-  Critical, Important, or Minor findings.
-- No authentication, credential or secret access, provider/model invocation,
-  cost/latency test, provider-local or ignored-checkpoint read, connected
-  resource retrieval, GitHub query, external mutation, or remote/live action
-  occurred.
-
-#### Handoff
-
-The containing logical commit and ignored task-3 report own the exact
-completion-lane evidence. PDRR-003 receives only its separately admitted rows;
-PDRR-006 later validates these proposals, assigns final contiguous IDs, and
-updates the shared ledger and projections atomically.
-
-### 2026-08-12 - PDRR-001 closed refresh admission frozen
-
-#### Metadata
-
-- **Date**: 2026-08-12
-- **Layer**: docs, qa, security
-- **Status**: complete
-- **Tags**: #pdrr #admission #research-boundary #validation
-- **Owner**: PDRR-001 assigned worker
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`
-- **Provenance**: PDRR-000 activation/fix commits `a6dbf106` and `d8c6b346`;
-  33-row WER request matrix; source ceiling `SRC-WERPC-067`; claim ceiling
-  `CLM-WERPC-008-06`; guarded source/claim snapshot SHA-256
-  `af8b1d447caed589c5f6ec77b8e6d7215c8b39c9727804094bac816b82ebe297`
-- **Sensitivity**: non-sensitive-redacted
-- **Retention / Expiry**: Retain through PDRR-007 closure or a superseding
-  approved admission record. Re-observe repository and source state before use.
-- **Next Owner**: PDRR-002 assigned worker after the PDRR-001 logical commit
-
-#### Progress
-
-PDRR-001 compared all 33 current request rows and froze exactly the 12
-`Partial` candidates: 006, 008, 009, 014, 020, 022, 023, 025, 026, 028, 032,
-and 033. The Task Gap Ledger binds each candidate to one closed admission
-state, its workstream, canonical owner, exact workspace selectors, allowed and
-forbidden evidence, a pre-integration disposition, follow-up evidence, and a
-refresh trigger. No external research or GitHub query occurred. The package
-also carries the exact one-line Spec 056 standalone-approval wording correction
-needed to close the inherited strict-validator prerequisite.
-
-Fix round 1 reopens only checker-evidence hardening after independent review of
-commit `342e6862`. One real self-test RED named all three defects: replacement
-unlink after a closed pathset guard, same-inode mutation accepted during a
-snapshot source read, and rejection of the actual task-local SDD artifact
-shape. The hardened checker now produces 93 named PASS results by binding
-pre-unlink identity/version metadata, checking post-read fd/path versions and
-byte count, and allowlisting only safe progress, brief, report, and review-diff
-artifact classes. Its first security review found a final pathname-unlink
-window and an overbroad review-diff pattern; verified atomic exchange with
-rollback, an exact exchange-window fixture, and two bounded hexadecimal review
-IDs close those findings. Final security re-review approved the hardened
-checker with zero Critical, Important, or Minor findings. The containing fix
-commit closes the exact completion lane.
-
-#### Memory
-
-A candidate list is not closed merely because its IDs are counted. Admission
-must bind every ID to the exact owner, workstream, selectors, evidence classes,
-disposition phase, and refresh trigger, while the checker independently rejects
-Git pathspec magic, unsafe file reuse, undefined source/claim reservations, raw
-remote bodies, and concurrent guarded-summary replacement.
-
-#### Evidence
-
-- The guarded checker was created only after absence/non-symlink proof with
-  `O_CREAT|O_EXCL|O_NOFOLLOW`, mode `0600`, and current-owner regular-file
-  verification. Its fix-round SHA-256 is
-  `815babfea03cbf97cf79ef5726295979759812e1848c2eb3d194346ff905e0a4`.
-- Checker self-test is GREEN across real admission, source/claim, safe-path,
-  creation/reuse, proposal, projected-remote, timeout/overflow, report, and
-  residue fixtures. Admission RED produced exactly 12 missing-candidate
-  diagnostics; admission GREEN reports `candidates=12 baseline=33`.
-- `/tmp/pdrr-ledger-before.md` is a current-owner regular mode-`0600`
-  byte-exact copy of the source/claim ledger. Its 752,987 bytes and SHA-256
-  match the unchanged tracked source.
-- Independent content and quality/security fix re-reviews are recorded in the
-  ignored task-2 report. Both approved the final package with zero Critical,
-  Important, or Minor findings after all earlier findings were closed.
-- No browse, GitHub, external network, provider/runtime, credential, secret,
-  cluster/live, deployment, or mutation evidence was requested or produced.
-
-#### Handoff
-
-The containing fix commit closes independent review and the exact logical lane;
-its SHA and completion evidence are recorded in the ignored task-2 report after
-commit. Hand PDRR-002 only the rows admitted to its workstream. `Pending`
-remains legal only until PDRR-006 integration.
-
-### 2026-08-12 - PDRR-000 standalone execution activated
-
-#### Metadata
-
-- **Date**: 2026-08-12
-- **Layer**: docs, qa
-- **Status**: complete
-- **Tags**: #pdrr #research #standalone-execution #activation
-- **Owner**: primary agent
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`
-- **Provenance**: direct human approval of Spec 056 and its Plan on 2026-08-12;
-  selected execution option 1 (Subagent-Driven); branch
-  `codex/2026-08-11-partial-defer-refresh`; program merge base
-  `a2d1ca69d91ff80cc2b81b27eb7bb08119cdd0db`; PDRR-000 task base
-  `2576d5103b53c4d14225bc46fed0ec25e53cceed`; approved Spec commit
-  `cd2823fc`
-- **Sensitivity**: non-sensitive-redacted
-- **Retention / Expiry**: Retain as the historical activation record after
-  PDRR-007 closure; a superseding approved lifecycle record may replace it.
-- **Next Owner**: none; PDRR-001 through PDRR-007 completed downstream by
-  2026-08-13
-
-#### Progress
-
-PDRR-000 activated the direct-approval standalone lifecycle for Spec 056, its
-reciprocal Plan and Task, ADR-0022, their three indexes, and the sorted
-`standaloneExecutions` registry relation. The activation path set is exactly
-`docs/03.specs/056-workspace-engineering-partial-defer-incremental-refresh/spec.md`,
-`docs/03.specs/README.md`,
-`docs/04.execution/plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`,
-`docs/04.execution/plans/README.md`,
-`docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md`,
-`docs/04.execution/tasks/README.md`,
-`docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`,
-`docs/99.templates/support/document-profiles.json`, and this ledger. No research
-content has started; PDRR-001 owns the closed admission ledger and its temporary
-checker.
-
-#### Memory
-
-An active standalone execution needs all four reciprocal repository records at
-once: direct approval/no-PRD-or-ARD text in Spec and Plan, the Task's explicit
-boundary and next owner, the ADR's typed relation traceability, and a numerically
-sorted registry row. The valid draft-state links/owners result is evidence, not
-a RED prerequisite; record the observed PASS before activating.
-
-#### Evidence
-
-- Pre-activation: `python3 scripts/validate-links-and-owners.py --root . --mode strict`
-  exited 0 on the valid draft state.
-- Prohibited evidence: no external browse, GitHub remote call, provider/runtime,
-  cluster/live access, secret read, or research content occurred during PDRR-000.
-- Completion evidence is recorded in the PDRR-000 Task, activation report, and
-  activation commit after focused, affected, staged, pre-commit, and diff gates.
-- Fix round 1 records the approved PDRR-000-only process-substitution replay
-  exception before the PDRR-001 checker exists. The original non-secret
-  `/tmp/pdrr-000-activation-paths.nul` is removed, its absence is proven, and it
-  is never reused; PDRR-001 onward retains checker `pathset` ownership.
-
-#### Handoff
-
-Historical handoff completed: PDRR-001 created and self-tested the guarded
-temporary checker and froze the closed Gap Ledger before downstream research.
-PDRR-001 through PDRR-007 are now complete, the package is merged to `main` as
-`a5d2dfbb`, final independent review is complete, and next owner is none. The
-allowed report paths remain limited to the PDRR directory declared in the Task.
-
-### 2026-08-11 - Diátaxis claims source-verified, profile candidate closed
+### 2026-08-11 - WORK-104 Stage 03 work-unit co-location
 
 #### Metadata
 
 - **Date**: 2026-08-11
 - **Layer**: docs
 - **Status**: complete
-- **Tags**: #diataxis #documentation #profiles #sourceverification #closure
-- **Owner**: primary agent
-- **Canonical Owner**: `docs/03.specs/052-document-taxonomy-consolidation/spec.md` for the route decision; `docs/99.templates/support/document-profiles.json` for the registry
-- **Provenance**: Published `diataxis.fr` pages returned HTTP 429 on a third attempt from a different client on 2026-08-11, so the claims were verified against the upstream source repository at `main` via the GitHub API, and reconciled against approved Spec 052 by repository-static reading.
+- **Tags**: #sdlc #document-governance #work-unit #migration
+- **Owner**: platform
+- **Canonical Owner**: `docs/03.specs/052-document-taxonomy-consolidation/tasks.md`
+- **Provenance**: WORK-104 exact move phase from manifest source commit `713dff1fc3de58a2d1682970a7f24faa39c14263`, after WORK-103 and the approved `WDTC-AMEND-001` carrier `446e336a`.
 - **Sensitivity**: non-sensitive-redacted
-- **Retention / Expiry**: Retain until `WORK-013` completes or Spec 052 is superseded. Re-observe before acting.
-- **Next Owner**: none for the route question, which is closed. `WORK-013` remains owned by its Plan.
+- **Retention / Expiry**: Retain through WORK-115 terminal closure.
+- **Next Owner**: WORK-105 — complete the exact eight-record AD conversion, Stage 99 core forms, ARD/API-Spec consumer closure, and atomic AD-0011/ADR-0027/projection acceptance.
 
 #### Progress
 
-Two questions were carried as open. Both are now answered, and one of them was
-never actually open.
+Verified the frozen Plan/Task source blobs, then consumed only the 82
+`move-current` manifest entries. The first ordinary apply stopped before any
+write at `MIGRATION-LOCK`; the controller-authorized exact retry reported
+`phase=move moves=82 archives=50 sources=132`. All 82 sources are absent, all
+82 targets are regular files, Stage 03 contains 41 sibling `plan.md` and 41
+sibling `tasks.md` files, and Stage 04 contains only its three transition
+README files. No migration transaction residue remains.
 
-**The published pages are still unreachable, but the claims are verified.** A
-third attempt on 2026-08-11, from a different client than the two on 2026-08-10,
-returned HTTP 429 again. Rather than leave the claims unverified, the upstream
-source that builds the site was read directly from GitHub. `source/start-here.rst`
-confirms the four kinds and their definitions, and
-`source/how-to-use-diataxis.rst` carries the load-bearing boundary verbatim:
-"It certainly does not mean that you should create empty structures for
-tutorials/howto guides/reference/explanation with nothing in them. Don't do that.
-It's horrible." Registered as `SRC-WERPC-067`. This is source-verified, not
-page-verified, and the distinction is recorded rather than glossed.
+Recalculated current Markdown and machine-contract consumers from the exact
+manifest, including reciprocal Spec/Plan/Task links and the standalone Spec
+053 registry values. Stage 90 observation bodies, Stage 98 records, and Stage
+05 content remain unchanged; transition validation resolves their historical
+Stage 04 references only when the exact mapped destination is tracked and
+regular. Stage 04 indexes now expose no stale authored rows, and the Stage 03
+tree exposes the co-located siblings.
 
-**The tutorial and explanation profile candidate is closed, not implemented.**
-Spec 052 is `active` and already decided this. `DOC-G2` declines a tutorial route
-because Diátaxis says empty structures must not be created in advance, and
-`DOC-G3` declines an explanation route on the same basis, keeping explanation
-inside ADR context and reference sub-types. The upstream sentence quoted above is
-exactly the basis `DOC-G2` cites, now checked at source instead of accepted
-secondhand. Creating these profiles would contradict both the approved local
-decision and the framework's own instruction.
-
-**What is actually open is a different thing.** `DOC-G1` requires constraining
-`Guide Type` to `how-to`, `tutorial`, `concept` in the profile registry and
-template. A 2026-08-11 registry check confirms that enum is still unenforced.
-That work, plus validating the eight current guides and recording the `DOC-G2`
-and `DOC-G3` absences deliberately, is the queued `WORK-013` package and belongs
-to its owning Plan.
-
-#### Memory
-
-A finding recorded as a "gap" by research and a question that is actually open
-are not the same thing. The research pack correctly observed that no tutorial or
-explanation route exists, and that observation alone reads like an unmade
-decision. The decision had been made months of work earlier, in an approved Spec,
-on a source-backed rationale. Checking whether an approved Spec already answers a
-research gap costs one grep and can convert an apparent backlog item into a
-closure.
-
-The second lesson is about evidence classes. When a published page is blocked,
-its upstream source is usually reachable from a different host and is stronger
-than inferring from commit dates, but it is still not the page. Recording which
-of the two was actually read keeps a later reader from over-trusting the result.
+Rebaselined only the moved Stage 03 destination Plan/Task. WORK-100 through
+WORK-103, `WDTC-AMEND-001`, and WORK-104 are complete. The prior destination
+WORK-105 through WORK-110 meanings are superseded; the only queued successor
+schedule is WORK-105 through WORK-115 from Spec 052 and ADR-0027. No
+Release-family, provider, hosted, remote, credential-bearing, or live action
+was created, performed, or claimed.
 
 #### Evidence
 
-- Three failed published-page attempts: two on 2026-08-10 from a subagent fetch
-  path, one on 2026-08-11 from a different client. All HTTP 429, including an
-  unrelated path probe, so the block is host-wide rather than page-specific.
-- `evildmp/diataxis-documentation-framework@main`, `source/start-here.rst` and
-  `source/how-to-use-diataxis.rst`, read through the GitHub API on 2026-08-11.
-- `docs/03.specs/052-document-taxonomy-consolidation/spec.md` is `status: active`
-  and carries `DOC-G1`, `DOC-G2`, and `DOC-G3` at lines 199 to 201.
-- Registry check on 2026-08-11: the `how-to`/`tutorial`/`concept` enum is not
-  enforced in `docs/99.templates/support/document-profiles.json`.
-- Repository search: no tracked document requests a tutorial or explanation
-  profile; the eight current guides carry no learning or tutorial intent signal.
+- Pre-apply and post-apply manifest checks remain exact at `132/82/50`.
+- Post-apply inventory is exact at 41 Plans, 41 Tasks, and three Stage 04 files;
+  source/target and transaction-residue audits are clean.
+- The valid focused RED began with 790 cross-document findings after the
+  physical move. Exact consumer repair and immutable-history resolution reduced
+  it to zero; strict links/owners reports `PASS CROSS-DOCUMENT`.
+- Registry self-test, strict transition registry, strict Markdown, migration
+  tests/check, affected/staged/index/aggregate, and diff evidence belong to the
+  final WORK-104 validation report. Controller all-files and commit evidence
+  remain separately owned and are not preclaimed here.
+- The controller subsequently ran the exact
+  `TMPDIR=/tmp pre-commit run --all-files` fixed point with exit `0`; every
+  applicable hook passed, no mutation occurred, and post-run scope remained
+  `A82/D82/M73` with zero unstaged paths. Commit evidence remains separately
+  controller-owned.
+- Stage 98, Stage 90, and Stage 05 content have zero WORK-104 diff.
 
 #### Handoff
 
-None in progress. The route question is closed. `WORK-013` stays queued under its
-Plan, and no agent should reopen `DOC-G2` or `DOC-G3` without superseding Spec 052.
+WORK-105 must preserve the exact eight ARD identifiers/slugs/states while
+converting them to AD, independently close authored API Spec instances and all
+consumer classes, preserve native OpenAPI/GraphQL/Protobuf contracts, and only
+then accept the separate AD-0011/ADR-0027/registry projection authority gate.
+WORK-107 and WORK-108 may not start before that acceptance. Rollback is a
+reviewed revert of the single WORK-104 logical commit; broad reset and archive
+payload repair remain prohibited.
 
-### 2026-08-10 - Orphaned taxonomy-program findings recovered before cleanup
+### 2026-08-10 - WDTC-AMEND-001 pre-WORK-104 terminal taxonomy design
 
 #### Metadata
 
 - **Date**: 2026-08-10
-- **Layer**: docs, meta, infra
+- **Layer**: architecture
 - **Status**: complete
-- **Tags**: #recovery #cleanup #hooks #security #validators #taxonomy
-- **Owner**: primary agent
-- **Canonical Owner**: `docs/04.execution/plans/2026-08-07-document-taxonomy-consolidation.md` for the program; `docs/00.agent-governance/hooks/` for the hook findings
-- **Provenance**: Recovered on 2026-08-10 from an untracked SDD ledger at `.superpowers/sdd/2026-08-07-document-taxonomy-consolidation/progress.md` before that file was deleted during one-shot cleanup. The findings themselves are dated 2026-08-08 and were produced during the taxonomy-consolidation program on base commit `c62a5cd9`.
+- **Tags**: #sdlc #document-governance #artifact-identity #archive
+- **Owner**: platform
+- **Canonical Owner**: `docs/03.specs/052-document-taxonomy-consolidation/spec.md`
+- **Provenance**: Pre-WORK-104 amendment from clean base `a3cc852f84519e2f5a20ad66238e8b8de26a3c8f`; initial amendment carrier `1452dbfde267452ed676b551ee2595d250a6ecfa`; first-correction carrier `574140abafced14ea1096df044a3ce6ffe7ae06e`; and the human-approved terminal-design rulings.
 - **Sensitivity**: non-sensitive-redacted
-- **Retention / Expiry**: Retain until each finding is either adopted into a canonical owner or explicitly superseded. Re-observe every file and line reference before acting, because all of them can drift.
-- **Next Owner**: human — decide whether the hook findings warrant a Stage 00 documentation change or a Spec.
+- **Retention / Expiry**: Retain through WDTC terminal closure and PRD-008 disposition.
+- **Next Owner**: WORK-104 — apply the existing 82-move task and rebaseline the destination Plan/Task to the closed WORK-104 through WORK-115 schedule.
 
 #### Progress
 
-Routine cleanup found an untracked ledger whose worktree no longer exists, so
-the record was orphaned. A search showed four of its conclusions appear in zero
-tracked files, meaning deletion would have destroyed them. They are recovered
-here verbatim in substance before the file is removed.
-
-**R-1 reduction is NOT FEASIBLE, with evidence.** The active-corpus census
-cannot be reduced. `scripts/validate-active-corpus-retention.py:927` compares
-`candidateBaseline` for exact equality against a validator-constructed expected
-value, and its negative probes at `:982-985` require that popping or appending
-an entry FAILS. `scripts/validate-active-corpus-eligibility.py:830-834` requires
-that missing-row, extra-row, and duplicate-row mutations all FAIL, and
-`tests/test_active_corpus_eligibility.py:29-32` asserts the exact counts
-`{"candidates": 110, "eligible": 12, "defer": 98, "controls": 2}`. The census is
-pinned fail-closed expected state, so removing rows is precisely what these
-validators exist to reject. Reducing the data would require weakening the
-validator and its negative probes at the same time. Consequence recorded at the
-time: package WDTC-001 had no remaining content and was dropped.
-
-**R-4 has an abort rule that a future agent must not skip.**
-`scripts/validate-agent-legacy-cutover.py:183` pins an exact reference count for
-`docs/00.agent-governance/memory/progress.md` inside `ALLOWED_REFERENCE_COUNTS`.
-Any entry rotated out of this file must not contain a counted retired-surface
-string, or the count breaks. Verify the counted strings are absent from the
-rotated range BEFORE moving anything; if a counted string would leave the live
-file, keep that entry or report the rotation infeasible. Do not adjust the
-pinned count to match. The other three consumers are safe by construction:
-`validate-agent-governance-closure.py:240` declares the memory-class row,
-`validate-agent-harness-contract.py:29` pins only the canonical path, and
-`validate-markdown-profiles.py:1510,1696` uses this file as an append parent,
-matching shape rather than content.
-
-**A hook privilege inversion was found and fixed.** An earlier worktree fix made
-`k8s-pre-edit.sh:321` derive the EXECUTABLE location from tool input rather than
-only the `--root` argument. Editing a file inside an untrusted worktree would
-have made the pre-edit guard execute that branch's copy of
-`select-affected-surfaces.py` — the guard running the code it is supposed to
-guard. The fix pins the program to the project directory and passes only
-`--root` as data. It was proven concretely: a sabotage stub placed in the
-worktree copy made the unpinned hook exit 2, while the pinned hook exits 0 with
-the sabotage marker absent.
-
-**Hooks in this repository cannot be validated live from a branch.**
-`.claude/settings.json` loads hooks from `$CLAUDE_PROJECT_DIR`, which is the main
-checkout, not the working directory. A hook change is therefore inert until it
-reaches `main`, so branch-local hook testing proves nothing. The original record
-notes this constraint is undocumented in Stage 00. A related constraint: the
-same resolver defect exists in `post-validate.sh`, but fixing it collides with
-`tests/test_provider_post_validate_hook.py:94`, which asserts that
-`git rev-parse` never appears in that hook as a deliberate hermeticity contract.
+Recorded active ADR-0027 as the human-approved terminal/current design while
+keeping accepted ADR-0026 as the transition program-decision registry
+projection. This completed documentation package is `WDTC-AMEND-001`; it is
+not the frozen Task's WORK-104 implementation. PRD-008 and Spec 052 now define
+terminal PRD, optional SRS, optional Interface Requirement, AD, and ADR forms,
+the WORK-105 eight-record ARD-to-AD conversion and retirement of authored
+`sdlc/api-spec`, preservation of separate
+native API-contract evidence, the closed mandatory/prohibited outer-ID grammar,
+virtual Stage 98 change identity, stable archive topology, 14-field recovery
+ledger, direct-link corpus, and exact `scripts/` closure.
+The ADR index exposes the accepted predecessor and active successor state.
+This package changes no route, profile, template, registry, manifest, Stage 04
+execution record, Stage 98 record, or script.
 
 #### Memory
 
-Untracked tool directories are not automatically disposable. A cleanup pass that
-classifies by directory name would have deleted a ledger holding a feasibility
-verdict, a validator abort rule, and a proven privilege-escalation fix. Grepping
-the tracked tree for each distinctive conclusion before deleting is what
-separated cache from knowledge here, and it cost one command.
+At WORK-105 acceptance ADR-0027 partially supersedes only accepted ADR-0018's
+mirror-path and Tombstone-prohibition clauses plus accepted ADR-0026's Stage 98
+date/mirror-path immutability. Full-body payload, provenance, retention,
+recovery, transition safety, and unrelated decisions remain intact. Active
+ARD-0011 is a conflicting transition predecessor and must atomically become
+AD-0011 with archive-invariant replacement before ADR-0027 acceptance.
 
-The recovered R-4 rule then immediately applied to its own recovery: writing this
-entry required checking that the new text contains none of the pinned
-retired-surface strings, because adding one would have broken the very validator
-the rule describes.
+Architecture review at clean base `833995d1` found that the current
+active/accepted `sdlc/ard` corpus is not one record but exactly eight:
+ARD-0004/0005/0006/0007/0010/0011 are active and ARD-0008/0009 are accepted.
+WORK-105 maps them one-to-one to AD-0004 through AD-0011, preserving the
+current filename slug and lifecycle state. The exact source/target paths are
+closed in ADR-0027 and Spec 052. Its full-repository classifier covers every
+ARD profile/template/route/relationship, lifecycle, registry, navigation,
+authoring, validator/script/test/fixture, skill, issue-form, execution,
+operations, and generated-current consumer. Current matches migrate to AD;
+only immutable or explicit history may use `retain-history`. Acceptance
+requires zero unconverted current ARDs and zero live or unclassified ARD
+consumers. Inside that full migration, the AD-0011 invariant replacement,
+ADR-0027 acceptance, and registry projection change remain a separate atomic
+authority gate. WORK-108 backfills AD `artifact_id` fields only after the
+complete WORK-105 conversion.
 
-#### Evidence
+Every declared `artifact_id` is globally unique. PRD, SRS, Interface
+Requirement, AD, ADR, the six Stage 03 work-unit forms, the five Stage 05
+operations forms, and Stage 98 Plan/Task/Tombstone/Migration outer records
+require one deterministic path-derived ID. Stage 00, Stage 90,
+governance memory/progress, Stage 99 support, README/navigation, templates,
+fixtures, native/generated surfaces, embedded archive payloads, and the
+virtual Stage 98 change aggregate prohibit the field. A change directory has
+no frontmatter; its path-derived `CHG-####` is `change_id` only, and every
+present Plan/Task leaf carries that same grouping value plus its own unique
+outer ID.
 
-Read-only, on branch `fix/infra-ksm-excess-rbac` at commit `ceba1057`:
+The current human-authored `sdlc/api-spec` profile, Stage 03 `api-spec.md`
+route, and `api-spec.template.md` are terminally retired by WORK-105. The
+tracked authored instance census is exactly zero, but that does not prove
+consumer retirement. WORK-105 independently requires a complete full-repo
+`git grep` classifier with zero live or unclassified authored-profile
+consumers. It covers profile/template/relationships, the positive Markdown
+fixture, lifecycle implementation, registry mappings/allowlists/self-tests,
+authoring hook/template routing, current Stage 00/03 prose, and
+validators/tests/docs/fixtures. Matches migrate to Stage 01 Interface/native
+contracts, become retired-route negative fixtures, or receive
+`retain-history` / `retain-native`; literal historical/native grep matches may
+remain. Human interface requirements use only Stage 01 `sdlc/interface` and
+IFC identity. Native OpenAPI, GraphQL, and Protobuf profiles/templates remain
+machine-readable Interface evidence with separate native identity rules; they
+are neither authored API Spec nor mandatory human artifact IDs. The current
+93-record cutover needs no `API-SPEC` tombstone type; a later discovery
+requires reviewed Interface/`IFC` tombstone ledger mapping.
 
-- The source ledger was 168 lines at
-  `.superpowers/sdd/2026-08-07-document-taxonomy-consolidation/progress.md`,
-  naming worktree `.worktrees/docs-taxonomy-consolidation` and branch
-  `refactor/docs-taxonomy-consolidation`, neither of which still exists.
-- Tracked-tree search returned zero files containing `NOT FEASIBLE`,
-  `ABORT RULE`, `privilege inversion`, or the branch-validation constraint
-  sentence.
-- `docs/04.execution/plans/2026-08-07-document-taxonomy-consolidation.md` is
-  tracked, and base commit `c62a5cd9` remains reachable, so the program itself
-  is preserved; only these conclusions were not.
-- Counted-string baseline in this file before the edit: four retired-surface
-  strings at zero occurrences and the fifth at its pinned value, all unchanged
-  by this entry.
+Terminal Stage 98 is a schema-versioned ledger cutover rather than a payload
+rewrite. The current cutover is 93-to-93 with every action `moved`: 76 records
+become unique Plan/Task leaves in 41 change directories (35 pairs, two
+Plan-only, four Task-only) and 17 become unique tombstones distributed
+`3/8/4/2`. Future merged/replaced/deleted rows also retain unique tombstone
+paths, so stable paths are never many-to-one. The ledger distinguishes original
+`source_commit`/`source_blob` from old-envelope
+`legacy_archive_commit`/`legacy_envelope_blob` and retains payload digest and
+dual recovery evidence.
 
-No cluster, hosted, provider-runtime, or credential-bearing check was run. Every
-file and line reference above is quoted from the recovered record and was not
-re-executed.
+The successor sequence is closed: WORK-104 owns 82 moves and destination
+Plan/Task rebaseline; WORK-105 owns the exact eight-record AD/Stage99 core-form
+conversion, complete ARD consumer closure, the separate AD-0011 invariant /
+ADR-0027 acceptance / registry projection authority gate, authored API Spec
+zero-instance plus complete consumer-disposition gates, negative fixtures,
+and native/history preservation; WORK-106 owns artifact/ledger
+transition validators; WORK-107 owns the 93-record rehome and cannot start
+before WORK-105; WORK-108 begins ID backfill only after the full AD conversion;
+WORK-109 through WORK-115 own
+document authority/routes, agent governance, the full script ledger,
+orchestration and the 49 count, progress/graph cleanup, transition asset
+retirement and the 47 count, and independent closure respectively. The
+destination rebaseline supersedes old WORK-105 through WORK-110 meanings.
 
-#### Handoff
+The terminal script inventory is not a filename-similarity reduction. WORK-112
+deletes only `validate-harness.sh` after orchestration/consumer migration and
+leaves 49 assets. WORK-114 deletes only the transition JSON/tool after cutover
+and leaves exactly 47 assets: 39 Python, seven shell, and one README. The other
+47 retain distinct rule, argument, diagnostic, negative-fixture, evidence, or
+manual-recovery semantics.
 
-None in progress. The hook findings are the actionable residue: whether the
-branch-validation constraint should be documented in Stage 00, and whether the
-`post-validate.sh` resolver defect should be fixed using the same pinned-program
-shape without weakening its hermeticity test.
-
-### 2026-08-10 - Candidate re-verification, zero-risk RBAC subset applied
-
-#### Metadata
-
-- **Date**: 2026-08-10
-- **Layer**: docs, infra, security
-- **Status**: complete
-- **Tags**: #followup #kubernetes #security #rbac #leastprivilege #diataxis #networkpolicy
-- **Owner**: primary agent
-- **Canonical Owner**: `gitops/platform/monitoring/kube-state-metrics.yaml` for the RBAC item; `gitops/platform/network-policies/` for the ingress item; `docs/99.templates/support/document-profiles.json` for the documentation item
-- **Provenance**: Read-only repository-static re-verification on 2026-08-10 after merge `6e117c2f`, plus the official kube-state-metrics v2.14.0 CLI documentation read at tag `v2.14.0`. The human approved implementing only the zero-risk RBAC subset.
-- **Sensitivity**: non-sensitive-redacted
-- **Retention / Expiry**: Retain until the remaining items are adopted by an approved Spec or explicitly rejected; re-observe every claim before acting.
-- **Next Owner**: human — decide on the deferred items. No agent is authorized to implement them.
-
-#### Progress
-
-All three candidates registered earlier today were re-verified and still hold.
-The first candidate turned out to be three separable items rather than one, and
-only the zero-risk item was implemented.
-
-**Applied — uncollected RBAC grants removed.** Five cluster-wide `list, watch`
-grants were removed from `ClusterRole/kube-state-metrics`: `serviceaccounts`
-plus the whole `rbac.authorization.k8s.io` rule covering `clusterroles`,
-`clusterrolebindings`, `roles`, and `rolebindings`. None appears in the
-documented default `--resources` collector set, and the Deployment sets no
-`--resources` flag, so removing them cannot change any exposed metric.
-
-**Deferred — the `secrets` grant.** This is the item the earlier registration
-called the highest-value bounded change, and the re-verification shows it is not
-a one-line deletion. `secrets` IS in the default collector set, so removing the
-grant alone would leave the secret informer running without permission. The
-correct change pairs the RBAC removal with an explicit `--resources` value that
-excludes `secrets`. That resolves the compatibility question `CLM-WERPC-008-01`
-left unobserved.
-
-**New finding — collector and RBAC are already out of step.** Two default
-collectors have no grant at all: `certificatesigningrequests` and `leases`. This
-predates today's work and suggests the workload is already logging permission
-failures for those two informers. It was not fixed here.
-
-**Deferred — no Ingress-type or default-deny NetworkPolicy.** Re-verified: all
-six tracked policies under `gitops/platform/network-policies/` remain
-`policyTypes: [Egress]` only, and no Ingress-type or default-deny policy exists
-under `gitops/`, `infrastructure/`, or `policy/`. Still the highest-risk item and
-still requires a complete allowed-flow inventory and a security-reviewed Spec.
-
-**Deferred — absent Diátaxis tutorial and explanation profiles.** Re-verified:
-64 routed profiles, none of them a tutorial or explanation type. Adoption should
-still first prove a named owner, reader, consumer, and validator need.
-
-**Diátaxis source re-check failed a second time.** Ten requests across
-`/start-here/`, `/`, the `www` hostname, and an unrelated `/map/` probe returned
-HTTP 429, so the block is host-wide for this egress. Two failures on the same day
-make it persistent rather than transient.
-
-#### Memory
-
-Splitting a least-privilege candidate by blast radius changed the outcome. As a
-single item it looked like one bounded change gated behind an unresolved
-compatibility question. Separated, part of it was provably zero-impact and
-shipped the same day, while the genuinely coupled part stayed deferred with its
-coupling now named instead of unknown.
-
-The general lesson is that "what does this permission grant" and "what does the
-workload actually read" are different questions, and comparing a role against the
-consumer's documented default collector set answers both at once. That
-comparison also surfaced the reverse defect nobody was looking for: resources the
-workload collects but has no permission to read.
+ISO/IEC/IEEE 42010:2022 bounds Architecture Description structure/expression,
+29148:2018 bounds requirements engineering and information items, and
+15289:2019 bounds lifecycle information-item purpose/content and permits an
+organization-selected presentation model. None mandates this repository's
+paths, filenames, stable IDs, form split, pairing, ledger, or script count.
 
 #### Evidence
 
-Repository-static and official-documentation, read-only, on merge `6e117c2f`:
-
-- kube-state-metrics v2.14.0 `docs/developer/cli-arguments.md` at tag `v2.14.0`
-  states the default `--resources` set, which includes `secrets` and excludes all
-  five removed grants.
-- `gitops/platform/monitoring/kube-state-metrics.yaml` Deployment declares no
-  `--resources` flag.
-- Before/after parse of the ClusterRole intersected against that default set:
-  five removed, zero added, zero removed items present in the default set.
-- `kube_secret` search across the tracked tree outside the research pack — zero
-  matches. The only kube-state-metrics series referenced anywhere are
-  `kube_deployment_*`, `kube_node_info`, and `kube_pod_*`.
-- Six `policyTypes` declarations under `gitops/platform/network-policies/` — all
-  `Egress`; zero Ingress-type or default-deny policy.
-- `docs/99.templates/support/document-profiles.json` — 64 routed profiles, zero
-  tutorial or explanation id.
-
-No cluster, ArgoCD, Vault, ESO, kubectl, registry, hosted, or credential-bearing
-check was run; effective RBAC, actual scrape behavior, real traffic flows, and
-live posture remain `DEFER`.
-
-#### Handoff
-
-None in progress. Three items await a human decision: pairing the `secrets` RBAC
-removal with an explicit `--resources` value, reconciling the
-`certificatesigningrequests` and `leases` collector/RBAC mismatch, and the two
-previously deferred candidates. The Diátaxis source re-check should be retried
-from a different network path.
-
-### 2026-08-10 - WER follow-up candidates registered without implementation
-
-#### Metadata
-
-- **Date**: 2026-08-10
-- **Layer**: docs, infra, security
-- **Status**: complete
-- **Tags**: #research #followup #kubernetes #security #diataxis #networkpolicy
-- **Owner**: primary agent
-- **Canonical Owner**: `docs/90.references/research/2026-08-08-wer/kubernetes-infrastructure-and-security.md` for the platform items; `docs/99.templates/support/document-profiles.json` for the documentation item
-- **Provenance**: Read-only repository-static inventory run on 2026-08-10 after the Spec 055 closure merge `79e44638`; human directed registration only, with no implementation.
-- **Sensitivity**: non-sensitive-redacted
-- **Retention / Expiry**: Retain until each candidate is adopted by an approved Spec or explicitly rejected; re-observe every claim before acting, because all three describe current tracked state that can drift.
-- **Next Owner**: human — decide whether any candidate becomes an approved Spec. No agent is authorized to implement these.
-
-#### Progress
-
-The Spec 055 closure re-verification surfaced three implementation candidates.
-The human chose registration only, so none was implemented and no manifest,
-profile, template, or policy changed. One read-only inventory was completed
-because it was the named prerequisite for the highest-value candidate.
-
-**Candidate 1 — kube-state-metrics cluster-wide Secret read.** The prerequisite
-consumer inventory is now complete and repository-static. Searching the whole
-tree outside the research pack finds zero `kube_secret_*` references, zero
-`PrometheusRule`, zero `ServiceMonitor`, and no Grafana dashboard asset. The
-only tracked consumer of any kube-state-metrics series is
-`gitops/workloads/adminer/analysis-template.yaml:19`, which queries
-`kube_pod_container_status_restarts_total`. No tracked consumer justifies
-`resources: secrets` with `verbs: [list, watch]` in
-`ClusterRole/kube-state-metrics`
-(`gitops/platform/monitoring/kube-state-metrics.yaml`). Removing that resource
-is therefore a bounded, evidence-backed change whenever an owner approves it.
-
-**Candidate 2 — no Ingress-type or default-deny NetworkPolicy.** All six tracked
-policies under `gitops/platform/network-policies/` declare
-`policyTypes: [Egress]` only, and no Ingress-type or default-deny policy exists
-under `gitops/`, `infrastructure/`, or `policy/`. This is the highest-risk
-candidate: a default-deny ingress posture added without a complete allowed-flow
-inventory can sever in-cluster traffic. It requires its own security-reviewed
-Spec, not an incremental edit.
-
-**Candidate 3 — absent Diátaxis tutorial and explanation profiles.** The
-registry holds 64 profiles; none is a tutorial or explanation type. The nearest
-existing types are `sdlc/guide`, `content/reference`, and
-`governance/reference`. The research owner deliberately declined to create a
-profile by implication, so adoption should first prove a named owner, reader,
-consumer, and validator need.
-
-#### Memory
-
-A gap that research classifies as an implementation gap is not automatically
-work to schedule. Candidate 1 is well-evidenced and small; candidate 2 is
-well-evidenced and dangerous; candidate 3 is well-evidenced and may be
-unnecessary. Evidence quality and action priority are independent axes, so
-record them separately instead of treating every confirmed gap as a backlog
-item.
-
-#### Evidence
-
-Repository-static, read-only, on merge commit `79e44638`:
-
-- `kube_secret` search across tracked YAML, JSON, and Markdown outside the
-  research pack — zero matches.
-- `PrometheusRule`, `ServiceMonitor`, and dashboard-asset search over `gitops/`
-  and `infrastructure/` — zero matches.
-- `gitops/workloads/adminer/analysis-template.yaml:19` — the single tracked
-  kube-state-metrics query.
-- Six `policyTypes` declarations under `gitops/platform/network-policies/` — all
-  `Egress`.
-- `docs/99.templates/support/document-profiles.json` — 64 profiles, no tutorial
-  or explanation id.
-
-No cluster, ArgoCD, Vault, ESO, kubectl, registry, hosted, or credential-bearing
-check was run; effective RBAC, actual scrape behavior, real traffic flows, and
-live posture remain `DEFER`. `CLM-WERPC-008-01` in the research pack still reads
-`Partial` with the consumer question unobserved; that dated snapshot is not
-edited retroactively, and this later observation is recorded here instead.
-
-#### Handoff
-
-None in progress. A human decides whether any candidate becomes an approved
-Spec. Candidate 1 is the smallest and best-evidenced starting point; candidate 2
-must not begin without a complete allowed-flow inventory and security review.
-
-### 2026-08-09 - WERG-000 gap-only research refresh design
-
-#### Metadata
-
-- **Date**: 2026-08-09
-- **Layer**: documentation, research, governance
-- **Status**: done
-- **Tags**: #research #gap-analysis #sdlc #verification #validation #kubernetes
-- **Owner**: primary agent
-- **Canonical Owner**: `docs/03.specs/055-workspace-engineering-gap-only-refresh/spec.md`
-- **Provenance**: Direct human approval of the gap-only design boundary and in-place `2026-08-08-wer` integration direction on 2026-08-09.
-- **Sensitivity**: non-sensitive
-- **Retention / Expiry**: Retain through Spec 055 review and execution closure; refresh if the admitted question set, existing pack identity, or evidence-depth authorization changes.
-- **Next Owner**: none — WERG-005 is complete; closure commit `22002d91`,
-  merge `79e44638`, and terminal trace reconciliation `6b953f74` are on local
-  `main`. Hosted, provider-runtime, remote, and live evidence remains `DEFER`.
-
-#### Progress
-
-Recorded the approved design as Spec 055 instead of creating the
-repository-prohibited `docs/superpowers/**` tree. After explicit written-Spec
-approval, authored the reciprocal Plan and Task with six work packages,
-four-state admission, exact five-owner integration, independent reviews,
-logical commits, cleanup, terminal gates, and branch finishing. The human
-selected subagent-driven execution on 2026-08-09, so WERG-000 applied the
-atomic active Spec/Plan/Task/index/ADR-0022 relation across the exact nine
-authorized activation paths and entered focused validation and review. The existing
-`2026-08-08-wer` pack remains the only research owner; authenticated,
-provider-runtime, hosted, remote, credential-bearing, and live evidence stays
-excluded.
-
-WERG-001 then read the complete 13-file pack without web access and built the
-33-row four-state admission matrix: 18 complete-existing, seven
-under-sourced-partial admissions, one unresearched Verification/Validation
-admission, and seven deeper-evidence exclusions. The exact admitted set is
-PRD, ARD, Policy, Release, Runbook, Verification/Validation, and the shared
-question-level Kubernetes and Security deltas. No source, claim, README
-request, topical report, runtime, provider, workflow, policy, or infrastructure
-row changed. Independent full-pack content and checker-quality reviews are
-Approved with no remaining Critical or Important finding.
-
-WERG-002 researched only the admitted external-source gaps and integrated the
-results into the existing `2026-08-08-wer` pack. Official primary sources for
-PRD, ARD, Policy, Release, Runbook, Verification, and Validation were checked
-on 2026-08-10. The exact additive ranges are `SRC-WERPC-053`–`059` and
-`CLM-WERPC-007-01`–`08`, plus request `REQ-WERPC-033`; prior source and claim
-rows remain byte-preserved. The SDLC owner now distinguishes all five admitted
-document families, and the QA owner has a seven-column Verification/Validation
-matrix with SDLC, release-readiness, operations, actor, input, evidence,
-failure, and `DEFER` boundaries. Final content and quality re-reviews are
-Approved with no remaining Critical or Important finding. The exact eight-path
-logical index passed its canonical gates without hook or formatter mutation.
-
-WERG-003 then researched only three reviewed line-level Kubernetes/Security
-deltas. It added `SRC-WERPC-060`–`065` and `CLM-WERPC-008-01`–`06` for
-kube-state-metrics Secret RBAC/metrics, Adminer ServiceAccount/token and Pod
-hardening, and immutable Git/chart/image plus signature, attestation, and
-provenance distinctions. Namespace ingress/default-deny was explicitly
-rejected as duplicate research. Content review is Approved; security review is
-Approved after correcting one default-token phrase to distinguish automatic
-credential mounting from token lifetime and effective RBAC. No manifest,
-policy, runtime, provider, remote, cluster, artifact, or secret value changed
-or was observed.
-
-WERG-004 reconciled the reviewed result without new research. The parsed final
-shape is 13 pack files, 33 request rows, 65 source IDs, and 65 claim IDs; all
-new rows are dated 2026-08-10 and all frozen source/claim rows remain stable.
-The exact five-owner integration and relative anchors pass. Independent review
-is Approved and logical commit `12798c47` records the reconciled result. Residue
-review finds only the task-owned checker and current NUL lane input; the optional
-ledger scratch file is absent and no unrelated path was removed. WERG-005 now
-owns whole-branch review, terminal validation, lifecycle closure, and cleanup.
-
-WERG-006 ran a closure re-verification on 2026-08-10 before finishing the
-branch. Seven disjoint read-only workers tested all 33 requested rows against
-four required elements: an official source with a checked date, exact workspace
-reconciliation, a named uncertainty boundary, and a refresh trigger. Thirty
-rows are `covered`. Three failed workspace reconciliation and were corrected in
-`b9e16079`: `REQ-WERPC-004` and `REQ-WERPC-006` asserted that root `CLAUDE.md`
-imports `AGENTS.md`, which `providers/claude.md` forbids and which commit
-`e11dd607` removed on 2026-05-29, ten weeks before the pack's observation date;
-`REQ-WERPC-021` asserted a 2026-05-10 LLM-WIKI freshness debt that closed in
-`ee67aad2`. Precision and absence statements were sharpened in `25b4a450`.
-
-#### Memory
-
-Spec 053, its Plan/Task, and its typed standalone relation are terminal `done`.
-A new active Plan/Task cannot be attached to that terminal relation. If the
-written draft is approved, Spec 055 requires its own reciprocal Plan, Task, and
-ADR-0022 standalone registry entry. The research output remains an in-place
-five-owner refresh; lifecycle evidence is separate from the research pack.
-
-Three reusable lessons from the WERG-006 closure re-verification:
-
-1. An `Approved` review is not evidence that a claim was reconciled against the
-   file it names. Three false repository facts survived every earlier content,
-   quality, and security review because those reviews checked that a cited path
-   exists, not that the cited path says what the claim asserts. Research
-   verification must open the named file and compare its content.
-2. Moving a Spec to `done` also requires registering it in
-   `POST_CLOSURE_SPEC_AUTHORITY_PATHS` in
-   `scripts/validate-active-corpus-residue-closure.py` and its retention test.
-   Without that, `validate-repo-quality-gates.sh` fails
-   `CLOSURE-AUTHORITY-SCOPE`. Commit `df8fe30d` is the reference pattern.
-3. `validate-reference-information-architecture.py` and the residue-closure
-   validator both require index bytes to equal worktree bytes. Unstaged changes
-   surface as `... is unavailable` or `CLOSURE-WORKTREE-INDEX-DRIFT`, which look
-   like tool defects but mean "stage first". Stage before reading their result.
-4. The commit-time `pre-commit` hook scans only changed files, so it cannot
-   substitute for `pre-commit run --all-files`. WERG-002 and WERG-003 recorded
-   the all-files lane as passed while `detect-secrets` was failing on three
-   Kubernetes RBAC prose lines. Run the all-files lane and read its exit code
-   before writing an all-files evidence sentence.
-
-#### Evidence
-
-- Main baseline at design start: `df8fe30dbbbd46611699f06692611041dbb35061` with a clean worktree and 18 local commits ahead of `origin/main`.
-- Isolated branch/worktree: `codex/2026-08-09-wer-gap-refresh` at `.worktrees/2026-08-09-wer-gap-refresh`.
-- Read-only gap audit found broad requested coverage already present and narrowed candidate external-source gaps to document-family semantics, explicit Verification/Validation terminology, and exact Kubernetes security deltas.
-- Routing audit confirmed `docs/superpowers/**` is prohibited and Stage 03 Spec plus Stage 04 Plan/Task is the canonical execution route.
-- Design-contract RED/GREEN: strict profile/link validation rejected grouped criteria and Spec-local pseudo-PRD rows; the corrected standalone `N/A` traceability form passes with ten one-to-one `VAL-WERG-*` rows.
-- Independent draft-design review is Approved with no Critical or Important finding.
-- Pre-final exact three-path affected and staged lanes, plain pre-commit, the direct repository quality gate, and all-files pre-commit passed. This evidence-only progress update invalidates those results as completion evidence; the primary agent must rerun the canonical final lanes after restaging and report the post-update results in the commit handoff.
-- The approved Spec is mapped to WERG-000–005 in an active reciprocal Plan and Task after the human selected subagent-driven execution.
-- Independent Plan review is Approved with no remaining Critical or Important finding after fix rounds for approval-state wording, complete 13-file admission review, reproducible temporary probe contracts, draft reciprocal exclusion, and post-lane scratch cleanup.
-- WERG-000 activation changes exactly Spec 055, ADR-0022, the Spec index, WERG Plan, Plan index, WERG Task, Task index, `docs/99.templates/support/document-profiles.json`, and this durable progress owner.
-- Focused activation rerun records registry self-test PASS (132 cases, 64 profiles, 30 templates), registry strict PASS (505 paths; zero uncovered or ambiguous), Markdown profiles strict PASS (zero violations), strict links PASS, and diff-check PASS.
-- The initial `STANDALONE-EXECUTION-ADR` and `STANDALONE-EXECUTION-APPROVAL` diagnostics are resolved by the exact Spec body approval statements, ADR-0022 reciprocal traceability row, and rendered Plan-to-Spec criterion link. The earlier production RIA diagnostic was the expected pre-staging exact-index authority boundary; RIA remains part of the exact staged gate.
-- Independent WERG-000 specification/content and quality reviews are Approved with no remaining Critical or Important finding. They confirmed the exact nine-path activation, reciprocal authority, sorted standalone relation, unchanged `programLineage`, and unchanged research pack.
-- The exact nine-path index passed RIA self-test and production validation, affected and staged lanes, the direct repository aggregate, plain pre-commit, all-files pre-commit, formatter review, and both worktree/cached diff checks. No hook changed a tracked file; the workflow-owned NUL path input was removed after the lanes.
-- No external source browsing, research-pack content edit, hosted/provider/live action, secret access, staging, or implementation commit has occurred in this activation step.
-- WERG-001 checker self-test passes 23 fixture-based cases at `/tmp/werg-gap-refresh-check.py` with SHA-256 `19cfee103a914a85bd4c0d8e81ca6cdea5a18ee115572f2be8d2faec4f689186`; baseline mode reproduces the missing Verification/Validation owner and five under-sourced document-family source classes before the complete matrix is written.
-- The quality-review RED proved that exact state/admitted membership, old-row mutation, and several path-boundary negatives were not enforced. The corrected checker pins all 33 topic states and eight admitted topics, fail-closes derived owner paths and symlinks, and exercises real old-row, outside-root, symlink-root, symlink-owner, field, ID, date, anchor, and residue fixtures. The content review approved all classifications after its transient missing-path self-test error and one malformed table delimiter were corrected.
-- Final WERG-001 content and quality re-reviews are Approved with no remaining Critical or Important finding. The admitted research boundary is exactly PRD, ARD, Policy, Release, Runbook, Verification/Validation, and the shared narrow Kubernetes/Security deltas; every other requested topic is a duplicate stop or deeper-evidence exclusion.
-- The complete admission probe covers exactly 13 pack files, 32 existing request rows plus one Verification/Validation topic, 52 source rows, and 51 claim rows. The in-review matrix authorizes eight topic rows and excludes all authenticated, provider-runtime, hosted, remote, administrative, credential-bearing, connected-resource, and live evidence.
-- WERG-002 baseline mode reproduced exactly six external-basis gaps. Final evidence uses the truthful 2026-08-10 date contract and adds only `SRC-WERPC-053`–`059`, `CLM-WERPC-007-01`–`08`, and `REQ-WERPC-033` across the admitted report owners.
-- The task-local checker now passes 28 fixture cases at SHA-256 `12580e30cd70872c112b1f7279f556de3868804284be8faa67652c7707e93363`. Its final 33-row admission, source/claim evidence, current-owner promotion, and nested Markdown-link integration checks all pass.
-- Final WERG-002 content and quality re-reviews are Approved with zero remaining Critical or Important findings. They preserve Spec 052 DOC-G10 as approved intent with queued/not-executed WORK-013, reject unsupported break-glass attribution, and keep static QA evidence distinct from intended-use or live validation.
-- The exact WERG-002 index contains eight paths: Spec 055, its Plan and Task, durable progress, pack README, SDLC report, QA report, and source/claim ledger. RIA self/production, affected/staged lanes, the direct aggregate, plain/all-files pre-commit, formatter review, and both diff checks pass without tracked mutation.
-- WERG-003 uses six source rows `SRC-WERPC-060`–`065` and six claim rows `CLM-WERPC-008-01`–`06`, all checked 2026-08-10 with exact selectors, uncertainty, and refresh triggers. The task-local Kubernetes and integration checks pass.
-- Final WERG-003 content and security reviews are Approved with zero remaining Critical or Important findings. The single security wording correction removes an unsupported implication about token scope while preserving the automatic-mount and effective-permission gap.
-- The exact six-path WERG-003 index contains the WERG Plan, Task, durable progress, pack README, Kubernetes/Security report, and source/claim ledger. RIA self/production, affected/staged lanes, direct aggregate, plain/all-files pre-commit, formatter review, and both diff checks pass without tracked mutation.
-- WERG-004 integration parses exactly 13 pack files, 33 request rows, 65 source IDs, and 65 claim IDs with zero record errors. Old-row stability, 2026-08-10 date, exact five-owner path, link, and residue checks pass; independent integration review is Approved and logical commit `12798c47` is complete.
-- Independent WERG-004 integration review is Approved with zero Critical or Important findings. It confirms the unchanged Snapshot Contract and Report Index, exact counts and five-owner scope, frozen-row/date/link closure, and truthful task-owned residue statement.
-- The exact five-path WERG-004 index contains the WERG Plan, Task, durable progress, pack README, and source/claim ledger. RIA self/production, affected/staged lanes, direct aggregate, plain/all-files pre-commit, formatter review, and both diff checks pass without tracked mutation.
-- WERG-003's exact planned `kubernetes` command returned `PASS kubernetes` on the pre-edit baseline because it checks admission markers and the existing NetworkPolicy boundary rather than absence of new research rows. The companion content probe for `SRC-WERPC-060`, `CLM-WERPC-008-01`, and the dated subsection returned exit 1 before integration.
-- WERG-003 adds only `SRC-WERPC-060`–`065`, `CLM-WERPC-008-01`–`06`, a dated Kubernetes/Security subsection, and refreshed `REQ-WERPC-008`/`REQ-WERPC-025` source/status cells, all with the truthful 2026-08-10 check date and explicit selector, uncertainty, and refresh boundaries.
-- WERG-003 inspected only tracked object/field selectors for kube-state-metrics, Adminer, root/ApplicationSet Git revisions, Helm chart identities, bootstrap pinning, and image identities. Effective RBAC, metric consumers, image compatibility, admission, reconciliation, artifacts, trust, hosted, registry, remote, and live evidence remains `DEFER`.
+- The clean pre-change baseline had 490 strict-transition registry paths. The
+  authored package adds ADR-0027, so the post-change strict result is 491 paths
+  with zero uncovered or ambiguous routes; self-test remains 132 cases, 65
+  profiles, and 30 templates. Strict Markdown and link/owner checks pass.
+- The migration check remained exact at `sources=132`, `moves=82`, and
+  `archives=50`, pinned to source commit
+  `713dff1fc3de58a2d1682970a7f24faa39c14263`.
+- Git blob identities remained
+  `d82466f99b093dc39092a3f36d1c55452a45a7ed` for the manifest,
+  `2c354aebf8578a9079d511f0f5a7783e7b0b8779` for the frozen Plan, and
+  `a066fc3460de0072a5a72c2822086ac1b6135c1c` for the frozen Task.
+- The tracked script census remained exact at 50: 40 Python, eight shell, one
+  JSON, and one README. Stage 98, the manifest/tool, registry/templates, and
+  frozen Plan/Task had zero diff.
+- RTK 0.34.3 was available on PATH, but `rtk gain` could not initialize its
+  tracking database. Repository policy therefore required direct commands;
+  no private runtime database or credential file was inspected.
+- Canonical targeted, affected, staged, aggregate, formatter-review, rerun, and
+  diff evidence is recorded in the ignored `WDTC-AMEND-001` report. Remote CI,
+  provider-runtime, credential-bearing, and live evidence remain `DEFER`; no
+  such action was performed.
+- The initial amendment is historical commit `1452dbfd`; its controller-owned
+  all-files fixed point exited 0 with every applicable hook passing and no
+  mutation. The first correction is historical commit `574140ab`; its
+  controller-owned final all-files fixed point likewise exited 0 with all
+  applicable hooks passing and no mutation. These results remain distinct
+  from implementer evidence.
+- First-correction RED found eight stale design/evidence markers, then one
+  reciprocal-link modeling error. GREEN retained ARD-0011's mandatory
+  conversion in decision prose/Spec while limiting the ADR body-contract table
+  to reciprocal ADR-to-Spec sources. Focused registry/Markdown/links,
+  immutable boundary/hash checks, migration `132/82/50`, exact-five affected
+  and staged runners, plain exact-index pre-commit, and aggregate validation
+  passed with zero final findings before the first-correction carrier was
+  created.
+- The commit that actually carries a correction is the authority for that
+  correction. This ledger does not forecast a future or self-referential
+  carrier hash. The Round 2 implementer left all-files `DEFER`; the controller
+  subsequently ran the final `pre-commit run --all-files` fixed point, which
+  exited 0 with every applicable hook passing and no mutation. Post-run scope
+  remained exactly the five owned tracked files staged with zero unstaged
+  paths. This records controller evidence without assigning a future carrier
+  identity; the actual carrier commit is Git history.
+- Round 2 stale-marker and worktree diff checks passed. Focused registry
+  self-test `132/65/30`, strict transition registry `491/0/0`, strict Markdown,
+  and strict links/owners passed with zero findings. Migration remained
+  `132/82/50`; the manifest and frozen Plan/Task retained their pinned blobs;
+  Stage 98, registry/templates, manifest/tool, and frozen files retained zero
+  diff; and the PRD-008 projection remained active Spec 052 / decision 0023.
+  Final affected/staged/index/aggregate and exact-scope evidence belongs to the
+  ignored Round 2 report rather than a forecast in this tracked ledger.
+- Final review found one remaining Critical: the current authored
+  `sdlc/api-spec` profile/template had no explicit terminal disposition.
+  Resolution assigns retirement to WORK-105, preserves native
+  OpenAPI/GraphQL/Protobuf evidence, records zero tracked authored
+  `docs/03.specs/*/api-spec.md` consumers, requires a terminal negative
+  fixture, and forbids an inferred `API-SPEC` tombstone type. This is a design
+  correction only; the registry and templates remain unchanged until
+  WORK-105.
+- Final-fix focused GREEN: registry self-test `132/65/30`, strict transition
+  registry `491/0/0`, strict Markdown, and strict links/owners all passed with
+  zero findings. The tracked Stage 03 authored API Spec census remained zero,
+  and Stage 98, registry/templates, manifest/tool, and frozen Plan/Task retained
+  zero diff. Exact affected/staged/index/aggregate evidence belongs to the
+  ignored report; implementer all-files remains `DEFER`.
+- The controller subsequently ran the final Critical-fix
+  `pre-commit run --all-files` fixed point. It exited 0 with every applicable
+  hook passing and no mutation. Post-run scope remained exactly the five owned
+  tracked files staged with zero unstaged paths. This is controller evidence;
+  no future or self-referential carrier hash is forecast, and the actual
+  carrier identity belongs to Git history.
+- Final Important review found that zero tracked authored API Spec instances
+  had been conflated with zero consumers. The correction makes the instance
+  census and complete consumer disposition independent WORK-105 gates,
+  enumerates all known live consumer classes, converts positive coverage to
+  retired-route negatives, and permits only classified `retain-history` /
+  `retain-native` residue. No current consumer is physically edited in this
+  amendment.
+- Final Important focused GREEN: registry self-test `132/65/30`, strict
+  transition registry `491/0/0`, strict Markdown, and strict links/owners all
+  passed with zero findings. The authored instance census remained zero, all
+  three governing documents contain the full-grep and positive-fixture gates,
+  and Stage 98, registry/templates, manifest/tool, and frozen Plan/Task retained
+  zero diff. Final lane evidence remains in the ignored report; implementer
+  all-files is controller-owned `DEFER`.
+- The controller then ran the final Important-fix
+  `TMPDIR=/tmp pre-commit run --all-files` fixed point. It exited 0 with every
+  applicable hook passing and no mutation. Post-run scope remained exactly the
+  five owned tracked files staged with zero unstaged paths. This controller
+  PASS is distinct from the implementer's all-files `DEFER`.
+- Architecture-review RED found one remaining Critical: earlier text assigned
+  WORK-105 only ARD-0011, leaving seven other current active/accepted
+  `sdlc/ard` records without terminal dispositions. Read-only census at
+  `833995d1` proved the exact eight IDs, source slugs, and states recorded
+  above. The correction closes the one-to-one AD mapping, complete ARD
+  classifier, zero-unconverted/zero-live-or-unclassified acceptance gates,
+  separate AD-0011 authority gate, and WORK-105-before-WORK-108 ordering. No
+  ARD or consumer is physically moved in this design amendment.
+- Architecture Critical focused GREEN: the read-only frontmatter/path census
+  returned exactly the eight mapped records and statuses; registry self-test
+  passed `132/65/30`; strict transition registry passed `491/0/0`; strict
+  Markdown and links/owners passed with zero findings; migration remained
+  `132/82/50`; protected Stage 04/98, registry/templates, manifest/tool, and
+  frozen surfaces retained zero diff.
+- Architecture Critical implementer fixed point: exact-five affected and
+  staged lanes both exited 0 and each repository-quality invocation emitted
+  one success marker; plain exact-index `pre-commit run` exited 0 with every
+  applicable hook passing and no mutation; direct aggregate exited 0 with the
+  terminal repository-quality PASS marker. Final strict/scope evidence is in
+  the ignored report. Implementer all-files remains controller-owned `DEFER`.
+- The controller then ran the Architecture Critical-fix
+  `TMPDIR=/tmp pre-commit run --all-files` fixed point. It exited 0 with every
+  applicable hook passing and no mutation. Post-run scope remained exactly the
+  five owned tracked files staged with zero unstaged paths. This controller
+  PASS is distinct from the implementer's all-files `DEFER`.
 
 #### Handoff
 
-None active. WERG-005 is completed, with closure commit `22002d91`, local-main
-merge `79e44638`, and terminal trace reconciliation `6b953f74`. There is no
-active WERG owner or handoff. Hosted, provider-runtime, remote, and live
-evidence remains `DEFER`; repository-static PASS results do not promote it.
+WORK-104 is the next owner and remains incomplete until the 82 moves and
+destination Plan/Task rebaseline occur. WORK-105 then owns lifecycle
+acceptance, authored API Spec retirement/native evidence preservation, and the
+atomic registry projection change; later work units own the archive cutover
+and script deletions. Rollback is a reviewed revert of the
+applicable `WDTC-AMEND-001` carrier commit before dependent implementation.
+Residual risk is later drift from the exact 93-row, global-ID, and
+`50 -> 49 -> 47` contracts; VAL-WDTC-013 through VAL-WDTC-016 fail those
+terminal states closed.
 
-### 2026-08-09 - WGIA-014 workspace governance audit closure
-
-#### Metadata
-
-- **Date**: 2026-08-09
-- **Layer**: documentation, governance, validation
-- **Status**: done
-- **Tags**: #governance #audit #closure #tdd #sdlc
-- **Owner**: primary agent
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
-- **Provenance**: WGIA-014 repository-static terminal reconciliation after WGIA-013 commit `4e4adcf3a120d1cd25006c7116f3f1cbbe29edae`
-- **Sensitivity**: non-sensitive
-- **Retention / Expiry**: Retain as Spec 054 terminal closure evidence; refresh only if the Current audit identity, protected retired baseline, or canonical owner state changes.
-- **Next Owner**: primary agent for the approved local fast-forward merge and feature worktree/branch cleanup.
-
-#### Progress
-
-Reconciled WGIA-012 as done at `dcc0a0e9` and WGIA-013 as a committed
-no-deletion result at `4e4adcf3`. WGIA-014 closes the reciprocal Spec, Plan,
-Task, three collection index rows, and typed standalone relation as `done`
-after whole-branch reviews approved the final repository-static tree. The
-ten-file Current audit pack and all nine member bodies remain unchanged.
-
-#### Memory
-
-The terminal active-corpus blocker was test expectation drift, not production
-eligibility drift. Four standalone-lineage negative cases had raised the named
-self-test set from 53 to 57; changing only the expected count preserves the
-58-case CLI result and the production 110/12/98/2 eligibility projection.
-Evidence-gated cleanup remains fail-closed: 15 candidates still have live
-consumers, so `Delete=0` is a valid reviewed terminal result.
-
-#### Evidence
-
-- RED: the focused test failed with `AssertionError: 57 != 53`.
-- GREEN: focused and full eligibility unit tests pass; CLI self-test reports 58
-  cases and production reports 110 candidates, 12 eligible, 98 deferred, and
-  two controls.
-- Terminal shape: ten pack files, 30 request rows, one sole Current audit, one
-  protected retired audit, 15 `Integrate` rows, and no Delete row.
-- Protected boundaries: no current or retired pack member body, Stage 98, RIA
-  baseline/projection, Spec 052 WORK-001, provider, hosted, remote, or live
-  state changed. Deeper evidence remains `DEFER`.
-- Fresh implementation reviews: Python/quality and specification/content are
-  Approved with no Critical or Important finding on the exact four-file
-  in-review diff.
-- Whole-branch security RED: seven exact repo-script auto-allow commands were
-  still mutable command trampolines even without wildcards. GREEN removes all
-  repo-script auto-allows, retains seven fixed read-only Git metadata commands,
-  and adds a focused no-trampoline regression. Provider tests pass 32/32 plus
-  self/production/evidence, Ruff, compile, and diff checks; security and Python
-  re-review are Approved with no remaining Critical or Important finding.
-- Terminal closure-authority RED/GREEN: the first exact `done` full gate failed
-  `CLOSURE-AUTHORITY-SCOPE` on Spec 054. The regression first expected the exact
-  054 path and failed against the seven-path production set; GREEN adds only
-  that path to the later done-Spec authority set. The focused test, 49-test
-  closure class, 25-case self-test, and production final frontier pass.
-- Exact terminal aggregate: strict registry 502/0/0, Markdown violations 0,
-  strict links, settled RIA, provider 32/32, eligibility 7/7 and 110/12/98/2,
-  affected 858/22/22/4, complete repository quality gate, and full harness all
-  pass on the staged `done` tree.
-- Plain staged and all-files pre-commit pass. Fresh whole-branch correctness,
-  security, and coverage reviews plus final Python/quality and lifecycle
-  consistency re-reviews are Approved with no remaining Critical or Important
-  finding; independent replay passes 126 focused tests, affected and staged
-  lanes for 14 paths, the complete gate, and the harness.
-- Completion boundary: the primary agent records exact-tree terminal aggregate,
-  harness, all-files, and fresh whole-branch review results before the closure
-  commit; this entry does not preclaim a later commit hash.
-
-#### Handoff
-
-Use the exact final staged terminal-gate evidence to create
-`docs: close workspace governance audit`, then proceed to the already approved
-local fast-forward merge and clean only this feature branch/worktree. Do not
-push or modify unrelated worktrees.
-
-### 2026-08-09 - WGIA-013 no-deletion revalidation
-
-#### Metadata
-
-- **Date**: 2026-08-09
-- **Layer**: documentation, governance, validation
-- **Status**: in-review
-- **Tags**: #governance #audit #cleanup #fail-closed
-- **Owner**: assigned worker
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
-- **Provenance**: WGIA-013 implementation of VAL-WGA-010 at Current HEAD `dcc0a0e9fbb9587c211fd457414f9dfe2e6924de`
-- **Sensitivity**: non-sensitive
-- **Retention / Expiry**: Retain through Spec 054 closure; refresh when a candidate, consumer, replacement, source commit, disposition, or Spec 052 WORK-001 state changes.
-- **Next Owner**: primary agent for fresh review and the non-empty evidence commit; then WGIA-014.
-
-#### Progress
-
-Re-ran the exact deletion entry gate without executing Spec 052 `WORK-001`.
-The disposition ledger has 15 unique tracked rows, all `Integrate`, and
-`Delete=0`. Its exact candidate set equals the current WORK-001 glob expansion;
-every row retains a surviving owner and at least one tracked consumer outside
-the candidate set. No deletion simulation, removal, post-delete claim, index
-change, deletion commit, or Stage 98 action occurred.
-
-#### Memory
-
-A no-deletion work package should stop at its destructive entry gate. Empty
-post-delete simulations and empty deletion commits do not add evidence when no
-row is authorized for deletion; the durable result is the exact negative proof
-and the unchanged execution owner.
-
-#### Evidence
-
-- Structural proof: 15 unique 12-column rows, `Integrate=15`, `Delete=0`, 15
-  tracked candidates, 15 live-consumer rows, and 15 surviving-owner rows.
-- Consumer/recovery proof: 114 selectors route to tracked paths, every row has
-  an external live consumer, and all 15 source commits recover candidate bytes.
-- Owner state: Spec 052 Task `WORK-001` is `Queued` and `Not executed`; all five
-  Plan execution steps remain unchecked.
-- Focused results: strict registry passes 502 paths with zero uncovered or
-  ambiguous, Markdown profiles report zero violations, strict links/owners
-  returns `PASS CROSS-DOCUMENT`, worktree/cached diff checks pass, and Stage 98
-  plus the Current pack have zero diff. Production RIA reports only the
-  expected dirty mutable-progress comparison limitation and no Current-pack
-  member or overlay diagnostic. Hosted, provider-runtime, remote, credential-
-  bearing, and live evidence remains `DEFER`.
-
-#### Handoff
-
-WGIA-013 is `In Review`. Fresh independent review is Approved with no Critical
-or Important finding. The primary agent must record the non-empty evidence
-commit before advancing to WGIA-014. Existing WORK-001 remains the only owner
-for future consumer migration and any later independently proven deletion.
-
-### 2026-08-09 - WGIA-012 atomic Current audit cutover
-
-#### Metadata
-
-- **Date**: 2026-08-09
-- **Layer**: documentation, governance, validation
-- **Status**: done
-- **Tags**: #governance #audit #ria #current-cutover #tdd
-- **Owner**: assigned worker
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
-- **Provenance**: WGIA-012 implementation of VAL-WGA-011 from source tree `e09a0b976a555c5200cdab2aeb9abf6759b77588`
-- **Sensitivity**: non-sensitive
-- **Retention / Expiry**: Retain through Spec 054 closure; refresh on Current pack, retired baseline, RIA settlement, report membership, or mutable navigation change.
-- **Next Owner**: WGIA-013 for current disposition revalidation; then WGIA-014.
-
-#### Progress
-
-Changed the audit collection, document-profile registry, RIA contract/schema/
-producer, current-pack navigation, and exact fixtures as one proposed unit. The
-2026-08-09 pack is the sole Current identity with nine draft members. The
-2026-07-11 pack is no longer Current and has one closed retired baseline whose
-source registry remains pinned to `15bba3d436ee2818f29d6f6880c7d5c4901aa0fe`.
-Its unchanged final repository bytes are separately protected at the cutover
-source `e09a0b976a555c5200cdab2aeb9abf6759b77588` through the typed audit
-settlement. Current navigation uses exact counted literal replacements; there
-is no whole-body projection.
-
-#### Memory
-
-A newly Current pack can be source-bounded before its registry row exists by
-using a non-self-referential source commit plus a closed settlement. A retired
-pack whose original source later gained reviewed overlays needs two explicit
-proof points: the original Current registry commit and the final pre-cutover
-byte commit. Conflating them either rejects legitimate historical overlays or
-permits future drift.
-
-#### Evidence
-
-- RED: the production contract still selected the old ID/hash; later isolated
-  probes exposed an incomplete README literal projection and Report Index
-  order drift.
-- GREEN: five focused tests and the final 94 full RIA tests pass. Negative coverage
-  rejects malformed/duplicate/overlapping retired records, bad commits or
-  members, noncanonical settlements/transitions, source registry drift, and
-  final-byte drift.
-- Fresh exact-index clone PASS: RIA self/settled production, registry self and
-  strict 502-path production, profiles zero, links self/strict, affected
-  858-path 22/22 selection, archive, LLM-WIKI check, and cached diff. Stage 98
-  has no diff; the contract has one Current, one retired baseline, no open
-  transition, one settlement, and no `completeBody` projection.
-- Fresh-review fix round 1 RED reproduced three Important findings: the audit
-  collection still named the retired pack as Current comparison owner; real
-  `e09a0b9...` loading stopped at `RIA-CONTRACT` before the original explicit
-  FSM result; and the missing-final-blob link fixture had no typed settlement.
-  GREEN routes that one mutable collection literal to the WGIA pack, keeps
-  proposed schema-v2 loading strict while historical commit loading uses its
-  anchored schema/projections, and reads retired registry membership at
-  `15bba3d...` but protected final bytes at settlement `toCommit=e09a0b9...`.
-  Seven focused RIA tests, link self-test, strict 502-path registry, Markdown
-  profiles with zero violations, strict links, and `git diff --check` pass.
-- Fresh-review fix round 2 RED showed the link fixture used one OID for retired
-  registry authority and protected final bytes; its missing-final mutation
-  stopped before any Git read. GREEN creates distinct fixture commits C1 and
-  C2, asserts the valid read sequence `C1 registry -> C2 retired body`, and
-  keeps Current baseline and settlement `toCommit` aligned on an unreadable OID
-  so the missing-final case attempts that exact body read and fails closed.
-  Link self/strict, three focused RIA tests, pycompile, Ruff, and diff-check pass.
-- Primary final evidence began with an exact 15-file index and expanded to 17
-  only after pre-commit formatter/QA review. The two accepted files are
-  `.secrets.baseline` and
-  `docs/04.execution/plans/2026-08-08-workspace-engineering-research-pack-consolidation.md`.
-  The first plain pre-commit failed on detect-secrets baseline mutation and
-  WGIA Plan MD001; the WGIA `Global Constraints` heading became a
-  profile-compatible bold label, and baseline formatter security review was
-  Approved. The first all-files lane then failed on eight reviewed
-  false-positive metadata/prose candidates and pre-existing WERPC Plan MD001.
-  The regenerated baseline has exactly 18 entries across seven paths, every
-  `is_secret` is false, no detector was weakened, security review is Approved,
-  and the WERPC `Global Constraints` heading is now bold.
-- Final primary validation PASS: affected paths=17; staged paths=17; plain
-  pre-commit; RIA 94/94; production RIA settled; LLM-WIKI; archive; direct
-  repository gate; full harness; final all-files; formatter-review; and rerun.
-  Primary final diff-checks remain pending. Hosted, remote, and live evidence
-  remains `DEFER`.
-- Logical commit: `dcc0a0e9fbb9587c211fd457414f9dfe2e6924de`
-  (`docs: cut over current governance audit`).
-
-#### Handoff
-
-WGIA-012 is `Done`. Fresh specification/content and Python/quality reviews,
-including clean fix rounds 1-2, are Approved with no remaining
-Critical/Important, and the atomic logical commit is recorded above.
-Repository-static evidence does not claim hosted, provider, remote, credential,
-secret, Kubernetes, GitOps, or live behavior.
-
-### 2026-08-09 - WGIA-011 script inventory and Claude approval remediation
-
-#### Metadata
-
-- **Date**: 2026-08-09
-- **Layer**: governance
-- **Status**: done
-- **Tags**: #governance #harness #security #claude #tdd
-- **Owner**: assigned worker
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
-- **Provenance**: WGIA-011 implementation of admitted `WGA-RMP-HAR-001` and `WGA-RMP-SEC-CLAUDE-001`
-- **Sensitivity**: non-sensitive
-- **Retention / Expiry**: Retain through Spec 054 closure; refresh on script inventory, Claude permission syntax, shared approval boundary, provider validator, review, or Current transition change.
-- **Next Owner**: WGIA-012 for atomic Current cutover and WGIA-014 for terminal QA.
-
-#### Progress
-
-Corrected the canonical script human index to name the two omitted import-only
-helpers and record the exact 47 tracked scripts = 41 CLI entrypoints + six
-helpers. Extended the existing aggregate to derive and fail closed on that
-inventory without changing any script caller or semantics. Narrowed Claude's
-tracked allow set to exact repository-static checks and metadata-only Git
-operations with literal roots and no wildcard suffix, added explicit secret-read and remote-mutation stops, and extended
-the focused provider validator/test boundary to own the complete exact 62-entry
-deny tuple. The aggregate retains hook-wiring checks but no Claude permission
-semantics. Shared Stage 00 policy remains
-the approval authority; tracked provider configuration remains static evidence.
-
-#### Memory
-
-Provider allow syntax is not shared approval authority. A closed tracked allow
-set can remove a repository-static conflict, but native loading, matcher
-precedence, prompting, and effective enforcement remain provider-runtime
-`DEFER`. Script inventory completeness is a human-index/aggregate projection;
-an import-only helper row does not promote that helper into a CLI or duplicate
-semantic owner.
-
-#### Evidence
-
-- RED: 47/41/6 script classification with exactly
-  `archive_cutover_manifest.py` and
-  `reference_information_architecture.py` missing from the README; Claude had
-  seven broad allow patterns and lacked the required secret-read/ordinary
-  remote-mutation stops. The initial focused contract test failed on the
-  missing `CLAUDE_ALLOWED_PERMISSIONS` owner.
-- GREEN: zero missing script names and exact-AST negative probes; provider
-  regression module 32/32 PASS, including wildcard/alternate-root rejects and
-  removal of every one of the 62 exact denies;
-  provider-config self-test/production PASS; harness contract reports 12/4/48;
-  harness semantics reports 12 roles/48 adapters/eight categories; roster
-  currentness, Python compile, shell syntax, and the extracted aggregate
-  embedded contract PASS. Strict registry passes 502 paths with zero
-  uncovered/ambiguous, Markdown profiles report zero violations, strict links
-  pass, diff check passes, and both Stage 98 boundaries are unchanged.
-- No secret payload, private provider state, credential, hosted workflow,
-  remote state, live cluster, Vault/ESO runtime, Stage 98, Current/RIA, agent
-  role/model, or workflow topology was read or changed.
-
-#### Handoff
-
-WGIA-011 is complete. Fresh specification/content, Python/quality, and security
-reviews are `Approved`, and the exact staged complete repository quality gate
-passes. Preserve two independent rollback/commit units: script inventory
-(`fix: complete script inventory`) and Claude tracked permissions
-(`fix: narrow Claude approval boundaries`).
-
-### 2026-08-09 - WGIA-010 governance and knowledge remediation
+### 2026-08-09 - WDTC-103 unmatched execution history archive
 
 #### Metadata
 
 - **Date**: 2026-08-09
 - **Layer**: docs
 - **Status**: done
-- **Tags**: #governance #llm-wiki #documentation #tdd
-- **Owner**: assigned worker
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
-- **Provenance**: WGIA-010 implementation of admitted WGA-RMP-GOV-001 and WGA-RMP-KNW-001 plus DOC-001/002 integration/no-delta evidence
-- **Sensitivity**: non-sensitive
-- **Retention / Expiry**: Retain through Spec 054 closure; refresh on root routing, any RIA-declared LLM-WIKI input, generator, WORK-013, review, or Current transition change.
-- **Next Owner**: WORK-013 for approved documentation-gap execution; WGIA-014 for terminal QA.
-
-#### Progress
-
-Corrected root human routing so Stage 00 is the canonical agent-policy owner,
-`AGENTS.md` remains a thin gateway, and all four tracked adapter surfaces are
-classified separately without a runtime claim. Reviewed the exact six
-RIA-declared LLM-WIKI inputs, refreshed source/review metadata to 2026-08-09,
-and regenerated `wiki-index.md` only through its producer. Recorded no-duplicate
-integration for DOC-G1/DOC-G5 findings while leaving queued WORK-013 and every
-Stage 99/Spec/Guide owner unchanged.
-
-#### Evidence
-
-- RED exited 1 for missing Stage 00 routing, promoted gateway, missing
-  `.gemini/`, and stale README/generator freshness metadata; the old generated
-  byte check still passed.
-- GREEN proves `root_owner=stage00`, `thin_gateway=true`, `surfaces=4/4`,
-  `llm_inputs=6/6`, and 2026-08-09 source/review dates. Producer generation and
-  `--check` pass.
-- PASS: three RIA generator tests, governance closure self/production, RIA
-  self-test, strict registry/profile/links, archive, DOC/WORK-013 no-delta, RIA
-  owner-family no-delta, diff, and both Stage 98 boundaries. Normal RIA
-  production rejects dirty progress and changed generator paths as unavailable
-  for comparison; no RIA owner changed, and staged/settled evidence remains for
-  terminal validation. The exact staged complete repository quality gate later
-  passed; no provider, remote, secret, or live action is claimed.
-- Content-review fix: one Important stale-present-tense contradiction in the
-  LLM-WIKI audit report is resolved. The 2026-05-10 state is explicitly the
-  observation/pre-remediation RED, the current 2026-08-09 state is GREEN, and
-  `WGA-RMP-KNW-001` is admitted/implemented rather than provisional.
-
-#### Handoff
-
-WGIA-010 is complete: fresh specification/content and quality reviews are
-Approved after the Important fix, and the exact staged complete repository
-quality gate passes. Rollback is bounded to the root README unit or the LLM-WIKI
-README/generator/generated-output unit; DOC rows have no canonical delta.
-
-### 2026-08-09 - WGIA-009 disposition and integrated roadmap
-
-#### Metadata
-
-- **Date**: 2026-08-09
-- **Layer**: docs
-- **Status**: done
-- **Tags**: #governance #audit #disposition #roadmap #cleanup
-- **Owner**: assigned worker
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
-- **Provenance**: WGIA-009 repository-static integration at observation commit `50628b84165479b03efc0a25be075a49c91a9aef`
+- **Tags**: #sdlc #archive #document-governance #recovery
+- **Owner**: platform
+- **Canonical Owner**: `docs/03.specs/052-document-taxonomy-consolidation/tasks.md`
+- **Provenance**: WORK-103 archive phase from the reviewed manifest pinned to `713dff1fc3de58a2d1682970a7f24faa39c14263`.
 - **Sensitivity**: non-sensitive-redacted
-- **Retention / Expiry**: Retain through Spec 054 closure; refresh on candidate, consumer, owner, admission, blocker, or Current transition change.
-- **Next Owner**: WGIA-010/011 for admitted rows, WORK-013 for integrated documentation rows, WORK-001 for the integrated active-corpus one-shot set, WGIA-012 for Current cutover, WGIA-013 for the then-current reviewed WGIA disposition, WGIA-014 for terminal QA.
+- **Retention / Expiry**: Retain through WDTC-110 closure.
+- **Next Owner**: WDTC-104 — rewrite the two frozen transition edges at their Stage 03 destinations and co-locate the 41 retained work units.
 
 #### Progress
 
-Rejected seven exact legacy-name matches as active-owner noncandidates: six
-tracked at observation and the post-observation dated ledger. Classified the
-exact fifteen Spec 052 `WORK-001` one-shot paths as `Integrate` because live
-consumers remain; `Delete=0`. Deduplicated 12 reviewed inputs into seven bounded
-Correct/Integrate admissions and five explicit `DEFER` rows without changing
-an implementation owner.
+Activated ArchiveContract v2 with the closed namespaces `arwb-base=31`,
+`acer-additive=12`, `wdtc-execution=50`, and `progress-snapshot=0`. The reviewed
+archive phase generated 50 canonical ArchiveEnvelope records, updated the
+collection Archive Index, removed only the 50 manifest `archive-unique`
+sources, and left all 82 `move-current` sources byte-pinned for WDTC-104. The
+repository archive now contains 93 records and 711 historical rendered links.
 
 #### Memory
 
-A broad vocabulary hit is triage, not lifecycle evidence: the exact excluded-
-scope starting-HEAD probe reports 2,355 matching lines and the authored
-worktree reports 2,360 after five matched Task evidence lines; none is promoted
-without tracked-path, consumer, replacement/owner, provenance, and history
-proof. For a post-observation candidate, record its real full creation commit
-and explicit observation absence; never substitute the observation SHA.
+The first ordinary apply attempt failed closed at `MIGRATION-LOCK` before any
+write and left zero transaction residue. The controller-authorized retry used
+the same reviewed tool path and passed exactly with `phase=archive moves=82
+archives=50 sources=132`. The prior 43 ARWB/ACER envelopes remain byte- and
+membership-identical. Spec-052 Plan/Task remain pinned to Git blobs
+`2c354aebf8578a9079d511f0f5a7783e7b0b8779` and
+`a066fc3460de0072a5a72c2822086ac1b6135c1c`. Recovery is read-only by default,
+and output recovery is confined, non-overwriting, and mode `0600`.
+
+One frozen `move-current` Task contains two links to newly archived originals.
+During `routeState=transition`, the link validator admits only those exact two
+edges after proving manifest membership and the source Git-blob identity, and
+resolves navigation to `docs/98.archive/README.md#document-index`. WDTC-104
+must rewrite or remove both edges at the destination; terminal routing rejects
+any residue. No current consumer links directly to an individual archive
+record.
+
+The immutable ACER residue-closure ledger remains byte-pinned to its
+pre-WDTC-103 snapshot. While both registry and migration manifest are in
+`transition`, its validator subtracts only the exact 50 `archive-unique`
+sources after proving the pinned manifest, `wdtc-execution` namespace,
+canonical ArchiveEnvelope provenance, source absence, and archive presence.
+It also pins the single additive migration-result object transition and the
+five reviewed authority-consumer object transitions whose retired Stage 04
+links now resolve to the collection Archive Index; every other source and
+authority object remains byte-equal. The Reference Information Architecture
+overlay similarly pins exactly seven protected audit/index old-to-reviewed
+object transitions and proves their manifest-retired Stage 04 destinations
+were removed or routed to the collection Archive Index; every other protected
+overlay remains under its existing byte/projection guard. WDTC-108 owns final
+document/ledger reconciliation and removal of these temporary object
+projections. WDTC-109 owns terminal enforcement: terminal state must reject
+the manifest-derived residue subtraction and any remaining transition object
+projection.
 
 #### Evidence
 
-- Seven name-only paths have exact active-consumer evidence and an explicit
-  noncandidate decision. Fifteen complete disposition rows include full source
-  commit, observation state, class, exact consumers, surviving owner,
-  `Integrate` decision, evidence, historical route, focused/aggregate
-  post-delete gates, and reviewer.
-- One contiguous 12-row roadmap routes GOV/KNW to WGIA-010, HAR/CLAUDE to
-  WGIA-011, DOC1/DOC2 to existing WORK-013, DSP to existing WORK-001, and
-  preserves SCAN/KSM/NET/ADM/SC as `DEFER` with exact release conditions.
-- PASS: exact table-width and 7-noncandidate/15-candidate/15-full-hash/
-  12-roadmap structure (`Integrate=15`, `Delete=0`, admitted=7, `DEFER=5`),
-  legacy-cutover self/production,
-  active-corpus role self/production, migration self-test, RIA self-test,
-  archive unit/production, strict registry/profile/links, diff, and both Stage
-  98 boundaries. Initial unstaged migration/RIA probes were unavailable under
-  their dirty-state guards, with no payload inspected or archive edit. Exact
-  staging then made the complete repository quality gate PASS, including
-  active-corpus migration production and RIA self-test/production, resolving
-  `BLK-WGA-DSP-001`/`002`. The same staged state runs 150 active-corpus tests
-  with 149 PASS and one stale 53-versus-57 eligibility expectation; only
-  `BLK-WGA-DSP-003` remains open. No post-delete rehearsal is claimed.
-- Specification review fix round 1 corrected the Candidate Discovery table's
-  delimiter from four cells to the exact three-cell header width. The first
-  structural parser run exposed and corrected the same delimiter-only mismatch
-  under the 12-cell Candidate Disposition Ledger header (13 to 12). The parser
-  checks equal header/delimiter/data widths for every WGIA-009-changed table;
-- Fresh content/quality review then found incomplete live-consumer coverage,
-  invalid JSON pointers/test anchors, two prose-only self references, and one
-  stale two-versus-three blocker count. All fifteen cells now separate live
-  consumers from dated decision/history evidence; a deterministic checker
-  resolves 114 path/selectors with zero missing/invalid results. The blocker
-  count is consistent, both fix-round re-reviews are Approved, and the final
-  states are two resolved plus one open blocker.
-
-#### Handoff
-
-WGIA-009 is Done with bounded `Partial` findings. Content and quality fix-round
-reviews are Approved; two authoring-state blockers are resolved by exact staged
-aggregate evidence, and the one open eligibility-unit blocker is routed to the
-active-corpus/WORK-001/WGIA-014 owners. Downstream
-work may use only
-admitted rows; deferred rows require their named owner/design/credential/live
-evidence. No deletion, implementation, Current cutover, historical rewrite,
-Stage 98 change, or external action occurred.
-
-### 2026-08-09 - WGIA-008 security and approval-boundary audit
-
-#### Metadata
-
-- **Date**: 2026-08-09
-- **Layer**: docs
-- **Status**: done
-- **Tags**: #governance #audit #security #approval #gitops
-- **Owner**: assigned worker
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
-- **Provenance**: WGIA-008 repository-static audit at observation commit `50628b84165479b03efc0a25be075a49c91a9aef`
-- **Sensitivity**: non-sensitive-redacted
-- **Retention / Expiry**: Retain through Spec 054 closure; refresh after independent review or any accepted security-owner change.
-- **Next Owner**: WGIA-009 for provisional-candidate admission; WGIA-011 only for accepted remediation; WGIA-014 for whole-branch closure.
-
-#### Progress
-
-Applied the Kubernetes security audit dimensions to repository-static RBAC,
-NetworkPolicy, secret-reference, container-hardening, and supply-chain evidence.
-Approval/workflow, GitOps structure, and Vault/ESO reference handling align
-within that lane. The report records Claude permission `Conflict`; Gitleaks,
-network-isolation, and admission/Adminer `Gap`; KSM least privilege and
-supply-chain identity `Partial`; and all deeper enforcement `DEFER`.
-
-#### Memory
-
-Manifest presence and pre-merge validation do not prove cluster admission,
-CNI behavior, reconciled RBAC, or secret delivery. Local-home-lab KubeLinter
-exceptions must be assessed separately from production-like hardening. A
-redacted scanner candidate is neither a proven secret nor a safe false
-positive until the credential/security owner completes non-disclosing triage.
-
-#### Evidence
-
-- Full Plan-required control matrix and nine closed findings, each with exact
-  owner, threat, enforcement, bypass/exception, failure mode, approval, depth,
-  uncertainty, and blocker fields.
-- Static inventory: nine namespaces, six egress-oriented NetworkPolicies, zero
-  ingress/default-deny policy, four uncovered namespaces, no wildcard RBAC,
-  three raw pod templates, no `latest` image, no digest-pinned raw image, and no
-  tracked raw Secret kind.
-- KSM Secret metadata `list`/`watch`, Claude broad command patterns, Adminer
-  hardening omissions, mutable supply-chain references, and redacted Gitleaks
-  scope are routed to six provisional WGIA-009 candidates; no disposition row.
-- Focused Actions/CI, Vault/ESO, GitOps-change/structure, secret handling,
-  policy fallback, KubeLinter/manifest, and infrastructure static checks pass;
-  optional Conftest is `SKIP` and deeper lanes remain `DEFER`.
-- The final contract probe passes 9 findings/14 fields, the exact closed
-  verdict distribution, six candidates, and 42 unique observation evidence
-  paths with none missing. Strict registry passes 502 paths, profiles report
-  zero violations, strict links are valid, and diff/Stage 98 checks pass. An
-  initial unsupported `--strict` invocation exited 2 at parsing; corrected
-  `--mode strict` commands pass.
-
-#### Handoff
-
-WGIA-008 is complete. Fresh independent specification/content and security
-fix-round reviews are Approved with no Critical/Important finding. Six
-provisional security rows remain WGIA-009 inputs rather than implementation
-approval. No secret value, provider runtime, hosted/remote, cluster/live state,
-canonical security owner, Stage 98, Current, or RIA surface was accessed or
-changed.
-
-### 2026-08-09 - WGIA-007 AI-agent system audit
-
-#### Metadata
-
-- **Date**: 2026-08-09
-- **Layer**: docs
-- **Status**: done
-- **Tags**: #governance #audit #agents #orchestration #evaluation
-- **Owner**: assigned worker
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
-- **Provenance**: WGIA-007 repository-static audit at observation commit `50628b84165479b03efc0a25be075a49c91a9aef`
-- **Sensitivity**: non-sensitive-redacted
-- **Retention / Expiry**: Retain through Spec 054 closure; refresh after independent review or any accepted agent-system owner change.
-- **Next Owner**: WGIA-014 whole-branch closure; no WGIA-011 correction was accepted.
-
-#### Progress
-
-Derived the exact 12-role/four-surface/48-projection inventory and one complete
-matrix row per role, including machine-equal permission class and required
-evidence. Repository-static role/adaptor semantics and integrated
-supervisor delegation, isolation, checkpoint, escalation, and completion align.
-Model mapping is 21 `PASS`/27 `DEFER`; all 48 effective fitness/promotion/
-canary/runtime decisions and all executed evaluation/final admission decisions
-remain `DEFER`. No remediation or disposition candidate is warranted.
-
-#### Memory
-
-`admissionState: current` on a tracked adapter is inventory state, not runtime
-admission. Static corpus readiness and adjudicator readiness likewise cannot be
-promoted to executed evaluation, effective model fitness, native discovery, or
-delegated execution. Historical candidate records for `docs-researcher` and
-`quality-engineer` preserve rationale/rollback while all four projections are
-current and final admission remains `DEFER`.
-
-#### Evidence
-
-- Harness contract/semantics, roster currentness/admission, evaluations, model
-  fitness, and provider config/evidence/canary self-tests and production checks
-  pass.
-- Exact production state is 12 roles, four surfaces, 48 projections, 12 ready
-  corpora, 21 mapping-ready/27 mapping-deferred tuples, and 48 runtime-deferred
-  tuples; six focused modules pass 150 tests.
-- Four complete findings and one complete provider-runtime evidence limitation
-  are in the dated report; no roadmap or disposition-ledger row was added.
-- The first quality review's one Important matrix-completeness finding is fixed
-  by adding exact `permissionClass` and `requiredEvidence` values for all 12
-  roles. The observation-contract equality probe reports 12 expected/12 actual
-  roles and zero malformed, missing, unknown, permission, or evidence mismatch;
-  specification/content and fix-round quality reviews are Approved.
-- The complete repository quality gate passes against the staged WGIA-007
-  scope; no full-gate limitation remains for this work item.
-
-#### Handoff
-
-WGIA-007 is complete. Specification/content and fix-round quality reviews are
-Approved, the complete repository quality gate passes against the staged scope,
-and no correction or candidate was accepted. WGIA-014 owns final whole-branch
-review and commit integration. No provider/runtime/authenticated/hosted/remote/
-live action or canonical owner change belongs to this handoff.
-
-### 2026-08-09 - WGIA-006 LLM-WIKI and memory audit
-
-#### Metadata
-
-- **Date**: 2026-08-09
-- **Layer**: docs
-- **Status**: done
-- **Tags**: #governance #audit #llm-wiki #knowledge #memory
-- **Owner**: assigned worker
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
-- **Provenance**: WGIA-006 repository-static audit at observation commit `50628b84165479b03efc0a25be075a49c91a9aef`
-- **Sensitivity**: non-sensitive-redacted
-- **Retention / Expiry**: Retain through Spec 054 closure; refresh after review or any accepted knowledge/memory owner change.
-- **Next Owner**: WGIA-009 candidate admission; WGIA-010 only an accepted knowledge correction; WGIA-014 whole-branch closure.
-
-#### Progress
-
-Audited the LLM-WIKI owner, six declared inputs, fixed generator, generated
-output, check and lookup routes, plus exactly four memory classes across
-authority, freshness, promotion, retention/GC, conflict, redaction, compaction,
-resume, and handoff. Generated ownership and the static memory lifecycle align.
-The visible 2026-05-10 LLM-WIKI review metadata is stale after all six inputs
-changed; one provisional WGIA-009 repair is recorded. Actual provider-local
-memory and checkpoint/compaction lifecycle execution remain `DEFER`.
-
-#### Memory
-
-Generated byte equality proves only that output matches the current producer.
-It does not prove that later declared-input changes received the stated
-on-source-change review, especially when the producer emits a fixed map and
-review date. Likewise, a four-class static checkpoint fixture proves closed
-repository semantics, not provider memory retention, deletion, or compaction.
-
-#### Evidence
-
-- Freshness RED: six of six declared inputs changed after review date
-  2026-05-10; latest declared input change is 2026-08-02.
-- Generator check, harness/loop/checkpoint/closure self-test and production
-  checks pass; focused memory and generator-relation tests pass 115 tests.
-- Four complete findings and one complete provider-runtime blocker are in the
-  dated report; one provisional roadmap row exists and no disposition row.
-- Generated output/producer, memory contracts, provider/private state, ignored
-  checkpoint, secrets, remote, and live surfaces were not modified/accessed.
-
-#### Handoff
-
-WGIA-006 is complete. Specification/content and quality reviews are Approved
-with no remaining Critical or Important finding, and the complete repository
-quality gate passes against the exact staged scope. WGIA-009 owns freshness
-candidate admission, WGIA-010 only an accepted knowledge correction, and
-WGIA-014 whole-branch closure. No provider/private-memory, checkpoint, remote,
-retrieval, or live action belongs to this handoff.
-
-### 2026-08-09 - WGIA-005 harness and loop audit
-
-#### Metadata
-
-- **Date**: 2026-08-09
-- **Layer**: docs
-- **Status**: done
-- **Tags**: #governance #audit #harness #loop #fixtures #scripts
-- **Owner**: assigned worker
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
-- **Provenance**: WGIA-005 repository-static audit at observation commit `50628b84165479b03efc0a25be075a49c91a9aef`
-- **Sensitivity**: non-sensitive-redacted
-- **Retention / Expiry**: Retain through Spec 054 closure; refresh after independent review or any accepted harness/loop owner change.
-- **Next Owner**: WGIA-009 candidate admission, WGIA-011 only for an accepted bounded human-index correction, and WGIA-014 whole-branch closure.
-
-#### Progress
-
-Audited the 12-role/four-surface/48-projection harness, 14 consumers, four
-evidence and memory classes, loop transitions/retry/stop/recovery, the 20-field
-checkpoint and handoff contract, all 47 tracked script files, and all 37 fixture
-files. Repository-static harness topology, loop/checkpoint behavior, and
-fixture production ownership align. The canonical scripts human inventory is
-`Partial`: exact proof is 41 CLI plus six helpers, with two helpers absent from
-`scripts/README.md`. One provisional WGIA-009 repair is recorded; provider
-runtime and actual ignored-checkpoint execution remain `DEFER`.
-
-#### Memory
-
-Self-test mutation counts do not prove production behavior by themselves. Run
-the same validator in production mode, keep focused and aggregate ownership
-distinct, and classify tracked adapters/canaries as repository-static. A
-pending deeper lane is not a blocker unless cause, impact, affected requests,
-release condition, owner, and evidence depth are all explicit.
-
-#### Evidence
-
-- Harness contract/semantics self-test and production pass exact 12/4/48 and
-  14-consumer contracts; loop and checkpoint self-test/production pass.
-- Roster currentness and provider config/canary/evidence self-test/production
-  pass; five focused unit modules pass 119 tests.
-- Corrected deterministic RED is 47 scripts = 41 CLI + six import helpers; the
-  human inventory omits `scripts/archive_cutover_manifest.py` and
-  `scripts/reference_information_architecture.py`. The 37 fixtures remain 31
-  JSON/six YAML and are mapped by current production-owner family.
-- Four complete findings and the blocker object are in the dated WGIA report;
-  no provider, remote, credential, secret, live, or ignored-checkpoint access
+- TDD RED preceded implementation for the generic repository boundary,
+  namespace/index parity, recovery API, and exact transition-edge handoff.
+- Final archive/cutover/recovery/lifecycle focused suite: 88/88 PASS in
+  503.339 seconds; active-corpus suite: 20/20 PASS in 21.475 seconds;
+  transition-edge suite: 5/5 PASS in 24.544 seconds.
+- `archive_cutover.py`: PASS with 93 records, 711 historical links, and 93
+  secret-clean records. Representative recovery verify passed for 7049 exact
+  bytes without writing output.
+- Migration check passed exact `132/82/50`; strict registry transition passed
+  490 paths with zero uncovered/ambiguous routes; strict Markdown and strict
+  cross-document validation passed with zero findings.
+- Independent post-archive audit proved 50/50 sources absent, 50/50 regular
+  targets present, Stage 98 exact 50 additions plus README modification,
+  prior43 43/43 byte-identical to HEAD, frozen Spec-052 blobs unchanged,
+  direct individual-archive consumer links zero, and transaction residue zero.
+- The controller-owned all-files pre-commit follow-up stopped only when
+  detect-secrets classified 24 transition Git object IDs as high-entropy
+  candidates; every other completed hook passed. Read-only Git proofs matched
+  all seven RIA old/current pairs to their exact HEAD/index objects and all five
+  residue-closure authority pairs to their exact HEAD/index objects. The
+  baseline therefore records only those 14 plus 10 candidates as
+  `is_secret: false`, together with the scanner's existing-entry line refresh
+  and generated timestamp. Two consecutive focused all-files detect-secrets
+  runs passed without mutation at baseline SHA-256
+  `2f9995fe66d2a711632d17306d67fda1e2eab53ba1941f9e1ff2399ba90ee307`.
+- The controller's final `pre-commit run --all-files` fixed-point exited 0
+  with every applicable hook passing, including strict repository quality and
+  detect-secrets, and no worktree mutation. The post-run staged shape remained
+  `A50/D50/M45`, with zero unstaged paths.
+- Review remediation for commit `0b53e9a1` closed all four Important and two
+  Minor findings after an exact ten-test RED. The transition waiver now uses
+  the canonical fully validated stage-zero/index-bound manifest, pins source
+  commit `713dff1fc3de58a2d1682970a7f24faa39c14263`, and admits exactly two
+  deferred edges. The `wdtc-execution` namespace joins exact manifest
+  source/target/commit/blob metadata, and cutover ownership no longer
+  self-compares an envelope's source commit.
+- Archive inventory and recovery now use descriptor-anchored, no-symlink,
+  bounded reads and identity-safe exclusive output/cleanup. Git provenance is
+  batched after one repository identity validation; the production snapshot
+  passed with 19 Git subprocesses in 3.016 seconds under the 24-call/60-second
+  regression bound. Index replacements and per-record historical-link counts
+  are exact, and the unused cutover migration-count binding was removed.
+- Review-fix GREEN evidence: new tests 10/10 in 39.253 seconds; final
+  archive/cutover/recovery/lifecycle tests 102/102 in 410.982 seconds;
+  canonical migration tests 56/56 in 106.589 seconds; Ruff, `py_compile`,
+  strict links, production cutover `93/711/93`, and 9,927-byte read-only
+  recovery PASS. The synchronized-index aggregate ended with `[PASS]
+  repository quality gates passed` after atomic staging.
+- The initial WORK-103 archive set exists as commit `0b53e9a1`. During this
+  review-fix round, no move phase, Release family, provider/runtime action,
+  remote action, live action, or additional commit was performed. The
+  controller's final review-fix `pre-commit run --all-files` exited 0 with all
+  hooks passing and no mutation; the post-run shape remained `M10` staged and
+  zero unstaged paths.
+- Review-fix Round 2 closed the remaining resource-boundary finding with
+  streaming Git batch parsing: declared blob sizes are rejected before body
+  reads, per-object/aggregate/object-count budgets are fixed, truncated or
+  trailing protocol data fails closed, diagnostics are payload-free, and
+  ordinary Git capture has bounded output with discarded stderr. Exact tree
+  membership uses non-recursive bounded lookup plus exact `commit:path`
+  batch evidence; the Stage 98 index uses a descriptor-anchored 2 MiB read.
+  TDD observed the six new adversarial cases RED, then the relevant suite
+  passed 108/108 in 386.042 seconds and migration passed 56/56 in 94.301
+  seconds. The production snapshot remained valid at 20 Git processes in
+  2.662 seconds; cutover `93/711/93`, 7,049-byte recovery, and migration
+  `132/82/50` all passed. The synchronized-index repository aggregate ended
+  with `[PASS] repository quality gates passed`. No move/Release/provider/
+  runtime/remote/live action or commit occurred during Round 2.
+- The controller's final Round 2 `pre-commit run --all-files` fixed-point
+  exited 0 with every applicable hook passing, including strict repository
+  quality and detect-secrets, and inspection confirmed no worktree mutation.
+  The post-run shape remained exactly `M5` staged with zero unstaged paths.
+- Review-fix Round 3 removed the remaining ancestor/descendant pathspec
+  expansion. Historical links are now resolved only through one global,
+  bounded exact `commit:path` batch-check; `ls-tree` receives only original
+  paths already proven to be blobs and cross-checks their mode and object ID.
+  The live `docs/03.specs` ancestor plus its four requested descendants and a
+  fixture with many unrelated descendants proved no expansion under the
+  output cap. TDD observed the two integration cases RED as one error and one
+  failure, then GREEN 2/2. Final validation/recovery passed 63/63 in 97.832
+  seconds and the full archive/cutover/recovery/lifecycle suite passed 110/110
+  in 391.355 seconds. The production snapshot remained valid at 20 Git
+  processes in 2.701 seconds; Ruff, `py_compile`, cutover `93/711/93`, and
+  7,049-byte recovery passed. The synchronized-index aggregate ended with
+  `[PASS] repository quality gates passed`. No later-scope action or commit
   occurred.
+- The controller's final Round 3 `pre-commit run --all-files` fixed-point
+  exited 0 with every applicable hook passing and no worktree mutation. The
+  post-run shape remained exactly `M3` staged with zero unstaged paths.
 
-#### Handoff
-
-WGIA-005 is complete. Specification/content and fix-round quality reviews are
-Approved with no remaining Critical or Important finding, and the complete
-repository quality gate passes against the exact staged scope. WGIA-009 owns
-candidate admission, WGIA-011 only an accepted bounded human-index correction,
-and WGIA-014 whole-branch closure. No provider-runtime, hosted, remote, or live
-action belongs to this handoff.
-
-### 2026-08-09 - WGIA-004 CI and QA audit
+### 2026-08-09 - WDTC-102 transition routes and reviewed migration manifest
 
 #### Metadata
 
 - **Date**: 2026-08-09
 - **Layer**: docs
 - **Status**: done
-- **Tags**: #governance #audit #ci #qa #validation
-- **Owner**: assigned worker
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
-- **Provenance**: WGIA-004 repository-static audit at observation commit `50628b84165479b03efc0a25be075a49c91a9aef`
+- **Tags**: #sdlc #migration #document-governance #validation
+- **Owner**: platform
+- **Canonical Owner**: `docs/03.specs/052-document-taxonomy-consolidation/tasks.md`
+- **Provenance**: WORK-102 implementation from corrected source commit `713dff1fc3de58a2d1682970a7f24faa39c14263`.
 - **Sensitivity**: non-sensitive-redacted
-- **Retention / Expiry**: Retain through Spec 054 closure; refresh after independent review or any accepted delivery-owner change.
-- **Next Owner**: WGIA-009 integration and WGIA-014 whole-branch closure.
+- **Retention / Expiry**: Retain through WDTC-110 closure.
+- **Next Owner**: supervisor — review and commit WORK-102 before WDTC-103.
 
 #### Progress
 
-Audited five workflows, eleven jobs, fifteen full-SHA Action uses, permissions,
-concurrency, changelog artifact retention, pre-commit, affected-surface routing,
-formatting/lint/syntax/test/contract/security/policy checks, and the Validation/
-Verification boundary. Actions and lane contracts align repository-statically;
-Prettier remains accurately dormant; hosted workflow, deployment CD, and live
-evidence remain `DEFER`. No canonical remediation candidate was identified.
+Added the explicit transition route state, the temporary native migration
+manifest profile, a fail-closed manifest builder/checker, and the reviewed
+132-source manifest with 82 current moves and 50 unique archives. The corrected
+ACER partition retains all 34 permanent admissions and temporarily admits one
+migration regression test, producing 68 helpers (`33 + 35`).
 
 #### Memory
 
-Configuration presence and affected-surface routing are not execution coverage.
-Before manufacturing a RED for dormant tooling, check the current semantic
-owner: here it already declares Prettier dormant and forbids a coverage claim.
-Keep selected-job syntax, local Validation, hosted Verification, deployment CD,
-and live reconciliation as separately identified evidence lanes.
+The manifest pins source commit `713dff1fc3de58a2d1682970a7f24faa39c14263`.
+The Spec-052 Plan blob is `2c354aebf8578a9079d511f0f5a7783e7b0b8779`
+and the Task blob is `a066fc3460de0072a5a72c2822086ac1b6135c1c`;
+both remained byte-identical during WORK-102. WDTC-103 must consume the 50
+archive entries without modifying either source, and WDTC-109 must remove only
+the transition-only test admission to restore 67 helpers (`33 + 34`).
 
 #### Evidence
 
-- Workflow proof: five workflows, eleven jobs, fifteen of fifteen full-SHA uses,
-  seven unique Actions, five concurrency blocks, and five read-only roots.
-- Dormant proof: two Prettier configs, two routed inputs, zero consumers, exact
-  dormant owner claim, and no TDD RED required.
-- Actions security, CI Python, affected surfaces, and agent-governance CI
-  self-test/production checks pass; two relevant workflow modules pass 110 tests.
-- Four complete findings are recorded; focused document/link/diff evidence and
-  the complete repository quality-gate PASS are in the active Task. No hosted,
-  remote, provider-runtime, credential, secret, or live action occurred.
-
-#### Handoff
-
-WGIA-004 is complete. Specification/content and quality reviews are Approved
-with no Critical or Important finding, and the complete repository quality gate
-passes against the exact staged scope. WGIA-009 may integrate the reviewed
-no-remediation result, while the current workflow, selection, quality, test,
-hook, and script owners remain unchanged; WGIA-014 owns terminal completion
-evidence.
-
-### 2026-08-09 - WGIA-003 SDLC and documentation audit
-
-#### Metadata
-
-- **Date**: 2026-08-09
-- **Layer**: docs
-- **Status**: done
-- **Tags**: #governance #audit #sdlc #documentation #templates
-- **Owner**: assigned worker
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
-- **Provenance**: WGIA-003 repository-static audit at observation commit `50628b84165479b03efc0a25be075a49c91a9aef`
-- **Sensitivity**: non-sensitive-redacted
-- **Retention / Expiry**: Retain through Spec 054 closure; refresh after independent review or accepted documentation remediation.
-- **Next Owner**: WGIA-009 for candidate admission and deduplication; the WDTC program retains WORK-013 implementation ownership, and WGIA-014 owns whole-branch closure.
-
-#### Progress
-
-Audited the requested document families, Stage 01-05 lifecycle, Stage 99
-profiles/templates, README forms, integration guides, Diátaxis mapping, and
-generated-document boundary. Eleven requested families are contract-aligned;
-the broad Release request has no active contract or explicit mapping to
-approved DOC-G5's narrower negative release-notes decision; approved DOC-G1's
-Guide Type enum is not yet enforced; and eight integration guides conform
-statically while live usability remains `DEFER`. Two WGIA-009 candidates now
-deduplicate and route to queued WORK-013 rather than seeking new decisions.
-
-#### Memory
-
-Template presence is not a family contract by itself: route, source profile,
-physical template, template profile, lifecycle projection, relationship role,
-index, and validator admission must move atomically. Before declaring a missing
-decision, resolve approved specifications and queued execution: Spec 052 already
-owns DOC-G1/DOC-G5 and WORK-013 owns their implementation. Static guide
-conformance never proves operator success or live safety.
-
-#### Evidence
-
-- Release probe: `profile_route=0 template=0 lifecycle=0 role_validator=0`.
-- Spec 052 DOC-G5 already rejects a narrower release-notes type; the remaining
-  gap is broader semantic mapping plus queued deliberate-absence execution.
-- Existing-family proof: 11/11 profiles, templates, and lifecycle projections;
-  six README profiles; eight indexed guides.
-- DOC-G1 already approves `how-to`, `tutorial`, `concept`; the required heading,
-  template prompt, and eight `how-to` values exist, while deterministic enum
-  enforcement and migration evidence remain queued in WORK-013.
-- Four complete findings and two provisional decision inputs are recorded in
-  the dated draft pack; focused registry/profile/lifecycle/link/diff results
-  are recorded in the active Task.
-- The first quality review's two Important findings are fixed: active approved
-  DOC-G1/DOC-G5 and queued WORK-013 now own both dependencies, and the final
-  pinned selector probe resolves all 49 evidence references with zero missing
-  paths or invalid selectors.
-- No canonical owner, disposition-ledger row, Current pointer, historical pack
-  body, Stage 98 path, remote resource, secret, provider runtime, or live state
+- RED: focused migration import failed because the tool was absent; strict
+  registry rejected the absent `--route-state` argument; ACER failed closed on
+  the unregistered helper.
+- GREEN: focused migration, ACER, strict-cutover, registry self-test/strict
+  transition, manifest dry-run, and strict Markdown validation passed.
+- Fix Round 1 RED/GREEN: staged pre-commit detected only the manifest's exact
+  Git integrity metadata (`sourceCommit` at two-space JSON indentation and 132
+  `sourceBlob` rows at six-space indentation). A focused regression first
+  proved those canonical forms absent from the narrow line allowlist, then
+  passed after adding only those two exact key/indent/hash alternatives to the
+  synchronized hook and baseline filters. Secret classifications were not
   changed.
+- Final controller rerun: `env TMPDIR=/tmp pre-commit run` exited 0; every
+  applicable hook passed, non-applicable hooks skipped, the exact 17-file index
+  had no unstaged mutation, both diff checks passed, and the frozen Plan/Task
+  staged plus unstaged diffs remained zero.
+- Fix Round 2 RED proved that the Plan-fixed immutable loader, read-only sorted
+  validator, archive/move planner, atomic apply preflight, and fixed phase CLI
+  were absent. GREEN adds those exact APIs and rejects dirty controlled paths,
+  invalid pairs, wrong phase order, missing targets, existing targets, and
+  targets below an existing Stage 98 record before the first write. No
+  production apply was executed.
+- Move-phase validation uses the existing `recover_git_blob` plus
+  `parse_archive_envelope(..., expected=recovered)` contract. It accepts a
+  completed archive only when original path, source commit/blob, canonical
+  metadata, digest, payload size, and payload bytes match; a committed corrupt
+  envelope fails closed without payload echo. Raw move-current targets still
+  require the exact source blob.
+- Terminal retired-route handling is now a registry-owned closed classifier:
+  ten exact Stage 90 evidence paths and narrow Stage 98 archived-Spec/execution
+  routes are the only admissible profiles. Mutable Stage 90, non-evidence Stage
+  98, navigation, executable, contract, fixture, and unclassified hits fail.
+  Terminal also rejects residual manifest file/route/profile and both schema
+  definitions.
+- Fix Round 2 focused GREEN passed 28/28 tests. Manifest dry-run remained
+  132/82/50; registry self-test remained 132 cases / 65 profiles / 30
+  templates; strict transition remained 490 paths with zero uncovered or
+  ambiguous routes; strict Markdown remained zero violations. The first
+  aggregate run stopped only on the expected unstaged ACER worktree/index drift
+  boundary. The staged rerun exited 0 with the final repository-quality PASS;
+  ACER remained exact at 68 helpers (`33 + 35`) and zero findings.
+- The controller's Fix Round 2 full pre-commit run failed only detect-secrets
+  on the exact Python `EXPECTED_SOURCE_COMMIT` Git identity. The existing
+  narrow inline convention now admits that constant line with
+  `# pragma: allowlist secret`. The derived baseline only moves the existing
+  `document-profiles.json` adjudication from line 7 to 42 and refreshes its
+  timestamp; no candidate, classification, filter, or adjudication changed.
+- Final controller verification: focused detect-secrets and full
+  `env TMPDIR=/tmp pre-commit run` both exited 0 with every applicable hook
+  passing. The final index contains exactly eight staged files and no unstaged
+  changes; both diff checks pass; frozen Plan/Task and all Stage 98 staged plus
+  unstaged diffs are zero. WORK-102 Fix Round 2 is complete.
+- Fix Round 3 RED reproduced raw archive output, absent secret-classifier
+  closure, incomplete triad acceptance, insufficient direct-apply controls,
+  late-write partial-state risk, manifest-declared commit substitution, hostile
+  Git environment influence, and duplicate-slug overwrite behavior.
+- Fix Round 3 GREEN makes archive apply recover each pinned Git blob, run a
+  bounded redacted gitleaks classification without payload output, derive
+  duplicate-key-safe deterministic metadata, render and parse a canonical
+  ArchiveEnvelope entirely before mutation, revalidate source types/blobs, and
+  install transactionally with reverse rollback and temporary-file cleanup.
+  Safe PATH discovery admits the canonical owner-controlled installed gitleaks
+  while rejecting repository and temporary-directory candidates.
+- Direct apply now requires the exact ordered pairs from the canonical tracked,
+  clean manifest at the reviewed commit; the manifest and `.gitleaks.toml` are
+  regular non-symlink tracked/clean control surfaces. Only exact regular Stage
+  04 sources, mirrored Stage 98 archive targets, and matching Stage 03 move
+  targets are admissible; ignored, symlinked, alternate, dirty, and wrong-blob
+  paths fail closed before writes.
+- Every move work unit is now an exact Spec/Plan/Task triad whose Spec number
+  matches its destination. Production remains 41 triads / 82 moves plus 50
+  archives. Duplicate spec/source slugs fail instead of overwriting state, and
+  strict transition reads and validates the manifest-declared source commit.
+- Fix Round 3 focused GREEN passed 41 migration/strict-cutover and 15 archive
+  recovery tests. Python compilation, Ruff, the 132/82/50 dry run, 132-case
+  registry self-test, 490-path strict transition, strict Markdown, and an
+  actual benign classification through the safe PATH-discovered gitleaks all
+  passed. No production apply was executed.
+- Archive apply deliberately emits canonical envelopes without editing the
+  existing Stage 98 index. Its success output names
+  `docs/98.archive/README.md#document-index`; WDTC-103 must stage generated
+  envelopes and index evidence atomically and must not commit an intermediate
+  envelope-only state.
+- Controller final verification completed the aggregate with exit 0 and final
+  repository-quality PASS, then completed
+  `env TMPDIR=/tmp pre-commit run --all-files` with exit 0 and every hook
+  passing. Post-run state is exactly six staged files with no unstaged changes;
+  both diff checks pass, and frozen Plan/Task plus `docs/98.archive` have zero
+  staged and unstaged diff. WORK-102 Fix Round 3 is complete.
+- Fix Round 4 RED produced five assertion failures and two missing-API errors:
+  move apply copied a substituted worktree read instead of its pinned Git blob,
+  no repository-scoped lock or immutable control-surface snapshot existed,
+  `os.replace` could clobber a concurrently created target, rollback did not
+  identity-protect replaced targets, and assume-unchanged/skip-worktree flags
+  concealed dirty control surfaces.
+- Fix Round 4 GREEN uses recovered pinned bytes for move output while retaining
+  immediate worktree blob/type revalidation. A Git-common-directory exclusive
+  lock now spans validation, preparation, installation, source removal,
+  rollback, and cleanup. Target installation uses atomic hard-link
+  no-clobber semantics; installed and staged identities are recorded by device
+  and inode, so rollback removes only the same object and preserves concurrent
+  or third-party replacements. Lock and migration temporaries leave no residue
+  in focused success and failure cases.
+- The manifest and `.gitleaks.toml` are each read exactly once through a
+  no-follow descriptor, bounded in size, compared byte-for-byte by Git blob ID
+  with their stage-zero index entry, and rejected for any index marker other
+  than normal `H` (including assume-unchanged and skip-worktree). Apply parses
+  the captured manifest bytes directly and gives gitleaks only an owner-mode
+  `0600` temporary copy of the captured config; original-path replacement
+  after capture cannot alter either consumer, and config cleanup is
+  identity-safe.
+- Fix Round 4 focused GREEN passed 62/62 migration, strict-cutover, and archive
+  recovery tests. Python compilation and Ruff passed; manifest dry run remains
+  132/82/50; registry self-test remains 132 cases / 65 profiles / 30 templates;
+  strict transition remains 490 paths with zero uncovered or ambiguous routes;
+  strict Markdown remains zero violations. No production apply was executed.
+- The staged Fix Round 4 aggregate exited 0 with final repository-quality PASS;
+  ACER remained exact at 68 helpers (`33 + 35`) with zero findings. Full
+  pre-commit remained assigned to the controller. The controller then completed
+  `env TMPDIR=/tmp pre-commit run --all-files` with exit 0 and every hook
+  passing; post-run state remained exactly three staged files with no unstaged
+  changes.
+- Fix Round 5 RED produced four failures and two missing-helper errors for an
+  exact open gitleaks-config descriptor, lock cleanup diagnostics, closed
+  whole-manifest validation, target/source replacement preservation, and the
+  pinned manifest builder. Two additional RED cases closed opposite-phase
+  corruption and lock identity-acquisition failure before any write.
+- Fix Round 5 GREEN keeps source, target, and private staging descriptors plus
+  hard-link anchors live through the transaction boundary. Target installation
+  is no-clobber through held parent directory descriptors; exact inode and
+  output bytes are revalidated before each source quarantine and immediately
+  before commit. Source removal is an atomic directory-FD rename into a private
+  transaction quarantine, and rollback restores without clobber while
+  preserving third-party replacements or explicit recovery residue when the
+  original cannot safely reclaim its path. Private cleanup never path-unlinks a
+  caller-controlled object.
+- Gitleaks consumes only `/proc/self/fd/<fd>` for the verified owner-mode `0600`
+  captured configuration, with that descriptor inherited explicitly and kept
+  open until classification exits. Direct apply now validates the complete
+  manifest plus exact 132/82/50 counts before mutation, including the opposite
+  phase. The retained builder derives commit and blobs only from
+  `EXPECTED_SOURCE_COMMIT` and rejects a current/pinned census mismatch.
+- Same-tool concurrency is serialized by the repository lock. Arbitrary
+  same-user path replacement cannot be eliminated by portable POSIX APIs, so
+  the implementation instead holds directory/object descriptors and private
+  anchors, uses no-clobber creation and quarantine moves, and fails closed
+  without deleting a mismatched object. Lock/body cleanup preserves the primary
+  diagnostic and records cleanup failure as a note; an unidentifiable new lock
+  is preserved rather than guessed safe to delete.
+- Fix Round 5 focused GREEN passed 71/71 migration, strict-cutover, and archive
+  recovery tests, including replacement at the final commit revalidation
+  boundary. Python compilation and Ruff passed. Actual safe gitleaks FD
+  classification returned 0; the dry run and pinned builder comparison remained
+  exactly 132/82/50; registry self-test remained 132 cases / 65 profiles / 30
+  templates; strict transition remained 490 paths with zero uncovered or
+  ambiguous routes; strict Markdown remained zero violations. No production
+  apply was executed, and full pre-commit remains assigned to the controller.
+- The exact three-file staged Fix Round 5 aggregate exited 0 with final
+  `[PASS] repository quality gates passed`; ACER remained exact at 68 helpers
+  (`33 + 35`) with zero findings. Full all-files pre-commit remains assigned to
+  the controller.
+- Controller verification completed `env TMPDIR=/tmp pre-commit run --all-files`
+  with exit 0 and every applicable hook passing. Post-run state remained exactly
+  three staged files with no unstaged changes.
+- Fix Round 6 RED produced eight failures across six selected methods: two
+  failure paths retained empty created target directories; source-directory
+  rename and target-directory symlink swaps were not detected; private cleanup
+  could unlink a replacement; transaction open/identity failures left raw
+  transaction directories; and disposal failure left a raw disposal name.
+- Fix Round 6 GREEN walks every source and target parent from the captured root
+  descriptor with `openat`/`mkdirat` semantics and no-follow directory opens.
+  Every component retains its parent descriptor, child descriptor, and
+  device/inode identity until transaction completion. The complete chain is
+  revalidated before each public install, source quarantine, rollback restore,
+  created-directory cleanup, and final commit boundary, so a renamed source
+  ancestor or symlink-substituted target ancestor aborts without writing to the
+  repository-external replacement.
+- Private cleanup now atomically renames the candidate to a random disposal
+  name inside the transaction quarantine before comparing identity. A mismatch
+  is never deleted: no-clobber hard-link restoration is attempted and all
+  objects remain recoverable with a bounded rollback diagnostic. Created target
+  directories retain anchored parent/child identity and are cleaned deepest
+  first only when still exact and empty; nonempty or replaced directories are
+  not removed. Partial preparation and late installation failures now leave no
+  empty created-target hierarchy.
+- Transaction initialization safely cleans an exact empty directory after
+  post-`mkdirat` open or identity failure; uncertain state is recovery-named.
+  Disposal keeps the quarantine descriptor open across rename and identity
+  proof, and any pre-removal failure is recovery-named while all retained
+  descriptors are closed. Cleanup failures remain notes on the primary body
+  error rather than replacing it.
+- Mode `0700` on the private quarantine is defense in depth, not a standalone
+  same-EUID concurrency claim. Same-tool concurrency remains serialized by the
+  repository lock; arbitrary same-EUID namespace changes are handled by held
+  descriptors, repeated identity checks, quarantine moves, no-clobber
+  restoration, preservation, and fail-closed diagnostics within portable POSIX
+  limits.
+- Fix Round 6 focused GREEN passed 75/75 migration, strict-cutover, and archive
+  recovery tests; Ruff and Python compilation passed. Actual gitleaks exact-FD
+  classification returned 0; dry run and pinned-builder equality remained
+  exactly 132/82/50; registry self-test remained 132 cases / 65 profiles / 30
+  templates; strict transition remained 490 paths with zero uncovered or
+  ambiguous routes; and strict Markdown remained zero violations. Normal paths
+  left no lock, transaction, disposal, or recovery residue. No production apply
+  ran, and full pre-commit remains assigned to the controller.
+- The exact three-file staged Fix Round 6 aggregate exited 0 with final
+  `[PASS] repository quality gates passed`; ACER remained exact at 68 helpers
+  (`33 + 35`) with zero findings. Full all-files pre-commit remains assigned to
+  the controller.
+- Controller verification completed `env TMPDIR=/tmp pre-commit run --all-files`
+  with exit 0 and every applicable hook passing. Post-run state remained exactly
+  three staged files with no unstaged changes.
+- Fix Round 7 RED reproduced nine partial-state failures across mkdir
+  stat/open/identity, post-link target open/identity/replacement, post-rename
+  source stat/identity, and private-stage identity failure. GREEN registers a
+  provisional created-directory owner immediately after `mkdirat`; records an
+  installed target and its expected stage identity immediately after `linkat`;
+  records the removed source name immediately after quarantine rename; and
+  catches both `OSError` and `MigrationAbort` while closing and safely cleaning
+  a partially staged private file.
+- A created directory with proved identity is reopened, checked exact and empty,
+  and removed through quarantine rollback. An identity-unknown object is never
+  deleted: it is moved into the transaction recovery record. A post-link target
+  whose open or identity proof fails is still rolled back; a substituted
+  third-party target remains at its public path. A transient post-rename source
+  proof failure is reclassified during rollback; a known replacement returns to
+  its public path with the canonical source anchor preserved for recovery, while
+  a persistently unknown moved object is retained in recovery after canonical
+  no-clobber restoration. Normal full rollback leaves no `.migration-*` residue.
+- The reviewed enforcement boundary is now explicit in the migration module.
+  The Git-common-directory lock is mandatory coordination for supported
+  repository/migration writers, not a security sandbox. Non-cooperative public
+  source, target, and ancestor replacement remains in scope. Hostile same-EUID
+  enumeration or replacement of random mode-`0700` private quarantine entries
+  is unsupported; private rename/identity/unlink is an internal integrity check,
+  not hostile-process isolation. Unsupported `dir_fd`, `O_NOFOLLOW`,
+  `follow_symlinks`, or archive `pass_fds` behavior fails before lock creation or
+  migration writes.
+- Deferred WDTC-104 handoff: once the frozen Plan moves to
+  `docs/03.specs/052-document-taxonomy-consolidation/plan.md`, that destination
+  must receive the same coordination/threat-boundary wording in WDTC-104's
+  encompassing logical change. WORK-102 keeps the manifest-pinned Stage 04 Plan
+  byte-identical and does not amend it in place.
+- Fix Round 7 focused GREEN passed 80/80 migration, strict-cutover, and archive
+  recovery tests; Ruff and Python compilation passed. Actual gitleaks exact-FD
+  classification returned 0; dry run and pinned-builder equality remained
+  exactly 132/82/50; registry self-test remained 132 cases / 65 profiles / 30
+  templates; strict transition remained 490 paths with zero uncovered or
+  ambiguous routes; and strict Markdown remained zero violations. No production
+  apply ran.
+- The exact three-file staged Fix Round 7 aggregate exited 0 with final
+  `[PASS] repository quality gates passed`; ACER remained exact at 68 helpers
+  (`33 + 35`) with zero findings. Full all-files pre-commit remains assigned to
+  the controller.
+- Controller verification completed `env TMPDIR=/tmp pre-commit run --all-files`
+  with exit 0 and every hook passing. Post-run state remained exactly three
+  staged files with no unstaged changes.
+- Fix Round 8 RED produced 12 assertion failures and five errors across the
+  platform capability matrix: the cached boolean missed individual flag and
+  support-set loss, and root discovery could expose mocked `NotImplementedError`
+  or `TypeError` before the gate. GREEN replaces it with an invocation-time
+  evaluator that checks POSIX, `O_NOFOLLOW`, `O_DIRECTORY`, `O_CLOEXEC`, all
+  seven used `dir_fd` operations, `stat`/`link` `follow_symlinks`, and
+  descriptor-based `listdir`. Archive additionally requires `/proc/self/fd`
+  and an explicit `subprocess.Popen` `pass_fds` contract.
+- The capability gate now precedes root canonicalization, repository-lock
+  creation, transaction creation, and every write. Sixteen one-at-a-time
+  missing-capability subcases prove bounded
+  `MIGRATION-PLATFORM-UNSUPPORTED` diagnostics, no leaked platform exception,
+  no lock call, no write, and no residue; a separate test proves the archive FD
+  bridge requirements do not unnecessarily reject move planning/application.
+- Fix Round 8 focused GREEN passed 81/81 migration, strict-cutover, and archive
+  recovery tests; Ruff and Python compilation passed. Actual gitleaks exact-FD
+  classification returned 0; dry run and fresh pinned-builder equality
+  remained exactly 132/82/50; registry self-test remained 132 cases / 65
+  profiles / 30 templates; strict transition remained 490 paths with zero
+  uncovered or ambiguous routes; and strict Markdown remained zero violations.
+  No production apply ran, and full all-files pre-commit remains assigned to
+  the controller.
+- The exact three-file staged Fix Round 8 aggregate exited 0 with final
+  `[PASS] repository quality gates passed`; ACER remained exact at 68 helpers
+  (`33 + 35`) with zero findings.
+- Controller verification completed `env TMPDIR=/tmp pre-commit run --all-files`
+  with exit 0 and every hook passing. Post-run state remained exactly three
+  staged files with no unstaged changes.
+- Repository-static only; hosted CI, provider-runtime, remote, credential, and
+  live-platform evidence remain DEFER.
 
 #### Handoff
 
-WGIA-003 is complete. Specification review and fix-round quality re-review are
-Approved with no remaining Critical or Important finding, and the complete
-repository quality gate passes against the exact staged scope. WGIA-009 may
-deduplicate and admit the two provisional routing rows; the WDTC program owns
-queued WORK-013 implementation, and WGIA-014 owns final closure.
+WORK-102 is ready for controller review and commit. Preserve all 34 permanent
+ACER admissions, the frozen 33-helper ledger, and both pinned Spec-052 source
+blobs when beginning WDTC-103.
 
-### 2026-08-09 - WGIA-002 purpose and governance audit
+### 2026-08-09 - WDTC-101 all-files baseline observation and Markdown repair
 
 #### Metadata
 
 - **Date**: 2026-08-09
 - **Layer**: docs
 - **Status**: done
-- **Tags**: #governance #audit #authority #provider-boundary
-- **Owner**: assigned worker
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
-- **Provenance**: WGIA-002 repository-static audit at observation commit `50628b84165479b03efc0a25be075a49c91a9aef`
+- **Tags**: #sdlc #validation #baseline #markdown
+- **Owner**: platform
+- **Canonical Owner**: `docs/03.specs/052-document-taxonomy-consolidation/tasks.md`
+- **Provenance**: Controller resolution for the approved WDTC-101 implementation at base `bdc1a51010c0541fee48e068c88d1d405a5ede84`.
 - **Sensitivity**: non-sensitive-redacted
-- **Retention / Expiry**: Retain through Spec 054 closure; refresh after independent review or accepted owner remediation.
-- **Next Owner**: WGIA-009 for roadmap admission; WGIA-010 only for an accepted canonical correction.
+- **Retention / Expiry**: Retain through WDTC-110 closure as the exact all-files baseline reconciliation record.
+- **Next Owner**: supervisor — continue with WORK-102 after preserving this scope boundary.
 
 #### Progress
 
-Audited workspace purpose, Stage 00 authority, JIT and approval routing,
-completion semantics, machine/readable role ownership, root/provider shims,
-and provider evidence boundaries. The reviewed report has four findings:
-one repository-static alignment, two root README conflicts, and one provider-
-runtime `DEFER`. One combined root README correction is a provisional roadmap
-input only; no active owner or disposition ledger was changed.
+Corrected the first `Global Constraints` heading in the completed Spec 053 Plan
+from H3 to H2, resolving all-files Markdown `MD001`. The approved repair adds
+only three exact non-secret detect-secrets baseline adjudications; scanner
+configuration and the source ledger remain unchanged.
 
 #### Memory
 
-A thin gateway can remain operationally correct while a human index still
-misclassifies it as authority. Audit root navigation separately from gateway
-content, and keep `.agents/` local/shared ownership distinct from `.gemini/`
-repo-static project surfaces. Tracked parity never proves provider discovery,
-authentication, hook delivery, role consumption, or model resolution.
+At the mandated implementation base, `TMPDIR=/tmp pre-commit run
+markdownlint-cli2 --all-files` reproduced MD001. An initial detect-secrets
+pass was recorded as a cache/order observation, but the authoritative repeated
+focused run reproduced exactly two source-ledger keyword candidates and one
+historical Plan hex candidate without exposing values. Their three exact
+baseline records are marked `is_secret: false`. The reviewed deterministic
+current-hook synchronization adds the active baseline-file and exact CLI
+exclusion filters, refreshes existing agent-legacy-cutover line numbers,
+removes one now-excluded duplicate, and updates the generated timestamp. The
+source ledger remains byte-identical. The required second fixed-point run
+attempted an additional reference-architecture baseline removal whose current
+source line was a `path` field, not an active exclusion match. An in-memory raw
+scan proved its stored candidate absent, so it was removed as a stale orphan;
+two subsequent focused detector runs passed without mutation. The controller
+then reran the exact all-files command on the staged fixed point with exit 0,
+every applicable hook passing, and no worktree mutation.
 
 #### Evidence
 
-- Pre-edit contradiction probe exited 1 with
-  `THIN_GATEWAY_AS_CANONICAL_OWNER,GEMINI_NATIVE_SURFACE_OMITTED`.
-- Corrected no-conflict proof passed at explicit JIT 7/7, delegated JIT 1/1,
-  12 roles, four surfaces, and 48 unique current adapters.
-- Governance closure, harness contract/semantics, roster currentness, strict
-  registry, strict Markdown profiles, strict links/owners, diff whitespace,
-  and the zero Stage 98 path-diff checks pass.
-- The complete repository quality gate passes at the exact staged scope.
-  Specification and quality reviews are Approved with no Critical or
-  Important finding; 43 unique cited path/selectors resolve in the pinned and
-  current trees with zero invalid.
-- Hosted CI, provider-runtime, authenticated, credential-bearing, remote, and
-  live evidence remains `DEFER`; no secrets or runtime state were accessed.
+- Focused RED: Markdownlint reports MD001 at the first Spec 053 Plan
+  `Global Constraints` heading; the repeated detect-secrets all-files run
+  reports the three approved candidates.
+- Focused GREEN reached a two-run byte-stable detector fixed point. The
+  controller all-files rerun exited 0 with every applicable hook passing and
+  no mutation; see the linked Task and implementation report.
+- Repository-static only: no provider-runtime, hosted CI, remote,
+  credential-bearing, or live result is claimed.
 
 #### Handoff
 
-WGIA-002 is complete. WGIA-009 may admit or reject the reviewed provisional
-roadmap input; WGIA-010 alone owns any accepted root README correction.
-WGIA-014 owns final branch review and closure.
+Do not broaden scanner suppression or add synthetic baseline records. Continue
+WDTC-102 from the completed staged WDTC-101 scope.
 
-### 2026-08-09 - WGIA-001 governance audit-pack foundation
+### 2026-08-09 - WDTC implementation plan approval and activation
 
 #### Metadata
 
 - **Date**: 2026-08-09
 - **Layer**: docs
-- **Status**: done
-- **Tags**: #governance #audit #documentation #validation
-- **Owner**: assigned worker
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md`
-- **Provenance**: WGIA-001 at observation commit `50628b84165479b03efc0a25be075a49c91a9aef`
+- **Status**: active
+- **Tags**: #sdlc #spec-driven #document-governance #agent-governance #planning
+- **Owner**: platform
+- **Canonical Owner**: `docs/03.specs/052-document-taxonomy-consolidation/tasks.md`
+- **Provenance**: Human approval of the complete design and implementation-plan direction after design baseline commit `14a0a75c`.
 - **Sensitivity**: non-sensitive-redacted
-- **Retention / Expiry**: Retain through Spec 054 closure; later topical and cutover tasks refresh the owning audit reports and Task evidence.
-- **Next Owner**: WGIA-002 through WGIA-009 topic-audit owners; WGIA-014 retains whole-branch review.
+- **Retention / Expiry**: Retain through WDTC-110 lifecycle closure; the terminal owner becomes the Spec 052 sibling `tasks.md` after WDTC-104.
+- **Next Owner**: supervisor — execute WORK-100 through WORK-110 with a fresh implementation worker and two-stage review per logical commit.
 
 #### Progress
 
-Prepared the exact ten-file draft audit pack with a 30-row sequential request
-matrix, one linked report/heading owner and current repository evidence per row,
-nine final-form report shells with substantive source inventories, and closed
-finding, source, review, freshness, verdict, evidence-depth, and blocker
-conventions. The bounded foundation passed controlling validation and its
-specification, quality, and Python reviews. No audit collection Current pointer, document-profile
-`referenceCurrentPacks`, RIA owner/schema/producer/test, historical pack body,
-or Stage 98 path changed.
+Replaced the superseded sixteen-package plan with eleven dependency-ordered
+packages aligned to the approved design. The active path keeps Stage 05 stable,
+excludes Release, archives unmatched execution history, migrates retained
+Plan/Task pairs into Stage 03, consolidates Stage 00/99 authority, extends the
+existing harness rather than creating another registry, preserves distinct
+validators, and assigns baseline/generated/memory cleanup explicit gates.
+The Plan canonical form and both Plan profiles now allow the mandatory
+`Global Constraints` section used by the approved agentic planning workflow;
+legacy Plans are not retroactively required to add it.
+
+ADR-0026 advanced from `draft` to `active` after human review. Its
+`active -> accepted` transition and the PRD-008 registry correction from
+unrelated ADR-0021 remain the first atomic implementation package.
 
 #### Memory
 
-A successor audit foundation must remain explicitly non-current and
-conservative: tracked owner presence supports at most a bounded inventory, not
-an `Aligned` topic verdict or provider/live claim. Keep one primary
-report-and-heading owner per request, represent unavailable deeper lanes as
-`DEFER`, and reserve machine-current projection, deletion, and closure for
-their separately gated tasks.
+The 2026-08-09 planning census observes 49 Specs, 65 Plans, 67 Tasks, 41 exact
+same-slug triads, and 50 unmatched execution documents. The latter count is 24
+unmatched Plans plus 26 unmatched Tasks; 23 slugs overlap, leaving one
+plan-only and three task-only records. The earlier 39-triad/27-orphan plan was
+stale and must not drive migration.
+
+Independent audits found that all five active-corpus validators remain live and
+semantically distinct, `archive_cutover_manifest.py` has active import
+consumers, and `validate-harness.sh` is only a wrapper but still has current
+README/PR-template consumers. The implementation therefore retains the first
+two families and retires the wrapper only after zero-consumer proof.
 
 #### Evidence
 
-- Initial exact pack/request probe reproduced RED at 0 files and 0 rows.
-- In-memory negative probes rejected missing, duplicate, and unknown members;
-  duplicate owner; incomplete finding; invalid verdict/depth; and Stage 98
-  delta without adding a tracked validator or fixture.
-- GREEN parser reports exact 10 files, 30 request rows, 9 reports, 14
-  conceptual finding fields, 8 verdicts, and 4 evidence depths.
-- Quality-review fix round 2 normalized every finding/source Evidence value in
-  the nine reports. The pinned-tree probe passes 203 references over 94 unique
-  paths with zero missing/broad values, and 122 unique selectors pass exact
-  heading, JSON-key, script, workflow, manifest, or configuration checks.
-- Strict Markdown profiles report zero violations; strict links/owners reports
-  `PASS CROSS-DOCUMENT`. Focused diff and final scope checks are recorded in
-  the paired Task and ignored worker report.
-- RTK 0.34.3 is available, but `rtk gain` cannot initialize its tracking
-  database (error 14); underlying focused commands were used without inspecting
-  private state.
-- The first complete gate run reproduced the README program-created inventory
-  mismatch. The TDD fix added the exact WGIA README handoff row and changed
-  active/program-created counts from 51/6 to 52/7 without changing immutable
-  or retired counts. Registry and Markdown self-tests, strict registry at 502
-  paths, strict profiles/links, cached/worktree diff checks, and the complete
-  repository quality gate pass. Specification, final quality, and Python
-  reviews are Approved with no remaining Critical or Important finding.
-- Hosted/provider-runtime, remote, credential-bearing, and live lanes remain
-  `DEFER` to later task owners.
+- Approved written design: PRD-008, ARD-0011, accepted ADR-0026, and Spec 052.
+- Approved implementation plan: WORK-100 through WORK-110 with one logical
+  commit, focused RED/GREEN, aggregate gate, and two-stage review per package.
+- Baseline design commit: `14a0a75c`.
+- Repository-static limitation: provider-runtime, hosted CI, remote,
+  credential-bearing, Release, and live results are not claimed.
 
 #### Handoff
 
-WGIA-001 is complete as a bounded draft foundation. WGIA-002 through WGIA-009
-own topical audit and review, WGIA-012 alone may make the pack Current, and
-WGIA-014 owns whole-branch review.
+Begin WORK-100 by accepting ADR-0026 and atomically changing only the PRD-008
+decision projection. Do not renumber Stage 05, create Release artifacts, delete
+active-corpus validators, or remove `archive_cutover_manifest.py`.
 
 ### 2026-08-09 - WERPC-009 lifecycle closure
 
@@ -1838,7 +936,7 @@ WGIA-014 owns whole-branch review.
 - **Status**: done
 - **Tags**: #research #closure #validation #sdlc
 - **Owner**: platform
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/053-workspace-engineering-research-pack-consolidation/tasks.md`
 - **Provenance**: WERPC-009 final repository-static closure evidence
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain as terminal closure evidence for Spec 053.
@@ -1888,7 +986,7 @@ choice.
 - **Status**: done
 - **Tags**: #research #retirement #reference-ia #cleanup #validation
 - **Owner**: platform
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/053-workspace-engineering-research-pack-consolidation/tasks.md`
 - **Provenance**: WERPC-008 exact pre/post-deletion evidence
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through WERPC-009 closure and keep sourceCommit dispositions afterward.
@@ -1944,7 +1042,7 @@ fresh review, residue scan, terminal lifecycle transition, and closure commit.
 - **Status**: done
 - **Tags**: #research #migration #reference-ia #links #contracts
 - **Owner**: platform
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/053-workspace-engineering-research-pack-consolidation/tasks.md`
 - **Provenance**: WERPC-007 repository-static RED/GREEN migration evidence
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through WERPC-009 closure and preserve the sourceCommit-bounded classifications afterward.
@@ -1996,7 +1094,7 @@ wrong commits, and byte drift retain `LINK-BROKEN`.
   and complete gate rerun remain pending fresh review.
 - Fresh review exposed an exact-header mismatch: the validator expected
   `Topic scope` while the production disposition table owns `Topic or
-heading`. Updating the fixture and adding a production-table parse assertion
+  heading`. Updating the fixture and adding a production-table parse assertion
   produced four focused RED findings, then the unified header made links
   self-test/strict PASS. A fresh isolated clone with all 25 predecessor files
   removed also passes strict links/owners.
@@ -2040,7 +1138,7 @@ claimed.
 - **Status**: done
 - **Tags**: #research #ai-agents #agency-agents #model-routing #memory
 - **Owner**: docs-researcher
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/053-workspace-engineering-research-pack-consolidation/tasks.md`
 - **Provenance**: WERPC-006; official and upstream primary sources checked 2026-08-08; direct repository-static contract observation
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through WERPC-009 closure; refresh source and claim rows on their listed trigger.
@@ -2097,7 +1195,7 @@ credential/remote/hosted/live action was performed or implied.
 - **Status**: done
 - **Tags**: #research #kubernetes #infrastructure #gitops #security
 - **Owner**: docs-researcher
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/053-workspace-engineering-research-pack-consolidation/tasks.md`
 - **Provenance**: WERPC-004; official primary sources checked 2026-08-08 and direct repository-static contract observation
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through WERPC-009 closure; refresh source and claim rows on their listed trigger.
@@ -2139,7 +1237,7 @@ provenance/verification.
 - Focused pre-review validation PASS: `git diff --check`,
   `python3 scripts/validate-markdown-profiles.py --root . --mode strict` (zero
   violations), `python3 scripts/validate-links-and-owners.py --root . --mode
-strict`, and `bash scripts/validate-harness.sh`.
+  strict`, and `bash scripts/validate-harness.sh`.
 - Fresh content review Approved with no Critical, Important, or Minor finding.
   On the exact five-file staged scope, cached diff, Reference IA production,
   and the complete repository quality gate passed.
@@ -2159,7 +1257,7 @@ evidence depths remain `DEFER` for separately authorized work.
 - **Status**: done
 - **Tags**: #research #sdd #sdlc #document-contracts #diataxis #llm-wiki
 - **Owner**: docs-researcher
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/053-workspace-engineering-research-pack-consolidation/tasks.md`
 - **Provenance**: WERPC-003; official primary sources checked 2026-08-08 and direct repository-static contract observation
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through WERPC-009 closure; refresh source and claim rows on their listed trigger.
@@ -2221,7 +1319,7 @@ validation `DEFER`.
 - **Status**: done
 - **Tags**: #research #harness #agent-loop #claude #codex #evidence-depth
 - **Owner**: docs-researcher
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/053-workspace-engineering-research-pack-consolidation/tasks.md`
 - **Provenance**: WERPC-002 / VAL-WER-004 through VAL-WER-007; official primary sources checked 2026-08-08; direct repository observation in the WERPC worktree
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through WERPC-009 closure; refresh individual source rows on their named provider/control trigger.
@@ -2295,7 +1393,7 @@ the WERPC-002 commit.
 - **Status**: done
 - **Tags**: #governance #lineage #standalone-execution #tdd
 - **Owner**: platform
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/053-workspace-engineering-research-pack-consolidation/tasks.md`
 - **Provenance**: direct human approval, Spec 053, and ADR-0022
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through Spec 053 closure.
@@ -2342,7 +1440,7 @@ its exact pack checks on a staged tree, and commit that logical unit.
 - **Status**: complete
 - **Tags**: #research #workspace-engineering #migration #provenance
 - **Owner**: docs-researcher
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/053-workspace-engineering-research-pack-consolidation/tasks.md`
 - **Provenance**: WERPC-001 file inventory and full Git provenance in `docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md`
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through WERPC-009 closure; successor ledger entries supersede only their named observations.
@@ -2392,7 +1490,7 @@ source-register schema, and evidence-depth boundary.
 - **Status**: done
 - **Tags**: #research #workspace-engineering #harness #sdlc #consolidation
 - **Owner**: platform
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/053-workspace-engineering-research-pack-consolidation/tasks.md`
 - **Provenance**: direct human request and approval; Spec 053; design commit `37c714d04e1ab20816f2719fdc09f6dc42acef72`
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through Spec 053 closure; summarize in the terminal Task evidence.
@@ -2449,7 +1547,7 @@ the required two-stage review.
 - **Status**: done
 - **Tags**: #governance #docs #sdlc #taxonomy #lifecycle
 - **Owner**: platform
-- **Canonical Owner**: `docs/04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/052-document-taxonomy-consolidation/tasks.md`
 - **Provenance**: `docs/03.specs/052-document-taxonomy-consolidation/spec.md`, baseline commit `dd54f844`
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain until Spec 052 reaches `done`; supersede on program closure.
@@ -2520,7 +1618,7 @@ commit.
 - **Status**: in-progress
 - **Tags**: #governance #docs #sdlc #taxonomy #planning
 - **Owner**: platform
-- **Canonical Owner**: `docs/04.execution/plans/2026-08-07-document-taxonomy-consolidation.md`
+- **Canonical Owner**: `docs/03.specs/052-document-taxonomy-consolidation/plan.md`
 - **Provenance**: `docs/03.specs/052-document-taxonomy-consolidation/spec.md`, baseline commit `dd54f844`
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain until Spec 052 reaches `done`; supersede on program closure.
@@ -2798,7 +1896,7 @@ each logical commit.
 - Immutability evidence: a one-byte change to a historical member produced
   `RIA-SNAPSHOT ... protected snapshot`; edits to the Current pack README and
   the collection README produced `RIA-OVERLAY ... protected Current bytes
-differ` and `RIA-OVERLAY ... protected index bytes differ`. All probe changes
+  differ` and `RIA-OVERLAY ... protected index bytes differ`. All probe changes
   were reverted byte-exactly.
 - `staged`: recorded by the committing step.
 - `ci`: repository-static only; `DEFER`.
@@ -2911,7 +2009,6 @@ differ` and `RIA-OVERLAY ... protected index bytes differ`. All probe changes
   governance decision; it was not worked around.
 - Push, PR, merge, hosted CI, provider runtime, and live verification remain
   pending human authorization.
-
 ### 2026-08-02 - PRD-007 program foundation activation
 
 #### Metadata
@@ -3150,7 +2247,7 @@ differ` and `RIA-OVERLAY ... protected index bytes differ`. All probe changes
   QA/review evidence without promoting any provider/runtime, hosted,
   actual-evaluation, remote, or live result.
 - The scoped review for the evidence commit returned `SPEC PASS`, `QUALITY
-PASS`, and no findings.
+  PASS`, and no findings.
 
 #### Evidence
 
@@ -3816,7 +2913,7 @@ PASS`, and no findings.
   router, aggregate compatibility checks, and script/test inventories.
 - Extended the closed CI contract to version `1.1.0` with the exact
   `targeted -> affected -> staged -> tests -> all-files ->
-formatter-review -> rerun -> diff-checks` sequence, separate staged and
+  formatter-review -> rerun -> diff-checks` sequence, separate staged and
   all-files commands, both worktree and cached diff checks, and formatter
   invalidation/rerun semantics.
 - Added production staged-runner support. Exact staged Markdown paths now flow
@@ -4496,7 +3593,7 @@ formatter-review -> rerun -> diff-checks` sequence, separate staged and
   body/index, reciprocal Task body/index, progress ledger, and Spec 044
   program-lineage relation. Spec 045 and Spec 046 remain draft.
 - AREA-000 is complete. Current implementation truth remains `10 roles / 3
-surfaces / 30 adapters`; the `12 roles / 4 surfaces / 48 adapters` state
+  surfaces / 30 adapters`; the `12 roles / 4 surfaces / 48 adapters` state
   remains a target until later Spec 044 implementation evidence exists.
 
 #### Evidence
@@ -4541,7 +3638,7 @@ surfaces / 30 adapters`; the `12 roles / 4 surfaces / 48 adapters` state
   program-lineage transition from `draft` to `active`.
 - The current implementation remains the Spec 041 baseline until subsequent
   commits promote repository-static roster evidence: current `10 roles / 3
-surfaces / 30 adapters`, target-only `12 roles / 4 surfaces / 48 adapters`.
+  surfaces / 30 adapters`, target-only `12 roles / 4 surfaces / 48 adapters`.
 
 #### Memory
 
@@ -4697,7 +3794,7 @@ surfaces / 30 adapters`, target-only `12 roles / 4 surfaces / 48 adapters`.
 
 - Explicit-ref lifecycle validation for `HEAD^..HEAD`: PASS.
 - Clean-tree repository aggregate: PASS (`[PASS] repository quality gates
-passed`).
+  passed`).
 - Pre-commit all-files: PASS for every applicable hook; Dockerfile lint was a
   no-file `SKIP`.
 - Strict registry, Markdown profile, cross-document, affected-surface, staged
@@ -5049,8 +4146,8 @@ passed`).
 #### Evidence
 
 - `python3 scripts/validate-document-lifecycle.py --root . --mode explicit-ref
---from-ref e85b7829cd120742c5f62712259a037134e2db7a --to-ref
-1a3232ce73a653371634e99d773d71ab03f87967` passed.
+  --from-ref e85b7829cd120742c5f62712259a037134e2db7a --to-ref
+  1a3232ce73a653371634e99d773d71ab03f87967` passed.
 - `bash scripts/validate-repo-quality-gates.sh .` passed on the clean tree
   after closure.
 - `git show --name-only` confirmed the closure commit's single parent and exact
@@ -5281,9 +4378,9 @@ passed`).
 - Independent terminal reviewers inspected staged diff SHA-256
   `e146fb13fb3a62db014e6317992a4f519b79ba330253c4c5fe89834dc67e1888`.
   `/root/ccpc004_terminal_requirements_review` returned `REQUIREMENTS
-COMPLIANT`; `/root/ccpc004_terminal_quality_review` returned `QUALITY
-APPROVED`; `/root/ccpc004_terminal_security_review` returned `SECURITY
-APPROVED`; all reported no findings. Hosted, provider, remote,
+  COMPLIANT`; `/root/ccpc004_terminal_quality_review` returned `QUALITY
+  APPROVED`; `/root/ccpc004_terminal_security_review` returned `SECURITY
+  APPROVED`; all reported no findings. Hosted, provider, remote,
   credential-bearing, and live evidence remains `DEFER`.
 - Terminal closure commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9` is
   observed with parent `35d8552ba423e3e2d92294ddeb81674392b8f333`.
@@ -5387,8 +4484,8 @@ APPROVED`; all reported no findings. Hosted, provider, remote,
   checks. Dockerfile lint was a no-file `SKIP`; no formatter mutation or
   unstaged drift remained.
 - `/root/spec040_ccpc001_final_requirements` returned `REQUIREMENTS
-COMPLIANT`, and `/root/spec040_ccpc001_final_quality` returned `QUALITY
-APPROVED` for pre-evidence digest
+  COMPLIANT`, and `/root/spec040_ccpc001_final_quality` returned `QUALITY
+  APPROVED` for pre-evidence digest
   `f83ec5afb90b6c2cb7d35e9c5259d5c8358697e6d7304bfa9cde39ddf9c1b360`.
   This evidence update does not predict or claim the CCPC-001 commit identity.
 - CCPC-001 implementation commit
@@ -5462,25 +4559,25 @@ APPROVED` for pre-evidence digest
   whole-tranche terminal review.
 - Active-corpus frontier commit
   `b5c3eea128b8b3be7c858f70803f83994be1fc77` received `REQUIREMENTS
-COMPLIANT` from `/root/gcqe006_frontier_requirements_review` and `QUALITY
-APPROVED` from `/root/gcqe006_frontier_quality_review`. It admits only the
+  COMPLIANT` from `/root/gcqe006_frontier_requirements_review` and `QUALITY
+  APPROVED` from `/root/gcqe006_frontier_quality_review`. It admits only the
   exact Spec 039-done / Spec 040-active advanced frontier.
 - Index-bound current/advanced test commit
   `39e6150a6f7a79b710d0e2cd7bc2dee8349f871a` received fresh `REQUIREMENTS
-COMPLIANT` from `/root/gcqe006_test_compat_requirements_review` and `QUALITY
-APPROVED` from `/root/gcqe006_test_compat_fresh_quality`. All three commit
+  COMPLIANT` from `/root/gcqe006_test_compat_requirements_review` and `QUALITY
+  APPROVED` from `/root/gcqe006_test_compat_fresh_quality`. All three commit
   review pairs are scoped compatibility evidence, not whole-tranche terminal
   approval.
 - The exact staged proposal passed the active-corpus residue class `46/46`,
   full module `84/84`, self-test `22`, and production result
   `active_controls=0/0 terminal_controls=4/2 terminal_specs=2 guards=13/29
-findings=0`. The repository aggregate ended with `[PASS] repository quality
-gates passed`. Lifecycle self-test `668`, staged lifecycle, registry
+  findings=0`. The repository aggregate ended with `[PASS] repository quality
+  gates passed`. Lifecycle self-test `668`, staged lifecycle, registry
   self-test `119`, registry strict `448` paths with zero uncovered/ambiguous,
   Markdown strict with zero violations, strict links/owners, and cached and
   unstaged diff checks also passed.
 - The terminal commit gate passed `bash scripts/validate-repo-quality-gates.sh
-.` through its final marker and `pre-commit run --all-files` with every
+  .` through its final marker and `pre-commit run --all-files` with every
   applicable hook green; Dockerfile lint was a no-file `SKIP`. No formatter
   mutation occurred, exactly eight paths remained staged with no unstaged
   changes, and both diff checks passed.
@@ -5678,9 +4775,9 @@ gates passed`. Lifecycle self-test `668`, staged lifecycle, registry
 - Markdown-profile strict validation: PASS.
 - The first final aggregate run reached the guide-index check after all earlier
   aggregate lanes passed, then emitted `ERR
-docs/05.operations/guides/README.md updated mismatch for
-0010-ci-cd-qa-reference-guide.md: index=2026-07-04,
-frontmatter=2026-07-26`. The plan's 12-file ownership map therefore has one
+  docs/05.operations/guides/README.md updated mismatch for
+  0010-ci-cd-qa-reference-guide.md: index=2026-07-04,
+  frontmatter=2026-07-26`. The plan's 12-file ownership map therefore has one
   bounded coupled-path variance: the existing guide collection-index row now
   carries the same date as its changed guide.
 - Remaining aggregate, strict cross-document, staged, unqualified all-files,
@@ -5740,7 +4837,7 @@ frontmatter=2026-07-26`. The plan's 12-file ownership map therefore has one
   for missing seven-day retention.
 - GREEN after remediation: security self-test, production validation, the
   staged repository-quality aggregate, and unqualified `pre-commit run
---all-files` passed. No formatter mutation required restaging.
+  --all-files` passed. No formatter mutation required restaging.
 - Review-round RED: internal hostile shapes made the self-test traceback at
   `jobs: [build]`, while a mapping-valued `steps` block with pinned
   `upload-artifact` was accepted. Review-round GREEN: self-test and production
@@ -5946,13 +5043,13 @@ frontmatter=2026-07-26`. The plan's 12-file ownership map therefore has one
 - `python3 scripts/validate-markdown-profiles.py --root . --mode strict`: PASS,
   zero violations.
 - `python3 scripts/validate-links-and-owners.py --root . --mode strict
---body-contracts registry`: PASS.
+  --body-contracts registry`: PASS.
 - `python3 scripts/validate-links-and-owners.py --self-test`: PASS, including
   pre-settlement inventory equality, post-settlement inventory addition and
   removal, protected-byte drift, malformed settlement, and exact
   `fromCommit`/reason drift regression cases.
 - `python3 scripts/validate-reference-information-architecture.py --root .
---require-settled-baselines`: PASS with the protected 446-row ledger
+  --require-settled-baselines`: PASS with the protected 446-row ledger
   unchanged.
 - `python3 scripts/validate-active-corpus-residue-closure.py --root .`: PASS
   after restoring the protected Spec 030 authority object.
@@ -6160,7 +5257,7 @@ frontmatter=2026-07-26`. The plan's 12-file ownership map therefore has one
   exited 1, so Conftest is `SKIP`; the separately reported built-in policy
   fallback is `PASS` and is not represented as a Conftest pass.
 - `find infrastructure scripts docs/00.agent-governance/hooks -type f -name
-'*.sh' -exec bash -n {} +`, `bash scripts/validate-repo-quality-gates.sh .`,
+  '*.sh' -exec bash -n {} +`, `bash scripts/validate-repo-quality-gates.sh .`,
   `pre-commit run --all-files`, and `git diff --check`: PASS. Dockerfile lint
   was a no-file `SKIP`, not a pass.
 - Whole-tranche independent review of PSH-001 through PSH-005 approved Action
@@ -6345,7 +5442,8 @@ frontmatter=2026-07-26`. The plan's 12-file ownership map therefore has one
   `d5f345ab514f1359518dac709c62842ef46c09aac41094fbb76a52656331615e`.
   It scans the 413 tracked post-deletion Markdown paths plus both snapshots and
   proves zero source-target, internal, external, consumer, and target edges.
-- Current-ledger/corpus equality is 412; history/source-manifest set equality is 59. All 26 AWS destinations and all 33 Azure destinations match the approved
+- Current-ledger/corpus equality is 412; history/source-manifest set equality is
+  59. All 26 AWS destinations and all 33 Azure destinations match the approved
   provider snapshots, and the source paths are absent from both the tracked
   inventory and filesystem.
 - Empty fixture semantic SHA-256:
@@ -6364,8 +5462,8 @@ frontmatter=2026-07-26`. The plan's 12-file ownership map therefore has one
   link-only hashes pass the README text guard.
 - The registry statement-level AST guard pins the only additional `main`
   expression. Focused README output is exactly `README baseline=67
-active_current=52 retired=20 declared_total=72 schema=2 exact_set=yes
-uncovered=0 ambiguous=0`; legacy progression/final labels are absent.
+  active_current=52 retired=20 declared_total=72 schema=2 exact_set=yes
+  uncovered=0 ambiguous=0`; legacy progression/final labels are absent.
   Registry and Markdown AST guards, both validator self-tests, compatibility
   validation, focused hooks, and the repository quality gate pass.
 - Final scope is exactly 79 staged paths: allowed70 plus nine fixed
@@ -6624,7 +5722,7 @@ uncovered=0 ambiguous=0`; legacy progression/final labels are absent.
   indexed Stage 05 documents without changing their normalized bodies or any
   README; the final full repository quality gate passes.
 - The exact tracked set is `126 = 120 documents + ledger + fixture + Markdown
-validator + quality-gate consumer + Task + progress`; nothing is staged by
+  validator + quality-gate consumer + Task + progress`; nothing is staged by
   this finalization step.
 
 #### Handoff
@@ -7282,7 +6380,7 @@ validator + quality-gate consumer + Task + progress`; nothing is staged by
 - Embedded Python/Bash blocks, three-file diff checks, registry self-test and
   compatibility validation, and focused pre-commit are the Plan-correction
   evidence bundle for logical commit `fix(plans): align semantic debt removal
-lifecycle`.
+  lifecycle`.
 - The repository quality gate passed from a clean `HEAD` clone under `/tmp`,
   isolating the unrelated in-progress SMDV-002 fixture in the implementation
   worktree.
@@ -7324,7 +6422,7 @@ lifecycle`.
 - Registry self-test and compatibility, repository quality, diff checks,
   exact seven-path staging, and focused pre-commit form the static evidence
   bundle for logical commit `docs(execution): start semantic document
-validation`.
+  validation`.
 - No live, secret-value, credential, remote CI, publication, push, merge,
   deployment, or third-party mutation check is performed or inferred.
 
@@ -7470,7 +6568,7 @@ validation`.
   label.
 - A copied fixture with `missing-role` changed to mutation `none` and
   `expected_errors: []` returned a deterministic `missing-role: fixture schema
-mismatch` failure before mutation execution.
+  mismatch` failure before mutation execution.
 - `python3 scripts/validate-agent-roster-currentness.py . --self-test` — PASS.
 - `python3 scripts/validate-agent-roster-currentness.py .` — PASS.
 - `git diff --check` — PASS with no output.
@@ -7569,8 +6667,8 @@ mismatch` failure before mutation execution.
   `e0d92f7^..1965215` using
   `.superpowers/sdd/task-10-closure-rereview.diff`; the reviewer returned Spec
   PASS and Quality PASS with no findings. The
-  [Plan](../../04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md),
-  [Task](../../04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md),
+  [Plan](../../98.archive/README.md#document-index),
+  [Task](../../98.archive/README.md#document-index),
   their indexes, WERH-010, and Phase 4 are therefore complete/`Done`.
 
 #### Memory
@@ -7751,7 +6849,7 @@ mismatch` failure before mutation execution.
 #### Progress
 
 - Completed the
-  [Workspace Contract Governance Normalization Task Record](../../04.execution/tasks/2026-07-05-workspace-contract-governance-normalization.md).
+  [Workspace Contract Governance Normalization Task Record](../../03.specs/020-workspace-contract-governance-normalization/tasks.md).
 - Introduced `_workspace/README.md` as the tracked contract for temporary,
   non-secret repository-support staging.
 - Kept scratch files ignored by default; `git ls-files _workspace` must list
@@ -7842,7 +6940,7 @@ mismatch` failure before mutation execution.
 - Refreshed tracked `graphify-out/**` artifacts so the four renamed active
   PRDs resolve through their numbered filenames.
 - Updated the
-  [Template Path Numbering Contract task record](../../04.execution/tasks/2026-07-05-template-path-numbering-contract.md)
+  [Template Path Numbering Contract task record](../../03.specs/019-template-path-numbering-contract/tasks.md)
   so TPN-002 evidence records the graph refresh and classifies remaining
   old-name matches from the requested scan.
 - Preserved the requested boundaries: no `docs/99.templates/**` or
@@ -7929,7 +7027,7 @@ mismatch` failure before mutation execution.
 #### Progress
 
 - Completed the
-  [Workspace Engineering Implementation Audit Pack Task Record](../../04.execution/tasks/2026-07-05-workspace-engineering-implementation-audit-pack.md).
+  [Workspace Engineering Implementation Audit Pack Task Record](../../03.specs/018-workspace-engineering-implementation-audit-pack/tasks.md).
 - Folderized existing root audit reports into dated folders under
   `docs/90.references/audits/`.
 - Added the dated
@@ -7989,7 +7087,7 @@ mismatch` failure before mutation execution.
 #### Progress
 
 - Completed WER-007 for the
-  [Workspace Engineering Research Pack Task Record](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md).
+  [Workspace Engineering Research Pack Task Record](../../03.specs/017-workspace-engineering-research-pack/tasks.md).
 - Added the dated `automation-pipeline-workflow-qa.md` reference with
   2026-07-05 metadata, source-checked date, authority boundary, repo-backed
   implementation comparison, workflow graph summary, evidence-lane separation,
@@ -8051,7 +7149,7 @@ mismatch` failure before mutation execution.
 #### Progress
 
 - Completed WER-006 for the
-  [Workspace Engineering Research Pack Task Record](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md).
+  [Workspace Engineering Research Pack Task Record](../../03.specs/017-workspace-engineering-research-pack/tasks.md).
 - Added the dated
   `kubernetes-infrastructure-security.md` reference with 2026-07-05 metadata,
   source-checked date, authority boundary, repo-backed implementation
@@ -8112,7 +7210,7 @@ mismatch` failure before mutation execution.
 #### Progress
 
 - Completed WER-005 for the
-  [Workspace Engineering Research Pack Task Record](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md).
+  [Workspace Engineering Research Pack Task Record](../../03.specs/017-workspace-engineering-research-pack/tasks.md).
 - Refreshed the dated `spec-sdlc-ci-qa-formatting.md` reference with
   2026-07-05 official/primary source coverage for GitHub Actions, NIST SSDF,
   NIST SP 800-204D, CodeQL/code scanning, Dependency Review, SLSA,
@@ -8167,7 +7265,7 @@ mismatch` failure before mutation execution.
 #### Progress
 
 - Completed WER-004 for the
-  [Workspace Engineering Research Pack Task Record](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md).
+  [Workspace Engineering Research Pack Task Record](../../03.specs/017-workspace-engineering-research-pack/tasks.md).
 - Refreshed the dated `harness-and-loop-engineering.md` reference with
   2026-07-04 metadata, official/primary source groups, provider agent-loop
   docs freshness triggers, common environment/rule-system construction,
@@ -8225,7 +7323,7 @@ mismatch` failure before mutation execution.
 #### Progress
 
 - Completed WER-003 for the
-  [Workspace Engineering Research Pack Task Record](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md).
+  [Workspace Engineering Research Pack Task Record](../../03.specs/017-workspace-engineering-research-pack/tasks.md).
 - Refreshed the dated
   `workspace-governance-baseline.md` reference with 2026-07-04 metadata,
   source-checked date, freshness triggers, required `Definitions / Facts`
@@ -8274,7 +7372,7 @@ mismatch` failure before mutation execution.
 #### Progress
 
 - Completed WER-002 for the
-  [Workspace Engineering Research Pack Task Record](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md).
+  [Workspace Engineering Research Pack Task Record](../../03.specs/017-workspace-engineering-research-pack/tasks.md).
 - Created the dated workspace engineering research pack README and updated the
   research and parent Stage 90 indexes to route current moved references through
   `docs/90.references/research/2026-07-04-wer/`.
@@ -8329,7 +7427,7 @@ mismatch` failure before mutation execution.
 #### Progress
 
 - Completed WER-001 baseline task evidence for the
-  [Workspace Engineering Research Pack Task Record](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md).
+  [Workspace Engineering Research Pack Task Record](../../03.specs/017-workspace-engineering-research-pack/tasks.md).
 - Created the Stage 04 task record, indexed it in the tasks README, and kept
   the work scoped to task evidence plus this progress ledger update.
 - Recorded the baseline branch/worktree check, task template intake, parent
@@ -8384,9 +7482,9 @@ mismatch` failure before mutation execution.
 
 - Completed ACS-005 for the active control surface governance hardening plan
   and closed the
-  [Plan](../../04.execution/plans/2026-07-04-active-control-surface-governance-hardening.md)
+  [Plan](../../03.specs/016-active-control-surface-governance-hardening/plan.md)
   and
-  [Task evidence](../../04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md).
+  [Task evidence](../../03.specs/016-active-control-surface-governance-hardening/tasks.md).
 - Marked the Stage 04 plan and task indexes as done for this workstream.
 - Confirmed active README, GitHub-native Markdown, snapshot-boundary,
   protected-surface, and repo-static validation contracts have aligned
@@ -8437,7 +7535,7 @@ mismatch` failure before mutation execution.
 
 - Completed ACS-004 for the active control surface governance hardening plan
   and updated the
-  [Task evidence](../../04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md).
+  [Task evidence](../../03.specs/016-active-control-surface-governance-hardening/tasks.md).
 - Aligned active README routing for scripts, GitOps, workloads, tests, Traefik,
   examples, and sample-app onboarding while preserving the common README
   profile and leaving AWS/Azure cloud example docs untouched.
@@ -8494,9 +7592,9 @@ mismatch` failure before mutation execution.
 
 - Completed T-005 for the workspace document governance hardening plan and
   updated the
-  [Plan](../../04.execution/plans/2026-07-03-workspace-document-governance-hardening.md)
+  [Plan](../../03.specs/013-workspace-document-governance-hardening/plan.md)
   and
-  [Task evidence](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md).
+  [Task evidence](../../03.specs/013-workspace-document-governance-hardening/tasks.md).
 - Hardened `scripts/validate-repo-quality-gates.sh` with deterministic,
   path-scoped checks for active README deprecated headings, active authored
   template residue, active template-routing owner drift, shared hook path
@@ -8548,7 +7646,7 @@ mismatch` failure before mutation execution.
 
 - Completed T-004 for the workspace document governance hardening plan and
   updated the
-  [Task evidence](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md).
+  [Task evidence](../../03.specs/013-workspace-document-governance-hardening/tasks.md).
 - Cleaned active README/profile drift in the governance hub, AWS example docs
   README, tests README, root README, and docs hub.
 - Updated active onboarding guidance in provider doc-writer surfaces, shared
@@ -8603,7 +7701,7 @@ mismatch` failure before mutation execution.
 
 - Completed T-003 for the workspace document governance hardening plan and
   updated the
-  [Task evidence](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md).
+  [Task evidence](../../03.specs/013-workspace-document-governance-hardening/tasks.md).
 - Kept root `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md` thin while aligning their
   provider roles: Codex/GPT starts from `AGENTS.md`, Claude starts from
   `CLAUDE.md`, and Gemini starts from `GEMINI.md`.
@@ -8666,7 +7764,7 @@ mismatch` failure before mutation execution.
 
 - Completed T-002 for the workspace document governance hardening plan and
   updated the
-  [Task evidence](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md).
+  [Task evidence](../../03.specs/013-workspace-document-governance-hardening/tasks.md).
 - Kept exact target-pattern/template routing in
   `docs/99.templates/support/template-routing.md`, with the Templates README as
   a synchronized route inventory.
@@ -8720,7 +7818,7 @@ mismatch` failure before mutation execution.
 - Completed Task 1 for the workspace document governance hardening plan:
   baseline status, tracked file inventory, frontmatter/README scans, provider
   scans, and CI/QA scans are recorded in the
-  [Task evidence](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md).
+  [Task evidence](../../03.specs/013-workspace-document-governance-hardening/tasks.md).
 - Created the Stage 90
   [workspace document governance hardening audit](../../90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md)
   because durable findings were found and should route to later tasks instead
@@ -8775,9 +7873,9 @@ mismatch` failure before mutation execution.
   `docs/superpowers/` top-level folder, which the repository quality gate
   rejects.
 - Created the Stage 04
-  [implementation plan](../../04.execution/plans/2026-07-03-workspace-document-governance-hardening.md)
+  [implementation plan](../../03.specs/013-workspace-document-governance-hardening/plan.md)
   and
-  [task record](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md)
+  [task record](../../03.specs/013-workspace-document-governance-hardening/tasks.md)
   after user approval of the Stage 03 Spec.
 - Registered the new Plan and Task in the Stage 04 README indexes.
 
@@ -8812,9 +7910,9 @@ mismatch` failure before mutation execution.
 #### Progress
 
 - Created the Stage 04
-  [implementation plan](../../04.execution/plans/2026-07-03-template-governance-audit-enhancement.md)
+  [implementation plan](../../03.specs/012-template-governance-audit-enhancement/plan.md)
   and
-  [task record](../../04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md)
+  [task record](../../03.specs/012-template-governance-audit-enhancement/tasks.md)
   for the approved follow-up audit and targeted enhancement pass over
   `docs/99.templates/**`.
 - Registered the new Plan and Task in the Stage 04 README indexes.
@@ -9056,9 +8154,9 @@ mismatch` failure before mutation execution.
 #### Progress
 
 - Created the Stage 04
-  [implementation plan](../../04.execution/plans/2026-07-03-template-contract-governance-migration.md)
+  [implementation plan](../../03.specs/011-template-contract-governance-migration/plan.md)
   and
-  [task record](../../04.execution/tasks/2026-07-03-template-contract-governance-migration.md)
+  [task record](../../03.specs/011-template-contract-governance-migration/tasks.md)
   for the approved template contract and governance migration.
 - Registered both execution documents in the Stage 04 plan and task README
   indexes.
@@ -9154,9 +8252,9 @@ mismatch` failure before mutation execution.
   [SDLC delivery practices](../../90.references/audits/2026-07-02-whia/sdlc-delivery-practices-implementation-audit.md).
 - Finalized the parent
   [Spec](../../03.specs/010-workspace-harness-implementation-audit-pack/spec.md),
-  [Plan](../../04.execution/plans/2026-07-02-workspace-harness-implementation-audit-pack.md),
+  [Plan](../../03.specs/010-workspace-harness-implementation-audit-pack/plan.md),
   and
-  [Task](../../04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md)
+  [Task](../../03.specs/010-workspace-harness-implementation-audit-pack/tasks.md)
   traceability by setting plan/task status and Stage 04 indexes to `Done`.
 - Updated the parent
   [references README](../../90.references/README.md), audits README, Stage 04
@@ -9234,7 +8332,7 @@ scripts/validate-repo-quality-gates.sh .` — PASS.
   plus four durable references covering governance baseline, harness/loop
   engineering, provider implementation status, and spec/SDLC/CI/QA/formatting.
 - Finalized
-  [T-006](../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md)
+  [T-006](../../03.specs/009-workspace-harness-research-pack/tasks.md)
   by marking the task and phase complete and recording the final repo-static
   validation bundle.
 - Confirmed the pack remains documentation-only reference material. Static
@@ -9310,8 +8408,8 @@ scripts/validate-repo-quality-gates.sh .` — PASS.
   missing eval contract, missing Hookify advisory boundary, and missing
   workflow-skill phase criteria.
 - Recorded the implementation plan and task evidence:
-  - [Plan](../../04.execution/plans/2026-06-05-harness-governance-v2-overlay.md)
-  - [Task](../../04.execution/tasks/2026-06-05-harness-governance-v2-overlay.md)
+  - [Plan](../../98.archive/README.md#document-index)
+  - [Task](../../98.archive/README.md#document-index)
 
 #### Memory
 
@@ -9383,8 +8481,8 @@ scripts/validate-repo-quality-gates.sh .` — PASS.
   AI-agent-facing English sections, and drift cleanup contract cannot be
   removed silently.
 - Recorded the implementation plan and task evidence:
-  - [Plan](../../04.execution/plans/2026-06-04-harness-four-element-alignment.md)
-  - [Task](../../04.execution/tasks/2026-06-04-harness-four-element-alignment.md)
+  - [Plan](../../98.archive/README.md#document-index)
+  - [Task](../../98.archive/README.md#document-index)
 
 #### Memory
 
@@ -9591,8 +8689,8 @@ scripts/validate-repo-quality-gates.sh .` — PASS.
 #### Progress
 
 - Created the Phase 4 ESO/Vault runtime diagnosis pair:
-  - [Plan](../../04.execution/plans/2026-06-02-phase-4-eso-vault-runtime-diagnosis.md)
-  - [Task](../../04.execution/tasks/2026-06-02-phase-4-eso-vault-runtime-diagnosis.md)
+  - [Plan](../../98.archive/README.md#document-index)
+  - [Task](../../98.archive/README.md#document-index)
 - Performed read-only diagnosis of the Phase 3 live validation failure.
 - Confirmed `vault-external` Service, `vault-external-1` EndpointSlice,
   `vault-backend` ClusterSecretStore, `external-secrets` ServiceAccount, and
@@ -9649,8 +8747,8 @@ scripts/validate-repo-quality-gates.sh .` — PASS.
 #### Progress
 
 - Created the Phase 3 protected-surface traceability pair:
-  - [Plan](../../04.execution/plans/2026-06-02-phase-3-protected-surface-hardening.md)
-  - [Task](../../04.execution/tasks/2026-06-02-phase-3-protected-surface-hardening.md)
+  - [Plan](../../98.archive/README.md#document-index)
+  - [Task](../../98.archive/README.md#document-index)
 - Added `.agents/**` to the GitHub Actions `repo_quality` path filter so shared
   asset SSoT changes trigger repository quality validation.
 - Hardened shared post/lifecycle hooks so `.agents/*` changes trigger
@@ -9717,8 +8815,8 @@ scripts/validate-repo-quality-gates.sh .` — PASS.
 #### Progress
 
 - Created the Phase 2 planning pair:
-  - [Plan](../../04.execution/plans/2026-06-02-phase-2-governance-alignment.md)
-  - [Task](../../04.execution/tasks/2026-06-02-phase-2-governance-alignment.md)
+  - [Plan](../../98.archive/README.md#document-index)
+  - [Task](../../98.archive/README.md#document-index)
 - Routed Phase 2 through the canonical `docs/04.execution` stage instead of
   creating off-taxonomy `docs/superpowers/**` artifacts.
 - Updated Plans and Tasks README indexes so the Phase 2 artifacts are
@@ -9758,7 +8856,7 @@ scripts/validate-repo-quality-gates.sh .` — PASS.
 
 #### Progress
 
-- Created [Phase 1 Governance Alignment Audit Task](../../04.execution/tasks/2026-06-02-phase-1-governance-alignment-audit.md)
+- Created [Phase 1 Governance Alignment Audit Task](../../98.archive/README.md#document-index)
   as repo-static evidence for the user-provided audit plan.
 - Re-audited Stage 00 canonical governance, provider adapters, docs lifecycle,
   QA/CI/CD gates, and GitOps boundaries against current repository evidence.
@@ -9813,10 +8911,10 @@ scripts/validate-repo-quality-gates.sh .` — PASS.
 #### Progress
 
 - Created the corrective traceability pair:
-  - [Plan](../../04.execution/plans/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md)
-  - [Task](../../04.execution/tasks/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md)
+  - [Plan](../../98.archive/README.md#document-index)
+  - [Task](../../98.archive/README.md#document-index)
 - Preserved the completed
-  [Phase 1 Decision Follow-up Plan](../../04.execution/plans/2026-06-02-phase-1-decision-follow-up.md)
+  [Phase 1 Decision Follow-up Plan](../../98.archive/README.md#document-index)
   and added a current-state coverage reconciliation note without reopening its
   `status: done`.
 - Mapped the original attachment's broader Stage 00/Codex harness requirements
@@ -9911,7 +9009,7 @@ scripts/validate-repo-quality-gates.sh .` — PASS.
 
 #### Progress
 
-- Created [Phase 1 Decision Follow-up Plan](../../04.execution/plans/2026-06-02-phase-1-decision-follow-up.md)
+- Created [Phase 1 Decision Follow-up Plan](../../98.archive/README.md#document-index)
   as a Phase 2 planning artifact for the 2026-06-02 Phase 1 continuation decisions.
 - Updated [Plans README](../../04.execution/plans/README.md) so the new plan is indexed in the stage structure and document table.
 - Implemented the plan by promoting it to `status: done` and checking its completion criteria after static validation.
@@ -9947,8 +9045,8 @@ scripts/validate-repo-quality-gates.sh .` — PASS.
 #### Progress
 
 - Created the approved Phase 2/3 traceability pair:
-  - [Plan](../../04.execution/plans/2026-05-31-codex-governance-harness-alignment.md)
-  - [Task](../../04.execution/tasks/2026-05-31-codex-governance-harness-alignment.md)
+  - [Plan](../../98.archive/README.md#document-index)
+  - [Task](../../98.archive/README.md#document-index)
 - Updated Stage 00 model policy and harness catalog so Codex worker tier stays
   `gpt-5.3-codex`, with explicit Codex `model_reasoning_effort` expectations.
 - Added `model_reasoning_effort` to all eight `.codex/agents/*.toml` mirrors:
@@ -14395,8 +13493,8 @@ References` is now a legacy heading that should not return.
 #### Progress
 
 - Added and completed Phase 2/3 artifacts for restoring `.claude/agents` as real Claude-specific agent files:
-  - [Plan](../../04.execution/plans/2026-06-01-claude-agent-surface-restoration.md)
-  - [Task](../../04.execution/tasks/2026-06-01-claude-agent-surface-restoration.md)
+  - [Plan](../../98.archive/README.md#document-index)
+  - [Archive Index](../../98.archive/README.md#document-index)
 - Pre-remediation inspection contradicted the older 2026-05-30 memory entry: `.claude/agents` was again a symlink to `../.agents/agents`, so prior memory was not treated as current runtime truth.
 - Replaced the `.claude/agents` symlink with real Claude agent files carrying Claude `model` and least-privilege `tools:` frontmatter.
 - Hardened `scripts/validate-repo-quality-gates.sh` to fail if `.claude/agents` is a symlink or if Claude agent model/tool frontmatter drifts.
@@ -14430,7 +13528,7 @@ References` is now a legacy heading that should not return.
 
 #### Progress
 
-- Completed Phase 3 for [Stage 00 Canonical Adapter Redesign](../../04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md) with task evidence in [2026-06-01-stage-00-canonical-adapter-redesign.md](../../04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md).
+- Completed Phase 3 for [Stage 00 Canonical Adapter Redesign](../../98.archive/README.md#document-index) with task evidence in [2026-06-01-stage-00-canonical-adapter-redesign.md](../../98.archive/README.md#document-index).
 - Added the Stage 00 canonical adapter ownership model to the governance hub, common governance mapping, harness catalog, and provider/runtime baselines.
 - Normalized active shared hook path references to `docs/00.agent-governance/hooks/*.sh` and expanded validator coverage for `.agents/hooks.json`, shared hook shell coverage, pre-commit shellcheck/shfmt scope, and stale `shell-static` guide drift.
 - Set authored-document template owner defaults to `platform` and recorded status/owner lifecycle expectations in the template README without turning additive lifecycle suggestions into required headings for all historical docs.
@@ -14896,7 +13994,7 @@ section separating static from live evidence.
 ### Resolution
 
 - Added
-  [Harness Connective Layer Risk Closure](../../04.execution/tasks/2026-06-05-harness-connective-layer-risk-closure.md)
+  [Harness Connective Layer Risk Closure](../../98.archive/README.md#document-index)
   as the durable task evidence for closing the connective-layer Remaining Risk
   and Follow-up Tasks.
 - Classified optional `kube-linter` absence as a closed local-tool boundary
@@ -14961,7 +14059,7 @@ section separating static from live evidence.
 - Hardened `scripts/validate-repo-quality-gates.sh` to reject Korean syllables
   in Stage 03/04 English-first artifacts.
 - Added
-  [Language Boundary Alignment](../../04.execution/tasks/2026-06-05-language-boundary-alignment.md)
+  [Language Boundary Alignment](../../98.archive/README.md#document-index)
   as the current task record for this broader objective.
 
 ### Evidence
@@ -15093,9 +14191,9 @@ section separating static from live evidence.
 ### Progress
 
 - Created the Stage 04 implementation plan:
-  [Workspace Document Contract Normalization Plan](../../04.execution/plans/2026-07-04-workspace-document-contract-normalization.md).
+  [Workspace Document Contract Normalization Plan](../../03.specs/014-workspace-document-contract-normalization/plan.md).
 - Created the Stage 04 task record:
-  [Workspace Document Contract Normalization Tasks](../../04.execution/tasks/2026-07-04-workspace-document-contract-normalization.md).
+  [Workspace Document Contract Normalization Tasks](../../03.specs/014-workspace-document-contract-normalization/tasks.md).
 - Indexed the new Plan and Task in their stage README files.
 - Split execution into six logical commits: audit inventory, contract/template
   normalization, active SDLC document application, historical evidence
@@ -16489,7 +15587,7 @@ section separating static from live evidence.
 
 - Reviewer: independent reviewer agent
   `/root/review_adm006_adm007_conflict`; disposition `APPROVED FOR LIFECYCLE
-CLOSURE (C0/H0/M0/L0)`, recorded in ignored evidence package
+  CLOSURE (C0/H0/M0/L0)`, recorded in ignored evidence package
   `.superpowers/sdd/asqa006-provisional-review.md`.
 - Rollback unit: logical commit
   `docs(agents): align provider qa evidence contracts`; revert it before any
@@ -16661,6 +15759,426 @@ CLOSURE (C0/H0/M0/L0)`, recorded in ignored evidence package
 - Rollback unit after commit: revert only the WERPC-005 logical commit before
   any dependent link migration. No runtime workflow or platform state changed.
 
+## 2026-08-09 - Document SDLC and agent-governance design approved
+
+### Metadata
+
+- **Date**: 2026-08-09
+- **Layer**: documentation, architecture, agent-governance, validation
+- **Status**: in-progress
+- **Tags**: #sdlc #spec-driven #agent-governance #taxonomy #validation
+- **Owner**: Codex root agent
+- **Canonical Owner**: [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md)
+- **Provenance**: Human-approved direction A and 2026-08-09 external/local audit
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain until Spec 052 reaches terminal disposition
+- **Next Owner**: Human reviewer for the written design; writing-plans follows approval
+
+### Progress
+
+- Recorded the approved terminal topology: Stage 03 co-locates Spec, Plan, and
+  Task; Stage 04 execution retires; Stage 05 operations stays stable; and no
+  Release document family or releases folder is created.
+- Rebased PRD-008, ARD-0011, and Spec 052 on the current repository audit and
+  added draft ADR-0026 instead of overwriting unrelated accepted ADR-0021.
+- Defined stable filename/date exceptions, fail-closed legacy/transition/
+  terminal routing, reviewed archive/delete/retain dispositions, Stage 00/99
+  authority consolidation, harness-contract risk/approval/trust/provenance
+  extension, validator semantic preservation, and baseline failure closure.
+- Recorded the current incorrect program-lineage association to ADR-0021 as a
+  defect. Registry and immutable-projection changes wait until ADR-0026 passes
+  lifecycle acceptance after written-design review.
+
+### Memory
+
+- ISO lifecycle standards support lifecycle and information-item tailoring but
+  do not mandate this repository's directory or filename scheme. Stable slugs,
+  date-in-frontmatter, and the unused Stage 04 slot are local architecture
+  decisions and must be reported as such.
+- Accepted ADRs are append-only. A mistaken program association is corrected by
+  a new draft decision, required review, later lifecycle promotion, and an
+  atomic registry projection; it does not authorize rewriting an unrelated
+  accepted ADR.
+- Similar validator names do not prove duplicate behavior. Consumer, rule,
+  negative-fixture, diagnostic, and evidence-lane equivalence are required
+  before merge or retirement.
+
+### Evidence
+
+- Clean pre-change `pre-commit run --all-files`: FAIL with a registry self-test
+  temporary-memory allocation error, three existing detect-secrets findings or
+  baseline drifts, and one existing Markdown heading violation. The hook's
+  `.secrets.baseline` mutation was reverted; these are named program defects,
+  not accepted terminal exceptions.
+- Registry self-test with `TMPDIR=/tmp`: PASS, 132 cases, 64 profiles, 30
+  templates, and all mutation probes passed.
+- Strict registry: PASS, 490 paths, zero uncovered or ambiguous routes.
+- Strict Markdown profiles: PASS with zero violations.
+- Strict links/owners: PASS with a valid cross-document result.
+- Staged lifecycle: PASS after routing new ADR-0026 through required `draft`
+  admission and deferring its registry projection until lifecycle review.
+- `git diff --check`: PASS.
+- `TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .`: PASS with the
+  final `[PASS] repository quality gates passed`; this isolates the recorded
+  default temporary-directory baseline defect without claiming it is fixed.
+- Independent staged-diff re-reviews by the taxonomy, template/registry, and
+  AI-governance auditors reported no remaining Critical or Important finding
+  after Stage 03 transition wording, ADR lifecycle, archive command, runtime
+  evidence owner, approval principal/scope, trace, and enforcement-boundary
+  corrections.
+- These results are repository-static. The raw default all-files baseline
+  failures remain named implementation work; no provider, hosted, remote, or
+  live evidence is claimed.
+
+### Handoff
+
+- Complete design self-review and repository gates, then commit this logical
+  design unit. The human must review the written Spec before implementation
+  planning begins.
+- After written-Spec approval, use `superpowers:writing-plans` to replace the
+  legacy Stage 04 Plan/Task with an execution plan for the approved topology.
+- No push, merge, publication, provider action, credential access, deployment,
+  or live mutation was performed.
+
+## 2026-08-09 - WORK-100 accepted ADR-0026 and corrected PRD-008 lineage
+
+### Metadata
+
+- **Date**: 2026-08-09
+- **Layer**: documentation, architecture, validation
+- **Status**: complete
+- **Tags**: #sdlc #taxonomy #lineage #validation
+- **Owner**: platform
+- **Canonical Owner**: [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md)
+- **Provenance**: Reviewed written design and implementation planning
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain until Spec 052 reaches terminal disposition
+- **Next Owner**: WORK-101 baseline repair
+
+### Progress
+
+- Accepted ADR-0026 after written-design and implementation-planning review.
+- Corrected only the PRD-008/ARD-0011/Spec-052 registry tranche decision from
+  unrelated ADR-0021 to ADR-0026; ADR-0021 and its original program scope are
+  unchanged.
+- Updated the immutable program-lineage projection and downstream Spec/Task
+  execution record to require accepted ADR-0026.
+
+### Evidence
+
+- RED: `python3 scripts/validate-document-contract-registry.py --root . --self-test`
+  failed as expected with `production program-lineage immutable projection
+  differs` before the registry correction.
+- GREEN: staged lifecycle, registry self-test, strict registry, and strict
+  links/owners validation each passed after the atomic correction. The strict
+  registry reported zero failures, uncovered paths, and ambiguous paths.
+- All results are repository-static; no remote, provider, credential, hosted,
+  or live action was performed or claimed.
+
+### Handoff
+
+- Continue with WORK-101. The known all-files baseline defects remain assigned
+  to that separate work package.
+
+## 2026-08-11 - WORK-105 terminal document-form cutover
+
+### Metadata
+
+- **Date**: 2026-08-11
+- **Layer**: documentation, architecture, validation
+- **Status**: complete
+- **Tags**: #sdlc #taxonomy #ad #validation
+- **Owner**: platform
+- **Canonical Owner**: [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md)
+- **Provenance**: WORK-105 tests-first implementation and staged-candidate review
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through terminal Spec 052 acceptance
+- **Next Owner**: WORK-106 transition-validator tranche
+
+### Progress
+
+- Converted the exact eight source architecture records to terminal AD-0004
+  through AD-0011 paths while preserving IDs, slugs, owners, and lifecycle
+  states; retired the authored legacy ARD/RFC and API Spec routes.
+- Added terminal SRS, Interface Requirement, and AD profiles/templates, retained
+  the three native OpenAPI/GraphQL/Protobuf forms byte-for-byte, and left
+  identity-field backfill to its later work package.
+- Closed the pinned-base consumer ledger at 2,092 unique path/line records:
+  1,864 legacy ARD matches, 235 API/native matches, and seven overlaps. The
+  staged-candidate classifier reports zero live and zero unclassified current
+  consumers while retaining only exact history, native evidence, and negative
+  controls.
+- Applied the AD-0011/ADR-0027/PRD-008 authority change only after corpus and
+  consumer closure. WORK-105 and WORK-106 leave Stage 98 unchanged; only the
+  later ledger-gated WORK-107 tranche may change its outer record locations.
+
+### Evidence
+
+- RED: the strict-cutover classifier tests first exposed four uncovered legacy
+  vocabulary forms, worktree leakage into staged results, and one file-wide
+  negative classification; the semantic/route/archive/invariant tranche then
+  exposed eight additional contract failures.
+- GREEN: the exact union generator reproduces 2,092 unique records with digest
+  `01586b5f638e47ab6074f55012f354f1147f2256ed3e55c5256525d625abff45`;
+  the worktree semantic projection reports zero live and zero unclassified
+  consumers, and the staged-index divergence probe passes.
+- Completed-history links are admitted only for status `done`, exact pinned-base
+  source bytes, and the eight closed predecessor targets. Active, draft,
+  accepted, changed-byte, and outside-target fixture mutations fail closed.
+- Stage 90 and Stage 98 bodies remain unchanged, Stage 05 changes are limited
+  to the reviewed seven AD-0007 link repairs, and no remote, provider, hosted,
+  credential, deployment, or live action was performed or claimed.
+- Final staged-candidate evidence supersedes the interim digest above: the exact
+  union generator and registry fixture digest are
+  `07a9a5060a0a9da2487308d24364d69f120799603ae3be13e9a280c74ac424f4`.
+  Focused gates passed for strict-cutover 31/31, registry self/strict, Markdown
+  self/strict, links self/strict, lifecycle self/staged, active corpus 100/100,
+  active-corpus residue self-test 25, governance closure 29/29, archive
+  cutover 31/31, and RIA 94/94. The synchronized staged-index aggregate ended
+  with `[PASS] repository quality gates passed`.
+- Controller verification ran `TMPDIR=/tmp pre-commit run` and
+  `TMPDIR=/tmp pre-commit run --all-files` to exit `0`; every applicable hook
+  passed and the all-files run produced no mutation. Its post-run candidate was
+  `A12/D11/M182` across 205 no-renames logical records (196 rename-aware paths)
+  with zero unstaged or untracked paths.
+
+### Handoff
+
+- Continue with WORK-106 only after the WORK-105 staged candidate and protected
+  surface checks remain green. Do not begin the Stage 98 cutover before its
+  schema-versioned ledger, validator, recovery, and bounded WORK-107 gate pass.
+
+## 2026-08-12 - WORK-106 artifact identity and migration-ledger validators
+
+### Metadata
+
+- **Date**: 2026-08-12
+- **Layer**: documentation, validation
+- **Status**: complete
+- **Tags**: #sdlc #taxonomy #identity #migration
+- **Owner**: platform
+- **Canonical Owner**: [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md)
+- **Provenance**: WORK-106 tests-first implementation on WORK-105 commit `84bd7cf5`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through terminal Spec 052 acceptance
+- **Next Owner**: WORK-107 stable Stage 98 rehome
+
+### Progress
+
+- Extended the existing document registry validator rather than adding a
+  one-shot helper. It derives the closed PRD/SRS/IFC/AD/ADR/Stage03/Stage05/
+  Incident/Postmortem and stable Stage 98 identities from canonical paths.
+- Transition mode permits absent mandatory outer `artifact_id` values until
+  WORK-108, while every present mismatch, duplicate, prohibited declaration,
+  or wrong `change_id`/`migration_id` fails. Terminal mode additionally rejects
+  missing mandatory identities.
+- Added exact 14-field migration-row validation, canonical legacy-path and Git
+  object/digest checks, action/replacement semantics, unique legacy/stable/
+  artifact identities, full legacy tombstone hashes, and the exact current
+  `93 = 76 + 17` / `35 + 2 + 4` / `3 + 8 + 4 + 2` census.
+
+### Evidence
+
+- RED: five focused tests produced 31 missing-interface errors; the expanded
+  tombstone/ledger matrix then exposed one missing helper and two unimplemented
+  ledger negatives.
+- GREEN: path identity fixture 20/20 and all negative mutations pass; full
+  strict-cutover is 37/37. Registry self-test reports 132 cases, 67 profiles,
+  and 31 templates; strict transition reports 504 paths with zero uncovered or
+  ambiguous routes.
+- The exact three-path affected and staged runners passed every selected gate
+  including one repository-quality success marker, and the synchronized
+  aggregate ended with `[PASS] repository quality gates passed`.
+- `docs/90.references/**` and `docs/98.archive/**` have zero staged and
+  worktree diff. No artifact-ID backfill, Stage 98 rehome, Release-family,
+  provider, remote, credential-bearing, hosted, or live action was performed.
+- Final completion sequence: the six-path affected and staged lanes, plain
+  exact-index `TMPDIR=/tmp pre-commit run`, standalone repository aggregate,
+  and `TMPDIR=/tmp pre-commit run --all-files` all exited `0`; every applicable
+  hook passed, the all-files run produced no mutation, and post-run scope
+  remained six staged paths with zero unstaged or untracked paths.
+
+### Handoff
+
+- WORK-107 may now construct the exact 93-row terminal ledger and stable paths.
+  It must preserve payload/provenance and dual recovery; WORK-108 remains the
+  sole owner of mandatory outer artifact-ID backfill.
+
+## 2026-08-12 - WORK-107 stable Stage 98 rehome
+
+### Metadata
+
+- **Date**: 2026-08-12
+- **Layer**: documentation, archive, validation
+- **Status**: complete
+- **Tags**: #sdlc #taxonomy #archive #migration
+- **Owner**: platform
+- **Canonical Owner**: [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md)
+- **Provenance**: WORK-107 tests-first implementation on WORK-106 commit `eaf4f21c`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through terminal Spec 052 acceptance
+- **Next Owner**: WORK-108 mandatory current artifact-ID backfill
+
+### Progress
+
+- Rehomed the exact 93 Stage 98 ArchiveEnvelope records through the reviewed
+  `MIG-0001` 14-field ledger without changing embedded payload or source
+  provenance. Every legacy path maps to one stable path and artifact identity.
+- The stable corpus is exactly 76 change leaves in 41
+  `changes/chg-####-<slug>` directories (`35` pairs, `2` plan-only, `4`
+  task-only) plus 17 typed tombstones with the closed `3/8/4/2` stage census.
+- Registered the accepted Archive Migration document family and reusable Stage
+  99 form, migrated archive-aware validators and consumers to the exact ledger
+  aliases, and kept current-document links at the Stage 98 collection index.
+
+### Evidence
+
+- Archive recovery 27/27, archive cutover 33/33, archive validation 44/44,
+  migration 58/58, strict-cutover 37/37, active-corpus migration 21/21,
+  retention 101/101, validation-lane 49/49, and RIA 94/94 passed.
+- Production cutover reports `records=93 historical_links=711
+  secret_clean=93`; migration check reports `moves=82 archives=50
+  sources=132`; representative stable recovery verifies `32887` bytes.
+- Registry self-test reports 132 cases, 69 profiles, and 32 templates; strict
+  transition reports 506 paths with zero uncovered or ambiguous routes.
+  Strict Markdown and links/owners pass, residue closure reports
+  `taxonomy_archived=50 current=0 findings=0`, and the synchronized aggregate
+  ended with `[PASS] repository quality gates passed`.
+- Stage 90 protected bytes remain unchanged. No provider, hosted, remote,
+  credential-bearing, Release-family, deployment, or live action was performed
+  or claimed.
+- Final lifecycle closure added an exact finite WORK-107 admission bound to the
+  WORK-106 commit, base/proposed registry blobs, canonical `MIG-0001` blob and
+  digest, 93 legacy envelopes, 93 rendered stable envelopes, and the archive
+  migration template. Missing or mutated authority, ledger, endpoint, or form
+  evidence fails closed. Lifecycle staged validation, its 754-case self-test,
+  and the 20-test archive lifecycle module all pass.
+- The final affected and staged lanes passed over 130 rename-aware paths; plain
+  `TMPDIR=/tmp pre-commit run` passed every applicable hook. The all-files lane
+  then passed over 132 paths with one repository-quality success marker and no
+  mutation. Post-run no-renames scope is `A95/D93/M37` across 225 logical
+  records, with zero unstaged or untracked paths.
+
+### Handoff
+
+- WORK-108 may backfill mandatory current-document outer artifact IDs only
+  while the exact stable 93-row ledger, WORK-105 accepted AD authority, and all
+  WORK-107 recovery/aggregate gates remain green.
+
+## 2026-08-12 - WORK-108 mandatory artifact identity backfill
+
+### Metadata
+
+- **Date**: 2026-08-12
+- **Layer**: documentation, validation
+- **Status**: complete
+- **Tags**: #sdlc #taxonomy #identity #archive
+- **Owner**: platform
+- **Canonical Owner**: [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md)
+- **Provenance**: WORK-108 tests-first implementation on WORK-107 commit `db320b59`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through terminal Spec 052 acceptance
+- **Next Owner**: WORK-109 terminal document authority and route consolidation
+
+### Progress
+
+- Backfilled the path-derived outer `artifact_id` for exactly 286 mandatory
+  records: 192 current authored documents, 93 stable Stage 98 records, and the
+  accepted `MIG-0001` ledger.
+- Required the field only on the 18 mandatory source profiles. Every Stage 99
+  template, README/navigation surface, governance/reference support record,
+  native/generated surface, fixture, and embedded archive payload remains
+  outside the mandatory identity namespace.
+- Preserved the WORK-105 accepted/completed history and WORK-107 recovery
+  contracts through exact outer-line projections. Stage 98 payload,
+  provenance, stable path, and 93-row ledger bindings remain unchanged.
+
+### Evidence
+
+- RED began at `269 != 286` and exposed the greedy tombstone-type parser, then
+  the staged lifecycle and historical-link projections exposed exact
+  transition gaps. Focused negative cases reject missing, duplicate, wrong,
+  reordered, prohibited, or non-outer identity changes.
+- GREEN: 286 declarations are globally unique and path-equal. Strict-cutover
+  38/38, archive recovery/cutover/validation 104/104, archive lifecycle 21/21,
+  lifecycle self-test 754, registry self-test 132/69/32, strict registry 506,
+  Markdown self/strict, and links self/strict all pass.
+- Final closure is green: agent-governance closure 30/30, active-corpus
+  retention 102/102, and RIA 94/94 pass. The synchronized aggregate ended with
+  `[PASS] repository quality gates passed`; affected and staged lanes each
+  passed for the exact 302-path index with one repository-quality success
+  marker. Plain and all-files pre-commit runs exited `0`, every applicable hook
+  passed, no formatter mutation occurred, and the post-run shape remained
+  exactly `M302` with zero unstaged or untracked paths.
+- Route state deliberately remains `transition`; WORK-109 exclusively owns the
+  terminal-route activation. No provider, hosted, remote, credential-bearing,
+  Release-family, deployment, or live action was performed or claimed.
+
+### Handoff
+
+- WORK-109 may consolidate the three document-authority owners and activate
+  terminal routes only while the exact 286-identity census and all WORK-108
+  finite projection checks remain green.
+
+## 2026-08-13 - WORK-054-002 terminal topology and four-digit identity
+
+### Metadata
+
+- **Date**: 2026-08-13
+- **Layer**: governance, documentation, validation
+- **Status**: complete
+- **Tags**: #sdlc #spec-driven #agent-governance #taxonomy #migration
+- **Owner**: platform
+- **Canonical Owner**: [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)
+- **Provenance**: WORK-054-002 tests-first implementation on design authority
+  commit `de72eb7d`
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through Spec 0054 terminal acceptance
+- **Next Owner**: WORK-054-003 integrated AI-agent governance
+
+### Progress
+
+- Normalized all eight active PRD files and forty-nine Stage 03 work-unit
+  directories to exact four-digit identities, removed the three Stage 04
+  transition indexes, and migrated every current mutable consumer to its
+  canonical Stage 03 sibling.
+- Consolidated the route-sensitive Stage 00 and Stage 99 owners into
+  `document-authoring.md`, `document-contract.md`, and
+  `document-lifecycle.md`; preserved completed and immutable history through
+  exact source-blob-pinned aliases rather than rewriting evidence.
+- Established the operations Incident route as
+  `incidents/<year>/inc-####-<slug>/{incident.md,postmortem.md}` with matching
+  `INC-<YYYY>-<DDDD>` and `POSTMORTEM-<YYYY>-<DDDD>` identities.
+- Added `MIG-0002` as the atomic 154-row authority: 141 moved, three replaced,
+  and ten merged records, pinned to source commit, source blobs, content
+  digests, current endpoints, and the full document SHA-256. Existing Stage 90
+  bytes and sealed Stage 98 records remain unchanged.
+
+### Evidence
+
+- Strict-cutover 49/49, registry self-test 132 cases / 69 profiles / 32
+  templates, strict registry 501 paths / zero uncovered / zero ambiguous,
+  lifecycle self-test 770 cases, staged lifecycle, Markdown, and links gates
+  all pass.
+- Archive validation 58/58 and archive cutover 35/35 pass; production archive
+  cutover reports `records=93 historical_links=711 secret_clean=93`.
+  Bounded staged-index migration readers reject oversized, trailing, timeout,
+  ambiguous-ref, and worktree/index-divergent authority.
+- Affected and staged lanes each exited `0` over the exact 315-path candidate
+  with one repository-quality success marker. Plain exact-index pre-commit
+  exited `0`; detect-secrets still rejects a synthetic high-entropy API key,
+  and shellcheck rejects the removed overlapping route pattern.
+- Independent Python and architecture/code reviews approved the candidate with
+  zero Critical, Important, or Minor findings. No provider, remote, hosted,
+  credential-bearing, Release-family, deployment, or live action was
+  performed or claimed.
+
+### Handoff
+
+- WORK-054-003 is the only active successor. It may consolidate common
+  AI-agent governance and provider-native adapters only while the four-digit
+  document routes, Stage 04 retirement, exact `MIG-0002`, Stage 90 byte
+  immutability, and all WP-002 focused gates remain green.
 ## 2026-08-14 - WRCP-007 workspace research consistency and partial refresh closure
 
 ### Metadata
@@ -16902,7 +16420,7 @@ evidence of **no regression**, not of a newly attained state.
 ### Metadata
 
 - Owner: platform
-- Scope: `docs/90.references/research/2026-08-08-wer/**`, `docs/03.specs/058-workspace-research-full-corpus-refresh/spec.md`, `docs/04.execution/{plans,tasks}/2026-08-17-workspace-research-full-corpus-refresh.md`, `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`, `docs/99.templates/support/document-profiles.json`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`, `README.md`
+- Scope: `docs/90.references/research/2026-08-08-wer/**`, `docs/03.specs/0059-workspace-research-full-corpus-refresh/spec.md`, `docs/04.execution/{plans,tasks}/2026-08-17-workspace-research-full-corpus-refresh.md`, `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`, `docs/99.templates/support/document-profiles.json`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`, `README.md`
 - Parent: Spec 058 / the WRFC-000..012 cycle, the fifth refresh over the 2026-08-08 WER pack
 - Evidence class: repository-static and public-documentation only
 
@@ -17041,7 +16559,7 @@ newly attained state.
 ### Metadata
 
 - Owner: platform
-- Scope: `gitops/platform/monitoring/kube-state-metrics.yaml`, `infrastructure/bootstrap-local.sh`, `docs/90.references/data/tech-stack-version-inventory.md`, `docs/02.architecture/decisions/0023-argo-cd-source-integrity-non-adoption.md`, `docs/03.specs/059-platform-currency-defect-closure/spec.md`, `docs/04.execution/{plans,tasks}/2026-08-18-platform-currency-defect-closure.md`, `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`, `docs/99.templates/support/document-profiles.json`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`, `docs/00.agent-governance/model-policy.md`, `README.md`
+- Scope: `gitops/platform/monitoring/kube-state-metrics.yaml`, `infrastructure/bootstrap-local.sh`, `docs/90.references/data/tech-stack-version-inventory.md`, `docs/02.architecture/decisions/0026-argo-cd-source-integrity-non-adoption.md`, `docs/03.specs/0060-platform-currency-defect-closure/spec.md`, `docs/04.execution/{plans,tasks}/2026-08-18-platform-currency-defect-closure.md`, `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`, `docs/99.templates/support/document-profiles.json`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`, `docs/00.agent-governance/model-policy.md`, `README.md`
 - Parent: Spec 059 / the PCDC-001..004 cycle, successor to the WRFC handoff
 - Evidence class: repository-static and public-documentation only
 
@@ -17079,7 +16597,7 @@ Both pins record the version an unpinned run resolves to today, so pinning chang
 nothing about what installs. It only makes the result deterministic — risk-neutral
 and determinism-positive.
 
-The Argo CD trigger was **settled rather than deferred.** ADR 0023 declines Source
+The Argo CD trigger was **settled rather than deferred.** ADR-0026 declines Source
 Integrity because it does not address the gap's cause: twelve declarations track
 `targetRevision: main`, and the facility verifies the signature on whichever commit
 sits at that mutable tip. It pins no revision, stops no signed force-push, and
@@ -17128,7 +16646,7 @@ cycle's blocking-class closure used.
   four minor versions apart. Upstream states neither that this works nor that it
   breaks, so the deferred upgrade closes a documented gap and not only a currency
   gap.
-- **`targetRevision: main` remains unpinned across twelve declarations.** ADR 0023
+- **`targetRevision: main` remains unpinned across twelve declarations.** ADR-0026
   records commit-SHA pinning as the preferred control but explicitly does not
   authorize it; it is a design change over all twelve and needs its own approval.
 - **`.github/**` still has no declared scope owner.** Carried forward unchanged
@@ -17172,7 +16690,7 @@ cycle's blocking-class closure used.
 ### Metadata
 
 - Owner: platform
-- Scope: `gitops/workloads/adminer/rollout.yaml`, `examples/sample-app/rollout.yaml`, `docs/03.specs/060-workload-security-context-baseline/spec.md`, `docs/04.execution/{plans,tasks}/2026-08-18-workload-security-context-baseline.md`, `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`, `docs/99.templates/support/document-profiles.json`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`
+- Scope: `gitops/workloads/adminer/rollout.yaml`, `examples/sample-app/rollout.yaml`, `docs/03.specs/0061-workload-security-context-baseline/spec.md`, `docs/04.execution/{plans,tasks}/2026-08-18-workload-security-context-baseline.md`, `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`, `docs/99.templates/support/document-profiles.json`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`
 - Parent: Spec 060 / the WSCB-001..004 cycle, successor to the PCDC handoff
 - Evidence class: repository-static and public-source only
 
@@ -17299,7 +16817,7 @@ template gap affected every future one.
 ### Metadata
 
 - Owner: platform
-- Scope: `docs/02.architecture/decisions/0024-pod-security-standards-staged-adoption.md`, `docs/02.architecture/decisions/README.md`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`
+- Scope: `docs/02.architecture/decisions/0027-pod-security-standards-staged-adoption.md`, `docs/02.architecture/decisions/README.md`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`
 - Parent: successor to the WSCB handoff, which named Pod Security Admission as the next candidate
 - Evidence class: repository-static and public-documentation only
 
@@ -17361,7 +16879,7 @@ hardened lives, and would learn the Istio constraint by failed reconciliation.
   not a standalone move. At Restricted the property does not hold — both
   workloads fail on `seccompProfile`, which Baseline does not require at all.
 - **The Helm-owned namespaces were not inspected at decision time.** Whether any
-  of their workloads satisfies Baseline or Restricted was unknown when ADR 0024
+  of their workloads satisfies Baseline or Restricted was unknown when ADR-0027
   was taken. A follow-up survey was commissioned immediately afterwards; see the
   next ledger entry for its results.
 - **Carried forward unchanged.** The two deferred `adminer` controls, the three
@@ -17393,13 +16911,13 @@ hardened lives, and would learn the Istio constraint by failed reconciliation.
 ### Metadata
 
 - Owner: platform
-- Scope: `docs/90.references/data/pod-security-compliance-inventory.md`, `docs/90.references/data/istio-cni-adoption-evaluation.md`, `docs/90.references/data/reference-information-architecture.json`, `docs/90.references/data/README.md`, `docs/02.architecture/decisions/0024-pod-security-standards-staged-adoption.md`
-- Parent: closes the two items ADR 0024 recorded as explicit non-goals
+- Scope: `docs/90.references/data/pod-security-compliance-inventory.md`, `docs/90.references/data/istio-cni-adoption-evaluation.md`, `docs/90.references/data/reference-information-architecture.json`, `docs/90.references/data/README.md`, `docs/02.architecture/decisions/0027-pod-security-standards-staged-adoption.md`
+- Parent: closes the two items ADR-0027 recorded as explicit non-goals
 - Evidence class: repository-static, public-documentation, and local `helm template` rendering
 
 ### Progress
 
-ADR 0024 declined to apply Pod Security Admission labels and named two things it
+ADR-0027 declined to apply Pod Security Admission labels and named two things it
 had not assessed: whether the Helm-owned namespaces satisfy Baseline or
 Restricted, and whether adopting Istio CNI would actually unblock Baseline rather
 than merely reduce privilege. Both are now answered, and one answer contradicts
@@ -17412,7 +16930,7 @@ and `ingress-nginx` pods. Six workloads fail Restricted and four of those fail o
 `seccompProfile` alone — the control Restricted requires and Baseline does not,
 which is why a workload can look fully hardened and still be Restricted-dirty.
 
-**That contradicts an ADR 0024 rejection rationale.** The ADR rejected applying
+**That contradicts an ADR-0027 rejection rationale.** The ADR rejected applying
 `warn`/`audit` at Baseline everywhere partly because "the Helm-owned namespaces
 would contribute warnings this repository cannot act on". They would contribute
 none. The signal would be exactly one class — the Istio init container in two
@@ -17468,7 +16986,7 @@ one that serves none.
 - **`headlamp` is the inverse trap**: its template carries a Restricted-clean
   default dict that the shipped `values.yaml` suppresses, so emptying
   `securityContext` is what reaches compliance.
-- **ADR 0024 warrants a revisit, not a supersession.** Its decision holds, its
+- **ADR-0027 warrants a revisit, not a supersession.** Its decision holds, its
   ownership-boundary argument holds, and its Istio prerequisite is now confirmed
   stronger than recorded. Only its "unactionable warnings" rejection is
   disproven.
@@ -17502,7 +17020,7 @@ one that serves none.
 ### Metadata
 
 - Owner: platform
-- Scope: `gitops/apps/root/platform-{istio-cni,istiod,kiali,headlamp,rollouts}-app.yaml`, `gitops/workloads/adminer/rollout.yaml`, `gitops/platform/monitoring/*.yaml`, `gitops/clusters/local/appproject-platform.yaml`, `gitops/README.md`, `docs/90.references/data/{pod-security-compliance-inventory,tech-stack-version-inventory}.md`, `docs/02.architecture/decisions/0024-pod-security-standards-staged-adoption.md`
+- Scope: `gitops/apps/root/platform-{istio-cni,istiod,kiali,headlamp,rollouts}-app.yaml`, `gitops/workloads/adminer/rollout.yaml`, `gitops/platform/monitoring/*.yaml`, `gitops/clusters/local/appproject-platform.yaml`, `gitops/README.md`, `docs/90.references/data/{pod-security-compliance-inventory,tech-stack-version-inventory}.md`, `docs/02.architecture/decisions/0027-pod-security-standards-staged-adoption.md`
 - Parent: acts on the compliance survey and the CNI evaluation from the prior cycle
 - Evidence class: repository-static, local `helm template` rendering, and one read-only container image inspection
 
@@ -17567,7 +17085,7 @@ none.
   agent outright; and the new chart needed rows in the GitOps namespace-ownership
   matrix and the version inventory. Adding a new *kind* to this platform is not
   the same as adding a new Application.
-- **ADR 0024's reversal condition has fired** and is recorded in the ADR. Its
+- **ADR-0027's reversal condition has fired** and is recorded in the ADR. Its
   steps 2 and 3 — `warn`/`audit` at Baseline, then per-namespace `enforce` — are
   unblocked and need a fresh decision, not a resumption of the old one.
 - **`istio-system` now requires a `privileged` label** under any future PSS
@@ -17599,13 +17117,13 @@ none.
 ### Metadata
 
 - Owner: platform
-- Scope: `docs/02.architecture/decisions/0025-pod-security-admission-per-namespace-adoption.md`, `gitops/platform/namespaces/namespace-*.yaml`, `gitops/workloads/adminer/rollout.yaml`, `gitops/apps/root/platform-ingress-nginx-app.yaml`, `docs/90.references/data/pod-security-compliance-inventory.md`, `docs/02.architecture/decisions/README.md`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`
-- Parent: ADR 0024's reversal condition fired when the Istio CNI agent was adopted
+- Scope: `docs/02.architecture/decisions/0028-pod-security-admission-per-namespace-adoption.md`, `gitops/platform/namespaces/namespace-*.yaml`, `gitops/workloads/adminer/rollout.yaml`, `gitops/apps/root/platform-ingress-nginx-app.yaml`, `docs/90.references/data/pod-security-compliance-inventory.md`, `docs/02.architecture/decisions/README.md`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`
+- Parent: ADR-0027's reversal condition fired when the Istio CNI agent was adopted
 - Evidence class: repository-static plus local `helm template` rendering
 
 ### Progress
 
-ADR 0024 declined PSS labels and recorded an ordering. Its reversal condition
+ADR-0027 declined PSS labels and recorded an ordering. Its reversal condition
 fired, so the question was taken again with evidence it did not have. The answer
 is **not uniform**, and the reasoning for that is the entry's point.
 
@@ -17698,7 +17216,7 @@ containers on the default path, so this single field was the entire gap.
 ### Metadata
 
 - Owner: platform
-- Scope: `docs/00.agent-governance/scopes/meta.md`, `docs/00.agent-governance/scopes/qa.md`, `gitops/platform/namespaces/namespace-argocd.yaml`, `gitops/platform/namespaces/kustomization.yaml`, `gitops/platform/monitoring/kube-state-metrics.yaml`, `docs/90.references/data/tech-stack-version-inventory.md`, `docs/90.references/data/pod-security-compliance-inventory.md`, `docs/02.architecture/decisions/0025-pod-security-admission-per-namespace-adoption.md`, `docs/02.architecture/decisions/0026-mutable-target-revision-retention.md`, `docs/02.architecture/decisions/README.md`, `gitops/README.md`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`
+- Scope: `docs/00.agent-governance/scopes/meta.md`, `docs/00.agent-governance/scopes/qa.md`, `gitops/platform/namespaces/namespace-argocd.yaml`, `gitops/platform/namespaces/kustomization.yaml`, `gitops/platform/monitoring/kube-state-metrics.yaml`, `docs/90.references/data/tech-stack-version-inventory.md`, `docs/90.references/data/pod-security-compliance-inventory.md`, `docs/02.architecture/decisions/0028-pod-security-admission-per-namespace-adoption.md`, `docs/02.architecture/decisions/0029-mutable-target-revision-retention.md`, `docs/02.architecture/decisions/README.md`, `gitops/README.md`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`
 - Parent: the four items carried forward on the PCDC and PSS handoffs
 - Evidence class: repository-static
 
@@ -17719,7 +17237,7 @@ and a pruned `argocd` namespace would delete every Application inside it along
 with Argo CD itself — the entire GitOps state, removed by the mechanism meant to
 keep it accurate. `argocd.argoproj.io/sync-options: Prune=false` is therefore
 not a precaution but a precondition. `enforce` is withheld for a stronger
-version of the chart-version argument in ADR 0025: all ten `argo-cd` workloads
+version of the chart-version argument in ADR-0028: all ten `argo-cd` workloads
 pass Restricted at the pinned version, but enforcing there would let a
 regressing chart upgrade lock Argo CD out of its own namespace.
 
@@ -17737,7 +17255,7 @@ at `v2.14.0`. This also settles a question an earlier withdrawal left ambiguous:
 the Spec 059 RBAC fix and the Spec 060 decision to withhold `endpointslices`
 were both correct.
 
-**ADR 0026 declined commit-SHA pinning by reframing what the pin would be.** All
+**ADR-0029 declined commit-SHA pinning by reframing what the pin would be.** All
 twelve `targetRevision: main` declarations point at this repository, and every
 chart-consuming Application already pins its chart version, so the pin was never
 about supply chain. All twelve are `automated` with `selfHeal`, so pinning does
@@ -17761,7 +17279,7 @@ its own `targetRevision`.
 - `bash scripts/validate-repo-quality-gates.sh .` reports
   `[PASS] repository quality gates passed`; 87 retention tests OK
 - Commits: `f37b02a9` the scope split, `ca5ba0b2` the argocd adoption,
-  `ef0dd366` the kube-state-metrics upgrade, `d4c40c92` ADR 0026
+  `ef0dd366` the kube-state-metrics upgrade, `d4c40c92` ADR-0029
 - No cluster, registry, hosted CI run, or remote was contacted
 
 ### Handoff
@@ -17773,9 +17291,9 @@ its own `targetRevision`.
   `argocd` closed the namespace-level instance of it. Bootstrap still installs
   charts before GitOps ownership exists, which is the same root as the unpinned
   bootstrap charts Spec 059 closed.
-- **ADR 0026 leaves the identity gap open deliberately.** What is deployed from
+- **ADR-0029 leaves the identity gap open deliberately.** What is deployed from
   `main` is not pinned to a commit, and that is now a recorded decision with
-  reasoning rather than an unadopted recommendation carried in ADR 0023.
+  reasoning rather than an unadopted recommendation carried in ADR-0026.
 - **Reusable lesson: the comparison target decides the answer, not the
   observation.** Both the kube-state-metrics RBAC question and the earlier
   withdrawal came from comparing against an upstream example rather than against
@@ -17828,7 +17346,7 @@ The flannel minor decides the hold: Istio CNI writes its conflist into the same
 CNI directory flannel owns and chains behind it, and that adoption is still
 render-verified only. Recreating the cluster on a new flannel before the
 Baseline warning channel is read stacks an unverified change on an unverified
-change, which is the pattern ADR 0025 already declined once.
+change, which is the pattern ADR-0028 already declined once.
 
 **A second version contract was missing entirely.** The repository pins the k3s
 image but has never pinned or observed the k3d binary that runs it;

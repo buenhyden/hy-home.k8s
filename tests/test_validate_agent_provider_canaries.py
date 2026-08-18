@@ -122,6 +122,11 @@ class ProviderCanaryContractTests(unittest.TestCase):
         }
         self.assertEqual(records, lanes)
 
+    def test_absent_runtime_native_pass_fails_closed(self) -> None:
+        mutated = self.contract_copy()
+        self.validator.apply_mutation(mutated, "absent-runtime-native-pass")
+        self.assert_rule(mutated, "PNME-UNSUPPORTED-RUNTIME")
+
     def test_all_canary_fixture_mutations_fail_with_declared_rule(self) -> None:
         for case in self.fixture["canaryMutations"]:
             with self.subTest(case=case["name"]):

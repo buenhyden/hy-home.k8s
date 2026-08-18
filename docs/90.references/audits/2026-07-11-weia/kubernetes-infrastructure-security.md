@@ -105,7 +105,7 @@ scored only in the corresponding SEC row.
 
 | ID | Benchmark | Expected control | Repository evidence | Maturity | Verdict | Confidence | Gap | Recommendation | Priority | Follow-up owner | Acceptance evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| PLAT-001 | [Current platform/security research](../../research/2026-07-07-wer/kubernetes-infrastructure-security.md); OpenGitOps | One declarative root owns platform desired state through an explicit project, source, destination, and versioned path. | `root-application.yaml` names `root-platform`, project `platform`, path `gitops/apps/root`, revision `main`, and the cluster-local destination; the structure gate asserts the hierarchy. | 3 deterministic local+CI enforcement | Implemented | Verified repo-static | No missing repository-static root-owner element; pull/reconcile behavior is excluded here and assessed by SEC-004. | Preserve one root owner and its deterministic hierarchy fixtures. | N/A — no action | N/A — no action | N/A — no action |
+| PLAT-001 | [Current platform/security research](../../research/2026-08-08-wer/kubernetes-infrastructure-and-security.md); OpenGitOps | One declarative root owns platform desired state through an explicit project, source, destination, and versioned path. | `root-application.yaml` names `root-platform`, project `platform`, path `gitops/apps/root`, revision `main`, and the cluster-local destination; the structure gate asserts the hierarchy. | 3 deterministic local+CI enforcement | Implemented | Verified repo-static | No missing repository-static root-owner element; pull/reconcile behavior is excluded here and assessed by SEC-004. | Preserve one root owner and its deterministic hierarchy fixtures. | N/A — no action | N/A — no action | N/A — no action |
 | PLAT-002 | Current research; Argo CD ApplicationSet | Workload discovery has one bounded generator, project, source family, and namespace rather than sharing platform ownership. | `apps-generator` discovers only `gitops/workloads/*`, renders into project `apps` and namespace `apps`; the structure gate asserts those exact fields. | 3 deterministic local+CI enforcement | Implemented | Verified repo-static | No missing static discovery boundary; generated Applications and controller discovery remain live-excluded. | Preserve the platform/workload owner split and exact generator fixture. | N/A — no action | N/A — no action | N/A — no action |
 | PLAT-003 | Kubernetes Kustomize; Current research | Every Kustomize root parses, every sibling manifest is referenced, and ownership can be rendered for review. | The structure gate parses all 12 tracked Kustomizations and rejects unreferenced sibling YAML; manifest validation parses the broader YAML target set. | 3 deterministic local+CI enforcement | Implemented | Verified repo-static | No missing parse/completeness control; full root render/schema depth is owned by SEC-011. | Keep parse and sibling-completeness checks as the fast foundation. | N/A — no action | N/A — no action | N/A — no action |
 | PLAT-004 | Kubernetes RBAC/AppProject least privilege; Current research | Workloads use a narrow source, destination, namespaced-kind list, no cluster kinds, and read-only project role. | `apps` permits one repository, only namespace `apps`, eight exact namespaced kinds, no cluster kinds, and `applications get` for `apps/*`; wildcard and unused-kind checks are deterministic. | 3 deterministic local+CI enforcement | Implemented | Verified repo-static | No missing tracked workload project restriction; live Argo CD authorization is excluded. | Preserve exact allow-lists and negative fixtures when onboarding a new workload kind. | N/A — no action | N/A — no action | N/A — no action |
@@ -224,8 +224,8 @@ or future artifact consumers the repository actually owns.
 ### Repository and Audit Sources
 
 - [Audit pack method](README.md)
-- [Implementation plan](../../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md)
-- [Current Kubernetes, Infrastructure, and Security Research](../../research/2026-07-07-wer/kubernetes-infrastructure-security.md)
+- [Implementation plan](../../../98.archive/README.md#document-index)
+- [Current Kubernetes, Infrastructure, and Security Research](../../research/2026-08-08-wer/kubernetes-infrastructure-and-security.md)
 - [Task 9 CI, QA, and Supply-Chain Audit](ci-qa-automation-pipeline-workflow.md)
 - [GitOps README](../../../../gitops/README.md)
 - [Infrastructure README](../../../../infrastructure/README.md)
@@ -282,7 +282,7 @@ read from those paths at the audit observation SHA.
 ## Related Documents
 
 - **Audit pack**: [2026-07-11 WEIA README](README.md)
-- **Implementation plan**: [WEIA implementation plan](../../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md)
-- **Current research pack**: [2026-07-07 WER README](../../research/2026-07-07-wer/README.md)
+- **Implementation plan**: [WEIA implementation plan](../../../98.archive/README.md#document-index)
+- **Current research pack**: [2026-07-07 WER README](../../research/2026-08-08-wer/README.md)
 - **Parent audits index**: [Audits README](../README.md)
 - **Integrated remediation owner**: `remediation-roadmap.md`

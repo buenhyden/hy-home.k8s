@@ -4,6 +4,7 @@ type: sdlc/adr
 status: accepted
 owner: platform
 updated: 2026-07-13
+artifact_id: "ADR-0011"
 ---
 
 # ADR-0011: Argo Rollouts for Progressive Delivery
@@ -61,5 +62,5 @@ Accepted — 2026-03-30
 - [PRD](../../01.requirements/001-argo-rollouts-progressive-delivery.md)
 - [ARD](../requirements/0004-argo-rollouts-progressive-delivery.md)
 - [Spec](../../03.specs/004-argo-rollouts-progressive-delivery/spec.md)
-- [Plan](../../04.execution/plans/2026-05-18-argo-rollouts-progressive-delivery.md)
-- [Task](../../04.execution/tasks/2026-05-18-argo-rollouts-progressive-delivery.md)
+- [Plan](../../03.specs/004-argo-rollouts-progressive-delivery/plan.md)
+- [Task](../../03.specs/004-argo-rollouts-progressive-delivery/tasks.md)

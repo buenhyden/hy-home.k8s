@@ -4,16 +4,20 @@
 from __future__ import annotations
 
 import argparse
+import bisect
 import copy
+import hashlib
+import importlib.util
 import json
 import re
 import shutil
 import stat
 import subprocess
+import sys
 import tempfile
-from dataclasses import replace
+from dataclasses import dataclass, replace
 from pathlib import Path, PurePosixPath
-from typing import Any
+from typing import Any, Mapping
 
 from document_contracts import (
     BASELINE_COUNT,
@@ -32,10 +36,328 @@ from document_contracts import (
     _parse_ls_tree_z,
     validate_registry,
 )
+from archive_recovery import ArchiveContractError, _git_capture_bounded
+from archive_validation import (
+    MIG0002_DOCUMENT_SHA256,
+    MIGRATION_DOCUMENT_MAX_BYTES,
+    parse_pinned_migration_control,
+    read_staged_blob_bounded,
+)
 
 
 SAMPLE_PATH = PurePosixPath(".agents/GEMINI.md")
 LOCAL_AGENT_FIXTURE_FIELD = "localAgentFixtureSamplePath"
+PROGRAM_LINEAGE_PROJECTION_FIXTURE_FIELD = "productionProgramLineageProjection"
+WORK105_CONSUMER_DISPOSITION_FIXTURE_FIELD = "work105ConsumerDisposition"
+WORK106_ARTIFACT_FIXTURE_FIELD = "work106ArtifactIdentityCases"
+WORK106_LEDGER_FIXTURE_FIELD = "work106MigrationLedger"
+WORK105_CONSUMER_BASE_COMMIT = "a6fa1806364ea0472baaad0906e1b5e4ddac8602"
+WORK105_CONSUMER_PATTERNS = (
+    {
+        "id": "ard",
+        "regex": (
+            r"sdlc/ard|template/sdlc/ard|ard\.template\.md|"
+            r"02\.architecture/requirements|Architecture Reference Document|"
+            r"(^|[^A-Za-z0-9_])ARD([^A-Za-z0-9_]|$)|ard_id|\"ard\""
+        ),
+        "scope": "tracked-text-lines",
+    },
+    {
+        "id": "authored-api-spec",
+        "regex": (
+            r"sdlc/api-spec|template/sdlc/api-spec|api-spec\.template\.md|"
+            r"(^|/)api-spec\.md|OpenAPI Specification|"
+            r"openapi\.template\.yaml|schema\.template\.graphql|"
+            r"service\.template\.proto|native-surface-cases\.json"
+        ),
+        "scope": "tracked-text-lines",
+    },
+)
+WORK105_CONSUMER_RECORD_KEYS = {
+    "patternId",
+    "path",
+    "line",
+    "matchedLineSha256",
+    "occurrenceCount",
+    "consumerClass",
+    "disposition",
+    "target",
+    "reason",
+}
+
+WORK106_LEDGER_FIELDS = frozenset(
+    {
+        "schema_version",
+        "migration_id",
+        "legacy_path",
+        "stable_path",
+        "artifact_id",
+        "action",
+        "replacement",
+        "source_commit",
+        "legacy_archive_commit",
+        "legacy_envelope_blob",
+        "source_blob",
+        "content_sha256",
+        "record_kind",
+        "reason",
+    }
+)
+WORK106_OBJECT_ID = re.compile(r"^[0-9a-f]{40}$")
+WORK106_CONTENT_DIGEST = re.compile(r"^[0-9a-f]{64}$")
+WORK106_MIGRATION_ID = re.compile(r"^MIG-[0-9]{4}$")
+WORK106_SLUG = r"[a-z0-9]+(?:-[a-z0-9]+)*"
+WORK106_TOMBSTONE_TYPES = {
+    "01.requirements": frozenset({"PRD", "SRS", "IFC"}),
+    "02.architecture": frozenset({"AD", "ADR"}),
+    "03.specs": frozenset(
+        {"SPEC", "AGENT-DESIGN", "DATA-MODEL", "TESTS", "PLAN", "TASK"}
+    ),
+    "05.operations": frozenset(
+        {"GUIDE", "POLICY", "RUNBOOK", "INCIDENT", "POSTMORTEM"}
+    ),
+}
+WORK108_MANDATORY_PROFILE_IDS = frozenset(
+    {
+        "sdlc/prd",
+        "sdlc/srs",
+        "sdlc/interface",
+        "sdlc/ad",
+        "sdlc/adr",
+        "sdlc/spec",
+        "sdlc/agent-design",
+        "sdlc/data-model",
+        "sdlc/tests",
+        "sdlc/plan",
+        "sdlc/task",
+        "sdlc/guide",
+        "sdlc/policy",
+        "sdlc/runbook",
+        "sdlc/incident",
+        "sdlc/postmortem",
+        "content/archive",
+        "content/archive-migration",
+    }
+)
+WORK109_SOURCE_COMMIT = "160ce006969ddb49965c8af193f3e9ee290e18a8"
+WORK109_MIGRATION_DOCUMENT_SHA256 = MIG0002_DOCUMENT_SHA256
+WORK109_GIT_TREE_MAX_BYTES = 2 * 1024 * 1024
+WORK109_MIGRATION_LEDGER_PATH = PurePosixPath(
+    "docs/98.archive/migrations/"
+    "mig-0002-sdlc-document-and-governance-consolidation.md"
+)
+WORK109_MIGRATION_LEDGER_MARKER = (
+    "<!-- archive-migration-ledger:v1 format=json -->"
+)
+WORK109_MIGRATION_LEDGER_FIELDS = frozenset(
+    {
+        "legacy_path",
+        "stable_path",
+        "artifact_id",
+        "action",
+        "replacement",
+        "source_commit",
+        "source_blob",
+        "content_sha256",
+        "reason",
+    }
+)
+WORK109_OBJECT_ID = re.compile(r"^[0-9a-f]{40}$")
+WORK109_CONTENT_DIGEST = re.compile(r"^[0-9a-f]{64}$")
+WORK109_LEGACY_PRD = re.compile(
+    r"^docs/01\.requirements/(?P<identity>[0-9]{3}-[^/]+\.md)$"
+)
+WORK109_LEGACY_SPEC_MEMBER = re.compile(
+    r"^docs/03\.specs/(?P<unit>[0-9]{3}-[^/]+)/(?P<leaf>[^/]+\.md)$"
+)
+WORK109_LEGACY_WORK_UNIT_MEMBER = re.compile(
+    r"^docs/03\.specs/(?P<unit>[0-9]{3})-[^/]+/"
+    r"(?P<leaf>plan|tasks)\.md$"
+)
+WORK109_STABLE_WORK_UNIT_MEMBER = re.compile(
+    r"^docs/03\.specs/(?P<unit>[0-9]{4})-[^/]+/"
+    r"(?P<leaf>plan|tasks)\.md$"
+)
+WORK109_DIRECT_APPROVAL_ADR_PATH = (
+    "docs/02.architecture/decisions/"
+    "0022-direct-approval-standalone-execution-lineage.md"
+)
+WORK109_DIRECT_APPROVAL_SPEC_PATH = (
+    "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md"
+)
+WORK109_REGISTRY_PATH = "docs/99.templates/support/document-profiles.json"
+WORK109_MANIFEST_PATH = "scripts/document-taxonomy-migration.json"
+WORK109_STANDALONE_ROW = {
+    "spec": "0054",
+    "plan": (
+        "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/"
+        "plan.md"
+    ),
+    "task": (
+        "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/"
+        "tasks.md"
+    ),
+    "state": "active",
+    "reason": (
+        "Direct human-approved B-scope SDLC and AI-agent governance "
+        "consolidation including Stage 90"
+    ),
+    "decision": "0022",
+    "approvalMode": "spec-body-record",
+}
+WORK109_SPEC_APPROVAL_BLOCK = (
+    "Direct human approval on 2026-08-13 authorizes this standalone execution "
+    "relation.\n"
+    "No separate PRD or Architecture Description is required or part of this "
+    "standalone lifecycle.\n"
+    "ADR-0022 owns its approval lineage and ADR-0025 owns the topology decision."
+)
+WORK109_ADR_BASE_TRACE_ROW = (
+    "| Direct human approval recorded in the Spec body | N/A — first typed "
+    "standalone-execution relation; preserves ADR-0016/0017 program lineage "
+    "semantics | [Spec 053](../../03.specs/053-workspace-engineering-research-"
+    "pack-consolidation/spec.md) |"
+)
+WORK109_ADR_CURRENT_TRACE_ROWS = (
+    "| Direct human approval recorded in the Spec body | N/A — first typed "
+    "standalone-execution relation; preserves ADR-0016/0017 program lineage "
+    "semantics | [Spec 053](../../03.specs/0053-workspace-engineering-research-"
+    "pack-consolidation/spec.md) |\n"
+    "| Direct human approval recorded in the Spec body | B-scope SDLC and "
+    "AI-agent governance consolidation including Stage 90 | [Spec 054](../../"
+    "03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |"
+)
+
+
+@dataclass(frozen=True)
+class Work106ArtifactIdentity:
+    artifact_id: str
+    change_id: str | None = None
+    migration_id: str | None = None
+    record_kind: str | None = None
+WORK105_STAGED_INVENTORY_BYTES = 4 * 1024 * 1024
+WORK105_STAGED_ENTRY_LIMIT = 20_000
+WORK105_STAGED_PATH_BYTES = 4096
+WORK105_STAGED_BLOB_BYTES = 8 * 1024 * 1024
+WORK105_STAGED_AGGREGATE_BYTES = 64 * 1024 * 1024
+WORK105_STAGED_OBJECT_LIMIT = 20_000
+WORK105_GIT_HEADER_BYTES = 256
+WORK105_OBJECT_ID = re.compile(rb"[0-9a-f]{40}|[0-9a-f]{64}")
+WORK105_SEMANTIC_BOUNDARY = re.compile(
+    r'(?<!\\)"|[,;:|<>{}\[\]\t]|[.!?](?=\s)'
+)
+WORK105_WIKI_GENERATOR_PATH = "scripts/generate-llm-wiki-index.sh"
+WORK105_WIKI_GENERATOR_BASE_ROW = (
+    "| Architecture requirements | [Architecture Requirements README]"
+    "(../../02.architecture/requirements/README.md) | Owns ARD-style "
+    "architecture requirement index | Architecture requirement changes |"
+)
+WORK105_WIKI_GENERATOR_CURRENT_ROW = (
+    "| Architecture descriptions | [Architecture Descriptions README]"
+    "(../../02.architecture/descriptions/README.md) | Owns the AD "
+    "architecture-description index | Architecture-description changes |"
+)
+WORK105_WIKI_GENERATOR_BASE_ROW_ASSIGNMENT = (
+    f"TRANSITION_BASE_ROW='{WORK105_WIKI_GENERATOR_BASE_ROW}'"
+)
+WORK105_WIKI_GENERATOR_HEADER_LINES = (
+    'TRANSITION_BASE_OUTPUT_OID="5a1482bd94df7f52d3ba22f20e9304c29d61862c"',  # pragma: allowlist secret
+    'TRANSITION_CURRENT_OUTPUT_OID="add8ff6c918674aad36e55ebff188f582bb9cd03"',  # pragma: allowlist secret
+    'TRANSITION_REGISTRY_OID="ce8da8f205cee1bba075bef7b26079a0708324b1"',  # pragma: allowlist secret
+    'TRANSITION_MANIFEST_OID="d82466f99b093dc39092a3f36d1c55452a45a7ed"',  # pragma: allowlist secret
+    'TRANSITION_MIGRATION_OID="b304c92c9c9032ebfe3be9156bd3f808ed1f5fb9"',  # pragma: allowlist secret
+    WORK105_WIKI_GENERATOR_BASE_ROW_ASSIGNMENT,
+    f"TRANSITION_CURRENT_ROW='{WORK105_WIKI_GENERATOR_CURRENT_ROW}'",
+)
+WORK105_WIKI_GENERATOR_PROJECTION_LINES = (
+    '  awk -v base="$TRANSITION_BASE_ROW" -v current="$TRANSITION_CURRENT_ROW" \'',
+    "    BEGIN { replacements = 0 }",
+    "    $0 == base {",
+    "      print current",
+    "      replacements++",
+    "      next",
+    "    }",
+    "    { print }",
+    "    END { if (replacements != 1) exit 1 }",
+    "  ' \"$OUTPUT_PATH\" >\"$projection\" || return 1",
+    '  [[ "$(blob_oid "$projection")" == "$TRANSITION_CURRENT_OUTPUT_OID" ]] '
+    "|| return 1",
+    '  cmp -s "$projection" "$generated"',
+)
+WORK105_WIKI_GENERATOR_REVIEWED_LITERALS = (
+    WORK105_WIKI_GENERATOR_HEADER_LINES + WORK105_WIKI_GENERATOR_PROJECTION_LINES
+)
+WORK105_COMPLETED_HISTORY_PATHS = frozenset(
+    {
+        "docs/03.specs/019-template-path-numbering-contract/plan.md",
+        "docs/03.specs/019-template-path-numbering-contract/spec.md",
+        "docs/03.specs/0019-template-path-numbering-contract/plan.md",
+        "docs/03.specs/0019-template-path-numbering-contract/spec.md",
+    }
+)
+WORK105_ACCEPTED_BASE_HISTORY_PATHS = frozenset(
+    {
+        "docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md",
+        "docs/02.architecture/decisions/0003-eso-vault-k8s-auth.md",
+        "docs/02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md",
+        "docs/02.architecture/decisions/0008-istio-install-and-ingress-coexist.md",
+        "docs/02.architecture/decisions/0009-kiali-external-observability.md",
+        "docs/02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md",
+        "docs/02.architecture/decisions/0012-argo-notifications-slack.md",
+        "docs/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md",
+        "docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md",
+        "docs/02.architecture/decisions/0015-declarative-document-contract-registry.md",
+        "docs/02.architecture/decisions/0016-program-to-tranche-document-lineage.md",
+        "docs/02.architecture/decisions/0017-program-follow-up-lineage-semantics.md",
+        "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md",
+        "docs/02.architecture/decisions/0020-document-lifecycle-program-closure-evidence.md",
+        "docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md",
+        "docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md",
+    }
+)
+WORK105_PROGRESS_PATH = "docs/00.agent-governance/memory/progress.md"
+WORK105_MIGRATION_CONTRACT_PATHS = frozenset(
+    {
+        WORK105_PROGRESS_PATH,
+        "docs/01.requirements/008-workspace-document-taxonomy-consolidation.md",
+        "docs/01.requirements/0008-workspace-document-taxonomy-consolidation.md",
+        "docs/02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md",
+        "docs/03.specs/052-document-taxonomy-consolidation/plan.md",
+        "docs/03.specs/052-document-taxonomy-consolidation/spec.md",
+        "docs/03.specs/052-document-taxonomy-consolidation/tasks.md",
+        "docs/03.specs/0052-document-taxonomy-consolidation/plan.md",
+        "docs/03.specs/0052-document-taxonomy-consolidation/spec.md",
+        "docs/03.specs/0052-document-taxonomy-consolidation/tasks.md",
+        "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/plan.md",
+        "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md",
+        "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks.md",
+    }
+)
+WORK105_PINNED_LEGACY_HISTORY_PATHS = frozenset(
+    {
+        "docs/02.architecture/decisions/0018-full-body-archive-record-and-retention.md",
+        "docs/02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md",
+        "scripts/archive_cutover_manifest.py",
+        "scripts/validate-active-corpus-eligibility.py",
+        "scripts/validate-active-corpus-migrations.py",
+        "scripts/validate-active-corpus-residue-closure.py",
+        "tests/test_active_corpus_eligibility.py",
+        "tests/test_active_corpus_migrations.py",
+        "tests/test_active_corpus_retention.py",
+    }
+)
+WORK109_PINNED_BASE_PATH_ALIASES = {
+    "docs/03.specs/0019-template-path-numbering-contract/plan.md":
+        "docs/03.specs/019-template-path-numbering-contract/plan.md",
+    "docs/03.specs/0019-template-path-numbering-contract/spec.md":
+        "docs/03.specs/019-template-path-numbering-contract/spec.md",
+}
+PRD_008_IMMUTABLE_PROJECTION = (
+    "0008",
+    "0011",
+    (("0052", 1, "0024"),),
+    (),
+)
 GEMINI_NATIVE_CURRENT_SURFACE_RULE = "REGISTRY_GEMINI_NATIVE_CURRENT_SURFACE"
 GEMINI_NATIVE_CURRENT_SURFACE_ERROR = (
     f"{GEMINI_NATIVE_CURRENT_SURFACE_RULE}: Gemini CLI native surface must be "
@@ -74,15 +396,15 @@ REFERENCE_MEMBER_SAMPLE_PATHS = (
     "docs/90.references/research/2026-07-07-test/active.md",
 )
 LINEAGE_FIXTURE_DOCUMENTS = {
-    "docs/01.requirements/005-fixture.md": ("sdlc/prd", "done", "2026-07-12"),
-    "docs/01.requirements/006-fixture.md": ("sdlc/prd", "active", "2026-07-15"),
-    "docs/02.architecture/requirements/0008-fixture.md": (
-        "sdlc/ard",
+    "docs/01.requirements/0005-fixture.md": ("sdlc/prd", "done", "2026-07-12"),
+    "docs/01.requirements/0006-fixture.md": ("sdlc/prd", "active", "2026-07-15"),
+    "docs/02.architecture/descriptions/ad-0008-fixture.md": (
+        "sdlc/ad",
         "accepted",
         "2026-07-12",
     ),
-    "docs/02.architecture/requirements/0009-fixture.md": (
-        "sdlc/ard",
+    "docs/02.architecture/descriptions/ad-0009-fixture.md": (
+        "sdlc/ad",
         "active",
         "2026-07-15",
     ),
@@ -116,29 +438,30 @@ LINEAGE_FIXTURE_DOCUMENTS = {
         "accepted",
         "2026-07-18",
     ),
-    "docs/03.specs/026-fixture/spec.md": ("sdlc/spec", "done", "2026-07-12"),
-    "docs/03.specs/033-fixture/spec.md": ("sdlc/spec", "done", "2026-07-15"),
-    "docs/03.specs/034-fixture/spec.md": ("sdlc/spec", "active", "2026-07-15"),
-    "docs/03.specs/035-fixture/spec.md": ("sdlc/spec", "active", "2026-07-15"),
-    "docs/03.specs/037-fixture/spec.md": ("sdlc/spec", "active", "2026-07-18"),
-    "docs/03.specs/038-fixture/spec.md": ("sdlc/spec", "active", "2026-07-15"),
-    "docs/03.specs/039-fixture/spec.md": ("sdlc/spec", "active", "2026-07-15"),
-    "docs/04.execution/plans/2026-07-18-fixture-037.md": (
+    "docs/03.specs/0026-fixture/spec.md": ("sdlc/spec", "done", "2026-07-12"),
+    "docs/03.specs/0033-fixture/spec.md": ("sdlc/spec", "done", "2026-07-15"),
+    "docs/03.specs/0034-fixture/spec.md": ("sdlc/spec", "active", "2026-07-15"),
+    "docs/03.specs/0035-fixture/spec.md": ("sdlc/spec", "active", "2026-07-15"),
+    "docs/03.specs/0036-fixture/spec.md": ("sdlc/spec", "draft", "2026-07-15"),
+    "docs/03.specs/0037-fixture/spec.md": ("sdlc/spec", "active", "2026-07-18"),
+    "docs/03.specs/0038-fixture/spec.md": ("sdlc/spec", "active", "2026-07-15"),
+    "docs/03.specs/0039-fixture/spec.md": ("sdlc/spec", "active", "2026-07-15"),
+    "docs/03.specs/0037-fixture/plan.md": (
         "sdlc/plan",
         "active",
         "2026-07-18",
     ),
-    "docs/04.execution/tasks/2026-07-18-fixture-037.md": (
+    "docs/03.specs/0037-fixture/tasks.md": (
         "sdlc/task",
         "active",
         "2026-07-18",
     ),
-    "docs/04.execution/plans/2026-07-18-fixture-038.md": (
+    "docs/03.specs/0038-fixture/plan.md": (
         "sdlc/plan",
         "active",
         "2026-07-18",
     ),
-    "docs/04.execution/tasks/2026-07-18-fixture-038.md": (
+    "docs/03.specs/0038-fixture/tasks.md": (
         "sdlc/task",
         "active",
         "2026-07-18",
@@ -790,6 +1113,9 @@ def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path.cwd())
     parser.add_argument("--mode", choices=("strict",), default="strict")
+    parser.add_argument(
+        "--route-state", choices=("legacy", "transition", "terminal")
+    )
     parser.add_argument("--profile")
     parser.add_argument(
         "--include-path",
@@ -910,7 +1236,7 @@ def _fixture_document_contracts() -> dict[str, Any]:
         "governance/reference",
         "content/reference",
         "sdlc/prd",
-        "sdlc/ard",
+        "sdlc/ad",
         "sdlc/adr",
         "sdlc/spec",
         "sdlc/plan",
@@ -943,7 +1269,7 @@ def _fixture_document_contracts() -> dict[str, Any]:
                 "profileIds": [
                     "governance/reference",
                     "content/reference",
-                    "sdlc/ard",
+                    "sdlc/ad",
                     "sdlc/adr",
                     "sdlc/spec",
                     "sdlc/plan",
@@ -1026,7 +1352,7 @@ def _fixture_document_contracts() -> dict[str, Any]:
                     *snapshot,
                     "governance/reference",
                     "content/reference",
-                    "sdlc/ard",
+                    "sdlc/ad",
                     "sdlc/adr",
                     "sdlc/spec",
                     "sdlc/plan",
@@ -1065,6 +1391,54 @@ def _minimal_fixture_registry() -> dict[str, Any]:
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "$id": "https://hy-home.k8s/schemas/document-profiles-8.schema.json",
         "schemaVersion": 8,
+        "routeState": "legacy",
+        "archiveContractVersion": 2,
+        "archiveNamespaces": [
+            {
+                "id": "arwb-base",
+                "policy": "exact-immutable",
+                "records": [
+                    f"docs/98.archive/fixture/arwb-{index:02d}.md"
+                    for index in range(31)
+                ],
+            },
+            {
+                "id": "acer-additive",
+                "policy": "exact-immutable",
+                "records": [
+                    f"docs/98.archive/fixture/acer-{index:02d}.md"
+                    for index in range(12)
+                ],
+            },
+            {
+                "id": "wdtc-execution",
+                "policy": "exact-reviewed-manifest",
+                "records": [
+                    f"docs/98.archive/fixture/wdtc-{index:02d}.md"
+                    for index in range(50)
+                ],
+            },
+            {
+                "id": "progress-snapshot",
+                "policy": "append-only-unique",
+                "records": [],
+            },
+        ],
+        "retiredRouteEvidence": {
+            "routeSegment": "04.execution",
+            "profiles": [
+                {
+                    "id": "stage90/immutable-retired-route-evidence",
+                    "paths": [],
+                    "routes": [],
+                },
+                {
+                    "id": "stage98/immutable-retired-route-evidence",
+                    "paths": [],
+                    "routes": [],
+                },
+            ],
+        },
         "baseline": {"sha": BASELINE_SHA, "count": BASELINE_COUNT},
         "target": {"roots": [".agents"], "rootFiles": ["README.md"]},
         "profiles": [
@@ -1196,7 +1570,7 @@ def _minimal_fixture_registry() -> dict[str, Any]:
                     },
                     {
                         "kind": "regex",
-                        "value": "^docs/01\\.requirements/[0-9]{3}-fixture\\.md$",
+                        "value": "^docs/01\\.requirements/[0-9]{4}-fixture\\.md$",
                     },
                 ],
                 "frontmatter": {
@@ -1244,8 +1618,8 @@ def _minimal_fixture_registry() -> dict[str, Any]:
                 "bodyContract": _fixture_body_contract(),
             },
             _fixture_lineage_profile(
-                "sdlc/ard",
-                "^docs/02\\.architecture/requirements/[0-9]{4}-fixture\\.md$",
+                "sdlc/ad",
+                "^docs/02\\.architecture/descriptions/ad-[0-9]{4}-fixture\\.md$",
                 ["draft", "active", "accepted", "archived"],
             ),
             _fixture_lineage_profile(
@@ -1255,17 +1629,17 @@ def _minimal_fixture_registry() -> dict[str, Any]:
             ),
             _fixture_lineage_profile(
                 "sdlc/spec",
-                "^docs/03\\.specs/[0-9]{3}-fixture/spec\\.md$",
+                "^docs/03\\.specs/[0-9]{4}-fixture/spec\\.md$",
                 ["draft", "active", "done", "archived"],
             ),
             _fixture_lineage_profile(
                 "sdlc/plan",
-                "^docs/04\\.execution/plans/[0-9]{4}-[0-9]{2}-[0-9]{2}-fixture-[0-9]{3}\\.md$",
+                "^docs/03\\.specs/[0-9]{4}-fixture/plan\\.md$",
                 ["draft", "active", "done", "archived"],
             ),
             _fixture_lineage_profile(
                 "sdlc/task",
-                "^docs/04\\.execution/tasks/[0-9]{4}-[0-9]{2}-[0-9]{2}-fixture-[0-9]{3}\\.md$",
+                "^docs/03\\.specs/[0-9]{4}-fixture/tasks\\.md$",
                 ["draft", "active", "done", "archived"],
             ),
         ],
@@ -1293,11 +1667,11 @@ def _minimal_fixture_registry() -> dict[str, Any]:
         "programLineage": {
             "programs": [
                 {
-                    "prd": "005",
-                    "ard": "0008",
+                    "prd": "0005",
+                    "ad": "0008",
                     "tranches": [
                         {
-                            "spec": "026",
+                            "spec": "0026",
                             "order": 1,
                             "state": "done",
                             "reason": "Original fixture tranche",
@@ -1306,7 +1680,7 @@ def _minimal_fixture_registry() -> dict[str, Any]:
                     ],
                     "followUps": [
                         {
-                            "spec": "033",
+                            "spec": "0033",
                             "order": 1,
                             "state": "done",
                             "reason": "Historical fixture follow-up",
@@ -1316,11 +1690,11 @@ def _minimal_fixture_registry() -> dict[str, Any]:
                     ],
                 },
                 {
-                    "prd": "006",
-                    "ard": "0009",
+                    "prd": "0006",
+                    "ad": "0009",
                     "tranches": [
                         {
-                            "spec": "034",
+                            "spec": "0034",
                             "order": 1,
                             "state": "active",
                             "reason": "Current fixture tranche",
@@ -1333,9 +1707,9 @@ def _minimal_fixture_registry() -> dict[str, Any]:
         },
         "standaloneExecutions": [
             {
-                "spec": "037",
-                "plan": "docs/04.execution/plans/2026-07-18-fixture-037.md",
-                "task": "docs/04.execution/tasks/2026-07-18-fixture-037.md",
+                "spec": "0037",
+                "plan": "docs/03.specs/0037-fixture/plan.md",
+                "task": "docs/03.specs/0037-fixture/tasks.md",
                 "state": "active",
                 "reason": "Direct approval fixture",
                 "decision": "0022",
@@ -1387,7 +1761,7 @@ def _convert_legacy_v5_fixture(raw_registry: dict[str, Any]) -> dict[str, Any]:
         "programs": [
             {
                 "prd": legacy["prd"],
-                "ard": legacy["ard"],
+                "ad": legacy["ard"],
                 "tranches": tranches,
                 "followUps": follow_ups,
             }
@@ -1410,6 +1784,11 @@ def _convert_legacy_v6_fixture(raw_registry: dict[str, Any]) -> dict[str, Any]:
     converted["$id"] = "https://hy-home.k8s/schemas/document-profiles-8.schema.json"
     converted["schemaVersion"] = 8
     converted["documentContracts"] = _fixture_document_contracts()
+    for program in converted["programLineage"]["programs"]:
+        program["prd"] = program["prd"].zfill(4)
+        program["ad"] = program["ad"].zfill(4)
+        for relation in (*program["tranches"], *program["followUps"]):
+            relation["spec"] = relation["spec"].zfill(4)
     return converted
 
 
@@ -1787,13 +2166,13 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         profile["routes"].append({"kind": "exact", "value": target})
         return
     programs = raw_registry["programLineage"]["programs"]
-    original = next(program for program in programs if program["prd"] == "005")
-    current = next(program for program in programs if program["prd"] == "006")
+    original = next(program for program in programs if program["prd"] == "0005")
+    current = next(program for program in programs if program["prd"] == "0006")
     if mutation == "duplicate-program":
         duplicate = copy.deepcopy(current)
         duplicate["prd"] = original["prd"]
-        duplicate["ard"] = original["ard"]
-        duplicate["tranches"][0]["spec"] = "035"
+        duplicate["ad"] = original["ad"]
+        duplicate["tranches"][0]["spec"] = "0035"
         programs.insert(1, duplicate)
         return
     if mutation == "reverse-programs":
@@ -1815,16 +2194,16 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         original["tranches"][0]["order"] = 2
         return
     if mutation == "unknown-program-prd":
-        current["prd"] = "999"
+        current["prd"] = "9999"
         return
     if mutation == "unknown-program-ard":
-        current["ard"] = "9999"
+        current["ad"] = "9999"
         return
     if mutation == "unknown-program-adr":
         current["tranches"][0]["decision"] = "9999"
         return
     if mutation == "unknown-program-spec":
-        current["tranches"][0]["spec"] = "999"
+        current["tranches"][0]["spec"] = "9999"
         return
     if mutation == "program-state-drift":
         original["tranches"][0]["state"] = "active"
@@ -1854,7 +2233,7 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         }
         return
     if mutation == "duplicate-program-spec-status-key":
-        current["tranches"][0]["spec"] = "036"
+        current["tranches"][0]["spec"] = "0036"
         return
     if mutation == "duplicate-program-adr-updated-key":
         current["tranches"][0]["decision"] = "0019"
@@ -1865,7 +2244,7 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
     if mutation == "misordered-follow-up-approval":
         current["followUps"] = [
             {
-                "spec": "038",
+                "spec": "0038",
                 "order": 1,
                 "state": "active",
                 "reason": "Later-approved fixture follow-up declared first",
@@ -1873,7 +2252,7 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
                 "evidenceMode": "reciprocal-body",
             },
             {
-                "spec": "039",
+                "spec": "0039",
                 "order": 2,
                 "state": "active",
                 "reason": "Earlier-approved fixture follow-up declared second",
@@ -1888,21 +2267,21 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         return
     if mutation == "standalone-duplicate-spec":
         duplicate = copy.deepcopy(standalone[0])
-        duplicate["plan"] = "docs/04.execution/plans/2026-07-18-fixture-039.md"
-        duplicate["task"] = "docs/04.execution/tasks/2026-07-18-fixture-039.md"
+        duplicate["plan"] = "docs/03.specs/0039-fixture/plan.md"
+        duplicate["task"] = "docs/03.specs/0039-fixture/tasks.md"
         standalone.append(duplicate)
         return
     if mutation == "standalone-program-overlap":
-        standalone[0]["spec"] = "034"
+        standalone[0]["spec"] = "0034"
         return
     if mutation == "standalone-wrong-plan-path":
-        standalone[0]["plan"] = "docs/04.execution/tasks/2026-07-18-fixture-037.md"
+        standalone[0]["plan"] = "docs/03.specs/0037-fixture/tasks.md"
         return
     if mutation == "standalone-missing-plan-owner":
-        standalone[0]["plan"] = "docs/04.execution/plans/2026-07-18-fixture-099.md"
+        standalone[0]["plan"] = "docs/03.specs/0099-fixture/plan.md"
         return
     if mutation == "standalone-missing-task-owner":
-        standalone[0]["task"] = "docs/04.execution/tasks/2026-07-18-fixture-099.md"
+        standalone[0]["task"] = "docs/03.specs/0099-fixture/tasks.md"
         return
     if mutation == "standalone-task-profile-mismatch":
         target = standalone[0]["task"]
@@ -1916,7 +2295,7 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         task_profile["routes"] = [
             {
                 "kind": "exact",
-                "value": "docs/04.execution/tasks/2026-07-18-fixture-038.md",
+                "value": "docs/03.specs/0038-fixture/tasks.md",
             }
         ]
         return
@@ -1927,23 +2306,23 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         earlier = copy.deepcopy(standalone[0])
         earlier.update(
             {
-                "spec": "038",
-                "plan": "docs/04.execution/plans/2026-07-18-fixture-038.md",
-                "task": "docs/04.execution/tasks/2026-07-18-fixture-038.md",
+                "spec": "0038",
+                "plan": "docs/03.specs/0038-fixture/plan.md",
+                "task": "docs/03.specs/0038-fixture/tasks.md",
             }
         )
         standalone.insert(0, earlier)
         return
     if mutation == "standalone-duplicate-plan":
         duplicate = copy.deepcopy(standalone[0])
-        duplicate["spec"] = "038"
-        duplicate["task"] = "docs/04.execution/tasks/2026-07-18-fixture-038.md"
+        duplicate["spec"] = "0038"
+        duplicate["task"] = "docs/03.specs/0038-fixture/tasks.md"
         standalone.append(duplicate)
         return
     if mutation == "standalone-duplicate-task":
         duplicate = copy.deepcopy(standalone[0])
-        duplicate["spec"] = "038"
-        duplicate["plan"] = "docs/04.execution/plans/2026-07-18-fixture-038.md"
+        duplicate["spec"] = "0038"
+        duplicate["plan"] = "docs/03.specs/0038-fixture/plan.md"
         standalone.append(duplicate)
         return
     if mutation == "standalone-state-drift":
@@ -2104,8 +2483,13 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
             for item in contracts["evidencePredicates"]
             if item["id"] == "activate-self-body"
         )
-        predicate["profileEdges"].append(
-            {"profileId": "sdlc/prd", "from": edge["from"], "to": edge["to"]}
+        predicate["profileEdges"].extend(
+            {
+                "profileId": profile_id,
+                "from": edge["from"],
+                "to": edge["to"],
+            }
+            for profile_id in lifecycle["profileIds"]
         )
         return
     if mutation == "missing-terminal-state":
@@ -2204,69 +2588,72 @@ def _assert_inventory_safety(root: Path) -> None:
             raise AssertionError(f"unsafe explicit include was accepted: {path}")
 
 
-def _assert_program_lineage_projection(registry: Registry) -> None:
+def _assert_program_lineage_projection(
+    registry: Registry,
+    fixture_prd_008_projection: tuple[Any, ...],
+) -> None:
     immutable_expected = (
         (
-            "003",
+            "0003",
             "0006",
             (
-                ("041", 1, "0013"),
-                ("042", 2, "0013"),
-                ("043", 3, "0013"),
-                ("044", 4, "0013"),
-                ("045", 5, "0013"),
-                ("046", 6, "0013"),
+                ("0041", 1, "0013"),
+                ("0042", 2, "0013"),
+                ("0043", 3, "0013"),
+                ("0044", 4, "0013"),
+                ("0045", 5, "0013"),
+                ("0046", 6, "0013"),
             ),
             (),
         ),
         (
-            "005",
+            "0005",
             "0008",
             tuple(
-                (f"{spec_id:03d}", order, "0016")
+                (f"{spec_id:04d}", order, "0016")
                 for order, spec_id in enumerate(range(26, 33), 1)
             ),
-            (("033", 1, "0017", "successor-record"),),
+            (("0033", 1, "0017", "successor-record"),),
         ),
         (
-            "006",
+            "0006",
             "0009",
             (
-                ("034", 1, "0017"),
-                ("035", 2, "0017"),
-                ("036", 3, "0017"),
-                ("037", 4, "0017"),
-                ("038", 5, "0017"),
-                ("039", 6, "0017"),
-                ("040", 7, "0017"),
+                ("0034", 1, "0017"),
+                ("0035", 2, "0017"),
+                ("0036", 3, "0017"),
+                ("0037", 4, "0017"),
+                ("0038", 5, "0017"),
+                ("0039", 6, "0017"),
+                ("0040", 7, "0017"),
             ),
             (),
         ),
         (
-            "007",
+            "0007",
             "0010",
             (
-                ("047", 1, "0021"),
-                ("048", 2, "0021"),
-                ("049", 3, "0021"),
-                ("050", 4, "0021"),
-                ("051", 5, "0021"),
+                ("0047", 1, "0021"),
+                ("0048", 2, "0021"),
+                ("0049", 3, "0021"),
+                ("0050", 4, "0021"),
+                ("0051", 5, "0021"),
             ),
             (),
         ),
         (
-            "008",
-            "0011",
-            (("052", 1, "0021"),),
-            (),
+            *fixture_prd_008_projection,
         ),
     )
+
+    if fixture_prd_008_projection != PRD_008_IMMUTABLE_PROJECTION:
+        raise AssertionError("production PRD-0008 lineage fixture differs")
 
     def assert_immutable_projection(candidate: Registry) -> None:
         immutable_actual = tuple(
             (
                 program.prd_id,
-                program.ard_id,
+                program.ad_id,
                 tuple(
                     (
                         relation.spec_id,
@@ -2295,7 +2682,7 @@ def _assert_program_lineage_projection(registry: Registry) -> None:
     assert_immutable_projection(registry)
 
     program_007 = next(
-        program for program in registry.program_lineage if program.prd_id == "007"
+        program for program in registry.program_lineage if program.prd_id == "0007"
     )
     missing_tranche_program = replace(
         program_007,
@@ -2304,7 +2691,7 @@ def _assert_program_lineage_projection(registry: Registry) -> None:
     missing_tranche_candidate = replace(
         registry,
         program_lineage=tuple(
-            missing_tranche_program if program.prd_id == "007" else program
+            missing_tranche_program if program.prd_id == "0007" else program
             for program in registry.program_lineage
         ),
     )
@@ -2313,7 +2700,7 @@ def _assert_program_lineage_projection(registry: Registry) -> None:
     except AssertionError:
         pass
     else:
-        raise AssertionError("missing PRD-007 tranche mutation accepted")
+        raise AssertionError("missing PRD-0007 tranche mutation accepted")
 
     def assert_state_contract(candidate: Registry) -> None:
         for program in candidate.program_lineage:
@@ -2338,12 +2725,12 @@ def _assert_program_lineage_projection(registry: Registry) -> None:
                     "active relation"
                 )
         historical = next(
-            program for program in candidate.program_lineage if program.prd_id == "005"
+            program for program in candidate.program_lineage if program.prd_id == "0005"
         )
         if any(relation.state != "done" for relation in historical.tranches):
-            raise AssertionError("PRD-005 historical original tranche is not terminal")
+            raise AssertionError("PRD-0005 historical original tranche is not terminal")
         if any(relation.state != "done" for relation in historical.follow_ups):
-            raise AssertionError("PRD-005 historical follow-up is not terminal")
+            raise AssertionError("PRD-0005 historical follow-up is not terminal")
 
     # Keep mutable relation state separate from immutable lineage identity.
     # Cross-document strict validation owns current Spec-to-relation parity;
@@ -2351,9 +2738,9 @@ def _assert_program_lineage_projection(registry: Registry) -> None:
     # two synthetic first-unfinished positions used by rollover validation.
     assert_state_contract(registry)
     current = next(
-        program for program in registry.program_lineage if program.prd_id == "006"
+        program for program in registry.program_lineage if program.prd_id == "0006"
     )
-    for ready_spec_id in ("035", "036"):
+    for ready_spec_id in ("0035", "0036"):
         ready_order = next(
             relation.order
             for relation in current.tranches
@@ -2378,7 +2765,7 @@ def _assert_program_lineage_projection(registry: Registry) -> None:
         candidate = replace(
             registry,
             program_lineage=tuple(
-                candidate_program if program.prd_id == "006" else program
+                candidate_program if program.prd_id == "0006" else program
                 for program in registry.program_lineage
             ),
         )
@@ -2394,7 +2781,7 @@ def _assert_program_lineage_projection(registry: Registry) -> None:
     invalid_candidate = replace(
         registry,
         program_lineage=tuple(
-            invalid_program if program.prd_id == "006" else program
+            invalid_program if program.prd_id == "0006" else program
             for program in registry.program_lineage
         ),
     )
@@ -2424,7 +2811,7 @@ def _assert_program_lineage_projection(registry: Registry) -> None:
     multiple_active_candidate = replace(
         registry,
         program_lineage=tuple(
-            multiple_active_program if program.prd_id == "006" else program
+            multiple_active_program if program.prd_id == "0006" else program
             for program in registry.program_lineage
         ),
     )
@@ -2437,7 +2824,11 @@ def _assert_program_lineage_projection(registry: Registry) -> None:
 
 
 def _assert_document_contract_projection(registry: Registry) -> None:
-    if registry.schema_version != 8 or len(registry.profiles) != 64:
+    if (
+        registry.schema_version != 8
+        or registry.route_state != "transition"
+        or len(registry.profiles) != 69
+    ):
         raise AssertionError("production v8 profile projection differs")
     profiles = {profile.profile_id: profile for profile in registry.profiles}
     expected_predicate_order = (
@@ -2466,7 +2857,6 @@ def _assert_document_contract_projection(registry: Registry) -> None:
 
     specifications = (
         "sdlc/spec",
-        "sdlc/api-spec",
         "sdlc/agent-design",
         "sdlc/data-model",
         "sdlc/tests",
@@ -2487,14 +2877,24 @@ def _assert_document_contract_projection(registry: Registry) -> None:
     expected_edges = {
         "archive-source-removal": set(),
         "activate-self-body": edges(
-            ("sdlc/prd", "sdlc/ard", "sdlc/adr", *specifications, *operations),
+            (
+                "sdlc/prd",
+                "sdlc/srs",
+                "sdlc/interface",
+                "sdlc/ad",
+                "sdlc/adr",
+                *specifications,
+                *operations,
+            ),
             "draft",
             "active",
         ),
         "activate-heading-profile": edges(references, "draft", "active"),
         "activate-execution-pair": edges(("sdlc/plan", "sdlc/task"), "draft", "active"),
-        "complete-product-program": edges(("sdlc/prd",), "active", "done"),
-        "accept-architecture": edges(("sdlc/ard",), "active", "accepted"),
+        "complete-product-program": edges(
+            ("sdlc/prd", "sdlc/srs", "sdlc/interface"), "active", "done"
+        ),
+        "accept-architecture": edges(("sdlc/ad",), "active", "accepted"),
         "accept-decision-self": edges(("sdlc/adr",), "active", "accepted"),
         "complete-specification": edges(specifications, "active", "done"),
         "complete-execution-pair": edges(("sdlc/plan", "sdlc/task"), "active", "done"),
@@ -2514,12 +2914,13 @@ def _assert_document_contract_projection(registry: Registry) -> None:
     if actual_edges != expected_edges:
         raise AssertionError("production exact edge/predicate projection differs")
 
-    standard_sources = (
+    terminal_sources = (
         "sdlc/prd",
-        "sdlc/ard",
+        "sdlc/srs",
+        "sdlc/interface",
+        "sdlc/ad",
         "sdlc/adr",
         "sdlc/spec",
-        "sdlc/api-spec",
         "sdlc/agent-design",
         "sdlc/data-model",
         "sdlc/tests",
@@ -2530,28 +2931,33 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         "sdlc/runbook",
         "sdlc/incident",
         "sdlc/postmortem",
+    )
+    standard_sources = (
         "content/reference",
         "governance/reference",
         "governance/memory",
         "governance/template-support",
     )
-    standard_templates = (
-        "template/content/reference",
+    terminal_templates = (
+        "template/sdlc/prd",
+        "template/sdlc/srs",
+        "template/sdlc/interface",
+        "template/sdlc/ad",
         "template/sdlc/adr",
-        "template/sdlc/ard",
+        "template/sdlc/spec",
+        "template/sdlc/agent-design",
+        "template/sdlc/data-model",
+        "template/sdlc/tests",
         "template/sdlc/plan",
         "template/sdlc/task",
         "template/sdlc/guide",
-        "template/sdlc/incident",
         "template/sdlc/policy",
-        "template/sdlc/postmortem",
         "template/sdlc/runbook",
-        "template/sdlc/prd",
-        "template/sdlc/agent-design",
-        "template/sdlc/api-spec",
-        "template/sdlc/data-model",
-        "template/sdlc/spec",
-        "template/sdlc/tests",
+        "template/sdlc/incident",
+        "template/sdlc/postmortem",
+    )
+    standard_templates = (
+        "template/content/reference",
         "template/governance/memory",
         "template/governance/reference",
         "template/governance/template-support",
@@ -2569,6 +2975,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         "exception/repository-runtime-baseline",
         "exception/provider-native-metadata",
         "exception/github-native-control",
+        "native/document-migration-manifest",
         "exception/native-contract-openapi",
         "exception/native-contract-graphql",
         "exception/native-contract-protobuf",
@@ -2632,10 +3039,49 @@ def _assert_document_contract_projection(registry: Registry) -> None:
             None,
         ),
     )
+    terminal_keys = (
+        *standard_keys,
+        (
+            "artifact_id",
+            "string",
+            False,
+            None,
+            None,
+            r"^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$",
+            None,
+        ),
+    )
     archive_keys = (
         *standard_keys[:2],
         ("status", "string", False, ("literal", "archived"), None, None, None),
         *standard_keys[3:],
+        (
+            "artifact_id",
+            "string",
+            False,
+            None,
+            None,
+            r"^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$",
+            None,
+        ),
+        (
+            "change_id",
+            "string",
+            True,
+            None,
+            None,
+            r"^CHG-[0-9]{4}$",
+            None,
+        ),
+        (
+            "original_artifact_id",
+            "string",
+            True,
+            None,
+            None,
+            r"^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$",
+            None,
+        ),
         (
             "original_type",
             "string",
@@ -2703,22 +3149,68 @@ def _assert_document_contract_projection(registry: Registry) -> None:
             None,
         ),
     )
+    archive_migration_keys = (
+        *standard_keys[:2],
+        ("status", "string", False, ("literal", "accepted"), None, None, None),
+        *standard_keys[3:],
+        (
+            "artifact_id",
+            "string",
+            False,
+            None,
+            None,
+            r"^MIG-[0-9]{4}$",
+            None,
+        ),
+        (
+            "migration_id",
+            "string",
+            False,
+            None,
+            None,
+            r"^MIG-[0-9]{4}$",
+            None,
+        ),
+    )
     expected_value_projection: dict[str, tuple[Any, ...]] = {}
+    for profile_id in terminal_sources:
+        expected_value_projection[profile_id] = (
+            "authored-terminal-identity",
+            terminal_sources,
+            terminal_keys,
+        )
+    for profile_id in terminal_templates:
+        expected_value_projection[profile_id] = (
+            "template-terminal-authored",
+            terminal_templates,
+            standard_keys,
+        )
     for profile_id in (*standard_sources, *standard_templates):
         expected_value_projection[profile_id] = (
             "authored-standard",
             standard_sources,
             standard_keys,
         )
-    for profile_id in (
-        "content/archive",
-        "template/content/archive",
-    ):
-        expected_value_projection[profile_id] = (
-            "archive-record",
-            ("content/archive",),
-            archive_keys,
-        )
+    expected_value_projection["content/archive"] = (
+        "archive-record",
+        ("content/archive",),
+        archive_keys,
+    )
+    expected_value_projection["template/content/archive"] = (
+        "template-terminal-archive-record",
+        ("template/content/archive",),
+        tuple(item for item in archive_keys if item[0] != "artifact_id"),
+    )
+    expected_value_projection["content/archive-migration"] = (
+        "archive-migration",
+        ("content/archive-migration",),
+        archive_migration_keys,
+    )
+    expected_value_projection["template/content/archive-migration"] = (
+        "template-terminal-archive-migration",
+        ("template/content/archive-migration",),
+        tuple(item for item in archive_migration_keys if item[0] != "artifact_id"),
+    )
     for profile_id in (*empty_sources, *empty_templates):
         expected_value_projection[profile_id] = (
             "frontmatter-free-or-native",
@@ -2738,7 +3230,14 @@ def _assert_document_contract_projection(registry: Registry) -> None:
 
     expected_roles: dict[str, tuple[str, str | None, str | None, str]] = {
         "sdlc/prd": ("product-requirement", None, "Traceability", "body-contract"),
-        "sdlc/ard": ("architecture-requirement", None, "Traceability", "body-contract"),
+        "sdlc/srs": ("system-requirement", None, "Traceability", "body-contract"),
+        "sdlc/interface": (
+            "interface-requirement",
+            None,
+            "Traceability",
+            "body-contract",
+        ),
+        "sdlc/ad": ("architecture-description", None, "Traceability", "body-contract"),
         "sdlc/adr": ("architecture-decision", None, "Traceability", "body-contract"),
         "sdlc/spec": (
             "implementation-specification",
@@ -2746,7 +3245,6 @@ def _assert_document_contract_projection(registry: Registry) -> None:
             "Traceability",
             "body-contract",
         ),
-        "sdlc/api-spec": ("api-specification", None, "Traceability", "body-contract"),
         "sdlc/agent-design": ("agent-design", None, "Traceability", "body-contract"),
         "sdlc/data-model": ("data-model", None, "Traceability", "body-contract"),
         "sdlc/tests": ("test-contract", None, "Traceability", "body-contract"),
@@ -2773,6 +3271,12 @@ def _assert_document_contract_projection(registry: Registry) -> None:
             None,
             None,
             "none",
+        ),
+        "content/archive-migration": (
+            "archive-migration",
+            None,
+            "Recovery",
+            "heading-set",
         ),
         "governance/reference": (
             "governance-reference",
@@ -2836,6 +3340,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         "exception/repository-runtime-baseline",
         "exception/provider-native-metadata",
         "exception/github-native-control",
+        "native/document-migration-manifest",
         "exception/generated-record",
         "exception/program-non-target",
     ):
@@ -2848,6 +3353,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         expected_roles[profile_id] = ("native-machine-contract", None, None, "none")
     template_sources = {
         "template/content/archive": "content/archive",
+        "template/content/archive-migration": "content/archive-migration",
         "template/governance/memory": "governance/memory",
         "template/readme/repository": "readme/repository",
         "template/readme/stage-index": "readme/stage-index",
@@ -2857,7 +3363,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         "template/readme/workspace-staging": "readme/workspace-staging",
         "template/content/reference": "content/reference",
         "template/sdlc/adr": "sdlc/adr",
-        "template/sdlc/ard": "sdlc/ard",
+        "template/sdlc/ad": "sdlc/ad",
         "template/sdlc/plan": "sdlc/plan",
         "template/sdlc/task": "sdlc/task",
         "template/sdlc/guide": "sdlc/guide",
@@ -2866,8 +3372,9 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         "template/sdlc/postmortem": "sdlc/postmortem",
         "template/sdlc/runbook": "sdlc/runbook",
         "template/sdlc/prd": "sdlc/prd",
+        "template/sdlc/interface": "sdlc/interface",
+        "template/sdlc/srs": "sdlc/srs",
         "template/sdlc/agent-design": "sdlc/agent-design",
-        "template/sdlc/api-spec": "sdlc/api-spec",
         "template/sdlc/data-model": "sdlc/data-model",
         "template/sdlc/spec": "sdlc/spec",
         "template/sdlc/tests": "sdlc/tests",
@@ -2892,13 +3399,20 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         )
         for profile_id, profile in profiles.items()
     }
-    if actual_roles != expected_roles or len(expected_roles) != 64:
+    if actual_roles != expected_roles or len(expected_roles) != 69:
         raise AssertionError("production complete role/source projection differs")
 
-    authored_draft = tuple(
-        profile_id
-        for profile_id in standard_sources
-        if profile_id not in {"sdlc/plan", "sdlc/task"}
+    authored_draft = (
+        "sdlc/prd",
+        "sdlc/interface",
+        "sdlc/srs",
+        *tuple(
+            profile_id
+            for profile_id in terminal_sources
+            if profile_id
+            not in {"sdlc/prd", "sdlc/srs", "sdlc/interface", "sdlc/plan", "sdlc/task"}
+        ),
+        *standard_sources,
     )
     snapshot_profiles = (
         "governance/progress-ledger",
@@ -2913,12 +3427,14 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         "exception/repository-runtime-baseline",
         "exception/provider-native-metadata",
         "exception/github-native-control",
+        "native/document-migration-manifest",
         "exception/native-contract-openapi",
         "exception/native-contract-graphql",
         "exception/native-contract-protobuf",
         "exception/generated-record",
         "exception/program-non-target",
         "template/content/archive",
+        "template/content/archive-migration",
         "template/governance/memory",
         "template/readme/repository",
         "template/readme/stage-index",
@@ -2928,7 +3444,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         "template/readme/workspace-staging",
         "template/content/reference",
         "template/sdlc/adr",
-        "template/sdlc/ard",
+        "template/sdlc/ad",
         "template/sdlc/plan",
         "template/sdlc/task",
         "template/sdlc/guide",
@@ -2937,8 +3453,9 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         "template/sdlc/postmortem",
         "template/sdlc/runbook",
         "template/sdlc/prd",
+        "template/sdlc/interface",
+        "template/sdlc/srs",
         "template/sdlc/agent-design",
-        "template/sdlc/api-spec",
         "template/sdlc/data-model",
         "template/sdlc/spec",
         "template/sdlc/tests",
@@ -2974,6 +3491,12 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         "archive-envelope",
         ("archived",),
     )
+    expected_admissions["content/archive-migration"] = admission_signature(
+        "archive-migration-control",
+        ("content/archive-migration",),
+        "states",
+        ("accepted",),
+    )
     for profile_id in snapshot_profiles:
         expected_admissions[profile_id] = admission_signature(
             "snapshot-only", snapshot_profiles, "snapshot-only", ()
@@ -2991,13 +3514,13 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         )
         for profile_id, profile in profiles.items()
     }
-    if actual_admissions != expected_admissions or len(expected_admissions) != 64:
+    if actual_admissions != expected_admissions or len(expected_admissions) != 69:
         raise AssertionError("production complete admission projection differs")
 
     lifecycle_groups = (
         (
             "product",
-            ("sdlc/prd",),
+            ("sdlc/prd", "sdlc/srs", "sdlc/interface"),
             ("done",),
             (
                 ("draft", "active", "activate-self-body"),
@@ -3006,7 +3529,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         ),
         (
             "architecture-requirement",
-            ("sdlc/ard",),
+            ("sdlc/ad",),
             ("accepted",),
             (
                 ("draft", "active", "activate-self-body"),
@@ -3060,6 +3583,12 @@ def _assert_document_contract_projection(registry: Registry) -> None:
             ),
         ),
         ("archive-record", ("content/archive",), ("archived",), ()),
+        (
+            "archive-migration",
+            ("content/archive-migration",),
+            ("accepted",),
+            (),
+        ),
         ("non-lifecycle", snapshot_profiles, (), ()),
     )
     expected_lifecycles: dict[str, tuple[Any, ...]] = {}
@@ -3079,7 +3608,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         )
         for profile_id, profile in profiles.items()
     }
-    if actual_lifecycles != expected_lifecycles or len(expected_lifecycles) != 64:
+    if actual_lifecycles != expected_lifecycles or len(expected_lifecycles) != 69:
         raise AssertionError("production complete lifecycle projection differs")
 
     def edge_rows(
@@ -3099,7 +3628,15 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         ),
         "activate-self-body": (
             edge_rows(
-                ("sdlc/prd", "sdlc/ard", "sdlc/adr", *specifications, *operations),
+                (
+                    "sdlc/prd",
+                    "sdlc/srs",
+                    "sdlc/interface",
+                    "sdlc/ad",
+                    "sdlc/adr",
+                    *specifications,
+                    *operations,
+                ),
                 "draft",
                 "active",
             ),
@@ -3129,7 +3666,11 @@ def _assert_document_contract_projection(registry: Registry) -> None:
             ("rendered-link", "reciprocal-link", "same-diff"),
         ),
         "complete-product-program": (
-            edge_rows(("sdlc/prd",), "active", "done"),
+            edge_rows(
+                ("sdlc/prd", "sdlc/srs", "sdlc/interface"),
+                "active",
+                "done",
+            ),
             (("sdlc/spec",), ("done",), 1, None),
             "program-lineage",
             (1, None),
@@ -3138,7 +3679,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
             ("program-lineage-closed", "same-diff"),
         ),
         "accept-architecture": (
-            edge_rows(("sdlc/ard",), "active", "accepted"),
+            edge_rows(("sdlc/ad",), "active", "accepted"),
             (("sdlc/adr",), ("accepted",), 1, None),
             "role-decision",
             (1, None),
@@ -3244,7 +3785,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
     if (
         profiles["template/sdlc/prd"].role_decision.source_profile_id != "sdlc/prd"
         or profiles["template/sdlc/prd"].value_contract.contract_id
-        != "authored-standard"
+        != "template-terminal-authored"
         or profiles["template/sdlc/prd"].admission.create.mode != "snapshot-only"
     ):
         raise AssertionError("canonical form inheritance projection differs")
@@ -3256,7 +3797,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         or {archive.delete, archive.rename, archive.profile_change} != {"deny"}
     ):
         raise AssertionError("production archive envelope admission projection differs")
-    if sum(len(profile.lifecycle.edges) for profile in registry.profiles) != 42:
+    if sum(len(profile.lifecycle.edges) for profile in registry.profiles) != 44:
         raise AssertionError("production lifecycle edge count differs")
 
 
@@ -3811,6 +4352,24 @@ def _assert_template_source_parity(registry: Any) -> None:
             raise AssertionError(
                 f"{profile.profile_id}: template/source profile is unknown"
             )
+        source_required = source.frontmatter.required
+        source_allowed = source.frontmatter.allowed
+        source_order = source.frontmatter.order
+        source_value_contract = source.value_contract
+        if source_id in WORK108_MANDATORY_PROFILE_IDS:
+            source_required = tuple(
+                key for key in source_required if key != "artifact_id"
+            )
+            source_allowed = tuple(key for key in source_allowed if key != "artifact_id")
+            source_order = tuple(key for key in source_order if key != "artifact_id")
+            source_value_contract = replace(
+                source_value_contract,
+                keys=tuple(
+                    item
+                    for item in source_value_contract.keys
+                    if item.key != "artifact_id"
+                ),
+            )
         comparisons = (
             (
                 "frontmatter",
@@ -3821,20 +4380,24 @@ def _assert_template_source_parity(registry: Any) -> None:
                 ),
                 (
                     source.frontmatter.mode,
-                    source.frontmatter.required,
-                    source.frontmatter.allowed,
+                    source_required,
+                    source_allowed,
                 ),
             ),
             (
                 "frontmatter-order",
                 profile.frontmatter.order,
-                source.frontmatter.order,
+                source_order,
             ),
             ("status", profile.status_domain, source.status_domain),
             ("headings", profile.headings, source.headings),
             ("class", profile.profile_class, source.profile_class),
             ("body", profile.body_contract, source.body_contract),
-            ("value-contract", profile.value_contract, source.value_contract),
+            (
+                "value-contract",
+                profile.value_contract.keys,
+                source_value_contract.keys,
+            ),
         )
         role_actual = (
             profile.role_decision.role,
@@ -3898,17 +4461,15 @@ def _assert_template_source_mutation_proofs(
         elif mutation == "body":
             profile["bodyContract"]["allowExplicitExclusion"] = False
         elif mutation == "value-contract":
-            standard = next(
+            template_contract = next(
                 item
                 for item in mutated["documentContracts"]["valueContracts"]
-                if "sdlc/prd" in item["profileIds"]
+                if item["id"] == "template-terminal-authored"
             )
-            drift = copy.deepcopy(standard)
-            drift["id"] = "template-prd-value-drift"
-            drift["profileIds"] = ["template/sdlc/prd"]
-            owner = next(item for item in drift["keys"] if item["key"] == "owner")
+            owner = next(
+                item for item in template_contract["keys"] if item["key"] == "owner"
+            )
             owner["pattern"] = "^platform$"
-            mutated["documentContracts"]["valueContracts"].append(drift)
         elif mutation == "source-cardinality":
             profile["sourceProfileIds"] = ["sdlc/prd", "sdlc/spec"]
         elif mutation == "missing-source":
@@ -4012,9 +4573,9 @@ def _assert_positive_coverage(
     native_form_paths = tuple(
         path for path in current_form_paths if path.suffix != ".md"
     )
-    if len(markdown_form_paths) != 27 or len(native_form_paths) != 3:
+    if len(markdown_form_paths) != 29 or len(native_form_paths) != 3:
         raise AssertionError(
-            "canonical form inventory must contain 27 Markdown and three native forms"
+            "canonical form inventory must contain 29 Markdown and three native forms"
         )
 
     covered_template_profiles: set[str] = set()
@@ -4070,6 +4631,20 @@ def _assert_positive_coverage(
                 raise AssertionError(
                     f"{profile.profile_id}: unknown source profile {source_id!r}"
                 )
+            source_frontmatter = source.frontmatter
+            if source_id in WORK108_MANDATORY_PROFILE_IDS:
+                source_frontmatter = replace(
+                    source_frontmatter,
+                    required=tuple(
+                        key for key in source_frontmatter.required if key != "artifact_id"
+                    ),
+                    allowed=tuple(
+                        key for key in source_frontmatter.allowed if key != "artifact_id"
+                    ),
+                    order=tuple(
+                        key for key in source_frontmatter.order if key != "artifact_id"
+                    ),
+                )
             inherited = (
                 profile.profile_class,
                 profile.frontmatter,
@@ -4079,7 +4654,7 @@ def _assert_positive_coverage(
             )
             expected = (
                 source.profile_class,
-                source.frontmatter,
+                source_frontmatter,
                 source.status_domain,
                 source.headings,
                 source.body_contract,
@@ -4300,8 +4875,8 @@ def _assert_readme_family_contract(
         set(retired_order)
     ):
         raise AssertionError("README retiredPaths must be sorted and unique")
-    if len(active_rows) != 52 or len(retired_rows) != 23:
-        raise AssertionError("README fixture must contain exact active52 and retired23")
+    if len(active_rows) != 48 or len(retired_rows) != 26:
+        raise AssertionError("README fixture must contain exact active48 and retired26")
 
     active_keys = {"path", "profile", "requiredH2", "allowedH2", "new"}
     retired_keys = active_keys | {"retiredBy", "destination"}
@@ -4309,9 +4884,43 @@ def _assert_readme_family_contract(
     retired_paths = {PurePosixPath(path) for path in retired_order}
     if active_paths & retired_paths:
         raise AssertionError("README activePaths and retiredPaths must be disjoint")
+    work109_retired_readmes = {
+        PurePosixPath("docs/04.execution/README.md"): (
+            "readme/stage-index",
+            "docs/03.specs/README.md",
+        ),
+        PurePosixPath("docs/04.execution/plans/README.md"): (
+            "readme/collection-index",
+            "docs/99.templates/templates/sdlc/execution/plan.template.md",
+        ),
+        PurePosixPath("docs/04.execution/tasks/README.md"): (
+            "readme/collection-index",
+            "docs/99.templates/templates/sdlc/execution/task.template.md",
+        ),
+    }
+    actual_work109_readmes = {
+        PurePosixPath(row["path"]): (row.get("profile"), row.get("destination"))
+        for row in retired_rows
+        if row.get("retiredBy") == "WORK-054-002"
+    }
+    if actual_work109_readmes != work109_retired_readmes:
+        raise AssertionError(
+            "WORK-054-002 retired README historical projection differs"
+        )
 
     baseline_readmes = {
         path for path in inventory.baseline_paths if _is_readme_path(path)
+    }
+    work105_readme_renames = {
+        PurePosixPath("docs/02.architecture/requirements/README.md"):
+            PurePosixPath("docs/02.architecture/descriptions/README.md"),
+        PurePosixPath("examples/aws/docs/02.architecture/requirements/README.md"):
+            PurePosixPath("examples/aws/docs/02.architecture/descriptions/README.md"),
+        PurePosixPath("examples/azure/docs/02.architecture/requirements/README.md"):
+            PurePosixPath("examples/azure/docs/02.architecture/descriptions/README.md"),
+    }
+    conceptual_baseline_readmes = {
+        work105_readme_renames.get(path, path) for path in baseline_readmes
     }
     tracked_readmes = {
         path for path in inventory.current_paths if _is_readme_path(path)
@@ -4357,7 +4966,16 @@ def _assert_readme_family_contract(
                         f"{path}: README fixture selected a non-authored profile"
                     )
             else:
-                if row["profile"] != "readme/snapshot-pack":
+                if path in work109_retired_readmes:
+                    if (
+                        row["retiredBy"] != "WORK-054-002"
+                        or (row["profile"], row["destination"])
+                        != work109_retired_readmes[path]
+                    ):
+                        raise AssertionError(
+                            f"{path}: WORK-054-002 retired README evidence differs"
+                        )
+                elif row["profile"] != "readme/snapshot-pack":
                     raise AssertionError(
                         f"{path}: retired README historical profile must be readme/snapshot-pack"
                     )
@@ -4397,7 +5015,7 @@ def _assert_readme_family_contract(
                 )
             if not isinstance(row["new"], bool):
                 raise AssertionError(f"{path}: README new flag must be boolean")
-            expected_new = path not in baseline_readmes
+            expected_new = path not in conceptual_baseline_readmes
             if row["new"] is not expected_new:
                 raise AssertionError(
                     f"{path}: README new flag differs from immutable baseline inventory"
@@ -4443,9 +5061,18 @@ def _assert_readme_family_contract(
                 if path in tracked_readmes or (root / path).exists():
                     raise AssertionError(f"README retired path is still current: {path}")
                 continue
+            if row["retiredBy"] == "WORK-054-002":
+                expected = work109_retired_readmes.get(path)
+                if expected is None or destination_path != PurePosixPath(expected[1]):
+                    raise AssertionError(
+                        f"{path}: WORK-054-002 README retirement destination is invalid"
+                    )
+                if path in tracked_readmes or (root / path).exists():
+                    raise AssertionError(f"README retired path is still current: {path}")
+                continue
             if row["retiredBy"] != "ADM-006":
                 raise AssertionError(
-                    f"{path}: README retirement owner must be ADM-006 or WERPC-008"
+                    f"{path}: README retirement owner must be WORK-054-002, ADM-006, or WERPC-008"
                 )
             if raw_path.startswith("examples/aws/docs/"):
                 provider = "aws"
@@ -4466,26 +5093,27 @@ def _assert_readme_family_contract(
             if path in tracked_readmes or (root / path).exists():
                 raise AssertionError(f"README retired path is still current: {path}")
 
-    active_baseline = active_paths & baseline_readmes
-    active_program_created = active_paths - baseline_readmes
+    active_baseline = active_paths & conceptual_baseline_readmes
+    active_program_created = active_paths - conceptual_baseline_readmes
     if len(baseline_readmes) != 67:
         raise AssertionError("README immutable baseline must contain exact 67 paths")
-    retired_baseline = retired_paths & baseline_readmes
-    retired_program_created = retired_paths - baseline_readmes
+    retired_baseline = retired_paths & conceptual_baseline_readmes
+    retired_program_created = retired_paths - conceptual_baseline_readmes
     if (
-        len(active_baseline) != 45
-        or len(active_program_created) != 7
-        or len(retired_baseline) != 22
+        len(active_baseline) != 42
+        or len(active_program_created) != 6
+        or len(retired_baseline) != 25
         or len(retired_program_created) != 1
     ):
         raise AssertionError(
-            "README handoff must contain active45+new7 and retired22+new1"
+            "README handoff must contain active42+new6 and retired25+new1"
         )
-    if active_baseline | retired_baseline != baseline_readmes:
+    if active_baseline | retired_baseline != conceptual_baseline_readmes:
         raise AssertionError(
             "README active baseline plus retired paths must reconstruct baseline67"
         )
-    if active_program_created != new_readmes:
+    current_rename_targets = set(work105_readme_renames.values()) & tracked_readmes
+    if active_program_created != new_readmes - current_rename_targets:
         raise AssertionError(
             "README program-created active paths must equal the current new inventory"
         )
@@ -4699,9 +5327,9 @@ def _assert_readme_fixture_mutation_proofs(
         ),
         key=lambda path: path.as_posix(),
     )
-    if len(declared_new_paths) != 7:
+    if len(declared_new_paths) != 6:
         raise AssertionError(
-            "README fixture mutation proof requires exact seven active program-created paths"
+            "README fixture mutation proof requires exact six active program-created paths"
         )
     missing_paths = set(declared_new_paths[:2])
     missing_declared_inventory = TargetInventory(
@@ -4790,6 +5418,1519 @@ def _assert_readme_fixture_mutation_proofs(
     )
 
 
+def _work105_generator_transition_control_lines(text: str) -> frozenset[int]:
+    """Return the sole reviewed legacy-row assignment in the pinned overlay."""
+
+    lines = tuple(text.splitlines())
+    if any(
+        lines.count(literal) != 1
+        for literal in WORK105_WIKI_GENERATOR_REVIEWED_LITERALS
+    ):
+        return frozenset()
+
+    def block_starts(block: tuple[str, ...]) -> tuple[int, ...]:
+        width = len(block)
+        return tuple(
+            index
+            for index in range(len(lines) - width + 1)
+            if lines[index : index + width] == block
+        )
+
+    header_starts = block_starts(WORK105_WIKI_GENERATOR_HEADER_LINES)
+    projection_starts = block_starts(WORK105_WIKI_GENERATOR_PROJECTION_LINES)
+    if len(header_starts) != 1 or len(projection_starts) != 1:
+        return frozenset()
+    base_offset = WORK105_WIKI_GENERATOR_HEADER_LINES.index(
+        WORK105_WIKI_GENERATOR_BASE_ROW_ASSIGNMENT
+    )
+    return frozenset({header_starts[0] + base_offset + 1})
+
+
+def _work105_consumer_disposition(
+    pattern_id: str,
+    path: str,
+    matched_line: str,
+    *,
+    historical_context: bool = False,
+    line_context: str | None = None,
+    generator_transition_control: bool = False,
+) -> tuple[str, str, str, str]:
+    """Classify one pinned WORK-105 consumer without an open fallback bucket."""
+
+    pattern_ids = frozenset(pattern_id.split("+"))
+    if not pattern_ids or not pattern_ids <= {"ard", "authored-api-spec"}:
+        raise AssertionError(f"unknown WORK-105 consumer pattern: {pattern_id}")
+    if historical_context or path.startswith(
+        ("docs/90.references/", "docs/98.archive/")
+    ):
+        return (
+            "immutable-history",
+            "retain-history",
+            path,
+            "Preserve pinned observation, archive, progress, or completed-history evidence.",
+        )
+    lowered = matched_line.casefold()
+    immutable_archive_namespace = (
+        path == "docs/99.templates/support/document-profiles.json"
+        and re.fullmatch(
+            r'"?docs/98\.archive/02\.architecture/requirements/'
+            r'000[1-3]-[^"/]+\.md"?,?',
+            matched_line.strip(),
+        )
+        is not None
+    )
+    if immutable_archive_namespace:
+        return (
+            "immutable-history",
+            "retain-history",
+            path,
+            "Preserve the exact immutable Stage 98 namespace inventory.",
+        )
+    strict_case_context = line_context.strip() if line_context is not None else ""
+    validator_occurrence_control = (
+        path == "scripts/validate-document-contract-registry.py"
+        and r"ambiguous\s*=\s*" in strict_case_context
+        and "historical " + "ARD" + " remains current" in strict_case_context
+    )
+    strict_occurrence_control = (
+        path == "tests/test_document_strict_cutover.py"
+        and (
+            re.fullmatch(
+                r'ambiguous\s*=\s*["\']?historical ARD remains current '
+                r'sdlc/ard["\']?',
+                strict_case_context,
+            )
+            is not None
+            or re.fullmatch(
+                r'\(?\s*["\']?ard["\']?\s*,\s*'
+                r'["\']?consumer\.json["\']?\s*,\s*'
+                r'["\']?no WORK-105 token is present["\']?\s*\)?',
+                strict_case_context,
+            )
+            is not None
+        )
+    )
+    if validator_occurrence_control or strict_occurrence_control:
+        return (
+            "retired-route-control",
+            "retired-route-negative",
+            "WORK-105 retired authored-route controls",
+            "Retain an explicit retired-route assertion or negative fixture line.",
+        )
+    ria_transition_overlay_control = (
+        path
+        in {
+            "scripts/reference_information_architecture.py",
+            "tests/test_reference_information_architecture.py",
+        }
+        and line_context is not None
+        and "Architecture requirements" in line_context
+        and "ARD-style architecture requirement index" in line_context
+    )
+    if ria_transition_overlay_control:
+        return (
+            "retired-route-control",
+            "retired-route-negative",
+            "WORK-105 RIA generator transition overlay",
+            "Retain only the exact base row in the reviewed Stage 90 generator overlay.",
+        )
+    wiki_generator_transition_control = (
+        path == WORK105_WIKI_GENERATOR_PATH
+        and generator_transition_control
+        and line_context == WORK105_WIKI_GENERATOR_BASE_ROW_ASSIGNMENT
+    )
+    if wiki_generator_transition_control:
+        return (
+            "retired-route-control",
+            "retired-route-negative",
+            "WORK-105 LLM Wiki generator transition overlay",
+            "Retain only the exact pinned old-to-new row assignment and OID guard.",
+        )
+    migration_contract_path = path in WORK105_MIGRATION_CONTRACT_PATHS
+    contract_context = line_context if line_context is not None else matched_line
+    retirement_wording = re.search(
+        r"\b(?:legacy|retired|retirement|unconverted|source|migration|"
+        r"convert(?:ed|s|ing)?|replace(?:d|ment)?|terminal|mapping|"
+        r"classif(?:ier|ication)|evidence)\b",
+        contract_context.casefold(),
+    )
+    replacement_evidence = re.search(
+        r"\bAD(?:-[0-9]{4})?\b|sdlc/ad|descriptions/ad-|"
+        r"\b(?:SRS|Interface Requirement)\b|migrate-current|retain-history",
+        contract_context,
+    )
+    migration_contract_control = (
+        migration_contract_path
+        and retirement_wording is not None
+        and replacement_evidence is not None
+    )
+    if migration_contract_control:
+        return (
+            "retired-route-control",
+            "retired-route-negative",
+            "WORK-105 retired authored-route controls",
+            "Retain an explicit retired-route assertion or negative fixture line.",
+        )
+    history_signal = re.search(
+        r"\b(?:historical|history|provenance|superseded|previously|former)\b|"
+        r"\bsource ard\b|\bcompleted (?:the )?(?:ard|migration)|"
+        r"retained historical ard evidence|"
+        r"docs/(?:90\.references|98\.archive)/|"
+        r"\|\s*ard-[0-9]{4}\s*\|.*\bad-[0-9]{4}\b.*descriptions/ad-",
+        lowered,
+    )
+    if history_signal is not None and re.search(
+        r"\b(?:current|live|active authoring|active route)\b", lowered
+    ):
+        raise AssertionError("WORK-105 consumer occurrence is semantically mixed")
+    if history_signal is not None:
+        return (
+            "semantic-history",
+            "retain-history",
+            path,
+            "Retain an explicitly historical, superseded, or provenance-only reference.",
+        )
+    authored_api_signal = re.search(
+        r"sdlc/api-spec|template/sdlc/api-spec|api-spec\.template\.md|"
+        r"(^|/)api-spec\.md",
+        matched_line,
+    )
+    if "authored-api-spec" in pattern_ids and authored_api_signal is None:
+        return (
+            "native-contract-consumer",
+            "retain-native",
+            "OpenAPI/GraphQL/Protobuf native contract surfaces",
+            "Retain the native contract identity, bytes, and consumer evidence.",
+        )
+    registry_fixture_control = (
+        path == "tests/fixtures/document-contracts/registry-cases.json"
+        and line_context is not None
+        and re.match(r'^\s*"[^"\n]+"\s*:', line_context) is not None
+    )
+    validator_control = path == "scripts/validate-document-contract-registry.py"
+    strict_test_control = (
+        path == "tests/test_document_strict_cutover.py"
+        and line_context is not None
+        and re.search(
+            r"assert|for value in|pattern\[\"id\"\]|patternId|"
+            r"docs/98\.archive/|sdlc/ard|template/sdlc/ard|ard\.template|"
+            r"api-spec|requirements/[^\s\"']*retired|"
+            r"path\.startswith\([\"']docs/02\.architecture/requirements/|"
+            r"\[\"ard\"|\"ard\"\s*:|^\s*\"ard\",?\s*$",
+            line_context,
+        )
+        is not None
+    )
+    retired_field_assertion_control = (
+        path == "tests/test_active_corpus_retention.py"
+        and matched_line == "programArd"
+        and line_context is not None
+        and re.search(
+            r"assertNotIn\(\s*[\"']programArd[\"']\s*,\s*row\s*\)",
+            line_context,
+        )
+        is not None
+    )
+    retired_alias_control = (
+        path
+        in {
+            "scripts/validate-document-lifecycle.py",
+            "scripts/validate-links-and-owners.py",
+            "scripts/validate-markdown-profiles.py",
+            "scripts/archive_cutover.py",
+            "tests/fixtures/document-lifecycle.json",
+            "tests/fixtures/links-and-owners.json",
+            "tests/fixtures/markdown-profiles.json",
+            "tests/test_archive_cutover.py",
+        }
+        and re.search(
+            r"02\.architecture/requirements/(?:README\.md|000[1-9]-|001[01]-)|"
+            r"ard\.template\.md|api-spec\.template\.md|sdlc/api-spec|"
+            r"original_type=[\"']ard[\"']|three immutable ARD rows",
+            matched_line,
+        )
+        is not None
+    )
+    lifecycle_control = path == "scripts/validate-document-lifecycle.py"
+    links_control = (
+        path == "scripts/validate-links-and-owners.py"
+        and line_context is not None
+        and re.search(
+            r"WORK105|work105|accepted_history|completed_history|"
+            r"retired|negative|mutation",
+            line_context,
+        )
+        is not None
+    )
+    active_corpus_test_control = (
+        path == "tests/test_active_corpus_retention.py"
+        and line_context is not None
+        and re.search(
+            r"wrong-|assertNotIn|\(\s*[\"']ard[\"']\s*,|"
+            r"field in \{[^}]*[\"']ard[\"']",
+            line_context,
+        )
+        is not None
+    )
+    active_migration_compatibility_control = (
+        (
+            path == "scripts/validate-active-corpus-migrations.py"
+            and line_context is not None
+            and re.fullmatch(
+                r'LEGACY_PROGRAM_ARCHITECTURE_KEY\s*=\s*["\']ard["\']',
+                line_context.strip(),
+            )
+            is not None
+        )
+        or (
+            path == "tests/test_active_corpus_migrations.py"
+            and line_context is not None
+            and (
+                '"ard": "0009"' in line_context
+                or re.search(
+                    r"assertEqual\(validator\.LEGACY_PROGRAM_ARCHITECTURE_KEY,\s*[\"']ard[\"']\)",
+                    line_context,
+                )
+                is not None
+            )
+        )
+    )
+    links_fixture_control = (
+        path == "tests/fixtures/links-and-owners.json"
+        and line_context is not None
+        and "docs/05.operations/guides/9997-history.md" in line_context
+        and '"status": "done"' in line_context
+    )
+    fixture_or_code_control = (
+        registry_fixture_control
+        or validator_control
+        or strict_test_control
+        or retired_field_assertion_control
+        or retired_alias_control
+        or lifecycle_control
+        or links_control
+        or active_corpus_test_control
+        or active_migration_compatibility_control
+        or links_fixture_control
+    )
+    retired_route_control = re.search(
+        r"\b(?:reject(?:ed|ion)?|forbid(?:den)?|negative|"
+        r"zero (?:live|authored|instance)|no active|must not)\b",
+        lowered,
+    )
+    if fixture_or_code_control or retired_route_control is not None:
+        return (
+            "retired-route-control",
+            "retired-route-negative",
+            "WORK-105 retired authored-route controls",
+            "Retain an explicit retired-route assertion or negative fixture line.",
+        )
+    current_ard_signal = re.search(WORK105_CONSUMER_PATTERNS[0]["regex"], matched_line)
+    if "ard" in pattern_ids and current_ard_signal is not None:
+        return (
+            "current-ard-consumer",
+            "migrate-current",
+            "sdlc/ad at docs/02.architecture/descriptions/ad-<id>-<slug>.md",
+            "Migrate the current ARD profile, route, template, label, and relationship consumer.",
+        )
+    if "authored-api-spec" in pattern_ids and authored_api_signal is not None:
+        return (
+            "current-authored-api-spec-consumer",
+            "migrate-current",
+            "terminal SRS, Interface Requirement, Spec, or native contract surface",
+            "Retire the authored API Spec route while preserving native machine contracts.",
+        )
+    raise AssertionError("WORK-105 consumer occurrence is unclassified")
+
+
+def _work105_occurrence_dispositions(
+    pattern: dict[str, str],
+    path: str,
+    matched_line: str,
+    *,
+    historical_context: bool = False,
+    semantic_context: str | None = None,
+    generator_transition_control: bool = False,
+) -> tuple[tuple[str, str, str, str] | None, ...]:
+    """Classify each semantic occurrence without line-wide category masking."""
+
+    pattern_id = pattern.get("id")
+    expression = pattern.get("regex")
+    if not isinstance(pattern_id, str) or not isinstance(expression, str):
+        raise AssertionError("WORK-105 consumer pattern is malformed")
+    matches = tuple(re.finditer(expression, matched_line))
+    boundaries = tuple(
+        match.start() for match in WORK105_SEMANTIC_BOUNDARY.finditer(matched_line)
+    )
+    dispositions: list[tuple[str, str, str, str] | None] = []
+    for occurrence in matches:
+        left_index = bisect.bisect_left(boundaries, occurrence.start()) - 1
+        right_index = bisect.bisect_left(boundaries, occurrence.end())
+        left = boundaries[left_index] + 1 if left_index >= 0 else 0
+        right = (
+            boundaries[right_index]
+            if right_index < len(boundaries)
+            else len(matched_line)
+        )
+        segment = matched_line[left:right]
+        try:
+            disposition = _work105_consumer_disposition(
+                pattern_id,
+                path,
+                segment,
+                historical_context=historical_context,
+                line_context=(
+                    semantic_context if semantic_context is not None else matched_line
+                ),
+                generator_transition_control=generator_transition_control,
+            )
+        except AssertionError:
+            disposition = None
+        dispositions.append(disposition)
+    return tuple(dispositions)
+
+
+def _work105_markdown_contexts(lines: list[str]) -> tuple[str, ...]:
+    """Project prose paragraphs and bind table rows to their exact header."""
+
+    contexts = list(lines)
+    cursor = 0
+    while cursor < len(lines):
+        if lines[cursor].lstrip().startswith("|"):
+            end = cursor + 1
+            while end < len(lines) and lines[end].lstrip().startswith("|"):
+                end += 1
+            header = lines[cursor].strip()
+            for index in range(cursor, end):
+                contexts[index] = f"{header} {lines[index].strip()}"
+            cursor = end
+            continue
+        if (
+            not lines[cursor].strip()
+            or lines[cursor].lstrip().startswith(("#", "```"))
+        ):
+            cursor += 1
+            continue
+        end = cursor + 1
+        while (
+            end < len(lines)
+            and lines[end].strip()
+            and not lines[end].lstrip().startswith(("#", "|", "```"))
+        ):
+            end += 1
+        context = " ".join(line.strip() for line in lines[cursor:end])
+        for index in range(cursor, end):
+            contexts[index] = context
+        cursor = end
+    return tuple(contexts)
+
+
+def _work105_record_disposition(
+    dispositions: tuple[tuple[str, str, str, str] | None, ...],
+) -> tuple[str, str, str, str]:
+    if not dispositions or any(item is None for item in dispositions):
+        raise AssertionError("WORK-105 base consumer occurrence is unclassified")
+    classified = tuple(item for item in dispositions if item is not None)
+    for priority in (
+        "migrate-current",
+        "retired-route-negative",
+        "retain-history",
+        "retain-native",
+    ):
+        selected = next((item for item in classified if item[1] == priority), None)
+        if selected is not None:
+            return selected
+    raise AssertionError("WORK-105 base consumer disposition is unknown")
+
+
+def _work105_base_consumer_records(
+    root: Path, patterns: tuple[dict[str, str], ...]
+) -> list[dict[str, Any]]:
+    records: list[dict[str, Any]] = []
+    semantic_context_by_path: dict[str, tuple[str, ...]] = {}
+    prefix = (WORK105_CONSUMER_BASE_COMMIT + ":").encode("utf-8")
+    combined_regex = "|".join(f"({pattern['regex']})" for pattern in patterns)
+    result = subprocess.run(
+        [
+            "git",
+            "grep",
+            "--full-name",
+            "-n",
+            "-I",
+            "-E",
+            "-e",
+            combined_regex,
+            WORK105_CONSUMER_BASE_COMMIT,
+            "--",
+        ],
+        cwd=root,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+    if result.returncode not in {0, 1}:
+        raise AssertionError("WORK-105 pinned consumer census git grep failed")
+    for raw_row in result.stdout.splitlines():
+        if not raw_row.startswith(prefix):
+            raise AssertionError("WORK-105 pinned consumer census row is malformed")
+        raw_path, raw_line, matched_line = raw_row[len(prefix) :].split(b":", 2)
+        path = raw_path.decode("utf-8")
+        line_number = int(raw_line)
+        decoded_line = matched_line.decode("utf-8")
+        matched_patterns = tuple(
+            pattern
+            for pattern in patterns
+            if re.search(pattern["regex"], decoded_line) is not None
+        )
+        pattern_id = "+".join(pattern["id"] for pattern in matched_patterns)
+        historical_context = (
+            path == WORK105_PROGRESS_PATH
+            or path in WORK105_COMPLETED_HISTORY_PATHS
+            or path in WORK105_ACCEPTED_BASE_HISTORY_PATHS
+            or path in WORK105_PINNED_LEGACY_HISTORY_PATHS
+        )
+        semantic_context = None
+        if path in WORK105_MIGRATION_CONTRACT_PATHS:
+            if path not in semantic_context_by_path:
+                try:
+                    pinned_lines = (
+                        _work105_pinned_blob(root, path).decode("utf-8").splitlines()
+                    )
+                except UnicodeDecodeError as exc:
+                    raise AssertionError(
+                        f"WORK-105 pinned migration contract is not UTF-8: {path}"
+                    ) from exc
+                semantic_context_by_path[path] = _work105_markdown_contexts(
+                    pinned_lines
+                )
+            semantic_context = semantic_context_by_path[path][line_number - 1]
+        occurrence_dispositions = tuple(
+            disposition
+            for pattern in matched_patterns
+            for disposition in _work105_occurrence_dispositions(
+                pattern,
+                path,
+                decoded_line,
+                historical_context=historical_context,
+                semantic_context=semantic_context,
+            )
+        )
+        occurrence_count = len(occurrence_dispositions)
+        if occurrence_count < 1:
+            raise AssertionError("WORK-105 pinned consumer occurrence count is empty")
+        try:
+            consumer_class, disposition, target, reason = (
+                _work105_record_disposition(occurrence_dispositions)
+            )
+        except AssertionError as exc:
+            raise AssertionError(
+                "WORK-105 base consumer occurrence is unclassified at "
+                f"{path}:{line_number}"
+            ) from exc
+        records.append(
+            {
+                "patternId": pattern_id,
+                "path": path,
+                "line": line_number,
+                "matchedLineSha256": hashlib.sha256(matched_line).hexdigest(),
+                "occurrenceCount": occurrence_count,
+                "consumerClass": consumer_class,
+                "disposition": disposition,
+                "target": target,
+                "reason": reason,
+            }
+        )
+    return records
+
+
+def _work105_consumer_census_sha256(records: list[dict[str, Any]]) -> str:
+    payload = json.dumps(
+        records, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _work105_read_stream_bounded(stream: Any, limit: int) -> bytes:
+    chunks: list[bytes] = []
+    total = 0
+    while True:
+        chunk = stream.read(min(65_536, limit + 1 - total))
+        if not isinstance(chunk, bytes):
+            raise AssertionError("WORK-105 Git stream type is invalid")
+        if not chunk:
+            return b"".join(chunks)
+        chunks.append(chunk)
+        total += len(chunk)
+        if total > limit:
+            raise AssertionError("WORK-105 Git output exceeds its resource budget")
+
+
+def _work105_git_stdout_bounded(
+    root: Path, arguments: tuple[str, ...], limit: int
+) -> bytes:
+    process = subprocess.Popen(
+        ["git", *arguments],
+        cwd=root,
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+    )
+    assert process.stdout is not None
+    try:
+        output = _work105_read_stream_bounded(process.stdout, limit)
+        returncode = process.wait()
+        if returncode != 0:
+            raise AssertionError("WORK-105 Git inventory command failed")
+        return output
+    except Exception:
+        process.kill()
+        process.wait()
+        raise
+    finally:
+        process.stdout.close()
+
+
+def _work105_parse_staged_inventory(
+    raw: bytes,
+    *,
+    entry_limit: int = WORK105_STAGED_ENTRY_LIMIT,
+    path_byte_limit: int = WORK105_STAGED_PATH_BYTES,
+) -> tuple[tuple[str, bytes], ...]:
+    """Parse one bounded stage-zero inventory without disclosing path payloads."""
+
+    if not isinstance(raw, bytes) or not raw.endswith(b"\0"):
+        raise AssertionError("WORK-105 staged consumer inventory is malformed")
+    records = raw.split(b"\0")
+    if len(records) - 1 > entry_limit:
+        raise AssertionError("WORK-105 staged path count exceeds its resource budget")
+    grouped: dict[str, list[tuple[bytes, bytes, bytes]]] = {}
+    for record in records[:-1]:
+        try:
+            header, raw_path = record.split(b"\t", 1)
+            mode, object_id, stage = header.split(b" ", 2)
+            if (
+                len(raw_path) > path_byte_limit
+                or WORK105_OBJECT_ID.fullmatch(object_id) is None
+            ):
+                raise ValueError
+            path = raw_path.decode("utf-8")
+        except (UnicodeDecodeError, ValueError) as exc:
+            raise AssertionError(
+                "WORK-105 staged consumer inventory is malformed"
+            ) from exc
+        grouped.setdefault(path, []).append((mode, object_id, stage))
+    selected: list[tuple[str, bytes]] = []
+    for path, entries in sorted(grouped.items()):
+        if len(entries) != 1 or entries[0][2] != b"0":
+            raise AssertionError("WORK-105 staged consumer inventory is unmerged")
+        mode, object_id, _ = entries[0]
+        if mode.startswith(b"100"):
+            selected.append((path, object_id))
+    return tuple(selected)
+
+
+def _work105_read_bounded_line(stream: Any) -> bytes:
+    line = bytearray()
+    while len(line) <= WORK105_GIT_HEADER_BYTES:
+        byte = stream.read(1)
+        if not isinstance(byte, bytes) or not byte:
+            raise AssertionError("WORK-105 staged blob response is truncated")
+        line.extend(byte)
+        if byte == b"\n":
+            return bytes(line)
+    raise AssertionError("WORK-105 staged blob header exceeds its resource budget")
+
+
+def _work105_read_exact(stream: Any, size: int) -> bytes:
+    chunks: list[bytes] = []
+    remaining = size
+    while remaining:
+        chunk = stream.read(min(65_536, remaining))
+        if not isinstance(chunk, bytes) or not chunk or len(chunk) > remaining:
+            raise AssertionError("WORK-105 staged blob payload is truncated")
+        chunks.append(chunk)
+        remaining -= len(chunk)
+    return b"".join(chunks)
+
+
+def _work105_read_blob_batch_protocol(
+    stream: Any,
+    object_ids: tuple[bytes, ...],
+    *,
+    per_blob_limit: int = WORK105_STAGED_BLOB_BYTES,
+    aggregate_limit: int = WORK105_STAGED_AGGREGATE_BYTES,
+    object_limit: int = WORK105_STAGED_OBJECT_LIMIT,
+) -> dict[bytes, bytes]:
+    """Read an exact ``cat-file --batch`` protocol within fixed budgets."""
+
+    if len(object_ids) > object_limit:
+        raise AssertionError("WORK-105 staged object count exceeds its resource budget")
+    blobs_by_id: dict[bytes, bytes] = {}
+    aggregate = 0
+    for expected_id in object_ids:
+        if WORK105_OBJECT_ID.fullmatch(expected_id) is None:
+            raise AssertionError("WORK-105 staged object identity is malformed")
+        header = _work105_read_bounded_line(stream).removesuffix(b"\n").split(b" ")
+        if len(header) != 3 or header[0] != expected_id or header[1] != b"blob":
+            raise AssertionError("WORK-105 staged blob response is malformed")
+        try:
+            size = int(header[2])
+        except ValueError as exc:
+            raise AssertionError("WORK-105 staged blob size is malformed") from exc
+        if size < 0 or size > per_blob_limit or aggregate + size > aggregate_limit:
+            raise AssertionError("WORK-105 staged blob bytes exceed their resource budget")
+        blobs_by_id[expected_id] = _work105_read_exact(stream, size)
+        if stream.read(1) != b"\n":
+            raise AssertionError("WORK-105 staged blob response is malformed")
+        aggregate += size
+    if stream.read(1) != b"":
+        raise AssertionError("WORK-105 staged blob response has trailing data")
+    return blobs_by_id
+
+
+def _work105_read_staged_blob_batch(
+    root: Path, object_ids: tuple[bytes, ...]
+) -> dict[bytes, bytes]:
+    if not object_ids:
+        return {}
+    with tempfile.TemporaryFile() as request:
+        for object_id in object_ids:
+            request.write(object_id + b"\n")
+        request.seek(0)
+        process = subprocess.Popen(
+            ["git", "cat-file", "--batch"],
+            cwd=root,
+            stdin=request,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+        )
+        assert process.stdout is not None
+        try:
+            blobs = _work105_read_blob_batch_protocol(process.stdout, object_ids)
+            returncode = process.wait()
+            if returncode != 0:
+                raise AssertionError("WORK-105 staged blob read failed")
+            return blobs
+        except Exception:
+            process.kill()
+            process.wait()
+            raise
+        finally:
+            process.stdout.close()
+
+
+def _work105_staged_blobs(root: Path) -> tuple[tuple[str, bytes], ...]:
+    """Read candidate bytes only from a bounded stage-zero index stream."""
+
+    inventory = _work105_git_stdout_bounded(
+        root,
+        ("ls-files", "--stage", "-z"),
+        WORK105_STAGED_INVENTORY_BYTES,
+    )
+    selected = _work105_parse_staged_inventory(inventory)
+    unique_ids = tuple(dict.fromkeys(object_id for _, object_id in selected))
+    blobs_by_id = _work105_read_staged_blob_batch(root, unique_ids)
+    return tuple((path, blobs_by_id[object_id]) for path, object_id in selected)
+
+
+def _work105_pinned_blob(root: Path, path: str) -> bytes:
+    base_path = WORK109_PINNED_BASE_PATH_ALIASES.get(path, path)
+    result = subprocess.run(
+        ["git", "show", f"{WORK105_CONSUMER_BASE_COMMIT}:{base_path}"],
+        cwd=root,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise AssertionError(f"WORK-105 pinned blob is unavailable: {path}")
+    return result.stdout
+
+
+def _work108_without_outer_artifact_id(path: str, raw: bytes) -> bytes | None:
+    identity = _work106_derive_artifact_identity(path)
+    if identity is None:
+        return None
+    expected = f'artifact_id: "{identity.artifact_id}"'.encode("ascii")
+    lines = raw.splitlines(keepends=True)
+    if not lines or lines[0].rstrip(b"\r\n") != b"---":
+        return None
+    try:
+        frontmatter_end = next(
+            index
+            for index, line in enumerate(lines[1:], 1)
+            if line.rstrip(b"\r\n") == b"---"
+        )
+    except StopIteration:
+        return None
+    matches = [
+        index
+        for index, line in enumerate(lines[:frontmatter_end])
+        if line.rstrip(b"\r\n") == expected
+    ]
+    if len(matches) != 1:
+        return None
+    index = matches[0]
+    if index == 0 or not lines[index - 1].startswith(b"updated:"):
+        return None
+    return b"".join(lines[:index] + lines[index + 1 :])
+
+
+def _work109_expected_direct_approval_adr(root: Path) -> bytes:
+    """Derive the sole reviewed ADR-0022 transition from its pinned base blob."""
+
+    pinned = _work105_pinned_blob(root, WORK109_DIRECT_APPROVAL_ADR_PATH)
+    try:
+        text = pinned.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise AssertionError("WORK-109 ADR-0022 base is not UTF-8") from exc
+    replacements = (
+        (
+            "updated: 2026-08-08\n---",
+            'updated: 2026-08-08\nartifact_id: "ADR-0022"\n---',
+        ),
+        (
+            "Add Spec 053 to PRD-008/ARD-0011 `programLineage`",
+            "Add Spec 053 to PRD-0008/ARD-0011 `programLineage`",
+        ),
+        (WORK109_ADR_BASE_TRACE_ROW, WORK109_ADR_CURRENT_TRACE_ROWS),
+    )
+    for old, new in replacements:
+        if text.count(old) != 1 or new in text:
+            raise AssertionError("WORK-109 ADR-0022 base transition anchor differs")
+        text = text.replace(old, new, 1)
+    return text.encode("utf-8")
+
+
+def _work109_direct_approval_history_transition(
+    root: Path,
+    raw_adr: bytes,
+    staged_blobs: Mapping[str, bytes],
+) -> bool:
+    """Admit one exact WP-002 ADR row without weakening completed history."""
+
+    required = {
+        WORK109_DIRECT_APPROVAL_SPEC_PATH,
+        WORK109_REGISTRY_PATH,
+        WORK109_MANIFEST_PATH,
+        WORK109_MIGRATION_LEDGER_PATH.as_posix(),
+    }
+    if not required <= set(staged_blobs):
+        raise AssertionError("WORK-109 direct-approval authority is incomplete")
+    if raw_adr != _work109_expected_direct_approval_adr(root):
+        raise AssertionError("WORK-109 ADR-0022 transition blob differs")
+
+    spec = staged_blobs[WORK109_DIRECT_APPROVAL_SPEC_PATH]
+    metadata = _work106_frontmatter(spec)
+    try:
+        spec_text = spec.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise AssertionError("WORK-109 Spec 0054 authority is not UTF-8") from exc
+    expected_metadata = {
+        "type": "sdlc/spec",
+        "status": "active",
+        "artifact_id": "SPEC-0054",
+    }
+    if (
+        any(metadata.get(key) != value for key, value in expected_metadata.items())
+        or spec_text.count(WORK109_SPEC_APPROVAL_BLOCK) != 1
+        or spec_text.count(
+            "Direct human approval on 2026-08-13 authorizes B-scope "
+            "consolidation including\nStage 90."
+        )
+        != 1
+        or spec_text.count(
+            "[ADR-0022](../../02.architecture/decisions/"
+            "0022-direct-approval-standalone-execution-lineage.md)"
+        )
+        != 1
+        or spec_text.count("[Plan 0054](plan.md)") != 1
+        or spec_text.count("[Tasks 0054](tasks.md)") != 1
+    ):
+        raise AssertionError("WORK-109 Spec 0054 direct-approval authority differs")
+
+    try:
+        registry_text = staged_blobs[WORK109_REGISTRY_PATH].decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise AssertionError("WORK-109 registry authority is not UTF-8") from exc
+    registry = _work109_parse_unique_json(registry_text)
+    standalone = (
+        registry.get("standaloneExecutions")
+        if isinstance(registry, Mapping)
+        else None
+    )
+    if (
+        not isinstance(standalone, list)
+        or not standalone
+        or standalone[-1] != WORK109_STANDALONE_ROW
+        or sum(
+            isinstance(row, Mapping) and row.get("spec") == "0054"
+            for row in standalone
+        )
+        != 1
+    ):
+        raise AssertionError("WORK-109 standalone approval authority differs")
+
+    tool = _load_migration_tool(root)
+    try:
+        document = tool._parse_manifest_bytes(staged_blobs[WORK109_MANIFEST_PATH])
+    except (AttributeError, OSError, ValueError) as exc:
+        raise AssertionError("WORK-109 immutable manifest authority differs") from exc
+    if document.source_commit != tool.EXPECTED_SOURCE_COMMIT:
+        raise AssertionError("WORK-109 immutable manifest authority differs")
+    _work109_transition_manifest_projection(
+        root,
+        document.entries,
+        route_state="transition",
+        ledger_bytes=staged_blobs[WORK109_MIGRATION_LEDGER_PATH.as_posix()],
+    )
+    return True
+
+
+def _work105_post_state(
+    root: Path, patterns: tuple[dict[str, str], ...]
+) -> dict[str, dict[str, int]]:
+    live = {pattern["id"]: 0 for pattern in patterns}
+    unclassified = {pattern["id"]: 0 for pattern in patterns}
+    authored_api_instances = 0
+    compiled = tuple((pattern, re.compile(pattern["regex"])) for pattern in patterns)
+    staged = _work105_staged_blobs(root)
+    staged_by_path = dict(staged)
+    for relative, raw in staged:
+        if b"\0" in raw:
+            continue
+        projected_raw = _work108_without_outer_artifact_id(relative, raw) or raw
+        try:
+            text = projected_raw.decode("utf-8")
+        except UnicodeDecodeError:
+            continue
+        historical_line_limit = 0
+        completed_history = False
+        pinned_history_lines: tuple[str, ...] = ()
+        if relative == WORK105_PROGRESS_PATH:
+            pinned = _work105_pinned_blob(root, relative)
+            if not raw.startswith(pinned):
+                raise AssertionError(
+                    "WORK-105 progress evidence is not an append-only pinned-base prefix"
+                )
+            historical_line_limit = len(pinned.splitlines())
+        elif relative in (
+            WORK105_COMPLETED_HISTORY_PATHS | WORK105_ACCEPTED_BASE_HISTORY_PATHS
+        ):
+            pinned = _work105_pinned_blob(root, relative)
+            completed_history = raw == pinned or (
+                _work108_without_outer_artifact_id(relative, raw) == pinned
+            )
+            if (
+                not completed_history
+                and relative == WORK109_DIRECT_APPROVAL_ADR_PATH
+            ):
+                completed_history = _work109_direct_approval_history_transition(
+                    root,
+                    raw,
+                    staged_by_path,
+                )
+            if not completed_history:
+                raise AssertionError(
+                    f"WORK-105 completed-history blob changed: {relative}"
+                )
+        elif relative in WORK105_PINNED_LEGACY_HISTORY_PATHS:
+            try:
+                pinned_history_lines = tuple(
+                    _work105_pinned_blob(root, relative).decode("utf-8").splitlines()
+                )
+            except UnicodeDecodeError as exc:
+                raise AssertionError(
+                    f"WORK-105 pinned history is not UTF-8: {relative}"
+                ) from exc
+        lines = text.splitlines()
+        semantic_contexts = (
+            _work105_markdown_contexts(lines)
+            if relative in WORK105_MIGRATION_CONTRACT_PATHS
+            else tuple(lines)
+        )
+        generator_transition_lines = (
+            _work105_generator_transition_control_lines(text)
+            if relative == WORK105_WIKI_GENERATOR_PATH
+            else frozenset()
+        )
+        authored_api_instances += len(
+            re.findall(r"(?m)^type:\s*sdlc/api-spec\s*$", text)
+        )
+        for line_number, matched_line in enumerate(lines, start=1):
+            for pattern, expression in compiled:
+                if expression.search(matched_line) is None:
+                    continue
+                occurrence_dispositions = _work105_occurrence_dispositions(
+                    pattern,
+                    relative,
+                    matched_line,
+                    historical_context=(
+                        completed_history
+                        or line_number <= historical_line_limit
+                        or (
+                            line_number <= len(pinned_history_lines)
+                            and pinned_history_lines[line_number - 1] == matched_line
+                        )
+                    ),
+                    semantic_context=semantic_contexts[line_number - 1],
+                    generator_transition_control=(
+                        line_number in generator_transition_lines
+                    ),
+                )
+                for classified in occurrence_dispositions:
+                    if classified is None:
+                        unclassified[pattern["id"]] += 1
+                        continue
+                    _, disposition, _, _ = classified
+                    if disposition == "migrate-current":
+                        live[pattern["id"]] += 1
+    return {
+        "ard": {"live": live["ard"], "unclassified": unclassified["ard"]},
+        "authoredApiSpec": {
+            "instances": authored_api_instances,
+            "live": live["authored-api-spec"],
+            "unclassified": unclassified["authored-api-spec"],
+        },
+    }
+
+
+def _assert_work105_consumer_disposition(root: Path, fixture: dict[str, Any]) -> None:
+    section = fixture.get(WORK105_CONSUMER_DISPOSITION_FIXTURE_FIELD)
+    expected_keys = {"baseCommit", "patterns", "censusSha256", "records", "postState"}
+    if not isinstance(section, dict) or set(section) != expected_keys:
+        raise AssertionError("WORK-105 consumer-disposition fixture shape differs")
+    if section["baseCommit"] != WORK105_CONSUMER_BASE_COMMIT:
+        raise AssertionError("WORK-105 consumer-disposition base commit differs")
+    expected_patterns = tuple(copy.deepcopy(WORK105_CONSUMER_PATTERNS))
+    actual_patterns = section["patterns"]
+    if not isinstance(actual_patterns, list) or tuple(actual_patterns) != expected_patterns:
+        raise AssertionError("WORK-105 consumer-disposition patterns differ")
+    records = section["records"]
+    if (
+        not isinstance(records, list)
+        or not records
+        or any(not isinstance(record, dict) or set(record) != WORK105_CONSUMER_RECORD_KEYS for record in records)
+    ):
+        raise AssertionError("WORK-105 consumer-disposition records differ")
+    generated = _work105_base_consumer_records(root, expected_patterns)
+    if records != generated:
+        raise AssertionError("WORK-105 consumer-disposition exact base census differs")
+    digest = _work105_consumer_census_sha256(generated)
+    if section["censusSha256"] != digest:
+        raise AssertionError("WORK-105 consumer-disposition census digest differs")
+    expected_post_state = {
+        "ard": {"live": 0, "unclassified": 0},
+        "authoredApiSpec": {"instances": 0, "live": 0, "unclassified": 0},
+    }
+    if section["postState"] != expected_post_state:
+        raise AssertionError("WORK-105 consumer-disposition declared post-state differs")
+    actual_post_state = _work105_post_state(root, expected_patterns)
+    if actual_post_state != expected_post_state:
+        raise AssertionError(
+            "WORK-105 consumer-disposition post-state is not closed: "
+            f"{actual_post_state!r}"
+        )
+
+
+def _work106_derive_artifact_identity(
+    raw_path: str,
+) -> Work106ArtifactIdentity | None:
+    """Derive one canonical outer identity from a terminal repository path."""
+
+    slug = WORK106_SLUG
+    simple_patterns = (
+        (rf"^docs/01\.requirements/(?P<id>[0-9]{{4}})-{slug}\.md$", "PRD"),
+        (rf"^docs/01\.requirements/srs-(?P<id>[0-9]{{4}})-{slug}\.md$", "SRS"),
+        (
+            rf"^docs/01\.requirements/ifc-(?P<id>[0-9]{{4}})-(?P<suffix>{slug})\.md$",
+            "IFC",
+        ),
+        (
+            rf"^docs/02\.architecture/descriptions/ad-(?P<id>[0-9]{{4}})-{slug}\.md$",
+            "AD",
+        ),
+        (
+            rf"^docs/02\.architecture/decisions/(?P<id>[0-9]{{4}})-{slug}\.md$",
+            "ADR",
+        ),
+        (rf"^docs/05\.operations/guides/(?P<id>[0-9]{{4}})-{slug}\.md$", "GUIDE"),
+        (rf"^docs/05\.operations/policies/(?P<id>[0-9]{{4}})-{slug}\.md$", "POLICY"),
+        (rf"^docs/05\.operations/runbooks/(?P<id>[0-9]{{4}})-{slug}\.md$", "RUNBOOK"),
+    )
+    for pattern, prefix in simple_patterns:
+        match = re.fullmatch(pattern, raw_path)
+        if match is None:
+            continue
+        suffix = match.groupdict().get("suffix")
+        artifact_id = f"{prefix}-{match.group('id')}"
+        if suffix is not None:
+            artifact_id += f"-{suffix.upper()}"
+        return Work106ArtifactIdentity(artifact_id)
+
+    stage03 = re.fullmatch(
+        rf"docs/03\.specs/(?P<id>[0-9]{{4}})-{slug}/"
+        r"(?P<leaf>spec|agent-design|data-model|tests|plan|tasks)\.md",
+        raw_path,
+    )
+    if stage03 is not None:
+        prefix = {
+            "spec": "SPEC",
+            "agent-design": "AGENT-DESIGN",
+            "data-model": "DATA-MODEL",
+            "tests": "TESTS",
+            "plan": "PLAN",
+            "tasks": "TASK",
+        }[stage03.group("leaf")]
+        return Work106ArtifactIdentity(f"{prefix}-{stage03.group('id')}")
+
+    incident = re.fullmatch(
+        rf"docs/05\.operations/incidents/(?P<year>[0-9]{{4}})/"
+        rf"inc-(?P<id>[0-9]{{4}})-(?P<slug>{slug})/"
+        rf"(?P<leaf>incident\.md|postmortem\.md)",
+        raw_path,
+    )
+    if incident is not None:
+        prefix = "POSTMORTEM" if incident.group("leaf") == "postmortem.md" else "INC"
+        return Work106ArtifactIdentity(
+            f"{prefix}-{incident.group('year')}-{incident.group('id')}"
+        )
+
+    change = re.fullmatch(
+        rf"docs/98\.archive/changes/chg-(?P<id>[0-9]{{4}})-{slug}/"
+        r"(?P<leaf>plan|task)\.md",
+        raw_path,
+    )
+    if change is not None:
+        change_id = f"CHG-{change.group('id')}"
+        kind = "change-plan" if change.group("leaf") == "plan" else "change-task"
+        prefix = "PLAN" if kind == "change-plan" else "TASK"
+        return Work106ArtifactIdentity(
+            f"{prefix}-{change_id}", change_id=change_id, record_kind=kind
+        )
+
+    migration = re.fullmatch(
+        rf"docs/98\.archive/migrations/mig-(?P<id>[0-9]{{4}})-{slug}\.md",
+        raw_path,
+    )
+    if migration is not None:
+        migration_id = f"MIG-{migration.group('id')}"
+        return Work106ArtifactIdentity(
+            migration_id, migration_id=migration_id, record_kind="migration"
+        )
+
+    tombstone = re.fullmatch(
+        r"docs/98\.archive/tombstones/(?P<stage>[0-9]{2}\.[a-z]+)/"
+        r"tmb-(?P<body>[a-z0-9]+(?:-[a-z0-9]+)*)\.md",
+        raw_path,
+    )
+    if tombstone is not None:
+        allowed_types = WORK106_TOMBSTONE_TYPES.get(tombstone.group("stage"), ())
+        body = tombstone.group("body")
+        for type_token in sorted(allowed_types, key=len, reverse=True):
+            prefix = type_token.lower() + "-"
+            if body.startswith(prefix) and re.fullmatch(slug, body.removeprefix(prefix)):
+                return Work106ArtifactIdentity(
+                    f"TMB-{type_token}-{body.removeprefix(prefix).upper()}",
+                    record_kind="tombstone",
+                )
+        return None
+    return None
+
+
+def _work106_artifact_diagnostics(
+    records: tuple[tuple[str, Mapping[str, Any]], ...], *, terminal: bool
+) -> tuple[str, ...]:
+    diagnostics: list[str] = []
+    owners: dict[str, list[str]] = {}
+    for path, metadata in records:
+        identity = _work106_derive_artifact_identity(path)
+        declared = metadata.get("artifact_id")
+        if identity is None:
+            if declared is not None:
+                diagnostics.append(f"ARTIFACT-ID-PROHIBITED:{path}")
+            continue
+        if isinstance(declared, str):
+            owners.setdefault(declared, []).append(path)
+        if declared is None:
+            if terminal:
+                diagnostics.append(f"ARTIFACT-ID-MISSING:{path}")
+        elif not isinstance(declared, str) or declared != identity.artifact_id:
+            diagnostics.append(f"ARTIFACT-ID-PATH:{path}")
+        if identity.change_id is not None and metadata.get("change_id") != identity.change_id:
+            diagnostics.append(f"ARTIFACT-CHANGE-ID:{path}")
+        if identity.migration_id is not None and metadata.get("migration_id") != identity.migration_id:
+            diagnostics.append(f"ARTIFACT-MIGRATION-ID:{path}")
+    for artifact_id, paths in owners.items():
+        if len(paths) > 1:
+            diagnostics.append(
+                f"ARTIFACT-ID-DUPLICATE:{artifact_id}:{','.join(sorted(paths))}"
+            )
+    return tuple(sorted(diagnostics))
+
+
+def _work106_canonical_legacy_path(raw_path: str) -> bool:
+    if not raw_path or raw_path.startswith("/") or "//" in raw_path or "\\" in raw_path:
+        return False
+    path = PurePosixPath(raw_path)
+    return (
+        path.as_posix() == raw_path
+        and all(part not in {"", ".", ".."} for part in path.parts)
+        and raw_path.startswith("docs/")
+    )
+
+
+def _work106_legacy_tombstone_token(legacy_path: str, source_blob: str) -> str:
+    if not _work106_canonical_legacy_path(legacy_path):
+        raise ValueError("legacy path is not canonical")
+    if WORK106_OBJECT_ID.fullmatch(source_blob) is None:
+        raise ValueError("source blob is not a lowercase Git object ID")
+    digest = hashlib.sha256(
+        legacy_path.encode("utf-8") + b"\0" + source_blob.encode("ascii")
+    ).hexdigest().upper()
+    return f"LEGACY-{digest}"
+
+
+def _work106_tombstone_artifact_id(
+    stage: str,
+    terminal_type: str,
+    original_artifact_id: str | None,
+    legacy_path: str,
+    source_blob: str,
+) -> str:
+    allowed = WORK106_TOMBSTONE_TYPES.get(stage)
+    if allowed is None or terminal_type not in allowed:
+        raise ValueError("tombstone stage/type pair is outside the closed map")
+    if original_artifact_id is None:
+        token = _work106_legacy_tombstone_token(legacy_path, source_blob)
+    else:
+        historical_ad_type = "AR" + "D"
+        source_type = (
+            historical_ad_type
+            if terminal_type == "AD"
+            and original_artifact_id.startswith(historical_ad_type + "-")
+            else terminal_type
+        )
+        prefix = f"{source_type}-"
+        token = original_artifact_id.removeprefix(prefix)
+        if (
+            not original_artifact_id.startswith(prefix)
+            or re.fullmatch(r"[A-Z0-9]+(?:-[A-Z0-9]+)*", token) is None
+        ):
+            raise ValueError("original artifact identity does not match tombstone type")
+    return f"TMB-{terminal_type}-{token}"
+
+
+def _work106_is_canonical_artifact_id(value: object) -> bool:
+    if not isinstance(value, str):
+        return False
+    return re.fullmatch(
+        r"(?:PRD|SRS|AD|ADR|SPEC|AGENT-DESIGN|DATA-MODEL|TESTS|PLAN|TASK)-[0-9]{4}"
+        r"|IFC-[0-9]{4}-[A-Z0-9]+(?:-[A-Z0-9]+)*"
+        r"|(?:GUIDE|POLICY|RUNBOOK)-[0-9]{4}"
+        r"|(?:INC|POSTMORTEM)-[0-9]{4}-[0-9]{4}"
+        r"|(?:PLAN|TASK)-CHG-[0-9]{4}"
+        r"|MIG-[0-9]{4}"
+        r"|TMB-[A-Z]+(?:-[A-Z]+)*-[A-Z0-9]+(?:-[A-Z0-9]+)*",
+        value,
+    ) is not None
+
+
+def _work106_ledger_diagnostics(
+    rows: tuple[Mapping[str, Any], ...], *, current: bool
+) -> tuple[str, ...]:
+    diagnostics: list[str] = []
+    stable_owners: dict[str, list[int]] = {}
+    artifact_owners: dict[str, list[int]] = {}
+    legacy_owners: dict[str, list[int]] = {}
+    change_leaves: dict[str, set[str]] = {}
+    tombstone_stages: dict[str, int] = {}
+    for index, row in enumerate(rows):
+        label = f"row-{index + 1}"
+        if not isinstance(row, Mapping) or set(row) != WORK106_LEDGER_FIELDS:
+            diagnostics.append(f"LEDGER-FIELDS:{label}")
+            continue
+        migration_id = row["migration_id"]
+        if row["schema_version"] != 1 or not isinstance(migration_id, str) or WORK106_MIGRATION_ID.fullmatch(migration_id) is None:
+            diagnostics.append(f"LEDGER-SCHEMA:{label}")
+        legacy_path = row["legacy_path"]
+        if not isinstance(legacy_path, str) or not _work106_canonical_legacy_path(legacy_path):
+            diagnostics.append(f"LEDGER-LEGACY-PATH:{label}")
+        else:
+            legacy_owners.setdefault(legacy_path, []).append(index)
+        stable_path = row["stable_path"]
+        identity = _work106_derive_artifact_identity(stable_path) if isinstance(stable_path, str) else None
+        if identity is None:
+            diagnostics.append(f"LEDGER-STABLE-PATH:{label}")
+        elif row["artifact_id"] != identity.artifact_id:
+            diagnostics.append(f"LEDGER-ARTIFACT-ID:{label}")
+        elif row["record_kind"] != identity.record_kind:
+            diagnostics.append(f"LEDGER-RECORD-KIND:{label}")
+        if isinstance(stable_path, str):
+            stable_owners.setdefault(stable_path, []).append(index)
+        artifact_id = row["artifact_id"]
+        if isinstance(artifact_id, str):
+            artifact_owners.setdefault(artifact_id, []).append(index)
+        for field in (
+            "source_commit",
+            "legacy_archive_commit",
+            "legacy_envelope_blob",
+            "source_blob",
+        ):
+            if not isinstance(row[field], str) or WORK106_OBJECT_ID.fullmatch(row[field]) is None:
+                diagnostics.append(f"LEDGER-GIT-OBJECT:{label}:{field}")
+        if not isinstance(row["content_sha256"], str) or WORK106_CONTENT_DIGEST.fullmatch(row["content_sha256"]) is None:
+            diagnostics.append(f"LEDGER-CONTENT-DIGEST:{label}")
+        if not isinstance(row["reason"], str) or not row["reason"].strip():
+            diagnostics.append(f"LEDGER-REASON:{label}")
+        action, replacement = row["action"], row["replacement"]
+        if action == "moved":
+            if replacement is not None:
+                diagnostics.append(f"LEDGER-ACTION-REPLACEMENT:{label}")
+        elif action in {"merged", "replaced"}:
+            if (
+                identity is None
+                or identity.record_kind != "tombstone"
+                or not _work106_is_canonical_artifact_id(replacement)
+            ):
+                diagnostics.append(f"LEDGER-ACTION-REPLACEMENT:{label}")
+        elif action == "deleted":
+            if identity is None or identity.record_kind != "tombstone" or replacement is not None:
+                diagnostics.append(f"LEDGER-ACTION-REPLACEMENT:{label}")
+        else:
+            diagnostics.append(f"LEDGER-ACTION:{label}")
+        if identity is not None and identity.change_id is not None:
+            change_leaves.setdefault(identity.change_id, set()).add(identity.record_kind or "")
+        if identity is not None and identity.record_kind == "tombstone":
+            stage = stable_path.split("/", 4)[3]
+            tombstone_stages[stage] = tombstone_stages.get(stage, 0) + 1
+    for path, indices in stable_owners.items():
+        if len(indices) > 1:
+            diagnostics.append(f"LEDGER-STABLE-PATH-DUPLICATE:{path}")
+    for path, indices in legacy_owners.items():
+        if len(indices) > 1:
+            diagnostics.append(f"LEDGER-LEGACY-PATH-DUPLICATE:{path}")
+    for artifact_id, indices in artifact_owners.items():
+        if len(indices) > 1:
+            diagnostics.append(f"LEDGER-ARTIFACT-ID-DUPLICATE:{artifact_id}")
+    if current:
+        if len(rows) != 93 or any(
+            not isinstance(row, Mapping) or row.get("action") != "moved"
+            for row in rows
+        ):
+            diagnostics.append("LEDGER-CURRENT-CENSUS")
+        pair_counts = {
+            frozenset({"change-plan", "change-task"}): 0,
+            frozenset({"change-plan"}): 0,
+            frozenset({"change-task"}): 0,
+        }
+        for leaves in change_leaves.values():
+            key = frozenset(leaves)
+            if key not in pair_counts:
+                diagnostics.append("LEDGER-CHANGE-GROUP")
+            else:
+                pair_counts[key] += 1
+        if tuple(pair_counts.values()) != (35, 2, 4):
+            diagnostics.append("LEDGER-CHANGE-CENSUS")
+        if tombstone_stages != {
+            "01.requirements": 3,
+            "02.architecture": 8,
+            "03.specs": 4,
+            "05.operations": 2,
+        }:
+            diagnostics.append("LEDGER-TOMBSTONE-CENSUS")
+    return tuple(sorted(set(diagnostics)))
+
+
+def _work106_mutated_ledger_rows(
+    source: Mapping[str, Any], mutation: str
+) -> tuple[dict[str, Any], ...]:
+    row = dict(source)
+    if mutation == "missing-field":
+        row.pop("reason")
+        return (row,)
+    if mutation == "extra-field":
+        row["unexpected"] = True
+        return (row,)
+    if mutation == "bad-legacy-path":
+        row["legacy_path"] = "docs/../escape.md"
+    elif mutation == "bad-source-commit":
+        row["source_commit"] = "A" * 40
+    elif mutation == "bad-content-digest":
+        row["content_sha256"] = "0" * 63
+    elif mutation == "artifact-path-mismatch":
+        row["artifact_id"] = "TASK-CHG-0001"
+    elif mutation == "kind-path-mismatch":
+        row["record_kind"] = "change-task"
+    elif mutation == "moved-replacement":
+        row["replacement"] = "SPEC-0052"
+    elif mutation == "bad-replacement-id":
+        row["action"] = "replaced"
+        row["stable_path"] = "docs/98.archive/tombstones/03.specs/tmb-plan-0001.md"
+        row["artifact_id"] = "TMB-PLAN-0001"
+        row["record_kind"] = "tombstone"
+        row["replacement"] = "not-an-id"
+    elif mutation == "duplicate-legacy-path":
+        second = dict(row)
+        second["stable_path"] = second["stable_path"].replace("chg-0001", "chg-0002")
+        second["artifact_id"] = "PLAN-CHG-0002"
+        return (row, second)
+    elif mutation == "duplicate-stable-path":
+        return (row, dict(row))
+    elif mutation == "duplicate-artifact-id":
+        second = dict(row)
+        second["stable_path"] = second["stable_path"].replace("chg-0001", "chg-0002")
+        return (row, second)
+    else:
+        raise AssertionError(f"unknown WORK-106 ledger mutation: {mutation}")
+    return (row,)
+
+
+def _work106_ledger_row(
+    ordinal: int, stable_path: str, artifact_id: str, record_kind: str
+) -> dict[str, Any]:
+    object_id = f"{ordinal:040x}"[-40:]
+    return {
+        "schema_version": 1,
+        "migration_id": "MIG-0001",
+        "legacy_path": f"docs/04.execution/legacy/record-{ordinal:03d}.md",
+        "stable_path": stable_path,
+        "artifact_id": artifact_id,
+        "action": "moved",
+        "replacement": None,
+        "source_commit": object_id,
+        "legacy_archive_commit": f"{ordinal + 100:040x}"[-40:],
+        "legacy_envelope_blob": f"{ordinal + 200:040x}"[-40:],
+        "source_blob": f"{ordinal + 300:040x}"[-40:],
+        "content_sha256": f"{ordinal:064x}"[-64:],
+        "record_kind": record_kind,
+        "reason": "Reviewed current-corpus stable rehome",
+    }
+
+
+def _work106_synthetic_current_ledger() -> tuple[dict[str, Any], ...]:
+    rows: list[dict[str, Any]] = []
+    ordinal = 1
+    for change in range(1, 42):
+        leaves = (
+            ("plan", "PLAN", "change-plan"),
+            ("task", "TASK", "change-task"),
+        )
+        if change in {36, 37}:
+            leaves = leaves[:1]
+        elif change >= 38:
+            leaves = leaves[1:]
+        for leaf, prefix, kind in leaves:
+            path = f"docs/98.archive/changes/chg-{change:04d}-record-{change:04d}/{leaf}.md"
+            rows.append(_work106_ledger_row(ordinal, path, f"{prefix}-CHG-{change:04d}", kind))
+            ordinal += 1
+    tombstone_groups = (
+        ("01.requirements", "prd", 3),
+        ("02.architecture", "ad", 8),
+        ("03.specs", "spec", 4),
+        ("05.operations", "guide", 2),
+    )
+    for stage, kind, count in tombstone_groups:
+        for number in range(1, count + 1):
+            token = f"{number:04d}"
+            path = f"docs/98.archive/tombstones/{stage}/tmb-{kind}-{token}.md"
+            rows.append(
+                _work106_ledger_row(
+                    ordinal, path, f"TMB-{kind.upper()}-{token}", "tombstone"
+                )
+            )
+            ordinal += 1
+    return tuple(rows)
+
+
+def _work106_frontmatter(raw: bytes) -> Mapping[str, Any]:
+    if not raw.startswith(b"---\n"):
+        return {}
+    closing = raw.find(b"\n---\n", 4)
+    if closing < 0:
+        return {}
+    metadata: dict[str, Any] = {}
+    for line in raw[4:closing].decode("utf-8").splitlines():
+        if ":" not in line:
+            continue
+        key, value = line.split(":", 1)
+        value = value.strip()
+        metadata[key.strip()] = None if value == "null" else value.strip("'\"")
+    return metadata
+
+
+def _assert_work106_transition_contract(
+    root: Path, fixture: Mapping[str, Any], *, terminal: bool
+) -> None:
+    artifact_cases = fixture.get(WORK106_ARTIFACT_FIXTURE_FIELD)
+    ledger_fixture = fixture.get(WORK106_LEDGER_FIXTURE_FIELD)
+    if not isinstance(artifact_cases, list) or len(artifact_cases) != 20:
+        raise AssertionError("WORK-106 artifact identity fixture differs")
+    for case in artifact_cases:
+        if not isinstance(case, dict) or not isinstance(case.get("path"), str):
+            raise AssertionError("WORK-106 artifact identity fixture differs")
+        identity = _work106_derive_artifact_identity(case["path"])
+        if identity is None or identity.artifact_id != case.get("artifactId"):
+            raise AssertionError("WORK-106 artifact identity fixture differs")
+        if identity.change_id != case.get("changeId") or identity.migration_id != case.get("migrationId"):
+            raise AssertionError("WORK-106 artifact identity fixture differs")
+    if not isinstance(ledger_fixture, dict) or set(ledger_fixture) != {"row", "negativeMutations"}:
+        raise AssertionError("WORK-106 migration ledger fixture differs")
+    row = ledger_fixture["row"]
+    mutations = ledger_fixture["negativeMutations"]
+    if _work106_ledger_diagnostics((row,), current=False):
+        raise AssertionError("WORK-106 migration ledger positive fixture differs")
+    if not isinstance(mutations, list) or any(
+        not _work106_ledger_diagnostics(_work106_mutated_ledger_rows(row, mutation), current=False)
+        for mutation in mutations
+    ):
+        raise AssertionError("WORK-106 migration ledger negative fixture differs")
+    if _work106_ledger_diagnostics(_work106_synthetic_current_ledger(), current=True):
+        raise AssertionError("WORK-106 current 93-row census fixture differs")
+    records = tuple(
+        (path, _work106_frontmatter(raw))
+        for path, raw in _work105_staged_blobs(root)
+        if path.endswith(".md")
+    )
+    diagnostics = _work106_artifact_diagnostics(records, terminal=terminal)
+    if diagnostics:
+        raise AssertionError("WORK-106 artifact identity: " + ", ".join(diagnostics))
+
+
+def _fixture_prd_008_immutable_projection(
+    fixture: dict[str, Any],
+) -> tuple[Any, ...]:
+    projection = fixture.get(PROGRAM_LINEAGE_PROJECTION_FIXTURE_FIELD)
+    if not isinstance(projection, dict) or set(projection) != {
+        "prd",
+        "ad",
+        "tranches",
+        "followUps",
+    }:
+        raise AssertionError("production PRD-0008 lineage fixture shape differs")
+    tranches = projection["tranches"]
+    follow_ups = projection["followUps"]
+    if (
+        not isinstance(projection["prd"], str)
+        or not isinstance(projection["ad"], str)
+        or not isinstance(tranches, list)
+        or len(tranches) != 1
+        or not isinstance(tranches[0], dict)
+        or set(tranches[0]) != {"spec", "order", "decision"}
+        or not isinstance(tranches[0]["spec"], str)
+        or type(tranches[0]["order"]) is not int
+        or not isinstance(tranches[0]["decision"], str)
+        or follow_ups != []
+    ):
+        raise AssertionError("production PRD-0008 lineage fixture shape differs")
+    return (
+        projection["prd"],
+        projection["ad"],
+        ((tranches[0]["spec"], tranches[0]["order"], tranches[0]["decision"]),),
+        (),
+    )
+
+
 def _self_test(root: Path) -> int:
     raw_registry = _load_json(root / REGISTRY_PATH)
     fixture = _load_json(root / FIXTURE_PATH)
@@ -4803,6 +6944,13 @@ def _self_test(root: Path) -> int:
         or actual_contract != EXPECTED_CASES
     ):
         print("FAIL document contract registry self-test: fixture contract mismatch")
+        return 1
+    try:
+        fixture_prd_008_projection = _fixture_prd_008_immutable_projection(fixture)
+        _assert_work105_consumer_disposition(root, fixture)
+        _assert_work106_transition_contract(root, fixture, terminal=False)
+    except AssertionError as exc:
+        print(f"FAIL document contract registry self-test: {exc}")
         return 1
 
     with tempfile.TemporaryDirectory(prefix="document-registry-current-owner-") as tmp:
@@ -4959,9 +7107,9 @@ def _self_test(root: Path) -> int:
         if (
             len(migrated.program_lineage) != 1
             or tuple(item.spec_id for item in migrated.program_lineage[0].tranches)
-            != ("026",)
+            != ("0026",)
             or tuple(item.spec_id for item in migrated.program_lineage[0].follow_ups)
-            != ("033",)
+            != ("0033",)
         ):
             print(
                 "FAIL document contract registry self-test: "
@@ -4980,7 +7128,7 @@ def _self_test(root: Path) -> int:
             root, raw_registry, fixture
         )
         registry = validate_registry(root, raw_registry)
-        _assert_program_lineage_projection(registry)
+        _assert_program_lineage_projection(registry, fixture_prd_008_projection)
         _assert_document_contract_projection(registry)
         readme_fixture = _load_json(root / README_FIXTURE_PATH)
         inventory = enumerate_target_markdown(root)
@@ -5017,6 +7165,426 @@ def _print_diagnostic(diagnostic: Any) -> None:
     )
 
 
+def _load_migration_tool(root: Path) -> Any:
+    path = root / "scripts/migrate-document-work-units.py"
+    specification = importlib.util.spec_from_file_location(
+        "document_taxonomy_migration_contract", path
+    )
+    if specification is None or specification.loader is None:
+        raise AssertionError("migration tool is unavailable")
+    module = importlib.util.module_from_spec(specification)
+    sys.modules[specification.name] = module
+    specification.loader.exec_module(module)
+    return module
+
+
+def _classify_retired_route_hit(
+    raw_registry: Any, path: PurePosixPath
+) -> str | None:
+    """Return one explicit immutable evidence profile, or fail closed."""
+    if not isinstance(raw_registry, dict):
+        return None
+    policy = raw_registry.get("retiredRouteEvidence")
+    if not isinstance(policy, dict) or policy.get("routeSegment") != "04.execution":
+        return None
+    profiles = policy.get("profiles")
+    if not isinstance(profiles, list):
+        return None
+    path_text = path.as_posix()
+    matches: list[str] = []
+    for profile in profiles:
+        if not isinstance(profile, dict) or set(profile) != {"id", "paths", "routes"}:
+            return None
+        profile_id = profile.get("id")
+        expected_prefix = {
+            "stage90/immutable-retired-route-evidence": "docs/90.references/",
+            "stage98/immutable-retired-route-evidence": "docs/98.archive/",
+        }.get(profile_id)
+        if expected_prefix is None or not isinstance(profile.get("paths"), list) or not isinstance(profile.get("routes"), list):
+            return None
+        selected = path_text in profile["paths"]
+        for route in profile["routes"]:
+            if not isinstance(route, dict) or set(route) != {"kind", "value"}:
+                return None
+            kind, value = route.get("kind"), route.get("value")
+            if not isinstance(value, str):
+                return None
+            if kind == "exact":
+                selected = selected or path_text == value
+            elif kind == "regex" and value.startswith("^") and value.endswith("$"):
+                selected = selected or re.fullmatch(value, path_text) is not None
+            elif kind != "regex":
+                return None
+        if selected and path_text.startswith(expected_prefix):
+            matches.append(profile_id)
+    return matches[0] if len(matches) == 1 else None
+
+
+def _terminal_route_contract_diagnostics(
+    root: Path,
+    raw_registry: Any,
+    raw_schema: Any,
+    retired_route_hits: tuple[PurePosixPath, ...],
+) -> tuple[str, ...]:
+    diagnostics: list[str] = []
+    manifest_path = PurePosixPath("scripts/document-taxonomy-migration.json")
+    if (root / manifest_path).exists():
+        diagnostics.append("TERMINAL-MIGRATION-FILE")
+    profiles = raw_registry.get("profiles", []) if isinstance(raw_registry, dict) else []
+    if any(
+        isinstance(profile, dict)
+        and profile.get("id") == "native/document-migration-manifest"
+        for profile in profiles
+    ):
+        diagnostics.append("TERMINAL-MIGRATION-PROFILE")
+    if any(
+        isinstance(profile, dict)
+        and any(
+            isinstance(route, dict)
+            and route.get("kind") == "exact"
+            and route.get("value") == manifest_path.as_posix()
+            for route in profile.get("routes", [])
+        )
+        for profile in profiles
+    ):
+        diagnostics.append("TERMINAL-MIGRATION-ROUTE")
+    definitions = raw_schema.get("$defs", {}) if isinstance(raw_schema, dict) else {}
+    if any(name in definitions for name in ("documentMigrationManifest", "documentMigrationEntry")):
+        diagnostics.append("TERMINAL-MIGRATION-SCHEMA")
+    for path in retired_route_hits:
+        if _classify_retired_route_hit(raw_registry, path) is None:
+            diagnostics.append(f"TERMINAL-RETIRED-HIT:{path.as_posix()}")
+    return tuple(sorted(set(diagnostics)))
+
+
+def _work109_parse_unique_json(contents: str) -> Any:
+    def unique(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        result: dict[str, Any] = {}
+        for key, value in pairs:
+            if key in result:
+                raise AssertionError("MIG-0002 JSON contains a duplicate key")
+            result[key] = value
+        return result
+
+    try:
+        return json.loads(contents, object_pairs_hook=unique)
+    except json.JSONDecodeError as exc:
+        raise AssertionError("MIG-0002 JSON is invalid") from exc
+
+
+def _work109_ledger_rows(contents: bytes) -> tuple[Mapping[str, Any], ...]:
+    """Parse the one bounded MIG-0002 ledger without accepting prose fallbacks."""
+
+    try:
+        raw_rows = parse_pinned_migration_control(
+            WORK109_MIGRATION_LEDGER_PATH.as_posix(), contents
+        )
+    except ArchiveContractError as exc:
+        raise AssertionError("MIG-0002 complete document differs") from exc
+    rows: list[Mapping[str, Any]] = []
+    action_counts = {"moved": 0, "replaced": 0, "merged": 0}
+    previous_path: str | None = None
+    for index, row in enumerate(raw_rows):
+        if not isinstance(row, Mapping) or set(row) != WORK109_MIGRATION_LEDGER_FIELDS:
+            raise AssertionError(f"MIG-0002 row schema differs at index {index}")
+        legacy_path = row.get("legacy_path")
+        action = row.get("action")
+        if (
+            not isinstance(legacy_path, str)
+            or not legacy_path.startswith("docs/")
+            or PurePosixPath(legacy_path).as_posix() != legacy_path
+            or ".." in PurePosixPath(legacy_path).parts
+            or action not in action_counts
+            or row.get("source_commit") != WORK109_SOURCE_COMMIT
+            or WORK109_OBJECT_ID.fullmatch(str(row.get("source_blob"))) is None
+            or WORK109_CONTENT_DIGEST.fullmatch(str(row.get("content_sha256")))
+            is None
+            or not isinstance(row.get("reason"), str)
+            or not row["reason"].strip()
+        ):
+            raise AssertionError(f"MIG-0002 row value differs at index {index}")
+        if previous_path is not None and legacy_path <= previous_path:
+            raise AssertionError("MIG-0002 legacy paths are not unique and sorted")
+        previous_path = legacy_path
+        action_counts[action] += 1
+        if action == "moved":
+            if (
+                not isinstance(row.get("stable_path"), str)
+                or not isinstance(row.get("artifact_id"), str)
+                or row.get("replacement") is not None
+            ):
+                raise AssertionError(f"MIG-0002 moved row differs at index {index}")
+        elif (
+            row.get("stable_path") is not None
+            or row.get("artifact_id") is not None
+            or not isinstance(row.get("replacement"), str)
+        ):
+            raise AssertionError(
+                f"MIG-0002 lifecycle-only row differs at index {index}"
+            )
+        rows.append(dict(row))
+    if action_counts != {"moved": 141, "replaced": 3, "merged": 10}:
+        raise AssertionError("MIG-0002 action inventory differs")
+    return tuple(rows)
+
+
+def _work109_base_move_inventory(root: Path) -> dict[str, tuple[str, str]]:
+    """Return the exact three-to-four-digit move inventory pinned to WORK-109."""
+
+    try:
+        result = _git_capture_bounded(
+            root,
+            "ls-tree",
+            "-r",
+            "-z",
+            WORK109_SOURCE_COMMIT,
+            "--",
+            "docs/01.requirements",
+            "docs/03.specs",
+            stdout_limit=WORK109_GIT_TREE_MAX_BYTES,
+        )
+    except ArchiveContractError as exc:
+        raise AssertionError("WORK-109 base inventory is unavailable") from exc
+    if result.returncode != 0 or not result.stdout.endswith(b"\0"):
+        raise AssertionError("WORK-109 base inventory is unavailable")
+    inventory: dict[str, tuple[str, str]] = {}
+    for record in result.stdout.split(b"\0")[:-1]:
+        try:
+            header, raw_path = record.split(b"\t", 1)
+            raw_mode, raw_type, raw_object_id = header.split(b" ", 2)
+            path = raw_path.decode("utf-8")
+            object_id = raw_object_id.decode("ascii")
+        except (UnicodeDecodeError, ValueError) as exc:
+            raise AssertionError("WORK-109 base inventory is malformed") from exc
+        if (
+            raw_mode not in {b"100644", b"100755"}
+            or raw_type != b"blob"
+            or WORK109_OBJECT_ID.fullmatch(object_id) is None
+            or PurePosixPath(path).as_posix() != path
+            or ".." in PurePosixPath(path).parts
+        ):
+            raise AssertionError("WORK-109 base inventory contains an unsafe row")
+        prd = WORK109_LEGACY_PRD.fullmatch(path)
+        member = WORK109_LEGACY_SPEC_MEMBER.fullmatch(path)
+        if prd is not None:
+            stable_path = f"docs/01.requirements/0{prd.group('identity')}"
+        elif member is not None:
+            stable_path = (
+                f"docs/03.specs/0{member.group('unit')}/{member.group('leaf')}"
+            )
+        else:
+            continue
+        if path in inventory:
+            raise AssertionError("WORK-109 base move path is duplicated")
+        inventory[path] = (stable_path, object_id)
+    if len(inventory) != 141:
+        raise AssertionError("WORK-109 base move inventory is not exactly 141 rows")
+    return inventory
+
+
+def _work109_transition_manifest_projection(
+    root: Path,
+    entries: tuple[Mapping[str, Any], ...],
+    *,
+    route_state: str,
+    ledger_bytes: bytes | None = None,
+) -> tuple[Mapping[str, Any], ...]:
+    """Project only MIG-0002 moved rows onto the immutable transition manifest."""
+
+    if route_state != "transition":
+        raise AssertionError("MIG-0002 manifest projection is transition-only")
+    root = root.resolve()
+    try:
+        contents = (
+            read_staged_blob_bounded(
+                root,
+                WORK109_MIGRATION_LEDGER_PATH.as_posix(),
+                max_bytes=MIGRATION_DOCUMENT_MAX_BYTES,
+            )
+            if ledger_bytes is None
+            else ledger_bytes
+        )
+    except ArchiveContractError as exc:
+        raise AssertionError("MIG-0002 staged document is unavailable") from exc
+    ledger_rows = _work109_ledger_rows(contents)
+    expected = _work109_base_move_inventory(root)
+    moved_rows = tuple(row for row in ledger_rows if row["action"] == "moved")
+    actual: dict[str, str] = {}
+    for row in moved_rows:
+        legacy_path = str(row["legacy_path"])
+        stable_path = str(row["stable_path"])
+        expected_row = expected.get(legacy_path)
+        if (
+            expected_row is None
+            or expected_row != (stable_path, row["source_blob"])
+            or stable_path in actual.values()
+        ):
+            raise AssertionError(f"MIG-0002 moved projection differs: {legacy_path}")
+        actual[legacy_path] = stable_path
+    if set(actual) != set(expected):
+        raise AssertionError("MIG-0002 moved projection is incomplete")
+
+    manifest_move_targets: set[str] = set()
+    projected_targets: set[str] = set()
+    work_units: dict[str, set[str]] = {}
+    projected: list[Mapping[str, Any]] = []
+    for index, row in enumerate(entries):
+        if not isinstance(row, Mapping):
+            raise AssertionError(f"transition manifest row is invalid at index {index}")
+        candidate = dict(row)
+        if row.get("disposition") == "move-current":
+            legacy_target = row.get("target")
+            legacy_match = (
+                WORK109_LEGACY_WORK_UNIT_MEMBER.fullmatch(legacy_target)
+                if isinstance(legacy_target, str)
+                else None
+            )
+            stable_target = actual.get(str(legacy_target))
+            stable_match = (
+                WORK109_STABLE_WORK_UNIT_MEMBER.fullmatch(stable_target)
+                if stable_target is not None
+                else None
+            )
+            if (
+                legacy_match is None
+                or stable_match is None
+                or stable_match.group("unit") != "0" + legacy_match.group("unit")
+                or stable_match.group("leaf") != legacy_match.group("leaf")
+            ):
+                raise AssertionError(
+                    f"transition manifest move projection differs at index {index}"
+                )
+            source = row.get("source")
+            if not isinstance(source, str) or (root / source).exists():
+                raise AssertionError("transition manifest source endpoint is not retired")
+            if (root / legacy_target).exists():
+                raise AssertionError("transition manifest legacy target remains active")
+            stable_path = root / stable_target
+            spec_path = stable_path.parent / "spec.md"
+            try:
+                stable_mode = stable_path.lstat().st_mode
+                spec_mode = spec_path.lstat().st_mode
+            except OSError as exc:
+                raise AssertionError(
+                    "transition manifest projected endpoint is missing"
+                ) from exc
+            if (
+                stat.S_ISLNK(stable_mode)
+                or not stat.S_ISREG(stable_mode)
+                or stat.S_ISLNK(spec_mode)
+                or not stat.S_ISREG(spec_mode)
+                or stable_target in projected_targets
+            ):
+                raise AssertionError("transition manifest projected endpoint is unsafe")
+            manifest_move_targets.add(legacy_target)
+            projected_targets.add(stable_target)
+            unit = stable_match.group("unit")
+            work_units.setdefault(unit, set()).add(stable_match.group("leaf"))
+            candidate["target"] = stable_target
+            candidate["workUnit"] = f"Spec-{unit}"
+        projected.append(candidate)
+
+    eligible_ledger_targets = {
+        path
+        for path in actual
+        if WORK109_LEGACY_WORK_UNIT_MEMBER.fullmatch(path) is not None
+    }
+    if (
+        len(projected) != 132
+        or len(manifest_move_targets) != 82
+        or manifest_move_targets != eligible_ledger_targets
+        or len(work_units) != 41
+        or any(names != {"plan", "tasks"} for names in work_units.values())
+    ):
+        raise AssertionError("transition manifest projected work-unit inventory differs")
+    return tuple(projected)
+
+
+def _work109_expected_legacy_manifest_diagnostics(
+    entries: tuple[Mapping[str, Any], ...],
+) -> tuple[str, ...]:
+    diagnostics: set[str] = set()
+    units: set[str] = set()
+    for row in entries:
+        if row.get("disposition") != "move-current":
+            continue
+        source = row.get("source")
+        target = row.get("target")
+        match = (
+            WORK109_LEGACY_WORK_UNIT_MEMBER.fullmatch(target)
+            if isinstance(target, str)
+            else None
+        )
+        if not isinstance(source, str) or match is None:
+            raise AssertionError("immutable transition manifest shape differs")
+        diagnostics.add(f"MIGRATION-MISSING-ENDPOINT:{source}")
+        units.add(match.group("unit"))
+    for unit in units:
+        diagnostics.add(f"MIGRATION-WORK-UNIT-SPEC:{unit}")
+        diagnostics.add(f"WORK-UNIT-MISSING-SPEC:{unit}")
+    return tuple(sorted(diagnostics))
+
+
+def _assert_route_state(root: Path, registry: Any, requested: str | None) -> None:
+    state = requested or registry.route_state
+    if requested is not None and requested != registry.route_state:
+        raise AssertionError(
+            f"route state differs from registry: requested={requested} registry={registry.route_state}"
+        )
+    manifest_path = PurePosixPath("scripts/document-taxonomy-migration.json")
+    if state == "transition":
+        profile = classify_path(registry, manifest_path)
+        if profile.profile_id != "native/document-migration-manifest":
+            raise AssertionError("migration manifest selected the wrong native profile")
+        tool = _load_migration_tool(root)
+        document = tool.load_manifest_document(root / manifest_path)
+        if document.source_commit != tool.EXPECTED_SOURCE_COMMIT:
+            raise AssertionError("migration manifest source commit is not the reviewed base")
+        entries = document.entries
+        projected_entries = _work109_transition_manifest_projection(
+            root,
+            entries,
+            route_state=state,
+        )
+        diagnostics = tool.validate_manifest(root, entries, document.source_commit)
+        expected_legacy_diagnostics = _work109_expected_legacy_manifest_diagnostics(
+            entries
+        )
+        if diagnostics != expected_legacy_diagnostics:
+            raise AssertionError("migration manifest invalid: " + ", ".join(diagnostics))
+        tool.validate_counts(
+            move_count=sum(
+                row["disposition"] == "move-current" for row in projected_entries
+            ),
+            archive_count=sum(
+                row["disposition"] == "archive-unique" for row in projected_entries
+            ),
+            source_count=len(projected_entries),
+        )
+    elif state == "terminal":
+        raw_registry = load_json_file(root / REGISTRY_PATH)
+        raw_schema = load_json_file(root / SCHEMA_PATH, diagnostic_path=SCHEMA_PATH)
+        token = "docs/" + raw_registry["retiredRouteEvidence"]["routeSegment"]
+        result = subprocess.run(
+            ["git", "grep", "-Il", "-F", "--", token],
+            cwd=root,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+        )
+        if result.returncode not in {0, 1}:
+            raise AssertionError("terminal retired-route scan failed")
+        hits = tuple(PurePosixPath(path) for path in result.stdout.splitlines())
+        diagnostics = _terminal_route_contract_diagnostics(
+            root, raw_registry, raw_schema, hits
+        )
+        if diagnostics:
+            raise AssertionError(
+                "terminal route contract failed: " + ", ".join(diagnostics)
+            )
+
+
 def main() -> int:
     args = _parse_args()
     try:
@@ -5029,6 +7597,14 @@ def main() -> int:
 
     try:
         registry = load_registry(root)
+        fixture = _load_json(root / FIXTURE_PATH)
+        _assert_work105_consumer_disposition(root, fixture)
+        _assert_work106_transition_contract(
+            root,
+            fixture,
+            terminal=(args.route_state or registry.route_state) == "terminal",
+        )
+        _assert_route_state(root, registry, args.route_state)
         _assert_template_source_parity(registry)
         _assert_gemini_native_current_surface(root)
         _assert_retired_cloud_sdlc_surfaces_absent(root)

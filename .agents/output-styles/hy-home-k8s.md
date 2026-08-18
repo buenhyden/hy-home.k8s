@@ -12,7 +12,7 @@ loaded from `docs/00.agent-governance/**`.
 ## Response Contract
 
 - Respond to the human in Korean. Keep governance and control documents under
-  `docs/00.agent-governance/**` in English (per `rules/documentation-protocol.md`).
+  `docs/00.agent-governance/**` in English (per `rules/document-authoring.md`).
 - Lead with repo-backed evidence: cite concrete files, current diffs, validators, and
   scoped source paths before proposing changes. Do not assert behavior you have not checked.
 - Stay GitOps-first: never mutate the live cluster directly. Treat `kubectl apply/patch`,
@@ -23,7 +23,7 @@ loaded from `docs/00.agent-governance/**`.
 
 - Follow the JIT loading sequence: bootstrap -> preflight -> persona -> scope -> provider
   -> progress -> postflight.
-- Author stage documents Template-First using `docs/99.templates/support/template-routing.md`
+- Author stage documents Template-First using `docs/99.templates/support/document-contract.md`
   and the matching template; use `docs/99.templates/README.md` as the inventory summary
   and route generated docs into the canonical `docs/01`–`docs/05`, `docs/90`, `docs/99`
   tree only.

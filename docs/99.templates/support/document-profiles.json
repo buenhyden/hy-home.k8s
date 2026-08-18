@@ -2,6 +2,161 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://hy-home.k8s/schemas/document-profiles-8.schema.json",
   "schemaVersion": 8,
+  "routeState": "transition",
+  "archiveContractVersion": 2,
+  "archiveNamespaces": [
+    {
+      "id": "arwb-base",
+      "policy": "exact-immutable",
+      "records": [
+        "docs/98.archive/changes/chg-0008-common-agent-governance-refactoring/plan.md",
+        "docs/98.archive/changes/chg-0012-docs-governance-consistency/plan.md",
+        "docs/98.archive/changes/chg-0012-docs-governance-consistency/task.md",
+        "docs/98.archive/changes/chg-0016-governance-refactoring/task.md",
+        "docs/98.archive/changes/chg-0020-k3d-agent-first-remediation/plan.md",
+        "docs/98.archive/changes/chg-0020-k3d-agent-first-remediation/task.md",
+        "docs/98.archive/changes/chg-0028-platform-expansion/plan.md",
+        "docs/98.archive/changes/chg-0028-platform-expansion/task.md",
+        "docs/98.archive/changes/chg-0031-spec-execution-implementation-audit/plan.md",
+        "docs/98.archive/changes/chg-0031-spec-execution-implementation-audit/task.md",
+        "docs/98.archive/changes/chg-0040-wsl-k3d-argocd-platform/plan.md",
+        "docs/98.archive/changes/chg-0040-wsl-k3d-argocd-platform/task.md",
+        "docs/98.archive/changes/chg-0041-wsl2-k3d-argocd-ha-platform/plan.md",
+        "docs/98.archive/changes/chg-0041-wsl2-k3d-argocd-ha-platform/task.md",
+        "docs/98.archive/tombstones/01.requirements/tmb-prd-legacy-513540c3ab7c8c7ec2d848170c3c6df85b1780a2126ad41cb61d550456cefcac.md",
+        "docs/98.archive/tombstones/01.requirements/tmb-prd-legacy-54087d753dd7edf618b1cd5a0ffad654f6511e117ff7eac1ac289792c20c1e4d.md",
+        "docs/98.archive/tombstones/01.requirements/tmb-prd-legacy-8b107a1a83eb2e477de7f3c7b1d63050cff935af0dcfbdeb1e2636dc4ee5de06.md",
+        "docs/98.archive/tombstones/02.architecture/tmb-ad-legacy-61d107a63b02dcdfa33f43fbb8418afb7e4bcd4a3d83da0693b71b830da22bb8.md",
+        "docs/98.archive/tombstones/02.architecture/tmb-ad-legacy-a9933ec86fcda902cce202655eaef15ff4131e1b8bf40a74a316368f2b80fe57.md",
+        "docs/98.archive/tombstones/02.architecture/tmb-ad-legacy-daf190279d9ffd8a110eee548317c0a8ae58b86ba21220f00427c0dcace9f7b1.md",
+        "docs/98.archive/tombstones/02.architecture/tmb-adr-legacy-1cf8aa49bbb6bdca7c69c6f94881c636d25dc68b9aa298ecb854790d17f26548.md",
+        "docs/98.archive/tombstones/02.architecture/tmb-adr-legacy-59ec4c1d612f19572a59abb443a1279f998584488a41f1adb3bece1081fe774e.md",
+        "docs/98.archive/tombstones/02.architecture/tmb-adr-legacy-6ec9a5d55b91e0e59d9b73f4c11ced53d7a3a290c5a88e704b4d6d7f733cfb34.md",
+        "docs/98.archive/tombstones/02.architecture/tmb-adr-legacy-78452949112de698bd6fa9205770c51f516c900f4e42f372912612de528eac9f.md",
+        "docs/98.archive/tombstones/02.architecture/tmb-adr-legacy-a19264e8c774c9843b1bd489e4ea13b089f9493ddcfe5716a88764e1b41e68ad.md",
+        "docs/98.archive/tombstones/03.specs/tmb-spec-legacy-013c5c6ed9d3a810044f6ce50eb9aa043472b2e3528bbdfa1810192682be76ac.md",
+        "docs/98.archive/tombstones/03.specs/tmb-spec-legacy-063f6e166f3ebfc9dbcce93b3ea6aa53438f58b75935fbda294e79d87c6b52f4.md",
+        "docs/98.archive/tombstones/03.specs/tmb-spec-legacy-250a2ac6df411e9506f888dd0a0db7493990b3544b20cdfdbb086fa7233034cc.md",
+        "docs/98.archive/tombstones/03.specs/tmb-spec-legacy-aa76c31eb19898c6270484148791abad4d8b07b4323eaf949bddafb0b8e7097c.md",
+        "docs/98.archive/tombstones/05.operations/tmb-guide-legacy-292f0f96da3102684734a62842ee5c4d1e663f731921040911fa288a16163305.md",
+        "docs/98.archive/tombstones/05.operations/tmb-runbook-legacy-3c3f615242a98268abeac20385372ef3eafe9dd9680454d749d7ffb853cdbf4a.md"
+      ]
+    },
+    {
+      "id": "acer-additive",
+      "policy": "exact-immutable",
+      "records": [
+        "docs/98.archive/changes/chg-0001-affected-surface-agent-qa/plan.md",
+        "docs/98.archive/changes/chg-0001-affected-surface-agent-qa/task.md",
+        "docs/98.archive/changes/chg-0004-archive-record-and-workspace-boundary/plan.md",
+        "docs/98.archive/changes/chg-0004-archive-record-and-workspace-boundary/task.md",
+        "docs/98.archive/changes/chg-0005-authority-and-lineage-foundation/plan.md",
+        "docs/98.archive/changes/chg-0005-authority-and-lineage-foundation/task.md",
+        "docs/98.archive/changes/chg-0014-document-schema-and-lifecycle-contract/plan.md",
+        "docs/98.archive/changes/chg-0014-document-schema-and-lifecycle-contract/task.md",
+        "docs/98.archive/changes/chg-0029-protected-surface-supply-chain-hardening/plan.md",
+        "docs/98.archive/changes/chg-0029-protected-surface-supply-chain-hardening/task.md",
+        "docs/98.archive/changes/chg-0035-template-lifecycle-contract-normalization/plan.md",
+        "docs/98.archive/changes/chg-0035-template-lifecycle-contract-normalization/task.md"
+      ]
+    },
+    {
+      "id": "wdtc-execution",
+      "policy": "exact-reviewed-manifest",
+      "records": [
+        "docs/98.archive/changes/chg-0002-agent-first-harness-llm-wiki-hooks/plan.md",
+        "docs/98.archive/changes/chg-0002-agent-first-harness-llm-wiki-hooks/task.md",
+        "docs/98.archive/changes/chg-0003-antigravity-governance/plan.md",
+        "docs/98.archive/changes/chg-0003-antigravity-governance/task.md",
+        "docs/98.archive/changes/chg-0006-claude-agent-surface-restoration/plan.md",
+        "docs/98.archive/changes/chg-0006-claude-agent-surface-restoration/task.md",
+        "docs/98.archive/changes/chg-0007-codex-governance-harness-alignment/plan.md",
+        "docs/98.archive/changes/chg-0007-codex-governance-harness-alignment/task.md",
+        "docs/98.archive/changes/chg-0009-current-implementation-docs-alignment/plan.md",
+        "docs/98.archive/changes/chg-0009-current-implementation-docs-alignment/task.md",
+        "docs/98.archive/changes/chg-0010-current-research-pack-fact-first-hardening/plan.md",
+        "docs/98.archive/changes/chg-0010-current-research-pack-fact-first-hardening/task.md",
+        "docs/98.archive/changes/chg-0011-docs-01-05-current-implementation-alignment/plan.md",
+        "docs/98.archive/changes/chg-0011-docs-01-05-current-implementation-alignment/task.md",
+        "docs/98.archive/changes/chg-0013-docs-governance-full-ab-hardening/plan.md",
+        "docs/98.archive/changes/chg-0013-docs-governance-full-ab-hardening/task.md",
+        "docs/98.archive/changes/chg-0015-github-qa-ci-remediation/plan.md",
+        "docs/98.archive/changes/chg-0015-github-qa-ci-remediation/task.md",
+        "docs/98.archive/changes/chg-0017-harness-connective-layer-risk-closure/task.md",
+        "docs/98.archive/changes/chg-0018-harness-four-element-alignment/plan.md",
+        "docs/98.archive/changes/chg-0018-harness-four-element-alignment/task.md",
+        "docs/98.archive/changes/chg-0019-harness-governance-v2-overlay/plan.md",
+        "docs/98.archive/changes/chg-0019-harness-governance-v2-overlay/task.md",
+        "docs/98.archive/changes/chg-0021-language-boundary-alignment/task.md",
+        "docs/98.archive/changes/chg-0022-p3-gitops-secret-runtime-remediation/plan.md",
+        "docs/98.archive/changes/chg-0022-p3-gitops-secret-runtime-remediation/task.md",
+        "docs/98.archive/changes/chg-0023-phase-1-decision-follow-up/plan.md",
+        "docs/98.archive/changes/chg-0024-phase-1-governance-alignment-audit/task.md",
+        "docs/98.archive/changes/chg-0025-phase-2-governance-alignment/plan.md",
+        "docs/98.archive/changes/chg-0025-phase-2-governance-alignment/task.md",
+        "docs/98.archive/changes/chg-0026-phase-3-protected-surface-hardening/plan.md",
+        "docs/98.archive/changes/chg-0026-phase-3-protected-surface-hardening/task.md",
+        "docs/98.archive/changes/chg-0027-phase-4-eso-vault-runtime-diagnosis/plan.md",
+        "docs/98.archive/changes/chg-0027-phase-4-eso-vault-runtime-diagnosis/task.md",
+        "docs/98.archive/changes/chg-0030-scripts-inventory-remediation/plan.md",
+        "docs/98.archive/changes/chg-0030-scripts-inventory-remediation/task.md",
+        "docs/98.archive/changes/chg-0032-stage-00-canonical-adapter-redesign/plan.md",
+        "docs/98.archive/changes/chg-0032-stage-00-canonical-adapter-redesign/task.md",
+        "docs/98.archive/changes/chg-0033-stage-00-codex-harness-coverage-reconciliation/plan.md",
+        "docs/98.archive/changes/chg-0033-stage-00-codex-harness-coverage-reconciliation/task.md",
+        "docs/98.archive/changes/chg-0034-template-crosslink-fix/plan.md",
+        "docs/98.archive/changes/chg-0034-template-crosslink-fix/task.md",
+        "docs/98.archive/changes/chg-0036-workspace-engineering-research-audit-integration/plan.md",
+        "docs/98.archive/changes/chg-0036-workspace-engineering-research-audit-integration/task.md",
+        "docs/98.archive/changes/chg-0037-workspace-engineering-research-pack-refresh/plan.md",
+        "docs/98.archive/changes/chg-0037-workspace-engineering-research-pack-refresh/task.md",
+        "docs/98.archive/changes/chg-0038-workspace-purpose-alignment/plan.md",
+        "docs/98.archive/changes/chg-0038-workspace-purpose-alignment/task.md",
+        "docs/98.archive/changes/chg-0039-workspace-skill-expansion/plan.md",
+        "docs/98.archive/changes/chg-0039-workspace-skill-expansion/task.md"
+      ]
+    },
+    {
+      "id": "progress-snapshot",
+      "policy": "append-only-unique",
+      "records": []
+    }
+  ],
+  "retiredRouteEvidence": {
+    "routeSegment": "04.execution",
+    "profiles": [
+      {
+        "id": "stage90/immutable-retired-route-evidence",
+        "paths": [
+          "docs/90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md",
+          "docs/90.references/audits/2026-07-04-wdcn/workspace-document-contract-normalization-audit.md",
+          "docs/90.references/cloud-examples/aws/2026-07-12-aws-example-snapshot.md",
+          "docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md",
+          "docs/90.references/data/active-corpus-eligibility-ledger.json",
+          "docs/90.references/data/active-corpus-migration-results.json",
+          "docs/90.references/data/active-corpus-residue-closure.json",
+          "docs/90.references/data/active-corpus-retention-census.json",
+          "docs/90.references/data/active-corpus-role-audit.json",
+          "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md"
+        ],
+        "routes": []
+      },
+      {
+        "id": "stage98/immutable-retired-route-evidence",
+        "paths": [],
+        "routes": [
+          {
+            "kind": "regex",
+            "value": "^docs/98\\.archive/03\\.specs/[0-9]{3}-[^/]+/spec\\.md$"
+          },
+          {
+            "kind": "regex",
+            "value": "^docs/98\\.archive/04\\.execution/(?:plans|tasks)/[^/]+\\.md$"
+          }
+        ]
+      }
+    ]
+  },
   "baseline": {
     "sha": "8e1b00b4dfb84b8431ba4d3d31b4ad0445a0019d",
     "count": 433
@@ -23,7 +178,12 @@
       "tests",
       "traefik"
     ],
-    "rootFiles": ["AGENTS.md", "CLAUDE.md", "GEMINI.md", "README.md"]
+    "rootFiles": [
+      "AGENTS.md",
+      "CLAUDE.md",
+      "GEMINI.md",
+      "README.md"
+    ]
   },
   "profiles": [
     {
@@ -33,16 +193,42 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/01\\.requirements/[0-9]{3}-[^/]+\\.md$"
+          "value": "^docs/01\\.requirements/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$"
         }
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
       },
-      "statusDomain": ["draft", "active", "done", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -76,8 +262,15 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["Requirement ID", "Acceptance criterion", "Downstream owner"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Requirement ID",
+          "Acceptance criterion",
+          "Downstream owner"
+        ],
         "identifierColumns": [
           {
             "column": "Requirement ID",
@@ -87,28 +280,265 @@
         "sourceLinkColumn": null,
         "targetLinkColumn": "Downstream owner",
         "allowedSourceProfileIds": [],
-        "allowedTargetProfileIds": ["sdlc/ard", "sdlc/spec"],
+        "allowedTargetProfileIds": [
+          "sdlc/srs",
+          "sdlc/interface",
+          "sdlc/ad",
+          "sdlc/spec"
+        ],
         "reciprocalEvidence": true,
         "allowExplicitExclusion": true
       }
     },
     {
-      "id": "sdlc/ard",
+      "id": "sdlc/srs",
       "class": "sdlc",
       "mode": "authored",
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/02\\.architecture/requirements/[0-9]{4}-[^/]+\\.md$"
+          "value": "^docs/01\\.requirements/srs-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$"
         }
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
       },
-      "statusDomain": ["draft", "active", "accepted", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "System Context",
+          "Functional Requirements",
+          "Non-Functional Requirements",
+          "Interface Requirements",
+          "Verification",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "System Context",
+          "Functional Requirements",
+          "Non-Functional Requirements",
+          "Interface Requirements",
+          "Verification",
+          "Traceability"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/requirements/srs.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Upstream requirement",
+          "System requirement",
+          "Downstream owner"
+        ],
+        "identifierColumns": [
+          {
+            "column": "Upstream requirement",
+            "kind": "requirement"
+          },
+          {
+            "column": "System requirement",
+            "kind": "requirement"
+          }
+        ],
+        "sourceLinkColumn": "Upstream requirement",
+        "targetLinkColumn": "Downstream owner",
+        "allowedSourceProfileIds": [
+          "sdlc/prd"
+        ],
+        "allowedTargetProfileIds": [
+          "sdlc/interface",
+          "sdlc/ad",
+          "sdlc/spec"
+        ],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
+    },
+    {
+      "id": "sdlc/interface",
+      "class": "sdlc",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/01\\.requirements/ifc-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Interface Boundary",
+          "Requirements",
+          "Data Contract",
+          "Error Handling",
+          "Verification",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Interface Boundary",
+          "Requirements",
+          "Data Contract",
+          "Error Handling",
+          "Verification",
+          "Traceability"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/requirements/interface.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Upstream requirement",
+          "Interface requirement",
+          "Downstream owner"
+        ],
+        "identifierColumns": [
+          {
+            "column": "Upstream requirement",
+            "kind": "requirement"
+          },
+          {
+            "column": "Interface requirement",
+            "kind": "requirement"
+          }
+        ],
+        "sourceLinkColumn": "Upstream requirement",
+        "targetLinkColumn": "Downstream owner",
+        "allowedSourceProfileIds": [
+          "sdlc/prd",
+          "sdlc/srs"
+        ],
+        "allowedTargetProfileIds": [
+          "sdlc/ad",
+          "sdlc/spec"
+        ],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
+    },
+    {
+      "id": "sdlc/ad",
+      "class": "sdlc",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/02\\.architecture/descriptions/ad-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -129,15 +559,22 @@
           "Traceability"
         ]
       },
-      "template": "docs/99.templates/templates/sdlc/architecture/ard.template.md",
+      "template": "docs/99.templates/templates/sdlc/architecture/ad.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
       "appendContract": null,
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["Upstream requirement", "Quality attribute or boundary", "ADR / Spec"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Upstream requirement",
+          "Quality attribute or boundary",
+          "ADR / Spec"
+        ],
         "identifierColumns": [
           {
             "column": "Upstream requirement",
@@ -146,8 +583,15 @@
         ],
         "sourceLinkColumn": "Upstream requirement",
         "targetLinkColumn": "ADR / Spec",
-        "allowedSourceProfileIds": ["sdlc/prd"],
-        "allowedTargetProfileIds": ["sdlc/adr", "sdlc/spec"],
+        "allowedSourceProfileIds": [
+          "sdlc/prd",
+          "sdlc/srs",
+          "sdlc/interface"
+        ],
+        "allowedTargetProfileIds": [
+          "sdlc/adr",
+          "sdlc/spec"
+        ],
         "reciprocalEvidence": true,
         "allowExplicitExclusion": true
       }
@@ -159,16 +603,42 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/02\\.architecture/decisions/[0-9]{4}-[^/]+\\.md$"
+          "value": "^docs/02\\.architecture/decisions/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$"
         }
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
       },
-      "statusDomain": ["draft", "active", "accepted", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -196,15 +666,24 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["Decision lineage", "Replacement relation", "Affected Spec"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Decision lineage",
+          "Replacement relation",
+          "Affected Spec"
+        ],
         "identifierColumns": [],
         "sourceLinkColumn": "Decision lineage",
         "targetLinkColumn": "Affected Spec",
-        "allowedSourceProfileIds": ["sdlc/ard", "sdlc/adr"],
+        "allowedSourceProfileIds": [
+          "sdlc/ad",
+          "sdlc/adr"
+        ],
         "allowedTargetProfileIds": [
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests"
@@ -220,16 +699,42 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/spec\\.md$"
+          "value": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/spec\\.md$"
         }
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
       },
-      "statusDomain": ["draft", "active", "done", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -265,8 +770,15 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["PRD requirement", "Spec criterion", "Verification method"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "PRD requirement",
+          "Spec criterion",
+          "Verification method"
+        ],
         "identifierColumns": [
           {
             "column": "PRD requirement",
@@ -279,81 +791,11 @@
         ],
         "sourceLinkColumn": "PRD requirement",
         "targetLinkColumn": null,
-        "allowedSourceProfileIds": ["sdlc/prd"],
-        "allowedTargetProfileIds": [],
-        "reciprocalEvidence": true,
-        "allowExplicitExclusion": true
-      }
-    },
-    {
-      "id": "sdlc/api-spec",
-      "class": "sdlc",
-      "mode": "authored",
-      "routes": [
-        {
-          "kind": "regex",
-          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/api-spec\\.md$"
-        }
-      ],
-      "frontmatter": {
-        "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
-      },
-      "statusDomain": ["draft", "active", "done", "archived"],
-      "headings": {
-        "required": [
-          "Overview",
-          "Scope & Non-goals",
-          "API Style",
-          "Authentication & Authorization",
-          "Endpoint / Operation Catalog",
-          "Request / Response Schemas",
-          "Error Model",
-          "Data Contract Compatibility",
-          "Non-Functional Requirements",
-          "Machine-readable Contract Files",
-          "Verification",
-          "Traceability"
+        "allowedSourceProfileIds": [
+          "sdlc/prd",
+          "sdlc/interface",
+          "sdlc/srs"
         ],
-        "allowed": [
-          "Overview",
-          "Scope & Non-goals",
-          "API Style",
-          "Authentication & Authorization",
-          "Endpoint / Operation Catalog",
-          "Request / Response Schemas",
-          "Error Model",
-          "Data Contract Compatibility",
-          "Non-Functional Requirements",
-          "Machine-readable Contract Files",
-          "Verification",
-          "Traceability"
-        ]
-      },
-      "template": "docs/99.templates/templates/sdlc/specs/api-spec.template.md",
-      "sourceProfileIds": [],
-      "placeholderPolicy": "forbidden",
-      "appendContract": null,
-      "bodyContract": {
-        "section": "Traceability",
-        "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["PRD requirement", "Spec criterion", "Verification method"],
-        "identifierColumns": [
-          {
-            "column": "PRD requirement",
-            "kind": "requirement"
-          },
-          {
-            "column": "Spec criterion",
-            "kind": "criterion"
-          }
-        ],
-        "sourceLinkColumn": "PRD requirement",
-        "targetLinkColumn": null,
-        "allowedSourceProfileIds": ["sdlc/prd"],
         "allowedTargetProfileIds": [],
         "reciprocalEvidence": true,
         "allowExplicitExclusion": true
@@ -366,16 +808,42 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/agent-design\\.md$"
+          "value": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/agent-design\\.md$"
         }
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
       },
-      "statusDomain": ["draft", "active", "done", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -415,8 +883,15 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["PRD requirement", "Spec criterion", "Verification method"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "PRD requirement",
+          "Spec criterion",
+          "Verification method"
+        ],
         "identifierColumns": [
           {
             "column": "PRD requirement",
@@ -429,7 +904,11 @@
         ],
         "sourceLinkColumn": "PRD requirement",
         "targetLinkColumn": null,
-        "allowedSourceProfileIds": ["sdlc/prd"],
+        "allowedSourceProfileIds": [
+          "sdlc/prd",
+          "sdlc/interface",
+          "sdlc/srs"
+        ],
         "allowedTargetProfileIds": [],
         "reciprocalEvidence": true,
         "allowExplicitExclusion": true
@@ -442,16 +921,42 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/data-model\\.md$"
+          "value": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/data-model\\.md$"
         }
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
       },
-      "statusDomain": ["draft", "active", "done", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -485,8 +990,15 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["PRD requirement", "Spec criterion", "Verification method"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "PRD requirement",
+          "Spec criterion",
+          "Verification method"
+        ],
         "identifierColumns": [
           {
             "column": "PRD requirement",
@@ -499,7 +1011,11 @@
         ],
         "sourceLinkColumn": "PRD requirement",
         "targetLinkColumn": null,
-        "allowedSourceProfileIds": ["sdlc/prd"],
+        "allowedSourceProfileIds": [
+          "sdlc/prd",
+          "sdlc/interface",
+          "sdlc/srs"
+        ],
         "allowedTargetProfileIds": [],
         "reciprocalEvidence": true,
         "allowExplicitExclusion": true
@@ -512,16 +1028,42 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/tests\\.md$"
+          "value": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/tests\\.md$"
         }
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
       },
-      "statusDomain": ["draft", "active", "done", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -555,8 +1097,15 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["PRD requirement", "Spec criterion", "Verification method"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "PRD requirement",
+          "Spec criterion",
+          "Verification method"
+        ],
         "identifierColumns": [
           {
             "column": "PRD requirement",
@@ -569,7 +1118,11 @@
         ],
         "sourceLinkColumn": "PRD requirement",
         "targetLinkColumn": null,
-        "allowedSourceProfileIds": ["sdlc/prd"],
+        "allowedSourceProfileIds": [
+          "sdlc/prd",
+          "sdlc/interface",
+          "sdlc/srs"
+        ],
         "allowedTargetProfileIds": [],
         "reciprocalEvidence": true,
         "allowExplicitExclusion": true
@@ -582,16 +1135,42 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/04\\.execution/plans/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+\\.md$"
+          "value": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/plan\\.md$"
         }
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
       },
-      "statusDomain": ["draft", "active", "done", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -605,6 +1184,7 @@
           "Traceability"
         ],
         "allowed": [
+          "Global Constraints",
           "Overview",
           "Context",
           "Goals & In-Scope",
@@ -623,8 +1203,15 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["Spec criterion", "Work package", "Expected Task"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Spec criterion",
+          "Work package",
+          "Expected Task"
+        ],
         "identifierColumns": [
           {
             "column": "Spec criterion",
@@ -635,12 +1222,13 @@
         "targetLinkColumn": "Expected Task",
         "allowedSourceProfileIds": [
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests"
         ],
-        "allowedTargetProfileIds": ["sdlc/task"],
+        "allowedTargetProfileIds": [
+          "sdlc/task"
+        ],
         "reciprocalEvidence": true,
         "allowExplicitExclusion": true
       }
@@ -652,16 +1240,42 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/04\\.execution/tasks/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+\\.md$"
+          "value": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/tasks\\.md$"
         }
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
       },
-      "statusDomain": ["draft", "active", "done", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -687,8 +1301,15 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["Criterion / work item", "Result", "Evidence"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Criterion / work item",
+          "Result",
+          "Evidence"
+        ],
         "identifierColumns": [
           {
             "column": "Criterion / work item",
@@ -700,7 +1321,6 @@
         "allowedSourceProfileIds": [
           "sdlc/plan",
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests"
@@ -717,16 +1337,42 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/05\\.operations/guides/[0-9]{4}-[^/]+\\.md$"
+          "value": "^docs/05\\.operations/guides/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$"
         }
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
       },
-      "statusDomain": ["draft", "active", "accepted", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -754,14 +1400,20 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["Promoted owner", "Audience outcome", "Operating surface"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Promoted owner",
+          "Audience outcome",
+          "Operating surface"
+        ],
         "identifierColumns": [],
         "sourceLinkColumn": "Promoted owner",
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests",
@@ -779,16 +1431,42 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/05\\.operations/policies/[0-9]{4}-[^/]+\\.md$"
+          "value": "^docs/05\\.operations/policies/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$"
         }
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
       },
-      "statusDomain": ["draft", "active", "accepted", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -818,14 +1496,20 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["Promoted owner", "Control owner", "Enforcement surface"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Promoted owner",
+          "Control owner",
+          "Enforcement surface"
+        ],
         "identifierColumns": [],
         "sourceLinkColumn": "Promoted owner",
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests",
@@ -843,16 +1527,42 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/05\\.operations/runbooks/[0-9]{4}-[^/]+\\.md$"
+          "value": "^docs/05\\.operations/runbooks/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$"
         }
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
       },
-      "statusDomain": ["draft", "active", "accepted", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -882,14 +1592,20 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["Promoted owner", "Trigger or control", "Evidence or recovery owner"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Promoted owner",
+          "Trigger or control",
+          "Evidence or recovery owner"
+        ],
         "identifierColumns": [],
         "sourceLinkColumn": "Promoted owner",
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests",
@@ -908,16 +1624,42 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/05\\.operations/incidents/[0-9]{4}/INC-[0-9]{3}-[^/]+/INC-[0-9]{3}-[^/]+\\.md$"
+          "value": "^docs/05\\.operations/incidents/[0-9]{4}/inc-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/incident\\.md$"
         }
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
       },
-      "statusDomain": ["draft", "active", "accepted", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -947,13 +1689,22 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["Timeline or action", "Evidence", "Follow-up Task"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Timeline or action",
+          "Evidence",
+          "Follow-up Task"
+        ],
         "identifierColumns": [],
         "sourceLinkColumn": null,
         "targetLinkColumn": "Follow-up Task",
         "allowedSourceProfileIds": [],
-        "allowedTargetProfileIds": ["sdlc/task"],
+        "allowedTargetProfileIds": [
+          "sdlc/task"
+        ],
         "reciprocalEvidence": true,
         "allowExplicitExclusion": true
       }
@@ -965,16 +1716,42 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/05\\.operations/incidents/[0-9]{4}/INC-[0-9]{3}-[^/]+/postmortem\\.md$"
+          "value": "^docs/05\\.operations/incidents/[0-9]{4}/inc-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/postmortem\\.md$"
         }
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
       },
-      "statusDomain": ["draft", "active", "accepted", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -1008,7 +1785,10 @@
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "Root cause or action",
           "Owner and due state",
@@ -1019,7 +1799,9 @@
         "sourceLinkColumn": null,
         "targetLinkColumn": "Follow-up Task",
         "allowedSourceProfileIds": [],
-        "allowedTargetProfileIds": ["sdlc/task"],
+        "allowedTargetProfileIds": [
+          "sdlc/task"
+        ],
         "reciprocalEvidence": true,
         "allowExplicitExclusion": true
       }
@@ -1036,11 +1818,35 @@
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
       },
-      "statusDomain": ["draft", "active", "accepted", "done", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "done",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -1076,7 +1882,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/98\\.archive/(?!.*(?:/)?README\\.md$).+\\.md$"
+          "value": "^docs/98\\.archive/(?!migrations/)(?!.*(?:/)?README\\.md$).+\\.md$"
         }
       ],
       "frontmatter": {
@@ -1087,6 +1893,7 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "original_type",
           "original_path",
           "archived_on",
@@ -1102,6 +1909,9 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
+          "change_id",
+          "original_artifact_id",
           "original_type",
           "original_path",
           "archived_on",
@@ -1117,6 +1927,9 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
+          "change_id",
+          "original_artifact_id",
           "original_type",
           "original_path",
           "archived_on",
@@ -1127,12 +1940,75 @@
           "content_sha256"
         ]
       },
-      "statusDomain": ["archived"],
+      "statusDomain": [
+        "archived"
+      ],
       "headings": {
         "required": [],
         "allowed": []
       },
       "template": "docs/99.templates/templates/common/archive-record.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null,
+      "bodyContract": null
+    },
+    {
+      "id": "content/archive-migration",
+      "class": "common",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/98\\.archive/migrations/mig-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
+          "migration_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
+          "migration_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
+          "migration_id"
+        ]
+      },
+      "statusDomain": [
+        "accepted"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Migration Ledger",
+          "Recovery"
+        ],
+        "allowed": [
+          "Overview",
+          "Migration Ledger",
+          "Recovery"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/archive-migration.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
       "appendContract": null,
@@ -1150,11 +2026,35 @@
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
       },
-      "statusDomain": ["draft", "active", "accepted", "done", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "done",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -1191,14 +2091,50 @@
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
       },
-      "statusDomain": ["draft", "active", "accepted", "done", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "done",
+        "archived"
+      ],
       "headings": {
-        "required": ["Problem", "Context", "Resolution", "Prevention", "Related Progress"],
-        "allowed": ["Problem", "Context", "Resolution", "Prevention", "Related Progress"]
+        "required": [
+          "Problem",
+          "Context",
+          "Resolution",
+          "Prevention",
+          "Related Progress"
+        ],
+        "allowed": [
+          "Problem",
+          "Context",
+          "Resolution",
+          "Prevention",
+          "Related Progress"
+        ]
       },
       "template": "docs/99.templates/templates/common/memory.template.md",
       "sourceProfileIds": [],
@@ -1218,11 +2154,35 @@
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
       },
-      "statusDomain": ["draft", "active", "accepted", "done", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "done",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -1265,8 +2225,12 @@
       },
       "statusDomain": [],
       "headings": {
-        "required": ["Work Entries"],
-        "allowed": ["Work Entries"]
+        "required": [
+          "Work Entries"
+        ],
+        "allowed": [
+          "Work Entries"
+        ]
       },
       "template": null,
       "sourceProfileIds": [],
@@ -1343,10 +2307,6 @@
         },
         {
           "kind": "exact",
-          "value": "docs/04.execution/README.md"
-        },
-        {
-          "kind": "exact",
           "value": "docs/05.operations/README.md"
         },
         {
@@ -1407,15 +2367,7 @@
         },
         {
           "kind": "exact",
-          "value": "docs/02.architecture/requirements/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/04.execution/plans/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/04.execution/tasks/README.md"
+          "value": "docs/02.architecture/descriptions/README.md"
         },
         {
           "kind": "exact",
@@ -1474,7 +2426,13 @@
       },
       "statusDomain": [],
       "headings": {
-        "required": ["Overview", "Scope", "Item Index", "Add and Find", "Related Documents"],
+        "required": [
+          "Overview",
+          "Scope",
+          "Item Index",
+          "Add and Find",
+          "Related Documents"
+        ],
         "allowed": [
           "Overview",
           "Scope",
@@ -1816,13 +2774,42 @@
       "bodyContract": null
     },
     {
+      "id": "native/document-migration-manifest",
+      "class": "exception",
+      "mode": "classification-only",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "scripts/document-taxonomy-migration.json"
+        }
+      ],
+      "frontmatter": {
+        "mode": "not-applicable",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [
+        "transition"
+      ],
+      "headings": {
+        "required": [],
+        "allowed": []
+      },
+      "template": null,
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null,
+      "bodyContract": null
+    },
+    {
       "id": "exception/native-contract-openapi",
       "class": "exception",
       "mode": "classification-only",
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/contracts/openapi\\.yaml$"
+          "value": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/contracts/openapi\\.yaml$"
         }
       ],
       "frontmatter": {
@@ -1849,7 +2836,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/contracts/schema\\.graphql$"
+          "value": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/contracts/schema\\.graphql$"
         }
       ],
       "frontmatter": {
@@ -1876,7 +2863,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/contracts/service\\.proto$"
+          "value": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/contracts/service\\.proto$"
         }
       ],
       "frontmatter": {
@@ -1987,6 +2974,8 @@
           "status",
           "owner",
           "updated",
+          "change_id",
+          "original_artifact_id",
           "original_type",
           "original_path",
           "archived_on",
@@ -2002,6 +2991,8 @@
           "status",
           "owner",
           "updated",
+          "change_id",
+          "original_artifact_id",
           "original_type",
           "original_path",
           "archived_on",
@@ -2012,13 +3003,77 @@
           "content_sha256"
         ]
       },
-      "statusDomain": ["archived"],
+      "statusDomain": [
+        "archived"
+      ],
       "headings": {
         "required": [],
         "allowed": []
       },
       "template": "docs/99.templates/templates/common/archive-record.template.md",
-      "sourceProfileIds": ["content/archive"],
+      "sourceProfileIds": [
+        "content/archive"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null,
+      "bodyContract": null
+    },
+    {
+      "id": "template/content/archive-migration",
+      "class": "common",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/common/archive-migration.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "migration_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "migration_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "migration_id"
+        ]
+      },
+      "statusDomain": [
+        "accepted"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Migration Ledger",
+          "Recovery"
+        ],
+        "allowed": [
+          "Overview",
+          "Migration Ledger",
+          "Recovery"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/archive-migration.template.md",
+      "sourceProfileIds": [
+        "content/archive-migration"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": null
@@ -2035,17 +3090,55 @@
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
       },
-      "statusDomain": ["draft", "active", "accepted", "done", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "done",
+        "archived"
+      ],
       "headings": {
-        "required": ["Problem", "Context", "Resolution", "Prevention", "Related Progress"],
-        "allowed": ["Problem", "Context", "Resolution", "Prevention", "Related Progress"]
+        "required": [
+          "Problem",
+          "Context",
+          "Resolution",
+          "Prevention",
+          "Related Progress"
+        ],
+        "allowed": [
+          "Problem",
+          "Context",
+          "Resolution",
+          "Prevention",
+          "Related Progress"
+        ]
       },
       "template": "docs/99.templates/templates/common/memory.template.md",
-      "sourceProfileIds": ["governance/memory"],
+      "sourceProfileIds": [
+        "governance/memory"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": null
@@ -2087,7 +3180,9 @@
         ]
       },
       "template": "docs/99.templates/templates/common/readme-repository.template.md",
-      "sourceProfileIds": ["readme/repository"],
+      "sourceProfileIds": [
+        "readme/repository"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": null
@@ -2127,7 +3222,9 @@
         ]
       },
       "template": "docs/99.templates/templates/common/readme-stage-index.template.md",
-      "sourceProfileIds": ["readme/stage-index"],
+      "sourceProfileIds": [
+        "readme/stage-index"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": null
@@ -2150,7 +3247,13 @@
       },
       "statusDomain": [],
       "headings": {
-        "required": ["Overview", "Scope", "Item Index", "Add and Find", "Related Documents"],
+        "required": [
+          "Overview",
+          "Scope",
+          "Item Index",
+          "Add and Find",
+          "Related Documents"
+        ],
         "allowed": [
           "Overview",
           "Scope",
@@ -2161,7 +3264,9 @@
         ]
       },
       "template": "docs/99.templates/templates/common/readme-collection-index.template.md",
-      "sourceProfileIds": ["readme/collection-index"],
+      "sourceProfileIds": [
+        "readme/collection-index"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": null
@@ -2204,7 +3309,9 @@
         ]
       },
       "template": "docs/99.templates/templates/common/readme-implementation.template.md",
-      "sourceProfileIds": ["readme/implementation"],
+      "sourceProfileIds": [
+        "readme/implementation"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": null
@@ -2246,7 +3353,9 @@
         ]
       },
       "template": "docs/99.templates/templates/common/readme-snapshot-pack.template.md",
-      "sourceProfileIds": ["readme/snapshot-pack"],
+      "sourceProfileIds": [
+        "readme/snapshot-pack"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": null
@@ -2287,7 +3396,9 @@
         ]
       },
       "template": "docs/99.templates/templates/common/readme-workspace-staging.template.md",
-      "sourceProfileIds": ["readme/workspace-staging"],
+      "sourceProfileIds": [
+        "readme/workspace-staging"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": null
@@ -2304,11 +3415,35 @@
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
       },
-      "statusDomain": ["draft", "active", "accepted", "done", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "done",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -2332,7 +3467,9 @@
         ]
       },
       "template": "docs/99.templates/templates/common/reference.template.md",
-      "sourceProfileIds": ["content/reference"],
+      "sourceProfileIds": [
+        "content/reference"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": null
@@ -2349,11 +3486,34 @@
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
       },
-      "statusDomain": ["draft", "active", "accepted", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -2375,21 +3535,32 @@
         ]
       },
       "template": "docs/99.templates/templates/sdlc/architecture/adr.template.md",
-      "sourceProfileIds": ["sdlc/adr"],
+      "sourceProfileIds": [
+        "sdlc/adr"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["Decision lineage", "Replacement relation", "Affected Spec"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Decision lineage",
+          "Replacement relation",
+          "Affected Spec"
+        ],
         "identifierColumns": [],
         "sourceLinkColumn": "Decision lineage",
         "targetLinkColumn": "Affected Spec",
-        "allowedSourceProfileIds": ["sdlc/ard", "sdlc/adr"],
+        "allowedSourceProfileIds": [
+          "sdlc/ad",
+          "sdlc/adr"
+        ],
         "allowedTargetProfileIds": [
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests"
@@ -2399,22 +3570,45 @@
       }
     },
     {
-      "id": "template/sdlc/ard",
+      "id": "template/sdlc/ad",
       "class": "sdlc",
       "mode": "template",
       "routes": [
         {
           "kind": "exact",
-          "value": "docs/99.templates/templates/sdlc/architecture/ard.template.md"
+          "value": "docs/99.templates/templates/sdlc/architecture/ad.template.md"
         }
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
       },
-      "statusDomain": ["draft", "active", "accepted", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -2435,15 +3629,24 @@
           "Traceability"
         ]
       },
-      "template": "docs/99.templates/templates/sdlc/architecture/ard.template.md",
-      "sourceProfileIds": ["sdlc/ard"],
+      "template": "docs/99.templates/templates/sdlc/architecture/ad.template.md",
+      "sourceProfileIds": [
+        "sdlc/ad"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["Upstream requirement", "Quality attribute or boundary", "ADR / Spec"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Upstream requirement",
+          "Quality attribute or boundary",
+          "ADR / Spec"
+        ],
         "identifierColumns": [
           {
             "column": "Upstream requirement",
@@ -2452,8 +3655,15 @@
         ],
         "sourceLinkColumn": "Upstream requirement",
         "targetLinkColumn": "ADR / Spec",
-        "allowedSourceProfileIds": ["sdlc/prd"],
-        "allowedTargetProfileIds": ["sdlc/adr", "sdlc/spec"],
+        "allowedSourceProfileIds": [
+          "sdlc/prd",
+          "sdlc/srs",
+          "sdlc/interface"
+        ],
+        "allowedTargetProfileIds": [
+          "sdlc/adr",
+          "sdlc/spec"
+        ],
         "reciprocalEvidence": true,
         "allowExplicitExclusion": true
       }
@@ -2470,11 +3680,34 @@
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
       },
-      "statusDomain": ["draft", "active", "done", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -2488,6 +3721,7 @@
           "Traceability"
         ],
         "allowed": [
+          "Global Constraints",
           "Overview",
           "Context",
           "Goals & In-Scope",
@@ -2500,14 +3734,23 @@
         ]
       },
       "template": "docs/99.templates/templates/sdlc/execution/plan.template.md",
-      "sourceProfileIds": ["sdlc/plan"],
+      "sourceProfileIds": [
+        "sdlc/plan"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["Spec criterion", "Work package", "Expected Task"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Spec criterion",
+          "Work package",
+          "Expected Task"
+        ],
         "identifierColumns": [
           {
             "column": "Spec criterion",
@@ -2518,12 +3761,13 @@
         "targetLinkColumn": "Expected Task",
         "allowedSourceProfileIds": [
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests"
         ],
-        "allowedTargetProfileIds": ["sdlc/task"],
+        "allowedTargetProfileIds": [
+          "sdlc/task"
+        ],
         "reciprocalEvidence": true,
         "allowExplicitExclusion": true
       }
@@ -2540,11 +3784,34 @@
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
       },
-      "statusDomain": ["draft", "active", "done", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -2564,14 +3831,23 @@
         ]
       },
       "template": "docs/99.templates/templates/sdlc/execution/task.template.md",
-      "sourceProfileIds": ["sdlc/task"],
+      "sourceProfileIds": [
+        "sdlc/task"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["Criterion / work item", "Result", "Evidence"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Criterion / work item",
+          "Result",
+          "Evidence"
+        ],
         "identifierColumns": [
           {
             "column": "Criterion / work item",
@@ -2583,7 +3859,6 @@
         "allowedSourceProfileIds": [
           "sdlc/plan",
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests"
@@ -2605,11 +3880,34 @@
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
       },
-      "statusDomain": ["draft", "active", "accepted", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -2631,20 +3929,28 @@
         ]
       },
       "template": "docs/99.templates/templates/sdlc/operations/guide.template.md",
-      "sourceProfileIds": ["sdlc/guide"],
+      "sourceProfileIds": [
+        "sdlc/guide"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["Promoted owner", "Audience outcome", "Operating surface"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Promoted owner",
+          "Audience outcome",
+          "Operating surface"
+        ],
         "identifierColumns": [],
         "sourceLinkColumn": "Promoted owner",
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests",
@@ -2667,11 +3973,34 @@
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
       },
-      "statusDomain": ["draft", "active", "accepted", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -2695,19 +4024,30 @@
         ]
       },
       "template": "docs/99.templates/templates/sdlc/operations/incident.template.md",
-      "sourceProfileIds": ["sdlc/incident"],
+      "sourceProfileIds": [
+        "sdlc/incident"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["Timeline or action", "Evidence", "Follow-up Task"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Timeline or action",
+          "Evidence",
+          "Follow-up Task"
+        ],
         "identifierColumns": [],
         "sourceLinkColumn": null,
         "targetLinkColumn": "Follow-up Task",
         "allowedSourceProfileIds": [],
-        "allowedTargetProfileIds": ["sdlc/task"],
+        "allowedTargetProfileIds": [
+          "sdlc/task"
+        ],
         "reciprocalEvidence": true,
         "allowExplicitExclusion": true
       }
@@ -2724,11 +4064,34 @@
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
       },
-      "statusDomain": ["draft", "active", "accepted", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -2752,20 +4115,28 @@
         ]
       },
       "template": "docs/99.templates/templates/sdlc/operations/policy.template.md",
-      "sourceProfileIds": ["sdlc/policy"],
+      "sourceProfileIds": [
+        "sdlc/policy"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["Promoted owner", "Control owner", "Enforcement surface"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Promoted owner",
+          "Control owner",
+          "Enforcement surface"
+        ],
         "identifierColumns": [],
         "sourceLinkColumn": "Promoted owner",
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests",
@@ -2788,11 +4159,34 @@
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
       },
-      "statusDomain": ["draft", "active", "accepted", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -2820,13 +4214,18 @@
         ]
       },
       "template": "docs/99.templates/templates/sdlc/operations/postmortem.template.md",
-      "sourceProfileIds": ["sdlc/postmortem"],
+      "sourceProfileIds": [
+        "sdlc/postmortem"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
         "requiredColumns": [
           "Root cause or action",
           "Owner and due state",
@@ -2837,7 +4236,9 @@
         "sourceLinkColumn": null,
         "targetLinkColumn": "Follow-up Task",
         "allowedSourceProfileIds": [],
-        "allowedTargetProfileIds": ["sdlc/task"],
+        "allowedTargetProfileIds": [
+          "sdlc/task"
+        ],
         "reciprocalEvidence": true,
         "allowExplicitExclusion": true
       }
@@ -2854,11 +4255,34 @@
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
       },
-      "statusDomain": ["draft", "active", "accepted", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -2882,20 +4306,28 @@
         ]
       },
       "template": "docs/99.templates/templates/sdlc/operations/runbook.template.md",
-      "sourceProfileIds": ["sdlc/runbook"],
+      "sourceProfileIds": [
+        "sdlc/runbook"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["Promoted owner", "Trigger or control", "Evidence or recovery owner"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Promoted owner",
+          "Trigger or control",
+          "Evidence or recovery owner"
+        ],
         "identifierColumns": [],
         "sourceLinkColumn": "Promoted owner",
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests",
@@ -2919,11 +4351,34 @@
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
       },
-      "statusDomain": ["draft", "active", "done", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -2951,14 +4406,23 @@
         ]
       },
       "template": "docs/99.templates/templates/sdlc/requirements/prd.template.md",
-      "sourceProfileIds": ["sdlc/prd"],
+      "sourceProfileIds": [
+        "sdlc/prd"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["Requirement ID", "Acceptance criterion", "Downstream owner"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Requirement ID",
+          "Acceptance criterion",
+          "Downstream owner"
+        ],
         "identifierColumns": [
           {
             "column": "Requirement ID",
@@ -2968,7 +4432,216 @@
         "sourceLinkColumn": null,
         "targetLinkColumn": "Downstream owner",
         "allowedSourceProfileIds": [],
-        "allowedTargetProfileIds": ["sdlc/ard", "sdlc/spec"],
+        "allowedTargetProfileIds": [
+          "sdlc/srs",
+          "sdlc/interface",
+          "sdlc/ad",
+          "sdlc/spec"
+        ],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
+    },
+    {
+      "id": "template/sdlc/srs",
+      "class": "sdlc",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/sdlc/requirements/srs.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "System Context",
+          "Functional Requirements",
+          "Non-Functional Requirements",
+          "Interface Requirements",
+          "Verification",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "System Context",
+          "Functional Requirements",
+          "Non-Functional Requirements",
+          "Interface Requirements",
+          "Verification",
+          "Traceability"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/requirements/srs.template.md",
+      "sourceProfileIds": [
+        "sdlc/srs"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Upstream requirement",
+          "System requirement",
+          "Downstream owner"
+        ],
+        "identifierColumns": [
+          {
+            "column": "Upstream requirement",
+            "kind": "requirement"
+          },
+          {
+            "column": "System requirement",
+            "kind": "requirement"
+          }
+        ],
+        "sourceLinkColumn": "Upstream requirement",
+        "targetLinkColumn": "Downstream owner",
+        "allowedSourceProfileIds": [
+          "sdlc/prd"
+        ],
+        "allowedTargetProfileIds": [
+          "sdlc/interface",
+          "sdlc/ad",
+          "sdlc/spec"
+        ],
+        "reciprocalEvidence": true,
+        "allowExplicitExclusion": true
+      }
+    },
+    {
+      "id": "template/sdlc/interface",
+      "class": "sdlc",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/sdlc/requirements/interface.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Interface Boundary",
+          "Requirements",
+          "Data Contract",
+          "Error Handling",
+          "Verification",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Interface Boundary",
+          "Requirements",
+          "Data Contract",
+          "Error Handling",
+          "Verification",
+          "Traceability"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/requirements/interface.template.md",
+      "sourceProfileIds": [
+        "sdlc/interface"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null,
+      "bodyContract": {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "Upstream requirement",
+          "Interface requirement",
+          "Downstream owner"
+        ],
+        "identifierColumns": [
+          {
+            "column": "Upstream requirement",
+            "kind": "requirement"
+          },
+          {
+            "column": "Interface requirement",
+            "kind": "requirement"
+          }
+        ],
+        "sourceLinkColumn": "Upstream requirement",
+        "targetLinkColumn": "Downstream owner",
+        "allowedSourceProfileIds": [
+          "sdlc/prd",
+          "sdlc/srs"
+        ],
+        "allowedTargetProfileIds": [
+          "sdlc/ad",
+          "sdlc/spec"
+        ],
         "reciprocalEvidence": true,
         "allowExplicitExclusion": true
       }
@@ -2985,11 +4658,34 @@
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
       },
-      "statusDomain": ["draft", "active", "done", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -3023,88 +4719,23 @@
         ]
       },
       "template": "docs/99.templates/templates/sdlc/specs/agent-design.template.md",
-      "sourceProfileIds": ["sdlc/agent-design"],
-      "placeholderPolicy": "template-only",
-      "appendContract": null,
-      "bodyContract": {
-        "section": "Traceability",
-        "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["PRD requirement", "Spec criterion", "Verification method"],
-        "identifierColumns": [
-          {
-            "column": "PRD requirement",
-            "kind": "requirement"
-          },
-          {
-            "column": "Spec criterion",
-            "kind": "criterion"
-          }
-        ],
-        "sourceLinkColumn": "PRD requirement",
-        "targetLinkColumn": null,
-        "allowedSourceProfileIds": ["sdlc/prd"],
-        "allowedTargetProfileIds": [],
-        "reciprocalEvidence": true,
-        "allowExplicitExclusion": true
-      }
-    },
-    {
-      "id": "template/sdlc/api-spec",
-      "class": "sdlc",
-      "mode": "template",
-      "routes": [
-        {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/sdlc/specs/api-spec.template.md"
-        }
+      "sourceProfileIds": [
+        "sdlc/agent-design"
       ],
-      "frontmatter": {
-        "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
-      },
-      "statusDomain": ["draft", "active", "done", "archived"],
-      "headings": {
-        "required": [
-          "Overview",
-          "Scope & Non-goals",
-          "API Style",
-          "Authentication & Authorization",
-          "Endpoint / Operation Catalog",
-          "Request / Response Schemas",
-          "Error Model",
-          "Data Contract Compatibility",
-          "Non-Functional Requirements",
-          "Machine-readable Contract Files",
-          "Verification",
-          "Traceability"
-        ],
-        "allowed": [
-          "Overview",
-          "Scope & Non-goals",
-          "API Style",
-          "Authentication & Authorization",
-          "Endpoint / Operation Catalog",
-          "Request / Response Schemas",
-          "Error Model",
-          "Data Contract Compatibility",
-          "Non-Functional Requirements",
-          "Machine-readable Contract Files",
-          "Verification",
-          "Traceability"
-        ]
-      },
-      "template": "docs/99.templates/templates/sdlc/specs/api-spec.template.md",
-      "sourceProfileIds": ["sdlc/api-spec"],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["PRD requirement", "Spec criterion", "Verification method"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "PRD requirement",
+          "Spec criterion",
+          "Verification method"
+        ],
         "identifierColumns": [
           {
             "column": "PRD requirement",
@@ -3117,7 +4748,11 @@
         ],
         "sourceLinkColumn": "PRD requirement",
         "targetLinkColumn": null,
-        "allowedSourceProfileIds": ["sdlc/prd"],
+        "allowedSourceProfileIds": [
+          "sdlc/prd",
+          "sdlc/interface",
+          "sdlc/srs"
+        ],
         "allowedTargetProfileIds": [],
         "reciprocalEvidence": true,
         "allowExplicitExclusion": true
@@ -3135,11 +4770,34 @@
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
       },
-      "statusDomain": ["draft", "active", "done", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -3167,14 +4825,23 @@
         ]
       },
       "template": "docs/99.templates/templates/sdlc/specs/data-model.template.md",
-      "sourceProfileIds": ["sdlc/data-model"],
+      "sourceProfileIds": [
+        "sdlc/data-model"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["PRD requirement", "Spec criterion", "Verification method"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "PRD requirement",
+          "Spec criterion",
+          "Verification method"
+        ],
         "identifierColumns": [
           {
             "column": "PRD requirement",
@@ -3187,7 +4854,11 @@
         ],
         "sourceLinkColumn": "PRD requirement",
         "targetLinkColumn": null,
-        "allowedSourceProfileIds": ["sdlc/prd"],
+        "allowedSourceProfileIds": [
+          "sdlc/prd",
+          "sdlc/interface",
+          "sdlc/srs"
+        ],
         "allowedTargetProfileIds": [],
         "reciprocalEvidence": true,
         "allowExplicitExclusion": true
@@ -3205,11 +4876,34 @@
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
       },
-      "statusDomain": ["draft", "active", "done", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -3239,14 +4933,23 @@
         ]
       },
       "template": "docs/99.templates/templates/sdlc/specs/spec.template.md",
-      "sourceProfileIds": ["sdlc/spec"],
+      "sourceProfileIds": [
+        "sdlc/spec"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["PRD requirement", "Spec criterion", "Verification method"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "PRD requirement",
+          "Spec criterion",
+          "Verification method"
+        ],
         "identifierColumns": [
           {
             "column": "PRD requirement",
@@ -3259,7 +4962,11 @@
         ],
         "sourceLinkColumn": "PRD requirement",
         "targetLinkColumn": null,
-        "allowedSourceProfileIds": ["sdlc/prd"],
+        "allowedSourceProfileIds": [
+          "sdlc/prd",
+          "sdlc/interface",
+          "sdlc/srs"
+        ],
         "allowedTargetProfileIds": [],
         "reciprocalEvidence": true,
         "allowExplicitExclusion": true
@@ -3277,11 +4984,34 @@
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
       },
-      "statusDomain": ["draft", "active", "done", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -3309,14 +5039,23 @@
         ]
       },
       "template": "docs/99.templates/templates/sdlc/specs/tests.template.md",
-      "sourceProfileIds": ["sdlc/tests"],
+      "sourceProfileIds": [
+        "sdlc/tests"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": {
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
-        "enforcedStatuses": ["draft", "active"],
-        "requiredColumns": ["PRD requirement", "Spec criterion", "Verification method"],
+        "enforcedStatuses": [
+          "draft",
+          "active"
+        ],
+        "requiredColumns": [
+          "PRD requirement",
+          "Spec criterion",
+          "Verification method"
+        ],
         "identifierColumns": [
           {
             "column": "PRD requirement",
@@ -3329,7 +5068,11 @@
         ],
         "sourceLinkColumn": "PRD requirement",
         "targetLinkColumn": null,
-        "allowedSourceProfileIds": ["sdlc/prd"],
+        "allowedSourceProfileIds": [
+          "sdlc/prd",
+          "sdlc/interface",
+          "sdlc/srs"
+        ],
         "allowedTargetProfileIds": [],
         "reciprocalEvidence": true,
         "allowExplicitExclusion": true
@@ -3357,14 +5100,22 @@
         "allowed": []
       },
       "template": "docs/99.templates/templates/common/progress.template.md",
-      "sourceProfileIds": ["governance/progress-ledger"],
+      "sourceProfileIds": [
+        "governance/progress-ledger"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": {
         "parentProfileId": "governance/progress-ledger",
         "parentH2": "Work Entries",
         "entryHeadingLevel": 3,
         "sectionHeadingLevel": 4,
-        "requiredSections": ["Metadata", "Progress", "Memory", "Evidence", "Handoff"]
+        "requiredSections": [
+          "Metadata",
+          "Progress",
+          "Memory",
+          "Evidence",
+          "Handoff"
+        ]
       },
       "bodyContract": null
     },
@@ -3380,11 +5131,35 @@
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
       },
-      "statusDomain": ["draft", "active", "accepted", "done", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "done",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -3404,7 +5179,9 @@
         ]
       },
       "template": "docs/99.templates/templates/common/governance-reference.template.md",
-      "sourceProfileIds": ["governance/reference"],
+      "sourceProfileIds": [
+        "governance/reference"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": null
@@ -3421,11 +5198,35 @@
       ],
       "frontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated"],
-        "order": ["title", "type", "status", "owner", "updated"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
       },
-      "statusDomain": ["draft", "active", "accepted", "done", "archived"],
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "done",
+        "archived"
+      ],
       "headings": {
         "required": [
           "Overview",
@@ -3445,7 +5246,9 @@
         ]
       },
       "template": "docs/99.templates/templates/common/template-support.template.md",
-      "sourceProfileIds": ["governance/template-support"],
+      "sourceProfileIds": [
+        "governance/template-support"
+      ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
       "bodyContract": null
@@ -3453,28 +5256,25 @@
   ],
   "governanceCurrentOwners": {
     "profileId": "governance/reference",
-    "allowedStates": ["active", "accepted"],
+    "allowedStates": [
+      "active",
+      "accepted"
+    ],
     "paths": [
-      "docs/00.agent-governance/common-governance.md",
       "docs/00.agent-governance/harness-catalog.md",
-      "docs/00.agent-governance/harness-implementation-map.md",
       "docs/00.agent-governance/model-policy.md",
-      "docs/00.agent-governance/providers/agents-md.md",
       "docs/00.agent-governance/providers/claude.md",
       "docs/00.agent-governance/providers/codex.md",
       "docs/00.agent-governance/providers/gemini.md",
       "docs/00.agent-governance/rules/agentic.md",
       "docs/00.agent-governance/rules/approval-boundaries.md",
       "docs/00.agent-governance/rules/bootstrap.md",
-      "docs/00.agent-governance/rules/document-stage-routing.md",
-      "docs/00.agent-governance/rules/documentation-protocol.md",
+      "docs/00.agent-governance/rules/document-authoring.md",
       "docs/00.agent-governance/rules/git-workflow.md",
       "docs/00.agent-governance/rules/persona.md",
       "docs/00.agent-governance/rules/postflight-checklist.md",
       "docs/00.agent-governance/rules/preflight-checklist.md",
       "docs/00.agent-governance/rules/quality-standards.md",
-      "docs/00.agent-governance/rules/stage-authoring-matrix.md",
-      "docs/00.agent-governance/rules/stage-checklists.md",
       "docs/00.agent-governance/rules/standards.md",
       "docs/00.agent-governance/scopes/architecture.md",
       "docs/00.agent-governance/scopes/backend.md",
@@ -3493,18 +5293,17 @@
     "profileId": "content/reference",
     "packs": [
       {
-        "id": "audits/2026-08-09-wgia",
-        "allowedStates": ["draft"],
+        "id": "audits/2026-07-11-weia",
+        "allowedStates": [
+          "done"
+        ],
         "members": [
-          "ai-agents-integrated-and-role-specific-agents.md",
-          "ci-cd-github-actions-qa-and-validation.md",
-          "harness-loop-fixtures-scripts-and-blockers.md",
-          "legacy-deprecated-and-one-shot-disposition-ledger.md",
-          "llm-wiki-memory-and-knowledge-management.md",
-          "remediation-and-integration-roadmap.md",
-          "security-and-approval-boundaries.md",
-          "spec-driven-sdlc-documentation-and-templates.md",
-          "workspace-purpose-governance-and-operating-contracts.md"
+          "ai-agents-model-routing-vibe-coding.md",
+          "ci-qa-automation-pipeline-workflow.md",
+          "governance-harness-loop-providers.md",
+          "kubernetes-infrastructure-security.md",
+          "remediation-roadmap.md",
+          "sdlc-document-lifecycle-frontmatter.md"
         ]
       }
     ]
@@ -3512,13 +5311,14 @@
   "documentContracts": {
     "valueContracts": [
       {
-        "id": "authored-standard",
+        "id": "authored-terminal-identity",
         "profileIds": [
           "sdlc/prd",
-          "sdlc/ard",
+          "sdlc/srs",
+          "sdlc/interface",
+          "sdlc/ad",
           "sdlc/adr",
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests",
@@ -3528,7 +5328,74 @@
           "sdlc/policy",
           "sdlc/runbook",
           "sdlc/incident",
-          "sdlc/postmortem",
+          "sdlc/postmortem"
+        ],
+        "keys": [
+          {
+            "key": "title",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "\\S",
+            "conditional": null
+          },
+          {
+            "key": "type",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "profile-id",
+              "value": null
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "status",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": {
+              "source": "status-domain",
+              "values": []
+            },
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "owner",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "conditional": null
+          },
+          {
+            "key": "updated",
+            "kind": "date",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            "conditional": null
+          },
+          {
+            "key": "artifact_id",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$",
+            "conditional": null
+          }
+        ]
+      },
+      {
+        "id": "authored-standard",
+        "profileIds": [
           "content/reference",
           "governance/reference",
           "governance/memory",
@@ -3590,7 +5457,9 @@
       },
       {
         "id": "archive-record",
-        "profileIds": ["content/archive"],
+        "profileIds": [
+          "content/archive"
+        ],
         "keys": [
           {
             "key": "title",
@@ -3641,6 +5510,33 @@
             "constant": null,
             "enum": null,
             "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            "conditional": null
+          },
+          {
+            "key": "artifact_id",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$",
+            "conditional": null
+          },
+          {
+            "key": "change_id",
+            "kind": "string",
+            "nullable": true,
+            "constant": null,
+            "enum": null,
+            "pattern": "^CHG-[0-9]{4}$",
+            "conditional": null
+          },
+          {
+            "key": "original_artifact_id",
+            "kind": "string",
+            "nullable": true,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$",
             "conditional": null
           },
           {
@@ -3728,6 +5624,384 @@
         ]
       },
       {
+        "id": "archive-migration",
+        "profileIds": [
+          "content/archive-migration"
+        ],
+        "keys": [
+          {
+            "key": "title",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "\\S",
+            "conditional": null
+          },
+          {
+            "key": "type",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "profile-id",
+              "value": null
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "status",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "literal",
+              "value": "accepted"
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "owner",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "conditional": null
+          },
+          {
+            "key": "updated",
+            "kind": "date",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            "conditional": null
+          },
+          {
+            "key": "artifact_id",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^MIG-[0-9]{4}$",
+            "conditional": null
+          },
+          {
+            "key": "migration_id",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^MIG-[0-9]{4}$",
+            "conditional": null
+          }
+        ]
+      },
+      {
+        "id": "template-terminal-authored",
+        "profileIds": [
+          "template/sdlc/prd",
+          "template/sdlc/srs",
+          "template/sdlc/interface",
+          "template/sdlc/ad",
+          "template/sdlc/adr",
+          "template/sdlc/spec",
+          "template/sdlc/agent-design",
+          "template/sdlc/data-model",
+          "template/sdlc/tests",
+          "template/sdlc/plan",
+          "template/sdlc/task",
+          "template/sdlc/guide",
+          "template/sdlc/policy",
+          "template/sdlc/runbook",
+          "template/sdlc/incident",
+          "template/sdlc/postmortem"
+        ],
+        "keys": [
+          {
+            "key": "title",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "\\S",
+            "conditional": null
+          },
+          {
+            "key": "type",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "profile-id",
+              "value": null
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "status",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": {
+              "source": "status-domain",
+              "values": []
+            },
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "owner",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "conditional": null
+          },
+          {
+            "key": "updated",
+            "kind": "date",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            "conditional": null
+          }
+        ]
+      },
+      {
+        "id": "template-terminal-archive-record",
+        "profileIds": [
+          "template/content/archive"
+        ],
+        "keys": [
+          {
+            "key": "title",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "\\S",
+            "conditional": null
+          },
+          {
+            "key": "type",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "profile-id",
+              "value": null
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "status",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "literal",
+              "value": "archived"
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "owner",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "conditional": null
+          },
+          {
+            "key": "updated",
+            "kind": "date",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            "conditional": null
+          },
+          {
+            "key": "change_id",
+            "kind": "string",
+            "nullable": true,
+            "constant": null,
+            "enum": null,
+            "pattern": "^CHG-[0-9]{4}$",
+            "conditional": null
+          },
+          {
+            "key": "original_artifact_id",
+            "kind": "string",
+            "nullable": true,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$",
+            "conditional": null
+          },
+          {
+            "key": "original_type",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[a-z][a-z0-9-]*(?:/[a-z0-9-]+)?$",
+            "conditional": null
+          },
+          {
+            "key": "original_path",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[^/\\\\].+",
+            "conditional": null
+          },
+          {
+            "key": "archived_on",
+            "kind": "date",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            "conditional": null
+          },
+          {
+            "key": "archive_reason",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": {
+              "source": "literal",
+              "values": [
+                "superseded",
+                "consolidated",
+                "completed-lineage",
+                "retired",
+                "abandoned",
+                "duplicate"
+              ]
+            },
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "replacement",
+            "kind": "string",
+            "nullable": true,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[^/\\\\].+",
+            "conditional": null
+          },
+          {
+            "key": "source_commit",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$",
+            "conditional": null
+          },
+          {
+            "key": "source_blob",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$",
+            "conditional": null
+          },
+          {
+            "key": "content_sha256",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9a-f]{64}$",
+            "conditional": null
+          }
+        ]
+      },
+      {
+        "id": "template-terminal-archive-migration",
+        "profileIds": [
+          "template/content/archive-migration"
+        ],
+        "keys": [
+          {
+            "key": "title",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "\\S",
+            "conditional": null
+          },
+          {
+            "key": "type",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "profile-id",
+              "value": null
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "status",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "literal",
+              "value": "accepted"
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "owner",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "conditional": null
+          },
+          {
+            "key": "updated",
+            "kind": "date",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            "conditional": null
+          },
+          {
+            "key": "migration_id",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^MIG-[0-9]{4}$",
+            "conditional": null
+          }
+        ]
+      },
+      {
         "id": "frontmatter-free-or-native",
         "profileIds": [
           "governance/progress-ledger",
@@ -3742,6 +6016,7 @@
           "exception/repository-runtime-baseline",
           "exception/provider-native-metadata",
           "exception/github-native-control",
+          "native/document-migration-manifest",
           "exception/native-contract-openapi",
           "exception/native-contract-graphql",
           "exception/native-contract-protobuf",
@@ -3753,189 +6028,261 @@
     ],
     "roleDecisions": [
       {
-        "profileIds": ["sdlc/prd"],
+        "profileIds": [
+          "sdlc/prd"
+        ],
         "role": "product-requirement",
         "sourceProfileId": null,
         "relationshipSection": "Traceability",
         "bodyRequirement": "body-contract"
       },
       {
-        "profileIds": ["sdlc/ard"],
-        "role": "architecture-requirement",
+        "profileIds": [
+          "sdlc/srs"
+        ],
+        "role": "system-requirement",
         "sourceProfileId": null,
         "relationshipSection": "Traceability",
         "bodyRequirement": "body-contract"
       },
       {
-        "profileIds": ["sdlc/adr"],
+        "profileIds": [
+          "sdlc/interface"
+        ],
+        "role": "interface-requirement",
+        "sourceProfileId": null,
+        "relationshipSection": "Traceability",
+        "bodyRequirement": "body-contract"
+      },
+      {
+        "profileIds": [
+          "sdlc/ad"
+        ],
+        "role": "architecture-description",
+        "sourceProfileId": null,
+        "relationshipSection": "Traceability",
+        "bodyRequirement": "body-contract"
+      },
+      {
+        "profileIds": [
+          "sdlc/adr"
+        ],
         "role": "architecture-decision",
         "sourceProfileId": null,
         "relationshipSection": "Traceability",
         "bodyRequirement": "body-contract"
       },
       {
-        "profileIds": ["sdlc/spec"],
+        "profileIds": [
+          "sdlc/spec"
+        ],
         "role": "implementation-specification",
         "sourceProfileId": null,
         "relationshipSection": "Traceability",
         "bodyRequirement": "body-contract"
       },
       {
-        "profileIds": ["sdlc/api-spec"],
-        "role": "api-specification",
-        "sourceProfileId": null,
-        "relationshipSection": "Traceability",
-        "bodyRequirement": "body-contract"
-      },
-      {
-        "profileIds": ["sdlc/agent-design"],
+        "profileIds": [
+          "sdlc/agent-design"
+        ],
         "role": "agent-design",
         "sourceProfileId": null,
         "relationshipSection": "Traceability",
         "bodyRequirement": "body-contract"
       },
       {
-        "profileIds": ["sdlc/data-model"],
+        "profileIds": [
+          "sdlc/data-model"
+        ],
         "role": "data-model",
         "sourceProfileId": null,
         "relationshipSection": "Traceability",
         "bodyRequirement": "body-contract"
       },
       {
-        "profileIds": ["sdlc/tests"],
+        "profileIds": [
+          "sdlc/tests"
+        ],
         "role": "test-contract",
         "sourceProfileId": null,
         "relationshipSection": "Traceability",
         "bodyRequirement": "body-contract"
       },
       {
-        "profileIds": ["sdlc/plan"],
+        "profileIds": [
+          "sdlc/plan"
+        ],
         "role": "execution-plan",
         "sourceProfileId": null,
         "relationshipSection": "Traceability",
         "bodyRequirement": "body-contract"
       },
       {
-        "profileIds": ["sdlc/task"],
+        "profileIds": [
+          "sdlc/task"
+        ],
         "role": "execution-task",
         "sourceProfileId": null,
         "relationshipSection": "Traceability",
         "bodyRequirement": "body-contract"
       },
       {
-        "profileIds": ["sdlc/guide"],
+        "profileIds": [
+          "sdlc/guide"
+        ],
         "role": "operator-guide",
         "sourceProfileId": null,
         "relationshipSection": "Traceability",
         "bodyRequirement": "body-contract"
       },
       {
-        "profileIds": ["sdlc/policy"],
+        "profileIds": [
+          "sdlc/policy"
+        ],
         "role": "control-policy",
         "sourceProfileId": null,
         "relationshipSection": "Traceability",
         "bodyRequirement": "body-contract"
       },
       {
-        "profileIds": ["sdlc/runbook"],
+        "profileIds": [
+          "sdlc/runbook"
+        ],
         "role": "operator-runbook",
         "sourceProfileId": null,
         "relationshipSection": "Traceability",
         "bodyRequirement": "body-contract"
       },
       {
-        "profileIds": ["sdlc/incident"],
+        "profileIds": [
+          "sdlc/incident"
+        ],
         "role": "incident-fact-record",
         "sourceProfileId": null,
         "relationshipSection": "Traceability",
         "bodyRequirement": "body-contract"
       },
       {
-        "profileIds": ["sdlc/postmortem"],
+        "profileIds": [
+          "sdlc/postmortem"
+        ],
         "role": "post-incident-analysis",
         "sourceProfileId": null,
         "relationshipSection": "Traceability",
         "bodyRequirement": "body-contract"
       },
       {
-        "profileIds": ["content/reference"],
+        "profileIds": [
+          "content/reference"
+        ],
         "role": "reference",
         "sourceProfileId": null,
         "relationshipSection": "Related Documents",
         "bodyRequirement": "heading-set"
       },
       {
-        "profileIds": ["content/archive"],
+        "profileIds": [
+          "content/archive"
+        ],
         "role": "archive-record",
         "sourceProfileId": null,
         "relationshipSection": null,
         "bodyRequirement": "none"
       },
       {
-        "profileIds": ["governance/reference"],
+        "profileIds": [
+          "content/archive-migration"
+        ],
+        "role": "archive-migration",
+        "sourceProfileId": null,
+        "relationshipSection": "Recovery",
+        "bodyRequirement": "heading-set"
+      },
+      {
+        "profileIds": [
+          "governance/reference"
+        ],
         "role": "governance-reference",
         "sourceProfileId": null,
         "relationshipSection": "Related Documents",
         "bodyRequirement": "heading-set"
       },
       {
-        "profileIds": ["governance/memory"],
+        "profileIds": [
+          "governance/memory"
+        ],
         "role": "governance-memory",
         "sourceProfileId": null,
         "relationshipSection": "Related Progress",
         "bodyRequirement": "heading-set"
       },
       {
-        "profileIds": ["governance/template-support"],
+        "profileIds": [
+          "governance/template-support"
+        ],
         "role": "template-support",
         "sourceProfileId": null,
         "relationshipSection": "Related Documents",
         "bodyRequirement": "heading-set"
       },
       {
-        "profileIds": ["governance/progress-ledger"],
+        "profileIds": [
+          "governance/progress-ledger"
+        ],
         "role": "progress-ledger",
         "sourceProfileId": null,
         "relationshipSection": null,
         "bodyRequirement": "none"
       },
       {
-        "profileIds": ["readme/repository"],
+        "profileIds": [
+          "readme/repository"
+        ],
         "role": "repository-readme",
         "sourceProfileId": null,
         "relationshipSection": "Related Documents",
         "bodyRequirement": "heading-set"
       },
       {
-        "profileIds": ["readme/stage-index"],
+        "profileIds": [
+          "readme/stage-index"
+        ],
         "role": "stage-index-readme",
         "sourceProfileId": null,
         "relationshipSection": "Related Documents",
         "bodyRequirement": "heading-set"
       },
       {
-        "profileIds": ["readme/collection-index"],
+        "profileIds": [
+          "readme/collection-index"
+        ],
         "role": "collection-index-readme",
         "sourceProfileId": null,
         "relationshipSection": "Related Documents",
         "bodyRequirement": "heading-set"
       },
       {
-        "profileIds": ["readme/implementation"],
+        "profileIds": [
+          "readme/implementation"
+        ],
         "role": "implementation-readme",
         "sourceProfileId": null,
         "relationshipSection": "Related Documents",
         "bodyRequirement": "heading-set"
       },
       {
-        "profileIds": ["readme/snapshot-pack"],
+        "profileIds": [
+          "readme/snapshot-pack"
+        ],
         "role": "snapshot-pack-readme",
         "sourceProfileId": null,
         "relationshipSection": "Related Documents",
         "bodyRequirement": "heading-set"
       },
       {
-        "profileIds": ["readme/workspace-staging"],
+        "profileIds": [
+          "readme/workspace-staging"
+        ],
         "role": "workspace-staging-readme",
         "sourceProfileId": null,
         "relationshipSection": "Related Documents",
@@ -3948,6 +6295,7 @@
           "exception/repository-runtime-baseline",
           "exception/provider-native-metadata",
           "exception/github-native-control",
+          "native/document-migration-manifest",
           "exception/generated-record",
           "exception/program-non-target"
         ],
@@ -3973,10 +6321,11 @@
         "id": "authored-draft-only",
         "profileIds": [
           "sdlc/prd",
-          "sdlc/ard",
+          "sdlc/interface",
+          "sdlc/srs",
+          "sdlc/ad",
           "sdlc/adr",
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests",
@@ -3992,7 +6341,9 @@
         ],
         "create": {
           "mode": "states",
-          "states": ["draft"],
+          "states": [
+            "draft"
+          ],
           "evidencePredicateId": null
         },
         "delete": "deny",
@@ -4002,10 +6353,16 @@
       },
       {
         "id": "execution-reciprocal-pair",
-        "profileIds": ["sdlc/plan", "sdlc/task"],
+        "profileIds": [
+          "sdlc/plan",
+          "sdlc/task"
+        ],
         "create": {
           "mode": "paired",
-          "states": ["draft", "active"],
+          "states": [
+            "draft",
+            "active"
+          ],
           "evidencePredicateId": null
         },
         "delete": "deny",
@@ -4015,11 +6372,32 @@
       },
       {
         "id": "archive-envelope-only",
-        "profileIds": ["content/archive"],
+        "profileIds": [
+          "content/archive"
+        ],
         "create": {
           "mode": "archive-envelope",
-          "states": ["archived"],
+          "states": [
+            "archived"
+          ],
           "evidencePredicateId": "archive-source-removal"
+        },
+        "delete": "deny",
+        "rename": "deny",
+        "profileChange": "deny",
+        "baselinePaths": []
+      },
+      {
+        "id": "archive-migration-control",
+        "profileIds": [
+          "content/archive-migration"
+        ],
+        "create": {
+          "mode": "states",
+          "states": [
+            "accepted"
+          ],
+          "evidencePredicateId": null
         },
         "delete": "deny",
         "rename": "deny",
@@ -4041,12 +6419,14 @@
           "exception/repository-runtime-baseline",
           "exception/provider-native-metadata",
           "exception/github-native-control",
+          "native/document-migration-manifest",
           "exception/native-contract-openapi",
           "exception/native-contract-graphql",
           "exception/native-contract-protobuf",
           "exception/generated-record",
           "exception/program-non-target",
           "template/content/archive",
+          "template/content/archive-migration",
           "template/governance/memory",
           "template/readme/repository",
           "template/readme/stage-index",
@@ -4056,7 +6436,7 @@
           "template/readme/workspace-staging",
           "template/content/reference",
           "template/sdlc/adr",
-          "template/sdlc/ard",
+          "template/sdlc/ad",
           "template/sdlc/plan",
           "template/sdlc/task",
           "template/sdlc/guide",
@@ -4065,8 +6445,9 @@
           "template/sdlc/postmortem",
           "template/sdlc/runbook",
           "template/sdlc/prd",
+          "template/sdlc/interface",
+          "template/sdlc/srs",
           "template/sdlc/agent-design",
-          "template/sdlc/api-spec",
           "template/sdlc/data-model",
           "template/sdlc/spec",
           "template/sdlc/tests",
@@ -4088,8 +6469,14 @@
     "lifecycleContracts": [
       {
         "id": "product",
-        "profileIds": ["sdlc/prd"],
-        "terminalStates": ["done"],
+        "profileIds": [
+          "sdlc/prd",
+          "sdlc/srs",
+          "sdlc/interface"
+        ],
+        "terminalStates": [
+          "done"
+        ],
         "edges": [
           {
             "from": "draft",
@@ -4105,8 +6492,12 @@
       },
       {
         "id": "architecture-requirement",
-        "profileIds": ["sdlc/ard"],
-        "terminalStates": ["accepted"],
+        "profileIds": [
+          "sdlc/ad"
+        ],
+        "terminalStates": [
+          "accepted"
+        ],
         "edges": [
           {
             "from": "draft",
@@ -4122,8 +6513,12 @@
       },
       {
         "id": "architecture-decision",
-        "profileIds": ["sdlc/adr"],
-        "terminalStates": ["accepted"],
+        "profileIds": [
+          "sdlc/adr"
+        ],
+        "terminalStates": [
+          "accepted"
+        ],
         "edges": [
           {
             "from": "draft",
@@ -4141,12 +6536,13 @@
         "id": "specification",
         "profileIds": [
           "sdlc/spec",
-          "sdlc/api-spec",
           "sdlc/agent-design",
           "sdlc/data-model",
           "sdlc/tests"
         ],
-        "terminalStates": ["done"],
+        "terminalStates": [
+          "done"
+        ],
         "edges": [
           {
             "from": "draft",
@@ -4162,8 +6558,13 @@
       },
       {
         "id": "execution",
-        "profileIds": ["sdlc/plan", "sdlc/task"],
-        "terminalStates": ["done"],
+        "profileIds": [
+          "sdlc/plan",
+          "sdlc/task"
+        ],
+        "terminalStates": [
+          "done"
+        ],
         "edges": [
           {
             "from": "draft",
@@ -4186,7 +6587,9 @@
           "sdlc/incident",
           "sdlc/postmortem"
         ],
-        "terminalStates": ["accepted"],
+        "terminalStates": [
+          "accepted"
+        ],
         "edges": [
           {
             "from": "draft",
@@ -4208,7 +6611,10 @@
           "governance/memory",
           "governance/template-support"
         ],
-        "terminalStates": ["accepted", "done"],
+        "terminalStates": [
+          "accepted",
+          "done"
+        ],
         "edges": [
           {
             "from": "draft",
@@ -4229,8 +6635,22 @@
       },
       {
         "id": "archive-record",
-        "profileIds": ["content/archive"],
-        "terminalStates": ["archived"],
+        "profileIds": [
+          "content/archive"
+        ],
+        "terminalStates": [
+          "archived"
+        ],
+        "edges": []
+      },
+      {
+        "id": "archive-migration",
+        "profileIds": [
+          "content/archive-migration"
+        ],
+        "terminalStates": [
+          "accepted"
+        ],
         "edges": []
       },
       {
@@ -4248,12 +6668,14 @@
           "exception/repository-runtime-baseline",
           "exception/provider-native-metadata",
           "exception/github-native-control",
+          "native/document-migration-manifest",
           "exception/native-contract-openapi",
           "exception/native-contract-graphql",
           "exception/native-contract-protobuf",
           "exception/generated-record",
           "exception/program-non-target",
           "template/content/archive",
+          "template/content/archive-migration",
           "template/governance/memory",
           "template/readme/repository",
           "template/readme/stage-index",
@@ -4263,7 +6685,7 @@
           "template/readme/workspace-staging",
           "template/content/reference",
           "template/sdlc/adr",
-          "template/sdlc/ard",
+          "template/sdlc/ad",
           "template/sdlc/plan",
           "template/sdlc/task",
           "template/sdlc/guide",
@@ -4272,8 +6694,9 @@
           "template/sdlc/postmortem",
           "template/sdlc/runbook",
           "template/sdlc/prd",
+          "template/sdlc/interface",
+          "template/sdlc/srs",
           "template/sdlc/agent-design",
-          "template/sdlc/api-spec",
           "template/sdlc/data-model",
           "template/sdlc/spec",
           "template/sdlc/tests",
@@ -4297,7 +6720,11 @@
         },
         "sameDiff": "source-removed-and-mirror-created",
         "bodyRequirement": "none",
-        "capabilities": ["archive-envelope", "same-diff", "source-removal"]
+        "capabilities": [
+          "archive-envelope",
+          "same-diff",
+          "source-removal"
+        ]
       },
       {
         "id": "activate-self-body",
@@ -4308,7 +6735,17 @@
             "to": "active"
           },
           {
-            "profileId": "sdlc/ard",
+            "profileId": "sdlc/srs",
+            "from": "draft",
+            "to": "active"
+          },
+          {
+            "profileId": "sdlc/interface",
+            "from": "draft",
+            "to": "active"
+          },
+          {
+            "profileId": "sdlc/ad",
             "from": "draft",
             "to": "active"
           },
@@ -4319,11 +6756,6 @@
           },
           {
             "profileId": "sdlc/spec",
-            "from": "draft",
-            "to": "active"
-          },
-          {
-            "profileId": "sdlc/api-spec",
             "from": "draft",
             "to": "active"
           },
@@ -4370,8 +6802,12 @@
         ],
         "evidence": [
           {
-            "profileIds": ["$self"],
-            "states": ["active"],
+            "profileIds": [
+              "$self"
+            ],
+            "states": [
+              "active"
+            ],
             "minimum": 1,
             "maximum": 1
           }
@@ -4383,7 +6819,9 @@
         },
         "sameDiff": "self-status-and-body",
         "bodyRequirement": "body-contract",
-        "capabilities": ["same-diff"]
+        "capabilities": [
+          "same-diff"
+        ]
       },
       {
         "id": "activate-heading-profile",
@@ -4411,8 +6849,12 @@
         ],
         "evidence": [
           {
-            "profileIds": ["$self"],
-            "states": ["active"],
+            "profileIds": [
+              "$self"
+            ],
+            "states": [
+              "active"
+            ],
             "minimum": 1,
             "maximum": 1
           }
@@ -4424,7 +6866,10 @@
         },
         "sameDiff": "self-status-and-body",
         "bodyRequirement": "heading-set",
-        "capabilities": ["rendered-link", "same-diff"]
+        "capabilities": [
+          "rendered-link",
+          "same-diff"
+        ]
       },
       {
         "id": "activate-execution-pair",
@@ -4442,14 +6887,22 @@
         ],
         "evidence": [
           {
-            "profileIds": ["sdlc/plan"],
-            "states": ["active"],
+            "profileIds": [
+              "sdlc/plan"
+            ],
+            "states": [
+              "active"
+            ],
             "minimum": 1,
             "maximum": 1
           },
           {
-            "profileIds": ["sdlc/task"],
-            "states": ["active"],
+            "profileIds": [
+              "sdlc/task"
+            ],
+            "states": [
+              "active"
+            ],
             "minimum": 1,
             "maximum": 1
           }
@@ -4461,7 +6914,11 @@
         },
         "sameDiff": "pair-created-or-status-changed",
         "bodyRequirement": "body-contract",
-        "capabilities": ["rendered-link", "reciprocal-link", "same-diff"]
+        "capabilities": [
+          "rendered-link",
+          "reciprocal-link",
+          "same-diff"
+        ]
       },
       {
         "id": "complete-product-program",
@@ -4470,12 +6927,26 @@
             "profileId": "sdlc/prd",
             "from": "active",
             "to": "done"
+          },
+          {
+            "profileId": "sdlc/srs",
+            "from": "active",
+            "to": "done"
+          },
+          {
+            "profileId": "sdlc/interface",
+            "from": "active",
+            "to": "done"
           }
         ],
         "evidence": [
           {
-            "profileIds": ["sdlc/spec"],
-            "states": ["done"],
+            "profileIds": [
+              "sdlc/spec"
+            ],
+            "states": [
+              "done"
+            ],
             "minimum": 1,
             "maximum": null
           }
@@ -4487,21 +6958,28 @@
         },
         "sameDiff": "target-and-last-relation-changed",
         "bodyRequirement": "body-contract",
-        "capabilities": ["program-lineage-closed", "same-diff"]
+        "capabilities": [
+          "program-lineage-closed",
+          "same-diff"
+        ]
       },
       {
         "id": "accept-architecture",
         "profileEdges": [
           {
-            "profileId": "sdlc/ard",
+            "profileId": "sdlc/ad",
             "from": "active",
             "to": "accepted"
           }
         ],
         "evidence": [
           {
-            "profileIds": ["sdlc/adr"],
-            "states": ["accepted"],
+            "profileIds": [
+              "sdlc/adr"
+            ],
+            "states": [
+              "accepted"
+            ],
             "minimum": 1,
             "maximum": null
           }
@@ -4513,7 +6991,11 @@
         },
         "sameDiff": "target-and-evidence-status-body-changed",
         "bodyRequirement": "body-contract",
-        "capabilities": ["rendered-link", "reciprocal-link", "same-diff"]
+        "capabilities": [
+          "rendered-link",
+          "reciprocal-link",
+          "same-diff"
+        ]
       },
       {
         "id": "accept-decision-self",
@@ -4526,8 +7008,12 @@
         ],
         "evidence": [
           {
-            "profileIds": ["$self"],
-            "states": ["accepted"],
+            "profileIds": [
+              "$self"
+            ],
+            "states": [
+              "accepted"
+            ],
             "minimum": 1,
             "maximum": 1
           }
@@ -4539,18 +7025,16 @@
         },
         "sameDiff": "self-status-and-body",
         "bodyRequirement": "body-contract",
-        "capabilities": ["rendered-link", "same-diff"]
+        "capabilities": [
+          "rendered-link",
+          "same-diff"
+        ]
       },
       {
         "id": "complete-specification",
         "profileEdges": [
           {
             "profileId": "sdlc/spec",
-            "from": "active",
-            "to": "done"
-          },
-          {
-            "profileId": "sdlc/api-spec",
             "from": "active",
             "to": "done"
           },
@@ -4572,14 +7056,22 @@
         ],
         "evidence": [
           {
-            "profileIds": ["sdlc/plan"],
-            "states": ["done"],
+            "profileIds": [
+              "sdlc/plan"
+            ],
+            "states": [
+              "done"
+            ],
             "minimum": 1,
             "maximum": 1
           },
           {
-            "profileIds": ["sdlc/task"],
-            "states": ["done"],
+            "profileIds": [
+              "sdlc/task"
+            ],
+            "states": [
+              "done"
+            ],
             "minimum": 1,
             "maximum": 1
           }
@@ -4591,7 +7083,11 @@
         },
         "sameDiff": "target-plan-task-status-changed",
         "bodyRequirement": "body-contract",
-        "capabilities": ["rendered-link", "reciprocal-link", "same-diff"]
+        "capabilities": [
+          "rendered-link",
+          "reciprocal-link",
+          "same-diff"
+        ]
       },
       {
         "id": "complete-execution-pair",
@@ -4609,14 +7105,22 @@
         ],
         "evidence": [
           {
-            "profileIds": ["sdlc/plan"],
-            "states": ["done"],
+            "profileIds": [
+              "sdlc/plan"
+            ],
+            "states": [
+              "done"
+            ],
             "minimum": 1,
             "maximum": 1
           },
           {
-            "profileIds": ["sdlc/task"],
-            "states": ["done"],
+            "profileIds": [
+              "sdlc/task"
+            ],
+            "states": [
+              "done"
+            ],
             "minimum": 1,
             "maximum": 1
           }
@@ -4628,7 +7132,12 @@
         },
         "sameDiff": "pair-status-changed",
         "bodyRequirement": "body-contract",
-        "capabilities": ["rendered-link", "reciprocal-link", "task-terminal-evidence", "same-diff"]
+        "capabilities": [
+          "rendered-link",
+          "reciprocal-link",
+          "task-terminal-evidence",
+          "same-diff"
+        ]
       },
       {
         "id": "accept-operated-document",
@@ -4661,14 +7170,22 @@
         ],
         "evidence": [
           {
-            "profileIds": ["sdlc/plan"],
-            "states": ["done"],
+            "profileIds": [
+              "sdlc/plan"
+            ],
+            "states": [
+              "done"
+            ],
             "minimum": 1,
             "maximum": 1
           },
           {
-            "profileIds": ["sdlc/task"],
-            "states": ["done"],
+            "profileIds": [
+              "sdlc/task"
+            ],
+            "states": [
+              "done"
+            ],
             "minimum": 1,
             "maximum": 1
           }
@@ -4680,7 +7197,10 @@
         },
         "sameDiff": "target-plan-task-status-changed",
         "bodyRequirement": "body-contract",
-        "capabilities": ["rendered-link", "same-diff"]
+        "capabilities": [
+          "rendered-link",
+          "same-diff"
+        ]
       },
       {
         "id": "terminate-reviewed-reference",
@@ -4728,14 +7248,22 @@
         ],
         "evidence": [
           {
-            "profileIds": ["sdlc/plan"],
-            "states": ["done"],
+            "profileIds": [
+              "sdlc/plan"
+            ],
+            "states": [
+              "done"
+            ],
             "minimum": 1,
             "maximum": 1
           },
           {
-            "profileIds": ["sdlc/task"],
-            "states": ["done"],
+            "profileIds": [
+              "sdlc/task"
+            ],
+            "states": [
+              "done"
+            ],
             "minimum": 1,
             "maximum": 1
           }
@@ -4747,109 +7275,111 @@
         },
         "sameDiff": "target-plan-task-status-changed",
         "bodyRequirement": "heading-set",
-        "capabilities": ["rendered-link", "same-diff"]
+        "capabilities": [
+          "rendered-link",
+          "same-diff"
+        ]
       }
     ]
   },
   "programLineage": {
     "programs": [
       {
-        "prd": "003",
-        "ard": "0006",
+        "prd": "0003",
         "tranches": [
           {
-            "spec": "041",
+            "spec": "0041",
             "order": 1,
             "state": "done",
             "reason": "Stage 00 agent governance contract",
             "decision": "0013"
           },
           {
-            "spec": "042",
+            "spec": "0042",
             "order": 2,
             "state": "done",
             "reason": "Provider-native runtime and model evidence",
             "decision": "0013"
           },
           {
-            "spec": "043",
+            "spec": "0043",
             "order": 3,
             "state": "done",
             "reason": "Agent harness loop lifecycle",
             "decision": "0013"
           },
           {
-            "spec": "044",
+            "spec": "0044",
             "order": 4,
             "state": "done",
             "reason": "Agent roster evaluation and admission",
             "decision": "0013"
           },
           {
-            "spec": "045",
+            "spec": "0045",
             "order": 5,
             "state": "done",
             "reason": "Agent governance CI and QA cutover",
             "decision": "0013"
           },
           {
-            "spec": "046",
+            "spec": "0046",
             "order": 6,
             "state": "done",
             "reason": "Agent governance program closure",
             "decision": "0013"
           }
         ],
-        "followUps": []
+        "followUps": [],
+        "ad": "0006"
       },
       {
-        "prd": "005",
-        "ard": "0008",
+        "prd": "0005",
         "tranches": [
           {
-            "spec": "026",
+            "spec": "0026",
             "order": 1,
             "state": "done",
             "reason": "Original ADR-0016 tranche",
             "decision": "0016"
           },
           {
-            "spec": "027",
+            "spec": "0027",
             "order": 2,
             "state": "done",
             "reason": "Original ADR-0016 tranche",
             "decision": "0016"
           },
           {
-            "spec": "028",
+            "spec": "0028",
             "order": 3,
             "state": "done",
             "reason": "Original ADR-0016 tranche",
             "decision": "0016"
           },
           {
-            "spec": "029",
+            "spec": "0029",
             "order": 4,
             "state": "done",
             "reason": "Original ADR-0016 tranche",
             "decision": "0016"
           },
           {
-            "spec": "030",
+            "spec": "0030",
             "order": 5,
             "state": "done",
             "reason": "Original ADR-0016 tranche",
             "decision": "0016"
           },
           {
-            "spec": "031",
+            "spec": "0031",
             "order": 6,
             "state": "done",
             "reason": "Original ADR-0016 tranche",
             "decision": "0016"
           },
           {
-            "spec": "032",
+            "spec": "0032",
             "order": 7,
             "state": "done",
             "reason": "Original ADR-0016 tranche",
@@ -4858,199 +7388,146 @@
         ],
         "followUps": [
           {
-            "spec": "033",
+            "spec": "0033",
             "order": 1,
             "state": "done",
             "reason": "Post-program template lifecycle follow-up",
             "decision": "0017",
             "evidenceMode": "successor-record"
           }
-        ]
+        ],
+        "ad": "0008"
       },
       {
-        "prd": "006",
-        "ard": "0009",
+        "prd": "0006",
         "tranches": [
           {
-            "spec": "034",
+            "spec": "0034",
             "order": 1,
             "state": "done",
             "reason": "Authority and lineage foundation",
             "decision": "0017"
           },
           {
-            "spec": "035",
+            "spec": "0035",
             "order": 2,
             "state": "done",
             "reason": "Document schema and lifecycle contract",
             "decision": "0017"
           },
           {
-            "spec": "036",
+            "spec": "0036",
             "order": 3,
             "state": "done",
             "reason": "Archive record and workspace boundary",
             "decision": "0017"
           },
           {
-            "spec": "037",
+            "spec": "0037",
             "order": 4,
             "state": "done",
             "reason": "Active corpus and execution retention",
             "decision": "0017"
           },
           {
-            "spec": "038",
+            "spec": "0038",
             "order": 5,
             "state": "done",
             "reason": "Reference information architecture",
             "decision": "0017"
           },
           {
-            "spec": "039",
+            "spec": "0039",
             "order": 6,
             "state": "done",
             "reason": "GitHub CI and QA evidence",
             "decision": "0017"
           },
           {
-            "spec": "040",
+            "spec": "0040",
             "order": 7,
             "state": "done",
             "reason": "Contract cutover and program closure",
             "decision": "0017"
           }
         ],
-        "followUps": []
+        "followUps": [],
+        "ad": "0009"
       },
       {
-        "prd": "007",
-        "ard": "0010",
+        "prd": "0007",
         "tranches": [
           {
-            "spec": "047",
+            "spec": "0047",
             "order": 1,
             "state": "draft",
             "reason": "Current surface and stash reconciliation",
             "decision": "0021"
           },
           {
-            "spec": "048",
+            "spec": "0048",
             "order": 2,
             "state": "draft",
             "reason": "GitHub routing and CI evidence",
             "decision": "0021"
           },
           {
-            "spec": "049",
+            "spec": "0049",
             "order": 3,
             "state": "draft",
             "reason": "Platform validation and security evidence",
             "decision": "0021"
           },
           {
-            "spec": "050",
+            "spec": "0050",
             "order": 4,
             "state": "draft",
             "reason": "Example IaC and validator QA",
             "decision": "0021"
           },
           {
-            "spec": "051",
+            "spec": "0051",
             "order": 5,
             "state": "draft",
             "reason": "Repository assurance integration and closure",
             "decision": "0021"
           }
         ],
-        "followUps": []
+        "followUps": [],
+        "ad": "0010"
       },
       {
-        "prd": "008",
-        "ard": "0011",
+        "prd": "0008",
         "tranches": [
           {
-            "spec": "052",
+            "spec": "0052",
             "order": 1,
             "state": "active",
             "reason": "Document taxonomy consolidation",
-            "decision": "0021"
+            "decision": "0024"
           }
         ],
-        "followUps": []
+        "followUps": [],
+        "ad": "0011"
       }
     ]
   },
   "standaloneExecutions": [
     {
-      "spec": "053",
-      "plan": "docs/04.execution/plans/2026-08-08-workspace-engineering-research-pack-consolidation.md",
-      "task": "docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md",
+      "spec": "0053",
+      "plan": "docs/03.specs/0053-workspace-engineering-research-pack-consolidation/plan.md",
+      "task": "docs/03.specs/0053-workspace-engineering-research-pack-consolidation/tasks.md",
       "state": "done",
-      "reason": "Direct human-approved research-pack consolidation without separate PRD/ARD authority",
+      "reason": "Direct human-approved research-pack consolidation without separate PRD/AD authority",
       "decision": "0022",
       "approvalMode": "spec-body-record"
     },
     {
-      "spec": "054",
-      "plan": "docs/04.execution/plans/2026-08-09-workspace-governance-audit-and-remediation.md",
-      "task": "docs/04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md",
-      "state": "done",
-      "reason": "Direct human-approved workspace governance audit and remediation without separate PRD/ARD authority",
-      "decision": "0022",
-      "approvalMode": "spec-body-record"
-    },
-    {
-      "spec": "055",
-      "plan": "docs/04.execution/plans/2026-08-09-workspace-engineering-gap-only-refresh.md",
-      "task": "docs/04.execution/tasks/2026-08-09-workspace-engineering-gap-only-refresh.md",
-      "state": "done",
-      "reason": "Direct human-approved gap-only external-source refresh of the existing 2026-08-08 WER pack without separate PRD/ARD authority",
-      "decision": "0022",
-      "approvalMode": "spec-body-record"
-    },
-    {
-      "spec": "056",
-      "plan": "docs/04.execution/plans/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md",
-      "task": "docs/04.execution/tasks/2026-08-11-workspace-engineering-partial-defer-incremental-refresh.md",
-      "state": "done",
-      "reason": "Direct human-approved Partial/DEFER closed-ledger incremental refresh of the existing 2026-08-08 WER pack with bounded read-only GitHub metadata evidence and no separate PRD/ARD authority",
-      "decision": "0022",
-      "approvalMode": "spec-body-record"
-    },
-    {
-      "spec": "057",
-      "plan": "docs/04.execution/plans/2026-08-14-workspace-research-consistency-and-partial-refresh.md",
-      "task": "docs/04.execution/tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md",
-      "state": "done",
-      "reason": "Direct human-approved combined constraint-consistency and Partial re-observation cycle over the existing 2026-08-08 WER pack without separate PRD/ARD authority",
-      "decision": "0022",
-      "approvalMode": "spec-body-record"
-    },
-    {
-      "spec": "058",
-      "plan": "docs/04.execution/plans/2026-08-17-workspace-research-full-corpus-refresh.md",
-      "task": "docs/04.execution/tasks/2026-08-17-workspace-research-full-corpus-refresh.md",
-      "state": "done",
-      "reason": "Direct human-approved full-corpus external and workspace re-observation of all thirty-six owner rows with terminal blocking-class closure over the existing 2026-08-08 WER pack without separate PRD/ARD authority",
-      "decision": "0022",
-      "approvalMode": "spec-body-record"
-    },
-    {
-      "spec": "059",
-      "plan": "docs/04.execution/plans/2026-08-18-platform-currency-defect-closure.md",
-      "task": "docs/04.execution/tasks/2026-08-18-platform-currency-defect-closure.md",
-      "state": "done",
-      "reason": "Direct human-approved bounded closure of two live platform version-currency defects plus the Argo CD source-integrity non-adoption decision, without separate PRD/ARD authority",
-      "decision": "0022",
-      "approvalMode": "spec-body-record"
-    },
-    {
-      "spec": "060",
-      "plan": "docs/04.execution/plans/2026-08-18-workload-security-context-baseline.md",
-      "task": "docs/04.execution/tasks/2026-08-18-workload-security-context-baseline.md",
-      "state": "done",
-      "reason": "Direct human-approved bounded closure of the workload security context asymmetry and of the sample template that propagates it, without separate PRD/ARD authority",
+      "spec": "0054",
+      "plan": "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/plan.md",
+      "task": "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks.md",
+      "state": "active",
+      "reason": "Direct human-approved B-scope SDLC and AI-agent governance consolidation including Stage 90",
       "decision": "0022",
       "approvalMode": "spec-body-record"
     }

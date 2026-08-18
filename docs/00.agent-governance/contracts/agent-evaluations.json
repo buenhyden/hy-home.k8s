@@ -4,7 +4,7 @@
   "contractId": "hy-home.k8s/agent-evaluations",
   "contractVersion": "1.1.0",
   "state": "repository-static-evaluation-ready",
-  "ownerSpec": "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md",
+  "ownerSpec": "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
   "versionHistory": [
     {
       "contractVersion": "1.0.0",

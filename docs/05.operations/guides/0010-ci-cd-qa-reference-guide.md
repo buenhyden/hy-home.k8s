@@ -4,6 +4,7 @@ type: sdlc/guide
 status: active
 owner: platform
 updated: 2026-07-26
+artifact_id: "GUIDE-0010"
 ---
 
 # CI/CD & QA 로컬-vs-GitHub 참조 가이드
@@ -34,7 +35,7 @@ CI 실패를 사전에 예방할 수 있다.
 
 ### Source Basis
 
-- Parent Spec: [Workspace Document Governance Hardening Spec](../../03.specs/013-workspace-document-governance-hardening/spec.md)는 GitHub Actions documentation, supply-chain evidence, CommonMark/YAML formatting, GitOps boundary claims의 official-source basis를 소유한다.
+- Parent Spec: [Workspace Document Governance Hardening Spec](../../03.specs/0013-workspace-document-governance-hardening/spec.md)는 GitHub Actions documentation, supply-chain evidence, CommonMark/YAML formatting, GitOps boundary claims의 official-source basis를 소유한다.
 - Reference: [CI/CD, GitHub Actions, and QA Research](../../90.references/research/2026-08-08-wer/ci-cd-github-actions-and-qa.md)는 workflow syntax/events, formatting, linting, testing, and static evidence boundaries를 dated snapshot으로 유지한다.
 - 이 가이드의 GitHub Actions CI gate definitions는 `.github/workflows/ci.yml`, `.github/README.md`, `scripts/README.md`, `tests/README.md`의 tracked repository evidence와 대조해 유지한다.
 
@@ -184,7 +185,7 @@ repo-static 및 CI 검증은 live k3d, ArgoCD, Vault, ESO, deployment readiness 
 ## Traceability
 
 - **CI 워크플로우**: [`.github/workflows/ci.yml`](../../../.github/workflows/ci.yml)
-- **Parent Spec**: [`../../03.specs/013-workspace-document-governance-hardening/spec.md`](../../03.specs/013-workspace-document-governance-hardening/spec.md)
+- **Parent Spec**: [`../../03.specs/0013-workspace-document-governance-hardening/spec.md`](../../03.specs/0013-workspace-document-governance-hardening/spec.md)
 - **Scripts 인벤토리**: [`../../../scripts/README.md`](../../../scripts/README.md)
 - **K8s GitOps 정책**: [`../policies/0001-k8s-gitops-operations-policy.md`](../policies/0001-k8s-gitops-operations-policy.md)
 - **HA 플랫폼 가이드**: [`0002-wsl2-k3d-argocd-ha-setup-guide.md`](0002-wsl2-k3d-argocd-ha-setup-guide.md)
@@ -194,4 +195,4 @@ repo-static 및 CI 검증은 live k3d, ArgoCD, Vault, ESO, deployment readiness 
 
 | Promoted owner | Audience outcome | Operating surface |
 | --- | --- | --- |
-| [Workspace Document Governance Hardening Spec](../../03.specs/013-workspace-document-governance-hardening/spec.md) | Contributors and AI agents can choose the correct local QA command, understand GitHub-only gates, and report static evidence without implying live readiness. | pre-commit hooks, repository quality and manifest validation scripts, `.github/workflows/ci.yml`, and CI-only event/API jobs |
+| [Workspace Document Governance Hardening Spec](../../03.specs/0013-workspace-document-governance-hardening/spec.md) | Contributors and AI agents can choose the correct local QA command, understand GitHub-only gates, and report static evidence without implying live readiness. | pre-commit hooks, repository quality and manifest validation scripts, `.github/workflows/ci.yml`, and CI-only event/API jobs |

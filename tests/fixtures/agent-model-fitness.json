@@ -141,6 +141,10 @@
       "expectedRule": "AREA-FIT-CUTOFF-AUTHORITY"
     },
     {
+      "name": "harness-tier-authority",
+      "expectedRule": "AREA-FIT-TIER-AUTHORITY"
+    },
+    {
       "name": "cutoff-mismatch",
       "expectedRule": "AREA-FIT-CUTOFF"
     },

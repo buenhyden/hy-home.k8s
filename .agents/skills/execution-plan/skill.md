@@ -8,7 +8,7 @@ description: Use when transforming design or architecture artifacts into a struc
 ## Purpose
 
 Transform architecture or spec artifacts (`docs/02.architecture/`, `docs/03.specs/`) into
-a concrete execution plan (`docs/04.execution/plans/`) following the SDD lifecycle contract
+a feature-local execution plan (`docs/03.specs/<id>-<slug>/plan.md`) following the SDD lifecycle contract
 in this repository.
 
 ## Trigger Phrases
@@ -22,10 +22,10 @@ in this repository.
 
 ## When to Use
 
-- A spec or ARD/ADR has been approved and needs a delivery plan.
+- A spec or AD/ADR has been approved and needs a delivery plan.
 - Translating a design decision into ordered implementation phases.
 - Defining risks, mitigations, verification steps, and completion criteria before starting work.
-- Producing a `plan.template.md`-compliant document for `docs/04.execution/plans/`.
+- Producing a `plan.template.md`-compliant sibling of the driving `spec.md`.
 
 ## When NOT to Use
 
@@ -36,7 +36,7 @@ in this repository.
 
 ## Workflow Steps
 
-1. Read the driving spec (`docs/03.specs/`) or ARD/ADR (`docs/02.architecture/`) to extract
+1. Read the driving spec (`docs/03.specs/`) or AD/ADR (`docs/02.architecture/`) to extract
    the goal, scope, and constraints.
 2. Identify all in-scope deliverables and group them into phases (P1 = immediate low-risk,
    P2 = bounded medium-risk, P3 = deferred high-risk/external-dependency).
@@ -44,7 +44,7 @@ in this repository.
 4. Identify risks and mitigations per phase.
 5. Write a Verification Plan section with concrete commands or checks.
 6. Write a Completion Criteria section with measurable, binary acceptance tests.
-7. Create the plan file under `docs/04.execution/plans/YYYY-MM-DD-<slug>.md` using
+7. Create or update `docs/03.specs/<id>-<slug>/plan.md` beside the driving `spec.md` using
    `docs/99.templates/templates/sdlc/execution/plan.template.md` as the base.
 8. Link the plan from `docs/00.agent-governance/memory/progress.md`.
 

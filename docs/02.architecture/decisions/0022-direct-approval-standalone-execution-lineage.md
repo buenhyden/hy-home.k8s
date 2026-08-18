@@ -3,7 +3,8 @@ title: 'ADR-0022: Direct-Approval Standalone Execution Lineage'
 type: sdlc/adr
 status: accepted
 owner: platform
-updated: 2026-08-12
+updated: 2026-08-18
+artifact_id: "ADR-0022"
 ---
 
 # ADR-0022: Direct-Approval Standalone Execution Lineage
@@ -61,7 +62,7 @@ false upstream authority.
 
 ## Alternatives
 
-- **Add Spec 053 to PRD-008/ARD-0011 `programLineage`**: rejected because the
+- **Add Spec 053 to PRD-0008/ARD-0011 `programLineage`**: rejected because the
   approved Spec explicitly treats those documents as conflicting inputs, not
   execution authority.
 - **Create a new PRD and ARD**: rejected because it contradicts the approved
@@ -74,13 +75,14 @@ false upstream authority.
 
 ### Lifecycle Traceability
 
-| Decision lineage                                | Replacement relation                                                                                      | Affected Spec                                                                                  |
-| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| Direct human approval recorded in the Spec body | N/A — first typed standalone-execution relation; preserves ADR-0016/0017 program lineage semantics        | [Spec 053](../../03.specs/053-workspace-engineering-research-pack-consolidation/spec.md)       |
-| Direct human approval recorded in the Spec body | N/A — second typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 054](../../03.specs/054-workspace-governance-audit-and-remediation/spec.md)              |
-| Direct human approval recorded in the Spec body | N/A — third typed standalone-execution relation; reuses the same closed approval and ownership semantics  | [Spec 055](../../03.specs/055-workspace-engineering-gap-only-refresh/spec.md)                  |
-| Direct human approval recorded in the Spec body | N/A — fourth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 056](../../03.specs/056-workspace-engineering-partial-defer-incremental-refresh/spec.md) |
-| Direct human approval recorded in the Spec body | N/A — fifth typed standalone-execution relation; reuses the same closed approval and ownership semantics  | [Spec 057](../../03.specs/057-workspace-research-consistency-and-partial-refresh/spec.md)      |
-| Direct human approval recorded in the Spec body | N/A — sixth typed standalone-execution relation; reuses the same closed approval and ownership semantics  | [Spec 058](../../03.specs/058-workspace-research-full-corpus-refresh/spec.md)                   |
-| Direct human approval recorded in the Spec body | N/A — seventh typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 059](../../03.specs/059-platform-currency-defect-closure/spec.md)                         |
-| Direct human approval recorded in the Spec body | N/A — eighth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 060](../../03.specs/060-workload-security-context-baseline/spec.md)                       |
+| Decision lineage | Replacement relation | Affected Spec |
+| --- | --- | --- |
+| Direct human approval recorded in the Spec body | N/A — first typed standalone-execution relation; preserves ADR-0016/0017 program lineage semantics | [Spec 053](../../03.specs/0053-workspace-engineering-research-pack-consolidation/spec.md) |
+| Direct human approval recorded in the Spec body | B-scope SDLC and AI-agent governance consolidation including Stage 90 | [Spec 054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| Direct human approval recorded in the Spec body | N/A — third typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0055](../../03.specs/0055-workspace-governance-audit-and-remediation/spec.md) |
+| Direct human approval recorded in the Spec body | N/A — fourth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0056](../../03.specs/0056-workspace-engineering-gap-only-refresh/spec.md) |
+| Direct human approval recorded in the Spec body | N/A — fifth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0057](../../03.specs/0057-workspace-engineering-partial-defer-incremental-refresh/spec.md) |
+| Direct human approval recorded in the Spec body | N/A — sixth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0058](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) |
+| Direct human approval recorded in the Spec body | N/A — seventh typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0059](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) |
+| Direct human approval recorded in the Spec body | N/A — eighth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0060](../../03.specs/0060-platform-currency-defect-closure/spec.md) |
+| Direct human approval recorded in the Spec body | N/A — ninth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0061](../../03.specs/0061-workload-security-context-baseline/spec.md) |

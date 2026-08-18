@@ -4,6 +4,7 @@ type: sdlc/adr
 status: accepted
 owner: platform
 updated: 2026-07-13
+artifact_id: "ADR-0012"
 ---
 
 # ADR-0012: Argo Notifications with Slack Webhook
@@ -62,5 +63,5 @@ Slack token bootstrap은 사람이 승인한 외부 Vault 작업으로만 수행
 - [PRD](../../01.requirements/002-argo-notifications-slack.md)
 - [ARD](../requirements/0005-argo-notifications-slack.md)
 - [Spec](../../03.specs/005-argo-notifications-slack/spec.md)
-- [Plan](../../04.execution/plans/2026-05-18-argo-notifications-slack.md)
-- [Task](../../04.execution/tasks/2026-05-18-argo-notifications-slack.md)
+- [Plan](../../03.specs/005-argo-notifications-slack/plan.md)
+- [Task](../../03.specs/005-argo-notifications-slack/tasks.md)

@@ -59,7 +59,7 @@ templates/
 
 ## Add and Find
 
-1. Choose the template through `../README.md` and `../support/template-routing.md`.
+1. Choose the template through `../README.md` and `../support/document-contract.md`.
 2. Copy the matching template into the final authored document path.
 3. Remove placeholder text, comments, and template instructions from authored
    documents.
@@ -80,6 +80,6 @@ This README is located at `docs/99.templates/templates/`.
 
 - [Templates README](../README.md)
 - [Template Support Contracts](../support/README.md)
-- [Template Routing](../support/template-routing.md)
-- [Frontmatter Schema](../support/frontmatter-schema.md)
+- [Template Routing](../support/document-contract.md)
+- [Frontmatter Schema](../support/document-contract.md)
 - [Canonical Task Form](./sdlc/execution/task.template.md)

@@ -34,14 +34,14 @@
 - 외부 Vault/PostgreSQL/Valkey 런타임 자체의 생성 및 운영
 - 애플리케이션 비즈니스 로직 구현
 - AWS/Azure 실제 리소스 프로비저닝과 cloud 계정 상태 변경
-- `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/99.templates` SSoT 문서의 승인 없는 임의 재작성
+- `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/05.operations`, `docs/90.references`, `docs/99.templates` SSoT 문서의 승인 없는 임의 재작성
 - 운영 환경 SLA/DR 자체 보장
 
 ## Repository Map
 
 ```text
 hy-home.k8s/
-├── docs/                  # PRD/ARD/ADR/Spec/Plan/Task/Operations/Runbook 체계
+├── docs/                  # PRD/AD/ADR/Spec/Plan/Task/Operations/Runbook 체계
 ├── gitops/                # ArgoCD가 동기화하는 선언형 GitOps 리소스
 ├── infrastructure/        # k3d, ArgoCD values, bootstrap 및 검증 스크립트
 ├── examples/              # 앱 온보딩 및 AWS/Azure cloud target 참조 예시
@@ -61,15 +61,14 @@ hy-home.k8s/
 
 `docs/`는 stage별 책임이 분리된 문서 SSoT다. 새 문서나 변경 증적은 아래 책임에 맞는 위치와 템플릿에서 시작한다.
 
-| Area                                                     | Responsibility                                                            | Template                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| -------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| [`docs/01.requirements`](docs/01.requirements/README.md) | 제품 요구사항, 사용자 문제, 범위, 성공/수용 기준                          | [`prd.template.md`](docs/99.templates/templates/sdlc/requirements/prd.template.md)                                                                                                                                                                                                                                                                                                                                                                                 |
-| [`docs/02.architecture`](docs/02.architecture/README.md) | 아키텍처 요구사항, 참조 구조, 의사결정                                    | [`ard.template.md`](docs/99.templates/templates/sdlc/architecture/ard.template.md), [`adr.template.md`](docs/99.templates/templates/sdlc/architecture/adr.template.md)                                                                                                                                                                                                                                                                                             |
-| [`docs/03.specs`](docs/03.specs/README.md)               | 기능/워크플로우/시스템 구현 명세와 feature-local API/Agent/Data/Test 계약 | [`spec.template.md`](docs/99.templates/templates/sdlc/specs/spec.template.md), helper templates는 [`03.specs README`](docs/03.specs/README.md) 참조                                                                                                                                                                                                                                                                                                                |
-| [`docs/04.execution`](docs/04.execution/README.md)       | 실행 계획, 작업 분해, 검증 증적                                           | [`plan.template.md`](docs/99.templates/templates/sdlc/execution/plan.template.md), [`task.template.md`](docs/99.templates/templates/sdlc/execution/task.template.md)                                                                                                                                                                                                                                                                                               |
-| [`docs/05.operations`](docs/05.operations/README.md)     | 운영 가이드, 정책, 런북, 사고 기록                                        | [`guide.template.md`](docs/99.templates/templates/sdlc/operations/guide.template.md), [`policy.template.md`](docs/99.templates/templates/sdlc/operations/policy.template.md), [`runbook.template.md`](docs/99.templates/templates/sdlc/operations/runbook.template.md), [`incident.template.md`](docs/99.templates/templates/sdlc/operations/incident.template.md), [`postmortem.template.md`](docs/99.templates/templates/sdlc/operations/postmortem.template.md) |
-| [`docs/90.references`](docs/90.references/README.md)     | 참조 자료, 용어, 버전 인벤토리, lookup material                           | [`reference.template.md`](docs/99.templates/templates/common/reference.template.md)                                                                                                                                                                                                                                                                                                                                                                                |
-| [`docs/99.templates`](docs/99.templates/README.md)       | canonical document templates, route inventory, target-relative link 규칙  | 정확한 target pattern과 template 선택은 [Template Routing Contract](docs/99.templates/support/template-routing.md)를 기준으로 한다.                                                                                                                                                                                                                                                                                                                                |
+| Area                                                     | Responsibility                                                                 | Template                                                                                                                                                                                                                                                                                                                         |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`docs/01.requirements`](docs/01.requirements/README.md) | 제품 요구사항, 사용자 문제, 범위, 성공/수용 기준                               | [`prd.template.md`](docs/99.templates/templates/sdlc/requirements/prd.template.md)                                                                                                                                                                                                                                                                           |
+| [`docs/02.architecture`](docs/02.architecture/README.md) | 아키텍처 요구사항, 참조 구조, 의사결정                                         | [`ad.template.md`](docs/99.templates/templates/sdlc/architecture/ad.template.md), [`adr.template.md`](docs/99.templates/templates/sdlc/architecture/adr.template.md)                                                                                                                                                                                                                   |
+| [`docs/03.specs`](docs/03.specs/README.md)               | 기능/워크플로우/시스템 구현 명세와 feature-local API/Agent/Data/Test 계약      | [`spec.template.md`](docs/99.templates/templates/sdlc/specs/spec.template.md), helper templates는 [`03.specs README`](docs/03.specs/README.md) 참조                                                                                                                                                                                                   |
+| [`docs/05.operations`](docs/05.operations/README.md)     | 운영 가이드, 정책, 런북, 사고 기록                                             | [`guide.template.md`](docs/99.templates/templates/sdlc/operations/guide.template.md), [`policy.template.md`](docs/99.templates/templates/sdlc/operations/policy.template.md), [`runbook.template.md`](docs/99.templates/templates/sdlc/operations/runbook.template.md), [`incident.template.md`](docs/99.templates/templates/sdlc/operations/incident.template.md), [`postmortem.template.md`](docs/99.templates/templates/sdlc/operations/postmortem.template.md) |
+| [`docs/90.references`](docs/90.references/README.md)     | 참조 자료, 용어, 버전 인벤토리, lookup material                                | [`reference.template.md`](docs/99.templates/templates/common/reference.template.md)                                                                                                                                                                                                                                                               |
+| [`docs/99.templates`](docs/99.templates/README.md)       | canonical document templates, route inventory, target-relative link 규칙       | 정확한 target pattern과 template 선택은 [Template Routing Contract](docs/99.templates/support/document-contract.md)를 기준으로 한다.                                                                                                                                                                                               |
 
 ### 현재 구현 경계
 
@@ -82,11 +81,11 @@ hy-home.k8s/
 
 1. 저장소를 처음 읽을 때는 `README.md -> docs/README.md -> 해당 provider shim(AGENTS.md, CLAUDE.md, GEMINI.md) -> 관련 stage 문서` 순서로 진입한다.
 2. 설계/구현/운영 판단은 가능한 한 `docs/01.requirements`부터 `docs/05.operations/runbooks`까지의 문서 체인을 기준으로 추적한다.
-3. 새 README나 authored stage 문서는 [Template Routing Contract](docs/99.templates/support/template-routing.md)에서 target pattern을 확인한 뒤 matching template에서 시작한다.
+3. 새 README나 authored stage 문서는 [Template Routing Contract](docs/99.templates/support/document-contract.md)에서 target pattern을 확인한 뒤 matching template에서 시작한다.
 4. 문서 링크는 상대 경로를 사용하고, 사람 대상 README는 한국어를 유지한다.
 5. `docs/00.agent-governance/*`는 영어로 유지하며, 게이트웨이 파일에는 규칙을 중복 복사하지 않는다.
-6. README 파일은 기본적으로 frontmatter를 요구하지 않는다. PRD/ARD/ADR/Spec/Plan/Task/Guide/Operations Policy/Runbook/Incident/Postmortem/Reference 같은 authored stage 문서는 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
-7. 문서 체계나 템플릿을 바꾸면 [`docs/README.md`](docs/README.md), 해당 stage README, [Template Routing Contract](docs/99.templates/support/template-routing.md), [`docs/99.templates/README.md`](docs/99.templates/README.md), 생성 문서 적용 범위를 같은 변경에서 점검한다.
+6. README 파일은 기본적으로 frontmatter를 요구하지 않는다. PRD/AD/ADR/Spec/Plan/Task/Guide/Operations Policy/Runbook/Incident/Postmortem/Reference 같은 authored stage 문서는 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
+7. 문서 체계나 템플릿을 바꾸면 [`docs/README.md`](docs/README.md), 해당 stage README, [Template Routing Contract](docs/99.templates/support/document-contract.md), [`docs/99.templates/README.md`](docs/99.templates/README.md), 생성 문서 적용 범위를 같은 변경에서 점검한다.
 8. 브랜치 전략은 `main` 중심 PR flow를 기본으로 하며, 상세 규칙은 [`docs/00.agent-governance/rules/git-workflow.md`](docs/00.agent-governance/rules/git-workflow.md)를 따른다.
 9. 인프라 변경은 GitOps-first로 다룬다. 일반 변경에서 live cluster mutation, `kubectl apply`, 외부 Vault 조작을 도입하지 않는다.
 10. `.github` 자동화나 QA gate를 바꿀 때는 [`.github/README.md`](.github/README.md)와 PR template의 검증 체크리스트를 함께 확인한다.
@@ -101,7 +100,7 @@ hy-home.k8s/
 
 - `docs/00.agent-governance/**`: Agent 실행 정책과 provider/runtime 계약이므로 영어를 유지한다.
 - `docs/03.specs/**/spec.md`: 구현 명세이므로 영어로 작성한다.
-- `docs/04.execution/plans/*.md`, `docs/04.execution/tasks/*.md`: 실행 계획, 검증 증적, handoff 기록이므로 영어로 작성한다.
+- `docs/03.specs/<id>-<slug>/plan.md`, `docs/03.specs/<id>-<slug>/tasks.md`: 실행 계획, 검증 증적, handoff 기록이므로 영어로 작성한다.
 - `docs/05.operations/{guides,policies,runbooks,incidents}`: 운영자가 읽는 본문은 한국어를 사용할 수 있고, AI Agent 실행 지시나 tool/prompt contract는 영어로 분리한다.
 - `docs/90.references/**`: 사람용 overview와 lookup 설명은 한국어를 사용할 수 있고, `Authority Boundary`, `Sources`, `Review and Freshness`, version support boundary, generated-index contract는 영어를 우선한다.
 
@@ -109,7 +108,7 @@ hy-home.k8s/
 
 | Workflow       | Start Here                                               | Expected Follow-up                                                              |
 | -------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| 요구사항 변경  | [`docs/01.requirements`](docs/01.requirements/README.md) | 관련 ARD/ADR, Spec, Plan 링크를 갱신한다.                                       |
+| 요구사항 변경  | [`docs/01.requirements`](docs/01.requirements/README.md) | 관련 AD/ADR, Spec, Plan 링크를 갱신한다.                                       |
 | 아키텍처 결정  | [`docs/02.architecture`](docs/02.architecture/README.md) | 결정의 결과를 Spec, 운영 정책, runbook에 반영한다.                              |
 | 기능 구현      | [`docs/03.specs`](docs/03.specs/README.md)               | Plan/Task를 만들고 검증 증적을 남긴다.                                          |
 | 운영 절차 변경 | [`docs/05.operations`](docs/05.operations/README.md)     | guide, policy, runbook 중 하나로 분류하고 GitOps-first 경계를 유지한다.         |
@@ -127,9 +126,10 @@ hy-home.k8s/
 ### Canonical Owners
 
 - [docs/README.md](docs/README.md)
+- [AGENTS.md](AGENTS.md)
 - [docs/00.agent-governance/README.md](docs/00.agent-governance/README.md)
-- [docs/01.requirements/004-current-local-gitops-platform.md](docs/01.requirements/004-current-local-gitops-platform.md)
-- [docs/03.specs/008-current-local-gitops-platform/spec.md](docs/03.specs/008-current-local-gitops-platform/spec.md)
+- [docs/01.requirements/0004-current-local-gitops-platform.md](docs/01.requirements/0004-current-local-gitops-platform.md)
+- [docs/03.specs/0008-current-local-gitops-platform/spec.md](docs/03.specs/0008-current-local-gitops-platform/spec.md)
 - [docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md](docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)
 - [docs/90.references/README.md](docs/90.references/README.md)
 - [.github/README.md](.github/README.md)
@@ -251,7 +251,7 @@ bash scripts/validate-policy-gates.sh .
 find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' -exec bash -n {} +
 ```
 
-하네스 표면 변경은 위 repo-static 게이트를 묶은 `bash scripts/validate-harness.sh`로 한 번에 검증한다. 표면별 승인 경계와 구현 지도는 [`harness-implementation-map.md`](docs/00.agent-governance/harness-implementation-map.md)와 [`approval-boundaries.md`](docs/00.agent-governance/rules/approval-boundaries.md)를 참조한다. live k3d/ArgoCD/Vault 검증은 기본 경로가 아니라 승인된 운영 runbook에서만 실행한다.
+하네스 표면 변경은 위 repo-static 게이트를 묶은 `bash scripts/validate-harness.sh`로 한 번에 검증한다. 표면별 승인 경계는 [`approval-boundaries.md`](docs/00.agent-governance/rules/approval-boundaries.md)를 참조하고, agent roster와 adapter 구현 위치는 [`harness-catalog.md`](docs/00.agent-governance/harness-catalog.md)를 참조한다. live k3d/ArgoCD/Vault 검증은 기본 경로가 아니라 승인된 운영 runbook에서만 실행한다.
 
 `validate-repo-quality-gates.sh`는 authored docs에서 bare/main direct push 예시와 PR-flow 문맥 없는 push 예시 회귀를 차단하고, README/examples 등 broader Markdown roots에서는 bare/main direct push 예시를 차단한다. 또한 `generate-llm-wiki-index.sh --check`로 LLM WIKI generated index freshness를 확인한다. `pre-commit`, `kube-linter`, `zizmor`, `actionlint`, `shellcheck`는 로컬에 있으면 사용한다. 로컬 `PATH`에 없을 때는 위의 repo-backed 검증을 먼저 실행하고, 전체 hook/tool matrix는 GitHub Actions에서 확인한다.
 
@@ -261,7 +261,7 @@ Cloud 예시의 버전 기준은 [Tech Stack Version Inventory](./docs/90.refere
 
 - [문서 허브](./docs/README.md)
 - [에이전트 실행 거버넌스](./docs/00.agent-governance/README.md)
-- [현재 로컬 GitOps 플랫폼 요구사항](./docs/01.requirements/004-current-local-gitops-platform.md)
-- [현재 로컬 GitOps 플랫폼 Spec](./docs/03.specs/008-current-local-gitops-platform/spec.md)
+- [현재 로컬 GitOps 플랫폼 요구사항](./docs/01.requirements/0004-current-local-gitops-platform.md)
+- [현재 로컬 GitOps 플랫폼 Spec](./docs/03.specs/0008-current-local-gitops-platform/spec.md)
 - [ArgoCD 플랫폼 부트스트랩 Runbook](./docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)
 - [저장소 스크립트 인덱스](./scripts/README.md)

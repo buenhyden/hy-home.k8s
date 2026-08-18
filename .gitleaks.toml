@@ -24,6 +24,17 @@ id = "generic-api-key"
   ]
 
   [[rules.allowlists]]
+  description = "Allow WORK-105 native template SHA256 fixture map entries"
+  condition = "AND"
+  paths = [
+    '''(?:^|/)tests/test_document_strict_cutover\.py$''',
+  ]
+  regexTarget = "line"
+  regexes = [
+    '''"(openapi\.template\.yaml|schema\.template\.graphql|service\.template\.proto)": "[0-9a-f]{64}",''',
+  ]
+
+  [[rules.allowlists]]
   description = "Allow only ACER-002 ledger pairKey false positives at the exact data path"
   condition = "AND"
   paths = [

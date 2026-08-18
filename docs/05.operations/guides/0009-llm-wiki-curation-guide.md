@@ -4,6 +4,7 @@ type: sdlc/guide
 status: active
 owner: platform
 updated: 2026-05-10
+artifact_id: "GUIDE-0009"
 ---
 
 # LLM Wiki Curation Guide
@@ -33,7 +34,7 @@ LLM Wiki entrypoint, generated index, `wiki-curator` agent 사용 시점을 일�
 
 - Repository checkout at `hy-home.k8s`.
 - `python3` and `bash` available for repo quality gates.
-- Current governance routing reviewed in [Harness Catalog](../../00.agent-governance/harness-catalog.md) and [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md).
+- Current governance routing reviewed in [Harness Catalog](../../00.agent-governance/harness-catalog.md) and [Document Stage Routing Rules](../../00.agent-governance/rules/document-authoring.md).
 
 ## Step-by-step Instructions
 
@@ -69,7 +70,7 @@ LLM Wiki entrypoint, generated index, `wiki-curator` agent 사용 시점을 일�
 
 - **Operation**: [Agentic Execution Rules](../../00.agent-governance/rules/agentic.md)
 - **Operation**: [Harness Catalog](../../00.agent-governance/harness-catalog.md)
-- **Operation**: [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)
+- **Operation**: [Document Stage Routing Rules](../../00.agent-governance/rules/document-authoring.md)
 - **Reference**: [LLM WIKI README](../../90.references/llm-wiki/README.md)
 - **Reference**: [Generated LLM WIKI Index](../../90.references/llm-wiki/wiki-index.md)
 

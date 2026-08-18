@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import hashlib
 import json
 import os
 import re
@@ -33,6 +34,8 @@ ROUTING_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/validation-surfaces.json"
 )
 CLAUDE_SETTINGS_PATH = PurePosixPath(".claude/settings.json")
+CAPABILITY_EVIDENCE_OWNER = CONTRACT_PATH.as_posix()
+MAX_GOVERNED_INPUT_BYTES = 1024 * 1024
 
 CUTOFF_UTC = datetime(2026, 7, 10, 1, 0, 0, tzinfo=timezone.utc)
 CUTOFF_UTC_DATE = CUTOFF_UTC.date()
@@ -75,6 +78,28 @@ ROUTED_SURFACES = (
     "governance-documents",
     "scripts",
     "tests",
+)
+HOOK_GRAPH_EXPECTATIONS = (
+    (
+        "local-compatibility-hook-graph",
+        "local",
+        ".agents/hooks.json",
+        "unsupported",
+        "ABSENT",
+        (
+            "03f1ce8362178ff638e6d54df9f6ed3532df262f5cd63767b0522ef4cda56cfe"  # pragma: allowlist secret
+        ),
+    ),
+    (
+        "codex-compatibility-hook-graph",
+        "codex",
+        ".codex/hooks.json",
+        "unverified",
+        "DEFER",
+        (
+            "666654f83dd15944e16828e30baa1c396f2884a50f001df38a47de476b096c9f"  # pragma: allowlist secret
+        ),
+    ),
 )
 FOCUSED_VALIDATORS = (
     (
@@ -563,24 +588,68 @@ def _inspect_governed_node(
         _close_descriptor(descriptor)
 
 
-def _read_regular_text(root: Path, relative: PurePosixPath | str) -> str:
+def _read_regular_bytes(root: Path, relative: PurePosixPath | str) -> bytes:
     descriptor = _open_governed_node(root, relative, expected_kind="file")
     if descriptor is None:
         fail("PNME-INPUT", "governed input is unavailable", exit_code=2)
     try:
-        with os.fdopen(descriptor, "r", encoding="utf-8") as stream:
-            descriptor = -1
-            return stream.read()
+        before = os.fstat(descriptor)
+        if before.st_size > MAX_GOVERNED_INPUT_BYTES:
+            fail("PNME-INPUT", "governed input exceeds its byte limit", exit_code=2)
+        chunks: list[bytes] = []
+        total = 0
+        while True:
+            remaining = MAX_GOVERNED_INPUT_BYTES - total
+            chunk = os.read(descriptor, min(65536, remaining + 1))
+            if not chunk:
+                break
+            total += len(chunk)
+            if total > MAX_GOVERNED_INPUT_BYTES:
+                fail(
+                    "PNME-INPUT",
+                    "governed input exceeds its byte limit",
+                    exit_code=2,
+                )
+            chunks.append(chunk)
+        after = os.fstat(descriptor)
+        if (
+            before.st_dev,
+            before.st_ino,
+            before.st_mode,
+            before.st_size,
+            before.st_mtime_ns,
+            before.st_ctime_ns,
+        ) != (
+            after.st_dev,
+            after.st_ino,
+            after.st_mode,
+            after.st_size,
+            after.st_mtime_ns,
+            after.st_ctime_ns,
+        ) or total != after.st_size:
+            fail("PNME-INPUT", "governed input changed during read", exit_code=2)
+        return b"".join(chunks)
     except ProviderConfigError:
         raise
-    except (OSError, UnicodeError):
+    except OSError:
+        fail(
+            "PNME-INPUT",
+            "governed input cannot be read",
+            exit_code=2,
+        )
+    finally:
+        _close_descriptor(descriptor)
+
+
+def _read_regular_text(root: Path, relative: PurePosixPath | str) -> str:
+    try:
+        return _read_regular_bytes(root, relative).decode("utf-8")
+    except UnicodeError:
         fail(
             "PNME-INPUT",
             "governed input cannot be read as UTF-8",
             exit_code=2,
         )
-    finally:
-        _close_descriptor(descriptor)
 
 
 def load_json(root: Path, relative: PurePosixPath) -> Any:
@@ -977,6 +1046,14 @@ def validate_evidence_lanes(providers: dict[str, dict[str, Any]]) -> None:
                 )
 
         by_id = {lane["id"]: lane["verdict"] for lane in lanes}
+        if provider["localObservation"]["installation"] != "present" and (
+            by_id["native-discovery"] == "PASS"
+            or by_id["authenticated-run"] == "PASS"
+        ):
+            fail(
+                "PNME-UNSUPPORTED-RUNTIME",
+                f"{provider_id} cannot claim runtime PASS without an installed runtime",
+            )
         if (
             by_id["authenticated-run"] == "PASS"
             and by_id["native-discovery"] != "PASS"
@@ -993,6 +1070,121 @@ def validate_evidence_lanes(providers: dict[str, dict[str, Any]]) -> None:
                 "PNME-EVIDENCE-LANE",
                 f"{provider_id} discovery PASS lacks repo-static PASS",
             )
+
+
+def validate_hook_graphs(
+    root: Path,
+    contract: dict[str, Any],
+    providers: dict[str, dict[str, Any]],
+    *,
+    check_paths: bool,
+) -> None:
+    if contract["capabilityEvidenceOwner"] != CAPABILITY_EVIDENCE_OWNER:
+        fail(
+            "PNME-HOOK-BOUNDARY",
+            "provider capability evidence must have one Stage 00 machine owner",
+        )
+
+    records = contract["hookGraphs"]
+    observed = tuple(
+        (
+            record["id"],
+            record["providerId"],
+            record["path"],
+            record["runtimeSupport"],
+            record["deliveryVerdict"],
+            record["contentSha256"],
+        )
+        for record in records
+    )
+    if observed != HOOK_GRAPH_EXPECTATIONS:
+        fail(
+            "PNME-HOOK-BOUNDARY",
+            f"retained hook graph inventory drifted: {observed}",
+        )
+    if len({record["path"] for record in records}) != len(records):
+        fail("PNME-HOOK-BOUNDARY", "hook graph paths must be unique")
+
+    for record in records:
+        key = f"{record['providerId']}/{record['path']}"
+        path = validate_repo_path(record["path"], f"{key}.path")
+        if (
+            record["classification"] != "custom-compatibility-bridge"
+            or record["evidenceClass"] != "repo-static"
+        ):
+            fail(
+                "PNME-HOOK-BOUNDARY",
+                f"{key} is not a repo-static custom compatibility bridge",
+            )
+        if record["runtimeSupport"] != "supported" and (
+            record["deliveryVerdict"] == "PASS"
+        ):
+            fail(
+                "PNME-HOOK-BOUNDARY",
+                f"{key} claims delivery PASS for an unsupported or unverified runtime",
+            )
+        native_verdict = {
+            lane["id"]: lane["verdict"]
+            for lane in providers[record["providerId"]]["evidenceLanes"]
+        }["native-discovery"]
+        if record["deliveryVerdict"] == "PASS" and native_verdict != "PASS":
+            fail(
+                "PNME-HOOK-BOUNDARY",
+                f"{key} claims delivery PASS without native discovery PASS",
+            )
+        if not all(
+            record[field]
+            for field in (
+                "owner",
+                "limitation",
+                "retryTrigger",
+                "claimBoundary",
+                "embeddedDeclaration",
+            )
+        ):
+            fail(
+                "PNME-HOOK-BOUNDARY",
+                f"{key} lacks an actionable compatibility boundary",
+            )
+
+        project_paths = {
+            (item["path"], item["kind"], item["state"])
+            for item in providers[record["providerId"]]["projectPaths"]
+        }
+        if (
+            record["path"],
+            "compatibility-hook-graph",
+            "current",
+        ) not in project_paths:
+            fail(
+                "PNME-HOOK-BOUNDARY",
+                f"{key} is not declared as a current compatibility hook graph",
+            )
+
+        if check_paths:
+            graph_bytes = _read_regular_bytes(root, path)
+            if hashlib.sha256(graph_bytes).hexdigest() != record["contentSha256"]:
+                fail(
+                    "PNME-HOOK-BOUNDARY",
+                    f"{key} bytes differ from the reviewed hook graph",
+                )
+            try:
+                graph_text = graph_bytes.decode("utf-8")
+            except UnicodeError:
+                fail("PNME-HOOK-BOUNDARY", f"{key} is not UTF-8")
+            graph = decode_json_text(graph_text, str(path))
+            if not isinstance(graph, dict) or not isinstance(
+                graph.get("hooks"), dict
+            ):
+                fail(
+                    "PNME-HOOK-BOUNDARY",
+                    f"{key} does not contain a closed hook graph",
+                )
+            if graph.get("description") != record["embeddedDeclaration"]:
+                fail(
+                    "PNME-HOOK-BOUNDARY",
+                    f"{key} does not embed its repo-static delivery boundary",
+                )
 
 
 def validate_models(contract: dict[str, Any], providers: dict[str, dict[str, Any]]) -> None:
@@ -1170,6 +1362,12 @@ def validate_contract(
     if check_paths:
         validate_claude_permissions(root)
     validate_evidence_lanes(providers)
+    validate_hook_graphs(
+        root,
+        contract,
+        providers,
+        check_paths=check_paths,
+    )
     validate_models(contract, providers)
     validate_mcp_inventory(contract, harness)
     validate_canary_policy(contract)
@@ -1183,6 +1381,7 @@ def validate_contract(
             for provider in providers.values()
         ),
         "mcpServers": len(contract["mcpInventory"]),
+        "hookGraphs": len(contract["hookGraphs"]),
     }
 
 
@@ -1222,6 +1421,17 @@ def apply_mutation(contract: dict[str, Any], name: str) -> None:
         contract["mcpInventory"][0]["allowedRoles"].append("unowned-agent")
     elif name == "secret-like-contract-value":
         contract["sourceLedger"][0]["claim"] = "sk-test-not-a-real-secret"
+    elif name == "hook-graph-unclassified":
+        contract["hookGraphs"][0]["classification"] = "unclassified"
+    elif name == "hook-graph-runtime-pass":
+        contract["hookGraphs"][0]["deliveryVerdict"] = "PASS"
+    elif name == "hook-graph-digest-drift":
+        contract["hookGraphs"][0]["contentSha256"] = "0" * 64
+    elif name == "absent-runtime-native-pass":
+        contract["providers"][3]["evidenceLanes"][1]["verdict"] = "PASS"
+        contract["providers"][3]["runtimeVerdicts"][
+            "nativeDiscovery"
+        ] = "PASS"
     else:
         fail("PNME-FIXTURE", f"unknown config mutation {name}")
 
@@ -1263,7 +1473,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 f"cases={cases} providers={counts['providers']} "
                 f"sources={counts['sources']} "
                 f"models={counts['modelCandidates']} "
-                f"mcp={counts['mcpServers']}"
+                f"mcp={counts['mcpServers']} "
+                f"hooks={counts['hookGraphs']}"
             )
         else:
             print(
@@ -1271,7 +1482,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 f"providers={counts['providers']} "
                 f"sources={counts['sources']} "
                 f"models={counts['modelCandidates']} "
-                f"mcp={counts['mcpServers']}"
+                f"mcp={counts['mcpServers']} "
+                f"hooks={counts['hookGraphs']}"
             )
         return 0
     except ProviderConfigError as exc:

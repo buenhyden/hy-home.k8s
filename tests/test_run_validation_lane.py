@@ -529,12 +529,12 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
             self.assertNotIn(variable, runner_text)
             self.assertNotIn(variable, hook_text)
 
-    def test_aggregate_does_not_execute_manual_archive_cutover(self):
+    def test_aggregate_executes_exact_archive_cutover(self):
         aggregate = (ROOT / "scripts/validate-repo-quality-gates.sh").read_text(
             encoding="utf-8"
         )
 
-        self.assertNotIn(
+        self.assertIn(
             'python3 "$ROOT_DIR/scripts/archive_cutover.py" --root "$ROOT_DIR"',
             aggregate,
         )
@@ -1564,7 +1564,10 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
         self.assertIn('scope="affected:paths=1"', output)
 
     def test_docs_selector_executes_every_validator_and_propagates_path(self):
-        path = "docs/98.archive/04.execution/tasks/2026-07-17-archive-record-and-workspace-boundary.md"
+        path = (
+            "docs/98.archive/changes/"
+            "chg-0004-archive-record-and-workspace-boundary/task.md"
+        )
         result, statuses, output, invoked = self._run([path])
 
         self.assertEqual(result, 0)
@@ -1584,7 +1587,7 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
         self.assertGreaterEqual(output.count(path), 3)
 
     def test_staged_selector_executes_every_selected_validator(self):
-        path = "docs/03.specs/045-agent-governance-ci-qa-cutover/spec.md"
+        path = "docs/03.specs/0045-agent-governance-ci-qa-cutover/spec.md"
         result, statuses, output, invoked = self._run([path], lane="staged")
 
         self.assertEqual(result, 0)

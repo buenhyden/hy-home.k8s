@@ -12,6 +12,15 @@
     "historicalLinks": 202
   },
   "archiveIndex": "docs/98.archive/README.md#document-index",
+  "repositoryArchive": {
+    "contractVersion": 2,
+    "managedNamespaces": [
+      "arwb-base",
+      "acer-additive"
+    ],
+    "managedRecords": 43,
+    "repositoryRecords": 93
+  },
   "counts": {
     "batches": 6,
     "records": 12,

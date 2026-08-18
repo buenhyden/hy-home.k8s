@@ -4,6 +4,8 @@
 from __future__ import annotations
 
 import hashlib
+import io
+import json
 import os
 import re
 import subprocess
@@ -111,7 +113,7 @@ class ArchiveRecoveryTest(unittest.TestCase):
             "original_path": self.original_path,
             "archived_on": "2026-07-18",
             "archive_reason": "superseded",
-            "replacement": "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+            "replacement": "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md",
             "source_commit": self.commit,
             "source_blob": self.blob,
             "content_sha256": hashlib.sha256(self.payload).hexdigest(),
@@ -186,7 +188,7 @@ class ArchiveRecoveryTest(unittest.TestCase):
         )
         self.assertEqual(
             replacement.path,
-            "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md",
+            "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md",
         )
 
         invalid_cases = (
@@ -436,17 +438,15 @@ class ArchiveRecoveryTest(unittest.TestCase):
             "GIT_NO_LAZY_FETCH": "0",
         }
         observed: list[tuple[list[str], dict[str, object]]] = []
-        real_run = subprocess.run
+        real_popen = subprocess.Popen
 
-        def capture(
-            *args: object, **kwargs: object
-        ) -> subprocess.CompletedProcess[bytes]:
+        def capture(*args: object, **kwargs: object):
             observed.append((list(args[0]), dict(kwargs)))
-            return real_run(*args, **kwargs)
+            return real_popen(*args, **kwargs)
 
         with mock.patch.dict(os.environ, hostile, clear=False):
             with mock.patch.object(
-                archive_recovery.subprocess, "run", side_effect=capture
+                archive_recovery.subprocess, "Popen", side_effect=capture
             ):
                 recovered = recover_git_blob(self.root, self.original_path, self.commit)
 
@@ -466,7 +466,7 @@ class ArchiveRecoveryTest(unittest.TestCase):
             self.assertNotIn("GIT_ALTERNATE_OBJECT_DIRECTORIES", environment)
             self.assertIn("--no-replace-objects", argv)
             self.assertIn("--literal-pathspecs", argv)
-            self.assertEqual(kwargs["timeout"], archive_recovery.GIT_TIMEOUT_SECONDS)
+            self.assertEqual(kwargs["stderr"], subprocess.DEVNULL)
 
     def test_stable_recovery_errors_for_root_startup_timeout_and_object_format(
         self,
@@ -480,7 +480,7 @@ class ArchiveRecoveryTest(unittest.TestCase):
 
         with mock.patch.object(
             archive_recovery.subprocess,
-            "run",
+            "Popen",
             side_effect=FileNotFoundError("STARTUP-SENTINEL"),
         ):
             with self.assertRaisesRegex(
@@ -491,11 +491,10 @@ class ArchiveRecoveryTest(unittest.TestCase):
         self.assertNotIn("STARTUP-SENTINEL", str(startup.exception))
 
         with mock.patch.object(
-            archive_recovery.subprocess,
-            "run",
-            side_effect=subprocess.TimeoutExpired(
-                cmd=["git", "TIMEOUT-SENTINEL"],
-                timeout=0.001,
+            archive_recovery._DeadlineReader,  # noqa: SLF001
+            "read",
+            side_effect=ArchiveContractError(
+                "RECOVERY-GIT-TIMEOUT", "bounded timeout"
             ),
         ):
             with self.assertRaisesRegex(
@@ -517,8 +516,8 @@ class ArchiveRecoveryTest(unittest.TestCase):
             )
             with self.subTest(name=name):
                 with mock.patch.object(
-                    archive_recovery.subprocess,
-                    "run",
+                    archive_recovery,
+                    "_git",
                     side_effect=responses,
                 ):
                     with self.assertRaisesRegex(
@@ -526,6 +525,103 @@ class ArchiveRecoveryTest(unittest.TestCase):
                         r"^RECOVERY-OBJECT-FORMAT:",
                     ):
                         recover_git_blob(self.root, self.original_path, self.commit)
+
+    def test_git_batch_rejects_oversized_header_before_body_read(self) -> None:
+        object_id = self.blob
+        header = (
+            f"{object_id} blob {archive_recovery.MAX_GIT_BLOB_BYTES + 1}\n"
+        ).encode("ascii")
+
+        class HeaderOnly:
+            def __init__(self) -> None:
+                self.offset = 0
+                self.body_read = False
+
+            def read(self, size: int = -1) -> bytes:
+                if self.offset >= len(header):
+                    self.body_read = True
+                    raise AssertionError("oversized body must not be read")
+                end = len(header) if size < 0 else min(len(header), self.offset + size)
+                result = header[self.offset:end]
+                self.offset = end
+                return result
+
+        stream = HeaderOnly()
+        with self.assertRaisesRegex(
+            ArchiveContractError, r"^RECOVERY-RESOURCE-LIMIT:"
+        ) as failure:
+            archive_recovery._read_git_blob_batch_protocol(  # noqa: SLF001
+                stream,
+                (object_id,),
+                object_id_length=len(object_id),
+            )
+
+        self.assertFalse(stream.body_read)
+        self.assertNotIn(object_id, str(failure.exception))
+
+    def test_git_batch_enforces_aggregate_budget_and_redacts_payload(self) -> None:
+        first = self.blob
+        second = "0" * len(first)
+        sentinel = b"SECRET-PAYLOAD-SENTINEL"
+        response = (
+            f"{first} blob {len(sentinel)}\n".encode("ascii")
+            + sentinel
+            + b"\n"
+            + f"{second} blob {len(sentinel)}\n".encode("ascii")
+            + sentinel
+            + b"\n"
+        )
+
+        with self.assertRaisesRegex(
+            ArchiveContractError, r"^RECOVERY-RESOURCE-LIMIT:"
+        ) as failure:
+            archive_recovery._read_git_blob_batch_protocol(  # noqa: SLF001
+                io.BytesIO(response),
+                (first, second),
+                object_id_length=len(first),
+                aggregate_limit=len(sentinel),
+            )
+
+        self.assertNotIn(sentinel.decode("ascii"), str(failure.exception))
+        self.assertNotIn(second, str(failure.exception))
+
+        with self.assertRaisesRegex(
+            ArchiveContractError, r"^RECOVERY-RESOURCE-LIMIT:"
+        ):
+            archive_recovery._read_git_blob_batch_protocol(  # noqa: SLF001
+                io.BytesIO(b""),
+                (first, second),
+                object_id_length=len(first),
+                object_limit=1,
+            )
+
+    def test_git_batch_rejects_truncated_and_extra_protocol_without_payload(self) -> None:
+        object_id = self.blob
+        cases = {
+            "truncated": f"{object_id} blob 5\nabc".encode("ascii"),
+            "extra": f"{object_id} blob 3\nabc\nEXTRA-SENTINEL".encode("ascii"),
+        }
+        for name, response in cases.items():
+            with self.subTest(name=name), self.assertRaisesRegex(
+                ArchiveContractError, r"^RECOVERY-OBJECT-MISSING:"
+            ) as failure:
+                archive_recovery._read_git_blob_batch_protocol(  # noqa: SLF001
+                    io.BytesIO(response),
+                    (object_id,),
+                    object_id_length=len(object_id),
+                )
+            self.assertNotIn("EXTRA-SENTINEL", str(failure.exception))
+
+    def test_recover_git_blob_uses_size_aware_batch_reader(self) -> None:
+        with mock.patch.object(
+            archive_recovery,
+            "_read_git_blob_batch",
+            wraps=archive_recovery._read_git_blob_batch,  # noqa: SLF001
+        ) as batch:
+            recovered = recover_git_blob(self.root, self.original_path, self.commit)
+
+        self.assertEqual(recovered.source_bytes, self.payload)
+        batch.assert_called_once()
 
     def test_rejects_worktree_byte_substitution(self) -> None:
         recovered = recover_git_blob(self.root, self.original_path, self.commit)
@@ -536,6 +632,250 @@ class ArchiveRecoveryTest(unittest.TestCase):
             r"^ARCHIVE-PAYLOAD-NOT-SOURCE-BLOB:",
         ):
             render_fixture_archive_envelope(self.metadata(), recovered, substitute)
+
+    def test_cli_verify_is_read_only_and_output_is_exact_non_overwriting(self) -> None:
+        recovered = recover_git_blob(self.root, self.original_path, self.commit)
+        record = self.root / "docs/98.archive/03.specs/900-fixture/spec.md"
+        record.parent.mkdir(parents=True)
+        record.write_bytes(
+            render_fixture_archive_envelope(self.metadata(), recovered, self.payload)
+        )
+        before = tuple(sorted(path.as_posix() for path in self.root.rglob("*")))
+
+        self.assertEqual(
+            archive_recovery.main(
+                ["--root", str(self.root), "--record", record.relative_to(self.root).as_posix(), "--verify"]
+            ),
+            0,
+        )
+        self.assertEqual(
+            tuple(sorted(path.as_posix() for path in self.root.rglob("*"))), before
+        )
+
+        output = Path(self.temporary.name).parent / f"recovered-{self.root.name}.md"
+        self.addCleanup(lambda: output.unlink(missing_ok=True))
+        self.assertEqual(
+            archive_recovery.main(
+                ["--root", str(self.root), "--record", record.relative_to(self.root).as_posix(), "--output", str(output)]
+            ),
+            0,
+        )
+        self.assertEqual(output.read_bytes(), self.payload)
+        with self.assertRaisesRegex(ArchiveContractError, r"^RECOVERY-OUTPUT-EXISTS:"):
+            archive_recovery.recover_archive_record(self.root, record.relative_to(self.root).as_posix(), output=output)
+
+    def test_recovery_output_rejects_repository_and_unconfined_paths(self) -> None:
+        recovered = recover_git_blob(self.root, self.original_path, self.commit)
+        record = self.root / "docs/98.archive/03.specs/900-fixture/spec.md"
+        record.parent.mkdir(parents=True)
+        record.write_bytes(
+            render_fixture_archive_envelope(self.metadata(), recovered, self.payload)
+        )
+        for output in (
+            self.root / "docs/recovered.md",
+            Path("relative-output.md"),
+        ):
+            with self.subTest(output=output), self.assertRaisesRegex(
+                ArchiveContractError, r"^RECOVERY-OUTPUT-CONFINEMENT:"
+            ):
+                archive_recovery.recover_archive_record(
+                    self.root,
+                    record.relative_to(self.root).as_posix(),
+                    output=output,
+                )
+
+    def test_recovery_rejects_archive_intermediate_parent_symlink(self) -> None:
+        recovered = recover_git_blob(self.root, self.original_path, self.commit)
+        real_parent = self.root / "archive-record-parent"
+        real_parent.mkdir()
+        (real_parent / "spec.md").write_bytes(
+            render_fixture_archive_envelope(self.metadata(), recovered, self.payload)
+        )
+        linked_parent = self.root / "docs/98.archive/03.specs/900-fixture"
+        linked_parent.parent.mkdir(parents=True)
+        linked_parent.symlink_to(real_parent, target_is_directory=True)
+
+        with self.assertRaisesRegex(
+            ArchiveContractError, r"^RECOVERY-RECORD-READ:"
+        ):
+            archive_recovery.recover_archive_record(
+                self.root,
+                "docs/98.archive/03.specs/900-fixture/spec.md",
+                verify=True,
+            )
+
+    def test_recovery_rejects_output_intermediate_parent_symlink(self) -> None:
+        recovered = recover_git_blob(self.root, self.original_path, self.commit)
+        record = self.root / "docs/98.archive/03.specs/900-fixture/spec.md"
+        record.parent.mkdir(parents=True)
+        record.write_bytes(
+            render_fixture_archive_envelope(self.metadata(), recovered, self.payload)
+        )
+        temporary_root = Path(tempfile.gettempdir()).resolve()
+        real_parent = Path(tempfile.mkdtemp(prefix="recovery-output-real-"))
+        linked_parent = temporary_root / f"recovery-output-link-{self.root.name}"
+        linked_parent.symlink_to(real_parent, target_is_directory=True)
+        self.addCleanup(lambda: real_parent.rmdir())
+        self.addCleanup(
+            lambda: [child.unlink(missing_ok=True) for child in real_parent.iterdir()]
+        )
+        self.addCleanup(lambda: linked_parent.unlink(missing_ok=True))
+
+        with self.assertRaisesRegex(
+            ArchiveContractError, r"^RECOVERY-OUTPUT-CONFINEMENT:"
+        ):
+            archive_recovery.recover_archive_record(
+                self.root,
+                record.relative_to(self.root).as_posix(),
+                output=linked_parent / "recovered.md",
+            )
+
+    def test_recovery_cleanup_keeps_substituted_output_identity(self) -> None:
+        recovered = recover_git_blob(self.root, self.original_path, self.commit)
+        record = self.root / "docs/98.archive/03.specs/900-fixture/spec.md"
+        record.parent.mkdir(parents=True)
+        record.write_bytes(
+            render_fixture_archive_envelope(self.metadata(), recovered, self.payload)
+        )
+        parent = Path(tempfile.mkdtemp(prefix="recovery-output-parent-"))
+        parked = parent.with_name(f"{parent.name}-parked")
+        output = parent / "recovered.md"
+        replacement = b"replacement identity must survive\n"
+
+        def substitute_parent_then_fail(_descriptor: int, _payload: object) -> int:
+            parent.rename(parked)
+            parent.mkdir()
+            output.write_bytes(replacement)
+            raise OSError("injected write failure")
+
+        try:
+            with mock.patch.object(
+                archive_recovery.os, "write", side_effect=substitute_parent_then_fail
+            ), self.assertRaisesRegex(
+                ArchiveContractError, r"^RECOVERY-OUTPUT-WRITE:"
+            ):
+                archive_recovery.recover_archive_record(
+                    self.root,
+                    record.relative_to(self.root).as_posix(),
+                    output=output,
+                )
+            self.assertTrue(output.exists())
+            self.assertEqual(output.read_bytes(), replacement)
+        finally:
+            output.unlink(missing_ok=True)
+            parent.rmdir()
+            parked_output = parked / output.name
+            parked_output.unlink(missing_ok=True)
+            parked.rmdir()
+
+
+class Work107StableArchiveContractTest(unittest.TestCase):
+    """Focused WORK-107 contract for the reviewed 93-to-93 stable rehome."""
+
+    maxDiff = None
+
+    def test_work107_reviewed_mapping_is_exact_and_bijective(self) -> None:
+        rows = archive_recovery.build_work107_migration_rows(ROOT)
+
+        self.assertEqual(
+            archive_recovery.WORK107_LEGACY_ARCHIVE_COMMIT,
+            "eaf4f21ca84b68d98e20cd0b41db8b8d08ba6d0c",  # pragma: allowlist secret
+        )
+        self.assertEqual(len(rows), 93)
+        self.assertEqual({row["action"] for row in rows}, {"moved"})
+        self.assertEqual({row["replacement"] for row in rows}, {None})
+        self.assertEqual(len({row["legacy_path"] for row in rows}), 93)
+        self.assertEqual(len({row["stable_path"] for row in rows}), 93)
+        self.assertEqual(len({row["artifact_id"] for row in rows}), 93)
+
+        changes: dict[str, set[str]] = {}
+        tombstones: dict[str, int] = {}
+        for row in rows:
+            stable = Path(row["stable_path"])
+            if row["record_kind"].startswith("change-"):
+                changes.setdefault(stable.parent.as_posix(), set()).add(stable.name)
+            else:
+                stage = stable.parts[3]
+                tombstones[stage] = tombstones.get(stage, 0) + 1
+            self.assertEqual(row["legacy_archive_commit"], archive_recovery.WORK107_LEGACY_ARCHIVE_COMMIT)
+            actual_blob = subprocess.run(
+                ["git", "rev-parse", f'{row["legacy_archive_commit"]}:{row["legacy_path"]}'],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout.strip()
+            self.assertEqual(row["legacy_envelope_blob"], actual_blob)
+
+        shapes = [frozenset(leaves) for leaves in changes.values()]
+        self.assertEqual(len(changes), 41)
+        self.assertEqual(shapes.count(frozenset({"plan.md", "task.md"})), 35)
+        self.assertEqual(shapes.count(frozenset({"plan.md"})), 2)
+        self.assertEqual(shapes.count(frozenset({"task.md"})), 4)
+        self.assertEqual(
+            tombstones,
+            {
+                "01.requirements": 3,
+                "02.architecture": 8,
+                "03.specs": 4,
+                "05.operations": 2,
+            },
+        )
+
+    def test_work107_ledger_round_trip_and_closed_mutations(self) -> None:
+        rows = archive_recovery.build_work107_migration_rows(ROOT)
+        rendered = archive_recovery.render_work107_migration_document(rows)
+        parsed = archive_recovery.parse_work107_migration_document(rendered)
+        self.assertEqual(parsed, rows)
+        self.assertEqual(tuple(parsed[0]), archive_recovery.WORK107_LEDGER_FIELDS)
+
+        mutations = []
+        duplicate = [dict(row) for row in rows]
+        duplicate[-1]["stable_path"] = duplicate[-2]["stable_path"]
+        mutations.append(duplicate)
+        wrong_action = [dict(row) for row in rows]
+        wrong_action[0]["action"] = "merged"
+        mutations.append(wrong_action)
+        wrong_object = [dict(row) for row in rows]
+        wrong_object[0]["legacy_envelope_blob"] = "0" * 40
+        mutations.append(wrong_object)
+        missing = [dict(row) for row in rows]
+        missing.pop()
+        mutations.append(missing)
+
+        for mutation in mutations:
+            with self.subTest(mutation=json.dumps(mutation[0], sort_keys=True)[:80]):
+                with self.assertRaises(ArchiveContractError):
+                    archive_recovery.validate_work107_migration_rows(ROOT, mutation)
+
+    def test_work107_stable_wrapper_preserves_payload_and_dual_recovery(self) -> None:
+        rows = archive_recovery.build_work107_migration_rows(ROOT)
+        change = next(row for row in rows if row["record_kind"] == "change-plan")
+        tombstone = next(row for row in rows if row["record_kind"] == "tombstone")
+
+        for row in (change, tombstone):
+            legacy = subprocess.run(
+                ["git", "show", f'{row["legacy_archive_commit"]}:{row["legacy_path"]}'],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+            ).stdout
+            legacy_parsed = parse_archive_envelope(legacy)
+            terminal = archive_recovery.render_work107_stable_envelope(legacy, row)
+            terminal_parsed = parse_archive_envelope(terminal)
+
+            self.assertEqual(terminal_parsed.payload, legacy_parsed.payload)
+            for key in ("source_commit", "source_blob", "content_sha256"):
+                self.assertEqual(terminal_parsed.metadata[key], legacy_parsed.metadata[key])
+            if row["record_kind"].startswith("change-"):
+                self.assertEqual(
+                    terminal_parsed.metadata["change_id"],
+                    row["artifact_id"].removeprefix("PLAN-").removeprefix("TASK-"),
+                )
+
+            recovered = archive_recovery.recover_work107_legacy_envelope(ROOT, row)
+            self.assertEqual(recovered.payload, legacy_parsed.payload)
+            self.assertEqual(recovered.metadata, legacy_parsed.metadata)
 
 
 if __name__ == "__main__":

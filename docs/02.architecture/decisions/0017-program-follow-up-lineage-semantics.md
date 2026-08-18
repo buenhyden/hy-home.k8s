@@ -4,6 +4,7 @@ type: sdlc/adr
 status: accepted
 owner: platform
 updated: 2026-07-15
+artifact_id: "ADR-0017"
 ---
 
 # ADR-0017: Program Follow-up Lineage Semantics

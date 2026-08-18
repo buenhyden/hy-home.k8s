@@ -31,7 +31,7 @@ ROSTER_ADMISSION_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/agent-roster-admission.json"
 )
 OWNER_SPEC = (
-    "docs/03.specs/044-agent-roster-evaluation-and-admission/spec.md"
+    "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md"
 )
 FIXED_CUTOFF = {
     "localTime": "2026-07-10 10:00 Asia/Seoul",

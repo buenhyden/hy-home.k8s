@@ -7,8 +7,8 @@ description: Use when decomposing an execution plan into agent-executable task u
 
 ## Purpose
 
-Decompose an execution plan (`docs/04.execution/plans/`) into individual task units
-(`docs/04.execution/tasks/`) that can be executed and verified by an agent or operator,
+Decompose a feature-local execution plan (`docs/03.specs/<id>-<slug>/plan.md`) into
+the sibling `tasks.md` work-unit ledger that can be executed and verified by an agent or operator,
 following the SDD lifecycle contract in this repository.
 
 ## Trigger Phrases
@@ -22,10 +22,10 @@ following the SDD lifecycle contract in this repository.
 
 ## When to Use
 
-- A `docs/04.execution/plans/` file has been approved and needs task-level tracking.
+- A feature-local `plan.md` has been approved and needs task-level tracking.
 - Translating a phase or work item into a single, agent-executable unit of work.
 - Each task needs acceptance criteria, evidence requirements, and a rollback note.
-- Producing `task.template.md`-compliant documents for `docs/04.execution/tasks/`.
+- Producing a `task.template.md`-compliant feature-local `tasks.md`.
 
 ## When NOT to Use
 
@@ -36,17 +36,17 @@ following the SDD lifecycle contract in this repository.
 
 ## Workflow Steps
 
-1. Read the plan file (`docs/04.execution/plans/YYYY-MM-DD-<slug>.md`) and extract each
+1. Read `docs/03.specs/<id>-<slug>/plan.md` and extract each
    work item from the Work Breakdown table.
 2. For each work item, determine if it is independently executable (single file owner,
    single verification check). If not, split further.
 3. Assign a task ID (`TASK-NNN`) and map it to the plan's REQ ID.
-4. Write the task file under `docs/04.execution/tasks/YYYY-MM-DD-<slug>-<id>.md` using
+4. Write or update `docs/03.specs/<id>-<slug>/tasks.md` using
    `docs/99.templates/templates/sdlc/execution/task.template.md` as the base.
-5. Each task file must include: goal, acceptance criteria (binary), evidence (command or
+5. The task ledger must include: goal, acceptance criteria (binary), evidence (command or
    artifact path), rollback, and a `## Related Documents` link to the parent plan.
-6. Update the parent plan's `## Work Breakdown` table to reference the task file paths.
-7. Update `docs/00.agent-governance/memory/progress.md` with the task file list.
+6. Update the parent plan's `## Work Breakdown` table to reference the task IDs.
+7. Update `docs/00.agent-governance/memory/progress.md` with the feature-local evidence paths.
 
 ## Output Format
 

@@ -6718,7 +6718,7 @@
       "norm_label": "prevention"
     },
     {
-      "label": "2026-06-01 \u2014 Workspace Agent Governance PRD/ARD Traceability Backfill",
+      "label": "2026-06-01 \u2014 Workspace Agent Governance PRD/AD Traceability Backfill",
       "file_type": "document",
       "source_file": "docs/00.agent-governance/memory/progress.md",
       "source_location": "L5167",
@@ -8005,13 +8005,13 @@
       "norm_label": "`01.requirements`"
     },
     {
-      "label": "`02.architecture/requirements`",
+      "label": "`02.architecture/descriptions`",
       "file_type": "document",
       "source_file": "docs/00.agent-governance/rules/stage-checklists.md",
       "source_location": "L16",
       "id": "rules_stage_checklists_02_architecture_requirements",
       "community": 144,
-      "norm_label": "`02.architecture/requirements`"
+      "norm_label": "`02.architecture/descriptions`"
     },
     {
       "label": "`02.architecture/decisions`",
@@ -9868,7 +9868,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0006-cert-manager-mkcert-ca-issuer.md",
+      "label": "ad-0006-cert-manager-mkcert-ca-issuer.md",
       "file_type": "document",
       "source_file": "docs/02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md",
       "source_location": "L1",
@@ -9976,7 +9976,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0008-istio-install-and-ingress-coexist.md",
+      "label": "ad-0008-istio-install-and-ingress-coexist.md",
       "file_type": "document",
       "source_file": "docs/02.architecture/decisions/0008-istio-install-and-ingress-coexist.md",
       "source_location": "L1",
@@ -10084,7 +10084,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0009-kiali-external-observability.md",
+      "label": "ad-0009-kiali-external-observability.md",
       "file_type": "document",
       "source_file": "docs/02.architecture/decisions/0009-kiali-external-observability.md",
       "source_location": "L1",
@@ -10192,7 +10192,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0011-argo-rollouts-progressive-delivery.md",
+      "label": "ad-0011-argo-rollouts-progressive-delivery.md",
       "file_type": "document",
       "source_file": "docs/02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md",
       "source_location": "L1",
@@ -10714,423 +10714,423 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0004-argo-rollouts-progressive-delivery.md",
+      "label": "ad-0004-argo-rollouts-progressive-delivery.md",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": "L1",
-      "id": "requirements_0004_argo_rollouts_progressive_delivery",
+      "id": "descriptions_ad_0004_argo_rollouts_progressive_delivery",
       "community": 218,
       "norm_label": "0004-argo-rollouts-progressive-delivery.md"
     },
     {
-      "label": "Argo Rollouts Progressive Delivery Architecture Reference Document",
+      "label": "Argo Rollouts Progressive Delivery Architecture Description",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": "L9",
-      "id": "requirements_0004_argo_rollouts_progressive_delivery_argo_rollouts_progressive_delivery_architecture_reference_document",
+      "id": "descriptions_ad_0004_argo_rollouts_progressive_delivery_argo_rollouts_progressive_delivery_architecture_description",
       "community": 218,
-      "norm_label": "argo rollouts progressive delivery architecture reference document"
+      "norm_label": "argo rollouts progressive delivery architecture description"
     },
     {
       "label": "Overview (KR)",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": "L11",
-      "id": "requirements_0004_argo_rollouts_progressive_delivery_overview_kr",
+      "id": "descriptions_ad_0004_argo_rollouts_progressive_delivery_overview_kr",
       "community": 218,
       "norm_label": "overview (kr)"
     },
     {
       "label": "Summary",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": "L16",
-      "id": "requirements_0004_argo_rollouts_progressive_delivery_summary",
+      "id": "descriptions_ad_0004_argo_rollouts_progressive_delivery_summary",
       "community": 218,
       "norm_label": "summary"
     },
     {
       "label": "Boundaries & Non-goals",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": "L21",
-      "id": "requirements_0004_argo_rollouts_progressive_delivery_boundaries_non_goals",
+      "id": "descriptions_ad_0004_argo_rollouts_progressive_delivery_boundaries_non_goals",
       "community": 218,
       "norm_label": "boundaries & non-goals"
     },
     {
       "label": "Quality Attributes",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": "L43",
-      "id": "requirements_0004_argo_rollouts_progressive_delivery_quality_attributes",
+      "id": "descriptions_ad_0004_argo_rollouts_progressive_delivery_quality_attributes",
       "community": 218,
       "norm_label": "quality attributes"
     },
     {
       "label": "System Overview & Context",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": "L52",
-      "id": "requirements_0004_argo_rollouts_progressive_delivery_system_overview_context",
+      "id": "descriptions_ad_0004_argo_rollouts_progressive_delivery_system_overview_context",
       "community": 218,
       "norm_label": "system overview & context"
     },
     {
       "label": "Data Architecture",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": "L60",
-      "id": "requirements_0004_argo_rollouts_progressive_delivery_data_architecture",
+      "id": "descriptions_ad_0004_argo_rollouts_progressive_delivery_data_architecture",
       "community": 218,
       "norm_label": "data architecture"
     },
     {
       "label": "Infrastructure & Deployment",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": "L74",
-      "id": "requirements_0004_argo_rollouts_progressive_delivery_infrastructure_deployment",
+      "id": "descriptions_ad_0004_argo_rollouts_progressive_delivery_infrastructure_deployment",
       "community": 218,
       "norm_label": "infrastructure & deployment"
     },
     {
-      "label": "AI Agent Architecture Requirements (If Applicable)",
+      "label": "AI Agent Architecture Descriptions (If Applicable)",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": "L90",
-      "id": "requirements_0004_argo_rollouts_progressive_delivery_ai_agent_architecture_requirements_if_applicable",
+      "id": "descriptions_ad_0004_argo_rollouts_progressive_delivery_ai_agent_architecture_requirements_if_applicable",
       "community": 218,
       "norm_label": "ai agent architecture requirements (if applicable)"
     },
     {
       "label": "Related Documents",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": "L98",
-      "id": "requirements_0004_argo_rollouts_progressive_delivery_related_documents",
+      "id": "descriptions_ad_0004_argo_rollouts_progressive_delivery_related_documents",
       "community": 218,
       "norm_label": "related documents"
     },
     {
-      "label": "0005-argo-notifications-slack.md",
+      "label": "ad-0005-argo-notifications-slack.md",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": "L1",
-      "id": "requirements_0005_argo_notifications_slack",
+      "id": "descriptions_ad_0005_argo_notifications_slack",
       "community": 219,
       "norm_label": "0005-argo-notifications-slack.md"
     },
     {
-      "label": "Argo Notifications Slack Architecture Reference Document",
+      "label": "Argo Notifications Slack Architecture Description",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": "L9",
-      "id": "requirements_0005_argo_notifications_slack_argo_notifications_slack_architecture_reference_document",
+      "id": "descriptions_ad_0005_argo_notifications_slack_argo_notifications_slack_architecture_description",
       "community": 219,
-      "norm_label": "argo notifications slack architecture reference document"
+      "norm_label": "argo notifications slack architecture description"
     },
     {
       "label": "Overview (KR)",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": "L11",
-      "id": "requirements_0005_argo_notifications_slack_overview_kr",
+      "id": "descriptions_ad_0005_argo_notifications_slack_overview_kr",
       "community": 219,
       "norm_label": "overview (kr)"
     },
     {
       "label": "Summary",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": "L16",
-      "id": "requirements_0005_argo_notifications_slack_summary",
+      "id": "descriptions_ad_0005_argo_notifications_slack_summary",
       "community": 219,
       "norm_label": "summary"
     },
     {
       "label": "Boundaries & Non-goals",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": "L21",
-      "id": "requirements_0005_argo_notifications_slack_boundaries_non_goals",
+      "id": "descriptions_ad_0005_argo_notifications_slack_boundaries_non_goals",
       "community": 219,
       "norm_label": "boundaries & non-goals"
     },
     {
       "label": "Quality Attributes",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": "L42",
-      "id": "requirements_0005_argo_notifications_slack_quality_attributes",
+      "id": "descriptions_ad_0005_argo_notifications_slack_quality_attributes",
       "community": 219,
       "norm_label": "quality attributes"
     },
     {
       "label": "System Overview & Context",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": "L51",
-      "id": "requirements_0005_argo_notifications_slack_system_overview_context",
+      "id": "descriptions_ad_0005_argo_notifications_slack_system_overview_context",
       "community": 219,
       "norm_label": "system overview & context"
     },
     {
       "label": "Data Architecture",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": "L59",
-      "id": "requirements_0005_argo_notifications_slack_data_architecture",
+      "id": "descriptions_ad_0005_argo_notifications_slack_data_architecture",
       "community": 219,
       "norm_label": "data architecture"
     },
     {
       "label": "Infrastructure & Deployment",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": "L74",
-      "id": "requirements_0005_argo_notifications_slack_infrastructure_deployment",
+      "id": "descriptions_ad_0005_argo_notifications_slack_infrastructure_deployment",
       "community": 219,
       "norm_label": "infrastructure & deployment"
     },
     {
-      "label": "AI Agent Architecture Requirements (If Applicable)",
+      "label": "AI Agent Architecture Descriptions (If Applicable)",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": "L87",
-      "id": "requirements_0005_argo_notifications_slack_ai_agent_architecture_requirements_if_applicable",
+      "id": "descriptions_ad_0005_argo_notifications_slack_ai_agent_architecture_requirements_if_applicable",
       "community": 219,
       "norm_label": "ai agent architecture requirements (if applicable)"
     },
     {
       "label": "Related Documents",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": "L95",
-      "id": "requirements_0005_argo_notifications_slack_related_documents",
+      "id": "descriptions_ad_0005_argo_notifications_slack_related_documents",
       "community": 219,
       "norm_label": "related documents"
     },
     {
-      "label": "0006-workspace-agent-governance-platform.md",
+      "label": "ad-0006-workspace-agent-governance-platform.md",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
       "source_location": "L1",
-      "id": "requirements_0006_workspace_agent_governance_platform",
+      "id": "descriptions_ad_0006_workspace_agent_governance_platform",
       "community": 220,
       "norm_label": "0006-workspace-agent-governance-platform.md"
     },
     {
-      "label": "Workspace Agent Governance Platform Architecture Reference Document (ARD)",
+      "label": "Workspace Agent Governance Platform Architecture Description (AD)",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
       "source_location": "L9",
-      "id": "requirements_0006_workspace_agent_governance_platform_workspace_agent_governance_platform_architecture_reference_document_ard",
+      "id": "descriptions_ad_0006_workspace_agent_governance_platform_workspace_agent_governance_platform_architecture_description_ard",
       "community": 220,
-      "norm_label": "workspace agent governance platform architecture reference document (ard)"
+      "norm_label": "workspace agent governance platform architecture description (ard)"
     },
     {
       "label": "Overview (KR)",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
       "source_location": "L11",
-      "id": "requirements_0006_workspace_agent_governance_platform_overview_kr",
+      "id": "descriptions_ad_0006_workspace_agent_governance_platform_overview_kr",
       "community": 220,
       "norm_label": "overview (kr)"
     },
     {
       "label": "Summary",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
       "source_location": "L18",
-      "id": "requirements_0006_workspace_agent_governance_platform_summary",
+      "id": "descriptions_ad_0006_workspace_agent_governance_platform_summary",
       "community": 220,
       "norm_label": "summary"
     },
     {
       "label": "Boundaries & Non-goals",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
       "source_location": "L25",
-      "id": "requirements_0006_workspace_agent_governance_platform_boundaries_non_goals",
+      "id": "descriptions_ad_0006_workspace_agent_governance_platform_boundaries_non_goals",
       "community": 220,
       "norm_label": "boundaries & non-goals"
     },
     {
       "label": "Quality Attributes",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
       "source_location": "L50",
-      "id": "requirements_0006_workspace_agent_governance_platform_quality_attributes",
+      "id": "descriptions_ad_0006_workspace_agent_governance_platform_quality_attributes",
       "community": 220,
       "norm_label": "quality attributes"
     },
     {
       "label": "System Overview & Context",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
       "source_location": "L59",
-      "id": "requirements_0006_workspace_agent_governance_platform_system_overview_context",
+      "id": "descriptions_ad_0006_workspace_agent_governance_platform_system_overview_context",
       "community": 220,
       "norm_label": "system overview & context"
     },
     {
       "label": "Data Architecture",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
       "source_location": "L71",
-      "id": "requirements_0006_workspace_agent_governance_platform_data_architecture",
+      "id": "descriptions_ad_0006_workspace_agent_governance_platform_data_architecture",
       "community": 220,
       "norm_label": "data architecture"
     },
     {
       "label": "Infrastructure & Deployment",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
       "source_location": "L86",
-      "id": "requirements_0006_workspace_agent_governance_platform_infrastructure_deployment",
+      "id": "descriptions_ad_0006_workspace_agent_governance_platform_infrastructure_deployment",
       "community": 220,
       "norm_label": "infrastructure & deployment"
     },
     {
-      "label": "AI Agent Architecture Requirements (If Applicable)",
+      "label": "AI Agent Architecture Descriptions (If Applicable)",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
       "source_location": "L99",
-      "id": "requirements_0006_workspace_agent_governance_platform_ai_agent_architecture_requirements_if_applicable",
+      "id": "descriptions_ad_0006_workspace_agent_governance_platform_ai_agent_architecture_requirements_if_applicable",
       "community": 220,
       "norm_label": "ai agent architecture requirements (if applicable)"
     },
     {
       "label": "Related Documents",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
       "source_location": "L115",
-      "id": "requirements_0006_workspace_agent_governance_platform_related_documents",
+      "id": "descriptions_ad_0006_workspace_agent_governance_platform_related_documents",
       "community": 220,
       "norm_label": "related documents"
     },
     {
-      "label": "0007-current-local-gitops-platform.md",
+      "label": "ad-0007-current-local-gitops-platform.md",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md",
       "source_location": "L1",
-      "id": "requirements_0007_current_local_gitops_platform",
+      "id": "descriptions_ad_0007_current_local_gitops_platform",
       "community": 221,
       "norm_label": "0007-current-local-gitops-platform.md"
     },
     {
-      "label": "Current Local GitOps Platform Architecture Reference Document (ARD)",
+      "label": "Current Local GitOps Platform Architecture Description (AD)",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md",
       "source_location": "L9",
-      "id": "requirements_0007_current_local_gitops_platform_current_local_gitops_platform_architecture_reference_document_ard",
+      "id": "descriptions_ad_0007_current_local_gitops_platform_current_local_gitops_platform_architecture_description_ard",
       "community": 221,
-      "norm_label": "current local gitops platform architecture reference document (ard)"
+      "norm_label": "current local gitops platform architecture description (ard)"
     },
     {
       "label": "Overview (KR)",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md",
       "source_location": "L11",
-      "id": "requirements_0007_current_local_gitops_platform_overview_kr",
+      "id": "descriptions_ad_0007_current_local_gitops_platform_overview_kr",
       "community": 221,
       "norm_label": "overview (kr)"
     },
     {
       "label": "Summary",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md",
       "source_location": "L16",
-      "id": "requirements_0007_current_local_gitops_platform_summary",
+      "id": "descriptions_ad_0007_current_local_gitops_platform_summary",
       "community": 221,
       "norm_label": "summary"
     },
     {
       "label": "Boundaries & Non-goals",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md",
       "source_location": "L21",
-      "id": "requirements_0007_current_local_gitops_platform_boundaries_non_goals",
+      "id": "descriptions_ad_0007_current_local_gitops_platform_boundaries_non_goals",
       "community": 221,
       "norm_label": "boundaries & non-goals"
     },
     {
       "label": "Quality Attributes",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md",
       "source_location": "L40",
-      "id": "requirements_0007_current_local_gitops_platform_quality_attributes",
+      "id": "descriptions_ad_0007_current_local_gitops_platform_quality_attributes",
       "community": 221,
       "norm_label": "quality attributes"
     },
     {
       "label": "System Overview & Context",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md",
       "source_location": "L49",
-      "id": "requirements_0007_current_local_gitops_platform_system_overview_context",
+      "id": "descriptions_ad_0007_current_local_gitops_platform_system_overview_context",
       "community": 221,
       "norm_label": "system overview & context"
     },
     {
       "label": "Data Architecture",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md",
       "source_location": "L55",
-      "id": "requirements_0007_current_local_gitops_platform_data_architecture",
+      "id": "descriptions_ad_0007_current_local_gitops_platform_data_architecture",
       "community": 221,
       "norm_label": "data architecture"
     },
     {
       "label": "Infrastructure & Deployment",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md",
       "source_location": "L68",
-      "id": "requirements_0007_current_local_gitops_platform_infrastructure_deployment",
+      "id": "descriptions_ad_0007_current_local_gitops_platform_infrastructure_deployment",
       "community": 221,
       "norm_label": "infrastructure & deployment"
     },
     {
-      "label": "AI Agent Architecture Requirements (If Applicable)",
+      "label": "AI Agent Architecture Descriptions (If Applicable)",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md",
       "source_location": "L82",
-      "id": "requirements_0007_current_local_gitops_platform_ai_agent_architecture_requirements_if_applicable",
+      "id": "descriptions_ad_0007_current_local_gitops_platform_ai_agent_architecture_requirements_if_applicable",
       "community": 221,
       "norm_label": "ai agent architecture requirements (if applicable)"
     },
     {
       "label": "Related Documents",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md",
       "source_location": "L90",
-      "id": "requirements_0007_current_local_gitops_platform_related_documents",
+      "id": "descriptions_ad_0007_current_local_gitops_platform_related_documents",
       "community": 221,
       "norm_label": "related documents"
     },
     {
       "label": "README.md",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": "L1",
       "id": "requirements_readme",
       "community": 193,
       "norm_label": "readme.md"
     },
     {
-      "label": "02.architecture/requirements (ARD)",
+      "label": "02.architecture/descriptions (AD)",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": "L1",
       "id": "requirements_readme_02_architecture_requirements_ard",
       "community": 193,
-      "norm_label": "02.architecture/requirements (ard)"
+      "norm_label": "02.architecture/descriptions (ard)"
     },
     {
       "label": "Overview",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": "L8",
       "id": "requirements_readme_overview",
       "community": 193,
@@ -11139,7 +11139,7 @@
     {
       "label": "Audience",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": "L16",
       "id": "requirements_readme_audience",
       "community": 193,
@@ -11148,7 +11148,7 @@
     {
       "label": "Scope",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": "L25",
       "id": "requirements_readme_scope",
       "community": 193,
@@ -11157,7 +11157,7 @@
     {
       "label": "In Scope",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": "L27",
       "id": "requirements_readme_in_scope",
       "community": 193,
@@ -11166,7 +11166,7 @@
     {
       "label": "Out of Scope",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": "L33",
       "id": "requirements_readme_out_of_scope",
       "community": 193,
@@ -11175,7 +11175,7 @@
     {
       "label": "Structure",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": "L39",
       "id": "requirements_readme_structure",
       "community": 193,
@@ -11184,7 +11184,7 @@
     {
       "label": "How to Work in This Area",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": "L50",
       "id": "requirements_readme_how_to_work_in_this_area",
       "community": 193,
@@ -11193,7 +11193,7 @@
     {
       "label": "Link Basis",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": "L58",
       "id": "requirements_readme_link_basis",
       "community": 193,
@@ -11202,7 +11202,7 @@
     {
       "label": "Document Index",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": "L67",
       "id": "requirements_readme_document_index",
       "community": 193,
@@ -11211,7 +11211,7 @@
     {
       "label": "Related Documents",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": "L76",
       "id": "requirements_readme_related_documents",
       "community": 193,
@@ -17689,7 +17689,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0006-argocd-prometheus-grafana-guide.md",
+      "label": "ad-0006-argocd-prometheus-grafana-guide.md",
       "file_type": "document",
       "source_file": "docs/05.operations/guides/0006-argocd-prometheus-grafana-guide.md",
       "source_location": "L1",
@@ -17833,7 +17833,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0007-k8s-observability-bootstrap-guide.md",
+      "label": "ad-0007-k8s-observability-bootstrap-guide.md",
       "file_type": "document",
       "source_file": "docs/05.operations/guides/0007-k8s-observability-bootstrap-guide.md",
       "source_location": "L1",
@@ -17986,7 +17986,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0008-github-app-gitops-onboarding-guide.md",
+      "label": "ad-0008-github-app-gitops-onboarding-guide.md",
       "file_type": "document",
       "source_file": "docs/05.operations/guides/0008-github-app-gitops-onboarding-guide.md",
       "source_location": "L1",
@@ -18310,7 +18310,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0009-llm-wiki-curation-guide.md",
+      "label": "ad-0009-llm-wiki-curation-guide.md",
       "file_type": "document",
       "source_file": "docs/05.operations/guides/0009-llm-wiki-curation-guide.md",
       "source_location": "L1",
@@ -18400,7 +18400,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0010-ci-cd-qa-reference-guide.md",
+      "label": "ad-0010-ci-cd-qa-reference-guide.md",
       "file_type": "document",
       "source_file": "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md",
       "source_location": "L1",
@@ -19237,7 +19237,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0004-rollouts-notifications-headlamp-policy.md",
+      "label": "ad-0004-rollouts-notifications-headlamp-policy.md",
       "file_type": "document",
       "source_file": "docs/05.operations/policies/0004-rollouts-notifications-headlamp-policy.md",
       "source_location": "L1",
@@ -19372,7 +19372,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0005-observability-platform-operations-policy.md",
+      "label": "ad-0005-observability-platform-operations-policy.md",
       "file_type": "document",
       "source_file": "docs/05.operations/policies/0005-observability-platform-operations-policy.md",
       "source_location": "L1",
@@ -19507,7 +19507,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0006-k8s-observability-operations-policy.md",
+      "label": "ad-0006-k8s-observability-operations-policy.md",
       "file_type": "document",
       "source_file": "docs/05.operations/policies/0006-k8s-observability-operations-policy.md",
       "source_location": "L1",
@@ -19651,7 +19651,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0007-app-gitops-onboarding-policy.md",
+      "label": "ad-0007-app-gitops-onboarding-policy.md",
       "file_type": "document",
       "source_file": "docs/05.operations/policies/0007-app-gitops-onboarding-policy.md",
       "source_location": "L1",
@@ -20551,7 +20551,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0004-rollouts-notifications-headlamp-runbook.md",
+      "label": "ad-0004-rollouts-notifications-headlamp-runbook.md",
       "file_type": "document",
       "source_file": "docs/05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md",
       "source_location": "L1",
@@ -20758,7 +20758,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0007-kiali-observability-connectivity-runbook.md",
+      "label": "ad-0007-kiali-observability-connectivity-runbook.md",
       "file_type": "document",
       "source_file": "docs/05.operations/runbooks/0007-kiali-observability-connectivity-runbook.md",
       "source_location": "L1",
@@ -21109,7 +21109,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0008-argocd-metrics-prometheus-runbook.md",
+      "label": "ad-0008-argocd-metrics-prometheus-runbook.md",
       "file_type": "document",
       "source_file": "docs/05.operations/runbooks/0008-argocd-metrics-prometheus-runbook.md",
       "source_location": "L1",
@@ -21361,7 +21361,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0009-k8s-observability-runbook.md",
+      "label": "ad-0009-k8s-observability-runbook.md",
       "file_type": "document",
       "source_file": "docs/05.operations/runbooks/0009-k8s-observability-runbook.md",
       "source_location": "L1",
@@ -21577,7 +21577,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0010-github-app-gitops-onboarding-runbook.md",
+      "label": "ad-0010-github-app-gitops-onboarding-runbook.md",
       "file_type": "document",
       "source_file": "docs/05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md",
       "source_location": "L1",
@@ -21847,7 +21847,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0011-reference-maintenance-runbook.md",
+      "label": "ad-0011-reference-maintenance-runbook.md",
       "file_type": "document",
       "source_file": "docs/05.operations/runbooks/0011-reference-maintenance-runbook.md",
       "source_location": "L1",
@@ -23530,7 +23530,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0004-external-services-endpoints-and-valkey-backend.md",
+      "label": "ad-0004-external-services-endpoints-and-valkey-backend.md",
       "file_type": "document",
       "source_file": "docs/98.archive/02.architecture/decisions/0004-external-services-endpoints-and-valkey-backend.md",
       "source_location": "L1",
@@ -23611,7 +23611,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0005-wsl2-ha-baseline-and-external-endpoint-contract.md",
+      "label": "ad-0005-wsl2-ha-baseline-and-external-endpoint-contract.md",
       "file_type": "document",
       "source_file": "docs/98.archive/02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md",
       "source_location": "L1",
@@ -23692,7 +23692,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0007-kubernetes-dashboard-v3.md",
+      "label": "ad-0007-kubernetes-dashboard-v3.md",
       "file_type": "document",
       "source_file": "docs/98.archive/02.architecture/decisions/0007-kubernetes-dashboard-v3.md",
       "source_location": "L1",
@@ -23773,7 +23773,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0010-headlamp-replaces-dashboard.md",
+      "label": "ad-0010-headlamp-replaces-dashboard.md",
       "file_type": "document",
       "source_file": "docs/98.archive/02.architecture/decisions/0010-headlamp-replaces-dashboard.md",
       "source_location": "L1",
@@ -23856,25 +23856,25 @@
     {
       "label": "0001-wsl-k3d-argocd-platform.md",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": "L1",
       "id": "requirements_0001_wsl_k3d_argocd_platform",
       "community": 263,
       "norm_label": "0001-wsl-k3d-argocd-platform.md"
     },
     {
-      "label": "Archive Tombstone: WSL k3d/k3s ArgoCD Platform Architecture Reference Document",
+      "label": "Archive Tombstone: WSL k3d/k3s ArgoCD Platform Architecture Description",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": "L9",
-      "id": "requirements_0001_wsl_k3d_argocd_platform_archive_tombstone_wsl_k3d_k3s_argocd_platform_architecture_reference_document",
+      "id": "requirements_0001_wsl_k3d_argocd_platform_archive_tombstone_wsl_k3d_k3s_argocd_platform_architecture_description",
       "community": 263,
-      "norm_label": "archive tombstone: wsl k3d/k3s argocd platform architecture reference document"
+      "norm_label": "archive tombstone: wsl k3d/k3s argocd platform architecture description"
     },
     {
       "label": "Overview (KR)",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": "L11",
       "id": "requirements_0001_wsl_k3d_argocd_platform_overview_kr",
       "community": 263,
@@ -23883,7 +23883,7 @@
     {
       "label": "Original Document",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": "L16",
       "id": "requirements_0001_wsl_k3d_argocd_platform_original_document",
       "community": 263,
@@ -23892,7 +23892,7 @@
     {
       "label": "Archive Decision",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": "L22",
       "id": "requirements_0001_wsl_k3d_argocd_platform_archive_decision",
       "community": 263,
@@ -23901,7 +23901,7 @@
     {
       "label": "Current Replacement",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": "L28",
       "id": "requirements_0001_wsl_k3d_argocd_platform_current_replacement",
       "community": 263,
@@ -23910,7 +23910,7 @@
     {
       "label": "Current Implementation Evidence",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": "L33",
       "id": "requirements_0001_wsl_k3d_argocd_platform_current_implementation_evidence",
       "community": 263,
@@ -23919,7 +23919,7 @@
     {
       "label": "Archive Index",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": "L40",
       "id": "requirements_0001_wsl_k3d_argocd_platform_archive_index",
       "community": 263,
@@ -23928,7 +23928,7 @@
     {
       "label": "Related Documents",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": "L44",
       "id": "requirements_0001_wsl_k3d_argocd_platform_related_documents",
       "community": 263,
@@ -23937,25 +23937,25 @@
     {
       "label": "0002-wsl2-k3d-argocd-ha-platform.md",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": "L1",
       "id": "requirements_0002_wsl2_k3d_argocd_ha_platform",
       "community": 264,
       "norm_label": "0002-wsl2-k3d-argocd-ha-platform.md"
     },
     {
-      "label": "Archive Tombstone: WSL2 k3d/k3s ArgoCD HA Platform Architecture Reference Document",
+      "label": "Archive Tombstone: WSL2 k3d/k3s ArgoCD HA Platform Architecture Description",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": "L9",
-      "id": "requirements_0002_wsl2_k3d_argocd_ha_platform_archive_tombstone_wsl2_k3d_k3s_argocd_ha_platform_architecture_reference_document",
+      "id": "requirements_0002_wsl2_k3d_argocd_ha_platform_archive_tombstone_wsl2_k3d_k3s_argocd_ha_platform_architecture_description",
       "community": 264,
-      "norm_label": "archive tombstone: wsl2 k3d/k3s argocd ha platform architecture reference document"
+      "norm_label": "archive tombstone: wsl2 k3d/k3s argocd ha platform architecture description"
     },
     {
       "label": "Overview (KR)",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": "L11",
       "id": "requirements_0002_wsl2_k3d_argocd_ha_platform_overview_kr",
       "community": 264,
@@ -23964,7 +23964,7 @@
     {
       "label": "Original Document",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": "L16",
       "id": "requirements_0002_wsl2_k3d_argocd_ha_platform_original_document",
       "community": 264,
@@ -23973,7 +23973,7 @@
     {
       "label": "Archive Decision",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": "L22",
       "id": "requirements_0002_wsl2_k3d_argocd_ha_platform_archive_decision",
       "community": 264,
@@ -23982,7 +23982,7 @@
     {
       "label": "Current Replacement",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": "L28",
       "id": "requirements_0002_wsl2_k3d_argocd_ha_platform_current_replacement",
       "community": 264,
@@ -23991,7 +23991,7 @@
     {
       "label": "Current Implementation Evidence",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": "L33",
       "id": "requirements_0002_wsl2_k3d_argocd_ha_platform_current_implementation_evidence",
       "community": 264,
@@ -24000,7 +24000,7 @@
     {
       "label": "Archive Index",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": "L40",
       "id": "requirements_0002_wsl2_k3d_argocd_ha_platform_archive_index",
       "community": 264,
@@ -24009,7 +24009,7 @@
     {
       "label": "Related Documents",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": "L44",
       "id": "requirements_0002_wsl2_k3d_argocd_ha_platform_related_documents",
       "community": 264,
@@ -24018,25 +24018,25 @@
     {
       "label": "0003-platform-expansion-mesh-dashboard.md",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": "L1",
       "id": "requirements_0003_platform_expansion_mesh_dashboard",
       "community": 265,
       "norm_label": "0003-platform-expansion-mesh-dashboard.md"
     },
     {
-      "label": "Archive Tombstone: Platform Expansion Mesh Dashboard Architecture Reference Document",
+      "label": "Archive Tombstone: Platform Expansion Mesh Dashboard Architecture Description",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": "L9",
-      "id": "requirements_0003_platform_expansion_mesh_dashboard_archive_tombstone_platform_expansion_mesh_dashboard_architecture_reference_document",
+      "id": "requirements_0003_platform_expansion_mesh_dashboard_archive_tombstone_platform_expansion_mesh_dashboard_architecture_description",
       "community": 265,
-      "norm_label": "archive tombstone: platform expansion mesh dashboard architecture reference document"
+      "norm_label": "archive tombstone: platform expansion mesh dashboard architecture description"
     },
     {
       "label": "Overview (KR)",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": "L11",
       "id": "requirements_0003_platform_expansion_mesh_dashboard_overview_kr",
       "community": 265,
@@ -24045,7 +24045,7 @@
     {
       "label": "Original Document",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": "L16",
       "id": "requirements_0003_platform_expansion_mesh_dashboard_original_document",
       "community": 265,
@@ -24054,7 +24054,7 @@
     {
       "label": "Archive Decision",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": "L22",
       "id": "requirements_0003_platform_expansion_mesh_dashboard_archive_decision",
       "community": 265,
@@ -24063,7 +24063,7 @@
     {
       "label": "Current Replacement",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": "L28",
       "id": "requirements_0003_platform_expansion_mesh_dashboard_current_replacement",
       "community": 265,
@@ -24072,7 +24072,7 @@
     {
       "label": "Current Implementation Evidence",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": "L33",
       "id": "requirements_0003_platform_expansion_mesh_dashboard_current_implementation_evidence",
       "community": 265,
@@ -24081,7 +24081,7 @@
     {
       "label": "Archive Index",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": "L40",
       "id": "requirements_0003_platform_expansion_mesh_dashboard_archive_index",
       "community": 265,
@@ -24090,7 +24090,7 @@
     {
       "label": "Related Documents",
       "file_type": "document",
-      "source_file": "docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": "L44",
       "id": "requirements_0003_platform_expansion_mesh_dashboard_related_documents",
       "community": 265,
@@ -25555,7 +25555,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0004-headlamp-auth-oidc-guide.md",
+      "label": "ad-0004-headlamp-auth-oidc-guide.md",
       "file_type": "document",
       "source_file": "docs/98.archive/05.operations/guides/0004-headlamp-auth-oidc-guide.md",
       "source_location": "L1",
@@ -25636,7 +25636,7 @@
       "norm_label": "related documents"
     },
     {
-      "label": "0005-headlamp-keycloak-runbook.md",
+      "label": "ad-0005-headlamp-keycloak-runbook.md",
       "file_type": "document",
       "source_file": "docs/98.archive/05.operations/runbooks/0005-headlamp-keycloak-runbook.md",
       "source_location": "L1",
@@ -26284,18 +26284,18 @@
       "norm_label": "related documents"
     },
     {
-      "label": "api-spec.template.md",
+      "label": "interface.template.md",
       "file_type": "document",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L1",
       "id": "99_templates_api_spec_template",
       "community": 98,
-      "norm_label": "api-spec.template.md"
+      "norm_label": "interface.template.md"
     },
     {
       "label": "[API Name] Specification",
       "file_type": "document",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L11",
       "id": "99_templates_api_spec_template_api_name_specification",
       "community": 98,
@@ -26304,7 +26304,7 @@
     {
       "label": "Overview (KR)",
       "file_type": "document",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L25",
       "id": "99_templates_api_spec_template_overview_kr",
       "community": 98,
@@ -26313,7 +26313,7 @@
     {
       "label": "Parent Spec",
       "file_type": "document",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L29",
       "id": "99_templates_api_spec_template_parent_spec",
       "community": 98,
@@ -26322,7 +26322,7 @@
     {
       "label": "Scope & Non-goals",
       "file_type": "document",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L33",
       "id": "99_templates_api_spec_template_scope_non_goals",
       "community": 98,
@@ -26331,7 +26331,7 @@
     {
       "label": "API Style",
       "file_type": "document",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L39",
       "id": "99_templates_api_spec_template_api_style",
       "community": 98,
@@ -26340,7 +26340,7 @@
     {
       "label": "Authentication & Authorization",
       "file_type": "document",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L45",
       "id": "99_templates_api_spec_template_authentication_authorization",
       "community": 98,
@@ -26349,7 +26349,7 @@
     {
       "label": "Endpoint / Operation Catalog",
       "file_type": "document",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L51",
       "id": "99_templates_api_spec_template_endpoint_operation_catalog",
       "community": 98,
@@ -26358,7 +26358,7 @@
     {
       "label": "Request / Response Schemas",
       "file_type": "document",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L57",
       "id": "99_templates_api_spec_template_request_response_schemas",
       "community": 98,
@@ -26367,7 +26367,7 @@
     {
       "label": "Request",
       "file_type": "document",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L59",
       "id": "99_templates_api_spec_template_request",
       "community": 98,
@@ -26376,7 +26376,7 @@
     {
       "label": "Response",
       "file_type": "document",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L67",
       "id": "99_templates_api_spec_template_response",
       "community": 98,
@@ -26385,7 +26385,7 @@
     {
       "label": "Error Model",
       "file_type": "document",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L76",
       "id": "99_templates_api_spec_template_error_model",
       "community": 98,
@@ -26394,7 +26394,7 @@
     {
       "label": "Data Contract Compatibility",
       "file_type": "document",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L82",
       "id": "99_templates_api_spec_template_data_contract_compatibility",
       "community": 98,
@@ -26403,7 +26403,7 @@
     {
       "label": "Non-Functional Requirements",
       "file_type": "document",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L88",
       "id": "99_templates_api_spec_template_non_functional_requirements",
       "community": 98,
@@ -26412,7 +26412,7 @@
     {
       "label": "Machine-readable Contract Files",
       "file_type": "document",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L95",
       "id": "99_templates_api_spec_template_machine_readable_contract_files",
       "community": 98,
@@ -26421,7 +26421,7 @@
     {
       "label": "Verification",
       "file_type": "document",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L101",
       "id": "99_templates_api_spec_template_verification",
       "community": 98,
@@ -26430,7 +26430,7 @@
     {
       "label": "Related Documents",
       "file_type": "document",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L107",
       "id": "99_templates_api_spec_template_related_documents",
       "community": 98,
@@ -26518,27 +26518,27 @@
       "norm_label": "related documents"
     },
     {
-      "label": "ard.template.md",
+      "label": "ad.template.md",
       "file_type": "document",
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": "L1",
       "id": "99_templates_ard_template",
       "community": 206,
-      "norm_label": "ard.template.md"
+      "norm_label": "ad.template.md"
     },
     {
-      "label": "[System or Domain Name] Architecture Reference Document (ARD)",
+      "label": "[System or Domain Name] Architecture Description (AD)",
       "file_type": "document",
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": "L11",
-      "id": "99_templates_ard_template_system_or_domain_name_architecture_reference_document_ard",
+      "id": "99_templates_ard_template_system_or_domain_name_architecture_description_ard",
       "community": 206,
-      "norm_label": "[system or domain name] architecture reference document (ard)"
+      "norm_label": "[system or domain name] architecture description (ard)"
     },
     {
       "label": "Overview (KR)",
       "file_type": "document",
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": "L24",
       "id": "99_templates_ard_template_overview_kr",
       "community": 206,
@@ -26547,7 +26547,7 @@
     {
       "label": "Summary",
       "file_type": "document",
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": "L28",
       "id": "99_templates_ard_template_summary",
       "community": 206,
@@ -26556,7 +26556,7 @@
     {
       "label": "Boundaries & Non-goals",
       "file_type": "document",
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": "L32",
       "id": "99_templates_ard_template_boundaries_non_goals",
       "community": 206,
@@ -26565,7 +26565,7 @@
     {
       "label": "Quality Attributes",
       "file_type": "document",
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": "L39",
       "id": "99_templates_ard_template_quality_attributes",
       "community": 206,
@@ -26574,7 +26574,7 @@
     {
       "label": "System Overview & Context",
       "file_type": "document",
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": "L48",
       "id": "99_templates_ard_template_system_overview_context",
       "community": 206,
@@ -26583,7 +26583,7 @@
     {
       "label": "Data Architecture",
       "file_type": "document",
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": "L52",
       "id": "99_templates_ard_template_data_architecture",
       "community": 206,
@@ -26592,16 +26592,16 @@
     {
       "label": "Infrastructure & Deployment",
       "file_type": "document",
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": "L58",
       "id": "99_templates_ard_template_infrastructure_deployment",
       "community": 206,
       "norm_label": "infrastructure & deployment"
     },
     {
-      "label": "AI Agent Architecture Requirements (If Applicable)",
+      "label": "AI Agent Architecture Descriptions (If Applicable)",
       "file_type": "document",
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": "L64",
       "id": "99_templates_ard_template_ai_agent_architecture_requirements_if_applicable",
       "community": 206,
@@ -26610,7 +26610,7 @@
     {
       "label": "Related Documents",
       "file_type": "document",
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": "L72",
       "id": "99_templates_ard_template_related_documents",
       "community": 206,
@@ -34376,9 +34376,9 @@
       "id": "readme_architecture_decisions"
     },
     {
-      "label": "WSL k3d/k3s ArgoCD Platform ARD",
+      "label": "WSL k3d/k3s ArgoCD Platform AD",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -34389,9 +34389,9 @@
       "id": "0001_wsl_k3d_argocd_platform_ard"
     },
     {
-      "label": "WSL2 k3d/k3s ArgoCD HA Platform ARD",
+      "label": "WSL2 k3d/k3s ArgoCD HA Platform AD",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -34402,9 +34402,9 @@
       "id": "0002_wsl2_k3d_argocd_ha_platform_ard"
     },
     {
-      "label": "Platform Expansion Mesh Dashboard ARD",
+      "label": "Platform Expansion Mesh Dashboard AD",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -34415,9 +34415,9 @@
       "id": "0003_platform_expansion_mesh_dashboard_ard"
     },
     {
-      "label": "Architecture Requirements README",
+      "label": "Architecture Descriptions README",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -34732,7 +34732,7 @@
     {
       "label": "GitOps, Secret, and External Data Planes",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -34745,7 +34745,7 @@
     {
       "label": "CI Control Plane",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -34758,7 +34758,7 @@
     {
       "label": "Access and TLS Contract",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -34771,7 +34771,7 @@
     {
       "label": "TLS, Mesh, and Observability Planes",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -37044,17 +37044,17 @@
       "id": "adr_template_architecture_decision_record"
     },
     {
-      "label": "Architecture Reference Document Template",
+      "label": "Architecture Description Template",
       "file_type": "document",
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
       "author": null,
       "contributor": null,
       "community": 7,
-      "norm_label": "architecture reference document template",
-      "id": "ard_template_architecture_reference_document"
+      "norm_label": "architecture description template",
+      "id": "ard_template_architecture_description"
     },
     {
       "label": "Product Requirements Document",
@@ -37085,7 +37085,7 @@
     {
       "label": "API Specification Template",
       "file_type": "document",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -37412,7 +37412,7 @@
       "id": "spec_template_technical_specification"
     },
     {
-      "label": "PRD and ARD References",
+      "label": "PRD and AD References",
       "file_type": "document",
       "source_file": "docs/99.templates/spec.template.md",
       "source_location": "Rules",
@@ -41978,9 +41978,9 @@
       "id": "rationale_rollouts_argoproj_integration"
     },
     {
-      "label": "Architecture Requirements ARD Stage",
+      "label": "Architecture Descriptions AD Stage",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -42043,9 +42043,9 @@
       "id": "2026_03_28_wsl2_k3d_argocd_ha_platform_plan"
     },
     {
-      "label": "Platform Expansion Mesh Dashboard ARD",
+      "label": "Platform Expansion Mesh Dashboard AD",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -42069,9 +42069,9 @@
       "id": "2026_03_29_platform_expansion_plan"
     },
     {
-      "label": "Argo Rollouts Progressive Delivery ARD",
+      "label": "Argo Rollouts Progressive Delivery AD",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -42095,9 +42095,9 @@
       "id": "2026_05_18_argo_rollouts_progressive_delivery_plan"
     },
     {
-      "label": "Argo Notifications Slack ARD",
+      "label": "Argo Notifications Slack AD",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -42123,7 +42123,7 @@
     {
       "label": "GitOps Platform",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -42136,7 +42136,7 @@
     {
       "label": "ArgoCD App-of-Apps",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -42149,7 +42149,7 @@
     {
       "label": "ESO Vault Secret Plane",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -42162,7 +42162,7 @@
     {
       "label": "External PostgreSQL and Valkey Services",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -42175,7 +42175,7 @@
     {
       "label": "CI Static Gate",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -42201,7 +42201,7 @@
     {
       "label": "cert-manager TLS Plane",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -42214,7 +42214,7 @@
     {
       "label": "Istio Mesh Plane",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -42279,7 +42279,7 @@
     {
       "label": "platform-rollouts ArgoCD Application",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -42331,7 +42331,7 @@
     {
       "label": "ArgoCD Notifications Controller",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -45657,9 +45657,9 @@
       "id": "readme_adr_stage"
     },
     {
-      "label": "ARD-0001 WSL k3d/k3s ArgoCD Platform",
+      "label": "AD-0001 WSL k3d/k3s ArgoCD Platform",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -45672,7 +45672,7 @@
     {
       "label": "WSL k3d/k3s ArgoCD Platform",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -45685,7 +45685,7 @@
     {
       "label": "ArgoCD GitOps Control Plane",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -45698,7 +45698,7 @@
     {
       "label": "ESO and Vault Secret Plane",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -45711,7 +45711,7 @@
     {
       "label": "External PostgreSQL and Valkey Services",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -45722,9 +45722,9 @@
       "id": "0001_wsl_k3d_argocd_platform_external_data_services"
     },
     {
-      "label": "ARD-0002 WSL2 k3d/k3s ArgoCD HA Platform",
+      "label": "AD-0002 WSL2 k3d/k3s ArgoCD HA Platform",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -45737,7 +45737,7 @@
     {
       "label": "WSL2 HA Platform",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -45750,7 +45750,7 @@
     {
       "label": "CI Static Gates",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -45763,7 +45763,7 @@
     {
       "label": "External Traefik to k3d Ingress Access Plane",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -45776,7 +45776,7 @@
     {
       "label": "Namespace Egress Boundaries",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -45787,9 +45787,9 @@
       "id": "0002_wsl2_k3d_argocd_ha_platform_namespace_egress_boundaries"
     },
     {
-      "label": "ARD-0003 Platform Expansion Mesh Dashboard",
+      "label": "AD-0003 Platform Expansion Mesh Dashboard",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -45802,7 +45802,7 @@
     {
       "label": "TLS Plane",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -45815,7 +45815,7 @@
     {
       "label": "Mesh Plane",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -45828,7 +45828,7 @@
     {
       "label": "Observability Access Plane",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -45839,9 +45839,9 @@
       "id": "0003_platform_expansion_mesh_dashboard_observability_access_plane"
     },
     {
-      "label": "Architecture Requirements Stage",
+      "label": "Architecture Descriptions Stage",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -47674,7 +47674,7 @@
     {
       "label": "API Specification Template",
       "file_type": "document",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -47687,7 +47687,7 @@
     {
       "label": "API Contract Compatibility Verification",
       "file_type": "document",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -47698,22 +47698,22 @@
       "id": "api_spec_template_api_contract_compatibility_verification"
     },
     {
-      "label": "Architecture Reference Document Template",
+      "label": "Architecture Description Template",
       "file_type": "document",
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
       "author": null,
       "contributor": null,
       "community": 1,
-      "norm_label": "architecture reference document template",
-      "id": "ard_template_architecture_reference_document_template"
+      "norm_label": "architecture description template",
+      "id": "ard_template_architecture_description_template"
     },
     {
       "label": "Quality Attributes Boundary",
       "file_type": "document",
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -48686,42 +48686,42 @@
       "id": "wsl2_k3d_argocd_ha_platform_prd"
     },
     {
-      "label": "WSL k3d k3s ArgoCD Platform Architecture Reference Document",
+      "label": "WSL k3d k3s ArgoCD Platform Architecture Description",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
       "author": null,
       "contributor": null,
       "community": 36,
-      "norm_label": "wsl k3d k3s argocd platform architecture reference document",
+      "norm_label": "wsl k3d k3s argocd platform architecture description",
       "id": "wsl_k3d_argocd_platform_ard"
     },
     {
-      "label": "WSL2 k3d k3s ArgoCD HA Platform Architecture Reference Document",
+      "label": "WSL2 k3d k3s ArgoCD HA Platform Architecture Description",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
       "author": null,
       "contributor": null,
       "community": 36,
-      "norm_label": "wsl2 k3d k3s argocd ha platform architecture reference document",
+      "norm_label": "wsl2 k3d k3s argocd ha platform architecture description",
       "id": "wsl2_k3d_argocd_ha_platform_ard"
     },
     {
-      "label": "Platform Expansion Mesh Dashboard Architecture Reference Document",
+      "label": "Platform Expansion Mesh Dashboard Architecture Description",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
       "author": null,
       "contributor": null,
       "community": 36,
-      "norm_label": "platform expansion mesh dashboard architecture reference document",
+      "norm_label": "platform expansion mesh dashboard architecture description",
       "id": "platform_expansion_mesh_dashboard_ard"
     },
     {
@@ -48764,9 +48764,9 @@
       "id": "external_service_current_contract"
     },
     {
-      "label": "Architecture Requirements README",
+      "label": "Architecture Descriptions README",
       "file_type": "document",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -64898,407 +64898,407 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": "L9",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0004_argo_rollouts_progressive_delivery",
-      "target": "requirements_0004_argo_rollouts_progressive_delivery_argo_rollouts_progressive_delivery_architecture_reference_document"
+      "source": "descriptions_ad_0004_argo_rollouts_progressive_delivery",
+      "target": "descriptions_ad_0004_argo_rollouts_progressive_delivery_argo_rollouts_progressive_delivery_architecture_description"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": "L90",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0004_argo_rollouts_progressive_delivery_argo_rollouts_progressive_delivery_architecture_reference_document",
-      "target": "requirements_0004_argo_rollouts_progressive_delivery_ai_agent_architecture_requirements_if_applicable"
+      "source": "descriptions_ad_0004_argo_rollouts_progressive_delivery_argo_rollouts_progressive_delivery_architecture_description",
+      "target": "descriptions_ad_0004_argo_rollouts_progressive_delivery_ai_agent_architecture_requirements_if_applicable"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": "L21",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0004_argo_rollouts_progressive_delivery_argo_rollouts_progressive_delivery_architecture_reference_document",
-      "target": "requirements_0004_argo_rollouts_progressive_delivery_boundaries_non_goals"
+      "source": "descriptions_ad_0004_argo_rollouts_progressive_delivery_argo_rollouts_progressive_delivery_architecture_description",
+      "target": "descriptions_ad_0004_argo_rollouts_progressive_delivery_boundaries_non_goals"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": "L60",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0004_argo_rollouts_progressive_delivery_argo_rollouts_progressive_delivery_architecture_reference_document",
-      "target": "requirements_0004_argo_rollouts_progressive_delivery_data_architecture"
+      "source": "descriptions_ad_0004_argo_rollouts_progressive_delivery_argo_rollouts_progressive_delivery_architecture_description",
+      "target": "descriptions_ad_0004_argo_rollouts_progressive_delivery_data_architecture"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": "L74",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0004_argo_rollouts_progressive_delivery_argo_rollouts_progressive_delivery_architecture_reference_document",
-      "target": "requirements_0004_argo_rollouts_progressive_delivery_infrastructure_deployment"
+      "source": "descriptions_ad_0004_argo_rollouts_progressive_delivery_argo_rollouts_progressive_delivery_architecture_description",
+      "target": "descriptions_ad_0004_argo_rollouts_progressive_delivery_infrastructure_deployment"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": "L11",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0004_argo_rollouts_progressive_delivery_argo_rollouts_progressive_delivery_architecture_reference_document",
-      "target": "requirements_0004_argo_rollouts_progressive_delivery_overview_kr"
+      "source": "descriptions_ad_0004_argo_rollouts_progressive_delivery_argo_rollouts_progressive_delivery_architecture_description",
+      "target": "descriptions_ad_0004_argo_rollouts_progressive_delivery_overview_kr"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": "L43",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0004_argo_rollouts_progressive_delivery_argo_rollouts_progressive_delivery_architecture_reference_document",
-      "target": "requirements_0004_argo_rollouts_progressive_delivery_quality_attributes"
+      "source": "descriptions_ad_0004_argo_rollouts_progressive_delivery_argo_rollouts_progressive_delivery_architecture_description",
+      "target": "descriptions_ad_0004_argo_rollouts_progressive_delivery_quality_attributes"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": "L98",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0004_argo_rollouts_progressive_delivery_argo_rollouts_progressive_delivery_architecture_reference_document",
-      "target": "requirements_0004_argo_rollouts_progressive_delivery_related_documents"
+      "source": "descriptions_ad_0004_argo_rollouts_progressive_delivery_argo_rollouts_progressive_delivery_architecture_description",
+      "target": "descriptions_ad_0004_argo_rollouts_progressive_delivery_related_documents"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": "L16",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0004_argo_rollouts_progressive_delivery_argo_rollouts_progressive_delivery_architecture_reference_document",
-      "target": "requirements_0004_argo_rollouts_progressive_delivery_summary"
+      "source": "descriptions_ad_0004_argo_rollouts_progressive_delivery_argo_rollouts_progressive_delivery_architecture_description",
+      "target": "descriptions_ad_0004_argo_rollouts_progressive_delivery_summary"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": "L52",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0004_argo_rollouts_progressive_delivery_argo_rollouts_progressive_delivery_architecture_reference_document",
-      "target": "requirements_0004_argo_rollouts_progressive_delivery_system_overview_context"
+      "source": "descriptions_ad_0004_argo_rollouts_progressive_delivery_argo_rollouts_progressive_delivery_architecture_description",
+      "target": "descriptions_ad_0004_argo_rollouts_progressive_delivery_system_overview_context"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": "L9",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0005_argo_notifications_slack",
-      "target": "requirements_0005_argo_notifications_slack_argo_notifications_slack_architecture_reference_document"
+      "source": "descriptions_ad_0005_argo_notifications_slack",
+      "target": "descriptions_ad_0005_argo_notifications_slack_argo_notifications_slack_architecture_description"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": "L87",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0005_argo_notifications_slack_argo_notifications_slack_architecture_reference_document",
-      "target": "requirements_0005_argo_notifications_slack_ai_agent_architecture_requirements_if_applicable"
+      "source": "descriptions_ad_0005_argo_notifications_slack_argo_notifications_slack_architecture_description",
+      "target": "descriptions_ad_0005_argo_notifications_slack_ai_agent_architecture_requirements_if_applicable"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": "L21",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0005_argo_notifications_slack_argo_notifications_slack_architecture_reference_document",
-      "target": "requirements_0005_argo_notifications_slack_boundaries_non_goals"
+      "source": "descriptions_ad_0005_argo_notifications_slack_argo_notifications_slack_architecture_description",
+      "target": "descriptions_ad_0005_argo_notifications_slack_boundaries_non_goals"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": "L59",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0005_argo_notifications_slack_argo_notifications_slack_architecture_reference_document",
-      "target": "requirements_0005_argo_notifications_slack_data_architecture"
+      "source": "descriptions_ad_0005_argo_notifications_slack_argo_notifications_slack_architecture_description",
+      "target": "descriptions_ad_0005_argo_notifications_slack_data_architecture"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": "L74",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0005_argo_notifications_slack_argo_notifications_slack_architecture_reference_document",
-      "target": "requirements_0005_argo_notifications_slack_infrastructure_deployment"
+      "source": "descriptions_ad_0005_argo_notifications_slack_argo_notifications_slack_architecture_description",
+      "target": "descriptions_ad_0005_argo_notifications_slack_infrastructure_deployment"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": "L11",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0005_argo_notifications_slack_argo_notifications_slack_architecture_reference_document",
-      "target": "requirements_0005_argo_notifications_slack_overview_kr"
+      "source": "descriptions_ad_0005_argo_notifications_slack_argo_notifications_slack_architecture_description",
+      "target": "descriptions_ad_0005_argo_notifications_slack_overview_kr"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": "L42",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0005_argo_notifications_slack_argo_notifications_slack_architecture_reference_document",
-      "target": "requirements_0005_argo_notifications_slack_quality_attributes"
+      "source": "descriptions_ad_0005_argo_notifications_slack_argo_notifications_slack_architecture_description",
+      "target": "descriptions_ad_0005_argo_notifications_slack_quality_attributes"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": "L95",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0005_argo_notifications_slack_argo_notifications_slack_architecture_reference_document",
-      "target": "requirements_0005_argo_notifications_slack_related_documents"
+      "source": "descriptions_ad_0005_argo_notifications_slack_argo_notifications_slack_architecture_description",
+      "target": "descriptions_ad_0005_argo_notifications_slack_related_documents"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": "L16",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0005_argo_notifications_slack_argo_notifications_slack_architecture_reference_document",
-      "target": "requirements_0005_argo_notifications_slack_summary"
+      "source": "descriptions_ad_0005_argo_notifications_slack_argo_notifications_slack_architecture_description",
+      "target": "descriptions_ad_0005_argo_notifications_slack_summary"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": "L51",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0005_argo_notifications_slack_argo_notifications_slack_architecture_reference_document",
-      "target": "requirements_0005_argo_notifications_slack_system_overview_context"
+      "source": "descriptions_ad_0005_argo_notifications_slack_argo_notifications_slack_architecture_description",
+      "target": "descriptions_ad_0005_argo_notifications_slack_system_overview_context"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
       "source_location": "L9",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0006_workspace_agent_governance_platform",
-      "target": "requirements_0006_workspace_agent_governance_platform_workspace_agent_governance_platform_architecture_reference_document_ard"
+      "source": "descriptions_ad_0006_workspace_agent_governance_platform",
+      "target": "descriptions_ad_0006_workspace_agent_governance_platform_workspace_agent_governance_platform_architecture_description_ard"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
       "source_location": "L99",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0006_workspace_agent_governance_platform_workspace_agent_governance_platform_architecture_reference_document_ard",
-      "target": "requirements_0006_workspace_agent_governance_platform_ai_agent_architecture_requirements_if_applicable"
+      "source": "descriptions_ad_0006_workspace_agent_governance_platform_workspace_agent_governance_platform_architecture_description_ard",
+      "target": "descriptions_ad_0006_workspace_agent_governance_platform_ai_agent_architecture_requirements_if_applicable"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
       "source_location": "L25",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0006_workspace_agent_governance_platform_workspace_agent_governance_platform_architecture_reference_document_ard",
-      "target": "requirements_0006_workspace_agent_governance_platform_boundaries_non_goals"
+      "source": "descriptions_ad_0006_workspace_agent_governance_platform_workspace_agent_governance_platform_architecture_description_ard",
+      "target": "descriptions_ad_0006_workspace_agent_governance_platform_boundaries_non_goals"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
       "source_location": "L71",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0006_workspace_agent_governance_platform_workspace_agent_governance_platform_architecture_reference_document_ard",
-      "target": "requirements_0006_workspace_agent_governance_platform_data_architecture"
+      "source": "descriptions_ad_0006_workspace_agent_governance_platform_workspace_agent_governance_platform_architecture_description_ard",
+      "target": "descriptions_ad_0006_workspace_agent_governance_platform_data_architecture"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
       "source_location": "L86",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0006_workspace_agent_governance_platform_workspace_agent_governance_platform_architecture_reference_document_ard",
-      "target": "requirements_0006_workspace_agent_governance_platform_infrastructure_deployment"
+      "source": "descriptions_ad_0006_workspace_agent_governance_platform_workspace_agent_governance_platform_architecture_description_ard",
+      "target": "descriptions_ad_0006_workspace_agent_governance_platform_infrastructure_deployment"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
       "source_location": "L11",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0006_workspace_agent_governance_platform_workspace_agent_governance_platform_architecture_reference_document_ard",
-      "target": "requirements_0006_workspace_agent_governance_platform_overview_kr"
+      "source": "descriptions_ad_0006_workspace_agent_governance_platform_workspace_agent_governance_platform_architecture_description_ard",
+      "target": "descriptions_ad_0006_workspace_agent_governance_platform_overview_kr"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
       "source_location": "L50",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0006_workspace_agent_governance_platform_workspace_agent_governance_platform_architecture_reference_document_ard",
-      "target": "requirements_0006_workspace_agent_governance_platform_quality_attributes"
+      "source": "descriptions_ad_0006_workspace_agent_governance_platform_workspace_agent_governance_platform_architecture_description_ard",
+      "target": "descriptions_ad_0006_workspace_agent_governance_platform_quality_attributes"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
       "source_location": "L115",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0006_workspace_agent_governance_platform_workspace_agent_governance_platform_architecture_reference_document_ard",
-      "target": "requirements_0006_workspace_agent_governance_platform_related_documents"
+      "source": "descriptions_ad_0006_workspace_agent_governance_platform_workspace_agent_governance_platform_architecture_description_ard",
+      "target": "descriptions_ad_0006_workspace_agent_governance_platform_related_documents"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
       "source_location": "L18",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0006_workspace_agent_governance_platform_workspace_agent_governance_platform_architecture_reference_document_ard",
-      "target": "requirements_0006_workspace_agent_governance_platform_summary"
+      "source": "descriptions_ad_0006_workspace_agent_governance_platform_workspace_agent_governance_platform_architecture_description_ard",
+      "target": "descriptions_ad_0006_workspace_agent_governance_platform_summary"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
       "source_location": "L59",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0006_workspace_agent_governance_platform_workspace_agent_governance_platform_architecture_reference_document_ard",
-      "target": "requirements_0006_workspace_agent_governance_platform_system_overview_context"
+      "source": "descriptions_ad_0006_workspace_agent_governance_platform_workspace_agent_governance_platform_architecture_description_ard",
+      "target": "descriptions_ad_0006_workspace_agent_governance_platform_system_overview_context"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md",
       "source_location": "L9",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0007_current_local_gitops_platform",
-      "target": "requirements_0007_current_local_gitops_platform_current_local_gitops_platform_architecture_reference_document_ard"
+      "source": "descriptions_ad_0007_current_local_gitops_platform",
+      "target": "descriptions_ad_0007_current_local_gitops_platform_current_local_gitops_platform_architecture_description_ard"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md",
       "source_location": "L82",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0007_current_local_gitops_platform_current_local_gitops_platform_architecture_reference_document_ard",
-      "target": "requirements_0007_current_local_gitops_platform_ai_agent_architecture_requirements_if_applicable"
+      "source": "descriptions_ad_0007_current_local_gitops_platform_current_local_gitops_platform_architecture_description_ard",
+      "target": "descriptions_ad_0007_current_local_gitops_platform_ai_agent_architecture_requirements_if_applicable"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md",
       "source_location": "L21",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0007_current_local_gitops_platform_current_local_gitops_platform_architecture_reference_document_ard",
-      "target": "requirements_0007_current_local_gitops_platform_boundaries_non_goals"
+      "source": "descriptions_ad_0007_current_local_gitops_platform_current_local_gitops_platform_architecture_description_ard",
+      "target": "descriptions_ad_0007_current_local_gitops_platform_boundaries_non_goals"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md",
       "source_location": "L55",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0007_current_local_gitops_platform_current_local_gitops_platform_architecture_reference_document_ard",
-      "target": "requirements_0007_current_local_gitops_platform_data_architecture"
+      "source": "descriptions_ad_0007_current_local_gitops_platform_current_local_gitops_platform_architecture_description_ard",
+      "target": "descriptions_ad_0007_current_local_gitops_platform_data_architecture"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md",
       "source_location": "L68",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0007_current_local_gitops_platform_current_local_gitops_platform_architecture_reference_document_ard",
-      "target": "requirements_0007_current_local_gitops_platform_infrastructure_deployment"
+      "source": "descriptions_ad_0007_current_local_gitops_platform_current_local_gitops_platform_architecture_description_ard",
+      "target": "descriptions_ad_0007_current_local_gitops_platform_infrastructure_deployment"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md",
       "source_location": "L11",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0007_current_local_gitops_platform_current_local_gitops_platform_architecture_reference_document_ard",
-      "target": "requirements_0007_current_local_gitops_platform_overview_kr"
+      "source": "descriptions_ad_0007_current_local_gitops_platform_current_local_gitops_platform_architecture_description_ard",
+      "target": "descriptions_ad_0007_current_local_gitops_platform_overview_kr"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md",
       "source_location": "L40",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0007_current_local_gitops_platform_current_local_gitops_platform_architecture_reference_document_ard",
-      "target": "requirements_0007_current_local_gitops_platform_quality_attributes"
+      "source": "descriptions_ad_0007_current_local_gitops_platform_current_local_gitops_platform_architecture_description_ard",
+      "target": "descriptions_ad_0007_current_local_gitops_platform_quality_attributes"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md",
       "source_location": "L90",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0007_current_local_gitops_platform_current_local_gitops_platform_architecture_reference_document_ard",
-      "target": "requirements_0007_current_local_gitops_platform_related_documents"
+      "source": "descriptions_ad_0007_current_local_gitops_platform_current_local_gitops_platform_architecture_description_ard",
+      "target": "descriptions_ad_0007_current_local_gitops_platform_related_documents"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md",
       "source_location": "L16",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0007_current_local_gitops_platform_current_local_gitops_platform_architecture_reference_document_ard",
-      "target": "requirements_0007_current_local_gitops_platform_summary"
+      "source": "descriptions_ad_0007_current_local_gitops_platform_current_local_gitops_platform_architecture_description_ard",
+      "target": "descriptions_ad_0007_current_local_gitops_platform_summary"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md",
       "source_location": "L49",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0007_current_local_gitops_platform_current_local_gitops_platform_architecture_reference_document_ard",
-      "target": "requirements_0007_current_local_gitops_platform_system_overview_context"
+      "source": "descriptions_ad_0007_current_local_gitops_platform_current_local_gitops_platform_architecture_description_ard",
+      "target": "descriptions_ad_0007_current_local_gitops_platform_system_overview_context"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": "L1",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -65308,7 +65308,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": "L16",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -65318,7 +65318,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": "L67",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -65328,7 +65328,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": "L50",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -65338,7 +65338,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": "L58",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -65348,7 +65348,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": "L8",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -65358,7 +65358,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": "L76",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -65368,7 +65368,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": "L25",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -65378,7 +65378,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": "L39",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -65388,7 +65388,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": "L27",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -65398,7 +65398,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": "L33",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -65409,7 +65409,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0004_argo_rollouts_progressive_delivery_ard",
@@ -65689,7 +65689,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0005_argo_notifications_slack_ard",
@@ -78638,248 +78638,248 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": "L9",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "requirements_0001_wsl_k3d_argocd_platform",
-      "target": "requirements_0001_wsl_k3d_argocd_platform_archive_tombstone_wsl_k3d_k3s_argocd_platform_architecture_reference_document"
+      "target": "requirements_0001_wsl_k3d_argocd_platform_archive_tombstone_wsl_k3d_k3s_argocd_platform_architecture_description"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": "L22",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0001_wsl_k3d_argocd_platform_archive_tombstone_wsl_k3d_k3s_argocd_platform_architecture_reference_document",
+      "source": "requirements_0001_wsl_k3d_argocd_platform_archive_tombstone_wsl_k3d_k3s_argocd_platform_architecture_description",
       "target": "requirements_0001_wsl_k3d_argocd_platform_archive_decision"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": "L40",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0001_wsl_k3d_argocd_platform_archive_tombstone_wsl_k3d_k3s_argocd_platform_architecture_reference_document",
+      "source": "requirements_0001_wsl_k3d_argocd_platform_archive_tombstone_wsl_k3d_k3s_argocd_platform_architecture_description",
       "target": "requirements_0001_wsl_k3d_argocd_platform_archive_index"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": "L33",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0001_wsl_k3d_argocd_platform_archive_tombstone_wsl_k3d_k3s_argocd_platform_architecture_reference_document",
+      "source": "requirements_0001_wsl_k3d_argocd_platform_archive_tombstone_wsl_k3d_k3s_argocd_platform_architecture_description",
       "target": "requirements_0001_wsl_k3d_argocd_platform_current_implementation_evidence"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": "L28",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0001_wsl_k3d_argocd_platform_archive_tombstone_wsl_k3d_k3s_argocd_platform_architecture_reference_document",
+      "source": "requirements_0001_wsl_k3d_argocd_platform_archive_tombstone_wsl_k3d_k3s_argocd_platform_architecture_description",
       "target": "requirements_0001_wsl_k3d_argocd_platform_current_replacement"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": "L16",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0001_wsl_k3d_argocd_platform_archive_tombstone_wsl_k3d_k3s_argocd_platform_architecture_reference_document",
+      "source": "requirements_0001_wsl_k3d_argocd_platform_archive_tombstone_wsl_k3d_k3s_argocd_platform_architecture_description",
       "target": "requirements_0001_wsl_k3d_argocd_platform_original_document"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": "L11",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0001_wsl_k3d_argocd_platform_archive_tombstone_wsl_k3d_k3s_argocd_platform_architecture_reference_document",
+      "source": "requirements_0001_wsl_k3d_argocd_platform_archive_tombstone_wsl_k3d_k3s_argocd_platform_architecture_description",
       "target": "requirements_0001_wsl_k3d_argocd_platform_overview_kr"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": "L44",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0001_wsl_k3d_argocd_platform_archive_tombstone_wsl_k3d_k3s_argocd_platform_architecture_reference_document",
+      "source": "requirements_0001_wsl_k3d_argocd_platform_archive_tombstone_wsl_k3d_k3s_argocd_platform_architecture_description",
       "target": "requirements_0001_wsl_k3d_argocd_platform_related_documents"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": "L9",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "requirements_0002_wsl2_k3d_argocd_ha_platform",
-      "target": "requirements_0002_wsl2_k3d_argocd_ha_platform_archive_tombstone_wsl2_k3d_k3s_argocd_ha_platform_architecture_reference_document"
+      "target": "requirements_0002_wsl2_k3d_argocd_ha_platform_archive_tombstone_wsl2_k3d_k3s_argocd_ha_platform_architecture_description"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": "L22",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0002_wsl2_k3d_argocd_ha_platform_archive_tombstone_wsl2_k3d_k3s_argocd_ha_platform_architecture_reference_document",
+      "source": "requirements_0002_wsl2_k3d_argocd_ha_platform_archive_tombstone_wsl2_k3d_k3s_argocd_ha_platform_architecture_description",
       "target": "requirements_0002_wsl2_k3d_argocd_ha_platform_archive_decision"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": "L40",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0002_wsl2_k3d_argocd_ha_platform_archive_tombstone_wsl2_k3d_k3s_argocd_ha_platform_architecture_reference_document",
+      "source": "requirements_0002_wsl2_k3d_argocd_ha_platform_archive_tombstone_wsl2_k3d_k3s_argocd_ha_platform_architecture_description",
       "target": "requirements_0002_wsl2_k3d_argocd_ha_platform_archive_index"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": "L33",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0002_wsl2_k3d_argocd_ha_platform_archive_tombstone_wsl2_k3d_k3s_argocd_ha_platform_architecture_reference_document",
+      "source": "requirements_0002_wsl2_k3d_argocd_ha_platform_archive_tombstone_wsl2_k3d_k3s_argocd_ha_platform_architecture_description",
       "target": "requirements_0002_wsl2_k3d_argocd_ha_platform_current_implementation_evidence"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": "L28",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0002_wsl2_k3d_argocd_ha_platform_archive_tombstone_wsl2_k3d_k3s_argocd_ha_platform_architecture_reference_document",
+      "source": "requirements_0002_wsl2_k3d_argocd_ha_platform_archive_tombstone_wsl2_k3d_k3s_argocd_ha_platform_architecture_description",
       "target": "requirements_0002_wsl2_k3d_argocd_ha_platform_current_replacement"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": "L16",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0002_wsl2_k3d_argocd_ha_platform_archive_tombstone_wsl2_k3d_k3s_argocd_ha_platform_architecture_reference_document",
+      "source": "requirements_0002_wsl2_k3d_argocd_ha_platform_archive_tombstone_wsl2_k3d_k3s_argocd_ha_platform_architecture_description",
       "target": "requirements_0002_wsl2_k3d_argocd_ha_platform_original_document"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": "L11",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0002_wsl2_k3d_argocd_ha_platform_archive_tombstone_wsl2_k3d_k3s_argocd_ha_platform_architecture_reference_document",
+      "source": "requirements_0002_wsl2_k3d_argocd_ha_platform_archive_tombstone_wsl2_k3d_k3s_argocd_ha_platform_architecture_description",
       "target": "requirements_0002_wsl2_k3d_argocd_ha_platform_overview_kr"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": "L44",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0002_wsl2_k3d_argocd_ha_platform_archive_tombstone_wsl2_k3d_k3s_argocd_ha_platform_architecture_reference_document",
+      "source": "requirements_0002_wsl2_k3d_argocd_ha_platform_archive_tombstone_wsl2_k3d_k3s_argocd_ha_platform_architecture_description",
       "target": "requirements_0002_wsl2_k3d_argocd_ha_platform_related_documents"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": "L9",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "requirements_0003_platform_expansion_mesh_dashboard",
-      "target": "requirements_0003_platform_expansion_mesh_dashboard_archive_tombstone_platform_expansion_mesh_dashboard_architecture_reference_document"
+      "target": "requirements_0003_platform_expansion_mesh_dashboard_archive_tombstone_platform_expansion_mesh_dashboard_architecture_description"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": "L22",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0003_platform_expansion_mesh_dashboard_archive_tombstone_platform_expansion_mesh_dashboard_architecture_reference_document",
+      "source": "requirements_0003_platform_expansion_mesh_dashboard_archive_tombstone_platform_expansion_mesh_dashboard_architecture_description",
       "target": "requirements_0003_platform_expansion_mesh_dashboard_archive_decision"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": "L40",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0003_platform_expansion_mesh_dashboard_archive_tombstone_platform_expansion_mesh_dashboard_architecture_reference_document",
+      "source": "requirements_0003_platform_expansion_mesh_dashboard_archive_tombstone_platform_expansion_mesh_dashboard_architecture_description",
       "target": "requirements_0003_platform_expansion_mesh_dashboard_archive_index"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": "L33",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0003_platform_expansion_mesh_dashboard_archive_tombstone_platform_expansion_mesh_dashboard_architecture_reference_document",
+      "source": "requirements_0003_platform_expansion_mesh_dashboard_archive_tombstone_platform_expansion_mesh_dashboard_architecture_description",
       "target": "requirements_0003_platform_expansion_mesh_dashboard_current_implementation_evidence"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": "L28",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0003_platform_expansion_mesh_dashboard_archive_tombstone_platform_expansion_mesh_dashboard_architecture_reference_document",
+      "source": "requirements_0003_platform_expansion_mesh_dashboard_archive_tombstone_platform_expansion_mesh_dashboard_architecture_description",
       "target": "requirements_0003_platform_expansion_mesh_dashboard_current_replacement"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": "L16",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0003_platform_expansion_mesh_dashboard_archive_tombstone_platform_expansion_mesh_dashboard_architecture_reference_document",
+      "source": "requirements_0003_platform_expansion_mesh_dashboard_archive_tombstone_platform_expansion_mesh_dashboard_architecture_description",
       "target": "requirements_0003_platform_expansion_mesh_dashboard_original_document"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": "L11",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0003_platform_expansion_mesh_dashboard_archive_tombstone_platform_expansion_mesh_dashboard_architecture_reference_document",
+      "source": "requirements_0003_platform_expansion_mesh_dashboard_archive_tombstone_platform_expansion_mesh_dashboard_architecture_description",
       "target": "requirements_0003_platform_expansion_mesh_dashboard_overview_kr"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/98.archive/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": "L44",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "requirements_0003_platform_expansion_mesh_dashboard_archive_tombstone_platform_expansion_mesh_dashboard_architecture_reference_document",
+      "source": "requirements_0003_platform_expansion_mesh_dashboard_archive_tombstone_platform_expansion_mesh_dashboard_architecture_description",
       "target": "requirements_0003_platform_expansion_mesh_dashboard_related_documents"
     },
     {
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0001_wsl_k3d_argocd_platform_ard",
@@ -79019,7 +79019,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0002_wsl2_k3d_argocd_ha_platform_ard",
@@ -79259,7 +79259,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "weight": 1.0,
       "source": "003_platform_expansion_spec",
@@ -81408,7 +81408,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L11",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -81418,7 +81418,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L39",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -81428,7 +81428,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L45",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -81438,7 +81438,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L82",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -81448,7 +81448,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L51",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -81458,7 +81458,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L76",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -81468,7 +81468,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L95",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -81478,7 +81478,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L88",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -81488,7 +81488,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L25",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -81498,7 +81498,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L29",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -81508,7 +81508,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L107",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -81518,7 +81518,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L57",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -81528,7 +81528,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L33",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -81538,7 +81538,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L101",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -81548,7 +81548,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L59",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -81558,7 +81558,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": "L67",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -81648,101 +81648,101 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": "L11",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "99_templates_ard_template",
-      "target": "99_templates_ard_template_system_or_domain_name_architecture_reference_document_ard"
+      "target": "99_templates_ard_template_system_or_domain_name_architecture_description_ard"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": "L64",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "99_templates_ard_template_system_or_domain_name_architecture_reference_document_ard",
+      "source": "99_templates_ard_template_system_or_domain_name_architecture_description_ard",
       "target": "99_templates_ard_template_ai_agent_architecture_requirements_if_applicable"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": "L32",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "99_templates_ard_template_system_or_domain_name_architecture_reference_document_ard",
+      "source": "99_templates_ard_template_system_or_domain_name_architecture_description_ard",
       "target": "99_templates_ard_template_boundaries_non_goals"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": "L52",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "99_templates_ard_template_system_or_domain_name_architecture_reference_document_ard",
+      "source": "99_templates_ard_template_system_or_domain_name_architecture_description_ard",
       "target": "99_templates_ard_template_data_architecture"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": "L58",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "99_templates_ard_template_system_or_domain_name_architecture_reference_document_ard",
+      "source": "99_templates_ard_template_system_or_domain_name_architecture_description_ard",
       "target": "99_templates_ard_template_infrastructure_deployment"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": "L24",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "99_templates_ard_template_system_or_domain_name_architecture_reference_document_ard",
+      "source": "99_templates_ard_template_system_or_domain_name_architecture_description_ard",
       "target": "99_templates_ard_template_overview_kr"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": "L39",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "99_templates_ard_template_system_or_domain_name_architecture_reference_document_ard",
+      "source": "99_templates_ard_template_system_or_domain_name_architecture_description_ard",
       "target": "99_templates_ard_template_quality_attributes"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": "L72",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "99_templates_ard_template_system_or_domain_name_architecture_reference_document_ard",
+      "source": "99_templates_ard_template_system_or_domain_name_architecture_description_ard",
       "target": "99_templates_ard_template_related_documents"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": "L28",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "99_templates_ard_template_system_or_domain_name_architecture_reference_document_ard",
+      "source": "99_templates_ard_template_system_or_domain_name_architecture_description_ard",
       "target": "99_templates_ard_template_summary"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": "L48",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "99_templates_ard_template_system_or_domain_name_architecture_reference_document_ard",
+      "source": "99_templates_ard_template_system_or_domain_name_architecture_description_ard",
       "target": "99_templates_ard_template_system_overview_context"
     },
     {
@@ -86829,7 +86829,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0005_wsl2_ha_baseline_and_external_endpoint_contract",
@@ -86899,7 +86899,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0006_cert_manager_mkcert_ca_issuer",
@@ -86969,7 +86969,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0007_kubernetes_dashboard_v3",
@@ -87009,7 +87009,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0008_istio_install_and_ingress_coexist",
@@ -87069,7 +87069,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0009_kiali_external_observability",
@@ -87109,7 +87109,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0010_headlamp_replaces_dashboard",
@@ -87209,7 +87209,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": null,
       "weight": 1.0,
       "source": "readme_architecture_decisions",
@@ -87229,7 +87229,7 @@
       "relation": "conceptually_related_to",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0001_wsl_k3d_argocd_platform_ard",
@@ -87239,7 +87239,7 @@
       "relation": "conceptually_related_to",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0001_wsl_k3d_argocd_platform_ard",
@@ -87259,7 +87259,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0001_wsl_k3d_argocd_platform_ard",
@@ -87269,7 +87269,7 @@
       "relation": "conceptually_related_to",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0002_wsl2_k3d_argocd_ha_platform_ard",
@@ -87279,7 +87279,7 @@
       "relation": "conceptually_related_to",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0002_wsl2_k3d_argocd_ha_platform_ard",
@@ -87289,7 +87289,7 @@
       "relation": "conceptually_related_to",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0002_wsl2_k3d_argocd_ha_platform_ard",
@@ -87309,7 +87309,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0002_wsl2_k3d_argocd_ha_platform_ard",
@@ -87319,7 +87319,7 @@
       "relation": "conceptually_related_to",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0003_platform_expansion_mesh_dashboard_ard",
@@ -87339,7 +87339,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0003_platform_expansion_mesh_dashboard_ard",
@@ -90253,7 +90253,7 @@
       "source_location": null,
       "weight": 1.0,
       "source": "templates_readme_template_stage",
-      "target": "ard_template_architecture_reference_document"
+      "target": "ard_template_architecture_description"
     },
     {
       "relation": "references",
@@ -90423,7 +90423,7 @@
       "source_location": null,
       "weight": 1.0,
       "source": "adr_template_architecture_decision_record",
-      "target": "ard_template_architecture_reference_document"
+      "target": "ard_template_architecture_description"
     },
     {
       "relation": "references",
@@ -90462,7 +90462,7 @@
       "source_file": "docs/99.templates/agent-design.template.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "ard_template_architecture_reference_document",
+      "source": "ard_template_architecture_description",
       "target": "agent_design_template_agent_design"
     },
     {
@@ -90472,17 +90472,17 @@
       "source_file": "docs/99.templates/plan.template.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "ard_template_architecture_reference_document",
+      "source": "ard_template_architecture_description",
       "target": "plan_template_implementation_plan"
     },
     {
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "ard_template_architecture_reference_document",
+      "source": "ard_template_architecture_description",
       "target": "prd_template_product_requirements_document"
     },
     {
@@ -90492,7 +90492,7 @@
       "source_file": "docs/99.templates/README.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "ard_template_architecture_reference_document",
+      "source": "ard_template_architecture_description",
       "target": "readme_template_folder_mapping"
     },
     {
@@ -90599,7 +90599,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": null,
       "weight": 1.0,
       "source": "plan_template_implementation_plan",
@@ -90649,7 +90649,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": null,
       "weight": 1.0,
       "source": "api_spec_template_api_specification",
@@ -94999,7 +94999,7 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": null,
       "weight": 1.0,
       "source": "readme_ard_stage",
@@ -95009,7 +95009,7 @@
       "relation": "conceptually_related_to",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": null,
       "weight": 1.0,
       "source": "readme_ard_stage",
@@ -95109,7 +95109,7 @@
       "relation": "conceptually_related_to",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0003_platform_expansion_ard",
@@ -95119,7 +95119,7 @@
       "relation": "conceptually_related_to",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0003_platform_expansion_ard",
@@ -95149,7 +95149,7 @@
       "relation": "implements",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0004_argo_rollouts_progressive_delivery_ard",
@@ -95219,7 +95219,7 @@
       "relation": "implements",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0005_argo_notifications_slack_ard",
@@ -95279,7 +95279,7 @@
       "relation": "implements",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0001_gitops_platform",
@@ -95289,7 +95289,7 @@
       "relation": "shares_data_with",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0001_gitops_platform",
@@ -95299,7 +95299,7 @@
       "relation": "shares_data_with",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0001_gitops_platform",
@@ -97849,7 +97849,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0006_cert_manager_mkcert_ca_issuer_tls_automation",
@@ -97979,7 +97979,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0008_istio_install_and_ingress_coexist_istio_default_profile",
@@ -98039,7 +98039,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0009_kiali_external_observability_kiali",
@@ -98109,7 +98109,7 @@
       "relation": "cites",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0010_headlamp_replaces_dashboard_adr_0010",
@@ -98359,7 +98359,7 @@
       "relation": "implements",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0001_wsl_k3d_argocd_platform_ard_0001",
@@ -98369,7 +98369,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0001_wsl_k3d_argocd_platform_ard_0001",
@@ -98389,7 +98389,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0001_wsl_k3d_argocd_platform_wsl_k3d_argocd_platform",
@@ -98399,7 +98399,7 @@
       "relation": "implements",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0001_wsl_k3d_argocd_platform_wsl_k3d_argocd_platform",
@@ -98409,7 +98409,7 @@
       "relation": "implements",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0001_wsl_k3d_argocd_platform_wsl_k3d_argocd_platform",
@@ -98439,7 +98439,7 @@
       "relation": "shares_data_with",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0001_wsl_k3d_argocd_platform_secret_plane",
@@ -98479,7 +98479,7 @@
       "relation": "implements",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0002_wsl2_k3d_argocd_ha_platform_ard_0002",
@@ -98489,7 +98489,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0002_wsl2_k3d_argocd_ha_platform_ard_0002",
@@ -98509,7 +98509,7 @@
       "relation": "implements",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0002_wsl2_k3d_argocd_ha_platform_wsl2_ha_platform",
@@ -98519,7 +98519,7 @@
       "relation": "implements",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0002_wsl2_k3d_argocd_ha_platform_wsl2_ha_platform",
@@ -98529,7 +98529,7 @@
       "relation": "implements",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0002_wsl2_k3d_argocd_ha_platform_wsl2_ha_platform",
@@ -98579,7 +98579,7 @@
       "relation": "implements",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0003_platform_expansion_mesh_dashboard_ard_0003",
@@ -98589,7 +98589,7 @@
       "relation": "implements",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0003_platform_expansion_mesh_dashboard_ard_0003",
@@ -98599,7 +98599,7 @@
       "relation": "implements",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0003_platform_expansion_mesh_dashboard_ard_0003",
@@ -98609,7 +98609,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0003_platform_expansion_mesh_dashboard_ard_0003",
@@ -100133,7 +100133,7 @@
       "source_location": null,
       "weight": 1.0,
       "source": "readme_templates_folder_mapping",
-      "target": "ard_template_architecture_reference_document_template"
+      "target": "ard_template_architecture_description_template"
     },
     {
       "relation": "references",
@@ -100229,7 +100229,7 @@
       "relation": "implements",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/99.templates/api-spec.template.md",
+      "source_file": "docs/99.templates/interface.template.md",
       "source_location": null,
       "weight": 1.0,
       "source": "api_spec_template_api_specification_template",
@@ -100239,10 +100239,10 @@
       "relation": "implements",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/99.templates/ard.template.md",
+      "source_file": "docs/99.templates/ad.template.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "ard_template_architecture_reference_document_template",
+      "source": "ard_template_architecture_description_template",
       "target": "ard_template_quality_attributes_boundary"
     },
     {
@@ -100739,7 +100739,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "weight": 1.0,
       "source": "wsl_k3d_argocd_platform_prd",
@@ -100759,7 +100759,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": null,
       "weight": 1.0,
       "source": "wsl2_k3d_argocd_ha_platform_prd",
@@ -100769,7 +100769,7 @@
       "relation": "semantically_similar_to",
       "confidence": "INFERRED",
       "confidence_score": 0.85,
-      "source_file": "docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0001-wsl-k3d-argocd-platform.md",
       "source_location": null,
       "weight": 1.0,
       "source": "wsl_k3d_argocd_platform_ard",
@@ -100779,7 +100779,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0002-wsl2-k3d-argocd-ha-platform.md",
       "source_location": null,
       "weight": 1.0,
       "source": "wsl2_k3d_argocd_ha_platform_ard",
@@ -100789,7 +100789,7 @@
       "relation": "conceptually_related_to",
       "confidence": "INFERRED",
       "confidence_score": 0.85,
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "weight": 1.0,
       "source": "wsl2_k3d_argocd_ha_platform_ard",
@@ -100799,7 +100799,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
+      "source_file": "docs/02.architecture/descriptions/ad-0003-platform-expansion-mesh-dashboard.md",
       "source_location": null,
       "weight": 1.0,
       "source": "platform_expansion_mesh_dashboard_ard",
@@ -100809,7 +100809,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": null,
       "weight": 1.0,
       "source": "requirements_readme_architecture_requirements",
@@ -100819,7 +100819,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": null,
       "weight": 1.0,
       "source": "requirements_readme_architecture_requirements",
@@ -100829,7 +100829,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": null,
       "weight": 1.0,
       "source": "requirements_readme_architecture_requirements",
@@ -100839,7 +100839,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/02.architecture/requirements/README.md",
+      "source_file": "docs/02.architecture/descriptions/README.md",
       "source_location": null,
       "weight": 1.0,
       "source": "requirements_readme_architecture_requirements",

@@ -496,11 +496,11 @@ Nodes (17): Platform Expansion Bootstrap Runbook, cert-manager Headlamp Istio Ki
 
 ### Community 1 - "App Gitops Onboarding Policy"
 Cohesion: 0.13
-Nodes (16): Architecture Decision Record Template, Decision Context Consequences Alternatives, API Contract Compatibility Verification, API Specification Template, Architecture Reference Document Template, Quality Attributes Boundary, Data Integrity Privacy Migration, Data Model Template (+8 more)
+Nodes (16): Architecture Decision Record Template, Decision Context Consequences Alternatives, API Contract Compatibility Verification, API Specification Template, Architecture Description Template, Quality Attributes Boundary, Data Integrity Privacy Migration, Data Model Template (+8 more)
 
 ### Community 2 - "003 Platform Expansion"
 Cohesion: 0.16
-Nodes (19): ARD-0003 Platform Expansion Mesh Dashboard, TLS Plane, ADR-0006 cert-manager with mkcert CA as ClusterIssuer, ArgoCD Manual TLS Exception, cert-manager, mkcert CA ClusterIssuer, Local TLS Automation, ADR-0007 Kubernetes Dashboard v3 Installation (+11 more)
+Nodes (19): AD-0003 Platform Expansion Mesh Dashboard, TLS Plane, ADR-0006 cert-manager with mkcert CA as ClusterIssuer, ArgoCD Manual TLS Exception, cert-manager, mkcert CA ClusterIssuer, Local TLS Automation, ADR-0007 Kubernetes Dashboard v3 Installation (+11 more)
 
 ### Community 3 - "Agent Framework Contract"
 Cohesion: 0.05
@@ -520,7 +520,7 @@ Nodes (24): Required Documentation Feedback Loop, Incident Document, Postmortem 
 
 ### Community 7 - "Canonical Template Stage"
 Cohesion: 0.17
-Nodes (24): Architecture Decision Record Template, Agent Design Template, Agent Governance Hub, Agent Reference Area README, Feature Agent Design Location, Agent Runtime Truth Locations, API Specification Template, Architecture Reference Document Template (+16 more)
+Nodes (24): Architecture Decision Record Template, Agent Design Template, Agent Governance Hub, Agent Reference Area README, Feature Agent Design Location, Agent Runtime Truth Locations, API Specification Template, Architecture Description Template (+16 more)
 
 ### Community 8 - "Platform Expansion Bootstrap Guide"
 Cohesion: 0.18
@@ -528,7 +528,7 @@ Nodes (13): External Repository Application CR, apps AppProject, apps-generator 
 
 ### Community 9 - "Platform Expansion Specification"
 Cohesion: 0.18
-Nodes (23): Platform Expansion Mesh Dashboard ARD, TLS, Mesh, and Observability Planes, ADR-0006 cert-manager with mkcert CA as ClusterIssuer, cert-manager TLS Automation, mkcert CA ClusterIssuer, ADR-0007 Kubernetes Dashboard v3 Installation, Kubernetes Dashboard v3 Installation, ingress-nginx and Istio Coexistence (+15 more)
+Nodes (23): Platform Expansion Mesh Dashboard AD, TLS, Mesh, and Observability Planes, ADR-0006 cert-manager with mkcert CA as ClusterIssuer, cert-manager TLS Automation, mkcert CA ClusterIssuer, ADR-0007 Kubernetes Dashboard v3 Installation, Kubernetes Dashboard v3 Installation, ingress-nginx and Istio Coexistence (+15 more)
 
 ### Community 10 - "Networkpolicy Allow Kiali Egress To"
 Cohesion: 0.07
@@ -540,7 +540,7 @@ Nodes (45): platform cluster resource whitelist, platform destination allowlist,
 
 ### Community 12 - "Argo Rollouts Progressive Delivery Backfill"
 Cohesion: 0.18
-Nodes (11): Argo Notifications Slack Controls, Argo Notifications Slack ARD, ArgoCD Notifications Controller, Application Slack Opt-in Annotation, argocd-notifications-cm ConfigMap, argocd-notifications-secret ExternalSecret, Slack Token Vault ESO Boundary, Argo Notifications Slack Backfill Plan (+3 more)
+Nodes (11): Argo Notifications Slack Controls, Argo Notifications Slack AD, ArgoCD Notifications Controller, Application Slack Opt-in Annotation, argocd-notifications-cm ConfigMap, argocd-notifications-secret ExternalSecret, Slack Token Vault ESO Boundary, Argo Notifications Slack Backfill Plan (+3 more)
 
 ### Community 13 - "Local Argocd Values"
 Cohesion: 0.15
@@ -560,7 +560,7 @@ Nodes (25): EndpointSlice alloy-external-1, Service alloy-external, Alloy discov
 
 ### Community 17 - "Wsl2 K3D K3S Argocd Ha"
 Cohesion: 0.15
-Nodes (18): Access and TLS Contract, CI Control Plane, CI Static Gate, WSL2 k3d/k3s ArgoCD HA Platform ARD, External Endpoint Contract, ArgoCD Pull Reconciliation Model, AppProject and Vault Minimum Privilege Controls, Static Contract CI Gates (+10 more)
+Nodes (18): Access and TLS Contract, CI Control Plane, CI Static Gate, WSL2 k3d/k3s ArgoCD HA Platform AD, External Endpoint Contract, ArgoCD Pull Reconciliation Model, AppProject and Vault Minimum Privilege Controls, Static Contract CI Gates (+10 more)
 
 ### Community 18 - "Gitops"
 Cohesion: 0.13
@@ -580,7 +580,7 @@ Nodes (29): check-secret-handling.sh, generate-llm-wiki-index.sh, optional kube-
 
 ### Community 22 - "Specs Stage"
 Cohesion: 0.17
-Nodes (18): WSL k3d ArgoCD Platform Plan, WSL2 k3d ArgoCD HA Platform Plan, Template Cross-link Fix Plan, Docs Governance Full AB Hardening Plan, Workspace Purpose Alignment Audit Plan, Workspace Harness Gap Analysis Plan, Architecture Requirements README, WSL k3d ArgoCD Platform Spec (+10 more)
+Nodes (18): WSL k3d ArgoCD Platform Plan, WSL2 k3d ArgoCD HA Platform Plan, Template Cross-link Fix Plan, Docs Governance Full AB Hardening Plan, Workspace Purpose Alignment Audit Plan, Workspace Harness Gap Analysis Plan, Architecture Descriptions README, WSL k3d ArgoCD Platform Spec (+10 more)
 
 ### Community 23 - "Tech Stack Version Inventory"
 Cohesion: 0.07
@@ -636,7 +636,7 @@ Nodes (7): Platform Expansion Bootstrap Guide, cert-manager Headlamp Istio Kiali
 
 ### Community 36 - "Wsl2 K3D K3S Argocd Ha"
 Cohesion: 0.07
-Nodes (30): External Service Current Contract, Platform Expansion Mesh Dashboard Architecture Reference Document, 1. Clone and Setup, 2. Repository Entry Points, 3. External Dependencies Readiness, 4. Bootstrap Local Platform, 5. Verify and Inspect, Audience (+22 more)
+Nodes (30): External Service Current Contract, Platform Expansion Mesh Dashboard Architecture Description, 1. Clone and Setup, 2. Repository Entry Points, 3. External Dependencies Readiness, 4. Bootstrap Local Platform, 5. Verify and Inspect, Audience (+22 more)
 
 ### Community 37 - "Canonical Template Stage"
 Cohesion: 0.57
@@ -700,7 +700,7 @@ Nodes (38): 1-1. 현재 EndpointSlice IP 확인, 1-2. 컨테이너 실제 IP 확
 
 ### Community 73 - "Community 73"
 Cohesion: 0.18
-Nodes (11): 2026-06-01 — Workspace Agent Governance PRD/ARD Traceability Backfill, Evidence, Evidence, Metadata, Metadata, Prevention, Prevention, Problem (+3 more)
+Nodes (11): 2026-06-01 — Workspace Agent Governance PRD/AD Traceability Backfill, Evidence, Evidence, Metadata, Metadata, Prevention, Prevention, Problem (+3 more)
 
 ### Community 74 - "Community 74"
 Cohesion: 0.06
@@ -984,7 +984,7 @@ Nodes (13): Ingress TLS Contract, Traefik Dynamic Routing, External Support Snap
 
 ### Community 144 - "Community 144"
 Cohesion: 0.14
-Nodes (13): `00.agent-governance`, `01.requirements`, `02.architecture/decisions`, `02.architecture/requirements`, `03.specs`, `04.execution/plans`, `04.execution/tasks`, `05.operations/guides` (+5 more)
+Nodes (13): `00.agent-governance`, `01.requirements`, `02.architecture/decisions`, `02.architecture/descriptions`, `03.specs`, `04.execution/plans`, `04.execution/tasks`, `05.operations/guides` (+5 more)
 
 ### Community 145 - "Community 145"
 Cohesion: 0.14
@@ -1180,7 +1180,7 @@ Nodes (12): Agent Metadata, AI Agent Requirements, Agent Operations, Immediate E
 
 ### Community 193 - "Community 193"
 Cohesion: 0.17
-Nodes (11): 02.architecture/requirements (ARD), Audience, Document Index, How to Work in This Area, In Scope, Link Basis, Out of Scope, Overview (+3 more)
+Nodes (11): 02.architecture/descriptions (AD), Audience, Document Index, How to Work in This Area, In Scope, Link Basis, Out of Scope, Overview (+3 more)
 
 ### Community 194 - "Community 194"
 Cohesion: 0.17
@@ -1204,7 +1204,7 @@ Nodes (11): Audience, How to Work in This Area, In Scope, Link Basis, Out of Sco
 
 ### Community 199 - "Community 199"
 Cohesion: 0.27
-Nodes (11): External Traefik to k3d Ingress Access Plane, ARD-0002 WSL2 k3d/k3s ArgoCD HA Platform, CI Static Gates, Namespace Egress Boundaries, WSL2 HA Platform, CI Optimization Phase, WSL2 HA Platform Hardening Plan, AppProject Least Privilege Contract (+3 more)
+Nodes (11): External Traefik to k3d Ingress Access Plane, AD-0002 WSL2 k3d/k3s ArgoCD HA Platform, CI Static Gates, Namespace Egress Boundaries, WSL2 HA Platform, CI Optimization Phase, WSL2 HA Platform Hardening Plan, AppProject Least Privilege Contract (+3 more)
 
 ### Community 200 - "Community 200"
 Cohesion: 0.24
@@ -1232,7 +1232,7 @@ Nodes (11): 2026-06-02 — Current Implementation Docs Alignment And Archive Cle
 
 ### Community 206 - "Community 206"
 Cohesion: 0.18
-Nodes (10): AI Agent Architecture Requirements (If Applicable), Boundaries & Non-goals, Data Architecture, Infrastructure & Deployment, Overview (KR), Quality Attributes, Related Documents, Summary (+2 more)
+Nodes (10): AI Agent Architecture Descriptions (If Applicable), Boundaries & Non-goals, Data Architecture, Infrastructure & Deployment, Overview (KR), Quality Attributes, Related Documents, Summary (+2 more)
 
 ### Community 207 - "Community 207"
 Cohesion: 0.18
@@ -1280,19 +1280,19 @@ Nodes (10): AI Agent Policy Section (If Applicable), Applies To, Controls, Excep
 
 ### Community 218 - "Community 218"
 Cohesion: 0.18
-Nodes (10): AI Agent Architecture Requirements (If Applicable), Argo Rollouts Progressive Delivery Architecture Reference Document, Boundaries & Non-goals, Data Architecture, Infrastructure & Deployment, Overview (KR), Quality Attributes, Related Documents (+2 more)
+Nodes (10): AI Agent Architecture Descriptions (If Applicable), Argo Rollouts Progressive Delivery Architecture Description, Boundaries & Non-goals, Data Architecture, Infrastructure & Deployment, Overview (KR), Quality Attributes, Related Documents (+2 more)
 
 ### Community 219 - "Community 219"
 Cohesion: 0.18
-Nodes (10): AI Agent Architecture Requirements (If Applicable), Argo Notifications Slack Architecture Reference Document, Boundaries & Non-goals, Data Architecture, Infrastructure & Deployment, Overview (KR), Quality Attributes, Related Documents (+2 more)
+Nodes (10): AI Agent Architecture Descriptions (If Applicable), Argo Notifications Slack Architecture Description, Boundaries & Non-goals, Data Architecture, Infrastructure & Deployment, Overview (KR), Quality Attributes, Related Documents (+2 more)
 
 ### Community 220 - "Community 220"
 Cohesion: 0.18
-Nodes (10): AI Agent Architecture Requirements (If Applicable), Boundaries & Non-goals, Data Architecture, Infrastructure & Deployment, Overview (KR), Quality Attributes, Related Documents, Summary (+2 more)
+Nodes (10): AI Agent Architecture Descriptions (If Applicable), Boundaries & Non-goals, Data Architecture, Infrastructure & Deployment, Overview (KR), Quality Attributes, Related Documents, Summary (+2 more)
 
 ### Community 221 - "Community 221"
 Cohesion: 0.18
-Nodes (10): AI Agent Architecture Requirements (If Applicable), Boundaries & Non-goals, Current Local GitOps Platform Architecture Reference Document (ARD), Data Architecture, Infrastructure & Deployment, Overview (KR), Quality Attributes, Related Documents (+2 more)
+Nodes (10): AI Agent Architecture Descriptions (If Applicable), Boundaries & Non-goals, Current Local GitOps Platform Architecture Description (AD), Data Architecture, Infrastructure & Deployment, Overview (KR), Quality Attributes, Related Documents (+2 more)
 
 ### Community 222 - "Community 222"
 Cohesion: 0.18
@@ -1344,7 +1344,7 @@ Nodes (9): Agent-specific Types (If Applicable), Inputs, Overview (KR), Related 
 
 ### Community 234 - "Community 234"
 Cohesion: 0.21
-Nodes (11): ArgoCD App-of-Apps, ESO Vault Secret Plane, External PostgreSQL and Valkey Services, GitOps Platform, WSL k3d/k3s ArgoCD Platform ARD, External Runtime Integration Contract, WSL k3d/k3s ArgoCD Platform Plan, WSL k3d/k3s ArgoCD Platform Plan (+3 more)
+Nodes (11): ArgoCD App-of-Apps, ESO Vault Secret Plane, External PostgreSQL and Valkey Services, GitOps Platform, WSL k3d/k3s ArgoCD Platform AD, External Runtime Integration Contract, WSL k3d/k3s ArgoCD Platform Plan, WSL k3d/k3s ArgoCD Platform Plan (+3 more)
 
 ### Community 235 - "Community 235"
 Cohesion: 0.25
@@ -1352,11 +1352,11 @@ Nodes (9): ArgoCD root-platform Application, infrastructure/bootstrap-local.sh, 
 
 ### Community 236 - "Community 236"
 Cohesion: 0.36
-Nodes (9): ARD-0001 WSL k3d/k3s ArgoCD Platform, External PostgreSQL and Valkey Services, ArgoCD GitOps Control Plane, ESO and Vault Secret Plane, WSL k3d/k3s ArgoCD Platform, Initial WSL k3d ArgoCD Platform Plan, Architecture Requirements Stage, External Runtime Integration Contract (+1 more)
+Nodes (9): AD-0001 WSL k3d/k3s ArgoCD Platform, External PostgreSQL and Valkey Services, ArgoCD GitOps Control Plane, ESO and Vault Secret Plane, WSL k3d/k3s ArgoCD Platform, Initial WSL k3d ArgoCD Platform Plan, Architecture Descriptions Stage, External Runtime Integration Contract (+1 more)
 
 ### Community 237 - "Community 237"
 Cohesion: 0.25
-Nodes (8): Argo Rollouts Progressive Delivery ARD, platform-rollouts ArgoCD Application, Rollout and Analysis CRDs, Rollouts Dashboard Route, Rollouts Controller Metrics, Rollouts Live Validation Boundary, Argo Rollouts Progressive Delivery Backfill Plan, platform-rollouts Current Contract
+Nodes (8): Argo Rollouts Progressive Delivery AD, platform-rollouts ArgoCD Application, Rollout and Analysis CRDs, Rollouts Dashboard Route, Rollouts Controller Metrics, Rollouts Live Validation Boundary, Argo Rollouts Progressive Delivery Backfill Plan, platform-rollouts Current Contract
 
 ### Community 238 - "Community 238"
 Cohesion: 0.22
@@ -1460,15 +1460,15 @@ Nodes (8): Archive Decision, Archive Index, Archive Tombstone: Common Agent Gove
 
 ### Community 263 - "Community 263"
 Cohesion: 0.22
-Nodes (8): Archive Decision, Archive Index, Archive Tombstone: WSL k3d/k3s ArgoCD Platform Architecture Reference Document, Current Implementation Evidence, Current Replacement, Original Document, Overview (KR), Related Documents
+Nodes (8): Archive Decision, Archive Index, Archive Tombstone: WSL k3d/k3s ArgoCD Platform Architecture Description, Current Implementation Evidence, Current Replacement, Original Document, Overview (KR), Related Documents
 
 ### Community 264 - "Community 264"
 Cohesion: 0.22
-Nodes (8): Archive Decision, Archive Index, Archive Tombstone: WSL2 k3d/k3s ArgoCD HA Platform Architecture Reference Document, Current Implementation Evidence, Current Replacement, Original Document, Overview (KR), Related Documents
+Nodes (8): Archive Decision, Archive Index, Archive Tombstone: WSL2 k3d/k3s ArgoCD HA Platform Architecture Description, Current Implementation Evidence, Current Replacement, Original Document, Overview (KR), Related Documents
 
 ### Community 265 - "Community 265"
 Cohesion: 0.22
-Nodes (8): Archive Decision, Archive Index, Archive Tombstone: Platform Expansion Mesh Dashboard Architecture Reference Document, Current Implementation Evidence, Current Replacement, Original Document, Overview (KR), Related Documents
+Nodes (8): Archive Decision, Archive Index, Archive Tombstone: Platform Expansion Mesh Dashboard Architecture Description, Current Implementation Evidence, Current Replacement, Original Document, Overview (KR), Related Documents
 
 ### Community 266 - "Community 266"
 Cohesion: 0.22
@@ -1688,7 +1688,7 @@ Nodes (5): CI Static Validation, WSL2 k3d/k3s ArgoCD HA Setup Guide, k3d HA Clus
 
 ### Community 320 - "Community 320"
 Cohesion: 0.60
-Nodes (5): k3d Workspace and Agent-first Remediation Plan, Architecture Requirements ARD Stage, Document Stage Traceability, Execution Stage, Specification Stage
+Nodes (5): k3d Workspace and Agent-first Remediation Plan, Architecture Descriptions AD Stage, Document Stage Traceability, Execution Stage, Specification Stage
 
 ### Community 321 - "Community 321"
 Cohesion: 0.50
@@ -1948,7 +1948,7 @@ Nodes (9): 2026-06-02 — Phase 1 governance alignment audit, Evidence, Evidence
 
 ### Community 385 - "Community 385"
 Cohesion: 0.67
-Nodes (3): cert-manager TLS Plane, Istio Mesh Plane, Platform Expansion Mesh Dashboard ARD
+Nodes (3): cert-manager TLS Plane, Istio Mesh Plane, Platform Expansion Mesh Dashboard AD
 
 ### Community 386 - "Community 386"
 Cohesion: 0.22

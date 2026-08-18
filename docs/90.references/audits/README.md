@@ -51,8 +51,8 @@ audits/
 | [2026-07-03-wdgh](./2026-07-03-wdgh/README.md) | Resolved | Workspace document-governance hardening baseline. | Resolution: [2026-07-04-wdcn](./2026-07-04-wdcn/README.md). |
 | [2026-07-04-wdcn](./2026-07-04-wdcn/README.md) | Resolved | Workspace document-contract normalization audit. | Current comparison owner: [2026-08-09-wgia](./2026-08-09-wgia/README.md). |
 | [2026-07-05-wea](./2026-07-05-wea/README.md) | Historical | Workspace engineering implementation audit based on the 2026-07-04 research benchmark. | Successor: [2026-07-11-weia](./2026-07-11-weia/README.md). |
-| [2026-07-11-weia](./2026-07-11-weia/README.md) | Historical | Evidence-scored workspace engineering implementation audit at the pinned observation SHA. | Successor: [2026-08-09-wgia](./2026-08-09-wgia/README.md); retain the prior [Plan](../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md) and [Task](../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md) as dated evidence. |
-| [2026-08-09-wgia](./2026-08-09-wgia/README.md) | Current pack | Workspace governance implementation audit across purpose, SDLC, delivery, harness, agents, knowledge, security, and cleanup. | Completion evidence is in the [Plan](../../04.execution/plans/2026-08-09-workspace-governance-audit-and-remediation.md) and [Task](../../04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md). |
+| [2026-07-11-weia](./2026-07-11-weia/README.md) | Historical | Evidence-scored workspace engineering implementation audit at the pinned observation SHA. | Successor: [2026-08-09-wgia](./2026-08-09-wgia/README.md); the prior Plan and Task are retained as dated evidence in [Archive chg-0036](../../98.archive/changes/chg-0036-workspace-engineering-research-audit-integration/plan.md). |
+| [2026-08-09-wgia](./2026-08-09-wgia/README.md) | Current pack | Workspace governance implementation audit across purpose, SDLC, delivery, harness, agents, knowledge, security, and cleanup. | Completion evidence is in the [Plan](../../03.specs/0055-workspace-governance-audit-and-remediation/plan.md) and [Tasks](../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md). |
 
 `Current pack`, `Historical`, and `Resolved` are collection roles, not report
 lifecycle values. The registry owns the single Current pointer; the selected
@@ -83,8 +83,8 @@ pack's `## Report Index` mirrors member lifecycle from report frontmatter.
 
 - [Parent Reference README](../README.md)
 - [Current Audit Pack](./2026-08-09-wgia/README.md)
-- [Current Audit Integration Plan](../../04.execution/plans/2026-08-09-workspace-governance-audit-and-remediation.md)
-- [Current Audit Integration Task](../../04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md)
+- [Current Audit Integration Plan](../../03.specs/0055-workspace-governance-audit-and-remediation/plan.md)
+- [Current Audit Integration Tasks](../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md)
 - [Workspace Harness Research Packs](../research/README.md)
 - [Reference Template](../../99.templates/templates/common/reference.template.md)
 - [Collection Index README Form](../../99.templates/templates/common/readme-collection-index.template.md)

@@ -12,7 +12,7 @@ updated: 2026-08-18
 
 이 문서는 Istio CNI node agent를 이 저장소의 WSL2 + k3d 환경에 도입할 때의
 효과·비용·위험을 평가한 결과다.
-[ADR 0024](../../02.architecture/decisions/0024-pod-security-standards-staged-adoption.md)가
+[ADR 0027](../../02.architecture/decisions/0027-pod-security-standards-staged-adoption.md)가
 PSS 도입 순서의 **1단계 선행조건**으로 지목한 항목이며, 실행이 아니라 평가다.
 
 ### Purpose
@@ -205,6 +205,6 @@ flannel conflist 파일명을 고정하는 편이 안전하다. 그 파일명은
 
 ## Related Documents
 
-- [ADR 0024 — Pod Security Standards 단계 도입](../../02.architecture/decisions/0024-pod-security-standards-staged-adoption.md)
+- [ADR-0027 — Pod Security Standards 단계 도입](../../02.architecture/decisions/0027-pod-security-standards-staged-adoption.md)
 - [Pod Security Compliance Inventory](./pod-security-compliance-inventory.md)
 - [Tech Stack Version Inventory](./tech-stack-version-inventory.md)

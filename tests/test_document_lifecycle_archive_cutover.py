@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import importlib.util
 import inspect
+import hashlib
 import json
 import os
 import re
@@ -37,6 +38,13 @@ from archive_cutover import (  # noqa: E402
     EXPECTED_ARCHIVE_PATHS,
 )
 import archive_cutover_manifest as CUTOVER_MANIFEST  # noqa: E402
+from archive_recovery import (  # noqa: E402
+    WORK107_LEGACY_ARCHIVE_COMMIT,
+    WORK107_MIGRATION_PATH,
+    build_work107_migration_rows,
+    render_work107_migration_document,
+    render_work107_stable_envelope,
+)
 from document_contracts import load_registry  # noqa: E402
 from document_lifecycle import LifecycleDocument  # noqa: E402
 
@@ -323,7 +331,7 @@ class FiniteArchiveCutoverAdmissionTest(unittest.TestCase):
 
     def test_unrelated_profile_change_is_not_admitted(self):
         base, proposed = exact_documents()
-        unrelated = PurePosixPath("docs/03.specs/999-unrelated/spec.md")
+        unrelated = PurePosixPath("docs/03.specs/0999-unrelated/spec.md")
         base[unrelated] = LifecycleDocument(unrelated, "sdlc/spec", "active")
         proposed[unrelated] = LifecycleDocument(unrelated, "sdlc/guide", "active")
         self.assertFalse(self._admit(base_documents=base, proposed_documents=proposed))
@@ -333,9 +341,327 @@ class FiniteArchiveCutoverAdmissionTest(unittest.TestCase):
         self.assertFalse(self._admit(mode="explicit-ref"))
 
 
+class FiniteWork107ArchiveRehomeAdmissionTest(unittest.TestCase):
+    registry_path = PurePosixPath(REGISTRY_PATH)
+    migration_path = PurePosixPath(WORK107_MIGRATION_PATH)
+    template_path = PurePosixPath(
+        "docs/99.templates/templates/common/archive-migration.template.md"
+    )
+    template_blob_oid = "dc3164eafd322e8139164cc16342de43fc3a72e8"  # pragma: allowlist secret
+
+    @staticmethod
+    def _git_blob_oid(content: bytes) -> str:
+        header = f"blob {len(content)}\0".encode("ascii")
+        return hashlib.sha1(header + content).hexdigest()  # noqa: S324
+
+    def _snapshot(self):
+        rows = build_work107_migration_rows(ROOT)
+        base: dict[PurePosixPath, str] = {}
+        proposed: dict[PurePosixPath, str] = {}
+        for row in rows:
+            legacy = PurePosixPath(str(row["legacy_path"]))
+            stable = PurePosixPath(str(row["stable_path"]))
+            legacy_oid = str(row["legacy_envelope_blob"])
+            legacy_bytes = VALIDATOR._blob_bytes(ROOT, legacy_oid)
+            stable_bytes = VALIDATOR._work107_without_outer_artifact_id(
+                render_work107_stable_envelope(legacy_bytes, row),
+                str(row["artifact_id"]),
+            )
+            self.assertIsNotNone(stable_bytes)
+            base[legacy] = legacy_oid
+            proposed[stable] = self._git_blob_oid(stable_bytes)
+        migration = VALIDATOR._work107_without_outer_artifact_id(
+            render_work107_migration_document(rows),
+            "MIG-0001",
+        )
+        self.assertIsNotNone(migration)
+        proposed[self.migration_path] = self._git_blob_oid(migration)
+        proposed[self.template_path] = self.template_blob_oid
+        return rows, base, proposed
+
+    def _admit(
+        self,
+        *,
+        mode: str = "staged",
+        base_commit: str = WORK107_LEGACY_ARCHIVE_COMMIT,
+        base_registry_oid: str = "fd842f60e801a39435600f35a27f22e1c659f1bd",  # pragma: allowlist secret
+        proposed_registry_oid: str = "7182c40ab8ee6b40173b408ec2c366314916f1e3",  # pragma: allowlist secret
+        base_blobs: dict[PurePosixPath, str] | None = None,
+        proposed_blobs: dict[PurePosixPath, str] | None = None,
+    ) -> frozenset[PurePosixPath]:
+        admission = getattr(VALIDATOR, "finite_work107_archive_rehome_paths", None)
+        self.assertTrue(callable(admission), "WORK-107 rehome admission is missing")
+        _rows, exact_base, exact_proposed = self._snapshot()
+        return admission(
+            root=ROOT,
+            mode=mode,
+            base_commit=base_commit,
+            base_registry_oid=base_registry_oid,
+            proposed_registry_oid=proposed_registry_oid,
+            base_blobs=base_blobs or exact_base,
+            proposed_blobs=proposed_blobs or exact_proposed,
+        )
+
+    def test_exact_staged_and_ci_rehome_consume_only_ledger_bijection(self):
+        rows, _base, _proposed = self._snapshot()
+        expected = {self.migration_path, self.template_path}
+        expected.update(PurePosixPath(str(row["legacy_path"])) for row in rows)
+        expected.update(PurePosixPath(str(row["stable_path"])) for row in rows)
+        self.assertEqual(self._admit(mode="staged"), frozenset(expected))
+        self.assertEqual(self._admit(mode="ci"), frozenset(expected))
+
+    def test_rehome_rejects_authority_or_endpoint_drift(self):
+        _rows, base, proposed = self._snapshot()
+        legacy = next(iter(base))
+        stable = next(path for path in proposed if path != self.migration_path)
+        for mutation in (
+            "wrong-base",
+            "wrong-base-registry",
+            "wrong-proposed-registry",
+            "missing-legacy",
+            "wrong-stable-blob",
+            "missing-migration",
+            "missing-template",
+        ):
+            with self.subTest(mutation=mutation):
+                mutated_base = dict(base)
+                mutated_proposed = dict(proposed)
+                kwargs: dict[str, object] = {
+                    "base_blobs": mutated_base,
+                    "proposed_blobs": mutated_proposed,
+                }
+                if mutation == "wrong-base":
+                    kwargs["base_commit"] = "0" * 40
+                elif mutation == "wrong-base-registry":
+                    kwargs["base_registry_oid"] = "0" * 40
+                elif mutation == "wrong-proposed-registry":
+                    kwargs["proposed_registry_oid"] = "f" * 40
+                elif mutation == "missing-legacy":
+                    mutated_base.pop(legacy)
+                elif mutation == "wrong-stable-blob":
+                    mutated_proposed[stable] = next(iter(base.values()))
+                elif mutation == "missing-migration":
+                    mutated_proposed.pop(self.migration_path)
+                elif mutation == "missing-template":
+                    mutated_proposed.pop(self.template_path)
+                self.assertFalse(self._admit(**kwargs))
+
+    def test_rehome_is_not_admitted_outside_staged_or_ci(self):
+        self.assertFalse(self._admit(mode="snapshot"))
+        self.assertFalse(self._admit(mode="explicit-ref"))
+
+
+class FiniteWork054Wp002TransitionAdmissionTest(unittest.TestCase):
+    """The WP-002 exception is one evidence-bound transition, not a bypass."""
+
+    def _admit(self, *, mode: str = "staged", mutation: str = "exact"):
+        fixture = getattr(
+            VALIDATOR, "_work054_wp002_transition_fixture_inputs", None
+        )
+        admission = getattr(
+            VALIDATOR, "finite_work054_wp002_transition_paths", None
+        )
+        self.assertTrue(callable(fixture), "WP-002 transition fixture is missing")
+        self.assertTrue(callable(admission), "WP-002 transition admission is missing")
+        return admission(**fixture(ROOT, mode, mutation))
+
+    def test_exact_staged_and_ci_transition_consume_only_finite_evidence(self):
+        staged = self._admit(mode="staged")
+        ci = self._admit(mode="ci")
+        self.assertEqual(len(staged), 303)
+        self.assertEqual(ci, staged)
+        self.assertIn(
+            PurePosixPath(
+                "docs/98.archive/migrations/"
+                "mig-0002-sdlc-document-and-governance-consolidation.md"
+            ),
+            staged,
+        )
+        self.assertIn(
+            PurePosixPath(
+                "docs/03.specs/0054-sdlc-document-and-agent-governance-"
+                "consolidation/spec.md"
+            ),
+            staged,
+        )
+        self.assertNotIn(PurePosixPath("docs/README.md"), staged)
+
+    def test_authority_manifest_and_target_drift_fail_closed(self):
+        for mutation in (
+            "wrong-base",
+            "missing-migration",
+            "missing-ledger-row",
+            "extra-ledger-row",
+            "source-blob-drift",
+            "source-digest-drift",
+            "replacement-drift",
+            "target-artifact-drift",
+            "standalone-lineage-drift",
+            "missing-spec-transition",
+            "missing-decision",
+            "decision-blob-drift",
+        ):
+            with self.subTest(mutation=mutation):
+                self.assertFalse(self._admit(mutation=mutation))
+
+    def test_transition_is_not_a_generic_create_delete_or_ref_exception(self):
+        self.assertFalse(self._admit(mode="snapshot"))
+        self.assertFalse(self._admit(mode="explicit-ref"))
+
+    def test_mig0002_full_document_pin_rejects_trailing_and_oversize_bytes(self):
+        raw = (ROOT / VALIDATOR.WORK054_WP002_MIGRATION_PATH).read_bytes()
+        self.assertEqual(len(VALIDATOR._work054_wp002_migration_rows(raw)), 154)
+        self.assertEqual(
+            hashlib.sha256(raw).hexdigest(),
+            VALIDATOR.WORK054_WP002_MIGRATION_SHA256,
+        )
+        for name, candidate in (
+            ("trailing", raw + b"\nUnreviewed trailing prose.\n"),
+            (
+                "oversize",
+                raw
+                + b"x"
+                * (
+                    VALIDATOR.MIGRATION_DOCUMENT_MAX_BYTES
+                    + 1
+                    - len(raw)
+                ),
+            ),
+        ):
+            with self.subTest(name=name), self.assertRaises(VALIDATOR.InvocationError):
+                VALIDATOR._work054_wp002_migration_rows(candidate)
+
+
+class FiniteWork054Wp003AgentGovernanceAdmissionTest(unittest.TestCase):
+    """MIG-0003 admits only its three exact legacy owner deletions."""
+
+    migration_path = VALIDATOR.WORK054_WP003_MIGRATION_PATH
+
+    def _snapshot(self):
+        raw = (ROOT / self.migration_path).read_bytes()
+        base = {
+            PurePosixPath(str(row["legacy_path"])): str(row["source_blob"])
+            for row in VALIDATOR.WORK054_WP003_OWNER_RETIREMENTS
+        }
+        proposed = {self.migration_path: VALIDATOR._git_blob_oid(raw)}
+        proposed.update(
+            {
+                PurePosixPath(str(row["replacement"])): "f" * 40
+                for row in VALIDATOR.WORK054_WP003_OWNER_RETIREMENTS
+            }
+        )
+        return raw, base, proposed
+
+    def _admit(
+        self,
+        *,
+        base_commit: str = VALIDATOR.WORK054_WP003_BASE_COMMIT,
+        base_blobs=None,
+        proposed_blobs=None,
+    ):
+        _raw, exact_base, exact_proposed = self._snapshot()
+        return VALIDATOR.finite_work054_wp003_agent_governance_paths(
+            root=ROOT,
+            mode="staged",
+            base_commit=base_commit,
+            base_blobs=base_blobs if base_blobs is not None else exact_base,
+            proposed_blobs=(
+                proposed_blobs if proposed_blobs is not None else exact_proposed
+            ),
+        )
+
+    def test_exact_projection_admits_only_four_paths(self):
+        _raw, base, _proposed = self._snapshot()
+        expected = frozenset({self.migration_path, *base})
+        self.assertEqual(self._admit(), expected)
+        self.assertEqual(len(expected), 4)
+
+    def test_authority_digest_and_endpoint_drift_fail_closed(self):
+        raw, base, proposed = self._snapshot()
+        legacy = next(iter(base))
+        replacement = PurePosixPath(
+            str(VALIDATOR.WORK054_WP003_OWNER_RETIREMENTS[0]["replacement"])
+        )
+        mutations = {
+            "wrong-base": {
+                "base_commit": "0" * 40,
+                "base_blobs": base,
+                "proposed_blobs": proposed,
+            },
+            "partial-legacy-retention": {
+                "base_blobs": base,
+                "proposed_blobs": {**proposed, legacy: base[legacy]},
+            },
+            "missing-replacement": {
+                "base_blobs": base,
+                "proposed_blobs": {
+                    path: oid
+                    for path, oid in proposed.items()
+                    if path != replacement
+                },
+            },
+        }
+        for name, kwargs in mutations.items():
+            with self.subTest(name=name):
+                self.assertFalse(self._admit(**kwargs))
+        with self.subTest(name="migration-digest-drift"), mock.patch.object(
+            VALIDATOR,
+            "_blob_bytes",
+            return_value=raw + b"\n",
+        ):
+            self.assertFalse(
+                self._admit(base_blobs=base, proposed_blobs=proposed)
+            )
+
+
+class FiniteWork108ArtifactIdentityAdmissionTest(unittest.TestCase):
+    @staticmethod
+    def _git_bytes(specifier: str) -> bytes:
+        result = subprocess.run(
+            ["git", "show", specifier],
+            cwd=ROOT,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        return result.stdout
+
+    def test_outer_artifact_projection_is_exact_and_fail_closed(self):
+        row = build_work107_migration_rows(ROOT)[0]
+        path = str(row["stable_path"])
+        proposed = self._git_bytes(f":{path}")
+        artifact_line = f'artifact_id: "{row["artifact_id"]}"\n'.encode()
+        self.assertEqual(proposed.count(artifact_line), 1)
+        base = proposed.replace(artifact_line, b"", 1)
+        helper = getattr(VALIDATOR, "_work108_artifact_projection", None)
+        self.assertTrue(callable(helper), "WORK-108 artifact projection is missing")
+        self.assertTrue(helper(path, base, proposed, str(row["artifact_id"])))
+        for mutation in (
+            proposed.replace(str(row["artifact_id"]).encode(), b"PLAN-CHG-9999", 1),
+            proposed + b"body drift\n",
+            proposed.replace(
+                f'artifact_id: "{row["artifact_id"]}"\n'.encode(),
+                b"",
+                1,
+            ),
+            proposed.replace(
+                f'artifact_id: "{row["artifact_id"]}"\n'.encode(),
+                (
+                    f'artifact_id: "{row["artifact_id"]}"\n'
+                    f'artifact_id: "{row["artifact_id"]}"\n'
+                ).encode(),
+                1,
+            ),
+        ):
+            with self.subTest(mutation=mutation[-32:]):
+                self.assertFalse(
+                    helper(path, base, mutation, str(row["artifact_id"]))
+                )
+
+
 class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
-    original_path = "docs/03.specs/900-fixture/spec.md"
-    archive_path = "docs/98.archive/03.specs/900-fixture/spec.md"
+    original_path = "docs/03.specs/0900-fixture/spec.md"
+    archive_path = "docs/98.archive/03.specs/0900-fixture/spec.md"
 
     @staticmethod
     def _git(root: Path, *arguments: str) -> str:
@@ -364,7 +690,7 @@ class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
             + f'original_path: "{cls.original_path}"\n'.encode()
             + b'archived_on: "2026-07-19"\n'
             + b'archive_reason: "superseded"\n'
-            + b'replacement: "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md"\n'
+            + b'replacement: "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md"\n'
             + b'source_commit: "0000000000000000000000000000000000000000"\n'
             + b'source_blob: "1111111111111111111111111111111111111111"\n'
             + b'content_sha256: "2222222222222222222222222222222222222222222222222222222222222222"\n'
