@@ -25,6 +25,23 @@ spec:
           limits:
             cpu: 200m
             memory: 128Mi
+        # 이 차트는 values.yaml이 securityContext를 채워두어, 템플릿에 있는
+        # Restricted-clean 기본 dict(else 분기)가 기본 설치에서는 적용되지 않는다.
+        # 키를 비우면 그 dict가 적용되지만 runAsUser: 100도 함께 사라져
+        # runAsNonRoot만 남고, 이미지가 USER를 이름으로 선언하면 kubelet이 기동을
+        # 거부한다. 그래서 비우지 않고 기존 블록을 그대로 재기술한 뒤 부족한 세
+        # 항목만 더한다. 4466 포트는 1024를 넘어 NET_BIND_SERVICE가 필요 없다.
+        securityContext:
+          privileged: false
+          runAsNonRoot: true
+          runAsUser: 100
+          runAsGroup: 101
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          seccompProfile:
+            type: RuntimeDefault
         initContainers: []
         env: []
         podAnnotations: {}

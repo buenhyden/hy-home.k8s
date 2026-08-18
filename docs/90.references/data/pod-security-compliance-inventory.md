@@ -27,8 +27,8 @@ PSS 라벨을 붙이기 전에 무엇이 통과하고 무엇이 걸리는지 알
 것은 차트도 워크로드도 아니고, Istio가 `apps`와 `ingress-nginx`의 pod에 주입하는
 `istio-init` init container 하나뿐이다.
 
-Restricted에서는 2개 워크로드가 걸린다. 조사 시점의 5건 중 도달 가능한 3건은
-닫혔고, 남은 둘은 `headlamp`와 `adminer`다. `seccompProfile`은 Restricted에만 있고 Baseline에는 없는 통제라, 잘
+Restricted에 남은 것은 `adminer` 하나다. 조사 시점의 6건 중 다섯은 이 저장소의
+values와 매니페스트로 닫혔고, `adminer`만 이미지 관측이 선행되어야 한다. `seccompProfile`은 Restricted에만 있고 Baseline에는 없는 통제라, 잘
 하드닝된 것처럼 보이는 워크로드가 정확히 여기서 갈린다.
 
 ## Reference Type
@@ -82,7 +82,6 @@ NetworkPolicy 6) 판정 대상이 없다. Istio `base` 차트도 CRD/RBAC/webhoo
 | `ingress-nginx`    | Helm             | 3            | **enabled** |
 | `istio-system`     | Helm             | 2            | —           |
 | `argo-rollouts`    | Helm             | 2            | —           |
-| `headlamp`         | Helm             | 1            | —           |
 | `argocd`           | Helm (GitOps 밖) | 10           | —           |
 
 ### Baseline 판정
@@ -110,6 +109,7 @@ capabilities 통제는 `spec.initContainers[*].securityContext.capabilities.add`
 | `monitoring` | 저장소 저작 `kube-state-metrics`, `alloy-k8s-logs` (seccompProfile 추가) | 2 |
 | `istio-system` | `istiod` 1.25.2 (이 저장소 values로 seccompProfile 추가) | 1 |
 | `istio-system` | `kiali-operator` 2.10.0 (블록 전체 재기술 + seccompProfile) | 1 |
+| `headlamp` | `headlamp` 0.41.0 (블록 전체 재기술 + 3개 항목 추가) | 1 |
 
 `argo-cd` 10.4.0은 조사한 차트 중 유일하게 모든 기본 워크로드가
 `seccompProfile.type: RuntimeDefault`를 명시한다.
