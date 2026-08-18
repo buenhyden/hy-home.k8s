@@ -17496,3 +17496,100 @@ one that serves none.
   bound on `checkedOn`, and every pre-existing entry stays valid.
 - No live, hosted, provider-runtime, remote, secret-value, push, publish, or
   deployment evidence was collected or claimed.
+
+## 2026-08-18 - PSS remediation sweep and Istio CNI adoption
+
+### Metadata
+
+- Owner: platform
+- Scope: `gitops/apps/root/platform-{istio-cni,istiod,kiali,headlamp,rollouts}-app.yaml`, `gitops/workloads/adminer/rollout.yaml`, `gitops/platform/monitoring/*.yaml`, `gitops/clusters/local/appproject-platform.yaml`, `gitops/README.md`, `docs/90.references/data/{pod-security-compliance-inventory,tech-stack-version-inventory}.md`, `docs/02.architecture/decisions/0024-pod-security-standards-staged-adoption.md`
+- Parent: acts on the compliance survey and the CNI evaluation from the prior cycle
+- Evidence class: repository-static, local `helm template` rendering, and one read-only container image inspection
+
+### Progress
+
+The survey found six Restricted shortfalls and one Baseline blocker. All seven
+are now closed, and the closing revealed that the mechanism differs by chart in
+a way worth carrying forward.
+
+**Three distinct closure mechanisms.** Repository-authored workloads
+(`kube-state-metrics`, `alloy-k8s-logs`, `adminer`) took a manifest edit. Charts
+that merge or leave the key empty (`istiod`, `argo-rollouts` dashboard) took a
+single values key. Charts that **replace** rather than merge (`kiali-operator`,
+`headlamp`) required restating the block the chart already rendered and adding
+only the missing field — supplying just `seccompProfile` there would have
+deleted five controls the chart was already providing and moved the workload
+away from Restricted.
+
+**`headlamp` was the third appearance of the numeric-user coupling.** Its
+documented fix is to empty `securityContext`, which does apply the chart's
+built-in hardened default — and also drops `runAsUser: 100` while keeping
+`runAsNonRoot: true`. That is the same trap found on `adminer`. Restating the
+block instead avoided the question entirely.
+
+**`adminer` closed by observation, not by guessing.** The deferral named a
+specific prerequisite: the numeric UID inside the image. Reading
+`/etc/passwd` out of the image without starting a container returned
+`adminer:x:999:999::/home/adminer:/bin/sh`, and the image config's `User` is the
+name `adminer`. Setting `runAsUser: 999` and `runAsGroup: 999` matches the
+image's own user, so the Dockerfile's `chown -R adminer:adminer /var/www/html`
+still applies and no file-mode assumption was needed. Writing the prerequisite
+as a concrete observation rather than "verification pending" is what made this a
+five-minute step.
+
+**Istio CNI adopted.** With `pilot.cni.enabled` the injected init container
+becomes `istio-validation`, which has no `capabilities.add` at all, so the one
+Baseline violation on the platform is removed. The privilege relocates to a
+per-node DaemonSet, making `istio-system` permanently unable to satisfy
+Baseline — two traffic-serving namespaces exempt traded for one that serves
+none.
+
+### Evidence
+
+- Every hardening change was verified by rendering the chart with this
+  repository's own values and re-evaluating both profiles, not by reading values
+- `adminer` image inspected with `docker create` and `docker cp`; no container
+  was started and no cluster was contacted
+- `istio-cni` rendered with the committed values resolves `cni-bin-dir` to
+  `/bin` and `cni-net-dir` to `/var/lib/rancher/k3s/agent/etc/cni/net.d`
+- `bash scripts/validate-repo-quality-gates.sh .` reports
+  `[PASS] repository quality gates passed`; cross-document PASS; markdown
+  profiles `actual="0"`
+- Commits: `d6bfd4b5` seccompProfile trio, `2cebcee4` kiali-operator,
+  `631e895f` headlamp, `218f9453` adminer plus the ADR rationale amendment,
+  `595d4735` Istio CNI adoption
+
+### Handoff
+
+- **The quality gates caught two registrations the change would have needed at
+  reconciliation time.** `apps/DaemonSet` was absent from the platform
+  AppProject `namespaceResourceWhitelist`, so ArgoCD would have rejected the node
+  agent outright; and the new chart needed rows in the GitOps namespace-ownership
+  matrix and the version inventory. Adding a new *kind* to this platform is not
+  the same as adding a new Application.
+- **ADR 0024's reversal condition has fired** and is recorded in the ADR. Its
+  steps 2 and 3 — `warn`/`audit` at Baseline, then per-namespace `enforce` — are
+  unblocked and need a fresh decision, not a resumption of the old one.
+- **`istio-system` now requires a `privileged` label** under any future PSS
+  adoption. That is the recorded cost of the trade, not an oversight.
+- **Live verification is owed and not claimed.** Nothing here proves the CNI
+  agent installs successfully on all four k3d nodes, that redirection works, or
+  that injected pods start. The recorded k3d risks stand: the binary lands in the
+  node container's writable layer and does not survive node recreation, a
+  force-killed node can leave a conflist entry that breaks all pod networking on
+  it, and rollback must set `pilot.cni.enabled: false` before removing the
+  Application.
+- **`readOnlyRootFilesystem` remains unapplied on three workloads** (`adminer`,
+  `argo-rollouts` dashboard, `headlamp`). It is not a Restricted requirement and
+  which paths need to be writable is not decidable from the manifest.
+- **Reusable lesson: `securityContext` in Helm values usually replaces, never
+  merges.** Two of eight charts here delete their own hardening when given a
+  partial override, and one does the inverse. Restating the rendered block and
+  adding one field is the safe edit; verify by rendering before and after and
+  diffing the container securityContext.
+- **Reusable lesson: write a deferral as an observation, not as a status.**
+  "Needs verification" would have left `adminer` open indefinitely. "The numeric
+  UID of `adminer` in the image" named a single fact, and closing it took one
+  read-only image inspection.
+- No live, hosted, provider-runtime, remote, secret-value, push, publish, or
+  deployment evidence was collected or claimed.
