@@ -2,3 +2,9 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: platform
+  labels:
+    # PSS: ADR 0025. pod이 없어 거부할 대상이 없다. 향후 추가분에 대한 가드로 건다.
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: v1.35
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted

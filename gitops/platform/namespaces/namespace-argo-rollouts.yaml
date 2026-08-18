@@ -2,3 +2,7 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: argo-rollouts
+  labels:
+    # PSS: ADR 0025. Helm 소유. 현재 차트 버전에서 Restricted 통과이나 버전 종속이라 enforce는 보류.
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted

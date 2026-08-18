@@ -1495,6 +1495,8 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             "0023-argo-cd-source-integrity-non-adoption.md",
             "docs/02.architecture/decisions/"
             "0024-pod-security-standards-staged-adoption.md",
+            "docs/02.architecture/decisions/"
+            "0025-pod-security-admission-per-namespace-adoption.md",
         ]
         expected_future_specs = [
             "docs/03.specs/041-stage-00-agent-governance-contract/spec.md",

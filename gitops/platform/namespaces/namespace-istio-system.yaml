@@ -2,3 +2,9 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: istio-system
+  labels:
+    # PSS: ADR 0025. istio-cni-node DaemonSet이 NET_ADMIN/SYS_ADMIN/proc hostPath를 요구해 Baseline 불가. 영구 예외임을 명시한다.
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/enforce-version: v1.35
+    pod-security.kubernetes.io/audit: privileged
+    pod-security.kubernetes.io/warn: privileged

@@ -3,5 +3,8 @@ kind: Namespace
 metadata:
   name: apps
   labels:
+    # PSS: ADR 0025. 주입 네임스페이스. CNI 도입의 라이브 검증 신호로 baseline warn/audit만 건다.
+    pod-security.kubernetes.io/audit: baseline
+    pod-security.kubernetes.io/warn: baseline
     app.kubernetes.io/part-of: apps
     istio-injection: enabled

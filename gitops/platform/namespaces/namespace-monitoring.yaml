@@ -3,5 +3,10 @@ kind: Namespace
 metadata:
   name: monitoring
   labels:
+    # PSS: ADR 0025. 저장소 저작 워크로드 2개, 주입 없음, Restricted 검증 완료. enforce 안전.
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: v1.35
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
     app.kubernetes.io/part-of: platform
     istio-injection: disabled
