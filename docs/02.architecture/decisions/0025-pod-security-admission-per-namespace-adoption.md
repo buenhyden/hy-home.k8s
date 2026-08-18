@@ -49,9 +49,10 @@ pass Restricted at their current chart versions. That is a fact about those
 versions, not a property of the charts. `enforce` there would turn a future chart
 upgrade that regresses into a failed sync rather than a warning.
 
-One namespace is unavailable regardless: `argocd` holds pods but is not
-GitOps-declared, because bootstrap installs that chart before GitOps ownership
-exists. A label there would have no home in this repository.
+One namespace was unavailable when this decision was taken: `argocd` holds pods
+but was not GitOps-declared, because bootstrap installs that chart before GitOps
+ownership exists, so a label there would have had no home in this repository.
+That gap has since been closed — see the amendment under `Decision`.
 
 And one is permanently exempt: `istio-cni-node` requires `NET_ADMIN`, `NET_RAW`,
 `SYS_PTRACE`, `SYS_ADMIN`, `DAC_OVERRIDE` and a `/proc` hostPath on every node,
@@ -76,7 +77,18 @@ upgrade with no change to this repository; an unpinned `audit`/`warn` reports
 what a future version would reject without acting on it. The pair gives stable
 enforcement plus forward warning.
 
-Do not label `argocd`.
+`argocd` was excluded when this decision was taken because it was not
+GitOps-declared. **That has since been amended.** The namespace is now declared
+in `gitops/platform/namespaces/namespace-argocd.yaml` and carries `audit` and
+`warn` at `restricted`, with no `enforce`.
+
+Two constraints shape that amendment. The namespace is adopted with
+`argocd.argoproj.io/sync-options: Prune=false`, because the owning Application
+prunes and a pruned `argocd` namespace would delete every Application in it along
+with Argo CD itself. And `enforce` is withheld for a stronger version of the
+chart-version argument above: all ten `argo-cd` workloads pass Restricted at the
+pinned version, but enforcing there would mean a regressing chart upgrade locks
+Argo CD out of its own namespace.
 
 Enforce only where compliance is a property of manifests this repository controls
 and does not depend on the unverified CNI change. `monitoring` holds two
@@ -98,8 +110,11 @@ outstanding verification into an observable rather than an inspection.
   change and has since been made. With it, both namespaces satisfy Restricted on
   the manifest, and the remaining barrier to raising them is the live CNI
   verification alone rather than two barriers.
-- It does not label `argocd`, and does not resolve that namespace's pre-GitOps
-  ownership gap.
+- It did not label `argocd` or resolve that namespace's pre-GitOps ownership
+  gap; both were done afterwards and are recorded as an amendment above. The
+  broader pre-GitOps boundary — bootstrap installing charts before GitOps
+  ownership exists — remains open and is the same boundary that left both
+  bootstrap charts unpinned until Spec 059.
 - It does not assess the Kiali operand, cert-manager ACME solver pods, or any
   other runtime-created pod spec.
 - It asserts no admission outcome. No cluster was contacted.

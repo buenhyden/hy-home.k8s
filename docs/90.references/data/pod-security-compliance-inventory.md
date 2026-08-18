@@ -29,8 +29,10 @@ PSS 라벨을 붙이기 전에 무엇이 통과하고 무엇이 걸리는지 알
 
 **Restricted 미달은 남지 않았다.** 조사 시점의 6건은 모두 이 저장소의 values와
 매니페스트로 닫혔다. 마지막 `adminer`는 이미지 `/etc/passwd`를 직접 읽어 UID 999를
-확인한 뒤 `runAsUser`/`runAsNonRoot`를 함께 적용해 커플링을 해소했다. `seccompProfile`은 Restricted에만 있고 Baseline에는 없는 통제라, 잘
-하드닝된 것처럼 보이는 워크로드가 정확히 여기서 갈린다.
+확인한 뒤 `runAsUser`/`runAsNonRoot`를 함께 적용해 커플링을 해소했다.
+
+여섯 건 중 넷은 `seccompProfile` 하나만 부족했다. 그 항목은 Restricted에만 있고
+Baseline에는 없어서, 잘 하드닝된 것처럼 보이는 워크로드가 정확히 여기서 갈린다.
 
 ## Reference Type
 
@@ -59,7 +61,9 @@ PSS 라벨을 붙이기 전에 무엇이 통과하고 무엇이 걸리는지 알
 ## Scope
 
 대상은 `gitops/`가 선언하는 9개 네임스페이스와, GitOps 밖에서 bootstrap이 직접
-설치하는 `argocd` 네임스페이스다.
+설치하는 `argocd` 네임스페이스다. `argocd`는 bootstrap이 `kubectl apply`로 만들지만,
+이후 `gitops/platform/namespaces/namespace-argocd.yaml`이 `Prune=false`로 선언적으로
+채택했다 — 소유 Application이 prune하므로 삭제 권한 없이 라벨만 관리한다.
 
 판정 방법은 두 갈래다. 저장소가 pod spec을 저작하는 워크로드는 매니페스트를 직접
 읽었고, Helm 차트가 소유하는 워크로드는 **이 저장소의 `helm.values` 재정의를
@@ -83,7 +87,7 @@ NetworkPolicy 6) 판정 대상이 없다. Istio `base` 차트도 CRD/RBAC/webhoo
 | `ingress-nginx`    | Helm             | 3            | **enabled** |
 | `istio-system`     | Helm             | 2            | —           |
 | `argo-rollouts`    | Helm             | 2            | —           |
-| `argocd`           | Helm (GitOps 밖) | 10           | —           |
+| `argocd`           | Helm (bootstrap 설치, GitOps 채택) | 10           | —           |
 
 ### Baseline 판정
 

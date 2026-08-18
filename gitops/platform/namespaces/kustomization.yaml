@@ -1,6 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+  - namespace-argocd.yaml
   - namespace-platform.yaml
   - namespace-apps.yaml
   - namespace-ingress-nginx.yaml

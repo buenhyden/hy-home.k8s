@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: argocd
+  annotations:
+    # 이 네임스페이스만 prune에서 제외한다. platform-namespaces Application은
+    # prune: true 이며, argocd 네임스페이스가 pruned 되면 그 안의 Application
+    # 전부와 ArgoCD 자신이 함께 삭제되어 GitOps 상태가 통째로 사라진다.
+    # bootstrap이 kubectl apply로 만든 것을 선언적으로 채택하되, 삭제 권한은 주지 않는다.
+    argocd.argoproj.io/sync-options: Prune=false
+  labels:
+    # PSS: ADR 0025의 판단 기준을 그대로 적용한다. argo-cd 10.4.0의 10개 워크로드는
+    # 모두 Restricted를 통과하지만, 그것은 이 차트 버전에 대한 사실이지 차트의 속성이
+    # 아니다. 여기서 enforce를 걸면 차트 업그레이드가 회귀했을 때 ArgoCD가 스스로를
+    # 기동하지 못하는 자기 잠금이 되므로, 관측만 하고 집행하지 않는다.
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
