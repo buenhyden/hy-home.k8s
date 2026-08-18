@@ -6009,6 +6009,42 @@ actual_k3s_image = k3d_config.get("image")
 if inventory.get("k3s_image") != actual_k3s_image:
     fail(f"k3s image drift: inventory={inventory.get('k3s_image')} actual={actual_k3s_image}")
 
+def _collect_container_images(node, sink):
+    if isinstance(node, dict):
+        image = node.get("image")
+        if isinstance(image, str) and node.get("name") and ":" in image:
+            sink.add(image)
+        for value in node.values():
+            _collect_container_images(value, sink)
+    elif isinstance(node, list):
+        for value in node:
+            _collect_container_images(value, sink)
+
+
+actual_workload_images = {}
+for raw_dir in ["gitops/platform", "gitops/workloads"]:
+    for manifest in sorted((root / raw_dir).rglob("*.yaml")):
+        images = set()
+        for document in load_yaml_documents(manifest):
+            _collect_container_images(document, images)
+        for image in images:
+            actual_workload_images[image] = rel(manifest)
+
+expected_workload_images = inventory.get("workload_images") or {}
+declared_refs = set()
+for name, expected in sorted(expected_workload_images.items()):
+    repository = str(expected.get("image", "")).removeprefix("docker.io/")
+    reference = f"{repository}:{expected.get('version')}"
+    declared_by = expected.get("declaredBy")
+    declared_refs.add(reference)
+    actual_manifest = actual_workload_images.get(reference)
+    if actual_manifest is None:
+        fail(f"workload image drift for {name}: inventory={reference} is declared by no tracked manifest")
+    elif actual_manifest != declared_by:
+        fail(f"workload image declaredBy drift for {name}: inventory={declared_by} actual={actual_manifest}")
+for reference in sorted(set(actual_workload_images) - declared_refs):
+    fail(f"workload image missing from inventory: {reference} in {actual_workload_images[reference]}")
+
 actual_charts = {}
 for app_file in sorted((root / "gitops/apps/root").glob("*.yaml")):
     data = load_yaml(app_file)
