@@ -17593,3 +17593,102 @@ none.
   read-only image inspection.
 - No live, hosted, provider-runtime, remote, secret-value, push, publish, or
   deployment evidence was collected or claimed.
+
+## 2026-08-18 - PSS per-namespace adoption and injected-pod seccomp closure
+
+### Metadata
+
+- Owner: platform
+- Scope: `docs/02.architecture/decisions/0025-pod-security-admission-per-namespace-adoption.md`, `gitops/platform/namespaces/namespace-*.yaml`, `gitops/workloads/adminer/rollout.yaml`, `gitops/apps/root/platform-ingress-nginx-app.yaml`, `docs/90.references/data/pod-security-compliance-inventory.md`, `docs/02.architecture/decisions/README.md`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`
+- Parent: ADR 0024's reversal condition fired when the Istio CNI agent was adopted
+- Evidence class: repository-static plus local `helm template` rendering
+
+### Progress
+
+ADR 0024 declined PSS labels and recorded an ordering. Its reversal condition
+fired, so the question was taken again with evidence it did not have. The answer
+is **not uniform**, and the reasoning for that is the entry's point.
+
+**Each namespace got the strongest mode its own evidence supports.**
+`istio-system` is permanently `privileged` because its CNI DaemonSet requires
+`NET_ADMIN`, `SYS_ADMIN` and a `/proc` hostPath on every node. `monitoring` and
+`platform` enforce `restricted`, because their compliance depends on neither a
+chart version nor the CNI change — one holds two repository-authored workloads
+verified down to volume types, the other holds no pods at all. The four
+non-injected Helm namespaces get `audit`/`warn` only, because their compliance is
+a fact about pinned chart versions rather than a property of the charts, and
+`enforce` would turn a future regressing upgrade into a failed sync during
+unrelated work.
+
+**The two injected namespaces got `warn`/`audit` at `baseline` as a verification
+device, not a placeholder.** The CNI adoption is render-verified but not
+live-verified. If it did not take effect, injected pods still carry `istio-init`
+with `NET_ADMIN` and `NET_RAW`, and enforcing there would have converted an
+unverified change into an outage. Warning there instead turns the outstanding
+verification into an observable: warnings appearing means the agent did not take
+effect. The check now comes to the operator rather than requiring an inspection.
+
+**`enforce-version` is pinned while `audit`/`warn` are not.** An unpinned
+`enforce` can begin rejecting workloads after a Kubernetes upgrade with no change
+to this repository; an unpinned `audit`/`warn` reports what a future version would
+reject without acting. The split buys stable enforcement plus forward warning.
+
+**A second, independent barrier was found and closed.** Istio sets
+`seccompProfile` only in its gateway templates, never for `istio-proxy` or
+`istio-validation`. Restricted's seccomp rule is satisfied by a pod-level value or
+by every container carrying one, so an injected pod reaches Restricted only
+through the pod-level field — a container-level value cannot cover containers
+Istio adds later. `adminer` moved its value from container to pod level and
+`ingress-nginx` gained `controller.podSecurityContext` plus
+`admissionWebhooks.patch.securityContext`. Reading the injection template
+confirmed that every other Restricted control is already satisfied by the injected
+containers on the default path, so this single field was the entire gap.
+
+### Evidence
+
+- All nine namespace manifests parse and carry exactly the decided label values,
+  verified by enumeration rather than by inspection of the edit
+- Rendering `ingress-nginx` 4.12.0 with this repository's values shows the
+  pod-level `seccompProfile` on the controller and both admission Jobs, with the
+  chart's `drop: [ALL]` and `add: [NET_BIND_SERVICE]` intact
+- The `istio-proxy` and `istio-validation` securityContext branches were read out
+  of the rendered sidecar-injector ConfigMap rather than inferred
+- `bash scripts/validate-repo-quality-gates.sh .` reports
+  `[PASS] repository quality gates passed`; 87 retention tests OK
+- Commits: `600534f1` the per-namespace adoption, `8223bc45` the injected-pod
+  seccomp closure
+- No cluster was contacted; reconciliation and any live effect remain
+  operator-owned
+
+### Handoff
+
+- **One condition now gates everything downstream.** The Baseline warning channel
+  on `apps` and `ingress-nginx` decides whether the CNI adoption worked. Clean
+  means `enforce: baseline` opens there, and `restricted` follows because the
+  manifest side is now complete. Warnings mean rollback, in the recorded order:
+  `pilot.cni.enabled: false` first, then remove the Application.
+- **`istio-system` is a permanent `privileged` exception** and is labeled as such
+  deliberately. It is the price of the CNI trade, not an oversight.
+- **`argocd` is unlabeled** because it holds pods but is not GitOps-declared. That
+  pre-GitOps ownership gap is the same one that left both bootstrap charts
+  unpinned until Spec 059, and it remains open.
+- **A conditional regression exists in the injected namespaces.** `TPROXY`
+  interception or a `sidecar.istio.io/capNetBindService` annotation switches
+  `istio-proxy` to `runAsUser: 0`, which fails Restricted. Neither is used today;
+  both are one annotation away.
+- **The four `audit`-only namespaces are watching for chart-upgrade regression.**
+  That is what those labels exist to surface; a warning there is the signal to
+  re-run the compliance render before merging the upgrade.
+- **Reusable lesson: pod-level versus container-level `securityContext` becomes a
+  correctness question once sidecars are injected.** A container-level value
+  covers only the containers you declared. Where a namespace has injection
+  enabled, the pod-level field is the only one that can cover what the mesh adds
+  later, and the same hardening pattern therefore yields different verdicts in an
+  injected namespace than in a non-injected one.
+- **Reusable lesson: a non-rejecting label can be a verification instrument.**
+  `warn` was reached for here not because enforcement felt premature but because
+  the warning channel answers a specific outstanding question at zero risk.
+  Choosing the mode by what it would tell you, rather than only by how strict it
+  is, is the transferable part.
+- No live, hosted, provider-runtime, remote, secret-value, push, publish, or
+  deployment evidence was collected or claimed.
