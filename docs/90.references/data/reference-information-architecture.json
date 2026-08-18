@@ -1,7 +1,7 @@
 {
   "$schema": "./reference-information-architecture.schema.json",
   "schemaVersion": 2,
-  "evidenceCutoff": "2026-07-22",
+  "evidenceCutoff": "2026-08-18",
   "currentPackRegistry": "docs/99.templates/support/document-profiles.json",
   "snapshotGuard": {
     "sourceCommit": "git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47",
@@ -9,8 +9,8 @@
       "audits/2026-05-24-whga",
       "audits/2026-07-02-whia",
       "audits/2026-07-03-wdgh",
-    "audits/2026-07-04-wdcn",
-    "audits/2026-07-05-wea"
+      "audits/2026-07-04-wdcn",
+      "audits/2026-07-05-wea"
     ]
   },
   "currentPackBaselines": {
@@ -20,7 +20,9 @@
     {
       "id": "audits/2026-07-11-weia",
       "sourceCommit": "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe",
-      "allowedStates": ["done"],
+      "allowedStates": [
+        "done"
+      ],
       "members": [
         "ai-agents-model-routing-vibe-coding.md",
         "ci-qa-automation-pipeline-workflow.md",
@@ -121,7 +123,9 @@
   "dataAssets": [
     {
       "id": "active-corpus-retention-census",
-      "repositoryEvidence": ["docs/90.references/data/active-corpus-retention-census.json"],
+      "repositoryEvidence": [
+        "docs/90.references/data/active-corpus-retention-census.json"
+      ],
       "refreshTrigger": "ACER-002 eligibility evidence, Spec 037 closure, ACER-004 role evidence, pinned object drift, proposal delta, or methodology-source change",
       "sources": [
         {
@@ -148,7 +152,9 @@
     },
     {
       "id": "active-corpus-eligibility-ledger",
-      "repositoryEvidence": ["docs/90.references/data/active-corpus-eligibility-ledger.json"],
+      "repositoryEvidence": [
+        "docs/90.references/data/active-corpus-eligibility-ledger.json"
+      ],
       "refreshTrigger": "ACER-003 cutover, pinned object or lineage evidence drift, or an owned upstream evidence change",
       "sources": [
         {
@@ -165,7 +171,9 @@
     },
     {
       "id": "active-corpus-migration-results",
-      "repositoryEvidence": ["docs/90.references/data/active-corpus-migration-results.json"],
+      "repositoryEvidence": [
+        "docs/90.references/data/active-corpus-migration-results.json"
+      ],
       "refreshTrigger": "Archive or index drift, consumer repair, validation-result change, or rollback-parent change",
       "sources": [
         {
@@ -182,7 +190,9 @@
     },
     {
       "id": "active-corpus-role-audit",
-      "repositoryEvidence": ["docs/90.references/data/active-corpus-role-audit.json"],
+      "repositoryEvidence": [
+        "docs/90.references/data/active-corpus-role-audit.json"
+      ],
       "refreshTrigger": "Stage 05 authored-record change, frozen helper drift, post-closure manifest drift, README safety drift, or Spec 037 closure",
       "sources": [
         {
@@ -199,7 +209,9 @@
     },
     {
       "id": "active-corpus-residue-closure",
-      "repositoryEvidence": ["docs/90.references/data/active-corpus-residue-closure.json"],
+      "repositoryEvidence": [
+        "docs/90.references/data/active-corpus-residue-closure.json"
+      ],
       "refreshTrigger": "Successor migration evidence, Plan or Task inventory, migration result, ADR or Spec authority, ACER-004 input, link evidence, or closure result changes",
       "sources": [
         {
@@ -226,13 +238,17 @@
     },
     {
       "id": "agent-reference-index",
-      "repositoryEvidence": ["docs/90.references/data/agent-reference-index.md"],
+      "repositoryEvidence": [
+        "docs/90.references/data/agent-reference-index.md"
+      ],
       "refreshTrigger": "Agent reference addition, provider adapter change, runtime roster movement, or Stage 00 routing change",
       "sources": [
         {
           "url": "https://learn.chatgpt.com/docs/agent-configuration/agents-md",
           "checkedOn": "2026-07-22",
-          "adoptedScope": ["Codex project-instruction discovery and scoped AGENTS.md context"],
+          "adoptedScope": [
+            "Codex project-instruction discovery and scoped AGENTS.md context"
+          ],
           "rejectedScope": [
             "Current local Codex runtime, model, tool, permission, or provider-parity claims"
           ]
@@ -250,7 +266,9 @@
         {
           "url": "https://geminicli.com/docs/cli/gemini-md/",
           "checkedOn": "2026-07-22",
-          "adoptedScope": ["Gemini CLI context hierarchy and GEMINI.md instruction discovery"],
+          "adoptedScope": [
+            "Gemini CLI context hierarchy and GEMINI.md instruction discovery"
+          ],
           "rejectedScope": [
             "Current local Gemini installation, runtime, model, tool, or execution evidence"
           ]
@@ -259,7 +277,9 @@
     },
     {
       "id": "reference-information-architecture-contract",
-      "repositoryEvidence": ["docs/90.references/data/reference-information-architecture.json"],
+      "repositoryEvidence": [
+        "docs/90.references/data/reference-information-architecture.json"
+      ],
       "refreshTrigger": "Current-pack registry, protected observation bytes, declared projection, source ledger, generated relation, duplicate rule, or baseline-state change",
       "sources": [
         {
@@ -278,7 +298,9 @@
           "adoptedScope": [
             "Exact stage-zero index identity and blob evidence for proposed repository files"
           ],
-          "rejectedScope": ["Remote branch, CI, deployment, or live-environment status"]
+          "rejectedScope": [
+            "Remote branch, CI, deployment, or live-environment status"
+          ]
         }
       ]
     },
@@ -313,7 +335,9 @@
     },
     {
       "id": "tech-stack-version-inventory",
-      "repositoryEvidence": ["docs/90.references/data/tech-stack-version-inventory.md"],
+      "repositoryEvidence": [
+        "docs/90.references/data/tech-stack-version-inventory.md"
+      ],
       "refreshTrigger": "Manifest or config version change, GitHub Actions or pre-commit pin change, cloud example target change, or official support-range change",
       "sources": [
         {
@@ -332,7 +356,9 @@
           "adoptedScope": [
             "AWS EKS Kubernetes support-range context for the repository example snapshot"
           ],
-          "rejectedScope": ["Live AWS account state, deployed EKS version, or upgrade approval"]
+          "rejectedScope": [
+            "Live AWS account state, deployed EKS version, or upgrade approval"
+          ]
         },
         {
           "url": "https://learn.microsoft.com/en-us/azure/aks/supported-kubernetes-versions",
@@ -342,6 +368,54 @@
           ],
           "rejectedScope": [
             "Live Azure subscription state, deployed AKS version, or upgrade approval"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pod-security-compliance-inventory",
+      "repositoryEvidence": [
+        "docs/90.references/data/pod-security-compliance-inventory.md"
+      ],
+      "refreshTrigger": "Chart version change, Application helm.values change, repository-authored securityContext change, or Pod Security Standards profile revision",
+      "sources": [
+        {
+          "url": "https://kubernetes.io/docs/concepts/security/pod-security-standards/",
+          "checkedOn": "2026-08-18",
+          "adoptedScope": [
+            "Baseline and Restricted control definitions used to classify each deployed workload"
+          ],
+          "rejectedScope": [
+            "Live admission outcome, cluster enforce-version behavior, or authorization to label any namespace"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "istio-cni-adoption-evaluation",
+      "repositoryEvidence": [
+        "docs/90.references/data/istio-cni-adoption-evaluation.md"
+      ],
+      "refreshTrigger": "Istio minor version change, k3d or k3s CNI path change, ambient mode evaluation, or Istio documenting a sidecar CNI k3s section",
+      "sources": [
+        {
+          "url": "https://istio.io/v1.25/docs/setup/additional-setup/cni/",
+          "checkedOn": "2026-08-18",
+          "adoptedScope": [
+            "Istio CNI node agent behavior, injection switchover, startup race, and repair semantics for sidecar mode"
+          ],
+          "rejectedScope": [
+            "Authorization to install the chart, live node networking outcome, or ambient mode guidance"
+          ]
+        },
+        {
+          "url": "https://istio.io/v1.25/docs/ambient/install/platform-prerequisites/",
+          "checkedOn": "2026-08-18",
+          "adoptedScope": [
+            "k3s and k3d CNI binary and configuration directory overrides"
+          ],
+          "rejectedScope": [
+            "Ambient mode adoption, and any claim that the sidecar CNI documentation covers k3s"
           ]
         }
       ]

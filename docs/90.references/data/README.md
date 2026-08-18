@@ -71,6 +71,8 @@ data/
 ├── reference-information-architecture.json # RIA closed reference architecture contract
 ├── reference-information-architecture.schema.json # RIA Draft 2020-12 schema
 ├── tech-stack-version-inventory.md   # Repo-backed version contracts and cloud snapshots
+├── pod-security-compliance-inventory.md # PSS Baseline/Restricted verdicts for every deployed workload
+├── istio-cni-adoption-evaluation.md  # Istio CNI effect, cost, and k3d-specific risk
 └── README.md                         # This file
 ```
 
@@ -105,6 +107,8 @@ data/
 | [Reference Information Architecture Contract](./reference-information-architecture.json) | closed repository-static contract | Pins the exact registry-derived Current pack IDs to committed baselines and owns immutable Historical guards, bounded Current projections, the offline source ledger, and a one-shot transition/settlement FSM; it does not copy Current members, paths, digests, states, or pointers | Current-pack registry, protected observation bytes, declared projection, source-ledger relation, or baseline-state change |
 | [Reference Information Architecture Schema](./reference-information-architecture.schema.json) | Draft 2020-12 schema | Closed schema-v2 form for Historical guards, exact Current baseline pins, bounded projections, source/scope/freshness records, and transition/settlement records; the validator adds strict calendar, HTTPS, duplicate, and safe repository-evidence semantics without network access | Contract field, source-ledger shape, fixed runner, projection, or baseline-FSM change |
 | [Tech Stack Version Inventory](./tech-stack-version-inventory.md) | version-contract-inventory / external-standard-snapshot | Repo-backed version contracts and cloud example snapshots | Manifest/config/example version change or official support-range change |
+| [Pod Security Compliance Inventory](./pod-security-compliance-inventory.md) | platform-compliance-inventory / external-standard-snapshot | Baseline/Restricted verdicts for all 26 deployed workloads, keyed to this repository's own values | Chart version change, Application helm.values change, repo-authored securityContext change, or PSS profile revision |
+| [Istio CNI Adoption Evaluation](./istio-cni-adoption-evaluation.md) | adoption-evaluation / external-standard-snapshot | Effect on injected pod privilege, the privilege relocation it causes, and k3d-specific paths and risks | Istio minor version change, k3d/k3s CNI path change, or ambient mode evaluation |
 
 ### Authority Boundary
 
