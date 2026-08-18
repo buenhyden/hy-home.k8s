@@ -55,6 +55,7 @@
 ├── 0021-canonical-surface-routing-and-evidence-depth.md
 ├── 0022-direct-approval-standalone-execution-lineage.md
 ├── 0023-argo-cd-source-integrity-non-adoption.md
+├── 0024-pod-security-standards-staged-adoption.md
 └── README.md
 ```
 
@@ -97,6 +98,7 @@
 | [`./0021-canonical-surface-routing-and-evidence-depth.md`](./0021-canonical-surface-routing-and-evidence-depth.md) | Canonical affected-surface references, GitHub projections, and layered platform evidence decision | Accepted | Existing platform topology and validation-surface owners are preserved; active Spec 047 and planned Specs 048–051 implement the reference-based projections and evidence-depth model without remote/live mutation. |
 | [`./0022-direct-approval-standalone-execution-lineage.md`](./0022-direct-approval-standalone-execution-lineage.md) | Direct human-approved standalone Spec/Plan/Task lineage decision | Accepted | Registry schema v8 owns the closed optional standalone relation while preserving every existing PRD/ARD-backed program-lineage rule. |
 | [`./0023-argo-cd-source-integrity-non-adoption.md`](./0023-argo-cd-source-integrity-non-adoption.md)               | Argo CD source-integrity 미채택 결정                                  | Accepted | 서명 검증은 가변 `targetRevision: main`의 tip 커밋만 인증하므로 기록된 identity gap의 원인을 해결하지 못한다. 선호 대안은 commit-SHA 핀이며 실행하지 않는다. Helm/OCI 범위 확장, warn 모드 문서화, 또는 독립적 이유의 commit signing 도입 시 재검토한다. |
+| [`./0024-pod-security-standards-staged-adoption.md`](./0024-pod-security-standards-staged-adoption.md) | Pod Security Standards 단계 도입 결정 | Accepted | 라벨을 지금 붙이지 않는다. Baseline capabilities 제어가 initContainers를 포함하고 `NET_ADMIN`·`NET_RAW`를 허용하지 않는 반면 `istio-cni` 없는 Istio 1.25.2는 `istio-init`에 그 둘을 요구하므로, 구속 조건은 워크로드가 아니라 mesh 네트워킹이다. 도입 순서는 CNI → warn/audit=baseline → 네임스페이스별 enforce로 기록한다. |
 
 ## Related Documents
 

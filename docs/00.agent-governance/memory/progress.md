@@ -17293,3 +17293,91 @@ template gap affected every future one.
   the commit message stands and this record corrects it.
 - No live, hosted, provider-runtime, remote, secret-value, push, publish, or
   deployment evidence was collected or claimed.
+
+## 2026-08-18 - PSS staged adoption decision
+
+### Metadata
+
+- Owner: platform
+- Scope: `docs/02.architecture/decisions/0024-pod-security-standards-staged-adoption.md`, `docs/02.architecture/decisions/README.md`, `scripts/validate-active-corpus-residue-closure.py`, `tests/test_active_corpus_retention.py`
+- Parent: successor to the WSCB handoff, which named Pod Security Admission as the next candidate
+- Evidence class: repository-static and public-documentation only
+
+### Progress
+
+The WSCB handoff ranked Pod Security Admission first among the remaining items,
+on the reasoning that nothing enforces the hardening convention. Investigating it
+before scoping a cycle changed what the work is.
+
+**The binding constraint is Istio, not any workload.** The Baseline profile's
+capabilities control restricts `spec.initContainers[*].securityContext.capabilities.add`
+alongside the container paths, and its allowed list of fourteen capabilities
+excludes `NET_ADMIN` and `NET_RAW`. This repository deploys Istio `1.25.2` as
+`base` and `istiod` with no `istio-cni` Application, and Istio documents that
+default injection uses an `istio-init` init container requiring exactly those two
+capabilities, which the CNI node agent removes. `apps` and `ingress-nginx` both
+carry `istio-injection: enabled`, so Baseline would flag every injected pod there
+— correctly about the capability and wrongly about the cause.
+
+**Most namespaces are not this repository's to fix.** Of ten namespaces, this
+repository authors pod specs in two: `monitoring` and `apps`. The other seven hold
+Helm-chart-managed workloads whose specs are upstream, so adopting a profile there
+means auditing charts the repository does not own and absorbing their upgrades as
+a compliance surface.
+
+The decision therefore declines to apply labels now and records the ordering —
+Istio CNI, then non-rejecting `warn`/`audit` at Baseline, then per-namespace
+`enforce` starting from `monitoring`, whose two workloads already satisfy
+Restricted. The ordering is the decision's product. Without it a future cycle
+would predictably label `apps` first, because that is where the workload it just
+hardened lives, and would learn the Istio constraint by failed reconciliation.
+
+### Evidence
+
+- `python3 scripts/validate-markdown-profiles.py --root . --mode strict` reports
+  `actual="0"` violations
+- `python3 scripts/validate-links-and-owners.py --root . --mode strict` reports
+  `PASS CROSS-DOCUMENT`
+- `python3 scripts/validate-active-corpus-residue-closure.py --root .` reports
+  `findings=0`
+- The retention suite passes at 87 tests after the closure-allowlist change
+- `bash scripts/validate-repo-quality-gates.sh .` reports
+  `[PASS] repository quality gates passed`
+- No k3d, kubectl, helm, argocd, docker, or registry command was run. No cluster
+  was contacted. No secret value was read.
+
+### Handoff
+
+- **Istio CNI evaluation is the unblocking item**, and it now carries two
+  justifications: it is the prerequisite for any Baseline adoption, and removing a
+  privileged init container from every injected pod is defensible on its own. It
+  is a node-networking change in a k3d cluster and needs its own approval.
+- **`monitoring` remains the safe pilot** but is explicitly not worth a cycle of
+  its own: injection is disabled and both workloads already satisfy Restricted, so
+  even `enforce` would change nothing there. It is step 3's starting point, not a
+  standalone move.
+- **The seven Helm-owned namespaces were not inspected.** Whether any of their
+  workloads satisfies Baseline or Restricted is unknown and stays `DEFER`.
+- **Carried forward unchanged.** The two deferred `adminer` controls, the three
+  deferred upgrades, `targetRevision: main` unpinned across twelve declarations,
+  `.github/**` without a declared scope owner, and the same
+  `securityContext` omission in `examples/azure/kubernetes/sample-app.yaml`.
+- **Reusable lesson: this is the third consecutive cycle where the named candidate
+  was not the binding constraint.** PCDC found the urgent item was an RBAC grant
+  no trigger named. WSCB found a kind-keyed sweep had missed the workload it was
+  written to find. This cycle found the PSS blocker is the service mesh's
+  networking mechanism rather than the workload that motivated the question.
+  Investigating the constraint before scoping the cycle has now paid off three
+  times; scoping directly from the previous handoff's headline would have failed
+  each time.
+- **Reusable lesson: a non-rejecting mode is not automatically the safe first
+  step.** `warn` and `audit` cannot reject a pod, which makes them look free. They
+  are not free when the dominant signal is a violation the reader cannot act on,
+  because unactionable warnings train their reader to ignore the channel. Signal
+  quality, not rejection risk, decided the ordering here.
+- **Registration note.** An ADR entering the post-closure authority scope must be
+  added in three places, not two: the module constant, the hardcoded
+  `expected_later` set inside `_self_test_post_closure_adr_scope()`, and the
+  mirrored test fixture. A Spec needs only two.
+- No live, hosted, provider-runtime, remote, secret-value, push, publish, or
+  deployment evidence was collected or claimed.
