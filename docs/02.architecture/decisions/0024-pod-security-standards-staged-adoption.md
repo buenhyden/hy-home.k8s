@@ -52,15 +52,30 @@ Baseline to either would flag every injected pod. That flag would be correct
 about the capability and wrong about the cause: it reports Istio's chosen
 networking mechanism, not a workload defect.
 
-**Most namespaces are not this repository's to fix.** Of ten namespaces, this
-repository authors the pod specs in exactly two: `monitoring`, holding
-`kube-state-metrics` and `alloy-k8s-logs`, and `apps`, holding `adminer`. The
-remaining seven hold Helm-chart-managed workloads whose pod specs are upstream.
-Adopting a profile there means auditing charts this repository does not own, and
-absorbing their upgrades as a compliance surface.
+**Most namespaces are not this repository's to fix.** GitOps declares nine
+namespaces. This repository authors the pod specs in exactly two: `monitoring`,
+holding `kube-state-metrics` and `alloy-k8s-logs`, and `apps`, holding `adminer`.
+One, `platform`, holds no pods at all — nine Services, nine EndpointSlices, and
+six NetworkPolicies — so a profile there admits nothing and changes nothing. The
+remaining six hold Helm-chart-managed workloads whose pod specs are upstream:
+`cert-manager`, `external-secrets`, `headlamp`, `ingress-nginx`, `istio-system`,
+and `argo-rollouts`. Adopting a profile there means auditing charts this
+repository does not own, and absorbing their upgrades as a compliance surface.
 
-One namespace is unambiguous. `monitoring` declares `istio-injection: disabled`
-and both its workloads already satisfy Restricted.
+A seventh Helm-owned namespace, `argocd`, holds pods but is not GitOps-declared,
+because bootstrap installs the `argo-cd` chart directly before GitOps ownership
+exists. A label on it would have no GitOps home today, which is the same
+pre-GitOps ownership boundary that left both bootstrap charts unpinned until
+Spec 059.
+
+One namespace is close to unambiguous, but not as close as it first appears.
+`monitoring` declares `istio-injection: disabled`, and both its workloads satisfy
+Baseline and three of Restricted's four added controls: `runAsNonRoot: true`,
+`allowPrivilegeEscalation: false`, and `capabilities.drop: [ALL]`. Neither sets
+`seccompProfile`, at pod or container level, so both fail Restricted on that one
+control. Restricted requires `RuntimeDefault` or `Localhost`; Baseline does not
+require it at all, which is why a workload that looks fully hardened can still be
+Baseline-clean and Restricted-dirty.
 
 ## Decision
 
@@ -75,8 +90,11 @@ constraint rather than from the most visible workload:
    `ingress-nginx`.
 2. Apply `warn` and `audit` at `baseline`, which report and never reject, and
    observe the actual signal before changing any admission outcome.
-3. Apply `enforce` per namespace, starting with `monitoring`, whose workloads
-   already satisfy the stricter Restricted profile.
+3. Apply `enforce` per namespace, starting with `monitoring`. Its workloads
+   satisfy Baseline today, so `enforce=baseline` is admissible there immediately.
+   Reaching `enforce=restricted` there additionally requires adding
+   `seccompProfile.type: RuntimeDefault` to both workloads — a repository-static
+   edit with no other prerequisite.
 
 Treat step 1 as a prerequisite rather than a parallel option. Steps 2 and 3 read
 as low-risk in isolation and are not, because their signal is meaningless while
@@ -88,8 +106,9 @@ the mesh's own init container is the dominant violation.
   mechanism is unsuitable.
 - It does not authorize, schedule, or design the Istio CNI installation. That is a
   node-networking change with its own risk and its own approval.
-- It does not assess whether any Helm-managed workload in the seven upstream
-  namespaces satisfies Baseline or Restricted. None was inspected.
+- It does not assess whether any Helm-managed workload in the six upstream
+  namespaces, or in `argocd`, satisfies Baseline or Restricted. None was
+  inspected at the time this decision was taken.
 - It does not close the `adminer` deferred controls, which remain blocked on
   reading the image filesystem.
 - It does not assert any admission, scheduling, or rejection behavior. No cluster
@@ -132,16 +151,17 @@ approval.
 tempting: neither mode can reject a pod, so the change is risk-free in the
 admission sense, and it would make the gap visible immediately. Rejected because
 the loudest and most frequent warning would be the Istio init container in two
-namespaces, and the seven Helm-owned namespaces would contribute warnings this
+namespaces, and the Helm-owned namespaces would contribute warnings this
 repository cannot act on. A signal that is mostly unactionable trains its reader
 to ignore it, which costs more than the missing signal.
 
 **Apply PSS to `monitoring` only.** The safest possible pilot: injection is
-disabled and both workloads already satisfy Restricted, so even `enforce` would
-change nothing. Rejected as a standalone move for that same reason — it exercises
+disabled and both workloads satisfy Baseline, so `enforce=baseline` would change
+nothing there. Rejected as a standalone move for that same reason — it exercises
 the mechanism only where there is no problem, and produces no evidence about the
 namespaces that have one. It is retained as step 3's starting point rather than as
-a cycle of its own.
+a cycle of its own. Note that the same property does not hold at Restricted, where
+both workloads currently fail on `seccompProfile`.
 
 **Label `apps` and `ingress-nginx` as `privileged` explicitly.** Would let the
 other namespaces adopt Baseline immediately. Rejected because it encodes the

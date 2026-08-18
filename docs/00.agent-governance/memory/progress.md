@@ -17319,11 +17319,14 @@ capabilities, which the CNI node agent removes. `apps` and `ingress-nginx` both
 carry `istio-injection: enabled`, so Baseline would flag every injected pod there
 — correctly about the capability and wrongly about the cause.
 
-**Most namespaces are not this repository's to fix.** Of ten namespaces, this
-repository authors pod specs in two: `monitoring` and `apps`. The other seven hold
-Helm-chart-managed workloads whose specs are upstream, so adopting a profile there
-means auditing charts the repository does not own and absorbing their upgrades as
-a compliance surface.
+**Most namespaces are not this repository's to fix.** GitOps declares nine
+namespaces. This repository authors pod specs in two, `monitoring` and `apps`;
+`platform` holds no pods at all, so a profile there admits nothing; and the
+remaining six hold Helm-chart-managed workloads whose specs are upstream, so
+adopting a profile there means auditing charts the repository does not own and
+absorbing their upgrades as a compliance surface. A seventh Helm-owned namespace,
+`argocd`, holds pods but is not GitOps-declared, because bootstrap installs that
+chart before GitOps ownership exists.
 
 The decision therefore declines to apply labels now and records the ordering —
 Istio CNI, then non-rejecting `warn`/`audit` at Baseline, then per-namespace
@@ -17353,11 +17356,14 @@ hardened lives, and would learn the Istio constraint by failed reconciliation.
   privileged init container from every injected pod is defensible on its own. It
   is a node-networking change in a k3d cluster and needs its own approval.
 - **`monitoring` remains the safe pilot** but is explicitly not worth a cycle of
-  its own: injection is disabled and both workloads already satisfy Restricted, so
-  even `enforce` would change nothing there. It is step 3's starting point, not a
-  standalone move.
-- **The seven Helm-owned namespaces were not inspected.** Whether any of their
-  workloads satisfies Baseline or Restricted is unknown and stays `DEFER`.
+  its own: injection is disabled and both workloads satisfy Baseline, so
+  `enforce=baseline` would change nothing there. It is step 3's starting point,
+  not a standalone move. At Restricted the property does not hold — both
+  workloads fail on `seccompProfile`, which Baseline does not require at all.
+- **The Helm-owned namespaces were not inspected at decision time.** Whether any
+  of their workloads satisfies Baseline or Restricted was unknown when ADR 0024
+  was taken. A follow-up survey was commissioned immediately afterwards; see the
+  next ledger entry for its results.
 - **Carried forward unchanged.** The two deferred `adminer` controls, the three
   deferred upgrades, `targetRevision: main` unpinned across twelve declarations,
   `.github/**` without a declared scope owner, and the same
