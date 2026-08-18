@@ -112,6 +112,7 @@ POST_CLOSURE_ADR_AUTHORITY_PATHS = frozenset(
         "docs/02.architecture/decisions/0023-argo-cd-source-integrity-non-adoption.md",
         "docs/02.architecture/decisions/0024-pod-security-standards-staged-adoption.md",
         "docs/02.architecture/decisions/0025-pod-security-admission-per-namespace-adoption.md",
+        "docs/02.architecture/decisions/0026-mutable-target-revision-retention.md",
     }
 )
 POST_CLOSURE_SPEC_AUTHORITY_PATHS = frozenset(
@@ -2810,6 +2811,8 @@ def _self_test_post_closure_adr_scope() -> int:
             "0024-pod-security-standards-staged-adoption.md",
             "docs/02.architecture/decisions/"
             "0025-pod-security-admission-per-namespace-adoption.md",
+            "docs/02.architecture/decisions/"
+            "0026-mutable-target-revision-retention.md",
         }
     )
     if POST_CLOSURE_ADR_AUTHORITY_PATHS != expected_later:

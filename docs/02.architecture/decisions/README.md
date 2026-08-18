@@ -57,6 +57,7 @@
 ├── 0023-argo-cd-source-integrity-non-adoption.md
 ├── 0024-pod-security-standards-staged-adoption.md
 ├── 0025-pod-security-admission-per-namespace-adoption.md
+├── 0026-mutable-target-revision-retention.md
 └── README.md
 ```
 
@@ -101,6 +102,7 @@
 | [`./0023-argo-cd-source-integrity-non-adoption.md`](./0023-argo-cd-source-integrity-non-adoption.md)               | Argo CD source-integrity 미채택 결정                                  | Accepted | 서명 검증은 가변 `targetRevision: main`의 tip 커밋만 인증하므로 기록된 identity gap의 원인을 해결하지 못한다. 선호 대안은 commit-SHA 핀이며 실행하지 않는다. Helm/OCI 범위 확장, warn 모드 문서화, 또는 독립적 이유의 commit signing 도입 시 재검토한다. |
 | [`./0024-pod-security-standards-staged-adoption.md`](./0024-pod-security-standards-staged-adoption.md) | Pod Security Standards 단계 도입 결정 | Accepted | 라벨을 지금 붙이지 않는다. Baseline capabilities 제어가 initContainers를 포함하고 `NET_ADMIN`·`NET_RAW`를 허용하지 않는 반면 `istio-cni` 없는 Istio 1.25.2는 `istio-init`에 그 둘을 요구하므로, 구속 조건은 워크로드가 아니라 mesh 네트워킹이다. 도입 순서는 CNI → warn/audit=baseline → 네임스페이스별 enforce로 기록한다. |
 | [`./0025-pod-security-admission-per-namespace-adoption.md`](./0025-pod-security-admission-per-namespace-adoption.md) | Pod Security Admission 네임스페이스별 도입 결정 | Accepted | ADR 0024의 역전 조건 발화 후 재판단이다. 네임스페이스마다 자체 증거가 뒷받침하는 최대 강도를 부여한다: `istio-system`은 CNI DaemonSet 때문에 영구 `privileged`, `monitoring`/`platform`은 `enforce=restricted`, Helm 소유 4곳은 차트 버전 종속이라 `audit`/`warn`만, 주입 2곳은 CNI 라이브 미검증이라 `baseline` warn/audit을 검증 신호로 쓴다. `enforce`만 버전 고정한다. |
+| [`./0026-mutable-target-revision-retention.md`](./0026-mutable-target-revision-retention.md) | 가변 targetRevision 유지 결정 | Accepted | ADR 0023이 선호 통제로 남긴 commit-SHA 핀을 기각한다. 12개 선언은 모두 이 저장소 자신을 가리키며 외부 차트는 이미 버전 핀이다. 핀은 하드닝이 아니라 자동 reconcile을 수동 promotion으로 바꾸는 배포 모델 변경이고, 핀 커밋은 자기 자신을 참조할 수 없어 구조적으로 한 커밋 뒤처진다. 운영자 추가·환경 추가·force-push 워크플로 도입 시 재검토한다. |
 
 ## Related Documents
 
