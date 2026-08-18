@@ -31,7 +31,6 @@ rules:
       - persistentvolumeclaims
       - persistentvolumes
       - namespaces
-      - endpoints
     verbs: [list, watch]
   - apiGroups: [apps]
     resources:
@@ -68,9 +67,14 @@ rules:
       - mutatingwebhookconfigurations
       - validatingwebhookconfigurations
     verbs: [list, watch]
-  # 아래 두 규칙은 kube-state-metrics 기본 수집 대상(default resources)이다.
+  # 아래 세 규칙은 kube-state-metrics 기본 수집 대상(default resources)이다.
   # 이 Deployment는 `args`를 선언하지 않아 기본 수집기 집합을 그대로 사용하므로,
-  # 권한이 없으면 두 수집기가 forbidden 상태로 동작한다.
+  # 권한이 없으면 해당 수집기가 forbidden 상태로 동작한다.
+  #
+  # v2.19.1의 기본 집합은 v2.14.0과 정확히 한 항목만 다르다: core `endpoints`가
+  # 빠지고 `discovery.k8s.io/endpointslices`가 들어온다. 나머지 27개는 동일하다.
+  # 따라서 core 목록에서 endpoints를 함께 제거했다 — 남겨두면 현재 핀이 사용하지
+  # 않는 권한이 된다.
   - apiGroups: [certificates.k8s.io]
     resources:
       - certificatesigningrequests
@@ -78,6 +82,10 @@ rules:
   - apiGroups: [coordination.k8s.io]
     resources:
       - leases
+    verbs: [list, watch]
+  - apiGroups: [discovery.k8s.io]
+    resources:
+      - endpointslices
     verbs: [list, watch]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -126,7 +134,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: kube-state-metrics
-          image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.14.0
+          image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.19.1
           ports:
             - name: http-metrics
               containerPort: 8080

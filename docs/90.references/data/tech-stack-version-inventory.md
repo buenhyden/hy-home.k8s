@@ -67,6 +67,24 @@ updated: 2026-07-30
 
 ```yaml
 k3s_image: 'rancher/k3s:v1.35.0-k3s1'
+# GitOps 매니페스트가 이미지 태그로 직접 핀하는 워크로드다. Helm 차트를 거치지 않으므로
+# helm_charts 계약이 덮지 않는다. bootstrap_helm_charts와 같은 부류의 경계 구멍이었다.
+workload_images:
+  kube-state-metrics:
+    image: 'registry.k8s.io/kube-state-metrics/kube-state-metrics'
+    version: 'v2.19.1'
+    declaredBy: 'gitops/platform/monitoring/kube-state-metrics.yaml'
+    note: 'ClusterRole은 이 버전의 DefaultResources 28개와 정확히 일치해야 한다. 버전을 올릴 때 pkg/options/resource.go 를 함께 확인한다.'
+  grafana-alloy:
+    image: 'docker.io/grafana/alloy'
+    version: 'v1.13.1'
+    declaredBy: 'gitops/platform/monitoring/alloy-k8s-logs.yaml'
+    note: '업그레이드 이연. 상위 v1.18.1 대비 마이너 5개 뒤짐.'
+  adminer:
+    image: 'adminer'
+    version: '4.8.1'
+    declaredBy: 'gitops/workloads/adminer/rollout.yaml'
+    note: '업그레이드 이연. 공식 이미지 라인은 4(adminer 4.17.1)와 5(adminer 5.5.1)뿐이며 6.x 이미지는 없다.'
 # bootstrap 단계에서 GitOps 소유권 확립 이전에 helm으로 직접 설치하는 chart다.
 # `infrastructure/bootstrap-local.sh`의 `--version` 값과 반드시 일치해야 한다.
 bootstrap_helm_charts:
