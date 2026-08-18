@@ -66,7 +66,25 @@ updated: 2026-07-30
 ### Version Contracts
 
 ```yaml
+# 이 핀은 의도적으로 유지한다. v1.35.7-k3s1 로의 이동은 Kubernetes 기준으로는 patch 7개지만,
+# k3s 번들이 함께 올리는 구성요소는 patch가 아니다: containerd v2.1.5 -> v2.2.5, flannel
+# v0.27.4 -> v0.28.4, coredns v1.13.1 -> v1.14.6, metrics-server v0.8.0 -> v0.9.0, kine
+# v0.14.9 -> v0.16.3 (minor), 그리고 traefik v3.5.1 -> v3.7.8 (--disable=traefik 이므로 무관).
+# 즉 버전 문자열이 변경 규모를 실제보다 작게 보이게 한다. 특히 flannel minor는 Istio CNI가
+# conflist를 체이닝하는 바로 그 표면이며, 그 도입은 아직 live 검증되지 않았다(ADR 0025).
+# 순서: Istio CNI의 Baseline warning 채널이 깨끗하게 확인된 뒤에 이 핀을 올린다.
+# k3d에는 upgrade 명령이 없어 이 값의 변경은 delete-and-recreate를 의미한다. 매니페스트
+# 편집이 아니라 운영 절차이며, 현재 저장소에는 그 재생성 절차 문서가 없다.
 k3s_image: 'rancher/k3s:v1.35.0-k3s1'
+# k3s_image를 실행하는 도구 자체의 계약이다. 저장소는 k3s 이미지를 핀하면서 그것을 구동하는
+# k3d 바이너리는 `bootstrap-local.sh`에서 "명령이 존재하는가"만 확인해 왔다.
+# 최소 버전은 선언하지 않는다. 근거가 없기 때문이다. 확인된 사실은 관측된 조합 하나뿐이다.
+k3d_cli:
+  observed: 'v5.8.3'
+  observedOn: '2026-08-18'
+  observedDefaultK3s: 'v1.31.5-k3s1'
+  upstreamLatest: 'v5.9.0'
+  note: 'k3d가 내장한 기본 k3s(v1.31.5-k3s1)보다 4개 마이너 앞선 v1.35.0-k3s1을 실제로 구동 중이므로, 기본값과의 격차 자체는 차단 요인이 아니다. 내장 기본값은 image를 명시하면 참조되지 않는다. v5.9.0은 cluster restart를 추가했을 뿐 upgrade 경로를 추가하지 않았다.'
 # GitOps 매니페스트가 이미지 태그로 직접 핀하는 워크로드다. Helm 차트를 거치지 않으므로
 # helm_charts 계약이 덮지 않는다. bootstrap_helm_charts와 같은 부류의 경계 구멍이었다.
 workload_images:
