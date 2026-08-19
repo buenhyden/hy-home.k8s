@@ -137,7 +137,13 @@ class ProviderConfigContractTests(unittest.TestCase):
                     continue
                 if item["kind"] == "role-directory":
                     target.mkdir(parents=True, exist_ok=True)
-                elif item["kind"] == "compatibility-hook-graph":
+                elif item["kind"] in {
+                    "compatibility-hook-graph",
+                    "tracked-settings",
+                }:
+                    # Tracked settings are parsed for real by the validator, so
+                    # a placeholder byte string would fail as JSON before the
+                    # boundary rule under test could be reached.
                     target.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copyfile(REPOSITORY_ROOT / item["path"], target)
                 else:

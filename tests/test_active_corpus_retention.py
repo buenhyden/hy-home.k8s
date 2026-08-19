@@ -3457,7 +3457,9 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         path = self.validator.REGISTRY_PATH
         base_blob, work105_blob = self.validator.WORK105_REGISTRY_BLOBS
         work107_blob = self.validator.WORK107_REGISTRY_BLOB
-        current_blob = self.validator.MIG2_REGISTRY_BLOB
+        # The consolidation merge advanced the registry past MIG-0002, so the
+        # tracked blob is the merge authority rather than the MIG-0002 one.
+        current_blob = self.validator.MERGE_REGISTRY_BLOB
         self.assertEqual(
             subprocess.run(
                 [
@@ -3490,7 +3492,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 capture_output=True,
                 text=True,
             ).stdout.strip(),
-            self.validator.WORK108_REGISTRY_BLOB,
+            self.validator.MERGE_REGISTRY_BLOB,
         )
         self.assertNotEqual(work105_blob, work107_blob)
         self.assertNotEqual(work105_blob, current_blob)

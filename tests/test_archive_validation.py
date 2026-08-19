@@ -1303,7 +1303,23 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
     def test_standalone_approval_statements_are_relation_specific(self) -> None:
         statements = self.validator.STANDALONE_APPROVAL_STATEMENTS
 
-        self.assertEqual(set(statements), {"0043", "0053", "0054"})
+        self.assertEqual(
+            set(statements),
+            # 0055-0061 are the renumbered successors the consolidation
+            # merge introduced alongside the original three.
+            {
+                "0043",
+                "0053",
+                "0054",
+                "0055",
+                "0056",
+                "0057",
+                "0058",
+                "0059",
+                "0060",
+                "0061",
+            },
+        )
         self.assertIn("2026-08-08", statements["0053"][0])
         self.assertIn("2026-08-13", statements["0054"][0])
         self.assertNotEqual(statements["0053"], statements["0054"])
@@ -1337,8 +1353,8 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             move_targets,
         )
 
-        self.assertEqual(len({edge.source for edge in edges}), 28)
-        self.assertEqual(len(edges), 96)
+        self.assertEqual(len({edge.source for edge in edges}), 27)
+        self.assertEqual(len(edges), 93)
         self.assertTrue(
             all(
                 replacement in self.context.tracked_regular_paths
@@ -1445,7 +1461,10 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         current = self.context.texts[source]
         current_bytes = current.encode("utf-8")
 
-        self.assertEqual(len(current_bytes), prefix_size)
+        # The ledger is append-only, so it may be longer than the frozen
+        # prefix. Only the prefix itself is pinned, which the next assertion
+        # checks byte for byte.
+        self.assertGreaterEqual(len(current_bytes), prefix_size)
         self.assertEqual(
             self.validator._git_sha1_blob_bytes(current_bytes[:prefix_size]),
             expected_blob,

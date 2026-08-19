@@ -543,6 +543,9 @@ class DocumentStrictCutoverTests(unittest.TestCase):
             ), (
                 "[Document Stage Routing](../00.agent-governance/rules/document-stage-routing.md)",
                 "[Document Stage Routing](../00.agent-governance/rules/document-authoring.md)",
+            ), (
+                "[Harness Implementation Map](../00.agent-governance/harness-implementation-map.md)",
+                "[Local Harness Catalog](../00.agent-governance/harness-catalog.md)",
             )),
             "docs/05.operations/guides/0009-llm-wiki-curation-guide.md": ((
                 "../../00.agent-governance/rules/document-stage-routing.md",
@@ -2028,6 +2031,9 @@ class DocumentStrictCutoverTests(unittest.TestCase):
             "docs/98.archive/README.md",
             WORK107_MIGRATION_PATH,
             "docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md",
+            # WP-003 recorded the agent governance control-plane consolidation
+            # as its own Stage 98 migration document.
+            "docs/98.archive/migrations/mig-0003-agent-governance-control-plane-consolidation.md",
         }
         self.assertEqual(set(staged_inventory), expected_current)
         self.assertEqual(
@@ -2222,7 +2228,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
             if (identity := validator._work106_derive_artifact_identity(path))
             is not None
         )
-        self.assertEqual(len(identities), 291)
+        self.assertEqual(len(identities), 317)
         self.assertEqual(
             validator._work106_artifact_diagnostics(records, terminal=True), ()
         )

@@ -96,16 +96,55 @@ class MigrationTests(unittest.TestCase):
     def test_production_manifest_is_exact(self):
         raw = json.loads((ROOT / "scripts/document-taxonomy-migration.json").read_text(encoding="utf-8"))
         manifest = self.tool.load_manifest(ROOT / "scripts/document-taxonomy-migration.json")
-        plan = self.tool.validate_manifest_data(ROOT, raw, True)
-        self.assertEqual((plan.source_count, plan.move_count, plan.archive_count), (132, 82, 50))
+        # The legacy manifest is retired, so full validation aborts on the
+        # reviewed missing-endpoint signature rather than producing a plan.
+        expected = self._expected_legacy_diagnostics(raw["entries"])
+        with self.assertRaises(self.tool.MigrationAbort) as raised:
+            self.tool.validate_manifest_data(ROOT, raw, True)
+        self.assertEqual(str(raised.exception), expected[0])
+        dispositions = [row["disposition"] for row in raw["entries"]]
+        self.assertEqual(
+            (
+                len(dispositions),
+                dispositions.count("move-current"),
+                len(dispositions) - dispositions.count("move-current"),
+            ),
+            (132, 82, 50),
+        )
         self.assertIsInstance(manifest, tuple)
         self.assertIsInstance(manifest[0], MappingProxyType)
         first = manifest[0]
-        self.assertEqual({k: first[k] for k in ("source", "target", "workUnit", "disposition", "reviewed")}, {"source": "docs/04.execution/plans/2026-08-07-document-taxonomy-consolidation.md", "target": "docs/03.specs/0052-document-taxonomy-consolidation/plan.md", "workUnit": "Spec-052", "disposition": "move-current", "reviewed": True})
+        self.assertEqual({k: first[k] for k in ("source", "target", "workUnit", "disposition", "reviewed")}, {"source": "docs/04.execution/plans/2026-08-07-document-taxonomy-consolidation.md", "target": "docs/03.specs/052-document-taxonomy-consolidation/plan.md", "workUnit": "Spec-052", "disposition": "move-current", "reviewed": True})
         move_units = {
             row["workUnit"] for row in manifest if row["disposition"] == "move-current"
         }
         self.assertEqual(len(move_units), 41)
+
+    def _expected_legacy_diagnostics(self, entries):
+        """Return the reviewed terminal signature of the retired legacy manifest.
+
+        WORK-109 moved every Spec member to a four-digit route and retired the
+        Stage 04 sources, so neither endpoint of a legacy move row resolves any
+        more. The registry validator pins exactly this diagnostic set, so an
+        empty result here would mean the retirement had been undone rather than
+        that the manifest still applies.
+        """
+
+        diagnostics = set()
+        units = set()
+        for row in entries:
+            if row.get("disposition") != "move-current":
+                continue
+            match = re.fullmatch(
+                r"docs/03\.specs/(\d{3})-[^/]+/(?:plan|tasks)\.md", row["target"]
+            )
+            self.assertIsNotNone(match)
+            diagnostics.add(f"MIGRATION-MISSING-ENDPOINT:{row['source']}")
+            units.add(match.group(1))
+        for unit in units:
+            diagnostics.add(f"MIGRATION-WORK-UNIT-SPEC:{unit}")
+            diagnostics.add(f"WORK-UNIT-MISSING-SPEC:{unit}")
+        return tuple(sorted(diagnostics))
 
     def test_work107_stable_archive_paths_preserve_reviewed_manifest_endpoints(self):
         manifest = json.loads(
@@ -119,11 +158,15 @@ class MigrationTests(unittest.TestCase):
                 manifest["entries"],
                 manifest["sourceCommit"],
             ),
-            (),
+            self._expected_legacy_diagnostics(manifest["entries"]),
         )
 
     def test_reviewed_manifest_snapshot_binds_clean_stage_zero_index(self):
-        snapshot = self.tool.load_reviewed_manifest_snapshot(ROOT)
+        # Every production consumer loads the snapshot with repository
+        # validation off, because the legacy endpoints are retired by design.
+        snapshot = self.tool.load_reviewed_manifest_snapshot(
+            ROOT, validate_repository=False
+        )
         self.assertEqual(snapshot.document.source_commit, self.tool.EXPECTED_SOURCE_COMMIT)
         self.assertEqual(len(snapshot.document.entries), 132)
 
@@ -135,7 +178,9 @@ class MigrationTests(unittest.TestCase):
         with mock.patch.object(
             self.tool, "_capture_control_surface", return_value=dirty
         ), self.assertRaisesRegex(self.tool.MigrationAbort, "CONTROL-DIRTY"):
-            self.tool.load_reviewed_manifest_snapshot(ROOT)
+            self.tool.load_reviewed_manifest_snapshot(
+                ROOT, validate_repository=False
+            )
 
     def test_named_unsafe_states_abort(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -186,8 +231,10 @@ class MigrationTests(unittest.TestCase):
 
     def test_cli_check_reports_counts(self):
         result = subprocess.run([sys.executable, str(TOOL), "--root", str(ROOT), "--manifest", "scripts/document-taxonomy-migration.json", "--check"], cwd=ROOT, text=True, capture_output=True)
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("moves=82 archives=50 sources=132", result.stdout)
+        # The retired legacy manifest fails closed; the check reports the first
+        # reviewed diagnostic instead of a plan summary.
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("MIGRATION-MISSING-ENDPOINT:", result.stdout + result.stderr)
 
     def test_detect_secrets_admits_only_canonical_manifest_identity_lines(self):
         config = yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text(encoding="utf-8"))

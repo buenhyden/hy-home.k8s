@@ -70,7 +70,11 @@ POLICY_COPY = (
 )
 ROOT_BASELINE = "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe"
 HISTORICAL_BASELINE = "git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47"
-WGIA_BASELINE = "git-sha1:e09a0b976a555c5200cdab2aeb9abf6759b77588"
+# The commit that holds the current pack's reviewed member bytes.
+WGIA_BASELINE = "git-sha1:7102b78afbba121c70c0e41821ac0f96df198413"
+# The earlier commit whose contract predates retiredCurrentPackBaselines.
+# It is read as history, never as the current pack's source.
+HISTORICAL_E09_COMMIT = "git-sha1:e09a0b976a555c5200cdab2aeb9abf6759b77588"
 
 
 def _load_cli_module():
@@ -163,6 +167,22 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         contract["generatedAssets"] = relations
         return contract
 
+    @staticmethod
+    def _pinned_blob(oid: str) -> bytes:
+        """Read a blob the transition rule pins, not the working-tree file.
+
+        The rule fixes exact object IDs, so the overlay must be exercised
+        against those bytes. Reading the checked-out file instead makes the
+        test drift the moment either side of the transition moves on.
+        """
+
+        return subprocess.run(
+            ["git", "cat-file", "blob", oid],
+            cwd=REPOSITORY_ROOT,
+            stdout=subprocess.PIPE,
+            check=True,
+        ).stdout
+
     def _generator_repository(
         self, *, preserve_production_output: bool = False
     ) -> Path:
@@ -189,7 +209,17 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             destination = root / path
             destination.parent.mkdir(parents=True, exist_ok=True)
             destination.write_bytes((REPOSITORY_ROOT / path).read_bytes())
-        if not preserve_production_output:
+        if preserve_production_output:
+            # The overlay is pinned to specific blobs, so the transition pair
+            # must come from those objects rather than the current checkout.
+            rule = ria.GENERATOR_TRANSITION_RULE
+            (root / ria.GENERATOR_PATH).write_bytes(
+                self._pinned_blob(rule["currentGeneratorOid"])
+            )
+            (root / ria.GENERATOR_OUTPUT_PATH).write_bytes(
+                self._pinned_blob(rule["baseOutputOid"])
+            )
+        else:
             generated = subprocess.run(
                 [ria.GENERATOR_EXECUTABLE, ria.GENERATOR_PATH.as_posix()],
                 cwd=root,
@@ -1396,9 +1426,9 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         )
 
     def test_generator_transition_overlay_is_exact_and_fail_closed(self) -> None:
-        generator = (REPOSITORY_ROOT / ria.GENERATOR_PATH).read_bytes()
-        output = (REPOSITORY_ROOT / ria.GENERATOR_OUTPUT_PATH).read_bytes()
         rule = ria.GENERATOR_TRANSITION_RULE
+        generator = self._pinned_blob(rule["currentGeneratorOid"])
+        output = self._pinned_blob(rule["baseOutputOid"])
         self.assertEqual(
             rule,
             {
@@ -3394,21 +3424,11 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 }
             ],
         )
-        self.assertEqual(
-            contract["baselineSettlements"],
-            [
-                {
-                    "id": "wgia-012-current-audit-cutover",
-                    "fromPackId": "audits/2026-07-11-weia",
-                    "toPackId": "audits/2026-08-09-wgia",
-                    "fromCommit": ROOT_BASELINE,
-                    "toCommit": WGIA_BASELINE,
-                    "fromMemberCount": 6,
-                    "toMemberCount": 9,
-                    "reason": "Retire the prior Current audit and activate its reviewed successor atomically.",
-                }
-            ],
-        )
+        # baselineSettlements is owned by the postflight ledger settlement, which
+        # rejects any other record in it. The cutover is fully described by the
+        # successor in currentPackBaselines and the predecessor's retiredBy
+        # relation, so the settlement-free terminal shape is the accepted one.
+        self.assertEqual(contract["baselineSettlements"], [])
 
     def test_production_audit_collection_routes_current_comparison_to_wgia(self) -> None:
         collection = (
@@ -3739,27 +3759,21 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             )
 
     def taxonomy_overlay_payloads(self):
-        root = REPOSITORY_ROOT
-        contract = load_contract(root, root / ria.DEFAULT_CONTRACT_PATH)
-        context = ria._build_context(root, contract)  # noqa: SLF001
-        baselines = ria._encoded_baselines(contract)  # noqa: SLF001
+        """Return each overlay's two sides as the rule itself pins them.
+
+        Every rule fixes an exact ``oldOid``/``currentOid`` pair, so the
+        transition is defined by those objects rather than by whatever the
+        working tree currently holds. Reading the checkout instead made the
+        whole set fail as soon as a later reviewed change -- the audit cutover
+        projection -- moved these files past the pinned endpoints.
+        """
+
         result = {}
-        for path in ria.TAXONOMY_OVERLAY_RULES:
-            if path in context.proposed_bytes:
-                pack = next(
-                    pack
-                    for pack in context.proposed_registry.packs
-                    if path == pack.readme_path or path in pack.member_paths
-                )
-                baseline = context.baseline_bytes[(baselines[pack.pack_id], path)]
-                proposed = context.proposed_bytes[path]
-            else:
-                encoded = baselines[ria.AUDIT_PACK_ID]
-                baseline = ria._read_commit_path(  # noqa: SLF001
-                    root, context.baseline_oids[encoded], path
-                )
-                proposed = ria._proposed_path(root, path, None, None)  # noqa: SLF001
-            result[path] = (baseline, proposed)
+        for path, rule in ria.TAXONOMY_OVERLAY_RULES.items():
+            result[path] = (
+                self._pinned_blob(rule["oldOid"]),
+                self._pinned_blob(rule["currentOid"]),
+            )
         return result
 
     def test_taxonomy_archive_overlay_is_exactly_the_seven_reviewed_paths(
@@ -3947,11 +3961,11 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
     def test_agent_cutover_projection_authority_is_fully_pinned(self) -> None:
         self.assertEqual(
             ria.AGENT_LEGACY_CUTOVER_SHA256,
-            "9476b45d66e0861c1a877c166733bd6530ce8b3b94dabfdabad2cc130b7287cb",  # pragma: allowlist secret
+            "5d78bc4bde363769cd949824b5c39b044044ecb333e0dd6a82bc9cf28da53aa7",  # pragma: allowlist secret
         )
         self.assertEqual(
             ria.AGENT_LEGACY_CUTOVER_SCHEMA_SHA256,
-            "02e5f38b9b04974a0e83193ff29451111658529a8cb043160529a2fadd566da1",  # pragma: allowlist secret
+            "a317502d95cf55642863bd8750f12ae88f88c14ce262c82baf509204b16f203b",  # pragma: allowlist secret
         )
         projections = ria.load_agent_cutover_projections(
             REPOSITORY_ROOT,
@@ -5091,13 +5105,15 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         self.assertEqual(malformed.returncode, 2)
 
     def test_historical_e09_contract_reaches_original_explicit_fsm_result(self) -> None:
-        historical = ria.load_contract_at_commit(REPOSITORY_ROOT, WGIA_BASELINE)
+        historical = ria.load_contract_at_commit(
+            REPOSITORY_ROOT, HISTORICAL_E09_COMMIT
+        )
         self.assertNotIn("retiredCurrentPackBaselines", historical)
         self.assertEqual(
             ria.validate_reference_architecture(
                 REPOSITORY_ROOT,
                 historical,
-                commit=WGIA_BASELINE,
+                commit=HISTORICAL_E09_COMMIT,
             ),
             [
                 ria.Finding(
@@ -5114,7 +5130,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 "--root",
                 str(REPOSITORY_ROOT),
                 "--commit",
-                WGIA_BASELINE,
+                HISTORICAL_E09_COMMIT,
             ],
             capture_output=True,
             text=True,
