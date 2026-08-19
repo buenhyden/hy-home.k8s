@@ -31,7 +31,7 @@
       {"path": "docs/99.templates/support/common.md", "profile": "governance/template-support", "profileClass": "governance", "mode": "authored", "title": "Common Support", "type": "governance/template-support", "status": "active", "body": "Common support."},
       {"path": "docs/99.templates/support/documentation.md", "profile": "governance/template-support", "profileClass": "governance", "mode": "authored", "title": "Documentation Support", "type": "governance/template-support", "status": "active", "body": "Documentation support."}
     ],
-    "collectionArtifacts": ["docs/99.templates/support/document-profiles.json", "docs/99.templates/support/document-profiles.schema.json"],
+    "collectionArtifacts": ["docs/99.templates/contracts/route-contract.json", "docs/99.templates/support/document-profiles.json", "docs/99.templates/support/document-profiles.schema.json"],
     "declaredIndexes": ["docs/03.specs/README.md"],
     "ledgerColumns": ["path", "title", "profile", "owner-key", "disposition", "destination", "local-evidence", "official-sources", "observed-version", "applicability", "content-decision", "refresh-trigger", "reviewer", "result"],
     "symlinkAdapters": [{"path": ".claude/skills", "target": "../.agents/skills"}],

@@ -850,29 +850,27 @@ class ArchiveCutoverTest(unittest.TestCase):
         self.assertNotIn("sentinel", output.getvalue())
 
     def test_registry_non_object_and_decode_failure_are_stable(self) -> None:
-        registry_path = (
-            ROOT / "docs/99.templates/support/document-profiles.json"
-        ).resolve()
-        original_read_text = Path.read_text
+        # The authority now arrives through the projection rather than through a
+        # single file read, so the unreadable and not-an-object cases are
+        # injected at that seam.
+        def payload(value):
+            def load(root):
+                if isinstance(value, BaseException):
+                    raise value
+                return value
 
-        def registry_text(value):
-            def read(path: Path, *args, **kwargs):
-                if path.resolve() == registry_path:
-                    if isinstance(value, BaseException):
-                        raise value
-                    return value
-                return original_read_text(path, *args, **kwargs)
-
-            return read
+            return load
 
         cases = (
-            "[]",
+            [],
             UnicodeDecodeError("utf-8", b"x", 0, 1, "sentinel-decode"),
         )
         for value in cases:
             with self.subTest(value=type(value).__name__):
                 with (
-                    patch.object(Path, "read_text", new=registry_text(value)),
+                    patch.object(
+                        archive_cutover, "load_internal_payload", new=payload(value)
+                    ),
                     patch.object(
                         archive_cutover, "_secret_classifier", return_value=None
                     ),

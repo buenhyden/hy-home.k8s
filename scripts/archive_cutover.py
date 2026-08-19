@@ -45,9 +45,11 @@ if __package__:
         validate_work107_migration_rows,
     )
     from scripts.document_contracts import (
+        REGISTRY_PATH,
         DocumentContractError,
         Registry,
         classify_path,
+        load_internal_payload,
         load_registry,
     )
     from scripts.document_lifecycle import document_from_text
@@ -80,9 +82,11 @@ else:
         validate_work107_migration_rows,
     )
     from document_contracts import (  # type: ignore[no-redef]
+        REGISTRY_PATH,
         DocumentContractError,
         Registry,
         classify_path,
+        load_internal_payload,
         load_registry,
     )
     from document_lifecycle import document_from_text  # type: ignore[no-redef]
@@ -943,15 +947,14 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
             secret_clean_count=0,
         )
     diagnostics: list[CutoverDiagnostic] = list(_finite_cutover_base_diagnostics(root))
-    registry_path = root / "docs/99.templates/support/document-profiles.json"
+    registry_path = root / REGISTRY_PATH
     try:
-        loaded_registry = json.loads(registry_path.read_text(encoding="utf-8"))
-    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        loaded_registry = load_internal_payload(root)
+    except (DocumentContractError, OSError, UnicodeDecodeError, ValueError):
         loaded_registry = {}
-    if isinstance(loaded_registry, dict):
-        registry = loaded_registry
-    else:
-        registry = {}
+    registry: Mapping[str, object] = (
+        loaded_registry if isinstance(loaded_registry, dict) else {}
+    )
     generic_report = validate_repository_archive(root, registry)
     diagnostics.extend(
         _diagnostic(item.code, item.path) for item in generic_report.diagnostics
@@ -1424,7 +1427,7 @@ def apply_work107_stable_rehome(repository_root: str | Path) -> int:
     root = Path(repository_root).resolve(strict=True)
     rows = validate_work107_migration_rows(root, build_work107_migration_rows(root))
     index_path = root / ARCHIVE_INDEX
-    registry_path = root / "docs/99.templates/support/document-profiles.json"
+    registry_path = root / "docs/99.templates/contracts/route-contract.json"
     migration_path = root / WORK107_MIGRATION_PATH
     original_index = index_path.read_bytes()
     original_registry = registry_path.read_bytes()

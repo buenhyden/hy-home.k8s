@@ -87,9 +87,12 @@ LEDGER_PATH = PurePosixPath(
 RIA_CONTRACT_PATH = PurePosixPath(
     "docs/90.references/data/reference-information-architecture.json"
 )
-DOCUMENT_PROFILES_PATH = PurePosixPath(
+# History holds the combined registry at this path; the RIA commit read below
+# resolves it from a pinned commit rather than from the working tree.
+RETIRED_DOCUMENT_PROFILES_PATH = PurePosixPath(
     "docs/99.templates/support/document-profiles.json"
 )
+ROUTE_CONTRACT_PATH = PurePosixPath("docs/99.templates/contracts/route-contract.json")
 DOCUMENT_TAXONOMY_MANIFEST_PATH = PurePosixPath(
     "scripts/document-taxonomy-migration.json"
 )
@@ -6860,7 +6863,7 @@ def _protected_historical_predecessor_link(
             registry_bytes = _read_ria_commit_path(
                 context.root,
                 oid,
-                Path(DOCUMENT_PROFILES_PATH.as_posix()),
+                Path(RETIRED_DOCUMENT_PROFILES_PATH.as_posix()),
             )
             source_bytes = _read_ria_commit_path(
                 context.root,
@@ -7266,7 +7269,7 @@ def _ledger_diagnostics(context: Context) -> list[Diagnostic]:
         archived_original_paths: set[str] = set()
         try:
             raw_registry = json.loads(
-                read_repository_text(context.root, DOCUMENT_PROFILES_PATH)
+                read_repository_text(context.root, ROUTE_CONTRACT_PATH)
             )
         except (OSError, UnicodeDecodeError, ValueError, json.JSONDecodeError):
             raw_registry = {}
@@ -7781,7 +7784,7 @@ def _fixture_baseline_commit(
         protected_source: (root / protected_source).read_bytes()
         for protected_source in protected_sources
     }
-    registry_path = root / DOCUMENT_PROFILES_PATH
+    registry_path = root / RETIRED_DOCUMENT_PROFILES_PATH
     original_registry_bytes = registry_path.read_bytes()
     predecessor = sorted(WERPC_PREDECESSOR_PATHS)[0]
     for protected_source, original_bytes in source_bytes.items():
