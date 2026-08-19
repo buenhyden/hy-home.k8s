@@ -2120,7 +2120,7 @@ for operations_root in operations_index_roots:
 
 template_enforcement_phrase_checks = {
     root / "docs/00.agent-governance/rules/document-authoring.md": [
-        "../../99.templates/support/document-profiles.json",
+        "../../99.templates/registry.json",
         "../../99.templates/support/document-contract.md",
         "status: draft",
         "every required heading",

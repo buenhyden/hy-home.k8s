@@ -183,7 +183,7 @@ WORK109_DIRECT_APPROVAL_ADR_PATH = (
 WORK109_DIRECT_APPROVAL_SPEC_PATH = (
     "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md"
 )
-WORK109_REGISTRY_PATH = "docs/99.templates/support/document-profiles.json"
+WORK109_REGISTRY_PATH = "docs/99.templates/registry.json"
 WORK109_MANIFEST_PATH = "scripts/document-taxonomy-migration.json"
 WORK109_STANDALONE_ROW = {
     "spec": "0054",

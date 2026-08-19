@@ -29,7 +29,7 @@ language, Template-First procedure, safety, readiness and completion checks,
 and validation handoff. It does not own exact routes, profile IDs,
 frontmatter keys or values, heading sets, relationship shapes, canonical form
 paths, lifecycle domains, or registered exceptions. Those machine values come
-only from the [Document Profile Registry](../../99.templates/support/document-profiles.json)
+only from the [Document Profile Registry](../../99.templates/registry.json)
 and its schema.
 
 [Document Contract](../../99.templates/support/document-contract.md) explains
@@ -227,7 +227,7 @@ prove CI, provider-runtime, remote, credential-bearing, or live behavior.
 
 ## Related Documents
 
-- [Document Profile Registry](../../99.templates/support/document-profiles.json)
+- [Document Profile Registry](../../99.templates/registry.json)
 - [Document Contract](../../99.templates/support/document-contract.md)
 - [Document Lifecycle](../../99.templates/support/document-lifecycle.md)
 - [Agent Quality Standards](quality-standards.md)
