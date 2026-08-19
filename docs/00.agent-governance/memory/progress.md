@@ -17417,3 +17417,102 @@ supposed to remove.
   passing run is what distinguishes an enforced contract from a documented one.
 - No live, hosted, provider-runtime, remote, secret-value, push, publish, or
   deployment evidence was collected or claimed.
+
+## 2026-08-19 - Merge validation closure: contract pin realignment and worktree retirement
+
+### Metadata
+
+- Owner: platform
+- Scope: `tests/test_active_corpus_retention.py`, `tests/test_active_corpus_role_audit.py`, `tests/test_archive_validation.py`, `tests/test_document_strict_cutover.py`, `tests/test_migrate_document_work_units.py`, `tests/test_reference_information_architecture.py`, `tests/test_validate_agent_provider_config.py`
+- Parent: the consolidation merge of `codex/docs-sdlc-governance-consolidation` into `main`
+- Evidence class: repository-static plus local execution of the full unittest suite and the repository quality gate
+
+### Progress
+
+**The first full-suite run after the merge found 34 failures, and every one was
+test-side.** No production validator disagreed with the merged tree. That
+asymmetry is the finding: the merge reconciled the validators correctly in the
+earlier cycle, but the assertions that pin those validators' inputs were left
+naming their pre-merge owners.
+
+**One placeholder byte string broke three unrelated contracts.** The provider
+config test root wrote `repository-static fixture` for every non-hook-graph
+project path, including `.claude/settings.json`, which the validator actually
+parses. Nine cases across the hook-boundary, input-boundary, and JSON-owner
+contracts failed with `PNME-JSON` before the rule under test could run. Copying
+tracked settings from the repository, as compatibility hook graphs already were,
+closed all nine.
+
+**The audit cutover split one dictionary into two, and the tests followed only
+half way.** `currentPackBaselines` is a mapping while
+`retiredCurrentPackBaselines` is a list of records carrying `retiredBy`,
+`allowedStates`, and `members`, because a retired pack must keep more than a
+commit. `AUDIT_PACK_ID` still correctly names the retired predecessor;
+`WGIA_PACK_ID` names the current pack. Only the lookups were stale.
+
+**Two overlay contracts pinned object IDs and then read the working tree.** The
+generator transition rule fixes `baseOutputOid`, `currentOutputOid`, and
+`currentGeneratorOid`; the taxonomy rules fix `oldOid` and `currentOid` per
+path. Both test paths ignored those pins and read the checkout, so all ten cases
+failed the moment a later reviewed change moved the files past the pinned
+endpoints. Reading the pinned blobs through `git cat-file` restored full
+coverage and removed the drift class entirely.
+
+**WP-003 shipped two internal mismatches that the branch could not have passed
+with.** `agent-legacy-cutover.json` was edited to `5d78bc4b` while both the
+module constant and the test pin stayed at `9476b45d`, and
+`test_production_manifest_is_exact` asserted a four-digit manifest target while
+the manifest it reads holds the three-digit legacy route. Both were corrected
+against the reviewed authority rather than against each other.
+
+**The legacy migration manifest is retired by design, and one validator already
+said so.** `_work109_expected_legacy_manifest_diagnostics` pins exactly 82
+`MIGRATION-MISSING-ENDPOINT` plus 41 `MIGRATION-WORK-UNIT-SPEC` and 41
+`WORK-UNIT-MISSING-SPEC` entries as expected output. An attempt to make the
+migration tool project legacy Spec routes onto their four-digit successors was
+reverted once that pin was found: it would have made the two consumers
+contradict each other. Every production caller already loads the reviewed
+snapshot with `validate_repository=False`; only the test did not.
+
+### Validation
+
+- `python3 -m unittest discover -s tests -q` -> `Ran 1038 tests` `OK`
+- `bash scripts/validate-repo-quality-gates.sh .` -> `[PASS] repository quality gates passed`
+- `git merge-base --is-ancestor codex/docs-sdlc-governance-consolidation main` -> ancestor, with zero unmerged commits
+- Worktree `.worktrees/docs-sdlc-governance-consolidation` removed after its tree was confirmed clean; its only untracked content was ignored caches plus one auto-generated session log, preserved as `sessions/2026-08-10-worktree-consolidation-session.md`
+- Branch `codex/docs-sdlc-governance-consolidation` deleted with `git branch -d`, which refuses a branch that is not fully merged
+- No cluster was created, deleted, or contacted
+
+### Handoff
+
+- **Recovery points are retained deliberately.** Tag `pre-consolidation-merge`
+  and branch `backup/main-pre-consolidation-merge` both still point at
+  `6e47b001`. Deleting them removes the only rollback for the whole merge, so
+  they are left for an explicit human decision rather than swept with the
+  worktree.
+- **`main` is far ahead of `origin/main` and unpushed.** Pushing is operator
+  work; nothing in this cycle attempted it.
+- **The generator transition overlay is now dead machinery.** Its base row no
+  longer exists in the wiki index and `generate-llm-wiki-index.sh --check`
+  passes, so the overlay can never match production again. It is exercised only
+  against its pinned blobs. Retiring it belongs to WP-013, not to this cycle.
+- **Three four-element phrases remain unhomed.** `## Harness Four-Element
+  Runtime Contract`, `native allow/deny policy`, and the `sandboxing` /
+  `not a Claude-style permission gate` pair left the active corpus rather than
+  moving. The vocabulary survives in `harness-catalog.md`; the per-provider
+  permission-model statements do not.
+- **Live verification is still owed and is now meaningful.** The Baseline
+  warning channel on `apps` and `ingress-nginx` could not have been read
+  correctly before, because the Istio CNI Application was never registered in
+  the root kustomization. That registration landed in this merge cycle.
+- **Reusable lesson: a pin that reads the working tree is not a pin.** Both
+  overlay contracts named exact object IDs and then compared against whatever
+  was checked out. They agreed only while nothing moved. The failure was not
+  drift in the data; it was a guard that never looked at what it claimed to
+  guard.
+- **Reusable lesson: when two consumers disagree, one of them is the owner.**
+  The migration tool and the registry validator both modelled the same
+  manifest. Fixing the tool to satisfy its own tests broke the validator that
+  pinned the tool's output. Finding the owner was cheaper than reconciling both.
+- No live, hosted, provider-runtime, remote, secret-value, push, publish, or
+  deployment evidence was collected or claimed.
