@@ -54,7 +54,7 @@ ROUTE_CONTRACT_SCHEMA_PATH = PurePosixPath(
 # The flat form validate_registry and its self-tests operate on. It is an
 # internal shape rather than a published authority: the two published
 # contracts above are projected into it by load_internal_payload.
-SCHEMA_PATH = PurePosixPath("docs/99.templates/support/document-profiles.schema.json")
+SCHEMA_PATH = PurePosixPath("docs/99.templates/contracts/registry-form.schema.json")
 INTERNAL_FORM_ID = "https://hy-home.k8s/schemas/document-profiles-8.schema.json"
 # The retired combined registry. Snapshot comparisons and commit-pinned reads
 # keep naming it because history holds it at this path and nowhere else; the

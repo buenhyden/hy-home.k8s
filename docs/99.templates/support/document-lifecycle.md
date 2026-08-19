@@ -210,7 +210,7 @@ the lifecycle change.
 ## Related Documents
 
 - [Document Profile Registry](./document-profiles.json)
-- [Document Profile Registry Schema](./document-profiles.schema.json)
+- [Document Registry Form Schema](../contracts/registry-form.schema.json)
 - [Document Contract](./document-contract.md)
 - [Document Authoring](../../00.agent-governance/rules/document-authoring.md)
 - [Archive Index](../../98.archive/README.md)

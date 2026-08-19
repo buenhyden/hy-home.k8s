@@ -181,7 +181,7 @@ hosted CI, remote execution, secret access, or live-cluster correctness.
 ## Related Documents
 
 - [Document Profile Registry](./document-profiles.json)
-- [Document Profile Registry Schema](./document-profiles.schema.json)
+- [Document Registry Form Schema](../contracts/registry-form.schema.json)
 - [Document Lifecycle](./document-lifecycle.md)
 - [Document Authoring](../../00.agent-governance/rules/document-authoring.md)
 - [Templates README](../README.md)
