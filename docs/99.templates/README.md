@@ -50,6 +50,11 @@ progress 책임을 지원한다.
 
 ```text
 99.templates/
+├── contracts/          # machine contracts and their schemas
+│   ├── document-profile.schema.json
+│   ├── frontmatter.schema.json
+│   ├── route-contract.json
+│   └── route-contract.schema.json
 ├── support/            # rationale, procedure, schema, cleanup
 │   ├── document-profiles.json
 │   ├── document-profiles.schema.json
@@ -57,6 +62,7 @@ progress 책임을 지원한다.
 ├── templates/          # copyable forms only
 │   ├── common/
 │   └── sdlc/
+├── registry.json
 └── README.md
 ```
 

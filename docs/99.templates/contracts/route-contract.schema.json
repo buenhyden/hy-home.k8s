@@ -1,0 +1,950 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hy-home.k8s/schemas/route-contract-8.schema.json",
+  "title": "Route and corpus contract for the Stage 99 document registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "$id",
+    "schemaVersion",
+    "routeState",
+    "archiveContractVersion",
+    "archiveNamespaces",
+    "retiredRouteEvidence",
+    "baseline",
+    "target",
+    "governanceCurrentOwners",
+    "referenceCurrentPacks",
+    "documentContracts"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "./route-contract.schema.json"
+    },
+    "$id": {
+      "const": "https://hy-home.k8s/docs/99.templates/contracts/route-contract.json"
+    },
+    "schemaVersion": {
+      "const": 8
+    },
+    "routeState": {
+      "enum": [
+        "legacy",
+        "transition",
+        "terminal"
+      ]
+    },
+    "archiveContractVersion": {
+      "const": 2
+    },
+    "archiveNamespaces": {
+      "$ref": "#/$defs/archiveNamespaces"
+    },
+    "retiredRouteEvidence": {
+      "$ref": "#/$defs/retiredRouteEvidence"
+    },
+    "baseline": {
+      "$ref": "#/$defs/baseline"
+    },
+    "target": {
+      "$ref": "#/$defs/target"
+    },
+    "governanceCurrentOwners": {
+      "$ref": "#/$defs/governanceCurrentOwners"
+    },
+    "referenceCurrentPacks": {
+      "$ref": "#/$defs/referenceCurrentPacks"
+    },
+    "documentContracts": {
+      "$ref": "#/$defs/documentContracts"
+    }
+  },
+  "$defs": {
+    "archiveNamespaces": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "prefixItems": [
+        {
+          "$ref": "#/$defs/arwbArchiveNamespace"
+        },
+        {
+          "$ref": "#/$defs/acerArchiveNamespace"
+        },
+        {
+          "$ref": "#/$defs/wdtcArchiveNamespace"
+        },
+        {
+          "$ref": "#/$defs/progressArchiveNamespace"
+        }
+      ]
+    },
+    "archiveNamespaceRecords": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^docs/98\\.archive/(?!README\\.md$).+\\.md$"
+      }
+    },
+    "arwbArchiveNamespace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "policy",
+        "records"
+      ],
+      "properties": {
+        "id": {
+          "const": "arwb-base"
+        },
+        "policy": {
+          "const": "exact-immutable"
+        },
+        "records": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/archiveNamespaceRecords"
+            },
+            {
+              "minItems": 31,
+              "maxItems": 31
+            }
+          ]
+        }
+      }
+    },
+    "acerArchiveNamespace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "policy",
+        "records"
+      ],
+      "properties": {
+        "id": {
+          "const": "acer-additive"
+        },
+        "policy": {
+          "const": "exact-immutable"
+        },
+        "records": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/archiveNamespaceRecords"
+            },
+            {
+              "minItems": 12,
+              "maxItems": 12
+            }
+          ]
+        }
+      }
+    },
+    "wdtcArchiveNamespace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "policy",
+        "records"
+      ],
+      "properties": {
+        "id": {
+          "const": "wdtc-execution"
+        },
+        "policy": {
+          "const": "exact-reviewed-manifest"
+        },
+        "records": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/archiveNamespaceRecords"
+            },
+            {
+              "minItems": 50,
+              "maxItems": 50
+            }
+          ]
+        }
+      }
+    },
+    "progressArchiveNamespace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "policy",
+        "records"
+      ],
+      "properties": {
+        "id": {
+          "const": "progress-snapshot"
+        },
+        "policy": {
+          "const": "append-only-unique"
+        },
+        "records": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/archiveNamespaceRecords"
+            },
+            {
+              "maxItems": 1
+            }
+          ]
+        }
+      }
+    },
+    "retiredRouteEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "routeSegment",
+        "profiles"
+      ],
+      "properties": {
+        "routeSegment": {
+          "const": "04.execution"
+        },
+        "profiles": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            {
+              "$ref": "#/$defs/retiredRouteEvidenceProfile"
+            },
+            {
+              "$ref": "#/$defs/retiredRouteEvidenceProfile"
+            }
+          ]
+        }
+      }
+    },
+    "retiredRouteEvidenceProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "paths",
+        "routes"
+      ],
+      "properties": {
+        "id": {
+          "enum": [
+            "stage90/immutable-retired-route-evidence",
+            "stage98/immutable-retired-route-evidence"
+          ]
+        },
+        "paths": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^docs/(?:90\\.references|98\\.archive)/"
+          }
+        },
+        "routes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/route"
+          }
+        }
+      }
+    },
+    "stringArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "governanceCurrentOwners": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileId",
+        "allowedStates",
+        "paths"
+      ],
+      "properties": {
+        "profileId": {
+          "const": "governance/reference"
+        },
+        "allowedStates": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "active"
+            },
+            {
+              "const": "accepted"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2,
+          "uniqueItems": true
+        },
+        "paths": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^docs/00\\.agent-governance/(?!README\\.md$)(?!memory/).+\\.md$"
+          }
+        }
+      }
+    },
+    "referenceCurrentPacks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileId",
+        "packs"
+      ],
+      "properties": {
+        "profileId": {
+          "const": "content/reference"
+        },
+        "packs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 2,
+          "items": {
+            "$ref": "#/$defs/referenceCurrentPack"
+          }
+        }
+      }
+    },
+    "referenceCurrentPack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "allowedStates",
+        "members"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^(audits|research)/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+$"
+        },
+        "allowedStates": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "members": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^(?!README\\.md$)[A-Za-z0-9][A-Za-z0-9._-]*\\.md$"
+          }
+        }
+      }
+    },
+    "baseline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sha",
+        "count"
+      ],
+      "properties": {
+        "sha": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "roots",
+        "rootFiles"
+      ],
+      "properties": {
+        "roots": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "rootFiles": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        }
+      }
+    },
+    "nonEmptyStringArray": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/stringArray"
+        },
+        {
+          "minItems": 1
+        }
+      ]
+    },
+    "documentContracts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "valueContracts",
+        "roleDecisions",
+        "admissionPolicies",
+        "lifecycleContracts",
+        "evidencePredicates"
+      ],
+      "properties": {
+        "valueContracts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/valueContract"
+          }
+        },
+        "roleDecisions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/roleDecision"
+          }
+        },
+        "admissionPolicies": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/admissionPolicy"
+          }
+        },
+        "lifecycleContracts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/lifecycleContract"
+          }
+        },
+        "evidencePredicates": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/evidencePredicate"
+          }
+        }
+      }
+    },
+    "scalarValue": {
+      "type": [
+        "string",
+        "integer",
+        "number",
+        "boolean",
+        "null"
+      ]
+    },
+    "constantConstraint": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source",
+            "value"
+          ],
+          "properties": {
+            "source": {
+              "enum": [
+                "literal",
+                "profile-id"
+              ]
+            },
+            "value": {
+              "$ref": "#/$defs/scalarValue"
+            }
+          }
+        }
+      ]
+    },
+    "enumConstraint": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source",
+            "values"
+          ],
+          "properties": {
+            "source": {
+              "enum": [
+                "literal",
+                "status-domain"
+              ]
+            },
+            "values": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/scalarValue"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "conditionalConstraint": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "key",
+            "operator",
+            "value",
+            "effect"
+          ],
+          "properties": {
+            "key": {
+              "type": "string",
+              "minLength": 1
+            },
+            "operator": {
+              "enum": [
+                "equals",
+                "not-equals"
+              ]
+            },
+            "value": {
+              "$ref": "#/$defs/scalarValue"
+            },
+            "effect": {
+              "enum": [
+                "required",
+                "forbidden"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "keyValueContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "kind",
+        "nullable",
+        "constant",
+        "enum",
+        "pattern",
+        "conditional"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "string",
+            "date",
+            "integer",
+            "number",
+            "boolean"
+          ]
+        },
+        "nullable": {
+          "type": "boolean"
+        },
+        "constant": {
+          "$ref": "#/$defs/constantConstraint"
+        },
+        "enum": {
+          "$ref": "#/$defs/enumConstraint"
+        },
+        "pattern": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "conditional": {
+          "$ref": "#/$defs/conditionalConstraint"
+        }
+      }
+    },
+    "valueContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "profileIds",
+        "keys"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "profileIds": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "keys": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/keyValueContract"
+          }
+        }
+      }
+    },
+    "roleDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileIds",
+        "role",
+        "sourceProfileId",
+        "relationshipSection",
+        "bodyRequirement"
+      ],
+      "properties": {
+        "profileIds": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "role": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "sourceProfileId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "relationshipSection": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "bodyRequirement": {
+          "enum": [
+            "body-contract",
+            "heading-set",
+            "none"
+          ]
+        }
+      }
+    },
+    "createAdmission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "states",
+        "evidencePredicateId"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "states",
+            "paired",
+            "archive-envelope",
+            "snapshot-only"
+          ]
+        },
+        "states": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "evidencePredicateId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        }
+      }
+    },
+    "admissionPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "profileIds",
+        "create",
+        "delete",
+        "rename",
+        "profileChange",
+        "baselinePaths"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "profileIds": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "create": {
+          "$ref": "#/$defs/createAdmission"
+        },
+        "delete": {
+          "const": "deny"
+        },
+        "rename": {
+          "const": "deny"
+        },
+        "profileChange": {
+          "const": "deny"
+        },
+        "baselinePaths": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "lifecycleEdge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "from",
+        "to",
+        "predicateId"
+      ],
+      "properties": {
+        "from": {
+          "type": "string",
+          "minLength": 1
+        },
+        "to": {
+          "type": "string",
+          "minLength": 1
+        },
+        "predicateId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        }
+      }
+    },
+    "lifecycleContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "profileIds",
+        "terminalStates",
+        "edges"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "profileIds": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "terminalStates": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "edges": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/lifecycleEdge"
+          }
+        }
+      }
+    },
+    "profileEdge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileId",
+        "from",
+        "to"
+      ],
+      "properties": {
+        "profileId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "from": {
+          "type": "string",
+          "minLength": 1
+        },
+        "to": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "evidenceRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileIds",
+        "states",
+        "minimum",
+        "maximum"
+      ],
+      "properties": {
+        "profileIds": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "states": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "minimum": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maximum": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        }
+      }
+    },
+    "evidencePredicate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "profileEdges",
+        "evidence",
+        "relationship",
+        "cardinality",
+        "sameDiff",
+        "bodyRequirement",
+        "capabilities"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "profileEdges": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/profileEdge"
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidenceRequirement"
+          }
+        },
+        "relationship": {
+          "enum": [
+            "self",
+            "role-decision",
+            "pair",
+            "program-lineage",
+            "archive-source"
+          ]
+        },
+        "cardinality": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "minimum",
+            "maximum"
+          ],
+          "properties": {
+            "minimum": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "maximum": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 1
+            }
+          }
+        },
+        "sameDiff": {
+          "enum": [
+            "self-status-and-body",
+            "pair-created-or-status-changed",
+            "target-and-last-relation-changed",
+            "target-and-evidence-status-body-changed",
+            "target-plan-task-status-changed",
+            "pair-status-changed",
+            "source-removed-and-mirror-created"
+          ]
+        },
+        "bodyRequirement": {
+          "enum": [
+            "body-contract",
+            "heading-set",
+            "none"
+          ]
+        },
+        "capabilities": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "rendered-link",
+              "reciprocal-link",
+              "program-lineage-closed",
+              "task-terminal-evidence",
+              "same-diff",
+              "archive-envelope",
+              "source-removal"
+            ]
+          }
+        }
+      }
+    },
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "value"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "exact",
+            "regex"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,2219 @@
+{
+  "$schema": "./route-contract.schema.json",
+  "$id": "https://hy-home.k8s/docs/99.templates/contracts/route-contract.json",
+  "schemaVersion": 8,
+  "routeState": "transition",
+  "archiveContractVersion": 2,
+  "archiveNamespaces": [
+    {
+      "id": "arwb-base",
+      "policy": "exact-immutable",
+      "records": [
+        "docs/98.archive/changes/chg-0008-common-agent-governance-refactoring/plan.md",
+        "docs/98.archive/changes/chg-0012-docs-governance-consistency/plan.md",
+        "docs/98.archive/changes/chg-0012-docs-governance-consistency/task.md",
+        "docs/98.archive/changes/chg-0016-governance-refactoring/task.md",
+        "docs/98.archive/changes/chg-0020-k3d-agent-first-remediation/plan.md",
+        "docs/98.archive/changes/chg-0020-k3d-agent-first-remediation/task.md",
+        "docs/98.archive/changes/chg-0028-platform-expansion/plan.md",
+        "docs/98.archive/changes/chg-0028-platform-expansion/task.md",
+        "docs/98.archive/changes/chg-0031-spec-execution-implementation-audit/plan.md",
+        "docs/98.archive/changes/chg-0031-spec-execution-implementation-audit/task.md",
+        "docs/98.archive/changes/chg-0040-wsl-k3d-argocd-platform/plan.md",
+        "docs/98.archive/changes/chg-0040-wsl-k3d-argocd-platform/task.md",
+        "docs/98.archive/changes/chg-0041-wsl2-k3d-argocd-ha-platform/plan.md",
+        "docs/98.archive/changes/chg-0041-wsl2-k3d-argocd-ha-platform/task.md",
+        "docs/98.archive/tombstones/01.requirements/tmb-prd-legacy-513540c3ab7c8c7ec2d848170c3c6df85b1780a2126ad41cb61d550456cefcac.md",
+        "docs/98.archive/tombstones/01.requirements/tmb-prd-legacy-54087d753dd7edf618b1cd5a0ffad654f6511e117ff7eac1ac289792c20c1e4d.md",
+        "docs/98.archive/tombstones/01.requirements/tmb-prd-legacy-8b107a1a83eb2e477de7f3c7b1d63050cff935af0dcfbdeb1e2636dc4ee5de06.md",
+        "docs/98.archive/tombstones/02.architecture/tmb-ad-legacy-61d107a63b02dcdfa33f43fbb8418afb7e4bcd4a3d83da0693b71b830da22bb8.md",
+        "docs/98.archive/tombstones/02.architecture/tmb-ad-legacy-a9933ec86fcda902cce202655eaef15ff4131e1b8bf40a74a316368f2b80fe57.md",
+        "docs/98.archive/tombstones/02.architecture/tmb-ad-legacy-daf190279d9ffd8a110eee548317c0a8ae58b86ba21220f00427c0dcace9f7b1.md",
+        "docs/98.archive/tombstones/02.architecture/tmb-adr-legacy-1cf8aa49bbb6bdca7c69c6f94881c636d25dc68b9aa298ecb854790d17f26548.md",
+        "docs/98.archive/tombstones/02.architecture/tmb-adr-legacy-59ec4c1d612f19572a59abb443a1279f998584488a41f1adb3bece1081fe774e.md",
+        "docs/98.archive/tombstones/02.architecture/tmb-adr-legacy-6ec9a5d55b91e0e59d9b73f4c11ced53d7a3a290c5a88e704b4d6d7f733cfb34.md",
+        "docs/98.archive/tombstones/02.architecture/tmb-adr-legacy-78452949112de698bd6fa9205770c51f516c900f4e42f372912612de528eac9f.md",
+        "docs/98.archive/tombstones/02.architecture/tmb-adr-legacy-a19264e8c774c9843b1bd489e4ea13b089f9493ddcfe5716a88764e1b41e68ad.md",
+        "docs/98.archive/tombstones/03.specs/tmb-spec-legacy-013c5c6ed9d3a810044f6ce50eb9aa043472b2e3528bbdfa1810192682be76ac.md",
+        "docs/98.archive/tombstones/03.specs/tmb-spec-legacy-063f6e166f3ebfc9dbcce93b3ea6aa53438f58b75935fbda294e79d87c6b52f4.md",
+        "docs/98.archive/tombstones/03.specs/tmb-spec-legacy-250a2ac6df411e9506f888dd0a0db7493990b3544b20cdfdbb086fa7233034cc.md",
+        "docs/98.archive/tombstones/03.specs/tmb-spec-legacy-aa76c31eb19898c6270484148791abad4d8b07b4323eaf949bddafb0b8e7097c.md",
+        "docs/98.archive/tombstones/05.operations/tmb-guide-legacy-292f0f96da3102684734a62842ee5c4d1e663f731921040911fa288a16163305.md",
+        "docs/98.archive/tombstones/05.operations/tmb-runbook-legacy-3c3f615242a98268abeac20385372ef3eafe9dd9680454d749d7ffb853cdbf4a.md"
+      ]
+    },
+    {
+      "id": "acer-additive",
+      "policy": "exact-immutable",
+      "records": [
+        "docs/98.archive/changes/chg-0001-affected-surface-agent-qa/plan.md",
+        "docs/98.archive/changes/chg-0001-affected-surface-agent-qa/task.md",
+        "docs/98.archive/changes/chg-0004-archive-record-and-workspace-boundary/plan.md",
+        "docs/98.archive/changes/chg-0004-archive-record-and-workspace-boundary/task.md",
+        "docs/98.archive/changes/chg-0005-authority-and-lineage-foundation/plan.md",
+        "docs/98.archive/changes/chg-0005-authority-and-lineage-foundation/task.md",
+        "docs/98.archive/changes/chg-0014-document-schema-and-lifecycle-contract/plan.md",
+        "docs/98.archive/changes/chg-0014-document-schema-and-lifecycle-contract/task.md",
+        "docs/98.archive/changes/chg-0029-protected-surface-supply-chain-hardening/plan.md",
+        "docs/98.archive/changes/chg-0029-protected-surface-supply-chain-hardening/task.md",
+        "docs/98.archive/changes/chg-0035-template-lifecycle-contract-normalization/plan.md",
+        "docs/98.archive/changes/chg-0035-template-lifecycle-contract-normalization/task.md"
+      ]
+    },
+    {
+      "id": "wdtc-execution",
+      "policy": "exact-reviewed-manifest",
+      "records": [
+        "docs/98.archive/changes/chg-0002-agent-first-harness-llm-wiki-hooks/plan.md",
+        "docs/98.archive/changes/chg-0002-agent-first-harness-llm-wiki-hooks/task.md",
+        "docs/98.archive/changes/chg-0003-antigravity-governance/plan.md",
+        "docs/98.archive/changes/chg-0003-antigravity-governance/task.md",
+        "docs/98.archive/changes/chg-0006-claude-agent-surface-restoration/plan.md",
+        "docs/98.archive/changes/chg-0006-claude-agent-surface-restoration/task.md",
+        "docs/98.archive/changes/chg-0007-codex-governance-harness-alignment/plan.md",
+        "docs/98.archive/changes/chg-0007-codex-governance-harness-alignment/task.md",
+        "docs/98.archive/changes/chg-0009-current-implementation-docs-alignment/plan.md",
+        "docs/98.archive/changes/chg-0009-current-implementation-docs-alignment/task.md",
+        "docs/98.archive/changes/chg-0010-current-research-pack-fact-first-hardening/plan.md",
+        "docs/98.archive/changes/chg-0010-current-research-pack-fact-first-hardening/task.md",
+        "docs/98.archive/changes/chg-0011-docs-01-05-current-implementation-alignment/plan.md",
+        "docs/98.archive/changes/chg-0011-docs-01-05-current-implementation-alignment/task.md",
+        "docs/98.archive/changes/chg-0013-docs-governance-full-ab-hardening/plan.md",
+        "docs/98.archive/changes/chg-0013-docs-governance-full-ab-hardening/task.md",
+        "docs/98.archive/changes/chg-0015-github-qa-ci-remediation/plan.md",
+        "docs/98.archive/changes/chg-0015-github-qa-ci-remediation/task.md",
+        "docs/98.archive/changes/chg-0017-harness-connective-layer-risk-closure/task.md",
+        "docs/98.archive/changes/chg-0018-harness-four-element-alignment/plan.md",
+        "docs/98.archive/changes/chg-0018-harness-four-element-alignment/task.md",
+        "docs/98.archive/changes/chg-0019-harness-governance-v2-overlay/plan.md",
+        "docs/98.archive/changes/chg-0019-harness-governance-v2-overlay/task.md",
+        "docs/98.archive/changes/chg-0021-language-boundary-alignment/task.md",
+        "docs/98.archive/changes/chg-0022-p3-gitops-secret-runtime-remediation/plan.md",
+        "docs/98.archive/changes/chg-0022-p3-gitops-secret-runtime-remediation/task.md",
+        "docs/98.archive/changes/chg-0023-phase-1-decision-follow-up/plan.md",
+        "docs/98.archive/changes/chg-0024-phase-1-governance-alignment-audit/task.md",
+        "docs/98.archive/changes/chg-0025-phase-2-governance-alignment/plan.md",
+        "docs/98.archive/changes/chg-0025-phase-2-governance-alignment/task.md",
+        "docs/98.archive/changes/chg-0026-phase-3-protected-surface-hardening/plan.md",
+        "docs/98.archive/changes/chg-0026-phase-3-protected-surface-hardening/task.md",
+        "docs/98.archive/changes/chg-0027-phase-4-eso-vault-runtime-diagnosis/plan.md",
+        "docs/98.archive/changes/chg-0027-phase-4-eso-vault-runtime-diagnosis/task.md",
+        "docs/98.archive/changes/chg-0030-scripts-inventory-remediation/plan.md",
+        "docs/98.archive/changes/chg-0030-scripts-inventory-remediation/task.md",
+        "docs/98.archive/changes/chg-0032-stage-00-canonical-adapter-redesign/plan.md",
+        "docs/98.archive/changes/chg-0032-stage-00-canonical-adapter-redesign/task.md",
+        "docs/98.archive/changes/chg-0033-stage-00-codex-harness-coverage-reconciliation/plan.md",
+        "docs/98.archive/changes/chg-0033-stage-00-codex-harness-coverage-reconciliation/task.md",
+        "docs/98.archive/changes/chg-0034-template-crosslink-fix/plan.md",
+        "docs/98.archive/changes/chg-0034-template-crosslink-fix/task.md",
+        "docs/98.archive/changes/chg-0036-workspace-engineering-research-audit-integration/plan.md",
+        "docs/98.archive/changes/chg-0036-workspace-engineering-research-audit-integration/task.md",
+        "docs/98.archive/changes/chg-0037-workspace-engineering-research-pack-refresh/plan.md",
+        "docs/98.archive/changes/chg-0037-workspace-engineering-research-pack-refresh/task.md",
+        "docs/98.archive/changes/chg-0038-workspace-purpose-alignment/plan.md",
+        "docs/98.archive/changes/chg-0038-workspace-purpose-alignment/task.md",
+        "docs/98.archive/changes/chg-0039-workspace-skill-expansion/plan.md",
+        "docs/98.archive/changes/chg-0039-workspace-skill-expansion/task.md"
+      ]
+    },
+    {
+      "id": "progress-snapshot",
+      "policy": "append-only-unique",
+      "records": []
+    }
+  ],
+  "retiredRouteEvidence": {
+    "routeSegment": "04.execution",
+    "profiles": [
+      {
+        "id": "stage90/immutable-retired-route-evidence",
+        "paths": [
+          "docs/90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md",
+          "docs/90.references/audits/2026-07-04-wdcn/workspace-document-contract-normalization-audit.md",
+          "docs/90.references/cloud-examples/aws/2026-07-12-aws-example-snapshot.md",
+          "docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md",
+          "docs/90.references/data/active-corpus-eligibility-ledger.json",
+          "docs/90.references/data/active-corpus-migration-results.json",
+          "docs/90.references/data/active-corpus-residue-closure.json",
+          "docs/90.references/data/active-corpus-retention-census.json",
+          "docs/90.references/data/active-corpus-role-audit.json",
+          "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md"
+        ],
+        "routes": []
+      },
+      {
+        "id": "stage98/immutable-retired-route-evidence",
+        "paths": [],
+        "routes": [
+          {
+            "kind": "regex",
+            "value": "^docs/98\\.archive/03\\.specs/[0-9]{3}-[^/]+/spec\\.md$"
+          },
+          {
+            "kind": "regex",
+            "value": "^docs/98\\.archive/04\\.execution/(?:plans|tasks)/[^/]+\\.md$"
+          }
+        ]
+      }
+    ]
+  },
+  "baseline": {
+    "sha": "8e1b00b4dfb84b8431ba4d3d31b4ad0445a0019d",
+    "count": 433
+  },
+  "target": {
+    "roots": [
+      "_workspace",
+      ".agents",
+      ".claude",
+      ".codex",
+      ".github",
+      "docs",
+      "examples",
+      "gitops",
+      "infrastructure",
+      "policy",
+      "scripts",
+      "secrets",
+      "tests",
+      "traefik"
+    ],
+    "rootFiles": [
+      "AGENTS.md",
+      "CLAUDE.md",
+      "GEMINI.md",
+      "README.md"
+    ]
+  },
+  "governanceCurrentOwners": {
+    "profileId": "governance/reference",
+    "allowedStates": [
+      "active",
+      "accepted"
+    ],
+    "paths": [
+      "docs/00.agent-governance/harness-catalog.md",
+      "docs/00.agent-governance/model-policy.md",
+      "docs/00.agent-governance/providers/claude.md",
+      "docs/00.agent-governance/providers/codex.md",
+      "docs/00.agent-governance/providers/gemini.md",
+      "docs/00.agent-governance/rules/agentic.md",
+      "docs/00.agent-governance/rules/approval-boundaries.md",
+      "docs/00.agent-governance/rules/bootstrap.md",
+      "docs/00.agent-governance/rules/document-authoring.md",
+      "docs/00.agent-governance/rules/git-workflow.md",
+      "docs/00.agent-governance/rules/persona.md",
+      "docs/00.agent-governance/rules/postflight-checklist.md",
+      "docs/00.agent-governance/rules/preflight-checklist.md",
+      "docs/00.agent-governance/rules/quality-standards.md",
+      "docs/00.agent-governance/rules/standards.md",
+      "docs/00.agent-governance/scopes/architecture.md",
+      "docs/00.agent-governance/scopes/backend.md",
+      "docs/00.agent-governance/scopes/docs.md",
+      "docs/00.agent-governance/scopes/frontend.md",
+      "docs/00.agent-governance/scopes/infra.md",
+      "docs/00.agent-governance/scopes/meta.md",
+      "docs/00.agent-governance/scopes/ops.md",
+      "docs/00.agent-governance/scopes/product.md",
+      "docs/00.agent-governance/scopes/qa.md",
+      "docs/00.agent-governance/scopes/security.md",
+      "docs/00.agent-governance/subagent-protocol.md"
+    ]
+  },
+  "referenceCurrentPacks": {
+    "profileId": "content/reference",
+    "packs": [
+      {
+        "id": "audits/2026-08-09-wgia",
+        "allowedStates": [
+          "draft"
+        ],
+        "members": [
+          "ai-agents-integrated-and-role-specific-agents.md",
+          "ci-cd-github-actions-qa-and-validation.md",
+          "harness-loop-fixtures-scripts-and-blockers.md",
+          "legacy-deprecated-and-one-shot-disposition-ledger.md",
+          "llm-wiki-memory-and-knowledge-management.md",
+          "remediation-and-integration-roadmap.md",
+          "security-and-approval-boundaries.md",
+          "spec-driven-sdlc-documentation-and-templates.md",
+          "workspace-purpose-governance-and-operating-contracts.md"
+        ]
+      }
+    ]
+  },
+  "documentContracts": {
+    "valueContracts": [
+      {
+        "id": "authored-terminal-identity",
+        "profileIds": [
+          "sdlc/prd",
+          "sdlc/srs",
+          "sdlc/interface",
+          "sdlc/ad",
+          "sdlc/adr",
+          "sdlc/spec",
+          "sdlc/agent-design",
+          "sdlc/data-model",
+          "sdlc/tests",
+          "sdlc/plan",
+          "sdlc/task",
+          "sdlc/guide",
+          "sdlc/policy",
+          "sdlc/runbook",
+          "sdlc/incident",
+          "sdlc/postmortem"
+        ],
+        "keys": [
+          {
+            "key": "title",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "\\S",
+            "conditional": null
+          },
+          {
+            "key": "type",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "profile-id",
+              "value": null
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "status",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": {
+              "source": "status-domain",
+              "values": []
+            },
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "owner",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "conditional": null
+          },
+          {
+            "key": "updated",
+            "kind": "date",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            "conditional": null
+          },
+          {
+            "key": "artifact_id",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$",
+            "conditional": null
+          }
+        ]
+      },
+      {
+        "id": "authored-standard",
+        "profileIds": [
+          "content/reference",
+          "governance/reference",
+          "governance/memory",
+          "governance/template-support"
+        ],
+        "keys": [
+          {
+            "key": "title",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "\\S",
+            "conditional": null
+          },
+          {
+            "key": "type",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "profile-id",
+              "value": null
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "status",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": {
+              "source": "status-domain",
+              "values": []
+            },
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "owner",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "conditional": null
+          },
+          {
+            "key": "updated",
+            "kind": "date",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            "conditional": null
+          }
+        ]
+      },
+      {
+        "id": "archive-record",
+        "profileIds": [
+          "content/archive"
+        ],
+        "keys": [
+          {
+            "key": "title",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "\\S",
+            "conditional": null
+          },
+          {
+            "key": "type",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "profile-id",
+              "value": null
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "status",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "literal",
+              "value": "archived"
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "owner",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "conditional": null
+          },
+          {
+            "key": "updated",
+            "kind": "date",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            "conditional": null
+          },
+          {
+            "key": "artifact_id",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$",
+            "conditional": null
+          },
+          {
+            "key": "change_id",
+            "kind": "string",
+            "nullable": true,
+            "constant": null,
+            "enum": null,
+            "pattern": "^CHG-[0-9]{4}$",
+            "conditional": null
+          },
+          {
+            "key": "original_artifact_id",
+            "kind": "string",
+            "nullable": true,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$",
+            "conditional": null
+          },
+          {
+            "key": "original_type",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[a-z][a-z0-9-]*(?:/[a-z0-9-]+)?$",
+            "conditional": null
+          },
+          {
+            "key": "original_path",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[^/\\\\].+",
+            "conditional": null
+          },
+          {
+            "key": "archived_on",
+            "kind": "date",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            "conditional": null
+          },
+          {
+            "key": "archive_reason",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": {
+              "source": "literal",
+              "values": [
+                "superseded",
+                "consolidated",
+                "completed-lineage",
+                "retired",
+                "abandoned",
+                "duplicate"
+              ]
+            },
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "replacement",
+            "kind": "string",
+            "nullable": true,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[^/\\\\].+",
+            "conditional": null
+          },
+          {
+            "key": "source_commit",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$",
+            "conditional": null
+          },
+          {
+            "key": "source_blob",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$",
+            "conditional": null
+          },
+          {
+            "key": "content_sha256",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9a-f]{64}$",
+            "conditional": null
+          }
+        ]
+      },
+      {
+        "id": "archive-migration",
+        "profileIds": [
+          "content/archive-migration"
+        ],
+        "keys": [
+          {
+            "key": "title",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "\\S",
+            "conditional": null
+          },
+          {
+            "key": "type",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "profile-id",
+              "value": null
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "status",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "literal",
+              "value": "accepted"
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "owner",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "conditional": null
+          },
+          {
+            "key": "updated",
+            "kind": "date",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            "conditional": null
+          },
+          {
+            "key": "artifact_id",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^MIG-[0-9]{4}$",
+            "conditional": null
+          },
+          {
+            "key": "migration_id",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^MIG-[0-9]{4}$",
+            "conditional": null
+          }
+        ]
+      },
+      {
+        "id": "template-terminal-authored",
+        "profileIds": [
+          "template/sdlc/prd",
+          "template/sdlc/srs",
+          "template/sdlc/interface",
+          "template/sdlc/ad",
+          "template/sdlc/adr",
+          "template/sdlc/spec",
+          "template/sdlc/agent-design",
+          "template/sdlc/data-model",
+          "template/sdlc/tests",
+          "template/sdlc/plan",
+          "template/sdlc/task",
+          "template/sdlc/guide",
+          "template/sdlc/policy",
+          "template/sdlc/runbook",
+          "template/sdlc/incident",
+          "template/sdlc/postmortem"
+        ],
+        "keys": [
+          {
+            "key": "title",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "\\S",
+            "conditional": null
+          },
+          {
+            "key": "type",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "profile-id",
+              "value": null
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "status",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": {
+              "source": "status-domain",
+              "values": []
+            },
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "owner",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "conditional": null
+          },
+          {
+            "key": "updated",
+            "kind": "date",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            "conditional": null
+          }
+        ]
+      },
+      {
+        "id": "template-terminal-archive-record",
+        "profileIds": [
+          "template/content/archive"
+        ],
+        "keys": [
+          {
+            "key": "title",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "\\S",
+            "conditional": null
+          },
+          {
+            "key": "type",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "profile-id",
+              "value": null
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "status",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "literal",
+              "value": "archived"
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "owner",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "conditional": null
+          },
+          {
+            "key": "updated",
+            "kind": "date",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            "conditional": null
+          },
+          {
+            "key": "change_id",
+            "kind": "string",
+            "nullable": true,
+            "constant": null,
+            "enum": null,
+            "pattern": "^CHG-[0-9]{4}$",
+            "conditional": null
+          },
+          {
+            "key": "original_artifact_id",
+            "kind": "string",
+            "nullable": true,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$",
+            "conditional": null
+          },
+          {
+            "key": "original_type",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[a-z][a-z0-9-]*(?:/[a-z0-9-]+)?$",
+            "conditional": null
+          },
+          {
+            "key": "original_path",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[^/\\\\].+",
+            "conditional": null
+          },
+          {
+            "key": "archived_on",
+            "kind": "date",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            "conditional": null
+          },
+          {
+            "key": "archive_reason",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": {
+              "source": "literal",
+              "values": [
+                "superseded",
+                "consolidated",
+                "completed-lineage",
+                "retired",
+                "abandoned",
+                "duplicate"
+              ]
+            },
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "replacement",
+            "kind": "string",
+            "nullable": true,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[^/\\\\].+",
+            "conditional": null
+          },
+          {
+            "key": "source_commit",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$",
+            "conditional": null
+          },
+          {
+            "key": "source_blob",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$",
+            "conditional": null
+          },
+          {
+            "key": "content_sha256",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9a-f]{64}$",
+            "conditional": null
+          }
+        ]
+      },
+      {
+        "id": "template-terminal-archive-migration",
+        "profileIds": [
+          "template/content/archive-migration"
+        ],
+        "keys": [
+          {
+            "key": "title",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "\\S",
+            "conditional": null
+          },
+          {
+            "key": "type",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "profile-id",
+              "value": null
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "status",
+            "kind": "string",
+            "nullable": false,
+            "constant": {
+              "source": "literal",
+              "value": "accepted"
+            },
+            "enum": null,
+            "pattern": null,
+            "conditional": null
+          },
+          {
+            "key": "owner",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "conditional": null
+          },
+          {
+            "key": "updated",
+            "kind": "date",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            "conditional": null
+          },
+          {
+            "key": "migration_id",
+            "kind": "string",
+            "nullable": false,
+            "constant": null,
+            "enum": null,
+            "pattern": "^MIG-[0-9]{4}$",
+            "conditional": null
+          }
+        ]
+      },
+      {
+        "id": "frontmatter-free-or-native",
+        "profileIds": [
+          "governance/progress-ledger",
+          "readme/repository",
+          "readme/stage-index",
+          "readme/collection-index",
+          "readme/implementation",
+          "readme/snapshot-pack",
+          "readme/workspace-staging",
+          "exception/root-provider-shim",
+          "exception/local-agent-asset",
+          "exception/repository-runtime-baseline",
+          "exception/provider-native-metadata",
+          "exception/github-native-control",
+          "native/document-migration-manifest",
+          "exception/native-contract-openapi",
+          "exception/native-contract-graphql",
+          "exception/native-contract-protobuf",
+          "exception/generated-record",
+          "exception/program-non-target"
+        ],
+        "keys": []
+      }
+    ],
+    "roleDecisions": [
+      {
+        "profileIds": [
+          "sdlc/prd"
+        ],
+        "role": "product-requirement",
+        "sourceProfileId": null,
+        "relationshipSection": "Traceability",
+        "bodyRequirement": "body-contract"
+      },
+      {
+        "profileIds": [
+          "sdlc/srs"
+        ],
+        "role": "system-requirement",
+        "sourceProfileId": null,
+        "relationshipSection": "Traceability",
+        "bodyRequirement": "body-contract"
+      },
+      {
+        "profileIds": [
+          "sdlc/interface"
+        ],
+        "role": "interface-requirement",
+        "sourceProfileId": null,
+        "relationshipSection": "Traceability",
+        "bodyRequirement": "body-contract"
+      },
+      {
+        "profileIds": [
+          "sdlc/ad"
+        ],
+        "role": "architecture-description",
+        "sourceProfileId": null,
+        "relationshipSection": "Traceability",
+        "bodyRequirement": "body-contract"
+      },
+      {
+        "profileIds": [
+          "sdlc/adr"
+        ],
+        "role": "architecture-decision",
+        "sourceProfileId": null,
+        "relationshipSection": "Traceability",
+        "bodyRequirement": "body-contract"
+      },
+      {
+        "profileIds": [
+          "sdlc/spec"
+        ],
+        "role": "implementation-specification",
+        "sourceProfileId": null,
+        "relationshipSection": "Traceability",
+        "bodyRequirement": "body-contract"
+      },
+      {
+        "profileIds": [
+          "sdlc/agent-design"
+        ],
+        "role": "agent-design",
+        "sourceProfileId": null,
+        "relationshipSection": "Traceability",
+        "bodyRequirement": "body-contract"
+      },
+      {
+        "profileIds": [
+          "sdlc/data-model"
+        ],
+        "role": "data-model",
+        "sourceProfileId": null,
+        "relationshipSection": "Traceability",
+        "bodyRequirement": "body-contract"
+      },
+      {
+        "profileIds": [
+          "sdlc/tests"
+        ],
+        "role": "test-contract",
+        "sourceProfileId": null,
+        "relationshipSection": "Traceability",
+        "bodyRequirement": "body-contract"
+      },
+      {
+        "profileIds": [
+          "sdlc/plan"
+        ],
+        "role": "execution-plan",
+        "sourceProfileId": null,
+        "relationshipSection": "Traceability",
+        "bodyRequirement": "body-contract"
+      },
+      {
+        "profileIds": [
+          "sdlc/task"
+        ],
+        "role": "execution-task",
+        "sourceProfileId": null,
+        "relationshipSection": "Traceability",
+        "bodyRequirement": "body-contract"
+      },
+      {
+        "profileIds": [
+          "sdlc/guide"
+        ],
+        "role": "operator-guide",
+        "sourceProfileId": null,
+        "relationshipSection": "Traceability",
+        "bodyRequirement": "body-contract"
+      },
+      {
+        "profileIds": [
+          "sdlc/policy"
+        ],
+        "role": "control-policy",
+        "sourceProfileId": null,
+        "relationshipSection": "Traceability",
+        "bodyRequirement": "body-contract"
+      },
+      {
+        "profileIds": [
+          "sdlc/runbook"
+        ],
+        "role": "operator-runbook",
+        "sourceProfileId": null,
+        "relationshipSection": "Traceability",
+        "bodyRequirement": "body-contract"
+      },
+      {
+        "profileIds": [
+          "sdlc/incident"
+        ],
+        "role": "incident-fact-record",
+        "sourceProfileId": null,
+        "relationshipSection": "Traceability",
+        "bodyRequirement": "body-contract"
+      },
+      {
+        "profileIds": [
+          "sdlc/postmortem"
+        ],
+        "role": "post-incident-analysis",
+        "sourceProfileId": null,
+        "relationshipSection": "Traceability",
+        "bodyRequirement": "body-contract"
+      },
+      {
+        "profileIds": [
+          "content/reference"
+        ],
+        "role": "reference",
+        "sourceProfileId": null,
+        "relationshipSection": "Related Documents",
+        "bodyRequirement": "heading-set"
+      },
+      {
+        "profileIds": [
+          "content/archive"
+        ],
+        "role": "archive-record",
+        "sourceProfileId": null,
+        "relationshipSection": null,
+        "bodyRequirement": "none"
+      },
+      {
+        "profileIds": [
+          "content/archive-migration"
+        ],
+        "role": "archive-migration",
+        "sourceProfileId": null,
+        "relationshipSection": "Recovery",
+        "bodyRequirement": "heading-set"
+      },
+      {
+        "profileIds": [
+          "governance/reference"
+        ],
+        "role": "governance-reference",
+        "sourceProfileId": null,
+        "relationshipSection": "Related Documents",
+        "bodyRequirement": "heading-set"
+      },
+      {
+        "profileIds": [
+          "governance/memory"
+        ],
+        "role": "governance-memory",
+        "sourceProfileId": null,
+        "relationshipSection": "Related Progress",
+        "bodyRequirement": "heading-set"
+      },
+      {
+        "profileIds": [
+          "governance/template-support"
+        ],
+        "role": "template-support",
+        "sourceProfileId": null,
+        "relationshipSection": "Related Documents",
+        "bodyRequirement": "heading-set"
+      },
+      {
+        "profileIds": [
+          "governance/progress-ledger"
+        ],
+        "role": "progress-ledger",
+        "sourceProfileId": null,
+        "relationshipSection": null,
+        "bodyRequirement": "none"
+      },
+      {
+        "profileIds": [
+          "readme/repository"
+        ],
+        "role": "repository-readme",
+        "sourceProfileId": null,
+        "relationshipSection": "Related Documents",
+        "bodyRequirement": "heading-set"
+      },
+      {
+        "profileIds": [
+          "readme/stage-index"
+        ],
+        "role": "stage-index-readme",
+        "sourceProfileId": null,
+        "relationshipSection": "Related Documents",
+        "bodyRequirement": "heading-set"
+      },
+      {
+        "profileIds": [
+          "readme/collection-index"
+        ],
+        "role": "collection-index-readme",
+        "sourceProfileId": null,
+        "relationshipSection": "Related Documents",
+        "bodyRequirement": "heading-set"
+      },
+      {
+        "profileIds": [
+          "readme/implementation"
+        ],
+        "role": "implementation-readme",
+        "sourceProfileId": null,
+        "relationshipSection": "Related Documents",
+        "bodyRequirement": "heading-set"
+      },
+      {
+        "profileIds": [
+          "readme/snapshot-pack"
+        ],
+        "role": "snapshot-pack-readme",
+        "sourceProfileId": null,
+        "relationshipSection": "Related Documents",
+        "bodyRequirement": "heading-set"
+      },
+      {
+        "profileIds": [
+          "readme/workspace-staging"
+        ],
+        "role": "workspace-staging-readme",
+        "sourceProfileId": null,
+        "relationshipSection": "Related Documents",
+        "bodyRequirement": "heading-set"
+      },
+      {
+        "profileIds": [
+          "exception/root-provider-shim",
+          "exception/local-agent-asset",
+          "exception/repository-runtime-baseline",
+          "exception/provider-native-metadata",
+          "exception/github-native-control",
+          "native/document-migration-manifest",
+          "exception/generated-record",
+          "exception/program-non-target"
+        ],
+        "role": "native-repository-surface",
+        "sourceProfileId": null,
+        "relationshipSection": null,
+        "bodyRequirement": "none"
+      },
+      {
+        "profileIds": [
+          "exception/native-contract-openapi",
+          "exception/native-contract-graphql",
+          "exception/native-contract-protobuf"
+        ],
+        "role": "native-machine-contract",
+        "sourceProfileId": null,
+        "relationshipSection": null,
+        "bodyRequirement": "none"
+      }
+    ],
+    "admissionPolicies": [
+      {
+        "id": "authored-draft-only",
+        "profileIds": [
+          "sdlc/prd",
+          "sdlc/interface",
+          "sdlc/srs",
+          "sdlc/ad",
+          "sdlc/adr",
+          "sdlc/spec",
+          "sdlc/agent-design",
+          "sdlc/data-model",
+          "sdlc/tests",
+          "sdlc/guide",
+          "sdlc/policy",
+          "sdlc/runbook",
+          "sdlc/incident",
+          "sdlc/postmortem",
+          "content/reference",
+          "governance/reference",
+          "governance/memory",
+          "governance/template-support"
+        ],
+        "create": {
+          "mode": "states",
+          "states": [
+            "draft"
+          ],
+          "evidencePredicateId": null
+        },
+        "delete": "deny",
+        "rename": "deny",
+        "profileChange": "deny",
+        "baselinePaths": []
+      },
+      {
+        "id": "execution-reciprocal-pair",
+        "profileIds": [
+          "sdlc/plan",
+          "sdlc/task"
+        ],
+        "create": {
+          "mode": "paired",
+          "states": [
+            "draft",
+            "active"
+          ],
+          "evidencePredicateId": null
+        },
+        "delete": "deny",
+        "rename": "deny",
+        "profileChange": "deny",
+        "baselinePaths": []
+      },
+      {
+        "id": "archive-envelope-only",
+        "profileIds": [
+          "content/archive"
+        ],
+        "create": {
+          "mode": "archive-envelope",
+          "states": [
+            "archived"
+          ],
+          "evidencePredicateId": "archive-source-removal"
+        },
+        "delete": "deny",
+        "rename": "deny",
+        "profileChange": "deny",
+        "baselinePaths": []
+      },
+      {
+        "id": "archive-migration-control",
+        "profileIds": [
+          "content/archive-migration"
+        ],
+        "create": {
+          "mode": "states",
+          "states": [
+            "accepted"
+          ],
+          "evidencePredicateId": null
+        },
+        "delete": "deny",
+        "rename": "deny",
+        "profileChange": "deny",
+        "baselinePaths": []
+      },
+      {
+        "id": "snapshot-only",
+        "profileIds": [
+          "governance/progress-ledger",
+          "readme/repository",
+          "readme/stage-index",
+          "readme/collection-index",
+          "readme/implementation",
+          "readme/snapshot-pack",
+          "readme/workspace-staging",
+          "exception/root-provider-shim",
+          "exception/local-agent-asset",
+          "exception/repository-runtime-baseline",
+          "exception/provider-native-metadata",
+          "exception/github-native-control",
+          "native/document-migration-manifest",
+          "exception/native-contract-openapi",
+          "exception/native-contract-graphql",
+          "exception/native-contract-protobuf",
+          "exception/generated-record",
+          "exception/program-non-target",
+          "template/content/archive",
+          "template/content/archive-migration",
+          "template/governance/memory",
+          "template/readme/repository",
+          "template/readme/stage-index",
+          "template/readme/collection-index",
+          "template/readme/implementation",
+          "template/readme/snapshot-pack",
+          "template/readme/workspace-staging",
+          "template/content/reference",
+          "template/sdlc/adr",
+          "template/sdlc/ad",
+          "template/sdlc/plan",
+          "template/sdlc/task",
+          "template/sdlc/guide",
+          "template/sdlc/incident",
+          "template/sdlc/policy",
+          "template/sdlc/postmortem",
+          "template/sdlc/runbook",
+          "template/sdlc/prd",
+          "template/sdlc/interface",
+          "template/sdlc/srs",
+          "template/sdlc/agent-design",
+          "template/sdlc/data-model",
+          "template/sdlc/spec",
+          "template/sdlc/tests",
+          "governance/progress-entry",
+          "template/governance/reference",
+          "template/governance/template-support"
+        ],
+        "create": {
+          "mode": "snapshot-only",
+          "states": [],
+          "evidencePredicateId": null
+        },
+        "delete": "deny",
+        "rename": "deny",
+        "profileChange": "deny",
+        "baselinePaths": []
+      }
+    ],
+    "lifecycleContracts": [
+      {
+        "id": "product",
+        "profileIds": [
+          "sdlc/prd",
+          "sdlc/srs",
+          "sdlc/interface"
+        ],
+        "terminalStates": [
+          "done"
+        ],
+        "edges": [
+          {
+            "from": "draft",
+            "to": "active",
+            "predicateId": "activate-self-body"
+          },
+          {
+            "from": "active",
+            "to": "done",
+            "predicateId": "complete-product-program"
+          }
+        ]
+      },
+      {
+        "id": "architecture-requirement",
+        "profileIds": [
+          "sdlc/ad"
+        ],
+        "terminalStates": [
+          "accepted"
+        ],
+        "edges": [
+          {
+            "from": "draft",
+            "to": "active",
+            "predicateId": "activate-self-body"
+          },
+          {
+            "from": "active",
+            "to": "accepted",
+            "predicateId": "accept-architecture"
+          }
+        ]
+      },
+      {
+        "id": "architecture-decision",
+        "profileIds": [
+          "sdlc/adr"
+        ],
+        "terminalStates": [
+          "accepted"
+        ],
+        "edges": [
+          {
+            "from": "draft",
+            "to": "active",
+            "predicateId": "activate-self-body"
+          },
+          {
+            "from": "active",
+            "to": "accepted",
+            "predicateId": "accept-decision-self"
+          }
+        ]
+      },
+      {
+        "id": "specification",
+        "profileIds": [
+          "sdlc/spec",
+          "sdlc/agent-design",
+          "sdlc/data-model",
+          "sdlc/tests"
+        ],
+        "terminalStates": [
+          "done"
+        ],
+        "edges": [
+          {
+            "from": "draft",
+            "to": "active",
+            "predicateId": "activate-self-body"
+          },
+          {
+            "from": "active",
+            "to": "done",
+            "predicateId": "complete-specification"
+          }
+        ]
+      },
+      {
+        "id": "execution",
+        "profileIds": [
+          "sdlc/plan",
+          "sdlc/task"
+        ],
+        "terminalStates": [
+          "done"
+        ],
+        "edges": [
+          {
+            "from": "draft",
+            "to": "active",
+            "predicateId": "activate-execution-pair"
+          },
+          {
+            "from": "active",
+            "to": "done",
+            "predicateId": "complete-execution-pair"
+          }
+        ]
+      },
+      {
+        "id": "operations",
+        "profileIds": [
+          "sdlc/guide",
+          "sdlc/policy",
+          "sdlc/runbook",
+          "sdlc/incident",
+          "sdlc/postmortem"
+        ],
+        "terminalStates": [
+          "accepted"
+        ],
+        "edges": [
+          {
+            "from": "draft",
+            "to": "active",
+            "predicateId": "activate-self-body"
+          },
+          {
+            "from": "active",
+            "to": "accepted",
+            "predicateId": "accept-operated-document"
+          }
+        ]
+      },
+      {
+        "id": "reference-governance",
+        "profileIds": [
+          "content/reference",
+          "governance/reference",
+          "governance/memory",
+          "governance/template-support"
+        ],
+        "terminalStates": [
+          "accepted",
+          "done"
+        ],
+        "edges": [
+          {
+            "from": "draft",
+            "to": "active",
+            "predicateId": "activate-heading-profile"
+          },
+          {
+            "from": "active",
+            "to": "accepted",
+            "predicateId": "terminate-reviewed-reference"
+          },
+          {
+            "from": "active",
+            "to": "done",
+            "predicateId": "terminate-reviewed-reference"
+          }
+        ]
+      },
+      {
+        "id": "archive-record",
+        "profileIds": [
+          "content/archive"
+        ],
+        "terminalStates": [
+          "archived"
+        ],
+        "edges": []
+      },
+      {
+        "id": "archive-migration",
+        "profileIds": [
+          "content/archive-migration"
+        ],
+        "terminalStates": [
+          "accepted"
+        ],
+        "edges": []
+      },
+      {
+        "id": "non-lifecycle",
+        "profileIds": [
+          "governance/progress-ledger",
+          "readme/repository",
+          "readme/stage-index",
+          "readme/collection-index",
+          "readme/implementation",
+          "readme/snapshot-pack",
+          "readme/workspace-staging",
+          "exception/root-provider-shim",
+          "exception/local-agent-asset",
+          "exception/repository-runtime-baseline",
+          "exception/provider-native-metadata",
+          "exception/github-native-control",
+          "native/document-migration-manifest",
+          "exception/native-contract-openapi",
+          "exception/native-contract-graphql",
+          "exception/native-contract-protobuf",
+          "exception/generated-record",
+          "exception/program-non-target",
+          "template/content/archive",
+          "template/content/archive-migration",
+          "template/governance/memory",
+          "template/readme/repository",
+          "template/readme/stage-index",
+          "template/readme/collection-index",
+          "template/readme/implementation",
+          "template/readme/snapshot-pack",
+          "template/readme/workspace-staging",
+          "template/content/reference",
+          "template/sdlc/adr",
+          "template/sdlc/ad",
+          "template/sdlc/plan",
+          "template/sdlc/task",
+          "template/sdlc/guide",
+          "template/sdlc/incident",
+          "template/sdlc/policy",
+          "template/sdlc/postmortem",
+          "template/sdlc/runbook",
+          "template/sdlc/prd",
+          "template/sdlc/interface",
+          "template/sdlc/srs",
+          "template/sdlc/agent-design",
+          "template/sdlc/data-model",
+          "template/sdlc/spec",
+          "template/sdlc/tests",
+          "governance/progress-entry",
+          "template/governance/reference",
+          "template/governance/template-support"
+        ],
+        "terminalStates": [],
+        "edges": []
+      }
+    ],
+    "evidencePredicates": [
+      {
+        "id": "archive-source-removal",
+        "profileEdges": [],
+        "evidence": [],
+        "relationship": "archive-source",
+        "cardinality": {
+          "minimum": 1,
+          "maximum": 1
+        },
+        "sameDiff": "source-removed-and-mirror-created",
+        "bodyRequirement": "none",
+        "capabilities": [
+          "archive-envelope",
+          "same-diff",
+          "source-removal"
+        ]
+      },
+      {
+        "id": "activate-self-body",
+        "profileEdges": [
+          {
+            "profileId": "sdlc/prd",
+            "from": "draft",
+            "to": "active"
+          },
+          {
+            "profileId": "sdlc/srs",
+            "from": "draft",
+            "to": "active"
+          },
+          {
+            "profileId": "sdlc/interface",
+            "from": "draft",
+            "to": "active"
+          },
+          {
+            "profileId": "sdlc/ad",
+            "from": "draft",
+            "to": "active"
+          },
+          {
+            "profileId": "sdlc/adr",
+            "from": "draft",
+            "to": "active"
+          },
+          {
+            "profileId": "sdlc/spec",
+            "from": "draft",
+            "to": "active"
+          },
+          {
+            "profileId": "sdlc/agent-design",
+            "from": "draft",
+            "to": "active"
+          },
+          {
+            "profileId": "sdlc/data-model",
+            "from": "draft",
+            "to": "active"
+          },
+          {
+            "profileId": "sdlc/tests",
+            "from": "draft",
+            "to": "active"
+          },
+          {
+            "profileId": "sdlc/guide",
+            "from": "draft",
+            "to": "active"
+          },
+          {
+            "profileId": "sdlc/policy",
+            "from": "draft",
+            "to": "active"
+          },
+          {
+            "profileId": "sdlc/runbook",
+            "from": "draft",
+            "to": "active"
+          },
+          {
+            "profileId": "sdlc/incident",
+            "from": "draft",
+            "to": "active"
+          },
+          {
+            "profileId": "sdlc/postmortem",
+            "from": "draft",
+            "to": "active"
+          }
+        ],
+        "evidence": [
+          {
+            "profileIds": [
+              "$self"
+            ],
+            "states": [
+              "active"
+            ],
+            "minimum": 1,
+            "maximum": 1
+          }
+        ],
+        "relationship": "self",
+        "cardinality": {
+          "minimum": 1,
+          "maximum": 1
+        },
+        "sameDiff": "self-status-and-body",
+        "bodyRequirement": "body-contract",
+        "capabilities": [
+          "same-diff"
+        ]
+      },
+      {
+        "id": "activate-heading-profile",
+        "profileEdges": [
+          {
+            "profileId": "content/reference",
+            "from": "draft",
+            "to": "active"
+          },
+          {
+            "profileId": "governance/reference",
+            "from": "draft",
+            "to": "active"
+          },
+          {
+            "profileId": "governance/memory",
+            "from": "draft",
+            "to": "active"
+          },
+          {
+            "profileId": "governance/template-support",
+            "from": "draft",
+            "to": "active"
+          }
+        ],
+        "evidence": [
+          {
+            "profileIds": [
+              "$self"
+            ],
+            "states": [
+              "active"
+            ],
+            "minimum": 1,
+            "maximum": 1
+          }
+        ],
+        "relationship": "role-decision",
+        "cardinality": {
+          "minimum": 1,
+          "maximum": 1
+        },
+        "sameDiff": "self-status-and-body",
+        "bodyRequirement": "heading-set",
+        "capabilities": [
+          "rendered-link",
+          "same-diff"
+        ]
+      },
+      {
+        "id": "activate-execution-pair",
+        "profileEdges": [
+          {
+            "profileId": "sdlc/plan",
+            "from": "draft",
+            "to": "active"
+          },
+          {
+            "profileId": "sdlc/task",
+            "from": "draft",
+            "to": "active"
+          }
+        ],
+        "evidence": [
+          {
+            "profileIds": [
+              "sdlc/plan"
+            ],
+            "states": [
+              "active"
+            ],
+            "minimum": 1,
+            "maximum": 1
+          },
+          {
+            "profileIds": [
+              "sdlc/task"
+            ],
+            "states": [
+              "active"
+            ],
+            "minimum": 1,
+            "maximum": 1
+          }
+        ],
+        "relationship": "pair",
+        "cardinality": {
+          "minimum": 2,
+          "maximum": 2
+        },
+        "sameDiff": "pair-created-or-status-changed",
+        "bodyRequirement": "body-contract",
+        "capabilities": [
+          "rendered-link",
+          "reciprocal-link",
+          "same-diff"
+        ]
+      },
+      {
+        "id": "complete-product-program",
+        "profileEdges": [
+          {
+            "profileId": "sdlc/prd",
+            "from": "active",
+            "to": "done"
+          },
+          {
+            "profileId": "sdlc/srs",
+            "from": "active",
+            "to": "done"
+          },
+          {
+            "profileId": "sdlc/interface",
+            "from": "active",
+            "to": "done"
+          }
+        ],
+        "evidence": [
+          {
+            "profileIds": [
+              "sdlc/spec"
+            ],
+            "states": [
+              "done"
+            ],
+            "minimum": 1,
+            "maximum": null
+          }
+        ],
+        "relationship": "program-lineage",
+        "cardinality": {
+          "minimum": 1,
+          "maximum": null
+        },
+        "sameDiff": "target-and-last-relation-changed",
+        "bodyRequirement": "body-contract",
+        "capabilities": [
+          "program-lineage-closed",
+          "same-diff"
+        ]
+      },
+      {
+        "id": "accept-architecture",
+        "profileEdges": [
+          {
+            "profileId": "sdlc/ad",
+            "from": "active",
+            "to": "accepted"
+          }
+        ],
+        "evidence": [
+          {
+            "profileIds": [
+              "sdlc/adr"
+            ],
+            "states": [
+              "accepted"
+            ],
+            "minimum": 1,
+            "maximum": null
+          }
+        ],
+        "relationship": "role-decision",
+        "cardinality": {
+          "minimum": 1,
+          "maximum": null
+        },
+        "sameDiff": "target-and-evidence-status-body-changed",
+        "bodyRequirement": "body-contract",
+        "capabilities": [
+          "rendered-link",
+          "reciprocal-link",
+          "same-diff"
+        ]
+      },
+      {
+        "id": "accept-decision-self",
+        "profileEdges": [
+          {
+            "profileId": "sdlc/adr",
+            "from": "active",
+            "to": "accepted"
+          }
+        ],
+        "evidence": [
+          {
+            "profileIds": [
+              "$self"
+            ],
+            "states": [
+              "accepted"
+            ],
+            "minimum": 1,
+            "maximum": 1
+          }
+        ],
+        "relationship": "self",
+        "cardinality": {
+          "minimum": 1,
+          "maximum": 1
+        },
+        "sameDiff": "self-status-and-body",
+        "bodyRequirement": "body-contract",
+        "capabilities": [
+          "rendered-link",
+          "same-diff"
+        ]
+      },
+      {
+        "id": "complete-specification",
+        "profileEdges": [
+          {
+            "profileId": "sdlc/spec",
+            "from": "active",
+            "to": "done"
+          },
+          {
+            "profileId": "sdlc/agent-design",
+            "from": "active",
+            "to": "done"
+          },
+          {
+            "profileId": "sdlc/data-model",
+            "from": "active",
+            "to": "done"
+          },
+          {
+            "profileId": "sdlc/tests",
+            "from": "active",
+            "to": "done"
+          }
+        ],
+        "evidence": [
+          {
+            "profileIds": [
+              "sdlc/plan"
+            ],
+            "states": [
+              "done"
+            ],
+            "minimum": 1,
+            "maximum": 1
+          },
+          {
+            "profileIds": [
+              "sdlc/task"
+            ],
+            "states": [
+              "done"
+            ],
+            "minimum": 1,
+            "maximum": 1
+          }
+        ],
+        "relationship": "pair",
+        "cardinality": {
+          "minimum": 2,
+          "maximum": 2
+        },
+        "sameDiff": "target-plan-task-status-changed",
+        "bodyRequirement": "body-contract",
+        "capabilities": [
+          "rendered-link",
+          "reciprocal-link",
+          "same-diff"
+        ]
+      },
+      {
+        "id": "complete-execution-pair",
+        "profileEdges": [
+          {
+            "profileId": "sdlc/plan",
+            "from": "active",
+            "to": "done"
+          },
+          {
+            "profileId": "sdlc/task",
+            "from": "active",
+            "to": "done"
+          }
+        ],
+        "evidence": [
+          {
+            "profileIds": [
+              "sdlc/plan"
+            ],
+            "states": [
+              "done"
+            ],
+            "minimum": 1,
+            "maximum": 1
+          },
+          {
+            "profileIds": [
+              "sdlc/task"
+            ],
+            "states": [
+              "done"
+            ],
+            "minimum": 1,
+            "maximum": 1
+          }
+        ],
+        "relationship": "pair",
+        "cardinality": {
+          "minimum": 2,
+          "maximum": 2
+        },
+        "sameDiff": "pair-status-changed",
+        "bodyRequirement": "body-contract",
+        "capabilities": [
+          "rendered-link",
+          "reciprocal-link",
+          "task-terminal-evidence",
+          "same-diff"
+        ]
+      },
+      {
+        "id": "accept-operated-document",
+        "profileEdges": [
+          {
+            "profileId": "sdlc/guide",
+            "from": "active",
+            "to": "accepted"
+          },
+          {
+            "profileId": "sdlc/policy",
+            "from": "active",
+            "to": "accepted"
+          },
+          {
+            "profileId": "sdlc/runbook",
+            "from": "active",
+            "to": "accepted"
+          },
+          {
+            "profileId": "sdlc/incident",
+            "from": "active",
+            "to": "accepted"
+          },
+          {
+            "profileId": "sdlc/postmortem",
+            "from": "active",
+            "to": "accepted"
+          }
+        ],
+        "evidence": [
+          {
+            "profileIds": [
+              "sdlc/plan"
+            ],
+            "states": [
+              "done"
+            ],
+            "minimum": 1,
+            "maximum": 1
+          },
+          {
+            "profileIds": [
+              "sdlc/task"
+            ],
+            "states": [
+              "done"
+            ],
+            "minimum": 1,
+            "maximum": 1
+          }
+        ],
+        "relationship": "pair",
+        "cardinality": {
+          "minimum": 2,
+          "maximum": 2
+        },
+        "sameDiff": "target-plan-task-status-changed",
+        "bodyRequirement": "body-contract",
+        "capabilities": [
+          "rendered-link",
+          "same-diff"
+        ]
+      },
+      {
+        "id": "terminate-reviewed-reference",
+        "profileEdges": [
+          {
+            "profileId": "content/reference",
+            "from": "active",
+            "to": "accepted"
+          },
+          {
+            "profileId": "content/reference",
+            "from": "active",
+            "to": "done"
+          },
+          {
+            "profileId": "governance/reference",
+            "from": "active",
+            "to": "accepted"
+          },
+          {
+            "profileId": "governance/reference",
+            "from": "active",
+            "to": "done"
+          },
+          {
+            "profileId": "governance/memory",
+            "from": "active",
+            "to": "accepted"
+          },
+          {
+            "profileId": "governance/memory",
+            "from": "active",
+            "to": "done"
+          },
+          {
+            "profileId": "governance/template-support",
+            "from": "active",
+            "to": "accepted"
+          },
+          {
+            "profileId": "governance/template-support",
+            "from": "active",
+            "to": "done"
+          }
+        ],
+        "evidence": [
+          {
+            "profileIds": [
+              "sdlc/plan"
+            ],
+            "states": [
+              "done"
+            ],
+            "minimum": 1,
+            "maximum": 1
+          },
+          {
+            "profileIds": [
+              "sdlc/task"
+            ],
+            "states": [
+              "done"
+            ],
+            "minimum": 1,
+            "maximum": 1
+          }
+        ],
+        "relationship": "role-decision",
+        "cardinality": {
+          "minimum": 2,
+          "maximum": 2
+        },
+        "sameDiff": "target-plan-task-status-changed",
+        "bodyRequirement": "heading-set",
+        "capabilities": [
+          "rendered-link",
+          "same-diff"
+        ]
+      }
+    ]
+  }
+}
