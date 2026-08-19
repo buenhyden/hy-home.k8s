@@ -17516,3 +17516,108 @@ snapshot with `validate_repository=False`; only the test did not.
   pinned the tool's output. Finding the owner was cheaper than reconciling both.
 - No live, hosted, provider-runtime, remote, secret-value, push, publish, or
   deployment evidence was collected or claimed.
+
+## 2026-08-19 - Stage 99 registry authority: contract split and loader cutover
+
+### Metadata
+
+- Owner: platform
+- Scope: `docs/99.templates/registry.json`, `docs/99.templates/contracts/`, `docs/99.templates/README.md`, `scripts/document_contracts.py`, `scripts/validate-document-contract-registry.py`, `scripts/validate-document-lifecycle.py`, `scripts/validate-markdown-profiles.py`, `tests/test_document_strict_cutover.py`
+- Parent: WP-004, Requirement Package convergence and Stage 99 contract reorganization
+- Evidence class: repository-static plus local execution of the full unittest suite and the repository quality gate
+
+### Progress
+
+**The plan's dedup premise was wrong, and proving it was the main result.** WP-004
+called for deleting nine keys from the registry on the grounds that another owner
+already held them. Tracing all nine showed the opposite: each is read from the
+registry by two to five independent scripts, and every supposed alternative owner
+is a consumer. `baseline` is one half of a two-sided pin against hardcoded
+`BASELINE_SHA`/`BASELINE_COUNT`. The "existing literal `2`" for
+`archiveContractVersion` in three validators is the code that checks the registry
+equals 2. RIA does not duplicate `referenceCurrentPacks`; its `currentPackRegistry`
+field names the registry file as their owner. Deleting the nine would have deleted
+machine authority, not redundancy.
+
+**The distinction that mattered: "also present elsewhere" is not "owned
+elsewhere."** Every piece of evidence originally offered for the dedup was of the
+first kind - prose in Specs 0026 and 0030, literals inside validators, pack
+declarations in RIA. A validator's literal is a watcher, not an owner.
+
+**The nine moved to a sibling contract instead, and the split is a lossless
+partition.** Twelve payload keys in, twelve out, no overlap, eleven values
+byte-equal, only `profiles` reshaped as the earlier slice intended. The schema was
+derived from the closure of those keys' definitions in the retired schema: 31 of
+44 defs, with the profile schema keeping 14 and `route` surviving on the contract
+side because `retiredRouteEvidence` legitimately records the old route form. Each
+half rejects the other half's keys, so the boundary is enforced rather than
+conventional.
+
+**`pathPattern` turned out to be a lossless encoding of the retired route list.**
+Splitting the top-level alternation and un-escaping any branch whose escaping
+round-trips recovers all 69 profiles' routes exactly, `kind` included. This is
+what made the loader cutover small: the projected payload equals the retired
+authority byte for byte, so roughly 150 mutation sites across the registry and
+markdown validators kept working untouched. Only the few places that read the
+file rather than a payload had to change.
+
+**A projection that merely classified correctly would have been wrong.** The first
+attempt flattened every profile to one regex route. Route selection stayed
+identical across all 539 tracked markdown paths, yet `_mutate` in the registry
+validator selects its target by `kind == "exact"` and would have silently
+retargeted. Behavioural equivalence on the happy path is not equivalence.
+
+**Two path classes are now distinct.** `REGISTRY_PATH` names the current published
+profile registry; `RETIRED_REGISTRY_PATH` names the combined file that history
+holds. `validate-document-lifecycle.py` uses the retired path throughout because
+it compares a base tree against a proposed one and no commit before this work
+contains the published contracts. This mirrors the `AUDIT_PACK_ID`
+current/retired split already in `reference_information_architecture.py`.
+
+**Deleting the retired file is not blocked by its historical readers.** The
+eligibility, closure, and RIA readers resolve it through `ls-tree` and
+`cat-file` against pinned commits, never through the working tree, so git objects
+keep serving them after a delete. What does block deletion is separate: index and
+byte readers that need a current file, five blob allowlist entries in the closure
+validator, RIA's `currentPackRegistry` value, two gate phrase checks, the
+`support/README.md` item index with its fixture, and nine frozen markdown links.
+
+### Validation
+
+- `python3 -m unittest discover -s tests -q` -> `Ran 1038 tests` `OK (skipped=4)`
+- `bash scripts/validate-repo-quality-gates.sh .` -> `[PASS] repository quality gates passed`
+- `python3 scripts/validate-links-and-owners.py --root . --mode strict` -> `PASS CROSS-DOCUMENT`
+- Projected payload compared against the retired authority -> identical under `json.dumps(sort_keys=True)`, zero profile drift
+- Route selection compared profile by profile across 539 tracked markdown paths -> zero mismatches, zero uncovered
+- Each half's schema rejects the other half's keys, a missing required key, and a legacy `routes` field
+- No cluster was created, deleted, or contacted
+
+### Handoff
+
+- **The retired registry is still the file that index and byte readers see.**
+  `archive_cutover.py`, `validate-links-and-owners.py`, and the closure validator
+  read its current bytes or its index blob. Repointing them is the deletion
+  slice's work, not the loader's.
+- **`artifactIdPattern` is published but inert.** The internal form is a closed
+  shape with no home for it, so the projection drops it. The identity rules it
+  states are still enforced from the regex table in
+  `_work106_derive_artifact_identity`. Moving that authority into the registry is
+  unfinished.
+- **The collapsed alternation relaxes one guard.** `classify_path` rejects a path
+  that matches more than one route; branches inside a single `pathPattern` can no
+  longer produce that conflict for the same profile. No tracked path relied on it,
+  but the published form cannot express the ambiguity the internal form could.
+- **Two schema defs are now unreachable.** `documentMigrationEntry` and
+  `documentMigrationManifest` were already unused by any payload key before the
+  split, so neither closure claimed them. They are pre-existing dead schema, left
+  in place rather than swept.
+- **`main` is far ahead of `origin/main` and unpushed.** Pushing is operator work;
+  nothing in this cycle attempted it.
+- **Live verification is still owed.** The Baseline warning channel on `apps` and
+  `ingress-nginx` remains unread.
+- **Reusable lesson: check the direction of a delegation before calling it a
+  duplicate.** RIA held a path string pointing at the registry. Read quickly that
+  looks like two owners of the same fact; read properly it is one owner and one
+  consumer naming it.
+- No live, hosted, provider-runtime, remote, secret-value, push, publish, or
+  deployment evidence was collected or claimed.
