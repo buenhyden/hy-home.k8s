@@ -363,9 +363,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
 
     def test_terminal_retired_route_classification_is_closed(self) -> None:
         validator = self.validators["registry"]
-        raw_registry = json.loads(
-            (REPOSITORY_ROOT / validator.REGISTRY_PATH).read_text(encoding="utf-8")
-        )
+        raw_registry = validator.load_internal_payload(REPOSITORY_ROOT)
         accepted = {
             "docs/90.references/data/active-corpus-migration-results.json": "stage90/immutable-retired-route-evidence",
             "docs/98.archive/04.execution/plans/2026-03-27-wsl-k3d-argocd-platform.md": "stage98/immutable-retired-route-evidence",
@@ -2191,7 +2189,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
             {
                 profile_id
                 for profile_id, profile in profiles.items()
-                if "artifact_id" in profile["frontmatter"]["required"]
+                if "artifact_id" in profile["requiredFrontmatter"]["required"]
             },
         )
         self.assertEqual(
@@ -2199,23 +2197,23 @@ class DocumentStrictCutoverTests(unittest.TestCase):
             {
                 profile_id
                 for profile_id, profile in profiles.items()
-                if "artifact_id" in profile["frontmatter"]["allowed"]
-                or "artifact_id" in profile["frontmatter"]["order"]
+                if "artifact_id" in profile["requiredFrontmatter"]["allowed"]
+                or "artifact_id" in profile["requiredFrontmatter"]["order"]
             },
         )
         for source_id in validator.WORK108_MANDATORY_PROFILE_IDS:
             template_id = f"template/{source_id}"
             with self.subTest(source_id=source_id):
-                self.assertIn("artifact_id", profiles[source_id]["frontmatter"]["allowed"])
-                self.assertIn("artifact_id", profiles[source_id]["frontmatter"]["order"])
+                self.assertIn("artifact_id", profiles[source_id]["requiredFrontmatter"]["allowed"])
+                self.assertIn("artifact_id", profiles[source_id]["requiredFrontmatter"]["order"])
                 self.assertNotIn(
-                    "artifact_id", profiles[template_id]["frontmatter"]["required"]
+                    "artifact_id", profiles[template_id]["requiredFrontmatter"]["required"]
                 )
                 self.assertNotIn(
-                    "artifact_id", profiles[template_id]["frontmatter"]["allowed"]
+                    "artifact_id", profiles[template_id]["requiredFrontmatter"]["allowed"]
                 )
                 self.assertNotIn(
-                    "artifact_id", profiles[template_id]["frontmatter"]["order"]
+                    "artifact_id", profiles[template_id]["requiredFrontmatter"]["order"]
                 )
         records = tuple(
             (path, validator._work106_frontmatter(raw))

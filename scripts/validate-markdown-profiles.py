@@ -26,7 +26,6 @@ import yaml
 from document_contracts import (
     ConditionalConstraint,
     ConstantConstraint,
-    REGISTRY_PATH,
     Diagnostic,
     DocumentContractError,
     DocumentProfile,
@@ -36,6 +35,7 @@ from document_contracts import (
     enumerate_tracked_regular_paths,
     enumerate_target_markdown,
     is_ignored_repository_path,
+    load_internal_payload,
     load_registry,
     read_repository_text,
     validate_registry,
@@ -1988,7 +1988,7 @@ def _native_index_integration_failures(
 
 
 def _self_test(root: Path) -> list[str]:
-    raw_registry = json.loads((root / REGISTRY_PATH).read_text(encoding="utf-8"))
+    raw_registry = load_internal_payload(root)
     registry = load_registry(root)
     profiles = {profile.profile_id: profile for profile in registry.profiles}
     inventory = enumerate_target_markdown(root)

@@ -30,6 +30,7 @@ from document_contracts import (
     classify_path,
     classify_paths,
     enumerate_target_markdown,
+    load_internal_payload,
     load_json_file,
     load_registry,
     _parse_ls_files_stage_z,
@@ -7039,7 +7040,7 @@ def _fixture_prd_008_immutable_projection(
 
 
 def _self_test(root: Path) -> int:
-    raw_registry = _load_json(root / REGISTRY_PATH)
+    raw_registry = load_internal_payload(root)
     fixture = _load_json(root / FIXTURE_PATH)
     actual_contract = tuple(
         (case.get("name"), case.get("mutation"), tuple(case.get("expected", ())))
@@ -7683,7 +7684,7 @@ def _assert_route_state(root: Path, registry: Any, requested: str | None) -> Non
             source_count=len(projected_entries),
         )
     elif state == "terminal":
-        raw_registry = load_json_file(root / REGISTRY_PATH)
+        raw_registry = load_internal_payload(root)
         raw_schema = load_json_file(root / SCHEMA_PATH, diagnostic_path=SCHEMA_PATH)
         token = "docs/" + raw_registry["retiredRouteEvidence"]["routeSegment"]
         result = subprocess.run(

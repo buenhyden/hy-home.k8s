@@ -39,7 +39,7 @@ from archive_cutover_manifest import (
     PROPOSED_REGISTRY_VERSION,
 )
 from document_contracts import (
-    REGISTRY_PATH,
+    RETIRED_REGISTRY_PATH,
     ROOT_FILES,
     TARGET_ROOTS,
     DocumentContractError,
@@ -2156,11 +2156,11 @@ def _work054_wp002_transition_fixture_inputs(
     base_registry_raw = dict(
         _registry_blob(
             root,
-            _tree_blob_oid(root, WORK054_WP002_BASE_COMMIT, REGISTRY_PATH),
+            _tree_blob_oid(root, WORK054_WP002_BASE_COMMIT, RETIRED_REGISTRY_PATH),
         )
     )
     proposed_registry_raw = dict(
-        _registry_blob(root, _index_blob_oid(root, REGISTRY_PATH))
+        _registry_blob(root, _index_blob_oid(root, RETIRED_REGISTRY_PATH))
     )
     base_registry = _classification_registry(
         production_registry,
@@ -3347,7 +3347,7 @@ def _registry_blob(
     root: Path,
     oid: str | None,
 ) -> Mapping[str, object]:
-    text = _blob_text(root, oid, REGISTRY_PATH)
+    text = _blob_text(root, oid, RETIRED_REGISTRY_PATH)
     if text is None:
         raise InvocationError("comparison snapshot lacks the document registry")
     try:
@@ -3713,7 +3713,7 @@ def _evaluate_comparison(
         base_blobs = _tree_blob_map(root, base_commit)
         proposed_blobs = _index_blob_map(root)
         changes = _staged_changes(root)
-        proposed_registry_oid = _index_blob_oid(root, REGISTRY_PATH)
+        proposed_registry_oid = _index_blob_oid(root, RETIRED_REGISTRY_PATH)
     else:
         if mode == "ci":
             assert base_ref is not None and to_ref is not None
@@ -3730,7 +3730,7 @@ def _evaluate_comparison(
         base_blobs = _tree_blob_map(root, base_commit)
         proposed_blobs = _tree_blob_map(root, proposed_commit)
         changes = _tree_changes(root, base_commit, proposed_commit)
-        proposed_registry_oid = _tree_blob_oid(root, proposed_commit, REGISTRY_PATH)
+        proposed_registry_oid = _tree_blob_oid(root, proposed_commit, RETIRED_REGISTRY_PATH)
 
     base_agent_contract_blobs: Mapping[PurePosixPath, str] = MappingProxyType({})
     proposed_agent_contract_blobs: Mapping[PurePosixPath, str] = MappingProxyType({})
@@ -3751,7 +3751,7 @@ def _evaluate_comparison(
                 lambda path: _tree_blob_oid(root, proposed_commit, path)
             )
 
-    base_registry_oid = _tree_blob_oid(root, base_commit, REGISTRY_PATH)
+    base_registry_oid = _tree_blob_oid(root, base_commit, RETIRED_REGISTRY_PATH)
     base_registry_raw = _registry_blob(root, base_registry_oid)
     proposed_registry_raw = _registry_blob(root, proposed_registry_oid)
     base_classification_registry = _classification_registry(registry, base_registry_raw)
@@ -4889,9 +4889,9 @@ def _git_case(
     registry: Registry,
     contract_root: Path,
 ) -> tuple[int, list[str]]:
-    fixture_registry = root / REGISTRY_PATH
+    fixture_registry = root / RETIRED_REGISTRY_PATH
     fixture_registry.parent.mkdir(parents=True, exist_ok=True)
-    fixture_registry.write_bytes((contract_root / REGISTRY_PATH).read_bytes())
+    fixture_registry.write_bytes((contract_root / RETIRED_REGISTRY_PATH).read_bytes())
     spec_path = "docs/03.specs/0900-example/spec.md"
     case_registry = registry
     ready_spec_id, ready_spec_state, blocked_spec_id = _dependency_ready_tranche_window(

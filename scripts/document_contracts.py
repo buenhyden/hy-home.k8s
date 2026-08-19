@@ -43,8 +43,25 @@ TARGET_ROOTS = (
     "tests",
     "traefik",
 )
-REGISTRY_PATH = PurePosixPath("docs/99.templates/support/document-profiles.json")
+REGISTRY_PATH = PurePosixPath("docs/99.templates/registry.json")
+PROFILE_SCHEMA_PATH = PurePosixPath(
+    "docs/99.templates/contracts/document-profile.schema.json"
+)
+ROUTE_CONTRACT_PATH = PurePosixPath("docs/99.templates/contracts/route-contract.json")
+ROUTE_CONTRACT_SCHEMA_PATH = PurePosixPath(
+    "docs/99.templates/contracts/route-contract.schema.json"
+)
+# The flat form validate_registry and its self-tests operate on. It is an
+# internal shape rather than a published authority: the two published
+# contracts above are projected into it by load_internal_payload.
 SCHEMA_PATH = PurePosixPath("docs/99.templates/support/document-profiles.schema.json")
+INTERNAL_FORM_ID = "https://hy-home.k8s/schemas/document-profiles-8.schema.json"
+# The retired combined registry. Snapshot comparisons and commit-pinned reads
+# keep naming it because history holds it at this path and nowhere else; the
+# published contracts above cannot stand in for a tree that predates them.
+RETIRED_REGISTRY_PATH = PurePosixPath(
+    "docs/99.templates/support/document-profiles.json"
+)
 _EVIDENCE_PREDICATE_SEMANTICS = {
     "archive-source-removal": (
         "source-removed-and-mirror-created",
@@ -2935,29 +2952,194 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
     return registry
 
 
-def load_registry(root: Path) -> Registry:
-    root = root.absolute()
-    raw_registry = load_json_file(root / REGISTRY_PATH)
-    if not isinstance(raw_registry, dict):
+def _load_published_contract(
+    root: Path, path: PurePosixPath, schema_path: PurePosixPath
+) -> Mapping[str, Any]:
+    """Decode one published contract and validate it against its own schema.
+
+    Identity is checked before the schema is read so that a payload from a
+    retired schema generation is rejected as REGISTRY_SCHEMA rather than
+    reaching a schema this repository no longer ships.
+    """
+
+    payload = load_json_file(root / path, diagnostic_path=path)
+    if not isinstance(payload, dict):
         _fail(
             "REGISTRY_SCHEMA",
-            expected="a JSON object",
-            actual=type(raw_registry).__name__,
+            expected=f"a JSON object at {path.as_posix()}",
+            actual=type(payload).__name__,
         )
-    if (
-        raw_registry.get("schemaVersion") != 8
-        or raw_registry.get("$id")
-        != "https://hy-home.k8s/schemas/document-profiles-8.schema.json"
-    ):
+    expected_id = f"https://hy-home.k8s/{path.as_posix()}"
+    if payload.get("schemaVersion") != 8 or payload.get("$id") != expected_id:
         _fail(
             "REGISTRY_SCHEMA",
-            expected="closed production registry schema v8",
+            expected=f"schemaVersion=8 $id={expected_id!r}",
             actual=(
-                f"schemaVersion={raw_registry.get('schemaVersion')!r} "
-                f"$id={raw_registry.get('$id')!r}"
+                f"schemaVersion={payload.get('schemaVersion')!r} "
+                f"$id={payload.get('$id')!r}"
             ),
         )
-    return validate_registry(root, raw_registry)
+    schema = load_json_file(root / schema_path, diagnostic_path=schema_path)
+    if not isinstance(schema, dict):
+        _fail(
+            "REGISTRY_SCHEMA",
+            expected=f"a JSON Schema object at {schema_path.as_posix()}",
+            actual=type(schema).__name__,
+        )
+    errors = sorted(
+        Draft202012Validator(schema).iter_errors(payload),
+        key=lambda error: tuple(str(part) for part in error.absolute_path),
+    )
+    if errors:
+        raise DocumentContractError(
+            tuple(
+                _diagnostic(
+                    _schema_rule_id(error),
+                    path=path,
+                    expected=error.message,
+                    actual="schema validation failed",
+                )
+                for error in errors
+            )
+        )
+    return payload
+
+
+def _split_top_level_alternation(body: str) -> list[str]:
+    """Split one alternation, ignoring bars inside groups, classes, or escapes."""
+
+    parts: list[str] = []
+    buffer: list[str] = []
+    depth = 0
+    in_class = False
+    index = 0
+    while index < len(body):
+        char = body[index]
+        if char == "\\":
+            buffer.append(body[index : index + 2])
+            index += 2
+            continue
+        if in_class:
+            if char == "]":
+                in_class = False
+        elif char == "[":
+            in_class = True
+        elif char == "(":
+            depth += 1
+        elif char == ")":
+            depth -= 1
+        elif char == "|" and depth == 0:
+            parts.append("".join(buffer))
+            buffer = []
+            index += 1
+            continue
+        buffer.append(char)
+        index += 1
+    parts.append("".join(buffer))
+    return parts
+
+
+def _internal_routes(pattern: str) -> list[dict[str, str]]:
+    """Recover the internal route list a published ``pathPattern`` encodes.
+
+    The published form states one anchored expression per profile, with an
+    alternation when the profile owns several routes. Recovering the branches
+    matters beyond matching: self-tests select a route by ``kind``, so a
+    projection that flattened every branch to one regex would silently retarget
+    them. A branch whose escaping round-trips is an exact route; anything else
+    stays a regex.
+    """
+
+    if not (pattern.startswith("^") and pattern.endswith("$")):
+        _fail(
+            "REGISTRY_SCHEMA",
+            expected="an anchored pathPattern",
+            actual=pattern,
+        )
+    inner = pattern[1:-1]
+    branches = (
+        _split_top_level_alternation(inner[3:-1])
+        if inner.startswith("(?:") and inner.endswith(")")
+        else [inner]
+    )
+    routes: list[dict[str, str]] = []
+    for branch in branches:
+        literal = re.sub(r"\\(.)", r"\1", branch)
+        if re.escape(literal) == branch:
+            routes.append({"kind": "exact", "value": literal})
+        else:
+            routes.append({"kind": "regex", "value": f"^{branch}$"})
+    return routes
+
+
+def _internal_profile_form(profile: Mapping[str, Any]) -> dict[str, Any]:
+    """Project one published profile into the flat internal profile form.
+
+    ``artifactIdPattern`` has no internal home yet and is deliberately
+    dropped: the internal form is a closed shape, so carrying it would fail
+    the internal schema instead of reaching a consumer.
+    """
+
+    return {
+        "id": profile["id"],
+        "class": profile["class"],
+        "mode": profile["mode"],
+        "routes": _internal_routes(profile["pathPattern"]),
+        "frontmatter": profile["requiredFrontmatter"],
+        "statusDomain": profile["lifecycle"]["statusDomain"],
+        "headings": profile["requiredSections"],
+        "template": profile["template"],
+        "sourceProfileIds": profile["relationships"]["sourceProfileIds"],
+        "placeholderPolicy": profile["placeholderPolicy"],
+        "appendContract": profile["lifecycle"]["appendContract"],
+        "bodyContract": profile["relationships"]["bodyContract"],
+    }
+
+
+def load_internal_payload(root: Path) -> dict[str, Any]:
+    """Return the flat internal payload projected from both contracts.
+
+    Callers that mutate the payload to exercise a rejection path work on this
+    form rather than on either published file, so a published reshape does not
+    have to be mirrored across every mutation site.
+    """
+
+    root = root.absolute()
+    registry = _load_published_contract(root, REGISTRY_PATH, PROFILE_SCHEMA_PATH)
+    routes = _load_published_contract(
+        root, ROUTE_CONTRACT_PATH, ROUTE_CONTRACT_SCHEMA_PATH
+    )
+    payload: dict[str, Any] = {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": INTERNAL_FORM_ID,
+        "schemaVersion": registry["schemaVersion"],
+    }
+    for key, value in routes.items():
+        if key not in {"$schema", "$id", "schemaVersion"}:
+            payload[key] = value
+    payload["profiles"] = [
+        _internal_profile_form(profile) for profile in registry["profiles"]
+    ]
+    payload["programLineage"] = registry["programLineage"]
+    if "standaloneExecutions" in registry:
+        payload["standaloneExecutions"] = registry["standaloneExecutions"]
+    if registry["schemaVersion"] != routes["schemaVersion"]:
+        _fail(
+            "REGISTRY_SCHEMA",
+            expected="one schema version across both published contracts",
+            actual=(
+                f"registry={registry['schemaVersion']!r} "
+                f"routes={routes['schemaVersion']!r}"
+            ),
+        )
+    return payload
+
+
+def load_registry(root: Path) -> Registry:
+    # Both published contracts are identity- and schema-checked while the
+    # internal payload is projected, so there is nothing left to gate here.
+    root = root.absolute()
+    return validate_registry(root, load_internal_payload(root))
 
 
 def _route_matches(route: Route, path: PurePosixPath) -> bool:
