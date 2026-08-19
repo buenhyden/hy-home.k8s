@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hy-home.k8s/docs/99.templates/contracts/frontmatter.schema.json",
+  "title": "Authored document frontmatter",
+  "description": "Validates the YAML frontmatter mapping of one authored document. Per-profile required, allowed, and ordered key sets stay in registry.json; this schema owns the shape and value grammar of each key.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "title",
+    "type",
+    "status",
+    "owner",
+    "updated"
+  ],
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "type": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[-/][a-z0-9]+)*$"
+    },
+    "status": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "owner": {
+      "type": "string",
+      "minLength": 1
+    },
+    "updated": {
+      "$ref": "#/$defs/isoDate"
+    },
+    "artifact_id": {
+      "$ref": "#/$defs/artifactId"
+    },
+    "change_id": {
+      "type": "string",
+      "pattern": "^CHG-[0-9]{4}$"
+    },
+    "original_artifact_id": {
+      "$ref": "#/$defs/artifactId"
+    },
+    "original_type": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[-/][a-z0-9]+)*$"
+    },
+    "original_path": {
+      "$ref": "#/$defs/repoRelativePath"
+    },
+    "archived_on": {
+      "$ref": "#/$defs/isoDate"
+    },
+    "archive_reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "replacement": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/repoRelativePath"
+        },
+        {
+          "const": "none"
+        }
+      ]
+    },
+    "source_commit": {
+      "$ref": "#/$defs/gitOid"
+    },
+    "source_blob": {
+      "$ref": "#/$defs/gitOid"
+    },
+    "content_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "migration_id": {
+      "type": "string",
+      "pattern": "^MIG-[0-9]{4}$"
+    }
+  },
+  "$defs": {
+    "isoDate": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "gitOid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "repoRelativePath": {
+      "type": "string",
+      "pattern": "^[^/][^\\\\]*$"
+    },
+    "artifactId": {
+      "type": "string",
+      "pattern": "^(?:(?:REQ|PRD|SRS|AD|ADR|SPEC|AGENT-DESIGN|DATA-MODEL|TESTS|PLAN|TASK)-[0-9]{4}|IFC-[0-9]{4}-[A-Z0-9]+(?:-[A-Z0-9]+)*|(?:GUIDE|POLICY|RUNBOOK)-[0-9]{4}|(?:INC|POSTMORTEM)-[0-9]{4}-[0-9]{4}|(?:PLAN|TASK)-CHG-[0-9]{4}|MIG-[0-9]{4}|TMB-[A-Z]+(?:-[A-Z]+)*-[A-Z0-9]+(?:-[A-Z0-9]+)*)$"
+    }
+  }
+}

@@ -1,0 +1,5168 @@
+{
+  "$schema": "./contracts/document-profile.schema.json",
+  "$id": "https://hy-home.k8s/docs/99.templates/registry.json",
+  "schemaVersion": 8,
+  "profiles": [
+    {
+      "id": "sdlc/prd",
+      "class": "sdlc",
+      "mode": "authored",
+      "pathPattern": "^docs/01\\.requirements/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "artifactIdPattern": "^PRD-[0-9]{4}$",
+      "template": "docs/99.templates/templates/sdlc/requirements/prd.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Vision",
+          "Problem Statement",
+          "Personas",
+          "Key Use Cases",
+          "Functional Requirements",
+          "Success / Acceptance Criteria",
+          "Scope and Non-goals",
+          "Risks, Dependencies, and Assumptions",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Vision",
+          "Problem Statement",
+          "Personas",
+          "Key Use Cases",
+          "Functional Requirements",
+          "Success / Acceptance Criteria",
+          "Scope and Non-goals",
+          "Risks, Dependencies, and Assumptions",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "Requirement ID",
+            "Acceptance criterion",
+            "Downstream owner"
+          ],
+          "identifierColumns": [
+            {
+              "column": "Requirement ID",
+              "kind": "requirement"
+            }
+          ],
+          "sourceLinkColumn": null,
+          "targetLinkColumn": "Downstream owner",
+          "allowedSourceProfileIds": [],
+          "allowedTargetProfileIds": [
+            "sdlc/srs",
+            "sdlc/interface",
+            "sdlc/ad",
+            "sdlc/spec"
+          ],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "sdlc/srs",
+      "class": "sdlc",
+      "mode": "authored",
+      "pathPattern": "^docs/01\\.requirements/srs-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "artifactIdPattern": "^SRS-[0-9]{4}$",
+      "template": "docs/99.templates/templates/sdlc/requirements/srs.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "System Context",
+          "Functional Requirements",
+          "Non-Functional Requirements",
+          "Interface Requirements",
+          "Verification",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "System Context",
+          "Functional Requirements",
+          "Non-Functional Requirements",
+          "Interface Requirements",
+          "Verification",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "Upstream requirement",
+            "System requirement",
+            "Downstream owner"
+          ],
+          "identifierColumns": [
+            {
+              "column": "Upstream requirement",
+              "kind": "requirement"
+            },
+            {
+              "column": "System requirement",
+              "kind": "requirement"
+            }
+          ],
+          "sourceLinkColumn": "Upstream requirement",
+          "targetLinkColumn": "Downstream owner",
+          "allowedSourceProfileIds": [
+            "sdlc/prd"
+          ],
+          "allowedTargetProfileIds": [
+            "sdlc/interface",
+            "sdlc/ad",
+            "sdlc/spec"
+          ],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "sdlc/interface",
+      "class": "sdlc",
+      "mode": "authored",
+      "pathPattern": "^docs/01\\.requirements/ifc-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md$",
+      "artifactIdPattern": "^IFC-[0-9]{4}-[A-Z0-9]+(?:-[A-Z0-9]+)*$",
+      "template": "docs/99.templates/templates/sdlc/requirements/interface.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Interface Boundary",
+          "Requirements",
+          "Data Contract",
+          "Error Handling",
+          "Verification",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Interface Boundary",
+          "Requirements",
+          "Data Contract",
+          "Error Handling",
+          "Verification",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "Upstream requirement",
+            "Interface requirement",
+            "Downstream owner"
+          ],
+          "identifierColumns": [
+            {
+              "column": "Upstream requirement",
+              "kind": "requirement"
+            },
+            {
+              "column": "Interface requirement",
+              "kind": "requirement"
+            }
+          ],
+          "sourceLinkColumn": "Upstream requirement",
+          "targetLinkColumn": "Downstream owner",
+          "allowedSourceProfileIds": [
+            "sdlc/prd",
+            "sdlc/srs"
+          ],
+          "allowedTargetProfileIds": [
+            "sdlc/ad",
+            "sdlc/spec"
+          ],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "sdlc/ad",
+      "class": "sdlc",
+      "mode": "authored",
+      "pathPattern": "^docs/02\\.architecture/descriptions/ad-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "artifactIdPattern": "^AD-[0-9]{4}$",
+      "template": "docs/99.templates/templates/sdlc/architecture/ad.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Boundaries & Non-goals",
+          "Quality Attributes",
+          "System Overview & Context",
+          "Data Architecture",
+          "Infrastructure & Deployment",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Boundaries & Non-goals",
+          "Quality Attributes",
+          "System Overview & Context",
+          "Data Architecture",
+          "Infrastructure & Deployment",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "Upstream requirement",
+            "Quality attribute or boundary",
+            "ADR / Spec"
+          ],
+          "identifierColumns": [
+            {
+              "column": "Upstream requirement",
+              "kind": "requirement"
+            }
+          ],
+          "sourceLinkColumn": "Upstream requirement",
+          "targetLinkColumn": "ADR / Spec",
+          "allowedSourceProfileIds": [
+            "sdlc/prd",
+            "sdlc/srs",
+            "sdlc/interface"
+          ],
+          "allowedTargetProfileIds": [
+            "sdlc/adr",
+            "sdlc/spec"
+          ],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "sdlc/adr",
+      "class": "sdlc",
+      "mode": "authored",
+      "pathPattern": "^docs/02\\.architecture/decisions/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "artifactIdPattern": "^ADR-[0-9]{4}$",
+      "template": "docs/99.templates/templates/sdlc/architecture/adr.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Context",
+          "Decision",
+          "Explicit Non-goals",
+          "Consequences",
+          "Alternatives",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Context",
+          "Decision",
+          "Explicit Non-goals",
+          "Consequences",
+          "Alternatives",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "Decision lineage",
+            "Replacement relation",
+            "Affected Spec"
+          ],
+          "identifierColumns": [],
+          "sourceLinkColumn": "Decision lineage",
+          "targetLinkColumn": "Affected Spec",
+          "allowedSourceProfileIds": [
+            "sdlc/ad",
+            "sdlc/adr"
+          ],
+          "allowedTargetProfileIds": [
+            "sdlc/spec",
+            "sdlc/agent-design",
+            "sdlc/data-model",
+            "sdlc/tests"
+          ],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "sdlc/spec",
+      "class": "sdlc",
+      "mode": "authored",
+      "pathPattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/spec\\.md$",
+      "artifactIdPattern": "^SPEC-[0-9]{4}$",
+      "template": "docs/99.templates/templates/sdlc/specs/spec.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Strategic Boundaries & Non-goals",
+          "Contracts",
+          "Core Design",
+          "Data Modeling & Storage Strategy",
+          "Interfaces & Data Structures",
+          "Edge Cases & Error Handling",
+          "Failure Modes & Fallback / Human Escalation",
+          "Verification Commands",
+          "Success Criteria & Verification Plan",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Strategic Boundaries & Non-goals",
+          "Contracts",
+          "Core Design",
+          "Data Modeling & Storage Strategy",
+          "Interfaces & Data Structures",
+          "Edge Cases & Error Handling",
+          "Failure Modes & Fallback / Human Escalation",
+          "Verification Commands",
+          "Success Criteria & Verification Plan",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "PRD requirement",
+            "Spec criterion",
+            "Verification method"
+          ],
+          "identifierColumns": [
+            {
+              "column": "PRD requirement",
+              "kind": "requirement"
+            },
+            {
+              "column": "Spec criterion",
+              "kind": "criterion"
+            }
+          ],
+          "sourceLinkColumn": "PRD requirement",
+          "targetLinkColumn": null,
+          "allowedSourceProfileIds": [
+            "sdlc/prd",
+            "sdlc/interface",
+            "sdlc/srs"
+          ],
+          "allowedTargetProfileIds": [],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "sdlc/agent-design",
+      "class": "sdlc",
+      "mode": "authored",
+      "pathPattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/agent-design\\.md$",
+      "artifactIdPattern": "^AGENT-DESIGN-[0-9]{4}$",
+      "template": "docs/99.templates/templates/sdlc/specs/agent-design.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Scope & Non-goals",
+          "Agent Role",
+          "Inputs / Outputs",
+          "Orchestration Model",
+          "Tools & Permissions",
+          "Prompt / Policy Contract",
+          "Context & Memory Strategy",
+          "Guardrails",
+          "Failure Modes & Fallback",
+          "Evaluation Plan",
+          "Observability",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Scope & Non-goals",
+          "Agent Role",
+          "Inputs / Outputs",
+          "Orchestration Model",
+          "Tools & Permissions",
+          "Prompt / Policy Contract",
+          "Context & Memory Strategy",
+          "Guardrails",
+          "Failure Modes & Fallback",
+          "Evaluation Plan",
+          "Observability",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "PRD requirement",
+            "Spec criterion",
+            "Verification method"
+          ],
+          "identifierColumns": [
+            {
+              "column": "PRD requirement",
+              "kind": "requirement"
+            },
+            {
+              "column": "Spec criterion",
+              "kind": "criterion"
+            }
+          ],
+          "sourceLinkColumn": "PRD requirement",
+          "targetLinkColumn": null,
+          "allowedSourceProfileIds": [
+            "sdlc/prd",
+            "sdlc/interface",
+            "sdlc/srs"
+          ],
+          "allowedTargetProfileIds": [],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "sdlc/data-model",
+      "class": "sdlc",
+      "mode": "authored",
+      "pathPattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/data-model\\.md$",
+      "artifactIdPattern": "^DATA-MODEL-[0-9]{4}$",
+      "template": "docs/99.templates/templates/sdlc/specs/data-model.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Scope & Non-goals",
+          "Entities / Aggregates",
+          "Relationships",
+          "Schema / Structures",
+          "Validation & Integrity Rules",
+          "Storage Strategy",
+          "Privacy / Security",
+          "Migration & Compatibility",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Scope & Non-goals",
+          "Entities / Aggregates",
+          "Relationships",
+          "Schema / Structures",
+          "Validation & Integrity Rules",
+          "Storage Strategy",
+          "Privacy / Security",
+          "Migration & Compatibility",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "PRD requirement",
+            "Spec criterion",
+            "Verification method"
+          ],
+          "identifierColumns": [
+            {
+              "column": "PRD requirement",
+              "kind": "requirement"
+            },
+            {
+              "column": "Spec criterion",
+              "kind": "criterion"
+            }
+          ],
+          "sourceLinkColumn": "PRD requirement",
+          "targetLinkColumn": null,
+          "allowedSourceProfileIds": [
+            "sdlc/prd",
+            "sdlc/interface",
+            "sdlc/srs"
+          ],
+          "allowedTargetProfileIds": [],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "sdlc/tests",
+      "class": "sdlc",
+      "mode": "authored",
+      "pathPattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/tests\\.md$",
+      "artifactIdPattern": "^TESTS-[0-9]{4}$",
+      "template": "docs/99.templates/templates/sdlc/specs/tests.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Verification Goals",
+          "TDD Scope",
+          "Test Matrix",
+          "Contract & Integration Tests",
+          "Non-Functional Tests",
+          "Fixtures / Datasets",
+          "How to Run",
+          "Evidence & Reporting",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Verification Goals",
+          "TDD Scope",
+          "Test Matrix",
+          "Contract & Integration Tests",
+          "Non-Functional Tests",
+          "Fixtures / Datasets",
+          "How to Run",
+          "Evidence & Reporting",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "PRD requirement",
+            "Spec criterion",
+            "Verification method"
+          ],
+          "identifierColumns": [
+            {
+              "column": "PRD requirement",
+              "kind": "requirement"
+            },
+            {
+              "column": "Spec criterion",
+              "kind": "criterion"
+            }
+          ],
+          "sourceLinkColumn": "PRD requirement",
+          "targetLinkColumn": null,
+          "allowedSourceProfileIds": [
+            "sdlc/prd",
+            "sdlc/interface",
+            "sdlc/srs"
+          ],
+          "allowedTargetProfileIds": [],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "sdlc/plan",
+      "class": "sdlc",
+      "mode": "authored",
+      "pathPattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/plan\\.md$",
+      "artifactIdPattern": "^PLAN-(?:CHG-)?[0-9]{4}$",
+      "template": "docs/99.templates/templates/sdlc/execution/plan.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Context",
+          "Goals & In-Scope",
+          "Non-Goals & Out-of-Scope",
+          "Work Breakdown",
+          "Verification Plan",
+          "Risks & Mitigations",
+          "Completion Criteria",
+          "Traceability"
+        ],
+        "allowed": [
+          "Global Constraints",
+          "Overview",
+          "Context",
+          "Goals & In-Scope",
+          "Non-Goals & Out-of-Scope",
+          "Work Breakdown",
+          "Verification Plan",
+          "Risks & Mitigations",
+          "Completion Criteria",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "Spec criterion",
+            "Work package",
+            "Expected Task"
+          ],
+          "identifierColumns": [
+            {
+              "column": "Spec criterion",
+              "kind": "criterion"
+            }
+          ],
+          "sourceLinkColumn": "Spec criterion",
+          "targetLinkColumn": "Expected Task",
+          "allowedSourceProfileIds": [
+            "sdlc/spec",
+            "sdlc/agent-design",
+            "sdlc/data-model",
+            "sdlc/tests"
+          ],
+          "allowedTargetProfileIds": [
+            "sdlc/task"
+          ],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "sdlc/task",
+      "class": "sdlc",
+      "mode": "authored",
+      "pathPattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/tasks\\.md$",
+      "artifactIdPattern": "^TASK-(?:CHG-)?[0-9]{4}$",
+      "template": "docs/99.templates/templates/sdlc/execution/task.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Inputs",
+          "Task Table",
+          "Approval and Safety Boundaries",
+          "Verification Summary",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Inputs",
+          "Task Table",
+          "Approval and Safety Boundaries",
+          "Verification Summary",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "Criterion / work item",
+            "Result",
+            "Evidence"
+          ],
+          "identifierColumns": [
+            {
+              "column": "Criterion / work item",
+              "kind": "work-item"
+            }
+          ],
+          "sourceLinkColumn": "Criterion / work item",
+          "targetLinkColumn": null,
+          "allowedSourceProfileIds": [
+            "sdlc/plan",
+            "sdlc/spec",
+            "sdlc/agent-design",
+            "sdlc/data-model",
+            "sdlc/tests"
+          ],
+          "allowedTargetProfileIds": [],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "sdlc/guide",
+      "class": "sdlc",
+      "mode": "authored",
+      "pathPattern": "^docs/05\\.operations/guides/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "artifactIdPattern": "^GUIDE-[0-9]{4}$",
+      "template": "docs/99.templates/templates/sdlc/operations/guide.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Guide Type",
+          "Target Audience",
+          "Prerequisites",
+          "Step-by-step Instructions",
+          "Common Pitfalls",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Guide Type",
+          "Target Audience",
+          "Prerequisites",
+          "Step-by-step Instructions",
+          "Common Pitfalls",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "Promoted owner",
+            "Audience outcome",
+            "Operating surface"
+          ],
+          "identifierColumns": [],
+          "sourceLinkColumn": "Promoted owner",
+          "targetLinkColumn": null,
+          "allowedSourceProfileIds": [
+            "sdlc/spec",
+            "sdlc/agent-design",
+            "sdlc/data-model",
+            "sdlc/tests",
+            "sdlc/task"
+          ],
+          "allowedTargetProfileIds": [],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "sdlc/policy",
+      "class": "sdlc",
+      "mode": "authored",
+      "pathPattern": "^docs/05\\.operations/policies/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "artifactIdPattern": "^POLICY-[0-9]{4}$",
+      "template": "docs/99.templates/templates/sdlc/operations/policy.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Policy Scope",
+          "Applies To",
+          "Controls",
+          "Exceptions",
+          "Verification",
+          "Review Cadence",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Policy Scope",
+          "Applies To",
+          "Controls",
+          "Exceptions",
+          "Verification",
+          "Review Cadence",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "Promoted owner",
+            "Control owner",
+            "Enforcement surface"
+          ],
+          "identifierColumns": [],
+          "sourceLinkColumn": "Promoted owner",
+          "targetLinkColumn": null,
+          "allowedSourceProfileIds": [
+            "sdlc/spec",
+            "sdlc/agent-design",
+            "sdlc/data-model",
+            "sdlc/tests",
+            "sdlc/task"
+          ],
+          "allowedTargetProfileIds": [],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "sdlc/runbook",
+      "class": "sdlc",
+      "mode": "authored",
+      "pathPattern": "^docs/05\\.operations/runbooks/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "artifactIdPattern": "^RUNBOOK-[0-9]{4}$",
+      "template": "docs/99.templates/templates/sdlc/operations/runbook.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Runbook Type",
+          "When to Use",
+          "Procedure or Checklist",
+          "Verification Steps",
+          "Observability and Evidence Sources",
+          "Safe Rollback or Recovery Procedure",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Runbook Type",
+          "When to Use",
+          "Procedure or Checklist",
+          "Verification Steps",
+          "Observability and Evidence Sources",
+          "Safe Rollback or Recovery Procedure",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "Promoted owner",
+            "Trigger or control",
+            "Evidence or recovery owner"
+          ],
+          "identifierColumns": [],
+          "sourceLinkColumn": "Promoted owner",
+          "targetLinkColumn": null,
+          "allowedSourceProfileIds": [
+            "sdlc/spec",
+            "sdlc/agent-design",
+            "sdlc/data-model",
+            "sdlc/tests",
+            "sdlc/task",
+            "sdlc/policy"
+          ],
+          "allowedTargetProfileIds": [],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "sdlc/incident",
+      "class": "sdlc",
+      "mode": "authored",
+      "pathPattern": "^docs/05\\.operations/incidents/[0-9]{4}/inc-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/incident\\.md$",
+      "artifactIdPattern": "^INC-[0-9]{4}-[0-9]{4}$",
+      "template": "docs/99.templates/templates/sdlc/operations/incident.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Incident Metadata",
+          "Impact",
+          "Timeline",
+          "Response State",
+          "Evidence",
+          "Follow-up Actions",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Incident Metadata",
+          "Impact",
+          "Timeline",
+          "Response State",
+          "Evidence",
+          "Follow-up Actions",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "Timeline or action",
+            "Evidence",
+            "Follow-up Task"
+          ],
+          "identifierColumns": [],
+          "sourceLinkColumn": null,
+          "targetLinkColumn": "Follow-up Task",
+          "allowedSourceProfileIds": [],
+          "allowedTargetProfileIds": [
+            "sdlc/task"
+          ],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "sdlc/postmortem",
+      "class": "sdlc",
+      "mode": "authored",
+      "pathPattern": "^docs/05\\.operations/incidents/[0-9]{4}/inc-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/postmortem\\.md$",
+      "artifactIdPattern": "^POSTMORTEM-[0-9]{4}-[0-9]{4}$",
+      "template": "docs/99.templates/templates/sdlc/operations/postmortem.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Incident Link and Impact Summary",
+          "Root Cause Analysis",
+          "Contributing Factors",
+          "What Went Well",
+          "What Went Wrong",
+          "Action Items",
+          "Prevention and Verification",
+          "Documentation Feedback Loop",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Incident Link and Impact Summary",
+          "Root Cause Analysis",
+          "Contributing Factors",
+          "What Went Well",
+          "What Went Wrong",
+          "Action Items",
+          "Prevention and Verification",
+          "Documentation Feedback Loop",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "Root cause or action",
+            "Owner and due state",
+            "Follow-up Task",
+            "Feedback target"
+          ],
+          "identifierColumns": [],
+          "sourceLinkColumn": null,
+          "targetLinkColumn": "Follow-up Task",
+          "allowedSourceProfileIds": [],
+          "allowedTargetProfileIds": [
+            "sdlc/task"
+          ],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "content/reference",
+      "class": "common",
+      "mode": "authored",
+      "pathPattern": "^docs/90\\.references/(?!.*(?:/)?README\\.md$)(?!llm-wiki/wiki-index\\.md$).+\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/common/reference.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "content/archive",
+      "class": "common",
+      "mode": "authored",
+      "pathPattern": "^docs/98\\.archive/(?!migrations/)(?!.*(?:/)?README\\.md$).+\\.md$",
+      "artifactIdPattern": "^TMB-[A-Z]+(?:-[A-Z]+)*-[A-Z0-9]+(?:-[A-Z0-9]+)*$",
+      "template": "docs/99.templates/templates/common/archive-record.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
+          "original_type",
+          "original_path",
+          "archived_on",
+          "archive_reason",
+          "replacement",
+          "source_commit",
+          "source_blob",
+          "content_sha256"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
+          "change_id",
+          "original_artifact_id",
+          "original_type",
+          "original_path",
+          "archived_on",
+          "archive_reason",
+          "replacement",
+          "source_commit",
+          "source_blob",
+          "content_sha256"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
+          "change_id",
+          "original_artifact_id",
+          "original_type",
+          "original_path",
+          "archived_on",
+          "archive_reason",
+          "replacement",
+          "source_commit",
+          "source_blob",
+          "content_sha256"
+        ]
+      },
+      "requiredSections": {
+        "required": [],
+        "allowed": []
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "content/archive-migration",
+      "class": "common",
+      "mode": "authored",
+      "pathPattern": "^docs/98\\.archive/migrations/mig-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md$",
+      "artifactIdPattern": "^MIG-[0-9]{4}$",
+      "template": "docs/99.templates/templates/common/archive-migration.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
+          "migration_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
+          "migration_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
+          "migration_id"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Migration Ledger",
+          "Recovery"
+        ],
+        "allowed": [
+          "Overview",
+          "Migration Ledger",
+          "Recovery"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "accepted"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "governance/reference",
+      "class": "governance",
+      "mode": "authored",
+      "pathPattern": "^docs/00\\.agent-governance/(?!README\\.md$)(?!memory/).+\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/common/governance-reference.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "governance/memory",
+      "class": "governance",
+      "mode": "authored",
+      "pathPattern": "^docs/00\\.agent-governance/memory/(?!README\\.md$)(?!progress\\.md$)[^/]+\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/common/memory.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Problem",
+          "Context",
+          "Resolution",
+          "Prevention",
+          "Related Progress"
+        ],
+        "allowed": [
+          "Problem",
+          "Context",
+          "Resolution",
+          "Prevention",
+          "Related Progress"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "governance/template-support",
+      "class": "governance",
+      "mode": "authored",
+      "pathPattern": "^docs/99\\.templates/support/(?!README\\.md$)[^/]+\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/common/template-support.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Purpose",
+          "Owned Contract",
+          "Authoring Rules",
+          "Validation Contract",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Purpose",
+          "Owned Contract",
+          "Authoring Rules",
+          "Validation Contract",
+          "Related Documents"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "governance/progress-ledger",
+      "class": "governance",
+      "mode": "frontmatter-free",
+      "pathPattern": "^docs/00\\.agent\\-governance/memory/progress\\.md$",
+      "artifactIdPattern": null,
+      "template": null,
+      "requiredFrontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [
+          "Work Entries"
+        ],
+        "allowed": [
+          "Work Entries"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "readme/repository",
+      "class": "readme",
+      "mode": "frontmatter-free",
+      "pathPattern": "^README\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/common/readme-repository.template.md",
+      "requiredFrontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Repository Map",
+          "Getting Started",
+          "Validation",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Repository Map",
+          "Getting Started",
+          "Validation",
+          "Related Documents",
+          "Prerequisites",
+          "Configuration",
+          "Security Boundary"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "readme/stage-index",
+      "class": "readme",
+      "mode": "frontmatter-free",
+      "pathPattern": "^(?:docs/README\\.md|docs/00\\.agent\\-governance/README\\.md|docs/01\\.requirements/README\\.md|docs/02\\.architecture/README\\.md|docs/03\\.specs/README\\.md|docs/05\\.operations/README\\.md|docs/90\\.references/README\\.md|docs/98\\.archive/README\\.md|docs/99\\.templates/README\\.md)$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/common/readme-stage-index.template.md",
+      "requiredFrontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Stage Contract",
+          "Document Index",
+          "Authoring Workflow",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Stage Contract",
+          "Document Index",
+          "Authoring Workflow",
+          "Related Documents",
+          "Lifecycle Handoff"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "readme/collection-index",
+      "class": "readme",
+      "mode": "frontmatter-free",
+      "pathPattern": "^(?:docs/00\\.agent\\-governance/memory/README\\.md|docs/02\\.architecture/decisions/README\\.md|docs/02\\.architecture/descriptions/README\\.md|docs/05\\.operations/guides/README\\.md|docs/05\\.operations/incidents/README\\.md|docs/05\\.operations/policies/README\\.md|docs/05\\.operations/runbooks/README\\.md|docs/90\\.references/audits/README\\.md|docs/90\\.references/data/README\\.md|docs/90\\.references/learning/README\\.md|docs/90\\.references/llm\\-wiki/README\\.md|docs/90\\.references/research/README\\.md|docs/99\\.templates/support/README\\.md|docs/99\\.templates/templates/README\\.md|docs/90\\.references/cloud\\-examples/README\\.md)$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/common/readme-collection-index.template.md",
+      "requiredFrontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Scope",
+          "Item Index",
+          "Add and Find",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Scope",
+          "Item Index",
+          "Add and Find",
+          "Related Documents",
+          "Selection Rules"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "readme/implementation",
+      "class": "readme",
+      "mode": "frontmatter-free",
+      "pathPattern": "^(?:examples/README\\.md|examples/sample\\-app/README\\.md|gitops/README\\.md|gitops/workloads/README\\.md|infrastructure/README\\.md|scripts/README\\.md|tests/README\\.md|traefik/README\\.md|examples/azure/gitops/README\\.md|examples/azure/infrastructure/README\\.md|examples/azure/kubernetes/README\\.md|examples/(?:aws|azure)/README\\.md)$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/common/readme-implementation.template.md",
+      "requiredFrontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Structure",
+          "Configuration Boundary",
+          "Validation",
+          "Operations",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Structure",
+          "Configuration Boundary",
+          "Validation",
+          "Operations",
+          "Related Documents",
+          "Prerequisites",
+          "Troubleshooting"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "readme/snapshot-pack",
+      "class": "readme",
+      "mode": "frontmatter-free",
+      "pathPattern": "^(?:docs/90\\.references/(?:audits|research)/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+/README\\.md|docs/90\\.references/cloud-examples/(?:aws|azure)/README\\.md)$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/common/readme-snapshot-pack.template.md",
+      "requiredFrontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Snapshot Contract",
+          "Report Index",
+          "Refresh and Succession",
+          "Evidence Boundary",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Snapshot Contract",
+          "Report Index",
+          "Refresh and Succession",
+          "Evidence Boundary",
+          "Related Documents",
+          "Method"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "readme/workspace-staging",
+      "class": "readme",
+      "mode": "frontmatter-free",
+      "pathPattern": "^_workspace/README\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/common/readme-workspace-staging.template.md",
+      "requiredFrontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Permitted Artifacts",
+          "Forbidden Local State",
+          "Promotion and Cleanup",
+          "Tracking Rules",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Permitted Artifacts",
+          "Forbidden Local State",
+          "Promotion and Cleanup",
+          "Tracking Rules",
+          "Related Documents"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "exception/root-provider-shim",
+      "class": "exception",
+      "mode": "frontmatter-free",
+      "pathPattern": "^(?:AGENTS\\.md|CLAUDE\\.md|GEMINI\\.md)$",
+      "artifactIdPattern": null,
+      "template": null,
+      "requiredFrontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [],
+        "allowed": []
+      },
+      "lifecycle": {
+        "statusDomain": [],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "exception/local-agent-asset",
+      "class": "exception",
+      "mode": "classification-only",
+      "pathPattern": "^\\.agents/.+\\.md$",
+      "artifactIdPattern": null,
+      "template": null,
+      "requiredFrontmatter": {
+        "mode": "not-applicable",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [],
+        "allowed": []
+      },
+      "lifecycle": {
+        "statusDomain": [],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "exception/repository-runtime-baseline",
+      "class": "exception",
+      "mode": "classification-only",
+      "pathPattern": "^(?:\\.claude/CLAUDE\\.md|\\.codex/CODEX\\.md)$",
+      "artifactIdPattern": null,
+      "template": null,
+      "requiredFrontmatter": {
+        "mode": "not-applicable",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [],
+        "allowed": []
+      },
+      "lifecycle": {
+        "statusDomain": [],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "exception/provider-native-metadata",
+      "class": "exception",
+      "mode": "classification-only",
+      "pathPattern": "^(?:\\.claude/agents/[^/]+\\.md|\\.gemini/agents/[^/]+\\.md)$",
+      "artifactIdPattern": null,
+      "template": null,
+      "requiredFrontmatter": {
+        "mode": "not-applicable",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [],
+        "allowed": []
+      },
+      "lifecycle": {
+        "statusDomain": [],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "exception/github-native-control",
+      "class": "exception",
+      "mode": "frontmatter-free",
+      "pathPattern": "^\\.github/(?:README|PULL_REQUEST_TEMPLATE|SECURITY)\\.md$",
+      "artifactIdPattern": null,
+      "template": null,
+      "requiredFrontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [],
+        "allowed": []
+      },
+      "lifecycle": {
+        "statusDomain": [],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "native/document-migration-manifest",
+      "class": "exception",
+      "mode": "classification-only",
+      "pathPattern": "^scripts/document\\-taxonomy\\-migration\\.json$",
+      "artifactIdPattern": null,
+      "template": null,
+      "requiredFrontmatter": {
+        "mode": "not-applicable",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [],
+        "allowed": []
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "transition"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "exception/native-contract-openapi",
+      "class": "exception",
+      "mode": "classification-only",
+      "pathPattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/contracts/openapi\\.yaml$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/sdlc/specs/openapi.template.yaml",
+      "requiredFrontmatter": {
+        "mode": "not-applicable",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [],
+        "allowed": []
+      },
+      "lifecycle": {
+        "statusDomain": [],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "exception/native-contract-graphql",
+      "class": "exception",
+      "mode": "classification-only",
+      "pathPattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/contracts/schema\\.graphql$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/sdlc/specs/schema.template.graphql",
+      "requiredFrontmatter": {
+        "mode": "not-applicable",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [],
+        "allowed": []
+      },
+      "lifecycle": {
+        "statusDomain": [],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "exception/native-contract-protobuf",
+      "class": "exception",
+      "mode": "classification-only",
+      "pathPattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/contracts/service\\.proto$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/sdlc/specs/service.template.proto",
+      "requiredFrontmatter": {
+        "mode": "not-applicable",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [],
+        "allowed": []
+      },
+      "lifecycle": {
+        "statusDomain": [],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "exception/generated-record",
+      "class": "exception",
+      "mode": "generated",
+      "pathPattern": "^docs/90\\.references/llm\\-wiki/wiki\\-index\\.md$",
+      "artifactIdPattern": null,
+      "template": null,
+      "requiredFrontmatter": {
+        "mode": "not-applicable",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [],
+        "allowed": []
+      },
+      "lifecycle": {
+        "statusDomain": [],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "exception/program-non-target",
+      "class": "exception",
+      "mode": "non-target",
+      "pathPattern": "^(?:RTK\\.md|graphify-out/.+\\.md)$",
+      "artifactIdPattern": null,
+      "template": null,
+      "requiredFrontmatter": {
+        "mode": "not-applicable",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [],
+        "allowed": []
+      },
+      "lifecycle": {
+        "statusDomain": [],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "template/content/archive",
+      "class": "common",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/common/archive\\-record\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/common/archive-record.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "original_type",
+          "original_path",
+          "archived_on",
+          "archive_reason",
+          "replacement",
+          "source_commit",
+          "source_blob",
+          "content_sha256"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "change_id",
+          "original_artifact_id",
+          "original_type",
+          "original_path",
+          "archived_on",
+          "archive_reason",
+          "replacement",
+          "source_commit",
+          "source_blob",
+          "content_sha256"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "change_id",
+          "original_artifact_id",
+          "original_type",
+          "original_path",
+          "archived_on",
+          "archive_reason",
+          "replacement",
+          "source_commit",
+          "source_blob",
+          "content_sha256"
+        ]
+      },
+      "requiredSections": {
+        "required": [],
+        "allowed": []
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "content/archive"
+        ],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/content/archive-migration",
+      "class": "common",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/common/archive\\-migration\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/common/archive-migration.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "migration_id"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "migration_id"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "migration_id"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Migration Ledger",
+          "Recovery"
+        ],
+        "allowed": [
+          "Overview",
+          "Migration Ledger",
+          "Recovery"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "accepted"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "content/archive-migration"
+        ],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/governance/memory",
+      "class": "governance",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/common/memory\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/common/memory.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Problem",
+          "Context",
+          "Resolution",
+          "Prevention",
+          "Related Progress"
+        ],
+        "allowed": [
+          "Problem",
+          "Context",
+          "Resolution",
+          "Prevention",
+          "Related Progress"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "governance/memory"
+        ],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/readme/repository",
+      "class": "readme",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/common/readme\\-repository\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/common/readme-repository.template.md",
+      "requiredFrontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Repository Map",
+          "Getting Started",
+          "Validation",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Repository Map",
+          "Getting Started",
+          "Validation",
+          "Related Documents",
+          "Prerequisites",
+          "Configuration",
+          "Security Boundary"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "readme/repository"
+        ],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/readme/stage-index",
+      "class": "readme",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/common/readme\\-stage\\-index\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/common/readme-stage-index.template.md",
+      "requiredFrontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Stage Contract",
+          "Document Index",
+          "Authoring Workflow",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Stage Contract",
+          "Document Index",
+          "Authoring Workflow",
+          "Related Documents",
+          "Lifecycle Handoff"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "readme/stage-index"
+        ],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/readme/collection-index",
+      "class": "readme",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/common/readme\\-collection\\-index\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/common/readme-collection-index.template.md",
+      "requiredFrontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Scope",
+          "Item Index",
+          "Add and Find",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Scope",
+          "Item Index",
+          "Add and Find",
+          "Related Documents",
+          "Selection Rules"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "readme/collection-index"
+        ],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/readme/implementation",
+      "class": "readme",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/common/readme\\-implementation\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/common/readme-implementation.template.md",
+      "requiredFrontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Structure",
+          "Configuration Boundary",
+          "Validation",
+          "Operations",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Structure",
+          "Configuration Boundary",
+          "Validation",
+          "Operations",
+          "Related Documents",
+          "Prerequisites",
+          "Troubleshooting"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "readme/implementation"
+        ],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/readme/snapshot-pack",
+      "class": "readme",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/common/readme\\-snapshot\\-pack\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/common/readme-snapshot-pack.template.md",
+      "requiredFrontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Snapshot Contract",
+          "Report Index",
+          "Refresh and Succession",
+          "Evidence Boundary",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Snapshot Contract",
+          "Report Index",
+          "Refresh and Succession",
+          "Evidence Boundary",
+          "Related Documents",
+          "Method"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "readme/snapshot-pack"
+        ],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/readme/workspace-staging",
+      "class": "readme",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/common/readme\\-workspace\\-staging\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/common/readme-workspace-staging.template.md",
+      "requiredFrontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Permitted Artifacts",
+          "Forbidden Local State",
+          "Promotion and Cleanup",
+          "Tracking Rules",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Permitted Artifacts",
+          "Forbidden Local State",
+          "Promotion and Cleanup",
+          "Tracking Rules",
+          "Related Documents"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "readme/workspace-staging"
+        ],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/content/reference",
+      "class": "common",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/common/reference\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/common/reference.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "content/reference"
+        ],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/sdlc/adr",
+      "class": "sdlc",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/sdlc/architecture/adr\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/sdlc/architecture/adr.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Context",
+          "Decision",
+          "Explicit Non-goals",
+          "Consequences",
+          "Alternatives",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Context",
+          "Decision",
+          "Explicit Non-goals",
+          "Consequences",
+          "Alternatives",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "sdlc/adr"
+        ],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "Decision lineage",
+            "Replacement relation",
+            "Affected Spec"
+          ],
+          "identifierColumns": [],
+          "sourceLinkColumn": "Decision lineage",
+          "targetLinkColumn": "Affected Spec",
+          "allowedSourceProfileIds": [
+            "sdlc/ad",
+            "sdlc/adr"
+          ],
+          "allowedTargetProfileIds": [
+            "sdlc/spec",
+            "sdlc/agent-design",
+            "sdlc/data-model",
+            "sdlc/tests"
+          ],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/sdlc/ad",
+      "class": "sdlc",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/sdlc/architecture/ad\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/sdlc/architecture/ad.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Boundaries & Non-goals",
+          "Quality Attributes",
+          "System Overview & Context",
+          "Data Architecture",
+          "Infrastructure & Deployment",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Boundaries & Non-goals",
+          "Quality Attributes",
+          "System Overview & Context",
+          "Data Architecture",
+          "Infrastructure & Deployment",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "sdlc/ad"
+        ],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "Upstream requirement",
+            "Quality attribute or boundary",
+            "ADR / Spec"
+          ],
+          "identifierColumns": [
+            {
+              "column": "Upstream requirement",
+              "kind": "requirement"
+            }
+          ],
+          "sourceLinkColumn": "Upstream requirement",
+          "targetLinkColumn": "ADR / Spec",
+          "allowedSourceProfileIds": [
+            "sdlc/prd",
+            "sdlc/srs",
+            "sdlc/interface"
+          ],
+          "allowedTargetProfileIds": [
+            "sdlc/adr",
+            "sdlc/spec"
+          ],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/sdlc/plan",
+      "class": "sdlc",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/sdlc/execution/plan\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/sdlc/execution/plan.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Context",
+          "Goals & In-Scope",
+          "Non-Goals & Out-of-Scope",
+          "Work Breakdown",
+          "Verification Plan",
+          "Risks & Mitigations",
+          "Completion Criteria",
+          "Traceability"
+        ],
+        "allowed": [
+          "Global Constraints",
+          "Overview",
+          "Context",
+          "Goals & In-Scope",
+          "Non-Goals & Out-of-Scope",
+          "Work Breakdown",
+          "Verification Plan",
+          "Risks & Mitigations",
+          "Completion Criteria",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "sdlc/plan"
+        ],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "Spec criterion",
+            "Work package",
+            "Expected Task"
+          ],
+          "identifierColumns": [
+            {
+              "column": "Spec criterion",
+              "kind": "criterion"
+            }
+          ],
+          "sourceLinkColumn": "Spec criterion",
+          "targetLinkColumn": "Expected Task",
+          "allowedSourceProfileIds": [
+            "sdlc/spec",
+            "sdlc/agent-design",
+            "sdlc/data-model",
+            "sdlc/tests"
+          ],
+          "allowedTargetProfileIds": [
+            "sdlc/task"
+          ],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/sdlc/task",
+      "class": "sdlc",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/sdlc/execution/task\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/sdlc/execution/task.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Inputs",
+          "Task Table",
+          "Approval and Safety Boundaries",
+          "Verification Summary",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Inputs",
+          "Task Table",
+          "Approval and Safety Boundaries",
+          "Verification Summary",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "sdlc/task"
+        ],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "Criterion / work item",
+            "Result",
+            "Evidence"
+          ],
+          "identifierColumns": [
+            {
+              "column": "Criterion / work item",
+              "kind": "work-item"
+            }
+          ],
+          "sourceLinkColumn": "Criterion / work item",
+          "targetLinkColumn": null,
+          "allowedSourceProfileIds": [
+            "sdlc/plan",
+            "sdlc/spec",
+            "sdlc/agent-design",
+            "sdlc/data-model",
+            "sdlc/tests"
+          ],
+          "allowedTargetProfileIds": [],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/sdlc/guide",
+      "class": "sdlc",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/sdlc/operations/guide\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/sdlc/operations/guide.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Guide Type",
+          "Target Audience",
+          "Prerequisites",
+          "Step-by-step Instructions",
+          "Common Pitfalls",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Guide Type",
+          "Target Audience",
+          "Prerequisites",
+          "Step-by-step Instructions",
+          "Common Pitfalls",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "sdlc/guide"
+        ],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "Promoted owner",
+            "Audience outcome",
+            "Operating surface"
+          ],
+          "identifierColumns": [],
+          "sourceLinkColumn": "Promoted owner",
+          "targetLinkColumn": null,
+          "allowedSourceProfileIds": [
+            "sdlc/spec",
+            "sdlc/agent-design",
+            "sdlc/data-model",
+            "sdlc/tests",
+            "sdlc/task"
+          ],
+          "allowedTargetProfileIds": [],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/sdlc/incident",
+      "class": "sdlc",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/sdlc/operations/incident\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/sdlc/operations/incident.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Incident Metadata",
+          "Impact",
+          "Timeline",
+          "Response State",
+          "Evidence",
+          "Follow-up Actions",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Incident Metadata",
+          "Impact",
+          "Timeline",
+          "Response State",
+          "Evidence",
+          "Follow-up Actions",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "sdlc/incident"
+        ],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "Timeline or action",
+            "Evidence",
+            "Follow-up Task"
+          ],
+          "identifierColumns": [],
+          "sourceLinkColumn": null,
+          "targetLinkColumn": "Follow-up Task",
+          "allowedSourceProfileIds": [],
+          "allowedTargetProfileIds": [
+            "sdlc/task"
+          ],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/sdlc/policy",
+      "class": "sdlc",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/sdlc/operations/policy\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/sdlc/operations/policy.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Policy Scope",
+          "Applies To",
+          "Controls",
+          "Exceptions",
+          "Verification",
+          "Review Cadence",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Policy Scope",
+          "Applies To",
+          "Controls",
+          "Exceptions",
+          "Verification",
+          "Review Cadence",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "sdlc/policy"
+        ],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "Promoted owner",
+            "Control owner",
+            "Enforcement surface"
+          ],
+          "identifierColumns": [],
+          "sourceLinkColumn": "Promoted owner",
+          "targetLinkColumn": null,
+          "allowedSourceProfileIds": [
+            "sdlc/spec",
+            "sdlc/agent-design",
+            "sdlc/data-model",
+            "sdlc/tests",
+            "sdlc/task"
+          ],
+          "allowedTargetProfileIds": [],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/sdlc/postmortem",
+      "class": "sdlc",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/sdlc/operations/postmortem\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/sdlc/operations/postmortem.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Incident Link and Impact Summary",
+          "Root Cause Analysis",
+          "Contributing Factors",
+          "What Went Well",
+          "What Went Wrong",
+          "Action Items",
+          "Prevention and Verification",
+          "Documentation Feedback Loop",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Incident Link and Impact Summary",
+          "Root Cause Analysis",
+          "Contributing Factors",
+          "What Went Well",
+          "What Went Wrong",
+          "Action Items",
+          "Prevention and Verification",
+          "Documentation Feedback Loop",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "sdlc/postmortem"
+        ],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "Root cause or action",
+            "Owner and due state",
+            "Follow-up Task",
+            "Feedback target"
+          ],
+          "identifierColumns": [],
+          "sourceLinkColumn": null,
+          "targetLinkColumn": "Follow-up Task",
+          "allowedSourceProfileIds": [],
+          "allowedTargetProfileIds": [
+            "sdlc/task"
+          ],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/sdlc/runbook",
+      "class": "sdlc",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/sdlc/operations/runbook\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/sdlc/operations/runbook.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Runbook Type",
+          "When to Use",
+          "Procedure or Checklist",
+          "Verification Steps",
+          "Observability and Evidence Sources",
+          "Safe Rollback or Recovery Procedure",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Runbook Type",
+          "When to Use",
+          "Procedure or Checklist",
+          "Verification Steps",
+          "Observability and Evidence Sources",
+          "Safe Rollback or Recovery Procedure",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "sdlc/runbook"
+        ],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "Promoted owner",
+            "Trigger or control",
+            "Evidence or recovery owner"
+          ],
+          "identifierColumns": [],
+          "sourceLinkColumn": "Promoted owner",
+          "targetLinkColumn": null,
+          "allowedSourceProfileIds": [
+            "sdlc/spec",
+            "sdlc/agent-design",
+            "sdlc/data-model",
+            "sdlc/tests",
+            "sdlc/task",
+            "sdlc/policy"
+          ],
+          "allowedTargetProfileIds": [],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/sdlc/prd",
+      "class": "sdlc",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/sdlc/requirements/prd\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/sdlc/requirements/prd.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Vision",
+          "Problem Statement",
+          "Personas",
+          "Key Use Cases",
+          "Functional Requirements",
+          "Success / Acceptance Criteria",
+          "Scope and Non-goals",
+          "Risks, Dependencies, and Assumptions",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Vision",
+          "Problem Statement",
+          "Personas",
+          "Key Use Cases",
+          "Functional Requirements",
+          "Success / Acceptance Criteria",
+          "Scope and Non-goals",
+          "Risks, Dependencies, and Assumptions",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "sdlc/prd"
+        ],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "Requirement ID",
+            "Acceptance criterion",
+            "Downstream owner"
+          ],
+          "identifierColumns": [
+            {
+              "column": "Requirement ID",
+              "kind": "requirement"
+            }
+          ],
+          "sourceLinkColumn": null,
+          "targetLinkColumn": "Downstream owner",
+          "allowedSourceProfileIds": [],
+          "allowedTargetProfileIds": [
+            "sdlc/srs",
+            "sdlc/interface",
+            "sdlc/ad",
+            "sdlc/spec"
+          ],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/sdlc/srs",
+      "class": "sdlc",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/sdlc/requirements/srs\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/sdlc/requirements/srs.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "System Context",
+          "Functional Requirements",
+          "Non-Functional Requirements",
+          "Interface Requirements",
+          "Verification",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "System Context",
+          "Functional Requirements",
+          "Non-Functional Requirements",
+          "Interface Requirements",
+          "Verification",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "sdlc/srs"
+        ],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "Upstream requirement",
+            "System requirement",
+            "Downstream owner"
+          ],
+          "identifierColumns": [
+            {
+              "column": "Upstream requirement",
+              "kind": "requirement"
+            },
+            {
+              "column": "System requirement",
+              "kind": "requirement"
+            }
+          ],
+          "sourceLinkColumn": "Upstream requirement",
+          "targetLinkColumn": "Downstream owner",
+          "allowedSourceProfileIds": [
+            "sdlc/prd"
+          ],
+          "allowedTargetProfileIds": [
+            "sdlc/interface",
+            "sdlc/ad",
+            "sdlc/spec"
+          ],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/sdlc/interface",
+      "class": "sdlc",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/sdlc/requirements/interface\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/sdlc/requirements/interface.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Interface Boundary",
+          "Requirements",
+          "Data Contract",
+          "Error Handling",
+          "Verification",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Interface Boundary",
+          "Requirements",
+          "Data Contract",
+          "Error Handling",
+          "Verification",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "sdlc/interface"
+        ],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "Upstream requirement",
+            "Interface requirement",
+            "Downstream owner"
+          ],
+          "identifierColumns": [
+            {
+              "column": "Upstream requirement",
+              "kind": "requirement"
+            },
+            {
+              "column": "Interface requirement",
+              "kind": "requirement"
+            }
+          ],
+          "sourceLinkColumn": "Upstream requirement",
+          "targetLinkColumn": "Downstream owner",
+          "allowedSourceProfileIds": [
+            "sdlc/prd",
+            "sdlc/srs"
+          ],
+          "allowedTargetProfileIds": [
+            "sdlc/ad",
+            "sdlc/spec"
+          ],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/sdlc/agent-design",
+      "class": "sdlc",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/sdlc/specs/agent\\-design\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/sdlc/specs/agent-design.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Scope & Non-goals",
+          "Agent Role",
+          "Inputs / Outputs",
+          "Orchestration Model",
+          "Tools & Permissions",
+          "Prompt / Policy Contract",
+          "Context & Memory Strategy",
+          "Guardrails",
+          "Failure Modes & Fallback",
+          "Evaluation Plan",
+          "Observability",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Scope & Non-goals",
+          "Agent Role",
+          "Inputs / Outputs",
+          "Orchestration Model",
+          "Tools & Permissions",
+          "Prompt / Policy Contract",
+          "Context & Memory Strategy",
+          "Guardrails",
+          "Failure Modes & Fallback",
+          "Evaluation Plan",
+          "Observability",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "sdlc/agent-design"
+        ],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "PRD requirement",
+            "Spec criterion",
+            "Verification method"
+          ],
+          "identifierColumns": [
+            {
+              "column": "PRD requirement",
+              "kind": "requirement"
+            },
+            {
+              "column": "Spec criterion",
+              "kind": "criterion"
+            }
+          ],
+          "sourceLinkColumn": "PRD requirement",
+          "targetLinkColumn": null,
+          "allowedSourceProfileIds": [
+            "sdlc/prd",
+            "sdlc/interface",
+            "sdlc/srs"
+          ],
+          "allowedTargetProfileIds": [],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/sdlc/data-model",
+      "class": "sdlc",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/sdlc/specs/data\\-model\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/sdlc/specs/data-model.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Scope & Non-goals",
+          "Entities / Aggregates",
+          "Relationships",
+          "Schema / Structures",
+          "Validation & Integrity Rules",
+          "Storage Strategy",
+          "Privacy / Security",
+          "Migration & Compatibility",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Scope & Non-goals",
+          "Entities / Aggregates",
+          "Relationships",
+          "Schema / Structures",
+          "Validation & Integrity Rules",
+          "Storage Strategy",
+          "Privacy / Security",
+          "Migration & Compatibility",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "sdlc/data-model"
+        ],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "PRD requirement",
+            "Spec criterion",
+            "Verification method"
+          ],
+          "identifierColumns": [
+            {
+              "column": "PRD requirement",
+              "kind": "requirement"
+            },
+            {
+              "column": "Spec criterion",
+              "kind": "criterion"
+            }
+          ],
+          "sourceLinkColumn": "PRD requirement",
+          "targetLinkColumn": null,
+          "allowedSourceProfileIds": [
+            "sdlc/prd",
+            "sdlc/interface",
+            "sdlc/srs"
+          ],
+          "allowedTargetProfileIds": [],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/sdlc/spec",
+      "class": "sdlc",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/sdlc/specs/spec\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/sdlc/specs/spec.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Strategic Boundaries & Non-goals",
+          "Contracts",
+          "Core Design",
+          "Data Modeling & Storage Strategy",
+          "Interfaces & Data Structures",
+          "Edge Cases & Error Handling",
+          "Failure Modes & Fallback / Human Escalation",
+          "Verification Commands",
+          "Success Criteria & Verification Plan",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Strategic Boundaries & Non-goals",
+          "Contracts",
+          "Core Design",
+          "Data Modeling & Storage Strategy",
+          "Interfaces & Data Structures",
+          "Edge Cases & Error Handling",
+          "Failure Modes & Fallback / Human Escalation",
+          "Verification Commands",
+          "Success Criteria & Verification Plan",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "sdlc/spec"
+        ],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "PRD requirement",
+            "Spec criterion",
+            "Verification method"
+          ],
+          "identifierColumns": [
+            {
+              "column": "PRD requirement",
+              "kind": "requirement"
+            },
+            {
+              "column": "Spec criterion",
+              "kind": "criterion"
+            }
+          ],
+          "sourceLinkColumn": "PRD requirement",
+          "targetLinkColumn": null,
+          "allowedSourceProfileIds": [
+            "sdlc/prd",
+            "sdlc/interface",
+            "sdlc/srs"
+          ],
+          "allowedTargetProfileIds": [],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/sdlc/tests",
+      "class": "sdlc",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/sdlc/specs/tests\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/sdlc/specs/tests.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Verification Goals",
+          "TDD Scope",
+          "Test Matrix",
+          "Contract & Integration Tests",
+          "Non-Functional Tests",
+          "Fixtures / Datasets",
+          "How to Run",
+          "Evidence & Reporting",
+          "Traceability"
+        ],
+        "allowed": [
+          "Overview",
+          "Verification Goals",
+          "TDD Scope",
+          "Test Matrix",
+          "Contract & Integration Tests",
+          "Non-Functional Tests",
+          "Fixtures / Datasets",
+          "How to Run",
+          "Evidence & Reporting",
+          "Traceability"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "sdlc/tests"
+        ],
+        "bodyContract": {
+          "section": "Traceability",
+          "tableHeading": "Lifecycle Traceability",
+          "enforcedStatuses": [
+            "draft",
+            "active"
+          ],
+          "requiredColumns": [
+            "PRD requirement",
+            "Spec criterion",
+            "Verification method"
+          ],
+          "identifierColumns": [
+            {
+              "column": "PRD requirement",
+              "kind": "requirement"
+            },
+            {
+              "column": "Spec criterion",
+              "kind": "criterion"
+            }
+          ],
+          "sourceLinkColumn": "PRD requirement",
+          "targetLinkColumn": null,
+          "allowedSourceProfileIds": [
+            "sdlc/prd",
+            "sdlc/interface",
+            "sdlc/srs"
+          ],
+          "allowedTargetProfileIds": [],
+          "reciprocalEvidence": true,
+          "allowExplicitExclusion": true
+        }
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "governance/progress-entry",
+      "class": "governance",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/common/progress\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/common/progress.template.md",
+      "requiredFrontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [],
+        "allowed": []
+      },
+      "lifecycle": {
+        "statusDomain": [],
+        "appendContract": {
+          "parentProfileId": "governance/progress-ledger",
+          "parentH2": "Work Entries",
+          "entryHeadingLevel": 3,
+          "sectionHeadingLevel": 4,
+          "requiredSections": [
+            "Metadata",
+            "Progress",
+            "Memory",
+            "Evidence",
+            "Handoff"
+          ]
+        }
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "governance/progress-ledger"
+        ],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/governance/reference",
+      "class": "governance",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/common/governance\\-reference\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/common/governance-reference.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "governance/reference"
+        ],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/governance/template-support",
+      "class": "governance",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/common/template\\-support\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/common/template-support.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Purpose",
+          "Owned Contract",
+          "Authoring Rules",
+          "Validation Contract",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Purpose",
+          "Owned Contract",
+          "Authoring Rules",
+          "Validation Contract",
+          "Related Documents"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "done",
+          "archived"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "governance/template-support"
+        ],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "template-only"
+    }
+  ],
+  "programLineage": {
+    "programs": [
+      {
+        "prd": "0003",
+        "tranches": [
+          {
+            "spec": "0041",
+            "order": 1,
+            "state": "done",
+            "reason": "Stage 00 agent governance contract",
+            "decision": "0013"
+          },
+          {
+            "spec": "0042",
+            "order": 2,
+            "state": "done",
+            "reason": "Provider-native runtime and model evidence",
+            "decision": "0013"
+          },
+          {
+            "spec": "0043",
+            "order": 3,
+            "state": "done",
+            "reason": "Agent harness loop lifecycle",
+            "decision": "0013"
+          },
+          {
+            "spec": "0044",
+            "order": 4,
+            "state": "done",
+            "reason": "Agent roster evaluation and admission",
+            "decision": "0013"
+          },
+          {
+            "spec": "0045",
+            "order": 5,
+            "state": "done",
+            "reason": "Agent governance CI and QA cutover",
+            "decision": "0013"
+          },
+          {
+            "spec": "0046",
+            "order": 6,
+            "state": "done",
+            "reason": "Agent governance program closure",
+            "decision": "0013"
+          }
+        ],
+        "followUps": [],
+        "ad": "0006"
+      },
+      {
+        "prd": "0005",
+        "tranches": [
+          {
+            "spec": "0026",
+            "order": 1,
+            "state": "done",
+            "reason": "Original ADR-0016 tranche",
+            "decision": "0016"
+          },
+          {
+            "spec": "0027",
+            "order": 2,
+            "state": "done",
+            "reason": "Original ADR-0016 tranche",
+            "decision": "0016"
+          },
+          {
+            "spec": "0028",
+            "order": 3,
+            "state": "done",
+            "reason": "Original ADR-0016 tranche",
+            "decision": "0016"
+          },
+          {
+            "spec": "0029",
+            "order": 4,
+            "state": "done",
+            "reason": "Original ADR-0016 tranche",
+            "decision": "0016"
+          },
+          {
+            "spec": "0030",
+            "order": 5,
+            "state": "done",
+            "reason": "Original ADR-0016 tranche",
+            "decision": "0016"
+          },
+          {
+            "spec": "0031",
+            "order": 6,
+            "state": "done",
+            "reason": "Original ADR-0016 tranche",
+            "decision": "0016"
+          },
+          {
+            "spec": "0032",
+            "order": 7,
+            "state": "done",
+            "reason": "Original ADR-0016 tranche",
+            "decision": "0016"
+          }
+        ],
+        "followUps": [
+          {
+            "spec": "0033",
+            "order": 1,
+            "state": "done",
+            "reason": "Post-program template lifecycle follow-up",
+            "decision": "0017",
+            "evidenceMode": "successor-record"
+          }
+        ],
+        "ad": "0008"
+      },
+      {
+        "prd": "0006",
+        "tranches": [
+          {
+            "spec": "0034",
+            "order": 1,
+            "state": "done",
+            "reason": "Authority and lineage foundation",
+            "decision": "0017"
+          },
+          {
+            "spec": "0035",
+            "order": 2,
+            "state": "done",
+            "reason": "Document schema and lifecycle contract",
+            "decision": "0017"
+          },
+          {
+            "spec": "0036",
+            "order": 3,
+            "state": "done",
+            "reason": "Archive record and workspace boundary",
+            "decision": "0017"
+          },
+          {
+            "spec": "0037",
+            "order": 4,
+            "state": "done",
+            "reason": "Active corpus and execution retention",
+            "decision": "0017"
+          },
+          {
+            "spec": "0038",
+            "order": 5,
+            "state": "done",
+            "reason": "Reference information architecture",
+            "decision": "0017"
+          },
+          {
+            "spec": "0039",
+            "order": 6,
+            "state": "done",
+            "reason": "GitHub CI and QA evidence",
+            "decision": "0017"
+          },
+          {
+            "spec": "0040",
+            "order": 7,
+            "state": "done",
+            "reason": "Contract cutover and program closure",
+            "decision": "0017"
+          }
+        ],
+        "followUps": [],
+        "ad": "0009"
+      },
+      {
+        "prd": "0007",
+        "tranches": [
+          {
+            "spec": "0047",
+            "order": 1,
+            "state": "draft",
+            "reason": "Current surface and stash reconciliation",
+            "decision": "0021"
+          },
+          {
+            "spec": "0048",
+            "order": 2,
+            "state": "draft",
+            "reason": "GitHub routing and CI evidence",
+            "decision": "0021"
+          },
+          {
+            "spec": "0049",
+            "order": 3,
+            "state": "draft",
+            "reason": "Platform validation and security evidence",
+            "decision": "0021"
+          },
+          {
+            "spec": "0050",
+            "order": 4,
+            "state": "draft",
+            "reason": "Example IaC and validator QA",
+            "decision": "0021"
+          },
+          {
+            "spec": "0051",
+            "order": 5,
+            "state": "draft",
+            "reason": "Repository assurance integration and closure",
+            "decision": "0021"
+          }
+        ],
+        "followUps": [],
+        "ad": "0010"
+      },
+      {
+        "prd": "0008",
+        "tranches": [
+          {
+            "spec": "0052",
+            "order": 1,
+            "state": "active",
+            "reason": "Document taxonomy consolidation",
+            "decision": "0024"
+          }
+        ],
+        "followUps": [],
+        "ad": "0011"
+      }
+    ]
+  },
+  "standaloneExecutions": [
+    {
+      "spec": "0053",
+      "plan": "docs/03.specs/0053-workspace-engineering-research-pack-consolidation/plan.md",
+      "task": "docs/03.specs/0053-workspace-engineering-research-pack-consolidation/tasks.md",
+      "state": "done",
+      "reason": "Direct human-approved research-pack consolidation without separate PRD/AD authority",
+      "decision": "0022",
+      "approvalMode": "spec-body-record"
+    },
+    {
+      "spec": "0054",
+      "plan": "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/plan.md",
+      "task": "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks.md",
+      "state": "active",
+      "reason": "Direct human-approved B-scope SDLC and AI-agent governance consolidation including Stage 90",
+      "decision": "0022",
+      "approvalMode": "spec-body-record"
+    }
+  ]
+}
