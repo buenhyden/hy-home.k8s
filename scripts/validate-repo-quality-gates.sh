@@ -2137,11 +2137,11 @@ template_enforcement_phrase_checks = {
         "Required Template",
         "validation evidence",
     ],
-    root / ".agents/agents/doc-writer.md": [
+    # WORK-054-003 slimmed the role adapters to provider-native metadata, so the
+    # template-enforcement wording now lives in the shared routing skill the
+    # adapters consume rather than being restated per role.
+    root / ".agents/skills/docs-stage-routing/skill.md": [
         "docs/99.templates/README.md",
-        "status: draft",
-        "required template headings",
-        "structural template mapping",
         "template path used",
         "Validation evidence",
     ],
@@ -2167,14 +2167,11 @@ for path in active_policy_template_routes:
 active_template_routing_reference_files = [
     root / "README.md",
     root / "docs/README.md",
-    root / ".agents/GEMINI.md",
-    root / ".codex/CODEX.md",
     root / ".agents/hooks.json",
     root / ".claude/settings.json",
     root / ".codex/hooks.json",
-    root / ".agents/agents/doc-writer.md",
-    root / ".claude/agents/doc-writer.md",
-    root / ".codex/agents/doc-writer.toml",
+    # WORK-054-003 moved restated policy out of the per-role adapters into the
+    # shared assets below, so the doc-writer adapters no longer carry the route.
     root / ".agents/output-styles/hy-home-k8s.md",
     root / ".agents/rules/workspace-rules.md",
     root / ".agents/skills/docs-stage-conformance/skill.md",
@@ -2825,31 +2822,25 @@ for phrase in [
     if phrase not in harness_catalog_text:
         fail(f"{rel(harness_catalog_path)} missing component audit matrix entry: {phrase}")
 
+# The provider baselines no longer carry this vocabulary. WORK-054-003 merged
+# the harness implementation map and the common governance document into the
+# canonical catalog, and the baselines became thin surface descriptions whose
+# exact text is fixed by PROVIDER_BASELINE_PROFILES. Asserting these phrases in
+# the baselines would make the two contracts unsatisfiable together, so the
+# assertion follows the content to its current owner.
 baseline_four_element_checks = {
-    root / ".claude/CLAUDE.md": [
-        "## Harness Four-Element Runtime Contract",
+    root / "docs/00.agent-governance/harness-catalog.md": [
         "Instruction and settings documents",
         "Architecture constraints",
         "Feedback loops",
         "Knowledge stores",
-        "native allow/deny policy",
-        "canonical progress ledger",
         "Agent eval completion",
         "Hookify local advisory",
-        "harness-catalog.md",
-    ],
-    root / ".codex/CODEX.md": [
-        "## Harness Four-Element Runtime Contract",
-        "Instruction and settings documents",
-        "Architecture constraints",
-        "Feedback loops",
-        "Knowledge stores",
-        "sandboxing",
-        "not a Claude-style permission gate",
-        "canonical progress ledger",
-        "Agent eval completion",
         "context/validation wiring",
         "harness-catalog.md",
+    ],
+    root / "docs/00.agent-governance/rules/agentic.md": [
+        "canonical progress ledger",
     ],
 }
 for path, phrases in baseline_four_element_checks.items():
@@ -4163,7 +4154,6 @@ tracked_script_paths = sorted(
 )
 expected_import_only_helpers = {
     "archive_cutover_manifest.py",
-    "archive_recovery.py",
     "archive_validation.py",
     "document_contracts.py",
     "document_lifecycle.py",
@@ -4213,13 +4203,13 @@ for script_path in tracked_script_paths:
 observed_script_names = {path.name for path in tracked_script_paths}
 observed_cli_count = len(tracked_script_paths) - len(observed_import_only_helpers)
 if (
-    len(tracked_script_paths) != 47
-    or observed_cli_count != 41
+    len(tracked_script_paths) != 48
+    or observed_cli_count != 43
     or observed_import_only_helpers != expected_import_only_helpers
 ):
     fail(
         "tracked script inventory must remain exact: "
-        "total=47 cli=41 helpers=6"
+        "total=48 cli=43 helpers=5"
     )
 for script_name in sorted(observed_script_names):
     if script_name not in scripts_readme:

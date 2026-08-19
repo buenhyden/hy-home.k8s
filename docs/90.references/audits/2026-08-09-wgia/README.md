@@ -111,7 +111,7 @@ promote one of those lanes.
 ## Related Documents
 
 - [Audit Collection](../README.md)
-- [Spec 054](../../../03.specs/0055-workspace-governance-audit-and-remediation/spec.md)
+- [Spec 0055](../../../03.specs/0055-workspace-governance-audit-and-remediation/spec.md)
 - [Implementation Plan](../../../03.specs/0055-workspace-governance-audit-and-remediation/plan.md)
 - [Implementation Task](../../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md)
 - [Prior Current Audit](../2026-07-11-weia/README.md)

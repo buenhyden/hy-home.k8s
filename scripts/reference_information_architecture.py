@@ -104,6 +104,12 @@ WGIA_PACK_ID = "audits/2026-08-09-wgia"
 WGIA_SOURCE_COMMIT = "git-sha1:7102b78afbba121c70c0e41821ac0f96df198413"
 # Consolidation commit holding the retired audit pack's current bytes.
 MERGE_RETIRED_AUDIT_COMMIT = "git-sha1:0b53e9a1f7406d11a326a8783761be3520835ec2"
+# A mutable index is projected forward from the commit that holds its
+# pre-projection text. That is not the commit that protects a pack's member
+# bytes: protecting an edited pack needs the later commit, projecting its index
+# needs the earlier one, and one commit cannot serve both roles. The two pins are
+# therefore separate, and only declared-projection paths use this one.
+PROJECTION_BASELINE_COMMIT = "git-sha1:e09a0b976a555c5200cdab2aeb9abf6759b77588"
 WGIA_ALLOWED_STATES = ("draft",)
 WGIA_MEMBERS = (
     "ai-agents-integrated-and-role-specific-agents.md",
@@ -1243,7 +1249,7 @@ _PROJECTION_ALLOWLIST: dict[str, dict[str, object]] = {
                 "count": 1,
             },
             {
-                "from": "| [2026-07-11-weia](./2026-07-11-weia/README.md) | Current pack | Evidence-scored workspace engineering implementation audit at the pinned observation SHA. | No successor; completion evidence is in the [Plan](../../98.archive/README.md#document-index) and [Task](../../98.archive/README.md#document-index). |",
+                "from": "| [2026-07-11-weia](./2026-07-11-weia/README.md) | Current pack | Evidence-scored workspace engineering implementation audit at the pinned observation SHA. | No successor; completion evidence is in the [Plan](../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md) and [Task](../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md). |",
                 "to": "| [2026-07-11-weia](./2026-07-11-weia/README.md) | Historical | Evidence-scored workspace engineering implementation audit at the pinned observation SHA. | Successor: [2026-08-09-wgia](./2026-08-09-wgia/README.md); retain the prior [Plan](../../98.archive/README.md#document-index) and [Task](../../98.archive/README.md#document-index) as dated evidence. |\n| [2026-08-09-wgia](./2026-08-09-wgia/README.md) | Current pack | Workspace governance implementation audit across purpose, SDLC, delivery, harness, agents, knowledge, security, and cleanup. | Completion evidence is in the [Plan](../../03.specs/0055-workspace-governance-audit-and-remediation/plan.md) and [Task](../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md). |",
                 "count": 1,
             },
@@ -1253,12 +1259,12 @@ _PROJECTION_ALLOWLIST: dict[str, dict[str, object]] = {
                 "count": 1,
             },
             {
-                "from": "- [Current Audit Integration Plan](../../98.archive/README.md#document-index)",
+                "from": "- [Current Audit Integration Plan](../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md)",
                 "to": "- [Current Audit Integration Plan](../../03.specs/0055-workspace-governance-audit-and-remediation/plan.md)",
                 "count": 1,
             },
             {
-                "from": "- [Current Audit Integration Task](../../98.archive/README.md#document-index)",
+                "from": "- [Current Audit Integration Task](../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md)",
                 "to": "- [Current Audit Integration Task](../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md)",
                 "count": 1,
             },
@@ -1299,6 +1305,26 @@ _PROJECTION_ALLOWLIST: dict[str, dict[str, object]] = {
             {
                 "from": "| [Workspace Purpose, Governance, and Operating Contracts](workspace-purpose-governance-and-operating-contracts.md) | `draft` | Purpose, roles, hierarchy, provider shims, and operating-contract owner inventory. |\n| [Spec-driven SDLC, Documentation, and Templates](spec-driven-sdlc-documentation-and-templates.md) | `draft` | Lifecycle, document, template, README, and guide owner inventory. |\n| [CI/CD, GitHub Actions, QA, and Validation](ci-cd-github-actions-qa-and-validation.md) | `draft` | Delivery and quality-lane owner inventory with Validation/Verification separation. |\n| [Harness, Loop, Fixtures, Scripts, and Blockers](harness-loop-fixtures-scripts-and-blockers.md) | `draft` | Harness, loop, fixture, script, recovery, and blocker owner inventory. |\n| [LLM-WIKI, Memory, and Knowledge Management](llm-wiki-memory-and-knowledge-management.md) | `draft` | Knowledge-routing and four-class memory owner inventory. |\n| [AI Agents, Integrated and Role-specific Agents](ai-agents-integrated-and-role-specific-agents.md) | `draft` | Orchestration, roster, adapter, model, evaluation, and handoff owner inventory. |\n| [Security and Approval Boundaries](security-and-approval-boundaries.md) | `draft` | Repository, workflow, agent, secret, GitOps, and action-boundary inventory. |\n| [Legacy, Deprecated, and One-shot Disposition Ledger](legacy-deprecated-and-one-shot-disposition-ledger.md) | `draft` | Seven rejected name-only noncandidates, fifteen exact `Integrate` dispositions, protected-history boundaries, and `Delete=0`. |\n| [Remediation and Integration Roadmap](remediation-and-integration-roadmap.md) | `draft` | Twelve deduplicated findings: seven bounded admissions and five explicit `DEFER` rows. |",
                 "to": "| [AI Agents, Integrated and Role-specific Agents](ai-agents-integrated-and-role-specific-agents.md) | `draft` | Orchestration, roster, adapter, model, evaluation, and handoff owner inventory. |\n| [CI/CD, GitHub Actions, QA, and Validation](ci-cd-github-actions-qa-and-validation.md) | `draft` | Delivery and quality-lane owner inventory with Validation/Verification separation. |\n| [Harness, Loop, Fixtures, Scripts, and Blockers](harness-loop-fixtures-scripts-and-blockers.md) | `draft` | Harness, loop, fixture, script, recovery, and blocker owner inventory. |\n| [Legacy, Deprecated, and One-shot Disposition Ledger](legacy-deprecated-and-one-shot-disposition-ledger.md) | `draft` | Seven rejected name-only noncandidates, fifteen exact `Integrate` dispositions, protected-history boundaries, and `Delete=0`. |\n| [LLM-WIKI, Memory, and Knowledge Management](llm-wiki-memory-and-knowledge-management.md) | `draft` | Knowledge-routing and four-class memory owner inventory. |\n| [Remediation and Integration Roadmap](remediation-and-integration-roadmap.md) | `draft` | Twelve deduplicated findings: seven bounded admissions and five explicit `DEFER` rows. |\n| [Security and Approval Boundaries](security-and-approval-boundaries.md) | `draft` | Repository, workflow, agent, secret, GitOps, and action-boundary inventory. |\n| [Spec-driven SDLC, Documentation, and Templates](spec-driven-sdlc-documentation-and-templates.md) | `draft` | Lifecycle, document, template, README, and guide owner inventory. |\n| [Workspace Purpose, Governance, and Operating Contracts](workspace-purpose-governance-and-operating-contracts.md) | `draft` | Purpose, roles, hierarchy, provider shims, and operating-contract owner inventory. |",
+                "count": 1,
+            },
+            {
+                "from": "- Completion owner: the paired [Task](../../../04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md).",
+                "to": "- Completion owner: the paired [Task](../../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md).",
+                "count": 1,
+            },
+            {
+                "from": "- [Spec 054](../../../03.specs/054-workspace-governance-audit-and-remediation/spec.md)",
+                "to": "- [Spec 0055](../../../03.specs/0055-workspace-governance-audit-and-remediation/spec.md)",
+                "count": 1,
+            },
+            {
+                "from": "- [Implementation Plan](../../../04.execution/plans/2026-08-09-workspace-governance-audit-and-remediation.md)",
+                "to": "- [Implementation Plan](../../../03.specs/0055-workspace-governance-audit-and-remediation/plan.md)",
+                "count": 1,
+            },
+            {
+                "from": "- [Implementation Task](../../../04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md)",
+                "to": "- [Implementation Task](../../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md)",
                 "count": 1,
             },
         ],
@@ -2865,11 +2891,19 @@ def _build_context(
             )
         baseline_registries[encoded] = registry
     proposed_bytes: dict[Path, bytes] = {}
+    projection_oid = parse_git_sha1(
+        PROJECTION_BASELINE_COMMIT, field="projectionBaseline"
+    )
+    baseline_oids.setdefault(PROJECTION_BASELINE_COMMIT, projection_oid)
     for pack in proposed_registry.packs:
         encoded = baselines[pack.pack_id]
         oid = baseline_oids[encoded]
         for path in (pack.readme_path, *pack.member_paths):
             baseline_bytes[(encoded, path)] = _read_commit_path(root, oid, path, runner)
+            if path.as_posix() in _PROJECTION_ALLOWLIST:
+                baseline_bytes[(PROJECTION_BASELINE_COMMIT, path)] = _read_commit_path(
+                    root, projection_oid, path, runner
+                )
             proposed_bytes[path] = _proposed_path(root, path, proposed_oid, runner)
     return ValidationContext(
         proposed_registry,
@@ -5648,11 +5682,18 @@ def validate_overlay_guards(
     for pack in context.proposed_registry.packs:
         encoded = baselines[pack.pack_id]
         for path in (pack.readme_path, *pack.member_paths):
-            baseline = context.baseline_bytes[(encoded, path)]
+            projection = projections.get(path)
+            # A projected index is read from its own baseline; see
+            # PROJECTION_BASELINE_COMMIT for why the two pins are separate.
+            source_encoded = (
+                PROJECTION_BASELINE_COMMIT
+                if path.as_posix() in _PROJECTION_ALLOWLIST
+                else encoded
+            )
+            baseline = context.baseline_bytes[(source_encoded, path)]
             proposed = context.proposed_bytes[path]
             raw_baseline = baseline
             raw_proposed = proposed
-            projection = projections.get(path)
             if path == transition_path:
                 digest = transition.get("targetSha256") if transition else None
                 length = transition.get("targetByteLength") if transition else None
@@ -5738,8 +5779,9 @@ def validate_overlay_guards(
             # The collection is retired from Current-pack governance, so its
             # historical cutover projection has nothing left to guard here.
             continue
-        encoded = baselines[pack_id]
-        oid = context.baseline_oids[encoded]
+        # Projected indexes read from their own baseline; see
+        # PROJECTION_BASELINE_COMMIT for why the two pins are separate.
+        oid = parse_git_sha1(PROJECTION_BASELINE_COMMIT, field="projectionBaseline")
         try:
             baseline = _read_commit_path(root.absolute(), oid, path, runner)
             proposed = _proposed_path(root.absolute(), path, proposed_oid, runner)

@@ -52,6 +52,7 @@ scripts/
 ├── document_contracts.py             # Closed registry v8 loader with archive-envelope, value, role, admission, lifecycle, evidence, lineage, inventory, and classifier projections
 ├── document_lifecycle.py             # Pure immutable base/proposed document lifecycle comparison and stable diagnostics
 ├── generate-llm-wiki-index.sh        # LLM Wiki generated Markdown index refresh/check
+├── migrate-document-work-units.py     # WORK-109 reviewed four-digit work-unit migration apply and manifest loader
 ├── reference_information_architecture.py # Import-only RIA validation primitives and canonical implementation
 ├── render-platform-chart-kinds.sh    # Manual Helm chart render review for platform AppProject allow-list impact
 ├── run-validation-lane.py            # Shell-free local affected/staged/all-files validator runner

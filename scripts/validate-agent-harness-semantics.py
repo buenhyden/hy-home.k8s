@@ -109,6 +109,7 @@ BASELINE_COMMON_REFERENCES = (
     "Provider facts: `docs/00.agent-governance/providers/{provider}.md`.",
     "Role inventory and semantics: `docs/00.agent-governance/harness-catalog.md` and `docs/00.agent-governance/contracts/harness-contract.json`.",
     "Validation lanes and handoff: `docs/00.agent-governance/rules/quality-standards.md`.",
+    "Shared lifecycle hooks: `docs/00.agent-governance/hooks`.",
     "Shell guidance: `RTK.md`.",
 )
 PROVIDER_BASELINE_PROFILES = {

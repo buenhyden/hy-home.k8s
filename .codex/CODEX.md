@@ -27,6 +27,7 @@ the relevant scope.
 - Role inventory and semantics: `docs/00.agent-governance/harness-catalog.md`
   and `docs/00.agent-governance/contracts/harness-contract.json`.
 - Validation lanes and handoff: `docs/00.agent-governance/rules/quality-standards.md`.
+- Shared lifecycle hooks: `docs/00.agent-governance/hooks`.
 - Shell guidance: `RTK.md`.
 
 ## Evidence Boundary
