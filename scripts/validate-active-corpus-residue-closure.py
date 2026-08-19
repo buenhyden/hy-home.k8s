@@ -45,7 +45,11 @@ FIXED_INPUT_COMMIT = (
 LEDGER_PATH = "docs/90.references/data/active-corpus-residue-closure.json"
 SCRIPT_PATH = "scripts/validate-active-corpus-residue-closure.py"
 AGGREGATE_PATH = "scripts/validate-repo-quality-gates.sh"
-REGISTRY_PATH = "docs/99.templates/support/document-profiles.json"
+# History pins the combined registry at this path; the WORK-105 base projection
+# below reads it from a base commit, not from the index.
+RETIRED_REGISTRY_PATH = "docs/99.templates/support/document-profiles.json"
+PROFILE_REGISTRY_PATH = "docs/99.templates/registry.json"
+ROUTE_CONTRACT_PATH = "docs/99.templates/contracts/route-contract.json"
 TAXONOMY_MANIFEST_PATH = "scripts/document-taxonomy-migration.json"
 TAXONOMY_SOURCE_COMMIT = (
     "713dff1fc3de58a2d1682970a7f24faa39c14263"  # pragma: allowlist secret
@@ -170,6 +174,15 @@ MIG2_REGISTRY_BLOB = (
 # worktree's registry still named its retired predecessor.
 MERGE_REGISTRY_BLOB = (
     "0ce925cfb58ca04d4177ab85779d2d8e4149dc96"  # pragma: allowlist secret
+)
+# Stage 99 contract split: the profile registry and the route contract replaced
+# the combined file as the current authority, so each carries its own admitted
+# state rather than sharing the retired file's allowlist.
+PROFILE_REGISTRY_BLOB = (
+    "0ed2033bf61a5ffec0608b91bfa95ddc510b77e9"  # pragma: allowlist secret
+)
+ROUTE_CONTRACT_BLOB = (
+    "8ae4cabcbd67dc9e7cb500989b6431e0e7e2b1af"  # pragma: allowlist secret
 )
 WORK105_AUTHORITY_BLOBS = {
     "docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md": (
@@ -354,7 +367,7 @@ WORK105_CURRENT_PATHS_BY_HISTORICAL = {
     for current, historical in WORK105_HISTORICAL_PATHS_BY_CURRENT.items()
 }
 WORK105_BASE_PATHS = (
-    REGISTRY_PATH,
+    RETIRED_REGISTRY_PATH,
     *sorted(WORK105_CURRENT_PATHS_BY_HISTORICAL),
 )
 TRANSITION_AUTHORITY_REMAPS = {
@@ -927,18 +940,19 @@ def _git_arguments_allowed(arguments: tuple[str, ...]) -> bool:
         {("ls-files", "-z", "--stage", "--", root) for root in INVENTORY_ROOTS}
     )
     inventory_queries.add(("ls-files", "-z", "--stage", "--", *SOURCE_PATHS))
-    inventory_queries.add(
-        (
-            "ls-files",
-            "-z",
-            "--cached",
-            "--others",
-            "--exclude-standard",
-            "--",
-            REGISTRY_PATH,
+    for authority_path in (PROFILE_REGISTRY_PATH, ROUTE_CONTRACT_PATH):
+        inventory_queries.add(
+            (
+                "ls-files",
+                "-z",
+                "--cached",
+                "--others",
+                "--exclude-standard",
+                "--",
+                authority_path,
+            )
         )
-    )
-    inventory_queries.add(("ls-files", "-z", "--stage", "--", REGISTRY_PATH))
+        inventory_queries.add(("ls-files", "-z", "--stage", "--", authority_path))
     inventory_queries.add(
         (
             "ls-files",
@@ -1246,7 +1260,7 @@ def _work105_base_projection(root: str, runner: GitRunner = _run_git) -> dict[st
     """Bind the staged WORK-105 compatibility projection to its exact base tree."""
 
     expected = {
-        REGISTRY_PATH: WORK105_REGISTRY_BLOBS[0],
+        RETIRED_REGISTRY_PATH: WORK105_REGISTRY_BLOBS[0],
         **{
             path: base_blob
             for path, (base_blob, _current_blob) in WORK105_AUTHORITY_BLOBS.items()
@@ -1292,11 +1306,11 @@ def _work105_base_projection(root: str, runner: GitRunner = _run_git) -> dict[st
                 for path in WORK105_BASE_PATHS
                 if resolved.get(path) != expected[path]
             ),
-            REGISTRY_PATH,
+            RETIRED_REGISTRY_PATH,
         )
         code = (
             "CLOSURE-TERMINAL-REGISTRY-AUTHORITY"
-            if mismatch == REGISTRY_PATH
+            if mismatch == RETIRED_REGISTRY_PATH
             else "CLOSURE-AUTHORITY-DRIFT"
         )
         raise ClosureError(code, mismatch)
@@ -1484,9 +1498,17 @@ def _single_file_inventory(
     return index
 
 
-def _registry_inventory(root: str, runner: GitRunner) -> dict[str, str]:
+REGISTRY_AUTHORITY_BLOBS = {
+    PROFILE_REGISTRY_PATH: (PROFILE_REGISTRY_BLOB,),
+    ROUTE_CONTRACT_PATH: (ROUTE_CONTRACT_BLOB,),
+}
+
+
+def _registry_inventory(
+    root: str, path: str, runner: GitRunner
+) -> dict[str, str]:
     return _single_file_inventory(
-        root, REGISTRY_PATH, "CLOSURE-REGISTRY-INVENTORY", runner
+        root, path, "CLOSURE-REGISTRY-INVENTORY", runner
     )
 
 
@@ -1518,20 +1540,31 @@ def _proposed_or_index_bytes(
 def _load_registry_authority(
     root: str, runner: GitRunner = _run_git
 ) -> Mapping[str, Any]:
-    index = _registry_inventory(root, runner)
-    payload = _proposed_or_index_bytes(root, REGISTRY_PATH, index, runner)
-    if index.get(REGISTRY_PATH) not in {
-        WORK105_REGISTRY_BLOBS[1],
-        WORK107_REGISTRY_BLOB,
-        WORK108_REGISTRY_BLOB,
-        MIG2_REGISTRY_BLOB,
-        MERGE_REGISTRY_BLOB,
-    }:
-        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", REGISTRY_PATH)
-    registry = _load_json_bytes(payload, REGISTRY_PATH)
-    if not isinstance(registry, Mapping):
-        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-MALFORMED", REGISTRY_PATH)
-    return registry
+    """Merge both published contracts into the flat form this closure reads.
+
+    The closure needs programLineage from the profile registry and routeState,
+    archiveContractVersion, and archiveNamespaces from the route contract, so
+    neither file alone answers it. Each is admitted against its own pinned
+    state, and a key declared by both is a contract error rather than a
+    silent precedence rule.
+    """
+
+    merged: dict[str, Any] = {}
+    for path, admitted in REGISTRY_AUTHORITY_BLOBS.items():
+        index = _registry_inventory(root, path, runner)
+        payload = _proposed_or_index_bytes(root, path, index, runner)
+        if index.get(path) not in admitted:
+            raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", path)
+        loaded = _load_json_bytes(payload, path)
+        if not isinstance(loaded, Mapping):
+            raise ClosureError("CLOSURE-TERMINAL-REGISTRY-MALFORMED", path)
+        for key, value in loaded.items():
+            if key in {"$schema", "$id", "schemaVersion"}:
+                continue
+            if key in merged:
+                raise ClosureError("CLOSURE-TERMINAL-REGISTRY-DUPLICATE", path)
+            merged[key] = value
+    return merged
 
 
 def _authored_stage04(paths: Sequence[str], scope: str) -> list[str]:
@@ -1734,7 +1767,7 @@ def _build_taxonomy_transition_closure(
         ("progress-snapshot", "append-only-unique", 0),
     )
     if not isinstance(namespaces, list) or len(namespaces) != len(namespace_contract):
-        raise ClosureError("CLOSURE-TAXONOMY-NAMESPACE", REGISTRY_PATH)
+        raise ClosureError("CLOSURE-TAXONOMY-NAMESPACE", ROUTE_CONTRACT_PATH)
     by_namespace: dict[str, Mapping[str, Any]] = {}
     for raw_namespace, (expected_id, expected_policy, expected_count) in zip(
         namespaces, namespace_contract, strict=True
@@ -1748,7 +1781,7 @@ def _build_taxonomy_transition_closure(
             or len(raw_namespace["records"]) != expected_count
             or raw_namespace["id"] in by_namespace
         ):
-            raise ClosureError("CLOSURE-TAXONOMY-NAMESPACE", REGISTRY_PATH)
+            raise ClosureError("CLOSURE-TAXONOMY-NAMESPACE", ROUTE_CONTRACT_PATH)
         by_namespace[raw_namespace["id"]] = raw_namespace
     namespace = by_namespace.get("wdtc-execution")
     if (
@@ -1758,7 +1791,7 @@ def _build_taxonomy_transition_closure(
         or any(not is_safe_path(path) for path in namespace["records"])
         or len(set(namespace["records"])) != 50
     ):
-        raise ClosureError("CLOSURE-TAXONOMY-NAMESPACE", REGISTRY_PATH)
+        raise ClosureError("CLOSURE-TAXONOMY-NAMESPACE", ROUTE_CONTRACT_PATH)
 
     entries = manifest.get("entries")
     if not isinstance(entries, list) or len(entries) != 132:
@@ -1825,7 +1858,7 @@ def _build_taxonomy_transition_closure(
         archive_aliases.get(entry["target"]) for entry in archive_entries
     }
     if archive_targets != set(namespace["records"]):
-        raise ClosureError("CLOSURE-TAXONOMY-NAMESPACE", REGISTRY_PATH)
+        raise ClosureError("CLOSURE-TAXONOMY-NAMESPACE", ROUTE_CONTRACT_PATH)
 
     candidates = eligibility.get("candidateRows")
     if not isinstance(candidates, list):
@@ -2133,7 +2166,7 @@ def _terminal_registry_relations(
     lineage = registry.get("programLineage")
     programs = lineage.get("programs") if isinstance(lineage, Mapping) else None
     if not isinstance(programs, list):
-        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-MALFORMED", REGISTRY_PATH)
+        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-MALFORMED", PROFILE_REGISTRY_PATH)
 
     exact_programs: list[Mapping[str, Any]] = []
     relations: dict[str, list[tuple[Mapping[str, Any], str, Mapping[str, Any]]]] = {
@@ -2143,32 +2176,32 @@ def _terminal_registry_relations(
     }
     for program in programs:
         if not isinstance(program, Mapping):
-            raise ClosureError("CLOSURE-TERMINAL-REGISTRY-MALFORMED", REGISTRY_PATH)
+            raise ClosureError("CLOSURE-TERMINAL-REGISTRY-MALFORMED", PROFILE_REGISTRY_PATH)
         if program.get("prd") == "0006" and program.get("ad") == "0009":
             if set(program) != {"prd", "ad", "tranches", "followUps"}:
-                raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", REGISTRY_PATH)
+                raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", PROFILE_REGISTRY_PATH)
             exact_programs.append(program)
         for collection_name in ("tranches", "followUps"):
             collection = program.get(collection_name)
             if not isinstance(collection, list):
-                raise ClosureError("CLOSURE-TERMINAL-REGISTRY-MALFORMED", REGISTRY_PATH)
+                raise ClosureError("CLOSURE-TERMINAL-REGISTRY-MALFORMED", PROFILE_REGISTRY_PATH)
             for relation in collection:
                 if not isinstance(relation, Mapping):
                     raise ClosureError(
-                        "CLOSURE-TERMINAL-REGISTRY-MALFORMED", REGISTRY_PATH
+                        "CLOSURE-TERMINAL-REGISTRY-MALFORMED", PROFILE_REGISTRY_PATH
                     )
                 spec_id = relation.get("spec")
                 if spec_id in relations:
                     relations[str(spec_id)].append((program, collection_name, relation))
 
     if len(exact_programs) > 1:
-        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-DUPLICATE", REGISTRY_PATH)
+        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-DUPLICATE", PROFILE_REGISTRY_PATH)
     if len(exact_programs) != 1:
-        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", REGISTRY_PATH)
+        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", PROFILE_REGISTRY_PATH)
     if any(len(relations[spec_id]) > 1 for spec_id in relations):
-        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-DUPLICATE", REGISTRY_PATH)
+        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-DUPLICATE", PROFILE_REGISTRY_PATH)
     if len(relations["0038"]) != 1:
-        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", REGISTRY_PATH)
+        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", PROFILE_REGISTRY_PATH)
     if len(relations["0039"]) != 1:
         raise ClosureError("CLOSURE-TERMINAL-FRONTIER", TERMINAL_SUCCESSOR_SPEC)
     if len(relations["0040"]) != 1:
@@ -2177,12 +2210,12 @@ def _terminal_registry_relations(
     exact_program = exact_programs[0]
     program_038, collection_038, relation_038 = relations["0038"][0]
     if program_038 is not exact_program or collection_038 != "tranches":
-        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", REGISTRY_PATH)
+        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", PROFILE_REGISTRY_PATH)
     if set(relation_038) != {*TERMINAL_RELATION_IDENTITY, "state"} or any(
         relation_038.get(key) != value
         for key, value in TERMINAL_RELATION_IDENTITY.items()
     ):
-        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", REGISTRY_PATH)
+        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", PROFILE_REGISTRY_PATH)
     if relation_038.get("state") not in {"active", "done"}:
         raise ClosureError("CLOSURE-TERMINAL-STATE", TERMINAL_SPEC)
 
@@ -2436,7 +2469,7 @@ def _partition_terminal_controls(
             "status": "done",
             "owner": "platform",
             **_object_identity(TERMINAL_SPEC, index, payloads[TERMINAL_SPEC]),
-            "registryPath": REGISTRY_PATH,
+            "registryPath": PROFILE_REGISTRY_PATH,
             "programPrd": "0006",
             "programAd": "0009",
             "relationClass": "original-tranche",
@@ -2466,7 +2499,7 @@ def _partition_terminal_controls(
                     index,
                     payloads[TERMINAL_SUCCESSOR_SPEC],
                 ),
-                "registryPath": REGISTRY_PATH,
+                "registryPath": PROFILE_REGISTRY_PATH,
                 "programPrd": "0006",
                 "programAd": "0009",
                 "relationClass": "original-tranche",
@@ -2496,7 +2529,7 @@ def _partition_terminal_controls(
                     index,
                     payloads[TERMINAL_FRONTIER_SPEC],
                 ),
-                "registryPath": REGISTRY_PATH,
+                "registryPath": PROFILE_REGISTRY_PATH,
                 "programPrd": "0006",
                 "programAd": "0009",
                 "relationClass": "original-tranche",
@@ -2797,7 +2830,7 @@ def _validate_terminal_frontier_shape(observed: Mapping[str, Any]) -> str:
                 "sdlc/spec",
                 "done",
                 "platform",
-                REGISTRY_PATH,
+                PROFILE_REGISTRY_PATH,
                 "0006",
                 "0009",
                 "original-tranche",

@@ -979,7 +979,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             self.assertEqual(row["decision"], "0017")
             self.assertEqual(row["relationClass"], "original-tranche")
             self.assertEqual(
-                row["registryPath"], self.validator.REGISTRY_PATH
+                row["registryPath"], self.validator.PROFILE_REGISTRY_PATH
             )
         self.assertEqual(
             [
@@ -1212,7 +1212,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
 
     def taxonomy_transition_fixture(self):
         registry = json.loads(
-            (REPOSITORY_ROOT / self.validator.REGISTRY_PATH).read_text(
+            (REPOSITORY_ROOT / self.validator.ROUTE_CONTRACT_PATH).read_text(
                 encoding="utf-8"
             )
         )
@@ -1822,7 +1822,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
 
     def test_work105_base_projection_is_exact_and_rejects_tree_drift(self) -> None:
         expected = {
-            self.validator.REGISTRY_PATH: self.validator.WORK105_REGISTRY_BLOBS[0],
+            self.validator.RETIRED_REGISTRY_PATH: self.validator.WORK105_REGISTRY_BLOBS[0],
             **{
                 path: blobs[0]
                 for path, blobs in self.validator.WORK105_AUTHORITY_BLOBS.items()
@@ -1842,7 +1842,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         for mutation, code, path in (
             ("wrong-authority-blob", "CLOSURE-AUTHORITY-DRIFT", authority_path),
             ("missing-authority", "CLOSURE-AUTHORITY-DRIFT", authority_path),
-            ("wrong-registry-blob", "CLOSURE-TERMINAL-REGISTRY-AUTHORITY", self.validator.REGISTRY_PATH),
+            ("wrong-registry-blob", "CLOSURE-TERMINAL-REGISTRY-AUTHORITY", self.validator.RETIRED_REGISTRY_PATH),
             ("wrong-path", "CLOSURE-AUTHORITY-DRIFT", "docs/03.specs/999-rogue/spec.md"),
         ):
             with self.subTest(mutation=mutation):
@@ -1852,7 +1852,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 elif mutation == "missing-authority":
                     rows.pop(authority_path)
                 elif mutation == "wrong-registry-blob":
-                    rows[self.validator.REGISTRY_PATH] = "f" * 40
+                    rows[self.validator.RETIRED_REGISTRY_PATH] = "f" * 40
                 else:
                     rows["docs/03.specs/999-rogue/spec.md"] = rows.pop(
                         authority_path
@@ -1874,7 +1874,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         self,
     ) -> None:
         expected = {
-            self.validator.REGISTRY_PATH: self.validator.WORK105_REGISTRY_BLOBS[0],
+            self.validator.RETIRED_REGISTRY_PATH: self.validator.WORK105_REGISTRY_BLOBS[0],
             **{
                 path: blobs[0]
                 for path, blobs in self.validator.WORK105_AUTHORITY_BLOBS.items()
@@ -3454,7 +3454,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         self.assertEqual(raised.exception.code, "CLOSURE-ACTIVE-CONTROL-STATUS")
 
     def test_spec038_registry_authority_is_exact_tracked_stage_zero(self) -> None:
-        path = self.validator.REGISTRY_PATH
+        path = self.validator.RETIRED_REGISTRY_PATH
         base_blob, work105_blob = self.validator.WORK105_REGISTRY_BLOBS
         work107_blob = self.validator.WORK107_REGISTRY_BLOB
         # The consolidation merge advanced the registry past MIG-0002, so the
@@ -3497,8 +3497,11 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         self.assertNotEqual(work105_blob, work107_blob)
         self.assertNotEqual(work105_blob, current_blob)
         self.assertNotEqual(work107_blob, current_blob)
-        listed = f"{path}\0".encode()
-        staged = f"100644 {'a' * 40} 0\t{path}\0".encode()
+        # The authority now merges both published contracts, so each is admitted
+        # against its own pinned state and the first one read reports the fault.
+        authority_path = next(iter(self.validator.REGISTRY_AUTHORITY_BLOBS))
+        listed = f"{authority_path}\0".encode()
+        staged = f"100644 {'a' * 40} 0\t{authority_path}\0".encode()
         cases = (
             ("missing", b"", b"", "CLOSURE-REGISTRY-INVENTORY"),
             ("untracked", listed, b"", "CLOSURE-REGISTRY-INVENTORY"),
@@ -3508,7 +3511,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 staged,
                 "CLOSURE-INVENTORY-DUPLICATE",
             ),
-            ("malformed", path.encode(), staged, "CLOSURE-GIT-MALFORMED"),
+            ("malformed", authority_path.encode(), staged, "CLOSURE-GIT-MALFORMED"),
             (
                 "unsafe",
                 b"../document-profiles.json\0",
@@ -3518,7 +3521,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             (
                 "non-stage-zero",
                 listed,
-                f"100644 {'a' * 40} 1\t{path}\0".encode(),
+                f"100644 {'a' * 40} 1\t{authority_path}\0".encode(),
                 "CLOSURE-INVENTORY-OBJECT",
             ),
         )
@@ -3532,12 +3535,16 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                     return subprocess.CompletedProcess(arguments, 0, payload, b"")
 
                 with self.assertRaises(self.validator.ClosureError) as raised:
-                    self.validator._registry_inventory(str(REPOSITORY_ROOT), runner)
+                    self.validator._registry_inventory(
+                        str(REPOSITORY_ROOT), authority_path, runner
+                    )
                 self.assertEqual(raised.exception.code, code)
 
         with (
             mock.patch.object(
-                self.validator, "_registry_inventory", return_value={path: "a" * 40}
+                self.validator,
+                "_registry_inventory",
+                return_value={authority_path: "a" * 40},
             ),
             mock.patch.object(
                 self.validator, "_read_descriptor_bytes", return_value=b"worktree"
@@ -3549,11 +3556,13 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             with self.assertRaises(self.validator.ClosureError) as raised:
                 self.validator._load_registry_authority(str(REPOSITORY_ROOT))
         self.assertEqual(raised.exception.code, "CLOSURE-WORKTREE-INDEX-DRIFT")
-        self.assertEqual(raised.exception.path, path)
+        self.assertEqual(raised.exception.path, authority_path)
 
         with (
             mock.patch.object(
-                self.validator, "_registry_inventory", return_value={path: "a" * 40}
+                self.validator,
+                "_registry_inventory",
+                return_value={authority_path: "a" * 40},
             ),
             mock.patch.object(
                 self.validator, "_read_descriptor_bytes", return_value=b"{}"
@@ -3565,7 +3574,33 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         self.assertEqual(
             raised.exception.code, "CLOSURE-TERMINAL-REGISTRY-AUTHORITY"
         )
-        self.assertEqual(raised.exception.path, path)
+        self.assertEqual(raised.exception.path, authority_path)
+
+        # A key declared by both published contracts is a contract error rather
+        # than a silent precedence rule.
+        overlap = json.dumps({"routeState": "transition"}).encode()
+        admitted = {
+            declared: blobs[0]
+            for declared, blobs in self.validator.REGISTRY_AUTHORITY_BLOBS.items()
+        }
+        with (
+            mock.patch.object(
+                self.validator,
+                "_registry_inventory",
+                side_effect=lambda _root, declared, _runner=None: {
+                    declared: admitted[declared]
+                },
+            ),
+            mock.patch.object(
+                self.validator, "_read_descriptor_bytes", return_value=overlap
+            ),
+            mock.patch.object(self.validator, "_index_blob", return_value=overlap),
+        ):
+            with self.assertRaises(self.validator.ClosureError) as raised:
+                self.validator._load_registry_authority(str(REPOSITORY_ROOT))
+        self.assertEqual(
+            raised.exception.code, "CLOSURE-TERMINAL-REGISTRY-DUPLICATE"
+        )
 
     def test_work108_authority_identity_projects_only_exact_outer_artifact(self) -> None:
         path = next(iter(self.validator.WORK105_AUTHORITY_BLOBS))
