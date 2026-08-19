@@ -780,7 +780,7 @@ IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS = {
     ): "3451f28cb08bab9e23a798998e00489bdf6959b8",  # pragma: allowlist secret
     PurePosixPath(
         "docs/90.references/llm-wiki/wiki-index.md"
-    ): "dc8fc819f144404f91b36625fd568481a290bd59",  # pragma: allowlist secret
+    ): "0c0941ad247d91e049c7d810010feea08de4d075",  # pragma: allowlist secret
     PurePosixPath(
         "docs/90.references/research/2026-08-08-wer/"
         "documentation-architecture-and-diataxis.md"
@@ -794,7 +794,7 @@ IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS = {
     ): "35b69ced14f3f5511a3b13dff35e337000297333",  # pragma: allowlist secret
 }
 IMMUTABLE_HISTORICAL_ALIAS_SOURCE_COUNT = 27
-IMMUTABLE_HISTORICAL_ALIAS_EDGE_COUNT = 94
+IMMUTABLE_HISTORICAL_ALIAS_EDGE_COUNT = 93
 COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS = {
     PurePosixPath("docs/00.agent-governance/memory/progress.md"): (
         "28a2051203f38118c721c78142c3a97c5d0040ce"  # pragma: allowlist secret
@@ -3662,7 +3662,12 @@ def _reviewed_source_pinned_alias_edges(
             and occurrence_count != expected_occurrence_count
         )
     ):
-        raise ConfigurationError(f"{contract_name} edge set differs")
+        raise ConfigurationError(
+            f"{contract_name} edge set differs "
+            f"(sources {len(source_blobs)}/{expected_source_count} "
+            f"edges {len(edges)}/{expected_edge_count} "
+            f"occurrences {occurrence_count}/{expected_occurrence_count})"
+        )
     return edges
 
 

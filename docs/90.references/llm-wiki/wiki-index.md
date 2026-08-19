@@ -56,7 +56,7 @@ updated: 2026-08-09
 | Documentation hub | [Docs README](../../README.md) | Owns human-facing docs map | Top-level docs taxonomy changes |
 | Requirements | [01.requirements README](../../01.requirements/README.md) | Owns product and platform requirements entrypoint | Requirement path or README changes |
 | Architecture | [02.architecture README](../../02.architecture/README.md) | Owns architecture requirements and decision entrypoints | Architecture path or README changes |
-| Architecture requirements | [Architecture Requirements README](../../02.architecture/requirements/README.md) | Owns ARD-style architecture requirement index | Architecture requirement changes |
+| Architecture descriptions | [Architecture Descriptions README](../../02.architecture/descriptions/README.md) | Owns the AD architecture-description index | Architecture-description changes |
 | Architecture decisions | [Architecture Decisions README](../../02.architecture/decisions/README.md) | Owns ADR-style decision index | Architecture decision changes |
 | Specifications | [03.specs README](../../03.specs/README.md) | Owns implementation contract index | Spec path or README changes |
 | Execution plans | [04.execution/plans README](../../04.execution/plans/README.md) | Owns execution plan index | Plan additions, moves, or status changes |

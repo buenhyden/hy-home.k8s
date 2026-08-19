@@ -35,8 +35,8 @@ AGENT_LEGACY_CUTOVER_PATH = Path(
 AGENT_LEGACY_CUTOVER_SCHEMA_PATH = Path(
     "docs/00.agent-governance/contracts/agent-legacy-cutover.schema.json"
 )
-AGENT_LEGACY_CUTOVER_SHA256 = "9476b45d66e0861c1a877c166733bd6530ce8b3b94dabfdabad2cc130b7287cb"  # pragma: allowlist secret
-AGENT_LEGACY_CUTOVER_SCHEMA_SHA256 = "02e5f38b9b04974a0e83193ff29451111658529a8cb043160529a2fadd566da1"  # pragma: allowlist secret
+AGENT_LEGACY_CUTOVER_SHA256 = "5d78bc4bde363769cd949824b5c39b044044ecb333e0dd6a82bc9cf28da53aa7"  # pragma: allowlist secret
+AGENT_LEGACY_CUTOVER_SCHEMA_SHA256 = "a317502d95cf55642863bd8750f12ae88f88c14ce262c82baf509204b16f203b"  # pragma: allowlist secret
 CANONICAL_SCHEMA_PATH = Path(
     "docs/90.references/data/reference-information-architecture.schema.json"
 )
@@ -48,16 +48,11 @@ DOCUMENT_TAXONOMY_MANIFEST_PATH = Path("scripts/document-taxonomy-migration.json
 ARCHIVE_MIGRATION_PATH = Path(
     "docs/98.archive/migrations/mig-0001-sdlc-taxonomy-convergence.md"
 )
-ARCHIVE_MIGRATION_SHA256 = (
-    "4e62cb6ba2a394cd9ae546543c85a58c8f105cb5d1ff48cfd8dab8b8b1082206"  # pragma: allowlist secret
-)
+ARCHIVE_MIGRATION_SHA256 = "4e62cb6ba2a394cd9ae546543c85a58c8f105cb5d1ff48cfd8dab8b8b1082206"  # pragma: allowlist secret
 SDLC_CONSOLIDATION_MIGRATION_PATH = Path(
-    "docs/98.archive/migrations/"
-    "mig-0002-sdlc-document-and-governance-consolidation.md"
+    "docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md"
 )
-SDLC_CONSOLIDATION_MIGRATION_SHA256 = (
-    "67032c0b86acbee04a1e713053d164df2e99f4486df79df5161d53975fb82a7a"  # pragma: allowlist secret
-)
+SDLC_CONSOLIDATION_MIGRATION_SHA256 = "67032c0b86acbee04a1e713053d164df2e99f4486df79df5161d53975fb82a7a"  # pragma: allowlist secret
 GENERATOR_ROUTE_LEGACY_PATH = Path(
     "docs/00.agent-governance/rules/document-stage-routing.md"
 )
@@ -106,7 +101,9 @@ HISTORICAL_PACK_IDS = (
 )
 AUDIT_PACK_ID = "audits/2026-07-11-weia"
 WGIA_PACK_ID = "audits/2026-08-09-wgia"
-WGIA_SOURCE_COMMIT = "git-sha1:e09a0b976a555c5200cdab2aeb9abf6759b77588"
+WGIA_SOURCE_COMMIT = "git-sha1:7102b78afbba121c70c0e41821ac0f96df198413"
+# Consolidation commit holding the retired audit pack's current bytes.
+MERGE_RETIRED_AUDIT_COMMIT = "git-sha1:0b53e9a1f7406d11a326a8783761be3520835ec2"
 WGIA_ALLOWED_STATES = ("draft",)
 WGIA_MEMBERS = (
     "ai-agents-integrated-and-role-specific-agents.md",
@@ -147,8 +144,7 @@ AGENT_CUTOVER_CURRENT_PATH_COUNTS = (
         1,
     ),
     (
-        "docs/90.references/research/2026-08-08-wer/"
-        "ci-cd-github-actions-and-qa.md",
+        "docs/90.references/research/2026-08-08-wer/ci-cd-github-actions-and-qa.md",
         2,
     ),
     (
@@ -1376,7 +1372,9 @@ def _validate_contract_boundaries(
             or PACK_ID_PATTERN.fullmatch(retired_by) is None
         ):
             raise ContractError(
-                "RIA-CONTRACT", "retiredCurrentPackBaselines", "pack identity is invalid"
+                "RIA-CONTRACT",
+                "retiredCurrentPackBaselines",
+                "pack identity is invalid",
             )
         retired_ids.add(pack_id)
         parse_git_sha1(record.get("sourceCommit"), field=f"{field}.sourceCommit")
@@ -2534,7 +2532,9 @@ def load_sdlc_consolidation_route_projections(
         except FileNotFoundError:
             return {}
         except OSError as error:
-            raise _GitError("SDLC consolidation route authority is unavailable") from error
+            raise _GitError(
+                "SDLC consolidation route authority is unavailable"
+            ) from error
         if not stat.S_ISREG(mode):
             raise _GitError("SDLC consolidation route authority is not regular")
     try:
@@ -2737,11 +2737,9 @@ def _taxonomy_transition_sources(
                 raise _GitError("taxonomy manifest archive route differs")
             archive_sources.add(source)
             archive_targets.add(target)
-    if (
-        dispositions != Counter({"move-current": 82, "archive-unique": 50})
-        or {archive_aliases.get(path) for path in archive_targets}
-        != set(namespace_records["wdtc-execution"])
-    ):
+    if dispositions != Counter({"move-current": 82, "archive-unique": 50}) or {
+        archive_aliases.get(path) for path in archive_targets
+    } != set(namespace_records["wdtc-execution"]):
         raise _GitError("taxonomy manifest membership differs")
     return frozenset(archive_sources)
 
@@ -2757,9 +2755,7 @@ def _load_taxonomy_archive_transition(
         field=REGISTRY_PATH.as_posix(),
     )
     manifest = _decode_json_bytes(
-        _proposed_path(
-            root, DOCUMENT_TAXONOMY_MANIFEST_PATH, proposed_oid, runner
-        ),
+        _proposed_path(root, DOCUMENT_TAXONOMY_MANIFEST_PATH, proposed_oid, runner),
         field=DOCUMENT_TAXONOMY_MANIFEST_PATH.as_posix(),
     )
     migration_document = _proposed_path(
@@ -2769,9 +2765,7 @@ def _load_taxonomy_archive_transition(
 
 
 def _blob_sha1(payload: bytes) -> str:
-    return hashlib.sha1(
-        f"blob {len(payload)}\0".encode("ascii") + payload
-    ).hexdigest()
+    return hashlib.sha1(f"blob {len(payload)}\0".encode("ascii") + payload).hexdigest()
 
 
 def _taxonomy_overlay_matches(
@@ -2812,9 +2806,7 @@ def _taxonomy_overlay_matches(
         os.path.relpath("docs/98.archive/README.md", path.parent.as_posix())
         + "#document-index"
     )
-    return proposed_text.count(f"]({archive_index})") == rule.get(
-        "archiveIndexLinks"
-    )
+    return proposed_text.count(f"]({archive_index})") == rule.get("archiveIndexLinks")
 
 
 def _build_context(
@@ -2851,9 +2843,7 @@ def _build_context(
         # governance is a reviewed registry change, so a pack that is absent
         # from the proposal is not drift; it simply stops being guarded here.
         baseline_by_id = {pack.pack_id: pack for pack in registry.packs}
-        source_bounded_successor = Pack(
-            WGIA_PACK_ID, WGIA_ALLOWED_STATES, WGIA_MEMBERS
-        )
+        source_bounded_successor = Pack(WGIA_PACK_ID, WGIA_ALLOWED_STATES, WGIA_MEMBERS)
 
         def baseline_matches(pack: Pack) -> bool:
             baseline_pack = baseline_by_id.get(pack.pack_id)
@@ -2862,8 +2852,7 @@ def _build_context(
             return (
                 pack == source_bounded_successor
                 and encoded == WGIA_SOURCE_COMMIT
-                and _audit_cutover_state(contract, baselines)
-                == ("audit-settled", None)
+                and _audit_cutover_state(contract, baselines) == ("audit-settled", None)
             )
 
         if registry.profile_id != proposed_registry.profile_id or any(
@@ -2969,7 +2958,9 @@ def validate_retired_current_baselines(
                 continue
             seen.add(pack_id)
             encoded = record.get("sourceCommit")
-            oid = parse_git_sha1(encoded, field="retiredCurrentPackBaselines.sourceCommit")
+            oid = parse_git_sha1(
+                encoded, field="retiredCurrentPackBaselines.sourceCommit"
+            )
             baseline_registry = _registry_projection(
                 _decode_json_bytes(
                     _read_commit_path(root.absolute(), oid, REGISTRY_PATH, runner),
@@ -2997,12 +2988,24 @@ def validate_retired_current_baselines(
             protected_oid = oid
             state, state_finding = _fsm_state(contract)
             if state == "audit-settled" and state_finding is None:
-                settlement = contract["baselineSettlements"][0]
-                assert isinstance(settlement, Mapping)
-                protected_oid = parse_git_sha1(
-                    settlement.get("toCommit"),
-                    field="baselineSettlements[0].toCommit",
-                )
+                settlements = contract.get("baselineSettlements")
+                if isinstance(settlements, list) and settlements:
+                    settlement = settlements[0]
+                    assert isinstance(settlement, Mapping)
+                    protected_oid = parse_git_sha1(
+                        settlement.get("toCommit"),
+                        field="baselineSettlements[0].toCommit",
+                    )
+                else:
+                    # Settlement-free cutover. The retired pack's protected bytes
+                    # are pinned at the consolidation commit that produced them:
+                    # that program rewrote the pack's links to the four-digit
+                    # routes, so neither the pack's own sourceCommit nor the
+                    # successor's baseline holds its current bytes any more.
+                    protected_oid = parse_git_sha1(
+                        MERGE_RETIRED_AUDIT_COMMIT,
+                        field="retiredCurrentPackBaselines[0].protectedCommit",
+                    )
             for path in (expected_pack.readme_path, *expected_pack.member_paths):
                 baseline = _read_commit_path(
                     root.absolute(), protected_oid, path, runner
@@ -5707,7 +5710,9 @@ def validate_overlay_guards(
         if path in current_paths:
             continue
         if path.parts[:3] == ("docs", "90.references", "audits"):
-            audit_ids = [pack_id for pack_id in baselines if pack_id.startswith("audits/")]
+            audit_ids = [
+                pack_id for pack_id in baselines if pack_id.startswith("audits/")
+            ]
             if len(audit_ids) != 1:
                 findings.append(
                     Finding(
@@ -5813,11 +5818,7 @@ def _audit_cutover_state(
         isinstance(record, Mapping) and record.get("id") == AUDIT_SETTLEMENT_ID
         for record in settlements
     )
-    if (
-        WGIA_PACK_ID not in baselines
-        and not retired
-        and not audit_settlement_present
-    ):
+    if WGIA_PACK_ID not in baselines and not retired and not audit_settlement_present:
         return None
     expected_retired = {
         "id": AUDIT_PACK_ID,
@@ -5837,11 +5838,18 @@ def _audit_cutover_state(
         "toMemberCount": len(WGIA_MEMBERS),
         "reason": AUDIT_SETTLEMENT_REASON,
     }
+    # The settlement record is optional evidence, not the state itself. The
+    # cutover is fully described by currentPackBaselines naming the successor and
+    # retiredCurrentPackBaselines naming the predecessor with its retiredBy
+    # relation, so an empty baselineSettlements is an admitted terminal shape.
+    # That array is owned by the postflight ledger settlement, which rejects any
+    # other record in it; requiring the cutover record here would make the two
+    # contracts unsatisfiable together.
     if (
         dict(baselines) != {WGIA_PACK_ID: WGIA_SOURCE_COMMIT}
         or retired != [expected_retired]
         or contract.get("baselineTransitions") != []
-        or settlements != [expected_settlement]
+        or settlements not in ([expected_settlement], [])
     ):
         return None, Finding(
             "RIA-TRANSITION",

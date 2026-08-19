@@ -14,7 +14,7 @@
     ]
   },
   "currentPackBaselines": {
-    "audits/2026-08-09-wgia": "git-sha1:e09a0b976a555c5200cdab2aeb9abf6759b77588"
+    "audits/2026-08-09-wgia": "git-sha1:7102b78afbba121c70c0e41821ac0f96df198413"
   },
   "retiredCurrentPackBaselines": [
     {
