@@ -3602,6 +3602,79 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             raised.exception.code, "CLOSURE-TERMINAL-REGISTRY-DUPLICATE"
         )
 
+    def test_profile_registry_authority_admits_spec0062_append_only(self) -> None:
+        profile_path = self.validator.PROFILE_REGISTRY_PATH
+        route_path = self.validator.ROUTE_CONTRACT_PATH
+        spec0062_blob = "b9aa815007b39e751b8fb98b0e88677234666af1"
+        admitted_profile_blobs = self.validator.REGISTRY_AUTHORITY_BLOBS[
+            profile_path
+        ]
+        self.assertEqual(
+            admitted_profile_blobs,
+            (self.validator.PROFILE_REGISTRY_BLOB, spec0062_blob),
+        )
+        self.assertEqual(
+            self.validator.REGISTRY_AUTHORITY_BLOBS[route_path],
+            (self.validator.ROUTE_CONTRACT_BLOB,),
+        )
+        self.assertEqual(
+            subprocess.run(
+                ["git", "rev-parse", f"HEAD:{profile_path}"],
+                cwd=REPOSITORY_ROOT,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout.strip(),
+            spec0062_blob,
+        )
+
+        payloads = {
+            profile_path: b'{"profiles": []}',
+            route_path: b'{"routeState": "transition"}',
+        }
+
+        def load_with_profile_blob(profile_blob: str):
+            def inventory(_root: str, path: str, _runner=None):
+                oid = (
+                    profile_blob
+                    if path == profile_path
+                    else self.validator.ROUTE_CONTRACT_BLOB
+                )
+                return {path: oid}
+
+            with (
+                mock.patch.object(
+                    self.validator, "_registry_inventory", side_effect=inventory
+                ),
+                mock.patch.object(
+                    self.validator,
+                    "_read_descriptor_bytes",
+                    side_effect=lambda _root, path: payloads[path],
+                ),
+                mock.patch.object(
+                    self.validator,
+                    "_index_blob",
+                    side_effect=lambda _root, _oid, path, _runner: payloads[path],
+                ),
+            ):
+                return self.validator._load_registry_authority(
+                    str(REPOSITORY_ROOT)
+                )
+
+        for admitted_blob in admitted_profile_blobs:
+            with self.subTest(admitted=admitted_blob):
+                self.assertEqual(
+                    load_with_profile_blob(admitted_blob),
+                    {"profiles": [], "routeState": "transition"},
+                )
+
+        with self.assertRaises(self.validator.ClosureError) as raised:
+            load_with_profile_blob("f" * 40)
+        self.assertEqual(
+            raised.exception.code, "CLOSURE-TERMINAL-REGISTRY-AUTHORITY"
+        )
+        self.assertEqual(raised.exception.path, profile_path)
+
     def test_work108_authority_identity_projects_only_exact_outer_artifact(self) -> None:
         path = next(iter(self.validator.WORK105_AUTHORITY_BLOBS))
         old_oid = self.validator.WORK105_AUTHORITY_BLOBS[path][1]

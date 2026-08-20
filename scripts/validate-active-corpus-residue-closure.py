@@ -181,6 +181,9 @@ MERGE_REGISTRY_BLOB = (
 PROFILE_REGISTRY_BLOB = (
     "0ed2033bf61a5ffec0608b91bfa95ddc510b77e9"  # pragma: allowlist secret
 )
+SPEC0062_PROFILE_REGISTRY_BLOB = (
+    "b9aa815007b39e751b8fb98b0e88677234666af1"  # pragma: allowlist secret
+)
 ROUTE_CONTRACT_BLOB = (
     "8ae4cabcbd67dc9e7cb500989b6431e0e7e2b1af"  # pragma: allowlist secret
 )
@@ -1499,7 +1502,10 @@ def _single_file_inventory(
 
 
 REGISTRY_AUTHORITY_BLOBS = {
-    PROFILE_REGISTRY_PATH: (PROFILE_REGISTRY_BLOB,),
+    PROFILE_REGISTRY_PATH: (
+        PROFILE_REGISTRY_BLOB,
+        SPEC0062_PROFILE_REGISTRY_BLOB,
+    ),
     ROUTE_CONTRACT_PATH: (ROUTE_CONTRACT_BLOB,),
 }
 
