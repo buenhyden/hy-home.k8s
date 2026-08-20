@@ -103,6 +103,60 @@ immediately through the checker before another consumer runs. Registration is
 version-bound and fails on an outside-root path, duplicate, missing file,
 symlink, wrong owner, wrong mode, or unapproved artifact class.
 
+One material, one-time WRFR-001 recovery exception is authorized after direct
+checker review legitimately changes the already registered checker and appends
+review evidence to the already registered Task 2 implementer report. The only
+recovery surface is:
+
+```text
+artifact-rebind-checker-review --workspace DIR --inventory FILE \
+  --expected-inventory-sha256 OLD_INVENTORY \
+  --expected-old-checker-sha256 OLD_CHECKER \
+  --approved-new-checker-sha256 NEW_CHECKER \
+  --expected-old-report-sha256 OLD_REPORT \
+  --approved-new-report-sha256 NEW_REPORT
+```
+
+The two targets are implicit and fixed to `DIR/full-corpus-check.py` and
+`DIR/task-2-report.md`; the parser exposes no target-path argument. Before the
+Task 2 report is frozen, its post-registration review evidence is summarized in
+mutable `progress.md`. The final amendment and direct-review preparation are
+then appended to `task-2-report.md`, its approved new SHA-256 is captured, and
+the report is never written again. Every later WRFR-001 result is recorded only
+in mutable `progress.md`. There is no generic report rebind, and
+`artifact-register` retains its duplicate rejection unchanged.
+
+The recovery command requires lowercase 64-hex, changed old/new checker and
+report identities; exact current inventory content SHA-256 equal to
+`OLD_INVENTORY`; the exact direct-child inventory path; the existing inventory
+schema, allowed classes, mutable entries, unique names, and exactly one
+immutable record for each fixed target; old record SHA-256 values equal to the
+two expected-old flags; and guarded current checker/report versions whose
+SHA-256 values equal the two approved-new flags. It validates every other
+immutable artifact against its complete registered FileVersion and revalidates
+both mutable artifacts. Wrong mode, owner, symlink, missing target, third-file
+drift, stale inventory content/version, unchanged identity, or an additional
+target fails closed.
+
+The command retains the complete old inventory bytes and FileVersion, reads
+both fixed targets before mutation, re-reads them immediately before the
+inventory CAS, and constructs an artifact list of identical length and order.
+Exactly the two existing records at their original indices are replaced with
+guarded current FileVersions; every other value is unchanged. The inventory
+replacement uses the old complete FileVersion as its CAS expectation. After
+CAS, the command re-reads both targets, requires their FileVersions unchanged,
+reads the new inventory at the exact CAS-returned FileVersion, and postvalidates
+the complete inventory and every artifact. It never mutates checker or report
+bytes.
+
+If any post-CAS target read or postvalidation fails, rollback may restore the
+exact old inventory bytes only when the inventory still has the exact new
+FileVersion returned by the command's CAS. Successful rollback is verified and
+then reports a fixed recovery failure. A concurrent update or failed rollback
+must not be overwritten and returns a fixed rollback-failed diagnostic. No
+stateful recovery runs until the amended tracked contract and exact new checker
+and frozen-report hashes receive fresh Python and security direct approval.
+
 The terminal residue check requires directory contents and inventory to be
 equal. The SDD finish procedure runs only after the final consumer, removes
 only the exact resolved Plan workspace, and proves that exact path absent. The
@@ -151,10 +205,10 @@ cross-links, and close validation.
 
 ## Context
 
-The predecessor [Spec 0059](../0059-workspace-research-full-corpus-refresh/spec.md)
-completed a full-corpus observation on 2026-08-17 and corrected one Kubernetes
-claim on 2026-08-18. The current pack contains fourteen Markdown files,
-thirty-six owners, ninety source IDs, and one hundred thirty-five claim IDs. Its
+Predecessor Spec 0059 completed a full-corpus observation on 2026-08-17 and
+corrected one Kubernetes claim on 2026-08-18. The current pack contains
+fourteen Markdown files, thirty-six owners, ninety source IDs, and one hundred
+thirty-five claim IDs. Its
 status matrix contains twenty-three `Verified`, one `Verified gap`, and twelve
 `Partial` rows.
 
@@ -268,7 +322,7 @@ replayed by an implementer.
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
 - Modify: `docs/03.specs/README.md`
 - Modify: `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`
-- Modify: `docs/99.templates/support/document-profiles.json`
+- Modify: `docs/99.templates/registry.json`
 - Modify: `scripts/validate-links-and-owners.py`
 - Modify: `tests/test_document_strict_cutover.py`
 - Modify: `docs/00.agent-governance/memory/progress.md`
@@ -379,7 +433,7 @@ replayed by an implementer.
     docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md \
     docs/03.specs/README.md \
     docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md \
-    docs/99.templates/support/document-profiles.json \
+    docs/99.templates/registry.json \
     scripts/validate-links-and-owners.py \
     tests/test_document_strict_cutover.py \
     docs/00.agent-governance/memory/progress.md
@@ -430,7 +484,7 @@ replayed by an implementer.
   exactly `001..036`, and one allocation map beginning at `SRC-WERPC-091` and
   `CLM-WERPC-013-01`.
 
-- [ ] **Step 1: write the checker self-test before implementation**
+- [x] **Step 1: write the checker self-test before implementation**
 
   Require `full-corpus-check.py` absent/non-symlink and create it with
   `O_CREAT|O_EXCL|O_NOFOLLOW`, mode `0600`, under the private SDD directory
@@ -468,6 +522,7 @@ replayed by an implementer.
   helper-sync --source FILE --target FILE
   artifact-init --workspace DIR --inventory FILE --bootstrap-ledger FILE
   artifact-register --workspace DIR --inventory FILE --path FILE
+  artifact-rebind-checker-review --workspace DIR --inventory FILE --expected-inventory-sha256 OLD_INVENTORY --expected-old-checker-sha256 OLD_CHECKER --approved-new-checker-sha256 NEW_CHECKER --expected-old-report-sha256 OLD_REPORT --approved-new-report-sha256 NEW_REPORT
   pathset --root ROOT --base SHA --lane affected|staged|all-files --output FILE
   residue --workspace DIR --inventory FILE
   remove-owned-helper-plan --path FILE
@@ -494,7 +549,7 @@ replayed by an implementer.
   python3 "$WRFR_SDD/full-corpus-check.py" self-test
   ```
 
-- [ ] **Step 2: implement and verify the guarded checker**
+- [x] **Step 2: implement and verify the guarded checker**
 
   Implement same-file guarded I/O with `os.open`, mandatory `O_NOFOLLOW`,
   `O_CREAT|O_EXCL` for creation, mode `0600`, current UID, regular-file checks,
@@ -534,7 +589,7 @@ replayed by an implementer.
   1 brief/report/review-package plus Task 2 brief paths recorded in the bootstrap
   ledger.
 
-- [ ] **Step 3: capture the exact baseline**
+- [x] **Step 3: capture the exact baseline**
 
   ```bash
   WRFR_BASE=$(git rev-parse HEAD)
@@ -553,7 +608,7 @@ replayed by an implementer.
   blocking-class mappings parsed from current canonical owners. Record
   `WRFR_BASE`, baseline SHA-256, file mode, and census in the Task.
 
-- [ ] **Step 4: dispatch five read-only research agents**
+- [x] **Step 4: dispatch five read-only research agents**
 
   Dispatch the five evidence agents in parallel. Each agent receives only its
   exact request-ID tuple, the relevant topical owner paths, the source ledger,
@@ -617,7 +672,7 @@ replayed by an implementer.
   done
   ```
 
-- [ ] **Step 5: independently review each research report**
+- [x] **Step 5: independently review each research report**
 
   Dispatch one source-fidelity reviewer per workstream and one cross-workstream
   quality reviewer after all five reports exist. Reviews check source identity,
@@ -625,7 +680,7 @@ replayed by an implementer.
   membership, duplicate research, and DEFER boundaries. Resolve every Critical
   or Important finding in the report and re-review before allocation.
 
-- [ ] **Step 6: validate the union and allocate IDs**
+- [x] **Step 6: validate the union and allocate IDs**
 
   ```bash
   python3 "$WRFR_SDD/full-corpus-check.py" validate-research \
@@ -646,7 +701,7 @@ replayed by an implementer.
   claims assigned contiguously from `013-01`. Record report and allocation
   SHA-256 values in the Task.
 
-- [ ] **Step 7: update execution evidence and run focused checks**
+- [x] **Step 7: update execution evidence and run focused checks**
 
   Mark `WRFR-001` Done in the Task only after the reviews and allocation pass.
   Record the exact observed counts, hashes, review verdicts, source-access
@@ -659,7 +714,34 @@ replayed by an implementer.
   git diff --check
   ```
 
-- [ ] **Step 8: commit and review evidence intake**
+  Completion evidence on 2026-08-20: the five final registered report hashes
+  are `f0dd1038b056d3f2bdc5e6c5e457e4f3c6cd93cdd5ab75375780101da9eca5b1`,
+  `bf5728c6d4f69dce90cff533058372e243ffed28ed5b5ee8949444212250ce86`,
+  `be273b3dad1b6b4f50d12285cf9114406ba5c3af94ded7646a71ceda5b47ae85`,
+  `edff89e3b29fdcaa658044ffc768b7c297e39a02936bd39657c90bb759a7fbce`,
+  and `f55cc2285577530544c48f26fb497184b43bb9822236e46a736294ed8695d993`.
+  All five source-fidelity reviews returned `Approved`; the cross-workstream
+  quality review returned `Approved` with Critical/Important/Minor `0/0/0`.
+
+  The allocation SHA-256 is
+  `04025a6ecc56853d773bac598e2c8895a408a2d6a9252be9727f4264c50fe40b`;
+  the registered inventory SHA-256 is
+  `39ef8f41848340daf9a0756a80611bcb549960080fc4bb5c8007a4ce625c8567`.
+  The exact 36-row union produced one contiguous source
+  `SRC-WERPC-091` and six contiguous claims `CLM-WERPC-013-01..06`,
+  with no duplicate, gap, or reservation.
+
+  `REQ-WERPC-033` records the unavailable registered NASA traceability URL as
+  `unreachable`; `REQ-WERPC-022` and `023` record an unavailable official
+  GitHub Environments URL without adopting environment claims. The sole
+  out-of-ledger source proposal is the official K3s v1.35 release-family source
+  for `REQ-WERPC-009`, allocated as `SRC-WERPC-091`; no new request owner was
+  created. The immutable row-020 baseline observation remains preserved, its
+  known legacy selector is normalized to the real `#ditaxis-baseline` anchor,
+  and every report row includes its normalized baseline selector while allowing
+  additional exact owner selectors.
+
+- [x] **Step 8: commit and review evidence intake**
 
   ```bash
   git add docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md \
@@ -1307,7 +1389,7 @@ replayed by an implementer.
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
 - Modify: `docs/03.specs/README.md`
 - Modify: `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`
-- Modify: `docs/99.templates/support/document-profiles.json`
+- Modify: `docs/99.templates/registry.json`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
 **Interfaces:**
@@ -1366,7 +1448,7 @@ replayed by an implementer.
     docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md \
     docs/03.specs/README.md \
     docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md \
-    docs/99.templates/support/document-profiles.json \
+    docs/99.templates/registry.json \
     docs/00.agent-governance/memory/progress.md
   git diff --cached --check
   git commit -m "docs: reconcile research lifecycle and cross-links"
@@ -1384,7 +1466,7 @@ replayed by an implementer.
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md`
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
 - Modify: `docs/03.specs/README.md`
-- Modify: `docs/99.templates/support/document-profiles.json`
+- Modify: `docs/99.templates/registry.json`
 - Modify: `scripts/validate-active-corpus-residue-closure.py`
 - Modify: `tests/test_active_corpus_retention.py`
 - Modify: `docs/00.agent-governance/memory/progress.md`
@@ -1517,7 +1599,7 @@ replayed by an implementer.
     docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md \
     docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md \
     docs/03.specs/README.md \
-    docs/99.templates/support/document-profiles.json \
+    docs/99.templates/registry.json \
     scripts/validate-active-corpus-residue-closure.py \
     tests/test_active_corpus_retention.py \
     docs/00.agent-governance/memory/progress.md

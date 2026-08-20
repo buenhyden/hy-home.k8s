@@ -16554,6 +16554,71 @@ newly attained state.
 - No live, hosted, provider-runtime, remote, secret-value, push, publish, or
   deployment evidence was collected or claimed.
 
+## 2026-08-20 - WRFR-001 full-corpus research evidence intake
+
+### Metadata
+
+- Date: 2026-08-20
+- Layer: docs
+- Status: complete
+- Tags: workspace-research, evidence-intake, closed-corpus, allocation
+- Owner: platform
+- Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md#wrfr-001-evidence-intake-completion`
+- Provenance: immutable baseline, five registered research reports, guarded allocation, and artifact inventory
+- Sensitivity: internal
+- Retention: durable
+- Next Owner: WRFR-002 agent-engineering integration
+
+### Progress
+
+WRFR-001 completed the closed-corpus intake at baseline commit
+`8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c`. The guarded checker validated the
+immutable `14 Markdown / 36 requests / 90 sources / 135 claims` census and the
+exact 36-row union of five disjoint reports. All five report reviews approved
+their registered bytes, and the cross-report quality review returned
+Critical/Important/Minor `0/0/0`.
+
+Allocation produced one new source, `SRC-WERPC-091`, for
+`REQ-WERPC-009`/platform-security and six claims without gaps or duplicates:
+`CLM-WERPC-013-01` through `013-03` for `REQ-WERPC-011` through `013` in
+SDLC/documentation, and `CLM-WERPC-013-04` through `013-06` for
+`REQ-WERPC-008`, `009`, and `025` in platform/security. No reservation record
+or unallocated identifier remains.
+
+### Memory
+
+The immutable baseline preserves the row 020 legacy selector exactly as
+observed. Validation normalizes only that observation to the real
+`#ditaxis-baseline` heading. Every research row must include its normalized
+baseline selector, while additional exact owner selectors remain allowed.
+
+The sole accepted out-of-ledger source is the official K3s v1.35 release-family
+page for `REQ-WERPC-009`; live-cluster and patch-suitability inferences were
+rejected. The registered NASA SWE-047 URL for `REQ-WERPC-033` was unreachable,
+so that row remains `Partial`/`human-judgement` with no new traceability claim.
+The registered GitHub Environments URL for `REQ-WERPC-022` and `023` was also
+unavailable, so neither row adopts an environment claim from it.
+
+### Evidence
+
+- Agent-engineering report: `f0dd1038b056d3f2bdc5e6c5e457e4f3c6cd93cdd5ab75375780101da9eca5b1` (`APPROVED`).
+- Provider/common report: `bf5728c6d4f69dce90cff533058372e243ffed28ed5b5ee8949444212250ce86` (`APPROVED`).
+- SDLC/documentation report: `be273b3dad1b6b4f50d12285cf9114406ba5c3af94ded7646a71ceda5b47ae85` (`APPROVED`).
+- Platform/security report: `edff89e3b29fdcaa658044ffc768b7c297e39a02936bd39657c90bb759a7fbce` (`APPROVED`).
+- Delivery/quality report: `f55cc2285577530544c48f26fb497184b43bb9822236e46a736294ed8695d993` (`APPROVED`).
+- Allocation: `04025a6ecc56853d773bac598e2c8895a408a2d6a9252be9727f4264c50fe40b`.
+- Artifact inventory after allocation registration: `39ef8f41848340daf9a0756a80611bcb549960080fc4bb5c8007a4ce625c8567`.
+- Baseline: `41d56cb71092d0cd9dee7caa90ddaf57183473170472695882e14707fe04ae5d`.
+- Post-registration `validate-research` and `residue`: `PASS`.
+
+### Handoff
+
+WRFR-002 consumes only its registered agent-engineering slice and the exact
+allocation above. Later owners must preserve the approved report identities,
+selector ruling, and closed-corpus outcome boundaries. WRFR-001 performed no
+remote GitHub query, provider-runtime check, hosted-CI check, live-cluster
+validation, push, publication, or deployment.
+
 ## 2026-08-20 - WRFR-000 lifecycle activation
 
 ### Metadata
