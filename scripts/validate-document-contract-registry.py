@@ -250,7 +250,11 @@ WORK109_ADR_CURRENT_TRACE_ROWS = (
     "| Direct human approval recorded in the Spec body | N/A — ninth typed "
     "standalone-execution relation; reuses the same closed approval and "
     "ownership semantics | [Spec 0061](../../03.specs/0061-workload-security-"
-    "context-baseline/spec.md) |"
+    "context-baseline/spec.md) |\n"
+    "| Direct human approval recorded in the Spec body | N/A — tenth typed "
+    "standalone-execution relation; reuses the same closed approval and "
+    "ownership semantics | [Spec 0062](../../03.specs/0062-workspace-research-"
+    "full-corpus-reverification/spec.md) |"
 )
 
 

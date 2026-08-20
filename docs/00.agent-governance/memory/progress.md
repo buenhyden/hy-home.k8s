@@ -16554,6 +16554,34 @@ newly attained state.
 - No live, hosted, provider-runtime, remote, secret-value, push, publish, or
   deployment evidence was collected or claimed.
 
+## 2026-08-20 - WRFR-000 lifecycle activation
+
+### Metadata
+
+- Owner: platform
+- Scope: `SPEC-0062`, `PLAN-0062`, `TASK-0062`, the Stage 03 index, ADR-0022,
+  the standalone-execution registry relation, and its validator regression
+- Evidence class: repository-static approval lineage and local strict-document
+  validation
+- Next Owner: `WRFR-001`
+
+### Progress
+
+Direct human approval dated 2026-08-20 activated the standalone Spec/Plan/Task
+relation for the full-corpus external-source and workspace reverification cycle.
+The logical activation commit is `docs: activate full-corpus research
+reverification`. The registry now records Spec `0062` with ADR-0022 and
+`spec-body-record` approval mode; the validator tuple is pinned to the exact
+approval and lifecycle-exclusion sentences in the Spec body.
+
+### Evidence
+
+- Focused approval-contract regression recorded RED against the draft approval
+  prose, then GREEN after the exact relation was activated.
+- Strict document registry, Markdown-profile, and cross-document link/owner
+  validation are the activation gates; no research, remote query, live,
+  provider-runtime, hosted-CI, secret, push, merge, or deployment work occurred.
+
 ## 2026-08-18 - PCDC platform currency defect closure
 
 ### Metadata

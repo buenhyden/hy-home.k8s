@@ -284,6 +284,31 @@ class DocumentStrictCutoverTests(unittest.TestCase):
             with self.subTest(validator=name):
                 self.assertEqual(self.parse(name, []).mode, "strict")
 
+    def test_spec_0062_standalone_approval_contract(self) -> None:
+        validator = self.validators["links"]
+        spec_text = (
+            REPOSITORY_ROOT
+            / "docs/03.specs/0062-workspace-research-full-corpus-reverification/spec.md"
+        ).read_text(encoding="utf-8")
+        approval_match = re.search(
+            r"(?m)^Direct human approval on (2026-08-20) authorizes this standalone execution relation\.$",
+            spec_text,
+        )
+        lifecycle_match = re.search(
+            r"(?m)^(No separate PRD or Architecture Description is required or part of this standalone lifecycle\.)$",
+            spec_text,
+        )
+
+        self.assertIsNotNone(approval_match)
+        self.assertIsNotNone(lifecycle_match)
+        assert approval_match is not None
+        assert lifecycle_match is not None
+        expected_from_spec = (approval_match.group(0), lifecycle_match.group(1))
+
+        self.assertEqual(
+            validator.STANDALONE_APPROVAL_STATEMENTS["0062"], expected_from_spec
+        )
+
     def test_registry_route_state_is_explicit_transition(self) -> None:
         args = self.parse("registry", ["--route-state", "transition"])
         self.assertEqual(args.route_state, "transition")

@@ -1,7 +1,7 @@
 ---
 title: 'Workspace Research Full-Corpus Reverification Technical Specification'
 type: sdlc/spec
-status: draft
+status: active
 owner: platform
 updated: 2026-08-20
 artifact_id: "SPEC-0062"
@@ -38,10 +38,8 @@ closed. A new public contract or repository selector may change such a row's
 analysis, but a static result does not prove provider runtime, hosted execution,
 live-cluster behavior, or user and operator validation.
 
-Direct human approval on 2026-08-20 authorizes the design in this draft Spec.
-Execution remains unauthorized until this written Spec and its reciprocal Plan
-are separately reviewed and approved. No separate PRD or Architecture
-Description is required or part of this standalone lifecycle.
+Direct human approval on 2026-08-20 authorizes this standalone execution relation.
+No separate PRD or Architecture Description is required or part of this standalone lifecycle.
 
 ## Strategic Boundaries & Non-goals
 

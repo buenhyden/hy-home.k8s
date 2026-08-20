@@ -1,7 +1,7 @@
 ---
 title: 'Workspace Research Full-Corpus Reverification Task'
 type: sdlc/task
-status: draft
+status: active
 owner: platform
 updated: 2026-08-20
 artifact_id: "TASK-0062"
@@ -12,10 +12,10 @@ artifact_id: "TASK-0062"
 ## Overview
 
 This Task is the execution ledger for `WRFR-000` through `WRFR-009` in the
-reciprocal [Plan](plan.md), implementing [Spec 0062](spec.md). It begins in
-`draft`: the design Spec is approved, but the Plan, execution mode, remote query
-allowlist, and repository mutations remain unapproved until the human reviews
-this Plan.
+reciprocal [Plan](plan.md), implementing [Spec 0062](spec.md). Direct human
+approval on 2026-08-20 activates the standalone execution relation. The
+activation commit is `docs: activate full-corpus research reverification`; its
+next owner is `WRFR-001`.
 
 The target is a 2026-08-20 external-source and workspace reverification of all
 thirty-six existing `REQ-WERPC-*` owners, integrated into the existing
@@ -67,7 +67,7 @@ stage, or commit.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WRFR-000 | VAL-WRFR-012, 013 | Activate standalone lifecycle and SDD workspace | platform | Queued | Not executed | Written Spec approved; Plan review pending |
+| WRFR-000 | VAL-WRFR-012, 013 | Activate standalone lifecycle and SDD workspace | platform | Done | Activated by direct approval on 2026-08-20 in `docs: activate full-corpus research reverification` | Active standalone Spec/Plan/Task relation; next owner `WRFR-001` |
 | WRFR-001 | VAL-WRFR-001..007, 009 | Freeze baseline, collect five read-only reports, allocate IDs | platform + research agents | Queued | Not executed | Exact 36-row input defined in Plan |
 | WRFR-002 | VAL-WRFR-002..005, 008, 013 | Integrate agent engineering findings | agent integrator | Queued | Not executed | Awaiting reviewed agent report/allocation |
 | WRFR-003 | VAL-WRFR-002..005, 008, 013 | Integrate provider/common findings | provider integrator | Queued | Not executed | Awaiting reviewed provider report/allocation |
