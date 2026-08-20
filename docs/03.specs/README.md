@@ -260,7 +260,9 @@ Spec은 실행 기준을 소유하는 문서다.
 │   ├── plan.md
 │   └── tasks.md
 ├── 0062-workspace-research-full-corpus-reverification/
-│   └── spec.md
+│   ├── spec.md
+│   ├── plan.md
+│   └── tasks.md
 └── README.md
 ```
 

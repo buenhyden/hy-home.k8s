@@ -170,11 +170,15 @@ dispatch, rerun, approval, merge, and configuration changes are prohibited.
 
 ### C-WRFR-011 — one-off artifact ownership
 
-Temporary artifacts are created only in the plan-specific ignored workspace or
-an exact approved `/tmp` path. Before creation, the path must be absent and not a
-symlink. While retained, it must be a current-user regular file with restrictive
-permissions. Only artifacts created by this cycle may be removed, and each is
-removed after its final consumer with an exact absence check.
+Temporary artifacts are created only in the plan-specific ignored workspace,
+an exact approved `/tmp` path, or the Superpowers helper's exact shared marker
+`.superpowers/sdd/.gitignore`. Before creation, a task-owned path must be absent
+and not a symlink. While retained, it must be a current-user regular file with
+restrictive permissions. The shared marker's initial state is recorded: an
+existing marker is byte-preserved, while a marker first created by this cycle is
+removed after the final helper consumer only when sibling safety is proven.
+Only artifacts created by this cycle may be removed, and every task-owned
+artifact is removed after its final consumer with an exact absence check.
 
 ### C-WRFR-012 — isolated execution
 
@@ -430,6 +434,8 @@ retained and strengthened here.
 
 ### Related Documents
 
+- [Implementation Plan](plan.md)
+- [Execution Task](tasks.md)
 - [Spec 0059 — Workspace Research Full-Corpus Refresh](../0059-workspace-research-full-corpus-refresh/spec.md)
 - [Current WER research pack](../../90.references/research/2026-08-08-wer/README.md)
 - [Research collection contract](../../90.references/research/README.md)
