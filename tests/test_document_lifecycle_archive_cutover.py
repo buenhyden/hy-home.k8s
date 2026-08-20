@@ -715,6 +715,48 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
             "lifecycleContracts", route_contract["documentContracts"]
         )
 
+    def test_production_compare_uses_validation_class_to_freeze_terminal_documents(self):
+        registry = load_registry(ROOT)
+        path = PurePosixPath("docs/03.specs/9999-terminal/spec.md")
+
+        def compare_body_change(status: str):
+            document = LifecycleDocument(path, "sdlc/spec", status)
+            return compare_lifecycle(
+                registry,
+                {path: document},
+                {path: document},
+                base_mode="staged",
+                evidence_context=LifecycleEvidenceContext(
+                    base_documents={path: document},
+                    proposed_documents={
+                        path: LifecycleEvidenceDocument(
+                            document,
+                            (),
+                            (),
+                            (),
+                            (),
+                            True,
+                            True,
+                            status == "done",
+                        )
+                    },
+                    changed_paths=frozenset({path}),
+                    status_changed_paths=frozenset(),
+                    body_changed_paths=frozenset({path}),
+                    created_paths=frozenset(),
+                ),
+            )
+
+        for status in ("draft", "active"):
+            with self.subTest(status=status):
+                self.assertEqual(compare_body_change(status), ())
+        terminal = compare_body_change("done")
+        self.assertEqual(
+            [item.rule_id for item in terminal],
+            ["LIFECYCLE-TERMINAL-MUTATION"],
+        )
+        self.assertIn("terminal", terminal[0].expected_transition)
+
     def test_terminal_supersession_uses_reciprocal_production_evidence(self):
         registry = load_registry(ROOT)
         source = PurePosixPath("docs/03.specs/9998-source/spec.md")

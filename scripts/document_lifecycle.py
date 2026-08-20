@@ -23,6 +23,7 @@ LIFECYCLE_RULE_IDS = frozenset(
         "LIFECYCLE-PROFILE-CHANGE",
         "LIFECYCLE-STATE",
         "LIFECYCLE-EDGE",
+        "LIFECYCLE-TERMINAL-MUTATION",
         "LIFECYCLE-EVIDENCE",
         "LIFECYCLE-BASE",
         "LIFECYCLE-BASE-DEFER",
@@ -201,13 +202,23 @@ def _state_diagnostic(
 ) -> LifecycleDiagnostic | None:
     if not _stateful(profile):
         return None
-    terminal_states = (
+    lifecycle_states = (
         tuple(state for state, _ in profile.lifecycle_domain.states)
         if profile.lifecycle_domain is not None
         else ()
     )
-    allowed_states = tuple(dict.fromkeys((*profile.status_domain, *terminal_states)))
-    if document.state_issue is None and document.status in allowed_states:
+    compatibility_states = tuple(
+        state for state in profile.status_domain if state not in lifecycle_states
+    )
+    allowed_states = (*lifecycle_states, *compatibility_states)
+    validation_class = (
+        profile.lifecycle_domain.validation_class(document.status)
+        if profile.lifecycle_domain is not None and document.status is not None
+        else None
+    )
+    if document.state_issue is None and (
+        validation_class is not None or document.status in compatibility_states
+    ):
         return None
     observed = (
         document.state_issue
@@ -222,6 +233,32 @@ def _state_diagnostic(
         observed=observed,
         base_mode=base_mode,
         evidence_gap="valid registry-owned lifecycle state",
+    )
+
+
+def _terminal_mutation_diagnostic(
+    document: LifecycleDocument,
+    profile: DocumentProfile,
+    *,
+    path_changed: bool,
+    base_mode: LifecycleBaseMode,
+) -> LifecycleDiagnostic | None:
+    domain = profile.lifecycle_domain
+    if (
+        not path_changed
+        or domain is None
+        or document.status is None
+        or domain.validation_class(document.status) != "terminal"
+    ):
+        return None
+    return _diagnostic(
+        "LIFECYCLE-TERMINAL-MUTATION",
+        path=document.path,
+        profile=document.profile_id,
+        expected="terminal document bytes unchanged",
+        observed=f"terminal status {document.status!r} has body changes",
+        base_mode=base_mode,
+        evidence_gap="registry-owned terminal validation class",
     )
 
 
@@ -1095,6 +1132,18 @@ def compare_lifecycle(
                 diagnostics.append(base_state_failure)
             if proposed_state_failure is not None:
                 diagnostics.append(proposed_state_failure)
+            continue
+        terminal_mutation = _terminal_mutation_diagnostic(
+            base,
+            profile,
+            path_changed=(
+                evidence_context is not None
+                and path in evidence_context.body_changed_paths
+            ),
+            base_mode=base_mode,
+        )
+        if terminal_mutation is not None:
+            diagnostics.append(terminal_mutation)
             continue
         if base.status == proposed.status or not _stateful(profile):
             continue
