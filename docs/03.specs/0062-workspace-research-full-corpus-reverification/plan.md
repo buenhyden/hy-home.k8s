@@ -1086,7 +1086,7 @@ of this recovery.
   reported zero violations; strict links/owners passed; and `git diff --check`
   passed. These are repository-static results only.
 
-- [ ] **Step 4: commit and review agent findings**
+- [x] **Step 4: commit and review agent findings**
 
   Update Task/Plan/progress and commit only the seven named tracked files:
 
@@ -1113,6 +1113,20 @@ of this recovery.
   expected `CLOSURE-WORKTREE-INDEX-DRIFT` because the seven-file logical unit
   was not yet staged. Stage exactly those seven files, replay affected, then
   run staged, plain pre-commit, all-files, formatter review, and diff checks.
+
+  Commit `06b3d681b11e0a373afcbe6bc86031dba615f590` contains exactly the
+  seven named paths. Registered report SHA-256 is
+  `9f589540cadf2893133d5a04b8fa8ee5b34747980117e4889fe98eaf9f1843ce`;
+  registered review-package SHA-256 is
+  `3fb6e7af4e5073e9ddde872c152a5332366763398654ca0eee15a1bf9e61f535`
+  for exact range `e8edd3fddb4171aad634ee31a278d136fd3e4529..06b3d681b11e0a373afcbe6bc86031dba615f590`;
+  final inventory SHA-256 is
+  `ec9863801083b29107e438a92998b40d121eca2183d6834cbfa3a5621b76fcfa`.
+  The post-commit reviewer returned `APPROVED WITH MINOR`,
+  Critical/Important/Minor `0/0/1`, and explicitly allowed WRFR-003 to
+  unblock. The sole Minor was stale Task-table evidence that still said the
+  commit/package review was pending; this closure unit corrects that evidence.
+  WRFR-002 is complete and WRFR-003 is queued and ready, not executed.
 
 ### Task 4: WRFR-003 — provider and common-environment integration
 

@@ -16560,14 +16560,14 @@ newly attained state.
 
 - Date: 2026-08-21
 - Layer: docs
-- Status: in_progress
+- Status: complete
 - Tags: workspace-research, agent-engineering, harness, loop, memory
 - Owner: platform
 - Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md#wrfr-002-agent-engineering-integration`
 - Provenance: registered agent-engineering report, allocation slice, owner diff, and focused validators
 - Sensitivity: internal
 - Retention: durable
-- Next Owner: WRFR-002 exact commit and registered task review
+- Next Owner: WRFR-003 provider/common integration
 
 ### Progress
 
@@ -16578,6 +16578,8 @@ and allocation SHA-256
 The exact slice is `REQ-WERPC-001`, `002`, and `026..032`, with no allocated
 new source or claim ID. Exactly one dated 2026-08-20 H3 was appended to each of
 the existing harness/loop, agent-system, model-routing, and memory owners.
+Commit `06b3d681b11e0a373afcbe6bc86031dba615f590` contains exactly the four
+owners plus Plan, Task, and durable progress.
 
 ### Memory
 
@@ -16607,6 +16609,21 @@ an empty allocation slice must not create a ledger record merely to restate it.
   document validator, then failed only at aggregate diagnostic
   `CLOSURE-WORKTREE-INDEX-DRIFT` for the Plan because the reviewed logical unit
   was not staged. It is retained as pre-stage evidence, not a PASS.
+- Exact-index affected and staged lanes, plain pre-commit, all-files,
+  formatter review, both diff checks, post-commit integration, and clean status:
+  PASS with no formatter mutation.
+- Registered Task 3 report SHA-256:
+  `9f589540cadf2893133d5a04b8fa8ee5b34747980117e4889fe98eaf9f1843ce`.
+  Registered review-package SHA-256:
+  `3fb6e7af4e5073e9ddde872c152a5332366763398654ca0eee15a1bf9e61f535`
+  for exact range `e8edd3fddb4171aad634ee31a278d136fd3e4529..06b3d681b11e0a373afcbe6bc86031dba615f590`.
+  Final inventory SHA-256:
+  `ec9863801083b29107e438a92998b40d121eca2183d6834cbfa3a5621b76fcfa`.
+- The post-commit reviewer returned `APPROVED WITH MINOR`,
+  Critical/Important/Minor `0/0/1`, and allowed WRFR-003 to unblock. The sole
+  Minor identified stale Task-table evidence that still said commit/package
+  review was pending; this closure unit changes that row to Done and records
+  the approved evidence.
 - External results remain nine `unchanged`; workspace results remain nine
   `confirmed`. Dispositions remain six `Verified` and three `Partial`.
 - Provider runtime remains `DEFER` for `REQ-WERPC-001`, `002`, `026`, `028`,
@@ -16616,11 +16633,10 @@ an empty allocation slice must not create a ledger record merely to restate it.
 
 ### Handoff
 
-Obtain independent pre-commit source-fidelity/content and code/quality review,
-commit exactly the four topical owners plus Plan, Task, and this durable
-progress record, then generate and register the post-commit Task 3 package.
-WRFR-003 remains queued until the task reviewer approves both Spec compliance
-and quality.
+WRFR-002 is complete. WRFR-003 may consume the registered provider/common
+report and its allocation slice. It is queued and ready, not executed. Preserve
+all provider-runtime, hosted-CI, live-infrastructure, and human-validation
+`DEFER` boundaries.
 
 ## 2026-08-21 - WRFR-002 allocation-order checker recovery gate
 

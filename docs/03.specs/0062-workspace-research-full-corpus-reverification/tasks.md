@@ -24,7 +24,8 @@ The first WRFR-002 integration probe then exposed an allocation-order checker
 defect before any owner edit. The reviewed checker-only recovery completed,
 the accepted fail-fast RED became `ERROR INTEGRATION_SECTION`, and WRFR-002
 integrated all nine agent-engineering rows. Its tracked commit and post-commit
-task review remain the next gate.
+task review are complete; the sole stale-evidence Minor is corrected in this
+closure unit, and WRFR-003 is queued and ready but not executed.
 
 The target is a 2026-08-20 external-source and workspace reverification of all
 thirty-six existing `REQ-WERPC-*` owners, integrated into the existing
@@ -85,8 +86,8 @@ stage, or commit.
 | --- | --- | --- | --- | --- | --- | --- |
 | WRFR-000 | VAL-WRFR-012, 013 | Activate standalone lifecycle and SDD workspace | platform | Done | Activated by direct approval on 2026-08-20 in `docs: activate full-corpus research reverification` | Active standalone Spec/Plan/Task relation; next owner `WRFR-001` |
 | WRFR-001 | VAL-WRFR-001..007, 009 | Freeze baseline, collect five read-only reports, allocate IDs | platform + research agents | Done | Exact 36-row union validated; all report and task reviews approved; one source and six claims allocated; tracked evidence committed | Packages A/B/C registered; final residue passed; task review `APPROVED` with Critical/Important/Minor `0/0/0` |
-| WRFR-002 | VAL-WRFR-002..005, 008, 013 | Integrate agent engineering findings | agent integrator | Implemented | Nine allocated rows appended to four existing owners; focused static validation passed | Awaiting exact seven-file commit and registered post-commit task review |
-| WRFR-003 | VAL-WRFR-002..005, 008, 013 | Integrate provider/common findings | provider integrator | Queued | Not executed | Awaiting reviewed provider report/allocation |
+| WRFR-002 | VAL-WRFR-002..005, 008, 013 | Integrate agent engineering findings | agent integrator | Done | Nine allocated rows appended and committed as `06b3d681`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole stale-evidence Minor addressed |
+| WRFR-003 | VAL-WRFR-002..005, 008, 013 | Integrate provider/common findings | provider integrator | Queued | Ready, not executed | WRFR-002 review approved; registered provider report/allocation slice ready |
 | WRFR-004 | VAL-WRFR-002..005, 008, 013 | Integrate SDLC/documentation findings | documentation integrator | Queued | Not executed | Awaiting reviewed SDLC report/allocation |
 | WRFR-005 | VAL-WRFR-002..005, 008, 013 | Integrate platform/security findings | platform/security integrator | Queued | Not executed | Awaiting reviewed platform report/allocation |
 | WRFR-006 | VAL-WRFR-002..005, 008, 011, 013 | Integrate delivery/quality and read-only GitHub evidence | delivery/security integrator | Queued | Not executed | Pre-remote security review required |
@@ -440,9 +441,15 @@ latency, hosted CI, live infrastructure, and human validation remain `DEFER`
 where their evidence class is absent.
 
 The tracked unit is limited to the four topical owners plus this Task, its
-Plan, and durable progress. The next gate is the exact seven-file commit,
-registered post-commit package, and independent task review; WRFR-003 remains
-queued until that gate approves.
+Plan, and durable progress. Commit
+`06b3d681b11e0a373afcbe6bc86031dba615f590` contains exactly those seven
+paths. Registered report SHA-256 is
+`9f589540cadf2893133d5a04b8fa8ee5b34747980117e4889fe98eaf9f1843ce`;
+registered package SHA-256 is
+`3fb6e7af4e5073e9ddde872c152a5332366763398654ca0eee15a1bf9e61f535`
+for range `e8edd3fddb4171aad634ee31a278d136fd3e4529..06b3d681b11e0a373afcbe6bc86031dba615f590`;
+final inventory SHA-256 is
+`ec9863801083b29107e438a92998b40d121eca2183d6834cbfa3a5621b76fcfa`.
 
 Independent pre-commit source-fidelity/content and spec-compliance/quality
 reviews both returned `APPROVED` with Critical/Important/Minor `0/0/0`. The
@@ -450,6 +457,13 @@ initial affected lane passed every selected agent and document validator and
 then failed only at the expected `CLOSURE-WORKTREE-INDEX-DRIFT` because this
 logical unit had not yet been staged. This is not completion evidence; the
 affected and staged lanes must pass against the exact index before commit.
+
+The exact-index affected and staged lanes, plain pre-commit, all-files,
+formatter review, and both diff checks subsequently passed without mutation.
+The post-commit reviewer returned `APPROVED WITH MINOR`,
+Critical/Important/Minor `0/0/1`, and allowed WRFR-003 to unblock. Its sole
+Minor identified this Task table's stale pre-commit evidence; the Done row
+above addresses it. WRFR-003 is queued and ready, not executed.
 
 ### Stop conditions
 
@@ -462,9 +476,9 @@ All other conflicts receive a recorded SDD ruling and continue under the Spec.
 
 WRFR-000 activation and WRFR-001 intake, tracked evidence, registered review
 packages, and task-level post-commit review are complete. The WRFR-002 checker
-recovery and nine-row topical integration are complete; its exact seven-file
-commit and registered post-commit review remain pending. Initial design
-evidence included:
+recovery, nine-row topical integration, exact seven-file commit, registered
+report/package, and post-commit task review are complete. WRFR-003 is queued
+and ready, not executed. Initial design evidence included:
 
 - isolated worktree created from clean tracked `HEAD`;
 - primary checkout's unrelated staged RIA files excluded from the branch;
@@ -503,7 +517,7 @@ diff check. No new ledger ID or owner was created.
 | [VAL-WRFR-010](spec.md) | Not executed | WRFR-007..009 own the shared projection sequence |
 | [VAL-WRFR-011](spec.md) | Not executed | WRFR-006 and WRFR-009 own the nine-class remote/security contract |
 | [VAL-WRFR-012](spec.md) | Workspace passed; cleanup pending | WRFR-001 residue validation passed; WRFR-009 still owns exact cleanup |
-| [VAL-WRFR-013](spec.md) | In progress | WRFR-001 review is complete; WRFR-002 implementation passed focused checks and awaits its exact commit/package review before WRFR-003 |
+| [VAL-WRFR-013](spec.md) | In progress | WRFR-001 and WRFR-002 logical commits and task reviews are complete; WRFR-003 is ready and later task commits remain pending |
 | [VAL-WRFR-014](spec.md) | Not executed | WRFR-009 owns the whole-branch review gate |
 | [VAL-WRFR-015](spec.md) | Not executed | WRFR-009 owns the terminal lane sequence |
 
