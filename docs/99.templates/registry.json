@@ -2060,7 +2060,6 @@
       "class": "readme",
       "mode": "frontmatter-free",
       "pathPattern": "^README\\.md$",
-      "artifactIdPattern": null,
       "template": "docs/99.templates/templates/common/readme-repository.template.md",
       "requiredFrontmatter": {
         "mode": "forbidden",
@@ -2087,10 +2086,6 @@
           "Security Boundary"
         ]
       },
-      "lifecycle": {
-        "statusDomain": [],
-        "appendContract": null
-      },
       "relationships": {
         "sourceProfileIds": [],
         "bodyContract": null
@@ -2102,7 +2097,6 @@
       "class": "readme",
       "mode": "frontmatter-free",
       "pathPattern": "^(?:docs/README\\.md|docs/00\\.agent\\-governance/README\\.md|docs/01\\.requirements/README\\.md|docs/02\\.architecture/README\\.md|docs/03\\.specs/README\\.md|docs/05\\.operations/README\\.md|docs/90\\.references/README\\.md|docs/98\\.archive/README\\.md|docs/99\\.templates/README\\.md)$",
-      "artifactIdPattern": null,
       "template": "docs/99.templates/templates/common/readme-stage-index.template.md",
       "requiredFrontmatter": {
         "mode": "forbidden",
@@ -2127,10 +2121,6 @@
           "Lifecycle Handoff"
         ]
       },
-      "lifecycle": {
-        "statusDomain": [],
-        "appendContract": null
-      },
       "relationships": {
         "sourceProfileIds": [],
         "bodyContract": null
@@ -2142,7 +2132,6 @@
       "class": "readme",
       "mode": "frontmatter-free",
       "pathPattern": "^(?:docs/00\\.agent\\-governance/memory/README\\.md|docs/02\\.architecture/decisions/README\\.md|docs/02\\.architecture/descriptions/README\\.md|docs/05\\.operations/guides/README\\.md|docs/05\\.operations/incidents/README\\.md|docs/05\\.operations/policies/README\\.md|docs/05\\.operations/runbooks/README\\.md|docs/90\\.references/audits/README\\.md|docs/90\\.references/data/README\\.md|docs/90\\.references/learning/README\\.md|docs/90\\.references/llm\\-wiki/README\\.md|docs/90\\.references/research/README\\.md|docs/99\\.templates/support/README\\.md|docs/99\\.templates/templates/README\\.md|docs/90\\.references/cloud\\-examples/README\\.md)$",
-      "artifactIdPattern": null,
       "template": "docs/99.templates/templates/common/readme-collection-index.template.md",
       "requiredFrontmatter": {
         "mode": "forbidden",
@@ -2167,10 +2156,6 @@
           "Selection Rules"
         ]
       },
-      "lifecycle": {
-        "statusDomain": [],
-        "appendContract": null
-      },
       "relationships": {
         "sourceProfileIds": [],
         "bodyContract": null
@@ -2182,7 +2167,6 @@
       "class": "readme",
       "mode": "frontmatter-free",
       "pathPattern": "^(?:examples/README\\.md|examples/sample\\-app/README\\.md|gitops/README\\.md|gitops/workloads/README\\.md|infrastructure/README\\.md|scripts/README\\.md|tests/README\\.md|traefik/README\\.md|examples/azure/gitops/README\\.md|examples/azure/infrastructure/README\\.md|examples/azure/kubernetes/README\\.md|examples/(?:aws|azure)/README\\.md)$",
-      "artifactIdPattern": null,
       "template": "docs/99.templates/templates/common/readme-implementation.template.md",
       "requiredFrontmatter": {
         "mode": "forbidden",
@@ -2210,10 +2194,6 @@
           "Troubleshooting"
         ]
       },
-      "lifecycle": {
-        "statusDomain": [],
-        "appendContract": null
-      },
       "relationships": {
         "sourceProfileIds": [],
         "bodyContract": null
@@ -2225,7 +2205,6 @@
       "class": "readme",
       "mode": "frontmatter-free",
       "pathPattern": "^(?:docs/90\\.references/(?:audits|research)/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+/README\\.md|docs/90\\.references/cloud-examples/(?:aws|azure)/README\\.md)$",
-      "artifactIdPattern": null,
       "template": "docs/99.templates/templates/common/readme-snapshot-pack.template.md",
       "requiredFrontmatter": {
         "mode": "forbidden",
@@ -2252,10 +2231,6 @@
           "Method"
         ]
       },
-      "lifecycle": {
-        "statusDomain": [],
-        "appendContract": null
-      },
       "relationships": {
         "sourceProfileIds": [],
         "bodyContract": null
@@ -2267,7 +2242,6 @@
       "class": "readme",
       "mode": "frontmatter-free",
       "pathPattern": "^_workspace/README\\.md$",
-      "artifactIdPattern": null,
       "template": "docs/99.templates/templates/common/readme-workspace-staging.template.md",
       "requiredFrontmatter": {
         "mode": "forbidden",
@@ -2292,10 +2266,6 @@
           "Tracking Rules",
           "Related Documents"
         ]
-      },
-      "lifecycle": {
-        "statusDomain": [],
-        "appendContract": null
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -2809,7 +2779,6 @@
       "class": "readme",
       "mode": "template",
       "pathPattern": "^docs/99\\.templates/templates/common/readme\\-repository\\.template\\.md$",
-      "artifactIdPattern": null,
       "template": "docs/99.templates/templates/common/readme-repository.template.md",
       "requiredFrontmatter": {
         "mode": "forbidden",
@@ -2836,10 +2805,6 @@
           "Security Boundary"
         ]
       },
-      "lifecycle": {
-        "statusDomain": [],
-        "appendContract": null
-      },
       "relationships": {
         "sourceProfileIds": [
           "readme/repository"
@@ -2853,7 +2818,6 @@
       "class": "readme",
       "mode": "template",
       "pathPattern": "^docs/99\\.templates/templates/common/readme\\-stage\\-index\\.template\\.md$",
-      "artifactIdPattern": null,
       "template": "docs/99.templates/templates/common/readme-stage-index.template.md",
       "requiredFrontmatter": {
         "mode": "forbidden",
@@ -2878,10 +2842,6 @@
           "Lifecycle Handoff"
         ]
       },
-      "lifecycle": {
-        "statusDomain": [],
-        "appendContract": null
-      },
       "relationships": {
         "sourceProfileIds": [
           "readme/stage-index"
@@ -2895,7 +2855,6 @@
       "class": "readme",
       "mode": "template",
       "pathPattern": "^docs/99\\.templates/templates/common/readme\\-collection\\-index\\.template\\.md$",
-      "artifactIdPattern": null,
       "template": "docs/99.templates/templates/common/readme-collection-index.template.md",
       "requiredFrontmatter": {
         "mode": "forbidden",
@@ -2920,10 +2879,6 @@
           "Selection Rules"
         ]
       },
-      "lifecycle": {
-        "statusDomain": [],
-        "appendContract": null
-      },
       "relationships": {
         "sourceProfileIds": [
           "readme/collection-index"
@@ -2937,7 +2892,6 @@
       "class": "readme",
       "mode": "template",
       "pathPattern": "^docs/99\\.templates/templates/common/readme\\-implementation\\.template\\.md$",
-      "artifactIdPattern": null,
       "template": "docs/99.templates/templates/common/readme-implementation.template.md",
       "requiredFrontmatter": {
         "mode": "forbidden",
@@ -2965,10 +2919,6 @@
           "Troubleshooting"
         ]
       },
-      "lifecycle": {
-        "statusDomain": [],
-        "appendContract": null
-      },
       "relationships": {
         "sourceProfileIds": [
           "readme/implementation"
@@ -2982,7 +2932,6 @@
       "class": "readme",
       "mode": "template",
       "pathPattern": "^docs/99\\.templates/templates/common/readme\\-snapshot\\-pack\\.template\\.md$",
-      "artifactIdPattern": null,
       "template": "docs/99.templates/templates/common/readme-snapshot-pack.template.md",
       "requiredFrontmatter": {
         "mode": "forbidden",
@@ -3009,10 +2958,6 @@
           "Method"
         ]
       },
-      "lifecycle": {
-        "statusDomain": [],
-        "appendContract": null
-      },
       "relationships": {
         "sourceProfileIds": [
           "readme/snapshot-pack"
@@ -3026,7 +2971,6 @@
       "class": "readme",
       "mode": "template",
       "pathPattern": "^docs/99\\.templates/templates/common/readme\\-workspace\\-staging\\.template\\.md$",
-      "artifactIdPattern": null,
       "template": "docs/99.templates/templates/common/readme-workspace-staging.template.md",
       "requiredFrontmatter": {
         "mode": "forbidden",
@@ -3051,10 +2995,6 @@
           "Tracking Rules",
           "Related Documents"
         ]
-      },
-      "lifecycle": {
-        "statusDomain": [],
-        "appendContract": null
       },
       "relationships": {
         "sourceProfileIds": [
@@ -4916,64 +4856,191 @@
     }
   ],
   "programLineage": {
+    "transitionLifecycleContracts": [
+      {
+        "id": "product",
+        "profileIds": ["sdlc/prd", "sdlc/srs", "sdlc/interface"],
+        "terminalStates": ["done"],
+        "edges": [
+          {"from": "draft", "to": "active", "predicateId": "activate-self-body"},
+          {"from": "active", "to": "done", "predicateId": "complete-product-program"}
+        ]
+      },
+      {
+        "id": "architecture-requirement",
+        "profileIds": ["sdlc/ad"],
+        "terminalStates": ["accepted"],
+        "edges": [
+          {"from": "draft", "to": "active", "predicateId": "activate-self-body"},
+          {"from": "active", "to": "accepted", "predicateId": "accept-architecture"}
+        ]
+      },
+      {
+        "id": "architecture-decision",
+        "profileIds": ["sdlc/adr"],
+        "terminalStates": ["accepted"],
+        "edges": [
+          {"from": "draft", "to": "active", "predicateId": "activate-self-body"},
+          {"from": "active", "to": "accepted", "predicateId": "accept-decision-self"}
+        ]
+      },
+      {
+        "id": "specification",
+        "profileIds": ["sdlc/spec", "sdlc/agent-design", "sdlc/data-model", "sdlc/tests"],
+        "terminalStates": ["done"],
+        "edges": [
+          {"from": "draft", "to": "active", "predicateId": "activate-self-body"},
+          {"from": "active", "to": "done", "predicateId": "complete-specification"}
+        ]
+      },
+      {
+        "id": "execution",
+        "profileIds": ["sdlc/plan", "sdlc/task"],
+        "terminalStates": ["done"],
+        "edges": [
+          {"from": "draft", "to": "active", "predicateId": "activate-execution-pair"},
+          {"from": "active", "to": "done", "predicateId": "complete-execution-pair"}
+        ]
+      },
+      {
+        "id": "operations",
+        "profileIds": ["sdlc/guide", "sdlc/policy", "sdlc/runbook", "sdlc/incident", "sdlc/postmortem"],
+        "terminalStates": ["accepted"],
+        "edges": [
+          {"from": "draft", "to": "active", "predicateId": "activate-self-body"},
+          {"from": "active", "to": "accepted", "predicateId": "accept-operated-document"}
+        ]
+      },
+      {
+        "id": "reference-governance",
+        "profileIds": ["content/reference", "governance/reference", "governance/memory", "governance/template-support"],
+        "terminalStates": ["accepted", "done"],
+        "edges": [
+          {"from": "draft", "to": "active", "predicateId": "activate-heading-profile"},
+          {"from": "active", "to": "accepted", "predicateId": "terminate-reviewed-reference"},
+          {"from": "active", "to": "done", "predicateId": "terminate-reviewed-reference"}
+        ]
+      },
+      {
+        "id": "archive-record",
+        "profileIds": ["content/archive"],
+        "terminalStates": ["archived"],
+        "edges": []
+      },
+      {
+        "id": "archive-migration",
+        "profileIds": ["content/archive-migration"],
+        "terminalStates": ["accepted"],
+        "edges": []
+      },
+      {
+        "id": "non-lifecycle",
+        "profileIds": [
+          "governance/progress-ledger", "readme/repository", "readme/stage-index",
+          "readme/collection-index", "readme/implementation", "readme/snapshot-pack",
+          "readme/workspace-staging", "exception/root-provider-shim",
+          "exception/local-agent-asset", "exception/repository-runtime-baseline",
+          "exception/provider-native-metadata", "exception/github-native-control",
+          "native/document-migration-manifest", "exception/native-contract-openapi",
+          "exception/native-contract-graphql", "exception/native-contract-protobuf",
+          "exception/generated-record", "exception/program-non-target",
+          "template/content/archive", "template/content/archive-migration",
+          "template/governance/memory", "template/readme/repository",
+          "template/readme/stage-index", "template/readme/collection-index",
+          "template/readme/implementation", "template/readme/snapshot-pack",
+          "template/readme/workspace-staging", "template/content/reference",
+          "template/sdlc/adr", "template/sdlc/ad", "template/sdlc/plan",
+          "template/sdlc/task", "template/sdlc/guide", "template/sdlc/incident",
+          "template/sdlc/policy", "template/sdlc/postmortem", "template/sdlc/runbook",
+          "template/sdlc/prd", "template/sdlc/interface", "template/sdlc/srs",
+          "template/sdlc/agent-design", "template/sdlc/data-model",
+          "template/sdlc/spec", "template/sdlc/tests", "governance/progress-entry",
+          "template/governance/reference", "template/governance/template-support"
+        ],
+        "terminalStates": [],
+        "edges": []
+      }
+    ],
     "lifecycleDomains": [
       {
         "family": "requirement-architecture",
+        "profileIds": ["sdlc/prd", "sdlc/srs", "sdlc/interface", "sdlc/ad"],
         "states": {"draft": "mutable", "active": "current", "superseded": "terminal", "retired": "terminal", "withdrawn": "terminal"},
         "transitions": [["draft", "active"], ["draft", "withdrawn"], ["active", "superseded"], ["active", "retired"]]
       },
       {
         "family": "adr",
+        "profileIds": ["sdlc/adr"],
         "states": {"proposed": "mutable", "accepted": "current", "rejected": "terminal", "superseded": "terminal"},
         "transitions": [["proposed", "accepted"], ["proposed", "rejected"], ["accepted", "superseded"]]
       },
       {
         "family": "spec-plan",
+        "profileIds": ["sdlc/spec", "sdlc/agent-design", "sdlc/data-model", "sdlc/tests", "sdlc/plan"],
         "states": {"draft": "mutable", "active": "current", "done": "terminal", "superseded": "terminal", "withdrawn": "terminal"},
         "transitions": [["draft", "active"], ["active", "done"], ["active", "superseded"], ["active", "withdrawn"]]
       },
       {
         "family": "task",
+        "profileIds": ["sdlc/task"],
         "states": {"queued": "mutable", "in-progress": "current", "blocked": "current", "done": "terminal", "cancelled": "terminal"},
         "transitions": [["queued", "in-progress"], ["in-progress", "done"], ["in-progress", "cancelled"], ["in-progress", "blocked"], ["blocked", "in-progress"]]
       },
       {
         "family": "governance-guide-policy-runbook",
+        "profileIds": ["sdlc/guide", "sdlc/policy", "sdlc/runbook", "governance/reference", "governance/memory", "governance/template-support"],
         "states": {"draft": "mutable", "active": "current", "superseded": "terminal", "retired": "terminal"},
         "transitions": [["draft", "active"], ["active", "superseded"], ["active", "retired"]]
       },
       {
         "family": "incident",
+        "profileIds": ["sdlc/incident"],
         "states": {"open": "current", "mitigated": "current", "resolved": "current", "closed": "terminal"},
         "transitions": [["open", "mitigated"], ["mitigated", "resolved"], ["resolved", "closed"]]
       },
       {
         "family": "postmortem",
+        "profileIds": ["sdlc/postmortem"],
         "states": {"draft": "mutable", "published": "current", "superseded": "terminal"},
         "transitions": [["draft", "published"], ["published", "superseded"]]
       },
       {
         "family": "research",
+        "profileIds": ["content/reference"],
         "states": {"draft": "mutable", "published": "current", "superseded": "terminal", "retired": "terminal"},
         "transitions": [["draft", "published"], ["published", "superseded"], ["published", "retired"]]
       },
       {
         "family": "audit",
+        "profileIds": [],
         "states": {"draft": "mutable", "completed": "current", "invalidated": "terminal"},
         "transitions": [["draft", "completed"], ["completed", "invalidated"]]
       },
       {
         "family": "data",
+        "profileIds": [],
         "states": {"draft": "mutable", "active": "current", "stale": "current", "superseded": "terminal", "retired": "terminal"},
         "transitions": [["draft", "active"], ["active", "stale"], ["stale", "superseded"], ["stale", "retired"]]
       },
       {
         "family": "migration-tombstone",
+        "profileIds": ["content/archive", "content/archive-migration"],
         "states": {"draft": "mutable", "sealed": "terminal"},
         "transitions": [["draft", "sealed"]]
       },
       {
         "family": "template-profile",
+        "profileIds": [
+          "template/content/archive", "template/content/archive-migration",
+          "template/governance/memory", "template/content/reference",
+          "template/sdlc/adr", "template/sdlc/ad", "template/sdlc/plan",
+          "template/sdlc/task", "template/sdlc/guide", "template/sdlc/incident",
+          "template/sdlc/policy", "template/sdlc/postmortem", "template/sdlc/runbook",
+          "template/sdlc/prd", "template/sdlc/interface", "template/sdlc/srs",
+          "template/sdlc/agent-design", "template/sdlc/data-model",
+          "template/sdlc/spec", "template/sdlc/tests",
+          "template/governance/reference", "template/governance/template-support"
+        ],
         "states": {"draft": "mutable", "active": "current", "superseded": "terminal", "retired": "terminal"},
         "transitions": [["draft", "active"], ["active", "superseded"], ["active", "retired"]]
       }

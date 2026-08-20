@@ -4,10 +4,13 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
+import selectors
 import stat
 import subprocess
 import sys
+import time
 from pathlib import Path, PurePosixPath
 from typing import Any, Mapping, Sequence
 
@@ -37,13 +40,19 @@ PROFILE_KEYS = frozenset(
         "relationships",
     }
 )
+ROUTER_PROFILE_KEYS = PROFILE_KEYS - {"artifactIdPattern", "lifecycle"}
 AGENT_MACHINE_FIELDS = frozenset(
     {
         "agentRoster",
         "agents",
+        "agent",
+        "role",
         "roles",
+        "permission",
         "permissions",
+        "provider",
         "providers",
+        "skill",
         "skills",
     }
 )
@@ -180,9 +189,16 @@ def validate_registry_authority(registry: Mapping[str, Any]) -> None:
         if not isinstance(profile_id, str) or not profile_id or profile_id in seen:
             raise AuthorityError("REGISTRY_PROFILE_ID: IDs must be unique strings")
         seen.add(profile_id)
-        if not PROFILE_KEYS.issubset(profile):
-            missing = sorted(PROFILE_KEYS - set(profile))
+        required_keys = (
+            ROUTER_PROFILE_KEYS if profile.get("class") == "readme" else PROFILE_KEYS
+        )
+        if not required_keys.issubset(profile):
+            missing = sorted(required_keys - set(profile))
             raise AuthorityError(f"REGISTRY_PROFILE_FIELDS: {profile_id}: {missing}")
+        if profile.get("class") == "readme" and (
+            "artifactIdPattern" in profile or "lifecycle" in profile
+        ):
+            raise AuthorityError(f"REGISTRY_ROUTER_FIELDS: {profile_id}")
         path_pattern = profile.get("pathPattern")
         if not isinstance(path_pattern, str):
             raise AuthorityError(f"REGISTRY_PATH_PATTERN: {profile_id}")
@@ -192,8 +208,8 @@ def validate_registry_authority(registry: Mapping[str, Any]) -> None:
         ):
             raise AuthorityError(f"STAGE99_SUPPORT_OWNER: {profile_id}")
     lineage = registry.get("programLineage")
-    if isinstance(lineage, Mapping) and "lifecycleDomains" in lineage:
-        domains = lineage["lifecycleDomains"]
+    if isinstance(lineage, Mapping):
+        domains = lineage.get("lifecycleDomains")
         if not isinstance(domains, list):
             raise AuthorityError("LIFECYCLE_DOMAIN: expected a list")
         actual: dict[str, set[tuple[str, str]]] = {}
@@ -223,7 +239,10 @@ def validate_registry_authority(registry: Mapping[str, Any]) -> None:
 
 
 def validate_template_profile_reference(
-    template_text: str, registry: Mapping[str, Any]
+    template_text: str,
+    registry: Mapping[str, Any],
+    *,
+    allow_router_without_profile: bool = False,
 ) -> str:
     """Return a template's profile ID and reject destination-path ownership."""
 
@@ -231,6 +250,8 @@ def validate_template_profile_reference(
         raise AuthorityError("TEMPLATE_DESTINATION: use a registry profile ID")
     match = re.search(r"(?m)^type:\s*[\"']?([^\"'\s]+)", template_text)
     if match is None:
+        if allow_router_without_profile:
+            return ""
         raise AuthorityError("TEMPLATE_PROFILE: missing type/profile ID")
     profile_id = match.group(1)
     profile_ids = {
@@ -250,12 +271,85 @@ def is_lifecycle_transition_allowed(
 
     states = lifecycle.get("states")
     transitions = lifecycle.get("transitions")
-    if not isinstance(states, Mapping) or not isinstance(transitions, Mapping):
+    if not isinstance(states, Mapping) or not isinstance(transitions, list):
         return False
     if from_state not in states or to_state not in states:
         return False
-    targets = transitions.get(from_state)
-    return isinstance(targets, list) and to_state in targets
+    return [from_state, to_state] in transitions
+
+
+def run_bounded_process(
+    arguments: Sequence[str],
+    *,
+    cwd: Path,
+    timeout_seconds: float,
+    max_stdout_bytes: int,
+    max_stderr_bytes: int = 64 * 1024,
+    check: bool = True,
+) -> subprocess.CompletedProcess[bytes]:
+    """Run one process while draining both pipes incrementally within caps."""
+
+    if timeout_seconds <= 0:
+        raise AuthorityError("AUTHORITY_TIMEOUT: timeout must be positive")
+    if max_stdout_bytes < 0 or max_stderr_bytes < 0:
+        raise AuthorityError("AUTHORITY_SIZE: subprocess limits must be non-negative")
+    try:
+        process = subprocess.Popen(
+            list(arguments),
+            cwd=cwd,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+    except OSError as exc:
+        raise AuthorityError("AUTHORITY_PROCESS: process could not start") from exc
+    assert process.stdout is not None and process.stderr is not None
+    streams = selectors.DefaultSelector()
+    streams.register(process.stdout, selectors.EVENT_READ, ("stdout", max_stdout_bytes))
+    streams.register(process.stderr, selectors.EVENT_READ, ("stderr", max_stderr_bytes))
+    chunks: dict[str, list[bytes]] = {"stdout": [], "stderr": []}
+    sizes = {"stdout": 0, "stderr": 0}
+    deadline = time.monotonic() + timeout_seconds
+    try:
+        while streams.get_map():
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise AuthorityError("AUTHORITY_TIMEOUT: subprocess exceeded deadline")
+            events = streams.select(remaining)
+            if not events:
+                raise AuthorityError("AUTHORITY_TIMEOUT: subprocess exceeded deadline")
+            for key, _ in events:
+                name, limit = key.data
+                chunk = os.read(key.fileobj.fileno(), min(64 * 1024, limit - sizes[name] + 1))
+                if not chunk:
+                    streams.unregister(key.fileobj)
+                    continue
+                sizes[name] += len(chunk)
+                if sizes[name] > limit:
+                    raise AuthorityError(f"AUTHORITY_SIZE: subprocess {name} exceeded limit")
+                chunks[name].append(chunk)
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise AuthorityError("AUTHORITY_TIMEOUT: subprocess exceeded deadline")
+        returncode = process.wait(timeout=remaining)
+    except (AuthorityError, subprocess.TimeoutExpired):
+        process.kill()
+        process.wait()
+        if isinstance(sys.exc_info()[1], subprocess.TimeoutExpired):
+            raise AuthorityError("AUTHORITY_TIMEOUT: subprocess exceeded deadline")
+        raise
+    finally:
+        streams.close()
+        process.stdout.close()
+        process.stderr.close()
+    stdout = b"".join(chunks["stdout"])
+    stderr = b"".join(chunks["stderr"])
+    completed = subprocess.CompletedProcess(list(arguments), returncode, stdout, stderr)
+    if check and returncode != 0:
+        raise subprocess.CalledProcessError(
+            returncode, completed.args, output=stdout, stderr=stderr
+        )
+    return completed
 
 
 def require_reciprocal_supersession(
@@ -284,18 +378,17 @@ def staged_authority_bytes(
     """Read one stage-zero authority blob with finite subprocess and byte limits."""
 
     try:
-        completed = subprocess.run(
+        completed = run_bounded_process(
             ["git", "show", f":{path.as_posix()}"],
             cwd=root,
             check=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            timeout=timeout_seconds,
+            timeout_seconds=timeout_seconds,
+            max_stdout_bytes=max_bytes,
         )
+    except AuthorityError:
+        raise
     except (subprocess.SubprocessError, OSError) as exc:
         raise AuthorityError(f"AUTHORITY_INDEX: {path}") from exc
-    if len(completed.stdout) > max_bytes or len(completed.stderr) > 64 * 1024:
-        raise AuthorityError(f"AUTHORITY_SIZE: {path}")
     try:
         completed.stdout.decode("utf-8", errors="strict")
     except UnicodeDecodeError as exc:
@@ -333,6 +426,23 @@ def main(argv: Sequence[str] | None = None) -> int:
         if not isinstance(registry, Mapping):
             raise AuthorityError("REGISTRY_ROOT: expected an object")
         validate_registry_authority(registry)
+        seen_templates: set[str] = set()
+        for profile in registry["profiles"]:
+            template = profile.get("template")
+            if not isinstance(template, str) or template in seen_templates:
+                continue
+            seen_templates.add(template)
+            template_text = read_bounded_utf8(
+                root / PurePosixPath(template), max_bytes=1024 * 1024
+            )
+            validate_template_profile_reference(
+                template_text,
+                registry,
+                allow_router_without_profile=(
+                    profile.get("class") == "readme"
+                    or profile.get("mode") != "authored"
+                ),
+            )
     except AuthorityError as exc:
         print(f"FAIL document authority: {exc}", file=sys.stderr)
         return 1

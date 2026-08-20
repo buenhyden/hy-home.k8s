@@ -9,6 +9,7 @@ from typing import Literal, Mapping, Sequence
 
 import yaml
 
+from document_authority import AuthorityError, require_reciprocal_supersession
 from document_contracts import DocumentProfile, Registry, classify_path
 
 
@@ -200,7 +201,13 @@ def _state_diagnostic(
 ) -> LifecycleDiagnostic | None:
     if not _stateful(profile):
         return None
-    if document.state_issue is None and document.status in profile.status_domain:
+    terminal_states = (
+        tuple(state for state, _ in profile.lifecycle_domain.states)
+        if profile.lifecycle_domain is not None
+        else ()
+    )
+    allowed_states = tuple(dict.fromkeys((*profile.status_domain, *terminal_states)))
+    if document.state_issue is None and document.status in allowed_states:
         return None
     observed = (
         document.state_issue
@@ -211,7 +218,7 @@ def _state_diagnostic(
         "LIFECYCLE-STATE",
         path=document.path,
         profile=document.profile_id,
-        expected=f"{side} status in {profile.status_domain!r}",
+        expected=f"{side} status in {allowed_states!r}",
         observed=observed,
         base_mode=base_mode,
         evidence_gap="valid registry-owned lifecycle state",
@@ -941,6 +948,53 @@ def validate_transition_evidence(
     )
 
 
+def _terminal_supersession_evidence(
+    profile: DocumentProfile,
+    target: LifecycleDocument,
+    context: LifecycleEvidenceContext,
+    *,
+    base_mode: LifecycleBaseMode,
+) -> tuple[LifecycleDiagnostic, ...]:
+    """Enforce the domain-derived reciprocal rule using rendered links."""
+
+    domain = profile.lifecycle_domain
+    if domain is None or not domain.requires_reciprocal_supersession:
+        return ()
+    target_view = context.proposed_documents.get(target.path)
+    if target_view is not None:
+        for successor in target_view.relationship_links:
+            successor_view = context.proposed_documents.get(successor)
+            if successor_view is None:
+                continue
+            try:
+                require_reciprocal_supersession(
+                    source=target.path.as_posix(),
+                    successor=successor.as_posix(),
+                    source_links={"superseded_by": successor.as_posix()},
+                    successor_links={
+                        "supersedes": (
+                            target.path.as_posix()
+                            if target.path in successor_view.relationship_links
+                            else ""
+                        )
+                    },
+                )
+            except AuthorityError:
+                continue
+            return ()
+    return (
+        _diagnostic(
+            "LIFECYCLE-EVIDENCE",
+            path=target.path,
+            profile=target.profile_id,
+            expected="one reciprocal supersedes/superseded_by relationship",
+            observed=f"terminal supersession to {target.status}",
+            base_mode=base_mode,
+            evidence_gap="registry lifecycle domain requires reciprocal supersession",
+        ),
+    )
+
+
 def compare_lifecycle(
     registry: Registry,
     base_documents: Mapping[PurePosixPath, LifecycleDocument],
@@ -1044,9 +1098,17 @@ def compare_lifecycle(
             continue
         if base.status == proposed.status or not _stateful(profile):
             continue
-        allowed_edges = {
+        transition_edges = {
             (edge.from_state, edge.to_state) for edge in profile.lifecycle.edges
         }
+        terminal_edges = (
+            set(profile.lifecycle_domain.transitions)
+            if profile.lifecycle_domain is not None
+            else set()
+        )
+        allowed_edges = terminal_edges | (
+            transition_edges if registry.route_state == "transition" else set()
+        )
         if (base.status, proposed.status) not in allowed_edges:
             diagnostics.append(
                 _diagnostic(
@@ -1059,7 +1121,10 @@ def compare_lifecycle(
                     evidence_gap="declared forward lifecycle edge",
                 )
             )
-        elif evidence_context is not None:
+        elif evidence_context is not None and (
+            base.status,
+            proposed.status,
+        ) in transition_edges:
             assert base.status is not None and proposed.status is not None
             diagnostics.extend(
                 validate_transition_evidence(
@@ -1067,6 +1132,19 @@ def compare_lifecycle(
                     proposed,
                     base.status,
                     proposed.status,
+                    evidence_context,
+                    base_mode=base_mode,
+                )
+            )
+        elif (
+            evidence_context is not None
+            and proposed.status == "superseded"
+            and (base.status, proposed.status) in terminal_edges
+        ):
+            diagnostics.extend(
+                _terminal_supersession_evidence(
+                    profile,
+                    proposed,
                     evidence_context,
                     base_mode=base_mode,
                 )

@@ -5,7 +5,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 ROOT_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd -P)"
 OUTPUT_PATH="$ROOT_DIR/docs/90.references/llm-wiki/wiki-index.md"
-REGISTRY_PATH="$ROOT_DIR/docs/99.templates/support/document-profiles.json"
+REGISTRY_PATH="$ROOT_DIR/docs/99.templates/registry.json"
+TRANSITION_REGISTRY_PATH="$ROOT_DIR/docs/99.templates/support/document-profiles.json"
 TAXONOMY_MANIFEST_PATH="$ROOT_DIR/scripts/document-taxonomy-migration.json"
 ARCHIVE_MIGRATION_PATH="$ROOT_DIR/docs/98.archive/migrations/mig-0001-sdlc-taxonomy-convergence.md"
 CHECK_MODE=false
@@ -156,10 +157,12 @@ transition_overlay_matches() {
 
   [[ "$(blob_oid "$OUTPUT_PATH")" == "$TRANSITION_BASE_OUTPUT_OID" ]] || return 1
   [[ "$(blob_oid "$generated")" == "$TRANSITION_CURRENT_OUTPUT_OID" ]] || return 1
-  [[ "$(blob_oid "$REGISTRY_PATH")" == "$TRANSITION_REGISTRY_OID" ]] || return 1
+  grep -Fqx '  "profiles": [' "$REGISTRY_PATH" || return 1
+  grep -Fqx '    "lifecycleDomains": [' "$REGISTRY_PATH" || return 1
+  [[ "$(blob_oid "$TRANSITION_REGISTRY_PATH")" == "$TRANSITION_REGISTRY_OID" ]] || return 1
   [[ "$(blob_oid "$TAXONOMY_MANIFEST_PATH")" == "$TRANSITION_MANIFEST_OID" ]] || return 1
   [[ "$(blob_oid "$ARCHIVE_MIGRATION_PATH")" == "$TRANSITION_MIGRATION_OID" ]] || return 1
-  grep -Fqx '  "routeState": "transition",' "$REGISTRY_PATH" || return 1
+  grep -Fqx '  "routeState": "transition",' "$TRANSITION_REGISTRY_PATH" || return 1
   grep -Fqx '  "state": "transition",' "$TAXONOMY_MANIFEST_PATH" || return 1
   awk -v base="$TRANSITION_BASE_ROW" -v current="$TRANSITION_CURRENT_ROW" '
     BEGIN { replacements = 0 }

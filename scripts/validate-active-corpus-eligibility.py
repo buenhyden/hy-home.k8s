@@ -29,7 +29,7 @@ EVIDENCE_COMMIT = "e251915f216ef7cf3c7eb9945cdab6cb429ab6e6"  # pragma: allowlis
 ACTIVATION_COMMIT = "9e2ec37f483145b322cf68a2f6e697dcf4fb80e1"  # pragma: allowlist secret
 CENSUS_PATH = "docs/90.references/data/active-corpus-retention-census.json"
 LEDGER_PATH = "docs/90.references/data/active-corpus-eligibility-ledger.json"
-PROFILE_PATH = "docs/99.templates/support/document-profiles.json"
+RETIRED_PROFILE_PATH = "docs/99.templates/support/document-profiles.json"
 MIGRATION_LEDGER_PATH = "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md"
 ARCHIVE_INDEX_ANCHOR = "docs/98.archive/README.md#document-index"
 PLAN_ROOT = "docs/04.execution/plans"
@@ -137,7 +137,7 @@ def _git_arguments_allowed(arguments: tuple[str, ...]) -> bool:
     if arguments[4] not in {CANDIDATE_COMMIT, EVIDENCE_COMMIT, ACTIVATION_COMMIT} or arguments[5] != "--":
         return False
     return arguments[6:] in {
-        (CENSUS_PATH,), (PROFILE_PATH,), (MIGRATION_LEDGER_PATH,), ("docs",),
+        (CENSUS_PATH,), (RETIRED_PROFILE_PATH,), (MIGRATION_LEDGER_PATH,), ("docs",),
         (PLAN_ROOT, TASK_ROOT),
         (f"{PLAN_ROOT}/{CONTROL_KEY}.md", f"{TASK_ROOT}/{CONTROL_KEY}.md"),
     }
@@ -551,7 +551,7 @@ def build_expected_ledger(root: str | os.PathLike[str], runner: GitRunner = _run
     for commit in (CANDIDATE_COMMIT, EVIDENCE_COMMIT, ACTIVATION_COMMIT):
         _verify_commit(repository, commit, runner)
     census = _require_mapping(_load_pinned_json(repository, EVIDENCE_COMMIT, CENSUS_PATH, runner), "ELIGIBILITY-CENSUS")
-    profile = _load_pinned_json(repository, EVIDENCE_COMMIT, PROFILE_PATH, runner)
+    profile = _load_pinned_json(repository, EVIDENCE_COMMIT, RETIRED_PROFILE_PATH, runner)
     candidates = _candidate_rows(census)
     candidate_paths = {str(row["path"]) for row in candidates}
     pair_by_path = {str(row["path"]): str(row["pairKey"]) for row in candidates}
@@ -1104,6 +1104,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     except (AssertionError, OSError, subprocess.SubprocessError):
         print("ERR ELIGIBILITY-SELF-TEST .", file=sys.stderr); return 1
     return 0
+
+
+# Terminal profile authority; the retired path above is read only from pinned
+# historical commits for the finite ACER-002 compatibility projection.
+CURRENT_PROFILE_PATH = "docs/99.templates/registry.json"
 
 
 if __name__ == "__main__":

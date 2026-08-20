@@ -1686,6 +1686,14 @@ def _minimal_fixture_registry() -> dict[str, Any]:
         },
         "documentContracts": _fixture_document_contracts(),
         "programLineage": {
+            "lifecycleDomains": [
+                {
+                    "family": "fixture",
+                    "profileIds": [],
+                    "states": {"draft": "mutable", "active": "current"},
+                    "transitions": [["draft", "active"]],
+                }
+            ],
             "programs": [
                 {
                     "prd": "0005",
@@ -1805,6 +1813,14 @@ def _convert_legacy_v6_fixture(raw_registry: dict[str, Any]) -> dict[str, Any]:
     converted["$id"] = "https://hy-home.k8s/schemas/document-profiles-8.schema.json"
     converted["schemaVersion"] = 8
     converted["documentContracts"] = _fixture_document_contracts()
+    converted["programLineage"]["lifecycleDomains"] = [
+        {
+            "family": "fixture",
+            "profileIds": [],
+            "states": {"draft": "mutable", "active": "current"},
+            "transitions": [["draft", "active"]],
+        }
+    ]
     for program in converted["programLineage"]["programs"]:
         program["prd"] = program["prd"].zfill(4)
         program["ad"] = program["ad"].zfill(4)

@@ -38,6 +38,7 @@ from archive_cutover import (  # noqa: E402
     EXPECTED_ARCHIVE_PATHS,
 )
 import archive_cutover_manifest as CUTOVER_MANIFEST  # noqa: E402
+import document_contracts  # noqa: E402
 from archive_recovery import (  # noqa: E402
     WORK107_LEGACY_ARCHIVE_COMMIT,
     WORK107_MIGRATION_PATH,
@@ -46,7 +47,13 @@ from archive_recovery import (  # noqa: E402
     render_work107_stable_envelope,
 )
 from document_contracts import load_registry  # noqa: E402
-from document_lifecycle import LifecycleDocument  # noqa: E402
+from document_lifecycle import (  # noqa: E402
+    LifecycleDocument,
+    LifecycleEvidenceContext,
+    LifecycleEvidenceDocument,
+    LifecycleRename,
+    compare_lifecycle,
+)
 
 
 LEGACY_PROFILE = "content/archive-tombstone"
@@ -673,23 +680,101 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
         specification.loader.exec_module(module)
         return module
 
-    def test_illegal_profile_transition_is_rejected(self):
+    def test_real_registry_edge_list_accepts_legal_and_rejects_illegal(self):
         authority = self._authority()
-        lifecycle = {
-            "states": {
-                "draft": "mutable",
-                "active": "current",
-                "retired": "terminal",
-            },
-            "transitions": {
-                "draft": ["active"],
-                "active": ["retired"],
-                "retired": [],
-            },
-        }
+        registry = json.loads((ROOT / authority.REGISTRY_PATH).read_text(encoding="utf-8"))
+        lifecycle = next(
+            domain
+            for domain in registry["programLineage"]["lifecycleDomains"]
+            if domain["family"] == "requirement-architecture"
+        )
+        self.assertTrue(
+            authority.is_lifecycle_transition_allowed(lifecycle, "draft", "active")
+        )
         self.assertFalse(
             authority.is_lifecycle_transition_allowed(lifecycle, "draft", "retired")
         )
+
+    def test_loaded_registry_types_terminal_domains_and_owns_transition_projection(self):
+        registry = load_registry(ROOT)
+        self.assertEqual(len(registry.lifecycle_domains), 12)
+        requirement = next(
+            domain
+            for domain in registry.lifecycle_domains
+            if domain.family == "requirement-architecture"
+        )
+        self.assertEqual(requirement.validation_class("active"), "current")
+        self.assertTrue(requirement.allows("draft", "active"))
+        self.assertFalse(requirement.allows("draft", "retired"))
+        route_contract = json.loads(
+            (ROOT / "docs/99.templates/contracts/route-contract.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertNotIn(
+            "lifecycleContracts", route_contract["documentContracts"]
+        )
+
+    def test_terminal_supersession_uses_reciprocal_production_evidence(self):
+        registry = load_registry(ROOT)
+        source = PurePosixPath("docs/03.specs/9998-source/spec.md")
+        successor = PurePosixPath("docs/03.specs/9999-successor/spec.md")
+        base = {
+            source: LifecycleDocument(source, "sdlc/spec", "active"),
+            successor: LifecycleDocument(successor, "sdlc/spec", "active"),
+        }
+        proposed = {
+            source: LifecycleDocument(source, "sdlc/spec", "superseded"),
+            successor: base[successor],
+        }
+
+        def context(*, reciprocal: bool) -> LifecycleEvidenceContext:
+            source_view = LifecycleEvidenceDocument(
+                proposed[source],
+                (successor,),
+                (successor,),
+                (),
+                (),
+                True,
+                True,
+                False,
+            )
+            successor_links = (source,) if reciprocal else ()
+            successor_view = LifecycleEvidenceDocument(
+                proposed[successor],
+                successor_links,
+                successor_links,
+                (),
+                (),
+                True,
+                True,
+                False,
+            )
+            return LifecycleEvidenceContext(
+                base_documents=base,
+                proposed_documents={source: source_view, successor: successor_view},
+                changed_paths=frozenset({source}),
+                status_changed_paths=frozenset({source}),
+                body_changed_paths=frozenset({source}),
+                created_paths=frozenset(),
+            )
+
+        missing = compare_lifecycle(
+            registry,
+            base,
+            proposed,
+            base_mode="staged",
+            evidence_context=context(reciprocal=False),
+        )
+        self.assertIn("LIFECYCLE-EVIDENCE", [item.rule_id for item in missing])
+        exact = compare_lifecycle(
+            registry,
+            base,
+            proposed,
+            base_mode="staged",
+            evidence_context=context(reciprocal=True),
+        )
+        self.assertEqual(exact, ())
 
     def test_mutable_supersession_requires_reciprocal_links(self):
         authority = self._authority()
@@ -723,6 +808,47 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
                     root,
                     PurePosixPath("registry.json"),
                     timeout_seconds=2,
+                )
+
+    def test_git_backed_readers_are_stream_capped_and_timed(self):
+        authority = self._authority()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+            path = root / "registry.json"
+            path.write_bytes(b"x" * 128)
+            subprocess.run(["git", "add", "registry.json"], cwd=root, check=True)
+            with self.assertRaisesRegex(authority.AuthorityError, "AUTHORITY_SIZE"):
+                authority.staged_authority_bytes(
+                    root, PurePosixPath("registry.json"), max_bytes=16
+                )
+            with self.assertRaisesRegex(authority.AuthorityError, "AUTHORITY_TIMEOUT"):
+                authority.staged_authority_bytes(
+                    root,
+                    PurePosixPath("registry.json"),
+                    timeout_seconds=1e-9,
+                )
+            with self.assertRaisesRegex(
+                document_contracts.AuthorityError, "AUTHORITY_SIZE"
+            ):
+                document_contracts._run_git(
+                    root, ["show", ":registry.json"], max_stdout_bytes=16
+                )
+            with self.assertRaisesRegex(
+                document_contracts.AuthorityError, "AUTHORITY_TIMEOUT"
+            ):
+                document_contracts._run_git(
+                    root,
+                    ["show", ":registry.json"],
+                    timeout_seconds=1e-9,
+                )
+            with self.assertRaisesRegex(
+                document_contracts.AuthorityError, "AUTHORITY_TIMEOUT"
+            ):
+                document_contracts._is_ignored(
+                    root,
+                    PurePosixPath("registry.json"),
+                    timeout_seconds=1e-9,
                 )
 
     def test_wp004a_current_owner_activation_is_finite_and_atomic(self):
@@ -768,6 +894,86 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
             ),
             frozenset(),
         )
+
+
+class IndependentLifecycleFixtureTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.fixture = json.loads((ROOT / VALIDATOR.FIXTURE_PATH).read_text(encoding="utf-8"))
+        cls.registry = load_registry(ROOT)
+
+    def test_forward_comparison_and_admission_cases_are_independent(self):
+        for contract in self.fixture["forwardContracts"]:
+            for profile_id in contract["profiles"]:
+                for from_state, to_state in contract["edges"]:
+                    with self.subTest(
+                        group="forward",
+                        contract=contract["name"],
+                        profile=profile_id,
+                        edge=(from_state, to_state),
+                    ):
+                        path = PurePosixPath("docs/__lifecycle__/fixture.md")
+                        diagnostics = compare_lifecycle(
+                            self.registry,
+                            {path: LifecycleDocument(path, profile_id, from_state)},
+                            {path: LifecycleDocument(path, profile_id, to_state)},
+                            base_mode="explicit-ref",
+                        )
+                        self.assertEqual(diagnostics, ())
+
+        for case in self.fixture["comparisonCases"]:
+            with self.subTest(group="comparison", case=case["name"]):
+                base = LifecycleDocument(
+                    PurePosixPath(case["base"][0]), case["base"][1], case["base"][2]
+                )
+                proposed = LifecycleDocument(
+                    PurePosixPath(case["proposed"][0]),
+                    case["proposed"][1],
+                    case["proposed"][2],
+                )
+                actual = compare_lifecycle(
+                    self.registry,
+                    {base.path: base},
+                    {proposed.path: proposed},
+                    base_mode="explicit-ref",
+                )
+                self.assertEqual(
+                    [item.rule_id for item in actual], case["expectedRuleIds"]
+                )
+
+        for case in self.fixture["admissionCases"]:
+            with self.subTest(group="admission", case=case["name"]):
+                documents = [
+                    LifecycleDocument(PurePosixPath(item[0]), item[1], item[2])
+                    for item in case["documents"]
+                ]
+                operation = case.get("operation", "create")
+                if operation == "create":
+                    actual = compare_lifecycle(
+                        self.registry,
+                        {},
+                        {item.path: item for item in documents},
+                        base_mode="staged",
+                    )
+                elif operation == "delete":
+                    actual = compare_lifecycle(
+                        self.registry,
+                        {item.path: item for item in documents},
+                        {},
+                        base_mode="staged",
+                    )
+                else:
+                    base, proposed = documents
+                    actual = compare_lifecycle(
+                        self.registry,
+                        {base.path: base},
+                        {proposed.path: proposed},
+                        renames=(LifecycleRename(base.path, proposed.path),),
+                        base_mode="staged",
+                    )
+                self.assertEqual(
+                    [item.rule_id for item in actual], case["expectedRuleIds"]
+                )
 
 
 class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):

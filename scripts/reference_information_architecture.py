@@ -43,7 +43,7 @@ CANONICAL_SCHEMA_PATH = Path(
 DATA_ASSET_ROOT = Path("docs/90.references/data")
 DATA_ASSET_README = DATA_ASSET_ROOT / "README.md"
 REFERENCE_ROOT = Path("docs/90.references")
-REGISTRY_PATH = Path("docs/99.templates/support/document-profiles.json")
+TRANSITION_CURRENT_PACK_PROJECTION_PATH = REGISTRY_PATH = Path("docs/99.templates/support/document-profiles.json")
 DOCUMENT_TAXONOMY_MANIFEST_PATH = Path("scripts/document-taxonomy-migration.json")
 ARCHIVE_MIGRATION_PATH = Path(
     "docs/98.archive/migrations/mig-0001-sdlc-taxonomy-convergence.md"
@@ -6517,3 +6517,9 @@ def run_self_test() -> None:
         except _GitError:
             continue
         raise AssertionError("hostile blob size was accepted")
+
+
+# RIA's frozen Current-pack baselines predate the root registry. The transition
+# path above is a finite reference-pack projection only; document profile and
+# lifecycle authority remains the terminal root registry. WP-007/WP-009 retire it.
+DOCUMENT_PROFILE_AUTHORITY_PATH = Path("docs/99.templates/registry.json")

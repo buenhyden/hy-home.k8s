@@ -20,6 +20,7 @@ from document_authority import (
     REGISTRY_MAX_BYTES,
     load_bounded_json,
     read_bounded_utf8,
+    run_bounded_process,
     validate_registry_authority,
 )
 
@@ -262,6 +263,26 @@ class LifecycleContract:
 
 
 @dataclass(frozen=True)
+class LifecycleDomain:
+    family: str
+    profile_ids: tuple[str, ...]
+    states: tuple[tuple[str, Literal["mutable", "current", "terminal"]], ...]
+    transitions: frozenset[tuple[str, str]]
+
+    def validation_class(
+        self, state: str
+    ) -> Literal["mutable", "current", "terminal"] | None:
+        return dict(self.states).get(state)
+
+    def allows(self, from_state: str, to_state: str) -> bool:
+        return (from_state, to_state) in self.transitions
+
+    @property
+    def requires_reciprocal_supersession(self) -> bool:
+        return any(target == "superseded" for _, target in self.transitions)
+
+
+@dataclass(frozen=True)
 class ProfileEdge:
     profile_id: str
     from_state: str
@@ -324,6 +345,7 @@ class DocumentProfile:
     role_decision: RoleDecision
     admission: AdmissionPolicy
     lifecycle: LifecycleContract
+    lifecycle_domain: LifecycleDomain | None
 
 
 @dataclass(frozen=True)
@@ -407,6 +429,7 @@ class Registry:
     program_lineage: tuple[ProgramLineage, ...]
     standalone_executions: tuple[StandaloneExecution, ...]
     evidence_predicates: tuple[EvidencePredicate, ...]
+    lifecycle_domains: tuple[LifecycleDomain, ...]
 
 
 @dataclass(frozen=True)
@@ -602,14 +625,19 @@ def _parse_ls_files_stage_z(raw: bytes) -> tuple[_GitEntry, ...]:
     return tuple(entries)
 
 
-def _run_git(root: Path, arguments: Sequence[str]) -> bytes:
-    completed = subprocess.run(
+def _run_git(
+    root: Path,
+    arguments: Sequence[str],
+    *,
+    timeout_seconds: float = GIT_TIMEOUT_SECONDS,
+    max_stdout_bytes: int = DOCUMENT_TEXT_MAX_BYTES,
+) -> bytes:
+    completed = run_bounded_process(
         ["git", *arguments],
         cwd=root,
         check=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        timeout=GIT_TIMEOUT_SECONDS,
+        timeout_seconds=timeout_seconds,
+        max_stdout_bytes=max_stdout_bytes,
     )
     return completed.stdout
 
@@ -638,13 +666,18 @@ def _sorted_paths(paths: set[PurePosixPath]) -> tuple[PurePosixPath, ...]:
     return tuple(sorted(paths, key=lambda item: item.as_posix()))
 
 
-def _is_ignored(root: Path, path: PurePosixPath) -> bool:
-    completed = subprocess.run(
+def _is_ignored(
+    root: Path,
+    path: PurePosixPath,
+    *,
+    timeout_seconds: float = GIT_TIMEOUT_SECONDS,
+) -> bool:
+    completed = run_bounded_process(
         ["git", "check-ignore", "--quiet", "--", path.as_posix()],
         cwd=root,
         check=False,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.PIPE,
+        timeout_seconds=timeout_seconds,
+        max_stdout_bytes=0,
     )
     if completed.returncode == 0:
         return True
@@ -1069,6 +1102,7 @@ def _profile_from_mapping(
     role_decision: RoleDecision,
     admission: AdmissionPolicy,
     lifecycle: LifecycleContract,
+    lifecycle_domain: LifecycleDomain | None,
 ) -> DocumentProfile:
     template = raw["template"]
     routes = tuple(
@@ -1107,6 +1141,7 @@ def _profile_from_mapping(
         role_decision=role_decision,
         admission=admission,
         lifecycle=lifecycle,
+        lifecycle_domain=lifecycle_domain,
     )
 
 
@@ -2749,6 +2784,30 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
                 )
             )
 
+    raw_domains = raw_registry["programLineage"]["lifecycleDomains"]
+    lifecycle_domains = tuple(
+        LifecycleDomain(
+            family=domain["family"],
+            profile_ids=tuple(domain["profileIds"]),
+            states=tuple(domain["states"].items()),
+            transitions=frozenset(tuple(edge) for edge in domain["transitions"]),
+        )
+        for domain in raw_domains
+    )
+    domains_by_profile: dict[str, LifecycleDomain] = {}
+    for domain in lifecycle_domains:
+        for profile_id in domain.profile_ids:
+            if profile_id in domains_by_profile:
+                diagnostics.append(
+                    _diagnostic(
+                        "REGISTRY_LIFECYCLE_DOMAIN",
+                        profile=profile_id,
+                        expected="at most one terminal lifecycle domain per profile",
+                        actual="duplicate terminal domain assignment",
+                    )
+                )
+            domains_by_profile[profile_id] = domain
+
     raw_programs = raw_registry["programLineage"]["programs"]
     raw_standalones = raw_registry.get("standaloneExecutions", [])
     diagnostics.extend(_program_structure_diagnostics(raw_programs))
@@ -2780,6 +2839,7 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
                 role_decision=roles_by_profile[profile["id"]],
                 admission=admissions_by_profile[profile["id"]],
                 lifecycle=lifecycles_by_profile[profile["id"]],
+                lifecycle_domain=domains_by_profile.get(profile["id"]),
             )
             for profile in raw_profiles
         ),
@@ -2799,6 +2859,7 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
             _standalone_execution_from_mapping(item) for item in raw_standalones
         ),
         evidence_predicates=evidence_predicates,
+        lifecycle_domains=lifecycle_domains,
     )
 
     current_owner_diagnostics: list[Diagnostic] = []
@@ -3093,12 +3154,12 @@ def _internal_profile_form(profile: Mapping[str, Any]) -> dict[str, Any]:
         "mode": profile["mode"],
         "routes": _internal_routes(profile["pathPattern"]),
         "frontmatter": profile["requiredFrontmatter"],
-        "statusDomain": profile["lifecycle"]["statusDomain"],
+        "statusDomain": profile.get("lifecycle", {}).get("statusDomain", []),
         "headings": profile["requiredSections"],
         "template": profile["template"],
         "sourceProfileIds": profile["relationships"]["sourceProfileIds"],
         "placeholderPolicy": profile["placeholderPolicy"],
-        "appendContract": profile["lifecycle"]["appendContract"],
+        "appendContract": profile.get("lifecycle", {}).get("appendContract"),
         "bodyContract": profile["relationships"]["bodyContract"],
     }
 
@@ -3132,11 +3193,15 @@ def load_internal_payload(root: Path) -> dict[str, Any]:
     for key, value in routes.items():
         if key not in {"$schema", "$id", "schemaVersion"}:
             payload[key] = value
+    payload["documentContracts"]["lifecycleContracts"] = registry[
+        "programLineage"
+    ]["transitionLifecycleContracts"]
     payload["profiles"] = [
         _internal_profile_form(profile) for profile in registry["profiles"]
     ]
     payload["programLineage"] = {
-        "programs": registry["programLineage"]["programs"]
+        "lifecycleDomains": registry["programLineage"]["lifecycleDomains"],
+        "programs": registry["programLineage"]["programs"],
     }
     if "standaloneExecutions" in registry:
         payload["standaloneExecutions"] = registry["standaloneExecutions"]

@@ -6,12 +6,15 @@ import importlib.util
 import io
 import json
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path, PurePosixPath
 from unittest import mock
+
+from jsonschema import Draft202012Validator
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
@@ -325,9 +328,39 @@ class DocumentAuthorityFoundationTests(unittest.TestCase):
                 registry,
             )
 
+    def test_production_authority_scans_mutated_real_template(self) -> None:
+        authority = load_document_authority()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            registry_path = root / authority.REGISTRY_PATH
+            registry_path.parent.mkdir(parents=True)
+            shutil.copy2(
+                REPOSITORY_ROOT / authority.REGISTRY_PATH,
+                registry_path,
+            )
+            shutil.copytree(
+                STAGE99_TEMPLATES_ROOT,
+                root / "docs/99.templates/templates",
+            )
+            template = (
+                root
+                / "docs/99.templates/templates/sdlc/specs/spec.template.md"
+            )
+            template.write_text(
+                "<!-- destination: docs/03.specs/9999-example/spec.md -->\n"
+                + template.read_text(encoding="utf-8"),
+                encoding="utf-8",
+            )
+            stderr = io.StringIO()
+            with contextlib.redirect_stderr(stderr):
+                result = authority.main(["--root", str(root)])
+            self.assertEqual(result, 1)
+            self.assertIn("TEMPLATE_DESTINATION", stderr.getvalue())
+
     def test_touched_lifecycle_validator_has_no_production_self_test_switch(self) -> None:
         source = VALIDATOR_PATHS["lifecycle"].read_text(encoding="utf-8")
         self.assertNotIn('add_argument("--self-test"', source)
+        self.assertNotIn("def _run_self_test(", source)
 
     def test_registry_reader_is_bounded_and_strict_utf8(self) -> None:
         authority = load_document_authority()
@@ -339,6 +372,54 @@ class DocumentAuthorityFoundationTests(unittest.TestCase):
             candidate.write_bytes(b"x" * 17)
             with self.assertRaisesRegex(authority.AuthorityError, "AUTHORITY_SIZE"):
                 authority.read_bounded_utf8(candidate, max_bytes=16)
+
+    def test_router_profiles_omit_artifact_and_lifecycle_fields(self) -> None:
+        registry = json.loads(
+            (REPOSITORY_ROOT / "docs/99.templates/registry.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        schema = json.loads(
+            (
+                REPOSITORY_ROOT
+                / "docs/99.templates/contracts/document-profile.schema.json"
+            ).read_text(encoding="utf-8")
+        )
+        errors = sorted(
+            Draft202012Validator(schema).iter_errors(registry),
+            key=lambda error: list(error.absolute_path),
+        )
+        self.assertEqual(errors, [])
+        routers = [
+            profile for profile in registry["profiles"] if profile["class"] == "readme"
+        ]
+        self.assertTrue(routers)
+        for profile in routers:
+            with self.subTest(profile=profile["id"]):
+                self.assertNotIn("artifactIdPattern", profile)
+                self.assertNotIn("lifecycle", profile)
+
+    def test_current_classifiers_use_root_registry_only(self) -> None:
+        retired = "docs/99.templates/support/document-profiles.json"
+        active_sources = {
+            "hook": REPOSITORY_ROOT
+            / "docs/00.agent-governance/hooks/k8s-pre-edit.sh",
+            "wiki": SCRIPTS_ROOT / "generate-llm-wiki-index.sh",
+            "ria": SCRIPTS_ROOT / "reference_information_architecture.py",
+            "eligibility": SCRIPTS_ROOT / "validate-active-corpus-eligibility.py",
+        }
+        root_registry = "docs/99.templates/registry.json"
+        for name, path in active_sources.items():
+            source = path.read_text(encoding="utf-8")
+            with self.subTest(source=name):
+                self.assertIn(root_registry, source)
+                for line in source.splitlines():
+                    if retired not in line:
+                        continue
+                    self.assertRegex(
+                        line,
+                        r"(?:RETIRED|TRANSITION|HISTORICAL).*document-profiles\.json",
+                    )
 
 
 class DocumentStrictCutoverTests(unittest.TestCase):

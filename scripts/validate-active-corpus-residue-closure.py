@@ -179,10 +179,10 @@ MERGE_REGISTRY_BLOB = (
 # the combined file as the current authority, so each carries its own admitted
 # state rather than sharing the retired file's allowlist.
 PROFILE_REGISTRY_BLOB = (
-    "0ed2033bf61a5ffec0608b91bfa95ddc510b77e9"  # pragma: allowlist secret
+    "efcd0c1fa03d21a6b1bdbb17e4ceb4c057114862"  # pragma: allowlist secret
 )
 ROUTE_CONTRACT_BLOB = (
-    "8ae4cabcbd67dc9e7cb500989b6431e0e7e2b1af"  # pragma: allowlist secret
+    "07683cbe76253834933deb6ae085baa9e198a84c"  # pragma: allowlist secret
 )
 # WP-004A activates the terminal profile lifecycle catalog and its two current
 # human owner routes while the remaining corpus stays in transition state.
