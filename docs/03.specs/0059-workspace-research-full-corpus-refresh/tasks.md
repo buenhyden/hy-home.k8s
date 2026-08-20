@@ -317,16 +317,16 @@ by `WRFC-012`.
 | [VAL-WRFC-001](plan.md) | Done    | 36 rows derived from the pack; zero duplicates, zero gaps, union exact  |
 | [VAL-WRFC-002](plan.md) | Done    | External and workspace results recorded separately for all 36 rows      |
 | [VAL-WRFC-003](plan.md) | Done    | 24 retained rows each carry exactly one blocking class                  |
-| [VAL-WRFC-004](plan.md) | Pending | Done                                                                    | 89 source IDs and 131 claim IDs unique and registered; none renumbered 
-| [VAL-WRFC-005](plan.md) | Pending | Done                                                                    | Pack file count held at fourteen; every dated section added as H3 
+| [VAL-WRFC-004](plan.md) | Pending | Done                                                                    | 89 source IDs and 131 claim IDs unique and registered; none renumbered |
+| [VAL-WRFC-005](plan.md) | Pending | Done                                                                    | Pack file count held at fourteen; every dated section added as H3 |
 | [VAL-WRFC-006](plan.md) | Done    | Zero `unreachable` rows; two HTTP 403 hosts resolved by search fallback |
-| [VAL-WRFC-007](plan.md) | Pending | Done                                                                    | Ten scopes re-derived; the five unowned canonical paths are unchanged 
-| [VAL-WRFC-008](plan.md) | Pending | Done                                                                    | Four counts agree; the collection README was already accurate 
-| [VAL-WRFC-009](plan.md) | Pending | Done                                                                    | Reconciliation was the last commit changing research pack content 
+| [VAL-WRFC-007](plan.md) | Pending | Done                                                                    | Ten scopes re-derived; the five unowned canonical paths are unchanged |
+| [VAL-WRFC-008](plan.md) | Pending | Done                                                                    | Four counts agree; the collection README was already accurate |
+| [VAL-WRFC-009](plan.md) | Pending | Done                                                                    | Reconciliation was the last commit changing research pack content |
 | [VAL-WRFC-010](plan.md) | Done    | Consumer enumeration recorded; contract corrected, no tracked deletion  |
-| [VAL-WRFC-011](plan.md) | Pending | Done                                                                    | Ledger 816,508 to 841,164 bytes; unchanged after commit; under 1 MB 
-| [VAL-WRFC-012](plan.md) | Pending | Done                                                                    | Eight lanes green plus clean diff checks; no regression against baseline 
-| [VAL-WRFC-013](plan.md) | Pending | Partial                                                                 | One commit per logical unit; branch merged; one worktree removal blocked 
+| [VAL-WRFC-011](plan.md) | Pending | Done                                                                    | Ledger 816,508 to 841,164 bytes; unchanged after commit; under 1 MB |
+| [VAL-WRFC-012](plan.md) | Pending | Done                                                                    | Eight lanes green plus clean diff checks; no regression against baseline |
+| [VAL-WRFC-013](plan.md) | Pending | Partial                                                                 | One commit per logical unit; branch merged; one worktree removal blocked |
 
 ### Related Documents
 
