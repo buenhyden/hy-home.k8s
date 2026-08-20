@@ -194,6 +194,7 @@
     "paths": [
       "docs/00.agent-governance/harness-catalog.md",
       "docs/00.agent-governance/model-policy.md",
+      "docs/00.agent-governance/policies/document-lifecycle.md",
       "docs/00.agent-governance/providers/claude.md",
       "docs/00.agent-governance/providers/codex.md",
       "docs/00.agent-governance/providers/gemini.md",
@@ -217,6 +218,7 @@
       "docs/00.agent-governance/scopes/product.md",
       "docs/00.agent-governance/scopes/qa.md",
       "docs/00.agent-governance/scopes/security.md",
+      "docs/00.agent-governance/sdlc.md",
       "docs/00.agent-governance/subagent-protocol.md"
     ]
   },

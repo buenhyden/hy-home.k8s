@@ -5,6 +5,8 @@
 ## Overview
 
 This directory is the policy SSoT for local agent execution in `hy-home.k8s`.
+It also routes the human SDLC flow and lifecycle policy without duplicating
+the Stage 99 machine registry.
 It keeps gateway files thin by hosting durable rules, execution checklists,
 scope routing, provider notes, reusable memory, shared hook scripts, model
 policy, and the canonical runtime catalog used by Claude-native
@@ -31,6 +33,7 @@ This README is primarily for:
 - Canonical runtime roster and subagent protocol
 - Reusable operational memory entries
 - Documentation language, template routing, and drift garbage-collection policy
+- Human SDLC flow and document-lifecycle policy
 
 ### Out of Scope
 
@@ -61,6 +64,7 @@ status, uniqueness, and order.
 | --- | --- |
 | [`harness-catalog.md`](harness-catalog.md) | `active` |
 | [`model-policy.md`](model-policy.md) | `active` |
+| [`document-lifecycle.md`](policies/document-lifecycle.md) | `active` |
 | [`claude.md`](providers/claude.md) | `active` |
 | [`codex.md`](providers/codex.md) | `active` |
 | [`gemini.md`](providers/gemini.md) | `active` |
@@ -84,6 +88,7 @@ status, uniqueness, and order.
 | [`product.md`](scopes/product.md) | `active` |
 | [`qa.md`](scopes/qa.md) | `active` |
 | [`security.md`](scopes/security.md) | `active` |
+| [`sdlc.md`](sdlc.md) | `active` |
 | [`subagent-protocol.md`](subagent-protocol.md) | `active` |
 
 ### Directory Map
@@ -95,6 +100,7 @@ Key folders in this area:
 - `providers/`: provider-specific notes
 - `hooks/`: shared lifecycle/edit hook scripts invoked by provider wiring
 - `memory/`: agent progress ledger and reusable operational lessons
+- `policies/`: lifecycle and SDLC norms that apply across document families
 
 ```text
 docs/00.agent-governance/
@@ -103,6 +109,8 @@ docs/00.agent-governance/
 ├── providers/          # Provider-specific notes for Claude, Gemini, and gateways
 ├── hooks/              # Shared lifecycle/edit hook scripts reused by providers
 ├── memory/             # Reusable lessons and operational findings
+├── policies/           # Human lifecycle and SDLC norms
+├── sdlc.md             # Requirements-to-operations flow
 ├── harness-catalog.md  # Canonical runtime roster for local agents and skills
 ├── model-policy.md     # Cross-provider model tier and effort policy
 ├── subagent-protocol.md
@@ -136,6 +144,8 @@ Links in this README are relative to `docs/00.agent-governance/`.
 - [Preflight Checklist](rules/preflight-checklist.md)
 - [Postflight Checklist](rules/postflight-checklist.md)
 - [Document Authoring Policy](rules/document-authoring.md)
+- [SDLC Flow](sdlc.md)
+- [Document Lifecycle Policy](policies/document-lifecycle.md)
 - [Local Harness Catalog](harness-catalog.md)
 - [Subagent Protocol](subagent-protocol.md)
 - [Codex Provider Notes](providers/codex.md)

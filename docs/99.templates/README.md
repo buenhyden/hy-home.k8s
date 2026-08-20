@@ -7,9 +7,10 @@
 
 ## Overview
 
-이 경로는 문서 작성에 쓰는 form과 그 form을 설명하는 support contract를
-분리한다. 정확한 경로, profile, frontmatter, 상태, heading, template 연결은
-[Document Profile Registry](./support/document-profiles.json)가 단독으로 소유한다.
+이 경로는 문서 작성에 쓰는 form과 그 form을 설명하는 전환기 support prose를
+분리한다. 정확한 경로, profile, frontmatter, 상태, heading, lifecycle,
+relationship, template 연결은
+[Document Profile Registry](./registry.json)가 단독으로 소유한다.
 README는 해당 machine contract를 복제하지 않고 사람이 올바른 소유자를 찾도록
 안내한다.
 
@@ -19,8 +20,8 @@ README는 해당 machine contract를 복제하지 않고 사람이 올바른 소
 
 | Surface | Role | Canonical owner |
 | --- | --- | --- |
-| Machine contract | 경로를 정확히 하나의 profile과 form으로 분류하고 검증한다. | [Document Profile Registry](./support/document-profiles.json) |
-| Support | 역할, 수명주기, metadata, 선택 절차, legacy 정리의 이유와 방법을 설명한다. | [`support/`](./support/README.md) |
+| Machine contract | 경로를 정확히 하나의 profile과 form으로 분류하고 lifecycle edge를 검증한다. | [Document Profile Registry](./registry.json)와 [`contracts/`](./contracts/)의 두 schema |
+| Support | 전환 기간의 rationale과 legacy 정리 배경만 설명하며 machine authority가 아니다. | [`support/`](./support/README.md) |
 | Forms | 작성자가 복사한 뒤 topic-specific 사실과 증거로 채우는 최소 구조를 제공한다. | [`templates/`](./templates/README.md) |
 | Authored documents | 요구, 결정, 명세, 실행, 운영, 참조, 보존 증거를 소유한다. | `docs/01.requirements`부터 `docs/05.operations`, `docs/90.references`, `docs/98.archive` |
 
@@ -41,8 +42,8 @@ README는 해당 machine contract를 복제하지 않고 사람이 올바른 소
 - **Operations forms**: Guide, Policy, Runbook, Incident, Postmortem의 서로 다른
   운영 증거 책임을 유지한다.
 
-현재 physical form의 전체 목록과 각각의 소유 profile은 README가 아니라 registry와
-repository quality gate에서 계산한다. `memory.template.md`와
+현재 physical form의 전체 목록과 각각의 소유 profile은 README나 support prose가
+아니라 registry와 repository quality gate에서 계산한다. `memory.template.md`와
 `progress.template.md`는 `00.agent-governance/memory/`의 서로 다른 memory와
 progress 책임을 지원한다.
 
@@ -53,12 +54,8 @@ progress 책임을 지원한다.
 ├── contracts/          # machine contracts and their schemas
 │   ├── document-profile.schema.json
 │   ├── frontmatter.schema.json
-│   ├── registry-form.schema.json
-│   ├── route-contract.json
-│   └── route-contract.schema.json
-├── support/            # rationale, procedure, cleanup
-│   ├── document-profiles.json
-│   └── *.md
+│   └── transition compatibility assets (WP-004C retirement owner)
+├── support/            # transition rationale only; never machine authority
 ├── templates/          # copyable forms only
 │   ├── common/
 │   └── sdlc/
@@ -89,6 +86,8 @@ Template 선택, form/body/frontmatter rationale은 [Document
 Contract](./support/document-contract.md)를 따르고, lifecycle·supersession·retention·archive
 및 legacy disposition은 [Document Lifecycle](./support/document-lifecycle.md)을 따른다.
 README는 frontmatter-free이며 선택된 README profile의 heading contract만 따른다.
+Template은 frontmatter의 `type` 값으로 registry profile ID를 소비하며 실제
+작성 destination path를 hardcode하지 않는다.
 
 ## Related Documents
 

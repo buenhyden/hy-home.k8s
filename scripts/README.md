@@ -49,6 +49,7 @@ scripts/
 ├── archive_recovery.py              # Private ARWB-001 exact Git-object and ArchiveEnvelope.v1 fixture capability
 ├── archive_validation.py            # Import-only ARWB-002 archive, history, authority, and immutability validation
 ├── check-secret-handling.sh          # GitOps/infrastructure/examples manifest plaintext secret pattern scan
+├── document_authority.py             # Bounded terminal Stage 99 document authority validation
 ├── document_contracts.py             # Closed registry v8 loader with archive-envelope, value, role, admission, lifecycle, evidence, lineage, inventory, and classifier projections
 ├── document_lifecycle.py             # Pure immutable base/proposed document lifecycle comparison and stable diagnostics
 ├── generate-llm-wiki-index.sh        # LLM Wiki generated Markdown index refresh/check
@@ -154,9 +155,9 @@ Shell syntax coverage는 Bash 문법 검증 범위일 뿐 보존 근거가 아�
 
 #### Python Validator Inventory
 
-The exact current inventory is 47 tracked scripts: 41 CLI entrypoints and the
-six import-only helpers `archive_cutover_manifest.py`, `archive_recovery.py`,
-`archive_validation.py`, `document_contracts.py`, `document_lifecycle.py`, and
+The exact current inventory is 49 tracked scripts: 44 CLI entrypoints and the
+five import-only helpers `archive_cutover_manifest.py`, `archive_validation.py`,
+`document_contracts.py`, `document_lifecycle.py`, and
 `reference_information_architecture.py`. Import-only helpers retain their
 existing callers and do not become duplicate CLI or semantic owners.
 

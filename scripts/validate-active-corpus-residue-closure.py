@@ -184,6 +184,14 @@ PROFILE_REGISTRY_BLOB = (
 ROUTE_CONTRACT_BLOB = (
     "8ae4cabcbd67dc9e7cb500989b6431e0e7e2b1af"  # pragma: allowlist secret
 )
+# WP-004A activates the terminal profile lifecycle catalog and its two current
+# human owner routes while the remaining corpus stays in transition state.
+WP004A_PROFILE_REGISTRY_BLOB = (
+    "2e0c5cc57fda60ba3207288e0beb0db7290df5f0"  # pragma: allowlist secret
+)
+WP004A_ROUTE_CONTRACT_BLOB = (
+    "45bd34a620f5b95551eee472c519f73cc84b18a5"  # pragma: allowlist secret
+)
 WORK105_AUTHORITY_BLOBS = {
     "docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md": (
         "b806d3ba8f7b1dbc25dee81c07c3b4ebc213d2fb",  # pragma: allowlist secret
@@ -1501,8 +1509,8 @@ def _single_file_inventory(
 
 
 REGISTRY_AUTHORITY_BLOBS = {
-    PROFILE_REGISTRY_PATH: (PROFILE_REGISTRY_BLOB,),
-    ROUTE_CONTRACT_PATH: (ROUTE_CONTRACT_BLOB,),
+    PROFILE_REGISTRY_PATH: (PROFILE_REGISTRY_BLOB, WP004A_PROFILE_REGISTRY_BLOB),
+    ROUTE_CONTRACT_PATH: (ROUTE_CONTRACT_BLOB, WP004A_ROUTE_CONTRACT_BLOB),
 }
 
 

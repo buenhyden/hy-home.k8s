@@ -17621,3 +17621,42 @@ validator, RIA's `currentPackRegistry` value, two gate phrase checks, the
   consumer naming it.
 - No live, hosted, provider-runtime, remote, secret-value, push, publish, or
   deployment evidence was collected or claimed.
+
+### 2026-08-20 - WORK-054-004A document authority foundation
+
+#### Metadata
+
+- **Date**: 2026-08-20
+- **Layer**: meta
+- **Status**: in-progress
+- **Tags**: #sdlc #document-governance #lifecycle #registry
+- **Owner**: platform
+- **Canonical Owner**: `docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks.md`
+- **Provenance**: WP-004A execution from approved Spec 0054 and ADR-0030.
+- **Sensitivity**: non-sensitive-redacted
+- **Retention / Expiry**: Retain through Spec 0054 terminal closure.
+- **Next Owner**: WP-004B — converge Requirement, Architecture, and Spec corpus routes with MIG-0004.
+
+#### Progress
+
+Activated `docs/99.templates/registry.json` as the sole Stage 99 document-profile
+machine owner while retaining the pre-WP-004 corpus behind a bounded finite
+transition projection. Added the human SDLC and lifecycle owners, explicit
+terminal lifecycle domains and validation classes, bounded strict authority
+reads, subprocess timeouts, staged-index/worktree drift rejection, and
+independent negative tests. The transitional Spec 0054 Task remains in place
+and is now `in-progress`; no corpus route, Stage 90/98 evidence, `.agents`
+authority, Release profile, or MIG-0004 mapping is part of this unit.
+
+#### Evidence
+
+The focused RED/GREEN commands, broad validation exits, exact changed paths,
+and commit identity are recorded in the bounded WP-004A task report. Repo-static
+validation does not establish hosted CI, provider runtime, remote, or live
+behavior.
+
+#### Handoff
+
+WP-004B must preserve this lifecycle catalog and bounded registry boundary
+while moving the Stage 01/02/03 corpus atomically with MIG-0004. WP-004C owns
+the later support/template convergence and transitional `tasks.md` migration.

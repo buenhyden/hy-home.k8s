@@ -95,8 +95,23 @@
       "pattern": "^[^/][^\\\\]*$"
     },
     "artifactId": {
+      "description": "Terminal identities plus the finite pre-WP-004 transition projection. New identities must use terminalArtifactId.",
+      "oneOf": [
+        {"$ref": "#/$defs/terminalArtifactId"},
+        {"$ref": "#/$defs/transitionArtifactId"}
+      ]
+    },
+    "terminalArtifactId": {
       "type": "string",
-      "pattern": "^(?:(?:REQ|PRD|SRS|AD|ADR|SPEC|AGENT-DESIGN|DATA-MODEL|TESTS|PLAN|TASK)-[0-9]{4}|IFC-[0-9]{4}-[A-Z0-9]+(?:-[A-Z0-9]+)*|(?:GUIDE|POLICY|RUNBOOK)-[0-9]{4}|(?:INC|POSTMORTEM)-[0-9]{4}-[0-9]{4}|(?:PLAN|TASK)-CHG-[0-9]{4}|MIG-[0-9]{4}|TMB-[A-Z]+(?:-[A-Z]+)*-[A-Z0-9]+(?:-[A-Z0-9]+)*)$"
+      "pattern": "^(?:(?:REQ|AD|ADR|SPEC|PLAN|GDE|POL|RUN|RES|AUD|DATA|MIG)-[0-9]{4}|TSK-[0-9]{4}-[0-9]{4}|(?:INC|POSTMORTEM)-[0-9]{4}-[0-9]{4}|TMB-[A-Z]+(?:-[A-Z]+)*-[A-Z0-9]+(?:-[A-Z0-9]+)*)$"
+    },
+    "requirementMemberId": {
+      "type": "string",
+      "pattern": "^REQ-[0-9]{4}-(?:FR|NFR|IF)-[0-9]{4}$"
+    },
+    "transitionArtifactId": {
+      "type": "string",
+      "pattern": "^(?:(?:PRD|SRS|AGENT-DESIGN|DATA-MODEL|TESTS|TASK)-[0-9]{4}|IFC-[0-9]{4}-[A-Z0-9]+(?:-[A-Z0-9]+)*|(?:GUIDE|POLICY|RUNBOOK)-[0-9]{4}|(?:PLAN|TASK)-CHG-[0-9]{4})$"
     }
   }
 }

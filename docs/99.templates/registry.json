@@ -4916,6 +4916,68 @@
     }
   ],
   "programLineage": {
+    "lifecycleDomains": [
+      {
+        "family": "requirement-architecture",
+        "states": {"draft": "mutable", "active": "current", "superseded": "terminal", "retired": "terminal", "withdrawn": "terminal"},
+        "transitions": [["draft", "active"], ["draft", "withdrawn"], ["active", "superseded"], ["active", "retired"]]
+      },
+      {
+        "family": "adr",
+        "states": {"proposed": "mutable", "accepted": "current", "rejected": "terminal", "superseded": "terminal"},
+        "transitions": [["proposed", "accepted"], ["proposed", "rejected"], ["accepted", "superseded"]]
+      },
+      {
+        "family": "spec-plan",
+        "states": {"draft": "mutable", "active": "current", "done": "terminal", "superseded": "terminal", "withdrawn": "terminal"},
+        "transitions": [["draft", "active"], ["active", "done"], ["active", "superseded"], ["active", "withdrawn"]]
+      },
+      {
+        "family": "task",
+        "states": {"queued": "mutable", "in-progress": "current", "blocked": "current", "done": "terminal", "cancelled": "terminal"},
+        "transitions": [["queued", "in-progress"], ["in-progress", "done"], ["in-progress", "cancelled"], ["in-progress", "blocked"], ["blocked", "in-progress"]]
+      },
+      {
+        "family": "governance-guide-policy-runbook",
+        "states": {"draft": "mutable", "active": "current", "superseded": "terminal", "retired": "terminal"},
+        "transitions": [["draft", "active"], ["active", "superseded"], ["active", "retired"]]
+      },
+      {
+        "family": "incident",
+        "states": {"open": "current", "mitigated": "current", "resolved": "current", "closed": "terminal"},
+        "transitions": [["open", "mitigated"], ["mitigated", "resolved"], ["resolved", "closed"]]
+      },
+      {
+        "family": "postmortem",
+        "states": {"draft": "mutable", "published": "current", "superseded": "terminal"},
+        "transitions": [["draft", "published"], ["published", "superseded"]]
+      },
+      {
+        "family": "research",
+        "states": {"draft": "mutable", "published": "current", "superseded": "terminal", "retired": "terminal"},
+        "transitions": [["draft", "published"], ["published", "superseded"], ["published", "retired"]]
+      },
+      {
+        "family": "audit",
+        "states": {"draft": "mutable", "completed": "current", "invalidated": "terminal"},
+        "transitions": [["draft", "completed"], ["completed", "invalidated"]]
+      },
+      {
+        "family": "data",
+        "states": {"draft": "mutable", "active": "current", "stale": "current", "superseded": "terminal", "retired": "terminal"},
+        "transitions": [["draft", "active"], ["active", "stale"], ["stale", "superseded"], ["stale", "retired"]]
+      },
+      {
+        "family": "migration-tombstone",
+        "states": {"draft": "mutable", "sealed": "terminal"},
+        "transitions": [["draft", "sealed"]]
+      },
+      {
+        "family": "template-profile",
+        "states": {"draft": "mutable", "active": "current", "superseded": "terminal", "retired": "terminal"},
+        "transitions": [["draft", "active"], ["active", "superseded"], ["active", "retired"]]
+      }
+    ],
     "programs": [
       {
         "prd": "0003",

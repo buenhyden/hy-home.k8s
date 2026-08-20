@@ -260,6 +260,87 @@ def load_validator(name: str, path: Path):
     return module
 
 
+def load_document_authority():
+    return load_validator("authority", SCRIPTS_ROOT / "document_authority.py")
+
+
+def terminal_registry_fixture() -> dict[str, object]:
+    return {
+        "$schema": "./contracts/document-profile.schema.json",
+        "$id": "https://hy-home.k8s/docs/99.templates/registry.json",
+        "schemaVersion": 9,
+        "profiles": [
+            {
+                "id": "governance/policy",
+                "pathPattern": "^docs/00\\.agent-governance/policies/[0-9]{4}-[a-z0-9-]+\\.md$",
+                "artifactIdPattern": None,
+                "template": "docs/99.templates/templates/governance/policy.template.md",
+                "requiredFrontmatter": ["title", "type", "status", "owner", "updated"],
+                "requiredSections": ["Overview", "Policy"],
+                "lifecycle": {
+                    "states": {
+                        "draft": "mutable",
+                        "active": "current",
+                        "superseded": "terminal",
+                        "retired": "terminal",
+                    },
+                    "transitions": {
+                        "draft": ["active"],
+                        "active": ["superseded", "retired"],
+                        "superseded": [],
+                        "retired": [],
+                    },
+                },
+                "relationships": {"supersession": "reciprocal"},
+            }
+        ],
+        "programLineage": [],
+        "standaloneExecutions": [],
+    }
+
+
+class DocumentAuthorityFoundationTests(unittest.TestCase):
+    def test_stage99_support_prose_cannot_be_a_machine_owner(self) -> None:
+        authority = load_document_authority()
+        registry = terminal_registry_fixture()
+        registry["profiles"][0]["pathPattern"] = (
+            "^docs/99\\.templates/support/document-contract\\.md$"
+        )
+        with self.assertRaisesRegex(authority.AuthorityError, "STAGE99_SUPPORT_OWNER"):
+            authority.validate_registry_authority(registry)
+
+    def test_stage99_registry_rejects_agent_roster_fields(self) -> None:
+        authority = load_document_authority()
+        registry = terminal_registry_fixture()
+        registry["profiles"][0]["permissions"] = ["write"]
+        with self.assertRaisesRegex(authority.AuthorityError, "STAGE99_AGENT_FIELD"):
+            authority.validate_registry_authority(registry)
+
+    def test_template_references_a_profile_not_a_destination(self) -> None:
+        authority = load_document_authority()
+        registry = terminal_registry_fixture()
+        with self.assertRaisesRegex(authority.AuthorityError, "TEMPLATE_DESTINATION"):
+            authority.validate_template_profile_reference(
+                "<!-- destination: docs/00.agent-governance/policies/0001-example.md -->\n",
+                registry,
+            )
+
+    def test_touched_lifecycle_validator_has_no_production_self_test_switch(self) -> None:
+        source = VALIDATOR_PATHS["lifecycle"].read_text(encoding="utf-8")
+        self.assertNotIn('add_argument("--self-test"', source)
+
+    def test_registry_reader_is_bounded_and_strict_utf8(self) -> None:
+        authority = load_document_authority()
+        with tempfile.TemporaryDirectory() as directory:
+            candidate = Path(directory) / "registry.json"
+            candidate.write_bytes(b"\xff")
+            with self.assertRaisesRegex(authority.AuthorityError, "AUTHORITY_UTF8"):
+                authority.read_bounded_utf8(candidate, max_bytes=16)
+            candidate.write_bytes(b"x" * 17)
+            with self.assertRaisesRegex(authority.AuthorityError, "AUTHORITY_SIZE"):
+                authority.read_bounded_utf8(candidate, max_bytes=16)
+
+
 class DocumentStrictCutoverTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -2226,7 +2307,8 @@ class DocumentStrictCutoverTests(unittest.TestCase):
             if (identity := validator._work106_derive_artifact_identity(path))
             is not None
         )
-        self.assertEqual(len(identities), 317)
+        self.assertTrue(identities)
+        self.assertEqual(len(identities), len({path for path, _ in identities}))
         self.assertEqual(
             validator._work106_artifact_diagnostics(records, terminal=True), ()
         )

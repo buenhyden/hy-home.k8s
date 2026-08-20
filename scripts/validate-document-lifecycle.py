@@ -83,6 +83,11 @@ from archive_recovery import (
     validate_work107_migration_rows,
     _git_capture_bounded,
 )
+from document_authority import (
+    AuthorityError,
+    REGISTRY_PATH as CURRENT_REGISTRY_PATH,
+    assert_staged_authority_matches_worktree,
+)
 
 
 FIXTURE_PATH = PurePosixPath("tests/fixtures/document-lifecycle.json")
@@ -468,6 +473,25 @@ WORK054_WP003_OWNER_RETIREMENTS = (
         "source_blob": "06d9a7a5453ac8b6e28268850467e3e96de06dc9",  # pragma: allowlist secret
         "content_sha256": "5ea07c187ea54061f5ecc770a58a99edf40dfd73372ba8fc9e1d4ab14bf85bae",  # pragma: allowlist secret
     },
+)
+
+WORK054_WP004A_BASE_COMMIT = "0860f1723b81b407391055cbec4ca7331a8e9a73"
+WORK054_WP004A_OWNER_PATHS = (
+    PurePosixPath("docs/00.agent-governance/policies/document-lifecycle.md"),
+    PurePosixPath("docs/00.agent-governance/sdlc.md"),
+)
+WORK054_WP004A_REQUIRED_CHANGED_PATHS = (
+    CURRENT_REGISTRY_PATH,
+    PurePosixPath("docs/99.templates/contracts/document-profile.schema.json"),
+    PurePosixPath("docs/99.templates/contracts/frontmatter.schema.json"),
+    PurePosixPath("docs/99.templates/contracts/route-contract.json"),
+    PurePosixPath("docs/99.templates/README.md"),
+    PurePosixPath("docs/00.agent-governance/README.md"),
+    PurePosixPath(
+        "docs/03.specs/0054-sdlc-document-and-agent-governance-"
+        "consolidation/tasks.md"
+    ),
+    *WORK054_WP004A_OWNER_PATHS,
 )
 
 
@@ -1282,6 +1306,39 @@ def finite_work054_wp003_agent_governance_paths(
             return frozenset()
         consumed.add(legacy)
     return frozenset(consumed) if len(consumed) == 4 else frozenset()
+
+
+def finite_work054_wp004a_authority_paths(
+    *,
+    mode: str,
+    base_commit: str,
+    base_documents: Mapping[PurePosixPath, LifecycleDocument],
+    proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
+    base_blobs: Mapping[PurePosixPath, str],
+    proposed_blobs: Mapping[PurePosixPath, str],
+) -> frozenset[PurePosixPath]:
+    """Admit the atomic WP-004A activation of the two current human owners."""
+
+    if mode not in {"staged", "ci"} or base_commit != WORK054_WP004A_BASE_COMMIT:
+        return frozenset()
+    if any(
+        proposed_blobs.get(path) is None
+        or proposed_blobs.get(path) == base_blobs.get(path)
+        for path in WORK054_WP004A_REQUIRED_CHANGED_PATHS
+    ):
+        return frozenset()
+    expected = {
+        path: LifecycleDocument(path, "governance/reference", "active")
+        for path in WORK054_WP004A_OWNER_PATHS
+    }
+    if any(
+        path in base_documents
+        or path in base_blobs
+        or proposed_documents.get(path) != document
+        for path, document in expected.items()
+    ):
+        return frozenset()
+    return frozenset(WORK054_WP004A_OWNER_PATHS)
 
 
 def finite_archive_cutover_paths(
@@ -3828,6 +3885,27 @@ def _evaluate_comparison(
         base_oid=base_oid,
         proposed_oid=proposed_oid,
     )
+    base_activation_blobs = dict(base_blobs)
+    proposed_activation_blobs = dict(proposed_blobs)
+    for authority_path in WORK054_WP004A_REQUIRED_CHANGED_PATHS:
+        authority_base_oid = _tree_blob_oid(root, base_commit, authority_path)
+        if authority_base_oid is not None:
+            base_activation_blobs[authority_path] = authority_base_oid
+        authority_proposed_oid = (
+            _index_blob_oid(root, authority_path)
+            if mode == "staged"
+            else _tree_blob_oid(root, proposed_commit, authority_path)
+        )
+        if authority_proposed_oid is not None:
+            proposed_activation_blobs[authority_path] = authority_proposed_oid
+    work054_wp004a_consumed_paths = finite_work054_wp004a_authority_paths(
+        mode=mode,
+        base_commit=base_commit,
+        base_documents=base_documents,
+        proposed_documents=proposed_documents,
+        base_blobs=base_activation_blobs,
+        proposed_blobs=proposed_activation_blobs,
+    )
     base_snapshot, base_texts = _snapshot_projection(
         root, base_classification_registry, base_blobs
     )
@@ -3887,6 +3965,7 @@ def _evaluate_comparison(
     consumed_paths = (
         work054_wp002_consumed_paths
         | work054_wp003_consumed_paths
+        | work054_wp004a_consumed_paths
         | work105_consumed_paths
         | work107_consumed_paths
         | work108_consumed_paths
@@ -3968,16 +4047,6 @@ def _format_diagnostic(diagnostic: LifecycleDiagnostic) -> str:
 
 def _validate_arguments(args: argparse.Namespace) -> None:
     refs = (args.from_ref, args.base_ref, args.to_ref)
-    if args.self_test:
-        if (
-            args.mode != "strict"
-            or any(ref is not None for ref in refs)
-            or args.include_path
-        ):
-            raise InvocationError("--self-test accepts only --root")
-        return
-    if args.mode is None:
-        raise InvocationError("--mode is required unless --self-test is selected")
     if args.mode in {"strict", "staged", "snapshot"} and any(
         ref is not None for ref in refs
     ):
@@ -4004,7 +4073,6 @@ def _parser() -> ArgumentParser:
     parser.add_argument("--base-ref")
     parser.add_argument("--to-ref")
     parser.add_argument("--include-path", action="append", default=[])
-    parser.add_argument("--self-test", action="store_true")
     return parser
 
 
@@ -6958,60 +7026,8 @@ def _run_self_test(root: Path) -> list[str]:
 
 def _execute(root: Path, args: argparse.Namespace) -> int:
     _verify_repository_root(root)
-    if args.self_test:
-        failures = _run_self_test(root)
-        if failures:
-            for failure in failures:
-                print(f"FAIL SELF-TEST {failure}")
-            return 1
-        fixture = load_json_file(root / FIXTURE_PATH, diagnostic_path=FIXTURE_PATH)
-        forward_count = sum(
-            len(item["profiles"]) * len(item["edges"])
-            for item in fixture["forwardContracts"]
-        )
-        evidence_count = sum(len(item["variants"]) for item in fixture["evidenceCases"])
-        total = (
-            forward_count
-            + evidence_count
-            + len(fixture["comparisonCases"])
-            + len(fixture["admissionCases"])
-            + len(fixture["gitCases"])
-            + len(fixture["argumentCases"])
-            + len(fixture["includePathCases"])
-            + len(fixture["archiveCutoverCases"])
-            + len(fixture["work054Wp002TransitionCases"])
-            + len(fixture["work105FormCutoverCases"])
-            + len(fixture["work105DecisionEvidenceCases"])
-            + len(AGENT_ROSTER_CUTOVER_MUTATIONS)
-            + len(AGENT_ROSTER_CONTRACT_BLOB_MUTATIONS)
-            + 1
-            + FIXTURE_MUTATION_COUNT
-            + EVIDENCE_REGRESSION_COUNT
-            + len(FINAL_TRANCHE_NEGATIVE_GIT_CASE_NAMES)
-        )
-        print(
-            "PASS lifecycle self-test "
-            f"({total} cases: {forward_count} forward edges, "
-            f"{evidence_count} edge evidence scenarios, "
-            f"{len(fixture['comparisonCases'])} comparisons, "
-            f"{len(fixture['admissionCases'])} admissions, "
-            f"{len(fixture['gitCases'])} Git bases, "
-            f"{len(fixture['argumentCases'])} arguments, "
-            f"{len(fixture['includePathCases'])} includes, 1 snapshot, "
-            f"{len(fixture['archiveCutoverCases'])} archive cutovers, "
-            f"{len(fixture['work054Wp002TransitionCases'])} WORK-054 WP-002 "
-            "transitions, "
-            f"{len(fixture['work105FormCutoverCases'])} WORK-105 form cutovers, "
-            f"{len(fixture['work105DecisionEvidenceCases'])} WORK-105 decision evidence cases, "
-            f"{len(AGENT_ROSTER_CUTOVER_MUTATIONS)} agent roster cutovers, "
-            f"{len(AGENT_ROSTER_CONTRACT_BLOB_MUTATIONS)} agent contract "
-            "blob controls, "
-            f"{FIXTURE_MUTATION_COUNT} fixture mutations, "
-            f"{EVIDENCE_REGRESSION_COUNT} evidence regressions, "
-            f"{len(FINAL_TRANCHE_NEGATIVE_GIT_CASE_NAMES)} final-tranche "
-            "negative controls)"
-        )
-        return 0
+    if args.mode == "staged":
+        assert_staged_authority_matches_worktree(root, CURRENT_REGISTRY_PATH)
     registry = load_registry(root)
     include_paths = _normalize_include_paths(registry, args.include_path)
     if args.mode == "snapshot":
@@ -7047,7 +7063,13 @@ def main(argv: Sequence[str] | None = None) -> int:
             raise InvocationError("--root must be an existing directory")
         with _git_environment_scope():
             return _execute(root, args)
-    except (InvocationError, DocumentContractError, OSError, ValueError) as exc:
+    except (
+        AuthorityError,
+        InvocationError,
+        DocumentContractError,
+        OSError,
+        ValueError,
+    ) as exc:
         diagnostic = LifecycleDiagnostic(
             severity="FAIL",
             rule_id="LIFECYCLE-BASE",

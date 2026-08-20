@@ -15,9 +15,19 @@ from typing import Any, Literal, Mapping, NoReturn, Sequence
 import yaml
 from jsonschema import Draft202012Validator
 
+from document_authority import (
+    AuthorityError,
+    REGISTRY_MAX_BYTES,
+    load_bounded_json,
+    read_bounded_utf8,
+    validate_registry_authority,
+)
+
 
 BASELINE_SHA = "8e1b00b4dfb84b8431ba4d3d31b4ad0445a0019d"  # pragma: allowlist secret
 BASELINE_COUNT = 433
+GIT_TIMEOUT_SECONDS = 10
+DOCUMENT_TEXT_MAX_BYTES = 16 * 1024 * 1024
 _LS_TREE_MODE_TYPES = {
     b"040000": b"tree",
     b"100644": b"blob",
@@ -491,19 +501,9 @@ def load_json_file(
     path: Path, *, diagnostic_path: PurePosixPath = REGISTRY_PATH
 ) -> Any:
     """Load JSON once with duplicate mapping keys rejected at every depth."""
-
-    def reject_duplicate_keys(pairs: Sequence[tuple[str, Any]]) -> dict[str, Any]:
-        result: dict[str, Any] = {}
-        for key, value in pairs:
-            if key in result:
-                raise _DuplicateJSONKeyError("duplicate JSON object key")
-            result[key] = value
-        return result
-
     try:
-        with path.open("r", encoding="utf-8") as handle:
-            return json.load(handle, object_pairs_hook=reject_duplicate_keys)
-    except (_DuplicateJSONKeyError, json.JSONDecodeError) as exc:
+        return load_bounded_json(path, max_bytes=REGISTRY_MAX_BYTES)
+    except AuthorityError as exc:
         raise DocumentContractError(
             (
                 _diagnostic(
@@ -609,6 +609,7 @@ def _run_git(root: Path, arguments: Sequence[str]) -> bytes:
         check=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
+        timeout=GIT_TIMEOUT_SECONDS,
     )
     return completed.stdout
 
@@ -678,7 +679,13 @@ def read_repository_text(root: Path, path: PurePosixPath) -> str:
     mode = _lstat_named_path(root.absolute(), normalized)
     if not stat.S_ISREG(mode):
         raise ValueError(f"repository path is not a regular file: {normalized}")
-    return (root.absolute() / normalized).read_text(encoding="utf-8")
+    try:
+        return read_bounded_utf8(
+            root.absolute() / normalized,
+            max_bytes=DOCUMENT_TEXT_MAX_BYTES,
+        )
+    except AuthorityError as exc:
+        raise ValueError(str(exc)) from exc
 
 
 def is_ignored_repository_path(root: Path, path: PurePosixPath) -> bool:
@@ -3106,6 +3113,14 @@ def load_internal_payload(root: Path) -> dict[str, Any]:
 
     root = root.absolute()
     registry = _load_published_contract(root, REGISTRY_PATH, PROFILE_SCHEMA_PATH)
+    try:
+        validate_registry_authority(registry)
+    except AuthorityError as exc:
+        _fail(
+            "REGISTRY_AUTHORITY",
+            expected="the sole bounded Stage 99 document-profile authority",
+            actual=str(exc),
+        )
     routes = _load_published_contract(
         root, ROUTE_CONTRACT_PATH, ROUTE_CONTRACT_SCHEMA_PATH
     )
@@ -3120,7 +3135,9 @@ def load_internal_payload(root: Path) -> dict[str, Any]:
     payload["profiles"] = [
         _internal_profile_form(profile) for profile in registry["profiles"]
     ]
-    payload["programLineage"] = registry["programLineage"]
+    payload["programLineage"] = {
+        "programs": registry["programLineage"]["programs"]
+    }
     if "standaloneExecutions" in registry:
         payload["standaloneExecutions"] = registry["standaloneExecutions"]
     if registry["schemaVersion"] != routes["schemaVersion"]:

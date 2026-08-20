@@ -4203,21 +4203,21 @@ for script_path in tracked_script_paths:
 observed_script_names = {path.name for path in tracked_script_paths}
 observed_cli_count = len(tracked_script_paths) - len(observed_import_only_helpers)
 if (
-    len(tracked_script_paths) != 48
-    or observed_cli_count != 43
+    len(tracked_script_paths) != 49
+    or observed_cli_count != 44
     or observed_import_only_helpers != expected_import_only_helpers
 ):
     fail(
         "tracked script inventory must remain exact: "
-        "total=48 cli=43 helpers=5"
+        "total=49 cli=44 helpers=5"
     )
 for script_name in sorted(observed_script_names):
     if script_name not in scripts_readme:
         fail(f"tracked script missing from scripts/README.md: {script_name}")
 for phrase in (
-    "47 tracked scripts",
-    "41 CLI entrypoints",
-    "six import-only helpers",
+    "49 tracked scripts",
+    "44 CLI entrypoints",
+    "five import-only helpers",
 ):
     if phrase not in scripts_readme:
         fail(f"scripts/README.md missing exact inventory summary: {phrase}")

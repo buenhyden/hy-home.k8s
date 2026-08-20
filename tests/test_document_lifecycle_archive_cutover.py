@@ -659,6 +659,117 @@ class FiniteWork108ArtifactIdentityAdmissionTest(unittest.TestCase):
                 )
 
 
+class DocumentAuthorityLifecycleTests(unittest.TestCase):
+    @staticmethod
+    def _authority():
+        path = ROOT / "scripts/document_authority.py"
+        specification = importlib.util.spec_from_file_location(
+            "document_lifecycle_authority", path
+        )
+        if specification is None or specification.loader is None:
+            raise AssertionError("document authority module could not be loaded")
+        module = importlib.util.module_from_spec(specification)
+        sys.modules[specification.name] = module
+        specification.loader.exec_module(module)
+        return module
+
+    def test_illegal_profile_transition_is_rejected(self):
+        authority = self._authority()
+        lifecycle = {
+            "states": {
+                "draft": "mutable",
+                "active": "current",
+                "retired": "terminal",
+            },
+            "transitions": {
+                "draft": ["active"],
+                "active": ["retired"],
+                "retired": [],
+            },
+        }
+        self.assertFalse(
+            authority.is_lifecycle_transition_allowed(lifecycle, "draft", "retired")
+        )
+
+    def test_mutable_supersession_requires_reciprocal_links(self):
+        authority = self._authority()
+        with self.assertRaisesRegex(authority.AuthorityError, "SUPERSESSION_RECIPROCAL"):
+            authority.require_reciprocal_supersession(
+                source="docs/01.requirements/0001-old.md",
+                successor="docs/01.requirements/0002-new.md",
+                source_links={"superseded_by": "docs/01.requirements/0002-new.md"},
+                successor_links={},
+            )
+
+    def test_material_staged_registry_drift_is_rejected(self):
+        authority = self._authority()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+            subprocess.run(
+                ["git", "config", "user.email", "fixture@example.invalid"],
+                cwd=root,
+                check=True,
+            )
+            subprocess.run(
+                ["git", "config", "user.name", "Fixture"], cwd=root, check=True
+            )
+            path = root / "registry.json"
+            path.write_text('{"state":"staged"}\n', encoding="utf-8")
+            subprocess.run(["git", "add", "registry.json"], cwd=root, check=True)
+            path.write_text('{"state":"worktree"}\n', encoding="utf-8")
+            with self.assertRaisesRegex(authority.AuthorityError, "AUTHORITY_DRIFT"):
+                authority.assert_staged_authority_matches_worktree(
+                    root,
+                    PurePosixPath("registry.json"),
+                    timeout_seconds=2,
+                )
+
+    def test_wp004a_current_owner_activation_is_finite_and_atomic(self):
+        admission = getattr(
+            VALIDATOR, "finite_work054_wp004a_authority_paths", None
+        )
+        self.assertTrue(callable(admission), "WP-004A authority admission is missing")
+        owner_paths = (
+            PurePosixPath("docs/00.agent-governance/policies/document-lifecycle.md"),
+            PurePosixPath("docs/00.agent-governance/sdlc.md"),
+        )
+        required_paths = tuple(VALIDATOR.WORK054_WP004A_REQUIRED_CHANGED_PATHS)
+        proposed_documents = {
+            path: LifecycleDocument(path, "governance/reference", "active")
+            for path in owner_paths
+        }
+        base_blobs = {path: "1" * 40 for path in required_paths}
+        proposed_blobs = {path: "2" * 40 for path in required_paths}
+        for path in owner_paths:
+            base_blobs.pop(path, None)
+            proposed_blobs[path] = "2" * 40
+
+        exact = admission(
+            mode="staged",
+            base_commit=VALIDATOR.WORK054_WP004A_BASE_COMMIT,
+            base_documents={},
+            proposed_documents=proposed_documents,
+            base_blobs=base_blobs,
+            proposed_blobs=proposed_blobs,
+        )
+        self.assertEqual(exact, frozenset(owner_paths))
+
+        partial_blobs = dict(proposed_blobs)
+        partial_blobs[required_paths[0]] = base_blobs[required_paths[0]]
+        self.assertEqual(
+            admission(
+                mode="staged",
+                base_commit=VALIDATOR.WORK054_WP004A_BASE_COMMIT,
+                base_documents={},
+                proposed_documents=proposed_documents,
+                base_blobs=base_blobs,
+                proposed_blobs=partial_blobs,
+            ),
+            frozenset(),
+        )
+
+
 class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
     original_path = "docs/03.specs/0900-fixture/spec.md"
     archive_path = "docs/98.archive/03.specs/0900-fixture/spec.md"
