@@ -309,6 +309,38 @@ class DocumentStrictCutoverTests(unittest.TestCase):
             validator.STANDALONE_APPROVAL_STATEMENTS["0062"], expected_from_spec
         )
 
+    def test_spec_0062_standalone_execution_has_one_canonical_owner(self) -> None:
+        contracts = sys.modules["document_contracts"]
+        expected = {
+            "spec": "0062",
+            "plan": "docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md",
+            "task": "docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md",
+            "state": "active",
+            "reason": "Direct human-approved full-corpus external-source and workspace reverification over the existing WER research pack",
+            "decision": "0022",
+            "approvalMode": "spec-body-record",
+        }
+        canonical = json.loads(
+            (REPOSITORY_ROOT / contracts.REGISTRY_PATH).read_text(encoding="utf-8")
+        )
+        retired = json.loads(
+            (REPOSITORY_ROOT / contracts.RETIRED_REGISTRY_PATH).read_text(
+                encoding="utf-8"
+            )
+        )
+
+        canonical_rows = canonical["standaloneExecutions"]
+        canonical_spec_numbers = [int(row["spec"]) for row in canonical_rows]
+        self.assertEqual(
+            [row for row in canonical_rows if row["spec"] == "0062"], [expected]
+        )
+        self.assertEqual(
+            canonical_spec_numbers, sorted(set(canonical_spec_numbers))
+        )
+        self.assertNotIn(
+            "0062", [row["spec"] for row in retired["standaloneExecutions"]]
+        )
+
     def test_registry_route_state_is_explicit_transition(self) -> None:
         args = self.parse("registry", ["--route-state", "transition"])
         self.assertEqual(args.route_state, "transition")

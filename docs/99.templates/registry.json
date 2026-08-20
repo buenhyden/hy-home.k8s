@@ -5163,6 +5163,15 @@
       "reason": "Direct human-approved B-scope SDLC and AI-agent governance consolidation including Stage 90",
       "decision": "0022",
       "approvalMode": "spec-body-record"
+    },
+    {
+      "spec": "0062",
+      "plan": "docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md",
+      "task": "docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md",
+      "state": "active",
+      "reason": "Direct human-approved full-corpus external-source and workspace reverification over the existing WER research pack",
+      "decision": "0022",
+      "approvalMode": "spec-body-record"
     }
   ]
 }
