@@ -16560,14 +16560,14 @@ newly attained state.
 
 - Date: 2026-08-21
 - Layer: docs
-- Status: in-progress
+- Status: complete
 - Tags: workspace-research, helper-loss, guarded-artifacts, task-review
 - Owner: platform
 - Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md#guarded-sdd-artifact-protocol`
 - Provenance: read-only alias, SDD workspace, marker, Git history, and helper-script observations
 - Sensitivity: internal
 - Retention: durable
-- Next Owner: WRFR-001 task reviewer, then WRFR-002 only after approval
+- Next Owner: WRFR-002
 
 ### Progress
 
@@ -16587,8 +16587,8 @@ device `2096`, inode `4410802`, size `2`, and recorded
 state. During that initial observation, no chmod, provenance change, helper
 alias recreation, ignored-artifact mutation, or cleanup was performed.
 
-The tracked Plan and Task now route every remaining `task-brief` and
-`review-package` call through the canonical Plan with a mandatory explicit
+The tracked Plan and Task routed every helper call after the alias-loss
+observation through the canonical Plan with a mandatory explicit
 absent output under the existing exact SDD workspace. Each call requires a
 guarded canonical-Plan read/freeze, workspace and output prechecks, `umask 077`,
 postvalidation, immediate artifact registration, and residue validation. The
@@ -16620,9 +16620,9 @@ that exact marker identity, and only when no foreign sibling exists.
   They are outside all three WRFR-001 package ranges and are not Task 2
   evidence.
 - The WRFR-001 implementation and evidence commit are complete; its
-  helper-loss amendment is commit `2716ce9f`. Checker-admitted replacement
-  packages and the task reviewer remain pending until the artifact-class
-  correction commit exists. `WRFR-002` remains blocked.
+  helper-loss amendment is commit `2716ce9f`, and the artifact-class correction
+  is commit `4f25be8b`. Checker-admitted replacement packages and independent
+  task review are complete. `WRFR-002` is queued and ready but not executed.
 - Package A is registered as `task-2-review-package.md`, SHA-256
   `5ab1b0da2e51f8c2ece16a43265e2e3c02633bb969f4fc65d20b6799991867ec`,
   for exact range `8d8c8e56..802193d3`. Inventory SHA-256 after Package A is
@@ -16645,14 +16645,17 @@ that exact marker identity, and only when no foreign sibling exists.
   does not prove same-file continuity between the checks and `rm -f`; this
   residual limitation is preserved, and the exception authorizes no further
   deletion or retry.
-- Plan Task 2 Step 9 now owns two checker-admitted canonical-Plan,
-  explicit-output calls after cleanup. Regenerated Package B uses exact range
-  `09f7cf1d..2716ce9f` and absent output `task-2-fix-1-review-package.md`.
-  Separate Package C uses exact range `2716ce9f..HEAD` captured immediately
-  after this correction commit and absent output
-  `task-2-fix-2-review-package.md`. Each new package is immediately registered
-  and residue-validated; registered Packages A, B, and C go together to the
-  same task reviewer.
+- Plan Task 2 Step 9 used two checker-admitted canonical-Plan, explicit-output
+  calls after cleanup. Regenerated Package B is
+  `task-2-fix-1-review-package.md`, exact range `09f7cf1d..2716ce9f`, SHA-256
+  `84776c9a4343572cb0bb0ef8c6cb634f7d30abbadf42ede1b3ee9799b71795bb`.
+  Separate Package C is `task-2-fix-2-review-package.md`, exact range
+  `2716ce9f..4f25be8b`, SHA-256
+  `81700dd345b9940c433cd8fb7d6e84a5506109c71547353753f5bec4e8dcfd11`.
+  Each package was immediately registered and residue-validated; final
+  inventory SHA-256 is
+  `021421d7341679884fed0976060465a5022c4ba72acc38e19c95cbf52d7038a4`,
+  and final `residue` returned `PASS`.
 - RTK `0.45.0` is installed, but `rtk gain` could not initialize its tracking
   database because the user-local database path is read-only; direct commands
   were used without inspecting private database or credential files.
@@ -16660,10 +16663,9 @@ that exact marker identity, and only when no foreign sibling exists.
   Important range-topology issue. The disjoint Package A/B topology in commit
   `2716ce9f` received fresh `APPROVED` re-review with
   Critical/Important/Minor `0/0/0` before the production artifact-class
-  failure. This correction requires its own fresh independent review.
+  failure.
 - Strict document-registry, Markdown-profile, cross-document link/owner, and
-  scoped diff validation passed for commit `2716ce9f`. The artifact-class
-  correction requires the same checks again before its commit.
+  scoped diff validation passed for commits `2716ce9f` and `4f25be8b`.
 - The first independent review of the artifact-class correction returned
   `APPROVED`, but it read the subsequently corrected bound-directory/full-
   FileVersion cleanup overclaim. That verdict is not completion evidence. A
@@ -16673,20 +16675,20 @@ that exact marker identity, and only when no foreign sibling exists.
   Critical/Important/Minor `0/0/1`. The sole stale package-cardinality Minor was
   corrected and scoped re-review returned `ADDRESSED` with no new Critical or
   Important finding.
+- The same independent Task 2 reviewer consumed registered Packages A, B, and
+  C together and returned `APPROVED` with Critical/Important/Minor `0/0/0`,
+  explicitly unblocking `WRFR-002`.
+- Final `pre-commit run --all-files` exited `0`; every hook passed and reported
+  no mutation.
 
 ### Handoff
 
-After this artifact-class correction is committed directly on
-`2716ce9fbbffc2de362839d08314ec33d265a705`, the controller captures the
-correction as `WRFR_CORRECTION_HEAD`. It independently applies the
-canonical-Plan freeze and explicit-output guards to regenerated Package B and
-separate Package C, immediately registers and validates each, and dispatches
-registered Packages A, B, and C to the same independent task reviewer. No
-WRFR-002 implementation begins until Task 2 spec-compliance and quality
-verdicts approve. Terminal cleanup preserves the alias and marker stop
-conditions above and leaves the two baseline-remediation commits, sibling
-workspaces, remote, live, provider-runtime, hosted-CI, secret, push, merge, and
-deployment state untouched.
+WRFR-002 may now consume its registered agent-engineering report and allocation
+slice. It is queued and ready, but no WRFR-002 implementation has run. Terminal
+cleanup preserves the alias and marker stop conditions above and leaves the two
+baseline-remediation commits, sibling workspaces, remote, live,
+provider-runtime, hosted-CI, secret, push, merge, and deployment state
+untouched.
 
 ## 2026-08-20 - WRFR-001 full-corpus research evidence intake
 
@@ -16694,14 +16696,14 @@ deployment state untouched.
 
 - Date: 2026-08-20
 - Layer: docs
-- Status: in-progress
+- Status: complete
 - Tags: workspace-research, evidence-intake, closed-corpus, allocation
 - Owner: platform
 - Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md#wrfr-001-evidence-intake-completion`
 - Provenance: immutable baseline, five registered research reports, guarded allocation, and artifact inventory
 - Sensitivity: internal
 - Retention: durable
-- Next Owner: WRFR-001 task reviewer; WRFR-002 remains blocked
+- Next Owner: WRFR-002
 
 ### Progress
 
@@ -16710,8 +16712,9 @@ baseline commit `8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c`. The guarded
 checker validated the immutable `14 Markdown / 36 requests / 90 sources / 135
 claims` census and the exact 36-row union of five disjoint reports. All five
 report reviews approved their registered bytes, and the cross-report quality
-review returned Critical/Important/Minor `0/0/0`. The work package remains in
-progress until the post-amendment task review approves.
+review returned Critical/Important/Minor `0/0/0`. The post-amendment task review
+subsequently approved Packages A/B/C with Critical/Important/Minor `0/0/0`, so
+the work package is complete.
 
 Allocation produced one new source, `SRC-WERPC-091`, for
 `REQ-WERPC-009`/platform-security and six claims without gaps or duplicates:
@@ -16748,14 +16751,13 @@ unavailable, so neither row adopts an environment claim from it.
 
 ### Handoff
 
-The WRFR-001 task reviewer first consumes the registered report identities,
-allocation, tracked commit range, and explicit review package described in the
-2026-08-21 recovery entry. Only after approval may WRFR-002 consume its
-registered agent-engineering slice and the exact allocation above. Later owners
-must preserve the approved report identities, selector ruling, and closed-corpus
-outcome boundaries. WRFR-001 performed no remote GitHub query, provider-runtime
-check, hosted-CI check, live-cluster validation, push, publication, or
-deployment.
+The WRFR-001 task reviewer approved the registered report identities,
+allocation, and Packages A/B/C described in the 2026-08-21 recovery entry.
+WRFR-002 may consume its registered agent-engineering slice and the exact
+allocation above; it is queued and has not executed. Later owners must preserve
+the approved report identities, selector ruling, and closed-corpus outcome
+boundaries. WRFR-001 performed no remote GitHub query, provider-runtime check,
+hosted-CI check, live-cluster validation, push, publication, or deployment.
 
 ## 2026-08-20 - WRFR-000 lifecycle activation
 

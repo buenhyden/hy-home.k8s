@@ -15,11 +15,12 @@ This Task is the execution ledger for `WRFR-000` through `WRFR-009` in the
 reciprocal [Plan](plan.md), implementing [Spec 0062](spec.md). Direct human
 approval on 2026-08-20 activates the standalone execution relation. The
 activation commit is `docs: activate full-corpus research reverification`.
-`WRFR-001` has committed closed-corpus evidence intake and allocation. Package
-A is registered, but the first helper-loss Package B used a checker-rejected
-basename. Its exact cleanup is complete; the artifact-class correction,
-regenerated Packages B/C, and task review remain pending. `WRFR-002` remains
-blocked.
+`WRFR-001` completed closed-corpus evidence intake, allocation, three disjoint
+registered review packages, and independent task review. The first helper-loss
+Package B used a checker-rejected basename; its bounded cleanup and evidence
+limitations remain recorded below. Regenerated Packages B/C passed registration
+and residue validation, and the reviewer approved Task 2 with no findings.
+`WRFR-002` is queued and ready but has not been executed.
 
 The target is a 2026-08-20 external-source and workspace reverification of all
 thirty-six existing `REQ-WERPC-*` owners, integrated into the existing
@@ -28,7 +29,7 @@ complete: guarded checker construction and direct review, artifact-inventory
 initialization and recovery, immutable baseline capture, five reviewed
 closed-corpus reports, exact-union validation, and final ID allocation all
 completed in the ignored SDD workspace. Its independent task-level
-spec-compliance and quality review is not complete. No remote GitHub query or
+spec-compliance and quality review is approved. No remote GitHub query or
 tracked research/integration implementation has occurred, and no successor
 work package has staged or committed execution work.
 
@@ -78,8 +79,8 @@ stage, or commit.
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WRFR-000 | VAL-WRFR-012, 013 | Activate standalone lifecycle and SDD workspace | platform | Done | Activated by direct approval on 2026-08-20 in `docs: activate full-corpus research reverification` | Active standalone Spec/Plan/Task relation; next owner `WRFR-001` |
-| WRFR-001 | VAL-WRFR-001..007, 009 | Freeze baseline, collect five read-only reports, allocate IDs | platform + research agents | Review pending | Exact 36-row union validated; all report reviews approved; one source and six claims allocated; tracked evidence committed | Post-amendment review package and task reviewer pending |
-| WRFR-002 | VAL-WRFR-002..005, 008, 013 | Integrate agent engineering findings | agent integrator | Blocked | Not executed | Awaiting WRFR-001 task-level spec-compliance and quality approval |
+| WRFR-001 | VAL-WRFR-001..007, 009 | Freeze baseline, collect five read-only reports, allocate IDs | platform + research agents | Done | Exact 36-row union validated; all report and task reviews approved; one source and six claims allocated; tracked evidence committed | Packages A/B/C registered; final residue passed; task review `APPROVED` with Critical/Important/Minor `0/0/0` |
+| WRFR-002 | VAL-WRFR-002..005, 008, 013 | Integrate agent engineering findings | agent integrator | Queued | Not executed | WRFR-001 task review approved; registered agent report and allocation slice are ready |
 | WRFR-003 | VAL-WRFR-002..005, 008, 013 | Integrate provider/common findings | provider integrator | Queued | Not executed | Awaiting reviewed provider report/allocation |
 | WRFR-004 | VAL-WRFR-002..005, 008, 013 | Integrate SDLC/documentation findings | documentation integrator | Queued | Not executed | Awaiting reviewed SDLC report/allocation |
 | WRFR-005 | VAL-WRFR-002..005, 008, 013 | Integrate platform/security findings | platform/security integrator | Queued | Not executed | Awaiting reviewed platform report/allocation |
@@ -182,9 +183,10 @@ The pre-amendment Task 2 commit sequence after base
 `ce74dc29c3be4fd5a4198bafd01998881ffdd969`,
 `19c270b17f8b8e303516eea8da68bf852d229e6f`, and
 `802193d33a08423f055615b621fb2667b0a99a1e`. The evidence implementation and
-commit are complete, and the helper-loss amendment is commit `2716ce9f`. The
-checker-admitted replacement packages and task reviewer remain pending until
-this artifact-class correction is committed; `WRFR-002` remains blocked.
+commit are complete, the helper-loss amendment is commit `2716ce9f`, and the
+artifact-class correction is commit `4f25be8b`. The checker-admitted replacement
+packages and independent task review are complete; `WRFR-002` is queued and
+ready but has not been executed.
 
 The shared branch then received two separately owned remediation commits:
 `a8fffa6100b3178337cb72deaf56e24c7f14d008` modifies only the Spec 0059 Task,
@@ -218,8 +220,8 @@ not prove same-file continuity between the checks and `rm -f`; that residual
 limitation remains explicit. This exception authorizes no further deletion or
 retry.
 
-After this correction is committed directly on `2716ce9f`, the controller
-creates regenerated Package B for the earlier helper-loss amendment and a
+After the correction was committed directly on `2716ce9f`, the controller
+created regenerated Package B for the earlier helper-loss amendment and a
 separate Package C for this correction. Before each call it independently
 guarded-reads and freezes the canonical Plan and applies every explicit-output
 precondition in Plan Task 2 Step 9, then runs exactly:
@@ -282,10 +284,26 @@ mode `0644`. It is not repaired now. Its only authorized terminal removal is
 the separately reviewed fd-bound, exact-identity, no-foreign-sibling procedure
 in the Plan.
 
+The final registered review identities are:
+
+| Package | Exact range | SHA-256 |
+| --- | --- | --- |
+| `task-2-review-package.md` | `8d8c8e56..802193d3` | `5ab1b0da2e51f8c2ece16a43265e2e3c02633bb969f4fc65d20b6799991867ec` |
+| `task-2-fix-1-review-package.md` | `09f7cf1d..2716ce9f` | `84776c9a4343572cb0bb0ef8c6cb634f7d30abbadf42ede1b3ee9799b71795bb` |
+| `task-2-fix-2-review-package.md` | `2716ce9f..4f25be8b` | `81700dd345b9940c433cd8fb7d6e84a5506109c71547353753f5bec4e8dcfd11` |
+
+The final registered inventory SHA-256 is
+`021421d7341679884fed0976060465a5022c4ba72acc38e19c95cbf52d7038a4`,
+and final `residue` returned `PASS`. The same independent Task 2 reviewer
+consumed all three registered packages and returned `APPROVED` with
+Critical/Important/Minor `0/0/0`, explicitly unblocking `WRFR-002`. The final
+`pre-commit run --all-files` rerun exited `0`; every hook passed and reported no
+mutation.
+
 ### WRFR-001 evidence intake completion
 
-This section records completed intake implementation evidence, not completion
-of the still-pending task-level post-commit review.
+This section records completed intake implementation evidence and the approved
+task-level post-commit review recorded above.
 
 The exact final registered artifact identities are:
 
@@ -339,9 +357,9 @@ All other conflicts receive a recorded SDD ruling and continue under the Spec.
 
 ## Verification Summary
 
-WRFR-000 activation is complete. WRFR-001 intake implementation and its tracked
-evidence commit are complete, while the task-level post-commit review remains
-pending. Initial design evidence included:
+WRFR-000 activation and WRFR-001 intake, tracked evidence, registered review
+packages, and task-level post-commit review are complete. WRFR-002 is queued and
+ready but has not been executed. Initial design evidence included:
 
 - isolated worktree created from clean tracked `HEAD`;
 - primary checkout's unrelated staged RIA files excluded from the branch;
@@ -363,7 +381,7 @@ runtime, hosted CI, live infrastructure, or user validation.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [VAL-WRFR-001](spec.md) | Done for intake implementation; task review pending | The checker validated the exact `001..036` report union |
+| [VAL-WRFR-001](spec.md) | Done | The checker validated the exact `001..036` report union, and the independent Task 2 reviewer approved Packages A/B/C with no findings |
 | [VAL-WRFR-002](spec.md) | Intake passed; integration pending | All 36 rows carry closed external and repository-static evidence fields |
 | [VAL-WRFR-003](spec.md) | Done | The five registered reports retain the exact closed workstream assignment |
 | [VAL-WRFR-004](spec.md) | Intake review passed; integration pending | All report-local reviews and the cross-report quality review approved the registered bytes |
@@ -375,7 +393,7 @@ runtime, hosted CI, live infrastructure, or user validation.
 | [VAL-WRFR-010](spec.md) | Not executed | WRFR-007..009 own the shared projection sequence |
 | [VAL-WRFR-011](spec.md) | Not executed | WRFR-006 and WRFR-009 own the nine-class remote/security contract |
 | [VAL-WRFR-012](spec.md) | Workspace passed; cleanup pending | WRFR-001 residue validation passed; WRFR-009 still owns exact cleanup |
-| [VAL-WRFR-013](spec.md) | In progress | Task 2 commits through `802193d3` exist; the post-amendment package and task review are pending, and WRFR-002 is blocked |
+| [VAL-WRFR-013](spec.md) | In progress | WRFR-001 commits and registered package review are complete; later task commits remain pending, and WRFR-002 is queued but not executed |
 | [VAL-WRFR-014](spec.md) | Not executed | WRFR-009 owns the whole-branch review gate |
 | [VAL-WRFR-015](spec.md) | Not executed | WRFR-009 owns the terminal lane sequence |
 

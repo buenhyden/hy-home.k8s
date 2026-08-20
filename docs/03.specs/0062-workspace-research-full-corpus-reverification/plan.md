@@ -788,7 +788,8 @@ replayed by an implementer.
   `ce74dc29c3be4fd5a4198bafd01998881ffdd969`,
   `19c270b17f8b8e303516eea8da68bf852d229e6f`, and
   `802193d33a08423f055615b621fb2667b0a99a1e`. The logical evidence commit is
-  complete; post-commit packaging and task review are not.
+  complete. At that commit boundary, post-commit packaging and task review were
+  not complete; Step 9 records their later closure.
 
   Two separately owned remediation commits follow the Task 2 evidence commit in
   the shared branch topology:
@@ -797,7 +798,7 @@ replayed by an implementer.
   `.secrets.baseline`. They are not WRFR-001 implementation evidence and remain
   under their separate reviews and owners.
 
-- [ ] **Step 9: review the committed evidence intake**
+- [x] **Step 9: review the committed evidence intake**
 
   Package A is already registered as `task-2-review-package.md`, SHA-256
   `5ab1b0da2e51f8c2ece16a43265e2e3c02633bb969f4fc65d20b6799991867ec`,
@@ -885,8 +886,27 @@ replayed by an implementer.
   separately owned `a8fffa61` Spec 0059 fix and `09f7cf1d` secrets-baseline fix
   remain outside all Task 2 evidence. Resolve WRFR-001 Critical or Important
   findings with a scoped fix commit and a new checker-admitted explicit-output
-  re-review before Task 3. `WRFR-002` remains blocked until the Task 2
-  spec-compliance and quality verdicts are both approved.
+  re-review before Task 3.
+
+  Completion evidence on 2026-08-21: registered Package A remains
+  `task-2-review-package.md`, SHA-256
+  `5ab1b0da2e51f8c2ece16a43265e2e3c02633bb969f4fc65d20b6799991867ec`,
+  for `8d8c8e56..802193d3`. Regenerated Package B is
+  `task-2-fix-1-review-package.md`, SHA-256
+  `84776c9a4343572cb0bb0ef8c6cb634f7d30abbadf42ede1b3ee9799b71795bb`,
+  for `09f7cf1d..2716ce9f`. Package C is
+  `task-2-fix-2-review-package.md`, SHA-256
+  `81700dd345b9940c433cd8fb7d6e84a5506109c71547353753f5bec4e8dcfd11`,
+  for `2716ce9f..4f25be8b`. The final registered inventory SHA-256 is
+  `021421d7341679884fed0976060465a5022c4ba72acc38e19c95cbf52d7038a4`,
+  and final `residue` returned `PASS`.
+
+  The same independent Task 2 reviewer consumed registered Packages A, B, and
+  C together and returned `APPROVED` with Critical/Important/Minor `0/0/0`,
+  explicitly unblocking `WRFR-002`. The final
+  `pre-commit run --all-files` rerun exited `0`; every hook passed and reported
+  no mutation. WRFR-001 is complete. `WRFR-002` is queued and ready, but no
+  WRFR-002 implementation has been executed.
 
 ### Task 3: WRFR-002 — agent engineering integration
 
