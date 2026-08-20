@@ -19,8 +19,10 @@ next owner is `WRFR-001`.
 
 The target is a 2026-08-20 external-source and workspace reverification of all
 thirty-six existing `REQ-WERPC-*` owners, integrated into the existing
-`2026-08-08-wer` pack. No research, remote GitHub query, tracked implementation,
-staging, or execution commit has occurred under this Task.
+`2026-08-08-wer` pack. No substantive research, remote GitHub query, or tracked
+research/integration implementation has occurred under this Task. `WRFR-000`
+remains the sole completed work package and activation commit; no successor work
+package has staged or committed execution work.
 
 ## Inputs
 

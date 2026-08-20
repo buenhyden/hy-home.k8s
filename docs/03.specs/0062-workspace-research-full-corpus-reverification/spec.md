@@ -432,8 +432,9 @@ retained and strengthened here.
 
 ### Related Documents
 
-- [Implementation Plan](plan.md)
-- [Execution Task](tasks.md)
+- [Plan](plan.md)
+- [Task](tasks.md)
+- [ADR 0022 — direct-approval standalone execution lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
 - [Spec 0059 — Workspace Research Full-Corpus Refresh](../0059-workspace-research-full-corpus-refresh/spec.md)
 - [Current WER research pack](../../90.references/research/2026-08-08-wer/README.md)
 - [Research collection contract](../../90.references/research/README.md)
