@@ -16584,8 +16584,8 @@ current-user regular non-symlink with bytes `*\n`, SHA-256
 device `2096`, inode `4410802`, size `2`, and recorded
 `mtime_ns`/`ctime_ns` `1787208168057628362`, but mode `0644`. The approved
 `restore-shared-marker` command requires mode `0600` and would reject this
-state. No chmod, provenance change, helper alias recreation, ignored-artifact
-mutation, or cleanup was performed.
+state. During that initial observation, no chmod, provenance change, helper
+alias recreation, ignored-artifact mutation, or cleanup was performed.
 
 The tracked Plan and Task now route every remaining `task-brief` and
 `review-package` call through the canonical Plan with a mandatory explicit
@@ -16617,43 +16617,76 @@ that exact marker identity, and only when no foreign sibling exists.
 - Separately owned baseline-remediation commits after Task 2 are
   `a8fffa6100b3178337cb72deaf56e24c7f14d008` for the Spec 0059 Task and
   `09f7cf1d70f7f533f7323343bad8de02c1ace3f4` for `.secrets.baseline`.
-  They are outside both WRFR-001 review ranges and are not Task 2 evidence.
+  They are outside all three WRFR-001 package ranges and are not Task 2
+  evidence.
 - The WRFR-001 implementation and evidence commit are complete; its
-  post-commit review package and task reviewer are pending until this amendment
-  commit exists. `WRFR-002` remains blocked.
-- Plan Task 2 Step 9 owns two exact canonical-Plan, explicit-output
-  `review-package` invocations. Original Task 2 uses
-  `8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c..802193d33a08423f055615b621fb2667b0a99a1e`
-  and absent output
-  `.superpowers/sdd/0062-workspace-research-full-corpus-reverification-plan/task-2-review-package.md`,
-  while the helper-loss fix uses
-  `09f7cf1d70f7f533f7323343bad8de02c1ace3f4..HEAD` captured immediately
-  after this amendment commit and absent output
-  `.superpowers/sdd/0062-workspace-research-full-corpus-reverification-plan/task-2-helper-loss-fix-review-package.md`.
-  Each call is followed immediately by `artifact-register` and `residue`, and
-  both registered packages go to the same task reviewer.
+  helper-loss amendment is commit `2716ce9f`. Checker-admitted replacement
+  packages and the task reviewer remain pending until the artifact-class
+  correction commit exists. `WRFR-002` remains blocked.
+- Package A is registered as `task-2-review-package.md`, SHA-256
+  `5ab1b0da2e51f8c2ece16a43265e2e3c02633bb969f4fc65d20b6799991867ec`,
+  for exact range `8d8c8e56..802193d3`. Inventory SHA-256 after Package A is
+  `255628ef76ca95e3dd1b41797bd58089c12fa06fc0a4a764672c683ff3cc46b5`.
+- The first Package B generation used rejected basename
+  `task-2-helper-loss-fix-review-package.md` for exact range
+  `09f7cf1d..2716ce9f`. It created one current-user mode-`0600` regular
+  non-symlink, size `50861`, SHA-256
+  `84776c9a4343572cb0bb0ef8c6cb634f7d30abbadf42ede1b3ee9799b71795bb`.
+  `artifact-register` returned exactly `ERROR ARTIFACT_CLASS`; the file was
+  absent from inventory, no reviewer consumed it, and no retry occurred.
+- Controller cleanup used `stat` to verify regular-file type, mode `0600`,
+  owner `hy`, and size `50861`; confirmed the SHA-256 above; ran `test ! -L`;
+  and proved the exact basename absent from inventory. It then ran `rm -f`
+  against the exact absolute path, proved that path absent, and obtained
+  `PASS residue`. Package A and the inventory identity above remained
+  unchanged.
+- Cleanup did not record device, inode, `mtime_ns`, or `ctime_ns`, retain a
+  complete FileVersion, or unlink through a bound directory descriptor. It
+  does not prove same-file continuity between the checks and `rm -f`; this
+  residual limitation is preserved, and the exception authorizes no further
+  deletion or retry.
+- Plan Task 2 Step 9 now owns two checker-admitted canonical-Plan,
+  explicit-output calls after cleanup. Regenerated Package B uses exact range
+  `09f7cf1d..2716ce9f` and absent output `task-2-fix-1-review-package.md`.
+  Separate Package C uses exact range `2716ce9f..HEAD` captured immediately
+  after this correction commit and absent output
+  `task-2-fix-2-review-package.md`. Each new package is immediately registered
+  and residue-validated; registered Packages A, B, and C go together to the
+  same task reviewer.
 - RTK `0.45.0` is installed, but `rtk gain` could not initialize its tracking
   database because the user-local database path is read-only; direct commands
   were used without inspecting private database or credential files.
-- Independent content review found one Important range-topology issue in the
-  first draft. The contract now uses the two disjoint ranges above; fresh
-  re-review returned `APPROVED` with Critical/Important/Minor `0/0/0`.
-- Strict document-registry, Markdown-profile, and cross-document link/owner
-  validation passed after the two-package correction, and the scoped diff check
-  reported no whitespace error or path outside the three-file amendment.
+- Independent content review of the prior helper-loss amendment found one
+  Important range-topology issue. The disjoint Package A/B topology in commit
+  `2716ce9f` received fresh `APPROVED` re-review with
+  Critical/Important/Minor `0/0/0` before the production artifact-class
+  failure. This correction requires its own fresh independent review.
+- Strict document-registry, Markdown-profile, cross-document link/owner, and
+  scoped diff validation passed for commit `2716ce9f`. The artifact-class
+  correction requires the same checks again before its commit.
+- The first independent review of the artifact-class correction returned
+  `APPROVED`, but it read the subsequently corrected bound-directory/full-
+  FileVersion cleanup overclaim. That verdict is not completion evidence. A
+  fresh reviewer evaluated the actual `stat`/SHA/symlink/inventory checks,
+  exact-path `rm -f`, post-delete absence/residue evidence, and unclosed
+  check-to-delete substitution limitation and returned `APPROVED` with
+  Critical/Important/Minor `0/0/1`. The sole stale package-cardinality Minor was
+  corrected and scoped re-review returned `ADDRESSED` with no new Critical or
+  Important finding.
 
 ### Handoff
 
-After this tracked amendment is committed directly on
-`09f7cf1d70f7f533f7323343bad8de02c1ace3f4`, the controller captures the
-amendment as `WRFR_TASK_HEAD`. It independently applies the canonical-Plan
-freeze and explicit-output guards to each disjoint review call, immediately
-registers and validates each package, and dispatches both to the same
-independent task reviewer. No WRFR-002 implementation begins until both Task 2
-spec-compliance and quality verdicts approve. Terminal cleanup preserves the
-alias and marker stop conditions above and leaves the two baseline-remediation
-commits, sibling workspaces, remote, live, provider-runtime, hosted-CI, secret,
-push, merge, and deployment state untouched.
+After this artifact-class correction is committed directly on
+`2716ce9fbbffc2de362839d08314ec33d265a705`, the controller captures the
+correction as `WRFR_CORRECTION_HEAD`. It independently applies the
+canonical-Plan freeze and explicit-output guards to regenerated Package B and
+separate Package C, immediately registers and validates each, and dispatches
+registered Packages A, B, and C to the same independent task reviewer. No
+WRFR-002 implementation begins until Task 2 spec-compliance and quality
+verdicts approve. Terminal cleanup preserves the alias and marker stop
+conditions above and leaves the two baseline-remediation commits, sibling
+workspaces, remote, live, provider-runtime, hosted-CI, secret, push, merge, and
+deployment state untouched.
 
 ## 2026-08-20 - WRFR-001 full-corpus research evidence intake
 

@@ -15,9 +15,11 @@ This Task is the execution ledger for `WRFR-000` through `WRFR-009` in the
 reciprocal [Plan](plan.md), implementing [Spec 0062](spec.md). Direct human
 approval on 2026-08-20 activates the standalone execution relation. The
 activation commit is `docs: activate full-corpus research reverification`.
-`WRFR-001` has committed closed-corpus evidence intake and allocation, but its
-post-commit review package and task review remain pending until the 2026-08-21
-helper-loss amendment is committed. `WRFR-002` remains blocked.
+`WRFR-001` has committed closed-corpus evidence intake and allocation. Package
+A is registered, but the first helper-loss Package B used a checker-rejected
+basename. Its exact cleanup is complete; the artifact-class correction,
+regenerated Packages B/C, and task review remain pending. `WRFR-002` remains
+blocked.
 
 The target is a 2026-08-20 external-source and workspace reverification of all
 thirty-six existing `REQ-WERPC-*` owners, integrated into the existing
@@ -180,52 +182,68 @@ The pre-amendment Task 2 commit sequence after base
 `ce74dc29c3be4fd5a4198bafd01998881ffdd969`,
 `19c270b17f8b8e303516eea8da68bf852d229e6f`, and
 `802193d33a08423f055615b621fb2667b0a99a1e`. The evidence implementation and
-commit are complete, but the task-level review package and reviewer remain
-pending until this amendment is committed; `WRFR-002` remains blocked.
+commit are complete, and the helper-loss amendment is commit `2716ce9f`. The
+checker-admitted replacement packages and task reviewer remain pending until
+this artifact-class correction is committed; `WRFR-002` remains blocked.
 
 The shared branch then received two separately owned remediation commits:
 `a8fffa6100b3178337cb72deaf56e24c7f14d008` modifies only the Spec 0059 Task,
 and `09f7cf1d70f7f533f7323343bad8de02c1ace3f4` modifies only
 `.secrets.baseline`. They are outside WRFR-001 implementation evidence and
-retain their separate owners and reviews. The two disjoint review ranges below
-exclude both remediation commits from WRFR-001 evidence.
+retain their separate owners and reviews. The three disjoint package ranges
+below exclude both remediation commits from WRFR-001 evidence.
 
-After the amendment commit, the controller creates two disjoint review
-packages. Before each call it independently guarded-reads and freezes the
-canonical Plan and applies every explicit-output precondition in Plan Task 2
-Step 9, then runs exactly:
+Package A is already registered as `task-2-review-package.md`, SHA-256
+`5ab1b0da2e51f8c2ece16a43265e2e3c02633bb969f4fc65d20b6799991867ec`,
+for range `8d8c8e56..802193d3`; its registration produced inventory SHA-256
+`255628ef76ca95e3dd1b41797bd58089c12fa06fc0a4a764672c683ff3cc46b5`.
+Neither identity may be regenerated or rebound.
+
+The first Package B generation used basename
+`task-2-helper-loss-fix-review-package.md` for range
+`09f7cf1d..2716ce9f`. It created one current-user mode-`0600` 50,861-byte
+regular non-symlink with SHA-256
+`84776c9a4343572cb0bb0ef8c6cb634f7d30abbadf42ede1b3ee9799b71795bb`,
+but registration failed exactly with `ERROR ARTIFACT_CLASS`. No reviewer
+consumed it, the inventory remained at the Package A hash above, and no retry
+occurred. Before regeneration, the controller used `stat` to verify regular
+type, mode `0600`, owner `hy`, and size `50861`, confirmed the SHA-256 above,
+ran `test ! -L`, and proved the exact basename absent from inventory. It then
+ran `rm -f` against the exact absolute path and proved that path absent and
+`residue` PASS. Package A and inventory hashes remained unchanged.
+
+The cleanup did not record device, inode, `mtime_ns`, or `ctime_ns`, retain a
+complete FileVersion, or unlink through a bound directory descriptor. It does
+not prove same-file continuity between the checks and `rm -f`; that residual
+limitation remains explicit. This exception authorizes no further deletion or
+retry.
+
+After this correction is committed directly on `2716ce9f`, the controller
+creates regenerated Package B for the earlier helper-loss amendment and a
+separate Package C for this correction. Before each call it independently
+guarded-reads and freezes the canonical Plan and applies every explicit-output
+precondition in Plan Task 2 Step 9, then runs exactly:
 
 ```bash
 WRFR_PLAN=docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md
 WRFR_SDD=.superpowers/sdd/0062-workspace-research-full-corpus-reverification-plan
-WRFR_TASK_BASE=8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c
-WRFR_TASK_ORIGINAL_HEAD=802193d33a08423f055615b621fb2667b0a99a1e
 WRFR_HELPER_LOSS_BASE=09f7cf1d70f7f533f7323343bad8de02c1ace3f4
-WRFR_TASK_HEAD=$(git rev-parse HEAD)
-WRFR_ORIGINAL_REVIEW_OUT="$WRFR_SDD/task-2-review-package.md"
-WRFR_HELPER_LOSS_REVIEW_OUT="$WRFR_SDD/task-2-helper-loss-fix-review-package.md"
+WRFR_HELPER_LOSS_HEAD=2716ce9fbbffc2de362839d08314ec33d265a705
+WRFR_CORRECTION_BASE=2716ce9fbbffc2de362839d08314ec33d265a705
+WRFR_CORRECTION_HEAD=$(git rev-parse HEAD)
+WRFR_HELPER_LOSS_REVIEW_OUT="$WRFR_SDD/task-2-fix-1-review-package.md"
+WRFR_CORRECTION_REVIEW_OUT="$WRFR_SDD/task-2-fix-2-review-package.md"
 WRFR_REVIEW_HELPER=/home/hy/.codex/plugins/cache/openai-curated-remote/superpowers/6.3.0/skills/subagent-driven-development/scripts/review-package
-test "$(git log -1 --format=%s "$WRFR_TASK_HEAD")" = \
-  "docs: recover helper workflow after temp loss"
-test "$(git rev-parse "$WRFR_TASK_HEAD^")" = "$WRFR_HELPER_LOSS_BASE"
-test ! -e "$WRFR_ORIGINAL_REVIEW_OUT"
-test ! -L "$WRFR_ORIGINAL_REVIEW_OUT"
-umask 077
-bash "$WRFR_REVIEW_HELPER" \
-  "$WRFR_PLAN" "$WRFR_TASK_BASE" "$WRFR_TASK_ORIGINAL_HEAD" \
-  "$WRFR_ORIGINAL_REVIEW_OUT"
-python3 "$WRFR_SDD/full-corpus-check.py" artifact-register \
-  --workspace "$WRFR_SDD" \
-  --inventory "$WRFR_SDD/artifact-inventory.json" \
-  --path "$WRFR_ORIGINAL_REVIEW_OUT"
-python3 "$WRFR_SDD/full-corpus-check.py" residue \
-  --workspace "$WRFR_SDD" \
-  --inventory "$WRFR_SDD/artifact-inventory.json"
+test "$(git log -1 --format=%s "$WRFR_CORRECTION_HEAD")" = \
+  "docs: correct helper review artifact class"
+test "$(git rev-parse "$WRFR_CORRECTION_HEAD^")" = "$WRFR_CORRECTION_BASE"
+test ! -e "$WRFR_SDD/task-2-helper-loss-fix-review-package.md"
+test ! -L "$WRFR_SDD/task-2-helper-loss-fix-review-package.md"
 test ! -e "$WRFR_HELPER_LOSS_REVIEW_OUT"
 test ! -L "$WRFR_HELPER_LOSS_REVIEW_OUT"
 umask 077
 bash "$WRFR_REVIEW_HELPER" \
-  "$WRFR_PLAN" "$WRFR_HELPER_LOSS_BASE" "$WRFR_TASK_HEAD" \
+  "$WRFR_PLAN" "$WRFR_HELPER_LOSS_BASE" "$WRFR_HELPER_LOSS_HEAD" \
   "$WRFR_HELPER_LOSS_REVIEW_OUT"
 python3 "$WRFR_SDD/full-corpus-check.py" artifact-register \
   --workspace "$WRFR_SDD" \
@@ -234,15 +252,29 @@ python3 "$WRFR_SDD/full-corpus-check.py" artifact-register \
 python3 "$WRFR_SDD/full-corpus-check.py" residue \
   --workspace "$WRFR_SDD" \
   --inventory "$WRFR_SDD/artifact-inventory.json"
+test ! -e "$WRFR_CORRECTION_REVIEW_OUT"
+test ! -L "$WRFR_CORRECTION_REVIEW_OUT"
+umask 077
+bash "$WRFR_REVIEW_HELPER" \
+  "$WRFR_PLAN" "$WRFR_CORRECTION_BASE" "$WRFR_CORRECTION_HEAD" \
+  "$WRFR_CORRECTION_REVIEW_OUT"
+python3 "$WRFR_SDD/full-corpus-check.py" artifact-register \
+  --workspace "$WRFR_SDD" \
+  --inventory "$WRFR_SDD/artifact-inventory.json" \
+  --path "$WRFR_CORRECTION_REVIEW_OUT"
+python3 "$WRFR_SDD/full-corpus-check.py" residue \
+  --workspace "$WRFR_SDD" \
+  --inventory "$WRFR_SDD/artifact-inventory.json"
 ```
 
 The canonical Plan and each generated output are postvalidated before reviewer
 dispatch. Neither call may invoke `sdd-workspace`, use a default output,
-recreate the alias, or invoke `helper-sync`. Both registered packages go to the
-same task reviewer: `8d8c8e56..802193d3` contains original Task 2, while
-`09f7cf1d..WRFR_TASK_HEAD` contains only this helper-loss amendment. The
-separately owned `a8fffa61` and `09f7cf1d` baseline fixes are outside both
-ranges and are not Task 2 evidence. Terminal alias cleanup skips
+recreate the alias, or invoke `helper-sync`. Registered Package A, regenerated
+Package B, and Package C go together to the same task reviewer. Package B is
+exactly `09f7cf1d..2716ce9f`; Package C is exactly
+`2716ce9f..WRFR_CORRECTION_HEAD`. Neither range may be widened or conflated, and
+the separately owned `a8fffa61` and `09f7cf1d` baseline fixes remain outside
+Task 2 evidence. Terminal alias cleanup skips
 `remove-owned-helper-plan` only while the alias remains absent/non-symlink; a
 reappearance stops execution without deletion. The initially absent shared
 marker remains the exact recorded helper-created identity with bytes `*\n` and
