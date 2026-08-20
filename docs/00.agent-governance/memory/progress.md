@@ -16554,29 +16554,131 @@ newly attained state.
 - No live, hosted, provider-runtime, remote, secret-value, push, publish, or
   deployment evidence was collected or claimed.
 
+## 2026-08-21 - WRFR helper workflow recovery after alias loss
+
+### Metadata
+
+- Date: 2026-08-21
+- Layer: docs
+- Status: in-progress
+- Tags: workspace-research, helper-loss, guarded-artifacts, task-review
+- Owner: platform
+- Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md#guarded-sdd-artifact-protocol`
+- Provenance: read-only alias, SDD workspace, marker, Git history, and helper-script observations
+- Sensitivity: internal
+- Retention: durable
+- Next Owner: WRFR-001 task reviewer, then WRFR-002 only after approval
+
+### Progress
+
+At tracked `HEAD` `802193d33a08423f055615b621fb2667b0a99a1e`, the exact
+helper Plan alias
+`/tmp/0062-workspace-research-full-corpus-reverification-plan.md` was
+observed absent and non-symlink on 2026-08-21 after the bootstrap ledger had
+recorded its created FileVersion. No cause is proved. The existing exact SDD
+workspace remains current-user-owned, non-symlink, and mode `0700`.
+
+The initially absent shared marker is now the exact recorded helper-created
+current-user regular non-symlink with bytes `*\n`, SHA-256
+`cdbcae15105d6b781e620813c79c7e868740d4e9cc53ce6f5fcbbc12387adf4b`,
+device `2096`, inode `4410802`, size `2`, and recorded
+`mtime_ns`/`ctime_ns` `1787208168057628362`, but mode `0644`. The approved
+`restore-shared-marker` command requires mode `0600` and would reject this
+state. No chmod, provenance change, helper alias recreation, ignored-artifact
+mutation, or cleanup was performed.
+
+The tracked Plan and Task now route every remaining `task-brief` and
+`review-package` call through the canonical Plan with a mandatory explicit
+absent output under the existing exact SDD workspace. Each call requires a
+guarded canonical-Plan read/freeze, workspace and output prechecks, `umask 077`,
+postvalidation, immediate artifact registration, and residue validation. The
+remaining workflow must not call `sdd-workspace`, select a default output,
+recreate the alias, or invoke `helper-sync`.
+
+### Memory
+
+An absent temporary alias whose loss has no proved cause is not safe evidence
+of ownership for a future deletion. Its terminal desired state is absent: skip
+`remove-owned-helper-plan` while it remains absent/non-symlink, but stop without
+deletion if it reappears. Likewise, an initially absent shared marker with a
+recorded exact identity but an incompatible mode must not be normalized merely
+to satisfy an existing cleanup command. After every consumer and SDD finish
+precondition completes, only a separately reviewed fd-bound cleanup may unlink
+that exact marker identity, and only when no foreign sibling exists.
+
+### Evidence
+
+- Task 2 base: `8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c`.
+- Pre-amendment Task 2 commits:
+  `ab1dcbae4b0b85a20e6b8c2236249ffa6559ca1f`,
+  `ce74dc29c3be4fd5a4198bafd01998881ffdd969`,
+  `19c270b17f8b8e303516eea8da68bf852d229e6f`, and
+  `802193d33a08423f055615b621fb2667b0a99a1e`.
+- Separately owned baseline-remediation commits after Task 2 are
+  `a8fffa6100b3178337cb72deaf56e24c7f14d008` for the Spec 0059 Task and
+  `09f7cf1d70f7f533f7323343bad8de02c1ace3f4` for `.secrets.baseline`.
+  They are outside both WRFR-001 review ranges and are not Task 2 evidence.
+- The WRFR-001 implementation and evidence commit are complete; its
+  post-commit review package and task reviewer are pending until this amendment
+  commit exists. `WRFR-002` remains blocked.
+- Plan Task 2 Step 9 owns two exact canonical-Plan, explicit-output
+  `review-package` invocations. Original Task 2 uses
+  `8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c..802193d33a08423f055615b621fb2667b0a99a1e`
+  and absent output
+  `.superpowers/sdd/0062-workspace-research-full-corpus-reverification-plan/task-2-review-package.md`,
+  while the helper-loss fix uses
+  `09f7cf1d70f7f533f7323343bad8de02c1ace3f4..HEAD` captured immediately
+  after this amendment commit and absent output
+  `.superpowers/sdd/0062-workspace-research-full-corpus-reverification-plan/task-2-helper-loss-fix-review-package.md`.
+  Each call is followed immediately by `artifact-register` and `residue`, and
+  both registered packages go to the same task reviewer.
+- RTK `0.45.0` is installed, but `rtk gain` could not initialize its tracking
+  database because the user-local database path is read-only; direct commands
+  were used without inspecting private database or credential files.
+- Independent content review found one Important range-topology issue in the
+  first draft. The contract now uses the two disjoint ranges above; fresh
+  re-review returned `APPROVED` with Critical/Important/Minor `0/0/0`.
+- Strict document-registry, Markdown-profile, and cross-document link/owner
+  validation passed after the two-package correction, and the scoped diff check
+  reported no whitespace error or path outside the three-file amendment.
+
+### Handoff
+
+After this tracked amendment is committed directly on
+`09f7cf1d70f7f533f7323343bad8de02c1ace3f4`, the controller captures the
+amendment as `WRFR_TASK_HEAD`. It independently applies the canonical-Plan
+freeze and explicit-output guards to each disjoint review call, immediately
+registers and validates each package, and dispatches both to the same
+independent task reviewer. No WRFR-002 implementation begins until both Task 2
+spec-compliance and quality verdicts approve. Terminal cleanup preserves the
+alias and marker stop conditions above and leaves the two baseline-remediation
+commits, sibling workspaces, remote, live, provider-runtime, hosted-CI, secret,
+push, merge, and deployment state untouched.
+
 ## 2026-08-20 - WRFR-001 full-corpus research evidence intake
 
 ### Metadata
 
 - Date: 2026-08-20
 - Layer: docs
-- Status: complete
+- Status: in-progress
 - Tags: workspace-research, evidence-intake, closed-corpus, allocation
 - Owner: platform
 - Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md#wrfr-001-evidence-intake-completion`
 - Provenance: immutable baseline, five registered research reports, guarded allocation, and artifact inventory
 - Sensitivity: internal
 - Retention: durable
-- Next Owner: WRFR-002 agent-engineering integration
+- Next Owner: WRFR-001 task reviewer; WRFR-002 remains blocked
 
 ### Progress
 
-WRFR-001 completed the closed-corpus intake at baseline commit
-`8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c`. The guarded checker validated the
-immutable `14 Markdown / 36 requests / 90 sources / 135 claims` census and the
-exact 36-row union of five disjoint reports. All five report reviews approved
-their registered bytes, and the cross-report quality review returned
-Critical/Important/Minor `0/0/0`.
+WRFR-001 completed and committed the closed-corpus intake implementation at
+baseline commit `8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c`. The guarded
+checker validated the immutable `14 Markdown / 36 requests / 90 sources / 135
+claims` census and the exact 36-row union of five disjoint reports. All five
+report reviews approved their registered bytes, and the cross-report quality
+review returned Critical/Important/Minor `0/0/0`. The work package remains in
+progress until the post-amendment task review approves.
 
 Allocation produced one new source, `SRC-WERPC-091`, for
 `REQ-WERPC-009`/platform-security and six claims without gaps or duplicates:
@@ -16613,11 +16715,14 @@ unavailable, so neither row adopts an environment claim from it.
 
 ### Handoff
 
-WRFR-002 consumes only its registered agent-engineering slice and the exact
-allocation above. Later owners must preserve the approved report identities,
-selector ruling, and closed-corpus outcome boundaries. WRFR-001 performed no
-remote GitHub query, provider-runtime check, hosted-CI check, live-cluster
-validation, push, publication, or deployment.
+The WRFR-001 task reviewer first consumes the registered report identities,
+allocation, tracked commit range, and explicit review package described in the
+2026-08-21 recovery entry. Only after approval may WRFR-002 consume its
+registered agent-engineering slice and the exact allocation above. Later owners
+must preserve the approved report identities, selector ruling, and closed-corpus
+outcome boundaries. WRFR-001 performed no remote GitHub query, provider-runtime
+check, hosted-CI check, live-cluster validation, push, publication, or
+deployment.
 
 ## 2026-08-20 - WRFR-000 lifecycle activation
 

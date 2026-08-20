@@ -3,7 +3,7 @@ title: 'Workspace Research Full-Corpus Reverification Implementation Plan'
 type: sdlc/plan
 status: active
 owner: platform
-updated: 2026-08-20
+updated: 2026-08-21
 artifact_id: "PLAN-0062"
 ---
 
@@ -81,17 +81,31 @@ SDD ledger, task briefs, implementer reports, review packages, the task-local
 checker, baseline, five research reports, allocation map, sanitized remote
 summary, and affected/staged NUL pathsets. No other file class is admitted.
 
-The canonical Plan remains the registry-routed `plan.md`, so SDD helpers use
-one exact Plan-owned alias,
-`/tmp/0062-workspace-research-full-corpus-reverification-plan.md`. The alias is
-a byte-identical current-user mode-`0600` regular file, never a symlink. Its
-unique basename makes the helper workspace
+The canonical Plan remains the registry-routed `plan.md`. The exact temporary
+alias `/tmp/0062-workspace-research-full-corpus-reverification-plan.md` was
+authorized only to give the initial `sdd-workspace` call a unique basename and
+create
 `.superpowers/sdd/0062-workspace-research-full-corpus-reverification-plan/`.
-Before every `task-brief` call, synchronize the alias from canonical `plan.md`.
-Task 1 and Task 2 use the exact bootstrap sequence in WRFR-000; after the
-checker exists, its guarded `helper-sync` subcommand owns every refresh. All
-helper calls receive explicit output paths under the unique workspace and run
-with `umask 077`.
+The completed bootstrap helper calls consumed that alias before its loss. On
+2026-08-21 the alias was observed absent and non-symlink; the cause is not
+proved. It must not be recreated, synchronized, or passed to another helper,
+and the checker `helper-sync` command is not authorized for any remaining
+execution.
+
+Every remaining `task-brief` or `review-package` call uses the canonical Plan
+path directly and supplies its output argument explicitly under the existing
+exact SDD workspace. The controller must never call `sdd-workspace` again and
+must never allow either helper to select a default output. Before each call,
+the controller guarded-reads the canonical Plan as a current-user regular
+non-symlink, captures its complete FileVersion and SHA-256, and freezes that
+version against tracked or concurrent mutation until the helper returns. It
+also proves the exact SDD workspace is the recorded current-user-owned
+non-symlink directory at mode `0700`, proves the explicit output absent and
+non-symlink, and sets `umask 077`. After the call it requires the canonical Plan
+FileVersion unchanged, postvalidates the output as a current-user mode-`0600`
+regular non-symlink inside that exact workspace, and immediately registers the
+output before any consumer runs. A mismatch stops execution without alias
+recovery, helper synchronization, or a second call.
 
 Before the checker exists, WRFR-000 records every helper-returned artifact path
 in `progress.md` after resolving it under the exact SDD root, rejecting a
@@ -160,23 +174,35 @@ and frozen-report hashes receive fresh Python and security direct approval.
 The terminal residue check requires directory contents and inventory to be
 equal. The SDD finish procedure runs only after the final consumer, removes
 only the exact resolved Plan workspace, and proves that exact path absent. The
-checker removes the exact helper Plan alias after its final helper consumer and
-proves it absent. The shared parent `.superpowers/sdd/.gitignore` is
-helper-owned, not Plan-owned: before the first helper call it must be absent or
-a current-user regular non-symlink containing exactly `*\n`; its prior state is
-recorded. After the final helper call, an initially existing marker must remain
-byte-identical. An initially absent marker is removed only after verifying it is
-still current-user, regular, non-symlink, exact `*\n`, and the Plan workspace is
-the only remaining SDD child; a foreign sibling makes cleanup fail closed. The
-terminal state must equal the recorded initial state.
+helper Plan alias has an absent final desired state. If it remains absent and
+non-symlink, terminal cleanup skips `remove-owned-helper-plan`; if it reappears,
+execution stops and must not delete an unproved file.
+
+The shared parent `.superpowers/sdd/.gitignore` was initially absent. The
+current helper-created marker was observed on 2026-08-21 as the recorded
+current-user regular non-symlink containing exactly `*\n` with its recorded
+FileVersion, but mode `0644`; `restore-shared-marker` would reject that state.
+Do not chmod it, update its provenance, or call `restore-shared-marker`. Only
+after every helper and reviewer consumer is complete, residue passes, final
+reviews approve, and the exact SDD workspace satisfies its finish preconditions
+may a separately reviewed fd-bound terminal cleanup remove the marker. That
+cleanup must open the exact `.superpowers/sdd` parent without following a
+symlink, prove the marker still matches the recorded owner, regular-file type,
+non-symlink status, exact bytes, and complete FileVersion, and prove no foreign
+sibling exists; it may then unlink only that exact directory entry through the
+validated parent descriptor and prove it absent. Any identity drift, wrong
+type, symlink, foreign sibling, or review gap stops cleanup without chmod,
+provenance change, generic deletion, or a completion claim. The terminal marker
+state remains the recorded initial state: absent.
 
 For every Task, the controller records `WRFR_TASK_BASE=$(git rev-parse HEAD)`
 before dispatch. The implementer completes focused validation and commits the
 logical unit before returning its report. Only then does the controller run
-`review-package` over `WRFR_TASK_BASE..HEAD` with an explicit, absent output
-path in the SDD workspace and dispatch the task reviewer. A required fix is a
-new scoped commit followed by a new review package from the same original base
-through the new `HEAD` and one scoped re-review. The successor Task is not
+`review-package` against the canonical Plan over `WRFR_TASK_BASE..HEAD`, with
+an explicit absent output path in the existing SDD workspace under the guarded
+protocol above, and dispatch the task reviewer. A required fix is a new scoped
+commit followed by a new explicit-output review package from the same original
+base through the new `HEAD` and one scoped re-review. The successor Task is not
 dispatched until both Spec compliance and task quality are approved. Every
 helper output is validated and registered before a reviewer consumes it.
 Every implementer and research-agent prompt requires its report path to be
@@ -443,6 +469,9 @@ replayed by an implementer.
 
 - [ ] **Step 6: review the committed activation and prepare Task 2**
 
+  This completed bootstrap step is historical and must not be replayed after
+  the 2026-08-21 alias-loss observation.
+
   Generate the SDD review package for the recorded Task 1 base through the
   activation `HEAD`. Dispatch one task reviewer for Spec compliance and quality
   and one `python-reviewer` for the validator and test changes. Resolve every
@@ -703,10 +732,12 @@ replayed by an implementer.
 
 - [x] **Step 7: update execution evidence and run focused checks**
 
-  Mark `WRFR-001` Done in the Task only after the reviews and allocation pass.
-  Record the exact observed counts, hashes, review verdicts, source-access
-  failures, and out-of-ledger observations. Update Plan checkboxes for completed
-  steps and durable progress with next owner `WRFR-002`.
+  Record the intake implementation and evidence commit as complete only after
+  the report reviews and allocation pass. Do not mark the complete WRFR-001 work
+  package Done or transfer ownership to `WRFR-002` until Step 9's post-commit
+  task review approves. Record the exact observed counts, hashes, review
+  verdicts, source-access failures, and out-of-ledger observations, and update
+  durable progress with the review-pending gate.
 
   ```bash
   python3 scripts/validate-markdown-profiles.py --root . --mode strict
@@ -741,7 +772,7 @@ replayed by an implementer.
   and every report row includes its normalized baseline selector while allowing
   additional exact owner selectors.
 
-- [x] **Step 8: commit and review evidence intake**
+- [x] **Step 8: commit evidence intake**
 
   ```bash
   git add docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md \
@@ -751,9 +782,83 @@ replayed by an implementer.
   git commit -m "docs: record full-corpus research evidence intake"
   ```
 
-  Generate the committed `WRFR_TASK_BASE..HEAD` package and dispatch the task
-  reviewer. Resolve Critical or Important findings with a scoped fix commit and
-  re-review before Task 3.
+  The Task 2 tracked commit sequence from base
+  `8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c` through the evidence commit is
+  `ab1dcbae4b0b85a20e6b8c2236249ffa6559ca1f`,
+  `ce74dc29c3be4fd5a4198bafd01998881ffdd969`,
+  `19c270b17f8b8e303516eea8da68bf852d229e6f`, and
+  `802193d33a08423f055615b621fb2667b0a99a1e`. The logical evidence commit is
+  complete; post-commit packaging and task review are not.
+
+  Two separately owned remediation commits follow the Task 2 evidence commit in
+  the shared branch topology:
+  `a8fffa6100b3178337cb72deaf56e24c7f14d008` modifies only the Spec 0059
+  Task, and `09f7cf1d70f7f533f7323343bad8de02c1ace3f4` modifies only
+  `.secrets.baseline`. They are not WRFR-001 implementation evidence and remain
+  under their separate reviews and owners.
+
+- [ ] **Step 9: review the committed evidence intake**
+
+  This step remains blocked until the tracked 2026-08-21 helper-loss amendment
+  is committed. After that commit, create two disjoint packages so the original
+  Task 2 work and this helper-loss fix are reviewed without either separately
+  owned remediation commit. Before each `review-package` call, independently
+  apply the guarded canonical-Plan freeze and explicit-output preconditions from
+  the global protocol. Then run exactly:
+
+  ```bash
+  WRFR_PLAN=docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md
+  WRFR_SDD=.superpowers/sdd/0062-workspace-research-full-corpus-reverification-plan
+  WRFR_TASK_BASE=8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c
+  WRFR_TASK_ORIGINAL_HEAD=802193d33a08423f055615b621fb2667b0a99a1e
+  WRFR_HELPER_LOSS_BASE=09f7cf1d70f7f533f7323343bad8de02c1ace3f4
+  WRFR_TASK_HEAD=$(git rev-parse HEAD)
+  WRFR_ORIGINAL_REVIEW_OUT="$WRFR_SDD/task-2-review-package.md"
+  WRFR_HELPER_LOSS_REVIEW_OUT="$WRFR_SDD/task-2-helper-loss-fix-review-package.md"
+  WRFR_REVIEW_HELPER=/home/hy/.codex/plugins/cache/openai-curated-remote/superpowers/6.3.0/skills/subagent-driven-development/scripts/review-package
+  test "$(git log -1 --format=%s "$WRFR_TASK_HEAD")" = \
+    "docs: recover helper workflow after temp loss"
+  test "$(git rev-parse "$WRFR_TASK_HEAD^")" = "$WRFR_HELPER_LOSS_BASE"
+  test ! -e "$WRFR_ORIGINAL_REVIEW_OUT"
+  test ! -L "$WRFR_ORIGINAL_REVIEW_OUT"
+  umask 077
+  bash "$WRFR_REVIEW_HELPER" \
+    "$WRFR_PLAN" "$WRFR_TASK_BASE" "$WRFR_TASK_ORIGINAL_HEAD" \
+    "$WRFR_ORIGINAL_REVIEW_OUT"
+  python3 "$WRFR_SDD/full-corpus-check.py" artifact-register \
+    --workspace "$WRFR_SDD" \
+    --inventory "$WRFR_SDD/artifact-inventory.json" \
+    --path "$WRFR_ORIGINAL_REVIEW_OUT"
+  python3 "$WRFR_SDD/full-corpus-check.py" residue \
+    --workspace "$WRFR_SDD" \
+    --inventory "$WRFR_SDD/artifact-inventory.json"
+  test ! -e "$WRFR_HELPER_LOSS_REVIEW_OUT"
+  test ! -L "$WRFR_HELPER_LOSS_REVIEW_OUT"
+  umask 077
+  bash "$WRFR_REVIEW_HELPER" \
+    "$WRFR_PLAN" "$WRFR_HELPER_LOSS_BASE" "$WRFR_TASK_HEAD" \
+    "$WRFR_HELPER_LOSS_REVIEW_OUT"
+  python3 "$WRFR_SDD/full-corpus-check.py" artifact-register \
+    --workspace "$WRFR_SDD" \
+    --inventory "$WRFR_SDD/artifact-inventory.json" \
+    --path "$WRFR_HELPER_LOSS_REVIEW_OUT"
+  python3 "$WRFR_SDD/full-corpus-check.py" residue \
+    --workspace "$WRFR_SDD" \
+    --inventory "$WRFR_SDD/artifact-inventory.json"
+  ```
+
+  Both calls must use the canonical Plan and their explicit absent outputs; they
+  must not call `sdd-workspace`, omit an output, recreate the alias, or invoke
+  `helper-sync`. After each call, postvalidate the unchanged canonical Plan
+  version and generated output before its immediate registration and residue
+  check. Provide both registered packages together to the same task reviewer.
+  The original package covers exactly `8d8c8e56..802193d3`; the helper-loss fix
+  package covers exactly `09f7cf1d..WRFR_TASK_HEAD`. Therefore the separately
+  owned `a8fffa61` Spec 0059 fix and `09f7cf1d` secrets-baseline fix are outside
+  both review ranges and are not Task 2 evidence. Resolve WRFR-001 Critical or
+  Important findings with a scoped fix commit and explicit-output re-review
+  before Task 3. `WRFR-002` remains blocked until the Task 2 spec-compliance and
+  quality verdicts are both approved.
 
 ### Task 3: WRFR-002 — agent engineering integration
 
@@ -1625,23 +1730,31 @@ replayed by an implementer.
   python3 "$WRFR_SDD/full-corpus-check.py" residue \
     --workspace "$WRFR_SDD" \
     --inventory "$WRFR_SDD/artifact-inventory.json"
-  python3 "$WRFR_SDD/full-corpus-check.py" restore-shared-marker \
-    --workspace "$WRFR_SDD" \
-    --bootstrap-ledger "$WRFR_SDD/progress.md"
-  python3 "$WRFR_SDD/full-corpus-check.py" remove-owned-helper-plan \
-    --path "$WRFR_HELPER_PLAN"
   test ! -e "$WRFR_HELPER_PLAN"
   test ! -L "$WRFR_HELPER_PLAN"
   ```
 
+  Alias absence is the terminal desired state, so the two passing tests skip
+  `remove-owned-helper-plan`. If either test fails, stop; do not delete the
+  reappeared, unproved path. Do not call `restore-shared-marker`: the initially
+  absent marker is still the exact recorded helper-created file but has mode
+  `0644`, which that command rejects.
+
   Record final `HEAD`, status, commit list, counts, artifact inventory, and
   review verdict in the SDD ledger. After the final scoped re-review has no open
-  Critical or Important finding, delete only this Plan's SDD workspace via the
-  subagent-driven development finish procedure and verify that exact path is
-  absent. Verify the shared marker state equals its recorded initial state. If a
-  foreign sibling prevents safe restoration, stop with an explicit cleanup
-  blocker instead of deleting or claiming completion. Leave every sibling SDD
-  workspace and every primary-checkout change untouched.
+  Critical or Important finding and every SDD finish precondition is satisfied,
+  obtain a separate review of the exact fd-bound marker-cleanup procedure and
+  its frozen target identity. Execute it only through a validated descriptor for
+  the exact `.superpowers/sdd` parent, only if the marker still matches its
+  recorded owner, regular-file type, non-symlink status, bytes, and complete
+  FileVersion, and only if the exact Plan workspace is the sole non-marker child.
+  It may unlink only the exact `.gitignore` entry and must prove it absent. Any
+  foreign sibling or identity drift stops cleanup without chmod, provenance
+  update, generic deletion, or a completion claim. Then delete only this Plan's
+  SDD workspace via the subagent-driven development finish procedure, prove that
+  exact path absent, and confirm the marker's recorded initial state remains
+  absent. Leave every sibling SDD workspace and every primary-checkout change
+  untouched.
 
 ## Verification Plan
 

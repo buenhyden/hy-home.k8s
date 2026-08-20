@@ -3,7 +3,7 @@ title: 'Workspace Research Full-Corpus Reverification Task'
 type: sdlc/task
 status: active
 owner: platform
-updated: 2026-08-20
+updated: 2026-08-21
 artifact_id: "TASK-0062"
 ---
 
@@ -15,17 +15,20 @@ This Task is the execution ledger for `WRFR-000` through `WRFR-009` in the
 reciprocal [Plan](plan.md), implementing [Spec 0062](spec.md). Direct human
 approval on 2026-08-20 activates the standalone execution relation. The
 activation commit is `docs: activate full-corpus research reverification`.
-`WRFR-001` has completed closed-corpus evidence intake and allocation; the
-current next owner is `WRFR-002`.
+`WRFR-001` has committed closed-corpus evidence intake and allocation, but its
+post-commit review package and task review remain pending until the 2026-08-21
+helper-loss amendment is committed. `WRFR-002` remains blocked.
 
 The target is a 2026-08-20 external-source and workspace reverification of all
 thirty-six existing `REQ-WERPC-*` owners, integrated into the existing
-`2026-08-08-wer` pack. `WRFR-001` is complete: guarded checker construction and
-direct review, artifact-inventory initialization and recovery, immutable
-baseline capture, five reviewed closed-corpus reports, exact-union validation,
-and final ID allocation all completed in the ignored SDD workspace. No remote
-GitHub query or tracked research/integration implementation has occurred, and
-no successor work package has staged or committed execution work.
+`2026-08-08-wer` pack. The WRFR-001 implementation and evidence commit are
+complete: guarded checker construction and direct review, artifact-inventory
+initialization and recovery, immutable baseline capture, five reviewed
+closed-corpus reports, exact-union validation, and final ID allocation all
+completed in the ignored SDD workspace. Its independent task-level
+spec-compliance and quality review is not complete. No remote GitHub query or
+tracked research/integration implementation has occurred, and no successor
+work package has staged or committed execution work.
 
 ## Inputs
 
@@ -73,8 +76,8 @@ stage, or commit.
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | WRFR-000 | VAL-WRFR-012, 013 | Activate standalone lifecycle and SDD workspace | platform | Done | Activated by direct approval on 2026-08-20 in `docs: activate full-corpus research reverification` | Active standalone Spec/Plan/Task relation; next owner `WRFR-001` |
-| WRFR-001 | VAL-WRFR-001..007, 009 | Freeze baseline, collect five read-only reports, allocate IDs | platform + research agents | Done | Exact 36-row union validated; all report reviews approved; one source and six claims allocated | Registered reports and allocation; next owner `WRFR-002` |
-| WRFR-002 | VAL-WRFR-002..005, 008, 013 | Integrate agent engineering findings | agent integrator | Queued | Not executed | Next owner; reviewed agent report and allocation slice ready |
+| WRFR-001 | VAL-WRFR-001..007, 009 | Freeze baseline, collect five read-only reports, allocate IDs | platform + research agents | Review pending | Exact 36-row union validated; all report reviews approved; one source and six claims allocated; tracked evidence committed | Post-amendment review package and task reviewer pending |
+| WRFR-002 | VAL-WRFR-002..005, 008, 013 | Integrate agent engineering findings | agent integrator | Blocked | Not executed | Awaiting WRFR-001 task-level spec-compliance and quality approval |
 | WRFR-003 | VAL-WRFR-002..005, 008, 013 | Integrate provider/common findings | provider integrator | Queued | Not executed | Awaiting reviewed provider report/allocation |
 | WRFR-004 | VAL-WRFR-002..005, 008, 013 | Integrate SDLC/documentation findings | documentation integrator | Queued | Not executed | Awaiting reviewed SDLC report/allocation |
 | WRFR-005 | VAL-WRFR-002..005, 008, 013 | Integrate platform/security findings | platform/security integrator | Queued | Not executed | Awaiting reviewed platform report/allocation |
@@ -85,17 +88,20 @@ stage, or commit.
 
 ## Approval and Safety Boundaries
 
-- **Allowed Paths**: the exact files listed under each Plan work package, this
-  Plan's unique ignored SDD workspace returned from the guarded helper-Plan
-  alias, and exact temporary alias
-  `/tmp/0062-workspace-research-full-corpus-reverification-plan.md`.
+- **Allowed Paths**: the exact files listed under each Plan work package and
+  this Plan's existing unique ignored SDD workspace. The historical temporary
+  alias `/tmp/0062-workspace-research-full-corpus-reverification-plan.md` is no
+  longer an allowed mutation surface and must remain absent/non-symlink.
 - **Forbidden Paths**: any new research directory or topic report; policy,
   manifest, workflow, application, runtime, credential, secret, primary-checkout
   staged RIA, sibling worktree, sibling SDD workspace, and unlisted `/tmp` path.
-- **Shared helper marker**: `.superpowers/sdd/.gitignore` is validated as exact
-  helper state and restored to its recorded initial state. An initially absent
-  marker is removed only when no foreign sibling exists; otherwise cleanup stops
-  fail-closed without deleting foreign state or claiming completion.
+- **Shared helper marker**: `.superpowers/sdd/.gitignore` was initially absent.
+  The current marker is the exact recorded current-user regular non-symlink with
+  bytes `*\n` and the recorded FileVersion, but mode `0644`; do not chmod it,
+  update provenance, or call `restore-shared-marker`. After every consumer and
+  SDD finish precondition completes, only a separately reviewed fd-bound cleanup
+  may remove that exact identity, and only with no foreign sibling. Any mismatch
+  stops fail-closed without generic deletion or a completion claim.
 - **Approval Required**: written Plan approval before WRFR-000; pre-remote
   security approval before any GitHub query; human finishing choice before push,
   merge, publication, branch deletion, or worktree cleanup.
@@ -159,7 +165,95 @@ rollback failure is preserved and fails closed. `artifact-register` remains
 unchanged, duplicate registration remains rejected, no generic report rebind
 exists, and all later WRFR-001 evidence goes only to mutable `progress.md`.
 
+### WRFR-001 helper workflow after alias loss
+
+On 2026-08-21 the exact helper Plan alias
+`/tmp/0062-workspace-research-full-corpus-reverification-plan.md` was observed
+absent and non-symlink after its created FileVersion had been recorded. No cause
+is proved. The alias must remain absent, must not be recreated or synchronized,
+and is not an input to any remaining helper call. The existing exact SDD
+workspace remains current-user-owned, non-symlink, and mode `0700`.
+
+The pre-amendment Task 2 commit sequence after base
+`8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c` is
+`ab1dcbae4b0b85a20e6b8c2236249ffa6559ca1f`,
+`ce74dc29c3be4fd5a4198bafd01998881ffdd969`,
+`19c270b17f8b8e303516eea8da68bf852d229e6f`, and
+`802193d33a08423f055615b621fb2667b0a99a1e`. The evidence implementation and
+commit are complete, but the task-level review package and reviewer remain
+pending until this amendment is committed; `WRFR-002` remains blocked.
+
+The shared branch then received two separately owned remediation commits:
+`a8fffa6100b3178337cb72deaf56e24c7f14d008` modifies only the Spec 0059 Task,
+and `09f7cf1d70f7f533f7323343bad8de02c1ace3f4` modifies only
+`.secrets.baseline`. They are outside WRFR-001 implementation evidence and
+retain their separate owners and reviews. The two disjoint review ranges below
+exclude both remediation commits from WRFR-001 evidence.
+
+After the amendment commit, the controller creates two disjoint review
+packages. Before each call it independently guarded-reads and freezes the
+canonical Plan and applies every explicit-output precondition in Plan Task 2
+Step 9, then runs exactly:
+
+```bash
+WRFR_PLAN=docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md
+WRFR_SDD=.superpowers/sdd/0062-workspace-research-full-corpus-reverification-plan
+WRFR_TASK_BASE=8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c
+WRFR_TASK_ORIGINAL_HEAD=802193d33a08423f055615b621fb2667b0a99a1e
+WRFR_HELPER_LOSS_BASE=09f7cf1d70f7f533f7323343bad8de02c1ace3f4
+WRFR_TASK_HEAD=$(git rev-parse HEAD)
+WRFR_ORIGINAL_REVIEW_OUT="$WRFR_SDD/task-2-review-package.md"
+WRFR_HELPER_LOSS_REVIEW_OUT="$WRFR_SDD/task-2-helper-loss-fix-review-package.md"
+WRFR_REVIEW_HELPER=/home/hy/.codex/plugins/cache/openai-curated-remote/superpowers/6.3.0/skills/subagent-driven-development/scripts/review-package
+test "$(git log -1 --format=%s "$WRFR_TASK_HEAD")" = \
+  "docs: recover helper workflow after temp loss"
+test "$(git rev-parse "$WRFR_TASK_HEAD^")" = "$WRFR_HELPER_LOSS_BASE"
+test ! -e "$WRFR_ORIGINAL_REVIEW_OUT"
+test ! -L "$WRFR_ORIGINAL_REVIEW_OUT"
+umask 077
+bash "$WRFR_REVIEW_HELPER" \
+  "$WRFR_PLAN" "$WRFR_TASK_BASE" "$WRFR_TASK_ORIGINAL_HEAD" \
+  "$WRFR_ORIGINAL_REVIEW_OUT"
+python3 "$WRFR_SDD/full-corpus-check.py" artifact-register \
+  --workspace "$WRFR_SDD" \
+  --inventory "$WRFR_SDD/artifact-inventory.json" \
+  --path "$WRFR_ORIGINAL_REVIEW_OUT"
+python3 "$WRFR_SDD/full-corpus-check.py" residue \
+  --workspace "$WRFR_SDD" \
+  --inventory "$WRFR_SDD/artifact-inventory.json"
+test ! -e "$WRFR_HELPER_LOSS_REVIEW_OUT"
+test ! -L "$WRFR_HELPER_LOSS_REVIEW_OUT"
+umask 077
+bash "$WRFR_REVIEW_HELPER" \
+  "$WRFR_PLAN" "$WRFR_HELPER_LOSS_BASE" "$WRFR_TASK_HEAD" \
+  "$WRFR_HELPER_LOSS_REVIEW_OUT"
+python3 "$WRFR_SDD/full-corpus-check.py" artifact-register \
+  --workspace "$WRFR_SDD" \
+  --inventory "$WRFR_SDD/artifact-inventory.json" \
+  --path "$WRFR_HELPER_LOSS_REVIEW_OUT"
+python3 "$WRFR_SDD/full-corpus-check.py" residue \
+  --workspace "$WRFR_SDD" \
+  --inventory "$WRFR_SDD/artifact-inventory.json"
+```
+
+The canonical Plan and each generated output are postvalidated before reviewer
+dispatch. Neither call may invoke `sdd-workspace`, use a default output,
+recreate the alias, or invoke `helper-sync`. Both registered packages go to the
+same task reviewer: `8d8c8e56..802193d3` contains original Task 2, while
+`09f7cf1d..WRFR_TASK_HEAD` contains only this helper-loss amendment. The
+separately owned `a8fffa61` and `09f7cf1d` baseline fixes are outside both
+ranges and are not Task 2 evidence. Terminal alias cleanup skips
+`remove-owned-helper-plan` only while the alias remains absent/non-symlink; a
+reappearance stops execution without deletion. The initially absent shared
+marker remains the exact recorded helper-created identity with bytes `*\n` and
+mode `0644`. It is not repaired now. Its only authorized terminal removal is
+the separately reviewed fd-bound, exact-identity, no-foreign-sibling procedure
+in the Plan.
+
 ### WRFR-001 evidence intake completion
+
+This section records completed intake implementation evidence, not completion
+of the still-pending task-level post-commit review.
 
 The exact final registered artifact identities are:
 
@@ -213,8 +307,9 @@ All other conflicts receive a recorded SDD ruling and continue under the Spec.
 
 ## Verification Summary
 
-WRFR-000 activation and WRFR-001 evidence intake are complete. Initial design
-evidence included:
+WRFR-000 activation is complete. WRFR-001 intake implementation and its tracked
+evidence commit are complete, while the task-level post-commit review remains
+pending. Initial design evidence included:
 
 - isolated worktree created from clean tracked `HEAD`;
 - primary checkout's unrelated staged RIA files excluded from the branch;
@@ -236,7 +331,7 @@ runtime, hosted CI, live infrastructure, or user validation.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [VAL-WRFR-001](spec.md) | Done for intake | The checker validated the exact `001..036` report union |
+| [VAL-WRFR-001](spec.md) | Done for intake implementation; task review pending | The checker validated the exact `001..036` report union |
 | [VAL-WRFR-002](spec.md) | Intake passed; integration pending | All 36 rows carry closed external and repository-static evidence fields |
 | [VAL-WRFR-003](spec.md) | Done | The five registered reports retain the exact closed workstream assignment |
 | [VAL-WRFR-004](spec.md) | Intake review passed; integration pending | All report-local reviews and the cross-report quality review approved the registered bytes |
@@ -248,7 +343,7 @@ runtime, hosted CI, live infrastructure, or user validation.
 | [VAL-WRFR-010](spec.md) | Not executed | WRFR-007..009 own the shared projection sequence |
 | [VAL-WRFR-011](spec.md) | Not executed | WRFR-006 and WRFR-009 own the nine-class remote/security contract |
 | [VAL-WRFR-012](spec.md) | Workspace passed; cleanup pending | WRFR-001 residue validation passed; WRFR-009 still owns exact cleanup |
-| [VAL-WRFR-013](spec.md) | In progress | This WRFR-001 evidence commit precedes controller-owned post-commit review |
+| [VAL-WRFR-013](spec.md) | In progress | Task 2 commits through `802193d3` exist; the post-amendment package and task review are pending, and WRFR-002 is blocked |
 | [VAL-WRFR-014](spec.md) | Not executed | WRFR-009 owns the whole-branch review gate |
 | [VAL-WRFR-015](spec.md) | Not executed | WRFR-009 owns the terminal lane sequence |
 
