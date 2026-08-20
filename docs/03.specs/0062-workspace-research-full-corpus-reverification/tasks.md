@@ -20,7 +20,9 @@ registered review packages, and independent task review. The first helper-loss
 Package B used a checker-rejected basename; its bounded cleanup and evidence
 limitations remain recorded below. Regenerated Packages B/C passed registration
 and residue validation, and the reviewer approved Task 2 with no findings.
-`WRFR-002` is queued and ready but has not been executed.
+The first WRFR-002 integration probe then exposed an allocation-order checker
+defect before any owner edit. `WRFR-002` is blocked at the one-time
+checker-only inventory recovery gate and has not been executed.
 
 The target is a 2026-08-20 external-source and workspace reverification of all
 thirty-six existing `REQ-WERPC-*` owners, integrated into the existing
@@ -80,7 +82,7 @@ stage, or commit.
 | --- | --- | --- | --- | --- | --- | --- |
 | WRFR-000 | VAL-WRFR-012, 013 | Activate standalone lifecycle and SDD workspace | platform | Done | Activated by direct approval on 2026-08-20 in `docs: activate full-corpus research reverification` | Active standalone Spec/Plan/Task relation; next owner `WRFR-001` |
 | WRFR-001 | VAL-WRFR-001..007, 009 | Freeze baseline, collect five read-only reports, allocate IDs | platform + research agents | Done | Exact 36-row union validated; all report and task reviews approved; one source and six claims allocated; tracked evidence committed | Packages A/B/C registered; final residue passed; task review `APPROVED` with Critical/Important/Minor `0/0/0` |
-| WRFR-002 | VAL-WRFR-002..005, 008, 013 | Integrate agent engineering findings | agent integrator | Queued | Not executed | WRFR-001 task review approved; registered agent report and allocation slice are ready |
+| WRFR-002 | VAL-WRFR-002..005, 008, 013 | Integrate agent engineering findings | agent integrator | Blocked | No owner edit; first probe returned `ERROR ALLOCATION_REFERENCE` | One-time reviewed checker-only inventory recovery required before resume |
 | WRFR-003 | VAL-WRFR-002..005, 008, 013 | Integrate provider/common findings | provider integrator | Queued | Not executed | Awaiting reviewed provider report/allocation |
 | WRFR-004 | VAL-WRFR-002..005, 008, 013 | Integrate SDLC/documentation findings | documentation integrator | Queued | Not executed | Awaiting reviewed SDLC report/allocation |
 | WRFR-005 | VAL-WRFR-002..005, 008, 013 | Integrate platform/security findings | platform/security integrator | Queued | Not executed | Awaiting reviewed platform report/allocation |
@@ -185,8 +187,9 @@ The pre-amendment Task 2 commit sequence after base
 `802193d33a08423f055615b621fb2667b0a99a1e`. The evidence implementation and
 commit are complete, the helper-loss amendment is commit `2716ce9f`, and the
 artifact-class correction is commit `4f25be8b`. The checker-admitted replacement
-packages and independent task review are complete; `WRFR-002` is queued and
-ready but has not been executed.
+packages and independent task review are complete. That review originally
+unblocked dispatch, but `WRFR-002` is now blocked by the later allocation-order
+checker defect and has not edited a tracked owner.
 
 The shared branch then received two separately owned remediation commits:
 `a8fffa6100b3178337cb72deaf56e24c7f14d008` modifies only the Spec 0059 Task,
@@ -300,6 +303,55 @@ Critical/Important/Minor `0/0/0`, explicitly unblocking `WRFR-002`. The final
 `pre-commit run --all-files` rerun exited `0`; every hook passed and reported no
 mutation.
 
+### WRFR-002 allocation-order checker recovery
+
+The Task 3 base is
+`e8edd3fddb4171aad634ee31a278d136fd3e4529`. Its registered brief is
+`task-3-brief.md`, SHA-256
+`0a04b10fadaa25f798e5b8648bc818c026d9c417dfe0f1d54a90370b82bb2de3`;
+registration produced inventory SHA-256
+`79bd0803f575a594a7f7b9ee3dc59a9100c09790668c6cf438866c91ade49f63`.
+The first actual integration RED on 2026-08-21 returned exactly
+`ERROR ALLOCATION_REFERENCE`. The implementer was paused and touched no
+tracked file.
+
+The defect is limited to the checker's final row-reference comparison. The
+registered allocation's global claims are `013-01..06`, while request-row
+traversal sees the same unique complete membership in order
+`013-04,05,01,02,03,06`. The correction compares exact cardinality,
+uniqueness, and sorted membership and preserves per-row owner checks. A new
+real self-test accepts non-global row insertion order and rejects missing,
+duplicate, and wrong-owner references.
+
+The Plan's fixed `artifact-rebind-checker-only` command is the sole authorized
+recovery. It may update only the same-index `full-corpus-check.py` inventory
+record from registered SHA-256
+`425b2eac6616cbf986960070b38061d76a6584fa4c139748a97d2c6da3d3fc7d`
+to freshly reviewed SHA-256
+`584086b297a7446e0a6dea932f0693831a3748813cae6f281bee41eb889c765d`.
+It has no generic target/report argument and validates all non-target records,
+full inventory identity, CAS continuity, post-state, and exact rollback
+continuity. The frozen Task 2 report stays
+`bb5e198e7c99a7c510296d12cf9c7f94eb8af4eed4ea9a6eedec91e085379598`.
+
+The first Python review found one Important race in the generic CAS helper's
+post-lock FileVersion read. A new TDD case mutates the inventory immediately
+after lock release. The revised helper captures its own replacement version
+under the lock, so rollback cannot overwrite those concurrent bytes. The old
+reviewed SHA is superseded and its approvals do not apply to the revised bytes.
+
+The revised candidate checker is current-user mode `0600`, 196902 bytes. All 89 named
+self-tests pass in normal and optimized mode; `py_compile`, Ruff check, and
+Ruff format check pass. The stateful command remains forbidden until fresh
+independent Python and security reviewers approve these exact checker bytes and
+the tracked Plan/Task/progress contract with no Critical or Important finding.
+After the three-document amendment is committed, the controller may execute
+the exact Plan tuple once, with no retry. Only a same-index sole-checker delta,
+`residue` and both self-test passes, and a post-recovery
+`ERROR INTEGRATION_SECTION` from the unchanged Task 3 probe may unblock the
+paused implementer. Allocation, baseline, reports, review packages, Task 3
+brief, and topical owners remain immutable throughout recovery.
+
 ### WRFR-001 evidence intake completion
 
 This section records completed intake implementation evidence and the approved
@@ -358,8 +410,9 @@ All other conflicts receive a recorded SDD ruling and continue under the Spec.
 ## Verification Summary
 
 WRFR-000 activation and WRFR-001 intake, tracked evidence, registered review
-packages, and task-level post-commit review are complete. WRFR-002 is queued and
-ready but has not been executed. Initial design evidence included:
+packages, and task-level post-commit review are complete. WRFR-002 is blocked
+at its one-time allocation-order checker recovery and has not edited a tracked
+owner. Initial design evidence included:
 
 - isolated worktree created from clean tracked `HEAD`;
 - primary checkout's unrelated staged RIA files excluded from the branch;
@@ -393,7 +446,7 @@ runtime, hosted CI, live infrastructure, or user validation.
 | [VAL-WRFR-010](spec.md) | Not executed | WRFR-007..009 own the shared projection sequence |
 | [VAL-WRFR-011](spec.md) | Not executed | WRFR-006 and WRFR-009 own the nine-class remote/security contract |
 | [VAL-WRFR-012](spec.md) | Workspace passed; cleanup pending | WRFR-001 residue validation passed; WRFR-009 still owns exact cleanup |
-| [VAL-WRFR-013](spec.md) | In progress | WRFR-001 commits and registered package review are complete; later task commits remain pending, and WRFR-002 is queued but not executed |
+| [VAL-WRFR-013](spec.md) | In progress | WRFR-001 commits and registered package review are complete; later task commits remain pending, and WRFR-002 is blocked before owner edits by its checker-only recovery gate |
 | [VAL-WRFR-014](spec.md) | Not executed | WRFR-009 owns the whole-branch review gate |
 | [VAL-WRFR-015](spec.md) | Not executed | WRFR-009 owns the terminal lane sequence |
 

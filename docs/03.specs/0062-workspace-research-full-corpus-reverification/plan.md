@@ -908,6 +908,87 @@ replayed by an implementer.
   no mutation. WRFR-001 is complete. `WRFR-002` is queued and ready, but no
   WRFR-002 implementation has been executed.
 
+### WRFR-002 one-time allocation-order checker recovery gate
+
+Task 3 dispatch froze base commit
+`e8edd3fddb4171aad634ee31a278d136fd3e4529` and registered
+`task-3-brief.md` before the integration RED. On 2026-08-21 that first actual
+RED returned `ERROR ALLOCATION_REFERENCE`, before any dated owner section was
+edited. The registered allocation is not corrupt: its global claim list is
+contiguous `CLM-WERPC-013-01..06`, while the closed row map encounters the same
+claims in valid request-row order `04,05,01,02,03,06`. The checker incorrectly
+required row traversal order to equal global allocation order. The Task 3
+implementer was paused and changed no tracked file.
+
+The proposed semantic correction compares exact reference cardinality,
+uniqueness, and sorted membership while retaining the existing per-row owner
+check. Its real self-test reverses two valid claim-bearing row insertions and
+also proves that missing, duplicate, and wrong-owner references still fail.
+Because the checker itself is an immutable registered artifact, this repair
+invalidates only its old inventory record. `WRFR-002` remains blocked until the
+one-time recovery below completes; the frozen baseline, allocation, reports,
+review packages, Task 3 brief, and every other inventory record remain
+immutable.
+
+The only authorized recovery command is
+`artifact-rebind-checker-only`. It has no generic target or report argument. It
+accepts only the exact inventory SHA-256, registered old checker SHA-256, and
+freshly approved new checker SHA-256; validates the complete inventory schema,
+the old checker record, both mutable records, and every other immutable record
+against its current complete FileVersion; and replaces only the checker record
+at its existing index. It re-reads the checker before and after the inventory
+CAS, postvalidates the exact resulting inventory, and attempts rollback to the
+exact old inventory bytes only against the CAS-returned FileVersion. Target or
+inventory contention, postvalidation failure, and rollback contention all fail
+closed. Existing `artifact-register` and the earlier two-record recovery
+command remain unchanged.
+
+The first independent Python review of candidate
+`71f4b499f1663c2aba2b8e31de5caeeb9b1ef2593dd1f4c95b3e891a43a3fac3`
+found an Important post-lock race: the generic CAS helper read its return
+FileVersion after releasing the update lock, so a concurrent writer could be
+mistaken for the helper's own result and then overwritten by rollback. TDD
+reproduced that exact window. The helper now captures and validates its
+replacement FileVersion while holding the lock; a post-unlock replacement makes
+rollback CAS fail and preserves the concurrent bytes. The earlier Python and
+security review results are invalid for the changed bytes.
+
+The revised candidate checker is mode `0600`, current-user owned, 196902 bytes, and
+SHA-256
+`584086b297a7446e0a6dea932f0693831a3748813cae6f281bee41eb889c765d`.
+Normal and optimized self-tests pass all 89 named cases; `py_compile`, Ruff
+check, and Ruff format check pass. Fresh independent Python and security
+reviewers must approve the exact checker bytes and this tracked contract with
+no Critical or Important finding before any stateful invocation. A later byte
+change invalidates both approvals and this tuple.
+
+After those approvals and the reviewed three-document contract commit, the
+controller may run exactly once:
+
+```bash
+WRFR_SDD=.superpowers/sdd/0062-workspace-research-full-corpus-reverification-plan
+python3 "$WRFR_SDD/full-corpus-check.py" artifact-rebind-checker-only \
+  --workspace "$WRFR_SDD" \
+  --inventory "$WRFR_SDD/artifact-inventory.json" \
+  --expected-inventory-sha256 \
+    79bd0803f575a594a7f7b9ee3dc59a9100c09790668c6cf438866c91ade49f63 \
+  --expected-old-checker-sha256 \
+    425b2eac6616cbf986960070b38061d76a6584fa4c139748a97d2c6da3d3fc7d \
+  --approved-new-checker-sha256 \
+    584086b297a7446e0a6dea932f0693831a3748813cae6f281bee41eb889c765d
+```
+
+Do not retry. Postvalidate that inventory length and order are unchanged, only
+the same-index checker record differs, checker SHA-256 is the approved value,
+and `task-2-report.md` remains
+`bb5e198e7c99a7c510296d12cf9c7f94eb8af4eed4ea9a6eedec91e085379598`.
+Then run `residue`, both self-test modes, and the unchanged Task 3 Step 1 probe.
+The expected post-recovery RED is `ERROR INTEGRATION_SECTION`, proving the
+allocation was admitted but the four dated owner sections are still absent.
+Only that evidence unblocks the paused implementer. No allocation, report,
+baseline, task brief, tracked topical owner, remote, or live mutation is part
+of this recovery.
+
 ### Task 3: WRFR-002 — agent engineering integration
 
 **Files:**
@@ -927,11 +1008,14 @@ replayed by an implementer.
 - Produces: reviewed 2026-08-20 sections for harness, loop, agency-agents, model
   routing, and memory without writing the shared source/claim ledger.
 
-- [ ] **Step 1: reproduce the missing-section RED**
+- [ ] **Step 1: pass the checker-recovery gate and reproduce the missing-section RED**
 
-  Use a read-only probe that requires the exact dated H3 in all four owner files
-  and the exact nine request IDs in the report. Expected before edits: four
-  missing-section diagnostics and exit 1.
+  Complete the separately reviewed one-time checker-only inventory recovery
+  above. Then use the same read-only probe that requires the exact dated H3 in
+  all four owner files and the exact nine request IDs in the report. Expected
+  before owner edits: `ERROR INTEGRATION_SECTION` and exit 1. The earlier
+  `ERROR ALLOCATION_REFERENCE` is the recorded checker defect and is not the
+  accepted Task 3 RED.
 
   ```bash
   python3 "$WRFR_SDD/full-corpus-check.py" validate-integration \

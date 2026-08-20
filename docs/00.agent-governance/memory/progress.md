@@ -16554,6 +16554,91 @@ newly attained state.
 - No live, hosted, provider-runtime, remote, secret-value, push, publish, or
   deployment evidence was collected or claimed.
 
+## 2026-08-21 - WRFR-002 allocation-order checker recovery gate
+
+### Metadata
+
+- Date: 2026-08-21
+- Layer: docs
+- Status: blocked
+- Tags: workspace-research, checker, allocation, guarded-artifacts
+- Owner: platform
+- Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md#wrfr-002-one-time-allocation-order-checker-recovery-gate`
+- Provenance: registered Task 3 brief, immutable allocation, checker RED, and local self-tests
+- Sensitivity: internal
+- Retention: durable
+- Next Owner: controller checker-only recovery, then paused WRFR-002 implementer
+
+### Progress
+
+Task 3 froze base commit
+`e8edd3fddb4171aad634ee31a278d136fd3e4529`, registered
+`task-3-brief.md` at SHA-256
+`0a04b10fadaa25f798e5b8648bc818c026d9c417dfe0f1d54a90370b82bb2de3`,
+and reached inventory SHA-256
+`79bd0803f575a594a7f7b9ee3dc59a9100c09790668c6cf438866c91ade49f63`.
+The first actual agent-engineering integration probe on 2026-08-21 returned
+exactly `ERROR ALLOCATION_REFERENCE`. The implementer was paused and changed no
+tracked file.
+
+The registered allocation remains exact and immutable. Its global claim list
+is contiguous `CLM-WERPC-013-01..06`; row traversal encounters the same complete
+unique set in request-row order `04,05,01,02,03,06`. The checker incorrectly
+compared those two orderings for sequence equality after already enforcing
+per-row ownership.
+
+### Memory
+
+An allocation has two legitimate orders: global identifier allocation order
+and owner-row traversal order. Referential integrity requires equal unique
+membership and cardinality plus owner correctness, not equal traversal order.
+A registered validator repair must recover only its own record; a generic
+artifact rebind or a report mutation would widen the exception unnecessarily.
+
+### Evidence
+
+- Actual pre-fix production probe: `ERROR ALLOCATION_REFERENCE`, exit `1`.
+- TDD RED: the new `allocation-row-reference-membership` case failed with that
+  exact error after the preceding eight cases passed.
+- Minimal semantic repair: compare exact cardinality, uniqueness, and sorted
+  membership; retain the existing owner loop. The new case also rejects
+  missing, duplicate, and wrong-owner references.
+- A fixed `artifact-rebind-checker-only` command has no generic target/report
+  argument. Its tests cover exact identity, complete non-target record
+  validation, same-index sole-checker replacement, target and inventory
+  contention, postvalidation rollback, and rollback contention.
+- First direct review of checker SHA-256
+  `71f4b499f1663c2aba2b8e31de5caeeb9b1ef2593dd1f4c95b3e891a43a3fac3`
+  produced security `APPROVED` at Critical/Important/Minor `0/0/0`, but Python
+  `CHANGES REQUIRED` with one Important post-lock CAS return-version race. Both
+  results are superseded because the checker bytes changed.
+- The TDD post-unlock-contention case failed before the fix because rollback
+  overwrote the simulated concurrent inventory. `_cas_file` now captures and
+  validates its replacement FileVersion while holding the update lock. The
+  case passes only when a post-unlock concurrent inventory survives and the
+  checker returns `REBIND_ROLLBACK_FAILED`.
+- Revised candidate checker SHA-256 is
+  `584086b297a7446e0a6dea932f0693831a3748813cae6f281bee41eb889c765d`;
+  mode/owner/size are `0600`, `hy:hy`, and `196902` bytes. All 89 named
+  self-tests pass in normal and optimized mode; `py_compile`, Ruff check, and
+  Ruff format check pass.
+- Registered old checker SHA-256 is
+  `425b2eac6616cbf986960070b38061d76a6584fa4c139748a97d2c6da3d3fc7d`.
+  Frozen Task 2 report SHA-256 remains
+  `bb5e198e7c99a7c510296d12cf9c7f94eb8af4eed4ea9a6eedec91e085379598`.
+- No stateful rebind, inventory/allocation/baseline/report/review-package/brief
+  mutation, owner edit, stage, commit, remote action, or live action occurred.
+
+### Handoff
+
+Fresh independent Python and security review must approve the exact checker
+bytes and the tracked Plan/Task/progress contract with no Critical or Important
+finding. After the reviewed three-document amendment is committed, the
+controller may run the Plan's exact checker-only tuple once and must not retry.
+Only a sole same-index checker-record delta, residue and both self-test passes,
+and the expected post-recovery `ERROR INTEGRATION_SECTION` may unblock the
+paused WRFR-002 implementer. Until then WRFR-002 remains blocked.
+
 ## 2026-08-21 - WRFR helper workflow recovery after alias loss
 
 ### Metadata
