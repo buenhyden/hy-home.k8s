@@ -735,6 +735,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
                     )
 
     def test_work109_direct_approval_lineage_is_atomic(self) -> None:
+        validator = self.validators["registry"]
         work_unit = "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation"
         for leaf in ("spec.md", "plan.md", "tasks.md"):
             with self.subTest(leaf=leaf):
@@ -745,8 +746,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
 
         registry = json.loads(
             _staged_bytes(
-                REPOSITORY_ROOT
-                / "docs/99.templates/support/document-profiles.json"
+                REPOSITORY_ROOT / validator.WORK109_REGISTRY_PATH
             )
         )
         expected = {
@@ -761,10 +761,14 @@ class DocumentStrictCutoverTests(unittest.TestCase):
             "decision": "0022",
             "approvalMode": "spec-body-record",
         }
-        self.assertEqual(registry["standaloneExecutions"][-1], expected)
+        standalone = registry["standaloneExecutions"]
         self.assertEqual(
-            [row["spec"] for row in registry["standaloneExecutions"]],
-            sorted(row["spec"] for row in registry["standaloneExecutions"]),
+            [row for row in standalone if row.get("spec") == "0054"], [expected]
+        )
+        standalone_spec_numbers = [int(row["spec"]) for row in standalone]
+        self.assertEqual(
+            standalone_spec_numbers,
+            sorted(set(standalone_spec_numbers)),
         )
         stage03_index = _staged_bytes(
             REPOSITORY_ROOT / "docs/03.specs/README.md"
@@ -813,6 +817,15 @@ class DocumentStrictCutoverTests(unittest.TestCase):
             path: _staged_bytes(REPOSITORY_ROOT / path) for path in required_paths
         }
         adr = _staged_bytes(adr_path)
+        registry = json.loads(
+            staged[validator.WORK109_REGISTRY_PATH].decode("utf-8")
+        )
+        standalone_specs = [
+            row["spec"] for row in registry["standaloneExecutions"]
+        ]
+        self.assertLess(
+            standalone_specs.index("0054"), standalone_specs.index("0062")
+        )
         self.assertTrue(
             validator._work109_direct_approval_history_transition(
                 REPOSITORY_ROOT,
@@ -838,7 +851,13 @@ class DocumentStrictCutoverTests(unittest.TestCase):
         registry = json.loads(
             registry_drift[validator.WORK109_REGISTRY_PATH].decode("utf-8")
         )
-        registry["standaloneExecutions"][-1]["decision"] = "0021"
+        work109_rows = [
+            row
+            for row in registry["standaloneExecutions"]
+            if row.get("spec") == "0054"
+        ]
+        self.assertEqual(len(work109_rows), 1)
+        work109_rows[0]["decision"] = "0021"
         registry_drift[validator.WORK109_REGISTRY_PATH] = json.dumps(
             registry, indent=2
         ).encode("utf-8")

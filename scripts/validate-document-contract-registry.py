@@ -6322,14 +6322,18 @@ def _work109_direct_approval_history_transition(
     standalone = (
         registry.get("standaloneExecutions") if isinstance(registry, Mapping) else None
     )
+    work109_rows = (
+        [
+            row
+            for row in standalone
+            if isinstance(row, Mapping) and row.get("spec") == "0054"
+        ]
+        if isinstance(standalone, list)
+        else []
+    )
     if (
         not isinstance(standalone, list)
-        or not standalone
-        or standalone[-1] != WORK109_STANDALONE_ROW
-        or sum(
-            isinstance(row, Mapping) and row.get("spec") == "0054" for row in standalone
-        )
-        != 1
+        or work109_rows != [WORK109_STANDALONE_ROW]
     ):
         raise AssertionError("WORK-109 standalone approval authority differs")
 
