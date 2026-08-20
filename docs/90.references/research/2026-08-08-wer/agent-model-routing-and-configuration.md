@@ -266,6 +266,38 @@ model/evaluation selector materially changes.
 promotion. New source registered: `SRC-WERPC-074`. New claim registered:
 `CLM-WERPC-010-03`.
 
+### 2026-08-20 full-corpus reverification
+
+The allocation slice assigns no new source or claim ID for this row.
+
+#### REQ-WERPC-028 model-routing re-observation
+
+- **Sources and external result:** `unchanged`; `SRC-WERPC-049`,
+  `SRC-WERPC-045`, and `SRC-WERPC-046` were re-observed on 2026-08-20. The
+  official provider pages still describe configuration, subagent model, and
+  reasoning surfaces without proving parser acceptance, entitlement, or
+  effective resolution.
+- **Workspace selector and result:** `confirmed` at baseline commit
+  `8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c` and
+  `agent-model-routing-and-configuration.md#model-routing-baseline`. Local
+  policy still maps task/role to provider, configured model tier, reasoning
+  effort, and bounded tool surface; the model-fitness contract remains the
+  evidence owner for each provider-role tuple.
+- **As-Is, gap, and target:** configured incumbent mappings remain `Partial`
+  at public-documentation depth. Exact parsing, account-level model and effort
+  resolution, task/tool fitness, same-suite quality and safety, cost, latency,
+  canary, rollback, and promotion evidence are absent. Preserve each
+  incumbent until those evidence classes and independent adjudication exist.
+- **Evidence boundary:** blocking class and retained boundary are
+  `provider-runtime` / `DEFER`. A documented model name or reasoning level is
+  not a stable local target and does not prove that the provider accepted or
+  applied the tuple; no runtime promotion is made.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the Stage
+  00 model policy/model-fitness contract. After platform-owner approval, use
+  one non-secret parse/resolution canary for an exact provider-role tuple
+  without changing adapters. Refresh when cited configuration, model,
+  reasoning, precedence, tool mapping, or a local fitness selector changes.
+
 ## Related Documents
 
 - [Provider implementation status](provider-implementation-status.md)

@@ -1008,7 +1008,7 @@ of this recovery.
 - Produces: reviewed 2026-08-20 sections for harness, loop, agency-agents, model
   routing, and memory without writing the shared source/claim ledger.
 
-- [ ] **Step 1: pass the checker-recovery gate and reproduce the missing-section RED**
+- [x] **Step 1: pass the checker-recovery gate and reproduce the missing-section RED**
 
   Complete the separately reviewed one-time checker-only inventory recovery
   above. Then use the same read-only probe that requires the exact dated H3 in
@@ -1025,7 +1025,14 @@ of this recovery.
     --workstream agent-engineering
   ```
 
-- [ ] **Step 2: append the agent-engineering findings**
+  The original pre-recovery run exited `1` with
+  `ERROR ALLOCATION_REFERENCE`. After reviewed checker-only recovery, the same
+  fail-fast probe exited `1` with `ERROR INTEGRATION_SECTION`, before any owner
+  edit. The checker reports the first failing section, so the accepted RED is
+  one exact diagnostic rather than the four diagnostics stated in the frozen
+  Task 3 brief.
+
+- [x] **Step 2: append the agent-engineering findings**
 
   Under the existing review/freshness owner in each file, append exactly one
   `### 2026-08-20 full-corpus reverification` section. Use the allocation map's
@@ -1047,7 +1054,13 @@ of this recovery.
   Gap, Target, evidence depth, rejected inference, retained DEFER, owner, safe
   follow-up, and trigger. Do not duplicate unchanged baseline prose.
 
-- [ ] **Step 3: run agent-focused GREEN checks**
+  Exactly one dated H3 was appended to each of the four owners. The nine rows
+  use their existing source identities because the allocation slice contains
+  no new source or claim ID. All external results remain `unchanged`, all
+  workspace results remain `confirmed`, and provider-runtime evidence remains
+  `DEFER` for rows `001`, `002`, `026`, `028`, and `032`.
+
+- [x] **Step 3: run agent-focused GREEN checks**
 
   ```bash
   python3 "$WRFR_SDD/full-corpus-check.py" validate-integration \
@@ -1068,6 +1081,11 @@ of this recovery.
   agent validator passes while runtime/fitness/promotion remains explicitly
   `DEFER` where the owner contract says so.
 
+  The task-local probe passed for all nine rows. The harness, loop, roster,
+  evaluation, model-fitness, and checkpoint validators passed; strict Markdown
+  reported zero violations; strict links/owners passed; and `git diff --check`
+  passed. These are repository-static results only.
+
 - [ ] **Step 4: commit and review agent findings**
 
   Update Task/Plan/progress and commit only the seven named tracked files:
@@ -1087,6 +1105,14 @@ of this recovery.
   Generate the committed package, then dispatch one source-fidelity reviewer
   and one task reviewer. Resolve Critical or Important findings in a scoped fix
   commit and re-review before Task 4.
+
+  Before staging, an independent source-fidelity/content reviewer and an
+  independent spec-compliance/quality reviewer both returned `APPROVED` with
+  Critical/Important/Minor `0/0/0`. The first affected lane selected and passed
+  every agent and document validator, then failed only at the aggregate's
+  expected `CLOSURE-WORKTREE-INDEX-DRIFT` because the seven-file logical unit
+  was not yet staged. Stage exactly those seven files, replay affected, then
+  run staged, plain pre-commit, all-files, formatter review, and diff checks.
 
 ### Task 4: WRFR-003 — provider and common-environment integration
 

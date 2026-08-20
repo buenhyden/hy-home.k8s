@@ -21,8 +21,10 @@ Package B used a checker-rejected basename; its bounded cleanup and evidence
 limitations remain recorded below. Regenerated Packages B/C passed registration
 and residue validation, and the reviewer approved Task 2 with no findings.
 The first WRFR-002 integration probe then exposed an allocation-order checker
-defect before any owner edit. `WRFR-002` is blocked at the one-time
-checker-only inventory recovery gate and has not been executed.
+defect before any owner edit. The reviewed checker-only recovery completed,
+the accepted fail-fast RED became `ERROR INTEGRATION_SECTION`, and WRFR-002
+integrated all nine agent-engineering rows. Its tracked commit and post-commit
+task review remain the next gate.
 
 The target is a 2026-08-20 external-source and workspace reverification of all
 thirty-six existing `REQ-WERPC-*` owners, integrated into the existing
@@ -31,9 +33,10 @@ complete: guarded checker construction and direct review, artifact-inventory
 initialization and recovery, immutable baseline capture, five reviewed
 closed-corpus reports, exact-union validation, and final ID allocation all
 completed in the ignored SDD workspace. Its independent task-level
-spec-compliance and quality review is approved. No remote GitHub query or
-tracked research/integration implementation has occurred, and no successor
-work package has staged or committed execution work.
+spec-compliance and quality review is approved. No remote GitHub query,
+provider runtime, hosted CI, live infrastructure, or human validation occurred.
+WRFR-002 changes only its four topical owners and three lifecycle records; no
+successor work package has executed.
 
 ## Inputs
 
@@ -82,7 +85,7 @@ stage, or commit.
 | --- | --- | --- | --- | --- | --- | --- |
 | WRFR-000 | VAL-WRFR-012, 013 | Activate standalone lifecycle and SDD workspace | platform | Done | Activated by direct approval on 2026-08-20 in `docs: activate full-corpus research reverification` | Active standalone Spec/Plan/Task relation; next owner `WRFR-001` |
 | WRFR-001 | VAL-WRFR-001..007, 009 | Freeze baseline, collect five read-only reports, allocate IDs | platform + research agents | Done | Exact 36-row union validated; all report and task reviews approved; one source and six claims allocated; tracked evidence committed | Packages A/B/C registered; final residue passed; task review `APPROVED` with Critical/Important/Minor `0/0/0` |
-| WRFR-002 | VAL-WRFR-002..005, 008, 013 | Integrate agent engineering findings | agent integrator | Blocked | No owner edit; first probe returned `ERROR ALLOCATION_REFERENCE` | One-time reviewed checker-only inventory recovery required before resume |
+| WRFR-002 | VAL-WRFR-002..005, 008, 013 | Integrate agent engineering findings | agent integrator | Implemented | Nine allocated rows appended to four existing owners; focused static validation passed | Awaiting exact seven-file commit and registered post-commit task review |
 | WRFR-003 | VAL-WRFR-002..005, 008, 013 | Integrate provider/common findings | provider integrator | Queued | Not executed | Awaiting reviewed provider report/allocation |
 | WRFR-004 | VAL-WRFR-002..005, 008, 013 | Integrate SDLC/documentation findings | documentation integrator | Queued | Not executed | Awaiting reviewed SDLC report/allocation |
 | WRFR-005 | VAL-WRFR-002..005, 008, 013 | Integrate platform/security findings | platform/security integrator | Queued | Not executed | Awaiting reviewed platform report/allocation |
@@ -352,6 +355,18 @@ the exact Plan tuple once, with no retry. Only a same-index sole-checker delta,
 paused implementer. Allocation, baseline, reports, review packages, Task 3
 brief, and topical owners remain immutable throughout recovery.
 
+Fresh Python and security reviews approved the final checker and tracked
+recovery contract with no Critical or Important finding. The controller ran
+the exact checker-only command once; it exited `0` with no output and was not
+retried. Only the checker record changed. The resulting checker SHA-256 is
+`584086b297a7446e0a6dea932f0693831a3748813cae6f281bee41eb889c765d`,
+inventory SHA-256 is
+`befe28f3abe095ac359ff187850e84cdaf5fe2016fa27e0334653ef3e52dbc8f`,
+and the frozen report/allocation identities are unchanged. `residue` and all
+89 normal/optimized self-tests passed. The unchanged integration probe then
+exited `1` with the expected fail-fast `ERROR INTEGRATION_SECTION`, unblocking
+owner integration without claiming four simultaneous diagnostics.
+
 ### WRFR-001 evidence intake completion
 
 This section records completed intake implementation evidence and the approved
@@ -400,6 +415,42 @@ remains SHA-256
 `bb5e198e7c99a7c510296d12cf9c7f94eb8af4eed4ea9a6eedec91e085379598`
 and was not appended.
 
+### WRFR-002 agent-engineering integration
+
+WRFR-002 consumed registered report SHA-256
+`f0dd1038b056d3f2bdc5e6c5e457e4f3c6cd93cdd5ab75375780101da9eca5b1`
+and allocation SHA-256
+`04025a6ecc56853d773bac598e2c8895a408a2d6a9252be9727f4264c50fe40b`.
+Its exact slice is `REQ-WERPC-001`, `002`, and `026..032`; every row has an
+empty new-source and new-claim allocation. The four existing topical owners
+each now contain exactly one `### 2026-08-20 full-corpus reverification`
+section, with existing source identities, baseline workspace selectors,
+As-Is/Gap/Target, evidence depth, rejected inference, blocking class,
+retained `DEFER`, owner, safe follow-up, and refresh trigger.
+
+The pre-recovery probe failed at `ERROR ALLOCATION_REFERENCE`; no owner file
+had been edited. Following the reviewed checker-only recovery, the accepted
+fail-fast RED was `ERROR INTEGRATION_SECTION`. After integration, the same
+probe passed all nine rows. Harness, loop, roster-currentness, agent
+evaluations, model fitness, and checkpoint validators passed. Strict Markdown
+reported zero violations, strict links/owners passed, and `git diff --check`
+passed. These results establish repository-static integration only. Provider
+runtime, model fitness/promotion, checkpoint use, connected resources, cost,
+latency, hosted CI, live infrastructure, and human validation remain `DEFER`
+where their evidence class is absent.
+
+The tracked unit is limited to the four topical owners plus this Task, its
+Plan, and durable progress. The next gate is the exact seven-file commit,
+registered post-commit package, and independent task review; WRFR-003 remains
+queued until that gate approves.
+
+Independent pre-commit source-fidelity/content and spec-compliance/quality
+reviews both returned `APPROVED` with Critical/Important/Minor `0/0/0`. The
+initial affected lane passed every selected agent and document validator and
+then failed only at the expected `CLOSURE-WORKTREE-INDEX-DRIFT` because this
+logical unit had not yet been staged. This is not completion evidence; the
+affected and staged lanes must pass against the exact index before commit.
+
 ### Stop conditions
 
 Execution stops only for a destructive or irreversible action, a
@@ -410,9 +461,10 @@ All other conflicts receive a recorded SDD ruling and continue under the Spec.
 ## Verification Summary
 
 WRFR-000 activation and WRFR-001 intake, tracked evidence, registered review
-packages, and task-level post-commit review are complete. WRFR-002 is blocked
-at its one-time allocation-order checker recovery and has not edited a tracked
-owner. Initial design evidence included:
+packages, and task-level post-commit review are complete. The WRFR-002 checker
+recovery and nine-row topical integration are complete; its exact seven-file
+commit and registered post-commit review remain pending. Initial design
+evidence included:
 
 - isolated worktree created from clean tracked `HEAD`;
 - primary checkout's unrelated staged RIA files excluded from the branch;
@@ -428,6 +480,11 @@ artifact residue. These results prove the closed-corpus public-source and
 repository-static intake only. They do not prove remote GitHub state, provider
 runtime, hosted CI, live infrastructure, or user validation.
 
+WRFR-002 preserved those evidence limits while appending the accepted delta to
+four existing owners. Its task-local integration probe and all six canonical
+agent validators passed, as did strict Markdown, strict links/owners, and the
+diff check. No new ledger ID or owner was created.
+
 ## Traceability
 
 ### Lifecycle Traceability
@@ -435,18 +492,18 @@ runtime, hosted CI, live infrastructure, or user validation.
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
 | [VAL-WRFR-001](spec.md) | Done | The checker validated the exact `001..036` report union, and the independent Task 2 reviewer approved Packages A/B/C with no findings |
-| [VAL-WRFR-002](spec.md) | Intake passed; integration pending | All 36 rows carry closed external and repository-static evidence fields |
+| [VAL-WRFR-002](spec.md) | Agent integration passed; remaining streams pending | All 36 rows carry closed evidence fields; WRFR-002 integrated its exact nine-row dual-observation slice |
 | [VAL-WRFR-003](spec.md) | Done | The five registered reports retain the exact closed workstream assignment |
-| [VAL-WRFR-004](spec.md) | Intake review passed; integration pending | All report-local reviews and the cross-report quality review approved the registered bytes |
-| [VAL-WRFR-005](spec.md) | Intake passed; integration pending | Baseline-selector membership and evidence-depth boundaries passed guarded validation |
+| [VAL-WRFR-004](spec.md) | Agent integration passed; remaining streams pending | Registered research review is preserved and the agent-engineering delta retains exact primary-source identities and limits |
+| [VAL-WRFR-005](spec.md) | Agent integration passed; remaining streams pending | WRFR-002 records its exact baseline selectors and evidence-depth boundaries |
 | [VAL-WRFR-006](spec.md) | Intake passed; ledger integration pending | All rows use the closed outcome vocabulary and passed checker validation |
 | [VAL-WRFR-007](spec.md) | Intake passed; ledger integration pending | Every row carries a valid blocking-class disposition combination |
-| [VAL-WRFR-008](spec.md) | Not executed | WRFR-002..008 own the existing-owner append-only contract |
+| [VAL-WRFR-008](spec.md) | In progress | WRFR-002 appended to four existing owners without creating a folder, report, or request owner; WRFR-003..008 remain |
 | [VAL-WRFR-009](spec.md) | Allocation passed; ledger integration pending | WRFR-001 allocated source 091 and claims 013-01..06 without gaps or duplicates |
 | [VAL-WRFR-010](spec.md) | Not executed | WRFR-007..009 own the shared projection sequence |
 | [VAL-WRFR-011](spec.md) | Not executed | WRFR-006 and WRFR-009 own the nine-class remote/security contract |
 | [VAL-WRFR-012](spec.md) | Workspace passed; cleanup pending | WRFR-001 residue validation passed; WRFR-009 still owns exact cleanup |
-| [VAL-WRFR-013](spec.md) | In progress | WRFR-001 commits and registered package review are complete; later task commits remain pending, and WRFR-002 is blocked before owner edits by its checker-only recovery gate |
+| [VAL-WRFR-013](spec.md) | In progress | WRFR-001 review is complete; WRFR-002 implementation passed focused checks and awaits its exact commit/package review before WRFR-003 |
 | [VAL-WRFR-014](spec.md) | Not executed | WRFR-009 owns the whole-branch review gate |
 | [VAL-WRFR-015](spec.md) | Not executed | WRFR-009 owns the terminal lane sequence |
 

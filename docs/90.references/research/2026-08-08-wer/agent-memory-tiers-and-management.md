@@ -273,6 +273,102 @@ memory contract or a named local memory selector materially changes.
 promotion. New source registered: `SRC-WERPC-074`. New claim registered:
 `CLM-WERPC-010-04`.
 
+### 2026-08-20 full-corpus reverification
+
+This increment re-observed the four memory rows at workspace baseline
+`8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c`. The allocation slice assigns no
+new source or claim ID. Provider-local memory and MCP resources remain
+auxiliary evidence and never replace a canonical repository owner.
+
+#### REQ-WERPC-029 short-term memory and checkpoint re-observation
+
+- **Sources and external result:** `unchanged`; `SRC-WERPC-068`,
+  `SRC-WERPC-050`, and `SRC-WERPC-051` were re-observed on 2026-08-20 as
+  public provider-memory and SDK-session context only.
+- **Workspace selector and result:** `confirmed` at
+  `agent-memory-tiers-and-management.md#short-term-memory-baseline`. The
+  checkpoint contract remains ignored, synthetic, atomic, redacted, advisory,
+  compactable, and subordinate to repository re-observation on resume.
+- **As-Is, gap, and target:** the short-term contract remains `Verified` at
+  repository-static depth. Actual checkpoint creation, compaction, recovery,
+  and provider memory use were not observed. Keep task state bounded and
+  repository-wins.
+- **Evidence boundary:** blocking class is `none`; ignored checkpoint contents
+  and provider-local memories remain unread. Provider memory or SDK sessions
+  do not prove checkpoint existence, use, or authority.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the Stage
+  00 checkpoint schema. Review only schema and lifecycle validators unless a
+  future task explicitly authorizes secret-safe recovery inspection. Refresh
+  when the checkpoint, redaction, resume, compaction, or recovery contract
+  changes.
+
+#### REQ-WERPC-030 long-term memory re-observation
+
+- **Sources and external result:** `unchanged`; `SRC-WERPC-068`,
+  `SRC-WERPC-050`, and `SRC-WERPC-051` were re-observed on 2026-08-20.
+- **Workspace selector and result:** `confirmed` at
+  `agent-memory-tiers-and-management.md#long-term-memory-baseline`. The durable
+  shared ledger remains the tracked long-term owner with canonical-owner,
+  provenance, sensitivity, retention, review, and handoff fields.
+- **As-Is, gap, and target:** the durable lifecycle remains `Verified` at
+  repository-static depth. Provider persistence, retention, deletion, and
+  enforcement are unobserved and non-authoritative. Promote only reviewed,
+  redacted facts with provenance into a canonical repository owner.
+- **Evidence boundary:** blocking class is `none`. Provider persistence,
+  session storage, or auto memory does not create or govern durable repository
+  memory.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the Stage
+  00 memory lifecycle. Use the canonical ledger and re-observe repository truth
+  before importing provider-local material. Refresh when the durable ledger,
+  provenance/retention lifecycle, or a cited provider memory/session contract
+  changes.
+
+#### REQ-WERPC-031 domain memory and MCP resource re-observation
+
+- **Sources and external result:** `unchanged`; `SRC-WERPC-066` was
+  re-observed on 2026-08-20. MCP versioning still names `2026-07-28` current,
+  and its Resources specification remains protocol context rather than domain
+  authority.
+- **Workspace selector and result:** `confirmed` at
+  `agent-memory-tiers-and-management.md#domain-scoped-memory-baseline`. Specs,
+  Runbooks, Incidents, and Postmortems remain the domain owners; archive and
+  promotion preserve provenance and review.
+- **As-Is, gap, and target:** domain memory remains `Verified` at
+  repository-static depth. No MCP server, authorization, version negotiation,
+  retrieval, cache, or subscription was observed. Keep retrieved material
+  auxiliary until re-observed and reviewed into its canonical owner.
+- **Evidence boundary:** blocking class is `none`. A Resources specification
+  does not prove connection, access, retrieval behavior, or authority of the
+  returned data.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the named
+  domain document owners. Authorize connector observation separately and do
+  not replace domain truth with provider/MCP state. Refresh when MCP
+  versioning/Resources or the domain-owner/archive contract changes.
+
+#### REQ-WERPC-032 memory lifecycle re-observation
+
+- **Sources and external result:** `unchanged`; `SRC-WERPC-068`,
+  `SRC-WERPC-050`, `SRC-WERPC-051`, and `SRC-WERPC-066` were re-observed on
+  2026-08-20.
+- **Workspace selector and result:** `confirmed` at
+  `agent-memory-tiers-and-management.md#memory-management-baseline`. The four
+  local memory classes still require redaction, repository-wins conflict
+  resolution, review-gated promotion, compaction, deletion/retention
+  boundaries, handoff, and canonical-owner routing.
+- **As-Is, gap, and target:** the lifecycle remains `Partial` at
+  public-documentation depth. Provider retention and deletion results,
+  compaction execution, secure erasure, and connected-resource behavior are
+  unobserved. Keep provider-local state auxiliary and promote only reviewed,
+  redacted evidence after repository re-observation.
+- **Evidence boundary:** blocking class and retained boundary are
+  `provider-runtime` / `DEFER`. Public memory, cache, subscription, compaction,
+  or deletion controls do not prove this environment's lifecycle behavior.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the Stage
+  00 memory/checkpoint contracts. After separate approval, perform one
+  non-secret lifecycle observation against an exact provider/version/store;
+  do not read ignored checkpoint contents. Refresh when a cited provider
+  memory, SDK session, MCP lifecycle, or named local selector changes.
+
 ## Related Documents
 
 - [Pack coverage matrix](README.md#requirement-coverage-matrix)

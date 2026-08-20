@@ -256,6 +256,61 @@ Agents pin changes.
 promotion. New source registered: `SRC-WERPC-074`. New claim registered:
 `CLM-WERPC-010-02`.
 
+### 2026-08-20 full-corpus reverification
+
+This increment re-observed the two agent-system rows at workspace baseline
+`8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c`. The allocation slice assigns no
+new source or claim ID. General provider-agent capability and the pinned
+Agency Agents comparison remain separate from local adoption authority.
+
+#### REQ-WERPC-026 governed agent-system re-observation
+
+- **Sources and external result:** `unchanged`; `SRC-WERPC-045` and
+  `SRC-WERPC-046` were re-observed on 2026-08-20. The official Codex and
+  Claude subagent pages still document custom-agent configuration, model/tool
+  controls, permissions, and scoped delegation without proving local use.
+- **Workspace selector and result:** `confirmed` at
+  `ai-agents-and-agency-agents.md#ai-agent-systems-baseline`. The baseline
+  still records a twelve-role, four-provider-surface roster with bounded
+  ownership, review, validation, rollback, and handoff contracts.
+- **As-Is, gap, and target:** the local agent system remains `Partial` at
+  public-documentation depth because provider discovery, effective
+  permissions, delegated execution, isolation, and role effectiveness are
+  unobserved. Keep common role semantics provider-neutral and provider schema
+  at the adapter edge.
+- **Evidence boundary:** blocking class and retained boundary are
+  `provider-runtime` / `DEFER`. Static adapter parity or provider fields do not
+  prove discovery, permissions, model resolution, tool use, or task quality.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the Stage
+  00 harness/roster-admission contracts. After approval, use a read-only,
+  non-secret canary for one exact agent adapter with no external writes.
+  Refresh when a cited provider agent schema, inheritance, tool, permission,
+  isolation, model, or local roster contract changes.
+
+#### REQ-WERPC-027 Agency Agents comparison re-observation
+
+- **Sources and external result:** `unchanged`; `SRC-WERPC-047` and
+  `SRC-WERPC-048` were re-observed on 2026-08-20 against pinned commit
+  `ebe9c99acb5c96f9468de368d8bead775387d1a7`. The pinned tree, MIT license,
+  and scripts remain reachable; no release superseded the fixed comparison.
+- **Workspace selector and result:** `confirmed` at
+  `ai-agents-and-agency-agents.md#agency-agents-baseline`. The canonical local
+  roster remains the adapted surface; the upstream catalog remains comparison
+  evidence only.
+- **As-Is, gap, and target:** the fixed-pin source comparison remains
+  `Verified` at public-documentation depth. It does not establish current
+  default-branch permanence, prompt quality, conversion or install success,
+  provider support, security, or admission. Continue to require explicit
+  license, security, roster, adapter, evaluation, and reviewer gates before
+  reuse.
+- **Evidence boundary:** blocking class is `none`, but no local-adoption or
+  runtime claim is made. Catalog availability and script presence do not
+  authorize prompt copying or script execution.
+- **Owner, safe follow-up, and trigger:** owner is this reference. If reuse is
+  proposed, separately review license, security, overwrite safety, and role
+  admission before executing a converter or installer. Refresh when the pin,
+  license, inspected scripts, or adoption policy changes.
+
 ## Related Documents
 
 - [Model routing](agent-model-routing-and-configuration.md)

@@ -16554,20 +16554,88 @@ newly attained state.
 - No live, hosted, provider-runtime, remote, secret-value, push, publish, or
   deployment evidence was collected or claimed.
 
+## 2026-08-21 - WRFR-002 agent-engineering integration
+
+### Metadata
+
+- Date: 2026-08-21
+- Layer: docs
+- Status: in_progress
+- Tags: workspace-research, agent-engineering, harness, loop, memory
+- Owner: platform
+- Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md#wrfr-002-agent-engineering-integration`
+- Provenance: registered agent-engineering report, allocation slice, owner diff, and focused validators
+- Sensitivity: internal
+- Retention: durable
+- Next Owner: WRFR-002 exact commit and registered task review
+
+### Progress
+
+WRFR-002 consumed registered agent-engineering report SHA-256
+`f0dd1038b056d3f2bdc5e6c5e457e4f3c6cd93cdd5ab75375780101da9eca5b1`
+and allocation SHA-256
+`04025a6ecc56853d773bac598e2c8895a408a2d6a9252be9727f4264c50fe40b`.
+The exact slice is `REQ-WERPC-001`, `002`, and `026..032`, with no allocated
+new source or claim ID. Exactly one dated 2026-08-20 H3 was appended to each of
+the existing harness/loop, agent-system, model-routing, and memory owners.
+
+### Memory
+
+Public provider documentation and tracked adapters describe different evidence
+classes. A static or public-documentation PASS cannot promote provider
+discovery, permissions, execution, model fitness, memory lifecycle, checkpoint
+use, connected-resource behavior, cost, or latency. Existing source IDs and
+baseline selectors therefore remain sufficient for an unchanged observation;
+an empty allocation slice must not create a ledger record merely to restate it.
+
+### Evidence
+
+- Initial pre-recovery probe: exit `1`, `ERROR ALLOCATION_REFERENCE`; no owner
+  edit had occurred.
+- Accepted post-recovery RED: exit `1`, fail-fast
+  `ERROR INTEGRATION_SECTION`; the checker reports one first failure, not four
+  simultaneous diagnostics.
+- GREEN: `PASS validate-integration` for all nine agent-engineering rows.
+- Canonical harness, loop, roster-currentness, agent-evaluations,
+  model-fitness, and checkpoint validators: PASS.
+- Strict Markdown: PASS with zero violations. Strict links/owners: PASS.
+  `git diff --check`: PASS.
+- Independent pre-commit source-fidelity/content and
+  spec-compliance/quality reviews: both `APPROVED`,
+  Critical/Important/Minor `0/0/0`.
+- The first exact-seven-path affected run passed every selected agent and
+  document validator, then failed only at aggregate diagnostic
+  `CLOSURE-WORKTREE-INDEX-DRIFT` for the Plan because the reviewed logical unit
+  was not staged. It is retained as pre-stage evidence, not a PASS.
+- External results remain nine `unchanged`; workspace results remain nine
+  `confirmed`. Dispositions remain six `Verified` and three `Partial`.
+- Provider runtime remains `DEFER` for `REQ-WERPC-001`, `002`, `026`, `028`,
+  and `032`. No remote, provider-runtime, hosted-CI, live-infrastructure,
+  secret-value, user-validation, push, merge, publication, or deployment
+  action occurred.
+
+### Handoff
+
+Obtain independent pre-commit source-fidelity/content and code/quality review,
+commit exactly the four topical owners plus Plan, Task, and this durable
+progress record, then generate and register the post-commit Task 3 package.
+WRFR-003 remains queued until the task reviewer approves both Spec compliance
+and quality.
+
 ## 2026-08-21 - WRFR-002 allocation-order checker recovery gate
 
 ### Metadata
 
 - Date: 2026-08-21
 - Layer: docs
-- Status: blocked
+- Status: complete
 - Tags: workspace-research, checker, allocation, guarded-artifacts
 - Owner: platform
 - Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md#wrfr-002-one-time-allocation-order-checker-recovery-gate`
 - Provenance: registered Task 3 brief, immutable allocation, checker RED, and local self-tests
 - Sensitivity: internal
 - Retention: durable
-- Next Owner: controller checker-only recovery, then paused WRFR-002 implementer
+- Next Owner: WRFR-002 agent-engineering integrator
 
 ### Progress
 
@@ -16628,16 +16696,24 @@ artifact rebind or a report mutation would widen the exception unnecessarily.
   `bb5e198e7c99a7c510296d12cf9c7f94eb8af4eed4ea9a6eedec91e085379598`.
 - No stateful rebind, inventory/allocation/baseline/report/review-package/brief
   mutation, owner edit, stage, commit, remote action, or live action occurred.
+- Fresh independent Python and security review approved final checker SHA-256
+  `584086b297a7446e0a6dea932f0693831a3748813cae6f281bee41eb889c765d`
+  and the tracked recovery contract with no Critical or Important finding.
+- The exact checker-only rebind ran once, exited `0` with no output, and was not
+  retried. The resulting inventory SHA-256 is
+  `befe28f3abe095ac359ff187850e84cdaf5fe2016fa27e0334653ef3e52dbc8f`;
+  report, allocation, baseline, review-package, and brief identities remained
+  unchanged. `residue` and all 89 normal/optimized self-tests passed.
+- The unchanged Task 3 probe then exited `1` with fail-fast
+  `ERROR INTEGRATION_SECTION`. This is the accepted missing-section RED; the
+  checker emits the first failing section rather than four diagnostics.
 
 ### Handoff
 
-Fresh independent Python and security review must approve the exact checker
-bytes and the tracked Plan/Task/progress contract with no Critical or Important
-finding. After the reviewed three-document amendment is committed, the
-controller may run the Plan's exact checker-only tuple once and must not retry.
-Only a sole same-index checker-record delta, residue and both self-test passes,
-and the expected post-recovery `ERROR INTEGRATION_SECTION` may unblock the
-paused WRFR-002 implementer. Until then WRFR-002 remains blocked.
+The checker-only recovery gate is complete. Its sole same-index checker-record
+delta, residue/self-test evidence, and accepted post-recovery RED unblocked the
+paused WRFR-002 implementer. The checker and inventory remain immutable inputs
+for the remaining integration tasks.
 
 ## 2026-08-21 - WRFR helper workflow recovery after alias loss
 
