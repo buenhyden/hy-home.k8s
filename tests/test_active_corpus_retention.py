@@ -2379,6 +2379,8 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             "0028-pod-security-admission-per-namespace-adoption.md",
             "docs/02.architecture/decisions/"
             "0029-mutable-target-revision-retention.md",
+            "docs/02.architecture/decisions/"
+            "0030-authority-first-sdlc-and-agent-governance-convergence.md",
         ]
         expected_future_specs = [
             "docs/03.specs/0041-stage-00-agent-governance-contract/spec.md",

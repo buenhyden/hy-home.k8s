@@ -3,7 +3,7 @@ title: 'SDLC Document and AI Agent Governance Consolidation Technical Specificat
 type: sdlc/spec
 status: active
 owner: platform
-updated: 2026-08-14
+updated: 2026-08-20
 artifact_id: "SPEC-0054"
 ---
 
@@ -18,10 +18,10 @@ references, and Stage 98 disposition evidence.
 
 The target is a small set of canonical document owners with deterministic
 four-digit identities, work-unit-local Spec/Plan/Task artifacts, one shared
-agent-governance control plane with provider-native adapters, and validators
-that implement the same rules as the prose and templates. The design is based
-on official ISO, NIST, GitHub Spec Kit, OpenSpec, Diataxis, Google SRE, GitHub
-Releases, OpenAI, Anthropic, and repository evidence reviewed on 2026-08-13.
+agent-governance control plane with Codex and Claude adapters, and validators
+that implement machine contracts without restating them. The design is based
+on official ISO, NIST, GitHub Spec Kit, OpenSpec, Diataxis, Google SRE, Git,
+OpenAI, Anthropic, and repository evidence reviewed through 2026-08-20.
 
 This specification succeeds, reconciles, or retires conflicting current
 instructions. It does not silently rewrite completed evidence. Current rules
@@ -51,6 +51,16 @@ revision supersedes the earlier PRD/SRS/Interface Requirement form split,
 line-digest Archive design. It retains the approved four-digit identity,
 Incident route, work-unit co-location, immutable source recovery, and logical
 commit boundaries.
+
+Direct human approvals through 2026-08-20 establish
+[ADR-0030](../../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)
+as the terminal authority for this program. The approved migration strategy is
+**authority-first incremental convergence**: establish each terminal machine
+owner before moving its corpus, remove related duplication in the same work
+package, and close repository-wide ownership in WP-010 and the final fixed
+point in WP-014. The new decision supersedes conflicting terminal-shape,
+provider-cardinality, archive-census, and script-census clauses of earlier
+decisions while preserving their transition-safety and recoverability goals.
 
 The reciprocal execution artifacts are [Plan 0054](plan.md) and
 [Tasks 0054](tasks.md).
@@ -92,8 +102,9 @@ The reciprocal execution artifacts are [Plan 0054](plan.md) and
   It is retained in place or moved through reviewed Stage 98 evidence.
 - External publication, deployment, push, merge, release creation, live
   provider execution, and credential-bearing actions are outside this scope.
-- `docs/05.operations/releases/` is not created without an approved owner,
-  lifecycle, template, consumer, and independent evidence need.
+- `docs/05.operations/releases/` is not a supported family. Deployment
+  execution belongs to a Spec Task or Runbook; published release identity and
+  notes belong to Git tags and GitHub Releases.
 
 ## Contracts
 
@@ -103,24 +114,36 @@ The terminal active topology is:
 
 ```text
 docs/
-├── 00.agent-governance/*
+├── 00.agent-governance/
+│   ├── README.md
+│   ├── sdlc.md
+│   ├── policies/
+│   ├── roles/
+│   ├── providers/
+│   │   ├── claude.md
+│   │   └── codex.md
+│   └── skills/
 ├── 01.requirements/
 │   ├── README.md
-│   └── ####-<slug>/README.md
+│   └── ####-<slug>.md
 ├── 02.architecture/
 │   ├── README.md
 │   ├── descriptions/####-<slug>.md
 │   └── decisions/####-<slug>.md
 ├── 03.specs/
 │   └── ####-<slug>/
+│       ├── README.md
 │       ├── spec.md
 │       ├── plan.md
-│       └── tasks.md
+│       └── tasks/tsk-####-<slug>.md
 ├── 05.operations/
-│   ├── guides/
+│   ├── README.md
+│   ├── guides/####-<slug>.md
 │   ├── incidents/<year>/inc-####-<slug>/
-│   ├── policies/
-│   └── runbooks/
+│   │   ├── incident.md
+│   │   └── postmortem.md
+│   ├── policies/####-<slug>.md
+│   └── runbooks/####-<slug>.md
 ├── 90.references/
 │   ├── README.md
 │   ├── research/####-<slug>/
@@ -146,16 +169,48 @@ docs/
         ├── archive/
         └── common/
 
+.agents/
+├── registry.json
+├── contracts/agent-registry.schema.json
+├── agents/
+└── skills/
+
+.claude/
+├── CLAUDE.md
+├── agents/
+└── <native-config>
+
+.codex/
+├── CODEX.md
+├── agents/
+└── <native-config>
+
 scripts/
+├── README.md
+├── docs/
+├── setup/
+├── qa/
+├── validation/
+│   ├── documents/
+│   ├── agents/
+│   ├── archive/
+│   ├── repository/
+│   └── tests/
+└── lib/
 ```
 
 `00`, `90`, `98`, and `99` are a control plane, reference library, historical
 evidence store, and template contract respectively. They are not sequential
 SDLC approval stages.
 
+The terminal tree contains no `.gemini/` directory and no root `GEMINI.md`.
+`.agents/` is provider-neutral executable governance, not an Antigravity or
+Gemini compatibility surface. Codex and Claude are the only supported provider
+projections.
+
 ### C-SDLC-002 — requirements and architecture ownership
 
-`docs/01.requirements/####-<slug>/README.md` is one Requirement Package with
+`docs/01.requirements/####-<slug>.md` is one Requirement Package with
 stable `REQ-####` identity. It combines the problem and goal, users and
 stakeholders, functional and non-functional requirements, constraints,
 external interface requirements, acceptance criteria, and links to related
@@ -197,11 +252,28 @@ Architecture Description, or dispositioned as historical evidence.
 
 ### C-SDLC-003 — work-unit-local Spec-driven execution
 
-One work unit owns `spec.md`, `plan.md`, and `tasks.md` under the same
-`docs/03.specs/####-<slug>/` directory. The Spec owns observable behavior and
-acceptance criteria; the Plan owns technical approach, validation, and
-recovery; Tasks own ordered execution and evidence. Cross-artifact validators
-must reject identifier, state, criterion, and path drift.
+One work unit owns a thin router `README.md`, `spec.md`, `plan.md`, and one or
+more task records under `tasks/` in the same
+`docs/03.specs/####-<slug>/` directory. The router has no `artifact_id`,
+lifecycle, or duplicated contract body. The Spec owns change goals, observable
+behavior, Technical Approach, Acceptance Contract, interfaces, and failure
+conditions. The Plan owns implementation order, test strategy, risk,
+rollback, and recovery. Each Task owns one independently reviewable execution
+unit and its evidence.
+
+A Task path is `tasks/tsk-####-<slug>.md`; its stable identity is
+`TSK-<SPEC-NUMBER>-<TASK-SEQUENCE>`, for example `TSK-0054-0001`.
+The directory sequence and final Task sequence must agree. Task numbers are
+append-only within a Spec Package and are never reused. Cross-artifact
+validators reject identifier, lifecycle, criterion, path, dependency, or
+evidence drift.
+
+Stage 03 does not own `design.md`, `tests.md`, `agent-design.md`,
+`data-model.md`, or a monolithic `tasks.md` as permanent artifact families.
+Change-local design moves to `spec.md`; ordering, test strategy, and rollback
+move to `plan.md`; execution evidence moves to Task records. A long-lived
+structural description or important choice is promoted to Stage 02 before the
+old file is removed. Executable tests remain with their production module.
 
 Executable interface contracts such as OpenAPI, GraphQL, and Protobuf belong
 to the Spec Package that implements and validates them. Stage 01 records the
@@ -245,21 +317,54 @@ The year is an event partition and part of `INC-<YYYY>-<DDDD>` and
 
 Overlapping Guide and Runbook pairs are merged or rewritten so one canonical
 owner remains for each procedure. Release publication remains owned by Git
-tags/GitHub Releases unless a future approved local release-record contract is
-introduced.
+tags/GitHub Releases. Any current local Release profile, template, route,
+fixture, validator rule, or document is deleted after consumer migration and
+recoverability proof; this program does not preserve a dormant Release family.
 
 ### C-SDLC-006 — integrated AI-agent governance
 
-`docs/00.agent-governance/` is the shared control plane. Common policy has one
-owner under `rules/`; domain constraints live under `scopes/`; machine-readable
-roster, evidence, routing, and lifecycle shapes live under `contracts/`;
-provider capability deltas live under `providers/`; shared implementations
-live under `hooks/`; durable repository memory lives under `memory/`.
+`docs/00.agent-governance/` is the human governance control plane:
 
-Repository root and provider-native files are thin gateways or adapters. They
-carry only the native metadata and instructions required by that provider.
-Repository-static presence, provider discovery, authenticated execution,
-hosted CI, and live evidence remain separate evidence classes.
+- `sdlc.md` owns the Requirements → Architecture → Spec → Implementation →
+  Operations flow;
+- `policies/` owns approval, security, quality, data, Git, and SDLC norms;
+- `roles/` owns responsibilities, boundaries, and handoff semantics;
+- `providers/` owns only Codex and Claude capability differences;
+- `skills/` owns skill approval, authoring, and lifecycle policy.
+
+The former `rules/`, `scopes/`, `contracts/`, `hooks/`, and `memory/` trees are
+not terminal owners. Their unique durable content moves to the owners above,
+to the responsible Spec Task or Stage 90 Data record, or to executable
+`.agents/` surfaces before duplicate and transition content is removed.
+
+`.agents/registry.json`, validated by
+`.agents/contracts/agent-registry.schema.json`, is the sole machine owner for
+role IDs, permission classes, handoff edges, and skill references.
+`.agents/agents/` and `.agents/skills/` are provider-neutral executable
+projections. `.claude/` and `.codex/` contain only provider-native thin
+adapters and configuration. Stage 99 does not own agent contracts.
+
+Gemini and Antigravity are removed from current governance: `.gemini/`, root
+`GEMINI.md`, Gemini provider notes, contracts, validators, canaries, hooks,
+fixtures, adapter projections, and Gemini/Antigravity-specific meaning in
+`.agents/` must reach zero current consumers before deletion. Historical
+claims are retained only through Git or minimal Stage 98 evidence.
+
+The permanent agent validation surface contains three responsibilities:
+agent-registry/schema integrity, provider projection/config integrity, and
+semantic/permission integrity. The aggregate gate invokes these validators but
+does not reproduce their rules. Repository-static presence, provider
+discovery, authenticated execution, hosted CI, and live evidence remain
+separate evidence classes.
+
+Tracked provider configuration and evidence are secret-free. Validators and
+agents do not collect or mutate user/private authentication configuration,
+credential paths, tokens, or raw transcripts. Hosted CI contains no provider
+credential; an authenticated canary is explicit local/manual work and records
+only redacted, secret-free results. Checkpoint or handoff state contains only
+bounded task and validation summaries. CI permissions follow least privilege
+and third-party actions retain supply-chain identity pins where byte or commit
+identity is the security contract.
 
 ### C-SDLC-007 — template and validator single contract
 
@@ -280,6 +385,39 @@ are merged into that README or the registry and then removed.
 Requirement templates converge into the Spec/Plan/Tasks and Requirement
 Package templates. Templates reference a registry profile ID rather than
 hardcoding their destination paths or restating validator behavior.
+
+The registry owns these profile-specific lifecycle domains and transitions:
+
+| Profile family | Lifecycle |
+| --- | --- |
+| Requirement Package / Architecture Description | `draft → active → superseded \| retired`; `draft → withdrawn` |
+| ADR | `proposed → accepted \| rejected`; `accepted → superseded` |
+| Spec / Plan | `draft → active → done \| superseded \| withdrawn` |
+| Task | `queued → in-progress → done \| cancelled`; `in-progress ↔ blocked` |
+| Governance / Guide / Policy / Runbook | `draft → active → superseded \| retired` |
+| Incident | `open → mitigated → resolved → closed` |
+| Postmortem | `draft → published → superseded` |
+| Research | `draft → published → superseded \| retired` |
+| Audit | `draft → completed → invalidated` |
+| Data | `draft → active → stale → superseded \| retired` |
+| Migration / Tombstone | `draft → sealed` |
+| Template / Profile | `draft → active → superseded \| retired` |
+
+The registry maps each profile status to the internal `mutable`, `current`, or
+`terminal` validation class; documents do not duplicate that class in
+frontmatter. Router READMEs have no `artifact_id` or lifecycle. State changes
+use the profile's legal transitions and, where replacement is meaningful,
+reciprocal `supersedes` and `superseded_by` links. Stable IDs are never reused
+after deletion or retirement.
+
+The stable ID families are `REQ-####` and package-scoped requirement member
+IDs, `AD-####`, `ADR-####`, `SPEC-####`, `PLAN-####`,
+`TSK-<SPEC-NUMBER>-####`, `GDE-####`, `POL-####`, `RUN-####`,
+`INC-<YYYY>-####`, `POSTMORTEM-<YYYY>-####`, `RES-####`, `AUD-####`,
+`DATA-####`, `MIG-####`, and `TMB-####`. Validators enforce path-number,
+parent-package, frontmatter-ID, and internal-ID equality. Cross-document
+traceability uses complete IDs rather than ambiguous short forms such as
+`FR-0001`.
 
 Legacy, deprecated, compatibility-only, conflicting, contradictory, or
 duplicate owners are removed after their active consumers reach zero and their
@@ -302,6 +440,9 @@ data files that it indexes. Research owns external evidence and investigation;
 Audit owns point-in-time gap or conformance assessment; Data owns repository
 inventory and structured reference data. `RES-####` and `AUD-####` remain
 frontmatter identities, but `res-` and `aud-` are not repeated in paths.
+Maintained reference packages declare the applicable freshness evidence from
+`reviewed_at`, `source_as_of`, and `review_due`; lifecycle state, not a dated
+filename, determines whether the reference is current.
 
 Every existing Stage 90 file receives exactly one disposition:
 
@@ -337,10 +478,11 @@ docs/98.archive/
 └── tombstones/<original-stage>/####-<slug>.md
 ```
 
-A Migration records a large path or authority cutover. A Tombstone records a
-deleted stable path, replacement, reason, and recovery commit. Every moved,
-merged, replaced, or deleted current artifact has only the minimum applicable
-evidence, including:
+A Migration records a large path or authority cutover as a bounded mapping. A
+Tombstone exists only when a deleted stable path needs a durable lookup record
+for replacement, reason, and recovery commit. Routine moves and merges do not
+create one Tombstone per source when one Migration and Git history provide the
+required mapping and recovery. The minimum applicable evidence is:
 
 ```yaml
 legacy_path:
@@ -357,37 +499,58 @@ ID patterns, path/frontmatter identity equality, no unapproved date-based
 active paths, disposition evidence for deletion or consolidation, and no
 active direct links to individual Archive records.
 
+A `recovery_commit` is valid only when it is a full Git object ID that resolves
+to a commit, is reachable from the named durable current or protected ref, and
+contains `legacy_path` as a regular blob. Recovery validation performs bounded
+object reads, strict UTF-8 where text is claimed, and a digest match when the
+record declares sealed byte identity. A missing, unreachable, wrong-type,
+wrong-path, oversized, undecodable, or digest-drifting object fails before
+deletion. Secret-bearing history is not preserved through the ordinary
+Archive path; it follows incident handling, credential rotation, and approved
+secret-removal procedure.
+
 Completed Spec/Plan/Task bodies are not copied into Archive without a specific
 audit or legal retention requirement. Active documents link to the Archive
 README or an applicable Migration, not to individual Tombstones. Superseded
 ADRs remain in Stage 02. Line-number SHA ledgers, full Archive snapshot counts,
-and other restatable Git inventories are removed. The existing Archive corpus
-is reviewed path by path and reduced to minimal Migration or Tombstone evidence
-only when Git recovery and consumer-zero are proven; otherwise the record is
-retained with an explicit reason.
+and other restatable Git inventories are removed. WP-009 reviews the existing
+Archive corpus path by path and reduces it to minimal Migration or Tombstone
+evidence only when Git recovery and consumer-zero are proven; otherwise the
+record is retained with an explicit reason.
 
-### C-SDLC-010 — scripts disposition and terminal inventory
+### C-SDLC-010 — scripts ownership and module boundaries
 
-All 50 current `scripts/` assets receive a reviewed machine-readable
-disposition containing owner, purpose, consumer, arguments, diagnostics,
-fixtures, evidence, recovery, and retirement gate.
+Every current `scripts/` asset receives a reviewed machine-readable
+disposition containing owner, purpose, consumers, supported interface,
+diagnostics, fixtures, evidence, recovery, and retirement gate. Historical
+census values, including earlier `50 → 49 → 47` projections, are evidence of a
+review point rather than terminal policy. The terminal inventory is whatever
+the closed ownership and consumer graph proves necessary.
 
-The first consolidation migrates consumers from the compatibility-only
-`validate-harness.sh` wrapper and removes it, yielding 49 tracked assets. After
-terminal taxonomy consumers are transferred to permanent contracts, the
-one-time `document-taxonomy-migration.json` and
-`migrate-document-work-units.py` are removed, yielding 47 tracked assets.
-Filename similarity alone is not sufficient evidence for merging validators.
+Production code converges under `docs/`, `setup/`, `qa/`,
+`validation/{documents,agents,archive,repository}`, and `lib/`. Validator tests
+and fixtures are co-located under `scripts/validation/tests/`; application and
+infrastructure tests may remain top-level when their production owner is not a
+script validator. Modules are normally 200–400 lines and must not exceed 800
+lines without an explicit reviewed exception.
+
+Compatibility entrypoints are temporary thin wrappers only. Production
+validators do not embed a `--self-test` suite; independent tests exercise their
+importable contracts. The aggregate gate is a thin orchestrator. All readers
+use bounded input, strict UTF-8, explicit subprocess timeouts, and staged-index
+semantics for commit claims, and fail on material index/worktree drift.
+Filename similarity or line-count reduction alone is not sufficient evidence
+for merging validators.
 
 ### C-SDLC-011 — design-document ownership
 
-`docs/03.specs/####-<slug>/` does not require a separate `design.md` by
-default. The Spec owns observable behavior, acceptance criteria, and
-change-local design detail; the Plan owns the implementation approach,
-validation, and recovery; Tasks own ordered execution and evidence. A
-long-lived structural view is promoted to an Architecture Description, and a
-long-lived important choice is promoted to an ADR before the work-unit-local
-`design.md` is removed.
+`docs/03.specs/####-<slug>/` has no permanent `design.md` or `tests.md`.
+The Spec owns goals, observable behavior, Technical Approach, Acceptance
+Contract, interfaces, failure conditions, and change-local design detail. The
+Plan owns implementation order, risks, test strategy, validation, rollback,
+and recovery. Task records own execution and evidence. A long-lived structural
+view is promoted to an Architecture Description, and a long-lived important
+choice is promoted to an ADR before a legacy design file is removed.
 
 Root `DESIGN.md` is not part of that SDLC artifact sequence. It is the
 canonical human-readable owner for UI and design-system color, typography,
@@ -409,13 +572,13 @@ large static fixture files. A completed transition gate, fixture, ledger, or
 helper is removed after its permanent invariants, current consumers, and Stage
 98 recovery evidence have moved to their terminal owners.
 
-Mutable current-state SHA pins are not policy. Branch HEADs, current validator
-blobs, and ordinary current document blobs are validated through schema,
-semantic projection, path/ID equality, lifecycle, cross-link, and
-consumer-zero contracts. A digest remains only when byte identity is itself the
-contract: immutable Stage 98 recovery sources, external supply-chain material,
-or a sealed evidence payload. Digest retention must name that purpose and its
-recovery or refresh boundary.
+Mutable current-state SHA pins are not policy. Branch HEADs, current documents,
+validators, templates, registries, aggregate line numbers, and corpus counts
+are validated through schema, semantic projection, path/ID equality,
+lifecycle, cross-link, and consumer-zero contracts. A digest remains only when
+byte identity is itself the contract: external supply-chain material, a sealed
+evidence payload, or a Git-reachable Archive recovery object. Digest retention
+must name that purpose and its recovery or refresh boundary.
 
 This simplification is applied incrementally without renumbering work
 packages. Every remaining work package removes the duplication it touches;
@@ -423,6 +586,8 @@ WP-010 closes the whole-script ownership and consumer graph, and WP-014 proves
 the terminal fixed point.
 
 ## Core Design
+
+### Technical Approach
 
 The implementation is a sequence of independently reviewable cutovers rather
 than one broad rewrite. Requirement Package, prefix-free Architecture, and
@@ -433,15 +598,33 @@ is atomic with its Stage 98 migration or tombstone evidence; a later global
 archive package verifies parity but does not retroactively repair an evidence
 gap.
 
-The closed execution order is: approved design and preserved intermediate
-evidence; Requirement Package, prefix-free Architecture, and Stage 99
-foundation; reconciled integrated agent governance; Stage 05 responsibility
-ledger; Stage 05 cutover; Stage 90 disposition ledger; Stage 90 cutover;
-minimal Stage 98 reconciliation; exact fifty-script and control-complexity
-ledger; wrapper retirement to forty-nine; append-only progress and
-generated-current cleanup; transition-asset retirement to forty-seven with a
-single-registry terminal state; and final fixed-point review and branch
-completion.
+WP-001 and WP-002 remain completed historical evidence, but any terminal
+assumption they made that conflicts with ADR-0030 is superseded. The closed
+remaining order is:
+
+1. **WP-004** establishes the terminal Stage 99 document authority, Requirement
+   Package, prefix-free Architecture, Stage 03 package, and lifecycle contract.
+2. **WP-003** remains blocked until WP-004 is complete, then resumes to converge
+   Stage 00 and `.agents/`, retain only Codex/Claude projections, and remove
+   Gemini/Antigravity current surfaces.
+3. **WP-005** records the Stage 05 responsibility and deletion ledger,
+   including the local Release family.
+4. **WP-006** performs the Stage 05 cutover and atomic recovery evidence.
+5. **WP-007** records the Stage 90 disposition ledger, including an explicit
+   retain/merge/replace/delete decision for the pre-existing staged RIA changes
+   preserved outside this worktree.
+6. **WP-008** performs the Stage 90 cutover and deterministic generation
+   reconciliation.
+7. **WP-009** compacts Stage 98 to its minimal Git-backed recovery role.
+8. **WP-010** closes the complete script ownership, consumer, gate, fixture,
+   and digest-purpose graph without prescribing a terminal file count.
+9. **WP-011** migrates compatibility entrypoints and CLI consumers.
+10. **WP-012** removes duplicate progress, closure, snapshot, and generated
+    current-state owners.
+11. **WP-013** retires transition-only assets and converges permanent modules,
+    tests, and fixtures.
+12. **WP-014** proves the all-files ownership, lifecycle, recovery, security,
+    test, and branch fixed point and performs final independent reviews.
 
 Every cutover starts with a focused failing test that proves the old conflict
 or missing invariant. Implementation is minimal until that test passes. Broad
@@ -464,7 +647,8 @@ rule owners.
 ## Data Modeling & Storage Strategy
 
 `docs/99.templates/registry.json` remains the machine authority for active
-profiles. A
+document profiles. `.agents/registry.json` is the separate machine authority
+for agent roles, permissions, handoffs, and skill references. A
 separate reviewed disposition ledger owns current-path migrations, Stage 90
 classification, and script retirement. Frozen archive evidence remains in
 Stage 98 and is never used as a mutable current-policy store.
@@ -480,8 +664,11 @@ The canonical interfaces are:
 
 - `docs/99.templates/registry.json` plus the two Stage 99 contract schemas for
   active document contracts;
-- Stage 00 contracts for agent roster, capability, evidence, and validation
-  classes;
+- `.agents/registry.json` plus its schema for the provider-neutral agent
+  registry;
+- Stage 00 policy and role documents as human governance, with point-in-time
+  provider/model evidence owned by Stage 90 Data and execution evidence owned
+  by Spec Tasks or Git;
 - a document migration/disposition ledger for current path changes;
 - a Stage 90 disposition ledger for reference ownership and freshness;
 - a script disposition ledger for executable ownership and retirement;
@@ -514,6 +701,11 @@ duplicate machine inventories or independently redefine lifecycle states.
   closed and does not rewrite output in check mode.
 - A provider adapter claiming runtime support without provider-runtime evidence
   fails evidence classification.
+- A Gemini/Antigravity current consumer, `.gemini/` surface, root `GEMINI.md`,
+  or provider-specific meaning in `.agents/` fails the provider-retirement
+  gate.
+- An agent adapter cardinality or role count hard-coded outside the agent
+  registry fails the machine-owner audit.
 - A script retirement with a remaining CI, hook, documentation, fixture, or
   test consumer fails.
 - A Guide and Runbook that both claim the same executable procedure fail the
@@ -541,41 +733,46 @@ or expansion beyond the approved B scope stops for human approval.
 ## Verification Commands
 
 The detailed implementation plan will bind exact commands to each logical
-task. The terminal gate set must include:
+task. The terminal gate set must include independent test discovery, each
+canonical validator, the thin aggregate, security checks, and both staged and
+all-files fixed points. Production validators must not execute embedded
+self-tests. The target command shape is:
 
 ```bash
-python3 scripts/validate-document-contract-registry.py --self-test
-python3 scripts/validate-document-contract-registry.py --mode strict --route-state terminal
-python3 scripts/validate-markdown-profiles.py --root . --self-test
-python3 scripts/validate-markdown-profiles.py --root . --mode strict
-python3 scripts/validate-links-and-owners.py --root . --self-test
-python3 scripts/validate-links-and-owners.py --root . --mode strict
-python3 scripts/validate-document-lifecycle.py --root . --self-test
-python3 scripts/validate-document-lifecycle.py --root . --mode staged
-TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
+python3 -m unittest discover -s scripts/validation/tests -p 'test_*.py'
+python3 scripts/validation/documents/validate.py --root . --mode strict
+python3 scripts/validation/agents/validate.py --root . --mode strict
+python3 scripts/validation/archive/validate.py --root . --mode strict
+python3 scripts/validation/repository/validate.py --root . --mode staged
+TMPDIR=/tmp bash scripts/qa/validate-repository.sh .
 TMPDIR=/tmp pre-commit run
 TMPDIR=/tmp pre-commit run --all-files
 git diff --check
 git diff --cached --check
 ```
 
+Compatibility wrappers may temporarily forward to these owners during a
+consumer migration, but WP-014 evidence uses the terminal entrypoints.
+
 Passing repository-static checks does not prove provider-runtime discovery,
 hosted CI, deployment, incident response, or live platform correctness.
 
 ## Success Criteria & Verification Plan
 
+### Acceptance Contract
+
 | Criterion | Required evidence |
 | --- | --- |
-| VAL-SDLC-001 | Exact terminal active topology; Requirement Packages replace repeated PRD/SRS/Interface forms; no Stage 02 requirements, Stage 04 owner, or unapproved Release family. |
+| VAL-SDLC-001 | Exact terminal active topology; Requirement Packages replace repeated PRD/SRS/Interface forms; no Stage 02 requirements, Stage 04 owner, local Release family, `.gemini/`, root `GEMINI.md`, or Gemini/Antigravity current governance. |
 | VAL-SDLC-002 | Every current numeric SDLC route uses four digits; parent folders determine prefix-free document types while typed frontmatter IDs match their paths, and every Requirement member uses a unique package-scoped `REQ-####-(FR|NFR|IF)-####` identity. |
 | VAL-SDLC-003 | Incident and Postmortem paths, templates, metadata, links, and negative fixtures use the exact lowercase co-located route. |
-| VAL-SDLC-004 | Every work unit keeps Spec, Plan, and Tasks co-located with reciprocal criteria and state consistency. |
-| VAL-SDLC-005 | Stage 00 has one canonical common contract per concern and thin, evidence-bounded provider adapters. |
+| VAL-SDLC-004 | Every work unit has a thin README router, Spec, Plan, and append-only `TSK-<SPEC>-####` records with reciprocal criteria and profile-valid state consistency; no separate design/tests artifact remains. |
+| VAL-SDLC-005 | Stage 00 human governance, `.agents` machine registry, and Codex/Claude thin projections have disjoint owners; the three permanent agent gates pass with no hard-coded roster/adaptor cardinality, tracked secret, private-auth mutation, hosted provider credential, unredacted canary result, or over-privileged CI claim. |
 | VAL-SDLC-006 | Stage 99 has one registry, two contract schemas, one human README, and one directly copyable template per active authored profile. |
 | VAL-SDLC-007 | Guide, Policy, Runbook, Incident, and Postmortem roles are disjoint; reviewed duplicate procedures have one owner. |
 | VAL-SDLC-008 | Every Stage 90 file resolves to Research, Audit, Data, Stage 05 Guide, Git history, Stage 98 evidence, or deletion exactly once; reference material cannot own active policy. |
-| VAL-SDLC-009 | Stage 98 contains only the minimal README, Migration, and Tombstone topology needed for mapping and Git recovery, with no active direct Tombstone link or redundant snapshot/count ledger. |
-| VAL-SDLC-010 | The exact 50-script ledger is complete; consumer-safe transitions prove 49 and then 47 terminal assets. |
+| VAL-SDLC-009 | Stage 98 contains only the minimal README, Migration, and Tombstone topology needed for mapping and Git recovery; every deletion proves full-OID commit existence, durable-ref reachability, regular `legacy_path` blob recovery, bounded read, and sealed digest when applicable, with no active direct Tombstone link, redundant snapshot/count ledger, or ordinary retention of secret-bearing history. |
+| VAL-SDLC-010 | The script ownership and consumer graph is complete; production modules obey responsibility and size boundaries, tests/fixtures are co-located, aggregate duplication and embedded self-tests are absent, and no terminal file-count invariant remains. |
 | VAL-SDLC-011 | Focused, affected, staged, aggregate, secret, all-files, and independent review gates pass at each required boundary; permanent rules have one machine owner and validator, with zero aggregate duplication, unjustified current-state SHA pins, or consumer-free transition fixtures at the terminal fixed point. |
 | VAL-SDLC-012 | Each independently testable logical unit is committed separately with no unrelated user changes included. |
 
@@ -594,7 +791,7 @@ hosted CI, deployment, incident response, or live platform correctness.
 | N/A — VAL-SDLC-007 shares the direct approved requirement source above. | VAL-SDLC-007 | Operations purpose and duplicate-owner audits. |
 | N/A — VAL-SDLC-008 shares the direct approved requirement source above. | VAL-SDLC-008 | Complete Stage 90 disposition and freshness audit. |
 | N/A — VAL-SDLC-009 shares the direct approved requirement source above. | VAL-SDLC-009 | Migration, tombstone, recovery, and direct-Archive-link gates. |
-| N/A — VAL-SDLC-010 shares the direct approved requirement source above. | VAL-SDLC-010 | Script disposition, consumer-zero, and exact-census gates. |
+| N/A — VAL-SDLC-010 shares the direct approved requirement source above. | VAL-SDLC-010 | Script ownership, consumer-zero, module-boundary, and no-fixed-census gates. |
 | N/A — VAL-SDLC-011 shares the direct approved requirement source above. | VAL-SDLC-011 | Focused, affected, staged, aggregate, review, canonical-owner, duplicate-gate, fixture-residue, and digest-purpose audits. |
 | N/A — VAL-SDLC-012 shares the direct approved requirement source above. | VAL-SDLC-012 | Commit-scope and staged-path audits. |
 
@@ -611,3 +808,10 @@ hosted CI, deployment, incident response, or live platform correctness.
 - [Diataxis](https://diataxis.fr/start-here/): separation of learning, how-to, reference, and explanation needs.
 - [GitHub Releases](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository): release tags, notes, and assets as an external delivery owner.
 - [OpenAI AGENTS.md guidance](https://developers.openai.com/codex/guides/agents-md), [Codex subagents](https://developers.openai.com/codex/subagents), [Anthropic settings](https://code.claude.com/docs/en/settings), and [Anthropic subagents](https://code.claude.com/docs/en/sub-agents): provider-native discovery and permission surfaces remain adapter-specific.
+
+These sources support separation of information-item purposes, decision
+history, co-located change execution, operational learning, provider-native
+adapters, and bounded automated controls. They do not mandate this repository's
+exact directory names, four-digit widths, lifecycle labels, stable-ID grammar,
+or work-package order; those are explicit local governance decisions approved
+in ADR-0030 and this specification.

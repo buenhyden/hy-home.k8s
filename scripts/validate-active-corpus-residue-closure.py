@@ -704,6 +704,8 @@ POST_CLOSURE_ADR_AUTHORITY_PATHS = frozenset(
         "docs/02.architecture/decisions/"
         "0028-pod-security-admission-per-namespace-adoption.md",
         "docs/02.architecture/decisions/0029-mutable-target-revision-retention.md",
+        "docs/02.architecture/decisions/"
+        "0030-authority-first-sdlc-and-agent-governance-convergence.md",
     }
 )
 POST_CLOSURE_PINNED_AUTHORITY_BLOBS = {
@@ -4392,6 +4394,8 @@ def _self_test_post_closure_adr_scope() -> int:
             "docs/02.architecture/decisions/"
             "0028-pod-security-admission-per-namespace-adoption.md",
             "docs/02.architecture/decisions/0029-mutable-target-revision-retention.md",
+            "docs/02.architecture/decisions/"
+            "0030-authority-first-sdlc-and-agent-governance-convergence.md",
         }
     )
     if POST_CLOSURE_ADR_AUTHORITY_PATHS != expected_later:
