@@ -16560,14 +16560,14 @@ newly attained state.
 
 - Date: 2026-08-21
 - Layer: docs
-- Status: in-review
+- Status: complete
 - Tags: workspace-research, sdlc, document-contracts, diataxis, llm-wiki
 - Owner: platform
 - Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
 - Provenance: registered SDLC/documentation report, allocation slice, owner diff, and focused validators
 - Sensitivity: internal
 - Retention: durable
-- Next Owner: WRFR-004 controller review and exact settlement
+- Next Owner: WRFR-005 platform/security integration
 
 ### Progress
 
@@ -16600,10 +16600,19 @@ owner, or new source was created. Only allocated claims
 
 ### Handoff
 
-Exact six-file staging, affected/staged/plain/all-files validation, commit,
-guarded report/package registration, and post-commit task review remain. No
-provider, hosted, live, remote, secret-value, user-validation, push, merge,
-publication, or deployment action occurred. WRFR-005 is not yet unblocked.
+Commit `7bbe6517a014cbc3e79c896d5097a3ae8b99a283` contains the exact six-file
+logical unit and follows separately reviewed prerequisites `bdd36f09` and
+`42222c33`. Registered report SHA-256 is
+`c7749874d884d0cd4af617537cd583eb11432ff0ffd537b68212248a84845918`;
+registered review-package SHA-256 is
+`b996e1022dd709d3a0b70d21df9c58ef9d29c1122810041b377d90aca9cb709e`
+for exact range `615c3a87..7bbe6517`; final inventory SHA-256 is
+`0d60d1d3602fc357bbabe382dd4ede0bfedaba640e2742d367de021fed5936c0`.
+The post-commit reviewer returned `APPROVED WITH MINOR`,
+Critical/Important/Minor `0/0/1`, and allowed WRFR-005 to unblock. This closure
+corrects its sole stale-evidence Minor. WRFR-004 is complete; WRFR-005 is queued
+and ready, not executed. No provider, hosted, live, remote, secret-value,
+user-validation, push, merge, publication, or deployment action occurred.
 
 ## 2026-08-21 - WRFR-003 provider/common integration
 

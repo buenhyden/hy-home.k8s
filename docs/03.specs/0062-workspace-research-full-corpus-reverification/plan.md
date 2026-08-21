@@ -1328,7 +1328,7 @@ of this recovery.
   LLM-WIKI generator check. The latter proves only deterministic output against
   declared inputs.
 
-- [ ] **Step 4: commit and review SDLC findings**
+- [x] **Step 4: commit and review SDLC findings**
 
   Update Task/Plan/progress and commit only the six named tracked files:
 
@@ -1347,9 +1347,20 @@ of this recovery.
   and resolve Critical or Important findings in a scoped fix commit followed by
   re-review before Task 6.
 
-  Pre-commit content review is complete. Exact six-file staging, canonical
-  lanes, commit, guarded report/package registration, and post-commit task
-  review remain the completion gate; WRFR-005 is not yet unblocked.
+  Commit `7bbe6517a014cbc3e79c896d5097a3ae8b99a283` contains exactly the six
+  named paths. It follows the separately reviewed prerequisite commits
+  `bdd36f09` and `42222c33`. Registered report SHA-256 is
+  `c7749874d884d0cd4af617537cd583eb11432ff0ffd537b68212248a84845918`;
+  registered review-package SHA-256 is
+  `b996e1022dd709d3a0b70d21df9c58ef9d29c1122810041b377d90aca9cb709e`
+  for exact three-commit range
+  `615c3a87..7bbe6517`. Final inventory SHA-256 is
+  `0d60d1d3602fc357bbabe382dd4ede0bfedaba640e2742d367de021fed5936c0`.
+  The post-commit reviewer returned `APPROVED WITH MINOR`,
+  Critical/Important/Minor `0/0/1`, and allowed WRFR-005 to unblock. The sole
+  Minor was stale lifecycle evidence that still described settlement and
+  review as pending; this closure unit corrects it. WRFR-004 is complete and
+  WRFR-005 is queued and ready, not executed.
 
 ### Task 6: WRFR-005 — platform and security integration
 
