@@ -1145,7 +1145,7 @@ of this recovery.
 - Produces: reviewed common-environment and Claude/Codex status sections with
   repository-static versus provider-native evidence separated.
 
-- [ ] **Step 1: reproduce the two-owner RED**
+- [x] **Step 1: reproduce the two-owner RED**
 
   ```bash
   python3 "$WRFR_SDD/full-corpus-check.py" validate-integration \
@@ -1155,7 +1155,11 @@ of this recovery.
 
   Expected before edits: two missing-section diagnostics and exit 1.
 
-- [ ] **Step 2: append the provider/common findings**
+  The unchanged pre-edit probe exited `1` with
+  `ERROR INTEGRATION_SECTION`. The checker is fail-fast and therefore reports
+  the first missing owner section rather than both missing sections in one run.
+
+- [x] **Step 2: append the provider/common findings**
 
   Add one dated H3 to each owner. Cover `REQ-WERPC-003..006` exactly:
 
@@ -1172,7 +1176,14 @@ of this recovery.
   authentication, entitlement, and execution. No local installation or provider
   runtime fact may be inferred from an official product page.
 
-- [ ] **Step 3: run provider-focused GREEN checks**
+  Exactly one dated H3 was appended to each of the two owners. The four rows
+  consume no new source or claim identifier, retain their normalized baseline
+  selectors, and record As-Is, Gap, Target, evidence depth, rejected inference,
+  retained `DEFER`, owner, safe follow-up, and refresh trigger. The Claude
+  changelog advance remains public-documentation evidence only; the failed
+  Codex MCP re-fetch supports no new current MCP-specific claim.
+
+- [x] **Step 3: run provider-focused GREEN checks**
 
   ```bash
   python3 "$WRFR_SDD/full-corpus-check.py" validate-integration \
@@ -1186,6 +1197,11 @@ of this recovery.
   python3 scripts/validate-links-and-owners.py --root . --mode strict
   git diff --check
   ```
+
+  The task-local probe passed all four rows. Provider config/evidence and both
+  roster validators passed; strict Markdown reported zero violations; strict
+  links/owners passed; and `git diff --check` passed. These results establish
+  repository-static integration only.
 
 - [ ] **Step 4: commit and review provider findings**
 
@@ -1204,6 +1220,16 @@ of this recovery.
   Generate the committed package, dispatch source-fidelity and task reviews,
   and resolve Critical or Important findings in a scoped fix commit followed by
   re-review before Task 5.
+
+  The first independent source-fidelity review found one Important omission:
+  the Codex row consumed the existing memory observation without listing
+  `SRC-WERPC-068` in its source boundary. The owner now lists
+  `SRC-WERPC-009..013` and `SRC-WERPC-068`. Covering checks passed, and the
+  independent source-fidelity re-review and spec/quality/security review both
+  returned `APPROVED` with Critical/Important/Minor `0/0/0`. Exact-index lanes,
+  this five-file implementation commit, guarded report/package registration,
+  and the post-commit task review remain the settlement sequence; Task 5 stays
+  blocked until that review approves.
 
 ### Task 5: WRFR-004 — SDLC and documentation integration
 

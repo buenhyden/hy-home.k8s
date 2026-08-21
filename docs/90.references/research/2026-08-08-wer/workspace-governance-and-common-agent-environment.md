@@ -209,6 +209,71 @@ The `Glob` tool does not traverse the `.claude/skills`, `.claude/workflows`, or
 trusting `Glob` alone could wrongly conclude the shared assets are absent. This
 is a tool artifact, not workspace drift.
 
+### 2026-08-20 full-corpus reverification
+
+This increment consumes the reviewed provider/common report and its empty
+source/claim allocation slice. It adds no identifier and does not restate the
+unchanged control-plane baseline. Public product documentation is evidence for
+provider contracts only; tracked files are repository-static evidence only.
+
+#### REQ-WERPC-003 workspace application
+
+- **External/workspace result:** `unchanged` / `confirmed`, using the existing
+  provider-source boundaries `SRC-WERPC-004` and `SRC-WERPC-009` and workspace
+  selector
+  `docs/90.references/research/2026-08-08-wer/workspace-governance-and-common-agent-environment.md#workspace-application-baseline`.
+- **As-Is:** at baseline commit `8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c`,
+  `CLAUDE.md` and `AGENTS.md` remain parallel thin gateways. Each routes through
+  bootstrap, its provider note and baseline, and `RTK.md`; neither imports the
+  other. The repository-owned chain still binds task scope, environment and
+  permission boundaries, tools, checkpoints, evaluation lanes, and evidence
+  reporting before provider-specific execution.
+- **Gap / Target:** no native Claude or Codex discovery, installation,
+  authentication, entitlement, effective instruction chain, or execution was
+  observed. Preserve the two gateways and the repository-owned JIT route;
+  collect a versioned, non-secret provider-native observation only when an
+  operational claim is authorized and necessary.
+- **Evidence depth / rejected inference:** current public documentation plus
+  repository-static selectors. Parallel gateways and documented instruction
+  surfaces do not prove that either provider loaded or enforced this worktree.
+- **Disposition / retained boundary:** `Verified` for the bounded product and
+  tracked topology claims; provider-native and authenticated/runtime behavior
+  remains `DEFER` under blocking class `repo-static`.
+- **Owner / safe follow-up / trigger:** Stage 00 workspace and provider
+  governance. Reinspect both gateway import lists without invoking a provider;
+  reopen on a material Claude instruction-loading, Codex AGENTS-discovery, or
+  root-gateway change.
+
+#### REQ-WERPC-006 common system
+
+- **External/workspace result:** `changed` / `confirmed`, within existing
+  `SRC-WERPC-004`, `SRC-WERPC-007`, `SRC-WERPC-009`, `SRC-WERPC-011`, and
+  `SRC-WERPC-068` boundaries and workspace selector
+  `docs/90.references/research/2026-08-08-wer/workspace-governance-and-common-agent-environment.md#common-system-baseline`.
+- **As-Is:** the harness catalog and contract still project twelve roles onto
+  four tracked provider surfaces, forty-eight adapters in total. The shared
+  layer owns scope, permission, tool, checkpoint, evaluation, evidence, and
+  durable-memory semantics; each adapter retains its provider-native
+  instruction, subagent, hook, sandbox/approval, MCP, memory, and model edges.
+- **Gap / Target:** current Claude documentation exposes a broader subagent
+  field surface, while Codex documentation continues to distinguish AGENTS,
+  custom agents, and optional local memory. Neither change proves discovery,
+  parsing, authentication, permission enforcement, retention, or effective
+  cross-provider parity. Preserve one repository control plane with distinct
+  provider projections and require separately authorized per-provider runtime
+  evidence for parity claims.
+- **Evidence depth / rejected inference:** repository-static inventory plus
+  current official public contracts. Equal counts, shared symlink views, and
+  overlapping product features do not prove semantic or runtime equivalence.
+- **Disposition / retained boundary:** `Partial`; the static common control
+  plane is confirmed, while provider-native parity and authenticated execution
+  remain `DEFER` under blocking class `repo-static`.
+- **Owner / safe follow-up / trigger:** Stage 00 harness/provider governance.
+  Reconcile static counts and contracts on a local change; reopen on a material
+  provider contract, harness inventory, adapter-tree, or shared-asset-link
+  change, and use a versioned non-secret runtime canary only with separate
+  authorization.
+
 ## Sources
 
 - **SRC-WERPC-004–008**: official Anthropic Claude Code documentation, checked

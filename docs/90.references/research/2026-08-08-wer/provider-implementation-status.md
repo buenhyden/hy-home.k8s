@@ -210,6 +210,75 @@ hook was added, `SessionStart` reports `source: "fork"`, GitLab token families
 gained secret redaction, and an opt-in Bash-tool memory cgroup control was
 added. None of these bear on the two owner rows above and none is adopted here.
 
+### 2026-08-20 full-corpus reverification
+
+This increment consumes the reviewed provider/common report and its empty
+source/claim allocation slice. It separates published product contracts,
+tracked configuration, native discovery, and authenticated execution; no
+provider client, account, credential, connected MCP, or live tool was inspected.
+
+#### REQ-WERPC-004 Claude implementation status
+
+- **External/workspace result:** `changed` / `confirmed`, using the existing
+  `SRC-WERPC-004..008` and `SRC-WERPC-083` source boundaries and workspace
+  selector
+  `docs/90.references/research/2026-08-08-wer/provider-implementation-status.md#claude-baseline`.
+- **As-Is:** current Anthropic pages continue to document `CLAUDE.md` context
+  and memory, layered settings and permissions, lifecycle hooks, custom
+  subagents with tool/MCP/model/context controls, and MCP configuration. The
+  changelog observed on 2026-08-20 advances through `2.1.237`. At the baseline
+  commit the worktree contains `.claude/settings.json`, twelve tracked Claude
+  agent adapters, and six configured hook event keys.
+- **Gap / Target:** no authorized evidence establishes the installed Claude
+  version, trusted settings, native agent discovery, hook delivery,
+  authentication, entitlement, granted permissions, memory behavior, resolved
+  model, MCP connectivity, or delegated execution. Retain the verified static
+  inventory and require a separately authorized, versioned, non-secret runtime
+  observation before making an operational claim.
+- **Evidence depth / rejected inference:** current official public
+  documentation plus repository-static selectors. A published release or a
+  syntactically present adapter cannot prove installation, discovery, trust,
+  authentication, permission enforcement, or execution.
+- **Disposition / retained boundary:** `Verified` for the bounded product
+  surfaces and static configuration; provider-native and authenticated/runtime
+  behavior remains `DEFER` under blocking class `repo-static`.
+- **Owner / safe follow-up / trigger:** Stage 00 Claude provider governance.
+  Maintain the static inventory; reopen on a material settings, permission,
+  hook, subagent, MCP, memory, model/context, changelog, or `.claude/` change,
+  and run a runtime canary only after separate authorization.
+
+#### REQ-WERPC-005 Codex implementation status
+
+- **External/workspace result:** `unchanged` / `confirmed`, using existing
+  `SRC-WERPC-009..013` and `SRC-WERPC-068` boundaries and workspace selector
+  `docs/90.references/research/2026-08-08-wer/provider-implementation-status.md#codex-baseline`.
+- **As-Is:** current OpenAI pages continue to document the AGENTS instruction
+  chain, layered configuration, custom subagents, sandbox and approval
+  controls, hooks, memories, and model selection. The baseline worktree
+  contains `AGENTS.md`, `.codex/CODEX.md`, `.codex/hooks.json`, and twelve
+  `.codex/agents/` TOML adapters, but no tracked `.codex/config.toml`. The
+  registered MCP URL was attempted during this cycle but the retrieval path
+  failed, so no new current MCP-specific claim is adopted.
+- **Gap / Target:** static files do not establish project-layer parsing or
+  trust, native agent discovery, hook execution, sandbox/approval enforcement,
+  authentication, entitlement, memory behavior, resolved models, MCP
+  connection, or tool execution. Preserve configuration and runtime as separate
+  evidence layers and treat the missing project config as a workspace gap, not
+  a runtime failure.
+- **Evidence depth / rejected inference:** current official public contracts
+  for the reachable surfaces plus repository-static selectors; the MCP
+  re-fetch limitation is explicit. Documented features and tracked adapters do
+  not prove local discovery, effective controls, connectivity, or execution.
+- **Disposition / retained boundary:** `Verified` for the bounded reachable
+  product contracts and static inventory; provider-native and
+  authenticated/runtime behavior remains `DEFER` under blocking class
+  `repo-static`.
+- **Owner / safe follow-up / trigger:** Stage 00 Codex provider governance.
+  Reinspect the tracked project layer and registered official pages on a
+  material AGENTS, config, subagent, sandbox/approval, hook, memory, model, MCP,
+  or `.codex/` change; use a versioned non-secret runtime canary only after
+  explicit authorization.
+
 ## Sources
 
 - **Anthropic primary sources**: [memory](https://code.claude.com/docs/en/memory),

@@ -16554,6 +16554,67 @@ newly attained state.
 - No live, hosted, provider-runtime, remote, secret-value, push, publish, or
   deployment evidence was collected or claimed.
 
+## 2026-08-21 - WRFR-003 provider/common integration
+
+### Metadata
+
+- Date: 2026-08-21
+- Layer: docs
+- Status: in-progress
+- Tags: workspace-research, provider, common-environment, claude, codex
+- Owner: platform
+- Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
+- Provenance: registered provider/common report, allocation slice, owner diff, and focused validators
+- Sensitivity: internal
+- Retention: durable
+- Next Owner: WRFR-003 exact settlement and post-commit review
+
+### Progress
+
+WRFR-003 consumes registered provider/common report SHA-256
+`bf5728c6d4f69dce90cff533058372e243ffed28ed5b5ee8949444212250ce86`
+and allocation SHA-256
+`04025a6ecc56853d773bac598e2c8895a408a2d6a9252be9727f4264c50fe40b`.
+Its exact slice is `REQ-WERPC-003..006`, with no allocated new source or claim
+ID. Exactly one dated 2026-08-20 H3 was appended to each existing workspace-
+governance and provider-status owner.
+
+### Memory
+
+Official product documentation, tracked adapters, provider-native discovery,
+and authenticated execution are non-transitive evidence classes. A release
+advance does not prove local installation, and a failed current MCP re-fetch
+does not authorize an unchanged or replacement MCP claim.
+
+### Evidence
+
+- RED: the pre-edit probe exited `1` with fail-fast
+  `ERROR INTEGRATION_SECTION`; it reports the first missing owner rather than
+  two simultaneous diagnostics.
+- GREEN: `PASS validate-integration` for all four provider/common rows.
+- Provider config/evidence, roster-admission, and roster-currentness validators:
+  PASS.
+- Strict Markdown: PASS with zero violations. Strict links/owners:
+  `PASS CROSS-DOCUMENT`. `git diff --check`: PASS.
+- External results are two `changed` and two `unchanged`; workspace results are
+  four `confirmed`; dispositions remain three `Verified` and one `Partial`.
+- Native discovery, installation, authentication, entitlement, effective
+  permissions, hook delivery, model resolution, MCP connectivity, memory
+  behavior, and provider execution remain `DEFER`.
+- The first source-fidelity review reported Important `1`: REQ-WERPC-005
+  omitted existing memory source `SRC-WERPC-068` from its source boundary. The
+  owner was corrected, covering checks passed, and the independent
+  source-fidelity and spec/quality/security re-reviews both returned `APPROVED`
+  with Critical/Important/Minor `0/0/0`.
+
+### Handoff
+
+Exact-index lanes and the five-file implementation commit precede guarded
+report/package registration and post-commit task review. WRFR-004 remains
+blocked until that review approves. No browsing, remote query, provider
+invocation, hosted CI, live infrastructure, secret-value access, push, merge,
+publication, or deployment occurred.
+
 ## 2026-08-21 - WRFR-002 agent-engineering integration
 
 ### Metadata
