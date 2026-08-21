@@ -36,7 +36,9 @@ the sole stale-evidence Minor is corrected in this closure unit. WRFR-005 has
 integrated its exact three-row platform/security slice into the existing owner;
 focused static validators and three independent pre-commit reviews approve the
 content. Its exact implementation commit, guarded report/package, and
-post-commit task review remain the current controller-owned gates.
+post-commit task review are complete; the sole stale lifecycle Minor is
+corrected in this closure unit. WRFR-006 is queued and ready, but no remote
+GitHub evidence may be collected before its required security review.
 
 The target is a 2026-08-20 external-source and workspace reverification of all
 thirty-six existing `REQ-WERPC-*` owners, integrated into the existing
@@ -103,7 +105,7 @@ stage, or commit.
 | WRFR-002 | VAL-WRFR-002..005, 008, 013 | Integrate agent engineering findings | agent integrator | Done | Nine allocated rows appended and committed as `06b3d681`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole stale-evidence Minor addressed |
 | WRFR-003 | VAL-WRFR-002..005, 008, 013 | Integrate provider/common findings | provider integrator | Done | Four allocated rows appended and committed as `a41def9e`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole stale-evidence Minor addressed |
 | WRFR-004 | VAL-WRFR-002..005, 008, 013 | Integrate SDLC/documentation findings | documentation integrator | Done | Sixteen allocated rows appended and committed as `7bbe6517`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole stale-evidence Minor addressed |
-| WRFR-005 | VAL-WRFR-002..005, 008, 013 | Integrate platform/security findings | platform/security integrator | In Review | Three allocated rows appended; focused static validators and independent pre-commit reviews approved | Exact four-file commit, guarded report/package, and post-commit task review pending |
+| WRFR-005 | VAL-WRFR-002..005, 008, 013 | Integrate platform/security findings | platform/security integrator | Done | Three allocated rows appended and committed as `63efc8de`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole stale-evidence Minor addressed |
 | WRFR-006 | VAL-WRFR-002..005, 008, 011, 013 | Integrate delivery/quality and read-only GitHub evidence | delivery/security integrator | Queued | Not executed | Pre-remote security review required |
 | WRFR-007 | VAL-WRFR-006..010, 013 | Integrate source, claim, scope, and pack projections | sole ledger integrator | Queued | Not executed | Awaiting all five topical commits |
 | WRFR-008 | VAL-WRFR-008, 010, 013 | Reconcile indexes, links, lifecycle, and progress | documentation integrator | Queued | Not executed | Awaiting terminal parsed counts |
@@ -588,9 +590,17 @@ the owner.
 All three rows remain `Partial` with blocking class `live-cluster`.
 Kubernetes authorization/admission/CNI, Argo reconciliation, Vault/ESO backend
 and readiness, registry/artifact trust, and recovery effectiveness remain
-`DEFER`. The exact four-file implementation commit, guarded report and review
-package registration, and post-commit task review remain controller-owned gates;
-WRFR-006 is not unblocked by this pre-commit state.
+`DEFER`. Commit `63efc8de90227e1d3c32e2c4388876d4b850a94b` contains the exact
+four-file logical unit. Registered report SHA-256 is
+`dfe45681c38ec2312936315a465f8069b6f6d1474afda5f6a86d7e34f5804e78`;
+registered review-package SHA-256 is
+`88111b614c7bda7305cf0d2686d57bda598106c2e66a4bce38333ba32c5682c0`
+for exact range `8ed7fae3..63efc8de`; final inventory SHA-256 is
+`d844156bdfe0dab8ab90009e89ad7807aab6987571955aa8a2783f4784047f24`.
+The post-commit reviewer returned `APPROVED WITH MINOR`,
+Critical/Important/Minor `0/0/1`; this closure corrects its sole intentional
+pre-closure lifecycle Minor. WRFR-005 is complete. WRFR-006 is queued and ready,
+but its pre-remote security review remains mandatory before any GitHub query.
 
 ### Stop conditions
 
@@ -610,8 +620,10 @@ registered report/package, and post-commit task review. WRFR-004 has completed
 its sixteen-row topical integration, exact six-file commit, registered
 report/package, and post-commit review. WRFR-005 has integrated its exact
 three-row owner section and passed focused static validation plus three
-independent pre-commit reviews; its implementation commit/package/post-commit
-review remains in progress. Initial design evidence included:
+independent pre-commit reviews. Its exact four-file implementation commit,
+registered report/package, and post-commit review are complete. The sole stale
+lifecycle Minor is closed; WRFR-006 is queued and ready subject to its
+pre-remote security gate. Initial design evidence included:
 
 - isolated worktree created from clean tracked `HEAD`;
 - primary checkout's unrelated staged RIA files excluded from the branch;
@@ -650,8 +662,9 @@ WRFR-005 preserves those boundaries across Kubernetes desired state,
 infrastructure execution contracts, and security controls. Its three-row probe
 and all canonical platform/security static validators pass, and independent
 source-fidelity, spec/quality, and security reviews approve the owner content.
-The exact implementation commit and controller-owned post-commit gates remain
-pending; WRFR-006 has not executed.
+Its exact implementation commit, guarded report/package registration, and
+post-commit task review are complete. WRFR-006 has not executed, and its
+required pre-remote security review still gates every GitHub query.
 
 ## Traceability
 
@@ -671,7 +684,7 @@ pending; WRFR-006 has not executed.
 | [VAL-WRFR-010](spec.md) | Not executed | WRFR-007..009 own the shared projection sequence |
 | [VAL-WRFR-011](spec.md) | Not executed | WRFR-006 and WRFR-009 own the nine-class remote/security contract |
 | [VAL-WRFR-012](spec.md) | Workspace passed; cleanup pending | WRFR-001 residue validation passed; WRFR-009 still owns exact cleanup |
-| [VAL-WRFR-013](spec.md) | In progress | WRFR-001..004 logical commits and task reviews are complete; WRFR-005 implementation is in review and later tasks remain pending |
+| [VAL-WRFR-013](spec.md) | In progress | WRFR-001..005 logical commits and task reviews are complete; WRFR-006..009 remain pending |
 | [VAL-WRFR-014](spec.md) | Not executed | WRFR-009 owns the whole-branch review gate |
 | [VAL-WRFR-015](spec.md) | Not executed | WRFR-009 owns the terminal lane sequence |
 

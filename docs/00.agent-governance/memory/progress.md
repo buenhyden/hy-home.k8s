@@ -16560,14 +16560,14 @@ newly attained state.
 
 - Date: 2026-08-21
 - Layer: docs
-- Status: in-review
+- Status: complete
 - Tags: workspace-research, kubernetes, infrastructure, security, supply-chain
 - Owner: platform
 - Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
-- Provenance: registered platform/security report, allocation slice, owner diff, focused validators, and independent pre-commit reviews
+- Provenance: registered platform/security report, allocation slice, exact implementation commit, guarded review package, focused validators, and independent post-commit review
 - Sensitivity: internal
 - Retention: durable
-- Next Owner: WRFR-005 controller commit/package/post-commit review gate
+- Next Owner: WRFR-006 delivery/security integrator after the required pre-remote security review
 
 ### Progress
 
@@ -16591,6 +16591,16 @@ separate evidence layers.
   `PASS CROSS-DOCUMENT`. `git diff --check`: PASS.
 - Independent source-fidelity, spec/quality, and security reviews each returned
   `APPROVED`, Critical/Important/Minor `0/0/0`.
+- Commit `63efc8de90227e1d3c32e2c4388876d4b850a94b` contains the exact
+  four-file logical unit. Registered report SHA-256 is
+  `dfe45681c38ec2312936315a465f8069b6f6d1474afda5f6a86d7e34f5804e78`;
+  registered review-package SHA-256 is
+  `88111b614c7bda7305cf0d2686d57bda598106c2e66a4bce38333ba32c5682c0`
+  for exact range `8ed7fae3..63efc8de`; final inventory SHA-256 is
+  `d844156bdfe0dab8ab90009e89ad7807aab6987571955aa8a2783f4784047f24`.
+- The post-commit reviewer returned `APPROVED WITH MINOR`,
+  Critical/Important/Minor `0/0/1`. This closure corrects its sole intentional
+  pre-closure lifecycle Minor; no content finding was reported.
 - No cluster, container runtime, registry, Argo CD, Helm, Vault, ESO, gateway,
   cloud, Secret value, credential, token, trust store, artifact, signature,
   attestation, recovery, remote, hosted, push, merge, publication, or deployment
@@ -16600,9 +16610,10 @@ separate evidence layers.
 
 All three rows remain `Partial` with blocking class `live-cluster`. Effective
 RBAC, admission, CNI, reconciliation, Vault/ESO readiness, artifact trust,
-registry, and recovery results remain `DEFER`. The exact four-file commit,
-guarded report/package registration, and post-commit review remain
-controller-owned. WRFR-006 is not yet unblocked.
+registry, and recovery results remain `DEFER`. WRFR-005 is complete. WRFR-006
+is queued and ready, but its required pre-remote security review remains a hard
+gate before any GitHub query. No provider, hosted, live, remote, secret-value,
+push, merge, publication, or deployment action occurred.
 
 ## 2026-08-21 - WRFR-004 SDLC/documentation integration
 

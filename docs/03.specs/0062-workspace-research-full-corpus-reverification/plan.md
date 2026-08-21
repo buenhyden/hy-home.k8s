@@ -1439,7 +1439,7 @@ of this recovery.
   strict links/owners, and diff check all passed. These are repository-static
   results only; no prohibited live or secret-bearing command was invoked.
 
-- [ ] **Step 4: commit platform findings**
+- [x] **Step 4: commit platform findings**
 
   ```bash
   git add docs/90.references/research/2026-08-08-wer/kubernetes-infrastructure-and-security.md \
@@ -1450,13 +1450,29 @@ of this recovery.
   git commit -m "docs: reverify platform and security research"
   ```
 
-- [ ] **Step 5: review the committed platform findings**
+  Commit `63efc8de90227e1d3c32e2c4388876d4b850a94b` contains exactly the four
+  named paths. It preserves every `Partial`, `live-cluster`, Secret-value, and
+  no-live-command boundary recorded by the approved pre-commit reviews.
+
+- [x] **Step 5: review the committed platform findings**
 
   Generate the committed package and dispatch source-fidelity, task, and
   `security-reviewer` reviews. The security review must verify no secret payload,
   live command, identity mutation, unbounded permission claim, or supply-chain
   equivalence entered the report. Resolve every Critical or Important finding
   in a scoped fix commit and re-review before Task 7.
+
+  Registered report SHA-256 is
+  `dfe45681c38ec2312936315a465f8069b6f6d1474afda5f6a86d7e34f5804e78`;
+  registered review-package SHA-256 is
+  `88111b614c7bda7305cf0d2686d57bda598106c2e66a4bce38333ba32c5682c0`
+  for exact one-commit range `8ed7fae3..63efc8de`. Final inventory SHA-256 is
+  `d844156bdfe0dab8ab90009e89ad7807aab6987571955aa8a2783f4784047f24`.
+  The post-commit reviewer returned `APPROVED WITH MINOR`,
+  Critical/Important/Minor `0/0/1`. Its sole Minor was the intentional
+  pre-closure lifecycle state in these three records; this closure corrects
+  it. WRFR-005 is complete. WRFR-006 is queued and ready, but its required
+  pre-remote security review remains a hard gate before any GitHub query.
 
 ### Task 7: WRFR-006 — delivery and quality integration
 
