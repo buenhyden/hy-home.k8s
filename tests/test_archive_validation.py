@@ -1306,7 +1306,8 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         self.assertEqual(
             set(statements),
             # 0055-0061 are the renumbered successors the consolidation
-            # merge introduced alongside the original three.
+            # merge introduced alongside the original three; 0062 is the
+            # active standalone successor admitted on 2026-08-20.
             {
                 "0043",
                 "0053",
@@ -1318,10 +1319,12 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
                 "0059",
                 "0060",
                 "0061",
+                "0062",
             },
         )
         self.assertIn("2026-08-08", statements["0053"][0])
         self.assertIn("2026-08-13", statements["0054"][0])
+        self.assertIn("2026-08-20", statements["0062"][0])
         self.assertNotEqual(statements["0053"], statements["0054"])
 
     def test_work109_mig0002_source_commit_blob_and_target_drift_fail_closed(
