@@ -16554,6 +16554,56 @@ newly attained state.
 - No live, hosted, provider-runtime, remote, secret-value, push, publish, or
   deployment evidence was collected or claimed.
 
+## 2026-08-21 - WRFR-005 platform/security integration
+
+### Metadata
+
+- Date: 2026-08-21
+- Layer: docs
+- Status: in-review
+- Tags: workspace-research, kubernetes, infrastructure, security, supply-chain
+- Owner: platform
+- Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
+- Provenance: registered platform/security report, allocation slice, owner diff, focused validators, and independent pre-commit reviews
+- Sensitivity: internal
+- Retention: durable
+- Next Owner: WRFR-005 controller commit/package/post-commit review gate
+
+### Progress
+
+WRFR-005 consumes registered report SHA-256
+`edff89e3b29fdcaa658044ffc768b7c297e39a02936bd39657c90bb759a7fbce`
+and allocation SHA-256
+`04025a6ecc56853d773bac598e2c8895a408a2d6a9252be9727f4264c50fe40b`.
+Its exact slice is `REQ-WERPC-008`, `009`, and `025`, with allocated
+`SRC-WERPC-091` and `CLM-WERPC-013-04..06`. Exactly one dated H3 was appended
+to the existing Kubernetes/infrastructure/security owner. Kubernetes desired
+state, infrastructure execution contracts, and security controls remain
+separate evidence layers.
+
+### Evidence
+
+- RED: exit `1`, exact fail-fast `ERROR INTEGRATION_SECTION` before edits.
+- GREEN: `PASS validate-integration` for all three assigned rows.
+- GitOps structure, static infrastructure contracts, 106-manifest syntax and
+  kube-linter, Vault/ESO contracts, and secret handling: PASS.
+- Strict Markdown: PASS with zero violations. Strict links/owners:
+  `PASS CROSS-DOCUMENT`. `git diff --check`: PASS.
+- Independent source-fidelity, spec/quality, and security reviews each returned
+  `APPROVED`, Critical/Important/Minor `0/0/0`.
+- No cluster, container runtime, registry, Argo CD, Helm, Vault, ESO, gateway,
+  cloud, Secret value, credential, token, trust store, artifact, signature,
+  attestation, recovery, remote, hosted, push, merge, publication, or deployment
+  evidence was accessed or claimed.
+
+### Handoff
+
+All three rows remain `Partial` with blocking class `live-cluster`. Effective
+RBAC, admission, CNI, reconciliation, Vault/ESO readiness, artifact trust,
+registry, and recovery results remain `DEFER`. The exact four-file commit,
+guarded report/package registration, and post-commit review remain
+controller-owned. WRFR-006 is not yet unblocked.
+
 ## 2026-08-21 - WRFR-004 SDLC/documentation integration
 
 ### Metadata

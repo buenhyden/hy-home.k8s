@@ -1378,7 +1378,7 @@ of this recovery.
 - Produces: one reviewed Kubernetes/infrastructure/security section with live
   cluster and secret boundaries preserved.
 
-- [ ] **Step 1: reproduce the platform-owner RED**
+- [x] **Step 1: reproduce the platform-owner RED**
 
   ```bash
   python3 "$WRFR_SDD/full-corpus-check.py" validate-integration \
@@ -1388,7 +1388,11 @@ of this recovery.
 
   Expected before edits: one missing-section diagnostic and exit 1.
 
-- [ ] **Step 2: append the platform and security findings**
+  The pre-edit probe exited `1` with exactly `ERROR INTEGRATION_SECTION`.
+  The checker is fail-fast and reported the one missing platform owner before
+  any owner or lifecycle edit.
+
+- [x] **Step 2: append the platform and security findings**
 
   The dated H3 must distinguish Kubernetes desired state, infrastructure
   scripts/contracts, and security controls. Reverify RBAC least privilege,
@@ -1400,7 +1404,16 @@ of this recovery.
   `k3d`, `helm`, `argocd`, `vault`, `docker`, a registry client, or any live
   infrastructure command. Never inspect a Secret value.
 
-- [ ] **Step 3: run platform-focused GREEN checks**
+  Exactly one dated H3 was appended immediately before terminal Related
+  Documents in the existing owner. It contains the exact three-row slice,
+  `SRC-WERPC-091`, and `CLM-WERPC-013-04..06`, and separates Kubernetes
+  desired state, infrastructure execution contracts, and security controls.
+  Effective RBAC, admission, CNI, Argo reconciliation, Vault/ESO, artifact
+  trust, registry, recovery, and runtime results remain `DEFER`. Independent
+  source-fidelity, spec/quality, and security reviews returned `APPROVED` with
+  Critical/Important/Minor `0/0/0` each.
+
+- [x] **Step 3: run platform-focused GREEN checks**
 
   ```bash
   python3 "$WRFR_SDD/full-corpus-check.py" validate-integration \
@@ -1419,6 +1432,12 @@ of this recovery.
   If any named script has moved, locate its current canonical successor through
   the affected-surface registry and record the exact replacement in the Task;
   do not silently drop the check.
+
+  Every named script remained at its canonical path. The integration probe,
+  GitOps structure, static infrastructure contracts, 106-manifest syntax and
+  kube-linter lane, Vault/ESO contracts, secret handling, strict Markdown,
+  strict links/owners, and diff check all passed. These are repository-static
+  results only; no prohibited live or secret-bearing command was invoked.
 
 - [ ] **Step 4: commit platform findings**
 

@@ -794,6 +794,139 @@ fetched. No row is promoted to `Verified`; no row is `Contradicted`. New
 source registered: `SRC-WERPC-075`. New claims registered:
 `CLM-WERPC-010-05` through `CLM-WERPC-010-07`.
 
+### 2026-08-20 full-corpus reverification
+
+This increment consumes the reviewed platform/security report at workspace
+baseline `8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c` and its exact allocation
+slice. Kubernetes desired state, infrastructure execution contracts, and
+security controls remain separate evidence layers. No cluster, container
+runtime, registry, Argo CD, Helm, Vault, ESO, gateway, or cloud command was
+run; no Secret value, credential, token, trust store, artifact, signature,
+attestation, or recovery output was inspected.
+
+#### REQ-WERPC-008 Kubernetes desired state
+
+- **Sources and result:** `unchanged` / `drifted`, using existing
+  `SRC-WERPC-060`, `SRC-WERPC-061`, and `SRC-WERPC-090`, plus selector
+  `kubernetes-infrastructure-and-security.md#kubernetes-baseline`.
+  `CLM-WERPC-013-04` records the current repository-static correction. The
+  v2.19.1 upstream role retains the Secret authorization boundary documented
+  at v2.14.0; metadata-oriented exported metrics do not narrow the underlying
+  Kubernetes API permission.
+- **As-Is:** `gitops/platform/monitoring/kube-state-metrics.yaml:21-34`
+  declares `secrets` with `list` and `watch`, while `:70-89` declares the
+  current default collector permissions and `:124-160` binds the dedicated
+  ServiceAccount to image `v2.19.1` with hardened pod/container fields. The
+  six exact manifests under `gitops/platform/network-policies/` still declare
+  Egress-only policy intent. `gitops/platform/namespaces/namespace-monitoring.yaml:7-10`
+  declares Restricted Pod Security labels. These selectors describe desired
+  state, not observed authorization, admission, CNI, scrape, or workload state.
+- **Gap / Target:** the owner previously described the v2.14.0 pin and must
+  reflect v2.19.1 without presenting the upgrade as runtime evidence. Preserve
+  the declared Secret-read risk, explicit collector/RBAC review, and the
+  NetworkPolicy/Pod Security intent; require separately authorized effective
+  RBAC, API admission, CNI flow, Argo reconciliation, and scrape-consumer
+  observations before asserting enforcement or necessity.
+- **Evidence / rejected inference:** official public documentation plus exact
+  repository selectors, evidence depth `repository-static`. A ClusterRole,
+  namespace label, hardened workload, or Egress policy proves no actual Secret
+  read, metric exposure, admission decision, selected traffic isolation, or
+  reconciled pod. The external Prometheus query set remains outside tracked
+  paths.
+- **Disposition / retained boundary:** `Partial`, blocking class
+  `live-cluster`. Effective authorization, Secret-safe scrape evidence,
+  admission/CNI behavior, and controller reconciliation remain `DEFER`.
+- **Owner / safe follow-up / trigger:** Kubernetes/observability owners with
+  platform and security review. A separately authorized read-only observation
+  may inspect effective RBAC, admission, CNI, and non-secret metric metadata;
+  reopen on a kube-state-metrics version, collector/RBAC, NetworkPolicy,
+  namespace-admission, cited source, or owner-selector change.
+
+#### REQ-WERPC-009 Infrastructure and GitOps execution boundary
+
+- **Sources and result:** `changed` / `drifted`, using new
+  `SRC-WERPC-091` with existing `SRC-WERPC-027`, `SRC-WERPC-032`, and
+  `SRC-WERPC-064`, plus selector
+  `kubernetes-infrastructure-and-security.md#infrastructure-baseline`.
+  `SRC-WERPC-091` is only official K3s v1.35 release-family context;
+  `CLM-WERPC-013-05` records the static infrastructure delta.
+- **As-Is:** `infrastructure/k3d/k3d-cluster.yaml:5,8-17` declares
+  `rancher/k3s:v1.35.0-k3s1`, the API host port, and HTTP/HTTPS load-balancer
+  mappings. `infrastructure/bootstrap-local.sh:246-253` now pins the Argo CD
+  Helm chart to `10.4.0`. `gitops/clusters/local/root-application.yaml:10`,
+  `gitops/clusters/local/applicationset-apps.yaml:20`, and Git-sourced owners
+  under `gitops/apps/root/` continue to select moving branch `main`.
+  `infrastructure/README.md#infrastructure-test-inventory` keeps the static
+  contract verifier distinct from the cluster-dependent verification suite.
+- **Gap / Target:** a pinned chart version is not Helm provenance, a moving Git
+  branch is not immutable revision identity, and a tagged image is not an
+  observed registry digest. Keep bootstrap inputs and static/live test
+  contracts current, then require an approved design for immutable revision,
+  chart provenance, image identity, trust policy, and Git-revert-first recovery
+  before any enforcement claim.
+- **Evidence / rejected inference:** official public release, GitOps, Helm,
+  image, SLSA, and SSDF material plus repository-static selectors. The K3s
+  release family does not prove patch suitability, image pull, cluster
+  creation, gateway reachability, Argo fetch/render/sync, registry content, or
+  recovery. A version pin, digest, signature, attestation, and SLSA provenance
+  are distinct identities or statements and are never equivalent by presence.
+- **Disposition / retained boundary:** `Partial`, blocking class
+  `live-cluster`. Cluster, gateway, controller, rendered-resource, registry,
+  hosted, cloud, and recovery results remain `DEFER`.
+- **Owner / safe follow-up / trigger:** Infrastructure and GitOps owners, with
+  delivery/security and platform-operations review. A later operator-approved
+  observation may collect exact revision, render, sync/health, registry
+  identity, and recovery evidence without credential or Secret payloads;
+  reopen on a K3s, Argo CD, Helm, SLSA, SSDF, k3d, bootstrap, chart, image,
+  targetRevision, or recovery-contract change.
+
+#### REQ-WERPC-025 Security controls and recovery evidence
+
+- **Sources and result:** `unchanged` / `drifted`, using existing
+  `SRC-WERPC-025`, `SRC-WERPC-026`, `SRC-WERPC-028`, `SRC-WERPC-062`, and
+  `SRC-WERPC-065`, plus selector
+  `kubernetes-infrastructure-and-security.md#security-baseline`.
+  `CLM-WERPC-013-06` records the current Adminer hardening observation.
+- **As-Is:** `gitops/workloads/adminer/rollout.yaml:19-50` now declares
+  non-root UID/GID, `RuntimeDefault` seccomp, disabled privilege escalation,
+  and dropped capabilities, while still omitting `serviceAccountName` and
+  `automountServiceAccountToken` and intentionally deferring a read-only root
+  filesystem. `gitops/platform/namespaces/namespace-apps.yaml:6-8` declares
+  Baseline audit/warn, not enforcement. `gitops/platform/eso/vault-secret-store.yaml:12-25`
+  declares the local-only Vault endpoint, KV v2, Kubernetes auth role,
+  ServiceAccount identity, and `vault` audience; the matching
+  `gitops/platform/eso/vault-token-reviewer-binding.yaml:1-14` declares the
+  TokenReview binding. `policy/conftest/kubernetes.rego:1-67` remains a static
+  pre-merge policy, not API admission.
+- **Gap / Target:** the workload fields align with Kubernetes hardening
+  guidance but do not establish image compatibility, effective
+  ServiceAccount/RBAC, token use, admission, or runtime posture. Vault/ESO
+  declarations do not establish role alignment, backend health,
+  ExternalSecret reconciliation, Secret encryption/rotation, or consumer
+  reload. The bounded tree contains no accepted artifact digest, Helm
+  provenance, Cosign verification, attestation, SLSA provenance, or Argo source
+  integrity result. Preserve these as separate controls with explicit trust
+  roots, identity expectations, fail-closed policy, rollback, and evidence
+  owners.
+- **Evidence / rejected inference:** official Kubernetes, Gatekeeper,
+  ESO/Vault, Sigstore, SLSA, GitHub, and NIST material plus repository-static
+  selectors, evidence depth `repository-static`. Hardened YAML, an audit/warn
+  label, TokenReview binding, Vault role name, static Rego, signature, or
+  attestation proves no admission decision, effective access, backend state,
+  artifact trust, conformance, or recovery capability.
+- **Disposition / retained boundary:** `Partial`, blocking class
+  `live-cluster`. Admission, effective identity/RBAC, Vault/ESO conditions,
+  Secret storage/rotation, registry artifact, trust-policy acceptance, and
+  recovery effectiveness remain `DEFER`.
+- **Owner / safe follow-up / trigger:** Security owner with Kubernetes,
+  delivery, Vault, and recovery owners. A separately authorized secret-safe
+  observation may collect admission decisions, effective identities,
+  readiness metadata, artifact-verifier results, and a controlled recovery
+  exercise; it must never collect Secret values or credential material. Reopen
+  on a Kubernetes, ESO, Vault, Gatekeeper, Argo CD, Sigstore, SLSA, GitHub,
+  NIST, Adminer, identity/admission, trust-policy, artifact-flow, or recovery
+  change.
+
 ## Related Documents
 
 - [CI/CD and QA](ci-cd-github-actions-and-qa.md)
