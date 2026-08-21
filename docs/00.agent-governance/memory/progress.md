@@ -16554,6 +16554,57 @@ newly attained state.
 - No live, hosted, provider-runtime, remote, secret-value, push, publish, or
   deployment evidence was collected or claimed.
 
+## 2026-08-21 - WRFR-004 SDLC/documentation integration
+
+### Metadata
+
+- Date: 2026-08-21
+- Layer: docs
+- Status: in-review
+- Tags: workspace-research, sdlc, document-contracts, diataxis, llm-wiki
+- Owner: platform
+- Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
+- Provenance: registered SDLC/documentation report, allocation slice, owner diff, and focused validators
+- Sensitivity: internal
+- Retention: durable
+- Next Owner: WRFR-004 controller review and exact settlement
+
+### Progress
+
+WRFR-004 consumes registered report SHA-256
+`be273b3dad1b6b4f50d12285cf9114406ba5c3af94ded7646a71ceda5b47ae85`
+and allocation SHA-256
+`04025a6ecc56853d773bac598e2c8895a408a2d6a9252be9727f4264c50fe40b`.
+The exact sixteen-row slice is integrated into the three existing topical
+owners. Exactly one dated H3 appears immediately before terminal Related
+Documents in each owner; no research folder, duplicate topic report, request
+owner, or new source was created. Only allocated claims
+`CLM-WERPC-013-01..03` are cited for additive current-form AD corrections.
+
+### Evidence
+
+- RED: exit `1`, exact fail-fast `ERROR INTEGRATION_SECTION` before owner edits.
+- GREEN: `PASS validate-integration` for all sixteen rows.
+- Strict registry and Markdown: PASS; active-corpus audit and RIA self-test:
+  PASS; LLM-WIKI generator `--check`: PASS; diff check: PASS.
+- Strict links initially exposed that two required append targets were exact
+  historical alias blobs. Separate reviewed prerequisites `bdd36f09` and
+  `42222c33` changed only validator/test authority, passed Python and security
+  review with Critical/Important/Minor `0/0/0`, and are outside this six-file
+  logical unit. Production strict links then returned `PASS CROSS-DOCUMENT`.
+- Independent source-fidelity and spec/quality/security reviews both returned
+  `APPROVED`, Critical/Important/Minor `0/0/0`.
+- Release stays `Verified gap`; paid ISO evidence stays catalog-bounded;
+  Diataxis reader effectiveness and LLM-WIKI publication/MCP/retrieval/runtime
+  remain `DEFER`.
+
+### Handoff
+
+Exact six-file staging, affected/staged/plain/all-files validation, commit,
+guarded report/package registration, and post-commit task review remain. No
+provider, hosted, live, remote, secret-value, user-validation, push, merge,
+publication, or deployment action occurred. WRFR-005 is not yet unblocked.
+
 ## 2026-08-21 - WRFR-003 provider/common integration
 
 ### Metadata

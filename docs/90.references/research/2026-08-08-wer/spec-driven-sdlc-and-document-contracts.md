@@ -470,6 +470,265 @@ three families. No claim is promoted beyond this split. New claims
 registered: `CLM-WERPC-010-10` (`REQ-WERPC-034`), `CLM-WERPC-010-11`
 (`REQ-WERPC-035`), `CLM-WERPC-010-12` (`REQ-WERPC-036`).
 
+### 2026-08-20 full-corpus reverification
+
+This increment consumes the reviewed SDLC/documentation report at workspace
+baseline `8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c`. External and workspace
+results remain independent. It appends current observations to this owner
+without rewriting the legacy ARD history above, creating a universal document
+standard, or treating public framework guidance as local conformance. The
+allocation slice adds no source and assigns only
+`CLM-WERPC-013-01..03` to the three current-form AD terminology corrections.
+
+#### REQ-WERPC-007 Spec-driven development
+
+- **Sources and result:** `unchanged` / `confirmed`, using
+  `SRC-WERPC-014` and selector
+  `spec-driven-sdlc-and-document-contracts.md#spec-driven-development-baseline`.
+- **As-Is / Gap / Target:** GitHub Spec Kit still places specification and
+  refinement before planning and task execution; the workspace retains its
+  bounded Spec/Plan/Task flow. Neither generated code nor a delivery outcome
+  was observed. Keep the practice model and evidence outcomes separately.
+- **Evidence / rejected inference:** public documentation only. The upstream
+  workflow does not prove Spec Kit installation, generated-code correctness,
+  provider execution, hosted CI, or local effectiveness.
+- **Disposition / boundary:** `Verified`; blocking class `none`. No deeper
+  outcome is promoted from the static observation.
+- **Owner / safe follow-up / trigger:** Stage 03/04 lifecycle governance.
+  Reopen if Spec Kit materially changes the cited flow or the local
+  Spec/Plan/Task contract changes; evaluate outcomes only in a separately
+  authorized execution.
+
+#### REQ-WERPC-010 SDLC framework and evidence chain
+
+- **Sources and result:** `unchanged` / `confirmed`, using
+  `SRC-WERPC-015`, `SRC-WERPC-016`, and the same baseline selector.
+- **As-Is / Gap / Target:** the repository retains its own lifecycle states,
+  authorities, inputs, outputs, approvals, traceability, failure meanings, and
+  evidence owners. ISO 12207:2026 and SSDF v1.1 remain bounded lifecycle and
+  secure-development benchmarks; named control and result evidence is still
+  needed before any conformance or effectiveness claim.
+- **Evidence / rejected inference:** repository-static plus public catalog and
+  publication evidence. The paid ISO clauses were not consulted, and neither
+  source prescribes this taxonomy or proves a security control.
+- **Disposition / boundary:** `Verified`; blocking class `repo-static`. The
+  missing named lifecycle-control and effectiveness evidence remains `DEFER`.
+- **Owner / safe follow-up / trigger:** Stage 00/03 lifecycle governance.
+  Reopen on an ISO edition, SSDF revision, or local lifecycle-contract change;
+  assess a named control only under its canonical owner.
+
+#### REQ-WERPC-011 PRD contract
+
+- **Sources and result:** `unchanged` / `drifted`, using
+  `SRC-WERPC-053` and selector
+  `spec-driven-sdlc-and-document-contracts.md#document-family-contract-matrix`.
+- **As-Is / Gap / Target:** PRD owns product intent, stakeholders, scope,
+  numbered requirements, and acceptance inputs, producing traceable product
+  authority for AD or Spec review. The historical matrix still says ARD even
+  though the terminal profile routes downstream architecture to
+  Architecture Description (`sdlc/ad`). Preserve history and use AD in current
+  references.
+- **Evidence / rejected inference:** repository-static plus the public ISO
+  catalog and NASA guidance. Public ISO evidence supports edition, status, and
+  scope only; neither source defines a universal PRD form or proves stakeholder
+  or product validation.
+- **Disposition / correction:** `Verified gap`, blocking class `none`;
+  `CLM-WERPC-013-01` records the current-form PRD downstream correction from
+  legacy ARD to AD without rewriting historical text.
+- **Owner / safe follow-up / trigger:** Product and Stage 99 profile owners.
+  Reopen when ISO 29148 is published or superseded, NASA guidance changes, or
+  the PRD-to-AD relationship changes.
+
+#### REQ-WERPC-012 Architecture Description contract
+
+- **Sources and result:** `unchanged` / `drifted`, using
+  `SRC-WERPC-054` and the document-family selector.
+- **As-Is / Gap / Target:** the terminal `sdlc/ad` contract turns upstream
+  requirements and quality/context/data/deployment boundaries into an
+  architecture description reviewed through AD-to-ADR/Spec traceability. The
+  historical matrix retains the former ARD name and route; current references
+  must use AD and `sdlc/ad` while legacy observations stay unchanged.
+- **Evidence / rejected inference:** repository-static plus public ISO/IEEE
+  catalog and NASA guidance. Paid normative clauses were not read, and the
+  sources mandate neither a Markdown form nor a notation or proof of
+  architecture effectiveness.
+- **Disposition / correction:** `Verified gap`, blocking class `none`;
+  `CLM-WERPC-013-02` records the current-form ARD-to-AD terminology, route, and
+  lineage correction.
+- **Owner / safe follow-up / trigger:** Architecture and Stage 99 profile
+  owners. Reopen on a terminal AD/ADR relation or cited guidance change;
+  review material architecture content separately and proportionally.
+
+#### REQ-WERPC-013 ADR contract
+
+- **Sources and result:** `unchanged` / `drifted`, using
+  `SRC-WERPC-017` and the document-family selector.
+- **As-Is / Gap / Target:** ADR still turns a significant decision context and
+  alternatives into accepted consequences and supersession lineage. The
+  active profile now accepts AD/ADR decision lineage, while historical prose
+  says ARD/ADR; current records must use AD/ADR.
+- **Evidence / rejected inference:** repository-static plus AWS guidance. The
+  guidance is a benchmark for context, consequences, acceptance, immutability,
+  and supersession; it does not define the exact local lifecycle or prove
+  decision quality.
+- **Disposition / correction:** `Verified gap`, blocking class `none`;
+  `CLM-WERPC-013-03` records the current AD/ADR lineage wording correction.
+- **Owner / safe follow-up / trigger:** Architecture and Stage 99 profile
+  owners. Preserve accepted/superseded history and reopen if the AD/ADR
+  relationship or upstream ADR guidance changes.
+
+#### REQ-WERPC-014 Guide contract
+
+- **Sources and result:** `unchanged` / `confirmed`, using
+  `SRC-WERPC-020` and the document-family selector.
+- **As-Is / Gap / Target:** Guide remains an audience-facing how-to-shaped
+  family that consumes a stable promoted owner and produces prerequisites,
+  steps, outcomes, and pitfalls. Its structural contract does not establish
+  reader classification, accessibility, safe execution, or usability; retain
+  `DOC-G1` and queued `WORK-013` ownership.
+- **Evidence / rejected inference:** repository-static plus Diátaxis public
+  guidance. A profile pass and a declared type do not prove a named reader can
+  find, understand, or complete the task.
+- **Disposition / boundary:** `Partial`; blocking class `human-judgement`.
+  Reader validation and DOC-G1 implementation evidence remain `DEFER`.
+- **Owner / safe follow-up / trigger:** Spec 052 and the WORK-013 owner. Reopen
+  if they change, a Guide violates its static contract, or an approved activity
+  names reader, task, environment, method, threshold, and evidence owner.
+
+#### REQ-WERPC-015 Incident contract
+
+- **Sources and result:** `unchanged` / `confirmed`, using
+  `SRC-WERPC-018` and the document-family selector.
+- **As-Is / Gap / Target:** Incident remains the contemporaneous factual owner
+  for impact, timeline, response state, evidence, and follow-up Task during an
+  end-to-end preparation/response/mitigation flow. No on-call response or
+  exercise was observed; keep facts and later analysis distinct.
+- **Evidence / rejected inference:** repository-static plus Google SRE
+  guidance. A static route and heading contract do not prove containment,
+  evidence availability, or response effectiveness.
+- **Disposition / boundary:** `Verified`; blocking class `none`. No runtime
+  incident-response result is inferred.
+- **Owner / safe follow-up / trigger:** Operations/Security incident owners.
+  Reopen on profile, response-model, or Google SRE guidance change; rehearse
+  only under separately approved operational scope.
+
+#### REQ-WERPC-016 Postmortem contract
+
+- **Sources and result:** `unchanged` / `confirmed`, using
+  `SRC-WERPC-018` and the document-family selector.
+- **As-Is / Gap / Target:** Postmortem remains the blameless learning owner that
+  consumes incident facts and produces causal analysis, owned/due actions,
+  follow-up Tasks, and feedback targets. No action closure or reliability
+  improvement outcome was observed.
+- **Evidence / rejected inference:** repository-static plus Google SRE
+  guidance. A template does not prove measurable follow-through or learning.
+- **Disposition / boundary:** `Verified`; blocking class `none`; effectiveness
+  is not promoted from structure.
+- **Owner / safe follow-up / trigger:** Operations/Security postmortem owners.
+  Reopen on contract or source change and evaluate action completion from
+  named evidence only.
+
+#### REQ-WERPC-017 Policy contract
+
+- **Sources and result:** `unchanged` / `confirmed`, using
+  `SRC-WERPC-055` and the document-family selector.
+- **As-Is / Gap / Target:** Policy remains the normative owner for intent,
+  applies-to scope, controls, exceptions, verification, and review cadence,
+  with procedures and assessments kept separate. No enforcement, assessment,
+  or compliance result was observed.
+- **Evidence / rejected inference:** repository-static plus bounded NIST CSF,
+  SP 800-53, and SP 800-53A guidance. Those cybersecurity/privacy sources do
+  not prescribe a universal operations-policy format or prove local controls.
+- **Disposition / boundary:** `Verified`; blocking class `none`. Keep control
+  and assessment evidence independently observable.
+- **Owner / safe follow-up / trigger:** Operations policy/control owners.
+  Reopen on NIST revision or local policy/control/assessment contract change.
+
+#### REQ-WERPC-018 Release contract gap
+
+- **Sources and result:** `unchanged` / `absent`, using
+  `SRC-WERPC-019`, `SRC-WERPC-056`, and the document-family selector.
+- **As-Is / Gap / Target:** no `sdlc/release` profile, route, template,
+  lifecycle, or validator exists; `DOC-G5` preserves that deliberate absence.
+  An auditable Release family would need identity, approval, validation,
+  rollout, rollback, outcome, retention, supersession, and links designed
+  atomically rather than inferred from notes, tags, workflows, or SemVer.
+- **Evidence / rejected inference:** repository-static plus Google SRE,
+  GitHub, and SemVer guidance. These are release-engineering, immutable-identity,
+  and versioning benchmarks, not a local approval or deployment record.
+- **Disposition / boundary:** `Verified gap`; blocking class
+  `human-judgement`. The approved cross-stage design is missing and remains
+  `DEFER`; no empty family is created.
+- **Owner / safe follow-up / trigger:** cross-stage lifecycle authority. Reopen
+  only if DOC-G5 is superseded, a complete Release design is approved, or the
+  upstream release/identity guidance changes.
+
+#### REQ-WERPC-019 Runbook contract
+
+- **Sources and result:** `unchanged` / `confirmed`, using
+  `SRC-WERPC-018`, `SRC-WERPC-057`, and the document-family selector.
+- **As-Is / Gap / Target:** Runbook remains the operational procedure owner
+  consuming a known trigger/control and producing preconditions, steps,
+  expected results, stop/escalation, verification, evidence, and recovery.
+  Command currency, rehearsal, authorization, automation behavior, and live
+  safety were not observed; preserve a recoverable manual path.
+- **Evidence / rejected inference:** repository-static plus Google SRE
+  guidance. A static procedure cannot prove commands are current, rehearsed,
+  authorized, automated safely, or production-safe.
+- **Disposition / boundary:** `Verified`; blocking class `none`. Live
+  execution and automation outcome remain outside this increment.
+- **Owner / safe follow-up / trigger:** Operations Runbook owner. Reopen on
+  profile, DOC-G10/WORK-013, recurring procedure, or cited SRE guidance change;
+  rehearse only with explicit environment and approval boundaries.
+
+#### REQ-WERPC-034 Spec contract
+
+- **Sources and result:** `unchanged` / `confirmed`, using
+  `SRC-WERPC-014`, `SRC-WERPC-076`, and the document-family selector.
+- **As-Is / Gap / Target:** Spec consumes approved upstream constraints and
+  produces a testable implementation contract, interfaces, failure handling,
+  and verification criteria. Route/frontmatter/lifecycle/headings/traceability
+  remain structurally checked; individual content readiness is unassessed.
+- **Evidence / rejected inference:** repository-static plus Spec Kit guidance.
+  Structural validity does not prove implementation readiness or success.
+- **Disposition / boundary:** `Verified`; blocking class `repo-static`.
+  Instance content and effectiveness remain `DEFER`.
+- **Owner / safe follow-up / trigger:** engineering and Stage 99 profile owners.
+  Reopen on profile/template/body-contract/source change or authorize one named
+  instance review.
+
+#### REQ-WERPC-035 Task contract
+
+- **Sources and result:** `unchanged` / `confirmed`, using
+  `SRC-WERPC-014`, `SRC-WERPC-076`, and the document-family selector.
+- **As-Is / Gap / Target:** Task consumes a Plan/Spec work item and produces an
+  assigned, safety-bounded execution/result/evidence handoff. Structural
+  lifecycle and criterion linkage remain checked; no individual delivery
+  result was assessed.
+- **Evidence / rejected inference:** repository-static plus Spec Kit guidance.
+  A `done` state cannot prove work, remote action, or delivery occurred.
+- **Disposition / boundary:** `Verified`; blocking class `repo-static`.
+  Execution and outcome evidence remain `DEFER`.
+- **Owner / safe follow-up / trigger:** engineering/QA and Stage 99 owners.
+  Reopen on profile/template/body-contract/source change or a separately
+  authorized instance review.
+
+#### REQ-WERPC-036 Plan contract
+
+- **Sources and result:** `unchanged` / `confirmed`, using
+  `SRC-WERPC-014`, `SRC-WERPC-076`, and the document-family selector.
+- **As-Is / Gap / Target:** Plan consumes a stable Spec/ADR boundary and
+  produces ordered work packages, risk treatment, validation, rollback design,
+  and reciprocal Tasks. Its structure remains checked; risk treatment,
+  rollback readiness, approval, and delivery outcome are unassessed.
+- **Evidence / rejected inference:** repository-static plus Spec Kit guidance.
+  A structurally valid Plan does not prove safe execution or delivery success.
+- **Disposition / boundary:** `Verified`; blocking class `repo-static`.
+  Instance delivery effectiveness remains `DEFER`.
+- **Owner / safe follow-up / trigger:** product/QA/technical lead and Stage 99
+  owners. Reopen on profile/template/body-contract/source change or a named
+  instance effectiveness review.
+
 ## Related Documents
 
 - [Documentation architecture and Diátaxis](documentation-architecture-and-diataxis.md)

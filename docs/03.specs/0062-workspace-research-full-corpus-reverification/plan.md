@@ -1261,7 +1261,7 @@ of this recovery.
 - Produces: reviewed Spec-driven, document-family, Diataxis, and LLM-WIKI
   sections without inventing a universal document standard.
 
-- [ ] **Step 1: reproduce the three-owner RED**
+- [x] **Step 1: reproduce the three-owner RED**
 
   ```bash
   python3 "$WRFR_SDD/full-corpus-check.py" validate-integration \
@@ -1271,7 +1271,11 @@ of this recovery.
 
   Expected before edits: three missing-section diagnostics and exit 1.
 
-- [ ] **Step 2: append the SDLC and document-family findings**
+  The actual pre-edit probe exited `1` with exactly
+  `ERROR INTEGRATION_SECTION`. The checker is fail-fast and reports only the
+  first missing owner rather than three simultaneous diagnostics.
+
+- [x] **Step 2: append the SDLC and document-family findings**
 
   Add one dated H3 to each owner and cover all sixteen assigned rows:
 
@@ -1291,7 +1295,16 @@ of this recovery.
   edition/status/scope only. NASA, NIST, Google SRE, Diataxis, and vendor guidance
   are benchmarks, not compliance claims or universal local formats.
 
-- [ ] **Step 3: run documentation-focused GREEN checks**
+  Exactly one dated H3 was appended immediately before terminal
+  `## Related Documents` in each existing owner. All sixteen rows are present.
+  `REQ-WERPC-011..013` use only `CLM-WERPC-013-01..03` for additive
+  current-form AD corrections; no source, request owner, report, or research
+  folder was created. Release, Diataxis, and LLM-WIKI deeper-evidence
+  boundaries remain fail-closed. Independent source-fidelity and
+  spec/quality/security reviews both returned `APPROVED` with
+  Critical/Important/Minor `0/0/0`.
+
+- [x] **Step 3: run documentation-focused GREEN checks**
 
   ```bash
   python3 "$WRFR_SDD/full-corpus-check.py" validate-integration \
@@ -1305,6 +1318,15 @@ of this recovery.
   bash scripts/generate-llm-wiki-index.sh --check
   git diff --check
   ```
+
+  The first strict-links run exposed that two required append targets were
+  complete-blob-pinned historical alias sources. Separate reviewed commits
+  `bdd36f09` and `42222c33` changed only the validator/test authority and its
+  Spec 0062 expectation; they remain outside this six-file work unit. After
+  Python and security approval, the full focused sequence was rerun at
+  `42222c33`: every command passed, including `PASS CROSS-DOCUMENT` and the
+  LLM-WIKI generator check. The latter proves only deterministic output against
+  declared inputs.
 
 - [ ] **Step 4: commit and review SDLC findings**
 
@@ -1324,6 +1346,10 @@ of this recovery.
   Generate the committed package, dispatch source-fidelity and task reviews,
   and resolve Critical or Important findings in a scoped fix commit followed by
   re-review before Task 6.
+
+  Pre-commit content review is complete. Exact six-file staging, canonical
+  lanes, commit, guarded report/package registration, and post-commit task
+  review remain the completion gate; WRFR-005 is not yet unblocked.
 
 ### Task 6: WRFR-005 — platform and security integration
 
