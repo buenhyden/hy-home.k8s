@@ -798,6 +798,17 @@ IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS = {
 }
 IMMUTABLE_HISTORICAL_ALIAS_SOURCE_COUNT = 27
 IMMUTABLE_HISTORICAL_ALIAS_EDGE_COUNT = 93
+IMMUTABLE_HISTORICAL_ALIAS_OCCURRENCE_COUNT = 169
+IMMUTABLE_HISTORICAL_INSERTION_SLICES = {
+    PurePosixPath(
+        "docs/90.references/research/2026-08-08-wer/"
+        "documentation-architecture-and-diataxis.md"
+    ): (27_688, 358, b"\n### 2026-08-20 full-corpus reverification\n"),
+    PurePosixPath(
+        "docs/90.references/research/2026-08-08-wer/"
+        "spec-driven-sdlc-and-document-contracts.md"
+    ): (48_521, 415, b"\n### 2026-08-20 full-corpus reverification\n"),
+}
 COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS = {
     PurePosixPath("docs/00.agent-governance/memory/progress.md"): (
         "28a2051203f38118c721c78142c3a97c5d0040ce"  # pragma: allowlist secret
@@ -3538,6 +3549,8 @@ def _reviewed_immutable_historical_alias_edges(
         expected_source_count=IMMUTABLE_HISTORICAL_ALIAS_SOURCE_COUNT,
         expected_edge_count=IMMUTABLE_HISTORICAL_ALIAS_EDGE_COUNT,
         contract_name="immutable historical alias",
+        insertion_slices=IMMUTABLE_HISTORICAL_INSERTION_SLICES,
+        expected_occurrence_count=IMMUTABLE_HISTORICAL_ALIAS_OCCURRENCE_COUNT,
     )
 
 
@@ -3595,6 +3608,7 @@ def _reviewed_source_pinned_alias_edges(
     expected_edge_count: int,
     contract_name: str,
     append_only_prefix_bytes: Mapping[PurePosixPath, int] | None = None,
+    insertion_slices: Mapping[PurePosixPath, tuple[int, int, bytes]] | None = None,
     exact_redirects: Mapping[PurePosixPath, PurePosixPath] | None = None,
     expected_occurrence_count: int | None = None,
 ) -> dict[ArchiveTransitionEdge, PurePosixPath]:
@@ -3607,6 +3621,16 @@ def _reviewed_source_pinned_alias_edges(
         size <= 0 for size in prefix_sizes.values()
     ):
         raise ConfigurationError(f"{contract_name} append-only prefix contract differs")
+    slices = insertion_slices or {}
+    if (
+        not set(slices).issubset(source_blobs)
+        or set(slices).intersection(prefix_sizes)
+        or any(
+            prefix_size <= 0 or suffix_size <= 0 or not insertion_marker
+            for prefix_size, suffix_size, insertion_marker in slices.values()
+        )
+    ):
+        raise ConfigurationError(f"{contract_name} insertion-slice contract differs")
     redirects = (
         dict(exact_redirects)
         if exact_redirects is not None
@@ -3619,16 +3643,28 @@ def _reviewed_source_pinned_alias_edges(
         text = context.texts.get(source)
         content = text.encode("utf-8") if text is not None else b""
         prefix_size = prefix_sizes.get(source)
-        source_matches = (
-            _git_sha1_blob(text) == expected_blob
-            if text is not None and prefix_size is None
-            else (
+        insertion_slice = slices.get(source)
+        if text is not None and insertion_slice is not None:
+            frozen_prefix_size, frozen_suffix_size, insertion_marker = insertion_slice
+            gap_end = len(content) - frozen_suffix_size
+            frozen_content = content[:frozen_prefix_size] + content[gap_end:]
+            gap_content = content[frozen_prefix_size:gap_end]
+            source_matches = (
+                gap_end > frozen_prefix_size
+                and gap_content.startswith(insertion_marker)
+                and _git_sha1_blob_bytes(frozen_content) == expected_blob
+                and collections.Counter(_extract_links(text))
+                == collections.Counter(_extract_links(frozen_content.decode("utf-8")))
+                + collections.Counter(_extract_links(gap_content.decode("utf-8")))
+            )
+        elif text is not None and prefix_size is not None:
+            source_matches = (
                 text is not None
-                and prefix_size is not None
                 and len(content) >= prefix_size
                 and _git_sha1_blob_bytes(content[:prefix_size]) == expected_blob
             )
-        )
+        else:
+            source_matches = text is not None and _git_sha1_blob(text) == expected_blob
         if (
             text is None
             or source not in context.tracked_regular_paths

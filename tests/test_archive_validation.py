@@ -1414,6 +1414,166 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
                 move_targets,
             )
 
+    def test_immutable_history_research_accepts_only_exact_insertion_slices(
+        self,
+    ) -> None:
+        _, move_targets, _ = self.validator._document_taxonomy_transition_manifest(
+            self.context
+        )
+        insertion_marker = b"\n### 2026-08-20 full-corpus reverification\n"
+        insertion_slices = {
+            PurePosixPath(
+                "docs/90.references/research/2026-08-08-wer/"
+                "documentation-architecture-and-diataxis.md"
+            ): (27_688, 358, insertion_marker),
+            PurePosixPath(
+                "docs/90.references/research/2026-08-08-wer/"
+                "spec-driven-sdlc-and-document-contracts.md"
+            ): (48_521, 415, insertion_marker),
+        }
+
+        self.assertEqual(
+            self.validator.IMMUTABLE_HISTORICAL_INSERTION_SLICES,
+            insertion_slices,
+        )
+        self.assertEqual(
+            self.validator.IMMUTABLE_HISTORICAL_ALIAS_OCCURRENCE_COUNT,
+            169,
+        )
+        for source, (
+            frozen_prefix_size,
+            frozen_suffix_size,
+            expected_marker,
+        ) in insertion_slices.items():
+            with self.subTest(source=source):
+                content = self.context.texts[source].encode("utf-8")
+                gap_end = len(content) - frozen_suffix_size
+                gap = content[frozen_prefix_size:gap_end]
+                self.assertTrue(gap.startswith(expected_marker))
+                self.assertEqual(
+                    self.validator._git_sha1_blob_bytes(
+                        content[:frozen_prefix_size] + content[gap_end:]
+                    ),
+                    self.validator.IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS[source],
+                )
+
+        edges = self.validator._reviewed_immutable_historical_alias_edges(
+            self.context,
+            move_targets,
+        )
+        self.assertEqual(len({edge.source for edge in edges}), 27)
+        self.assertEqual(len(edges), 93)
+
+        source = next(iter(insertion_slices))
+        _prefix_size, suffix_size, _marker = insertion_slices[source]
+        insertion_point = len(self.context.texts[source].encode("utf-8")) - suffix_size
+        current = self.context.texts[source].encode("utf-8")
+        appended_context = dataclasses.replace(
+            self.context,
+            texts={
+                **self.context.texts,
+                source: (
+                    current[:insertion_point]
+                    + b"\n<!-- approved gap fixture -->\n"
+                    + current[insertion_point:]
+                ).decode("utf-8"),
+            },
+        )
+        self.assertEqual(
+            self.validator._reviewed_immutable_historical_alias_edges(
+                appended_context,
+                move_targets,
+            ),
+            edges,
+        )
+
+    def test_immutable_history_research_slice_and_other_sources_fail_closed(
+        self,
+    ) -> None:
+        _, move_targets, _ = self.validator._document_taxonomy_transition_manifest(
+            self.context
+        )
+        insertion_marker = b"\n### 2026-08-20 full-corpus reverification\n"
+        insertion_slices = {
+            PurePosixPath(
+                "docs/90.references/research/2026-08-08-wer/"
+                "documentation-architecture-and-diataxis.md"
+            ): (27_688, 358, insertion_marker),
+            PurePosixPath(
+                "docs/90.references/research/2026-08-08-wer/"
+                "spec-driven-sdlc-and-document-contracts.md"
+            ): (48_521, 415, insertion_marker),
+        }
+        for source, (prefix_size, suffix_size, _marker) in insertion_slices.items():
+            content = self.context.texts[source].encode("utf-8")
+            gap_end = len(content) - suffix_size
+            mutated_prefix = bytearray(content)
+            mutated_prefix[0] = ord("!")
+            mutated_suffix = bytearray(content)
+            mutated_suffix[-1] = ord("!")
+            mutated_marker = (
+                content[:prefix_size]
+                + content[prefix_size:gap_end].replace(
+                    insertion_marker,
+                    b"\n### unreviewed increment\n",
+                    1,
+                )
+                + content[gap_end:]
+            )
+            suffix_state_mask = (
+                content[:gap_end]
+                + b"\n[fixture](../../../99.templates/support/template-routing.md)\n"
+                + b"\n```\n"
+                + content[gap_end:]
+            )
+
+            for name, changed_text in (
+                ("frozen-prefix-mutation", mutated_prefix.decode("utf-8")),
+                ("frozen-suffix-mutation", mutated_suffix.decode("utf-8")),
+                ("gap-marker-mutation", mutated_marker.decode("utf-8")),
+                ("suffix-state-mask", suffix_state_mask.decode("utf-8")),
+                ("truncation", content[: prefix_size - 1].decode("utf-8")),
+                (
+                    "insertion-outside-boundary",
+                    (content + b"\n<!-- outside boundary -->\n").decode("utf-8"),
+                ),
+            ):
+                with self.subTest(source=source, name=name):
+                    drifted_context = dataclasses.replace(
+                        self.context,
+                        texts={
+                            **self.context.texts,
+                            source: changed_text,
+                        },
+                    )
+                    with self.assertRaises(self.validator.ConfigurationError):
+                        self.validator._reviewed_immutable_historical_alias_edges(
+                            drifted_context,
+                            move_targets,
+                        )
+
+        other_source = next(
+            iter(
+                sorted(
+                    set(self.validator.IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS)
+                    - set(insertion_slices)
+                )
+            )
+        )
+        with self.subTest(source=other_source, name="other-source-append"):
+            drifted_context = dataclasses.replace(
+                self.context,
+                texts={
+                    **self.context.texts,
+                    other_source: self.context.texts[other_source] + "\n",
+                },
+            )
+            with self.assertRaises(self.validator.ConfigurationError):
+                self.validator._reviewed_immutable_historical_alias_edges(
+                    drifted_context,
+                    move_targets,
+                )
+
     def test_completed_history_aliases_are_exact_source_and_edge_sets(
         self,
     ) -> None:
