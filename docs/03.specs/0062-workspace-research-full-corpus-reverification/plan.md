@@ -1203,7 +1203,7 @@ of this recovery.
   links/owners passed; and `git diff --check` passed. These results establish
   repository-static integration only.
 
-- [ ] **Step 4: commit and review provider findings**
+- [x] **Step 4: commit and review provider findings**
 
   Update Task/Plan/progress and commit only the five named tracked files:
 
@@ -1226,10 +1226,22 @@ of this recovery.
   `SRC-WERPC-068` in its source boundary. The owner now lists
   `SRC-WERPC-009..013` and `SRC-WERPC-068`. Covering checks passed, and the
   independent source-fidelity re-review and spec/quality/security review both
-  returned `APPROVED` with Critical/Important/Minor `0/0/0`. Exact-index lanes,
-  this five-file implementation commit, guarded report/package registration,
-  and the post-commit task review remain the settlement sequence; Task 5 stays
-  blocked until that review approves.
+  returned `APPROVED` with Critical/Important/Minor `0/0/0`.
+
+  Commit `a41def9e570ed798c87d6a17adb766df394f4768` contains exactly the five
+  named paths. Registered report SHA-256 is
+  `39c9bdcd9710d66ea57c06e5404da326f07d8424423e85900d559fba60ddc996`;
+  registered review-package SHA-256 is
+  `889801d930e7e25e5beb828fea743e6a9ccb652ecc6ae0f979c474dc924d74d7`
+  for exact range
+  `8cd4721f06943f16302ada0c993187c9328d503b..a41def9e570ed798c87d6a17adb766df394f4768`;
+  final inventory SHA-256 is
+  `e949e9f191b8153486e1f2d43c9f903f65df583cb5f436ef91dd0a60a3bb3cce`.
+  The post-commit reviewer returned `APPROVED WITH MINOR`,
+  Critical/Important/Minor `0/0/1`, and explicitly allowed WRFR-004 to
+  unblock. The sole Minor was stale Task evidence that still described
+  settlement and review as pending; this closure unit corrects it. WRFR-003 is
+  complete and WRFR-004 is queued and ready, not executed.
 
 ### Task 5: WRFR-004 — SDLC and documentation integration
 

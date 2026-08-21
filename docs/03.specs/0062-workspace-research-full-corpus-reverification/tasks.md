@@ -27,8 +27,10 @@ integrated all nine agent-engineering rows. Its tracked commit and post-commit
 task review are complete; the sole stale-evidence Minor is corrected in this
 closure unit. WRFR-003 has integrated all four provider/common rows, resolved
 one source-boundary review finding, and passed its focused repository-static
-validators and both independent pre-commit reviews. Exact-index settlement and
-the post-commit task review remain in progress.
+validators and both independent pre-commit reviews. Its exact five-file commit,
+registered report/package, and post-commit review are complete; the sole stale-
+evidence Minor is corrected in this closure unit. WRFR-004 is queued and ready,
+not executed.
 
 The target is a 2026-08-20 external-source and workspace reverification of all
 thirty-six existing `REQ-WERPC-*` owners, integrated into the existing
@@ -91,8 +93,8 @@ stage, or commit.
 | WRFR-000 | VAL-WRFR-012, 013 | Activate standalone lifecycle and SDD workspace | platform | Done | Activated by direct approval on 2026-08-20 in `docs: activate full-corpus research reverification` | Active standalone Spec/Plan/Task relation; next owner `WRFR-001` |
 | WRFR-001 | VAL-WRFR-001..007, 009 | Freeze baseline, collect five read-only reports, allocate IDs | platform + research agents | Done | Exact 36-row union validated; all report and task reviews approved; one source and six claims allocated; tracked evidence committed | Packages A/B/C registered; final residue passed; task review `APPROVED` with Critical/Important/Minor `0/0/0` |
 | WRFR-002 | VAL-WRFR-002..005, 008, 013 | Integrate agent engineering findings | agent integrator | Done | Nine allocated rows appended and committed as `06b3d681`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole stale-evidence Minor addressed |
-| WRFR-003 | VAL-WRFR-002..005, 008, 013 | Integrate provider/common findings | provider integrator | In progress | Four allocated rows appended; focused GREEN and both pre-commit reviews approved | Exact five-file settlement and post-commit task review remain |
-| WRFR-004 | VAL-WRFR-002..005, 008, 013 | Integrate SDLC/documentation findings | documentation integrator | Queued | Not executed | Awaiting reviewed SDLC report/allocation |
+| WRFR-003 | VAL-WRFR-002..005, 008, 013 | Integrate provider/common findings | provider integrator | Done | Four allocated rows appended and committed as `a41def9e`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole stale-evidence Minor addressed |
+| WRFR-004 | VAL-WRFR-002..005, 008, 013 | Integrate SDLC/documentation findings | documentation integrator | Queued | Ready, not executed | Registered SDLC report/allocation available; awaiting Task 5 dispatch |
 | WRFR-005 | VAL-WRFR-002..005, 008, 013 | Integrate platform/security findings | platform/security integrator | Queued | Not executed | Awaiting reviewed platform report/allocation |
 | WRFR-006 | VAL-WRFR-002..005, 008, 011, 013 | Integrate delivery/quality and read-only GitHub evidence | delivery/security integrator | Queued | Not executed | Pre-remote security review required |
 | WRFR-007 | VAL-WRFR-006..010, 013 | Integrate source, claim, scope, and pack projections | sole ledger integrator | Queued | Not executed | Awaiting all five topical commits |
@@ -493,9 +495,20 @@ links/owners, and the diff check all pass. These results establish only the
 published-product and repository-static boundaries. Native discovery,
 installation, authentication, entitlement, effective permissions, hook
 delivery, model resolution, MCP connectivity, memory behavior, and provider
-execution remain `DEFER`. Exact-index lanes and this five-file implementation
-commit precede guarded report/package registration and post-commit task review;
-WRFR-004 remains blocked until that review approves.
+execution remain `DEFER`.
+
+Commit `a41def9e570ed798c87d6a17adb766df394f4768` contains the exact five-file
+logical unit. Registered report SHA-256 is
+`39c9bdcd9710d66ea57c06e5404da326f07d8424423e85900d559fba60ddc996`;
+registered review-package SHA-256 is
+`889801d930e7e25e5beb828fea743e6a9ccb652ecc6ae0f979c474dc924d74d7`
+for exact range
+`8cd4721f06943f16302ada0c993187c9328d503b..a41def9e570ed798c87d6a17adb766df394f4768`;
+final inventory SHA-256 is
+`e949e9f191b8153486e1f2d43c9f903f65df583cb5f436ef91dd0a60a3bb3cce`.
+The post-commit reviewer returned `APPROVED WITH MINOR`,
+Critical/Important/Minor `0/0/1`; this closure corrects its sole stale-evidence
+Minor. WRFR-004 is queued and ready, not executed.
 
 ### Stop conditions
 
@@ -510,9 +523,9 @@ WRFR-000 activation and WRFR-001 intake, tracked evidence, registered review
 packages, and task-level post-commit review are complete. The WRFR-002 checker
 recovery, nine-row topical integration, exact seven-file commit, registered
 report/package, and post-commit task review are complete. WRFR-003 has completed
-its four-row owner integration, focused validation, and both pre-commit reviews;
-exact-index settlement and post-commit review remain. Initial design evidence
-included:
+its four-row owner integration, focused validation, exact five-file commit,
+registered report/package, and post-commit task review. WRFR-004 is queued and
+ready, not executed. Initial design evidence included:
 
 - isolated worktree created from clean tracked `HEAD`;
 - primary checkout's unrelated staged RIA files excluded from the branch;
@@ -536,7 +549,9 @@ diff check. No new ledger ID or owner was created.
 WRFR-003 likewise preserves those limits across the common-environment and
 provider-status owners. Its four-row probe and canonical provider validators
 pass, the corrected source boundary received independent approval, and no new
-ledger ID or owner was created.
+ledger ID or owner was created. Its exact five-file implementation commit,
+guarded report/package registration, and post-commit review are complete.
+WRFR-004 is queued and ready, not executed.
 
 ## Traceability
 
@@ -556,7 +571,7 @@ ledger ID or owner was created.
 | [VAL-WRFR-010](spec.md) | Not executed | WRFR-007..009 own the shared projection sequence |
 | [VAL-WRFR-011](spec.md) | Not executed | WRFR-006 and WRFR-009 own the nine-class remote/security contract |
 | [VAL-WRFR-012](spec.md) | Workspace passed; cleanup pending | WRFR-001 residue validation passed; WRFR-009 still owns exact cleanup |
-| [VAL-WRFR-013](spec.md) | In progress | WRFR-001 and WRFR-002 logical commits and task reviews are complete; WRFR-003 pre-commit reviews are approved and its settlement/review plus later tasks remain pending |
+| [VAL-WRFR-013](spec.md) | In progress | WRFR-001..003 logical commits and task reviews are complete; WRFR-004 is queued and ready, and later tasks remain pending |
 | [VAL-WRFR-014](spec.md) | Not executed | WRFR-009 owns the whole-branch review gate |
 | [VAL-WRFR-015](spec.md) | Not executed | WRFR-009 owns the terminal lane sequence |
 

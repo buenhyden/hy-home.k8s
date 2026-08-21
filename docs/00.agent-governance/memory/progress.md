@@ -16560,14 +16560,14 @@ newly attained state.
 
 - Date: 2026-08-21
 - Layer: docs
-- Status: in-progress
+- Status: complete
 - Tags: workspace-research, provider, common-environment, claude, codex
 - Owner: platform
 - Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
 - Provenance: registered provider/common report, allocation slice, owner diff, and focused validators
 - Sensitivity: internal
 - Retention: durable
-- Next Owner: WRFR-003 exact settlement and post-commit review
+- Next Owner: WRFR-004 SDLC/documentation integration
 
 ### Progress
 
@@ -16609,11 +16609,21 @@ does not authorize an unchanged or replacement MCP claim.
 
 ### Handoff
 
-Exact-index lanes and the five-file implementation commit precede guarded
-report/package registration and post-commit task review. WRFR-004 remains
-blocked until that review approves. No browsing, remote query, provider
-invocation, hosted CI, live infrastructure, secret-value access, push, merge,
-publication, or deployment occurred.
+Commit `a41def9e570ed798c87d6a17adb766df394f4768` contains the exact five-file
+logical unit. Registered report SHA-256 is
+`39c9bdcd9710d66ea57c06e5404da326f07d8424423e85900d559fba60ddc996`;
+registered review-package SHA-256 is
+`889801d930e7e25e5beb828fea743e6a9ccb652ecc6ae0f979c474dc924d74d7`
+for exact range
+`8cd4721f06943f16302ada0c993187c9328d503b..a41def9e570ed798c87d6a17adb766df394f4768`;
+final inventory SHA-256 is
+`e949e9f191b8153486e1f2d43c9f903f65df583cb5f436ef91dd0a60a3bb3cce`.
+The post-commit reviewer returned `APPROVED WITH MINOR`,
+Critical/Important/Minor `0/0/1`, and allowed WRFR-004 to unblock. This closure
+corrects its sole stale-evidence Minor. WRFR-003 is complete; WRFR-004 is queued
+and ready, not executed. No browsing, remote query, provider invocation,
+hosted CI, live infrastructure, secret-value access, push, merge, publication,
+or deployment occurred.
 
 ## 2026-08-21 - WRFR-002 agent-engineering integration
 
