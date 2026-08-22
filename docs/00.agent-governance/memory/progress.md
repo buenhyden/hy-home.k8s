@@ -16908,6 +16908,29 @@ original Task 8 Step 5 rerun. WRFR-007 remains blocked/in progress. No Task 8
 completion, post-commit review, remote query, live action, push, merge, or
 publication is claimed.
 
+### WRFR-007 pre-commit integration handoff
+
+The pre-owner checker probe reached accepted semantic RED
+`ERROR INTEGRATION_SOURCE_PROJECTION`. The closed transition-guard recovery
+contract was committed as
+`0a9a9e656c0655617e1c9ea3c3df28b98ad56d34`, and its exact two-file
+implementation was committed as
+`545f114dd5080ac541ba2ae9bec9a18d24f58129`. Fresh independent final guard
+review returned Critical/Important/Minor `0/0/0`.
+
+Task 8 Steps 2 through 4 now own exactly the additive source/claim ledger block,
+the ten-scope projection, and the pack reconciliation. The original Step 5 is
+fully GREEN: shared integration returns `PASS validate-integration`; the strict
+document registry returns `540 paths`; strict Markdown profiles return `0`
+violations; strict links returns `PASS CROSS-DOCUMENT`; and
+`git diff --check` passes.
+
+WRFR-007 is in progress at Step 6. Next owner is the controller for the exact
+six-file integration diff, commit, registered package, and independent
+post-commit ledger/source-fidelity and task reviews. No integration commit,
+package, post-commit approval, WRFR-007 completion, remote query, live action,
+push, merge, or publication is claimed by this handoff.
+
 ## 2026-08-21 - WRFR-005 platform/security integration
 
 ### Metadata

@@ -2212,7 +2212,7 @@ command passes, and Step 6 remains controller-owned review and commit work.
 - Produces: one contiguous source sequence beginning at `091`, one contiguous
   `013` claim block, ten re-projected scopes, and terminal pack counts.
 
-- [ ] **Step 1: reproduce ledger and projection RED**
+- [x] **Step 1: reproduce ledger and projection RED**
 
   ```bash
   python3 "$WRFR_SDD/full-corpus-check.py" validate-integration \
@@ -2222,8 +2222,11 @@ command passes, and Step 6 remains controller-owned review and commit work.
 
   Expected before shared integration: allocated source/claim IDs absent from the
   ledger, scope projection absent, and pack counts still at the baseline.
+  After the approved checker-only recovery and before owner edits, the unchanged
+  command exited `1` with accepted semantic RED
+  `ERROR INTEGRATION_SOURCE_PROJECTION`.
 
-- [ ] **Step 2: append source and claim records**
+- [x] **Step 2: append source and claim records**
 
   Use `allocation.json` exactly. Append sources in numeric order, then append the
   `CLM-WERPC-013-NN` cycle block in numeric order. Each source row contains owner,
@@ -2236,7 +2239,7 @@ command passes, and Step 6 remains controller-owned review and commit work.
   would rewrite old rows, stop and switch to an append operation that touches
   only the new section; do not accept mechanical whole-ledger reflow.
 
-- [ ] **Step 3: re-project the ten governance scopes**
+- [x] **Step 3: re-project the ten governance scopes**
 
   Append one 2026-08-20 H3 to `scope-application-index.md` that derives, rather
   than restates, the refreshed evidence for:
@@ -2257,7 +2260,7 @@ command passes, and Step 6 remains controller-owned review and commit work.
   Every scope entry names the contributing request IDs, current evidence depth,
   changed/unchanged outcome, retained limitation, and canonical owner.
 
-- [ ] **Step 4: reconcile the pack README**
+- [x] **Step 4: reconcile the pack README**
 
   Append a dated reconciliation section with exact terminal file/request/source/
   claim counts, external outcome distribution, workspace outcome distribution,
@@ -2267,7 +2270,7 @@ command passes, and Step 6 remains controller-owned review and commit work.
   Update only mutable snapshot/count cells that are contractually current. Do
   not rewrite earlier dated reconciliation sections.
 
-- [ ] **Step 5: validate shared integration**
+- [x] **Step 5: validate shared integration**
 
   ```bash
   python3 "$WRFR_SDD/full-corpus-check.py" validate-integration \
@@ -2282,6 +2285,14 @@ command passes, and Step 6 remains controller-owned review and commit work.
   Expected: all allocated IDs occur exactly once as owner rows, every topical
   reference resolves, exact 36 dual observations exist, all ten scopes exist,
   and README counts equal the parsed terminal corpus.
+
+  Executed evidence is GREEN after recovery-contract commit
+  `0a9a9e656c0655617e1c9ea3c3df28b98ad56d34` and exact two-file guard commit
+  `545f114dd5080ac541ba2ae9bec9a18d24f58129`. Fresh independent final guard
+  review returned Critical/Important/Minor `0/0/0`. Shared integration returned
+  `PASS validate-integration`; the strict registry returned `540 paths`; the
+  strict Markdown validator returned `0` violations; strict links returned
+  `PASS CROSS-DOCUMENT`; and `git diff --check` passed.
 
 - [ ] **Step 6: commit and review shared integration**
 
