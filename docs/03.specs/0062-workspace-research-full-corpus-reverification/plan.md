@@ -2048,6 +2048,109 @@ Continuation is closed and ordered:
    `ERROR INTEGRATION_SOURCE_PROJECTION`, not argument parsing. Only that result
    unblocks the sole shared-ledger integrator.
 
+#### Approved checker candidate and integration serialization
+
+The test-first repair is complete. The initial parser test reproduced
+`ERROR ARGUMENTS_INVALID`; later mutation-first review cycles closed legacy
+header/order drift, scope derivation and confinement, exact README sets,
+collection/progress negation, registered `main()` dispatch, reciprocal-link
+overconstraint, out-of-ledger lifecycle ambiguity, production collection-table
+shape, and terminal ledger placement. Intermediate candidates were never
+rebound and are superseded.
+
+The approved checker SHA-256 is
+`3cdaf66628e817663d9306b8e31c95788db0111fb30f1dcdcedc027fbdab338a`;
+its size, mode, and owner are `367108` bytes, `0600`, and `hy:hy`. All 128
+self-tests pass in normal and explicit optimized mode. `py_compile` with a
+`/tmp` bytecode prefix, Ruff check, and Ruff format-check pass. Fresh exact-byte
+Python and security reviews both returned `APPROVED`,
+Critical/Important/Minor `0/0/0`.
+
+The owner writers must use these dated-section serialization contracts:
+
+- The ledger preserves every baseline byte and inserts its sole dated H3 and
+  the already-defined source/claim tables immediately before the unique
+  `## Sources` heading. The complete baseline `## Sources`,
+  `## Review and Freshness`, and `## Related Documents` suffix remains exact.
+- The scope section table header is exactly
+  `Scope | Requests | Evidence depths | Outcome | Blocking classes | Canonical owners`.
+  Its ten rows retain Plan order and partition the corpus exactly as follows:
+
+  ```text
+  repository governance=003
+  harness and loop=001,002
+  provider and common environment=004,005,006
+  agents, model, and memory=026..032
+  SDLC and document contracts=007,010..019,034..036
+  documentation and knowledge routing=020,021
+  Kubernetes and infrastructure=008,009
+  security and approval=025
+  CI/CD and QA=022,023,024
+  verification and validation=033
+  ```
+
+  `Evidence depths` is the sorted unique report-derived set. `Outcome` is
+  exactly `changed` when any contributing row has external `changed` or
+  workspace `drifted`/`absent`, otherwise `unchanged`. `Blocking classes` is
+  the sorted unique non-`none` set, or exactly `none`. `Canonical owners` is the
+  sorted exact baseline-owner set with each path backticked.
+- The pack dated reconciliation uses `Field | Value` and these exact ordered
+  rows:
+
+  ```text
+  Census | markdownFiles=14, requests=36, sources=91, claims=141
+  External results | changed=3, unchanged=32, unreachable=1
+  Workspace results | confirmed=29, drifted=6, absent=1
+  Dispositions | Verified=20, Verified gap=4, Partial=12
+  Evidence depths | repository-static=28, public-documentation=8
+  Blocking classes | none=12, repo-static=10, provider-runtime=5, hosted-ci=2, live-cluster=3, human-judgement=4
+  Changed requests | REQ-WERPC-004, REQ-WERPC-006, REQ-WERPC-008, REQ-WERPC-009, REQ-WERPC-011, REQ-WERPC-012, REQ-WERPC-013, REQ-WERPC-018, REQ-WERPC-025
+  Unreachable requests | REQ-WERPC-033
+  Allocated K3s observation | SRC-WERPC-091; request=REQ-WERPC-009
+  Allocated claims | CLM-WERPC-013-01, CLM-WERPC-013-02, CLM-WERPC-013-03, CLM-WERPC-013-04, CLM-WERPC-013-05, CLM-WERPC-013-06
+  Terminology claims | CLM-WERPC-013-01, CLM-WERPC-013-02, CLM-WERPC-013-03
+  Drift claims | CLM-WERPC-013-04, CLM-WERPC-013-05, CLM-WERPC-013-06
+  Out-of-ledger observations | observed proposals=1; allocated=1; unallocated=0; outside-request/new-owner=0; SRC-WERPC-091->REQ-WERPC-009
+  ```
+
+- The Task 9 collection reconciliation uses `Field | Value | State` with exact
+  rows `Current pack | 2026-08-08-wer | sole`, then Markdown files `14`,
+  Requests `36`, Sources `91`, and Claims `141`, each state `exact`. The
+  production four-column Research Pack Index remains
+  `Material | Status | Role | Authority Boundary`; every `Active pack` or
+  `Current pack` Status row must form the exact canonical fourteen-file dated
+  pack set.
+- The Task 9 durable-progress section uses `Field | Value`: WRFR-002 through
+  WRFR-007 each equal `complete`, followed by `Next Owner | WRFR-009` and
+  `Terminal Approval | not-claimed`.
+
+One unregistered review residue must be removed before rebind. Its fixed
+identity is:
+
+| Object | Device | Inode | Size | `mtime_ns` / `ctime_ns` | Mode | UID:GID | Constraint |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| SDD workspace parent | 2096 | 4406235 | 4096 | not a cleanup equality field | `0700` | 1000:1000 | existing non-symlink directory; fixed cleanup parent |
+| `__pycache__` | 2096 | 1694147 | 4096 | 1787398444410567416 | `0755` | 1000:1000 | non-symlink directory; entries exactly the file below |
+| `__pycache__/full-corpus-check.cpython-312.pyc` | 2096 | 1754901 | 404505 | 1787398444410567416 | `0600` | 1000:1000 | regular non-symlink; SHA-256 `4589e081b801c768b74f855815e0d67f6a9c452dd8e2f1d54c6dabd43815f68e` |
+
+After this amendment commit, cleanup uses the literal SDD path and no generic
+target. Open the SDD parent and `__pycache__` with directory file descriptors,
+`O_DIRECTORY`, and `O_NOFOLLOW`; bind the parent and directory identities above;
+require the child entry set to be exactly the named file; and obtain the child
+with `lstat`/`stat(..., follow_symlinks=False)` plus an `O_NOFOLLOW` file
+descriptor. Match device, inode, size, nanosecond mtime/ctime, mode, UID/GID,
+regular-file type, and SHA-256 through that descriptor. Recheck the directory
+entry against the retained file descriptor immediately before a dirfd-relative
+`unlink`, then `fsync` the directory. Require the retained directory to be
+empty, rebind it from the retained SDD-parent descriptor, remove only that exact
+empty directory with dirfd-relative `rmdir`, `fsync` the SDD parent, and prove
+the literal entry absent without following a symlink. Any mismatch, extra
+entry, rename, substitution, symlink, hash drift, or postcondition failure stops
+without broader deletion. The remaining same-UID race between final identity
+check and unlink is explicit; retained dirfds and post-absence bound but cannot
+eliminate it. This cleanup is not a checker or inventory rebind and creates no
+authority to remove any other artifact.
+
 No remote query, live action, push, merge, publication, or new research owner is
 authorized by this recovery.
 

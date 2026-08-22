@@ -864,6 +864,27 @@ checker-only rebind with no retry, residue/self-test proof, and the unchanged
 Task 8 probe reaching `ERROR INTEGRATION_SOURCE_PROJECTION`. The sole ledger
 integrator may resume only after that semantic RED.
 
+The final checker candidate is SHA-256
+`3cdaf66628e817663d9306b8e31c95788db0111fb30f1dcdcedc027fbdab338a`,
+367108 bytes, mode `0600`, owner `hy:hy`. All 128 normal and optimized
+self-tests, compile, Ruff check, and Ruff format-check pass. Fresh Python and
+security exact-byte reviews both approved it at Critical/Important/Minor
+`0/0/0`. The Plan now fixes the exact ledger insertion boundary and the scope,
+pack, collection, and progress table serialization that WRFR-007/008 must
+produce.
+
+Before the one-shot checker rebind, remove only the exact unregistered review
+cache described in the Plan. Its file identity is device/inode
+`2096/1754901`, 404505 bytes, mode `0600`, UID:GID `1000:1000`, mtime/ctime
+`1787398444410567416` ns, and SHA-256
+`4589e081b801c768b74f855815e0d67f6a9c452dd8e2f1d54c6dabd43815f68e`.
+Its sole parent-cache directory is device/inode `2096/1694147`, mode `0755`,
+UID:GID `1000:1000`, with the same mtime/ctime. Use the Plan's retained-dirfd,
+no-follow, exact-entry, pre-unlink revalidation, `fsync`, empty-directory
+`rmdir`, and post-absence procedure. A mismatch stops cleanup. The inventory
+and every registered artifact remain unchanged until the already-fixed
+checker-only rebind runs exactly once.
+
 No registered artifact, topical/shared owner, remote state, or live system may
 change before the tracked recovery contracts and checker review gates allow it.
 

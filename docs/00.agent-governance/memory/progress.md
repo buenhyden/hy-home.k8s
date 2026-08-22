@@ -16853,6 +16853,34 @@ with `ERROR INTEGRATION_SOURCE_PROJECTION`; only that RED can resume the sole
 ledger integrator. No remote query, live action, push, merge, publication, or
 new research owner is authorized.
 
+The bounded test-first repair is now exact-byte approved. Final checker SHA-256
+is `3cdaf66628e817663d9306b8e31c95788db0111fb30f1dcdcedc027fbdab338a`;
+size/mode/owner are 367108 bytes, `0600`, and `hy:hy`. All 128 normal and
+optimized self-tests, compile, Ruff check, and Ruff format-check pass. Fresh
+Python and security reviewers both returned `APPROVED` at
+Critical/Important/Minor `0/0/0`. The checker now composes the five topical
+modes with exact shared-ledger and reconciliation validators, uses registered
+reports through the production `main()` path, preserves the terminal ledger
+suffix, and validates the Plan's closed incremental table grammar. No candidate
+was rebound during review.
+
+One unregistered review cache remains before stateful execution. The fixed file
+identity is device/inode `2096/1754901`, 404505 bytes, mode `0600`, UID:GID
+`1000:1000`, mtime/ctime `1787398444410567416` ns, SHA-256
+`4589e081b801c768b74f855815e0d67f6a9c452dd8e2f1d54c6dabd43815f68e`.
+Its exact cache directory is device/inode `2096/1694147`, mode `0755`, UID:GID
+`1000:1000`, same mtime/ctime, with that one entry only; the retained SDD parent
+is device/inode `2096/4406235`, mode `0700`, UID:GID `1000:1000`. After this
+amendment commit, remove only the file and then the empty cache directory using
+the Plan's retained-dirfd, no-follow, complete-identity, hash, `fsync`, and
+post-absence procedure. Next, run the fixed checker-only rebind exactly once
+against inventory
+`68b4173514a287eaff1e9e1c3b50c7ad57d3e6dbce2eb01b6dcd10ba9d08c1bc`
+and old checker
+`2308481b8b0ded1647c105a4ab9aad0292db1459e53b8989a49f1fd3bdd7b038`,
+then residue/self-tests and the unchanged semantic Task 8 RED. WRFR-007 remains
+blocked until that ordered sequence completes.
+
 ## 2026-08-21 - WRFR-005 platform/security integration
 
 ### Metadata
