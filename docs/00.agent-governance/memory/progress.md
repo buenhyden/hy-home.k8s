@@ -17063,6 +17063,92 @@ human-approved cleanup-recovery design and independent review. No Task 8
 completion, WRFR-008 execution, cleanup recovery, preprobe, push, merge, remote,
 or live action is claimed.
 
+### 2026-08-23 WRFR-007 Path B and cleanup-recovery contract ruling
+
+#### Metadata
+
+- Date: 2026-08-23
+- Layer: docs
+- Status: in-progress
+- Tags: workspace-research, provenance, replay, cleanup-recovery
+- Owner: platform
+- Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
+- Provenance: human Path B ruling, separately approved reviewed cleanup design, Git object inspection, and read-only filesystem identity inspection at tracked `HEAD` `7ea1d08d59213e9aa975ae1c4bf04435ba09ac93`
+- Sensitivity: internal
+- Retention: durable through WRFR-009 closure
+- Next Owner: Task 8B replay controller; then independent WRFR-007 closure reviewer
+
+#### Progress
+
+The human selected Path B for the Task 8 provenance correction. This is a
+closed replay within `WRFR-007`, not a new Plan Task or WRFR. The `task-11-*`
+prefix is reserved only for replay evidence. Before this contract amendment no
+`task-11-*` artifact existed. Existing `task-8-*` and `task-12-*` artifacts are
+immutable and retain their original timing and meaning.
+
+Git proves the reviewed projection transition from predecessor commit
+`545f114dd5080ac541ba2ae9bec9a18d24f58129` to integration commit
+`fef53976b97c560de0a9f020e87be1e7e0e1c3b8`: ledger blob
+`a6feed2026d19261f42f475f52f3f746eeee4122` to
+`e4ed30b5602278b212a5e035a9dded222fae8d85`, scope-index blob
+`f7e4b60cce6a7d5ee5c706ab3a6a8fae663e9bed` to
+`6c2d4723c69821a9681fa45151ea70b528ff66fa`, and pack-README blob
+`6bfec251d8927dd82f5c12b49c013a598c64d088` to
+`11719d258d0454d68f3e6b6ed0377c3d3b9de6b2`. Task 8B requires exactly two
+adjacent three-path commits: withdrawal to all three predecessor blobs with
+semantic RED `ERROR INTEGRATION_SOURCE_PROJECTION`, followed by reapplication
+to all three successor blobs with GREEN validation. Separate single-commit
+`task-11-review-package.md` and `task-11-fix-1-review-package.md` reviews make
+both actions visible even though the combined tree delta is net zero. WRFR-008
+remains blocked through a fresh post-reapplication WRFR-007 closure review.
+
+The separately reviewed cleanup-recovery design is approved as a design only.
+It changes no checker and preserves historical bootstrap and incident
+provenance. Because ctime cannot be restored, terminal cleanup may match only
+the current reviewed marker successor identity: device/inode `2096/4410802`,
+regular non-symlink, mode `0644`, UID:GID `1000:1000`, size `2`, mtime/ctime
+`1787407543770964835` ns, bytes `*\n`, SHA-256
+`cdbcae15105d6b781e620813c79c7e868740d4e9cc53ce6f5fcbbc12387adf4b`.
+The foreign empty `plan` directory is device/inode `2096/4541614`, mode `0755`,
+UID:GID `1000:1000`, mtime/ctime `1787407543766841537` ns. The canonical Plan
+workspace remains device/inode `2096/4406235`, mode `0700`.
+
+The approved design requires a no-path-argument, descriptor-bound, source-hash
+frozen procedure that validates the exact identities, types, marker bytes/hash,
+empty directory, canonical workspace, and exact three-child parent set before
+mutation. Its only destructive order is descriptor-relative `rmdir(plan)` then
+`unlink(.gitignore)`, with rechecks and terminal proof. Precondition failure is
+zero mutation. A failure after the first call is recorded as partial and never
+recreated or automatically retried. The exact program must pass success,
+fail-closed, race/replacement, and partial-failure fixtures, real-state read-only
+preflight, and independent security/task review. A separate explicit human
+approval over its source hash, final identities, tests, reviews, and exact
+command is still required. No destructive cleanup or SDD finish is authorized.
+
+#### Evidence
+
+- Pre-amendment brief `task-12-brief.md`: device/inode `2096/4605976`, mode
+  `0600`, size `12085`, mtime/ctime `1787418652539336788` ns, SHA-256
+  `4380e06081f186dabb2c02709c397cca6dbf28b7368897b85f24451cdb4e63a2`.
+- Pre-amendment inventory: device/inode `2096/4605988`, mode `0600`, size
+  `11476`, mtime `1787418652699962725` ns, ctime `1787418652700051174` ns,
+  SHA-256 `c042b051df1345eaca531cacafac9c6d706cd768386c4769b6b7207382908598`.
+- Read-only inspection found exactly `.gitignore`, the canonical Plan workspace,
+  and foreign empty `plan` under `.superpowers/sdd`; no `task-11-*` artifact
+  existed. No checker, research projection, ignored incident object, inventory,
+  remote resource, or live resource was mutated.
+
+#### Handoff
+
+The next controller must first create and register `task-11-brief.md`, prove
+pre-dispatch consumption, and freeze the clean starting identities. It then owns
+the exact adjacent withdrawal/reapplication commits, separate packages and
+reviews, and final WRFR-007 closure review. Rollback is not a squashed net-zero
+claim: preserve both replay commits and use a separately reviewed additive fix
+if either identity is wrong. Residual risk is the still-unexecuted replay and
+the intentionally unexecuted destructive cleanup. WRFR-008 remains blocked;
+cleanup execution remains separately human-gated.
+
 ## 2026-08-21 - WRFR-005 platform/security integration
 
 ### Metadata

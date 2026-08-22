@@ -3,7 +3,7 @@ title: 'Workspace Research Full-Corpus Reverification Implementation Plan'
 type: sdlc/plan
 status: active
 owner: platform
-updated: 2026-08-22
+updated: 2026-08-23
 artifact_id: "PLAN-0062"
 ---
 
@@ -2387,6 +2387,120 @@ procedure.
 
 No completion, exception, re-execution, or WRFR-008 authorization is claimed by
 this incident record.
+
+#### 2026-08-23 Path B ruling and closed replay contract
+
+This section additively supersedes only the unresolved A/B decision above. The
+human selected **Path B**. The incident facts, integration commit, late brief,
+implementer report, and every prior review package remain immutable historical
+evidence; none may be edited, replaced, re-registered, or represented as timely
+pre-dispatch evidence. This replay is Task 8B within `WRFR-007`, not Plan Task
+11, not a new WRFR, and not `WRFR-010`. The `task-11-*` artifact prefix is only
+the ignored replay-evidence namespace admitted by the existing inventory
+grammar.
+
+The frozen projection transition is exact:
+
+| Research projection | Predecessor commit/blob | Reviewed successor commit/blob |
+| --- | --- | --- |
+| `source-coverage-and-migration-ledger.md` | `545f114dd5080ac541ba2ae9bec9a18d24f58129` / `a6feed2026d19261f42f475f52f3f746eeee4122` | `fef53976b97c560de0a9f020e87be1e7e0e1c3b8` / `e4ed30b5602278b212a5e035a9dded222fae8d85` |
+| `scope-application-index.md` | `545f114dd5080ac541ba2ae9bec9a18d24f58129` / `f7e4b60cce6a7d5ee5c706ab3a6a8fae663e9bed` | `fef53976b97c560de0a9f020e87be1e7e0e1c3b8` / `6c2d4723c69821a9681fa45151ea70b528ff66fa` |
+| `README.md` | `545f114dd5080ac541ba2ae9bec9a18d24f58129` / `6bfec251d8927dd82f5c12b49c013a598c64d088` | `fef53976b97c560de0a9f020e87be1e7e0e1c3b8` / `11719d258d0454d68f3e6b6ed0377c3d3b9de6b2` |
+
+Replay must follow this closed order:
+
+1. Generate `task-11-brief.md`, register its complete FileVersion in the
+   existing inventory, prove it was consumed before implementer dispatch, and
+   freeze the starting `HEAD`, index, worktree, and the three successor blobs.
+   Any existing `task-11-*` entry, foreign path, staged change, or blob mismatch
+   stops the replay before mutation.
+2. Create one withdrawal commit whose parent is the frozen starting `HEAD` and
+   whose complete pathset is only the three table rows. Each resulting blob must
+   equal its predecessor blob. Run the unchanged shared-ledger integration
+   command and require semantic RED `ERROR INTEGRATION_SOURCE_PROJECTION`; an
+   infrastructure/configuration failure or any different semantic result is not
+   accepted. Record the commit and command evidence in `task-11-report.md`, then
+   generate `task-11-review-package.md` for exactly that one adjacent commit and
+   obtain independent projection/task review before reapplication.
+3. Create the immediately adjacent reapplication commit with no intervening
+   tracked commit and the same exact three-path pathset. Each resulting blob
+   must equal its reviewed successor blob. Rerun shared integration, strict
+   registry, strict Markdown profiles, strict links/owners, affected/staged
+   lanes, exact-index pre-commit, repository-quality gates selected for the
+   three paths, and both diff checks; every applicable repository-static check
+   must be GREEN. Generate `task-11-fix-1-review-package.md` for exactly that
+   one reapplication commit and obtain a fresh independent projection/task
+   review.
+4. Register the completed replay report and both adjacent review packages only
+   after their immutable bytes and FileVersions are final. A combined net-zero
+   range is supplemental only and cannot replace either single-commit package.
+   Any correction uses another admitted `task-11-fix-N-review-package.md` and
+   preserves earlier artifacts. Only a fresh scoped `WRFR-007` closure review
+   with no open Critical or Important finding may close Task 8 Step 6.
+
+The two commits may change no Plan, Task, progress, checker, test, inventory,
+Spec, lifecycle, or other research file. Their net tree must restore the three
+successor blobs exactly, while their adjacent commit and review identities make
+the withdrawal and reapplication independently observable. `WRFR-008` remains
+blocked until the post-reapplication `WRFR-007` closure review is approved and
+recorded; Path B selection alone authorizes neither replay completion nor
+successor execution.
+
+##### Approved cleanup-recovery design; destructive execution still gated
+
+The human separately approved this reviewed design contract, not its destructive
+execution. It changes no checker and does not revise the original bootstrap or
+incident provenance. The marker's pre-incident FileVersion remains permanently
+invalid because ctime cannot be restored. For terminal removal only, the
+reviewed successor identity is device/inode `2096/4410802`, regular non-symlink,
+mode `0644`, UID:GID `1000:1000`, size `2`, mtime/ctime
+`1787407543770964835` ns, and SHA-256
+`cdbcae15105d6b781e620813c79c7e868740d4e9cc53ce6f5fcbbc12387adf4b` for
+bytes `*\n`. The foreign empty directory identity is device/inode
+`2096/4541614`, mode `0755`, UID:GID `1000:1000`, with mtime/ctime
+`1787407543766841537` ns. The canonical Plan workspace remains
+device/inode `2096/4406235`, mode `0700`.
+
+At WRFR-009 terminal cleanup, use one independently reviewed, source-hashed
+Python procedure invoked from the frozen worktree root with no filesystem path
+argument. It must reject any argument, open the fixed components
+`.superpowers`, `sdd`, `plan`, `.gitignore`, and
+`0062-workspace-research-full-corpus-reverification-plan` one component at a
+time with directory-relative descriptors and `O_NOFOLLOW`, retain all
+descriptors through completion, and compare `fstat` with non-following
+directory-entry stat before each mutation. Precondition success requires the
+exact successor marker above, the exact empty foreign directory above, the
+canonical workspace identity, and the exact parent entry set consisting only
+of those three children. It must also require final WRFR-009 review/validation
+approval and absence of concurrent writers. A type, owner, mode, device, inode,
+timestamp, size, hash, bytes, emptiness, entry-set, descriptor/entry, or review
+mismatch stops with zero mutation.
+
+After all preconditions pass in one invocation, the only permitted destructive
+calls are descriptor-relative `rmdir` of the fixed `plan` entry followed by
+descriptor-relative `unlink` of the fixed `.gitignore` entry. Recheck the
+bound identity immediately before each call. Prove both entries absent and
+non-symlink through the retained parent descriptor and prove the canonical Plan
+workspace is then the sole child. Do not chmod, rewrite, restore timestamps,
+rename, quarantine, recreate, update provenance, delete recursively, follow a
+symlink, or remove the canonical workspace in this recovery procedure. The
+existing SDD finish procedure remains the later and separate owner of that
+workspace.
+
+All preconditions are atomic with respect to authorization, not a rollback
+promise. If `rmdir` succeeds but the later `unlink` or verification fails,
+record a partial recovery with the sibling absent and marker retained or state
+unknown; do not recreate either object and do not retry without a fresh
+identity capture, independent review, and new human approval. If both removals
+occur but final proof fails, stop with completion unclaimed and preserve the
+observed state for review. Before execution, the exact source hash must pass
+fixture tests for success, symlink/type/identity/hash/foreign-child/race
+rejection, non-empty sibling rejection, injected failure before mutation, and
+injected failure between the two calls; it must also receive independent
+security and task review plus a real-state read-only preflight. Those results,
+the final frozen identities, and the exact destructive command require a new
+explicit human approval. Neither this Plan amendment nor cleanup-design approval
+authorizes `rmdir`, `unlink`, Plan-workspace finish, or any other deletion.
 
 ### Task 9: WRFR-008 — cross-link and lifecycle reconciliation
 
