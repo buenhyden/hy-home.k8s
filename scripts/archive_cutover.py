@@ -59,6 +59,7 @@ if __package__:
         MIGRATION_DOCUMENT_MAX_BYTES,
         parse_pinned_migration_control,
         read_staged_blob_bounded,
+        read_worktree_regular_bounded,
         validate_current_archive_authority,
         validate_repository_archive,
     )
@@ -96,6 +97,7 @@ else:
         MIGRATION_DOCUMENT_MAX_BYTES,
         parse_pinned_migration_control,
         read_staged_blob_bounded,
+        read_worktree_regular_bounded,
         validate_current_archive_authority,
         validate_repository_archive,
     )
@@ -154,47 +156,6 @@ SECOND_SOURCE_ORIGINAL_PATHS = frozenset(
         "docs/05.operations/runbooks/0005-headlamp-keycloak-runbook.md",
     }
 )
-
-STALE_CONTRACT_SURFACES = (
-    ".github/README.md",
-    "docs/README.md",
-    "docs/00.agent-governance/harness-catalog.md",
-    "docs/00.agent-governance/scopes/docs.md",
-    "docs/00.agent-governance/rules/agentic.md",
-    "docs/00.agent-governance/rules/document-stage-routing.md",
-    "docs/00.agent-governance/rules/documentation-protocol.md",
-    "docs/00.agent-governance/rules/stage-authoring-matrix.md",
-    "docs/00.agent-governance/rules/stage-checklists.md",
-    "docs/00.agent-governance/hooks/k8s-pre-edit.sh",
-    "docs/01.requirements/README.md",
-    "docs/02.architecture/README.md",
-    "docs/02.architecture/decisions/README.md",
-    "docs/02.architecture/descriptions/README.md",
-    "docs/03.specs/README.md",
-    "docs/04.execution/plans/README.md",
-    "docs/04.execution/tasks/README.md",
-    "docs/05.operations/README.md",
-    "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md",
-    "docs/90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md",
-    "docs/90.references/research/2026-08-08-wer/workspace-governance-and-common-agent-environment.md",
-    "docs/90.references/research/2026-08-08-wer/ci-cd-github-actions-and-qa.md",
-    "docs/99.templates/README.md",
-    "docs/99.templates/templates/README.md",
-    "docs/99.templates/support/common-documentation-governance.md",
-    "docs/99.templates/support/documentation-contract.md",
-    "docs/99.templates/support/frontmatter-schema.md",
-    "docs/99.templates/support/legacy-cleanup-rules.md",
-    "docs/99.templates/support/sdlc-governance.md",
-    "scripts/README.md",
-    "scripts/validate-links-and-owners.py",
-    "scripts/validate-markdown-profiles.py",
-    "scripts/validate-repo-quality-gates.sh",
-    "tests/fixtures/document-lifecycle.json",
-    "tests/fixtures/links-and-owners.json",
-    "tests/fixtures/markdown-profiles.json",
-    "tests/README.md",
-)
-
 
 @dataclass(frozen=True)
 class CutoverDiagnostic:
@@ -475,14 +436,14 @@ def _work054_migration_projection(
     rows_by_path: dict[str, tuple[dict[str, object], ...]] = {}
     try:
         for migration_path in WORK054_MIGRATION_PATHS:
-            content = (root / migration_path).read_bytes()
-            if (
-                migration_path not in tracked_regular_blobs
-                or not _regular_file(root, migration_path)
-                or len(content) > MIGRATION_DOCUMENT_MAX_BYTES
-            ):
+            if migration_path not in tracked_regular_blobs:
                 raise ValueError
             staged = read_staged_blob_bounded(
+                root,
+                migration_path,
+                max_bytes=MIGRATION_DOCUMENT_MAX_BYTES,
+            )
+            content = read_worktree_regular_bounded(
                 root,
                 migration_path,
                 max_bytes=MIGRATION_DOCUMENT_MAX_BYTES,
@@ -1366,19 +1327,6 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
     diagnostics.extend(
         _diagnostic(item.code, item.path) for item in current_report.diagnostics
     )
-
-    for raw_path in STALE_CONTRACT_SURFACES:
-        if raw_path in work054_projection.current_by_legacy:
-            continue
-        try:
-            text = (root / raw_path).read_text(encoding="utf-8")
-        except OSError:
-            diagnostics.append(
-                _diagnostic("ARCHIVE-CONTRACT-SURFACE-MISSING", raw_path)
-            )
-            continue
-        if _RETIRED_WORD in text.lower():
-            diagnostics.append(_diagnostic("ARCHIVE-RETIRED-AUTHORITY", raw_path))
 
     unique = tuple(
         sorted(

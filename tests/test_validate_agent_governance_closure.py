@@ -7,6 +7,7 @@ import copy
 import hashlib
 import importlib.util
 import json
+import subprocess
 import sys
 import unittest
 from pathlib import Path, PurePosixPath
@@ -470,6 +471,43 @@ class AgentGovernanceClosureTests(unittest.TestCase):
                 "56f19c272052da00a2f5428c80a2388df2fc2e14",  # pragma: allowlist secret -- unreachable Git blob fixture
                 PurePosixPath("docs/03.specs/9999-rogue/spec.md"),
             )
+
+    def test_historical_predecessor_rejects_detached_head_only_retention(self) -> None:
+        owner = PurePosixPath("docs/03.specs/9999-fixture/spec.md")
+        with TemporaryDirectory(prefix="closure-durable-ref-") as temporary:
+            root = Path(temporary)
+
+            def git(*arguments: str) -> str:
+                result = subprocess.run(
+                    ("git", *arguments),
+                    cwd=root,
+                    check=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                )
+                return result.stdout.strip()
+
+            git("init", "--quiet")
+            git("config", "user.email", "closure@example.invalid")
+            git("config", "user.name", "Closure Fixture")
+            target = root / owner
+            target.parent.mkdir(parents=True)
+            target.write_text("---\nstatus: done\n---\n", encoding="utf-8")
+            git("add", "--", owner.as_posix())
+            git("commit", "--quiet", "-m", "fixture")
+            commit = git("rev-parse", "HEAD")
+            git("checkout", "--quiet", "--detach", commit)
+
+            with patch.dict(
+                self.module.PREDECESSOR_HISTORICAL_PATHS,
+                {owner: (owner,)},
+            ), self.assertRaisesRegex(ValueError, "named durable"):
+                self.module._read_predecessor_implementation_blob(
+                    root,
+                    commit,
+                    owner,
+                )
 
     def test_historical_predecessor_snapshot_is_digest_and_status_bound(self) -> None:
         contract = json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))

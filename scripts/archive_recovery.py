@@ -565,6 +565,98 @@ def _require_repository(root: Path) -> tuple[Path, int]:
     )
 
 
+_DURABLE_REF = re.compile(
+    r"refs/(?:heads|remotes)/[A-Za-z0-9][A-Za-z0-9._/-]*\Z"
+)
+
+
+def current_named_durable_ref(repository_root: str | Path) -> str:
+    """Return the current full branch ref, rejecting detached HEAD."""
+
+    try:
+        root = Path(repository_root).resolve(strict=True)
+    except (OSError, RuntimeError) as exc:
+        raise _error("RECOVERY-DURABLE-REF", "repository root is unavailable") from exc
+    result = _git(root, "symbolic-ref", "-q", "HEAD")
+    if result.returncode != 0:
+        raise _error(
+            "RECOVERY-DURABLE-REF",
+            "a named durable current ref is required",
+        )
+    try:
+        durable_ref = result.stdout.decode("ascii", errors="strict").strip()
+    except UnicodeDecodeError as exc:
+        raise _error(
+            "RECOVERY-DURABLE-REF",
+            "the named durable current ref is malformed",
+        ) from exc
+    if _DURABLE_REF.fullmatch(durable_ref) is None:
+        raise _error(
+            "RECOVERY-DURABLE-REF",
+            "the named durable current ref is outside the allowed namespace",
+        )
+    return durable_ref
+
+
+def require_commits_reachable_from_durable_refs(
+    repository_root: str | Path,
+    commits: tuple[str, ...],
+    durable_refs: tuple[str, ...],
+) -> None:
+    """Require every commit to be retained by an explicit allowed named ref."""
+
+    root, object_id_length = _require_repository(Path(repository_root))
+    if not commits or not durable_refs or len(set(durable_refs)) != len(durable_refs):
+        raise _error("RECOVERY-DURABLE-REF", "durable ref selection is invalid")
+
+    resolved_refs: list[str] = []
+    for durable_ref in durable_refs:
+        if (
+            not isinstance(durable_ref, str)
+            or _DURABLE_REF.fullmatch(durable_ref) is None
+        ):
+            raise _error(
+                "RECOVERY-DURABLE-REF",
+                "durable ref is outside the allowed namespace",
+            )
+        resolved = _git(
+            root,
+            "rev-parse",
+            "--verify",
+            "--end-of-options",
+            f"{durable_ref}^{{commit}}",
+        )
+        if resolved.returncode != 0:
+            raise _error("RECOVERY-DURABLE-REF", "durable ref is unavailable")
+        try:
+            object_id = resolved.stdout.decode("ascii", errors="strict").strip()
+        except UnicodeDecodeError as exc:
+            raise _error("RECOVERY-DURABLE-REF", "durable ref is malformed") from exc
+        if (
+            len(object_id) != object_id_length
+            or _FULL_OBJECT_ID.fullmatch(object_id) is None
+        ):
+            raise _error("RECOVERY-DURABLE-REF", "durable ref is malformed")
+        resolved_refs.append(durable_ref)
+
+    for commit in commits:
+        if (
+            not isinstance(commit, str)
+            or len(commit) != object_id_length
+            or _FULL_OBJECT_ID.fullmatch(commit) is None
+        ):
+            raise _error("RECOVERY-OBJECT-AMBIGUOUS", "commit identity is invalid")
+        if not any(
+            _git(root, "merge-base", "--is-ancestor", commit, durable_ref).returncode
+            == 0
+            for durable_ref in resolved_refs
+        ):
+            raise _error(
+                "RECOVERY-OBJECT-UNREACHABLE",
+                "commit is not reachable from an allowed named durable ref",
+            )
+
+
 def _require_repository_path(value: object, *, field: str) -> str:
     canonical = _require_git_tree_path(value, field=field)
     path = PurePosixPath(canonical)

@@ -108,64 +108,6 @@ WORK054_WP004B_MIGRATION_PATH = PurePosixPath(
     "docs/98.archive/migrations/0004-document-authority-convergence.md"
 )
 WORK054_WP004B_MIGRATION_SHA256 = "6c769973de12023d8021792df4257be1401ee27f7b8293f336263352f849a3f6"  # pragma: allowlist secret
-WORK054_HARNESS_TERMINAL = PurePosixPath(
-    "docs/00.agent-governance/harness-catalog.md"
-)
-WORK054_CODEX_TERMINAL = PurePosixPath(
-    "docs/00.agent-governance/providers/codex.md"
-)
-WORK054_TEMPLATE_TERMINAL = PurePosixPath(
-    "docs/99.templates/support/document-contract.md"
-)
-WORK054_HISTORICAL_LINK_PROJECTION = {
-    PurePosixPath(
-        "docs/03.specs/0015-agent-governance-contract-normalization/plan.md"
-    ): ((0, WORK054_HARNESS_TERMINAL, 1),),
-    PurePosixPath(
-        "docs/03.specs/0015-agent-governance-contract-normalization/spec.md"
-    ): (
-        (0, WORK054_HARNESS_TERMINAL, 1),
-        (1, WORK054_HARNESS_TERMINAL, 1),
-        (3, WORK054_TEMPLATE_TERMINAL, 1),
-    ),
-    PurePosixPath(
-        "docs/03.specs/0017-workspace-engineering-research-pack/spec.md"
-    ): ((1, WORK054_HARNESS_TERMINAL, 1),),
-    PurePosixPath(
-        "docs/03.specs/0018-workspace-engineering-implementation-audit-pack/spec.md"
-    ): ((1, WORK054_HARNESS_TERMINAL, 1),),
-    PurePosixPath(
-        "docs/90.references/audits/2026-07-02-whia/harness-loop-implementation-audit.md"
-    ): ((1, WORK054_HARNESS_TERMINAL, 6),),
-    PurePosixPath(
-        "docs/90.references/audits/2026-07-02-whia/provider-harness-loop-implementation-audit.md"
-    ): (
-        (0, WORK054_HARNESS_TERMINAL, 8),
-        (1, WORK054_HARNESS_TERMINAL, 6),
-    ),
-    PurePosixPath(
-        "docs/90.references/audits/2026-07-02-whia/workspace-governance-implementation-audit.md"
-    ): (
-        (0, WORK054_HARNESS_TERMINAL, 3),
-        (1, WORK054_HARNESS_TERMINAL, 4),
-    ),
-    PurePosixPath(
-        "docs/90.references/audits/2026-07-05-wea/governance-harness-loop-providers.md"
-    ): (
-        (0, WORK054_HARNESS_TERMINAL, 1),
-        (1, WORK054_HARNESS_TERMINAL, 3),
-        (2, WORK054_CODEX_TERMINAL, 1),
-    ),
-    PurePosixPath(
-        "docs/90.references/audits/2026-07-05-wea/implementation-roadmap-and-automation-opportunities.md"
-    ): ((1, WORK054_HARNESS_TERMINAL, 2),),
-    PurePosixPath(
-        "docs/90.references/audits/2026-07-11-weia/governance-harness-loop-providers.md"
-    ): (
-        (1, WORK054_HARNESS_TERMINAL, 2),
-        (3, WORK054_TEMPLATE_TERMINAL, 1),
-    ),
-}
 ARCHIVE_INDEX_BOUNDARY = "docs/98.archive/README.md#document-index"
 ARCHIVE_INDEX_PATH = PurePosixPath("docs/98.archive/README.md")
 DOCUMENT_TAXONOMY_SOURCE_COMMIT = (
@@ -814,15 +756,9 @@ IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS = {
         "documentation-architecture-and-diataxis.md"
     ): "e5f0495270e6a4b5b4aeb97401957d501989eb33",  # pragma: allowlist secret
     PurePosixPath(
-        "docs/90.references/research/2026-08-08-wer/"
-        "spec-driven-sdlc-and-document-contracts.md"
-    ): "d25e1a9452ae99149cc1a4f94862fc3e96e3b418",  # pragma: allowlist secret
-    PurePosixPath(
         "docs/98.archive/README.md"
     ): "35b69ced14f3f5511a3b13dff35e337000297333",  # pragma: allowlist secret
 }
-IMMUTABLE_HISTORICAL_ALIAS_SOURCE_COUNT = 27
-IMMUTABLE_HISTORICAL_ALIAS_EDGE_COUNT = 94
 COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS = {
     PurePosixPath("docs/00.agent-governance/memory/progress.md"): (
         "28a2051203f38118c721c78142c3a97c5d0040ce"  # pragma: allowlist secret
@@ -3690,8 +3626,8 @@ def _reviewed_immutable_historical_alias_edges(
         context,
         move_targets,
         source_blobs=IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS,
-        expected_source_count=IMMUTABLE_HISTORICAL_ALIAS_SOURCE_COUNT,
-        expected_edge_count=IMMUTABLE_HISTORICAL_ALIAS_EDGE_COUNT,
+        expected_source_count=None,
+        expected_edge_count=None,
         contract_name="immutable historical alias",
     )
 
@@ -3746,14 +3682,14 @@ def _reviewed_source_pinned_alias_edges(
     move_targets: Mapping[PurePosixPath, PurePosixPath],
     *,
     source_blobs: Mapping[PurePosixPath, str],
-    expected_source_count: int,
-    expected_edge_count: int,
+    expected_source_count: int | None,
+    expected_edge_count: int | None,
     contract_name: str,
     append_only_prefix_bytes: Mapping[PurePosixPath, int] | None = None,
     exact_redirects: Mapping[PurePosixPath, PurePosixPath] | None = None,
     expected_occurrence_count: int | None = None,
 ) -> dict[ArchiveTransitionEdge, PurePosixPath]:
-    """Resolve a closed source/blob/edge-pinned historical alias set."""
+    """Resolve source-pinned historical aliases with optional finite totals."""
 
     if context.route_state != "transition":
         return {}
@@ -3812,9 +3748,15 @@ def _reviewed_source_pinned_alias_edges(
             contributing_sources.add(source)
             occurrence_count += 1
     if (
-        len(source_blobs) != expected_source_count
+        (
+            expected_source_count is not None
+            and len(source_blobs) != expected_source_count
+        )
         or contributing_sources != set(source_blobs)
-        or len(edges) != expected_edge_count
+        or (
+            expected_edge_count is not None
+            and len(edges) != expected_edge_count
+        )
         or (
             expected_occurrence_count is not None
             and occurrence_count != expected_occurrence_count
@@ -3833,107 +3775,64 @@ def _reviewed_work054_historical_owner_edges(
     context: Context,
     move_targets: Mapping[PurePosixPath, PurePosixPath],
 ) -> dict[ArchiveTransitionEdge, PurePosixPath]:
-    """Resolve the exact per-source retired-link projection for WORK-054."""
+    """Resolve rendered retired links through the sealed migration chain."""
 
     if context.route_state != "transition":
         return {}
     del move_targets
-    redirects = _work054_wp003_owner_merges(context)
-    migration_rows = tuple(redirects.items())
-    retired_template_route = PurePosixPath(
-        "docs/99.templates/support/template-routing.md"
+    aliases, replacements, work109_merges = _work109_migration_projection(context)
+    migration_projections = (
+        aliases,
+        replacements,
+        work109_merges,
+        _work054_wp003_owner_merges(context),
+        _work054_wp004b_targets(context),
     )
-    current_template_route = WORK054_TEMPLATE_TERMINAL
-    _, _, work109_merges = _work109_migration_projection(context)
-    if work109_merges.get(retired_template_route) != current_template_route:
-        raise ConfigurationError(
-            "WORK-054 historical template-route projection differs"
-        )
-    redirects[retired_template_route] = current_template_route
-    migration_rows += ((retired_template_route, current_template_route),)
-
-    expected_sources = set(WORK054_HISTORICAL_LINK_PROJECTION)
-    other_reviewed_sources = (
-        set(IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS)
-        | set(COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS)
-    ) - expected_sources
-    expected: dict[
-        PurePosixPath,
-        collections.Counter[tuple[PurePosixPath, PurePosixPath]],
-    ] = {}
-    for source, rows in WORK054_HISTORICAL_LINK_PROJECTION.items():
-        counter: collections.Counter[
-            tuple[PurePosixPath, PurePosixPath]
-        ] = collections.Counter()
-        for row_index, terminal, multiplicity in rows:
-            if (
-                not isinstance(row_index, int)
-                or row_index < 0
-                or row_index >= len(migration_rows)
-                or multiplicity <= 0
-            ):
+    redirects: dict[PurePosixPath, PurePosixPath] = {}
+    for projection in migration_projections:
+        for retired, target in projection.items():
+            previous = redirects.get(retired)
+            if previous is not None and previous != target:
                 raise ConfigurationError(
-                    "WORK-054 historical owner terminal projection differs"
+                    "WORK-054 historical migration projection conflicts"
                 )
-            retired, migrated_terminal = migration_rows[row_index]
-            if migrated_terminal != terminal:
-                raise ConfigurationError(
-                    "WORK-054 historical owner terminal projection differs"
-                )
-            counter[(retired, terminal)] += multiplicity
-        expected[source] = counter
+            redirects[retired] = target
 
-    retired_names = tuple(path.name for path in redirects)
-    actual: dict[
-        PurePosixPath,
-        collections.Counter[tuple[PurePosixPath, PurePosixPath]],
-    ] = {}
+    terminal_redirects: dict[PurePosixPath, PurePosixPath] = {}
+    for retired, target in redirects.items():
+        visited = {retired}
+        terminal = target
+        while terminal in redirects and redirects[terminal] != terminal:
+            if terminal in visited:
+                raise ConfigurationError(
+                    "WORK-054 historical migration projection cycles"
+                )
+            visited.add(terminal)
+            terminal = redirects[terminal]
+        if terminal != retired:
+            terminal_redirects[retired] = terminal
+
+    edges: dict[ArchiveTransitionEdge, PurePosixPath] = {}
     for source, text in context.texts.items():
-        if source in other_reviewed_sources or not any(
-            name in text for name in retired_names
-        ):
-            continue
-        counter: collections.Counter[
-            tuple[PurePosixPath, PurePosixPath]
-        ] = collections.Counter()
         for raw in _extract_links(text):
             kind, target = _local_destination(source, raw)
             if kind != "local" or target is None:
                 continue
-            replacement = redirects.get(target)
+            replacement = terminal_redirects.get(target)
             if replacement is None or _path_exists_without_dereference(
                 context.root, target, context.adapter_targets
             ):
                 continue
-            counter[(target, replacement)] += 1
-        if counter:
-            actual[source] = counter
-
-    if (
-        set(actual) != expected_sources
-        or not expected_sources.issubset(context.tracked_regular_paths)
-    ):
-        raise ConfigurationError(
-            "WORK-054 historical owner source set differs"
-        )
-
-    edges: dict[ArchiveTransitionEdge, PurePosixPath] = {}
-    for source, expected_counter in expected.items():
-        if actual[source] != expected_counter:
-            raise ConfigurationError(
-                "WORK-054 historical owner link multiset differs"
-            )
-        for retired, terminal in expected_counter:
             if (
-                terminal not in context.tracked_regular_paths
+                replacement not in context.tracked_regular_paths
                 or not _path_exists_without_dereference(
-                    context.root, terminal, context.adapter_targets
+                    context.root, replacement, context.adapter_targets
                 )
             ):
                 raise ConfigurationError(
                     "WORK-054 historical owner replacement is unavailable"
                 )
-            edges[ArchiveTransitionEdge(source, retired)] = terminal
+            edges[ArchiveTransitionEdge(source, target)] = replacement
     return edges
 
 

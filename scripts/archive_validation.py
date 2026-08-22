@@ -36,8 +36,10 @@ if __package__:
         _git_capture_bounded,
         _read_git_blob_batch,
         _read_stream_bounded as _recovery_read_stream_bounded,
+        current_named_durable_ref,
         parse_work107_migration_document,
         parse_archive_envelope,
+        require_commits_reachable_from_durable_refs,
     )
 else:  # Direct import-only execution from scripts/.
     from archive_recovery import (  # type: ignore[no-redef]
@@ -50,13 +52,19 @@ else:  # Direct import-only execution from scripts/.
         _git_capture_bounded,
         _read_git_blob_batch,
         _read_stream_bounded as _recovery_read_stream_bounded,
+        current_named_durable_ref,
         parse_work107_migration_document,
         parse_archive_envelope,
+        require_commits_reachable_from_durable_refs,
     )
 
 
 ARCHIVE_ROOT = PurePosixPath("docs/98.archive")
 ARCHIVE_INDEX = ARCHIVE_ROOT / "README.md"
+CURRENT_MARKDOWN_MAX_BYTES = 1_000_000
+CURRENT_MARKDOWN_TOTAL_BYTES = 32 * 1024 * 1024
+CURRENT_MARKDOWN_MAX_FILES = 1024
+_INDEX_CAPTURE_MAX_BYTES = 2 * 1024 * 1024
 CURRENT_STATUSES = frozenset(
     {"draft", "active", "accepted", "done", "archived", "sealed"}
 )
@@ -596,46 +604,278 @@ def read_staged_blob_bounded(
         ) from exc
 
 
-def _require_commits_reachable(root: Path, commits: tuple[str, ...]) -> None:
-    """Require each reviewed source commit to be an ancestor of current HEAD."""
+def read_worktree_regular_bounded(
+    repository_root: str | Path,
+    path: str,
+    *,
+    max_bytes: int = CURRENT_MARKDOWN_MAX_BYTES,
+) -> bytes:
+    """Read one regular file through held no-follow descriptors within a budget."""
 
-    for commit in commits:
-        result = _git_command(
-            root,
-            "merge-base",
-            "--is-ancestor",
-            commit,
-            "HEAD",
-            output_limit=256,
-        )
-        if result.returncode == 1:
-            raise ArchiveContractError(
-                "RECOVERY-OBJECT-UNREACHABLE",
-                "migration commit is not reachable from current HEAD",
-            )
-        if result.returncode:
-            raise ArchiveContractError(
-                "RECOVERY-MIGRATION-INPUT",
-                "migration reachability lookup failed",
-            )
-
-
-def _require_regular_current_target(root: Path, relative: str) -> None:
-    """Require a canonical current target to exist as a regular non-link file."""
-
-    if _canonical_path(relative) != relative:
+    if (
+        _canonical_path(path) != path
+        or type(max_bytes) is not int
+        or not 0 < max_bytes <= CURRENT_MARKDOWN_MAX_BYTES
+    ):
         raise ArchiveContractError(
-            "RECOVERY-MIGRATION-TARGET", "migration target path is invalid"
+            "RECOVERY-MIGRATION-TARGET", "current target path is invalid"
         )
     try:
-        metadata = (root / relative).lstat()
-    except OSError as exc:
+        root = Path(repository_root).resolve(strict=True)
+        root_metadata = os.lstat(root)
+        if stat.S_ISLNK(root_metadata.st_mode) or not stat.S_ISDIR(
+            root_metadata.st_mode
+        ):
+            raise OSError
+        directory_flags = (
+            os.O_RDONLY
+            | getattr(os, "O_CLOEXEC", 0)
+            | getattr(os, "O_DIRECTORY", 0)
+            | getattr(os, "O_NOFOLLOW", 0)
+        )
+        file_flags = (
+            os.O_RDONLY
+            | getattr(os, "O_CLOEXEC", 0)
+            | getattr(os, "O_NOFOLLOW", 0)
+        )
+        descriptors: list[int] = []
+        try:
+            root_descriptor = os.open(root, directory_flags)
+            descriptors.append(root_descriptor)
+            opened_root = os.fstat(root_descriptor)
+            if (
+                not stat.S_ISDIR(opened_root.st_mode)
+                or (opened_root.st_dev, opened_root.st_ino)
+                != (root_metadata.st_dev, root_metadata.st_ino)
+            ):
+                raise OSError
+            parent_descriptor = root_descriptor
+            parts = PurePosixPath(path).parts
+            for part in parts[:-1]:
+                child = os.open(part, directory_flags, dir_fd=parent_descriptor)
+                descriptors.append(child)
+                if not stat.S_ISDIR(os.fstat(child).st_mode):
+                    raise OSError
+                parent_descriptor = child
+            file_descriptor = os.open(
+                parts[-1], file_flags, dir_fd=parent_descriptor
+            )
+            descriptors.append(file_descriptor)
+            before = os.fstat(file_descriptor)
+            if not stat.S_ISREG(before.st_mode):
+                raise OSError
+            if before.st_size > max_bytes:
+                raise ArchiveContractError(
+                    "RECOVERY-RESOURCE-LIMIT",
+                    "current Markdown exceeds its byte budget",
+                )
+            chunks: list[bytes] = []
+            total = 0
+            while True:
+                chunk = os.read(file_descriptor, min(65536, max_bytes + 1 - total))
+                if not chunk:
+                    break
+                chunks.append(chunk)
+                total += len(chunk)
+                if total > max_bytes:
+                    raise ArchiveContractError(
+                        "RECOVERY-RESOURCE-LIMIT",
+                        "current Markdown exceeds its byte budget",
+                    )
+            after = os.fstat(file_descriptor)
+            current = os.stat(
+                parts[-1], dir_fd=parent_descriptor, follow_symlinks=False
+            )
+            def identity(item: os.stat_result) -> tuple[int, int, int, int, int]:
+                return (
+                    item.st_dev,
+                    item.st_ino,
+                    item.st_mode,
+                    item.st_size,
+                    item.st_mtime_ns,
+                )
+            if identity(before) != identity(after) or identity(after) != identity(
+                current
+            ):
+                raise OSError
+            return b"".join(chunks)
+        finally:
+            for descriptor in reversed(descriptors):
+                os.close(descriptor)
+    except ArchiveContractError:
+        raise
+    except (OSError, RuntimeError) as exc:
         raise ArchiveContractError(
-            "RECOVERY-MIGRATION-TARGET", "migration target is unavailable"
+            "RECOVERY-MIGRATION-TARGET",
+            "current target is unavailable or changed during read",
         ) from exc
-    if not stat.S_ISREG(metadata.st_mode):
+
+
+def _staged_regular_blob_inventory(root: Path) -> dict[str, str]:
+    """Return the bounded stage-zero regular Markdown authority inventory."""
+
+    object_id_length = _repository_identity(root)
+    result = _git_command(
+        root,
+        "ls-files",
+        "--stage",
+        "-z",
+        "--",
+        "docs/01.requirements",
+        "docs/02.architecture",
+        "docs/03.specs",
+        output_limit=_INDEX_CAPTURE_MAX_BYTES,
+    )
+    if result.returncode:
         raise ArchiveContractError(
-            "RECOVERY-MIGRATION-TARGET", "migration target is not a regular file"
+            "RECOVERY-MIGRATION-INPUT", "stage-zero inventory is unavailable"
+        )
+    records = result.stdout.split(b"\0")
+    if not records or records[-1] != b"":
+        raise ArchiveContractError(
+            "RECOVERY-MIGRATION-INPUT", "stage-zero inventory is malformed"
+        )
+    inventory: dict[str, str] = {}
+    try:
+        for record in records[:-1]:
+            header, raw_path = record.split(b"\t", 1)
+            mode, raw_object_id, stage = header.split(b" ", 2)
+            path = raw_path.decode("utf-8", errors="strict")
+            object_id = raw_object_id.decode("ascii", errors="strict")
+            if (
+                mode not in {b"100644", b"100755"}
+                or stage != b"0"
+                or _canonical_path(path) != path
+                or path in inventory
+                or len(object_id) != object_id_length
+                or _FULL_OBJECT_ID.fullmatch(object_id) is None
+            ):
+                raise ValueError
+            inventory[path] = object_id
+    except (UnicodeDecodeError, ValueError) as exc:
+        raise ArchiveContractError(
+            "RECOVERY-MIGRATION-INPUT", "stage-zero inventory is malformed"
+        ) from exc
+    if len(inventory) > CURRENT_MARKDOWN_MAX_FILES:
+        raise ArchiveContractError(
+            "RECOVERY-RESOURCE-LIMIT", "current Markdown count exceeds its budget"
+        )
+    return inventory
+
+
+def _staged_markdown_documents(
+    root: Path,
+    inventory: Mapping[str, str],
+    paths: Sequence[str],
+) -> dict[str, str]:
+    """Read exact stage-zero Markdown and require byte-identical worktree files."""
+
+    selected = tuple(sorted(paths))
+    if (
+        len(selected) > CURRENT_MARKDOWN_MAX_FILES
+        or len(set(selected)) != len(selected)
+        or any(path not in inventory for path in selected)
+    ):
+        raise ArchiveContractError(
+            "RECOVERY-MIGRATION-TARGET", "current staged target set differs"
+        )
+    object_ids = tuple(sorted({inventory[path] for path in selected}))
+    object_id_length = _repository_identity(root)
+    blobs: dict[str, bytes] = {}
+    remaining_bytes = CURRENT_MARKDOWN_TOTAL_BYTES
+    for offset in range(0, len(object_ids), MAX_GIT_BATCH_OBJECTS):
+        batch = object_ids[offset : offset + MAX_GIT_BATCH_OBJECTS]
+        batch_blobs = _read_git_blob_batch(
+            root,
+            batch,
+            object_id_length=object_id_length,
+            per_blob_limit=CURRENT_MARKDOWN_MAX_BYTES,
+            aggregate_limit=remaining_bytes,
+            object_limit=MAX_GIT_BATCH_OBJECTS,
+        )
+        batch_bytes = sum(len(content) for content in batch_blobs.values())
+        if batch_bytes > remaining_bytes:
+            raise ArchiveContractError(
+                "RECOVERY-RESOURCE-LIMIT",
+                "current Markdown bytes exceed their aggregate budget",
+            )
+        remaining_bytes -= batch_bytes
+        blobs.update(batch_blobs)
+    documents: dict[str, str] = {}
+    total = 0
+    for path in selected:
+        staged = blobs[inventory[path]]
+        total += len(staged)
+        if total > CURRENT_MARKDOWN_TOTAL_BYTES:
+            raise ArchiveContractError(
+                "RECOVERY-RESOURCE-LIMIT",
+                "current Markdown bytes exceed their aggregate budget",
+            )
+        worktree = read_worktree_regular_bounded(root, path)
+        if worktree != staged:
+            raise ArchiveContractError(
+                "RECOVERY-MIGRATION-TARGET",
+                "current target differs between index and worktree",
+            )
+        try:
+            documents[path] = staged.decode("utf-8", errors="strict")
+        except UnicodeDecodeError as exc:
+            raise ArchiveContractError(
+                "RECOVERY-NON-UTF8", "current Markdown is not UTF-8"
+            ) from exc
+    return documents
+
+
+def _untracked_task_paths(root: Path) -> tuple[str, ...]:
+    result = _git_command(
+        root,
+        "ls-files",
+        "--others",
+        "--exclude-standard",
+        "-z",
+        "--",
+        "docs/03.specs",
+        output_limit=_INDEX_CAPTURE_MAX_BYTES,
+    )
+    if result.returncode:
+        raise ArchiveContractError(
+            "RECOVERY-MIGRATION-INPUT", "untracked Task lookup failed"
+        )
+    try:
+        paths = tuple(
+            sorted(
+                raw.decode("utf-8", errors="strict")
+                for raw in result.stdout.split(b"\0")
+                if raw
+            )
+        )
+    except UnicodeDecodeError as exc:
+        raise ArchiveContractError(
+            "RECOVERY-MIGRATION-INPUT", "untracked Task lookup is malformed"
+        ) from exc
+    pattern = re.compile(
+        r"docs/03\.specs/[0-9]{4}-[a-z0-9-]+/tasks/tsk-[0-9]{4}-[a-z0-9-]+\.md\Z"
+    )
+    return tuple(path for path in paths if pattern.fullmatch(path))
+
+
+def _require_commits_reachable(root: Path, commits: tuple[str, ...]) -> None:
+    """Require each source commit through the named current durable ref."""
+
+    durable_ref = current_named_durable_ref(root)
+    require_commits_reachable_from_durable_refs(root, commits, (durable_ref,))
+
+
+def _require_regular_current_target(
+    relative: str,
+    inventory: Mapping[str, str],
+) -> None:
+    """Require a canonical current target to be a tracked stage-zero blob."""
+
+    if _canonical_path(relative) != relative or relative not in inventory:
+        raise ArchiveContractError(
+            "RECOVERY-MIGRATION-TARGET",
+            "migration target is not a tracked stage-zero regular blob",
         )
 
 
@@ -669,9 +909,11 @@ def _validate_mig0004_rows_and_targets(
         "docs/03.specs/0041-stage-00-agent-governance-contract/agent-design.md",
     }
     counts = {"requirement": 0, "architecture": 0, "task": 0, "agent": 0}
-    task_directories: set[Path] = set()
+    task_directories: set[str] = set()
+    target_paths: set[str] = set()
     previous: str | None = None
     legacy_paths: set[str] = set()
+    inventory = _staged_regular_blob_inventory(root)
 
     for row in rows:
         legacy = row.get("legacy_path")
@@ -744,7 +986,7 @@ def _validate_mig0004_rows_and_targets(
                 raise ArchiveContractError(
                     "RECOVERY-MIGRATION-ROW", "Task replacement differs"
                 )
-            task_directories.add((root / legacy).parent)
+            task_directories.add(PurePosixPath(legacy).parent.as_posix())
             target = row["replacement"]
         else:
             raise ArchiveContractError(
@@ -754,8 +996,9 @@ def _validate_mig0004_rows_and_targets(
             raise ArchiveContractError(
                 "RECOVERY-MIGRATION-TARGET", "migration target is invalid"
             )
-        _require_regular_current_target(root, target)
-        if target != legacy and (root / legacy).exists():
+        _require_regular_current_target(target, inventory)
+        target_paths.add(target)
+        if target != legacy and legacy in inventory:
             raise ArchiveContractError(
                 "RECOVERY-MIGRATION-TARGET", "retired source remains current"
             )
@@ -764,53 +1007,64 @@ def _validate_mig0004_rows_and_targets(
         raise ArchiveContractError(
             "RECOVERY-MIGRATION-ROW", "MIG-0004 disposition is incomplete"
         )
-
-    task_ids: set[str] = set()
-    task_paths: set[str] = set()
+    task_artifacts: dict[str, str] = {}
+    if _untracked_task_paths(root):
+        raise ArchiveContractError(
+            "RECOVERY-MIGRATION-TASK", "untracked Task record is present"
+        )
     for package in sorted(task_directories):
-        for task in sorted((package / "tasks").glob("tsk-*.md")):
-            relative = task.relative_to(root).as_posix()
-            _require_regular_current_target(root, relative)
-            match = re.fullmatch(r"tsk-(?P<sequence>[0-9]{4})-[a-z0-9-]+\.md", task.name)
+        prefix = f"{package}/tasks/"
+        for relative in sorted(
+            path
+            for path in inventory
+            if path.startswith(prefix) and PurePosixPath(path).name.startswith("tsk-")
+        ):
+            _require_regular_current_target(relative, inventory)
+            task_name = PurePosixPath(relative).name
+            match = re.fullmatch(
+                r"tsk-(?P<sequence>[0-9]{4})-[a-z0-9-]+\.md", task_name
+            )
             if match is None:
                 raise ArchiveContractError(
                     "RECOVERY-MIGRATION-TASK", "Task path differs"
                 )
-            try:
-                contents = task.read_text(encoding="utf-8")
-            except (OSError, UnicodeDecodeError) as exc:
-                raise ArchiveContractError(
-                    "RECOVERY-MIGRATION-TASK", "Task record is unreadable"
-                ) from exc
-            spec = package.name[:4]
+            spec = PurePosixPath(package).name[:4]
             artifact = f'TSK-{spec}-{match.group("sequence")}'
-            if f'artifact_id: "{artifact}"' not in contents:
-                raise ArchiveContractError(
-                    "RECOVERY-MIGRATION-TASK", "Task identity differs"
-                )
-            task_paths.add(relative)
-            task_ids.add(artifact)
-    if len(task_paths) != 315 or len(task_ids) != 315:
+            task_artifacts[relative] = artifact
+    if len(task_artifacts) != 315 or len(set(task_artifacts.values())) != 315:
         raise ArchiveContractError(
             "RECOVERY-MIGRATION-TASK", "Task disposition is not exactly 315"
         )
+    consumer_paths = tuple(
+        path
+        for path in inventory
+        if path.endswith(".md")
+        and path.startswith(
+            ("docs/01.requirements/", "docs/02.architecture/", "docs/03.specs/")
+        )
+    )
+    consumer_documents = _staged_markdown_documents(
+        root, inventory, consumer_paths
+    )
+    if not target_paths.issubset(consumer_documents):
+        raise ArchiveContractError(
+            "RECOVERY-MIGRATION-TARGET", "migration target is outside current Markdown"
+        )
+    for relative, artifact in task_artifacts.items():
+        if f'artifact_id: "{artifact}"' not in consumer_documents[relative]:
+            raise ArchiveContractError(
+                "RECOVERY-MIGRATION-TASK", "Task identity differs"
+            )
 
     retired_consumer = re.compile(
         r"docs/04\.execution/|docs/02\.architecture/descriptions/ad-[0-9]{4}-"
     )
-    for stage in ("docs/01.requirements", "docs/02.architecture", "docs/03.specs"):
-        for document in sorted((root / stage).rglob("*.md")):
-            try:
-                contents = document.read_text(encoding="utf-8")
-            except (OSError, UnicodeDecodeError) as exc:
-                raise ArchiveContractError(
-                    "RECOVERY-MIGRATION-CONSUMER", "current document is unreadable"
-                ) from exc
-            if retired_consumer.search(contents):
-                raise ArchiveContractError(
-                    "RECOVERY-MIGRATION-CONSUMER",
-                    "current document retains a retired path consumer",
-                )
+    for contents in consumer_documents.values():
+        if retired_consumer.search(contents):
+            raise ArchiveContractError(
+                "RECOVERY-MIGRATION-CONSUMER",
+                "current document retains a retired path consumer",
+            )
 
 
 def _namespace_records(

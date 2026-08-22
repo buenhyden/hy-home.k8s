@@ -17,6 +17,19 @@ from typing import Any
 from jsonschema import Draft202012Validator
 from jsonschema.exceptions import SchemaError
 
+try:
+    from scripts.archive_recovery import (
+        ArchiveContractError,
+        current_named_durable_ref,
+        require_commits_reachable_from_durable_refs,
+    )
+except ModuleNotFoundError:  # Direct execution from scripts/.
+    from archive_recovery import (  # type: ignore[no-redef]
+        ArchiveContractError,
+        current_named_durable_ref,
+        require_commits_reachable_from_durable_refs,
+    )
+
 
 CONTRACT_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/agent-governance-closure.json"
@@ -736,11 +749,21 @@ def _read_predecessor_implementation_blob(
     if aliases is None:
         raise ValueError("historical predecessor owner is unknown")
     object_type = _run_git(root, "cat-file", "-t", commit)
-    reachable = _run_git(root, "merge-base", "--is-ancestor", commit, "HEAD")
     if object_type.returncode != 0 or object_type.stdout.strip() != b"commit":
         raise ValueError("implementation ref is not reachable")
-    if reachable.returncode != 0:
-        raise ValueError("implementation ref is not reachable")
+    try:
+        durable_ref = current_named_durable_ref(root)
+        require_commits_reachable_from_durable_refs(
+            root,
+            (commit,),
+            (durable_ref,),
+        )
+    except ArchiveContractError as exc:
+        if exc.code == "RECOVERY-DURABLE-REF":
+            raise ValueError(
+                "implementation ref requires a named durable ref"
+            ) from exc
+        raise ValueError("implementation ref is not reachable") from exc
     for alias in aliases:
         try:
             return _read_git_blob(root, commit, alias)

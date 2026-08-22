@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from array import array
 from collections import Counter
+import copy
 from dataclasses import dataclass
 from datetime import date
 from html import unescape
@@ -48,6 +49,7 @@ DATA_ASSET_ROOT = Path("docs/90.references/data")
 DATA_ASSET_README = DATA_ASSET_ROOT / "README.md"
 REFERENCE_ROOT = Path("docs/90.references")
 REGISTRY_PATH = Path("docs/99.templates/registry.json")
+ROUTE_CONTRACT_PATH = Path("docs/99.templates/contracts/route-contract.json")
 TRANSITION_CURRENT_PACK_PROJECTION_PATH = Path("docs/99.templates/support/document-profiles.json")
 WP004B_DOCUMENT_AUTHORITY_MIGRATION_PATH = Path(
     "docs/98.archive/migrations/0004-document-authority-convergence.md"
@@ -55,6 +57,15 @@ WP004B_DOCUMENT_AUTHORITY_MIGRATION_PATH = Path(
 WP004B_ROOT_ONLY_PROFILE_ID = "sdlc/requirement-package"
 WP004B_SUPPORT_ONLY_PROFILE_IDS = frozenset(
     {"sdlc/prd", "sdlc/srs", "sdlc/interface"}
+)
+WP004B_SUPPORT_PROFILE_ORDER = ("sdlc/prd", "sdlc/srs", "sdlc/interface")
+WP004B_SUPPORT_SCHEMA = "https://json-schema.org/draft/2020-12/schema"
+WP004B_SUPPORT_ID = "https://hy-home.k8s/schemas/document-profiles-8.schema.json"
+WP004B_SUPPORT_GOVERNANCE_EXCLUSIONS = frozenset(
+    {
+        "docs/00.agent-governance/policies/document-lifecycle.md",
+        "docs/00.agent-governance/sdlc.md",
+    }
 )
 DOCUMENT_TAXONOMY_MANIFEST_PATH = Path("scripts/document-taxonomy-migration.json")
 ARCHIVE_MIGRATION_PATH = Path(
@@ -1262,7 +1273,7 @@ _PROJECTION_ALLOWLIST: dict[str, dict[str, object]] = {
             },
             {
                 "from": "| [2026-07-11-weia](./2026-07-11-weia/README.md) | Current pack | Evidence-scored workspace engineering implementation audit at the pinned observation SHA. | No successor; completion evidence is in the [Plan](../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md) and [Task](../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md). |",
-                "to": "| [2026-07-11-weia](./2026-07-11-weia/README.md) | Historical | Evidence-scored workspace engineering implementation audit at the pinned observation SHA. | Successor: [2026-08-09-wgia](./2026-08-09-wgia/README.md); retain the prior [Plan](../../98.archive/README.md#document-index) and [Task](../../98.archive/README.md#document-index) as dated evidence. |\n| [2026-08-09-wgia](./2026-08-09-wgia/README.md) | Current pack | Workspace governance implementation audit across purpose, SDLC, delivery, harness, agents, knowledge, security, and cleanup. | Completion evidence is in the [Plan](../../03.specs/0055-workspace-governance-audit-and-remediation/plan.md) and [Task](../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md). |",
+                "to": "| [2026-07-11-weia](./2026-07-11-weia/README.md) | Historical | Evidence-scored workspace engineering implementation audit at the pinned observation SHA. | Successor: [2026-08-09-wgia](./2026-08-09-wgia/README.md); retain the prior [Plan](../../98.archive/README.md#document-index) and [Task](../../98.archive/README.md#document-index) as dated evidence. |\n| [2026-08-09-wgia](./2026-08-09-wgia/README.md) | Current pack | Workspace governance implementation audit across purpose, SDLC, delivery, harness, agents, knowledge, security, and cleanup. | Completion evidence is in the [Plan](../../03.specs/0055-workspace-governance-audit-and-remediation/plan.md) and [TSK-0055-0015](../../03.specs/0055-workspace-governance-audit-and-remediation/tasks/tsk-0015-wgia-014.md). |",
                 "count": 1,
             },
             {
@@ -1277,7 +1288,7 @@ _PROJECTION_ALLOWLIST: dict[str, dict[str, object]] = {
             },
             {
                 "from": "- [Current Audit Integration Task](../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md)",
-                "to": "- [Current Audit Integration Task](../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md)",
+                "to": "- [Current Audit Integration Task TSK-0055-0013](../../03.specs/0055-workspace-governance-audit-and-remediation/tasks/tsk-0013-wgia-012.md)",
                 "count": 1,
             },
             {
@@ -1321,7 +1332,7 @@ _PROJECTION_ALLOWLIST: dict[str, dict[str, object]] = {
             },
             {
                 "from": "- Completion owner: the paired [Task](../../../04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md).",
-                "to": "- Completion owner: the paired [Task](../../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md).",
+                "to": "- Completion owner: [TSK-0055-0015](../../../03.specs/0055-workspace-governance-audit-and-remediation/tasks/tsk-0015-wgia-014.md).",
                 "count": 1,
             },
             {
@@ -1336,10 +1347,21 @@ _PROJECTION_ALLOWLIST: dict[str, dict[str, object]] = {
             },
             {
                 "from": "- [Implementation Task](../../../04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md)",
-                "to": "- [Implementation Task](../../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md)",
+                "to": "- [Implementation Task TSK-0055-0015](../../../03.specs/0055-workspace-governance-audit-and-remediation/tasks/tsk-0015-wgia-014.md)",
                 "count": 1,
             },
         ],
+    },
+}
+
+_WP004B_PROJECTION_LEGACY_TARGETS: dict[str, dict[str, str]] = {
+    "docs/90.references/audits/README.md": {
+        "| [2026-07-11-weia](./2026-07-11-weia/README.md) | Current pack | Evidence-scored workspace engineering implementation audit at the pinned observation SHA. | No successor; completion evidence is in the [Plan](../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md) and [Task](../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md). |": "| [2026-07-11-weia](./2026-07-11-weia/README.md) | Historical | Evidence-scored workspace engineering implementation audit at the pinned observation SHA. | Successor: [2026-08-09-wgia](./2026-08-09-wgia/README.md); retain the prior [Plan](../../98.archive/README.md#document-index) and [Task](../../98.archive/README.md#document-index) as dated evidence. |\n| [2026-08-09-wgia](./2026-08-09-wgia/README.md) | Current pack | Workspace governance implementation audit across purpose, SDLC, delivery, harness, agents, knowledge, security, and cleanup. | Completion evidence is in the [Plan](../../03.specs/0055-workspace-governance-audit-and-remediation/plan.md) and [Task](../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md). |",
+        "- [Current Audit Integration Task](../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md)": "- [Current Audit Integration Task](../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md)",
+    },
+    "docs/90.references/audits/2026-08-09-wgia/README.md": {
+        "- Completion owner: the paired [Task](../../../04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md).": "- Completion owner: the paired [Task](../../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md).",
+        "- [Implementation Task](../../../04.execution/tasks/2026-08-09-workspace-governance-audit-and-remediation.md)": "- [Implementation Task](../../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md)",
     },
 }
 
@@ -2818,6 +2840,17 @@ def _proposed_registry_inputs(
             f"document authority is invalid: {error}",
         ) from error
 
+    route_contract = _decode_json_bytes(
+        _proposed_path(root, ROUTE_CONTRACT_PATH, proposed_oid, runner),
+        field=ROUTE_CONTRACT_PATH.as_posix(),
+    )
+    if not isinstance(route_contract, Mapping):
+        raise ContractError(
+            "RIA-BOUNDARY",
+            ROUTE_CONTRACT_PATH.as_posix(),
+            "document route authority is unavailable",
+        )
+
     proposed_projection = _proposed_path(
         root,
         TRANSITION_CURRENT_PACK_PROJECTION_PATH,
@@ -2828,7 +2861,7 @@ def _proposed_registry_inputs(
         proposed_projection,
         field=TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix(),
     )
-    _validate_wp004b_support_projection(authority, projection)
+    _validate_wp004b_support_projection(authority, route_contract, projection)
     _load_wp004b_transition_rows(root, proposed_oid, runner)
     return authority, proposed_projection
 
@@ -2857,17 +2890,87 @@ def _load_wp004b_transition_rows(
         ) from error
 
 
-def _wp004b_transition_link_mask(
-    payload: bytes,
-    path: Path,
-    rows: Sequence[Mapping[str, object]],
-) -> bytes:
-    """Normalize only Markdown link targets declared by sealed MIG-0004."""
+def _rendered_inline_link_destination_spans(
+    text: str,
+) -> tuple[tuple[int, int], ...]:
+    """Return direct-link destinations that CommonMark renders as links.
 
-    try:
-        text = payload.decode("utf-8", errors="strict")
-    except UnicodeDecodeError as error:
-        raise _GitError("WP-004B transition target is not UTF-8") from error
+    The returned offsets address the original text. Fenced/indented code,
+    inline code, HTML comments, and images are deliberately opaque.
+    """
+
+    masked = _mask_markdown_comments(text)
+    block_intervals = _code_block_intervals(masked)
+    opaque_intervals = tuple(
+        sorted(
+            (
+                *block_intervals,
+                *_inline_code_intervals_outside_blocks(masked, block_intervals),
+            )
+        )
+    )
+    semantic = _mask_block_intervals(masked, opaque_intervals)
+    run_lengths, next_backtick = _backtick_runs(semantic)
+    angle_tokens = _inline_angle_tokens(semantic)
+    inline_opaque = _inline_opaque_intervals(
+        semantic,
+        run_lengths=run_lengths,
+        next_backtick=next_backtick,
+        angle_tokens=angle_tokens,
+    )
+    square_pairs = _paired_delimiters(
+        semantic,
+        "[",
+        "]",
+        opaque_spans=inline_opaque,
+    )
+    parenthesis_pairs = _paired_delimiters(
+        semantic,
+        "(",
+        ")",
+        opaque_spans=inline_opaque,
+    )
+    spans: list[tuple[int, int]] = []
+    cursor = 0
+    while cursor < len(semantic):
+        if semantic.startswith("![", cursor):
+            image = _consume_markdown_link(
+                semantic,
+                cursor,
+                limit=len(semantic),
+                reference_labels=frozenset(),
+                square_pairs=square_pairs,
+                parenthesis_pairs=parenthesis_pairs,
+            )
+            cursor = image[2] if image is not None else cursor + 2
+            continue
+        if semantic[cursor] != "[":
+            cursor += 1
+            continue
+        link = _consume_markdown_link(
+            semantic,
+            cursor,
+            limit=len(semantic),
+            reference_labels=frozenset(),
+            square_pairs=square_pairs,
+            parenthesis_pairs=parenthesis_pairs,
+        )
+        if link is None:
+            cursor += 1
+            continue
+        suffix = link[1] + 1
+        if suffix < len(semantic) and semantic[suffix] == "(":
+            destination_end = parenthesis_pairs.get(suffix)
+            if destination_end is not None:
+                spans.append((suffix + 1, destination_end))
+        cursor = link[2]
+    return tuple(spans)
+
+
+def _wp004b_task_transitions(
+    rows: Sequence[Mapping[str, object]],
+) -> dict[Path, Path]:
+    transitions: dict[Path, Path] = {}
     for row in rows:
         source = row.get("legacy_path")
         target = row.get("replacement") or row.get("stable_path")
@@ -2879,12 +2982,87 @@ def _wp004b_transition_link_mask(
             or not target.endswith("/README.md")
         ):
             continue
-        source_relative = os.path.relpath(source, path.parent.as_posix())
-        target_relative = os.path.relpath(target, path.parent.as_posix())
-        text = text.replace(
-            f"]({target_relative})",
-            f"]({source_relative})",
-        )
+        source_path = Path(source)
+        target_path = Path(target)
+        if source_path in transitions or target_path in transitions.values():
+            raise _GitError("WP-004B transition link authority is ambiguous")
+        transitions[source_path] = target_path
+    return transitions
+
+
+def _wp004b_transition_link_mask(
+    payload: bytes,
+    path: Path,
+    rows: Sequence[Mapping[str, object]],
+    *,
+    baseline: bytes,
+) -> bytes:
+    """Normalize the exact rendered-link edge set declared by MIG-0004."""
+
+    try:
+        text = payload.decode("utf-8", errors="strict")
+        baseline_text = baseline.decode("utf-8", errors="strict")
+    except UnicodeDecodeError as error:
+        raise _GitError("WP-004B transition target is not UTF-8") from error
+
+    transitions = _wp004b_task_transitions(rows)
+
+    transition_targets = frozenset((*transitions, *transitions.values()))
+
+    def transition_links(
+        value: str,
+    ) -> list[tuple[tuple[int, int], str, Path]]:
+        observed: list[tuple[tuple[int, int], str, Path]] = []
+        for span in _rendered_inline_link_destination_spans(value):
+            destination = value[slice(*span)]
+            resolved = _resolve_markdown_destination(path, destination)
+            if resolved in transition_targets:
+                observed.append((span, destination, resolved))
+        return observed
+
+    baseline_links = transition_links(baseline_text)
+    proposed_links = transition_links(text)
+    if baseline_links and len(baseline_links) != len(proposed_links):
+        raise _GitError("WP-004B rendered link membership differs")
+
+    replacements: list[tuple[int, int, str]] = []
+    if not baseline_links:
+        inverse_transitions = {target: source for source, target in transitions.items()}
+        for proposed_span, proposed_destination, proposed_target in proposed_links:
+            if proposed_target in transitions:
+                continue
+            source_target = inverse_transitions.get(proposed_target)
+            if source_target is None:
+                raise _GitError("WP-004B rendered link edge is undeclared")
+            source_relative = os.path.relpath(
+                source_target.as_posix(), path.parent.as_posix()
+            )
+            if proposed_destination.startswith("<"):
+                closing = proposed_destination.find(">")
+                if closing < 0:
+                    raise _GitError("WP-004B rendered link edge is malformed")
+                replacement = (
+                    f"<{source_relative}>" + proposed_destination[closing + 1 :]
+                )
+            else:
+                split = re.search(r"[ \t\r\n]", proposed_destination)
+                suffix = proposed_destination[split.start() :] if split else ""
+                replacement = source_relative + suffix
+            replacements.append((*proposed_span, replacement))
+    else:
+        for baseline_link, proposed_link in zip(
+            baseline_links, proposed_links, strict=True
+        ):
+            _baseline_span, baseline_destination, baseline_target = baseline_link
+            proposed_span, proposed_destination, proposed_target = proposed_link
+            if baseline_destination == proposed_destination:
+                continue
+            if transitions.get(baseline_target) != proposed_target:
+                raise _GitError("WP-004B rendered link edge is undeclared")
+            replacements.append((*proposed_span, baseline_destination))
+
+    for start, end, replacement in reversed(replacements):
+        text = text[:start] + replacement + text[end:]
     return text.encode("utf-8")
 
 
@@ -2962,8 +3140,386 @@ def _wp004b_support_profile_projection(
     }
 
 
+def _wp004b_requirement_split_profile(
+    root_profile: Mapping[str, object], profile_id: str
+) -> dict[str, object]:
+    """Derive one retired Requirement form from the terminal Package owner."""
+
+    if profile_id not in WP004B_SUPPORT_ONLY_PROFILE_IDS:
+        raise ContractError(
+            "RIA-BOUNDARY",
+            TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix(),
+            "support-only profile identity differs",
+        )
+    frontmatter = copy.deepcopy(root_profile.get("requiredFrontmatter"))
+    if not isinstance(frontmatter, dict):
+        raise ContractError(
+            "RIA-BOUNDARY",
+            REGISTRY_PATH.as_posix(),
+            "Requirement Package frontmatter authority is unavailable",
+        )
+    for key in ("allowed", "order"):
+        values = frontmatter.get(key)
+        if not isinstance(values, list):
+            raise ContractError(
+                "RIA-BOUNDARY",
+                REGISTRY_PATH.as_posix(),
+                "Requirement Package frontmatter authority is unavailable",
+            )
+        frontmatter[key] = [
+            value
+            for value in values
+            if value not in {"superseded_by", "supersedes"}
+        ]
+
+    split = {
+        "sdlc/prd": {
+            "route": root_profile.get("pathPattern"),
+            "headings": root_profile.get("requiredSections"),
+            "template": root_profile.get("template"),
+            "requiredColumns": [
+                "Requirement ID",
+                "Acceptance criterion",
+                "Downstream owner",
+            ],
+            "identifierColumns": [
+                {"column": "Requirement ID", "kind": "requirement"}
+            ],
+            "sourceLinkColumn": None,
+            "allowedSourceProfileIds": [],
+            "allowedTargetProfileIds": [
+                "sdlc/srs",
+                "sdlc/interface",
+                "sdlc/ad",
+                "sdlc/spec",
+            ],
+        },
+        "sdlc/srs": {
+            "route": (
+                r"^docs/01\.requirements/srs-[0-9]{4}-[a-z][a-z0-9]*"
+                r"(?:-[a-z0-9]+)*\.md$"
+            ),
+            "headings": {
+                "required": [
+                    "Overview",
+                    "System Context",
+                    "Functional Requirements",
+                    "Non-Functional Requirements",
+                    "Interface Requirements",
+                    "Verification",
+                    "Traceability",
+                ],
+                "allowed": [
+                    "Overview",
+                    "System Context",
+                    "Functional Requirements",
+                    "Non-Functional Requirements",
+                    "Interface Requirements",
+                    "Verification",
+                    "Traceability",
+                ],
+            },
+            "template": "docs/99.templates/templates/sdlc/requirements/srs.template.md",
+            "requiredColumns": [
+                "Upstream requirement",
+                "System requirement",
+                "Downstream owner",
+            ],
+            "identifierColumns": [
+                {"column": "Upstream requirement", "kind": "requirement"},
+                {"column": "System requirement", "kind": "requirement"},
+            ],
+            "sourceLinkColumn": "Upstream requirement",
+            "allowedSourceProfileIds": ["sdlc/prd"],
+            "allowedTargetProfileIds": [
+                "sdlc/interface",
+                "sdlc/ad",
+                "sdlc/spec",
+            ],
+        },
+        "sdlc/interface": {
+            "route": (
+                r"^docs/01\.requirements/ifc-[0-9]{4}-[a-z0-9]+"
+                r"(?:-[a-z0-9]+)*\.md$"
+            ),
+            "headings": {
+                "required": [
+                    "Overview",
+                    "Interface Boundary",
+                    "Requirements",
+                    "Data Contract",
+                    "Error Handling",
+                    "Verification",
+                    "Traceability",
+                ],
+                "allowed": [
+                    "Overview",
+                    "Interface Boundary",
+                    "Requirements",
+                    "Data Contract",
+                    "Error Handling",
+                    "Verification",
+                    "Traceability",
+                ],
+            },
+            "template": "docs/99.templates/templates/sdlc/requirements/interface.template.md",
+            "requiredColumns": [
+                "Upstream requirement",
+                "Interface requirement",
+                "Downstream owner",
+            ],
+            "identifierColumns": [
+                {"column": "Upstream requirement", "kind": "requirement"},
+                {"column": "Interface requirement", "kind": "requirement"},
+            ],
+            "sourceLinkColumn": "Upstream requirement",
+            "allowedSourceProfileIds": ["sdlc/prd", "sdlc/srs"],
+            "allowedTargetProfileIds": ["sdlc/ad", "sdlc/spec"],
+        },
+    }[profile_id]
+    body = {
+        "section": "Traceability",
+        "tableHeading": "Lifecycle Traceability",
+        "enforcedStatuses": ["draft", "active"],
+        "requiredColumns": split["requiredColumns"],
+        "identifierColumns": split["identifierColumns"],
+        "sourceLinkColumn": split["sourceLinkColumn"],
+        "targetLinkColumn": "Downstream owner",
+        "allowedSourceProfileIds": split["allowedSourceProfileIds"],
+        "allowedTargetProfileIds": split["allowedTargetProfileIds"],
+        "reciprocalEvidence": True,
+        "allowExplicitExclusion": True,
+    }
+    return {
+        "id": profile_id,
+        "class": root_profile.get("class"),
+        "mode": root_profile.get("mode"),
+        "routes": [{"kind": "regex", "value": split["route"]}],
+        "frontmatter": frontmatter,
+        "statusDomain": ["draft", "active", "done", "archived"],
+        "headings": split["headings"],
+        "template": split["template"],
+        "sourceProfileIds": [],
+        "placeholderPolicy": root_profile.get("placeholderPolicy"),
+        "appendContract": None,
+        "bodyContract": body,
+    }
+
+
+def _wp004b_expand_requirement_ids(
+    value: object, *, order: Sequence[str] = WP004B_SUPPORT_PROFILE_ORDER
+) -> object:
+    if isinstance(value, list):
+        expanded: list[object] = []
+        for item in value:
+            if item == WP004B_ROOT_ONLY_PROFILE_ID:
+                expanded.extend(order)
+            else:
+                expanded.append(_wp004b_expand_requirement_ids(item, order=order))
+        return expanded
+    if isinstance(value, Mapping):
+        return {
+            key: _wp004b_expand_requirement_ids(item, order=order)
+            for key, item in value.items()
+        }
+    return value
+
+
+def _wp004b_support_document_contracts(
+    authority: Mapping[str, object], route_contract: Mapping[str, object]
+) -> dict[str, object]:
+    contracts = copy.deepcopy(route_contract.get("documentContracts"))
+    lineage = authority.get("programLineage")
+    if not isinstance(contracts, dict) or not isinstance(lineage, Mapping):
+        raise ContractError(
+            "RIA-BOUNDARY",
+            ROUTE_CONTRACT_PATH.as_posix(),
+            "document contract authority is unavailable",
+        )
+
+    value_contracts = contracts.get("valueContracts")
+    if not isinstance(value_contracts, list):
+        raise ContractError("RIA-BOUNDARY", ROUTE_CONTRACT_PATH.as_posix(), "value contract authority differs")
+    removed_value_ids = {
+        "adr-relation-identity",
+        "requirement-package-identity",
+        "template-adr-relation-identity",
+    }
+    projected_values: list[object] = []
+    for record in value_contracts:
+        if not isinstance(record, dict) or not isinstance(record.get("id"), str):
+            raise ContractError("RIA-BOUNDARY", ROUTE_CONTRACT_PATH.as_posix(), "value contract authority differs")
+        if record["id"] in removed_value_ids:
+            continue
+        projected = copy.deepcopy(record)
+        if record["id"] == "authored-terminal-identity":
+            profile_ids = list(record["profileIds"])
+            insert_at = profile_ids.index("sdlc/spec")
+            profile_ids.insert(insert_at, "sdlc/adr")
+            projected["profileIds"] = [
+                *WP004B_SUPPORT_PROFILE_ORDER,
+                *profile_ids,
+            ]
+        elif record["id"] == "template-terminal-authored":
+            profile_ids = list(record["profileIds"])
+            insert_at = profile_ids.index("template/sdlc/spec")
+            profile_ids.insert(insert_at, "template/sdlc/adr")
+            projected["profileIds"] = profile_ids
+        projected_values.append(projected)
+    contracts["valueContracts"] = projected_values
+
+    role_decisions = contracts.get("roleDecisions")
+    if not isinstance(role_decisions, list):
+        raise ContractError("RIA-BOUNDARY", ROUTE_CONTRACT_PATH.as_posix(), "role decision authority differs")
+    projected_roles: list[object] = []
+    split_roles = (
+        ("sdlc/prd", "product-requirement"),
+        ("sdlc/srs", "system-requirement"),
+        ("sdlc/interface", "interface-requirement"),
+    )
+    for record in role_decisions:
+        if isinstance(record, Mapping) and record.get("profileIds") == [WP004B_ROOT_ONLY_PROFILE_ID]:
+            for profile_id, role in split_roles:
+                projected = copy.deepcopy(record)
+                projected["profileIds"] = [profile_id]
+                projected["role"] = role
+                projected_roles.append(projected)
+        else:
+            projected_roles.append(record)
+    contracts["roleDecisions"] = projected_roles
+
+    admission_policies = contracts.get("admissionPolicies")
+    if not isinstance(admission_policies, list):
+        raise ContractError("RIA-BOUNDARY", ROUTE_CONTRACT_PATH.as_posix(), "admission policy authority differs")
+    for record in admission_policies:
+        if isinstance(record, dict) and record.get("id") == "authored-draft-only":
+            record["profileIds"] = _wp004b_expand_requirement_ids(
+                record.get("profileIds"),
+                order=("sdlc/prd", "sdlc/interface", "sdlc/srs"),
+            )
+
+    evidence_predicates = contracts.get("evidencePredicates")
+    if not isinstance(evidence_predicates, list):
+        raise ContractError("RIA-BOUNDARY", ROUTE_CONTRACT_PATH.as_posix(), "evidence predicate authority differs")
+    for record in evidence_predicates:
+        if isinstance(record, dict) and record.get("id") == "activate-self-body":
+            record["profileEdges"] = _wp004b_expand_requirement_ids(
+                record.get("profileEdges")
+            )
+            edges: list[object] = []
+            for edge in record["profileEdges"]:
+                if isinstance(edge, Mapping) and edge.get("profileId") == WP004B_ROOT_ONLY_PROFILE_ID:
+                    for profile_id in WP004B_SUPPORT_PROFILE_ORDER:
+                        projected = dict(edge)
+                        projected["profileId"] = profile_id
+                        edges.append(projected)
+                else:
+                    edges.append(edge)
+            record["profileEdges"] = edges
+    product_completion = {
+        "id": "complete-product-program",
+        "profileEdges": [
+            {"profileId": profile_id, "from": "active", "to": "done"}
+            for profile_id in WP004B_SUPPORT_PROFILE_ORDER
+        ],
+        "evidence": [
+            {
+                "profileIds": ["sdlc/spec"],
+                "states": ["done"],
+                "minimum": 1,
+                "maximum": None,
+            }
+        ],
+        "relationship": "program-lineage",
+        "cardinality": {"minimum": 1, "maximum": None},
+        "sameDiff": "target-and-last-relation-changed",
+        "bodyRequirement": "body-contract",
+        "capabilities": ["program-lineage-closed", "same-diff"],
+    }
+    insert_at = next(
+        index
+        for index, record in enumerate(evidence_predicates)
+        if isinstance(record, Mapping) and record.get("id") == "accept-architecture"
+    )
+    evidence_predicates.insert(insert_at, product_completion)
+
+    lifecycle_contracts = copy.deepcopy(lineage.get("transitionLifecycleContracts"))
+    if not isinstance(lifecycle_contracts, list):
+        raise ContractError("RIA-BOUNDARY", REGISTRY_PATH.as_posix(), "lifecycle contract authority differs")
+    lifecycle_contracts[0] = {
+        "id": "product",
+        "profileIds": list(WP004B_SUPPORT_PROFILE_ORDER),
+        "terminalStates": ["done"],
+        "edges": [
+            {"from": "draft", "to": "active", "predicateId": "activate-self-body"},
+            {"from": "active", "to": "done", "predicateId": "complete-product-program"},
+        ],
+    }
+    for record in lifecycle_contracts:
+        if isinstance(record, dict) and record.get("id") == "archive-migration":
+            record["terminalStates"] = ["accepted"]
+    contracts["lifecycleContracts"] = lifecycle_contracts
+    return contracts
+
+
+def _wp004b_support_top_level_projection(
+    authority: Mapping[str, object], route_contract: Mapping[str, object]
+) -> dict[str, object]:
+    lineage = copy.deepcopy(authority.get("programLineage"))
+    if not isinstance(lineage, dict):
+        raise ContractError("RIA-BOUNDARY", REGISTRY_PATH.as_posix(), "program lineage authority differs")
+    lineage.pop("lifecycleDomains", None)
+    lineage.pop("transitionLifecycleContracts", None)
+    lineage = _wp004b_expand_requirement_ids(lineage)
+
+    standalone = _wp004b_expand_requirement_ids(
+        copy.deepcopy(authority.get("standaloneExecutions"))
+    )
+    if not isinstance(standalone, list):
+        raise ContractError("RIA-BOUNDARY", REGISTRY_PATH.as_posix(), "standalone execution authority differs")
+    for record in standalone:
+        if isinstance(record, dict) and record.get("spec") == "0053":
+            record["task"] = (
+                "docs/03.specs/0053-workspace-engineering-research-pack-consolidation/tasks.md"
+            )
+
+    governance = copy.deepcopy(route_contract.get("governanceCurrentOwners"))
+    if not isinstance(governance, dict) or not isinstance(governance.get("paths"), list):
+        raise ContractError("RIA-BOUNDARY", ROUTE_CONTRACT_PATH.as_posix(), "governance owner authority differs")
+    governance["paths"] = [
+        path
+        for path in governance["paths"]
+        if path not in WP004B_SUPPORT_GOVERNANCE_EXCLUSIONS
+    ]
+    route_keys = (
+        "archiveContractVersion",
+        "archiveNamespaces",
+        "baseline",
+        "referenceCurrentPacks",
+        "retiredRouteEvidence",
+        "routeState",
+        "target",
+    )
+    expected = {
+        "$schema": WP004B_SUPPORT_SCHEMA,
+        "$id": WP004B_SUPPORT_ID,
+        "schemaVersion": authority.get("schemaVersion"),
+        "programLineage": lineage,
+        "standaloneExecutions": standalone,
+        "governanceCurrentOwners": governance,
+        "documentContracts": _wp004b_support_document_contracts(
+            authority, route_contract
+        ),
+    }
+    for key in route_keys:
+        expected[key] = copy.deepcopy(route_contract.get(key))
+    return expected
+
+
 def _validate_wp004b_support_projection(
-    authority: Mapping[str, object], projection: Mapping[str, object]
+    authority: Mapping[str, object],
+    route_contract: Mapping[str, object],
+    projection: Mapping[str, object],
 ) -> None:
     """Require exact shared-profile parity across the finite WP-004B transition."""
 
@@ -3006,6 +3562,22 @@ def _validate_wp004b_support_projection(
             TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix(),
             "support-only profile transition differs",
         )
+    root_requirement = root_profiles.get(WP004B_ROOT_ONLY_PROFILE_ID)
+    if root_requirement is None:
+        raise ContractError(
+            "RIA-BOUNDARY",
+            REGISTRY_PATH.as_posix(),
+            "Requirement Package authority is unavailable",
+        )
+    for profile_id in sorted(WP004B_SUPPORT_ONLY_PROFILE_IDS):
+        if support_profiles[profile_id] != _wp004b_requirement_split_profile(
+            root_requirement, profile_id
+        ):
+            raise ContractError(
+                "RIA-BOUNDARY",
+                TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix(),
+                f"support-only profile semantic projection differs: {profile_id}",
+            )
     for profile_id in sorted(set(root_profiles) & set(support_profiles)):
         if support_profiles[profile_id] != _wp004b_support_profile_projection(
             root_profiles[profile_id]
@@ -3015,6 +3587,17 @@ def _validate_wp004b_support_projection(
                 TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix(),
                 f"shared profile semantic projection differs: {profile_id}",
             )
+    support_top_level = {
+        key: value for key, value in projection.items() if key != "profiles"
+    }
+    if support_top_level != _wp004b_support_top_level_projection(
+        authority, route_contract
+    ):
+        raise ContractError(
+            "RIA-BOUNDARY",
+            TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix(),
+            "support top-level semantic projection differs",
+        )
 
 
 def _load_taxonomy_archive_transition(
@@ -5802,6 +6385,129 @@ def _projection_mask(
     return text.encode("utf-8")
 
 
+def _wp004b_projection_router_alternatives(
+    path: Path,
+    projection: Mapping[str, object],
+    rows: Sequence[Mapping[str, object]],
+) -> dict[str, str]:
+    legacy_targets = _WP004B_PROJECTION_LEGACY_TARGETS.get(path.as_posix())
+    if legacy_targets is None:
+        return {}
+    expected = _PROJECTION_ALLOWLIST.get(path.as_posix())
+    if expected is None or dict(projection) != {"path": path.as_posix(), **expected}:
+        raise _GitError("WP-004B projected edge authority differs")
+    replacements = projection.get("literalReplacements")
+    if not isinstance(replacements, list):
+        raise _GitError("WP-004B projected edge authority is malformed")
+    by_source = {
+        replacement.get("from"): replacement
+        for replacement in replacements
+        if isinstance(replacement, Mapping)
+        and isinstance(replacement.get("from"), str)
+    }
+    if len(by_source) != len(replacements):
+        raise _GitError("WP-004B projected edge authority is ambiguous")
+
+    transitions = _wp004b_task_transitions(rows)
+    alternatives: dict[str, str] = {}
+    for source, legacy_target in legacy_targets.items():
+        replacement = by_source.get(source)
+        if replacement is None or replacement.get("count") != 1:
+            raise _GitError("WP-004B projected edge authority is incomplete")
+        terminal_target = replacement.get("to")
+        if not isinstance(terminal_target, str):
+            raise _GitError("WP-004B projected terminal edge is malformed")
+
+        legacy_links: list[tuple[tuple[int, int], str, Path]] = []
+        for span in _rendered_inline_link_destination_spans(legacy_target):
+            destination = legacy_target[slice(*span)]
+            resolved = _resolve_markdown_destination(path, destination)
+            if resolved in transitions:
+                legacy_links.append((span, destination, resolved))
+        if len(legacy_links) != 1:
+            raise _GitError("WP-004B projected legacy edge is ambiguous")
+        span, legacy_destination, legacy_path = legacy_links[0]
+        router_path = transitions[legacy_path]
+
+        terminal_edges = []
+        for terminal_span in _rendered_inline_link_destination_spans(terminal_target):
+            destination = terminal_target[slice(*terminal_span)]
+            resolved = _resolve_markdown_destination(path, destination)
+            if (
+                resolved.parent == router_path.parent / "tasks"
+                and re.fullmatch(r"tsk-[0-9]{4}-[a-z0-9-]+\.md", resolved.name)
+                is not None
+            ):
+                terminal_edges.append(resolved)
+        if len(terminal_edges) != 1:
+            raise _GitError("WP-004B projected terminal edge is ambiguous")
+
+        router_relative = os.path.relpath(
+            router_path.as_posix(), path.parent.as_posix()
+        )
+        if legacy_destination.startswith("<"):
+            closing = legacy_destination.find(">")
+            if closing < 0:
+                raise _GitError("WP-004B projected legacy edge is malformed")
+            router_destination = (
+                f"<{router_relative}>" + legacy_destination[closing + 1 :]
+            )
+        else:
+            split = re.search(r"[ \t\r\n]", legacy_destination)
+            suffix = legacy_destination[split.start() :] if split else ""
+            router_destination = router_relative + suffix
+        router_target = (
+            legacy_target[: span[0]]
+            + router_destination
+            + legacy_target[span[1] :]
+        )
+        alternatives[source] = router_target
+    return alternatives
+
+
+def _wp004b_projection_mask(
+    payload: bytes,
+    path: Path,
+    projection: Mapping[str, object],
+    rows: Sequence[Mapping[str, object]],
+    *,
+    state: str,
+) -> bytes:
+    if state != "proposed" or not rows:
+        return _projection_mask(payload, path, projection, state=state)
+    alternatives = _wp004b_projection_router_alternatives(path, projection, rows)
+    if not alternatives:
+        return _projection_mask(payload, path, projection, state=state)
+    try:
+        text = payload.decode("utf-8", "strict")
+    except UnicodeDecodeError as error:
+        raise _GitError("projected Markdown is not UTF-8") from error
+    projected = dict(projection)
+    replacements = projection.get("literalReplacements")
+    assert isinstance(replacements, list)
+    projected_replacements: list[object] = []
+    for replacement in replacements:
+        if not isinstance(replacement, Mapping):
+            projected_replacements.append(replacement)
+            continue
+        source = replacement.get("from")
+        terminal_target = replacement.get("to")
+        router_target = alternatives.get(source) if isinstance(source, str) else None
+        if router_target is None or not isinstance(terminal_target, str):
+            projected_replacements.append(dict(replacement))
+            continue
+        terminal_count = text.count(terminal_target)
+        router_count = text.count(router_target)
+        if (terminal_count, router_count) == (1, 0):
+            projected_replacements.append(dict(replacement))
+        elif (terminal_count, router_count) == (0, 1):
+            projected_replacements.append({**replacement, "to": router_target})
+        else:
+            raise _GitError("WP-004B projected terminal/router edge differs")
+    projected["literalReplacements"] = projected_replacements
+    return _projection_mask(payload, path, projected, state=state)
+
+
 def _transition_record(contract: Mapping[str, object]) -> Mapping[str, object] | None:
     records = contract.get("baselineTransitions")
     if (
@@ -5998,20 +6704,20 @@ def validate_overlay_guards(
             proposed = context.proposed_bytes[path]
             raw_baseline = baseline
             raw_proposed = proposed
-            try:
-                proposed = _wp004b_transition_link_mask(
-                    proposed, path, wp004b_rows
-                )
-            except _GitError:
-                findings.append(
-                    Finding(
-                        "RIA-OVERLAY",
-                        path.as_posix(),
-                        "WP-004B transition target is malformed",
-                    )
-                )
-                continue
             if path == transition_path:
+                try:
+                    proposed = _wp004b_transition_link_mask(
+                        proposed, path, wp004b_rows, baseline=baseline
+                    )
+                except _GitError:
+                    findings.append(
+                        Finding(
+                            "RIA-OVERLAY",
+                            path.as_posix(),
+                            "WP-004B transition target is malformed",
+                        )
+                    )
+                    continue
                 digest = transition.get("targetSha256") if transition else None
                 length = transition.get("targetByteLength") if transition else None
                 if (
@@ -6031,16 +6737,18 @@ def validate_overlay_guards(
                 continue
             try:
                 if projection is not None:
-                    baseline = _projection_mask(
+                    baseline = _wp004b_projection_mask(
                         baseline,
                         path,
                         projection,
+                        wp004b_rows,
                         state="baseline",
                     )
-                    proposed = _projection_mask(
+                    proposed = _wp004b_projection_mask(
                         proposed,
                         path,
                         projection,
+                        wp004b_rows,
                         state="proposed",
                     )
             except _GitError:
@@ -6049,6 +6757,19 @@ def validate_overlay_guards(
                         "RIA-OVERLAY",
                         path.as_posix(),
                         "declared projection is malformed",
+                    )
+                )
+                continue
+            try:
+                proposed = _wp004b_transition_link_mask(
+                    proposed, path, wp004b_rows, baseline=baseline
+                )
+            except _GitError:
+                findings.append(
+                    Finding(
+                        "RIA-OVERLAY",
+                        path.as_posix(),
+                        "WP-004B transition target is malformed",
                     )
                 )
                 continue
@@ -6104,20 +6825,22 @@ def validate_overlay_guards(
             proposed = _proposed_path(root.absolute(), path, proposed_oid, runner)
             raw_baseline = baseline
             raw_proposed = proposed
-            proposed = _wp004b_transition_link_mask(
-                proposed, path, wp004b_rows
-            )
-            baseline = _projection_mask(
+            baseline = _wp004b_projection_mask(
                 baseline,
                 path,
                 projection,
+                wp004b_rows,
                 state="baseline",
             )
-            proposed = _projection_mask(
+            proposed = _wp004b_projection_mask(
                 proposed,
                 path,
                 projection,
+                wp004b_rows,
                 state="proposed",
+            )
+            proposed = _wp004b_transition_link_mask(
+                proposed, path, wp004b_rows, baseline=baseline
             )
         except (ContractError, _GitError):
             findings.append(

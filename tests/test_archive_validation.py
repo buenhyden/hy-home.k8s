@@ -23,6 +23,7 @@ sys.path.insert(0, str(ROOT))
 
 from scripts.archive_recovery import (  # noqa: E402
     ARCHIVE_ENVELOPE_MARKER,
+    require_commits_reachable_from_durable_refs,
     recover_git_blob,
     render_fixture_archive_envelope,
 )
@@ -829,6 +830,305 @@ class ArchiveValidationTest(unittest.TestCase):
                     (unreachable,),
                 )
 
+    def test_recovery_requires_an_allowed_named_durable_ref(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="durable-ref-recovery-") as temporary:
+            root = Path(temporary)
+            fixture = GitFixture(root)
+            source, _blobs = fixture.commit_many({"legacy.md": b"legacy\n"})
+            short_branch = fixture.run(
+                "symbolic-ref", "--short", "HEAD"
+            ).decode("ascii").strip()
+            durable_ref = f"refs/heads/{short_branch}"
+
+            require_commits_reachable_from_durable_refs(
+                root.resolve(),
+                (source,),
+                (durable_ref,),
+            )
+            fixture.run("checkout", "--quiet", "--detach", source)
+
+            with self.assertRaisesRegex(
+                archive_validation.ArchiveContractError,
+                "RECOVERY-DURABLE-REF",
+            ):
+                archive_validation._require_commits_reachable(  # noqa: SLF001
+                    root.resolve(),
+                    (source,),
+                )
+
+            fixture.run("branch", "-D", short_branch)
+            with self.assertRaisesRegex(
+                archive_validation.ArchiveContractError,
+                "RECOVERY-DURABLE-REF",
+            ):
+                require_commits_reachable_from_durable_refs(
+                    root.resolve(),
+                    (source,),
+                    (durable_ref,),
+                )
+
+    def test_recovery_rejects_wrong_or_untrusted_ref_namespaces(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="wrong-durable-ref-") as temporary:
+            root = Path(temporary)
+            fixture = GitFixture(root)
+            source, _blobs = fixture.commit_many({"legacy.md": b"legacy\n"})
+            source_branch = fixture.run(
+                "symbolic-ref", "--short", "HEAD"
+            ).decode("ascii").strip()
+            fixture.run("checkout", "--quiet", "--orphan", "unrelated")
+            fixture.commit_many({"unrelated.md": b"unrelated\n"})
+
+            with self.assertRaisesRegex(
+                archive_validation.ArchiveContractError,
+                "RECOVERY-OBJECT-UNREACHABLE",
+            ):
+                require_commits_reachable_from_durable_refs(
+                    root.resolve(),
+                    (source,),
+                    ("refs/heads/unrelated",),
+                )
+            for candidate in ("HEAD", f"refs/tags/{source_branch}"):
+                with self.subTest(candidate=candidate), self.assertRaisesRegex(
+                    archive_validation.ArchiveContractError,
+                    "RECOVERY-DURABLE-REF",
+                ):
+                    require_commits_reachable_from_durable_refs(
+                        root.resolve(),
+                        (source,),
+                        (candidate,),
+                    )
+
+    @staticmethod
+    def _mig0004_current_fixture(root: Path) -> tuple[GitFixture, tuple[dict[str, object], ...]]:
+        migration_path = (
+            "docs/98.archive/migrations/"
+            "0004-document-authority-convergence.md"
+        )
+        rows = archive_validation.parse_pinned_migration_control(
+            migration_path,
+            (ROOT / migration_path).read_bytes(),
+        )
+        files: dict[str, bytes] = {}
+        for row in rows:
+            target = (
+                row["stable_path"]
+                if row["action"] == "moved"
+                else row["replacement"]
+            )
+            assert isinstance(target, str)
+            files[target] = (ROOT / target).read_bytes()
+        for task in ROOT.glob("docs/03.specs/*/tasks/tsk-*.md"):
+            files[task.relative_to(ROOT).as_posix()] = task.read_bytes()
+        fixture = GitFixture(root)
+        for relative, payload in files.items():
+            destination = root / relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(payload)
+        fixture.run("--literal-pathspecs", "add", "--", *files)
+        return fixture, rows
+
+    def test_mig0004_targets_and_tasks_are_bound_to_stage_zero(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="mig0004-stage-zero-") as temporary:
+            root = Path(temporary)
+            fixture, rows = self._mig0004_current_fixture(root)
+            archive_validation._validate_mig0004_rows_and_targets(  # noqa: SLF001
+                root.resolve(), rows
+            )
+
+            target = str(rows[0]["replacement"])
+            fixture.run("rm", "--cached", "--quiet", "--", target)
+            self.assertTrue((root / target).is_file())
+            with self.assertRaisesRegex(
+                archive_validation.ArchiveContractError,
+                "RECOVERY-MIGRATION-TARGET",
+            ):
+                archive_validation._validate_mig0004_rows_and_targets(  # noqa: SLF001
+                    root.resolve(), rows
+                )
+
+    def test_mig0004_rejects_an_index_deleted_untracked_task(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="mig0004-untracked-task-") as temporary:
+            root = Path(temporary)
+            fixture, rows = self._mig0004_current_fixture(root)
+            task = sorted(root.glob("docs/03.specs/*/tasks/tsk-*.md"))[0]
+            relative = task.relative_to(root).as_posix()
+            fixture.run("rm", "--cached", "--quiet", "--", relative)
+            self.assertTrue(task.is_file())
+
+            with self.assertRaisesRegex(
+                archive_validation.ArchiveContractError,
+                "RECOVERY-MIGRATION-TASK",
+            ):
+                archive_validation._validate_mig0004_rows_and_targets(  # noqa: SLF001
+                    root.resolve(), rows
+                )
+
+    def test_mig0004_rejects_oversized_current_consumers_before_reading(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="mig0004-oversize-consumer-") as temporary:
+            root = Path(temporary)
+            fixture, rows = self._mig0004_current_fixture(root)
+            consumer = root / "docs/03.specs/9999-oversized.md"
+            consumer.write_bytes(
+                b"x" * (archive_validation.CURRENT_MARKDOWN_MAX_BYTES + 1)
+            )
+            fixture.run("add", "--", consumer.relative_to(root).as_posix())
+
+            with self.assertRaisesRegex(
+                archive_validation.ArchiveContractError,
+                "RECOVERY-RESOURCE-LIMIT",
+            ):
+                archive_validation._validate_mig0004_rows_and_targets(  # noqa: SLF001
+                    root.resolve(), rows
+                )
+
+    def test_bounded_current_reader_rejects_symlinks_and_replacement_race(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="bounded-current-reader-") as temporary:
+            root = Path(temporary).resolve()
+            parent = root / "docs" / "pkg"
+            parent.mkdir(parents=True)
+            target = parent / "record.md"
+            target.write_bytes(b"stable\n")
+
+            self.assertEqual(
+                archive_validation.read_worktree_regular_bounded(
+                    root, "docs/pkg/record.md", max_bytes=32
+                ),
+                b"stable\n",
+            )
+            target.unlink()
+            target.symlink_to(root / "outside.md")
+            with self.assertRaisesRegex(
+                archive_validation.ArchiveContractError,
+                "RECOVERY-MIGRATION-TARGET",
+            ):
+                archive_validation.read_worktree_regular_bounded(
+                    root, "docs/pkg/record.md", max_bytes=32
+                )
+
+            target.unlink()
+            target.write_bytes(b"stable\n")
+            real_parent = root / "real-pkg"
+            parent.rename(real_parent)
+            parent.symlink_to(real_parent, target_is_directory=True)
+            with self.assertRaisesRegex(
+                archive_validation.ArchiveContractError,
+                "RECOVERY-MIGRATION-TARGET",
+            ):
+                archive_validation.read_worktree_regular_bounded(
+                    root, "docs/pkg/record.md", max_bytes=32
+                )
+
+            parent.unlink()
+            real_parent.rename(parent)
+            original_read = archive_validation.os.read
+            replaced = False
+
+            def replace_after_read(descriptor: int, size: int) -> bytes:
+                nonlocal replaced
+                chunk = original_read(descriptor, size)
+                if chunk and not replaced:
+                    replacement = parent / "replacement.md"
+                    replacement.write_bytes(b"changed\n")
+                    replacement.replace(target)
+                    replaced = True
+                return chunk
+
+            with mock.patch.object(
+                archive_validation.os,
+                "read",
+                side_effect=replace_after_read,
+            ), self.assertRaisesRegex(
+                archive_validation.ArchiveContractError,
+                "RECOVERY-MIGRATION-TARGET",
+            ):
+                archive_validation.read_worktree_regular_bounded(
+                    root, "docs/pkg/record.md", max_bytes=32
+                )
+
+    def test_stage_zero_markdown_inventory_has_file_and_utf8_budgets(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="staged-markdown-budget-") as temporary:
+            root = Path(temporary)
+            fixture = GitFixture(root)
+            invalid = "docs/03.specs/9999-invalid/spec.md"
+            target = root / invalid
+            target.parent.mkdir(parents=True)
+            target.write_bytes(b"# invalid\n\xff")
+            fixture.run("add", "--", invalid)
+            inventory = archive_validation._staged_regular_blob_inventory(  # noqa: SLF001
+                root.resolve()
+            )
+            with self.assertRaisesRegex(
+                archive_validation.ArchiveContractError,
+                "RECOVERY-NON-UTF8",
+            ):
+                archive_validation._staged_markdown_documents(  # noqa: SLF001
+                    root.resolve(), inventory, (invalid,)
+                )
+
+        with tempfile.TemporaryDirectory(prefix="staged-markdown-count-") as temporary:
+            root = Path(temporary)
+            fixture = GitFixture(root)
+            paths = tuple(
+                f"docs/03.specs/9999-count/{index:04d}.md"
+                for index in range(archive_validation.CURRENT_MARKDOWN_MAX_FILES + 1)
+            )
+            for relative in paths:
+                target = root / relative
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(b"# bounded\n")
+            fixture.run("add", "--", *paths)
+            with self.assertRaisesRegex(
+                archive_validation.ArchiveContractError,
+                "RECOVERY-RESOURCE-LIMIT",
+            ):
+                archive_validation._staged_regular_blob_inventory(  # noqa: SLF001
+                    root.resolve()
+                )
+
+    def test_staged_markdown_batches_share_one_global_byte_budget(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="staged-global-budget-") as temporary:
+            root = Path(temporary)
+            fixture = GitFixture(root)
+            paths: list[str] = []
+            for index, marker in enumerate((b"a", b"b", b"c", b"d"), start=1):
+                relative = f"docs/03.specs/9999-budget/{index:04d}.md"
+                target = root / relative
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(marker * 30)
+                paths.append(relative)
+            fixture.run("add", "--", *paths)
+            inventory = archive_validation._staged_regular_blob_inventory(  # noqa: SLF001
+                root.resolve()
+            )
+            real_reader = archive_validation._read_git_blob_batch  # noqa: SLF001
+            aggregate_limits: list[int] = []
+
+            def read_batch(*args, **kwargs):
+                aggregate_limits.append(kwargs["aggregate_limit"])
+                return real_reader(*args, **kwargs)
+
+            with mock.patch.object(
+                archive_validation,
+                "MAX_GIT_BATCH_OBJECTS",
+                2,
+            ), mock.patch.object(
+                archive_validation,
+                "CURRENT_MARKDOWN_TOTAL_BYTES",
+                100,
+            ), mock.patch.object(
+                archive_validation,
+                "_read_git_blob_batch",
+                side_effect=read_batch,
+            ), self.assertRaisesRegex(
+                archive_validation.ArchiveContractError,
+                "RECOVERY-RESOURCE-LIMIT",
+            ):
+                archive_validation._staged_markdown_documents(  # noqa: SLF001
+                    root.resolve(), inventory, tuple(paths)
+                )
+
+            self.assertEqual(aggregate_limits, [100, 40])
+
     def test_repository_inventory_rejects_unknown_or_drifted_migration_profiles(
         self,
     ) -> None:
@@ -1094,7 +1394,7 @@ class ArchiveValidationTest(unittest.TestCase):
             command = args[0] if args else kwargs.get("args", ())
             if command and command[0] == "git":
                 git_calls += 1
-                if git_calls > 39:
+                if git_calls > 64:
                     raise AssertionError("repository archive exceeded Git subprocess budget")
             return real_popen(*args, **kwargs)
 
@@ -1106,9 +1406,10 @@ class ArchiveValidationTest(unittest.TestCase):
         elapsed = time.monotonic() - started
 
         self.assertTrue(report.valid, report.diagnostics)
-        # MIG-0004 adds bounded index-byte, identity, reachability, exact
-        # commit:path, and content-batch calls without per-row subprocesses.
-        self.assertLessEqual(git_calls, 39)
+        # The power-of-two process budget covers staged authority inventory,
+        # named-ref reachability, exact commit:path, and batched content reads
+        # without introducing per-row subprocesses or a current count pin.
+        self.assertLessEqual(git_calls, 64)
         self.assertLess(elapsed, 60.0)
 
     def test_work107_stable_ledger_digest_is_pinned_without_git_reconstruction(
@@ -1401,35 +1702,46 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             move_targets,
         )
 
-    def test_work054_historical_edges_use_exact_structural_projection(
+    def test_work054_historical_edges_follow_sealed_migrations_without_source_pins(
         self,
     ) -> None:
-        edges = self._work054_edges(self.context)
-
-        self.assertEqual(
-            {edge.source for edge in edges},
-            set(self.validator.WORK054_HISTORICAL_LINK_PROJECTION),
+        source = PurePosixPath(
+            "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md"
         )
-        self.assertEqual(
-            {edge.target for edge in edges},
-            set(self.validator._work054_wp003_owner_merges(self.context))
-            | {
-                PurePosixPath(
-                    "docs/99.templates/support/template-routing.md"
-                )
+        expected = {
+            PurePosixPath(
+                "docs/00.agent-governance/" + "common-" + "governance.md"
+            ): PurePosixPath("docs/00.agent-governance/harness-catalog.md"),
+            PurePosixPath(
+                "docs/03.specs/024-observability-and-network-review-agents/agent-design.md"
+            ): PurePosixPath(
+                "docs/03.specs/0024-observability-and-network-review-agents/spec.md"
+            ),
+            PurePosixPath(
+                "docs/99.templates/support/template-routing.md"
+            ): PurePosixPath("docs/99.templates/support/document-contract.md"),
+        }
+        added_links = "".join(
+            f"\n[retired]({self.validator.posixpath.relpath(retired, source.parent)})"
+            for retired in expected
+            for _ in range(2)
+        )
+        context = dataclasses.replace(
+            self.context,
+            texts={
+                **self.context.texts,
+                source: self.context.texts[source] + added_links + "\n",
             },
         )
-        self.assertEqual(
-            edges[
-                self.validator.ArchiveTransitionEdge(
-                    PurePosixPath(
-                        "docs/03.specs/0015-agent-governance-contract-normalization/spec.md"
-                    ),
-                    PurePosixPath("docs/99.templates/support/template-routing.md"),
+
+        edges = self._work054_edges(context)
+
+        for retired, terminal in expected.items():
+            with self.subTest(retired=retired):
+                self.assertEqual(
+                    edges[self.validator.ArchiveTransitionEdge(source, retired)],
+                    terminal,
                 )
-            ],
-            PurePosixPath("docs/99.templates/support/document-contract.md"),
-        )
 
     def test_work054_historical_projection_ignores_non_link_formatting(self) -> None:
         source = PurePosixPath(
@@ -1453,171 +1765,69 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             edges,
         )
 
-    def test_work054_historical_projection_rejects_missing_source(self) -> None:
-        source = PurePosixPath(
-            "docs/03.specs/0015-agent-governance-contract-normalization/plan.md"
-        )
-        context = dataclasses.replace(
-            self.context,
-            texts={
-                path: text
-                for path, text in self.context.texts.items()
-                if path != source
-            },
-        )
-
-        with self.assertRaisesRegex(
-            self.validator.ConfigurationError,
-            "WORK-054 historical owner source set differs",
-        ):
-            self._work054_edges(context)
-
-    def test_work054_historical_projection_rejects_unowned_extra_source(
+    def test_current_stage90_research_uses_migration_semantics_not_blob_pins(
         self,
     ) -> None:
-        source = PurePosixPath("EXTRA.md")
-        retired = next(
-            iter(self.validator._work054_wp003_owner_merges(self.context))
+        source = PurePosixPath(
+            "docs/90.references/research/2026-08-08-wer/"
+            "spec-driven-sdlc-and-document-contracts.md"
         )
+        retired = PurePosixPath(
+            "docs/00.agent-governance/" + "common-" + "governance.md"
+        )
+        raw = self.validator.posixpath.relpath(retired, source.parent)
         context = dataclasses.replace(
             self.context,
             texts={
                 **self.context.texts,
-                source: f"[retired]({retired.as_posix()})\n",
+                source: self.context.texts[source]
+                + f"\n[retired]({raw})\n[duplicate]({raw})\n",
             },
+        )
+        _aliases, move_targets, _replacements = (
+            self.validator._document_taxonomy_transition_manifest(context)
+        )
+
+        self.validator._reviewed_immutable_historical_alias_edges(
+            context,
+            move_targets,
+        )
+        edges = self._work054_edges(context)
+
+        self.assertEqual(
+            edges[self.validator.ArchiveTransitionEdge(source, retired)],
+            PurePosixPath("docs/00.agent-governance/harness-catalog.md"),
+        )
+
+    def test_work054_historical_projection_rejects_undeclared_retired_edge(
+        self,
+    ) -> None:
+        source = PurePosixPath("fixture.md")
+        undeclared = PurePosixPath(
+            "docs/00.agent-governance/retired-without-migration.md"
+        )
+        raw = self.validator.posixpath.relpath(undeclared, source.parent)
+        fixture_profile = next(iter(self.context.profiles.values()))
+        context = dataclasses.replace(
+            self.context,
+            paths=(*self.context.paths, source),
+            profiles={**self.context.profiles, source: fixture_profile},
+            texts={
+                **self.context.texts,
+                source: f"[retired]({raw})\n",
+            },
+            metadata={**self.context.metadata, source: {}},
             tracked_regular_paths=self.context.tracked_regular_paths | {source},
         )
 
-        with self.assertRaisesRegex(
-            self.validator.ConfigurationError,
-            "WORK-054 historical owner source set differs",
-        ):
-            self._work054_edges(context)
+        diagnostics = self.validator._link_diagnostics(context)
 
-    def test_work054_historical_projection_rejects_duplicate_multiplicity(
-        self,
-    ) -> None:
-        source = PurePosixPath(
-            "docs/03.specs/0015-agent-governance-contract-normalization/plan.md"
+        self.assertTrue(
+            any(
+                item.rule_id == "LINK-BROKEN" and item.path == source
+                for item in diagnostics
+            )
         )
-        retired = next(
-            iter(self.validator._work054_wp003_owner_merges(self.context))
-        )
-        raw = next(
-            item
-            for item in self.validator._extract_links(self.context.texts[source])
-            if self.validator._local_destination(source, item)[1] == retired
-        )
-        duplicate = f"\n[duplicate]({raw})\n"
-        context = dataclasses.replace(
-            self.context,
-            texts={
-                **self.context.texts,
-                source: self.context.texts[source] + duplicate,
-            },
-        )
-
-        with self.assertRaisesRegex(
-            self.validator.ConfigurationError,
-            "WORK-054 historical owner link multiset differs",
-        ):
-            self._work054_edges(context)
-
-    def test_work054_historical_projection_rejects_wrong_retired_target(
-        self,
-    ) -> None:
-        source = PurePosixPath(
-            "docs/03.specs/0015-agent-governance-contract-normalization/spec.md"
-        )
-        original = self.context.texts[source]
-        retired_rows = tuple(
-            self.validator._work054_wp003_owner_merges(self.context)
-        )
-        original_raw = next(
-            item
-            for item in self.validator._extract_links(original)
-            if self.validator._local_destination(source, item)[1]
-            == retired_rows[0]
-        )
-        replacement_raw = (
-            "../../" + retired_rows[1].relative_to("docs").as_posix()
-        )
-        context = dataclasses.replace(
-            self.context,
-            texts={
-                **self.context.texts,
-                source: original.replace(
-                    f"]({original_raw})",
-                    f"]({replacement_raw})",
-                    1,
-                ),
-            },
-        )
-
-        with self.assertRaisesRegex(
-            self.validator.ConfigurationError,
-            "WORK-054 historical owner link multiset differs",
-        ):
-            self._work054_edges(context)
-
-    def test_work054_historical_projection_rejects_wrong_terminal_target(
-        self,
-    ) -> None:
-        redirects = self.validator._work054_wp003_owner_merges(self.context)
-        redirects[next(iter(redirects))] = self.validator.WORK054_CODEX_TERMINAL
-
-        with mock.patch.object(
-            self.validator,
-            "_work054_wp003_owner_merges",
-            return_value=redirects,
-        ), self.assertRaisesRegex(
-            self.validator.ConfigurationError,
-            "WORK-054 historical owner terminal projection differs",
-        ):
-            self._work054_edges(self.context)
-
-    def test_work054_historical_projection_rejects_wrong_migration_row(
-        self,
-    ) -> None:
-        source = PurePosixPath(
-            "docs/03.specs/0015-agent-governance-contract-normalization/plan.md"
-        )
-        projection = {
-            **self.validator.WORK054_HISTORICAL_LINK_PROJECTION,
-            source: ((1, self.validator.WORK054_HARNESS_TERMINAL, 1),),
-        }
-
-        with mock.patch.object(
-            self.validator,
-            "WORK054_HISTORICAL_LINK_PROJECTION",
-            projection,
-        ), self.assertRaisesRegex(
-            self.validator.ConfigurationError,
-            "WORK-054 historical owner link multiset differs",
-        ):
-            self._work054_edges(self.context)
-
-    def test_work054_historical_projection_rejects_extra_projection_token(
-        self,
-    ) -> None:
-        source = PurePosixPath(
-            "docs/03.specs/0015-agent-governance-contract-normalization/plan.md"
-        )
-        projection = {
-            **self.validator.WORK054_HISTORICAL_LINK_PROJECTION,
-            source: self.validator.WORK054_HISTORICAL_LINK_PROJECTION[source]
-            + ((3, self.validator.WORK054_TEMPLATE_TERMINAL, 1),),
-        }
-
-        with mock.patch.object(
-            self.validator,
-            "WORK054_HISTORICAL_LINK_PROJECTION",
-            projection,
-        ), self.assertRaisesRegex(
-            self.validator.ConfigurationError,
-            "WORK-054 historical owner link multiset differs",
-        ):
-            self._work054_edges(self.context)
 
     def test_standalone_approval_statements_are_relation_specific(self) -> None:
         statements = self.validator.STANDALONE_APPROVAL_STATEMENTS
@@ -1663,7 +1873,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
                 with self.assertRaises(self.validator.ConfigurationError):
                     self.validator._work109_four_digit_aliases(context)
 
-    def test_immutable_history_aliases_are_exact_source_and_edge_sets(self) -> None:
+    def test_immutable_history_aliases_use_only_frozen_sources(self) -> None:
         _, move_targets, _ = (
             self.validator._document_taxonomy_transition_manifest(self.context)
         )
@@ -1672,9 +1882,9 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             move_targets,
         )
 
-        self.assertEqual(len({edge.source for edge in edges}), 27)
         self.assertEqual(
-            len(edges), self.validator.IMMUTABLE_HISTORICAL_ALIAS_EDGE_COUNT
+            {edge.source for edge in edges},
+            set(self.validator.IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS),
         )
         self.assertTrue(
             all(

@@ -737,6 +737,14 @@ class DocumentStrictCutoverTests(unittest.TestCase):
                 ("├── YYYY/\n│   └── INC-###-<title>/\n│       ├── INC-###-<title>.md  # Incident fact record", "├── <year>/\n│   └── inc-####-<slug>/\n│       ├── incident.md         # Incident fact record"),
                 ("2. Incident Record는 `YYYY/INC-###-<title>/INC-###-<title>.md`로 작성해 폴더 ID와 파일 ID를 일치시킨다.", "2. Incident Record는 `<year>/inc-####-<slug>/incident.md`로 작성하고 frontmatter `artifact_id`를 `INC-<YYYY>-<DDDD>`와 일치시킨다."),
             ),
+            "docs/05.operations/policies/0001-k8s-gitops-operations-policy.md": ((
+                "- **AD**: [`../../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md`](../../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md)",
+                "- **AD**: [AD-0007 Current Local GitOps Platform](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)",
+            ),),
+            "docs/05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md": ((
+                "- **Rollouts Task**: [`../../03.specs/0004-argo-rollouts-progressive-delivery/tasks.md`](../../03.specs/0004-argo-rollouts-progressive-delivery/tasks.md)\n- **Notifications Task**: [`../../03.specs/0005-argo-notifications-slack/tasks.md`](../../03.specs/0005-argo-notifications-slack/tasks.md)",
+                "- **Rollouts Task records**: [Spec 0004 package router](../../03.specs/0004-argo-rollouts-progressive-delivery/README.md)\n- **Notifications Task records**: [Spec 0005 package router](../../03.specs/0005-argo-notifications-slack/README.md)",
+            ),),
         }
         for path in base:
             base_bytes = subprocess.run(
@@ -2996,6 +3004,96 @@ class Wp004bCorpusCutoverTests(unittest.TestCase):
                     re.search(r"(?:descriptions/|\()ad-(?:000[4-9]|001[01])-", text),
                     path,
                 )
+
+    def test_current_authoring_guides_do_not_publish_retired_terminal_forms(self) -> None:
+        forbidden_by_path = {
+            "docs/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md": (
+                "01.requirements/       PRD",
+                "optional SRS",
+                "optional Interface Req.",
+                "descriptions/        AD                          ad-<NNNN>",
+                "tasks.md            execution state and evidence",
+                "`docs/03.specs/` has no terminal route",
+            ),
+            "docs/03.specs/README.md": (
+                "`tasks.md`",
+                "`agent-design.md`",
+                "`tests.md`",
+                "관련 PRD와 AD",
+            ),
+            "docs/02.architecture/README.md": (
+                "docs/02.architecture/descriptions/ad-####-",
+            ),
+            "docs/02.architecture/descriptions/README.md": (
+                "docs/02.architecture/descriptions/ad-####-",
+            ),
+        }
+        for relative, forbidden in forbidden_by_path.items():
+            text = (REPOSITORY_ROOT / relative).read_text(encoding="utf-8")
+            for token in forbidden:
+                with self.subTest(path=relative, token=token):
+                    self.assertNotIn(token, text)
+
+    def test_current_reference_targets_and_rendered_labels_use_task_records(self) -> None:
+        ria = json.loads(
+            (
+                REPOSITORY_ROOT
+                / "docs/90.references/data/reference-information-architecture.json"
+            ).read_text(encoding="utf-8")
+        )
+
+        def values(node: object, *, under_to: bool = False) -> list[str]:
+            if isinstance(node, dict):
+                return [
+                    value
+                    for key, child in node.items()
+                    for value in values(child, under_to=under_to or key == "to")
+                ]
+            if isinstance(node, list):
+                return [value for child in node for value in values(child, under_to=under_to)]
+            return [node] if under_to and isinstance(node, str) else []
+
+        retired_task_target = re.compile(r"docs/03\.specs/[0-9]{4}-[^\s)]+/tasks\.md")
+        for target in values(ria):
+            with self.subTest(target=target[:120]):
+                self.assertIsNone(retired_task_target.search(target))
+
+        current_surfaces = (
+            "docs/90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md",
+            "docs/05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md",
+            "docs/05.operations/policies/0001-k8s-gitops-operations-policy.md",
+        )
+        for relative in current_surfaces:
+            text = (REPOSITORY_ROOT / relative).read_text(encoding="utf-8")
+            with self.subTest(path=relative):
+                self.assertNotRegex(text, r"\[[^\]]*(?:tasks\.md|ad-000[457])[^\]]*\]")
+                self.assertNotRegex(text, retired_task_target)
+
+    def test_superseded_topology_and_provider_cardinality_are_not_current_authority(self) -> None:
+        adr0030 = "0030-authority-first-sdlc-and-agent-governance-convergence.md"
+        spec0054 = "0054-sdlc-document-and-agent-governance-consolidation/spec.md"
+        checks = {
+            "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md": (
+                ("12 role × 4 surface = 48 adapter exact parity", "Current accepted decision"),
+                (adr0030, spec0054, "Historical predecessor context"),
+            ),
+            "docs/01.requirements/0003-workspace-agent-governance-platform.md": (
+                ("12-role/48-adapter 및 eval/model fitness가 검증된다.", "three provider canary records"),
+                (adr0030, spec0054, "Historical predecessor context"),
+            ),
+            "docs/01.requirements/0008-workspace-document-taxonomy-consolidation.md": (
+                ("Terminal active requirements and architecture expose only PRD, SRS, Interface Requirement", "accepted ADR-0024 and Spec 052 own"),
+                (adr0030, spec0054, "Current terminal authority"),
+            ),
+        }
+        for relative, (forbidden, required) in checks.items():
+            text = (REPOSITORY_ROOT / relative).read_text(encoding="utf-8")
+            for token in forbidden:
+                with self.subTest(path=relative, forbidden=token):
+                    self.assertNotIn(token, text)
+            for token in required:
+                with self.subTest(path=relative, required=token):
+                    self.assertIn(token, text)
 
 
 if __name__ == "__main__":

@@ -19,7 +19,7 @@ Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에
 | 찾는 것 | 먼저 볼 위치 | 판단 기준 |
 | --- | --- | --- |
 | 현재 외부 서비스, Headlamp, `172.18.x` 계약 | [`gitops/platform/external-services/`](../../gitops/platform/external-services/), [`gitops/platform/network-policies/`](../../gitops/platform/network-policies/), [`verify-contracts-static.sh`](../../infrastructure/tests/verify-contracts-static.sh) | 현재 desired state와 정적 계약 검증이 우선한다. |
-| 시스템 경계와 품질 속성 | [`descriptions/`](./descriptions/README.md) | AD는 PRD를 아키텍처 설명과 참조 구조로 확장한다. |
+| 시스템 경계와 품질 속성 | [`descriptions/`](./descriptions/README.md) | AD는 Requirement Package를 현재 구조와 참조 모델로 해석한다. |
 | 기술 선택과 현재 decision record | [`decisions/`](./decisions/README.md) | ADR은 현재 구현 기준의 결정, 대안, 결과를 보존한다. |
 | 구현자가 따라야 할 계약 | [`../03.specs/`](../03.specs/README.md) | 파일/manifest/API 수준 상세 설계는 Spec stage가 소유한다. |
 | 운영 정책과 복구 절차 | [`../05.operations/`](../05.operations/README.md) | 실행 절차, 정책, runbook은 Operations stage가 소유한다. |
@@ -37,7 +37,7 @@ Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에
 
 - 시스템 경계, 품질 속성, 배포 구조, 데이터/인프라 관점의 요구사항
 - 선택지, 결정 근거, 결과를 남기는 Architecture Decision Record
-- PRD, Spec, Plan, Operations 문서로 이어지는 추적 링크
+- Requirement Package, Spec, Plan, Operations 문서로 이어지는 추적 링크
 
 ### Out of Scope
 
@@ -59,8 +59,8 @@ Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에
 
 1. 요구사항을 시스템 경계와 품질 속성으로 확장할 때는 `descriptions/`를 갱신한다.
 2. 기술 선택이나 운영 모델 결정은 `decisions/`에 ADR로 기록한다.
-3. AD target은 `docs/02.architecture/descriptions/ad-####-<system-or-domain>.md`, ADR target은 `docs/02.architecture/decisions/####-<short-title>.md`를 따른다.
-4. 현재 구현과 상충하는 old AD/ADR은 bulk note로 보존하지 않고 provenance가 검증된 Archive Record로 이동한다.
+3. AD target은 `docs/02.architecture/descriptions/####-<system-or-domain>.md`, ADR target은 `docs/02.architecture/decisions/####-<short-title>.md`를 따른다. 유형은 부모 폴더가 결정하고 안정 ID는 frontmatter의 `AD-####`/`ADR-####`로 유지한다.
+4. Superseded ADR은 decision log에 상호 연결해 유지한다. 삭제된 안정 경로의 복구는 Git과 필요한 최소 Stage 98 Migration/Tombstone이 소유한다.
 5. 구현자가 따라야 할 상세 계약은 `../03.specs/`로 넘긴다.
 6. 운영 정책이나 복구 절차는 `../05.operations/`로 넘긴다.
 

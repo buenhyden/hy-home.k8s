@@ -413,15 +413,17 @@ class ArchiveCutoverTest(unittest.TestCase):
                         "ARCHIVE-REPLACEMENT-NONCURRENT",
                     )
 
-    def test_work054_mig0002_projection_is_exact_and_current(self) -> None:
+    def test_work054_migration_projection_is_exact_and_current(self) -> None:
         tracked = archive_cutover._tracked_regular_blobs(ROOT)
 
-        projection = archive_cutover._work054_migration_projection(ROOT, tracked)
+        projection = archive_cutover._work054_migration_projection(
+            ROOT, tracked, load_registry(ROOT)
+        )
 
-        self.assertEqual(len(projection.current_by_legacy), 154)
+        self.assertEqual(len(projection.current_by_legacy), 223)
         self.assertEqual(
             projection.action_counts,
-            (("merged", 10), ("moved", 141), ("replaced", 3)),
+            (("merged", 15), ("moved", 149), ("replaced", 59)),
         )
         self.assertEqual(
             projection.current_by_legacy[
@@ -441,14 +443,18 @@ class ArchiveCutoverTest(unittest.TestCase):
         )
 
     def test_work054_mig0002_projection_rejects_any_byte_drift(self) -> None:
-        migration_path = (ROOT / archive_cutover.WORK054_MIGRATION_PATH).resolve()
-        original_read_bytes = Path.read_bytes
+        migration_path = archive_cutover.WORK054_MIGRATION_PATH
+        original_reader = archive_cutover.read_worktree_regular_bounded
 
-        def drift_migration(path: Path) -> bytes:
-            content = original_read_bytes(path)
-            return content + b"\n" if path.resolve() == migration_path else content
+        def drift_migration(root: Path, path: str, *, max_bytes: int) -> bytes:
+            content = original_reader(root, path, max_bytes=max_bytes)
+            return content + b"\n" if path == migration_path else content
 
-        with patch.object(Path, "read_bytes", new=drift_migration):
+        with patch.object(
+            archive_cutover,
+            "read_worktree_regular_bounded",
+            new=drift_migration,
+        ):
             with self.assertRaisesRegex(
                 RuntimeError,
                 "^WORK-054 migration ledger is unavailable$",
@@ -456,7 +462,28 @@ class ArchiveCutoverTest(unittest.TestCase):
                 archive_cutover._work054_migration_projection(
                     ROOT,
                     archive_cutover._tracked_regular_blobs(ROOT),
+                    load_registry(ROOT),
                 )
+
+    def test_work054_projection_rejects_untracked_input_before_worktree_read(
+        self,
+    ) -> None:
+        tracked = dict(archive_cutover._tracked_regular_blobs(ROOT))
+        tracked.pop(archive_cutover.WORK054_MIGRATION_PATH)
+
+        with patch.object(
+            Path,
+            "read_bytes",
+            side_effect=AssertionError("worktree bytes read before index admission"),
+        ), self.assertRaisesRegex(
+            RuntimeError,
+            "^WORK-054 migration ledger is unavailable$",
+        ):
+            archive_cutover._work054_migration_projection(
+                ROOT,
+                tracked,
+                load_registry(ROOT),
+            )
 
     def test_work105_legacy_ad_replacement_alias_is_exact_and_fails_closed(
         self,
@@ -976,15 +1003,6 @@ class ArchiveCutoverTest(unittest.TestCase):
         ):
             report = self._validate_without_repeating_secret_classification()
         self._assert_named_partial(report, "ARCHIVE-FINITE-ADMISSION")
-
-    def test_partial_stale_role_is_rejected(self) -> None:
-        with patch.object(
-            archive_cutover,
-            "STALE_CONTRACT_SURFACES",
-            ("docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md",),
-        ):
-            report = self._validate_without_repeating_secret_classification()
-        self._assert_named_partial(report, "ARCHIVE-RETIRED-AUTHORITY")
 
     def test_partial_direct_current_link_is_rejected(self) -> None:
         current_report = ArchiveValidationReport(

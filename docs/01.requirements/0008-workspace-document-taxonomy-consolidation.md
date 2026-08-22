@@ -3,7 +3,7 @@ title: 'Workspace Document Taxonomy Consolidation Requirement Package'
 type: sdlc/requirement-package
 status: active
 owner: platform
-updated: 2026-08-11
+updated: 2026-08-22
 artifact_id: "REQ-0008"
 supersedes: "[REQ-0005, REQ-0006]"
 ---
@@ -26,11 +26,13 @@ the pre-WORK-104 design package `WDTC-AMEND-001` in accepted
 Those predecessor PRD/SRS/Interface, prefixed-AD, fixed Archive-census, and
 fixed script-count decisions are historical only and are superseded by
 [ADR-0030](../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md).
+**Current terminal authority** is ADR-0030 together with
+[Spec 0054](../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md).
 The terminal current forms are a unified Requirement Package, prefix-free
 Architecture Description (AD), and ADR. Every declared
 `artifact_id` is globally unique; mandatory terminal outer profiles require
-one, while excluded profiles prohibit the field. Stage 98 uses stable change,
-tombstone, and migration records instead of dated mirror paths. Accepted
+one, while excluded profiles prohibit the field. Stage 98 uses minimal
+Migration and necessary Tombstone records backed by Git history. Accepted
 ADR-0023 remains the transition predecessor. WORK-105 converted the complete
 active/accepted ARD-0004 through ARD-0011 source census one-to-one to
 AD-0004 through AD-0011, closed every live legacy ARD consumer, installed the
@@ -39,9 +41,9 @@ changed the PRD-0008 projection to ADR-0024 as one atomic gate. WORK-104 remains
 the existing 82-move and destination Plan/Task rebaseline task.
 
 WORK-105 retired the authored API Spec profile, Stage 03 route, template, and
-relationships. Terminal human-authored interface
-requirements use only Stage 01 `sdlc/interface` and the `IFC-###-<SLUG-TOKEN>`
-grammar. Native OpenAPI, GraphQL, and Protobuf profiles/templates remain
+relationships. Terminal solution-independent interface requirements are
+package-scoped `REQ-####-IF-####` members in Stage 01. Native OpenAPI,
+GraphQL, and Protobuf profiles/templates remain
 machine-readable Interface evidence under separate native identity contracts;
 they are not authored API Spec records or mandatory human artifact IDs.
 
@@ -118,11 +120,11 @@ closed by the program; they may not be hidden by weakening a gate.
 
 ## Key Use Cases
 
-A new work unit is created at `docs/03.specs/<NNN>-<slug>/`; its fixed-name
-Spec, Plan, and Task files express one lifecycle without a separate execution
+A new work unit is created at `docs/03.specs/<NNNN>-<slug>/`; its router,
+Spec, Plan, and append-only Task records express one lifecycle without a separate execution
 stage or date-based mutable identity.
 
-A reviewer follows registry-owned reciprocal relations from a PRD and AD to
+A reviewer follows registry-owned reciprocal relations from a Requirement Package and AD to
 an accepted ADR, Spec criteria, Plan work packages, Task results, and
 operations feedback. A link establishes traceability, while the named test or
 review evidence establishes the claim.
@@ -174,9 +176,9 @@ be deleted with provenance and disposition evidence.
 
 The mandatory terminal outer profiles are Requirement Package, prefix-free AD,
 ADR, Spec, Plan, append-only Task, Guide, Policy,
-Runbook, Incident, Postmortem, and Stage 98 Plan, Task, Tombstone, and
-Migration. Agent Design, Data Model, and Tests remain transitional Spec-package
-members only where the registry admits them until WP-004C. Every declared `artifact_id` participates in one global uniqueness
+Runbook, Incident, Postmortem, Migration, and necessary Tombstone.
+Change-local design belongs to Spec and Plan; executable tests remain with
+their production module. Every declared `artifact_id` participates in one global uniqueness
 check. Stage 00 governance/reference, Stage 90 content/reference/observations,
 governance memory/progress, Stage 99 support, README, template, fixture,
 native/generated, the retired authored API Spec surface, virtual change
@@ -226,12 +228,21 @@ the full eight-record corpus and consumer closure. WORK-108 performs
 full WORK-105 conversion, so this form migration does not move the identity
 backfill earlier in the closed schedule.
 
-The current 93 Stage 98 records need no `API-SPEC` tombstone type. A
-later-discovered historical API Spec must be mapped through the reviewed
-ledger to a Stage 01 Interface record or an `IFC` tombstone before terminal
-acceptance.
+Current interface requirements use the package-scoped `REQ-####-IF-####`
+form, with `REQ-####` equal to the containing Package `artifact_id`. Stage 98
+uses only the Spec 0054 minimal recovery topology: a bounded
+`migrations/####-<slug>.md` record or a
+`tombstones/<original-stage>/####-<slug>.md` lookup. It defines neither a
+fixed archive-corpus count nor a separate `API-SPEC` tombstone category.
 
-The path grammar is closed and deterministic:
+### Historical predecessor context
+
+The following path-grammar and corpus/cardinality clauses preserve the
+WORK-105 through WORK-108 predecessor transition evidence only. They are
+non-authoritative for current authoring. ADR-0030, Spec 0054, and the Stage 99
+registry own current paths and identities.
+
+The predecessor path grammar was closed and deterministic:
 
 | Form | Path-derived identity |
 | --- | --- |
@@ -269,11 +280,12 @@ Each Stage 98 ledger row requires the seven user fields `legacy_path`,
 `legacy_envelope_blob`, `source_blob`, `content_sha256`, and `record_kind`.
 The seven named fields are required but are not an exclusive field set.
 `source_commit` is original-source provenance; `legacy_archive_commit` is the
-distinct commit containing the old envelope. The current 93 rows all use
-`action=moved`, one source to one unique stable record. Future `merged` or
-`replaced` rows retain a unique tombstone and non-null replacement; `deleted`
-rows retain a unique tombstone and null replacement. Many-to-one stable paths
-are forbidden.
+distinct commit containing the old envelope. The completed predecessor ledger
+snapshot recorded 93 `action=moved` rows, one source to one unique stable
+record; that fixed count is historical evidence, not a current corpus claim.
+Future `merged` or `replaced` rows retain a unique tombstone and non-null
+replacement; `deleted` rows retain a unique tombstone and null replacement.
+Many-to-one stable paths are forbidden.
 
 The direct-link validator scans mutable/current registry-selected Markdown
 outside Stage 98 and excludes historical observation profiles and embedded
@@ -285,7 +297,7 @@ may link only to the Stage 98 collection README.
 
 | Acceptance ID | Criterion |
 | --- | --- |
-| ACC-WDTC-001 | Stage 03 is the only live Spec/Plan/Task work-unit owner and `docs/03.specs/` is absent. |
+| ACC-WDTC-001 | Stage 03 is the only live Spec/Plan/Task work-unit owner; every package has a thin router and package-local Task records, and retired Stage 04 has no live consumer. |
 | ACC-WDTC-002 | `docs/05.operations/` remains stable and no Release-family surface is created. |
 | ACC-WDTC-003 | Mutable active filenames are date-free, while every date-identity exception is explicit and validated. |
 | ACC-WDTC-004 | Registry-owned lineage, route, template, heading, and lifecycle contracts have no competing prose or machine owner. |
@@ -294,11 +306,11 @@ may link only to the Stage 98 collection README.
 | ACC-WDTC-007 | Baseline validator defects and migration regressions are closed; aggregate and all-files repository-static gates pass. |
 | ACC-WDTC-008 | Existing archive payloads remain byte-stable and dated observation bodies preserve their historical meaning. |
 | ACC-WDTC-009 | Logical-unit commits remain independently reviewable and revertible, with measured before/after inventories. |
-| ACC-WDTC-010 | PRD-0007 has a valid consolidated resumption route and no remote or live action is implied. |
-| ACC-WDTC-011 | Terminal active requirements and architecture expose only PRD/SRS/Interface Requirement and AD/ADR. The exact eight legacy-form records map to AD-0004 through AD-0011 with preserved slugs/states, zero unconverted current records, and zero live/unclassified legacy-form consumers; the AD-0011 authority gate is atomic. Authored API Spec is retired only after independent zero-instance and complete-consumer-disposition proof, while native API contracts and classified history remain evidence. |
+| ACC-WDTC-010 | REQ-0007 has a valid consolidated resumption route and no remote or live action is implied. |
+| ACC-WDTC-011 | Terminal active requirements and architecture expose one flat Requirement Package profile, package-scoped FR/NFR/IF members, prefix-free AD paths, and ADR decisions. The exact eight legacy-form records map to AD-0004 through AD-0011 with preserved slugs/states and zero live legacy consumers; native API contracts and classified history remain evidence. |
 | ACC-WDTC-012 | After WORK-105's complete AD conversion, WORK-108 gives every mandatory terminal outer profile one globally unique, type-valid, path-derived `artifact_id`; every excluded profile, including the retired authored API Spec profile, prohibits it; positive API Spec coverage becomes retired-route negative coverage; native contract identity remains separate; and virtual `change_id` never enters the artifact namespace. |
-| ACC-WDTC-013 | All 93 historical Stage 98 records have unique recoverable terminal records under the 14-field ledger contract, immutable payload/provenance, and no terminal date/year path. |
-| ACC-WDTC-014 | The exact script sequence is `50 -> 49 -> 47`; all other 47 assets retain their distinct contract, diagnostic, fixture, evidence, or recovery responsibility. |
+| ACC-WDTC-013 | Every removed authority path has bounded recoverable Git evidence or an applicable minimal Migration/Tombstone disposition; no fixed Archive snapshot count is terminal policy. |
+| ACC-WDTC-014 | Script inventory is derived from the closed owner/consumer graph; no fixed script count is terminal policy. |
 
 ## Scope and Non-goals
 
@@ -348,7 +360,7 @@ surface.
 
 | Requirement ID | Acceptance criterion | Downstream owner |
 | --- | --- | --- |
-| REQ-0008-FR-0001 | ACC-WDTC-001 | [AD-0011](../02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md) and [Spec 052](../03.specs/0052-document-taxonomy-consolidation/spec.md) own the target and migration contract; accepted ADR-0023 remains the transition predecessor and accepted ADR-0024 is the registry projection. |
+| REQ-0008-FR-0001 | ACC-WDTC-001 | [AD-0011](../02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md) owns the current Architecture Description; [Spec 052](../03.specs/0052-document-taxonomy-consolidation/spec.md) remains reciprocal predecessor migration evidence. |
 | REQ-0008-FR-0002 | ACC-WDTC-003 | N/A — ADR-0024 and Spec 052 own stable filenames and the terminal removal of the Stage 98 date exception. |
 | REQ-0008-FR-0003 | ACC-WDTC-002 | N/A — accepted ADR-0023 records the approved Stage 05 stability target and remains unchanged by the active successor. |
 | REQ-0008-FR-0004 | ACC-WDTC-004 | N/A — ADR-0024 and Spec 052 own the exact eight-record ARD-to-AD mapping and stable registry-lineage boundaries. |
@@ -356,7 +368,7 @@ surface.
 | REQ-0008-FR-0006 | ACC-WDTC-004 | N/A — Spec 052 owns template and current-consumer migration. |
 | REQ-0008-FR-0007 | ACC-WDTC-002 | N/A — accepted ADR-0023 records the explicit Release-family exclusion target. |
 | REQ-0008-FR-0008 | ACC-WDTC-005 | N/A — Spec 052 owns disposition classification and evidence. |
-| REQ-0008-FR-0009 | ACC-WDTC-008 | N/A — accepted ADR-0024 and Spec 052 own the bounded wrapper/path supersession while retaining payload/provenance invariants. |
+| REQ-0008-FR-0009 | ACC-WDTC-008 | N/A — ADR-0030 and Spec 0054 own bounded Git recovery while predecessor payload/provenance invariants remain historical evidence. |
 | REQ-0008-FR-0010 | ACC-WDTC-007 | N/A — Spec 052 owns transitional and terminal validator modes. |
 | REQ-0008-FR-0011 | ACC-WDTC-005 | N/A — Spec 052 owns script and validator reconciliation. |
 | REQ-0008-FR-0012 | ACC-WDTC-005 | N/A — Spec 052 owns consumer and fixture disposition gates. |
@@ -366,7 +378,7 @@ surface.
 | REQ-0008-FR-0016 | ACC-WDTC-007 | N/A — Spec 052 owns the named baseline remediation. |
 | REQ-0008-NFR-0001 | ACC-WDTC-010 | N/A — Spec 052 owns suspension and resumption evidence. |
 | REQ-0008-NFR-0002 | ACC-WDTC-010 | N/A — AD-0011 owns the local-only system boundary. |
-| REQ-0008-NFR-0003 | ACC-WDTC-011 | [Spec 052](../03.specs/0052-document-taxonomy-consolidation/spec.md) owns the exact eight-record AD conversion, complete consumer closure, terminal PRD/SRS/Interface Requirement and AD/ADR form contract, authored API Spec retirement, and native API evidence preservation; accepted ADR-0024 is the registry projection after the atomic AD-0011 invariant gate. |
-| REQ-0008-NFR-0004 | ACC-WDTC-012 | N/A — accepted ADR-0024 and Spec 052 own global artifact identity, authored API Spec prohibition, native-contract separation, numeric preservation, and WORK-108 backfill after WORK-105's full AD conversion. |
-| REQ-0008-NFR-0005 | ACC-WDTC-013 | N/A — accepted ADR-0024 and Spec 052 own the stable Stage 98 topology and exact 93-row ledger cutover. |
-| REQ-0008-NFR-0006 | ACC-WDTC-014 | N/A — Spec 052 owns the reviewed WORK-112/WORK-114 `50 -> 49 -> 47` script disposition. |
+| REQ-0008-NFR-0003 | ACC-WDTC-011 | [AD-0011](../02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md) describes Requirement Package, prefix-free Architecture, and package-local Task topology under the current authority named above. |
+| REQ-0008-NFR-0004 | ACC-WDTC-012 | N/A — ADR-0030, Spec 0054, and the Stage 99 registry own global artifact identity and path/profile parity. |
+| REQ-0008-NFR-0005 | ACC-WDTC-013 | N/A — ADR-0030 and Spec 0054 own minimal Git-backed recovery without fixed Archive cardinality. |
+| REQ-0008-NFR-0006 | ACC-WDTC-014 | N/A — ADR-0030 and Spec 0054 own consumer-derived script reconciliation without a fixed count. |

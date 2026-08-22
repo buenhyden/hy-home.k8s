@@ -3,7 +3,7 @@ title: 'Workspace Agent Governance Platform Architecture Description'
 type: sdlc/ad
 status: active
 owner: platform
-updated: 2026-08-01
+updated: 2026-08-22
 artifact_id: "AD-0006"
 ---
 
@@ -11,9 +11,12 @@ artifact_id: "AD-0006"
 
 ## Overview
 
-이 문서는 Stage 00 canonical governance를 네 provider surface에 투영하고, runtime evidence와
-feedback loop로 닫는 참조 아키텍처를 정의한다. 핵심 구조는
-`canonical policy + machine harness contract + provider projection + execution loop + evidence gate`다.
+이 문서는 Stage 00 human governance, provider-neutral machine authority,
+provider projection, execution loop와 evidence gate의 경계를 정의한다.
+[ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)과
+[Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)가
+current terminal authority다. Codex와 Claude만 남기는 실제 surface cutover는
+WP-003 소유이며 이 문서는 완료되지 않은 cutover를 현재 구현으로 주장하지 않는다.
 설계의 고정 외부 사실 관찰 기준은 **2026-07-10 10:00 Asia/Seoul**
 (`2026-07-10T01:00:00Z`)이며, concrete provider schema와
 model 값은 official primary source와 native parse/runtime evidence가 함께 입증할 때만
@@ -28,9 +31,9 @@ Stage 00, schema validator, worktree와 SDLC evidence에 맞게 적용한다. �
 
 ### Owns
 
-- `docs/00.agent-governance/**`의 durable policy, current roster, provider note, quality와 lifecycle contract.
-- 단일 versioned `harness-contract`와 schema 및 네 surface projection rule.
-- `.agents/**` local/Antigravity, `.claude/**`, `.codex/**`, `.gemini/**`의 adapter ownership.
+- `docs/00.agent-governance/**`의 durable human policy, 역할 책임, provider 차이와 lifecycle 경계.
+- 하나의 provider-neutral role/permission/handoff machine owner를 두고 projection이 공통 policy를 복제하지 않는 구조.
+- 현재 registry inventory에서 role과 adapter 집합을 도출하고 고정 cardinality를 권위로 사용하지 않는 규칙.
 - 역할별 model/reasoning-effort decision, provider config/MCP allowlist와 runtime canary evidence model.
 - Bounded retry, checkpoint, compaction, resume, handoff, eval/admission과 legacy cutover.
 - Spec 039가 제공하는 baseline CI/QA를 소비하고 Spec 045에서 추가하는 agent-governance static lane.
@@ -50,7 +53,7 @@ Stage 00, schema validator, worktree와 SDLC evidence에 맞게 적용한다. �
 
 ### Non-goals
 
-- 네 provider에 독립된 governance fork를 만드는 것.
+- provider별 독립 governance fork를 만드는 것.
 - `.agents/**`를 Gemini CLI native evidence로 취급하는 것.
 - Provider-authenticated canary를 GitHub-hosted secret lane으로 실행하는 것.
 - 모든 역할에 같은 model/effort를 적용하거나 모델명을 “최신”이라는 이유만으로 자동 승격하는 것.
@@ -61,8 +64,8 @@ Stage 00, schema validator, worktree와 SDLC evidence에 맞게 적용한다. �
 
 | Attribute | Architecture requirement | Measure |
 | --- | --- | --- |
-| Consistency | Machine contract가 역할 semantic과 surface projection의 유일한 machine owner다. | 12 role × 4 surface = 48 adapter exact parity, duplicate owner 0건 |
-| Verifiability | Static shape, native discovery와 authenticated run을 별도 evidence class로 관리한다. | Contract/schema/config PASS와 Claude·Codex·Gemini별 독립 canary record; PASS만 runtime readiness |
+| Consistency | Provider-neutral registry가 역할 semantic과 admitted surface projection의 유일한 machine owner다. | Registry-derived parity와 duplicate owner 0건 |
+| Verifiability | Static shape, native discovery와 authenticated run을 별도 evidence class로 관리한다. | Contract/schema/config PASS와 admitted-provider별 독립 canary record; PASS만 runtime readiness |
 | Reliability | 동일 실패의 무한 반복을 차단하고 재현 가능한 state만 checkpoint한다. | 동일 signature retry ≤2, task recovery ≤3, 동일 결과 2회면 stop |
 | Security | Least privilege, GitOps-first, secret-free evidence와 명시적 external-action approval을 적용한다. | Secret/auth/transcript 저장 0건, CI write permission 불필요, action full SHA |
 | Evolvability | Provider schema/model 변화는 cutoff ledger, eval과 canary를 통해 갱신한다. | Source date·model compatibility·fitness fixture 없는 승격 0건 |
@@ -71,6 +74,15 @@ Stage 00, schema validator, worktree와 SDLC evidence에 맞게 적용한다. �
 | Operability | Local QA와 CI가 같은 contract/schema/parity failure를 진단한다. | Targeted→all-files lane 및 repository quality gate PASS |
 
 ## System Overview & Context
+
+### Historical predecessor context
+
+The provider names, surface topology, roster counts, model candidates, and
+canary cardinalities below preserve the 2026-08-01 predecessor implementation
+context only. They are non-authoritative for current topology and must not be
+used to admit a provider or derive a roster. ADR-0030 and Spec 0054 own the
+current boundary; WP-003 will migrate or remove these tracked surfaces after
+consumer-zero proof.
 
 ### Logical components
 
@@ -168,7 +180,7 @@ runtime-readiness claim은 해당 canary PASS가 필요하다. Repository-local 
 
 ### State and integrity flow
 
-`PRD/AD/ADR → Spec → machine contract → provider projection → static validation → authenticated
+`Requirement Package/AD/ADR → Spec → machine contract → provider projection → static validation → authenticated
 canary/eval → CI/QA → closure` 순서를 사용한다. Specs 038–040은 이 프로그램의 문서·CI 기반을
 먼저 닫고, Specs 041–046은 contract, provider, loop, roster, cutover, closure 순서로 선행
 evidence를 소비한다.
@@ -183,26 +195,30 @@ remaining work만 보존하고 secret, auth data, raw/full transcript를 버린�
 - 격리된 `.worktrees/**` worktree와 logical branch/commit을 기본 실행 단위로 사용한다.
 - Project-local provider config는 secret-free defaults, role layer와 allowlisted MCP/tool만 추적한다.
   User auth/config는 저장소 밖에 남고 migration script가 임의로 덮어쓰지 않는다.
-- Provider canary는 local/manual lane에서 인증 후 실행한다. GitHub Actions에는 Claude/Codex/Gemini
+- Provider canary는 local/manual lane에서 인증 후 실행한다. 현재 Codex와 Claude의
+  provider set 및 필요한 canary record는 registry에서 도출하며, GitHub Actions에는 provider
   credential을 추가하지 않는다.
-- Spec 039의 baseline workflow/QA를 먼저 완료한다. Spec 045의 agent-governance lane은
-  contract/schema, 12/48 parity, provider config parse, eval fixture, legacy/orphan pattern을 검사하며
-  `permissions` 최소화와 third-party action full commit SHA를 사용한다. 근거는
-  [GitHub secure use](https://docs.github.com/en/actions/reference/security/secure-use)다.
+- Spec 039의 baseline workflow/QA를 먼저 완료한다. 현재 agent-governance lane은
+  registry-derived contract/schema parity, Codex·Claude provider config parse, eval fixture,
+  legacy/orphan pattern을 검사하며 `permissions` 최소화와 third-party action full commit SHA를
+  사용한다. 근거는 [GitHub secure use](https://docs.github.com/en/actions/reference/security/secure-use)다.
 - Local QA는 targeted → affected → staged → tests →
   [`pre-commit run --all-files`](https://pre-commit.com/) → formatter review → rerun →
   `git diff --check`/scope review 순서다. 실패 수정 뒤 관련 lane을 다시 실행한다.
-- Spec 046은 repository quality gate, all-files, 세 provider canary record, 12/48,
-  eval/model fitness, zero-legacy, independent whole-branch review와 clean tree를 요구한다.
-  `ABSENT`/`DEFER` provider record는 runtime readiness PASS가 아니며 owner/trigger가 필수다.
+- Spec 0054의 current closure는 repository quality gate, all-files, registry-derived Codex·Claude
+  canary record, eval/model fitness, zero-legacy, independent whole-branch review와 clean tree를
+  요구한다. `ABSENT`/`DEFER` provider record는 runtime readiness PASS가 아니며 owner/trigger가
+  필수다. 이전 three-provider/12/48 closure 수치는 historical predecessor evidence일 뿐 current
+  acceptance 기준이 아니다.
 
 ## Traceability
 
 ### Lifecycle Traceability
 
-The table below maps the implemented delta to accepted current ADR-0019 after
-the Spec 046 repository-local terminal transition. Accepted ADR-0013 remains
-the historical predecessor that governed the earlier tranches.
+The table below retains the implemented predecessor delta while routing its
+current interpretation to ADR-0030 and Spec 0054. ADR-0019 and ADR-0013 remain
+historical predecessors; their fixed provider/cardinality clauses are not
+current authority.
 
 | Upstream requirement | Quality attribute or boundary | ADR / Spec |
 | --- | --- | --- |
@@ -213,11 +229,11 @@ the historical predecessor that governed the earlier tranches.
 | [REQ-0003-FR-0005](../../01.requirements/0003-workspace-agent-governance-platform.md) | Execution/checkpoint/handoff evidence | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
 | [REQ-0003-FR-0006](../../01.requirements/0003-workspace-agent-governance-platform.md) | Form/profile와 routing contract | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
 | [REQ-0003-FR-0007](../../01.requirements/0003-workspace-agent-governance-platform.md) | GitOps, secret, privilege와 approval boundary | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-0003-FR-0008](../../01.requirements/0003-workspace-agent-governance-platform.md) | Four-surface projection | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-0003-FR-0008](../../01.requirements/0003-workspace-agent-governance-platform.md) | Registry-derived admitted-provider projection | [ADR 0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
 | [REQ-0003-FR-0009](../../01.requirements/0003-workspace-agent-governance-platform.md) | Provider schema/model/effort/MCP와 canary | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
 | [REQ-0003-FR-0010](../../01.requirements/0003-workspace-agent-governance-platform.md) | Machine harness contract/schema | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
 | [REQ-0003-FR-0011](../../01.requirements/0003-workspace-agent-governance-platform.md) | Bounded loop/checkpoint/compaction | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| [REQ-0003-NFR-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | 12-role/48-adapter, eval/admission | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| [REQ-0003-NFR-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | Registry-derived parity and eval/admission | [ADR 0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
 | [REQ-0003-NFR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | CI/QA/all-files evidence | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
 | [REQ-0003-IF-0001](../../01.requirements/0003-workspace-agent-governance-platform.md) | Legacy cutover/current-owner integrity | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
 | [REQ-0003-IF-0002](../../01.requirements/0003-workspace-agent-governance-platform.md) | Evidence-only external role admission | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
@@ -226,16 +242,18 @@ the historical predecessor that governed the earlier tranches.
 | N/A — [Acceptance criterion 03](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Gateway/evidence-class separation | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
 | N/A — [Acceptance criterion 04](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Repository static gate | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
 | N/A — [Acceptance criterion 05](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Template form authority | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| N/A — [Acceptance criterion 06](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | 12/48 exact parity | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
-| N/A — [Acceptance criterion 07](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Three-provider independent canary classification and readiness evidence | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
+| N/A — [Acceptance criterion 06](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Registry-derived role/provider parity | [ADR 0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
+| N/A — [Acceptance criterion 07](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Admitted-provider independent canary classification and readiness evidence | [ADR 0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md) |
 | N/A — [Acceptance criterion 08](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Contract/schema/provider parity | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
 | N/A — [Acceptance criterion 09](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Recovery fixture and safe resume | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
 | N/A — [Acceptance criterion 10](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Eval/model-fitness evidence | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
 | N/A — [Acceptance criterion 11](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | CI and all-files gate | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
 | N/A — [Acceptance criterion 12](../../01.requirements/0003-workspace-agent-governance-platform.md) remains package-owned | Zero stale legacy/orphan reference | [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md) |
 
-- **PRD**: [PRD 003](../../01.requirements/0003-workspace-agent-governance-platform.md)
-- **Current accepted decision**: [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md)
+- **Requirement Package**: [REQ-0003](../../01.requirements/0003-workspace-agent-governance-platform.md)
+- **Current terminal decision**: [ADR 0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)
+- **Current implementation authority**: [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)
+- **Historical accepted predecessor**: [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Historical accepted predecessor**: [ADR 0013](../decisions/0013-stage-00-canonical-adapter-model.md)
 - **Prerequisites**: [Spec 038](../../03.specs/0038-reference-information-architecture/spec.md),
   [Spec 039](../../03.specs/0039-github-ci-qa-evidence/spec.md),

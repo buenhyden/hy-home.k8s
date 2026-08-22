@@ -48,7 +48,6 @@ from document_contracts import (
     Route,
     classify_path,
     enumerate_target_markdown,
-    load_json_file,
     load_registry,
     read_repository_text,
 )
@@ -507,6 +506,53 @@ WORK054_WP004B_TASK_PATTERN = re.compile(
     r"^docs/03\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/"
     r"tasks/tsk-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\.md$"
 )
+WORK054_WP004B_SPEC_PATTERN = re.compile(
+    r"^docs/03\.specs/(?P<spec>[0-9]{4})-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/"
+    r"spec\.md$"
+)
+WORK054_WP004B_PLAN_PATTERN = re.compile(
+    r"^docs/03\.specs/(?P<spec>[0-9]{4})-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/"
+    r"plan\.md$"
+)
+WORK054_WP004B_REQUIREMENT_PATTERN = re.compile(
+    r"^docs/01\.requirements/(?P<identity>[0-9]{4})-[a-z0-9]+"
+    r"(?:-[a-z0-9]+)*\.md$"
+)
+WORK054_WP004B_AD_PATTERN = re.compile(
+    r"^docs/02\.architecture/descriptions/(?P<identity>[0-9]{4})-"
+    r"[a-z0-9]+(?:-[a-z0-9]+)*\.md$"
+)
+WORK054_WP004B_ROUTER_TASK_LINK = re.compile(
+    r"^- \[`(?P<artifact>TSK-[0-9]{4}-[0-9]{4})` — "
+    r"`(?P<legacy>[^`]+)`\]\((?P<path>tasks/tsk-[0-9]{4}-[a-z0-9]+"
+    r"(?:-[a-z0-9]+)*\.md)\)$"
+)
+WORK054_WP004B_TASK_STATUSES = MappingProxyType(
+    {
+        "done": "done",
+        "completed": "done",
+        "archived": "done",
+        "transferred": "done",
+        "in progress": "in-progress",
+        "in-progress": "in-progress",
+        "queued": "queued",
+        "pending": "queued",
+        "blocked": "blocked",
+        "cancelled": "cancelled",
+        "canceled": "cancelled",
+    }
+)
+
+
+@dataclass(frozen=True)
+class _Work054Wp004bAdmission:
+    paths: frozenset[PurePosixPath]
+    diagnostics: frozenset[tuple[PurePosixPath, str, str, str]]
+
+
+_EMPTY_WORK054_WP004B_ADMISSION = _Work054Wp004bAdmission(
+    frozenset(), frozenset()
+)
 
 
 def _registry_profile_ids(raw_registry: Mapping[str, object]) -> frozenset[str]:
@@ -667,12 +713,16 @@ def finite_work105_form_cutover_paths(
     return frozenset(consumed)
 
 
-def _wp004b_proposed_classification_registry(
+def _wp004b_classification_registry(
     current_registry: Registry,
     projected_registry: Registry,
+    *,
+    authority_converged: bool,
 ) -> Registry:
-    """Activate the sole root Requirement Package over three finite aliases."""
+    """Classify Requirement Packages only in trees carrying sealed MIG-0004."""
 
+    if not authority_converged:
+        return projected_registry
     current = {
         profile.profile_id: profile for profile in current_registry.profiles
     }
@@ -694,31 +744,241 @@ def _wp004b_proposed_classification_registry(
     return replace(projected_registry, profiles=profiles)
 
 
-def finite_work054_wp004b_document_authority_paths(
+def _work054_wp004b_document(
+    root: Path,
+    registry: Registry,
+    path: PurePosixPath,
+    oid: str | None,
+    *,
+    profile_id: str,
+    status: str | None,
+    artifact_id: str | None,
+    blob_reader: Callable[[str], bytes] | None = None,
+) -> LifecycleDocument | None:
+    if oid is None:
+        return None
+    try:
+        raw = (blob_reader or (lambda value: _blob_bytes(root, value)))(oid)
+        text = raw.decode("utf-8")
+        document = document_from_text(registry, path, text)
+    except (InvocationError, UnicodeDecodeError, DocumentContractError):
+        return None
+    if (
+        document.profile_id != profile_id
+        or document.status != status
+        or document.state_issue is not None
+    ):
+        return None
+    if artifact_id is None:
+        return document if not text.startswith("---\n") else None
+    return (
+        document
+        if _work054_wp002_frontmatter_value(raw, "artifact_id") == artifact_id
+        else None
+    )
+
+
+def _work054_wp004b_table_cells(line: str) -> tuple[str, ...] | None:
+    if not line.startswith("|") or not line.endswith("|"):
+        return None
+    cells: list[str] = []
+    current: list[str] = []
+    escaped = False
+    in_code = False
+    for character in line[1:-1]:
+        if escaped:
+            current.append(character)
+            escaped = False
+        elif character == "\\":
+            current.append(character)
+            escaped = True
+        elif character == "`":
+            current.append(character)
+            in_code = not in_code
+        elif character == "|" and not in_code:
+            cells.append("".join(current).strip())
+            current = []
+        else:
+            current.append(character)
+    if escaped or in_code:
+        return None
+    cells.append("".join(current).strip())
+    return tuple(cells)
+
+
+def _work054_wp004b_task_table(
+    raw: bytes,
+) -> tuple[str, str, tuple[tuple[str, tuple[str, ...]], ...]] | None:
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        return None
+    marker = "\n## Task Table\n"
+    if text.count(marker) != 1:
+        return None
+    section = re.split(r"\n#{2,6} ", text.partition(marker)[2], maxsplit=1)[0]
+    lines = [line for line in section.splitlines() if line.startswith("|")]
+    if len(lines) < 3:
+        return None
+    header = _work054_wp004b_table_cells(lines[0])
+    separator = _work054_wp004b_table_cells(lines[1])
+    if (
+        header is None
+        or separator is None
+        or len(header) != len(separator)
+        or any(re.fullmatch(r":?-{3,}:?", cell) is None for cell in separator)
+    ):
+        return None
+    rows: list[tuple[str, tuple[str, ...]]] = []
+    for line in lines[2:]:
+        cells = _work054_wp004b_table_cells(line)
+        if cells is None or len(cells) != len(header):
+            return None
+        rows.append((line, cells))
+    return lines[0], lines[1], tuple(rows)
+
+
+def _work054_wp004b_task_slug(legacy_id: str) -> str | None:
+    slug = re.sub(r"[^a-z0-9]+", "-", legacy_id.lower()).strip("-")
+    return slug if re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", slug) else None
+
+
+def _work054_wp004b_legacy_id(raw: str) -> str:
+    link = re.fullmatch(r"\[(?P<label>[A-Za-z0-9-]+)\]\([^)]*\)", raw)
+    return link.group("label") if link is not None else raw
+
+
+def _work054_wp004b_task_title(raw: str) -> str:
+    return raw.replace("\\|", "|").replace("`", "").strip()
+
+
+def _work054_wp004b_render_task(
+    *,
+    artifact_id: str,
+    title: str,
+    status: str,
+    owner: str,
+    updated: str,
+    legacy_id: str,
+    header_line: str,
+    separator_line: str,
+    row_line: str,
+) -> bytes:
+    heading_title = title.rstrip(".")
+    quoted_title = json.dumps(
+        f"{artifact_id}: {title}", ensure_ascii=False
+    )
+    lifecycle_trace = ""
+    if status != "done":
+        lifecycle_trace = (
+            "\n### Lifecycle Traceability\n\n"
+            "| Criterion / work item | Result | Evidence |\n"
+            "| --- | --- | --- |\n"
+            f"| N/A — legacy work item `{legacy_id}` | Preserved legacy status; "
+            f"current Task is `{status}`. | Row-specific result and evidence remain "
+            "in the Task Table above. |\n\n"
+        )
+    return (
+        f"---\n"
+        f"title: {quoted_title}\n"
+        f"type: sdlc/task\n"
+        f"status: {status}\n"
+        f"owner: {owner}\n"
+        f"updated: {updated}\n"
+        f'artifact_id: "{artifact_id}"\n'
+        f"---\n\n"
+        f"# {artifact_id}: {heading_title}\n\n"
+        f"## Overview\n\n"
+        f"Append-only Task record for legacy work item `{legacy_id}` from the package's\n"
+        f"decomposed monolithic ledger. The exact row below preserves its criterion,\n"
+        f"dependency, owner, result, and evidence.\n\n"
+        f"## Inputs\n\n"
+        f"- [Package router](../README.md)\n"
+        f"- [Owning Spec](../spec.md)\n"
+        f"- [Owning Plan](../plan.md)\n"
+        f"- [Migration recovery ledger](../../../98.archive/migrations/0004-document-authority-convergence.md)\n\n"
+        f"## Task Table\n\n"
+        f"{header_line}\n"
+        f"{separator_line}\n"
+        f"{row_line}\n\n"
+        f"## Approval and Safety Boundaries\n\n"
+        f"The shared approval, safety, and rollback contract is preserved once in the\n"
+        f"[owning Plan](../plan.md#legacy-task-approval-and-rollback-boundaries). This\n"
+        f"record does not broaden that contract.\n\n"
+        f"## Verification Summary\n\n"
+        f"The row-specific validation/result/evidence is preserved verbatim above. The\n"
+        f"shared verification context is in the\n"
+        f"[owning Plan](../plan.md#legacy-task-verification-evidence).\n\n"
+        f"## Traceability\n\n"
+        f"- Stable Task: `{artifact_id}`\n"
+        f"- Legacy work item: `{legacy_id}`\n"
+        f"{lifecycle_trace}"
+        f"- Package inventory: [README](../README.md#task-records)\n"
+        f"- Legacy bytes: [MIG-0004](../../../98.archive/migrations/0004-document-authority-convergence.md)\n"
+    ).encode("utf-8")
+
+
+def _work054_wp004b_admission(
     *,
     root: Path,
     mode: str,
     base_commit: str,
     base_blobs: Mapping[PurePosixPath, str],
     proposed_blobs: Mapping[PurePosixPath, str],
-) -> frozenset[PurePosixPath]:
-    """Admit only the sealed 66-row WP-004B package authority cutover."""
+    base_registry: Registry,
+    proposed_registry: Registry,
+) -> _Work054Wp004bAdmission:
+    """Admit only the cutover projected by sealed MIG-0004 authority."""
 
     if mode not in {"staged", "ci"}:
-        return frozenset()
+        return _EMPTY_WORK054_WP004B_ADMISSION
+    blob_cache: dict[str, bytes] = {}
+
+    def read_blob(oid: str) -> bytes:
+        if oid not in blob_cache:
+            blob_cache[oid] = _blob_bytes(root, oid)
+        return blob_cache[oid]
+
     migration_oid = proposed_blobs.get(WORK054_WP004B_MIGRATION_PATH)
     if migration_oid is None or WORK054_WP004B_MIGRATION_PATH in base_blobs:
-        return frozenset()
+        return _EMPTY_WORK054_WP004B_ADMISSION
     try:
+        migration_bytes = read_blob(migration_oid)
         rows = parse_pinned_migration_control(
             WORK054_WP004B_MIGRATION_PATH.as_posix(),
-            _blob_bytes(root, migration_oid),
+            migration_bytes,
         )
-    except ArchiveContractError:
-        return frozenset()
+    except (ArchiveContractError, InvocationError):
+        return _EMPTY_WORK054_WP004B_ADMISSION
+
+    migration_document = _work054_wp004b_document(
+        root,
+        proposed_registry,
+        WORK054_WP004B_MIGRATION_PATH,
+        migration_oid,
+        profile_id="content/archive-migration",
+        status="sealed",
+        artifact_id="MIG-0004",
+        blob_reader=read_blob,
+    )
+    if migration_document is None:
+        return _EMPTY_WORK054_WP004B_ADMISSION
 
     consumed: set[PurePosixPath] = {WORK054_WP004B_MIGRATION_PATH}
+    allowed_diagnostics: set[tuple[PurePosixPath, str, str, str]] = {
+        (
+            WORK054_WP004B_MIGRATION_PATH,
+            "LIFECYCLE-CREATE",
+            "content/archive-migration",
+            "absent -> sealed",
+        )
+    }
     task_packages: set[PurePosixPath] = set()
+    requirement_paths: set[PurePosixPath] = set()
+    architecture_paths: set[PurePosixPath] = set()
+    agent_replacements: set[PurePosixPath] = set()
+    expected_task_paths: set[PurePosixPath] = set()
+    expected_task_labels: dict[PurePosixPath, tuple[str, str]] = {}
     for row in rows:
         legacy_raw = row.get("legacy_path")
         source_commit = row.get("source_commit")
@@ -729,35 +989,312 @@ def finite_work054_wp004b_document_authority_paths(
             or not isinstance(source_blob, str)
             or source_commit != base_commit
         ):
-            return frozenset()
+            return _EMPTY_WORK054_WP004B_ADMISSION
         legacy = PurePosixPath(legacy_raw)
         if base_blobs.get(legacy) != source_blob:
-            return frozenset()
+            return _EMPTY_WORK054_WP004B_ADMISSION
         target_raw = row.get("stable_path") or row.get("replacement")
         target = PurePosixPath(target_raw) if isinstance(target_raw, str) else None
         if action == "replaced" and target == legacy:
             proposed_oid = proposed_blobs.get(legacy)
             if proposed_oid is None or proposed_oid == source_blob:
-                return frozenset()
+                return _EMPTY_WORK054_WP004B_ADMISSION
+            requirement_match = WORK054_WP004B_REQUIREMENT_PATTERN.fullmatch(
+                legacy.as_posix()
+            )
+            if requirement_match is None:
+                return _EMPTY_WORK054_WP004B_ADMISSION
+            identity = requirement_match.group("identity")
+            base_status = _work054_wp002_frontmatter_value(
+                read_blob(source_blob), "status"
+            )
+            expected_status = {
+                "active": "active",
+                "done": "superseded",
+            }.get(base_status or "")
+            if (
+                expected_status is None
+                or _work054_wp004b_document(
+                    root,
+                    base_registry,
+                    legacy,
+                    source_blob,
+                    profile_id="sdlc/prd",
+                    status=base_status,
+                    artifact_id=f"PRD-{identity}",
+                    blob_reader=read_blob,
+                )
+                is None
+                or _work054_wp004b_document(
+                    root,
+                    proposed_registry,
+                    legacy,
+                    proposed_oid,
+                    profile_id=WORK054_WP004B_REQUIREMENT_PACKAGE_PROFILE,
+                    status=expected_status,
+                    artifact_id=f"REQ-{identity}",
+                    blob_reader=read_blob,
+                )
+                is None
+            ):
+                return _EMPTY_WORK054_WP004B_ADMISSION
+            target_bytes = read_blob(proposed_oid)
+            if expected_status == "superseded" and (
+                _work054_wp002_frontmatter_value(target_bytes, "superseded_by")
+                != "REQ-0008"
+            ):
+                return _EMPTY_WORK054_WP004B_ADMISSION
+            if identity == "0008":
+                supersedes = _work054_wp002_frontmatter_value(
+                    target_bytes, "supersedes"
+                )
+                if supersedes is None or set(
+                    re.findall(r"REQ-[0-9]{4}", supersedes)
+                ) != {"REQ-0005", "REQ-0006"}:
+                    return _EMPTY_WORK054_WP004B_ADMISSION
+            requirement_paths.add(legacy)
             consumed.add(legacy)
+            allowed_diagnostics.add(
+                (
+                    legacy,
+                    "LIFECYCLE-STATE",
+                    WORK054_WP004B_REQUIREMENT_PACKAGE_PROFILE,
+                    "sdlc/prd -> sdlc/requirement-package; "
+                    "current registry classification unavailable",
+                )
+            )
             continue
         if target is None or target not in proposed_blobs:
-            return frozenset()
+            return _EMPTY_WORK054_WP004B_ADMISSION
         if legacy in proposed_blobs:
-            return frozenset()
+            return _EMPTY_WORK054_WP004B_ADMISSION
         if action == "moved":
+            identity = row.get("artifact_id")
+            match = WORK054_WP004B_AD_PATTERN.fullmatch(target.as_posix())
+            base_status = _work054_wp002_frontmatter_value(
+                read_blob(source_blob), "status"
+            )
+            if (
+                match is None
+                or identity != f"AD-{match.group('identity')}"
+                or base_status is None
+                or _work054_wp004b_document(
+                    root,
+                    base_registry,
+                    legacy,
+                    source_blob,
+                    profile_id="sdlc/ad",
+                    status=base_status,
+                    artifact_id=str(identity),
+                    blob_reader=read_blob,
+                )
+                is None
+                or _work054_wp004b_document(
+                    root,
+                    proposed_registry,
+                    target,
+                    proposed_blobs[target],
+                    profile_id="sdlc/ad",
+                    status=base_status,
+                    artifact_id=str(identity),
+                    blob_reader=read_blob,
+                )
+                is None
+            ):
+                return _EMPTY_WORK054_WP004B_ADMISSION
+            architecture_paths.add(target)
             consumed.update((legacy, target))
+            if source_blob == proposed_blobs[target]:
+                allowed_diagnostics.add(
+                    (
+                        target,
+                        "LIFECYCLE-RENAME",
+                        "sdlc/ad",
+                        f"{legacy.as_posix()} -> {target.as_posix()}",
+                    )
+                )
+            else:
+                allowed_diagnostics.update(
+                    {
+                        (
+                            legacy,
+                            "LIFECYCLE-DELETE",
+                            "sdlc/ad",
+                            f"{base_status} -> absent",
+                        ),
+                        (
+                            target,
+                            "LIFECYCLE-CREATE",
+                            "sdlc/ad",
+                            f"absent -> {base_status}",
+                        ),
+                    }
+                )
             continue
         if action == "replaced" and legacy.name == "tasks.md":
             if target.name != "README.md" or target in base_blobs:
-                return frozenset()
+                return _EMPTY_WORK054_WP004B_ADMISSION
+            source_bytes = read_blob(source_blob)
+            source_table = _work054_wp004b_task_table(source_bytes)
+            source_status = _work054_wp002_frontmatter_value(
+                source_bytes, "status"
+            )
+            source_owner = _work054_wp002_frontmatter_value(source_bytes, "owner")
+            source_updated = _work054_wp002_frontmatter_value(
+                source_bytes, "updated"
+            )
+            spec_number = legacy.parent.name[:4]
+            if (
+                source_table is None
+                or source_status is None
+                or source_owner is None
+                or source_updated is None
+                or _work054_wp004b_document(
+                    root,
+                    base_registry,
+                    legacy,
+                    source_blob,
+                    profile_id="sdlc/task",
+                    status=source_status,
+                    artifact_id=f"TASK-{spec_number}",
+                    blob_reader=read_blob,
+                )
+                is None
+            ):
+                return _EMPTY_WORK054_WP004B_ADMISSION
+            header_line, separator_line, source_rows = source_table
+            headers = _work054_wp004b_table_cells(header_line)
+            assert headers is not None
+            lowered_headers = tuple(cell.lower() for cell in headers)
+            try:
+                status_index = lowered_headers.index("status")
+            except ValueError:
+                return _EMPTY_WORK054_WP004B_ADMISSION
+            owner_index = (
+                lowered_headers.index("owner") if "owner" in lowered_headers else None
+            )
+            for sequence, (row_line, cells) in enumerate(source_rows, 1):
+                legacy_id = _work054_wp004b_legacy_id(cells[0])
+                slug = _work054_wp004b_task_slug(legacy_id)
+                status = WORK054_WP004B_TASK_STATUSES.get(
+                    cells[status_index].strip().lower()
+                )
+                row_owner = (
+                    cells[owner_index].strip()
+                    if owner_index is not None
+                    else source_owner
+                )
+                artifact_id = f"TSK-{spec_number}-{sequence:04d}"
+                if slug is None or status is None or not row_owner:
+                    return _EMPTY_WORK054_WP004B_ADMISSION
+                task_path = legacy.parent / "tasks" / f"tsk-{sequence:04d}-{slug}.md"
+                task_oid = proposed_blobs.get(task_path)
+                task_bytes = read_blob(task_oid) if task_oid is not None else b""
+                task_table = _work054_wp004b_task_table(task_bytes)
+                if task_table is None:
+                    return _EMPTY_WORK054_WP004B_ADMISSION
+                task_header, task_separator, task_rows = task_table
+                target_cells = task_rows[0][1] if len(task_rows) == 1 else ()
+                if (
+                    task_header != header_line
+                    or task_separator != separator_line
+                    or len(task_rows) != 1
+                    or len(target_cells) != len(cells)
+                    or _work054_wp004b_legacy_id(target_cells[0]) != legacy_id
+                    or target_cells[1] != cells[1]
+                    or (
+                        owner_index is not None
+                        and target_cells[owner_index] != cells[owner_index]
+                    )
+                    or target_cells[status_index] != cells[status_index]
+                    or any(not cell for cell in target_cells)
+                ):
+                    return _EMPTY_WORK054_WP004B_ADMISSION
+                projected_row = task_rows[0][0]
+                expected = _work054_wp004b_render_task(
+                    artifact_id=artifact_id,
+                    title=_work054_wp004b_task_title(cells[1]),
+                    status=status,
+                    owner=source_owner,
+                    updated=source_updated,
+                    legacy_id=legacy_id,
+                    header_line=header_line,
+                    separator_line=separator_line,
+                    row_line=projected_row,
+                )
+                if (
+                    task_oid is None
+                    or task_bytes != expected
+                    or _work054_wp004b_document(
+                        root,
+                        proposed_registry,
+                        task_path,
+                        task_oid,
+                        profile_id="sdlc/task",
+                        status=status,
+                        artifact_id=artifact_id,
+                        blob_reader=read_blob,
+                    )
+                    is None
+                ):
+                    return _EMPTY_WORK054_WP004B_ADMISSION
+                expected_task_paths.add(task_path)
+                expected_task_labels[task_path] = (artifact_id, legacy_id)
+                allowed_diagnostics.add(
+                    (
+                        task_path,
+                        "LIFECYCLE-CREATE",
+                        "sdlc/task",
+                        f"absent -> {status}",
+                    )
+                )
             task_packages.add(legacy.parent)
             consumed.update((legacy, target))
+            allowed_diagnostics.add(
+                (
+                    legacy,
+                    "LIFECYCLE-DELETE",
+                    "sdlc/task",
+                    f"{source_status} -> absent",
+                )
+            )
             continue
         if action == "merged" and legacy.name == "agent-design.md":
+            source_status = _work054_wp002_frontmatter_value(
+                read_blob(source_blob), "status"
+            )
+            spec_number = legacy.parent.name[:4]
+            target_oid = proposed_blobs.get(target)
+            if (
+                source_status is None
+                or target.name != "spec.md"
+                or target_oid is None
+                or target_oid == base_blobs.get(target)
+                or _work054_wp004b_document(
+                    root,
+                    base_registry,
+                    legacy,
+                    source_blob,
+                    profile_id="sdlc/agent-design",
+                    status=source_status,
+                    artifact_id=f"AGENT-DESIGN-{spec_number}",
+                    blob_reader=read_blob,
+                )
+                is None
+            ):
+                return _EMPTY_WORK054_WP004B_ADMISSION
+            agent_replacements.add(target)
             consumed.update((legacy, target))
+            allowed_diagnostics.add(
+                (
+                    legacy,
+                    "LIFECYCLE-DELETE",
+                    "sdlc/agent-design",
+                    f"{source_status} -> absent",
+                )
+            )
             continue
-        return frozenset()
+        return _EMPTY_WORK054_WP004B_ADMISSION
 
     routers = {
         path
@@ -769,18 +1306,184 @@ def finite_work054_wp004b_document_authority_paths(
         for path in proposed_blobs
         if WORK054_WP004B_TASK_PATTERN.fullmatch(path.as_posix())
     }
+    specs = {
+        path
+        for path in proposed_blobs
+        if WORK054_WP004B_SPEC_PATTERN.fullmatch(path.as_posix())
+    }
+    plans = {
+        path
+        for path in proposed_blobs
+        if WORK054_WP004B_PLAN_PATTERN.fullmatch(path.as_posix())
+    }
+    spec_packages = {path.parent for path in specs}
     task_owners = {path.parent.parent for path in tasks}
     if (
-        len(routers) != 57
-        or len(tasks) != 315
+        tasks != expected_task_paths
         or any(path in base_blobs for path in routers | tasks)
         or task_owners != task_packages
-        or not task_packages <= {path.parent for path in routers}
+        or {path.parent for path in routers} != spec_packages
+        or not task_packages <= spec_packages
+        or {path.parent for path in plans} - spec_packages
+        or {
+            path
+            for path in proposed_blobs
+            if WORK054_WP004B_REQUIREMENT_PATTERN.fullmatch(path.as_posix())
+        }
+        != requirement_paths
+        or {
+            path
+            for path in proposed_blobs
+            if WORK054_WP004B_AD_PATTERN.fullmatch(path.as_posix())
+        }
+        != architecture_paths
     ):
-        return frozenset()
+        return _EMPTY_WORK054_WP004B_ADMISSION
+
+    for spec_path in specs:
+        spec_match = WORK054_WP004B_SPEC_PATTERN.fullmatch(spec_path.as_posix())
+        assert spec_match is not None
+        base_oid = base_blobs.get(spec_path)
+        base_status = (
+            _work054_wp002_frontmatter_value(read_blob(base_oid), "status")
+            if base_oid is not None
+            else None
+        )
+        if (
+            base_oid is None
+            or base_status is None
+            or _work054_wp004b_document(
+                root,
+                proposed_registry,
+                spec_path,
+                proposed_blobs[spec_path],
+                profile_id="sdlc/spec",
+                status=base_status,
+                artifact_id=f"SPEC-{spec_match.group('spec')}",
+                blob_reader=read_blob,
+            )
+            is None
+        ):
+            return _EMPTY_WORK054_WP004B_ADMISSION
+        consumed.add(spec_path)
+
+    for plan_path in plans:
+        plan_match = WORK054_WP004B_PLAN_PATTERN.fullmatch(plan_path.as_posix())
+        assert plan_match is not None
+        base_oid = base_blobs.get(plan_path)
+        base_status = (
+            _work054_wp002_frontmatter_value(read_blob(base_oid), "status")
+            if base_oid is not None
+            else None
+        )
+        if (
+            base_oid is None
+            or base_status is None
+            or _work054_wp004b_document(
+                root,
+                proposed_registry,
+                plan_path,
+                proposed_blobs[plan_path],
+                profile_id="sdlc/plan",
+                status=base_status,
+                artifact_id=f"PLAN-{plan_match.group('spec')}",
+                blob_reader=read_blob,
+            )
+            is None
+        ):
+            return _EMPTY_WORK054_WP004B_ADMISSION
+        consumed.add(plan_path)
+
+    if not agent_replacements <= specs:
+        return _EMPTY_WORK054_WP004B_ADMISSION
+
+    for router in routers:
+        router_oid = proposed_blobs[router]
+        if (
+            _work054_wp004b_document(
+                root,
+                proposed_registry,
+                router,
+                router_oid,
+                profile_id="readme/collection-index",
+                status=None,
+                artifact_id=None,
+                blob_reader=read_blob,
+            )
+            is None
+        ):
+            return _EMPTY_WORK054_WP004B_ADMISSION
+        router_text = read_blob(router_oid).decode("utf-8")
+        marker = "\n## Task Records\n"
+        if router_text.count(marker) != 1 or router_text.count("(spec.md)") != 1:
+            return _EMPTY_WORK054_WP004B_ADMISSION
+        package = router.parent
+        plan_exists = package / "plan.md" in plans
+        if router_text.count("(plan.md)") != int(plan_exists):
+            return _EMPTY_WORK054_WP004B_ADMISSION
+        section = router_text.partition(marker)[2].partition("\n## ")[0]
+        links: dict[PurePosixPath, tuple[str, str]] = {}
+        for line in section.splitlines():
+            match = WORK054_WP004B_ROUTER_TASK_LINK.fullmatch(line)
+            if match is None:
+                continue
+            task_path = package / match.group("path")
+            if task_path in links:
+                return _EMPTY_WORK054_WP004B_ADMISSION
+            links[task_path] = (match.group("artifact"), match.group("legacy"))
+        actual = {path for path in tasks if path.parent.parent == package}
+        if (
+            set(links) != actual
+            or any(links[path] != expected_task_labels[path] for path in actual)
+            or router_text.count("](tasks/tsk-") != len(actual)
+        ):
+            return _EMPTY_WORK054_WP004B_ADMISSION
+        allowed_diagnostics.add(
+            (
+                router,
+                "LIFECYCLE-CREATE",
+                "readme/collection-index",
+                "absent -> not-applicable",
+            )
+        )
     consumed.update(routers)
     consumed.update(tasks)
-    return frozenset(consumed)
+    return _Work054Wp004bAdmission(
+        frozenset(consumed), frozenset(allowed_diagnostics)
+    )
+
+
+def finite_work054_wp004b_document_authority_paths(
+    *,
+    root: Path,
+    mode: str,
+    base_commit: str,
+    base_blobs: Mapping[PurePosixPath, str],
+    proposed_blobs: Mapping[PurePosixPath, str],
+) -> frozenset[PurePosixPath]:
+    """Return paths only after exact WP-004B tree-object projection succeeds."""
+
+    try:
+        current_registry = load_registry(root)
+        base_registry = _classification_registry(
+            current_registry,
+            _registry_blob(
+                root,
+                _tree_blob_oid(root, base_commit, RETIRED_REGISTRY_PATH),
+            ),
+        )
+        proposed_registry = current_registry
+    except (DocumentContractError, InvocationError):
+        return frozenset()
+    return _work054_wp004b_admission(
+        root=root,
+        mode=mode,
+        base_commit=base_commit,
+        base_blobs=base_blobs,
+        proposed_blobs=proposed_blobs,
+        base_registry=base_registry,
+        proposed_registry=proposed_registry,
+    ).paths
 
 
 def _git_blob_oid(content: bytes) -> str:
@@ -3948,8 +4651,15 @@ def _evaluate_comparison(
     proposed_classification_registry = _classification_registry(
         registry, proposed_registry_raw
     )
-    proposed_classification_registry = _wp004b_proposed_classification_registry(
-        registry, proposed_classification_registry
+    base_classification_registry = _wp004b_classification_registry(
+        registry,
+        base_classification_registry,
+        authority_converged=WORK054_WP004B_MIGRATION_PATH in base_blobs,
+    )
+    proposed_classification_registry = _wp004b_classification_registry(
+        registry,
+        proposed_classification_registry,
+        authority_converged=WORK054_WP004B_MIGRATION_PATH in proposed_blobs,
     )
 
     work054_wp002_consumed_paths = finite_work054_wp002_transition_paths(
@@ -3970,16 +4680,15 @@ def _evaluate_comparison(
         base_blobs=base_blobs,
         proposed_blobs=proposed_blobs,
     )
-    work054_wp004b_consumed_paths = (
-        finite_work054_wp004b_document_authority_paths(
-            root=root,
-            mode=mode,
-            base_commit=base_commit,
-            base_blobs=base_blobs,
-            proposed_blobs=proposed_blobs,
-        )
+    work054_wp004b_admission = _work054_wp004b_admission(
+        root=root,
+        mode=mode,
+        base_commit=base_commit,
+        base_blobs=base_blobs,
+        proposed_blobs=proposed_blobs,
+        base_registry=base_classification_registry,
+        proposed_registry=proposed_classification_registry,
     )
-
     work107_consumed_paths = finite_work107_archive_rehome_paths(
         root=root,
         mode=mode,
@@ -4107,11 +4816,10 @@ def _evaluate_comparison(
                 base_harness=base_harness,
                 proposed_harness=proposed_harness,
             )
-    consumed_paths = (
+    legacy_consumed_paths = (
         work054_wp002_consumed_paths
         | work054_wp003_consumed_paths
         | work054_wp004a_consumed_paths
-        | work054_wp004b_consumed_paths
         | work105_consumed_paths
         | work107_consumed_paths
         | work108_consumed_paths
@@ -4125,7 +4833,14 @@ def _evaluate_comparison(
         return tuple(
             diagnostic
             for diagnostic in diagnostics
-            if diagnostic.path not in consumed_paths
+            if diagnostic.path not in legacy_consumed_paths
+            and (
+                diagnostic.path,
+                diagnostic.rule_id,
+                diagnostic.profile,
+                diagnostic.observed_transition,
+            )
+            not in work054_wp004b_admission.diagnostics
         )
 
     if not _comparison_requires_evidence(

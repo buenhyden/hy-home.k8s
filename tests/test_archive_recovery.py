@@ -840,7 +840,7 @@ class PinnedMigrationRecoveryCliTest(unittest.TestCase):
                 prefix="migration-recovery-cli-"
             ) as temporary:
                 root = Path(temporary)
-                fixture = GitFixture(root)
+                _fixture = GitFixture(root)
                 target = root / record
                 target.parent.mkdir(parents=True)
                 target.write_bytes(migration)

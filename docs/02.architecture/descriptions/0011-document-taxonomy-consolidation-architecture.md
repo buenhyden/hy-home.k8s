@@ -3,7 +3,7 @@ title: 'Document Taxonomy Consolidation Architecture Description'
 type: sdlc/ad
 status: active
 owner: platform
-updated: 2026-08-11
+updated: 2026-08-22
 artifact_id: "AD-0011"
 ---
 
@@ -12,7 +12,7 @@ artifact_id: "AD-0011"
 ## Overview
 
 This architecture implements
-[PRD-0008](../../01.requirements/0008-workspace-document-taxonomy-consolidation.md)
+[REQ-0008](../../01.requirements/0008-workspace-document-taxonomy-consolidation.md)
 as one repository-local control plane for SDLC documents, template and profile
 contracts, AI-agent governance, and validation. It organizes change evidence
 around a Stage 03 work unit, retires the separate Stage 04 execution tree,
@@ -34,21 +34,19 @@ not govern GitOps desired state, live Kubernetes or Vault behavior, provider
 authentication, hosted CI administration, credentials, publication, or remote
 mutation.
 
-Existing Stage 98 payload bytes, digests, source commits/blobs, legacy-envelope
-identity, and recovery result are immutable in every phase. WORK-105 and
-WORK-106 also preserve every existing path and wrapper byte. The sole
-existing-record path/wrapper exception is the exact 93-row, ledger-gated
-WORK-107 outer rehome defined below; WORK-108 and later restore full path and
-wrapper immutability. Outside that bounded event, this program may append a
-new ArchiveEnvelope for unique retired history and update the central index,
-but it may not edit an existing record.
+Current document topology and recovery follow
+[ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)
+and [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md).
+Git history is the default full-content archive. A current deletion or move
+requires bounded consumer-zero and recovery evidence; sealed historical
+payloads are not rewritten to make current validation pass.
 
 Stage 90 dated observations retain the facts and paths observed at their
 cutoff. A current navigational index or an explicit historical annotation may
 change when its contract allows; observation prose is not silently rewritten
 to look current.
 
-Existing PRD, AD, ADR, and Spec numbers remain stable. Accepted ADRs are
+Existing Requirement Package, AD, ADR, and Spec numbers remain stable. Accepted ADRs are
 append-only decision evidence; changed decisions use a successor record rather
 than rewriting an unrelated or accepted predecessor.
 
@@ -76,39 +74,38 @@ redesign, and consolidation of validators with different failure semantics.
 
 ```text
 docs/
-  00.agent-governance/   human policy, provider deltas, harness contracts
-  01.requirements/       PRD                         <NNN>-<slug>.md
-                         optional SRS                srs-<NNN>-<slug>.md
-                         optional Interface Req.     ifc-<NNN>-<slug>.md
+  00.agent-governance/   human policy, roles, provider deltas, skill governance
+  01.requirements/       Requirement Package         ####-<slug>.md
   02.architecture/
-    descriptions/        AD                          ad-<NNNN>-<slug>.md
-    decisions/           ADR                         <NNNN>-<slug>.md
-  03.specs/              work unit                   <NNN>-<slug>/
-    <NNN>-<slug>/
+    descriptions/        AD                          ####-<slug>.md
+    decisions/           ADR                         ####-<slug>.md
+  03.specs/              work unit                   ####-<slug>/
+    ####-<slug>/
+      README.md           thin package router
       spec.md             technical contract
-      plan.md             ordered implementation design, when required
-      tasks.md            execution state and evidence, when required
+      plan.md             order, risk, validation, rollback
+      tasks/
+        tsk-####-<slug>.md independently reviewable execution evidence
   05.operations/
     guides/ incidents/ policies/ runbooks/
-  90.references/         dated research, audits, reference, data
-  98.archive/            append-only ArchiveEnvelope records and index
-  99.templates/          canonical forms and support rationale
+  90.references/         research, audits, data
+  98.archive/            minimal migration and tombstone lookup
+  99.templates/          registry, schemas, copyable templates
 scripts/                 declared validation and repository automation
 ```
 
-`docs/03.specs/` has no terminal route. Its numeric slot remains unused;
-number continuity is less valuable than avoiding a second broad path rewrite
-and preserving stable Stage 05 links. A work unit may have only `spec.md`.
-`plan.md` requires its sibling Spec, and `tasks.md` requires both siblings.
+`docs/03.specs/` is the terminal work-unit route. Every package has a thin
+router and a Spec; Plan and Task records are present according to its governed
+execution lineage. Stage 04 remains retired and is not silently reused.
 
 ### Authority topology
 
 | Plane | Canonical owner | Projection boundary |
 | --- | --- | --- |
-| Agent-facing document routing and execution policy | `docs/00.agent-governance/rules/document-authoring.md` | Root/provider gateways and skills route to it but do not copy the full rules. |
-| Document route, profile, heading, status, template, and relationship values | `docs/99.templates/support/document-profiles.json` plus schema | Stage 00, templates, README indexes, and validators consume or explain values; they do not redefine them. |
-| Template selection and lifecycle rationale | `docs/99.templates/support/document-contract.md` and `document-lifecycle.md` | Template forms contain author prompts and required structure only. |
-| Agent system, role, permission, evidence, risk, approval, and provenance shape | Existing `harness-contract.json` plus schema | Provider adapters contain provider-native deltas only; no separate agent registry is introduced. |
+| Human document routing and execution policy | Stage 00 SDLC/policy owners | Root/provider gateways and skills route to them but do not copy the full rules. |
+| Document route, profile, heading, status, template, and relationship values | `docs/99.templates/registry.json` plus its two schemas | Stage 00, templates, README indexes, and validators consume or explain values; they do not redefine them. |
+| Template projection | Registry-selected templates | Template forms reference their registry profile and contain copyable structure only. |
+| Agent system, role, permission, and handoff shape | Terminal `.agents/registry.json` owner defined by ADR-0030 | WP-003 migrates provider-neutral and Codex/Claude projections without treating the predecessor harness as a parallel terminal owner. |
 | Validator lane and command selection | `validation-surfaces.json` | Pre-commit, affected selection, CI, and aggregate wrappers invoke the declared owner. |
 | Historical evidence | Stage 98 archive index and immutable envelopes | Active documents link through the index; they do not rewrite archive payloads. |
 
@@ -116,10 +113,10 @@ and preserving stable Stage 05 links. A work unit may have only `spec.md`.
 
 The route migration has three explicit states:
 
-1. `legacy`: current Stage 03 Spec and Stage 04 Plan/Task routes are valid.
+1. `legacy`: the predecessor route is valid before its successor contract lands.
 2. `transition`: only enumerated source and target pairs may coexist; one work
    unit cannot have two active owners, and unlisted new-route paths fail.
-3. `terminal`: Stage 03 fixed-name routes are valid and every live Stage 04
+3. `terminal`: the current Stage 01/02/03 routes are valid and every retired
    execution path or consumer fails.
 
 Tests and registry compatibility land before document moves. An explicit
@@ -155,12 +152,18 @@ snapshots, real Incident/Postmortem identities, and Stage 98 mirror paths.
 
 Cross-stage lineage continues to use the registry's closed program or
 standalone relationship data and reciprocal document links. This program does
-not add ad-hoc frontmatter keys that compete with that owner. Accepted
-[ADR-0024](../decisions/0024-terminal-artifact-identity-and-archive-layout.md)
-owns the terminal form and archive-layout direction, and the PRD-0008 program
-projection names that decision without rewriting accepted predecessor records.
+not add ad-hoc frontmatter keys that compete with that owner.
+[ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)
+owns the terminal form and archive/recovery direction. Superseded decisions
+remain linked predecessor evidence rather than competing current owners.
 
-### Stable Stage 98 migration invariant
+### Historical predecessor migration evidence
+
+The WORK-105 through WORK-108 clauses below describe a completed predecessor
+transition only. They are non-authoritative for new topology, corpus
+cardinality, or Archive design. Current terminal authority is ADR-0030 and
+Spec 0054; current path recovery is indexed by the applicable Stage 98
+Migration and Git history.
 
 WORK-105 and WORK-106 change no Stage 98 path or byte. WORK-105 acceptance and
 a green WORK-106 validator tranche are both preconditions. WORK-107 only may
@@ -299,10 +302,10 @@ promoted, or a required repository-static gate fails.
 
 | Upstream requirement | Quality attribute or boundary | ADR / Spec |
 | --- | --- | --- |
-| [REQ-0008-FR-0001](../../01.requirements/0008-workspace-document-taxonomy-consolidation.md#functional-requirements) | Stage 03 work-unit locality and retired Stage 04 execution route | [ADR-0024](../decisions/0024-terminal-artifact-identity-and-archive-layout.md) and [Spec 052](../../03.specs/0052-document-taxonomy-consolidation/spec.md) |
-| N/A — REQ-0008-FR-0002 through REQ-0008-FR-0004 share the PRD source above. | Stable filename identity, Stage 05 stability, and registry-owned reciprocal lineage | N/A — ADR-0024 and Spec 052 share the target owners above. |
-| N/A — REQ-0008-FR-0005 through REQ-0008-FR-0007 share the PRD source above. | Authority uniqueness, template parity, and explicit Release exclusion | N/A — ADR-0024 and Spec 052 share the target owners above. |
-| N/A — REQ-0008-FR-0008 through REQ-0008-FR-0010 share the PRD source above. | Reviewed disposition, archive integrity, and fail-closed route transition | N/A — Spec 052 owns the migration contract. |
-| N/A — REQ-0008-FR-0011 and REQ-0008-FR-0012 share the PRD source above. | Validator semantic preservation and consumer/fixture proof | N/A — Spec 052 owns script reconciliation. |
-| N/A — REQ-0008-FR-0013 and REQ-0008-FR-0014 share the PRD source above. | Existing harness owner, risk/approval/provenance records, and evidence non-promotion | N/A — ADR-0024 and Spec 052 share the target owners above. |
-| N/A — REQ-0008-FR-0015 through REQ-0008-NFR-0002 share the PRD source above. | Recoverable cleanup, green baseline, suspended-program safety, and local-only scope | N/A — Spec 052 owns the execution and verification design. |
+| [REQ-0008-FR-0001](../../01.requirements/0008-workspace-document-taxonomy-consolidation.md#functional-requirements) | Stage 03 work-unit locality and retired Stage 04 execution route | [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md); [Spec 052](../../03.specs/0052-document-taxonomy-consolidation/spec.md) remains reciprocal predecessor migration evidence. |
+| N/A — REQ-0008-FR-0002 through REQ-0008-FR-0004 share the Requirement Package source above. | Stable filename identity, Stage 05 stability, and registry-owned reciprocal lineage | N/A — ADR-0030 and Spec 0054 share the target owners above. |
+| N/A — REQ-0008-FR-0005 through REQ-0008-FR-0007 share the Requirement Package source above. | Authority uniqueness, template parity, and explicit Release exclusion | N/A — ADR-0030 and Spec 0054 share the target owners above. |
+| N/A — REQ-0008-FR-0008 through REQ-0008-FR-0010 share the Requirement Package source above. | Reviewed disposition, archive integrity, and fail-closed route transition | N/A — Spec 0054 owns the migration contract. |
+| N/A — REQ-0008-FR-0011 and REQ-0008-FR-0012 share the Requirement Package source above. | Validator semantic preservation and consumer/fixture proof | N/A — Spec 0054 owns script reconciliation. |
+| N/A — REQ-0008-FR-0013 and REQ-0008-FR-0014 share the Requirement Package source above. | Provider-neutral governance boundary and evidence non-promotion | N/A — ADR-0030 and Spec 0054 own the terminal boundary; WP-003 owns the provider cutover. |
+| N/A — REQ-0008-FR-0015 through REQ-0008-NFR-0002 share the Requirement Package source above. | Recoverable cleanup, green baseline, suspended-program safety, and local-only scope | N/A — Spec 0054 owns the execution and verification design. |

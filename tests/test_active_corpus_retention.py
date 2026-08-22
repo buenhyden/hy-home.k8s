@@ -15,6 +15,8 @@ from contextlib import redirect_stderr
 from pathlib import Path, PurePosixPath
 from unittest import mock
 
+from jsonschema import Draft202012Validator
+
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 VALIDATOR_PATH = REPOSITORY_ROOT / "scripts" / "validate-active-corpus-retention.py"
@@ -3704,20 +3706,15 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             base_blob,
         )
         self.assertRegex(current_blob, r"^[0-9a-f]{40}$")
-        self.assertEqual(
-            subprocess.run(
-                ["git", "rev-parse", f"HEAD:{path}"],
-                cwd=REPOSITORY_ROOT,
-                check=True,
-                capture_output=True,
-                text=True,
-            ).stdout.strip(),
-            self.validator.MERGE_REGISTRY_BLOB,
-        )
         self.assertNotEqual(work105_blob, work107_blob)
         self.assertNotEqual(work105_blob, current_blob)
         self.assertNotEqual(work107_blob, current_blob)
-        merged = self.validator._load_registry_authority(str(REPOSITORY_ROOT))
+        # Registry semantics are independent of the separately covered sealed
+        # migration/worktree-drift boundary.
+        with mock.patch.object(
+            self.validator, "_validate_wp004b_atomic_admission"
+        ):
+            merged = self.validator._load_registry_authority(str(REPOSITORY_ROOT))
         self.assertIn("programLineage", merged)
         # The authority now merges both published contracts, so each is admitted
         # against its own pinned state and the first one read reports the fault.
@@ -3835,10 +3832,52 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 encoding="utf-8"
             )
         )
+        predecessor_profile = json.loads(
+            subprocess.run(
+                [
+                    "git",
+                    "show",
+                    f"{self.validator.WP004B_SOURCE_COMMIT}:"
+                    f"{self.validator.PROFILE_REGISTRY_PATH}",
+                ],
+                cwd=REPOSITORY_ROOT,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout
+        )
+        predecessor_route = json.loads(
+            subprocess.run(
+                [
+                    "git",
+                    "show",
+                    f"{self.validator.WP004B_SOURCE_COMMIT}:"
+                    f"{self.validator.ROUTE_CONTRACT_PATH}",
+                ],
+                cwd=REPOSITORY_ROOT,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout
+        )
         admitted = self.validator._wp004b_registry_surface_admitted
-        self.assertTrue(admitted(self.validator.PROFILE_REGISTRY_PATH, profile))
-        self.assertTrue(admitted(self.validator.ROUTE_CONTRACT_PATH, route))
-        self.assertFalse(admitted("docs/99.templates/rogue.json", profile))
+        self.assertTrue(
+            admitted(
+                self.validator.PROFILE_REGISTRY_PATH,
+                predecessor_profile,
+                profile,
+            )
+        )
+        self.assertTrue(
+            admitted(
+                self.validator.ROUTE_CONTRACT_PATH,
+                predecessor_route,
+                route,
+            )
+        )
+        self.assertFalse(
+            admitted("docs/99.templates/rogue.json", predecessor_profile, profile)
+        )
 
         wrong_path = copy.deepcopy(profile)
         migration_profile = next(
@@ -3850,7 +3889,11 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             "pathPattern"
         ].replace("0004-document-authority-convergence", "0005-rogue")
         self.assertFalse(
-            admitted(self.validator.PROFILE_REGISTRY_PATH, wrong_path)
+            admitted(
+                self.validator.PROFILE_REGISTRY_PATH,
+                predecessor_profile,
+                wrong_path,
+            )
         )
 
         broad_create = copy.deepcopy(route)
@@ -3861,7 +3904,69 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         )
         migration_policy["create"]["states"].append("sealed")
         self.assertFalse(
-            admitted(self.validator.ROUTE_CONTRACT_PATH, broad_create)
+            admitted(
+                self.validator.ROUTE_CONTRACT_PATH,
+                predecessor_route,
+                broad_create,
+            )
+        )
+
+        unrelated_profile = copy.deepcopy(profile)
+        next(
+            item
+            for item in unrelated_profile["profiles"]
+            if item["id"] == "sdlc/guide"
+        )["pathPattern"] = ".*"
+        self.assertFalse(
+            admitted(
+                self.validator.PROFILE_REGISTRY_PATH,
+                predecessor_profile,
+                unrelated_profile,
+            )
+        )
+
+        lineage = copy.deepcopy(profile)
+        lineage["programLineage"]["rogue"] = []
+        self.assertFalse(
+            admitted(
+                self.validator.PROFILE_REGISTRY_PATH,
+                predecessor_profile,
+                lineage,
+            )
+        )
+
+        unrelated_policy = copy.deepcopy(route)
+        next(
+            item
+            for item in unrelated_policy["documentContracts"]["admissionPolicies"]
+            if item["id"] == "archive-envelope-only"
+        )["delete"] = "allow"
+        self.assertFalse(
+            admitted(
+                self.validator.ROUTE_CONTRACT_PATH,
+                predecessor_route,
+                unrelated_policy,
+            )
+        )
+
+        route_state = copy.deepcopy(route)
+        route_state["routeState"] = "settled"
+        self.assertFalse(
+            admitted(
+                self.validator.ROUTE_CONTRACT_PATH,
+                predecessor_route,
+                route_state,
+            )
+        )
+
+        top_level = copy.deepcopy(route)
+        top_level["rogue"] = True
+        self.assertFalse(
+            admitted(
+                self.validator.ROUTE_CONTRACT_PATH,
+                predecessor_route,
+                top_level,
+            )
         )
 
         with mock.patch.object(
@@ -3881,6 +3986,183 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             raised.exception.code,
             "CLOSURE-TERMINAL-REGISTRY-AUTHORITY",
         )
+
+    def test_wp004b_rejects_schema_valid_mutation_of_every_changed_profile(
+        self,
+    ) -> None:
+        profile = json.loads(
+            (REPOSITORY_ROOT / self.validator.PROFILE_REGISTRY_PATH).read_text(
+                encoding="utf-8"
+            )
+        )
+        predecessor = json.loads(
+            subprocess.run(
+                [
+                    "git",
+                    "show",
+                    f"{self.validator.WP004B_SOURCE_COMMIT}:"
+                    f"{self.validator.PROFILE_REGISTRY_PATH}",
+                ],
+                cwd=REPOSITORY_ROOT,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout
+        )
+        changed_profiles = {
+            "content/archive-migration",
+            "readme/collection-index",
+            "sdlc/ad",
+            "sdlc/adr",
+            "sdlc/agent-design",
+            "sdlc/data-model",
+            "sdlc/requirement-package",
+            "sdlc/spec",
+            "sdlc/task",
+            "sdlc/tests",
+            "template/content/archive-migration",
+            "template/readme/collection-index",
+            "template/sdlc/ad",
+            "template/sdlc/adr",
+            "template/sdlc/agent-design",
+            "template/sdlc/data-model",
+            "template/sdlc/interface",
+            "template/sdlc/prd",
+            "template/sdlc/spec",
+            "template/sdlc/srs",
+            "template/sdlc/task",
+            "template/sdlc/tests",
+        }
+        self.assertEqual(
+            changed_profiles,
+            {
+                item["id"]
+                for item in profile["profiles"]
+                if item["id"] not in {entry["id"] for entry in predecessor["profiles"]}
+                or next(
+                    (
+                        entry
+                        for entry in predecessor["profiles"]
+                        if entry["id"] == item["id"]
+                    ),
+                    None,
+                )
+                != item
+            },
+        )
+        admitted = self.validator._wp004b_registry_surface_admitted
+        for profile_id in sorted(changed_profiles):
+            with self.subTest(profile_id=profile_id):
+                mutation = copy.deepcopy(profile)
+                record = next(
+                    item for item in mutation["profiles"] if item["id"] == profile_id
+                )
+                record["placeholderPolicy"] = (
+                    "template-only"
+                    if record["placeholderPolicy"] == "forbidden"
+                    else "forbidden"
+                )
+                self.validator.validate_registry_authority(mutation)
+                self.assertFalse(
+                    admitted(
+                        self.validator.PROFILE_REGISTRY_PATH,
+                        predecessor,
+                        mutation,
+                    )
+                )
+
+    def test_wp004b_rejects_schema_valid_mutation_of_every_changed_route_record(
+        self,
+    ) -> None:
+        route = json.loads(
+            (REPOSITORY_ROOT / self.validator.ROUTE_CONTRACT_PATH).read_text(
+                encoding="utf-8"
+            )
+        )
+        predecessor = json.loads(
+            subprocess.run(
+                [
+                    "git",
+                    "show",
+                    f"{self.validator.WP004B_SOURCE_COMMIT}:"
+                    f"{self.validator.ROUTE_CONTRACT_PATH}",
+                ],
+                cwd=REPOSITORY_ROOT,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout
+        )
+        route_schema = json.loads(
+            (
+                REPOSITORY_ROOT
+                / "docs/99.templates/contracts/route-contract.schema.json"
+            ).read_text(encoding="utf-8")
+        )
+        mutations = {
+            "valueContracts": {
+                "archive-migration",
+                "authored-terminal-identity",
+                "template-terminal-archive-migration",
+                "template-terminal-authored",
+                "adr-relation-identity",
+                "requirement-package-identity",
+                "template-adr-relation-identity",
+            },
+            "roleDecisions": {"sdlc/requirement-package"},
+            "admissionPolicies": {
+                "authored-draft-only",
+                "execution-plan",
+                "task-record",
+            },
+            "evidencePredicates": {
+                "activate-execution-pair",
+                "activate-self-body",
+                "complete-execution-pair",
+            },
+        }
+        admitted = self.validator._wp004b_registry_surface_admitted
+
+        for section, record_ids in mutations.items():
+            for record_id in sorted(record_ids):
+                with self.subTest(section=section, record_id=record_id):
+                    mutation = copy.deepcopy(route)
+                    records = mutation["documentContracts"][section]
+                    if section == "roleDecisions":
+                        record = next(
+                            item
+                            for item in records
+                            if item["profileIds"] == [record_id]
+                        )
+                        record["relationshipSection"] = "Traceability Review"
+                    else:
+                        record = next(item for item in records if item["id"] == record_id)
+                        if section == "valueContracts":
+                            extra_profile = next(
+                                candidate
+                                for candidate in (
+                                    "sdlc/guide",
+                                    "sdlc/requirement-package",
+                                    "content/archive",
+                                )
+                                if candidate not in record["profileIds"]
+                            )
+                            record["profileIds"].append(extra_profile)
+                        elif section == "admissionPolicies":
+                            record["baselinePaths"].append("docs/README.md")
+                        else:
+                            record["capabilities"].append("archive-envelope")
+                    self.assertEqual(
+                        list(Draft202012Validator(route_schema).iter_errors(mutation)),
+                        [],
+                    )
+                    self.assertFalse(
+                        admitted(
+                            self.validator.ROUTE_CONTRACT_PATH,
+                            predecessor,
+                            mutation,
+                        )
+                    )
 
     def test_work108_authority_identity_projects_only_exact_outer_artifact(self) -> None:
         path = next(iter(self.validator.WORK105_AUTHORITY_BLOBS))
@@ -4467,29 +4749,35 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             all(call[0] in {"ls-files", "cat-file", "ls-tree"} for call in calls)
         )
         tree_calls = [call for call in calls if call[0] == "ls-tree"]
-        self.assertEqual(
-            tree_calls,
-            [
+        observed_tree_reads: set[tuple[str, tuple[str, ...]]] = set()
+        for call in tree_calls:
+            if call[:3] == ("ls-tree", "-z", "--full-tree"):
+                commit_index = 3
+            elif call[:4] == ("ls-tree", "-r", "-z", "--full-tree"):
+                commit_index = 4
+            else:
+                self.fail(f"unexpected ls-tree query shape: {call!r}")
+            self.assertEqual(call[commit_index + 1], "--")
+            observed_tree_reads.add((call[commit_index], call[commit_index + 2 :]))
+        required_tree_reads = {
                 (
-                    "ls-tree",
-                    "-z",
-                    "--full-tree",
                     self.validator.WORK105_BASE_COMMIT,
-                    "--",
-                    *self.validator.WORK105_BASE_PATHS,
+                    self.validator.WORK105_BASE_PATHS,
                 ),
                 (
-                    "ls-tree",
-                    "-r",
-                    "-z",
-                    "--full-tree",
+                    self.validator.WP004B_SOURCE_COMMIT,
+                    (self.validator.PROFILE_REGISTRY_PATH,),
+                ),
+                (
+                    self.validator.WP004B_SOURCE_COMMIT,
+                    (self.validator.ROUTE_CONTRACT_PATH,),
+                ),
+                (
                     self.validator.TAXONOMY_SOURCE_COMMIT,
-                    "--",
-                    self.validator.PLAN_ROOT,
-                    self.validator.TASK_ROOT,
-                )
-            ],
-        )
+                    (self.validator.PLAN_ROOT, self.validator.TASK_ROOT),
+                ),
+            }
+        self.assertLessEqual(required_tree_reads, observed_tree_reads)
 
     def test_ignored_workspace_descriptor_sentinel(self) -> None:
         original_open = self.validator.os.open

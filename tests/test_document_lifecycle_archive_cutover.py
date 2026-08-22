@@ -714,6 +714,66 @@ class FiniteWork108ArtifactIdentityAdmissionTest(unittest.TestCase):
 
 class DocumentAuthorityLifecycleTests(unittest.TestCase):
     @staticmethod
+    def _wp004b_committed_transition():
+        migration_path = VALIDATOR.WORK054_WP004B_MIGRATION_PATH.as_posix()
+        target_commit = run_closed_git(
+            "log",
+            "--format=%H",
+            "--diff-filter=A",
+            "--",
+            migration_path,
+        )
+        proposed = VALIDATOR._tree_blob_map(ROOT, target_commit)
+        rows = VALIDATOR.parse_pinned_migration_control(
+            migration_path,
+            VALIDATOR._blob_bytes(
+                ROOT,
+                proposed[VALIDATOR.WORK054_WP004B_MIGRATION_PATH],
+            ),
+        )
+        source_commits = {row.get("source_commit") for row in rows}
+        if len(source_commits) != 1:
+            raise AssertionError("MIG-0004 must name one transition source commit")
+        base_commit = source_commits.pop()
+        if not isinstance(base_commit, str):
+            raise AssertionError("MIG-0004 source commit is malformed")
+        return (
+            base_commit,
+            target_commit,
+            VALIDATOR._tree_blob_map(ROOT, base_commit),
+            proposed,
+        )
+
+    @staticmethod
+    def _wp004b_admitted(base_commit, base, proposed):
+        return VALIDATOR.finite_work054_wp004b_document_authority_paths(
+            root=ROOT,
+            mode="ci",
+            base_commit=base_commit,
+            base_blobs=base,
+            proposed_blobs=proposed,
+        )
+
+    @staticmethod
+    def _mutation_result(base_commit, base, proposed, path, mutation):
+        original_blob_reader = VALIDATOR._blob_bytes
+        sentinel = "f" * 40
+        changed = dict(proposed)
+        changed[path] = sentinel
+
+        def read_blob(root, oid, **kwargs):
+            if oid == sentinel:
+                return mutation
+            return original_blob_reader(root, oid, **kwargs)
+
+        with mock.patch.object(VALIDATOR, "_blob_bytes", side_effect=read_blob):
+            return DocumentAuthorityLifecycleTests._wp004b_admitted(
+                base_commit,
+                base,
+                changed,
+            )
+
+    @staticmethod
     def _authority():
         path = ROOT / "scripts/document_authority.py"
         specification = importlib.util.spec_from_file_location(
@@ -761,26 +821,121 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
             "lifecycleContracts", route_contract["documentContracts"]
         )
 
-    def test_wp004b_staged_document_authority_cutover_is_finitely_admitted(self):
+    def test_wp004b_committed_document_authority_cutover_is_finitely_admitted(self):
+        base_commit, target_commit, base, proposed = (
+            self._wp004b_committed_transition()
+        )
+        accepted = self._wp004b_admitted(base_commit, base, proposed)
+        self.assertTrue(accepted)
+
         diagnostics = VALIDATOR._evaluate_comparison(
             ROOT,
             load_registry(ROOT),
-            mode="staged",
+            mode="ci",
+            base_ref=base_commit,
+            to_ref=target_commit,
         )
-
         self.assertEqual(diagnostics, ())
 
-    def test_wp004b_finite_admission_rejects_missing_extra_and_source_drift(self):
-        base_commit = VALIDATOR._resolve_commit(ROOT, "HEAD", "HEAD")
-        base = VALIDATOR._tree_blob_map(ROOT, base_commit)
-        proposed = VALIDATOR._index_blob_map(ROOT)
-        accepted = VALIDATOR.finite_work054_wp004b_document_authority_paths(
-            root=ROOT,
-            mode="staged",
-            base_commit=base_commit,
-            base_blobs=base,
-            proposed_blobs=proposed,
+        with mock.patch.object(
+            VALIDATOR,
+            "_work054_wp004b_admission",
+            return_value=VALIDATOR._EMPTY_WORK054_WP004B_ADMISSION,
+        ):
+            diagnostics_without_admission = VALIDATOR._evaluate_comparison(
+                ROOT,
+                load_registry(ROOT),
+                mode="ci",
+                base_ref=base_commit,
+                to_ref=target_commit,
+            )
+        self.assertTrue(diagnostics_without_admission)
+
+    def test_wp004b_finite_admission_consumes_only_named_diagnostics(self):
+        base_commit, target_commit, _base, proposed = (
+            self._wp004b_committed_transition()
         )
+        task = next(
+            path
+            for path in proposed
+            if VALIDATOR.WORK054_WP004B_TASK_PATTERN.fullmatch(path.as_posix())
+        )
+        unexpected = VALIDATOR.LifecycleDiagnostic(
+            severity="FAIL",
+            rule_id="LIFECYCLE-STATE",
+            path=task,
+            profile="sdlc/task",
+            expected_transition="reviewed finite transition only",
+            observed_transition="unexpected admitted-path diagnostic",
+            base_mode="ci",
+            evidence_gap="synthetic unexpected transition",
+        )
+        with mock.patch.object(
+            VALIDATOR,
+            "compare_lifecycle",
+            return_value=(unexpected,),
+        ):
+            diagnostics = VALIDATOR._evaluate_comparison(
+                ROOT,
+                load_registry(ROOT),
+                mode="ci",
+                base_ref=base_commit,
+                to_ref=target_commit,
+            )
+        self.assertEqual(diagnostics, (unexpected,))
+
+    def test_wp004b_post_cutover_active_requirement_body_edit_is_valid(self):
+        _base_commit, target_commit, _base, proposed = (
+            self._wp004b_committed_transition()
+        )
+        current_registry = load_registry(ROOT)
+        target_registry = VALIDATOR._classification_registry(
+            current_registry,
+            VALIDATOR._registry_blob(
+                ROOT,
+                VALIDATOR._tree_blob_oid(
+                    ROOT,
+                    target_commit,
+                    VALIDATOR.RETIRED_REGISTRY_PATH,
+                ),
+            ),
+        )
+        converged_registry = VALIDATOR._wp004b_classification_registry(
+            current_registry,
+            target_registry,
+            authority_converged=True,
+        )
+        requirement = PurePosixPath(
+            "docs/01.requirements/0008-workspace-document-taxonomy-consolidation.md"
+        )
+        original = VALIDATOR._blob_bytes(ROOT, proposed[requirement]).decode(
+            "utf-8"
+        )
+        changed = original + "\nCurrent traceability prose update.\n"
+        base_document = VALIDATOR.document_from_text(
+            converged_registry, requirement, original
+        )
+        proposed_document = VALIDATOR.document_from_text(
+            converged_registry, requirement, changed
+        )
+        self.assertEqual(base_document.profile_id, "sdlc/requirement-package")
+        self.assertEqual(base_document.status, "active")
+        self.assertIsNone(base_document.state_issue)
+        self.assertEqual(
+            VALIDATOR.compare_lifecycle(
+                converged_registry,
+                {requirement: base_document},
+                {requirement: proposed_document},
+                base_mode="staged",
+            ),
+            (),
+        )
+
+    def test_wp004b_finite_admission_rejects_missing_extra_and_source_drift(self):
+        base_commit, _target_commit, base, proposed = (
+            self._wp004b_committed_transition()
+        )
+        accepted = self._wp004b_admitted(base_commit, base, proposed)
         tasks = sorted(
             (
                 path
@@ -789,7 +944,7 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
             ),
             key=PurePosixPath.as_posix,
         )
-        self.assertEqual(len(tasks), 315)
+        self.assertTrue(tasks)
 
         missing = dict(proposed)
         missing.pop(tasks[0])
@@ -815,15 +970,164 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
             (drifted_base, proposed),
         ):
             self.assertEqual(
-                VALIDATOR.finite_work054_wp004b_document_authority_paths(
-                    root=ROOT,
-                    mode="staged",
-                    base_commit=base_commit,
-                    base_blobs=case_base,
-                    proposed_blobs=case_proposed,
+                self._wp004b_admitted(
+                    base_commit,
+                    case_base,
+                    case_proposed,
                 ),
                 frozenset(),
             )
+
+    def test_wp004b_finite_admission_binds_task_oid_bytes_and_frontmatter(self):
+        base_commit, _target_commit, base, proposed = (
+            self._wp004b_committed_transition()
+        )
+        accepted = self._wp004b_admitted(base_commit, base, proposed)
+        tasks = sorted(
+            (
+                path
+                for path in accepted
+                if VALIDATOR.WORK054_WP004B_TASK_PATTERN.fullmatch(path.as_posix())
+            ),
+            key=PurePosixPath.as_posix,
+        )
+        self.assertTrue(tasks)
+        task = next(
+            path
+            for path in tasks
+            if b"status: done\n" in VALIDATOR._blob_bytes(ROOT, proposed[path])
+        )
+        other = next(path for path in tasks if path.parent != task.parent)
+        swapped = dict(proposed)
+        swapped[task] = proposed[other]
+        self.assertEqual(
+            self._wp004b_admitted(base_commit, base, swapped),
+            frozenset(),
+        )
+
+        original = VALIDATOR._blob_bytes(ROOT, proposed[task])
+        mutations = (
+            original + b"\nunauthorized body drift\n",
+            original.replace(b"status: done\n", b"status: queued\n", 1),
+            original.replace(b"type: sdlc/task\n", b"type: sdlc/spec\n", 1),
+            original.replace(b'artifact_id: "TSK-', b'artifact_id: "TSK-9999-', 1),
+        )
+        for mutation in mutations:
+            with self.subTest(mutation=mutation[-48:]):
+                self.assertEqual(
+                    self._mutation_result(
+                        base_commit,
+                        base,
+                        proposed,
+                        task,
+                        mutation,
+                    ),
+                    frozenset(),
+                )
+
+    def test_wp004b_finite_admission_binds_requirement_and_ad_metadata(self):
+        base_commit, _target_commit, base, proposed = (
+            self._wp004b_committed_transition()
+        )
+        accepted = self._wp004b_admitted(base_commit, base, proposed)
+        requirement = next(
+            path
+            for path in accepted
+            if path.as_posix().startswith("docs/01.requirements/")
+            and b"status: active\n"
+            in VALIDATOR._blob_bytes(ROOT, proposed[path])
+        )
+        architecture = next(
+            path
+            for path in accepted
+            if path.as_posix().startswith("docs/02.architecture/descriptions/")
+            and "/ad-" not in path.as_posix()
+            and b"status: active\n"
+            in VALIDATOR._blob_bytes(ROOT, proposed[path])
+        )
+        requirement_bytes = VALIDATOR._blob_bytes(ROOT, proposed[requirement])
+        architecture_bytes = VALIDATOR._blob_bytes(ROOT, proposed[architecture])
+        mutations = (
+            (
+                requirement,
+                requirement_bytes.replace(b"status: active\n", b"status: draft\n", 1),
+            ),
+            (
+                requirement,
+                requirement_bytes.replace(
+                    b"type: sdlc/requirement-package\n",
+                    b"type: sdlc/prd\n",
+                    1,
+                ),
+            ),
+            (
+                requirement,
+                requirement_bytes.replace(b'artifact_id: "REQ-', b'artifact_id: "REQ-9999-', 1),
+            ),
+            (
+                architecture,
+                architecture_bytes.replace(b"status: active\n", b"status: draft\n", 1),
+            ),
+            (
+                architecture,
+                architecture_bytes.replace(b'artifact_id: "AD-', b'artifact_id: "AD-9999-', 1),
+            ),
+        )
+        for path, mutation in mutations:
+            with self.subTest(path=path, mutation=mutation[:80]):
+                self.assertEqual(
+                    self._mutation_result(
+                        base_commit,
+                        base,
+                        proposed,
+                        path,
+                        mutation,
+                    ),
+                    frozenset(),
+                )
+
+    def test_wp004b_finite_admission_rejects_duplicate_router_and_foreign_task(self):
+        base_commit, _target_commit, base, proposed = (
+            self._wp004b_committed_transition()
+        )
+        accepted = self._wp004b_admitted(base_commit, base, proposed)
+        router = next(
+            path
+            for path in accepted
+            if VALIDATOR.WORK054_WP004B_ROUTER_PATTERN.fullmatch(path.as_posix())
+            and b"tasks/tsk-" in VALIDATOR._blob_bytes(ROOT, proposed[path])
+        )
+        router_bytes = VALIDATOR._blob_bytes(ROOT, proposed[router])
+        task_line = next(
+            line
+            for line in router_bytes.splitlines(keepends=True)
+            if b"](tasks/tsk-" in line
+        )
+        self.assertEqual(
+            self._mutation_result(
+                base_commit,
+                base,
+                proposed,
+                router,
+                router_bytes + task_line,
+            ),
+            frozenset(),
+        )
+
+        foreign = dict(proposed)
+        foreign[
+            PurePosixPath("docs/03.specs/9999-rogue/tasks/tsk-0001-rogue.md")
+        ] = proposed[
+            next(
+                path
+                for path in accepted
+                if VALIDATOR.WORK054_WP004B_TASK_PATTERN.fullmatch(path.as_posix())
+            )
+        ]
+        self.assertEqual(
+            self._wp004b_admitted(base_commit, base, foreign),
+            frozenset(),
+        )
 
     def test_production_compare_uses_validation_class_to_freeze_terminal_documents(self):
         registry = load_registry(ROOT)

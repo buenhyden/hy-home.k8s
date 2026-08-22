@@ -3,7 +3,7 @@ title: 'Workspace Agent Governance Platform Requirement Package'
 type: sdlc/requirement-package
 status: active
 owner: platform
-updated: 2026-08-01
+updated: 2026-08-22
 artifact_id: "REQ-0003"
 ---
 
@@ -16,8 +16,16 @@ artifact_id: "REQ-0003"
 gateway, 기계 검증 가능한 harness contract, provider-native adapter, 반복 가능한 QA와 평가
 루프를 결합한다. 아래 네-surface 및 fixed-cardinality 내용은 2026-08-01
 predecessor proposal의 역사적 목표이며 현재 terminal authority가 아니다.
-ADR-0030이 이를 supersede하며, 실제 provider/surface admission과 roster
-cardinality reconciliation은 WP-003 소유다.
+current authority는
+[ADR-0030](../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)과
+[Spec 0054](../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)다.
+실제 provider/surface admission과 roster cardinality reconciliation은 WP-003 소유다.
+
+### Historical predecessor context
+
+The following four-surface table and dated provider observations preserve the
+2026-08-01 predecessor proposal only. They are non-authoritative for current
+provider admission, cardinality, or topology.
 
 | Surface | 역할 | native/runtime 주장 경계 |
 | --- | --- | --- |
@@ -33,7 +41,7 @@ readiness를 분리한다.
 
 ## Vision
 
-운영자는 동일한 역할 계약을 네 surface에서 예측 가능하게 실행하고, 역할 특성에 맞는
+운영자는 동일한 역할 계약을 registry-admitted provider surface에서 예측 가능하게 실행하고, 역할 특성에 맞는
 provider model과 reasoning effort를 선택하며, 실패를 무한 반복하지 않는 loop와 검증 증거로
 결과를 신뢰할 수 있어야 한다. Human은 목표와 승인 경계를 정하고 Agent는 격리된 환경에서
 구현·검토·검증을 수행한다. 저장소 지식, 명시적 계약, fixture와 CI가 의도와 실행 사이의
@@ -74,7 +82,7 @@ contract와 각 provider의 실제 schema·runtime evidence로 변환할 요구�
   surface projection과 검증 상태를 확인한다.
 - **STORY-02**: 작업 라우터는 역할의 복잡도, 위험, context, tool use, 비용·latency 및 eval
   결과를 바탕으로 provider별 model과 reasoning effort를 선택한다.
-- **STORY-03**: Claude, Codex, Gemini 운영자는 repo-static parse와 discovery/run canary를
+- **STORY-03**: admitted provider 운영자는 repo-static parse와 discovery/run canary를
   별도 증거로 관리한다. Provider-runtime readiness는 해당 provider PASS가 필요하지만,
   repository-local closure는 `ABSENT`/`DEFER`의 owner와 retry trigger를 보존할 수 있다.
 - **STORY-04**: 실패한 Agent는 동일 failure signature를 제한 횟수만 재시도하고, 진행이 없으면
@@ -112,7 +120,7 @@ contract와 각 provider의 실제 schema·runtime evidence로 변환할 요구�
 | Requirement ID | Acceptance criterion |
 | --- | --- |
 | N/A — Acceptance criterion 01 remains acceptance-only | Stage 00 governance hub, harness catalog, model policy, provider note, hook, QA와 template routing이 하나의 owner graph로 연결된다. |
-| N/A — Acceptance criterion 02 remains acceptance-only | PRD 003 → AD 0006 → ADR 0019 → Specs 041–046 → Plan/Task의 reciprocal lifecycle chain이 존재한다. |
+| N/A — Acceptance criterion 02 remains acceptance-only | REQ-0003 → AD-0006 → ADR-0030 → Spec 0054 → Plan/Task의 reciprocal lifecycle chain이 존재한다. |
 | N/A — Acceptance criterion 03 remains acceptance-only | Root/provider gateway는 durable policy를 복제하지 않고 native, repo-static, runtime evidence를 구분한다. |
 | N/A — Acceptance criterion 04 remains acceptance-only | Repository static quality gate가 governance 변경 후 PASS한다. |
 | N/A — Acceptance criterion 05 remains acceptance-only | 별도 template-policy 승인 없이 외부 documentation format을 repository template contract 대체물로 사용하지 않는다. |
@@ -157,9 +165,8 @@ contract와 각 provider의 실제 schema·runtime evidence로 변환할 요구�
   evidence lane에서 실행하고 secret-free 결과만 기록한다.
 - `.agent-work/checkpoint.json`은 ignore된 transient recovery state이며 durable SDLC, credential
   store 또는 full transcript가 아니다.
-- ADR-0019는 Spec 046의 repository-local closure와 명시적 external-lane limitation을
-  보존한 terminal transition에서 `accepted` current decision이 되었다. ADR-0013은
-  earlier tranche 실행을 지배한 accepted historical predecessor로 유지한다.
+- ADR-0019와 ADR-0013은 predecessor 실행과 external-lane limitation을
+  보존하는 superseded historical decisions다. ADR-0030이 current terminal decision이다.
 
 ### Research and provider evidence baseline
 
@@ -199,21 +206,21 @@ contract와 각 provider의 실제 schema·runtime evidence로 변환할 요구�
 | REQ-0003-FR-0005 | Repo-changing handoff에 evidence와 limitation이 남는다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0006 | Template/profile/cross-link 검사가 통과한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0007 | GitOps, secret, privilege와 external-action guardrail 위반이 없다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0008 | 네 surface가 공통 semantic과 분리된 native claim을 가진다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0009 | Schema/model/effort/MCP 및 세 provider의 독립 canary record가 검증된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0008 | Registry-admitted surface가 공통 semantic과 분리된 native claim을 가진다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0009 | Schema/model/effort/MCP 및 admitted provider의 독립 canary record가 검증된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0010 | Machine harness contract/schema가 모든 역할과 adapter를 검증한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0011 | Bounded loop/checkpoint/compaction fixture가 recovery 경계를 증명한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-NFR-0001 | 12-role/48-adapter 및 eval/model fitness가 검증된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-NFR-0001 | Registry-derived role/adapter parity 및 eval/model fitness가 검증된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-NFR-0002 | CI/QA/all-files evidence가 필수 lane 전체를 통과한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-IF-0001 | Legacy와 orphan current-owner가 active surface에 남지 않는다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-IF-0002 | 외부 role idea가 local gap과 eval을 통과해야 admission된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | N/A — Acceptance criterion 01 remains acceptance-only | Stage 00 owner graph가 모순 없이 연결된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| N/A — Acceptance criterion 02 remains acceptance-only | PRD→AD→ADR→Spec→Plan/Task reciprocal chain이 존재한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| N/A — Acceptance criterion 02 remains acceptance-only | Requirement Package→AD→ADR→Spec→Plan/Task reciprocal chain이 존재한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | N/A — Acceptance criterion 03 remains acceptance-only | Gateway가 policy를 복제하지 않고 evidence class를 구분한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | N/A — Acceptance criterion 04 remains acceptance-only | Repository static quality gate가 PASS한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | N/A — Acceptance criterion 05 remains acceptance-only | Repository template contract가 유일한 form authority로 유지된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| N/A — Acceptance criterion 06 remains acceptance-only | 12 canonical roles와 48 adapters가 exact parity를 이룬다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| N/A — Acceptance criterion 07 remains acceptance-only | Claude, Codex, Gemini 각각의 canary record와 runtime-readiness 경계가 검증된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| N/A — Acceptance criterion 06 remains acceptance-only | Registry-derived roles와 admitted adapters가 parity를 이룬다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| N/A — Acceptance criterion 07 remains acceptance-only | 각 admitted provider의 canary record와 runtime-readiness 경계가 검증된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | N/A — Acceptance criterion 08 remains acceptance-only | Contract/schema/provider metadata parity가 PASS한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | N/A — Acceptance criterion 09 remains acceptance-only | Bounded loop recovery와 safe resume가 fixture로 검증된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | N/A — Acceptance criterion 10 remains acceptance-only | 역할별 eval/model fitness evidence가 존재한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
@@ -221,7 +228,9 @@ contract와 각 provider의 실제 schema·runtime evidence로 변환할 요구�
 | N/A — Acceptance criterion 12 remains acceptance-only | Stale legacy와 orphan reference가 0건이다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 
 - **AD**: [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md)
-- **Decision**: [ADR 0019](../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
+- **Current terminal decision**: [ADR 0030](../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)
+- **Current implementation authority**: [Spec 0054](../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)
+- **Historical predecessor**: [ADR 0019](../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Prerequisite Specs**: [Spec 038](../03.specs/0038-reference-information-architecture/spec.md),
   [Spec 039](../03.specs/0039-github-ci-qa-evidence/spec.md),
   [Spec 040](../03.specs/0040-contract-cutover-and-program-closure/spec.md)
