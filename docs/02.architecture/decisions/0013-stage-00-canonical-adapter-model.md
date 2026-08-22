@@ -48,7 +48,7 @@ policy를 복제하면 같은 규칙이 서로 다른 표현으로 drift될 수 
   `.codex/hooks.json` and local `.agents/hooks.json` are context/validation
   wiring, while Claude native settings/hooks retain their documented runtime
   behavior. None establishes Gemini CLI native event delivery.
-- Work evidence belongs in `docs/04.execution/tasks/**` and `docs/00.agent-governance/memory/progress.md`, not in provider-specific hidden ledgers.
+- Work evidence belongs in `docs/03.specs/tasks/**` and `docs/00.agent-governance/memory/progress.md`, not in provider-specific hidden ledgers.
 
 ### Agent decision application
 
@@ -110,9 +110,9 @@ policy를 복제하면 같은 규칙이 서로 다른 표현으로 drift될 수 
 
 ## Traceability
 
-- **PRD**: [../../01.requirements/003-workspace-agent-governance-platform.md](../../01.requirements/003-workspace-agent-governance-platform.md)
-- **ARD**: [../requirements/0006-workspace-agent-governance-platform.md](../requirements/0006-workspace-agent-governance-platform.md)
-- **Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
+- **PRD**: [../../01.requirements/003-workspace-agent-governance-platform.md](../../01.requirements/0003-workspace-agent-governance-platform.md)
+- **ARD**: [../requirements/0006-workspace-agent-governance-platform.md](../descriptions/0006-workspace-agent-governance-platform.md)
+- **Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/0006-workspace-harness-gap-analysis/spec.md)
 - **Plan**: [../../04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md](../../98.archive/README.md#document-index)
 - **Task**: [Archive Index](../../98.archive/README.md#document-index)
 - **Governance Hub**: [../../00.agent-governance/README.md](../../00.agent-governance/README.md)

@@ -769,6 +769,100 @@ class ArchiveRecoveryTest(unittest.TestCase):
             parked.rmdir()
 
 
+class PinnedMigrationRecoveryCliTest(unittest.TestCase):
+    """Keep CLI migration recovery limited to the sealed MIG-0004 control."""
+
+    migration_path = (
+        "docs/98.archive/migrations/0004-document-authority-convergence.md"
+    )
+
+    @staticmethod
+    def run_cli(root: Path, record: str, *, verify: bool = True) -> tuple[int, str]:
+        arguments = ["--root", str(root), "--record", record]
+        arguments.extend(["--verify"] if verify else ["--output", "/tmp/recovery.md"])
+        output = io.StringIO()
+        with mock.patch("sys.stdout", output):
+            result = archive_recovery.main(arguments)
+        return result, output.getvalue()
+
+    def test_cli_verifies_exact_sealed_mig0004_through_pinned_recovery(self) -> None:
+        result, output = self.run_cli(ROOT, self.migration_path)
+
+        self.assertEqual(result, 0, output)
+        self.assertEqual(
+            output,
+            "PASS archive recovery operation=verify migration=MIG-0004\n",
+        )
+
+    def test_cli_rejects_wrong_digest_and_status_before_git_recovery(self) -> None:
+        migration = (ROOT / self.migration_path).read_bytes()
+        cases = (
+            ("wrong-digest", migration + b"\n"),
+            (
+                "wrong-status",
+                migration.replace(b'status: "sealed"', b'status: "accepted"', 1),
+            ),
+        )
+        for name, content in cases:
+            with self.subTest(name=name), tempfile.TemporaryDirectory(
+                prefix="migration-recovery-cli-"
+            ) as temporary:
+                root = Path(temporary)
+                fixture = GitFixture(root)
+                target = root / self.migration_path
+                target.parent.mkdir(parents=True)
+                target.write_bytes(content)
+                fixture.run("add", "--", self.migration_path)
+
+                result, output = self.run_cli(root, self.migration_path)
+
+                self.assertEqual(result, 1)
+                self.assertEqual(
+                    output,
+                    "FAIL archive recovery code=ARCHIVE-MIGRATION-PROFILE\n",
+                )
+
+    def test_cli_does_not_promote_wrong_or_unknown_migration_paths(self) -> None:
+        migration = (ROOT / self.migration_path).read_bytes()
+        cases = (
+            (
+                "wrong-declared-path",
+                "docs/98.archive/migrations/"
+                "mig-0003-agent-governance-control-plane-consolidation.md",
+            ),
+            (
+                "unknown-migration",
+                "docs/98.archive/migrations/9999-unreviewed.md",
+            ),
+        )
+        for name, record in cases:
+            with self.subTest(name=name), tempfile.TemporaryDirectory(
+                prefix="migration-recovery-cli-"
+            ) as temporary:
+                root = Path(temporary)
+                fixture = GitFixture(root)
+                target = root / record
+                target.parent.mkdir(parents=True)
+                target.write_bytes(migration)
+
+                result, output = self.run_cli(root, record)
+
+                self.assertEqual(result, 1)
+                self.assertEqual(
+                    output,
+                    "FAIL archive recovery code=ARCHIVE-MARKER-INVALID\n",
+                )
+
+    def test_cli_does_not_recover_mig0004_to_an_output_file(self) -> None:
+        result, output = self.run_cli(ROOT, self.migration_path, verify=False)
+
+        self.assertEqual(result, 1)
+        self.assertEqual(
+            output,
+            "FAIL archive recovery code=ARCHIVE-MARKER-INVALID\n",
+        )
+
+
 class Work107StableArchiveContractTest(unittest.TestCase):
     """Focused WORK-107 contract for the reviewed 93-to-93 stable rehome."""
 

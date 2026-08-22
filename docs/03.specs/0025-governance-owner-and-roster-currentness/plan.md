@@ -48,6 +48,21 @@ sixteen draft Specs backed by done Plans/Tasks, one completed execution Plan
 misplaced in Stage 90, and incomplete evidence links across the forty-one
 baseline Stage 04 Plans.
 
+### Legacy Task ledger inputs
+
+This document tracks implementation and verification work for governance owner
+and roster currentness. It keeps tasks derived from Spec 025 and its execution
+Plan traceable while preserving repository-static evidence boundaries.
+
+**2026-07-14 terminology correction:** The completed RCR evidence and counts
+remain unchanged. Current roster validation names `local`, `claude`, and
+`codex` adapter surfaces and requires `Ten shared local role stems / thirty
+tracked role adapters`; `.agents/**` does not prove Gemini CLI native support.
+
+- **Parent Spec**:
+  [../../03.specs/0025-governance-owner-and-roster-currentness/spec.md](spec.md)
+- **Parent Plan**:
+  [../plans/2026-07-11-governance-owner-and-roster-currentness.md](plan.md)
 ## Goals & In-Scope
 
 - Normalize the Stage 90 audit pack information architecture.
@@ -121,6 +136,97 @@ baseline Stage 04 Plans.
 | VAL-PLN-005 | Guardrail | Roster and owner-pointer drift fails | Roster validator self-test | Valid case passes; four invalid cases fail as expected. |
 | VAL-PLN-006 | Repository | Full repository conformance | Quality gate and pre-commit | All required checks pass; optional skips are labeled. |
 
+### Legacy Task verification evidence
+
+- **Logical task commits**:
+  - T-001: `d96b927ceea53a8aab085a5fd1832a208ff77e9d`.
+  - T-002: `078bd77220178bab19e88d69f3f167c50af23ae6`; review remediation
+    `04c91a18810e05b42a7c5bc6f2dcb0ff3ad4b600`.
+  - T-003: `8325a044725c784ea194d09675c3bef0cd935ab6`.
+  - T-004: `4abc9ccbc26322f058cfda52cb0793960ec57704`.
+  - T-005: `5035e496fb7b8584ad9a7d7a8baf1d03a9fc5d58`; review remediation
+    `365679efde96e44ed053a21c0b585f984b8e01da`.
+  - T-006: the closure commit containing this evidence, with exact post-commit
+    SHA recorded in the Task 6 implementation report because a commit cannot
+    contain its own content-addressed SHA.
+- **Fixture self-test**:
+  `python3 scripts/validate-agent-roster-currentness.py . --self-test` passed
+  with `[PASS] agent roster currentness validation passed`.
+- **Real roster validation**:
+  `python3 scripts/validate-agent-roster-currentness.py .` passed with
+  `[PASS] agent roster currentness validation passed`.
+- **Repository quality gate**: `bash scripts/validate-repo-quality-gates.sh .`
+  passed with `[PASS] repository quality gates passed` after its two blocking
+  roster checks passed.
+- **Pre-commit all files**: `pre-commit run --all-files` passed. All applicable
+  hooks passed; `Lint Dockerfiles` reported `Skipped` because there were no
+  matching files, and is not claimed as a pass.
+- **Diff check**: `git diff --check` passed with exit 0 and no output.
+- **Optional tool results**: Only the non-applicable Dockerfile hook skip
+  above was reported; no optional skipped hook is claimed as a pass.
+- **Logs / Evidence Location**: This Task table, the commits above, and the
+  Task 6 implementation report.
+- **Safety Boundary**: No live Kubernetes, Argo CD, Vault, provider-runtime,
+  credential, secret-value, remote, publish, push, merge, or third-party
+  mutation is authorized by this Task.
+
+### Final-review remediation (2026-07-11)
+
+- **Functional fix commit**:
+  `4c0b9d8a8ca6586f0aabb3dca8ec2272944c094f`
+  (`fix(governance): harden roster currentness validation`).
+- **Focused negative proofs**: a canonical bootstrap label misdirected to
+  `rules/persona.md` returned exactly
+  `harness catalog missing canonical owner link: docs/00.agent-governance/rules/bootstrap.md -> rules/bootstrap.md`;
+  each of `8 local agents`, `Eight local provider adapters`, `eight shared
+  roles`, and `8 role stems` independently returned exactly
+  `harness catalog contains stale eight-role currentness prose` through
+  production `validate_contract()`.
+- **Validation commands**:
+  - `python3 scripts/validate-agent-roster-currentness.py . --self-test` —
+    PASS with `[PASS] agent roster currentness validation passed`.
+  - `python3 scripts/validate-agent-roster-currentness.py .` — PASS with
+    `[PASS] agent roster currentness validation passed`.
+  - `git diff --check` — PASS with exit 0 and no output.
+  - `bash scripts/validate-repo-quality-gates.sh .` — PASS with
+    `[PASS] repository quality gates passed`.
+  - `pre-commit run --all-files` — all applicable hooks PASS;
+    `Lint Dockerfiles` reported `Skipped` because no matching files exist and
+    is not claimed as a pass.
+  - `git diff --check 184d13e034101ee27c98bd0b850b91d956069c33...HEAD`
+    — PASS with exit 0 and no output.
+- **Evidence boundary**: these results are repository-static only. No live
+  Kubernetes, Argo CD, Vault, ESO, provider runtime, credential, secret-value,
+  remote GitHub/CI, publish, push, merge, or third-party mutation ran.
+
+### Parser and fixture final-review remediation (2026-07-11)
+
+- **Functional fix commit**:
+  `c444254fcafaca11b96d37a1e7ee70befc251ddc`
+  (`fix(governance): reject malformed canonical owner links`).
+- **Focused negative proofs**: seven canonical label/target pairs written as
+  image syntax returned exactly seven missing-owner-link errors. A bootstrap
+  label with only a leading backtick and one with only a trailing backtick each
+  returned exactly the canonical bootstrap missing-owner-link error. A copied
+  fixture whose `missing-role` case used mutation `none` and
+  `expected_errors: []` returned the deterministic `missing-role: fixture
+  schema mismatch` error before mutation execution.
+- **Validation commands**:
+  - `python3 scripts/validate-agent-roster-currentness.py . --self-test` —
+    PASS with `[PASS] agent roster currentness validation passed`.
+  - `python3 scripts/validate-agent-roster-currentness.py .` — PASS with
+    `[PASS] agent roster currentness validation passed`.
+  - `git diff --check` — PASS with exit 0 and no output.
+  - `bash scripts/validate-repo-quality-gates.sh .` — PASS with
+    `[PASS] repository quality gates passed` after both roster checks passed.
+  - `pre-commit run --all-files` — exit 0; all applicable hooks PASS. The
+    non-applicable `Lint Dockerfiles` hook reported `Skipped` and is not
+    claimed as a pass.
+  - `git diff --check 184d13e034101ee27c98bd0b850b91d956069c33...HEAD`
+    — PASS with exit 0 and no output.
+- **Evidence boundary**: these results are repository-static only. No live
+  Kubernetes, Argo CD, Vault, ESO, provider runtime, credential, secret-value,
+  remote GitHub/CI, publish, push, merge, or third-party mutation ran.
 ## Risks & Mitigations
 
 | Risk | Impact | Mitigation |
@@ -154,10 +260,10 @@ baseline Stage 04 Plans.
 
 - Modify: `docs/03.specs/0025-governance-owner-and-roster-currentness/spec.md`
 - Modify: `docs/03.specs/README.md`
-- Modify: `docs/04.execution/plans/2026-07-11-governance-owner-and-roster-currentness.md`
-- Modify: `docs/04.execution/plans/README.md`
-- Create: `docs/04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md`
-- Modify: `docs/04.execution/tasks/README.md`
+- Modify: `docs/03.specs/0025-governance-owner-and-roster-currentness/plan.md`
+- Modify: `docs/03.specs/0025-governance-owner-and-roster-currentness/plan.md`
+- Create: `docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records`
+- Modify: `docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records`
 
 **Interfaces:**
 
@@ -174,8 +280,8 @@ python3 - <<'PY'
 from pathlib import Path
 
 spec = Path('docs/03.specs/0025-governance-owner-and-roster-currentness/spec.md')
-plan = Path('docs/04.execution/plans/2026-07-11-governance-owner-and-roster-currentness.md')
-task = Path('docs/04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md')
+plan = Path('docs/03.specs/0025-governance-owner-and-roster-currentness/plan.md')
+task = Path('docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records')
 assert task.exists(), task
 assert '../../04.execution/plans/2026-07-11-governance-owner-and-roster-currentness.md' in spec.read_text()
 assert '../../04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md' in spec.read_text()
@@ -207,7 +313,7 @@ canonical Task template with this exact task table:
 
 Add reciprocal links in each document's `Related Documents`. Change the Spec
 and Plan README rows from `Draft` to `Active`, and add the Task to
-`docs/04.execution/tasks/README.md` with status `Active` and date `2026-07-11`.
+`docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records` with status `Active` and date `2026-07-11`.
 
 - [ ] **Step 3: Run the reciprocal-lineage assertion**
 
@@ -223,10 +329,10 @@ bash scripts/validate-repo-quality-gates.sh .
 pre-commit run --files \
   docs/03.specs/0025-governance-owner-and-roster-currentness/spec.md \
   docs/03.specs/README.md \
-  docs/04.execution/plans/2026-07-11-governance-owner-and-roster-currentness.md \
-  docs/04.execution/plans/README.md \
-  docs/04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md \
-  docs/04.execution/tasks/README.md
+  docs/03.specs/0025-governance-owner-and-roster-currentness/plan.md \
+  docs/03.specs/0025-governance-owner-and-roster-currentness/plan.md \
+  docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records \
+  docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records
 ```
 
 Expected: all required checks PASS.
@@ -237,10 +343,10 @@ Expected: all required checks PASS.
 git add \
   docs/03.specs/0025-governance-owner-and-roster-currentness/spec.md \
   docs/03.specs/README.md \
-  docs/04.execution/plans/2026-07-11-governance-owner-and-roster-currentness.md \
-  docs/04.execution/plans/README.md \
-  docs/04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md \
-  docs/04.execution/tasks/README.md
+  docs/03.specs/0025-governance-owner-and-roster-currentness/plan.md \
+  docs/03.specs/0025-governance-owner-and-roster-currentness/plan.md \
+  docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records \
+  docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records
 git commit -m "docs(execution): start roster currentness workstream"
 ```
 
@@ -258,12 +364,12 @@ git commit -m "docs(execution): start roster currentness workstream"
 - Modify: `docs/90.references/audits/2026-07-05-wea/README.md`
 - Modify: `docs/90.references/audits/2026-07-11-weia/README.md`
 - Move: `docs/90.references/audits/2026-07-11-weia/implementation-plan.md`
-  to `docs/04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md`
-- Create: `docs/04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md`
+  to `docs/03.specs/0025-governance-owner-and-roster-currentness/plan.md`
+- Create: `docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records`
 - Modify: the six other Markdown reports under
   `docs/90.references/audits/2026-07-11-weia/`
-- Modify: `docs/04.execution/plans/README.md`
-- Modify: `docs/04.execution/tasks/README.md`
+- Modify: `docs/03.specs/0025-governance-owner-and-roster-currentness/plan.md`
+- Modify: `docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records`
 
 **Interfaces:**
 
@@ -289,8 +395,8 @@ assert parent.count('| Current pack |') == 1
 historical = (root / '2026-07-05-wea' / 'README.md').read_text()
 assert '| Current |' not in historical
 assert not (root / '2026-07-11-weia' / 'implementation-plan.md').exists()
-assert Path('docs/04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md').exists()
-assert Path('docs/04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md').exists()
+assert Path('docs/03.specs/0025-governance-owner-and-roster-currentness/plan.md').exists()
+assert Path('docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records').exists()
 PY
 ```
 
@@ -334,7 +440,7 @@ short completion-evidence pointer to the relocated Plan and Task.
 ```bash
 git mv \
   docs/90.references/audits/2026-07-11-weia/implementation-plan.md \
-  docs/04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md
+  docs/03.specs/0025-governance-owner-and-roster-currentness/plan.md
 ```
 
 Change its frontmatter to:
@@ -378,7 +484,7 @@ Add the relocated Plan and Task to their Stage 04 README indexes as `Done`.
 Run the Step 1 assertion again, then:
 
 ```bash
-rg -n 'implementation-plan\.md' docs/90.references/audits docs/04.execution
+rg -n 'implementation-plan\.md' docs/90.references/audits docs/03.specs
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
 pre-commit run --files \
@@ -389,8 +495,8 @@ pre-commit run --files \
   docs/90.references/audits/2026-07-04-wdcn/README.md \
   docs/90.references/audits/2026-07-05-wea/README.md \
   docs/90.references/audits/2026-07-11-weia/README.md \
-  docs/04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md \
-  docs/04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md
+  docs/03.specs/0025-governance-owner-and-roster-currentness/plan.md \
+  docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records
 ```
 
 Expected: no active link targets the old Stage 90 path; all required checks
@@ -399,7 +505,7 @@ PASS.
 - [ ] **Step 7: Commit**
 
 ```bash
-git add docs/90.references/audits docs/04.execution/plans docs/04.execution/tasks
+git add docs/90.references/audits docs/03.specs/plans docs/03.specs/tasks
 git commit -m "docs(audits): normalize audit pack information architecture"
 ```
 
@@ -531,7 +637,7 @@ git commit -m "docs(specs): reconcile lifecycle and current ownership"
 
 **Files:**
 
-- Modify: `docs/04.execution/plans/README.md`
+- Modify: `docs/03.specs/0025-governance-owner-and-roster-currentness/plan.md`
 - Modify: the forty-one baseline Plan files listed in Spec 025's Complete Plan
   Evidence Ledger when their row requires a link, historical-instruction note,
   Spec link, or pre-Spec declaration.
@@ -549,7 +655,7 @@ git commit -m "docs(specs): reconcile lifecycle and current ownership"
 python3 - <<'PY'
 from pathlib import Path
 
-plans = sorted(p for p in Path('docs/04.execution/plans').glob('*.md') if p.name != 'README.md')
+plans = sorted(p for p in Path('docs/03.specs/plans').glob('*.md') if p.name != 'README.md')
 baseline = [p for p in plans if p.name <= '2026-07-10-current-research-pack-fact-first-hardening.md']
 assert len(baseline) == 41, len(baseline)
 exception = {
@@ -558,7 +664,7 @@ exception = {
 }
 for plan in baseline:
     task_name = exception.get(plan.name, plan.name)
-    task = Path('docs/04.execution/tasks') / task_name
+    task = Path('docs/03.specs/tasks') / task_name
     assert task.exists(), (plan, task)
     text = plan.read_text()
     assert f'../tasks/{task_name}' in text, plan
@@ -650,7 +756,7 @@ Run the Step 1 assertion again, then:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-pre-commit run --files docs/04.execution/plans/*.md
+pre-commit run --files docs/03.specs/*.md
 ```
 
 Expected: all 41 baseline Plans resolve one existing Task and either a parent
@@ -659,7 +765,7 @@ Spec or an explicit pre-Spec N/A declaration; required checks PASS.
 - [ ] **Step 6: Commit**
 
 ```bash
-git add docs/04.execution/plans
+git add docs/03.specs/plans
 git commit -m "docs(plans): reconcile execution evidence links"
 ```
 
@@ -739,8 +845,8 @@ REQUIRED_OWNER_POINTERS = (
     "docs/00.agent-governance/rules/bootstrap.md",
     "docs/00.agent-governance/rules/persona.md",
     "docs/00.agent-governance/rules/stage-authoring-matrix.md",
-    "docs/04.execution/tasks/2026-07-06-observability-and-network-review-agents.md",
-    "docs/04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md",
+    "docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records",
+    "docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records",
     "docs/99.templates/support/documentation-contract.md",
     "docs/99.templates/support/template-routing.md",
 )
@@ -933,10 +1039,10 @@ git commit -m "fix(governance): enforce canonical roster and owner pointers"
 
 - Modify: `docs/03.specs/0025-governance-owner-and-roster-currentness/spec.md`
 - Modify: `docs/03.specs/README.md`
-- Modify: `docs/04.execution/plans/2026-07-11-governance-owner-and-roster-currentness.md`
-- Modify: `docs/04.execution/plans/README.md`
-- Modify: `docs/04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md`
-- Modify: `docs/04.execution/tasks/README.md`
+- Modify: `docs/03.specs/0025-governance-owner-and-roster-currentness/plan.md`
+- Modify: `docs/03.specs/0025-governance-owner-and-roster-currentness/plan.md`
+- Modify: `docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records`
+- Modify: `docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records`
 - Modify: `docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
@@ -954,8 +1060,8 @@ from pathlib import Path
 
 paths = [
     Path('docs/03.specs/0025-governance-owner-and-roster-currentness/spec.md'),
-    Path('docs/04.execution/plans/2026-07-11-governance-owner-and-roster-currentness.md'),
-    Path('docs/04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md'),
+    Path('docs/03.specs/0025-governance-owner-and-roster-currentness/plan.md'),
+    Path('docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records'),
 ]
 for path in paths:
     assert 'status: done' in path.read_text(), path
@@ -1032,15 +1138,35 @@ files remain after the final commit.
 git add \
   docs/03.specs/0025-governance-owner-and-roster-currentness/spec.md \
   docs/03.specs/README.md \
-  docs/04.execution/plans/2026-07-11-governance-owner-and-roster-currentness.md \
-  docs/04.execution/plans/README.md \
-  docs/04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md \
-  docs/04.execution/tasks/README.md \
+  docs/03.specs/0025-governance-owner-and-roster-currentness/plan.md \
+  docs/03.specs/0025-governance-owner-and-roster-currentness/plan.md \
+  docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records \
+  docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records \
   docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md \
   docs/00.agent-governance/memory/progress.md
 git commit -m "docs(governance): close roster currentness evidence"
 ```
 
+### Legacy Task approval and rollback boundaries
+
+- **Allowed Paths**: `RCR-001 through RCR-006` is limited to these Governance Owner and Roster Currentness owners and Task-Table surfaces:
+  - `docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records`
+  - `docs/03.specs/0025-governance-owner-and-roster-currentness/spec.md`
+  - `docs/03.specs/0025-governance-owner-and-roster-currentness/plan.md`
+- **Forbidden Paths**: runtime manifests, provider or CI settings, secret values, generated/local state, and paths outside the Governance Owner and Roster Currentness work items and linked evidence owners.
+- **Approval Required**: Human approval is required before Governance Owner and Roster Currentness protected-file expansion, deletion/relocation, runtime/CI/provider mutation, credential access, publication, push, or merge beyond the parent Plan.
+- **Static Validation**: Preserve the Governance Owner and Roster Currentness outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `python3 scripts/validate-agent-roster-currentness.py . --self-test`
+  - `python3 scripts/validate-agent-roster-currentness.py .`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `pre-commit run --all-files`
+- **Live Validation**: DEFER — Governance Owner and Roster Currentness is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: No secret value is required for Governance Owner and Roster Currentness; do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
+- **Rollback Plan**: Revert the logical Governance Owner and Roster Currentness change set for `RCR-001 through RCR-006` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Governance Owner and Roster Currentness evidence remains in:
+  - `docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records`
+  - `docs/03.specs/0025-governance-owner-and-roster-currentness/spec.md`
+  - `docs/03.specs/0025-governance-owner-and-roster-currentness/plan.md`
 ## Completion Criteria
 
 - [ ] Audit parent README has one Current pointer and one row per dated pack.
@@ -1062,7 +1188,7 @@ git commit -m "docs(governance): close roster currentness evidence"
 - **Spec**:
   [../../03.specs/0025-governance-owner-and-roster-currentness/spec.md](spec.md)
 - **Task**:
-  [../tasks/2026-07-11-governance-owner-and-roster-currentness.md](tasks.md)
+  [../tasks/2026-07-11-governance-owner-and-roster-currentness.md](README.md#task-records)
 - **Current Audit Pack**:
   [../../90.references/audits/2026-07-11-weia/README.md](../../90.references/audits/2026-07-11-weia/README.md)
 - **Remediation Roadmap**:
@@ -1070,3 +1196,16 @@ git commit -m "docs(governance): close roster currentness evidence"
 - **Harness Catalog**:
   [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Archive Index**: [../../98.archive/README.md](../../98.archive/README.md)
+
+### Legacy Task traceability
+
+- **Spec**:
+  [../../03.specs/0025-governance-owner-and-roster-currentness/spec.md](spec.md)
+- **Plan**:
+  [../plans/2026-07-11-governance-owner-and-roster-currentness.md](plan.md)
+- **Current Audit Pack**:
+  [../../90.references/audits/2026-07-11-weia/README.md](../../90.references/audits/2026-07-11-weia/README.md)
+- **Remediation Roadmap**:
+  [../../90.references/audits/2026-07-11-weia/remediation-roadmap.md](../../90.references/audits/2026-07-11-weia/remediation-roadmap.md)
+- **Harness Catalog**:
+  [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)

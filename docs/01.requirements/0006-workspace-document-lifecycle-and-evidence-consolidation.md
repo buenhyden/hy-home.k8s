@@ -1,13 +1,14 @@
 ---
-title: 'Workspace Document Lifecycle and Evidence Consolidation Product Requirements'
-type: sdlc/prd
-status: done
+title: 'Workspace Document Lifecycle and Evidence Consolidation Requirement Package'
+type: sdlc/requirement-package
+status: superseded
 owner: platform
 updated: 2026-07-28
-artifact_id: "PRD-0006"
+artifact_id: "REQ-0006"
+superseded_by: REQ-0008
 ---
 
-# Workspace Document Lifecycle and Evidence Consolidation Product Requirements
+# Workspace Document Lifecycle and Evidence Consolidation Requirement Package
 
 ## Overview
 
@@ -81,19 +82,19 @@ unidentified and unclaimed.
 
 | Requirement ID | Requirement | Priority | Verification intent |
 | --- | --- | --- | --- |
-| REQ-WDLEC-001 | Preserve document-profiles.json as the sole machine owner of routes, frontmatter, lifecycle domains, templates, body contracts, current packs, and program lineage. | Must | Strict registry validation resolves every governed path exactly once. |
-| REQ-WDLEC-002 | Represent Spec 033 as a completed follow-up to the seven Specs fixed by ADR-0016, not as an eighth original tranche. | Must | Registry and reciprocal document checks distinguish tranches from follow-ups. |
-| REQ-WDLEC-003 | Define closed, profile-specific metadata and state-transition contracts without adding consumer-free relationship keys. | Must | Positive and negative fixtures cover allowed values, transitions, and evidence. |
-| REQ-WDLEC-004 | Replace retired metadata-only archive stubs with one non-authoritative full-body archive record per original path. | Must | Existing 31 records recover exact payloads with commit, blob, and digest evidence. |
-| REQ-WDLEC-005 | Keep current SDLC owners separate from archive records and prohibit archive reactivation. | Must | Owner and transition validators reject archive-as-current and archived-to-active cases. |
-| REQ-WDLEC-006 | Move eligible completed Plans and Tasks from closed lineages to the archive while preserving current Specs and accepted architecture decisions. | Must | A migration ledger proves eligibility, movement, links, and rollback per lineage. |
-| REQ-WDLEC-007 | Enforce lifecycle-based active-stage cardinality instead of arbitrary folder file-count limits. | Must | Current-owner, active Plan/Task, and closed-lineage residue fixtures pass. |
-| REQ-WDLEC-008 | Clarify audit, research, data, generated wiki, learning, archive, and scratch authority boundaries and consolidate only genuine duplicate current owners. | Must | Current-pack, generated-output, source-freshness, and duplicate-owner checks pass. |
-| REQ-WDLEC-009 | Keep _workspace limited to ignored, temporary, non-secret repository-support staging and reject tracked scratch children. | Must | Git-metadata checks pass without reading ignored children. |
-| REQ-WDLEC-010 | Align GitHub CI with affected fast lanes, full-document escalation, an always-running aggregate verdict, explicit artifact retention, and least privilege. | Must | Workflow fixtures and native linters pass with no remote-state claim. |
-| REQ-WDLEC-011 | Require logical commits, independent subagent review, full-corpus QA, and revertable migration boundaries. | Must | Commit, review, validation, and closure evidence are linked from each tranche. |
-| REQ-WDLEC-012 | Preserve protected surfaces, secret boundaries, and live-system approval constraints during all migrations. | Must | Static checks pass and remote/live work is recorded as DEFER unless separately approved. |
-| REQ-WDLEC-013 | Reconcile current Guide, Policy, Runbook, Incident, Postmortem, and helper Tests roles, frontmatter, sections, duplicate ownership, and stale semantic claims without fabricating operations evidence. | Must | Stage 05 and helper-profile audits report zero unresolved current contract conflicts or unowned exceptions. |
+| REQ-0006-FR-0001 | Preserve document-profiles.json as the sole machine owner of routes, frontmatter, lifecycle domains, templates, body contracts, current packs, and program lineage. | Must | Strict registry validation resolves every governed path exactly once. |
+| REQ-0006-FR-0002 | Represent Spec 033 as a completed follow-up to the seven Specs fixed by ADR-0016, not as an eighth original tranche. | Must | Registry and reciprocal document checks distinguish tranches from follow-ups. |
+| REQ-0006-FR-0003 | Define closed, profile-specific metadata and state-transition contracts without adding consumer-free relationship keys. | Must | Positive and negative fixtures cover allowed values, transitions, and evidence. |
+| REQ-0006-FR-0004 | Replace retired metadata-only archive stubs with one non-authoritative full-body archive record per original path. | Must | Existing 31 records recover exact payloads with commit, blob, and digest evidence. |
+| REQ-0006-FR-0005 | Keep current SDLC owners separate from archive records and prohibit archive reactivation. | Must | Owner and transition validators reject archive-as-current and archived-to-active cases. |
+| REQ-0006-FR-0006 | Move eligible completed Plans and Tasks from closed lineages to the archive while preserving current Specs and accepted architecture decisions. | Must | A migration ledger proves eligibility, movement, links, and rollback per lineage. |
+| REQ-0006-FR-0007 | Enforce lifecycle-based active-stage cardinality instead of arbitrary folder file-count limits. | Must | Current-owner, active Plan/Task, and closed-lineage residue fixtures pass. |
+| REQ-0006-FR-0008 | Clarify audit, research, data, generated wiki, learning, archive, and scratch authority boundaries and consolidate only genuine duplicate current owners. | Must | Current-pack, generated-output, source-freshness, and duplicate-owner checks pass. |
+| REQ-0006-FR-0009 | Keep _workspace limited to ignored, temporary, non-secret repository-support staging and reject tracked scratch children. | Must | Git-metadata checks pass without reading ignored children. |
+| REQ-0006-FR-0010 | Align GitHub CI with affected fast lanes, full-document escalation, an always-running aggregate verdict, explicit artifact retention, and least privilege. | Must | Workflow fixtures and native linters pass with no remote-state claim. |
+| REQ-0006-FR-0011 | Require logical commits, independent subagent review, full-corpus QA, and revertable migration boundaries. | Must | Commit, review, validation, and closure evidence are linked from each tranche. |
+| REQ-0006-NFR-0001 | Preserve protected surfaces, secret boundaries, and live-system approval constraints during all migrations. | Must | Static checks pass and remote/live work is recorded as DEFER unless separately approved. |
+| REQ-0006-NFR-0002 | Reconcile current Guide, Policy, Runbook, Incident, Postmortem, and helper Tests roles, frontmatter, sections, duplicate ownership, and stale semantic claims without fabricating operations evidence. | Must | Stage 05 and helper-profile audits report zero unresolved current contract conflicts or unowned exceptions. |
 
 ## Success / Acceptance Criteria
 
@@ -163,16 +164,16 @@ unidentified and unclaimed.
 
 | Requirement ID | Acceptance criterion | Downstream owner |
 | --- | --- | --- |
-| REQ-WDLEC-001 | ACC-WDLEC-001 | [AD-0009](../02.architecture/descriptions/ad-0009-document-lifecycle-evidence-operating-model.md) and [Spec 034](../03.specs/0034-authority-and-lineage-foundation/spec.md) |
-| REQ-WDLEC-002 | ACC-WDLEC-002 | N/A — Spec 034 shares the downstream owner linked in REQ-WDLEC-001 and is governed by unchanged accepted ADR-0017. |
-| REQ-WDLEC-003 | ACC-WDLEC-003 | [Spec 035](../03.specs/0035-document-schema-and-lifecycle-contract/spec.md) |
-| REQ-WDLEC-004 | ACC-WDLEC-004 | [Spec 036](../03.specs/0036-archive-record-and-workspace-boundary/spec.md), governed by ADR-0018 |
-| REQ-WDLEC-005 | ACC-WDLEC-005 | N/A — Spec 036 shares the downstream owner linked in REQ-WDLEC-004. |
-| REQ-WDLEC-006 | ACC-WDLEC-006 | [Spec 037](../03.specs/0037-active-corpus-and-execution-retention/spec.md) |
-| REQ-WDLEC-007 | ACC-WDLEC-006 | N/A — Spec 037 shares the downstream owner linked in REQ-WDLEC-006. |
-| REQ-WDLEC-008 | ACC-WDLEC-007 | [Spec 038](../03.specs/0038-reference-information-architecture/spec.md) |
-| REQ-WDLEC-009 | ACC-WDLEC-001 | N/A — Spec 036 shares the downstream owner linked in REQ-WDLEC-004. |
-| REQ-WDLEC-010 | ACC-WDLEC-008 | [Spec 039](../03.specs/0039-github-ci-qa-evidence/spec.md) |
-| REQ-WDLEC-011 | ACC-WDLEC-008 | [Spec 040](../03.specs/0040-contract-cutover-and-program-closure/spec.md) |
-| REQ-WDLEC-012 | ACC-WDLEC-009 | N/A — Spec 040 shares the downstream owner linked in REQ-WDLEC-011 and retains external `DEFER`. |
-| REQ-WDLEC-013 | ACC-WDLEC-010 | N/A — Specs 035 and 037 share the downstream owners linked in REQ-WDLEC-003 and REQ-WDLEC-006. |
+| REQ-0006-FR-0001 | ACC-WDLEC-001 | [AD-0009](../02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md) and [Spec 034](../03.specs/0034-authority-and-lineage-foundation/spec.md) |
+| REQ-0006-FR-0002 | ACC-WDLEC-002 | N/A — Spec 034 shares the downstream owner linked in REQ-0006-FR-0001 and is governed by unchanged accepted ADR-0017. |
+| REQ-0006-FR-0003 | ACC-WDLEC-003 | [Spec 035](../03.specs/0035-document-schema-and-lifecycle-contract/spec.md) |
+| REQ-0006-FR-0004 | ACC-WDLEC-004 | [Spec 036](../03.specs/0036-archive-record-and-workspace-boundary/spec.md), governed by ADR-0018 |
+| REQ-0006-FR-0005 | ACC-WDLEC-005 | N/A — Spec 036 shares the downstream owner linked in REQ-0006-FR-0004. |
+| REQ-0006-FR-0006 | ACC-WDLEC-006 | [Spec 037](../03.specs/0037-active-corpus-and-execution-retention/spec.md) |
+| REQ-0006-FR-0007 | ACC-WDLEC-006 | N/A — Spec 037 shares the downstream owner linked in REQ-0006-FR-0006. |
+| REQ-0006-FR-0008 | ACC-WDLEC-007 | [Spec 038](../03.specs/0038-reference-information-architecture/spec.md) |
+| REQ-0006-FR-0009 | ACC-WDLEC-001 | N/A — Spec 036 shares the downstream owner linked in REQ-0006-FR-0004. |
+| REQ-0006-FR-0010 | ACC-WDLEC-008 | [Spec 039](../03.specs/0039-github-ci-qa-evidence/spec.md) |
+| REQ-0006-FR-0011 | ACC-WDLEC-008 | [Spec 040](../03.specs/0040-contract-cutover-and-program-closure/spec.md) |
+| REQ-0006-NFR-0001 | ACC-WDLEC-009 | N/A — Spec 040 shares the downstream owner linked in REQ-0006-FR-0011 and retains external `DEFER`. |
+| REQ-0006-NFR-0002 | ACC-WDLEC-010 | N/A — Specs 035 and 037 share the downstream owners linked in REQ-0006-FR-0003 and REQ-0006-FR-0006. |

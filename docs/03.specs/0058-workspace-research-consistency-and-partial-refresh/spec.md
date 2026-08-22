@@ -375,4 +375,4 @@ standalone execution rules.
 - [Quality standards](../../00.agent-governance/rules/quality-standards.md)
 - [ADR-0022 — direct-approval standalone execution lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
 - [Implementation Plan](plan.md)
-- [Task](tasks.md)
+- [Task](README.md#task-records)

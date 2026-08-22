@@ -78,6 +78,9 @@ WORK107_REGISTRY_PATH = "docs/99.templates/support/document-profiles.json"
 WORK107_MIGRATION_PATH = (
     "docs/98.archive/migrations/mig-0001-sdlc-taxonomy-convergence.md"
 )
+WP004B_PINNED_MIGRATION_PATH = (
+    "docs/98.archive/migrations/0004-document-authority-convergence.md"
+)
 WORK107_MIGRATION_DOCUMENT_SHA256 = (
     "4e62cb6ba2a394cd9ae546543c85a58c8f105cb5d1ff48cfd8dab8b8b1082206"  # pragma: allowlist secret
 )
@@ -1655,6 +1658,34 @@ def recover_archive_record(
     return recovered
 
 
+def verify_declared_migration_record(
+    repository_root: str | Path,
+    record: object,
+) -> str | None:
+    """Verify only the sealed migration explicitly admitted at this CLI boundary."""
+
+    canonical = _require_repository_path(record, field="record")
+    if canonical != WP004B_PINNED_MIGRATION_PATH:
+        return None
+    root, _object_length = _require_repository(Path(repository_root))
+    _record_path, content = _read_archive_record(root, canonical)
+    if __package__:
+        from scripts.archive_validation import (  # noqa: PLC0415
+            ArchiveContractError as MigrationContractError,
+            validate_pinned_migration_recovery,
+        )
+    else:
+        from archive_validation import (  # type: ignore[no-redef]  # noqa: PLC0415
+            ArchiveContractError as MigrationContractError,
+            validate_pinned_migration_recovery,
+        )
+    try:
+        validate_pinned_migration_recovery(root, canonical, content)
+    except MigrationContractError as exc:
+        raise _error(exc.code, "declared migration recovery differs") from exc
+    return "MIG-0004"
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path.cwd())
@@ -1668,6 +1699,17 @@ def _parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     try:
+        migration_id = (
+            verify_declared_migration_record(args.root, args.record)
+            if args.verify
+            else None
+        )
+        if migration_id is not None:
+            print(
+                "PASS archive recovery "
+                f"operation=verify migration={migration_id}"
+            )
+            return 0
         recovered = recover_archive_record(
             args.root,
             args.record,

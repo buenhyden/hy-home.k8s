@@ -389,8 +389,8 @@ Roster currentness and owner lineage resolve through these canonical surfaces:
 - [`docs/00.agent-governance/rules/bootstrap.md`](rules/bootstrap.md)
 - [`docs/00.agent-governance/rules/persona.md`](rules/persona.md)
 - [`docs/00.agent-governance/rules/document-authoring.md`](rules/document-authoring.md)
-- [`docs/03.specs/0024-observability-and-network-review-agents/tasks.md`](../03.specs/0024-observability-and-network-review-agents/tasks.md)
-- [`docs/03.specs/0025-governance-owner-and-roster-currentness/tasks.md`](../03.specs/0025-governance-owner-and-roster-currentness/tasks.md)
+- [`docs/03.specs/0024-observability-and-network-review-agents/README.md`](../03.specs/0024-observability-and-network-review-agents/README.md)
+- [`docs/03.specs/0025-governance-owner-and-roster-currentness/README.md`](../03.specs/0025-governance-owner-and-roster-currentness/README.md)
 - [`docs/99.templates/support/document-contract.md`](../99.templates/support/document-contract.md)
 
 Adapter consistency is a quality-gate contract. `scripts/validate-repo-quality-gates.sh`

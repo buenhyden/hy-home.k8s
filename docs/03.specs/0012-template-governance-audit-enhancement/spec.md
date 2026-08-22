@@ -113,8 +113,8 @@ existing canonical stage, selected by its role:
 
 | Output | Canonical Location | Purpose |
 | --- | --- | --- |
-| Execution plan | [`docs/04.execution/plans/2026-07-03-template-governance-audit-enhancement.md`](plan.md) | Work order, risks, and verification gates. |
-| Task evidence | [`docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md`](tasks.md) | Audit findings, changes, validation evidence, and handoff. |
+| Execution plan | [`docs/03.specs/0012-template-governance-audit-enhancement/plan.md`](plan.md) | Work order, risks, and verification gates. |
+| Task evidence | [`docs/03.specs/0012-template-governance-audit-enhancement/README.md#task-records`](README.md#task-records) | Audit findings, changes, validation evidence, and handoff. |
 | Durable reference finding set | `docs/90.references/audits/<date>-template-governance-audit-enhancement.md` | Optional dated snapshot if findings should persist as reference material. |
 
 The default output should be Stage 04 plan/task. A Stage 90 audit should be
@@ -311,15 +311,15 @@ find docs/99.templates -maxdepth 5 -type f -print | sort
 - **Plan**:
   [../../04.execution/plans/2026-07-03-template-governance-audit-enhancement.md](plan.md)
 - **Task**:
-  [../../04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md](tasks.md)
+  [../../04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md](README.md#task-records)
 - **Templates README**:
   [../../99.templates/README.md](../../99.templates/README.md)
 - **Template Routing Contract**:
-  [../../99.templates/support/template-routing.md](../../99.templates/support/template-routing.md)
+  [../../99.templates/support/template-routing.md](../../99.templates/support/document-contract.md)
 - **Frontmatter Schema**:
-  [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/frontmatter-schema.md)
+  [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/document-contract.md)
 - **Documentation Protocol**:
-  [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/documentation-protocol.md)
+  [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/document-authoring.md)
 - **Quality Gate**:
   [../../../scripts/validate-repo-quality-gates.sh](../../../scripts/validate-repo-quality-gates.sh)
 - **Completed evolution**: [011](../0011-template-contract-governance-migration/spec.md) -> [012](./spec.md) -> [013](../0013-workspace-document-governance-hardening/spec.md) -> [014](../0014-workspace-document-contract-normalization/spec.md) -> [020](../0020-workspace-contract-governance-normalization/spec.md) -> [021](../0021-sdlc-lifecycle-contract/spec.md) -> [022](../0022-control-cloud-doc-normalization/spec.md) -> [023](../0023-stage03-04-repo-static-gap-closure/spec.md).
@@ -336,11 +336,11 @@ find docs/99.templates -maxdepth 5 -type f -print | sort
 - **Template README**:
   [../../99.templates/README.md](../../99.templates/README.md)
 - **Template Routing Contract**:
-  [../../99.templates/support/template-routing.md](../../99.templates/support/template-routing.md)
+  [../../99.templates/support/template-routing.md](../../99.templates/support/document-contract.md)
 - **Frontmatter Schema**:
-  [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/frontmatter-schema.md)
+  [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/document-contract.md)
 - **Documentation Protocol**:
-  [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/documentation-protocol.md)
+  [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/document-authoring.md)
 - **Repository Quality Gate**:
   [../../../scripts/validate-repo-quality-gates.sh](../../../scripts/validate-repo-quality-gates.sh)
 - **External Reference: Diataxis**:

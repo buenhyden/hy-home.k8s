@@ -59,6 +59,24 @@ SHA and current unpushed hosted evidence remains `DEFER`.
 - Repository-quality is the pre-commit aggregate owner; do not add a second
   dedicated pre-commit owner for the same validator.
 
+### Legacy Task ledger inputs
+
+This Task is the durable execution ledger for Spec 048. It will record the
+GitHub routing contract package, native labeler/CODEOWNERS/hub projection,
+affected and aggregate routing, read-only remote metadata, logical commits,
+QA, reviews, closure, and Spec 049 handoff. Every row is queued; this draft
+claims no implementation, hosted-current result, remote mutation, or live
+evidence.
+
+- Parent [Spec 048](spec.md)
+- Parent [Implementation Plan](plan.md)
+- [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md),
+  [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md),
+  and [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+- Spec 047 target disposition and successor matrix
+- Current `validation-surfaces.json`, `.github/labeler.yml`,
+  `.github/CODEOWNERS`, `.github/README.md`, workflow YAML, repository
+  aggregate, GitHub security validator, and read-only remote metadata
 ## Goals & In-Scope
 
 - Create `github-surface-routing.json`, adjacent closed schema, mutation
@@ -162,7 +180,7 @@ import CLI side effects or duplicate route data.
   rtk python3 scripts/validate-markdown-profiles.py --root . --mode strict
   rtk python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts registry
   rtk git diff --check
-  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0048-github-routing-and-ci-evidence/spec.md docs/03.specs/README.md docs/04.execution/plans/2026-08-02-github-routing-and-ci-evidence.md docs/04.execution/plans/README.md docs/04.execution/tasks/2026-08-02-github-routing-and-ci-evidence.md docs/04.execution/tasks/README.md docs/99.templates/support/document-profiles.json
+  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0048-github-routing-and-ci-evidence/spec.md docs/03.specs/README.md docs/03.specs/0048-github-routing-and-ci-evidence/plan.md docs/03.specs/0048-github-routing-and-ci-evidence/plan.md docs/03.specs/0048-github-routing-and-ci-evidence/README.md#task-records docs/03.specs/0048-github-routing-and-ci-evidence/README.md#task-records docs/99.templates/support/document-profiles.json
   rtk git commit -m "docs: activate github routing evidence plan"
   ```
 
@@ -301,7 +319,7 @@ import CLI side effects or duplicate route data.
   progress so Spec 049 becomes first unfinished, then commit closure.
 
   ```bash
-  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0048-github-routing-and-ci-evidence/spec.md docs/03.specs/README.md docs/04.execution/plans/2026-08-02-github-routing-and-ci-evidence.md docs/04.execution/plans/README.md docs/04.execution/tasks/2026-08-02-github-routing-and-ci-evidence.md docs/04.execution/tasks/README.md docs/99.templates/support/document-profiles.json
+  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0048-github-routing-and-ci-evidence/spec.md docs/03.specs/README.md docs/03.specs/0048-github-routing-and-ci-evidence/plan.md docs/03.specs/0048-github-routing-and-ci-evidence/plan.md docs/03.specs/0048-github-routing-and-ci-evidence/README.md#task-records docs/03.specs/0048-github-routing-and-ci-evidence/README.md#task-records docs/99.templates/support/document-profiles.json
   rtk git commit -m "docs: record github routing closure"
   ```
 
@@ -325,6 +343,13 @@ rtk git diff --check
 rtk git diff --cached --check
 ```
 
+### Legacy Task verification evidence
+
+Not executed. Implementation will record exact artifact versions, contract
+counts, mapped surface classes, native projection differences, focused and
+aggregate results, formatter effects, remote repository/SHA/time/result/
+limitation rows, reviews, logical commits, and successor handoff. Planned
+commands and dated historical metadata are not current PASS evidence.
 ## Risks & Mitigations
 
 | Risk | Mitigation |
@@ -336,6 +361,30 @@ rtk git diff --cached --check
 | Historical remote failure is promoted to current | Bind result to observed SHA and keep unpushed local HEAD hosted evidence `DEFER`. |
 | Validator executes as two primary pre-commit owners | Use repository-quality as the only pre-commit owner and verify command inventory parity. |
 
+### Legacy Task approval and rollback boundaries
+
+- **Allowed Paths**: new GitHub routing contract/schema/fixture/validator/test;
+  `.github/labeler.yml`, `.github/CODEOWNERS`, `.github/README.md`; current
+  validation routing/fixtures, repository aggregate, inventories, reciprocal
+  SDLC documents/indexes, and progress.
+- **Forbidden Paths**: ignored/private state, secrets, auth caches, provider
+  payloads, shell history, RTK logs, workflow logs, and live-system data.
+- **Approval Required**: push, PR, remote merge, workflow dispatch/rerun,
+  branch-rule/ruleset or review-enforcement change, credential use, release,
+  deployment, or live mutation. None is authorized here.
+- **Static Validation**: focused self-test/production/unittest, affected
+  surfaces, AGQC, GitHub Actions security, strict documents, repository
+  aggregate, all-files pre-commit, formatter inspection, both diff checks, and
+  independent requirements plus quality/security reviews.
+- **Live Validation**: `DEFER`; historical remote observations bind only their
+  exact SHA and local-current hosted evidence remains `DEFER`.
+- **Secret / Vault Handling**: no log or secret-value reads; diagnostics and
+  durable evidence are metadata-only and value-free.
+- **Rollback Plan**: revert GRCE commits in reverse order; native projection
+  and its matching contract expectation revert together, and validator
+  registration plus aggregate invocation revert together.
+- **Evidence Location**: this Task and
+  `../../00.agent-governance/memory/progress.md`.
 ## Completion Criteria
 
 - The new contract/schema references surface IDs only and rejects unknown,
@@ -353,9 +402,9 @@ rtk git diff --cached --check
 ## Traceability
 
 - **Spec**: [GitHub Routing and CI Evidence](spec.md)
-- **Task**: [GitHub Routing and CI Evidence Task](tasks.md)
+- **Task**: [GitHub Routing and CI Evidence Task](README.md#task-records)
 - **Program**: [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
-- **Architecture**: [AD-0010](../../02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md)
+- **Architecture**: [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
 - **Decision**: [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Predecessor**: Spec 047 Current Surface and Stash Reconciliation in the
   PRD-0007 program lineage
@@ -366,8 +415,26 @@ rtk git diff --cached --check
 
 | Spec criterion | Work package | Expected Task |
 | --- | --- | --- |
-| [VAL-GRCE-001](spec.md#success-criteria--verification-plan) | GRCE-001, GRCE-002 | [Contract and validator evidence](tasks.md#task-table) |
+| [VAL-GRCE-001](spec.md#success-criteria--verification-plan) | GRCE-001, GRCE-002 | [Contract and validator evidence](tasks/tsk-0002-grce-001.md) |
 | N/A — VAL-GRCE-002 and VAL-GRCE-003 share the Spec source above | GRCE-003 | N/A — reciprocal Task is linked in VAL-GRCE-001 |
 | N/A — VAL-GRCE-004 and VAL-GRCE-005 share the Spec source above | GRCE-004 | N/A — reciprocal Task is linked in VAL-GRCE-001 |
 | N/A — VAL-GRCE-006 and VAL-GRCE-007 share the Spec source above | GRCE-005 | N/A — reciprocal Task is linked in VAL-GRCE-001 |
 | N/A — VAL-GRCE-008 shares the Spec source above | GRCE-000, GRCE-005 | N/A — reciprocal Task is linked in VAL-GRCE-001 |
+
+### Legacy Task traceability
+
+- **Spec**: GitHub Routing and CI Evidence
+- **Plan**: GitHub Routing and CI Evidence Implementation Plan
+- **Predecessor**: Spec 047 Current Surface and Stash Reconciliation
+- **Successor**: Spec 049 Platform Validation and Security Evidence
+
+#### Lifecycle Traceability
+
+| Criterion / work item | Result | Evidence |
+| --- | --- | --- |
+| [GRCE-000](plan.md#work-breakdown) | Not executed | Queued activation evidence. |
+| N/A — GRCE-001 shares the Plan and Spec sources above | Not executed | Queued focused RED evidence. |
+| N/A — GRCE-002 shares the Plan and Spec sources above | Not executed | Queued contract package evidence. |
+| N/A — GRCE-003 shares the Plan and Spec sources above | Not executed | Queued native projection evidence. |
+| N/A — GRCE-004 shares the Plan and Spec sources above | Not executed | Queued affected/aggregate integration evidence. |
+| N/A — GRCE-005 shares the Plan and Spec sources above | Not executed | Queued remote metadata, QA, review, and closure evidence. |

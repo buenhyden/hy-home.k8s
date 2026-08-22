@@ -7,11 +7,12 @@ import importlib.util
 import io
 import json
 import os
+import re
 import subprocess
 import sys
 import unittest
 from contextlib import redirect_stderr
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from unittest import mock
 
 
@@ -884,6 +885,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             inventory_paths = {
                 self.validator.TERMINAL_CONTROL_REPLACEMENTS.get(path, path)
                 for path in expected_paths
+                if path not in self.validator.TERMINAL_TASK_PACKAGE_SOURCES
             }
             inventory_object_ids = self.index_object_identities(inventory_paths)
             expected_object_ids = {
@@ -891,8 +893,9 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                     self.validator.TERMINAL_CONTROL_REPLACEMENTS.get(path, path)
                 ]
                 for path in expected_paths
+                if path not in self.validator.TERMINAL_TASK_PACKAGE_SOURCES
             }
-        self.assertEqual(set(expected_object_ids), expected_paths)
+        self.assertTrue(set(expected_object_ids).issubset(expected_paths))
 
         control_row_keys = {
             "kind",
@@ -915,10 +918,18 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 self.assertEqual(
                     set(row), control_row_keys | {"legacySource", "indexedTarget"}
                 )
-                self.assertEqual(row["objectMode"], "projected-replacement")
+                self.assertEqual(
+                    row["objectMode"],
+                    "projected-task-package"
+                    if row["path"] in self.validator.TERMINAL_TASK_PACKAGE_SOURCES
+                    else "projected-replacement",
+                )
                 self.assertEqual(row["legacySource"], row["path"])
                 self.assertEqual(row["indexedTarget"], indexed_target)
-            self.assertEqual(row["objectId"], expected_object_ids[row["path"]])
+            if row["path"] in expected_object_ids:
+                self.assertEqual(row["objectId"], expected_object_ids[row["path"]])
+            else:
+                self.assertRegex(row["objectId"], r"^git:sha1:[0-9a-f]{40}$")
         self.assertEqual(
             [
                 (
@@ -1027,17 +1038,11 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             frozen["pairCardinality"] = self.validator._build_pairs(
                 frozen["currentRows"]
             )
-            for rows in frozen["authorityGuards"].values():
-                for row in rows:
-                    current_path = (
-                        self.validator.WORK105_CURRENT_PATHS_BY_HISTORICAL.get(
-                            row["path"], row["path"]
-                        )
-                    )
-                    blobs = self.validator.WORK105_AUTHORITY_BLOBS.get(current_path)
-                    if blobs is not None:
-                        row["path"] = current_path
-                        row["objectId"] = self.validator._git_identity(blobs[1])
+            # Current authority identity is intentionally structural and
+            # branch-relative. Dedicated tests above validate its exact
+            # profile, artifact, lifecycle, owner, and reciprocal relations;
+            # this frozen transition fixture must not reintroduce SHA pins.
+            frozen["authorityGuards"] = copy.deepcopy(actual["authorityGuards"])
         self.assertEqual(actual, frozen)
         return mode
 
@@ -1245,16 +1250,31 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             for row in manifest["entries"]
             if row["disposition"] == "move-current"
         ]
+        migration_payload = (
+            REPOSITORY_ROOT / self.validator.WP004B_MIGRATION_PATH
+        ).read_bytes()
+        migration_rows = self.validator.validate_pinned_migration_recovery(
+            str(REPOSITORY_ROOT),
+            self.validator.WP004B_MIGRATION_PATH,
+            migration_payload,
+        )
+        migrations_by_legacy = {
+            row["legacy_path"]: row for row in migration_rows
+        }
         payloads = {
             **archive_payloads,
-            **{
-                self.validator._current_taxonomy_target(row["target"]): (
-                    REPOSITORY_ROOT
-                    / self.validator._current_taxonomy_target(row["target"])
-                ).read_bytes()
-                for row in move_rows
-            },
         }
+        for row in move_rows:
+            target = self.validator._current_taxonomy_target(row["target"])
+            if target.endswith("/tasks.md"):
+                router = migrations_by_legacy[target]["replacement"]
+                payloads[router] = (REPOSITORY_ROOT / router).read_bytes()
+                package = REPOSITORY_ROOT / PurePosixPath(router).parent
+                for task in sorted((package / "tasks").glob("*.md")):
+                    relative = task.relative_to(REPOSITORY_ROOT).as_posix()
+                    payloads[relative] = task.read_bytes()
+            else:
+                payloads[target] = (REPOSITORY_ROOT / target).read_bytes()
         index = {path: "a" * 40 for path in payloads}
         if not hasattr(self.__class__, "taxonomy_source_tree_fixture"):
             source_tree = self.validator._taxonomy_source_tree(
@@ -1280,7 +1300,24 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             dict(self.taxonomy_source_tree_fixture),
             dict(self.taxonomy_archive_recoveries_fixture),
             archive_aliases,
+            migration_rows,
         )
+
+    def migration_rows(self, path: str):
+        payload = (REPOSITORY_ROOT / path).read_bytes()
+        if path == self.validator.MIG2_MIGRATION_PATH:
+            return self.validator.parse_pinned_migration_control(path, payload)
+        return self.validator.validate_pinned_migration_recovery(
+            str(REPOSITORY_ROOT),
+            path,
+            payload,
+        )
+
+    def wp004b_migration_rows(self):
+        return self.migration_rows(self.validator.WP004B_MIGRATION_PATH)
+
+    def mig2_migration_rows(self):
+        return self.migration_rows(self.validator.MIG2_MIGRATION_PATH)
 
     def test_taxonomy_transition_closes_exact_manifest_archive_set(self) -> None:
         (
@@ -1292,6 +1329,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             source_tree,
             archive_recoveries,
             archive_aliases,
+            migration_rows,
         ) = self.taxonomy_transition_fixture()
         rows = self.validator._build_taxonomy_transition_closure(
             registry,
@@ -1303,6 +1341,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             source_tree,
             archive_recoveries,
             archive_aliases,
+            migration_rows,
         )
         self.assertEqual(len(rows), 100)
         self.assertEqual(
@@ -1327,6 +1366,23 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                     and row["archivePresent"] is True
                 )
                 for row in rows
+            )
+        )
+        projected_tasks = [
+            row
+            for row in rows
+            if row["kind"] == "task"
+            and row["disposition"] == "manifest-move-closed"
+        ]
+        self.assertTrue(projected_tasks)
+        self.assertTrue(
+            all(
+                row["replacementPath"].endswith("/README.md")
+                and row["replacementObjectMode"] == "projected-task-package"
+                and re.fullmatch(
+                    r"git:sha1:[0-9a-f]{40}", row["replacementObjectId"]
+                )
+                for row in projected_tasks
             )
         )
 
@@ -1359,6 +1415,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                     source_tree,
                     archive_recoveries,
                     archive_aliases,
+                    migration_rows,
                 ) = self.taxonomy_transition_fixture()
                 archive_rows = [
                     row
@@ -1389,6 +1446,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                         source_tree,
                         archive_recoveries,
                         archive_aliases,
+                        migration_rows,
                     )
                 self.assertEqual(raised.exception.code, expected)
 
@@ -1404,6 +1462,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             source_tree,
             archive_recoveries,
             archive_aliases,
+            migration_rows,
         ) = self.taxonomy_transition_fixture()
         archive_row = next(
             row
@@ -1431,6 +1490,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 source_tree,
                 archive_recoveries,
                 archive_aliases,
+                migration_rows,
             )
         self.assertEqual(raised.exception.code, "CLOSURE-TAXONOMY-BLOB")
 
@@ -1448,6 +1508,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                     source_tree,
                     archive_recoveries,
                     archive_aliases,
+                    migration_rows,
                 ) = self.taxonomy_transition_fixture()
                 frozen_sources = {
                     row["path"]
@@ -1480,6 +1541,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                         source_tree,
                         archive_recoveries,
                         archive_aliases,
+                        migration_rows,
                     )
                 self.assertIn(
                     raised.exception.code,
@@ -1496,6 +1558,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             source_tree,
             archive_recoveries,
             archive_aliases,
+            migration_rows,
         ) = self.taxonomy_transition_fixture()
         plan_rows = [
             row
@@ -1521,28 +1584,21 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 source_tree,
                 archive_recoveries,
                 archive_aliases,
+                migration_rows,
             )
         self.assertEqual(raised.exception.code, "CLOSURE-TAXONOMY-MOVE")
 
     def test_terminal_replacement_identity_names_the_indexed_target(self) -> None:
         legacy_source, indexed_target = next(
-            iter(self.validator.TERMINAL_CONTROL_REPLACEMENTS.items())
+            (source, target)
+            for source, target in self.validator.TERMINAL_CONTROL_REPLACEMENTS.items()
+            if source not in self.validator.TERMINAL_TASK_PACKAGE_SOURCES
         )
         target_oid = "a" * 40
-        target_payloads = {
-            target: (REPOSITORY_ROOT / target).read_bytes()
-            for target in self.validator.TERMINAL_CONTROL_REPLACEMENTS.values()
-        }
-
-        projected_index, projected_payloads = (
-            self.validator._project_terminal_control_replacements(
-                {target: target_oid for target in target_payloads}, target_payloads
-            )
-        )
         identity = self.validator._object_identity(
             legacy_source,
-            projected_index,
-            projected_payloads[legacy_source],
+            {indexed_target: target_oid},
+            (REPOSITORY_ROOT / indexed_target).read_bytes(),
         )
 
         self.assertEqual(
@@ -1554,6 +1610,110 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 "indexedTarget": indexed_target,
             },
         )
+
+    def test_terminal_task_projection_requires_exact_router_task_set(self) -> None:
+        source = self.validator.EXECUTION_TASK
+        router = (
+            "docs/03.specs/0037-active-corpus-and-execution-retention/README.md"
+        )
+        task = (
+            "docs/03.specs/0037-active-corpus-and-execution-retention/tasks/"
+            "tsk-0001-fixture.md"
+        )
+        payloads = {
+            router: b"# Router\n\n## Task Records\n\n- [Task](tasks/tsk-0001-fixture.md)\n",
+            task: (
+                b"---\ntype: sdlc/task\nstatus: done\nowner: platform\n"
+                b'artifact_id: "TSK-0037-0001"\n---\n'
+            ),
+        }
+        index = {
+            path: self.git_blob_identity(payload).rsplit(":", 1)[1]
+            for path, payload in payloads.items()
+        }
+        rows = (
+            {
+                "legacy_path": str(PurePosixPath(router).with_name("tasks.md")),
+                "action": "replaced",
+                "replacement": router,
+            },
+        )
+
+        projected_payload = self.validator._project_terminal_task_package(
+            source, router, index, payloads, rows
+        )
+        identity = self.validator._object_identity(
+            source, index, projected_payload
+        )
+
+        self.assertEqual(identity["objectMode"], "projected-task-package")
+        self.assertEqual(identity["legacySource"], source)
+        self.assertEqual(identity["indexedTarget"], router)
+        self.assertRegex(identity["objectId"], r"^git:sha1:[0-9a-f]{40}$")
+
+    def test_terminal_task_projection_rejects_projection_drift(self) -> None:
+        source = self.validator.EXECUTION_TASK
+        router = (
+            "docs/03.specs/0037-active-corpus-and-execution-retention/README.md"
+        )
+        task = (
+            "docs/03.specs/0037-active-corpus-and-execution-retention/tasks/"
+            "tsk-0001-fixture.md"
+        )
+        base_payloads = {
+            router: b"# Router\n\n## Task Records\n\n- [Task](tasks/tsk-0001-fixture.md)\n",
+            task: (
+                b"---\ntype: sdlc/task\nstatus: done\nowner: platform\n"
+                b'artifact_id: "TSK-0037-0001"\n---\n'
+            ),
+        }
+        base_rows = (
+            {
+                "legacy_path": str(PurePosixPath(router).with_name("tasks.md")),
+                "action": "replaced",
+                "replacement": router,
+            },
+        )
+
+        for mutation in (
+            "missing",
+            "extra",
+            "duplicate",
+            "duplicate-id",
+            "wrong-state",
+            "wrong-row",
+        ):
+            with self.subTest(mutation=mutation):
+                payloads = dict(base_payloads)
+                rows = copy.deepcopy(base_rows)
+                if mutation == "missing":
+                    payloads.pop(task)
+                elif mutation == "extra":
+                    payloads[task.replace("0001", "0002")] = base_payloads[task]
+                elif mutation == "duplicate":
+                    payloads[router] += b"- [Again](tasks/tsk-0001-fixture.md)\n"
+                elif mutation == "duplicate-id":
+                    second = task.replace("0001", "0002")
+                    payloads[router] += b"- [Second](tasks/tsk-0002-fixture.md)\n"
+                    payloads[second] = base_payloads[task]
+                elif mutation == "wrong-state":
+                    payloads[task] = base_payloads[task].replace(
+                        b"status: done", b"status: blocked"
+                    )
+                else:
+                    rows[0]["replacement"] = router.replace("README.md", "spec.md")
+                index = {
+                    path: self.git_blob_identity(payload).rsplit(":", 1)[1]
+                    for path, payload in payloads.items()
+                }
+
+                with self.assertRaises(self.validator.ClosureError) as raised:
+                    self.validator._project_terminal_task_package(
+                        source, router, index, payloads, rows
+                    )
+                self.assertEqual(
+                    raised.exception.code, "CLOSURE-TERMINAL-INCOMPLETE"
+                )
 
     def test_taxonomy_transition_rejects_blob_source_and_terminal_drift(self) -> None:
         for mutation, expected in (
@@ -1571,6 +1731,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                     source_tree,
                     archive_recoveries,
                     archive_aliases,
+                    migration_rows,
                 ) = self.taxonomy_transition_fixture()
                 archive_row = next(
                     row
@@ -1596,6 +1757,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                         source_tree,
                         archive_recoveries,
                         archive_aliases,
+                        migration_rows,
                     )
                 self.assertEqual(raised.exception.code, expected)
 
@@ -1669,13 +1831,13 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             set(self.validator.WORK105_CURRENT_PATHS_BY_HISTORICAL),
             authority_paths,
         )
-        for rows in observed_guards.values():
+        for guard_name, rows in observed_guards.items():
             for row in rows:
                 historical_path = row["path"]
                 current_path = self.validator.WORK105_CURRENT_PATHS_BY_HISTORICAL[
                     historical_path
                 ]
-                base_blob, current_blob = self.validator.WORK105_AUTHORITY_BLOBS[
+                base_blob, retired_current_blob = self.validator.WORK105_AUTHORITY_BLOBS[
                     current_path
                 ]
                 observed_base_blob = subprocess.run(
@@ -1703,18 +1865,20 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                     check=True,
                     capture_output=True,
                 ).stdout
-                projected = self.validator._work108_authority_object_identity(
-                    current_path,
+                current_entry = self.validator._authority_entries(
+                    [current_path],
                     {current_path: observed_current_blob},
-                    current_payload,
-                )
-                self.assertNotEqual(observed_current_blob, current_blob)
+                    {current_path: current_payload},
+                    kind="adr" if guard_name == "acceptedAdrs" else "spec",
+                )[0]
+                self.assertNotEqual(observed_current_blob, retired_current_blob)
                 self.assertEqual(
-                    projected["objectId"],
-                    self.validator._git_identity(current_blob),
+                    current_entry["objectId"],
+                    self.validator._git_identity(observed_current_blob),
+                    current_path,
                 )
-                row["path"] = current_path
-                row["objectId"] = self.validator._git_identity(current_blob)
+                row.clear()
+                row.update(current_entry)
         transition = [{"path": "docs/04.execution/plans/fixture.md"}]
         self.validator._validate_authority_guard_transition(
             ledger_guards, observed_guards, transition
@@ -1745,7 +1909,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                         for row in rows
                         if row["path"] in self.validator.WORK105_AUTHORITY_BLOBS
                     )
-                    target["objectId"] = self.validator._git_identity("f" * 40)
+                    target["objectId"] = "git:sha1:not-an-object"
                 else:
                     active_transition = []
                 with self.assertRaises(self.validator.ClosureError) as raised:
@@ -1756,69 +1920,28 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                     raised.exception.code, "CLOSURE-AUTHORITY-DRIFT"
                 )
 
-    def test_work105_authority_projection_rejects_obsolete_pre_restore_adrs(
-        self,
-    ) -> None:
-        obsolete_blobs = {
-            "docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md":
-                "162e2ec3e35d1d8300ca7471cb5dbe10c6a8976d",  # pragma: allowlist secret
-            "docs/02.architecture/decisions/0003-eso-vault-k8s-auth.md":
-                "68c6f3ecf628f7c6426094bc1e1f69b605fe3ea0",  # pragma: allowlist secret
-            "docs/02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md":
-                "bc2cf5dd98dd06dc0478e4e1979ea65af09a0c0c",  # pragma: allowlist secret
-            "docs/02.architecture/decisions/0008-istio-install-and-ingress-coexist.md":
-                "8f3eb7ee9a086dcd637b8fe54c0d4922a3af305c",  # pragma: allowlist secret
-            "docs/02.architecture/decisions/0009-kiali-external-observability.md":
-                "e912f93a6be593e6c9973ccee6ab2e872c233c35",  # pragma: allowlist secret
-            "docs/02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md":
-                "5a98e0c5e057b7ab1db7ab09afb6e1f560616cd1",  # pragma: allowlist secret
-            "docs/02.architecture/decisions/0012-argo-notifications-slack.md":
-                "9c1578f375012a468eafe4288bdbe9814c9d80e8",  # pragma: allowlist secret
-            "docs/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md":
-                "2442656dd9bd450b40bb8c9303d6f7dfe391f122",  # pragma: allowlist secret
-            "docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md":
-                "2010e74ceb1ca8d179f1d8d7da7345ad9cded5b3",  # pragma: allowlist secret
-            "docs/02.architecture/decisions/0015-declarative-document-contract-registry.md":
-                "01528a8d4892a655b1f0675eea80757f0c66ca38",  # pragma: allowlist secret
-            "docs/02.architecture/decisions/0016-program-to-tranche-document-lineage.md":
-                "4db70a5e946a1cda7d41d70d02ef5d8036c85f35",  # pragma: allowlist secret
-            "docs/02.architecture/decisions/0017-program-follow-up-lineage-semantics.md":
-                "80e081470d5923c1020f127f39316d8e9f7ff148",  # pragma: allowlist secret
-            "docs/02.architecture/decisions/0018-full-body-archive-record-and-retention.md":
-                "6c4712596a048dde6eef5f6f7edf55b8e8a6b41e",  # pragma: allowlist secret
-        }
+    def test_current_authority_guards_reject_structural_drift(self) -> None:
         ledger_guards = copy.deepcopy(self.ledger["authorityGuards"])
-        observed_guards = copy.deepcopy(ledger_guards)
-        for rows in observed_guards.values():
-            for row in rows:
-                current_path = self.validator.WORK105_CURRENT_PATHS_BY_HISTORICAL[
-                    row["path"]
-                ]
-                row["path"] = current_path
-                row["objectId"] = self.validator._git_identity(
-                    self.validator.WORK105_AUTHORITY_BLOBS[current_path][1]
-                )
+        observed_guards = self.validator.build_observed(REPOSITORY_ROOT)[
+            "authorityGuards"
+        ]
         transition = [{"path": "docs/04.execution/plans/fixture.md"}]
-
-        for path, obsolete_blob in obsolete_blobs.items():
-            with self.subTest(path=path):
-                self.assertNotEqual(
-                    obsolete_blob, self.validator.WORK105_AUTHORITY_BLOBS[path][1]
-                )
+        for field, value in (
+            ("profile", "sdlc/rogue"),
+            ("status", "draft"),
+            ("owner", "rogue"),
+            ("objectId", "git:sha1:not-an-object"),
+        ):
+            with self.subTest(field=field):
                 candidate = copy.deepcopy(observed_guards)
-                target = next(
-                    row
-                    for rows in candidate.values()
-                    for row in rows
-                    if row["path"] == path
-                )
-                target["objectId"] = self.validator._git_identity(obsolete_blob)
+                target = candidate["doneSpecs"][0]
+                target[field] = value
                 with self.assertRaises(self.validator.ClosureError) as raised:
                     self.validator._validate_authority_guard_transition(
                         ledger_guards, candidate, transition
                     )
                 self.assertEqual(raised.exception.code, "CLOSURE-AUTHORITY-DRIFT")
-                self.assertEqual(raised.exception.path, path)
+                self.assertEqual(raised.exception.path, target["path"])
 
     def test_work105_base_projection_is_exact_and_rejects_tree_drift(self) -> None:
         expected = {
@@ -1925,27 +2048,126 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             path: (REPOSITORY_ROOT / path).read_bytes()
             for path in self.validator.TRANSITION_AUTHORITY_REMAPS
         }
+        payloads.update(
+            {
+                path.relative_to(REPOSITORY_ROOT).as_posix(): path.read_bytes()
+                for path in (REPOSITORY_ROOT / "docs/03.specs").rglob("*.md")
+            }
+        )
+        payloads["docs/98.archive/README.md"] = (
+            REPOSITORY_ROOT / "docs/98.archive/README.md"
+        ).read_bytes()
+        mig2_rows = self.mig2_migration_rows()
+        mig4_rows = self.wp004b_migration_rows()
         self.validator._validate_transition_authority_semantics(
-            payloads, taxonomy_sources
+            payloads, taxonomy_sources, mig2_rows, mig4_rows
         )
-        path, remaps = next(
-            iter(self.validator.TRANSITION_AUTHORITY_REMAPS.items())
+        path = (
+            "docs/02.architecture/decisions/"
+            "0011-argo-rollouts-progressive-delivery.md"
         )
-        mutated = dict(payloads)
+        remaps = self.validator.TRANSITION_AUTHORITY_REMAPS[path]
         start = os.path.dirname(path)
         retired, replacement = remaps[0]
         replacement_target = os.path.relpath(replacement, start)
         retired_target = os.path.relpath(retired, start)
-        mutated[path] = mutated[path].replace(
+        wrong_body = dict(payloads)
+        wrong_body[path] = wrong_body[path].replace(
             f"]({replacement_target})".encode(),
             f"]({retired_target})".encode(),
             1,
         )
-        with self.assertRaises(self.validator.ClosureError) as raised:
-            self.validator._validate_transition_authority_semantics(
-                mutated, taxonomy_sources
-            )
-        self.assertEqual(raised.exception.code, "CLOSURE-AUTHORITY-DRIFT")
+        missing_mig2 = [
+            row for row in mig2_rows if row.get("legacy_path") != replacement
+        ]
+        stable_task = next(
+            row["stable_path"]
+            for row in mig2_rows
+            if row.get("legacy_path") == remaps[1][1]
+        )
+        missing_mig4 = [
+            row for row in mig4_rows if row.get("legacy_path") != stable_task
+        ]
+        missing_target = dict(payloads)
+        current_plan = next(
+            row["stable_path"]
+            for row in mig2_rows
+            if row.get("legacy_path") == replacement
+        )
+        missing_target.pop(current_plan)
+        for mutation, candidate_payloads, candidate_mig2, candidate_mig4 in (
+            ("non-frozen-body", {**payloads, path: payloads[path] + b"drift\n"}, mig2_rows, mig4_rows),
+            ("retired-link", wrong_body, mig2_rows, mig4_rows),
+            ("missing-mig2", payloads, missing_mig2, mig4_rows),
+            ("missing-mig4", payloads, mig2_rows, missing_mig4),
+            ("missing-current-target", missing_target, mig2_rows, mig4_rows),
+        ):
+            with self.subTest(mutation=mutation):
+                with self.assertRaises(self.validator.ClosureError) as raised:
+                    self.validator._validate_transition_authority_semantics(
+                        candidate_payloads,
+                        taxonomy_sources,
+                        candidate_mig2,
+                        candidate_mig4,
+                    )
+                self.assertEqual(
+                    raised.exception.code, "CLOSURE-AUTHORITY-DRIFT"
+                )
+
+    def test_adr0030_supersession_graph_is_exact_and_reciprocal(self) -> None:
+        paths = {
+            path.relative_to(REPOSITORY_ROOT).as_posix(): path.read_bytes()
+            for path in (
+                REPOSITORY_ROOT / "docs/02.architecture/decisions"
+            ).glob("*.md")
+        }
+        self.validator._validate_adr0030_relations(paths)
+
+        predecessor = next(
+            path
+            for path, payload in paths.items()
+            if b'artifact_id: "ADR-0015"' in payload
+        )
+        successor = next(
+            path
+            for path, payload in paths.items()
+            if b'artifact_id: "ADR-0030"' in payload
+        )
+        for mutation, path, before, after in (
+            ("predecessor-owner", predecessor, b"owner: platform", b"owner: rogue"),
+            (
+                "predecessor-status",
+                predecessor,
+                b"status: superseded",
+                b"status: accepted",
+            ),
+            (
+                "predecessor-reciprocal",
+                predecessor,
+                b"superseded_by: ADR-0030",
+                b"superseded_by: ADR-9999",
+            ),
+            (
+                "successor-artifact",
+                successor,
+                b'artifact_id: "ADR-0030"',
+                b'artifact_id: "ADR-9999"',
+            ),
+            (
+                "successor-set",
+                successor,
+                b"ADR-0025",
+                b"ADR-9999",
+            ),
+        ):
+            with self.subTest(mutation=mutation):
+                candidate = dict(paths)
+                candidate[path] = candidate[path].replace(before, after, 1)
+                with self.assertRaises(self.validator.ClosureError) as raised:
+                    self.validator._validate_adr0030_relations(candidate)
+                self.assertEqual(
+                    raised.exception.code, "CLOSURE-AUTHORITY-PROFILE"
+                )
 
     def test_production_closure_matches_exact_repository_state(self) -> None:
         observed = self.validator.build_observed(REPOSITORY_ROOT)
@@ -2132,7 +2354,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         old_blob, base_blob = self.validator.TRANSITION_AUTHORITY_BLOBS[
             self.validator.OWNER_SPEC
         ]
-        work105_base_blob, current_blob = self.validator.WORK105_AUTHORITY_BLOBS[
+        work105_base_blob, retired_current_blob = self.validator.WORK105_AUTHORITY_BLOBS[
             self.validator.OWNER_SPEC
         ]
         base_object_id = subprocess.run(
@@ -2156,15 +2378,15 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         self.assertEqual(rows[historical_owner]["objectId"], f"git:sha1:{old_blob}")
         self.assertEqual(work105_base_blob, base_blob)
         self.assertEqual(base_object_id, base_blob)
-        projected = self.validator._work108_authority_object_identity(
+        current_identity = self.validator._object_identity(
             self.validator.OWNER_SPEC,
             {self.validator.OWNER_SPEC: object_id},
             payload,
         )
-        self.assertNotEqual(object_id, current_blob)
+        self.assertNotEqual(object_id, retired_current_blob)
         self.assertEqual(
-            projected["objectId"],
-            self.validator._git_identity(current_blob),
+            current_identity["objectId"],
+            self.validator._git_identity(object_id),
         )
 
         manifest = json.loads(
@@ -2180,12 +2402,14 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             self.assertEqual(
                 rows[source]["objectId"], f"git:sha1:{entry['sourceBlob']}"
             )
-            self.assertTrue(
-                (
-                    REPOSITORY_ROOT
-                    / self.validator._current_taxonomy_target(entry["target"])
-                ).is_file()
-            )
+            target = self.validator._current_taxonomy_target(entry["target"])
+            if source == self.validator.EXECUTION_TASK:
+                target = self.validator._migration_task_router(
+                    target,
+                    self.wp004b_migration_rows(),
+                    error_code="TEST",
+                )
+            self.assertTrue((REPOSITORY_ROOT / target).is_file())
 
     def test_terminal_spec037_controls_become_owned_defer_without_source_rewrite(
         self,
@@ -2402,26 +2626,29 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         future_specs = sorted(self.validator.POST_CLOSURE_SPEC_AUTHORITY_PATHS)
         self.assertEqual(future_adrs, expected_future_adrs)
         self.assertEqual(future_specs, expected_future_specs)
-        accepted_payload = (
-            b"---\ntype: sdlc/adr\nstatus: accepted\nowner: platform\n---\n"
-        )
-        done_payload = b"---\ntype: sdlc/spec\nstatus: done\nowner: platform\n---\n"
+        def authority_payload(path: str, kind: str) -> bytes:
+            sequence = re.search(r"/(?P<id>[0-9]{4})-", path).group("id")
+            artifact_id = f"ADR-{sequence}" if kind == "adr" else f"SPEC-{sequence}"
+            predecessor = artifact_id in self.validator.ADR0030_PREDECESSORS
+            status = "superseded" if predecessor else "accepted" if kind == "adr" else "done"
+            reciprocal = "superseded_by: ADR-0030\n" if predecessor else ""
+            return (
+                f"---\ntype: sdlc/{kind}\nstatus: {status}\nowner: platform\n"
+                f'artifact_id: "{artifact_id}"\n{reciprocal}---\n'
+            ).encode()
         payloads = {
             **{
-                path: accepted_payload
+                path: authority_payload(path, "adr")
                 for path in self.validator.FROZEN_ACCEPTED_ADR_PATHS
             },
             **{
-                path: done_payload
+                path: authority_payload(path, "spec")
                 for path in self.validator.FROZEN_DONE_SPEC_PATHS
             },
-            **{path: accepted_payload for path in future_adrs},
-            **{path: done_payload for path in future_specs},
+            **{path: authority_payload(path, "adr") for path in future_adrs},
+            **{path: authority_payload(path, "spec") for path in future_specs},
         }
         authority_index: dict[str, str] = {}
-        for path, oid in self.validator.POST_CLOSURE_PINNED_AUTHORITY_BLOBS.items():
-            payloads[path] = (REPOSITORY_ROOT / path).read_bytes()
-            authority_index[path] = oid
 
         adr_scope = self.validator._frozen_authority_scope(
             [*self.validator.FROZEN_ACCEPTED_ADR_PATHS, *future_adrs],
@@ -2454,19 +2681,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             ],
             list(self.validator.FROZEN_DONE_SPEC_PATHS),
         )
-        pinned_path, pinned_blob = next(
-            iter(self.validator.POST_CLOSURE_PINNED_AUTHORITY_BLOBS.items())
-        )
-        self.assertEqual(
-            subprocess.run(
-                ["git", "rev-parse", f":{pinned_path}"],
-                cwd=REPOSITORY_ROOT,
-                check=True,
-                capture_output=True,
-                text=True,
-            ).stdout.strip(),
-            pinned_blob,
-        )
+        self.assertEqual(self.validator.POST_CLOSURE_PINNED_AUTHORITY_BLOBS, {})
         for kind, frozen, future in (
             ("adr", self.validator.FROZEN_ACCEPTED_ADR_PATHS, future_adrs),
             ("spec", self.validator.FROZEN_DONE_SPEC_PATHS, future_specs),
@@ -2530,28 +2745,30 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             "docs/02.architecture/decisions/"
             "2099-rogue-accepted-decision.md"
         )
-        rogue_spec = "docs/03.specs/999-rogue-done-spec/spec.md"
+        rogue_spec = "docs/03.specs/9999-rogue-done-spec/spec.md"
         for kind, frozen, future, rogue_path, rogue_payload in (
             (
                 "adr",
                 self.validator.FROZEN_ACCEPTED_ADR_PATHS,
                 future_adrs,
                 self.validator.TERMINAL_PROGRAM_CLOSURE_ADR,
-                accepted_payload,
+                authority_payload(
+                    self.validator.TERMINAL_PROGRAM_CLOSURE_ADR, "adr"
+                ),
             ),
             (
                 "adr",
                 self.validator.FROZEN_ACCEPTED_ADR_PATHS,
                 future_adrs,
                 rogue_adr,
-                accepted_payload,
+                authority_payload(rogue_adr, "adr"),
             ),
             (
                 "spec",
                 self.validator.FROZEN_DONE_SPEC_PATHS,
                 future_specs,
                 rogue_spec,
-                done_payload,
+                authority_payload(rogue_spec, "spec"),
             ),
         ):
             with self.subTest(kind=kind, rogue_path=rogue_path):
@@ -3117,10 +3334,14 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             ),
             [rogue_adr],
         )
+        rogue_payload = (
+            b"---\ntype: sdlc/adr\nstatus: accepted\nowner: platform\n"
+            b'artifact_id: "ADR-2099"\n---\n# Rogue\n'
+        )
         rogue_entries = self.validator._authority_entries(
             [rogue_adr],
             {},
-            {rogue_adr: closure_payload},
+            {rogue_adr: rogue_payload},
             kind="adr",
         )
         self.assertEqual(
@@ -3459,9 +3680,15 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         path = self.validator.RETIRED_REGISTRY_PATH
         base_blob, work105_blob = self.validator.WORK105_REGISTRY_BLOBS
         work107_blob = self.validator.WORK107_REGISTRY_BLOB
-        # The consolidation merge advanced the registry past MIG-0002, so the
-        # tracked blob is the merge authority rather than the MIG-0002 one.
-        current_blob = self.validator.MERGE_REGISTRY_BLOB
+        # Historical predecessor bytes remain pinned, while the proposed
+        # registry is admitted structurally through exact MIG-0004 recovery.
+        current_blob = subprocess.run(
+            ["git", "rev-parse", f":{path}"],
+            cwd=REPOSITORY_ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
         self.assertEqual(
             subprocess.run(
                 [
@@ -3476,16 +3703,7 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             ).stdout.strip(),
             base_blob,
         )
-        self.assertEqual(
-            subprocess.run(
-                ["git", "rev-parse", f":{path}"],
-                cwd=REPOSITORY_ROOT,
-                check=True,
-                capture_output=True,
-                text=True,
-            ).stdout.strip(),
-            current_blob,
-        )
+        self.assertRegex(current_blob, r"^[0-9a-f]{40}$")
         self.assertEqual(
             subprocess.run(
                 ["git", "rev-parse", f"HEAD:{path}"],
@@ -3499,6 +3717,8 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         self.assertNotEqual(work105_blob, work107_blob)
         self.assertNotEqual(work105_blob, current_blob)
         self.assertNotEqual(work107_blob, current_blob)
+        merged = self.validator._load_registry_authority(str(REPOSITORY_ROOT))
+        self.assertIn("programLineage", merged)
         # The authority now merges both published contracts, so each is admitted
         # against its own pinned state and the first one read reports the fault.
         authority_path = next(iter(self.validator.REGISTRY_AUTHORITY_BLOBS))
@@ -3602,6 +3822,64 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
                 self.validator._load_registry_authority(str(REPOSITORY_ROOT))
         self.assertEqual(
             raised.exception.code, "CLOSURE-TERMINAL-REGISTRY-DUPLICATE"
+        )
+
+    def test_wp004b_registry_admission_is_exact_atomic_and_finite(self) -> None:
+        profile = json.loads(
+            (REPOSITORY_ROOT / self.validator.PROFILE_REGISTRY_PATH).read_text(
+                encoding="utf-8"
+            )
+        )
+        route = json.loads(
+            (REPOSITORY_ROOT / self.validator.ROUTE_CONTRACT_PATH).read_text(
+                encoding="utf-8"
+            )
+        )
+        admitted = self.validator._wp004b_registry_surface_admitted
+        self.assertTrue(admitted(self.validator.PROFILE_REGISTRY_PATH, profile))
+        self.assertTrue(admitted(self.validator.ROUTE_CONTRACT_PATH, route))
+        self.assertFalse(admitted("docs/99.templates/rogue.json", profile))
+
+        wrong_path = copy.deepcopy(profile)
+        migration_profile = next(
+            item
+            for item in wrong_path["profiles"]
+            if item["id"] == "content/archive-migration"
+        )
+        migration_profile["pathPattern"] = migration_profile[
+            "pathPattern"
+        ].replace("0004-document-authority-convergence", "0005-rogue")
+        self.assertFalse(
+            admitted(self.validator.PROFILE_REGISTRY_PATH, wrong_path)
+        )
+
+        broad_create = copy.deepcopy(route)
+        migration_policy = next(
+            item
+            for item in broad_create["documentContracts"]["admissionPolicies"]
+            if item["id"] == "archive-migration-control"
+        )
+        migration_policy["create"]["states"].append("sealed")
+        self.assertFalse(
+            admitted(self.validator.ROUTE_CONTRACT_PATH, broad_create)
+        )
+
+        with mock.patch.object(
+            self.validator,
+            "validate_pinned_migration_recovery",
+            side_effect=self.validator.ArchiveContractError(
+                "ARCHIVE-MIGRATION-PROFILE",
+                "digest drift",
+            ),
+        ):
+            with self.assertRaises(self.validator.ClosureError) as raised:
+                self.validator._validate_wp004b_atomic_admission(
+                    str(REPOSITORY_ROOT),
+                    self.validator._run_git,
+                )
+        self.assertEqual(
+            raised.exception.code,
+            "CLOSURE-TERMINAL-REGISTRY-AUTHORITY",
         )
 
     def test_work108_authority_identity_projects_only_exact_outer_artifact(self) -> None:
@@ -4046,10 +4324,12 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
         accepted_path = "docs/02.architecture/decisions/9999-accepted.md"
         payloads = {
             draft_path: (
-                b"---\ntype: sdlc/adr\nstatus: draft\nowner: platform\n---\n# Draft\n"
+                b"---\ntype: sdlc/adr\nstatus: draft\nowner: platform\n"
+                b'artifact_id: "ADR-9998"\n---\n# Draft\n'
             ),
             accepted_path: (
-                b"---\ntype: sdlc/adr\nstatus: accepted\nowner: platform\n---\n"
+                b"---\ntype: sdlc/adr\nstatus: accepted\nowner: platform\n"
+                b'artifact_id: "ADR-9999"\n---\n'
                 b"# Accepted\n"
             ),
         }

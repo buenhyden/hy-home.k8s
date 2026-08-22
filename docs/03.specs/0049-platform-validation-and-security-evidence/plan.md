@@ -75,6 +75,24 @@ runner or operator temporary storage and never become tracked artifacts.
 - Keep local-only Vault HTTP and Traefik `insecureSkipVerify` exceptions
   explicit; do not rewrite transport without live CA and compatibility proof.
 
+### Legacy Task ledger inputs
+
+This Task is the sole durable execution-evidence owner for Spec 049. It will
+record the closed evidence package, exact tools, thirteen Kustomize renders,
+built-in and external-GVK schema results, Traefik graph, direct security and
+fallback regressions, routing/CI ownership, reviews, commits, closure, and
+Spec 050 handoff. Every row is queued; this draft claims no implementation,
+download, hosted-current result, remote Helm result, or live evidence.
+
+- Parent [Spec 049](spec.md)
+- Parent [Implementation Plan](plan.md)
+- [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md),
+  [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md),
+  and [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+- Spec 048 target/routing handoff and current `validation-surfaces.json`
+- Current Kustomize roots, GitOps/infrastructure desired state, policy Rego,
+  tracked secret contract, Vault/ESO contract, Traefik dynamic files, CI,
+  aggregate, inventories, and exact official tool/checksum sources
 ## Goals & In-Scope
 
 - Create the closed platform evidence contract/schema and mutation fixture.
@@ -188,7 +206,7 @@ copied.
   rtk python3 scripts/validate-markdown-profiles.py --root . --mode strict
   rtk python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts registry
   rtk git diff --check
-  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0049-platform-validation-and-security-evidence/spec.md docs/03.specs/README.md docs/04.execution/plans/2026-08-02-platform-validation-and-security-evidence.md docs/04.execution/plans/README.md docs/04.execution/tasks/2026-08-02-platform-validation-and-security-evidence.md docs/04.execution/tasks/README.md docs/99.templates/support/document-profiles.json
+  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0049-platform-validation-and-security-evidence/spec.md docs/03.specs/README.md docs/03.specs/0049-platform-validation-and-security-evidence/plan.md docs/03.specs/0049-platform-validation-and-security-evidence/plan.md docs/03.specs/0049-platform-validation-and-security-evidence/README.md#task-records docs/03.specs/0049-platform-validation-and-security-evidence/README.md#task-records docs/99.templates/support/document-profiles.json
   rtk git commit -m "docs: activate platform validation evidence plan"
   ```
 
@@ -415,7 +433,7 @@ copied.
   ```bash
   rtk python3 scripts/validate-document-lifecycle.py --root . --mode staged
   rtk git diff --check
-  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0049-platform-validation-and-security-evidence/spec.md docs/03.specs/README.md docs/04.execution/plans/2026-08-02-platform-validation-and-security-evidence.md docs/04.execution/plans/README.md docs/04.execution/tasks/2026-08-02-platform-validation-and-security-evidence.md docs/04.execution/tasks/README.md docs/99.templates/support/document-profiles.json
+  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0049-platform-validation-and-security-evidence/spec.md docs/03.specs/README.md docs/03.specs/0049-platform-validation-and-security-evidence/plan.md docs/03.specs/0049-platform-validation-and-security-evidence/plan.md docs/03.specs/0049-platform-validation-and-security-evidence/README.md#task-records docs/03.specs/0049-platform-validation-and-security-evidence/README.md#task-records docs/99.templates/support/document-profiles.json
   rtk git commit -m "docs: close platform validation evidence tranche"
   ```
 
@@ -431,6 +449,14 @@ copied.
 | CI | Exact tools, selector routing, CI contract, required summary | Preparation or primary invocation failure fails |
 | Closure | Full tests, aggregate, all-files, diff, independent reviews | Any open finding or required SKIP/DEFER blocks closure |
 
+### Legacy Task verification evidence
+
+Not executed. Implementation will record exact contract/schema versions, all
+three tool versions/artifacts/checksums, thirteen target results, object/GVK
+counts, every `SKIP`/`DEFER` limitation/owner/retry trigger, Traefik graph and
+mutation counts, focused fallback/redaction tests, routing/CI ownership,
+formatter effects, reviews, and logical commits. Planned commands and official
+release metadata are not current PASS evidence.
 ## Risks & Mitigations
 
 - **Tool or schema supply-chain drift:** pin artifact, SHA-256, official source,
@@ -447,6 +473,32 @@ copied.
   caches temporary, and classify required preparation failure as FAIL rather
   than silently falling back.
 
+### Legacy Task approval and rollback boundaries
+
+- **Allowed Paths**: new platform contract/schema/fixtures/validators/tests;
+  current validation routing and fixture; manifest CI job and CI contract;
+  repository aggregate/pre-commit/inventories; Traefik README; exact tool
+  inventory; reciprocal SDLC documents/indexes/progress/program relation.
+- **Forbidden Paths**: ignored/private files, secret values, credentials,
+  kubeconfig, auth caches, shell history, RTK logs, provider responses,
+  rendered Secret bodies, tracked tool/schema caches, and live-system state.
+- **Approval Required**: push, PR, hosted dispatch/rerun, deployment, apply,
+  cluster admission, Argo CD sync, Vault/ESO/TLS mutation, provider login, or
+  other remote/live mutation. None is authorized here.
+- **Static Validation**: exact checksum preparation, contract self-test and
+  production, thirteen renders, schema/GVK disposition, Traefik tests,
+  focused security tests, affected/CI/security/aggregate/all-files/diff, and
+  independent requirements/quality/security/GitOps/network review.
+- **Live Validation**: `DEFER`; remote Helm, cluster, Vault, ESO, TLS, DNS,
+  controller, and provider evidence require a separately approved context.
+- **Secret / Vault Handling**: value-free diagnostics only; store path, line,
+  kind, key, rule ID, count, result, limitation, owner, and retry trigger.
+- **Rollback Plan**: revert closure, CI/routing, focused security changes,
+  Traefik validator, and evidence package in reverse order. Contract/tool
+  identity and its validator/tests revert together; focused-owner registration
+  and duplicate inline removal revert together.
+- **Evidence Location**: this Task and
+  `../../00.agent-governance/memory/progress.md`.
 ## Completion Criteria
 
 - The closed contract/schema/fixture and both focused validators pass their
@@ -465,9 +517,9 @@ copied.
 ## Traceability
 
 - **Spec**: [Platform Validation and Security Evidence](spec.md)
-- **Task**: [Platform Validation and Security Evidence Task](tasks.md)
+- **Task**: [Platform Validation and Security Evidence Task](README.md#task-records)
 - **Program**: [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
-- **Architecture**: [AD-0010](../../02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md)
+- **Architecture**: [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
 - **Decision**: [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Predecessor**: Spec 048 GitHub Routing and CI Evidence in the PRD-0007
   program lineage
@@ -478,9 +530,28 @@ copied.
 
 | Spec criterion | Work package | Expected Task |
 | --- | --- | --- |
-| [VAL-PVSE-001](spec.md#success-criteria--verification-plan) | PVSE-001, PVSE-002 | [Contract/schema mutation and source-parity results](tasks.md#task-table) |
-| N/A — VAL-PVSE-002 and VAL-PVSE-003 share the Spec source above | PVSE-002 | [Exact-tool thirteen-root render and per-GVK schema evidence](tasks.md#task-table) |
-| N/A — VAL-PVSE-004 shares the Spec source above | PVSE-003 | [Traefik positive/negative graph results](tasks.md#task-table) |
-| N/A — VAL-PVSE-005 and VAL-PVSE-006 share the Spec source above | PVSE-004 | [Canonical focused security/fallback regression results](tasks.md#task-table) |
-| N/A — VAL-PVSE-007 shares the Spec source above | PVSE-002, PVSE-003, PVSE-006 | [Exception and remote/live DEFER matrix](tasks.md#task-table) |
-| N/A — VAL-PVSE-008 shares the Spec source above | PVSE-005, PVSE-006 | [Routing, CI, QA, review, and closure evidence](tasks.md#task-table) |
+| [VAL-PVSE-001](spec.md#success-criteria--verification-plan) | PVSE-001, PVSE-002 | [Contract/schema mutation and source-parity results](tasks/tsk-0002-pvse-001.md) |
+| N/A — VAL-PVSE-002 and VAL-PVSE-003 share the Spec source above | PVSE-002 | [Exact-tool thirteen-root render and per-GVK schema evidence](tasks/tsk-0003-pvse-002.md) |
+| N/A — VAL-PVSE-004 shares the Spec source above | PVSE-003 | [Traefik positive/negative graph results](tasks/tsk-0004-pvse-003.md) |
+| N/A — VAL-PVSE-005 and VAL-PVSE-006 share the Spec source above | PVSE-004 | [Canonical focused security/fallback regression results](tasks/tsk-0005-pvse-004.md) |
+| N/A — VAL-PVSE-007 shares the Spec source above | PVSE-002, PVSE-003, PVSE-006 | [Exception and remote/live DEFER matrix](tasks/tsk-0003-pvse-002.md) |
+| N/A — VAL-PVSE-008 shares the Spec source above | PVSE-005, PVSE-006 | [Routing, CI, QA, review, and closure evidence](tasks/tsk-0006-pvse-005.md) |
+
+### Legacy Task traceability
+
+- **Spec**: Platform Validation and Security Evidence
+- **Plan**: Platform Validation and Security Evidence Implementation Plan
+- **Predecessor**: Spec 048 GitHub Routing and CI Evidence
+- **Successor**: Spec 050 Example IaC and Validator QA
+
+#### Lifecycle Traceability
+
+| Criterion / work item | Result | Evidence |
+| --- | --- | --- |
+| [PVSE-000](plan.md#work-breakdown) | Not executed | Queued activation evidence. |
+| N/A — PVSE-001 shares the Plan and Spec sources above | Not executed | Queued focused RED evidence. |
+| N/A — PVSE-002 shares the Plan and Spec sources above | Not executed | Queued contract, exact-tool, render, schema, and depth evidence. |
+| N/A — PVSE-003 shares the Plan and Spec sources above | Not executed | Queued Traefik product-semantic evidence. |
+| N/A — PVSE-004 shares the Plan and Spec sources above | Not executed | Queued security/fallback/redaction regression evidence. |
+| N/A — PVSE-005 shares the Plan and Spec sources above | Not executed | Queued affected/aggregate/CI ownership evidence. |
+| N/A — PVSE-006 shares the Plan and Spec sources above | Not executed | Queued QA, review, closure, and successor evidence. |

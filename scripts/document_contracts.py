@@ -1341,11 +1341,11 @@ _PROGRAM_OWNER_CONTRACTS = {
     "prd": (
         PurePosixPath("docs/01.requirements"),
         re.compile(r"^docs/01\.requirements/(?P<id>[0-9]{4})-[^/]+\.md$"),
-        "sdlc/prd",
+        "sdlc/requirement-package",
     ),
     "ad": (
         PurePosixPath("docs/02.architecture/descriptions"),
-        re.compile(r"^docs/02\.architecture/descriptions/ad-(?P<id>[0-9]{4})-[^/]+\.md$"),
+        re.compile(r"^docs/02\.architecture/descriptions/(?P<id>[0-9]{4})-[^/]+\.md$"),
         "sdlc/ad",
     ),
     "adr": (
@@ -1475,13 +1475,23 @@ def _program_repository_diagnostics(
             decision_keys[decision_id] = None
             return None
         decision_metadata = metadata(path)
-        if decision_metadata is None or decision_metadata.get("status") != "accepted":
+        accepted_or_reciprocal_predecessor = (
+            decision_metadata is not None
+            and (
+                decision_metadata.get("status") == "accepted"
+                or (
+                    decision_metadata.get("status") == "superseded"
+                    and decision_metadata.get("superseded_by") == "ADR-0030"
+                )
+            )
+        )
+        if not accepted_or_reciprocal_predecessor:
             diagnostics.append(
                 _diagnostic(
                     "REGISTRY_PROGRAM_DECISION",
                     path=path,
                     profile="sdlc/adr",
-                    expected="an accepted governing ADR",
+                    expected="an accepted ADR or reciprocal ADR-0030 predecessor",
                     actual=(
                         "unreadable frontmatter"
                         if decision_metadata is None
@@ -2020,10 +2030,19 @@ def _document_contract_projection(
                 and admission.create.evidence_predicate_id is None
                 and not admission.baseline_paths
             )
+            task_record_creation = (
+                profile_id == "sdlc/task"
+                and admission.create.mode == "states"
+                and admission.create.states == ("queued",)
+                and admission.profile_ids == ("sdlc/task",)
+                and admission.create.evidence_predicate_id is None
+                and not admission.baseline_paths
+            )
             if (
                 admission.create.mode == "states"
                 and admission.create.states != ("draft",)
                 and not migration_control_creation
+                and not task_record_creation
             ):
                 diagnostics.append(
                     _diagnostic(
@@ -2047,16 +2066,14 @@ def _document_contract_projection(
                 (
                     admission.create.mode == "states"
                     and profile["mode"] == "authored"
-                    and profile_id not in {"sdlc/plan", "sdlc/task", "content/archive"}
+                    and profile_id != "content/archive"
                     and admission.create.evidence_predicate_id is None
                     and not admission.baseline_paths
-                )
-                or (
-                    admission.create.mode == "paired"
-                    and admission_profiles == {"sdlc/plan", "sdlc/task"}
-                    and admission.create.states == ("draft", "active")
-                    and admission.create.evidence_predicate_id is None
-                    and not admission.baseline_paths
+                    and (
+                        admission.create.states == ("draft",)
+                        or migration_control_creation
+                        or task_record_creation
+                    )
                 )
                 or (
                     admission.create.mode == "archive-envelope"

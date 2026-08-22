@@ -59,7 +59,7 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
 - Keep ordinary active filenames free of dates; retain dates in frontmatter or
   typed evidence metadata.
 - Do not restore retired `docs/02.architecture/requirements/` or
-  `docs/04.execution/` routes; Requirement Packages, Architecture
+  `docs/03.specs/` routes; Requirement Packages, Architecture
   Descriptions, and Stage 03 siblings are their current replacement owners.
 - Limit Stage 90 to `research/`, `audits/`, and `data/` numbered packages;
   route `learning/` content to a Stage 05 Guide or Research.
@@ -299,7 +299,7 @@ cannot satisfy the terminal completion criteria.
   or retained disposition and no competing active queue.
 - Modify the exact eight PRD records, all forty-nine Stage 03 work-unit paths,
   their current mutable consumers, and the relevant Stage 01/02/03 indexes.
-- Delete `docs/04.execution/{README.md,plans/README.md,tasks/README.md}` only in
+- Delete `docs/03.specs/{README.md,plans/README.md,tasks/README.md}` only in
   this atomic route cutover.
 - Consolidate the route-sensitive authoring owner at
   `docs/00.agent-governance/rules/document-authoring.md` and repair every root,

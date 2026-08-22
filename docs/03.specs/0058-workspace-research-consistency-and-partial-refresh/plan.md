@@ -69,6 +69,111 @@ Copied verbatim from the owning Spec. Every work package inherits these.
 - Temporary files live only under the session scratchpad path and are absent
   before terminal validation.
 
+### Legacy Task ledger inputs
+
+This Task is the durable execution and evidence ledger for the direct
+human-approved [Spec 0058](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md)
+and its reciprocal
+[Implementation Plan](plan.md).
+Direct human approval on 2026-08-14 authorizes this standalone execution relation.
+No separate PRD or Architecture Description is required or part of this standalone lifecycle.
+The typed relation is governed by
+[ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md).
+
+This Task tracks the eight-work-package cycle over the existing
+`2026-08-08-wer` research pack: a constraint-consistency pass over scope
+projection, approved one-off artifact cleanup, and a dated re-observation of
+the twelve `Partial` requirement rows. WRCP-000 activates the standalone
+execution relation itself; WRCP-001 through WRCP-007 execute and close the
+remaining work packages defined by the Plan.
+
+- [Spec 0058](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md)
+- [Implementation Plan](plan.md)
+- [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
+- [Document profile registry](../../99.templates/support/document-profiles.json)
+- Direct human approval of the written Spec and Plan on 2026-08-14
+
+### Topic ledger
+
+The following thirty-six-row ledger is closed for this cycle: twenty-one
+`reconfirm-verified` rows, twelve `refresh-partial` rows (`REQ-WERPC-006`,
+`008`, `009`, `014`, `020`, `022`, `023`, `025`, `026`, `028`, `032`, `033`),
+and three `admit-new-owner` rows (`REQ-WERPC-034`, `035`, `036`) admitted by
+Spec 057 amendment `C-WRCP-010` for the Spec, Task, and Plan document
+families, which previously had no requirement owner in the coverage matrix.
+Task 7 creates the three new owner rows; this ledger only records them.
+
+| Request line                                     | Primary owner   | Disposition        |
+| ------------------------------------------------ | --------------- | ------------------ |
+| Harness engineering                              | `REQ-WERPC-001` | reconfirm-verified |
+| Loop engineering                                 | `REQ-WERPC-002` | reconfirm-verified |
+| Workspace application system, environment, rules | `REQ-WERPC-003` | reconfirm-verified |
+| Claude implementation status                     | `REQ-WERPC-004` | reconfirm-verified |
+| Codex implementation status                      | `REQ-WERPC-005` | reconfirm-verified |
+| Claude/Codex common environment and rules        | `REQ-WERPC-006` | refresh-partial    |
+| Spec-driven development                          | `REQ-WERPC-007` | reconfirm-verified |
+| Kubernetes                                       | `REQ-WERPC-008` | refresh-partial    |
+| Infrastructure                                   | `REQ-WERPC-009` | refresh-partial    |
+| SDLC                                             | `REQ-WERPC-010` | reconfirm-verified |
+| PRD                                              | `REQ-WERPC-011` | reconfirm-verified |
+| AD                                              | `REQ-WERPC-012` | reconfirm-verified |
+| ADR                                              | `REQ-WERPC-013` | reconfirm-verified |
+| Guide                                            | `REQ-WERPC-014` | refresh-partial    |
+| Incident                                         | `REQ-WERPC-015` | reconfirm-verified |
+| Postmortem                                       | `REQ-WERPC-016` | reconfirm-verified |
+| Policy                                           | `REQ-WERPC-017` | reconfirm-verified |
+| Release                                          | `REQ-WERPC-018` | reconfirm-verified |
+| Runbook                                          | `REQ-WERPC-019` | reconfirm-verified |
+| Documentation and Diátaxis                       | `REQ-WERPC-020` | refresh-partial    |
+| LLM-WIKI                                         | `REQ-WERPC-021` | reconfirm-verified |
+| CI/CD                                            | `REQ-WERPC-022` | refresh-partial    |
+| GitHub Actions                                   | `REQ-WERPC-023` | refresh-partial    |
+| QA                                               | `REQ-WERPC-024` | reconfirm-verified |
+| Security                                         | `REQ-WERPC-025` | refresh-partial    |
+| AI agent systems                                 | `REQ-WERPC-026` | refresh-partial    |
+| agency-agents                                    | `REQ-WERPC-027` | reconfirm-verified |
+| Task-fit model and configuration                 | `REQ-WERPC-028` | refresh-partial    |
+| Short-term memory                                | `REQ-WERPC-029` | reconfirm-verified |
+| Long-term memory                                 | `REQ-WERPC-030` | reconfirm-verified |
+| Domain-scoped memory                             | `REQ-WERPC-031` | reconfirm-verified |
+| Memory management                                | `REQ-WERPC-032` | refresh-partial    |
+| Verification and Validation                      | `REQ-WERPC-033` | refresh-partial    |
+| Spec document family                             | `REQ-WERPC-034` | admit-new-owner    |
+| Task document family                             | `REQ-WERPC-035` | admit-new-owner    |
+| Plan document family                             | `REQ-WERPC-036` | admit-new-owner    |
+
+Assertion: 36 total rows, 21 `reconfirm-verified`, 12 `refresh-partial`, 3
+`admit-new-owner`. This matches the closed count; no row was added or
+widened beyond what this table lists.
+
+### Cleanup record
+
+The Step 3 consumer check was first run unscoped and returned six matches,
+all of them self-referential mentions of the target path inside Spec 057
+and the reciprocal Plan — the two governance documents that describe this
+very cleanup step, not a functional or informational dependency on the
+snapshot's content. That unscoped check could never pass, since it grepped
+the documents authorizing the deletion. The Plan was corrected in commit
+`c90dba04` to exclude both self-referencing documents from the match set.
+The corrected check
+(`rtk proxy grep -rn "graphify-out/2026-06-04" --include="*.md"
+--include="*.json" --include="*.py" --include="*.sh" --include="*.yaml"
+--include="*.yml" docs/ scripts/ tests/ .github/ .claude/ .codex/ .agents/
+.gemini/ .pre-commit-config.yaml .gitignore | rtk proxy grep -v
+"0058-workspace-research-consistency-and-partial-refresh" | rtk proxy grep
+-v "2026-08-14-workspace-research-consistency-and-partial-refresh"`)
+returned zero matches: no script, validator, fixture, config, or workflow
+depends on the snapshot. Both approved targets were removed this cycle.
+
+| Target                                          | Tracking state    | Consumer check | Action        |
+| ----------------------------------------------- | ----------------- | -------------- | ------------- |
+| `graphify-out/2026-06-04/`                      | tracked           | no-consumer    | removed       |
+| `sessions/2026-08-11-session.md` and two others | untracked-ignored | no-consumer    | removed       |
+| `.worktrees/docs-sdlc-governance-consolidation` | untracked-ignored | not-applicable | reported-only |
+
+The `.worktrees/docs-sdlc-governance-consolidation` worktree's branch is 32
+commits ahead of and 58 behind `main`, so it holds unmerged work and is an
+explicit non-goal of this cycle.
 ## Goals & In-Scope
 
 - Register and activate the standalone Spec/Plan/Task relation for spec `057`.
@@ -117,12 +222,12 @@ Copied verbatim from the owning Spec. Every work package inherits these.
 **Files:**
 
 - Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md`
-- Modify: `docs/04.execution/plans/2026-08-14-workspace-research-consistency-and-partial-refresh.md`
-- Create: `docs/04.execution/tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md`
+- Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/plan.md`
+- Create: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
 - Modify: `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`
 - Modify: `docs/99.templates/support/document-profiles.json`
-- Modify: `docs/04.execution/plans/README.md`
-- Modify: `docs/04.execution/tasks/README.md`
+- Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/plan.md`
+- Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
 
 **Interfaces:**
 
@@ -132,7 +237,7 @@ Copied verbatim from the owning Spec. Every work package inherits these.
 
 - [ ] **Step 1: Create the Task from the current template.** Copy
       `docs/99.templates/templates/sdlc/execution/task.template.md` to
-      `docs/04.execution/tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md`.
+      `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`.
       Remove every author prompt. Set frontmatter `status: active`. Its H2 profile
       is fixed: `Overview`, `Inputs`, `Task Table`, `Approval and Safety
 Boundaries`, `Verification Summary`, `Traceability`. Set `WRCP-000` to
@@ -202,8 +307,8 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
   ```json
   {
     "spec": "057",
-    "plan": "docs/04.execution/plans/2026-08-14-workspace-research-consistency-and-partial-refresh.md",
-    "task": "docs/04.execution/tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md",
+    "plan": "docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/plan.md",
+    "task": "docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records",
     "state": "active",
     "reason": "Direct human-approved combined constraint-consistency and Partial re-observation cycle over the existing 2026-08-08 WER pack without separate PRD/AD authority",
     "decision": "0022",
@@ -218,7 +323,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 
 - [ ] **Step 8: Register Plan and Task in their stage indexes.** Add one tree
       entry and one table row for each new file in
-      `docs/04.execution/plans/README.md` and `docs/04.execution/tasks/README.md`.
+      `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/plan.md` and `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`.
       Match the existing row shape exactly, including the status column and the
       date column value `2026-08-14`.
 
@@ -227,11 +332,11 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 
   ```bash
   git add docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md \
-          docs/04.execution/plans/2026-08-14-workspace-research-consistency-and-partial-refresh.md \
-          docs/04.execution/tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md \
+          docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/plan.md \
+          docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records \
           docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md \
           docs/99.templates/support/document-profiles.json \
-          docs/04.execution/plans/README.md docs/04.execution/tasks/README.md
+          docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/plan.md docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records
   python3 scripts/validate-links-and-owners.py --root . --mode strict
   python3 scripts/validate-markdown-profiles.py --root . --mode strict
   python3 scripts/validate-document-contract-registry.py --root . --mode strict
@@ -250,7 +355,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 
 **Files:**
 
-- Modify: `docs/04.execution/tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md`
+- Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
 - Delete: `graphify-out/2026-06-04/` (five tracked files)
 
 **Interfaces:**
@@ -364,7 +469,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
   python3 scripts/validate-links-and-owners.py --root . --mode strict
   python3 scripts/validate-document-contract-registry.py --root . --mode strict
   bash scripts/validate-repo-quality-gates.sh .
-  git add -A docs/04.execution/tasks/ graphify-out/
+  git add -A docs/03.specs/ graphify-out/
   git commit -m "chore: remove superseded graphify snapshot and freeze topic ledger"
   ```
 
@@ -384,7 +489,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 - Modify: `docs/90.references/research/2026-08-08-wer/agent-model-routing-and-configuration.md`
 - Modify: `docs/90.references/research/2026-08-08-wer/agent-memory-tiers-and-management.md`
 - Modify: `docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md`
-- Modify: `docs/04.execution/tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md`
+- Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
 
 **Interfaces:**
 
@@ -442,7 +547,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 - [ ] **Step 7: Commit.**
 
   ```bash
-  git add docs/90.references/research/2026-08-08-wer/ docs/04.execution/tasks/
+  git add docs/90.references/research/2026-08-08-wer/ docs/03.specs/
   git commit -m "docs: refresh agent governance and memory evidence"
   ```
 
@@ -452,7 +557,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 
 - Modify: `docs/90.references/research/2026-08-08-wer/kubernetes-infrastructure-and-security.md`
 - Modify: `docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md`
-- Modify: `docs/04.execution/tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md`
+- Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
 
 **Interfaces:**
 
@@ -493,7 +598,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
   ```bash
   python3 scripts/validate-links-and-owners.py --root . --mode strict
   python3 scripts/validate-markdown-profiles.py --root . --mode strict
-  git add docs/90.references/research/2026-08-08-wer/ docs/04.execution/tasks/
+  git add docs/90.references/research/2026-08-08-wer/ docs/03.specs/
   git commit -m "docs: refresh Kubernetes infrastructure and security evidence"
   ```
 
@@ -504,7 +609,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 - Modify: `docs/90.references/research/2026-08-08-wer/documentation-architecture-and-diataxis.md`
 - Modify: `docs/90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md`
 - Modify: `docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md`
-- Modify: `docs/04.execution/tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md`
+- Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
 
 **Interfaces:**
 
@@ -542,8 +647,8 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
   | Family | Canonical path             | Profile and template                                                               |
   | ------ | -------------------------- | ---------------------------------------------------------------------------------- |
   | Spec   | `docs/03.specs/`           | `sdlc/spec` profile; `docs/99.templates/templates/sdlc/specs/spec.template.md`     |
-  | Task   | `docs/04.execution/tasks/` | `sdlc/task` profile; `docs/99.templates/templates/sdlc/execution/task.template.md` |
-  | Plan   | `docs/04.execution/plans/` | `sdlc/plan` profile; `docs/99.templates/templates/sdlc/execution/plan.template.md` |
+  | Task   | `docs/03.specs/` | `sdlc/task` profile; `docs/99.templates/templates/sdlc/execution/task.template.md` |
+  | Plan   | `docs/03.specs/` | `sdlc/plan` profile; `docs/99.templates/templates/sdlc/execution/plan.template.md` |
 
   For each, record the enforced H2 profile, the lifecycle states the repository
   actually uses, the reciprocity rules its validator enforces, and what the
@@ -565,7 +670,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
   ```bash
   python3 scripts/validate-links-and-owners.py --root . --mode strict
   python3 scripts/validate-markdown-profiles.py --root . --mode strict
-  git add docs/90.references/research/2026-08-08-wer/ docs/04.execution/tasks/
+  git add docs/90.references/research/2026-08-08-wer/ docs/03.specs/
   git commit -m "docs: refresh Guide and documentation architecture evidence"
   ```
 
@@ -575,7 +680,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 
 - Modify: `docs/90.references/research/2026-08-08-wer/ci-cd-github-actions-and-qa.md`
 - Modify: `docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md`
-- Modify: `docs/04.execution/tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md`
+- Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
 
 **Interfaces:**
 
@@ -618,7 +723,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
   ```bash
   python3 scripts/validate-links-and-owners.py --root . --mode strict
   python3 scripts/validate-markdown-profiles.py --root . --mode strict
-  git add docs/90.references/research/2026-08-08-wer/ docs/04.execution/tasks/
+  git add docs/90.references/research/2026-08-08-wer/ docs/03.specs/
   git commit -m "docs: refresh CI CD Actions and QA evidence"
   ```
 
@@ -629,7 +734,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 - Modify: `docs/90.references/research/2026-08-08-wer/scope-application-index.md`
 - Modify: `docs/90.references/research/2026-08-08-wer/README.md`
 - Modify: `docs/90.references/research/README.md`
-- Modify: `docs/04.execution/tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md`
+- Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
 
 **Interfaces:**
 
@@ -668,8 +773,8 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
   | Request ID      | Requested topic | Primary owner                           | Workspace evidence         | External source class                                        | Status              |
   | --------------- | --------------- | --------------------------------------- | -------------------------- | ------------------------------------------------------------ | ------------------- |
   | `REQ-WERPC-034` | Spec            | the document-family matrix row for Spec | `docs/03.specs/`           | as recorded for that row, plus the 2026-08-14 re-observation | from Task 5 Step 4b |
-  | `REQ-WERPC-035` | Task            | the document-family matrix row for Task | `docs/04.execution/tasks/` | as recorded for that row, plus the 2026-08-14 re-observation | from Task 5 Step 4b |
-  | `REQ-WERPC-036` | Plan            | the document-family matrix row for Plan | `docs/04.execution/plans/` | as recorded for that row, plus the 2026-08-14 re-observation | from Task 5 Step 4b |
+  | `REQ-WERPC-035` | Task            | the document-family matrix row for Task | `docs/03.specs/` | as recorded for that row, plus the 2026-08-14 re-observation | from Task 5 Step 4b |
+  | `REQ-WERPC-036` | Plan            | the document-family matrix row for Plan | `docs/03.specs/` | as recorded for that row, plus the 2026-08-14 re-observation | from Task 5 Step 4b |
 
   Link each primary owner to the anchor of the document-family matrix section,
   the way rows `REQ-WERPC-011` through `REQ-WERPC-019` already do. Then state in
@@ -701,7 +806,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
   python3 scripts/validate-links-and-owners.py --root . --mode strict
   python3 scripts/validate-markdown-profiles.py --root . --mode strict
   python3 scripts/validate-reference-information-architecture.py --self-test
-  git add docs/90.references/ docs/04.execution/tasks/
+  git add docs/90.references/ docs/03.specs/
   git commit -m "docs: reproject scope index and reconcile cross-links"
   ```
 
@@ -711,10 +816,10 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 
 - Modify: `docs/00.agent-governance/memory/progress.md`
 - Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md`
-- Modify: `docs/04.execution/plans/2026-08-14-workspace-research-consistency-and-partial-refresh.md`
-- Modify: `docs/04.execution/tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md`
+- Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/plan.md`
+- Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
 - Modify: `docs/99.templates/support/document-profiles.json`
-- Modify: `docs/03.specs/README.md`, `docs/04.execution/plans/README.md`, `docs/04.execution/tasks/README.md`
+- Modify: `docs/03.specs/README.md`, `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/plan.md`, `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
 
 **Interfaces:**
 
@@ -766,8 +871,8 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 
 - [ ] **Step 6: Update the three stage indexes.** Change the status column for
       the Spec, Plan, and Task rows from `Active` to `Done` in
-      `docs/03.specs/README.md`, `docs/04.execution/plans/README.md`, and
-      `docs/04.execution/tasks/README.md`.
+      `docs/03.specs/README.md`, `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/plan.md`, and
+      `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`.
 
 - [ ] **Step 7: Re-validate after the lifecycle flip.**
 
@@ -805,6 +910,52 @@ Index checks resolve against tracked paths, so new files are staged before
 validation. External fetch results are recorded as observations with dates and
 never promoted into runtime or live claims.
 
+### Legacy Task verification evidence
+
+The pre-activation baseline run of
+`python3 scripts/validate-links-and-owners.py --root . --mode strict` on a
+clean working tree returned:
+
+```text
+PASS CROSS-DOCUMENT . cross-document expected="valid" actual="valid" owner="cross-document-validator"
+```
+
+This is a valid draft-state baseline, not a fabricated failure.
+
+After the activation edits (Task creation; ADR reciprocal row and prose;
+Spec `### Related Documents` and Overview approval statements; Plan
+Lifecycle Traceability link conversion; registry `standaloneExecutions`
+entry; frontmatter `status: active` on Spec, Plan, and Task; and stage index
+updates), the following strict validators were run on the staged tree:
+
+- `python3 scripts/validate-links-and-owners.py --root . --mode strict`
+- `python3 scripts/validate-markdown-profiles.py --root . --mode strict`
+- `python3 scripts/validate-document-contract-registry.py --root . --mode strict`
+- `git diff --check && git diff --cached --check`
+
+Their exact final output lines:
+
+```text
+PASS CROSS-DOCUMENT . cross-document expected="valid" actual="valid" owner="cross-document-validator"
+PASS SUMMARY . - expected="no violations" actual="0" owner="markdown-profile-validator"
+PASS document contract registry: 512 paths (strict, tracked-only plus explicit includes)
+```
+
+Both `git diff --check` and `git diff --cached --check` exited 0 with no
+whitespace errors. Full command transcripts are recorded in the ignored
+task-1 report at
+`.superpowers/sdd/2026-08-14-workspace-research-consistency-and-partial-refresh/task-1-report.md`.
+
+Two intermediate transient diagnostics were observed and resolved before this
+final run, not fabricated failures: `PROGRAM-LINEAGE-EXECUTION-GATE` between
+Step 1 (Task frontmatter set `active`) and Step 6 (registry entry added), and
+`REGISTRY_STANDALONE_STATE` between Step 6 (registry `state: active`) and
+Step 7 (Spec/Plan frontmatter set `active`). Both are expected artifacts of
+the documented step ordering and cleared once the later step ran.
+
+Remote, hosted-runtime, provider-runtime, credential-bearing, cluster,
+infrastructure, and live evidence remain `DEFER` for WRCP-000; this activation
+performs repository-static edits only.
 ## Risks & Mitigations
 
 | Risk                                      | Impact                                       | Mitigation                                                                                         |
@@ -818,6 +969,32 @@ never promoted into runtime or live claims.
 | Formatter reflows a wide table            | Large diff obscures the real change          | Review with `git diff --ignore-all-space` and confirm the row count delta                          |
 | Cycle promotes nothing                    | Reads as wasted effort                       | The Spec defines a no-promotion outcome as success when the delta and boundaries are recorded      |
 
+### Legacy Task approval and rollback boundaries
+
+- **Allowed Paths**: this Task; Spec 057 and its index; the reciprocal Plan and
+  its index; ADR-0022; `docs/99.templates/support/document-profiles.json`;
+  `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/plan.md`; `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`;
+  and only this ignored report:
+  `.superpowers/sdd/2026-08-14-workspace-research-consistency-and-partial-refresh/task-1-report.md`.
+- **Forbidden Paths**: `docs/98.archive/**`; protected Current or retired audit
+  bodies; research-pack content before WRCP-001 admission; GitHub, workflow,
+  GitOps, infrastructure, provider, model, memory-contract, secret, credential,
+  user/global configuration, remote, and live-system surfaces; and unrelated
+  user changes.
+- **Approval Required**: any research beyond approved WRCP work packages,
+  remote mutation, secret or variable access, provider or cluster access,
+  implementation/configuration change, destructive action, push, pull request,
+  merge, or authority/scope expansion.
+- **Static Validation**: strict registry, Markdown-profile, and links/owners
+  checks; `git diff --check` and `git diff --cached --check`.
+- **Live Validation**: `DEFER`; WRCP-000 performs no remote, provider-runtime,
+  hosted, credential-bearing, cluster, infrastructure, or live validation.
+- **Secret / Vault Handling**: no secret or credential is read, written, or
+  printed; none is in scope for this activation.
+- **Rollback Plan**: revert the single activation commit; no other lifecycle
+  state depends on it yet.
+- **Evidence Location**: this Task's Verification Summary and Traceability
+  sections, and the activation commit recorded in Step 10.
 ## Completion Criteria
 
 - All eight work packages are committed as separate non-empty logical commits.
@@ -843,17 +1020,17 @@ never promoted into runtime or live claims.
 
 | Spec criterion                                                                                | Work package  | Expected Task                                                                                                                                                     |
 | --------------------------------------------------------------------------------------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [VAL-WRCP-001](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-001      | [WRCP-001](tasks.md) will record the thirty-six-row topic ledger with unique owners              |
-| [VAL-WRCP-002](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-002..005 | [WRCP-002..005](tasks.md) will record separated workspace and external results per requirement   |
-| [VAL-WRCP-003](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-002..005 | [WRCP-002..005](tasks.md) will record four retention fields per retained Partial or DEFER        |
-| [VAL-WRCP-004](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-002..005 | [WRCP-002..005](tasks.md) will record ledger before/after comparison and ID uniqueness           |
-| [VAL-WRCP-005](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-001      | [WRCP-001](tasks.md) will record consumer check result and the unchanged worktree                |
-| [VAL-WRCP-006](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-002..005 | [WRCP-002..005](tasks.md) will record unchanged pack file inventory with dated sections only     |
-| [VAL-WRCP-007](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-006      | [WRCP-006](tasks.md) will record scope re-derivation and the unowned-path re-test                |
-| [VAL-WRCP-008](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-006      | [WRCP-006](tasks.md) will record cross-document agreement on counts and statuses                 |
-| [VAL-WRCP-009](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-006      | [WRCP-006](tasks.md) will record reconciliation as the last content commit                       |
-| [VAL-WRCP-010](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-007      | [WRCP-007](tasks.md) will record full lane results compared against the baseline                 |
-| [VAL-WRCP-011](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-000..007 | [WRCP-000..007](tasks.md) will record one commit per package and terminal temporary-file absence |
+| [VAL-WRCP-001](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-001      | [WRCP-001](README.md#task-records) will record the thirty-six-row topic ledger with unique owners              |
+| [VAL-WRCP-002](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-002..005 | [WRCP-002..005](README.md#task-records) will record separated workspace and external results per requirement   |
+| [VAL-WRCP-003](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-002..005 | [WRCP-002..005](README.md#task-records) will record four retention fields per retained Partial or DEFER        |
+| [VAL-WRCP-004](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-002..005 | [WRCP-002..005](README.md#task-records) will record ledger before/after comparison and ID uniqueness           |
+| [VAL-WRCP-005](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-001      | [WRCP-001](README.md#task-records) will record consumer check result and the unchanged worktree                |
+| [VAL-WRCP-006](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-002..005 | [WRCP-002..005](README.md#task-records) will record unchanged pack file inventory with dated sections only     |
+| [VAL-WRCP-007](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-006      | [WRCP-006](README.md#task-records) will record scope re-derivation and the unowned-path re-test                |
+| [VAL-WRCP-008](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-006      | [WRCP-006](README.md#task-records) will record cross-document agreement on counts and statuses                 |
+| [VAL-WRCP-009](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-006      | [WRCP-006](README.md#task-records) will record reconciliation as the last content commit                       |
+| [VAL-WRCP-010](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-007      | [WRCP-007](README.md#task-records) will record full lane results compared against the baseline                 |
+| [VAL-WRCP-011](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-000..007 | [WRCP-000..007](README.md#task-records) will record one commit per package and terminal temporary-file absence |
 
 ### Related documents
 
@@ -866,10 +1043,25 @@ relation are recorded the same way.
 - Owning Spec:
   `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md`
 - Reciprocal Task:
-  `docs/04.execution/tasks/2026-08-14-workspace-research-consistency-and-partial-refresh.md`
+  `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
 - Decision source:
   `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`
 - Immediate predecessor cycle: spec `056`
 - [Research pack README](../../90.references/research/2026-08-08-wer/README.md)
 - [Scope application index](../../90.references/research/2026-08-08-wer/scope-application-index.md)
 - [Quality standards](../../00.agent-governance/rules/quality-standards.md)
+
+### Legacy Task traceability
+
+#### Lifecycle Traceability
+
+| Criterion / work item                                                                                                                                  | Result                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Evidence                                                                                                                                                                      |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [WRCP-000](plan.md#task-1-wrcp-000--activate-the-standalone-execution)               | In progress. The direct-approval standalone execution relation is being activated in this commit: registry entry, ADR reciprocity, three `active` statuses, stage indexes, and converted Lifecycle Traceability links.                                                                                                                                                                                                                                                                                     | This Task, Spec 057, reciprocal Plan, ADR-0022, `standaloneExecutions` entry, activation commit                                                                               |
+| [WRCP-001](plan.md#task-2-wrcp-001--topic-ledger-and-approved-cleanup)               | Not yet executed.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Not applicable                                                                                                                                                                |
+| [WRCP-002](plan.md#task-3-wrcp-002--governance-agents-model-memory-refresh)          | Done. `REQ-WERPC-006`/`026`/`028`/`032` re-observed on 2026-08-14; workspace canonical owners are `no-change` against the 2026-08-12 baseline; all nine registered external URLs were reachable and unchanged; all four dispositions remain `Partial`.                                                                                                                                                                                                                                                     | Dated 2026-08-14 sections in the four owner reports; `SRC-WERPC-074`; `CLM-WERPC-010-01` through `-04`                                                                        |
+| [WRCP-003](plan.md#task-4-wrcp-003--kubernetes-infrastructure-security-refresh)      | Done. `REQ-WERPC-008`/`009`/`025` re-observed on 2026-08-14; workspace selectors under `gitops/`, `policy/`, `infrastructure/`, and `traefik/` are `no-change` against the 2026-08-12 baseline (`a5d2dfbb`); the eighteen registered external sources were re-fetched with no material change except one inconclusive sub-claim; all three dispositions remain `Partial`.                                                                                                                                  | Dated 2026-08-14 section in `kubernetes-infrastructure-and-security.md`; `SRC-WERPC-075`; `CLM-WERPC-010-05` through `-07`                                                    |
+| [WRCP-004](plan.md#task-5-wrcp-004--guide-diátaxis-sdlc-and-document-family-refresh) | Done. `REQ-WERPC-014`/`020` re-observed on 2026-08-14; the workspace Guide/Diátaxis selectors and Spec 052 decisions are `no-change`; `SRC-WERPC-067` is unchanged and the published Diátaxis page was reachable on this attempt; both dispositions remain `Partial`. `REQ-WERPC-034`/`035`/`036` re-observed for the first time under Spec 057 `C-WRCP-010`; each is `Verified` on structural contract and `DEFER` on effectiveness.                                                                      | Dated 2026-08-14 sections in `documentation-architecture-and-diataxis.md` and `spec-driven-sdlc-and-document-contracts.md`; `SRC-WERPC-076`; `CLM-WERPC-010-08` through `-12` |
+| [WRCP-005](plan.md#task-6-wrcp-005--cicd-actions-qa-vv-refresh)                      | Done. `REQ-WERPC-022`/`023`/`033` re-observed on 2026-08-14; the workspace CI/CD/Actions/QA selectors (`.github/`, `.pre-commit-config.yaml`, `validation-surfaces.json`, `quality-standards.md`) are `no-change`; the twelve registered sources were re-fetched with eleven unchanged and one relocated (GitHub Actions environments page, equivalent content); all three dispositions remain `Partial`.                                                                                                  | Dated 2026-08-14 section in `ci-cd-github-actions-and-qa.md`; `SRC-WERPC-077`; `CLM-WERPC-010-13` through `-15`                                                               |
+| [WRCP-006](plan.md#task-7-wrcp-006--scope-re-projection-and-reconciliation)          | Done. Ten scope rows re-derived, none changed (registry unchanged since 2026-07-29); five unowned paths re-tested, unchanged; observation dates and frontmatter refreshed to 2026-08-14; `REQ-WERPC-034`/`035`/`036` registered as three new coverage-matrix owner rows (`Verified` contract / `DEFER` effect); reconciliation subsection added (14 files, 36 owners, 77 source IDs, 92 claim IDs, zero `Partial` cells changed); collection README confirmed accurate; scope index and pack README agree. | `scope-application-index.md`; pack `README.md`'s coverage matrix and `### 2026-08-14 consistency and Partial re-observation reconciliation` subsection                        |
+| [WRCP-007](plan.md#task-8-wrcp-007--validation-closure-and-lifecycle-done)           | Not yet executed.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Not applicable                                                                                                                                                                |

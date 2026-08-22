@@ -238,6 +238,20 @@ class ArchiveValidationTest(unittest.TestCase):
 
         self.assertEqual(self.codes(report), ("ARCHIVE-REACTIVATED",))
 
+    def test_requirement_package_is_a_current_markdown_profile(self) -> None:
+        document = CurrentMarkdownDocument(
+            path="docs/01.requirements/0001-fixture.md",
+            markdown="# Requirement package\n",
+            profile="sdlc/requirement-package",
+            status="active",
+        )
+
+        report = validate_current_archive_authority(
+            (document,), individual_archive_paths=frozenset({self.archive_path})
+        )
+
+        self.assertEqual(self.codes(report), ())
+
     def test_red_missing_empty_and_invalid_archive_inventory_fail_closed(self) -> None:
         empty = validate_current_archive_authority(())
         invalid_container = validate_current_archive_authority(
@@ -508,6 +522,43 @@ class ArchiveValidationTest(unittest.TestCase):
 
         self.assertEqual(self.codes(report), ("ARCHIVE-DIRECT-CURRENT-LINK",))
 
+    def test_mig0004_is_the_only_direct_current_migration_control(self) -> None:
+        current = CurrentMarkdownDocument(
+            path="docs/03.specs/0054-document-authority-convergence/README.md",
+            markdown=(
+                "[recovery](../../98.archive/migrations/"
+                "0004-document-authority-convergence.md)\n"
+            ),
+            profile="readme/collection-index",
+            status="active",
+        )
+        wrong_control = dataclasses.replace(
+            current,
+            markdown=(
+                "[wrong](../../98.archive/migrations/"
+                "mig-0003-agent-governance-control-plane-consolidation.md)\n"
+            ),
+        )
+
+        self.assertEqual(
+            self.codes(
+                validate_current_archive_authority(
+                    (current,),
+                    individual_archive_paths=frozenset({self.archive_path}),
+                )
+            ),
+            (),
+        )
+        self.assertEqual(
+            self.codes(
+                validate_current_archive_authority(
+                    (wrong_control,),
+                    individual_archive_paths=frozenset({self.archive_path}),
+                )
+            ),
+            ("ARCHIVE-DIRECT-CURRENT-LINK",),
+        )
+
     def test_green_noncurrent_direct_link_does_not_claim_current_authority(
         self,
     ) -> None:
@@ -710,6 +761,73 @@ class ArchiveValidationTest(unittest.TestCase):
                 "RECOVERY-OBJECT-NOT-COMMIT",
                 self.codes(types.SimpleNamespace(diagnostics=diagnostics)),
             )
+
+    def test_mig0004_recovery_is_integrated_sealed_and_fully_pinned(self) -> None:
+        migration_path = (
+            "docs/98.archive/migrations/"
+            "0004-document-authority-convergence.md"
+        )
+        migration_bytes = (ROOT / migration_path).read_bytes()
+
+        rows = archive_validation.validate_pinned_migration_recovery(
+            ROOT,
+            migration_path,
+            migration_bytes,
+        )
+
+        self.assertEqual(len(rows), 66)
+        self.assertEqual(
+            hashlib.sha256(migration_bytes).hexdigest(),
+            archive_validation.MIG0004_DOCUMENT_SHA256,
+        )
+        self.assertEqual(
+            {action: sum(row["action"] == action for row in rows) for action in {
+                "moved", "merged", "replaced"
+            }},
+            {"moved": 8, "merged": 2, "replaced": 56},
+        )
+        for name, candidate in (
+            (
+                "accepted-status",
+                migration_bytes.replace(b'status: "sealed"', b'status: "accepted"', 1),
+            ),
+            ("trailing-prose", migration_bytes + b"\nUnreviewed trailing prose.\n"),
+        ):
+            with self.subTest(name=name), self.assertRaisesRegex(
+                archive_validation.ArchiveContractError,
+                "ARCHIVE-MIGRATION-PROFILE",
+            ):
+                archive_validation.parse_pinned_migration_control(
+                    migration_path,
+                    candidate,
+                )
+
+    def test_recovery_rejects_a_full_but_unreachable_commit(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="unreachable-migration-commit-") as temporary:
+            root = Path(temporary)
+            fixture = GitFixture(root)
+            reachable, _blobs = fixture.commit_many({"reachable.md": b"reachable\n"})
+            durable_branch = fixture.run(
+                "symbolic-ref", "--short", "HEAD"
+            ).decode("ascii").strip()
+            fixture.run("checkout", "--quiet", "--orphan", "detached-source")
+            unreachable, _blobs = fixture.commit_many(
+                {"reachable.md": b"reachable\n", "legacy.md": b"legacy\n"}
+            )
+            fixture.run("checkout", "--quiet", durable_branch)
+
+            archive_validation._require_commits_reachable(  # noqa: SLF001
+                root.resolve(),
+                (reachable,),
+            )
+            with self.assertRaisesRegex(
+                archive_validation.ArchiveContractError,
+                "RECOVERY-OBJECT-UNREACHABLE",
+            ):
+                archive_validation._require_commits_reachable(  # noqa: SLF001
+                    root.resolve(),
+                    (unreachable,),
+                )
 
     def test_repository_inventory_rejects_unknown_or_drifted_migration_profiles(
         self,
@@ -976,7 +1094,7 @@ class ArchiveValidationTest(unittest.TestCase):
             command = args[0] if args else kwargs.get("args", ())
             if command and command[0] == "git":
                 git_calls += 1
-                if git_calls > 29:
+                if git_calls > 39:
                     raise AssertionError("repository archive exceeded Git subprocess budget")
             return real_popen(*args, **kwargs)
 
@@ -988,9 +1106,9 @@ class ArchiveValidationTest(unittest.TestCase):
         elapsed = time.monotonic() - started
 
         self.assertTrue(report.valid, report.diagnostics)
-        # MIG-0003 adds five bounded calls: repository identity (2), commit
-        # types, exact commit:path members, and one three-blob content batch.
-        self.assertLessEqual(git_calls, 29)
+        # MIG-0004 adds bounded index-byte, identity, reachability, exact
+        # commit:path, and content-batch calls without per-row subprocesses.
+        self.assertLessEqual(git_calls, 39)
         self.assertLess(elapsed, 60.0)
 
     def test_work107_stable_ledger_digest_is_pinned_without_git_reconstruction(
@@ -1155,7 +1273,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         "2026-07-05-workspace-engineering-implementation-audit-pack.md"
     )
     moved_target = PurePosixPath(
-        "docs/03.specs/0018-workspace-engineering-implementation-audit-pack/tasks.md"
+        "docs/03.specs/0018-workspace-engineering-implementation-audit-pack/README.md"
     )
     archived_source = PurePosixPath(
         "docs/04.execution/plans/"
@@ -1274,31 +1392,232 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
                 with self.assertRaises(self.validator.ConfigurationError):
                     self.validator._work054_wp003_owner_merges(context)
 
-    def test_work054_historical_edges_are_limited_to_mig0003_merges(self) -> None:
+    def _work054_edges(self, context: object) -> dict[object, PurePosixPath]:
         _aliases, move_targets, _replacements = (
-            self.validator._document_taxonomy_transition_manifest(self.context)
+            self.validator._document_taxonomy_transition_manifest(context)
         )
-        edges = self.validator._reviewed_work054_historical_owner_edges(
-            self.context,
+        return self.validator._reviewed_work054_historical_owner_edges(
+            context,
             move_targets,
         )
 
-        self.assertEqual(self.validator.WORK054_HISTORICAL_OCCURRENCE_COUNT, 41)
-        self.assertEqual(len(edges), 15)
-        self.assertEqual(len({edge.source for edge in edges}), 10)
+    def test_work054_historical_edges_use_exact_structural_projection(
+        self,
+    ) -> None:
+        edges = self._work054_edges(self.context)
+
+        self.assertEqual(
+            {edge.source for edge in edges},
+            set(self.validator.WORK054_HISTORICAL_LINK_PROJECTION),
+        )
         self.assertEqual(
             {edge.target for edge in edges},
-            set(self.validator._work054_wp003_owner_merges(self.context)),
-        )
-        self.assertNotIn(
-            self.validator.ArchiveTransitionEdge(
+            set(self.validator._work054_wp003_owner_merges(self.context))
+            | {
                 PurePosixPath(
-                    "docs/03.specs/0015-agent-governance-contract-normalization/spec.md"
-                ),
-                PurePosixPath("docs/99.templates/support/template-routing.md"),
+                    "docs/99.templates/support/template-routing.md"
+                )
+            },
+        )
+        self.assertEqual(
+            edges[
+                self.validator.ArchiveTransitionEdge(
+                    PurePosixPath(
+                        "docs/03.specs/0015-agent-governance-contract-normalization/spec.md"
+                    ),
+                    PurePosixPath("docs/99.templates/support/template-routing.md"),
+                )
+            ],
+            PurePosixPath("docs/99.templates/support/document-contract.md"),
+        )
+
+    def test_work054_historical_projection_ignores_non_link_formatting(self) -> None:
+        source = PurePosixPath(
+            "docs/03.specs/0015-agent-governance-contract-normalization/plan.md"
+        )
+        retired = next(
+            iter(self.validator._work054_wp003_owner_merges(self.context))
+        )
+        context = dataclasses.replace(
+            self.context,
+            texts={**self.context.texts, source: self.context.texts[source] + "\n"},
+        )
+
+        edges = self._work054_edges(context)
+
+        self.assertIn(
+            self.validator.ArchiveTransitionEdge(
+                source,
+                retired,
             ),
             edges,
         )
+
+    def test_work054_historical_projection_rejects_missing_source(self) -> None:
+        source = PurePosixPath(
+            "docs/03.specs/0015-agent-governance-contract-normalization/plan.md"
+        )
+        context = dataclasses.replace(
+            self.context,
+            texts={
+                path: text
+                for path, text in self.context.texts.items()
+                if path != source
+            },
+        )
+
+        with self.assertRaisesRegex(
+            self.validator.ConfigurationError,
+            "WORK-054 historical owner source set differs",
+        ):
+            self._work054_edges(context)
+
+    def test_work054_historical_projection_rejects_unowned_extra_source(
+        self,
+    ) -> None:
+        source = PurePosixPath("EXTRA.md")
+        retired = next(
+            iter(self.validator._work054_wp003_owner_merges(self.context))
+        )
+        context = dataclasses.replace(
+            self.context,
+            texts={
+                **self.context.texts,
+                source: f"[retired]({retired.as_posix()})\n",
+            },
+            tracked_regular_paths=self.context.tracked_regular_paths | {source},
+        )
+
+        with self.assertRaisesRegex(
+            self.validator.ConfigurationError,
+            "WORK-054 historical owner source set differs",
+        ):
+            self._work054_edges(context)
+
+    def test_work054_historical_projection_rejects_duplicate_multiplicity(
+        self,
+    ) -> None:
+        source = PurePosixPath(
+            "docs/03.specs/0015-agent-governance-contract-normalization/plan.md"
+        )
+        retired = next(
+            iter(self.validator._work054_wp003_owner_merges(self.context))
+        )
+        raw = next(
+            item
+            for item in self.validator._extract_links(self.context.texts[source])
+            if self.validator._local_destination(source, item)[1] == retired
+        )
+        duplicate = f"\n[duplicate]({raw})\n"
+        context = dataclasses.replace(
+            self.context,
+            texts={
+                **self.context.texts,
+                source: self.context.texts[source] + duplicate,
+            },
+        )
+
+        with self.assertRaisesRegex(
+            self.validator.ConfigurationError,
+            "WORK-054 historical owner link multiset differs",
+        ):
+            self._work054_edges(context)
+
+    def test_work054_historical_projection_rejects_wrong_retired_target(
+        self,
+    ) -> None:
+        source = PurePosixPath(
+            "docs/03.specs/0015-agent-governance-contract-normalization/spec.md"
+        )
+        original = self.context.texts[source]
+        retired_rows = tuple(
+            self.validator._work054_wp003_owner_merges(self.context)
+        )
+        original_raw = next(
+            item
+            for item in self.validator._extract_links(original)
+            if self.validator._local_destination(source, item)[1]
+            == retired_rows[0]
+        )
+        replacement_raw = (
+            "../../" + retired_rows[1].relative_to("docs").as_posix()
+        )
+        context = dataclasses.replace(
+            self.context,
+            texts={
+                **self.context.texts,
+                source: original.replace(
+                    f"]({original_raw})",
+                    f"]({replacement_raw})",
+                    1,
+                ),
+            },
+        )
+
+        with self.assertRaisesRegex(
+            self.validator.ConfigurationError,
+            "WORK-054 historical owner link multiset differs",
+        ):
+            self._work054_edges(context)
+
+    def test_work054_historical_projection_rejects_wrong_terminal_target(
+        self,
+    ) -> None:
+        redirects = self.validator._work054_wp003_owner_merges(self.context)
+        redirects[next(iter(redirects))] = self.validator.WORK054_CODEX_TERMINAL
+
+        with mock.patch.object(
+            self.validator,
+            "_work054_wp003_owner_merges",
+            return_value=redirects,
+        ), self.assertRaisesRegex(
+            self.validator.ConfigurationError,
+            "WORK-054 historical owner terminal projection differs",
+        ):
+            self._work054_edges(self.context)
+
+    def test_work054_historical_projection_rejects_wrong_migration_row(
+        self,
+    ) -> None:
+        source = PurePosixPath(
+            "docs/03.specs/0015-agent-governance-contract-normalization/plan.md"
+        )
+        projection = {
+            **self.validator.WORK054_HISTORICAL_LINK_PROJECTION,
+            source: ((1, self.validator.WORK054_HARNESS_TERMINAL, 1),),
+        }
+
+        with mock.patch.object(
+            self.validator,
+            "WORK054_HISTORICAL_LINK_PROJECTION",
+            projection,
+        ), self.assertRaisesRegex(
+            self.validator.ConfigurationError,
+            "WORK-054 historical owner link multiset differs",
+        ):
+            self._work054_edges(self.context)
+
+    def test_work054_historical_projection_rejects_extra_projection_token(
+        self,
+    ) -> None:
+        source = PurePosixPath(
+            "docs/03.specs/0015-agent-governance-contract-normalization/plan.md"
+        )
+        projection = {
+            **self.validator.WORK054_HISTORICAL_LINK_PROJECTION,
+            source: self.validator.WORK054_HISTORICAL_LINK_PROJECTION[source]
+            + ((3, self.validator.WORK054_TEMPLATE_TERMINAL, 1),),
+        }
+
+        with mock.patch.object(
+            self.validator,
+            "WORK054_HISTORICAL_LINK_PROJECTION",
+            projection,
+        ), self.assertRaisesRegex(
+            self.validator.ConfigurationError,
+            "WORK-054 historical owner link multiset differs",
+        ):
+            self._work054_edges(self.context)
 
     def test_standalone_approval_statements_are_relation_specific(self) -> None:
         statements = self.validator.STANDALONE_APPROVAL_STATEMENTS
@@ -1354,7 +1673,9 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         )
 
         self.assertEqual(len({edge.source for edge in edges}), 27)
-        self.assertEqual(len(edges), 93)
+        self.assertEqual(
+            len(edges), self.validator.IMMUTABLE_HISTORICAL_ALIAS_EDGE_COUNT
+        )
         self.assertTrue(
             all(
                 replacement in self.context.tracked_regular_paths
@@ -1425,8 +1746,13 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             move_targets,
         )
 
-        self.assertEqual(len({edge.source for edge in edges}), 46)
-        self.assertEqual(len(edges), 186)
+        self.assertEqual(
+            len({edge.source for edge in edges}),
+            self.validator.COMPLETED_HISTORY_ALIAS_SOURCE_COUNT,
+        )
+        self.assertEqual(
+            len(edges), self.validator.COMPLETED_HISTORY_ALIAS_EDGE_COUNT
+        )
         self.assertTrue(
             all(
                 replacement in self.context.tracked_regular_paths
@@ -1481,7 +1807,9 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             appended_context,
             move_targets,
         )
-        self.assertEqual(len(edges), 186)
+        self.assertEqual(
+            len(edges), self.validator.COMPLETED_HISTORY_ALIAS_EDGE_COUNT
+        )
 
         mutated_prefix = bytearray(current_bytes)
         mutated_prefix[0] = ord("!")

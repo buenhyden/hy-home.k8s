@@ -64,6 +64,21 @@ support contracts still describe the route as `docs/03.specs/<feature-id>/`.
 This plan updates the current contract to
 `docs/03.specs/<###-Numbering>-<feature-id>/`.
 
+### Legacy Task ledger inputs
+
+This task tracks implementation and verification work for the Stage 01 PRD and
+Stage 03 spec numeric route migration defined by the parent Spec and Plan.
+
+TPN-001 is evidence-only. It creates this Stage 04 task record and adds the
+task README index row. No implementation files, PRD files, template forms,
+support contracts, Stage 00 governance files, validator logic, or runtime
+configuration are changed in TPN-001.
+
+- **Parent Spec**: [../../03.specs/0019-template-path-numbering-contract/spec.md](spec.md)
+- **Parent Plan**: [../plans/2026-07-05-template-path-numbering-contract.md](plan.md)
+- **Task Template**: [../../99.templates/templates/sdlc/execution/task.template.md](../../99.templates/templates/sdlc/execution/task.template.md)
+- **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/support/document-contract.md)
+- **Quality Gate**: [../../../scripts/validate-repo-quality-gates.sh](../../../scripts/validate-repo-quality-gates.sh)
 ## Goals & In-Scope
 
 - **Goals**:
@@ -77,8 +92,8 @@ This plan updates the current contract to
 - **In Scope**:
   - `docs/01.requirements/**`
   - `docs/03.specs/**`
-  - `docs/04.execution/plans/**`
-  - `docs/04.execution/tasks/**`
+  - `docs/03.specs/**`
+  - `docs/03.specs/**`
   - `docs/99.templates/**`
   - `docs/00.agent-governance/rules/**`
   - `docs/00.agent-governance/memory/progress.md`
@@ -105,10 +120,10 @@ This plan updates the current contract to
 
 | Path | Responsibility |
 | --- | --- |
-| `docs/04.execution/plans/2026-07-05-template-path-numbering-contract.md` | This implementation plan. |
-| `docs/04.execution/plans/README.md` | Plan index entry for this work. |
-| `docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md` | Execution evidence, status table, validation commands, and handoff. |
-| `docs/04.execution/tasks/README.md` | Task index entry for this work. |
+| `docs/03.specs/0019-template-path-numbering-contract/plan.md` | This implementation plan. |
+| `docs/03.specs/0019-template-path-numbering-contract/plan.md` | Plan index entry for this work. |
+| `docs/03.specs/0019-template-path-numbering-contract/README.md#task-records` | Execution evidence, status table, validation commands, and handoff. |
+| `docs/03.specs/0019-template-path-numbering-contract/README.md#task-records` | Task index entry for this work. |
 | `docs/01.requirements/001-argo-rollouts-progressive-delivery.md` | Renamed Argo Rollouts PRD. |
 | `docs/01.requirements/002-argo-notifications-slack.md` | Renamed Argo Notifications PRD. |
 | `docs/01.requirements/003-workspace-agent-governance-platform.md` | Renamed workspace agent governance PRD. |
@@ -155,8 +170,8 @@ This plan updates the current contract to
 
 **Files:**
 
-- Create: `docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md`
-- Modify: `docs/04.execution/tasks/README.md`
+- Create: `docs/03.specs/0019-template-path-numbering-contract/README.md#task-records`
+- Modify: `docs/03.specs/0019-template-path-numbering-contract/README.md#task-records`
 - Read: `docs/99.templates/templates/sdlc/execution/task.template.md`
 - Read: `docs/03.specs/019-template-path-numbering-contract/spec.md`
 - Read: `docs/99.templates/support/template-routing.md`
@@ -201,7 +216,7 @@ folders through `019-template-path-numbering-contract/spec.md`.
 Run:
 
 ```bash
-rg -n "docs/01\\.requirements/YYYY-MM-DD-<feature-or-system>|docs/03\\.specs/<feature-id>|YYYY-MM-DD-<feature-or-system>|<feature-id>" docs/99.templates docs/00.agent-governance scripts docs/01.requirements docs/03.specs docs/04.execution/plans docs/04.execution/tasks
+rg -n "docs/01\\.requirements/YYYY-MM-DD-<feature-or-system>|docs/03\\.specs/<feature-id>|YYYY-MM-DD-<feature-or-system>|<feature-id>" docs/99.templates docs/00.agent-governance scripts docs/01.requirements docs/03.specs docs/03.specs/plans docs/03.specs/tasks
 ```
 
 Expected: output includes current route contracts and template examples that
@@ -209,7 +224,7 @@ must be updated or explicitly preserved as Stage 04 date-based routes.
 
 - [ ] **Step 5: Create the task record**
 
-Create `docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md`
+Create `docs/03.specs/0019-template-path-numbering-contract/README.md#task-records`
 with frontmatter:
 
 ```yaml
@@ -227,6 +242,19 @@ The task record must include these sections:
 ````markdown
 # Task: Template Path Numbering Contract
 
+
+
+### Legacy Task supplemental evidence
+
+### Baseline Evidence
+
+| Date | Command | Result Summary |
+| --- | --- | --- |
+| 2026-07-05 | `git status --short --branch` | PASS; branch is `codex/workspace-engineering-audit-pack` and no pre-existing working-tree changes were reported. |
+| 2026-07-05 | `find docs/01.requirements docs/03.specs -maxdepth 3 -type f \| sort` | PASS; current inventory shows four date-based active PRDs, `docs/01.requirements/README.md`, fifteen numbered Stage 03 `spec.md` files through `0019-template-path-numbering-contract`, and `docs/03.specs/README.md`. |
+| 2026-07-05 | `rg -n "docs/01\\.requirements/YYYY-MM-DD-<feature-or-system>\|docs/03\\.specs/<feature-id>\|YYYY-MM-DD-<feature-or-system>\|<feature-id>" docs/99.templates docs/00.agent-governance scripts docs/01.requirements docs/03.specs docs/03.specs/plans docs/03.specs/tasks` | PASS; baseline scan found old PRD route placeholders and unnumbered Stage 03 placeholders in template, support, governance, validator, README, and plan surfaces. These matches are expected before TPN-002 through TPN-004. |
+| 2026-07-05 | `rg -n "2026-05-17-argo-rollouts-progressive-delivery\|2026-05-17-argo-notifications-slack\|2026-06-01-workspace-agent-governance-platform\|2026-06-02-current-local-gitops-platform" docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts` | PASS; baseline scan found active links and historical evidence references to the four old PRD filenames. TPN-002 owns active-link remediation and classification of any historical evidence. |
+| 2026-07-05 | `sed -n '1000,1085p' scripts/validate-repo-quality-gates.sh` | PASS; validator baseline still maps PRD routes through `YYYY-MM-DD-<feature-or-system>` and Stage 03 routes through `<feature-id>`, confirming TPN-004 must update validator normalization. |
 ## Overview
 
 This task tracks implementation and validation work for the Stage 01 PRD and
@@ -291,7 +319,7 @@ instruction residue.
 
 - [ ] **Step 6: Add task index row**
 
-Modify `docs/04.execution/tasks/README.md` by adding this row to the document
+Modify `docs/03.specs/0019-template-path-numbering-contract/README.md#task-records` by adding this row to the document
 index:
 
 ```markdown
@@ -307,7 +335,7 @@ Run:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-git add docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md docs/04.execution/tasks/README.md
+git add docs/03.specs/0019-template-path-numbering-contract/README.md#task-records docs/03.specs/0019-template-path-numbering-contract/README.md#task-records
 git commit -m "docs(tasks): Add template path numbering evidence"
 ```
 
@@ -323,7 +351,7 @@ Expected: both validation commands pass and the commit succeeds.
 - Rename: `docs/01.requirements/2026-06-02-current-local-gitops-platform.md` to `docs/01.requirements/004-current-local-gitops-platform.md`
 - Modify: `docs/01.requirements/README.md`
 - Modify: active links in `docs/**`, `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `README.md`, `.github/**`, and `scripts/**` when they point to current PRDs.
-- Modify: `docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md`
+- Modify: `docs/03.specs/0019-template-path-numbering-contract/README.md#task-records`
 
 - [ ] **Step 1: Rename the PRD files with `git mv`**
 
@@ -402,7 +430,7 @@ current route guidance.
 
 - [ ] **Step 5: Update task evidence**
 
-In `docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md`:
+In `docs/03.specs/0019-template-path-numbering-contract/README.md#task-records`:
 
 - Mark `TPN-002` as `Done`.
 - Add an Evidence Log row:
@@ -420,7 +448,7 @@ Run:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-git add docs/01.requirements docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts
+git add docs/01.requirements docs/03.specs/0019-template-path-numbering-contract/README.md#task-records docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts
 git commit -m "docs(requirements): Number active PRD files"
 ```
 
@@ -451,7 +479,7 @@ Expected: validation passes and the commit succeeds.
 - Modify: `docs/99.templates/README.md`
 - Modify: `docs/99.templates/support/sdlc-governance.md`
 - Modify: `docs/99.templates/support/template-routing.md`
-- Modify: `docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md`
+- Modify: `docs/03.specs/0019-template-path-numbering-contract/README.md#task-records`
 
 - [ ] **Step 1: Replace current PRD target pattern in template contracts**
 
@@ -536,7 +564,7 @@ date-based.
 
 - [ ] **Step 5: Update task evidence**
 
-In `docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md`:
+In `docs/03.specs/0019-template-path-numbering-contract/README.md#task-records`:
 
 - Mark `TPN-003` as `Done`.
 - Add this Evidence Log row:
@@ -552,7 +580,7 @@ Run:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-git add docs/99.templates docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md
+git add docs/99.templates docs/03.specs/0019-template-path-numbering-contract/README.md#task-records
 git commit -m "docs(templates): Number PRD and spec route contracts"
 ```
 
@@ -567,7 +595,7 @@ Expected: validation passes and the commit succeeds.
 - Modify: `docs/00.agent-governance/rules/stage-authoring-matrix.md`
 - Modify: `docs/03.specs/README.md`
 - Modify: `scripts/validate-repo-quality-gates.sh`
-- Modify: `docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md`
+- Modify: `docs/03.specs/0019-template-path-numbering-contract/README.md#task-records`
 
 - [ ] **Step 1: Update Stage 03 README route wording**
 
@@ -689,7 +717,7 @@ quality gate passes.
 
 - [ ] **Step 6: Update task evidence**
 
-In `docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md`:
+In `docs/03.specs/0019-template-path-numbering-contract/README.md#task-records`:
 
 - Mark `TPN-004` as `Done`.
 - Add this Evidence Log row:
@@ -705,7 +733,7 @@ Run:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-git add docs/00.agent-governance/rules/document-stage-routing.md docs/00.agent-governance/rules/documentation-protocol.md docs/00.agent-governance/rules/stage-authoring-matrix.md docs/03.specs/README.md scripts/validate-repo-quality-gates.sh docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md
+git add docs/00.agent-governance/rules/document-stage-routing.md docs/00.agent-governance/rules/documentation-protocol.md docs/00.agent-governance/rules/stage-authoring-matrix.md docs/03.specs/README.md scripts/validate-repo-quality-gates.sh docs/03.specs/0019-template-path-numbering-contract/README.md#task-records
 git commit -m "docs(governance): Enforce numbered document routes"
 ```
 
@@ -715,15 +743,15 @@ Expected: validation passes and the commit succeeds.
 
 **Files:**
 
-- Modify: `docs/04.execution/plans/README.md`
-- Modify: `docs/04.execution/tasks/README.md`
-- Modify: `docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md`
+- Modify: `docs/03.specs/0019-template-path-numbering-contract/plan.md`
+- Modify: `docs/03.specs/0019-template-path-numbering-contract/README.md#task-records`
+- Modify: `docs/03.specs/0019-template-path-numbering-contract/README.md#task-records`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 - Modify: any active document with stale current-route links found by scans.
 
 - [ ] **Step 1: Add plan index row**
 
-Modify `docs/04.execution/plans/README.md` by adding this row near other
+Modify `docs/03.specs/0019-template-path-numbering-contract/plan.md` by adding this row near other
 2026-07-05 plans:
 
 ```markdown
@@ -804,7 +832,7 @@ Expected: memory records the reusable route distinction.
 
 - [ ] **Step 4: Close task evidence**
 
-In `docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md`:
+In `docs/03.specs/0019-template-path-numbering-contract/README.md#task-records`:
 
 - Mark all task rows `Done`.
 - Change frontmatter `status: draft` to `status: done`.
@@ -850,7 +878,7 @@ Expected:
 Run:
 
 ```bash
-git add docs/04.execution/plans/README.md docs/04.execution/tasks/README.md docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md docs/00.agent-governance/memory/progress.md docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts
+git add docs/03.specs/0019-template-path-numbering-contract/plan.md docs/03.specs/0019-template-path-numbering-contract/README.md#task-records docs/03.specs/0019-template-path-numbering-contract/README.md#task-records docs/00.agent-governance/memory/progress.md docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts
 git commit -m "docs(validation): Close template path numbering migration"
 ```
 
@@ -867,15 +895,51 @@ Expected: final closure commit succeeds.
 | VAL-TPN-005 | Quality | Markdown whitespace and patch sanity | `git diff --check` | Command exits 0. |
 | VAL-TPN-006 | Quality | Repository documentation and route gates | `bash scripts/validate-repo-quality-gates.sh .` | Command exits 0. |
 
+### Legacy Task verification evidence
+
+- **Test Commands**:
+  - `git diff --check`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+- **Eval Commands**: Not applicable; this task is documentation evidence only.
+- **Logs / Evidence Location**: This task record and the Git commits for
+  `docs(tasks): Add template path numbering evidence`,
+  `docs(requirements): Number active PRD files`,
+  `docs(requirements): Refresh PRD graph references`,
+  `docs(templates): Number PRD and spec route contracts`, and
+  `docs(governance): Enforce numbered document routes`.
+- **Current Result**: PASS on 2026-07-05 after TPN-005; final stale scans,
+  numeric PRD inventory, Stage 03 numeric feature-folder inventory,
+  `git diff --check`, and `bash scripts/validate-repo-quality-gates.sh .`
+  passed.
+
+### Evidence Log
+
+| Date | Task | Check | Result |
+| --- | --- | --- | --- |
+| 2026-07-05 | TPN-001 | Baseline inventory | PASS; four active PRDs are still date-based and Stage 03 specs are already organized under numbered feature folders. |
+| 2026-07-05 | TPN-001 | Route-contract baseline scan | PASS; old route placeholders remain in current contract surfaces before implementation tasks begin. |
+| 2026-07-05 | TPN-001 | Scope control | PASS; TPN-001 changes only this task evidence file and `docs/03.specs/0019-template-path-numbering-contract/README.md#task-records`. |
+| 2026-07-05 | TPN-001 | Validation | PASS; `git diff --check` and `bash scripts/validate-repo-quality-gates.sh .` completed successfully. |
+| 2026-07-05 | TPN-002 | PRD rename and old-name active-link scan | PASS; four PRDs renamed with `git mv`, Stage 01 README updated, and active old-name links removed, including the validation-discovered `infrastructure/README.md` PRD link. |
+| 2026-07-05 | TPN-002 review fix | Graph artifact refresh and old-name scan classification | PASS; tracked `graphify-out/**` artifacts were refreshed to the numbered PRD filenames. The requested scan now has no `graphify-out` matches; remaining matches are explicit historical/migration evidence in the TPN spec mapping and scan command, the TPN plan mapping, commands, and validation rows, this task record's baseline and review-fix evidence, and progress memory. Runtime tooling note: `rtk` is installed at `/home/hy/.local/bin/rtk` but not on this shell's `PATH`; `rtk gain` could not initialize its tracking database, so final validation commands ran directly. |
+| 2026-07-05 | TPN-003 | Template and support route contract update | PASS; template examples, Templates README, SDLC governance, and template routing contract use numbered Stage 01 and Stage 03 route patterns while preserving Stage 04 date-based routes |
+| 2026-07-05 | TPN-004 | Governance and validator route update | PASS; Stage 00 route guidance, Stage 03 README wording, and validator structural/native mappings enforce numbered PRD and Stage 03 feature-folder routes, restoring the repository quality gate after the expected TPN-003 route-map drift |
+| 2026-07-05 | TPN-005 | Final stale scans and repository quality gates | PASS; old current-route patterns were removed from active guidance, remaining matches are explicit TPN migration criteria or evidence, numeric PRD inventory was verified, and repository quality gates passed |
+
+### Handoff
+
+Template path numbering contract implementation is complete. No live runtime,
+credential, GitOps desired-state, provider runtime, external service, push,
+merge, or PR mutation was performed.
 ## Risks & Mitigations
 
 | Risk | Impact | Mitigation |
 | --- | --- | --- |
 | Broad replacement changes historical evidence incorrectly | Medium | Use focused scans and preserve old paths only when explicitly historical. |
 | Validator and support route maps drift | High | Update both in the same task and rely on quality gate route-map equality checks. |
-| Stage 04 date-based route gets accidentally changed | Medium | Include a preservation scan for `docs/04.execution/(plans|tasks)/YYYY-MM-DD`. |
+| Stage 04 date-based route gets accidentally changed | Medium | Include a preservation scan for `docs/03.specs/(plans|tasks)/YYYY-MM-DD`. |
 | Old PRD links break after `git mv` | High | Run stale PRD scans and repository quality gates before committing the rename unit. |
-| New `docs/superpowers` paths bypass repo taxonomy | Medium | Store all implementation plans in `docs/04.execution/plans/` and task evidence in `docs/04.execution/tasks/`. |
+| New `docs/superpowers` paths bypass repo taxonomy | Medium | Store all implementation plans in `docs/03.specs/` and task evidence in `docs/03.specs/`. |
 
 ### Agent Rollout & Evaluation Gates
 
@@ -890,6 +954,31 @@ Expected: final closure commit succeeds.
   a way that cannot be resolved without changing the approved route contract.
 - **Prompt / Model Promotion Criteria**: Not applicable.
 
+### Legacy Task approval and rollback boundaries
+
+- **Allowed Paths**: `TPN-001 through TPN-005` is limited to these Template Path Numbering Contract owners and Task-Table surfaces:
+  - `docs/03.specs/0019-template-path-numbering-contract/README.md#task-records`
+  - `docs/03.specs/0019-template-path-numbering-contract/spec.md`
+  - `docs/03.specs/0019-template-path-numbering-contract/plan.md`
+  - `docs/99.templates/templates/sdlc/execution/task.template.md`
+  - `docs/99.templates/support/template-routing.md`
+  - `docs/01.requirements/README.md`
+  - `docs/03.specs/README.md`
+- **Forbidden Paths**: runtime manifests, provider or CI settings, secret values, generated/local state, and paths outside the Template Path Numbering Contract work items and linked evidence owners.
+- **Approval Required**: Human approval is required before Template Path Numbering Contract protected-file expansion, deletion/relocation, runtime/CI/provider mutation, credential access, publication, push, or merge beyond the parent Plan.
+- **Static Validation**: Preserve the Template Path Numbering Contract outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `git diff --check`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `git mv`
+- **Live Validation**: DEFER — Template Path Numbering Contract is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: No secret value is required for Template Path Numbering Contract; do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
+- **Rollback Plan**: Revert the logical Template Path Numbering Contract change set for `TPN-001 through TPN-005` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Template Path Numbering Contract evidence remains in:
+  - `docs/03.specs/0019-template-path-numbering-contract/README.md#task-records`
+  - `docs/03.specs/0019-template-path-numbering-contract/spec.md`
+  - `docs/03.specs/0019-template-path-numbering-contract/plan.md`
+  - `docs/99.templates/templates/sdlc/execution/task.template.md`
+  - `docs/99.templates/support/template-routing.md`
 ## Completion Criteria
 
 - [ ] Stage 04 task evidence exists and is complete.
@@ -910,10 +999,17 @@ Expected: final closure commit succeeds.
 ## Traceability
 
 - **Spec**: [../../03.specs/019-template-path-numbering-contract/spec.md](spec.md)
-- **Task**: [../tasks/2026-07-05-template-path-numbering-contract.md](tasks.md)
-- **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/support/template-routing.md)
-- **SDLC Governance**: [../../99.templates/support/sdlc-governance.md](../../99.templates/support/sdlc-governance.md)
+- **Task**: [../tasks/2026-07-05-template-path-numbering-contract.md](README.md#task-records)
+- **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/support/document-contract.md)
+- **SDLC Governance**: [../../99.templates/support/sdlc-governance.md](../../99.templates/support/document-lifecycle.md)
 - **Templates README**: [../../99.templates/README.md](../../99.templates/README.md)
-- **Stage Authoring Matrix**: [../../00.agent-governance/rules/stage-authoring-matrix.md](../../00.agent-governance/rules/stage-authoring-matrix.md)
-- **Documentation Protocol**: [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/documentation-protocol.md)
+- **Stage Authoring Matrix**: [../../00.agent-governance/rules/stage-authoring-matrix.md](../../00.agent-governance/rules/document-authoring.md)
+- **Documentation Protocol**: [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/document-authoring.md)
 - **Quality Gate**: [../../../scripts/validate-repo-quality-gates.sh](../../../scripts/validate-repo-quality-gates.sh)
+
+### Legacy Task traceability
+
+- **Spec**: [../../03.specs/0019-template-path-numbering-contract/spec.md](spec.md)
+- **Plan**: [../plans/2026-07-05-template-path-numbering-contract.md](plan.md)
+- **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/support/document-contract.md)
+- **Task Template**: [../../99.templates/templates/sdlc/execution/task.template.md](../../99.templates/templates/sdlc/execution/task.template.md)

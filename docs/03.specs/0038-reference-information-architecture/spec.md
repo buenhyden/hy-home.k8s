@@ -19,7 +19,7 @@ plan, runbook, or runtime owner.
 
 The reciprocal implementation
 [Plan](plan.md)
-and [Task](tasks.md)
+and [Task](README.md#task-records)
 record the reviewed RIA-000 through RIA-006 packages and the observed RIA-007
 C1 closure and clean-tree postflight. RIA-002 completed through design commits `08cf17d` and
 `f0c019a` plus implementation commits `13835e9`, `e29c6fb`, `27a63b3`, and
@@ -328,17 +328,17 @@ hook, validator, scanner behavior, or CI topology is changed here.
 - **Final integrator**: [Spec 040](../0040-contract-cutover-and-program-closure/spec.md)
 - **Current audit**: [2026-07-11 WEIA](../../90.references/audits/2026-07-11-weia/README.md)
 - **PRD**: [PRD-0006](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
-- **AD**: [AD-0009](../../02.architecture/descriptions/ad-0009-document-lifecycle-evidence-operating-model.md)
+- **AD**: [AD-0009](../../02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md)
 - **Plan**: [Reference Information Architecture Implementation Plan](plan.md)
-- **Task**: [Reference Information Architecture Task](tasks.md)
+- **Task**: [Reference Information Architecture Task](README.md#task-records)
 
 ### Lifecycle Traceability
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-WDLEC-008](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-RIA-001 | Registry and index checks enforce unique Current packs. |
-| N/A — REQ-WDLEC-008 / VAL-RIA-002 shares the PRD-0006 source linked in VAL-RIA-001 | VAL-RIA-002 | Historical-body guard compares observation snapshots with baseline. |
-| N/A — REQ-WDLEC-008 / VAL-RIA-003 shares the PRD-0006 source linked in VAL-RIA-001 | VAL-RIA-003 | Overlay fixtures restrict mutable projections; transition/settlement fixtures prove the one-member durable baseline chain. |
-| N/A — REQ-WDLEC-008 / VAL-RIA-004 shares the PRD-0006 source linked in VAL-RIA-001 | VAL-RIA-004 | Reference body-contract checks verify source and freshness fields. |
-| N/A — REQ-WDLEC-008 / VAL-RIA-005 shares the PRD-0006 source linked in VAL-RIA-001 | VAL-RIA-005 | Generator no-diff validation protects the wiki index. |
-| N/A — REQ-WDLEC-008 / VAL-RIA-006 shares the PRD-0006 source linked in VAL-RIA-001 | VAL-RIA-006 | Duplicate and policy-residue fixtures fail. |
+| [REQ-0006-FR-0008](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-RIA-001 | Registry and index checks enforce unique Current packs. |
+| N/A — REQ-0006-FR-0008 / VAL-RIA-002 shares the PRD-0006 source linked in VAL-RIA-001 | VAL-RIA-002 | Historical-body guard compares observation snapshots with baseline. |
+| N/A — REQ-0006-FR-0008 / VAL-RIA-003 shares the PRD-0006 source linked in VAL-RIA-001 | VAL-RIA-003 | Overlay fixtures restrict mutable projections; transition/settlement fixtures prove the one-member durable baseline chain. |
+| N/A — REQ-0006-FR-0008 / VAL-RIA-004 shares the PRD-0006 source linked in VAL-RIA-001 | VAL-RIA-004 | Reference body-contract checks verify source and freshness fields. |
+| N/A — REQ-0006-FR-0008 / VAL-RIA-005 shares the PRD-0006 source linked in VAL-RIA-001 | VAL-RIA-005 | Generator no-diff validation protects the wiki index. |
+| N/A — REQ-0006-FR-0008 / VAL-RIA-006 shares the PRD-0006 source linked in VAL-RIA-001 | VAL-RIA-006 | Duplicate and policy-residue fixtures fail. |

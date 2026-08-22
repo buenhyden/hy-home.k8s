@@ -92,7 +92,7 @@ Out of scope:
   - Research benchmark documents in `docs/90.references/research/`.
   - Repo-backed evidence in `AGENTS.md`, `.codex/CODEX.md`, `CLAUDE.md`,
     `GEMINI.md`, `.agents/**`, `.codex/**`, `.claude/**`,
-    `docs/00.agent-governance/**`, `docs/04.execution/**`,
+    `docs/00.agent-governance/**`, `docs/03.specs/**`,
     `docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md`,
     `docs/99.templates/**`, `scripts/**`, and `.github/workflows/**`.
   - Existing audit precedent:
@@ -209,7 +209,7 @@ No external API is introduced.
   progress, validation evidence, and static-vs-live limitations.
 - **Retrieval Boundary**: Audit reports summarize implementation status. Active
   policy remains in `docs/00.agent-governance/**`; execution evidence remains
-  in `docs/04.execution/**`; operations procedure remains in
+  in `docs/03.specs/**`; operations procedure remains in
   `docs/05.operations/**`.
 
 ### Guardrails
@@ -299,7 +299,7 @@ rg --files | rg '(^|/)progress\.md$'
 ## Traceability
 
 - **AD**:
-  `[../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md]`
+  `[../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md]`
 - **ADR**:
   `[../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md]`
 - **Research Pack Spec**:
@@ -320,7 +320,7 @@ rg --files | rg '(^|/)progress\.md$'
 - **PRD**: No standalone PRD exists for this documentation-only audit pack; the
   direct user request is the requirement source.
 - **AD**:
-  `[../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md]`
+  `[../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md]`
 - **Related ADRs**:
   `[../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md]`
 - **Research Pack Spec**:

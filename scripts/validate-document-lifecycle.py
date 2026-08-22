@@ -493,6 +493,20 @@ WORK054_WP004A_REQUIRED_CHANGED_PATHS = (
     ),
     *WORK054_WP004A_OWNER_PATHS,
 )
+WORK054_WP004B_MIGRATION_PATH = PurePosixPath(
+    "docs/98.archive/migrations/0004-document-authority-convergence.md"
+)
+WORK054_WP004B_REQUIREMENT_PROFILES = frozenset(
+    {"sdlc/prd", "sdlc/srs", "sdlc/interface"}
+)
+WORK054_WP004B_REQUIREMENT_PACKAGE_PROFILE = "sdlc/requirement-package"
+WORK054_WP004B_ROUTER_PATTERN = re.compile(
+    r"^docs/03\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\.md$"
+)
+WORK054_WP004B_TASK_PATTERN = re.compile(
+    r"^docs/03\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/"
+    r"tasks/tsk-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\.md$"
+)
 
 
 def _registry_profile_ids(raw_registry: Mapping[str, object]) -> frozenset[str]:
@@ -650,6 +664,122 @@ def finite_work105_form_cutover_paths(
         ):
             return frozenset()
         consumed.add(path)
+    return frozenset(consumed)
+
+
+def _wp004b_proposed_classification_registry(
+    current_registry: Registry,
+    projected_registry: Registry,
+) -> Registry:
+    """Activate the sole root Requirement Package over three finite aliases."""
+
+    current = {
+        profile.profile_id: profile for profile in current_registry.profiles
+    }
+    projected_ids = {
+        profile.profile_id for profile in projected_registry.profiles
+    }
+    requirement = current.get(WORK054_WP004B_REQUIREMENT_PACKAGE_PROFILE)
+    if (
+        requirement is None
+        or WORK054_WP004B_REQUIREMENT_PACKAGE_PROFILE in projected_ids
+        or not WORK054_WP004B_REQUIREMENT_PROFILES <= projected_ids
+    ):
+        return projected_registry
+    profiles = tuple(
+        profile
+        for profile in projected_registry.profiles
+        if profile.profile_id not in WORK054_WP004B_REQUIREMENT_PROFILES
+    ) + (requirement,)
+    return replace(projected_registry, profiles=profiles)
+
+
+def finite_work054_wp004b_document_authority_paths(
+    *,
+    root: Path,
+    mode: str,
+    base_commit: str,
+    base_blobs: Mapping[PurePosixPath, str],
+    proposed_blobs: Mapping[PurePosixPath, str],
+) -> frozenset[PurePosixPath]:
+    """Admit only the sealed 66-row WP-004B package authority cutover."""
+
+    if mode not in {"staged", "ci"}:
+        return frozenset()
+    migration_oid = proposed_blobs.get(WORK054_WP004B_MIGRATION_PATH)
+    if migration_oid is None or WORK054_WP004B_MIGRATION_PATH in base_blobs:
+        return frozenset()
+    try:
+        rows = parse_pinned_migration_control(
+            WORK054_WP004B_MIGRATION_PATH.as_posix(),
+            _blob_bytes(root, migration_oid),
+        )
+    except ArchiveContractError:
+        return frozenset()
+
+    consumed: set[PurePosixPath] = {WORK054_WP004B_MIGRATION_PATH}
+    task_packages: set[PurePosixPath] = set()
+    for row in rows:
+        legacy_raw = row.get("legacy_path")
+        source_commit = row.get("source_commit")
+        source_blob = row.get("source_blob")
+        action = row.get("action")
+        if (
+            not isinstance(legacy_raw, str)
+            or not isinstance(source_blob, str)
+            or source_commit != base_commit
+        ):
+            return frozenset()
+        legacy = PurePosixPath(legacy_raw)
+        if base_blobs.get(legacy) != source_blob:
+            return frozenset()
+        target_raw = row.get("stable_path") or row.get("replacement")
+        target = PurePosixPath(target_raw) if isinstance(target_raw, str) else None
+        if action == "replaced" and target == legacy:
+            proposed_oid = proposed_blobs.get(legacy)
+            if proposed_oid is None or proposed_oid == source_blob:
+                return frozenset()
+            consumed.add(legacy)
+            continue
+        if target is None or target not in proposed_blobs:
+            return frozenset()
+        if legacy in proposed_blobs:
+            return frozenset()
+        if action == "moved":
+            consumed.update((legacy, target))
+            continue
+        if action == "replaced" and legacy.name == "tasks.md":
+            if target.name != "README.md" or target in base_blobs:
+                return frozenset()
+            task_packages.add(legacy.parent)
+            consumed.update((legacy, target))
+            continue
+        if action == "merged" and legacy.name == "agent-design.md":
+            consumed.update((legacy, target))
+            continue
+        return frozenset()
+
+    routers = {
+        path
+        for path in proposed_blobs
+        if WORK054_WP004B_ROUTER_PATTERN.fullmatch(path.as_posix())
+    }
+    tasks = {
+        path
+        for path in proposed_blobs
+        if WORK054_WP004B_TASK_PATTERN.fullmatch(path.as_posix())
+    }
+    task_owners = {path.parent.parent for path in tasks}
+    if (
+        len(routers) != 57
+        or len(tasks) != 315
+        or any(path in base_blobs for path in routers | tasks)
+        or task_owners != task_packages
+        or not task_packages <= {path.parent for path in routers}
+    ):
+        return frozenset()
+    consumed.update(routers)
+    consumed.update(tasks)
     return frozenset(consumed)
 
 
@@ -3434,7 +3564,10 @@ def _classification_registry(
         LEGACY_ARCHIVE_TEMPLATE_PROFILE: ARCHIVE_TEMPLATE_PROFILE,
         "sdlc/ard": "sdlc/ad",  # Retired WORK-105 comparison alias.
         "template/sdlc/ard": "template/sdlc/ad",  # Retired comparison alias.
-        "sdlc/api-spec": "sdlc/interface",  # Retired comparison alias.
+        "sdlc/prd": "sdlc/requirement-package",  # Retired WP-004B alias.
+        "sdlc/srs": "sdlc/requirement-package",  # Retired WP-004B alias.
+        "sdlc/interface": "sdlc/requirement-package",  # Retired WP-004B alias.
+        "sdlc/api-spec": "sdlc/requirement-package",  # Retired comparison alias.
         "template/sdlc/api-spec": "template/sdlc/interface",  # Retired alias.
     }
     projected: list[DocumentProfile] = []
@@ -3815,6 +3948,9 @@ def _evaluate_comparison(
     proposed_classification_registry = _classification_registry(
         registry, proposed_registry_raw
     )
+    proposed_classification_registry = _wp004b_proposed_classification_registry(
+        registry, proposed_classification_registry
+    )
 
     work054_wp002_consumed_paths = finite_work054_wp002_transition_paths(
         root=root,
@@ -3833,6 +3969,15 @@ def _evaluate_comparison(
         base_commit=base_commit,
         base_blobs=base_blobs,
         proposed_blobs=proposed_blobs,
+    )
+    work054_wp004b_consumed_paths = (
+        finite_work054_wp004b_document_authority_paths(
+            root=root,
+            mode=mode,
+            base_commit=base_commit,
+            base_blobs=base_blobs,
+            proposed_blobs=proposed_blobs,
+        )
     )
 
     work107_consumed_paths = finite_work107_archive_rehome_paths(
@@ -3966,6 +4111,7 @@ def _evaluate_comparison(
         work054_wp002_consumed_paths
         | work054_wp003_consumed_paths
         | work054_wp004a_consumed_paths
+        | work054_wp004b_consumed_paths
         | work105_consumed_paths
         | work107_consumed_paths
         | work108_consumed_paths

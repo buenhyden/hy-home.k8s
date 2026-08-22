@@ -166,7 +166,7 @@ git diff --check
 ### Inputs
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/0005-workspace-document-assurance-modernization.md)
-- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/ad-0008-workspace-document-assurance-operating-model.md)
+- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md)
 - **ADR**: [Declarative Document Contract Registry](../../02.architecture/decisions/0015-declarative-document-contract-registry.md)
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Audit**: [SDLC, Document Lifecycle, and Frontmatter](../../90.references/audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md)
@@ -174,6 +174,6 @@ git diff --check
 ### Delivery and References
 
 - **Plan**: [Document Contract Registry Implementation Plan](plan.md)
-- **Task**: [Document Contract Registry Task](tasks.md)
+- **Task**: [Document Contract Registry Task](README.md#task-records)
 - **Next Spec**: [Template Contract Consolidation](../0027-template-contract-consolidation/spec.md)
 - **External Basis**: [JSON Schema object validation](https://json-schema.org/understanding-json-schema/reference/object), [YAML 1.2.2](https://yaml.org/spec/1.2.2/), and [GitHub Docs frontmatter convention](https://docs.github.com/en/contributing/writing-for-github-docs/using-yaml-frontmatter)

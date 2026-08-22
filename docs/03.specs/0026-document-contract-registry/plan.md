@@ -69,6 +69,24 @@ template ownership in support prose and a large shell validator. Spec 026
 replaces those parallel machine owners with one protected JSON contract while
 leaving human rationale in Markdown.
 
+### Legacy Task ledger inputs
+
+This document tracks implementation and verification work for the document
+contract registry. It keeps tasks derived from Spec 026 and its execution Plan
+traceable while preserving repository-static evidence boundaries.
+
+**2026-07-14 contract correction:** DCR-001 through DCR-005 and their original
+counts remain completed point-in-time evidence. The current owner is registry
+schema v4 / `DocumentProfileContract.v3` with 62 profiles and the split local,
+repository-runtime-baseline, and Claude-native exception routes; mode
+`classification-only` replaces the ambiguous historical `native` mode. The
+current contract also keeps the Spec-030-retired `examples/{aws,azure}/docs/**`
+trees unrouted and rejects tracked reintroduction.
+
+- **Parent Spec**:
+  [../../03.specs/0026-document-contract-registry/spec.md](spec.md)
+- **Parent Plan**:
+  [../plans/2026-07-12-document-contract-registry.md](plan.md)
 ## Goals & In-Scope
 
 - Create a closed JSON Schema and one versioned document-profile registry.
@@ -298,6 +316,33 @@ Required rule IDs are `REGISTRY_SCHEMA`, `REGISTRY_PROFILE_ID`,
 | VAL-PLN-003 | Repository | `bash scripts/validate-repo-quality-gates.sh .` | Required gates pass; no new strict migration rejection. |
 | VAL-PLN-004 | Formatting | `git diff --check` and `pre-commit run --all-files` | No whitespace error; all applicable hooks pass. |
 
+### Legacy Task verification evidence
+
+- **RED Evidence**: Before integration, the exact DCR-005 quality-gate
+  assertion exited `1` at the missing registry self-test invocation.
+- **Test Commands**:
+  - `python3 scripts/validate-document-contract-registry.py --self-test` — PASS:
+    9 cases, 54 profiles, and 21 templates.
+  - `python3 scripts/validate-document-contract-registry.py --root . --mode compatibility`
+    — PASS: baseline 433, 19 new, 452 total, uncovered 0, ambiguous 0.
+  - `bash scripts/validate-repo-quality-gates.sh .` — PASS with registry
+    self-test and compatibility classification running before legacy checks.
+  - `git diff --check` — PASS with no output.
+  - `pre-commit run --all-files` — all applicable hooks PASS; Dockerfile lint
+    reported `Skipped` because no Dockerfiles were in scope and is not claimed
+    as a pass.
+- **Reviewer**: Codex DCR-005 implementation self-review. DCR-001 through
+  DCR-004 retain their approved task-review outcomes; an independent review of
+  this closure commit remains a post-commit review boundary.
+- **Rollback Range**:
+  `23e1a2789e0036e60db09a6a915c6dbe4b11d660..HEAD`; revert the single DCR-005
+  closure commit to restore the approved DCR-004 state.
+- **Logs / Evidence Location**: This Task table and the logical task commits.
+- **Limitations**: The optional Dockerfile hook skipped. RTK ran commands
+  without untrusted project-local filters. No live Kubernetes, Argo CD, Vault,
+  ESO, provider-runtime, credential, secret-value, remote CI, publish, push,
+  merge, or third-party mutation ran or is inferred from repository-static
+  PASS results.
 ## Risks & Mitigations
 
 | Risk | Impact | Mitigation |
@@ -324,9 +369,9 @@ Required rule IDs are `REGISTRY_SCHEMA`, `REGISTRY_PROFILE_ID`,
 
 - Modify: `docs/03.specs/0026-document-contract-registry/spec.md`
 - Modify: `docs/03.specs/README.md`
-- Modify: `docs/04.execution/plans/README.md`
-- Create: `docs/04.execution/tasks/2026-07-12-document-contract-registry.md`
-- Modify: `docs/04.execution/tasks/README.md`
+- Modify: `docs/03.specs/0026-document-contract-registry/plan.md`
+- Create: `docs/03.specs/0026-document-contract-registry/README.md#task-records`
+- Modify: `docs/03.specs/0026-document-contract-registry/README.md#task-records`
 
 **Interfaces:**
 
@@ -339,8 +384,8 @@ Required rule IDs are `REGISTRY_SCHEMA`, `REGISTRY_PROFILE_ID`,
 python3 - <<'PY'
 from pathlib import Path
 spec = Path('docs/03.specs/0026-document-contract-registry/spec.md')
-plan = Path('docs/04.execution/plans/2026-07-12-document-contract-registry.md')
-task = Path('docs/04.execution/tasks/2026-07-12-document-contract-registry.md')
+plan = Path('docs/03.specs/0026-document-contract-registry/plan.md')
+task = Path('docs/03.specs/0026-document-contract-registry/README.md#task-records')
 assert task.exists()
 for source, target in ((spec, '../../04.execution/plans/2026-07-12-document-contract-registry.md'),
                        (spec, '../../04.execution/tasks/2026-07-12-document-contract-registry.md'),
@@ -383,8 +428,8 @@ Run the Step 1 command. Expected: PASS with no output.
 
 ```bash
 git diff --check
-pre-commit run --files docs/03.specs/0026-document-contract-registry/spec.md docs/03.specs/README.md docs/04.execution/plans/2026-07-12-document-contract-registry.md docs/04.execution/plans/README.md docs/04.execution/tasks/2026-07-12-document-contract-registry.md docs/04.execution/tasks/README.md
-git add docs/03.specs/0026-document-contract-registry/spec.md docs/03.specs/README.md docs/04.execution/plans/2026-07-12-document-contract-registry.md docs/04.execution/plans/README.md docs/04.execution/tasks/2026-07-12-document-contract-registry.md docs/04.execution/tasks/README.md
+pre-commit run --files docs/03.specs/0026-document-contract-registry/spec.md docs/03.specs/README.md docs/03.specs/0026-document-contract-registry/plan.md docs/03.specs/0026-document-contract-registry/plan.md docs/03.specs/0026-document-contract-registry/README.md#task-records docs/03.specs/0026-document-contract-registry/README.md#task-records
+git add docs/03.specs/0026-document-contract-registry/spec.md docs/03.specs/README.md docs/03.specs/0026-document-contract-registry/plan.md docs/03.specs/0026-document-contract-registry/plan.md docs/03.specs/0026-document-contract-registry/README.md#task-records docs/03.specs/0026-document-contract-registry/README.md#task-records
 git commit -m "docs(execution): start document registry tranche"
 ```
 
@@ -624,7 +669,7 @@ Expected: compilation and commit succeed.
 - Modify: `tests/fixtures/document-contracts/registry-cases.json`
 - Modify: `scripts/validate-document-contract-registry.py`
 - Modify: `.secrets.baseline`
-- Modify: `docs/04.execution/plans/2026-07-12-document-contract-registry.md`
+- Modify: `docs/03.specs/0026-document-contract-registry/plan.md`
 
 **Interfaces:**
 
@@ -720,10 +765,10 @@ Expected: commit succeeds.
 - Modify: `.github/workflows/ci.yml`
 - Modify: `docs/03.specs/0026-document-contract-registry/spec.md`
 - Modify: `docs/03.specs/README.md`
-- Modify: `docs/04.execution/plans/2026-07-12-document-contract-registry.md`
-- Modify: `docs/04.execution/plans/README.md`
-- Modify: `docs/04.execution/tasks/2026-07-12-document-contract-registry.md`
-- Modify: `docs/04.execution/tasks/README.md`
+- Modify: `docs/03.specs/0026-document-contract-registry/plan.md`
+- Modify: `docs/03.specs/0026-document-contract-registry/plan.md`
+- Modify: `docs/03.specs/0026-document-contract-registry/README.md#task-records`
+- Modify: `docs/03.specs/0026-document-contract-registry/README.md#task-records`
 
 **Interfaces:**
 
@@ -781,12 +826,32 @@ update the three index rows to `Done`; link Spec 027 as the next consumer.
 - [ ] **Step 6: Commit closure**
 
 ```bash
-git add docs/99.templates/support/documentation-contract.md docs/99.templates/support/frontmatter-schema.md docs/99.templates/support/template-routing.md scripts/validate-repo-quality-gates.sh .github/workflows/ci.yml docs/03.specs/0026-document-contract-registry/spec.md docs/03.specs/README.md docs/04.execution/plans/2026-07-12-document-contract-registry.md docs/04.execution/plans/README.md docs/04.execution/tasks/2026-07-12-document-contract-registry.md docs/04.execution/tasks/README.md
+git add docs/99.templates/support/documentation-contract.md docs/99.templates/support/frontmatter-schema.md docs/99.templates/support/template-routing.md scripts/validate-repo-quality-gates.sh .github/workflows/ci.yml docs/03.specs/0026-document-contract-registry/spec.md docs/03.specs/README.md docs/03.specs/0026-document-contract-registry/plan.md docs/03.specs/0026-document-contract-registry/plan.md docs/03.specs/0026-document-contract-registry/README.md#task-records docs/03.specs/0026-document-contract-registry/README.md#task-records
 git commit -m "docs(validation): close document registry evidence"
 ```
 
 Expected: one closure commit and a clean focused diff.
 
+### Legacy Task approval and rollback boundaries
+
+- **Allowed Paths**: `DCR-001 through DCR-005` is limited to these Document Contract Registry owners and Task-Table surfaces:
+  - `docs/03.specs/0026-document-contract-registry/README.md#task-records`
+  - `docs/03.specs/0026-document-contract-registry/spec.md`
+  - `docs/03.specs/0026-document-contract-registry/plan.md`
+- **Forbidden Paths**: runtime manifests, provider or CI settings, secret values, generated/local state, and paths outside the Document Contract Registry work items and linked evidence owners.
+- **Approval Required**: Human approval is required before Document Contract Registry protected-file expansion, deletion/relocation, runtime/CI/provider mutation, credential access, publication, push, or merge beyond the parent Plan.
+- **Static Validation**: Preserve the Document Contract Registry outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `python3 scripts/validate-document-contract-registry.py --self-test`
+  - `python3 scripts/validate-document-contract-registry.py --root . --mode compatibility`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `git diff --check`
+- **Live Validation**: DEFER — Document Contract Registry is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: No secret value is required for Document Contract Registry; do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
+- **Rollback Plan**: Revert the logical Document Contract Registry change set for `DCR-001 through DCR-005` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Document Contract Registry evidence remains in:
+  - `docs/03.specs/0026-document-contract-registry/README.md#task-records`
+  - `docs/03.specs/0026-document-contract-registry/spec.md`
+  - `docs/03.specs/0026-document-contract-registry/plan.md`
 ## Completion Criteria
 
 - [ ] Registry schema, data, loader, classifier, and fixtures exist.
@@ -799,9 +864,18 @@ Expected: one closure commit and a clean focused diff.
 ## Traceability
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/0005-workspace-document-assurance-modernization.md)
-- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/ad-0008-workspace-document-assurance-operating-model.md)
+- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md)
 - **ADR**: [Declarative Document Contract Registry](../../02.architecture/decisions/0015-declarative-document-contract-registry.md)
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Spec**: [Document Contract Registry](spec.md)
-- **Task**: [Document Contract Registry Task](tasks.md)
+- **Task**: [Document Contract Registry Task](README.md#task-records)
 - **Next Spec**: [Template Contract Consolidation](../0027-template-contract-consolidation/spec.md)
+
+### Legacy Task traceability
+
+- **Spec**:
+  [../../03.specs/0026-document-contract-registry/spec.md](spec.md)
+- **Plan**:
+  [../plans/2026-07-12-document-contract-registry.md](plan.md)
+- **Next Spec**:
+  [../../03.specs/0027-template-contract-consolidation/spec.md](../0027-template-contract-consolidation/spec.md)

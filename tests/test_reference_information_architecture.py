@@ -89,9 +89,6 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
     maxDiff = None
 
     def setUp(self) -> None:
-        self.original_projection_oid = (
-            ria.TRANSITION_CURRENT_PACK_PROJECTION_BLOB_OID
-        )
         self.temporary_directory = tempfile.TemporaryDirectory()
         self.root = Path(self.temporary_directory.name)
         self.contract_path = (
@@ -107,9 +104,6 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         schema_path.write_bytes(SCHEMA.read_bytes())
 
     def tearDown(self) -> None:
-        ria.TRANSITION_CURRENT_PACK_PROJECTION_BLOB_OID = (
-            self.original_projection_oid
-        )
         self.temporary_directory.cleanup()
 
     def _minimal_contract(self) -> dict[str, object]:
@@ -120,31 +114,52 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             json.dumps(contract, indent=2) + "\n", encoding="utf-8"
         )
 
+    @staticmethod
+    def _support_projection_with_packs(
+        packs: list[dict[str, object]],
+    ) -> str:
+        projection = json.loads(
+            (
+                REPOSITORY_ROOT / ria.TRANSITION_CURRENT_PACK_PROJECTION_PATH
+            ).read_text(encoding="utf-8")
+        )
+        projection["referenceCurrentPacks"] = {
+            "profileId": "content/reference",
+            "packs": packs,
+        }
+        return json.dumps(projection, indent=2) + "\n"
+
     def _write_registry(self, pack_ids: list[str]) -> None:
         registry = self.root / "docs/99.templates/support/document-profiles.json"
         registry.parent.mkdir(parents=True, exist_ok=True)
-        payload = json.dumps(
-            {
-                "referenceCurrentPacks": {
-                    "profileId": "reference-current-pack",
-                    "packs": [
-                        {
-                            "id": pack_id,
-                            "members": [],
-                            "allowedStates": ["active"],
-                        }
-                        for pack_id in pack_ids
-                    ],
-                }
-            }
-        ).encode()
-        registry.write_bytes(payload)
-        ria.TRANSITION_CURRENT_PACK_PROJECTION_BLOB_OID = ria._blob_sha1(  # noqa: SLF001
-            payload
+        projection = json.loads(
+            (
+                REPOSITORY_ROOT / ria.TRANSITION_CURRENT_PACK_PROJECTION_PATH
+            ).read_text(encoding="utf-8")
         )
+        projection["referenceCurrentPacks"] = {
+            "profileId": "reference-current-pack",
+            "packs": [
+                {
+                    "id": pack_id,
+                    "members": [],
+                    "allowedStates": ["active"],
+                }
+                for pack_id in pack_ids
+            ],
+        }
+        payload = (json.dumps(projection, indent=2) + "\n").encode()
+        registry.write_bytes(payload)
         authority = self.root / ria.REGISTRY_PATH
         authority.parent.mkdir(parents=True, exist_ok=True)
         authority.write_bytes((REPOSITORY_ROOT / ria.REGISTRY_PATH).read_bytes())
+        migration = self.root / ria.WP004B_DOCUMENT_AUTHORITY_MIGRATION_PATH
+        migration.parent.mkdir(parents=True, exist_ok=True)
+        migration.write_bytes(
+            (
+                REPOSITORY_ROOT / ria.WP004B_DOCUMENT_AUTHORITY_MIGRATION_PATH
+            ).read_bytes()
+        )
 
     def _source_contract(self) -> dict[str, object]:
         fixture = json.loads(SOURCE_FRESHNESS.read_text(encoding="utf-8"))
@@ -193,14 +208,6 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             check=True,
         ).stdout
 
-    @staticmethod
-    def _pin_repository_projection() -> None:
-        ria.TRANSITION_CURRENT_PACK_PROJECTION_BLOB_OID = ria._blob_sha1(  # noqa: SLF001
-            (
-                REPOSITORY_ROOT / ria.TRANSITION_CURRENT_PACK_PROJECTION_PATH
-            ).read_bytes()
-        )
-
     def _generator_repository(
         self, *, preserve_production_output: bool = False
     ) -> Path:
@@ -223,6 +230,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             ria.DOCUMENT_TAXONOMY_MANIFEST_PATH,
             ria.ARCHIVE_MIGRATION_PATH,
             ria.SDLC_CONSOLIDATION_MIGRATION_PATH,
+            ria.WP004B_DOCUMENT_AUTHORITY_MIGRATION_PATH,
         )
         for path in paths:
             destination = root / path
@@ -307,27 +315,23 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             ria.REGISTRY_PATH.as_posix(): (
                 REPOSITORY_ROOT / ria.REGISTRY_PATH
             ).read_text(encoding="utf-8"),
-            "docs/99.templates/support/document-profiles.json": json.dumps(
-                {
-                    "referenceCurrentPacks": {
-                        "profileId": "content/reference",
-                        "packs": [
-                            {
-                                "id": "audits/2026-07-11-weia",
-                                "members": audit_members,
-                                "allowedStates": ["done"],
-                            },
-                            {
-                                "id": "research/2026-08-08-wer",
-                                "members": research_members,
-                                "allowedStates": ["active", "accepted"],
-                            },
-                        ],
-                    }
-                },
-                indent=2,
-            )
-            + "\n",
+            "docs/99.templates/support/document-profiles.json": self._support_projection_with_packs(
+                [
+                    {
+                        "id": "audits/2026-07-11-weia",
+                        "members": audit_members,
+                        "allowedStates": ["done"],
+                    },
+                    {
+                        "id": "research/2026-08-08-wer",
+                        "members": research_members,
+                        "allowedStates": ["active", "accepted"],
+                    },
+                ]
+            ),
+            ria.WP004B_DOCUMENT_AUTHORITY_MIGRATION_PATH.as_posix(): (
+                REPOSITORY_ROOT / ria.WP004B_DOCUMENT_AUTHORITY_MIGRATION_PATH
+            ).read_text(encoding="utf-8"),
             "docs/90.references/audits/README.md": audit_index
             if audit_index is not None
             else owners["auditIndex"],
@@ -355,11 +359,6 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             destination = root / relative
             destination.parent.mkdir(parents=True, exist_ok=True)
             destination.write_text(payload, encoding="utf-8")
-        ria.TRANSITION_CURRENT_PACK_PROJECTION_BLOB_OID = ria._blob_sha1(  # noqa: SLF001
-            (
-                root / ria.TRANSITION_CURRENT_PACK_PROJECTION_PATH
-            ).read_bytes()
-        )
         self._git_in(root, "init", "--quiet")
         self._git_in(root, "add", "--", *sorted(payloads))
         return root, self._minimal_contract(), owners, copies
@@ -1793,9 +1792,6 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 registry_path.write_text(
                     json.dumps(registry, indent=2) + "\n",
                     encoding="utf-8",
-                )
-                ria.TRANSITION_CURRENT_PACK_PROJECTION_BLOB_OID = ria._blob_sha1(  # noqa: SLF001
-                    registry_path.read_bytes()
                 )
                 second_readme = (
                     root
@@ -3546,18 +3542,17 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
 
     def test_retired_current_baseline_rejects_byte_and_registry_drift(self) -> None:
         contract = self._audit_settled_contract()
-        current_registry = {
-            "referenceCurrentPacks": {
-                "profileId": "content/reference",
-                "packs": [
+        current_registry = json.loads(
+            self._support_projection_with_packs(
+                [
                     {
                         "id": ria.WGIA_PACK_ID,
                         "allowedStates": list(ria.WGIA_ALLOWED_STATES),
                         "members": list(ria.WGIA_MEMBERS),
                     }
-                ],
-            }
-        }
+                ]
+            )
+        )
         historical_registry = {
             "referenceCurrentPacks": {
                 "profileId": "content/reference",
@@ -3588,6 +3583,11 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 return (REPOSITORY_ROOT / ria.REGISTRY_PATH).read_bytes()
             if path == ria.TRANSITION_CURRENT_PACK_PROJECTION_PATH:
                 return json.dumps(current_registry).encode()
+            if path == ria.WP004B_DOCUMENT_AUTHORITY_MIGRATION_PATH:
+                return (
+                    REPOSITORY_ROOT
+                    / ria.WP004B_DOCUMENT_AUTHORITY_MIGRATION_PATH
+                ).read_bytes()
             return b"drift" if path == target else b"protected"
 
         def baseline(
@@ -3605,9 +3605,6 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         with (
             mock.patch.object(ria, "_proposed_path", side_effect=proposed),
             mock.patch.object(ria, "_read_commit_path", side_effect=baseline),
-            mock.patch.object(
-                ria, "_read_blob", return_value=json.dumps(current_registry).encode()
-            ),
         ):
             findings = ria.validate_retired_current_baselines(self.root, contract)
         self.assertEqual(
@@ -3820,7 +3817,6 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
     def test_taxonomy_archive_overlay_is_exactly_the_seven_reviewed_paths(
         self,
     ) -> None:
-        self._pin_repository_projection()
         sources = ria._load_taxonomy_archive_transition(  # noqa: SLF001
             REPOSITORY_ROOT, proposed_oid=None, runner=None
         )
@@ -3837,7 +3833,6 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
     def test_taxonomy_archive_overlay_rejects_membership_oid_and_semantic_drift(
         self,
     ) -> None:
-        self._pin_repository_projection()
         sources = ria._load_taxonomy_archive_transition(  # noqa: SLF001
             REPOSITORY_ROOT, proposed_oid=None, runner=None
         )
@@ -5114,21 +5109,87 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         self.assertTrue(callable(ria.read_proposed_regular_file))
         self.assertTrue(callable(ria.validate_proposed_registry_authority))
 
+    def test_wp004b_root_authority_and_finite_support_projection_are_accepted(
+        self,
+    ) -> None:
+        contract = json.loads(
+            (REPOSITORY_ROOT / ria.DEFAULT_CONTRACT_PATH).read_text(
+                encoding="utf-8"
+            )
+        )
+
+        self.assertEqual(
+            ria.validate_proposed_registry_authority(REPOSITORY_ROOT, contract),
+            [],
+        )
+
+    def test_wp004b_current_overlay_accepts_only_migration_link_targets(
+        self,
+    ) -> None:
+        contract = json.loads(
+            (REPOSITORY_ROOT / ria.DEFAULT_CONTRACT_PATH).read_text(
+                encoding="utf-8"
+            )
+        )
+
+        self.assertEqual(
+            ria.validate_overlay_guards(REPOSITORY_ROOT, contract),
+            [],
+        )
+
+    def test_wp004b_transition_link_mask_is_content_preserving_and_ledger_bounded(
+        self,
+    ) -> None:
+        path = Path(
+            "docs/90.references/audits/2026-08-09-wgia/"
+            "spec-driven-sdlc-documentation-and-templates.md"
+        )
+        rows = ria._load_wp004b_transition_rows(  # noqa: SLF001
+            REPOSITORY_ROOT, None, None
+        )
+        source = "../../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md"
+        target = "../../../03.specs/0055-workspace-governance-audit-and-remediation/README.md"
+        baseline = f"# Report\n\n- [Implementation Task]({source})\n".encode()
+        proposed = f"# Report\n\n- [Implementation Task]({target})\n".encode()
+
+        self.assertEqual(
+            ria._wp004b_transition_link_mask(proposed, path, rows),  # noqa: SLF001
+            baseline,
+        )
+        self.assertNotEqual(
+            ria._wp004b_transition_link_mask(  # noqa: SLF001
+                proposed + b"unauthorized body drift\n", path, rows
+            ),
+            baseline,
+        )
+        non_ledger = proposed.replace(b"0055-", b"0054-", 1)
+        self.assertEqual(
+            ria._wp004b_transition_link_mask(  # noqa: SLF001
+                non_ledger, path, rows
+            ),
+            non_ledger,
+        )
+
     def _proposed_authority_repository(self) -> tuple[Path, dict[str, object]]:
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         root = Path(temporary.name)
         authority_path = Path("docs/99.templates/registry.json")
         support_path = Path("docs/99.templates/support/document-profiles.json")
-        for path in (authority_path, support_path):
+        migration_path = ria.WP004B_DOCUMENT_AUTHORITY_MIGRATION_PATH
+        for path in (authority_path, support_path, migration_path):
             target = root / path
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes((REPOSITORY_ROOT / path).read_bytes())
-        ria.TRANSITION_CURRENT_PACK_PROJECTION_BLOB_OID = ria._blob_sha1(  # noqa: SLF001
-            (root / support_path).read_bytes()
-        )
         self._git_in(root, "init", "--quiet")
-        self._git_in(root, "add", "--", authority_path.as_posix(), support_path.as_posix())
+        self._git_in(
+            root,
+            "add",
+            "--",
+            authority_path.as_posix(),
+            support_path.as_posix(),
+            migration_path.as_posix(),
+        )
         return root, self._minimal_contract()
 
     def test_proposed_tree_rejects_root_authority_mutation_when_support_is_unchanged(self) -> None:
@@ -5147,17 +5208,90 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         self.assertEqual(findings[0].path, authority_path.as_posix())
         self.assertIn("document authority", findings[0].message)
 
-    def test_proposed_tree_rejects_support_projection_mutation_when_root_is_unchanged(self) -> None:
+    def test_proposed_tree_accepts_support_projection_formatting_change(self) -> None:
+        root, _contract = self._proposed_authority_repository()
+        support_path = Path("docs/99.templates/support/document-profiles.json")
+        projection = json.loads((root / support_path).read_text(encoding="utf-8"))
+        (root / support_path).write_text(
+            json.dumps(projection, separators=(",", ":")) + "\n",
+            encoding="utf-8",
+        )
+        self._git_in(root, "add", "--", support_path.as_posix())
+
+        authority, rendered = ria._proposed_registry_inputs(  # noqa: SLF001
+            root, None, None
+        )
+
+        self.assertIn("profiles", authority)
+        self.assertEqual(json.loads(rendered), projection)
+
+    def test_proposed_tree_rejects_support_semantic_mutation_when_root_is_unchanged(self) -> None:
         root, contract = self._proposed_authority_repository()
         support_path = Path("docs/99.templates/support/document-profiles.json")
-        (root / support_path).write_bytes((root / support_path).read_bytes() + b"\n")
+        projection = json.loads((root / support_path).read_text(encoding="utf-8"))
+        task = next(
+            profile for profile in projection["profiles"] if profile["id"] == "sdlc/task"
+        )
+        task["statusDomain"].append("rogue")
+        (root / support_path).write_text(
+            json.dumps(projection, indent=2) + "\n",
+            encoding="utf-8",
+        )
         self._git_in(root, "add", "--", support_path.as_posix())
 
         findings = ria.validate_proposed_registry_authority(root, contract)
 
         self.assertEqual([item.rule_id for item in findings], ["RIA-BOUNDARY"])
         self.assertEqual(findings[0].path, support_path.as_posix())
-        self.assertIn("pinned compatibility projection", findings[0].message)
+        self.assertIn("semantic projection", findings[0].message)
+
+    def test_proposed_tree_rejects_missing_and_extra_shared_profiles(self) -> None:
+        for case in ("missing", "extra"):
+            with self.subTest(case=case):
+                root, contract = self._proposed_authority_repository()
+                support_path = Path(
+                    "docs/99.templates/support/document-profiles.json"
+                )
+                projection = json.loads(
+                    (root / support_path).read_text(encoding="utf-8")
+                )
+                if case == "missing":
+                    projection["profiles"] = [
+                        profile
+                        for profile in projection["profiles"]
+                        if profile["id"] != "sdlc/task"
+                    ]
+                else:
+                    rogue = dict(projection["profiles"][0])
+                    rogue["id"] = "sdlc/rogue"
+                    projection["profiles"].append(rogue)
+                (root / support_path).write_text(
+                    json.dumps(projection, indent=2) + "\n",
+                    encoding="utf-8",
+                )
+                self._git_in(root, "add", "--", support_path.as_posix())
+
+                findings = ria.validate_proposed_registry_authority(root, contract)
+
+                self.assertEqual(
+                    [item.rule_id for item in findings], ["RIA-BOUNDARY"]
+                )
+                self.assertEqual(findings[0].path, support_path.as_posix())
+                self.assertIn("profile transition differs", findings[0].message)
+
+    def test_proposed_tree_rejects_non_exact_wp004b_transition_authority(self) -> None:
+        root, contract = self._proposed_authority_repository()
+        migration_path = ria.WP004B_DOCUMENT_AUTHORITY_MIGRATION_PATH
+        (root / migration_path).write_bytes(
+            (root / migration_path).read_bytes() + b"\n"
+        )
+        self._git_in(root, "add", "--", migration_path.as_posix())
+
+        findings = ria.validate_proposed_registry_authority(root, contract)
+
+        self.assertEqual([item.rule_id for item in findings], ["RIA-TRANSITION"])
+        self.assertEqual(findings[0].path, migration_path.as_posix())
+        self.assertIn("transition authority", findings[0].message)
 
     def test_cli_modes_are_mutually_exclusive_and_terminal_is_orthogonal(self) -> None:
         terminal = subprocess.run(

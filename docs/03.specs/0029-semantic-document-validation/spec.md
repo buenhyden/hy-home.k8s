@@ -130,7 +130,7 @@ establish live cluster or provider readiness.
 ### Inputs
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/0005-workspace-document-assurance-modernization.md)
-- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/ad-0008-workspace-document-assurance-operating-model.md)
+- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md)
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Registry Spec**: [Document Contract Registry](../0026-document-contract-registry/spec.md)
 - **README Spec**: [README and Workspace Profiles](../0028-readme-workspace-profiles/spec.md)
@@ -138,6 +138,6 @@ establish live cluster or provider readiness.
 ### Delivery and References
 
 - **Execution Plan**: [Semantic Document Validation Implementation Plan](plan.md)
-- **Execution Task**: [Task: Semantic Document Validation](tasks.md)
+- **Execution Task**: [Task: Semantic Document Validation](README.md#task-records)
 - **Next Spec**: [Authored Document Migration](../0030-authored-document-migration/spec.md)
 - **Parsing Basis**: [CommonMark](https://spec.commonmark.org/0.31.2/) and [JSON Schema validation](https://json-schema.org/draft/2020-12/json-schema-validation)

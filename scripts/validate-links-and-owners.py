@@ -104,41 +104,68 @@ WORK054_MIGRATION_PATH = PurePosixPath(
     "mig-0003-agent-governance-control-plane-consolidation.md"
 )
 WORK054_MIGRATION_SHA256 = "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42"  # pragma: allowlist secret
-WORK054_HISTORICAL_SOURCE_BLOBS = {
+WORK054_WP004B_MIGRATION_PATH = PurePosixPath(
+    "docs/98.archive/migrations/0004-document-authority-convergence.md"
+)
+WORK054_WP004B_MIGRATION_SHA256 = "6c769973de12023d8021792df4257be1401ee27f7b8293f336263352f849a3f6"  # pragma: allowlist secret
+WORK054_HARNESS_TERMINAL = PurePosixPath(
+    "docs/00.agent-governance/harness-catalog.md"
+)
+WORK054_CODEX_TERMINAL = PurePosixPath(
+    "docs/00.agent-governance/providers/codex.md"
+)
+WORK054_TEMPLATE_TERMINAL = PurePosixPath(
+    "docs/99.templates/support/document-contract.md"
+)
+WORK054_HISTORICAL_LINK_PROJECTION = {
     PurePosixPath(
         "docs/03.specs/0015-agent-governance-contract-normalization/plan.md"
-    ): "a93360fd3315fa3ff490485157caa323357bb67f",
+    ): ((0, WORK054_HARNESS_TERMINAL, 1),),
     PurePosixPath(
         "docs/03.specs/0015-agent-governance-contract-normalization/spec.md"
-    ): "47c45671ac536bf2298251f55286395ac02e0b0e",
+    ): (
+        (0, WORK054_HARNESS_TERMINAL, 1),
+        (1, WORK054_HARNESS_TERMINAL, 1),
+        (3, WORK054_TEMPLATE_TERMINAL, 1),
+    ),
     PurePosixPath(
         "docs/03.specs/0017-workspace-engineering-research-pack/spec.md"
-    ): "70c88e6f657ade6416eee00e41372a768d1e7db7",
+    ): ((1, WORK054_HARNESS_TERMINAL, 1),),
     PurePosixPath(
         "docs/03.specs/0018-workspace-engineering-implementation-audit-pack/spec.md"
-    ): "d9b4edf7203dcfefb9c5cee9256c3b2dc115399a",
+    ): ((1, WORK054_HARNESS_TERMINAL, 1),),
     PurePosixPath(
         "docs/90.references/audits/2026-07-02-whia/harness-loop-implementation-audit.md"
-    ): "39f7d5dbc4d69e53485fb0b9d482a151e9b44b86",
+    ): ((1, WORK054_HARNESS_TERMINAL, 6),),
     PurePosixPath(
         "docs/90.references/audits/2026-07-02-whia/provider-harness-loop-implementation-audit.md"
-    ): "0403e861994bc322fbcaaabfceb1b5c8ada02572",
+    ): (
+        (0, WORK054_HARNESS_TERMINAL, 8),
+        (1, WORK054_HARNESS_TERMINAL, 6),
+    ),
     PurePosixPath(
         "docs/90.references/audits/2026-07-02-whia/workspace-governance-implementation-audit.md"
-    ): "0965758eccd42bba5e884f01270ed738c9d6410a",
+    ): (
+        (0, WORK054_HARNESS_TERMINAL, 3),
+        (1, WORK054_HARNESS_TERMINAL, 4),
+    ),
     PurePosixPath(
         "docs/90.references/audits/2026-07-05-wea/governance-harness-loop-providers.md"
-    ): "84830e0fa7178f820bfb189d9f129fd34209af18",
+    ): (
+        (0, WORK054_HARNESS_TERMINAL, 1),
+        (1, WORK054_HARNESS_TERMINAL, 3),
+        (2, WORK054_CODEX_TERMINAL, 1),
+    ),
     PurePosixPath(
         "docs/90.references/audits/2026-07-05-wea/implementation-roadmap-and-automation-opportunities.md"
-    ): "5cf2c6b9b24ab510b3cfa48eca6f7afa7d0feec5",
+    ): ((1, WORK054_HARNESS_TERMINAL, 2),),
     PurePosixPath(
         "docs/90.references/audits/2026-07-11-weia/governance-harness-loop-providers.md"
-    ): "b35dce197ca96bb9341b590ef505040e86d18577",
+    ): (
+        (1, WORK054_HARNESS_TERMINAL, 2),
+        (3, WORK054_TEMPLATE_TERMINAL, 1),
+    ),
 }
-WORK054_HISTORICAL_SOURCE_COUNT = 10
-WORK054_HISTORICAL_OCCURRENCE_COUNT = 41
-WORK054_HISTORICAL_EDGE_COUNT = 15
 ARCHIVE_INDEX_BOUNDARY = "docs/98.archive/README.md#document-index"
 ARCHIVE_INDEX_PATH = PurePosixPath("docs/98.archive/README.md")
 DOCUMENT_TAXONOMY_SOURCE_COMMIT = (
@@ -586,15 +613,13 @@ RETIRED_REFERENCE_TERMINAL_STATUSES = frozenset(
         "superseded",
     }
 )
-SMDV_CLOSURE_PATHS = (
+SMDV_CLOSURE_OWNER_PATHS = (
     PurePosixPath("docs/03.specs/0029-semantic-document-validation/spec.md"),
     PurePosixPath("docs/03.specs/0029-semantic-document-validation/plan.md"),
-    PurePosixPath("docs/03.specs/0029-semantic-document-validation/tasks.md"),
 )
-ADM_CLOSURE_PATHS = (
+ADM_CLOSURE_OWNER_PATHS = (
     PurePosixPath("docs/03.specs/0030-authored-document-migration/spec.md"),
     PurePosixPath("docs/03.specs/0030-authored-document-migration/plan.md"),
-    PurePosixPath("docs/03.specs/0030-authored-document-migration/tasks.md"),
 )
 
 
@@ -797,7 +822,7 @@ IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS = {
     ): "35b69ced14f3f5511a3b13dff35e337000297333",  # pragma: allowlist secret
 }
 IMMUTABLE_HISTORICAL_ALIAS_SOURCE_COUNT = 27
-IMMUTABLE_HISTORICAL_ALIAS_EDGE_COUNT = 93
+IMMUTABLE_HISTORICAL_ALIAS_EDGE_COUNT = 94
 COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS = {
     PurePosixPath("docs/00.agent-governance/memory/progress.md"): (
         "28a2051203f38118c721c78142c3a97c5d0040ce"  # pragma: allowlist secret
@@ -941,10 +966,44 @@ COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS = {
     ): "f609274b7c1faf9f5ebae949abab511ac95391ea",  # pragma: allowlist secret
 }
 COMPLETED_HISTORY_ALIAS_SOURCE_COUNT = 46
-COMPLETED_HISTORY_ALIAS_EDGE_COUNT = 186
+COMPLETED_HISTORY_ALIAS_EDGE_COUNT = 70
 COMPLETED_HISTORY_APPEND_ONLY_PREFIX_BYTES = {
     PurePosixPath("docs/00.agent-governance/memory/progress.md"): 768_684,
 }
+
+# WP-004B removes monolithic Task ledgers and edits the superseded ADR set.
+# Those current paths no longer need a historical-link waiver; their retired
+# identities are recoverable through MIG-0004 and ADR-0030 respectively.
+_WP004B_RETIRED_COMPLETED_SOURCES = frozenset(
+    {
+        path
+        for path in COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS
+        if path.parts[:2] == ("docs", "03.specs")
+    }
+    | {
+        PurePosixPath(
+            "docs/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md"
+        ),
+        PurePosixPath(
+            "docs/02.architecture/decisions/0015-declarative-document-contract-registry.md"
+        ),
+        PurePosixPath(
+            "docs/02.architecture/decisions/0018-full-body-archive-record-and-retention.md"
+        ),
+        PurePosixPath(
+            "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md"
+        ),
+        PurePosixPath(
+            "docs/02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md"
+        ),
+    }
+)
+COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS = {
+    path: blob
+    for path, blob in COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS.items()
+    if path not in _WP004B_RETIRED_COMPLETED_SOURCES
+}
+COMPLETED_HISTORY_ALIAS_SOURCE_COUNT = len(COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS)
 
 
 @dataclass(frozen=True)
@@ -3045,10 +3104,12 @@ def _work109_migration_projection(
     except (RiaContractError, RiaGitError):
         raise ConfigurationError("WORK-109 migration ledger source differs") from None
 
+    wp004b_targets = _work054_wp004b_targets(context)
     aliases: dict[PurePosixPath, PurePosixPath] = {}
     replacements: dict[PurePosixPath, PurePosixPath] = {}
     merges: dict[PurePosixPath, PurePosixPath] = {}
     stable_paths: set[PurePosixPath] = set()
+    pre_cutover_stable_paths: set[PurePosixPath] = set()
     for row, (source_blob, content_sha256) in zip(
         rows,
         source_evidence,
@@ -3083,24 +3144,33 @@ def _work109_migration_projection(
             stable_value = row.get("stable_path")
             artifact_id = row.get("artifact_id")
             expected = _work109_expected_stable_path(legacy)
+            has_wp004b_cutover = expected in wp004b_targets
+            current_target = wp004b_targets.get(expected) if expected is not None else None
+            if current_target is None:
+                current_target = expected
             if (
                 not isinstance(stable_value, str)
                 or expected is None
                 or stable_value != expected.as_posix()
                 or row.get("replacement") is not None
                 or not isinstance(artifact_id, str)
-                or expected in stable_paths
-                or expected not in context.tracked_regular_paths
+                or expected in pre_cutover_stable_paths
+                or current_target not in context.tracked_regular_paths
                 or not _path_exists_without_dereference(
-                    context.root, expected, context.adapter_targets
+                    context.root, current_target, context.adapter_targets
                 )
-                or context.metadata.get(expected, {}).get("artifact_id") != artifact_id
+                or (
+                    not has_wp004b_cutover
+                    and context.metadata.get(expected, {}).get("artifact_id")
+                    != artifact_id
+                )
             ):
                 raise ConfigurationError(
                     f"WORK-109 migration ledger target differs: {legacy.as_posix()}"
                 )
-            aliases[legacy] = expected
-            stable_paths.add(expected)
+            aliases[legacy] = current_target
+            stable_paths.add(current_target)
+            pre_cutover_stable_paths.add(expected)
             continue
 
         action = row.get("action")
@@ -3127,12 +3197,91 @@ def _work109_migration_projection(
 
     if (
         len(aliases) != 141
-        or len(stable_paths) != 141
+        or len(pre_cutover_stable_paths) != 141
         or replacements != WORK109_REPLACEMENTS
         or merges != WORK109_MERGES
     ):
         raise ConfigurationError("WORK-109 migration ledger coverage differs")
     return aliases, replacements, merges
+
+
+def _work054_wp004b_targets(
+    context: Context,
+) -> dict[PurePosixPath, PurePosixPath]:
+    """Return the exact terminal targets sealed by MIG-0004."""
+
+    if (
+        WORK054_WP004B_MIGRATION_PATH not in context.paths
+        or WORK054_WP004B_MIGRATION_PATH not in context.tracked_regular_paths
+    ):
+        raise ConfigurationError("WORK-054 WP-004B migration ledger is unavailable")
+    text = context.texts.get(WORK054_WP004B_MIGRATION_PATH)
+    if (
+        text is None
+        or hashlib.sha256(text.encode("utf-8")).hexdigest()
+        != WORK054_WP004B_MIGRATION_SHA256
+    ):
+        raise ConfigurationError("WORK-054 WP-004B migration ledger differs")
+    metadata = context.metadata.get(WORK054_WP004B_MIGRATION_PATH, {})
+    if (
+        metadata.get("artifact_id") != "MIG-0004"
+        or metadata.get("migration_id") != "MIG-0004"
+        or metadata.get("status") != "sealed"
+    ):
+        raise ConfigurationError("WORK-054 WP-004B migration identity differs")
+    marker = f"{WORK109_LEDGER_MARKER}\n\n```json\n"
+    if text.count(marker) != 1:
+        raise ConfigurationError("WORK-054 WP-004B migration ledger differs")
+    _prefix, remainder = text.split(marker, 1)
+    raw, fence, _suffix = remainder.partition("\n```\n")
+    if not fence:
+        raise ConfigurationError("WORK-054 WP-004B migration ledger differs")
+    try:
+        rows = json.loads(raw)
+    except (json.JSONDecodeError, UnicodeError) as exc:
+        raise ConfigurationError("WORK-054 WP-004B migration ledger differs") from exc
+    if not isinstance(rows, list) or len(rows) != 66:
+        raise ConfigurationError("WORK-054 WP-004B migration coverage differs")
+    targets: dict[PurePosixPath, PurePosixPath] = {}
+    previous: str | None = None
+    counts = {"moved": 0, "replaced": 0, "merged": 0}
+    for row in rows:
+        if not isinstance(row, Mapping):
+            raise ConfigurationError("WORK-054 WP-004B migration row differs")
+        legacy_value = row.get("legacy_path")
+        action = row.get("action")
+        target_value = row.get("stable_path") if action == "moved" else row.get("replacement")
+        if (
+            not isinstance(legacy_value, str)
+            or not isinstance(target_value, str)
+            or action not in counts
+            or row.get("source_commit")
+            != "211e167f9ef0268c937303faa82d7ed297b33e38"  # pragma: allowlist secret -- sealed migration source commit
+            or (previous is not None and legacy_value <= previous)
+        ):
+            raise ConfigurationError("WORK-054 WP-004B migration row differs")
+        legacy = PurePosixPath(legacy_value)
+        target = PurePosixPath(target_value)
+        if (
+            legacy.as_posix() != legacy_value
+            or target.as_posix() != target_value
+            or legacy.is_absolute()
+            or target.is_absolute()
+            or ".." in legacy.parts
+            or ".." in target.parts
+            or legacy in targets
+            or target not in context.tracked_regular_paths
+            or not _path_exists_without_dereference(
+                context.root, target, context.adapter_targets
+            )
+        ):
+            raise ConfigurationError("WORK-054 WP-004B migration target differs")
+        targets[legacy] = target
+        counts[action] += 1
+        previous = legacy_value
+    if counts != {"moved": 8, "replaced": 56, "merged": 2}:
+        raise ConfigurationError("WORK-054 WP-004B migration coverage differs")
+    return targets
 
 
 def _work109_four_digit_aliases(
@@ -3522,6 +3671,12 @@ def _immutable_historical_redirects(
         if legacy_archive.parts[:2] == ("docs", "98.archive"):
             original = PurePosixPath("docs", *legacy_archive.parts[2:])
             redirects.setdefault(original, stable_archive)
+    wp004b_targets = _work054_wp004b_targets(context)
+    redirects = {
+        source: wp004b_targets.get(target, target)
+        for source, target in redirects.items()
+    }
+    redirects.update(wp004b_targets)
     return redirects
 
 
@@ -3678,20 +3833,108 @@ def _reviewed_work054_historical_owner_edges(
     context: Context,
     move_targets: Mapping[PurePosixPath, PurePosixPath],
 ) -> dict[ArchiveTransitionEdge, PurePosixPath]:
-    """Resolve only the exact source-pinned links retired by MIG-0003."""
+    """Resolve the exact per-source retired-link projection for WORK-054."""
 
     if context.route_state != "transition":
         return {}
-    return _reviewed_source_pinned_alias_edges(
-        context,
-        move_targets,
-        source_blobs=WORK054_HISTORICAL_SOURCE_BLOBS,
-        expected_source_count=WORK054_HISTORICAL_SOURCE_COUNT,
-        expected_edge_count=WORK054_HISTORICAL_EDGE_COUNT,
-        contract_name="WORK-054 historical owner",
-        exact_redirects=_work054_wp003_owner_merges(context),
-        expected_occurrence_count=WORK054_HISTORICAL_OCCURRENCE_COUNT,
+    del move_targets
+    redirects = _work054_wp003_owner_merges(context)
+    migration_rows = tuple(redirects.items())
+    retired_template_route = PurePosixPath(
+        "docs/99.templates/support/template-routing.md"
     )
+    current_template_route = WORK054_TEMPLATE_TERMINAL
+    _, _, work109_merges = _work109_migration_projection(context)
+    if work109_merges.get(retired_template_route) != current_template_route:
+        raise ConfigurationError(
+            "WORK-054 historical template-route projection differs"
+        )
+    redirects[retired_template_route] = current_template_route
+    migration_rows += ((retired_template_route, current_template_route),)
+
+    expected_sources = set(WORK054_HISTORICAL_LINK_PROJECTION)
+    other_reviewed_sources = (
+        set(IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS)
+        | set(COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS)
+    ) - expected_sources
+    expected: dict[
+        PurePosixPath,
+        collections.Counter[tuple[PurePosixPath, PurePosixPath]],
+    ] = {}
+    for source, rows in WORK054_HISTORICAL_LINK_PROJECTION.items():
+        counter: collections.Counter[
+            tuple[PurePosixPath, PurePosixPath]
+        ] = collections.Counter()
+        for row_index, terminal, multiplicity in rows:
+            if (
+                not isinstance(row_index, int)
+                or row_index < 0
+                or row_index >= len(migration_rows)
+                or multiplicity <= 0
+            ):
+                raise ConfigurationError(
+                    "WORK-054 historical owner terminal projection differs"
+                )
+            retired, migrated_terminal = migration_rows[row_index]
+            if migrated_terminal != terminal:
+                raise ConfigurationError(
+                    "WORK-054 historical owner terminal projection differs"
+                )
+            counter[(retired, terminal)] += multiplicity
+        expected[source] = counter
+
+    retired_names = tuple(path.name for path in redirects)
+    actual: dict[
+        PurePosixPath,
+        collections.Counter[tuple[PurePosixPath, PurePosixPath]],
+    ] = {}
+    for source, text in context.texts.items():
+        if source in other_reviewed_sources or not any(
+            name in text for name in retired_names
+        ):
+            continue
+        counter: collections.Counter[
+            tuple[PurePosixPath, PurePosixPath]
+        ] = collections.Counter()
+        for raw in _extract_links(text):
+            kind, target = _local_destination(source, raw)
+            if kind != "local" or target is None:
+                continue
+            replacement = redirects.get(target)
+            if replacement is None or _path_exists_without_dereference(
+                context.root, target, context.adapter_targets
+            ):
+                continue
+            counter[(target, replacement)] += 1
+        if counter:
+            actual[source] = counter
+
+    if (
+        set(actual) != expected_sources
+        or not expected_sources.issubset(context.tracked_regular_paths)
+    ):
+        raise ConfigurationError(
+            "WORK-054 historical owner source set differs"
+        )
+
+    edges: dict[ArchiveTransitionEdge, PurePosixPath] = {}
+    for source, expected_counter in expected.items():
+        if actual[source] != expected_counter:
+            raise ConfigurationError(
+                "WORK-054 historical owner link multiset differs"
+            )
+        for retired, terminal in expected_counter:
+            if (
+                terminal not in context.tracked_regular_paths
+                or not _path_exists_without_dereference(
+                    context.root, terminal, context.adapter_targets
+                )
+            ):
+                raise ConfigurationError(
+                    "WORK-054 historical owner replacement is unavailable"
+                )
+            edges[ArchiveTransitionEdge(source, retired)] = terminal
+    return edges
 
 
 def _link_diagnostics(context: Context) -> list[Diagnostic]:
@@ -4484,7 +4727,13 @@ PROGRAM_LINEAGE_OVERLAY_HEADING = (
     "### 2026-07-15 template lifecycle disposition overlay"
 )
 PROGRAM_MUTABLE_STATES = frozenset({"draft", "active"})
-PROGRAM_CURRENT_EXECUTION_STATES = frozenset({"draft", "active"})
+PROGRAM_CURRENT_EXECUTION_STATES = frozenset(
+    {"draft", "active", "queued", "in-progress", "blocked"}
+)
+PROGRAM_CURRENT_TASK_STATES = frozenset({"queued", "in-progress", "blocked"})
+PROGRAM_TASK_STATUS_DOMAIN = frozenset(
+    {"queued", "in-progress", "blocked", "done", "cancelled"}
+)
 PROGRAM_PATHS = {
     "sdlc/prd": re.compile(r"^docs/01\.requirements/({identifier})-[^/]+\.md$"),
     "sdlc/ad": re.compile(
@@ -4494,6 +4743,18 @@ PROGRAM_PATHS = {
         r"^docs/02\.architecture/decisions/({identifier})-[^/]+\.md$"
     ),
     "sdlc/spec": re.compile(r"^docs/03\.specs/({identifier})-[^/]+/spec\.md$"),
+}
+PROGRAM_TRANSITION_OWNER_CONTRACTS = {
+    "sdlc/prd": (
+        "sdlc/requirement-package",
+        re.compile(r"^docs/01\.requirements/({identifier})-[^/]+\.md$"),
+    ),
+    "sdlc/ad": (
+        "sdlc/ad",
+        re.compile(
+            r"^docs/02\.architecture/descriptions/({identifier})-[^/]+\.md$"
+        ),
+    ),
 }
 PROGRAM_LIFECYCLE_AUTHORITY = {
     "prd": "draft -> active -> done | archived",
@@ -4510,12 +4771,16 @@ def _program_owner_path(
 ) -> PurePosixPath | None:
     """Resolve one numeric owner from the already bounded tracked inventory."""
 
+    owner_profile_id = profile_id
     pattern_template = PROGRAM_PATHS[profile_id].pattern
+    if context.route_state == "transition" and profile_id in PROGRAM_TRANSITION_OWNER_CONTRACTS:
+        owner_profile_id, pattern = PROGRAM_TRANSITION_OWNER_CONTRACTS[profile_id]
+        pattern_template = pattern.pattern
     pattern = re.compile(pattern_template.format(identifier=re.escape(identifier)))
     matches = tuple(
         path
         for path in context.paths
-        if context.profiles[path].profile_id == profile_id
+        if context.profiles[path].profile_id == owner_profile_id
         and pattern.fullmatch(path.as_posix()) is not None
     )
     return matches[0] if len(matches) == 1 else None
@@ -5320,7 +5585,9 @@ def _historical_exception_diagnostics(
     def source_pinned_targets(source: PurePosixPath) -> set[PurePosixPath]:
         return {
             reviewed_alias_edges.get(ArchiveTransitionEdge(source, target), target)
-            for target in _program_local_targets(context, source)
+            for raw_link in _extract_links(context.texts.get(source, ""))
+            for kind, target in (_local_destination(source, raw_link),)
+            if kind == "local" and target is not None
         }
 
     adr_agrees = (
@@ -5388,6 +5655,66 @@ def _current_execution_link_graph(
         if context.profiles[path].profile_id in {"sdlc/plan", "sdlc/task"}
         and _program_status(context, path) in PROGRAM_CURRENT_EXECUTION_STATES
     }
+
+
+def _program_package_task_projection(
+    context: Context,
+    spec: PurePosixPath,
+) -> tuple[
+    tuple[PurePosixPath, ...],
+    tuple[PurePosixPath, ...],
+    bool,
+]:
+    """Return one Spec package's exact Task inventory and current subset."""
+
+    task_root = spec.parent / "tasks"
+    task_name = re.compile(r"^tsk-[0-9]{4}-[^/]+\.md$")
+    package_tasks = tuple(
+        sorted(
+            (
+                path
+                for path in context.paths
+                if path.parent == task_root
+                and context.profiles[path].profile_id == "sdlc/task"
+            ),
+            key=lambda item: item.as_posix(),
+        )
+    )
+    current_tasks = tuple(
+        path
+        for path in package_tasks
+        if _program_status(context, path) in PROGRAM_CURRENT_TASK_STATES
+    )
+    router = spec.parent / "README.md"
+    router_targets = tuple(
+        target
+        for raw_link in _extract_links(context.texts.get(router, ""))
+        for kind, target in (_local_destination(router, raw_link),)
+        if kind == "local" and target is not None
+        if target in context.profiles
+        and context.profiles[target].profile_id == "sdlc/task"
+    )
+    spec_identifier = spec.parent.name[:4]
+    identities_complete = all(
+        task.name[4:8] == f"{sequence:04d}"
+        and context.metadata[task].get("artifact_id")
+        == f"TSK-{spec_identifier}-{sequence:04d}"
+        for sequence, task in enumerate(package_tasks, start=1)
+    )
+    router_complete = (
+        router in context.paths
+        and context.profiles[router].profile_id == "readme/collection-index"
+        and bool(package_tasks)
+        and all(task_name.fullmatch(path.name) is not None for path in package_tasks)
+        and identities_complete
+        and all(
+            _program_status(context, path) in PROGRAM_TASK_STATUS_DOMAIN
+            for path in package_tasks
+        )
+        and len(router_targets) == len(set(router_targets))
+        and set(router_targets) == set(package_tasks)
+    )
+    return package_tasks, current_tasks, router_complete
 
 
 @dataclass
@@ -5562,15 +5889,90 @@ def _program_execution_diagnostics(
             and execution_state_matches
             and reciprocal_pair
         )
+        package_tasks, current_package_tasks, router_complete = (
+            _program_package_task_projection(context, spec)
+        )
+        package_task_targets = {
+            task: _program_local_targets(context, task) for task in package_tasks
+        }
+        plan_targets = graph.get(plans[0], frozenset()) if len(plans) == 1 else frozenset()
+        package_direct_spec_links = (
+            len(plans) == 1
+            and spec in plan_targets
+            and all(spec in package_task_targets[task] for task in package_tasks)
+        )
+        package_reciprocal = (
+            len(plans) == 1
+            and bool(package_tasks)
+            and all(plans[0] in package_task_targets[task] for task in package_tasks)
+            and any(task in plan_targets for task in package_tasks)
+        )
+        package_component_complete = (
+            len(plans) == 1
+            and set(tasks) == set(current_package_tasks)
+        )
+        package_statuses = tuple(
+            _program_status(context, task) for task in package_tasks
+        )
+        package_state_matches = (
+            len(plans) == 1
+            and _program_status(context, plans[0]) == relation.state
+            and (
+                (
+                    relation.state == "draft"
+                    and bool(package_statuses)
+                    and all(
+                        status in PROGRAM_CURRENT_TASK_STATES
+                        for status in package_statuses
+                    )
+                    and (
+                        all(status == "queued" for status in package_statuses)
+                        or (
+                            relation == dependency_ready
+                            and "in-progress" in package_statuses
+                        )
+                    )
+                )
+                or (
+                    relation.state == "active"
+                    and (
+                        (
+                            bool(current_package_tasks)
+                            and "in-progress" in package_statuses
+                            and all(
+                                status in PROGRAM_CURRENT_TASK_STATES
+                                for status in package_statuses
+                            )
+                        )
+                        or (
+                            not current_package_tasks
+                            and bool(package_statuses)
+                            and all(
+                                status in {"done", "cancelled"}
+                                for status in package_statuses
+                            )
+                        )
+                    )
+                )
+            )
+        )
+        valid_execution_package = (
+            router_complete
+            and package_component_complete
+            and package_direct_spec_links
+            and package_reciprocal
+            and package_state_matches
+        )
+        valid_execution = valid_execution_pair or valid_execution_package
         valid_ready_state = relation == dependency_ready and (
-            not component or valid_execution_pair
+            not component or valid_execution
         )
         valid_blocked_state = relation != dependency_ready and (
             not component
             or (
                 not isinstance(relation, ProgramFollowUp)
                 and relation.state == "draft"
-                and valid_execution_pair
+                and valid_execution
             )
         )
         if valid_ready_state or valid_blocked_state:
@@ -7312,14 +7714,23 @@ def _ledger_diagnostics(context: Context) -> list[Diagnostic]:
             | {path.as_posix() for path in context.paths}
             | archived_original_paths
         )
+        wp004b_targets = (
+            _work054_wp004b_targets(context)
+            if context.route_state == "transition"
+            else {}
+        )
+        work105_targets = {
+            source: wp004b_targets.get(target, target)
+            for source, target in WORK105_LEDGER_PATH_ALIASES.items()
+        }
         if all(
             target in context.tracked_regular_paths
             and _path_exists_without_dereference(
                 context.root, target, context.adapter_targets
             )
-            for target in WORK105_LEDGER_PATH_ALIASES.values()
+            for target in work105_targets.values()
         ):
-            known_paths |= {source.as_posix() for source in WORK105_LEDGER_PATH_ALIASES}
+            known_paths |= {source.as_posix() for source in work105_targets}
         if not any(
             profile.profile_id == "sdlc/api-spec"
             for profile in context.profiles.values()
@@ -7370,6 +7781,14 @@ def _ledger_diagnostics(context: Context) -> list[Diagnostic]:
                 for target in work109_targets.values()
             ):
                 known_paths |= {source.as_posix() for source in work109_targets}
+            if all(
+                target in context.tracked_regular_paths
+                and _path_exists_without_dereference(
+                    context.root, target, context.adapter_targets
+                )
+                for target in wp004b_targets.values()
+            ):
+                known_paths |= {source.as_posix() for source in wp004b_targets}
         stable_archive_aliases = _work107_stable_archive_aliases(context)
         if stable_archive_aliases and all(
             target in context.tracked_regular_paths
@@ -10678,14 +11097,17 @@ def _mutated_body_contract_context(context: Context, mutation: str) -> Context:
 
         _translations = (
             ("../../03.specs/0999-fixture/spec.md", "spec.md"),
-            ("../tasks/2026-07-15-fixture.md", "tasks.md"),
+            (
+                "../tasks/2026-07-15-fixture.md",
+                "tasks/tsk-0001-fixture.md",
+            ),
             (
                 "../../04.execution/tasks/2026-07-15-fixture.md",
-                "../../../../03.specs/0999-fixture/tasks.md",
+                "../../../../03.specs/0999-fixture/tasks/tsk-0001-fixture.md",
             ),
             (
                 "../04.execution/tasks/2026-07-15-fixture.md",
-                "../03.specs/0999-fixture/tasks.md",
+                "../03.specs/0999-fixture/tasks/tsk-0001-fixture.md",
             ),
         )
 
@@ -10758,8 +11180,8 @@ def _mutated_body_contract_context(context: Context, mutation: str) -> Context:
             "N/A",
             1,
         )
-    elif mutation == "done-status":
-        mutated.metadata[prd]["status"] = "done"
+    elif mutation == "superseded-status":
+        mutated.metadata[prd]["status"] = "superseded"
         mutated.texts[prd] = mutated.texts[prd].replace(
             "../03.specs/0999-fixture/spec.md",
             "../04.execution/tasks/2026-07-15-fixture.md",
@@ -12564,8 +12986,17 @@ def _self_test(root: Path) -> list[str]:
         )
 
     post_smdv_context = copy.deepcopy(production_context)
-    adm_closure_valid = True
-    for path in ADM_CLOSURE_PATHS:
+    adm_tasks, _, adm_router_complete = _program_package_task_projection(
+        production_context,
+        ADM_CLOSURE_OWNER_PATHS[0],
+    )
+    adm_closure_valid = adm_router_complete and all(
+        production_context.metadata[path].get("status") == "done"
+        and not _owner_candidate(production_context, path)
+        and not owner_keys.get(path)
+        for path in adm_tasks
+    )
+    for path in ADM_CLOSURE_OWNER_PATHS:
         if (
             path not in production_context.metadata
             or production_context.metadata[path].get("status") != "done"
@@ -12575,9 +13006,11 @@ def _self_test(root: Path) -> list[str]:
             adm_closure_valid = False
             break
         post_smdv_context.metadata[path]["status"] = "active"
+    for path in adm_tasks:
+        post_smdv_context.metadata[path]["status"] = "in-progress"
     if not adm_closure_valid:
         failures.append(
-            "ADM closure paths must be the exact done-status owner exclusions"
+            "ADM closure package must expose exact done owners and routed Tasks"
         )
     else:
         post_smdv_keys, post_smdv_diagnostics = _owner_state(post_smdv_context)
@@ -12589,18 +13022,29 @@ def _self_test(root: Path) -> list[str]:
         post_smdv_unique_keys = {key for key in post_smdv_keys.values() if key}
         if (
             post_smdv_diagnostics
-            or adm_transitioned_paths != set(ADM_CLOSURE_PATHS)
-            or any(not post_smdv_keys.get(path) for path in ADM_CLOSURE_PATHS)
+            or adm_transitioned_paths != set(ADM_CLOSURE_OWNER_PATHS)
+            or any(
+                not post_smdv_keys.get(path) for path in ADM_CLOSURE_OWNER_PATHS
+            )
             or len(post_smdv_unique_keys) - len(current_unique_keys)
-            != len(ADM_CLOSURE_PATHS)
+            != len(ADM_CLOSURE_OWNER_PATHS)
         ):
             failures.append(
-                "ADM done-to-active transition must change only its three paths "
-                "and add three non-empty unique owner keys"
+                "ADM done-to-current transition must change only its Spec/Plan "
+                "owners and add their non-empty unique owner keys"
             )
         pre_smdv_context = copy.deepcopy(post_smdv_context)
-        smdv_closure_valid = True
-        for path in SMDV_CLOSURE_PATHS:
+        smdv_tasks, _, smdv_router_complete = _program_package_task_projection(
+            post_smdv_context,
+            SMDV_CLOSURE_OWNER_PATHS[0],
+        )
+        smdv_closure_valid = smdv_router_complete and all(
+            post_smdv_context.metadata[path].get("status") == "done"
+            and not _owner_candidate(post_smdv_context, path)
+            and not post_smdv_keys.get(path)
+            for path in smdv_tasks
+        )
+        for path in SMDV_CLOSURE_OWNER_PATHS:
             if (
                 path not in post_smdv_context.metadata
                 or post_smdv_context.metadata[path].get("status") != "done"
@@ -12610,9 +13054,11 @@ def _self_test(root: Path) -> list[str]:
                 smdv_closure_valid = False
                 break
             pre_smdv_context.metadata[path]["status"] = "active"
+        for path in smdv_tasks:
+            pre_smdv_context.metadata[path]["status"] = "in-progress"
         if not smdv_closure_valid:
             failures.append(
-                "SMDV closure paths must be the exact done-status owner exclusions"
+                "SMDV closure package must expose exact done owners and routed Tasks"
             )
         else:
             pre_smdv_keys, pre_smdv_diagnostics = _owner_state(pre_smdv_context)
@@ -12624,14 +13070,17 @@ def _self_test(root: Path) -> list[str]:
             pre_smdv_unique_keys = {key for key in pre_smdv_keys.values() if key}
             if (
                 pre_smdv_diagnostics
-                or smdv_transitioned_paths != set(SMDV_CLOSURE_PATHS)
-                or any(not pre_smdv_keys.get(path) for path in SMDV_CLOSURE_PATHS)
+                or smdv_transitioned_paths != set(SMDV_CLOSURE_OWNER_PATHS)
+                or any(
+                    not pre_smdv_keys.get(path)
+                    for path in SMDV_CLOSURE_OWNER_PATHS
+                )
                 or len(pre_smdv_unique_keys) - len(post_smdv_unique_keys)
-                != len(SMDV_CLOSURE_PATHS)
+                != len(SMDV_CLOSURE_OWNER_PATHS)
             ):
                 failures.append(
-                    "SMDV done-to-active transition must change only its three "
-                    "paths and add three non-empty unique owner keys"
+                    "SMDV done-to-current transition must change only its Spec/Plan "
+                    "owners and add their non-empty unique owner keys"
                 )
     return failures
 

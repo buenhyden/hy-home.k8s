@@ -661,7 +661,11 @@ class DocumentStrictCutoverTests(unittest.TestCase):
         )
         for path, profile_id in (
             ("docs/03.specs/0052-document-taxonomy-consolidation/plan.md", "sdlc/plan"),
-            ("docs/03.specs/0052-document-taxonomy-consolidation/tasks.md", "sdlc/task"),
+            (
+                "docs/03.specs/0052-document-taxonomy-consolidation/"
+                "tasks/tsk-0001-work-100.md",
+                "sdlc/task",
+            ),
         ):
             with self.subTest(path=path):
                 self.assertEqual(
@@ -759,6 +763,19 @@ class DocumentStrictCutoverTests(unittest.TestCase):
             if expected != base_bytes:
                 changed_paths.add(path)
                 normalized_occurrences += spec_count + prd_count
+            expected = re.sub(
+                rb"(\]\((?:\.\./)+02\.architecture/descriptions/)ad-"
+                rb"((?:000[4-9]|001[01])-[^)]+\.md\))",
+                rb"\g<1>\g<2>",
+                expected,
+            )
+            expected = re.sub(
+                rb"(\]\((?:\.\./)+03\.specs/"
+                rb"(?:0004-argo-rollouts-progressive-delivery|"
+                rb"0005-argo-notifications-slack))/tasks\.md(?:#[^)]*)?\)",
+                rb"\g<1>/README.md)",
+                expected,
+            )
             with self.subTest(path=path):
                 _assert_staged_and_worktree_bytes(
                     REPOSITORY_ROOT / path, expected
@@ -805,10 +822,10 @@ class DocumentStrictCutoverTests(unittest.TestCase):
         validator = self.validators["registry"]
         registry = validator.load_registry(REPOSITORY_ROOT)
         valid = {
-            "docs/01.requirements/0008-workspace-document-taxonomy-consolidation.md": "sdlc/prd",
+            "docs/01.requirements/0008-workspace-document-taxonomy-consolidation.md": "sdlc/requirement-package",
             "docs/03.specs/0052-document-taxonomy-consolidation/spec.md": "sdlc/spec",
             "docs/03.specs/0052-document-taxonomy-consolidation/plan.md": "sdlc/plan",
-            "docs/03.specs/0052-document-taxonomy-consolidation/tasks.md": "sdlc/task",
+            "docs/03.specs/0052-document-taxonomy-consolidation/tasks/tsk-0001-work-100.md": "sdlc/task",
             "docs/05.operations/incidents/2026/inc-0001-database-latency/incident.md": "sdlc/incident",
             "docs/05.operations/incidents/2026/inc-0001-database-latency/postmortem.md": "sdlc/postmortem",
         }
@@ -887,13 +904,15 @@ class DocumentStrictCutoverTests(unittest.TestCase):
             "114": "WORK-054-013",
             "115": "WORK-054-014",
         }
-        for leaf in ("plan.md", "tasks.md"):
-            text = _staged_bytes(
-                REPOSITORY_ROOT
-                / "docs/03.specs/0052-document-taxonomy-consolidation"
-                / leaf
-            ).decode("utf-8")
-            for legacy, successor in transferred.items():
+        package = REPOSITORY_ROOT / "docs/03.specs/0052-document-taxonomy-consolidation"
+        plan_text = _staged_bytes(package / "plan.md").decode("utf-8")
+        for legacy, successor in transferred.items():
+            sequence = int(legacy) - 98
+            task_path = package / "tasks" / f"tsk-{sequence:04d}-work-{legacy}.md"
+            for leaf, text in (
+                ("plan.md", plan_text),
+                (task_path.name, _staged_bytes(task_path).decode("utf-8")),
+            ):
                 with self.subTest(leaf=leaf, legacy=legacy):
                     row = next(
                         line
@@ -975,6 +994,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
                     )
 
     def test_work109_mig0002_exact_atomic_coverage(self) -> None:
+        validator = self.validators["registry"]
         ledger_path = (
             REPOSITORY_ROOT
             / "docs/98.archive/migrations/"
@@ -1054,6 +1074,9 @@ class DocumentStrictCutoverTests(unittest.TestCase):
         )
 
         staged = _staged_blob_inventory("docs")
+        wp004b_current_targets = validator._work054_wp004b_current_targets(
+            REPOSITORY_ROOT
+        )
         required_fields = {
             "legacy_path",
             "stable_path",
@@ -1086,8 +1109,11 @@ class DocumentStrictCutoverTests(unittest.TestCase):
                     self.assertEqual(row["stable_path"], target)
                     self.assertEqual(row["action"], "moved")
                     self.assertIsNone(row["replacement"])
-                    self.assertIn(target, staged)
-                    target_text = _staged_bytes(REPOSITORY_ROOT / target).decode(
+                    current_target = wp004b_current_targets.get(target, target)
+                    self.assertIn(current_target, staged)
+                    if target in wp004b_current_targets:
+                        continue
+                    target_text = _staged_bytes(REPOSITORY_ROOT / current_target).decode(
                         "utf-8"
                     )
                     identity = re.search(
@@ -1139,7 +1165,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
         self.assertTrue(
             all(
                 re.fullmatch(
-                    r"docs/03\.specs/[0-9]{4}-[^/]+/(?:plan|tasks)\.md",
+                    r"docs/03\.specs/[0-9]{4}-[^/]+/(?:plan|README)\.md",
                     row["target"],
                 )
                 and re.fullmatch(r"Spec-[0-9]{4}", row["workUnit"])
@@ -1244,13 +1270,17 @@ class DocumentStrictCutoverTests(unittest.TestCase):
         document = tool.load_manifest_document(
             REPOSITORY_ROOT / "scripts/document-taxonomy-migration.json"
         )
-        staged = _staged_bytes(
-            REPOSITORY_ROOT / validator.WORK109_MIGRATION_LEDGER_PATH
-        )
+        staged = {
+            path.as_posix(): _staged_bytes(REPOSITORY_ROOT / path)
+            for path in (
+                validator.WORK109_MIGRATION_LEDGER_PATH,
+                validator.WORK054_WP004B_MIGRATION_LEDGER_PATH,
+            )
+        }
         with mock.patch.object(
             validator,
             "read_staged_blob_bounded",
-            return_value=staged,
+            side_effect=lambda _root, path, **_kwargs: staged[path],
         ) as reader:
             projection = validator._work109_transition_manifest_projection(
                 REPOSITORY_ROOT,
@@ -1258,10 +1288,19 @@ class DocumentStrictCutoverTests(unittest.TestCase):
                 route_state="transition",
             )
         self.assertEqual(len(projection), 132)
-        reader.assert_called_once_with(
-            REPOSITORY_ROOT.resolve(),
-            validator.WORK109_MIGRATION_LEDGER_PATH.as_posix(),
-            max_bytes=validator.MIGRATION_DOCUMENT_MAX_BYTES,
+        self.assertEqual(
+            reader.call_args_list,
+            [
+                mock.call(
+                    REPOSITORY_ROOT.resolve(),
+                    path.as_posix(),
+                    max_bytes=validator.MIGRATION_DOCUMENT_MAX_BYTES,
+                )
+                for path in (
+                    validator.WORK109_MIGRATION_LEDGER_PATH,
+                    validator.WORK054_WP004B_MIGRATION_LEDGER_PATH,
+                )
+            ],
         )
 
     def test_work109_stage04_readme_retirement_profiles_are_exact(self) -> None:
@@ -1289,48 +1328,20 @@ class DocumentStrictCutoverTests(unittest.TestCase):
             if row["retiredBy"] == "WORK-054-002"
         }
         self.assertEqual(actual, expected)
-        validator._assert_readme_family_contract(
-            REPOSITORY_ROOT,
-            registry,
-            fixture=fixture,
+        routers = sorted(
+            (REPOSITORY_ROOT / "docs/03.specs").glob(
+                "[0-9][0-9][0-9][0-9]-*/README.md"
+            )
         )
-
-        mutations: dict[str, dict[str, object]] = {}
-        wrong_destination = json.loads(json.dumps(fixture))
-        next(
-            row
-            for row in wrong_destination["retiredPaths"]
-            if row["path"] == "docs/04.execution/plans/README.md"
-        )["destination"] = "docs/03.specs/README.md"
-        mutations["wrong destination"] = wrong_destination
-
-        wrong_owner = json.loads(json.dumps(fixture))
-        next(
-            row
-            for row in wrong_owner["retiredPaths"]
-            if row["path"] == "docs/04.execution/tasks/README.md"
-        )["retiredBy"] = "WORK-109"
-        mutations["wrong owner"] = wrong_owner
-
-        extra_owner = json.loads(json.dumps(fixture))
-        next(
-            row
-            for row in extra_owner["retiredPaths"]
-            if row["retiredBy"] == "ADM-006"
-        )["retiredBy"] = "WORK-054-002"
-        mutations["extra path"] = extra_owner
-
-        for label, mutated in mutations.items():
-            with self.subTest(label=label):
-                with self.assertRaisesRegex(
-                    AssertionError,
-                    "WORK-054-002 retired README historical projection differs",
-                ):
-                    validator._assert_readme_family_contract(
-                        REPOSITORY_ROOT,
-                        registry,
-                        fixture=mutated,
-                    )
+        self.assertEqual(len(routers), 57)
+        for router in routers:
+            relative = router.relative_to(REPOSITORY_ROOT)
+            with self.subTest(path=relative.as_posix()):
+                self.assertEqual(
+                    validator.classify_path(registry, relative).profile_id,
+                    "readme/collection-index",
+                )
+                self.assertFalse(_staged_bytes(router).startswith(b"---\n"))
 
     def test_compatibility_mode_is_rejected_by_argparse(self) -> None:
         for name in VALIDATOR_PATHS:
@@ -1442,14 +1453,14 @@ class DocumentStrictCutoverTests(unittest.TestCase):
         )
         expected_paths = {
             "docs/02.architecture/descriptions/"
-            f"ad-{identifier}-{slug}.md"
+            f"{identifier}-{slug}.md"
             for identifier, slug, _ in EXPECTED_AD_CORPUS
         }
         actual_paths = {
             path
             for path in architecture_inventory
             if re.fullmatch(
-                r"docs/02\.architecture/descriptions/ad-[0-9]{4}-[^/]+\.md",
+                r"docs/02\.architecture/descriptions/[0-9]{4}-[^/]+\.md",
                 path,
             )
         }
@@ -1457,7 +1468,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
         for identifier, slug, status in EXPECTED_AD_CORPUS:
             relative = (
                 "docs/02.architecture/descriptions/"
-                f"ad-{identifier}-{slug}.md"
+                f"{identifier}-{slug}.md"
             )
             text = _staged_bytes(REPOSITORY_ROOT / relative).decode("utf-8")
             with self.subTest(path=relative):
@@ -1567,10 +1578,11 @@ class DocumentStrictCutoverTests(unittest.TestCase):
             REPOSITORY_ROOT
             / "docs/02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md"
         ).decode("utf-8")
-        self.assertIn("status: accepted\n", adr0024)
+        self.assertIn("status: superseded\n", adr0024)
+        self.assertIn("superseded_by: ADR-0030\n", adr0024)
         ad0011 = _staged_bytes(
             REPOSITORY_ROOT
-            / "docs/02.architecture/descriptions/ad-0011-document-taxonomy-consolidation-architecture.md"
+            / "docs/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md"
         ).decode("utf-8")
         self.assertIn("93-row", ad0011)
         self.assertIn("payload", ad0011)
@@ -1690,6 +1702,34 @@ class DocumentStrictCutoverTests(unittest.TestCase):
                 ],
                 {"live": 1, "unclassified": 0},
             )
+
+    def test_work105_admits_only_the_exact_closure_implementation_alias(self) -> None:
+        validator = self.validators["registry"]
+        path = "scripts/validate-agent-governance-closure.py"
+        exact = (
+            '            "docs/02.architecture/'
+            'requirements/0006-workspace-agent-governance-platform.md"'
+        )
+        self.assertTrue(
+            validator._work054_wp004b_historical_ard_line(
+                REPOSITORY_ROOT,
+                path,
+                exact,
+            )
+        )
+        for wrong_path, wrong_line in (
+            ("scripts/other.py", exact),
+            (path, exact.replace("0006", "0007")),
+            (path, exact + "  # broad fallback"),
+        ):
+            with self.subTest(path=wrong_path, line=wrong_line):
+                self.assertFalse(
+                    validator._work054_wp004b_historical_ard_line(
+                        REPOSITORY_ROOT,
+                        wrong_path,
+                        wrong_line,
+                    )
+                )
 
     def test_work105_staged_blob_reader_is_streamed_bounded_and_redacted(self) -> None:
         validator = self.validators["registry"]
@@ -2045,7 +2085,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
             REPOSITORY_ROOT
             / "docs/02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md"
         ).decode("utf-8")
-        self.assertIn("legacy ARD consumers", prd)
+        self.assertNotIn("legacy ARD consumers", prd)
         self.assertIn("unconverted current ARD", spec)
         self.assertIn("Source ARD", adr)
         self.assertIn("Terminal AD", adr)
@@ -2083,7 +2123,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
             _staged_bytes(surfaces[0]).decode("utf-8"),
         )
 
-    def test_work105_completed_spec019_history_is_byte_exact(self) -> None:
+    def test_work105_spec0019_history_is_bounded_during_authority_convergence(self) -> None:
         validator = self.validators["registry"]
         for relative in (
             "docs/03.specs/0019-template-path-numbering-contract/spec.md",
@@ -2091,7 +2131,8 @@ class DocumentStrictCutoverTests(unittest.TestCase):
         ):
             path = REPOSITORY_ROOT / relative
             with self.subTest(path=relative):
-                self.assertEqual(
+                self.assertIn(relative, validator.WORK105_PINNED_LEGACY_HISTORY_PATHS)
+                self.assertNotEqual(
                     validator._work108_without_outer_artifact_id(
                         relative, _staged_bytes(path)
                     ),
@@ -2101,7 +2142,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
     def test_work105_stage98_invariant_blocks_105_106_and_gates_107_plus(self) -> None:
         ad0011_path = (
             REPOSITORY_ROOT
-            / "docs/02.architecture/descriptions/ad-0011-document-taxonomy-consolidation-architecture.md"
+            / "docs/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md"
         )
         ad0011 = _staged_bytes(ad0011_path).decode("utf-8")
         self.assertIn("WORK-105 and WORK-106 change no Stage 98 path or byte", ad0011)
@@ -2194,6 +2235,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
             # WP-003 recorded the agent governance control-plane consolidation
             # as its own Stage 98 migration document.
             "docs/98.archive/migrations/mig-0003-agent-governance-control-plane-consolidation.md",
+            "docs/98.archive/migrations/0004-document-authority-convergence.md",
         }
         self.assertEqual(set(staged_inventory), expected_current)
         self.assertEqual(
@@ -2241,7 +2283,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
             "docs/01.requirements/ifc-09-bad.md",
             "docs/01.requirements/ifc-009-Bad.md",
             "docs/01.requirements/ifc-009-double--hyphen.md",
-            "docs/02.architecture/descriptions/ad-011-short.md",
+            "docs/02.architecture/descriptions/011-short.md",
             "docs/03.specs/52-short/spec.md",
             "docs/98.archive/changes/chg-0001-bad/nested/plan.md",
             "docs/98.archive/tombstones/02.architecture/tmb-ar" + "d-0011.md",
@@ -2253,7 +2295,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
         validator = self.validators["registry"]
         records = (
             ("docs/01.requirements/0008-program.md", {}),
-            ("docs/02.architecture/descriptions/ad-0011-program.md", {"artifact_id": "AD-0011"}),
+            ("docs/02.architecture/descriptions/0011-program.md", {"artifact_id": "AD-0011"}),
             (
                 "docs/90.references/current.md",
                 {"original_artifact_id": "AR" + "D-0011"},
@@ -2266,9 +2308,9 @@ class DocumentStrictCutoverTests(unittest.TestCase):
         )
 
         mutations = (
-            (("docs/01.requirements/0008-program.md", {"artifact_id": "PRD-0009"}), "ARTIFACT-ID-PATH"),
-            (("docs/90.references/current.md", {"artifact_id": "PRD-0008"}), "ARTIFACT-ID-PROHIBITED"),
-            (("docs/01.requirements/0009-second.md", {"artifact_id": "PRD-0008"}), "ARTIFACT-ID-PATH"),
+            (("docs/01.requirements/0008-program.md", {"artifact_id": "REQ-0009"}), "ARTIFACT-ID-PATH"),
+            (("docs/90.references/current.md", {"artifact_id": "REQ-0008"}), "ARTIFACT-ID-PROHIBITED"),
+            (("docs/01.requirements/0009-second.md", {"artifact_id": "REQ-0008"}), "ARTIFACT-ID-PATH"),
         )
         for record, expected in mutations:
             with self.subTest(expected=expected):
@@ -2278,8 +2320,8 @@ class DocumentStrictCutoverTests(unittest.TestCase):
                 self.assertTrue(any(item.startswith(expected) for item in diagnostics))
 
         duplicate = (
-            ("docs/01.requirements/0008-program.md", {"artifact_id": "PRD-0008"}),
-            ("docs/01.requirements/0008-alias.md", {"artifact_id": "PRD-0008"}),
+            ("docs/01.requirements/0008-program.md", {"artifact_id": "REQ-0008"}),
+            ("docs/01.requirements/0008-alias.md", {"artifact_id": "REQ-0008"}),
         )
         self.assertTrue(
             any(
@@ -2364,19 +2406,28 @@ class DocumentStrictCutoverTests(unittest.TestCase):
             },
         )
         for source_id in validator.WORK108_MANDATORY_PROFILE_IDS:
-            template_id = f"template/{source_id}"
             with self.subTest(source_id=source_id):
                 self.assertIn("artifact_id", profiles[source_id]["requiredFrontmatter"]["allowed"])
                 self.assertIn("artifact_id", profiles[source_id]["requiredFrontmatter"]["order"])
-                self.assertNotIn(
-                    "artifact_id", profiles[template_id]["requiredFrontmatter"]["required"]
+                template_ids = (
+                    (
+                        "template/sdlc/prd",
+                        "template/sdlc/srs",
+                        "template/sdlc/interface",
+                    )
+                    if source_id == "sdlc/requirement-package"
+                    else (f"template/{source_id}",)
                 )
-                self.assertNotIn(
-                    "artifact_id", profiles[template_id]["requiredFrontmatter"]["allowed"]
-                )
-                self.assertNotIn(
-                    "artifact_id", profiles[template_id]["requiredFrontmatter"]["order"]
-                )
+                for template_id in template_ids:
+                    self.assertNotIn(
+                        "artifact_id", profiles[template_id]["requiredFrontmatter"]["required"]
+                    )
+                    self.assertNotIn(
+                        "artifact_id", profiles[template_id]["requiredFrontmatter"]["allowed"]
+                    )
+                    self.assertNotIn(
+                        "artifact_id", profiles[template_id]["requiredFrontmatter"]["order"]
+                    )
         records = tuple(
             (path, validator._work106_frontmatter(raw))
             for path, raw in validator._work105_staged_blobs(REPOSITORY_ROOT)
@@ -2475,6 +2526,476 @@ class DocumentStrictCutoverTests(unittest.TestCase):
         wrong[-1]["stable_path"] = wrong[-2]["stable_path"]
         diagnostics = validator._work106_ledger_diagnostics(tuple(wrong), current=True)
         self.assertTrue(any(item.startswith("LEDGER-STABLE-PATH-DUPLICATE") for item in diagnostics))
+
+
+class Wp004bCorpusCutoverTests(unittest.TestCase):
+    """Independent terminal-corpus assertions for WP-004B."""
+
+    TASK_COUNTS = {
+        "0004": 5, "0005": 5, "0009": 6, "0010": 6, "0011": 7,
+        "0012": 6, "0013": 5, "0014": 6, "0015": 5, "0016": 5,
+        "0017": 8, "0018": 7, "0019": 5, "0020": 5, "0021": 4,
+        "0022": 6, "0023": 5, "0024": 4, "0025": 6, "0026": 5,
+        "0027": 6, "0028": 6, "0029": 4, "0030": 8, "0037": 6,
+        "0038": 8, "0039": 7, "0040": 5, "0041": 6, "0042": 6,
+        "0043": 5, "0044": 6, "0045": 7, "0046": 6, "0047": 6,
+        "0048": 6, "0049": 7, "0050": 7, "0051": 6, "0052": 17,
+        "0053": 11, "0055": 15, "0056": 6, "0057": 8, "0058": 8,
+        "0059": 13, "0060": 4, "0061": 4,
+    }
+
+    @staticmethod
+    def _metadata(path: Path) -> dict[str, object]:
+        text = path.read_text(encoding="utf-8")
+        match = re.match(r"\A---\n(.*?)\n---\n", text, re.DOTALL)
+        if match is None:
+            raise AssertionError(f"missing frontmatter: {path}")
+        metadata: dict[str, object] = {}
+        for line in match.group(1).splitlines():
+            key, separator, value = line.partition(":")
+            if separator:
+                metadata[key] = value.strip().strip("\"'")
+        return metadata
+
+    def test_requirement_packages_use_complete_unique_member_ids(self) -> None:
+        requirements = sorted((REPOSITORY_ROOT / "docs/01.requirements").glob("[0-9][0-9][0-9][0-9]-*.md"))
+        self.assertEqual(len(requirements), 8)
+        all_members: list[str] = []
+        expected_counts = (
+            (3, 0, 3), (3, 1, 2), (11, 2, 2), (4, 2, 1),
+            (10, 2, 0), (11, 2, 0), (10, 2, 0), (16, 6, 0),
+        )
+        for sequence, (path, counts) in enumerate(zip(requirements, expected_counts), 1):
+            package = f"REQ-{sequence:04d}"
+            metadata = self._metadata(path)
+            self.assertEqual(metadata.get("type"), "sdlc/requirement-package")
+            self.assertEqual(metadata.get("artifact_id"), package)
+            text = path.read_text(encoding="utf-8")
+            self.assertNotIn("REQ-PRD-MET-", text)
+            normative = text.split("## Success", 1)[0]
+            self.assertNotRegex(normative, r"\bACC-[A-Z0-9-]+\b")
+            members = re.findall(rf"\b{package}-(FR|NFR|IF)-([0-9]{{4}})\b", text)
+            for family, expected in zip(("FR", "NFR", "IF"), counts):
+                numbers = list(dict.fromkeys(number for actual, number in members if actual == family))
+                self.assertEqual(numbers, [f"{number:04d}" for number in range(1, expected + 1)])
+            all_members.extend(dict.fromkeys(f"{package}-{family}-{number}" for family, number in members))
+        self.assertEqual(len(all_members), 93)
+        self.assertEqual(len(all_members), len(set(all_members)))
+
+    def test_requirement_supersession_is_reciprocal_and_done_is_absent(self) -> None:
+        paths = sorted((REPOSITORY_ROOT / "docs/01.requirements").glob("[0-9][0-9][0-9][0-9]-*.md"))
+        metadata = {path.name[:4]: self._metadata(path) for path in paths}
+        self.assertEqual(metadata["0005"].get("status"), "superseded")
+        self.assertEqual(metadata["0005"].get("superseded_by"), "REQ-0008")
+        self.assertEqual(metadata["0006"].get("status"), "superseded")
+        self.assertEqual(metadata["0006"].get("superseded_by"), "REQ-0008")
+        self.assertEqual(metadata["0008"].get("status"), "active")
+        self.assertEqual(metadata["0008"].get("supersedes"), "[REQ-0005, REQ-0006]")
+        self.assertNotIn("done", {item.get("status") for item in metadata.values()})
+        for identifier in ("0005", "0006"):
+            text = paths[int(identifier) - 1].read_text(encoding="utf-8")
+            self.assertEqual(text.count("superseded_by:"), 1)
+        self.assertEqual(paths[7].read_text(encoding="utf-8").count("supersedes:"), 1)
+
+    def test_only_three_legacy_requirement_templates_are_transitionally_admitted(self) -> None:
+        registry = json.loads(
+            (REPOSITORY_ROOT / "docs/99.templates/registry.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        transitional = {
+            profile["id"]
+            for profile in registry["profiles"]
+            if profile["mode"] == "template"
+            and profile["relationships"]["sourceProfileIds"]
+            == ["sdlc/requirement-package"]
+        }
+        self.assertEqual(
+            transitional,
+            {"template/sdlc/prd", "template/sdlc/srs", "template/sdlc/interface"},
+        )
+
+    def test_architecture_paths_and_adr0030_relations_are_terminal(self) -> None:
+        descriptions = REPOSITORY_ROOT / "docs/02.architecture/descriptions"
+        self.assertEqual(list(descriptions.glob("ad-[0-9][0-9][0-9][0-9]-*.md")), [])
+        self.assertEqual(len(list(descriptions.glob("[0-9][0-9][0-9][0-9]-*.md"))), 8)
+        decision_root = REPOSITORY_ROOT / "docs/02.architecture/decisions"
+        predecessor_ids = ("0015", "0018", "0019", "0023", "0024", "0025")
+        successor = self._metadata(next(decision_root.glob("0030-*.md")))
+        self.assertEqual(successor.get("supersedes"), "[ADR-0015, ADR-0018, ADR-0019, ADR-0023, ADR-0024, ADR-0025]")
+        for identifier in predecessor_ids:
+            metadata = self._metadata(next(decision_root.glob(f"{identifier}-*.md")))
+            self.assertEqual(metadata.get("status"), "superseded")
+            self.assertEqual(metadata.get("superseded_by"), "ADR-0030")
+
+    def test_spec_packages_have_thin_routers_and_exact_task_union(self) -> None:
+        packages = sorted(path for path in (REPOSITORY_ROOT / "docs/03.specs").iterdir() if path.is_dir())
+        self.assertEqual(len(packages), 57)
+        task_ids: list[str] = []
+        task_paths: list[str] = []
+        for package in packages:
+            router = package / "README.md"
+            self.assertTrue(router.is_file(), package.name)
+            self.assertFalse(router.read_text(encoding="utf-8").startswith("---\n"))
+            self.assertFalse((package / "agent-design.md").exists(), package.name)
+            spec_number = package.name[:4]
+            if spec_number == "0054":
+                self.assertTrue((package / "tasks.md").is_file())
+                continue
+            self.assertFalse((package / "tasks.md").exists(), package.name)
+            records = sorted((package / "tasks").glob("tsk-[0-9][0-9][0-9][0-9]-*.md")) if (package / "tasks").is_dir() else []
+            self.assertEqual(len(records), self.TASK_COUNTS.get(spec_number, 0), package.name)
+            for sequence, record in enumerate(records, 1):
+                expected_id = f"TSK-{spec_number}-{sequence:04d}"
+                self.assertEqual(record.name[4:8], f"{sequence:04d}")
+                self.assertEqual(self._metadata(record).get("artifact_id"), expected_id)
+                record_text = record.read_text(encoding="utf-8")
+                self.assertLess(len(record_text.encode("utf-8")), 12_000)
+                self.assertNotIn("**Forbidden Paths**", record_text)
+                self.assertIn("Legacy Task approval and rollback boundaries", (package / "plan.md").read_text(encoding="utf-8"))
+                task_ids.append(expected_id)
+                task_paths.append(record.relative_to(REPOSITORY_ROOT).as_posix())
+        self.assertEqual(len(task_ids), 315)
+        self.assertEqual(len(task_ids), len(set(task_ids)))
+        self.assertEqual(len(task_paths), len(set(task_paths)))
+
+    def test_generated_task_links_resolve_from_the_task_record_depth(self) -> None:
+        links = load_validator("wp004b_task_links", VALIDATOR_PATHS["links"])
+        records = sorted(
+            (REPOSITORY_ROOT / "docs/03.specs").glob(
+                "[0-9][0-9][0-9][0-9]-*/tasks/tsk-*.md"
+            )
+        )
+        self.assertEqual(len(records), 315)
+        missing: list[tuple[str, str, str]] = []
+        for record in records:
+            relative = record.relative_to(REPOSITORY_ROOT).as_posix()
+            for link in links.rendered_local_links(
+                record.read_text(encoding="utf-8"), relative
+            ):
+                if (
+                    link.kind == "local"
+                    and link.target is not None
+                    and not (REPOSITORY_ROOT / link.target).exists()
+                ):
+                    missing.append((relative, link.raw_target, link.target.as_posix()))
+        self.assertEqual(missing, [])
+
+    def test_spec0052_plan_traceability_targets_current_task_records(self) -> None:
+        plan = (
+            REPOSITORY_ROOT
+            / "docs/03.specs/0052-document-taxonomy-consolidation/plan.md"
+        ).read_text(encoding="utf-8")
+        table = plan.split("### Lifecycle Traceability\n", 1)[1].split(
+            "\n\n### Legacy Task traceability", 1
+        )[0]
+        rows = [line for line in table.splitlines() if line.startswith("| [VAL-")]
+        self.assertEqual(len(rows), 16)
+        self.assertNotIn("README.md#task-records", table)
+        expected = {
+            f"tasks/tsk-{(work - 99 if work < 104 else work - 98):04d}-work-{work:03d}.md"
+            for work in range(100, 116)
+        }
+        actual = set(re.findall(r"\]\((tasks/tsk-[^)]+\.md)\)", table))
+        self.assertTrue(expected.issubset(actual))
+
+    def test_pinned_work054_history_composes_the_exact_retired_template_route(self) -> None:
+        links = load_validator("wp004b_history_links", VALIDATOR_PATHS["links"])
+        context = links._build_context(REPOSITORY_ROOT, ())
+        _, move_targets, _ = links._document_taxonomy_transition_manifest(context)
+        edges = links._reviewed_work054_historical_owner_edges(context, move_targets)
+        source = PurePosixPath(
+            "docs/03.specs/0015-agent-governance-contract-normalization/spec.md"
+        )
+        retired = PurePosixPath("docs/99.templates/support/template-routing.md")
+        expected = PurePosixPath("docs/99.templates/support/document-contract.md")
+        self.assertEqual(edges[links.ArchiveTransitionEdge(source, retired)], expected)
+
+    def test_work105_post_state_admits_only_exact_mig0004_ard_history(self) -> None:
+        registry = load_validator("wp004b_registry_history", VALIDATOR_PATHS["registry"])
+        source = "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md"
+        line = next(
+            item
+            for item in (REPOSITORY_ROOT / source).read_text(encoding="utf-8").splitlines()
+            if "N/A — shared " + "AR" + "D 0006 source above" in item
+        )
+        self.assertTrue(
+            registry._work054_wp004b_historical_ard_line(
+                REPOSITORY_ROOT, source, line
+            )
+        )
+        for wrong_source, wrong_line in (
+            (
+                "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md",
+                line,
+            ),
+            (
+                "docs/98.archive/migrations/0004-document-authority-convergence.md",
+                line,
+            ),
+            (source, line.replace("AR" + "D 0006", "AR" + "D 9999")),
+            (
+                source,
+                "- **" + "AR" + "D**: [unreviewed](../descriptions/9999-unreviewed.md)",
+            ),
+        ):
+            with self.subTest(source=wrong_source, line=wrong_line):
+                self.assertFalse(
+                    registry._work054_wp004b_historical_ard_line(
+                        REPOSITORY_ROOT, wrong_source, wrong_line
+                    )
+                )
+
+    def test_spec0033_historical_exception_resolves_terminal_requirement_and_ad(self) -> None:
+        links = load_validator("wp004b_program_history", VALIDATOR_PATHS["links"])
+        context = links._build_context(REPOSITORY_ROOT, ())
+        self.assertEqual(
+            links._program_owner_path(context, "sdlc/prd", "0005"),
+            PurePosixPath(
+                "docs/01.requirements/0005-workspace-document-assurance-modernization.md"
+            ),
+        )
+        self.assertEqual(
+            links._program_owner_path(context, "sdlc/ad", "0008"),
+            PurePosixPath(
+                "docs/02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md"
+            ),
+        )
+        registry = links.load_registry(REPOSITORY_ROOT)
+        program = next(item for item in registry.program_lineage if item.prd_id == "0005")
+        follow_up = next(item for item in program.follow_ups if item.spec_id == "0033")
+        self.assertEqual(
+            links._historical_exception_diagnostics(context, program, follow_up), []
+        )
+        current_requirement = links._program_owner_path(context, "sdlc/prd", "0005")
+        self.assertIsNotNone(current_requirement)
+        missing_context = links.replace(
+            context,
+            paths=tuple(path for path in context.paths if path != current_requirement),
+            profiles={
+                path: value
+                for path, value in context.profiles.items()
+                if path != current_requirement
+            },
+            texts={
+                path: value
+                for path, value in context.texts.items()
+                if path != current_requirement
+            },
+            metadata={
+                path: value
+                for path, value in context.metadata.items()
+                if path != current_requirement
+            },
+            tracked_regular_paths=frozenset(
+                path
+                for path in context.tracked_regular_paths
+                if path != current_requirement
+            ),
+        )
+        with self.assertRaises(links.ConfigurationError):
+            links._historical_exception_diagnostics(
+                missing_context, program, follow_up
+            )
+        wrong_contracts = {
+            **links.PROGRAM_TRANSITION_OWNER_CONTRACTS,
+            "sdlc/prd": (
+                "sdlc/requirement-package",
+                re.compile(r"^docs/01\.requirements/9999-[^/]+\.md$"),
+            ),
+        }
+        with mock.patch.object(
+            links, "PROGRAM_TRANSITION_OWNER_CONTRACTS", wrong_contracts
+        ):
+            self.assertEqual(
+                links._program_owner_path(context, "sdlc/prd", "0005"), None
+            )
+            self.assertTrue(
+                links._historical_exception_diagnostics(context, program, follow_up)
+            )
+
+    def test_program_execution_gate_uses_exact_package_local_task_sets(self) -> None:
+        links = load_validator("wp004b_program_tasks", VALIDATOR_PATHS["links"])
+        context = links._build_context(REPOSITORY_ROOT, ())
+        gated_specs = {"0047", "0048", "0049", "0050", "0051", "0052"}
+        projections: dict[str, tuple[object, object, bool]] = {}
+        for spec_id in gated_specs:
+            spec = links._program_owner_path(context, "sdlc/spec", spec_id)
+            self.assertIsNotNone(spec)
+            projection = (
+                links._program_package_task_projection(context, spec)
+            )
+            projections[spec_id] = projection
+            package_tasks, current_tasks, router_complete = projection
+            self.assertTrue(router_complete, spec_id)
+            self.assertGreaterEqual(len(package_tasks), len(current_tasks))
+            if current_tasks:
+                self.assertTrue(
+                    all(
+                        links._program_status(context, task)
+                        in {"queued", "in-progress", "blocked"}
+                        for task in current_tasks
+                    )
+                )
+            else:
+                self.assertTrue(
+                    all(
+                        links._program_status(context, task) in {"done", "cancelled"}
+                        for task in package_tasks
+                    )
+                )
+
+        spec = links._program_owner_path(context, "sdlc/spec", "0047")
+        self.assertIsNotNone(spec)
+        package_tasks, _, _ = projections["0047"]
+        router = spec.parent / "README.md"
+        router_text = context.texts[router]
+        first_task = package_tasks[0]
+        first_target = f"tasks/{first_task.name}"
+        missing_text, count = re.subn(
+            rf"(?m)^.*\]\({re.escape(first_target)}\)\n", "", router_text, count=1
+        )
+        self.assertEqual(count, 1)
+        missing_context = links.replace(
+            context, texts={**context.texts, router: missing_text}
+        )
+        self.assertFalse(
+            links._program_package_task_projection(missing_context, spec)[2]
+        )
+        duplicate_context = links.replace(
+            context,
+            texts={
+                **context.texts,
+                router: router_text + f"\n- [duplicate]({first_target})\n",
+            },
+        )
+        self.assertFalse(
+            links._program_package_task_projection(duplicate_context, spec)[2]
+        )
+        foreign_task = projections["0048"][0][0]
+        foreign_target = f"../{foreign_task.parent.parent.name}/tasks/{foreign_task.name}"
+        foreign_context = links.replace(
+            context,
+            texts={
+                **context.texts,
+                router: router_text + f"\n- [foreign]({foreign_target})\n",
+            },
+        )
+        self.assertFalse(
+            links._program_package_task_projection(foreign_context, spec)[2]
+        )
+        wrong_metadata = {
+            **context.metadata,
+            first_task: {**context.metadata[first_task], "status": "active"},
+        }
+        wrong_state_context = links.replace(context, metadata=wrong_metadata)
+        self.assertFalse(
+            links._program_package_task_projection(wrong_state_context, spec)[2]
+        )
+        registry = links.load_registry(REPOSITORY_ROOT)
+        diagnostics = links._program_lineage_diagnostics(
+            context, registry.program_lineage, registry.standalone_executions
+        )
+        failures = [
+            item
+            for item in diagnostics
+            if item.rule_id == "PROGRAM-LINEAGE-EXECUTION-GATE"
+            and item.path.parts[2][:4] in gated_specs
+        ]
+        self.assertEqual(failures, [])
+
+    def test_terminal_task_lifecycle_is_exact_and_legacy_status_stays_row_owned(self) -> None:
+        registry = json.loads(
+            (REPOSITORY_ROOT / "docs/99.templates/registry.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        profiles = {profile["id"]: profile for profile in registry["profiles"]}
+        terminal_domain = ["queued", "in-progress", "blocked", "done", "cancelled"]
+        self.assertEqual(
+            profiles["sdlc/task"]["lifecycle"]["statusDomain"], terminal_domain
+        )
+        self.assertEqual(
+            profiles["template/sdlc/task"]["lifecycle"]["statusDomain"],
+            terminal_domain,
+        )
+
+        task_root = REPOSITORY_ROOT / "docs/03.specs"
+        records = sorted(task_root.glob("[0-9][0-9][0-9][0-9]-*/tasks/tsk-*.md"))
+        self.assertEqual(len(records), 315)
+        self.assertTrue(
+            all(self._metadata(record).get("status") in terminal_domain for record in records)
+        )
+        nonterminal: list[str] = []
+        for record in records:
+            record_text = record.read_text(encoding="utf-8")
+            task_table = record_text.split("## Task Table\n", 1)[1]
+            self.assertRegex(task_table, r"(?m)^\| [^\n]+ \|$")
+            if self._metadata(record).get("status") != "done":
+                match = re.search(
+                    r"### Lifecycle Traceability\n\n"
+                    r"\| Criterion / work item \| Result \| Evidence \|\n"
+                    r"\| --- \| --- \| --- \|\n"
+                    r"\| N/A — legacy work item `([^`]+)` \|",
+                    record_text,
+                )
+                self.assertIsNotNone(match, record)
+                nonterminal.append(match.group(1))
+        self.assertEqual(len(nonterminal), 34)
+        self.assertEqual(len(nonterminal), len(set(nonterminal)))
+
+    def test_spec0054_legacy_task_status_admission_is_one_exact_path_and_content(self) -> None:
+        markdown = load_validator(
+            "wp004b_markdown", VALIDATOR_PATHS["markdown"]
+        )
+        path = PurePosixPath(
+            "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks.md"
+        )
+        data = {
+            "type": "sdlc/task",
+            "status": "active",
+            "artifact_id": "TASK-0054",
+        }
+        self.assertTrue(markdown._is_work054_transitional_task_status(path, data))
+        self.assertFalse(
+            markdown._is_work054_transitional_task_status(
+                PurePosixPath("docs/03.specs/0053-example/tasks.md"), data
+            )
+        )
+        for key, value in (
+            ("type", "sdlc/plan"),
+            ("status", "draft"),
+            ("artifact_id", "TASK-9999"),
+        ):
+            changed = {**data, key: value}
+            self.assertFalse(markdown._is_work054_transitional_task_status(path, changed))
+
+    def test_mig0004_has_exact_unique_66_row_disposition(self) -> None:
+        migration = REPOSITORY_ROOT / "docs/98.archive/migrations/0004-document-authority-convergence.md"
+        self.assertTrue(migration.is_file())
+        self.assertEqual(self._metadata(migration).get("status"), "sealed")
+        text = migration.read_text(encoding="utf-8")
+        marker = "<!-- archive-migration-ledger:v1 format=json -->\n\n```json\n"
+        self.assertEqual(text.count(marker), 1)
+        rows = json.loads(text.split(marker, 1)[1].split("\n```", 1)[0])
+        self.assertEqual(len(rows), 66)
+        legacy_paths = [row["legacy_path"] for row in rows]
+        self.assertEqual(legacy_paths, sorted(legacy_paths))
+        self.assertEqual(len(legacy_paths), len(set(legacy_paths)))
+        task_rows = [row for row in rows if row["legacy_path"].endswith("/tasks.md")]
+        self.assertEqual(len(task_rows), 48)
+        self.assertTrue(all(row["action"] == "replaced" for row in task_rows))
+        self.assertTrue(all(row["stable_path"] is None and row["artifact_id"] is None for row in task_rows))
+
+    def test_current_sdlc_corpus_has_no_retired_execution_or_prefixed_ad_consumer(self) -> None:
+        for stage in ("01.requirements", "02.architecture", "03.specs"):
+            for path in (REPOSITORY_ROOT / "docs" / stage).rglob("*.md"):
+                text = path.read_text(encoding="utf-8")
+                self.assertNotIn("docs/04.execution/", text, path)
+                self.assertIsNone(
+                    re.search(r"(?:descriptions/|\()ad-(?:000[4-9]|001[01])-", text),
+                    path,
+                )
 
 
 if __name__ == "__main__":

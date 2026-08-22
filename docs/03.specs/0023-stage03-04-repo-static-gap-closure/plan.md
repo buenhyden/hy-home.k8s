@@ -47,9 +47,9 @@ operator-approved follow-up rows.
 
 Initial investigation found:
 
-- `docs/04.execution/plans/2026-07-04-workspace-engineering-research-pack.md`
+- `docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md`
   has `status: draft`.
-- `docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md`
+- `docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records`
   has `status: draft`, while its task table and phase checklist record
   WER-001 through WER-007 as complete.
 - Stage 04 README indexes match the current `Draft` frontmatter, so existing
@@ -58,6 +58,22 @@ Initial investigation found:
 - Runtime validation items in older active specs remain outside repo-static
   scope and need explicit operator approval.
 
+### Legacy Task ledger inputs
+
+This task record tracks repo-static closure work for Stage 03/04 implementation
+and evidence gaps. The first confirmed closure target is the Workspace
+Engineering Research Pack lifecycle drift: its execution evidence records all
+WER tasks as `Done`, while its Stage 04 plan/task frontmatter and README index
+rows still advertise `Draft`.
+
+This record also separates work that cannot be proven from repository-local
+files, such as live cluster validation, secret readiness, remote GitHub
+settings, or provider mutation.
+
+- **Parent Spec**: [../../03.specs/0023-stage03-04-repo-static-gap-closure/spec.md](spec.md)
+- **Parent Plan**: [../plans/2026-07-06-stage03-04-repo-static-gap-closure.md](plan.md)
+- **WER Plan**: [../plans/2026-07-04-workspace-engineering-research-pack.md](../0017-workspace-engineering-research-pack/plan.md)
+- **WER Task**: [./2026-07-04-workspace-engineering-research-pack.md](../0017-workspace-engineering-research-pack/README.md)
 ## Goals & In-Scope
 
 - **Goals**:
@@ -70,10 +86,10 @@ Initial investigation found:
   - Run and record final repository-static validation.
 - **In Scope**:
   - `docs/03.specs/0023-stage03-04-repo-static-gap-closure/spec.md`
-  - `docs/04.execution/plans/2026-07-06-stage03-04-repo-static-gap-closure.md`
-  - `docs/04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md`
-  - `docs/04.execution/plans/2026-07-04-workspace-engineering-research-pack.md`
-  - `docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md`
+  - `docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md`
+  - `docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records`
+  - `docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md`
+  - `docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records`
   - Stage 04 plan/task README indexes.
   - `docs/00.agent-governance/memory/progress.md`
 
@@ -111,8 +127,8 @@ Initial investigation found:
 
 **Files:**
 
-- Create: `docs/04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md`
-- Modify: `docs/04.execution/tasks/README.md`
+- Create: `docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records`
+- Modify: `docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
 - [ ] **Step 1: Confirm branch and working tree**
@@ -147,7 +163,7 @@ python3 - <<'PY'
 from pathlib import Path
 import re
 root = Path(".")
-for base in ["docs/03.specs", "docs/04.execution/plans", "docs/04.execution/tasks"]:
+for base in ["docs/03.specs", "docs/03.specs/plans", "docs/03.specs/tasks"]:
     print(f"## {base}")
     for path in sorted((root / base).rglob("*.md")):
         if path.name == "README.md":
@@ -169,8 +185,8 @@ Run:
 
 ```bash
 rg -n "status: draft|WER-00[1-7].*Done|\\[x\\] WER-|Completion Criteria|Final validation|Handoff" \
-  docs/04.execution/plans/2026-07-04-workspace-engineering-research-pack.md \
-  docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md
+  docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md \
+  docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records
 ```
 
 Expected: task rows and phase checkboxes show WER-001 through WER-007 are
@@ -178,7 +194,7 @@ complete while frontmatter remains `draft`.
 
 - [ ] **Step 5: Create the Stage 04 task record**
 
-Create `docs/04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md`
+Create `docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records`
 with frontmatter:
 
 ```yaml
@@ -217,7 +233,7 @@ Initial task rows:
 - [ ] **Step 6: Update the task README index**
 
 Add `2026-07-06-stage03-04-repo-static-gap-closure.md` to the structure block
-and document index in `docs/04.execution/tasks/README.md` with status
+and document index in `docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records` with status
 `Active` and updated date `2026-07-06`.
 
 - [ ] **Step 7: Update progress memory**
@@ -241,7 +257,7 @@ Expected: `git diff --check` has no output and repo-quality prints
 Commit:
 
 ```bash
-git add docs/04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md docs/04.execution/tasks/README.md docs/00.agent-governance/memory/progress.md
+git add docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records docs/00.agent-governance/memory/progress.md
 git commit -m "docs(tasks): Start Stage 03 04 repo-static gap closure"
 ```
 
@@ -249,7 +265,7 @@ git commit -m "docs(tasks): Start Stage 03 04 repo-static gap closure"
 
 **Files:**
 
-- Modify: `docs/04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md`
+- Modify: `docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records`
 
 - [ ] **Step 1: Run targeted gap scans**
 
@@ -257,7 +273,7 @@ Run:
 
 ```bash
 rg -n "(?i)pending|deferred|todo|in progress|not implemented|unimplemented|missing|gap|follow-?up|remaining|blocked|outstanding|future|live validation|runtime validation|not yet|next" \
-  docs/03.specs docs/04.execution/plans docs/04.execution/tasks
+  docs/03.specs docs/03.specs/plans docs/03.specs/tasks
 ```
 
 Expected: command returns historical and current candidates; classify only
@@ -268,7 +284,7 @@ active repo-static gaps in the task ledger.
 In the task record, add these initial rows under `Gap Classification Ledger`:
 
 ```markdown
-| S34-GAP-001 | `docs/04.execution/plans/2026-07-04-workspace-engineering-research-pack.md`; `docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md` | repo-static | WER task evidence records all WER tasks done, but plan/task frontmatter and README indexes remain `Draft`. | Close Stage 04 lifecycle drift in S34-003. | platform | Open |
+| S34-GAP-001 | `docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md`; `docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records` | repo-static | WER task evidence records all WER tasks done, but plan/task frontmatter and README indexes remain `Draft`. | Close Stage 04 lifecycle drift in S34-003. | platform | Open |
 | S34-GAP-002 | Active runtime specs and older task evidence | operator-approved | Rollouts, Notifications, Vault/ESO, live validation, secret value, and remote settings require runtime/operator authority. | Record as follow-up in S34-004; do not mutate live or remote systems. | operator | Follow-up |
 | S34-GAP-003 | Stage 03 draft governance specs | out-of-scope | Draft specs may remain design contracts even when their Stage 04 execution is done; automatic conversion to `done` would rewrite lifecycle semantics. | Preserve unless a scoped lifecycle decision approves spec status migration. | platform | Closed |
 ```
@@ -292,7 +308,7 @@ Expected: both pass.
 Commit:
 
 ```bash
-git add docs/04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md
+git add docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records
 git commit -m "docs(tasks): Classify Stage 03 04 repo-static gaps"
 ```
 
@@ -300,11 +316,11 @@ git commit -m "docs(tasks): Classify Stage 03 04 repo-static gaps"
 
 **Files:**
 
-- Modify: `docs/04.execution/plans/2026-07-04-workspace-engineering-research-pack.md`
-- Modify: `docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md`
-- Modify: `docs/04.execution/plans/README.md`
-- Modify: `docs/04.execution/tasks/README.md`
-- Modify: `docs/04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md`
+- Modify: `docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md`
+- Modify: `docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records`
+- Modify: `docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md`
+- Modify: `docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records`
+- Modify: `docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
 - [ ] **Step 1: Confirm WER files have completed task evidence**
@@ -313,7 +329,7 @@ Run:
 
 ```bash
 rg -n "WER-00[1-7].*Done|\\[x\\] WER-00[1-7]|Final validation|no-mutation handoff|Required validation" \
-  docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md
+  docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records
 ```
 
 Expected: WER-001 through WER-007 are present as `Done` and phase checklist
@@ -321,7 +337,7 @@ items are checked.
 
 - [ ] **Step 2: Update WER plan frontmatter and completion criteria**
 
-In `docs/04.execution/plans/2026-07-04-workspace-engineering-research-pack.md`:
+In `docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md`:
 
 - Change frontmatter `status: draft` to `status: done`.
 - Change completion criteria checkboxes for the dated research pack, moved
@@ -332,7 +348,7 @@ In `docs/04.execution/plans/2026-07-04-workspace-engineering-research-pack.md`:
 
 - [ ] **Step 3: Update WER task frontmatter**
 
-In `docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md`:
+In `docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records`:
 
 - Change frontmatter `status: draft` to `status: done`.
 - Add a short final evidence note under `Verification Summary` or the final
@@ -341,14 +357,14 @@ In `docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md`:
 
 - [ ] **Step 4: Update Stage 04 README indexes**
 
-In both `docs/04.execution/plans/README.md` and
-`docs/04.execution/tasks/README.md`, change the WER row status from `Draft` to
+In both `docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md` and
+`docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records`, change the WER row status from `Draft` to
 `Done`. Keep the updated date as `2026-07-04` unless the row already uses a
 later evidence date.
 
 - [ ] **Step 5: Update the current task and progress memory**
 
-In `docs/04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md`:
+In `docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records`:
 
 - Mark `S34-GAP-001` as `Closed`.
 - Mark `S34-003` as `Done`.
@@ -371,7 +387,7 @@ Expected: both pass and Stage 04 README status/date sync stays valid.
 Commit:
 
 ```bash
-git add docs/04.execution/plans/2026-07-04-workspace-engineering-research-pack.md docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md docs/04.execution/plans/README.md docs/04.execution/tasks/README.md docs/04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md docs/00.agent-governance/memory/progress.md
+git add docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records docs/00.agent-governance/memory/progress.md
 git commit -m "docs(execution): Close WER repo-static lifecycle drift"
 ```
 
@@ -379,7 +395,7 @@ git commit -m "docs(execution): Close WER repo-static lifecycle drift"
 
 **Files:**
 
-- Modify: `docs/04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md`
+- Modify: `docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
 - [ ] **Step 1: Add operator follow-up rows**
@@ -417,7 +433,7 @@ Expected: both pass.
 Commit:
 
 ```bash
-git add docs/04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md docs/00.agent-governance/memory/progress.md
+git add docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records docs/00.agent-governance/memory/progress.md
 git commit -m "docs(tasks): Route operator-approved Stage 03 04 follow-ups"
 ```
 
@@ -425,10 +441,10 @@ git commit -m "docs(tasks): Route operator-approved Stage 03 04 follow-ups"
 
 **Files:**
 
-- Modify: `docs/04.execution/plans/2026-07-06-stage03-04-repo-static-gap-closure.md`
-- Modify: `docs/04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md`
-- Modify: `docs/04.execution/plans/README.md`
-- Modify: `docs/04.execution/tasks/README.md`
+- Modify: `docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md`
+- Modify: `docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records`
+- Modify: `docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md`
+- Modify: `docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
 - [ ] **Step 1: Run final validation bundle**
@@ -457,7 +473,7 @@ Expected:
 
 - [ ] **Step 2: Close the current task record**
 
-In `docs/04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md`:
+In `docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records`:
 
 - Change frontmatter `status: active` to `status: done`.
 - Mark `S34-005` as `Done`.
@@ -466,7 +482,7 @@ In `docs/04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md`:
 
 - [ ] **Step 3: Close the current plan**
 
-In `docs/04.execution/plans/2026-07-06-stage03-04-repo-static-gap-closure.md`:
+In `docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md`:
 
 - Change frontmatter `status: draft` to `status: done`.
 - Check every item under `Completion Criteria`.
@@ -499,10 +515,124 @@ Expected: both pass.
 Commit:
 
 ```bash
-git add docs/04.execution/plans/2026-07-06-stage03-04-repo-static-gap-closure.md docs/04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md docs/04.execution/plans/README.md docs/04.execution/tasks/README.md docs/00.agent-governance/memory/progress.md
+git add docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records docs/00.agent-governance/memory/progress.md
 git commit -m "docs(tasks): Record Stage 03 04 repo-static gap closure"
 ```
 
+### Legacy Task supplemental evidence
+
+### Phase View
+
+### Phase 1: Baseline and Classification
+
+- [x] S34-001 Create task record and baseline gap audit.
+- [x] S34-002 Classify Stage 03/04 gaps by evidence lane.
+
+### Phase 2: Repo-Static Closure
+
+- [x] S34-003 Close WER repo-static lifecycle drift.
+
+### Phase 3: Follow-up Routing and Closure
+
+- [x] S34-004 Record operator-approved follow-up ledger.
+- [x] S34-005 Close validation and handoff evidence.
+
+### Gap Classification Ledger
+
+| Gap ID | Source | Evidence Lane | Finding | Resolution | Owner | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| S34-GAP-001 | `docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md`; `docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records` | repo-static | WER task evidence records all WER tasks done, but plan/task frontmatter and README indexes remain `Draft`. | Closed in S34-003 by aligning WER plan/task frontmatter, plan completion criteria, and Stage 04 README indexes with existing Done evidence. | platform | Closed |
+| S34-GAP-002 | Active runtime specs and older task evidence | operator-approved | Rollouts, Notifications, Vault/ESO, live validation, secret value, and remote settings require runtime/operator authority. | Record as follow-up in S34-004; do not mutate live or remote systems. | operator | Follow-up |
+| S34-GAP-003 | Stage 03 draft governance specs | out-of-scope | Draft specs may remain design contracts even when their Stage 04 execution is done; automatic conversion to `done` would rewrite lifecycle semantics. | Preserve unless a scoped lifecycle decision approves spec status migration. | platform | Closed |
+
+### Operator-Approved Follow-up Ledger
+
+| Follow-up ID | Topic | Source | Approval Boundary | Evidence Lane | Status |
+| --- | --- | --- | --- | --- | --- |
+| S34-OP-001 | Argo Rollouts runtime validation | `docs/03.specs/0004-argo-rollouts-progressive-delivery/spec.md` | Requires live cluster and operator-approved runtime checks. | operator-approved | Not run in this repo-static pass. |
+| S34-OP-002 | ArgoCD Notifications Slack runtime validation | `docs/03.specs/0005-argo-notifications-slack/spec.md` | Requires live controller state and Slack send/error evidence. | operator-approved | Not run in this repo-static pass. |
+| S34-OP-003 | Vault/ESO/live secret readiness | `docs/03.specs/0006-workspace-harness-gap-analysis/spec.md`; `docs/03.specs/0008-current-local-gitops-platform/spec.md` | Requires live runtime and must not inspect secret values. | operator-approved | Not run in this repo-static pass. |
+| S34-OP-004 | Remote GitHub ruleset or CI provider settings | Stage 03/04 deferred boundary mentions | Requires remote settings authority. | operator-approved | Not run in this repo-static pass. |
+
+### Baseline Audit
+
+- Branch baseline: `codex/stage03-04-repo-static-gap-closure`.
+- Preserved pre-existing untracked paths:
+  - `docs/90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md`
+  - `sessions/`
+- Status inventory found Stage 03 draft specs from
+  `0009-workspace-harness-research-pack` through
+  `0023-stage03-04-repo-static-gap-closure`. These remain design contracts for
+  classification, not automatic closure targets.
+- Stage 04 status inventory found:
+  - `docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md`
+    as `draft`.
+  - `docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md`
+    as `draft`.
+  - `docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records`
+    as `draft`.
+- WER completion evidence found `WER-001` through `WER-007` task rows as
+  `Done` and checked phase-view items for WER-002 through WER-007, while WER
+  plan/task frontmatter remains `status: draft`.
+
+### Gap Scan Evidence
+
+- Targeted scan command:
+  `rg -n "(?i)pending|deferred|todo|in progress|not implemented|unimplemented|missing|gap|follow-?up|remaining|blocked|outstanding|future|live validation|runtime validation|not yet|next" docs/03.specs docs/03.specs/plans docs/03.specs/tasks`
+- The scan produced historical, template, spec-policy, and task-evidence hits.
+  Classification used only current Stage 03/04 ownership boundaries and active
+  evidence, not raw keyword count.
+- Repo-static closure candidate:
+  - WER Stage 04 plan/task lifecycle drift, because completion evidence exists
+    locally and the correction is limited to frontmatter, completion criteria,
+    indexes, and evidence notes.
+- Operator-approved follow-up candidates:
+  - Argo Rollouts runtime validation.
+  - ArgoCD Notifications Slack runtime validation.
+  - Vault/ESO/live secret readiness.
+  - Remote GitHub ruleset or CI provider settings.
+- Out-of-scope candidates:
+  - Bulk Stage 03 `draft` spec conversion, because Stage 03 can keep design
+    contracts open while Stage 04 records execution completion.
+
+### WER Lifecycle Closure Evidence
+
+- WER task evidence scan confirmed `WER-001` through `WER-007` task rows as
+  `Done`.
+- WER plan frontmatter changed from `status: draft` to `status: done`.
+- WER plan completion criteria changed from open checkboxes to checked
+  completion evidence while preserving detailed historical task-step
+  checkboxes.
+- WER task frontmatter changed from `status: draft` to `status: done`.
+- Stage 04 plan and task README index rows changed from `Draft` to `Done`.
+- No live/runtime, secret, remote, provider, or third-party action was
+  performed.
+
+### Operator-Approved Follow-up Evidence
+
+- Confirmed the referenced Stage 03 spec files exist for Rollouts,
+  Notifications, workspace harness gap analysis, and current local GitOps
+  platform.
+- Recorded four operator-approved follow-up rows for live/runtime, secret, and
+  remote authority work.
+- No live cluster command, secret value inspection, remote GitHub settings
+  change, provider mutation, push, publish, or merge action was performed.
+
+### Final Validation Bundle
+
+| Command | Result |
+| --- | --- |
+| `git diff --check` | PASS; no output. |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS; no output. |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed`. |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS; 104 YAML files parsed and optional `kube-linter` was skipped because it is not installed. |
+| `bash scripts/check-secret-handling.sh .` | PASS; 100 files scanned and no plaintext secret patterns found. |
+| `bash scripts/validate-policy-gates.sh .` | PASS; optional `conftest` was not installed and the built-in policy fallback passed. |
+
+Final boundary: WER repo-static drift is closed, operator-approved follow-up is
+separate, and the pre-existing untracked
+`docs/90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md`
+and `sessions/` paths remain untouched.
 ## Verification Plan
 
 | ID | Level | Description | Command / How to Run | Pass Criteria |
@@ -514,6 +644,38 @@ git commit -m "docs(tasks): Record Stage 03 04 repo-static gap closure"
 | VAL-PLN-023-005 | Security | Plaintext secret scan | `bash scripts/check-secret-handling.sh .` | Exit 0 with no plaintext secret findings. |
 | VAL-PLN-023-006 | Policy | Policy fallback or Conftest lane | `bash scripts/validate-policy-gates.sh .` | Exit 0; optional conftest fallback may be reported. |
 
+### Legacy Task verification evidence
+
+- **Test Commands**:
+  - `git status --short --branch`
+  - `python3 - <<'PY' ... status inventory ... PY`
+  - `rg -n "status: draft|WER-00[1-7].*Done|\[x\] WER-|Completion Criteria|Final validation|Handoff" ...`
+  - `rg -n "(?i)pending|deferred|todo|in progress|not implemented|unimplemented|missing|gap|follow-?up|remaining|blocked|outstanding|future|live validation|runtime validation|not yet|next" docs/03.specs docs/03.specs/plans docs/03.specs/tasks`
+- **Eval Commands**:
+  - `git diff --check` PASS.
+  - `bash scripts/validate-repo-quality-gates.sh .` PASS with
+    `[PASS] repository quality gates passed`.
+  - S34-002 validation: `git diff --check` PASS.
+  - S34-002 validation: `bash scripts/validate-repo-quality-gates.sh .` PASS
+    with `[PASS] repository quality gates passed`.
+  - S34-003 validation: `git diff --check` PASS.
+  - S34-003 validation: `bash scripts/validate-repo-quality-gates.sh .` PASS
+    with `[PASS] repository quality gates passed`.
+  - S34-004 validation: `git diff --check` PASS.
+  - S34-004 validation: `bash scripts/validate-repo-quality-gates.sh .` PASS
+    with `[PASS] repository quality gates passed`.
+  - S34-005 final validation bundle PASS:
+    - `git diff --check`
+    - `bash -n scripts/validate-repo-quality-gates.sh`
+    - `bash scripts/validate-repo-quality-gates.sh .`
+    - `bash scripts/validate-k8s-manifests.sh .`
+    - `bash scripts/check-secret-handling.sh .`
+    - `bash scripts/validate-policy-gates.sh .`
+  - S34-005 closure validation after status/index updates PASS:
+    - `git diff --check`
+    - `bash scripts/validate-repo-quality-gates.sh .`
+- **Logs / Evidence Location**:
+  - This task record, Stage 04 README index, and progress memory entry.
 ## Risks & Mitigations
 
 | Risk | Impact | Mitigation |
@@ -535,6 +697,34 @@ git commit -m "docs(tasks): Record Stage 03 04 repo-static gap closure"
   stop and keep WER status as `draft` while recording the unresolved gap.
 - **Prompt / Model Promotion Criteria**: Not applicable.
 
+### Legacy Task approval and rollback boundaries
+
+- **Allowed Paths**: `S34-001 through S34-005` is limited to these Stage 03/04 Repo-Static Gap Closure owners and Task-Table surfaces:
+  - `docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records`
+  - `docs/03.specs/0023-stage03-04-repo-static-gap-closure/spec.md`
+  - `docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md`
+  - `docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md`
+  - `docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records`
+  - `docs/03.specs/0004-argo-rollouts-progressive-delivery/spec.md`
+  - `docs/03.specs/0005-argo-notifications-slack/spec.md`
+  - `docs/03.specs/0006-workspace-harness-gap-analysis/spec.md`
+  - `docs/03.specs/0008-current-local-gitops-platform/spec.md`
+- **Forbidden Paths**: runtime manifests, provider or CI settings, secret values, generated/local state, and paths outside the Stage 03/04 Repo-Static Gap Closure work items and linked evidence owners.
+- **Approval Required**: Human approval is required before Stage 03/04 Repo-Static Gap Closure protected-file expansion, deletion/relocation, runtime/CI/provider mutation, credential access, publication, push, or merge beyond the parent Plan.
+- **Static Validation**: Preserve the Stage 03/04 Repo-Static Gap Closure outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `git status --short --branch`
+  - `python3 - <<'PY' ... status inventory ... PY`
+  - `rg -n "status: draft|WER-00[1-7].*Done|\[x\] WER-|Completion Criteria|Final validation|Handoff" ...`
+  - `rg -n "(?i)pending|deferred|todo|in progress|not implemented|unimplemented|missing|gap|follow-?up|remaining|blocked|outstanding|future|live validation|runtime validation|not yet|next" docs/03.specs docs/03.specs/plans docs/03.specs/tasks`
+- **Live Validation**: DEFER — Stage 03/04 Repo-Static Gap Closure is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: No secret value is required for Stage 03/04 Repo-Static Gap Closure; do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
+- **Rollback Plan**: Revert the logical Stage 03/04 Repo-Static Gap Closure change set for `S34-001 through S34-005` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Stage 03/04 Repo-Static Gap Closure evidence remains in:
+  - `docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records`
+  - `docs/03.specs/0023-stage03-04-repo-static-gap-closure/spec.md`
+  - `docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md`
+  - `docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md`
+  - `docs/03.specs/0023-stage03-04-repo-static-gap-closure/README.md#task-records`
 ## Completion Criteria
 
 - [x] Stage 04 task record exists and is indexed.
@@ -549,6 +739,14 @@ git commit -m "docs(tasks): Record Stage 03 04 repo-static gap closure"
 - **Spec**: [../../03.specs/0023-stage03-04-repo-static-gap-closure/spec.md](spec.md)
 - **Planned Tasks Path**: `../tasks/2026-07-06-stage03-04-repo-static-gap-closure.md`
 - **WER Plan**: [./2026-07-04-workspace-engineering-research-pack.md](../0017-workspace-engineering-research-pack/plan.md)
-- **WER Task**: [../tasks/2026-07-04-workspace-engineering-research-pack.md](../0017-workspace-engineering-research-pack/tasks.md)
+- **WER Task**: [../tasks/2026-07-04-workspace-engineering-research-pack.md](../0017-workspace-engineering-research-pack/README.md)
 - **SDLC Lifecycle Contract Spec**: [../../03.specs/0021-sdlc-lifecycle-contract/spec.md](../0021-sdlc-lifecycle-contract/spec.md)
+- **Progress Memory**: [../../00.agent-governance/memory/progress.md](../../00.agent-governance/memory/progress.md)
+
+### Legacy Task traceability
+
+- **Spec**: [../../03.specs/0023-stage03-04-repo-static-gap-closure/spec.md](spec.md)
+- **Plan**: [../plans/2026-07-06-stage03-04-repo-static-gap-closure.md](plan.md)
+- **WER Plan**: [../plans/2026-07-04-workspace-engineering-research-pack.md](../0017-workspace-engineering-research-pack/plan.md)
+- **WER Task**: [./2026-07-04-workspace-engineering-research-pack.md](../0017-workspace-engineering-research-pack/README.md)
 - **Progress Memory**: [../../00.agent-governance/memory/progress.md](../../00.agent-governance/memory/progress.md)

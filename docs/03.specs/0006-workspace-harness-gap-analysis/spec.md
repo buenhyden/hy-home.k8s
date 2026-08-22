@@ -51,8 +51,8 @@ pass.
 - **Config Contract**: root gateway files remain thin; recurring workflow and
   task-to-skill routing are recorded in `docs/00.agent-governance/harness-catalog.md`.
 - **Data / Interface Contract**: no new runtime API is introduced. New
-  execution evidence lives in `docs/03.specs/`, `docs/04.execution/plans/`,
-  `docs/04.execution/tasks/`, and `docs/00.agent-governance/memory/progress.md`.
+  execution evidence lives in `docs/03.specs/`, `docs/03.specs/`,
+  `docs/03.specs/`, and `docs/00.agent-governance/memory/progress.md`.
 - **Governance Contract**: all findings are classified as low, medium, or high
   risk. High-risk runtime, secret, ArgoCD, and CI/CD policy items are either
   deferred with explicit pre-checks or handled through a separate approved plan
@@ -523,7 +523,7 @@ clusterrolebinding` examples carry human-approved, bootstrap, break-glass,
 ### Related inputs
 
 - **PRD**: N/A. This is a workspace governance and validation improvement.
-- **AD**: [../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md](../../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md)
+- **AD**: [../02.architecture/descriptions/0007-current-local-gitops-platform.md](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - **Related ADRs**:
   [ADR-0002](../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md),
   [ADR-0003](../../02.architecture/decisions/0003-eso-vault-k8s-auth.md),

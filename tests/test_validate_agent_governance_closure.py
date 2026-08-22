@@ -28,7 +28,7 @@ EXPECTED_CLOSED_PREDECESSOR_DIGESTS = {
         "PRD-0003",
         "3974bd28ba0c39220ff1a79e1bedfc7a88bb85a380860cf15924f90df1454aa2",  # pragma: allowlist secret
     ),
-    "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md": (
+    "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md": (
         "AD-0006",
         "722632512b4724fc1b0c26c839a5b5fbdd77d5ea074386d2c3725a9ab1cb2c0b",  # pragma: allowlist secret
     ),
@@ -416,7 +416,9 @@ class AgentGovernanceClosureTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "not a real directory"):
                 self.module._load_json(link, PurePosixPath("input.json"))
 
-    def test_repository_sources_are_digest_bound(self) -> None:
+    def test_historical_predecessor_evidence_is_independent_of_current_bytes(
+        self,
+    ) -> None:
         contract = json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))
         read_regular_bytes = self.module._read_regular_bytes
         for row in contract["predecessorCriteria"]:
@@ -433,8 +435,70 @@ class AgentGovernanceClosureTests(unittest.TestCase):
             ):
                 self.assertEqual(
                     self.module._validate_predecessor_sources(REPO_ROOT, contract),
-                    [f"predecessor source digest differs: {predecessor_path}"],
+                    [],
                 )
+
+    def test_historical_predecessor_git_boundary_fails_closed(self) -> None:
+        owner = PurePosixPath(
+            "docs/01.requirements/0003-workspace-agent-governance-platform.md"
+        )
+        aliases = self.module.PREDECESSOR_HISTORICAL_PATHS[owner]
+        self.assertEqual(
+            aliases,
+            (
+                owner,
+                PurePosixPath(
+                    "docs/01.requirements/003-workspace-agent-governance-platform.md"
+                ),
+            ),
+        )
+        with self.assertRaisesRegex(ValueError, "implementation ref is not reachable"):
+            self.module._read_predecessor_implementation_blob(
+                REPO_ROOT,
+                "f" * 40,
+                owner,
+            )
+        with self.assertRaisesRegex(ValueError, "implementation blob is unavailable"):
+            self.module._read_git_blob(
+                REPO_ROOT,
+                "56f19c272052da00a2f5428c80a2388df2fc2e14",  # pragma: allowlist secret -- unreachable Git blob fixture
+                owner,
+            )
+        with self.assertRaisesRegex(ValueError, "historical predecessor owner is unknown"):
+            self.module._read_predecessor_implementation_blob(
+                REPO_ROOT,
+                "56f19c272052da00a2f5428c80a2388df2fc2e14",  # pragma: allowlist secret -- unreachable Git blob fixture
+                PurePosixPath("docs/03.specs/9999-rogue/spec.md"),
+            )
+
+    def test_historical_predecessor_snapshot_is_digest_and_status_bound(self) -> None:
+        contract = json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))
+        for row in contract["predecessorCriteria"]:
+            with self.subTest(owner=row["owner"]):
+                snapshot = self.module._resolve_predecessor_evidence_snapshot(
+                    REPO_ROOT,
+                    PurePosixPath(row["owner"]),
+                    row["implementationRef"],
+                    row["expectedStatus"],
+                    row["evidenceSha256"],
+                )
+                self.assertEqual(
+                    hashlib.sha256(snapshot).hexdigest(),
+                    row["evidenceSha256"],
+                )
+
+        row = contract["predecessorCriteria"][0]
+        with self.assertRaisesRegex(ValueError, "historical predecessor digest is unavailable"):
+            self.module._resolve_predecessor_evidence_snapshot(
+                REPO_ROOT,
+                PurePosixPath(row["owner"]),
+                row["implementationRef"],
+                row["expectedStatus"],
+                "0" * 64,
+            )
+
+    def test_current_provider_and_model_sources_remain_digest_bound(self) -> None:
+        contract = json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))
 
         for source_path, validator, expected in (
             (
@@ -457,7 +521,7 @@ class AgentGovernanceClosureTests(unittest.TestCase):
                 ):
                     self.assertEqual(validator(REPO_ROOT, contract), [expected])
 
-    def test_wp003_rebases_live_sources_without_changing_closed_predecessors(
+    def test_wp003_closed_predecessor_digests_remain_historical(
         self,
     ) -> None:
         contract = json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))
@@ -477,12 +541,23 @@ class AgentGovernanceClosureTests(unittest.TestCase):
         for owner, (artifact_id, expected_digest) in (
             EXPECTED_CLOSED_PREDECESSOR_DIGESTS.items()
         ):
-            source = (REPO_ROOT / owner).read_bytes()
-            artifact_line = f'artifact_id: "{artifact_id}"\n'.encode("ascii")
             with self.subTest(owner=owner):
-                self.assertEqual(source.count(artifact_line), 1)
-                projected = source.replace(artifact_line, b"", 1)
-                self.assertEqual(hashlib.sha256(projected).hexdigest(), expected_digest)
+                snapshot = self.module._resolve_predecessor_evidence_snapshot(
+                    REPO_ROOT,
+                    PurePosixPath(owner),
+                    next(
+                        row["implementationRef"]
+                        for row in contract["predecessorCriteria"]
+                        if row["owner"] == owner
+                    ),
+                    next(
+                        row["expectedStatus"]
+                        for row in contract["predecessorCriteria"]
+                        if row["owner"] == owner
+                    ),
+                    expected_digest,
+                )
+                self.assertEqual(hashlib.sha256(snapshot).hexdigest(), expected_digest)
                 self.assertEqual(fixture_rows[owner], expected_digest)
                 self.assertEqual(contract_rows[owner], expected_digest)
                 self.assertEqual(validator_rows[owner], expected_digest)
@@ -541,46 +616,6 @@ class AgentGovernanceClosureTests(unittest.TestCase):
                     contract,
                     "predecessor status, implementation ref, or digest differs",
                 )
-
-    def test_work108_predecessor_projection_accepts_only_exact_outer_identity(
-        self,
-    ) -> None:
-        contract = json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))
-        for row, expected in zip(
-            contract["predecessorCriteria"],
-            self.module.EXPECTED_PREDECESSORS,
-            strict=True,
-        ):
-            owner = PurePosixPath(row["owner"])
-            source = self.module._read_regular_bytes(REPO_ROOT, owner)
-            projected = self.module._work108_predecessor_digest_payload(
-                owner,
-                source,
-            )
-            with self.subTest(owner=owner):
-                self.assertIsNotNone(projected)
-                self.assertEqual(
-                    self.module.hashlib.sha256(projected).hexdigest(),
-                    expected[4],
-                )
-
-            artifact_id = self.module.WORK108_PREDECESSOR_ARTIFACT_IDS[owner]
-            exact_line = f'artifact_id: "{artifact_id}"\n'.encode("ascii")
-            mutations = {
-                "missing": source.replace(exact_line, b"", 1),
-                "wrong": source.replace(exact_line, b'artifact_id: "ROGUE-999"\n', 1),
-                "duplicate": source.replace(exact_line, exact_line * 2, 1),
-                "payload-drift": source + b"\n",
-            }
-            for mutation, candidate in mutations.items():
-                with self.subTest(owner=owner, mutation=mutation):
-                    self.assertIsNone(
-                        self.module._work108_predecessor_digest_payload(
-                            owner,
-                            candidate,
-                        )
-                    )
-
 
 if __name__ == "__main__":
     unittest.main()

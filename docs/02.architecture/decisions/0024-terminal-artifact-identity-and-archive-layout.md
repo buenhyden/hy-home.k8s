@@ -1,10 +1,11 @@
 ---
 title: 'ADR-0024: Terminal Artifact Identity and Archive Layout'
 type: sdlc/adr
-status: accepted
+status: superseded
 owner: platform
 updated: 2026-08-11
 artifact_id: "ADR-0024"
+superseded_by: ADR-0030
 ---
 
 # ADR-0024: Terminal Artifact Identity and Archive Layout
@@ -44,7 +45,7 @@ full-body immutable payload and provenance but also fixes an archive record at
 the mirrored original path and prohibits a parallel Tombstone. Accepted
 ADR-0023 preserves Stage 98 dates and existing paths for the transition.
 Active
-[AD-0011](../descriptions/ad-0011-document-taxonomy-consolidation-architecture.md)
+[AD-0011](../descriptions/0011-document-taxonomy-consolidation-architecture.md)
 also treats AD and the mirror archive invariant as current. Those path/form
 constraints conflict with the approved terminal topology, although their
 payload, provenance, recovery, and transition-safety purposes remain valid.
@@ -80,14 +81,14 @@ lifecycle state:
 
 | Source ARD | Preserved status | Terminal AD / exact WORK-105 path |
 | --- | --- | --- |
-| ARD-0004 | active | AD-0004 / `docs/02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md` |
-| ARD-0005 | active | AD-0005 / `docs/02.architecture/descriptions/ad-0005-argo-notifications-slack.md` |
-| ARD-0006 | active | AD-0006 / `docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md` |
-| ARD-0007 | active | AD-0007 / `docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md` |
-| ARD-0008 | accepted | AD-0008 / `docs/02.architecture/descriptions/ad-0008-workspace-document-assurance-operating-model.md` |
-| ARD-0009 | accepted | AD-0009 / `docs/02.architecture/descriptions/ad-0009-document-lifecycle-evidence-operating-model.md` |
-| ARD-0010 | active | AD-0010 / `docs/02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md` |
-| ARD-0011 | active | AD-0011 / `docs/02.architecture/descriptions/ad-0011-document-taxonomy-consolidation-architecture.md` |
+| ARD-0004 | active | AD-0004 / `docs/02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md` |
+| ARD-0005 | active | AD-0005 / `docs/02.architecture/descriptions/0005-argo-notifications-slack.md` |
+| ARD-0006 | active | AD-0006 / `docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md` |
+| ARD-0007 | active | AD-0007 / `docs/02.architecture/descriptions/0007-current-local-gitops-platform.md` |
+| ARD-0008 | accepted | AD-0008 / `docs/02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md` |
+| ARD-0009 | accepted | AD-0009 / `docs/02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md` |
+| ARD-0010 | active | AD-0010 / `docs/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md` |
+| ARD-0011 | active | AD-0011 / `docs/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md` |
 
 These AD labels are lifecycle document identities; WORK-105 preserved the
 four-digit identity and deferred every mandatory `artifact_id` to WORK-108.

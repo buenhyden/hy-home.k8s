@@ -10,6 +10,7 @@ import json
 import os
 import re
 import stat
+import subprocess
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -76,8 +77,8 @@ EXPECTED_PREDECESSORS = (
         ),
     ),
     (
-        "ard-0006",
-        "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
+        "ad-0006",
+        "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md",
         "active",
         "git-sha1:" + "38a2fe6b-90bad694-d0a9a021-c7edce8d-800e03ea".replace("-", ""),
         "72263251-2b4724fc-1b0c26c8-39a5b5fb-dd77d5ea-074386d2-c3725a9a-b1cb2c0b".replace(
@@ -169,7 +170,7 @@ EXPECTED_PREDECESSORS = (
 WORK108_PREDECESSOR_ARTIFACT_IDS = {
     PurePosixPath("docs/01.requirements/0003-workspace-agent-governance-platform.md"): "PRD-0003",
     PurePosixPath(
-        "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md"
+        "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md"
     ): "AD-0006",
     PurePosixPath(
         "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md"
@@ -188,6 +189,57 @@ WORK108_PREDECESSOR_ARTIFACT_IDS = {
         )
     },
 }
+PREDECESSOR_HISTORICAL_PATHS = {
+    PurePosixPath(
+        "docs/01.requirements/0003-workspace-agent-governance-platform.md"
+    ): (
+        PurePosixPath(
+            "docs/01.requirements/0003-workspace-agent-governance-platform.md"
+        ),
+        PurePosixPath(
+            "docs/01.requirements/003-workspace-agent-governance-platform.md"
+        ),
+    ),
+    PurePosixPath(
+        "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md"
+    ): (
+        PurePosixPath(
+            "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md"
+        ),
+        PurePosixPath(
+            "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md"
+        ),
+        PurePosixPath(
+            "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md"
+        ),
+    ),
+    PurePosixPath(
+        "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md"
+    ): (
+        PurePosixPath(
+            "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md"
+        ),
+    ),
+    **{
+        PurePosixPath(f"docs/03.specs/{number}-{slug}/spec.md"): (
+            PurePosixPath(f"docs/03.specs/{number}-{slug}/spec.md"),
+            PurePosixPath(f"docs/03.specs/{number[1:]}-{slug}/spec.md"),
+        )
+        for number, slug in (
+            ("0038", "reference-information-architecture"),
+            ("0039", "github-ci-qa-evidence"),
+            ("0040", "contract-cutover-and-program-closure"),
+            ("0041", "stage-00-agent-governance-contract"),
+            ("0042", "provider-native-runtime-and-model-evidence"),
+            ("0043", "agent-harness-loop-lifecycle"),
+            ("0044", "agent-roster-evaluation-and-admission"),
+            ("0045", "agent-governance-ci-qa-cutover"),
+        )
+    },
+}
+MAX_PREDECESSOR_BLOB_BYTES = 1024 * 1024
+MAX_PREDECESSOR_HISTORY = 64
+GIT_TIMEOUT_SECONDS = 5
 PREDECESSOR_VALIDATOR_COMMAND = (
     "python3 scripts/validate-markdown-profiles.py --root . --mode strict"
 )
@@ -629,6 +681,154 @@ def _work108_predecessor_digest_payload(
     return projected
 
 
+def _run_git(root: Path, *arguments: str) -> subprocess.CompletedProcess[bytes]:
+    try:
+        metadata = os.lstat(root)
+    except OSError as exc:
+        raise ValueError("repository root is unavailable") from exc
+    if stat.S_ISLNK(metadata.st_mode) or not stat.S_ISDIR(metadata.st_mode):
+        raise ValueError("repository root is not a real directory")
+    try:
+        return subprocess.run(
+            ("git", "-C", os.fspath(root), *arguments),
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+            timeout=GIT_TIMEOUT_SECONDS,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise ValueError("historical git evidence is unavailable") from exc
+
+
+def _read_git_blob(root: Path, commit: str, path: PurePosixPath) -> bytes:
+    if not re.fullmatch(r"[0-9a-f]{40}", commit):
+        raise ValueError("implementation ref is invalid")
+    if (
+        path.is_absolute()
+        or not path.parts
+        or any(part in {"", ".", ".."} for part in path.parts)
+    ):
+        raise ValueError("historical predecessor path is invalid")
+    object_name = f"{commit}:{path.as_posix()}"
+    object_type = _run_git(root, "cat-file", "-t", object_name)
+    if object_type.returncode != 0 or object_type.stdout.strip() != b"blob":
+        raise ValueError("implementation blob is unavailable")
+    object_size = _run_git(root, "cat-file", "-s", object_name)
+    try:
+        size = int(object_size.stdout.strip()) if object_size.returncode == 0 else -1
+    except ValueError:
+        size = -1
+    if size < 0 or size > MAX_PREDECESSOR_BLOB_BYTES:
+        raise ValueError("implementation blob size is invalid")
+    source = _run_git(root, "cat-file", "blob", object_name)
+    if source.returncode != 0 or len(source.stdout) != size:
+        raise ValueError("implementation blob is unavailable")
+    return source.stdout
+
+
+def _read_predecessor_implementation_blob(
+    root: Path,
+    commit: str,
+    owner: PurePosixPath,
+) -> bytes:
+    aliases = PREDECESSOR_HISTORICAL_PATHS.get(owner)
+    if aliases is None:
+        raise ValueError("historical predecessor owner is unknown")
+    object_type = _run_git(root, "cat-file", "-t", commit)
+    reachable = _run_git(root, "merge-base", "--is-ancestor", commit, "HEAD")
+    if object_type.returncode != 0 or object_type.stdout.strip() != b"commit":
+        raise ValueError("implementation ref is not reachable")
+    if reachable.returncode != 0:
+        raise ValueError("implementation ref is not reachable")
+    for alias in aliases:
+        try:
+            return _read_git_blob(root, commit, alias)
+        except ValueError as exc:
+            if str(exc) != "implementation blob is unavailable":
+                raise
+    raise ValueError("implementation blob is unavailable")
+
+
+def _project_predecessor_evidence(
+    owner: PurePosixPath,
+    source: bytes,
+    expected_digest: str,
+) -> bytes | None:
+    if hashlib.sha256(source).hexdigest() == expected_digest:
+        return source
+    projected = _work108_predecessor_digest_payload(owner, source)
+    if (
+        projected is not None
+        and hashlib.sha256(projected).hexdigest() == expected_digest
+    ):
+        return projected
+    return None
+
+
+def _resolve_predecessor_evidence_snapshot(
+    root: Path,
+    owner: PurePosixPath,
+    implementation_ref: str,
+    expected_status: str,
+    expected_digest: str,
+) -> bytes:
+    match = re.fullmatch(r"git-sha1:([0-9a-f]{40})", implementation_ref)
+    if match is None:
+        raise ValueError("implementation ref is invalid")
+    implementation = _read_predecessor_implementation_blob(
+        root,
+        match.group(1),
+        owner,
+    )
+    try:
+        implementation_status = _frontmatter_status(implementation.decode("utf-8"))
+    except UnicodeError as exc:
+        raise ValueError("implementation blob cannot be decoded") from exc
+    if implementation_status != expected_status:
+        raise ValueError("implementation blob status differs")
+
+    aliases = PREDECESSOR_HISTORICAL_PATHS[owner]
+    history = _run_git(
+        root,
+        "rev-list",
+        f"--max-count={MAX_PREDECESSOR_HISTORY}",
+        "HEAD",
+        "--",
+        *(path.as_posix() for path in aliases),
+    )
+    if history.returncode != 0:
+        raise ValueError("historical predecessor history is unavailable")
+    commits = tuple(
+        line.decode("ascii")
+        for line in history.stdout.splitlines()
+        if re.fullmatch(rb"[0-9a-f]{40}", line)
+    )
+    for commit in commits:
+        for alias in aliases:
+            try:
+                source = _read_git_blob(root, commit, alias)
+            except ValueError as exc:
+                if str(exc) == "implementation blob is unavailable":
+                    continue
+                raise
+            projected = _project_predecessor_evidence(
+                owner,
+                source,
+                expected_digest,
+            )
+            if projected is None:
+                continue
+            try:
+                status = _frontmatter_status(projected.decode("utf-8"))
+            except UnicodeError as exc:
+                raise ValueError("historical predecessor cannot be decoded") from exc
+            if status != expected_status:
+                raise ValueError("historical predecessor status differs")
+            return projected
+    raise ValueError("historical predecessor digest is unavailable")
+
+
 def _validate_predecessor_sources(root: Path, contract: dict[str, Any]) -> list[str]:
     rows = contract.get("predecessorCriteria", [])
     identities = tuple((row.get("id"), row.get("owner")) for row in rows)
@@ -637,25 +837,27 @@ def _validate_predecessor_sources(root: Path, contract: dict[str, Any]) -> list[
         return ["predecessor source identities differ"]
     errors: list[str] = []
     for row, expected in zip(rows, EXPECTED_PREDECESSORS, strict=True):
-        _identity, owner, expected_status, _implementation_ref, expected_digest = (
-            expected
-        )
-        source = _read_regular_bytes(root, PurePosixPath(owner))
-        projected = _work108_predecessor_digest_payload(PurePosixPath(owner), source)
-        observed_digest = (
-            hashlib.sha256(projected).hexdigest() if projected is not None else None
-        )
-        if (
-            observed_digest != expected_digest
-            or row.get("evidenceSha256") != observed_digest
-        ):
-            errors.append(f"predecessor source digest differs: {owner}")
+        _identity, owner, expected_status, implementation_ref, expected_digest = expected
+        owner_path = PurePosixPath(owner)
+        _read_regular_bytes(root, owner_path)
         try:
-            status = _frontmatter_status(source.decode("utf-8"))
-        except UnicodeError:
-            status = None
-        if status != expected_status or row.get("expectedStatus") != status:
-            errors.append("predecessor source status differs")
+            snapshot = _resolve_predecessor_evidence_snapshot(
+                root,
+                owner_path,
+                implementation_ref,
+                expected_status,
+                expected_digest,
+            )
+        except ValueError as exc:
+            errors.append(f"predecessor historical evidence differs: {owner}: {exc}")
+            continue
+        if (
+            hashlib.sha256(snapshot).hexdigest() != expected_digest
+            or row.get("evidenceSha256") != expected_digest
+            or row.get("implementationRef") != implementation_ref
+            or row.get("expectedStatus") != expected_status
+        ):
+            errors.append(f"predecessor historical evidence differs: {owner}")
     return errors
 
 

@@ -129,8 +129,8 @@ The ownership boundaries are:
 | --- | --- |
 | `docs/90.references/audits/` | Dated findings, scores, evidence, and remediation routing. |
 | `docs/03.specs/0025-governance-owner-and-roster-currentness/` | RMD-004 design and acceptance contract. |
-| `docs/04.execution/plans/` | Ordered implementation, risk, rollback, and verification gates. |
-| `docs/04.execution/tasks/` | Actual completion state and verification evidence. |
+| `docs/03.specs/` | Ordered implementation, risk, rollback, and verification gates. |
+| `docs/03.specs/` | Actual completion state and verification evidence. |
 | `docs/00.agent-governance/` | Durable current roster, role, provider-adapter, and canonical-owner policy. |
 | `scripts/validate-repo-quality-gates.sh` and fixtures | Deterministic rejection of roster and owner-pointer drift. |
 
@@ -154,8 +154,8 @@ The deterministic owner-pointer allowlist is:
 | Role/persona responsibility contract | `docs/00.agent-governance/rules/persona.md` | Harness catalog roster section. |
 | Stage authoring ownership | `docs/00.agent-governance/rules/stage-authoring-matrix.md` | Harness catalog owner-routing section. |
 | Current role roster and adapter inventory | `docs/00.agent-governance/harness-catalog.md` | Exact role rows and adapter-surface rows. |
-| Completed ninth/tenth role implementation | `docs/04.execution/tasks/2026-07-06-observability-and-network-review-agents.md` | Harness catalog evidence pointer and Spec 025 lineage. |
-| RMD-004 completion evidence | `docs/04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md` | Spec 025 and its same-topic Plan. |
+| Completed ninth/tenth role implementation | `docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records` | Harness catalog evidence pointer and Spec 025 lineage. |
+| RMD-004 completion evidence | `docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records` | Spec 025 and its same-topic Plan. |
 | Document/template ownership contract | `docs/99.templates/support/documentation-contract.md` | Harness catalog documentation-owner pointer. |
 | Authored-document route contract | `docs/99.templates/support/template-routing.md` | Harness catalog template-route pointer. |
 
@@ -207,7 +207,7 @@ labels will be corrected at the pack-navigation/currentness layer.
 
 `docs/90.references/audits/2026-07-11-weia/implementation-plan.md` will move to:
 
-`docs/04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md`
+`docs/03.specs/0025-governance-owner-and-roster-currentness/plan.md`
 
 It will become `type: sdlc/plan`, `status: done`. A compact same-basename Task
 will record the completed audit-pack outputs, commits, validation, and scope
@@ -458,7 +458,7 @@ This ledger is the implementation input for all twenty baseline Specs. Spec
 
 All forty-one baseline Plans are already `done`. `Task` below names the
 evidence record; `same` means the Task uses the same filename under
-`docs/04.execution/tasks/`. Every row remains in Stage 04 unless later evidence
+`docs/03.specs/`. Every row remains in Stage 04 unless later evidence
 passes the five-condition Archive gate.
 
 | Plan | Task | Link action | Target / Archive result |
@@ -567,15 +567,15 @@ retains responsibility for final integration, validation, and branch finishing.
 - [Remediation Roadmap](../../90.references/audits/2026-07-11-weia/remediation-roadmap.md)
 - [Spec Stage](../README.md)
 - [Execution Plan](plan.md)
-- [Execution Task](tasks.md)
-- [Plan Stage](../../04.execution/plans/README.md)
-- [Task Stage](../../04.execution/tasks/README.md)
+- [Execution Task](README.md#task-records)
+- [Plan Stage](../../99.templates/templates/sdlc/execution/plan.template.md)
+- [Task Stage](../../99.templates/templates/sdlc/execution/task.template.md)
 - [Agent Governance Normalization Spec](../0015-agent-governance-contract-normalization/spec.md)
 - [Workspace Harness Gap Spec](../0006-workspace-harness-gap-analysis/spec.md)
 - [Observability and Network Agents Spec](../0024-observability-and-network-review-agents/spec.md)
 - [Harness Catalog](../../00.agent-governance/harness-catalog.md)
-- [Document Stage Routing](../../00.agent-governance/rules/document-stage-routing.md)
-- [Frontmatter Schema](../../99.templates/support/frontmatter-schema.md)
+- [Document Stage Routing](../../00.agent-governance/rules/document-authoring.md)
+- [Frontmatter Schema](../../99.templates/support/document-contract.md)
 - [Archive Index](../../98.archive/README.md)
 ### Related inputs
 

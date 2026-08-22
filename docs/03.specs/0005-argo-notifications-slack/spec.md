@@ -192,21 +192,21 @@ kubectl -n argocd logs deploy/argocd-notifications-controller --tail=50 | grep -
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-PRD-FUN-01](../../01.requirements/0002-argo-notifications-slack.md) | VAL-SPC-001 | `verify-contracts-static.sh` checks `notifications.enabled: true` in the ArgoCD Helm values. |
-| [REQ-PRD-FUN-03](../../01.requirements/0002-argo-notifications-slack.md) | VAL-SPC-002 | Static ConfigMap checks confirm the Slack service, event templates, triggers, and default triggers. |
-| [REQ-PRD-FUN-02](../../01.requirements/0002-argo-notifications-slack.md) | VAL-SPC-003 | Static contract validation checks the Vault key/property reference and target Secret key without reading credential values. |
-| [REQ-PRD-FUN-02](../../01.requirements/0002-argo-notifications-slack.md) | VAL-SPC-004 | `scripts/check-secret-handling.sh .` provides the zero-plaintext-credential result. |
-| [REQ-PRD-MET-03](../../01.requirements/0002-argo-notifications-slack.md) | VAL-SPC-005 | The operator-approved runbook checks controller readiness, ExternalSecret state, and non-secret Slack send/error evidence. |
+| [REQ-0002-FR-0001](../../01.requirements/0002-argo-notifications-slack.md) | VAL-SPC-001 | `verify-contracts-static.sh` checks `notifications.enabled: true` in the ArgoCD Helm values. |
+| [REQ-0002-FR-0003](../../01.requirements/0002-argo-notifications-slack.md) | VAL-SPC-002 | Static ConfigMap checks confirm the Slack service, event templates, triggers, and default triggers. |
+| [REQ-0002-FR-0002](../../01.requirements/0002-argo-notifications-slack.md) | VAL-SPC-003 | Static contract validation checks the Vault key/property reference and target Secret key without reading credential values. |
+| [REQ-0002-FR-0002](../../01.requirements/0002-argo-notifications-slack.md) | VAL-SPC-004 | `scripts/check-secret-handling.sh .` provides the zero-plaintext-credential result. |
+| N/A — [Acceptance criterion 03](../../01.requirements/0002-argo-notifications-slack.md) remains package-owned | VAL-SPC-005 | The operator-approved runbook checks controller readiness, ExternalSecret state, and non-secret Slack send/error evidence. |
 
 - **PRD**: [`../../01.requirements/0002-argo-notifications-slack.md`](../../01.requirements/0002-argo-notifications-slack.md)
-- **AD**: [`../../02.architecture/descriptions/ad-0005-argo-notifications-slack.md`](../../02.architecture/descriptions/ad-0005-argo-notifications-slack.md)
+- **AD**: [`../../02.architecture/descriptions/0005-argo-notifications-slack.md`](../../02.architecture/descriptions/0005-argo-notifications-slack.md)
 - **Related ADRs**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md), [`../../02.architecture/decisions/0003-eso-vault-k8s-auth.md`](../../02.architecture/decisions/0003-eso-vault-k8s-auth.md)
 - **Plan**: [`../../04.execution/plans/2026-05-18-argo-notifications-slack.md`](plan.md)
-- **Tasks**: [`../../04.execution/tasks/2026-05-18-argo-notifications-slack.md`](tasks.md)
+- **Tasks**: [`../../04.execution/tasks/2026-05-18-argo-notifications-slack.md`](README.md#task-records)
 - **Runbook**: [`../../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md)
 - **Operations Policy**: [`../../05.operations/policies/0004-rollouts-notifications-headlamp-policy.md`](../../05.operations/policies/0004-rollouts-notifications-headlamp-policy.md)
 ### Related inputs
 
 - **PRD**: [`../../01.requirements/0002-argo-notifications-slack.md`](../../01.requirements/0002-argo-notifications-slack.md)
-- **AD**: [`../../02.architecture/descriptions/ad-0005-argo-notifications-slack.md`](../../02.architecture/descriptions/ad-0005-argo-notifications-slack.md)
+- **AD**: [`../../02.architecture/descriptions/0005-argo-notifications-slack.md`](../../02.architecture/descriptions/0005-argo-notifications-slack.md)
 - **Related ADRs**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md), [`../../02.architecture/decisions/0003-eso-vault-k8s-auth.md`](../../02.architecture/decisions/0003-eso-vault-k8s-auth.md)

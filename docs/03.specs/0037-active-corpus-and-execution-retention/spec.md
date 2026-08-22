@@ -217,18 +217,18 @@ Remote/live and CI/FIFO PASS results are unclaimed.
 - **Predecessor**: [Spec 036](../0036-archive-record-and-workspace-boundary/spec.md)
 - **Final integrator**: [Spec 040](../0040-contract-cutover-and-program-closure/spec.md)
 - **PRD**: [PRD-0006](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
-- **AD**: [AD-0009](../../02.architecture/descriptions/ad-0009-document-lifecycle-evidence-operating-model.md)
+- **AD**: [AD-0009](../../02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md)
 - **Plan**: [Active Corpus and Execution Retention Implementation Plan](plan.md)
-- **Task**: [Active Corpus and Execution Retention Task](tasks.md)
+- **Task**: [Active Corpus and Execution Retention Task](README.md#task-records)
 
 ### Lifecycle Traceability
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-WDLEC-006](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ACER-001 | The census ledger covers the complete baseline execution set. |
-| N/A — REQ-WDLEC-006 / VAL-ACER-002 shares the PRD-0006 source linked in VAL-ACER-001 | VAL-ACER-002 | Per-lineage migration results verify archive and rollback data. |
-| N/A — REQ-WDLEC-007 / VAL-ACER-003 shares the PRD-0006 source linked in VAL-ACER-001 | VAL-ACER-003 | Current-owner and lineage cardinality fixtures pass. |
-| N/A — REQ-WDLEC-007 / VAL-ACER-004 shares the PRD-0006 source linked in VAL-ACER-001 | VAL-ACER-004 | Active-stage residue validation matches the reviewed ledger. |
-| N/A — REQ-WDLEC-005 / VAL-ACER-005 shares the PRD-0006 source linked in VAL-ACER-001 | VAL-ACER-005 | Negative migration fixtures protect valid terminal authority. |
-| N/A — REQ-WDLEC-006 / VAL-ACER-006 shares the PRD-0006 source linked in VAL-ACER-001 | VAL-ACER-006 | Dual-context link validators pass after every batch. |
-| N/A — REQ-WDLEC-013 / VAL-ACER-007 shares the PRD-0006 source linked in VAL-ACER-001 | VAL-ACER-007 | Operations/helper census and negative fixtures verify role and evidence boundaries. |
+| [REQ-0006-FR-0006](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ACER-001 | The census ledger covers the complete baseline execution set. |
+| N/A — REQ-0006-FR-0006 / VAL-ACER-002 shares the PRD-0006 source linked in VAL-ACER-001 | VAL-ACER-002 | Per-lineage migration results verify archive and rollback data. |
+| N/A — REQ-0006-FR-0007 / VAL-ACER-003 shares the PRD-0006 source linked in VAL-ACER-001 | VAL-ACER-003 | Current-owner and lineage cardinality fixtures pass. |
+| N/A — REQ-0006-FR-0007 / VAL-ACER-004 shares the PRD-0006 source linked in VAL-ACER-001 | VAL-ACER-004 | Active-stage residue validation matches the reviewed ledger. |
+| N/A — REQ-0006-FR-0005 / VAL-ACER-005 shares the PRD-0006 source linked in VAL-ACER-001 | VAL-ACER-005 | Negative migration fixtures protect valid terminal authority. |
+| N/A — REQ-0006-FR-0006 / VAL-ACER-006 shares the PRD-0006 source linked in VAL-ACER-001 | VAL-ACER-006 | Dual-context link validators pass after every batch. |
+| N/A — REQ-0006-NFR-0002 / VAL-ACER-007 shares the PRD-0006 source linked in VAL-ACER-001 | VAL-ACER-007 | Operations/helper census and negative fixtures verify role and evidence boundaries. |

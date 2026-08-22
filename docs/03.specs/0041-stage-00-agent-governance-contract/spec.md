@@ -103,6 +103,16 @@ Every result is classified as one of `repo-static`, `provider-runtime`,
 
 ## Core Design
 
+### Legacy agent-design disposition
+
+The former sibling design's valid change-local material is retained in this
+Spec's foundation-first migration, projection invariant, interfaces,
+guardrails, and verification sections. Canonical roles expose bounded inputs,
+structured outputs, explicit prohibited actions, stop conditions, and named
+handoffs; provider projections remain repository-static until separately
+admitted. Historical four-provider and fixed-cardinality assertions are not
+promoted here: ADR-0030 and WP-003 own their terminal reconciliation.
+
 ### Foundation-first migration
 
 1. Inventory every current semantics consumer, producer, generated summary,
@@ -234,19 +244,19 @@ now part of the repository-static aggregate lane.
 ## Traceability
 
 - **Program requirement**: [PRD 003](../../01.requirements/0003-workspace-agent-governance-platform.md)
-- **Architecture**: [AD 0006](../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md)
+- **Architecture**: [AD 0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md)
 - **Current accepted decision**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Current-program prerequisite**: [Spec 040](../0040-contract-cutover-and-program-closure/spec.md)
-- **Agent design**: [Agent Design](./agent-design.md)
+- **Retired agent-design recovery**: [MIG-0004](../../98.archive/migrations/0004-document-authority-convergence.md)
 - **Execution Plan**: [Stage 00 Agent Governance Contract Implementation Plan](plan.md)
-- **Task evidence**: [Stage 00 Agent Governance Contract Task](tasks.md)
+- **Task evidence**: [Stage 00 Agent Governance Contract Task](README.md#task-records)
 - **Successor**: [Spec 042](../0042-provider-native-runtime-and-model-evidence/spec.md)
 
 ### Lifecycle Traceability
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-PRD-FUN-10](../../01.requirements/0003-workspace-agent-governance-platform.md#functional-requirements) | VAL-SAGC-002 | Contract/schema negative fixtures prove the closed machine contract. |
+| [REQ-0003-FR-0010](../../01.requirements/0003-workspace-agent-governance-platform.md#functional-requirements) | VAL-SAGC-002 | Contract/schema negative fixtures prove the closed machine contract. |
 | N/A — VAL-SAGC-003 shares the PRD-0003 source linked in VAL-SAGC-002 | VAL-SAGC-003 | Routing-owner comparison proves validation routing remains separate. |
 | N/A — VAL-SAGC-004 shares the PRD-0003 source linked in VAL-SAGC-002 | VAL-SAGC-004 | Consumer migration ledger proves one selected machine owner. |
 | N/A — VAL-SAGC-005 shares the PRD-0003 source linked in VAL-SAGC-002 | VAL-SAGC-005 | Exact-set validation proves canonical role/projection parity. |

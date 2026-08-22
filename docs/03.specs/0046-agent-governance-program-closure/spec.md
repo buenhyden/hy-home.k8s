@@ -267,7 +267,7 @@ tests.
 ## Traceability
 
 - **PRD**: [PRD 003](../../01.requirements/0003-workspace-agent-governance-platform.md)
-- **AD**: [AD 0006](../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md)
+- **AD**: [AD 0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md)
 - **Decision**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Document-lifecycle prerequisites**: [Spec 038](../0038-reference-information-architecture/spec.md),
   [Spec 039](../0039-github-ci-qa-evidence/spec.md), and
@@ -280,13 +280,13 @@ tests.
 - **Plan**:
   [Agent Governance Program Closure Implementation Plan](plan.md)
 - **Task**:
-  [Task: Agent Governance Program Closure](tasks.md)
+  [Task: Agent Governance Program Closure](README.md#task-records)
 
 ### Lifecycle Traceability
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-PRD-MET-02](../../01.requirements/0003-workspace-agent-governance-platform.md#success--acceptance-criteria) | VAL-AGPC-001 | Predecessor and lineage validation proves the reciprocal program chain. |
+| N/A — [Acceptance criterion 02](../../01.requirements/0003-workspace-agent-governance-platform.md#success--acceptance-criteria) remains package-owned | VAL-AGPC-001 | Predecessor and lineage validation proves the reciprocal program chain. |
 | N/A — shared PRD 003 source above | VAL-AGPC-002 | Closure contract/schema/validator reject incomplete or lane-collapsed evidence. |
 | N/A — shared PRD 003 source above | VAL-AGPC-003 | Current machine contracts validate at the repository-static boundary. |
 | N/A — shared PRD 003 source above | VAL-AGPC-004 | Roster validation proves exact 12/48 repository-static parity. |

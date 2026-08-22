@@ -48,10 +48,10 @@ closure commit contains exactly
 `docs/00.agent-governance/memory/progress.md`,
 `docs/03.specs/0039-github-ci-qa-evidence/spec.md`,
 `docs/03.specs/README.md`,
-`docs/04.execution/plans/2026-07-26-github-ci-qa-evidence.md`,
-`docs/04.execution/plans/README.md`,
-`docs/04.execution/tasks/2026-07-26-github-ci-qa-evidence.md`,
-`docs/04.execution/tasks/README.md`, and
+`docs/03.specs/0039-github-ci-qa-evidence/plan.md`,
+`docs/03.specs/0039-github-ci-qa-evidence/plan.md`,
+`docs/03.specs/0039-github-ci-qa-evidence/README.md#task-records`,
+`docs/03.specs/0039-github-ci-qa-evidence/README.md#task-records`, and
 `docs/99.templates/support/document-profiles.json`. Those paths atomically
 record the terminal Spec/Plan/Task and index state plus the registry-owned
 PRD-0006 program-lineage transition for Spec 039 while Spec 040 remains
@@ -216,17 +216,17 @@ GitHub's workflow, security, and artifact-retention guidance:
 - **Foundation**: [Spec 035](../0035-document-schema-and-lifecycle-contract/spec.md)
 - **Final integrator**: [Spec 040](../0040-contract-cutover-and-program-closure/spec.md)
 - **PRD**: [PRD-0006](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
-- **AD**: [AD-0009](../../02.architecture/descriptions/ad-0009-document-lifecycle-evidence-operating-model.md)
+- **AD**: [AD-0009](../../02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md)
 - **Plan**: [GitHub CI and QA Evidence Plan](plan.md)
-- **Task**: [GitHub CI and QA Evidence Task](tasks.md)
+- **Task**: [GitHub CI and QA Evidence Task](README.md#task-records)
 
 ### Lifecycle Traceability
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-WDLEC-010](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-GCQE-001 | Workflow fixtures assert entry and aggregate topology. |
-| N/A — REQ-WDLEC-010 / VAL-GCQE-002 shares the PRD-0006 source linked in VAL-GCQE-001 | VAL-GCQE-002 | Selector fixtures cover every contract and migration path class. |
-| N/A — REQ-WDLEC-010 / VAL-GCQE-003 shares the PRD-0006 source linked in VAL-GCQE-001 | VAL-GCQE-003 | actionlint, zizmor, and repository policy checks pass. |
-| N/A — REQ-WDLEC-010 / VAL-GCQE-004 shares the PRD-0006 source linked in VAL-GCQE-001 | VAL-GCQE-004 | Portability fixtures run on FIFO-capable and unsupported environments. |
-| N/A — REQ-WDLEC-011 / VAL-GCQE-005 shares the PRD-0006 source linked in VAL-GCQE-001 | VAL-GCQE-005 | Agent QA contract and all-files evidence are checked together. |
-| N/A — REQ-WDLEC-012 / VAL-GCQE-006 shares the PRD-0006 source linked in VAL-GCQE-001 | VAL-GCQE-006 | Result-class fixtures reject SKIP/DEFER as PASS. |
+| [REQ-0006-FR-0010](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-GCQE-001 | Workflow fixtures assert entry and aggregate topology. |
+| N/A — REQ-0006-FR-0010 / VAL-GCQE-002 shares the PRD-0006 source linked in VAL-GCQE-001 | VAL-GCQE-002 | Selector fixtures cover every contract and migration path class. |
+| N/A — REQ-0006-FR-0010 / VAL-GCQE-003 shares the PRD-0006 source linked in VAL-GCQE-001 | VAL-GCQE-003 | actionlint, zizmor, and repository policy checks pass. |
+| N/A — REQ-0006-FR-0010 / VAL-GCQE-004 shares the PRD-0006 source linked in VAL-GCQE-001 | VAL-GCQE-004 | Portability fixtures run on FIFO-capable and unsupported environments. |
+| N/A — REQ-0006-FR-0011 / VAL-GCQE-005 shares the PRD-0006 source linked in VAL-GCQE-001 | VAL-GCQE-005 | Agent QA contract and all-files evidence are checked together. |
+| N/A — REQ-0006-NFR-0001 / VAL-GCQE-006 shares the PRD-0006 source linked in VAL-GCQE-001 | VAL-GCQE-006 | Result-class fixtures reject SKIP/DEFER as PASS. |

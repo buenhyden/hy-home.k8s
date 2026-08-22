@@ -53,8 +53,8 @@
       "rollbackPath": "Fixture rollback path."
     },
     {
-      "id": "ard-0006",
-      "owner": "docs/02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md",
+      "id": "ad-0006",
+      "owner": "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md",
       "expectedStatus": "active",
       "implementationRef": "git-sha1:38a2fe6b90bad694d0a9a021c7edce8d800e03ea",
       "validatorCommand": "python3 scripts/validate-markdown-profiles.py --root . --mode strict",

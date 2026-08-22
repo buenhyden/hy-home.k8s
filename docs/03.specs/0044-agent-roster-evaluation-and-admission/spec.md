@@ -362,21 +362,21 @@ evidence update. The next workstream is Spec 045.
 ## Traceability
 
 - **PRD**: [PRD 003](../../01.requirements/0003-workspace-agent-governance-platform.md)
-- **AD**: [AD 0006](../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md)
+- **AD**: [AD 0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md)
 - **Decision**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Predecessors**: [Spec 041](../0041-stage-00-agent-governance-contract/spec.md),
   [Spec 042](../0042-provider-native-runtime-and-model-evidence/spec.md), and
   [Spec 043](../0043-agent-harness-loop-lifecycle/spec.md)
-- **Agent design**: [Workspace Agent Governance Program Design](../0041-stage-00-agent-governance-contract/agent-design.md)
+- **Agent design**: [Workspace Agent Governance Program Design](../0041-stage-00-agent-governance-contract/spec.md)
 - **Successor**: [Spec 045](../0045-agent-governance-ci-qa-cutover/spec.md)
 - **Execution Plan**: [Agent Roster Evaluation and Admission Implementation Plan](plan.md)
-- **Task evidence**: [Agent Roster Evaluation and Admission Task](tasks.md)
+- **Task evidence**: [Agent Roster Evaluation and Admission Task](README.md#task-records)
 
 ### Lifecycle Traceability
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-PRD-FUN-12](../../01.requirements/0003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AREA-001 | Canonical-role validation proves the exact 12-role set. |
+| [REQ-0003-NFR-0001](../../01.requirements/0003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AREA-001 | Canonical-role validation proves the exact 12-role set. |
 | N/A — VAL-AREA-002 shares the PRD-0003 source linked in VAL-AREA-001 | VAL-AREA-002 | Four-surface validation proves exact 48-adapter parity. |
 | N/A — VAL-AREA-003 shares the PRD-0003 source linked in VAL-AREA-001 | VAL-AREA-003 | Role-contract fixtures prove the two new roles are bounded and non-overlapping. |
 | N/A — VAL-AREA-004 shares the PRD-0003 source linked in VAL-AREA-001 | VAL-AREA-004 | Admission negative fixtures reject direct catalog import, overlap, excess authority, and missing evidence. |

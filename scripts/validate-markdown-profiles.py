@@ -101,6 +101,9 @@ COMPATIBILITY_PATH = Path(
     "tests/fixtures/document-contracts/template-compatibility.json"
 )
 OWNER = "markdown-profile-validator"
+WORK054_TRANSITIONAL_TASK_PATH = PurePosixPath(
+    "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks.md"
+)
 AUTHOR_PROMPT_MARKER = "Author prompt:"
 AUTHOR_PROMPT_COMMENT = re.compile(r"(?m)^[ \t]*<!-- Author prompt:")
 GENERIC_RESIDUE = (
@@ -594,9 +597,13 @@ def _first_visible_table(
 
 
 IDENTIFIER_PATTERNS = {
-    "requirement": re.compile(r"^REQ-[A-Z0-9-]+-[0-9]{2,3}$"),
+    "requirement": re.compile(r"^REQ-[0-9]{4}-(?:FR|NFR|IF)-[0-9]{4}$"),
     "criterion": re.compile(r"^VAL-[A-Z0-9-]+-[0-9]{3}$"),
     "work-item": re.compile(r"^[A-Z][A-Z0-9-]+-[0-9]{3}$"),
+}
+TEMPLATE_IDENTIFIER_PATTERNS = {
+    **IDENTIFIER_PATTERNS,
+    "requirement": re.compile(r"^REQ-[A-Z0-9-]+-[0-9]{2,4}$"),
 }
 EXPLICIT_EXCLUSION = re.compile(r"^N/A — \S(?:.*\S)?$")
 
@@ -735,7 +742,12 @@ def _body_contract_diagnostics(
                         )
                     )
                 continue
-            pattern = IDENTIFIER_PATTERNS[identifier.kind]
+            patterns = (
+                TEMPLATE_IDENTIFIER_PATTERNS
+                if profile.mode == "template"
+                else IDENTIFIER_PATTERNS
+            )
+            pattern = patterns[identifier.kind]
             if pattern.fullmatch(value) is None:
                 diagnostics.append(
                     _diagnostic(
@@ -946,6 +958,19 @@ def _value_rule_id(key: str, constraint: str) -> str:
     return f"FM-VALUE-{constraint.upper()}"
 
 
+def _is_work054_transitional_task_status(
+    path: PurePosixPath, data: dict[str, object]
+) -> bool:
+    """Admit only the exact monolithic Task 0054 record until WP-004C."""
+
+    return (
+        path == WORK054_TRANSITIONAL_TASK_PATH
+        and data.get("type") == "sdlc/task"
+        and data.get("status") == "active"
+        and data.get("artifact_id") == "TASK-0054"
+    )
+
+
 def _value_contract_diagnostics(
     path: PurePosixPath,
     profile: DocumentProfile,
@@ -1046,7 +1071,14 @@ def _value_contract_diagnostics(
                 if enumeration.source == "status-domain"
                 else enumeration.values
             )
-            if not any(_same_scalar(value, item) for item in allowed):
+            finite_work054_admission = (
+                contract.key == "status"
+                and enumeration.source == "status-domain"
+                and _is_work054_transitional_task_status(path, data)
+            )
+            if not finite_work054_admission and not any(
+                _same_scalar(value, item) for item in allowed
+            ):
                 diagnostics.append(
                     _diagnostic(
                         _value_rule_id(contract.key, "enum"),

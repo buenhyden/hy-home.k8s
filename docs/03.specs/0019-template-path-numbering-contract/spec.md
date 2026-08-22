@@ -270,20 +270,20 @@ no matches after active links are updated.
 ## Traceability
 
 - **Templates README**: [../../99.templates/README.md](../../99.templates/README.md)
-- **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/support/template-routing.md)
-- **SDLC Template Governance**: [../../99.templates/support/sdlc-governance.md](../../99.templates/support/sdlc-governance.md)
-- **Template Documentation Contract**: [../../99.templates/support/documentation-contract.md](../../99.templates/support/documentation-contract.md)
-- **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/frontmatter-schema.md)
-- **Stage Authoring Matrix**: [../../00.agent-governance/rules/stage-authoring-matrix.md](../../00.agent-governance/rules/stage-authoring-matrix.md)
-- **Document Stage Routing Rules**: [../../00.agent-governance/rules/document-stage-routing.md](../../00.agent-governance/rules/document-stage-routing.md)
-- **Documentation Protocol**: [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/documentation-protocol.md)
+- **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/support/document-contract.md)
+- **SDLC Template Governance**: [../../99.templates/support/sdlc-governance.md](../../99.templates/support/document-lifecycle.md)
+- **Template Documentation Contract**: [../../99.templates/support/documentation-contract.md](../../99.templates/support/document-contract.md)
+- **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/document-contract.md)
+- **Stage Authoring Matrix**: [../../00.agent-governance/rules/stage-authoring-matrix.md](../../00.agent-governance/rules/document-authoring.md)
+- **Document Stage Routing Rules**: [../../00.agent-governance/rules/document-stage-routing.md](../../00.agent-governance/rules/document-authoring.md)
+- **Documentation Protocol**: [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/document-authoring.md)
 - **Quality Gate**: [../../../scripts/validate-repo-quality-gates.sh](../../../scripts/validate-repo-quality-gates.sh)
 - **Diataxis**: <https://diataxis.fr/>
 - **Google Developer Documentation Style Guide**: <https://developers.google.com/style>
 - **GitHub Docs Best Practices**: <https://docs.github.com/en/contributing/writing-for-github-docs/best-practices-for-github-docs>
 - **NIST SSDF SP 800-218**: <https://csrc.nist.gov/pubs/sp/800/218/final>
 - **Plan**: [../../04.execution/plans/2026-07-05-template-path-numbering-contract.md](plan.md)
-- **Task**: [../../04.execution/tasks/2026-07-05-template-path-numbering-contract.md](tasks.md)
+- **Task**: [../../04.execution/tasks/2026-07-05-template-path-numbering-contract.md](README.md#task-records)
 ### Related inputs
 
 - **User request**: Normalize `docs/99.templates/**`, update PRD and Stage 03

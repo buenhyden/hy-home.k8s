@@ -46,6 +46,17 @@ by the user:
 - Use official or primary external sources for standards claims.
 - Commit each logical task separately.
 
+### Legacy Task ledger inputs
+
+This document tracks implementation and verification work for workspace
+document contract normalization. It keeps audit, contract, active document,
+historical evidence, reference, CI/QA, validator, and final review work
+traceable to the parent Spec and Plan.
+
+- **Parent Spec**:
+  [Workspace Document Contract Normalization Spec](spec.md)
+- **Parent Plan**:
+  [Workspace Document Contract Normalization Plan](plan.md)
 ## Goals & In-Scope
 
 - **Goals**:
@@ -59,8 +70,8 @@ by the user:
   - Reconcile validator coverage with the final contract shape.
 - **In Scope**:
   - `_workspace`, `.github`, `docs/01.requirements`, `docs/02.architecture`,
-    `docs/03.specs`, `docs/04.execution/plans`,
-    `docs/04.execution/tasks`, `docs/05.operations`,
+    `docs/03.specs`, `docs/03.specs/plans`,
+    `docs/03.specs/tasks`, `docs/05.operations`,
     `docs/90.references`, `docs/98.archive`, and `docs/99.templates`.
   - `scripts/validate-repo-quality-gates.sh` deterministic checks.
   - README indexes when folder content or profile language changes.
@@ -92,7 +103,7 @@ by the user:
 | `docs/90.references/{research,audits,data,llm-wiki,learning}` | Reference profile alignment, source boundaries, generated-index contracts, and freshness rules. |
 | `.github`, `docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md`, `scripts/README.md`, `tests/README.md` | CI/QA and automation contract alignment. |
 | `scripts/validate-repo-quality-gates.sh` | Deterministic validation of the final document contract shape. |
-| `docs/04.execution/plans/*`, `docs/04.execution/tasks/*`, `docs/00.agent-governance/memory/progress.md` | Execution evidence, status, and reusable memory. |
+| `docs/03.specs/*`, `docs/03.specs/*`, `docs/00.agent-governance/memory/progress.md` | Execution evidence, status, and reusable memory. |
 
 ## Work Breakdown
 
@@ -118,7 +129,7 @@ by the user:
 
 - Create: `docs/90.references/audits/2026-07-04-wdcn/workspace-document-contract-normalization-audit.md`
 - Modify: `docs/90.references/audits/README.md`
-- Modify: `docs/04.execution/tasks/2026-07-04-workspace-document-contract-normalization.md`
+- Modify: `docs/03.specs/0014-workspace-document-contract-normalization/README.md#task-records`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
 - [ ] **Step 1: Capture repository status**
@@ -206,6 +217,35 @@ updated: 2026-07-04
 
 # Workspace Document Contract Normalization Audit
 
+
+
+### Legacy Task supplemental evidence
+
+### Phase View
+
+### Phase 1: Audit
+
+- [x] T-001 Audit and inventory document contract drift.
+
+### Phase 2: Contract Sources
+
+- [x] T-002 Normalize support contracts and template forms.
+
+### Phase 3: Active Documents
+
+- [x] T-003 Apply active SDLC document profiles.
+
+### Phase 4: Historical Evidence
+
+- [x] T-004 Normalize historical evidence contracts.
+
+### Phase 5: References and CI/QA
+
+- [x] T-005 Align references, CI/QA, and formatting contracts.
+
+### Phase 6: Final Validation
+
+- [x] T-006 Reconcile final validator and governance gates.
 ## Overview
 
 ## Reference Type
@@ -244,7 +284,7 @@ Run:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-git add docs/90.references/audits/2026-07-04-wdcn/workspace-document-contract-normalization-audit.md docs/90.references/audits/README.md docs/04.execution/tasks/2026-07-04-workspace-document-contract-normalization.md docs/00.agent-governance/memory/progress.md
+git add docs/90.references/audits/2026-07-04-wdcn/workspace-document-contract-normalization-audit.md docs/90.references/audits/README.md docs/03.specs/0014-workspace-document-contract-normalization/README.md#task-records docs/00.agent-governance/memory/progress.md
 git commit -m "docs(audit): Inventory document contract drift"
 ```
 
@@ -353,7 +393,7 @@ Run:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-git add docs/99.templates docs/00.agent-governance/rules scripts/validate-repo-quality-gates.sh docs/04.execution/tasks/2026-07-04-workspace-document-contract-normalization.md docs/00.agent-governance/memory/progress.md
+git add docs/99.templates docs/00.agent-governance/rules scripts/validate-repo-quality-gates.sh docs/03.specs/0014-workspace-document-contract-normalization/README.md#task-records docs/00.agent-governance/memory/progress.md
 git commit -m "docs(templates): Normalize document contract profiles"
 ```
 
@@ -368,8 +408,8 @@ Expected:
 - Modify: `docs/01.requirements/**`
 - Modify: `docs/02.architecture/**`
 - Modify: `docs/03.specs/**`
-- Modify: `docs/04.execution/plans/**`
-- Modify: `docs/04.execution/tasks/**`
+- Modify: `docs/03.specs/**`
+- Modify: `docs/03.specs/**`
 - Modify: `docs/05.operations/**`
 - Modify as needed: related README indexes
 - Modify: task/progress evidence
@@ -379,7 +419,7 @@ Expected:
 Run:
 
 ```bash
-find docs/01.requirements docs/02.architecture docs/03.specs docs/04.execution/plans docs/04.execution/tasks docs/05.operations -type f -name '*.md' | sort
+find docs/01.requirements docs/02.architecture docs/03.specs docs/03.specs/plans docs/03.specs/tasks docs/05.operations -type f -name '*.md' | sort
 ```
 
 Expected:
@@ -399,7 +439,7 @@ For each non-README Markdown file in active SDLC stages:
 Run after edits:
 
 ```bash
-rg -n "^---$|^title:|^type:|^status:|^owner:|^updated:" docs/01.requirements docs/02.architecture docs/03.specs docs/04.execution/plans docs/04.execution/tasks docs/05.operations
+rg -n "^---$|^title:|^type:|^status:|^owner:|^updated:" docs/01.requirements docs/02.architecture docs/03.specs docs/03.specs/plans docs/03.specs/tasks docs/05.operations
 ```
 
 Expected:
@@ -432,7 +472,7 @@ Expected:
 Run:
 
 ```bash
-rg -n "tests?\\.md|runbook|Verification|Validation|Rollback|Recovery|Success Criteria|Acceptance Criteria|current contract|superseded" docs/03.specs docs/05.operations/runbooks docs/04.execution
+rg -n "tests?\\.md|runbook|Verification|Validation|Rollback|Recovery|Success Criteria|Acceptance Criteria|current contract|superseded" docs/03.specs docs/05.operations/runbooks docs/03.specs
 ```
 
 Expected:
@@ -450,7 +490,7 @@ bodies.
 Run:
 
 ```bash
-rg -n "^## Link Basis$|^## Related Documents$|^---$" -g 'README.md' docs/01.requirements docs/02.architecture docs/03.specs docs/04.execution docs/05.operations
+rg -n "^## Link Basis$|^## Related Documents$|^---$" -g 'README.md' docs/01.requirements docs/02.architecture docs/03.specs docs/03.specs docs/05.operations
 ```
 
 Expected:
@@ -464,7 +504,7 @@ Run:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-git add docs/01.requirements docs/02.architecture docs/03.specs docs/04.execution docs/05.operations docs/00.agent-governance/memory/progress.md
+git add docs/01.requirements docs/02.architecture docs/03.specs docs/03.specs docs/05.operations docs/00.agent-governance/memory/progress.md
 git commit -m "docs(sdlc): Apply active document profiles"
 ```
 
@@ -477,8 +517,8 @@ Expected:
 **Files:**
 
 - Modify: `docs/98.archive/**`
-- Modify: older `docs/04.execution/plans/**`
-- Modify: older `docs/04.execution/tasks/**`
+- Modify: older `docs/03.specs/**`
+- Modify: older `docs/03.specs/**`
 - Modify: `docs/90.references/audits/**`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 - Modify as needed: archive and audit README indexes
@@ -488,7 +528,7 @@ Expected:
 Run:
 
 ```bash
-find docs/98.archive docs/90.references/audits docs/04.execution/plans docs/04.execution/tasks -type f -name '*.md' | sort
+find docs/98.archive docs/90.references/audits docs/03.specs/plans docs/03.specs/tasks -type f -name '*.md' | sort
 ```
 
 Expected:
@@ -528,7 +568,7 @@ For old Stage 04 records:
 Run:
 
 ```bash
-rg -n "current and target|during the migration|after Phase|\\.claude/(hooks)|deprecated README heading|type:[ ]operations" docs/04.execution/plans docs/04.execution/tasks
+rg -n "current and target|during the migration|after Phase|\\.claude/(hooks)|deprecated README heading|type:[ ]operations" docs/03.specs/plans docs/03.specs/tasks
 ```
 
 Expected:
@@ -562,7 +602,7 @@ Run:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-git add docs/98.archive docs/04.execution/plans docs/04.execution/tasks docs/90.references/audits docs/00.agent-governance/memory/progress.md
+git add docs/98.archive docs/03.specs/plans docs/03.specs/tasks docs/90.references/audits docs/00.agent-governance/memory/progress.md
 git commit -m "docs(archive): Normalize historical evidence contracts"
 ```
 
@@ -661,7 +701,7 @@ Run:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-git add docs/90.references .github docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md scripts/README.md tests/README.md scripts/validate-repo-quality-gates.sh docs/04.execution/tasks/2026-07-04-workspace-document-contract-normalization.md docs/00.agent-governance/memory/progress.md
+git add docs/90.references .github docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md scripts/README.md tests/README.md scripts/validate-repo-quality-gates.sh docs/03.specs/0014-workspace-document-contract-normalization/README.md#task-records docs/00.agent-governance/memory/progress.md
 git commit -m "docs(qa): Align references and CI QA contracts"
 ```
 
@@ -676,8 +716,8 @@ Expected:
 - Modify: `scripts/validate-repo-quality-gates.sh`
 - Modify as needed: `docs/00.agent-governance/**`
 - Modify as needed: `docs/99.templates/**`
-- Modify: `docs/04.execution/plans/2026-07-04-workspace-document-contract-normalization.md`
-- Modify: `docs/04.execution/tasks/2026-07-04-workspace-document-contract-normalization.md`
+- Modify: `docs/03.specs/0014-workspace-document-contract-normalization/plan.md`
+- Modify: `docs/03.specs/0014-workspace-document-contract-normalization/README.md#task-records`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
 - [x] **Step 1: Re-run final drift scans**
@@ -768,7 +808,7 @@ Run:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-git add scripts/validate-repo-quality-gates.sh docs/00.agent-governance docs/99.templates docs/04.execution/plans/2026-07-04-workspace-document-contract-normalization.md docs/04.execution/tasks/2026-07-04-workspace-document-contract-normalization.md
+git add scripts/validate-repo-quality-gates.sh docs/00.agent-governance docs/99.templates docs/03.specs/0014-workspace-document-contract-normalization/plan.md docs/03.specs/0014-workspace-document-contract-normalization/README.md#task-records
 git commit -m "docs(validation): Reconcile document governance gates"
 ```
 
@@ -789,6 +829,230 @@ Expected:
 | VAL-PLN-006 | Historical evidence | Current vs historical separation | Focused `rg` scans from Task 6 | Remaining legacy strings are labeled historical, template starter, or generated evidence. |
 | VAL-PLN-007 | Review | Final independent review | Subagent reviewer brief in Task 6 | READY or all findings fixed and re-reviewed. |
 
+### Legacy Task verification evidence
+
+- **Required Commands**:
+  - `git diff --check`
+  - `bash -n scripts/validate-repo-quality-gates.sh`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `bash scripts/validate-harness.sh`
+- **Conditional Commands**:
+  - `bash infrastructure/tests/verify-contracts-static.sh`
+  - `bash scripts/validate-gitops-structure.sh`
+  - `bash scripts/validate-k8s-manifests.sh .`
+  - `bash scripts/check-secret-handling.sh .`
+  - `bash scripts/validate-policy-gates.sh .`
+- **Review Evidence**:
+  - Spec compliance reviewer result after each task.
+  - Code quality reviewer result after each task.
+  - Final independent reviewer result for the full branch.
+
+### Execution Evidence
+
+### T-001 Audit and Inventory Document Contract Drift
+
+Status: Done.
+
+Evidence:
+
+- Added the dated audit report:
+  [Workspace Document Contract Normalization Audit](../../90.references/audits/2026-07-04-wdcn/workspace-document-contract-normalization-audit.md).
+- Updated the audit report index in
+  [Audit References README](../../90.references/audits/README.md).
+- Focused docs Markdown inventory counted 206 Markdown files, 181 authored
+  frontmatter documents, 23 README files, 2 intentional common-template
+  frontmatter-free exceptions, and 32 archive Tombstones.
+- `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and
+  `.github/SECURITY.md` were recorded as active frontmatter-free repository
+  surfaces that need explicit contract treatment in T-002 or T-005.
+- Read-only subagent cross-check found no validator-blocking drift and added
+  three follow-up routes: scripts README count drift, coverage wording
+  boundary drift, and resolved prior-audit findings that need historical
+  framing.
+
+Validation:
+
+- `git diff --check` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+
+### T-002 Normalize Support Contracts and Template Forms
+
+Status: Done.
+
+Evidence:
+
+- Clarified `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and
+  `.github/SECURITY.md` as frontmatter-free GitHub-native control Markdown in
+  template support contracts, Stage 00 routing rules, and the repository
+  quality gate.
+- Extended reference template/support vocabulary with
+  `dated-implementation-audit`, `data-catalog`, and `source-ledger` so new
+  Stage 90 reference documents match observed repository usage.
+- Clarified incident record routing: the incident file must live under
+  `docs/05.operations/incidents/YYYY/INC-###-<title>/` and its filename must
+  match the incident folder; `postmortem.md` remains in the same folder.
+- Clarified that `docs/00.agent-governance/memory/<topic>.md` excludes the
+  reserved `progress.md` route.
+- Documented the required-heading extraction algorithm: literal `##`
+  template headings are required unless they contain placeholders or are
+  marked optional or if-applicable.
+- Updated `docs/00.agent-governance/hooks/k8s-pre-edit.sh` so mismatched
+  incident folder/file IDs produce an early route note instead of a misleading
+  incident-template classification.
+- Added official GitHub source links for PR template and security policy
+  GitHub-native Markdown behavior.
+
+Validation:
+
+- `git diff --check` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `bash -n docs/00.agent-governance/hooks/k8s-pre-edit.sh` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- Pre-edit hook simulation for
+  `docs/05.operations/incidents/2026/INC-001-demo/INC-002-other.md` emitted a
+  route note that the incident filename must match the folder.
+- Focused flat-template route scan — PASS.
+- Focused support stale migration wording scan — PASS.
+- Broad legacy residue scan found only historical Stage 04/progress evidence
+  and template starter markers, not current support-contract drift.
+
+### T-003 Apply Active SDLC Document Profiles
+
+Status: Done.
+
+Evidence:
+
+- Updated the parent spec so active repository-control Markdown under
+  `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and
+  `.github/SECURITY.md` is modeled as a frontmatter-free GitHub-native control
+  surface instead of a missing authored-document profile.
+- Added `repository-control` evidence and `control` validator scope to the
+  document contract profile model used by the spec.
+- Updated the Operations README and Incidents README so active authoring
+  guidance requires incident records to use
+  `docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md` and
+  postmortems to use `postmortem.md` in the same incident folder.
+- Confirmed the repository has no tracked incident record files that need live
+  path migration in this task.
+- Rechecked the official GitHub pull request template and security policy docs
+  while preserving `.github` control Markdown as frontmatter-free.
+
+Validation:
+
+- `git diff --check` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- Focused active-rule scan for GitHub-native control Markdown,
+  `repository-control`, and incident folder/file equality terms — PASS.
+
+### T-004 Normalize Historical Evidence Contracts
+
+Status: Done.
+
+Evidence:
+
+- Added a resolution overlay to the 2026-07-03 workspace document governance
+  hardening audit so dated README heading, README delimiter, CI/QA hook-path,
+  and provider traceability findings remain preserved as baseline evidence
+  without reading as current drift.
+- Updated the 2026-07-03 audit checklist statuses from pending remediation
+  labels to resolved historical-item labels where current scans and later task
+  evidence show the drift is closed.
+- Updated the audit index to mark the 2026-07-03 audit as a resolved snapshot.
+- Added a resolution overlay to the 2026-07-04 normalization audit and marked
+  completed T-002/T-003/T-004 checklist items done while keeping T-005 and
+  T-006 pending.
+- Clarified archive Tombstone interpretation in the archive README and common
+  documentation governance: Tombstones and archive index rows are historical
+  evidence, while current replacements own active contracts.
+
+Validation:
+
+- `git diff --check` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- Deprecated README related-heading scan across active surfaces — PASS with no
+  matches.
+- Active CI/QA hook-path drift scan over `tests/README.md`, the CI/CD QA
+  guide, and `scripts/README.md` — PASS with no matches.
+- Focused README metadata scan over representative README files — PASS with no
+  matches.
+- Incident record inventory under `docs/05.operations/incidents` — no tracked
+  incident records requiring migration.
+
+### T-005 Align References, CI/QA, and Formatting Contracts
+
+Status: Done.
+
+Evidence:
+
+- Reconciled `scripts/README.md` with the current tracked script inventory:
+  eight `scripts/*.sh` files, including `validate-harness.sh`, are present and
+  retained.
+- Aligned coverage wording across the CI/CD QA guide, `tests/README.md`, and
+  `.github/PULL_REQUEST_TEMPLATE.md`: future testable application code keeps
+  the 90% target where applicable, while Bash/YAML/Markdown infrastructure
+  changes use validation-matrix evidence instead of application coverage
+  claims.
+- Refreshed the Stage 90 spec/SDLC/CI/QA/formatting research reference with
+  official GitHub Actions workflow syntax/events, CommonMark 0.31.2, YAML
+  1.2.2, and pre-commit sources checked on 2026-07-04.
+- Updated the research README index to show the refreshed CI/formatting source
+  basis.
+- Updated the 2026-07-04 normalization audit so scripts inventory, coverage
+  wording, and CI/QA official-source alignment are marked done in T-005.
+
+Validation:
+
+- `git diff --check` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- Script inventory scan found eight tracked `scripts/*.sh` files.
+- Focused stale scan for the old seven-script wording, old coverage wording,
+  and old pending T-005 marker — PASS with no matches.
+- Focused source/coverage scan confirmed GitHub Actions workflow syntax,
+  CommonMark 0.31.2, YAML 1.2.2, pre-commit, and coverage boundary terms are
+  present on the intended reference and CI/QA surfaces.
+
+### T-006 Reconcile Final Validator and Governance Gates
+
+Status: Done.
+
+Evidence:
+
+- Re-ran the final validation bundle after T-001 through T-005 and confirmed
+  no additional deterministic validator changes were needed beyond the
+  contract/profile checks already added earlier in this branch.
+- `bash scripts/validate-harness.sh` passed the repo-static bundle:
+  repository quality gates, GitOps structure, Kubernetes manifest syntax,
+  secret handling, policy gates, static infrastructure contracts, and diff
+  hygiene.
+- Broad Task 6 drift scan still returns expected historical plans/tasks,
+  progress ledger evidence, template starter markers, generated validator
+  literals, and example migration phases; repo-quality gates pass and README
+  frontmatter scan returned no matches.
+- Final independent reviewer `019f2a3e-0dd4-7292-95cb-9da3038e30f3` reported
+  no blocking correctness, security, scope-control, template-route,
+  frontmatter, or section-contract issues. The reviewer found only stale T-006
+  completion tracking, which this entry and the companion audit/index updates
+  resolve.
+- Remote GitHub Actions run status was not inspected; this task records
+  repo-static validation only.
+
+Validation:
+
+- `git diff --check` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash scripts/validate-harness.sh` — PASS.
+- `jq empty .agents/hooks.json .claude/settings.json .codex/hooks.json` —
+  PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` — PASS.
+- Task 6 README frontmatter scan — PASS with no matches.
+- Optional local tooling limitation: `kube-linter` was not installed and was
+  skipped by `validate-k8s-manifests.sh`; `conftest` was not installed and
+  `validate-policy-gates.sh` used the built-in fallback.
 ## Risks & Mitigations
 
 | Risk | Impact | Mitigation |
@@ -808,6 +1072,28 @@ Expected:
 - **Rollback Trigger**: Revert the logical task commit that introduced a validator false positive, broken link, or contract contradiction.
 - **Prompt / Model Promotion Criteria**: Not applicable; provider prompts and agent surfaces are documentation contracts, not model promotion artifacts, unless a later task touches them explicitly.
 
+### Legacy Task approval and rollback boundaries
+
+- **Allowed Paths**: `T-001 through T-006` is limited to these Workspace Document Contract Normalization owners and Task-Table surfaces:
+  - `docs/03.specs/0014-workspace-document-contract-normalization/README.md#task-records`
+  - `docs/03.specs/0014-workspace-document-contract-normalization/spec.md`
+  - `docs/03.specs/0014-workspace-document-contract-normalization/plan.md`
+- **Forbidden Paths**: runtime manifests, provider or CI settings, secret values, generated/local state, and paths outside the Workspace Document Contract Normalization work items and linked evidence owners.
+- **Approval Required**: Human approval is required before Workspace Document Contract Normalization protected-file expansion, deletion/relocation, runtime/CI/provider mutation, credential access, publication, push, or merge beyond the parent Plan.
+- **Static Validation**: Preserve the Workspace Document Contract Normalization outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `git diff --check`
+  - `bash -n scripts/validate-repo-quality-gates.sh`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `bash scripts/validate-harness.sh`
+- **Live Validation**: DEFER — Workspace Document Contract Normalization is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: No secret value is required for Workspace Document Contract Normalization; do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
+- **Rollback Plan**: Revert the logical Workspace Document Contract Normalization change set for `T-001 through T-006` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Workspace Document Contract Normalization evidence remains in:
+  - `docs/03.specs/0014-workspace-document-contract-normalization/README.md#task-records`
+  - `docs/03.specs/0014-workspace-document-contract-normalization/spec.md`
+  - `docs/03.specs/0014-workspace-document-contract-normalization/plan.md`
+  - `.github/ABOUT.md`
+  - `.github/PULL_REQUEST_TEMPLATE.md`
 ## Completion Criteria
 
 - [x] Audit inventory completed and indexed.
@@ -825,8 +1111,19 @@ Expected:
 ## Traceability
 
 - **Spec**: [Workspace Document Contract Normalization Spec](spec.md)
-- **Tasks**: [Workspace Document Contract Normalization Tasks](tasks.md)
-- **Template Routing Contract**: [Template Routing](../../99.templates/support/template-routing.md)
-- **Frontmatter Schema**: [Frontmatter Schema](../../99.templates/support/frontmatter-schema.md)
-- **Documentation Contract**: [Template Documentation Contract](../../99.templates/support/documentation-contract.md)
+- **Tasks**: [Workspace Document Contract Normalization Tasks](README.md#task-records)
+- **Template Routing Contract**: [Template Routing](../../99.templates/support/document-contract.md)
+- **Frontmatter Schema**: [Frontmatter Schema](../../99.templates/support/document-contract.md)
+- **Documentation Contract**: [Template Documentation Contract](../../99.templates/support/document-contract.md)
 - **CI/QA Guide**: [CI/CD and QA Reference Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
+
+### Legacy Task traceability
+
+- **Spec**:
+  [Workspace Document Contract Normalization Spec](spec.md)
+- **Plan**:
+  [Workspace Document Contract Normalization Plan](plan.md)
+- **Template Routing Contract**:
+  [Template Routing](../../99.templates/support/document-contract.md)
+- **Frontmatter Schema**:
+  [Frontmatter Schema](../../99.templates/support/document-contract.md)

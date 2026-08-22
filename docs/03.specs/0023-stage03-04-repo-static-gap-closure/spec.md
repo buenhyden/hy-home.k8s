@@ -12,8 +12,8 @@ artifact_id: "SPEC-0023"
 ## Overview
 
 This specification defines a repo-static gap-closure pass for the authored
-documents under `docs/03.specs/`, `docs/04.execution/plans/`, and
-`docs/04.execution/tasks/`.
+documents under `docs/03.specs/`, `docs/03.specs/`, and
+`docs/03.specs/`.
 
 The approved scope is intentionally narrow: close implementation and evidence
 gaps that can be resolved with repository-local document, governance,
@@ -224,8 +224,8 @@ runtime API contract is required.
   - Repository validation passes.
 - **Datasets / Fixtures**:
   - Current `docs/03.specs/**`.
-  - Current `docs/04.execution/plans/**`.
-  - Current `docs/04.execution/tasks/**`.
+  - Current `docs/03.specs/**`.
+  - Current `docs/03.specs/**`.
   - Existing validation scripts.
 - **How to Run**:
   - `git diff --check`
@@ -295,9 +295,9 @@ bash scripts/validate-policy-gates.sh .
 - **Plan**: [../../04.execution/plans/2026-07-06-stage03-04-repo-static-gap-closure.md](plan.md)
 - **Planned Tasks Path**: `../../04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md`
 - **Plan**: [../../04.execution/plans/2026-07-04-workspace-engineering-research-pack.md](../0017-workspace-engineering-research-pack/plan.md)
-- **Tasks**: [../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md](../0017-workspace-engineering-research-pack/tasks.md)
-- **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/support/template-routing.md)
-- **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/frontmatter-schema.md)
+- **Tasks**: [../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md](../0017-workspace-engineering-research-pack/README.md)
+- **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/support/document-contract.md)
+- **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/document-contract.md)
 - **Progress Memory**: [../../00.agent-governance/memory/progress.md](../../00.agent-governance/memory/progress.md)
 - **Completed evolution**: [011](../0011-template-contract-governance-migration/spec.md) -> [012](../0012-template-governance-audit-enhancement/spec.md) -> [013](../0013-workspace-document-governance-hardening/spec.md) -> [014](../0014-workspace-document-contract-normalization/spec.md) -> [020](../0020-workspace-contract-governance-normalization/spec.md) -> [021](../0021-sdlc-lifecycle-contract/spec.md) -> [022](../0022-control-cloud-doc-normalization/spec.md) -> [023](./spec.md).
 ### Related inputs

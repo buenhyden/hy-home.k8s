@@ -1,13 +1,13 @@
 ---
-title: 'Repository Delivery and Platform Assurance Product Requirements'
-type: sdlc/prd
+title: 'Repository Delivery and Platform Assurance Requirement Package'
+type: sdlc/requirement-package
 status: active
 owner: platform
 updated: 2026-08-07
-artifact_id: "PRD-0007"
+artifact_id: "REQ-0007"
 ---
 
-# Repository Delivery and Platform Assurance Product Requirements
+# Repository Delivery and Platform Assurance Requirement Package
 
 ## Overview
 
@@ -82,18 +82,18 @@ state that current `main` has already superseded.
 
 | Requirement ID | Requirement | Priority | Verification intent |
 | --- | --- | --- | --- |
-| REQ-RDPA-001 | Inventory every in-scope tracked surface and classify it as change, evidence-backed no-change, or bounded DEFER without forcing cosmetic edits. | Must | A reviewed current-surface matrix covers `.github`, `examples`, `gitops`, `infrastructure`, `policy`, `scripts`, `secrets`, `tests`, and `traefik`. |
-| REQ-RDPA-002 | Reconcile saved stash object `6370311e...` by hunk disposition and regenerate derived object identities from current HEAD. | Must | The Task records every disposition, no stale generated object ID is copied, and the matching stash is dropped only after verified local integration. |
-| REQ-RDPA-003 | Keep one machine owner for affected-path routing and add a non-duplicative GitHub label/CODEOWNERS projection contract. | Must | Schema, parity validator, and negative fixtures reject missing, extra, ambiguous, or duplicated routing facts. |
-| REQ-RDPA-004 | Preserve intentional CI evidence lanes, one aggregate verdict, immutable Action identity, least privilege, and explicit remote observation boundaries. | Must | Workflow topology and routing tests pass without manufacturing a hosted run for an unpushed SHA. |
-| REQ-RDPA-005 | Record platform evidence depth as syntax, render, schema or policy, product semantic, and live observation rather than one undifferentiated PASS. | Must | All 13 Kustomize roots and every platform validator have an exact tool, result, fallback, lane, and depth record. |
-| REQ-RDPA-006 | Validate Traefik references, Kubernetes GVK expectations, GitOps structure, policy, Vault/ESO contracts, secret handling, and explicit local-only transport exceptions. | Must | Positive and negative fixtures prove fail-closed reference, policy, secret, and exception behavior. |
-| REQ-RDPA-007 | Add provider-native Terraform and Bicep static validation for executable examples without cloud credentials or deployment. | Must | Terraform format/init/validate and Bicep lint/build evidence is recorded with pinned tool identity and no apply/deploy command. |
-| REQ-RDPA-008 | Add deterministic direct tests for malformed input, missing tools, fallback behavior, unsafe paths, and forbidden actions. | Must | Focused test suites fail on every named negative fixture and distinguish required-tool failure from diagnostic SKIP. |
-| REQ-RDPA-009 | Preserve secret, ignored-state, remote-action, and live-system approval boundaries throughout implementation. | Must | Diff and review evidence show no ignored secret read, credential change, push, remote mutation, or live mutation. |
-| REQ-RDPA-010 | Execute as ordered Specs with separate Plans, Tasks, logical commits, independent reviews, rollback units, and final local-only integration. | Must | Each tranche has reciprocal evidence and passes its gate before its successor begins. |
-| REQ-RDPA-011 | Keep image and artifact assurance fail-closed without performing an unverified blanket digest migration. | Should | Current non-`latest` tag-or-digest checks pass and any digest, SBOM, or provenance follow-up names consumers, owner, and trigger. |
-| REQ-RDPA-012 | Keep native README/frontmatter forms unchanged unless the selected profile or observed content proves a real contract defect. | Must | Strict registry, Markdown-profile, and link/owner validation passes with no template residue or arbitrary README section. |
+| REQ-0007-FR-0001 | Inventory every in-scope tracked surface and classify it as change, evidence-backed no-change, or bounded DEFER without forcing cosmetic edits. | Must | A reviewed current-surface matrix covers `.github`, `examples`, `gitops`, `infrastructure`, `policy`, `scripts`, `secrets`, `tests`, and `traefik`. |
+| REQ-0007-FR-0002 | Reconcile saved stash object `6370311e...` by hunk disposition and regenerate derived object identities from current HEAD. | Must | The Task records every disposition, no stale generated object ID is copied, and the matching stash is dropped only after verified local integration. |
+| REQ-0007-FR-0003 | Keep one machine owner for affected-path routing and add a non-duplicative GitHub label/CODEOWNERS projection contract. | Must | Schema, parity validator, and negative fixtures reject missing, extra, ambiguous, or duplicated routing facts. |
+| REQ-0007-FR-0004 | Preserve intentional CI evidence lanes, one aggregate verdict, immutable Action identity, least privilege, and explicit remote observation boundaries. | Must | Workflow topology and routing tests pass without manufacturing a hosted run for an unpushed SHA. |
+| REQ-0007-FR-0005 | Record platform evidence depth as syntax, render, schema or policy, product semantic, and live observation rather than one undifferentiated PASS. | Must | All 13 Kustomize roots and every platform validator have an exact tool, result, fallback, lane, and depth record. |
+| REQ-0007-FR-0006 | Validate Traefik references, Kubernetes GVK expectations, GitOps structure, policy, Vault/ESO contracts, secret handling, and explicit local-only transport exceptions. | Must | Positive and negative fixtures prove fail-closed reference, policy, secret, and exception behavior. |
+| REQ-0007-FR-0007 | Add provider-native Terraform and Bicep static validation for executable examples without cloud credentials or deployment. | Must | Terraform format/init/validate and Bicep lint/build evidence is recorded with pinned tool identity and no apply/deploy command. |
+| REQ-0007-FR-0008 | Add deterministic direct tests for malformed input, missing tools, fallback behavior, unsafe paths, and forbidden actions. | Must | Focused test suites fail on every named negative fixture and distinguish required-tool failure from diagnostic SKIP. |
+| REQ-0007-FR-0009 | Preserve secret, ignored-state, remote-action, and live-system approval boundaries throughout implementation. | Must | Diff and review evidence show no ignored secret read, credential change, push, remote mutation, or live mutation. |
+| REQ-0007-FR-0010 | Execute as ordered Specs with separate Plans, Tasks, logical commits, independent reviews, rollback units, and final local-only integration. | Must | Each tranche has reciprocal evidence and passes its gate before its successor begins. |
+| REQ-0007-NFR-0001 | Keep image and artifact assurance fail-closed without performing an unverified blanket digest migration. | Should | Current non-`latest` tag-or-digest checks pass and any digest, SBOM, or provenance follow-up names consumers, owner, and trigger. |
+| REQ-0007-NFR-0002 | Keep native README/frontmatter forms unchanged unless the selected profile or observed content proves a real contract defect. | Must | Strict registry, Markdown-profile, and link/owner validation passes with no template residue or arbitrary README section. |
 
 ## Success / Acceptance Criteria
 
@@ -165,15 +165,15 @@ state that current `main` has already superseded.
 
 | Requirement ID | Acceptance criterion | Downstream owner |
 | --- | --- | --- |
-| REQ-RDPA-001 | ACC-RDPA-001 | [AD-0010](../02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md) and [Spec 047](../03.specs/0047-current-surface-and-stash-reconciliation/spec.md) own architecture and first-tranche disposition evidence. |
-| REQ-RDPA-002 | ACC-RDPA-007 | N/A — Spec 047 shares the downstream owner linked in REQ-RDPA-001. |
-| REQ-RDPA-003 | ACC-RDPA-002 | [Spec 048](../03.specs/0048-github-routing-and-ci-evidence/spec.md) owns GitHub projection and CI evidence. |
-| REQ-RDPA-004 | ACC-RDPA-002 | N/A — Spec 048 shares the downstream owner stated in REQ-RDPA-003. |
-| REQ-RDPA-005 | ACC-RDPA-003 | [Spec 049](../03.specs/0049-platform-validation-and-security-evidence/spec.md) owns layered platform evidence. |
-| REQ-RDPA-006 | ACC-RDPA-004 | N/A — Spec 049 shares the downstream owner stated in REQ-RDPA-005. |
-| REQ-RDPA-007 | ACC-RDPA-005 | [Spec 050](../03.specs/0050-example-iac-and-validator-qa/spec.md) owns provider-native example validation. |
-| REQ-RDPA-008 | ACC-RDPA-006 | N/A — Specs 049 and 050 share the downstream owners linked in REQ-RDPA-005 and REQ-RDPA-007. |
-| REQ-RDPA-009 | ACC-RDPA-009 | N/A — Specs 047 through 051 share this approval boundary through the linked tranche owners. |
-| REQ-RDPA-010 | ACC-RDPA-008 | [Spec 051](../03.specs/0051-repository-assurance-integration-and-closure/spec.md) owns terminal integration and closure. |
-| REQ-RDPA-011 | ACC-RDPA-004 | N/A — Spec 049 shares the downstream owner stated in REQ-RDPA-005. |
-| REQ-RDPA-012 | ACC-RDPA-001 | N/A — Specs 047 and 051 share the downstream owners linked in REQ-RDPA-001 and REQ-RDPA-010. |
+| REQ-0007-FR-0001 | ACC-RDPA-001 | [AD-0010](../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md) and [Spec 047](../03.specs/0047-current-surface-and-stash-reconciliation/spec.md) own architecture and first-tranche disposition evidence. |
+| REQ-0007-FR-0002 | ACC-RDPA-007 | N/A — Spec 047 shares the downstream owner linked in REQ-0007-FR-0001. |
+| REQ-0007-FR-0003 | ACC-RDPA-002 | [Spec 048](../03.specs/0048-github-routing-and-ci-evidence/spec.md) owns GitHub projection and CI evidence. |
+| REQ-0007-FR-0004 | ACC-RDPA-002 | N/A — Spec 048 shares the downstream owner stated in REQ-0007-FR-0003. |
+| REQ-0007-FR-0005 | ACC-RDPA-003 | [Spec 049](../03.specs/0049-platform-validation-and-security-evidence/spec.md) owns layered platform evidence. |
+| REQ-0007-FR-0006 | ACC-RDPA-004 | N/A — Spec 049 shares the downstream owner stated in REQ-0007-FR-0005. |
+| REQ-0007-FR-0007 | ACC-RDPA-005 | [Spec 050](../03.specs/0050-example-iac-and-validator-qa/spec.md) owns provider-native example validation. |
+| REQ-0007-FR-0008 | ACC-RDPA-006 | N/A — Specs 049 and 050 share the downstream owners linked in REQ-0007-FR-0005 and REQ-0007-FR-0007. |
+| REQ-0007-FR-0009 | ACC-RDPA-009 | N/A — Specs 047 through 051 share this approval boundary through the linked tranche owners. |
+| REQ-0007-FR-0010 | ACC-RDPA-008 | [Spec 051](../03.specs/0051-repository-assurance-integration-and-closure/spec.md) owns terminal integration and closure. |
+| REQ-0007-NFR-0001 | ACC-RDPA-004 | N/A — Spec 049 shares the downstream owner stated in REQ-0007-FR-0005. |
+| REQ-0007-NFR-0002 | ACC-RDPA-001 | N/A — Specs 047 and 051 share the downstream owners linked in REQ-0007-FR-0001 and REQ-0007-FR-0010. |

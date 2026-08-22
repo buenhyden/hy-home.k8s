@@ -13,7 +13,7 @@ artifact_id: "SPEC-0052"
 
 This specification implements
 [PRD-0008](../../01.requirements/0008-workspace-document-taxonomy-consolidation.md),
-[AD-0011](../../02.architecture/descriptions/ad-0011-document-taxonomy-consolidation-architecture.md),
+[AD-0011](../../02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md),
 and the human-approved direction recorded in accepted
 [ADR-0023](../../02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md).
 It replaces the earlier Spec 052 direction that would have renumbered
@@ -77,7 +77,7 @@ publish, push, merge, deploy, or operate live infrastructure.
 The terminal live route is `docs/03.specs/<NNN>-<slug>/`. `spec.md` is the work
 unit owner. `plan.md` is optional but requires the Spec. `tasks.md` is optional
 but requires both Spec and Plan. No live Spec, Plan, Task, or index remains
-under `docs/04.execution/`.
+under `docs/03.specs/`.
 
 ### DTC-2 Stable identity and date exceptions
 
@@ -208,14 +208,14 @@ one-to-one AD destinations:
 
 | Source ARD/status | Source path provenance | Terminal AD/target |
 | --- | --- | --- |
-| ARD-0004 / active | legacy basename `0004-argo-rollouts-progressive-delivery.md` | AD-0004 / `descriptions/ad-0004-argo-rollouts-progressive-delivery.md` |
-| ARD-0005 / active | legacy basename `0005-argo-notifications-slack.md` | AD-0005 / `descriptions/ad-0005-argo-notifications-slack.md` |
-| ARD-0006 / active | legacy basename `0006-workspace-agent-governance-platform.md` | AD-0006 / `descriptions/ad-0006-workspace-agent-governance-platform.md` |
-| ARD-0007 / active | legacy basename `0007-current-local-gitops-platform.md` | AD-0007 / `descriptions/ad-0007-current-local-gitops-platform.md` |
-| ARD-0008 / accepted | legacy basename `0008-workspace-document-assurance-operating-model.md` | AD-0008 / `descriptions/ad-0008-workspace-document-assurance-operating-model.md` |
-| ARD-0009 / accepted | legacy basename `0009-document-lifecycle-evidence-operating-model.md` | AD-0009 / `descriptions/ad-0009-document-lifecycle-evidence-operating-model.md` |
-| ARD-0010 / active | legacy basename `0010-repository-delivery-evidence-architecture.md` | AD-0010 / `descriptions/ad-0010-repository-delivery-evidence-architecture.md` |
-| ARD-0011 / active | legacy basename `0011-document-taxonomy-consolidation-architecture.md` | AD-0011 / `descriptions/ad-0011-document-taxonomy-consolidation-architecture.md` |
+| ARD-0004 / active | legacy basename `0004-argo-rollouts-progressive-delivery.md` | AD-0004 / `descriptions/0004-argo-rollouts-progressive-delivery.md` |
+| ARD-0005 / active | legacy basename `0005-argo-notifications-slack.md` | AD-0005 / `descriptions/0005-argo-notifications-slack.md` |
+| ARD-0006 / active | legacy basename `0006-workspace-agent-governance-platform.md` | AD-0006 / `descriptions/0006-workspace-agent-governance-platform.md` |
+| ARD-0007 / active | legacy basename `0007-current-local-gitops-platform.md` | AD-0007 / `descriptions/0007-current-local-gitops-platform.md` |
+| ARD-0008 / accepted | legacy basename `0008-workspace-document-assurance-operating-model.md` | AD-0008 / `descriptions/0008-workspace-document-assurance-operating-model.md` |
+| ARD-0009 / accepted | legacy basename `0009-document-lifecycle-evidence-operating-model.md` | AD-0009 / `descriptions/0009-document-lifecycle-evidence-operating-model.md` |
+| ARD-0010 / active | legacy basename `0010-repository-delivery-evidence-architecture.md` | AD-0010 / `descriptions/0010-repository-delivery-evidence-architecture.md` |
+| ARD-0011 / active | legacy basename `0011-document-taxonomy-consolidation-architecture.md` | AD-0011 / `descriptions/0011-document-taxonomy-consolidation-architecture.md` |
 
 Every table path is relative to `docs/02.architecture/`. WORK-105 preserves
 the four-digit ID, complete slug, and active/accepted state for every row. It
@@ -502,7 +502,7 @@ exact path inventory; broad recursive deletion is forbidden.
   "mode": "transition",
   "entries": [
     {
-      "source": "docs/04.execution/plans/<legacy-name>.md",
+      "source": "docs/03.specs/<legacy-name>.md",
       "target": "docs/03.specs/<NNN>-<slug>/plan.md",
       "workUnit": "Spec-<NNN>",
       "disposition": "move-current",
@@ -733,7 +733,7 @@ hosted CI, remote settings, secret safety, deployment, or live operation.
 - **Program requirement**:
   [PRD-0008](../../01.requirements/0008-workspace-document-taxonomy-consolidation.md)
 - **Architecture**:
-  [AD-0011](../../02.architecture/descriptions/ad-0011-document-taxonomy-consolidation-architecture.md)
+  [AD-0011](../../02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md)
 - **Accepted full-body archive predecessor**:
   [ADR-0018](../../02.architecture/decisions/0018-full-body-archive-record-and-retention.md)
 - **Accepted transition predecessor**:
@@ -742,7 +742,7 @@ hosted CI, remote settings, secret safety, deployment, or live operation.
   [ADR-0024](../../02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md)
 - **Approved implementation Plan and Task, to move during transition**:
   [legacy Plan](plan.md)
-  and [legacy Task](tasks.md)
+  and [legacy Task](README.md#task-records)
 - **External evidence boundary**:
   [Spec-driven SDLC and document contracts](../../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md)
   and [AI agents and Agency Agents](../../90.references/research/2026-08-08-wer/ai-agents-and-agency-agents.md)
@@ -753,19 +753,19 @@ hosted CI, remote settings, secret safety, deployment, or live operation.
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-WDTC-001](../../01.requirements/0008-workspace-document-taxonomy-consolidation.md#functional-requirements) | VAL-WDTC-001 | Mapping and terminal route/locality fixtures prove Stage 03 co-location and Stage 04 retirement. |
-| N/A — REQ-WDTC-002 shares the PRD source above. | VAL-WDTC-003 | Filename/frontmatter inventory and exception fixtures prove stable identity. |
-| N/A — REQ-WDTC-003 and REQ-WDTC-007 share the PRD source above. | VAL-WDTC-002 | Residue and registry checks prove Stage 05 stability and Release exclusion. |
-| N/A — REQ-WDTC-004 shares the PRD source above. | VAL-WDTC-004 | Exact eight-row mapping, classifier closure, registry, and reciprocal-link validation prove stable lineage and atomic authority transition. |
-| N/A — REQ-WDTC-005 and REQ-WDTC-006 share the PRD source above. | VAL-WDTC-005 | Rule-owner and profile/template checks prove authority separation. |
-| N/A — REQ-WDTC-008 through REQ-WDTC-010 share the PRD source above. | VAL-WDTC-006 | Disposition, source-blob, archive, and path results prove safe migration. |
-| N/A — REQ-WDTC-011 and REQ-WDTC-012 share the PRD source above. | VAL-WDTC-007 | Consumer, rule, fixture, and parity evidence prove safe script reconciliation. |
-| N/A — REQ-WDTC-013 and REQ-WDTC-014 share the PRD source above. | VAL-WDTC-008 | Harness schema and semantic fixtures prove governance and evidence boundaries. |
-| N/A — REQ-WDTC-015 shares the PRD source above. | VAL-WDTC-009 | Recovery and reproducibility evidence prove bounded cleanup. |
-| N/A — REQ-WDTC-016 shares the PRD source above. | VAL-WDTC-010 | Aggregate and all-files PASS prove baseline and regression closure. |
-| N/A — REQ-WDTC-017 shares the PRD source above. | VAL-WDTC-011 | Status and path evidence prove suspension and resumption safety. |
-| N/A — REQ-WDTC-018 shares the PRD source above. | VAL-WDTC-012 | Evidence-class handoff proves local-only scope. |
-| N/A — REQ-WDTC-019 shares the PRD source above. | VAL-WDTC-013 | Exact eight-row ARD-to-AD mapping, zero unconverted/current-consumer results, atomic AD-0011 authority evidence, independent authored API Spec gates, retired-route negatives, and native/history retention prove the approved document taxonomy. |
-| N/A — REQ-WDTC-020 shares the PRD source above. | VAL-WDTC-014 | WORK-105-before-WORK-108 ordering, mandatory/prohibited selection, complete API Spec consumer disposition, native-contract non-promotion, global uniqueness, canonical typed-ID including AD-0004 through AD-0011, virtual change-ID, tombstone digest, and path/frontmatter fixtures prove artifact identity. |
-| N/A — REQ-WDTC-021 shares the PRD source above. | VAL-WDTC-015 | Exact ledger census, immutable payload/provenance, old-object evidence, and recovery prove the 93-row Stage 98 bijection. |
-| N/A — REQ-WDTC-022 shares the PRD source above. | VAL-WDTC-016 | Exact staged inventories and the 50-row semantic disposition ledger prove `50 -> 49 -> 47` closure. |
+| [REQ-0008-FR-0001](../../01.requirements/0008-workspace-document-taxonomy-consolidation.md#functional-requirements) | VAL-WDTC-001 | Mapping and terminal route/locality fixtures prove Stage 03 co-location and Stage 04 retirement. |
+| N/A — REQ-0008-FR-0002 shares the PRD source above. | VAL-WDTC-003 | Filename/frontmatter inventory and exception fixtures prove stable identity. |
+| N/A — REQ-0008-FR-0003 and REQ-0008-FR-0007 share the PRD source above. | VAL-WDTC-002 | Residue and registry checks prove Stage 05 stability and Release exclusion. |
+| N/A — REQ-0008-FR-0004 shares the PRD source above. | VAL-WDTC-004 | Exact eight-row mapping, classifier closure, registry, and reciprocal-link validation prove stable lineage and atomic authority transition. |
+| N/A — REQ-0008-FR-0005 and REQ-0008-FR-0006 share the PRD source above. | VAL-WDTC-005 | Rule-owner and profile/template checks prove authority separation. |
+| N/A — REQ-0008-FR-0008 through REQ-0008-FR-0010 share the PRD source above. | VAL-WDTC-006 | Disposition, source-blob, archive, and path results prove safe migration. |
+| N/A — REQ-0008-FR-0011 and REQ-0008-FR-0012 share the PRD source above. | VAL-WDTC-007 | Consumer, rule, fixture, and parity evidence prove safe script reconciliation. |
+| N/A — REQ-0008-FR-0013 and REQ-0008-FR-0014 share the PRD source above. | VAL-WDTC-008 | Harness schema and semantic fixtures prove governance and evidence boundaries. |
+| N/A — REQ-0008-FR-0015 shares the PRD source above. | VAL-WDTC-009 | Recovery and reproducibility evidence prove bounded cleanup. |
+| N/A — REQ-0008-FR-0016 shares the PRD source above. | VAL-WDTC-010 | Aggregate and all-files PASS prove baseline and regression closure. |
+| N/A — REQ-0008-NFR-0001 shares the PRD source above. | VAL-WDTC-011 | Status and path evidence prove suspension and resumption safety. |
+| N/A — REQ-0008-NFR-0002 shares the PRD source above. | VAL-WDTC-012 | Evidence-class handoff proves local-only scope. |
+| N/A — REQ-0008-NFR-0003 shares the PRD source above. | VAL-WDTC-013 | Exact eight-row ARD-to-AD mapping, zero unconverted/current-consumer results, atomic AD-0011 authority evidence, independent authored API Spec gates, retired-route negatives, and native/history retention prove the approved document taxonomy. |
+| N/A — REQ-0008-NFR-0004 shares the PRD source above. | VAL-WDTC-014 | WORK-105-before-WORK-108 ordering, mandatory/prohibited selection, complete API Spec consumer disposition, native-contract non-promotion, global uniqueness, canonical typed-ID including AD-0004 through AD-0011, virtual change-ID, tombstone digest, and path/frontmatter fixtures prove artifact identity. |
+| N/A — REQ-0008-NFR-0005 shares the PRD source above. | VAL-WDTC-015 | Exact ledger census, immutable payload/provenance, old-object evidence, and recovery prove the 93-row Stage 98 bijection. |
+| N/A — REQ-0008-NFR-0006 shares the PRD source above. | VAL-WDTC-016 | Exact staged inventories and the 50-row semantic disposition ledger prove `50 -> 49 -> 47` closure. |

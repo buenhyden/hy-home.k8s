@@ -322,7 +322,7 @@ the implementation diff.
 ### Upstream authority
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/0005-workspace-document-assurance-modernization.md)
-- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/ad-0008-workspace-document-assurance-operating-model.md)
+- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md)
 - **Registry ADR**: [Declarative Document Contract Registry](../../02.architecture/decisions/0015-declarative-document-contract-registry.md)
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 
@@ -373,17 +373,17 @@ the implementation diff.
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-PRD-FUN-01](../../01.requirements/0005-workspace-document-assurance-modernization.md#functional-requirements) | VAL-TLCN-001 | Registry self-tests and strict route resolution prove zero uncovered or ambiguous document paths. |
-| [REQ-PRD-FUN-01](../../01.requirements/0005-workspace-document-assurance-modernization.md#functional-requirements) | VAL-TLCN-002 | Registry validation proves one exhaustive machine-readable contract inventory. |
-| [REQ-PRD-FUN-02](../../01.requirements/0005-workspace-document-assurance-modernization.md#functional-requirements) | VAL-TLCN-003 | Focused scans and repository gates check Stage 99 support-owner separation and stale-claim removal. |
-| [REQ-PRD-FUN-02](../../01.requirements/0005-workspace-document-assurance-modernization.md#functional-requirements) | VAL-TLCN-004 | Registry-derived inventory and form validation cover all 27 Markdown and three native forms. |
-| [REQ-PRD-FUN-05](../../01.requirements/0005-workspace-document-assurance-modernization.md#functional-requirements) | VAL-TLCN-005 | Strict profile validation checks the five-key frontmatter baseline and rejects legacy or duplicate-purpose keys. |
-| [REQ-PRD-FUN-12](../../01.requirements/0005-workspace-document-assurance-modernization.md#functional-requirements) | VAL-TLCN-006 | Independent negative fixtures reject placeholder, generic, malformed, and invalid relationship content. |
-| [REQ-PRD-FUN-12](../../01.requirements/0005-workspace-document-assurance-modernization.md#functional-requirements) | VAL-TLCN-007 | Scoped audit mode verifies topic-specific lifecycle handoffs for current authored consumers. |
-| [REQ-PRD-FUN-05](../../01.requirements/0005-workspace-document-assurance-modernization.md#functional-requirements) | VAL-TLCN-008 | A baseline diff guard proves completed PRD/Spec/Plan/Task and accepted ADR bodies are unchanged. |
-| [REQ-PRD-FUN-05](../../01.requirements/0005-workspace-document-assurance-modernization.md#functional-requirements) | VAL-TLCN-009 | Focused link validation proves PRD 003 no longer claims Spec 006 as its current owner. |
-| [REQ-PRD-FUN-10](../../01.requirements/0005-workspace-document-assurance-modernization.md#functional-requirements) | VAL-TLCN-010 | Logical commits and independent reviews provide the execution-control evidence. |
-| [REQ-PRD-MET-08](../../01.requirements/0005-workspace-document-assurance-modernization.md#success--acceptance-criteria) | VAL-TLCN-010 | Strict validators, repository quality gates, all-files pre-commit, and `git diff --check` provide the repository-static gate evidence. |
+| [REQ-0005-FR-0001](../../01.requirements/0005-workspace-document-assurance-modernization.md#functional-requirements) | VAL-TLCN-001 | Registry self-tests and strict route resolution prove zero uncovered or ambiguous document paths. |
+| [REQ-0005-FR-0001](../../01.requirements/0005-workspace-document-assurance-modernization.md#functional-requirements) | VAL-TLCN-002 | Registry validation proves one exhaustive machine-readable contract inventory. |
+| [REQ-0005-FR-0002](../../01.requirements/0005-workspace-document-assurance-modernization.md#functional-requirements) | VAL-TLCN-003 | Focused scans and repository gates check Stage 99 support-owner separation and stale-claim removal. |
+| [REQ-0005-FR-0002](../../01.requirements/0005-workspace-document-assurance-modernization.md#functional-requirements) | VAL-TLCN-004 | Registry-derived inventory and form validation cover all 27 Markdown and three native forms. |
+| [REQ-0005-FR-0005](../../01.requirements/0005-workspace-document-assurance-modernization.md#functional-requirements) | VAL-TLCN-005 | Strict profile validation checks the five-key frontmatter baseline and rejects legacy or duplicate-purpose keys. |
+| [REQ-0005-NFR-0002](../../01.requirements/0005-workspace-document-assurance-modernization.md#functional-requirements) | VAL-TLCN-006 | Independent negative fixtures reject placeholder, generic, malformed, and invalid relationship content. |
+| [REQ-0005-NFR-0002](../../01.requirements/0005-workspace-document-assurance-modernization.md#functional-requirements) | VAL-TLCN-007 | Scoped audit mode verifies topic-specific lifecycle handoffs for current authored consumers. |
+| [REQ-0005-FR-0005](../../01.requirements/0005-workspace-document-assurance-modernization.md#functional-requirements) | VAL-TLCN-008 | A baseline diff guard proves completed PRD/Spec/Plan/Task and accepted ADR bodies are unchanged. |
+| [REQ-0005-FR-0005](../../01.requirements/0005-workspace-document-assurance-modernization.md#functional-requirements) | VAL-TLCN-009 | Focused link validation proves PRD 003 no longer claims Spec 006 as its current owner. |
+| [REQ-0005-FR-0010](../../01.requirements/0005-workspace-document-assurance-modernization.md#functional-requirements) | VAL-TLCN-010 | Logical commits and independent reviews provide the execution-control evidence. |
+| N/A — [Acceptance criterion 08](../../01.requirements/0005-workspace-document-assurance-modernization.md#success--acceptance-criteria) remains package-owned | VAL-TLCN-010 | Strict validators, repository quality gates, all-files pre-commit, and `git diff --check` provide the repository-static gate evidence. |
 
 ### Execution
 

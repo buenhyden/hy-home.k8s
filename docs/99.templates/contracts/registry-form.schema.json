@@ -430,7 +430,7 @@
         },
         "task": {
           "type": "string",
-          "pattern": "^docs/03\\.specs/[0-9]{4}-[A-Za-z0-9][A-Za-z0-9._-]*/tasks\\.md$"
+          "pattern": "^docs/03\\.specs/[0-9]{4}-[A-Za-z0-9][A-Za-z0-9._-]*/(?:tasks\\.md|tasks/tsk-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md)$"
         },
         "state": {
           "enum": ["active", "done", "archived"]

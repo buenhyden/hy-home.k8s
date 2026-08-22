@@ -143,5 +143,5 @@ Source roles are closed to `policy owner`, `machine owner`, `human index`,
 - [Pack Index](README.md)
 - [Spec 054](../../../03.specs/0055-workspace-governance-audit-and-remediation/spec.md)
 - [Implementation Plan](../../../03.specs/0055-workspace-governance-audit-and-remediation/plan.md)
-- [Implementation Task](../../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md)
+- [Implementation Task](../../../03.specs/0055-workspace-governance-audit-and-remediation/README.md)
 - [Disposition Ledger](legacy-deprecated-and-one-shot-disposition-ledger.md)

@@ -1,10 +1,11 @@
 ---
 title: 'ADR-0019: Provider-Native Agent Harness and Loop Model'
 type: sdlc/adr
-status: accepted
+status: superseded
 owner: platform
 updated: 2026-08-01
 artifact_id: "ADR-0019"
+superseded_by: ADR-0030
 ---
 
 # ADR-0019: Provider-Native Agent Harness and Loop Model
@@ -48,9 +49,9 @@ native parse, account availability와 동일 corpus eval로 결정한다. 모델
 특정 역할 적합성을 증명하지 않으며, tracked `.gemini/**`의 존재와 authenticated runtime
 readiness를 같은 claim으로 둘 수 없다.
 
-활성 Specs [038](../../03.specs/038-reference-information-architecture/spec.md),
-[039](../../03.specs/039-github-ci-qa-evidence/spec.md),
-[040](../../03.specs/040-contract-cutover-and-program-closure/spec.md)은 reference IA, baseline
+활성 Specs [038](../../03.specs/0038-reference-information-architecture/spec.md),
+[039](../../03.specs/0039-github-ci-qa-evidence/spec.md),
+[040](../../03.specs/0040-contract-cutover-and-program-closure/spec.md)은 reference IA, baseline
 CI/QA와 기존 program closure를 소유한다. 이 세 Spec이 완료되기 전에는 새 adapter나 legacy
 cutover를 시작하지 않는다.
 
@@ -225,18 +226,18 @@ handoff로 남아 있으며 이 accepted decision을 external 또는 runtime PAS
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ARD 0006](../requirements/0006-workspace-agent-governance-platform.md) | ADR-0019가 accepted current decision이며 [ADR 0013](0013-stage-00-canonical-adapter-model.md)은 earlier tranche의 accepted historical predecessor다. | [Spec 041](../../03.specs/041-stage-00-agent-governance-contract/spec.md) |
-| N/A — shared ARD 0006 source above | Provider adoption은 accepted history를 보존하는 conditional replacement다. | [Spec 042](../../03.specs/042-provider-native-runtime-and-model-evidence/spec.md) |
-| N/A — shared ARD 0006 source above | Loop lifecycle은 accepted ADR-0019의 repository-static contract다. | [Spec 043](../../03.specs/043-agent-harness-loop-lifecycle/spec.md) |
-| N/A — shared ARD 0006 source above | Roster/eval은 exact parity evidence가 있어야 replacement에 포함된다. | [Spec 044](../../03.specs/044-agent-roster-evaluation-and-admission/spec.md) |
-| [ADR 0013](0013-stage-00-canonical-adapter-model.md) | Consumer-first cutover 후 old 3-surface 결정을 historical record로 보존한다. | [Spec 045](../../03.specs/045-agent-governance-ci-qa-cutover/spec.md) |
-| N/A — shared ADR 0013 source above | Spec 046 repository-local terminal transition이 current decision을 ADR-0019로 전환했고 external lane은 분리된 상태로 남는다. | [Spec 046](../../03.specs/046-agent-governance-program-closure/spec.md) |
+| [ARD 0006](../descriptions/0006-workspace-agent-governance-platform.md) | ADR-0019가 accepted current decision이며 [ADR 0013](0013-stage-00-canonical-adapter-model.md)은 earlier tranche의 accepted historical predecessor다. | [Spec 041](../../03.specs/0041-stage-00-agent-governance-contract/spec.md) |
+| N/A — shared ARD 0006 source above | Provider adoption은 accepted history를 보존하는 conditional replacement다. | [Spec 042](../../03.specs/0042-provider-native-runtime-and-model-evidence/spec.md) |
+| N/A — shared ARD 0006 source above | Loop lifecycle은 accepted ADR-0019의 repository-static contract다. | [Spec 043](../../03.specs/0043-agent-harness-loop-lifecycle/spec.md) |
+| N/A — shared ARD 0006 source above | Roster/eval은 exact parity evidence가 있어야 replacement에 포함된다. | [Spec 044](../../03.specs/0044-agent-roster-evaluation-and-admission/spec.md) |
+| [ADR 0013](0013-stage-00-canonical-adapter-model.md) | Consumer-first cutover 후 old 3-surface 결정을 historical record로 보존한다. | [Spec 045](../../03.specs/0045-agent-governance-ci-qa-cutover/spec.md) |
+| N/A — shared ADR 0013 source above | Spec 046 repository-local terminal transition이 current decision을 ADR-0019로 전환했고 external lane은 분리된 상태로 남는다. | [Spec 046](../../03.specs/0046-agent-governance-program-closure/spec.md) |
 
-- **PRD**: [PRD 003](../../01.requirements/003-workspace-agent-governance-platform.md)
+- **PRD**: [PRD 003](../../01.requirements/0003-workspace-agent-governance-platform.md)
 - **ARD**: ARD 0006 (linked in the lifecycle table above)
 - **Current accepted decision**: ADR 0019 (this record)
 - **Historical accepted predecessor**: ADR 0013 (linked in the lifecycle table above)
-- **Prerequisites**: [Spec 038](../../03.specs/038-reference-information-architecture/spec.md),
-  [Spec 039](../../03.specs/039-github-ci-qa-evidence/spec.md),
-  [Spec 040](../../03.specs/040-contract-cutover-and-program-closure/spec.md)
-- **Agent design**: [Workspace Agent Governance Program Design](../../03.specs/041-stage-00-agent-governance-contract/agent-design.md)
+- **Prerequisites**: [Spec 038](../../03.specs/0038-reference-information-architecture/spec.md),
+  [Spec 039](../../03.specs/0039-github-ci-qa-evidence/spec.md),
+  [Spec 040](../../03.specs/0040-contract-cutover-and-program-closure/spec.md)
+- **Agent design**: [Workspace Agent Governance Program Design](../../03.specs/0041-stage-00-agent-governance-contract/spec.md)

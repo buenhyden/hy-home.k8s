@@ -161,11 +161,33 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
             str(row["stable_path"] if row["action"] == "moved" else row["replacement"])
             for row in rows
         }
+        wp004b_path = validator.WORK054_WP004B_MIGRATION_PATH
+        wp004b_bytes = (ROOT / wp004b_path).read_bytes()
+        wp004b_rows = validator.parse_pinned_migration_control(
+            wp004b_path,
+            wp004b_bytes,
+        )
+        for row in wp004b_rows:
+            legacy = str(row["legacy_path"])
+            replacement = str(
+                row["stable_path"]
+                if row["action"] == "moved"
+                else row["replacement"]
+            )
+            if legacy != replacement:
+                current_paths.discard(legacy)
+                current_paths.add(replacement)
         with tempfile.TemporaryDirectory(prefix="active-mig0002-index-") as temporary:
             root = pathlib.Path(temporary)
             subprocess.run(["git", "init", "--quiet"], cwd=root, check=True)
+            wp004b_target = root / wp004b_path
+            wp004b_target.parent.mkdir(parents=True)
+            wp004b_target.write_bytes(wp004b_bytes)
+            subprocess.run(
+                ["git", "add", "--", wp004b_path], cwd=root, check=True
+            )
             target = root / migration_path
-            target.parent.mkdir(parents=True)
+            target.parent.mkdir(parents=True, exist_ok=True)
 
             target.write_bytes(b"invalid staged migration\n")
             subprocess.run(
@@ -230,6 +252,93 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
                 validator._validate_archive_inventory(
                     root,
                     (migration_path,),
+                    frozenset(),
+                    frozenset(),
+                )
+            self.assertEqual(raised.exception.code, "MIGRATION-ROGUE-ARCHIVE")
+
+    def test_mig0004_archive_inventory_control_is_exact_sealed_and_finite(
+        self,
+    ) -> None:
+        validator = load_validator()
+        migration_path = validator.WORK054_WP004B_MIGRATION_PATH
+        valid = (ROOT / migration_path).read_bytes()
+        rogue_path = "docs/98.archive/migrations/0005-rogue.md"
+
+        self.assertEqual(
+            hashlib.sha256(valid).hexdigest(),
+            validator.WORK054_WP004B_MIGRATION_DOCUMENT_SHA256,
+        )
+        self.assertIn(b'\nstatus: "sealed"\n', valid)
+        with tempfile.TemporaryDirectory(prefix="active-mig0004-index-") as temporary:
+            root = pathlib.Path(temporary)
+            subprocess.run(["git", "init", "--quiet"], cwd=root, check=True)
+            target = root / migration_path
+            target.parent.mkdir(parents=True)
+            target.write_bytes(valid)
+            subprocess.run(
+                ["git", "add", "--", migration_path], cwd=root, check=True
+            )
+
+            validator._validate_archive_inventory(
+                root,
+                (migration_path,),
+                frozenset(),
+                frozenset(),
+            )
+
+            with self.assertRaises(validator.MigrationError) as raised:
+                validator._validate_archive_inventory(
+                    root,
+                    (migration_path, rogue_path),
+                    frozenset(),
+                    frozenset(),
+                )
+            self.assertEqual(raised.exception.code, "MIGRATION-ROGUE-ARCHIVE")
+
+            target.write_bytes(
+                valid.replace(b'\nstatus: "sealed"\n', b'\nstatus: "accepted"\n', 1)
+            )
+            subprocess.run(
+                ["git", "add", "--", migration_path], cwd=root, check=True
+            )
+            with self.assertRaises(validator.MigrationError) as raised:
+                validator._validate_archive_inventory(
+                    root,
+                    (migration_path,),
+                    frozenset(),
+                    frozenset(),
+                )
+            self.assertEqual(raised.exception.code, "MIGRATION-ROGUE-ARCHIVE")
+
+    def test_archive_index_inventory_exception_requires_frontmatter_free_router(
+        self,
+    ) -> None:
+        validator = load_validator()
+        index_path = validator.ARCHIVE_INDEX_PATH
+        valid = b"# 98.archive\n\n## Document Index\n"
+
+        with tempfile.TemporaryDirectory(prefix="active-archive-index-") as temporary:
+            root = pathlib.Path(temporary)
+            subprocess.run(["git", "init", "--quiet"], cwd=root, check=True)
+            target = root / index_path
+            target.parent.mkdir(parents=True)
+            target.write_bytes(valid)
+            subprocess.run(["git", "add", "--", index_path], cwd=root, check=True)
+
+            validator._validate_archive_inventory(
+                root,
+                (index_path,),
+                frozenset(),
+                frozenset(),
+            )
+
+            target.write_bytes(b"---\ntitle: rogue\n---\n" + valid)
+            subprocess.run(["git", "add", "--", index_path], cwd=root, check=True)
+            with self.assertRaises(validator.MigrationError) as raised:
+                validator._validate_archive_inventory(
+                    root,
+                    (index_path,),
                     frozenset(),
                     frozenset(),
                 )
@@ -357,7 +466,7 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
         self.assertTrue(retired_repaired_by_batch_six <= migrated_originals)
 
         missing_current = staged_paths - {
-            "docs/03.specs/0037-active-corpus-and-execution-retention/tasks.md"
+            "docs/03.specs/0037-active-corpus-and-execution-retention/README.md"
         }
         missing_replacements = {
             source: target
@@ -398,7 +507,7 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
                 "docs/04.execution/tasks/"
                 "2026-07-18-active-corpus-and-execution-retention.md"
             ],
-            "docs/03.specs/0037-active-corpus-and-execution-retention/tasks.md",
+            "docs/03.specs/0037-active-corpus-and-execution-retention/README.md",
         )
         self.assertEqual(
             replacements[
@@ -410,6 +519,13 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
             replacements["docs/04.execution/plans/README.md"],
             "docs/99.templates/templates/sdlc/execution/plan.template.md",
         )
+
+        missing_projection = current_paths - {
+            "docs/03.specs/0037-active-corpus-and-execution-retention/README.md"
+        }
+        with self.assertRaises(validator.MigrationError) as raised:
+            validator._reviewed_move_current_replacements(ROOT, missing_projection)
+        self.assertEqual(raised.exception.code, "MIGRATION-CONSUMERS")
 
     def test_incomplete_five_batch_prefix_is_rejected(self) -> None:
         validator = load_validator()

@@ -1176,7 +1176,7 @@ credential, secret, or live-platform evidence.
 The approved gap-only refresh compared all 13 current pack files, the 32
 unique README request rows, all 52 existing source rows, and all 51 existing
 claim rows before any new web research. The complete review-input matrix is
-owned by the active [WERG Task](../../../03.specs/0056-workspace-engineering-gap-only-refresh/tasks.md#2026-08-09-gap-only-admission-matrix).
+owned by the active [WERG Task](../../../03.specs/0056-workspace-engineering-gap-only-refresh/README.md).
 
 The four-state result is 18 `complete-existing`, seven
 `admit-under-sourced-partial`, one `admit-unresearched`, and seven
@@ -1239,5 +1239,5 @@ rewriting sourceCommit facts.
 ## Related Documents
 
 - [Pack README](README.md)
-- [WERPC Task](../../../03.specs/0053-workspace-engineering-research-pack-consolidation/tasks.md)
+- [WERPC Task](../../../03.specs/0053-workspace-engineering-research-pack-consolidation/README.md)
 - [WERPC Plan](../../../03.specs/0053-workspace-engineering-research-pack-consolidation/plan.md)

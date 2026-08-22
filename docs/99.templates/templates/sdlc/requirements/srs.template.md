@@ -1,6 +1,6 @@
 ---
 title: '{System Name} System Requirements Specification'
-type: sdlc/srs
+type: sdlc/requirement-package
 status: draft
 owner: platform
 updated: YYYY-MM-DD
@@ -38,6 +38,6 @@ updated: YYYY-MM-DD
 
 ### Lifecycle Traceability
 
-| Upstream requirement | System requirement | Downstream owner |
+| Requirement ID | Acceptance criterion | Downstream owner |
 | --- | --- | --- |
-| REQ-FEATURE-001 | REQ-SYS-FEATURE-001 | Architecture Description or Specification owner |
+| REQ-0000-FR-0001 | Observable system behavior and deterministic evidence | Architecture Description or Specification owner |

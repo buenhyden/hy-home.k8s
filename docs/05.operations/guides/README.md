@@ -97,7 +97,7 @@ Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 - [05.operations/runbooks](../runbooks/README.md)
 - [05.operations/incidents](../incidents/README.md)
 - [PRD](../../01.requirements/0004-current-local-gitops-platform.md)
-- [AD](../../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md)
+- [AD](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - [Spec](../../03.specs/0008-current-local-gitops-platform/spec.md)
 - [Plan](../../98.archive/README.md#document-index)
 - [Archive Index](../../98.archive/README.md#document-index)

@@ -1,10 +1,11 @@
 ---
 title: 'ADR-0025: Four-Digit Document Path Identity'
 type: sdlc/adr
-status: accepted
+status: superseded
 owner: platform
 updated: 2026-08-13
 artifact_id: "ADR-0025"
+superseded_by: ADR-0030
 ---
 
 # ADR-0025: Four-Digit Document Path Identity

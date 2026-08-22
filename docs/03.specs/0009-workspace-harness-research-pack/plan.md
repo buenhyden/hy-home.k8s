@@ -35,6 +35,17 @@ reference documents. The selected design is one README plus four reference
 documents, using a repo-first and official-source-first approach while also
 including bounded market scan and implementation checklist sections.
 
+### Legacy Task ledger inputs
+
+This document tracks implementation and verification work for the integrated
+workspace harness research pack under `docs/90.references/research/`.
+
+The task is documentation-only. Repo-static validation is required, but live
+k3d, ArgoCD, Vault, ESO, Kubernetes, cloud, provider runtime, and secret checks
+are out of scope unless separately approved by a human.
+
+- **Parent Spec**: `../../03.specs/0009-workspace-harness-research-pack/spec.md`
+- **Parent Plan**: `../plans/2026-07-02-workspace-harness-research-pack.md`
 ## Goals & In-Scope
 
 - **Goals**:
@@ -43,8 +54,8 @@ including bounded market scan and implementation checklist sections.
   - Create `harness-and-loop-engineering.md`.
   - Create `provider-implementation-status.md`.
   - Create `spec-sdlc-ci-qa-formatting.md`.
-  - Update `docs/90.references/README.md`, `docs/04.execution/plans/README.md`,
-    `docs/04.execution/tasks/README.md`, and
+  - Update `docs/90.references/README.md`, `docs/03.specs/0009-workspace-harness-research-pack/plan.md`,
+    `docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records`, and
     `docs/00.agent-governance/memory/progress.md`.
   - Run repo-static validation and commit by logical unit.
 - **In Scope**:
@@ -80,9 +91,9 @@ including bounded market scan and implementation checklist sections.
 | `docs/90.references/research/provider-implementation-status.md` | Claude, Codex/OpenAI, and Gemini/Google implementation status for harness/loop capabilities and shared environment construction. |
 | `docs/90.references/research/spec-sdlc-ci-qa-formatting.md` | Spec-driven development, SDLC, CI/CD, QA, formatting, and verification analysis mapped to this repo. |
 | `docs/90.references/README.md` | Parent reference index and structure update for the new `research/` folder. |
-| `docs/04.execution/plans/README.md` | Plan index update. |
-| `docs/04.execution/tasks/2026-07-02-workspace-harness-research-pack.md` | Execution tracking and validation evidence. |
-| `docs/04.execution/tasks/README.md` | Task index update. |
+| `docs/03.specs/0009-workspace-harness-research-pack/plan.md` | Plan index update. |
+| `docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records` | Execution tracking and validation evidence. |
+| `docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records` | Task index update. |
 | `docs/00.agent-governance/memory/progress.md` | Progress, reusable memory, validation evidence, and handoff update. |
 
 ### Source Baseline
@@ -140,7 +151,7 @@ Market scan and comparative sources:
 | PLN-003 | Write harness and loop engineering reference | `docs/90.references/research/harness-and-loop-engineering.md` | VAL-SPC-004, VAL-SPC-005 | Harness, loop, market scan, and implementation checklist sections present. |
 | PLN-004 | Write provider implementation status reference | `docs/90.references/research/provider-implementation-status.md` | VAL-SPC-004, VAL-SPC-005 | Claude, Codex/OpenAI, and Gemini/Google sections cite current sources and mark unknowns. |
 | PLN-005 | Write spec/SDLC/CI/QA/formatting reference | `docs/90.references/research/spec-sdlc-ci-qa-formatting.md` | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | SDD, SDLC, CI/CD, QA, formatting, and validation matrix mapped to repo controls. |
-| PLN-006 | Integrate indexes, task evidence, memory, and validation | `docs/04.execution/tasks/2026-07-02-workspace-harness-research-pack.md`, `docs/04.execution/plans/README.md`, `docs/04.execution/tasks/README.md`, `docs/00.agent-governance/memory/progress.md` | VAL-SPC-006 | Repo-static validation passes and task evidence records executed commands. |
+| PLN-006 | Integrate indexes, task evidence, memory, and validation | `docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records`, `docs/03.specs/0009-workspace-harness-research-pack/plan.md`, `docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records`, `docs/00.agent-governance/memory/progress.md` | VAL-SPC-006 | Repo-static validation passes and task evidence records executed commands. |
 
 ### Detailed Task Steps
 
@@ -150,7 +161,7 @@ Market scan and comparative sources:
 
 - Create: `docs/90.references/research/README.md`
 - Modify: `docs/90.references/README.md`
-- Modify: `docs/04.execution/tasks/2026-07-02-workspace-harness-research-pack.md`
+- Modify: `docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records`
 
 - [x] **Step 1: Read templates and parent README**
 
@@ -197,7 +208,7 @@ new README/index issue, fix the README structure before continuing.
 Run:
 
 ```bash
-git add docs/90.references/research/README.md docs/90.references/README.md docs/04.execution/tasks/2026-07-02-workspace-harness-research-pack.md
+git add docs/90.references/research/README.md docs/90.references/README.md docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records
 git commit -m "docs(research): Scaffold workspace harness research references"
 ```
 
@@ -210,7 +221,7 @@ updates.
 
 - Create: `docs/90.references/research/workspace-governance-baseline.md`
 - Modify: `docs/90.references/research/README.md`
-- Modify: `docs/04.execution/tasks/2026-07-02-workspace-harness-research-pack.md`
+- Modify: `docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
 - [x] **Step 1: Gather repo evidence**
@@ -267,7 +278,7 @@ Run:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-git add docs/90.references/research/workspace-governance-baseline.md docs/90.references/research/README.md docs/04.execution/tasks/2026-07-02-workspace-harness-research-pack.md docs/00.agent-governance/memory/progress.md
+git add docs/90.references/research/workspace-governance-baseline.md docs/90.references/research/README.md docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records docs/00.agent-governance/memory/progress.md
 git commit -m "docs(research): Document workspace governance baseline"
 ```
 
@@ -280,7 +291,7 @@ and evidence updates.
 
 - Create: `docs/90.references/research/harness-and-loop-engineering.md`
 - Modify: `docs/90.references/research/README.md`
-- Modify: `docs/04.execution/tasks/2026-07-02-workspace-harness-research-pack.md`
+- Modify: `docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records`
 
 - [x] **Step 1: Gather official and market scan sources**
 
@@ -317,7 +328,7 @@ Run:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-git add docs/90.references/research/harness-and-loop-engineering.md docs/90.references/research/README.md docs/04.execution/tasks/2026-07-02-workspace-harness-research-pack.md
+git add docs/90.references/research/harness-and-loop-engineering.md docs/90.references/research/README.md docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records
 git commit -m "docs(research): Analyze harness and loop engineering"
 ```
 
@@ -329,7 +340,7 @@ Expected: validation passes and the commit contains the harness/loop reference.
 
 - Create: `docs/90.references/research/provider-implementation-status.md`
 - Modify: `docs/90.references/research/README.md`
-- Modify: `docs/04.execution/tasks/2026-07-02-workspace-harness-research-pack.md`
+- Modify: `docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records`
 
 - [x] **Step 1: Gather provider sources**
 
@@ -367,7 +378,7 @@ Run:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-git add docs/90.references/research/provider-implementation-status.md docs/90.references/research/README.md docs/04.execution/tasks/2026-07-02-workspace-harness-research-pack.md
+git add docs/90.references/research/provider-implementation-status.md docs/90.references/research/README.md docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records
 git commit -m "docs(research): Compare provider harness implementations"
 ```
 
@@ -379,7 +390,7 @@ Expected: validation passes and the commit contains the provider comparison.
 
 - Create: `docs/90.references/research/spec-sdlc-ci-qa-formatting.md`
 - Modify: `docs/90.references/research/README.md`
-- Modify: `docs/04.execution/tasks/2026-07-02-workspace-harness-research-pack.md`
+- Modify: `docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records`
 
 - [x] **Step 1: Gather delivery-practice sources**
 
@@ -412,7 +423,7 @@ Run:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-git add docs/90.references/research/spec-sdlc-ci-qa-formatting.md docs/90.references/research/README.md docs/04.execution/tasks/2026-07-02-workspace-harness-research-pack.md
+git add docs/90.references/research/spec-sdlc-ci-qa-formatting.md docs/90.references/research/README.md docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records
 git commit -m "docs(research): Map SDD SDLC CI QA formatting practices"
 ```
 
@@ -425,9 +436,9 @@ reference.
 
 - Modify: `docs/90.references/research/README.md`
 - Modify: `docs/90.references/README.md`
-- Modify: `docs/04.execution/plans/README.md`
-- Modify: `docs/04.execution/tasks/README.md`
-- Modify: `docs/04.execution/tasks/2026-07-02-workspace-harness-research-pack.md`
+- Modify: `docs/03.specs/0009-workspace-harness-research-pack/plan.md`
+- Modify: `docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records`
+- Modify: `docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
 - [x] **Step 1: Update plan and task indexes**
@@ -477,12 +488,30 @@ are modified.
 Run:
 
 ```bash
-git add docs/90.references/research/README.md docs/90.references/README.md docs/04.execution/plans/README.md docs/04.execution/tasks/README.md docs/04.execution/tasks/2026-07-02-workspace-harness-research-pack.md docs/00.agent-governance/memory/progress.md
+git add docs/90.references/research/README.md docs/90.references/README.md docs/03.specs/0009-workspace-harness-research-pack/plan.md docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records docs/00.agent-governance/memory/progress.md
 git commit -m "docs(research): Finalize workspace harness research pack"
 ```
 
 Expected: one final integration commit.
 
+### Legacy Task supplemental evidence
+
+### Phase View
+
+### Phase 1
+
+- [x] T-001 Scaffold research folder README and parent reference index.
+- [x] T-002 Write workspace governance baseline reference.
+
+### Phase 2
+
+- [x] T-003 Write harness and loop engineering reference.
+- [x] T-004 Write provider implementation status reference.
+- [x] T-005 Write spec/SDLC/CI/QA/formatting reference.
+
+### Phase 3
+
+- [x] T-006 Final integration, validation, memory, and handoff.
 ## Verification Plan
 
 | ID | Level | Description | Command / How to Run | Pass Criteria |
@@ -492,6 +521,44 @@ Expected: one final integration commit.
 | VAL-PLN-003 | Repo quality | Template, README, link, and governance gates | `bash scripts/validate-repo-quality-gates.sh .` | Prints `[PASS] repository quality gates passed`. |
 | VAL-PLN-004 | Memory singleton | Confirm only canonical progress ledger exists | `rg --files \| rg '(^\|/)progress\.md$'` | Prints only `docs/00.agent-governance/memory/progress.md`. |
 | VAL-PLN-005 | Source attribution | Confirm each reference has `Sources` and `Review and Freshness` | Manual review plus repo gate | Every reference document contains required sections and source-checked date. |
+
+### Legacy Task verification evidence
+
+- **Test Commands**:
+  - `git diff --check`
+  - `bash scripts/generate-llm-wiki-index.sh --check`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `rg --files | rg '(^|/)progress\.md$'`
+- **Eval Commands**:
+  - Manual source-attribution review for each reference document.
+  - Manual checklist coverage review against the parent Spec success criteria.
+- **Logs / Evidence Location**:
+  - This task record.
+  - `../../00.agent-governance/memory/progress.md`.
+
+### Task Evidence
+
+| Date | Task ID | Command | Result |
+| --- | --- | --- | --- |
+| 2026-07-02 | T-001 | `git diff --check` | PASS; no output |
+| 2026-07-02 | T-001 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
+| 2026-07-02 | T-002 | Manual template/source review | PASS; created `../../90.references/research/workspace-governance-baseline.md` from `../../99.templates/templates/common/reference.template.md` using repo-backed governance, CI, scripts, template, and adapter evidence |
+| 2026-07-02 | T-002 | `git diff --check` | PASS; no output |
+| 2026-07-02 | T-002 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
+| 2026-07-02 | T-003 | Manual template/source review | PASS; created `../../90.references/research/harness-and-loop-engineering.md` from `../../99.templates/templates/common/reference.template.md` using required OpenAI, Anthropic, MCP, repo-backed, and non-authoritative market-scan sources checked on 2026-07-02 |
+| 2026-07-02 | T-003 | `git diff --check` | PASS; no output |
+| 2026-07-02 | T-003 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
+| 2026-07-02 | T-004 | Manual template/source review | PASS; created `../../90.references/research/provider-implementation-status.md` from `../../99.templates/templates/common/reference.template.md` using required Claude Code, Claude Code release notes, Codex/OpenAI docs, OpenAI Codex agent-loop article, Gemini CLI, Gemini Code Assist agent mode, Google ADK, and repo-backed provider sources checked on 2026-07-02 |
+| 2026-07-02 | T-004 | `git diff --check` | PASS; no output |
+| 2026-07-02 | T-004 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
+| 2026-07-02 | T-005 | Manual template/source review | PASS; created `../../90.references/research/spec-sdlc-ci-qa-formatting.md` from `../../99.templates/templates/common/reference.template.md` using required NIST SSDF, NIST SP 800-204D, GitHub Actions, GitHub Actions secure-use, pre-commit, GitHub Spec Kit, Martin Fowler CI, repo-backed validation, and non-authoritative market-scan sources checked on 2026-07-02 |
+| 2026-07-02 | T-005 | `git diff --check` | PASS; no output |
+| 2026-07-02 | T-005 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
+| 2026-07-02 | T-006 | `git diff --check` | PASS; no output |
+| 2026-07-02 | T-006 | `bash scripts/generate-llm-wiki-index.sh --check` | PASS; `[PASS] LLM WIKI generated index is current` |
+| 2026-07-02 | T-006 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
+| 2026-07-02 | T-006 | `rg --files \| rg '(^\|/)progress\.md$'` | PASS; returned only `docs/00.agent-governance/memory/progress.md` |
+| 2026-07-02 | T-006 | Final review remediation | PASS; aligned plan/task frontmatter, Stage 04 indexes, plan checkboxes, and completion criteria to `Done` |
 
 ## Risks & Mitigations
 
@@ -517,6 +584,28 @@ Expected: one final integration commit.
 - **Prompt / Model Promotion Criteria**: Not applicable; no model or prompt
   surface is promoted.
 
+### Legacy Task approval and rollback boundaries
+
+- **Allowed Paths**: `T-001 through T-006` is limited to these Workspace Harness Research Pack owners and Task-Table surfaces:
+  - `docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records`
+  - `docs/03.specs/0009-workspace-harness-research-pack/spec.md`
+  - `docs/03.specs/0009-workspace-harness-research-pack/plan.md`
+- **Forbidden Paths**: active policy or runtime configuration not named by the Workspace Harness Research Pack Task Table, provider settings, secret values, local diagnostics, and remote publication surfaces.
+- **Approval Required**: Human approval is required before publishing Workspace Harness Research Pack research, changing active policy/runtime behavior, deleting evidence, contacting providers, push, merge, or corpus expansion.
+- **Static Validation**: Preserve the Workspace Harness Research Pack outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `git diff --check`
+  - `bash scripts/generate-llm-wiki-index.sh --check`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `rg --files | rg '(^|/)progress\.md$'`
+- **Live Validation**: DEFER — Workspace Harness Research Pack is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: Workspace Harness Research Pack evidence must use public or repository-visible facts only; do not inspect or reproduce credentials, tokens, auth files, private logs, kubeconfigs, or shell history.
+- **Rollback Plan**: Revert the logical Workspace Harness Research Pack change set for `T-001 through T-006` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Workspace Harness Research Pack evidence remains in:
+  - `docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records`
+  - `docs/03.specs/0009-workspace-harness-research-pack/spec.md`
+  - `docs/03.specs/0009-workspace-harness-research-pack/plan.md`
+  - `docs/00.agent-governance/memory/progress.md`
+  - `docs/90.references/research/workspace-governance-baseline.md`
 ## Completion Criteria
 
 - [x] `docs/90.references/research/README.md` exists and indexes all four
@@ -533,7 +622,14 @@ Expected: one final integration commit.
 ## Traceability
 
 - **PRD**: `../../01.requirements/0003-workspace-agent-governance-platform.md`
-- **AD**: `../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md`
+- **AD**: `../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md`
 - **Spec**: `../../03.specs/0009-workspace-harness-research-pack/spec.md`
 - **ADR**: `../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md`
-- **Task**: [../tasks/2026-07-02-workspace-harness-research-pack.md](tasks.md)
+- **Task**: [../tasks/2026-07-02-workspace-harness-research-pack.md](README.md#task-records)
+
+### Legacy Task traceability
+
+- **Spec**: `../../03.specs/0009-workspace-harness-research-pack/spec.md`
+- **Plan**: `../plans/2026-07-02-workspace-harness-research-pack.md`
+- **Reference README**: `../../90.references/README.md`
+- **Research folder**: `../../90.references/research/README.md`

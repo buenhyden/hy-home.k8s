@@ -157,18 +157,18 @@ cleanup.
 
 - **Predecessors**: [Spec 037](../0037-active-corpus-and-execution-retention/spec.md), [Spec 038](../0038-reference-information-architecture/spec.md), and [Spec 039](../0039-github-ci-qa-evidence/spec.md)
 - **Program PRD**: [PRD-0006](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
-- **Program AD**: [AD-0009](../../02.architecture/descriptions/ad-0009-document-lifecycle-evidence-operating-model.md)
+- **Program AD**: [AD-0009](../../02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md)
 - **Decisions**: [ADR-0017](../../02.architecture/decisions/0017-program-follow-up-lineage-semantics.md), [ADR-0018](../../02.architecture/decisions/0018-full-body-archive-record-and-retention.md), and [ADR-0020](../../02.architecture/decisions/0020-document-lifecycle-program-closure-evidence.md)
 - **Execution Plan**: [Contract Cutover and Program Closure Implementation Plan](plan.md)
-- **Task Evidence**: [Contract Cutover and Program Closure Task](tasks.md)
+- **Task Evidence**: [Contract Cutover and Program Closure Task](README.md#task-records)
 
 ### Lifecycle Traceability
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-WDLEC-003](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-CCPC-001 | Final stale-route and compatibility scans report zero. |
-| N/A — REQ-WDLEC-001 shares the PRD-0006 source linked in VAL-CCPC-001 | VAL-CCPC-002 | Strict registry, profile, transition, owner, and link gates pass. |
-| N/A — REQ-WDLEC-004 shares the PRD-0006 source linked in VAL-CCPC-001 | VAL-CCPC-003 | Complete archive integrity and historical-link checks pass. |
-| N/A — REQ-WDLEC-006 shares the PRD-0006 source linked in VAL-CCPC-001 | VAL-CCPC-004 | Final migration ledger has no unowned disposition. |
-| N/A — REQ-WDLEC-008 shares the PRD-0006 source linked in VAL-CCPC-001 | VAL-CCPC-005 | References, generation, workflow, and selector suites pass. |
-| N/A — REQ-WDLEC-011 shares the PRD-0006 source linked in VAL-CCPC-001 | VAL-CCPC-006 | All-files QA and independent review produce clean verdicts. |
+| [REQ-0006-FR-0003](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-CCPC-001 | Final stale-route and compatibility scans report zero. |
+| N/A — REQ-0006-FR-0001 shares the PRD-0006 source linked in VAL-CCPC-001 | VAL-CCPC-002 | Strict registry, profile, transition, owner, and link gates pass. |
+| N/A — REQ-0006-FR-0004 shares the PRD-0006 source linked in VAL-CCPC-001 | VAL-CCPC-003 | Complete archive integrity and historical-link checks pass. |
+| N/A — REQ-0006-FR-0006 shares the PRD-0006 source linked in VAL-CCPC-001 | VAL-CCPC-004 | Final migration ledger has no unowned disposition. |
+| N/A — REQ-0006-FR-0008 shares the PRD-0006 source linked in VAL-CCPC-001 | VAL-CCPC-005 | References, generation, workflow, and selector suites pass. |
+| N/A — REQ-0006-FR-0011 shares the PRD-0006 source linked in VAL-CCPC-001 | VAL-CCPC-006 | All-files QA and independent review produce clean verdicts. |

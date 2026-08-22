@@ -280,7 +280,7 @@ to the Spec Package that implements and validates them. Stage 01 records the
 solution-independent external interface requirement and links to that
 executable contract without duplicating it.
 
-`docs/04.execution/` is not restored as an active owner. Its numeric slot
+`docs/03.specs/` is not restored as an active owner. Its numeric slot
 remains unused so retired links are not silently reinterpreted.
 
 ### C-SDLC-004 — four-digit and date policy

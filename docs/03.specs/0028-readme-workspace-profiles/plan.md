@@ -59,6 +59,21 @@ sections and unrelated optional content. The current gate requires the same
 seven headings in every README, so repositories, stage indexes, snapshot packs,
 implementation entrypoints, and `_workspace` cannot express distinct jobs.
 
+### Legacy Task ledger inputs
+
+This Task tracks six bounded implementation units for replacing the monolithic
+README form with path-derived profiles, migrating the complete README corpus,
+and preserving `_workspace` as temporary non-secret repository-support staging.
+RWP-001 through RWP-006 are complete: all 67 baseline README files and five
+cloud handoffs resolve to one of six profiles, and the retired common form and
+its compatibility exceptions have been removed.
+
+- **Parent Spec**: [README and Workspace Profiles Technical Specification](spec.md)
+- **Parent Plan**: [README and Workspace Profiles Implementation Plan](plan.md)
+- **Completed Registry Spec**: [Document Contract Registry](../0026-document-contract-registry/spec.md)
+- **Completed Template Spec**: [Template Contract Consolidation](../0027-template-contract-consolidation/spec.md)
+- **Semantic Validator Consumer**: [Semantic Document Validation](../0029-semantic-document-validation/spec.md)
+- **Authored Corpus and Handoff Migration Owner**: [Authored Document Migration](../0030-authored-document-migration/spec.md)
 ## Goals & In-Scope
 
 - Create six minimal README forms and exact registry heading profiles.
@@ -122,7 +137,7 @@ docs/00.agent-governance/README.md
 docs/01.requirements/README.md
 docs/02.architecture/README.md
 docs/03.specs/README.md
-docs/04.execution/README.md
+docs/03.specs/README.md
 docs/05.operations/README.md
 docs/90.references/README.md
 docs/98.archive/README.md
@@ -135,8 +150,8 @@ docs/99.templates/README.md
 docs/00.agent-governance/memory/README.md
 docs/02.architecture/decisions/README.md
 docs/02.architecture/descriptions/README.md
-docs/04.execution/plans/README.md
-docs/04.execution/tasks/README.md
+docs/03.specs/0028-readme-workspace-profiles/plan.md
+docs/03.specs/0028-readme-workspace-profiles/README.md#task-records
 docs/05.operations/guides/README.md
 docs/05.operations/incidents/README.md
 docs/05.operations/policies/README.md
@@ -167,8 +182,8 @@ examples/aws/docs/01.requirements/README.md
 examples/aws/docs/02.architecture/decisions/README.md
 examples/aws/docs/02.architecture/descriptions/README.md
 examples/aws/docs/03.specs/README.md
-examples/aws/docs/04.execution/plans/README.md
-examples/aws/docs/04.execution/tasks/README.md
+examples/aws/docs/03.specs/0028-readme-workspace-profiles/plan.md
+examples/aws/docs/03.specs/0028-readme-workspace-profiles/README.md#task-records
 examples/aws/docs/05.operations/guides/README.md
 examples/aws/docs/05.operations/policies/README.md
 examples/aws/docs/05.operations/runbooks/README.md
@@ -177,8 +192,8 @@ examples/azure/docs/01.requirements/README.md
 examples/azure/docs/02.architecture/decisions/README.md
 examples/azure/docs/02.architecture/descriptions/README.md
 examples/azure/docs/03.specs/README.md
-examples/azure/docs/04.execution/plans/README.md
-examples/azure/docs/04.execution/tasks/README.md
+examples/azure/docs/03.specs/0028-readme-workspace-profiles/plan.md
+examples/azure/docs/03.specs/0028-readme-workspace-profiles/README.md#task-records
 examples/azure/docs/05.operations/guides/README.md
 examples/azure/docs/05.operations/policies/README.md
 examples/azure/docs/05.operations/runbooks/README.md
@@ -233,6 +248,34 @@ Baseline total is `1 + 10 + 16 + 28 + 11 + 1 = 67`. Final total is
 | VAL-PLN-003 | Workspace | `git ls-files _workspace` plus ignore checks | Only README tracked; representative scratch ignored. |
 | VAL-PLN-004 | Repository | Quality gate and all-files pre-commit | All applicable checks pass. |
 
+### Legacy Task verification evidence
+
+- RWP-001 through RWP-005 were independently reviewed clean after their recorded
+  compatibility, proof-hardening, fixture, hidden-anchor, and implementation-
+  table fixes. The logical chain is `44b8e37` through `3dfa3c1`; `60fd310`
+  corrected the atomic RWP-006 closure proof before implementation.
+- Registry validation passes with 60 profiles, 27 template forms, 466 classified
+  targets (`baseline=433`, `new=35`), and no uncovered or ambiguous paths.
+  README validation passes for all 67 baseline and 72 final paths, with all 72
+  in canonical profile mode.
+- The byte-identical fixture SHA is
+  `50f8c8ab05267a9ddf059d72ca6950d4f05b14ad82010c0d9576eb7a9f1f68d0`;
+  its five added handoffs are `docs/90.references/cloud-examples/README.md`,
+  `docs/90.references/cloud-examples/aws/README.md`,
+  `docs/90.references/cloud-examples/azure/README.md`,
+  `examples/aws/README.md`, and `examples/azure/README.md`.
+- The document-profile projection SHA is
+  `54ab9344bc7c718da6bb8ad95cdd5a9e3ab66728052263afbe9f2c107a04a7a8`;
+  the template-compatibility fixture SHA is
+  `d53a36f8849fdb8131f79c23ad2bd66c267a1594f12c0b03f353dfe5c88b46a2`.
+- Active residue searches, focused parser and handoff proofs, registry modes,
+  repository quality, diff checks, link/index/hook/mutation probes, exact
+  25-path cached scope, and every applicable all-files pre-commit hook pass.
+  Dockerfile lint is a non-applicable SKIP because no Dockerfile was selected,
+  not a pass.
+- Evidence is repository-static only. No live, secret-value, credential,
+  remote CI, publication, push, merge, deployment, or third-party mutation was
+  performed or inferred.
 ## Risks & Mitigations
 
 | Risk | Impact | Mitigation |
@@ -259,9 +302,9 @@ Baseline total is `1 + 10 + 16 + 28 + 11 + 1 = 67`. Final total is
 
 - Modify: `docs/03.specs/0028-readme-workspace-profiles/spec.md`
 - Modify: `docs/03.specs/README.md`
-- Modify: `docs/04.execution/plans/README.md`
-- Create: `docs/04.execution/tasks/2026-07-12-readme-workspace-profiles.md`
-- Modify: `docs/04.execution/tasks/README.md`
+- Modify: `docs/03.specs/0028-readme-workspace-profiles/plan.md`
+- Create: `docs/03.specs/0028-readme-workspace-profiles/README.md#task-records`
+- Modify: `docs/03.specs/0028-readme-workspace-profiles/README.md#task-records`
 
 **Interfaces:**
 
@@ -274,8 +317,8 @@ Baseline total is `1 + 10 + 16 + 28 + 11 + 1 = 67`. Final total is
 python3 - <<'PY'
 from pathlib import Path
 spec = Path('docs/03.specs/0028-readme-workspace-profiles/spec.md')
-plan = Path('docs/04.execution/plans/2026-07-12-readme-workspace-profiles.md')
-task = Path('docs/04.execution/tasks/2026-07-12-readme-workspace-profiles.md')
+plan = Path('docs/03.specs/0028-readme-workspace-profiles/plan.md')
+task = Path('docs/03.specs/0028-readme-workspace-profiles/README.md#task-records')
 assert task.exists()
 for source, target in ((spec,'../../04.execution/plans/2026-07-12-readme-workspace-profiles.md'),(spec,'../../04.execution/tasks/2026-07-12-readme-workspace-profiles.md'),(plan,'../../03.specs/0028-readme-workspace-profiles/spec.md'),(plan,'../tasks/2026-07-12-readme-workspace-profiles.md'),(task,'../../03.specs/0028-readme-workspace-profiles/spec.md'),(task,'../plans/2026-07-12-readme-workspace-profiles.md')):
     assert target in source.read_text(), (source, target)
@@ -294,7 +337,7 @@ Spec/Plan links. Set this Plan active and add dated active index rows.
 
 ```bash
 git diff --check
-git add docs/03.specs/0028-readme-workspace-profiles/spec.md docs/03.specs/README.md docs/04.execution/plans/2026-07-12-readme-workspace-profiles.md docs/04.execution/plans/README.md docs/04.execution/tasks/2026-07-12-readme-workspace-profiles.md docs/04.execution/tasks/README.md
+git add docs/03.specs/0028-readme-workspace-profiles/spec.md docs/03.specs/README.md docs/03.specs/0028-readme-workspace-profiles/plan.md docs/03.specs/0028-readme-workspace-profiles/plan.md docs/03.specs/0028-readme-workspace-profiles/README.md#task-records docs/03.specs/0028-readme-workspace-profiles/README.md#task-records
 git commit -m "docs(execution): start readme profile tranche"
 ```
 
@@ -663,7 +706,7 @@ live or provider-latest readiness.
 - [x] **Step 5: Validate and commit**
 
 ```bash
-git add README.md docs/README.md docs/00.agent-governance/README.md docs/00.agent-governance/memory/README.md docs/01.requirements/README.md docs/02.architecture docs/03.specs/README.md docs/04.execution docs/05.operations docs/90.references/README.md docs/90.references/audits/README.md docs/90.references/data/README.md docs/90.references/learning/README.md docs/90.references/llm-wiki/README.md docs/90.references/research/README.md docs/98.archive/README.md docs/99.templates docs/90.references/cloud-examples/README.md
+git add README.md docs/README.md docs/00.agent-governance/README.md docs/00.agent-governance/memory/README.md docs/01.requirements/README.md docs/02.architecture docs/03.specs/README.md docs/03.specs docs/05.operations docs/90.references/README.md docs/90.references/audits/README.md docs/90.references/data/README.md docs/90.references/learning/README.md docs/90.references/llm-wiki/README.md docs/90.references/research/README.md docs/98.archive/README.md docs/99.templates docs/90.references/cloud-examples/README.md
 python3 scripts/validate-document-contract-registry.py --root . --mode compatibility --profile readme
 bash scripts/validate-repo-quality-gates.sh .
 git diff --cached --check
@@ -1044,15 +1087,56 @@ git add docs/99.templates/README.md docs/99.templates/templates/README.md \
   tests/fixtures/document-contracts/registry-cases.json \
   tests/fixtures/document-contracts/template-compatibility.json \
   docs/03.specs/0028-readme-workspace-profiles/spec.md docs/03.specs/README.md \
-  docs/04.execution/plans/2026-07-12-readme-workspace-profiles.md \
-  docs/04.execution/plans/README.md \
-  docs/04.execution/tasks/2026-07-12-readme-workspace-profiles.md \
-  docs/04.execution/tasks/README.md
+  docs/03.specs/0028-readme-workspace-profiles/plan.md \
+  docs/03.specs/0028-readme-workspace-profiles/plan.md \
+  docs/03.specs/0028-readme-workspace-profiles/README.md#task-records \
+  docs/03.specs/0028-readme-workspace-profiles/README.md#task-records
 git commit -m "docs(readme): close profile migration evidence"
 ```
 
 Expected: closure commit succeeds.
 
+### Legacy Task approval and rollback boundaries
+
+- **Allowed Paths**: Each RWP unit used the exact path set declared in its Plan
+  task. RWP-006 changed exactly the 25 active consumer and lifecycle paths
+  listed in Plan Task 6: 24 modified paths and one deleted form. Historical
+  non-README evidence remained outside the closure scope.
+- **Forbidden Paths**: Ignored `_workspace` children, secrets, credentials,
+  local diagnostics, live/provider/cluster state, remote resources, and every
+  path outside the applicable RWP task scope remained untouched.
+- **Approval Required**: Human approval is required before adding a seventh
+  profile, accessing secrets or local state, publishing, pushing, or performing
+  any remote or live mutation. The operator approved this tranche's protected
+  Stage 00, Stage 99, provider, hook, script, and validator changes.
+- **Static Validation**: Registry self-test and compatibility modes, the
+  focused fence-aware 72-path assertion, semantic digest and fixture SHA pins,
+  repository quality gate, active residue searches, `git diff --check`, exact
+  cached scope proof, and all-files pre-commit checks form the closure bundle.
+- **Live Validation**: DEFER. This tranche is repository-static and does not
+  establish Kubernetes, Argo CD, Vault, ESO, or provider-runtime readiness.
+- **Secret / Vault Handling**: Do not read, print, enumerate, move, or modify
+  credentials, secret values, Vault data, tokens, keys, certificates,
+  kubeconfigs, local settings, diagnostics, or ignored workspace content.
+- **Rollback Plan**: Revert newest-first: the closure commit containing this
+  Task, then `60fd310`, `3dfa3c1`, `f20f563`, `147b27b`, `771eecb`,
+  `495c792`, `01fdfd6`, `a6c3b91`, `6fe2a83`, `4e85c55`, `30468a9`,
+  `983bba9`, and `44b8e37`. Do not partially restore the retired common form
+  without its registry, fixture, and validator state.
+- **Evidence Location**: This Task, the commits above, and ignored
+  `.superpowers/sdd/rwp-task-{1..6}-report.md` implementation reports. The
+  exact closure SHA and independent RWP-006 review belong in the Task 6 report
+  because a commit cannot contain its own SHA.
+- **GitOps Impact**: None; no manifests or desired-state configuration change.
+- **Kubernetes Impact**: None; no live cluster command is authorized or run.
+- **Operations / Runbook Impact**: None; no operational procedure changes.
+
+`_workspace` validation is limited to tracked-file and ignore-rule metadata.
+It must never enumerate or open ignored children. Spec 029 must run the same
+eight cases in `readme-profile-cases.json` through its production CommonMark-
+aware parser and then remove the temporary finite fixture reader from the
+repository quality gate. Spec 030 owns broader authored-corpus migration and
+cloud-document handoff consolidation.
 ## Completion Criteria
 
 - [x] Six profile forms and exact routes exist; the monolithic form is deleted.
@@ -1066,10 +1150,19 @@ Expected: closure commit succeeds.
 ## Traceability
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/0005-workspace-document-assurance-modernization.md)
-- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/ad-0008-workspace-document-assurance-operating-model.md)
+- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md)
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Registry Spec**: [Document Contract Registry](../0026-document-contract-registry/spec.md)
 - **Template Spec**: [Template Contract Consolidation](../0027-template-contract-consolidation/spec.md)
 - **Spec**: [README and Workspace Profiles](spec.md)
 - **Next Spec**: [Semantic Document Validation](../0029-semantic-document-validation/spec.md)
-- **Task**: [README and Workspace Profiles](tasks.md)
+- **Task**: [README and Workspace Profiles](README.md#task-records)
+
+### Legacy Task traceability
+
+- **Spec**: [README and Workspace Profiles](spec.md)
+- **Plan**: [README and Workspace Profiles Implementation Plan](plan.md)
+- **Previous Registry Tranche**: [Document Contract Registry](../0026-document-contract-registry/spec.md)
+- **Previous Template Tranche**: [Template Contract Consolidation](../0027-template-contract-consolidation/spec.md)
+- **Semantic Validation Consumer**: [Semantic Document Validation](../0029-semantic-document-validation/spec.md)
+- **Authored Migration Owner**: [Authored Document Migration](../0030-authored-document-migration/spec.md)

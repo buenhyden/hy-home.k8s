@@ -450,7 +450,7 @@
     "documents": [
       {
         "path": "docs/01.requirements/0999-fixture.md",
-        "profile": "sdlc/prd",
+        "profile": "sdlc/requirement-package",
         "status": "active",
         "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Requirement ID | Acceptance criterion | Downstream owner |\n| --- | --- | --- |\n| REQ-FIXTURE-001 | Observable result | [Spec](../03.specs/0999-fixture/spec.md) |\n"
       },
@@ -458,7 +458,7 @@
         "path": "docs/03.specs/0999-fixture/plan.md",
         "profile": "sdlc/plan",
         "status": "active",
-        "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Spec criterion | Work package | Expected Task |\n| --- | --- | --- |\n| [VAL-FIXTURE-001](spec.md) | WP-001 | [Task](tasks.md) |\n"
+        "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Spec criterion | Work package | Expected Task |\n| --- | --- | --- |\n| [VAL-FIXTURE-001](spec.md) | WP-001 | [Task](tasks/tsk-0001-fixture.md) |\n"
       },
       {
         "path": "docs/03.specs/0999-fixture/spec.md",
@@ -467,27 +467,27 @@
         "body": "## Traceability\n\n### Lifecycle Traceability\n\n| PRD requirement | Spec criterion | Verification method |\n| --- | --- | --- |\n| [REQ-FIXTURE-001](../../01.requirements/0999-fixture.md) | VAL-FIXTURE-001 | [Plan](plan.md) |\n"
       },
       {
-        "path": "docs/03.specs/0999-fixture/tasks.md",
+        "path": "docs/03.specs/0999-fixture/tasks/tsk-0001-fixture.md",
         "profile": "sdlc/task",
-        "status": "active",
-        "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Criterion / work item | Result | Evidence |\n| --- | --- | --- |\n| [WORK-FIXTURE-001](plan.md) | Verified | [Incident](../../05.operations/incidents/2026/inc-0999-fixture/incident.md), [Postmortem](../../05.operations/incidents/2026/inc-0999-fixture/postmortem.md) |\n"
+        "status": "in-progress",
+        "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Criterion / work item | Result | Evidence |\n| --- | --- | --- |\n| [WORK-FIXTURE-001](../plan.md) | Verified | [Incident](../../../05.operations/incidents/2026/inc-0999-fixture/incident.md), [Postmortem](../../../05.operations/incidents/2026/inc-0999-fixture/postmortem.md) |\n"
       },
       {
         "path": "docs/05.operations/incidents/2026/inc-0999-fixture/incident.md",
         "profile": "sdlc/incident",
         "status": "active",
-        "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Timeline or action | Evidence | Follow-up Task |\n| --- | --- | --- |\n| 10:00 recovery action | Incident log | [Task](../../../../03.specs/0999-fixture/tasks.md) |\n"
+        "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Timeline or action | Evidence | Follow-up Task |\n| --- | --- | --- |\n| 10:00 recovery action | Incident log | [Task](../../../../03.specs/0999-fixture/tasks/tsk-0001-fixture.md) |\n"
       },
       {
         "path": "docs/05.operations/incidents/2026/inc-0999-fixture/postmortem.md",
         "profile": "sdlc/postmortem",
         "status": "active",
-        "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Root cause or action | Owner and due state | Follow-up Task | Feedback target |\n| --- | --- | --- | --- |\n| Prevent recurrence | platform / 2026-07-30 / active | [Task](../../../../03.specs/0999-fixture/tasks.md) | [Spec](../../../../03.specs/0999-fixture/spec.md) |\n"
+        "body": "## Traceability\n\n### Lifecycle Traceability\n\n| Root cause or action | Owner and due state | Follow-up Task | Feedback target |\n| --- | --- | --- | --- |\n| Prevent recurrence | platform / 2026-07-30 / active | [Task](../../../../03.specs/0999-fixture/tasks/tsk-0001-fixture.md) | [Spec](../../../../03.specs/0999-fixture/spec.md) |\n"
       }
     ]
   },
   "bodyContractCases": [
-    {"name": "valid-prd-spec-plan-task", "mutation": "none", "bodyContracts": "audit", "expected_rule_ids": []},
+    {"name": "valid-requirement-spec-plan-task", "mutation": "none", "bodyContracts": "audit", "expected_rule_ids": []},
     {"name": "valid-incident-postmortem-feedback", "mutation": "feedback-positive", "bodyContracts": "audit", "expected_rule_ids": []},
     {"name": "disallowed-source-profile", "mutation": "disallowed-source-profile", "bodyContracts": "audit", "expected_rule_ids": ["BODY-LINK-SOURCE-PROFILE"]},
     {"name": "disallowed-target-profile", "mutation": "disallowed-target-profile", "bodyContracts": "audit", "expected_rule_ids": ["BODY-LINK-TARGET-PROFILE"]},
@@ -497,10 +497,10 @@
     {"name": "missing-reciprocal-evidence", "mutation": "missing-reciprocal", "bodyContracts": "audit", "expected_rule_ids": ["BODY-LINK-RECIPROCAL"]},
     {"name": "exclusion-without-reason", "mutation": "exclusion-without-reason", "bodyContracts": "audit", "expected_rule_ids": ["BODY-LINK-EXCLUSION"]},
     {"name": "registry-enforced-status-scope", "mutation": "disallowed-target-profile", "bodyContracts": "registry", "expected_rule_ids": ["BODY-LINK-TARGET-PROFILE"]},
-    {"name": "audit-done-status-excluded", "mutation": "done-status", "bodyContracts": "audit", "expected_rule_ids": []},
+    {"name": "audit-superseded-status-excluded", "mutation": "superseded-status", "bodyContracts": "audit", "expected_rule_ids": []},
     {"name": "audit-matching-prefix", "mutation": "disallowed-target-profile", "bodyContracts": "audit", "pathPrefixes": ["docs/05.operations", "docs/01.requirements"], "expected_rule_ids": ["BODY-LINK-TARGET-PROFILE"]},
     {"name": "audit-nonmatching-prefix", "mutation": "disallowed-target-profile", "bodyContracts": "audit", "pathPrefixes": ["docs/03.specs"], "expected_rule_ids": []},
-    {"name": "audit-prefix-done-status-excluded", "mutation": "done-status", "bodyContracts": "audit", "pathPrefixes": ["docs/01.requirements"], "expected_rule_ids": []},
+    {"name": "audit-prefix-superseded-status-excluded", "mutation": "superseded-status", "bodyContracts": "audit", "pathPrefixes": ["docs/01.requirements"], "expected_rule_ids": []},
     {"name": "three-space-table-disallowed-link", "mutation": "three-space-disallowed-target", "bodyContracts": "audit", "expected_rule_ids": ["BODY-LINK-TARGET-PROFILE"]},
     {"name": "commented-fence-cannot-hide-table", "mutation": "commented-fence-disallowed-target", "bodyContracts": "audit", "expected_rule_ids": ["BODY-LINK-TARGET-PROFILE"]},
     {"name": "full-reference-disallowed-link", "mutation": "full-reference-disallowed-target", "bodyContracts": "audit", "expected_rule_ids": ["BODY-LINK-TARGET-PROFILE"]},

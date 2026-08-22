@@ -58,6 +58,16 @@ Handoff / Escalation, Postflight). They differ only in domain:
   ingress objects, NetworkPolicy structure, DNS and TLS wiring correctness at
   the manifest level.
 
+### Legacy agent-design disposition
+
+The former sibling design's valid change-local contract is owned here: both
+roles are review-only, accept bounded repository paths or diffs, return
+severity-ranked findings with file/line evidence, use least privilege, and
+escalate implementation or sensitive security findings to the appropriate
+owner. Repository-static evidence does not imply provider-runtime or live
+readiness. Historical fixed-surface/cardinality claims are superseded by
+ADR-0030 and remain outside this completed work unit.
+
 ## Data Modeling & Storage Strategy
 
 No new data stores. Durable lessons route to
@@ -78,7 +88,7 @@ Not applicable; these are delegated subagents, not network services.
 
 #### Agent Role & IO Contract
 
-Defined in the sibling `agent-design.md`.
+Defined by the Core Design and guardrails in this Spec.
 
 #### Tools & Tool Contract
 
@@ -136,9 +146,9 @@ bash scripts/validate-repo-quality-gates.sh .
 
 ## Traceability
 
-- **Agent Design**: [./agent-design.md](./agent-design.md)
+- **Retired agent-design recovery**: [MIG-0004](../../98.archive/migrations/0004-document-authority-convergence.md)
 - **Plan**: [../../04.execution/plans/2026-07-06-observability-and-network-review-agents.md](plan.md)
-- **Task**: [../../04.execution/tasks/2026-07-06-observability-and-network-review-agents.md](tasks.md)
+- **Task**: [../../04.execution/tasks/2026-07-06-observability-and-network-review-agents.md](README.md#task-records)
 - **Gap-analysis reference**: `docs/90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md`; [current lookup](../../90.references/research/2026-08-08-wer/ai-agents-and-agency-agents.md)
 - **Harness catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Model policy**: [../../00.agent-governance/model-policy.md](../../00.agent-governance/model-policy.md)

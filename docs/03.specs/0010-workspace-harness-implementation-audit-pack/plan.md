@@ -34,6 +34,17 @@ The user selected four audit reports plus an audits README. The audit benchmark
 is the current research pack under `docs/90.references/research/`, and the
 implementation evidence must come from current repository files.
 
+### Legacy Task ledger inputs
+
+This document tracks implementation and verification work for the workspace
+harness implementation audit pack under `docs/90.references/audits/`.
+
+The task is documentation-only. Repo-static validation is required, but live
+k3d, ArgoCD, Vault, ESO, Kubernetes, cloud, provider runtime, paid-job, and
+secret checks are out of scope unless separately approved by a human.
+
+- **Parent Spec**: `../../03.specs/0010-workspace-harness-implementation-audit-pack/spec.md`
+- **Parent Plan**: `../plans/2026-07-02-workspace-harness-implementation-audit-pack.md`
 ## Goals & In-Scope
 
 - **Goals**:
@@ -75,9 +86,9 @@ implementation evidence must come from current repository files.
 | `docs/90.references/audits/2026-07-02-provider-harness-loop-implementation-audit.md` | Claude, Codex, and Gemini harness/loop implementation status plus common environment/rules/system parity. |
 | `docs/90.references/audits/2026-07-02-sdlc-delivery-practices-implementation-audit.md` | Spec-driven development, SDLC, CI/CD, QA, and formatting implementation status. |
 | `docs/90.references/README.md` | Parent reference hub structure and folder-role update for `audits/`. |
-| `docs/04.execution/plans/README.md` | Plan index row for this execution plan. |
-| `docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md` | Execution tracking and validation evidence. |
-| `docs/04.execution/tasks/README.md` | Task index row for this execution task. |
+| `docs/03.specs/0010-workspace-harness-implementation-audit-pack/plan.md` | Plan index row for this execution plan. |
+| `docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md#task-records` | Execution tracking and validation evidence. |
+| `docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md#task-records` | Task index row for this execution task. |
 | `docs/00.agent-governance/memory/progress.md` | Progress, reusable memory, validation evidence, and final handoff update. |
 
 ### Source Baseline
@@ -94,7 +105,7 @@ Use these source groups during implementation:
   - `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.codex/CODEX.md`
   - `.agents/**`, `.claude/**`, `.codex/**`
   - `docs/00.agent-governance/**`
-  - `docs/04.execution/**`
+  - `docs/03.specs/**`
   - `docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md`
   - `docs/99.templates/**`
   - `scripts/**`
@@ -122,7 +133,7 @@ Use these source groups during implementation:
 
 - Create: `docs/90.references/audits/README.md`
 - Modify: `docs/90.references/README.md`
-- Modify: `docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md`
+- Modify: `docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md#task-records`
 
 - [x] **Step 1: Read templates and existing audit precedent**
 
@@ -199,7 +210,7 @@ Expected:
 Commit:
 
 ```bash
-git add docs/90.references/audits/README.md docs/90.references/README.md docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md
+git add docs/90.references/audits/README.md docs/90.references/README.md docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md#task-records
 git commit -m "docs(audit): Scaffold workspace harness audit references"
 ```
 
@@ -209,7 +220,7 @@ git commit -m "docs(audit): Scaffold workspace harness audit references"
 
 - Create: `docs/90.references/audits/2026-07-02-workspace-governance-implementation-audit.md`
 - Modify: `docs/90.references/audits/README.md`
-- Modify: `docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md`
+- Modify: `docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md#task-records`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
 - [x] **Step 1: Gather benchmark and repo evidence**
@@ -283,7 +294,7 @@ Expected: both commands pass.
 Commit:
 
 ```bash
-git add docs/90.references/audits/2026-07-02-workspace-governance-implementation-audit.md docs/90.references/audits/README.md docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md docs/00.agent-governance/memory/progress.md
+git add docs/90.references/audits/2026-07-02-workspace-governance-implementation-audit.md docs/90.references/audits/README.md docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md#task-records docs/00.agent-governance/memory/progress.md
 git commit -m "docs(audit): Assess workspace governance implementation"
 ```
 
@@ -293,7 +304,7 @@ git commit -m "docs(audit): Assess workspace governance implementation"
 
 - Create: `docs/90.references/audits/2026-07-02-harness-loop-implementation-audit.md`
 - Modify: `docs/90.references/audits/README.md`
-- Modify: `docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md`
+- Modify: `docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md#task-records`
 
 - [x] **Step 1: Gather benchmark and repo evidence**
 
@@ -347,7 +358,7 @@ Expected: both commands pass.
 Commit:
 
 ```bash
-git add docs/90.references/audits/2026-07-02-harness-loop-implementation-audit.md docs/90.references/audits/README.md docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md
+git add docs/90.references/audits/2026-07-02-harness-loop-implementation-audit.md docs/90.references/audits/README.md docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md#task-records
 git commit -m "docs(audit): Assess harness and loop implementation"
 ```
 
@@ -357,7 +368,7 @@ git commit -m "docs(audit): Assess harness and loop implementation"
 
 - Create: `docs/90.references/audits/2026-07-02-provider-harness-loop-implementation-audit.md`
 - Modify: `docs/90.references/audits/README.md`
-- Modify: `docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md`
+- Modify: `docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md#task-records`
 
 - [x] **Step 1: Gather benchmark and repo evidence**
 
@@ -413,7 +424,7 @@ Expected: both commands pass.
 Commit:
 
 ```bash
-git add docs/90.references/audits/2026-07-02-provider-harness-loop-implementation-audit.md docs/90.references/audits/README.md docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md
+git add docs/90.references/audits/2026-07-02-provider-harness-loop-implementation-audit.md docs/90.references/audits/README.md docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md#task-records
 git commit -m "docs(audit): Assess provider harness implementation"
 ```
 
@@ -423,7 +434,7 @@ git commit -m "docs(audit): Assess provider harness implementation"
 
 - Create: `docs/90.references/audits/2026-07-02-sdlc-delivery-practices-implementation-audit.md`
 - Modify: `docs/90.references/audits/README.md`
-- Modify: `docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md`
+- Modify: `docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md#task-records`
 
 - [x] **Step 1: Gather benchmark and repo evidence**
 
@@ -432,8 +443,8 @@ Run:
 ```bash
 sed -n '1,340p' docs/90.references/research/spec-sdlc-ci-qa-formatting.md
 sed -n '1,220p' docs/03.specs/README.md
-sed -n '1,220p' docs/04.execution/plans/README.md
-sed -n '1,220p' docs/04.execution/tasks/README.md
+sed -n '1,220p' docs/03.specs/0010-workspace-harness-implementation-audit-pack/plan.md
+sed -n '1,220p' docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md#task-records
 sed -n '1,220p' docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md
 sed -n '1,220p' .github/workflows/ci.yml
 sed -n '1,220p' .pre-commit-config.yaml
@@ -478,7 +489,7 @@ Expected: both commands pass.
 Commit:
 
 ```bash
-git add docs/90.references/audits/2026-07-02-sdlc-delivery-practices-implementation-audit.md docs/90.references/audits/README.md docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md
+git add docs/90.references/audits/2026-07-02-sdlc-delivery-practices-implementation-audit.md docs/90.references/audits/README.md docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md#task-records
 git commit -m "docs(audit): Assess SDLC delivery implementation"
 ```
 
@@ -486,10 +497,10 @@ git commit -m "docs(audit): Assess SDLC delivery implementation"
 
 **Files:**
 
-- Modify: `docs/04.execution/plans/2026-07-02-workspace-harness-implementation-audit-pack.md`
-- Modify: `docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md`
-- Modify: `docs/04.execution/plans/README.md`
-- Modify: `docs/04.execution/tasks/README.md`
+- Modify: `docs/03.specs/0010-workspace-harness-implementation-audit-pack/plan.md`
+- Modify: `docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md#task-records`
+- Modify: `docs/03.specs/0010-workspace-harness-implementation-audit-pack/plan.md`
+- Modify: `docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md#task-records`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
 - [x] **Step 1: Align plan/task completion state**
@@ -506,8 +517,8 @@ Update this plan and the task record:
 
 Update:
 
-- `docs/04.execution/plans/README.md`: add or update this plan row to `Done`.
-- `docs/04.execution/tasks/README.md`: add or update this task row to `Done`.
+- `docs/03.specs/0010-workspace-harness-implementation-audit-pack/plan.md`: add or update this plan row to `Done`.
+- `docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md#task-records`: add or update this task row to `Done`.
 - `docs/00.agent-governance/memory/progress.md`: set the audit pack entry to
   `complete`, summarize created audit reports, record final validation
   evidence, and state that no live runtime readiness check was run.
@@ -521,8 +532,8 @@ git diff --check
 bash scripts/generate-llm-wiki-index.sh --check
 bash scripts/validate-repo-quality-gates.sh .
 rg --files | rg '(^|/)progress\.md$'
-rg -n '^status: draft|^- \\[ \\]' docs/04.execution/plans/2026-07-02-workspace-harness-implementation-audit-pack.md docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md
-rg -n 'workspace-harness-implementation-audit-pack.*\\| Draft \\|' docs/04.execution/plans/README.md docs/04.execution/tasks/README.md
+rg -n '^status: draft|^- \\[ \\]' docs/03.specs/0010-workspace-harness-implementation-audit-pack/plan.md docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md#task-records
+rg -n 'workspace-harness-implementation-audit-pack.*\\| Draft \\|' docs/03.specs/0010-workspace-harness-implementation-audit-pack/plan.md docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md#task-records
 ```
 
 Expected:
@@ -538,10 +549,28 @@ Expected:
 Commit:
 
 ```bash
-git add docs/04.execution/plans/2026-07-02-workspace-harness-implementation-audit-pack.md docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md docs/04.execution/plans/README.md docs/04.execution/tasks/README.md docs/00.agent-governance/memory/progress.md
+git add docs/03.specs/0010-workspace-harness-implementation-audit-pack/plan.md docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md#task-records docs/03.specs/0010-workspace-harness-implementation-audit-pack/plan.md docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md#task-records docs/00.agent-governance/memory/progress.md
 git commit -m "docs(audit): Finalize workspace harness implementation audit pack"
 ```
 
+### Legacy Task supplemental evidence
+
+### Phase View
+
+### Phase 1
+
+- [x] T-001 Create audits README and parent reference scaffold.
+
+### Phase 2
+
+- [x] T-002 Write workspace governance implementation audit.
+- [x] T-003 Write harness and loop implementation audit.
+- [x] T-004 Write provider harness and loop implementation audit.
+- [x] T-005 Write SDLC delivery practices implementation audit.
+
+### Phase 3
+
+- [x] T-006 Final integration, validation, memory, and handoff.
 ## Verification Plan
 
 | ID | Level | Description | Command / How to Run | Pass Criteria |
@@ -551,6 +580,62 @@ git commit -m "docs(audit): Finalize workspace harness implementation audit pack
 | VAL-PLN-003 | Repo quality | Repository quality gates | `bash scripts/validate-repo-quality-gates.sh .` | Prints `[PASS] repository quality gates passed`. |
 | VAL-PLN-004 | Progress singleton | Canonical progress ledger uniqueness | `rg --files \| rg '(^\|/)progress\.md$'` | Prints only `docs/00.agent-governance/memory/progress.md`. |
 | VAL-PLN-005 | Status alignment | No stale audit-pack draft/checklist markers | Targeted `rg` commands from Task 6 Step 3 | No audit-pack frontmatter remains `draft`, no audit-pack checklist remains unchecked, and no audit-pack README row remains `Draft`. |
+
+### Legacy Task verification evidence
+
+- **Test Commands**:
+  - `git diff --check`
+  - `bash scripts/generate-llm-wiki-index.sh --check`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `rg --files | rg '(^|/)progress\.md$'`
+- **Eval Commands**:
+  - Manual benchmark-to-evidence review for every audit report.
+  - Manual status-vocabulary review for every `Implemented`, `Partial`,
+    `Gap`, and `Not in scope` claim.
+  - Manual checklist coverage review against parent Spec VAL-SPC-004.
+- **Logs / Evidence Location**:
+  - This task record.
+  - `../../00.agent-governance/memory/progress.md`.
+
+### Task Evidence
+
+| Date | Task ID | Command | Result |
+| --- | --- | --- | --- |
+| 2026-07-02 | Plan | Manual plan review | PASS; plan and task records created from approved Spec with six logical units and repo-static validation criteria |
+| 2026-07-02 | Plan | `git diff --check` | PASS; no output |
+| 2026-07-02 | Plan | `bash scripts/generate-llm-wiki-index.sh --check` | PASS; `[PASS] LLM WIKI generated index is current` |
+| 2026-07-02 | Plan | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
+| 2026-07-02 | T-001 | Manual README/template review | PASS; reviewed parent Spec, parent Plan, README template, reference template, parent reference README, and existing audit precedent |
+| 2026-07-02 | T-001 | `git diff --check` | PASS; no output |
+| 2026-07-02 | T-001 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
+| 2026-07-02 | T-001 | Manual quality-review remediation | PASS; added dated implementation audit snapshot as the fifth reference role and bounded audits away from active policy, plans, tasks, runbooks, CI semantics, and live runtime readiness |
+| 2026-07-02 | T-002 | Manual governance audit matrix review | PASS; compared workspace governance benchmark against repo-backed evidence for purpose, rules, provider adapters, templates, scripts, CI/CD QA lanes, approval boundaries, and automation opportunities |
+| 2026-07-02 | T-002 | `git diff --check` | PASS; no output |
+| 2026-07-02 | T-002 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
+| 2026-07-02 | T-003 | Manual harness/loop audit matrix review | PASS; compared the harness and loop benchmark against repo-backed evidence for instruction/settings surfaces, architecture constraints, feedback loops, knowledge stores, observe/plan/act/verify/learn loop, eval/review loops, subagent/worktree/review-loop practices, MCP/tool boundaries, and automation opportunities |
+| 2026-07-02 | T-003 | `git diff --check` | PASS; no output |
+| 2026-07-02 | T-003 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
+| 2026-07-03 | T-003 review fix | Manual section-contract review | SUPERSEDED; previous review prompt over-specified non-template headings and was replaced by the visible template-contract cleanup below |
+| 2026-07-03 | T-003 review fix | `git diff --check` | PASS; no output |
+| 2026-07-03 | T-003 review fix | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
+| 2026-07-03 | T-003 section-contract cleanup | Manual template-contract review | PASS; removed hidden compatibility markers and restored visible top-level sections from the parent Spec/reference template while preserving analysis content, matrix statuses, static-vs-live caveat, and evidence links |
+| 2026-07-03 | T-003 section-contract cleanup | `git diff --check` | PASS; no output |
+| 2026-07-03 | T-003 section-contract cleanup | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
+| 2026-07-03 | T-004 | Manual provider audit matrix review | PASS; compared provider benchmark against repo-backed evidence for Claude, Codex, Gemini, common parity, known non-parity boundaries, automation opportunities, and absence evidence for untracked local provider settings or MCP config |
+| 2026-07-03 | T-004 | `git diff --check` | PASS; no output |
+| 2026-07-03 | T-004 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
+| 2026-07-03 | T-005 | Manual SDLC/delivery audit matrix review | PASS; compared SDLC benchmark against repo-backed evidence for spec-driven development, Stage 03 Spec lifecycle, Stage 04 Plan lifecycle, Stage 04 Task/evidence lifecycle, secure SDLC evidence lanes, CI/CD jobs, QA validation commands, formatting and pre-commit, static-vs-live readiness boundary, and automation opportunities |
+| 2026-07-03 | T-005 | `git diff --check` | PASS; no output |
+| 2026-07-03 | T-005 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
+| 2026-07-03 | T-005 quality review fix | Manual wording remediation | PASS; replaced stale in-progress audit README wording with completed-pack language while preserving future planned-report link-basis guidance |
+| 2026-07-03 | T-005 quality review fix | `git diff --check` | PASS; no output |
+| 2026-07-03 | T-005 quality review fix | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
+| 2026-07-03 | T-006 | Manual final integration review | PASS; marked plan/task complete, updated Stage 04 indexes to `Done`, verified all four 2026-07-02 audit reports are linked as `Current`, and refreshed progress memory |
+| 2026-07-03 | T-006 | `git diff --check` | PASS; no output |
+| 2026-07-03 | T-006 | `bash scripts/generate-llm-wiki-index.sh --check` | PASS; `[PASS] LLM WIKI generated index is current` |
+| 2026-07-03 | T-006 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
+| 2026-07-03 | T-006 | `rg --files \| rg '(^\|/)progress\.md$'` | PASS; returned only `docs/00.agent-governance/memory/progress.md` |
+| 2026-07-03 | T-006 | Targeted audit-pack stale-marker scans | PASS; no audit-pack frontmatter remained `draft`, no audit-pack checklist remained unchecked, and no audit-pack README row remained `Draft` |
 
 ## Risks & Mitigations
 
@@ -576,6 +661,27 @@ git commit -m "docs(audit): Finalize workspace harness implementation audit pack
 - **Prompt / Model Promotion Criteria**: Not applicable; no model or prompt
   surface is promoted.
 
+### Legacy Task approval and rollback boundaries
+
+- **Allowed Paths**: `T-001 through T-006` is limited to these Workspace Harness Implementation Audit Pack owners and Task-Table surfaces:
+  - `docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md#task-records`
+  - `docs/03.specs/0010-workspace-harness-implementation-audit-pack/spec.md`
+  - `docs/03.specs/0010-workspace-harness-implementation-audit-pack/plan.md`
+- **Forbidden Paths**: active policy or runtime configuration not named by the Workspace Harness Implementation Audit Pack Task Table, provider settings, secret values, local diagnostics, and remote publication surfaces.
+- **Approval Required**: Human approval is required before publishing Workspace Harness Implementation Audit Pack research, changing active policy/runtime behavior, deleting evidence, contacting providers, push, merge, or corpus expansion.
+- **Static Validation**: Preserve the Workspace Harness Implementation Audit Pack outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `git diff --check`
+  - `bash scripts/generate-llm-wiki-index.sh --check`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `rg --files | rg '(^|/)progress\.md$'`
+- **Live Validation**: DEFER — Workspace Harness Implementation Audit Pack is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: Workspace Harness Implementation Audit Pack evidence must use public or repository-visible facts only; do not inspect or reproduce credentials, tokens, auth files, private logs, kubeconfigs, or shell history.
+- **Rollback Plan**: Revert the logical Workspace Harness Implementation Audit Pack change set for `T-001 through T-006` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Workspace Harness Implementation Audit Pack evidence remains in:
+  - `docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md#task-records`
+  - `docs/03.specs/0010-workspace-harness-implementation-audit-pack/spec.md`
+  - `docs/03.specs/0010-workspace-harness-implementation-audit-pack/plan.md`
+  - `docs/00.agent-governance/memory/progress.md`
 ## Completion Criteria
 
 - [x] `docs/90.references/audits/README.md` exists and indexes all audit
@@ -593,15 +699,23 @@ git commit -m "docs(audit): Finalize workspace harness implementation audit pack
 ## Traceability
 
 - **AD**:
-  `[../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md]`
+  `[../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md]`
 - **ADR**:
   `[../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md]`
 - **Spec**:
   `[../../03.specs/0010-workspace-harness-implementation-audit-pack/spec.md]`
-- **Task**: [../tasks/2026-07-02-workspace-harness-implementation-audit-pack.md](tasks.md)
+- **Task**: [../tasks/2026-07-02-workspace-harness-implementation-audit-pack.md](README.md#task-records)
 - **Research README**:
   `[../../90.references/research/README.md]`
 - **Audits README**:
   `../../90.references/audits/README.md`
 - **Reference Maintenance Runbook**:
   `[../../05.operations/runbooks/0011-reference-maintenance-runbook.md]`
+
+### Legacy Task traceability
+
+- **Spec**: `../../03.specs/0010-workspace-harness-implementation-audit-pack/spec.md`
+- **Plan**: `../plans/2026-07-02-workspace-harness-implementation-audit-pack.md`
+- **Research README**: `../../90.references/research/README.md`
+- **Audits folder**: `../../90.references/audits/`
+- **Reference README**: `../../90.references/README.md`

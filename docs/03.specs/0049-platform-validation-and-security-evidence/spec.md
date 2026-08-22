@@ -247,13 +247,13 @@ commands and tool identities selected by the approved Plan.
 - **Program requirement**:
   [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
 - **Architecture**:
-  [AD-0010](../../02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md)
+  [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
 - **Decision**:
   [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Plan**:
   [Platform Validation and Security Evidence Implementation Plan](plan.md)
 - **Task**:
-  [Platform Validation and Security Evidence Task](tasks.md)
+  [Platform Validation and Security Evidence Task](README.md#task-records)
 - **Predecessor**:
   [Spec 048](../0048-github-routing-and-ci-evidence/spec.md)
 - **Successor**:
@@ -263,11 +263,11 @@ commands and tool identities selected by the approved Plan.
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-RDPA-005](../../01.requirements/0007-repository-delivery-and-platform-assurance.md#functional-requirements) | VAL-PVSE-001 | Closed contract/schema and mutation fixtures prove depth and lane integrity. |
-| N/A — REQ-RDPA-005 shares the PRD-0007 source linked above. | VAL-PVSE-002 | Exact-root render evidence proves deterministic desired-state construction. |
-| N/A — REQ-RDPA-005 shares the PRD-0007 source linked above. | VAL-PVSE-003 | Schema and GVK fixtures prove built-in and external disposition boundaries. |
-| N/A — REQ-RDPA-006 shares the PRD-0007 source linked above. | VAL-PVSE-004 | Product-semantic fixtures prove Traefik reference and field behavior. |
-| N/A — REQ-RDPA-006 shares the PRD-0007 source linked above. | VAL-PVSE-005 | Existing focused gates and new direct tests prove security contract retention. |
-| N/A — REQ-RDPA-008 shares the PRD-0007 source linked above. | VAL-PVSE-006 | Isolated positive, negative, and fallback suites prove deterministic failure behavior. |
-| N/A — REQ-RDPA-009 shares the PRD-0007 source linked above. | VAL-PVSE-007 | Exception and DEFER rows prove honest live/transport boundaries. |
-| N/A — REQ-RDPA-010 shares the PRD-0007 source linked above. | VAL-PVSE-008 | Local QA and independent reviews prove rollback-ready closure. |
+| [REQ-0007-FR-0005](../../01.requirements/0007-repository-delivery-and-platform-assurance.md#functional-requirements) | VAL-PVSE-001 | Closed contract/schema and mutation fixtures prove depth and lane integrity. |
+| N/A — REQ-0007-FR-0005 shares the PRD-0007 source linked above. | VAL-PVSE-002 | Exact-root render evidence proves deterministic desired-state construction. |
+| N/A — REQ-0007-FR-0005 shares the PRD-0007 source linked above. | VAL-PVSE-003 | Schema and GVK fixtures prove built-in and external disposition boundaries. |
+| N/A — REQ-0007-FR-0006 shares the PRD-0007 source linked above. | VAL-PVSE-004 | Product-semantic fixtures prove Traefik reference and field behavior. |
+| N/A — REQ-0007-FR-0006 shares the PRD-0007 source linked above. | VAL-PVSE-005 | Existing focused gates and new direct tests prove security contract retention. |
+| N/A — REQ-0007-FR-0008 shares the PRD-0007 source linked above. | VAL-PVSE-006 | Isolated positive, negative, and fallback suites prove deterministic failure behavior. |
+| N/A — REQ-0007-FR-0009 shares the PRD-0007 source linked above. | VAL-PVSE-007 | Exception and DEFER rows prove honest live/transport boundaries. |
+| N/A — REQ-0007-FR-0010 shares the PRD-0007 source linked above. | VAL-PVSE-008 | Local QA and independent reviews prove rollback-ready closure. |

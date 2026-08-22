@@ -82,6 +82,13 @@ WORK054_WP003_MIGRATION_PATH = (
 WORK054_WP003_MIGRATION_DOCUMENT_SHA256 = (
     "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42"  # pragma: allowlist secret
 )
+WORK054_WP004B_MIGRATION_PATH = (
+    "docs/98.archive/migrations/"
+    "0004-document-authority-convergence.md"
+)
+WORK054_WP004B_MIGRATION_DOCUMENT_SHA256 = (
+    archive_validation_module.MIG0004_DOCUMENT_SHA256
+)
 WORK109_SOURCE_COMMIT = "160ce006969ddb49965c8af193f3e9ee290e18a8"  # pragma: allowlist secret
 WORK109_LEDGER_MARKER = (
     b"<!-- archive-migration-ledger:v1 format=json -->\n\n```json\n"
@@ -976,25 +983,48 @@ def _validate_archive_inventory(
         archive_validation_module.WORK107_MIGRATION_PATH,
         WORK109_MIGRATION_PATH,
     }
-    if WORK054_WP003_MIGRATION_PATH in paths:
+    finite_controls = {
+        WORK054_WP003_MIGRATION_PATH: (
+            WORK054_WP003_MIGRATION_DOCUMENT_SHA256,
+            3,
+        ),
+        WORK054_WP004B_MIGRATION_PATH: (
+            WORK054_WP004B_MIGRATION_DOCUMENT_SHA256,
+            66,
+        ),
+    }
+    for migration_path, (expected_digest, expected_rows) in finite_controls.items():
+        if migration_path not in paths:
+            continue
         try:
             content = read_staged_blob_bounded(
                 root,
-                WORK054_WP003_MIGRATION_PATH,
+                migration_path,
                 max_bytes=MIGRATION_DOCUMENT_MAX_BYTES,
             )
-            rows = parse_pinned_migration_control(
-                WORK054_WP003_MIGRATION_PATH, content
+            rows = parse_pinned_migration_control(migration_path, content)
+        except (ArchiveContractError, OSError, ValueError):
+            _fail("MIGRATION-ROGUE-ARCHIVE", migration_path)
+        if (
+            hashlib.sha256(content).hexdigest() != expected_digest
+            or len(rows) != expected_rows
+        ):
+            _fail("MIGRATION-ROGUE-ARCHIVE", migration_path)
+        migration_controls.add(migration_path)
+    if ARCHIVE_INDEX_PATH in paths:
+        try:
+            index_content = read_staged_blob_bounded(
+                root,
+                ARCHIVE_INDEX_PATH,
+                max_bytes=MIGRATION_DOCUMENT_MAX_BYTES,
             )
         except (ArchiveContractError, OSError, ValueError):
-            _fail("MIGRATION-ROGUE-ARCHIVE", WORK054_WP003_MIGRATION_PATH)
+            _fail("MIGRATION-ROGUE-ARCHIVE", ARCHIVE_INDEX_PATH)
         if (
-            hashlib.sha256(content).hexdigest()
-            != WORK054_WP003_MIGRATION_DOCUMENT_SHA256
-            or len(rows) != 3
+            not index_content.startswith(b"# 98.archive\n")
+            or index_content.count(b"\n## Document Index\n") != 1
         ):
-            _fail("MIGRATION-ROGUE-ARCHIVE", WORK054_WP003_MIGRATION_PATH)
-        migration_controls.add(WORK054_WP003_MIGRATION_PATH)
+            _fail("MIGRATION-ROGUE-ARCHIVE", ARCHIVE_INDEX_PATH)
     actual = frozenset(
         path
         for path in paths
@@ -1057,6 +1087,55 @@ def _work109_expected_current_path(legacy: str) -> str | None:
     )
 
 
+def _work054_wp004b_current_replacements(
+    root: Path,
+    current_paths: set[str],
+) -> dict[str, str]:
+    """Project only exact retired WP-004B paths to reviewed current owners."""
+
+    try:
+        content = read_staged_blob_bounded(
+            root,
+            WORK054_WP004B_MIGRATION_PATH,
+            max_bytes=MIGRATION_DOCUMENT_MAX_BYTES,
+        )
+        rows = parse_pinned_migration_control(
+            WORK054_WP004B_MIGRATION_PATH,
+            content,
+        )
+    except (ArchiveContractError, OSError, ValueError):
+        _fail("MIGRATION-CONSUMERS")
+    replacements: dict[str, str] = {}
+    projected_rows = 0
+    for row in rows:
+        if not isinstance(row, Mapping):
+            _fail("MIGRATION-CONSUMERS")
+        action = row.get("action")
+        legacy_value = row.get("legacy_path")
+        target_value = (
+            row.get("stable_path") if action == "moved" else row.get("replacement")
+        )
+        if not isinstance(legacy_value, str) or not isinstance(target_value, str):
+            _fail("MIGRATION-CONSUMERS")
+        legacy = validate_path(legacy_value)
+        target = validate_path(target_value)
+        if legacy == target:
+            if legacy not in current_paths:
+                _fail("MIGRATION-CONSUMERS")
+            continue
+        projected_rows += 1
+        if (
+            legacy in current_paths
+            or target not in current_paths
+            or legacy in replacements
+        ):
+            _fail("MIGRATION-CONSUMERS")
+        replacements[legacy] = target
+    if len(replacements) != projected_rows:
+        _fail("MIGRATION-CONSUMERS")
+    return replacements
+
+
 def _work109_current_replacements(
     root: Path, current_paths: set[str]
 ) -> dict[str, str]:
@@ -1074,6 +1153,10 @@ def _work109_current_replacements(
     if len(rows) != 154:
         _fail("MIGRATION-CONSUMERS")
 
+    wp004b_replacements = _work054_wp004b_current_replacements(
+        root,
+        current_paths,
+    )
     replacements: dict[str, str] = {}
     stable_paths: set[str] = set()
     action_counts = {"moved": 0, "replaced": 0, "merged": 0}
@@ -1100,6 +1183,7 @@ def _work109_current_replacements(
 
         if action == "moved":
             stable = validate_path(raw_row["stable_path"])
+            current_stable = wp004b_replacements.get(stable, stable)
             expected = _work109_expected_current_path(legacy)
             if (
                 stable != expected
@@ -1107,10 +1191,10 @@ def _work109_current_replacements(
                 or not isinstance(raw_row["artifact_id"], str)
                 or not raw_row["artifact_id"]
                 or stable in stable_paths
-                or stable not in current_paths
+                or current_stable not in current_paths
             ):
                 _fail("MIGRATION-CONSUMERS")
-            replacements[legacy] = stable
+            replacements[legacy] = current_stable
             stable_paths.add(stable)
             continue
 
@@ -1152,12 +1236,17 @@ def _reviewed_move_current_replacements(
         _fail("MIGRATION-CONSUMERS")
 
     replacements = _work109_current_replacements(root, current_paths)
+    wp004b_replacements = _work054_wp004b_current_replacements(
+        root,
+        current_paths,
+    )
     for entry in snapshot.document.entries:
         if entry["disposition"] != "move-current":
             continue
         source = validate_path(entry["source"])
         target = validate_path(entry["target"])
         current_target = replacements.get(target, target)
+        current_target = wp004b_replacements.get(current_target, current_target)
         if (
             source in current_paths
             or current_target not in current_paths
@@ -1200,7 +1289,9 @@ def _current_documents(
                     else "content/reference"
                 ),
                 status=(
-                    "accepted"
+                    "sealed"
+                    if path == WORK054_WP004B_MIGRATION_PATH
+                    else "accepted"
                     if path in archive_validation_module._ARCHIVE_MIGRATION_CONTROLS
                     else "active"
                 ),

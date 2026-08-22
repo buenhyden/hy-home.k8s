@@ -327,10 +327,10 @@ bash scripts/validate-policy-gates.sh .
 - **Spec**: [Template Path Numbering Contract](../0019-template-path-numbering-contract/spec.md)
 - **Spec**: [SDLC Lifecycle Contract](../0021-sdlc-lifecycle-contract/spec.md)
 - **Plan**: [../../04.execution/plans/2026-07-06-control-cloud-doc-normalization.md](plan.md)
-- **Tasks**: [../../04.execution/tasks/2026-07-06-control-cloud-doc-normalization.md](tasks.md)
-- **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/support/template-routing.md)
-- **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/frontmatter-schema.md)
-- **Common Documentation Governance**: [../../99.templates/support/common-documentation-governance.md](../../99.templates/support/common-documentation-governance.md)
+- **Tasks**: [../../04.execution/tasks/2026-07-06-control-cloud-doc-normalization.md](README.md#task-records)
+- **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/support/document-contract.md)
+- **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/document-contract.md)
+- **Common Documentation Governance**: [../../99.templates/support/common-documentation-governance.md](../../99.templates/support/document-lifecycle.md)
 - **Completed evolution**: [011](../0011-template-contract-governance-migration/spec.md) -> [012](../0012-template-governance-audit-enhancement/spec.md) -> [013](../0013-workspace-document-governance-hardening/spec.md) -> [014](../0014-workspace-document-contract-normalization/spec.md) -> [020](../0020-workspace-contract-governance-normalization/spec.md) -> [021](../0021-sdlc-lifecycle-contract/spec.md) -> [022](./spec.md) -> [023](../0023-stage03-04-repo-static-gap-closure/spec.md).
 ### Related inputs
 

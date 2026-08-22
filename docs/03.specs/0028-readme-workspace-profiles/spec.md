@@ -129,12 +129,12 @@ git diff --check
 ### Inputs
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/0005-workspace-document-assurance-modernization.md)
-- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/ad-0008-workspace-document-assurance-operating-model.md)
+- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md)
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Registry Spec**: [Document Contract Registry](../0026-document-contract-registry/spec.md)
 - **Template Spec**: [Template Contract Consolidation](../0027-template-contract-consolidation/spec.md)
 - **Execution Plan**: [README and Workspace Profiles Implementation Plan](plan.md)
-- **Execution Task**: [README and Workspace Profiles Task](tasks.md)
+- **Execution Task**: [README and Workspace Profiles Task](README.md#task-records)
 - **Current Workspace Contract**: [Workspace Support Staging](../../../_workspace/README.md)
 
 ### Delivery and References

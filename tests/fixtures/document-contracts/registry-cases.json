@@ -24003,17 +24003,17 @@
     }
   ],
   "work106ArtifactIdentityCases": [
-    {"path": "docs/01.requirements/0008-workspace-document-taxonomy-consolidation.md", "artifactId": "PRD-0008"},
+    {"path": "docs/01.requirements/0008-workspace-document-taxonomy-consolidation.md", "artifactId": "REQ-0008"},
     {"path": "docs/01.requirements/srs-0009-platform-runtime.md", "artifactId": "SRS-0009"},
     {"path": "docs/01.requirements/ifc-0009-control-plane-api.md", "artifactId": "IFC-0009-CONTROL-PLANE-API"},
-    {"path": "docs/02.architecture/descriptions/ad-0011-document-taxonomy-consolidation-architecture.md", "artifactId": "AD-0011"},
+    {"path": "docs/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md", "artifactId": "AD-0011"},
     {"path": "docs/02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md", "artifactId": "ADR-0024"},
     {"path": "docs/03.specs/0052-document-taxonomy-consolidation/spec.md", "artifactId": "SPEC-0052"},
     {"path": "docs/03.specs/0052-document-taxonomy-consolidation/agent-design.md", "artifactId": "AGENT-DESIGN-0052"},
     {"path": "docs/03.specs/0052-document-taxonomy-consolidation/data-model.md", "artifactId": "DATA-MODEL-0052"},
     {"path": "docs/03.specs/0052-document-taxonomy-consolidation/tests.md", "artifactId": "TESTS-0052"},
     {"path": "docs/03.specs/0052-document-taxonomy-consolidation/plan.md", "artifactId": "PLAN-0052"},
-    {"path": "docs/03.specs/0052-document-taxonomy-consolidation/tasks.md", "artifactId": "TASK-0052"},
+    {"path": "docs/03.specs/0052-document-taxonomy-consolidation/tasks/tsk-0017-work-115.md", "artifactId": "TSK-0052-0017"},
     {"path": "docs/05.operations/guides/0009-llm-wiki-curation-guide.md", "artifactId": "GUIDE-0009"},
     {"path": "docs/05.operations/policies/0007-app-gitops-onboarding-policy.md", "artifactId": "POLICY-0007"},
     {"path": "docs/05.operations/runbooks/0011-reference-maintenance-runbook.md", "artifactId": "RUNBOOK-0011"},
@@ -24021,7 +24021,7 @@
     {"path": "docs/05.operations/incidents/2026/inc-0007-control-plane/postmortem.md", "artifactId": "POSTMORTEM-2026-0007"},
     {"path": "docs/98.archive/changes/chg-0001-bootstrap/plan.md", "artifactId": "PLAN-CHG-0001", "changeId": "CHG-0001"},
     {"path": "docs/98.archive/changes/chg-0001-bootstrap/task.md", "artifactId": "TASK-CHG-0001", "changeId": "CHG-0001"},
-    {"path": "docs/98.archive/migrations/mig-0001-sdlc-taxonomy-convergence.md", "artifactId": "MIG-0001", "migrationId": "MIG-0001"},
+    {"path": "docs/98.archive/migrations/0004-document-authority-convergence.md", "artifactId": "MIG-0004", "migrationId": "MIG-0004"},
     {"path": "docs/98.archive/tombstones/02.architecture/tmb-ad-0011.md", "artifactId": "TMB-AD-0011"}
   ],
   "work106MigrationLedger": {
@@ -24051,7 +24051,7 @@
   "routingCases": [
     {
       "path": "docs/01.requirements/0005-workspace-document-assurance-modernization.md",
-      "expectedProfile": "sdlc/prd",
+      "expectedProfile": "sdlc/requirement-package",
       "expectedRuleIds": []
     },
     {

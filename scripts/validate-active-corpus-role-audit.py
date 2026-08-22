@@ -16,6 +16,15 @@ from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
+try:
+    from scripts.archive_recovery import ArchiveContractError
+    from scripts.archive_validation import parse_pinned_migration_control
+except ModuleNotFoundError:  # Direct execution from scripts/.
+    from archive_recovery import ArchiveContractError  # type: ignore[no-redef]
+    from archive_validation import (  # type: ignore[no-redef]
+        parse_pinned_migration_control,
+    )
+
 
 SCHEMA = "active-corpus-role-audit.v1"
 INPUT_COMMIT = "2ab01b05f0e3f91368b10cc2c30046050f081a6b"  # pragma: allowlist secret
@@ -25,6 +34,9 @@ AGGREGATE_PATH = "scripts/validate-repo-quality-gates.sh"
 MIGRATION_PATH = (
     "docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md"
 )
+WP004B_MIGRATION_PATH = (
+    "docs/98.archive/migrations/0004-document-authority-convergence.md"
+)
 FROZEN_OWNER_SPEC = "docs/03.specs/037-active-corpus-and-execution-retention/spec.md"
 CURRENT_OWNER_SPEC = "docs/03.specs/0037-active-corpus-and-execution-retention/spec.md"
 FROZEN_EXECUTION_TRACKER = (
@@ -33,8 +45,11 @@ FROZEN_EXECUTION_TRACKER = (
 FROZEN_EXECUTION_TARGET = (
     "docs/03.specs/037-active-corpus-and-execution-retention/tasks.md"
 )
-CURRENT_EXECUTION_TRACKER = (
+MIG0002_EXECUTION_TARGET = (
     "docs/03.specs/0037-active-corpus-and-execution-retention/tasks.md"
+)
+CURRENT_EXECUTION_TRACKER = (
+    "docs/03.specs/0037-active-corpus-and-execution-retention/README.md"
 )
 OWNER_SPEC = FROZEN_OWNER_SPEC
 EXECUTION_TRACKER = FROZEN_EXECUTION_TRACKER
@@ -413,6 +428,7 @@ def _git_arguments_allowed(arguments: tuple[str, ...]) -> bool:
             "--stage",
             "--",
             MIGRATION_PATH,
+            WP004B_MIGRATION_PATH,
             CURRENT_OWNER_SPEC,
             CURRENT_EXECUTION_TRACKER,
         ),
@@ -992,9 +1008,11 @@ def _expected_moved_path(legacy: str) -> str | None:
 
 
 def validate_authority_projection(
-    migration_text: str, current_paths: set[str]
+    migration_text: str,
+    wp004b_text: str,
+    current_paths: set[str],
 ) -> dict[str, str]:
-    """Resolve frozen ACER-004 routes through the exact MIG-0002 projection."""
+    """Resolve frozen ACER-004 routes through exact MIG-0002/MIG-0004 inputs."""
 
     try:
         metadata = _frontmatter(migration_text, MIGRATION_PATH)
@@ -1063,10 +1081,30 @@ def validate_authority_projection(
         or len(legacy_paths) != len(set(legacy_paths))
         or action_counts != {"moved": 141, "replaced": 3, "merged": 10}
         or moved.get(FROZEN_OWNER_SPEC) != CURRENT_OWNER_SPEC
-        or moved.get(FROZEN_EXECUTION_TARGET) != CURRENT_EXECUTION_TRACKER
+        or moved.get(FROZEN_EXECUTION_TARGET) != MIG0002_EXECUTION_TARGET
         or {CURRENT_OWNER_SPEC, CURRENT_EXECUTION_TRACKER} - current_paths
     ):
         raise RoleAuditError("ROLE-AUDIT-AUTHORITY", MIGRATION_PATH)
+    try:
+        wp004b_rows = parse_pinned_migration_control(
+            WP004B_MIGRATION_PATH,
+            wp004b_text.encode("utf-8", errors="strict"),
+        )
+    except (ArchiveContractError, UnicodeError, ValueError) as exc:
+        raise RoleAuditError("ROLE-AUDIT-AUTHORITY", WP004B_MIGRATION_PATH) from exc
+    task_rows = tuple(
+        row
+        for row in wp004b_rows
+        if row.get("legacy_path") == MIG0002_EXECUTION_TARGET
+    )
+    if (
+        len(task_rows) != 1
+        or task_rows[0].get("action") != "replaced"
+        or task_rows[0].get("stable_path") is not None
+        or task_rows[0].get("artifact_id") is not None
+        or task_rows[0].get("replacement") != CURRENT_EXECUTION_TRACKER
+    ):
+        raise RoleAuditError("ROLE-AUDIT-AUTHORITY", WP004B_MIGRATION_PATH)
     return {
         FROZEN_OWNER_SPEC: CURRENT_OWNER_SPEC,
         FROZEN_EXECUTION_TRACKER: CURRENT_EXECUTION_TRACKER,
@@ -1080,7 +1118,12 @@ def verify_authority_projection(
     enforce_index: bool = True,
 ) -> dict[str, str]:
     normalized = _normalize_root(root)
-    paths = {MIGRATION_PATH, CURRENT_OWNER_SPEC, CURRENT_EXECUTION_TRACKER}
+    paths = {
+        MIGRATION_PATH,
+        WP004B_MIGRATION_PATH,
+        CURRENT_OWNER_SPEC,
+        CURRENT_EXECUTION_TRACKER,
+    }
     if enforce_index:
         index = _parse_modes(
             _git(
@@ -1091,6 +1134,7 @@ def verify_authority_projection(
                     "--stage",
                     "--",
                     MIGRATION_PATH,
+                    WP004B_MIGRATION_PATH,
                     CURRENT_OWNER_SPEC,
                     CURRENT_EXECUTION_TRACKER,
                 ),
@@ -1101,13 +1145,20 @@ def verify_authority_projection(
         if set(index) != paths:
             raise RoleAuditError("ROLE-AUDIT-AUTHORITY", MIGRATION_PATH)
         migration_text = _authoritative_text(normalized, MIGRATION_PATH, index, runner)
+        wp004b_text = _authoritative_text(
+            normalized,
+            WP004B_MIGRATION_PATH,
+            index,
+            runner,
+        )
         for path in (CURRENT_OWNER_SPEC, CURRENT_EXECUTION_TRACKER):
             _authoritative_bytes(normalized, path, index, runner)
     else:
         migration_text = _worktree_text(normalized, MIGRATION_PATH)
+        wp004b_text = _worktree_text(normalized, WP004B_MIGRATION_PATH)
         for path in (CURRENT_OWNER_SPEC, CURRENT_EXECUTION_TRACKER):
             _read_worktree_bytes(normalized, path)
-    return validate_authority_projection(migration_text, paths)
+    return validate_authority_projection(migration_text, wp004b_text, paths)
 
 
 def validate_ledger(ledger: Any, observed: Mapping[str, Any]) -> dict[str, int]:

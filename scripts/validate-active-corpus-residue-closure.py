@@ -27,6 +27,10 @@ try:
         parse_archive_envelope,
         parse_work107_migration_document,
     )
+    from scripts.archive_validation import (
+        parse_pinned_migration_control,
+        validate_pinned_migration_recovery,
+    )
 except ModuleNotFoundError:  # Direct execution from scripts/.
     from archive_recovery import (  # type: ignore[no-redef]
         ArchiveContractError,
@@ -35,6 +39,10 @@ except ModuleNotFoundError:  # Direct execution from scripts/.
         WORK107_MIGRATION_PATH,
         parse_archive_envelope,
         parse_work107_migration_document,
+    )
+    from archive_validation import (  # type: ignore[no-redef]
+        parse_pinned_migration_control,
+        validate_pinned_migration_recovery,
     )
 
 
@@ -50,6 +58,18 @@ AGGREGATE_PATH = "scripts/validate-repo-quality-gates.sh"
 RETIRED_REGISTRY_PATH = "docs/99.templates/support/document-profiles.json"
 PROFILE_REGISTRY_PATH = "docs/99.templates/registry.json"
 ROUTE_CONTRACT_PATH = "docs/99.templates/contracts/route-contract.json"
+WP004B_MIGRATION_PATH = (
+    "docs/98.archive/migrations/0004-document-authority-convergence.md"
+)
+MIG2_MIGRATION_PATH = (
+    "docs/98.archive/migrations/"
+    "mig-0002-sdlc-document-and-governance-consolidation.md"
+)
+WP004B_MIGRATION_PATH_PATTERN = (
+    r"^docs/98\.archive/migrations/"
+    r"(?:mig-000[1-3]-[a-z0-9]+(?:-[a-z0-9]+)*|"
+    r"0004-document-authority-convergence)\.md$"
+)
 TAXONOMY_MANIFEST_PATH = "scripts/document-taxonomy-migration.json"
 TAXONOMY_SOURCE_COMMIT = (
     "713dff1fc3de58a2d1682970a7f24faa39c14263"  # pragma: allowlist secret
@@ -608,6 +628,13 @@ TRANSITION_AUTHORITY_REMAPS = {
         ),
     ),
 }
+FROZEN_ALIAS_AUTHORITY_PATHS = frozenset(
+    {
+        "docs/02.architecture/decisions/"
+        "0011-argo-rollouts-progressive-delivery.md",
+        "docs/02.architecture/decisions/0012-argo-notifications-slack.md",
+    }
+)
 OWNER_SPEC = "docs/03.specs/0037-active-corpus-and-execution-retention/spec.md"
 EXECUTION_PLAN = (
     "docs/04.execution/plans/2026-07-18-active-corpus-and-execution-retention.md"
@@ -637,14 +664,17 @@ TERMINAL_PROGRAM_TASK_PATHS = frozenset(
 )
 TERMINAL_CONTROL_REPLACEMENTS = {
     EXECUTION_PLAN: "docs/03.specs/0037-active-corpus-and-execution-retention/plan.md",
-    EXECUTION_TASK: "docs/03.specs/0037-active-corpus-and-execution-retention/tasks.md",
+    EXECUTION_TASK: "docs/03.specs/0037-active-corpus-and-execution-retention/README.md",
     TERMINAL_PLAN: "docs/03.specs/0038-reference-information-architecture/plan.md",
-    TERMINAL_TASK: "docs/03.specs/0038-reference-information-architecture/tasks.md",
+    TERMINAL_TASK: "docs/03.specs/0038-reference-information-architecture/README.md",
     TERMINAL_SUCCESSOR_PLAN: "docs/03.specs/0039-github-ci-qa-evidence/plan.md",
-    TERMINAL_SUCCESSOR_TASK: "docs/03.specs/0039-github-ci-qa-evidence/tasks.md",
+    TERMINAL_SUCCESSOR_TASK: "docs/03.specs/0039-github-ci-qa-evidence/README.md",
     TERMINAL_FRONTIER_PLAN: "docs/03.specs/0040-contract-cutover-and-program-closure/plan.md",
-    TERMINAL_FRONTIER_TASK: "docs/03.specs/0040-contract-cutover-and-program-closure/tasks.md",
+    TERMINAL_FRONTIER_TASK: "docs/03.specs/0040-contract-cutover-and-program-closure/README.md",
 }
+TERMINAL_TASK_PACKAGE_SOURCES = frozenset(
+    {EXECUTION_TASK, TERMINAL_TASK, TERMINAL_SUCCESSOR_TASK, TERMINAL_FRONTIER_TASK}
+)
 TERMINAL_PROGRAM_CLOSURE_ADR = (
     "docs/02.architecture/decisions/0020-document-lifecycle-program-closure-evidence.md"
 )
@@ -716,11 +746,17 @@ POST_CLOSURE_ADR_AUTHORITY_PATHS = frozenset(
         "0030-authority-first-sdlc-and-agent-governance-convergence.md",
     }
 )
-POST_CLOSURE_PINNED_AUTHORITY_BLOBS = {
-    "docs/02.architecture/decisions/0025-four-digit-document-path-identity.md": (
-        "5d4bea9a3072259f9f530fda0b8873afba92ca39"  # pragma: allowlist secret
-    )
-}
+POST_CLOSURE_PINNED_AUTHORITY_BLOBS: dict[str, str] = {}
+ADR0030_PREDECESSORS = frozenset(
+    {
+        "ADR-0015",
+        "ADR-0018",
+        "ADR-0019",
+        "ADR-0023",
+        "ADR-0024",
+        "ADR-0025",
+    }
+)
 POST_CLOSURE_SPEC_AUTHORITY_PATHS = frozenset(
     {
         "docs/03.specs/0041-stage-00-agent-governance-contract/spec.md",
@@ -849,6 +885,17 @@ GIT_TIMEOUT_SECONDS = 10
 MAX_FILE_BYTES = 2_000_000
 SAFE_PATH = re.compile(r"[A-Za-z0-9._@+/-]+\Z")
 ACTIVE_CONTROL_LINEAGE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._@+-]*\Z")
+TASK_ROUTER_LINK = re.compile(
+    r"\]\((?P<path>tasks/tsk-(?P<sequence>[0-9]{4})-"
+    r"[a-z0-9]+(?:-[a-z0-9]+)*\.md)\)"
+)
+TASK_RECORD_PATH = re.compile(
+    r"docs/03\.specs/(?P<spec>[0-9]{4})-[a-z0-9]+(?:-[a-z0-9]+)*/tasks/"
+    r"tsk-(?P<sequence>[0-9]{4})-[a-z0-9]+(?:-[a-z0-9]+)*\.md\Z"
+)
+TASK_RECORD_STATUSES = frozenset(
+    {"queued", "in-progress", "blocked", "done", "cancelled"}
+)
 TERMINAL_RELATION_IDENTITY = {
     "spec": "0038",
     "order": 5,
@@ -950,7 +997,11 @@ def _git_arguments_allowed(arguments: tuple[str, ...]) -> bool:
         {("ls-files", "-z", "--stage", "--", root) for root in INVENTORY_ROOTS}
     )
     inventory_queries.add(("ls-files", "-z", "--stage", "--", *SOURCE_PATHS))
-    for authority_path in (PROFILE_REGISTRY_PATH, ROUTE_CONTRACT_PATH):
+    for authority_path in (
+        PROFILE_REGISTRY_PATH,
+        ROUTE_CONTRACT_PATH,
+        WP004B_MIGRATION_PATH,
+    ):
         inventory_queries.add(
             (
                 "ls-files",
@@ -1560,14 +1611,19 @@ def _load_registry_authority(
     """
 
     merged: dict[str, Any] = {}
+    wp004b_atomic_admitted = False
     for path, admitted in REGISTRY_AUTHORITY_BLOBS.items():
         index = _registry_inventory(root, path, runner)
         payload = _proposed_or_index_bytes(root, path, index, runner)
-        if index.get(path) not in admitted:
-            raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", path)
         loaded = _load_json_bytes(payload, path)
         if not isinstance(loaded, Mapping):
             raise ClosureError("CLOSURE-TERMINAL-REGISTRY-MALFORMED", path)
+        if index.get(path) not in admitted:
+            if not _wp004b_registry_surface_admitted(path, loaded):
+                raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", path)
+            if not wp004b_atomic_admitted:
+                _validate_wp004b_atomic_admission(root, runner)
+                wp004b_atomic_admitted = True
         for key, value in loaded.items():
             if key in {"$schema", "$id", "schemaVersion"}:
                 continue
@@ -1575,6 +1631,95 @@ def _load_registry_authority(
                 raise ClosureError("CLOSURE-TERMINAL-REGISTRY-DUPLICATE", path)
             merged[key] = value
     return merged
+
+
+def _validate_wp004b_atomic_admission(
+    root: str,
+    runner: GitRunner,
+) -> None:
+    index = _single_file_inventory(
+        root,
+        WP004B_MIGRATION_PATH,
+        "CLOSURE-TERMINAL-REGISTRY-AUTHORITY",
+        runner,
+    )
+    payload = _proposed_or_index_bytes(
+        root,
+        WP004B_MIGRATION_PATH,
+        index,
+        runner,
+    )
+    try:
+        rows = validate_pinned_migration_recovery(
+            root,
+            WP004B_MIGRATION_PATH,
+            payload,
+        )
+    except ArchiveContractError as exc:
+        raise ClosureError(
+            "CLOSURE-TERMINAL-REGISTRY-AUTHORITY",
+            WP004B_MIGRATION_PATH,
+        ) from exc
+    if len(rows) != 66:
+        raise ClosureError(
+            "CLOSURE-TERMINAL-REGISTRY-AUTHORITY",
+            WP004B_MIGRATION_PATH,
+        )
+
+
+def _wp004b_registry_surface_admitted(
+    path: str,
+    loaded: Mapping[str, Any],
+) -> bool:
+    if path == PROFILE_REGISTRY_PATH:
+        profiles = loaded.get("profiles")
+        matches = (
+            [
+                profile
+                for profile in profiles
+                if isinstance(profile, Mapping)
+                and profile.get("id") == "content/archive-migration"
+            ]
+            if isinstance(profiles, list)
+            else []
+        )
+        return len(matches) == 1 and matches[0].get(
+            "pathPattern"
+        ) == WP004B_MIGRATION_PATH_PATTERN and matches[0].get("lifecycle") == {
+            "statusDomain": ["accepted", "sealed"],
+            "appendContract": None,
+        }
+    if path == ROUTE_CONTRACT_PATH:
+        contracts = loaded.get("documentContracts")
+        policies = (
+            contracts.get("admissionPolicies")
+            if isinstance(contracts, Mapping)
+            else None
+        )
+        matches = (
+            [
+                policy
+                for policy in policies
+                if isinstance(policy, Mapping)
+                and policy.get("id") == "archive-migration-control"
+            ]
+            if isinstance(policies, list)
+            else []
+        )
+        return len(matches) == 1 and matches[0] == {
+            "id": "archive-migration-control",
+            "profileIds": ["content/archive-migration"],
+            "create": {
+                "mode": "states",
+                "states": ["accepted"],
+                "evidencePredicateId": None,
+            },
+            "delete": "deny",
+            "rename": "deny",
+            "profileChange": "deny",
+            "baselinePaths": [],
+        }
+    return False
 
 
 def _authored_stage04(paths: Sequence[str], scope: str) -> list[str]:
@@ -1597,6 +1742,13 @@ def _object_identity(
         return {"objectMode": "index-stage-zero", "objectId": _git_identity(oid)}
     indexed_target = TERMINAL_CONTROL_REPLACEMENTS.get(path)
     if indexed_target is not None:
+        if path in TERMINAL_TASK_PACKAGE_SOURCES:
+            return {
+                "objectMode": "projected-task-package",
+                "objectId": _git_identity(_git_blob_oid(payload)),
+                "legacySource": path,
+                "indexedTarget": indexed_target,
+            }
         target_oid = index.get(indexed_target)
         if target_oid is not None:
             return {
@@ -1628,8 +1780,49 @@ def _current_taxonomy_target(path: str) -> str:
     return f"docs/03.specs/0{match.group('id')}-{match.group('suffix')}"
 
 
+def _mig2_authority_target(
+    path: str,
+    migration_rows: Sequence[Mapping[str, object]],
+) -> str:
+    """Resolve one frozen three-digit Spec target through its exact MIG-0002 row."""
+
+    match = re.fullmatch(
+        r"docs/03\.specs/(?P<id>[0-9]{3})-(?P<slug>[a-z0-9]+(?:-[a-z0-9]+)*)/"
+        r"(?P<leaf>plan|spec|tasks)\.md",
+        path,
+    )
+    if match is None:
+        return path
+    matching_rows = [
+        row for row in migration_rows if row.get("legacy_path") == path
+    ]
+    if len(matching_rows) != 1:
+        raise ClosureError("CLOSURE-AUTHORITY-DRIFT", path)
+    row = matching_rows[0]
+    sequence = f"0{match.group('id')}"
+    expected_target = (
+        f"docs/03.specs/{sequence}-{match.group('slug')}/"
+        f"{match.group('leaf')}.md"
+    )
+    artifact_prefix = {
+        "plan": "PLAN",
+        "spec": "SPEC",
+        "tasks": "TASK",
+    }[match.group("leaf")]
+    if (
+        row.get("action") != "moved"
+        or row.get("stable_path") != expected_target
+        or row.get("replacement") is not None
+        or row.get("artifact_id") != f"{artifact_prefix}-{sequence}"
+    ):
+        raise ClosureError("CLOSURE-AUTHORITY-DRIFT", path)
+    return expected_target
+
+
 def _work108_authority_object_identity(
-    path: str, index: Mapping[str, str], payload: bytes
+    path: str,
+    index: Mapping[str, str],
+    payload: bytes,
 ) -> dict[str, str]:
     """Project only the reviewed WORK-108 outer ID onto frozen authority bytes."""
 
@@ -1742,6 +1935,86 @@ def _work107_archive_aliases(content: bytes) -> dict[str, str]:
     return aliases
 
 
+def _taxonomy_task_projection(
+    legacy_ledger: str,
+    index: Mapping[str, str],
+    payloads: Mapping[str, bytes],
+    migration_rows: Sequence[Mapping[str, object]],
+) -> tuple[str, bytes]:
+    """Resolve one reviewed Task ledger only through its MIG-0004 package row."""
+
+    router = _migration_task_router(
+        legacy_ledger, migration_rows, error_code="CLOSURE-TAXONOMY-MOVE"
+    )
+    return router, _project_task_package(
+        router,
+        index,
+        payloads,
+        migration_rows,
+        error_code="CLOSURE-TAXONOMY-MOVE",
+    )
+
+
+def _migration_task_router(
+    legacy_ledger: str,
+    migration_rows: Sequence[Mapping[str, object]],
+    *,
+    error_code: str,
+) -> str:
+    """Return the one exact same-package README replacement for a Task ledger."""
+
+    matching_rows = [
+        row for row in migration_rows if row.get("legacy_path") == legacy_ledger
+    ]
+    if len(matching_rows) != 1:
+        raise ClosureError(error_code, legacy_ledger)
+    row = matching_rows[0]
+    router = row.get("replacement")
+    if (
+        row.get("action") != "replaced"
+        or row.get("stable_path") is not None
+        or row.get("artifact_id") is not None
+        or not isinstance(router, str)
+        or PurePosixPath(router).parent != PurePosixPath(legacy_ledger).parent
+        or PurePosixPath(router).name != "README.md"
+    ):
+        raise ClosureError(error_code, legacy_ledger)
+    return router
+
+
+def _current_authority_target(
+    replacement: str,
+    taxonomy_rows: Sequence[Mapping[str, object]],
+    migration_rows: Sequence[Mapping[str, object]],
+) -> str:
+    """Compose one reviewed historical target through four-digit and MIG-0004 moves."""
+
+    historical = _mig2_authority_target(replacement, taxonomy_rows)
+    matching_rows = [
+        row for row in migration_rows if row.get("legacy_path") == historical
+    ]
+    if not matching_rows:
+        return historical
+    if len(matching_rows) != 1:
+        raise ClosureError("CLOSURE-AUTHORITY-DRIFT", historical)
+    row = matching_rows[0]
+    if historical.endswith("/tasks.md"):
+        return _migration_task_router(
+            historical,
+            migration_rows,
+            error_code="CLOSURE-AUTHORITY-DRIFT",
+        )
+    if (
+        row.get("action") == "moved"
+        and isinstance(row.get("stable_path"), str)
+        and row.get("replacement") is None
+    ):
+        return str(row["stable_path"])
+    if row.get("action") == "replaced" and row.get("replacement") == historical:
+        return historical
+    raise ClosureError("CLOSURE-AUTHORITY-DRIFT", historical)
+
+
 def _build_taxonomy_transition_closure(
     registry: Mapping[str, Any],
     manifest: Mapping[str, Any],
@@ -1752,6 +2025,7 @@ def _build_taxonomy_transition_closure(
     source_tree: Mapping[str, str],
     archive_recoveries: Mapping[str, RecoveryResult],
     archive_aliases: Mapping[str, str],
+    migration_rows: Sequence[Mapping[str, object]],
 ) -> list[dict[str, Any]]:
     """Reconcile the frozen ACER residue snapshot with exact WDTC archives."""
 
@@ -1970,46 +2244,60 @@ def _build_taxonomy_transition_closure(
             if source.startswith(f"{TASK_ROOT}/")
             else None
         )
-        expected_name = "plan.md" if kind == "plan" else "tasks.md"
-        target_path = PurePosixPath(target)
+        replacement_path = target
+        replacement_mode = "index-stage-zero"
+        replacement_payload = archive_payloads.get(target)
+        replacement_oid = archive_index.get(target)
+        if kind == "task":
+            replacement_path, replacement_payload = _taxonomy_task_projection(
+                target,
+                archive_index,
+                archive_payloads,
+                migration_rows,
+            )
+            replacement_oid = _git_blob_oid(replacement_payload)
+            replacement_mode = "projected-task-package"
+        replacement = PurePosixPath(replacement_path)
+        expected_name = "plan.md" if kind == "plan" else "README.md"
         if (
             kind is None
             or source in current_paths
-            or target not in current_paths
-            or target_path.parts[:2] != ("docs", "03.specs")
-            or len(target_path.parts) != 4
-            or target_path.name != expected_name
+            or replacement_path not in current_paths
+            or replacement.parts[:2] != ("docs", "03.specs")
+            or len(replacement.parts) != 4
+            or replacement.name != expected_name
         ):
             raise ClosureError("CLOSURE-TAXONOMY-MOVE", source)
-        target_bytes = archive_payloads.get(target)
-        target_oid = archive_index.get(target)
         if (
-            not isinstance(target_bytes, bytes)
-            or not isinstance(target_oid, str)
-            or FULL_OID.fullmatch(target_oid) is None
+            not isinstance(replacement_payload, bytes)
+            or not isinstance(replacement_oid, str)
+            or FULL_OID.fullmatch(replacement_oid) is None
         ):
-            raise ClosureError("CLOSURE-TAXONOMY-MOVE", target)
-        metadata = _frontmatter(_decode_text(target_bytes, target), target)
+            raise ClosureError("CLOSURE-TAXONOMY-MOVE", replacement_path)
+        metadata = _frontmatter(
+            _decode_text(replacement_payload, replacement_path), replacement_path
+        )
         if (
             metadata.get("type") != f"sdlc/{kind}"
             or metadata.get("owner") != "platform"
         ):
-            raise ClosureError("CLOSURE-TAXONOMY-MOVE", target)
+            raise ClosureError("CLOSURE-TAXONOMY-MOVE", replacement_path)
         if source not in frozen_paths:
             continue
-        rows.append(
-            {
-                "path": source,
-                "kind": kind,
-                "replacementPath": target,
-                "sourceCommit": _git_identity(TAXONOMY_SOURCE_COMMIT),
-                "sourceBlob": _git_identity(entry["sourceBlob"]),
-                "replacementObjectId": _git_identity(target_oid),
-                "disposition": "manifest-move-closed",
-                "currentSourcePresent": False,
-                "replacementPresent": True,
-            }
-        )
+        closed = {
+            "path": source,
+            "kind": kind,
+            "replacementPath": replacement_path,
+            "sourceCommit": _git_identity(TAXONOMY_SOURCE_COMMIT),
+            "sourceBlob": _git_identity(entry["sourceBlob"]),
+            "replacementObjectId": _git_identity(replacement_oid),
+            "disposition": "manifest-move-closed",
+            "currentSourcePresent": False,
+            "replacementPresent": True,
+        }
+        if kind == "task":
+            closed["replacementObjectMode"] = replacement_mode
+        rows.append(closed)
     rows.sort(key=lambda row: row["path"])
     if len(rows) != len(frozen_paths):
         raise ClosureError("CLOSURE-TAXONOMY-MANIFEST-COUNT", TAXONOMY_MANIFEST_PATH)
@@ -2152,7 +2440,9 @@ def _terminal_program_control_scope(paths: Sequence[str], *, kind: str) -> list[
 
 
 def _project_terminal_control_replacements(
-    index: Mapping[str, str], payloads: Mapping[str, bytes]
+    index: Mapping[str, str],
+    payloads: Mapping[str, bytes],
+    migration_rows: Sequence[Mapping[str, object]] = (),
 ) -> tuple[dict[str, str], dict[str, bytes]]:
     """Project reviewed Stage 03 siblings into the frozen terminal-state model."""
 
@@ -2166,8 +2456,120 @@ def _project_terminal_control_replacements(
             or target not in payloads
         ):
             raise ClosureError("CLOSURE-TERMINAL-INCOMPLETE", target)
-        projected_payloads[source] = payloads[target]
+        if source in TERMINAL_TASK_PACKAGE_SOURCES:
+            projected_payloads[source] = _project_terminal_task_package(
+                source,
+                target,
+                index,
+                payloads,
+                migration_rows,
+            )
+        else:
+            projected_payloads[source] = payloads[target]
     return projected_index, projected_payloads
+
+
+def _project_terminal_task_package(
+    source: str,
+    router: str,
+    index: Mapping[str, str],
+    payloads: Mapping[str, bytes],
+    migration_rows: Sequence[Mapping[str, object]],
+) -> bytes:
+    """Project one retired Task ledger through its exact router-owned Task set."""
+
+    return _project_task_package(
+        router,
+        index,
+        payloads,
+        migration_rows,
+        error_code="CLOSURE-TERMINAL-INCOMPLETE",
+        required_status="done",
+    )
+
+
+def _project_task_package(
+    router: str,
+    index: Mapping[str, str],
+    payloads: Mapping[str, bytes],
+    migration_rows: Sequence[Mapping[str, object]],
+    *,
+    error_code: str,
+    required_status: str | None = None,
+) -> bytes:
+    """Render a deterministic identity from an exact MIG row and router Task set."""
+
+    legacy_ledger = str(PurePosixPath(router).with_name("tasks.md"))
+    matching_rows = [
+        row for row in migration_rows if row.get("legacy_path") == legacy_ledger
+    ]
+    if len(matching_rows) != 1 or any(
+        matching_rows[0].get(key) != value
+        for key, value in {
+            "action": "replaced",
+            "replacement": router,
+            "stable_path": None,
+            "artifact_id": None,
+        }.items()
+    ):
+        raise ClosureError(error_code, router)
+    if router not in index or router not in payloads:
+        raise ClosureError(error_code, router)
+
+    router_text = _decode_text(payloads[router], router)
+    marker = "\n## Task Records\n"
+    if router_text.count(marker) != 1:
+        raise ClosureError(error_code, router)
+    section = router_text.partition(marker)[2].partition("\n## ")[0]
+    rendered_links = [match.group("path") for match in TASK_ROUTER_LINK.finditer(section)]
+    if not rendered_links or len(rendered_links) != len(set(rendered_links)):
+        raise ClosureError(error_code, router)
+
+    package = str(PurePosixPath(router).parent)
+    task_prefix = f"{package}/tasks/"
+    rendered_paths = [str(PurePosixPath(package) / link) for link in rendered_links]
+    actual_paths = sorted(
+        path
+        for path in payloads
+        if path.startswith(task_prefix) and path.endswith(".md")
+    )
+    if sorted(rendered_paths) != actual_paths or len(actual_paths) != len(
+        set(actual_paths)
+    ):
+        raise ClosureError(error_code, router)
+
+    artifact_ids: set[str] = set()
+    identities: list[str] = [f"router\0{router}\0{index[router]}"]
+    for task_path in actual_paths:
+        match = TASK_RECORD_PATH.fullmatch(task_path)
+        task_oid = index.get(task_path)
+        task_payload = payloads.get(task_path)
+        if match is None or task_oid is None or not isinstance(task_payload, bytes):
+            raise ClosureError(error_code, task_path)
+        metadata = _frontmatter(_decode_text(task_payload, task_path), task_path)
+        artifact_id = metadata.get("artifact_id")
+        expected_artifact = f"TSK-{match.group('spec')}-{match.group('sequence')}"
+        if (
+            metadata.get("type") != "sdlc/task"
+            or metadata.get("status") not in TASK_RECORD_STATUSES
+            or (
+                required_status is not None
+                and metadata.get("status") != required_status
+            )
+            or metadata.get("owner") != "platform"
+            or artifact_id != expected_artifact
+            or artifact_id in artifact_ids
+        ):
+            raise ClosureError(error_code, task_path)
+        artifact_ids.add(artifact_id)
+        identities.append(f"task\0{task_path}\0{task_oid}\0{artifact_id}")
+
+    body = "\n".join(identities).encode("utf-8")
+    return (
+        b"---\ntype: sdlc/task\nstatus: done\nowner: platform\n---\n"
+        + body
+        + b"\n"
+    )
 
 
 def _terminal_registry_relations(
@@ -2748,7 +3150,12 @@ def _validate_terminal_frontier_shape(observed: Mapping[str, Any]) -> str:
             return set(row) == control_keys and object_identity_is_indexed(row)
         return (
             set(row) == projected_control_keys
-            and row.get("objectMode") == "projected-replacement"
+            and row.get("objectMode")
+            == (
+                "projected-task-package"
+                if path in TERMINAL_TASK_PACKAGE_SOURCES
+                else "projected-replacement"
+            )
             and row.get("legacySource") == path
             and row.get("indexedTarget") == indexed_target
             and object_id_is_git(row)
@@ -3134,10 +3541,11 @@ def _authority_entries(
     payloads: Mapping[str, bytes],
     *,
     kind: str,
+    migration_rows: Sequence[Mapping[str, object]] = (),
 ) -> list[dict[str, Any]]:
     entries: list[dict[str, Any]] = []
     expected_type = f"sdlc/{kind}"
-    expected_status = "accepted" if kind == "adr" else "done"
+    expected_statuses = {"accepted", "superseded"} if kind == "adr" else {"done"}
     authority = ADR_AUTHORITY if kind == "adr" else SPEC_AUTHORITY
     trigger = (
         "accepted-adr-authority-or-evidence-change"
@@ -3147,17 +3555,41 @@ def _authority_entries(
     for path in paths:
         payload = payloads[path]
         metadata = _frontmatter(_decode_text(payload, path), path)
-        if metadata.get("status") != expected_status:
+        if metadata.get("status") not in expected_statuses:
             continue
-        if metadata.get("type") != expected_type or metadata.get("owner") != "platform":
+        path_match = re.search(r"/(?P<id>[0-9]{4})-", path)
+        expected_artifact = (
+            f"ADR-{path_match.group('id')}"
+            if kind == "adr" and path_match is not None
+            else f"SPEC-{path_match.group('id')}"
+            if path_match is not None
+            else None
+        )
+        if (
+            metadata.get("type") != expected_type
+            or metadata.get("owner") != "platform"
+            or metadata.get("artifact_id") != expected_artifact
+            or (
+                expected_artifact in ADR0030_PREDECESSORS
+                and (
+                    metadata.get("status") != "superseded"
+                    or metadata.get("superseded_by") != "ADR-0030"
+                )
+            )
+            or (
+                kind == "adr"
+                and metadata.get("status") == "superseded"
+                and expected_artifact not in ADR0030_PREDECESSORS
+            )
+        ):
             raise ClosureError("CLOSURE-AUTHORITY-PROFILE", path)
         entries.append(
             {
                 "path": path,
                 "profile": expected_type,
-                "status": expected_status,
+                "status": metadata["status"],
                 "owner": "platform",
-                **_work108_authority_object_identity(path, index, payload),
+                **_object_identity(path, index, payload),
                 "disposition": "retain",
                 "reason": AUTHORITY_REASON,
                 "currentAuthority": authority,
@@ -3193,11 +3625,18 @@ def _frozen_authority_entries(
     payloads: Mapping[str, bytes],
     *,
     kind: str,
+    migration_rows: Sequence[Mapping[str, object]] = (),
 ) -> list[dict[str, Any]]:
     """Build only the exact PRD-0006 authority rows and require their state."""
 
     scoped_paths = _frozen_authority_scope(paths, kind=kind)
-    entries = _authority_entries(scoped_paths, index, payloads, kind=kind)
+    entries = _authority_entries(
+        scoped_paths,
+        index,
+        payloads,
+        kind=kind,
+        migration_rows=migration_rows,
+    )
     entries_by_path = {row["path"] for row in entries}
     for path in scoped_paths:
         if path not in entries_by_path:
@@ -3213,6 +3652,7 @@ def _frozen_authority_entries(
         index,
         payloads,
         kind=kind,
+        migration_rows=migration_rows,
     )
     for row in later_authority:
         if row["path"] not in allowed_later:
@@ -3295,6 +3735,51 @@ def _generic_adr_authority_paths(
     return [path for path in adr_paths if path != TERMINAL_PROGRAM_CLOSURE_ADR]
 
 
+def _validate_adr0030_relations(payloads: Mapping[str, bytes]) -> None:
+    """Require the exact reciprocal supersession graph owned by ADR-0030."""
+
+    successor = (
+        "docs/02.architecture/decisions/"
+        "0030-authority-first-sdlc-and-agent-governance-convergence.md"
+    )
+    successor_payload = payloads.get(successor)
+    if not isinstance(successor_payload, bytes):
+        raise ClosureError("CLOSURE-AUTHORITY-PROFILE", successor)
+    successor_metadata = _frontmatter(
+        _decode_text(successor_payload, successor), successor
+    )
+    rendered = successor_metadata.get("supersedes", "")
+    supersedes = frozenset(re.findall(r"ADR-[0-9]{4}", rendered))
+    if (
+        successor_metadata.get("type") != "sdlc/adr"
+        or successor_metadata.get("status") != "accepted"
+        or successor_metadata.get("owner") != "platform"
+        or successor_metadata.get("artifact_id") != "ADR-0030"
+        or supersedes != ADR0030_PREDECESSORS
+    ):
+        raise ClosureError("CLOSURE-AUTHORITY-PROFILE", successor)
+    for artifact_id in sorted(ADR0030_PREDECESSORS):
+        sequence = artifact_id.removeprefix("ADR-")
+        matches = [
+            path
+            for path in payloads
+            if path.startswith("docs/02.architecture/decisions/")
+            and PurePosixPath(path).name.startswith(f"{sequence}-")
+        ]
+        if len(matches) != 1:
+            raise ClosureError("CLOSURE-AUTHORITY-PROFILE", artifact_id)
+        path = matches[0]
+        metadata = _frontmatter(_decode_text(payloads[path], path), path)
+        if (
+            metadata.get("artifact_id") != artifact_id
+            or metadata.get("type") != "sdlc/adr"
+            or metadata.get("status") != "superseded"
+            or metadata.get("owner") != "platform"
+            or metadata.get("superseded_by") != "ADR-0030"
+        ):
+            raise ClosureError("CLOSURE-AUTHORITY-PROFILE", path)
+
+
 def _validate_repository_archive_projection(migration: Mapping[str, Any]) -> None:
     if migration.get("repositoryArchive") != {
         "contractVersion": 2,
@@ -3356,7 +3841,10 @@ def _validate_source_ledger_transition(
 
 
 def _validate_transition_authority_semantics(
-    payloads: Mapping[str, bytes], taxonomy_sources: frozenset[str]
+    payloads: Mapping[str, bytes],
+    taxonomy_sources: frozenset[str],
+    taxonomy_rows: Sequence[Mapping[str, object]],
+    migration_rows: Sequence[Mapping[str, object]],
 ) -> None:
     if set(TRANSITION_AUTHORITY_REMAPS) != set(TRANSITION_AUTHORITY_BLOBS):
         raise ClosureError("CLOSURE-AUTHORITY-DRIFT")
@@ -3367,17 +3855,86 @@ def _validate_transition_authority_semantics(
         payload = payloads.get(authority_path)
         if not isinstance(payload, bytes):
             raise ClosureError("CLOSURE-AUTHORITY-DRIFT", authority_path)
+        if authority_path in FROZEN_ALIAS_AUTHORITY_PATHS:
+            identity = _work108_authority_object_identity(
+                authority_path,
+                {authority_path: _git_blob_oid(payload)},
+                payload,
+            )
+            expected_blob = WORK105_AUTHORITY_BLOBS[authority_path][1]
+            if identity.get("objectId") != _git_identity(expected_blob):
+                raise ClosureError("CLOSURE-AUTHORITY-DRIFT", authority_path)
         text = _decode_text(payload, authority_path)
         start = posixpath.dirname(authority_path)
-        expected_targets = Counter(replacement for _source, replacement in remaps)
-        for replacement, expected_count in expected_targets.items():
-            replacement_target = posixpath.relpath(replacement, start)
-            if text.count(f"]({replacement_target})") != expected_count:
-                raise ClosureError("CLOSURE-AUTHORITY-DRIFT", authority_path)
-        for retired_source in retired_sources:
-            retired_target = posixpath.relpath(retired_source, start)
-            if f"]({retired_target})" in text:
-                raise ClosureError("CLOSURE-AUTHORITY-DRIFT", authority_path)
+        resolved = [
+            (
+                retired_source,
+                replacement,
+                _current_authority_target(
+                    replacement, taxonomy_rows, migration_rows
+                ),
+            )
+            for retired_source, replacement in remaps
+        ]
+        if authority_path in FROZEN_ALIAS_AUTHORITY_PATHS:
+            expected_links = Counter(
+                (replacement,) for _source, replacement, _current in resolved
+            )
+        else:
+            expected_links = Counter(
+                (
+                    (current_target, f"{current_target}#task-records")
+                    if replacement.endswith("/tasks.md")
+                    else (current_target,)
+                )
+                for _source, replacement, current_target in resolved
+            )
+        if any(
+            sum(
+                text.count(f"]({posixpath.relpath(target, start)})")
+                for target in targets
+            )
+            != count
+            for targets, count in expected_links.items()
+        ) or any(
+            f"]({posixpath.relpath(retired_source, start)})" in text
+            for retired_source in retired_sources
+        ):
+            raise ClosureError("CLOSURE-AUTHORITY-DRIFT", authority_path)
+        for _retired_source, replacement, current_target in resolved:
+            if replacement.endswith("/plan.md"):
+                current_payload = payloads.get(current_target)
+                if not isinstance(current_payload, bytes):
+                    raise ClosureError("CLOSURE-AUTHORITY-DRIFT", authority_path)
+                package = re.fullmatch(
+                    r"docs/03\.specs/(?P<id>[0-9]{4})-"
+                    r"[a-z0-9]+(?:-[a-z0-9]+)*/plan\.md",
+                    current_target,
+                )
+                metadata = _frontmatter(
+                    _decode_text(current_payload, current_target), current_target
+                )
+                if (
+                    package is None
+                    or metadata.get("type") != "sdlc/plan"
+                    or metadata.get("status") != "done"
+                    or metadata.get("owner") != "platform"
+                    or metadata.get("artifact_id")
+                    != f"PLAN-{package.group('id')}"
+                ):
+                    raise ClosureError("CLOSURE-AUTHORITY-DRIFT", authority_path)
+            elif replacement.endswith("/tasks.md"):
+                projected_index = {
+                    path: _git_blob_oid(body) for path, body in payloads.items()
+                }
+                _project_task_package(
+                    current_target,
+                    projected_index,
+                    payloads,
+                    migration_rows,
+                    error_code="CLOSURE-AUTHORITY-DRIFT",
+                    required_status="done",
+                )
 
 
 def _validate_authority_guard_transition(
@@ -3425,7 +3982,7 @@ def _validate_authority_guard_transition(
             if work105_blobs is None:
                 raise ClosureError("CLOSURE-AUTHORITY-DRIFT", path)
             admitted_work105.add(path)
-            work105_base_blob, current_blob = work105_blobs
+            work105_base_blob, _retired_current_blob = work105_blobs
             transition_blobs = TRANSITION_AUTHORITY_BLOBS.get(path)
             if transition_blobs is None:
                 old_blob = work105_base_blob
@@ -3433,19 +3990,34 @@ def _validate_authority_guard_transition(
             else:
                 admitted_transition.add(path)
                 old_blob, transition_blob = transition_blobs
+            current_object = observed_row.get("objectId")
+            artifact_match = re.search(r"/(?P<id>[0-9]{4})-", path)
+            artifact_id = (
+                f"ADR-{artifact_match.group('id')}"
+                if path.startswith(f"{ADR_ROOT}/") and artifact_match is not None
+                else None
+            )
+            expected_status = (
+                "superseded"
+                if artifact_id in ADR0030_PREDECESSORS
+                else ledger_row.get("status")
+            )
             if (
                 work105_base_blob != transition_blob
                 or ledger_row.get("objectId") != _git_identity(old_blob)
-                or observed_row.get("objectId") != _git_identity(current_blob)
+                or observed_row.get("objectMode") != "index-stage-zero"
+                or not isinstance(current_object, str)
+                or re.fullmatch(r"git:sha1:[0-9a-f]{40}", current_object) is None
+                or observed_row.get("status") != expected_status
                 or {
                     key: path if key == "path" else value
                     for key, value in ledger_row.items()
-                    if key != "objectId"
+                    if key not in {"objectId", "status", "objectMode"}
                 }
                 != {
                     key: value
                     for key, value in observed_row.items()
-                    if key != "objectId"
+                    if key not in {"objectId", "status", "objectMode"}
                 }
             ):
                 raise ClosureError("CLOSURE-AUTHORITY-DRIFT", path)
@@ -3563,6 +4135,29 @@ def build_observed(
         taxonomy_source_tree,
         runner,
     )
+    wp004b_payload = inventory_payloads.get(WP004B_MIGRATION_PATH)
+    if not isinstance(wp004b_payload, bytes):
+        raise ClosureError("CLOSURE-TERMINAL-INCOMPLETE", WP004B_MIGRATION_PATH)
+    try:
+        wp004b_rows = validate_pinned_migration_recovery(
+            normalized,
+            WP004B_MIGRATION_PATH,
+            wp004b_payload,
+        )
+    except ArchiveContractError as exc:
+        raise ClosureError(
+            "CLOSURE-TERMINAL-INCOMPLETE", WP004B_MIGRATION_PATH
+        ) from exc
+    mig2_payload = inventory_payloads.get(MIG2_MIGRATION_PATH)
+    if not isinstance(mig2_payload, bytes):
+        raise ClosureError("CLOSURE-AUTHORITY-DRIFT", MIG2_MIGRATION_PATH)
+    try:
+        mig2_rows = parse_pinned_migration_control(
+            MIG2_MIGRATION_PATH,
+            mig2_payload,
+        )
+    except ArchiveContractError as exc:
+        raise ClosureError("CLOSURE-AUTHORITY-DRIFT", MIG2_MIGRATION_PATH) from exc
     taxonomy_transition = _build_taxonomy_transition_closure(
         registry,
         taxonomy_manifest,
@@ -3573,6 +4168,7 @@ def build_observed(
         taxonomy_source_tree,
         taxonomy_archive_recoveries,
         archive_aliases,
+        wp004b_rows,
     )
     taxonomy_sources = frozenset(row["path"] for row in taxonomy_transition)
     taxonomy_archives = frozenset(
@@ -3580,7 +4176,9 @@ def build_observed(
         for row in taxonomy_transition
         if row["disposition"] == "manifest-archive-closed"
     )
-    _validate_transition_authority_semantics(inventory_payloads, taxonomy_sources)
+    _validate_transition_authority_semantics(
+        inventory_payloads, taxonomy_sources, mig2_rows, wp004b_rows
+    )
     current = _build_current_rows(
         plan_paths,
         task_paths,
@@ -3594,7 +4192,7 @@ def build_observed(
         path for path in inventories[SPEC_ROOT][0] if path.endswith("/spec.md")
     ]
     terminal_index, terminal_payloads = _project_terminal_control_replacements(
-        combined_index, inventory_payloads
+        combined_index, inventory_payloads, wp004b_rows
     )
     terminal = _partition_terminal_controls(
         _terminal_program_control_scope(
@@ -3649,17 +4247,20 @@ def build_observed(
         adr_paths,
         terminal_program_closure_authority,
     )
+    _validate_adr0030_relations(inventory_payloads)
     accepted_adrs = _frozen_authority_entries(
         generic_adr_paths,
         combined_index,
         inventory_payloads,
         kind="adr",
+        migration_rows=wp004b_rows,
     )
     done_specs = _frozen_authority_entries(
         terminal["specPaths"],
         combined_index,
         inventory_payloads,
         kind="spec",
+        migration_rows=wp004b_rows,
     )
     migrated_paths = {row["path"] for row in migrated} | {
         row["archivePath"] for row in migrated
@@ -4409,11 +5010,26 @@ def _self_test_post_closure_adr_scope() -> int:
     if POST_CLOSURE_ADR_AUTHORITY_PATHS != expected_later:
         raise AssertionError("post-closure ADR authority set drift")
 
-    def accepted_payload() -> bytes:
-        return b"---\ntype: sdlc/adr\nstatus: accepted\nowner: platform\n---\n# ADR\n"
+    def authority_payload(path: str) -> bytes:
+        match = re.search(r"/(?P<id>[0-9]{4})-", path)
+        if match is None:
+            raise AssertionError("invalid self-test ADR path")
+        artifact_id = f"ADR-{match.group('id')}"
+        status = "superseded" if artifact_id in ADR0030_PREDECESSORS else "accepted"
+        reciprocal = (
+            "superseded_by: ADR-0030\n"
+            if artifact_id in ADR0030_PREDECESSORS
+            else ""
+        )
+        return (
+            "---\ntype: sdlc/adr\n"
+            f"status: {status}\nowner: platform\n"
+            f'artifact_id: "{artifact_id}"\n'
+            f"{reciprocal}---\n# ADR\n"
+        ).encode()
 
     known_paths = [*FROZEN_ACCEPTED_ADR_PATHS, *sorted(expected_later)]
-    payloads = {path: accepted_payload() for path in known_paths}
+    payloads = {path: authority_payload(path) for path in known_paths}
     index = {
         path: POST_CLOSURE_PINNED_AUTHORITY_BLOBS.get(path, "0" * 40)
         for path in known_paths
@@ -4430,7 +5046,7 @@ def _self_test_post_closure_adr_scope() -> int:
 
     unknown = "docs/02.architecture/decisions/9999-unknown-post-closure-authority.md"
     unknown_paths = [*known_paths, unknown]
-    unknown_payloads = {**payloads, unknown: accepted_payload()}
+    unknown_payloads = {**payloads, unknown: authority_payload(unknown)}
     unknown_index = {**index, unknown: "0" * 40}
     try:
         _frozen_authority_entries(

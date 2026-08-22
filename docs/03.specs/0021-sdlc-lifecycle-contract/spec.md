@@ -26,7 +26,7 @@ same lifecycle rules and be validated by repository quality gates.
 In scope:
 
 - Codify the SDLC flow from `docs/01.requirements/` through
-  `docs/04.execution/`, with operations and archive handoff rules where they
+  `docs/03.specs/`, with operations and archive handoff rules where they
   apply.
 - Define status transition expectations for PRD, AD, ADR, Spec, Plan, Task,
   operations, and archive tombstone documents.

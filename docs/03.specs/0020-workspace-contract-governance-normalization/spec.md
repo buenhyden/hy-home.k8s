@@ -407,13 +407,13 @@ Expected notes:
 
 ## Traceability
 
-- **Template Documentation Contract**: [../../99.templates/support/documentation-contract.md](../../99.templates/support/documentation-contract.md)
-- **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/support/template-routing.md)
-- **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/frontmatter-schema.md)
-- **Legacy Cleanup Rules**: [../../99.templates/support/legacy-cleanup-rules.md](../../99.templates/support/legacy-cleanup-rules.md)
-- **Documentation Protocol**: [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/documentation-protocol.md)
-- **Document Stage Routing**: [../../00.agent-governance/rules/document-stage-routing.md](../../00.agent-governance/rules/document-stage-routing.md)
-- **Stage Authoring Matrix**: [../../00.agent-governance/rules/stage-authoring-matrix.md](../../00.agent-governance/rules/stage-authoring-matrix.md)
+- **Template Documentation Contract**: [../../99.templates/support/documentation-contract.md](../../99.templates/support/document-contract.md)
+- **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/support/document-contract.md)
+- **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/document-contract.md)
+- **Legacy Cleanup Rules**: [../../99.templates/support/legacy-cleanup-rules.md](../../99.templates/support/document-lifecycle.md)
+- **Documentation Protocol**: [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/document-authoring.md)
+- **Document Stage Routing**: [../../00.agent-governance/rules/document-stage-routing.md](../../00.agent-governance/rules/document-authoring.md)
+- **Stage Authoring Matrix**: [../../00.agent-governance/rules/stage-authoring-matrix.md](../../00.agent-governance/rules/document-authoring.md)
 - **Quality Gate**: [../../../scripts/validate-repo-quality-gates.sh](../../../scripts/validate-repo-quality-gates.sh)
 - **Future Plan**: `../../04.execution/plans/2026-07-05-workspace-contract-governance-normalization.md`
 - **Future Task Evidence**: `../../04.execution/tasks/2026-07-05-workspace-contract-governance-normalization.md`

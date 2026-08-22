@@ -427,14 +427,14 @@ rule.
 ## Traceability
 
 - [Templates README](../../99.templates/README.md)
-- [Documentation Protocol](../../00.agent-governance/rules/documentation-protocol.md)
-- [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)
-- [Stage Authoring Matrix](../../00.agent-governance/rules/stage-authoring-matrix.md)
+- [Documentation Protocol](../../00.agent-governance/rules/document-authoring.md)
+- [Document Stage Routing Rules](../../00.agent-governance/rules/document-authoring.md)
+- [Stage Authoring Matrix](../../00.agent-governance/rules/document-authoring.md)
 - [Stage 03 Specs README](../README.md)
 - [Progress Ledger](../../00.agent-governance/memory/progress.md)
 - [Repository Quality Gate](../../../scripts/validate-repo-quality-gates.sh)
 - [Plan](plan.md)
-- [Task](tasks.md)
+- [Task](README.md#task-records)
 - **Completed evolution**: [011](./spec.md) -> [012](../0012-template-governance-audit-enhancement/spec.md) -> [013](../0013-workspace-document-governance-hardening/spec.md) -> [014](../0014-workspace-document-contract-normalization/spec.md) -> [020](../0020-workspace-contract-governance-normalization/spec.md) -> [021](../0021-sdlc-lifecycle-contract/spec.md) -> [022](../0022-control-cloud-doc-normalization/spec.md) -> [023](../0023-stage03-04-repo-static-gap-closure/spec.md).
 - [GitHub Docs YAML frontmatter](https://docs.github.com/en/contributing/writing-for-github-docs/using-yaml-frontmatter)
 - [Diátaxis documentation framework](https://diataxis.fr/)
@@ -452,10 +452,10 @@ rule.
 - **Current template inventory**:
   [`../../99.templates/README.md`](../../99.templates/README.md)
 - **Documentation protocol**:
-  [`../../00.agent-governance/rules/documentation-protocol.md`](../../00.agent-governance/rules/documentation-protocol.md)
+  [`../../00.agent-governance/rules/documentation-protocol.md`](../../00.agent-governance/rules/document-authoring.md)
 - **Stage routing rules**:
-  [`../../00.agent-governance/rules/document-stage-routing.md`](../../00.agent-governance/rules/document-stage-routing.md)
+  [`../../00.agent-governance/rules/document-stage-routing.md`](../../00.agent-governance/rules/document-authoring.md)
 - **Stage authoring matrix**:
-  [`../../00.agent-governance/rules/stage-authoring-matrix.md`](../../00.agent-governance/rules/stage-authoring-matrix.md)
+  [`../../00.agent-governance/rules/stage-authoring-matrix.md`](../../00.agent-governance/rules/document-authoring.md)
 - **Repository quality gate**:
   [`../../../scripts/validate-repo-quality-gates.sh`](../../../scripts/validate-repo-quality-gates.sh)

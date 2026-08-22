@@ -1,13 +1,13 @@
 ---
-title: 'Current Local GitOps Platform Product Requirements'
-type: sdlc/prd
+title: 'Current Local GitOps Platform Requirement Package'
+type: sdlc/requirement-package
 status: active
 owner: platform
 updated: 2026-07-13
-artifact_id: "PRD-0004"
+artifact_id: "REQ-0004"
 ---
 
-# Current Local GitOps Platform Product Requirements
+# Current Local GitOps Platform Requirement Package
 
 ## Overview
 
@@ -39,20 +39,20 @@ WSL2 + WSL-native Docker 기반 로컬 Kubernetes 플랫폼을 GitOps-first 방�
 
 ## Functional Requirements
 
-- **REQ-PRD-FUN-01**: 로컬 클러스터 desired state는 `gitops/clusters/local`, `gitops/apps/root`, `gitops/platform`, `gitops/workloads`가 소유한다.
-- **REQ-PRD-FUN-02**: ArgoCD는 App-of-Apps와 ApplicationSet 구조로 platform component와 workload를 분리해야 한다.
-- **REQ-PRD-FUN-03**: 외부 Vault, PostgreSQL, Valkey, observability service는 Kubernetes `Service`와 `EndpointSlice` 계약으로 연결해야 한다.
-- **REQ-PRD-FUN-04**: Cluster UI는 Headlamp를 기준으로 하며 active docs는 제거된 old UI runtime을 current input으로 다루지 않는다.
-- **REQ-PRD-FUN-05**: cert-manager, ingress-nginx, Istio, Kiali, Argo Rollouts, Argo Notifications, monitoring, ESO/Vault 연동은 현재 platform scope에 포함한다.
-- **REQ-PRD-FUN-06**: secret value, Vault token, private key는 Git, 문서, 로그에 남기지 않는다.
-- **REQ-PRD-FUN-07**: archive로 이동한 old 문서는 active 문서와 Index Only로만 연결한다.
+- **REQ-0004-FR-0001**: 로컬 클러스터 desired state는 `gitops/clusters/local`, `gitops/apps/root`, `gitops/platform`, `gitops/workloads`가 소유한다.
+- **REQ-0004-FR-0002**: ArgoCD는 App-of-Apps와 ApplicationSet 구조로 platform component와 workload를 분리해야 한다.
+- **REQ-0004-FR-0003**: 외부 Vault, PostgreSQL, Valkey, observability service는 Kubernetes `Service`와 `EndpointSlice` 계약으로 연결해야 한다.
+- **REQ-0004-FR-0004**: Cluster UI는 Headlamp를 기준으로 하며 active docs는 제거된 old UI runtime을 current input으로 다루지 않는다.
+- **REQ-0004-NFR-0001**: cert-manager, ingress-nginx, Istio, Kiali, Argo Rollouts, Argo Notifications, monitoring, ESO/Vault 연동은 현재 platform scope에 포함한다.
+- **REQ-0004-NFR-0002**: secret value, Vault token, private key는 Git, 문서, 로그에 남기지 않는다.
+- **REQ-0004-IF-0001**: archive로 이동한 old 문서는 active 문서와 Index Only로만 연결한다.
 
 ## Success / Acceptance Criteria
 
-- **REQ-PRD-MET-01**: `bash infrastructure/tests/verify-contracts-static.sh`가 현재 GitOps contract를 통과한다.
-- **REQ-PRD-MET-02**: `bash scripts/validate-gitops-structure.sh`가 root Application, platform Application, workload ApplicationSet 경계를 통과한다.
-- **REQ-PRD-MET-03**: `bash scripts/validate-k8s-manifests.sh .`가 tracked Kubernetes YAML syntax를 통과한다.
-- **REQ-PRD-MET-04**: `bash scripts/validate-repo-quality-gates.sh .`가 active docs와 archive Tombstone policy를 통과한다.
+- **Acceptance criterion 01**: `bash infrastructure/tests/verify-contracts-static.sh`가 현재 GitOps contract를 통과한다.
+- **Acceptance criterion 02**: `bash scripts/validate-gitops-structure.sh`가 root Application, platform Application, workload ApplicationSet 경계를 통과한다.
+- **Acceptance criterion 03**: `bash scripts/validate-k8s-manifests.sh .`가 tracked Kubernetes YAML syntax를 통과한다.
+- **Acceptance criterion 04**: `bash scripts/validate-repo-quality-gates.sh .`가 active docs와 archive Tombstone policy를 통과한다.
 
 ## Scope and Non-goals
 
@@ -97,19 +97,19 @@ WSL2 + WSL-native Docker 기반 로컬 Kubernetes 플랫폼을 GitOps-first 방�
 
 | Requirement ID | Acceptance criterion | Downstream owner |
 | --- | --- | --- |
-| REQ-PRD-FUN-01 | current desired-state roots와 소유 경계가 GitOps 구조 검증을 통과한다. | [AD 0007](../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md) and [Spec 008](../03.specs/0008-current-local-gitops-platform/spec.md) |
-| REQ-PRD-FUN-02 | root Application, platform Applications, workload ApplicationSet의 분리 계약이 정적 검증을 통과한다. | [AD 0007](../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md) and [Spec 008](../03.specs/0008-current-local-gitops-platform/spec.md) |
-| REQ-PRD-FUN-03 | Vault, PostgreSQL, Valkey, observability 외부 서비스가 Service/EndpointSlice 계약으로 표현된다. | [AD 0007](../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md) and [Spec 008](../03.specs/0008-current-local-gitops-platform/spec.md) |
-| REQ-PRD-FUN-04 | active 문서와 desired state가 Headlamp를 현재 cluster UI로 사용하고 제거된 UI를 current input으로 취급하지 않는다. | [AD 0007](../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md) and [Spec 008](../03.specs/0008-current-local-gitops-platform/spec.md) |
-| REQ-PRD-FUN-05 | cert-manager, ingress-nginx, Istio, Kiali, Rollouts, Notifications, monitoring 및 ESO/Vault 구성이 현재 platform scope에 존재한다. | [AD 0007](../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md) and [Spec 008](../03.specs/0008-current-local-gitops-platform/spec.md) |
-| REQ-PRD-FUN-06 | Git, 문서 및 로그에 secret value, Vault token 또는 private key가 없다. | [AD 0007](../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md) and [Spec 008](../03.specs/0008-current-local-gitops-platform/spec.md) |
-| REQ-PRD-FUN-07 | archived old 문서는 active 계약의 구현 입력이 아니라 archive index를 통한 기록으로만 연결된다. | [AD 0007](../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md) and [Spec 008](../03.specs/0008-current-local-gitops-platform/spec.md) |
-| REQ-PRD-MET-01 | `infrastructure/tests/verify-contracts-static.sh`가 current GitOps contract를 통과한다. | [AD 0007](../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md) and [Spec 008](../03.specs/0008-current-local-gitops-platform/spec.md) |
-| REQ-PRD-MET-02 | `scripts/validate-gitops-structure.sh`가 root, platform, workload 경계를 통과한다. | [AD 0007](../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md) and [Spec 008](../03.specs/0008-current-local-gitops-platform/spec.md) |
-| REQ-PRD-MET-03 | `scripts/validate-k8s-manifests.sh .`가 tracked Kubernetes YAML syntax를 통과한다. | [AD 0007](../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md) and [Spec 008](../03.specs/0008-current-local-gitops-platform/spec.md) |
-| REQ-PRD-MET-04 | repository quality gate가 active-doc와 archive Tombstone policy를 통과한다. | [AD 0007](../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md) and [Spec 008](../03.specs/0008-current-local-gitops-platform/spec.md) |
+| REQ-0004-FR-0001 | current desired-state roots와 소유 경계가 GitOps 구조 검증을 통과한다. | [AD 0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) and [Spec 008](../03.specs/0008-current-local-gitops-platform/spec.md) |
+| REQ-0004-FR-0002 | root Application, platform Applications, workload ApplicationSet의 분리 계약이 정적 검증을 통과한다. | [AD 0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) and [Spec 008](../03.specs/0008-current-local-gitops-platform/spec.md) |
+| REQ-0004-FR-0003 | Vault, PostgreSQL, Valkey, observability 외부 서비스가 Service/EndpointSlice 계약으로 표현된다. | [AD 0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) and [Spec 008](../03.specs/0008-current-local-gitops-platform/spec.md) |
+| REQ-0004-FR-0004 | active 문서와 desired state가 Headlamp를 현재 cluster UI로 사용하고 제거된 UI를 current input으로 취급하지 않는다. | [AD 0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) and [Spec 008](../03.specs/0008-current-local-gitops-platform/spec.md) |
+| REQ-0004-NFR-0001 | cert-manager, ingress-nginx, Istio, Kiali, Rollouts, Notifications, monitoring 및 ESO/Vault 구성이 현재 platform scope에 존재한다. | [AD 0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) and [Spec 008](../03.specs/0008-current-local-gitops-platform/spec.md) |
+| REQ-0004-NFR-0002 | Git, 문서 및 로그에 secret value, Vault token 또는 private key가 없다. | [AD 0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) and [Spec 008](../03.specs/0008-current-local-gitops-platform/spec.md) |
+| REQ-0004-IF-0001 | archived old 문서는 active 계약의 구현 입력이 아니라 archive index를 통한 기록으로만 연결된다. | [AD 0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) and [Spec 008](../03.specs/0008-current-local-gitops-platform/spec.md) |
+| N/A — Acceptance criterion 01 remains acceptance-only | `infrastructure/tests/verify-contracts-static.sh`가 current GitOps contract를 통과한다. | [AD 0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) and [Spec 008](../03.specs/0008-current-local-gitops-platform/spec.md) |
+| N/A — Acceptance criterion 02 remains acceptance-only | `scripts/validate-gitops-structure.sh`가 root, platform, workload 경계를 통과한다. | [AD 0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) and [Spec 008](../03.specs/0008-current-local-gitops-platform/spec.md) |
+| N/A — Acceptance criterion 03 remains acceptance-only | `scripts/validate-k8s-manifests.sh .`가 tracked Kubernetes YAML syntax를 통과한다. | [AD 0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) and [Spec 008](../03.specs/0008-current-local-gitops-platform/spec.md) |
+| N/A — Acceptance criterion 04 remains acceptance-only | repository quality gate가 active-doc와 archive Tombstone policy를 통과한다. | [AD 0007](../02.architecture/descriptions/0007-current-local-gitops-platform.md) and [Spec 008](../03.specs/0008-current-local-gitops-platform/spec.md) |
 
-- **AD**: [../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md](../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md)
+- **AD**: [../02.architecture/descriptions/0007-current-local-gitops-platform.md](../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - **Spec**: [../03.specs/0008-current-local-gitops-platform/spec.md](../03.specs/0008-current-local-gitops-platform/spec.md)
 - **Plan**: [../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md](../98.archive/README.md#document-index)
 - **ADR**: [../02.architecture/decisions/0014-current-local-gitops-platform-contract.md](../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)

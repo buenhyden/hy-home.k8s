@@ -156,7 +156,7 @@ only after an explicit reciprocal Plan/Task pair is created.
 ## Traceability
 
 - **PRD**: [Workspace Document Lifecycle and Evidence Consolidation](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
-- **AD**: [Document Lifecycle and Evidence Operating Model](../../02.architecture/descriptions/ad-0009-document-lifecycle-evidence-operating-model.md)
+- **AD**: [Document Lifecycle and Evidence Operating Model](../../02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md)
 - **Lineage decision**: [ADR-0017](../../02.architecture/decisions/0017-program-follow-up-lineage-semantics.md)
 - **Current audit**: [2026-07-11 WEIA](../../90.references/audits/2026-07-11-weia/README.md)
 - **Completed execution history**: [Archive Index](../../98.archive/README.md#document-index)
@@ -166,10 +166,10 @@ only after an explicit reciprocal Plan/Task pair is created.
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-WDLEC-001](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ALF-001 | Registry fixtures assert the original tranche set. |
-| [REQ-WDLEC-002](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ALF-002 | Registry and reciprocal-link checks assert follow-up semantics. |
-| [REQ-WDLEC-001](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ALF-003 | Program-lineage validation asserts the new tranche sequence. |
-| [REQ-WDLEC-002](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ALF-004 | Independent negative mutations reject invalid membership. |
-| [REQ-WDLEC-008](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ALF-005 | Current-pack overlay validation compares finding IDs with HEAD evidence. |
-| [REQ-WDLEC-001](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ALF-006 | Duplicate-fact scans reject exact non-owner lifecycle tables. |
-| [REQ-WDLEC-011](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ALF-007 | Plan/Task lineage fixtures enforce predecessor-gated execution admission. |
+| [REQ-0006-FR-0001](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ALF-001 | Registry fixtures assert the original tranche set. |
+| [REQ-0006-FR-0002](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ALF-002 | Registry and reciprocal-link checks assert follow-up semantics. |
+| [REQ-0006-FR-0001](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ALF-003 | Program-lineage validation asserts the new tranche sequence. |
+| [REQ-0006-FR-0002](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ALF-004 | Independent negative mutations reject invalid membership. |
+| [REQ-0006-FR-0008](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ALF-005 | Current-pack overlay validation compares finding IDs with HEAD evidence. |
+| [REQ-0006-FR-0001](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ALF-006 | Duplicate-fact scans reject exact non-owner lifecycle tables. |
+| [REQ-0006-FR-0011](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ALF-007 | Plan/Task lineage fixtures enforce predecessor-gated execution admission. |

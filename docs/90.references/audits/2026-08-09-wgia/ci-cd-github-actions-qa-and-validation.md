@@ -260,5 +260,5 @@ Source roles are closed to `policy owner`, `machine owner`, `human index`,
 - [Pack Index](README.md)
 - [Spec 054](../../../03.specs/0055-workspace-governance-audit-and-remediation/spec.md)
 - [Quality Standards](../../../00.agent-governance/rules/quality-standards.md)
-- [Implementation Task](../../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md)
+- [Implementation Task](../../../03.specs/0055-workspace-governance-audit-and-remediation/README.md)
 - [Prior CI/QA Audit](../2026-07-11-weia/ci-qa-automation-pipeline-workflow.md)

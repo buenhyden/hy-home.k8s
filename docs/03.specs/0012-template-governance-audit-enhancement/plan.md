@@ -52,10 +52,23 @@ Current quick inspection shows three concrete improvement candidates:
   phase-oriented terms instead of current steady-state rules.
 - A retired duplicate harness Task starter was specialized, but some
   support route tables can make it look like a second structural route for
-  `docs/04.execution/tasks/*.md`.
+  `docs/03.specs/*.md`.
 - The quality gate enforces many template rules, but it can add a narrow guard
   against stale migration-phase wording inside active support contracts.
 
+### Legacy Task ledger inputs
+
+This document tracks implementation and verification work for the follow-up
+audit and targeted enhancement pass over `docs/99.templates/**`. It keeps
+findings, remediation tasks, validation evidence, and final handoff tied to the
+approved Stage 03 spec and Stage 04 plan.
+
+- **Parent Spec**: [../../03.specs/0012-template-governance-audit-enhancement/spec.md](spec.md)
+- **Parent Plan**: [../plans/2026-07-03-template-governance-audit-enhancement.md](plan.md)
+- **Template README**: [../../99.templates/README.md](../../99.templates/README.md)
+- **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/support/document-contract.md)
+- **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/document-contract.md)
+- **Quality Gate**: [../../../scripts/validate-repo-quality-gates.sh](../../../scripts/validate-repo-quality-gates.sh)
 ## Goals & In-Scope
 
 - **Goals**:
@@ -70,7 +83,7 @@ Current quick inspection shows three concrete improvement candidates:
   - `docs/99.templates/**`.
   - Template-related Stage 00 rules.
   - `scripts/validate-repo-quality-gates.sh`.
-  - `docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md`.
+  - `docs/03.specs/0012-template-governance-audit-enhancement/README.md#task-records`.
   - Stage README indexes and `docs/00.agent-governance/memory/progress.md`.
 
 ## Non-Goals & Out-of-Scope
@@ -90,7 +103,7 @@ Current quick inspection shows three concrete improvement candidates:
 
 | Task | Description | Files / Docs Affected | Target REQ | Validation Criteria |
 | --- | --- | --- | --- | --- |
-| PLN-001 | Establish audit task record and planning evidence | `docs/04.execution/plans/**`, `docs/04.execution/tasks/**`, Stage 04 READMEs, progress ledger | VAL-SPC-005 | New Plan and Task pass Stage 04 English-first and template checks |
+| PLN-001 | Establish audit task record and planning evidence | `docs/03.specs/**`, `docs/03.specs/**`, Stage 04 READMEs, progress ledger | VAL-SPC-005 | New Plan and Task pass Stage 04 English-first and template checks |
 | PLN-002 | Record baseline audit findings | Task finding ledger, `docs/99.templates/**`, Stage 00 rules, quality gate | VAL-SPC-001, VAL-SPC-002, VAL-SPC-003 | Finding ledger has evidence, risk, action, validation, and status |
 | PLN-003 | Clarify current support contracts | `docs/99.templates/support/**`, `docs/99.templates/README.md` | VAL-SPC-001, VAL-SPC-002 | No active support doc describes completed migration phases as current rules |
 | PLN-004 | Remove overlapping harness-task route semantics | `template-routing.md`, `sdlc-governance.md`, README references, quality gate if needed | VAL-SPC-001, VAL-SPC-003 | Harness task contract is supplemental and does not create a second structural route |
@@ -103,10 +116,10 @@ Current quick inspection shows three concrete improvement candidates:
 
 **Files:**
 
-- Create: `docs/04.execution/plans/2026-07-03-template-governance-audit-enhancement.md`
-- Create: `docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md`
-- Modify: `docs/04.execution/plans/README.md`
-- Modify: `docs/04.execution/tasks/README.md`
+- Create: `docs/03.specs/0012-template-governance-audit-enhancement/plan.md`
+- Create: `docs/03.specs/0012-template-governance-audit-enhancement/README.md#task-records`
+- Modify: `docs/03.specs/0012-template-governance-audit-enhancement/plan.md`
+- Modify: `docs/03.specs/0012-template-governance-audit-enhancement/README.md#task-records`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
 - [x] **Step 1: Confirm the branch and worktree**
@@ -167,7 +180,7 @@ Expected: both commands pass.
 Commit:
 
 ```bash
-git add docs/04.execution/plans/2026-07-03-template-governance-audit-enhancement.md docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md docs/04.execution/plans/README.md docs/04.execution/tasks/README.md docs/00.agent-governance/memory/progress.md
+git add docs/03.specs/0012-template-governance-audit-enhancement/plan.md docs/03.specs/0012-template-governance-audit-enhancement/README.md#task-records docs/03.specs/0012-template-governance-audit-enhancement/plan.md docs/03.specs/0012-template-governance-audit-enhancement/README.md#task-records docs/00.agent-governance/memory/progress.md
 git commit -m "docs(plan): Plan template governance audit enhancement"
 ```
 
@@ -175,7 +188,7 @@ git commit -m "docs(plan): Plan template governance audit enhancement"
 
 **Files:**
 
-- Modify: `docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md`
+- Modify: `docs/03.specs/0012-template-governance-audit-enhancement/README.md#task-records`
 - Read: `docs/99.templates/**`
 - Read: `docs/00.agent-governance/rules/document-stage-routing.md`
 - Read: `docs/00.agent-governance/rules/documentation-protocol.md`
@@ -238,7 +251,7 @@ Run:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-git add docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md
+git add docs/03.specs/0012-template-governance-audit-enhancement/README.md#task-records
 git commit -m "docs(audit): Record template governance baseline"
 ```
 
@@ -254,7 +267,7 @@ Expected: both validation commands pass before commit.
 - Modify: `docs/99.templates/support/template-routing.md`
 - Modify: `docs/99.templates/support/sdlc-governance.md`
 - Modify: `docs/99.templates/README.md`
-- Modify: `docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md`
+- Modify: `docs/03.specs/0012-template-governance-audit-enhancement/README.md#task-records`
 
 - [x] **Step 1: Convert migration-phase wording to current-contract wording**
 
@@ -283,10 +296,42 @@ they are the active operating model.
 - [x] **Step 2: Clarify harness task contract placement**
 
 In `template-routing.md` and `sdlc-governance.md`, remove
-`docs/04.execution/tasks/YYYY-MM-DD-<harness-task>.md` from structural route
+`docs/03.specs/YYYY-MM-DD-<harness-task>.md` from structural route
 tables and add a supplemental starter note:
 
 ```markdown
+
+
+### Legacy Task supplemental evidence
+
+### Audit Finding Ledger
+
+| Finding ID | Scope | Evidence Path | Expected Contract | Observed State | Risk | Action | Validation | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| FND-001 | support | `docs/99.templates/support/frontmatter-schema.md`; `docs/99.templates/support/legacy-cleanup-rules.md`; `docs/99.templates/support/template-routing.md`; `docs/99.templates/support/README.md` | Active support docs describe current steady-state contracts | Support docs now describe current frontmatter, cleanup, and route enforcement contracts without completed migration-phase wording. | Medium | doc-sync | `rg -n "Phase [1-4]\|during the migration\|after Phase\|current and target" docs/99.templates/support` | Resolved |
+| FND-002 | support | `docs/99.templates/README.md`; `docs/99.templates/support/template-routing.md`; `docs/99.templates/support/sdlc-governance.md`; `scripts/validate-repo-quality-gates.sh` | `task.template.md` was the only structural route; the duplicate harness Task starter was supplemental | Support route tables kept only the Stage 04 Task structural mapping; Spec 027 later retired the duplicate starter. | Medium | doc-sync | Historical duplicate-route scan recorded in this Task | Resolved |
+| FND-003 | validator | `scripts/validate-repo-quality-gates.sh` | Stable support-contract drift should fail deterministically | The quality gate rejected stale migration-phase wording and prevented the retired duplicate harness Task starter from becoming a structural route; Spec 027 later removed the duplicate. | Low | validator-fix | `bash scripts/validate-repo-quality-gates.sh .` | Resolved |
+| FND-004 | authored-doc | `docs/**`; `.codex/**`; `.agents/**`; `AGENTS.md`; `RTK.md` | Authored docs retain no active template residue, simple legacy frontmatter type values, quoted canonical owner values, flat template routes, or legacy incident path rules | Task 5 scans found no active authored-doc template residue. The simple type scan returned archive Tombstone `Original type:` metadata under `docs/98.archive/**`, not active frontmatter drift. The quoted owner scan returned TypeScript interface examples in Stage 03 specs, not YAML frontmatter. The incident path scan returned the Stage 00 legacy mapping and prohibited-path contract for `docs/10\\.incidents`, not an active old incident filename convention. No authored-doc remediation was needed. | Low | no-change | `rg -n -e "Target: docs[/]" -e "Use this te[m]plate" docs --glob "*.md" --glob "!docs/99.templates/**"`<br>`rg -n "type: (prd\|ard\|adr\|spec\|plan\|task\|policy\|guide\|runbook\|incident\|postmortem\|reference)$" docs --glob "*.md" --glob "!docs/99.templates/**"`<br>`rg -n "owner: ['\"]platform['\"]" docs --glob "*.md"`<br>`find docs/05.operations/incidents -mindepth 1 -maxdepth 4 -type f -print \| sort`<br>`rg -n "docs/05\\.operations/incidents/[0-9]{4}/INC-[0-9]{3}-[^/]+/(incident\|postmortem)\\.md\|docs/10\\.incidents" docs/99.templates docs/00.agent-governance docs/05.operations scripts` | Accepted |
+
+### Phase View
+
+### Phase 1: Planning Baseline
+
+- [x] T-001 Create and validate planning artifacts.
+
+### Phase 2: Audit Evidence
+
+- [x] T-002 Run baseline scans and refine finding ledger.
+
+### Phase 3: Targeted Remediation
+
+- [x] T-003 Remediate support contract drift.
+- [x] T-004 Add validator guardrails.
+
+### Phase 4: Verification And Handoff
+
+- [x] T-005 Verify authored document usage.
+- [x] T-006 Complete final sync and evidence.
 ## Retired Duplicate Task Starter
 
 The retired duplicate harness Task starter supplemented the canonical Task
@@ -296,7 +341,7 @@ canonical Task form and removed the duplicate.
 ```
 
 Expected: `task.template.md` remains the only structural mapping for
-`docs/04.execution/tasks/*.md`.
+`docs/03.specs/*.md`.
 
 - [x] **Step 3: Update the Task finding statuses**
 
@@ -326,7 +371,7 @@ Expected: both commands pass.
 Commit:
 
 ```bash
-git add docs/99.templates/support/README.md docs/99.templates/support/frontmatter-schema.md docs/99.templates/support/legacy-cleanup-rules.md docs/99.templates/support/template-routing.md docs/99.templates/support/sdlc-governance.md docs/99.templates/README.md docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md
+git add docs/99.templates/support/README.md docs/99.templates/support/frontmatter-schema.md docs/99.templates/support/legacy-cleanup-rules.md docs/99.templates/support/template-routing.md docs/99.templates/support/sdlc-governance.md docs/99.templates/README.md docs/03.specs/0012-template-governance-audit-enhancement/README.md#task-records
 git commit -m "docs(templates): Clarify current support contracts"
 ```
 
@@ -335,7 +380,7 @@ git commit -m "docs(templates): Clarify current support contracts"
 **Files:**
 
 - Modify: `scripts/validate-repo-quality-gates.sh`
-- Modify: `docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md`
+- Modify: `docs/03.specs/0012-template-governance-audit-enhancement/README.md#task-records`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
 - [x] **Step 1: Add support-doc stale wording validation**
@@ -403,7 +448,7 @@ returns no active support-doc matches.
 Run:
 
 ```bash
-git add scripts/validate-repo-quality-gates.sh docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md docs/00.agent-governance/memory/progress.md
+git add scripts/validate-repo-quality-gates.sh docs/03.specs/0012-template-governance-audit-enhancement/README.md#task-records docs/00.agent-governance/memory/progress.md
 git commit -m "docs(validation): Guard template support drift"
 ```
 
@@ -413,7 +458,7 @@ Expected: commit succeeds after validation evidence is recorded.
 
 **Files:**
 
-- Modify: `docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md`
+- Modify: `docs/03.specs/0012-template-governance-audit-enhancement/README.md#task-records`
 - Modify only if a concrete finding exists: affected Stage README or authored
   document under `docs/00.agent-governance/**`, `docs/05.operations/**`,
   `docs/90.references/**`, or `docs/99.templates/**`
@@ -460,7 +505,7 @@ Run:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-git add docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md
+git add docs/03.specs/0012-template-governance-audit-enhancement/README.md#task-records
 git commit -m "docs(audit): Verify authored template usage"
 ```
 
@@ -472,10 +517,10 @@ creating an empty commit.
 
 **Files:**
 
-- Modify: `docs/04.execution/plans/2026-07-03-template-governance-audit-enhancement.md`
-- Modify: `docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md`
-- Modify: `docs/04.execution/plans/README.md`
-- Modify: `docs/04.execution/tasks/README.md`
+- Modify: `docs/03.specs/0012-template-governance-audit-enhancement/plan.md`
+- Modify: `docs/03.specs/0012-template-governance-audit-enhancement/README.md#task-records`
+- Modify: `docs/03.specs/0012-template-governance-audit-enhancement/plan.md`
+- Modify: `docs/03.specs/0012-template-governance-audit-enhancement/README.md#task-records`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
 - [x] **Step 1: Run final validation**
@@ -499,10 +544,10 @@ migration-phase wording.
 Update statuses:
 
 ```text
-docs/04.execution/plans/2026-07-03-template-governance-audit-enhancement.md -> status: done
-docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md -> status: done
-docs/04.execution/plans/README.md row -> Done
-docs/04.execution/tasks/README.md row -> Done
+docs/03.specs/0012-template-governance-audit-enhancement/plan.md -> status: done
+docs/03.specs/0012-template-governance-audit-enhancement/README.md#task-records -> status: done
+docs/03.specs/0012-template-governance-audit-enhancement/plan.md row -> Done
+docs/03.specs/0012-template-governance-audit-enhancement/README.md#task-records row -> Done
 docs/00.agent-governance/memory/progress.md entry -> complete
 ```
 
@@ -513,7 +558,7 @@ Expected: final evidence is recorded in the Task and progress ledger.
 Run:
 
 ```bash
-git add docs/04.execution/plans/2026-07-03-template-governance-audit-enhancement.md docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md docs/04.execution/plans/README.md docs/04.execution/tasks/README.md docs/00.agent-governance/memory/progress.md
+git add docs/03.specs/0012-template-governance-audit-enhancement/plan.md docs/03.specs/0012-template-governance-audit-enhancement/README.md#task-records docs/03.specs/0012-template-governance-audit-enhancement/plan.md docs/03.specs/0012-template-governance-audit-enhancement/README.md#task-records docs/00.agent-governance/memory/progress.md
 git commit -m "docs(audit): Complete template governance audit enhancement"
 ```
 
@@ -532,6 +577,102 @@ Expected: commit succeeds after final validation evidence is recorded.
 | VAL-PLN-007 | Static | Incident bundle route audit | `find docs/05.operations/incidents -mindepth 1 -maxdepth 4 -type f -print \| sort` | No placeholder incident files; future files follow bundle convention |
 | VAL-PLN-008 | Review | Finding ledger completeness | Manual review of the Stage 04 Task record | Each finding has evidence, risk, action, validation, and status |
 
+### Legacy Task verification evidence
+
+- **Test Commands**:
+  - `git diff --check`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+- **Eval Commands**:
+  - `find docs/99.templates -maxdepth 5 -type f -print | sort`
+  - `rg -n "Phase [1-4]|during the migration|after Phase|current and target|YYYY-MM-DD-<harness-task>|duplicate-harness-task-starter" docs/99.templates/support docs/99.templates/README.md docs/00.agent-governance/rules/document-stage-routing.md scripts/validate-repo-quality-gates.sh`
+  - `rg -n -e "Target: docs[/]" -e "Use this te[m]plate" docs --glob "*.md" --glob "!docs/99.templates/**"`
+  - `rg -n "type: (prd|ard|adr|spec|plan|task|policy|guide|runbook|incident|postmortem|reference)$" docs --glob "*.md" --glob "!docs/99.templates/**"`
+  - `rg -n "owner: ['\"]platform['\"]" docs --glob "*.md"`
+  - `rg -n "docs/99\\.templates/[a-z0-9-]+\\.template\\.(md|yaml|graphql|proto)" docs scripts .codex .agents AGENTS.md RTK.md`
+  - `rg -n "docs/10\\.incidents|Legacy postmortem top-level|Legacy learning top-level" docs scripts .codex .agents AGENTS.md RTK.md`
+  - `find docs/05.operations/incidents -mindepth 1 -maxdepth 4 -type f -print | sort`
+  - `rg -n "docs/05\\.operations/incidents/[0-9]{4}/INC-[0-9]{3}-[^/]+/(incident|postmortem)\\.md|docs/10\\.incidents" docs/99.templates docs/00.agent-governance docs/05.operations scripts`
+  - `rg -n "Phase [1-4]|during the migration|after Phase|current and target" docs/99.templates/support`
+  - Historical duplicate-route scan over template routing and SDLC governance — no structural duplicate.
+- **Logs / Evidence Location**:
+  - T-001 planning evidence: `git diff --check` passed.
+  - T-001 planning evidence:
+    `bash scripts/validate-repo-quality-gates.sh .` passed.
+  - T-001 planning evidence: Stage 04 Korean text scan returned no matches.
+  - T-002 baseline evidence: template inventory contained only
+    `docs/99.templates/README.md`, `support/**`, and `templates/**`; no flat
+    template-form files were present at the template root.
+  - T-002 baseline evidence: drift candidate scan returned bounded support,
+    README, and validator matches mapped to FND-001, FND-002, or accepted
+    harness-validation context; it did not reveal active flat-template routes.
+  - T-002 baseline evidence: the `Target: docs[/]` and
+    `Use this te[m]plate` authored-doc residue scan returned no matches.
+  - T-002 baseline evidence: the flat template route scan returned no matches
+    across docs, scripts, `.codex`, `.agents`, `AGENTS.md`, and `RTK.md`.
+  - T-002 baseline evidence: the legacy incident-route scan now returns
+    self-referential matches in this Task record, plus the plan evidence
+    command and the Stage 00 prohibited-path contract; no active legacy route
+    contract was found.
+  - T-003 remediation evidence: support drift scan returned no matches for
+    stale phase wording or current-vs-target wording in active support docs.
+  - T-003 remediation evidence: harness supplemental starter scan returned no
+    lines that combine the harness starter template with the old placeholder
+    task pattern in the support contracts.
+  - T-003 remediation evidence: `git diff --check` passed.
+  - T-003 remediation evidence:
+    `bash scripts/validate-repo-quality-gates.sh .` passed.
+  - T-004 validator evidence: quality gate now rejects stale support-doc
+    migration wording and harness starter overlap in the structural route map.
+  - T-004 validation evidence: `git diff --check` passed.
+  - T-004 validation evidence:
+    `bash scripts/validate-repo-quality-gates.sh .` passed.
+  - T-004 validation evidence: focused support drift scan returned no matches.
+  - T-004 validation evidence: harness route overlap scan returned no matches.
+  - T-005 validation evidence: authored-doc template residue scan returned no
+    matches.
+  - T-005 validation evidence: simple legacy type scan returned only archive
+    Tombstone `Original type:` metadata under `docs/98.archive/**`; no active
+    frontmatter drift was found.
+  - T-005 validation evidence: quoted canonical owner scan returned only
+    TypeScript interface examples in Stage 03 specs; no quoted YAML owner
+    value was found in active frontmatter.
+  - T-005 validation evidence: incident bundle inventory returned only
+    `docs/05.operations/incidents/README.md`; no incident bundle files use the
+    old filename convention.
+  - T-005 validation evidence: incident path scan returned only the Stage 00
+    legacy migration map and prohibited-path contract for `docs/10\\.incidents`;
+    no active old incident filename route was found.
+  - T-005 remediation evidence: no authored-document or Stage README edits were
+    needed.
+  - T-005 validation evidence: `git diff --check` passed.
+  - T-005 validation evidence:
+    `bash scripts/validate-repo-quality-gates.sh .` passed.
+  - T-006 final validation evidence: `git diff --check` passed with no output.
+  - T-006 final validation evidence:
+    `bash scripts/validate-repo-quality-gates.sh .` passed with
+    `[PASS] repository quality gates passed`.
+  - T-006 final template tree evidence:
+    `find docs/99.templates -maxdepth 5 -type f -print | sort` returned only
+    `docs/99.templates/README.md`, `docs/99.templates/support/**`, and
+    `docs/99.templates/templates/**`; no flat root template-form files were
+    present.
+  - T-006 final flat-route evidence:
+    `rg -n "docs/99\\.templates/[a-z0-9-]+\\.template\\.(md|yaml|graphql|proto)" docs scripts .codex .agents AGENTS.md RTK.md`
+    returned no matches, so no active current-route drift or self-referential
+    evidence exception was present.
+  - T-006 final support wording evidence:
+    `rg -n "Phase [1-4]|during the migration|after Phase|current and target" docs/99.templates/support`
+    returned no matches.
+  - Final-review remediation evidence: the Spec Related Documents now link to
+    the dated Stage 04 Plan and Task records.
+  - Final-review remediation evidence: stale support wording validation now
+    includes `docs/99.templates/support/README.md`, while README frontmatter
+    remains exempt.
+  - T-006 runtime tooling note: `rtk` was not on PATH;
+    `/home/hy/.local/bin/rtk --version` returned `rtk 0.34.3`, but
+    `/home/hy/.local/bin/rtk gain` failed with a tracking database
+    initialization error, so the exact validation commands were run directly
+    per provider guidance.
 ## Risks & Mitigations
 
 | Risk | Impact | Mitigation |
@@ -556,6 +697,35 @@ Expected: commit succeeds after final validation evidence is recorded.
   Stage 00 governance.
 - **Prompt / Model Promotion Criteria**: Not applicable.
 
+### Legacy Task approval and rollback boundaries
+
+- **Allowed Paths**: `T-001 through T-006` is limited to these Template Governance Audit Enhancement owners and Task-Table surfaces:
+  - `docs/03.specs/0012-template-governance-audit-enhancement/README.md#task-records`
+  - `docs/03.specs/0012-template-governance-audit-enhancement/spec.md`
+  - `docs/03.specs/0012-template-governance-audit-enhancement/plan.md`
+  - `docs/99.templates/README.md`
+  - `docs/99.templates/support/template-routing.md`
+  - `docs/99.templates/support/frontmatter-schema.md`
+  - `docs/99.templates/support/legacy-cleanup-rules.md`
+  - `docs/99.templates/support/README.md`
+  - `docs/99.templates/support/sdlc-governance.md`
+  - `scripts/validate-repo-quality-gates.sh`
+- **Forbidden Paths**: active policy or runtime configuration not named by the Template Governance Audit Enhancement Task Table, provider settings, secret values, local diagnostics, and remote publication surfaces.
+- **Approval Required**: Human approval is required before publishing Template Governance Audit Enhancement research, changing active policy/runtime behavior, deleting evidence, contacting providers, push, merge, or corpus expansion.
+- **Static Validation**: Preserve the Template Governance Audit Enhancement outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `git diff --check`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `find docs/99.templates -maxdepth 5 -type f -print | sort`
+  - `rg -n "Phase [1-4]|during the migration|after Phase|current and target|YYYY-MM-DD-<harness-task>|duplicate-harness-task-starter" docs/99.templates/support docs/99.templates/README.md docs/00.agent-governance/rules/document-stage-routing.md scripts/validate-repo-quality-gates.sh`
+- **Live Validation**: DEFER — Template Governance Audit Enhancement is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: Template Governance Audit Enhancement evidence must use public or repository-visible facts only; do not inspect or reproduce credentials, tokens, auth files, private logs, kubeconfigs, or shell history.
+- **Rollback Plan**: Revert the logical Template Governance Audit Enhancement change set for `T-001 through T-006` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Template Governance Audit Enhancement evidence remains in:
+  - `docs/03.specs/0012-template-governance-audit-enhancement/README.md#task-records`
+  - `docs/03.specs/0012-template-governance-audit-enhancement/spec.md`
+  - `docs/03.specs/0012-template-governance-audit-enhancement/plan.md`
+  - `docs/99.templates/README.md`
+  - `docs/99.templates/support/template-routing.md`
 ## Completion Criteria
 
 - [x] Baseline audit findings recorded.
@@ -569,10 +739,20 @@ Expected: commit succeeds after final validation evidence is recorded.
 ## Traceability
 
 - **Spec**: [../../03.specs/0012-template-governance-audit-enhancement/spec.md](spec.md)
-- **Tasks**: [../tasks/2026-07-03-template-governance-audit-enhancement.md](tasks.md)
+- **Tasks**: [../tasks/2026-07-03-template-governance-audit-enhancement.md](README.md#task-records)
 - **Templates README**: [../../99.templates/README.md](../../99.templates/README.md)
-- **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/support/template-routing.md)
-- **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/frontmatter-schema.md)
-- **Documentation Protocol**: [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/documentation-protocol.md)
-- **Document Stage Routing Rules**: [../../00.agent-governance/rules/document-stage-routing.md](../../00.agent-governance/rules/document-stage-routing.md)
+- **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/support/document-contract.md)
+- **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/document-contract.md)
+- **Documentation Protocol**: [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/document-authoring.md)
+- **Document Stage Routing Rules**: [../../00.agent-governance/rules/document-stage-routing.md](../../00.agent-governance/rules/document-authoring.md)
 - **Quality Gate**: [../../../scripts/validate-repo-quality-gates.sh](../../../scripts/validate-repo-quality-gates.sh)
+
+### Legacy Task traceability
+
+- **Spec**: [../../03.specs/0012-template-governance-audit-enhancement/spec.md](spec.md)
+- **Plan**: [../plans/2026-07-03-template-governance-audit-enhancement.md](plan.md)
+- **Template Contract Migration Plan**: [../plans/2026-07-03-template-contract-governance-migration.md](../0011-template-contract-governance-migration/plan.md)
+- **Template Contract Migration Task**: [./2026-07-03-template-contract-governance-migration.md](../0011-template-contract-governance-migration/README.md)
+- **Templates README**: [../../99.templates/README.md](../../99.templates/README.md)
+- **Documentation Protocol**: [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/document-authoring.md)
+- **Document Stage Routing Rules**: [../../00.agent-governance/rules/document-stage-routing.md](../../00.agent-governance/rules/document-authoring.md)

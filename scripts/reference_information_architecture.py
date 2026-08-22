@@ -25,6 +25,8 @@ from urllib.parse import urlsplit
 
 from jsonschema import Draft202012Validator
 
+from archive_recovery import ArchiveContractError
+from archive_validation import parse_pinned_migration_control
 from document_authority import AuthorityError, validate_registry_authority
 
 
@@ -47,8 +49,12 @@ DATA_ASSET_README = DATA_ASSET_ROOT / "README.md"
 REFERENCE_ROOT = Path("docs/90.references")
 REGISTRY_PATH = Path("docs/99.templates/registry.json")
 TRANSITION_CURRENT_PACK_PROJECTION_PATH = Path("docs/99.templates/support/document-profiles.json")
-TRANSITION_CURRENT_PACK_PROJECTION_BLOB_OID = (
-    "0ce925cfb58ca04d4177ab85779d2d8e4149dc96"
+WP004B_DOCUMENT_AUTHORITY_MIGRATION_PATH = Path(
+    "docs/98.archive/migrations/0004-document-authority-convergence.md"
+)
+WP004B_ROOT_ONLY_PROFILE_ID = "sdlc/requirement-package"
+WP004B_SUPPORT_ONLY_PROFILE_IDS = frozenset(
+    {"sdlc/prd", "sdlc/srs", "sdlc/interface"}
 )
 DOCUMENT_TAXONOMY_MANIFEST_PATH = Path("scripts/document-taxonomy-migration.json")
 ARCHIVE_MIGRATION_PATH = Path(
@@ -203,7 +209,7 @@ TAXONOMY_OVERLAY_RULES: Mapping[Path, Mapping[str, object]] = MappingProxyType(
     {
         Path("docs/90.references/audits/2026-07-11-weia/README.md"): {
             "oldOid": "84b4cdae06e3882cee4b9f60cec30b01dfada873",  # pragma: allowlist secret
-            "currentOid": "dbeb6c063b36c98d620d09562a5100d5923343b5",
+            "currentOid": "dbeb6c063b36c98d620d09562a5100d5923343b5",  # pragma: allowlist secret -- reviewed Git blob OID
             "retiredLinks": MappingProxyType({_WEIA_PLAN: 5, _WEIA_TASK: 4}),
             "archiveIndexLinks": 8,
         },
@@ -212,7 +218,7 @@ TAXONOMY_OVERLAY_RULES: Mapping[Path, Mapping[str, object]] = MappingProxyType(
             "ai-agents-model-routing-vibe-coding.md"
         ): {
             "oldOid": "bdeb41f2cb5d7aa0b9822f7c7ffc0674c6abc895",  # pragma: allowlist secret
-            "currentOid": "71fdb66e9ff080aa505374dc4ab0424065153edc",
+            "currentOid": "71fdb66e9ff080aa505374dc4ab0424065153edc",  # pragma: allowlist secret -- reviewed Git blob OID
             "retiredLinks": MappingProxyType({_WEIA_PLAN: 1}),
             "archiveIndexLinks": 1,
         },
@@ -221,7 +227,7 @@ TAXONOMY_OVERLAY_RULES: Mapping[Path, Mapping[str, object]] = MappingProxyType(
             "ci-qa-automation-pipeline-workflow.md"
         ): {
             "oldOid": "b469ca00ffc7e226fa2f51b40c8a5bb2347a0f03",  # pragma: allowlist secret
-            "currentOid": "4cad1c4330c41d721b7fe6aa9eebb90c702e2f8f",
+            "currentOid": "4cad1c4330c41d721b7fe6aa9eebb90c702e2f8f",  # pragma: allowlist secret -- reviewed Git blob OID
             "retiredLinks": MappingProxyType({_WEIA_PLAN: 1}),
             "archiveIndexLinks": 1,
         },
@@ -230,7 +236,7 @@ TAXONOMY_OVERLAY_RULES: Mapping[Path, Mapping[str, object]] = MappingProxyType(
             "governance-harness-loop-providers.md"
         ): {
             "oldOid": "859dd01de058474939e734ca6e5cf6c1678ff18d",  # pragma: allowlist secret
-            "currentOid": "b35dce197ca96bb9341b590ef505040e86d18577",
+            "currentOid": "b35dce197ca96bb9341b590ef505040e86d18577",  # pragma: allowlist secret -- reviewed Git blob OID
             "retiredLinks": MappingProxyType({_WEIA_PLAN: 1}),
             "archiveIndexLinks": 1,
         },
@@ -239,7 +245,7 @@ TAXONOMY_OVERLAY_RULES: Mapping[Path, Mapping[str, object]] = MappingProxyType(
             "kubernetes-infrastructure-security.md"
         ): {
             "oldOid": "8d706c7b2f09a030cc3d9bf1ca9cf856779288a1",  # pragma: allowlist secret
-            "currentOid": "f8cec478bbff2ee542c0738521bdb54de2fc6e38",
+            "currentOid": "f8cec478bbff2ee542c0738521bdb54de2fc6e38",  # pragma: allowlist secret -- reviewed Git blob OID
             "retiredLinks": MappingProxyType({_WEIA_PLAN: 2}),
             "archiveIndexLinks": 2,
         },
@@ -248,13 +254,13 @@ TAXONOMY_OVERLAY_RULES: Mapping[Path, Mapping[str, object]] = MappingProxyType(
             "sdlc-document-lifecycle-frontmatter.md"
         ): {
             "oldOid": "fa3178eab2ad0371652188b16ec9ed8d456ee21b",  # pragma: allowlist secret
-            "currentOid": "39cdc99f265ca91c35f1f0ede114cf626359837e",
+            "currentOid": "39cdc99f265ca91c35f1f0ede114cf626359837e",  # pragma: allowlist secret -- reviewed Git blob OID
             "retiredLinks": MappingProxyType({_WEIA_PLAN: 1}),
             "archiveIndexLinks": 1,
         },
         Path("docs/90.references/audits/README.md"): {
             "oldOid": "6020fd85b8e21578ba93fba61c03b17599118a87",  # pragma: allowlist secret
-            "currentOid": "16f671253013bbdda6605049bd08981b0d40556f",
+            "currentOid": "16f671253013bbdda6605049bd08981b0d40556f",  # pragma: allowlist secret -- reviewed Git blob OID
             "retiredLinks": MappingProxyType({_WEIA_PLAN: 2, _WEIA_TASK: 2}),
             "archiveIndexLinks": 4,
         },
@@ -2818,18 +2824,197 @@ def _proposed_registry_inputs(
         proposed_oid,
         runner,
     )
-    pinned_projection = _read_blob(
+    projection = _decode_json_bytes(
+        proposed_projection,
+        field=TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix(),
+    )
+    _validate_wp004b_support_projection(authority, projection)
+    _load_wp004b_transition_rows(root, proposed_oid, runner)
+    return authority, proposed_projection
+
+
+def _load_wp004b_transition_rows(
+    root: Path,
+    proposed_oid: str | None,
+    runner: GitRunner | None,
+) -> tuple[dict[str, object], ...]:
+    migration_payload = _proposed_path(
         root,
-        TRANSITION_CURRENT_PACK_PROJECTION_BLOB_OID,
+        WP004B_DOCUMENT_AUTHORITY_MIGRATION_PATH,
+        proposed_oid,
         runner,
     )
-    if proposed_projection != pinned_projection:
+    try:
+        return parse_pinned_migration_control(
+            WP004B_DOCUMENT_AUTHORITY_MIGRATION_PATH.as_posix(),
+            migration_payload,
+        )
+    except ArchiveContractError as error:
+        raise ContractError(
+            "RIA-TRANSITION",
+            WP004B_DOCUMENT_AUTHORITY_MIGRATION_PATH.as_posix(),
+            "WP-004B transition authority is unavailable",
+        ) from error
+
+
+def _wp004b_transition_link_mask(
+    payload: bytes,
+    path: Path,
+    rows: Sequence[Mapping[str, object]],
+) -> bytes:
+    """Normalize only Markdown link targets declared by sealed MIG-0004."""
+
+    try:
+        text = payload.decode("utf-8", errors="strict")
+    except UnicodeDecodeError as error:
+        raise _GitError("WP-004B transition target is not UTF-8") from error
+    for row in rows:
+        source = row.get("legacy_path")
+        target = row.get("replacement") or row.get("stable_path")
+        if (
+            row.get("action") != "replaced"
+            or not isinstance(source, str)
+            or not source.endswith("/tasks.md")
+            or not isinstance(target, str)
+            or not target.endswith("/README.md")
+        ):
+            continue
+        source_relative = os.path.relpath(source, path.parent.as_posix())
+        target_relative = os.path.relpath(target, path.parent.as_posix())
+        text = text.replace(
+            f"]({target_relative})",
+            f"]({source_relative})",
+        )
+    return text.encode("utf-8")
+
+
+def _expand_wp004b_requirement_profiles(value: object) -> object:
+    """Project the root Requirement Package relation into the finite legacy IDs."""
+
+    if not isinstance(value, list):
+        return value
+    expanded: list[object] = []
+    for item in value:
+        if item == WP004B_ROOT_ONLY_PROFILE_ID:
+            expanded.extend(sorted(WP004B_SUPPORT_ONLY_PROFILE_IDS))
+        else:
+            expanded.append(item)
+    return expanded
+
+
+def _wp004b_support_profile_projection(
+    profile: Mapping[str, object],
+) -> dict[str, object]:
+    """Render one root profile into the legacy support registry's semantics."""
+
+    relationships = profile.get("relationships")
+    if not isinstance(relationships, Mapping):
+        raise ContractError(
+            "RIA-BOUNDARY",
+            REGISTRY_PATH.as_posix(),
+            "document profile relationship authority is unavailable",
+        )
+    body = relationships.get("bodyContract")
+    if isinstance(body, Mapping):
+        projected_body: object = dict(body)
+        for field in ("allowedSourceProfileIds", "allowedTargetProfileIds"):
+            if field in projected_body:
+                projected_body[field] = _expand_wp004b_requirement_profiles(
+                    projected_body[field]
+                )
+    else:
+        projected_body = body
+    lifecycle = profile.get("lifecycle")
+    if lifecycle is None and profile.get("class") == "readme":
+        status_domain: object = []
+        append_contract: object = None
+    elif isinstance(lifecycle, Mapping):
+        status_domain = lifecycle.get("statusDomain")
+        append_contract = lifecycle.get("appendContract")
+    else:
+        raise ContractError(
+            "RIA-BOUNDARY",
+            REGISTRY_PATH.as_posix(),
+            "document profile lifecycle authority is unavailable",
+        )
+    path_pattern = profile.get("pathPattern")
+    if not isinstance(path_pattern, str):
+        raise ContractError(
+            "RIA-BOUNDARY",
+            REGISTRY_PATH.as_posix(),
+            "document profile path authority is unavailable",
+        )
+    return {
+        "id": profile.get("id"),
+        "class": profile.get("class"),
+        "mode": profile.get("mode"),
+        "routes": [{"kind": "regex", "value": path_pattern}],
+        "frontmatter": profile.get("requiredFrontmatter"),
+        "statusDomain": status_domain,
+        "headings": profile.get("requiredSections"),
+        "template": profile.get("template"),
+        "sourceProfileIds": _expand_wp004b_requirement_profiles(
+            relationships.get("sourceProfileIds")
+        ),
+        "placeholderPolicy": profile.get("placeholderPolicy"),
+        "appendContract": append_contract,
+        "bodyContract": projected_body,
+    }
+
+
+def _validate_wp004b_support_projection(
+    authority: Mapping[str, object], projection: Mapping[str, object]
+) -> None:
+    """Require exact shared-profile parity across the finite WP-004B transition."""
+
+    root_records = authority.get("profiles")
+    support_records = projection.get("profiles")
+    if not isinstance(root_records, list) or not isinstance(support_records, list):
         raise ContractError(
             "RIA-BOUNDARY",
             TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix(),
-            "pinned compatibility projection differs from the proposed tree",
+            "compatibility profile projection is unavailable",
         )
-    return authority, pinned_projection
+
+    def by_id(records: list[object]) -> dict[str, Mapping[str, object]]:
+        result: dict[str, Mapping[str, object]] = {}
+        for record in records:
+            if (
+                not isinstance(record, Mapping)
+                or not isinstance(record.get("id"), str)
+                or record["id"] in result
+            ):
+                raise ContractError(
+                    "RIA-BOUNDARY",
+                    TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix(),
+                    "compatibility profile identity differs",
+                )
+            result[record["id"]] = record
+        return result
+
+    root_profiles = by_id(root_records)
+    support_profiles = by_id(support_records)
+    if set(root_profiles) - set(support_profiles) != {WP004B_ROOT_ONLY_PROFILE_ID}:
+        raise ContractError(
+            "RIA-BOUNDARY",
+            TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix(),
+            "root-only profile transition differs",
+        )
+    if set(support_profiles) - set(root_profiles) != WP004B_SUPPORT_ONLY_PROFILE_IDS:
+        raise ContractError(
+            "RIA-BOUNDARY",
+            TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix(),
+            "support-only profile transition differs",
+        )
+    for profile_id in sorted(set(root_profiles) & set(support_profiles)):
+        if support_profiles[profile_id] != _wp004b_support_profile_projection(
+            root_profiles[profile_id]
+        ):
+            raise ContractError(
+                "RIA-BOUNDARY",
+                TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix(),
+                f"shared profile semantic projection differs: {profile_id}",
+            )
 
 
 def _load_taxonomy_archive_transition(
@@ -5748,6 +5933,21 @@ def validate_overlay_guards(
         ]
     baselines = _encoded_baselines(contract)
     projections = _projection_map(contract)
+    if contract.get("currentPackRegistry") == REGISTRY_PATH.as_posix():
+        try:
+            wp004b_rows = _load_wp004b_transition_rows(
+                root.absolute(), proposed_oid, runner
+            )
+        except (ContractError, _GitError):
+            return [
+                Finding(
+                    "RIA-OVERLAY",
+                    WP004B_DOCUMENT_AUTHORITY_MIGRATION_PATH.as_posix(),
+                    "Current transition authority is unavailable",
+                )
+            ]
+    else:
+        wp004b_rows = ()
     try:
         taxonomy_sources = _load_taxonomy_archive_transition(
             root.absolute(), proposed_oid=proposed_oid, runner=runner
@@ -5798,6 +5998,19 @@ def validate_overlay_guards(
             proposed = context.proposed_bytes[path]
             raw_baseline = baseline
             raw_proposed = proposed
+            try:
+                proposed = _wp004b_transition_link_mask(
+                    proposed, path, wp004b_rows
+                )
+            except _GitError:
+                findings.append(
+                    Finding(
+                        "RIA-OVERLAY",
+                        path.as_posix(),
+                        "WP-004B transition target is malformed",
+                    )
+                )
+                continue
             if path == transition_path:
                 digest = transition.get("targetSha256") if transition else None
                 length = transition.get("targetByteLength") if transition else None
@@ -5891,6 +6104,9 @@ def validate_overlay_guards(
             proposed = _proposed_path(root.absolute(), path, proposed_oid, runner)
             raw_baseline = baseline
             raw_proposed = proposed
+            proposed = _wp004b_transition_link_mask(
+                proposed, path, wp004b_rows
+            )
             baseline = _projection_mask(
                 baseline,
                 path,

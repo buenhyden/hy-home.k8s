@@ -38,7 +38,7 @@ contracts.
 - The approved terminal work-unit route is
   `docs/03.specs/<NNNN>-<slug>/{spec.md,plan.md,tasks.md}`; `plan.md` is optional
   and `tasks.md` requires both siblings.
-- `docs/04.execution/` is retired; its numeric slot remains unused.
+- `docs/03.specs/` is retired; its numeric slot remains unused.
 - `docs/05.operations/` remains unchanged and continues to own guides,
   incidents, policies, and runbooks.
 - Do not create a Release profile, template, folder, lifecycle, validator, or
@@ -123,6 +123,35 @@ Spec 053 Plan's H1-to-H3 jump. With `TMPDIR=/tmp`, every strict document lane
 and the aggregate repository gate passes; the three all-files defects remain
 explicit Task 2 work and are not terminal waivers.
 
+### Legacy Task ledger inputs
+
+This Task records execution evidence for the approved work-unit-centered SDLC,
+document-governance, and AI-agent-governance consolidation. The closed sequence records WORK-100 through WORK-115 plus the approved
+pre-WORK-104 amendment. WORK-100 through WORK-108 and `WDTC-AMEND-001` are
+complete; WORK-109 through WORK-115 are transferred to the corresponding
+Spec 0054 work items and no longer form a competing active queue.
+
+All results are repository-static. No provider-runtime enforcement, hosted CI,
+remote state, credential-bearing action, release action, or live-cluster result
+is performed or claimed.
+
+- **Plan**:
+  [Document Taxonomy Consolidation Implementation Plan](plan.md)
+- **Specification**:
+  [Spec 052](spec.md)
+- **Program requirement**:
+  [PRD-0008](../../01.requirements/0008-workspace-document-taxonomy-consolidation.md)
+- **Architecture**:
+  [AD-0011](../../02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md)
+- **Current decision**:
+  [ADR-0024](../../02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md)
+- **Accepted transition predecessor**:
+  [ADR-0023](../../02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md)
+- **External evidence**:
+  [Spec-driven SDLC and document contracts](../../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md)
+  and [AI agents and Agency Agents](../../90.references/research/2026-08-08-wer/ai-agents-and-agency-agents.md)
+- **Design baseline**: transition design `14a0a75c`; approved terminal
+  amendment carried by `1452dbfd` through `446e336a`.
 ## Goals & In-Scope
 
 - Activate accepted ADR-0023 and correct the machine lineage atomically.
@@ -391,6 +420,88 @@ All results are repository-static. Hosted CI, provider-runtime enforcement,
 remote state, credentials, and live cluster behavior remain `DEFER` or outside
 scope and are never inferred from these checks.
 
+### Legacy Task verification evidence
+
+WORK-100 and WORK-101 retain their accepted decision-lineage and controller
+all-files fixed-point evidence. WORK-102 established the exact transition
+contract and fail-closed migration tool. WORK-103 archived exactly 50 unmatched
+sources into a 93-record repository while preserving prior envelopes.
+`WDTC-AMEND-001` then closed the terminal AD, identity, archive-layout, and
+script-inventory design through commit `446e336a` without changing the frozen
+Stage 04 Plan/Task.
+
+WORK-104 verified those frozen source blobs, applied only the reviewed move
+phase, and reported `phase=move moves=82 archives=50 sources=132`. Post-apply
+evidence is exact: 41 `plan.md`, 41 `tasks.md`, only three Stage 04 README
+files, zero source/target or transaction residue, and zero Stage 05/90/98 body
+diff. Manifest-derived current link repair closed the 790-finding RED; strict
+links/owners, Markdown, transition registry, and migration checks pass. The
+destination Plan and Task now use only the human-approved WORK-105 through
+WORK-115 successor meanings.
+
+Historical WORK-105 evidence records the former eight `docs/02.architecture/requirements/0004..0011` ARD paths.
+records to `docs/02.architecture/descriptions/ad-0004..0011`, preserved the six
+active and two accepted statuses, activated the AD route and Stage 99 PRD/SRS/IFC
+and AD core forms, retired only the authored API Spec form while preserving
+OpenAPI/GraphQL/Protobuf native surfaces, and accepted ADR-0024 as the current
+PRD-0008/AD-0011/Spec-052 authority. Stage 90 and Stage 98 remain byte-immutable,
+Stage 05 has exactly seven reviewed AD-0007 link repairs, and no `artifact_id`
+frontmatter is introduced before WORK-108.
+
+WORK-106 added no document family or one-shot script. The existing registry
+validator now owns the closed active and Stage 98 path-to-ID grammar, global
+declared-ID uniqueness, prohibited namespace selection, transition-versus-
+terminal missing-field rule, exact `change_id`/`migration_id` binding, full
+legacy tombstone hash, and schema-versioned 14-field migration ledger. The
+positive fixture proves the exact 93-row `76 + 17` census with `35/2/4` change
+grouping and `3/8/4/2` tombstones; missing/extra fields, aliases, malformed
+objects/digests, action/replacement errors, record-kind drift, and duplicate
+legacy/stable/artifact identities fail closed. Stage 90 and Stage 98 remain
+byte-identical and mandatory current IDs remain deliberately absent until
+WORK-108.
+
+WORK-107 rehomed the exact 93 Stage 98 records through the reviewed 14-field
+`MIG-0001` ledger. The stable corpus contains 76 change leaves in 41
+`chg-####-<slug>` directories (`35` pairs, `2` plan-only, `4` task-only) and
+17 typed tombstones (`3/8/4/2`). Every legacy path has one unique stable path
+and artifact identity; old ArchiveEnvelope bytes remain recoverable by the
+pinned archive commit, while stable records preserve payload, source commit,
+source blob, and content digest. Current documents still route only to the
+Stage 98 collection index. Archive recovery 27/27, cutover 33/33, validation
+44/44, migration 58/58, active-corpus retention 101/101, RIA 94/94, strict
+registry/Markdown/links, residue closure, and the synchronized repository
+aggregate all passed. Stage 90 remained unchanged and WORK-108 remains the
+sole owner of mandatory current-document artifact-ID backfill.
+
+WORK-108 backfilled exactly 286 outer identities: 192 current authored records,
+93 stable Stage 98 records, and `MIG-0001`. The registry requires
+`artifact_id` only for the 18 mandatory source profiles and omits it from every
+template and prohibited surface. Path-derived IDs and frontmatter agree,
+declarations are globally unique, all eight Architecture Descriptions are
+`AD-0004` through `AD-0011`, and Stage 98 embedded payload bytes remain opaque.
+The finite lifecycle projection accepts only the exact WORK-107-to-WORK-108
+outer-line insertion; malformed, duplicated, reordered, missing, or unrelated
+body changes fail closed. Route state remains `transition` for WORK-109.
+
+The final finite lifecycle adapter consumes the rehome only when the WORK-106
+commit, both registry blobs, canonical migration document and template, all 93
+legacy envelope objects, and all 93 rendered stable objects match exactly.
+Lifecycle staged validation, the 754-case lifecycle self-test, and the 20-test
+archive lifecycle module pass. Affected and staged lanes pass over 130 paths;
+plain pre-commit and the 132-path all-files lane pass every applicable gate
+without mutation. The final no-renames scope is `A95/D93/M37` with zero
+unstaged or untracked paths.
+
+The controller-owned WORK-104 fixed point ran
+`TMPDIR=/tmp pre-commit run --all-files` with exit `0`; every applicable hook
+passed and the run produced no mutation. Post-run scope remained exactly
+`A82/D82/M73` with zero unstaged paths.
+
+No provider, hosted, remote, credential-bearing, Release-family, or live action
+was performed or claimed. WORK-109 ownership transferred to Spec 0054
+`WORK-054-002` and may proceed only while
+the completed WORK-108 identity census, WORK-107 stable rehome, and WORK-105
+accepted eight-AD authority gate remain green.
 ## Risks & Mitigations
 
 | Risk | Owner | Mitigation |
@@ -406,6 +517,32 @@ scope and are never inferred from these checks.
 | One-time tooling becomes permanent legacy | Platform maintainer | WORK-114 deletes map, tool, and tool-only tests after permanent fixtures own terminal behavior. |
 | Large changes hide regressions | Reviewer | One logical commit per task, fresh worker, two review stages, focused and aggregate gates. |
 
+### Legacy Task approval and rollback boundaries
+
+- **Allowed Paths**: `docs/**` with existing Stage 98 envelopes read-only,
+  repository-local gateway/provider projections, `.github/**`, `.pre-commit-config.yaml`,
+  `.gitignore`, `scripts/**`, and `tests/**` named by the Plan.
+- **Forbidden Paths**: modification/deletion of an existing
+  `docs/98.archive/**` envelope or payload; `gitops/**`, `infrastructure/**`,
+  `traefik/**`, `policy/**`, `secrets/**`, provider credentials, remote systems,
+  and live-cluster state.
+- **Approval Required**: new document families, Stage 05 or lifecycle-ID
+  renumbering, uncertain historical disposition, unique rule/fixture removal,
+  evidence-class promotion, existing archive mutation, secret/credential access,
+  external write, remote action, or live mutation.
+- **Static Validation**: implementers run focused, strict, affected/staged,
+  aggregate, and diff checks for the exact logical scope. Controller-owned
+  all-files and commit actions run only when explicitly delegated.
+- **Live Validation**: `DEFER` — the program performs and claims no provider,
+  hosted, remote, credential-bearing, Release, or live action.
+- **Secret / Vault Handling**: scanner findings are adjudicated by exact
+  location without printing values. No token, secret, kubeconfig, Vault value,
+  provider body, prompt body, or credential file is read or retained.
+- **Rollback Plan**: each WORK item is one revertible commit. A failing
+  uncommitted tranche is reversed only with a reviewed patch; broad reset and
+  archive-payload repair are prohibited.
+- **Evidence Location**: this Task, the corresponding logical commits, new
+  archive index entries, and `docs/00.agent-governance/memory/progress.md`.
 ## Completion Criteria
 
 - WORK-100 through WORK-104 and `WDTC-AMEND-001` retain their factual commit,
@@ -433,31 +570,55 @@ scope and are never inferred from these checks.
 - **Program requirement**:
   [PRD-0008](../../01.requirements/0008-workspace-document-taxonomy-consolidation.md)
 - **Architecture**:
-  [AD-0011](../../02.architecture/descriptions/ad-0011-document-taxonomy-consolidation-architecture.md)
+  [AD-0011](../../02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md)
 - **Decision**:
   [ADR-0024](../../02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md)
 - **Specification**:
   [Spec 052](spec.md)
 - **Execution evidence**:
-  [Task: Document Taxonomy Consolidation](tasks.md)
+  [Task: Document Taxonomy Consolidation](README.md#task-records)
 
 ### Lifecycle Traceability
 
 | Spec criterion | Work package | Expected Task |
 | --- | --- | --- |
-| [VAL-WDTC-001](spec.md#success-criteria--verification-plan) | WORK-104, WORK-109, WORK-114, WORK-115 | [Work-unit inventory, terminal routes, residue and closure](tasks.md) |
-| [VAL-WDTC-002](spec.md#success-criteria--verification-plan) | WORK-109, WORK-115 | [Stage 05 stability and Release-family absence](tasks.md) |
-| [VAL-WDTC-003](spec.md#success-criteria--verification-plan) | WORK-107..109, WORK-115 | [Stable path and closed date-exception evidence](tasks.md) |
-| [VAL-WDTC-004](spec.md#success-criteria--verification-plan) | WORK-105 | [Eight-AD conversion and atomic ADR-0024 projection](tasks.md) |
-| [VAL-WDTC-005](spec.md#success-criteria--verification-plan) | WORK-109 | [Disjoint authority-owner inventory](tasks.md) |
-| [VAL-WDTC-006](spec.md#success-criteria--verification-plan) | WORK-102, WORK-103, WORK-106, WORK-107 | [Disposition, archive, ledger and recovery evidence](tasks.md) |
-| [VAL-WDTC-007](spec.md#success-criteria--verification-plan) | WORK-111, WORK-112, WORK-114 | [Complete script ledger and consumer/fixture parity](tasks.md) |
-| [VAL-WDTC-008](spec.md#success-criteria--verification-plan) | WORK-110 | [Agent-governance schema and semantic negatives](tasks.md) |
-| [VAL-WDTC-009](spec.md#success-criteria--verification-plan) | WORK-113 | [Progress recovery and generated-output residue](tasks.md) |
-| [VAL-WDTC-010](spec.md#success-criteria--verification-plan) | WORK-101, WORK-114, WORK-115 | [Baseline repair and final fixed-point results](tasks.md) |
-| [VAL-WDTC-011](spec.md#success-criteria--verification-plan) | WORK-115 | [Specs 047-051 status and resumption handoff](tasks.md) |
-| [VAL-WDTC-012](spec.md#success-criteria--verification-plan) | All work | [Repository-static evidence classification](tasks.md) |
-| [VAL-WDTC-013](spec.md#success-criteria--verification-plan) | WORK-105 | [Eight-AD and authored API Spec complete consumer disposition](tasks.md) |
-| [VAL-WDTC-014](spec.md#success-criteria--verification-plan) | WORK-106, WORK-108 | [Global mandatory/prohibited artifact-ID results](tasks.md) |
-| [VAL-WDTC-015](spec.md#success-criteria--verification-plan) | WORK-106, WORK-107 | [93-row stable archive migration ledger](tasks.md) |
-| [VAL-WDTC-016](spec.md#success-criteria--verification-plan) | WORK-111, WORK-112, WORK-114 | [50-row disposition and exact 49/47 censuses](tasks.md) |
+| [VAL-WDTC-001](spec.md#success-criteria--verification-plan) | WORK-104, WORK-109, WORK-114, WORK-115 | [WORK-104](tasks/tsk-0006-work-104.md), [WORK-109](tasks/tsk-0011-work-109.md), [WORK-114](tasks/tsk-0016-work-114.md), [WORK-115](tasks/tsk-0017-work-115.md) |
+| [VAL-WDTC-002](spec.md#success-criteria--verification-plan) | WORK-109, WORK-115 | [WORK-109](tasks/tsk-0011-work-109.md), [WORK-115](tasks/tsk-0017-work-115.md) |
+| [VAL-WDTC-003](spec.md#success-criteria--verification-plan) | WORK-107..109, WORK-115 | [WORK-107](tasks/tsk-0009-work-107.md), [WORK-108](tasks/tsk-0010-work-108.md), [WORK-109](tasks/tsk-0011-work-109.md), [WORK-115](tasks/tsk-0017-work-115.md) |
+| [VAL-WDTC-004](spec.md#success-criteria--verification-plan) | WORK-105 | [WORK-105](tasks/tsk-0007-work-105.md) |
+| [VAL-WDTC-005](spec.md#success-criteria--verification-plan) | WORK-109 | [WORK-109](tasks/tsk-0011-work-109.md) |
+| [VAL-WDTC-006](spec.md#success-criteria--verification-plan) | WORK-102, WORK-103, WORK-106, WORK-107 | [WORK-102](tasks/tsk-0003-work-102.md), [WORK-103](tasks/tsk-0004-work-103.md), [WORK-106](tasks/tsk-0008-work-106.md), [WORK-107](tasks/tsk-0009-work-107.md) |
+| [VAL-WDTC-007](spec.md#success-criteria--verification-plan) | WORK-111, WORK-112, WORK-114 | [WORK-111](tasks/tsk-0013-work-111.md), [WORK-112](tasks/tsk-0014-work-112.md), [WORK-114](tasks/tsk-0016-work-114.md) |
+| [VAL-WDTC-008](spec.md#success-criteria--verification-plan) | WORK-110 | [WORK-110](tasks/tsk-0012-work-110.md) |
+| [VAL-WDTC-009](spec.md#success-criteria--verification-plan) | WORK-113 | [WORK-113](tasks/tsk-0015-work-113.md) |
+| [VAL-WDTC-010](spec.md#success-criteria--verification-plan) | WORK-101, WORK-114, WORK-115 | [WORK-101](tasks/tsk-0002-work-101.md), [WORK-114](tasks/tsk-0016-work-114.md), [WORK-115](tasks/tsk-0017-work-115.md) |
+| [VAL-WDTC-011](spec.md#success-criteria--verification-plan) | WORK-115 | [WORK-115](tasks/tsk-0017-work-115.md) |
+| [VAL-WDTC-012](spec.md#success-criteria--verification-plan) | All work | [WORK-100](tasks/tsk-0001-work-100.md), [WORK-101](tasks/tsk-0002-work-101.md), [WORK-102](tasks/tsk-0003-work-102.md), [WORK-103](tasks/tsk-0004-work-103.md), [WDTC-AMEND-001](tasks/tsk-0005-wdtc-amend-001.md), [WORK-104](tasks/tsk-0006-work-104.md), [WORK-105](tasks/tsk-0007-work-105.md), [WORK-106](tasks/tsk-0008-work-106.md), [WORK-107](tasks/tsk-0009-work-107.md), [WORK-108](tasks/tsk-0010-work-108.md), [WORK-109](tasks/tsk-0011-work-109.md), [WORK-110](tasks/tsk-0012-work-110.md), [WORK-111](tasks/tsk-0013-work-111.md), [WORK-112](tasks/tsk-0014-work-112.md), [WORK-113](tasks/tsk-0015-work-113.md), [WORK-114](tasks/tsk-0016-work-114.md), [WORK-115](tasks/tsk-0017-work-115.md) |
+| [VAL-WDTC-013](spec.md#success-criteria--verification-plan) | WORK-105 | [WORK-105](tasks/tsk-0007-work-105.md) |
+| [VAL-WDTC-014](spec.md#success-criteria--verification-plan) | WORK-106, WORK-108 | [WORK-106](tasks/tsk-0008-work-106.md), [WORK-108](tasks/tsk-0010-work-108.md) |
+| [VAL-WDTC-015](spec.md#success-criteria--verification-plan) | WORK-106, WORK-107 | [WORK-106](tasks/tsk-0008-work-106.md), [WORK-107](tasks/tsk-0009-work-107.md) |
+| [VAL-WDTC-016](spec.md#success-criteria--verification-plan) | WORK-111, WORK-112, WORK-114 | [WORK-111](tasks/tsk-0013-work-111.md), [WORK-112](tasks/tsk-0014-work-112.md), [WORK-114](tasks/tsk-0016-work-114.md) |
+
+### Legacy Task traceability
+
+#### Lifecycle Traceability
+
+| Criterion / work item | Result | Evidence |
+| --- | --- | --- |
+| [WORK-100](plan.md#work-breakdown) | Complete. | ADR-0023 acceptance and PRD-0008 transition projection evidence in `dd8b3465`/`ba180eca`. |
+| [WORK-101](plan.md#work-breakdown) | Complete. | Baseline repair `57ce3746` and controller all-files fixed point. |
+| [WORK-102](plan.md#work-breakdown) | Complete. | Exact transition routes, manifest/tool hardening, and `132/82/50` checks. |
+| [WORK-103](plan.md#work-breakdown) | Complete. | 50 added envelopes, 93-record index, immutable prior records, and recovery checks. |
+| [WDTC-AMEND-001](plan.md#work-breakdown) | Complete. | Human-approved Spec 052/ADR-0024 design carried through `446e336a`. |
+| [WORK-104](plan.md#work-breakdown) | Complete. | Exact 82 move, 41/41 siblings, three Stage 04 READMEs, repaired consumers, and strict focused gates. |
+| [WORK-105](plan.md#work-breakdown) | Complete. | Exact eight-AD conversion, legacy ARD/authored API Spec retirement, ADR-0024 authority acceptance, native surface preservation, and strict focused gates passed. |
+| [WORK-106](plan.md#work-breakdown) | Complete. | Closed path-derived/global identity and exact 14-field ledger validators; strict-cutover 37/37 and repository gates passed. |
+| [WORK-107](plan.md#work-breakdown) | Complete. | Exact 93-to-93 stable rehome, 76/17 census, immutable payload/provenance, old-envelope recovery, and aggregate PASS. |
+| [WORK-108](plan.md#work-breakdown) | Complete. | Exact 286 path-derived outer identities, global uniqueness, mandatory/prohibited profile parity, and finite lifecycle projection passed. |
+| [WORK-109](plan.md#work-breakdown) | Transferred. | Spec 0054 `WORK-054-002` owns document authority and route convergence. |
+| [WORK-110](plan.md#work-breakdown) | Transferred. | Spec 0054 `WORK-054-003` owns AI-agent governance convergence. |
+| [WORK-111](plan.md#work-breakdown) | Transferred. | Spec 0054 `WORK-054-010` owns the exact 50-row script ledger. |
+| [WORK-112](plan.md#work-breakdown) | Transferred. | Spec 0054 `WORK-054-011` owns wrapper retirement and the exact 49 count. |
+| [WORK-113](plan.md#work-breakdown) | Transferred. | Spec 0054 `WORK-054-012` owns recoverable progress/graph cleanup. |
+| [WORK-114](plan.md#work-breakdown) | Transferred. | Spec 0054 `WORK-054-013` owns transition retirement and the exact 47 count. |
+| [WORK-115](plan.md#work-breakdown) | Transferred. | Spec 0054 `WORK-054-014` owns final closure and PRD-0007 handoff. |

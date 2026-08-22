@@ -387,7 +387,7 @@ authoring. It creates no PRD or AD and authorizes no live, hosted, or
 provider-runtime observation. It is the sixth typed standalone-execution relation
 under ADR 0022, with a reciprocal
 [Plan](plan.md)
-and [Task](tasks.md)
+and [Task](README.md#task-records)
 authored under the repository's standalone execution rules. Its refresh target is
 the [2026-08-08 WER pack](../../90.references/research/2026-08-08-wer/README.md),
 and its predecessor cycle is

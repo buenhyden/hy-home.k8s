@@ -243,7 +243,7 @@ Source roles are closed to `policy owner`, `machine owner`, `human index`,
 - [Pack Index](README.md)
 - [Spec 054](../../../03.specs/0055-workspace-governance-audit-and-remediation/spec.md)
 - [Implementation Plan](../../../03.specs/0055-workspace-governance-audit-and-remediation/plan.md)
-- [Implementation Task](../../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md)
+- [Implementation Task](../../../03.specs/0055-workspace-governance-audit-and-remediation/README.md)
 - [Harness Catalog](../../../00.agent-governance/harness-catalog.md)
 - [Harness Implementation Map](../../../00.agent-governance/harness-catalog.md)
 - [Memory Contract](../../../00.agent-governance/memory/README.md)

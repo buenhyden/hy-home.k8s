@@ -383,7 +383,7 @@ and the required QA ordering/formatter rerun.
 ## Traceability
 
 - **PRD**: [PRD 003](../../01.requirements/0003-workspace-agent-governance-platform.md)
-- **AD**: [AD 0006](../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md)
+- **AD**: [AD 0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md)
 - **Decision**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **CI foundation**: [Spec 039](../0039-github-ci-qa-evidence/spec.md)
 - **Roster/eval predecessor**: [Spec 044](../0044-agent-roster-evaluation-and-admission/spec.md)
@@ -391,21 +391,21 @@ and the required QA ordering/formatter rerun.
   `279f8103`
 - **Successor**: [Spec 046](../0046-agent-governance-program-closure/spec.md)
 - **Execution Plan**: [Agent Governance CI and QA Cutover Implementation Plan](plan.md)
-- **Task evidence**: [Agent Governance CI and QA Cutover Task](tasks.md)
+- **Task evidence**: [Agent Governance CI and QA Cutover Task](README.md#task-records)
 
 ### Lifecycle Traceability
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-PRD-FUN-13](../../01.requirements/0003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AGQC-001 | Selector and aggregate fixtures prove the Spec 039 CI ownership boundary. |
-| N/A — VAL-AGQC-002 shares the REQ-PRD-FUN-13 source linked above | VAL-AGQC-002 | Workflow-security fixtures prove full-SHA and least-permission enforcement. |
-| N/A — VAL-AGQC-003 shares the REQ-PRD-FUN-13 source linked above | VAL-AGQC-003 | Static contract and parity fixtures produce identical local/CI verdicts. |
-| N/A — VAL-AGQC-004 shares the REQ-PRD-FUN-13 source linked above | VAL-AGQC-004 | Evidence-lane fixtures keep provider credentials and canaries outside GitHub CI. |
+| [REQ-0003-NFR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AGQC-001 | Selector and aggregate fixtures prove the Spec 039 CI ownership boundary. |
+| N/A — VAL-AGQC-002 shares the REQ-0003-NFR-0002 source linked above | VAL-AGQC-002 | Workflow-security fixtures prove full-SHA and least-permission enforcement. |
+| N/A — VAL-AGQC-003 shares the REQ-0003-NFR-0002 source linked above | VAL-AGQC-003 | Static contract and parity fixtures produce identical local/CI verdicts. |
+| N/A — VAL-AGQC-004 shares the REQ-0003-NFR-0002 source linked above | VAL-AGQC-004 | Evidence-lane fixtures keep provider credentials and canaries outside GitHub CI. |
 | N/A — VAL-AGQC-007 shares the PRD-0003 source linked in VAL-AGQC-001 | VAL-AGQC-007 | Consumer migration and active scans prove safe legacy removal. |
 | N/A — VAL-AGQC-008 shares the PRD-0003 source linked in VAL-AGQC-001 | VAL-AGQC-008 | Historical scans prove intentional records remain non-current. |
 | N/A — VAL-AGQC-009 shares the PRD-0003 source linked in VAL-AGQC-001 | VAL-AGQC-009 | Checkpoint identity and durable memory fixtures prove repository-static isolation and lifecycle policy. |
 | N/A — VAL-AGQC-005 shares the PRD-0003 source linked in VAL-AGQC-001 | VAL-AGQC-005 | Task evidence proves the mandatory QA lane ordering. |
-| N/A — REQ-PRD-MET-11 shares the PRD-0003 source linked in VAL-AGQC-001 | VAL-AGQC-006 | All-files and formatter rerun fixtures prove clean completion. |
+| N/A — Acceptance criterion 11 shares the PRD-0003 source linked in VAL-AGQC-001 | VAL-AGQC-006 | All-files and formatter rerun fixtures prove clean completion. |
 | N/A — repeated VAL-AGQC-007 metric shares the PRD-0003 source linked above | VAL-AGQC-007 | Active-corpus scans report zero stale current claim. |
 | N/A — repeated VAL-AGQC-008 metric shares the PRD-0003 source linked above | VAL-AGQC-008 | Historical relation validation prevents old evidence from becoming current. |
 | N/A — repeated VAL-AGQC-009 metric shares the PRD-0003 source linked above | VAL-AGQC-009 | Synthetic isolation and memory-policy fixtures preserve the Spec 043 runtime boundary. |

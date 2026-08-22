@@ -1,7 +1,7 @@
 ---
 title: 'Task: {Task Name}'
 type: sdlc/task
-status: draft
+status: queued
 owner: platform
 updated: YYYY-MM-DD
 ---

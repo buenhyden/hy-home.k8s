@@ -17,20 +17,14 @@
   ],
   "forwardContracts": [
     {
-      "name": "product",
+      "name": "requirement",
       "profiles": [
-        "sdlc/prd",
-        "sdlc/srs",
-        "sdlc/interface"
+        "sdlc/requirement-package"
       ],
       "edges": [
         [
           "draft",
           "active"
-        ],
-        [
-          "active",
-          "done"
         ]
       ]
     },
@@ -88,8 +82,7 @@
     {
       "name": "execution",
       "profiles": [
-        "sdlc/plan",
-        "sdlc/task"
+        "sdlc/plan"
       ],
       "edges": [
         [
@@ -98,6 +91,22 @@
         ],
         [
           "active",
+          "done"
+        ]
+      ]
+    },
+    {
+      "name": "task-execution",
+      "profiles": [
+        "sdlc/task"
+      ],
+      "edges": [
+        [
+          "queued",
+          "in-progress"
+        ],
+        [
+          "in-progress",
           "done"
         ]
       ]
@@ -356,97 +365,37 @@
       ]
     },
     {
-      "name": "paired-draft-create-allowed",
+      "name": "plan-draft-create-allowed",
       "documents": [
         [
           "docs/03.specs/900-lifecycle-fixture/plan.md",
           "sdlc/plan",
-          "draft"
-        ],
-        [
-          "docs/03.specs/900-lifecycle-fixture/tasks.md",
-          "sdlc/task",
           "draft"
         ]
       ],
       "expectedRuleIds": []
     },
     {
-      "name": "paired-active-create-allowed",
+      "name": "task-queued-create-allowed",
       "documents": [
         [
-          "docs/03.specs/900-lifecycle-fixture/plan.md",
-          "sdlc/plan",
-          "active"
-        ],
-        [
-          "docs/03.specs/900-lifecycle-fixture/tasks.md",
+          "docs/03.specs/900-lifecycle-fixture/tasks/tsk-0001-fixture.md",
           "sdlc/task",
-          "active"
+          "queued"
         ]
       ],
       "expectedRuleIds": []
     },
     {
-      "name": "paired-orphan-create-denied",
+      "name": "task-nonqueued-create-denied",
       "documents": [
         [
-          "docs/03.specs/900-lifecycle-fixture/plan.md",
-          "sdlc/plan",
-          "draft"
+          "docs/03.specs/900-lifecycle-fixture/tasks/tsk-0001-fixture.md",
+          "sdlc/task",
+          "in-progress"
         ]
       ],
       "expectedRuleIds": [
-        "LIFECYCLE-CREATE"
-      ]
-    },
-    {
-      "name": "paired-state-mismatch-denied",
-      "documents": [
-        [
-          "docs/03.specs/900-lifecycle-fixture/plan.md",
-          "sdlc/plan",
-          "active"
-        ],
-        [
-          "docs/03.specs/900-lifecycle-fixture/tasks.md",
-          "sdlc/task",
-          "draft"
-        ]
-      ],
-      "expectedRuleIds": [
-        "LIFECYCLE-CREATE",
-        "LIFECYCLE-CREATE"
-      ]
-    },
-    {
-      "name": "multiple-pairs-create-denied",
-      "documents": [
-        [
-          "docs/03.specs/900-lifecycle-fixture-a/plan.md",
-          "sdlc/plan",
-          "draft"
-        ],
-        [
-          "docs/03.specs/900-lifecycle-fixture-a/tasks.md",
-          "sdlc/task",
-          "draft"
-        ],
-        [
-          "docs/03.specs/901-lifecycle-fixture-b/plan.md",
-          "sdlc/plan",
-          "draft"
-        ],
-        [
-          "docs/03.specs/901-lifecycle-fixture-b/tasks.md",
-          "sdlc/task",
-          "draft"
-        ]
-      ],
-      "expectedRuleIds": [
-        "LIFECYCLE-CREATE",
-        "LIFECYCLE-CREATE",
-        "LIFECYCLE-CREATE",
         "LIFECYCLE-CREATE"
       ]
     },

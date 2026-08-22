@@ -1,6 +1,6 @@
 ---
 title: '{Interface Name} Interface Requirement'
-type: sdlc/interface
+type: sdlc/requirement-package
 status: draft
 owner: platform
 updated: YYYY-MM-DD
@@ -38,6 +38,6 @@ updated: YYYY-MM-DD
 
 ### Lifecycle Traceability
 
-| Upstream requirement | Interface requirement | Downstream owner |
+| Requirement ID | Acceptance criterion | Downstream owner |
 | --- | --- | --- |
-| REQ-FEATURE-001 | REQ-IFC-FEATURE-001 | Architecture Description or Specification owner |
+| REQ-0000-IF-0001 | Observable interface behavior and deterministic evidence | Architecture Description or Specification owner |

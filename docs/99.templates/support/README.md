@@ -89,4 +89,4 @@ This README is located at `docs/99.templates/support/`.
 - [Document Authoring Policy](../../00.agent-governance/rules/document-authoring.md)
 - [Migration Spec](../../03.specs/0011-template-contract-governance-migration/spec.md)
 - [Migration Plan](../../03.specs/0011-template-contract-governance-migration/plan.md)
-- [Migration Task](../../03.specs/0011-template-contract-governance-migration/tasks.md)
+- [Migration Task](../../03.specs/0011-template-contract-governance-migration/README.md)

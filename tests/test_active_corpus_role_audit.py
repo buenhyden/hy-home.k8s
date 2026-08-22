@@ -177,7 +177,7 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
         self.assertNotIn("execution-tracker", roles)
         self.assertIs(self.ledger["helperTests"]["executionTracker"], False)
 
-    def test_frozen_authority_routes_project_through_mig_0002(self) -> None:
+    def test_frozen_authority_routes_project_through_exact_migrations(self) -> None:
         self.assertEqual(
             self.ledger["authority"]["ownerSpec"],
             "docs/03.specs/037-active-corpus-and-execution-retention/spec.md",
@@ -190,8 +190,12 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
         migration = (REPOSITORY_ROOT / self.validator.MIGRATION_PATH).read_text(
             encoding="utf-8"
         )
+        wp004b = (
+            REPOSITORY_ROOT / self.validator.WP004B_MIGRATION_PATH
+        ).read_text(encoding="utf-8")
         projection = self.validator.validate_authority_projection(
             migration,
+            wp004b,
             {
                 self.validator.CURRENT_OWNER_SPEC,
                 self.validator.CURRENT_EXECUTION_TRACKER,
@@ -211,6 +215,9 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
         migration = (REPOSITORY_ROOT / self.validator.MIGRATION_PATH).read_text(
             encoding="utf-8"
         )
+        wp004b = (
+            REPOSITORY_ROOT / self.validator.WP004B_MIGRATION_PATH
+        ).read_text(encoding="utf-8")
         owner_row = (
             '"legacy_path": "docs/03.specs/037-active-corpus-and-execution-retention/'
             'spec.md"'
@@ -232,6 +239,32 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 with self.assertRaises(self.validator.RoleAuditError) as raised:
                     self.validator.validate_authority_projection(
                         candidate,
+                        wp004b,
+                        {
+                            self.validator.CURRENT_OWNER_SPEC,
+                            self.validator.CURRENT_EXECUTION_TRACKER,
+                        },
+                    )
+                self.assertEqual(raised.exception.code, "ROLE-AUDIT-AUTHORITY")
+
+        wp004b_candidates = {
+            "unsealed authority": wp004b.replace(
+                'status: "sealed"', 'status: "accepted"', 1
+            ),
+            "wrong current Task projection": wp004b.replace(
+                '"replacement": "docs/03.specs/0037-active-corpus-and-'
+                'execution-retention/README.md"',
+                '"replacement": "docs/03.specs/0037-active-corpus-and-'
+                'execution-retention/spec.md"',
+                1,
+            ),
+        }
+        for name, candidate in wp004b_candidates.items():
+            with self.subTest(name=name):
+                with self.assertRaises(self.validator.RoleAuditError) as raised:
+                    self.validator.validate_authority_projection(
+                        migration,
+                        candidate,
                         {
                             self.validator.CURRENT_OWNER_SPEC,
                             self.validator.CURRENT_EXECUTION_TRACKER,
@@ -242,6 +275,7 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
         with self.assertRaises(self.validator.RoleAuditError) as raised:
             self.validator.validate_authority_projection(
                 migration,
+                wp004b,
                 {self.validator.CURRENT_OWNER_SPEC},
             )
         self.assertEqual(raised.exception.code, "ROLE-AUDIT-AUTHORITY")

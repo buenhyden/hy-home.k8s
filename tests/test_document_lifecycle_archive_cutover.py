@@ -37,6 +37,7 @@ from archive_cutover import (  # noqa: E402
     CUTOVER_BASE_COMMIT,
     EXPECTED_ARCHIVE_PATHS,
 )
+import archive_cutover as ARCHIVE_CUTOVER  # noqa: E402
 import archive_cutover_manifest as CUTOVER_MANIFEST  # noqa: E402
 import document_contracts  # noqa: E402
 from archive_recovery import (  # noqa: E402
@@ -472,26 +473,25 @@ class FiniteWork054Wp002TransitionAdmissionTest(unittest.TestCase):
         self.assertTrue(callable(admission), "WP-002 transition admission is missing")
         return admission(**fixture(ROOT, mode, mutation))
 
-    def test_exact_staged_and_ci_transition_consume_only_finite_evidence(self):
+    def test_wp004b_corpus_closes_the_old_wp002_transition_admission(self):
         staged = self._admit(mode="staged")
         ci = self._admit(mode="ci")
-        self.assertEqual(len(staged), 303)
+        self.assertEqual(staged, frozenset())
         self.assertEqual(ci, staged)
-        self.assertIn(
-            PurePosixPath(
-                "docs/98.archive/migrations/"
-                "mig-0002-sdlc-document-and-governance-consolidation.md"
-            ),
-            staged,
+
+    def test_unknown_retired_profile_alias_still_fails_closed(self):
+        current = VALIDATOR.load_registry(ROOT)
+        raw = json.loads(
+            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
+                encoding="utf-8"
+            )
         )
-        self.assertIn(
-            PurePosixPath(
-                "docs/03.specs/0054-sdlc-document-and-agent-governance-"
-                "consolidation/spec.md"
-            ),
-            staged,
-        )
-        self.assertNotIn(PurePosixPath("docs/README.md"), staged)
+        raw["profiles"][0]["id"] = "sdlc/prd-typo"
+        with self.assertRaisesRegex(
+            VALIDATOR.InvocationError,
+            "comparison registry profile has no current lifecycle projection",
+        ):
+            VALIDATOR._classification_registry(current, raw)
 
     def test_authority_manifest_and_target_drift_fail_closed(self):
         for mutation in (
@@ -621,6 +621,52 @@ class FiniteWork054Wp003AgentGovernanceAdmissionTest(unittest.TestCase):
             )
 
 
+class ArchiveCutoverMigrationGraphTests(unittest.TestCase):
+    """Archive replacements resolve through the sealed migration graph."""
+
+    def test_exact_multi_hop_graph_resolves_to_current_profiles(self):
+        edges = {
+            "docs/legacy.md": "docs/intermediate.md",
+            "docs/intermediate.md": "docs/current.md",
+            "docs/current-self.md": "docs/current-self.md",
+        }
+        profiles = {
+            "docs/current.md": "sdlc/plan",
+            "docs/current-self.md": "sdlc/requirement-package",
+        }
+        self.assertEqual(
+            ARCHIVE_CUTOVER._resolve_migration_graph(edges, profiles),
+            {
+                "docs/current-self.md": "docs/current-self.md",
+                "docs/intermediate.md": "docs/current.md",
+                "docs/legacy.md": "docs/current.md",
+            },
+        )
+
+    def test_graph_rejects_cycle_unknown_missing_and_wrong_profile(self):
+        cases = (
+            (
+                "cycle",
+                {"docs/a.md": "docs/b.md", "docs/b.md": "docs/a.md"},
+                {},
+            ),
+            ("unknown", {"docs/a.md": "docs/unknown.md"}, {}),
+            (
+                "missing-target",
+                {"docs/a.md": "docs/missing.md"},
+                {"docs/current.md": "sdlc/plan"},
+            ),
+            (
+                "wrong-profile",
+                {"docs/a.md": "docs/archive.md"},
+                {"docs/archive.md": ARCHIVE_PROFILE},
+            ),
+        )
+        for name, edges, profiles in cases:
+            with self.subTest(name=name), self.assertRaises(RuntimeError):
+                ARCHIVE_CUTOVER._resolve_migration_graph(edges, profiles)
+
+
 class FiniteWork108ArtifactIdentityAdmissionTest(unittest.TestCase):
     @staticmethod
     def _git_bytes(specifier: str) -> bytes:
@@ -714,6 +760,70 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
         self.assertNotIn(
             "lifecycleContracts", route_contract["documentContracts"]
         )
+
+    def test_wp004b_staged_document_authority_cutover_is_finitely_admitted(self):
+        diagnostics = VALIDATOR._evaluate_comparison(
+            ROOT,
+            load_registry(ROOT),
+            mode="staged",
+        )
+
+        self.assertEqual(diagnostics, ())
+
+    def test_wp004b_finite_admission_rejects_missing_extra_and_source_drift(self):
+        base_commit = VALIDATOR._resolve_commit(ROOT, "HEAD", "HEAD")
+        base = VALIDATOR._tree_blob_map(ROOT, base_commit)
+        proposed = VALIDATOR._index_blob_map(ROOT)
+        accepted = VALIDATOR.finite_work054_wp004b_document_authority_paths(
+            root=ROOT,
+            mode="staged",
+            base_commit=base_commit,
+            base_blobs=base,
+            proposed_blobs=proposed,
+        )
+        tasks = sorted(
+            (
+                path
+                for path in accepted
+                if VALIDATOR.WORK054_WP004B_TASK_PATTERN.fullmatch(path.as_posix())
+            ),
+            key=PurePosixPath.as_posix,
+        )
+        self.assertEqual(len(tasks), 315)
+
+        missing = dict(proposed)
+        missing.pop(tasks[0])
+        extra = dict(proposed)
+        extra[
+            PurePosixPath(
+                "docs/03.specs/9999-rogue/tasks/tsk-0001-rogue.md"
+            )
+        ] = "0" * 40
+        drifted_base = dict(base)
+        legacy_task = next(
+            path
+            for path in base
+            if path.as_posix().endswith(
+                "0055-workspace-governance-audit-and-remediation/tasks.md"
+            )
+        )
+        drifted_base[legacy_task] = "0" * 40
+
+        for case_base, case_proposed in (
+            (base, missing),
+            (base, extra),
+            (drifted_base, proposed),
+        ):
+            self.assertEqual(
+                VALIDATOR.finite_work054_wp004b_document_authority_paths(
+                    root=ROOT,
+                    mode="staged",
+                    base_commit=base_commit,
+                    base_blobs=case_base,
+                    proposed_blobs=case_proposed,
+                ),
+                frozenset(),
+            )
 
     def test_production_compare_uses_validation_class_to_freeze_terminal_documents(self):
         registry = load_registry(ROOT)

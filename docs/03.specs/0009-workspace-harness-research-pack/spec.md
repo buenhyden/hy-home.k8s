@@ -273,7 +273,7 @@ rg --files | rg '(^|/)progress\.md$'
 ## Traceability
 
 - **Workspace governance platform PRD**: `../../01.requirements/0003-workspace-agent-governance-platform.md`
-- **Workspace governance AD**: `../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md`
+- **Workspace governance AD**: `../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md`
 - **Canonical adapter ADR**: `../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md`
 - **Existing harness gap-analysis spec**: `../0006-workspace-harness-gap-analysis/spec.md`
 - **Execution plan**: `../../04.execution/plans/2026-07-02-workspace-harness-research-pack.md`

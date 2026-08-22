@@ -403,7 +403,7 @@ secret-value check is part of acceptance.
 - **Conflicting program requirement**:
   [PRD-0008](../../01.requirements/0008-workspace-document-taxonomy-consolidation.md)
 - **Conflicting architecture**:
-  [AD-0011](../../02.architecture/descriptions/ad-0011-document-taxonomy-consolidation-architecture.md)
+  [AD-0011](../../02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md)
 - **Approved requirement source**: the 2026-08-08 human request and explicit
   approval in the current Codex task.
 - **Governing standalone decision**:
@@ -411,7 +411,7 @@ secret-value check is part of acceptance.
 - **Execution artifacts**:
   [Plan](plan.md)
   and
-  [Task](tasks.md).
+  [Task](README.md#task-records).
 
 ### Lifecycle Traceability
 

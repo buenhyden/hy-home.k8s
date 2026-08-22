@@ -1,10 +1,11 @@
 ---
 title: 'ADR-0015: Declarative Document Contract Registry'
 type: sdlc/adr
-status: accepted
+status: superseded
 owner: platform
 updated: 2026-07-12
 artifact_id: "ADR-0015"
+superseded_by: ADR-0030
 ---
 
 # ADR-0015: Declarative Document Contract Registry
@@ -85,9 +86,9 @@ historical evidence and provider-native schemas.
 
 ## Traceability
 
-- **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
-- **ARD**: [Workspace Document Assurance Operating Model](../requirements/0008-workspace-document-assurance-operating-model.md)
+- **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/0005-workspace-document-assurance-modernization.md)
+- **ARD**: [Workspace Document Assurance Operating Model](../descriptions/0008-workspace-document-assurance-operating-model.md)
 - **Related ADR**: [Program-to-Tranche Lineage](./0016-program-to-tranche-document-lineage.md)
-- **First Spec**: [Document Contract Registry](../../03.specs/026-document-contract-registry/spec.md)
+- **First Spec**: [Document Contract Registry](../../03.specs/0026-document-contract-registry/spec.md)
 - **JSON Schema Object Validation**: [JSON Schema 2020-12](https://json-schema.org/draft/2020-12/json-schema-validation)
 - **YAML Mapping Order**: [YAML 1.2.2](https://yaml.org/spec/1.2.2/)

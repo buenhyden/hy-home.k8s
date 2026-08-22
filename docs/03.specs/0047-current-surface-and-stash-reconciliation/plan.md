@@ -59,6 +59,26 @@ full object identity rather than assuming `stash@{0}` remains stable.
 - Keep active target files unchanged unless current evidence proves Spec 047
   itself owns a registry or generated-evidence correction.
 
+### Legacy Task ledger inputs
+
+This Task is the durable execution ledger for Spec 047. It will record the
+PRD-0007 program activation, current tracked target inventory, canonical
+surface/owner mapping, one disposition per target, tracked stash reconciliation
+categories, any current-generated residue evidence, reviews, validation, and
+the handoff to Spec 048. CSASR-000 is in progress and all later rows remain
+queued. This activation claims no target implementation, stash content
+adoption, stash apply/pop/drop, remote, or live result.
+
+- Parent [Spec 047](spec.md)
+- Parent [Implementation Plan](plan.md)
+- [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md),
+  [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md),
+  and [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+- Current `validation-surfaces.json`, document profile registry, Current audit
+  pack, tracked repository inventory, and affected-surface validators
+- Preserved stash object
+  `6370311e020620cc2743005896cc88db97d15465`; ordinal and parents must be
+  re-observed at execution time
 ## Goals & In-Scope
 
 - Create and activate the reciprocal Spec 047 Plan/Task path.
@@ -101,8 +121,8 @@ full object identity rather than assuming `stash@{0}` remains stable.
 
 **Create before execution:**
 
-- `docs/04.execution/plans/2026-08-02-current-surface-and-stash-reconciliation.md`
-- `docs/04.execution/tasks/2026-08-02-current-surface-and-stash-reconciliation.md`
+- `docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md`
+- `docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records`
 
 **Modify during execution:**
 
@@ -114,19 +134,19 @@ full object identity rather than assuming `stash@{0}` remains stable.
   encoded there
 - `docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md`
 - `docs/03.specs/README.md`
-- `docs/04.execution/plans/README.md`
-- `docs/04.execution/tasks/README.md`
+- `docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md`
+- `docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records`
 - the five reciprocal program Plan/Task pairs:
-  - `docs/04.execution/plans/2026-08-02-current-surface-and-stash-reconciliation.md`
-    and `docs/04.execution/tasks/2026-08-02-current-surface-and-stash-reconciliation.md`
-  - `docs/04.execution/plans/2026-08-02-github-routing-and-ci-evidence.md`
-    and `docs/04.execution/tasks/2026-08-02-github-routing-and-ci-evidence.md`
-  - `docs/04.execution/plans/2026-08-02-platform-validation-and-security-evidence.md`
-    and `docs/04.execution/tasks/2026-08-02-platform-validation-and-security-evidence.md`
-  - `docs/04.execution/plans/2026-08-02-example-iac-and-validator-qa.md`
-    and `docs/04.execution/tasks/2026-08-02-example-iac-and-validator-qa.md`
-  - `docs/04.execution/plans/2026-08-02-repository-assurance-integration-and-closure.md`
-    and `docs/04.execution/tasks/2026-08-02-repository-assurance-integration-and-closure.md`
+  - `docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md`
+    and `docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records`
+  - `docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md`
+    and `docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records`
+  - `docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md`
+    and `docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records`
+  - `docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md`
+    and `docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records`
+  - `docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md`
+    and `docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records`
 - `docs/00.agent-governance/memory/progress.md`
 - `docs/90.references/data/active-corpus-residue-closure.json` only after a
   current validator-proven regeneration need
@@ -184,10 +204,10 @@ full object identity rather than assuming `stash@{0}` remains stable.
 - [ ] Commit the exact two-phase activation sequence.
 
   ```bash
-  rtk git add docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md docs/02.architecture/decisions/README.md docs/04.execution/plans/2026-08-02-current-surface-and-stash-reconciliation.md
+  rtk git add docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md docs/02.architecture/decisions/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md
   rtk git commit -m "docs: activate repository delivery decision"
 
-  rtk git add docs/00.agent-governance/memory/progress.md docs/01.requirements/0007-repository-delivery-and-platform-assurance.md docs/01.requirements/README.md docs/02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md docs/02.architecture/descriptions/README.md docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md docs/02.architecture/decisions/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/README.md docs/04.execution/plans/2026-08-02-current-surface-and-stash-reconciliation.md docs/04.execution/plans/2026-08-02-github-routing-and-ci-evidence.md docs/04.execution/plans/2026-08-02-platform-validation-and-security-evidence.md docs/04.execution/plans/2026-08-02-example-iac-and-validator-qa.md docs/04.execution/plans/2026-08-02-repository-assurance-integration-and-closure.md docs/04.execution/plans/README.md docs/04.execution/tasks/2026-08-02-current-surface-and-stash-reconciliation.md docs/04.execution/tasks/2026-08-02-github-routing-and-ci-evidence.md docs/04.execution/tasks/2026-08-02-platform-validation-and-security-evidence.md docs/04.execution/tasks/2026-08-02-example-iac-and-validator-qa.md docs/04.execution/tasks/2026-08-02-repository-assurance-integration-and-closure.md docs/04.execution/tasks/README.md docs/99.templates/support/document-profiles.json scripts/validate-document-contract-registry.py scripts/validate-links-and-owners.py tests/fixtures/links-and-owners.json
+  rtk git add docs/00.agent-governance/memory/progress.md docs/01.requirements/0007-repository-delivery-and-platform-assurance.md docs/01.requirements/README.md docs/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md docs/02.architecture/descriptions/README.md docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md docs/02.architecture/decisions/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/99.templates/support/document-profiles.json scripts/validate-document-contract-registry.py scripts/validate-links-and-owners.py tests/fixtures/links-and-owners.json
   rtk git commit -m "docs: activate repository delivery program lineage"
   ```
 
@@ -215,7 +235,7 @@ full object identity rather than assuming `stash@{0}` remains stable.
   rtk python3 scripts/validate-markdown-profiles.py --root . --mode strict
   rtk python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts registry
   rtk git diff --check
-  rtk git add docs/04.execution/tasks/2026-08-02-current-surface-and-stash-reconciliation.md docs/00.agent-governance/memory/progress.md
+  rtk git add docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/00.agent-governance/memory/progress.md
   rtk git commit -m "docs: record current surface disposition matrix"
   ```
 
@@ -254,7 +274,7 @@ full object identity rather than assuming `stash@{0}` remains stable.
   evidence unit; never copy the stash's generated object.
 
   ```bash
-  rtk git add docs/04.execution/tasks/2026-08-02-current-surface-and-stash-reconciliation.md docs/00.agent-governance/memory/progress.md docs/90.references/data/active-corpus-residue-closure.json
+  rtk git add docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/00.agent-governance/memory/progress.md docs/90.references/data/active-corpus-residue-closure.json
   rtk git commit -m "docs: record stash reconciliation ledger"
   ```
 
@@ -284,7 +304,7 @@ full object identity rather than assuming `stash@{0}` remains stable.
 - [ ] Commit closure without preclaiming its own SHA.
 
   ```bash
-  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/README.md docs/04.execution/plans/2026-08-02-current-surface-and-stash-reconciliation.md docs/04.execution/plans/README.md docs/04.execution/tasks/2026-08-02-current-surface-and-stash-reconciliation.md docs/04.execution/tasks/README.md docs/99.templates/support/document-profiles.json
+  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/99.templates/support/document-profiles.json
   rtk git commit -m "docs: close current surface reconciliation tranche"
   ```
 
@@ -309,6 +329,17 @@ rtk git diff --check
 No command in this Plan proves hosted, provider, credential-bearing, remote,
 or live readiness. Those lanes remain `DEFER`.
 
+### Legacy Task verification evidence
+
+CSASR-000 starts from clean branch HEAD
+`7a1923d0a93143e3f8d106e98ac5bee25e2a10b5` and observes preserved stash
+object `6370311e020620cc2743005896cc88db97d15465`. It activates only the PRD-0007
+lineage and reciprocal SDLC path; it does not preclaim its own commit SHA or
+any CSASR-001 through CSASR-005 result.
+
+Later work will add the exact target disposition matrix, stash ledger,
+current-generator decision, logical commits, validator results, review
+outcomes, formatter effects, limitations, and successor handoff.
 ## Risks & Mitigations
 
 | Risk | Mitigation |
@@ -320,6 +351,31 @@ or live readiness. Those lanes remain `DEFER`.
 | Stale generated identity is copied | Run the current producer and compare current validation; never reuse stash-generated object IDs. |
 | Successor implementation leaks into foundation | Record `change`/`defer` and `nextSpec`; reject active-target edits not owned by Spec 047. |
 
+### Legacy Task approval and rollback boundaries
+
+- **Allowed Paths**: PRD-0007/AD-0010/ADR-0021, Spec 047, reciprocal
+  Plan/Task and indexes, progress, document profiles, registry projection
+  validator/tests, current tracked target metadata, and validator-proven
+  `active-corpus-residue-closure.json` regeneration.
+- **Forbidden Paths**: ignored/private state, secret values, auth files,
+  provider logs, RTK logs, shell history, live-system state, and the stash's
+  untracked-parent payload.
+- **Approval Required**: any downstream active-target implementation, push,
+  PR, remote mutation, workflow dispatch, credential action, live operation,
+  or stash apply/pop/drop. None is authorized in this Task.
+- **Static Validation**: registry/lifecycle self-tests and staged modes,
+  Markdown/link contracts, affected surfaces, residue closure, repository
+  aggregate, all-files pre-commit, formatter inspection, diff, and independent
+  reviews.
+- **Live Validation**: `DEFER`; no hosted/provider/remote/live result can be
+  promoted from repository-static evidence.
+- **Secret / Vault Handling**: never read or print secret values; record only
+  tracked path metadata and redacted contract results.
+- **Rollback Plan**: revert the smallest CSASR logical commit in reverse order;
+  revert program activation last and preserve the stash throughout.
+- **Evidence Location**: this Task and
+  `../../00.agent-governance/memory/progress.md`; temporary inventories are not
+  durable evidence.
 ## Completion Criteria
 
 - PRD-0007 program lineage is structurally valid with Specs 047-051 ordered and
@@ -338,9 +394,9 @@ or live readiness. Those lanes remain `DEFER`.
 ## Traceability
 
 - **Spec**: [Current Surface and Stash Reconciliation](spec.md)
-- **Task**: [Current Surface and Stash Reconciliation Task](tasks.md)
+- **Task**: [Current Surface and Stash Reconciliation Task](README.md#task-records)
 - **Program**: [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
-- **Architecture**: [AD-0010](../../02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md)
+- **Architecture**: [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
 - **Decision**: [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Successor**: Spec 048 GitHub Routing and CI Evidence in the PRD-0007 program
   lineage
@@ -349,8 +405,26 @@ or live readiness. Those lanes remain `DEFER`.
 
 | Spec criterion | Work package | Expected Task |
 | --- | --- | --- |
-| [VAL-CSASR-001](spec.md#success-criteria--verification-plan) | CSASR-000, CSASR-001 | [Activation and inventory evidence](tasks.md#task-table) |
+| [VAL-CSASR-001](spec.md#success-criteria--verification-plan) | CSASR-000, CSASR-001 | [Activation and inventory evidence](tasks/tsk-0001-csasr-000.md) |
 | N/A — VAL-CSASR-002 and VAL-CSASR-003 share the Spec source above | CSASR-002 | N/A — reciprocal Task is linked in VAL-CSASR-001 |
 | N/A — VAL-CSASR-004 and VAL-CSASR-005 share the Spec source above | CSASR-003, CSASR-004 | N/A — reciprocal Task is linked in VAL-CSASR-001 |
 | N/A — VAL-CSASR-006 and VAL-CSASR-007 share the Spec source above | CSASR-001, CSASR-003 | N/A — reciprocal Task is linked in VAL-CSASR-001 |
 | N/A — VAL-CSASR-008 and VAL-CSASR-009 share the Spec source above | CSASR-005 | N/A — reciprocal Task is linked in VAL-CSASR-001 |
+
+### Legacy Task traceability
+
+- **Spec**: [Current Surface and Stash Reconciliation](spec.md)
+- **Plan**: [Current Surface and Stash Reconciliation Implementation Plan](plan.md)
+- **Successor**: Spec 048 GitHub Routing and CI Evidence
+- **Stash state**: preserved until Spec 051 finishing gate
+
+#### Lifecycle Traceability
+
+| Criterion / work item | Result | Evidence |
+| --- | --- | --- |
+| [CSASR-000](plan.md#work-breakdown) | In Progress | The reciprocal activation set is being validated; commit SHA is not yet claimed. |
+| N/A — CSASR-001 shares the Plan and Spec sources above | Not executed | Queued tracked inventory evidence. |
+| N/A — CSASR-002 shares the Plan and Spec sources above | Not executed | Queued disposition matrix evidence. |
+| N/A — CSASR-003 shares the Plan and Spec sources above | Not executed | Queued tracked stash reconciliation evidence. |
+| N/A — CSASR-004 shares the Plan and Spec sources above | Not executed | Queued current-generator evidence or no-change proof. |
+| N/A — CSASR-005 shares the Plan and Spec sources above | Not executed | Queued closure and handoff evidence. |

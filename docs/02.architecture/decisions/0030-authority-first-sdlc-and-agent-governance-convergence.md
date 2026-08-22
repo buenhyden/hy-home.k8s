@@ -5,6 +5,7 @@ status: accepted
 owner: platform
 updated: 2026-08-20
 artifact_id: "ADR-0030"
+supersedes: "[ADR-0015, ADR-0018, ADR-0019, ADR-0023, ADR-0024, ADR-0025]"
 ---
 
 # ADR-0030: Authority-First SDLC and Agent Governance Convergence

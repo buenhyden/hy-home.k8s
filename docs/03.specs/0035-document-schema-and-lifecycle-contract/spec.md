@@ -195,14 +195,14 @@ strict/snapshot/clean-tree checks are intentionally not pre-claimed.
 - **Predecessor**: [Spec 034](../0034-authority-and-lineage-foundation/spec.md)
 - **Successors**: [Spec 036](../0036-archive-record-and-workspace-boundary/spec.md), [Spec 037](../0037-active-corpus-and-execution-retention/spec.md), [Spec 038](../0038-reference-information-architecture/spec.md), [Spec 039](../0039-github-ci-qa-evidence/spec.md), and [Spec 040](../0040-contract-cutover-and-program-closure/spec.md)
 - **PRD**: [PRD-0006](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
-- **AD**: [AD-0009](../../02.architecture/descriptions/ad-0009-document-lifecycle-evidence-operating-model.md)
+- **AD**: [AD-0009](../../02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md)
 - **Completed execution history**: [Archive Index](../../98.archive/README.md#document-index)
 
 ### Lifecycle Traceability
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-WDLEC-001](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-DSLC-001 | Strict registry selection reports zero uncovered or ambiguous paths. |
+| [REQ-0006-FR-0001](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-DSLC-001 | Strict registry selection reports zero uncovered or ambiguous paths. |
 | N/A — VAL-DSLC-002 shares the PRD-0006 source linked in VAL-DSLC-001 | VAL-DSLC-002 | Frontmatter mutation fixtures cover closed metadata contracts. |
 | N/A — VAL-DSLC-003 shares the PRD-0006 source linked in VAL-DSLC-001 | VAL-DSLC-003 | Base-to-proposed lifecycle fixtures cover each family edge. |
 | N/A — VAL-DSLC-004 shares the PRD-0006 source linked in VAL-DSLC-001 | VAL-DSLC-004 | Negative transition fixtures reject reopen and reactivation. |

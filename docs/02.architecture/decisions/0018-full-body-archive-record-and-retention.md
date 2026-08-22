@@ -1,10 +1,11 @@
 ---
 title: 'ADR-0018: Full-body Archive Record and Retention'
 type: sdlc/adr
-status: accepted
+status: superseded
 owner: platform
 updated: 2026-08-11
 artifact_id: "ADR-0018"
+superseded_by: ADR-0030
 ---
 
 # ADR-0018: Full-body Archive Record and Retention
@@ -87,14 +88,14 @@ unreachable objects may be pruned:
 
 ## Traceability
 
-- **Requirement**: [PRD-006](../../01.requirements/006-workspace-document-lifecycle-and-evidence-consolidation.md)
-- **Architecture**: [ARD-0009](../requirements/0009-document-lifecycle-evidence-operating-model.md)
-- **Archive implementation**: [Spec 036](../../03.specs/036-archive-record-and-workspace-boundary/spec.md)
-- **Execution retention**: [Spec 037](../../03.specs/037-active-corpus-and-execution-retention/spec.md)
+- **Requirement**: [PRD-006](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
+- **Architecture**: [ARD-0009](../descriptions/0009-document-lifecycle-evidence-operating-model.md)
+- **Archive implementation**: [Spec 036](../../03.specs/0036-archive-record-and-workspace-boundary/spec.md)
+- **Execution retention**: [Spec 037](../../03.specs/0037-active-corpus-and-execution-retention/spec.md)
 
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| Existing metadata-only archive decision | Supersedes the Tombstone-only storage model | [Spec 036](../../03.specs/036-archive-record-and-workspace-boundary/spec.md) |
-| [ADR-0024](./0024-terminal-artifact-identity-and-archive-layout.md) | Partially supersedes only the mirrored-original-path requirement and parallel-Tombstone prohibition; preserves full-body payload, provenance, retention, and recovery | [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md) |
+| Existing metadata-only archive decision | Supersedes the Tombstone-only storage model | [Spec 036](../../03.specs/0036-archive-record-and-workspace-boundary/spec.md) |
+| [ADR-0024](./0024-terminal-artifact-identity-and-archive-layout.md) | Partially supersedes only the mirrored-original-path requirement and parallel-Tombstone prohibition; preserves full-body payload, provenance, retention, and recovery | [Spec 052](../../03.specs/0052-document-taxonomy-consolidation/spec.md) |

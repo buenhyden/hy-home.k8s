@@ -107,6 +107,12 @@ WORK054_MIGRATION_PATH = (
     "docs/98.archive/migrations/"
     "mig-0002-sdlc-document-and-governance-consolidation.md"
 )
+WORK054_MIGRATION_PATHS = (
+    WORK054_MIGRATION_PATH,
+    "docs/98.archive/migrations/"
+    "mig-0003-agent-governance-control-plane-consolidation.md",
+    "docs/98.archive/migrations/0004-document-authority-convergence.md",
+)
 WORK054_MIGRATION_SHA256 = MIG0002_DOCUMENT_SHA256
 WORK054_SOURCE_COMMIT = (
     "160ce006969ddb49965c8af193f3e9ee290e18a8"  # pragma: allowlist secret
@@ -429,86 +435,120 @@ def _canonical_document_path(value: object) -> str | None:
     return value
 
 
+def _resolve_migration_graph(
+    edges: Mapping[str, str],
+    current_profiles: Mapping[str, str],
+) -> dict[str, str]:
+    """Resolve a closed migration graph to one selected current owner per source."""
+
+    resolved: dict[str, str] = {}
+    for source in sorted(edges):
+        current = source
+        visited: set[str] = set()
+        while current in edges:
+            if current in visited:
+                raise RuntimeError("migration graph cycle")
+            visited.add(current)
+            target = edges[current]
+            if target == current:
+                break
+            current = target
+        profile = current_profiles.get(current)
+        if (
+            not isinstance(profile, str)
+            or not profile
+            or profile in {ARCHIVE_PROFILE, "content/archive-migration"}
+        ):
+            raise RuntimeError("migration graph target is not current")
+        resolved[source] = current
+    return resolved
+
+
 def _work054_migration_projection(
     root: Path,
     tracked_regular_blobs: Mapping[str, str],
+    registry: Registry,
 ) -> Work054MigrationProjection:
-    """Consume only the exact MIG-0002 bytes and validate every current target."""
+    """Compose exact MIG-0002..0004 rows to selected regular current targets."""
 
     failure = "WORK-054 migration ledger is unavailable"
-    object_id = tracked_regular_blobs.get(WORK054_MIGRATION_PATH)
+    rows_by_path: dict[str, tuple[dict[str, object], ...]] = {}
     try:
-        content = (root / WORK054_MIGRATION_PATH).read_bytes()
-        if (
-            object_id is None
-            or not _regular_file(root, WORK054_MIGRATION_PATH)
-            or len(content) > MIGRATION_DOCUMENT_MAX_BYTES
-        ):
-            raise ValueError
-        staged = read_staged_blob_bounded(
-            root,
-            WORK054_MIGRATION_PATH,
-            max_bytes=MIGRATION_DOCUMENT_MAX_BYTES,
-        )
-        if staged != content:
-            raise ValueError
-        rows = parse_pinned_migration_control(WORK054_MIGRATION_PATH, staged)
+        for migration_path in WORK054_MIGRATION_PATHS:
+            content = (root / migration_path).read_bytes()
+            if (
+                migration_path not in tracked_regular_blobs
+                or not _regular_file(root, migration_path)
+                or len(content) > MIGRATION_DOCUMENT_MAX_BYTES
+            ):
+                raise ValueError
+            staged = read_staged_blob_bounded(
+                root,
+                migration_path,
+                max_bytes=MIGRATION_DOCUMENT_MAX_BYTES,
+            )
+            if staged != content:
+                raise ValueError
+            rows_by_path[migration_path] = parse_pinned_migration_control(
+                migration_path,
+                staged,
+            )
     except (ArchiveContractError, OSError, RuntimeError, ValueError):
         raise RuntimeError(failure) from None
-    if len(rows) != 154:
-        raise RuntimeError(failure)
 
-    current_by_legacy: dict[str, str] = {}
-    stable_paths: set[str] = set()
-    action_counts = {"merged": 0, "moved": 0, "replaced": 0}
-    previous_legacy = ""
-    for row in rows:
-        if type(row) is not dict or tuple(row) != WORK054_LEDGER_FIELDS:
-            raise RuntimeError(failure)
-        legacy = _canonical_document_path(row.get("legacy_path"))
-        action = row.get("action")
-        if (
-            legacy is None
-            or legacy <= previous_legacy
-            or action not in action_counts
-            or row.get("source_commit") != WORK054_SOURCE_COMMIT
-            or _FULL_OBJECT_ID.fullmatch(str(row.get("source_blob", ""))) is None
-            or re.fullmatch(r"[0-9a-f]{64}", str(row.get("content_sha256", "")))
-            is None
-            or not isinstance(row.get("reason"), str)
-            or not row["reason"].strip()
-            or legacy in tracked_regular_blobs
-            or _regular_file(root, legacy)
-        ):
-            raise RuntimeError(failure)
-        previous_legacy = legacy
-        action_counts[action] += 1
-
-        if action == "moved":
-            current = _canonical_document_path(row.get("stable_path"))
-            if (
-                current is None
-                or row.get("replacement") is not None
-                or not isinstance(row.get("artifact_id"), str)
-                or not row["artifact_id"]
-                or current in stable_paths
-            ):
+    edges: dict[str, str] = {}
+    action_counts: dict[str, int] = {}
+    for migration_path in WORK054_MIGRATION_PATHS:
+        previous_legacy = ""
+        for row in rows_by_path[migration_path]:
+            if type(row) is not dict or tuple(row) != WORK054_LEDGER_FIELDS:
                 raise RuntimeError(failure)
-            stable_paths.add(current)
-        else:
-            current = _canonical_document_path(row.get("replacement"))
+            legacy = _canonical_document_path(row.get("legacy_path"))
+            action = row.get("action")
+            target_value = (
+                row.get("stable_path") if action == "moved" else row.get("replacement")
+            )
+            target = _canonical_document_path(target_value)
             if (
-                current is None
-                or row.get("stable_path") is not None
-                or row.get("artifact_id") is not None
+                legacy is None
+                or legacy <= previous_legacy
+                or legacy in edges
+                or action not in {"merged", "moved", "replaced"}
+                or target is None
+                or (action == "moved" and row.get("replacement") is not None)
+                or (action != "moved" and row.get("stable_path") is not None)
+                or _FULL_OBJECT_ID.fullmatch(str(row.get("source_blob", ""))) is None
+                or re.fullmatch(r"[0-9a-f]{64}", str(row.get("content_sha256", "")))
+                is None
+                or not isinstance(row.get("reason"), str)
+                or not row["reason"].strip()
+                or (
+                    legacy != target
+                    and (legacy in tracked_regular_blobs or _regular_file(root, legacy))
+                )
             ):
-                raise RuntimeError(failure)
-        if current not in tracked_regular_blobs or not _regular_file(root, current):
-            raise RuntimeError(failure)
-        current_by_legacy[legacy] = current
+                raise RuntimeError(f"{failure}: row {legacy or migration_path}")
+            previous_legacy = legacy
+            edges[legacy] = target
+            action_counts[action] = action_counts.get(action, 0) + 1
 
-    if action_counts != {"merged": 10, "moved": 141, "replaced": 3}:
-        raise RuntimeError(failure)
+    terminal_paths = {
+        target
+        for target in edges.values()
+        if target not in edges or edges[target] == target
+    }
+    current_profiles: dict[str, str] = {}
+    try:
+        for target in terminal_paths:
+            if target not in tracked_regular_blobs or not _regular_file(root, target):
+                raise RuntimeError(f"{failure}: target {target}")
+            profile = classify_path(registry, PurePosixPath(target))
+            if profile.mode not in {"authored", "frontmatter-free", "template"}:
+                raise RuntimeError(f"{failure}: profile {target}")
+            current_profiles[target] = profile.profile_id
+        current_by_legacy = _resolve_migration_graph(edges, current_profiles)
+    except DocumentContractError as exc:
+        raise RuntimeError(f"{failure}: profile selection") from exc
     return Work054MigrationProjection(
         current_by_legacy=MappingProxyType(current_by_legacy),
         action_counts=tuple(sorted(action_counts.items())),
@@ -955,6 +995,10 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
     registry: Mapping[str, object] = (
         loaded_registry if isinstance(loaded_registry, dict) else {}
     )
+    try:
+        typed_registry = load_registry(root)
+    except (DocumentContractError, OSError, UnicodeDecodeError, ValueError):
+        typed_registry = None
     generic_report = validate_repository_archive(root, registry)
     diagnostics.extend(
         _diagnostic(item.code, item.path) for item in generic_report.diagnostics
@@ -965,9 +1009,12 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         tracked_regular_blobs = MappingProxyType({})
         diagnostics.append(_diagnostic("ARCHIVE-CURRENT-INVENTORY", "docs"))
     try:
+        if typed_registry is None:
+            raise RuntimeError
         work054_projection = _work054_migration_projection(
             root,
             tracked_regular_blobs,
+            typed_registry,
         )
     except RuntimeError:
         work054_projection = Work054MigrationProjection(
@@ -1192,10 +1239,7 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
                 registry_path.relative_to(root).as_posix(),
             )
         )
-    try:
-        typed_registry = load_registry(root)
-    except (DocumentContractError, OSError, UnicodeDecodeError, ValueError):
-        typed_registry = None
+    if typed_registry is None:
         diagnostics.append(
             _diagnostic(
                 "ARCHIVE-AUTHORITY-INCOMPLETE",

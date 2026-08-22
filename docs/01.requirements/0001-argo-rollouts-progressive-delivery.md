@@ -1,13 +1,13 @@
 ---
-title: 'Argo Rollouts Progressive Delivery Product Requirements'
-type: sdlc/prd
+title: 'Argo Rollouts Progressive Delivery Requirement Package'
+type: sdlc/requirement-package
 status: active
 owner: platform
 updated: 2026-07-13
-artifact_id: "PRD-0001"
+artifact_id: "REQ-0001"
 ---
 
-# Argo Rollouts Progressive Delivery Product Requirements
+# Argo Rollouts Progressive Delivery Requirement Package
 
 ## Overview
 
@@ -42,19 +42,19 @@ Rollouts GitOps 리소스와 운영 문서는 이미 저장소에 존재하며, 
 
 ## Functional Requirements
 
-- **REQ-PRD-FUN-01**: 플랫폼은 표준 GitOps 흐름 안에서 Argo Rollouts 기반 점진적 배포 기능을 제공해야 한다. 구체 chart/version 계약은 ADR/Spec이 소유한다.
-- **REQ-PRD-FUN-02**: Rollouts Dashboard UI를 `rollouts.127.0.0.1.nip.io`(ingress-nginx + cert-manager TLS)로 노출해야 한다.
-- **REQ-PRD-FUN-03**: Controller metrics는 운영자가 rollout 상태와 실패 신호를 관찰할 수 있도록 수집 가능해야 한다.
-- **REQ-PRD-FUN-04**: ArgoCD는 Rollouts 관련 리소스를 GitOps sync 상태로 추적할 수 있어야 한다. 구체 AppProject 허용 목록은 downstream Spec이 소유한다.
-- **REQ-PRD-FUN-05**: 기본 promotion 정책은 자동 promotion을 강제하지 않아야 하며, 앱별 Rollout은 승인된 AnalysisTemplate으로 실패 시 자동 abort/rollback을 수행할 수 있어야 한다.
-- **REQ-PRD-FUN-06**: 표준 local route를 통해 `rollouts.127.0.0.1.nip.io` 접근을 제공해야 한다.
+- **REQ-0001-FR-0001**: 플랫폼은 표준 GitOps 흐름 안에서 Argo Rollouts 기반 점진적 배포 기능을 제공해야 한다. 구체 chart/version 계약은 ADR/Spec이 소유한다.
+- **REQ-0001-FR-0002**: Rollouts Dashboard UI를 `rollouts.127.0.0.1.nip.io`(ingress-nginx + cert-manager TLS)로 노출해야 한다.
+- **REQ-0001-FR-0003**: Controller metrics는 운영자가 rollout 상태와 실패 신호를 관찰할 수 있도록 수집 가능해야 한다.
+- **REQ-0001-IF-0001**: ArgoCD는 Rollouts 관련 리소스를 GitOps sync 상태로 추적할 수 있어야 한다. 구체 AppProject 허용 목록은 downstream Spec이 소유한다.
+- **REQ-0001-IF-0002**: 기본 promotion 정책은 자동 promotion을 강제하지 않아야 하며, 앱별 Rollout은 승인된 AnalysisTemplate으로 실패 시 자동 abort/rollback을 수행할 수 있어야 한다.
+- **REQ-0001-IF-0003**: 표준 local route를 통해 `rollouts.127.0.0.1.nip.io` 접근을 제공해야 한다.
 
 ## Success / Acceptance Criteria
 
-- **REQ-PRD-MET-01**: 운영자가 Rollouts controller 상태를 확인할 수 있다. Evidence: `argo-rollouts-controller` Deployment `Available=True`.
-- **REQ-PRD-MET-02**: 운영자가 Dashboard에서 rollout 진행률을 확인할 수 있다. Evidence: `rollouts.127.0.0.1.nip.io` HTTPS 접근 성공.
-- **REQ-PRD-MET-03**: 애플리케이션 팀이 Rollout 리소스를 ArgoCD 상태 모델로 추적할 수 있다. Evidence: ArgoCD가 `Rollout` 리소스를 `Healthy` 또는 `Progressing` 상태로 표시.
-- **REQ-PRD-MET-04**: CI가 Rollouts 관련 정적 계약 회귀를 차단한다. Evidence: repo quality gate와 정적 계약 검증 PASS.
+- **Acceptance criterion 01**: 운영자가 Rollouts controller 상태를 확인할 수 있다. Evidence: `argo-rollouts-controller` Deployment `Available=True`.
+- **Acceptance criterion 02**: 운영자가 Dashboard에서 rollout 진행률을 확인할 수 있다. Evidence: `rollouts.127.0.0.1.nip.io` HTTPS 접근 성공.
+- **Acceptance criterion 03**: 애플리케이션 팀이 Rollout 리소스를 ArgoCD 상태 모델로 추적할 수 있다. Evidence: ArgoCD가 `Rollout` 리소스를 `Healthy` 또는 `Progressing` 상태로 표시.
+- **Acceptance criterion 04**: CI가 Rollouts 관련 정적 계약 회귀를 차단한다. Evidence: repo quality gate와 정적 계약 검증 PASS.
 
 ## Scope and Non-goals
 
@@ -91,21 +91,21 @@ Rollouts GitOps 리소스와 운영 문서는 이미 저장소에 존재하며, 
 
 | Requirement ID | Acceptance criterion | Downstream owner |
 | --- | --- | --- |
-| REQ-PRD-FUN-01 | GitOps 정적 검증이 `platform-rollouts` 설치 계약을 통과하고 운영자가 controller 가용성을 확인할 수 있다. | [AD 0004](../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
-| REQ-PRD-FUN-02 | `rollouts.127.0.0.1.nip.io` HTTPS 경로에서 Dashboard 진행률을 확인할 수 있다. | [AD 0004](../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
-| REQ-PRD-FUN-03 | controller 상태와 metrics 노출 계약이 정적 검증 및 운영 점검에서 관찰 가능하다. | [AD 0004](../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
-| REQ-PRD-FUN-04 | ArgoCD가 `Rollout`을 `Healthy` 또는 `Progressing` 상태로 추적할 수 있다. | [AD 0004](../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
-| REQ-PRD-FUN-05 | 승인된 AnalysisTemplate을 사용하는 앱별 Rollout이 실패 신호에서 abort/rollback 경계를 유지하고 자동 promotion을 강제하지 않는다. | [AD 0004](../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
-| REQ-PRD-FUN-06 | 표준 local route가 Dashboard HTTPS 접근 계약과 일치한다. | [AD 0004](../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
-| REQ-PRD-MET-01 | `argo-rollouts-controller` Deployment가 `Available=True`임을 운영자가 확인할 수 있다. | [AD 0004](../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
-| REQ-PRD-MET-02 | `rollouts.127.0.0.1.nip.io` HTTPS 접근이 성공하고 Dashboard에 진행률이 표시된다. | [AD 0004](../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
-| REQ-PRD-MET-03 | ArgoCD가 기준 Rollout 리소스를 `Healthy` 또는 `Progressing`으로 표시한다. | [AD 0004](../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
-| REQ-PRD-MET-04 | repository quality gate와 Rollouts 정적 계약 검증이 PASS한다. | [AD 0004](../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
+| REQ-0001-FR-0001 | GitOps 정적 검증이 `platform-rollouts` 설치 계약을 통과하고 운영자가 controller 가용성을 확인할 수 있다. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
+| REQ-0001-FR-0002 | `rollouts.127.0.0.1.nip.io` HTTPS 경로에서 Dashboard 진행률을 확인할 수 있다. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
+| REQ-0001-FR-0003 | controller 상태와 metrics 노출 계약이 정적 검증 및 운영 점검에서 관찰 가능하다. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
+| REQ-0001-IF-0001 | ArgoCD가 `Rollout`을 `Healthy` 또는 `Progressing` 상태로 추적할 수 있다. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
+| REQ-0001-IF-0002 | 승인된 AnalysisTemplate을 사용하는 앱별 Rollout이 실패 신호에서 abort/rollback 경계를 유지하고 자동 promotion을 강제하지 않는다. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
+| REQ-0001-IF-0003 | 표준 local route가 Dashboard HTTPS 접근 계약과 일치한다. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
+| N/A — Acceptance criterion 01 remains acceptance-only | `argo-rollouts-controller` Deployment가 `Available=True`임을 운영자가 확인할 수 있다. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
+| N/A — Acceptance criterion 02 remains acceptance-only | `rollouts.127.0.0.1.nip.io` HTTPS 접근이 성공하고 Dashboard에 진행률이 표시된다. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
+| N/A — Acceptance criterion 03 remains acceptance-only | ArgoCD가 기준 Rollout 리소스를 `Healthy` 또는 `Progressing`으로 표시한다. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
+| N/A — Acceptance criterion 04 remains acceptance-only | repository quality gate와 Rollouts 정적 계약 검증이 PASS한다. | [AD 0004](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md) and [Spec 004](../03.specs/0004-argo-rollouts-progressive-delivery/spec.md) |
 
-- **AD**: [`../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md`](../02.architecture/descriptions/ad-0004-argo-rollouts-progressive-delivery.md)
+- **AD**: [`../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md`](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md)
 - **Spec**: [`../03.specs/0004-argo-rollouts-progressive-delivery/spec.md`](../03.specs/0004-argo-rollouts-progressive-delivery/spec.md)
 - **Plan**: [`../04.execution/plans/2026-05-18-argo-rollouts-progressive-delivery.md`](../03.specs/0004-argo-rollouts-progressive-delivery/plan.md)
-- **Task**: [`../04.execution/tasks/2026-05-18-argo-rollouts-progressive-delivery.md`](../03.specs/0004-argo-rollouts-progressive-delivery/tasks.md)
+- **Task**: [`../04.execution/tasks/2026-05-18-argo-rollouts-progressive-delivery.md`](../03.specs/0004-argo-rollouts-progressive-delivery/README.md)
 - **ADR**: [`../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md)
 - **ADR**: [`../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`](../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md)
 - **PRD**: [`./0004-current-local-gitops-platform.md`](./0004-current-local-gitops-platform.md) — cert-manager 의존

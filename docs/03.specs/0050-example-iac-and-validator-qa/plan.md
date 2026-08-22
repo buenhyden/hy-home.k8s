@@ -74,6 +74,25 @@ preparation dependency, while no cloud credential or provider API is required.
 - Preserve current example topology unless a native static failure proves an
   in-scope defect and a focused regression covers the repair.
 
+### Legacy Task ledger inputs
+
+This Task is the sole durable execution-evidence owner for Spec 050. It will
+record the platform-contract extension, exact Terraform/Bicep tools, provider
+lock, native non-deploy results, closed-argv and artifact regressions,
+README/routing/CI ownership, placeholder cleanup, QA, reviews, commits,
+closure, and Spec 051 handoff. Every row is queued; this draft claims no
+implementation, cloud credential, plan, deployment, hosted-current, provider,
+or live result.
+
+- Parent [Spec 050](spec.md)
+- Parent [Implementation Plan](plan.md)
+- [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md),
+  [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md),
+  and [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+- Spec 049 platform contract, exact-tool helper behavior, validation routing,
+  CI owner, aggregate, and residual DEFER records
+- Current AWS Terraform source/constraints/modules, Azure Bicep module graph,
+  example READMEs, `.gitignore`, inventories, and tracked placeholder
 ## Goals & In-Scope
 
 - Extend the existing platform contract/schema/fixture with Terraform and
@@ -192,7 +211,7 @@ stdout/stderr is not durable evidence.
   rtk python3 scripts/validate-markdown-profiles.py --root . --mode strict
   rtk python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts registry
   rtk git diff --check
-  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0050-example-iac-and-validator-qa/spec.md docs/03.specs/README.md docs/04.execution/plans/2026-08-02-example-iac-and-validator-qa.md docs/04.execution/plans/README.md docs/04.execution/tasks/2026-08-02-example-iac-and-validator-qa.md docs/04.execution/tasks/README.md docs/99.templates/support/document-profiles.json
+  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0050-example-iac-and-validator-qa/spec.md docs/03.specs/README.md docs/03.specs/0050-example-iac-and-validator-qa/plan.md docs/03.specs/0050-example-iac-and-validator-qa/plan.md docs/03.specs/0050-example-iac-and-validator-qa/README.md#task-records docs/03.specs/0050-example-iac-and-validator-qa/README.md#task-records docs/99.templates/support/document-profiles.json
   rtk git commit -m "docs: activate example iac validation plan"
   ```
 
@@ -431,7 +450,7 @@ stdout/stderr is not durable evidence.
   ```bash
   rtk python3 scripts/validate-document-lifecycle.py --root . --mode staged
   rtk git diff --check
-  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0050-example-iac-and-validator-qa/spec.md docs/03.specs/README.md docs/04.execution/plans/2026-08-02-example-iac-and-validator-qa.md docs/04.execution/plans/README.md docs/04.execution/tasks/2026-08-02-example-iac-and-validator-qa.md docs/04.execution/tasks/README.md docs/99.templates/support/document-profiles.json
+  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0050-example-iac-and-validator-qa/spec.md docs/03.specs/README.md docs/03.specs/0050-example-iac-and-validator-qa/plan.md docs/03.specs/0050-example-iac-and-validator-qa/plan.md docs/03.specs/0050-example-iac-and-validator-qa/README.md#task-records docs/03.specs/0050-example-iac-and-validator-qa/README.md#task-records docs/99.templates/support/document-profiles.json
   rtk git commit -m "docs: close example iac validation tranche"
   ```
 
@@ -446,6 +465,14 @@ stdout/stderr is not durable evidence.
 | Routing/CI | Existing examples surface, aggregate, manifest job, CI contract | Duplicate primary owner or tool preparation failure fails |
 | Closure | Full tests, aggregate, all-files, diff, independent reviews | Open finding or required SKIP/DEFER blocks closure |
 
+### Legacy Task verification evidence
+
+Not executed. Implementation will record exact CLI versions/artifacts/
+checksums, contract/schema versions, selected providers and lock hashes,
+Terraform/Bicep argv and results, warning codes, cache/artifact boundaries,
+README/routing/CI parity, formatter effects, reviews, commits, and bounded
+cloud/provider DEFER. Planned commands and official release metadata are not
+current PASS evidence.
 ## Risks & Mitigations
 
 - **Provider/module network drift:** commit reviewed provider lock and exact
@@ -462,6 +489,34 @@ stdout/stderr is not durable evidence.
 - **CI command duplication:** keep `manifest-static` primary and assert exact
   command ownership in routing/CI contract tests.
 
+### Legacy Task approval and rollback boundaries
+
+- **Allowed Paths**: existing platform contract/schema/fixture and validator;
+  new shared tool helper/example validator/test/fixtures; Terraform lock;
+  `.gitignore`; validation routing/fixture; manifest CI and CI contract;
+  aggregate/inventories; example READMEs and tracked placeholder; reciprocal
+  SDLC documents/indexes/progress/program relation.
+- **Forbidden Paths**: ignored/private files, credentials, auth files, shell
+  history, RTK logs, secret values, Terraform state/plan/cache/crash/variable
+  secret files, provider response bodies, compiled deployment artifacts, and
+  live cloud/cluster state.
+- **Approval Required**: push, PR, hosted dispatch, Terraform plan/apply/
+  destroy/import/refresh/backend mutation, Azure login/deploy/what-if/resource
+  read, credential use, or live mutation. None is authorized here.
+- **Static Validation**: exact tool/checksum preparation, contract/helper/
+  focused self-tests, fake-tool regressions, Terraform fmt/init/validate,
+  Bicep lint/build, artifact scan, affected/CI/security/aggregate/all-files/
+  diff, and independent requirements/quality/security/infrastructure reviews.
+- **Live Validation**: `DEFER`; cloud/provider/account/subscription/cost/quota/
+  IAM/runtime evidence requires a separate approved provider context.
+- **Secret Handling**: child environments are allowlisted and durable output
+  contains no credential variable/value or full provider response.
+- **Rollback Plan**: revert closure, CI/routing/placeholder, Bicep guidance,
+  Terraform lock, and contract/helper/validator packages in reverse order.
+  CI workflow/contract/test and contract/helper/consumers always revert as
+  matched units.
+- **Evidence Location**: this Task and
+  `../../00.agent-governance/memory/progress.md`.
 ## Completion Criteria
 
 - The contract extension, shared tool helper, example validator, fake-tool
@@ -481,9 +536,9 @@ stdout/stderr is not durable evidence.
 ## Traceability
 
 - **Spec**: [Example IaC and Validator QA](spec.md)
-- **Task**: [Example IaC and Validator QA Task](tasks.md)
+- **Task**: [Example IaC and Validator QA Task](README.md#task-records)
 - **Program**: [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
-- **Architecture**: [AD-0010](../../02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md)
+- **Architecture**: [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
 - **Decision**: [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Predecessor**: Spec 049 Platform Validation and Security Evidence in the
   PRD-0007 program lineage
@@ -494,9 +549,30 @@ stdout/stderr is not durable evidence.
 
 | Spec criterion | Work package | Expected Task |
 | --- | --- | --- |
-| [VAL-EIVQ-001](spec.md#success-criteria--verification-plan) | EIVQ-001, EIVQ-002 | [Closed contract/argv/tool/root mutation evidence](tasks.md#task-table) |
-| N/A — VAL-EIVQ-002 and VAL-EIVQ-003 share the Spec source above | EIVQ-003 | [Exact Terraform, provider lock, native result, and artifact evidence](tasks.md#task-table) |
-| N/A — VAL-EIVQ-004 shares the Spec source above | EIVQ-004 | [Per-source Bicep lint/build/warning evidence](tasks.md#task-table) |
-| N/A — VAL-EIVQ-005 shares the Spec source above | EIVQ-001, EIVQ-002 | [Focused negative/fallback regression evidence](tasks.md#task-table) |
-| N/A — VAL-EIVQ-006 and VAL-EIVQ-007 share the Spec source above | EIVQ-004, EIVQ-005 | [README, placeholder, redaction, and protected-boundary evidence](tasks.md#task-table) |
-| N/A — VAL-EIVQ-008 shares the Spec source above | EIVQ-005, EIVQ-006 | [Routing, CI, QA, review, and closure evidence](tasks.md#task-table) |
+| [VAL-EIVQ-001](spec.md#success-criteria--verification-plan) | EIVQ-001, EIVQ-002 | [Closed contract/argv/tool/root mutation evidence](tasks/tsk-0002-eivq-001.md) |
+| N/A — VAL-EIVQ-002 and VAL-EIVQ-003 share the Spec source above | EIVQ-003 | [Exact Terraform, provider lock, native result, and artifact evidence](tasks/tsk-0004-eivq-003.md) |
+| N/A — VAL-EIVQ-004 shares the Spec source above | EIVQ-004 | [Per-source Bicep lint/build/warning evidence](tasks/tsk-0005-eivq-004.md) |
+| N/A — VAL-EIVQ-005 shares the Spec source above | EIVQ-001, EIVQ-002 | [Focused negative/fallback regression evidence](tasks/tsk-0002-eivq-001.md) |
+| N/A — VAL-EIVQ-006 and VAL-EIVQ-007 share the Spec source above | EIVQ-004, EIVQ-005 | [README, placeholder, redaction, and protected-boundary evidence](tasks/tsk-0005-eivq-004.md) |
+| N/A — VAL-EIVQ-008 shares the Spec source above | EIVQ-005, EIVQ-006 | [Routing, CI, QA, review, and closure evidence](tasks/tsk-0006-eivq-005.md) |
+
+### Legacy Task traceability
+
+- **Spec**: [Example IaC and Validator QA](spec.md)
+- **Plan**: [Example IaC and Validator QA Implementation Plan](plan.md)
+- **Predecessor**: Spec 049 Platform Validation and Security Evidence in the
+  PRD-0007 program lineage
+- **Successor**: Spec 051 Repository Assurance Integration and Closure in the
+  PRD-0007 program lineage
+
+#### Lifecycle Traceability
+
+| Criterion / work item | Result | Evidence |
+| --- | --- | --- |
+| [EIVQ-000](plan.md#work-breakdown) | Not executed | Queued activation evidence. |
+| N/A — EIVQ-001 shares the Plan and Spec sources above | Not executed | Queued focused RED and closed-command evidence. |
+| N/A — EIVQ-002 shares the Plan and Spec sources above | Not executed | Queued contract/helper/validator evidence. |
+| N/A — EIVQ-003 shares the Plan and Spec sources above | Not executed | Queued Terraform lock/native/artifact evidence. |
+| N/A — EIVQ-004 shares the Plan and Spec sources above | Not executed | Queued Bicep and README boundary evidence. |
+| N/A — EIVQ-005 shares the Plan and Spec sources above | Not executed | Queued affected/aggregate/CI/cleanup evidence. |
+| N/A — EIVQ-006 shares the Plan and Spec sources above | Not executed | Queued QA, review, closure, and successor evidence. |

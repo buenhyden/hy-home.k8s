@@ -231,7 +231,7 @@ read-only remote metadata commands in addition to this terminal sequence.
 - **Program requirement**:
   [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
 - **Architecture**:
-  [AD-0010](../../02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md)
+  [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
 - **Decision**:
   [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Predecessor**:
@@ -239,18 +239,18 @@ read-only remote metadata commands in addition to this terminal sequence.
 - **Implementation Plan**:
   [Repository Assurance Integration and Closure Implementation Plan](plan.md)
 - **Execution Task**:
-  [Task: Repository Assurance Integration and Closure](tasks.md)
+  [Task: Repository Assurance Integration and Closure](README.md#task-records)
 
 ### Lifecycle Traceability
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-RDPA-010](../../01.requirements/0007-repository-delivery-and-platform-assurance.md#functional-requirements) | VAL-RAIC-001 | Program-lineage and execution-component validation proves predecessor closure. |
-| N/A — REQ-RDPA-003 through REQ-RDPA-008 share the PRD-0007 source linked above. | VAL-RAIC-002 | Contract, schema, native projection, and validator evidence proves integrated ownership. |
-| N/A — REQ-RDPA-001 shares the PRD-0007 source linked above. | VAL-RAIC-003 | Final target matrix and diff inspection prove complete current disposition. |
-| N/A — REQ-RDPA-008 shares the PRD-0007 source linked above. | VAL-RAIC-004 | Ordered local validation results prove required gate completion. |
-| N/A — REQ-RDPA-010 shares the PRD-0007 source linked above. | VAL-RAIC-005 | Exact-diff independent review proves compliance and quality/security approval. |
-| N/A — REQ-RDPA-010 shares the PRD-0007 source linked above. | VAL-RAIC-006 | Lifecycle and cross-link validators prove reciprocal terminal documents. |
-| N/A — REQ-RDPA-010 shares the PRD-0007 source linked above. | VAL-RAIC-007 | Git ancestry, status, and main postflight prove local-only integration. |
-| N/A — REQ-RDPA-002 shares the PRD-0007 source linked above. | VAL-RAIC-008 | Stash identity and cleanup evidence prove safe retirement and worktree closure. |
-| N/A — REQ-RDPA-009 shares the PRD-0007 source linked above. | VAL-RAIC-009 | Dated lane matrix preserves all external limitations and owners. |
+| [REQ-0007-FR-0010](../../01.requirements/0007-repository-delivery-and-platform-assurance.md#functional-requirements) | VAL-RAIC-001 | Program-lineage and execution-component validation proves predecessor closure. |
+| N/A — REQ-0007-FR-0003 through REQ-0007-FR-0008 share the PRD-0007 source linked above. | VAL-RAIC-002 | Contract, schema, native projection, and validator evidence proves integrated ownership. |
+| N/A — REQ-0007-FR-0001 shares the PRD-0007 source linked above. | VAL-RAIC-003 | Final target matrix and diff inspection prove complete current disposition. |
+| N/A — REQ-0007-FR-0008 shares the PRD-0007 source linked above. | VAL-RAIC-004 | Ordered local validation results prove required gate completion. |
+| N/A — REQ-0007-FR-0010 shares the PRD-0007 source linked above. | VAL-RAIC-005 | Exact-diff independent review proves compliance and quality/security approval. |
+| N/A — REQ-0007-FR-0010 shares the PRD-0007 source linked above. | VAL-RAIC-006 | Lifecycle and cross-link validators prove reciprocal terminal documents. |
+| N/A — REQ-0007-FR-0010 shares the PRD-0007 source linked above. | VAL-RAIC-007 | Git ancestry, status, and main postflight prove local-only integration. |
+| N/A — REQ-0007-FR-0002 shares the PRD-0007 source linked above. | VAL-RAIC-008 | Stash identity and cleanup evidence prove safe retirement and worktree closure. |
+| N/A — REQ-0007-FR-0009 shares the PRD-0007 source linked above. | VAL-RAIC-009 | Dated lane matrix preserves all external limitations and owners. |

@@ -152,15 +152,15 @@ git diff --check
 ### Inputs
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/0005-workspace-document-assurance-modernization.md)
-- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/ad-0008-workspace-document-assurance-operating-model.md)
+- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md)
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Registry Spec**: [Document Contract Registry](../0026-document-contract-registry/spec.md)
-- **Current Contracts**: [Template Documentation Contract](../../99.templates/support/documentation-contract.md) and [SDLC Template Governance](../../99.templates/support/sdlc-governance.md)
+- **Current Contracts**: [Template Documentation Contract](../../99.templates/support/document-contract.md) and [SDLC Template Governance](../../99.templates/support/document-lifecycle.md)
 
 ### Delivery and References
 
 - **Plan**: [Template Contract Consolidation Implementation Plan](plan.md)
-- **Task**: [Template Contract Consolidation Task](tasks.md)
+- **Task**: [Template Contract Consolidation Task](README.md#task-records)
 - **Next Spec**: [README and Workspace Profiles](../0028-readme-workspace-profiles/spec.md)
 - **Template Support**: [Template Support Index](../../99.templates/support/README.md)
 - **Documentation Method**: [Diátaxis](https://diataxis.fr/start-here/)

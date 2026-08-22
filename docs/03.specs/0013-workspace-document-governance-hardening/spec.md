@@ -344,16 +344,16 @@ bash scripts/validate-policy-gates.sh .
 
 - [Docs Hub](../../README.md)
 - [Agent Governance Hub](../../00.agent-governance/README.md)
-- [Template Documentation Contract](../../99.templates/support/documentation-contract.md)
-- [Template Frontmatter Schema](../../99.templates/support/frontmatter-schema.md)
-- [Template Routing Contract](../../99.templates/support/template-routing.md)
-- [SDLC Template Governance](../../99.templates/support/sdlc-governance.md)
-- [Common Documentation Governance](../../99.templates/support/common-documentation-governance.md)
+- [Template Documentation Contract](../../99.templates/support/document-contract.md)
+- [Template Frontmatter Schema](../../99.templates/support/document-contract.md)
+- [Template Routing Contract](../../99.templates/support/document-contract.md)
+- [SDLC Template Governance](../../99.templates/support/document-lifecycle.md)
+- [Common Documentation Governance](../../99.templates/support/document-lifecycle.md)
 - [CI/CD & QA Reference Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
 - [Scripts README](../../../scripts/README.md)
 - [GitHub Configuration Hub](../../../.github/README.md)
 - [Plan](plan.md)
-- [Task](tasks.md)
+- [Task](README.md#task-records)
 - **Completed evolution**: [011](../0011-template-contract-governance-migration/spec.md) -> [012](../0012-template-governance-audit-enhancement/spec.md) -> [013](./spec.md) -> [014](../0014-workspace-document-contract-normalization/spec.md) -> [020](../0020-workspace-contract-governance-normalization/spec.md) -> [021](../0021-sdlc-lifecycle-contract/spec.md) -> [022](../0022-control-cloud-doc-normalization/spec.md) -> [023](../0023-stage03-04-repo-static-gap-closure/spec.md).
 ### Related inputs
 

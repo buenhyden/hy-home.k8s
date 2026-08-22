@@ -215,18 +215,18 @@ Requirements review returned `COMPLIANT`; quality and security returned
 ## Traceability
 
 - **Program requirement**: [PRD 003](../../01.requirements/0003-workspace-agent-governance-platform.md)
-- **Architecture**: [AD 0006](../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md)
+- **Architecture**: [AD 0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md)
 - **Proposed decision**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Predecessor**: [Spec 042](../0042-provider-native-runtime-and-model-evidence/spec.md)
 - **Successor**: [Spec 044](../0044-agent-roster-evaluation-and-admission/spec.md)
 - **Execution Plan**: [Agent Harness Loop Lifecycle Implementation Plan](plan.md)
-- **Task evidence**: [Agent Harness Loop Lifecycle Task](tasks.md)
+- **Task evidence**: [Agent Harness Loop Lifecycle Task](README.md#task-records)
 
 ### Lifecycle Traceability
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-PRD-FUN-11](../../01.requirements/0003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AHLL-001 | Same-signature fixtures prove the retry ceiling. |
+| [REQ-0003-FR-0011](../../01.requirements/0003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AHLL-001 | Same-signature fixtures prove the retry ceiling. |
 | N/A — VAL-AHLL-002 shares the PRD-0003 source linked in VAL-AHLL-001 | VAL-AHLL-002 | Task-budget fixtures prove the recovery ceiling. |
 | N/A — VAL-AHLL-003 shares the PRD-0003 source linked in VAL-AHLL-001 | VAL-AHLL-003 | No-progress fixtures prove early stop and escalation. |
 | N/A — VAL-AHLL-004 shares the PRD-0003 source linked in VAL-AHLL-001 | VAL-AHLL-004 | Non-retryable fixtures prove immediate termination. |

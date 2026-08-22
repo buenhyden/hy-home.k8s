@@ -242,4 +242,4 @@ Source roles are closed to `policy owner`, `machine owner`, `human index`,
 - [Spec 054](../../../03.specs/0055-workspace-governance-audit-and-remediation/spec.md)
 - [Document Profile Registry](../../../99.templates/support/document-profiles.json)
 - [Template Routing Contract](../../../99.templates/README.md)
-- [Implementation Task](../../../03.specs/0055-workspace-governance-audit-and-remediation/tasks.md)
+- [Implementation Task](../../../03.specs/0055-workspace-governance-audit-and-remediation/README.md)

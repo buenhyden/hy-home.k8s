@@ -1,10 +1,11 @@
 ---
 title: 'ADR-0023: Work-Unit Document Taxonomy and Governance Authority'
 type: sdlc/adr
-status: accepted
+status: superseded
 owner: platform
 updated: 2026-08-11
 artifact_id: "ADR-0023"
+superseded_by: ADR-0030
 ---
 
 # ADR-0023: Work-Unit Document Taxonomy and Governance Authority
@@ -42,7 +43,7 @@ confirmed that a Release document family is unnecessary.
 
 - Co-locate `spec.md`, optional `plan.md`, and optional `tasks.md` in
   `docs/03.specs/<NNN>-<slug>/`; a Task requires both sibling documents.
-- Retire `docs/04.execution/` and leave the Stage 04 numeric slot unused.
+- Retire `docs/03.specs/` and leave the Stage 04 numeric slot unused.
 - Keep `docs/05.operations/` and its guide, incident, policy, and runbook paths
   stable. Do not create `docs/04.operations/`.
 - Use stable identifiers or slugs for mutable authored documents. Keep dates in
@@ -131,5 +132,5 @@ reviewable and revertible by logical commit.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ARD-0011](../requirements/0011-document-taxonomy-consolidation-architecture.md) | N/A — first decision for PRD-008 taxonomy direction; corrects only the registry's unrelated ADR-0021 association | [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md) |
-| [ADR-0024](./0024-terminal-artifact-identity-and-archive-layout.md) | Partially supersedes only terminal Stage 98 date/mirror-path immutability; preserves transition safety, Stage 05 stability, Release exclusion, and every unrelated decision | [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md) |
+| [ARD-0011](../descriptions/0011-document-taxonomy-consolidation-architecture.md) | N/A — first decision for PRD-008 taxonomy direction; corrects only the registry's unrelated ADR-0021 association | [Spec 052](../../03.specs/0052-document-taxonomy-consolidation/spec.md) |
+| [ADR-0024](./0024-terminal-artifact-identity-and-archive-layout.md) | Partially supersedes only terminal Stage 98 date/mirror-path immutability; preserves transition safety, Stage 05 stability, Release exclusion, and every unrelated decision | [Spec 052](../../03.specs/0052-document-taxonomy-consolidation/spec.md) |

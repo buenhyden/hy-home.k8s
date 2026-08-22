@@ -288,7 +288,7 @@ git diff --check
 ### Inputs
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/0005-workspace-document-assurance-modernization.md)
-- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/ad-0008-workspace-document-assurance-operating-model.md)
+- **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md)
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Validation Spec**: [Semantic Document Validation](../0029-semantic-document-validation/spec.md)
 - **Current Audit**: [SDLC, Document Lifecycle, and Frontmatter](../../90.references/audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md)
@@ -296,7 +296,7 @@ git diff --check
 ### Delivery and References
 
 - **Execution Plan**: [Authored Document Migration Implementation Plan](plan.md)
-- **Execution Task**: [Authored Document Migration Task](tasks.md)
+- **Execution Task**: [Authored Document Migration Task](README.md#task-records)
 - **Next Spec**: [Affected Surface and Agent QA](../0031-affected-surface-agent-qa/spec.md)
 - **ADR Practice**: [Documenting Architecture Decisions](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions)
 - **Documentation Classification Aid**: [Diátaxis](https://diataxis.fr/)

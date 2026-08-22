@@ -239,13 +239,13 @@ isolated environment described above, not an unreviewed ambient configuration.
 - **Program requirement**:
   [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
 - **Architecture**:
-  [AD-0010](../../02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md)
+  [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
 - **Decision**:
   [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Plan**:
   [Example IaC and Validator QA Implementation Plan](plan.md)
 - **Task**:
-  [Example IaC and Validator QA Task](tasks.md)
+  [Example IaC and Validator QA Task](README.md#task-records)
 - **Predecessor**:
   [Spec 049](../0049-platform-validation-and-security-evidence/spec.md)
 - **Successor**:
@@ -255,11 +255,11 @@ isolated environment described above, not an unreviewed ambient configuration.
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-RDPA-007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md#functional-requirements) | VAL-EIVQ-001 | Closed-command orchestrator and mutation fixtures prove execution safety. |
-| N/A — REQ-RDPA-007 shares the PRD-0007 source linked above. | VAL-EIVQ-002 | Native Terraform commands prove non-deploy configuration semantics. |
-| N/A — REQ-RDPA-007 shares the PRD-0007 source linked above. | VAL-EIVQ-003 | Lock and inventory comparison proves reproducible provider/module identity. |
-| N/A — REQ-RDPA-007 shares the PRD-0007 source linked above. | VAL-EIVQ-004 | Native Bicep lint/build proves static module semantics without login. |
-| N/A — REQ-RDPA-008 shares the PRD-0007 source linked above. | VAL-EIVQ-005 | Isolated negative and fallback tests prove deterministic error handling. |
-| N/A — REQ-RDPA-012 shares the PRD-0007 source linked above. | VAL-EIVQ-006 | Profile and direct command comparison proves accurate example routing prose. |
-| N/A — REQ-RDPA-009 shares the PRD-0007 source linked above. | VAL-EIVQ-007 | Redacted scope and filesystem evidence proves protected boundaries. |
-| N/A — REQ-RDPA-010 shares the PRD-0007 source linked above. | VAL-EIVQ-008 | Local QA and independent reviews prove rollback-ready closure. |
+| [REQ-0007-FR-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md#functional-requirements) | VAL-EIVQ-001 | Closed-command orchestrator and mutation fixtures prove execution safety. |
+| N/A — REQ-0007-FR-0007 shares the PRD-0007 source linked above. | VAL-EIVQ-002 | Native Terraform commands prove non-deploy configuration semantics. |
+| N/A — REQ-0007-FR-0007 shares the PRD-0007 source linked above. | VAL-EIVQ-003 | Lock and inventory comparison proves reproducible provider/module identity. |
+| N/A — REQ-0007-FR-0007 shares the PRD-0007 source linked above. | VAL-EIVQ-004 | Native Bicep lint/build proves static module semantics without login. |
+| N/A — REQ-0007-FR-0008 shares the PRD-0007 source linked above. | VAL-EIVQ-005 | Isolated negative and fallback tests prove deterministic error handling. |
+| N/A — REQ-0007-NFR-0002 shares the PRD-0007 source linked above. | VAL-EIVQ-006 | Profile and direct command comparison proves accurate example routing prose. |
+| N/A — REQ-0007-FR-0009 shares the PRD-0007 source linked above. | VAL-EIVQ-007 | Redacted scope and filesystem evidence proves protected boundaries. |
+| N/A — REQ-0007-FR-0010 shares the PRD-0007 source linked above. | VAL-EIVQ-008 | Local QA and independent reviews prove rollback-ready closure. |

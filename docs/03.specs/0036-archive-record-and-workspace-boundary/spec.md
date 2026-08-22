@@ -193,14 +193,14 @@ unclaimed.
 - **Successor**: [Spec 037](../0037-active-corpus-and-execution-retention/spec.md)
 - **Archive decision**: [ADR-0018](../../02.architecture/decisions/0018-full-body-archive-record-and-retention.md)
 - **PRD**: [PRD-0006](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
-- **AD**: [AD-0009](../../02.architecture/descriptions/ad-0009-document-lifecycle-evidence-operating-model.md)
+- **AD**: [AD-0009](../../02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md)
 - **Completed execution history**: [Archive Index](../../98.archive/README.md#document-index)
 
 ### Lifecycle Traceability
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-WDLEC-004](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ARWB-001 | Recovery check enumerates exact source commit and blob per path. |
+| [REQ-0006-FR-0004](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ARWB-001 | Recovery check enumerates exact source commit and blob per path. |
 | N/A — VAL-ARWB-002 shares the PRD-0006 source linked in VAL-ARWB-001 | VAL-ARWB-002 | Archive schema and digest validation inspect every record. |
 | N/A — VAL-ARWB-003 shares the PRD-0006 source linked in VAL-ARWB-001 | VAL-ARWB-003 | Dual current and historical link lanes report zero misses. |
 | N/A — VAL-ARWB-004 shares the PRD-0006 source linked in VAL-ARWB-001 | VAL-ARWB-004 | Registry-derived form inventory and stale-route scan prove removal. |

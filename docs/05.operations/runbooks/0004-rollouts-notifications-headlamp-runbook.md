@@ -194,8 +194,8 @@ curl -ksS -o /dev/null -w '%{http_code}' https://rollouts.127.0.0.1.nip.io/
 - **ADR-0012**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md)
 - **Rollouts Spec**: [`../../03.specs/0004-argo-rollouts-progressive-delivery/spec.md`](../../03.specs/0004-argo-rollouts-progressive-delivery/spec.md)
 - **Notifications Spec**: [`../../03.specs/0005-argo-notifications-slack/spec.md`](../../03.specs/0005-argo-notifications-slack/spec.md)
-- **Rollouts Task**: [`../../03.specs/0004-argo-rollouts-progressive-delivery/tasks.md`](../../03.specs/0004-argo-rollouts-progressive-delivery/tasks.md)
-- **Notifications Task**: [`../../03.specs/0005-argo-notifications-slack/tasks.md`](../../03.specs/0005-argo-notifications-slack/tasks.md)
+- **Rollouts Task**: [`../../03.specs/0004-argo-rollouts-progressive-delivery/tasks.md`](../../03.specs/0004-argo-rollouts-progressive-delivery/README.md)
+- **Notifications Task**: [`../../03.specs/0005-argo-notifications-slack/tasks.md`](../../03.specs/0005-argo-notifications-slack/README.md)
 
 ### Lifecycle Traceability
 

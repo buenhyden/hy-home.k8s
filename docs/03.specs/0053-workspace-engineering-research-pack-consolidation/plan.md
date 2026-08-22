@@ -109,6 +109,32 @@ gaps use official OpenAI documentation only. Claude, Kubernetes, GitHub,
 Diátaxis, security, and upstream project claims use their official or primary
 owners.
 
+### Legacy Task ledger inputs
+
+This Task records execution and review evidence for the ten WERPC work
+packages that replace three dated research packs with one source-backed
+`2026-08-08-wer` pack. Rows advance only after the logical commit, required
+repository-static gates, implementation report, specification review, and
+quality review are accepted.
+
+External source observations are dated evidence, not live provider or platform
+proof. No hosted CI, provider-runtime, remote, credential-bearing, secret-value,
+or live-cluster result is produced or claimed.
+
+- **Specification**:
+  [Spec 053](spec.md)
+- **Plan**:
+  [Workspace Engineering Research Pack Consolidation Implementation Plan](plan.md)
+- **Standalone execution decision**:
+  [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
+- **Predecessor specification**: `Spec 017` at
+  `docs/03.specs/0017-workspace-engineering-research-pack/spec.md`
+- **Conflicting program**: `Spec 052` at
+  `docs/03.specs/0052-document-taxonomy-consolidation/spec.md`
+- **Approved requirement source**: direct 2026-08-08 human request and explicit
+  Spec 053 approval in the current Codex task
+- **Design commit**: `37c714d04e1ab20816f2719fdc09f6dc42acef72`
+- **Execution branch base**: `37c714d04e1ab20816f2719fdc09f6dc42acef72`
 ## Goals & In-Scope
 
 - Activate reciprocal Spec/Plan/Task lifecycle and resolve the Spec 052
@@ -194,11 +220,11 @@ owners.
 
 - Modify `docs/01.requirements/0008-workspace-document-taxonomy-consolidation.md`
   and
-  `docs/02.architecture/descriptions/ad-0011-document-taxonomy-consolidation-architecture.md`
+  `docs/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md`
   with the approved three-pack exception and Spec 053 owner.
 - Modify `docs/03.specs/0052-document-taxonomy-consolidation/spec.md`,
-  `docs/04.execution/plans/2026-08-07-document-taxonomy-consolidation.md`, and
-  `docs/04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md` so
+  `docs/03.specs/0053-workspace-engineering-research-pack-consolidation/plan.md`, and
+  `docs/03.specs/0053-workspace-engineering-research-pack-consolidation/README.md#task-records` so
   WDTC-002/WORK-002 is superseded without changing other Spec 052 work.
 - Modify Spec 053, the Specs/Plans/Tasks indexes, and
   `docs/00.agent-governance/memory/progress.md` for reciprocal lifecycle and
@@ -275,10 +301,10 @@ Canonical follow-up owner | Refresh trigger
 **Files:**
 
 - Create: this Plan and
-  `docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md`
+  `docs/03.specs/0053-workspace-engineering-research-pack-consolidation/README.md#task-records`
 - Modify: Spec 053, PRD-0008, AD-0011, Spec 052, the Spec 052 Plan/Task,
-  `docs/03.specs/README.md`, `docs/04.execution/plans/README.md`,
-  `docs/04.execution/tasks/README.md`, and the progress ledger
+  `docs/03.specs/README.md`, `docs/03.specs/0053-workspace-engineering-research-pack-consolidation/plan.md`,
+  `docs/03.specs/0053-workspace-engineering-research-pack-consolidation/README.md#task-records`, and the progress ledger
 
 **Interfaces:**
 
@@ -322,10 +348,10 @@ Canonical follow-up owner | Refresh trigger
   ```bash
   bash scripts/validate-repo-quality-gates.sh .
   git add docs/01.requirements/0008-workspace-document-taxonomy-consolidation.md \
-    docs/02.architecture/descriptions/ad-0011-document-taxonomy-consolidation-architecture.md \
+    docs/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md \
     docs/03.specs/0052-document-taxonomy-consolidation/spec.md \
     docs/03.specs/0053-workspace-engineering-research-pack-consolidation/spec.md \
-    docs/03.specs/README.md docs/04.execution/plans docs/04.execution/tasks \
+    docs/03.specs/README.md docs/03.specs/plans docs/03.specs/tasks \
     docs/00.agent-governance/memory/progress.md
   git commit -m "docs: activate research pack consolidation"
   ```
@@ -414,7 +440,7 @@ Canonical follow-up owner | Refresh trigger
   ```bash
   bash scripts/validate-repo-quality-gates.sh .
   git add docs/90.references/research/2026-08-08-wer \
-    docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md \
+    docs/03.specs/0053-workspace-engineering-research-pack-consolidation/README.md#task-records \
     docs/00.agent-governance/memory/progress.md
   git commit -m "docs: establish consolidated research pack"
   ```
@@ -480,7 +506,7 @@ Canonical follow-up owner | Refresh trigger
   bash scripts/validate-repo-quality-gates.sh .
   git diff --check
   git add docs/90.references/research/2026-08-08-wer \
-    docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md \
+    docs/03.specs/0053-workspace-engineering-research-pack-consolidation/README.md#task-records \
     docs/00.agent-governance/memory/progress.md
   git commit -m "docs: research harness loop and provider systems"
   ```
@@ -542,7 +568,7 @@ Canonical follow-up owner | Refresh trigger
   bash scripts/validate-repo-quality-gates.sh .
   git diff --check
   git add docs/90.references/research/2026-08-08-wer \
-    docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md \
+    docs/03.specs/0053-workspace-engineering-research-pack-consolidation/README.md#task-records \
     docs/00.agent-governance/memory/progress.md
   git commit -m "docs: research spec driven documentation systems"
   ```
@@ -594,7 +620,7 @@ Canonical follow-up owner | Refresh trigger
   bash scripts/validate-repo-quality-gates.sh .
   git diff --check
   git add docs/90.references/research/2026-08-08-wer \
-    docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md \
+    docs/03.specs/0053-workspace-engineering-research-pack-consolidation/README.md#task-records \
     docs/00.agent-governance/memory/progress.md
   git commit -m "docs: research kubernetes infrastructure security"
   ```
@@ -646,7 +672,7 @@ Canonical follow-up owner | Refresh trigger
   bash scripts/validate-repo-quality-gates.sh .
   git diff --check
   git add docs/90.references/research/2026-08-08-wer \
-    docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md \
+    docs/03.specs/0053-workspace-engineering-research-pack-consolidation/README.md#task-records \
     docs/00.agent-governance/memory/progress.md
   git commit -m "docs: research ci github actions and qa"
   ```
@@ -708,7 +734,7 @@ Canonical follow-up owner | Refresh trigger
   bash scripts/validate-repo-quality-gates.sh .
   git diff --check
   git add docs/90.references/research/2026-08-08-wer \
-    docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md \
+    docs/03.specs/0053-workspace-engineering-research-pack-consolidation/README.md#task-records \
     docs/00.agent-governance/memory/progress.md
   git commit -m "docs: research agent model and memory systems"
   ```
@@ -870,7 +896,7 @@ Canonical follow-up owner | Refresh trigger
 
   ```bash
   git add docs/90.references/research \
-    docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md \
+    docs/03.specs/0053-workspace-engineering-research-pack-consolidation/README.md#task-records \
     docs/00.agent-governance/memory/progress.md
   git commit -m "docs: retire predecessor research packs"
   ```
@@ -929,7 +955,7 @@ Canonical follow-up owner | Refresh trigger
   git ls-files | rg '(^|/)(tmp|temp|scratch|draft-output)(/|$)|\.bak$|\.orig$'
   rg -n 'hosted.*PASS|provider-runtime.*PASS|live.*PASS|remote.*PASS' \
     docs/90.references/research/2026-08-08-wer \
-    docs/04.execution/tasks/2026-08-08-workspace-engineering-research-pack-consolidation.md
+    docs/03.specs/0053-workspace-engineering-research-pack-consolidation/README.md#task-records
   ```
 
   Expected: no archive-path diff, no task-created residue, and no unsupported
@@ -973,6 +999,113 @@ No command in this Plan proves provider-runtime, hosted-CI, remote, credential,
 secret-value, or live-platform state. Those lanes remain `Deferred` or
 `Unverified` and are never converted to PASS by inference.
 
+### Legacy Task verification evidence
+
+The specification and design commit are approved. WERPC-000 is done:
+`python3 scripts/validate-document-contract-registry.py --root . --mode strict`,
+`python3 scripts/validate-links-and-owners.py --root . --mode strict`,
+`git diff --check`, and `bash scripts/validate-repo-quality-gates.sh .` passed
+on the final pre-commit tree. The optional `pre-commit run --all-files` attempt
+was interrupted after it stalled and rewrote only detect-secrets metadata in
+`.secrets.baseline`; that incidental change was restored exactly and the
+optional lane is `SKIP`, not `PASS`. The passing required strict, diff, and full
+repository gate results are the fallback evidence. The results are
+repository-static only; provider-runtime, hosted CI, remote, and live
+validation remain `DEFER`.
+WERPC-001 is done with the thirteen-file shape, request-owner matrix, dated
+predecessor source-register interface, 25 full-hash file dispositions, and 35
+text-exact H3 split rows. It does not claim external currentness: later topical
+work must recheck predecessor URLs. Its strict registry, strict links/owners,
+and full repository quality-gate results are repository-static only.
+WERPC-000A implements the approved typed standalone-execution contract without
+changing `programLineage`. Registry, links/owners, eligibility, residue closure,
+the affected unit tests, Markdown profiles, cached diff, and the complete
+repository quality gate passed on the final reviewed staged tree.
+WERPC-002 is done: its source ledger has official, dated primary sources with
+refresh triggers and claim boundaries; the topical references retain `DEFER`
+for native discovery, authenticated/runtime, hosted CI, remote, and live
+claims. The collection-index and README-inventory REDs were closed without
+changing the immutable baseline, and both fresh reviews plus the final staged
+Reference IA and complete repository quality gate passed. The attempted
+Reference IA `--staged` variant is recorded as an inapplicable-mode `SKIP`; the
+Plan's production `--root .` command passed. WERPC-003 is done: its nine dated
+source rows and thirteen bounded claim rows support the complete document-family
+matrix, Release absence gap, Diátaxis mapping, and LLM-WIKI boundary. Fresh
+review returned Approved with no finding, and Reference IA production plus the
+complete repository quality gate passed on the exact staged tree. WERPC-004 is
+done: its 12 dated source rows and 11 bounded claims cover the
+platform hierarchy, GitOps/secret trust boundaries, static-versus-runtime
+controls, and As-Is/gap/target matrix. Focused checks passed, fresh content
+review was Approved with no finding, and Reference IA production plus the
+complete repository quality gate passed on the exact staged tree. All
+remote/live/secret evidence remains `DEFER`.
+WERPC-005 is done: its dated source/claim registers and current workflow/QA
+analysis passed focused validation, fresh review returned Approved with no
+finding, and Reference IA production plus the complete repository quality gate
+passed on the exact staged tree. It does not promote repository-static workflow
+evidence to hosted CI, administration, credential, artifact, OIDC, deployment,
+remote, or live evidence. WERPC-006 is done: its exact Agency Agents pin, eight
+dated sources, and eight bounded claims distinguish role/model/memory static
+contracts from provider/runtime behavior. Focused checks passed, fresh review
+was Approved, the upstream-script-path RED was corrected, and Reference IA plus
+the complete repository gate passed on the exact staged tree. WERPC-007 is
+implemented and ready for fresh review: its exact tracked occurrence inventory
+is 732 lines across 70 files, every hit has one reviewed classification row,
+and focused RIA, agent-cutover, active-corpus, registry, link, archive, compile,
+and diff validations pass. RIA production was first proven in an isolated
+clone. A migration reviewer later staged the exact 53-file scope while proving
+index authority; cached scope/diff checks and the actual staged RIA 88/88 plus
+direct validator pass, with no forbidden diff. Its unrequested harness and
+full-gate starts were interrupted with exit 130 and are not PASS evidence. The
+pre-review harness attempt exposed and led to restoration of the
+three phase-bounded README fixture rows; its focused registry self-test now
+passes. Fresh review then found and closed the production disposition-header
+and inherited Git-configuration defects; an exact-delete clone passes strict
+links, and Python plus QA re-review are Approved. The controller then audited
+and replaced an over-broad 25-file currentness exception with the reviewed
+exact disposition parser and a single predecessor-ledger exception, refreshed
+the exact active-corpus closure identities, and reran both the complete
+repository quality gate and full harness successfully. WERPC-007 is done.
+WERPC-008 is done: all 25 enumerated predecessor files and the three empty
+directories are absent, the new pack remains exactly 13 files, all 25
+dispositions are completed, and post-deletion README, RIA, and agent-cutover
+contracts pass the required repository-static gates. WERPC-009 closes the
+reciprocal lifecycle: deterministic audit confirmed exact 13 pack files, 32
+unique request-owner rows, 52 source rows, 51 bounded claim rows, 25 completed
+file dispositions, 35 split dispositions, three absent predecessor roots, zero
+Stage 98 branch diff, no tracked temporary/scratch residue, no unsupported
+deep-evidence success claim, and 11 logical pre-closure
+implementation commits. The post-deletion occurrence table exactly matches 732
+lines across 66 files. Required repository-static validation passed with
+strict links/owners, Reference IA, archive validation, harness, and the complete
+repository quality gate. The first terminal harness run exposed
+`CLOSURE-AUTHORITY-SCOPE` for newly done Spec 053; an exact-set unit test
+reproduced the missing post-closure authority, and the bounded one-path registry
+addition made the targeted test, closure self-test, production closure check,
+and full harness pass without accepting any unknown Spec. The optional
+all-files pre-commit run passed its early
+hooks but was interrupted at the long-running strict repository-quality hook;
+it is `SKIP`, not `PASS`, and made no worktree change. Push, merge, PR creation,
+worktree removal, hosted CI, provider-runtime, remote, credential, secret, and
+live validation remain outside the approved scope.
+
+### Terminal Acceptance Matrix
+
+| Criterion | Result | Deterministic terminal evidence |
+| --- | --- | --- |
+| VAL-WER-001 | PASS | The tracked successor pack contains exactly 13 files: one README and twelve declared references. |
+| VAL-WER-002 | PASS | The README contains 32 sequential, unique request rows; every row has one linked primary owner and one nonempty workspace-evidence cell. |
+| VAL-WER-003 | PASS | The ledger contains 25 unique file dispositions with full 40-hex source commits and 35 reviewed section-split rows. |
+| VAL-WER-004 | PASS | The source register has 52 rows; SRC-WERPC-004–052 are 49 current rows with URLs, 2026-08-08 checks, adopted/rejected scopes, and refresh triggers; all twelve references expose Sources and Review and Freshness sections. |
+| VAL-WER-005 | PASS | The 32 requirement states and 51 claim rows use only the five-state vocabulary and retain repository evidence plus uncertainty boundaries. |
+| VAL-WER-006 | PASS | Provider and common-environment references keep Claude, Codex, shared static controls, native discovery, authentication, and runtime evidence as separate surfaces. |
+| VAL-WER-007 | PASS | The 32-owner matrix covers every requested harness, loop, SDLC/document, documentation, platform, delivery, security, agent, model, and memory topic. |
+| VAL-WER-008 | PASS | Current navigation and machine consumers route to the successor; strict links/owners and RIA pass; every remaining predecessor-token line is classified by an exact 732-line/66-file table. |
+| VAL-WER-009 | PASS | All 25 predecessor files and all three roots are absent; the successor remains exactly 13 files; residue scan found no task-created scratch artifact. |
+| VAL-WER-010 | PASS | The branch diff contains zero `docs/98.archive/**` path changes and archive validation passes. |
+| VAL-WER-011 | PASS | Eleven logical commits before closure, eleven work-package SDD reports, and one bounded WERPC-002 fix report preserve per-unit evidence and review history. |
+| VAL-WER-012 | PASS | Fresh whole-branch review is Approved and required Reference IA, strict links, archive, harness, diff, and complete repository-static quality gates pass; deeper evidence remains DEFER. |
+
 ## Risks & Mitigations
 
 | Risk | Mitigation | Owner |
@@ -991,6 +1124,26 @@ Rollback is commit-scoped. Before WERPC-008, reverting any research or migration
 commit leaves the old packs live. WERPC-008 is a single deletion commit and can
 be reverted without altering Stage 98 or Git history.
 
+### Legacy Task approval and rollback boundaries
+
+- **Allowed Paths**: `docs/**` except existing `docs/98.archive/**` records;
+  `scripts/**` and `tests/**` only for path-contract and fixture migration
+- **Forbidden Paths**: existing `docs/98.archive/**` records, `gitops/**`,
+  `infrastructure/**`, `traefik/**`, `policy/**`, ignored credential/secret
+  state, user stashes, and paths outside the isolated worktree
+- **Approval Required**: any live, hosted, remote, credential-bearing,
+  secret-reading, push, merge, publication, third-party mutation, or change to
+  active runtime/provider/platform behavior
+- **Static Validation**: focused commands in each Plan task and
+  `bash scripts/validate-repo-quality-gates.sh .` before every commit
+- **Live Validation**: `DEFER` — not authorized and not required for this
+  descriptive research pack
+- **Secret / Vault Handling**: no secret value, token, kubeconfig, ignored
+  credential file, Vault payload, or provider credential is read or printed
+- **Rollback Plan**: one logical commit per row; WERPC-008 is the isolated
+  deletion commit; Git history retains the predecessor content
+- **Evidence Location**: this Task, the new source/migration ledger, the
+  progress ledger, Git commits, and the SDD ledger review packages
 ## Completion Criteria
 
 - The exact thirteen new pack files exist and all required topics have one
@@ -1014,7 +1167,7 @@ be reverted without altering Stage 98 or Git history.
 
 - [Spec 053](spec.md)
 - [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
-- [WERPC Task](tasks.md)
+- [WERPC Task](README.md#task-records)
 - Predecessor `Spec 017` at
   `docs/03.specs/0017-workspace-engineering-research-pack/spec.md`
 - Conflicting `Spec 052` at
@@ -1024,15 +1177,33 @@ be reverted without altering Stage 98 or Git history.
 
 | Spec criterion | Work package | Expected Task |
 | --- | --- | --- |
-| [VAL-WER-001](spec.md#success-criteria--verification-plan) | WERPC-001, WERPC-009 | [Exact thirteen-file inventory](tasks.md#task-table) |
-| N/A — VAL-WER-002 shares the Spec source above | WERPC-001, WERPC-009 | [Unique request-to-primary-owner matrix](tasks.md#task-table) |
-| N/A — VAL-WER-003 shares the Spec source above | WERPC-001–009 | [25-file and split-section disposition ledger](tasks.md#task-table) |
-| N/A — VAL-WER-004 shares the Spec source above | WERPC-002–006, WERPC-009 | [Source register and per-reference freshness review](tasks.md#task-table) |
-| N/A — VAL-WER-005 shares the Spec source above | WERPC-002–006, WERPC-009 | [Workspace evidence and five-state status review](tasks.md#task-table) |
-| N/A — VAL-WER-006 shares the Spec source above | WERPC-002 | [Provider/common-environment surface matrix review](tasks.md#task-table) |
-| N/A — VAL-WER-007 shares the Spec source above | WERPC-002–006 | [Requirement owner matrix and task reviews](tasks.md#task-table) |
-| N/A — VAL-WER-008 shares the Spec source above | WERPC-007 | [Focused tests and classified occurrence closure](tasks.md#task-table) |
-| N/A — VAL-WER-009 shares the Spec source above | WERPC-008, WERPC-009 | [Exact path absence and residue scan](tasks.md#task-table) |
-| N/A — VAL-WER-010 shares the Spec source above | WERPC-007–009 | [Archive diff and archive validation](tasks.md#task-table) |
-| N/A — VAL-WER-011 shares the Spec source above | All packages | [SDD ledger, per-task reports/reviews, commit and gate inventory](tasks.md#task-table) |
-| N/A — VAL-WER-012 shares the Spec source above | WERPC-009 | [Whole-branch review, full QA, and evidence-depth audit](tasks.md#task-table) |
+| [VAL-WER-001](spec.md#success-criteria--verification-plan) | WERPC-001, WERPC-009 | [Exact thirteen-file inventory](tasks/tsk-0003-werpc-001.md) |
+| N/A — VAL-WER-002 shares the Spec source above | WERPC-001, WERPC-009 | [Unique request-to-primary-owner matrix](tasks/tsk-0003-werpc-001.md) |
+| N/A — VAL-WER-003 shares the Spec source above | WERPC-001–009 | [25-file and split-section disposition ledger](tasks/tsk-0003-werpc-001.md) |
+| N/A — VAL-WER-004 shares the Spec source above | WERPC-002–006, WERPC-009 | [Source register and per-reference freshness review](tasks/tsk-0004-werpc-002.md) |
+| N/A — VAL-WER-005 shares the Spec source above | WERPC-002–006, WERPC-009 | [Workspace evidence and five-state status review](tasks/tsk-0004-werpc-002.md) |
+| N/A — VAL-WER-006 shares the Spec source above | WERPC-002 | [Provider/common-environment surface matrix review](tasks/tsk-0004-werpc-002.md) |
+| N/A — VAL-WER-007 shares the Spec source above | WERPC-002–006 | [Requirement owner matrix and task reviews](tasks/tsk-0004-werpc-002.md) |
+| N/A — VAL-WER-008 shares the Spec source above | WERPC-007 | [Focused tests and classified occurrence closure](tasks/tsk-0009-werpc-007.md) |
+| N/A — VAL-WER-009 shares the Spec source above | WERPC-008, WERPC-009 | [Exact path absence and residue scan](tasks/tsk-0010-werpc-008.md) |
+| N/A — VAL-WER-010 shares the Spec source above | WERPC-007–009 | [Archive diff and archive validation](tasks/tsk-0009-werpc-007.md) |
+| N/A — VAL-WER-011 shares the Spec source above | All packages | [SDD ledger, per-task reports/reviews, commit and gate inventory](tasks/tsk-0001-werpc-000.md) |
+| N/A — VAL-WER-012 shares the Spec source above | WERPC-009 | [Whole-branch review, full QA, and evidence-depth audit](tasks/tsk-0011-werpc-009.md) |
+
+### Legacy Task traceability
+
+#### Lifecycle Traceability
+
+| Criterion / work item | Result | Evidence |
+| --- | --- | --- |
+| [WERPC-000](plan.md#work-breakdown) | Done. | Active Spec/Plan/Task and collection indexes; bounded PRD-0008/AD-0011 exception; superseded WDTC-002/WORK-002 route; required strict, diff, and repository-quality checks passed; optional all-files pre-commit INTERRUPTED/SKIP with required-gate fallback; self-review. |
+| N/A — WERPC-000A shares the Plan and Spec sources above | Done. | Typed standalone execution, exact-pair/approval/owner/state/overlap/terminal tests, bounded closure authority, two independent reviews, and the complete repository quality gate PASS. |
+| N/A — WERPC-001 shares the Plan and Spec sources above | Done. | Exact thirteen-file pack; 32 unique request-primary-owner rows; three dated predecessor source entries; 25 file rows with matching full source commits; 35 text-exact H3 split dispositions; strict registry, strict links/owners, cached diff, and full repository quality gate PASS on the staged tree. |
+| N/A — WERPC-002 shares the Plan and Spec sources above | Done. | Dated source/claim ledger (SRC-WERPC-004–013; CLM-WERPC-002-01–009); detailed harness/loop, provider-surface, and common-control-plane references; exact 13 tree/row collection projections; active54/new7 README inventory contract with baseline67/active47/retired20 preserved; documentation and Python fresh reviews Approved; final Reference IA production and complete repository quality gate PASS. |
+| N/A — WERPC-003 shares the Plan and Spec sources above | Done. | Three detailed references; `SRC-WERPC-014`–`022` and `CLM-WERPC-003-01`–`13`; complete family matrix with Release absence gap; Diátaxis partial application/tutorial-explanation gap; LLM-WIKI generator/schema/drift/freshness and llms.txt/MCP/search/RAG boundaries; fresh review Approved; final Reference IA production and complete repository quality gate PASS. |
+| N/A — WERPC-004 shares the Plan and Spec sources above | Done. | `SRC-WERPC-023`–`034`, `CLM-WERPC-004-01`–`11`, platform/security reference, REQ-WERPC-008/009/025 status cells, focused checks PASS, fresh content review Approved, and final staged Reference IA/cached-diff/complete quality gate PASS. |
+| N/A — WERPC-005 shares the Plan and Spec sources above | Done. | CI/CD/GitHub Actions/QA reference, REQ-WERPC-022–024 coverage status, `SRC-WERPC-035`–`044`, and `CLM-WERPC-005-01`–`10`; focused checks PASS; fresh review Approved; exact staged Reference IA/cached diff/complete quality gate PASS. |
+| N/A — WERPC-006 shares the Plan and Spec sources above | Done. | Three detailed references; fixed Agency Agents source pin `ebe9c99acb5c96f9468de368d8bead775387d1a7`; `SRC-WERPC-045`–`052`; `CLM-WERPC-006-01`–`08`; focused checks PASS; fresh review Approved; upstream-path RED fixed; staged Reference IA/cached diff/complete quality gate PASS. |
+| N/A — WERPC-007 shares the Plan and Spec sources above | Done. | RED/GREEN migration evidence; RIA-protected historical-link proof with valid and fail-closed negative fixtures; 732/70 exact occurrence closure and 70-row classification; isolated staged RIA 88/88 plus direct validator; agent 37/37; active corpus 19/19; registry self-test/strict; links strict/self-test; exact production disposition parse and post-delete clone; hardened Git hostile-config probe; archive validation; Python compile; cached diff; complete repository gate; and full harness PASS. The three phase-bounded README fixture rows remain until atomic WERPC-008 deletion. Python and QA re-reviews Approved; this logical commit. |
+| N/A — WERPC-008 shares the Plan and Spec sources above | Done. | Exact25 pre-gate; three absent predecessor roots; exact13 surviving pack; completed 25-row disposition table; README active51/retired23; RIA production; agent-cutover self-test/production; links self-test/strict; archive; cached diff; complete repository gate; and full harness PASS. Optional filesystem-sensitive unit reruns are recorded honestly and do not replace the passing required lanes; this logical commit. |
+| N/A — WERPC-009 shares the Plan and Spec sources above | Done. | VAL-WER-001–012 criterion walk, exact13/32/52/25 counts, three absent roots, zero Stage 98 diff, no tracked residue, no unsupported deep-evidence PASS claim, strict links/owners, Reference IA, archive, harness, complete quality gate, lifecycle/index/registry `done` transition, and branch-finishing handoff. |

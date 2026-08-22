@@ -220,13 +220,13 @@ or `git stash drop` in this tranche.
 - **Program requirement**:
   [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
 - **Architecture**:
-  [AD-0010](../../02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md)
+  [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
 - **Decision**:
   [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Plan**:
   [Current Surface and Stash Reconciliation Implementation Plan](plan.md)
 - **Task**:
-  [Current Surface and Stash Reconciliation Task](tasks.md)
+  [Current Surface and Stash Reconciliation Task](README.md#task-records)
 - **Successor**:
   [Spec 048](../0048-github-routing-and-ci-evidence/spec.md)
 
@@ -234,12 +234,12 @@ or `git stash drop` in this tranche.
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-RDPA-001](../../01.requirements/0007-repository-delivery-and-platform-assurance.md#functional-requirements) | VAL-CSASR-001 | Tracked inventory and current disposition matrix prove complete scoped ownership. |
-| N/A — REQ-RDPA-001 shares the PRD-0007 source linked above. | VAL-CSASR-002 | Current evidence classification reconciles every dated audit finding. |
-| N/A — REQ-RDPA-010 shares the PRD-0007 source linked above. | VAL-CSASR-003 | Registry and cross-document validators prove ordered program activation. |
-| N/A — REQ-RDPA-002 shares the PRD-0007 source linked above. | VAL-CSASR-004 | Stash ledger proves one semantic disposition per hunk. |
-| N/A — REQ-RDPA-002 shares the PRD-0007 source linked above. | VAL-CSASR-005 | Generator comparison proves current object identities. |
-| N/A — REQ-RDPA-009 shares the PRD-0007 source linked above. | VAL-CSASR-006 | Status, scope, and review evidence prove protected boundaries. |
-| N/A — REQ-RDPA-012 shares the PRD-0007 source linked above. | VAL-CSASR-007 | Focused and aggregate QA prove contract-compliant authored output. |
-| N/A — REQ-RDPA-010 shares the PRD-0007 source linked above. | VAL-CSASR-008 | Independent review records prove requirements and quality/security approval. |
-| N/A — REQ-RDPA-001 shares the PRD-0007 source linked above. | VAL-CSASR-009 | Successor handoff matrix proves bounded downstream ownership. |
+| [REQ-0007-FR-0001](../../01.requirements/0007-repository-delivery-and-platform-assurance.md#functional-requirements) | VAL-CSASR-001 | Tracked inventory and current disposition matrix prove complete scoped ownership. |
+| N/A — REQ-0007-FR-0001 shares the PRD-0007 source linked above. | VAL-CSASR-002 | Current evidence classification reconciles every dated audit finding. |
+| N/A — REQ-0007-FR-0010 shares the PRD-0007 source linked above. | VAL-CSASR-003 | Registry and cross-document validators prove ordered program activation. |
+| N/A — REQ-0007-FR-0002 shares the PRD-0007 source linked above. | VAL-CSASR-004 | Stash ledger proves one semantic disposition per hunk. |
+| N/A — REQ-0007-FR-0002 shares the PRD-0007 source linked above. | VAL-CSASR-005 | Generator comparison proves current object identities. |
+| N/A — REQ-0007-FR-0009 shares the PRD-0007 source linked above. | VAL-CSASR-006 | Status, scope, and review evidence prove protected boundaries. |
+| N/A — REQ-0007-NFR-0002 shares the PRD-0007 source linked above. | VAL-CSASR-007 | Focused and aggregate QA prove contract-compliant authored output. |
+| N/A — REQ-0007-FR-0010 shares the PRD-0007 source linked above. | VAL-CSASR-008 | Independent review records prove requirements and quality/security approval. |
+| N/A — REQ-0007-FR-0001 shares the PRD-0007 source linked above. | VAL-CSASR-009 | Successor handoff matrix proves bounded downstream ownership. |

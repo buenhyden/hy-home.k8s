@@ -345,17 +345,17 @@ bash infrastructure/tests/verify-contracts-static.sh
 - [Workspace Document Governance Hardening](../0013-workspace-document-governance-hardening/spec.md)
 - [Workspace Document Contract Normalization](../0014-workspace-document-contract-normalization/spec.md)
 - [Agent Governance Contract Normalization](../0015-agent-governance-contract-normalization/spec.md)
-- [Template Documentation Contract](../../99.templates/support/documentation-contract.md)
-- [Template Routing Contract](../../99.templates/support/template-routing.md)
-- [Common Documentation Template Governance](../../99.templates/support/common-documentation-governance.md)
-- [Frontmatter Schema](../../99.templates/support/frontmatter-schema.md)
-- [Documentation Protocol](../../00.agent-governance/rules/documentation-protocol.md)
+- [Template Documentation Contract](../../99.templates/support/document-contract.md)
+- [Template Routing Contract](../../99.templates/support/document-contract.md)
+- [Common Documentation Template Governance](../../99.templates/support/document-lifecycle.md)
+- [Frontmatter Schema](../../99.templates/support/document-contract.md)
+- [Documentation Protocol](../../00.agent-governance/rules/document-authoring.md)
 - [Git Workflow](../../00.agent-governance/rules/git-workflow.md)
 - [Quality Standards](../../00.agent-governance/rules/quality-standards.md)
 - [Repository Quality Gate](../../../scripts/validate-repo-quality-gates.sh)
 - [Harness Validation](../../../scripts/validate-harness.sh)
 - [Plan](plan.md)
-- [Task](tasks.md)
+- [Task](README.md#task-records)
 ### Related inputs
 
 - **PRD**: No separate PRD exists. The upstream requirement is the approved

@@ -66,6 +66,26 @@ the authority.
 - Drop the stash and remove the worktree/branch only after local integration
   and main postflight PASS.
 
+### Legacy Task ledger inputs
+
+This Task is the sole durable execution-evidence owner for Spec 051. It will
+record predecessor closure, two-contract integration, final target and DEFER
+matrices, local QA, independent reviews, merge readiness, the observed local
+fast-forward, exact stash retirement, worktree/branch cleanup, and terminal
+lifecycle postflight. All rows are queued; this draft claims no implementation,
+merge, stash, cleanup, remote, or live result.
+
+- Parent [Spec 051](spec.md)
+- Parent [Implementation Plan](plan.md)
+- [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md),
+  [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md),
+  and [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+- Predecessor Specs 047-050, their Plans, Tasks, commits, reviews, contracts,
+  schemas, validators, fixtures, and residual DEFER owners
+- Preserved stash object
+  `6370311e020620cc2743005896cc88db97d15465`
+- Implementation branch `program/repository-delivery-platform-assurance` and
+  worktree `.worktrees/repository-delivery-platform-assurance`
 ## Goals & In-Scope
 
 - Activate Spec 051 only after Specs 047-050 and their reciprocal Plan/Task
@@ -113,7 +133,7 @@ the authority.
 
 - `docs/01.requirements/0007-repository-delivery-and-platform-assurance.md`
 - `docs/01.requirements/README.md`
-- `docs/02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md`
+- `docs/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md`
 - `docs/02.architecture/descriptions/README.md`
 - `docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md`
 - `docs/02.architecture/decisions/README.md`
@@ -123,10 +143,10 @@ the authority.
 - `docs/03.specs/0050-example-iac-and-validator-qa/spec.md`
 - `docs/03.specs/0051-repository-assurance-integration-and-closure/spec.md`
 - `docs/03.specs/README.md`
-- `docs/04.execution/plans/2026-08-02-*.md`
-- `docs/04.execution/plans/README.md`
-- `docs/04.execution/tasks/2026-08-02-*.md`
-- `docs/04.execution/tasks/README.md`
+- `docs/03.specs/2026-08-02-*.md`
+- `docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md`
+- `docs/03.specs/2026-08-02-*.md`
+- `docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records`
 - `docs/00.agent-governance/memory/progress.md`
 - `docs/99.templates/support/document-profiles.json`
 
@@ -147,7 +167,7 @@ the authority.
 
   ```bash
   rtk git status --short --branch
-  rtk rg -n '^status:|\| .* \| (Done|Queued) \|' docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/0048-github-routing-and-ci-evidence/spec.md docs/03.specs/0049-platform-validation-and-security-evidence/spec.md docs/03.specs/0050-example-iac-and-validator-qa/spec.md docs/04.execution/tasks/2026-08-02-*.md
+  rtk rg -n '^status:|\| .* \| (Done|Queued) \|' docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/0048-github-routing-and-ci-evidence/spec.md docs/03.specs/0049-platform-validation-and-security-evidence/spec.md docs/03.specs/0050-example-iac-and-validator-qa/spec.md docs/03.specs/2026-08-02-*.md
   ```
 
   Expected: Specs 047-050 and their Tasks are done, Spec 051 is the first
@@ -170,7 +190,7 @@ the authority.
 - [ ] Commit the activation unit.
 
   ```bash
-  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0051-repository-assurance-integration-and-closure/spec.md docs/03.specs/README.md docs/04.execution/plans/2026-08-02-repository-assurance-integration-and-closure.md docs/04.execution/plans/README.md docs/04.execution/tasks/2026-08-02-repository-assurance-integration-and-closure.md docs/04.execution/tasks/README.md docs/99.templates/support/document-profiles.json
+  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0051-repository-assurance-integration-and-closure/spec.md docs/03.specs/README.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/99.templates/support/document-profiles.json
   rtk git commit -m "docs: activate repository assurance closure"
   ```
 
@@ -208,7 +228,7 @@ the authority.
   rtk python3 scripts/validate-document-contract-registry.py --root . --mode strict
   rtk python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts registry
   rtk git diff --check
-  rtk git add docs/04.execution/tasks/2026-08-02-repository-assurance-integration-and-closure.md docs/00.agent-governance/memory/progress.md
+  rtk git add docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/00.agent-governance/memory/progress.md
   rtk git commit -m "docs: record repository assurance integration evidence"
   ```
 
@@ -252,7 +272,7 @@ the authority.
   digest in the Task, then commit only the evidence delta.
 
   ```bash
-  rtk git add docs/04.execution/tasks/2026-08-02-repository-assurance-integration-and-closure.md docs/00.agent-governance/memory/progress.md
+  rtk git add docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/00.agent-governance/memory/progress.md
   rtk git commit -m "docs: record repository assurance final review"
   ```
 
@@ -285,7 +305,7 @@ the authority.
 - [ ] Commit merge-readiness evidence and rerun the aggregate.
 
   ```bash
-  rtk git add docs/04.execution/tasks/2026-08-02-repository-assurance-integration-and-closure.md docs/00.agent-governance/memory/progress.md
+  rtk git add docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/00.agent-governance/memory/progress.md
   rtk git commit -m "docs: prepare repository assurance local integration"
   rtk bash scripts/validate-repo-quality-gates.sh .
   ```
@@ -382,7 +402,7 @@ the authority.
   SHA.
 
   ```bash
-  rtk git add docs/00.agent-governance/memory/progress.md docs/01.requirements/0007-repository-delivery-and-platform-assurance.md docs/01.requirements/README.md docs/02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md docs/02.architecture/descriptions/README.md docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md docs/02.architecture/decisions/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/0048-github-routing-and-ci-evidence/spec.md docs/03.specs/0049-platform-validation-and-security-evidence/spec.md docs/03.specs/0050-example-iac-and-validator-qa/spec.md docs/03.specs/0051-repository-assurance-integration-and-closure/spec.md docs/03.specs/README.md docs/04.execution/plans/2026-08-02-current-surface-and-stash-reconciliation.md docs/04.execution/plans/2026-08-02-github-routing-and-ci-evidence.md docs/04.execution/plans/2026-08-02-platform-validation-and-security-evidence.md docs/04.execution/plans/2026-08-02-example-iac-and-validator-qa.md docs/04.execution/plans/2026-08-02-repository-assurance-integration-and-closure.md docs/04.execution/plans/README.md docs/04.execution/tasks/2026-08-02-current-surface-and-stash-reconciliation.md docs/04.execution/tasks/2026-08-02-github-routing-and-ci-evidence.md docs/04.execution/tasks/2026-08-02-platform-validation-and-security-evidence.md docs/04.execution/tasks/2026-08-02-example-iac-and-validator-qa.md docs/04.execution/tasks/2026-08-02-repository-assurance-integration-and-closure.md docs/04.execution/tasks/README.md docs/99.templates/support/document-profiles.json
+  rtk git add docs/00.agent-governance/memory/progress.md docs/01.requirements/0007-repository-delivery-and-platform-assurance.md docs/01.requirements/README.md docs/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md docs/02.architecture/descriptions/README.md docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md docs/02.architecture/decisions/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/0048-github-routing-and-ci-evidence/spec.md docs/03.specs/0049-platform-validation-and-security-evidence/spec.md docs/03.specs/0050-example-iac-and-validator-qa/spec.md docs/03.specs/0051-repository-assurance-integration-and-closure/spec.md docs/03.specs/README.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/99.templates/support/document-profiles.json
   rtk git commit -m "docs: close repository delivery assurance program"
   ```
 
@@ -423,6 +443,13 @@ file-type-specific no-file hooks may report `SKIP`. Hosted, provider, remote,
 credential-bearing, cloud, cluster, Vault, ESO, TLS, and other live lanes
 remain `DEFER` with explicit owners and retry triggers.
 
+### Legacy Task verification evidence
+
+Not executed. The Task will record per-command results, exact tool versions,
+branch and commit identities, contract versions, review dispositions,
+formatter effects, target/DEFER matrices, local integration outcome, stash
+identity/disposition, cleanup outcome, and external-lane limitations as work
+advances. Draft status is not completion evidence.
 ## Risks & Mitigations
 
 | Risk | Mitigation |
@@ -435,6 +462,32 @@ remain `DEFER` with explicit owners and retry triggers.
 | Worktree cleanup fails | Keep integrated main intact, report cleanup incomplete, and do not use force removal until the cause is reviewed. |
 | Local PASS is mistaken for hosted/live readiness | Bind each result to lane, SHA, tool, time, limitation, owner, and retry trigger. |
 
+### Legacy Task approval and rollback boundaries
+
+- **Allowed Paths**: PRD-0007/AD-0010/ADR-0021; Specs 047-051; their five
+  Plans/Tasks and indexes; progress; document profiles; the two machine
+  contracts and implementation surfaces already approved by predecessor
+  Specs; local Git refs/worktree/stash metadata required for finishing.
+- **Forbidden Paths**: ignored/private files, secret values, credentials,
+  authentication caches, provider response bodies, shell history, RTK logs,
+  raw stash patch payloads outside the tracked reviewed scope, and live-system
+  state.
+- **Approval Required**: push, PR, remote merge, hosted dispatch, branch-rule
+  mutation, credential change, deployment, provider call, or live
+  Kubernetes/Argo CD/Vault/ESO/TLS action. None is authorized by this Task.
+- **Static Validation**: focused contract tests, affected and staged runners,
+  full unit suite, strict documents, platform gates, repository aggregate,
+  all-files pre-commit, formatter inspection, both diff checks, and two
+  independent reviews.
+- **Live Validation**: `DEFER`; each external lane must retain limitation,
+  owner, retry trigger, evidence lane, exact SHA, and timestamp when observed.
+- **Secret / Vault Handling**: no read, print, copy, or durable storage of
+  secret material; only tracked redacted/synthetic contracts are eligible.
+- **Rollback Plan**: stop before stash drop on any merge/postflight failure;
+  preserve logical commits and use reviewed `git revert` units in reverse
+  dependency order if rollback is chosen.
+- **Evidence Location**: this Task and
+  `../../00.agent-governance/memory/progress.md`; no third closure contract.
 ## Completion Criteria
 
 - Specs 047-051, all reciprocal Plans/Tasks, indexes, progress, and program
@@ -452,9 +505,9 @@ remain `DEFER` with explicit owners and retry triggers.
 ## Traceability
 
 - **Spec**: [Repository Assurance Integration and Closure](spec.md)
-- **Task**: [Repository Assurance Integration and Closure Task](tasks.md)
+- **Task**: [Repository Assurance Integration and Closure Task](README.md#task-records)
 - **Program**: [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
-- **Architecture**: [AD-0010](../../02.architecture/descriptions/ad-0010-repository-delivery-evidence-architecture.md)
+- **Architecture**: [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
 - **Decision**: [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Predecessor**: Spec 050 Example IaC and Validator QA in the PRD-0007 program
   lineage
@@ -463,9 +516,29 @@ remain `DEFER` with explicit owners and retry triggers.
 
 | Spec criterion | Work package | Expected Task |
 | --- | --- | --- |
-| [VAL-RAIC-001](spec.md#success-criteria--verification-plan) | RAIC-000 | [Activation evidence](tasks.md#task-table) |
-| N/A — VAL-RAIC-002 and VAL-RAIC-003 share the Spec source above | RAIC-001 | [Contract and target evidence](tasks.md#task-table) |
-| N/A — VAL-RAIC-004 and VAL-RAIC-005 share the Spec source above | RAIC-002 | [QA and independent-review evidence](tasks.md#task-table) |
-| N/A — VAL-RAIC-006 shares the Spec source above | RAIC-000, RAIC-005 | [Lifecycle evidence](tasks.md#task-table) |
-| N/A — VAL-RAIC-007 and VAL-RAIC-008 share the Spec source above | RAIC-003, RAIC-004, RAIC-005 | [Local-integration and cleanup evidence](tasks.md#task-table) |
-| N/A — VAL-RAIC-009 shares the Spec source above | RAIC-001, RAIC-005 | [Residual DEFER evidence](tasks.md#task-table) |
+| [VAL-RAIC-001](spec.md#success-criteria--verification-plan) | RAIC-000 | [Activation evidence](tasks/tsk-0001-raic-000.md) |
+| N/A — VAL-RAIC-002 and VAL-RAIC-003 share the Spec source above | RAIC-001 | [Contract and target evidence](tasks/tsk-0002-raic-001.md) |
+| N/A — VAL-RAIC-004 and VAL-RAIC-005 share the Spec source above | RAIC-002 | [QA and independent-review evidence](tasks/tsk-0003-raic-002.md) |
+| N/A — VAL-RAIC-006 shares the Spec source above | RAIC-000, RAIC-005 | [Lifecycle evidence](tasks/tsk-0001-raic-000.md) |
+| N/A — VAL-RAIC-007 and VAL-RAIC-008 share the Spec source above | RAIC-003, RAIC-004, RAIC-005 | [Local-integration and cleanup evidence](tasks/tsk-0004-raic-003.md) |
+| N/A — VAL-RAIC-009 shares the Spec source above | RAIC-001, RAIC-005 | [Residual DEFER evidence](tasks/tsk-0002-raic-001.md) |
+
+### Legacy Task traceability
+
+- **Spec**: [Repository Assurance Integration and Closure](spec.md)
+- **Plan**: [Repository Assurance Integration and Closure Implementation Plan](plan.md)
+- **Predecessor**: Spec 050 Example IaC and Validator QA in the PRD-0007 program
+  lineage
+- **Successor state**: local repository program closure; hosted/provider/live
+  readiness remains separately approval-gated
+
+#### Lifecycle Traceability
+
+| Criterion / work item | Result | Evidence |
+| --- | --- | --- |
+| [RAIC-000](plan.md#work-breakdown) | Not executed | Queued activation evidence. |
+| N/A — RAIC-001 shares the Plan and Spec sources above | Not executed | Queued contract and target integration evidence. |
+| N/A — RAIC-002 shares the Plan and Spec sources above | Not executed | Queued QA and independent review evidence. |
+| N/A — RAIC-003 shares the Plan and Spec sources above | Not executed | Queued merge-readiness evidence. |
+| N/A — RAIC-004 shares the Plan and Spec sources above | Not executed | Queued local finishing evidence. |
+| N/A — RAIC-005 shares the Plan and Spec sources above | Not executed | Queued terminal lifecycle and postflight evidence. |

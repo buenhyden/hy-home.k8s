@@ -5,7 +5,9 @@ from __future__ import annotations
 
 import argparse
 import bisect
+import collections
 import copy
+import functools
 import hashlib
 import importlib.util
 import json
@@ -120,9 +122,7 @@ WORK106_TOMBSTONE_TYPES = {
 }
 WORK108_MANDATORY_PROFILE_IDS = frozenset(
     {
-        "sdlc/prd",
-        "sdlc/srs",
-        "sdlc/interface",
+        "sdlc/requirement-package",
         "sdlc/ad",
         "sdlc/adr",
         "sdlc/spec",
@@ -140,11 +140,21 @@ WORK108_MANDATORY_PROFILE_IDS = frozenset(
         "content/archive-migration",
     }
 )
+WORK054_WP004B_TRANSITIONAL_TEMPLATE_IDS = frozenset(
+    {
+        "template/sdlc/prd",
+        "template/sdlc/srs",
+        "template/sdlc/interface",
+    }
+)
 WORK109_SOURCE_COMMIT = "160ce006969ddb49965c8af193f3e9ee290e18a8"
 WORK109_MIGRATION_DOCUMENT_SHA256 = MIG0002_DOCUMENT_SHA256
 WORK109_GIT_TREE_MAX_BYTES = 2 * 1024 * 1024
 WORK109_MIGRATION_LEDGER_PATH = PurePosixPath(
     "docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md"
+)
+WORK054_WP004B_MIGRATION_LEDGER_PATH = PurePosixPath(
+    "docs/98.archive/migrations/0004-document-authority-convergence.md"
 )
 WORK109_MIGRATION_LEDGER_MARKER = "<!-- archive-migration-ledger:v1 format=json -->"
 WORK109_MIGRATION_LEDGER_FIELDS = frozenset(
@@ -312,14 +322,7 @@ WORK105_WIKI_GENERATOR_PROJECTION_LINES = (
 WORK105_WIKI_GENERATOR_REVIEWED_LITERALS = (
     WORK105_WIKI_GENERATOR_HEADER_LINES + WORK105_WIKI_GENERATOR_PROJECTION_LINES
 )
-WORK105_COMPLETED_HISTORY_PATHS = frozenset(
-    {
-        "docs/03.specs/019-template-path-numbering-contract/plan.md",
-        "docs/03.specs/019-template-path-numbering-contract/spec.md",
-        "docs/03.specs/0019-template-path-numbering-contract/plan.md",
-        "docs/03.specs/0019-template-path-numbering-contract/spec.md",
-    }
-)
+WORK105_COMPLETED_HISTORY_PATHS = frozenset()
 WORK105_ACCEPTED_BASE_HISTORY_PATHS = frozenset(
     {
         "docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md",
@@ -329,12 +332,9 @@ WORK105_ACCEPTED_BASE_HISTORY_PATHS = frozenset(
         "docs/02.architecture/decisions/0009-kiali-external-observability.md",
         "docs/02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md",
         "docs/02.architecture/decisions/0012-argo-notifications-slack.md",
-        "docs/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md",
         "docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md",
-        "docs/02.architecture/decisions/0015-declarative-document-contract-registry.md",
         "docs/02.architecture/decisions/0016-program-to-tranche-document-lineage.md",
         "docs/02.architecture/decisions/0017-program-follow-up-lineage-semantics.md",
-        "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md",
         "docs/02.architecture/decisions/0020-document-lifecycle-program-closure-evidence.md",
         "docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md",
         "docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md",
@@ -360,8 +360,15 @@ WORK105_MIGRATION_CONTRACT_PATHS = frozenset(
 )
 WORK105_PINNED_LEGACY_HISTORY_PATHS = frozenset(
     {
+        "docs/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md",
+        "docs/02.architecture/decisions/0015-declarative-document-contract-registry.md",
         "docs/02.architecture/decisions/0018-full-body-archive-record-and-retention.md",
+        "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md",
         "docs/02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md",
+        "docs/03.specs/019-template-path-numbering-contract/plan.md",
+        "docs/03.specs/019-template-path-numbering-contract/spec.md",
+        "docs/03.specs/0019-template-path-numbering-contract/plan.md",
+        "docs/03.specs/0019-template-path-numbering-contract/spec.md",
         "scripts/archive_cutover_manifest.py",
         "scripts/validate-active-corpus-eligibility.py",
         "scripts/validate-active-corpus-migrations.py",
@@ -419,14 +426,22 @@ REFERENCE_MEMBER_SAMPLE_PATHS = (
     "docs/90.references/research/2026-07-07-test/active.md",
 )
 LINEAGE_FIXTURE_DOCUMENTS = {
-    "docs/01.requirements/0005-fixture.md": ("sdlc/prd", "done", "2026-07-12"),
-    "docs/01.requirements/0006-fixture.md": ("sdlc/prd", "active", "2026-07-15"),
-    "docs/02.architecture/descriptions/ad-0008-fixture.md": (
+    "docs/01.requirements/0005-fixture.md": (
+        "sdlc/requirement-package",
+        "active",
+        "2026-07-12",
+    ),
+    "docs/01.requirements/0006-fixture.md": (
+        "sdlc/requirement-package",
+        "active",
+        "2026-07-15",
+    ),
+    "docs/02.architecture/descriptions/0008-fixture.md": (
         "sdlc/ad",
         "accepted",
         "2026-07-12",
     ),
-    "docs/02.architecture/descriptions/ad-0009-fixture.md": (
+    "docs/02.architecture/descriptions/0009-fixture.md": (
         "sdlc/ad",
         "active",
         "2026-07-15",
@@ -466,27 +481,27 @@ LINEAGE_FIXTURE_DOCUMENTS = {
     "docs/03.specs/0034-fixture/spec.md": ("sdlc/spec", "active", "2026-07-15"),
     "docs/03.specs/0035-fixture/spec.md": ("sdlc/spec", "active", "2026-07-15"),
     "docs/03.specs/0036-fixture/spec.md": ("sdlc/spec", "draft", "2026-07-15"),
-    "docs/03.specs/0037-fixture/spec.md": ("sdlc/spec", "active", "2026-07-18"),
-    "docs/03.specs/0038-fixture/spec.md": ("sdlc/spec", "active", "2026-07-15"),
+    "docs/03.specs/0037-fixture/spec.md": ("sdlc/spec", "done", "2026-07-18"),
+    "docs/03.specs/0038-fixture/spec.md": ("sdlc/spec", "done", "2026-07-15"),
     "docs/03.specs/0039-fixture/spec.md": ("sdlc/spec", "active", "2026-07-15"),
     "docs/03.specs/0037-fixture/plan.md": (
         "sdlc/plan",
-        "active",
+        "done",
         "2026-07-18",
     ),
-    "docs/03.specs/0037-fixture/tasks.md": (
+    "docs/03.specs/0037-fixture/tasks/tsk-0001-fixture.md": (
         "sdlc/task",
-        "active",
+        "done",
         "2026-07-18",
     ),
     "docs/03.specs/0038-fixture/plan.md": (
         "sdlc/plan",
-        "active",
+        "done",
         "2026-07-18",
     ),
-    "docs/03.specs/0038-fixture/tasks.md": (
+    "docs/03.specs/0038-fixture/tasks/tsk-0001-fixture.md": (
         "sdlc/task",
-        "active",
+        "done",
         "2026-07-18",
     ),
 }
@@ -1256,7 +1271,7 @@ def _fixture_document_contracts() -> dict[str, Any]:
     authored = [
         "governance/reference",
         "content/reference",
-        "sdlc/prd",
+        "sdlc/requirement-package",
         "sdlc/ad",
         "sdlc/adr",
         "sdlc/spec",
@@ -1267,7 +1282,7 @@ def _fixture_document_contracts() -> dict[str, Any]:
         "test/sample",
         "readme/collection-index",
         "readme/snapshot-pack",
-        "template/sdlc/prd",
+        "template/sdlc/requirement-package",
     ]
     return {
         "valueContracts": [
@@ -1280,7 +1295,7 @@ def _fixture_document_contracts() -> dict[str, Any]:
         ],
         "roleDecisions": [
             {
-                "profileIds": ["sdlc/prd"],
+                "profileIds": ["sdlc/requirement-package"],
                 "role": "product-requirement",
                 "sourceProfileId": None,
                 "relationshipSection": "Traceability",
@@ -1328,11 +1343,24 @@ def _fixture_document_contracts() -> dict[str, Any]:
                 "baselinePaths": [],
             },
             {
-                "id": "execution-reciprocal-pair",
-                "profileIds": ["sdlc/plan", "sdlc/task"],
+                "id": "execution-plan-draft-only",
+                "profileIds": ["sdlc/plan"],
                 "create": {
-                    "mode": "paired",
-                    "states": ["draft", "active"],
+                    "mode": "states",
+                    "states": ["draft"],
+                    "evidencePredicateId": None,
+                },
+                "delete": "deny",
+                "rename": "deny",
+                "profileChange": "deny",
+                "baselinePaths": [],
+            },
+            {
+                "id": "task-queued-only",
+                "profileIds": ["sdlc/task"],
+                "create": {
+                    "mode": "states",
+                    "states": ["queued"],
                     "evidencePredicateId": None,
                 },
                 "delete": "deny",
@@ -1357,7 +1385,7 @@ def _fixture_document_contracts() -> dict[str, Any]:
         "lifecycleContracts": [
             {
                 "id": "fixture-prd",
-                "profileIds": ["sdlc/prd"],
+                "profileIds": ["sdlc/requirement-package"],
                 "terminalStates": ["active"],
                 "edges": [
                     {
@@ -1387,7 +1415,11 @@ def _fixture_document_contracts() -> dict[str, Any]:
             {
                 "id": "activate-self-body",
                 "profileEdges": [
-                    {"profileId": "sdlc/prd", "from": "draft", "to": "active"}
+                    {
+                        "profileId": "sdlc/requirement-package",
+                        "from": "draft",
+                        "to": "active",
+                    }
                 ],
                 "evidence": [
                     {
@@ -1581,7 +1613,7 @@ def _minimal_fixture_registry() -> dict[str, Any]:
                 "bodyContract": None,
             },
             {
-                "id": "sdlc/prd",
+                "id": "sdlc/requirement-package",
                 "class": "sdlc",
                 "mode": "authored",
                 "routes": [
@@ -1600,7 +1632,13 @@ def _minimal_fixture_registry() -> dict[str, Any]:
                     "allowed": ["title", "type", "status", "owner", "updated"],
                     "order": ["title", "type", "status", "owner", "updated"],
                 },
-                "statusDomain": ["draft", "active"],
+                "statusDomain": [
+                    "draft",
+                    "active",
+                    "superseded",
+                    "retired",
+                    "withdrawn",
+                ],
                 "headings": {
                     "required": ["Overview", "Traceability"],
                     "allowed": ["Overview", "Traceability"],
@@ -1612,7 +1650,7 @@ def _minimal_fixture_registry() -> dict[str, Any]:
                 "bodyContract": _fixture_body_contract(),
             },
             {
-                "id": "template/sdlc/prd",
+                "id": "template/sdlc/requirement-package",
                 "class": "sdlc",
                 "mode": "template",
                 "routes": [
@@ -1627,20 +1665,26 @@ def _minimal_fixture_registry() -> dict[str, Any]:
                     "allowed": ["title", "type", "status", "owner", "updated"],
                     "order": ["title", "type", "status", "owner", "updated"],
                 },
-                "statusDomain": ["draft", "active"],
+                "statusDomain": [
+                    "draft",
+                    "active",
+                    "superseded",
+                    "retired",
+                    "withdrawn",
+                ],
                 "headings": {
                     "required": ["Overview", "Traceability"],
                     "allowed": ["Overview", "Traceability"],
                 },
                 "template": "tests/fixtures/document-contracts/self-test-prd.template.md",
-                "sourceProfileIds": ["sdlc/prd"],
+                "sourceProfileIds": ["sdlc/requirement-package"],
                 "placeholderPolicy": "template-only",
                 "appendContract": None,
                 "bodyContract": _fixture_body_contract(),
             },
             _fixture_lineage_profile(
                 "sdlc/ad",
-                "^docs/02\\.architecture/descriptions/ad-[0-9]{4}-fixture\\.md$",
+                "^docs/02\\.architecture/descriptions/[0-9]{4}-fixture\\.md$",
                 ["draft", "active", "accepted", "archived"],
             ),
             _fixture_lineage_profile(
@@ -1660,8 +1704,11 @@ def _minimal_fixture_registry() -> dict[str, Any]:
             ),
             _fixture_lineage_profile(
                 "sdlc/task",
-                "^docs/03\\.specs/[0-9]{4}-fixture/tasks\\.md$",
-                ["draft", "active", "done", "archived"],
+                (
+                    "^docs/03\\.specs/[0-9]{4}-fixture/tasks/"
+                    "tsk-[0-9]{4}-fixture\\.md$"
+                ),
+                ["queued", "in-progress", "blocked", "done", "cancelled"],
             ),
         ],
         "governanceCurrentOwners": {
@@ -1738,8 +1785,8 @@ def _minimal_fixture_registry() -> dict[str, Any]:
             {
                 "spec": "0037",
                 "plan": "docs/03.specs/0037-fixture/plan.md",
-                "task": "docs/03.specs/0037-fixture/tasks.md",
-                "state": "active",
+                "task": "docs/03.specs/0037-fixture/tasks/tsk-0001-fixture.md",
+                "state": "done",
                 "reason": "Direct approval fixture",
                 "decision": "0022",
                 "approvalMode": "spec-body-record",
@@ -1876,15 +1923,33 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
     if mutation == "point-to-missing-template":
         profile["template"] = "docs/99.templates/templates/missing-document.md"
         return
-    prd_profile = next(
+    mutation_profile_ids = {
+        candidate["id"] for candidate in raw_registry["profiles"]
+    }
+    mutation_requirement_profile_id = (
+        "sdlc/requirement-package"
+        if "sdlc/requirement-package" in mutation_profile_ids
+        else "sdlc/prd"
+    )
+    mutation_requirement_profiles = [
         candidate
         for candidate in raw_registry["profiles"]
-        if candidate["id"] == "sdlc/prd"
+        if candidate["id"] == mutation_requirement_profile_id
+    ]
+    if len(mutation_requirement_profiles) != 1:
+        raise AssertionError(
+            f"{mutation}: expected one {mutation_requirement_profile_id} mutation owner"
+        )
+    prd_profile = mutation_requirement_profiles[0]
+    template_requirement_id = (
+        "template/sdlc/requirement-package"
+        if "template/sdlc/requirement-package" in mutation_profile_ids
+        else "template/sdlc/prd"
     )
     template_profile = next(
         candidate
         for candidate in raw_registry["profiles"]
-        if candidate["id"] == "template/sdlc/prd"
+        if candidate["id"] == template_requirement_id
     )
     if mutation == "remove-body-contract":
         del prd_profile["bodyContract"]
@@ -2283,7 +2348,7 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
             {
                 "spec": "0038",
                 "order": 1,
-                "state": "active",
+                "state": "done",
                 "reason": "Later-approved fixture follow-up declared first",
                 "decision": "0022",
                 "evidenceMode": "reciprocal-body",
@@ -2305,14 +2370,18 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
     if mutation == "standalone-duplicate-spec":
         duplicate = copy.deepcopy(standalone[0])
         duplicate["plan"] = "docs/03.specs/0039-fixture/plan.md"
-        duplicate["task"] = "docs/03.specs/0039-fixture/tasks.md"
+        duplicate["task"] = (
+            "docs/03.specs/0039-fixture/tasks/tsk-0001-fixture.md"
+        )
         standalone.append(duplicate)
         return
     if mutation == "standalone-program-overlap":
         standalone[0]["spec"] = "0034"
         return
     if mutation == "standalone-wrong-plan-path":
-        standalone[0]["plan"] = "docs/03.specs/0037-fixture/tasks.md"
+        standalone[0]["plan"] = (
+            "docs/03.specs/0037-fixture/tasks/tsk-0001-fixture.md"
+        )
         return
     if mutation == "standalone-missing-plan-owner":
         standalone[0]["plan"] = "docs/03.specs/0099-fixture/plan.md"
@@ -2332,7 +2401,9 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         task_profile["routes"] = [
             {
                 "kind": "exact",
-                "value": "docs/03.specs/0038-fixture/tasks.md",
+                "value": (
+                    "docs/03.specs/0038-fixture/tasks/tsk-0001-fixture.md"
+                ),
             }
         ]
         return
@@ -2345,7 +2416,9 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
             {
                 "spec": "0038",
                 "plan": "docs/03.specs/0038-fixture/plan.md",
-                "task": "docs/03.specs/0038-fixture/tasks.md",
+                "task": (
+                    "docs/03.specs/0038-fixture/tasks/tsk-0001-fixture.md"
+                ),
             }
         )
         standalone.insert(0, earlier)
@@ -2353,7 +2426,9 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
     if mutation == "standalone-duplicate-plan":
         duplicate = copy.deepcopy(standalone[0])
         duplicate["spec"] = "0038"
-        duplicate["task"] = "docs/03.specs/0038-fixture/tasks.md"
+        duplicate["task"] = (
+            "docs/03.specs/0038-fixture/tasks/tsk-0001-fixture.md"
+        )
         standalone.append(duplicate)
         return
     if mutation == "standalone-duplicate-task":
@@ -2363,7 +2438,7 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         standalone.append(duplicate)
         return
     if mutation == "standalone-state-drift":
-        standalone[0]["state"] = "done"
+        standalone[0]["state"] = "active"
         return
     if mutation == "standalone-decision-not-accepted":
         standalone[0]["decision"] = "0018"
@@ -2376,9 +2451,9 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         group = next(
             item
             for item in contracts["valueContracts"]
-            if "sdlc/prd" in item["profileIds"]
+            if mutation_requirement_profile_id in item["profileIds"]
         )
-        group["profileIds"].remove("sdlc/prd")
+        group["profileIds"].remove(mutation_requirement_profile_id)
         return
     role_copy_profiles = {
         "guide-role-copied-to-runbook": ("sdlc/guide", "sdlc/runbook"),
@@ -2404,7 +2479,9 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         target["role"] = source["role"]
         return
     value_group = next(
-        item for item in contracts["valueContracts"] if "sdlc/prd" in item["profileIds"]
+        item
+        for item in contracts["valueContracts"]
+        if mutation_requirement_profile_id in item["profileIds"]
     )
     value_keys = {item["key"]: item for item in value_group["keys"]}
     if mutation == "invalid-value-kind":
@@ -2431,10 +2508,12 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         }
         return
     role = next(
-        item for item in contracts["roleDecisions"] if "sdlc/prd" in item["profileIds"]
+        item
+        for item in contracts["roleDecisions"]
+        if mutation_requirement_profile_id in item["profileIds"]
     )
     if mutation == "missing-role-decision":
-        role["profileIds"].remove("sdlc/prd")
+        role["profileIds"].remove(mutation_requirement_profile_id)
         return
     if mutation == "invalid-relationship-section":
         role["relationshipSection"] = "Related Documents"
@@ -2445,7 +2524,7 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
     admission = next(
         item
         for item in contracts["admissionPolicies"]
-        if "sdlc/prd" in item["profileIds"]
+        if mutation_requirement_profile_id in item["profileIds"]
     )
     if mutation == "invalid-create-admission":
         admission["create"]["states"] = ["active"]
@@ -2482,13 +2561,13 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         admission["profileChange"] = "allow"
         return
     if mutation == "invalid-paired-admission":
-        paired = next(
+        task_admission = next(
             item
             for item in contracts["admissionPolicies"]
-            if item["id"] == "execution-reciprocal-pair"
+            if item["profileIds"] == ["sdlc/task"]
         )
-        admission["profileIds"].remove("sdlc/prd")
-        paired["profileIds"].append("sdlc/prd")
+        admission["profileIds"].remove(mutation_requirement_profile_id)
+        task_admission["profileIds"].append(mutation_requirement_profile_id)
         return
     if mutation == "baseline-path-on-standard":
         admission["baselinePaths"].append("docs/example.md")
@@ -2496,7 +2575,7 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
     lifecycle = next(
         item
         for item in contracts["lifecycleContracts"]
-        if "sdlc/prd" in item["profileIds"]
+        if mutation_requirement_profile_id in item["profileIds"]
     )
     if mutation == "duplicate-lifecycle-edge":
         lifecycle["edges"].append(copy.deepcopy(lifecycle["edges"][0]))
@@ -2506,11 +2585,11 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         return
     if mutation in {"terminal-outgoing-edge", "archived-lifecycle-edge"}:
         edge = (
-            {"from": "done", "to": "active", "predicateId": "activate-self-body"}
+            {"from": "active", "to": "draft", "predicateId": "activate-self-body"}
             if mutation == "terminal-outgoing-edge"
             else {
                 "from": "active",
-                "to": "archived",
+                "to": "retired",
                 "predicateId": "activate-self-body",
             }
         )
@@ -2533,7 +2612,7 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         lifecycle["terminalStates"] = []
         return
     if mutation == "archived-terminal-state":
-        lifecycle["terminalStates"].append("archived")
+        lifecycle["terminalStates"].append("retired")
         return
     predicate = next(
         item
@@ -2862,7 +2941,6 @@ def _assert_document_contract_projection(registry: Registry) -> None:
     if (
         registry.schema_version != 8
         or registry.route_state != "transition"
-        or len(registry.profiles) != 69
     ):
         raise AssertionError("production v8 profile projection differs")
     profiles = {profile.profile_id: profile for profile in registry.profiles}
@@ -2871,7 +2949,6 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         "activate-self-body",
         "activate-heading-profile",
         "activate-execution-pair",
-        "complete-product-program",
         "accept-architecture",
         "accept-decision-self",
         "complete-specification",
@@ -2913,9 +2990,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         "archive-source-removal": set(),
         "activate-self-body": edges(
             (
-                "sdlc/prd",
-                "sdlc/srs",
-                "sdlc/interface",
+                "sdlc/requirement-package",
                 "sdlc/ad",
                 "sdlc/adr",
                 *specifications,
@@ -2925,14 +3000,17 @@ def _assert_document_contract_projection(registry: Registry) -> None:
             "active",
         ),
         "activate-heading-profile": edges(references, "draft", "active"),
-        "activate-execution-pair": edges(("sdlc/plan", "sdlc/task"), "draft", "active"),
-        "complete-product-program": edges(
-            ("sdlc/prd", "sdlc/srs", "sdlc/interface"), "active", "done"
+        "activate-execution-pair": (
+            edges(("sdlc/plan",), "draft", "active")
+            | edges(("sdlc/task",), "queued", "in-progress")
         ),
         "accept-architecture": edges(("sdlc/ad",), "active", "accepted"),
         "accept-decision-self": edges(("sdlc/adr",), "active", "accepted"),
         "complete-specification": edges(specifications, "active", "done"),
-        "complete-execution-pair": edges(("sdlc/plan", "sdlc/task"), "active", "done"),
+        "complete-execution-pair": (
+            edges(("sdlc/plan",), "active", "done")
+            | edges(("sdlc/task",), "in-progress", "done")
+        ),
         "accept-operated-document": edges(operations, "active", "accepted"),
         "terminate-reviewed-reference": (
             edges(references, "active", "accepted")
@@ -2950,11 +3028,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         raise AssertionError("production exact edge/predicate projection differs")
 
     terminal_sources = (
-        "sdlc/prd",
-        "sdlc/srs",
-        "sdlc/interface",
         "sdlc/ad",
-        "sdlc/adr",
         "sdlc/spec",
         "sdlc/agent-design",
         "sdlc/data-model",
@@ -2978,7 +3052,6 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         "template/sdlc/srs",
         "template/sdlc/interface",
         "template/sdlc/ad",
-        "template/sdlc/adr",
         "template/sdlc/spec",
         "template/sdlc/agent-design",
         "template/sdlc/data-model",
@@ -3086,6 +3159,32 @@ def _assert_document_contract_projection(registry: Registry) -> None:
             None,
         ),
     )
+    requirement_relation_keys = (
+        *terminal_keys,
+        ("superseded_by", "string", True, None, None, r"^REQ-[0-9]{4}$", None),
+        (
+            "supersedes",
+            "string",
+            True,
+            None,
+            None,
+            r"^\[REQ-[0-9]{4}, REQ-[0-9]{4}\]$",
+            None,
+        ),
+    )
+    adr_relation_keys = (
+        *terminal_keys,
+        ("superseded_by", "string", True, None, None, r"^ADR-[0-9]{4}$", None),
+        (
+            "supersedes",
+            "string",
+            True,
+            None,
+            None,
+            r"^\[ADR-[0-9]{4}(?:, ADR-[0-9]{4})*\]$",
+            None,
+        ),
+    )
     archive_keys = (
         *standard_keys[:2],
         ("status", "string", False, ("literal", "archived"), None, None, None),
@@ -3185,9 +3284,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         ),
     )
     archive_migration_keys = (
-        *standard_keys[:2],
-        ("status", "string", False, ("literal", "accepted"), None, None, None),
-        *standard_keys[3:],
+        *standard_keys,
         (
             "artifact_id",
             "string",
@@ -3214,12 +3311,27 @@ def _assert_document_contract_projection(registry: Registry) -> None:
             terminal_sources,
             terminal_keys,
         )
+    expected_value_projection["sdlc/requirement-package"] = (
+        "requirement-package-identity",
+        ("sdlc/requirement-package",),
+        requirement_relation_keys,
+    )
+    expected_value_projection["sdlc/adr"] = (
+        "adr-relation-identity",
+        ("sdlc/adr",),
+        adr_relation_keys,
+    )
     for profile_id in terminal_templates:
         expected_value_projection[profile_id] = (
             "template-terminal-authored",
             terminal_templates,
             standard_keys,
         )
+    expected_value_projection["template/sdlc/adr"] = (
+        "template-adr-relation-identity",
+        ("template/sdlc/adr",),
+        tuple(item for item in adr_relation_keys if item[0] != "artifact_id"),
+    )
     for profile_id in (*standard_sources, *standard_templates):
         expected_value_projection[profile_id] = (
             "authored-standard",
@@ -3264,10 +3376,8 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         raise AssertionError("production complete value projection differs")
 
     expected_roles: dict[str, tuple[str, str | None, str | None, str]] = {
-        "sdlc/prd": ("product-requirement", None, "Traceability", "body-contract"),
-        "sdlc/srs": ("system-requirement", None, "Traceability", "body-contract"),
-        "sdlc/interface": (
-            "interface-requirement",
+        "sdlc/requirement-package": (
+            "requirement-package",
             None,
             "Traceability",
             "body-contract",
@@ -3406,9 +3516,9 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         "template/sdlc/policy": "sdlc/policy",
         "template/sdlc/postmortem": "sdlc/postmortem",
         "template/sdlc/runbook": "sdlc/runbook",
-        "template/sdlc/prd": "sdlc/prd",
-        "template/sdlc/interface": "sdlc/interface",
-        "template/sdlc/srs": "sdlc/srs",
+        "template/sdlc/prd": "sdlc/requirement-package",
+        "template/sdlc/interface": "sdlc/requirement-package",
+        "template/sdlc/srs": "sdlc/requirement-package",
         "template/sdlc/agent-design": "sdlc/agent-design",
         "template/sdlc/data-model": "sdlc/data-model",
         "template/sdlc/spec": "sdlc/spec",
@@ -3434,18 +3544,17 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         )
         for profile_id, profile in profiles.items()
     }
-    if actual_roles != expected_roles or len(expected_roles) != 69:
+    if actual_roles != expected_roles:
         raise AssertionError("production complete role/source projection differs")
 
     authored_draft = (
-        "sdlc/prd",
-        "sdlc/interface",
-        "sdlc/srs",
+        "sdlc/requirement-package",
+        "sdlc/ad",
+        "sdlc/adr",
         *tuple(
             profile_id
             for profile_id in terminal_sources
-            if profile_id
-            not in {"sdlc/prd", "sdlc/srs", "sdlc/interface", "sdlc/plan", "sdlc/task"}
+            if profile_id not in {"sdlc/ad", "sdlc/plan", "sdlc/task"}
         ),
         *standard_sources,
     )
@@ -3513,13 +3622,12 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         expected_admissions[profile_id] = admission_signature(
             "authored-draft-only", authored_draft, "states", ("draft",)
         )
-    for profile_id in ("sdlc/plan", "sdlc/task"):
-        expected_admissions[profile_id] = admission_signature(
-            "execution-reciprocal-pair",
-            ("sdlc/plan", "sdlc/task"),
-            "paired",
-            ("draft", "active"),
-        )
+    expected_admissions["sdlc/plan"] = admission_signature(
+        "execution-plan", ("sdlc/plan",), "states", ("draft",)
+    )
+    expected_admissions["sdlc/task"] = admission_signature(
+        "task-record", ("sdlc/task",), "states", ("queued",)
+    )
     expected_admissions["content/archive"] = admission_signature(
         "archive-envelope-only",
         ("content/archive",),
@@ -3549,18 +3657,15 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         )
         for profile_id, profile in profiles.items()
     }
-    if actual_admissions != expected_admissions or len(expected_admissions) != 69:
+    if actual_admissions != expected_admissions:
         raise AssertionError("production complete admission projection differs")
 
     lifecycle_groups = (
         (
-            "product",
-            ("sdlc/prd", "sdlc/srs", "sdlc/interface"),
-            ("done",),
-            (
-                ("draft", "active", "activate-self-body"),
-                ("active", "done", "complete-product-program"),
-            ),
+            "requirement",
+            ("sdlc/requirement-package",),
+            ("active",),
+            (("draft", "active", "activate-self-body"),),
         ),
         (
             "architecture-requirement",
@@ -3591,11 +3696,20 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         ),
         (
             "execution",
-            ("sdlc/plan", "sdlc/task"),
+            ("sdlc/plan",),
             ("done",),
             (
                 ("draft", "active", "activate-execution-pair"),
                 ("active", "done", "complete-execution-pair"),
+            ),
+        ),
+        (
+            "task-execution",
+            ("sdlc/task",),
+            ("done",),
+            (
+                ("queued", "in-progress", "activate-execution-pair"),
+                ("in-progress", "done", "complete-execution-pair"),
             ),
         ),
         (
@@ -3621,7 +3735,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         (
             "archive-migration",
             ("content/archive-migration",),
-            ("accepted",),
+            ("accepted", "sealed"),
             (),
         ),
         ("non-lifecycle", snapshot_profiles, (), ()),
@@ -3643,7 +3757,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         )
         for profile_id, profile in profiles.items()
     }
-    if actual_lifecycles != expected_lifecycles or len(expected_lifecycles) != 69:
+    if actual_lifecycles != expected_lifecycles:
         raise AssertionError("production complete lifecycle projection differs")
 
     def edge_rows(
@@ -3664,9 +3778,7 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         "activate-self-body": (
             edge_rows(
                 (
-                    "sdlc/prd",
-                    "sdlc/srs",
-                    "sdlc/interface",
+                    "sdlc/requirement-package",
                     "sdlc/ad",
                     "sdlc/adr",
                     *specifications,
@@ -3692,26 +3804,25 @@ def _assert_document_contract_projection(registry: Registry) -> None:
             ("rendered-link", "same-diff"),
         ),
         "activate-execution-pair": (
-            edge_rows(("sdlc/plan", "sdlc/task"), "draft", "active"),
-            (("sdlc/plan",), ("active",), 1, 1, ("sdlc/task",), ("active",), 1, 1),
+            (
+                *edge_rows(("sdlc/plan",), "draft", "active"),
+                *edge_rows(("sdlc/task",), "queued", "in-progress"),
+            ),
+            (
+                ("sdlc/plan",),
+                ("active",),
+                1,
+                1,
+                ("sdlc/task",),
+                ("in-progress",),
+                1,
+                1,
+            ),
             "pair",
             (2, 2),
             "pair-created-or-status-changed",
             "body-contract",
             ("rendered-link", "reciprocal-link", "same-diff"),
-        ),
-        "complete-product-program": (
-            edge_rows(
-                ("sdlc/prd", "sdlc/srs", "sdlc/interface"),
-                "active",
-                "done",
-            ),
-            (("sdlc/spec",), ("done",), 1, None),
-            "program-lineage",
-            (1, None),
-            "target-and-last-relation-changed",
-            "body-contract",
-            ("program-lineage-closed", "same-diff"),
         ),
         "accept-architecture": (
             edge_rows(("sdlc/ad",), "active", "accepted"),
@@ -3741,7 +3852,10 @@ def _assert_document_contract_projection(registry: Registry) -> None:
             ("rendered-link", "reciprocal-link", "same-diff"),
         ),
         "complete-execution-pair": (
-            edge_rows(("sdlc/plan", "sdlc/task"), "active", "done"),
+            (
+                *edge_rows(("sdlc/plan",), "active", "done"),
+                *edge_rows(("sdlc/task",), "in-progress", "done"),
+            ),
             (("sdlc/plan",), ("done",), 1, 1, ("sdlc/task",), ("done",), 1, 1),
             "pair",
             (2, 2),
@@ -3818,7 +3932,8 @@ def _assert_document_contract_projection(registry: Registry) -> None:
     if actual_null_body_roles != expected_null_body_roles:
         raise AssertionError("production null-body role decision projection differs")
     if (
-        profiles["template/sdlc/prd"].role_decision.source_profile_id != "sdlc/prd"
+        profiles["template/sdlc/prd"].role_decision.source_profile_id
+        != "sdlc/requirement-package"
         or profiles["template/sdlc/prd"].value_contract.contract_id
         != "template-terminal-authored"
         or profiles["template/sdlc/prd"].admission.create.mode != "snapshot-only"
@@ -3832,8 +3947,6 @@ def _assert_document_contract_projection(registry: Registry) -> None:
         or {archive.delete, archive.rename, archive.profile_change} != {"deny"}
     ):
         raise AssertionError("production archive envelope admission projection differs")
-    if sum(len(profile.lifecycle.edges) for profile in registry.profiles) != 44:
-        raise AssertionError("production lifecycle edge count differs")
 
 
 def _assert_parser_safety() -> None:
@@ -4374,8 +4487,20 @@ def _assert_template_source_parity(registry: Any) -> None:
     """Require every ordinary Markdown form to equal its canonical source."""
 
     profiles = {profile.profile_id: profile for profile in registry.profiles}
+    for profile_id in WORK054_WP004B_TRANSITIONAL_TEMPLATE_IDS:
+        profile = profiles.get(profile_id)
+        if (
+            profile is None
+            or profile.mode != "template"
+            or profile.source_profile_ids != ("sdlc/requirement-package",)
+        ):
+            raise AssertionError(
+                "WP-004B transitional Requirement template admission differs"
+            )
     for profile in registry.profiles:
         if profile.mode != "template" or profile.append_contract is not None:
+            continue
+        if profile.profile_id in WORK054_WP004B_TRANSITIONAL_TEMPLATE_IDS:
             continue
         if len(profile.source_profile_ids) != 1:
             raise AssertionError(
@@ -4482,7 +4607,7 @@ def _assert_template_source_mutation_proofs(
             raise AssertionError(f"invalid template/source parity case: {case!r}")
         mutated = copy.deepcopy(raw_registry)
         profile = next(
-            item for item in mutated["profiles"] if item["id"] == "template/sdlc/prd"
+            item for item in mutated["profiles"] if item["id"] == "template/sdlc/spec"
         )
         mutation = case["mutation"]
         if mutation == "frontmatter":
@@ -4508,11 +4633,11 @@ def _assert_template_source_mutation_proofs(
             )
             owner["pattern"] = "^platform$"
         elif mutation == "source-cardinality":
-            profile["sourceProfileIds"] = ["sdlc/prd", "sdlc/spec"]
+            profile["sourceProfileIds"] = ["sdlc/spec", "sdlc/plan"]
         elif mutation == "missing-source":
             profile["sourceProfileIds"] = []
         elif mutation == "duplicate-source":
-            profile["sourceProfileIds"] = ["sdlc/prd", "sdlc/prd"]
+            profile["sourceProfileIds"] = ["sdlc/spec", "sdlc/spec"]
         elif mutation == "unknown-source":
             profile["sourceProfileIds"] = ["sdlc/unknown"]
         else:
@@ -4657,6 +4782,12 @@ def _assert_positive_coverage(
                 raise AssertionError(
                     "governance/progress-entry append contract does not match "
                     "the ledger H3/H4 contract"
+                )
+            continue
+        if profile.profile_id in WORK054_WP004B_TRANSITIONAL_TEMPLATE_IDS:
+            if profile.source_profile_ids != ("sdlc/requirement-package",):
+                raise AssertionError(
+                    "WP-004B transitional Requirement template source differs"
                 )
             continue
         if not profile.source_profile_ids:
@@ -4970,6 +5101,27 @@ def _assert_readme_family_contract(
         path for path in inventory.current_paths if _is_readme_path(path)
     }
     new_readmes = {path for path in inventory.new_paths if _is_readme_path(path)}
+    spec_router_pattern = re.compile(
+        r"^docs/03\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\.md$"
+    )
+    spec_router_paths = {
+        path for path in tracked_readmes if spec_router_pattern.fullmatch(path.as_posix())
+    }
+    expected_spec_router_paths = {
+        path.parent / "README.md"
+        for path in inventory.current_paths
+        if re.fullmatch(
+            r"docs/03\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/spec\.md",
+            path.as_posix(),
+        )
+    }
+    if spec_router_paths != expected_spec_router_paths or any(
+        classify_path(registry, path).profile_id != "readme/collection-index"
+        for path in spec_router_paths
+    ):
+        raise AssertionError(
+            "Spec package README routers must equal the exact current Spec owner set"
+        )
     readme_profile_ids = _readme_profile_ids(registry)
     readme_profiles = {
         profile.profile_id: profile
@@ -5164,11 +5316,17 @@ def _assert_readme_family_contract(
             "README active baseline plus retired paths must reconstruct baseline67"
         )
     current_rename_targets = set(work105_readme_renames.values()) & tracked_readmes
-    if active_program_created != new_readmes - current_rename_targets:
+    legacy_new_readmes = new_readmes - spec_router_paths
+    if active_program_created != legacy_new_readmes - current_rename_targets:
         raise AssertionError(
-            "README program-created active paths must equal the current new inventory"
+            "README program-created active paths must equal the current new inventory: "
+            f"extra={sorted(active_program_created - legacy_new_readmes)!r} "
+            f"missing={sorted((legacy_new_readmes - current_rename_targets) - active_program_created)!r}"
         )
-    inventory_error = _readme_inventory_exact_error(tracked_readmes, active_paths)
+    complete_active_paths = active_paths | spec_router_paths
+    inventory_error = _readme_inventory_exact_error(
+        tracked_readmes, complete_active_paths
+    )
     if inventory_error is not None:
         raise AssertionError(inventory_error)
     selected_tracked = {
@@ -5176,11 +5334,11 @@ def _assert_readme_family_contract(
         for path in inventory.current_paths
         if classify_path(registry, path).profile_id in readme_profile_ids
     }
-    if selected_tracked != active_paths:
+    if selected_tracked != complete_active_paths:
         raise AssertionError(
             "README family selected path set differs from fixture activePaths: "
-            f"extra={sorted(path.as_posix() for path in selected_tracked - active_paths)!r} "
-            f"missing={sorted(path.as_posix() for path in active_paths - selected_tracked)!r}"
+            f"extra={sorted(path.as_posix() for path in selected_tracked - complete_active_paths)!r} "
+            f"missing={sorted(path.as_posix() for path in complete_active_paths - selected_tracked)!r}"
         )
 
     expected_cases = (
@@ -6361,6 +6519,69 @@ def _work109_direct_approval_history_transition(
     return True
 
 
+@functools.lru_cache(maxsize=4)
+def _work054_wp004b_moved_ad_targets(root: Path) -> dict[str, str]:
+    """Return the exact eight prefix-free AD targets sealed by MIG-0004."""
+
+    targets = _work054_wp004b_current_targets(root)
+    moved: dict[str, str] = {}
+    pattern = re.compile(
+        r"^docs/02\.architecture/descriptions/"
+        r"ad-(?P<identity>(?:000[4-9]|001[01]))-(?P<slug>[^/]+)\.md$"
+    )
+    for legacy, current in targets.items():
+        match = pattern.fullmatch(legacy)
+        if match is None:
+            continue
+        expected = (
+            "docs/02.architecture/descriptions/"
+            f"{match.group('identity')}-{match.group('slug')}.md"
+        )
+        if current != expected or match.group("identity") in moved:
+            raise AssertionError("MIG-0004 moved AD projection differs")
+        moved[match.group("identity")] = current
+    expected_identities = {
+        f"{identity:04d}" for identity in range(4, 12)
+    }
+    if set(moved) != expected_identities:
+        raise AssertionError("MIG-0004 moved AD projection is not exact")
+    return moved
+
+
+def _work054_wp004b_historical_ard_line(
+    root: Path,
+    relative: str,
+    line: str,
+) -> bool:
+    """Admit only accepted-ADR ARD labels projected by eight MIG-0004 moves."""
+
+    if relative == "scripts/validate-agent-governance-closure.py":
+        moved = _work054_wp004b_moved_ad_targets(root.resolve())
+        implementation_alias_line = (
+            '            "docs/02.architecture/'
+            'requirements/0006-workspace-agent-governance-platform.md"'
+        )
+        return (
+            moved.get("0006")
+            == "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md"
+            and line == implementation_alias_line
+        )
+
+    if (
+        relative not in WORK105_PINNED_LEGACY_HISTORY_PATHS
+        or not relative.startswith("docs/02.architecture/decisions/")
+    ):
+        return False
+    moved = _work054_wp004b_moved_ad_targets(root.resolve())
+    identities = set(
+        re.findall(r"(?<![A-Za-z0-9_])ARD(?:-|\s)+(\d{4})(?![A-Za-z0-9_])", line)
+    )
+    for identity, target in moved.items():
+        if f"](../descriptions/{PurePosixPath(target).name})" in line:
+            identities.add(identity)
+    return bool(identities) and identities <= set(moved)
+
+
 def _work105_post_state(
     root: Path, patterns: tuple[dict[str, str], ...]
 ) -> dict[str, dict[str, int]]:
@@ -6380,7 +6601,7 @@ def _work105_post_state(
             continue
         historical_line_limit = 0
         completed_history = False
-        pinned_history_lines: tuple[str, ...] = ()
+        pinned_history_lines: collections.Counter[str] = collections.Counter()
         if relative == WORK105_PROGRESS_PATH:
             pinned = _work105_pinned_blob(root, relative)
             if not raw.startswith(pinned):
@@ -6407,7 +6628,7 @@ def _work105_post_state(
                 )
         elif relative in WORK105_PINNED_LEGACY_HISTORY_PATHS:
             try:
-                pinned_history_lines = tuple(
+                pinned_history_lines = collections.Counter(
                     _work105_pinned_blob(root, relative).decode("utf-8").splitlines()
                 )
             except UnicodeDecodeError as exc:
@@ -6429,6 +6650,9 @@ def _work105_post_state(
             re.findall(r"(?m)^type:\s*sdlc/api-spec\s*$", text)
         )
         for line_number, matched_line in enumerate(lines, start=1):
+            pinned_history_line = pinned_history_lines[matched_line] > 0
+            if pinned_history_line:
+                pinned_history_lines[matched_line] -= 1
             for pattern, expression in compiled:
                 if expression.search(matched_line) is None:
                     continue
@@ -6439,9 +6663,12 @@ def _work105_post_state(
                     historical_context=(
                         completed_history
                         or line_number <= historical_line_limit
+                        or pinned_history_line
                         or (
-                            line_number <= len(pinned_history_lines)
-                            and pinned_history_lines[line_number - 1] == matched_line
+                            pattern["id"] == "ard"
+                            and _work054_wp004b_historical_ard_line(
+                                root, relative, matched_line
+                            )
                         )
                     ),
                     semantic_context=semantic_contexts[line_number - 1],
@@ -6519,14 +6746,14 @@ def _work106_derive_artifact_identity(
 
     slug = WORK106_SLUG
     simple_patterns = (
-        (rf"^docs/01\.requirements/(?P<id>[0-9]{{4}})-{slug}\.md$", "PRD"),
+        (rf"^docs/01\.requirements/(?P<id>[0-9]{{4}})-{slug}\.md$", "REQ"),
         (rf"^docs/01\.requirements/srs-(?P<id>[0-9]{{4}})-{slug}\.md$", "SRS"),
         (
             rf"^docs/01\.requirements/ifc-(?P<id>[0-9]{{4}})-(?P<suffix>{slug})\.md$",
             "IFC",
         ),
         (
-            rf"^docs/02\.architecture/descriptions/ad-(?P<id>[0-9]{{4}})-{slug}\.md$",
+            rf"^docs/02\.architecture/descriptions/(?P<id>[0-9]{{4}})-{slug}\.md$",
             "AD",
         ),
         (
@@ -6563,6 +6790,16 @@ def _work106_derive_artifact_identity(
         }[stage03.group("leaf")]
         return Work106ArtifactIdentity(f"{prefix}-{stage03.group('id')}")
 
+    task_record = re.fullmatch(
+        rf"docs/03\.specs/(?P<spec>[0-9]{{4}})-{slug}/tasks/"
+        rf"tsk-(?P<task>[0-9]{{4}})-{slug}\.md",
+        raw_path,
+    )
+    if task_record is not None:
+        return Work106ArtifactIdentity(
+            f"TSK-{task_record.group('spec')}-{task_record.group('task')}"
+        )
+
     incident = re.fullmatch(
         rf"docs/05\.operations/incidents/(?P<year>[0-9]{{4}})/"
         rf"inc-(?P<id>[0-9]{{4}})-(?P<slug>{slug})/"
@@ -6589,7 +6826,7 @@ def _work106_derive_artifact_identity(
         )
 
     migration = re.fullmatch(
-        rf"docs/98\.archive/migrations/mig-(?P<id>[0-9]{{4}})-{slug}\.md",
+        rf"docs/98\.archive/migrations/(?:mig-)?(?P<id>[0-9]{{4}})-{slug}\.md",
         raw_path,
     )
     if migration is not None:
@@ -7512,6 +7749,41 @@ def _work109_base_move_inventory(root: Path) -> dict[str, tuple[str, str]]:
     return inventory
 
 
+def _work054_wp004b_current_targets(root: Path) -> dict[str, str]:
+    """Return MIG-0004's finite legacy-to-current target projection."""
+
+    try:
+        contents = read_staged_blob_bounded(
+            root,
+            WORK054_WP004B_MIGRATION_LEDGER_PATH.as_posix(),
+            max_bytes=MIGRATION_DOCUMENT_MAX_BYTES,
+        )
+        rows = parse_pinned_migration_control(
+            WORK054_WP004B_MIGRATION_LEDGER_PATH.as_posix(), contents
+        )
+    except ArchiveContractError as exc:
+        raise AssertionError("MIG-0004 staged document differs") from exc
+    if len(rows) != 66:
+        raise AssertionError("MIG-0004 projection is not exactly 66 rows")
+    targets: dict[str, str] = {}
+    for index, row in enumerate(rows):
+        legacy = row.get("legacy_path")
+        action = row.get("action")
+        target = row.get("stable_path") if action == "moved" else row.get("replacement")
+        if (
+            not isinstance(legacy, str)
+            or not isinstance(target, str)
+            or action not in {"moved", "replaced", "merged"}
+            or legacy in targets
+            or PurePosixPath(legacy).as_posix() != legacy
+            or PurePosixPath(target).as_posix() != target
+            or ".." in PurePosixPath(target).parts
+        ):
+            raise AssertionError(f"MIG-0004 projection differs at index {index}")
+        targets[legacy] = target
+    return targets
+
+
 def _work109_transition_manifest_projection(
     root: Path,
     entries: tuple[Mapping[str, Any], ...],
@@ -7538,6 +7810,7 @@ def _work109_transition_manifest_projection(
         raise AssertionError("MIG-0002 staged document is unavailable") from exc
     ledger_rows = _work109_ledger_rows(contents)
     expected = _work109_base_move_inventory(root)
+    wp004b_targets = _work054_wp004b_current_targets(root)
     moved_rows = tuple(row for row in ledger_rows if row["action"] == "moved")
     actual: dict[str, str] = {}
     for row in moved_rows:
@@ -7591,7 +7864,8 @@ def _work109_transition_manifest_projection(
                 )
             if (root / legacy_target).exists():
                 raise AssertionError("transition manifest legacy target remains active")
-            stable_path = root / stable_target
+            current_target = wp004b_targets.get(stable_target, stable_target)
+            stable_path = root / current_target
             spec_path = stable_path.parent / "spec.md"
             try:
                 stable_mode = stable_path.lstat().st_mode
@@ -7605,14 +7879,14 @@ def _work109_transition_manifest_projection(
                 or not stat.S_ISREG(stable_mode)
                 or stat.S_ISLNK(spec_mode)
                 or not stat.S_ISREG(spec_mode)
-                or stable_target in projected_targets
+                or current_target in projected_targets
             ):
                 raise AssertionError("transition manifest projected endpoint is unsafe")
             manifest_move_targets.add(legacy_target)
-            projected_targets.add(stable_target)
+            projected_targets.add(current_target)
             unit = stable_match.group("unit")
             work_units.setdefault(unit, set()).add(stable_match.group("leaf"))
-            candidate["target"] = stable_target
+            candidate["target"] = current_target
             candidate["workUnit"] = f"Spec-{unit}"
         projected.append(candidate)
 

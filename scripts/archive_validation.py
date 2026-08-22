@@ -57,12 +57,15 @@ else:  # Direct import-only execution from scripts/.
 
 ARCHIVE_ROOT = PurePosixPath("docs/98.archive")
 ARCHIVE_INDEX = ARCHIVE_ROOT / "README.md"
-CURRENT_STATUSES = frozenset({"draft", "active", "accepted", "done", "archived"})
+CURRENT_STATUSES = frozenset(
+    {"draft", "active", "accepted", "done", "archived", "sealed"}
+)
 CURRENT_MARKDOWN_PROFILES = frozenset(
     {
         "sdlc/prd",
         "sdlc/srs",
         "sdlc/interface",
+        "sdlc/requirement-package",
         "sdlc/ad",
         "sdlc/adr",
         "sdlc/spec",
@@ -252,12 +255,19 @@ _WORK054_WP003_MIGRATION_PATH = (
     "docs/98.archive/migrations/"
     "mig-0003-agent-governance-control-plane-consolidation.md"
 )
+_WORK054_WP004B_MIGRATION_PATH = (
+    "docs/98.archive/migrations/"
+    "0004-document-authority-convergence.md"
+)
 MIGRATION_DOCUMENT_MAX_BYTES = 128 * 1024
 MIG0002_DOCUMENT_SHA256 = (
     "67032c0b86acbee04a1e713053d164df2e99f4486df79df5161d53975fb82a7a"  # pragma: allowlist secret
 )
 MIG0003_DOCUMENT_SHA256 = (
     "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42"  # pragma: allowlist secret
+)
+MIG0004_DOCUMENT_SHA256 = (
+    "6c769973de12023d8021792df4257be1401ee27f7b8293f336263352f849a3f6"  # pragma: allowlist secret
 )
 _MIGRATION_LEDGER_PREFIX = (
     b"<!-- archive-migration-ledger:v1 format=json -->\n\n```json\n"
@@ -267,7 +277,7 @@ _ARCHIVE_MIGRATION_CONTROLS = {
         "MIG-0001",
         93,
         {"moved": 93},
-        "4e62cb6ba2a394cd9ae546543c85a58c8f105cb5d1ff48cfd8dab8b8b1082206",
+        "4e62cb6ba2a394cd9ae546543c85a58c8f105cb5d1ff48cfd8dab8b8b1082206",  # pragma: allowlist secret -- sealed migration digest
     ),
     _WORK109_MIGRATION_PATH: (
         "MIG-0002",
@@ -280,6 +290,12 @@ _ARCHIVE_MIGRATION_CONTROLS = {
         3,
         {"merged": 3},
         MIG0003_DOCUMENT_SHA256,
+    ),
+    _WORK054_WP004B_MIGRATION_PATH: (
+        "MIG-0004",
+        66,
+        {"moved": 8, "replaced": 56, "merged": 2},
+        MIG0004_DOCUMENT_SHA256,
     ),
 }
 _MIGRATION_FRONTMATTER_KEYS = (
@@ -344,7 +360,12 @@ def _migration_control_diagnostics(
         if (
             tuple(metadata) != _MIGRATION_FRONTMATTER_KEYS
             or metadata.get("type") != "content/archive-migration"
-            or metadata.get("status") != "accepted"
+            or metadata.get("status")
+            != (
+                "sealed"
+                if path == _WORK054_WP004B_MIGRATION_PATH
+                else "accepted"
+            )
             or metadata.get("owner") != "platform"
             or metadata.get("artifact_id") != expected_id
             or metadata.get("migration_id") != expected_id
@@ -412,9 +433,12 @@ def validate_pinned_migration_recovery(
     path: str,
     content: bytes,
 ) -> tuple[dict[str, object], ...]:
-    """Verify the MIG-0003 source tuples against the exact Git object graph."""
+    """Verify declared recovery tuples against the exact Git object graph."""
 
-    if path != _WORK054_WP003_MIGRATION_PATH:
+    if path not in {
+        _WORK054_WP003_MIGRATION_PATH,
+        _WORK054_WP004B_MIGRATION_PATH,
+    }:
         raise ArchiveContractError(
             "ARCHIVE-MIGRATION-PROFILE",
             "migration recovery is not declared for this control",
@@ -422,6 +446,14 @@ def validate_pinned_migration_recovery(
     rows = parse_pinned_migration_control(path, content)
     try:
         root = Path(repository_root).resolve(strict=True)
+        if path == _WORK054_WP004B_MIGRATION_PATH:
+            staged = read_staged_blob_bounded(root, path)
+            if staged != content:
+                raise ArchiveContractError(
+                    "ARCHIVE-MIGRATION-STAGED-DRIFT",
+                    "sealed migration differs between index and worktree",
+                )
+            _validate_mig0004_rows_and_targets(root, rows)
         object_id_length = _repository_identity(root)
         by_commit: dict[str, list[dict[str, object]]] = {}
         seen_paths: set[str] = set()
@@ -455,6 +487,8 @@ def validate_pinned_migration_recovery(
             raise ArchiveContractError(
                 "RECOVERY-OBJECT-NOT-COMMIT", "migration commit is unavailable"
             )
+        if path == _WORK054_WP004B_MIGRATION_PATH:
+            _require_commits_reachable(root, tuple(sorted(by_commit)))
         members = _batch_commit_path_members(
             root,
             {
@@ -560,6 +594,223 @@ def read_staged_blob_bounded(
         raise ArchiveContractError(
             "ARCHIVE-MIGRATION-PROFILE", "staged migration blob differs"
         ) from exc
+
+
+def _require_commits_reachable(root: Path, commits: tuple[str, ...]) -> None:
+    """Require each reviewed source commit to be an ancestor of current HEAD."""
+
+    for commit in commits:
+        result = _git_command(
+            root,
+            "merge-base",
+            "--is-ancestor",
+            commit,
+            "HEAD",
+            output_limit=256,
+        )
+        if result.returncode == 1:
+            raise ArchiveContractError(
+                "RECOVERY-OBJECT-UNREACHABLE",
+                "migration commit is not reachable from current HEAD",
+            )
+        if result.returncode:
+            raise ArchiveContractError(
+                "RECOVERY-MIGRATION-INPUT",
+                "migration reachability lookup failed",
+            )
+
+
+def _require_regular_current_target(root: Path, relative: str) -> None:
+    """Require a canonical current target to exist as a regular non-link file."""
+
+    if _canonical_path(relative) != relative:
+        raise ArchiveContractError(
+            "RECOVERY-MIGRATION-TARGET", "migration target path is invalid"
+        )
+    try:
+        metadata = (root / relative).lstat()
+    except OSError as exc:
+        raise ArchiveContractError(
+            "RECOVERY-MIGRATION-TARGET", "migration target is unavailable"
+        ) from exc
+    if not stat.S_ISREG(metadata.st_mode):
+        raise ArchiveContractError(
+            "RECOVERY-MIGRATION-TARGET", "migration target is not a regular file"
+        )
+
+
+def _validate_mig0004_rows_and_targets(
+    root: Path,
+    rows: tuple[dict[str, object], ...],
+) -> None:
+    """Validate MIG-0004's finite disposition and current target inventory."""
+
+    fields = (
+        "legacy_path",
+        "stable_path",
+        "artifact_id",
+        "action",
+        "replacement",
+        "source_commit",
+        "source_blob",
+        "content_sha256",
+        "reason",
+    )
+    source_commit = "211e167f9ef0268c937303faa82d7ed297b33e38"  # pragma: allowlist secret -- sealed migration source commit
+    requirement = re.compile(r"docs/01\.requirements/000[1-8]-[a-z0-9-]+\.md\Z")
+    architecture = re.compile(
+        r"docs/02\.architecture/descriptions/ad-(000[4-9]|001[01])-[a-z0-9-]+\.md\Z"
+    )
+    task_ledger = re.compile(
+        r"docs/03\.specs/(?P<spec>[0-9]{4})-[a-z0-9-]+/tasks\.md\Z"
+    )
+    agent_design_paths = {
+        "docs/03.specs/0024-observability-and-network-review-agents/agent-design.md",
+        "docs/03.specs/0041-stage-00-agent-governance-contract/agent-design.md",
+    }
+    counts = {"requirement": 0, "architecture": 0, "task": 0, "agent": 0}
+    task_directories: set[Path] = set()
+    previous: str | None = None
+    legacy_paths: set[str] = set()
+
+    for row in rows:
+        legacy = row.get("legacy_path")
+        if (
+            type(row) is not dict
+            or tuple(row) != fields
+            or not isinstance(legacy, str)
+            or _canonical_path(legacy) != legacy
+            or legacy in legacy_paths
+            or (previous is not None and legacy <= previous)
+            or row.get("source_commit") != source_commit
+            or not isinstance(row.get("reason"), str)
+            or not str(row["reason"]).strip()
+        ):
+            raise ArchiveContractError(
+                "RECOVERY-MIGRATION-ROW", "MIG-0004 row identity differs"
+            )
+        previous = legacy
+        legacy_paths.add(legacy)
+        target: object
+        if requirement.fullmatch(legacy):
+            counts["requirement"] += 1
+            if (
+                row.get("action") != "replaced"
+                or row.get("stable_path") is not None
+                or row.get("artifact_id") is not None
+                or row.get("replacement") != legacy
+            ):
+                raise ArchiveContractError(
+                    "RECOVERY-MIGRATION-ROW", "Requirement replacement differs"
+                )
+            target = row["replacement"]
+        elif (match := architecture.fullmatch(legacy)) is not None:
+            counts["architecture"] += 1
+            expected_target = legacy.replace("/ad-", "/", 1)
+            expected_artifact = f"AD-{match.group(1)}"
+            if (
+                row.get("action") != "moved"
+                or row.get("stable_path") != expected_target
+                or row.get("artifact_id") != expected_artifact
+                or row.get("replacement") is not None
+            ):
+                raise ArchiveContractError(
+                    "RECOVERY-MIGRATION-ROW", "Architecture move differs"
+                )
+            target = row["stable_path"]
+        elif legacy in agent_design_paths:
+            counts["agent"] += 1
+            expected_target = str(PurePosixPath(legacy).with_name("spec.md"))
+            if (
+                row.get("action") != "merged"
+                or row.get("stable_path") is not None
+                or row.get("artifact_id") is not None
+                or row.get("replacement") != expected_target
+            ):
+                raise ArchiveContractError(
+                    "RECOVERY-MIGRATION-ROW", "agent-design disposition differs"
+                )
+            target = row["replacement"]
+        elif (match := task_ledger.fullmatch(legacy)) is not None:
+            counts["task"] += 1
+            expected_target = str(PurePosixPath(legacy).with_name("README.md"))
+            if (
+                match.group("spec") == "0054"
+                or row.get("action") != "replaced"
+                or row.get("stable_path") is not None
+                or row.get("artifact_id") is not None
+                or row.get("replacement") != expected_target
+            ):
+                raise ArchiveContractError(
+                    "RECOVERY-MIGRATION-ROW", "Task replacement differs"
+                )
+            task_directories.add((root / legacy).parent)
+            target = row["replacement"]
+        else:
+            raise ArchiveContractError(
+                "RECOVERY-MIGRATION-ROW", "MIG-0004 legacy path is undeclared"
+            )
+        if not isinstance(target, str):
+            raise ArchiveContractError(
+                "RECOVERY-MIGRATION-TARGET", "migration target is invalid"
+            )
+        _require_regular_current_target(root, target)
+        if target != legacy and (root / legacy).exists():
+            raise ArchiveContractError(
+                "RECOVERY-MIGRATION-TARGET", "retired source remains current"
+            )
+
+    if counts != {"requirement": 8, "architecture": 8, "task": 48, "agent": 2}:
+        raise ArchiveContractError(
+            "RECOVERY-MIGRATION-ROW", "MIG-0004 disposition is incomplete"
+        )
+
+    task_ids: set[str] = set()
+    task_paths: set[str] = set()
+    for package in sorted(task_directories):
+        for task in sorted((package / "tasks").glob("tsk-*.md")):
+            relative = task.relative_to(root).as_posix()
+            _require_regular_current_target(root, relative)
+            match = re.fullmatch(r"tsk-(?P<sequence>[0-9]{4})-[a-z0-9-]+\.md", task.name)
+            if match is None:
+                raise ArchiveContractError(
+                    "RECOVERY-MIGRATION-TASK", "Task path differs"
+                )
+            try:
+                contents = task.read_text(encoding="utf-8")
+            except (OSError, UnicodeDecodeError) as exc:
+                raise ArchiveContractError(
+                    "RECOVERY-MIGRATION-TASK", "Task record is unreadable"
+                ) from exc
+            spec = package.name[:4]
+            artifact = f'TSK-{spec}-{match.group("sequence")}'
+            if f'artifact_id: "{artifact}"' not in contents:
+                raise ArchiveContractError(
+                    "RECOVERY-MIGRATION-TASK", "Task identity differs"
+                )
+            task_paths.add(relative)
+            task_ids.add(artifact)
+    if len(task_paths) != 315 or len(task_ids) != 315:
+        raise ArchiveContractError(
+            "RECOVERY-MIGRATION-TASK", "Task disposition is not exactly 315"
+        )
+
+    retired_consumer = re.compile(
+        r"docs/04\.execution/|docs/02\.architecture/descriptions/ad-[0-9]{4}-"
+    )
+    for stage in ("docs/01.requirements", "docs/02.architecture", "docs/03.specs"):
+        for document in sorted((root / stage).rglob("*.md")):
+            try:
+                contents = document.read_text(encoding="utf-8")
+            except (OSError, UnicodeDecodeError) as exc:
+                raise ArchiveContractError(
+                    "RECOVERY-MIGRATION-CONSUMER", "current document is unreadable"
+                ) from exc
+            if retired_consumer.search(contents):
+                raise ArchiveContractError(
+                    "RECOVERY-MIGRATION-CONSUMER",
+                    "current document retains a retired path consumer",
+                )
 
 
 def _namespace_records(
@@ -709,24 +960,26 @@ def _repository_archive_records(
                 diagnostics.append(
                     _diagnostic("ARCHIVE-INVENTORY-READ", ARCHIVE_ROOT.as_posix())
                 )
-    migration_content = migration_controls.get(_WORK054_WP003_MIGRATION_PATH)
-    if (
-        migration_content is not None
-        and not _migration_control_diagnostics(
-            _WORK054_WP003_MIGRATION_PATH,
-            migration_content,
-        )
+    for migration_path in (
+        _WORK054_WP003_MIGRATION_PATH,
+        _WORK054_WP004B_MIGRATION_PATH,
     ):
-        try:
-            validate_pinned_migration_recovery(
-                root,
-                _WORK054_WP003_MIGRATION_PATH,
+        migration_content = migration_controls.get(migration_path)
+        if (
+            migration_content is not None
+            and not _migration_control_diagnostics(
+                migration_path,
                 migration_content,
             )
-        except ArchiveContractError as exc:
-            diagnostics.append(
-                _diagnostic(exc.code, _WORK054_WP003_MIGRATION_PATH)
-            )
+        ):
+            try:
+                validate_pinned_migration_recovery(
+                    root,
+                    migration_path,
+                    migration_content,
+                )
+            except ArchiveContractError as exc:
+                diagnostics.append(_diagnostic(exc.code, migration_path))
     return records, diagnostics
 
 
@@ -1944,7 +2197,9 @@ def validate_current_archive_authority(
                 continue
             target_path = target.as_posix()
             if target_path in canonical_individuals or (
-                target.is_relative_to(ARCHIVE_ROOT) and target != ARCHIVE_INDEX
+                target.is_relative_to(ARCHIVE_ROOT)
+                and target != ARCHIVE_INDEX
+                and target_path != _WORK054_WP004B_MIGRATION_PATH
             ):
                 diagnostics.append(_diagnostic("ARCHIVE-DIRECT-CURRENT-LINK", path))
     return _report(diagnostics)

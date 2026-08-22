@@ -503,7 +503,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/02\\.architecture/descriptions/ad-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$"
+          "value": "^docs/02\\.architecture/descriptions/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$"
         }
       ],
       "frontmatter": {
@@ -584,9 +584,9 @@
         "sourceLinkColumn": "Upstream requirement",
         "targetLinkColumn": "ADR / Spec",
         "allowedSourceProfileIds": [
+          "sdlc/interface",
           "sdlc/prd",
-          "sdlc/srs",
-          "sdlc/interface"
+          "sdlc/srs"
         ],
         "allowedTargetProfileIds": [
           "sdlc/adr",
@@ -622,7 +622,9 @@
           "status",
           "owner",
           "updated",
-          "artifact_id"
+          "artifact_id",
+          "superseded_by",
+          "supersedes"
         ],
         "order": [
           "title",
@@ -630,14 +632,17 @@
           "status",
           "owner",
           "updated",
-          "artifact_id"
+          "artifact_id",
+          "superseded_by",
+          "supersedes"
         ]
       },
       "statusDomain": [
         "draft",
         "active",
         "accepted",
-        "archived"
+        "archived",
+        "superseded"
       ],
       "headings": {
         "required": [
@@ -792,8 +797,8 @@
         "sourceLinkColumn": "PRD requirement",
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
-          "sdlc/prd",
           "sdlc/interface",
+          "sdlc/prd",
           "sdlc/srs"
         ],
         "allowedTargetProfileIds": [],
@@ -905,8 +910,8 @@
         "sourceLinkColumn": "PRD requirement",
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
-          "sdlc/prd",
           "sdlc/interface",
+          "sdlc/prd",
           "sdlc/srs"
         ],
         "allowedTargetProfileIds": [],
@@ -1012,8 +1017,8 @@
         "sourceLinkColumn": "PRD requirement",
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
-          "sdlc/prd",
           "sdlc/interface",
+          "sdlc/prd",
           "sdlc/srs"
         ],
         "allowedTargetProfileIds": [],
@@ -1119,8 +1124,8 @@
         "sourceLinkColumn": "PRD requirement",
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
-          "sdlc/prd",
           "sdlc/interface",
+          "sdlc/prd",
           "sdlc/srs"
         ],
         "allowedTargetProfileIds": [],
@@ -1240,7 +1245,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/tasks\\.md$"
+          "value": "^docs/03\\.specs/(?:0054-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/tasks\\.md|[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/tasks/tsk-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md)$"
         }
       ],
       "frontmatter": {
@@ -1271,10 +1276,11 @@
         ]
       },
       "statusDomain": [
-        "draft",
-        "active",
+        "queued",
+        "in-progress",
+        "blocked",
         "done",
-        "archived"
+        "cancelled"
       ],
       "headings": {
         "required": [
@@ -1302,8 +1308,9 @@
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
         "enforcedStatuses": [
-          "draft",
-          "active"
+          "queued",
+          "in-progress",
+          "blocked"
         ],
         "requiredColumns": [
           "Criterion / work item",
@@ -1960,7 +1967,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/98\\.archive/migrations/mig-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md$"
+          "value": "^docs/98\\.archive/migrations/(?:mig-000[1-3]-[a-z0-9]+(?:-[a-z0-9]+)*|0004-document-authority-convergence)\\.md$"
         }
       ],
       "frontmatter": {
@@ -1994,7 +2001,8 @@
         ]
       },
       "statusDomain": [
-        "accepted"
+        "accepted",
+        "sealed"
       ],
       "headings": {
         "required": [
@@ -2213,8 +2221,8 @@
       "mode": "frontmatter-free",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/00.agent-governance/memory/progress.md"
+          "kind": "regex",
+          "value": "^docs/00\\.agent\\-governance/memory/progress\\.md$"
         }
       ],
       "frontmatter": {
@@ -2244,8 +2252,8 @@
       "mode": "frontmatter-free",
       "routes": [
         {
-          "kind": "exact",
-          "value": "README.md"
+          "kind": "regex",
+          "value": "^README\\.md$"
         }
       ],
       "frontmatter": {
@@ -2286,40 +2294,8 @@
       "mode": "frontmatter-free",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/00.agent-governance/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/01.requirements/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/02.architecture/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/03.specs/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/05.operations/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/90.references/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/98.archive/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/99.templates/README.md"
+          "kind": "regex",
+          "value": "^(?:docs/README\\.md|docs/00\\.agent\\-governance/README\\.md|docs/01\\.requirements/README\\.md|docs/02\\.architecture/README\\.md|docs/03\\.specs/README\\.md|docs/05\\.operations/README\\.md|docs/90\\.references/README\\.md|docs/98\\.archive/README\\.md|docs/99\\.templates/README\\.md)$"
         }
       ],
       "frontmatter": {
@@ -2358,64 +2334,8 @@
       "mode": "frontmatter-free",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/00.agent-governance/memory/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/02.architecture/decisions/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/02.architecture/descriptions/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/05.operations/guides/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/05.operations/incidents/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/05.operations/policies/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/05.operations/runbooks/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/90.references/audits/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/90.references/data/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/90.references/learning/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/90.references/llm-wiki/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/90.references/research/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/99.templates/support/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "docs/90.references/cloud-examples/README.md"
+          "kind": "regex",
+          "value": "^(?:docs/00\\.agent\\-governance/memory/README\\.md|docs/02\\.architecture/decisions/README\\.md|docs/02\\.architecture/descriptions/README\\.md|docs/05\\.operations/guides/README\\.md|docs/05\\.operations/incidents/README\\.md|docs/05\\.operations/policies/README\\.md|docs/05\\.operations/runbooks/README\\.md|docs/90\\.references/audits/README\\.md|docs/90\\.references/data/README\\.md|docs/90\\.references/learning/README\\.md|docs/90\\.references/llm\\-wiki/README\\.md|docs/90\\.references/research/README\\.md|docs/99\\.templates/support/README\\.md|docs/99\\.templates/templates/README\\.md|docs/90\\.references/cloud\\-examples/README\\.md|docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md)$"
         }
       ],
       "frontmatter": {
@@ -2439,7 +2359,8 @@
           "Item Index",
           "Add and Find",
           "Related Documents",
-          "Selection Rules"
+          "Selection Rules",
+          "Task Records"
         ]
       },
       "template": "docs/99.templates/templates/common/readme-collection-index.template.md",
@@ -2454,52 +2375,8 @@
       "mode": "frontmatter-free",
       "routes": [
         {
-          "kind": "exact",
-          "value": "examples/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "examples/sample-app/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "gitops/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "gitops/workloads/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "infrastructure/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "scripts/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "tests/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "traefik/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "examples/azure/gitops/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "examples/azure/infrastructure/README.md"
-        },
-        {
-          "kind": "exact",
-          "value": "examples/azure/kubernetes/README.md"
-        },
-        {
           "kind": "regex",
-          "value": "^examples/(?:aws|azure)/README\\.md$"
+          "value": "^(?:examples/README\\.md|examples/sample\\-app/README\\.md|gitops/README\\.md|gitops/workloads/README\\.md|infrastructure/README\\.md|scripts/README\\.md|tests/README\\.md|traefik/README\\.md|examples/azure/gitops/README\\.md|examples/azure/infrastructure/README\\.md|examples/azure/kubernetes/README\\.md|examples/(?:aws|azure)/README\\.md)$"
         }
       ],
       "frontmatter": {
@@ -2542,11 +2419,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/90\\.references/(?:audits|research)/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+/README\\.md$"
-        },
-        {
-          "kind": "regex",
-          "value": "^docs/90\\.references/cloud-examples/(?:aws|azure)/README\\.md$"
+          "value": "^(?:docs/90\\.references/(?:audits|research)/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+/README\\.md|docs/90\\.references/cloud-examples/(?:aws|azure)/README\\.md)$"
         }
       ],
       "frontmatter": {
@@ -2587,8 +2460,8 @@
       "mode": "frontmatter-free",
       "routes": [
         {
-          "kind": "exact",
-          "value": "_workspace/README.md"
+          "kind": "regex",
+          "value": "^_workspace/README\\.md$"
         }
       ],
       "frontmatter": {
@@ -2628,16 +2501,8 @@
       "mode": "frontmatter-free",
       "routes": [
         {
-          "kind": "exact",
-          "value": "AGENTS.md"
-        },
-        {
-          "kind": "exact",
-          "value": "CLAUDE.md"
-        },
-        {
-          "kind": "exact",
-          "value": "GEMINI.md"
+          "kind": "regex",
+          "value": "^(?:AGENTS\\.md|CLAUDE\\.md|GEMINI\\.md)$"
         }
       ],
       "frontmatter": {
@@ -2690,12 +2555,8 @@
       "mode": "classification-only",
       "routes": [
         {
-          "kind": "exact",
-          "value": ".claude/CLAUDE.md"
-        },
-        {
-          "kind": "exact",
-          "value": ".codex/CODEX.md"
+          "kind": "regex",
+          "value": "^(?:\\.claude/CLAUDE\\.md|\\.codex/CODEX\\.md)$"
         }
       ],
       "frontmatter": {
@@ -2722,11 +2583,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^\\.claude/agents/[^/]+\\.md$"
-        },
-        {
-          "kind": "regex",
-          "value": "^\\.gemini/agents/[^/]+\\.md$"
+          "value": "^(?:\\.claude/agents/[^/]+\\.md|\\.gemini/agents/[^/]+\\.md)$"
         }
       ],
       "frontmatter": {
@@ -2779,8 +2636,8 @@
       "mode": "classification-only",
       "routes": [
         {
-          "kind": "exact",
-          "value": "scripts/document-taxonomy-migration.json"
+          "kind": "regex",
+          "value": "^scripts/document\\-taxonomy\\-migration\\.json$"
         }
       ],
       "frontmatter": {
@@ -2889,8 +2746,8 @@
       "mode": "generated",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/90.references/llm-wiki/wiki-index.md"
+          "kind": "regex",
+          "value": "^docs/90\\.references/llm\\-wiki/wiki\\-index\\.md$"
         }
       ],
       "frontmatter": {
@@ -2916,12 +2773,8 @@
       "mode": "non-target",
       "routes": [
         {
-          "kind": "exact",
-          "value": "RTK.md"
-        },
-        {
           "kind": "regex",
-          "value": "^graphify-out/.+\\.md$"
+          "value": "^(?:RTK\\.md|graphify-out/.+\\.md)$"
         }
       ],
       "frontmatter": {
@@ -2947,8 +2800,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/common/archive-record.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/common/archive\\-record\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -3024,8 +2877,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/common/archive-migration.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/common/archive\\-migration\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -3056,7 +2909,8 @@
         ]
       },
       "statusDomain": [
-        "accepted"
+        "accepted",
+        "sealed"
       ],
       "headings": {
         "required": [
@@ -3084,8 +2938,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/common/memory.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/common/memory\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -3149,8 +3003,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/common/readme-repository.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/common/readme\\-repository\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -3193,8 +3047,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/common/readme-stage-index.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/common/readme\\-stage\\-index\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -3235,8 +3089,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/common/readme-collection-index.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/common/readme\\-collection\\-index\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -3260,7 +3114,8 @@
           "Item Index",
           "Add and Find",
           "Related Documents",
-          "Selection Rules"
+          "Selection Rules",
+          "Task Records"
         ]
       },
       "template": "docs/99.templates/templates/common/readme-collection-index.template.md",
@@ -3277,8 +3132,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/common/readme-implementation.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/common/readme\\-implementation\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -3322,8 +3177,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/common/readme-snapshot-pack.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/common/readme\\-snapshot\\-pack\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -3366,8 +3221,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/common/readme-workspace-staging.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/common/readme\\-workspace\\-staging\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -3409,8 +3264,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/common/reference.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/common/reference\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -3480,8 +3335,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/sdlc/architecture/adr.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/sdlc/architecture/adr\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -3498,21 +3353,26 @@
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "superseded_by",
+          "supersedes"
         ],
         "order": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "superseded_by",
+          "supersedes"
         ]
       },
       "statusDomain": [
         "draft",
         "active",
         "accepted",
-        "archived"
+        "archived",
+        "superseded"
       ],
       "headings": {
         "required": [
@@ -3575,8 +3435,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/sdlc/architecture/ad.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/sdlc/architecture/ad\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -3656,9 +3516,9 @@
         "sourceLinkColumn": "Upstream requirement",
         "targetLinkColumn": "ADR / Spec",
         "allowedSourceProfileIds": [
+          "sdlc/interface",
           "sdlc/prd",
-          "sdlc/srs",
-          "sdlc/interface"
+          "sdlc/srs"
         ],
         "allowedTargetProfileIds": [
           "sdlc/adr",
@@ -3674,8 +3534,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/sdlc/execution/plan.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/sdlc/execution/plan\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -3778,8 +3638,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/sdlc/execution/task.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/sdlc/execution/task\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -3807,10 +3667,11 @@
         ]
       },
       "statusDomain": [
-        "draft",
-        "active",
+        "queued",
+        "in-progress",
+        "blocked",
         "done",
-        "archived"
+        "cancelled"
       ],
       "headings": {
         "required": [
@@ -3840,8 +3701,9 @@
         "section": "Traceability",
         "tableHeading": "Lifecycle Traceability",
         "enforcedStatuses": [
-          "draft",
-          "active"
+          "queued",
+          "in-progress",
+          "blocked"
         ],
         "requiredColumns": [
           "Criterion / work item",
@@ -3874,8 +3736,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/sdlc/operations/guide.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/sdlc/operations/guide\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -3967,8 +3829,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/sdlc/operations/incident.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/sdlc/operations/incident\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -4058,8 +3920,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/sdlc/operations/policy.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/sdlc/operations/policy\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -4153,8 +4015,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/sdlc/operations/postmortem.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/sdlc/operations/postmortem\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -4249,8 +4111,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/sdlc/operations/runbook.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/sdlc/operations/runbook\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -4345,8 +4207,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/sdlc/requirements/prd.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/sdlc/requirements/prd\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -4407,7 +4269,9 @@
       },
       "template": "docs/99.templates/templates/sdlc/requirements/prd.template.md",
       "sourceProfileIds": [
-        "sdlc/prd"
+        "sdlc/interface",
+        "sdlc/prd",
+        "sdlc/srs"
       ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
@@ -4433,8 +4297,6 @@
         "targetLinkColumn": "Downstream owner",
         "allowedSourceProfileIds": [],
         "allowedTargetProfileIds": [
-          "sdlc/srs",
-          "sdlc/interface",
           "sdlc/ad",
           "sdlc/spec"
         ],
@@ -4448,8 +4310,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/sdlc/requirements/srs.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/sdlc/requirements/srs\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -4504,6 +4366,8 @@
       },
       "template": "docs/99.templates/templates/sdlc/requirements/srs.template.md",
       "sourceProfileIds": [
+        "sdlc/interface",
+        "sdlc/prd",
         "sdlc/srs"
       ],
       "placeholderPolicy": "template-only",
@@ -4516,27 +4380,20 @@
           "active"
         ],
         "requiredColumns": [
-          "Upstream requirement",
-          "System requirement",
+          "Requirement ID",
+          "Acceptance criterion",
           "Downstream owner"
         ],
         "identifierColumns": [
           {
-            "column": "Upstream requirement",
-            "kind": "requirement"
-          },
-          {
-            "column": "System requirement",
+            "column": "Requirement ID",
             "kind": "requirement"
           }
         ],
-        "sourceLinkColumn": "Upstream requirement",
+        "sourceLinkColumn": null,
         "targetLinkColumn": "Downstream owner",
-        "allowedSourceProfileIds": [
-          "sdlc/prd"
-        ],
+        "allowedSourceProfileIds": [],
         "allowedTargetProfileIds": [
-          "sdlc/interface",
           "sdlc/ad",
           "sdlc/spec"
         ],
@@ -4550,8 +4407,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/sdlc/requirements/interface.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/sdlc/requirements/interface\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -4606,7 +4463,9 @@
       },
       "template": "docs/99.templates/templates/sdlc/requirements/interface.template.md",
       "sourceProfileIds": [
-        "sdlc/interface"
+        "sdlc/interface",
+        "sdlc/prd",
+        "sdlc/srs"
       ],
       "placeholderPolicy": "template-only",
       "appendContract": null,
@@ -4618,26 +4477,19 @@
           "active"
         ],
         "requiredColumns": [
-          "Upstream requirement",
-          "Interface requirement",
+          "Requirement ID",
+          "Acceptance criterion",
           "Downstream owner"
         ],
         "identifierColumns": [
           {
-            "column": "Upstream requirement",
-            "kind": "requirement"
-          },
-          {
-            "column": "Interface requirement",
+            "column": "Requirement ID",
             "kind": "requirement"
           }
         ],
-        "sourceLinkColumn": "Upstream requirement",
+        "sourceLinkColumn": null,
         "targetLinkColumn": "Downstream owner",
-        "allowedSourceProfileIds": [
-          "sdlc/prd",
-          "sdlc/srs"
-        ],
+        "allowedSourceProfileIds": [],
         "allowedTargetProfileIds": [
           "sdlc/ad",
           "sdlc/spec"
@@ -4652,8 +4504,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/sdlc/specs/agent-design.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/sdlc/specs/agent\\-design\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -4749,8 +4601,8 @@
         "sourceLinkColumn": "PRD requirement",
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
-          "sdlc/prd",
           "sdlc/interface",
+          "sdlc/prd",
           "sdlc/srs"
         ],
         "allowedTargetProfileIds": [],
@@ -4764,8 +4616,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/sdlc/specs/data-model.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/sdlc/specs/data\\-model\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -4855,8 +4707,8 @@
         "sourceLinkColumn": "PRD requirement",
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
-          "sdlc/prd",
           "sdlc/interface",
+          "sdlc/prd",
           "sdlc/srs"
         ],
         "allowedTargetProfileIds": [],
@@ -4870,8 +4722,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/sdlc/specs/spec.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/sdlc/specs/spec\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -4963,8 +4815,8 @@
         "sourceLinkColumn": "PRD requirement",
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
-          "sdlc/prd",
           "sdlc/interface",
+          "sdlc/prd",
           "sdlc/srs"
         ],
         "allowedTargetProfileIds": [],
@@ -4978,8 +4830,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/sdlc/specs/tests.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/sdlc/specs/tests\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -5069,8 +4921,8 @@
         "sourceLinkColumn": "PRD requirement",
         "targetLinkColumn": null,
         "allowedSourceProfileIds": [
-          "sdlc/prd",
           "sdlc/interface",
+          "sdlc/prd",
           "sdlc/srs"
         ],
         "allowedTargetProfileIds": [],
@@ -5084,8 +4936,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/common/progress.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/common/progress\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -5125,8 +4977,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/common/governance-reference.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/common/governance\\-reference\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -5192,8 +5044,8 @@
       "mode": "template",
       "routes": [
         {
-          "kind": "exact",
-          "value": "docs/99.templates/templates/common/template-support.template.md"
+          "kind": "regex",
+          "value": "^docs/99\\.templates/templates/common/template\\-support\\.template\\.md$"
         }
       ],
       "frontmatter": {
@@ -5657,11 +5509,11 @@
             "key": "status",
             "kind": "string",
             "nullable": false,
-            "constant": {
-              "source": "literal",
-              "value": "accepted"
+            "constant": null,
+            "enum": {
+              "source": "status-domain",
+              "values": []
             },
-            "enum": null,
             "pattern": null,
             "conditional": null
           },
@@ -5967,11 +5819,11 @@
             "key": "status",
             "kind": "string",
             "nullable": false,
-            "constant": {
-              "source": "literal",
-              "value": "accepted"
+            "constant": null,
+            "enum": {
+              "source": "status-domain",
+              "values": []
             },
-            "enum": null,
             "pattern": null,
             "conditional": null
           },
@@ -6355,16 +6207,31 @@
         "baselinePaths": []
       },
       {
-        "id": "execution-reciprocal-pair",
+        "id": "execution-plan",
         "profileIds": [
-          "sdlc/plan",
+          "sdlc/plan"
+        ],
+        "create": {
+          "mode": "states",
+          "states": [
+            "draft"
+          ],
+          "evidencePredicateId": null
+        },
+        "delete": "deny",
+        "rename": "deny",
+        "profileChange": "deny",
+        "baselinePaths": []
+      },
+      {
+        "id": "task-record",
+        "profileIds": [
           "sdlc/task"
         ],
         "create": {
-          "mode": "paired",
+          "mode": "states",
           "states": [
-            "draft",
-            "active"
+            "queued"
           ],
           "evidencePredicateId": null
         },
@@ -6562,8 +6429,7 @@
       {
         "id": "execution",
         "profileIds": [
-          "sdlc/plan",
-          "sdlc/task"
+          "sdlc/plan"
         ],
         "terminalStates": [
           "done"
@@ -6576,6 +6442,27 @@
           },
           {
             "from": "active",
+            "to": "done",
+            "predicateId": "complete-execution-pair"
+          }
+        ]
+      },
+      {
+        "id": "task-execution",
+        "profileIds": [
+          "sdlc/task"
+        ],
+        "terminalStates": [
+          "done"
+        ],
+        "edges": [
+          {
+            "from": "queued",
+            "to": "in-progress",
+            "predicateId": "activate-execution-pair"
+          },
+          {
+            "from": "in-progress",
             "to": "done",
             "predicateId": "complete-execution-pair"
           }
@@ -6884,8 +6771,8 @@
           },
           {
             "profileId": "sdlc/task",
-            "from": "draft",
-            "to": "active"
+            "from": "queued",
+            "to": "in-progress"
           }
         ],
         "evidence": [
@@ -6904,7 +6791,7 @@
               "sdlc/task"
             ],
             "states": [
-              "active"
+              "in-progress"
             ],
             "minimum": 1,
             "maximum": 1
@@ -7102,7 +6989,7 @@
           },
           {
             "profileId": "sdlc/task",
-            "from": "active",
+            "from": "in-progress",
             "to": "done"
           }
         ],

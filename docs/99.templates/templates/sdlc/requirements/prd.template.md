@@ -1,12 +1,12 @@
 ---
-title: '{Feature or System Name} Product Requirements'
-type: sdlc/prd
+title: '{Feature or System Name} Requirement Package'
+type: sdlc/requirement-package
 status: draft
 owner: platform
 updated: YYYY-MM-DD
 ---
 
-# [Feature or System Name] Product Requirements
+# [Feature or System Name] Requirement Package
 
 ## Overview
 

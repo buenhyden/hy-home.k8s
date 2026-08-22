@@ -248,18 +248,18 @@ their recorded `DEFER` or `ABSENT` verdicts.
 ## Traceability
 
 - **Program requirement**: [PRD 003](../../01.requirements/0003-workspace-agent-governance-platform.md)
-- **Architecture**: [AD 0006](../../02.architecture/descriptions/ad-0006-workspace-agent-governance-platform.md)
+- **Architecture**: [AD 0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md)
 - **Proposed decision**: [ADR 0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Predecessor**: [Spec 041](../0041-stage-00-agent-governance-contract/spec.md)
 - **Successor**: [Spec 043](../0043-agent-harness-loop-lifecycle/spec.md)
 - **Execution Plan**: [Provider-Native Runtime and Model Evidence Implementation Plan](plan.md)
-- **Task evidence**: [Provider-Native Runtime and Model Evidence Task](tasks.md)
+- **Task evidence**: [Provider-Native Runtime and Model Evidence Task](README.md#task-records)
 
 ### Lifecycle Traceability
 
 | PRD requirement | Spec criterion | Verification method |
 | --- | --- | --- |
-| [REQ-PRD-FUN-08](../../01.requirements/0003-workspace-agent-governance-platform.md#functional-requirements) | VAL-PNME-001 | Path ownership proves four distinct projections. |
+| [REQ-0003-FR-0008](../../01.requirements/0003-workspace-agent-governance-platform.md#functional-requirements) | VAL-PNME-001 | Path ownership proves four distinct projections. |
 | N/A — VAL-PNME-002 shares the PRD-0003 source linked in VAL-PNME-001 | VAL-PNME-002 | Provider-schema fixtures prove supported metadata and cutoff confidence. |
 | N/A — VAL-PNME-003 shares the PRD-0003 source linked in VAL-PNME-001 | VAL-PNME-003 | Config/MCP validation proves secret-free tracked baselines. |
 | N/A — VAL-PNME-004 shares the PRD-0003 source linked in VAL-PNME-001 | VAL-PNME-004 | Model compatibility records prove effort and fallback boundaries. |
