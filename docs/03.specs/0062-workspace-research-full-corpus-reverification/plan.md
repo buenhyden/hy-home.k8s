@@ -1979,7 +1979,8 @@ The shared-ledger mode has this exact contract:
    the immutable allocation. Scalar cells equal the corresponding allocation
    string after rejecting newline or literal `|`; the URL cell wraps only the
    exact allocated URL in angle brackets. Array cells retain allocation order
-   and join values with `, `; an empty source-ID array is exactly `None`.
+   and join values with a comma followed by one space; an empty source-ID array
+   is exactly `None`.
    `Canonical owner` is the request's immutable baseline owner path. Missing,
    duplicate, reordered, wrong-owner, or
    allocation-divergent source and claim rows fail respectively with
@@ -2294,7 +2295,7 @@ command passes, and Step 6 remains controller-owned review and commit work.
   strict Markdown validator returned `0` violations; strict links returned
   `PASS CROSS-DOCUMENT`; and `git diff --check` passed.
 
-- [x] **Step 6: commit and review shared integration**
+- [ ] **Step 6: commit and review shared integration** — **Blocked**
 
   Review the local diff for accidental old-row reflow, then commit:
 
@@ -2326,6 +2327,66 @@ command passes, and Step 6 remains controller-owned review and commit work.
   integration, strict registry, strict Markdown, strict links/owners,
   `git diff --check`, and artifact `residue` lanes were rerun after commit and
   passed. WRFR-007 is complete; WRFR-008 is queued and ready.
+
+#### 2026-08-22 Task 8 provenance incident
+
+The preceding closure record is retained as the evidence available when it was
+written, but it no longer controls current status. `task-8-brief.md` was
+generated and registered only after integration commit
+`fef53976b97c560de0a9f020e87be1e7e0e1c3b8`; it therefore cannot prove that the
+implementer consumed a registered brief before dispatch. The late brief,
+implementer report, and review package are immutable evidence and must not be
+rewritten to simulate an earlier event.
+
+Independent task/spec re-review withdrew its earlier `APPROVED` result and
+classified one Important provenance finding, Critical/Important/Minor
+`0/1/0`. The independent ledger/source content review remains `APPROVED`,
+Critical/Important/Minor `0/0/0`; the integration commit, source and claim
+owners, ten-scope projection, pack reconciliation, and all GREEN validation
+evidence remain preserved. Step 6 and WRFR-007 are blocked because provenance,
+not content, is unresolved. WRFR-008 must not begin before an explicit human
+decision.
+
+Exactly two next paths are allowed, both requiring explicit human direction:
+
+- **A — documented one-time exception:** accept the exact full Plan and scoped
+  prompt as the implementation input despite the missing registered
+  pre-dispatch brief, record the exception without rewriting any artifact, and
+  obtain a new scoped closure review.
+- **B — closed re-execution:** withdraw and then reapply the three research
+  projections only after a new registered pre-dispatch brief is demonstrably
+  consumed, followed by a new fix package and independent review. The existing
+  commit and late evidence remain historical rather than being rewritten.
+
+##### Separate mandatory SDD cleanup-recovery gate
+
+After the provenance correction, the controller mistakenly invoked the
+forbidden canonical `sdd-workspace` helper while recovering context. It created
+the empty sibling `.superpowers/sdd/plan` with device/inode `2096/4541614`, mode
+`0755`, UID:GID `1000:1000`, and mtime/ctime
+`1787407543766841537` ns. It also rewrote `.superpowers/sdd/.gitignore` with
+identical bytes `*\n` and unchanged SHA-256
+`cdbcae15105d6b781e620813c79c7e868740d4e9cc53ce6f5fcbbc12387adf4b`.
+The marker remains device/inode `2096/4410802`, mode `0644`, UID:GID
+`1000:1000`, but its mtime/ctime changed from recorded
+`1787208168057628362` ns to `1787407543770964835` ns.
+
+The canonical Plan workspace remains device/inode `2096/4406235`, mode `0700`.
+Inventory SHA-256 remains
+`058cad35454e285dcc4c7b9b2be8ede06e111090ec45f78762cd5a001c14b545`,
+and no canonical task-artifact bytes changed. Nevertheless, the marker
+FileVersion is invalidated and the foreign sibling makes the WRFR-009 cleanup
+preconditions false. No deletion, restoration, chmod, or recovery was attempted.
+
+This is a separate mandatory gate, not a third Task 8 resolution path. The two
+Task 8 paths remain exactly A/B above. Independently of that choice, the exact
+empty sibling and rewritten marker identity require explicit human direction
+and a one-time cleanup-recovery design plus independent review before any
+recovery action or WRFR-009 cleanup. This Plan does not invent or authorize the
+procedure.
+
+No completion, exception, re-execution, or WRFR-008 authorization is claimed by
+this incident record.
 
 ### Task 9: WRFR-008 — cross-link and lifecycle reconciliation
 

@@ -45,11 +45,13 @@ reasons. The existing delivery/quality owner now contains the single dated
 four-row increment and all focused GREEN checks pass. Its exact implementation
 commit, registered report/package, and post-commit review are complete; the
 sole intentional pre-closure lifecycle Minor is corrected in this closure.
-WRFR-006 is complete. WRFR-007 completed the reviewed checker-only recovery,
-the Stage 90 transition-guard recovery, the semantic shared-ledger RED, the
-exact six-file shared projection commit, registered report/package, and
-post-commit owner review. WRFR-008 is queued for cross-link and lifecycle
-reconciliation. No remote retry is permitted.
+WRFR-006 is complete. WRFR-007 preserves the reviewed checker-only recovery,
+the Stage 90 transition-guard recovery, the semantic shared-ledger RED, and the
+exact six-file shared projection commit. Its ledger/source content review
+remains approved, but task/spec re-review found one Important pre-dispatch
+provenance gap, so WRFR-007 is blocked pending explicit human direction.
+WRFR-008 remains queued and blocked behind that decision. No remote retry is
+permitted.
 
 The target is a 2026-08-20 external-source and workspace reverification of all
 thirty-six existing `REQ-WERPC-*` owners, integrated into the existing
@@ -69,9 +71,10 @@ records. WRFR-006 has executed its approved pre-remote review, two RED probes,
 two preflights, summary initialization/registration, both reviewed local
 recoveries, and exactly one approved query budget per class. The final summary,
 owner edit, focused GREEN evidence, exact commit, registered report/package,
-and post-commit review are complete. WRFR-007 completed its checker recovery,
-shared ledger/scope/pack integration, registered report/package, and
-post-commit owner review. WRFR-008 and later work packages have not executed.
+and post-commit review are complete. WRFR-007 preserves its checker recovery and
+shared ledger/scope/pack integration, but its prior task/spec approval is
+withdrawn for the recorded Important provenance finding. WRFR-008 and later
+work packages have not executed and remain blocked behind human direction.
 
 ## Inputs
 
@@ -125,9 +128,9 @@ stage, or commit.
 | WRFR-004 | VAL-WRFR-002..005, 008, 013 | Integrate SDLC/documentation findings | documentation integrator | Done | Sixteen allocated rows appended and committed as `7bbe6517`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole stale-evidence Minor addressed |
 | WRFR-005 | VAL-WRFR-002..005, 008, 013 | Integrate platform/security findings | platform/security integrator | Done | Three allocated rows appended and committed as `63efc8de`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole stale-evidence Minor addressed |
 | WRFR-006 | VAL-WRFR-002..005, 008, 011, 013 | Integrate delivery/quality and read-only GitHub evidence | delivery/security integrator | Done | Nine-class summary and four-row owner integration committed as `ae7a2262`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole lifecycle Minor addressed |
-| WRFR-007 | VAL-WRFR-006..010, 013 | Integrate source, claim, scope, and pack projections | controller Step 6 | Done | Exact six-file integration committed as `fef53976`; registered package and post-commit owner review approved | Report/package registered; owner review `APPROVED`, Critical/Important/Minor `0/0/0`; shared integration, registry, Markdown, links, diff, and residue lanes passed |
-| WRFR-008 | VAL-WRFR-008, 010, 013 | Reconcile indexes, links, lifecycle, and progress | documentation integrator | Queued | Not executed | Terminal parsed counts known; awaiting reconciliation preprobe |
-| WRFR-009 | VAL-WRFR-010, 012..015 | Run terminal lanes, whole-branch review, closure, cleanup | platform + QA | Queued | Not executed | Awaiting WRFR-008 |
+| WRFR-007 | VAL-WRFR-006..010, 013 | Integrate source, claim, scope, and pack projections | explicit human decision | Blocked | Integration commit `fef53976` and content evidence preserved; late brief cannot prove pre-dispatch consumption | Task/spec re-review withdrawn with Critical/Important/Minor `0/1/0`; ledger/source content review remains `APPROVED` `0/0/0` |
+| WRFR-008 | VAL-WRFR-008, 010, 013 | Reconcile indexes, links, lifecycle, and progress | documentation integrator | Queued (Blocked) | Not executed | No reconciliation preprobe before the WRFR-007 provenance decision |
+| WRFR-009 | VAL-WRFR-010, 012..015 | Run terminal lanes, whole-branch review, closure, cleanup | platform + QA | Queued (Blocked) | Not executed | Awaiting WRFR-008 and a separately approved SDD cleanup-recovery gate for the foreign sibling and invalidated marker FileVersion |
 
 ## Approval and Safety Boundaries
 
@@ -917,6 +920,49 @@ validator self-test, strict links, and diff check; obtain independent code and
 security approval; and commit exactly the two guard files. Only then does the
 sole ledger integrator resume the original Task 8 Step 5. WRFR-007 remains
 blocked/in progress, with no completion or post-commit review claimed.
+
+### WRFR-007 provenance correction and decision gate
+
+`task-8-brief.md` was generated and registered after exact integration commit
+`fef53976b97c560de0a9f020e87be1e7e0e1c3b8`, so it cannot establish registered
+brief consumption before implementer dispatch. The late brief, implementer
+report, and review package remain immutable and must not be rewritten.
+Independent task/spec re-review withdrew the prior `APPROVED` result and records
+Critical/Important/Minor `0/1/0`. The separate ledger/source content review
+remains `APPROVED`, `0/0/0`, and no integration content or validation evidence
+is withdrawn.
+
+WRFR-007 is blocked pending explicit human direction between only two paths:
+(A) a documented one-time exception accepting the exact full-Plan/scoped-prompt
+evidence, with a new scoped closure review; or (B) a closed re-execution that
+withdraws and reapplies only the three research projections after a registered
+pre-dispatch brief, followed by a new fix package and review. WRFR-008 remains
+queued but blocked and must not start before that decision. No exception,
+re-execution, completion, or successor authorization is claimed here.
+
+### SDD helper incident and separate WRFR-009 cleanup gate
+
+After this provenance correction, the controller mistakenly invoked the
+forbidden canonical `sdd-workspace` helper. The command created the exact empty
+directory `.superpowers/sdd/plan` at device/inode `2096/4541614`, mode `0755`,
+UID:GID `1000:1000`, mtime/ctime `1787407543766841537` ns. It also rewrote
+`.superpowers/sdd/.gitignore` with the same `*\n` bytes and unchanged SHA-256
+`cdbcae15105d6b781e620813c79c7e868740d4e9cc53ce6f5fcbbc12387adf4b`.
+That marker retains device/inode `2096/4410802`, mode `0644`, UID:GID
+`1000:1000`, while mtime/ctime moved from `1787208168057628362` ns to
+`1787407543770964835` ns.
+
+The canonical Plan workspace is unchanged at device/inode `2096/4406235`, mode
+`0700`; inventory SHA-256 remains
+`058cad35454e285dcc4c7b9b2be8ede06e111090ec45f78762cd5a001c14b545`;
+and no canonical task-artifact bytes changed. The new sibling and invalidated
+marker FileVersion nevertheless block WRFR-009 cleanup preconditions. No
+deletion, chmod, restoration, or recovery was attempted.
+
+The Task 8 decision remains exactly A/B above. Separately, the new SDD objects
+require explicit human direction and an independently reviewed one-time
+cleanup-recovery design before any recovery operation or WRFR-009 cleanup. No
+procedure or authorization is invented by this Task record.
 
 ### Stop conditions
 

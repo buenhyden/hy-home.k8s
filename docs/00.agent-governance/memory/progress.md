@@ -16970,6 +16970,61 @@ preprobe. No terminal lifecycle completion, whole-branch review, terminal
 cleanup, push, merge, publication, workflow dispatch, remote query, hosted
 state, provider-runtime state, or live infrastructure state is claimed here.
 
+### 2026-08-22 WRFR-007 provenance truth correction
+
+This correction explicitly supersedes the immediately preceding claim that the
+combined post-commit owner review was `APPROVED`, Critical/Important/Minor
+`0/0/0`, and that WRFR-007 was complete. The earlier section remains intact as
+historical evidence and is not deleted or rewritten.
+
+`task-8-brief.md` was generated and registered only after integration commit
+`fef53976b97c560de0a9f020e87be1e7e0e1c3b8`. It cannot prove registered brief
+consumption before implementer dispatch. The late brief, implementer report,
+and review package are preserved immutable and must not be rewritten to repair
+event order. Independent task/spec re-review therefore withdrew its prior
+approval and records one Important finding, Critical/Important/Minor `0/1/0`.
+The separate ledger/source content review remains `APPROVED`,
+Critical/Important/Minor `0/0/0`; integration commit and content, terminal
+counts, identifiers, scope projection, evidence boundaries, and all executed
+validation results remain preserved.
+
+WRFR-007 is blocked and not complete. Explicit human direction is required for
+exactly one of two allowed next paths: **A**, a documented one-time exception
+accepting the exact full Plan and scoped prompt as implementation evidence,
+without rewriting any late artifact and with a new scoped closure review; or
+**B**, a closed re-execution that withdraws and reapplies the three research
+projections after a registered pre-dispatch brief, followed by a new fix package
+and independent review. WRFR-008 remains queued but blocked and must not begin
+before that decision. No exception, re-execution, completion, push, merge,
+publication, remote query, provider-runtime action, or live action is claimed.
+
+### 2026-08-22 forbidden `sdd-workspace` helper incident
+
+After the Task 8 provenance truth correction, the controller mistakenly invoked
+the forbidden canonical `sdd-workspace` helper while recovering context. The
+command created empty `.superpowers/sdd/plan` with device/inode
+`2096/4541614`, mode `0755`, UID:GID `1000:1000`, and mtime/ctime
+`1787407543766841537` ns. It also rewrote `.superpowers/sdd/.gitignore` with
+identical bytes `*\n` and unchanged SHA-256
+`cdbcae15105d6b781e620813c79c7e868740d4e9cc53ce6f5fcbbc12387adf4b`.
+The marker remains device/inode `2096/4410802`, mode `0644`, UID:GID
+`1000:1000`; its mtime/ctime changed from the recorded
+`1787208168057628362` ns to `1787407543770964835` ns, invalidating its recorded
+FileVersion.
+
+The canonical Plan workspace remains device/inode `2096/4406235`, mode `0700`.
+Inventory SHA-256 remains
+`058cad35454e285dcc4c7b9b2be8ede06e111090ec45f78762cd5a001c14b545`,
+and no canonical task-artifact bytes changed. The foreign sibling and marker
+version drift add a separate WRFR-009 cleanup blocker. No deletion, chmod,
+restoration, or recovery was attempted.
+
+The Task 8 provenance decision still has exactly the two previously recorded
+paths A/B. This SDD incident is a separate mandatory gate: explicit human
+direction, a one-time cleanup-recovery design, and independent review are
+required before any recovery action or WRFR-009 cleanup. No procedure is
+invented or authorized here.
+
 ## 2026-08-21 - WRFR-005 platform/security integration
 
 ### Metadata
