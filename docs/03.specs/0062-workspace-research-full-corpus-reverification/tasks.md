@@ -128,7 +128,7 @@ stage, or commit.
 | WRFR-004 | VAL-WRFR-002..005, 008, 013 | Integrate SDLC/documentation findings | documentation integrator | Done | Sixteen allocated rows appended and committed as `7bbe6517`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole stale-evidence Minor addressed |
 | WRFR-005 | VAL-WRFR-002..005, 008, 013 | Integrate platform/security findings | platform/security integrator | Done | Three allocated rows appended and committed as `63efc8de`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole stale-evidence Minor addressed |
 | WRFR-006 | VAL-WRFR-002..005, 008, 011, 013 | Integrate delivery/quality and read-only GitHub evidence | delivery/security integrator | Done | Nine-class summary and four-row owner integration committed as `ae7a2262`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole lifecycle Minor addressed |
-| WRFR-007 | VAL-WRFR-006..010, 013 | Integrate source, claim, scope, and pack projections | explicit human decision | Blocked | Integration commit `fef53976` and content evidence preserved; late brief cannot prove pre-dispatch consumption | Task/spec re-review withdrawn with Critical/Important/Minor `0/1/0`; ledger/source content review remains `APPROVED` `0/0/0` |
+| WRFR-007 | VAL-WRFR-006..010, 013 | Integrate source, claim, scope, and pack projections | explicit human decision | Blocked | Integration commit `fef53976` and content evidence preserved; late brief cannot prove pre-dispatch consumption | Task/spec re-review withdrawn with Critical/Important/Minor `0/1/0`; ledger/source content review remains `APPROVED` `0/0/0`; correction-record consistency re-review is `ADDRESSED/APPROVED` `0/0/0` without approving the original provenance gap |
 | WRFR-008 | VAL-WRFR-008, 010, 013 | Reconcile indexes, links, lifecycle, and progress | documentation integrator | Queued (Blocked) | Not executed | No reconciliation preprobe before the WRFR-007 provenance decision |
 | WRFR-009 | VAL-WRFR-010, 012..015 | Run terminal lanes, whole-branch review, closure, cleanup | platform + QA | Queued (Blocked) | Not executed | Awaiting WRFR-008 and a separately approved SDD cleanup-recovery gate for the foreign sibling and invalidated marker FileVersion |
 
@@ -932,6 +932,19 @@ Critical/Important/Minor `0/1/0`. The separate ledger/source content review
 remains `APPROVED`, `0/0/0`, and no integration content or validation evidence
 is withdrawn.
 
+Truth-correction commit `62fccac1` changes exactly the three tracked lifecycle
+documents. Its initial correction review rejected only stale Tasks current-state
+and traceability wording, Critical/Important/Minor `0/1/0`. Scoped fix commit
+`e9be3f7a` changes exactly `tasks.md`. The registered review identities are
+`task-8-fix-1-review-package.md` for exact range `8df025d5..62fccac1`, SHA-256
+`87785a9c160a9fffbbf1b928c2a09544eddbdfed0baf18d15b3c640e96e64cc1`, and
+`task-8-fix-2-review-package.md` for exact range `62fccac1..e9be3f7a`, SHA-256
+`2ede5fdeae5d88ce7661fa354b2fa812fbe2f3182aa127cb65264a464ababbde`.
+Scoped correction-record re-review returned `ADDRESSED/APPROVED`, `0/0/0`.
+That approval closes only the truth-correction record's internal consistency;
+it does not approve the original Task 8 provenance, choose A/B, authorize
+WRFR-008, or authorize cleanup recovery.
+
 WRFR-007 is blocked pending explicit human direction between only two paths:
 (A) a documented one-time exception accepting the exact full-Plan/scoped-prompt
 evidence, with a new scoped closure review; or (B) a closed re-execution that
@@ -1056,7 +1069,7 @@ OIDC-setting, stakeholder, deployment, or live outcome is promoted.
 | [VAL-WRFR-010](spec.md) | Recorded shared-projection validation passed; Task 8 closure blocked | The integrated projection evidence is preserved; closure awaits the late-brief provenance A/B decision, and WRFR-009 cleanup remains separately gated |
 | [VAL-WRFR-011](spec.md) | Remote summary and security reviews passed | Nine unique sanitized classes passed; seven are observed and workflows/OIDC retain fixed checker-compatibility unavailable reasons |
 | [VAL-WRFR-012](spec.md) | Workspace passed; cleanup pending | WRFR-001 residue validation passed; WRFR-009 still owns exact cleanup |
-| [VAL-WRFR-013](spec.md) | In progress | WRFR-001..006 logical commits and task reviews are complete; WRFR-007 has a correction commit but still awaits independent correction review and the provenance decision, WRFR-008 is not executed, and WRFR-009 remains pending |
+| [VAL-WRFR-013](spec.md) | In progress | WRFR-001..006 logical commits and task reviews are complete; WRFR-007 correction-record review is approved but Task 8 still awaits the explicit A/B provenance decision, WRFR-008 is not executed, and WRFR-009 remains pending |
 | [VAL-WRFR-014](spec.md) | Not executed | WRFR-009 owns the whole-branch review gate |
 | [VAL-WRFR-015](spec.md) | Not executed | WRFR-009 owns the terminal lane sequence |
 

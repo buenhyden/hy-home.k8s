@@ -17025,6 +17025,44 @@ direction, a one-time cleanup-recovery design, and independent review are
 required before any recovery action or WRFR-009 cleanup. No procedure is
 invented or authorized here.
 
+### 2026-08-23 WRFR-007 correction-record review closure
+
+Truth-correction commit `62fccac1` (`docs: record WRFR007 provenance blockers`)
+changes exactly the three tracked Plan, Task, and durable-progress documents.
+Its initial correction review rejected only stale Tasks current-state and
+traceability wording, Critical/Important/Minor `0/1/0`. Scoped fix commit
+`e9be3f7a` (`docs: reconcile WRFR007 traceability`) changes exactly `tasks.md`,
+with `11 insertions(+), 8 deletions(-)`.
+
+The two registered review identities are:
+
+- `task-8-fix-1-review-package.md`, exact range `8df025d5..62fccac1`, one
+  commit, `25,554` bytes, SHA-256
+  `87785a9c160a9fffbbf1b928c2a09544eddbdfed0baf18d15b3c640e96e64cc1`;
+- `task-8-fix-2-review-package.md`, exact range `62fccac1..e9be3f7a`, one
+  commit, `6,830` bytes, SHA-256
+  `2ede5fdeae5d88ce7661fa354b2fa812fbe2f3182aa127cb65264a464ababbde`.
+
+Final affected and staged lanes each passed with repository-quality exit `0`
+and exactly one success marker. Plain exact-index pre-commit passed, and cached
+and uncached diff checks passed. Scoped re-review returned
+`ADDRESSED/APPROVED`, Critical/Important/Minor `0/0/0`. This approval closes
+only the truth-correction record's consistency; it does not approve the
+original Task 8 provenance, choose path A or B, authorize WRFR-008, or authorize
+cleanup recovery.
+
+The all-files detect-secrets findings at `tests/test_archive_validation.py`
+lines `1168`, `1169`, and `1754` remain classified as three deterministic Git
+blob-ID false positives, Critical/Important/Minor `0/0/3`. Separate inline
+pragma remediation was recommended but not implemented; this record does not
+authorize a secrets-baseline refresh.
+
+WRFR-007 and WRFR-008 remain blocked pending explicit human direction on the
+Task 8 A/B provenance decision. WRFR-009 remains separately blocked pending a
+human-approved cleanup-recovery design and independent review. No Task 8
+completion, WRFR-008 execution, cleanup recovery, preprobe, push, merge, remote,
+or live action is claimed.
+
 ## 2026-08-21 - WRFR-005 platform/security integration
 
 ### Metadata
