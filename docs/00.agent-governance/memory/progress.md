@@ -16554,6 +16554,98 @@ newly attained state.
 - No live, hosted, provider-runtime, remote, secret-value, push, publish, or
   deployment evidence was collected or claimed.
 
+## 2026-08-21 - WRFR-006 remote evidence incident and fixed recovery gate
+
+### Metadata
+
+- Date: 2026-08-21
+- Layer: docs, delivery, security
+- Status: blocked
+- Tags: workspace-research, github-actions, remote-evidence, recovery, cleanup
+- Owner: platform
+- Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md#wrfr-006-remote-incident-and-recovery-contract`
+- Provenance: approved pre-remote review, minimized preflights, guarded summary/inventory identities, sanitized checker diagnostic, metadata-only residue inspection, and reviewed recovery design
+- Sensitivity: internal; configuration, credential, state, and residue contents unread
+- Retention: durable
+- Next Owner: checker implementer, then independent Python/security reviewers, then WRFR-006 delivery/security integrator
+
+### Progress
+
+WRFR-006 passed its pre-remote security review with `Approved With Minor`,
+Critical/Important/Minor `0/0/1`. The sole Minor was the bounded 403/404
+recognition. The local integration and missing-summary RED probes returned
+`ERROR INTEGRATION_SECTION` and `ERROR PATH_INVALID`. Authentication and exact
+repository-identity preflights then each ran once and succeeded; authentication
+output was discarded and the projected repository was exactly
+`buenhyden/hy-home.k8s`, its GitHub HTTPS URL, and default branch `main`.
+
+The guarded remote summary was initialized and registered. The `workflows`
+query ran once and stopped at `ERROR REMOTE_COMMAND`. The only retained payload
+is sanitized state `failed`, reason `non-allowlisted-failure`, and empty data.
+Raw stdout/stderr were not read or stored. No retry, fallback, alternate
+endpoint, second preflight, or later class query occurred. `runs`,
+`actions-permissions`, `workflow-permissions`, `rulesets`,
+`branch-protection`, `environments`, `oidc`, and `artifacts` retain their single
+budgets.
+
+The frozen incident identities are checker
+`584086b297a7446e0a6dea932f0693831a3748813cae6f281bee41eb889c765d`,
+summary
+`cc77a8ae007b71f32328ce159dd03f60d3a32390131710cb6eee675bdbee4b56`,
+and inventory
+`1dc24b116bbd09cb8e36f96a0bfb6c332dac8793f15b3cf33cc858efd8c9c22b`.
+No delivery owner was edited.
+
+### Incident boundary
+
+The checker child lacked authenticated GitHub config/state locations and
+created `.local/state/gh/device-id` in the repository. Its contents remain
+unread. The exact metadata-only identity is device `2096`, UID `1000`, common
+`mtime_ns`/`ctime_ns` `1787287593754570540`: `.local` inode `1747675`, size
+`4096`, mode `0755`, sole entry `state`; `state` inode `2221665`, size `4096`,
+mode `0755`, sole entry `gh`; `gh` inode `3263846`, size `4096`, mode `0755`,
+sole entry `device-id`; and `device-id` inode `3276459`, size `36`, mode `0600`,
+regular file. No content or SHA was read.
+
+The fixed recovery order is now: commit the three-document contract; implement
+and test the checker; obtain fresh exact-byte Python/security approval; run
+`artifact-rebind-checker-only` once; run
+`remove-owned-gh-state-residue --root .` once; run the no-network
+`remote-recover-auth-context` once; then consume only the remaining eight query
+budgets in order. Neither preflight nor `workflows` may run again. The local
+recovery preserves `observedAt` and changes only the existing `workflows` entry
+to `unavailable`, reason `checker-auth-context-incompatible`, empty data.
+
+Every summary mutation must update the registered summary and same-index
+inventory record with exact FileVersion CAS and compensating rollback. Two-file
+atomicity is unavailable; rollback contention is a distinct fail-closed
+incident. Cleanup uses literal dirfds, `O_NOFOLLOW`, full metadata identity,
+exact entry sets, pre/post `fstat`, empty-directory removal, and final `.local`
+absence. Precondition failure guarantees no mutation. Unlink plus three rmdir
+operations are not one POSIX atomic action: a failure after unlink may leave a
+monotonic partial cleanup, which must return fixed `CLEANUP_PARTIAL`, must not be
+retried, and is never success. Success requires complete `.local` absence.
+Same-UID contention remains an explicit platform limitation.
+
+Remaining-query children receive only minimal `PATH`/locale, fixed
+`GH_CONFIG_DIR=/home/hy/.config/gh` and
+`XDG_STATE_HOME=/home/hy/.local/state`, plus only the Plan-enumerated non-secret
+prompt, pager, update-notifier, color, and terminal-prompt controls. `HOME`,
+tokens, `GH_HOST`, `GH_REPO`, `GH_DEBUG`, `LD_*`, proxy, `PAGER`,
+`XDG_CONFIG_HOME`, and other config variables are forbidden. Config/state
+content reads and hashes are forbidden. The Plan pins the metadata-only leaf snapshot and the ancestor
+dirfd rules: `/` and `/home` are trusted system prefixes with no current-process
+write access; `/home/hy` downward is current-UID-owned with group/world write
+bits clear. String path resolution is not an identity check.
+
+### Handoff
+
+WRFR-006 is `In Progress` and blocked. The next permitted action is the reviewed
+checker TDD/recovery sequence, not a remote retry or delivery-owner edit. Any
+checker byte change invalidates prior approvals. Any metadata drift requires a
+new tracked amendment. No push, merge, publication, live infrastructure,
+provider-runtime, secret-value, or additional remote action occurred.
+
 ## 2026-08-21 - WRFR-005 platform/security integration
 
 ### Metadata

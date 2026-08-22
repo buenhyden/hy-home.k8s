@@ -552,6 +552,9 @@ replayed by an implementer.
   artifact-init --workspace DIR --inventory FILE --bootstrap-ledger FILE
   artifact-register --workspace DIR --inventory FILE --path FILE
   artifact-rebind-checker-review --workspace DIR --inventory FILE --expected-inventory-sha256 OLD_INVENTORY --expected-old-checker-sha256 OLD_CHECKER --approved-new-checker-sha256 NEW_CHECKER --expected-old-report-sha256 OLD_REPORT --approved-new-report-sha256 NEW_REPORT
+  artifact-rebind-checker-only --workspace DIR --inventory FILE --expected-inventory-sha256 OLD_INVENTORY --expected-old-checker-sha256 OLD_CHECKER --approved-new-checker-sha256 NEW_CHECKER
+  remove-owned-gh-state-residue --root ROOT
+  remote-recover-auth-context --workspace DIR --inventory FILE --summary FILE --expected-inventory-sha256 OLD_INVENTORY --expected-summary-sha256 OLD_SUMMARY
   pathset --root ROOT --base SHA --lane affected|staged|all-files --output FILE
   residue --workspace DIR --inventory FILE
   remove-owned-helper-plan --path FILE
@@ -1471,8 +1474,10 @@ of this recovery.
   The post-commit reviewer returned `APPROVED WITH MINOR`,
   Critical/Important/Minor `0/0/1`. Its sole Minor was the intentional
   pre-closure lifecycle state in these three records; this closure corrects
-  it. WRFR-005 is complete. WRFR-006 is queued and ready, but its required
-  pre-remote security review remains a hard gate before any GitHub query.
+  it. WRFR-005 is complete. WRFR-006 passed its pre-remote security review and
+  both preflights, but is blocked after its sole `workflows` query failed under
+  the checker auth-context defect. The fixed recovery gate below now precedes
+  every remaining GitHub query.
 
 ### Task 7: WRFR-006 — delivery and quality integration
 
@@ -1491,7 +1496,7 @@ of this recovery.
 - Produces: one CI/CD, GitHub Actions, QA, and V&V section plus one guarded,
   sanitized nine-class remote summary.
 
-- [ ] **Step 1: obtain pre-remote security approval**
+- [x] **Step 1: obtain pre-remote security approval**
 
   Before any `gh` or GitHub API command, dispatch `security-reviewer` with the
   exact repository, branch, the two preflight argv vectors from Step 3, the nine
@@ -1501,7 +1506,7 @@ of this recovery.
   the checker's per-class documented-unavailable path. Stop remote evidence
   collection if that review reports an unresolved Critical or Important issue.
 
-- [ ] **Step 2: reproduce local and remote RED**
+- [x] **Step 2: reproduce local and remote RED**
 
   ```bash
   python3 "$WRFR_SDD/full-corpus-check.py" validate-integration \
@@ -1514,7 +1519,7 @@ of this recovery.
   Expected before edits/initialization: one missing-section diagnostic and one
   missing guarded summary diagnostic.
 
-- [ ] **Step 3: initialize and verify the remote target**
+- [x] **Step 3: initialize and verify the remote target**
 
   ```bash
   gh auth status --hostname github.com
@@ -1531,7 +1536,7 @@ of this recovery.
   `buenhyden/hy-home.k8s`, the URL is the GitHub HTTPS repository URL, and the
   default branch is `main`. Authentication output is not copied into evidence.
 
-- [ ] **Step 4: run each approved remote query once**
+- [ ] **Step 4: run each approved remote query once — blocked after the first class**
 
   Invoke every query through `remote-query`; the checker verifies the argv,
   applies a bounded timeout, projects only the named fields, and performs a
@@ -1592,6 +1597,135 @@ of this recovery.
   Multiple classes may therefore be unavailable without a retry or a second
   network path. Any other nonzero exit, schema mismatch, extra field, or raw
   output condition stops the workstream; it is not converted to unavailable.
+
+#### WRFR-006 remote incident and fixed recovery gate
+
+The pre-remote security review returned `Approved With Minor`, with
+Critical/Important/Minor `0/0/1`; the bounded 403/404 recognition was the sole
+Minor and did not block execution. The controller then ran each approved
+preflight exactly once. `gh auth status --hostname github.com` succeeded, and
+the projected repository identity from the second preflight was exactly
+`buenhyden/hy-home.k8s`, the GitHub HTTPS URL, and default branch `main`.
+Authentication output was discarded. The local integration RED was exactly
+`ERROR INTEGRATION_SECTION`; the pre-initialization remote RED was exactly
+`ERROR PATH_INVALID`.
+
+The remote summary was initialized and registered. The first and only
+`workflows` query then exited with `ERROR REMOTE_COMMAND`. The registered
+summary contains only the sanitized state `failed`, reason
+`non-allowlisted-failure`, and an empty data object for that class. Raw stdout
+and stderr were neither read nor stored. No retry, fallback, alternate endpoint,
+or second preflight was attempted, and the remaining eight classes have not
+been invoked. The frozen incident identities are:
+
+- checker SHA-256
+  `584086b297a7446e0a6dea932f0693831a3748813cae6f281bee41eb889c765d`;
+- summary SHA-256
+  `cc77a8ae007b71f32328ce159dd03f60d3a32390131710cb6eee675bdbee4b56`;
+- inventory SHA-256
+  `1dc24b116bbd09cb8e36f96a0bfb6c332dac8793f15b3cf33cc858efd8c9c22b`.
+
+The child process received the checker's minimal locale and executable search
+environment but no authenticated GitHub configuration or state location. It
+therefore created repository-local `.local/state/gh/device-id`; its 36 bytes
+remain unread. The exact metadata-only residue contract, with nanosecond times
+and no atime, is:
+
+| Path | Device | Inode | Size | `mtime_ns` / `ctime_ns` | Mode | UID | Exact entries |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| `.local` | 2096 | 1747675 | 4096 | 1787287593754570540 | `0755` | 1000 | `state` |
+| `.local/state` | 2096 | 2221665 | 4096 | 1787287593754570540 | `0755` | 1000 | `gh` |
+| `.local/state/gh` | 2096 | 3263846 | 4096 | 1787287593754570540 | `0755` | 1000 | `device-id` |
+| `.local/state/gh/device-id` | 2096 | 3276459 | 36 | 1787287593754570540 | `0600` | 1000 | regular file; content unread |
+
+WRFR-006 is `In Progress` and blocked. No delivery owner edit or remaining
+remote query may proceed until the following material recovery sequence
+completes in order:
+
+1. Commit this three-document incident contract before modifying the ignored
+   checker or any stateful artifact.
+2. Extend the checker test-first with the fixed
+   `artifact-rebind-checker-only`, `remove-owned-gh-state-residue`, and
+   `remote-recover-auth-context` interfaces and transactional registered-summary
+   updates. Run compile, normal and optimized self-tests, Ruff checks, and fresh
+   independent Python and security direct review over the exact bytes. Any
+   Critical or Important finding, later byte change, or incomplete rollback
+   test keeps the gate closed.
+3. Invoke `artifact-rebind-checker-only` exactly once against the incident
+   inventory/checker tuple above and the newly approved checker SHA-256. It may
+   change only the same-index checker record. Do not retry.
+4. Invoke `remove-owned-gh-state-residue --root .` exactly once. The command has
+   no generic target. It opens the repository and each literal component with
+   directory file descriptors and `O_NOFOLLOW`, binds every row above by
+   `(device,inode,size,mtime_ns,ctime_ns,mode,uid)`, checks the exact entry set,
+   revalidates with `fstat`, unlinks only `device-id`, removes only the three now
+   empty directories, and proves `.local` absent afterward. Any mismatch,
+   symlink, new entry, non-empty directory, or contention stops without broader
+   deletion. The same-UID actor race between final validation and unlink/rmdir
+   is a documented platform limitation; dirfd binding, exact entry checks, and
+   post-absence proof bound but cannot eliminate it.
+   Precondition failure guarantees no mutation, but unlink plus three `rmdir`
+   operations are not one POSIX atomic action. A failure after unlink may leave
+   a monotonic partial cleanup; the checker must return fixed
+   `CLEANUP_PARTIAL`, must not retry, and must never call that state success.
+   Success requires the complete absence of `.local`.
+5. Invoke `remote-recover-auth-context` exactly once with the then-current exact
+   inventory and incident summary hashes. It performs no network process,
+   preserves the existing `observedAt`, and replaces only the existing
+   `workflows` state with fixed `unavailable`, reason
+   `checker-auth-context-incompatible`, and empty data. It must update the
+   registered summary and its same-index inventory record as a compensating
+   two-file transaction: validate and lock both identities, CAS the summary,
+   CAS the inventory, postvalidate both, and on any second-stage failure roll
+   the summary back only against the exact FileVersion returned by its CAS.
+   Because two-file atomic replacement is unavailable, rollback contention or
+   failure is a distinct fail-closed incident and never a consistency claim.
+6. Prove `.local` absent before and after every remaining query, do not repeat
+   either preflight or `workflows`, and invoke `runs`, `actions-permissions`,
+   `workflow-permissions`, `rulesets`, `branch-protection`, `environments`,
+   `oidc`, and `artifacts` once each in the existing listed order. Stop on the
+   first non-allowlisted failure; do not consume later budgets.
+
+For each recovery or remaining-query child, construct a fresh environment from
+the existing minimal `PATH`, `LC_ALL`, and `LANG`, the fixed
+`GH_CONFIG_DIR=/home/hy/.config/gh` and
+`XDG_STATE_HOME=/home/hy/.local/state`, and only these fixed non-secret controls:
+`GH_PROMPT_DISABLED=1`, `GH_PAGER=/usr/bin/cat`,
+`GH_NO_UPDATE_NOTIFIER=1`, `GH_NO_EXTENSION_UPDATE_NOTIFIER=1`, `NO_COLOR=1`,
+and `GIT_TERMINAL_PROMPT=0`. Do not inherit or inject `HOME`, token variables,
+`GH_HOST`, `GH_REPO`, `GH_DEBUG`, `LD_*`, proxy variables, `PAGER`,
+`XDG_CONFIG_HOME`, or any other credential/configuration variable. Walk
+both absolute paths component-by-component without following symlinks and bind
+all relevant objects before and after the child by the same metadata identity;
+never read, hash, copy, print, or store configuration/state contents. The
+fixed `/home/hy/...` spellings are part of the allowlist; `Path.resolve()` or
+another string-only canonicalization is not a substitute for the dirfd walk.
+Snapshot `/` and `/home` as trusted system directories: user-namespace UID
+`65534` is permitted there, but they must be non-symlinks, not group/world
+writable, not writable by the current process, and stable by retained-dirfd
+`(device,inode,mode,uid)` before and after. From `/home/hy` downward every
+component must instead be current-UID-owned, non-symlink, non-group/world
+writable, and stable by its retained dirfd; owner-write permission is allowed
+on these user-owned leaves. Any ancestor mismatch closes the gate. The
+current metadata-only snapshot that a reviewed execution must either match or
+replace through a new tracked amendment is:
+
+| Object | Device | Inode | Size | `mtime_ns` / `ctime_ns` | Mode | UID | Constraint |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| `/home/hy/.config/gh` | 2096 | 77048 | 4096 | 1771840087477040631 | `0751` | 1000 | entries exactly `config.yml`, `hosts.yml` |
+| `/home/hy/.config/gh/hosts.yml` | 2096 | 83227 | 210 | 1784175379048299565 | `0600` | 1000 | required regular file; content unread |
+| `/home/hy/.config/gh/config.yml` | 2096 | 83791 | 1660 | 1771840087477040631 | `0600` | 1000 | regular file; content unread |
+| `/home/hy/.local/state/gh` | 2096 | 11400 | 4096 | 1778049370412048559 | `0755` | 1000 | entries exactly `device-id` |
+| `/home/hy/.local/state/gh/device-id` | 2096 | 11405 | 36 | 1778049370412048559 | `0600` | 1000 | required regular file; content unread |
+
+The checker may support a metadata snapshot in which `config.yml` is absent,
+but only when both pre- and post-checks return `ENOENT`; a dangling symlink,
+appearance during execution, or any other transition fails closed. `hosts.yml`
+and the host state `device-id` remain required, current-user-owned, regular,
+mode `0600`, and bounded. Every summary mutation, including each remaining
+query, uses the same transactional summary/inventory CAS and compensating
+rollback contract. The unavoidable same-UID mutation window remains explicit;
+metadata stability is not proof that secret contents were inspected or valid.
 
 - [ ] **Step 5: validate the remote summary**
 

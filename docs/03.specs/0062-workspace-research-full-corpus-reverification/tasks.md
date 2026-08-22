@@ -37,8 +37,12 @@ integrated its exact three-row platform/security slice into the existing owner;
 focused static validators and three independent pre-commit reviews approve the
 content. Its exact implementation commit, guarded report/package, and
 post-commit task review are complete; the sole stale lifecycle Minor is
-corrected in this closure unit. WRFR-006 is queued and ready, but no remote
-GitHub evidence may be collected before its required security review.
+corrected in this closure unit. WRFR-006 passed its pre-remote review and both
+preflights, but its first and only `workflows` query stopped with
+`ERROR REMOTE_COMMAND` after creating one metadata-only repository residue.
+The remaining eight query budgets are untouched. WRFR-006 is now `In Progress`
+and blocked on the fixed recovery contract below; no preflight or `workflows`
+retry is permitted.
 
 The target is a 2026-08-20 external-source and workspace reverification of all
 thirty-six existing `REQ-WERPC-*` owners, integrated into the existing
@@ -53,7 +57,9 @@ WRFR-002 changed only its four topical owners and three lifecycle records.
 WRFR-003 is limited to its two topical owners and the same three lifecycle
 records. WRFR-004 is limited to its three topical owners and those lifecycle
 records. WRFR-005 is limited to its one topical owner and those lifecycle
-records; WRFR-006 and later work packages have not executed.
+records. WRFR-006 has executed only its approved pre-remote review, two RED
+probes, two preflights, summary initialization/registration, and one
+`workflows` query; no delivery owner edit or later work package has executed.
 
 ## Inputs
 
@@ -106,7 +112,7 @@ stage, or commit.
 | WRFR-003 | VAL-WRFR-002..005, 008, 013 | Integrate provider/common findings | provider integrator | Done | Four allocated rows appended and committed as `a41def9e`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole stale-evidence Minor addressed |
 | WRFR-004 | VAL-WRFR-002..005, 008, 013 | Integrate SDLC/documentation findings | documentation integrator | Done | Sixteen allocated rows appended and committed as `7bbe6517`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole stale-evidence Minor addressed |
 | WRFR-005 | VAL-WRFR-002..005, 008, 013 | Integrate platform/security findings | platform/security integrator | Done | Three allocated rows appended and committed as `63efc8de`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole stale-evidence Minor addressed |
-| WRFR-006 | VAL-WRFR-002..005, 008, 011, 013 | Integrate delivery/quality and read-only GitHub evidence | delivery/security integrator | Queued | Not executed | Pre-remote security review required |
+| WRFR-006 | VAL-WRFR-002..005, 008, 011, 013 | Integrate delivery/quality and read-only GitHub evidence | delivery/security integrator | In Progress | Blocked after the sole `workflows` query returned `ERROR REMOTE_COMMAND`; no owner edit | Pre-remote review and preflights passed; fixed checker/recovery gate required; remaining eight classes untouched |
 | WRFR-007 | VAL-WRFR-006..010, 013 | Integrate source, claim, scope, and pack projections | sole ledger integrator | Queued | Not executed | Awaiting all five topical commits |
 | WRFR-008 | VAL-WRFR-008, 010, 013 | Reconcile indexes, links, lifecycle, and progress | documentation integrator | Queued | Not executed | Awaiting terminal parsed counts |
 | WRFR-009 | VAL-WRFR-010, 012..015 | Run terminal lanes, whole-branch review, closure, cleanup | platform + QA | Queued | Not executed | Awaiting WRFR-008 |
@@ -133,8 +139,11 @@ stage, or commit.
 - **External Research**: read-only official/primary-source retrieval; search is a
   locator and never substitutes for reading the source.
 - **Remote GitHub**: exactly the nine Plan allowlisted metadata classes, at most
-  once each, through the guarded checker; no dispatch, rerun, approval, merge,
-  settings mutation, raw logs, tokens, or secret-bearing data.
+  once each, through the guarded checker. The `workflows` budget is consumed and
+  may be recovered only locally to the fixed unavailable reason; the other eight
+  remain available once each in their fixed order. No preflight or class rerun,
+  dispatch, approval, merge, settings mutation, raw logs, tokens, or
+  secret-bearing data.
 - **Static Validation**: task-local closed-corpus checker, domain validators,
   document registry, Markdown profiles, links/owners, RIA, affected/staged lanes,
   aggregate quality, pre-commit, all-files, formatter review, and diff checks.
@@ -384,6 +393,82 @@ and the frozen report/allocation identities are unchanged. `residue` and all
 exited `1` with the expected fail-fast `ERROR INTEGRATION_SECTION`, unblocking
 owner integration without claiming four simultaneous diagnostics.
 
+### WRFR-006 remote incident and recovery contract
+
+The required pre-remote security review completed `Approved With Minor`,
+Critical/Important/Minor `0/0/1`; its sole Minor concerned broad bounded
+403/404 recognition. Authentication and repository-identity preflights each ran
+once and succeeded. The repository projection was exactly
+`buenhyden/hy-home.k8s`, its GitHub HTTPS URL, and default branch `main`; auth
+output was discarded. The local and missing-summary RED results were
+`ERROR INTEGRATION_SECTION` and `ERROR PATH_INVALID` respectively.
+
+After guarded initialization and registration, the `workflows` class ran exactly
+once and stopped at `ERROR REMOTE_COMMAND`. Only sanitized state `failed`, reason
+`non-allowlisted-failure`, and empty data were retained. Raw stdout/stderr were
+not read or stored. Neither preflight nor `workflows` may be retried, and the
+other eight classes have not run. The incident tuple is checker
+`584086b297a7446e0a6dea932f0693831a3748813cae6f281bee41eb889c765d`,
+summary
+`cc77a8ae007b71f32328ce159dd03f60d3a32390131710cb6eee675bdbee4b56`,
+and inventory
+`1dc24b116bbd09cb8e36f96a0bfb6c332dac8793f15b3cf33cc858efd8c9c22b`.
+
+The child received no GitHub configuration/state locations and created the
+repository-local regular file `.local/state/gh/device-id`. Its contents remain
+unread. The exact fixed cleanup identity uses device `2096`, UID `1000`, common
+`mtime_ns`/`ctime_ns` `1787287593754570540`, and these path-specific values:
+
+| Path | Inode | Size | Mode | Exact entry |
+| --- | ---: | ---: | ---: | --- |
+| `.local` | 1747675 | 4096 | `0755` | `state` |
+| `.local/state` | 2221665 | 4096 | `0755` | `gh` |
+| `.local/state/gh` | 3263846 | 4096 | `0755` | `device-id` |
+| `.local/state/gh/device-id` | 3276459 | 36 | `0600` | regular file; content unread |
+
+The fixed [Plan recovery gate](plan.md#wrfr-006-remote-incident-and-fixed-recovery-gate)
+is now authoritative. Its order is: commit this contract; implement the checker
+test-first and obtain fresh exact-byte Python/security approvals; run
+`artifact-rebind-checker-only` once; run the exact dirfd-bound
+`remove-owned-gh-state-residue` once; run the no-network
+`remote-recover-auth-context` once; then run only `runs`,
+`actions-permissions`, `workflow-permissions`, `rulesets`,
+`branch-protection`, `environments`, `oidc`, and `artifacts`, once each in that
+order. Recovery preserves the original `observedAt` and converts only the
+existing `workflows` record to `unavailable` with reason
+`checker-auth-context-incompatible` and empty data.
+
+Every summary mutation uses a registered-summary/inventory compensating CAS. A
+second-stage failure rolls the summary back only against the exact version
+returned by its own CAS; rollback contention fails closed because two-file
+atomic replacement is unavailable. Cleanup uses literal dirfd traversal,
+`O_NOFOLLOW`, complete metadata identity, exact entry sets, `fstat` rechecks,
+empty-directory removal, and post-absence proof. The same-UID race window is an
+explicit limitation, not an atomicity claim.
+
+Each remaining-query child receives only minimal `PATH`/locale, the fixed
+`GH_CONFIG_DIR=/home/hy/.config/gh` and
+`XDG_STATE_HOME=/home/hy/.local/state`, plus fixed non-secret prompt, pager,
+update-notifier, color, and terminal-prompt controls enumerated by the Plan.
+`HOME`, tokens, `GH_HOST`, `GH_REPO`, `GH_DEBUG`, `LD_*`, proxy, `PAGER`,
+`XDG_CONFIG_HOME`, and other configuration variables are forbidden.
+Configuration/state contents
+must never be read, hashed, copied, printed, or stored. The Plan pins the current
+metadata-only identities for `/home/hy/.config/gh`, `config.yml`, `hosts.yml`,
+and `/home/hy/.local/state/gh/device-id`, including exact directory entries and
+pre/post stability. Literal `/home/hy/...` dirfd traversal is required; path
+resolution alone is insufficient. `/` and `/home` use the trusted-system-dir
+snapshot rule, including user-namespace UID `65534`, no group/world or
+current-process write access, and retained-dirfd stability. `/home/hy` onward
+requires current UID, no group/world write access, and retained-dirfd stability.
+A `config.yml` absence snapshot is valid only as `ENOENT`
+both before and after; symlink, appearance, disappearance, metadata change, or
+repository `.local` presence fails closed.
+
+WRFR-006 remains `In Progress`/blocked. No delivery owner edit, retry, fallback,
+alternate endpoint, raw-output inspection, remaining remote query, push, merge,
+publication, or live action is authorized before the recovery gate completes.
+
 ### WRFR-001 evidence intake completion
 
 This section records completed intake implementation evidence and the approved
@@ -599,8 +684,9 @@ for exact range `8ed7fae3..63efc8de`; final inventory SHA-256 is
 `d844156bdfe0dab8ab90009e89ad7807aab6987571955aa8a2783f4784047f24`.
 The post-commit reviewer returned `APPROVED WITH MINOR`,
 Critical/Important/Minor `0/0/1`; this closure corrects its sole intentional
-pre-closure lifecycle Minor. WRFR-005 is complete. WRFR-006 is queued and ready,
-but its pre-remote security review remains mandatory before any GitHub query.
+pre-closure lifecycle Minor. WRFR-005 is complete. WRFR-006 passed its
+pre-remote gate but is blocked after the single consumed `workflows` query; its
+fixed recovery gate now precedes every remaining GitHub query.
 
 ### Stop conditions
 
@@ -622,8 +708,9 @@ report/package, and post-commit review. WRFR-005 has integrated its exact
 three-row owner section and passed focused static validation plus three
 independent pre-commit reviews. Its exact four-file implementation commit,
 registered report/package, and post-commit review are complete. The sole stale
-lifecycle Minor is closed; WRFR-006 is queued and ready subject to its
-pre-remote security gate. Initial design evidence included:
+lifecycle Minor is closed. WRFR-006 is `In Progress` and blocked on the fixed
+checker/recovery sequence after the single consumed `workflows` query. Initial
+design evidence included:
 
 - isolated worktree created from clean tracked `HEAD`;
 - primary checkout's unrelated staged RIA files excluded from the branch;
@@ -663,8 +750,10 @@ infrastructure execution contracts, and security controls. Its three-row probe
 and all canonical platform/security static validators pass, and independent
 source-fidelity, spec/quality, and security reviews approve the owner content.
 Its exact implementation commit, guarded report/package registration, and
-post-commit task review are complete. WRFR-006 has not executed, and its
-required pre-remote security review still gates every GitHub query.
+post-commit task review are complete. WRFR-006 completed its pre-remote review,
+RED probes, preflights, summary registration, and one `workflows` attempt, but
+no delivery owner edit. The fixed recovery contract gates the remaining eight
+queries.
 
 ## Traceability
 
@@ -679,12 +768,12 @@ required pre-remote security review still gates every GitHub query.
 | [VAL-WRFR-005](spec.md) | Four topical integrations passed; delivery remains pending | WRFR-002 through WRFR-005 record exact baseline selectors and evidence-depth boundaries |
 | [VAL-WRFR-006](spec.md) | Intake passed; ledger integration pending | All rows use the closed outcome vocabulary and passed checker validation |
 | [VAL-WRFR-007](spec.md) | Intake passed; ledger integration pending | Every row carries a valid blocking-class disposition combination |
-| [VAL-WRFR-008](spec.md) | In progress | WRFR-002 through WRFR-005 appended to ten existing owners without creating a research folder, duplicate topic report, or request owner; WRFR-006..008 remain |
+| [VAL-WRFR-008](spec.md) | In progress | WRFR-002 through WRFR-005 appended to ten existing owners without creating a research folder, duplicate topic report, or request owner; WRFR-006 is blocked before owner integration and WRFR-007..008 remain |
 | [VAL-WRFR-009](spec.md) | Allocation passed; ledger integration pending | WRFR-001 allocated source 091 and claims 013-01..06 without gaps or duplicates |
 | [VAL-WRFR-010](spec.md) | Not executed | WRFR-007..009 own the shared projection sequence |
-| [VAL-WRFR-011](spec.md) | Not executed | WRFR-006 and WRFR-009 own the nine-class remote/security contract |
+| [VAL-WRFR-011](spec.md) | In progress / blocked | Pre-remote review and preflights passed; `workflows` consumed its only query and is awaiting fixed local recovery, while the other eight classes remain untouched |
 | [VAL-WRFR-012](spec.md) | Workspace passed; cleanup pending | WRFR-001 residue validation passed; WRFR-009 still owns exact cleanup |
-| [VAL-WRFR-013](spec.md) | In progress | WRFR-001..005 logical commits and task reviews are complete; WRFR-006..009 remain pending |
+| [VAL-WRFR-013](spec.md) | In progress | WRFR-001..005 logical commits and task reviews are complete; WRFR-006 is blocked in remote evidence collection and WRFR-007..009 remain pending |
 | [VAL-WRFR-014](spec.md) | Not executed | WRFR-009 owns the whole-branch review gate |
 | [VAL-WRFR-015](spec.md) | Not executed | WRFR-009 owns the terminal lane sequence |
 
