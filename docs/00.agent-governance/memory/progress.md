@@ -16698,6 +16698,10 @@ and inventory
 `008be406a418348269cf5c58c3becf9cac024ba1db6adf1f430e0d9ae5fd927e`.
 The registered summary contains exactly the first eight class records and no
 `artifacts` record.
+The logical query-budget order remains the approved command sequence. The
+registered JSON writer uses `sort_keys=True`, so the persisted class map instead
+uses canonical lexicographic `tuple(sorted(REMOTE_CLASSES[:8]))`; that map order
+is an integrity precondition, not invocation-order evidence.
 
 GitHub's primary
 [OIDC REST documentation](https://docs.github.com/en/rest/actions/oidc)

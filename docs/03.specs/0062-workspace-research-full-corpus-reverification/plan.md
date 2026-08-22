@@ -1815,10 +1815,15 @@ sequence:
    `6255a3734325aab127e81b5730a121c9bf97c38b0611d91c21b9c6f1f7dc9ee2`
    and the then-current exact inventory SHA-256. The command performs no
    network or child-process action. It requires the exact repository identity,
-   exactly the first eight ordered classes, no `artifacts` record, the first
-   seven records unchanged, and OIDC exactly `failed` / `schema-invalid` /
-   `{}`. It preserves every pre-OIDC record, the OIDC `observedAt`, repository
-   identity, class order, and `artifacts` absence; it changes only OIDC to
+   exactly the logical first-eight class membership, no `artifacts` record, the
+   first seven records unchanged, and OIDC exactly `failed` / `schema-invalid`
+   / `{}`. The query-budget order remains the Plan command sequence, while the
+   persisted JSON class map must use the canonical lexicographic order emitted
+   by `_json_bytes(sort_keys=True)`, namely
+   `tuple(sorted(REMOTE_CLASSES[:8]))`; map order is not evidence of invocation
+   order. It preserves every pre-OIDC record, the OIDC `observedAt`, repository
+   identity, canonical persisted class-map order, and `artifacts` absence; it
+   changes only OIDC to
    `unavailable` / `checker-oidc-schema-incompatible` / `{}`.
 5. The recovery uses the existing registered-summary/inventory compensating CAS
    contract without weakening identity checks, commit ordering, rollback

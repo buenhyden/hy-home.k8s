@@ -547,9 +547,13 @@ closed and ordered:
 4. Invoke `remote-recover-oidc-schema` exactly once against summary
    `6255a3734325aab127e81b5730a121c9bf97c38b0611d91c21b9c6f1f7dc9ee2`
    and the then-current exact inventory identity. It launches no child and
-   performs no network access. It preserves the summary repository identity,
-   class order, all seven preceding class records at the parsed data level, the
-   `oidc` `observedAt`, and the absence of `artifacts`; it changes
+   performs no network access. The query-budget order is the Plan command
+   sequence; the persisted class-map order is separately the canonical
+   lexicographic `tuple(sorted(REMOTE_CLASSES[:8]))` emitted by
+   `_json_bytes(sort_keys=True)` and is not invocation evidence. It preserves
+   the summary repository identity, canonical persisted class-map order, all
+   seven preceding class records at the parsed data level, the `oidc`
+   `observedAt`, and the absence of `artifacts`; it changes
    only `oidc` from `failed` / `schema-invalid` / `{}` to `unavailable` /
    `checker-oidc-schema-incompatible` / `{}`. The existing compensating
    registered-summary/inventory CAS and rollback contract remains mandatory.
