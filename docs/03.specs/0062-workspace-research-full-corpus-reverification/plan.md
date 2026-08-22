@@ -3,7 +3,7 @@ title: 'Workspace Research Full-Corpus Reverification Implementation Plan'
 type: sdlc/plan
 status: active
 owner: platform
-updated: 2026-08-21
+updated: 2026-08-22
 artifact_id: "PLAN-0062"
 ---
 
@@ -555,6 +555,7 @@ replayed by an implementer.
   artifact-rebind-checker-only --workspace DIR --inventory FILE --expected-inventory-sha256 OLD_INVENTORY --expected-old-checker-sha256 OLD_CHECKER --approved-new-checker-sha256 NEW_CHECKER
   remove-owned-gh-state-residue --root ROOT
   remote-recover-auth-context --workspace DIR --inventory FILE --summary FILE --expected-inventory-sha256 OLD_INVENTORY --expected-summary-sha256 OLD_SUMMARY
+  remote-recover-oidc-schema --workspace DIR --inventory FILE --summary FILE --expected-inventory-sha256 OLD_INVENTORY --expected-summary-sha256 OLD_SUMMARY
   pathset --root ROOT --base SHA --lane affected|staged|all-files --output FILE
   residue --workspace DIR --inventory FILE
   remove-owned-helper-plan --path FILE
@@ -1474,10 +1475,11 @@ of this recovery.
   The post-commit reviewer returned `APPROVED WITH MINOR`,
   Critical/Important/Minor `0/0/1`. Its sole Minor was the intentional
   pre-closure lifecycle state in these three records; this closure corrects
-  it. WRFR-005 is complete. WRFR-006 passed its pre-remote security review and
-  both preflights, but is blocked after its sole `workflows` query failed under
-  the checker auth-context defect. The fixed recovery gate below now precedes
-  every remaining GitHub query.
+  it. WRFR-005 is complete. WRFR-006 passed its pre-remote security review,
+  preflights, and first fixed local recovery. The queries from `runs` through
+  `environments` then ran once each, and the sole `oidc` query stopped on a
+  checker schema mismatch. The second fixed recovery gate below now precedes
+  the untouched `artifacts` query.
 
 ### Task 7: WRFR-006 — delivery and quality integration
 
@@ -1536,11 +1538,16 @@ of this recovery.
   `buenhyden/hy-home.k8s`, the URL is the GitHub HTTPS repository URL, and the
   default branch is `main`. Authentication output is not copied into evidence.
 
-- [ ] **Step 4: run each approved remote query once — blocked after the first class**
+- [ ] **Step 4: run each approved remote query once — blocked at the eighth class**
 
   Invoke every query through `remote-query`; the checker verifies the argv,
   applies a bounded timeout, projects only the named fields, and performs a
   version-bound atomic update. The exact evidence classes and argv are:
+
+  Current execution has consumed the first eight budgets in order. `workflows`
+  was recovered locally after its first incident; `runs` through `environments`
+  were observed once each; `oidc` stopped with `ERROR REMOTE_SCHEMA` and awaits
+  only the fixed local recovery below. `artifacts` has not run.
 
   ```bash
   python3 "$WRFR_SDD/full-corpus-check.py" remote-query --root . \
@@ -1737,6 +1744,97 @@ rollback contract. The unavoidable same-UID mutation window remains explicit;
 metadata stability is not proof that secret contents were inspected or valid.
 Any compensation drift, contention, or failure is a distinct fail-closed
 registered-pair inconsistency and never a rollback-success claim.
+
+#### WRFR-006 OIDC schema incident and fixed recovery gate
+
+The first recovery gate completed in its prescribed order. The exact-byte
+checker reviews approved the revised checker, its checker-only inventory rebind
+completed, the repository `.local` residue was removed exactly once,
+`remote-recover-auth-context` performed only the fixed local `workflows`
+transition, and `.local` absence plus `residue` passed. No preflight or
+`workflows` retry occurred. The delivery integrator then invoked `runs`,
+`actions-permissions`, `workflow-permissions`, `rulesets`,
+`branch-protection`, and `environments` exactly once each, in order, and the
+registered summary retained their sanitized observations.
+
+The sole `oidc` invocation returned `ERROR REMOTE_SCHEMA`. The registered OIDC
+record is exactly state `failed`, reason `schema-invalid`, and empty data. The
+checker captured and classified raw output in process memory but did not expose
+it to the controller or a human, copy it, or persist it. The raw response is no
+longer available. No retry, fallback, alternate endpoint, later query, or
+preflight occurred; `artifacts` remains absent from the summary. The fixed
+second-incident identities are:
+
+- checker SHA-256
+  `31a14c46f18bdaa690360f67d263ad78aa440a8345d76c9160c150ba1b4f56a3`;
+- summary SHA-256
+  `6255a3734325aab127e81b5730a121c9bf97c38b0611d91c21b9c6f1f7dc9ee2`;
+- inventory SHA-256
+  `008be406a418348269cf5c58c3becf9cac024ba1db6adf1f430e0d9ae5fd927e`.
+
+GitHub's primary
+[OIDC REST documentation](https://docs.github.com/en/rest/actions/oidc)
+defines `use_default` as boolean and `include_claim_keys` as optional and
+ignored when `use_default` is true. A nullable or absent projected claim-key
+value is therefore plausible, but the lost raw response prevents a factual
+finding about what this invocation returned. The root cause remains unproven;
+the recovery is a checker-compatibility disposition, not a remote-state claim.
+The fixed jq object always emits the `include_claim_keys` key, so an absent raw
+field becomes post-projection `null`; a post-projection object missing that key
+remains invalid.
+
+The checker must expose only this fixed interface, with no caller-selected
+class or reason:
+
+```text
+remote-recover-oidc-schema --workspace DIR --inventory FILE --summary FILE \
+  --expected-inventory-sha256 OLD --expected-summary-sha256 OLD
+```
+
+WRFR-006 remains `In Progress` and blocked. Continue only through this exact
+sequence:
+
+1. Commit this second three-document incident amendment while the checker,
+   summary, inventory, `.local` absence, and credential/state paths remain
+   untouched.
+2. Add failing tests first for the OIDC projection rule and fixed recovery.
+   The projection validator may accept `include_claim_keys: null` only when
+   `use_default` is exactly `true`; false, missing/invalid `use_default`, or any
+   other invalid type remains `ERROR REMOTE_SCHEMA`. Implement the minimal
+   validator change and `remote-recover-oidc-schema`, then run compile, normal
+   and optimized self-tests, and Ruff. Obtain fresh independent Python and
+   security approvals over the exact checker bytes; any Critical or Important
+   finding or later byte change blocks stateful execution.
+3. Invoke `artifact-rebind-checker-only` exactly once with old checker
+   `31a14c46f18bdaa690360f67d263ad78aa440a8345d76c9160c150ba1b4f56a3`,
+   old inventory
+   `008be406a418348269cf5c58c3becf9cac024ba1db6adf1f430e0d9ae5fd927e`,
+   and the newly approved checker SHA-256. Only the checker's existing inventory
+   record may change. Do not retry.
+4. Invoke `remote-recover-oidc-schema` exactly once with old summary
+   `6255a3734325aab127e81b5730a121c9bf97c38b0611d91c21b9c6f1f7dc9ee2`
+   and the then-current exact inventory SHA-256. The command performs no
+   network or child-process action. It requires the exact repository identity,
+   exactly the first eight ordered classes, no `artifacts` record, the first
+   seven records unchanged, and OIDC exactly `failed` / `schema-invalid` /
+   `{}`. It preserves every pre-OIDC record, the OIDC `observedAt`, repository
+   identity, class order, and `artifacts` absence; it changes only OIDC to
+   `unavailable` / `checker-oidc-schema-incompatible` / `{}`.
+5. The recovery uses the existing registered-summary/inventory compensating CAS
+   contract without weakening identity checks, commit ordering, rollback
+   ordering, or postvalidation. Any mismatch, contention, compensation failure,
+   or unexpected class/data change is fail-closed and consumes no network
+   budget.
+6. Prove `.local` absent and run `residue`. Then, and only then, invoke the
+   untouched `artifacts` query once through the already approved command and
+   child environment. Prove `.local` absent again, run `residue`, and execute
+   `remote-validate`. Do not invoke either preflight or any of the first eight
+   classes again.
+
+This second gate supersedes only the first gate's current handoff; it preserves
+the first incident and recovery as historical evidence. The checker, registered
+summary, inventory, and remaining network budget remain immutable until this
+tracked contract is committed and exact-byte review completes.
 
 - [ ] **Step 5: validate the remote summary**
 

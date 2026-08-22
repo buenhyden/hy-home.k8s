@@ -16657,6 +16657,91 @@ checker byte change invalidates prior approvals. Any metadata drift requires a
 new tracked amendment. No push, merge, publication, live infrastructure,
 provider-runtime, secret-value, or additional remote action occurred.
 
+## 2026-08-22 - WRFR-006 OIDC schema incident and fixed recovery gate
+
+### Metadata
+
+- Date: 2026-08-22
+- Layer: docs, delivery, security
+- Status: blocked
+- Tags: workspace-research, github-actions, remote-evidence, oidc, recovery
+- Owner: platform
+- Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md#wrfr-006-oidc-schema-incident-and-recovery-contract`
+- Provenance: approved first recovery, guarded registered-summary transitions, sanitized checker diagnostic, and GitHub primary OIDC REST documentation
+- Sensitivity: internal; raw response, configuration, credential, and state contents were not exposed, copied, or persisted
+- Retention: durable
+- Next Owner: checker implementer, independent Python/security reviewers, then WRFR-006 delivery/security integrator
+
+### Progress
+
+The first WRFR-006 recovery completed under its tracked contract. The approved
+checker was rebound; the repository `.local` residue was removed exactly once;
+`workflows` was converted through the fixed no-network recovery; `.local`
+absence and `residue` passed. No preflight or `workflows` retry occurred.
+`runs`, `actions-permissions`, `workflow-permissions`, `rulesets`,
+`branch-protection`, and `environments` then ran exactly once each in order and
+their sanitized observations were retained.
+
+The sole `oidc` query stopped with `ERROR REMOTE_SCHEMA`. Only state `failed`,
+reason `schema-invalid`, and empty data were persisted. The checker captured and
+classified the raw response in process memory, but did not expose it to the
+controller or a human, copy it, or persist it. The raw response is no longer
+available, so the actual returned shape and root cause remain unproven. No
+retry, fallback, alternate endpoint, second preflight, or `artifacts` query
+occurred. `.local` remains absent and `residue` passed.
+
+The second incident identities are checker
+`31a14c46f18bdaa690360f67d263ad78aa440a8345d76c9160c150ba1b4f56a3`,
+summary
+`6255a3734325aab127e81b5730a121c9bf97c38b0611d91c21b9c6f1f7dc9ee2`,
+and inventory
+`008be406a418348269cf5c58c3becf9cac024ba1db6adf1f430e0d9ae5fd927e`.
+The registered summary contains exactly the first eight class records and no
+`artifacts` record.
+
+GitHub's primary
+[OIDC REST documentation](https://docs.github.com/en/rest/actions/oidc)
+defines `use_default` as boolean and `include_claim_keys` as optional and
+ignored when `use_default` is true. That makes a nullable projection plausible,
+but does not prove the lost response contained one or establish the repository's
+OIDC configuration.
+The fixed jq object emits `include_claim_keys` even when the raw field is absent,
+so the permitted compatibility shape is post-projection `null`; a missing
+post-projection key remains invalid.
+
+### Fixed recovery
+
+The only local recovery interface is:
+
+```text
+remote-recover-oidc-schema --workspace DIR --inventory FILE --summary FILE \
+  --expected-inventory-sha256 OLD --expected-summary-sha256 OLD
+```
+
+The closed order is: commit the second three-document contract; add failing
+tests; change the validator so `include_claim_keys: null` is accepted only when
+`use_default` is exactly `true`; implement the fixed local recovery; run compile,
+normal/optimized self-tests, and Ruff; obtain exact-byte independent Python and
+security approval; run the exact checker-only rebind once; run OIDC recovery
+once; prove `.local` absent and run `residue`; invoke only `artifacts` once; then
+prove `.local` absent, run `residue`, and run `remote-validate`.
+
+Recovery performs no network or child process. It requires the exact incident
+hashes and summary shape, preserves repository identity, order, the seven prior
+class records, the OIDC `observedAt`, and `artifacts` absence, and changes only
+OIDC from `failed` / `schema-invalid` / `{}` to `unavailable` /
+`checker-oidc-schema-incompatible` / `{}`. It uses the existing compensating
+summary/inventory CAS and rollback contract. There is no caller-selected class
+or reason.
+
+### Handoff
+
+WRFR-006 remains `In Progress` and blocked. No preflight, first-eight-class
+query, checker mutation, registered-artifact mutation, delivery owner edit,
+raw-output inspection, push, merge, publication, or live mutation is permitted
+before the tracked contract commit and exact-byte checker review. `artifacts`
+is the only unconsumed remote query budget.
+
 ## 2026-08-21 - WRFR-005 platform/security integration
 
 ### Metadata

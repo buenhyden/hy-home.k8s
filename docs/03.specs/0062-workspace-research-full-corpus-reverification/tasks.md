@@ -3,7 +3,7 @@ title: 'Workspace Research Full-Corpus Reverification Task'
 type: sdlc/task
 status: active
 owner: platform
-updated: 2026-08-21
+updated: 2026-08-22
 artifact_id: "TASK-0062"
 ---
 
@@ -38,10 +38,13 @@ focused static validators and three independent pre-commit reviews approve the
 content. Its exact implementation commit, guarded report/package, and
 post-commit task review are complete; the sole stale lifecycle Minor is
 corrected in this closure unit. WRFR-006 passed its pre-remote review and both
-preflights, but its first and only `workflows` query stopped with
-`ERROR REMOTE_COMMAND` after creating one metadata-only repository residue.
-The remaining eight query budgets are untouched. WRFR-006 is now `In Progress`
-and blocked on the fixed recovery contract below; no preflight or `workflows`
+preflights. Its first `workflows` incident was recovered through the approved
+local-only gate: the checker was approved and rebound, the repository `.local`
+residue was removed once, and `workflows` became a fixed local `unavailable`
+record. The next six classes through `environments` each ran once. The sole
+`oidc` query then stopped with `ERROR REMOTE_SCHEMA`; `artifacts` remains
+untouched. WRFR-006 is now `In Progress` and blocked on the second fixed
+recovery contract below. No preflight, `workflows`, completed-class, or `oidc`
 retry is permitted.
 
 The target is a 2026-08-20 external-source and workspace reverification of all
@@ -57,9 +60,11 @@ WRFR-002 changed only its four topical owners and three lifecycle records.
 WRFR-003 is limited to its two topical owners and the same three lifecycle
 records. WRFR-004 is limited to its three topical owners and those lifecycle
 records. WRFR-005 is limited to its one topical owner and those lifecycle
-records. WRFR-006 has executed only its approved pre-remote review, two RED
-probes, two preflights, summary initialization/registration, and one
-`workflows` query; no delivery owner edit or later work package has executed.
+records. WRFR-006 has executed its approved pre-remote review, two RED probes,
+two preflights, summary initialization/registration, the reviewed first local
+recovery, and exactly one query for each class from `runs` through `oidc` in the
+listed order. No delivery owner edit, `artifacts` query, or later work package
+has executed.
 
 ## Inputs
 
@@ -112,7 +117,7 @@ stage, or commit.
 | WRFR-003 | VAL-WRFR-002..005, 008, 013 | Integrate provider/common findings | provider integrator | Done | Four allocated rows appended and committed as `a41def9e`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole stale-evidence Minor addressed |
 | WRFR-004 | VAL-WRFR-002..005, 008, 013 | Integrate SDLC/documentation findings | documentation integrator | Done | Sixteen allocated rows appended and committed as `7bbe6517`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole stale-evidence Minor addressed |
 | WRFR-005 | VAL-WRFR-002..005, 008, 013 | Integrate platform/security findings | platform/security integrator | Done | Three allocated rows appended and committed as `63efc8de`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole stale-evidence Minor addressed |
-| WRFR-006 | VAL-WRFR-002..005, 008, 011, 013 | Integrate delivery/quality and read-only GitHub evidence | delivery/security integrator | In Progress | Blocked after the sole `workflows` query returned `ERROR REMOTE_COMMAND`; no owner edit | Pre-remote review and preflights passed; fixed checker/recovery gate required; remaining eight classes untouched |
+| WRFR-006 | VAL-WRFR-002..005, 008, 011, 013 | Integrate delivery/quality and read-only GitHub evidence | delivery/security integrator | In Progress | Blocked after the sole `oidc` query returned `ERROR REMOTE_SCHEMA`; no owner edit | First recovery complete; first eight class records retained; second fixed checker/recovery gate required; `artifacts` untouched |
 | WRFR-007 | VAL-WRFR-006..010, 013 | Integrate source, claim, scope, and pack projections | sole ledger integrator | Queued | Not executed | Awaiting all five topical commits |
 | WRFR-008 | VAL-WRFR-008, 010, 013 | Reconcile indexes, links, lifecycle, and progress | documentation integrator | Queued | Not executed | Awaiting terminal parsed counts |
 | WRFR-009 | VAL-WRFR-010, 012..015 | Run terminal lanes, whole-branch review, closure, cleanup | platform + QA | Queued | Not executed | Awaiting WRFR-008 |
@@ -139,9 +144,10 @@ stage, or commit.
 - **External Research**: read-only official/primary-source retrieval; search is a
   locator and never substitutes for reading the source.
 - **Remote GitHub**: exactly the nine Plan allowlisted metadata classes, at most
-  once each, through the guarded checker. The `workflows` budget is consumed and
-  may be recovered only locally to the fixed unavailable reason; the other eight
-  remain available once each in their fixed order. No preflight or class rerun,
+  once each, through the guarded checker. The `workflows` and `oidc` budgets are
+  consumed and may be recovered only through their respective fixed local-only
+  interfaces. The six intervening classes are complete and immutable;
+  `artifacts` alone retains one query budget. No preflight or class rerun,
   dispatch, approval, merge, settings mutation, raw logs, tokens, or
   secret-bearing data.
 - **Static Validation**: task-local closed-corpus checker, domain validators,
@@ -477,6 +483,86 @@ WRFR-006 remains `In Progress`/blocked. No delivery owner edit, retry, fallback,
 alternate endpoint, raw-output inspection, remaining remote query, push, merge,
 publication, or live action is authorized before the recovery gate completes.
 
+### WRFR-006 OIDC schema incident and recovery contract
+
+The first recovery gate above completed without a network retry: the approved
+checker was rebound, `remove-owned-gh-state-residue` removed the repository
+`.local` tree exactly once, `remote-recover-auth-context` converted only the
+existing `workflows` record to its fixed local `unavailable` disposition, and
+`residue` passed with `.local` absent. The controller then invoked `runs`,
+`actions-permissions`, `workflow-permissions`, `rulesets`,
+`branch-protection`, and `environments` exactly once each in the approved order,
+and each observation was retained through the registered-summary transaction.
+
+The `oidc` class ran exactly once and stopped with `ERROR REMOTE_SCHEMA`. Its
+only persisted projection is state `failed`, reason `schema-invalid`, and empty
+data. The checker captured and classified the raw response in process memory,
+but did not expose it to the controller or a human, copy it, or persist it; the
+raw response is no longer available for diagnosis. No retry, fallback,
+alternate endpoint, preflight, or `artifacts` query occurred. The second
+incident tuple is:
+
+- checker SHA-256
+  `31a14c46f18bdaa690360f67d263ad78aa440a8345d76c9160c150ba1b4f56a3`;
+- summary SHA-256
+  `6255a3734325aab127e81b5730a121c9bf97c38b0611d91c21b9c6f1f7dc9ee2`;
+- inventory SHA-256
+  `008be406a418348269cf5c58c3becf9cac024ba1db6adf1f430e0d9ae5fd927e`.
+
+GitHub's primary
+[OIDC REST documentation](https://docs.github.com/en/rest/actions/oidc)
+defines `use_default` as a boolean and `include_claim_keys` as optional and
+ignored when `use_default` is true. That contract makes an absent or nullable
+claim-key projection plausible, but it does not establish what the lost raw
+response contained. The exact cause of this incident therefore remains
+unproven. Recovery addresses only the checker's documented compatibility gap;
+it does not assert a remote OIDC configuration value.
+The fixed jq object always emits `include_claim_keys`, so a missing raw field is
+represented as post-projection `null`; a post-projection object without the key
+is still rejected.
+
+The sole recovery interface is fixed and accepts no class or reason input:
+
+```text
+remote-recover-oidc-schema --workspace DIR --inventory FILE --summary FILE \
+  --expected-inventory-sha256 OLD --expected-summary-sha256 OLD
+```
+
+WRFR-006 remains `In Progress` and blocked. The next permitted operations are
+closed and ordered:
+
+1. Commit this three-document amendment before changing ignored checker or
+   registered artifact bytes.
+2. Extend the checker test-first so the OIDC validator accepts
+   `include_claim_keys: null` only when `use_default` is exactly `true`, and add
+   the fixed no-network recovery interface above. Compile, run normal and
+   optimized self-tests and Ruff, then obtain fresh independent Python and
+   security approvals over the exact checker bytes. Any Critical or Important
+   finding or later byte change closes the gate.
+3. Run `artifact-rebind-checker-only` exactly once against checker
+   `31a14c46f18bdaa690360f67d263ad78aa440a8345d76c9160c150ba1b4f56a3`
+   and inventory
+   `008be406a418348269cf5c58c3becf9cac024ba1db6adf1f430e0d9ae5fd927e`,
+   binding only the newly approved checker identity. Do not retry.
+4. Invoke `remote-recover-oidc-schema` exactly once against summary
+   `6255a3734325aab127e81b5730a121c9bf97c38b0611d91c21b9c6f1f7dc9ee2`
+   and the then-current exact inventory identity. It launches no child and
+   performs no network access. It preserves the summary repository identity,
+   class order, all seven preceding class records at the parsed data level, the
+   `oidc` `observedAt`, and the absence of `artifacts`; it changes
+   only `oidc` from `failed` / `schema-invalid` / `{}` to `unavailable` /
+   `checker-oidc-schema-incompatible` / `{}`. The existing compensating
+   registered-summary/inventory CAS and rollback contract remains mandatory.
+5. Prove `.local` absent and run `residue`; then invoke only the untouched
+   `artifacts` query exactly once. Prove `.local` absent again, run `residue`,
+   and execute `remote-validate`. Neither preflight nor any of the first eight
+   classes may be invoked again.
+
+The registered summary and inventory remain untouched until this tracked
+contract is committed and the new checker passes exact-byte review. No delivery
+owner edit, OIDC conclusion, retry, raw-output inspection, push, merge,
+publication, or live mutation is authorized by this amendment.
+
 ### WRFR-001 evidence intake completion
 
 This section records completed intake implementation evidence and the approved
@@ -693,8 +779,9 @@ for exact range `8ed7fae3..63efc8de`; final inventory SHA-256 is
 The post-commit reviewer returned `APPROVED WITH MINOR`,
 Critical/Important/Minor `0/0/1`; this closure corrects its sole intentional
 pre-closure lifecycle Minor. WRFR-005 is complete. WRFR-006 passed its
-pre-remote gate but is blocked after the single consumed `workflows` query; its
-fixed recovery gate now precedes every remaining GitHub query.
+pre-remote gate and its first fixed recovery. It is now blocked after the sole
+`oidc` query failed schema validation; the second fixed recovery gate precedes
+the untouched `artifacts` query.
 
 ### Stop conditions
 
@@ -716,8 +803,8 @@ report/package, and post-commit review. WRFR-005 has integrated its exact
 three-row owner section and passed focused static validation plus three
 independent pre-commit reviews. Its exact four-file implementation commit,
 registered report/package, and post-commit review are complete. The sole stale
-lifecycle Minor is closed. WRFR-006 is `In Progress` and blocked on the fixed
-checker/recovery sequence after the single consumed `workflows` query. Initial
+lifecycle Minor is closed. WRFR-006 is `In Progress` and blocked on the second
+fixed checker/recovery sequence after the single consumed `oidc` query. Initial
 design evidence included:
 
 - isolated worktree created from clean tracked `HEAD`;
@@ -759,9 +846,9 @@ and all canonical platform/security static validators pass, and independent
 source-fidelity, spec/quality, and security reviews approve the owner content.
 Its exact implementation commit, guarded report/package registration, and
 post-commit task review are complete. WRFR-006 completed its pre-remote review,
-RED probes, preflights, summary registration, and one `workflows` attempt, but
-no delivery owner edit. The fixed recovery contract gates the remaining eight
-queries.
+RED probes, preflights, summary registration, first fixed recovery, and the
+single observations through `oidc`, but no delivery owner edit. The second fixed
+recovery contract gates the untouched `artifacts` query.
 
 ## Traceability
 
@@ -779,7 +866,7 @@ queries.
 | [VAL-WRFR-008](spec.md) | In progress | WRFR-002 through WRFR-005 appended to ten existing owners without creating a research folder, duplicate topic report, or request owner; WRFR-006 is blocked before owner integration and WRFR-007..008 remain |
 | [VAL-WRFR-009](spec.md) | Allocation passed; ledger integration pending | WRFR-001 allocated source 091 and claims 013-01..06 without gaps or duplicates |
 | [VAL-WRFR-010](spec.md) | Not executed | WRFR-007..009 own the shared projection sequence |
-| [VAL-WRFR-011](spec.md) | In progress / blocked | Pre-remote review and preflights passed; `workflows` consumed its only query and is awaiting fixed local recovery, while the other eight classes remain untouched |
+| [VAL-WRFR-011](spec.md) | In progress / blocked | First recovery passed; the first eight class budgets are consumed, `oidc` awaits its fixed local recovery, and `artifacts` remains untouched |
 | [VAL-WRFR-012](spec.md) | Workspace passed; cleanup pending | WRFR-001 residue validation passed; WRFR-009 still owns exact cleanup |
 | [VAL-WRFR-013](spec.md) | In progress | WRFR-001..005 logical commits and task reviews are complete; WRFR-006 is blocked in remote evidence collection and WRFR-007..009 remain pending |
 | [VAL-WRFR-014](spec.md) | Not executed | WRFR-009 owns the whole-branch review gate |
