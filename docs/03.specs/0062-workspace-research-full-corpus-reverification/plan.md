@@ -1478,7 +1478,9 @@ of this recovery.
   it. WRFR-005 is complete. WRFR-006 passed its pre-remote security review,
   both fixed local recoveries, the untouched `artifacts` query, nine-class
   remote validation, owner integration, and its delivery-focused GREEN checks.
-  Its exact commit and post-commit reviews remain pending under Step 8.
+  Its exact implementation commit, registered report/package, and post-commit
+  review are complete. The sole intentional pre-closure lifecycle Minor is
+  corrected in this closure; WRFR-007 is queued and ready.
 
 ### Task 7: WRFR-006 — delivery and quality integration
 
@@ -1902,7 +1904,7 @@ nine-class summary SHA-256 is
   not prove hosted current-HEAD execution, enforcement, intended use, or live
   delivery.
 
-- [ ] **Step 8: commit and review delivery findings**
+- [x] **Step 8: commit and review delivery findings**
 
   Update Task/Plan/progress, then commit:
 
@@ -1920,6 +1922,18 @@ nine-class summary SHA-256 is
   sanitized summary schema/counts and the committed package, not credentials or
   raw command output. Resolve Critical or Important findings in a scoped fix
   commit and re-review before Task 8.
+
+  Commit `ae7a22620ede8bfdb387c4528952f156e82a7aa2` contains exactly the
+  four named paths. Registered report SHA-256 is
+  `00856efaed17e3d5267e13d1c83399529bab7203201167d873bf83712aaec6a9`;
+  registered review-package SHA-256 is
+  `71a09244cce2ddb51bc2f1a1568ed874d1614837423e430fb8d3bbe816b3b876`
+  for exact one-commit range `fcbcd869..ae7a2262`. Final inventory SHA-256 is
+  `68b4173514a287eaff1e9e1c3b50c7ad57d3e6dbce2eb01b6dcd10ba9d08c1bc`.
+  The post-commit reviewer returned `APPROVED WITH MINOR`,
+  Critical/Important/Minor `0/0/1`, and found no material implementation
+  defect. This closure corrects its sole intentional pre-closure lifecycle
+  Minor. WRFR-006 is complete and WRFR-007 is queued and ready.
 
 ### Task 8: WRFR-007 — source, claim, scope, and pack integration
 

@@ -16752,14 +16752,14 @@ is the only unconsumed remote query budget.
 
 - Date: 2026-08-22
 - Layer: docs, delivery, quality, security
-- Status: in-progress
+- Status: complete
 - Tags: workspace-research, github-actions, ci-cd, qa, verification, validation
 - Owner: platform
 - Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md#wrfr-006-delivery-and-quality-integration`
-- Provenance: immutable delivery/quality report, exact allocation slice, guarded nine-class remote summary, one existing-owner append, and focused repository-static validators
+- Provenance: immutable delivery/quality report, exact allocation slice, guarded nine-class remote summary, exact implementation commit, registered report/package, focused validators, and independent post-commit review
 - Sensitivity: internal; only sanitized remote fields and aggregate counts are retained here
 - Retention: durable
-- Next Owner: WRFR-006 controller for exact commit, registered package, and post-commit reviews
+- Next Owner: WRFR-007 sole ledger integrator
 
 ### Progress
 
@@ -16809,9 +16809,19 @@ linting, syntax, unit/integration, end-to-end, mutation, affected, staged,
 all-files, diff, and the full Requirements Validation / Product Verification /
 Product Validation evidence matrix.
 
-WRFR-006 remains `In Progress`. Only Step 8's exact four-file commit,
-registered report/package, and source-fidelity, task, and post-remote security
-reviews may close it. No staging, commit, push, merge, publication, workflow
+Commit `ae7a22620ede8bfdb387c4528952f156e82a7aa2` contains the exact
+four-file logical unit. Registered report SHA-256 is
+`00856efaed17e3d5267e13d1c83399529bab7203201167d873bf83712aaec6a9`;
+registered review-package SHA-256 is
+`71a09244cce2ddb51bc2f1a1568ed874d1614837423e430fb8d3bbe816b3b876`
+for exact range `fcbcd869..ae7a2262`; final inventory SHA-256 is
+`68b4173514a287eaff1e9e1c3b50c7ad57d3e6dbce2eb01b6dcd10ba9d08c1bc`.
+The post-commit reviewer returned `APPROVED WITH MINOR`,
+Critical/Important/Minor `0/0/1`, with no material implementation defect. The
+sole Minor was the intentional pre-closure state corrected here.
+
+WRFR-006 is complete. WRFR-007 is queued and ready for the sole atomic
+source/claim/scope/README projection. No push, merge, publication, workflow
 dispatch, setting mutation, deployment, or live action is claimed here.
 
 ## 2026-08-21 - WRFR-005 platform/security integration
