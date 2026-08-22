@@ -1935,6 +1935,122 @@ nine-class summary SHA-256 is
   defect. This closure corrects its sole intentional pre-closure lifecycle
   Minor. WRFR-006 is complete and WRFR-007 is queued and ready.
 
+### WRFR-007 pre-integration checker recovery gate
+
+The first Task 8 command ran from clean tracked commit
+`cb494def67049706670e63d5157676886885faa7` before any shared-ledger owner
+edit. It exited `1` with exactly `ERROR ARGUMENTS_INVALID` because the checker
+parser accepts only the five topical workstreams. The same checker also treats
+an omitted `--workstream` as those five topical checks only, so it can falsely
+pass terminal validation without checking the shared ledger, scope projection,
+pack census, or lifecycle reconciliation. The frozen identities at this
+checkpoint are:
+
+- checker SHA-256
+  `2308481b8b0ded1647c105a4ab9aad0292db1459e53b8989a49f1fd3bdd7b038`;
+- inventory SHA-256
+  `68b4173514a287eaff1e9e1c3b50c7ad57d3e6dbce2eb01b6dcd10ba9d08c1bc`;
+- allocation SHA-256
+  `04025a6ecc56853d773bac598e2c8895a408a2d6a9252be9727f4264c50fe40b`;
+- baseline SHA-256
+  `41d56cb71092d0cd9dee7caa90ddaf57183473170472695882e14707fe04ae5d`.
+
+This defect is broader than an argparse choice. The repair must preserve the
+five topical modes and add two closed pseudo-modes, `shared-ledger` and
+`reconciliation`. An invocation without `--workstream` must compose all five
+topical validators plus both pseudo-mode validators. Unknown mode names remain
+`ERROR ARGUMENTS_INVALID`.
+
+The shared-ledger mode has this exact contract:
+
+1. Compare the existing source owner rows `SRC-WERPC-001..090` and all existing
+   135 claim owner rows with their lines at the immutable baseline commit and
+   reject any byte change as `INTEGRATION_LEDGER_LEGACY`.
+2. Require exactly one dated addition section in the ledger. To preserve the
+   old headers and rows byte-for-byte, that section uses new tables with these
+   exact headers and does not widen or reflow an existing table:
+
+   ```text
+   Source ID | Request owner | URL | Revision | Source class | Checked on | Adopted scope | Rejected scope | Uncertainty | Refresh trigger
+   Claim ID | Request owner | Claim | Source IDs | Workspace selectors | Evidence depth | Disposition | Missing evidence | Safe boundary | Canonical owner | Refresh trigger
+   ```
+
+   It projects `SRC-WERPC-091` and `CLM-WERPC-013-01..06` in numeric order from
+   the immutable allocation. Scalar cells equal the corresponding allocation
+   string after rejecting newline or literal `|`; the URL cell wraps only the
+   exact allocated URL in angle brackets. Array cells retain allocation order
+   and join values with `, `; an empty source-ID array is exactly `None`.
+   `Canonical owner` is the request's immutable baseline owner path. Missing,
+   duplicate, reordered, wrong-owner, or
+   allocation-divergent source and claim rows fail respectively with
+   `INTEGRATION_SOURCE_PROJECTION` or `INTEGRATION_CLAIM_PROJECTION`.
+3. Require exact terminal census `14/36/91/141`, all 36 report rows with both
+   external and workspace observations, exactly one owner row for every
+   referenced source/claim ID, and no unallocated addition. Identifier census
+   or reference failures use `INTEGRATION_IDENTIFIER_CENSUS` or
+   `INTEGRATION_IDENTIFIER_REFERENCE`.
+4. Require exactly one `### 2026-08-20 full-corpus reverification` section in
+   the scope index and all ten Plan scopes. Each scope must project contributing
+   REQ IDs, evidence depth, changed/unchanged outcome, retained limitation, and
+   canonical owner. Section and entry failures use `INTEGRATION_SCOPE_SECTION`
+   and `INTEGRATION_SCOPE_PROJECTION`.
+5. Recompute the pack README reconciliation from the five registered reports
+   and immutable allocation. It must record census `14/36/91/141`; external
+   `changed=3`, `unchanged=32`, `unreachable=1`; workspace `confirmed=29`,
+   `drifted=6`, `absent=1`; dispositions `Verified=20`, `Verified gap=4`,
+   `Partial=12`; evidence depths `repository-static=28`,
+   `public-documentation=8`; blocking classes `none=12`, `repo-static=10`,
+   `provider-runtime=5`, `hosted-ci=2`, `live-cluster=3`,
+   `human-judgement=4`; changed request IDs `004`, `006`, `008`, `009`, `011`,
+   `012`, `013`, `018`, `025`; unreachable request `033`; the allocated K3s
+   observation; and the six allocated claim additions, distinguished as three
+   current-form terminology corrections and three repository-static drift
+   records. Missing reconciliation and mismatched derived values use
+   `INTEGRATION_README_RECONCILIATION` and
+   `INTEGRATION_DISTRIBUTION`.
+
+The reconciliation mode must first satisfy shared-ledger validation, then
+require the collection README to retain `2026-08-08-wer` as the sole current
+pack and agree on terminal census; Stage 03, Spec, Plan, Task, ADR 0022, and
+`standaloneExecutions` must be reciprocal and lifecycle-consistent; and durable
+progress must list WRFR-002..007 completion with next owner WRFR-009 without
+terminal approval. Before Task 9 edits, absence of the required dated collection
+reconciliation fails first with `INTEGRATION_RECONCILIATION_SECTION`. Other
+failures close with `INTEGRATION_COLLECTION_CURRENT`,
+`INTEGRATION_COLLECTION_CENSUS`, `INTEGRATION_LIFECYCLE`,
+`INTEGRATION_STAGE_INDEX`, `INTEGRATION_STANDALONE_ADR`,
+`INTEGRATION_STANDALONE_REGISTRY`, or `INTEGRATION_PROGRESS`. Explicit
+`reconciliation` validates the Task 9 pre-terminal active/In-Review state. The
+no-workstream terminal composition accepts only a mutually consistent active
+pre-closure state or mutually consistent done post-closure state.
+
+Continuation is closed and ordered:
+
+1. Commit this three-document recovery contract before changing the ignored
+   checker, inventory, ledger, scope index, or pack README.
+2. Add failing self-tests first for parser acceptance, mode dispatch, the exact
+   production parsers, terminal composition, every fail-code family above, and
+   mutations of legacy rows, allocated IDs, references, scope entries,
+   distributions, current-pack census, lifecycle, ADR/registry reciprocity, and
+   progress. Implement the minimum repair; compile it, run normal and optimized
+   self-tests, run Ruff check and format-check, and obtain fresh independent
+   Python and security approvals over the exact candidate bytes. Any Critical
+   or Important finding or later byte change closes the gate.
+3. Amend these same three tracked documents with the approved candidate hash
+   and review verdicts, and commit that amendment before stateful execution.
+4. Invoke fixed `artifact-rebind-checker-only` exactly once with inventory
+   `68b4173514a287eaff1e9e1c3b50c7ad57d3e6dbce2eb01b6dcd10ba9d08c1bc`, old
+   checker `2308481b8b0ded1647c105a4ab9aad0292db1459e53b8989a49f1fd3bdd7b038`,
+   and the approved new checker hash. It may update only the existing checker
+   record. Do not retry.
+5. Run residue and normal/optimized self-tests, then rerun the unchanged Task 8
+   command. Before owner edits it must reach semantic RED
+   `ERROR INTEGRATION_SOURCE_PROJECTION`, not argument parsing. Only that result
+   unblocks the sole shared-ledger integrator.
+
+No remote query, live action, push, merge, publication, or new research owner is
+authorized by this recovery.
+
 ### Task 8: WRFR-007 — source, claim, scope, and pack integration
 
 **Files:**

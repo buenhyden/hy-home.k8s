@@ -45,8 +45,9 @@ reasons. The existing delivery/quality owner now contains the single dated
 four-row increment and all focused GREEN checks pass. Its exact implementation
 commit, registered report/package, and post-commit review are complete; the
 sole intentional pre-closure lifecycle Minor is corrected in this closure.
-WRFR-006 is complete, WRFR-007 is queued and ready, and no remote retry is
-permitted.
+WRFR-006 is complete. WRFR-007 reached its pre-integration checker recovery
+gate and is blocked until the reviewed checker-only recovery produces the
+semantic shared-ledger RED. No remote retry is permitted.
 
 The target is a 2026-08-20 external-source and workspace reverification of all
 thirty-six existing `REQ-WERPC-*` owners, integrated into the existing
@@ -121,7 +122,7 @@ stage, or commit.
 | WRFR-004 | VAL-WRFR-002..005, 008, 013 | Integrate SDLC/documentation findings | documentation integrator | Done | Sixteen allocated rows appended and committed as `7bbe6517`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole stale-evidence Minor addressed |
 | WRFR-005 | VAL-WRFR-002..005, 008, 013 | Integrate platform/security findings | platform/security integrator | Done | Three allocated rows appended and committed as `63efc8de`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole stale-evidence Minor addressed |
 | WRFR-006 | VAL-WRFR-002..005, 008, 011, 013 | Integrate delivery/quality and read-only GitHub evidence | delivery/security integrator | Done | Nine-class summary and four-row owner integration committed as `ae7a2262`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole lifecycle Minor addressed |
-| WRFR-007 | VAL-WRFR-006..010, 013 | Integrate source, claim, scope, and pack projections | sole ledger integrator | Queued | Not executed | All five topical commits/reviews complete; ready for atomic shared-ledger integration |
+| WRFR-007 | VAL-WRFR-006..010, 013 | Integrate source, claim, scope, and pack projections | checker repair, then sole ledger integrator | Blocked | Pre-integration probe returned `ERROR ARGUMENTS_INVALID`; no owner edit | Tracked recovery contract requires reviewed checker-only repair and `ERROR INTEGRATION_SOURCE_PROJECTION` before integration |
 | WRFR-008 | VAL-WRFR-008, 010, 013 | Reconcile indexes, links, lifecycle, and progress | documentation integrator | Queued | Not executed | Awaiting terminal parsed counts |
 | WRFR-009 | VAL-WRFR-010, 012..015 | Run terminal lanes, whole-branch review, closure, cleanup | platform + QA | Queued | Not executed | Awaiting WRFR-008 |
 
@@ -839,6 +840,33 @@ complete and WRFR-007 is queued and ready. No new research folder/report,
 shared ledger projection, push, merge, publication, workflow dispatch, remote
 mutation, or live action is claimed by this closure.
 
+### WRFR-007 pre-integration checker recovery
+
+The first Task 8 shared-ledger probe ran at clean commit `cb494def` before any
+owner edit and returned exactly `ERROR ARGUMENTS_INVALID`. The checker SHA-256
+was `2308481b8b0ded1647c105a4ab9aad0292db1459e53b8989a49f1fd3bdd7b038` and
+the inventory SHA-256 was
+`68b4173514a287eaff1e9e1c3b50c7ad57d3e6dbce2eb01b6dcd10ba9d08c1bc`.
+The parser has only the five topical workstreams, and no-workstream validation
+also checks only those five. WRFR-007 remains blocked with no ledger, scope, or
+README edit.
+
+The tracked Plan amendment fixes the repair boundary: retain topical behavior;
+add closed `shared-ledger` and `reconciliation` modes; make no-workstream
+validation compose all seven validators; define the append-only source/claim
+table schemas; derive exact `14/36/91/141` census and report distributions; and
+fail closed on ledger legacy drift, allocation projection, identifier
+references, ten-scope projection, pack reconciliation, collection census,
+lifecycle, Stage 03, ADR/registry reciprocity, and progress. The required order
+is TDD RED, minimal checker repair, compile plus normal/optimized self-tests and
+Ruff, exact-byte Python/security review, tracked final-hash amendment, one
+checker-only rebind with no retry, residue/self-test proof, and the unchanged
+Task 8 probe reaching `ERROR INTEGRATION_SOURCE_PROJECTION`. The sole ledger
+integrator may resume only after that semantic RED.
+
+No registered artifact, topical/shared owner, remote state, or live system may
+change before the tracked recovery contracts and checker review gates allow it.
+
 ### Stop conditions
 
 Execution stops only for a destructive or irreversible action, a
@@ -862,7 +890,8 @@ registered report/package, and post-commit review are complete. The sole stale
 lifecycle Minor is closed. WRFR-006 passed both fixed recoveries, final remote
 validation, four-row owner integration, focused GREEN checks, exact four-file
 commit, registered report/package, and post-commit review. Its sole lifecycle
-Minor is closed; WRFR-007 is queued and ready. Initial design evidence included:
+Minor is closed; WRFR-007 is blocked only by the tracked pre-integration checker
+recovery gate. Initial design evidence included:
 
 - isolated worktree created from clean tracked `HEAD`;
 - primary checkout's unrelated staged RIA files excluded from the branch;

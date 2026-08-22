@@ -16824,6 +16824,35 @@ WRFR-006 is complete. WRFR-007 is queued and ready for the sole atomic
 source/claim/scope/README projection. No push, merge, publication, workflow
 dispatch, setting mutation, deployment, or live action is claimed here.
 
+### WRFR-007 pre-integration checker recovery gate
+
+At clean commit `cb494def67049706670e63d5157676886885faa7`, the first exact
+Task 8 shared-ledger command ran before any owner edit and exited `1` with
+`ERROR ARGUMENTS_INVALID`. Checker SHA-256 was
+`2308481b8b0ded1647c105a4ab9aad0292db1459e53b8989a49f1fd3bdd7b038` and
+inventory SHA-256 was
+`68b4173514a287eaff1e9e1c3b50c7ad57d3e6dbce2eb01b6dcd10ba9d08c1bc`.
+The registered baseline, allocation, reports, summary, and review artifacts
+were not changed.
+
+The checker parser recognizes only the five topical workstreams. Its
+no-workstream path also validates only those five, so both planned pseudo-mode
+commands are rejected and terminal validation can omit the shared ledger,
+scope projection, pack census, and lifecycle reconciliation. The tracked Plan
+now defines the append-only table schemas, exact `14/36/91/141` terminal
+census, derived report distributions, ten scopes, lifecycle/ADR/registry/
+progress relationships, fixed fail-code families, and terminal composition.
+
+WRFR-007 is blocked at the recovery gate. The next owner is the bounded checker
+repair: failing tests first, minimal implementation, compile, normal and
+optimized self-tests, Ruff, exact-byte Python/security review, and a tracked
+candidate-hash amendment. Only then may fixed
+`artifact-rebind-checker-only` run once against the identities above. After
+residue and self-test proof, the unchanged Task 8 probe must fail semantically
+with `ERROR INTEGRATION_SOURCE_PROJECTION`; only that RED can resume the sole
+ledger integrator. No remote query, live action, push, merge, publication, or
+new research owner is authorized.
+
 ## 2026-08-21 - WRFR-005 platform/security integration
 
 ### Metadata
