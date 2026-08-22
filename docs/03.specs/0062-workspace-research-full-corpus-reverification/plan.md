@@ -2409,11 +2409,15 @@ The frozen projection transition is exact:
 
 Replay must follow this closed order:
 
-1. Generate `task-11-brief.md`, register its complete FileVersion in the
-   existing inventory, prove it was consumed before implementer dispatch, and
-   freeze the starting `HEAD`, index, worktree, and the three successor blobs.
-   Any existing `task-11-*` entry, foreign path, staged change, or blob mismatch
-   stops the replay before mutation.
+1. Before brief creation, require every `task-11-*` entry absent and
+   non-symlink. Create `task-11-brief.md` through the guarded artifact protocol,
+   register its complete FileVersion, and freeze the post-registration
+   inventory. After registration and before dispatch, require exactly that
+   registered brief in the `task-11-*` namespace; any other `task-11-*` entry is
+   foreign. Prove the frozen brief was consumed before implementer dispatch and
+   freeze the starting `HEAD`, clean index/worktree, and three successor blobs.
+   A brief FileVersion, inventory, foreign-path, staging, or blob mismatch stops
+   the replay before mutation.
 2. Create one withdrawal commit whose parent is the frozen starting `HEAD` and
    whose complete pathset is only the three table rows. Each resulting blob must
    equal its predecessor blob. Run the unchanged shared-ledger integration
@@ -2446,61 +2450,120 @@ blocked until the post-reapplication `WRFR-007` closure review is approved and
 recorded; Path B selection alone authorizes neither replay completion nor
 successor execution.
 
-##### Approved cleanup-recovery design; destructive execution still gated
+##### Human-approved cleanup-recovery design pending independent re-review
 
-The human separately approved this reviewed design contract, not its destructive
-execution. It changes no checker and does not revise the original bootstrap or
-incident provenance. The marker's pre-incident FileVersion remains permanently
-invalid because ctime cannot be restored. For terminal removal only, the
-reviewed successor identity is device/inode `2096/4410802`, regular non-symlink,
-mode `0644`, UID:GID `1000:1000`, size `2`, mtime/ctime
-`1787407543770964835` ns, and SHA-256
-`cdbcae15105d6b781e620813c79c7e868740d4e9cc53ce6f5fcbbc12387adf4b` for
-bytes `*\n`. The foreign empty directory identity is device/inode
-`2096/4541614`, mode `0755`, UID:GID `1000:1000`, with mtime/ctime
-`1787407543766841537` ns. The canonical Plan workspace remains
-device/inode `2096/4406235`, mode `0700`.
+The human approved this design contract, but the first independent security
+review rejected it. It remains pending fresh independent security and task/spec
+re-review and does not authorize creation or execution. It changes no checker
+and does not revise original bootstrap or incident provenance. The marker's
+pre-incident FileVersion remains permanently invalid because ctime cannot be
+restored. Its incident successor identity is device/inode `2096/4410802`,
+regular non-symlink, mode `0644`, UID:GID `1000:1000`, size `2`, mtime/ctime
+`1787407543770964835` ns, SHA-256
+`cdbcae15105d6b781e620813c79c7e868740d4e9cc53ce6f5fcbbc12387adf4b`, bytes
+`*\n`. The foreign empty directory is device/inode `2096/4541614`, mode `0755`,
+UID:GID `1000:1000`, mtime/ctime `1787407543766841537` ns. The canonical Plan
+workspace is device/inode `2096/4406235`, mode `0700`; its timestamps, entries,
+protected content, and inventory remain mutable until the last pre-cleanup
+consumer finishes.
 
-At WRFR-009 terminal cleanup, use one independently reviewed, source-hashed
-Python procedure invoked from the frozen worktree root with no filesystem path
-argument. It must reject any argument, open the fixed components
-`.superpowers`, `sdd`, `plan`, `.gitignore`, and
-`0062-workspace-research-full-corpus-reverification-plan` one component at a
-time with directory-relative descriptors and `O_NOFOLLOW`, retain all
-descriptors through completion, and compare `fstat` with non-following
-directory-entry stat before each mutation. Precondition success requires the
-exact successor marker above, the exact empty foreign directory above, the
-canonical workspace identity, and the exact parent entry set consisting only
-of those three children. It must also require final WRFR-009 review/validation
-approval and absence of concurrent writers. A type, owner, mode, device, inode,
-timestamp, size, hash, bytes, emptiness, entry-set, descriptor/entry, or review
-mismatch stops with zero mutation.
+The future executable is fixed at
+`/tmp/wrfr-009-sdd-incident-recovery.py` under `C-WRFR-011`. Before any
+separately approved creation, that exact path must be absent and non-symlink.
+Creation must be exclusive and no-follow, producing a current-user regular
+non-symlink of mode `0600`. Freeze and independently review its exact source and
+executed bytes, size, mode, UID:GID, and SHA-256. Invoke it from the frozen
+worktree root only as
+`PYTHONDONTWRITEBYTECODE=1 python3 -I -B /tmp/wrfr-009-sdd-incident-recovery.py
+<mode>`, where `<mode>` is exactly `--self-test`, `--check`, or `--execute`.
+It accepts one mode and no filesystem path argument. This correction authorizes
+neither creation, execution, nor later deletion of the temporary executable.
 
-After all preconditions pass in one invocation, the only permitted destructive
-calls are descriptor-relative `rmdir` of the fixed `plan` entry followed by
-descriptor-relative `unlink` of the fixed `.gitignore` entry. Recheck the
-bound identity immediately before each call. Prove both entries absent and
-non-symlink through the retained parent descriptor and prove the canonical Plan
-workspace is then the sole child. Do not chmod, rewrite, restore timestamps,
-rename, quarantine, recreate, update provenance, delete recursively, follow a
-symlink, or remove the canonical workspace in this recovery procedure. The
-existing SDD finish procedure remains the later and separate owner of that
-workspace.
+After the last pre-cleanup consumer, one final approval manifest must freeze
+every bound object, not reuse a historical inventory hash:
 
-All preconditions are atomic with respect to authorization, not a rollback
-promise. If `rmdir` succeeds but the later `unlink` or verification fails,
-record a partial recovery with the sibling absent and marker retained or state
-unknown; do not recreate either object and do not retry without a fresh
-identity capture, independent review, and new human approval. If both removals
-occur but final proof fails, stop with completion unclaimed and preserve the
-observed state for review. Before execution, the exact source hash must pass
-fixture tests for success, symlink/type/identity/hash/foreign-child/race
-rejection, non-empty sibling rejection, injected failure before mutation, and
-injected failure between the two calls; it must also receive independent
-security and task review plus a real-state read-only preflight. Those results,
-the final frozen identities, and the exact destructive command require a new
-explicit human approval. Neither this Plan amendment nor cleanup-design approval
-authorizes `rmdir`, `unlink`, Plan-workspace finish, or any other deletion.
+- the worktree root, `.superpowers`, and `sdd` directories: directory and
+  non-symlink type, device, inode, mode, UID:GID, size, mtime, ctime, exact
+  sorted entry sets, and SHA-256 of the canonical NUL-delimited entry-set bytes;
+- incident `plan`: the same identity fields and an exact empty entry set;
+- successor `.gitignore`: regular and non-symlink type, every identity field,
+  size, timestamps, bytes, and SHA-256;
+- the canonical Plan workspace: directory identity and exact final entry set,
+  plus the final inventory bytes/SHA-256 and every protected artifact's complete
+  FileVersion and content SHA-256 after its last consumer; and
+- the separately created executable identity and source/executed-byte hash.
+
+Current stable device/inode values are provisional manifest inputs only:
+worktree `2096/2229923`, `.superpowers` `2096/3023848`, `sdd`
+`2096/4404277`, incident `plan` `2096/4541614`, successor marker
+`2096/4410802`, and canonical workspace `2096/4406235`. The terminal manifest
+must freshly bind all fields above. A missing field, changed identity, unexpected
+entry, content mismatch, or use of the current historical inventory as terminal
+identity is `RECOVERY_PRECONDITION` before mutation.
+
+The procedure opens each fixed component one at a time with directory-relative
+descriptors and `O_NOFOLLOW`, retains them through completion, and compares
+`fstat` to non-following entry stat before every mutation. Use `O_NOATIME` for
+regular-file reads when supported; lack of permission for `O_NOATIME` permits a
+no-follow read but grants no authority to weaken any other check. Hold a
+non-blocking advisory exclusive `flock` on the retained `sdd` descriptor through
+check, mutation, fsync, and proof. This quiesces cooperating actors only. A
+non-cooperating same-UID writer remains a residual race addressed by repeated
+descriptor/entry checks and fail-closed results, not claimed away.
+
+After one complete precondition pass, `--execute` may call only
+descriptor-relative `rmdir(plan)`, then `fsync(sdd_fd)`, prove `plan` absent and
+all protected state unchanged, then descriptor-relative `unlink(.gitignore)`,
+then `fsync(sdd_fd)`, and finally prove both names absent/non-symlink, the
+canonical workspace is the sole `sdd` child, final protected inventory/content
+is unchanged, and residue validation passes. Do not chmod, rewrite, restore
+timestamps, rename, quarantine, recreate, update provenance, recursively
+delete, follow a symlink, or remove the canonical workspace. The existing SDD
+finish remains a later, separate operation.
+
+Exit and terminal-marker semantics are closed:
+
+| Exit | State | Meaning |
+| --- | --- | --- |
+| `0` | `PASS` | Selected mode completed with its required proof. |
+| `20` | `RECOVERY_PRECONDITION` | Failure before any namespace/data mutation; a last-check replacement before `rmdir` is included. |
+| `21` | `RECOVERY_PARTIAL` | Any failure after the first mutation, including either `fsync`, final absence/exclusivity proof, protected-content proof, or residue proof. |
+| `22` | `RECOVERY_ALREADY_COMPLETE` | Both incident names are already absent and the canonical workspace/protected state proves the approved recovered state. |
+| `23` | `RECOVERY_ARGUMENTS` | Mode count/value or any path argument is invalid. |
+
+Every mode emits exactly one stable terminal line:
+`WRFR_SDD_RECOVERY mode=<mode> code=<state> mutations=<0|1|2>
+state=<precondition|partial|recovered|already-complete|arguments|self-test>`.
+Zero mutation excludes access-time effects but requires equality of namespace,
+data, size, mode, ownership, mtime, and ctime. Failure after `rmdir`, including
+its following `fsync`, is partial; both names removed with any proof failure is
+partial. Never recreate either name or retry a partial result without a new
+manifest, independent review, and explicit human approval.
+
+Before destructive approval, the exact source must pass `--self-test` fixtures
+for success, arguments, already-complete, symlink/type/identity/owner/mode/time/
+bytes/hash/entry-set mismatch, non-empty sibling, lock contention,
+replacement/race, pre-mutation failure, both `fsync` failures, between-call
+failure, final-proof failure, and residue failure. `--check` must pass against
+the final manifest without mutation. Fresh security and task/spec reviews must
+approve the source, executable identity, manifest, tests, exact command,
+quiescence boundary, and partial semantics before a separate human approval.
+No cleanup or finish is authorized by this amendment.
+
+##### Task 12 fix-round evidence boundary
+
+Registered `task-13-brief.md` is Task 12 correction evidence only, not Plan
+Task 13 or a WRFR. Registered `task-14-brief.md` is a clerical correction to
+that brief only, not Plan Task 14 or a WRFR; it replaces the absent mistyped
+third blob fixture with tracked blob
+`a21d2cfeae6dfcd4cdc98f6661c1f7a190c49523`. Both briefs, Task 12 artifacts,
+the inventory, and ignored progress remain immutable. Exact test-only Commit A
+is `0577d1c0` (`test: allowlist reviewed blob fixtures`); this three-document
+contract is the separate Commit B. `task-13-report.md` will record the complete
+two-commit and validation evidence without becoming a Plan task. The design is
+human-approved pending fresh independent security and task/spec re-review. No
+Path B replay, WRFR-008, incident-recovery executable action, cleanup, remote or
+live mutation, or lifecycle transition is authorized or performed by this fix.
 
 ### Task 9: WRFR-008 — cross-link and lifecycle reconciliation
 
@@ -2749,31 +2812,52 @@ authorizes `rmdir`, `unlink`, Plan-workspace finish, or any other deletion.
   python3 "$WRFR_SDD/full-corpus-check.py" residue \
     --workspace "$WRFR_SDD" \
     --inventory "$WRFR_SDD/artifact-inventory.json"
+  ```
+
+  Record final `HEAD`, status, commit list, counts, artifact inventory, and
+  review verdict in the SDD ledger. After the last pre-cleanup consumer, freeze
+  the complete approval manifest defined by the Task 8 cleanup-recovery
+  addendum. For this exact incident only, the proven manifest state containing
+  the known empty `plan` sibling and known successor `.gitignore` supersedes the
+  legacy branch that would stop on any foreign sibling. Any identity, entry,
+  manifest, lock, executable, review, or content mismatch still takes that
+  legacy fail-closed stop branch and authorizes no generic removal.
+
+  Obtain fresh independent security and task/spec approval for the exact source,
+  tests, planned guarded creation, complete manifest contract, and commands.
+  Then obtain separate human approval to create exact executable
+  `/tmp/wrfr-009-sdd-incident-recovery.py`; freeze and independently verify its
+  complete executable identity against the approved source before separately
+  approving `--check` or `--execute`. This Plan text grants none of those
+  actions. The approved incident sequence is `--check`, descriptor-relative
+  `rmdir(plan)`, parent `fsync`, proof, descriptor-relative
+  `unlink(.gitignore)`, parent `fsync`, and final absence/canonical-child/
+  protected-content/residue proof. Any failure after the first removal is
+  `RECOVERY_PARTIAL`, stops completion, and cannot be retried without a new
+  manifest, review, and approval.
+
+  Only after incident recovery returns `PASS` or a fully proved
+  `RECOVERY_ALREADY_COMPLETE` may Step 9 continue to the legacy helper/marker
+  branch:
+
+  ```bash
   test ! -e "$WRFR_HELPER_PLAN"
   test ! -L "$WRFR_HELPER_PLAN"
   ```
 
   Alias absence is the terminal desired state, so the two passing tests skip
   `remove-owned-helper-plan`. If either test fails, stop; do not delete the
-  reappeared, unproved path. Do not call `restore-shared-marker`: the initially
-  absent marker is still the exact recorded helper-created file but has mode
-  `0644`, which that command rejects.
+  reappeared, unproved path. Do not call `restore-shared-marker`: incident
+  recovery has proved the exact successor `.gitignore` absent, while the old
+  restoration command was inapplicable to its mode-`0644` incident identity.
 
-  Record final `HEAD`, status, commit list, counts, artifact inventory, and
-  review verdict in the SDD ledger. After the final scoped re-review has no open
-  Critical or Important finding and every SDD finish precondition is satisfied,
-  obtain a separate review of the exact fd-bound marker-cleanup procedure and
-  its frozen target identity. Execute it only through a validated descriptor for
-  the exact `.superpowers/sdd` parent, only if the marker still matches its
-  recorded owner, regular-file type, non-symlink status, bytes, and complete
-  FileVersion, and only if the exact Plan workspace is the sole non-marker child.
-  It may unlink only the exact `.gitignore` entry and must prove it absent. Any
-  foreign sibling or identity drift stops cleanup without chmod, provenance
-  update, generic deletion, or a completion claim. Then delete only this Plan's
-  SDD workspace via the subagent-driven development finish procedure, prove that
-  exact path absent, and confirm the marker's recorded initial state remains
-  absent. Leave every sibling SDD workspace and every primary-checkout change
-  untouched.
+  The existing subagent-driven development finish procedure may then run as the
+  separate later operation that removes this Plan's canonical SDD workspace.
+  Prove that exact workspace absent, the marker's recorded initial state remains
+  absent, and every sibling/primary-checkout change remains untouched. Creation,
+  execution, and later deletion of the temporary recovery executable each
+  require their own recorded authority; no such action occurs in this
+  correction.
 
 ## Verification Plan
 

@@ -49,11 +49,10 @@ WRFR-006 is complete. WRFR-007 preserves the reviewed checker-only recovery,
 the Stage 90 transition-guard recovery, the semantic shared-ledger RED, and the
 exact six-file shared projection commit. Its ledger/source content review
 remains approved, but task/spec re-review found one Important pre-dispatch
-provenance gap, so WRFR-007 is blocked pending explicit human direction. The
-human has now selected closed re-execution Path B, but replay has not begun and
-remains gated by a registered pre-dispatch brief and exact adjacent commit
-reviews. WRFR-008 remains queued and blocked through the resulting WRFR-007
-closure review. No remote retry is permitted.
+provenance gap. The human has selected closed re-execution Path B; replay has
+not begun and remains gated by a registered pre-dispatch brief, exact adjacent
+commit reviews, and closure review. WRFR-008 remains queued and blocked through
+that WRFR-007 closure review. No remote retry is permitted.
 
 The target is a 2026-08-20 external-source and workspace reverification of all
 thirty-six existing `REQ-WERPC-*` owners, integrated into the existing
@@ -132,7 +131,7 @@ stage, or commit.
 | WRFR-006 | VAL-WRFR-002..005, 008, 011, 013 | Integrate delivery/quality and read-only GitHub evidence | delivery/security integrator | Done | Nine-class summary and four-row owner integration committed as `ae7a2262`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole lifecycle Minor addressed |
 | WRFR-007 | VAL-WRFR-006..010, 013 | Integrate source, claim, scope, and pack projections | Task 8B replay controller | Blocked | Human selected Path B; exact withdrawal/reapplication replay is approved but not started | `task-11-*` is replay evidence only; exact adjacent commits and packages plus fresh closure review remain required |
 | WRFR-008 | VAL-WRFR-008, 010, 013 | Reconcile indexes, links, lifecycle, and progress | documentation integrator | Queued (Blocked) | Not executed | No reconciliation preprobe until the post-reapplication WRFR-007 closure review is approved |
-| WRFR-009 | VAL-WRFR-010, 012..015 | Run terminal lanes, whole-branch review, closure, cleanup | platform + QA | Queued (Blocked) | Cleanup-recovery design approved; no destructive execution authorized | Awaiting WRFR-008, terminal tests/reviews, frozen successor identities, and a separate human approval for exact `rmdir`/`unlink` execution |
+| WRFR-009 | VAL-WRFR-010, 012..015 | Run terminal lanes, whole-branch review, closure, cleanup | platform + QA | Queued (Blocked) | Cleanup-recovery design human-approved but pending fresh independent re-review; no destructive execution authorized | Awaiting WRFR-008, final manifest/executable/tests/reviews, and separate human approval for exact incident recovery before later SDD finish |
 
 ## Approval and Safety Boundaries
 
@@ -998,9 +997,12 @@ successor introduced by commit
 | `docs/90.references/research/2026-08-08-wer/scope-application-index.md` | `f7e4b60cce6a7d5ee5c706ab3a6a8fae663e9bed` | `6c2d4723c69821a9681fa45151ea70b528ff66fa` |
 | `docs/90.references/research/2026-08-08-wer/README.md` | `6bfec251d8927dd82f5c12b49c013a598c64d088` | `11719d258d0454d68f3e6b6ed0377c3d3b9de6b2` |
 
-Entry requires an absent `task-11-*` namespace, clean index/worktree, all three
-successor blobs, and registered `task-11-brief.md` proven consumed before
-dispatch. The first commit restores only the three predecessor blobs and must
+Before brief creation, entry requires every `task-11-*` path absent and
+non-symlink. After guarded `task-11-brief.md` creation and registration, the
+pre-dispatch gate requires exactly that registered frozen brief and no other
+`task-11-*` entry, plus its post-registration inventory, clean index/worktree,
+all three successor blobs, and proven brief consumption. The first commit
+restores only the three predecessor blobs and must
 produce semantic RED `ERROR INTEGRATION_SOURCE_PROJECTION` from the unchanged
 shared-ledger integration command. `task-11-report.md` records its identities
 and result; `task-11-review-package.md` covers exactly this one commit and must
@@ -1019,45 +1021,77 @@ two commits. WRFR-007 remains blocked until a new scoped closure review approves
 the reapplication with no open Critical or Important finding. WRFR-008 remains
 blocked until that review is recorded.
 
-### Approved cleanup-recovery design and unapproved execution
+### Human-approved cleanup-recovery design pending independent re-review
 
 This additive contract supersedes only the earlier absence of a procedure. The
-human approved the independently reviewed design, while destructive `rmdir` and
-`unlink` remain expressly unauthorized. No checker changes. Historical
+human approved the design, but independent security review rejected the first
+version; fresh security and task/spec approval remains mandatory. Destructive
+`rmdir` and `unlink` are expressly unauthorized. No checker changes. Historical
 bootstrap and incident provenance remains unchanged; ctime restoration is
-impossible and must not be simulated. Terminal marker removal may match only
-the reviewed successor identity: device/inode `2096/4410802`, regular
-non-symlink, mode `0644`, UID:GID `1000:1000`, size `2`, mtime/ctime
-`1787407543770964835` ns, SHA-256
+impossible and must not be simulated. The incident identities remain marker
+device/inode `2096/4410802`, regular non-symlink mode `0644`, UID:GID
+`1000:1000`, size `2`, mtime/ctime `1787407543770964835` ns, SHA-256
 `cdbcae15105d6b781e620813c79c7e868740d4e9cc53ce6f5fcbbc12387adf4b`, bytes
-`*\n`. The foreign empty `plan` directory is device/inode `2096/4541614`, mode
-`0755`, UID:GID `1000:1000`, mtime/ctime `1787407543766841537` ns. The canonical
-workspace remains device/inode `2096/4406235`, mode `0700`.
+`*\n`; empty `plan` directory device/inode `2096/4541614`, mode `0755`,
+UID:GID `1000:1000`, mtime/ctime `1787407543766841537` ns; canonical workspace
+device/inode `2096/4406235`, mode `0700`.
 
-The terminal procedure is a source-hashed Python invocation from the frozen
-worktree root with no filesystem path argument. It rejects arguments, opens
-fixed path components one at a time with retained directory-relative
-descriptors and `O_NOFOLLOW`, and validates descriptor/entry agreement, exact
-identities, marker bytes/hash, empty foreign directory, canonical workspace,
-and the exact three-child parent entry set. Any mismatch or incomplete terminal
-review/validation causes zero mutation. After one complete precondition pass,
-the only permitted destructive sequence is descriptor-relative `rmdir` of
-fixed `plan`, then descriptor-relative `unlink` of fixed `.gitignore`, with an
-identity recheck immediately before each call and absence/non-symlink proof
-afterward. The procedure may not chmod, rewrite, restore time, rename, recreate,
-recursively delete, update provenance, or remove the canonical workspace.
+The future executable is fixed at
+`/tmp/wrfr-009-sdd-incident-recovery.py`. Require that exact path absent and
+non-symlink before a separately approved exclusive/no-follow mode-`0600`
+current-user creation. Freeze its source/executed bytes, size, mode, owner, and
+SHA-256 under `C-WRFR-011`. Run only
+`PYTHONDONTWRITEBYTECODE=1 python3 -I -B` from the frozen worktree root with one
+of `--self-test`, `--check`, or `--execute`; reject every path argument. This
+correction authorizes no creation, execution, or later deletion.
 
-If the first removal succeeds and the second call or proof fails, record partial
-recovery; do not recreate or retry. If both removals occur but proof fails,
-preserve the observed state and leave completion unclaimed. Any retry requires
-new identity capture, independent review, and human approval. Before execution,
-the exact source must pass success and fail-closed fixtures for symlink, type,
-identity, owner/mode, timestamp, bytes/hash, foreign child, non-empty sibling,
-replacement/race, pre-mutation failure, and between-call partial failure; then
-receive independent security/task review and a real-state read-only preflight.
-The exact source hash, frozen identities, tests, reviews, and destructive command
-must be presented for a separate explicit human approval. This amendment does
-not authorize either removal or the later SDD finish.
+After the last pre-cleanup consumer, freeze one final approval manifest for the
+worktree root, `.superpowers`, `sdd`, incident `plan`, successor `.gitignore`,
+canonical workspace, protected artifacts/final inventory, and executable. For
+every object record type/non-symlink, device, inode, mode, UID:GID, size where
+applicable, mtime, ctime, exact sorted entry sets plus hashes for directories,
+and exact content hashes/FileVersions for regular/protected content. The current
+historical inventory hash is not the terminal identity. Missing or changed
+manifest data is precondition failure.
+
+Retain no-follow component descriptors and hold an advisory non-blocking
+exclusive `flock` on `sdd` throughout. This coordinates cooperating actors;
+repeated descriptor/entry checks handle, but cannot eliminate, a non-cooperating
+same-UID writer. Use `O_NOATIME` where supported without weakening other checks.
+After complete preconditions, the only sequence is descriptor-relative
+`rmdir(plan)`, `fsync(sdd_fd)`, absence/protected-state proof,
+descriptor-relative `unlink(.gitignore)`, `fsync(sdd_fd)`, and final
+absence/canonical-child/protected-inventory/residue proof. The canonical SDD
+finish is a separate later operation owned by Task 10 Step 9.
+
+Results are exact: `0 PASS`, `20 RECOVERY_PRECONDITION` before mutation,
+`21 RECOVERY_PARTIAL` after the first mutation or on either fsync/final/residue
+proof failure, `22 RECOVERY_ALREADY_COMPLETE`, and `23 RECOVERY_ARGUMENTS`.
+Every mode emits one `WRFR_SDD_RECOVERY` line with mode, symbolic code, mutation
+count, and state. Zero mutation excludes access-time effects but requires all
+namespace/data/size/mode/owner/mtime/ctime values unchanged. Never recreate or
+retry a partial state without a new manifest, reviews, and human approval.
+
+The exact source must pass self-tests for success, argument/already-complete,
+all identity/content/entry/lock/race failures, non-empty sibling, pre-mutation,
+both fsync points, between-call, final-proof, and residue partial failures.
+`--check`, fresh security/task reviews, and separate human approval over the
+manifest, executable, tests, and command precede `--execute`. No replay,
+recovery, cleanup, temporary-script action, or SDD finish occurs in this fix.
+
+### Task 12 fix-round evidence boundary
+
+Registered `task-13-brief.md` is Task 12 fix evidence only, not Plan Task 13 or
+a WRFR. Registered `task-14-brief.md` corrects only the brief's absent mistyped
+third fixture to tracked blob `a21d2cfeae6dfcd4cdc98f6661c1f7a190c49523`;
+it is not Plan Task 14 or a WRFR. Preserve both briefs, every Task 12 artifact,
+inventory, and ignored progress unchanged. Exact test-only Commit A is
+`0577d1c0` (`test: allowlist reviewed blob fixtures`); this exact Plan/Task/
+durable-progress correction is Commit B. Unregistered `task-13-report.md`
+records the two-commit and ordered validation evidence only. Fresh Python,
+security, and task/spec review of the correction remains mandatory before Path
+B replay. No replay, WRFR-008, recovery executable, cleanup, remote/live action,
+or lifecycle change is part of this fix.
 
 ### Stop conditions
 
@@ -1082,10 +1116,13 @@ registered report/package, and post-commit review are complete. The sole stale
 lifecycle Minor is closed. WRFR-006 passed both fixed recoveries, final remote
 validation, four-row owner integration, focused GREEN checks, exact four-file
 commit, registered report/package, and post-commit review. Its sole lifecycle
-Minor is closed. WRFR-007's shared projection is integrated and preserved, but
-Task 8 closure is blocked by the late-brief provenance gap pending explicit
-human direction on resolution path A or B. Separately, WRFR-009 cleanup remains
-blocked by its mandatory human-approved cleanup-recovery design and review gate.
+Minor is closed. WRFR-007's shared projection is integrated and preserved. The
+human selected Path B to close the late-brief provenance gap, but replay has not
+begun and Task 8 remains blocked through its registered-brief, adjacent-commit,
+and closure-review gates. The human also approved the cleanup-recovery design,
+but its first security review rejected it; fresh independent review and a
+separate destructive execution approval remain mandatory before WRFR-009
+incident recovery and later SDD finish.
 Initial design evidence included:
 
 - isolated worktree created from clean tracked `HEAD`;
@@ -1144,14 +1181,14 @@ OIDC-setting, stakeholder, deployment, or live outcome is promoted.
 | [VAL-WRFR-003](spec.md) | Done | The five registered reports retain the exact closed workstream assignment |
 | [VAL-WRFR-004](spec.md) | All five workstream integrations and reviews passed | Registered research review is preserved; all integrated workstreams retain exact primary-source identities and limits |
 | [VAL-WRFR-005](spec.md) | Five topical integrations passed | WRFR-002 through WRFR-006 record exact baseline selectors and evidence-depth boundaries; all five commits/reviews are complete |
-| [VAL-WRFR-006](spec.md) | Shared projection integrated and preserved; Task 8 closure blocked | All rows use the closed outcome vocabulary and passed checker validation; closure awaits the late-brief provenance A/B decision |
-| [VAL-WRFR-007](spec.md) | Shared projection integrated and preserved; Task 8 closure blocked | Every row carries a valid blocking-class disposition combination; closure awaits the late-brief provenance A/B decision |
-| [VAL-WRFR-008](spec.md) | In progress; Task 8 closure blocked | The existing-owner projection is preserved without a new research folder, duplicate topic report, or request owner; WRFR-007 awaits the provenance decision and WRFR-008 is not executed |
-| [VAL-WRFR-009](spec.md) | Allocation and shared projection integrated and preserved; Task 8 closure blocked | Source 091 and claims 013-01..06 remain contiguous, unique, and integrated; closure awaits the late-brief provenance A/B decision |
-| [VAL-WRFR-010](spec.md) | Recorded shared-projection validation passed; Task 8 closure blocked | The integrated projection evidence is preserved; closure awaits the late-brief provenance A/B decision, and WRFR-009 cleanup remains separately gated |
+| [VAL-WRFR-006](spec.md) | Shared projection integrated and preserved; Task 8 Path B queued | All rows use the closed outcome vocabulary and passed checker validation; closure awaits the selected Path B registered-brief replay and review |
+| [VAL-WRFR-007](spec.md) | Shared projection integrated and preserved; Task 8 Path B queued | Every row carries a valid blocking-class disposition combination; the A/B choice is closed and replay remains unexecuted |
+| [VAL-WRFR-008](spec.md) | In progress; Task 8 closure blocked | The existing-owner projection is preserved without a new research folder, duplicate topic report, or request owner; selected Path B awaits replay/closure review and WRFR-008 is not executed |
+| [VAL-WRFR-009](spec.md) | Allocation and shared projection integrated and preserved; Task 8 Path B queued | Source 091 and claims 013-01..06 remain contiguous, unique, and integrated; closure awaits the selected replay, not a provenance choice |
+| [VAL-WRFR-010](spec.md) | Recorded shared-projection validation passed; Task 8 closure blocked | The integrated projection evidence is preserved; Path B replay/closure review and separately re-reviewed/approved WRFR-009 incident recovery remain pending |
 | [VAL-WRFR-011](spec.md) | Remote summary and security reviews passed | Nine unique sanitized classes passed; seven are observed and workflows/OIDC retain fixed checker-compatibility unavailable reasons |
-| [VAL-WRFR-012](spec.md) | Workspace passed; cleanup pending | WRFR-001 residue validation passed; WRFR-009 still owns exact cleanup |
-| [VAL-WRFR-013](spec.md) | In progress | WRFR-001..006 logical commits and task reviews are complete; WRFR-007 correction-record review is approved but Task 8 still awaits the explicit A/B provenance decision, WRFR-008 is not executed, and WRFR-009 remains pending |
+| [VAL-WRFR-012](spec.md) | Workspace passed; cleanup pending | WRFR-001 residue validation passed; WRFR-009 owns exact incident recovery before the separate later SDD finish |
+| [VAL-WRFR-013](spec.md) | In progress | WRFR-001..006 are complete; WRFR-007 selected Path B but has not replayed or closed, WRFR-008 is not executed, and WRFR-009 design awaits fresh independent approval and destructive authority |
 | [VAL-WRFR-014](spec.md) | Not executed | WRFR-009 owns the whole-branch review gate |
 | [VAL-WRFR-015](spec.md) | Not executed | WRFR-009 owns the terminal lane sequence |
 

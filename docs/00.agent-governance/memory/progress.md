@@ -17149,6 +17149,119 @@ if either identity is wrong. Residual risk is the still-unexecuted replay and
 the intentionally unexecuted destructive cleanup. WRFR-008 remains blocked;
 cleanup execution remains separately human-gated.
 
+### 2026-08-23 Task 12 fix round 1 contract correction
+
+#### Metadata
+
+- Date: 2026-08-23
+- Layer: docs
+- Status: in-progress
+- Tags: workspace-research, provenance, replay, cleanup-recovery, correction
+- Owner: platform
+- Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
+- Provenance: registered Task 13 fix brief, registered Task 14 clerical correction, exact test-only Commit A, and this three-document Commit B
+- Sensitivity: internal
+- Retention: durable through WRFR-009 closure
+- Next Owner: controller validation and fresh Python, security, and task/spec review
+
+#### Progress
+
+This entry additively supersedes only the rejected parts of the preceding Task
+12 ruling. `task-13-*` is Task 12 correction evidence, not Plan Task 13 or a new
+WRFR. `task-14-*` corrects only Task 13's mistyped third allowlist fixture, not
+Plan Task 14 or a WRFR. Registered `task-13-brief.md` is mode `0600`, size
+`26000`, SHA-256
+`d504dd23da4b4ee33668e735848ab0b5a75f832a3965462028fe940b3e5f993a`;
+registered `task-14-brief.md` is mode `0600`, size `2630`, SHA-256
+`0fbe797d4ef372e594763e196323aaa66f52feb7df66c3fb4d3cf9d19ee22043`.
+Post-registration inventory SHA-256 is
+`c32655b04a3b810c9a902a35512c8d45df8eeb8b7fb5ee153a55fbdb2efe605e`.
+Those artifacts, Task 12 artifacts, inventory, and ignored progress remain
+unchanged.
+
+Path B now has a possible two-state entry gate. Before guarded brief creation,
+all `task-11-*` entries must be absent/non-symlink. After registration and
+before dispatch, exactly the registered frozen `task-11-brief.md` may exist;
+every other `task-11-*` entry is foreign. Its complete FileVersion,
+post-registration inventory, proven pre-dispatch consumption, clean index/
+worktree, starting `HEAD`, and all three successor blobs are mandatory. Path B
+is human-selected but remains unexecuted, and WRFR-008 stays blocked through
+the replay and fresh WRFR-007 closure review.
+
+The cleanup-recovery design is human-approved but pending fresh independent
+security and task/spec re-review because the first security review rejected it.
+The future executable is fixed at
+`/tmp/wrfr-009-sdd-incident-recovery.py`; it must be absent/non-symlink before
+separately approved exclusive no-follow mode-`0600` creation, and its source,
+executed bytes, size, ownership, mode, and SHA-256 must be frozen under
+`C-WRFR-011`. It accepts only `--self-test`, `--check`, or `--execute`, no path
+argument, and runs from the frozen root with
+`PYTHONDONTWRITEBYTECODE=1 python3 -I -B`. This correction authorizes no
+creation, execution, or later deletion.
+
+After the last pre-cleanup consumer, the terminal approval manifest freshly
+binds the worktree root, `.superpowers`, retained `sdd`, incident empty `plan`,
+successor `.gitignore`, mutable canonical workspace, final inventory/protected
+artifacts, and executable. It records type/non-symlink, device, inode, mode,
+UID:GID, size where applicable, mtime, ctime, canonical exact entry sets and
+their hashes, and regular/protected content hashes/FileVersions. The historical
+inventory hash is not terminal evidence. The procedure retains no-follow
+descriptors and an advisory exclusive non-blocking `flock` on `sdd`; cooperating
+actors quiesce, while a non-cooperating same-UID writer remains a residual race
+handled by repeated identity checks and fail-closed results. `O_NOATIME` is used
+when supported without weakening other checks.
+
+Task 10 Step 9 now runs the exact incident recovery before its old marker branch
+and before the separate later SDD finish. After complete preconditions, its only
+namespace sequence is `rmdir(plan)`, `fsync(sdd_fd)`, absence/protected-state
+proof, `unlink(.gitignore)`, `fsync(sdd_fd)`, and final absence, canonical-child,
+protected-content, final-inventory, and residue proof. Any failure after the
+first mutation, including either fsync or final proof, is `RECOVERY_PARTIAL`;
+no completion, recreation, or automatic retry is allowed. A mismatch not exact
+to this incident returns to the old foreign-sibling fail-closed branch. Only a
+proved `PASS` or `RECOVERY_ALREADY_COMPLETE` permits the separate canonical SDD
+finish later.
+
+Result semantics are `0 PASS`, `20 RECOVERY_PRECONDITION`,
+`21 RECOVERY_PARTIAL`, `22 RECOVERY_ALREADY_COMPLETE`, and
+`23 RECOVERY_ARGUMENTS`. Every mode emits one stable `WRFR_SDD_RECOVERY` marker
+with mode, symbolic code, mutation count, and state. Zero mutation excludes
+access-time effects but preserves namespace, data, size, mode, owner, mtime, and
+ctime. Self-tests cover success, already-complete/arguments, every manifest and
+content mismatch, lock/race, non-empty sibling, pre-mutation, both fsync points,
+between-call, final-proof, and residue failure. Fresh reviews, passing `--check`,
+and a separate human approval over exact source/executable/manifest/tests/
+command remain hard gates.
+
+#### Evidence
+
+- Commit A `0577d1c0` (`test: allowlist reviewed blob fixtures`) changes only
+  `tests/test_archive_validation.py`, adding the three exact inline
+  `# pragma: allowlist secret` annotations. It does not change fixture values or
+  `.secrets.baseline`.
+- Full `tests.test_archive_validation`: PASS, `70` tests in `123.649s`.
+- Direct `detect-secrets scan tests/test_archive_validation.py`: PASS, zero
+  findings. `.secrets.baseline` remained SHA-256
+  `9e4117d7868cc4d770364ee2108cc1d4314a46121b97f2a443b595364bfebd94`.
+- Commit B is the exact Plan, Task, and durable-progress correction logical
+  unit; its SHA and ordered completion evidence belong in guarded unregistered
+  `task-13-report.md` after controller-run long lanes complete.
+- No research projection, checker, Spec, lifecycle, inventory, ignored progress,
+  recovery namespace, remote/live resource, Path B replay, WRFR-008 action, or
+  cleanup action changed.
+
+#### Handoff
+
+The controller owns exact affected/staged lanes, exact-index pre-commit,
+repository-quality, both diff checks, and `pre-commit run --all-files`. Only
+after those results are final may the implementer create `task-13-report.md`
+once through `O_CREAT|O_EXCL|O_NOFOLLOW` mode `0600`, recording the full ordered
+eight-step completion sequence. Fresh Python, security, and task/spec review
+must approve the exact `fec19b02..<correction-head>` package before Path B
+begins. Residual risks are the unexecuted replay, rejected-until-re-reviewed
+recovery design, non-cooperating-writer race, and separately unapproved
+destructive/temporary-executable operations.
+
 ## 2026-08-21 - WRFR-005 platform/security integration
 
 ### Metadata
