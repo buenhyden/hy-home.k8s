@@ -987,8 +987,11 @@ registered report/package, and post-commit review are complete. The sole stale
 lifecycle Minor is closed. WRFR-006 passed both fixed recoveries, final remote
 validation, four-row owner integration, focused GREEN checks, exact four-file
 commit, registered report/package, and post-commit review. Its sole lifecycle
-Minor is closed; WRFR-007 is blocked only by the tracked pre-integration checker
-recovery gate. Initial design evidence included:
+Minor is closed. WRFR-007's shared projection is integrated and preserved, but
+Task 8 closure is blocked by the late-brief provenance gap pending explicit
+human direction on resolution path A or B. Separately, WRFR-009 cleanup remains
+blocked by its mandatory human-approved cleanup-recovery design and review gate.
+Initial design evidence included:
 
 - isolated worktree created from clean tracked `HEAD`;
 - primary checkout's unrelated staged RIA files excluded from the branch;
@@ -1046,14 +1049,14 @@ OIDC-setting, stakeholder, deployment, or live outcome is promoted.
 | [VAL-WRFR-003](spec.md) | Done | The five registered reports retain the exact closed workstream assignment |
 | [VAL-WRFR-004](spec.md) | All five workstream integrations and reviews passed | Registered research review is preserved; all integrated workstreams retain exact primary-source identities and limits |
 | [VAL-WRFR-005](spec.md) | Five topical integrations passed | WRFR-002 through WRFR-006 record exact baseline selectors and evidence-depth boundaries; all five commits/reviews are complete |
-| [VAL-WRFR-006](spec.md) | Intake passed; ledger integration pending | All rows use the closed outcome vocabulary and passed checker validation |
-| [VAL-WRFR-007](spec.md) | Intake passed; ledger integration pending | Every row carries a valid blocking-class disposition combination |
-| [VAL-WRFR-008](spec.md) | In progress | WRFR-002 through WRFR-006 appended to eleven existing owners without creating a research folder, duplicate topic report, or request owner; WRFR-007..008 remain |
-| [VAL-WRFR-009](spec.md) | Allocation passed; ledger integration pending | WRFR-001 allocated source 091 and claims 013-01..06 without gaps or duplicates |
-| [VAL-WRFR-010](spec.md) | Not executed | WRFR-007..009 own the shared projection sequence |
+| [VAL-WRFR-006](spec.md) | Shared projection integrated and preserved; Task 8 closure blocked | All rows use the closed outcome vocabulary and passed checker validation; closure awaits the late-brief provenance A/B decision |
+| [VAL-WRFR-007](spec.md) | Shared projection integrated and preserved; Task 8 closure blocked | Every row carries a valid blocking-class disposition combination; closure awaits the late-brief provenance A/B decision |
+| [VAL-WRFR-008](spec.md) | In progress; Task 8 closure blocked | The existing-owner projection is preserved without a new research folder, duplicate topic report, or request owner; WRFR-007 awaits the provenance decision and WRFR-008 is not executed |
+| [VAL-WRFR-009](spec.md) | Allocation and shared projection integrated and preserved; Task 8 closure blocked | Source 091 and claims 013-01..06 remain contiguous, unique, and integrated; closure awaits the late-brief provenance A/B decision |
+| [VAL-WRFR-010](spec.md) | Recorded shared-projection validation passed; Task 8 closure blocked | The integrated projection evidence is preserved; closure awaits the late-brief provenance A/B decision, and WRFR-009 cleanup remains separately gated |
 | [VAL-WRFR-011](spec.md) | Remote summary and security reviews passed | Nine unique sanitized classes passed; seven are observed and workflows/OIDC retain fixed checker-compatibility unavailable reasons |
 | [VAL-WRFR-012](spec.md) | Workspace passed; cleanup pending | WRFR-001 residue validation passed; WRFR-009 still owns exact cleanup |
-| [VAL-WRFR-013](spec.md) | In progress | WRFR-001..006 logical commits and task reviews are complete; WRFR-007..009 remain pending |
+| [VAL-WRFR-013](spec.md) | In progress | WRFR-001..006 logical commits and task reviews are complete; WRFR-007 has a correction commit but still awaits independent correction review and the provenance decision, WRFR-008 is not executed, and WRFR-009 remains pending |
 | [VAL-WRFR-014](spec.md) | Not executed | WRFR-009 owns the whole-branch review gate |
 | [VAL-WRFR-015](spec.md) | Not executed | WRFR-009 owns the terminal lane sequence |
 
