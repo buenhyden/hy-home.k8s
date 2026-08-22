@@ -1165,8 +1165,8 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
     reviewed_research_source = PurePosixPath(
         "docs/90.references/research/2026-08-08-wer/README.md"
     )
-    reviewed_research_baseline_blob = "6bfec251d8927dd82f5c12b49c013a598c64d088"
-    reviewed_research_successor_blob = "11719d258d0454d68f3e6b6ed0377c3d3b9de6b2"
+    reviewed_research_baseline_blob = "6bfec251d8927dd82f5c12b49c013a598c64d088"  # pragma: allowlist secret
+    reviewed_research_successor_blob = "11719d258d0454d68f3e6b6ed0377c3d3b9de6b2"  # pragma: allowlist secret
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -1751,7 +1751,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             "extra-reviewed-source": {
                 self.reviewed_research_source: valid_transition,
                 PurePosixPath("docs/90.references/research/README.md"): (
-                    "a21d2cfeae6dfcd4cdc98f6661c1f7a190c49523",
+                    "a21d2cfeae6dfcd4cdc98f6661c1f7a190c49523",  # pragma: allowlist secret
                     "2" * 40,
                 ),
             },
