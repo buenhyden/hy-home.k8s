@@ -122,7 +122,7 @@ stage, or commit.
 | WRFR-004 | VAL-WRFR-002..005, 008, 013 | Integrate SDLC/documentation findings | documentation integrator | Done | Sixteen allocated rows appended and committed as `7bbe6517`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole stale-evidence Minor addressed |
 | WRFR-005 | VAL-WRFR-002..005, 008, 013 | Integrate platform/security findings | platform/security integrator | Done | Three allocated rows appended and committed as `63efc8de`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole stale-evidence Minor addressed |
 | WRFR-006 | VAL-WRFR-002..005, 008, 011, 013 | Integrate delivery/quality and read-only GitHub evidence | delivery/security integrator | Done | Nine-class summary and four-row owner integration committed as `ae7a2262`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole lifecycle Minor addressed |
-| WRFR-007 | VAL-WRFR-006..010, 013 | Integrate source, claim, scope, and pack projections | checker repair, then sole ledger integrator | Blocked | Pre-integration probe returned `ERROR ARGUMENTS_INVALID`; no owner edit | Tracked recovery contract requires reviewed checker-only repair and `ERROR INTEGRATION_SOURCE_PROJECTION` before integration |
+| WRFR-007 | VAL-WRFR-006..010, 013 | Integrate source, claim, scope, and pack projections | transition-guard recovery, then sole ledger integrator | Blocked | Steps 2..4 project cleanly and shared/registry/Markdown/diff checks pass; strict links exits `2` on the Stage 90 frozen README blob | Closed two-file guard repair and original Step 5 GREEN are required before controller review/commit |
 | WRFR-008 | VAL-WRFR-008, 010, 013 | Reconcile indexes, links, lifecycle, and progress | documentation integrator | Queued | Not executed | Awaiting terminal parsed counts |
 | WRFR-009 | VAL-WRFR-010, 012..015 | Run terminal lanes, whole-branch review, closure, cleanup | platform + QA | Queued | Not executed | Awaiting WRFR-008 |
 
@@ -887,6 +887,33 @@ checker-only rebind runs exactly once.
 
 No registered artifact, topical/shared owner, remote state, or live system may
 change before the tracked recovery contracts and checker review gates allow it.
+
+### WRFR-007 Stage 90 frozen-blob transition-guard recovery
+
+The approved shared projection is present only in the three Task 8 research
+owners. The exact shared validator, strict document registry, strict Markdown
+profiles, and diff check pass. Strict links validation exits `2` with
+`configuration error: reviewed Stage 90 move source differs from its frozen blob`
+because
+`docs/90.references/research/2026-08-08-wer/README.md` moved from reviewed base
+blob `6bfec251d8927dd82f5c12b49c013a598c64d088` to reviewed Task 8 successor blob
+`11719d258d0454d68f3e6b6ed0377c3d3b9de6b2`.
+
+The bounded repair retains the Stage 90 move-edge probe at `29` and the immutable
+alias source/edge/occurrence probes at `27/93/169`. One closed path-keyed
+`(base, target)` transition map must serve both the Stage 90 and immutable-alias
+checks. Foreign keys, a mismatched base, non-lowercase-40hex values,
+`target == base`, insertion/prefix overlap, and any arbitrary mutation fail
+closed. The repair may change only `scripts/validate-links-and-owners.py` and
+`tests/test_archive_validation.py`; it cannot weaken edge, redirect,
+occurrence, target, path, or archive checks.
+
+The controller must first commit this three-document contract, then run focused
+TDD RED/GREEN, compile, Ruff check/format-check, focused and full archive tests,
+validator self-test, strict links, and diff check; obtain independent code and
+security approval; and commit exactly the two guard files. Only then does the
+sole ledger integrator resume the original Task 8 Step 5. WRFR-007 remains
+blocked/in progress, with no completion or post-commit review claimed.
 
 ### Stop conditions
 

@@ -16881,6 +16881,33 @@ and old checker
 then residue/self-tests and the unchanged semantic Task 8 RED. WRFR-007 remains
 blocked until that ordered sequence completes.
 
+### WRFR-007 Stage 90 frozen-blob transition-guard recovery
+
+The checker recovery completed and Task 8 resumed through the three research
+owners. Shared integration, strict document-registry, strict Markdown-profile,
+and diff checks pass, but strict links exits `2` with
+`configuration error: reviewed Stage 90 move source differs from its frozen blob`.
+The source is `docs/90.references/research/2026-08-08-wer/README.md`; its frozen
+base Git blob is `6bfec251d8927dd82f5c12b49c013a598c64d088` and its reviewed Task 8
+successor Git blob is `11719d258d0454d68f3e6b6ed0377c3d3b9de6b2`.
+
+The recovery is closed to one source-specific `(base, target)` transition map
+used by both the Stage 90 reviewed-move and immutable-historical-alias checks.
+It must preserve the current move-edge count `29` and immutable alias
+source/edge/occurrence counts `27/93/169`, while rejecting foreign keys, base
+mismatch, non-lowercase-40hex values, an equal base and target, insertion or
+prefix overlap, and arbitrary mutation. Only
+`scripts/validate-links-and-owners.py` and
+`tests/test_archive_validation.py` may change in the repair.
+
+Next owner is the bounded transition-guard implementer after this three-document
+contract commit. Required order is focused TDD RED/GREEN; compile and Ruff;
+focused/full archive tests, validator self-test, strict links, and diff check;
+fresh independent code/security review; exact two-file guard commit; then the
+original Task 8 Step 5 rerun. WRFR-007 remains blocked/in progress. No Task 8
+completion, post-commit review, remote query, live action, push, merge, or
+publication is claimed.
+
 ## 2026-08-21 - WRFR-005 platform/security integration
 
 ### Metadata

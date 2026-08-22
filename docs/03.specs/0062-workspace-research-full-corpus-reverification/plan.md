@@ -2154,6 +2154,46 @@ authority to remove any other artifact.
 No remote query, live action, push, merge, publication, or new research owner is
 authorized by this recovery.
 
+#### Task 8 Stage 90 frozen-blob transition-guard recovery
+
+Task 8 Steps 2 through 4 produced the required shared projection, and the exact
+shared integration, strict document-registry, strict Markdown-profile, and
+`git diff --check` commands passed. The exact strict links command exited `2`
+with `configuration error: reviewed Stage 90 move source differs from its frozen blob`.
+The failing reviewed source is
+`docs/90.references/research/2026-08-08-wer/README.md`: the guard accepts only
+base Git blob `6bfec251d8927dd82f5c12b49c013a598c64d088`, while the reviewed Task 8
+successor is Git blob `11719d258d0454d68f3e6b6ed0377c3d3b9de6b2`.
+
+This is a validator transition defect, not authority to relax immutable-history
+validation. The repair must retain the current Stage 90 reviewed move-edge count
+of `29` and the immutable historical alias source/edge/occurrence counts of
+`27/93/169`. Define one closed source-specific `(base, target)` Git-blob
+transition map containing only the path and blob pair above, and apply that same
+map in both the Stage 90 reviewed-move and immutable-historical-alias source
+checks. A source not in the map remains pinned to its existing single blob.
+The target is accepted only as the complete current source blob; it does not
+authorize an open-ended append or prefix/suffix exception.
+
+The transition parser and validators fail closed on every foreign key, base
+mismatch, value that is not lowercase 40-hex, target equal to base, insertion or
+prefix overlap, and arbitrary source mutation. The map must not change link
+targets, redirect membership, edge derivation, occurrence counting, path
+resolution, or archive authority. The exact implementation scope is limited to
+`scripts/validate-links-and-owners.py` and
+`tests/test_archive_validation.py`; no research owner, README, ledger, scope,
+registry, inventory, report, or remote state belongs to this repair.
+
+Execution order is fixed: commit this tracked three-document recovery contract;
+write focused mutation tests and record RED; implement the minimum shared
+transition helper and record GREEN; run compile, Ruff check and format-check,
+the focused tests, full `tests.test_archive_validation`, validator self-test,
+strict links validation, and `git diff --check`; obtain fresh independent code
+and security review; then commit the exact two-file guard repair. Only after
+that commit may Task 8 Step 5 be rerun. WRFR-007 remains blocked/in progress;
+Steps 1 through 5 and completion remain unchecked until every original Step 5
+command passes, and Step 6 remains controller-owned review and commit work.
+
 ### Task 8: WRFR-007 — source, claim, scope, and pack integration
 
 **Files:**
