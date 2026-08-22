@@ -1476,10 +1476,9 @@ of this recovery.
   Critical/Important/Minor `0/0/1`. Its sole Minor was the intentional
   pre-closure lifecycle state in these three records; this closure corrects
   it. WRFR-005 is complete. WRFR-006 passed its pre-remote security review,
-  preflights, and first fixed local recovery. The queries from `runs` through
-  `environments` then ran once each, and the sole `oidc` query stopped on a
-  checker schema mismatch. The second fixed recovery gate below now precedes
-  the untouched `artifacts` query.
+  both fixed local recoveries, the untouched `artifacts` query, nine-class
+  remote validation, owner integration, and its delivery-focused GREEN checks.
+  Its exact commit and post-commit reviews remain pending under Step 8.
 
 ### Task 7: WRFR-006 — delivery and quality integration
 
@@ -1538,16 +1537,16 @@ of this recovery.
   `buenhyden/hy-home.k8s`, the URL is the GitHub HTTPS repository URL, and the
   default branch is `main`. Authentication output is not copied into evidence.
 
-- [ ] **Step 4: run each approved remote query once — blocked at the eighth class**
+- [x] **Step 4: run each approved remote query once**
 
   Invoke every query through `remote-query`; the checker verifies the argv,
   applies a bounded timeout, projects only the named fields, and performs a
   version-bound atomic update. The exact evidence classes and argv are:
 
-  Current execution has consumed the first eight budgets in order. `workflows`
-  was recovered locally after its first incident; `runs` through `environments`
-  were observed once each; `oidc` stopped with `ERROR REMOTE_SCHEMA` and awaits
-  only the fixed local recovery below. `artifacts` has not run.
+  Current execution consumed all nine budgets in order. `workflows` and `oidc`
+  were each converted only through their fixed reviewed local recovery;
+  `runs` through `environments` and then the untouched `artifacts` class were
+  observed exactly once. No preflight or evidence class was retried.
 
   ```bash
   python3 "$WRFR_SDD/full-corpus-check.py" remote-query --root . \
@@ -1647,9 +1646,9 @@ and no atime, is:
 | `.local/state/gh` | 2096 | 3263846 | 4096 | 1787287593754570540 | `0755` | 1000 | `device-id` |
 | `.local/state/gh/device-id` | 2096 | 3276459 | 36 | 1787287593754570540 | `0600` | 1000 | regular file; not directly inspected by controller/checker |
 
-WRFR-006 is `In Progress` and blocked. No delivery owner edit or remaining
-remote query may proceed until the following material recovery sequence
-completes in order:
+At this first incident checkpoint, WRFR-006 was `In Progress` and blocked. No
+delivery owner edit or remaining remote query could proceed until the following
+material recovery sequence completed in order:
 
 1. Commit this three-document incident contract before modifying the ignored
    checker or any stateful artifact.
@@ -1791,8 +1790,8 @@ remote-recover-oidc-schema --workspace DIR --inventory FILE --summary FILE \
   --expected-inventory-sha256 OLD --expected-summary-sha256 OLD
 ```
 
-WRFR-006 remains `In Progress` and blocked. Continue only through this exact
-sequence:
+At this second incident checkpoint, WRFR-006 remained `In Progress` and
+blocked. Continuation was limited to this exact sequence:
 
 1. Commit this second three-document incident amendment while the checker,
    summary, inventory, `.local` absence, and credential/state paths remain
@@ -1836,12 +1835,15 @@ sequence:
    `remote-validate`. Do not invoke either preflight or any of the first eight
    classes again.
 
-This second gate supersedes only the first gate's current handoff; it preserves
-the first incident and recovery as historical evidence. The checker, registered
-summary, inventory, and remaining network budget remain immutable until this
-tracked contract is committed and exact-byte review completes.
+This second gate superseded only the first gate's then-current handoff and
+preserves the first incident and recovery as historical evidence. It completed
+on 2026-08-22: exact-byte checker review and checker-only rebind passed, the
+fixed no-network OIDC recovery preserved the bounded unavailable disposition,
+`.local` absence and residue passed, `artifacts` ran exactly once, and the final
+nine-class summary SHA-256 is
+`da137936a4ec5cbb10c06303b96e22cc933188fec7042b8aa0dd774e627d4d21`.
 
-- [ ] **Step 5: validate the remote summary**
+- [x] **Step 5: validate the remote summary**
 
   ```bash
   python3 "$WRFR_SDD/full-corpus-check.py" remote-validate \
@@ -1853,7 +1855,12 @@ tracked contract is committed and exact-byte review completes.
   identity, no token/log/body field, and no evidence tied to a revision other
   than the returned `headSha` values.
 
-- [ ] **Step 6: append the delivery and quality findings**
+  Completion evidence on 2026-08-22: `PASS remote-validate` over the exact
+  summary above. Seven classes are observed; `workflows` is unavailable with
+  fixed reason `checker-auth-context-incompatible`, and `oidc` is unavailable
+  with fixed reason `checker-oidc-schema-incompatible`.
+
+- [x] **Step 6: append the delivery and quality findings**
 
   Add one dated H3 covering:
 
@@ -1871,7 +1878,7 @@ tracked contract is committed and exact-byte review completes.
   criterion identifier, not a validation outcome. Static PASS never proves
   intended use or stakeholder acceptance.
 
-- [ ] **Step 7: run delivery-focused GREEN checks**
+- [x] **Step 7: run delivery-focused GREEN checks**
 
   ```bash
   python3 "$WRFR_SDD/full-corpus-check.py" validate-integration \
@@ -1885,6 +1892,15 @@ tracked contract is committed and exact-byte review completes.
   python3 scripts/validate-links-and-owners.py --root . --mode strict
   git diff --check
   ```
+
+  Completion evidence on 2026-08-22: the pre-edit probe returned exact
+  fail-fast `ERROR INTEGRATION_SECTION`. The integrated probe returned
+  `PASS validate-integration`; GitHub Actions security, CI Python contract,
+  affected surfaces, agent-governance CI, strict Markdown, strict links/owners,
+  and `git diff --check` all passed. The owner retains exactly one dated H3 and
+  all four allocated request IDs. These results are repository-static and do
+  not prove hosted current-HEAD execution, enforcement, intended use, or live
+  delivery.
 
 - [ ] **Step 8: commit and review delivery findings**
 

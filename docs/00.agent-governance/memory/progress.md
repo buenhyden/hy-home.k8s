@@ -16746,6 +16746,74 @@ raw-output inspection, push, merge, publication, or live mutation is permitted
 before the tracked contract commit and exact-byte checker review. `artifacts`
 is the only unconsumed remote query budget.
 
+## 2026-08-22 - WRFR-006 delivery and quality integration
+
+### Metadata
+
+- Date: 2026-08-22
+- Layer: docs, delivery, quality, security
+- Status: in-progress
+- Tags: workspace-research, github-actions, ci-cd, qa, verification, validation
+- Owner: platform
+- Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md#wrfr-006-delivery-and-quality-integration`
+- Provenance: immutable delivery/quality report, exact allocation slice, guarded nine-class remote summary, one existing-owner append, and focused repository-static validators
+- Sensitivity: internal; only sanitized remote fields and aggregate counts are retained here
+- Retention: durable
+- Next Owner: WRFR-006 controller for exact commit, registered package, and post-commit reviews
+
+### Progress
+
+The second fixed recovery gate completed without a preflight or evidence-class
+retry. Exact-byte checker review and checker-only rebind passed; the fixed
+no-network OIDC recovery retained the compatibility-unavailable boundary;
+repository `.local` absence and residue passed; only the untouched `artifacts`
+query then ran once. The final nine-class summary SHA-256 is
+`da137936a4ec5cbb10c06303b96e22cc933188fec7042b8aa0dd774e627d4d21`
+and `remote-validate` passed.
+
+The immutable delivery/quality report SHA-256 is
+`f55cc2285577530544c48f26fb497184b43bb9822236e46a736294ed8695d993`.
+Its exact allocation slice is `REQ-WERPC-022`, `023`, `024`, and `033`, with no
+new source or claim identity. The existing CI/CD, GitHub Actions, QA, and V&V
+owner now contains exactly one `### 2026-08-20 full-corpus reverification`
+section immediately before terminal Related Documents. No research folder,
+duplicate report, or shared-ledger projection was created.
+
+The sanitized summary contains seven observed classes. Actions is enabled with
+allowed-actions mode `all`; default workflow permission is `read`; rulesets are
+empty; the `main` projection requires `ci-summary` but has strict checking and
+administrator enforcement disabled and zero required approvals; environments
+and artifacts each total zero; and the latest-20 run sample contains 13 success
+and 7 failure conclusions over 8 unique head SHAs. `workflows` is unavailable
+with fixed reason `checker-auth-context-incompatible`; `oidc` is unavailable
+with fixed reason `checker-oidc-schema-incompatible`.
+
+These values are setting and historical metadata only. They do not establish a
+current-local-HEAD hosted run, effective merge or token enforcement, workflow
+inventory, failure cause, actual OIDC setting, secret value, artifact history or
+integrity, stakeholder acceptance, intended-use fitness, deployment,
+reconciliation, rollback, or live health. The GitHub OIDC REST contract was
+used only to bound the checker compatibility diagnosis; it is not a newly
+allocated ledger source or a repository-setting claim.
+
+### Verification and handoff
+
+The pre-edit integration probe exited `1` with exact
+`ERROR INTEGRATION_SECTION`. After the append, it returned
+`PASS validate-integration`. GitHub Actions security, CI Python contract,
+affected surfaces, agent-governance CI, strict Markdown, strict links/owners,
+and `git diff --check` all passed. The section covers local triggers/jobs,
+concurrency, artifacts/environments, promotion/rollback, permissions and
+full-SHA pins, shell/script ownership, supply-chain evidence, formatting,
+linting, syntax, unit/integration, end-to-end, mutation, affected, staged,
+all-files, diff, and the full Requirements Validation / Product Verification /
+Product Validation evidence matrix.
+
+WRFR-006 remains `In Progress`. Only Step 8's exact four-file commit,
+registered report/package, and source-fidelity, task, and post-remote security
+reviews may close it. No staging, commit, push, merge, publication, workflow
+dispatch, setting mutation, deployment, or live action is claimed here.
+
 ## 2026-08-21 - WRFR-005 platform/security integration
 
 ### Metadata
