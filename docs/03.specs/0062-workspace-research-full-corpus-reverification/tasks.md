@@ -405,9 +405,11 @@ output was discarded. The local and missing-summary RED results were
 
 After guarded initialization and registration, the `workflows` class ran exactly
 once and stopped at `ERROR REMOTE_COMMAND`. Only sanitized state `failed`, reason
-`non-allowlisted-failure`, and empty data were retained. Raw stdout/stderr were
-not read or stored. Neither preflight nor `workflows` may be retried, and the
-other eight classes have not run. The incident tuple is checker
+`non-allowlisted-failure`, and empty data were retained. The bounded checker
+captured and classified stdout/stderr in memory, but raw output was not exposed
+to the controller or a human, copied into evidence, or persisted. Neither
+preflight nor `workflows` may be retried, and the other eight classes have not
+run. The incident tuple is checker
 `584086b297a7446e0a6dea932f0693831a3748813cae6f281bee41eb889c765d`,
 summary
 `cc77a8ae007b71f32328ce159dd03f60d3a32390131710cb6eee675bdbee4b56`,
@@ -415,8 +417,9 @@ and inventory
 `1dc24b116bbd09cb8e36f96a0bfb6c332dac8793f15b3cf33cc858efd8c9c22b`.
 
 The child received no GitHub configuration/state locations and created the
-repository-local regular file `.local/state/gh/device-id`. Its contents remain
-unread. The exact fixed cleanup identity uses device `2096`, UID `1000`, common
+repository-local regular file `.local/state/gh/device-id`. Its contents were
+not directly inspected by the controller or checker. The exact fixed cleanup
+identity uses device `2096`, UID `1000`, common
 `mtime_ns`/`ctime_ns` `1787287593754570540`, and these path-specific values:
 
 | Path | Inode | Size | Mode | Exact entry |
@@ -424,7 +427,7 @@ unread. The exact fixed cleanup identity uses device `2096`, UID `1000`, common
 | `.local` | 1747675 | 4096 | `0755` | `state` |
 | `.local/state` | 2221665 | 4096 | `0755` | `gh` |
 | `.local/state/gh` | 3263846 | 4096 | `0755` | `device-id` |
-| `.local/state/gh/device-id` | 3276459 | 36 | `0600` | regular file; content unread |
+| `.local/state/gh/device-id` | 3276459 | 36 | `0600` | regular file; not directly inspected by controller/checker |
 
 The fixed [Plan recovery gate](plan.md#wrfr-006-remote-incident-and-fixed-recovery-gate)
 is now authoritative. Its order is: commit this contract; implement the checker
@@ -438,10 +441,13 @@ order. Recovery preserves the original `observedAt` and converts only the
 existing `workflows` record to `unavailable` with reason
 `checker-auth-context-incompatible` and empty data.
 
-Every summary mutation uses a registered-summary/inventory compensating CAS. A
-second-stage failure rolls the summary back only against the exact version
-returned by its own CAS; rollback contention fails closed because two-file
-atomic replacement is unavailable. Cleanup uses literal dirfd traversal,
+Every summary mutation uses a registered-summary/inventory compensating CAS.
+Summary-only rollback is allowed only when inventory CAS did not commit. After
+an inventory commit, later failure compensates inventory first against its
+exact returned FileVersion, then summary against its exact returned
+FileVersion, and postvalidates the old pair; any drift or compensation failure
+is a distinct fail-closed inconsistency because two-file atomic replacement is
+unavailable. Cleanup uses literal dirfd traversal,
 `O_NOFOLLOW`, complete metadata identity, exact entry sets, `fstat` rechecks,
 empty-directory removal, and post-absence proof. The same-UID race window is an
 explicit limitation, not an atomicity claim.
@@ -451,9 +457,11 @@ Each remaining-query child receives only minimal `PATH`/locale, the fixed
 `XDG_STATE_HOME=/home/hy/.local/state`, plus fixed non-secret prompt, pager,
 update-notifier, color, and terminal-prompt controls enumerated by the Plan.
 `HOME`, tokens, `GH_HOST`, `GH_REPO`, `GH_DEBUG`, `LD_*`, proxy, `PAGER`,
-`XDG_CONFIG_HOME`, and other configuration variables are forbidden.
-Configuration/state contents
-must never be read, hashed, copied, printed, or stored. The Plan pins the current
+`XDG_CONFIG_HOME`, and other configuration variables are forbidden. The
+controller and checker must not directly read, hash, copy, print, or persist
+configuration/state contents. Only the approved `/usr/bin/gh` child may consume
+the standard-path bytes for authentication/state operation, without exposing
+them through raw output or evidence. The Plan pins the current
 metadata-only identities for `/home/hy/.config/gh`, `config.yml`, `hosts.yml`,
 and `/home/hy/.local/state/gh/device-id`, including exact directory entries and
 pre/post stability. Literal `/home/hy/...` dirfd traversal is required; path

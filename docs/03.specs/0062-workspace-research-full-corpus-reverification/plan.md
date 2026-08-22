@@ -1613,10 +1613,12 @@ Authentication output was discarded. The local integration RED was exactly
 The remote summary was initialized and registered. The first and only
 `workflows` query then exited with `ERROR REMOTE_COMMAND`. The registered
 summary contains only the sanitized state `failed`, reason
-`non-allowlisted-failure`, and an empty data object for that class. Raw stdout
-and stderr were neither read nor stored. No retry, fallback, alternate endpoint,
-or second preflight was attempted, and the remaining eight classes have not
-been invoked. The frozen incident identities are:
+`non-allowlisted-failure`, and an empty data object for that class. The bounded
+checker captured and classified stdout/stderr in memory, but raw output was not
+exposed to the controller or a human, copied into evidence, or persisted. No
+retry, fallback, alternate endpoint, or second preflight was attempted, and the
+remaining eight classes have not been invoked. The frozen incident identities
+are:
 
 - checker SHA-256
   `584086b297a7446e0a6dea932f0693831a3748813cae6f281bee41eb889c765d`;
@@ -1628,7 +1630,7 @@ been invoked. The frozen incident identities are:
 The child process received the checker's minimal locale and executable search
 environment but no authenticated GitHub configuration or state location. It
 therefore created repository-local `.local/state/gh/device-id`; its 36 bytes
-remain unread. The exact metadata-only residue contract, with nanosecond times
+were not directly inspected by the controller or checker. The exact metadata-only residue contract, with nanosecond times
 and no atime, is:
 
 | Path | Device | Inode | Size | `mtime_ns` / `ctime_ns` | Mode | UID | Exact entries |
@@ -1636,7 +1638,7 @@ and no atime, is:
 | `.local` | 2096 | 1747675 | 4096 | 1787287593754570540 | `0755` | 1000 | `state` |
 | `.local/state` | 2096 | 2221665 | 4096 | 1787287593754570540 | `0755` | 1000 | `gh` |
 | `.local/state/gh` | 2096 | 3263846 | 4096 | 1787287593754570540 | `0755` | 1000 | `device-id` |
-| `.local/state/gh/device-id` | 2096 | 3276459 | 36 | 1787287593754570540 | `0600` | 1000 | regular file; content unread |
+| `.local/state/gh/device-id` | 2096 | 3276459 | 36 | 1787287593754570540 | `0600` | 1000 | regular file; not directly inspected by controller/checker |
 
 WRFR-006 is `In Progress` and blocked. No delivery owner edit or remaining
 remote query may proceed until the following material recovery sequence
@@ -1675,9 +1677,13 @@ completes in order:
    `workflows` state with fixed `unavailable`, reason
    `checker-auth-context-incompatible`, and empty data. It must update the
    registered summary and its same-index inventory record as a compensating
-   two-file transaction: validate and lock both identities, CAS the summary,
-   CAS the inventory, postvalidate both, and on any second-stage failure roll
-   the summary back only against the exact FileVersion returned by its CAS.
+   two-file transaction: validate and lock both identities, retain both old raw
+   byte sequences and FileVersions, CAS the summary, CAS the inventory, and
+   postvalidate both. Summary-only rollback is allowed only when the inventory
+   CAS demonstrably did not commit. If inventory CAS committed and later
+   postvalidation fails, compensate the inventory first against the exact
+   FileVersion returned by its CAS, then compensate the summary against its
+   exact returned FileVersion, and postvalidate the restored old pair.
    Because two-file atomic replacement is unavailable, rollback contention or
    failure is a distinct fail-closed incident and never a consistency claim.
 6. Prove `.local` absent before and after every remaining query, do not repeat
@@ -1696,8 +1702,11 @@ and `GIT_TERMINAL_PROMPT=0`. Do not inherit or inject `HOME`, token variables,
 `GH_HOST`, `GH_REPO`, `GH_DEBUG`, `LD_*`, proxy variables, `PAGER`,
 `XDG_CONFIG_HOME`, or any other credential/configuration variable. Walk
 both absolute paths component-by-component without following symlinks and bind
-all relevant objects before and after the child by the same metadata identity;
-never read, hash, copy, print, or store configuration/state contents. The
+all relevant objects before and after the child by the same metadata identity.
+The controller and checker must never directly read, hash, copy, print, or
+persist configuration/state contents. Only the approved `/usr/bin/gh` child may
+consume those standard-path bytes for authentication/state operation, and it
+must not expose them through raw output or evidence. The
 fixed `/home/hy/...` spellings are part of the allowlist; `Path.resolve()` or
 another string-only canonicalization is not a substitute for the dirfd walk.
 Snapshot `/` and `/home` as trusted system directories: user-namespace UID
@@ -1713,10 +1722,10 @@ replace through a new tracked amendment is:
 | Object | Device | Inode | Size | `mtime_ns` / `ctime_ns` | Mode | UID | Constraint |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
 | `/home/hy/.config/gh` | 2096 | 77048 | 4096 | 1771840087477040631 | `0751` | 1000 | entries exactly `config.yml`, `hosts.yml` |
-| `/home/hy/.config/gh/hosts.yml` | 2096 | 83227 | 210 | 1784175379048299565 | `0600` | 1000 | required regular file; content unread |
-| `/home/hy/.config/gh/config.yml` | 2096 | 83791 | 1660 | 1771840087477040631 | `0600` | 1000 | regular file; content unread |
+| `/home/hy/.config/gh/hosts.yml` | 2096 | 83227 | 210 | 1784175379048299565 | `0600` | 1000 | required regular file; not directly inspected by controller/checker |
+| `/home/hy/.config/gh/config.yml` | 2096 | 83791 | 1660 | 1771840087477040631 | `0600` | 1000 | regular file; not directly inspected by controller/checker |
 | `/home/hy/.local/state/gh` | 2096 | 11400 | 4096 | 1778049370412048559 | `0755` | 1000 | entries exactly `device-id` |
-| `/home/hy/.local/state/gh/device-id` | 2096 | 11405 | 36 | 1778049370412048559 | `0600` | 1000 | required regular file; content unread |
+| `/home/hy/.local/state/gh/device-id` | 2096 | 11405 | 36 | 1778049370412048559 | `0600` | 1000 | required regular file; not directly inspected by controller/checker |
 
 The checker may support a metadata snapshot in which `config.yml` is absent,
 but only when both pre- and post-checks return `ENOENT`; a dangling symlink,
@@ -1726,6 +1735,8 @@ mode `0600`, and bounded. Every summary mutation, including each remaining
 query, uses the same transactional summary/inventory CAS and compensating
 rollback contract. The unavoidable same-UID mutation window remains explicit;
 metadata stability is not proof that secret contents were inspected or valid.
+Any compensation drift, contention, or failure is a distinct fail-closed
+registered-pair inconsistency and never a rollback-success claim.
 
 - [ ] **Step 5: validate the remote summary**
 

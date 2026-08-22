@@ -16565,7 +16565,7 @@ newly attained state.
 - Owner: platform
 - Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md#wrfr-006-remote-incident-and-recovery-contract`
 - Provenance: approved pre-remote review, minimized preflights, guarded summary/inventory identities, sanitized checker diagnostic, metadata-only residue inspection, and reviewed recovery design
-- Sensitivity: internal; configuration, credential, state, and residue contents unread
+- Sensitivity: internal; configuration, credential, state, and residue contents not directly inspected by the controller or checker
 - Retention: durable
 - Next Owner: checker implementer, then independent Python/security reviewers, then WRFR-006 delivery/security integrator
 
@@ -16582,8 +16582,10 @@ output was discarded and the projected repository was exactly
 The guarded remote summary was initialized and registered. The `workflows`
 query ran once and stopped at `ERROR REMOTE_COMMAND`. The only retained payload
 is sanitized state `failed`, reason `non-allowlisted-failure`, and empty data.
-Raw stdout/stderr were not read or stored. No retry, fallback, alternate
-endpoint, second preflight, or later class query occurred. `runs`,
+The bounded checker captured and classified stdout/stderr in memory, but raw
+output was not exposed to the controller or a human, copied into evidence, or
+persisted. No retry, fallback, alternate endpoint, second preflight, or later
+class query occurred. `runs`,
 `actions-permissions`, `workflow-permissions`, `rulesets`,
 `branch-protection`, `environments`, `oidc`, and `artifacts` retain their single
 budgets.
@@ -16599,13 +16601,15 @@ No delivery owner was edited.
 ### Incident boundary
 
 The checker child lacked authenticated GitHub config/state locations and
-created `.local/state/gh/device-id` in the repository. Its contents remain
-unread. The exact metadata-only identity is device `2096`, UID `1000`, common
+created `.local/state/gh/device-id` in the repository. Its contents were not
+directly inspected by the controller or checker. The exact metadata-only
+identity is device `2096`, UID `1000`, common
 `mtime_ns`/`ctime_ns` `1787287593754570540`: `.local` inode `1747675`, size
 `4096`, mode `0755`, sole entry `state`; `state` inode `2221665`, size `4096`,
 mode `0755`, sole entry `gh`; `gh` inode `3263846`, size `4096`, mode `0755`,
 sole entry `device-id`; and `device-id` inode `3276459`, size `36`, mode `0600`,
-regular file. No content or SHA was read.
+regular file. The controller/checker did not directly read content or compute a
+SHA.
 
 The fixed recovery order is now: commit the three-document contract; implement
 and test the checker; obtain fresh exact-byte Python/security approval; run
@@ -16617,9 +16621,13 @@ recovery preserves `observedAt` and changes only the existing `workflows` entry
 to `unavailable`, reason `checker-auth-context-incompatible`, empty data.
 
 Every summary mutation must update the registered summary and same-index
-inventory record with exact FileVersion CAS and compensating rollback. Two-file
-atomicity is unavailable; rollback contention is a distinct fail-closed
-incident. Cleanup uses literal dirfds, `O_NOFOLLOW`, full metadata identity,
+inventory record with exact FileVersion CAS and compensating rollback.
+Summary-only rollback is allowed only when inventory CAS did not commit. After
+inventory commit, later failure compensates inventory first against its exact
+returned FileVersion, then summary against its exact returned FileVersion, and
+postvalidates the old pair. Two-file atomicity is unavailable; any drift,
+contention, or compensation failure is a distinct fail-closed incident, not
+rollback success. Cleanup uses literal dirfds, `O_NOFOLLOW`, full metadata identity,
 exact entry sets, pre/post `fstat`, empty-directory removal, and final `.local`
 absence. Precondition failure guarantees no mutation. Unlink plus three rmdir
 operations are not one POSIX atomic action: a failure after unlink may leave a
@@ -16632,8 +16640,11 @@ Remaining-query children receive only minimal `PATH`/locale, fixed
 `XDG_STATE_HOME=/home/hy/.local/state`, plus only the Plan-enumerated non-secret
 prompt, pager, update-notifier, color, and terminal-prompt controls. `HOME`,
 tokens, `GH_HOST`, `GH_REPO`, `GH_DEBUG`, `LD_*`, proxy, `PAGER`,
-`XDG_CONFIG_HOME`, and other config variables are forbidden. Config/state
-content reads and hashes are forbidden. The Plan pins the metadata-only leaf snapshot and the ancestor
+`XDG_CONFIG_HOME`, and other config variables are forbidden. The controller and
+checker may not directly read, hash, copy, print, or persist config/state
+contents. Only the approved `/usr/bin/gh` child may consume the standard-path
+bytes for authentication/state operation, without exposing them through raw
+output or evidence. The Plan pins the metadata-only leaf snapshot and the ancestor
 dirfd rules: `/` and `/home` are trusted system prefixes with no current-process
 write access; `/home/hy` downward is current-UID-owned with group/world write
 bits clear. String path resolution is not an identity check.
