@@ -15,6 +15,7 @@ import time
 import types
 import unittest
 from pathlib import Path, PurePosixPath
+from typing import Any
 from unittest import mock
 
 
@@ -1161,6 +1162,11 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         "docs/04.execution/plans/"
         "2026-05-24-p3-gitops-secret-runtime-remediation.md"
     )
+    reviewed_research_source = PurePosixPath(
+        "docs/90.references/research/2026-08-08-wer/README.md"
+    )
+    reviewed_research_baseline_blob = "6bfec251d8927dd82f5c12b49c013a598c64d088"
+    reviewed_research_successor_blob = "11719d258d0454d68f3e6b6ed0377c3d3b9de6b2"
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -1178,6 +1184,36 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         spec.loader.exec_module(validator)
         cls.validator = validator
         cls.context = validator._build_context(ROOT)
+
+    def _reviewed_research_baseline_text(self) -> str:
+        completed = subprocess.run(
+            [
+                "git",
+                "cat-file",
+                "blob",
+                self.reviewed_research_baseline_blob,
+            ],
+            cwd=ROOT,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+        )
+        self.assertEqual(completed.returncode, 0, completed.stderr.decode())
+        text = completed.stdout.decode("utf-8")
+        self.assertEqual(
+            self.validator._git_sha1_blob(text),
+            self.reviewed_research_baseline_blob,
+        )
+        return text
+
+    def _reviewed_research_context(self, text: str) -> Any:
+        return dataclasses.replace(
+            self.context,
+            texts={
+                **self.context.texts,
+                self.reviewed_research_source: text,
+            },
+        )
 
     def test_exact_manifest_edges_route_to_collection_index(self) -> None:
         handoff = self.validator._archive_transition_handoff(self.context)
@@ -1489,6 +1525,305 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             ),
             edges,
         )
+
+    def test_stage90_research_admits_only_reviewed_blob_transition(self) -> None:
+        _, move_targets, _ = self.validator._document_taxonomy_transition_manifest(
+            self.context
+        )
+        baseline_context = self._reviewed_research_context(
+            self._reviewed_research_baseline_text()
+        )
+        baseline_text = baseline_context.texts[self.reviewed_research_source]
+        self.assertIn(
+            self.validator._git_sha1_blob(
+                self.context.texts[self.reviewed_research_source]
+            ),
+            frozenset(
+                {
+                    self.reviewed_research_baseline_blob,
+                    self.reviewed_research_successor_blob,
+                }
+            ),
+        )
+
+        transitions = self.validator.REVIEWED_STAGE90_MOVE_SOURCE_BLOB_TRANSITIONS
+        transition_contract = (
+            self.validator.REVIEWED_STAGE90_MOVE_SOURCE_BLOB_TRANSITION_CONTRACT
+        )
+        self.assertEqual(
+            transition_contract,
+            (
+                (
+                    self.reviewed_research_source,
+                    self.reviewed_research_baseline_blob,
+                    self.reviewed_research_successor_blob,
+                ),
+            ),
+        )
+        self.assertEqual(
+            transitions.get(self.reviewed_research_source),
+            (
+                self.reviewed_research_baseline_blob,
+                self.reviewed_research_successor_blob,
+            ),
+        )
+        source_blob_matches = self.validator._reviewed_source_blob_matches
+        validated_transitions = (
+            self.validator._validated_reviewed_source_blob_transitions(
+                self.validator.REVIEWED_STAGE90_MOVE_SOURCE_BLOBS,
+                transitions,
+                contract_name="reviewed Stage 90 move",
+            )
+        )
+        self.assertTrue(
+            source_blob_matches(
+                self.reviewed_research_source,
+                self.reviewed_research_baseline_blob,
+                self.validator.REVIEWED_STAGE90_MOVE_SOURCE_BLOBS,
+                validated_transitions,
+                contract_name="reviewed Stage 90 move",
+            )
+        )
+        self.assertTrue(
+            source_blob_matches(
+                self.reviewed_research_source,
+                self.reviewed_research_successor_blob,
+                self.validator.REVIEWED_STAGE90_MOVE_SOURCE_BLOBS,
+                validated_transitions,
+                contract_name="reviewed Stage 90 move",
+            )
+        )
+        self.assertFalse(
+            source_blob_matches(
+                self.reviewed_research_source,
+                "0" * 40,
+                self.validator.REVIEWED_STAGE90_MOVE_SOURCE_BLOBS,
+                validated_transitions,
+                contract_name="reviewed Stage 90 move",
+            )
+        )
+        baseline_edges = self.validator._reviewed_stage90_move_edges(
+            baseline_context,
+            move_targets,
+        )
+        real_git_sha1_blob = self.validator._git_sha1_blob
+
+        def successor_hash(text: str) -> str:
+            if text == baseline_text:
+                return self.reviewed_research_successor_blob
+            return real_git_sha1_blob(text)
+
+        with mock.patch.object(
+            self.validator,
+            "_git_sha1_blob",
+            side_effect=successor_hash,
+        ):
+            successor_edges = self.validator._reviewed_stage90_move_edges(
+                baseline_context,
+                move_targets,
+            )
+
+        self.assertEqual(successor_edges, baseline_edges)
+        self.assertEqual(len(successor_edges), 29)
+        self.assertEqual(
+            len(self.validator.REVIEWED_STAGE90_MOVE_SOURCE_BLOBS),
+            14,
+        )
+
+    def test_immutable_aliases_compose_exact_reviewed_blob_transition(
+        self,
+    ) -> None:
+        _, move_targets, _ = self.validator._document_taxonomy_transition_manifest(
+            self.context
+        )
+        baseline_context = self._reviewed_research_context(
+            self._reviewed_research_baseline_text()
+        )
+        baseline_text = baseline_context.texts[self.reviewed_research_source]
+
+        baseline_edges = self.validator._reviewed_immutable_historical_alias_edges(
+            baseline_context,
+            move_targets,
+        )
+        real_git_sha1_blob = self.validator._git_sha1_blob
+
+        def successor_hash(text: str) -> str:
+            if text == baseline_text:
+                return self.reviewed_research_successor_blob
+            return real_git_sha1_blob(text)
+
+        with mock.patch.object(
+            self.validator,
+            "_git_sha1_blob",
+            side_effect=successor_hash,
+        ):
+            successor_edges = self.validator._reviewed_immutable_historical_alias_edges(
+                baseline_context,
+                move_targets,
+            )
+
+        self.assertEqual(successor_edges, baseline_edges)
+        self.assertEqual(len({edge.source for edge in successor_edges}), 27)
+        self.assertEqual(len(successor_edges), 93)
+        self.assertEqual(
+            self.validator.IMMUTABLE_HISTORICAL_ALIAS_OCCURRENCE_COUNT,
+            169,
+        )
+
+    def test_reviewed_blob_transition_rejects_arbitrary_research_drift(
+        self,
+    ) -> None:
+        _, move_targets, _ = self.validator._document_taxonomy_transition_manifest(
+            self.context
+        )
+        drifted_context = self._reviewed_research_context(
+            self.context.texts[self.reviewed_research_source]
+            + "\n<!-- unreviewed mutation -->\n"
+        )
+
+        for resolver in (
+            self.validator._reviewed_stage90_move_edges,
+            self.validator._reviewed_immutable_historical_alias_edges,
+        ):
+            with (
+                self.subTest(resolver=resolver.__name__),
+                self.assertRaises(self.validator.ConfigurationError),
+            ):
+                resolver(drifted_context, move_targets)
+
+    def test_reviewed_blob_transition_configuration_fails_closed(self) -> None:
+        _, move_targets, _ = self.validator._document_taxonomy_transition_manifest(
+            self.context
+        )
+        baseline_context = self._reviewed_research_context(
+            self._reviewed_research_baseline_text()
+        )
+        valid_transition = (
+            self.reviewed_research_baseline_blob,
+            self.reviewed_research_successor_blob,
+        )
+        invalid_configurations = {
+            "empty-map": {},
+            "unknown-key": {
+                PurePosixPath(
+                    "docs/90.references/research/unreviewed.md"
+                ): valid_transition
+            },
+            "empty-transition": {self.reviewed_research_source: ()},
+            "list-transition": {
+                self.reviewed_research_source: list(valid_transition)
+            },
+            "one-member-transition": {
+                self.reviewed_research_source: (
+                    self.reviewed_research_baseline_blob,
+                )
+            },
+            "non-string-member": {
+                self.reviewed_research_source: (
+                    self.reviewed_research_baseline_blob,
+                    1,
+                )
+            },
+            "uppercase-base": {
+                self.reviewed_research_source: (
+                    self.reviewed_research_baseline_blob.upper(),
+                    self.reviewed_research_successor_blob,
+                )
+            },
+            "uppercase-target": {
+                self.reviewed_research_source: (
+                    self.reviewed_research_baseline_blob,
+                    self.reviewed_research_successor_blob.upper(),
+                )
+            },
+            "non-hex-target": {
+                self.reviewed_research_source: (
+                    self.reviewed_research_baseline_blob,
+                    "g" * 40,
+                )
+            },
+            "unreviewed-valid-target": {
+                self.reviewed_research_source: (
+                    self.reviewed_research_baseline_blob,
+                    "1" * 40,
+                )
+            },
+            "extra-reviewed-source": {
+                self.reviewed_research_source: valid_transition,
+                PurePosixPath("docs/90.references/research/README.md"): (
+                    "a21d2cfeae6dfcd4cdc98f6661c1f7a190c49523",
+                    "2" * 40,
+                ),
+            },
+            "base-map-mismatch": {
+                self.reviewed_research_source: (
+                    "0" * 40,
+                    self.reviewed_research_successor_blob,
+                )
+            },
+            "baseline-duplicate": {
+                self.reviewed_research_source: (
+                    self.reviewed_research_baseline_blob,
+                    self.reviewed_research_baseline_blob,
+                )
+            },
+        }
+
+        for name, transitions in invalid_configurations.items():
+            for resolver in (
+                self.validator._reviewed_stage90_move_edges,
+                self.validator._reviewed_immutable_historical_alias_edges,
+            ):
+                with (
+                    self.subTest(name=name, resolver=resolver.__name__),
+                    mock.patch.object(
+                        self.validator,
+                        "REVIEWED_STAGE90_MOVE_SOURCE_BLOB_TRANSITIONS",
+                        transitions,
+                    ),
+                    self.assertRaises(self.validator.ConfigurationError),
+                ):
+                    resolver(baseline_context, move_targets)
+
+    def test_reviewed_blob_transition_rejects_base_mismatch(self) -> None:
+        mismatched_source_blobs = {
+            **self.validator.REVIEWED_STAGE90_MOVE_SOURCE_BLOBS,
+            self.reviewed_research_source: "0" * 40,
+        }
+
+        with self.assertRaises(self.validator.ConfigurationError):
+            self.validator._validated_reviewed_source_blob_transitions(
+                mismatched_source_blobs,
+                self.validator.REVIEWED_STAGE90_MOVE_SOURCE_BLOB_TRANSITIONS,
+                contract_name="reviewed Stage 90 move",
+            )
+
+    def test_reviewed_blob_transition_rejects_slice_and_prefix_overlap(
+        self,
+    ) -> None:
+        validate_transitions = (
+            self.validator._validated_reviewed_source_blob_transitions
+        )
+        transition_source = self.reviewed_research_source
+        overlap_cases = {
+            "append-only-prefix": {
+                "append_only_prefix_bytes": {transition_source: 1}
+            },
+            "insertion-slice": {
+                "insertion_slices": {transition_source: (1, 1, b"\n")}
+            },
+        }
+
+        for name, overlap in overlap_cases.items():
+            with self.subTest(name=name), self.assertRaises(
+                self.validator.ConfigurationError
+            ):
+                validate_transitions(
+                    self.validator.IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS,
+                    self.validator.REVIEWED_STAGE90_MOVE_SOURCE_BLOB_TRANSITIONS,
+                    contract_name="immutable historical alias",
+                    **overlap,
+                )
 
     def test_immutable_history_research_slice_and_other_sources_fail_closed(
         self,

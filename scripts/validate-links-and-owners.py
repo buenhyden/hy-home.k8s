@@ -26,6 +26,7 @@ from dataclasses import dataclass, field as dataclass_field, replace
 from functools import lru_cache
 from pathlib import Path
 from pathlib import PurePosixPath
+from types import MappingProxyType
 from typing import Any, Iterable, Mapping, Sequence
 from urllib.parse import unquote
 
@@ -750,6 +751,25 @@ REVIEWED_STAGE90_MOVE_SOURCE_BLOBS = {
         "a21d2cfeae6dfcd4cdc98f6661c1f7a190c49523"  # pragma: allowlist secret
     ),
 }
+REVIEWED_STAGE90_MOVE_SOURCE_BLOB_TRANSITION_CONTRACT: tuple[
+    tuple[PurePosixPath, str, str], ...
+] = (
+    (
+        PurePosixPath("docs/90.references/research/2026-08-08-wer/README.md"),
+        "6bfec251d8927dd82f5c12b49c013a598c64d088",  # pragma: allowlist secret
+        "11719d258d0454d68f3e6b6ed0377c3d3b9de6b2",  # pragma: allowlist secret
+    ),
+)
+REVIEWED_STAGE90_MOVE_SOURCE_BLOB_TRANSITIONS: Mapping[
+    PurePosixPath, tuple[str, str]
+] = MappingProxyType(
+    {
+        source: (baseline_blob, target_blob)
+        for source, baseline_blob, target_blob in (
+            REVIEWED_STAGE90_MOVE_SOURCE_BLOB_TRANSITION_CONTRACT
+        )
+    }
+)
 REVIEWED_STAGE90_MOVE_EDGE_COUNT = 29
 IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS = {
     **REVIEWED_STAGE90_MOVE_SOURCE_BLOBS,
@@ -3416,6 +3436,74 @@ def _git_sha1_blob(text: str) -> str:
     return _git_sha1_blob_bytes(text.encode("utf-8"))
 
 
+def _validated_reviewed_source_blob_transitions(
+    source_blobs: Mapping[PurePosixPath, str],
+    transitions: Mapping[PurePosixPath, tuple[str, str]],
+    *,
+    contract_name: str,
+    append_only_prefix_bytes: Mapping[PurePosixPath, int] | None = None,
+    insertion_slices: Mapping[PurePosixPath, tuple[int, int, bytes]] | None = None,
+) -> Mapping[PurePosixPath, tuple[str, str]]:
+    """Validate one closed set of reviewed frozen-blob transitions."""
+
+    try:
+        transition_items = tuple(transitions.items())
+    except (AttributeError, RuntimeError, TypeError) as error:
+        raise ConfigurationError(
+            f"{contract_name} source blob transition differs"
+        ) from error
+    transition_sources = frozenset(source for source, _ in transition_items)
+    overlap_sources = frozenset(append_only_prefix_bytes or {}) | frozenset(
+        insertion_slices or {}
+    )
+    if (
+        not transition_items
+        or not transition_sources.issubset(source_blobs)
+        or transition_sources.intersection(overlap_sources)
+    ):
+        raise ConfigurationError(f"{contract_name} source blob transition differs")
+    candidate_contract: list[tuple[PurePosixPath, str, str]] = []
+    for source, transition in transition_items:
+        if type(transition) is not tuple or len(transition) != 2:  # noqa: E721
+            raise ConfigurationError(f"{contract_name} source blob transition differs")
+        baseline_blob, target_blob = transition
+        if (
+            not isinstance(baseline_blob, str)
+            or not isinstance(target_blob, str)
+            or re.fullmatch(r"[0-9a-f]{40}", baseline_blob) is None
+            or re.fullmatch(r"[0-9a-f]{40}", target_blob) is None
+            or source_blobs[source] != baseline_blob
+            or target_blob == baseline_blob
+        ):
+            raise ConfigurationError(f"{contract_name} source blob transition differs")
+        candidate_contract.append((source, baseline_blob, target_blob))
+    if (
+        tuple(candidate_contract)
+        != REVIEWED_STAGE90_MOVE_SOURCE_BLOB_TRANSITION_CONTRACT
+    ):
+        raise ConfigurationError(f"{contract_name} source blob transition differs")
+    return MappingProxyType(dict(transition_items))
+
+
+def _reviewed_source_blob_matches(
+    source: PurePosixPath,
+    actual_blob: str,
+    source_blobs: Mapping[PurePosixPath, str],
+    transitions: Mapping[PurePosixPath, tuple[str, str]],
+    *,
+    contract_name: str,
+) -> bool:
+    """Match one source against its frozen baseline or exact reviewed successor."""
+
+    expected_blob = source_blobs.get(source)
+    if expected_blob is None:
+        raise ConfigurationError(f"{contract_name} transition source differs")
+    transition = transitions.get(source)
+    return actual_blob == expected_blob or (
+        transition is not None and actual_blob == transition[1]
+    )
+
+
 def _archive_transition_handoff(context: Context) -> ArchiveTransitionHandoff:
     """Project exact frozen-source edges only while the registry is transition."""
 
@@ -3471,14 +3559,27 @@ def _reviewed_stage90_move_edges(
 
     if context.route_state != "transition":
         return frozenset()
+    reviewed_transitions = _validated_reviewed_source_blob_transitions(
+        REVIEWED_STAGE90_MOVE_SOURCE_BLOBS,
+        REVIEWED_STAGE90_MOVE_SOURCE_BLOB_TRANSITIONS,
+        contract_name="reviewed Stage 90 move",
+    )
     edges: set[ArchiveTransitionEdge] = set()
     contributing_sources: set[PurePosixPath] = set()
-    for source, expected_blob in REVIEWED_STAGE90_MOVE_SOURCE_BLOBS.items():
+    for source in REVIEWED_STAGE90_MOVE_SOURCE_BLOBS:
         text = context.texts.get(source)
+        actual_blob = _git_sha1_blob(text) if text is not None else ""
+        source_matches = _reviewed_source_blob_matches(
+            source,
+            actual_blob,
+            REVIEWED_STAGE90_MOVE_SOURCE_BLOBS,
+            reviewed_transitions,
+            contract_name="reviewed Stage 90 move",
+        )
         if (
             text is None
             or source not in context.tracked_regular_paths
-            or _git_sha1_blob(text) != expected_blob
+            or not source_matches
         ):
             raise ConfigurationError(
                 "reviewed Stage 90 move source differs from its frozen blob"
@@ -3551,6 +3652,7 @@ def _reviewed_immutable_historical_alias_edges(
         contract_name="immutable historical alias",
         insertion_slices=IMMUTABLE_HISTORICAL_INSERTION_SLICES,
         expected_occurrence_count=IMMUTABLE_HISTORICAL_ALIAS_OCCURRENCE_COUNT,
+        source_blob_transitions=REVIEWED_STAGE90_MOVE_SOURCE_BLOB_TRANSITIONS,
     )
 
 
@@ -3611,6 +3713,7 @@ def _reviewed_source_pinned_alias_edges(
     insertion_slices: Mapping[PurePosixPath, tuple[int, int, bytes]] | None = None,
     exact_redirects: Mapping[PurePosixPath, PurePosixPath] | None = None,
     expected_occurrence_count: int | None = None,
+    source_blob_transitions: Mapping[PurePosixPath, tuple[str, str]] | None = None,
 ) -> dict[ArchiveTransitionEdge, PurePosixPath]:
     """Resolve a closed source/blob/edge-pinned historical alias set."""
 
@@ -3631,6 +3734,15 @@ def _reviewed_source_pinned_alias_edges(
         )
     ):
         raise ConfigurationError(f"{contract_name} insertion-slice contract differs")
+    reviewed_transitions = None
+    if source_blob_transitions is not None:
+        reviewed_transitions = _validated_reviewed_source_blob_transitions(
+            source_blobs,
+            source_blob_transitions,
+            contract_name=contract_name,
+            append_only_prefix_bytes=prefix_sizes,
+            insertion_slices=slices,
+        )
     redirects = (
         dict(exact_redirects)
         if exact_redirects is not None
@@ -3664,7 +3776,17 @@ def _reviewed_source_pinned_alias_edges(
                 and _git_sha1_blob_bytes(content[:prefix_size]) == expected_blob
             )
         else:
-            source_matches = text is not None and _git_sha1_blob(text) == expected_blob
+            source_matches = text is not None and (
+                _git_sha1_blob(text) == expected_blob
+                if reviewed_transitions is None
+                else _reviewed_source_blob_matches(
+                    source,
+                    _git_sha1_blob(text),
+                    source_blobs,
+                    reviewed_transitions,
+                    contract_name=contract_name,
+                )
+            )
         if (
             text is None
             or source not in context.tracked_regular_paths
