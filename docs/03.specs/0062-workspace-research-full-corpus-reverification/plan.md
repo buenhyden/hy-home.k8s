@@ -2294,7 +2294,7 @@ command passes, and Step 6 remains controller-owned review and commit work.
   strict Markdown validator returned `0` violations; strict links returned
   `PASS CROSS-DOCUMENT`; and `git diff --check` passed.
 
-- [ ] **Step 6: commit and review shared integration**
+- [x] **Step 6: commit and review shared integration**
 
   Review the local diff for accidental old-row reflow, then commit:
 
@@ -2312,6 +2312,20 @@ command passes, and Step 6 remains controller-owned review and commit work.
   Generate the committed package and dispatch one ledger/source-fidelity
   reviewer and one task reviewer. Resolve Critical or Important findings in a
   scoped fix commit and re-review before Task 9.
+
+  The exact six-file integration commit is
+  `fef53976b97c560de0a9f020e87be1e7e0e1c3b8`
+  (`docs: integrate full-corpus research evidence`). The registered
+  implementer report SHA-256 is
+  `f781967ffc14a7e1d23421c06859a3eea0fc78cc510ea2df059165ab487ef7bd`;
+  the registered review-package SHA-256 is
+  `9c68c5f77a6473f6c6c4c106669514d90080d7a88f5558ef67e6db363e60952c`
+  for exact range `cb494def..fef53976`. Post-commit owner review of the
+  ledger/source-fidelity projection and task/spec quality returned
+  `APPROVED`, Critical/Important/Minor `0/0/0`. The required shared
+  integration, strict registry, strict Markdown, strict links/owners,
+  `git diff --check`, and artifact `residue` lanes were rerun after commit and
+  passed. WRFR-007 is complete; WRFR-008 is queued and ready.
 
 ### Task 9: WRFR-008 — cross-link and lifecycle reconciliation
 

@@ -45,9 +45,11 @@ reasons. The existing delivery/quality owner now contains the single dated
 four-row increment and all focused GREEN checks pass. Its exact implementation
 commit, registered report/package, and post-commit review are complete; the
 sole intentional pre-closure lifecycle Minor is corrected in this closure.
-WRFR-006 is complete. WRFR-007 reached its pre-integration checker recovery
-gate and is blocked until the reviewed checker-only recovery produces the
-semantic shared-ledger RED. No remote retry is permitted.
+WRFR-006 is complete. WRFR-007 completed the reviewed checker-only recovery,
+the Stage 90 transition-guard recovery, the semantic shared-ledger RED, the
+exact six-file shared projection commit, registered report/package, and
+post-commit owner review. WRFR-008 is queued for cross-link and lifecycle
+reconciliation. No remote retry is permitted.
 
 The target is a 2026-08-20 external-source and workspace reverification of all
 thirty-six existing `REQ-WERPC-*` owners, integrated into the existing
@@ -67,8 +69,9 @@ records. WRFR-006 has executed its approved pre-remote review, two RED probes,
 two preflights, summary initialization/registration, both reviewed local
 recoveries, and exactly one approved query budget per class. The final summary,
 owner edit, focused GREEN evidence, exact commit, registered report/package,
-and post-commit review are complete. WRFR-007 and later work packages have not
-executed.
+and post-commit review are complete. WRFR-007 completed its checker recovery,
+shared ledger/scope/pack integration, registered report/package, and
+post-commit owner review. WRFR-008 and later work packages have not executed.
 
 ## Inputs
 
@@ -122,8 +125,8 @@ stage, or commit.
 | WRFR-004 | VAL-WRFR-002..005, 008, 013 | Integrate SDLC/documentation findings | documentation integrator | Done | Sixteen allocated rows appended and committed as `7bbe6517`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole stale-evidence Minor addressed |
 | WRFR-005 | VAL-WRFR-002..005, 008, 013 | Integrate platform/security findings | platform/security integrator | Done | Three allocated rows appended and committed as `63efc8de`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole stale-evidence Minor addressed |
 | WRFR-006 | VAL-WRFR-002..005, 008, 011, 013 | Integrate delivery/quality and read-only GitHub evidence | delivery/security integrator | Done | Nine-class summary and four-row owner integration committed as `ae7a2262`; registered post-commit review approved | Report/package registered; task review `APPROVED WITH MINOR`, Critical/Important/Minor `0/0/1`; sole lifecycle Minor addressed |
-| WRFR-007 | VAL-WRFR-006..010, 013 | Integrate source, claim, scope, and pack projections | controller Step 6 | In Progress | Steps 1..5 complete; accepted semantic RED and original Step 5 are recorded; exact guard commit `545f114d` is independently approved | Awaiting exact six-file integration commit, registered package, and post-commit reviews; no completion claimed |
-| WRFR-008 | VAL-WRFR-008, 010, 013 | Reconcile indexes, links, lifecycle, and progress | documentation integrator | Queued | Not executed | Awaiting terminal parsed counts |
+| WRFR-007 | VAL-WRFR-006..010, 013 | Integrate source, claim, scope, and pack projections | controller Step 6 | Done | Exact six-file integration committed as `fef53976`; registered package and post-commit owner review approved | Report/package registered; owner review `APPROVED`, Critical/Important/Minor `0/0/0`; shared integration, registry, Markdown, links, diff, and residue lanes passed |
+| WRFR-008 | VAL-WRFR-008, 010, 013 | Reconcile indexes, links, lifecycle, and progress | documentation integrator | Queued | Not executed | Terminal parsed counts known; awaiting reconciliation preprobe |
 | WRFR-009 | VAL-WRFR-010, 012..015 | Run terminal lanes, whole-branch review, closure, cleanup | platform + QA | Queued | Not executed | Awaiting WRFR-008 |
 
 ## Approval and Safety Boundaries

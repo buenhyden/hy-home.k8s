@@ -16931,6 +16931,45 @@ post-commit ledger/source-fidelity and task reviews. No integration commit,
 package, post-commit approval, WRFR-007 completion, remote query, live action,
 push, merge, or publication is claimed by this handoff.
 
+### WRFR-007 post-commit shared integration closure
+
+The exact six-file integration commit is
+`fef53976b97c560de0a9f020e87be1e7e0e1c3b8`
+(`docs: integrate full-corpus research evidence`). It modified only the shared
+source/claim ledger, scope projection, pack README, Plan, Task, and durable
+progress files. No new research folder, duplicate topical report, duplicate
+request owner, remote query, live action, push, merge, publication, workflow
+dispatch, or setting mutation occurred.
+
+Registered implementer report SHA-256 is
+`f781967ffc14a7e1d23421c06859a3eea0fc78cc510ea2df059165ab487ef7bd`.
+Registered review-package SHA-256 is
+`9c68c5f77a6473f6c6c4c106669514d90080d7a88f5558ef67e6db363e60952c` for exact
+range `cb494def..fef53976`. The package includes the checker-recovery,
+Stage 90 transition-guard recovery, and exact six-file integration commits so
+the review surface preserves the full WRFR-007 unblock chain.
+
+Post-commit owner review of ledger/source-fidelity and task/spec quality
+returned `APPROVED`, Critical/Important/Minor `0/0/0`. The reviewed evidence
+confirms that `SRC-WERPC-091` and `CLM-WERPC-013-01..06` are allocated exactly
+once, the ten-scope projection exists once, the terminal pack census is
+`markdownFiles=14, requests=36, sources=91, claims=141`, and prior ledger rows
+were not reflowed.
+
+Rerun validation after commit:
+
+- Shared integration: `PASS validate-integration`.
+- Strict document contract registry: `PASS document contract registry: 540 paths`.
+- Strict Markdown profiles: `0` violations.
+- Strict links/owners: `PASS CROSS-DOCUMENT`.
+- Diff hygiene: `git diff --check` PASS.
+- Artifact residue: `PASS residue` with `artifact-inventory.json`.
+
+WRFR-007 is complete. WRFR-008 is queued and ready for the reconciliation
+preprobe. No terminal lifecycle completion, whole-branch review, terminal
+cleanup, push, merge, publication, workflow dispatch, remote query, hosted
+state, provider-runtime state, or live infrastructure state is claimed here.
+
 ## 2026-08-21 - WRFR-005 platform/security integration
 
 ### Metadata
