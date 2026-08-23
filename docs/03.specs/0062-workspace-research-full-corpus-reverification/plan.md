@@ -2552,18 +2552,26 @@ No cleanup or finish is authorized by this amendment.
 
 ##### Task 12 fix-round evidence boundary
 
-Registered `task-13-brief.md` is Task 12 correction evidence only, not Plan
-Task 13 or a WRFR. Registered `task-14-brief.md` is a clerical correction to
-that brief only, not Plan Task 14 or a WRFR; it replaces the absent mistyped
-third blob fixture with tracked blob
-`a21d2cfeae6dfcd4cdc98f6661c1f7a190c49523`. Both briefs, Task 12 artifacts,
-the inventory, and ignored progress remain immutable. Exact test-only Commit A
-is `0577d1c0` (`test: allowlist reviewed blob fixtures`); this three-document
-contract is the separate Commit B. `task-13-report.md` will record the complete
-two-commit and validation evidence without becoming a Plan task. The design is
-human-approved pending fresh independent security and task/spec re-review. No
-Path B replay, WRFR-008, incident-recovery executable action, cleanup, remote or
-live mutation, or lifecycle transition is authorized or performed by this fix.
+The `task-13-*`, `task-14-*`, `task-15-*`, and `task-16-*` namespaces are Task
+12 correction evidence only; none is a Plan Task or WRFR. Registered
+`task-14-brief.md` corrects the absent mistyped third blob fixture in the
+registered Task 13 brief to tracked blob
+`a21d2cfeae6dfcd4cdc98f6661c1f7a190c49523`. The exact correction commits are
+`0577d1c0ea3a1e8abee78a674cbe7918108a0dc7`,
+`2d76516fbea3cecf71790b034882e81013286564`, and
+`a3796481ab554765f29aacd0fe571096f8a947f7`. Registered mode-`0600`,
+10484-byte `task-13-report.md` has SHA-256
+`45bfb4af077f4ada1e8dc1a9056c15565711b3b9e6147f442c3e1d39974f011b`;
+registered mode-`0600`, 59500-byte `task-12-fix-1-review-package.md` has
+SHA-256
+`075048d9add453d4420c01e2260012ee1de70f9c281557c0d56b8b556a96b84c`.
+Independent Python and security reviews are `APPROVED`,
+Critical/Important/Minor `0/0/0`; task/spec review is `REJECTED`, `0/1/0`,
+solely for the stale registered-evidence wording corrected here and awaits
+narrow re-review. All briefs, reports, packages, inventory, and ignored
+progress remain immutable. No Path B replay, WRFR-008, incident-recovery
+executable action, cleanup, remote or live mutation, or lifecycle transition
+is authorized or performed by this fix.
 
 ### Task 9: WRFR-008 — cross-link and lifecycle reconciliation
 

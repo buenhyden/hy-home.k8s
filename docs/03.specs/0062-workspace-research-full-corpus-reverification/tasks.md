@@ -1081,17 +1081,25 @@ recovery, cleanup, temporary-script action, or SDD finish occurs in this fix.
 
 ### Task 12 fix-round evidence boundary
 
-Registered `task-13-brief.md` is Task 12 fix evidence only, not Plan Task 13 or
-a WRFR. Registered `task-14-brief.md` corrects only the brief's absent mistyped
-third fixture to tracked blob `a21d2cfeae6dfcd4cdc98f6661c1f7a190c49523`;
-it is not Plan Task 14 or a WRFR. Preserve both briefs, every Task 12 artifact,
-inventory, and ignored progress unchanged. Exact test-only Commit A is
-`0577d1c0` (`test: allowlist reviewed blob fixtures`); this exact Plan/Task/
-durable-progress correction is Commit B. Unregistered `task-13-report.md`
-records the two-commit and ordered validation evidence only. Fresh Python,
-security, and task/spec review of the correction remains mandatory before Path
-B replay. No replay, WRFR-008, recovery executable, cleanup, remote/live action,
-or lifecycle change is part of this fix.
+The `task-13-*`, `task-14-*`, `task-15-*`, and `task-16-*` namespaces are Task
+12 fix evidence only; none is a Plan Task or WRFR. Registered
+`task-14-brief.md` corrects only the absent mistyped third fixture in the
+registered Task 13 brief to tracked blob
+`a21d2cfeae6dfcd4cdc98f6661c1f7a190c49523`. The exact correction commits are
+`0577d1c0ea3a1e8abee78a674cbe7918108a0dc7`,
+`2d76516fbea3cecf71790b034882e81013286564`, and
+`a3796481ab554765f29aacd0fe571096f8a947f7`. Registered mode-`0600`,
+10484-byte `task-13-report.md` has SHA-256
+`45bfb4af077f4ada1e8dc1a9056c15565711b3b9e6147f442c3e1d39974f011b`;
+registered mode-`0600`, 59500-byte `task-12-fix-1-review-package.md` has
+SHA-256
+`075048d9add453d4420c01e2260012ee1de70f9c281557c0d56b8b556a96b84c`.
+Independent Python and security reviews are `APPROVED`,
+Critical/Important/Minor `0/0/0`; task/spec review is `REJECTED`, `0/1/0`,
+solely for the stale registered-evidence wording corrected here and awaits
+narrow re-review. Preserve every brief, report, package, inventory, and ignored
+progress unchanged. No replay, WRFR-008, recovery executable, cleanup,
+remote/live action, or lifecycle change is part of this fix.
 
 ### Stop conditions
 

@@ -17162,14 +17162,15 @@ cleanup execution remains separately human-gated.
 - Provenance: registered Task 13 fix brief, registered Task 14 clerical correction, exact test-only Commit A, and this three-document Commit B
 - Sensitivity: internal
 - Retention: durable through WRFR-009 closure
-- Next Owner: controller validation and fresh Python, security, and task/spec review
+- Next Owner: controller validation and narrow task/spec re-review
 
 #### Progress
 
 This entry additively supersedes only the rejected parts of the preceding Task
-12 ruling. `task-13-*` is Task 12 correction evidence, not Plan Task 13 or a new
-WRFR. `task-14-*` corrects only Task 13's mistyped third allowlist fixture, not
-Plan Task 14 or a WRFR. Registered `task-13-brief.md` is mode `0600`, size
+12 ruling. The `task-13-*`, `task-14-*`, `task-15-*`, and `task-16-*`
+namespaces are Task 12 correction evidence only; none is a Plan Task or WRFR.
+Registered `task-14-brief.md` corrects only Task 13's mistyped third allowlist
+fixture. Registered `task-13-brief.md` is mode `0600`, size
 `26000`, SHA-256
 `d504dd23da4b4ee33668e735848ab0b5a75f832a3965462028fe940b3e5f993a`;
 registered `task-14-brief.md` is mode `0600`, size `2630`, SHA-256
@@ -17243,24 +17244,34 @@ command remain hard gates.
 - Direct `detect-secrets scan tests/test_archive_validation.py`: PASS, zero
   findings. `.secrets.baseline` remained SHA-256
   `9e4117d7868cc4d770364ee2108cc1d4314a46121b97f2a443b595364bfebd94`.
-- Commit B is the exact Plan, Task, and durable-progress correction logical
-  unit; its SHA and ordered completion evidence belong in guarded unregistered
-  `task-13-report.md` after controller-run long lanes complete.
+- The exact correction commits are
+  `0577d1c0ea3a1e8abee78a674cbe7918108a0dc7`,
+  `2d76516fbea3cecf71790b034882e81013286564`, and
+  `a3796481ab554765f29aacd0fe571096f8a947f7`. Registered mode-`0600`,
+  10484-byte `task-13-report.md` has SHA-256
+  `45bfb4af077f4ada1e8dc1a9056c15565711b3b9e6147f442c3e1d39974f011b`;
+  registered mode-`0600`, 59500-byte
+  `task-12-fix-1-review-package.md` has SHA-256
+  `075048d9add453d4420c01e2260012ee1de70f9c281557c0d56b8b556a96b84c`.
+- Independent Python and security reviews are `APPROVED`,
+  Critical/Important/Minor `0/0/0`. Task/spec review is `REJECTED`, `0/1/0`,
+  solely for the stale registered-evidence wording corrected here and awaits
+  narrow re-review.
 - No research projection, checker, Spec, lifecycle, inventory, ignored progress,
   recovery namespace, remote/live resource, Path B replay, WRFR-008 action, or
   cleanup action changed.
 
 #### Handoff
 
-The controller owns exact affected/staged lanes, exact-index pre-commit,
-repository-quality, both diff checks, and `pre-commit run --all-files`. Only
-after those results are final may the implementer create `task-13-report.md`
-once through `O_CREAT|O_EXCL|O_NOFOLLOW` mode `0600`, recording the full ordered
-eight-step completion sequence. Fresh Python, security, and task/spec review
-must approve the exact `fec19b02..<correction-head>` package before Path B
-begins. Residual risks are the unexecuted replay, rejected-until-re-reviewed
-recovery design, non-cooperating-writer race, and separately unapproved
-destructive/temporary-executable operations.
+The controller owns validation and narrow task/spec re-review of this
+documentation-only registered-evidence correction. The registered Task 13
+report and Task 12 fix package above already preserve the ordered completion
+evidence. Python and security review approved the exact correction with no
+finding; task/spec review rejected only the stale wording now corrected and
+must approve its narrow re-review before Path B begins. Residual risks are the
+unexecuted replay, the separately human-gated recovery design and destructive
+execution, the non-cooperating-writer race, and separately unapproved
+temporary-executable operations.
 
 ## 2026-08-21 - WRFR-005 platform/security integration
 
