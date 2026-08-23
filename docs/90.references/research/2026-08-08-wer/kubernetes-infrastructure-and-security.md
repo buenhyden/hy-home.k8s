@@ -3,7 +3,7 @@ title: 'Reference: Kubernetes, Infrastructure, and Security'
 type: content/reference
 status: active
 owner: platform
-updated: 2026-08-10
+updated: 2026-08-23
 ---
 
 # Reference: Kubernetes, Infrastructure, and Security
@@ -926,6 +926,33 @@ attestation, or recovery output was inspected.
   on a Kubernetes, ESO, Vault, Gatekeeper, Argo CD, Sigstore, SLSA, GitHub,
   NIST, Adminer, identity/admission, trust-policy, artifact-flow, or recovery
   change.
+
+### 2026-08-23 reconciliation and workload-identity increment
+
+The current [Argo CD automated-sync contract](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/)
+preserves an important trigger boundary: a live-cluster change alone does not
+cause another automated synchronization for an already synchronized Git
+revision unless automated self-heal is enabled. The tracked Applications'
+`selfHeal: true` fields are repository-static desired state only. They do not
+prove the controller observed drift, retried, pruned, reconciled, or restored
+health; revision identity, sync/health status, and recovery behavior remain
+`DEFER` pending separately authorized live evidence.
+
+Kubernetes' current [ServiceAccount guidance](https://kubernetes.io/docs/concepts/security/service-accounts/)
+continues to favor dedicated identities, least-privilege authorization, and
+short-lived projected tokens obtained through TokenRequest over long-lived
+credentials. Its [declarative-management guidance](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/declarative-config/)
+describes managing object configuration from files, but applying desired state
+does not prove effective RBAC, token audience or lifetime, admission, rollout,
+or workload behavior. The existing ServiceAccount, token-automount, and RBAC
+gaps therefore keep their `Partial`/`DEFER` disposition; this increment does
+not authorize a manifest or live-cluster change.
+
+The immutable-reference, signature, and attestation boundary is also
+unchanged. A Git revision, chart version, image digest, signature, provenance
+statement, verifier policy, and admission result remain distinct evidence
+classes; no registry object, trust decision, reconciliation, or runtime result
+was inspected.
 
 ## Related Documents
 

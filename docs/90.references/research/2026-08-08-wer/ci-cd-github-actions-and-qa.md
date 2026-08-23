@@ -3,7 +3,7 @@ title: 'Reference: CI/CD, GitHub Actions, and QA'
 type: content/reference
 status: active
 owner: platform
-updated: 2026-08-12
+updated: 2026-08-23
 ---
 
 # Reference: CI/CD, GitHub Actions, and QA
@@ -615,6 +615,35 @@ affected-surface, agent-governance-CI, strict Markdown, strict links/owners,
 and diff checks also passed. These are named repository-static results only.
 No result in this section authorizes workflow dispatch, rerun, approval,
 setting mutation, deployment, publication, push, or merge.
+
+### 2026-08-23 conditional OIDC and supply-chain increment
+
+GitHub's current [OIDC security reference](https://docs.github.com/en/actions/reference/security/oidc)
+adds a date-sensitive boundary: the immutable subject-format behavior applies
+automatically to repositories created after 2026-07-15, while an existing
+repository can enter that format by opt-in or by a qualifying rename or
+transfer after that date. This public product rule does not establish this
+repository's creation, rename, or transfer history, opt-in state, effective
+subject format, issued JWT claims, cloud trust policy, token exchange, or
+workload identity. Those
+administration and runtime evidence classes remain `DEFER`.
+
+The tracked workflows still declare no `id-token: write` permission or cloud
+identity consumer. At repository-static depth, no immediate OIDC workflow or
+trust-configuration change is justified. If OIDC is later introduced, the
+owner must record the repository creation/rename/transfer history or opt-in
+decision, exact subject and audience contract, least-privilege job boundary,
+cloud-side trust conditions, and a separately authorized redacted exchange
+result.
+
+The [secure-use guidance](https://docs.github.com/en/actions/reference/security/secure-use)
+and [artifact-attestation guidance](https://docs.github.com/en/actions/concepts/security/artifact-attestations)
+do not change the existing boundary: a full commit SHA is the immutable action
+reference, not an upstream-code or transitive-provenance audit, and generating
+an attestation is distinct from consumer-side verification against explicit
+repository, workflow, signer, and digest expectations. No attestation,
+verification, hosted run, or release artifact was inspected; those outcomes
+remain `DEFER`.
 
 ## Related Documents
 
