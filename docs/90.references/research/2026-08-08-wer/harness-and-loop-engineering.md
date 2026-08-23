@@ -3,7 +3,7 @@ title: 'Reference: Harness and Loop Engineering'
 type: content/reference
 status: active
 owner: platform
-updated: 2026-08-10
+updated: 2026-08-23
 ---
 
 # Reference: Harness and Loop Engineering
@@ -313,6 +313,53 @@ change the shared ledger.
   an exact provider/version and retain only redacted transition, stop,
   recovery, and handoff metadata. Refresh when a cited Codex orchestration
   surface or the local lifecycle/checkpoint contract changes.
+
+### 2026-08-23 provider-control gap increment
+
+This gap-only increment follows the Spec 0054 terminal provider boundary:
+Claude and Codex are the provider adapters under comparison, while the shared
+repository contract remains provider-neutral. It changes no adapter, hook,
+model configuration, owner, validator, or document topology.
+
+#### Codex orchestration and hook delta
+
+- **Documented fact:** the current [Codex configuration
+  reference](https://learn.chatgpt.com/docs/config-file/config-reference) and
+  [subagent guide](https://learn.chatgpt.com/docs/agent-configuration/subagents)
+  describe multi-agent operation as stable and enabled by default. This
+  supersedes an experimental-only product-surface description, but it does not
+  prove native agent discovery or delegation in this worktree
+  (`SRC-WERPC-010`–`011`).
+- **Documented fact:** the current [Codex hooks
+  guide](https://learn.chatgpt.com/docs/hooks) includes lifecycle events such
+  as `Stop`, `SubagentStop`, `PreCompact`, and `PostCompact`
+  (`SRC-WERPC-012`). Their existence supplies interception and observation
+  points; it does not make hook coverage complete or a hook equivalent to the
+  workspace approval, sandbox, validation, or termination contracts.
+- **Loop rule:** the subagent permission contract is fail-closed. If a child
+  needs approval and cannot obtain it, the operation returns failure to the
+  parent. The local loop must classify that evidence as `FAIL`, `blocked`, or
+  `escalated` according to the owning contract; it must never infer `PASS` from
+  absent approval or absent hook output.
+
+#### Claude hook delta
+
+The current [Claude Code hooks
+guide](https://code.claude.com/docs/en/hooks-guide) distinguishes deterministic
+command hooks, suitable for production guardrails, from prompt- or agent-based
+hooks whose agent-hook surface is experimental (`SRC-WERPC-006`). A command
+hook can enforce its documented exit-code contract, but tracked configuration
+still does not prove trust, delivery, execution, or complete coverage. Agent
+hooks therefore remain advisory until separately validated and cannot replace
+the same approval and deterministic validation owners.
+
+**Disposition:** the public capability description changed, while local
+runtime evidence did not. Harness and loop contracts remain `Verified` at
+repository-static depth; provider discovery, hook delivery, approval handling,
+delegation, compaction-event delivery, and enforcement completeness remain
+`provider-runtime` / `DEFER`. Recheck on a provider lifecycle, permission, or
+multi-agent contract change, and admit promotion only from a separately
+authorized, non-secret runtime observation.
 
 ## Related Documents
 

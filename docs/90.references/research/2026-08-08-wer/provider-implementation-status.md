@@ -3,7 +3,7 @@ title: 'Reference: Provider Implementation Status'
 type: content/reference
 status: active
 owner: platform
-updated: 2026-08-08
+updated: 2026-08-23
 ---
 
 # Reference: Provider Implementation Status
@@ -278,6 +278,58 @@ provider client, account, credential, connected MCP, or live tool was inspected.
   material AGENTS, config, subagent, sandbox/approval, hook, memory, model, MCP,
   or `.codex/` change; use a versioned non-secret runtime canary only after
   explicit authorization.
+
+### 2026-08-23 provider-contract and authority-convergence increment
+
+This gap-only increment records current official provider contracts without
+promoting any repository declaration to runtime evidence. It also applies the
+terminal Spec 0054 authority interpretation additively: Claude and Codex are the
+current provider projections, while the provider-neutral repository core owns
+shared scope, permission, evidence, validation, and memory rules. Older
+four-surface inventory statements remain dated static observations; they do not
+make Gemini or Antigravity a current terminal provider. No adapter or document
+topology migration is performed by this research increment.
+
+#### Codex documented capability delta
+
+- The official [configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference)
+  and [subagent guide](https://learn.chatgpt.com/docs/agent-configuration/subagents)
+  now describe `features.multi_agent` as stable and enabled by default. This
+  corrects an experimental-only product characterization; it does not prove
+  that this workspace discovered a project agent, spawned a child, or resolved
+  its model and tools.
+- The official [hooks reference](https://learn.chatgpt.com/docs/hooks) documents
+  lifecycle hooks, including stop, subagent-stop, and compaction boundaries.
+  Hooks remain distinct from sandbox and approval authority. A tracked hook
+  declaration therefore proves neither trust, delivery, ordering, nor effect.
+- The official [AGENTS.md guide](https://learn.chatgpt.com/docs/agent-configuration/agents-md)
+  documents the global-to-project discovery chain and nearer-directory
+  precedence. The subagent guide also documents inheritance of the parent
+  sandbox and approval policy; an action that requires approval the child
+  cannot obtain fails instead of silently widening authority.
+
+#### Claude documented capability delta
+
+The official [hooks guide](https://code.claude.com/docs/en/hooks-guide)
+distinguishes deterministic command hooks, suitable for repeatable production
+controls, from experimental agent hooks whose model-mediated behavior is not a
+deterministic gate. The official
+[subagent guide](https://code.claude.com/docs/en/subagents) documents separate
+subagent context and configurable isolation. These contracts support bounded
+delegation, but do not prove that this workspace loaded an adapter, delivered a
+hook, created an isolated worktree, or enforced a permission.
+
+#### Evidence disposition
+
+- **Verified:** the bounded official capability statements above and the
+  terminal authority rule that shared semantics belong to the provider-neutral
+  core with Claude/Codex projections.
+- **Partial:** repository-static adapters and hook declarations can be checked,
+  but equivalence across the two provider runtimes is not established.
+- **DEFER:** native discovery, hook delivery and effect, child execution and
+  isolation, approval outcomes, authentication, entitlement, MCP connection,
+  memory behavior, and resolved model remain provider-runtime observations.
+  They require a separately authorized, versioned, non-secret canary.
 
 ## Sources
 

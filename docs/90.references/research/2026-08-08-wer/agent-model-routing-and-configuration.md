@@ -3,7 +3,7 @@ title: 'Reference: Agent Model Routing and Configuration'
 type: content/reference
 status: active
 owner: platform
-updated: 2026-08-10
+updated: 2026-08-23
 ---
 
 # Reference: Agent Model Routing and Configuration
@@ -297,6 +297,41 @@ The allocation slice assigns no new source or claim ID for this row.
   one non-secret parse/resolution canary for an exact provider-role tuple
   without changing adapters. Refresh when cited configuration, model,
   reasoning, precedence, tool mapping, or a local fitness selector changes.
+
+### 2026-08-23 Codex routing guidance gap increment
+
+This gap-only increment records current documentation without changing any
+model, role, adapter, effort value, evaluation binding, or terminal document
+topology. It applies only to the Spec 0054 Claude/Codex provider boundary.
+
+- **Precedence is a product contract, not runtime evidence.** The current
+  [Codex subagent
+  guide](https://learn.chatgpt.com/docs/agent-configuration/subagents)
+  documents agent-file model or reasoning overrides ahead of an explicit spawn
+  value, then `[agents]` defaults and the parent setting
+  (`SRC-WERPC-011`/`SRC-WERPC-045`). The [configuration
+  reference](https://learn.chatgpt.com/docs/config-file/config-reference)
+  remains a second required surface for accepted keys and values
+  (`SRC-WERPC-010`/`SRC-WERPC-049`). Neither page proves parsing, entitlement,
+  effective resolution, or absence of silent fallback in this workspace.
+- **Model names are recommendations only.** The current [Codex subagent
+  guide](https://learn.chatgpt.com/docs/agent-configuration/subagents) and
+  official model guidance assign
+  `gpt-5.6` to the most demanding work, `gpt-5.6-terra` to read-heavy analysis,
+  and `gpt-5.6-luna` to narrow high-volume work. These names and workload
+  descriptions are dated documentation facts, not admitted local routing
+  tuples or fitness results; see the [latest-model
+  guide](https://developers.openai.com/api/docs/guides/latest-model).
+- **Promotion remains closed.** Exact account availability, parser support,
+  price, latency, task/tool fitness, quality, safety, fallback behavior,
+  canary outcome, and promotion evidence all remain `DEFER`. Do not edit
+  configuration from this documentation alone. A future candidate must use
+  the same evaluation suite, independent adjudication, an exact resolution
+  check, rollback evidence, and platform-owner approval.
+
+**Disposition:** `REQ-WERPC-028` remains `Partial` at public-documentation plus
+repository-static depth. The dated guidance refines a candidate hypothesis; it
+does not change the model-fitness contract or any configured incumbent.
 
 ## Related Documents
 

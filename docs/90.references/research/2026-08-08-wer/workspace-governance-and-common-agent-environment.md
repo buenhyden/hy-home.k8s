@@ -3,7 +3,7 @@ title: 'Reference: Workspace Governance and Common Agent Environment'
 type: content/reference
 status: active
 owner: platform
-updated: 2026-08-08
+updated: 2026-08-23
 ---
 
 # Reference: Workspace Governance and Common Agent Environment
@@ -378,6 +378,32 @@ or a named workspace selector materially changes.
 **Final disposition:** `Partial`, unchanged from the 2026-08-12 baseline. No
 promotion. New source registered: `SRC-WERPC-074`. New claim registered:
 `CLM-WERPC-010-01`.
+
+### 2026-08-23 Spec 0054 authority-convergence increment
+
+This is an additive terminal correction, not a topology migration. Under the
+approved Spec 0054 direction, the current provider set is Claude and Codex, and
+the provider-neutral core owns shared authority, workflow, evidence,
+validation, and durable-memory semantics. Provider gateways and adapters only
+translate those semantics onto native surfaces. Earlier references to Gemini,
+Antigravity, four surfaces, or forty-eight projections remain historical
+repository-static observations for their stated dates; they are not current
+terminal-provider declarations.
+
+#### Common-environment gap reconciliation
+
+| Boundary | Current external contract | Workspace rule | Evidence disposition |
+| --- | --- | --- | --- |
+| Codex orchestration | Official [configuration](https://learn.chatgpt.com/docs/config-file/config-reference) and [subagent](https://learn.chatgpt.com/docs/agent-configuration/subagents) pages describe multi-agent support as stable and on by default. | Keep role semantics and task authority in the provider-neutral core; a Codex agent file is a projection, not its owner. | Product capability `Verified`; project discovery, spawn, delivery, authentication, and model resolution `DEFER`. |
+| Codex instructions and hooks | Official [AGENTS.md discovery](https://learn.chatgpt.com/docs/agent-configuration/agents-md) and [lifecycle hooks](https://learn.chatgpt.com/docs/hooks) are documented product surfaces. | Preserve the thin Codex gateway; keep sandbox/approval as authority and use hooks for bounded lifecycle evidence. | Product contracts `Verified`; effective chain, trust, hook ordering, delivery, and effect `DEFER`. |
+| Child authority | Codex documents parent sandbox/approval inheritance and fail-closed behavior when a child cannot obtain required approval. | A child receives bounded paths and acceptance evidence but no authority expansion; the integration owner retains shared-file writes and final evidence. | Documented inheritance `Verified`; an actual approval outcome or child tool set `DEFER`. |
+| Claude hooks and isolation | Official Claude [hooks](https://code.claude.com/docs/en/hooks-guide) distinguish deterministic command hooks from experimental agent hooks; [subagents](https://code.claude.com/docs/en/subagents) have separate context and configurable isolation. | Use deterministic command hooks only for repeatable controls, treat agent hooks as advisory/experimental, and require explicit non-overlapping ownership for isolated or parallel work. | Product contracts `Verified`; local discovery, hook delivery, isolation creation, permission effect, and execution `DEFER`. |
+
+The authority correction does not authorize moving Stage 90 research, deleting
+legacy projections, rewriting task topology, or cutting over validators. Those
+changes remain with their Spec 0054 work packages. Until those owners land the
+terminal topology, this research pack uses existing owner paths and records the
+transition instead of creating a duplicate report or competing authority.
 
 ## Related Documents
 

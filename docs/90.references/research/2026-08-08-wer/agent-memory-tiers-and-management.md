@@ -3,7 +3,7 @@ title: 'Reference: Agent Memory Tiers and Management'
 type: content/reference
 status: active
 owner: platform
-updated: 2026-08-10
+updated: 2026-08-23
 ---
 
 # Reference: Agent Memory Tiers and Management
@@ -368,6 +368,35 @@ auxiliary evidence and never replace a canonical repository owner.
   non-secret lifecycle observation against an exact provider/version/store;
   do not read ignored checkpoint contents. Refresh when a cited provider
   memory, SDK session, MCP lifecycle, or named local selector changes.
+
+### 2026-08-23 provider-memory gap increment
+
+This gap-only increment follows the Spec 0054 Claude/Codex-only terminal
+provider boundary and changes no memory owner, checkpoint, adapter, retention
+rule, or document topology.
+
+- **Codex:** [Codex
+  Memories](https://learn.chatgpt.com/docs/customization/memories) remains off by
+  default and is a provider-local recall surface (`SRC-WERPC-068`). A product
+  control to use or generate a memory does not prove enablement, retrieval,
+  redaction, retention, deletion, or authority in this workspace.
+- **Claude:** the current [Claude Code execution and context
+  guide](https://code.claude.com/docs/en/how-claude-code-works) documents
+  context compaction, while the [memory
+  guide](https://code.claude.com/docs/en/memory) documents provider-local auto
+  memory (`SRC-WERPC-051`). Compaction preserves provider conversation utility;
+  it does not promote a summary or auto-memory entry into durable or
+  domain-scoped repository memory.
+- **Shared rule:** provider memory, compacted context, session storage, and
+  retrieved resources remain `provider-local-auxiliary`. On every resume,
+  re-observe repository state. Only reviewed, redacted, provenance-bearing
+  facts may enter the durable ledger or the owning domain document; those
+  repository owners win every conflict.
+
+**Disposition:** `REQ-WERPC-029` through `031` remain `Verified` on their local
+contracts and `REQ-WERPC-032` remains `Partial`. Provider enablement, actual
+compaction, retention, deletion, retrieval, and secure-erasure behavior remain
+`provider-runtime` / `DEFER`; no provider store or ignored checkpoint was read.
 
 ## Related Documents
 
