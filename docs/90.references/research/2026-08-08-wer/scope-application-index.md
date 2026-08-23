@@ -3,7 +3,7 @@ title: 'Reference: Scope Application Index'
 type: content/reference
 status: draft
 owner: platform
-updated: 2026-08-14
+updated: 2026-08-23
 ---
 
 # Reference: Scope Application Index
@@ -231,6 +231,39 @@ research touched a path the scope already owns.
 | security and approval | REQ-WERPC-025 | repository-static | changed | live-cluster | `docs/90.references/research/2026-08-08-wer/kubernetes-infrastructure-and-security.md` |
 | CI/CD and QA | REQ-WERPC-022, REQ-WERPC-023, REQ-WERPC-024 | repository-static | unchanged | hosted-ci, repo-static | `docs/90.references/research/2026-08-08-wer/ci-cd-github-actions-and-qa.md` |
 | verification and validation | REQ-WERPC-033 | repository-static | unchanged | human-judgement | `docs/90.references/research/2026-08-08-wer/ci-cd-github-actions-and-qa.md` |
+
+### 2026-08-23 Spec 0054-compatible gap projection
+
+The closed incremental ledger now extends through `SRC-WERPC-115` and
+`CLM-WERPC-014-11`. It changes no requirement status or evidence-class
+promotion. This projection routes the new claims without editing the frozen
+pack README or the two frozen SDLC/documentation topical owners. Those owner
+body and path changes remain with the queued Spec 0054 Stage 90 work packages.
+
+| Scope | Claim IDs | Materialized owner | Retained boundary |
+| --- | --- | --- | --- |
+| harness and loop | `CLM-WERPC-014-01` | [Harness and loop](harness-and-loop-engineering.md#2026-08-23-provider-control-gap-increment) | Product capability is documented; native discovery, hook delivery, approval outcome, execution, and enforcement completeness remain `provider-runtime` / `DEFER`. |
+| provider and common environment | `CLM-WERPC-014-02`, `CLM-WERPC-014-03` | [Provider status](provider-implementation-status.md#2026-08-23-provider-contract-and-authority-convergence-increment), [common environment](workspace-governance-and-common-agent-environment.md#2026-08-23-spec-0054-authority-convergence-increment) | Claude/Codex are the terminal projections and shared rules remain provider-neutral; adapter loading, authentication, isolation, and parity remain `DEFER`. |
+| SDLC and document contracts | `CLM-WERPC-014-04` | [Ledger addendum](source-coverage-and-migration-ledger.md#2026-08-23-spec-0054-authority-convergence-addendum); terminal owner remains `spec-driven-sdlc-and-document-contracts.md` | ISO and spec-driven sources support but do not prescribe the local package. Owner-body materialization, Task sharding, registry/profile activation, and validator cutover remain `DEFER`. |
+| documentation and release communication | `CLM-WERPC-014-05` | [Ledger addendum](source-coverage-and-migration-ledger.md#2026-08-23-spec-0054-authority-convergence-addendum); terminal owner remains `documentation-architecture-and-diataxis.md` | Diátaxis and GitHub Releases do not define local families or authority. Reader validation, rollout evidence, Stage 90 relocation, and cross-link cutover remain `DEFER`. |
+| Kubernetes, infrastructure, and security | `CLM-WERPC-014-06` | [Platform security](kubernetes-infrastructure-and-security.md#2026-08-23-reconciliation-and-workload-identity-increment) | Desired state, self-heal declarations, and identity guidance do not prove live reconciliation, effective RBAC, admission, or recovery. |
+| CI/CD, GitHub Actions, QA, and V&V | `CLM-WERPC-014-07` | [CI/CD and QA](ci-cd-github-actions-and-qa.md#2026-08-23-conditional-oidc-and-supply-chain-increment) | Repository creation/rename/transfer history, OIDC opt-in/JWT/trust, hosted runs, attestation verification, and intended-use evidence remain `DEFER`. |
+| model routing | `CLM-WERPC-014-08` | [Model routing](agent-model-routing-and-configuration.md#2026-08-23-codex-routing-guidance-gap-increment) | Model names are candidate guidance only; exact resolution, account availability, same-suite fitness, cost, latency, safety, rollback, and approval remain `DEFER`. |
+| memory and LLM-WIKI | `CLM-WERPC-014-09`, `CLM-WERPC-014-11` | [Memory tiers](agent-memory-tiers-and-management.md#2026-08-23-provider-memory-gap-increment), [LLM-WIKI](llm-wiki-and-knowledge-routing.md#2026-08-20-full-corpus-reverification) | Provider memory is auxiliary and no external source defines the workspace taxonomy; retrieval effectiveness, retention/deletion, promotion, and secure erasure remain `DEFER`. |
+| AI agents and agency-agents | `CLM-WERPC-014-10` | [AI agents](ai-agents-and-agency-agents.md#2026-08-20-full-corpus-reverification) | Upstream is unchanged after the retained baseline; direct import, provider parity, evaluation, model fitness, and admission remain unproven. |
+
+The pack README remains byte-identical to its reviewed transition successor.
+This is intentional transition compliance, not a missing source or claim: the
+source ledger is the closed evidence owner for this increment, and this scope
+index is its cross-scope router until Spec 0054 performs the atomic Stage 90
+owner and consumer cutover.
+
+The ignored Spec 0062 task checker remains frozen to the earlier allocation
+ending at `SRC-WERPC-091` and `CLM-WERPC-013-06`; when applied to this later
+increment it fails closed with `ERROR INTEGRATION_LEDGER_LEGACY`. That result is
+an expected legacy-allocation boundary, not a passing validation. This work does
+not widen the ignored checker or revive the legacy `tasks.md` control plane;
+Spec 0054 owns the terminal Task registry and validator/command cutover.
 
 ## Sources
 
