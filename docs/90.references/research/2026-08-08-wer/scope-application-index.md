@@ -217,6 +217,21 @@ not permit a reopen condition to be waived once met. It grants no scope
 authority: a requirement appearing in a scope row still means only that the
 research touched a path the scope already owns.
 
+### 2026-08-20 full-corpus reverification
+
+| Scope | Requests | Evidence depths | Outcome | Blocking classes | Canonical owners |
+| --- | --- | --- | --- | --- | --- |
+| repository governance | REQ-WERPC-003 | public-documentation | unchanged | repo-static | `docs/90.references/research/2026-08-08-wer/workspace-governance-and-common-agent-environment.md` |
+| harness and loop | REQ-WERPC-001, REQ-WERPC-002 | repository-static | unchanged | provider-runtime | `docs/90.references/research/2026-08-08-wer/harness-and-loop-engineering.md` |
+| provider and common environment | REQ-WERPC-004, REQ-WERPC-005, REQ-WERPC-006 | public-documentation, repository-static | changed | repo-static | `docs/90.references/research/2026-08-08-wer/provider-implementation-status.md`, `docs/90.references/research/2026-08-08-wer/workspace-governance-and-common-agent-environment.md` |
+| agents, model, and memory | REQ-WERPC-026, REQ-WERPC-027, REQ-WERPC-028, REQ-WERPC-029, REQ-WERPC-030, REQ-WERPC-031, REQ-WERPC-032 | public-documentation, repository-static | unchanged | provider-runtime | `docs/90.references/research/2026-08-08-wer/agent-memory-tiers-and-management.md`, `docs/90.references/research/2026-08-08-wer/agent-model-routing-and-configuration.md`, `docs/90.references/research/2026-08-08-wer/ai-agents-and-agency-agents.md` |
+| SDLC and document contracts | REQ-WERPC-007, REQ-WERPC-010, REQ-WERPC-011, REQ-WERPC-012, REQ-WERPC-013, REQ-WERPC-014, REQ-WERPC-015, REQ-WERPC-016, REQ-WERPC-017, REQ-WERPC-018, REQ-WERPC-019, REQ-WERPC-034, REQ-WERPC-035, REQ-WERPC-036 | public-documentation, repository-static | changed | human-judgement, repo-static | `docs/90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md` |
+| documentation and knowledge routing | REQ-WERPC-020, REQ-WERPC-021 | repository-static | unchanged | human-judgement, repo-static | `docs/90.references/research/2026-08-08-wer/documentation-architecture-and-diataxis.md`, `docs/90.references/research/2026-08-08-wer/llm-wiki-and-knowledge-routing.md` |
+| Kubernetes and infrastructure | REQ-WERPC-008, REQ-WERPC-009 | repository-static | changed | live-cluster | `docs/90.references/research/2026-08-08-wer/kubernetes-infrastructure-and-security.md` |
+| security and approval | REQ-WERPC-025 | repository-static | changed | live-cluster | `docs/90.references/research/2026-08-08-wer/kubernetes-infrastructure-and-security.md` |
+| CI/CD and QA | REQ-WERPC-022, REQ-WERPC-023, REQ-WERPC-024 | repository-static | unchanged | hosted-ci, repo-static | `docs/90.references/research/2026-08-08-wer/ci-cd-github-actions-and-qa.md` |
+| verification and validation | REQ-WERPC-033 | repository-static | unchanged | human-judgement | `docs/90.references/research/2026-08-08-wer/ci-cd-github-actions-and-qa.md` |
+
 ## Sources
 
 - Workspace observation, 2026-08-14: the
