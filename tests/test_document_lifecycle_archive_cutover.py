@@ -1884,6 +1884,40 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
             with self.subTest(changed=changed):
                 self.assertNotEqual(repaired, changed)
 
+    def test_mig0004_link_repair_excludes_malformed_and_code_payloads(self) -> None:
+        path = PurePosixPath("docs/guide/current.md")
+        rewrites = {
+            PurePosixPath("docs/old.md"): PurePosixPath("docs/new.md"),
+        }
+        for payload in (
+            "prose](../old.md)\n",
+            "`[approved](../old.md)`\n",
+            "```markdown\n[approved](../old.md)\n```\n",
+            "`| PRD requirement | Spec criterion | Verification method |`\n",
+            "```markdown\n| PRD requirement | Spec criterion | Verification method |\n```\n",
+        ):
+            with self.subTest(payload=payload):
+                self.assertEqual(
+                    VALIDATOR._wp004c_link_repair_text(path, payload, rewrites),
+                    payload,
+                )
+
+    def test_ad_template_creates_in_zero_indegree_draft_state(self) -> None:
+        registry = load_registry(ROOT)
+        template = (
+            ROOT / "docs/99.templates/templates/architecture/ad.template.md"
+        ).read_text(encoding="utf-8")
+        path = PurePosixPath(
+            "docs/02.architecture/descriptions/9999-template-admission.md"
+        )
+        created = VALIDATOR.document_from_text(registry, path, template)
+
+        self.assertEqual(created.status, "draft")
+        self.assertEqual(
+            VALIDATOR.compare_lifecycle(registry, {}, {path: created}, base_mode="staged"),
+            (),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

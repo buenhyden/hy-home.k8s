@@ -523,7 +523,10 @@ WORK054_WP004B_TASK_STATUSES = MappingProxyType(
         "canceled": "cancelled",
     }
 )
-WP004C_MARKDOWN_DESTINATION = re.compile(r"(?P<prefix>\]\()(?P<target>[^)\s]+)(?P<suffix>\))")
+WP004C_INLINE_MARKDOWN_LINK = re.compile(
+    r"(?P<label>\[[^\]\r\n]+\])\((?P<target>[^()\s]+)\)"
+)
+WP004C_FENCED_CODE = re.compile(r"^[ \t]{0,3}(?P<fence>`{3,}|~{3,})")
 WP004C_PRD_REQUIREMENT_HEADER = "| PRD requirement | Spec criterion | Verification method |"
 WP004C_REQUIREMENT_ID_HEADER = "| Requirement ID | Spec criterion | Verification method |"
 
@@ -555,12 +558,61 @@ def _wp004c_link_repair_text(
         if replacement is None:
             return match.group(0)
         relative = posixpath.relpath(replacement.as_posix(), parent)
-        return f"{match.group('prefix')}{relative}{marker}{fragment}{match.group('suffix')}"
+        return f"{match.group('label')}({relative}{marker}{fragment})"
 
-    return WP004C_MARKDOWN_DESTINATION.sub(replace, text).replace(
-        WP004C_PRD_REQUIREMENT_HEADER,
-        WP004C_REQUIREMENT_ID_HEADER,
-    )
+    def rewrite_inline_code_free(line: str) -> str:
+        rendered: list[str] = []
+        cursor = 0
+        delimiter: str | None = None
+        while cursor < len(line):
+            tick = line.find("`", cursor)
+            if tick < 0:
+                segment = line[cursor:]
+                rendered.append(
+                    segment
+                    if delimiter is not None
+                    else WP004C_INLINE_MARKDOWN_LINK.sub(replace, segment)
+                )
+                break
+            segment = line[cursor:tick]
+            rendered.append(
+                segment
+                if delimiter is not None
+                else WP004C_INLINE_MARKDOWN_LINK.sub(replace, segment)
+            )
+            end = tick
+            while end < len(line) and line[end] == "`":
+                end += 1
+            ticks = line[tick:end]
+            rendered.append(ticks)
+            if delimiter is None:
+                delimiter = ticks
+            elif ticks == delimiter:
+                delimiter = None
+            cursor = end
+        return "".join(rendered)
+
+    rendered: list[str] = []
+    fenced: str | None = None
+    for line in text.splitlines(keepends=True):
+        marker = WP004C_FENCED_CODE.match(line)
+        if fenced is not None:
+            rendered.append(line)
+            if marker is not None and marker.group("fence")[0] == fenced[0] and len(
+                marker.group("fence")
+            ) >= len(fenced):
+                fenced = None
+            continue
+        if marker is not None:
+            fenced = marker.group("fence")
+            rendered.append(line)
+        elif line.rstrip("\r\n") == WP004C_PRD_REQUIREMENT_HEADER:
+            rendered.append(
+                WP004C_REQUIREMENT_ID_HEADER + line[len(line.rstrip("\r\n")) :]
+            )
+        else:
+            rendered.append(rewrite_inline_code_free(line))
+    return "".join(rendered)
 
 
 def _registry_profile_ids(raw_registry: Mapping[str, object]) -> frozenset[str]:
