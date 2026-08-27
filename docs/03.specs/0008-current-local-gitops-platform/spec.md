@@ -112,7 +112,7 @@ bash scripts/validate-k8s-manifests.sh .
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | N/A — [Acceptance criterion 04](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | VAL-SPC-001 | `scripts/validate-repo-quality-gates.sh .` checks current active-document and archive Tombstone policy. |
 | N/A — [Acceptance criterion 01](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | VAL-SPC-002 | `infrastructure/tests/verify-contracts-static.sh` verifies the current GitOps manifest contracts. |

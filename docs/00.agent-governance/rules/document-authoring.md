@@ -32,9 +32,9 @@ paths, lifecycle domains, or registered exceptions. Those machine values come
 only from the [Document Profile Registry](../../99.templates/registry.json)
 and its schema.
 
-[Document Contract](../../99.templates/support/document-contract.md) explains
+[Document Contract](../../99.templates/README.md) explains
 form, body, metadata, and exact-one-profile rationale. [Document
-Lifecycle](../../99.templates/support/document-lifecycle.md) explains
+Lifecycle](../policies/document-lifecycle.md) explains
 promotion, supersession, retention, archive, date exceptions, and legacy
 disposition. README files are navigation and inventory only.
 
@@ -228,8 +228,8 @@ prove CI, provider-runtime, remote, credential-bearing, or live behavior.
 ## Related Documents
 
 - [Document Profile Registry](../../99.templates/registry.json)
-- [Document Contract](../../99.templates/support/document-contract.md)
-- [Document Lifecycle](../../99.templates/support/document-lifecycle.md)
+- [Document Contract](../../99.templates/README.md)
+- [Document Lifecycle](../policies/document-lifecycle.md)
 - [Agent Quality Standards](quality-standards.md)
 - [Preflight Checklist](preflight-checklist.md)
 - [Postflight Checklist](postflight-checklist.md)

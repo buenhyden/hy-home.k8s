@@ -157,7 +157,7 @@ The deterministic owner-pointer allowlist is:
 | Completed ninth/tenth role implementation | `docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records` | Harness catalog evidence pointer and Spec 025 lineage. |
 | RMD-004 completion evidence | `docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records` | Spec 025 and its same-topic Plan. |
 | Document/template ownership contract | `docs/99.templates/support/documentation-contract.md` | Harness catalog documentation-owner pointer. |
-| Authored-document route contract | `docs/99.templates/support/template-routing.md` | Harness catalog template-route pointer. |
+| Authored-document route contract | `docs/99.templates/README.md` | Harness catalog template-route pointer. |
 
 The validator checks only these declared path relationships and exact roster
 sets. It does not infer ownership from arbitrary prose.
@@ -568,14 +568,14 @@ retains responsibility for final integration, validation, and branch finishing.
 - [Spec Stage](../README.md)
 - [Execution Plan](plan.md)
 - [Execution Task](README.md#task-records)
-- [Plan Stage](../../99.templates/templates/sdlc/execution/plan.template.md)
-- [Task Stage](../../99.templates/templates/sdlc/execution/task.template.md)
+- [Plan Stage](../../99.templates/templates/specs/plan.template.md)
+- [Task Stage](../../99.templates/templates/specs/task.template.md)
 - [Agent Governance Normalization Spec](../0015-agent-governance-contract-normalization/spec.md)
 - [Workspace Harness Gap Spec](../0006-workspace-harness-gap-analysis/spec.md)
 - [Observability and Network Agents Spec](../0024-observability-and-network-review-agents/spec.md)
 - [Harness Catalog](../../00.agent-governance/harness-catalog.md)
 - [Document Stage Routing](../../00.agent-governance/rules/document-authoring.md)
-- [Frontmatter Schema](../../99.templates/support/document-contract.md)
+- [Frontmatter Schema](../../99.templates/README.md)
 - [Archive Index](../../98.archive/README.md)
 ### Related inputs
 

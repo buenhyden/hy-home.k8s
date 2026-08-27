@@ -75,7 +75,7 @@ Out of scope:
 - **Data / Interface Contract**:
   - Authored audit reports use `type: content/reference` frontmatter and the
     required reference sections from
-    `docs/99.templates/templates/common/reference.template.md`.
+    `docs/99.templates/templates/references/reference.template.md`.
   - Audit matrices use only `Implemented`, `Partial`, `Gap`, and
     `Not in scope`.
   - Every `Implemented` or `Partial` row includes repo-backed evidence links.
@@ -354,7 +354,7 @@ bash scripts/validate-repo-quality-gates.sh .
 - **Tasks**: `../../04.execution/tasks/2026-07-05-workspace-engineering-implementation-audit-pack.md`
 - **Research Pack README**: `docs/90.references/research/2026-07-04-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
 - **Audits README**: [../../90.references/audits/README.md](../../90.references/audits/README.md)
-- **Reference Template**: [../../99.templates/templates/common/reference.template.md](../../99.templates/templates/common/reference.template.md)
+- **Reference Template**: [../../99.templates/templates/references/reference.template.md](../../99.templates/templates/references/reference.template.md)
 - **CI/CD QA Guide**: [../../05.operations/guides/0010-ci-cd-qa-reference-guide.md](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
 ### Related inputs
 
@@ -373,10 +373,10 @@ Repository inputs:
 - [Audits README](../../90.references/audits/README.md)
 - `docs/90.references/research/2026-07-04-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
 - [90.references README](../../90.references/README.md)
-- [Reference Template](../../99.templates/templates/common/reference.template.md)
+- [Reference Template](../../99.templates/templates/references/reference.template.md)
 - [Agent Governance Hub](../../00.agent-governance/README.md)
 - [Harness Catalog](../../00.agent-governance/harness-catalog.md)
-- [Harness Implementation Map](../../00.agent-governance/harness-implementation-map.md)
+- [Harness Implementation Map](../../00.agent-governance/harness-catalog.md)
 - [CI/CD QA Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
 - [Scripts README](../../../scripts/README.md)
 - [GitHub Configuration Hub](../../../.github/README.md)

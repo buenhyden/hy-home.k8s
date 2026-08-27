@@ -223,7 +223,7 @@ Remote/live and CI/FIFO PASS results are unclaimed.
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-0006-FR-0006](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ACER-001 | The census ledger covers the complete baseline execution set. |
 | N/A — REQ-0006-FR-0006 / VAL-ACER-002 shares the PRD-0006 source linked in VAL-ACER-001 | VAL-ACER-002 | Per-lineage migration results verify archive and rollback data. |

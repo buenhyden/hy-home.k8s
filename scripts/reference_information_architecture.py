@@ -50,14 +50,14 @@ DATA_ASSET_README = DATA_ASSET_ROOT / "README.md"
 REFERENCE_ROOT = Path("docs/90.references")
 REGISTRY_PATH = Path("docs/99.templates/registry.json")
 ROUTE_CONTRACT_PATH = Path("docs/99.templates/contracts/route-contract.json")
-TRANSITION_CURRENT_PACK_PROJECTION_PATH = Path("docs/99.templates/support/document-profiles.json")
+TRANSITION_CURRENT_PACK_PROJECTION_PATH = Path(
+    "docs/99.templates/support/document-profiles.json"
+)
 WP004B_DOCUMENT_AUTHORITY_MIGRATION_PATH = Path(
     "docs/98.archive/migrations/0004-document-authority-convergence.md"
 )
 WP004B_ROOT_ONLY_PROFILE_ID = "sdlc/requirement-package"
-WP004B_SUPPORT_ONLY_PROFILE_IDS = frozenset(
-    {"sdlc/prd", "sdlc/srs", "sdlc/interface"}
-)
+WP004B_SUPPORT_ONLY_PROFILE_IDS = frozenset({"sdlc/prd", "sdlc/srs", "sdlc/interface"})
 WP004B_SUPPORT_PROFILE_ORDER = ("sdlc/prd", "sdlc/srs", "sdlc/interface")
 WP004B_SUPPORT_SCHEMA = "https://json-schema.org/draft/2020-12/schema"
 WP004B_SUPPORT_ID = "https://hy-home.k8s/schemas/document-profiles-8.schema.json"
@@ -688,7 +688,16 @@ def _git_arguments_allowed(arguments: tuple[str, ...]) -> bool:
         and arguments[:3] == ("ls-tree", "-rz", "--full-tree")
         and OID_PATTERN.fullmatch(arguments[3]) is not None
         and arguments[4] == "--"
-        and Path(arguments[5]) in DUPLICATE_TREE_INVENTORY_ROOTS
+        and (
+            Path(arguments[5]) in DUPLICATE_TREE_INVENTORY_ROOTS
+            or (
+                len(Path(arguments[5]).parts) == 4
+                and Path(arguments[5]).parts[:2] == ("docs", "90.references")
+                and Path(arguments[5]).parts[2] in {"audits", "research"}
+                and PACK_ID_PATTERN.fullmatch("/".join(Path(arguments[5]).parts[2:]))
+                is not None
+            )
+        )
     ):
         return True
     if arguments == ("rev-parse", "--verify", "HEAD"):
@@ -2500,7 +2509,16 @@ def validate_generated_assets(
     return sorted(set(findings))
 
 
-def _registry_projection(value: Mapping[str, object]) -> RegistryProjection:
+def _historical_registry_projection(
+    value: Mapping[str, object],
+) -> RegistryProjection:
+    """Decode the retired Stage 99 pack projection from a pinned commit.
+
+    Current ownership is derived from the terminal Stage 90 contract and root
+    registry.  This decoder exists only for byte-exact historical baseline
+    proof.
+    """
+
     root = value.get("referenceCurrentPacks")
     if not isinstance(root, Mapping):
         raise ContractError(
@@ -2557,6 +2575,199 @@ def _registry_projection(value: Mapping[str, object]) -> RegistryProjection:
             all_paths.add(path)
         packs.append(pack)
     return RegistryProjection(profile, tuple(packs))
+
+
+def _terminal_profile_for_path(
+    authority: Mapping[str, object], path: Path
+) -> Mapping[str, object]:
+    profiles = authority.get("profiles")
+    if not isinstance(profiles, list):
+        raise ContractError(
+            "RIA-BOUNDARY",
+            REGISTRY_PATH.as_posix(),
+            "terminal profile authority is unavailable",
+        )
+    matches: list[Mapping[str, object]] = []
+    for profile in profiles:
+        if not isinstance(profile, Mapping):
+            continue
+        pattern = profile.get("pathPattern")
+        if not isinstance(pattern, str):
+            continue
+        try:
+            matched = re.fullmatch(pattern, path.as_posix()) is not None
+        except re.error as error:
+            raise ContractError(
+                "RIA-BOUNDARY",
+                REGISTRY_PATH.as_posix(),
+                "terminal profile path pattern is malformed",
+            ) from error
+        if matched:
+            matches.append(profile)
+    if len(matches) != 1:
+        raise ContractError(
+            "RIA-BOUNDARY",
+            path.as_posix(),
+            "terminal profile classification is not unique",
+        )
+    return matches[0]
+
+
+def _terminal_member_frontmatter(content: bytes, path: Path) -> tuple[str, str]:
+    try:
+        text = content.decode("utf-8", errors="strict")
+    except UnicodeDecodeError as error:
+        raise ContractError(
+            "RIA-BOUNDARY", path.as_posix(), "Current member is not UTF-8"
+        ) from error
+    if not text.startswith("---\n") or "\n---\n" not in text[4:]:
+        raise ContractError(
+            "RIA-BOUNDARY", path.as_posix(), "Current member frontmatter is missing"
+        )
+    header = text[4:].split("\n---\n", 1)[0]
+    values: dict[str, str] = {}
+    for line in header.splitlines():
+        if ":" not in line:
+            continue
+        key, raw = line.split(":", 1)
+        value = raw.strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
+            value = value[1:-1]
+        if key in {"type", "status"}:
+            if key in values or not value:
+                raise ContractError(
+                    "RIA-BOUNDARY",
+                    path.as_posix(),
+                    "Current member frontmatter is malformed",
+                )
+            values[key] = value
+    if set(values) != {"type", "status"}:
+        raise ContractError(
+            "RIA-BOUNDARY",
+            path.as_posix(),
+            "Current member type/status authority is unavailable",
+        )
+    return values["type"], values["status"]
+
+
+def _current_pack_inventory_root(pack_id: str) -> Path:
+    if PACK_ID_PATTERN.fullmatch(pack_id) is None:
+        raise ContractError(
+            "RIA-CONTRACT", "currentPackBaselines", "pack key is invalid"
+        )
+    return REFERENCE_ROOT / pack_id
+
+
+def _tracked_current_pack_paths(
+    root: Path,
+    pack_id: str,
+    *,
+    commit_oid: str | None,
+    runner: GitRunner | None,
+) -> tuple[Path, ...]:
+    inventory_root = _current_pack_inventory_root(pack_id)
+    if commit_oid is None:
+        payload = _git(
+            root,
+            ("ls-files", "-z", "--stage", "--", inventory_root.as_posix()),
+            runner=runner,
+        )
+        return _parse_regular_inventory(payload, inventory_root, committed=False)
+    _require_commit(root, commit_oid, runner)
+    payload = _git(
+        root,
+        (
+            "ls-tree",
+            "-rz",
+            "--full-tree",
+            commit_oid,
+            "--",
+            inventory_root.as_posix(),
+        ),
+        runner=runner,
+    )
+    return _parse_regular_inventory(payload, inventory_root, committed=True)
+
+
+def _terminal_current_pack_projection(
+    root: Path,
+    authority: Mapping[str, object],
+    contract: Mapping[str, object],
+    *,
+    proposed_oid: str | None,
+    runner: GitRunner | None,
+) -> RegistryProjection:
+    """Derive Current pack ownership without a Stage 99 projection."""
+
+    baselines = _encoded_baselines(contract)
+    packs: list[Pack] = []
+    for pack_id in baselines:
+        inventory_root = _current_pack_inventory_root(pack_id)
+        readme = inventory_root / "README.md"
+        paths = _tracked_current_pack_paths(
+            root,
+            pack_id,
+            commit_oid=proposed_oid,
+            runner=runner,
+        )
+        if readme not in paths:
+            raise ContractError(
+                "RIA-BOUNDARY",
+                readme.as_posix(),
+                "Current pack README is unavailable",
+            )
+        if any(path.parent != inventory_root or path.suffix != ".md" for path in paths):
+            raise ContractError(
+                "RIA-BOUNDARY",
+                inventory_root.as_posix(),
+                "Current pack inventory is malformed",
+            )
+        readme_profile = _terminal_profile_for_path(authority, readme)
+        if readme_profile.get("id") != "readme/snapshot-pack":
+            raise ContractError(
+                "RIA-BOUNDARY",
+                readme.as_posix(),
+                "Current pack README profile differs",
+            )
+        members = tuple(sorted(path.name for path in paths if path != readme))
+        states: set[str] = set()
+        for member in members:
+            path = inventory_root / member
+            profile = _terminal_profile_for_path(authority, path)
+            if profile.get("id") != "content/reference":
+                raise ContractError(
+                    "RIA-BOUNDARY",
+                    path.as_posix(),
+                    "Current member profile differs",
+                )
+            declared_type, status = _terminal_member_frontmatter(
+                _proposed_path(root, path, proposed_oid, runner), path
+            )
+            lifecycle = profile.get("lifecycle")
+            status_domain = (
+                lifecycle.get("statusDomain")
+                if isinstance(lifecycle, Mapping)
+                else None
+            )
+            if (
+                declared_type != profile.get("id")
+                or not isinstance(status_domain, list)
+                or status not in status_domain
+            ):
+                raise ContractError(
+                    "RIA-BOUNDARY",
+                    path.as_posix(),
+                    "Current member type/status differs",
+                )
+            states.add(status)
+        packs.append(Pack(pack_id, tuple(sorted(states)), members))
+    if not packs:
+        raise ContractError(
+            "RIA-BOUNDARY",
+            DEFAULT_CONTRACT_PATH.as_posix(),
+            "Current pack ownership is empty",
+        )
+    return RegistryProjection("content/reference", tuple(packs))
 
 
 def _encoded_baselines(contract: Mapping[str, object]) -> dict[str, str]:
@@ -2712,6 +2923,13 @@ def _taxonomy_transition_sources(
 ) -> frozenset[str]:
     route_state = registry.get("routeState")
     manifest_state = manifest.get("state")
+    terminal_root_authority = "routeState" not in registry and isinstance(
+        registry.get("programLineage"), Mapping
+    )
+    if terminal_root_authority:
+        if manifest_state not in {"transition", "terminal"}:
+            raise _GitError("taxonomy transition state differs")
+        return frozenset()
     if route_state == "terminal":
         if manifest_state != "terminal":
             raise _GitError("taxonomy transition state differs")
@@ -2813,19 +3031,7 @@ def _proposed_registry_inputs(
     root: Path,
     proposed_oid: str | None,
     runner: GitRunner | None,
-    *,
-    allow_historical_projection: bool = False,
-) -> tuple[Mapping[str, object], bytes]:
-    if allow_historical_projection:
-        if proposed_oid is None:
-            raise _GitError("historical projection requires an explicit commit")
-        historical_projection = _proposed_path(
-            root,
-            TRANSITION_CURRENT_PACK_PROJECTION_PATH,
-            proposed_oid,
-            runner,
-        )
-        return {}, historical_projection
+) -> Mapping[str, object]:
     authority_payload = _proposed_path(root, REGISTRY_PATH, proposed_oid, runner)
     authority = _decode_json_bytes(
         authority_payload,
@@ -2840,30 +3046,7 @@ def _proposed_registry_inputs(
             f"document authority is invalid: {error}",
         ) from error
 
-    route_contract = _decode_json_bytes(
-        _proposed_path(root, ROUTE_CONTRACT_PATH, proposed_oid, runner),
-        field=ROUTE_CONTRACT_PATH.as_posix(),
-    )
-    if not isinstance(route_contract, Mapping):
-        raise ContractError(
-            "RIA-BOUNDARY",
-            ROUTE_CONTRACT_PATH.as_posix(),
-            "document route authority is unavailable",
-        )
-
-    proposed_projection = _proposed_path(
-        root,
-        TRANSITION_CURRENT_PACK_PROJECTION_PATH,
-        proposed_oid,
-        runner,
-    )
-    projection = _decode_json_bytes(
-        proposed_projection,
-        field=TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix(),
-    )
-    _validate_wp004b_support_projection(authority, route_contract, projection)
-    _load_wp004b_transition_rows(root, proposed_oid, runner)
-    return authority, proposed_projection
+    return authority
 
 
 def _load_wp004b_transition_rows(
@@ -3066,6 +3249,112 @@ def _wp004b_transition_link_mask(
     return text.encode("utf-8")
 
 
+TERMINAL_AUTHORITY_LINK_EDGES: Mapping[Path, tuple[tuple[str, str], ...]] = {
+    Path("docs/90.references/audits/2026-08-09-wgia/README.md"): (
+        (
+            "docs/99.templates/support/document-profiles.json",
+            "docs/99.templates/registry.json",
+        ),
+        (
+            "../../../99.templates/templates/common/reference.template.md",
+            "../../../99.templates/templates/references/reference.template.md",
+        ),
+    ),
+    Path(
+        "docs/90.references/audits/2026-08-09-wgia/"
+        "legacy-deprecated-and-one-shot-disposition-ledger.md"
+    ): (
+        (
+            "../../../99.templates/support/document-lifecycle.md",
+            "../../../00.agent-governance/policies/document-lifecycle.md",
+        ),
+    ),
+    Path(
+        "docs/90.references/audits/2026-08-09-wgia/"
+        "spec-driven-sdlc-documentation-and-templates.md"
+    ): (
+        (
+            "docs/99.templates/support/document-profiles.json",
+            "docs/99.templates/registry.json",
+        ),
+        (
+            "../../../99.templates/support/document-profiles.json",
+            "../../../99.templates/registry.json",
+        ),
+        (
+            "docs/99.templates/support/template-routing.md",
+            "docs/99.templates/README.md",
+        ),
+        (
+            "../../../99.templates/support/template-routing.md",
+            "../../../99.templates/README.md",
+        ),
+        (
+            "docs/99.templates/templates/sdlc/requirements/prd.template.md",
+            "docs/99.templates/templates/requirements/requirement-package.template.md",
+        ),
+        (
+            "docs/99.templates/templates/sdlc/architecture/adr.template.md",
+            "docs/99.templates/templates/architecture/adr.template.md",
+        ),
+        (
+            "docs/99.templates/templates/sdlc/specs/spec.template.md",
+            "docs/99.templates/templates/specs/spec.template.md",
+        ),
+        (
+            "docs/99.templates/templates/sdlc/execution/plan.template.md",
+            "docs/99.templates/templates/specs/plan.template.md",
+        ),
+        (
+            "docs/99.templates/templates/sdlc/execution/task.template.md",
+            "docs/99.templates/templates/specs/task.template.md",
+        ),
+        (
+            "docs/99.templates/templates/sdlc/operations/guide.template.md",
+            "docs/99.templates/templates/operations/guide.template.md",
+        ),
+        (
+            "docs/99.templates/templates/sdlc/operations/incident.template.md",
+            "docs/99.templates/templates/operations/incident.template.md",
+        ),
+        (
+            "docs/99.templates/templates/sdlc/operations/postmortem.template.md",
+            "docs/99.templates/templates/operations/postmortem.template.md",
+        ),
+        (
+            "docs/99.templates/templates/sdlc/operations/policy.template.md",
+            "docs/99.templates/templates/operations/policy.template.md",
+        ),
+        (
+            "docs/99.templates/templates/sdlc/operations/runbook.template.md",
+            "docs/99.templates/templates/operations/runbook.template.md",
+        ),
+    ),
+    Path("docs/90.references/audits/README.md"): (
+        (
+            "../../99.templates/templates/common/reference.template.md",
+            "../../99.templates/templates/references/reference.template.md",
+        ),
+    ),
+}
+
+
+def _terminal_authority_link_mask(payload: bytes, path: Path) -> bytes:
+    """Normalize only reviewed terminal route edges for four Current owners."""
+
+    edges = TERMINAL_AUTHORITY_LINK_EDGES.get(path)
+    if edges is None:
+        return payload
+    try:
+        text = payload.decode("utf-8", errors="strict")
+    except UnicodeDecodeError as error:
+        raise _GitError("terminal authority owner is not UTF-8") from error
+    for index, (source, target) in enumerate(edges):
+        marker = f"<RIA-TERMINAL-AUTHORITY-{index}>"
+        text = text.replace(source, marker).replace(target, marker)
+    return text.encode("utf-8")
+
+
 def _expand_wp004b_requirement_profiles(value: object) -> object:
     """Project the root Requirement Package relation into the finite legacy IDs."""
 
@@ -3167,9 +3456,7 @@ def _wp004b_requirement_split_profile(
                 "Requirement Package frontmatter authority is unavailable",
             )
         frontmatter[key] = [
-            value
-            for value in values
-            if value not in {"superseded_by", "supersedes"}
+            value for value in values if value not in {"superseded_by", "supersedes"}
         ]
 
     split = {
@@ -3182,9 +3469,7 @@ def _wp004b_requirement_split_profile(
                 "Acceptance criterion",
                 "Downstream owner",
             ],
-            "identifierColumns": [
-                {"column": "Requirement ID", "kind": "requirement"}
-            ],
+            "identifierColumns": [{"column": "Requirement ID", "kind": "requirement"}],
             "sourceLinkColumn": None,
             "allowedSourceProfileIds": [],
             "allowedTargetProfileIds": [
@@ -3339,7 +3624,11 @@ def _wp004b_support_document_contracts(
 
     value_contracts = contracts.get("valueContracts")
     if not isinstance(value_contracts, list):
-        raise ContractError("RIA-BOUNDARY", ROUTE_CONTRACT_PATH.as_posix(), "value contract authority differs")
+        raise ContractError(
+            "RIA-BOUNDARY",
+            ROUTE_CONTRACT_PATH.as_posix(),
+            "value contract authority differs",
+        )
     removed_value_ids = {
         "adr-relation-identity",
         "requirement-package-identity",
@@ -3348,7 +3637,11 @@ def _wp004b_support_document_contracts(
     projected_values: list[object] = []
     for record in value_contracts:
         if not isinstance(record, dict) or not isinstance(record.get("id"), str):
-            raise ContractError("RIA-BOUNDARY", ROUTE_CONTRACT_PATH.as_posix(), "value contract authority differs")
+            raise ContractError(
+                "RIA-BOUNDARY",
+                ROUTE_CONTRACT_PATH.as_posix(),
+                "value contract authority differs",
+            )
         if record["id"] in removed_value_ids:
             continue
         projected = copy.deepcopy(record)
@@ -3370,7 +3663,11 @@ def _wp004b_support_document_contracts(
 
     role_decisions = contracts.get("roleDecisions")
     if not isinstance(role_decisions, list):
-        raise ContractError("RIA-BOUNDARY", ROUTE_CONTRACT_PATH.as_posix(), "role decision authority differs")
+        raise ContractError(
+            "RIA-BOUNDARY",
+            ROUTE_CONTRACT_PATH.as_posix(),
+            "role decision authority differs",
+        )
     projected_roles: list[object] = []
     split_roles = (
         ("sdlc/prd", "product-requirement"),
@@ -3378,7 +3675,9 @@ def _wp004b_support_document_contracts(
         ("sdlc/interface", "interface-requirement"),
     )
     for record in role_decisions:
-        if isinstance(record, Mapping) and record.get("profileIds") == [WP004B_ROOT_ONLY_PROFILE_ID]:
+        if isinstance(record, Mapping) and record.get("profileIds") == [
+            WP004B_ROOT_ONLY_PROFILE_ID
+        ]:
             for profile_id, role in split_roles:
                 projected = copy.deepcopy(record)
                 projected["profileIds"] = [profile_id]
@@ -3390,7 +3689,11 @@ def _wp004b_support_document_contracts(
 
     admission_policies = contracts.get("admissionPolicies")
     if not isinstance(admission_policies, list):
-        raise ContractError("RIA-BOUNDARY", ROUTE_CONTRACT_PATH.as_posix(), "admission policy authority differs")
+        raise ContractError(
+            "RIA-BOUNDARY",
+            ROUTE_CONTRACT_PATH.as_posix(),
+            "admission policy authority differs",
+        )
     for record in admission_policies:
         if isinstance(record, dict) and record.get("id") == "authored-draft-only":
             record["profileIds"] = _wp004b_expand_requirement_ids(
@@ -3400,7 +3703,11 @@ def _wp004b_support_document_contracts(
 
     evidence_predicates = contracts.get("evidencePredicates")
     if not isinstance(evidence_predicates, list):
-        raise ContractError("RIA-BOUNDARY", ROUTE_CONTRACT_PATH.as_posix(), "evidence predicate authority differs")
+        raise ContractError(
+            "RIA-BOUNDARY",
+            ROUTE_CONTRACT_PATH.as_posix(),
+            "evidence predicate authority differs",
+        )
     for record in evidence_predicates:
         if isinstance(record, dict) and record.get("id") == "activate-self-body":
             record["profileEdges"] = _wp004b_expand_requirement_ids(
@@ -3408,7 +3715,10 @@ def _wp004b_support_document_contracts(
             )
             edges: list[object] = []
             for edge in record["profileEdges"]:
-                if isinstance(edge, Mapping) and edge.get("profileId") == WP004B_ROOT_ONLY_PROFILE_ID:
+                if (
+                    isinstance(edge, Mapping)
+                    and edge.get("profileId") == WP004B_ROOT_ONLY_PROFILE_ID
+                ):
                     for profile_id in WP004B_SUPPORT_PROFILE_ORDER:
                         projected = dict(edge)
                         projected["profileId"] = profile_id
@@ -3445,7 +3755,11 @@ def _wp004b_support_document_contracts(
 
     lifecycle_contracts = copy.deepcopy(lineage.get("transitionLifecycleContracts"))
     if not isinstance(lifecycle_contracts, list):
-        raise ContractError("RIA-BOUNDARY", REGISTRY_PATH.as_posix(), "lifecycle contract authority differs")
+        raise ContractError(
+            "RIA-BOUNDARY",
+            REGISTRY_PATH.as_posix(),
+            "lifecycle contract authority differs",
+        )
     lifecycle_contracts[0] = {
         "id": "product",
         "profileIds": list(WP004B_SUPPORT_PROFILE_ORDER),
@@ -3467,7 +3781,11 @@ def _wp004b_support_top_level_projection(
 ) -> dict[str, object]:
     lineage = copy.deepcopy(authority.get("programLineage"))
     if not isinstance(lineage, dict):
-        raise ContractError("RIA-BOUNDARY", REGISTRY_PATH.as_posix(), "program lineage authority differs")
+        raise ContractError(
+            "RIA-BOUNDARY",
+            REGISTRY_PATH.as_posix(),
+            "program lineage authority differs",
+        )
     lineage.pop("lifecycleDomains", None)
     lineage.pop("transitionLifecycleContracts", None)
     lineage = _wp004b_expand_requirement_ids(lineage)
@@ -3476,7 +3794,11 @@ def _wp004b_support_top_level_projection(
         copy.deepcopy(authority.get("standaloneExecutions"))
     )
     if not isinstance(standalone, list):
-        raise ContractError("RIA-BOUNDARY", REGISTRY_PATH.as_posix(), "standalone execution authority differs")
+        raise ContractError(
+            "RIA-BOUNDARY",
+            REGISTRY_PATH.as_posix(),
+            "standalone execution authority differs",
+        )
     for record in standalone:
         if isinstance(record, dict) and record.get("spec") == "0053":
             record["task"] = (
@@ -3484,8 +3806,14 @@ def _wp004b_support_top_level_projection(
             )
 
     governance = copy.deepcopy(route_contract.get("governanceCurrentOwners"))
-    if not isinstance(governance, dict) or not isinstance(governance.get("paths"), list):
-        raise ContractError("RIA-BOUNDARY", ROUTE_CONTRACT_PATH.as_posix(), "governance owner authority differs")
+    if not isinstance(governance, dict) or not isinstance(
+        governance.get("paths"), list
+    ):
+        raise ContractError(
+            "RIA-BOUNDARY",
+            ROUTE_CONTRACT_PATH.as_posix(),
+            "governance owner authority differs",
+        )
     governance["paths"] = [
         path
         for path in governance["paths"]
@@ -3606,11 +3934,7 @@ def _load_taxonomy_archive_transition(
     proposed_oid: str | None,
     runner: GitRunner | None,
 ) -> frozenset[str]:
-    _, projection = _proposed_registry_inputs(root, proposed_oid, runner)
-    registry = _decode_json_bytes(
-        projection,
-        field=TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix(),
-    )
+    registry = _proposed_registry_inputs(root, proposed_oid, runner)
     manifest = _decode_json_bytes(
         _proposed_path(root, DOCUMENT_TAXONOMY_MANIFEST_PATH, proposed_oid, runner),
         field=DOCUMENT_TAXONOMY_MANIFEST_PATH.as_posix(),
@@ -3674,21 +3998,33 @@ def _build_context(
     runner: GitRunner | None = None,
 ) -> ValidationContext:
     root = root.absolute()
-    _, proposed_registry_bytes = _proposed_registry_inputs(
-        root,
-        proposed_oid,
-        runner,
-        allow_historical_projection=(
-            contract.get("currentPackRegistry")
-            == TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix()
-        ),
+    historical_projection = (
+        contract.get("currentPackRegistry")
+        == TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix()
     )
-    proposed_registry = _registry_projection(
-        _decode_json_bytes(
-            proposed_registry_bytes,
-            field=TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix(),
+    if historical_projection:
+        if proposed_oid is None:
+            raise _GitError("historical projection requires an explicit commit")
+        proposed_registry = _historical_registry_projection(
+            _decode_json_bytes(
+                _read_commit_path(
+                    root,
+                    proposed_oid,
+                    TRANSITION_CURRENT_PACK_PROJECTION_PATH,
+                    runner,
+                ),
+                field=TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix(),
+            )
         )
-    )
+    else:
+        authority = _proposed_registry_inputs(root, proposed_oid, runner)
+        proposed_registry = _terminal_current_pack_projection(
+            root,
+            authority,
+            contract,
+            proposed_oid=proposed_oid,
+            runner=runner,
+        )
     baselines = _encoded_baselines(contract)
     if tuple(baselines) != proposed_registry.pack_ids:
         raise ContractError(
@@ -3705,7 +4041,7 @@ def _build_context(
         registry_bytes = _read_commit_path(
             root, oid, TRANSITION_CURRENT_PACK_PROJECTION_PATH, runner
         )
-        registry = _registry_projection(
+        registry = _historical_registry_projection(
             _decode_json_bytes(
                 registry_bytes,
                 field=TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix(),
@@ -3809,20 +4145,13 @@ def validate_retired_current_baselines(
             if proposed_commit is not None
             else None
         )
-        _, proposed_projection = _proposed_registry_inputs(
+        authority = _proposed_registry_inputs(root.absolute(), proposed_oid, runner)
+        proposed_registry = _terminal_current_pack_projection(
             root.absolute(),
-            proposed_oid,
-            runner,
-            allow_historical_projection=(
-                contract.get("currentPackRegistry")
-                == TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix()
-            ),
-        )
-        proposed_registry = _registry_projection(
-            _decode_json_bytes(
-                proposed_projection,
-                field=TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix(),
-            )
+            authority,
+            contract,
+            proposed_oid=proposed_oid,
+            runner=runner,
         )
         current_ids = set(proposed_registry.pack_ids)
         findings: list[Finding] = []
@@ -3851,7 +4180,7 @@ def validate_retired_current_baselines(
             oid = parse_git_sha1(
                 encoded, field="retiredCurrentPackBaselines.sourceCommit"
             )
-            baseline_registry = _registry_projection(
+            baseline_registry = _historical_registry_projection(
                 _decode_json_bytes(
                     _read_commit_path(
                         root.absolute(),
@@ -5832,26 +6161,37 @@ def validate_duplicate_rules(
             ]
     root = root.absolute()
     try:
-        _, registry_payload = _proposed_registry_inputs(
-            root,
-            commit_oid,
-            runner,
-            allow_historical_projection=(
-                contract.get("currentPackRegistry")
-                == TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix()
-            ),
-        )
-        registry = _registry_projection(
-            _decode_json_bytes(
-                registry_payload,
-                field=TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix(),
+        if (
+            contract.get("currentPackRegistry")
+            == TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix()
+        ):
+            if commit_oid is None:
+                raise _GitError("historical projection requires an explicit commit")
+            registry = _historical_registry_projection(
+                _decode_json_bytes(
+                    _read_commit_path(
+                        root,
+                        commit_oid,
+                        TRANSITION_CURRENT_PACK_PROJECTION_PATH,
+                        runner,
+                    ),
+                    field=TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix(),
+                )
             )
-        )
+        else:
+            authority = _proposed_registry_inputs(root, commit_oid, runner)
+            registry = _terminal_current_pack_projection(
+                root,
+                authority,
+                contract,
+                proposed_oid=commit_oid,
+                runner=runner,
+            )
     except (ContractError, _GitError):
         return [
             Finding(
                 "RIA-DUPLICATE",
-                TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix(),
+                DEFAULT_CONTRACT_PATH.as_posix(),
                 "Current owner registry is unavailable",
             )
         ]
@@ -6402,8 +6742,7 @@ def _wp004b_projection_router_alternatives(
     by_source = {
         replacement.get("from"): replacement
         for replacement in replacements
-        if isinstance(replacement, Mapping)
-        and isinstance(replacement.get("from"), str)
+        if isinstance(replacement, Mapping) and isinstance(replacement.get("from"), str)
     }
     if len(by_source) != len(replacements):
         raise _GitError("WP-004B projected edge authority is ambiguous")
@@ -6457,9 +6796,7 @@ def _wp004b_projection_router_alternatives(
             suffix = legacy_destination[split.start() :] if split else ""
             router_destination = router_relative + suffix
         router_target = (
-            legacy_target[: span[0]]
-            + router_destination
-            + legacy_target[span[1] :]
+            legacy_target[: span[0]] + router_destination + legacy_target[span[1] :]
         )
         alternatives[source] = router_target
     return alternatives
@@ -6764,6 +7101,8 @@ def validate_overlay_guards(
                 proposed = _wp004b_transition_link_mask(
                     proposed, path, wp004b_rows, baseline=baseline
                 )
+                baseline = _terminal_authority_link_mask(baseline, path)
+                proposed = _terminal_authority_link_mask(proposed, path)
             except _GitError:
                 findings.append(
                     Finding(
@@ -6842,6 +7181,8 @@ def validate_overlay_guards(
             proposed = _wp004b_transition_link_mask(
                 proposed, path, wp004b_rows, baseline=baseline
             )
+            baseline = _terminal_authority_link_mask(baseline, path)
+            proposed = _terminal_authority_link_mask(proposed, path)
         except (ContractError, _GitError):
             findings.append(
                 Finding(
@@ -7066,9 +7407,17 @@ def _settlement_proof(
         _validate_contract_boundaries(c2_contract, allow_historical_v2=True)
         if not _matching_open_contract(settlement, c2_contract, contract):
             raise _GitError("transition contract does not match settlement")
-        c2_registry_bytes = _read_commit_path(root, c2_oid, REGISTRY_PATH, runner)
-        c2_registry = _registry_projection(
-            _decode_json_bytes(c2_registry_bytes, field=REGISTRY_PATH.as_posix())
+        c2_registry_bytes = _read_commit_path(
+            root,
+            c2_oid,
+            TRANSITION_CURRENT_PACK_PROJECTION_PATH,
+            runner,
+        )
+        c2_registry = _historical_registry_projection(
+            _decode_json_bytes(
+                c2_registry_bytes,
+                field=TRANSITION_CURRENT_PACK_PROJECTION_PATH.as_posix(),
+            )
         )
         root_registry = context.baseline_registries[CURRENT_ROOT_COMMIT]
         if c2_registry != root_registry or c2_registry != context.proposed_registry:

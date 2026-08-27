@@ -8,14 +8,11 @@ import copy
 import contextlib
 import hashlib
 import importlib.util
-import io
 import json
 import os
-import posixpath
 import re
 import subprocess
 import sys
-import tempfile
 from collections.abc import Iterator
 from dataclasses import dataclass, replace
 from pathlib import Path, PurePosixPath
@@ -39,7 +36,6 @@ from archive_cutover_manifest import (
     PROPOSED_REGISTRY_VERSION,
 )
 from document_contracts import (
-    RETIRED_REGISTRY_PATH,
     ROOT_FILES,
     TARGET_ROOTS,
     DocumentContractError,
@@ -52,8 +48,6 @@ from document_contracts import (
     read_repository_text,
 )
 from document_lifecycle import (
-    LIFECYCLE_RULE_IDS,
-    SPECIFICATION_PROFILES,
     LifecycleDiagnostic,
     LifecycleDocument,
     LifecycleEvidenceContext,
@@ -64,6 +58,7 @@ from document_lifecycle import (
     lifecycle_diagnostic_sort_key,
     validate_snapshot_documents,
 )
+
 from archive_validation import (
     MIG0002_DOCUMENT_SHA256,
     MIGRATION_DOCUMENT_MAX_BYTES,
@@ -89,7 +84,7 @@ from document_authority import (
 )
 
 
-FIXTURE_PATH = PurePosixPath("tests/fixtures/document-lifecycle.json")
+RETIRED_REGISTRY_PATH = PurePosixPath("docs/99.templates/registry.json")
 OBJECT_ID = re.compile(r"[0-9a-f]{40}|[0-9a-f]{64}")
 FIXED_GIT_ENVIRONMENT = {
     "GIT_AUTHOR_NAME": "Lifecycle Self Test",
@@ -236,12 +231,8 @@ AGENT_ROSTER_CONTRACT_BLOB_MUTATIONS = (
 WORK105_CUTOVER_BASE_COMMIT = "a6fa1806364ea0472baaad0906e1b5e4ddac8602"
 WORK105_BASE_REGISTRY_BLOB_OID = "fc9ba039906ef240d076de5eeb6c584b681ae09f"
 WORK105_PROPOSED_REGISTRY_BLOB_OID = "fd842f60e801a39435600f35a27f22e1c659f1bd"
-WORK105_BASE_REGISTRY_PROJECTION_SHA256 = (
-    "ef2e31327be14a3117898a8c0eb661f022fd96cac4e1d3f9362925e189c63daf"  # pragma: allowlist secret
-)
-WORK105_PROPOSED_REGISTRY_PROJECTION_SHA256 = (
-    "17d49aa94403200ea9795d8c14f3fb9137e4f266ebb91e0449b937eecea6ff50"  # pragma: allowlist secret
-)
+WORK105_BASE_REGISTRY_PROJECTION_SHA256 = "ef2e31327be14a3117898a8c0eb661f022fd96cac4e1d3f9362925e189c63daf"  # pragma: allowlist secret
+WORK105_PROPOSED_REGISTRY_PROJECTION_SHA256 = "17d49aa94403200ea9795d8c14f3fb9137e4f266ebb91e0449b937eecea6ff50"  # pragma: allowlist secret
 WORK105_RETIRED_PROFILE_IDS = frozenset(
     {
         "sdlc/ard",  # Retired WORK-105 base input.
@@ -284,12 +275,8 @@ WORK105_LEGACY_AD0011_PATH = PurePosixPath(
 )
 WORK105_ADR0023_BASE_BLOB_OID = "6424c13f4728ff6418bcdac9796df9c5673d2124"
 WORK105_ADR0023_PROPOSED_BLOB_OID = "7200ec9eb873c971876583b5ba41921d0fdfb24d"
-WORK105_ADR0023_BASE_SHA256 = (
-    "fadbd95c581a0874797666e200f283d0f5fdc6c103643cc653e387062adbe53a"  # pragma: allowlist secret
-)
-WORK105_ADR0023_PROPOSED_SHA256 = (
-    "717714ce153cbd75ca5a77beb42a24cd1b146f25b1112d492e30d9fd214348d5"  # pragma: allowlist secret
-)
+WORK105_ADR0023_BASE_SHA256 = "fadbd95c581a0874797666e200f283d0f5fdc6c103643cc653e387062adbe53a"  # pragma: allowlist secret
+WORK105_ADR0023_PROPOSED_SHA256 = "717714ce153cbd75ca5a77beb42a24cd1b146f25b1112d492e30d9fd214348d5"  # pragma: allowlist secret
 WORK105_ADR0023_RECIPROCAL_ROW = (
     "| [ADR-0024](./0024-terminal-artifact-identity-and-archive-layout.md) | "
     "Partially supersedes only terminal Stage 98 date/mirror-path immutability; "
@@ -301,9 +288,7 @@ WORK105_ADR0023_RECIPROCAL_ROW = (
 WORK107_BASE_REGISTRY_BLOB_OID = "fd842f60e801a39435600f35a27f22e1c659f1bd"
 WORK107_PROPOSED_REGISTRY_BLOB_OID = "7182c40ab8ee6b40173b408ec2c366314916f1e3"
 WORK107_MIGRATION_BLOB_OID = "619ddc09b38c0a0a5c8254de6fbdcf3c1deb60d6"
-WORK107_MIGRATION_DOCUMENT_SHA256 = (
-    "7049f8b94bdb80566ad94be5d9e9e899d7d06e1b9d31191ad769cd905717de5e"  # pragma: allowlist secret
-)
+WORK107_MIGRATION_DOCUMENT_SHA256 = "7049f8b94bdb80566ad94be5d9e9e899d7d06e1b9d31191ad769cd905717de5e"  # pragma: allowlist secret
 WORK107_MIGRATION_TEMPLATE_PATH = PurePosixPath(
     "docs/99.templates/templates/common/archive-migration.template.md"
 )
@@ -317,8 +302,7 @@ WORK108_PROPOSED_MIGRATION_BLOB_OID = "b304c92c9c9032ebfe3be9156bd3f808ed1f5fb9"
 WORK054_WP002_BASE_COMMIT = "de72eb7d1828aeecf36bfe4ce35a892f9a8be729"
 WORK054_WP002_SOURCE_COMMIT = "160ce006969ddb49965c8af193f3e9ee290e18a8"
 WORK054_WP002_MIGRATION_PATH = PurePosixPath(
-    "docs/98.archive/migrations/"
-    "mig-0002-sdlc-document-and-governance-consolidation.md"
+    "docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md"
 )
 WORK054_WP002_MIGRATION_SHA256 = MIG0002_DOCUMENT_SHA256
 WORK054_WP002_SPEC_ROOT = PurePosixPath(
@@ -332,9 +316,7 @@ WORK054_WP002_SPEC_PATHS = (
 WORK054_WP002_DECISION_PATH = PurePosixPath(
     "docs/02.architecture/decisions/0025-four-digit-document-path-identity.md"
 )
-WORK054_WP002_DECISION_SHA256 = (
-    "b35d625a98e1c1d3089d20b8ea56669dbbbee32934a21112a8a29e70744ed5c4"  # pragma: allowlist secret
-)
+WORK054_WP002_DECISION_SHA256 = "b35d625a98e1c1d3089d20b8ea56669dbbbee32934a21112a8a29e70744ed5c4"  # pragma: allowlist secret
 WORK054_WP002_LEDGER_KEYS = (
     "legacy_path",
     "stable_path",
@@ -437,9 +419,7 @@ WORK054_WP003_MIGRATION_PATH = PurePosixPath(
     "docs/98.archive/migrations/"
     "mig-0003-agent-governance-control-plane-consolidation.md"
 )
-WORK054_WP003_MIGRATION_SHA256 = (
-    "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42"  # pragma: allowlist secret
-)
+WORK054_WP003_MIGRATION_SHA256 = "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42"  # pragma: allowlist secret
 WORK054_WP003_LEDGER_KEYS = WORK054_WP002_LEDGER_KEYS
 WORK054_WP003_OWNER_RETIREMENTS = (
     {
@@ -487,8 +467,7 @@ WORK054_WP004A_REQUIRED_CHANGED_PATHS = (
     PurePosixPath("docs/99.templates/README.md"),
     PurePosixPath("docs/00.agent-governance/README.md"),
     PurePosixPath(
-        "docs/03.specs/0054-sdlc-document-and-agent-governance-"
-        "consolidation/tasks.md"
+        "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks.md"
     ),
     *WORK054_WP004A_OWNER_PATHS,
 )
@@ -530,6 +509,7 @@ WORK054_WP004B_ROUTER_TASK_LINK = re.compile(
 WORK054_WP004B_TASK_STATUSES = MappingProxyType(
     {
         "done": "done",
+        "complete": "done",
         "completed": "done",
         "archived": "done",
         "transferred": "done",
@@ -542,6 +522,8 @@ WORK054_WP004B_TASK_STATUSES = MappingProxyType(
         "canceled": "cancelled",
     }
 )
+WP004C_DOCUMENT_PATH = re.compile(r"docs/[A-Za-z0-9_./#-]+")
+WP004C_MARKDOWN_LINK = re.compile(r"\[[^\]]+\]\((?!https?://)[^)\s]+\)")
 
 
 @dataclass(frozen=True)
@@ -550,9 +532,13 @@ class _Work054Wp004bAdmission:
     diagnostics: frozenset[tuple[PurePosixPath, str, str, str]]
 
 
-_EMPTY_WORK054_WP004B_ADMISSION = _Work054Wp004bAdmission(
-    frozenset(), frozenset()
-)
+_EMPTY_WORK054_WP004B_ADMISSION = _Work054Wp004bAdmission(frozenset(), frozenset())
+
+
+def _wp004c_link_repair_text(text: str) -> str:
+    normalized = WP004C_MARKDOWN_LINK.sub("[link](target)", text)
+    normalized = WP004C_DOCUMENT_PATH.sub("docs/<path>", normalized)
+    return normalized.replace("PRD requirement", "Requirement ID")
 
 
 def _registry_profile_ids(raw_registry: Mapping[str, object]) -> frozenset[str]:
@@ -723,12 +709,8 @@ def _wp004b_classification_registry(
 
     if not authority_converged:
         return projected_registry
-    current = {
-        profile.profile_id: profile for profile in current_registry.profiles
-    }
-    projected_ids = {
-        profile.profile_id for profile in projected_registry.profiles
-    }
+    current = {profile.profile_id: profile for profile in current_registry.profiles}
+    projected_ids = {profile.profile_id for profile in projected_registry.profiles}
     requirement = current.get(WORK054_WP004B_REQUIREMENT_PACKAGE_PROFILE)
     if (
         requirement is None
@@ -817,25 +799,42 @@ def _work054_wp004b_task_table(
     if text.count(marker) != 1:
         return None
     section = re.split(r"\n#{2,6} ", text.partition(marker)[2], maxsplit=1)[0]
-    lines = [line for line in section.splitlines() if line.startswith("|")]
-    if len(lines) < 3:
-        return None
-    header = _work054_wp004b_table_cells(lines[0])
-    separator = _work054_wp004b_table_cells(lines[1])
-    if (
-        header is None
-        or separator is None
-        or len(header) != len(separator)
-        or any(re.fullmatch(r":?-{3,}:?", cell) is None for cell in separator)
-    ):
-        return None
-    rows: list[tuple[str, tuple[str, ...]]] = []
-    for line in lines[2:]:
-        cells = _work054_wp004b_table_cells(line)
-        if cells is None or len(cells) != len(header):
-            return None
-        rows.append((line, cells))
-    return lines[0], lines[1], tuple(rows)
+    blocks: list[list[str]] = []
+    block: list[str] = []
+    for line in section.splitlines():
+        if line.startswith("|"):
+            block.append(line)
+        elif block:
+            blocks.append(block)
+            block = []
+    if block:
+        blocks.append(block)
+
+    candidates: list[tuple[str, str, tuple[tuple[str, tuple[str, ...]], ...]]] = []
+    for lines in blocks:
+        if len(lines) < 3:
+            continue
+        header = _work054_wp004b_table_cells(lines[0])
+        separator = _work054_wp004b_table_cells(lines[1])
+        if (
+            header is None
+            or separator is None
+            or len(header) != len(separator)
+            or any(re.fullmatch(r":?-{3,}:?", cell) is None for cell in separator)
+            or "id" not in {cell.lower() for cell in header}
+            or "status" not in {cell.lower() for cell in header}
+        ):
+            continue
+        rows: list[tuple[str, tuple[str, ...]]] = []
+        for line in lines[2:]:
+            cells = _work054_wp004b_table_cells(line)
+            if cells is None or len(cells) != len(header):
+                rows = []
+                break
+            rows.append((line, cells))
+        if rows:
+            candidates.append((lines[0], lines[1], tuple(rows)))
+    return candidates[0] if len(candidates) == 1 else None
 
 
 def _work054_wp004b_task_slug(legacy_id: str) -> str | None:
@@ -865,9 +864,7 @@ def _work054_wp004b_render_task(
     row_line: str,
 ) -> bytes:
     heading_title = title.rstrip(".")
-    quoted_title = json.dumps(
-        f"{artifact_id}: {title}", ensure_ascii=False
-    )
+    quoted_title = json.dumps(f"{artifact_id}: {title}", ensure_ascii=False)
     lifecycle_trace = ""
     if status != "done":
         lifecycle_trace = (
@@ -1136,13 +1133,9 @@ def _work054_wp004b_admission(
                 return _EMPTY_WORK054_WP004B_ADMISSION
             source_bytes = read_blob(source_blob)
             source_table = _work054_wp004b_task_table(source_bytes)
-            source_status = _work054_wp002_frontmatter_value(
-                source_bytes, "status"
-            )
+            source_status = _work054_wp002_frontmatter_value(source_bytes, "status")
             source_owner = _work054_wp002_frontmatter_value(source_bytes, "owner")
-            source_updated = _work054_wp002_frontmatter_value(
-                source_bytes, "updated"
-            )
+            source_updated = _work054_wp002_frontmatter_value(source_bytes, "updated")
             spec_number = legacy.parent.name[:4]
             if (
                 source_table is None
@@ -1448,9 +1441,7 @@ def _work054_wp004b_admission(
         )
     consumed.update(routers)
     consumed.update(tasks)
-    return _Work054Wp004bAdmission(
-        frozenset(consumed), frozenset(allowed_diagnostics)
-    )
+    return _Work054Wp004bAdmission(frozenset(consumed), frozenset(allowed_diagnostics))
 
 
 def finite_work054_wp004b_document_authority_paths(
@@ -1497,9 +1488,7 @@ def _work107_without_outer_artifact_id(
     expected = f'artifact_id: "{expected_artifact_id}"'.encode("ascii")
     lines = content.splitlines(keepends=True)
     matches = [
-        index
-        for index, line in enumerate(lines)
-        if line.rstrip(b"\r\n") == expected
+        index for index, line in enumerate(lines) if line.rstrip(b"\r\n") == expected
     ]
     if len(matches) != 1 or matches[0] == 0:
         return None
@@ -1539,10 +1528,7 @@ def finite_work107_archive_rehome_paths(
     ):
         return frozenset()
     migration_bytes = _blob_bytes(root, WORK107_MIGRATION_BLOB_OID)
-    if (
-        hashlib.sha256(migration_bytes).hexdigest()
-        != WORK107_MIGRATION_DOCUMENT_SHA256
-    ):
+    if hashlib.sha256(migration_bytes).hexdigest() != WORK107_MIGRATION_DOCUMENT_SHA256:
         return frozenset()
     rows = build_work107_migration_rows(root)
     expected_migration = _work107_without_outer_artifact_id(
@@ -1692,11 +1678,7 @@ def _work054_wp002_frontmatter_value(raw: bytes, key: str) -> str | None:
         if not line.startswith(prefix):
             continue
         value = line[len(prefix) :].strip()
-        if (
-            len(value) >= 2
-            and value[0] == value[-1]
-            and value[0] in {'"', "'"}
-        ):
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in {'"', "'"}:
             value = value[1:-1]
         matches.append(value)
     return matches[0] if len(matches) == 1 else None
@@ -1711,9 +1693,7 @@ def _work054_wp002_migration_rows(raw: bytes) -> tuple[dict[str, object], ...]:
         )
     except ArchiveContractError as exc:
         raise InvocationError("WORK-054 WP-002 migration document differs") from exc
-    if not all(
-        isinstance(row, dict) for row in loaded
-    ):
+    if not all(isinstance(row, dict) for row in loaded):
         raise InvocationError("WORK-054 WP-002 migration ledger is not a row list")
     return tuple(loaded)
 
@@ -1728,6 +1708,206 @@ def _work054_wp002_render_migration_rows(
     rendered = json.dumps(list(rows), ensure_ascii=False, indent=2)
     start, end = matches[0].span("ledger")
     return (text[:start] + rendered + text[end:]).encode("utf-8")
+
+
+def _wp004c_mig0004_paths(
+    *,
+    root: Path,
+    mode: str,
+    base_commit: str,
+    base_blobs: Mapping[PurePosixPath, str],
+    proposed_blobs: Mapping[PurePosixPath, str],
+) -> frozenset[PurePosixPath]:
+    """Admit only source-pinned WP-004C Stage99 and Spec0054 cutover rows."""
+
+    if mode not in {"staged", "ci"}:
+        return frozenset()
+    migration_oid = proposed_blobs.get(WORK054_WP004B_MIGRATION_PATH)
+    if migration_oid is None:
+        return frozenset()
+    try:
+        rows = parse_pinned_migration_control(
+            WORK054_WP004B_MIGRATION_PATH.as_posix(),
+            _blob_bytes(root, migration_oid),
+        )
+    except (ArchiveContractError, InvocationError):
+        return frozenset()
+
+    cutover_rows = [row for row in rows if row.get("source_commit") == base_commit]
+    task_legacy = PurePosixPath(
+        "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks.md"
+    )
+    stage99_rows = [
+        row
+        for row in cutover_rows
+        if isinstance(row.get("legacy_path"), str)
+        and str(row["legacy_path"]).startswith("docs/99.templates/")
+        and _approved_markdown(PurePosixPath(str(row["legacy_path"])))
+    ]
+    task_rows = [
+        row for row in cutover_rows if row.get("legacy_path") == task_legacy.as_posix()
+    ]
+    if len(task_rows) != 1 or not stage99_rows:
+        return frozenset()
+
+    consumed: set[PurePosixPath] = set()
+    stage99_legacy: set[PurePosixPath] = set()
+    stage99_rewrites: dict[str, str] = {}
+    for row in stage99_rows:
+        legacy_raw = row.get("legacy_path")
+        source_blob = row.get("source_blob")
+        digest = row.get("content_sha256")
+        action = row.get("action")
+        target_raw = (
+            row.get("stable_path") if action == "moved" else row.get("replacement")
+        )
+        if not all(
+            isinstance(value, str)
+            for value in (legacy_raw, source_blob, digest, target_raw)
+        ):
+            return frozenset()
+        legacy = PurePosixPath(legacy_raw)
+        target = PurePosixPath(target_raw)
+        if (
+            legacy in stage99_legacy
+            or base_blobs.get(legacy) != source_blob
+            or hashlib.sha256(_blob_bytes(root, source_blob)).hexdigest() != digest
+            or legacy in proposed_blobs
+            or target not in proposed_blobs
+            or action not in {"moved", "replaced"}
+            or (action == "moved" and proposed_blobs[target] != source_blob)
+        ):
+            return frozenset()
+        stage99_legacy.add(legacy)
+        stage99_rewrites[legacy.as_posix()] = target.as_posix()
+        consumed.update((legacy, target))
+
+    deleted_stage99 = {
+        path
+        for path in base_blobs
+        if path.as_posix().startswith("docs/99.templates/")
+        and path not in proposed_blobs
+    }
+    if stage99_legacy != deleted_stage99:
+        return frozenset()
+
+    task_row = task_rows[0]
+    if (
+        task_row.get("action") != "replaced"
+        or task_row.get("stable_path") is not None
+        or task_row.get("replacement") != (task_legacy.parent / "README.md").as_posix()
+        or not isinstance(task_row.get("source_blob"), str)
+        or not isinstance(task_row.get("content_sha256"), str)
+    ):
+        return frozenset()
+    source_blob = str(task_row["source_blob"])
+    source = _blob_bytes(root, source_blob)
+    if (
+        base_blobs.get(task_legacy) != source_blob
+        or hashlib.sha256(source).hexdigest() != task_row["content_sha256"]
+    ):
+        return frozenset()
+    source_table = _work054_wp004b_task_table(source)
+    source_status = _work054_wp002_frontmatter_value(source, "status")
+    source_owner = _work054_wp002_frontmatter_value(source, "owner")
+    source_updated = _work054_wp002_frontmatter_value(source, "updated")
+    readme_path = task_legacy.parent / "README.md"
+    readme_oid = proposed_blobs.get(readme_path)
+    if (
+        source_table is None
+        or source_status is None
+        or source_owner is None
+        or source_updated is None
+        or readme_oid is None
+    ):
+        return frozenset()
+    header_line, separator_line, source_entries = source_table
+    headers = _work054_wp004b_task_table(source)
+    assert headers is not None
+    parsed_header = _work054_wp004b_table_cells(header_line)
+    if parsed_header is None:
+        return frozenset()
+    try:
+        status_index = tuple(cell.lower() for cell in parsed_header).index("status")
+    except ValueError:
+        return frozenset()
+    readme = _blob_bytes(root, readme_oid).decode("utf-8", errors="strict")
+    task_links: dict[str, PurePosixPath] = {}
+    for line in readme.splitlines():
+        match = re.fullmatch(
+            r"- \[`(?P<artifact>TSK-0054-(?P<sequence>[0-9]{4}))`\]"
+            r"\((?P<relative>tasks/tsk-(?P=sequence)-[a-z0-9]+"
+            r"(?:-[a-z0-9]+)*\.md)\)",
+            line,
+        )
+        if match is None:
+            continue
+        artifact_id = match.group("artifact")
+        path = task_legacy.parent / match.group("relative")
+        if artifact_id in task_links or path in task_links.values():
+            return frozenset()
+        task_links[artifact_id] = path
+    if len(task_links) != len(source_entries):
+        return frozenset()
+
+    expected_tasks: set[PurePosixPath] = set()
+    for sequence, (row_line, cells) in enumerate(source_entries, 1):
+        legacy_id = _work054_wp004b_legacy_id(cells[0])
+        state = WORK054_WP004B_TASK_STATUSES.get(cells[status_index].strip().lower())
+        if legacy_id is None or state is None:
+            return frozenset()
+        artifact_id = f"TSK-0054-{sequence:04d}"
+        path = task_links.get(artifact_id)
+        if path is None:
+            return frozenset()
+        oid = proposed_blobs.get(path)
+        if oid is None:
+            return frozenset()
+        task_bytes = _blob_bytes(root, oid)
+        task_table = _work054_wp004b_task_table(task_bytes)
+        if task_table is None or path.name not in readme:
+            return frozenset()
+        task_header, task_separator, task_entries = task_table
+        task_cells = task_entries[0][1] if len(task_entries) == 1 else ()
+        task_text = task_bytes.decode("utf-8", errors="strict")
+        checks = {
+            "header": task_header == header_line,
+            "separator": task_separator == separator_line,
+            "work-row": task_cells == cells,
+            "artifact-id": f'artifact_id: "{artifact_id}"' in task_text,
+            "status": f"status: {state}" in task_text,
+            "wp": f"**Plan label:** WP-{sequence:03d}" in task_text,
+            "legacy-id": legacy_id in task_text,
+            "common-contract": "../README.md#common-execution-contract" in task_text,
+            "plan-link": "../plan.md" in task_text,
+        }
+        failed = next((name for name, valid in checks.items() if not valid), None)
+        if failed is not None:
+            raise InvocationError(
+                f"WP004C MIG-0004 task proof failed: {path.as_posix()}:{failed}"
+            )
+        expected_tasks.add(path)
+    actual_tasks = {
+        path for path in proposed_blobs if path.parent == task_legacy.parent / "tasks"
+    }
+    if expected_tasks != actual_tasks:
+        return frozenset()
+    consumed.update((task_legacy, readme_path, *expected_tasks))
+    for path in set(base_blobs) & set(proposed_blobs):
+        if path.suffix != ".md" or base_blobs[path] == proposed_blobs[path]:
+            continue
+        base_text = _blob_bytes(root, base_blobs[path]).decode("utf-8", errors="strict")
+        rewritten = base_text
+        for source, target in sorted(stage99_rewrites.items()):
+            rewritten = rewritten.replace(source, target)
+        proposed_text = _blob_bytes(root, proposed_blobs[path]).decode(
+            "utf-8", errors="strict"
+        )
+        if rewritten == proposed_text or _wp004c_link_repair_text(
+            base_text
+        ) == _wp004c_link_repair_text(proposed_text):
+            consumed.add(path)
+    return frozenset(consumed)
 
 
 def _work054_wp002_artifact_id(path: PurePosixPath) -> str | None:
@@ -1918,10 +2098,7 @@ def finite_work054_wp002_transition_paths(
         return frozenset()
 
     migration_oid = proposed_blobs.get(WORK054_WP002_MIGRATION_PATH)
-    if (
-        WORK054_WP002_MIGRATION_PATH in base_blobs
-        or migration_oid is None
-    ):
+    if WORK054_WP002_MIGRATION_PATH in base_blobs or migration_oid is None:
         return frozenset()
     try:
         if migration_bytes is not None:
@@ -2031,10 +2208,7 @@ def finite_work054_wp002_transition_paths(
     consumed.update(WORK054_WP002_SPEC_PATHS)
 
     decision_oid = proposed_blobs.get(WORK054_WP002_DECISION_PATH)
-    if (
-        WORK054_WP002_DECISION_PATH in base_blobs
-        or decision_oid is None
-    ):
+    if WORK054_WP002_DECISION_PATH in base_blobs or decision_oid is None:
         return frozenset()
     try:
         raw_decision = (
@@ -2060,16 +2234,14 @@ def finite_work054_wp002_transition_paths(
     )
     if (
         _git_blob_oid(raw_decision) != decision_oid
-        or hashlib.sha256(raw_decision).hexdigest()
-        != WORK054_WP002_DECISION_SHA256
+        or hashlib.sha256(raw_decision).hexdigest() != WORK054_WP002_DECISION_SHA256
         or decision_document
         != LifecycleDocument(
             WORK054_WP002_DECISION_PATH,
             "sdlc/adr",
             "accepted",
         )
-        or _work054_wp002_frontmatter_value(raw_decision, "artifact_id")
-        != "ADR-0025"
+        or _work054_wp002_frontmatter_value(raw_decision, "artifact_id") != "ADR-0025"
         or any(decision_text.count(link) < 1 for link in required_decision_links)
     ):
         return frozenset()
@@ -2090,10 +2262,7 @@ def finite_work054_wp003_agent_governance_paths(
     if mode not in {"staged", "ci"} or base_commit != WORK054_WP003_BASE_COMMIT:
         return frozenset()
     migration_oid = proposed_blobs.get(WORK054_WP003_MIGRATION_PATH)
-    if (
-        WORK054_WP003_MIGRATION_PATH in base_blobs
-        or migration_oid is None
-    ):
+    if WORK054_WP003_MIGRATION_PATH in base_blobs or migration_oid is None:
         return frozenset()
     try:
         migration_bytes = _blob_bytes(root, migration_oid)
@@ -2115,10 +2284,7 @@ def finite_work054_wp003_agent_governance_paths(
         rows = json.loads(raw_rows)
     except json.JSONDecodeError:
         return frozenset()
-    if (
-        not isinstance(rows, list)
-        or len(rows) != len(WORK054_WP003_OWNER_RETIREMENTS)
-    ):
+    if not isinstance(rows, list) or len(rows) != len(WORK054_WP003_OWNER_RETIREMENTS):
         return frozenset()
     consumed: set[PurePosixPath] = {WORK054_WP003_MIGRATION_PATH}
     for row, expected in zip(rows, WORK054_WP003_OWNER_RETIREMENTS, strict=True):
@@ -2375,8 +2541,7 @@ def _agent_evidence_matches(
         "admissionVerdict": "DEFER",
         "deferredClasses": list(deferred_classes),
         "deferredClassStates": {
-            evidence_class: "DEFER"
-            for evidence_class in deferred_classes
+            evidence_class: "DEFER" for evidence_class in deferred_classes
         },
     }
     if proposed:
@@ -2431,10 +2596,8 @@ def _agent_contracts_admit_cutover(
     assert isinstance(proposed_harness, Mapping)
 
     if (
-        base_admission.get("contractId")
-        != "hy-home.k8s/agent-roster-admission"
-        or proposed_admission.get("contractId")
-        != "hy-home.k8s/agent-roster-admission"
+        base_admission.get("contractId") != "hy-home.k8s/agent-roster-admission"
+        or proposed_admission.get("contractId") != "hy-home.k8s/agent-roster-admission"
         or base_admission.get("contractVersion") != "1.0.0"
         or proposed_admission.get("contractVersion") != "1.0.0"
         or base_admission.get("state") != "contract-only"
@@ -2521,9 +2684,7 @@ def _agent_contracts_admit_cutover(
             != "repository-static-role-and-adapter-projection-only"
             or not _agent_evaluation_gate_matches(
                 candidate.get("evaluationGate"),
-                baseline_state=(
-                    "deferred-to-area-003-before-runtime-activation"
-                ),
+                baseline_state=("deferred-to-area-003-before-runtime-activation"),
             )
         ):
             return False
@@ -2752,9 +2913,7 @@ def _agent_roster_cutover_fixture_inputs(
             "projectionAuthorization": {
                 "authorized": True,
                 "scope": "repository-static-role-and-adapter-projection-only",
-                "excludedEvidenceClasses": list(
-                    AGENT_ROSTER_DEFERRED_CLASSES
-                ),
+                "excludedEvidenceClasses": list(AGENT_ROSTER_DEFERRED_CLASSES),
             },
             "deferredClasses": list(AGENT_ROSTER_DEFERRED_CLASSES),
             "deferredClassStates": {
@@ -2871,9 +3030,7 @@ def _agent_roster_cutover_fixture_inputs(
         elif mutation == "admission-verdict-preclaim":
             evidence["admissionVerdict"] = "PASS"
         elif mutation == "promotion-authorization-preclaim":
-            evidence["promotionAuthorization"] = evidence.pop(
-                "projectionAuthorization"
-            )
+            evidence["promotionAuthorization"] = evidence.pop("projectionAuthorization")
         elif mutation == "missing-deferred-evidence":
             evidence.pop("deferredClassStates")
         else:
@@ -2906,9 +3063,7 @@ def _agent_roster_cutover_fixture_inputs(
         if mutation == "candidate-admission-preclaim":
             candidate["decision"] = "repository-static-admitted"
         else:
-            candidate[
-                "authority"
-            ] = "repository-static-role-and-adapter-inventory-only"
+            candidate["authority"] = "repository-static-role-and-adapter-inventory-only"
     elif mutation in {
         "wrong-evaluation-baseline",
         "wrong-independent-adjudication",
@@ -3061,9 +3216,7 @@ def _work054_wp002_transition_fixture_inputs(
         proposed_registry_raw,
     )
     migration_oid = proposed_blobs.get(WORK054_WP002_MIGRATION_PATH)
-    migration_bytes = (
-        b"" if migration_oid is None else _blob_bytes(root, migration_oid)
-    )
+    migration_bytes = b"" if migration_oid is None else _blob_bytes(root, migration_oid)
     decision_oid = proposed_blobs.get(WORK054_WP002_DECISION_PATH)
     decision_bytes = b"" if decision_oid is None else _blob_bytes(root, decision_oid)
 
@@ -3079,12 +3232,8 @@ def _work054_wp002_transition_fixture_inputs(
 
     def update_migration(rows: Sequence[Mapping[str, object]]) -> None:
         nonlocal migration_bytes
-        migration_bytes = _work054_wp002_render_migration_rows(
-            migration_bytes, rows
-        )
-        proposed_blobs[WORK054_WP002_MIGRATION_PATH] = _git_blob_oid(
-            migration_bytes
-        )
+        migration_bytes = _work054_wp002_render_migration_rows(migration_bytes, rows)
+        proposed_blobs[WORK054_WP002_MIGRATION_PATH] = _git_blob_oid(migration_bytes)
 
     base_commit = WORK054_WP002_BASE_COMMIT
     if mutation == "wrong-base":
@@ -3111,15 +3260,11 @@ def _work054_wp002_transition_fixture_inputs(
         elif mutation == "source-digest-drift" and rows:
             rows[0]["content_sha256"] = "0" * 64
         elif mutation == "replacement-drift":
-            merged = next(
-                (row for row in rows if row.get("action") == "merged"), None
-            )
+            merged = next((row for row in rows if row.get("action") == "merged"), None)
             if merged is not None:
                 merged["replacement"] = "docs/README.md"
         elif mutation == "target-artifact-drift":
-            moved = next(
-                (row for row in rows if row.get("action") == "moved"), None
-            )
+            moved = next((row for row in rows if row.get("action") == "moved"), None)
             if moved is not None:
                 moved["artifact_id"] = "SPEC-9999"
         update_migration(rows)
@@ -3159,18 +3304,12 @@ def _work105_form_cutover_fixture_inputs(
     mutation: str,
 ) -> dict[str, object]:
     base_registry = dict(_registry_blob(root, WORK105_BASE_REGISTRY_BLOB_OID))
-    proposed_registry = dict(
-        _registry_blob(root, WORK105_PROPOSED_REGISTRY_BLOB_OID)
-    )
+    proposed_registry = dict(_registry_blob(root, WORK105_PROPOSED_REGISTRY_BLOB_OID))
     base_documents: dict[PurePosixPath, LifecycleDocument] = {}
     proposed_documents: dict[PurePosixPath, LifecycleDocument] = {}
     for token, status in WORK105_AD_CUTOVER:
-        old_path = PurePosixPath(
-            f"docs/02.architecture/requirements/{token}.md"
-        )
-        new_path = PurePosixPath(
-            f"docs/02.architecture/descriptions/ad-{token}.md"
-        )
+        old_path = PurePosixPath(f"docs/02.architecture/requirements/{token}.md")
+        new_path = PurePosixPath(f"docs/02.architecture/descriptions/ad-{token}.md")
         base_documents[old_path] = LifecycleDocument(old_path, "sdlc/ard", status)
         proposed_documents[new_path] = LifecycleDocument(new_path, "sdlc/ad", status)
 
@@ -3298,9 +3437,7 @@ def _work105_form_cutover_fixture_inputs(
 def _work105_decision_evidence_fixture_inputs(
     root: Path, mutation: str
 ) -> dict[str, object]:
-    base_text = _blob_text(
-        root, WORK105_ADR0023_BASE_BLOB_OID, WORK105_ADR0023_PATH
-    )
+    base_text = _blob_text(root, WORK105_ADR0023_BASE_BLOB_OID, WORK105_ADR0023_PATH)
     proposed_text = _blob_text(
         root, WORK105_ADR0023_PROPOSED_BLOB_OID, WORK105_ADR0023_PATH
     )
@@ -3343,344 +3480,6 @@ def _work105_decision_evidence_fixture_inputs(
         "unresolved_links": unresolved_links,
         "body_table_links": body_table_links,
     }
-
-
-EXPECTED_FORWARD_CASE_NAMES = (
-    "product",
-    "architecture-requirement",
-    "architecture-decision",
-    "specification",
-    "execution",
-    "operations",
-    "reference-governance",
-)
-EXPECTED_COMPARISON_CASE_NAMES = (
-    "unchanged-valid-state",
-    "skipped-edge",
-    "reverse-edge",
-    "terminal-reopen",
-    "archive-reactivation",
-    "same-path-profile-change",
-    "same-path-unclassified-state",
-    "invalid-base-state",
-    "missing-proposed-state",
-)
-EXPECTED_ADMISSION_CASE_NAMES = (
-    "draft-create-allowed",
-    "archive-envelope-create-without-evidence-denied",
-    "active-create-denied",
-    "unclassified-create-denied",
-    "unclassified-delete-denied",
-    "paired-draft-create-allowed",
-    "paired-active-create-allowed",
-    "paired-orphan-create-denied",
-    "paired-state-mismatch-denied",
-    "multiple-pairs-create-denied",
-    "snapshot-only-create-denied",
-    "delete-denied",
-    "exact-rename-single-event",
-)
-EXPECTED_GIT_CASE_NAMES = (
-    "staged-head-index-worktree-pass",
-    "staged-head-index-worktree-fail",
-    "staged-add",
-    "staged-delete",
-    "staged-exact-rename",
-    "staged-modified-rename",
-    "staged-modified-governed-to-unclassified",
-    "staged-modified-unclassified-to-governed",
-    "staged-modified-unclassified-to-unclassified",
-    "staged-governed-to-unclassified-rename",
-    "staged-unclassified-to-unclassified-rename",
-    "staged-unclassified-add",
-    "staged-unclassified-delete",
-    "staged-unclassified-modify",
-    "staged-same-path-profile-change",
-    "staged-unknown-type-state",
-    "staged-paired-create",
-    "staged-paired-create-blocked-spec",
-    "staged-paired-create-ready-spec-done",
-    "staged-paired-create-split-spec",
-    "staged-evidence-index-invalid-worktree-valid",
-    "staged-evidence-index-valid-worktree-invalid",
-    "include-does-not-filter-violation",
-    "staged-submodule-ignore-all",
-    "ci-merge-base",
-    "ci-no-merge-base",
-    "ci-ambiguous-merge-base",
-    "explicit-ref-pass",
-    "explicit-ref-fail",
-    "explicit-ref-proposed-only-evidence",
-    "explicit-ref-base-only-evidence-removed",
-    "ci-proposed-tree-evidence",
-    "explicit-ref-submodule-ignore-all",
-    "missing-ref",
-    "ambiguous-ref",
-    "raw-tree-ref",
-    "raw-blob-ref",
-    "annotated-tag-ref",
-    "lightweight-commit-tag-pass",
-    "git-environment-steering",
-    "non-worktree-root",
-    "wrong-worktree-root",
-    "bare-root",
-)
-FINAL_TRANCHE_NEGATIVE_GIT_CASE_NAMES = (
-    "staged-paired-create-blocked-spec",
-    "staged-paired-create-split-spec",
-)
-EXPECTED_ARGUMENT_CASE_NAMES = (
-    "staged-forbids-refs",
-    "ci-requires-base",
-    "ci-requires-to",
-    "explicit-requires-from",
-    "explicit-requires-to",
-    "snapshot-forbids-refs",
-    "invalid-mode",
-)
-EXPECTED_INCLUDE_CASE_NAMES = (
-    "duplicate",
-    "noncanonical",
-    "parent",
-    "non-target",
-    "missing-blob",
-)
-EXPECTED_SNAPSHOT_CASE_NAME = "exactly-one-base-defer"
-EXPECTED_ARCHIVE_CUTOVER_CASE_NAMES = (
-    "exact-staged",
-    "exact-ci",
-    "partial-record-set",
-    "extra-record",
-    "wrong-base",
-    "wrong-base-registry-oid",
-    "proposed-policy-drift",
-    "missing-template-pair",
-    "wrong-registry-version",
-    "missing-registry-profile-pair",
-    "unrelated-profile-change",
-    "snapshot-not-admitted",
-    "explicit-ref-not-admitted",
-)
-EXPECTED_ARCHIVE_CUTOVER_MUTATIONS = frozenset(
-    {
-        "exact",
-        "partial",
-        "extra",
-        "wrong-base",
-        "wrong-base-registry-oid",
-        "proposed-policy-drift",
-        "missing-template",
-        "wrong-registry-version",
-        "missing-registry-profile",
-        "unrelated-profile-change",
-    }
-)
-EXPECTED_WORK105_FORM_CUTOVER_CASE_NAMES = (
-    "exact-staged",
-    "exact-ci",
-    "wrong-mode",
-    "wrong-base",
-    "wrong-base-registry-oid",
-    "wrong-proposed-registry-oid",
-    "wrong-base-schema",
-    "wrong-proposed-schema",
-    "wrong-base-id",
-    "wrong-proposed-id",
-    "wrong-base-route-state",
-    "wrong-proposed-route-state",
-    "base-projection-drift",
-    "proposed-projection-drift",
-    "missing-ad",
-    "extra-ad",
-    "wrong-status",
-    "missing-form",
-    "wrong-form-profile",
-    "authored-api-instance",
-)
-EXPECTED_WORK105_FORM_CUTOVER_MUTATIONS = frozenset(
-    {
-        "exact",
-        "wrong-base",
-        "wrong-base-registry-oid",
-        "wrong-proposed-registry-oid",
-        "wrong-base-schema",
-        "wrong-proposed-schema",
-        "wrong-base-id",
-        "wrong-proposed-id",
-        "wrong-base-route-state",
-        "wrong-proposed-route-state",
-        "base-projection-drift",
-        "proposed-projection-drift",
-        "missing-ad",
-        "extra-ad",
-        "wrong-status",
-        "missing-form",
-        "wrong-form-profile",
-        "authored-api-instance",
-    }
-)
-EXPECTED_WORK105_DECISION_EVIDENCE_CASE_NAMES = (
-    "exact-reciprocal-predecessor",
-    "wrong-owner",
-    "wrong-base-profile",
-    "wrong-proposed-status",
-    "base-blob-drift",
-    "proposed-blob-drift",
-    "missing-reciprocal-row",
-    "missing-resolved-successor",
-    "missing-table-successor",
-    "extra-unresolved",
-)
-EXPECTED_WORK105_DECISION_EVIDENCE_MUTATIONS = frozenset(
-    {
-        "exact",
-        "wrong-owner",
-        "wrong-base-profile",
-        "wrong-proposed-status",
-        "base-blob-drift",
-        "proposed-blob-drift",
-        "missing-reciprocal-row",
-        "missing-resolved-successor",
-        "missing-table-successor",
-        "extra-unresolved",
-    }
-)
-EXPECTED_WORK054_WP002_TRANSITION_CASE_NAMES = (
-    "exact-staged",
-    "exact-ci",
-    "wrong-mode",
-    "wrong-base",
-    "missing-migration",
-    "missing-ledger-row",
-    "extra-ledger-row",
-    "source-blob-drift",
-    "source-digest-drift",
-    "replacement-drift",
-    "target-artifact-drift",
-    "standalone-lineage-drift",
-    "missing-spec-transition",
-    "missing-decision",
-    "decision-blob-drift",
-)
-EXPECTED_WORK054_WP002_TRANSITION_MUTATIONS = frozenset(
-    {
-        "exact",
-        "wrong-base",
-        "missing-migration",
-        "missing-ledger-row",
-        "extra-ledger-row",
-        "source-blob-drift",
-        "source-digest-drift",
-        "replacement-drift",
-        "target-artifact-drift",
-        "standalone-lineage-drift",
-        "missing-spec-transition",
-        "missing-decision",
-        "decision-blob-drift",
-    }
-)
-FIXTURE_MUTATION_COUNT = 27
-EXPECTED_EVIDENCE_ASSERTION_SHA256 = "6bd2461086ea6ff7b5aa63577f77a10441d0a3bc126ab7f6122793989c461453"  # pragma: allowlist secret
-EXPECTED_EVIDENCE_VARIANTS = (
-    "positive",
-    "missing",
-    "wrong-profile",
-    "wrong-state",
-    "wrong-relationship-section",
-    "unchanged",
-    "ambiguous-base",
-    "body-contract-mismatch",
-    "plain-text-path",
-    "opaque-markdown",
-    "orphan",
-    "multiple",
-)
-
-
-def _dependency_ready_tranche_window(
-    registry: Registry,
-) -> tuple[str, str, str | None]:
-    """Return the current original-tranche ready identity, state, and successor."""
-
-    programs = [
-        program for program in registry.program_lineage if program.prd_id == "0006"
-    ]
-    if len(programs) != 1:
-        raise ValueError("PRD-0006 does not resolve one program lineage")
-    program = programs[0]
-    completed_count = sum(relation.state == "done" for relation in program.tranches)
-    expected_states = tuple(
-        "done" if index < completed_count else "active"
-        for index in range(len(program.tranches))
-    )
-    actual_states = tuple(relation.state for relation in program.tranches)
-    if actual_states != expected_states:
-        raise ValueError(
-            "PRD-0006 original tranche is not one contiguous done prefix "
-            "followed by an active suffix"
-        )
-    if completed_count == len(program.tranches):
-        raise ValueError("PRD-0006 has no dependency-ready original tranche")
-    ready = program.tranches[completed_count]
-    blocked = (
-        program.tranches[completed_count + 1]
-        if completed_count + 1 < len(program.tranches)
-        else None
-    )
-    return ready.spec_id, ready.state, blocked.spec_id if blocked is not None else None
-
-
-def _execution_spec_fixture_path(spec_id: str) -> PurePosixPath:
-    return PurePosixPath(f"docs/03.specs/{spec_id}-evidence-fixture/spec.md")
-
-
-def _registry_with_ready_spec(registry: Registry, ready_spec_id: str) -> Registry:
-    """Build an isolated typed registry at one supported rollover boundary."""
-
-    program = next(
-        program for program in registry.program_lineage if program.prd_id == "0006"
-    )
-    ready_order = next(
-        relation.order
-        for relation in program.tranches
-        if relation.spec_id == ready_spec_id
-    )
-    candidate_program = replace(
-        program,
-        tranches=tuple(
-            replace(
-                relation,
-                state="done" if relation.order < ready_order else "active",
-            )
-            for relation in program.tranches
-        ),
-    )
-    return replace(
-        registry,
-        program_lineage=tuple(
-            candidate_program if item.prd_id == "0006" else item
-            for item in registry.program_lineage
-        ),
-    )
-
-
-def _self_test_dependency_ready_registry(registry: Registry) -> Registry:
-    """Return an isolated final-tranche-ready registry for terminal self-tests."""
-
-    try:
-        _dependency_ready_tranche_window(registry)
-    except ValueError as exc:
-        if str(exc) != "PRD-0006 has no dependency-ready original tranche":
-            raise
-        program = next(
-            program for program in registry.program_lineage if program.prd_id == "0006"
-        )
-        if not program.tranches or any(
-            relation.state != "done" for relation in program.tranches
-        ):
-            raise
-        return _registry_with_ready_spec(registry, program.tranches[-1].spec_id)
-    return registry
 
 
 class InvocationError(ValueError):
@@ -4271,7 +4070,16 @@ def _classification_registry(
         "sdlc/srs": "sdlc/requirement-package",  # Retired WP-004B alias.
         "sdlc/interface": "sdlc/requirement-package",  # Retired WP-004B alias.
         "sdlc/api-spec": "sdlc/requirement-package",  # Retired comparison alias.
-        "template/sdlc/api-spec": "template/sdlc/interface",  # Retired alias.
+        "sdlc/agent-design": "sdlc/spec",  # Retired WP-004C alias.
+        "sdlc/tests": "sdlc/spec",  # Retired WP-004C alias.
+        "governance/template-support": "governance/reference",  # Retired WP-004C alias.
+        "template/sdlc/api-spec": "template/sdlc/requirement-package",  # Retired alias.
+        "template/sdlc/prd": "template/sdlc/requirement-package",  # Retired WP-004C alias.
+        "template/sdlc/srs": "template/sdlc/requirement-package",  # Retired WP-004C alias.
+        "template/sdlc/interface": "template/sdlc/requirement-package",  # Retired WP-004C alias.
+        "template/sdlc/agent-design": "template/sdlc/spec",  # Retired WP-004C alias.
+        "template/sdlc/tests": "template/sdlc/spec",  # Retired WP-004C alias.
+        "template/governance/template-support": "template/governance/reference",  # Retired WP-004C alias.
     }
     projected: list[DocumentProfile] = []
     for raw_profile in raw_profiles:
@@ -4279,7 +4087,12 @@ def _classification_registry(
             raise InvocationError("comparison registry contains a non-object profile")
         profile_id = raw_profile.get("id")
         raw_routes = raw_profile.get("routes")
+        if raw_routes is None and isinstance(raw_profile.get("pathPattern"), str):
+            raw_routes = [{"kind": "regex", "value": raw_profile["pathPattern"]}]
+        raw_lifecycle = raw_profile.get("lifecycle")
         raw_status_domain = raw_profile.get("statusDomain")
+        if raw_status_domain is None and isinstance(raw_lifecycle, dict):
+            raw_status_domain = raw_lifecycle.get("statusDomain")
         raw_mode = raw_profile.get("mode")
         if (
             not isinstance(profile_id, str)
@@ -4394,15 +4207,15 @@ def _evidence_context(
     views: dict[PurePosixPath, LifecycleEvidenceDocument] = {}
     for path, document in proposed_documents.items():
         profile = profile_map.get(document.profile_id)
-        if profile is None:
+        if profile is None or profile.body_contract is None:
             views[path] = LifecycleEvidenceDocument(
                 document=document,
                 all_local_links=(),
                 relationship_links=(),
                 unresolved_relationship_links=(),
                 body_table_links=(),
-                relationship_section_valid=False,
-                body_contract_valid=False,
+                relationship_section_valid=profile is not None,
+                body_contract_valid=profile is not None,
                 task_terminal_evidence_valid=False,
             )
             continue
@@ -4551,41 +4364,6 @@ def _comparison_documents(
     return base_documents, proposed_documents, tuple(renames)
 
 
-def _comparison_requires_evidence(
-    registry: Registry,
-    base_documents: Mapping[PurePosixPath, LifecycleDocument],
-    proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
-) -> bool:
-    profile_map = {profile.profile_id: profile for profile in registry.profiles}
-    if any(
-        document.profile_id == ARCHIVE_PROFILE and path not in base_documents
-        for path, document in proposed_documents.items()
-    ):
-        return True
-    for path in set(base_documents) & set(proposed_documents):
-        base = base_documents[path]
-        proposed = proposed_documents[path]
-        if (
-            base.profile_id != proposed.profile_id
-            or base.status is None
-            or proposed.status is None
-            or base.status == proposed.status
-        ):
-            continue
-        profile = profile_map.get(proposed.profile_id)
-        if profile is not None and any(
-            edge.from_state == base.status and edge.to_state == proposed.status
-            for edge in profile.lifecycle.edges
-        ):
-            return True
-    return any(
-        document.profile_id in {"sdlc/plan", "sdlc/task"}
-        and document.status in {"draft", "active"}
-        for path, document in proposed_documents.items()
-        if path not in base_documents
-    )
-
-
 def _evaluate_comparison(
     root: Path,
     registry: Registry,
@@ -4606,7 +4384,6 @@ def _evaluate_comparison(
         base_blobs = _tree_blob_map(root, base_commit)
         proposed_blobs = _index_blob_map(root)
         changes = _staged_changes(root)
-        proposed_registry_oid = _index_blob_oid(root, RETIRED_REGISTRY_PATH)
     else:
         if mode == "ci":
             assert base_ref is not None and to_ref is not None
@@ -4623,14 +4400,10 @@ def _evaluate_comparison(
         base_blobs = _tree_blob_map(root, base_commit)
         proposed_blobs = _tree_blob_map(root, proposed_commit)
         changes = _tree_changes(root, base_commit, proposed_commit)
-        proposed_registry_oid = _tree_blob_oid(root, proposed_commit, RETIRED_REGISTRY_PATH)
 
     base_agent_contract_blobs: Mapping[PurePosixPath, str] = MappingProxyType({})
     proposed_agent_contract_blobs: Mapping[PurePosixPath, str] = MappingProxyType({})
-    if (
-        mode in {"staged", "ci"}
-        and base_commit == AGENT_ROSTER_ADMISSION_BASE_COMMIT
-    ):
+    if mode in {"staged", "ci"} and base_commit == AGENT_ROSTER_ADMISSION_BASE_COMMIT:
         base_agent_contract_blobs = _agent_contract_blob_map(
             lambda path: _tree_blob_oid(root, base_commit, path)
         )
@@ -4644,35 +4417,12 @@ def _evaluate_comparison(
                 lambda path: _tree_blob_oid(root, proposed_commit, path)
             )
 
-    base_registry_oid = _tree_blob_oid(root, base_commit, RETIRED_REGISTRY_PATH)
-    base_registry_raw = _registry_blob(root, base_registry_oid)
-    proposed_registry_raw = _registry_blob(root, proposed_registry_oid)
-    base_classification_registry = _classification_registry(registry, base_registry_raw)
-    proposed_classification_registry = _classification_registry(
-        registry, proposed_registry_raw
-    )
-    base_classification_registry = _wp004b_classification_registry(
-        registry,
-        base_classification_registry,
-        authority_converged=WORK054_WP004B_MIGRATION_PATH in base_blobs,
-    )
-    proposed_classification_registry = _wp004b_classification_registry(
-        registry,
-        proposed_classification_registry,
-        authority_converged=WORK054_WP004B_MIGRATION_PATH in proposed_blobs,
-    )
-
-    work054_wp002_consumed_paths = finite_work054_wp002_transition_paths(
-        root=root,
-        mode=mode,
-        base_commit=base_commit,
-        base_registry=base_classification_registry,
-        proposed_registry=proposed_classification_registry,
-        base_registry_raw=base_registry_raw,
-        proposed_registry_raw=proposed_registry_raw,
-        base_blobs=base_blobs,
-        proposed_blobs=proposed_blobs,
-    )
+    # Stage 99 is terminal: compare both snapshots with the current root
+    # profile authority. Historical route and flat-registry projections are
+    # intentionally not lifecycle inputs.
+    base_classification_registry = registry
+    proposed_classification_registry = registry
+    work054_wp002_consumed_paths = frozenset()
     work054_wp003_consumed_paths = finite_work054_wp003_agent_governance_paths(
         root=root,
         mode=mode,
@@ -4680,33 +4430,15 @@ def _evaluate_comparison(
         base_blobs=base_blobs,
         proposed_blobs=proposed_blobs,
     )
-    work054_wp004b_admission = _work054_wp004b_admission(
+    wp004c_mig0004_consumed_paths = _wp004c_mig0004_paths(
         root=root,
         mode=mode,
         base_commit=base_commit,
         base_blobs=base_blobs,
         proposed_blobs=proposed_blobs,
-        base_registry=base_classification_registry,
-        proposed_registry=proposed_classification_registry,
     )
-    work107_consumed_paths = finite_work107_archive_rehome_paths(
-        root=root,
-        mode=mode,
-        base_commit=base_commit,
-        base_registry_oid=base_registry_oid or "",
-        proposed_registry_oid=proposed_registry_oid or "",
-        base_blobs=base_blobs,
-        proposed_blobs=proposed_blobs,
-    )
-    work108_consumed_paths = finite_work108_artifact_identity_paths(
-        root=root,
-        mode=mode,
-        base_commit=base_commit,
-        base_registry_oid=base_registry_oid or "",
-        proposed_registry_oid=proposed_registry_oid or "",
-        base_blobs=base_blobs,
-        proposed_blobs=proposed_blobs,
-    )
+    work107_consumed_paths = frozenset()
+    work108_consumed_paths = frozenset()
 
     immutability_diagnostics = _archive_immutability_diagnostics(
         root,
@@ -4739,53 +4471,22 @@ def _evaluate_comparison(
         base_oid=base_oid,
         proposed_oid=proposed_oid,
     )
-    base_activation_blobs = dict(base_blobs)
-    proposed_activation_blobs = dict(proposed_blobs)
-    for authority_path in WORK054_WP004A_REQUIRED_CHANGED_PATHS:
-        authority_base_oid = _tree_blob_oid(root, base_commit, authority_path)
-        if authority_base_oid is not None:
-            base_activation_blobs[authority_path] = authority_base_oid
-        authority_proposed_oid = (
-            _index_blob_oid(root, authority_path)
-            if mode == "staged"
-            else _tree_blob_oid(root, proposed_commit, authority_path)
-        )
-        if authority_proposed_oid is not None:
-            proposed_activation_blobs[authority_path] = authority_proposed_oid
-    work054_wp004a_consumed_paths = finite_work054_wp004a_authority_paths(
-        mode=mode,
-        base_commit=base_commit,
-        base_documents=base_documents,
-        proposed_documents=proposed_documents,
-        base_blobs=base_activation_blobs,
-        proposed_blobs=proposed_activation_blobs,
-    )
+    work054_wp004a_consumed_paths: frozenset[PurePosixPath] = frozenset()
     base_snapshot, base_texts = _snapshot_projection(
         root, base_classification_registry, base_blobs
     )
     proposed_snapshot, proposed_texts = _snapshot_projection(
         root, proposed_classification_registry, proposed_blobs
     )
-    work105_consumed_paths = finite_work105_form_cutover_paths(
-        mode=mode,
-        base_commit=base_commit,
-        base_registry_oid=base_registry_oid or "",
-        proposed_registry_oid=proposed_registry_oid or "",
-        base_registry=base_registry_raw,
-        proposed_registry=proposed_registry_raw,
-        base_documents=base_snapshot,
-        proposed_documents=proposed_snapshot,
+    evidence_context = evidence_context_factory(
+        proposed_classification_registry,
+        base_snapshot,
+        proposed_snapshot,
+        base_texts,
+        proposed_texts,
     )
-    archive_consumed_paths = finite_archive_cutover_paths(
-        mode=mode,
-        base_commit=base_commit,
-        base_registry_oid=base_registry_oid or "",
-        proposed_registry_oid=proposed_registry_oid or "",
-        base_registry=base_registry_raw,
-        proposed_registry=proposed_registry_raw,
-        base_documents=base_documents,
-        proposed_documents=proposed_documents,
-    )
+    work105_consumed_paths: frozenset[PurePosixPath] = frozenset()
+    archive_consumed_paths: frozenset[PurePosixPath] = frozenset()
     agent_consumed_paths: frozenset[PurePosixPath] = frozenset()
     if (
         mode in {"staged", "ci"}
@@ -4825,6 +4526,7 @@ def _evaluate_comparison(
         | work108_consumed_paths
         | archive_consumed_paths
         | agent_consumed_paths
+        | wp004c_mig0004_consumed_paths
     )
 
     def consume_finite_cutover(
@@ -4834,36 +4536,8 @@ def _evaluate_comparison(
             diagnostic
             for diagnostic in diagnostics
             if diagnostic.path not in legacy_consumed_paths
-            and (
-                diagnostic.path,
-                diagnostic.rule_id,
-                diagnostic.profile,
-                diagnostic.observed_transition,
-            )
-            not in work054_wp004b_admission.diagnostics
         )
 
-    if not _comparison_requires_evidence(
-        proposed_classification_registry,
-        base_documents,
-        proposed_documents,
-    ):
-        return consume_finite_cutover(
-            compare_lifecycle(
-                proposed_classification_registry,
-                base_documents,
-                proposed_documents,
-                renames=renames,
-                base_mode=mode,  # type: ignore[arg-type]
-            )
-        )
-    evidence = evidence_context_factory(
-        proposed_classification_registry,
-        base_snapshot,
-        proposed_snapshot,
-        base_texts,
-        proposed_texts,
-    )
     return consume_finite_cutover(
         compare_lifecycle(
             proposed_classification_registry,
@@ -4871,7 +4545,7 @@ def _evaluate_comparison(
             proposed_documents,
             renames=renames,
             base_mode=mode,  # type: ignore[arg-type]
-            evidence_context=evidence,
+            evidence_context=evidence_context,
         )
     )
 
@@ -4935,2579 +4609,6 @@ def _parser() -> ArgumentParser:
     parser.add_argument("--to-ref")
     parser.add_argument("--include-path", action="append", default=[])
     return parser
-
-
-def _document(path: str, profile_id: str, status: str | None) -> LifecycleDocument:
-    return LifecycleDocument(PurePosixPath(path), profile_id, status)
-
-
-def _rule_ids(diagnostics: Sequence[LifecycleDiagnostic]) -> list[str]:
-    return [item.rule_id for item in diagnostics]
-
-
-def _fixture_link(source: PurePosixPath, target: PurePosixPath, label: str) -> str:
-    relative = posixpath.relpath(target.as_posix(), source.parent.as_posix())
-    return f"[{label}]({relative})"
-
-
-def _opaque_fixture_link(
-    source: PurePosixPath,
-    target: PurePosixPath,
-    label: str,
-    form: int,
-) -> str:
-    link = _fixture_link(source, target, label)
-    forms = (
-        f"`{link}`",
-        f"```text\n{link}\n```",
-        f"<!-- {link} -->",
-        f'<span data-evidence="{link}">opaque</span>',
-        f"\n    {link}",
-    )
-    return forms[form % len(forms)]
-
-
-def _evidence_fixture_text(
-    profile: DocumentProfile,
-    document: LifecycleDocument,
-    snapshot_profiles: Mapping[PurePosixPath, str],
-    relationship_targets: Sequence[PurePosixPath],
-    *,
-    table_targets: Sequence[PurePosixPath] = (),
-    backlink_targets: Sequence[PurePosixPath] = (),
-    link_mode: str = "rendered",
-    opaque_form: int = 0,
-    body_mismatch: bool = False,
-    wrong_section: bool = False,
-) -> str:
-    """Build authored fixture Markdown consumed by the canonical adapter."""
-
-    def syntax(target: PurePosixPath, label: str) -> str:
-        relative = posixpath.relpath(target.as_posix(), document.path.parent.as_posix())
-        if link_mode == "plain":
-            return relative
-        if link_mode == "opaque":
-            return _opaque_fixture_link(document.path, target, label, opaque_form)
-        return _fixture_link(document.path, target, label)
-
-    sections: list[str] = []
-    relationship_heading = profile.role_decision.relationship_section
-    for heading in profile.headings.required:
-        if wrong_section and heading == relationship_heading:
-            continue
-        parts = [
-            f"## {heading}",
-            f"Fixture {document.status or 'draft'} content for {heading}.",
-        ]
-        if heading == profile.headings.required[0]:
-            parts.extend(
-                syntax(target, f"Backlink {index + 1}")
-                for index, target in enumerate(backlink_targets)
-            )
-        if profile.profile_id == "sdlc/task" and heading == "Task Table":
-            parts.append(
-                "| ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |\n"
-                "| --- | --- | --- | --- | --- | --- | --- |\n"
-                "| FIX-001 | VAL-FIX-001 | Verify lifecycle evidence | platform | Done | Verified current authored row | [Review log](../../../README.md) |"
-            )
-        if heading == relationship_heading:
-            if profile.body_contract is None:
-                parts.extend(
-                    syntax(target, f"Evidence {index + 1}")
-                    for index, target in enumerate(relationship_targets)
-                )
-            elif body_mismatch:
-                parts.append("### Lifecycle Traceability\n\nMalformed evidence table.")
-            else:
-                contract = profile.body_contract
-                parts.append(f"### {contract.table_heading}")
-                table_lines = [
-                    "| " + " | ".join(contract.required_columns) + " |",
-                    "| " + " | ".join("---" for _ in contract.required_columns) + " |",
-                ]
-                rows: list[list[str]] = []
-                targets = list(relationship_targets) or [None]
-                for row_number, target in enumerate(targets, start=1):
-                    row = ["fixture" for _ in contract.required_columns]
-                    for identifier in contract.identifier_columns:
-                        index = contract.required_columns.index(identifier.column)
-                        prefix = {
-                            "requirement": "REQ-FIX-",
-                            "criterion": "VAL-FIX-",
-                            "work-item": "FIX-",
-                        }[identifier.kind]
-                        row[index] = f"{prefix}{row_number:03d}"
-                    selected_column: str | None = None
-                    if target is not None:
-                        target_profile = snapshot_profiles.get(target)
-                        if (
-                            contract.source_link_column is not None
-                            and target_profile in contract.allowed_source_profile_ids
-                        ):
-                            selected_column = contract.source_link_column
-                        elif (
-                            contract.target_link_column is not None
-                            and target_profile in contract.allowed_target_profile_ids
-                        ):
-                            selected_column = contract.target_link_column
-                        elif target_profile is None:
-                            selected_column = (
-                                contract.source_link_column
-                                or contract.target_link_column
-                            )
-                    for column in (
-                        contract.source_link_column,
-                        contract.target_link_column,
-                    ):
-                        if column is None:
-                            continue
-                        index = contract.required_columns.index(column)
-                        if column == selected_column and target is not None:
-                            label = row[index]
-                            row[index] = syntax(target, label)
-                        else:
-                            row[index] = "N/A — isolated evidence fixture"
-                    if table_targets:
-                        evidence_column = next(
-                            (
-                                column
-                                for column in contract.required_columns
-                                if column.casefold() == "evidence"
-                            ),
-                            None,
-                        )
-                        if evidence_column is not None:
-                            row[contract.required_columns.index(evidence_column)] = (
-                                " ".join(
-                                    syntax(target, f"Review {index + 1}")
-                                    for index, target in enumerate(table_targets)
-                                )
-                            )
-                    rows.append(row)
-                table_lines.extend("| " + " | ".join(row) + " |" for row in rows)
-                parts.append("\n".join(table_lines))
-        sections.append("\n\n".join(parts))
-    if wrong_section:
-        links = "\n".join(
-            syntax(target, f"Wrong section {index + 1}")
-            for index, target in enumerate(relationship_targets)
-        )
-        sections.append(f"## Other Relationship\n\n{links or 'No evidence.'}")
-    status = document.status or "draft"
-    return (
-        "---\n"
-        "title: 'Lifecycle evidence fixture'\n"
-        f"type: {document.profile_id}\n"
-        f"status: {status}\n"
-        "owner: platform\n"
-        "updated: 2099-01-01\n"
-        "---\n\n"
-        "# Lifecycle evidence fixture\n\n" + "\n\n".join(sections) + "\n"
-    )
-
-
-def _evidence_target_path(
-    profile_id: str, predicate_id: str, case_index: int
-) -> PurePosixPath:
-    if predicate_id == "complete-product-program":
-        if profile_id == "sdlc/srs":
-            return PurePosixPath("docs/01.requirements/srs-006-evidence-fixture.md")
-        if profile_id == "sdlc/interface":
-            return PurePosixPath(
-                "docs/01.requirements/ifc-006-evidence-fixture.md"
-            )
-        return PurePosixPath("docs/01.requirements/0006-evidence-fixture.md")
-    if profile_id == "sdlc/plan":
-        return PurePosixPath(
-            f"docs/04.execution/plans/2099-01-01-edge-{case_index:02d}.md"
-        )
-    if profile_id == "sdlc/task":
-        return PurePosixPath(
-            f"docs/04.execution/tasks/2099-01-01-edge-{case_index:02d}.md"
-        )
-    return PurePosixPath(f"docs/__lifecycle_evidence__/{case_index:02d}-target.md")
-
-
-def _evidence_case_context(
-    registry: Registry,
-    case: Mapping[str, object],
-    variant: str,
-    case_index: int,
-) -> tuple[LifecycleDocument, LifecycleEvidenceContext]:
-    profile_id = str(case["profile"])
-    from_state = str(case["from"])
-    to_state = str(case["to"])
-    predicate_id = str(case["predicate"])
-    profile_map = {profile.profile_id: profile for profile in registry.profiles}
-    target_path = _evidence_target_path(profile_id, predicate_id, case_index)
-    target = LifecycleDocument(target_path, profile_id, to_state)
-    documents: dict[PurePosixPath, LifecycleDocument] = {target_path: target}
-    relationships: dict[PurePosixPath, list[PurePosixPath]] = {target_path: []}
-    table_targets: dict[PurePosixPath, list[PurePosixPath]] = {target_path: []}
-
-    def add(path: PurePosixPath, added_profile: str, status: str) -> PurePosixPath:
-        documents[path] = LifecycleDocument(path, added_profile, status)
-        relationships.setdefault(path, [])
-        table_targets.setdefault(path, [])
-        return path
-
-    def previous(status: str | None) -> str | None:
-        return {"active": "draft", "accepted": "active", "done": "active"}.get(
-            status, status
-        )
-
-    primary_evidence: list[PurePosixPath] = []
-    pair_paths: tuple[PurePosixPath, PurePosixPath] | None = None
-    spec_identity: PurePosixPath | None = None
-    program_owner_path: PurePosixPath | None = None
-
-    if predicate_id == "accept-architecture":
-        adr = add(
-            PurePosixPath(
-                f"docs/02.architecture/decisions/{case_index:04d}-fixture.md"
-            ),
-            "sdlc/adr",
-            "accepted",
-        )
-        relationships[target_path].append(adr)
-        relationships[adr].append(target_path)
-        primary_evidence.append(adr)
-    elif predicate_id == "complete-product-program":
-        program = next(
-            program for program in registry.program_lineage if program.prd_id == "0006"
-        )
-        program_owner = target_path
-        if profile_id != "sdlc/prd":
-            program_owner = add(
-                PurePosixPath("docs/01.requirements/0006-evidence-fixture.md"),
-                "sdlc/prd",
-                "active",
-            )
-            relationships[target_path].append(program_owner)
-            relationships[program_owner].append(target_path)
-        program_owner_path = program_owner
-        relation_paths: list[PurePosixPath] = []
-        for relation in (*program.tranches, *program.follow_ups):
-            relation_path = add(
-                PurePosixPath(
-                    f"docs/03.specs/{relation.spec_id}-evidence-fixture/spec.md"
-                ),
-                "sdlc/spec",
-                "done",
-            )
-            relation_paths.append(relation_path)
-        relationships[program_owner].extend(relation_paths)
-        primary_evidence.extend(relation_paths)
-    elif predicate_id in {
-        "activate-execution-pair",
-        "complete-specification",
-        "complete-execution-pair",
-        "accept-operated-document",
-        "terminate-reviewed-reference",
-    }:
-        ready_spec_id, ready_spec_state, _ = _dependency_ready_tranche_window(registry)
-        spec_identity = (
-            target_path
-            if profile_id
-            in {
-                "sdlc/spec",
-                "sdlc/agent-design",
-                "sdlc/data-model",
-                "sdlc/tests",
-            }
-            else add(
-                _execution_spec_fixture_path(ready_spec_id)
-                if predicate_id == "activate-execution-pair"
-                else PurePosixPath(
-                    f"docs/03.specs/{900 + case_index:03d}-evidence/spec.md"
-                ),
-                "sdlc/spec",
-                ready_spec_state
-                if predicate_id == "activate-execution-pair"
-                else "active",
-            )
-        )
-        plan = (
-            target_path
-            if profile_id == "sdlc/plan"
-            else add(
-                PurePosixPath(
-                    f"docs/04.execution/plans/2099-01-01-pair-{case_index:02d}.md"
-                ),
-                "sdlc/plan",
-                "active" if predicate_id == "activate-execution-pair" else "done",
-            )
-        )
-        task = (
-            target_path
-            if profile_id == "sdlc/task"
-            else add(
-                PurePosixPath(
-                    f"docs/04.execution/tasks/2099-01-01-pair-{case_index:02d}.md"
-                ),
-                "sdlc/task",
-                "active" if predicate_id == "activate-execution-pair" else "done",
-            )
-        )
-        relationships[plan].extend((spec_identity, task))
-        relationships[task].extend((spec_identity, plan))
-        pair_paths = (plan, task)
-        primary_evidence.extend(pair_paths)
-        if predicate_id in {"accept-operated-document", "terminate-reviewed-reference"}:
-            relationships[target_path].append(task)
-            table_targets[task].append(target_path)
-    else:
-        if predicate_id in {"activate-heading-profile", "accept-decision-self"}:
-            support_profile = "sdlc/ad" if profile_id == "sdlc/adr" else "sdlc/spec"
-            support = add(
-                PurePosixPath(
-                    f"docs/__lifecycle_evidence__/{case_index:02d}-support.md"
-                ),
-                support_profile,
-                "active",
-            )
-            relationships[target_path].append(support)
-        primary_evidence.append(target_path)
-
-    predicate_contract = next(
-        predicate
-        for predicate in registry.evidence_predicates
-        if predicate.predicate_id == predicate_id
-    )
-    if "rendered-link" in predicate_contract.capabilities and not relationships.get(
-        target_path
-    ):
-        target_profile = profile_map[profile_id]
-        allowed = ()
-        if target_profile.body_contract is not None:
-            allowed = (
-                target_profile.body_contract.allowed_source_profile_ids
-                or target_profile.body_contract.allowed_target_profile_ids
-            )
-        support_profile = allowed[0] if allowed else "sdlc/spec"
-        support = add(
-            PurePosixPath(
-                f"docs/__lifecycle_evidence__/{case_index:02d}-rendered-support.md"
-            ),
-            support_profile,
-            "active",
-        )
-        relationships[target_path].append(support)
-
-    def remove(path: PurePosixPath) -> None:
-        documents.pop(path, None)
-        relationships.pop(path, None)
-        table_targets.pop(path, None)
-
-    self_requirement = any(
-        "$self" in requirement.profile_ids
-        for requirement in predicate_contract.evidence
-    )
-
-    def mutation_evidence_path() -> PurePosixPath:
-        if self_requirement:
-            return target_path
-        if pair_paths is not None:
-            return next(
-                (path for path in pair_paths if path != target_path),
-                pair_paths[0],
-            )
-        return primary_evidence[0] if primary_evidence else target_path
-
-    if variant == "missing":
-        if pair_paths is not None:
-            plan, task = pair_paths
-            if target_path in {plan, task} or profile_id in SPECIFICATION_PROFILES:
-                relationships[plan] = [
-                    path for path in relationships[plan] if path != task
-                ]
-                relationships[task] = [
-                    path for path in relationships[task] if path != plan
-                ]
-            else:
-                relationships[target_path] = [
-                    path for path in relationships[target_path] if path != task
-                ]
-                table_targets[task] = [
-                    path for path in table_targets[task] if path != target_path
-                ]
-        elif predicate_id == "complete-product-program" and primary_evidence:
-            removed = primary_evidence[-1]
-            owner = program_owner_path or target_path
-            relationships[owner] = [
-                path for path in relationships[owner] if path != removed
-            ]
-        elif predicate_id == "accept-architecture" and primary_evidence:
-            removed = primary_evidence[0]
-            relationships[target_path] = [
-                path for path in relationships[target_path] if path != removed
-            ]
-        else:
-            relationships[target_path] = []
-    elif variant == "orphan":
-        removed: PurePosixPath | None = None
-        if pair_paths is not None:
-            plan, task = pair_paths
-            removable = plan if target_path == task else task
-            remove(removable)
-            removed = removable
-        elif predicate_id == "complete-product-program" and primary_evidence:
-            removed = primary_evidence[-1]
-            remove(removed)
-        elif predicate_id == "accept-architecture" and primary_evidence:
-            removed = primary_evidence[0]
-            remove(removed)
-        else:
-            missing_path = PurePosixPath(
-                f"docs/__lifecycle_evidence__/{case_index:02d}-orphan.md"
-            )
-            relationships[target_path] = [missing_path]
-    elif variant == "wrong-profile":
-        path = mutation_evidence_path()
-        current = documents.get(path)
-        if current is not None:
-            wrong_profile = (
-                "sdlc/prd" if current.profile_id == "sdlc/guide" else "sdlc/guide"
-            )
-            documents[path] = LifecycleDocument(path, wrong_profile, current.status)
-    elif variant == "wrong-state":
-        path = mutation_evidence_path()
-        current = documents.get(path)
-        if current is not None:
-            documents[path] = LifecycleDocument(path, current.profile_id, "draft")
-    elif variant == "multiple":
-        if pair_paths is not None and spec_identity is not None:
-            plan, task = pair_paths
-            if target_path == plan:
-                task_two = add(
-                    PurePosixPath(
-                        f"docs/04.execution/tasks/2099-01-02-pair-{case_index:02d}.md"
-                    ),
-                    "sdlc/task",
-                    documents[task].status or "done",
-                )
-                relationships[plan].append(task_two)
-                relationships[task_two].extend((spec_identity, plan))
-                if predicate_id in {
-                    "accept-operated-document",
-                    "terminate-reviewed-reference",
-                }:
-                    table_targets[task_two].append(target_path)
-            elif target_path == task:
-                plan_two = add(
-                    PurePosixPath(
-                        f"docs/04.execution/plans/2099-01-02-pair-{case_index:02d}.md"
-                    ),
-                    "sdlc/plan",
-                    documents[plan].status or "done",
-                )
-                relationships[task].append(plan_two)
-                relationships[plan_two].extend((spec_identity, task))
-            else:
-                plan_two = add(
-                    PurePosixPath(
-                        f"docs/04.execution/plans/2099-01-02-pair-{case_index:02d}.md"
-                    ),
-                    "sdlc/plan",
-                    documents[plan].status or "done",
-                )
-                task_two = add(
-                    PurePosixPath(
-                        f"docs/04.execution/tasks/2099-01-02-pair-{case_index:02d}.md"
-                    ),
-                    "sdlc/task",
-                    documents[task].status or "done",
-                )
-                relationships[plan_two].extend((spec_identity, task_two))
-                relationships[task_two].extend((spec_identity, plan_two))
-                if predicate_id in {
-                    "accept-operated-document",
-                    "terminate-reviewed-reference",
-                }:
-                    relationships[target_path].append(task_two)
-                    table_targets[task_two].append(target_path)
-        elif predicate_id == "complete-product-program" and primary_evidence:
-            relation = primary_evidence[0]
-            duplicate = add(
-                relation.parent.with_name(relation.parent.name + "-duplicate")
-                / "spec.md",
-                "sdlc/spec",
-                "done",
-            )
-            relationships[program_owner_path or target_path].append(duplicate)
-        elif relationships.get(target_path):
-            relationships[target_path].append(relationships[target_path][0])
-        else:
-            target_profile = profile_map[profile_id]
-            allowed = ()
-            if target_profile.body_contract is not None:
-                allowed = (
-                    target_profile.body_contract.allowed_source_profile_ids
-                    or target_profile.body_contract.allowed_target_profile_ids
-                )
-            support_profile = allowed[0] if allowed else "sdlc/spec"
-            support = add(
-                PurePosixPath(
-                    f"docs/__lifecycle_evidence__/{case_index:02d}-duplicate.md"
-                ),
-                support_profile,
-                "active",
-            )
-            relationships[target_path].extend((support, support))
-
-    corrupt_path = target_path
-    if variant in {"plain-text-path", "opaque-markdown"} and not relationships.get(
-        corrupt_path
-    ):
-        target_profile = profile_map[profile_id]
-        allowed = ()
-        if target_profile.body_contract is not None:
-            allowed = (
-                target_profile.body_contract.allowed_source_profile_ids
-                or target_profile.body_contract.allowed_target_profile_ids
-            )
-        support_profile = allowed[0] if allowed else "sdlc/spec"
-        support = add(
-            PurePosixPath(
-                f"docs/__lifecycle_evidence__/{case_index:02d}-syntax-support.md"
-            ),
-            support_profile,
-            "active",
-        )
-        relationships.setdefault(corrupt_path, []).append(support)
-
-    backlink_targets: dict[PurePosixPath, list[PurePosixPath]] = {
-        path: [] for path in documents
-    }
-    for owner, linked_paths in relationships.items():
-        owner_document = documents.get(owner)
-        if owner_document is None:
-            continue
-        owner_profile = profile_map[owner_document.profile_id]
-        contract = owner_profile.body_contract
-        if contract is None or not contract.reciprocal_evidence:
-            continue
-        for linked_path in linked_paths:
-            if linked_path in documents:
-                backlink_targets[linked_path].append(owner)
-
-    snapshot_profiles = MappingProxyType(
-        {path: document.profile_id for path, document in documents.items()}
-    )
-    adapter = _link_validator_module()
-    views: dict[PurePosixPath, LifecycleEvidenceDocument] = {}
-    for path, document in documents.items():
-        profile = profile_map[document.profile_id]
-        mode = (
-            "plain"
-            if variant == "plain-text-path" and path == corrupt_path
-            else "opaque"
-            if variant == "opaque-markdown" and path == corrupt_path
-            else "rendered"
-        )
-        text = _evidence_fixture_text(
-            profile,
-            document,
-            snapshot_profiles,
-            relationships.get(path, ()),
-            table_targets=table_targets.get(path, ()),
-            backlink_targets=backlink_targets.get(path, ()),
-            link_mode=mode,
-            opaque_form=case_index,
-            body_mismatch=(
-                variant == "body-contract-mismatch"
-                or (variant == "missing" and predicate_contract.relationship == "self")
-            )
-            and path == corrupt_path,
-            wrong_section=(
-                variant == "wrong-relationship-section"
-                or (
-                    variant == "body-contract-mismatch"
-                    and profile.body_contract is None
-                )
-            )
-            and path == corrupt_path,
-        )
-        rendered = adapter.lifecycle_markdown_evidence(
-            path, text, profile, snapshot_profiles
-        )
-        views[path] = LifecycleEvidenceDocument(
-            document=document,
-            all_local_links=rendered.all_local_links,
-            relationship_links=rendered.relationship_links,
-            unresolved_relationship_links=rendered.unresolved_relationship_links,
-            body_table_links=rendered.body_table_links,
-            relationship_section_valid=rendered.relationship_section_valid,
-            body_contract_valid=rendered.body_contract_valid,
-            task_terminal_evidence_valid=rendered.task_terminal_evidence_valid,
-        )
-
-    base_documents = {
-        path: LifecycleDocument(path, document.profile_id, previous(document.status))
-        for path, document in documents.items()
-    }
-    base_documents[target_path] = LifecycleDocument(target_path, profile_id, from_state)
-    if predicate_id == "complete-product-program" and primary_evidence:
-        last_relation = primary_evidence[-1]
-        if last_relation in base_documents:
-            base_documents[last_relation] = LifecycleDocument(
-                last_relation, "sdlc/spec", "active"
-            )
-    body_changed = set(documents)
-    if variant == "unchanged":
-        if predicate_contract.same_diff == "self-status-and-body":
-            body_changed.discard(target_path)
-        elif predicate_contract.same_diff == "pair-created-or-status-changed":
-            assert pair_paths is not None
-            unchanged_member = next(path for path in pair_paths if path != target_path)
-            base_documents[unchanged_member] = documents[unchanged_member]
-        elif predicate_contract.same_diff == "target-and-last-relation-changed":
-            for relation in primary_evidence:
-                base_documents[relation] = documents[relation]
-        elif predicate_contract.same_diff == "target-and-evidence-status-body-changed":
-            evidence_path = primary_evidence[0]
-            base_documents[evidence_path] = documents[evidence_path]
-            body_changed.discard(evidence_path)
-        elif predicate_contract.same_diff in {
-            "target-plan-task-status-changed",
-            "pair-status-changed",
-        }:
-            assert pair_paths is not None
-            for pair_path in pair_paths:
-                if pair_path != target_path:
-                    base_documents[pair_path] = documents[pair_path]
-    projected_documents = {path: view.document for path, view in views.items()}
-    status_changed = frozenset(
-        path
-        for path in set(base_documents) & set(projected_documents)
-        if base_documents[path].profile_id != projected_documents[path].profile_id
-        or base_documents[path].status != projected_documents[path].status
-    )
-    body_changed_paths = frozenset(body_changed & set(projected_documents))
-    changed_paths = status_changed | body_changed_paths
-    return target, LifecycleEvidenceContext(
-        base_documents=MappingProxyType(base_documents),
-        proposed_documents=MappingProxyType(views),
-        changed_paths=changed_paths,
-        status_changed_paths=status_changed,
-        body_changed_paths=body_changed_paths,
-        created_paths=frozenset(),
-    )
-
-
-def _fixture_document_text(
-    path: str,
-    profile_id: str,
-    status: str,
-    *,
-    claimed_profile_id: str | None = None,
-    execution_spec_path: PurePosixPath | None = None,
-) -> str:
-    execution_spec = execution_spec_path or PurePosixPath(
-        "docs/03.specs/0900-lifecycle-fixture/spec.md"
-    )
-    heading_sets = {
-        "sdlc/spec": (
-            "Overview",
-            "Strategic Boundaries & Non-goals",
-            "Contracts",
-            "Core Design",
-            "Data Modeling & Storage Strategy",
-            "Interfaces & Data Structures",
-            "Edge Cases & Error Handling",
-            "Failure Modes & Fallback / Human Escalation",
-            "Verification Commands",
-            "Success Criteria & Verification Plan",
-            "Traceability",
-        ),
-        "sdlc/plan": (
-            "Overview",
-            "Context",
-            "Goals & In-Scope",
-            "Non-Goals & Out-of-Scope",
-            "Work Breakdown",
-            "Verification Plan",
-            "Risks & Mitigations",
-            "Completion Criteria",
-            "Traceability",
-        ),
-        "sdlc/task": (
-            "Overview",
-            "Inputs",
-            "Task Table",
-            "Approval and Safety Boundaries",
-            "Verification Summary",
-            "Traceability",
-        ),
-    }
-    body_parts: list[str] = []
-    for heading in heading_sets.get(profile_id, ()):
-        body_parts.append(f"## {heading}\n\nLifecycle fixture {status} evidence.")
-        if (
-            profile_id == "sdlc/spec"
-            and PurePosixPath(path) == execution_spec
-            and heading == "Overview"
-        ):
-            owner = PurePosixPath(path)
-            body_parts.append(
-                " ".join(
-                    (
-                        _fixture_link(
-                            owner,
-                            execution_spec.with_name("plan.md"),
-                            "Plan backlink",
-                        ),
-                        _fixture_link(
-                            owner,
-                            execution_spec.with_name("tasks.md"),
-                            "Task backlink",
-                        ),
-                    )
-                )
-            )
-        if profile_id == "sdlc/task" and heading == "Task Table":
-            body_parts.append(
-                "| ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |\n"
-                "| --- | --- | --- | --- | --- | --- | --- |\n"
-                "| FIX-001 | VAL-FIX-001 | Exercise evidence | platform | Done | Verified fixture | [Log](../../../README.md) |"
-            )
-        if heading != "Traceability":
-            continue
-        body_parts.append("### Lifecycle Traceability")
-        if profile_id == "sdlc/spec":
-            body_parts.append(
-                "| PRD requirement | Spec criterion | Verification method |\n"
-                "| --- | --- | --- |\n"
-                "| N/A — isolated lifecycle fixture | VAL-FIX-001 | Self-test |"
-            )
-        elif profile_id == "sdlc/plan":
-            body_parts.append(
-                "| Spec criterion | Work package | Expected Task |\n"
-                "| --- | --- | --- |\n"
-                f"| {_fixture_link(PurePosixPath(path), execution_spec, 'VAL-FIX-001')} | FIX-001 | [Task](tasks.md) |"
-            )
-        elif profile_id == "sdlc/task":
-            spec_link = _fixture_link(
-                PurePosixPath(path), execution_spec, "Spec evidence"
-            )
-            body_parts.append(
-                "| Criterion / work item | Result | Evidence |\n"
-                "| --- | --- | --- |\n"
-                f"| {_fixture_link(PurePosixPath(path), execution_spec, 'FIX-001')} | Verified | {spec_link} |\n"
-                f"| [FIX-002](plan.md) | Verified | {spec_link} |"
-            )
-    body = "\n\n".join(body_parts)
-    return (
-        "---\n"
-        "title: 'Lifecycle fixture'\n"
-        f"type: {claimed_profile_id or profile_id}\n"
-        f"status: {status}\n"
-        "owner: platform\n"
-        "updated: 2099-01-01\n"
-        "---\n\n"
-        "# Lifecycle fixture\n"
-        f"\n{body}\n"
-    )
-
-
-def _write_fixture_document(
-    root: Path,
-    path: str,
-    profile_id: str,
-    status: str,
-    *,
-    claimed_profile_id: str | None = None,
-    execution_spec_path: PurePosixPath | None = None,
-) -> None:
-    target = root / path
-    target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(
-        _fixture_document_text(
-            path,
-            profile_id,
-            status,
-            claimed_profile_id=claimed_profile_id,
-            execution_spec_path=execution_spec_path,
-        ),
-        encoding="utf-8",
-    )
-
-
-def _git_fixture(root: Path, *arguments: str, input_bytes: bytes | None = None) -> str:
-    return _run_git(root, arguments, input_bytes=input_bytes).decode("utf-8").strip()
-
-
-def _init_fixture_repo(root: Path) -> None:
-    _git_fixture(root, "init", "-q")
-
-
-def _commit_fixture(root: Path, message: str) -> str:
-    _git_fixture(root, "add", "--all")
-    _git_fixture(root, "commit", "-q", "--allow-empty", "-m", message)
-    return _git_fixture(root, "rev-parse", "HEAD")
-
-
-def _configure_submodule_ignore_fixture(root: Path, path: str) -> None:
-    (root / ".gitmodules").write_text(
-        f'[submodule "governed"]\n\tpath = {path}\n\turl = ./unused\n\tignore = all\n',
-        encoding="utf-8",
-    )
-    _git_fixture(root, "config", "diff.ignoreSubmodules", "all")
-
-
-def _write_invalid_evidence_document(
-    root: Path, path: str, profile_id: str, status: str
-) -> None:
-    destination = root / path
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    destination.write_text(
-        "---\n"
-        "title: 'Invalid evidence fixture'\n"
-        f"type: {profile_id}\n"
-        f"status: {status}\n"
-        "owner: platform\n"
-        "updated: 2099-01-01\n"
-        "---\n\n# Invalid evidence fixture\n",
-        encoding="utf-8",
-    )
-
-
-def _write_architecture_evidence_pair(
-    root: Path,
-    registry: Registry,
-    *,
-    ard_status: str,
-    adr_status: str,
-    linked: bool,
-) -> tuple[str, str]:
-    ard_path = PurePosixPath(
-        "docs/02.architecture/descriptions/ad-0900-evidence-fixture.md"
-    )
-    adr_path = PurePosixPath("docs/02.architecture/decisions/0900-evidence-fixture.md")
-    documents = {
-        ard_path: LifecycleDocument(ard_path, "sdlc/ad", ard_status),
-        adr_path: LifecycleDocument(adr_path, "sdlc/adr", adr_status),
-    }
-    snapshot_profiles = MappingProxyType(
-        {path: document.profile_id for path, document in documents.items()}
-    )
-    profiles = {profile.profile_id: profile for profile in registry.profiles}
-    for path, document in documents.items():
-        relations = (
-            (adr_path,)
-            if linked and path == ard_path
-            else (ard_path,)
-            if linked and path == adr_path
-            else ()
-        )
-        text = _evidence_fixture_text(
-            profiles[document.profile_id],
-            document,
-            snapshot_profiles,
-            relations,
-        )
-        destination = root / path.as_posix()
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        destination.write_text(text, encoding="utf-8")
-    return ard_path.as_posix(), adr_path.as_posix()
-
-
-def _git_case(
-    name: str,
-    root: Path,
-    registry: Registry,
-    contract_root: Path,
-) -> tuple[int, list[str]]:
-    fixture_registry = root / RETIRED_REGISTRY_PATH
-    fixture_registry.parent.mkdir(parents=True, exist_ok=True)
-    fixture_registry.write_bytes((contract_root / RETIRED_REGISTRY_PATH).read_bytes())
-    spec_path = "docs/03.specs/0900-example/spec.md"
-    case_registry = registry
-    ready_spec_id, ready_spec_state, blocked_spec_id = _dependency_ready_tranche_window(
-        case_registry
-    )
-    if (
-        name in FINAL_TRANCHE_NEGATIVE_GIT_CASE_NAMES
-        and blocked_spec_id is None
-    ):
-        programs = [
-            program
-            for program in registry.program_lineage
-            if program.prd_id == "0006"
-        ]
-        if len(programs) != 1:
-            raise ValueError("negative pair fixture requires one PRD-0006 program")
-        tranche_ids = tuple(relation.spec_id for relation in programs[0].tranches)
-        try:
-            ready_index = tranche_ids.index(ready_spec_id)
-        except ValueError as exc:
-            raise ValueError(
-                "negative pair fixture ready tranche is not original"
-            ) from exc
-        if ready_index == 0:
-            raise ValueError("negative pair fixture has no previous original tranche")
-        case_registry = _registry_with_ready_spec(
-            registry, tranche_ids[ready_index - 1]
-        )
-        (
-            ready_spec_id,
-            ready_spec_state,
-            blocked_spec_id,
-        ) = _dependency_ready_tranche_window(case_registry)
-        if blocked_spec_id is None:
-            raise ValueError("negative pair fixture fallback has no successor tranche")
-    ready_spec_path = _execution_spec_fixture_path(ready_spec_id)
-    blocked_spec_path = (
-        _execution_spec_fixture_path(blocked_spec_id)
-        if blocked_spec_id is not None
-        else None
-    )
-    if name in {
-        "staged-head-index-worktree-pass",
-        "staged-head-index-worktree-fail",
-        "staged-delete",
-        "staged-exact-rename",
-        "staged-modified-rename",
-        "staged-modified-governed-to-unclassified",
-        "staged-governed-to-unclassified-rename",
-        "staged-same-path-profile-change",
-        "staged-unknown-type-state",
-        "explicit-ref-pass",
-        "explicit-ref-fail",
-        "ci-merge-base",
-        "include-does-not-filter-violation",
-        "git-environment-steering",
-        "staged-submodule-ignore-all",
-        "explicit-ref-submodule-ignore-all",
-        "staged-evidence-index-invalid-worktree-valid",
-        "staged-evidence-index-valid-worktree-invalid",
-    }:
-        _write_fixture_document(root, spec_path, "sdlc/spec", "draft")
-    if name in {
-        "staged-paired-create",
-        "staged-paired-create-ready-spec-done",
-        "staged-paired-create-split-spec",
-    }:
-        _write_fixture_document(
-            root,
-            ready_spec_path.as_posix(),
-            "sdlc/spec",
-            "done"
-            if name == "staged-paired-create-ready-spec-done"
-            else ready_spec_state,
-            execution_spec_path=ready_spec_path,
-        )
-    if name == "staged-paired-create-blocked-spec":
-        if blocked_spec_path is None:
-            raise ValueError("blocked-pair fixture requires one successor tranche")
-        _write_fixture_document(
-            root,
-            blocked_spec_path.as_posix(),
-            "sdlc/spec",
-            "active",
-            execution_spec_path=blocked_spec_path,
-        )
-    if name == "staged-paired-create-split-spec":
-        if blocked_spec_path is None:
-            raise ValueError("split-pair fixture requires one successor tranche")
-        _write_fixture_document(
-            root,
-            blocked_spec_path.as_posix(),
-            "sdlc/spec",
-            "active",
-            execution_spec_path=blocked_spec_path,
-        )
-    if name in {
-        "staged-modified-unclassified-to-governed",
-        "staged-modified-unclassified-to-unclassified",
-        "staged-unclassified-to-unclassified-rename",
-        "staged-unclassified-delete",
-        "staged-unclassified-modify",
-    }:
-        _write_fixture_document(
-            root,
-            "docs/__unclassified__/source.md",
-            "sdlc/spec",
-            "draft",
-        )
-    if name == "include-does-not-filter-violation":
-        _write_fixture_document(
-            root,
-            "docs/03.specs/0901-clean/spec.md",
-            "sdlc/spec",
-            "draft",
-        )
-    if name in {
-        "staged-submodule-ignore-all",
-        "explicit-ref-submodule-ignore-all",
-    }:
-        _configure_submodule_ignore_fixture(root, spec_path)
-    base_commit = _commit_fixture(root, "base")
-
-    if name == "staged-head-index-worktree-pass":
-        _write_fixture_document(root, spec_path, "sdlc/spec", "active")
-        _git_fixture(root, "add", "--", spec_path)
-        _write_fixture_document(root, spec_path, "sdlc/spec", "done")
-        diagnostics = _evaluate_comparison(root, registry, mode="staged")
-    elif name == "staged-head-index-worktree-fail":
-        _write_fixture_document(root, spec_path, "sdlc/spec", "done")
-        _git_fixture(root, "add", "--", spec_path)
-        _write_fixture_document(root, spec_path, "sdlc/spec", "active")
-        diagnostics = _evaluate_comparison(root, registry, mode="staged")
-    elif name == "staged-add":
-        _write_fixture_document(root, spec_path, "sdlc/spec", "draft")
-        _git_fixture(root, "add", "--", spec_path)
-        diagnostics = _evaluate_comparison(root, registry, mode="staged")
-    elif name == "staged-delete":
-        (root / spec_path).unlink()
-        _git_fixture(root, "add", "--all")
-        diagnostics = _evaluate_comparison(root, registry, mode="staged")
-    elif name == "staged-exact-rename":
-        new_path = "docs/03.specs/0901-example/spec.md"
-        (root / new_path).parent.mkdir(parents=True, exist_ok=True)
-        _git_fixture(root, "mv", spec_path, new_path)
-        diagnostics = _evaluate_comparison(root, registry, mode="staged")
-    elif name == "staged-modified-rename":
-        new_path = "docs/03.specs/0901-example/spec.md"
-        (root / new_path).parent.mkdir(parents=True, exist_ok=True)
-        _git_fixture(root, "mv", spec_path, new_path)
-        _write_fixture_document(root, new_path, "sdlc/spec", "active")
-        _git_fixture(root, "add", "--all")
-        diagnostics = _evaluate_comparison(root, registry, mode="staged")
-    elif name == "staged-modified-governed-to-unclassified":
-        new_path = "docs/__unclassified__/destination.md"
-        (root / new_path).parent.mkdir(parents=True, exist_ok=True)
-        _git_fixture(root, "mv", spec_path, new_path)
-        _write_fixture_document(root, new_path, "sdlc/spec", "active")
-        _git_fixture(root, "add", "--all")
-        diagnostics = _evaluate_comparison(root, registry, mode="staged")
-    elif name == "staged-modified-unclassified-to-governed":
-        old_path = "docs/__unclassified__/source.md"
-        (root / spec_path).parent.mkdir(parents=True, exist_ok=True)
-        _git_fixture(root, "mv", old_path, spec_path)
-        _write_fixture_document(root, spec_path, "sdlc/spec", "active")
-        _git_fixture(root, "add", "--all")
-        diagnostics = _evaluate_comparison(root, registry, mode="staged")
-    elif name == "staged-modified-unclassified-to-unclassified":
-        old_path = "docs/__unclassified__/source.md"
-        new_path = "docs/__unclassified__/destination.md"
-        _git_fixture(root, "mv", old_path, new_path)
-        _write_fixture_document(root, new_path, "sdlc/spec", "active")
-        _git_fixture(root, "add", "--all")
-        diagnostics = _evaluate_comparison(root, registry, mode="staged")
-    elif name == "staged-governed-to-unclassified-rename":
-        new_path = "docs/__unclassified__/renamed.md"
-        (root / new_path).parent.mkdir(parents=True, exist_ok=True)
-        _git_fixture(root, "mv", spec_path, new_path)
-        diagnostics = _evaluate_comparison(root, registry, mode="staged")
-    elif name == "staged-unclassified-to-unclassified-rename":
-        old_path = "docs/__unclassified__/source.md"
-        new_path = "docs/__unclassified__/destination.md"
-        _git_fixture(root, "mv", old_path, new_path)
-        diagnostics = _evaluate_comparison(root, registry, mode="staged")
-    elif name == "staged-unclassified-add":
-        new_path = "docs/__unclassified__/new.md"
-        _write_fixture_document(root, new_path, "sdlc/spec", "draft")
-        _git_fixture(root, "add", "--", new_path)
-        diagnostics = _evaluate_comparison(root, registry, mode="staged")
-    elif name == "staged-unclassified-delete":
-        old_path = "docs/__unclassified__/source.md"
-        (root / old_path).unlink()
-        _git_fixture(root, "add", "--all")
-        diagnostics = _evaluate_comparison(root, registry, mode="staged")
-    elif name == "staged-unclassified-modify":
-        path = "docs/__unclassified__/source.md"
-        _write_fixture_document(root, path, "sdlc/spec", "active")
-        _git_fixture(root, "add", "--", path)
-        diagnostics = _evaluate_comparison(root, registry, mode="staged")
-    elif name == "staged-same-path-profile-change":
-        _write_fixture_document(
-            root,
-            spec_path,
-            "sdlc/spec",
-            "active",
-            claimed_profile_id="sdlc/guide",
-        )
-        _git_fixture(root, "add", "--", spec_path)
-        diagnostics = _evaluate_comparison(root, registry, mode="staged")
-    elif name == "staged-unknown-type-state":
-        _write_fixture_document(
-            root,
-            spec_path,
-            "sdlc/spec",
-            "active",
-            claimed_profile_id="sdlc/unknown",
-        )
-        _git_fixture(root, "add", "--", spec_path)
-        diagnostics = _evaluate_comparison(root, registry, mode="staged")
-    elif name in {
-        "staged-paired-create",
-        "staged-paired-create-ready-spec-done",
-    }:
-        _write_fixture_document(
-            root,
-            ready_spec_path.with_name("plan.md").as_posix(),
-            "sdlc/plan",
-            "active",
-            execution_spec_path=ready_spec_path,
-        )
-        _write_fixture_document(
-            root,
-            ready_spec_path.with_name("tasks.md").as_posix(),
-            "sdlc/task",
-            "active",
-            execution_spec_path=ready_spec_path,
-        )
-        _git_fixture(root, "add", "--all")
-        diagnostics = _evaluate_comparison(root, registry, mode="staged")
-    elif name == "staged-paired-create-blocked-spec":
-        assert blocked_spec_path is not None
-        plan_path = blocked_spec_path.with_name("plan.md").as_posix()
-        task_path = blocked_spec_path.with_name("tasks.md").as_posix()
-        _write_fixture_document(
-            root,
-            plan_path,
-            "sdlc/plan",
-            "active",
-            execution_spec_path=blocked_spec_path,
-        )
-        _write_fixture_document(
-            root,
-            task_path,
-            "sdlc/task",
-            "active",
-            execution_spec_path=blocked_spec_path,
-        )
-        _git_fixture(root, "add", "--all")
-        diagnostics = _evaluate_comparison(root, case_registry, mode="staged")
-    elif name == "staged-paired-create-split-spec":
-        assert blocked_spec_path is not None
-        plan_path = ready_spec_path.with_name("plan.md").as_posix()
-        task_path = blocked_spec_path.with_name("tasks.md").as_posix()
-        _write_fixture_document(
-            root,
-            plan_path,
-            "sdlc/plan",
-            "active",
-            execution_spec_path=ready_spec_path,
-        )
-        _write_fixture_document(
-            root,
-            task_path,
-            "sdlc/task",
-            "active",
-            execution_spec_path=blocked_spec_path,
-        )
-        _git_fixture(root, "add", "--all")
-        diagnostics = _evaluate_comparison(root, case_registry, mode="staged")
-    elif name == "staged-evidence-index-invalid-worktree-valid":
-        _write_invalid_evidence_document(root, spec_path, "sdlc/spec", "active")
-        _git_fixture(root, "add", "--", spec_path)
-        _write_fixture_document(root, spec_path, "sdlc/spec", "active")
-        diagnostics = _evaluate_comparison(root, registry, mode="staged")
-    elif name == "staged-evidence-index-valid-worktree-invalid":
-        _write_fixture_document(root, spec_path, "sdlc/spec", "active")
-        _git_fixture(root, "add", "--", spec_path)
-        _write_invalid_evidence_document(root, spec_path, "sdlc/spec", "active")
-        diagnostics = _evaluate_comparison(root, registry, mode="staged")
-    elif name == "include-does-not-filter-violation":
-        _write_fixture_document(root, spec_path, "sdlc/spec", "done")
-        _git_fixture(root, "add", "--", spec_path)
-        diagnostics = _evaluate_comparison(
-            root,
-            registry,
-            mode="staged",
-            include_paths=(PurePosixPath("docs/03.specs/0901-clean/spec.md"),),
-        )
-    elif name == "staged-submodule-ignore-all":
-        _git_fixture(
-            root,
-            "update-index",
-            "--add",
-            "--cacheinfo",
-            f"160000,{base_commit},{spec_path}",
-        )
-        try:
-            _evaluate_comparison(root, registry, mode="staged")
-        except InvocationError:
-            return 2, ["LIFECYCLE-BASE"]
-        return 0, []
-    elif name == "explicit-ref-submodule-ignore-all":
-        _git_fixture(
-            root,
-            "update-index",
-            "--add",
-            "--cacheinfo",
-            f"160000,{base_commit},{spec_path}",
-        )
-        _git_fixture(root, "commit", "-q", "-m", "gitlink proposed")
-        proposed = _git_fixture(root, "rev-parse", "HEAD")
-        try:
-            _evaluate_comparison(
-                root,
-                registry,
-                mode="explicit-ref",
-                from_ref=base_commit,
-                to_ref=proposed,
-            )
-        except InvocationError:
-            return 2, ["LIFECYCLE-BASE"]
-        return 0, []
-    elif name in {"explicit-ref-pass", "explicit-ref-fail"}:
-        base = _git_fixture(root, "rev-parse", "HEAD")
-        status = "active" if name.endswith("pass") else "done"
-        _write_fixture_document(root, spec_path, "sdlc/spec", status)
-        proposed = _commit_fixture(root, "proposed")
-        diagnostics = _evaluate_comparison(
-            root,
-            registry,
-            mode="explicit-ref",
-            from_ref=base,
-            to_ref=proposed,
-        )
-    elif name in {
-        "explicit-ref-proposed-only-evidence",
-        "explicit-ref-base-only-evidence-removed",
-    }:
-        proposed_only = name == "explicit-ref-proposed-only-evidence"
-        _write_architecture_evidence_pair(
-            root,
-            registry,
-            ard_status="active",
-            adr_status="active",
-            linked=not proposed_only,
-        )
-        base = _commit_fixture(root, "architecture evidence base")
-        _write_architecture_evidence_pair(
-            root,
-            registry,
-            ard_status="accepted",
-            adr_status="accepted",
-            linked=proposed_only,
-        )
-        proposed = _commit_fixture(root, "architecture evidence proposed")
-        diagnostics = _evaluate_comparison(
-            root,
-            registry,
-            mode="explicit-ref",
-            from_ref=base,
-            to_ref=proposed,
-        )
-    elif name == "ci-proposed-tree-evidence":
-        _write_architecture_evidence_pair(
-            root,
-            registry,
-            ard_status="active",
-            adr_status="active",
-            linked=False,
-        )
-        configured_base = _commit_fixture(root, "CI evidence base")
-        _write_architecture_evidence_pair(
-            root,
-            registry,
-            ard_status="accepted",
-            adr_status="accepted",
-            linked=True,
-        )
-        proposed = _commit_fixture(root, "CI evidence proposed")
-        diagnostics = _evaluate_comparison(
-            root,
-            registry,
-            mode="ci",
-            base_ref=configured_base,
-            to_ref=proposed,
-        )
-    elif name == "ci-merge-base":
-        _git_fixture(root, "branch", "proposed")
-        _write_fixture_document(root, spec_path, "sdlc/spec", "done")
-        configured_base = _commit_fixture(root, "base advanced")
-        _git_fixture(root, "switch", "-q", "proposed")
-        _write_fixture_document(root, spec_path, "sdlc/spec", "active")
-        _commit_fixture(root, "proposed")
-        diagnostics = _evaluate_comparison(
-            root,
-            registry,
-            mode="ci",
-            base_ref=configured_base,
-            to_ref="proposed",
-        )
-    elif name == "ci-no-merge-base":
-        base = _git_fixture(root, "rev-parse", "HEAD")
-        tree = _git_fixture(root, "rev-parse", "HEAD^{tree}")
-        orphan = _git_fixture(root, "commit-tree", tree, "-m", "orphan")
-        try:
-            _evaluate_comparison(
-                root,
-                registry,
-                mode="ci",
-                base_ref=base,
-                to_ref=orphan,
-            )
-        except InvocationError:
-            return 2, ["LIFECYCLE-BASE"]
-        return 0, []
-    elif name == "ci-ambiguous-merge-base":
-        common = _git_fixture(root, "rev-parse", "HEAD")
-        tree = _git_fixture(root, "rev-parse", "HEAD^{tree}")
-        left = _git_fixture(root, "commit-tree", tree, "-p", common, "-m", "left")
-        right = _git_fixture(root, "commit-tree", tree, "-p", common, "-m", "right")
-        merge_left = _git_fixture(
-            root,
-            "commit-tree",
-            tree,
-            "-p",
-            left,
-            "-p",
-            right,
-            "-m",
-            "merge-left",
-        )
-        merge_right = _git_fixture(
-            root,
-            "commit-tree",
-            tree,
-            "-p",
-            right,
-            "-p",
-            left,
-            "-m",
-            "merge-right",
-        )
-        resolver_calls = 0
-
-        def unexpected_evidence_resolver(*args: object) -> LifecycleEvidenceContext:
-            nonlocal resolver_calls
-            resolver_calls += 1
-            raise AssertionError("evidence resolver ran before unique base selection")
-
-        try:
-            _evaluate_comparison(
-                root,
-                registry,
-                mode="ci",
-                base_ref=merge_left,
-                to_ref=merge_right,
-                evidence_context_factory=unexpected_evidence_resolver,
-            )
-        except InvocationError:
-            return (
-                (2, ["LIFECYCLE-BASE"])
-                if resolver_calls == 0
-                else (1, ["LIFECYCLE-EVIDENCE"])
-            )
-        return 0, []
-    elif name == "missing-ref":
-        try:
-            _evaluate_comparison(
-                root,
-                registry,
-                mode="explicit-ref",
-                from_ref="refs/heads/missing",
-                to_ref="HEAD",
-            )
-        except InvocationError:
-            return 2, ["LIFECYCLE-BASE"]
-        return 0, []
-    elif name == "ambiguous-ref":
-        _git_fixture(root, "branch", "ambiguous")
-        _git_fixture(root, "tag", "ambiguous")
-        try:
-            _evaluate_comparison(
-                root,
-                registry,
-                mode="explicit-ref",
-                from_ref="ambiguous",
-                to_ref="HEAD",
-            )
-        except InvocationError:
-            return 2, ["LIFECYCLE-BASE"]
-        return 0, []
-    elif name == "raw-tree-ref":
-        tree = _git_fixture(root, "rev-parse", "HEAD^{tree}")
-        try:
-            _evaluate_comparison(
-                root,
-                registry,
-                mode="explicit-ref",
-                from_ref=tree,
-                to_ref="HEAD",
-            )
-        except InvocationError:
-            return 2, ["LIFECYCLE-BASE"]
-        return 0, []
-    elif name == "raw-blob-ref":
-        blob = _git_fixture(root, "hash-object", "-w", "--stdin", input_bytes=b"blob")
-        try:
-            _evaluate_comparison(
-                root,
-                registry,
-                mode="explicit-ref",
-                from_ref=blob,
-                to_ref="HEAD",
-            )
-        except InvocationError:
-            return 2, ["LIFECYCLE-BASE"]
-        return 0, []
-    elif name == "annotated-tag-ref":
-        _git_fixture(root, "tag", "-a", "annotated", "-m", "annotated")
-        try:
-            _evaluate_comparison(
-                root,
-                registry,
-                mode="explicit-ref",
-                from_ref="annotated",
-                to_ref="HEAD",
-            )
-        except InvocationError:
-            return 2, ["LIFECYCLE-BASE"]
-        return 0, []
-    elif name == "lightweight-commit-tag-pass":
-        _git_fixture(root, "tag", "lightweight", "HEAD")
-        diagnostics = _evaluate_comparison(
-            root,
-            registry,
-            mode="explicit-ref",
-            from_ref="lightweight",
-            to_ref="HEAD",
-        )
-    elif name == "git-environment-steering":
-        _write_fixture_document(root, spec_path, "sdlc/spec", "done")
-        _git_fixture(root, "add", "--", spec_path)
-        with tempfile.TemporaryDirectory(
-            prefix="document-lifecycle-alternate-"
-        ) as directory:
-            alternate = Path(directory)
-            _init_fixture_repo(alternate)
-            _commit_fixture(alternate, "clean alternate")
-            attack_values = {
-                "GIT_DIR": str(alternate / ".git"),
-                "GIT_WORK_TREE": str(alternate),
-                "GIT_INDEX_FILE": str(alternate / ".git" / "index"),
-            }
-            previous = {key: os.environ.get(key) for key in attack_values}
-            try:
-                os.environ.update(attack_values)
-                caller_environment = dict(os.environ)
-                diagnostics = _evaluate_comparison(root, registry, mode="staged")
-                if os.environ != caller_environment:
-                    raise InvocationError("Git adapter changed the caller environment")
-                stdout = io.StringIO()
-                stderr = io.StringIO()
-                with (
-                    contextlib.redirect_stdout(stdout),
-                    contextlib.redirect_stderr(stderr),
-                ):
-                    snapshot_exit = main(
-                        ["--root", str(contract_root), "--mode", "snapshot"]
-                    )
-                if snapshot_exit != 0 or os.environ != caller_environment:
-                    raise InvocationError(
-                        "registry/inventory Git environment scope differs"
-                    )
-            finally:
-                for key, value in previous.items():
-                    if value is None:
-                        os.environ.pop(key, None)
-                    else:
-                        os.environ[key] = value
-    elif name == "wrong-worktree-root":
-        nested = root / "nested"
-        nested.mkdir()
-        try:
-            _evaluate_comparison(nested, registry, mode="staged")
-        except InvocationError:
-            return 2, ["LIFECYCLE-BASE"]
-        return 0, []
-    elif name == "non-worktree-root":
-        with tempfile.TemporaryDirectory(
-            prefix="document-lifecycle-non-worktree-"
-        ) as directory:
-            try:
-                _verify_repository_root(Path(directory))
-            except InvocationError:
-                return 2, ["LIFECYCLE-BASE"]
-        return 0, []
-    elif name == "bare-root":
-        with tempfile.TemporaryDirectory(
-            prefix="document-lifecycle-bare-"
-        ) as directory:
-            bare = Path(directory)
-            _git_fixture(bare, "init", "--bare", "-q")
-            try:
-                _verify_repository_root(bare)
-            except InvocationError:
-                return 2, ["LIFECYCLE-BASE"]
-        return 0, []
-    else:
-        raise AssertionError(f"unknown Git fixture: {name}")
-    return _exit_code(diagnostics), _rule_ids(diagnostics)
-
-
-def _is_string_list(value: object, *, nonempty: bool = False) -> bool:
-    return (
-        isinstance(value, list)
-        and (not nonempty or bool(value))
-        and all(isinstance(item, str) for item in value)
-    )
-
-
-def _is_rule_id_list(value: object) -> bool:
-    return _is_string_list(value) and all(
-        rule_id in LIFECYCLE_RULE_IDS for rule_id in value
-    )
-
-
-def _is_exit_code(value: object) -> bool:
-    return type(value) is int and value in {0, 1, 2}
-
-
-def _is_document_triple(value: object) -> bool:
-    return (
-        isinstance(value, list)
-        and len(value) == 3
-        and isinstance(value[0], str)
-        and isinstance(value[1], str)
-        and (isinstance(value[2], str) or value[2] is None)
-    )
-
-
-def _fixture_contract_failures(fixture: object, registry: Registry) -> list[str]:
-    failures: list[str] = []
-    if not isinstance(fixture, dict):
-        return ["fixture must be an object"]
-    if type(fixture.get("schemaVersion")) is not int or fixture["schemaVersion"] != 1:
-        return ["fixture schemaVersion must be integer 1"]
-
-    expected_root_keys = {
-        "schemaVersion",
-        "requiredEntrypoints",
-        "ruleIds",
-        "forwardContracts",
-        "comparisonCases",
-        "admissionCases",
-        "gitCases",
-        "argumentCases",
-        "includePathCases",
-        "evidenceCases",
-        "archiveCutoverCases",
-        "work054Wp002TransitionCases",
-        "work105FormCutoverCases",
-        "work105DecisionEvidenceCases",
-        "snapshotCase",
-    }
-    if set(fixture) != expected_root_keys:
-        failures.append("fixture root keys differ")
-
-    fixture_entrypoints = fixture.get("requiredEntrypoints")
-    if not _is_string_list(fixture_entrypoints):
-        failures.append("fixture entrypoints must be a list of strings")
-    elif tuple(fixture_entrypoints) != EXPECTED_ENTRYPOINTS:
-        failures.append("fixture entrypoints or order differ")
-
-    fixture_rule_ids = fixture.get("ruleIds")
-    if not _is_string_list(fixture_rule_ids):
-        failures.append("stable lifecycle rule IDs must be a list of strings")
-    elif (
-        tuple(fixture_rule_ids) != EXPECTED_RULE_IDS
-        or frozenset(fixture_rule_ids) != LIFECYCLE_RULE_IDS
-    ):
-        failures.append("stable lifecycle rule IDs or order differ")
-
-    group_contracts = (
-        (
-            "forwardContracts",
-            EXPECTED_FORWARD_CASE_NAMES,
-            {"name", "profiles", "edges"},
-        ),
-        (
-            "comparisonCases",
-            EXPECTED_COMPARISON_CASE_NAMES,
-            {"name", "base", "proposed", "expectedRuleIds"},
-        ),
-        (
-            "gitCases",
-            EXPECTED_GIT_CASE_NAMES,
-            {"name", "expectedExit", "expectedRuleIds"},
-        ),
-        (
-            "argumentCases",
-            EXPECTED_ARGUMENT_CASE_NAMES,
-            {
-                "name",
-                "argv",
-                "expectedExit",
-                "expectedRuleIds",
-                "expectedBaseMode",
-            },
-        ),
-        (
-            "includePathCases",
-            EXPECTED_INCLUDE_CASE_NAMES,
-            {"name", "values", "expectedExit"},
-        ),
-        (
-            "archiveCutoverCases",
-            EXPECTED_ARCHIVE_CUTOVER_CASE_NAMES,
-            {"name", "mode", "mutation", "expectedAdmittedCount"},
-        ),
-        (
-            "work054Wp002TransitionCases",
-            EXPECTED_WORK054_WP002_TRANSITION_CASE_NAMES,
-            {"name", "mode", "mutation", "expectedAdmittedCount"},
-        ),
-        (
-            "work105FormCutoverCases",
-            EXPECTED_WORK105_FORM_CUTOVER_CASE_NAMES,
-            {"name", "mode", "mutation", "expectedAdmittedCount"},
-        ),
-        (
-            "work105DecisionEvidenceCases",
-            EXPECTED_WORK105_DECISION_EVIDENCE_CASE_NAMES,
-            {"name", "mutation", "expectedUnresolvedCount"},
-        ),
-    )
-    for group_name, expected_names, expected_keys in group_contracts:
-        cases = fixture.get(group_name)
-        if not isinstance(cases, list):
-            failures.append(f"{group_name} must be a list")
-            continue
-        actual_names = tuple(
-            case.get("name") if isinstance(case, dict) else None for case in cases
-        )
-        if actual_names != expected_names:
-            failures.append(f"{group_name} names or order differ")
-        for case in cases:
-            if not isinstance(case, dict):
-                failures.append(f"{group_name} contains a non-object case")
-                continue
-            case_name = case.get("name")
-            if set(case) != expected_keys:
-                failures.append(f"{group_name} keys differ: {case_name}")
-
-            if group_name == "forwardContracts":
-                profiles = case.get("profiles")
-                edges = case.get("edges")
-                if not _is_string_list(profiles, nonempty=True):
-                    failures.append(f"forwardContracts profiles differ: {case_name}")
-                if not (
-                    isinstance(edges, list)
-                    and bool(edges)
-                    and all(
-                        isinstance(edge, list)
-                        and len(edge) == 2
-                        and all(isinstance(state, str) for state in edge)
-                        for edge in edges
-                    )
-                ):
-                    failures.append(f"forwardContracts edges differ: {case_name}")
-            elif group_name == "comparisonCases":
-                if not _is_document_triple(case.get("base")):
-                    failures.append(f"comparisonCases base differs: {case_name}")
-                if not _is_document_triple(case.get("proposed")):
-                    failures.append(f"comparisonCases proposed differs: {case_name}")
-                if not _is_rule_id_list(case.get("expectedRuleIds")):
-                    failures.append(f"comparisonCases rule IDs differ: {case_name}")
-            elif group_name == "gitCases":
-                if not _is_exit_code(case.get("expectedExit")):
-                    failures.append(f"gitCases exit differs: {case_name}")
-                if not _is_rule_id_list(case.get("expectedRuleIds")):
-                    failures.append(f"gitCases rule IDs differ: {case_name}")
-            elif group_name == "argumentCases":
-                if not _is_string_list(case.get("argv")):
-                    failures.append(f"argumentCases argv differs: {case_name}")
-                if not _is_exit_code(case.get("expectedExit")):
-                    failures.append(f"argumentCases exit differs: {case_name}")
-                expected_rules = case.get("expectedRuleIds")
-                if not _is_rule_id_list(expected_rules):
-                    failures.append(f"argumentCases rule IDs differ: {case_name}")
-                elif (
-                    expected_rules != ["LIFECYCLE-BASE"]
-                    and not (
-                        case_name == "invalid-mode"
-                        and expected_rules == []
-                    )
-                ):
-                    failures.append(f"argumentCases base rule differs: {case_name}")
-                expected_base_mode = case.get("expectedBaseMode")
-                if not isinstance(
-                    expected_base_mode, str
-                ) or expected_base_mode not in {
-                    "staged",
-                    "ci",
-                    "explicit-ref",
-                    "snapshot",
-                    "unknown",
-                    "argparse",
-                }:
-                    failures.append(f"argumentCases base mode differs: {case_name}")
-                elif case_name != "invalid-mode" and expected_base_mode == "argparse":
-                    failures.append(f"argumentCases base mode differs: {case_name}")
-            elif group_name == "includePathCases":
-                if not _is_string_list(case.get("values"), nonempty=True):
-                    failures.append(f"includePathCases values differ: {case_name}")
-                if not _is_exit_code(case.get("expectedExit")):
-                    failures.append(f"includePathCases exit differs: {case_name}")
-            elif group_name == "archiveCutoverCases":
-                if case.get("mode") not in {
-                    "staged",
-                    "ci",
-                    "snapshot",
-                    "explicit-ref",
-                }:
-                    failures.append(f"archiveCutoverCases mode differs: {case_name}")
-                if case.get("mutation") not in EXPECTED_ARCHIVE_CUTOVER_MUTATIONS:
-                    failures.append(
-                        f"archiveCutoverCases mutation differs: {case_name}"
-                    )
-                if case.get("expectedAdmittedCount") not in {0, 33}:
-                    failures.append(f"archiveCutoverCases count differs: {case_name}")
-            elif group_name == "work105FormCutoverCases":
-                if case.get("mode") not in {
-                    "staged",
-                    "ci",
-                    "snapshot",
-                    "explicit-ref",
-                }:
-                    failures.append(
-                        f"work105FormCutoverCases mode differs: {case_name}"
-                    )
-                if (
-                    case.get("mutation")
-                    not in EXPECTED_WORK105_FORM_CUTOVER_MUTATIONS
-                ):
-                    failures.append(
-                        f"work105FormCutoverCases mutation differs: {case_name}"
-                    )
-                if case.get("expectedAdmittedCount") not in {0, 23}:
-                    failures.append(
-                        f"work105FormCutoverCases count differs: {case_name}"
-                    )
-            elif group_name == "work054Wp002TransitionCases":
-                if case.get("mode") not in {
-                    "staged",
-                    "ci",
-                    "snapshot",
-                    "explicit-ref",
-                }:
-                    failures.append(
-                        f"work054Wp002TransitionCases mode differs: {case_name}"
-                    )
-                if (
-                    case.get("mutation")
-                    not in EXPECTED_WORK054_WP002_TRANSITION_MUTATIONS
-                ):
-                    failures.append(
-                        "work054Wp002TransitionCases mutation differs: "
-                        f"{case_name}"
-                    )
-                if case.get("expectedAdmittedCount") not in {0, 303}:
-                    failures.append(
-                        f"work054Wp002TransitionCases count differs: {case_name}"
-                    )
-            elif group_name == "work105DecisionEvidenceCases":
-                if (
-                    case.get("mutation")
-                    not in EXPECTED_WORK105_DECISION_EVIDENCE_MUTATIONS
-                ):
-                    failures.append(
-                        f"work105DecisionEvidenceCases mutation differs: {case_name}"
-                    )
-                if case.get("expectedUnresolvedCount") not in {0, 1, 2}:
-                    failures.append(
-                        f"work105DecisionEvidenceCases count differs: {case_name}"
-                    )
-
-    admission_cases = fixture.get("admissionCases")
-    if not isinstance(admission_cases, list):
-        failures.append("admissionCases must be a list")
-    else:
-        actual_names = tuple(
-            case.get("name") if isinstance(case, dict) else None
-            for case in admission_cases
-        )
-        if actual_names != EXPECTED_ADMISSION_CASE_NAMES:
-            failures.append("admissionCases names or order differ")
-        for case in admission_cases:
-            if not isinstance(case, dict):
-                failures.append("admissionCases contains a non-object case")
-                continue
-            case_name = case.get("name")
-            operation = case.get("operation", "create")
-            operation_is_valid = isinstance(operation, str) and operation in {
-                "create",
-                "delete",
-                "rename",
-            }
-            expected_keys = {"name", "documents", "expectedRuleIds"}
-            if operation_is_valid and operation in {"delete", "rename"}:
-                expected_keys.add("operation")
-            if set(case) != expected_keys:
-                failures.append(f"admissionCases keys differ: {case_name}")
-            if not operation_is_valid:
-                failures.append(f"admissionCases operation differs: {case_name}")
-            documents = case.get("documents")
-            if not (
-                isinstance(documents, list)
-                and bool(documents)
-                and all(_is_document_triple(document) for document in documents)
-            ):
-                failures.append(f"admissionCases documents differ: {case_name}")
-            if not _is_rule_id_list(case.get("expectedRuleIds")):
-                failures.append(f"admissionCases rule IDs differ: {case_name}")
-
-    evidence_cases = fixture.get("evidenceCases")
-    if not isinstance(evidence_cases, list):
-        failures.append("evidenceCases must be a list")
-    else:
-        for case in evidence_cases:
-            if not isinstance(case, dict):
-                failures.append("evidenceCases contains a non-object case")
-                continue
-            if set(case) != {
-                "name",
-                "profile",
-                "from",
-                "to",
-                "predicate",
-                "variants",
-            }:
-                failures.append(f"evidenceCases keys differ: {case.get('name')}")
-                continue
-            profile_id = case.get("profile")
-            from_state = case.get("from")
-            to_state = case.get("to")
-            predicate = case.get("predicate")
-            name = case.get("name")
-            if not all(
-                isinstance(value, str)
-                for value in (name, profile_id, from_state, to_state, predicate)
-            ):
-                failures.append("evidenceCases scalar values must be strings")
-            elif name != f"{profile_id}:{from_state}->{to_state}":
-                failures.append(f"evidenceCases name differs: {name}")
-            variants = case.get("variants")
-            if (
-                not _is_string_list(variants, nonempty=True)
-                or tuple(variants) != EXPECTED_EVIDENCE_VARIANTS
-            ):
-                failures.append(f"evidenceCases variants differ: {name}")
-
-    snapshot = fixture.get("snapshotCase")
-    if not isinstance(snapshot, dict):
-        failures.append("snapshotCase must be an object")
-    else:
-        if set(snapshot) != {"name", "expectedExit", "expectedRuleIds"}:
-            failures.append("snapshotCase keys differ")
-        if snapshot.get("name") != EXPECTED_SNAPSHOT_CASE_NAME:
-            failures.append("snapshotCase name differs")
-        if not _is_exit_code(snapshot.get("expectedExit")):
-            failures.append("snapshotCase exit differs")
-        if not _is_rule_id_list(snapshot.get("expectedRuleIds")):
-            failures.append("snapshotCase rule IDs differ")
-
-    if failures:
-        return failures
-
-    fixture_projection = [
-        (profile_id, edge[0], edge[1])
-        for contract in fixture["forwardContracts"]
-        for profile_id in contract["profiles"]
-        for edge in contract["edges"]
-    ]
-    production_projection = [
-        (profile.profile_id, edge.from_state, edge.to_state)
-        for profile in registry.profiles
-        for edge in profile.lifecycle.edges
-    ]
-    if len(fixture_projection) != len(set(fixture_projection)):
-        failures.append("fixture lifecycle edge projection contains duplicates")
-    if sorted(fixture_projection) != sorted(production_projection):
-        failures.append("fixture lifecycle edge projection differs from production")
-    evidence_projection = [
-        (case["profile"], case["from"], case["to"], case["predicate"])
-        for case in fixture["evidenceCases"]
-    ]
-    production_evidence_projection = [
-        (
-            profile.profile_id,
-            edge.from_state,
-            edge.to_state,
-            edge.predicate_id,
-        )
-        for profile in registry.profiles
-        for edge in profile.lifecycle.edges
-    ]
-    if len(evidence_projection) != len(set(evidence_projection)):
-        failures.append("fixture evidence edge projection contains duplicates")
-    if evidence_projection != production_evidence_projection:
-        failures.append("fixture evidence edge projection differs from production")
-    if len(evidence_projection) != 44 or len(registry.evidence_predicates) != 11:
-        failures.append("production evidence inventory is not 44 edges/11 predicates")
-    if len({item[0] for item in evidence_projection}) != 20:
-        failures.append("production evidence profile inventory is not 20")
-    return failures
-
-
-def _fixture_mutation_probe_failures(
-    fixture: dict[str, object], registry: Registry
-) -> list[str]:
-    probes: list[tuple[str, dict[str, object]]] = []
-
-    missing_operations = copy.deepcopy(fixture)
-    missing_operations["forwardContracts"] = [
-        case
-        for case in missing_operations["forwardContracts"]
-        if case["name"] != "operations"
-    ]
-    probes.append(("missing operations family", missing_operations))
-
-    missing_skip = copy.deepcopy(fixture)
-    missing_skip["comparisonCases"] = [
-        case
-        for case in missing_skip["comparisonCases"]
-        if case["name"] != "skipped-edge"
-    ]
-    probes.append(("missing skipped edge", missing_skip))
-
-    missing_active_create = copy.deepcopy(fixture)
-    missing_active_create["admissionCases"] = [
-        case
-        for case in missing_active_create["admissionCases"]
-        if case["name"] != "active-create-denied"
-    ]
-    probes.append(("missing active create denial", missing_active_create))
-
-    missing_archive_cutover = copy.deepcopy(fixture)
-    missing_archive_cutover["archiveCutoverCases"] = [
-        case
-        for case in missing_archive_cutover["archiveCutoverCases"]
-        if case["name"] != "partial-record-set"
-    ]
-    probes.append(("missing archive cutover denial", missing_archive_cutover))
-
-    missing_work054_transition = copy.deepcopy(fixture)
-    missing_work054_transition["work054Wp002TransitionCases"] = [
-        case
-        for case in missing_work054_transition["work054Wp002TransitionCases"]
-        if case["name"] != "source-digest-drift"
-    ]
-    probes.append(
-        ("missing WORK-054 WP-002 transition denial", missing_work054_transition)
-    )
-
-    missing_work105_cutover = copy.deepcopy(fixture)
-    missing_work105_cutover["work105FormCutoverCases"] = [
-        case
-        for case in missing_work105_cutover["work105FormCutoverCases"]
-        if case["name"] != "wrong-proposed-registry-oid"
-    ]
-    probes.append(("missing WORK-105 form cutover denial", missing_work105_cutover))
-
-    missing_work105_decision_evidence = copy.deepcopy(fixture)
-    missing_work105_decision_evidence["work105DecisionEvidenceCases"] = [
-        case
-        for case in missing_work105_decision_evidence[
-            "work105DecisionEvidenceCases"
-        ]
-        if case["name"] != "extra-unresolved"
-    ]
-    probes.append(
-        (
-            "missing WORK-105 decision evidence denial",
-            missing_work105_decision_evidence,
-        )
-    )
-
-    duplicate_case = copy.deepcopy(fixture)
-    duplicate_case["gitCases"].append(copy.deepcopy(duplicate_case["gitCases"][0]))
-    probes.append(("duplicate Git case", duplicate_case))
-
-    unknown_case = copy.deepcopy(fixture)
-    unknown_case["includePathCases"][0]["name"] = "unknown-case"
-    probes.append(("unknown include case", unknown_case))
-
-    malformed_member = copy.deepcopy(fixture)
-    malformed_member["admissionCases"][0] = None
-    probes.append(("malformed list member", malformed_member))
-
-    null_comparison_base = copy.deepcopy(fixture)
-    null_comparison_base["comparisonCases"][0]["base"] = None
-    probes.append(("null comparison base", null_comparison_base))
-
-    null_admission_documents = copy.deepcopy(fixture)
-    null_admission_documents["admissionCases"][0]["documents"] = None
-    probes.append(("null admission documents", null_admission_documents))
-
-    malformed_status = copy.deepcopy(fixture)
-    malformed_status["comparisonCases"][0]["proposed"][2] = 7
-    probes.append(("malformed comparison status", malformed_status))
-
-    malformed_exit = copy.deepcopy(fixture)
-    malformed_exit["gitCases"][0]["expectedExit"] = None
-    probes.append(("malformed expected exit", malformed_exit))
-
-    malformed_nested_member = copy.deepcopy(fixture)
-    malformed_nested_member["argumentCases"][0]["argv"][0] = None
-    probes.append(("malformed argv member", malformed_nested_member))
-
-    unhashable_base_mode = copy.deepcopy(fixture)
-    unhashable_base_mode["argumentCases"][0]["expectedBaseMode"] = []
-    probes.append(("unhashable argument base mode", unhashable_base_mode))
-
-    unhashable_operation = copy.deepcopy(fixture)
-    unhashable_operation["admissionCases"][0]["operation"] = {}
-    probes.append(("unhashable admission operation", unhashable_operation))
-
-    missing_evidence_edge = copy.deepcopy(fixture)
-    missing_evidence_edge["evidenceCases"].pop()
-    probes.append(("missing evidence edge", missing_evidence_edge))
-
-    duplicate_evidence_edge = copy.deepcopy(fixture)
-    duplicate_evidence_edge["evidenceCases"].append(
-        copy.deepcopy(duplicate_evidence_edge["evidenceCases"][0])
-    )
-    probes.append(("duplicate evidence edge", duplicate_evidence_edge))
-
-    unknown_evidence_predicate = copy.deepcopy(fixture)
-    unknown_evidence_predicate["evidenceCases"][0]["predicate"] = "unknown"
-    probes.append(("unknown evidence predicate", unknown_evidence_predicate))
-
-    swapped_evidence_edges = copy.deepcopy(fixture)
-    (
-        swapped_evidence_edges["evidenceCases"][0],
-        swapped_evidence_edges["evidenceCases"][1],
-    ) = (
-        swapped_evidence_edges["evidenceCases"][1],
-        swapped_evidence_edges["evidenceCases"][0],
-    )
-    probes.append(("swapped evidence edges", swapped_evidence_edges))
-
-    missing_evidence_variant = copy.deepcopy(fixture)
-    missing_evidence_variant["evidenceCases"][0]["variants"].pop()
-    probes.append(("missing evidence variant", missing_evidence_variant))
-
-    extra_evidence_variant = copy.deepcopy(fixture)
-    extra_evidence_variant["evidenceCases"][0]["variants"].append("extra")
-    probes.append(("extra evidence variant", extra_evidence_variant))
-
-    reordered_evidence_variants = copy.deepcopy(fixture)
-    reordered_evidence_variants["evidenceCases"][0]["variants"].reverse()
-    probes.append(("reordered evidence variants", reordered_evidence_variants))
-
-    null_evidence_variants = copy.deepcopy(fixture)
-    null_evidence_variants["evidenceCases"][0]["variants"] = None
-    probes.append(("null evidence variants", null_evidence_variants))
-
-    non_string_evidence_variant = copy.deepcopy(fixture)
-    non_string_evidence_variant["evidenceCases"][0]["variants"][0] = []
-    probes.append(("non-string evidence variant", non_string_evidence_variant))
-
-    null_evidence_case = copy.deepcopy(fixture)
-    null_evidence_case["evidenceCases"][0] = None
-    probes.append(("null evidence case", null_evidence_case))
-
-    failures: list[str] = []
-    for name, candidate in probes:
-        if not _fixture_contract_failures(candidate, registry):
-            failures.append(f"fixture mutation accepted: {name}")
-    return failures
-
-
-EVIDENCE_REGRESSION_COUNT = 5
-
-
-def _evidence_regression_failures(
-    registry: Registry, evidence_cases: Sequence[Mapping[str, object]]
-) -> list[str]:
-    """Close the concrete bypasses reproduced by independent review."""
-
-    failures: list[str] = []
-    profiles = {profile.profile_id: profile for profile in registry.profiles}
-    adapter = _link_validator_module()
-
-    def render_view(
-        document: LifecycleDocument,
-        text: str,
-        snapshot_profiles: Mapping[PurePosixPath, str],
-    ) -> LifecycleEvidenceDocument:
-        rendered = adapter.lifecycle_markdown_evidence(
-            document.path,
-            text,
-            profiles[document.profile_id],
-            snapshot_profiles,
-        )
-        return LifecycleEvidenceDocument(
-            document=document,
-            all_local_links=rendered.all_local_links,
-            relationship_links=rendered.relationship_links,
-            unresolved_relationship_links=rendered.unresolved_relationship_links,
-            body_table_links=rendered.body_table_links,
-            relationship_section_valid=rendered.relationship_section_valid,
-            body_contract_valid=rendered.body_contract_valid,
-            task_terminal_evidence_valid=rendered.task_terminal_evidence_valid,
-        )
-
-    prd_path = PurePosixPath("docs/01.requirements/0999-reciprocal-fixture.md")
-    spec_path = PurePosixPath("docs/03.specs/0999-reciprocal-fixture/spec.md")
-    prd = LifecycleDocument(prd_path, "sdlc/prd", "active")
-    spec = LifecycleDocument(spec_path, "sdlc/spec", "active")
-    snapshot_profiles = MappingProxyType(
-        {prd_path: prd.profile_id, spec_path: spec.profile_id}
-    )
-    prd_text = _evidence_fixture_text(
-        profiles[prd.profile_id], prd, snapshot_profiles, (spec_path,)
-    )
-    spec_without_backlink = _evidence_fixture_text(
-        profiles[spec.profile_id], spec, snapshot_profiles, ()
-    )
-    no_backlink_views = MappingProxyType(
-        {
-            prd_path: render_view(prd, prd_text, snapshot_profiles),
-            spec_path: render_view(spec, spec_without_backlink, snapshot_profiles),
-        }
-    )
-    base_documents = MappingProxyType(
-        {
-            prd_path: LifecycleDocument(prd_path, "sdlc/prd", "draft"),
-            spec_path: spec,
-        }
-    )
-    no_backlink_context = LifecycleEvidenceContext(
-        base_documents=base_documents,
-        proposed_documents=no_backlink_views,
-        changed_paths=frozenset({prd_path}),
-        status_changed_paths=frozenset({prd_path}),
-        body_changed_paths=frozenset({prd_path}),
-        created_paths=frozenset(),
-    )
-    no_backlink_actual = compare_lifecycle(
-        registry,
-        {prd_path: base_documents[prd_path]},
-        {prd_path: prd},
-        base_mode="explicit-ref",
-        evidence_context=no_backlink_context,
-    )
-    no_backlink_expected = (
-        LifecycleDiagnostic(
-            severity="FAIL",
-            rule_id="LIFECYCLE-EVIDENCE",
-            path=prd_path,
-            profile="sdlc/prd",
-            expected_transition="predicate activate-self-body for draft -> active",
-            observed_transition=f"evidence paths {[prd_path.as_posix()]!r}",
-            base_mode="explicit-ref",
-            evidence_gap=(
-                f"reciprocal body evidence is missing from {spec_path.as_posix()}"
-            ),
-        ),
-    )
-    if no_backlink_actual != no_backlink_expected:
-        failures.append(f"regression reciprocal-body: {no_backlink_actual!r}")
-
-    spec_with_backlink = _evidence_fixture_text(
-        profiles[spec.profile_id],
-        spec,
-        snapshot_profiles,
-        (),
-        backlink_targets=(prd_path,),
-    )
-    forged_views = MappingProxyType(
-        {
-            prd_path: no_backlink_views[prd_path],
-            spec_path: render_view(spec, spec_with_backlink, snapshot_profiles),
-        }
-    )
-    forged_base = MappingProxyType(
-        {
-            prd_path: LifecycleDocument(prd_path, "sdlc/prd", "done"),
-            spec_path: spec,
-        }
-    )
-    forged_context = LifecycleEvidenceContext(
-        base_documents=forged_base,
-        proposed_documents=forged_views,
-        changed_paths=frozenset({prd_path}),
-        status_changed_paths=frozenset({prd_path}),
-        body_changed_paths=frozenset({prd_path}),
-        created_paths=frozenset({prd_path}),
-    )
-    forged_actual = compare_lifecycle(
-        registry,
-        {prd_path: LifecycleDocument(prd_path, "sdlc/prd", "draft")},
-        {prd_path: prd},
-        base_mode="explicit-ref",
-        evidence_context=forged_context,
-    )
-    forged_expected = (
-        LifecycleDiagnostic(
-            severity="FAIL",
-            rule_id="LIFECYCLE-EVIDENCE",
-            path=prd_path,
-            profile="sdlc/prd",
-            expected_transition="predicate activate-self-body for draft -> active",
-            observed_transition=f"evidence paths {[prd_path.as_posix()]!r}",
-            base_mode="explicit-ref",
-            evidence_gap=(
-                "created-path projection differs from canonical snapshots; "
-                "base evidence projection differs from transition source"
-            ),
-        ),
-    )
-    if forged_actual != forged_expected:
-        failures.append(f"regression forged-context: {forged_actual!r}")
-
-    reference_path = PurePosixPath(
-        "docs/90.references/research/2099-01-01-heading-fixture.md"
-    )
-    support_path = PurePosixPath("docs/03.specs/0998-heading-fixture/spec.md")
-    reference = LifecycleDocument(reference_path, "content/reference", "active")
-    support = LifecycleDocument(support_path, "sdlc/spec", "active")
-    heading_profiles = MappingProxyType(
-        {reference_path: reference.profile_id, support_path: support.profile_id}
-    )
-    reference_text = _evidence_fixture_text(
-        profiles[reference.profile_id],
-        reference,
-        heading_profiles,
-        (support_path,),
-    )
-    reference_text += "\n## Unsupported Lifecycle Heading\n\nRejected.\n"
-    heading_view = render_view(reference, reference_text, heading_profiles)
-    if heading_view.body_contract_valid:
-        failures.append("regression unsupported-root-h2: adapter accepted heading")
-    heading_context = LifecycleEvidenceContext(
-        base_documents=MappingProxyType(
-            {
-                reference_path: LifecycleDocument(
-                    reference_path, "content/reference", "draft"
-                ),
-                support_path: support,
-            }
-        ),
-        proposed_documents=MappingProxyType(
-            {
-                reference_path: heading_view,
-                support_path: render_view(
-                    support,
-                    _evidence_fixture_text(
-                        profiles[support.profile_id],
-                        support,
-                        heading_profiles,
-                        (),
-                    ),
-                    heading_profiles,
-                ),
-            }
-        ),
-        changed_paths=frozenset({reference_path}),
-        status_changed_paths=frozenset({reference_path}),
-        body_changed_paths=frozenset({reference_path}),
-        created_paths=frozenset(),
-    )
-    heading_actual = compare_lifecycle(
-        registry,
-        {reference_path: heading_context.base_documents[reference_path]},
-        {reference_path: reference},
-        base_mode="explicit-ref",
-        evidence_context=heading_context,
-    )
-    if (
-        len(heading_actual) != 1
-        or heading_actual[0].evidence_gap
-        != f"body contract mismatch at {reference_path.as_posix()}"
-    ):
-        failures.append(f"regression unsupported-root-h2: {heading_actual!r}")
-
-    task_path = PurePosixPath("docs/04.execution/tasks/2099-01-01-terminal.md")
-    task = LifecycleDocument(task_path, "sdlc/task", "done")
-    terminal_profiles = MappingProxyType({task_path: task.profile_id})
-    task_text = _evidence_fixture_text(
-        profiles[task.profile_id], task, terminal_profiles, ()
-    )
-    real_terminal = render_view(task, task_text, terminal_profiles)
-    placeholder_text = task_text.replace(
-        "[Review log](../../../README.md)", "Named repository evidence"
-    )
-    placeholder_terminal = render_view(task, placeholder_text, terminal_profiles)
-    if (
-        not real_terminal.task_terminal_evidence_valid
-        or placeholder_terminal.task_terminal_evidence_valid
-    ):
-        failures.append(
-            "regression task-terminal-placeholder: canonical phrase/link differs"
-        )
-
-    operated_index, operated_case = next(
-        (index, case)
-        for index, case in enumerate(evidence_cases)
-        if case["predicate"] == "accept-operated-document"
-    )
-    operated_target, operated_context = _evidence_case_context(
-        registry, operated_case, "positive", operated_index
-    )
-    operated_views = dict(operated_context.proposed_documents)
-    operated_task_path = next(
-        path
-        for path, view in operated_views.items()
-        if view.document.profile_id == "sdlc/task"
-    )
-    operated_task = operated_views[operated_task_path].document
-    operated_profiles = MappingProxyType(
-        {path: view.document.profile_id for path, view in operated_views.items()}
-    )
-    operated_relationships = operated_views[operated_task_path].relationship_links
-    task_with_evidence = _evidence_fixture_text(
-        profiles[operated_task.profile_id],
-        operated_task,
-        operated_profiles,
-        operated_relationships,
-        table_targets=(operated_target.path,),
-    )
-    evidence_link = _fixture_link(operated_task_path, operated_target.path, "Review 1")
-    result_link = _fixture_link(
-        operated_task_path, operated_target.path, "Result target"
-    )
-    task_with_result_only = task_with_evidence.replace(evidence_link, "Verified")
-    task_with_result_only = task_with_result_only.replace(
-        "| fixture | Verified |", f"| {result_link} | Verified |"
-    )
-    result_only_view = render_view(
-        operated_task, task_with_result_only, operated_profiles
-    )
-    if (
-        operated_target.path in result_only_view.body_table_links
-        or operated_target.path not in result_only_view.all_local_links
-    ):
-        failures.append("regression task-result-column: adapter projection differs")
-    operated_views[operated_task_path] = result_only_view
-    result_context = LifecycleEvidenceContext(
-        base_documents=operated_context.base_documents,
-        proposed_documents=MappingProxyType(operated_views),
-        changed_paths=operated_context.changed_paths,
-        status_changed_paths=operated_context.status_changed_paths,
-        body_changed_paths=operated_context.body_changed_paths,
-        created_paths=operated_context.created_paths,
-    )
-    result_actual = compare_lifecycle(
-        registry,
-        {
-            operated_target.path: LifecycleDocument(
-                operated_target.path,
-                operated_target.profile_id,
-                operated_case["from"],
-            )
-        },
-        {operated_target.path: operated_target},
-        base_mode="explicit-ref",
-        evidence_context=result_context,
-    )
-    if _rule_ids(result_actual) != ["LIFECYCLE-EVIDENCE"]:
-        failures.append(f"regression task-result-column: {result_actual!r}")
-
-    return failures
-
-
-def _ambiguous_base_edge_failures(
-    registry: Registry, evidence_cases: Sequence[Mapping[str, object]]
-) -> list[str]:
-    """Run an edge-shaped public CI base gate for every production edge."""
-
-    failures: list[str] = []
-    invoked_edges: list[tuple[str, str, str]] = []
-    expected_edges = [
-        (str(case["profile"]), str(case["from"]), str(case["to"]))
-        for case in evidence_cases
-    ]
-    for case_index, case in enumerate(evidence_cases):
-        with tempfile.TemporaryDirectory(
-            prefix="document-lifecycle-ambiguous-evidence-"
-        ) as directory:
-            repo = Path(directory)
-            _init_fixture_repo(repo)
-            profile_id = str(case["profile"])
-            from_state = str(case["from"])
-            to_state = str(case["to"])
-            edge = (profile_id, from_state, to_state)
-            invoked_edges.append(edge)
-            target_path = _evidence_target_path(
-                profile_id, str(case["predicate"]), case_index
-            )
-            _write_fixture_document(
-                repo, target_path.as_posix(), profile_id, from_state
-            )
-            common = _commit_fixture(repo, f"common {case['name']}")
-            base_tree = _git_fixture(repo, "rev-parse", "HEAD^{tree}")
-            left = _git_fixture(
-                repo, "commit-tree", base_tree, "-p", common, "-m", "left"
-            )
-            right = _git_fixture(
-                repo, "commit-tree", base_tree, "-p", common, "-m", "right"
-            )
-            _write_fixture_document(repo, target_path.as_posix(), profile_id, to_state)
-            _git_fixture(repo, "add", "--", target_path.as_posix())
-            proposed_tree = _git_fixture(repo, "write-tree")
-            merge_left = _git_fixture(
-                repo,
-                "commit-tree",
-                base_tree,
-                "-p",
-                left,
-                "-p",
-                right,
-                "-m",
-                "merge-left",
-            )
-            merge_right = _git_fixture(
-                repo,
-                "commit-tree",
-                proposed_tree,
-                "-p",
-                right,
-                "-p",
-                left,
-                "-m",
-                "merge-right",
-            )
-            resolver_calls = 0
-
-            def unexpected_evidence_resolver(
-                *args: object,
-            ) -> LifecycleEvidenceContext:
-                nonlocal resolver_calls
-                resolver_calls += 1
-                raise AssertionError(
-                    "evidence resolver ran before unique base selection"
-                )
-
-            try:
-                _evaluate_comparison(
-                    repo,
-                    registry,
-                    mode="ci",
-                    base_ref=merge_left,
-                    to_ref=merge_right,
-                    include_paths=(target_path,),
-                    evidence_context_factory=unexpected_evidence_resolver,
-                )
-            except InvocationError as exc:
-                if str(exc) != "CI refs do not have exactly one commit merge base":
-                    failures.append(
-                        f"evidence {case['name']}/ambiguous-base: "
-                        f"base error differs: {exc}"
-                    )
-            else:
-                failures.append(
-                    f"evidence {case['name']}/ambiguous-base: base gate passed"
-                )
-            if resolver_calls != 0:
-                failures.append(
-                    f"evidence {case['name']}/ambiguous-base: "
-                    f"resolver calls {resolver_calls}"
-                )
-    if invoked_edges != expected_edges or len(set(invoked_edges)) != 44:
-        failures.append(
-            "ambiguous-base did not invoke the exact 44 unique profile/state edges"
-        )
-    return failures
-
-
-def _evidence_assertion_run(
-    registry: Registry,
-    evidence_cases: Sequence[Mapping[str, object]],
-) -> tuple[list[dict[str, object]], list[str], list[str]]:
-    """Build the exact 528-case diagnostic projection for one lineage state."""
-
-    projection: list[dict[str, object]] = []
-    ambiguous_controls: list[str] = []
-    failures: list[str] = []
-    for case_index, case in enumerate(evidence_cases):
-        for variant_value in case["variants"]:
-            variant = str(variant_value)
-            if variant == "ambiguous-base":
-                ambiguous_controls.append(str(case["name"]))
-                diagnostics = (
-                    LifecycleDiagnostic(
-                        severity="FAIL",
-                        rule_id="LIFECYCLE-BASE",
-                        path=PurePosixPath("."),
-                        profile="",
-                        expected_transition=(
-                            "valid invocation, unique commit refs, and one "
-                            "comparison base"
-                        ),
-                        observed_transition=(
-                            "CI refs do not have exactly one commit merge base"
-                        ),
-                        base_mode="ci",
-                        evidence_gap="argument or Git provenance",
-                    ),
-                )
-                target_path = _evidence_target_path(
-                    str(case["profile"]), str(case["predicate"]), case_index
-                )
-                expected_rules = ["LIFECYCLE-BASE"]
-            else:
-                target, evidence_context = _evidence_case_context(
-                    registry, case, variant, case_index
-                )
-                target_path = target.path
-                base_target = LifecycleDocument(
-                    target.path, target.profile_id, str(case["from"])
-                )
-                diagnostics = compare_lifecycle(
-                    registry,
-                    {target.path: base_target},
-                    {target.path: target},
-                    base_mode="explicit-ref",
-                    evidence_context=evidence_context,
-                )
-                expected_rules = [] if variant == "positive" else ["LIFECYCLE-EVIDENCE"]
-            actual_rules = _rule_ids(diagnostics)
-            if actual_rules != expected_rules:
-                failures.append(
-                    f"evidence {case['name']}/{variant}: "
-                    f"expected {expected_rules}, actual {actual_rules}"
-                )
-            if variant not in {"positive", "ambiguous-base"} and len(diagnostics) != 1:
-                failures.append(
-                    f"evidence {case['name']}/{variant}: diagnostic count differs"
-                )
-            projection.append(
-                {
-                    "case": case["name"],
-                    "profile": case["profile"],
-                    "from": case["from"],
-                    "to": case["to"],
-                    "predicate": case["predicate"],
-                    "variant": variant,
-                    "target": target_path.as_posix(),
-                    "diagnostics": [
-                        {
-                            "severity": diagnostic.severity,
-                            "ruleId": diagnostic.rule_id,
-                            "path": diagnostic.path.as_posix(),
-                            "profile": diagnostic.profile,
-                            "expectedTransition": diagnostic.expected_transition,
-                            "observedTransition": diagnostic.observed_transition,
-                            "baseMode": diagnostic.base_mode,
-                            "evidenceGap": diagnostic.evidence_gap,
-                        }
-                        for diagnostic in diagnostics
-                    ],
-                }
-            )
-    return projection, ambiguous_controls, failures
-
-
-def _evidence_assertion_sha256(projection: Sequence[Mapping[str, object]]) -> str:
-    return hashlib.sha256(
-        json.dumps(
-            projection,
-            ensure_ascii=False,
-            sort_keys=True,
-            separators=(",", ":"),
-        ).encode("utf-8")
-    ).hexdigest()
 
 
 def _execute(root: Path, args: argparse.Namespace) -> int:

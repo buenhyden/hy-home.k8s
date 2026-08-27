@@ -84,8 +84,8 @@ repository-static validation evidence.
 
 | Task | Description | Files / Docs Affected | Target Requirement | Validation Criteria |
 | --- | --- | --- | --- | --- |
-| PLN-001 | Align SDLC lifecycle and handoff contracts | `docs/99.templates/support/sdlc-governance.md`, `docs/99.templates/support/template-routing.md`, `docs/99.templates/support/documentation-contract.md`, `docs/00.agent-governance/rules/document-stage-routing.md`, `docs/00.agent-governance/rules/stage-authoring-matrix.md` | VAL-SDLC-LC-001 | Contract surfaces describe the same lifecycle, numbering, handoff, and active-surface rules. |
-| PLN-002 | Extend archive tombstone metadata contract and current tombstones | `docs/99.templates/support/frontmatter-schema.md`, `docs/99.templates/templates/common/archive-tombstone.template.md`, `docs/98.archive/README.md`, `docs/98.archive/**/*.md`, `scripts/validate-repo-quality-gates.sh` | VAL-SDLC-LC-003 | Archive tombstones contain `original_path`, `archived_on`, `archive_reason`, and `replacement`, and the archive profile allows those keys. |
+| PLN-001 | Align SDLC lifecycle and handoff contracts | `docs/99.templates/support/sdlc-governance.md`, `docs/99.templates/README.md`, `docs/99.templates/support/documentation-contract.md`, `docs/00.agent-governance/rules/document-stage-routing.md`, `docs/00.agent-governance/rules/stage-authoring-matrix.md` | VAL-SDLC-LC-001 | Contract surfaces describe the same lifecycle, numbering, handoff, and active-surface rules. |
+| PLN-002 | Extend archive tombstone metadata contract and current tombstones | `docs/99.templates/contracts/frontmatter.schema.json`, `docs/99.templates/templates/common/archive-tombstone.template.md`, `docs/98.archive/README.md`, `docs/98.archive/**/*.md`, `scripts/validate-repo-quality-gates.sh` | VAL-SDLC-LC-003 | Archive tombstones contain `original_path`, `archived_on`, `archive_reason`, and `replacement`, and the archive profile allows those keys. |
 | PLN-003 | Align active surface evidence and `_workspace` boundary | `_workspace/README.md`, `docs/01.requirements/README.md`, `docs/03.specs/README.md`, `docs/03.specs/0021-sdlc-lifecycle-contract/README.md#task-records`, `docs/03.specs/0021-sdlc-lifecycle-contract/README.md#task-records` | VAL-SDLC-LC-002, VAL-SDLC-LC-004 | Active routes and workspace staging rules match the new contract; task evidence exists. |
 | PLN-004 | Add validator checks and close validation | `scripts/validate-repo-quality-gates.sh`, Stage 04 task evidence, progress memory when required | VAL-SDLC-LC-005 | `git diff --check`, shell syntax check, and repository quality gates pass. |
 
@@ -101,7 +101,7 @@ repository-static validation evidence.
 **Files:**
 
 - Modify: `docs/99.templates/support/sdlc-governance.md`
-- Modify: `docs/99.templates/support/template-routing.md`
+- Modify: `docs/99.templates/README.md`
 - Modify: `docs/99.templates/support/documentation-contract.md`
 - Modify: `docs/00.agent-governance/rules/document-stage-routing.md`
 - Modify: `docs/00.agent-governance/rules/stage-authoring-matrix.md`
@@ -112,7 +112,7 @@ Run:
 
 ```bash
 sed -n '1,260p' docs/99.templates/support/sdlc-governance.md
-sed -n '1,240p' docs/99.templates/support/template-routing.md
+sed -n '1,240p' docs/99.templates/README.md
 sed -n '1,260p' docs/99.templates/support/documentation-contract.md
 sed -n '1,260p' docs/00.agent-governance/rules/document-stage-routing.md
 sed -n '1,260p' docs/00.agent-governance/rules/stage-authoring-matrix.md
@@ -175,7 +175,7 @@ Expected: the lifecycle wording appears in the contract owners and
 Run:
 
 ```bash
-git add docs/99.templates/support/sdlc-governance.md docs/99.templates/support/template-routing.md docs/99.templates/support/documentation-contract.md docs/00.agent-governance/rules/document-stage-routing.md docs/00.agent-governance/rules/stage-authoring-matrix.md
+git add docs/99.templates/support/sdlc-governance.md docs/99.templates/README.md docs/99.templates/support/documentation-contract.md docs/00.agent-governance/rules/document-stage-routing.md docs/00.agent-governance/rules/stage-authoring-matrix.md
 git commit -m "docs(governance): Align SDLC lifecycle contracts"
 ```
 
@@ -183,7 +183,7 @@ git commit -m "docs(governance): Align SDLC lifecycle contracts"
 
 **Files:**
 
-- Modify: `docs/99.templates/support/frontmatter-schema.md`
+- Modify: `docs/99.templates/contracts/frontmatter.schema.json`
 - Modify: `docs/99.templates/templates/common/archive-tombstone.template.md`
 - Modify: `docs/98.archive/README.md`
 - Modify: `docs/98.archive/**/*.md`
@@ -194,7 +194,7 @@ git commit -m "docs(governance): Align SDLC lifecycle contracts"
 Run:
 
 ```bash
-sed -n '1,260p' docs/99.templates/support/frontmatter-schema.md
+sed -n '1,260p' docs/99.templates/contracts/frontmatter.schema.json
 sed -n '1,220p' docs/99.templates/templates/common/archive-tombstone.template.md
 sed -n '1,260p' docs/98.archive/README.md
 find docs/98.archive -type f -name '*.md' | sort
@@ -283,7 +283,7 @@ shell syntax, and repository quality gates pass.
 Run:
 
 ```bash
-git add docs/99.templates/support/frontmatter-schema.md docs/99.templates/templates/common/archive-tombstone.template.md docs/98.archive scripts/validate-repo-quality-gates.sh docs/03.specs/0021-sdlc-lifecycle-contract/plan.md
+git add docs/99.templates/contracts/frontmatter.schema.json docs/99.templates/templates/common/archive-tombstone.template.md docs/98.archive scripts/validate-repo-quality-gates.sh docs/03.specs/0021-sdlc-lifecycle-contract/plan.md
 git commit -m "docs(archive): Add archive tombstone metadata contract"
 ```
 
@@ -602,7 +602,7 @@ Stage 03 active Spec folders:
 
 - **Spec**: [../../03.specs/0021-sdlc-lifecycle-contract/spec.md](spec.md)
 - **Plan**: [../plans/2026-07-06-sdlc-lifecycle-contract.md](plan.md)
-- **SDLC Governance**: [../../99.templates/support/sdlc-governance.md](../../99.templates/support/document-lifecycle.md)
-- **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/support/document-contract.md)
-- **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/document-contract.md)
+- **SDLC Governance**: [../../99.templates/support/sdlc-governance.md](../../99.templates/README.md)
+- **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/README.md)
+- **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/README.md)
 - **Archive Index**: [../../98.archive/README.md](../../98.archive/README.md)

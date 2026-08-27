@@ -86,5 +86,5 @@ pack's `## Report Index` mirrors member lifecycle from report frontmatter.
 - [Current Audit Integration Plan](../../03.specs/0055-workspace-governance-audit-and-remediation/plan.md)
 - [Current Audit Integration Task](../../03.specs/0055-workspace-governance-audit-and-remediation/README.md)
 - [Workspace Harness Research Packs](../research/README.md)
-- [Reference Template](../../99.templates/templates/common/reference.template.md)
+- [Reference Template](../../99.templates/templates/references/reference.template.md)
 - [Collection Index README Form](../../99.templates/templates/common/readme-collection-index.template.md)

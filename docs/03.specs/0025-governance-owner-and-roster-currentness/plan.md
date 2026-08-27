@@ -848,7 +848,7 @@ REQUIRED_OWNER_POINTERS = (
     "docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records",
     "docs/03.specs/0025-governance-owner-and-roster-currentness/README.md#task-records",
     "docs/99.templates/support/documentation-contract.md",
-    "docs/99.templates/support/template-routing.md",
+    "docs/99.templates/README.md",
 )
 
 def validate_contract(

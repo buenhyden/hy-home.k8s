@@ -95,7 +95,7 @@ and closes validation through local static checks.
 
 - **Parent Spec**: [../../03.specs/0018-workspace-engineering-implementation-audit-pack/spec.md](spec.md)
 - **Parent Plan**: [../plans/2026-07-05-workspace-engineering-implementation-audit-pack.md](plan.md)
-- **Task Template**: [../../99.templates/templates/sdlc/execution/task.template.md](../../99.templates/templates/sdlc/execution/task.template.md)
+- **Task Template**: [../../99.templates/templates/specs/task.template.md](../../99.templates/templates/specs/task.template.md)
 - **Research Pack**: `docs/90.references/research/2026-07-04-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
 - **Audits Index**: [../../90.references/audits/README.md](../../90.references/audits/README.md)
 ## Goals & In-Scope
@@ -175,7 +175,7 @@ and closes validation through local static checks.
 - Create: `docs/03.specs/0018-workspace-engineering-implementation-audit-pack/README.md#task-records`
 - Modify: `docs/03.specs/0018-workspace-engineering-implementation-audit-pack/README.md#task-records`
 - Modify: `docs/00.agent-governance/memory/progress.md`
-- Read: `docs/99.templates/templates/sdlc/execution/task.template.md`
+- Read: `docs/99.templates/templates/specs/task.template.md`
 - Read: `docs/03.specs/0018-workspace-engineering-implementation-audit-pack/spec.md`
 - Read: `docs/90.references/research/2026-07-04-wer/README.md`
 - Read: `docs/90.references/audits/README.md`
@@ -196,7 +196,7 @@ uncommitted changes after the plan commit.
 Run:
 
 ```bash
-sed -n '1,220p' docs/99.templates/templates/sdlc/execution/task.template.md
+sed -n '1,220p' docs/99.templates/templates/specs/task.template.md
 sed -n '1,420p' docs/03.specs/0018-workspace-engineering-implementation-audit-pack/spec.md
 ```
 
@@ -983,7 +983,7 @@ Expected: commit succeeds and the worktree is clean.
 
 - **Baseline Commands**:
   - `git status --short --branch`
-  - `sed -n '1,220p' docs/99.templates/templates/sdlc/execution/task.template.md`
+  - `sed -n '1,220p' docs/99.templates/templates/specs/task.template.md`
   - `sed -n '1,420p' docs/03.specs/0018-workspace-engineering-implementation-audit-pack/spec.md`
   - `rg --files docs/90.references/audits docs/90.references/research docs/03.specs docs/03.specs | sort`
   - Full old-path candidate scan over
@@ -1221,7 +1221,7 @@ Expected: commit succeeds and the worktree is clean.
   - `git status --short --branch` confirmed only intended closure edits before
     the final WEA-007 commit.
 - **Evidence Location**:
-  - This task record and [README.md](../../99.templates/templates/sdlc/execution/task.template.md)
+  - This task record and [README.md](../../99.templates/templates/specs/task.template.md)
 
 ### Boundary Statement
 
@@ -1260,7 +1260,7 @@ mutation.
   - `docs/03.specs/0018-workspace-engineering-implementation-audit-pack/README.md#task-records`
   - `docs/03.specs/0018-workspace-engineering-implementation-audit-pack/spec.md`
   - `docs/03.specs/0018-workspace-engineering-implementation-audit-pack/plan.md`
-  - `docs/99.templates/templates/sdlc/execution/task.template.md`
+  - `docs/99.templates/templates/specs/task.template.md`
   - `docs/90.references/research/2026-07-04-wer/README.md`
   - `docs/90.references/audits/README.md`
   - `docs/90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md`
@@ -1281,7 +1281,7 @@ mutation.
   - `docs/03.specs/0018-workspace-engineering-implementation-audit-pack/README.md#task-records`
   - `docs/03.specs/0018-workspace-engineering-implementation-audit-pack/spec.md`
   - `docs/03.specs/0018-workspace-engineering-implementation-audit-pack/plan.md`
-  - `docs/99.templates/templates/sdlc/execution/task.template.md`
+  - `docs/99.templates/templates/specs/task.template.md`
   - `docs/90.references/research/2026-07-04-wer/README.md`
 ## Completion Criteria
 
@@ -1305,8 +1305,8 @@ mutation.
 - **Task**: [../tasks/2026-07-05-workspace-engineering-implementation-audit-pack.md](README.md#task-records)
 - **Research Pack README**: `docs/90.references/research/2026-07-04-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
 - **Audits README**: [../../90.references/audits/README.md](../../90.references/audits/README.md)
-- **Reference Template**: [../../99.templates/templates/common/reference.template.md](../../99.templates/templates/common/reference.template.md)
-- **Task Template**: [../../99.templates/templates/sdlc/execution/task.template.md](../../99.templates/templates/sdlc/execution/task.template.md)
+- **Reference Template**: [../../99.templates/templates/references/reference.template.md](../../99.templates/templates/references/reference.template.md)
+- **Task Template**: [../../99.templates/templates/specs/task.template.md](../../99.templates/templates/specs/task.template.md)
 
 ### Legacy Task traceability
 
@@ -1314,4 +1314,4 @@ mutation.
 - **Plan**: [../plans/2026-07-05-workspace-engineering-implementation-audit-pack.md](plan.md)
 - **Research Pack README**: `docs/90.references/research/2026-07-04-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
 - **Audits README**: [../../90.references/audits/README.md](../../90.references/audits/README.md)
-- **Task Index**: [README.md](../../99.templates/templates/sdlc/execution/task.template.md)
+- **Task Index**: [README.md](../../99.templates/templates/specs/task.template.md)

@@ -115,7 +115,7 @@ their Spec/index owners, and the exact ADR-0022 standalone relation atomically.
 ### Canonical workspace comparison owners
 
 - PRD and AD profile, lifecycle, and template facts:
-  `docs/99.templates/support/document-profiles.json` and
+  `docs/99.templates/registry.json` and
   `docs/99.templates/templates/sdlc/**`.
 - Current document decisions, including Guide taxonomy and the narrow
   no-release-notes decision:
@@ -177,7 +177,7 @@ edit begins.
 - Terminal predecessor: `docs/03.specs/053-workspace-engineering-research-pack-consolidation/spec.md`
 - Document taxonomy decision: `docs/03.specs/052-document-taxonomy-consolidation/spec.md`
 - [Quality standards](../../00.agent-governance/rules/quality-standards.md)
-- [Document contracts registry](../../99.templates/support/document-profiles.json)
+- [Document contracts registry](../../99.templates/registry.json)
 ## Goals & In-Scope
 
 - Activate a new Spec 055 standalone execution relation only after Plan
@@ -241,7 +241,7 @@ edit begins.
 - Modify: `docs/03.specs/0056-workspace-engineering-gap-only-refresh/plan.md`
 - Modify: `docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records`
 - Modify: `docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records`
-- Modify: `docs/99.templates/support/document-profiles.json`
+- Modify: `docs/99.templates/registry.json`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
 **Interfaces:**
@@ -767,7 +767,7 @@ git commit -m "docs: reconcile WER gap-only research evidence"
 - Modify: `docs/03.specs/0056-workspace-engineering-gap-only-refresh/plan.md`
 - Modify: `docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records`
 - Modify: `docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records`
-- Modify: `docs/99.templates/support/document-profiles.json`
+- Modify: `docs/99.templates/registry.json`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
 **Interfaces:**

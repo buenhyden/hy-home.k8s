@@ -534,7 +534,7 @@ Expected: commit succeeds.
 
 - Create: `scripts/document_contracts.py`
 - Create: `scripts/validate-document-contract-registry.py`
-- Create: `docs/99.templates/support/document-profiles.json`
+- Create: `docs/99.templates/registry.json`
 - Modify: `scripts/README.md`
 
 **Interfaces:**
@@ -653,7 +653,7 @@ behavior, `jsonschema` preflight, and PASS/FAIL semantics.
 ```bash
 python3 -m py_compile scripts/document_contracts.py scripts/validate-document-contract-registry.py
 git diff --check
-git add scripts/document_contracts.py scripts/validate-document-contract-registry.py scripts/README.md docs/99.templates/support/document-profiles.json
+git add scripts/document_contracts.py scripts/validate-document-contract-registry.py scripts/README.md docs/99.templates/registry.json
 git commit -m "feat(validation): add document registry classifier"
 ```
 
@@ -665,7 +665,7 @@ Expected: compilation and commit succeed.
 
 **Files:**
 
-- Modify: `docs/99.templates/support/document-profiles.json`
+- Modify: `docs/99.templates/registry.json`
 - Modify: `tests/fixtures/document-contracts/registry-cases.json`
 - Modify: `scripts/validate-document-contract-registry.py`
 - Modify: `.secrets.baseline`
@@ -746,7 +746,7 @@ Expected: self-test PASS; repository output includes
 
 ```bash
 git diff --check
-git add docs/99.templates/support/document-profiles.json tests/fixtures/document-contracts/registry-cases.json
+git add docs/99.templates/registry.json tests/fixtures/document-contracts/registry-cases.json
 git commit -m "feat(docs): classify document contract corpus"
 ```
 
@@ -759,8 +759,8 @@ Expected: commit succeeds.
 **Files:**
 
 - Modify: `docs/99.templates/support/documentation-contract.md`
-- Modify: `docs/99.templates/support/frontmatter-schema.md`
-- Modify: `docs/99.templates/support/template-routing.md`
+- Modify: `docs/99.templates/contracts/frontmatter.schema.json`
+- Modify: `docs/99.templates/README.md`
 - Modify: `scripts/validate-repo-quality-gates.sh`
 - Modify: `.github/workflows/ci.yml`
 - Modify: `docs/03.specs/0026-document-contract-registry/spec.md`
@@ -826,7 +826,7 @@ update the three index rows to `Done`; link Spec 027 as the next consumer.
 - [ ] **Step 6: Commit closure**
 
 ```bash
-git add docs/99.templates/support/documentation-contract.md docs/99.templates/support/frontmatter-schema.md docs/99.templates/support/template-routing.md scripts/validate-repo-quality-gates.sh .github/workflows/ci.yml docs/03.specs/0026-document-contract-registry/spec.md docs/03.specs/README.md docs/03.specs/0026-document-contract-registry/plan.md docs/03.specs/0026-document-contract-registry/plan.md docs/03.specs/0026-document-contract-registry/README.md#task-records docs/03.specs/0026-document-contract-registry/README.md#task-records
+git add docs/99.templates/support/documentation-contract.md docs/99.templates/contracts/frontmatter.schema.json docs/99.templates/README.md scripts/validate-repo-quality-gates.sh .github/workflows/ci.yml docs/03.specs/0026-document-contract-registry/spec.md docs/03.specs/README.md docs/03.specs/0026-document-contract-registry/plan.md docs/03.specs/0026-document-contract-registry/plan.md docs/03.specs/0026-document-contract-registry/README.md#task-records docs/03.specs/0026-document-contract-registry/README.md#task-records
 git commit -m "docs(validation): close document registry evidence"
 ```
 

@@ -164,7 +164,7 @@ only after an explicit reciprocal Plan/Task pair is created.
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-0006-FR-0001](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ALF-001 | Registry fixtures assert the original tranche set. |
 | [REQ-0006-FR-0002](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ALF-002 | Registry and reciprocal-link checks assert follow-up semantics. |

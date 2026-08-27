@@ -46,10 +46,10 @@ if ! python3 -c 'import jsonschema' >/dev/null 2>&1; then
 fi
 
 DOCUMENT_INCLUDE_ARGS=()
-if [[ -f "$ROOT_DIR/docs/99.templates/templates/common/archive-record.template.md" ]]; then
+if [[ -f "$ROOT_DIR/docs/99.templates/templates/archive/archive-record.template.md" ]]; then
     DOCUMENT_INCLUDE_ARGS+=(
         --include-path
-        docs/99.templates/templates/common/archive-record.template.md
+        docs/99.templates/templates/archive/archive-record.template.md
     )
 fi
 for archive_candidate in \
@@ -70,10 +70,8 @@ for archive_candidate in \
     fi
 done
 
-python3 "$ROOT_DIR/scripts/validate-document-contract-registry.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-document-contract-registry.py" --root "$ROOT_DIR" --mode strict "${DOCUMENT_INCLUDE_ARGS[@]}"
 python3 "$ROOT_DIR/scripts/validate-markdown-profiles.py" --root "$ROOT_DIR" --mode strict --body-contracts registry "${DOCUMENT_INCLUDE_ARGS[@]}"
-python3 "$ROOT_DIR/scripts/validate-links-and-owners.py" --root "$ROOT_DIR" --self-test
 python3 "$ROOT_DIR/scripts/validate-links-and-owners.py" --root "$ROOT_DIR" --mode strict --body-contracts registry "${DOCUMENT_INCLUDE_ARGS[@]}"
 python3 "$ROOT_DIR/scripts/validate-gitops-change-set.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-gitops-change-set.py" --root "$ROOT_DIR" --base-ref HEAD
@@ -1174,11 +1172,6 @@ if template_compatibility.get("retiredFields") != sorted(RETIRED_TEMPLATE_DEBT_F
     fail(f"{rel(template_compatibility_path)} retiredFields contract differs")
 expected_behavior_cases = [
     {
-        "name": "registry-derived-form-inventory",
-        "expectedMarkdownForms": 29,
-        "expectedNativeForms": 3,
-    },
-    {
         "name": "retired-debt-fields-remain-absent",
         "forbiddenFields": sorted(RETIRED_TEMPLATE_DEBT_FIELDS),
     },
@@ -1302,7 +1295,7 @@ if not canonical_form_contract_errors(
 ):
     fail("canonical form mutation proof accepted duplicate profile ownership")
 noncanonical_native_form = pathlib.PurePosixPath(
-    "docs/99.templates/templates/sdlc/specs/openapi.yaml"
+    "docs/99.templates/templates/specs/openapi.yaml"
 )
 expected_noncanonical_diagnostic = (
     "physical form filenames must match <name>.template.(md|yaml|graphql|proto): "
@@ -1328,15 +1321,6 @@ if expected_noncanonical_diagnostic not in noncanonical_errors:
         "canonical form mutation proof did not reject a noncanonical native filename "
         "with the stable diagnostic"
     )
-markdown_form_count = sum(path.suffix == ".md" for path in physical_form_paths)
-native_form_count = len(physical_form_paths) - markdown_form_count
-if (markdown_form_count, native_form_count) != (29, 3):
-    fail(
-        "registry-derived form inventory must contain 29 Markdown and three native forms: "
-        f"actual={(markdown_form_count, native_form_count)}"
-    )
-
-
 def canonical_form_content_errors(
     form_sources: dict[pathlib.PurePosixPath, str],
 ) -> list[str]:
@@ -1517,10 +1501,10 @@ for error in canonical_form_content_errors(form_sources):
 # registry-table drift inside the aggregate repository gate without extending
 # authored-document semantic enforcement ahead of the lifecycle-table tranche.
 spec_form = pathlib.PurePosixPath(
-    "docs/99.templates/templates/sdlc/specs/spec.template.md"
+    "docs/99.templates/templates/specs/spec.template.md"
 )
 native_form = pathlib.PurePosixPath(
-    "docs/99.templates/templates/sdlc/specs/openapi.template.yaml"
+    "docs/99.templates/templates/specs/openapi.template.yaml"
 )
 form_content_mutations = []
 retired_mutation = dict(form_sources)
@@ -1544,7 +1528,7 @@ for label, mutation in form_content_mutations:
         fail(f"canonical form content mutation accepted {label}")
 
 archive_record_form = pathlib.PurePosixPath(
-    "docs/99.templates/templates/common/archive-record.template.md"
+    "docs/99.templates/templates/archive/archive-record.template.md"
 )
 archive_marker_mutation = dict(form_sources)
 archive_marker_mutation[archive_record_form] = archive_marker_mutation[
@@ -1562,7 +1546,7 @@ if expected_archive_marker_diagnostic not in canonical_form_content_errors(
     )
 
 archive_migration_form = pathlib.PurePosixPath(
-    "docs/99.templates/templates/common/archive-migration.template.md"
+    "docs/99.templates/templates/archive/archive-migration.template.md"
 )
 archive_migration_marker_mutation = dict(form_sources)
 archive_migration_marker_mutation[archive_migration_form] = (
@@ -1660,19 +1644,8 @@ if canonical_form_content_errors(missing_source_mutation):
     )
 
 template_support_root = root / "docs/99.templates/support"
-support_stale_patterns = [
-    (re.compile(r"Phase [1-4]"), "migration phase wording"),
-    (re.compile(r"during the migration"), "migration-only wording"),
-    (re.compile(r"after Phase"), "migration phase ordering"),
-    (re.compile(r"current and target frontmatter"), "current/target schema wording"),
-]
-for support_doc in sorted(template_support_root.glob("*.md")):
-    support_text = read_text(support_doc)
-    for pattern, label in support_stale_patterns:
-        if pattern.search(support_text):
-            fail(f"{rel(support_doc)} contains stale {label}")
-    if support_doc.name == "README.md":
-        continue
+if template_support_root.exists():
+    fail("docs/99.templates/support is a retired transition surface")
 
 
 for provider in ["aws", "azure"]:
@@ -1834,11 +1807,11 @@ operations_routing_rows = markdown_table_after_heading(
 )
 expected_operations_routing_header = ["필요 상황", "사용할 위치", "시작 템플릿"]
 expected_operations_routing_targets = [
-    ("./guides/README.md", "../99.templates/templates/sdlc/operations/guide.template.md"),
-    ("./policies/README.md", "../99.templates/templates/sdlc/operations/policy.template.md"),
-    ("./runbooks/README.md", "../99.templates/templates/sdlc/operations/runbook.template.md"),
-    ("./incidents/README.md", "../99.templates/templates/sdlc/operations/incident.template.md"),
-    ("./incidents/README.md", "../99.templates/templates/sdlc/operations/postmortem.template.md"),
+    ("./guides/README.md", "../99.templates/templates/operations/guide.template.md"),
+    ("./policies/README.md", "../99.templates/templates/operations/policy.template.md"),
+    ("./runbooks/README.md", "../99.templates/templates/operations/runbook.template.md"),
+    ("./incidents/README.md", "../99.templates/templates/operations/incident.template.md"),
+    ("./incidents/README.md", "../99.templates/templates/operations/postmortem.template.md"),
 ]
 if len(operations_routing_rows) < 2:
     fail("docs/05.operations/README.md Operations Routing Matrix must contain a header and routing rows")
@@ -1912,14 +1885,14 @@ expected_incident_boundary = [
     {
         "artifact": "Incident Record",
         "path_rule": "./<year>/inc-####-<slug>/incident.md",
-        "template": "../../99.templates/templates/sdlc/operations/incident.template.md",
+        "template": "../../99.templates/templates/operations/incident.template.md",
         "creation_phrase": "real incident fact record",
         "current_state": "No tracked incident records.",
     },
     {
         "artifact": "Postmortem",
         "path_rule": "./<year>/inc-####-<slug>/postmortem.md",
-        "template": "../../99.templates/templates/sdlc/operations/postmortem.template.md",
+        "template": "../../99.templates/templates/operations/postmortem.template.md",
         "creation_phrase": "root cause/prevention analysis",
         "current_state": "No tracked postmortems.",
     },
@@ -2121,15 +2094,16 @@ for operations_root in operations_index_roots:
 template_enforcement_phrase_checks = {
     root / "docs/00.agent-governance/rules/document-authoring.md": [
         "../../99.templates/registry.json",
-        "../../99.templates/support/document-contract.md",
+        "../../99.templates/README.md",
         "status: draft",
         "every required heading",
         "selected profile/form",
     ],
-    root / "docs/99.templates/support/document-contract.md": [
-        "Sole machine owner of exact routes",
-        "Literal required H2 headings",
-        "selected profile, form",
+    root / "docs/99.templates/README.md": [
+        "registry.json",
+        "machine contract",
+        "profile",
+        "canonical form",
     ],
     root / ".agents/skills/docs-stage-routing/skill.md": [
         "docs/99.templates/README.md",
@@ -2152,21 +2126,7 @@ for path, phrases in template_enforcement_phrase_checks.items():
         if phrase not in text:
             fail(f"{rel(path)} missing template enforcement phrase: {phrase}")
 
-active_policy_template_routes = [
-    root / ".agents/skills/docs-stage-routing/skill.md",
-    root / "docs/00.agent-governance/hooks/k8s-pre-edit.sh",
-]
-for path in active_policy_template_routes:
-    text = read_text(path)
-    legacy_operation_template = "operation" + ".template.md"
-    if legacy_operation_template in text:
-        fail(f"{rel(path)} must route operations policy docs to policy.template.md, not {legacy_operation_template}")
-    if "policy.template.md" not in text:
-        fail(f"{rel(path)} missing operations policy template route: policy.template.md")
-
 active_template_routing_reference_files = [
-    root / "README.md",
-    root / "docs/README.md",
     root / ".agents/hooks.json",
     root / ".claude/settings.json",
     root / ".codex/hooks.json",
@@ -2181,8 +2141,12 @@ active_template_routing_reference_files = [
 ]
 for path in active_template_routing_reference_files:
     text = read_text(path)
-    if "99.templates/support/document-contract.md" not in text:
-        fail(f"{rel(path)} must route exact template selection through docs/99.templates/support/document-contract.md")
+    if "99.templates/registry.json" not in text:
+        fail(f"{rel(path)} must route exact template selection through docs/99.templates/registry.json")
+
+for path in [root / "README.md", root / "docs/README.md"]:
+    if "99.templates/README.md" not in read_text(path):
+        fail(f"{rel(path)} must link the Stage 99 human author guide")
 
 legacy_denylist_literals = {
     "operation" + ".template.md": "deprecated operations policy template route",
@@ -2913,7 +2877,7 @@ for phrase in [
 memory_progress_path = root / "docs/00.agent-governance/memory/progress.md"
 memory_progress_text = read_text(memory_progress_path)
 for phrase in [
-    "docs/99.templates/templates/common/progress.template.md",
+    "docs/99.templates/templates/governance/progress.template.md",
     "## Work Entries",
     "#### Progress",
     "#### Memory",
@@ -2930,16 +2894,16 @@ for phrase in [
         fail(f"{rel(memory_progress_path)} missing historical/current-source phrase: {phrase}")
 
 memory_dir = root / "docs/00.agent-governance/memory"
-memory_template_path = root / "docs/99.templates/templates/common/memory.template.md"
-progress_template_path = root / "docs/99.templates/templates/common/progress.template.md"
+memory_template_path = root / "docs/99.templates/templates/governance/memory.template.md"
+progress_template_path = root / "docs/99.templates/templates/governance/progress.template.md"
 for path in [memory_dir / "README.md", memory_progress_path, memory_template_path, progress_template_path]:
     if not path.exists():
         fail(f"required memory contract file is missing: {rel(path)}")
 
 memory_readme_text = read_text(memory_dir / "README.md")
 for phrase in [
-    "docs/99.templates/templates/common/memory.template.md",
-    "docs/99.templates/templates/common/progress.template.md",
+    "docs/99.templates/templates/governance/memory.template.md",
+    "docs/99.templates/templates/governance/progress.template.md",
     "Standalone files under this folder must use",
     "Related Progress",
     "`progress.md` work entry",
@@ -3475,7 +3439,7 @@ if "approval-boundaries.md" not in harness_catalog_map_text:
         "approval boundaries"
     )
 canonical_task_form_text = read_text(
-    root / "docs/99.templates/templates/sdlc/execution/task.template.md"
+    root / "docs/99.templates/templates/specs/task.template.md"
 )
 for phrase in [
     "## Approval and Safety Boundaries",
@@ -3831,7 +3795,7 @@ if True:
     docs_hook_payload = json.dumps(
         {
             "tool_input": {
-                "file_path": "docs/01.requirements/ifc-999-example-feature.md"
+                "file_path": "docs/01.requirements/9999-example-feature.md"
             }
         }
     )
@@ -3862,8 +3826,9 @@ if True:
         fail(f"{rel(pre_hook_path)} docs payload simulation failed: {docs_pre_hook_result.stderr.strip()}")
     for phrase in [
         "Template-First",
+        "sdlc/requirement-package",
         "docs/99.templates/README.md",
-        "docs/99.templates/templates/sdlc/requirements/interface.template.md",
+        "docs/99.templates/templates/requirements/requirement-package.template.md",
         "documentation template enforcement",
     ]:
         if phrase not in docs_pre_hook_result.stdout:

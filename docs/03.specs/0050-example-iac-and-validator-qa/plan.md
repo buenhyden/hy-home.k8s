@@ -211,7 +211,7 @@ stdout/stderr is not durable evidence.
   rtk python3 scripts/validate-markdown-profiles.py --root . --mode strict
   rtk python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts registry
   rtk git diff --check
-  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0050-example-iac-and-validator-qa/spec.md docs/03.specs/README.md docs/03.specs/0050-example-iac-and-validator-qa/plan.md docs/03.specs/0050-example-iac-and-validator-qa/plan.md docs/03.specs/0050-example-iac-and-validator-qa/README.md#task-records docs/03.specs/0050-example-iac-and-validator-qa/README.md#task-records docs/99.templates/support/document-profiles.json
+  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0050-example-iac-and-validator-qa/spec.md docs/03.specs/README.md docs/03.specs/0050-example-iac-and-validator-qa/plan.md docs/03.specs/0050-example-iac-and-validator-qa/plan.md docs/03.specs/0050-example-iac-and-validator-qa/README.md#task-records docs/03.specs/0050-example-iac-and-validator-qa/README.md#task-records docs/99.templates/registry.json
   rtk git commit -m "docs: activate example iac validation plan"
   ```
 
@@ -450,7 +450,7 @@ stdout/stderr is not durable evidence.
   ```bash
   rtk python3 scripts/validate-document-lifecycle.py --root . --mode staged
   rtk git diff --check
-  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0050-example-iac-and-validator-qa/spec.md docs/03.specs/README.md docs/03.specs/0050-example-iac-and-validator-qa/plan.md docs/03.specs/0050-example-iac-and-validator-qa/plan.md docs/03.specs/0050-example-iac-and-validator-qa/README.md#task-records docs/03.specs/0050-example-iac-and-validator-qa/README.md#task-records docs/99.templates/support/document-profiles.json
+  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0050-example-iac-and-validator-qa/spec.md docs/03.specs/README.md docs/03.specs/0050-example-iac-and-validator-qa/plan.md docs/03.specs/0050-example-iac-and-validator-qa/plan.md docs/03.specs/0050-example-iac-and-validator-qa/README.md#task-records docs/03.specs/0050-example-iac-and-validator-qa/README.md#task-records docs/99.templates/registry.json
   rtk git commit -m "docs: close example iac validation tranche"
   ```
 

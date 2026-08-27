@@ -63,8 +63,8 @@ Stage 00 또는 Stage 03으로 라우팅해야 하는 Agent runtime contract를
 
 - [Agent Governance Hub](../../00.agent-governance/README.md)
 - [Harness Catalog](../../00.agent-governance/harness-catalog.md)
-- [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)
-- [Template Routing](../../99.templates/support/template-routing.md)
+- [Document Stage Routing Rules](../../00.agent-governance/rules/document-authoring.md)
+- [Template Routing](../../99.templates/README.md)
 - [Data README](./README.md)
 
 ## Review and Freshness

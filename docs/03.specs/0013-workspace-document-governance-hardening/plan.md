@@ -317,8 +317,8 @@ git commit -m "docs(audit): Record workspace document governance baseline"
 **Files:**
 
 - Modify as needed: `docs/99.templates/support/documentation-contract.md`
-- Modify as needed: `docs/99.templates/support/frontmatter-schema.md`
-- Modify as needed: `docs/99.templates/support/template-routing.md`
+- Modify as needed: `docs/99.templates/contracts/frontmatter.schema.json`
+- Modify as needed: `docs/99.templates/README.md`
 - Modify as needed: `docs/99.templates/support/sdlc-governance.md`
 - Modify as needed: `docs/99.templates/support/common-documentation-governance.md`
 - Modify as needed: `docs/99.templates/support/legacy-cleanup-rules.md`
@@ -342,7 +342,7 @@ rg -n "Template-Folder Mapping|Current Route Map|required_stage_templates|templa
 Expected:
 
 - Every structural route in `docs/99.templates/README.md` appears in
-  `docs/99.templates/support/template-routing.md`.
+  `docs/99.templates/README.md`.
 - Every Markdown route has a matching validator mapping.
 - The duplicate harness Task starter was supplemental at this point and did
   not become a second structural route; Spec 027 later retired it.
@@ -353,7 +353,7 @@ Run:
 
 ```bash
 rg -n "sdlc/prd|sdlc/ad|sdlc/adr|sdlc/spec|sdlc/plan|sdlc/task|sdlc/guide|sdlc/policy|sdlc/runbook|sdlc/incident|sdlc/postmortem|content/reference|content/archive-tombstone|governance/template-support|governance/reference|governance/memory" \
-  docs/99.templates/support/frontmatter-schema.md docs/99.templates/templates scripts/validate-repo-quality-gates.sh
+  docs/99.templates/contracts/frontmatter.schema.json docs/99.templates/templates scripts/validate-repo-quality-gates.sh
 ```
 
 Expected:
@@ -846,20 +846,20 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
   ```text
   docs/99.templates/templates/README.md
   docs/99.templates/templates/common/archive-tombstone.template.md
-  docs/99.templates/templates/common/memory.template.md
-  docs/99.templates/templates/common/progress.template.md
+  docs/99.templates/templates/governance/memory.template.md
+  docs/99.templates/templates/governance/progress.template.md
   docs/99.templates/templates/common/readme.template.md
-  docs/99.templates/templates/common/reference.template.md
-  docs/99.templates/templates/sdlc/architecture/adr.template.md
-  docs/99.templates/templates/sdlc/architecture/ad.template.md
-  docs/99.templates/templates/sdlc/execution/plan.template.md
-  docs/99.templates/templates/sdlc/execution/task.template.md
-  docs/99.templates/templates/sdlc/operations/guide.template.md
-  docs/99.templates/templates/sdlc/operations/incident.template.md
-  docs/99.templates/templates/sdlc/operations/policy.template.md
-  docs/99.templates/templates/sdlc/operations/postmortem.template.md
-  docs/99.templates/templates/sdlc/operations/runbook.template.md
-  docs/99.templates/templates/sdlc/requirements/prd.template.md
+  docs/99.templates/templates/references/reference.template.md
+  docs/99.templates/templates/architecture/adr.template.md
+  docs/99.templates/templates/architecture/ad.template.md
+  docs/99.templates/templates/specs/plan.template.md
+  docs/99.templates/templates/specs/task.template.md
+  docs/99.templates/templates/operations/guide.template.md
+  docs/99.templates/templates/operations/incident.template.md
+  docs/99.templates/templates/operations/policy.template.md
+  docs/99.templates/templates/operations/postmortem.template.md
+  docs/99.templates/templates/operations/runbook.template.md
+  docs/99.templates/templates/requirements/requirement-package.template.md
   docs/99.templates/templates/sdlc/specs/agent-design.template.md
   docs/99.templates/templates/sdlc/specs/interface.template.md
   docs/99.templates/templates/sdlc/specs/data-model.template.md
@@ -867,7 +867,7 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
   docs/99.templates/templates/sdlc/specs/openapi.template.yaml
   docs/99.templates/templates/sdlc/specs/schema.template.graphql
   docs/99.templates/templates/sdlc/specs/service.template.proto
-  docs/99.templates/templates/sdlc/specs/spec.template.md
+  docs/99.templates/templates/specs/spec.template.md
   docs/99.templates/templates/sdlc/specs/tests.template.md
   ```
 
@@ -877,10 +877,10 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
   docs/99.templates/support/README.md
   docs/99.templates/support/common-documentation-governance.md
   docs/99.templates/support/documentation-contract.md
-  docs/99.templates/support/frontmatter-schema.md
+  docs/99.templates/contracts/frontmatter.schema.json
   docs/99.templates/support/legacy-cleanup-rules.md
   docs/99.templates/support/sdlc-governance.md
-  docs/99.templates/support/template-routing.md
+  docs/99.templates/README.md
   ```
 
 - `find docs/00.agent-governance -maxdepth 3 -type f | sort`:
@@ -993,7 +993,7 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
   supplemental rather than structural at that time; Spec 027 later retired it.
 - Updated Stage 00 routing, documentation protocol, and authoring matrix docs
   so exact target-pattern/template routing points to
-  `docs/99.templates/support/template-routing.md` instead of carrying a full
+  `docs/99.templates/README.md` instead of carrying a full
   duplicate map.
 - Added deterministic validator coverage that compares the Templates README
   route table with the support Current Route Map and checks documented Markdown
@@ -1013,7 +1013,7 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
 - Frontmatter profile scan:
 
   ```text
-  rg -n "sdlc/prd|sdlc/ad|sdlc/adr|sdlc/spec|sdlc/plan|sdlc/task|sdlc/guide|sdlc/policy|sdlc/runbook|sdlc/incident|sdlc/postmortem|content/reference|content/archive-tombstone|governance/template-support|governance/reference|governance/memory" docs/99.templates/support/frontmatter-schema.md docs/99.templates/templates scripts/validate-repo-quality-gates.sh
+  rg -n "sdlc/prd|sdlc/ad|sdlc/adr|sdlc/spec|sdlc/plan|sdlc/task|sdlc/guide|sdlc/policy|sdlc/runbook|sdlc/incident|sdlc/postmortem|content/reference|content/archive-tombstone|governance/template-support|governance/reference|governance/memory" docs/99.templates/contracts/frontmatter.schema.json docs/99.templates/templates scripts/validate-repo-quality-gates.sh
   ```
 
   PASS. Markdown template frontmatter, support schema, and validator expected
@@ -1063,7 +1063,7 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
   `.agents/hooks.json` remain context/validation wiring.
 - Updated shared `.agents` rules, workflows, and docs skills to route exact
   target-pattern/template decisions through
-  `docs/99.templates/support/template-routing.md` instead of carrying a
+  `docs/99.templates/README.md` instead of carrying a
   duplicate route matrix.
 - Clarified Stage 00 common governance, provider notes, harness catalog,
   subagent protocol, and meta scope ownership so `.agents/skills`,
@@ -1074,7 +1074,7 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
 - Review remediation tightened the three cited active runtime/provider
   references so `.agents/GEMINI.md`, `.codex/CODEX.md`, and
   `docs/00.agent-governance/rules/document-stage-routing.md` now point
-  directly to `docs/99.templates/support/template-routing.md` for route
+  directly to `docs/99.templates/README.md` for route
   selection. `.agents/GEMINI.md` now describes only shared
   skills/workflows/output-style symlink views and keeps provider-native files
   as real adapter/runtime surfaces.
@@ -1117,7 +1117,7 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
   `conftest` were not installed; the harness script used YAML syntax checks
   and the built-in policy fallback.
 - Review remediation focused scans — PASS: the three cited files point to
-  `docs/99.templates/support/template-routing.md`, and `.agents/GEMINI.md` no
+  `docs/99.templates/README.md`, and `.agents/GEMINI.md` no
   longer claims all of `.claude/` or `.codex/` symlink to `.agents/`.
 
 #### Handoff
@@ -1145,7 +1145,7 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
   heading literal as current guidance.
 - Updated root/docs README onboarding text and active doc-writer/output-style
   guidance so exact target-pattern/template selection points to
-  `docs/99.templates/support/template-routing.md`; the Templates README remains
+  `docs/99.templates/README.md`; the Templates README remains
   an inventory summary.
 - Replaced duplicated route lists in `.agents/hooks.json`,
   `.claude/settings.json`, and `.codex/hooks.json` with support-contract
@@ -1175,7 +1175,7 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
   heading text, and old template-routing owner wording. PASS, no matches.
 - Support-routing confirmation scan returned the touched README, doc-writer,
   output-style, hook, and provider custom-instruction surfaces pointing to
-  `docs/99.templates/support/template-routing.md`.
+  `docs/99.templates/README.md`.
 - Broad high-risk command scan was reviewed. Remaining matches are unchanged
   prohibited-boundary, bootstrap-only, operator-approved, or historical
   evidence references; this Task 4 change introduced no new live mutation,
@@ -1227,7 +1227,7 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
   ledger so historical evidence is not rejected.
 - Added deterministic route-owner checks for active onboarding, provider,
   hook, workflow, and doc-writer surfaces that must point exact template
-  selection at `docs/99.templates/support/template-routing.md`.
+  selection at `docs/99.templates/README.md`.
 - Extended shared-hook path coverage to `tests/README.md`, preserving
   `docs/00.agent-governance/hooks` as the active shell syntax owner.
 - Added CI/QA source-basis checks requiring `.github/ABOUT.md` and the CI/CD
@@ -1346,9 +1346,9 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
 
 - [Parent Spec](spec.md)
 - [Task Evidence](README.md#task-records)
-- [Template Documentation Contract](../../99.templates/support/document-contract.md)
-- [Template Frontmatter Schema](../../99.templates/support/document-contract.md)
-- [Template Routing Contract](../../99.templates/support/document-contract.md)
+- [Template Documentation Contract](../../99.templates/README.md)
+- [Template Frontmatter Schema](../../99.templates/README.md)
+- [Template Routing Contract](../../99.templates/README.md)
 - [Agent Governance Hub](../../00.agent-governance/README.md)
 - [GitHub Configuration Hub](../../../.github/README.md)
 - [CI/CD & QA Reference Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
@@ -1357,9 +1357,9 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
 
 - [Spec](spec.md)
 - [Plan](plan.md)
-- [Template Documentation Contract](../../99.templates/support/document-contract.md)
-- [Template Frontmatter Schema](../../99.templates/support/document-contract.md)
-- [Template Routing Contract](../../99.templates/support/document-contract.md)
+- [Template Documentation Contract](../../99.templates/README.md)
+- [Template Frontmatter Schema](../../99.templates/README.md)
+- [Template Routing Contract](../../99.templates/README.md)
 - [Agent Governance Hub](../../00.agent-governance/README.md)
 - [CI/CD & QA Reference Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
 - [Workspace Document Governance Hardening Audit](../../90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md)

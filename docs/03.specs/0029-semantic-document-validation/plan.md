@@ -36,7 +36,7 @@ CommonMark-compatible fence parsing, Bash, Markdown, Git, and pre-commit.
 ### Global Constraints
 
 - Work only in the isolated worktree for branch `codex/workspace-document-assurance-modernization`.
-- Consume `docs/99.templates/support/document-profiles.json`; do not create a second route, key, lifecycle, or heading owner.
+- Consume `docs/99.templates/registry.json`; do not create a second route, key, lifecycle, or heading owner.
 - Use repository-relative POSIX paths and reject leading `./`, `..`, case aliases, and symlink traversal.
 - Diagnostics must contain rule ID, path, profile, expected value, actual value, and remediation owner without printing secret content.
 - Exit codes are `0` for success, `1` for document violations, and `2` for configuration or CLI errors.

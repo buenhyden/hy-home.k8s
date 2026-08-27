@@ -507,7 +507,7 @@ clusterrolebinding` examples carry human-approved, bootstrap, break-glass,
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | N/A — this repository-governance baseline predates and does not implement a single product requirement | VAL-SPC-006-059 | The existing workspace-wide P0 overlay and repository-static quality gates verify the summarized harness-gap baseline; current Stage 00 product ownership remains outside this Spec. |
 

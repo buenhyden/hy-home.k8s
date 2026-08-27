@@ -26,7 +26,7 @@ ARCHIVE_TEMPLATE_PROFILE = "template/content/archive"
 LEGACY_ARCHIVE_TEMPLATE = (
     "docs/99.templates/templates/common/archive-tombstone.template.md"
 )
-ARCHIVE_TEMPLATE = "docs/99.templates/templates/common/archive-record.template.md"
+ARCHIVE_TEMPLATE = "docs/99.templates/templates/archive/archive-record.template.md"
 
 EXPECTED_ARCHIVE_PATHS = (
     "docs/98.archive/01.requirements/2026-03-27-wsl-k3d-argocd-platform.md",

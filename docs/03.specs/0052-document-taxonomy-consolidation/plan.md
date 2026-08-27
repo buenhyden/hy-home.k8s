@@ -303,12 +303,12 @@ routes, refuses overwrite, and never restores directly into the repository.
 - `docs/00.agent-governance/rules/document-authoring.md` — agent-facing stage
   selection, timing, language, safety, lifecycle, checklist, and validation
   procedure.
-- `docs/99.templates/support/document-contract.md` — exact-one-profile
+- `docs/99.templates/README.md` — exact-one-profile
   selection, form/body/frontmatter rationale, protected-surface boundary.
-- `docs/99.templates/support/document-lifecycle.md` — lifecycle,
+- `docs/00.agent-governance/policies/document-lifecycle.md` — lifecycle,
   supersession, retention, archive, date exception, and legacy-disposition
   rationale.
-- `docs/99.templates/support/document-profiles.json` and schema — sole machine
+- `docs/99.templates/registry.json` and schema — sole machine
   owner of routes, states, values, relationships, forms, and exceptions.
 
 The Plan/Task template files stay at

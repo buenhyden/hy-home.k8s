@@ -30,11 +30,13 @@ updated: YYYY-MM-DD
 
 ## Functional Requirements
 
-<!-- Author prompt: assign stable IDs to verifiable capabilities and constraints. -->
+<!-- Author prompt: assign package-dependent stable IDs to functional, non-functional, and implementation-independent interface requirements. -->
 
 | Requirement ID | Requirement | Priority | Verification intent |
 | --- | --- | --- | --- |
-| REQ-FEATURE-001 | State one testable product requirement. | Must | Name the observable acceptance evidence. |
+| REQ-0001-FR-0001 | State one testable functional requirement. | Must | Name the observable acceptance evidence. |
+| REQ-0001-NFR-0001 | State one measurable non-functional constraint. | Must | Name the observable quality evidence. |
+| REQ-0001-IF-0001 | State one implementation-independent external interface requirement. | Must | Name the observable contract evidence. |
 
 ## Success / Acceptance Criteria
 
@@ -56,4 +58,6 @@ updated: YYYY-MM-DD
 
 | Requirement ID | Acceptance criterion | Downstream owner |
 | --- | --- | --- |
-| REQ-FEATURE-001 | State one measurable acceptance condition. | Architecture or Specification owner |
+| REQ-0001-FR-0001 | State one measurable functional acceptance condition. | Architecture or Specification owner |
+| REQ-0001-NFR-0001 | State one measurable quality acceptance condition. | Architecture or Specification owner |
+| REQ-0001-IF-0001 | State one measurable interface acceptance condition. | Specification owner |

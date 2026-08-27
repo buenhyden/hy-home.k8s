@@ -80,7 +80,7 @@ evidence-update commit and the clean-tree repository-static aggregate passed.
 - [ADR-0017](../../02.architecture/decisions/0017-program-follow-up-lineage-semantics.md)
 - [ADR-0018](../../02.architecture/decisions/0018-full-body-archive-record-and-retention.md)
 - [ADR-0020](../../02.architecture/decisions/0020-document-lifecycle-program-closure-evidence.md)
-- [Document profile registry](../../99.templates/support/document-profiles.json)
+- [Document profile registry](../../99.templates/registry.json)
 - [Current implementation audit index](../../90.references/audits/README.md)
 - `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`; [current lookup](../../90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md)
 - Spec 039 closure `e1d1e910840337327a557ab4b84e86f8fced11d6`

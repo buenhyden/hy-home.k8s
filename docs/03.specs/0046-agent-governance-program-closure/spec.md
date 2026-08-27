@@ -284,7 +284,7 @@ tests.
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | N/A — [Acceptance criterion 02](../../01.requirements/0003-workspace-agent-governance-platform.md#success--acceptance-criteria) remains package-owned | VAL-AGPC-001 | Predecessor and lineage validation proves the reciprocal program chain. |
 | N/A — shared PRD 003 source above | VAL-AGPC-002 | Closure contract/schema/validator reject incomplete or lane-collapsed evidence. |

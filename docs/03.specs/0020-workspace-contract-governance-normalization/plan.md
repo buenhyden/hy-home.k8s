@@ -88,8 +88,8 @@ in scope for this task.
 
 - **Parent Spec**: [../../03.specs/0020-workspace-contract-governance-normalization/spec.md](spec.md)
 - **Parent Plan**: [../plans/2026-07-05-workspace-contract-governance-normalization.md](plan.md)
-- **Task Template**: [../../99.templates/templates/sdlc/execution/task.template.md](../../99.templates/templates/sdlc/execution/task.template.md)
-- **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/support/document-contract.md)
+- **Task Template**: [../../99.templates/templates/specs/task.template.md](../../99.templates/templates/specs/task.template.md)
+- **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/README.md)
 - **Documentation Protocol**: [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/document-authoring.md)
 - **Quality Gate**: [../../../scripts/validate-repo-quality-gates.sh](../../../scripts/validate-repo-quality-gates.sh)
 ## Goals & In-Scope
@@ -147,7 +147,7 @@ in scope for this task.
 | `docs/00.agent-governance/rules/documentation-protocol.md` | Document output routing and drift cleanup rule for `_workspace`. |
 | `docs/00.agent-governance/rules/approval-boundaries.md` | Protected-surface boundary for scratch artifacts, secret risk, and cleanup escalation. |
 | `docs/99.templates/support/documentation-contract.md` | Support contract surface table and validation boundary for `_workspace`. |
-| `docs/99.templates/support/frontmatter-schema.md` | README/frontmatter-free exception notes for `_workspace/README.md`. |
+| `docs/99.templates/contracts/frontmatter.schema.json` | README/frontmatter-free exception notes for `_workspace/README.md`. |
 | `docs/99.templates/support/legacy-cleanup-rules.md` | Legacy scratch, backup, local log, auth, token, and diagnostic residue cleanup rules. |
 | `.github/ABOUT.md` | GitHub control-surface summary of repo quality and secret boundary if stale. |
 | `.github/PULL_REQUEST_TEMPLATE.md` | PR checklist mirror for `_workspace` and secret-risk staging if stale. |
@@ -182,9 +182,9 @@ in scope for this task.
 - Create: `docs/03.specs/0020-workspace-contract-governance-normalization/README.md#task-records`
 - Modify: `docs/03.specs/0020-workspace-contract-governance-normalization/README.md#task-records`
 - Modify: `docs/03.specs/0020-workspace-contract-governance-normalization/plan.md`
-- Read: `docs/99.templates/templates/sdlc/execution/task.template.md`
+- Read: `docs/99.templates/templates/specs/task.template.md`
 - Read: `docs/03.specs/0020-workspace-contract-governance-normalization/spec.md`
-- Read: `docs/99.templates/support/template-routing.md`
+- Read: `docs/99.templates/README.md`
 - Read: `docs/00.agent-governance/rules/documentation-protocol.md`
 
 - [ ] **Step 1: Confirm the branch and clean state**
@@ -203,7 +203,7 @@ tree is clean after this plan commit.
 Run:
 
 ```bash
-sed -n '1,220p' docs/99.templates/templates/sdlc/execution/task.template.md
+sed -n '1,220p' docs/99.templates/templates/specs/task.template.md
 sed -n '1,460p' docs/03.specs/0020-workspace-contract-governance-normalization/spec.md
 ```
 
@@ -239,7 +239,7 @@ Use these top-level sections in order:
 | Date | Command | Result Class |
 | --- | --- | --- |
 | 2026-07-05 | `git status --short --branch` | PASS; branch was `codex/workspace-engineering-audit-pack` and the working tree had no pre-existing changes. |
-| 2026-07-05 | `sed -n '1,220p' docs/99.templates/templates/sdlc/execution/task.template.md` | PASS; template frontmatter uses `type: sdlc/task`, `status: draft`, `owner: platform`, and the required Stage 04 task evidence structure. |
+| 2026-07-05 | `sed -n '1,220p' docs/99.templates/templates/specs/task.template.md` | PASS; template frontmatter uses `type: sdlc/task`, `status: draft`, `owner: platform`, and the required Stage 04 task evidence structure. |
 | 2026-07-05 | `sed -n '1,460p' docs/03.specs/0020-workspace-contract-governance-normalization/spec.md` | PASS; the parent spec defines VAL-SPC-020-001 through VAL-SPC-020-010. |
 | 2026-07-05 | `find AGENTS.md CLAUDE.md GEMINI.md README.md _workspace .agents .claude .codex .github docs examples gitops infrastructure policy scripts secrets tests traefik -maxdepth 3 -print \| sort` | PASS; pre-edit target inventory returned 592 paths across root shims, agent adapters, GitHub controls, docs, examples, GitOps, infrastructure, policy, scripts, secrets, tests, and Traefik surfaces. |
 | 2026-07-05 | `find _workspace -maxdepth 4 -type f -print \| sort` | PASS; no files were present under `_workspace` before implementation. |
@@ -309,7 +309,7 @@ Requested target inventory notes:
 
 ```bash
 git status --short --branch
-sed -n '1,220p' docs/99.templates/templates/sdlc/execution/task.template.md
+sed -n '1,220p' docs/99.templates/templates/specs/task.template.md
 sed -n '1,460p' docs/03.specs/0020-workspace-contract-governance-normalization/spec.md
 find AGENTS.md CLAUDE.md GEMINI.md README.md _workspace .agents .claude .codex .github docs examples gitops infrastructure policy scripts secrets tests traefik -maxdepth 3 -print | sort
 find _workspace -maxdepth 4 -type f -print | sort
@@ -326,7 +326,7 @@ git diff --check
 bash scripts/validate-repo-quality-gates.sh .
 git add docs/03.specs/0020-workspace-contract-governance-normalization/plan.md docs/03.specs/0020-workspace-contract-governance-normalization/README.md#task-records docs/03.specs/0020-workspace-contract-governance-normalization/README.md#task-records
 git diff --cached --check
-git add .gitignore _workspace/README.md README.md docs/00.agent-governance/subagent-protocol.md docs/00.agent-governance/rules/documentation-protocol.md docs/00.agent-governance/rules/approval-boundaries.md docs/99.templates/support/documentation-contract.md docs/99.templates/support/frontmatter-schema.md docs/99.templates/support/legacy-cleanup-rules.md docs/03.specs/0020-workspace-contract-governance-normalization/README.md#task-records
+git add .gitignore _workspace/README.md README.md docs/00.agent-governance/subagent-protocol.md docs/00.agent-governance/rules/documentation-protocol.md docs/00.agent-governance/rules/approval-boundaries.md docs/99.templates/support/documentation-contract.md docs/99.templates/contracts/frontmatter.schema.json docs/99.templates/support/legacy-cleanup-rules.md docs/03.specs/0020-workspace-contract-governance-normalization/README.md#task-records
 git diff --cached --check
 git commit -m "docs(governance): Define workspace staging boundary"
 rg -n "Dry-run logs|dry-run|logs|summaries" _workspace/README.md
@@ -464,7 +464,7 @@ Expected: staged diff has no whitespace errors and the commit succeeds.
 - Modify: `docs/00.agent-governance/rules/documentation-protocol.md`
 - Modify: `docs/00.agent-governance/rules/approval-boundaries.md`
 - Modify: `docs/99.templates/support/documentation-contract.md`
-- Modify: `docs/99.templates/support/frontmatter-schema.md`
+- Modify: `docs/99.templates/contracts/frontmatter.schema.json`
 - Modify: `docs/99.templates/support/legacy-cleanup-rules.md`
 - Modify: `docs/03.specs/0020-workspace-contract-governance-normalization/README.md#task-records`
 
@@ -561,7 +561,7 @@ surface for `_workspace`:
 | Workspace scratch staging | `_workspace/README.md` plus ignored `_workspace/**` scratch | Temporary non-secret repo-support staging; durable findings promote to canonical docs. |
 ```
 
-Update `docs/99.templates/support/frontmatter-schema.md` exceptions to state
+Update `docs/99.templates/contracts/frontmatter.schema.json` exceptions to state
 that `_workspace/README.md` is a frontmatter-free README and scratch files are
 not authored documents.
 
@@ -596,7 +596,7 @@ Record the command outputs and set WCGN-002 to `Done`.
 Run:
 
 ```bash
-git add .gitignore _workspace/README.md README.md docs/00.agent-governance/subagent-protocol.md docs/00.agent-governance/rules/documentation-protocol.md docs/00.agent-governance/rules/approval-boundaries.md docs/99.templates/support/documentation-contract.md docs/99.templates/support/frontmatter-schema.md docs/99.templates/support/legacy-cleanup-rules.md docs/03.specs/0020-workspace-contract-governance-normalization/README.md#task-records
+git add .gitignore _workspace/README.md README.md docs/00.agent-governance/subagent-protocol.md docs/00.agent-governance/rules/documentation-protocol.md docs/00.agent-governance/rules/approval-boundaries.md docs/99.templates/support/documentation-contract.md docs/99.templates/contracts/frontmatter.schema.json docs/99.templates/support/legacy-cleanup-rules.md docs/03.specs/0020-workspace-contract-governance-normalization/README.md#task-records
 git diff --cached --check
 git commit -m "docs(governance): Define workspace staging boundary"
 ```
@@ -610,8 +610,8 @@ Expected: staged diff has no whitespace errors and the commit succeeds.
 - Modify as findings require: `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`,
   `README.md`, `.agents/**`, `.claude/**`, `.codex/**`, `docs/**`
 - Modify as evidence owner: `docs/03.specs/0020-workspace-contract-governance-normalization/README.md#task-records`
-- Read: `docs/99.templates/support/frontmatter-schema.md`
-- Read: `docs/99.templates/support/template-routing.md`
+- Read: `docs/99.templates/contracts/frontmatter.schema.json`
+- Read: `docs/99.templates/README.md`
 - Read: `docs/99.templates/support/documentation-contract.md`
 - Read: `docs/99.templates/support/legacy-cleanup-rules.md`
 
@@ -638,7 +638,7 @@ rg -n "^---$|^title:|^type:|^status:|^owner:|^updated:" docs/01.requirements doc
 
 Expected: simple un-namespaced `type` values return no active matches. For any
 active match, replace the value with the profile in
-`docs/99.templates/support/frontmatter-schema.md` and keep key order as
+`docs/99.templates/contracts/frontmatter.schema.json` and keep key order as
 `title`, `type`, `status`, `owner`, `updated`.
 
 - [ ] **Step 3: Scan template residue and legacy section drift**
@@ -808,7 +808,7 @@ has no whitespace errors and the commit succeeds.
 - Modify: `docs/03.specs/0020-workspace-contract-governance-normalization/README.md#task-records`
 - Modify: `docs/03.specs/0020-workspace-contract-governance-normalization/plan.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
-- Read: `docs/99.templates/templates/common/progress.template.md`
+- Read: `docs/99.templates/templates/governance/progress.template.md`
 
 - [ ] **Step 1: Add deterministic `_workspace` validator checks**
 
@@ -1014,8 +1014,8 @@ Expected: staged diff has no whitespace errors and the commit succeeds.
   - `docs/03.specs/0020-workspace-contract-governance-normalization/README.md#task-records`
   - `docs/03.specs/0020-workspace-contract-governance-normalization/spec.md`
   - `docs/03.specs/0020-workspace-contract-governance-normalization/plan.md`
-  - `docs/99.templates/templates/sdlc/execution/task.template.md`
-  - `docs/99.templates/support/template-routing.md`
+  - `docs/99.templates/templates/specs/task.template.md`
+  - `docs/99.templates/README.md`
   - `docs/00.agent-governance/rules/documentation-protocol.md`
   - `_workspace/README.md`
   - `_workspace/probe.log`
@@ -1035,8 +1035,8 @@ Expected: staged diff has no whitespace errors and the commit succeeds.
   - `docs/03.specs/0020-workspace-contract-governance-normalization/README.md#task-records`
   - `docs/03.specs/0020-workspace-contract-governance-normalization/spec.md`
   - `docs/03.specs/0020-workspace-contract-governance-normalization/plan.md`
-  - `docs/99.templates/templates/sdlc/execution/task.template.md`
-  - `docs/99.templates/support/template-routing.md`
+  - `docs/99.templates/templates/specs/task.template.md`
+  - `docs/99.templates/README.md`
 ## Completion Criteria
 
 - [ ] `_workspace/README.md` documents allowed artifacts, prohibited artifacts,
@@ -1060,9 +1060,9 @@ Expected: staged diff has no whitespace errors and the commit succeeds.
 
 - **Spec**: [../../03.specs/0020-workspace-contract-governance-normalization/spec.md](spec.md)
 - **Task**: [../tasks/2026-07-05-workspace-contract-governance-normalization.md](README.md#task-records)
-- **Template Documentation Contract**: [../../99.templates/support/documentation-contract.md](../../99.templates/support/document-contract.md)
-- **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/support/document-contract.md)
-- **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/document-contract.md)
+- **Template Documentation Contract**: [../../99.templates/support/documentation-contract.md](../../99.templates/README.md)
+- **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/README.md)
+- **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/README.md)
 - **Documentation Protocol**: [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/document-authoring.md)
 - **Approval Boundaries**: [../../00.agent-governance/rules/approval-boundaries.md](../../00.agent-governance/rules/approval-boundaries.md)
 - **Repository Quality Gate**: [../../../scripts/validate-repo-quality-gates.sh](../../../scripts/validate-repo-quality-gates.sh)
@@ -1071,7 +1071,7 @@ Expected: staged diff has no whitespace errors and the commit succeeds.
 
 - **Spec**: [../../03.specs/0020-workspace-contract-governance-normalization/spec.md](spec.md)
 - **Plan**: [../plans/2026-07-05-workspace-contract-governance-normalization.md](plan.md)
-- **Task Template**: [../../99.templates/templates/sdlc/execution/task.template.md](../../99.templates/templates/sdlc/execution/task.template.md)
-- **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/support/document-contract.md)
+- **Task Template**: [../../99.templates/templates/specs/task.template.md](../../99.templates/templates/specs/task.template.md)
+- **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/README.md)
 - **Documentation Protocol**: [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/document-authoring.md)
-- **Task Stage Index**: [./README.md](../../99.templates/templates/sdlc/execution/task.template.md)
+- **Task Stage Index**: [./README.md](../../99.templates/templates/specs/task.template.md)

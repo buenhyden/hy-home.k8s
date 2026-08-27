@@ -25,7 +25,7 @@ Define the repository-local routing contract for document-generation workflows.
 
 1. Classify the requested output as governance, feature-bound design, execution plan, operational doc, or durable reference.
 2. Reject non-canonical targets such as `docs/superpowers/**` and reroute the request into the stage tree.
-3. Confirm the target pattern and Required Template in `docs/99.templates/support/document-contract.md`; use `docs/99.templates/README.md` as the inventory summary.
+3. Confirm the target pattern, profile ID, and Required Template in `docs/99.templates/registry.json`; use `docs/99.templates/README.md` for author guidance.
 4. Read the matching template under `docs/99.templates/templates/` before creating any authored stage document.
 5. Use the canonical path for the selected document type.
 6. Set new authored documents to `status: draft`, use `owner: platform`, and keep all required template headings.
@@ -36,19 +36,19 @@ Define the repository-local routing contract for document-generation workflows.
 
 ## Route Sources
 
-Use the Current Route Map in
-`docs/99.templates/support/document-contract.md` as the canonical
-target-pattern-to-template contract. That support contract is the source for
-the Required Template, including operations policy routing to
-`docs/99.templates/templates/sdlc/operations/policy.template.md`.
-`docs/99.templates/README.md` is the synchronized inventory summary, not a
-separate route owner.
+Use `docs/99.templates/registry.json` as the canonical
+target-pattern/profile/template contract. It selects the Required Template,
+including operations policy routing to profile `sdlc/policy` and
+`docs/99.templates/templates/operations/policy.template.md`.
+`docs/99.templates/README.md` is the human author guide, not a separate
+machine route owner.
 
 ## Named Skill Routing
 
 ### `agent-memory-systems`
 
-- Feature-specific memory strategy goes to `docs/03.specs/<feature-id>/agent-design.md`.
+- Change-scoped agent behavior and memory strategy belongs in the owning
+  package `spec.md` under profile `sdlc/spec`.
 - Durable reusable memory concepts go to `docs/90.references/data/<topic>.md`.
 
 ### `agent-md-refactor`

@@ -23,8 +23,9 @@ loaded from `docs/00.agent-governance/**`.
 
 - Follow the JIT loading sequence: bootstrap -> preflight -> persona -> scope -> provider
   -> progress -> postflight.
-- Author stage documents Template-First using `docs/99.templates/support/document-contract.md`
-  and the matching template; use `docs/99.templates/README.md` as the inventory summary
+- Author stage documents Template-First using the profile selected by
+  `docs/99.templates/registry.json` and its terminal template; use
+  `docs/99.templates/README.md` for author guidance
   and route generated docs into the canonical `docs/01`–`docs/05`, `docs/90`, `docs/99`
   tree only.
 - Define validation evidence before editing. Report skipped or unavailable local tools

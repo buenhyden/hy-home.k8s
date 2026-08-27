@@ -101,9 +101,6 @@ COMPATIBILITY_PATH = Path(
     "tests/fixtures/document-contracts/template-compatibility.json"
 )
 OWNER = "markdown-profile-validator"
-WORK054_TRANSITIONAL_TASK_PATH = PurePosixPath(
-    "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks.md"
-)
 AUTHOR_PROMPT_MARKER = "Author prompt:"
 AUTHOR_PROMPT_COMMENT = re.compile(r"(?m)^[ \t]*<!-- Author prompt:")
 GENERIC_RESIDUE = (
@@ -286,12 +283,9 @@ def _native_surface_owner(
         profile = classify_path(registry, path)
     except DocumentContractError:
         return None
-    role = profile.role_decision
     if (
         profile.mode == "classification-only"
         and profile.frontmatter.mode == "not-applicable"
-        and role.role == "native-machine-contract"
-        and role.body_requirement == "none"
     ):
         return "registry-profile", profile
     return None
@@ -313,7 +307,8 @@ def _is_native_candidate_path(registry: Any, path: PurePosixPath) -> bool:
         profile.template.name.replace(".template.", ".")
         for profile in registry.profiles
         if profile.template is not None
-        and profile.role_decision.role == "native-machine-contract"
+        and profile.mode == "classification-only"
+        and profile.frontmatter.mode == "not-applicable"
     }
     return (
         len(parts) >= 2
@@ -601,10 +596,7 @@ IDENTIFIER_PATTERNS = {
     "criterion": re.compile(r"^VAL-[A-Z0-9-]+-[0-9]{3}$"),
     "work-item": re.compile(r"^[A-Z][A-Z0-9-]+-[0-9]{3}$"),
 }
-TEMPLATE_IDENTIFIER_PATTERNS = {
-    **IDENTIFIER_PATTERNS,
-    "requirement": re.compile(r"^REQ-[A-Z0-9-]+-[0-9]{2,4}$"),
-}
+TEMPLATE_IDENTIFIER_PATTERNS = IDENTIFIER_PATTERNS
 EXPLICIT_EXCLUSION = re.compile(r"^N/A — \S(?:.*\S)?$")
 
 
@@ -618,6 +610,40 @@ def _identifier_text(cell: str) -> str:
     if len(value) >= 2 and value.startswith("`") and value.endswith("`"):
         value = value[1:-1].strip()
     return value
+
+
+def _requirement_package_number(path: PurePosixPath) -> str | None:
+    """Return the canonical four-digit Requirement Package path identity."""
+
+    match = re.fullmatch(r"([0-9]{4})-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\.md", path.name)
+    return None if match is None else match.group(1)
+
+
+def _requirement_package_identity_diagnostics(
+    path: PurePosixPath,
+    profile: DocumentProfile,
+    metadata: dict[str, Any],
+) -> list[Diagnostic]:
+    """Bind an authored Requirement Package artifact ID to its path number."""
+
+    if profile.profile_id != "sdlc/requirement-package" or profile.mode != "authored":
+        return []
+    package_number = _requirement_package_number(path)
+    artifact_id = metadata.get("artifact_id")
+    if package_number is None or not isinstance(artifact_id, str):
+        return []
+    expected = f"REQ-{package_number}"
+    if artifact_id == expected:
+        return []
+    return [
+        _diagnostic(
+            "REQUIREMENT-PACKAGE-IDENTITY",
+            path,
+            profile,
+            f"artifact_id equals path-derived package ID {expected!r}",
+            repr(artifact_id),
+        )
+    ]
 
 
 def _body_contract_is_enforced(
@@ -758,6 +784,28 @@ def _body_contract_diagnostics(
                         value,
                     )
                 )
+                continue
+            if (
+                identifier.kind == "requirement"
+                and profile.profile_id == "sdlc/requirement-package"
+                and profile.mode == "authored"
+            ):
+                package_number = _requirement_package_number(path)
+                expected_prefix = (
+                    None if package_number is None else f"REQ-{package_number}-"
+                )
+                if expected_prefix is not None and not value.startswith(
+                    expected_prefix
+                ):
+                    diagnostics.append(
+                        _diagnostic(
+                            "REQUIREMENT-PACKAGE-MEMBER-ID",
+                            path,
+                            profile,
+                            f"requirement identifier starts with {expected_prefix!r}",
+                            value,
+                        )
+                    )
     return sorted(diagnostics, key=diagnostic_sort_key)
 
 
@@ -928,6 +976,10 @@ def _matches_value_kind(value: object, kind: str) -> bool:
     return False
 
 
+def _is_string_sequence(value: object) -> bool:
+    return isinstance(value, list) and all(isinstance(item, str) for item in value)
+
+
 def _value_pattern_text(value: object) -> str:
     """Render one non-null contract scalar to canonical pattern text."""
 
@@ -958,149 +1010,107 @@ def _value_rule_id(key: str, constraint: str) -> str:
     return f"FM-VALUE-{constraint.upper()}"
 
 
-def _is_work054_transitional_task_status(
-    path: PurePosixPath, data: dict[str, object]
-) -> bool:
-    """Admit only the exact monolithic Task 0054 record until WP-004C."""
-
-    return (
-        path == WORK054_TRANSITIONAL_TASK_PATH
-        and data.get("type") == "sdlc/task"
-        and data.get("status") == "active"
-        and data.get("artifact_id") == "TASK-0054"
-    )
-
-
 def _value_contract_diagnostics(
     path: PurePosixPath,
     profile: DocumentProfile,
     data: dict[str, object],
     today: dt.date,
 ) -> list[Diagnostic]:
-    """Validate frontmatter scalars from the selected registry contract."""
+    """Validate frontmatter scalars from the terminal profile contract."""
 
     diagnostics: list[Diagnostic] = []
-    for contract in profile.value_contract.keys:
-        conditional = contract.conditional
-        if conditional is not None:
-            reference_present = conditional.key in data
-            reference = data.get(conditional.key)
-            equals = reference_present and _same_scalar(reference, conditional.value)
-            condition_matches = reference_present and (
-                equals if conditional.operator == "equals" else not equals
-            )
-            if condition_matches:
-                present = contract.key in data
-                violates = (conditional.effect == "required" and not present) or (
-                    conditional.effect == "forbidden" and present
-                )
-                if violates:
-                    diagnostics.append(
-                        _diagnostic(
-                            "FM-VALUE-CONDITIONAL",
-                            path,
-                            profile,
-                            (
-                                f"{contract.key} is {conditional.effect} when "
-                                f"{conditional.key} {conditional.operator} "
-                                f"{conditional.value!r}"
-                            ),
-                            "present" if present else "missing",
-                        )
-                    )
-
-        if contract.key not in data:
+    expected_kinds = {
+        "title": "string",
+        "type": "string",
+        "status": "string",
+        "owner": "string",
+        "updated": "date",
+        "archived_on": "date",
+        "artifact_id": "string",
+        "supersedes": "string-or-sequence",
+        "superseded_by": "string-or-sequence",
+    }
+    for key, kind in expected_kinds.items():
+        if key not in data:
             continue
-        value = data[contract.key]
+        value = data[key]
         if value is None:
-            if not contract.nullable:
-                diagnostics.append(
-                    _diagnostic(
-                        _value_rule_id(contract.key, "null"),
-                        path,
-                        profile,
-                        f"{contract.key} is non-null",
-                        "null",
-                    )
-                )
-            continue
-        if not _matches_value_kind(value, contract.kind):
             diagnostics.append(
                 _diagnostic(
-                    _value_rule_id(contract.key, "kind"),
+                    _value_rule_id(key, "null"),
                     path,
                     profile,
-                    f"{contract.key} has {contract.kind} kind",
+                    f"{key} is non-null",
+                    "null",
+                )
+            )
+            continue
+        kind_matches = (
+            (isinstance(value, str) or _is_string_sequence(value))
+            if kind == "string-or-sequence"
+            else _matches_value_kind(value, kind)
+        )
+        if not kind_matches:
+            diagnostics.append(
+                _diagnostic(
+                    _value_rule_id(key, "kind"),
+                    path,
+                    profile,
+                    f"{key} has {kind} kind",
                     type(value).__name__,
                 )
             )
             continue
 
         date_placeholder = (
-            profile.mode == "template"
-            and contract.kind == "date"
-            and value == "YYYY-MM-DD"
+            profile.mode == "template" and kind == "date" and value == "YYYY-MM-DD"
         )
-        if contract.kind == "date":
-            _validate_date(diagnostics, path, profile, contract.key, value, today)
+        if kind == "date":
+            _validate_date(diagnostics, path, profile, key, value, today)
         if date_placeholder:
             continue
 
-        constant = contract.constant
-        if constant is not None:
-            expected = (
-                _expected_type(profile)
-                if constant.source == "profile-id"
-                else constant.value
-            )
+        if key == "type":
+            expected = _expected_type(profile)
             if not _same_scalar(value, expected):
                 diagnostics.append(
                     _diagnostic(
-                        _value_rule_id(contract.key, "constant"),
+                        _value_rule_id(key, "constant"),
                         path,
                         profile,
                         repr(expected),
                         repr(value),
                     )
                 )
-
-        enumeration = contract.enum
-        if enumeration is not None:
-            allowed = (
-                profile.status_domain
-                if enumeration.source == "status-domain"
-                else enumeration.values
-            )
-            finite_work054_admission = (
-                contract.key == "status"
-                and enumeration.source == "status-domain"
-                and _is_work054_transitional_task_status(path, data)
-            )
-            if not finite_work054_admission and not any(
-                _same_scalar(value, item) for item in allowed
-            ):
-                diagnostics.append(
-                    _diagnostic(
-                        _value_rule_id(contract.key, "enum"),
-                        path,
-                        profile,
-                        repr(allowed),
-                        repr(value),
-                    )
-                )
-
-        pattern_text = _value_pattern_text(value)
-        if (
-            contract.pattern is not None
-            and re.search(contract.pattern, pattern_text) is None
+        if key == "status" and not any(
+            _same_scalar(value, item) for item in profile.status_domain
         ):
             diagnostics.append(
                 _diagnostic(
-                    _value_rule_id(contract.key, "pattern"),
+                    _value_rule_id(key, "enum"),
                     path,
                     profile,
-                    f"{contract.key} matches {contract.pattern!r}",
-                    repr(pattern_text),
+                    repr(profile.status_domain),
+                    repr(value),
+                )
+            )
+        if (
+            key == "artifact_id"
+            and profile.artifact_id_pattern is not None
+            and not (
+                profile.profile_id == "content/archive"
+                and path.parts[:3] == ("docs", "98.archive", "changes")
+            )
+            and re.search(profile.artifact_id_pattern, _value_pattern_text(value))
+            is None
+        ):
+            diagnostics.append(
+                _diagnostic(
+                    _value_rule_id(key, "pattern"),
+                    path,
+                    profile,
+                    f"{key} matches {profile.artifact_id_pattern!r}",
+                    repr(_value_pattern_text(value)),
                 )
             )
     return diagnostics
@@ -1436,6 +1446,7 @@ def validate_document(
     body = _frontmatter_body(text, path, profile, diagnostics, effective_today)
     diagnostics.extend(_body_diagnostics(path, profile, body, append_context))
     status = ""
+    metadata: dict[str, Any] = {}
     if profile.frontmatter.mode == "required":
         try:
             _, metadata, _ = extract_frontmatter(text)
@@ -1443,6 +1454,9 @@ def validate_document(
             metadata = {}
         value = metadata.get("status")
         status = value if isinstance(value, str) else ""
+    diagnostics.extend(
+        _requirement_package_identity_diagnostics(path, profile, metadata)
+    )
     diagnostics.extend(
         _body_contract_diagnostics(
             path,
@@ -2121,7 +2135,9 @@ def _self_test(root: Path) -> list[str]:
         for case in fixture.get("nativeProfileCases", [])
     )
     if actual_native_cases != expected_native_cases:
-        failures.append("nativeProfileCases must preserve the exact transition contract")
+        failures.append(
+            "nativeProfileCases must preserve the exact transition contract"
+        )
     expected_date_cases = (
         ("authored-previous-day", "sdlc/spec", "2026-07-11", ()),
         ("authored-same-day", "sdlc/spec", "2026-07-12", ()),
@@ -2192,12 +2208,9 @@ def _self_test(root: Path) -> list[str]:
         path.as_posix() for path in inventory.baseline_paths if path.name == "README.md"
     }
     work105_readme_renames = {
-        "docs/02.architecture/requirements/README.md":
-            "docs/02.architecture/descriptions/README.md",
-        "examples/aws/docs/02.architecture/requirements/README.md":
-            "examples/aws/docs/02.architecture/descriptions/README.md",
-        "examples/azure/docs/02.architecture/requirements/README.md":
-            "examples/azure/docs/02.architecture/descriptions/README.md",
+        "docs/02.architecture/requirements/README.md": "docs/02.architecture/descriptions/README.md",
+        "examples/aws/docs/02.architecture/requirements/README.md": "examples/aws/docs/02.architecture/descriptions/README.md",
+        "examples/azure/docs/02.architecture/requirements/README.md": "examples/azure/docs/02.architecture/descriptions/README.md",
     }
     conceptual_baseline_readmes = {
         work105_readme_renames.get(path, path) for path in baseline_readmes
@@ -2286,7 +2299,9 @@ def _self_test(root: Path) -> list[str]:
                     except ValueError as exc:
                         failures.append(f"README retired path invalid: {exc}")
                     else:
-                        failures.append(f"README retired path is still routed: {path_text}")
+                        failures.append(
+                            f"README retired path is still routed: {path_text}"
+                        )
             if handoff.get("requiredH2") != list(selected.headings.required):
                 failures.append(f"README handoff requiredH2 mismatch: {path_text}")
             if handoff.get("allowedH2") != list(selected.headings.allowed):
@@ -2303,10 +2318,8 @@ def _self_test(root: Path) -> list[str]:
             if handoff.get("retiredBy") == "WORK-054-002":
                 stage04_destinations = {
                     "docs/04.execution/README.md": "docs/03.specs/README.md",
-                    "docs/04.execution/plans/README.md":
-                        "docs/99.templates/templates/sdlc/execution/plan.template.md",
-                    "docs/04.execution/tasks/README.md":
-                        "docs/99.templates/templates/sdlc/execution/task.template.md",
+                    "docs/04.execution/plans/README.md": "docs/99.templates/templates/specs/plan.template.md",
+                    "docs/04.execution/tasks/README.md": "docs/99.templates/templates/specs/task.template.md",
                 }
                 if handoff.get("destination") != stage04_destinations.get(path_text):
                     failures.append(
@@ -3300,7 +3313,6 @@ def _parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--include-path", action="append", default=[])
     group = parser.add_mutually_exclusive_group()
-    group.add_argument("--self-test", action="store_true")
     group.add_argument("--inventory", action="store_true")
     return parser
 
@@ -3309,14 +3321,6 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     root = args.root.resolve()
     try:
-        if args.self_test:
-            failures = _self_test(root)
-            if failures:
-                for failure in failures:
-                    print(f"FAIL SELF-TEST {failure}")
-                return 1
-            print("PASS markdown profile self-test; native surfaces 10/10")
-            return 0
         registry = load_registry(root)
         include_paths = tuple(PurePosixPath(value) for value in args.include_path)
         native_include_paths = tuple(

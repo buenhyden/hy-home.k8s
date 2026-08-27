@@ -261,7 +261,7 @@ commands and tool identities selected by the approved Plan.
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-0007-FR-0005](../../01.requirements/0007-repository-delivery-and-platform-assurance.md#functional-requirements) | VAL-PVSE-001 | Closed contract/schema and mutation fixtures prove depth and lane integrity. |
 | N/A — REQ-0007-FR-0005 shares the PRD-0007 source linked above. | VAL-PVSE-002 | Exact-root render evidence proves deterministic desired-state construction. |

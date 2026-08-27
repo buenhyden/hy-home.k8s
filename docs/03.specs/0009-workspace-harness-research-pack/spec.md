@@ -59,7 +59,7 @@ Out of scope:
 
 - **Config Contract**: No repository configuration or runtime settings change is
   required. The research pack must route to `docs/90.references/research/` and
-  use `docs/99.templates/templates/common/reference.template.md` for non-README documents.
+  use `docs/99.templates/templates/references/reference.template.md` for non-README documents.
 - **Data / Interface Contract**: The pack consists of Markdown reference
   documents with frontmatter, source/freshness metadata, authority boundaries,
   definitions/facts, and related-document links.

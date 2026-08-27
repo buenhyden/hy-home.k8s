@@ -81,8 +81,8 @@ memory/
 1. Read `progress.md` before substantial repo-changing work to avoid repeating
    stale assumptions.
 2. Append progress and reusable memory to `progress.md` during repo-changing
-   work using `../../99.templates/templates/common/progress.template.md`.
-3. Use `../../99.templates/templates/common/memory.template.md` for standalone memory entries if
+   work using `../../99.templates/templates/governance/progress.template.md`.
+3. Use `../../99.templates/templates/governance/memory.template.md` for standalone memory entries if
    a future task creates separate memory files.
 4. Link the entry to the affected spec, runbook, incident, or postmortem when
    useful.
@@ -105,8 +105,8 @@ Links in this README are relative to `docs/00.agent-governance/memory/`.
 ## Related Documents
 
 - [Agent Governance Hub](../README.md)
-- [Memory Template](../../99.templates/templates/common/memory.template.md)
-- [Progress Template](../../99.templates/templates/common/progress.template.md)
+- [Memory Template](../../99.templates/templates/governance/memory.template.md)
+- [Progress Template](../../99.templates/templates/governance/progress.template.md)
 - [Documentation Protocol](../rules/document-authoring.md)
 
 ### Policy
@@ -124,10 +124,10 @@ Links in this README are relative to `docs/00.agent-governance/memory/`.
 
 ### Format
 
-Use `docs/99.templates/templates/common/progress.template.md` for `progress.md` entries and keep
+Use `docs/99.templates/templates/governance/progress.template.md` for `progress.md` entries and keep
 each item scoped to one workstream.
 
 Standalone files under this folder must use
-`docs/99.templates/templates/common/memory.template.md`. They are supporting context only and
+`docs/99.templates/templates/governance/memory.template.md`. They are supporting context only and
 must include a `Related Progress` section that points back to the matching
 `progress.md` work entry.

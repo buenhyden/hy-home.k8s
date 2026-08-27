@@ -78,7 +78,7 @@ data/
 
 ## Add and Find
 
-1. Use [reference.template.md](../../99.templates/templates/common/reference.template.md) for new non-README documents.
+1. Use [reference.template.md](../../99.templates/templates/references/reference.template.md) for new non-README documents.
 2. Keep every data reference factual and source-checked.
 3. Update the source file, this folder index, and [90.references README](../README.md) in the same change when a data reference moves.
 4. Route runtime policy to `docs/00.agent-governance/**`.

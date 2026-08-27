@@ -145,7 +145,7 @@ fired. This is a contract signal rather than an opinion.
 
 All thirty-six rows returned `confirmed` except `REQ-WERPC-018`, which returned
 `absent` as expected: a case-insensitive search across
-`docs/99.templates/support/document-profiles.json` returns zero matches for a
+`docs/99.templates/registry.json` returns zero matches for a
 `release` profile, confirming the `DOC-G5` decided gap is intact rather than
 drifted.
 

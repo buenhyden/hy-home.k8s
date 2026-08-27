@@ -40,4 +40,4 @@ updated: YYYY-MM-DD
 
 | Upstream requirement | Quality attribute or boundary | ADR / Spec |
 | --- | --- | --- |
-| REQ-FEATURE-001 | Name one measurable attribute or architecture boundary. | ADR or Specification owner |
+| REQ-0001-NFR-0001 | Name one measurable attribute or architecture boundary. | ADR or Specification owner |

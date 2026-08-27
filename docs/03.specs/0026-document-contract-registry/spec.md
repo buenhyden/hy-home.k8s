@@ -25,7 +25,7 @@ does not introduce universal metadata fields or a root `DESIGN.md`.
 
 ## Contracts
 
-- **Config Contract**: `docs/99.templates/support/document-profiles.json`
+- **Config Contract**: `docs/99.templates/registry.json`
   declares current schema version `4`, profile definitions, path routes, exact or patterned
   exceptions, and template paths. It validates against
   `docs/99.templates/support/document-profiles.schema.json` using JSON Schema
@@ -99,7 +99,7 @@ The registry covers these profile classes:
     "allowed": ["title", "type", "status", "owner", "updated"]
   },
   "statusDomain": ["draft", "active", "done"],
-  "template": "docs/99.templates/templates/sdlc/specs/spec.template.md"
+  "template": "docs/99.templates/templates/specs/spec.template.md"
 }
 ```
 

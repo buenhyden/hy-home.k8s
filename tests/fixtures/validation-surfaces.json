@@ -6,7 +6,7 @@
     {"name": "environment-example", "path": ".env.example", "expectedSurface": "root-config"},
     {"name": "root-provider-gateway", "path": "AGENTS.md", "expectedSurface": "provider-gateways"},
     {"name": "governance", "path": "docs/00.agent-governance/rules/bootstrap.md", "expectedSurface": "governance-documents"},
-    {"name": "templates", "path": "docs/99.templates/support/document-contract.md", "expectedSurface": "template-documents"},
+    {"name": "templates", "path": "docs/99.templates/registry.json", "expectedSurface": "template-documents"},
     {"name": "shared-agent", "path": ".agents/agents/supervisor.md", "expectedSurface": "agent-shared"},
     {"name": "claude-adapter", "path": ".claude/agents/supervisor.md", "expectedSurface": "agent-claude"},
     {"name": "codex-adapter", "path": ".codex/agents/supervisor.toml", "expectedSurface": "agent-codex"},
@@ -95,7 +95,7 @@
     {
       "name": "agent-governance-template-documents",
       "lane": "ci",
-      "paths": ["docs/99.templates/support/document-contract.md"],
+      "paths": ["docs/99.templates/registry.json"],
       "expected": {
         "validators": ["agent-governance-ci", "agent-governance-closure", "agent-legacy-cutover", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
         "ciJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
@@ -163,7 +163,7 @@
         ".env.example",
         "AGENTS.md",
         "docs/00.agent-governance/rules/bootstrap.md",
-        "docs/99.templates/support/document-contract.md",
+        "docs/99.templates/registry.json",
         ".agents/agents/supervisor.md",
         ".claude/agents/supervisor.md",
         ".codex/agents/supervisor.toml",
@@ -189,7 +189,7 @@
       "paths": [
         "docs/90.references/research/README.md",
         "docs/90.references/research/2026-08-08-wer/README.md",
-        "docs/99.templates/support/README.md",
+        "docs/99.templates/README.md",
         "scripts/validate-links-and-owners.py",
         "scripts/validate-repo-quality-gates.sh",
         "tests/fixtures/links-and-owners.json"
@@ -260,7 +260,7 @@
       "name": "contract-bulk-document-escalation",
       "lane": "ci",
       "paths": [
-        "docs/99.templates/support/document-profiles.json",
+        "docs/99.templates/registry.json",
         "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md",
         "docs/98.archive/03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md"
       ],
@@ -289,7 +289,7 @@
         "docs/03.specs/0031-affected-surface-agent-qa/spec.md",
         "_workspace/README.md",
         ".agents/agents/supervisor.md",
-        "docs/99.templates/support/document-contract.md",
+        "docs/99.templates/registry.json",
         ".github/workflows/ci.yml"
       ],
       "expectedJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
@@ -303,7 +303,7 @@
         "docs/03.specs/0031-affected-surface-agent-qa/spec.md",
         "_workspace/README.md",
         ".agents/agents/supervisor.md",
-        "docs/99.templates/support/document-contract.md",
+        "docs/99.templates/registry.json",
         ".github/workflows/ci.yml"
       ],
       "expectedJobs": ["agent-governance-static", "pre-commit", "repo-quality-static"],
@@ -322,7 +322,7 @@
         "secrets/README.md",
         "traefik/traefik.yaml",
         ".agents/agents/supervisor.md",
-        "docs/99.templates/support/document-contract.md",
+        "docs/99.templates/registry.json",
         ".github/workflows/ci.yml"
       ],
       "expectedJobs": ["agent-governance-static", "manifest-static", "pre-commit", "repo-quality-static"],
@@ -359,7 +359,7 @@
       "rangeKind": "base-head",
       "paths": [
         ".pre-commit-config.yaml",
-        "docs/99.templates/support/document-contract.md",
+        "docs/99.templates/registry.json",
         "docs/01.requirements/0003-workspace-agent-governance-platform.md",
         "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md",
         "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md",
@@ -738,7 +738,7 @@
         "surfaceId": "template-documents",
         "ciJobId": "agent-governance-static"
       },
-      "paths": ["docs/99.templates/support/document-contract.md"],
+      "paths": ["docs/99.templates/registry.json"],
       "expectedError": "SURFACE-AGENT-GOVERNANCE-CI"
     },
     {

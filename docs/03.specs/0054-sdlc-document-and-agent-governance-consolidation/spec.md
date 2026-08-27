@@ -63,7 +63,7 @@ provider-cardinality, archive-census, and script-census clauses of earlier
 decisions while preserving their transition-safety and recoverability goals.
 
 The reciprocal execution artifacts are [Plan 0054](plan.md) and
-[Tasks 0054](tasks.md).
+[Tasks 0054](README.md#task-records).
 
 ## Strategic Boundaries & Non-goals
 
@@ -780,7 +780,7 @@ hosted CI, deployment, incident response, or live platform correctness.
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | N/A — the direct human-approved B-scope consolidation has no separate PRD. | VAL-SDLC-001 | Exact topology and scope audit. |
 | N/A — VAL-SDLC-002 shares the direct approved requirement source above. | VAL-SDLC-002 | Registry path, identity, date, and malformed-route negatives. |

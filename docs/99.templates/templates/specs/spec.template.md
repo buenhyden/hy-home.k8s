@@ -54,6 +54,6 @@ updated: YYYY-MM-DD
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
-| REQ-FEATURE-001 | VAL-FEATURE-001 | Named unit, contract, integration, or review evidence |
+| REQ-0001-FR-0001 | VAL-FEATURE-001 | Named unit, contract, integration, or review evidence |

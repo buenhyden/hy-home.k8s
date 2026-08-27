@@ -122,7 +122,7 @@ same policy in different words.
 | Hook scripts                              | `docs/00.agent-governance/hooks/*.sh`                                             | `.claude/settings.json`, `.agents/hooks.json` local wiring, `.codex/hooks.json` | Hook payload simulation and shell syntax checks; Gemini CLI delivery is `DEFER`     |
 | Validation selection and handoff evidence | `contracts/validation-surfaces.json`, `rules/quality-standards.md`                 | Local hooks, pre-commit, CI selector, provider handoffs                         | Affected-surface, role-semantic, native metadata, roster, and program-closure validators |
 | Program closure result classification     | `contracts/agent-governance-closure.json` and adjacent schema                     | Provider notes, implementation map, pre-commit, and the existing agent-governance CI job | Closure self-test and production validator; repository-static PASS never promotes provider, hosted, actual-evaluation, remote, or live lanes |
-| Template contract                         | `docs/99.templates/support/document-contract.md` and `docs/99.templates/README.md` | docs-stage-routing skill, provider event wiring, doc-writer agents              | Structural template coverage and README/link checks                                |
+| Template contract                         | `docs/99.templates/README.md` and `docs/99.templates/README.md` | docs-stage-routing skill, provider event wiring, doc-writer agents              | Structural template coverage and README/link checks                                |
 | Work evidence                             | `docs/03.specs/<id>-<slug>/tasks.md` and `memory/progress.md`                     | Provider final responses and PR descriptions                                    | Task verification summary and progress ledger                                      |
 
 ### Model Tier Mapping
@@ -223,7 +223,7 @@ Instruction and settings documents -> Architecture constraints -> Feedback loops
   static checks.
 - **Documentation language and template routing**: folder responsibilities are
   governed by `document-authoring.md`; path-to-template routing is governed
-  by `docs/99.templates/support/document-contract.md` and summarized by
+  by `docs/99.templates/README.md` and summarized by
   `docs/99.templates/README.md`.
   Human-facing README and overview prose should prefer Korean, while explicit
   AI-agent-facing sections such as `AI Agent Requirements` should prefer
@@ -391,7 +391,7 @@ Roster currentness and owner lineage resolve through these canonical surfaces:
 - [`docs/00.agent-governance/rules/document-authoring.md`](rules/document-authoring.md)
 - [`docs/03.specs/0024-observability-and-network-review-agents/README.md`](../03.specs/0024-observability-and-network-review-agents/README.md)
 - [`docs/03.specs/0025-governance-owner-and-roster-currentness/README.md`](../03.specs/0025-governance-owner-and-roster-currentness/README.md)
-- [`docs/99.templates/support/document-contract.md`](../99.templates/support/document-contract.md)
+- [`docs/99.templates/README.md`](../99.templates/README.md)
 
 Adapter consistency is a quality-gate contract. `scripts/validate-repo-quality-gates.sh`
 must be able to verify matching file stems, matching scope imports, Runtime

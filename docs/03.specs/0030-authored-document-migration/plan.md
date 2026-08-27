@@ -259,10 +259,10 @@ debt_paths = {
 support_paths = {
     'docs/99.templates/support/common-documentation-governance.md',
     'docs/99.templates/support/documentation-contract.md',
-    'docs/99.templates/support/frontmatter-schema.md',
+    'docs/99.templates/contracts/frontmatter.schema.json',
     'docs/99.templates/support/legacy-cleanup-rules.md',
     'docs/99.templates/support/sdlc-governance.md',
-    'docs/99.templates/support/template-routing.md',
+    'docs/99.templates/README.md',
 }
 adm003 = {path for path in debt_paths if path.startswith((
     'docs/01.requirements/', 'docs/',
@@ -1455,10 +1455,10 @@ and mutation refresh, and the printed staged count. Roll back with
 - Modify structurally only: every remaining shape-debt non-README Markdown path under `docs/98.archive/`
 - Modify structurally only: `docs/99.templates/support/common-documentation-governance.md`
 - Modify structurally only: `docs/99.templates/support/documentation-contract.md`
-- Modify structurally only: `docs/99.templates/support/frontmatter-schema.md`
+- Modify structurally only: `docs/99.templates/contracts/frontmatter.schema.json`
 - Modify structurally only: `docs/99.templates/support/legacy-cleanup-rules.md`
 - Modify structurally only: `docs/99.templates/support/sdlc-governance.md`
-- Modify structurally only: `docs/99.templates/support/template-routing.md`
+- Modify structurally only: `docs/99.templates/README.md`
 - Modify: durable migration ledger
 - Modify: `tests/fixtures/document-contracts/template-compatibility.json`
 - Modify: `scripts/validate-markdown-profiles.py`
@@ -3071,7 +3071,7 @@ absent-source strict PASS and compatibility exit 2 for each semantic validator,
 and cross-document inventory mode remains available without loading the retired
 source.
 Do not alter profile routes, registry data, or registry semantics. In
-particular, `docs/99.templates/support/document-profiles.json` is neither a
+particular, `docs/99.templates/registry.json` is neither a
 debt owner nor an ADM-007 file.
 
 - [x] **Step 3: Run GREEN strict and residue checks**
@@ -3158,7 +3158,7 @@ expected = {
     'tests/fixtures/document-contracts/template-compatibility.json',
 }
 semantic = 'tests/fixtures/document-contracts/semantic-compatibility-debt.json'
-registry = 'docs/99.templates/support/document-profiles.json'
+registry = 'docs/99.templates/registry.json'
 actual = set(subprocess.check_output(
     ['git', 'diff', '--cached', '--name-only'], text=True
 ).splitlines())

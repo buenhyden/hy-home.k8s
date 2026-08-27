@@ -190,7 +190,7 @@ kubectl -n argocd logs deploy/argocd-notifications-controller --tail=50 | grep -
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-0002-FR-0001](../../01.requirements/0002-argo-notifications-slack.md) | VAL-SPC-001 | `verify-contracts-static.sh` checks `notifications.enabled: true` in the ArgoCD Helm values. |
 | [REQ-0002-FR-0003](../../01.requirements/0002-argo-notifications-slack.md) | VAL-SPC-002 | Static ConfigMap checks confirm the Slack service, event templates, triggers, and default triggers. |

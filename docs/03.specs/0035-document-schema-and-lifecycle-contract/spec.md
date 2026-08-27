@@ -200,7 +200,7 @@ strict/snapshot/clean-tree checks are intentionally not pre-claimed.
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-0006-FR-0001](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-DSLC-001 | Strict registry selection reports zero uncovered or ambiguous paths. |
 | N/A — VAL-DSLC-002 shares the PRD-0006 source linked in VAL-DSLC-001 | VAL-DSLC-002 | Frontmatter mutation fixtures cover closed metadata contracts. |

@@ -113,4 +113,4 @@ is introduced. Any unverified live condition remains `DEFER` under
 
 - [Local Harness Catalog](../harness-catalog.md)
 - [Bootstrap Governance](bootstrap.md)
-- [Canonical Task Approval and Safety Boundaries](../../99.templates/templates/sdlc/execution/task.template.md#approval-and-safety-boundaries)
+- [Canonical Task Approval and Safety Boundaries](../../99.templates/templates/specs/task.template.md#approval-and-safety-boundaries)

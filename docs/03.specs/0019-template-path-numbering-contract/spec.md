@@ -91,8 +91,8 @@ The new structural route patterns are:
 
 | Role | Target Pattern | Template |
 | --- | --- | --- |
-| Product requirement | `docs/01.requirements/<###-Numbering>-<feature-or-system>.md` | `docs/99.templates/templates/sdlc/requirements/prd.template.md` |
-| Technical specification | `docs/03.specs/<###-Numbering>-<feature-id>/spec.md` | `docs/99.templates/templates/sdlc/specs/spec.template.md` |
+| Product requirement | `docs/01.requirements/<###-Numbering>-<feature-or-system>.md` | `docs/99.templates/templates/requirements/requirement-package.template.md` |
+| Technical specification | `docs/03.specs/<###-Numbering>-<feature-id>/spec.md` | `docs/99.templates/templates/specs/spec.template.md` |
 | API contract doc | `docs/03.specs/<###-Numbering>-<feature-id>/api-spec.md` | `docs/99.templates/templates/sdlc/specs/api-spec.template.md` |
 | Agent design | `docs/03.specs/<###-Numbering>-<feature-id>/agent-design.md` | `docs/99.templates/templates/sdlc/specs/agent-design.template.md` |
 | Data model | `docs/03.specs/<###-Numbering>-<feature-id>/data-model.md` | `docs/99.templates/templates/sdlc/specs/data-model.template.md` |
@@ -124,7 +124,7 @@ authored document path -> template route -> frontmatter profile -> required head
 
 The implementation plan should update these surfaces together:
 
-- `docs/99.templates/templates/sdlc/requirements/prd.template.md`
+- `docs/99.templates/templates/requirements/requirement-package.template.md`
 - `docs/99.templates/templates/sdlc/specs/*.template.md`
 - `docs/99.templates/templates/sdlc/specs/openapi.template.yaml`
 - `docs/99.templates/templates/sdlc/specs/schema.template.graphql`
@@ -132,11 +132,11 @@ The implementation plan should update these surfaces together:
 - `docs/99.templates/templates/sdlc/architecture/*.template.md`
 - `docs/99.templates/templates/sdlc/execution/*.template.md`
 - `docs/99.templates/templates/sdlc/operations/*.template.md`
-- `docs/99.templates/templates/common/reference.template.md`
+- `docs/99.templates/templates/references/reference.template.md`
 - `docs/99.templates/README.md`
 - `docs/99.templates/support/sdlc-governance.md`
-- `docs/99.templates/support/template-routing.md`
-- `docs/99.templates/support/frontmatter-schema.md` if route notes mention old
+- `docs/99.templates/README.md`
+- `docs/99.templates/contracts/frontmatter.schema.json` if route notes mention old
   path forms
 - `docs/01.requirements/README.md`
 - `docs/03.specs/README.md`
@@ -209,7 +209,7 @@ specs use numeric identity, while Stage 04 execution records remain date-based.
 Evaluation is repository-static:
 
 - Structural route mapping equality between `docs/99.templates/README.md`,
-  `docs/99.templates/support/template-routing.md`, and
+  `docs/99.templates/README.md`, and
   `scripts/validate-repo-quality-gates.sh`.
 - Absence of active links to the four old date-based PRD filenames.
 - Absence of active contract text that advertises the old PRD or unnumbered
@@ -270,10 +270,10 @@ no matches after active links are updated.
 ## Traceability
 
 - **Templates README**: [../../99.templates/README.md](../../99.templates/README.md)
-- **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/support/document-contract.md)
-- **SDLC Template Governance**: [../../99.templates/support/sdlc-governance.md](../../99.templates/support/document-lifecycle.md)
-- **Template Documentation Contract**: [../../99.templates/support/documentation-contract.md](../../99.templates/support/document-contract.md)
-- **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/document-contract.md)
+- **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/README.md)
+- **SDLC Template Governance**: [../../99.templates/support/sdlc-governance.md](../../99.templates/README.md)
+- **Template Documentation Contract**: [../../99.templates/support/documentation-contract.md](../../99.templates/README.md)
+- **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/README.md)
 - **Stage Authoring Matrix**: [../../00.agent-governance/rules/stage-authoring-matrix.md](../../00.agent-governance/rules/document-authoring.md)
 - **Document Stage Routing Rules**: [../../00.agent-governance/rules/document-stage-routing.md](../../00.agent-governance/rules/document-authoring.md)
 - **Documentation Protocol**: [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/document-authoring.md)
@@ -296,8 +296,8 @@ no matches after active links are updated.
 - **Template support contracts**:
   `docs/99.templates/support/documentation-contract.md`,
   `docs/99.templates/support/sdlc-governance.md`,
-  `docs/99.templates/support/template-routing.md`, and
-  `docs/99.templates/support/frontmatter-schema.md`.
+  `docs/99.templates/README.md`, and
+  `docs/99.templates/contracts/frontmatter.schema.json`.
 - **Validator**: `scripts/validate-repo-quality-gates.sh`.
 - **External basis**: Diataxis, Google developer documentation style guidance,
   GitHub Docs writing guidance, and NIST SSDF.

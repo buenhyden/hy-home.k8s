@@ -533,7 +533,7 @@ live results remain `DEFER` unless independently observed and approved.
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | N/A — direct human approval and Spec approval on 2026-08-09 authorize this standalone design and active execution; no separate PRD/AD program owner is asserted | VAL-WGA-001 | Exact ten-file pack and 30-row coverage audit. |
 | N/A — the same direct approval governs this standalone design | VAL-WGA-002 | Finding-field completeness audit and independent content review. |

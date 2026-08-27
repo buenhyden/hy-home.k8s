@@ -960,9 +960,7 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
         fail("SURFACE-FIXTURE", "selection case names must be unique")
     required_agent_selection_paths = {
         "agent-governance-root-config": (".pre-commit-config.yaml",),
-        "agent-governance-template-documents": (
-            "docs/99.templates/support/document-contract.md",
-        ),
+        "agent-governance-template-documents": ("docs/99.templates/registry.json",),
         "agent-governance-authored-lineage": (
             "docs/01.requirements/0003-workspace-agent-governance-platform.md",
             "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md",
@@ -1031,7 +1029,7 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
         "secrets/README.md",
         "traefik/traefik.yaml",
         ".agents/agents/supervisor.md",
-        "docs/99.templates/support/document-contract.md",
+        "docs/99.templates/registry.json",
         ".github/workflows/ci.yml",
         "gitops/rename-probe.yaml",
         "docs/03.specs/999-rename-probe/spec.md",

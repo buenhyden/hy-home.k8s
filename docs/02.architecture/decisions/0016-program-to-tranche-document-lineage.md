@@ -75,7 +75,7 @@ program PRDs would weaken either family uniqueness or product ownership.
 
 ## Traceability
 
-- **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
-- **ARD**: [Workspace Document Assurance Operating Model](../requirements/0008-workspace-document-assurance-operating-model.md)
+- **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/0005-workspace-document-assurance-modernization.md)
+- **ARD**: [Workspace Document Assurance Operating Model](../descriptions/0008-workspace-document-assurance-operating-model.md)
 - **Related ADR**: [Declarative Document Contract Registry](./0015-declarative-document-contract-registry.md)
-- **Specs**: [Document Contract Registry](../../03.specs/026-document-contract-registry/spec.md) through [Protected Surface and Supply Chain Hardening](../../03.specs/032-protected-surface-supply-chain-hardening/spec.md)
+- **Specs**: [Document Contract Registry](../../03.specs/0026-document-contract-registry/spec.md) through [Protected Surface and Supply Chain Hardening](../../03.specs/0032-protected-surface-supply-chain-hardening/spec.md)

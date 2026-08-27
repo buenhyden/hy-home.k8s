@@ -52,7 +52,7 @@ document's topic-specific semantics or runtime procedure is correct.
 
 ### Templates
 
-`docs/99.templates/support/document-profiles.json` contains 64 profiles and is
+`docs/99.templates/registry.json` contains 64 profiles and is
 the exact machine owner. Each of the eleven existing requested families has a
 source profile, physical template, corresponding template profile, lifecycle
 projection, relationship role, and registry/profile/lifecycle validators.
@@ -99,18 +99,18 @@ Validator key: `registry` is
 
 | Family | Canonical stage and human index | Machine profile | Physical template | Lifecycle contract | Validator |
 | --- | --- | --- | --- | --- | --- |
-| PRD | `docs/01.requirements/`; `docs/01.requirements/README.md#document-index` | `sdlc/prd` | `docs/99.templates/templates/sdlc/requirements/prd.template.md` | product: `draft -> active -> done`; archived preservation allowed | registry/profile/lifecycle/links |
+| PRD | `docs/01.requirements/`; `docs/01.requirements/README.md#document-index` | `sdlc/prd` | `docs/99.templates/templates/requirements/requirement-package.template.md` | product: `draft -> active -> done`; archived preservation allowed | registry/profile/lifecycle/links |
 | ARD | `docs/02.architecture/requirements/`; `docs/02.architecture/requirements/README.md#item-index` | `sdlc/ard` | `docs/99.templates/templates/sdlc/architecture/ard.template.md` | architecture-requirement: `draft -> active -> accepted` | registry/profile/lifecycle/links |
-| ADR | `docs/02.architecture/decisions/`; `docs/02.architecture/decisions/README.md#item-index` | `sdlc/adr` | `docs/99.templates/templates/sdlc/architecture/adr.template.md` | architecture-decision: `draft -> active -> accepted` | registry/profile/lifecycle/links |
-| Spec | `docs/03.specs/<NNN-topic>/spec.md`; `docs/03.specs/README.md#current-spec-index` | `sdlc/spec` | `docs/99.templates/templates/sdlc/specs/spec.template.md` | specification: `draft -> active -> done` | registry/profile/lifecycle/links |
-| Plan | `docs/04.execution/plans/`; `docs/04.execution/plans/README.md#item-index` | `sdlc/plan` | `docs/99.templates/templates/sdlc/execution/plan.template.md` | execution pair: `draft -> active -> done` | registry/profile/lifecycle/links |
-| Task | `docs/04.execution/tasks/`; `docs/04.execution/tasks/README.md#item-index` | `sdlc/task` | `docs/99.templates/templates/sdlc/execution/task.template.md` | execution pair: `draft -> active -> done` | registry/profile/lifecycle/links |
-| Guide | `docs/05.operations/guides/`; `docs/05.operations/guides/README.md#item-index` | `sdlc/guide` | `docs/99.templates/templates/sdlc/operations/guide.template.md` | operations: `draft -> active -> accepted` | registry/profile/lifecycle/links |
-| Incident | `docs/05.operations/incidents/YYYY/INC-NNN-topic/`; `docs/05.operations/incidents/README.md#item-index` | `sdlc/incident` | `docs/99.templates/templates/sdlc/operations/incident.template.md` | operations: `draft -> active -> accepted` | registry/profile/lifecycle/links |
-| Postmortem | colocated `postmortem.md`; `docs/05.operations/incidents/README.md#item-index` | `sdlc/postmortem` | `docs/99.templates/templates/sdlc/operations/postmortem.template.md` | operations: `draft -> active -> accepted` | registry/profile/lifecycle/links |
-| Policy | `docs/05.operations/policies/`; `docs/05.operations/policies/README.md#item-index` | `sdlc/policy` | `docs/99.templates/templates/sdlc/operations/policy.template.md` | operations: `draft -> active -> accepted` | registry/profile/lifecycle/links |
+| ADR | `docs/02.architecture/decisions/`; `docs/02.architecture/decisions/README.md#item-index` | `sdlc/adr` | `docs/99.templates/templates/architecture/adr.template.md` | architecture-decision: `draft -> active -> accepted` | registry/profile/lifecycle/links |
+| Spec | `docs/03.specs/<NNN-topic>/spec.md`; `docs/03.specs/README.md#current-spec-index` | `sdlc/spec` | `docs/99.templates/templates/specs/spec.template.md` | specification: `draft -> active -> done` | registry/profile/lifecycle/links |
+| Plan | `docs/04.execution/plans/`; `docs/04.execution/plans/README.md#item-index` | `sdlc/plan` | `docs/99.templates/templates/specs/plan.template.md` | execution pair: `draft -> active -> done` | registry/profile/lifecycle/links |
+| Task | `docs/04.execution/tasks/`; `docs/04.execution/tasks/README.md#item-index` | `sdlc/task` | `docs/99.templates/templates/specs/task.template.md` | execution pair: `draft -> active -> done` | registry/profile/lifecycle/links |
+| Guide | `docs/05.operations/guides/`; `docs/05.operations/guides/README.md#item-index` | `sdlc/guide` | `docs/99.templates/templates/operations/guide.template.md` | operations: `draft -> active -> accepted` | registry/profile/lifecycle/links |
+| Incident | `docs/05.operations/incidents/YYYY/INC-NNN-topic/`; `docs/05.operations/incidents/README.md#item-index` | `sdlc/incident` | `docs/99.templates/templates/operations/incident.template.md` | operations: `draft -> active -> accepted` | registry/profile/lifecycle/links |
+| Postmortem | colocated `postmortem.md`; `docs/05.operations/incidents/README.md#item-index` | `sdlc/postmortem` | `docs/99.templates/templates/operations/postmortem.template.md` | operations: `draft -> active -> accepted` | registry/profile/lifecycle/links |
+| Policy | `docs/05.operations/policies/`; `docs/05.operations/policies/README.md#item-index` | `sdlc/policy` | `docs/99.templates/templates/operations/policy.template.md` | operations: `draft -> active -> accepted` | registry/profile/lifecycle/links |
 | Release | none; Spec 052 DOC-G5 separately rejects a first-class release-notes route | none | none | none; queued WORK-013 will record deliberate absence for release notes | none; no profile means no registry-driven admission |
-| Runbook | `docs/05.operations/runbooks/`; `docs/05.operations/runbooks/README.md#item-index` | `sdlc/runbook` | `docs/99.templates/templates/sdlc/operations/runbook.template.md` | operations: `draft -> active -> accepted` | registry/profile/lifecycle/links |
+| Runbook | `docs/05.operations/runbooks/`; `docs/05.operations/runbooks/README.md#item-index` | `sdlc/runbook` | `docs/99.templates/templates/operations/runbook.template.md` | operations: `draft -> active -> accepted` | registry/profile/lifecycle/links |
 
 Spec helpers have separate `sdlc/api-spec`, `sdlc/agent-design`,
 `sdlc/data-model`, and `sdlc/tests` profiles under the Spec owner. They are not
@@ -120,7 +120,7 @@ additional requested top-level families.
 
 | Surface | As-Is owner | Enforcement boundary |
 | --- | --- | --- |
-| README families | `docs/99.templates/support/document-profiles.json#profiles` owns six `readme/*` profiles and their forms. | Frontmatter-free route/headings and exact active inventory are registry/profile checked. |
+| README families | `docs/99.templates/registry.json#profiles` owns six `readme/*` profiles and their forms. | Frontmatter-free route/headings and exact active inventory are registry/profile checked. |
 | Integration guides | `docs/05.operations/guides/README.md#item-index` plus `sdlc/guide`. | Eight tracked guides are profile/link/index checked; live usability remains `DEFER`. |
 | Guide Type / Diátaxis | Spec 052 `#recorded-documentation-gap-disposition` owns DOC-G1 through DOC-G3; the WDTC Plan `#task-14-wdtc-013--disposition-the-documentation-gaps` owns execution. | `Guide Type` heading, three-value template prompt, and eight `how-to` guides exist; registry enum enforcement and recorded deliberate absences remain queued in WORK-013. |
 | Generated documents | `docs/90.references/llm-wiki/wiki-index.md` plus `scripts/generate-llm-wiki-index.sh#main`. | `exception/generated-record`; update canonical sources and regenerate, never hand-edit. |
@@ -147,12 +147,12 @@ the closed pack vocabularies.
 - **Scope**: PRD, ARD, ADR, Spec, Plan, Task, Guide, Incident, Postmortem, Policy, and Runbook route/form/lifecycle/validator ownership.
 - **Expected state**: every existing requested family has one source profile, route, physical template, source-linked template profile, lifecycle projection, relationship role, stage index, and deterministic validator route.
 - **Observed state**: all eleven families satisfy that shape; the deterministic proof returned `families=11/11 templates=11/11 lifecycles=11/11`, and the registry owns six separate README profiles.
-- **Evidence**: `docs/99.templates/support/document-profiles.json#profiles`; `docs/99.templates/support/document-profiles.json#documentContracts.lifecycleContracts`; `docs/99.templates/support/document-profiles.json#documentContracts.roleDecisions`; `docs/99.templates/support/sdlc-governance.md#sdlc-profile-handoff`; `docs/00.agent-governance/rules/stage-authoring-matrix.md#current-contract`; `scripts/validate-document-contract-registry.py#_assert_template_source_parity`; `scripts/validate-document-lifecycle.py#main`.
+- **Evidence**: `docs/99.templates/registry.json#profiles`; `docs/99.templates/registry.json#documentContracts.lifecycleContracts`; `docs/99.templates/registry.json#documentContracts.roleDecisions`; `docs/99.templates/support/sdlc-governance.md#sdlc-profile-handoff`; `docs/00.agent-governance/rules/stage-authoring-matrix.md#current-contract`; `scripts/validate-document-contract-registry.py#_assert_template_source_parity`; `scripts/validate-document-lifecycle.py#main`.
 - **Evidence depth**: `repository-static`.
 - **Verdict**: `Aligned`.
 - **Impact**: authors and validators resolve the same route, form, lifecycle, and relationship owners for the eleven implemented families.
 - **Disposition**: `Keep`.
-- **Canonical owner**: `docs/99.templates/support/document-profiles.json`; Stage 01-05 documents retain topic truth and READMEs remain human indexes.
+- **Canonical owner**: `docs/99.templates/registry.json`; Stage 01-05 documents retain topic truth and READMEs remain human indexes.
 - **Verification**: existing-family proof plus registry self-test/strict, Markdown self-test/strict, lifecycle self-test/snapshot, template/source parity, and strict links.
 - **Uncertainty**: structural alignment does not prove every document's topic semantics, reader usefulness, hosted result, or live procedure.
 - **Blocker**: none at repository-static contract depth.
@@ -163,7 +163,7 @@ the closed pack vocabularies.
 - **Scope**: broader requested Release record versus the narrower release-notes type, including route, profile, template, lifecycle, relationship role, index, validator admission, and deliberate-absence ownership.
 - **Expected state**: the broad request is mapped explicitly to an existing evidence family or distinguished from the approved DOC-G5 decision not to create release notes; queued implementation records the negative decision without reopening it.
 - **Observed state**: the absence probe remains valid at zero profile/route, template, lifecycle, and relationship-role entries. Approved Spec 052 DOC-G5 already decides not to create a release-notes type, and its Plan gives WORK-013 the deliberate-absence text plus conditional future-instance route; WORK-013 is still queued. Neither owner explicitly maps the broader `Release` request to that narrower decision or another existing record.
-- **Evidence**: `docs/03.specs/052-document-taxonomy-consolidation/spec.md#recorded-documentation-gap-disposition`; `docs/04.execution/plans/2026-08-07-document-taxonomy-consolidation.md#task-14-wdtc-013--disposition-the-documentation-gaps`; `docs/04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md#task-table`; `docs/99.templates/support/document-profiles.json#profiles`; `docs/99.templates/support/document-profiles.json#documentContracts.lifecycleContracts`; `docs/99.templates/support/document-profiles.json#documentContracts.roleDecisions`; `docs/99.templates/README.md#form-family-inventory`; `docs/99.templates/templates/README.md#item-index`.
+- **Evidence**: `docs/03.specs/052-document-taxonomy-consolidation/spec.md#recorded-documentation-gap-disposition`; `docs/04.execution/plans/2026-08-07-document-taxonomy-consolidation.md#task-14-wdtc-013--disposition-the-documentation-gaps`; `docs/04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md#task-table`; `docs/99.templates/registry.json#profiles`; `docs/99.templates/registry.json#documentContracts.lifecycleContracts`; `docs/99.templates/registry.json#documentContracts.roleDecisions`; `docs/99.templates/README.md#form-family-inventory`; `docs/99.templates/templates/README.md#item-index`.
 - **Evidence depth**: `repository-static`.
 - **Verdict**: `Gap`.
 - **Impact**: release notes are correctly blocked from ad hoc creation, but the broader audit request cannot yet resolve deterministically to that negative decision or an existing release-evidence owner.
@@ -179,7 +179,7 @@ the closed pack vocabularies.
 - **Scope**: approved Guide Type classification for the eight current guides and the related no-tutorial/no-explanation route decisions.
 - **Expected state**: DOC-G1's `how-to`, `tutorial`, `concept` enum is enforced in the `sdlc/guide` registry contract and template, all eight guides validate after migration, and DOC-G2/DOC-G3 deliberate absences are recorded without new routes.
 - **Observed state**: Spec 052 is active and approved; DOC-G1 already decides the enum. The registry requires a `Guide Type` heading, the template names all three values, and all eight guides declare `how-to`, but the registry lacks deterministic enum enforcement. The WDTC Plan assigns that enforcement, all-eight-guide validation, and deliberate-absence text to WORK-013, which remains queued.
-- **Evidence**: `docs/03.specs/052-document-taxonomy-consolidation/spec.md#recorded-documentation-gap-disposition`; `docs/04.execution/plans/2026-08-07-document-taxonomy-consolidation.md#task-14-wdtc-013--disposition-the-documentation-gaps`; `docs/04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md#task-table`; `docs/99.templates/support/document-profiles.json#profiles[id=sdlc/guide]`; `docs/99.templates/templates/sdlc/operations/guide.template.md#guide-type`; `docs/05.operations/guides/README.md#item-index`.
+- **Evidence**: `docs/03.specs/052-document-taxonomy-consolidation/spec.md#recorded-documentation-gap-disposition`; `docs/04.execution/plans/2026-08-07-document-taxonomy-consolidation.md#task-14-wdtc-013--disposition-the-documentation-gaps`; `docs/04.execution/tasks/2026-08-07-document-taxonomy-consolidation.md#task-table`; `docs/99.templates/registry.json#profiles[id=sdlc/guide]`; `docs/99.templates/templates/operations/guide.template.md#guide-type`; `docs/05.operations/guides/README.md#item-index`.
 - **Evidence depth**: `repository-static`.
 - **Verdict**: `Partial`.
 - **Impact**: guide authors have the intended values and current documents are consistent, but an invalid future Guide Type value is not deterministically rejected.
@@ -195,7 +195,7 @@ the closed pack vocabularies.
 - **Scope**: eight numbered Stage 05 guides, their collection index, route, form, lifecycle, headings, status/date projection, and links.
 - **Expected state**: guides conform to the repository-static contract, while command success, reader completion, and live safety require separately authorized evidence.
 - **Observed state**: the collection indexes eight guides; the deterministic proof returned `guides=8`, and registry/profile/link checks cover their structural contracts. WGIA-003 performed no live guide execution or usability rehearsal.
-- **Evidence**: `docs/05.operations/guides/README.md#item-index`; `docs/05.operations/guides/README.md#documentation-standards`; `docs/05.operations/guides/README.md#문서-인덱스`; `docs/99.templates/support/document-profiles.json#profiles[id=sdlc/guide]`; `docs/99.templates/templates/sdlc/operations/guide.template.md#topic-name-guide`; `scripts/validate-markdown-profiles.py#main`; `scripts/validate-links-and-owners.py#main`.
+- **Evidence**: `docs/05.operations/guides/README.md#item-index`; `docs/05.operations/guides/README.md#documentation-standards`; `docs/05.operations/guides/README.md#문서-인덱스`; `docs/99.templates/registry.json#profiles[id=sdlc/guide]`; `docs/99.templates/templates/operations/guide.template.md#topic-name-guide`; `scripts/validate-markdown-profiles.py#main`; `scripts/validate-links-and-owners.py#main`.
 - **Evidence depth**: `repository-static`.
 - **Verdict**: `Partial`.
 - **Impact**: guides are admissible and discoverable, but static PASS must not be reported as successful operator execution or safe live behavior.
@@ -212,8 +212,8 @@ Source roles are closed to `policy owner`, `machine owner`, `human index`,
 
 | Source ID | Source role | Evidence at the observation commit | Use |
 | --- | --- | --- | --- |
-| SRC-WGA-DOC-001 | machine owner | `docs/99.templates/support/document-profiles.json#profiles`; `docs/99.templates/support/document-profiles.json#documentContracts.lifecycleContracts`; `docs/99.templates/support/document-profiles.json#documentContracts.roleDecisions`; `docs/99.templates/support/document-profiles.schema.json#properties.profiles` | Exact route, form, lifecycle, and relationship contract. |
-| SRC-WGA-DOC-002 | policy owner | `docs/03.specs/052-document-taxonomy-consolidation/spec.md#recorded-documentation-gap-disposition`; `docs/99.templates/support/template-routing.md#exact-one-profile-procedure`; `docs/99.templates/support/sdlc-governance.md#sdlc-profile-handoff`; `docs/00.agent-governance/rules/stage-authoring-matrix.md#current-contract` | Approved documentation-gap decisions plus selection, stage, and lifecycle procedure. |
+| SRC-WGA-DOC-001 | machine owner | `docs/99.templates/registry.json#profiles`; `docs/99.templates/registry.json#documentContracts.lifecycleContracts`; `docs/99.templates/registry.json#documentContracts.roleDecisions`; `docs/99.templates/support/document-profiles.schema.json#properties.profiles` | Exact route, form, lifecycle, and relationship contract. |
+| SRC-WGA-DOC-002 | policy owner | `docs/03.specs/052-document-taxonomy-consolidation/spec.md#recorded-documentation-gap-disposition`; `docs/99.templates/README.md#exact-one-profile-procedure`; `docs/99.templates/support/sdlc-governance.md#sdlc-profile-handoff`; `docs/00.agent-governance/rules/stage-authoring-matrix.md#current-contract` | Approved documentation-gap decisions plus selection, stage, and lifecycle procedure. |
 | SRC-WGA-DOC-003 | human index | `docs/README.md#document-index`; `docs/03.specs/README.md#current-spec-index`; `docs/05.operations/guides/README.md#item-index`; `docs/99.templates/templates/README.md#item-index` | Reader routing and inventory entrypoints. |
 | SRC-WGA-DOC-004 | evidence producer | `scripts/validate-document-contract-registry.py#main`; `scripts/validate-markdown-profiles.py#main`; `scripts/validate-document-lifecycle.py#main`; `scripts/validate-links-and-owners.py#main`; `tests/fixtures/document-contracts/template-source-parity.json#cases` | Deterministic local conformance and negative template/source-parity fixtures. |
 | SRC-WGA-DOC-005 | historical snapshot | `docs/90.references/research/2026-08-08-wer/documentation-architecture-and-diataxis.md#diátaxis-baseline`; `docs/90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md#document-family-contract-matrix` | Dated descriptive comparison only; not an active schema owner. |
@@ -240,6 +240,6 @@ Source roles are closed to `policy owner`, `machine owner`, `human index`,
 
 - [Pack Index](README.md)
 - [Spec 054](../../../03.specs/0055-workspace-governance-audit-and-remediation/spec.md)
-- [Document Profile Registry](../../../99.templates/support/document-profiles.json)
+- [Document Profile Registry](../../../99.templates/registry.json)
 - [Template Routing Contract](../../../99.templates/README.md)
 - [Implementation Task](../../../03.specs/0055-workspace-governance-audit-and-remediation/README.md)

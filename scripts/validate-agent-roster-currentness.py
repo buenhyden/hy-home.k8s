@@ -13,9 +13,7 @@ from typing import Any
 HARNESS_CONTRACT_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/harness-contract.json"
 )
-FIXTURE_PATH = PurePosixPath(
-    "tests/fixtures/agent-roster-currentness.json"
-)
+FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-roster-currentness.json")
 CONTRACT_VERSION = "1.0.0"
 CONSUMER_ID = "roster-currentness-validator"
 ALLOWED_EXTENSIONS = frozenset({".md", ".toml"})
@@ -25,7 +23,7 @@ REQUIRED_OWNER_LINKS = {
     "docs/00.agent-governance/rules/document-authoring.md": "rules/document-authoring.md",
     "docs/03.specs/0024-observability-and-network-review-agents/README.md": "../03.specs/0024-observability-and-network-review-agents/README.md",
     "docs/03.specs/0025-governance-owner-and-roster-currentness/README.md": "../03.specs/0025-governance-owner-and-roster-currentness/README.md",
-    "docs/99.templates/support/document-contract.md": "../99.templates/support/document-contract.md",
+    "docs/99.templates/README.md": "../99.templates/README.md",
 }
 STALE_COUNT_VARIANTS = (
     "8 local agents",
@@ -39,7 +37,9 @@ STALE_COUNT_VARIANTS = (
     "3 surfaces",
     "30 adapters",
 )
-VALID_ROSTER_PHRASE = "Twelve shared local role stems / forty-eight tracked role adapters"
+VALID_ROSTER_PHRASE = (
+    "Twelve shared local role stems / forty-eight tracked role adapters"
+)
 VALID_ROSTER_PHRASE_ERROR = (
     "harness catalog canonical roster phrase must appear exactly once"
 )
@@ -65,15 +65,17 @@ def duplicate_owner_link_error(label: str, target: str) -> str:
     )
 
 
-REQUIRED_CASE_NAMES = frozenset({
-    "valid",
-    "missing-role",
-    "surface-mismatch",
-    "stale-count",
-    "bad-owner",
-    "duplicate-owner",
-    "missing-current-phrase",
-})
+REQUIRED_CASE_NAMES = frozenset(
+    {
+        "valid",
+        "missing-role",
+        "surface-mismatch",
+        "stale-count",
+        "bad-owner",
+        "duplicate-owner",
+        "missing-current-phrase",
+    }
+)
 
 
 def normalize_markdown_label(label: str) -> str:
@@ -88,9 +90,7 @@ def load_harness_contract(root: Path) -> dict[str, Any]:
         HARNESS_CONTRACT_PATH,
         final_kind="file",
     )
-    value = json.loads(
-        contract_path.read_text(encoding="utf-8")
-    )
+    value = json.loads(contract_path.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
         raise ValueError("harness contract root must be an object")
     return value
@@ -138,22 +138,16 @@ def safe_repo_path(
         except OSError as exc:
             raise ValueError(f"{raw}: {exc}") from exc
         if stat.S_ISLNK(mode):
-            raise ValueError(
-                f"{raw}: symlink path component {segment!r} is forbidden"
-            )
+            raise ValueError(f"{raw}: symlink path component {segment!r} is forbidden")
         is_final = index == len(segments) - 1
         if not is_final and not stat.S_ISDIR(mode):
             raise ValueError(f"{raw}: parent component {segment!r} is not a directory")
         if is_final:
             expected = (
-                stat.S_ISREG(mode)
-                if final_kind == "file"
-                else stat.S_ISDIR(mode)
+                stat.S_ISREG(mode) if final_kind == "file" else stat.S_ISDIR(mode)
             )
             if not expected:
-                raise ValueError(
-                    f"{raw}: expected a regular non-symlink {final_kind}"
-                )
+                raise ValueError(f"{raw}: expected a regular non-symlink {final_kind}")
     try:
         resolved = candidate.resolve(strict=True)
         resolved.relative_to(strict_root)
@@ -173,7 +167,8 @@ def select_current_harness(contract: dict[str, Any]) -> HarnessRoster:
     if not isinstance(consumers, list):
         raise ValueError("harness consumers must be a list")
     selected = [
-        consumer for consumer in consumers
+        consumer
+        for consumer in consumers
         if isinstance(consumer, dict) and consumer.get("id") == CONSUMER_ID
     ]
     if len(selected) != 1 or (
@@ -181,9 +176,7 @@ def select_current_harness(contract: dict[str, Any]) -> HarnessRoster:
         selected[0].get("selectedVersion"),
         selected[0].get("migrationState"),
     ) != ("harness-contract", CONTRACT_VERSION, "current"):
-        raise ValueError(
-            "roster validator must select harness-contract/1.0.0/current"
-        )
+        raise ValueError("roster validator must select harness-contract/1.0.0/current")
 
     inventory = contract.get("currentInventory")
     if not isinstance(inventory, dict) or inventory.get("state") != "current":
@@ -233,8 +226,7 @@ def select_current_harness(contract: dict[str, Any]) -> HarnessRoster:
         (
             role_id,
             surface_id,
-            locations[surface_id][0]
-            / f"{role_id}{locations[surface_id][1]}",
+            locations[surface_id][0] / f"{role_id}{locations[surface_id][1]}",
         )
         for role_id in role_ids
         for surface_id in surface_ids
@@ -276,45 +268,55 @@ def fixture_case_schema(roster: HarnessRoster) -> dict[str, dict[str, Any]]:
         },
         "missing-role": {
             "mutation": "remove-network-from-claude",
-            "expected_errors": frozenset({
-                "claude roster missing expected stems: network-reviewer",
-                inventory_error,
-            }),
+            "expected_errors": frozenset(
+                {
+                    "claude roster missing expected stems: network-reviewer",
+                    inventory_error,
+                }
+            ),
             "catalog_variants": None,
         },
         "surface-mismatch": {
             "mutation": "add-extra-to-codex",
-            "expected_errors": frozenset({
-                "codex roster has unexpected stems: extra-reviewer",
-                inventory_error,
-            }),
+            "expected_errors": frozenset(
+                {
+                    "codex roster has unexpected stems: extra-reviewer",
+                    inventory_error,
+                }
+            ),
             "catalog_variants": None,
         },
         "stale-count": {
             "mutation": "check-stale-count-variants",
-            "expected_errors": frozenset({
-                "harness catalog contains stale pre-12-role currentness prose",
-            }),
+            "expected_errors": frozenset(
+                {
+                    "harness catalog contains stale pre-12-role currentness prose",
+                }
+            ),
             "catalog_variants": STALE_COUNT_VARIANTS,
         },
         "bad-owner": {
             "mutation": "misdirect-bootstrap-owner",
-            "expected_errors": frozenset({
-                missing_owner_link_error(
-                    "docs/00.agent-governance/rules/bootstrap.md",
-                    "rules/bootstrap.md",
-                ),
-            }),
+            "expected_errors": frozenset(
+                {
+                    missing_owner_link_error(
+                        "docs/00.agent-governance/rules/bootstrap.md",
+                        "rules/bootstrap.md",
+                    ),
+                }
+            ),
             "catalog_variants": None,
         },
         "duplicate-owner": {
             "mutation": "duplicate-document-authoring-owner",
-            "expected_errors": frozenset({
-                duplicate_owner_link_error(
-                    "docs/00.agent-governance/rules/document-authoring.md",
-                    "rules/document-authoring.md",
-                ),
-            }),
+            "expected_errors": frozenset(
+                {
+                    duplicate_owner_link_error(
+                        "docs/00.agent-governance/rules/document-authoring.md",
+                        "rules/document-authoring.md",
+                    ),
+                }
+            ),
             "catalog_variants": None,
         },
         "missing-current-phrase": {
@@ -337,7 +339,9 @@ def validate_contract(
         missing = sorted(expected_stems - stems)
         extra = sorted(stems - expected_stems)
         if missing:
-            errors.append(f"{surface} roster missing expected stems: {', '.join(missing)}")
+            errors.append(
+                f"{surface} roster missing expected stems: {', '.join(missing)}"
+            )
         if extra:
             errors.append(f"{surface} roster has unexpected stems: {', '.join(extra)}")
     expected_projection_count = len(roster.projection_paths)
@@ -392,9 +396,7 @@ def repository_inputs(
     return surfaces, catalog
 
 
-def run_self_test(
-    root: Path, roster: HarnessRoster
-) -> list[str]:
+def run_self_test(root: Path, roster: HarnessRoster) -> list[str]:
     fixture_path = safe_repo_path(
         root,
         FIXTURE_PATH,
@@ -404,9 +406,7 @@ def run_self_test(
     failures: list[str] = []
     expected_stems = frozenset(roster.role_ids)
     if frozenset(data["expected_stems"]) != expected_stems:
-        failures.append(
-            "fixture expected_stems does not match harness current roleIds"
-        )
+        failures.append("fixture expected_stems does not match harness current roleIds")
     fixture_owner_links = data.get("expected_owner_links")
     if not isinstance(fixture_owner_links, dict) or not all(
         isinstance(label, str) and isinstance(target, str)
@@ -420,7 +420,10 @@ def run_self_test(
     cases = data["cases"]
     case_schema = fixture_case_schema(roster)
     case_names = [case["name"] for case in cases]
-    if len(case_names) != len(REQUIRED_CASE_NAMES) or set(case_names) != REQUIRED_CASE_NAMES:
+    if (
+        len(case_names) != len(REQUIRED_CASE_NAMES)
+        or set(case_names) != REQUIRED_CASE_NAMES
+    ):
         failures.append(
             "fixture case names must be exactly: "
             + ", ".join(sorted(REQUIRED_CASE_NAMES))
@@ -432,8 +435,7 @@ def run_self_test(
         schema_errors: list[str] = []
         if case.get("mutation") != schema["mutation"]:
             schema_errors.append(
-                f"mutation must be {schema['mutation']!r}, got "
-                f"{case.get('mutation')!r}"
+                f"mutation must be {schema['mutation']!r}, got {case.get('mutation')!r}"
             )
         fixture_expected_errors = case.get("expected_errors")
         if not isinstance(fixture_expected_errors, list) or not all(
@@ -462,14 +464,20 @@ def run_self_test(
             )
     if failures:
         return failures
-    base_catalog = VALID_ROSTER_PHRASE + "\n" + "\n".join(
-        f"[`{label}`]({target})" for label, target in REQUIRED_OWNER_LINKS.items()
+    base_catalog = (
+        VALID_ROSTER_PHRASE
+        + "\n"
+        + "\n".join(
+            f"[`{label}`]({target})" for label, target in REQUIRED_OWNER_LINKS.items()
+        )
     )
-    probe_surfaces = {
-        name: set(expected_stems) for name in roster.surface_ids
-    }
-    image_catalog = VALID_ROSTER_PHRASE + "\n" + "\n".join(
-        f"![`{label}`]({target})" for label, target in REQUIRED_OWNER_LINKS.items()
+    probe_surfaces = {name: set(expected_stems) for name in roster.surface_ids}
+    image_catalog = (
+        VALID_ROSTER_PHRASE
+        + "\n"
+        + "\n".join(
+            f"![`{label}`]({target})" for label, target in REQUIRED_OWNER_LINKS.items()
+        )
     )
     image_errors = set(validate_contract(probe_surfaces, image_catalog, roster))
     expected_image_errors = {
@@ -492,9 +500,7 @@ def run_self_test(
         ("trailing backtick", f"[{bootstrap_label}`]({bootstrap_target})"),
     ):
         probe_catalog = base_catalog.replace(valid_bootstrap_link, malformed_link, 1)
-        probe_errors = set(
-            validate_contract(probe_surfaces, probe_catalog, roster)
-        )
+        probe_errors = set(validate_contract(probe_surfaces, probe_catalog, roster))
         if probe_errors != expected_bootstrap_error:
             failures.append(
                 f"bootstrap owner-link {probe_name} probe: expected exact errors "
@@ -514,9 +520,7 @@ def run_self_test(
             f"{sorted(duplicate_phrase_errors)!r}"
         )
     for case in cases:
-        surfaces = {
-            name: set(expected_stems) for name in roster.surface_ids
-        }
+        surfaces = {name: set(expected_stems) for name in roster.surface_ids}
         catalog = base_catalog
         mutation = case["mutation"]
         if mutation == "remove-network-from-claude":

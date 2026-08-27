@@ -146,7 +146,7 @@ context/validation wiring; and Gemini CLI `.gemini/**` as absent/`DEFER`.
 - Create: `docs/03.specs/0015-agent-governance-contract-normalization/README.md#task-records`
 - Modify: `docs/03.specs/0015-agent-governance-contract-normalization/README.md#task-records`
 - Modify: `docs/00.agent-governance/memory/progress.md`
-- Read: `docs/99.templates/templates/sdlc/execution/task.template.md`
+- Read: `docs/99.templates/templates/specs/task.template.md`
 - Read: `docs/03.specs/0015-agent-governance-contract-normalization/spec.md`
 
 - [ ] **Step 1: Confirm branch and clean state**
@@ -165,7 +165,7 @@ with only intentional plan-task work after this plan commit.
 Run:
 
 ```bash
-sed -n '1,260p' docs/99.templates/templates/sdlc/execution/task.template.md
+sed -n '1,260p' docs/99.templates/templates/specs/task.template.md
 ```
 
 Expected: output includes `type: sdlc/task`, `## Overview`, `## Validation
@@ -1176,11 +1176,11 @@ Checked on 2026-07-04:
 - **Spec**: [../../03.specs/0015-agent-governance-contract-normalization/spec.md](spec.md)
 - **Task**: [../tasks/2026-07-04-agent-governance-contract-normalization.md](README.md#task-records)
 - **Governance Hub**: [../../00.agent-governance/README.md](../../00.agent-governance/README.md)
-- **Common Governance**: [../../00.agent-governance/common-governance.md](../../00.agent-governance/common-governance.md)
+- **Common Governance**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Harness Catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Subagent Protocol**: [../../00.agent-governance/subagent-protocol.md](../../00.agent-governance/subagent-protocol.md)
 - **Approval Boundaries**: [../../00.agent-governance/rules/approval-boundaries.md](../../00.agent-governance/rules/approval-boundaries.md)
-- **Plan Template**: [../../99.templates/templates/sdlc/execution/plan.template.md](../../99.templates/templates/sdlc/execution/plan.template.md)
+- **Plan Template**: [../../99.templates/templates/specs/plan.template.md](../../99.templates/templates/specs/plan.template.md)
 
 ### Legacy Task traceability
 
@@ -1189,4 +1189,4 @@ Checked on 2026-07-04:
 - **Plan**:
   [../plans/2026-07-04-agent-governance-contract-normalization.md](plan.md)
 - **Task Template**:
-  [../../99.templates/templates/sdlc/execution/task.template.md](../../99.templates/templates/sdlc/execution/task.template.md)
+  [../../99.templates/templates/specs/task.template.md](../../99.templates/templates/specs/task.template.md)

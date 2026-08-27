@@ -237,7 +237,7 @@ observed repository and SHA.
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-0007-FR-0003](../../01.requirements/0007-repository-delivery-and-platform-assurance.md#functional-requirements) | VAL-GRCE-001 | Closed schema and mutation fixtures prove a reference-only projection owner. |
 | N/A — REQ-0007-FR-0003 shares the PRD-0007 source linked above. | VAL-GRCE-002 | Agent surface fixtures prove complete label and explicit owner coverage. |

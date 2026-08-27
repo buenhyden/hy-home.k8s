@@ -446,17 +446,10 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "transitionLifecycleContracts",
         "lifecycleDomains",
         "programs"
       ],
       "properties": {
-        "transitionLifecycleContracts": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {"$ref": "#/$defs/lifecycleContract"}
-        },
         "lifecycleDomains": {
           "type": "array",
           "minItems": 1,
@@ -471,34 +464,6 @@
           "items": {
             "$ref": "#/$defs/program"
           }
-        }
-      }
-    },
-    "lifecycleEdge": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["from", "to", "predicateId"],
-      "properties": {
-        "from": {"type": "string", "minLength": 1},
-        "to": {"type": "string", "minLength": 1},
-        "predicateId": {
-          "type": "string",
-          "pattern": "^[a-z0-9][a-z0-9-]*$"
-        }
-      }
-    },
-    "lifecycleContract": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["id", "profileIds", "terminalStates", "edges"],
-      "properties": {
-        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
-        "profileIds": {"$ref": "#/$defs/nonEmptyStringArray"},
-        "terminalStates": {"$ref": "#/$defs/stringArray"},
-        "edges": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": {"$ref": "#/$defs/lifecycleEdge"}
         }
       }
     },

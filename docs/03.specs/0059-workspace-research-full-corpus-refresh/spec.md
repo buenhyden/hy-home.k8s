@@ -82,7 +82,7 @@ No separate PRD or Architecture Description is required or part of this standalo
 - Registration of new `SRC-WERPC-078` and later source rows and
   `CLM-WERPC-011-NN` claim rows.
 - Lifecycle registration of Spec 058: the `standaloneExecutions` entry in
-  `docs/99.templates/support/document-profiles.json`, the lineage row in
+  `docs/99.templates/registry.json`, the lineage row in
   [ADR 0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md),
   the Stage 03 and Stage 04 index rows, and the
   `POST_CLOSURE_SPEC_AUTHORITY_PATHS` allowlist entry in

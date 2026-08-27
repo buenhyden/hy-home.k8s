@@ -192,7 +192,7 @@ curl -ksS -o /dev/null -w '%{http_code}' https://rollouts.127.0.0.1.nip.io/
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-0001-FR-0001](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) | VAL-SPC-001 | `scripts/validate-gitops-structure.sh` confirms the root-owned `platform-rollouts` Application. |
 | [REQ-0001-FR-0001](../../01.requirements/0001-argo-rollouts-progressive-delivery.md) | VAL-SPC-002 | `infrastructure/tests/verify-contracts-static.sh` checks the chart repository, namespace, and platform AppProject contract. |

@@ -64,6 +64,11 @@ EXPECTED_LIFECYCLE_TRANSITIONS = {
         ("draft", "active"), ("draft", "withdrawn"),
         ("active", "superseded"), ("active", "retired"),
     },
+    "architecture-description": {
+        ("draft", "active"), ("draft", "accepted"),
+        ("active", "superseded"), ("active", "retired"),
+        ("accepted", "superseded"), ("accepted", "retired"),
+    },
     "adr": {
         ("proposed", "accepted"), ("proposed", "rejected"),
         ("accepted", "superseded"),

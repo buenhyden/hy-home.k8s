@@ -394,8 +394,8 @@ Expected: commit succeeds.
 - Modify: `docs/99.templates/support/documentation-contract.md`
 - Modify: `docs/99.templates/support/sdlc-governance.md`
 - Modify: `docs/99.templates/support/common-documentation-governance.md`
-- Modify: `docs/99.templates/support/frontmatter-schema.md`
-- Modify: `docs/99.templates/support/template-routing.md`
+- Modify: `docs/99.templates/contracts/frontmatter.schema.json`
+- Modify: `docs/99.templates/README.md`
 - Modify: `docs/99.templates/support/legacy-cleanup-rules.md`
 - Modify: `docs/99.templates/support/README.md`
 - Modify: `scripts/validate-repo-quality-gates.sh`
@@ -460,10 +460,10 @@ Expected: compatibility and legacy gate PASS.
 
 - Modify: all Markdown forms under `docs/99.templates/templates/common/` except the README template
 - Modify: all Markdown forms under `docs/99.templates/templates/sdlc/`
-- Modify: `docs/99.templates/templates/common/progress.template.md` as an append fragment, not a whole-document form
+- Modify: `docs/99.templates/templates/governance/progress.template.md` as an append fragment, not a whole-document form
 - Create: `docs/99.templates/templates/common/governance-reference.template.md`
 - Create: `docs/99.templates/templates/common/template-support.template.md`
-- Modify: `docs/99.templates/support/document-profiles.json`
+- Modify: `docs/99.templates/registry.json`
 - Modify: `scripts/validate-document-contract-registry.py` fixed profile IDs and
   semantic digest; the registry library remains out of scope
 - Modify: `tests/fixtures/document-contracts/registry-cases.json` profile and
@@ -516,7 +516,7 @@ the form and row together.
 ```bash
 python3 - <<'PY'
 from pathlib import Path
-task = Path('docs/99.templates/templates/sdlc/execution/task.template.md').read_text()
+task = Path('docs/99.templates/templates/specs/task.template.md').read_text()
 assert '## Approval and Safety Boundaries' in task
 assert '## Working Rules' not in task
 assert '## Suggested Types' not in task
@@ -569,7 +569,7 @@ import json
 import subprocess
 from pathlib import Path
 fixture = json.loads(Path('tests/fixtures/document-contracts/template-compatibility.json').read_text())
-registry = json.loads(Path('docs/99.templates/support/document-profiles.json').read_text())
+registry = json.loads(Path('docs/99.templates/registry.json').read_text())
 registry_by_id = {profile['id']: profile for profile in registry['profiles']}
 rows = fixture['canonicalFormCoverage']
 profiles = [row['profile'] for row in rows]
@@ -638,7 +638,7 @@ Expected: all PASS and compatibility debt count equals the fixture baseline.
 
 ```bash
 git diff --check
-git add docs/99.templates/templates/common docs/99.templates/templates/sdlc docs/99.templates/support/document-profiles.json tests/fixtures/document-contracts/template-compatibility.json
+git add docs/99.templates/templates/common docs/99.templates/templates/sdlc docs/99.templates/registry.json tests/fixtures/document-contracts/template-compatibility.json
 git commit -m "refactor(templates): normalize document forms"
 ```
 
@@ -656,7 +656,7 @@ Expected: commit succeeds.
 - Modify: `docs/00.agent-governance/rules/documentation-protocol.md`
 - Modify: `docs/00.agent-governance/rules/document-stage-routing.md`
 - Modify: `docs/00.agent-governance/rules/stage-authoring-matrix.md`
-- Modify: `docs/99.templates/support/document-profiles.json`
+- Modify: `docs/99.templates/registry.json`
 - Modify: `scripts/validate-repo-quality-gates.sh`
 - Modify: `tests/fixtures/document-contracts/template-compatibility.json`
 - Modify: `scripts/validate-document-contract-registry.py`

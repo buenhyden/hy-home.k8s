@@ -253,7 +253,7 @@ isolated environment described above, not an unreviewed ambient configuration.
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-0007-FR-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md#functional-requirements) | VAL-EIVQ-001 | Closed-command orchestrator and mutation fixtures prove execution safety. |
 | N/A — REQ-0007-FR-0007 shares the PRD-0007 source linked above. | VAL-EIVQ-002 | Native Terraform commands prove non-deploy configuration semantics. |

@@ -164,7 +164,7 @@ cleanup.
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-0006-FR-0003](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-CCPC-001 | Final stale-route and compatibility scans report zero. |
 | N/A — REQ-0006-FR-0001 shares the PRD-0006 source linked in VAL-CCPC-001 | VAL-CCPC-002 | Strict registry, profile, transition, owner, and link gates pass. |

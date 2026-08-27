@@ -19,7 +19,7 @@
     "docs/00.agent-governance/rules/document-authoring.md": "rules/document-authoring.md",
     "docs/03.specs/0024-observability-and-network-review-agents/README.md": "../03.specs/0024-observability-and-network-review-agents/README.md",
     "docs/03.specs/0025-governance-owner-and-roster-currentness/README.md": "../03.specs/0025-governance-owner-and-roster-currentness/README.md",
-    "docs/99.templates/support/document-contract.md": "../99.templates/support/document-contract.md"
+    "docs/99.templates/README.md": "../99.templates/README.md"
   },
   "cases": [
     {"name": "valid", "mutation": "none", "expected_errors": []},

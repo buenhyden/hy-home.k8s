@@ -163,4 +163,4 @@ Links in this README are relative to `docs/00.agent-governance/`.
 
 - Add a new execution rule under `rules/`.
 - Add a provider note under `providers/`.
-- Add work progress and reusable memory under `memory/progress.md` using `docs/99.templates/templates/common/progress.template.md`.
+- Add work progress and reusable memory under `memory/progress.md` using `docs/99.templates/templates/governance/progress.template.md`.

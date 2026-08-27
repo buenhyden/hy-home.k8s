@@ -254,7 +254,7 @@ now part of the repository-static aggregate lane.
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-0003-FR-0010](../../01.requirements/0003-workspace-agent-governance-platform.md#functional-requirements) | VAL-SAGC-002 | Contract/schema negative fixtures prove the closed machine contract. |
 | N/A — VAL-SAGC-003 shares the PRD-0003 source linked in VAL-SAGC-002 | VAL-SAGC-003 | Routing-owner comparison proves validation routing remains separate. |

@@ -52,7 +52,7 @@ closure commit contains exactly
 `docs/03.specs/0039-github-ci-qa-evidence/plan.md`,
 `docs/03.specs/0039-github-ci-qa-evidence/README.md#task-records`,
 `docs/03.specs/0039-github-ci-qa-evidence/README.md#task-records`, and
-`docs/99.templates/support/document-profiles.json`. Those paths atomically
+`docs/99.templates/registry.json`. Those paths atomically
 record the terminal Spec/Plan/Task and index state plus the registry-owned
 PRD-0006 program-lineage transition for Spec 039 while Spec 040 remains
 `active`.
@@ -222,7 +222,7 @@ GitHub's workflow, security, and artifact-retention guidance:
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-0006-FR-0010](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-GCQE-001 | Workflow fixtures assert entry and aggregate topology. |
 | N/A — REQ-0006-FR-0010 / VAL-GCQE-002 shares the PRD-0006 source linked in VAL-GCQE-001 | VAL-GCQE-002 | Selector fixtures cover every contract and migration path class. |

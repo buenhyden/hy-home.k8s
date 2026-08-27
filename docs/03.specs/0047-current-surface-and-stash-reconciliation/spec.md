@@ -232,7 +232,7 @@ or `git stash drop` in this tranche.
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-0007-FR-0001](../../01.requirements/0007-repository-delivery-and-platform-assurance.md#functional-requirements) | VAL-CSASR-001 | Tracked inventory and current disposition matrix prove complete scoped ownership. |
 | N/A — REQ-0007-FR-0001 shares the PRD-0007 source linked above. | VAL-CSASR-002 | Current evidence classification reconciles every dated audit finding. |

@@ -241,7 +241,7 @@ invoke a provider, query the GitHub remote, or inspect a cluster.
 exactly eight numbered Guide instances (`0001`, `0002`, `0003`, `0006`,
 `0007`, `0008`, `0009`, `0010`), each still declaring `` `how-to` `` under
 its `## Guide Type` heading. `git diff --stat a5d2dfbb HEAD --
-docs/05.operations/guides/ docs/99.templates/support/document-profiles.json`
+docs/05.operations/guides/ docs/99.templates/registry.json`
 shows no change under `docs/05.operations/guides/`; the profiles file itself
 appears in the diff, but a parsed-JSON key-level comparison against the
 `a5d2dfbb` baseline shows only the `standaloneExecutions` key differs (this
@@ -298,6 +298,6 @@ promotion. New source registered: `SRC-WERPC-076`. New claim registered:
 
 - [SDLC document contracts](spec-driven-sdlc-and-document-contracts.md)
 - [LLM-WIKI routing](llm-wiki-and-knowledge-routing.md)
-- [Template routing](../../../99.templates/support/template-routing.md)
-- [Document profiles](../../../99.templates/support/document-profiles.json)
+- [Template routing](../../../99.templates/README.md)
+- [Document profiles](../../../99.templates/registry.json)
 - [Source ledger](source-coverage-and-migration-ledger.md)

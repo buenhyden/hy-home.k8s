@@ -224,7 +224,7 @@ Requirements review returned `COMPLIANT`; quality and security returned
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-0003-FR-0011](../../01.requirements/0003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AHLL-001 | Same-signature fixtures prove the retry ceiling. |
 | N/A — VAL-AHLL-002 shares the PRD-0003 source linked in VAL-AHLL-001 | VAL-AHLL-002 | Task-budget fixtures prove the recovery ceiling. |

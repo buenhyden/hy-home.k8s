@@ -76,7 +76,7 @@ reviewed RIA-001 head
 
 The contract never supplies Current member paths, per-member digests, or
 pointers. The validator first reads the exact constant registry path
-`docs/99.templates/support/document-profiles.json` through a bounded stage-zero
+`docs/99.templates/registry.json` through a bounded stage-zero
 index reader. For that path and every later registry-derived exact safe path it
 runs only `/usr/bin/git ls-files -z --stage -- <safe-path>`, requires exactly one
 stage-0 entry in regular mode `100644` or `100755`, reads that fixed blob, and
@@ -334,7 +334,7 @@ hook, validator, scanner behavior, or CI topology is changed here.
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-0006-FR-0008](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-RIA-001 | Registry and index checks enforce unique Current packs. |
 | N/A — REQ-0006-FR-0008 / VAL-RIA-002 shares the PRD-0006 source linked in VAL-RIA-001 | VAL-RIA-002 | Historical-body guard compares observation snapshots with baseline. |

@@ -365,7 +365,7 @@ credential-bearing, or live success.
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | N/A — direct human approval on 2026-08-09 authorizes this standalone gap-admission design; no separate PRD/AD program owner is asserted | VAL-WERG-001 | Written Spec review and exact admission inventory |
 | N/A — the same direct approval governs in-place integration into the existing pack | VAL-WERG-002 | Exact changed-path scope and pack-owner review |

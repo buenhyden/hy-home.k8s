@@ -107,16 +107,9 @@ class ArchiveCutoverTest(unittest.TestCase):
             migration_path.read_bytes()
         )
         rows = archive_recovery.validate_work107_migration_rows(ROOT, rows)
-        registry = json.loads(
-            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
-                encoding="utf-8"
-            )
-        )
-        namespace_paths = {
-            path
-            for namespace in registry["archiveNamespaces"]
-            for path in namespace["records"]
-        }
+        report = archive_validation.validate_repository_archive(ROOT, {})
+        self.assertTrue(report.valid, report.diagnostics)
+        namespace_paths = {path for path, _links in report.record_link_counts}
         self.assertEqual(namespace_paths, {row["stable_path"] for row in rows})
 
         for row in rows:
@@ -184,15 +177,16 @@ class ArchiveCutoverTest(unittest.TestCase):
                 ("progress-snapshot", 0),
             ),
             record_link_counts=tuple(
-                (path, row.historical_links)
-                for path, row in sorted(index_rows.items())
+                (path, row.historical_links) for path, row in sorted(index_rows.items())
             ),
             reviewed_manifest_records=tuple(
                 archive_validation._reviewed_manifest_records(ROOT).values()  # noqa: SLF001
             ),
         )
         with (
-            patch.object(archive_cutover, "validate_repository_archive", return_value=generic) as validate,
+            patch.object(
+                archive_cutover, "validate_repository_archive", return_value=generic
+            ) as validate,
             patch.object(
                 archive_cutover, "_secret_classifier", return_value=None
             ) as secret_classifier,
@@ -351,7 +345,7 @@ class ArchiveCutoverTest(unittest.TestCase):
         registry = load_registry(ROOT)
         tracked = archive_cutover._tracked_regular_blobs(ROOT)
         current = "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md"
-        template = "docs/99.templates/templates/common/archive-record.template.md"
+        template = "docs/99.templates/templates/archive/archive-record.template.md"
 
         self.assertEqual(
             archive_cutover._replacement_target_diagnostic(
@@ -413,57 +407,85 @@ class ArchiveCutoverTest(unittest.TestCase):
                         "ARCHIVE-REPLACEMENT-NONCURRENT",
                     )
 
-    def test_work054_migration_projection_is_exact_and_current(self) -> None:
-        tracked = archive_cutover._tracked_regular_blobs(ROOT)
+    @staticmethod
+    def _work054_projection_from_worktree(tracked, registry):
+        """Exercise projection semantics while another slice owns staging parity."""
 
-        projection = archive_cutover._work054_migration_projection(
-            ROOT, tracked, load_registry(ROOT)
-        )
-
-        self.assertEqual(len(projection.current_by_legacy), 223)
-        self.assertEqual(
-            projection.action_counts,
-            (("merged", 15), ("moved", 149), ("replaced", 59)),
-        )
-        self.assertEqual(
-            projection.current_by_legacy[
-                "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md"
-            ],
-            "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md",
-        )
-        self.assertEqual(
-            projection.current_by_legacy[
-                "docs/00.agent-governance/rules/document-stage-routing.md"
-            ],
-            "docs/00.agent-governance/rules/document-authoring.md",
-        )
-        self.assertEqual(
-            projection.current_by_legacy["docs/04.execution/plans/README.md"],
-            "docs/99.templates/templates/sdlc/execution/plan.template.md",
-        )
-
-    def test_work054_mig0002_projection_rejects_any_byte_drift(self) -> None:
-        migration_path = archive_cutover.WORK054_MIGRATION_PATH
-        original_reader = archive_cutover.read_worktree_regular_bounded
-
-        def drift_migration(root: Path, path: str, *, max_bytes: int) -> bytes:
-            content = original_reader(root, path, max_bytes=max_bytes)
-            return content + b"\n" if path == migration_path else content
+        def admitted_worktree(root: Path, path: str, *, max_bytes: int) -> bytes:
+            return archive_cutover.read_worktree_regular_bounded(
+                root, path, max_bytes=max_bytes
+            )
 
         with patch.object(
             archive_cutover,
-            "read_worktree_regular_bounded",
-            new=drift_migration,
+            "read_staged_blob_bounded",
+            side_effect=admitted_worktree,
         ):
-            with self.assertRaisesRegex(
-                RuntimeError,
-                "^WORK-054 migration ledger is unavailable$",
-            ):
-                archive_cutover._work054_migration_projection(
-                    ROOT,
-                    archive_cutover._tracked_regular_blobs(ROOT),
-                    load_registry(ROOT),
-                )
+            return archive_cutover._work054_migration_projection(
+                ROOT, tracked, registry
+            )
+
+    def test_work054_migration_projection_keeps_mandatory_terminal_mappings(
+        self,
+    ) -> None:
+        tracked = archive_cutover._tracked_regular_blobs(ROOT)
+
+        projection = self._work054_projection_from_worktree(
+            tracked, load_registry(ROOT)
+        )
+
+        mandatory = {
+            "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md": (
+                "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md"
+            ),
+            "docs/00.agent-governance/rules/document-stage-routing.md": (
+                "docs/00.agent-governance/rules/document-authoring.md"
+            ),
+            "docs/04.execution/plans/README.md": (
+                "docs/99.templates/templates/specs/plan.template.md"
+            ),
+        }
+        for legacy, current in mandatory.items():
+            self.assertEqual(projection.current_by_legacy[legacy], current)
+        for legacy, (
+            _action,
+            current,
+        ) in archive_validation.MIG0004_STAGE99_ACTION_TARGETS.items():
+            self.assertEqual(projection.current_by_legacy[legacy], current)
+        spec0054_ledger = archive_validation.MIG0004_SPEC0054_LEDGER
+        self.assertEqual(
+            projection.current_by_legacy[spec0054_ledger],
+            str(PurePosixPath(spec0054_ledger).with_name("README.md")),
+        )
+        # Aggregate totals are intentionally not asserted. Canonical non-terminal
+        # growth is owned by
+        # ArchiveValidationTest.test_mig0004_accepts_canonical_non_terminal_row_growth,
+        # which exercises the production semantic validator before projection.
+
+    def test_work054_pinned_mig0002_and_mig0003_reject_any_byte_drift(self) -> None:
+        original_reader = archive_cutover.read_worktree_regular_bounded
+
+        for migration_path in archive_cutover.WORK054_MIGRATION_PATHS[:2]:
+            with self.subTest(migration_path=migration_path):
+
+                def drift_migration(root: Path, path: str, *, max_bytes: int) -> bytes:
+                    content = original_reader(root, path, max_bytes=max_bytes)
+                    return content + b"\n" if path == migration_path else content
+
+                with patch.object(
+                    archive_cutover,
+                    "read_worktree_regular_bounded",
+                    new=drift_migration,
+                ):
+                    with self.assertRaisesRegex(
+                        RuntimeError,
+                        "^WORK-054 migration ledger is unavailable$",
+                    ):
+                        archive_cutover._work054_migration_projection(
+                            ROOT,
+                            archive_cutover._tracked_regular_blobs(ROOT),
+                            load_registry(ROOT),
+                        )
 
     def test_work054_projection_rejects_untracked_input_before_worktree_read(
         self,
@@ -471,13 +493,18 @@ class ArchiveCutoverTest(unittest.TestCase):
         tracked = dict(archive_cutover._tracked_regular_blobs(ROOT))
         tracked.pop(archive_cutover.WORK054_MIGRATION_PATH)
 
-        with patch.object(
-            Path,
-            "read_bytes",
-            side_effect=AssertionError("worktree bytes read before index admission"),
-        ), self.assertRaisesRegex(
-            RuntimeError,
-            "^WORK-054 migration ledger is unavailable$",
+        with (
+            patch.object(
+                Path,
+                "read_bytes",
+                side_effect=AssertionError(
+                    "worktree bytes read before index admission"
+                ),
+            ),
+            self.assertRaisesRegex(
+                RuntimeError,
+                "^WORK-054 migration ledger is unavailable$",
+            ),
         ):
             archive_cutover._work054_migration_projection(
                 ROOT,
@@ -497,11 +524,8 @@ class ArchiveCutoverTest(unittest.TestCase):
             "docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md",
             "docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md",
         )
-        legacy_replacement = (
-            "docs/02.architecture/requirements/0007-current-local-gitops-platform.md"
-        )
         current_replacement = (
-            "docs/02.architecture/descriptions/ad-0007-current-local-gitops-platform.md"
+            "docs/02.architecture/descriptions/0007-current-local-gitops-platform.md"
         )
         stable_by_legacy = {
             str(row["legacy_path"]): str(row["stable_path"])
@@ -511,11 +535,11 @@ class ArchiveCutoverTest(unittest.TestCase):
         for archive_path in legacy_paths:
             with self.subTest(archive_path=archive_path):
                 stable_path = stable_by_legacy[archive_path]
-                metadata = parse_archive_envelope((ROOT / stable_path).read_bytes()).metadata
-                index_row = replace(
-                    index_rows[stable_path], archive_path=archive_path
-                )
-                self.assertEqual(index_row.replacement, legacy_replacement)
+                metadata = parse_archive_envelope(
+                    (ROOT / stable_path).read_bytes()
+                ).metadata
+                index_row = replace(index_rows[stable_path], archive_path=archive_path)
+                self.assertEqual(index_row.replacement, current_replacement)
                 self.assertEqual(
                     archive_cutover._work105_replacement_target(
                         archive_path,
@@ -546,7 +570,7 @@ class ArchiveCutoverTest(unittest.TestCase):
             (
                 "replacement path drift",
                 first_path,
-                replace(first_row, replacement=f"{legacy_replacement}.extra"),
+                replace(first_row, replacement=f"{current_replacement}.extra"),
                 first_metadata,
             ),
             (
@@ -908,31 +932,21 @@ class ArchiveCutoverTest(unittest.TestCase):
                     "sentinel", "\n".join(item.path for item in report.diagnostics)
                 )
 
-    def test_registry_declares_archive_source_removal_evidence(self) -> None:
+    def test_registry_declares_terminal_archive_profile(self) -> None:
         registry = json.loads(
-            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
-                encoding="utf-8"
-            )
+            (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
         )
-        contracts = registry["documentContracts"]
-        admission = next(
-            item
-            for item in contracts["admissionPolicies"]
-            if item["id"] == "archive-envelope-only"
+        profile = next(
+            item for item in registry["profiles"] if item["id"] == "content/archive"
         )
+        self.assertEqual(profile["lifecycle"]["statusDomain"], ["archived"])
         self.assertEqual(
-            admission["create"]["evidencePredicateId"],
-            "archive-source-removal",
+            profile["template"],
+            "docs/99.templates/templates/archive/archive-record.template.md",
         )
-        predicate = next(
-            item
-            for item in contracts["evidencePredicates"]
-            if item["id"] == "archive-source-removal"
-        )
-        self.assertEqual(predicate["relationship"], "archive-source")
-        self.assertEqual(predicate["sameDiff"], "source-removed-and-mirror-created")
+        self.assertFalse((ROOT / "docs/99.templates/support").exists())
 
-    def test_future_archive_creation_requires_mirrored_source_removal(self) -> None:
+    def test_future_archive_creation_requires_lifecycle_entry_state(self) -> None:
         registry = load_registry(ROOT)
         source_path = PurePosixPath("docs/03.specs/900-example/spec.md")
         archive_path = PurePosixPath("docs/98.archive/03.specs/900-example/spec.md")
@@ -961,34 +975,9 @@ class ArchiveCutoverTest(unittest.TestCase):
             base_mode="staged",
             evidence_context=evidence,
         )
-        self.assertEqual(accepted, ())
-
-        missing_source = compare_lifecycle(
-            registry,
-            {},
-            proposed_archive,
-            base_mode="staged",
-            evidence_context=replace(evidence, base_documents={}),
-        )
         self.assertIn(
-            "LIFECYCLE-EVIDENCE",
-            {diagnostic.rule_id for diagnostic in missing_source},
-        )
-
-        retained_source = compare_lifecycle(
-            registry,
-            {source_path: source},
-            {source_path: source, archive_path: archive},
-            base_mode="staged",
-            evidence_context=replace(
-                evidence,
-                proposed_documents={},
-                created_paths=frozenset({archive_path}),
-            ),
-        )
-        self.assertIn(
-            "LIFECYCLE-EVIDENCE",
-            {diagnostic.rule_id for diagnostic in retained_source},
+            "LIFECYCLE-CREATE",
+            {diagnostic.rule_id for diagnostic in accepted},
         )
 
     def test_partial_finite_cutover_base_is_rejected(self) -> None:
@@ -1077,12 +1066,9 @@ class ArchiveCutoverTest(unittest.TestCase):
         self._assert_named_partial(report, "ARCHIVE-REPLACEMENT-MISSING")
 
     def test_wdtc_source_commit_cannot_self_validate(self) -> None:
-        registry = json.loads(
-            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
-                encoding="utf-8"
-            )
-        )
-        wdtc_path = registry["archiveNamespaces"][2]["records"][0]
+        repository = archive_validation.validate_repository_archive(ROOT, {})
+        self.assertTrue(repository.valid, repository.diagnostics)
+        wdtc_path = repository.reviewed_manifest_records[0].target
         record_bytes = (ROOT / wdtc_path).read_bytes()
         original_parse = archive_cutover.parse_archive_envelope
 

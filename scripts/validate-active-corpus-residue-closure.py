@@ -62,21 +62,11 @@ AGGREGATE_PATH = "scripts/validate-repo-quality-gates.sh"
 # below reads it from a base commit, not from the index.
 RETIRED_REGISTRY_PATH = "docs/99.templates/support/document-profiles.json"
 PROFILE_REGISTRY_PATH = "docs/99.templates/registry.json"
-ROUTE_CONTRACT_PATH = "docs/99.templates/contracts/route-contract.json"
 WP004B_MIGRATION_PATH = (
     "docs/98.archive/migrations/0004-document-authority-convergence.md"
 )
-WP004B_SOURCE_COMMIT = (
-    "211e167f9ef0268c937303faa82d7ed297b33e38"  # pragma: allowlist secret
-)
 MIG2_MIGRATION_PATH = (
-    "docs/98.archive/migrations/"
-    "mig-0002-sdlc-document-and-governance-consolidation.md"
-)
-WP004B_MIGRATION_PATH_PATTERN = (
-    r"^docs/98\.archive/migrations/"
-    r"(?:mig-000[1-3]-[a-z0-9]+(?:-[a-z0-9]+)*|"
-    r"0004-document-authority-convergence)\.md$"
+    "docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md"
 )
 TAXONOMY_MANIFEST_PATH = "scripts/document-taxonomy-migration.json"
 TAXONOMY_SOURCE_COMMIT = (
@@ -196,23 +186,6 @@ WORK108_REGISTRY_BLOB = (
 )
 MIG2_REGISTRY_BLOB = (
     "cd5fda0aee923f6010d6cbd0cfbb9ff889149233"  # pragma: allowlist secret
-)
-# Stage 99 contract split: the profile registry and the route contract replaced
-# the combined file as the current authority, so each carries its own admitted
-# state rather than sharing the retired file's allowlist.
-PROFILE_REGISTRY_BLOB = (
-    "efcd0c1fa03d21a6b1bdbb17e4ceb4c057114862"  # pragma: allowlist secret
-)
-ROUTE_CONTRACT_BLOB = (
-    "07683cbe76253834933deb6ae085baa9e198a84c"  # pragma: allowlist secret
-)
-# WP-004A activates the terminal profile lifecycle catalog and its two current
-# human owner routes while the remaining corpus stays in transition state.
-WP004A_PROFILE_REGISTRY_BLOB = (
-    "2e0c5cc57fda60ba3207288e0beb0db7290df5f0"  # pragma: allowlist secret
-)
-WP004A_ROUTE_CONTRACT_BLOB = (
-    "45bd34a620f5b95551eee472c519f73cc84b18a5"  # pragma: allowlist secret
 )
 WORK105_AUTHORITY_BLOBS = {
     "docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md": (
@@ -630,13 +603,7 @@ TRANSITION_AUTHORITY_REMAPS = {
         ),
     ),
 }
-FROZEN_ALIAS_AUTHORITY_PATHS = frozenset(
-    {
-        "docs/02.architecture/decisions/"
-        "0011-argo-rollouts-progressive-delivery.md",
-        "docs/02.architecture/decisions/0012-argo-notifications-slack.md",
-    }
-)
+FROZEN_ALIAS_AUTHORITY_PATHS: frozenset[str] = frozenset()
 OWNER_SPEC = "docs/03.specs/0037-active-corpus-and-execution-retention/spec.md"
 EXECUTION_PLAN = (
     "docs/04.execution/plans/2026-07-18-active-corpus-and-execution-retention.md"
@@ -999,11 +966,7 @@ def _git_arguments_allowed(arguments: tuple[str, ...]) -> bool:
         {("ls-files", "-z", "--stage", "--", root) for root in INVENTORY_ROOTS}
     )
     inventory_queries.add(("ls-files", "-z", "--stage", "--", *SOURCE_PATHS))
-    for authority_path in (
-        PROFILE_REGISTRY_PATH,
-        ROUTE_CONTRACT_PATH,
-        WP004B_MIGRATION_PATH,
-    ):
+    for authority_path in (PROFILE_REGISTRY_PATH, WP004B_MIGRATION_PATH):
         inventory_queries.add(
             (
                 "ls-files",
@@ -1062,17 +1025,6 @@ def _git_arguments_allowed(arguments: tuple[str, ...]) -> bool:
             *WORK105_BASE_PATHS,
         )
     )
-    for authority_path in (PROFILE_REGISTRY_PATH, ROUTE_CONTRACT_PATH):
-        inventory_queries.add(
-            (
-                "ls-tree",
-                "-z",
-                "--full-tree",
-                WP004B_SOURCE_COMMIT,
-                "--",
-                authority_path,
-            )
-        )
     if arguments in inventory_queries:
         return True
     return (
@@ -1572,18 +1524,8 @@ def _single_file_inventory(
     return index
 
 
-REGISTRY_AUTHORITY_BLOBS = {
-    PROFILE_REGISTRY_PATH: (PROFILE_REGISTRY_BLOB, WP004A_PROFILE_REGISTRY_BLOB),
-    ROUTE_CONTRACT_PATH: (ROUTE_CONTRACT_BLOB, WP004A_ROUTE_CONTRACT_BLOB),
-}
-
-
-def _registry_inventory(
-    root: str, path: str, runner: GitRunner
-) -> dict[str, str]:
-    return _single_file_inventory(
-        root, path, "CLOSURE-REGISTRY-INVENTORY", runner
-    )
+def _registry_inventory(root: str, path: str, runner: GitRunner) -> dict[str, str]:
+    return _single_file_inventory(root, path, "CLOSURE-REGISTRY-INVENTORY", runner)
 
 
 def _taxonomy_manifest_inventory(root: str, runner: GitRunner) -> dict[str, str]:
@@ -1611,781 +1553,22 @@ def _proposed_or_index_bytes(
     return staged
 
 
-def _wp004b_predecessor_registry_surface(
-    root: str,
-    path: str,
-    runner: GitRunner,
-) -> Mapping[str, Any]:
-    tree = _git(
-        root,
-        (
-            "ls-tree",
-            "-z",
-            "--full-tree",
-            WP004B_SOURCE_COMMIT,
-            "--",
-            path,
-        ),
-        runner,
-    )
-    records = tree[:-1].split(b"\0") if tree.endswith(b"\0") else []
-    if len(records) != 1:
-        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", path)
-    try:
-        header, raw_path = records[0].split(b"\t", 1)
-        mode, object_type, raw_oid = header.split(b" ", 2)
-        source_path = raw_path.decode("utf-8", errors="strict")
-        oid = raw_oid.decode("ascii", errors="strict")
-    except (ValueError, UnicodeDecodeError) as exc:
-        raise ClosureError(
-            "CLOSURE-TERMINAL-REGISTRY-AUTHORITY", path
-        ) from exc
-    if (
-        mode != b"100644"
-        or object_type != b"blob"
-        or source_path != path
-        or FULL_OID.fullmatch(oid) is None
-    ):
-        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", path)
-    loaded = _load_json_bytes(_index_blob(root, oid, path, runner), path)
-    if not isinstance(loaded, Mapping):
-        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", path)
-    return loaded
-
-
 def _load_registry_authority(
     root: str, runner: GitRunner = _run_git
 ) -> Mapping[str, Any]:
-    """Merge both published contracts into the flat form this closure reads.
+    """Load the sole terminal Stage 99 registry from the staged regular file."""
 
-    The closure needs programLineage from the profile registry and routeState,
-    archiveContractVersion, and archiveNamespaces from the route contract, so
-    neither file alone answers it. Each is admitted against its own pinned
-    state, and a key declared by both is a contract error rather than a
-    silent precedence rule.
-    """
-
-    merged: dict[str, Any] = {}
-    wp004b_atomic_admitted = False
-    for path, admitted in REGISTRY_AUTHORITY_BLOBS.items():
-        index = _registry_inventory(root, path, runner)
-        payload = _proposed_or_index_bytes(root, path, index, runner)
-        loaded = _load_json_bytes(payload, path)
-        if not isinstance(loaded, Mapping):
-            raise ClosureError("CLOSURE-TERMINAL-REGISTRY-MALFORMED", path)
-        if index.get(path) not in admitted:
-            predecessor = _wp004b_predecessor_registry_surface(
-                root, path, runner
-            )
-            if not _wp004b_registry_surface_admitted(
-                path, predecessor, loaded
-            ):
-                raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", path)
-            if not wp004b_atomic_admitted:
-                _validate_wp004b_atomic_admission(root, runner)
-                wp004b_atomic_admitted = True
-        for key, value in loaded.items():
-            if key in {"$schema", "$id", "schemaVersion"}:
-                continue
-            if key in merged:
-                raise ClosureError("CLOSURE-TERMINAL-REGISTRY-DUPLICATE", path)
-            merged[key] = value
-    return merged
-
-
-def _validate_wp004b_atomic_admission(
-    root: str,
-    runner: GitRunner,
-) -> None:
-    index = _single_file_inventory(
-        root,
-        WP004B_MIGRATION_PATH,
-        "CLOSURE-TERMINAL-REGISTRY-AUTHORITY",
-        runner,
-    )
-    payload = _proposed_or_index_bytes(
-        root,
-        WP004B_MIGRATION_PATH,
-        index,
-        runner,
-    )
-    try:
-        rows = validate_pinned_migration_recovery(
-            root,
-            WP004B_MIGRATION_PATH,
-            payload,
-        )
-    except ArchiveContractError as exc:
-        raise ClosureError(
-            "CLOSURE-TERMINAL-REGISTRY-AUTHORITY",
-            WP004B_MIGRATION_PATH,
-        ) from exc
-    if len(rows) != 66:
-        raise ClosureError(
-            "CLOSURE-TERMINAL-REGISTRY-AUTHORITY",
-            WP004B_MIGRATION_PATH,
-        )
-
-
-def _records_by_identity(
-    records: object,
-    *,
-    identity: Callable[[Mapping[str, Any]], str | None],
-) -> dict[str, Mapping[str, Any]] | None:
-    if not isinstance(records, list):
-        return None
-    indexed: dict[str, Mapping[str, Any]] = {}
-    for record in records:
-        if not isinstance(record, Mapping):
-            return None
-        record_id = identity(record)
-        if not isinstance(record_id, str) or not record_id or record_id in indexed:
-            return None
-        indexed[record_id] = record
-    return indexed
-
-
-_WP004B_PROFILE_FIELD_DELTAS: dict[
-    str, dict[tuple[str, ...], object]
-] = {
-    "content/archive-migration": {
-        ("pathPattern",): WP004B_MIGRATION_PATH_PATTERN,
-        ("lifecycle", "statusDomain"): ["accepted", "sealed"],
-    },
-    "readme/collection-index": {
-        ("pathPattern",): (
-            "^(?:docs/00\\.agent\\-governance/memory/README\\.md|"
-            "docs/02\\.architecture/decisions/README\\.md|"
-            "docs/02\\.architecture/descriptions/README\\.md|"
-            "docs/05\\.operations/guides/README\\.md|"
-            "docs/05\\.operations/incidents/README\\.md|"
-            "docs/05\\.operations/policies/README\\.md|"
-            "docs/05\\.operations/runbooks/README\\.md|"
-            "docs/90\\.references/audits/README\\.md|"
-            "docs/90\\.references/data/README\\.md|"
-            "docs/90\\.references/learning/README\\.md|"
-            "docs/90\\.references/llm\\-wiki/README\\.md|"
-            "docs/90\\.references/research/README\\.md|"
-            "docs/99\\.templates/support/README\\.md|"
-            "docs/99\\.templates/templates/README\\.md|"
-            "docs/90\\.references/cloud\\-examples/README\\.md|"
-            "docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*"
-            "(?:-[a-z0-9]+)*/README\\.md)$"
-        ),
-        ("requiredSections", "allowed"): [
-            "Overview",
-            "Scope",
-            "Item Index",
-            "Add and Find",
-            "Related Documents",
-            "Selection Rules",
-            "Task Records",
-        ],
-    },
-    "sdlc/ad": {
-        ("pathPattern",): (
-            r"^docs/02\.architecture/descriptions/[0-9]{4}-[a-z][a-z0-9]*"
-            r"(?:-[a-z0-9]+)*\.md$"
-        ),
-        ("relationships", "bodyContract", "allowedSourceProfileIds"): [
-            "sdlc/requirement-package"
-        ],
-    },
-    "sdlc/adr": {
-        ("lifecycle", "statusDomain"): [
-            "draft",
-            "active",
-            "accepted",
-            "archived",
-            "superseded",
-        ],
-        ("requiredFrontmatter", "allowed"): [
-            "title",
-            "type",
-            "status",
-            "owner",
-            "updated",
-            "artifact_id",
-            "superseded_by",
-            "supersedes",
-        ],
-        ("requiredFrontmatter", "order"): [
-            "title",
-            "type",
-            "status",
-            "owner",
-            "updated",
-            "artifact_id",
-            "superseded_by",
-            "supersedes",
-        ],
-    },
-    "sdlc/task": {
-        ("pathPattern",): (
-            r"^docs/03\.specs/(?:0054-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/"
-            r"tasks\.md|[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/tasks/"
-            r"tsk-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\.md)$"
-        ),
-        ("artifactIdPattern",): r"^(?:TASK-0054|TSK-[0-9]{4}-[0-9]{4})$",
-        ("lifecycle", "statusDomain"): [
-            "queued",
-            "in-progress",
-            "blocked",
-            "done",
-            "cancelled",
-        ],
-        ("relationships", "bodyContract", "enforcedStatuses"): [
-            "queued",
-            "in-progress",
-            "blocked",
-        ],
-    },
-    "template/content/archive-migration": {
-        ("lifecycle", "statusDomain"): ["accepted", "sealed"]
-    },
-    "template/readme/collection-index": {
-        ("requiredSections", "allowed"): [
-            "Overview",
-            "Scope",
-            "Item Index",
-            "Add and Find",
-            "Related Documents",
-            "Selection Rules",
-            "Task Records",
-        ]
-    },
-    "template/sdlc/adr": {
-        ("lifecycle", "statusDomain"): [
-            "draft",
-            "active",
-            "accepted",
-            "archived",
-            "superseded",
-        ],
-        ("requiredFrontmatter", "allowed"): [
-            "title",
-            "type",
-            "status",
-            "owner",
-            "updated",
-            "superseded_by",
-            "supersedes",
-        ],
-        ("requiredFrontmatter", "order"): [
-            "title",
-            "type",
-            "status",
-            "owner",
-            "updated",
-            "superseded_by",
-            "supersedes",
-        ],
-    },
-    "template/sdlc/interface": {
-        ("relationships", "sourceProfileIds"): ["sdlc/requirement-package"],
-        ("relationships", "bodyContract", "requiredColumns"): [
-            "Requirement ID",
-            "Acceptance criterion",
-            "Downstream owner",
-        ],
-        ("relationships", "bodyContract", "identifierColumns"): [
-            {"column": "Requirement ID", "kind": "requirement"}
-        ],
-        ("relationships", "bodyContract", "sourceLinkColumn"): None,
-        ("relationships", "bodyContract", "allowedSourceProfileIds"): [],
-    },
-    "template/sdlc/prd": {
-        ("relationships", "sourceProfileIds"): ["sdlc/requirement-package"],
-        ("relationships", "bodyContract", "allowedTargetProfileIds"): [
-            "sdlc/ad",
-            "sdlc/spec",
-        ],
-    },
-    "template/sdlc/srs": {
-        ("relationships", "sourceProfileIds"): ["sdlc/requirement-package"],
-        ("relationships", "bodyContract", "requiredColumns"): [
-            "Requirement ID",
-            "Acceptance criterion",
-            "Downstream owner",
-        ],
-        ("relationships", "bodyContract", "identifierColumns"): [
-            {"column": "Requirement ID", "kind": "requirement"}
-        ],
-        ("relationships", "bodyContract", "sourceLinkColumn"): None,
-        ("relationships", "bodyContract", "allowedSourceProfileIds"): [],
-        ("relationships", "bodyContract", "allowedTargetProfileIds"): [
-            "sdlc/ad",
-            "sdlc/spec",
-        ],
-    },
-    "template/sdlc/task": {
-        ("lifecycle", "statusDomain"): [
-            "queued",
-            "in-progress",
-            "blocked",
-            "done",
-            "cancelled",
-        ],
-        ("relationships", "bodyContract", "enforcedStatuses"): [
-            "queued",
-            "in-progress",
-            "blocked",
-        ],
-    },
-}
-
-_WP004B_PROFILE_FIELD_DELTAS = {
-    **_WP004B_PROFILE_FIELD_DELTAS,
-    **{
-        profile_id: {
-            ("relationships", "bodyContract", "allowedSourceProfileIds"): [
-                "sdlc/requirement-package"
-            ]
-        }
-        for profile_id in (
-            "sdlc/agent-design",
-            "sdlc/data-model",
-            "sdlc/spec",
-            "sdlc/tests",
-            "template/sdlc/ad",
-            "template/sdlc/agent-design",
-            "template/sdlc/data-model",
-            "template/sdlc/spec",
-            "template/sdlc/tests",
-        )
-    },
-}
-
-
-def _set_projection_field(
-    record: dict[str, Any], path: tuple[str, ...], value: object
-) -> None:
-    cursor = record
-    for key in path[:-1]:
-        child = cursor[key]
-        if not isinstance(child, dict):
-            raise TypeError("projection source field is not an object")
-        cursor = child
-    cursor[path[-1]] = copy.deepcopy(value)
-
-
-def _unique_mutable_record(
-    records: object, *, key: str, value: str
-) -> dict[str, Any]:
-    if not isinstance(records, list):
-        raise TypeError("projection record set is not an array")
-    matches = [
-        record
-        for record in records
-        if isinstance(record, dict) and record.get(key) == value
-    ]
-    if len(matches) != 1:
-        raise ValueError("projection record identity is not unique")
-    return matches[0]
-
-
-def _wp004b_expected_profile_registry(
-    predecessor: Mapping[str, Any],
-) -> dict[str, Any] | None:
-    try:
-        expected = copy.deepcopy(dict(predecessor))
-        profiles = expected["profiles"]
-        predecessor_profiles = _records_by_identity(
-            profiles, identity=lambda record: record.get("id")
-        )
-        if predecessor_profiles is None or "sdlc/requirement-package" in predecessor_profiles:
-            return None
-        if not {
-            "sdlc/prd",
-            "sdlc/srs",
-            "sdlc/interface",
-            *_WP004B_PROFILE_FIELD_DELTAS,
-        }.issubset(predecessor_profiles):
-            return None
-
-        requirement = copy.deepcopy(dict(predecessor_profiles["sdlc/prd"]))
-        requirement["id"] = "sdlc/requirement-package"
-        requirement["artifactIdPattern"] = r"^REQ-[0-9]{4}$"
-        requirement["requiredFrontmatter"]["allowed"] = [
-            "title",
-            "type",
-            "status",
-            "owner",
-            "updated",
-            "artifact_id",
-            "superseded_by",
-            "supersedes",
-        ]
-        requirement["requiredFrontmatter"]["order"] = [
-            "title",
-            "type",
-            "status",
-            "owner",
-            "updated",
-            "artifact_id",
-            "superseded_by",
-            "supersedes",
-        ]
-        requirement["lifecycle"]["statusDomain"] = [
-            "draft",
-            "active",
-            "superseded",
-            "retired",
-            "withdrawn",
-        ]
-        requirement["relationships"]["bodyContract"]["allowedTargetProfileIds"] = [
-            "sdlc/ad",
-            "sdlc/spec",
-        ]
-        expected["profiles"] = [
-            requirement
-            if profile.get("id") == "sdlc/prd"
-            else profile
-            for profile in profiles
-            if isinstance(profile, dict)
-            and profile.get("id") not in {"sdlc/srs", "sdlc/interface"}
-        ]
-        expected_profiles = _records_by_identity(
-            expected["profiles"], identity=lambda record: record.get("id")
-        )
-        if expected_profiles is None:
-            return None
-        for profile_id, deltas in _WP004B_PROFILE_FIELD_DELTAS.items():
-            record = expected_profiles.get(profile_id)
-            if not isinstance(record, dict):
-                return None
-            for field_path, value in deltas.items():
-                _set_projection_field(record, field_path, value)
-
-        lineage = expected["programLineage"]
-        requirement_domain = _unique_mutable_record(
-            lineage["lifecycleDomains"],
-            key="family",
-            value="requirement-architecture",
-        )
-        requirement_domain["profileIds"] = ["sdlc/requirement-package", "sdlc/ad"]
-        projected_contracts: list[dict[str, Any]] = []
-        for contract in lineage["transitionLifecycleContracts"]:
-            if not isinstance(contract, dict):
-                return None
-            contract_id = contract.get("id")
-            if contract_id == "product":
-                projected_contracts.append(
-                    {
-                        "id": "requirement",
-                        "profileIds": ["sdlc/requirement-package"],
-                        "terminalStates": ["active"],
-                        "edges": [
-                            {
-                                "from": "draft",
-                                "to": "active",
-                                "predicateId": "activate-self-body",
-                            }
-                        ],
-                    }
-                )
-                continue
-            projected = copy.deepcopy(contract)
-            if contract_id == "execution":
-                projected["profileIds"] = ["sdlc/plan"]
-                projected_contracts.append(projected)
-                projected_contracts.append(
-                    {
-                        "id": "task-execution",
-                        "profileIds": ["sdlc/task"],
-                        "terminalStates": ["done"],
-                        "edges": [
-                            {
-                                "from": "queued",
-                                "to": "in-progress",
-                                "predicateId": "activate-execution-pair",
-                            },
-                            {
-                                "from": "in-progress",
-                                "to": "done",
-                                "predicateId": "complete-execution-pair",
-                            },
-                        ],
-                    }
-                )
-                continue
-            if contract_id == "archive-migration":
-                projected["terminalStates"] = ["accepted", "sealed"]
-            projected_contracts.append(projected)
-        lineage["transitionLifecycleContracts"] = projected_contracts
-
-        execution = _unique_mutable_record(
-            expected["standaloneExecutions"], key="spec", value="0053"
-        )
-        execution["task"] = (
-            "docs/03.specs/0053-workspace-engineering-research-pack-consolidation/"
-            "tasks/tsk-0001-werpc-000.md"
-        )
-        return expected
-    except (KeyError, TypeError, ValueError):
-        return None
-
-
-def _wp004b_profile_registry_projection(
-    predecessor: Mapping[str, Any],
-    loaded: Mapping[str, Any],
-) -> bool:
-    expected = _wp004b_expected_profile_registry(predecessor)
-    if expected is None or loaded != expected:
-        return False
+    path = PROFILE_REGISTRY_PATH
+    index = _registry_inventory(root, path, runner)
+    payload = _proposed_or_index_bytes(root, path, index, runner)
+    loaded = _load_json_bytes(payload, path)
+    if not isinstance(loaded, Mapping):
+        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-MALFORMED", path)
     try:
         validate_registry_authority(loaded)
-    except AuthorityError:
-        return False
-    return True
-
-
-def _relation_value_key(key: str, pattern: str) -> dict[str, object]:
-    return {
-        "key": key,
-        "kind": "string",
-        "nullable": True,
-        "constant": None,
-        "enum": None,
-        "pattern": pattern,
-        "conditional": None,
-    }
-
-
-def _set_status_domain_value_contract(record: dict[str, Any]) -> None:
-    status = _unique_mutable_record(record["keys"], key="key", value="status")
-    status["constant"] = None
-    status["enum"] = {"source": "status-domain", "values": []}
-
-
-def _wp004b_expected_route_contract(
-    predecessor: Mapping[str, Any],
-) -> dict[str, Any] | None:
-    try:
-        expected = copy.deepcopy(dict(predecessor))
-        contracts = expected["documentContracts"]
-
-        values = contracts["valueContracts"]
-        projected_values: list[dict[str, Any]] = []
-        for value in values:
-            if not isinstance(value, dict):
-                return None
-            value_id = value.get("id")
-            projected = copy.deepcopy(value)
-            if value_id == "authored-terminal-identity":
-                projected["profileIds"] = [
-                    "sdlc/ad",
-                    "sdlc/spec",
-                    "sdlc/agent-design",
-                    "sdlc/data-model",
-                    "sdlc/tests",
-                    "sdlc/plan",
-                    "sdlc/task",
-                    "sdlc/guide",
-                    "sdlc/policy",
-                    "sdlc/runbook",
-                    "sdlc/incident",
-                    "sdlc/postmortem",
-                ]
-                projected_values.append(projected)
-                adr_value = copy.deepcopy(projected)
-                adr_value["id"] = "adr-relation-identity"
-                adr_value["profileIds"] = ["sdlc/adr"]
-                adr_value["keys"].extend(
-                    [
-                        _relation_value_key(
-                            "superseded_by", r"^ADR-[0-9]{4}$"
-                        ),
-                        _relation_value_key(
-                            "supersedes",
-                            r"^\[ADR-[0-9]{4}(?:, ADR-[0-9]{4})*\]$",
-                        ),
-                    ]
-                )
-                projected_values.append(adr_value)
-                requirement_value = copy.deepcopy(projected)
-                requirement_value["id"] = "requirement-package-identity"
-                requirement_value["profileIds"] = ["sdlc/requirement-package"]
-                requirement_value["keys"].extend(
-                    [
-                        _relation_value_key(
-                            "superseded_by", r"^REQ-[0-9]{4}$"
-                        ),
-                        _relation_value_key(
-                            "supersedes",
-                            r"^\[REQ-[0-9]{4}, REQ-[0-9]{4}\]$",
-                        ),
-                    ]
-                )
-                projected_values.append(requirement_value)
-                continue
-            if value_id == "archive-migration":
-                _set_status_domain_value_contract(projected)
-            elif value_id == "template-terminal-authored":
-                projected["profileIds"] = [
-                    profile_id
-                    for profile_id in projected["profileIds"]
-                    if profile_id != "template/sdlc/adr"
-                ]
-                template_adr = copy.deepcopy(projected)
-                template_adr["id"] = "template-adr-relation-identity"
-                template_adr["profileIds"] = ["template/sdlc/adr"]
-                template_adr["keys"].extend(
-                    [
-                        _relation_value_key(
-                            "superseded_by", r"^ADR-[0-9]{4}$"
-                        ),
-                        _relation_value_key(
-                            "supersedes",
-                            r"^\[ADR-[0-9]{4}(?:, ADR-[0-9]{4})*\]$",
-                        ),
-                    ]
-                )
-                projected_values.append(template_adr)
-            elif value_id == "template-terminal-archive-migration":
-                _set_status_domain_value_contract(projected)
-            projected_values.append(projected)
-        contracts["valueContracts"] = projected_values
-
-        roles = contracts["roleDecisions"]
-        contracts["roleDecisions"] = [
-            {
-                "profileIds": ["sdlc/requirement-package"],
-                "role": "requirement-package",
-                "sourceProfileId": None,
-                "relationshipSection": "Traceability",
-                "bodyRequirement": "body-contract",
-            },
-            *[
-                role
-                for role in roles
-                if isinstance(role, dict)
-                and role.get("profileIds")
-                not in (["sdlc/prd"], ["sdlc/srs"], ["sdlc/interface"])
-            ],
-        ]
-
-        policies = contracts["admissionPolicies"]
-        projected_policies: list[dict[str, Any]] = []
-        for policy in policies:
-            if not isinstance(policy, dict):
-                return None
-            policy_id = policy.get("id")
-            projected = copy.deepcopy(policy)
-            if policy_id == "authored-draft-only":
-                projected["profileIds"] = [
-                    "sdlc/requirement-package",
-                    *[
-                        profile_id
-                        for profile_id in projected["profileIds"]
-                        if profile_id
-                        not in {"sdlc/prd", "sdlc/srs", "sdlc/interface"}
-                    ],
-                ]
-            elif policy_id == "execution-reciprocal-pair":
-                projected_policies.extend(
-                    [
-                        {
-                            "id": "execution-plan",
-                            "profileIds": ["sdlc/plan"],
-                            "create": {
-                                "mode": "states",
-                                "states": ["draft"],
-                                "evidencePredicateId": None,
-                            },
-                            "delete": "deny",
-                            "rename": "deny",
-                            "profileChange": "deny",
-                            "baselinePaths": [],
-                        },
-                        {
-                            "id": "task-record",
-                            "profileIds": ["sdlc/task"],
-                            "create": {
-                                "mode": "states",
-                                "states": ["queued"],
-                                "evidencePredicateId": None,
-                            },
-                            "delete": "deny",
-                            "rename": "deny",
-                            "profileChange": "deny",
-                            "baselinePaths": [],
-                        },
-                    ]
-                )
-                continue
-            projected_policies.append(projected)
-        contracts["admissionPolicies"] = projected_policies
-
-        predicates = contracts["evidencePredicates"]
-        projected_predicates: list[dict[str, Any]] = []
-        for predicate in predicates:
-            if not isinstance(predicate, dict):
-                return None
-            predicate_id = predicate.get("id")
-            if predicate_id == "complete-product-program":
-                continue
-            projected = copy.deepcopy(predicate)
-            if predicate_id == "activate-self-body":
-                projected["profileEdges"] = [
-                    {
-                        "profileId": "sdlc/requirement-package",
-                        "from": "draft",
-                        "to": "active",
-                    },
-                    *[
-                        edge
-                        for edge in projected["profileEdges"]
-                        if edge.get("profileId")
-                        not in {"sdlc/prd", "sdlc/srs", "sdlc/interface"}
-                    ],
-                ]
-            elif predicate_id == "activate-execution-pair":
-                task_edge = _unique_mutable_record(
-                    projected["profileEdges"],
-                    key="profileId",
-                    value="sdlc/task",
-                )
-                task_edge["from"] = "queued"
-                task_edge["to"] = "in-progress"
-                task_evidence = next(
-                    evidence
-                    for evidence in projected["evidence"]
-                    if evidence.get("profileIds") == ["sdlc/task"]
-                )
-                task_evidence["states"] = ["in-progress"]
-            elif predicate_id == "complete-execution-pair":
-                task_edge = _unique_mutable_record(
-                    projected["profileEdges"],
-                    key="profileId",
-                    value="sdlc/task",
-                )
-                task_edge["from"] = "in-progress"
-            projected_predicates.append(projected)
-        contracts["evidencePredicates"] = projected_predicates
-        return expected
-    except (KeyError, StopIteration, TypeError, ValueError):
-        return None
-
-
-def _wp004b_route_contract_projection(
-    predecessor: Mapping[str, Any],
-    loaded: Mapping[str, Any],
-) -> bool:
-    expected = _wp004b_expected_route_contract(predecessor)
-    return expected is not None and loaded == expected
-
-
-def _wp004b_registry_surface_admitted(
-    path: str,
-    predecessor: Mapping[str, Any],
-    loaded: Mapping[str, Any],
-) -> bool:
-    if path == PROFILE_REGISTRY_PATH:
-        return _wp004b_profile_registry_projection(predecessor, loaded)
-    if path == ROUTE_CONTRACT_PATH:
-        return _wp004b_route_contract_projection(predecessor, loaded)
-    return False
+    except AuthorityError as exc:
+        raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", path) from exc
+    return loaded
 
 
 def _authored_stage04(paths: Sequence[str], scope: str) -> list[str]:
@@ -2459,16 +1642,13 @@ def _mig2_authority_target(
     )
     if match is None:
         return path
-    matching_rows = [
-        row for row in migration_rows if row.get("legacy_path") == path
-    ]
+    matching_rows = [row for row in migration_rows if row.get("legacy_path") == path]
     if len(matching_rows) != 1:
         raise ClosureError("CLOSURE-AUTHORITY-DRIFT", path)
     row = matching_rows[0]
     sequence = f"0{match.group('id')}"
     expected_target = (
-        f"docs/03.specs/{sequence}-{match.group('slug')}/"
-        f"{match.group('leaf')}.md"
+        f"docs/03.specs/{sequence}-{match.group('slug')}/{match.group('leaf')}.md"
     )
     artifact_prefix = {
         "plan": "PLAN",
@@ -2682,7 +1862,6 @@ def _current_authority_target(
 
 
 def _build_taxonomy_transition_closure(
-    registry: Mapping[str, Any],
     manifest: Mapping[str, Any],
     eligibility: Mapping[str, Any],
     current_paths: set[str],
@@ -2695,53 +1874,14 @@ def _build_taxonomy_transition_closure(
 ) -> list[dict[str, Any]]:
     """Reconcile the frozen ACER residue snapshot with exact WDTC archives."""
 
-    if (
-        not isinstance(registry, Mapping)
-        or registry.get("routeState") != "transition"
-        or not isinstance(manifest, Mapping)
-        or manifest.get("state") != "transition"
-    ):
+    if not isinstance(manifest, Mapping) or manifest.get("state") != "transition":
         raise ClosureError("CLOSURE-TAXONOMY-TERMINAL", TAXONOMY_MANIFEST_PATH)
-    if (
-        registry.get("archiveContractVersion") != 2
-        or manifest.get("sourceCommit") != TAXONOMY_SOURCE_COMMIT
-        or set(manifest) != {"state", "sourceCommit", "entries"}
-    ):
+    if manifest.get("sourceCommit") != TAXONOMY_SOURCE_COMMIT or set(manifest) != {
+        "state",
+        "sourceCommit",
+        "entries",
+    }:
         raise ClosureError("CLOSURE-TAXONOMY-MANIFEST", TAXONOMY_MANIFEST_PATH)
-
-    namespaces = registry.get("archiveNamespaces")
-    namespace_contract = (
-        ("arwb-base", "exact-immutable", 31),
-        ("acer-additive", "exact-immutable", 12),
-        ("wdtc-execution", "exact-reviewed-manifest", 50),
-        ("progress-snapshot", "append-only-unique", 0),
-    )
-    if not isinstance(namespaces, list) or len(namespaces) != len(namespace_contract):
-        raise ClosureError("CLOSURE-TAXONOMY-NAMESPACE", ROUTE_CONTRACT_PATH)
-    by_namespace: dict[str, Mapping[str, Any]] = {}
-    for raw_namespace, (expected_id, expected_policy, expected_count) in zip(
-        namespaces, namespace_contract, strict=True
-    ):
-        if (
-            not isinstance(raw_namespace, Mapping)
-            or set(raw_namespace) != {"id", "policy", "records"}
-            or raw_namespace.get("id") != expected_id
-            or raw_namespace.get("policy") != expected_policy
-            or not isinstance(raw_namespace.get("records"), list)
-            or len(raw_namespace["records"]) != expected_count
-            or raw_namespace["id"] in by_namespace
-        ):
-            raise ClosureError("CLOSURE-TAXONOMY-NAMESPACE", ROUTE_CONTRACT_PATH)
-        by_namespace[raw_namespace["id"]] = raw_namespace
-    namespace = by_namespace.get("wdtc-execution")
-    if (
-        namespace is None
-        or namespace.get("policy") != "exact-reviewed-manifest"
-        or not isinstance(namespace.get("records"), list)
-        or any(not is_safe_path(path) for path in namespace["records"])
-        or len(set(namespace["records"])) != 50
-    ):
-        raise ClosureError("CLOSURE-TAXONOMY-NAMESPACE", ROUTE_CONTRACT_PATH)
 
     entries = manifest.get("entries")
     if not isinstance(entries, list) or len(entries) != 132:
@@ -2796,8 +1936,8 @@ def _build_taxonomy_transition_closure(
         raise ClosureError("CLOSURE-TAXONOMY-BLOB", TAXONOMY_MANIFEST_PATH)
 
     if (
-        len(archive_aliases) != 93
-        or len(set(archive_aliases.values())) != 93
+        not archive_aliases
+        or len(set(archive_aliases.values())) != len(archive_aliases)
         or any(
             not is_safe_path(legacy) or not is_safe_path(stable)
             for legacy, stable in archive_aliases.items()
@@ -2807,8 +1947,8 @@ def _build_taxonomy_transition_closure(
     archive_targets = {
         archive_aliases.get(entry["target"]) for entry in archive_entries
     }
-    if archive_targets != set(namespace["records"]):
-        raise ClosureError("CLOSURE-TAXONOMY-NAMESPACE", ROUTE_CONTRACT_PATH)
+    if None in archive_targets or not archive_targets.issubset(archive_payloads):
+        raise ClosureError("CLOSURE-TAXONOMY-NAMESPACE", WORK107_MIGRATION_PATH)
 
     candidates = eligibility.get("candidateRows")
     if not isinstance(candidates, list):
@@ -3187,7 +2327,9 @@ def _project_task_package(
     if router_text.count(marker) != 1:
         raise ClosureError(error_code, router)
     section = router_text.partition(marker)[2].partition("\n## ")[0]
-    rendered_links = [match.group("path") for match in TASK_ROUTER_LINK.finditer(section)]
+    rendered_links = [
+        match.group("path") for match in TASK_ROUTER_LINK.finditer(section)
+    ]
     if not rendered_links or len(rendered_links) != len(set(rendered_links)):
         raise ClosureError(error_code, router)
 
@@ -3231,11 +2373,7 @@ def _project_task_package(
         identities.append(f"task\0{task_path}\0{task_oid}\0{artifact_id}")
 
     body = "\n".join(identities).encode("utf-8")
-    return (
-        b"---\ntype: sdlc/task\nstatus: done\nowner: platform\n---\n"
-        + body
-        + b"\n"
-    )
+    return b"---\ntype: sdlc/task\nstatus: done\nowner: platform\n---\n" + body + b"\n"
 
 
 def _terminal_registry_relations(
@@ -3254,15 +2392,21 @@ def _terminal_registry_relations(
     }
     for program in programs:
         if not isinstance(program, Mapping):
-            raise ClosureError("CLOSURE-TERMINAL-REGISTRY-MALFORMED", PROFILE_REGISTRY_PATH)
+            raise ClosureError(
+                "CLOSURE-TERMINAL-REGISTRY-MALFORMED", PROFILE_REGISTRY_PATH
+            )
         if program.get("prd") == "0006" and program.get("ad") == "0009":
             if set(program) != {"prd", "ad", "tranches", "followUps"}:
-                raise ClosureError("CLOSURE-TERMINAL-REGISTRY-AUTHORITY", PROFILE_REGISTRY_PATH)
+                raise ClosureError(
+                    "CLOSURE-TERMINAL-REGISTRY-AUTHORITY", PROFILE_REGISTRY_PATH
+                )
             exact_programs.append(program)
         for collection_name in ("tranches", "followUps"):
             collection = program.get(collection_name)
             if not isinstance(collection, list):
-                raise ClosureError("CLOSURE-TERMINAL-REGISTRY-MALFORMED", PROFILE_REGISTRY_PATH)
+                raise ClosureError(
+                    "CLOSURE-TERMINAL-REGISTRY-MALFORMED", PROFILE_REGISTRY_PATH
+                )
             for relation in collection:
                 if not isinstance(relation, Mapping):
                     raise ClosureError(
@@ -4536,9 +3680,7 @@ def _validate_transition_authority_semantics(
             (
                 retired_source,
                 replacement,
-                _current_authority_target(
-                    replacement, taxonomy_rows, migration_rows
-                ),
+                _current_authority_target(replacement, taxonomy_rows, migration_rows),
             )
             for retired_source, replacement in remaps
         ]
@@ -4585,8 +3727,7 @@ def _validate_transition_authority_semantics(
                     or metadata.get("type") != "sdlc/plan"
                     or metadata.get("status") != "done"
                     or metadata.get("owner") != "platform"
-                    or metadata.get("artifact_id")
-                    != f"PLAN-{package.group('id')}"
+                    or metadata.get("artifact_id") != f"PLAN-{package.group('id')}"
                 ):
                     raise ClosureError("CLOSURE-AUTHORITY-DRIFT", authority_path)
             elif replacement.endswith("/tasks.md"):
@@ -4825,7 +3966,6 @@ def build_observed(
     except ArchiveContractError as exc:
         raise ClosureError("CLOSURE-AUTHORITY-DRIFT", MIG2_MIGRATION_PATH) from exc
     taxonomy_transition = _build_taxonomy_transition_closure(
-        registry,
         taxonomy_manifest,
         eligibility,
         set(inventory_payloads),
@@ -5683,9 +4823,7 @@ def _self_test_post_closure_adr_scope() -> int:
         artifact_id = f"ADR-{match.group('id')}"
         status = "superseded" if artifact_id in ADR0030_PREDECESSORS else "accepted"
         reciprocal = (
-            "superseded_by: ADR-0030\n"
-            if artifact_id in ADR0030_PREDECESSORS
-            else ""
+            "superseded_by: ADR-0030\n" if artifact_id in ADR0030_PREDECESSORS else ""
         )
         return (
             "---\ntype: sdlc/adr\n"

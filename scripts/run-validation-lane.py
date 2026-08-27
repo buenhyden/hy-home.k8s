@@ -165,7 +165,9 @@ def observation(completed: BoundedCommandResult) -> str:
         status = "completed" if completed.returncode == 0 else "failed"
     else:
         status = completed.status
-    returncode = "unknown" if completed.returncode is None else str(completed.returncode)
+    returncode = (
+        "unknown" if completed.returncode is None else str(completed.returncode)
+    )
     return ";".join(
         (
             f"status={status}",
@@ -323,7 +325,9 @@ def _close_pipe(pipe: BinaryIO | None) -> bool:
     return True
 
 
-def _close_selector(selector: selectors.BaseSelector) -> tuple[bool, BaseException | None]:
+def _close_selector(
+    selector: selectors.BaseSelector,
+) -> tuple[bool, BaseException | None]:
     """Close a selector after child cleanup and defer asynchronous exceptions."""
 
     try:
@@ -358,7 +362,13 @@ def _status_ppid(pid: int) -> int | None:
             for line in handle:
                 if line.startswith("PPid:"):
                     return int(line.split()[1])
-    except (FileNotFoundError, ProcessLookupError, PermissionError, OSError, ValueError):
+    except (
+        FileNotFoundError,
+        ProcessLookupError,
+        PermissionError,
+        OSError,
+        ValueError,
+    ):
         return None
     return None
 
@@ -397,7 +407,9 @@ def _process_children_map() -> dict[int, set[int]]:
     return children
 
 
-def _discover_owned_pids(leader_pid: int, baseline_direct_children: set[int]) -> set[int]:
+def _discover_owned_pids(
+    leader_pid: int, baseline_direct_children: set[int]
+) -> set[int]:
     """Find the leader, its descendants, and subreaper-adopted owned children."""
 
     children = _process_children_map()
@@ -648,9 +660,8 @@ def cleanup_process_group(
                 if pid != process.pid and not _signal_pidfd(pidfd, signal.SIGKILL):
                     cleanup_complete = False
 
-            if (
-                _recorded_returncode(process) is None
-                and (group_signal_effective or group_signal_failed)
+            if _recorded_returncode(process) is None and (
+                group_signal_effective or group_signal_failed
             ):
                 if group_signal_failed:
                     leader_pidfd = pidfds.get(process.pid)
@@ -832,9 +843,7 @@ def _run_bounded_command_locked(
     process: subprocess.Popen[bytes] | None = None
     baseline_direct_children = _direct_child_pids()
     subreaper_previous = _get_subreaper_state()
-    subreaper_enabled = bool(
-        subreaper_previous is not None and _set_subreaper_state(1)
-    )
+    subreaper_enabled = bool(subreaper_previous is not None and _set_subreaper_state(1))
     stdout_read: BinaryIO | None = None
     stderr_read: BinaryIO | None = None
     stdout_read_fd: int | None = None
@@ -973,9 +982,7 @@ def _run_bounded_command_locked(
                 status = "timeout"
                 break
             try:
-                events = selector.select(
-                    min(VALIDATOR_PIPE_POLL_SECONDS, remaining)
-                )
+                events = selector.select(min(VALIDATOR_PIPE_POLL_SECONDS, remaining))
             except InterruptedError:
                 status = "collection_interrupted"
                 break
@@ -1090,9 +1097,7 @@ def _run_bounded_command_locked(
         if process is not None:
             try:
                 if cleanup_deadline is None:
-                    cleanup_deadline = time.monotonic() + max(
-                        0.0, cleanup_seconds
-                    )
+                    cleanup_deadline = time.monotonic() + max(0.0, cleanup_seconds)
                 cleanup_process_group(
                     process,
                     cleanup_seconds,
@@ -1126,19 +1131,13 @@ def _run_bounded_command_locked(
         finally:
             if subreaper_previous is not None and subreaper_enabled:
                 if not _set_subreaper_state(subreaper_previous):
-                    raise RuntimeError(
-                        "validator subreaper state restoration failed"
-                    )
+                    raise RuntimeError("validator subreaper state restoration failed")
 
     return BoundedCommandResult(
         status=status,
         returncode=process.returncode,
-        stdout=accumulators["stdout"].result(
-            complete=stream_complete["stdout"]
-        ),
-        stderr=accumulators["stderr"].result(
-            complete=stream_complete["stderr"]
-        ),
+        stdout=accumulators["stdout"].result(complete=stream_complete["stdout"]),
+        stderr=accumulators["stderr"].result(complete=stream_complete["stderr"]),
         cleanup_complete=cleanup_complete,
     )
 
@@ -1183,7 +1182,7 @@ def validator_argv(
         return argv
 
     include_candidates = list(paths)
-    archive_form = "docs/99.templates/templates/common/archive-record.template.md"
+    archive_form = "docs/99.templates/templates/archive/archive-record.template.md"
     if (root / archive_form).is_file() and archive_form not in include_candidates:
         include_candidates.append(archive_form)
 

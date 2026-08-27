@@ -371,7 +371,7 @@ the implementation diff.
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-0005-FR-0001](../../01.requirements/0005-workspace-document-assurance-modernization.md#functional-requirements) | VAL-TLCN-001 | Registry self-tests and strict route resolution prove zero uncovered or ambiguous document paths. |
 | [REQ-0005-FR-0001](../../01.requirements/0005-workspace-document-assurance-modernization.md#functional-requirements) | VAL-TLCN-002 | Registry validation proves one exhaustive machine-readable contract inventory. |

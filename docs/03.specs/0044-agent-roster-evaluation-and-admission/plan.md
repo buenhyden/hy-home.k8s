@@ -257,7 +257,7 @@ does not preclaim its own content-addressed commit SHA.
 - **Allowed Paths**: `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.agents/**`,
   `.claude/**`, `.codex/**`, `.gemini/**`,
   `docs/00.agent-governance/**`, `docs/03.specs/**`,
-  `docs/03.specs/**`, `docs/99.templates/support/document-profiles.json`,
+  `docs/03.specs/**`, `docs/99.templates/registry.json`,
   `scripts/**`, `tests/**`
 - **Forbidden Paths**: credentials, auth caches, shell history, Vault/ESO
   values, live Kubernetes/GitOps state, provider account state, and

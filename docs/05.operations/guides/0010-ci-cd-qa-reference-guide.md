@@ -90,7 +90,7 @@ bash scripts/validate-policy-gates.sh .
 - active Rollouts 문서는 현재 adminer/sample-app AnalysisTemplate 구현을 future-only 또는 analysis-free 기본 계약처럼 설명할 수 없다.
 - active app onboarding 문서는 Deployment가 apps AppProject allow-list에 이미 들어있다고 설명할 수 없다.
 - Archive Record는 provenance가 검증된 원본 전체 바이트를 marker 뒤 payload로 보존하며, 현재 문서는 개별 record가 아니라 `docs/98.archive/README.md`만 탐색 진입점으로 사용한다.
-- `docs/99.templates/templates/common/reference.template.md`는 archive 정책이나 archive wording을 포함하지 않는다.
+- `docs/99.templates/templates/references/reference.template.md`는 archive 정책이나 archive wording을 포함하지 않는다.
 
 #### 1-8. Shell 문법 검사 (단일 파일)
 

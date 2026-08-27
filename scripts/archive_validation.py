@@ -26,6 +26,7 @@ from types import ModuleType
 from typing import Mapping, Protocol, Sequence
 
 if __package__:
+    from scripts.archive_cutover_manifest import EXPECTED_ARCHIVE_PATHS
     from scripts.archive_recovery import (
         ArchiveContractError,
         MAX_GIT_BATCH_BYTES,
@@ -42,6 +43,7 @@ if __package__:
         require_commits_reachable_from_durable_refs,
     )
 else:  # Direct import-only execution from scripts/.
+    from archive_cutover_manifest import EXPECTED_ARCHIVE_PATHS  # type: ignore[no-redef]
     from archive_recovery import (  # type: ignore[no-redef]
         ArchiveContractError,
         MAX_GIT_BATCH_BYTES,
@@ -223,19 +225,17 @@ def _report(
     )
 
 
-_NAMESPACE_CONTRACT = (
-    ("arwb-base", "exact-immutable", 31, 31),
-    ("acer-additive", "exact-immutable", 12, 12),
-    ("wdtc-execution", "exact-reviewed-manifest", 50, 50),
-    ("progress-snapshot", "append-only-unique", 0, 1),
+_NAMESPACE_IDS = (
+    "arwb-base",
+    "acer-additive",
+    "wdtc-execution",
+    "progress-snapshot",
 )
 _INDEX_HEADER = (
     "| Archive Record | Original Path | Original Type | Source Commit | Source "
     "Blob | Payload SHA-256 | Historical Links | Current Replacement | Reason |"
 )
-_INDEX_SEPARATOR = (
-    "| --- | --- | --- | --- | --- | --- | ---: | --- | --- |"
-)
+_INDEX_SEPARATOR = "| --- | --- | --- | --- | --- | --- | ---: | --- | --- |"
 _INDEX_LINK = re.compile(r"\[`(?P<label>[^`]+)`\]\(\./(?P<target>[^)]+)\)\Z")
 _INDEX_REPLACEMENT_LINK = re.compile(
     r"\[`(?P<label>docs/[^`]+)`\]\((?P<target>(?:\.\.?/)[^)]+)\)\Z"
@@ -256,27 +256,162 @@ _MANIFEST_SOURCE_COMMIT = (
 )
 _MIGRATION_MODULE_TOKEN = object()
 _WORK109_MIGRATION_PATH = (
-    "docs/98.archive/migrations/"
-    "mig-0002-sdlc-document-and-governance-consolidation.md"
+    "docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md"
 )
 _WORK054_WP003_MIGRATION_PATH = (
     "docs/98.archive/migrations/"
     "mig-0003-agent-governance-control-plane-consolidation.md"
 )
 _WORK054_WP004B_MIGRATION_PATH = (
-    "docs/98.archive/migrations/"
-    "0004-document-authority-convergence.md"
+    "docs/98.archive/migrations/0004-document-authority-convergence.md"
 )
 MIGRATION_DOCUMENT_MAX_BYTES = 128 * 1024
-MIG0002_DOCUMENT_SHA256 = (
-    "67032c0b86acbee04a1e713053d164df2e99f4486df79df5161d53975fb82a7a"  # pragma: allowlist secret
+MIG0002_DOCUMENT_SHA256 = "67032c0b86acbee04a1e713053d164df2e99f4486df79df5161d53975fb82a7a"  # pragma: allowlist secret
+MIG0003_DOCUMENT_SHA256 = "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42"  # pragma: allowlist secret
+MIG0004_SPEC0054_LEDGER = (
+    "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks.md"
 )
-MIG0003_DOCUMENT_SHA256 = (
-    "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42"  # pragma: allowlist secret
+MIG0004_TERMINAL_SOURCE_COMMIT = (
+    "7a770c3c0eabaeda554c4030fc08fb17de164fe5"  # pragma: allowlist secret
 )
-MIG0004_DOCUMENT_SHA256 = (
-    "6c769973de12023d8021792df4257be1401ee27f7b8293f336263352f849a3f6"  # pragma: allowlist secret
-)
+MIG0004_STAGE99_ACTION_TARGETS = {
+    "docs/99.templates/contracts/registry-form.schema.json": (
+        "replaced",
+        "docs/99.templates/contracts/document-profile.schema.json",
+    ),
+    "docs/99.templates/contracts/route-contract.json": (
+        "replaced",
+        "docs/99.templates/registry.json",
+    ),
+    "docs/99.templates/contracts/route-contract.schema.json": (
+        "replaced",
+        "docs/99.templates/registry.json",
+    ),
+    "docs/99.templates/support/README.md": (
+        "replaced",
+        "docs/99.templates/README.md",
+    ),
+    "docs/99.templates/support/document-contract.md": (
+        "replaced",
+        "docs/99.templates/README.md",
+    ),
+    "docs/99.templates/support/document-lifecycle.md": (
+        "replaced",
+        "docs/99.templates/README.md",
+    ),
+    "docs/99.templates/support/document-profiles.json": (
+        "replaced",
+        "docs/99.templates/registry.json",
+    ),
+    "docs/99.templates/templates/README.md": (
+        "replaced",
+        "docs/99.templates/README.md",
+    ),
+    "docs/99.templates/templates/common/archive-migration.template.md": (
+        "moved",
+        "docs/99.templates/templates/archive/archive-migration.template.md",
+    ),
+    "docs/99.templates/templates/common/archive-record.template.md": (
+        "moved",
+        "docs/99.templates/templates/archive/archive-record.template.md",
+    ),
+    "docs/99.templates/templates/common/governance-reference.template.md": (
+        "moved",
+        "docs/99.templates/templates/governance/governance-reference.template.md",
+    ),
+    "docs/99.templates/templates/common/memory.template.md": (
+        "moved",
+        "docs/99.templates/templates/governance/memory.template.md",
+    ),
+    "docs/99.templates/templates/common/progress.template.md": (
+        "moved",
+        "docs/99.templates/templates/governance/progress.template.md",
+    ),
+    "docs/99.templates/templates/common/reference.template.md": (
+        "moved",
+        "docs/99.templates/templates/references/reference.template.md",
+    ),
+    "docs/99.templates/templates/common/template-support.template.md": (
+        "replaced",
+        "docs/99.templates/README.md",
+    ),
+    "docs/99.templates/templates/sdlc/architecture/ad.template.md": (
+        "replaced",
+        "docs/99.templates/templates/architecture/ad.template.md",
+    ),
+    "docs/99.templates/templates/sdlc/architecture/adr.template.md": (
+        "replaced",
+        "docs/99.templates/templates/architecture/adr.template.md",
+    ),
+    "docs/99.templates/templates/sdlc/execution/plan.template.md": (
+        "moved",
+        "docs/99.templates/templates/specs/plan.template.md",
+    ),
+    "docs/99.templates/templates/sdlc/execution/task.template.md": (
+        "moved",
+        "docs/99.templates/templates/specs/task.template.md",
+    ),
+    "docs/99.templates/templates/sdlc/operations/guide.template.md": (
+        "moved",
+        "docs/99.templates/templates/operations/guide.template.md",
+    ),
+    "docs/99.templates/templates/sdlc/operations/incident.template.md": (
+        "replaced",
+        "docs/99.templates/templates/operations/incident.template.md",
+    ),
+    "docs/99.templates/templates/sdlc/operations/policy.template.md": (
+        "moved",
+        "docs/99.templates/templates/operations/policy.template.md",
+    ),
+    "docs/99.templates/templates/sdlc/operations/postmortem.template.md": (
+        "moved",
+        "docs/99.templates/templates/operations/postmortem.template.md",
+    ),
+    "docs/99.templates/templates/sdlc/operations/runbook.template.md": (
+        "moved",
+        "docs/99.templates/templates/operations/runbook.template.md",
+    ),
+    "docs/99.templates/templates/sdlc/requirements/interface.template.md": (
+        "replaced",
+        "docs/99.templates/templates/requirements/requirement-package.template.md",
+    ),
+    "docs/99.templates/templates/sdlc/requirements/prd.template.md": (
+        "replaced",
+        "docs/99.templates/templates/requirements/requirement-package.template.md",
+    ),
+    "docs/99.templates/templates/sdlc/requirements/srs.template.md": (
+        "replaced",
+        "docs/99.templates/templates/requirements/requirement-package.template.md",
+    ),
+    "docs/99.templates/templates/sdlc/specs/agent-design.template.md": (
+        "replaced",
+        "docs/99.templates/templates/specs/spec.template.md",
+    ),
+    "docs/99.templates/templates/sdlc/specs/data-model.template.md": (
+        "replaced",
+        "docs/99.templates/templates/specs/data-model.template.md",
+    ),
+    "docs/99.templates/templates/sdlc/specs/openapi.template.yaml": (
+        "moved",
+        "docs/99.templates/templates/specs/openapi.template.yaml",
+    ),
+    "docs/99.templates/templates/sdlc/specs/schema.template.graphql": (
+        "moved",
+        "docs/99.templates/templates/specs/schema.template.graphql",
+    ),
+    "docs/99.templates/templates/sdlc/specs/service.template.proto": (
+        "moved",
+        "docs/99.templates/templates/specs/service.template.proto",
+    ),
+    "docs/99.templates/templates/sdlc/specs/spec.template.md": (
+        "replaced",
+        "docs/99.templates/templates/specs/spec.template.md",
+    ),
+    "docs/99.templates/templates/sdlc/specs/tests.template.md": (
+        "replaced",
+        "docs/99.templates/templates/specs/spec.template.md",
+    ),
+}
 _MIGRATION_LEDGER_PREFIX = (
     b"<!-- archive-migration-ledger:v1 format=json -->\n\n```json\n"
 )
@@ -301,9 +436,9 @@ _ARCHIVE_MIGRATION_CONTROLS = {
     ),
     _WORK054_WP004B_MIGRATION_PATH: (
         "MIG-0004",
-        66,
-        {"moved": 8, "replaced": 56, "merged": 2},
-        MIG0004_DOCUMENT_SHA256,
+        None,
+        None,
+        None,
     ),
 }
 _MIGRATION_FRONTMATTER_KEYS = (
@@ -350,7 +485,10 @@ def _migration_control_diagnostics(
         return (_diagnostic("ARCHIVE-MIGRATION-CONTROL", path),)
     expected_id, expected_rows, expected_actions, expected_sha256 = contract
     try:
-        if hashlib.sha256(content).hexdigest() != expected_sha256:
+        if (
+            expected_sha256 is not None
+            and hashlib.sha256(content).hexdigest() != expected_sha256
+        ):
             raise ValueError
         text = content.decode("utf-8", errors="strict")
         lines = text.splitlines()
@@ -369,11 +507,7 @@ def _migration_control_diagnostics(
             tuple(metadata) != _MIGRATION_FRONTMATTER_KEYS
             or metadata.get("type") != "content/archive-migration"
             or metadata.get("status")
-            != (
-                "sealed"
-                if path == _WORK054_WP004B_MIGRATION_PATH
-                else "accepted"
-            )
+            != ("sealed" if path == _WORK054_WP004B_MIGRATION_PATH else "accepted")
             or metadata.get("owner") != "platform"
             or metadata.get("artifact_id") != expected_id
             or metadata.get("migration_id") != expected_id
@@ -391,7 +525,7 @@ def _migration_control_diagnostics(
         if not fence or not suffix.startswith(b"\n## Recovery\n"):
             raise ValueError
         rows = json.loads(raw_rows.decode("utf-8", errors="strict"))
-        if type(rows) is not list or len(rows) != expected_rows:
+        if type(rows) is not list:
             raise ValueError
         actions: dict[str, int] = {}
         for row in rows:
@@ -399,7 +533,9 @@ def _migration_control_diagnostics(
                 raise ValueError
             action = row["action"]
             actions[action] = actions.get(action, 0) + 1
-        if actions != expected_actions:
+        if expected_rows is not None and len(rows) != expected_rows:
+            raise ValueError
+        if expected_actions is not None and actions != expected_actions:
             raise ValueError
     except (UnicodeDecodeError, ValueError, json.JSONDecodeError):
         return (_diagnostic("ARCHIVE-MIGRATION-PROFILE", path),)
@@ -500,9 +636,7 @@ def validate_pinned_migration_recovery(
         members = _batch_commit_path_members(
             root,
             {
-                commit: tuple(
-                    sorted(str(row["legacy_path"]) for row in commit_rows)
-                )
+                commit: tuple(sorted(str(row["legacy_path"]) for row in commit_rows))
                 for commit, commit_rows in by_commit.items()
             },
             object_id_length,
@@ -528,8 +662,7 @@ def validate_pinned_migration_recovery(
                 source = blobs.get(str(row["source_blob"]))
                 if (
                     source is None
-                    or hashlib.sha256(source).hexdigest()
-                    != row["content_sha256"]
+                    or hashlib.sha256(source).hexdigest() != row["content_sha256"]
                 ):
                     raise ArchiveContractError(
                         "RECOVERY-MIGRATION-CONTENT",
@@ -634,20 +767,17 @@ def read_worktree_regular_bounded(
             | getattr(os, "O_NOFOLLOW", 0)
         )
         file_flags = (
-            os.O_RDONLY
-            | getattr(os, "O_CLOEXEC", 0)
-            | getattr(os, "O_NOFOLLOW", 0)
+            os.O_RDONLY | getattr(os, "O_CLOEXEC", 0) | getattr(os, "O_NOFOLLOW", 0)
         )
         descriptors: list[int] = []
         try:
             root_descriptor = os.open(root, directory_flags)
             descriptors.append(root_descriptor)
             opened_root = os.fstat(root_descriptor)
-            if (
-                not stat.S_ISDIR(opened_root.st_mode)
-                or (opened_root.st_dev, opened_root.st_ino)
-                != (root_metadata.st_dev, root_metadata.st_ino)
-            ):
+            if not stat.S_ISDIR(opened_root.st_mode) or (
+                opened_root.st_dev,
+                opened_root.st_ino,
+            ) != (root_metadata.st_dev, root_metadata.st_ino):
                 raise OSError
             parent_descriptor = root_descriptor
             parts = PurePosixPath(path).parts
@@ -657,9 +787,7 @@ def read_worktree_regular_bounded(
                 if not stat.S_ISDIR(os.fstat(child).st_mode):
                     raise OSError
                 parent_descriptor = child
-            file_descriptor = os.open(
-                parts[-1], file_flags, dir_fd=parent_descriptor
-            )
+            file_descriptor = os.open(parts[-1], file_flags, dir_fd=parent_descriptor)
             descriptors.append(file_descriptor)
             before = os.fstat(file_descriptor)
             if not stat.S_ISREG(before.st_mode):
@@ -686,6 +814,7 @@ def read_worktree_regular_bounded(
             current = os.stat(
                 parts[-1], dir_fd=parent_descriptor, follow_symlinks=False
             )
+
             def identity(item: os.stat_result) -> tuple[int, int, int, int, int]:
                 return (
                     item.st_dev,
@@ -694,6 +823,7 @@ def read_worktree_regular_bounded(
                     item.st_size,
                     item.st_mtime_ns,
                 )
+
             if identity(before) != identity(after) or identity(after) != identity(
                 current
             ):
@@ -712,7 +842,7 @@ def read_worktree_regular_bounded(
 
 
 def _staged_regular_blob_inventory(root: Path) -> dict[str, str]:
-    """Return the bounded stage-zero regular Markdown authority inventory."""
+    """Return the bounded stage-zero regular cutover-target inventory."""
 
     object_id_length = _repository_identity(root)
     result = _git_command(
@@ -724,6 +854,7 @@ def _staged_regular_blob_inventory(root: Path) -> dict[str, str]:
         "docs/01.requirements",
         "docs/02.architecture",
         "docs/03.specs",
+        "docs/99.templates",
         output_limit=_INDEX_CAPTURE_MAX_BYTES,
     )
     if result.returncode:
@@ -896,10 +1027,9 @@ def _validate_mig0004_rows_and_targets(
         "content_sha256",
         "reason",
     )
-    source_commit = "211e167f9ef0268c937303faa82d7ed297b33e38"  # pragma: allowlist secret -- sealed migration source commit
-    requirement = re.compile(r"docs/01\.requirements/000[1-8]-[a-z0-9-]+\.md\Z")
+    requirement = re.compile(r"docs/01\.requirements/[0-9]{4}-[a-z0-9-]+\.md\Z")
     architecture = re.compile(
-        r"docs/02\.architecture/descriptions/ad-(000[4-9]|001[01])-[a-z0-9-]+\.md\Z"
+        r"docs/02\.architecture/descriptions/ad-([0-9]{4})-[a-z0-9-]+\.md\Z"
     )
     task_ledger = re.compile(
         r"docs/03\.specs/(?P<spec>[0-9]{4})-[a-z0-9-]+/tasks\.md\Z"
@@ -908,15 +1038,38 @@ def _validate_mig0004_rows_and_targets(
         "docs/03.specs/0024-observability-and-network-review-agents/agent-design.md",
         "docs/03.specs/0041-stage-00-agent-governance-contract/agent-design.md",
     }
-    counts = {"requirement": 0, "architecture": 0, "task": 0, "agent": 0}
     task_directories: set[str] = set()
     target_paths: set[str] = set()
+    stage99_paths: set[str] = set()
+    spec0054_rows = 0
     previous: str | None = None
     legacy_paths: set[str] = set()
     inventory = _staged_regular_blob_inventory(root)
+    stage99_targets = frozenset(
+        target for _action, target in MIG0004_STAGE99_ACTION_TARGETS.values()
+    )
+    consumer_paths = tuple(
+        path
+        for path in inventory
+        if path.endswith(".md")
+        and path.startswith(
+            ("docs/01.requirements/", "docs/02.architecture/", "docs/03.specs/")
+        )
+    )
+    selected_documents = _staged_markdown_documents(
+        root,
+        inventory,
+        tuple(sorted(set(consumer_paths) | set(stage99_targets))),
+    )
 
     for row in rows:
         legacy = row.get("legacy_path")
+        expected_stage99 = (
+            MIG0004_STAGE99_ACTION_TARGETS.get(legacy)
+            if isinstance(legacy, str)
+            else None
+        )
+        stage99_row = expected_stage99 is not None
         if (
             type(row) is not dict
             or tuple(row) != fields
@@ -924,18 +1077,55 @@ def _validate_mig0004_rows_and_targets(
             or _canonical_path(legacy) != legacy
             or legacy in legacy_paths
             or (previous is not None and legacy <= previous)
-            or row.get("source_commit") != source_commit
+            or not isinstance(row.get("source_commit"), str)
+            or _FULL_OBJECT_ID.fullmatch(str(row["source_commit"])) is None
+            or not isinstance(row.get("source_blob"), str)
+            or _FULL_OBJECT_ID.fullmatch(str(row["source_blob"])) is None
+            or not isinstance(row.get("content_sha256"), str)
+            or re.fullmatch(r"[0-9a-f]{64}", str(row["content_sha256"])) is None
             or not isinstance(row.get("reason"), str)
             or not str(row["reason"]).strip()
+            or (
+                legacy
+                in set(MIG0004_STAGE99_ACTION_TARGETS) | {MIG0004_SPEC0054_LEDGER}
+                and row.get("source_commit") != MIG0004_TERMINAL_SOURCE_COMMIT
+            )
         ):
             raise ArchiveContractError(
-                "RECOVERY-MIGRATION-ROW", "MIG-0004 row identity differs"
+                "RECOVERY-MIGRATION-ROW", f"row identity differs: {legacy!r}"
             )
         previous = legacy
         legacy_paths.add(legacy)
         target: object
-        if requirement.fullmatch(legacy):
-            counts["requirement"] += 1
+        if stage99_row:
+            expected_action, expected_target = expected_stage99
+            target_field = (
+                "stable_path" if expected_action == "moved" else "replacement"
+            )
+            empty_field = "replacement" if expected_action == "moved" else "stable_path"
+            if (
+                row.get("action") != expected_action
+                or row.get(target_field) != expected_target
+                or row.get(empty_field) is not None
+                or row.get("artifact_id") is not None
+            ):
+                raise ArchiveContractError(
+                    "RECOVERY-MIGRATION-ROW", f"Stage99 action target differs: {legacy}"
+                )
+            stage99_paths.add(legacy)
+            target = expected_target
+            if expected_action == "moved" and (
+                hashlib.sha256(selected_documents[target].encode("utf-8")).hexdigest()
+                != row.get("content_sha256")
+            ):
+                raise ArchiveContractError(
+                    "RECOVERY-MIGRATION-TARGET", "Stage99 move bytes differ"
+                )
+        elif isinstance(legacy, str) and legacy.startswith("docs/99.templates/"):
+            raise ArchiveContractError(
+                "RECOVERY-MIGRATION-ROW", f"undeclared Stage99 row: {legacy}"
+            )
+        elif requirement.fullmatch(legacy):
             if (
                 row.get("action") != "replaced"
                 or row.get("stable_path") is not None
@@ -943,11 +1133,11 @@ def _validate_mig0004_rows_and_targets(
                 or row.get("replacement") != legacy
             ):
                 raise ArchiveContractError(
-                    "RECOVERY-MIGRATION-ROW", "Requirement replacement differs"
+                    "RECOVERY-MIGRATION-ROW",
+                    f"Requirement replacement differs: {legacy}",
                 )
             target = row["replacement"]
         elif (match := architecture.fullmatch(legacy)) is not None:
-            counts["architecture"] += 1
             expected_target = legacy.replace("/ad-", "/", 1)
             expected_artifact = f"AD-{match.group(1)}"
             if (
@@ -957,11 +1147,10 @@ def _validate_mig0004_rows_and_targets(
                 or row.get("replacement") is not None
             ):
                 raise ArchiveContractError(
-                    "RECOVERY-MIGRATION-ROW", "Architecture move differs"
+                    "RECOVERY-MIGRATION-ROW", f"Architecture move differs: {legacy}"
                 )
             target = row["stable_path"]
         elif legacy in agent_design_paths:
-            counts["agent"] += 1
             expected_target = str(PurePosixPath(legacy).with_name("spec.md"))
             if (
                 row.get("action") != "merged"
@@ -970,43 +1159,51 @@ def _validate_mig0004_rows_and_targets(
                 or row.get("replacement") != expected_target
             ):
                 raise ArchiveContractError(
-                    "RECOVERY-MIGRATION-ROW", "agent-design disposition differs"
+                    "RECOVERY-MIGRATION-ROW",
+                    f"agent-design disposition differs: {legacy}",
                 )
             target = row["replacement"]
         elif (match := task_ledger.fullmatch(legacy)) is not None:
-            counts["task"] += 1
+            if legacy == MIG0004_SPEC0054_LEDGER:
+                spec0054_rows += 1
             expected_target = str(PurePosixPath(legacy).with_name("README.md"))
             if (
-                match.group("spec") == "0054"
-                or row.get("action") != "replaced"
+                row.get("action") != "replaced"
                 or row.get("stable_path") is not None
                 or row.get("artifact_id") is not None
                 or row.get("replacement") != expected_target
             ):
                 raise ArchiveContractError(
-                    "RECOVERY-MIGRATION-ROW", "Task replacement differs"
+                    "RECOVERY-MIGRATION-ROW", f"Task replacement differs: {legacy}"
                 )
             task_directories.add(PurePosixPath(legacy).parent.as_posix())
             target = row["replacement"]
         else:
             raise ArchiveContractError(
-                "RECOVERY-MIGRATION-ROW", "MIG-0004 legacy path is undeclared"
+                "RECOVERY-MIGRATION-ROW",
+                f"MIG-0004 legacy path is undeclared: {legacy}",
             )
         if not isinstance(target, str):
             raise ArchiveContractError(
                 "RECOVERY-MIGRATION-TARGET", "migration target is invalid"
             )
-        _require_regular_current_target(target, inventory)
-        target_paths.add(target)
+        if not stage99_row:
+            _require_regular_current_target(target, inventory)
+            target_paths.add(target)
         if target != legacy and legacy in inventory:
             raise ArchiveContractError(
                 "RECOVERY-MIGRATION-TARGET", "retired source remains current"
             )
 
-    if counts != {"requirement": 8, "architecture": 8, "task": 48, "agent": 2}:
+    if stage99_paths != set(MIG0004_STAGE99_ACTION_TARGETS):
         raise ArchiveContractError(
-            "RECOVERY-MIGRATION-ROW", "MIG-0004 disposition is incomplete"
+            "RECOVERY-MIGRATION-ROW", "MIG-0004 Stage99 disposition differs"
         )
+    if spec0054_rows != 1:
+        raise ArchiveContractError(
+            "RECOVERY-MIGRATION-ROW", "MIG-0004 Spec0054 disposition differs"
+        )
+
     task_artifacts: dict[str, str] = {}
     if _untracked_task_paths(root):
         raise ArchiveContractError(
@@ -1029,24 +1226,16 @@ def _validate_mig0004_rows_and_targets(
                     "RECOVERY-MIGRATION-TASK", "Task path differs"
                 )
             spec = PurePosixPath(package).name[:4]
-            artifact = f'TSK-{spec}-{match.group("sequence")}'
+            artifact = f"TSK-{spec}-{match.group('sequence')}"
             task_artifacts[relative] = artifact
-    if len(task_artifacts) != 315 or len(set(task_artifacts.values())) != 315:
+    if len(task_artifacts) != len(set(task_artifacts.values())):
         raise ArchiveContractError(
-            "RECOVERY-MIGRATION-TASK", "Task disposition is not exactly 315"
+            "RECOVERY-MIGRATION-TASK", "Task artifact identity is not unique"
         )
-    consumer_paths = tuple(
-        path
-        for path in inventory
-        if path.endswith(".md")
-        and path.startswith(
-            ("docs/01.requirements/", "docs/02.architecture/", "docs/03.specs/")
-        )
-    )
-    consumer_documents = _staged_markdown_documents(
-        root, inventory, consumer_paths
-    )
-    if not target_paths.issubset(consumer_documents):
+    consumer_documents = {path: selected_documents[path] for path in consumer_paths}
+    if not {path for path in target_paths if path.endswith(".md")}.issubset(
+        consumer_documents
+    ):
         raise ArchiveContractError(
             "RECOVERY-MIGRATION-TARGET", "migration target is outside current Markdown"
         )
@@ -1067,49 +1256,36 @@ def _validate_mig0004_rows_and_targets(
             )
 
 
-def _namespace_records(
-    registry: object,
+def _stage98_namespace_records(
+    actual: frozenset[str],
+    stable_rows: Mapping[str, Mapping[str, object]],
+    reviewed_manifest: Mapping[str, ReviewedManifestRecord],
 ) -> tuple[dict[str, tuple[str, ...]], list[ArchiveDiagnostic]]:
+    """Derive reporting partitions from Stage 98's durable recovery owners."""
+
     diagnostics: list[ArchiveDiagnostic] = []
-    if not isinstance(registry, RuntimeMapping) or registry.get(
-        "archiveContractVersion"
-    ) != 2:
-        return {}, [_contract_diagnostic("ARCHIVE-NAMESPACE-CONTRACT")]
-    raw_namespaces = registry.get("archiveNamespaces")
-    if type(raw_namespaces) is not list or len(raw_namespaces) != len(
-        _NAMESPACE_CONTRACT
-    ):
-        return {}, [_contract_diagnostic("ARCHIVE-NAMESPACE-CONTRACT")]
-    namespaces: dict[str, tuple[str, ...]] = {}
-    seen: set[str] = set()
-    for raw, (expected_id, expected_policy, minimum, maximum) in zip(
-        raw_namespaces, _NAMESPACE_CONTRACT, strict=True
-    ):
-        if (
-            type(raw) is not dict
-            or tuple(raw) != ("id", "policy", "records")
-            or raw.get("id") != expected_id
-            or raw.get("policy") != expected_policy
-            or type(raw.get("records")) is not list
-        ):
-            diagnostics.append(_contract_diagnostic("ARCHIVE-NAMESPACE-CONTRACT"))
-            continue
-        raw_records = raw["records"]
-        if not minimum <= len(raw_records) <= maximum:
-            diagnostics.append(_contract_diagnostic("ARCHIVE-NAMESPACE-COUNT"))
-        canonical: list[str] = []
-        for value in raw_records:
-            path = _canonical_path(value, archive_only=True)
-            if path is None or path == ARCHIVE_INDEX.as_posix():
-                diagnostics.append(_diagnostic("ARCHIVE-NAMESPACE-PATH", value))
-                continue
-            if path in seen:
-                diagnostics.append(_diagnostic("ARCHIVE-NAMESPACE-OVERLAP", path))
-            seen.add(path)
-            canonical.append(path)
-        if len(set(canonical)) != len(canonical):
-            diagnostics.append(_contract_diagnostic("ARCHIVE-NAMESPACE-OVERLAP"))
-        namespaces[expected_id] = tuple(canonical)
+    legacy_to_stable = {
+        str(row["legacy_path"]): stable for stable, row in stable_rows.items()
+    }
+    base = frozenset(
+        legacy_to_stable.get(path, path) for path in EXPECTED_ARCHIVE_PATHS
+    )
+    reviewed = frozenset(reviewed_manifest)
+    if not base.issubset(actual) or not reviewed.issubset(actual):
+        diagnostics.append(
+            _diagnostic("ARCHIVE-NAMESPACE-REVIEWED", ARCHIVE_ROOT.as_posix())
+        )
+    if base & reviewed:
+        diagnostics.append(
+            _diagnostic("ARCHIVE-NAMESPACE-OVERLAP", ARCHIVE_ROOT.as_posix())
+        )
+    additive = actual - base - reviewed
+    namespaces = {
+        "arwb-base": tuple(sorted(base & actual)),
+        "acer-additive": tuple(sorted(additive)),
+        "wdtc-execution": tuple(sorted(reviewed & actual)),
+        "progress-snapshot": (),
+    }
     return namespaces, diagnostics
 
 
@@ -1138,7 +1314,10 @@ def _repository_archive_records(
         )
         try:
             before = os.fstat(descriptor)
-            if not stat.S_ISREG(before.st_mode) or before.st_size > _ARCHIVE_RECORD_LIMIT:
+            if (
+                not stat.S_ISREG(before.st_mode)
+                or before.st_size > _ARCHIVE_RECORD_LIMIT
+            ):
                 raise OSError
             chunks: list[bytes] = []
             remaining = before.st_size
@@ -1205,7 +1384,9 @@ def _repository_archive_records(
         )
         visit(archive_fd, ARCHIVE_ROOT)
     except (OSError, RuntimeError, ValueError):
-        diagnostics.append(_diagnostic("ARCHIVE-INVENTORY-READ", ARCHIVE_ROOT.as_posix()))
+        diagnostics.append(
+            _diagnostic("ARCHIVE-INVENTORY-READ", ARCHIVE_ROOT.as_posix())
+        )
     finally:
         if archive_fd is not None:
             try:
@@ -1219,12 +1400,9 @@ def _repository_archive_records(
         _WORK054_WP004B_MIGRATION_PATH,
     ):
         migration_content = migration_controls.get(migration_path)
-        if (
-            migration_content is not None
-            and not _migration_control_diagnostics(
-                migration_path,
-                migration_content,
-            )
+        if migration_content is not None and not _migration_control_diagnostics(
+            migration_path,
+            migration_content,
         ):
             try:
                 validate_pinned_migration_recovery(
@@ -1257,7 +1435,10 @@ def _load_migration_module() -> ModuleType:
         sys.path.insert(0, scripts_path)
     try:
         spec.loader.exec_module(module)
-        if Path(str(getattr(module, "__file__", ""))).resolve(strict=True) != script_path:
+        if (
+            Path(str(getattr(module, "__file__", ""))).resolve(strict=True)
+            != script_path
+        ):
             raise RuntimeError("reviewed migration module is unavailable")
     finally:
         sys.modules.pop(module_name, None)
@@ -1279,7 +1460,10 @@ def _reviewed_manifest_records(root: Path) -> dict[str, ReviewedManifestRecord]:
             raise RuntimeError("reviewed migration manifest is unavailable") from exc
         raise
     document = snapshot.document
-    if document.source_commit != _MANIFEST_SOURCE_COMMIT or len(document.entries) != 132:
+    if (
+        document.source_commit != _MANIFEST_SOURCE_COMMIT
+        or len(document.entries) != 132
+    ):
         raise RuntimeError("reviewed migration manifest identity differs")
     move_count = 0
     reviewed: dict[str, ReviewedManifestRecord] = {}
@@ -1425,18 +1609,30 @@ def _parse_repository_index(
         raw_rows.append(line)
     end = header + 2 + len(raw_rows)
     if any(line.startswith("|") for line in lines[end:]):
-        diagnostics.append(_diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX.as_posix()))
+        diagnostics.append(
+            _diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX.as_posix())
+        )
     rows: dict[str, tuple[str, ...]] = {}
     link_total = 0
     for line in raw_rows:
         cells = tuple(cell.strip() for cell in line.strip().strip("|").split("|"))
         if len(cells) != 9:
-            diagnostics.append(_diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX.as_posix()))
+            diagnostics.append(
+                _diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX.as_posix())
+            )
             continue
         link = _INDEX_LINK.fullmatch(cells[0])
-        code_cells = tuple(_INDEX_CODE.fullmatch(cells[index]) for index in (1, 2, 3, 4, 5, 8))
-        if link is None or any(match is None for match in code_cells) or not cells[6].isdigit():
-            diagnostics.append(_diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX.as_posix()))
+        code_cells = tuple(
+            _INDEX_CODE.fullmatch(cells[index]) for index in (1, 2, 3, 4, 5, 8)
+        )
+        if (
+            link is None
+            or any(match is None for match in code_cells)
+            or not cells[6].isdigit()
+        ):
+            diagnostics.append(
+                _diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX.as_posix())
+            )
             continue
         path = f"docs/98.archive/{link.group('target')}"
         replacement = cells[7]
@@ -1460,9 +1656,13 @@ def _parse_repository_index(
             or path in rows
             or not replacement_valid
         ):
-            diagnostics.append(_diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX.as_posix()))
+            diagnostics.append(
+                _diagnostic("ARCHIVE-INDEX-STRUCTURE", ARCHIVE_INDEX.as_posix())
+            )
             continue
-        values = tuple(match.group("value") for match in code_cells if match is not None)
+        values = tuple(
+            match.group("value") for match in code_cells if match is not None
+        )
         rows[path] = (*values, cells[7], cells[6])
         link_total += int(cells[6])
     markers = tuple(_INDEX_MARKER.finditer(text))
@@ -1471,7 +1671,9 @@ def _parse_repository_index(
         or int(markers[0].group("records")) != len(rows)
         or int(markers[0].group("links")) != link_total
     ):
-        diagnostics.append(_diagnostic("ARCHIVE-INDEX-MANIFEST", ARCHIVE_INDEX.as_posix()))
+        diagnostics.append(
+            _diagnostic("ARCHIVE-INDEX-MANIFEST", ARCHIVE_INDEX.as_posix())
+        )
     return rows, link_total, diagnostics
 
 
@@ -1479,7 +1681,9 @@ def validate_repository_archive(
     repository_root: str | Path,
     registry: object,
 ) -> ArchiveValidationReport:
-    """Validate the complete version-2 repository archive and README index."""
+    """Validate the repository archive from Stage 98 recovery owners."""
+
+    del registry  # Kept for the public compatibility signature through WP-011.
 
     try:
         root = Path(repository_root).resolve(strict=True)
@@ -1487,11 +1691,9 @@ def validate_repository_archive(
             raise OSError
     except (OSError, RuntimeError, TypeError):
         return _report((_diagnostic("ARCHIVE-ROOT-UNAVAILABLE", "<repository>"),))
-    namespaces, namespace_diagnostics = _namespace_records(registry)
     records, inventory_diagnostics = _repository_archive_records(root)
-    declared = frozenset(path for paths in namespaces.values() for path in paths)
     actual = frozenset(records)
-    diagnostics = [*namespace_diagnostics, *inventory_diagnostics]
+    diagnostics = [*inventory_diagnostics]
     try:
         stable_rows = _work107_stable_rows(root)
     except RuntimeError:
@@ -1519,13 +1721,12 @@ def validate_repository_archive(
             )
             for path, row in reviewed_manifest.items()
         }
-    wdtc_paths = frozenset(namespaces.get("wdtc-execution", ()))
-    if frozenset(reviewed_manifest) != wdtc_paths:
-        diagnostics.append(
-            _diagnostic("ARCHIVE-NAMESPACE-REVIEWED", ARCHIVE_ROOT.as_posix())
-        )
-    if actual != declared:
-        diagnostics.append(_diagnostic("ARCHIVE-NAMESPACE-PARITY", ARCHIVE_ROOT.as_posix()))
+    namespaces, namespace_diagnostics = _stage98_namespace_records(
+        actual,
+        stable_rows,
+        reviewed_manifest,
+    )
+    diagnostics.extend(namespace_diagnostics)
     if stable_rows and frozenset(stable_rows) != actual:
         diagnostics.append(
             _diagnostic("ARCHIVE-MIGRATION-PARITY", WORK107_MIGRATION_PATH)
@@ -1569,7 +1770,9 @@ def validate_repository_archive(
             except OSError:
                 diagnostics.append(_diagnostic("ARCHIVE-ORIGINAL-READ", record.path))
             else:
-                diagnostics.append(_diagnostic("ARCHIVE-ORIGINAL-STILL-CURRENT", record.path))
+                diagnostics.append(
+                    _diagnostic("ARCHIVE-ORIGINAL-STILL-CURRENT", record.path)
+                )
     try:
         index_text = _read_repository_index(root)
     except ArchiveContractError as exc:
@@ -1578,7 +1781,9 @@ def validate_repository_archive(
     index_rows, index_links, index_diagnostics = _parse_repository_index(index_text)
     diagnostics.extend(index_diagnostics)
     if frozenset(index_rows) != actual:
-        diagnostics.append(_diagnostic("ARCHIVE-INDEX-PARITY", ARCHIVE_INDEX.as_posix()))
+        diagnostics.append(
+            _diagnostic("ARCHIVE-INDEX-PARITY", ARCHIVE_INDEX.as_posix())
+        )
     if index_links != record_report.historical_link_count:
         diagnostics.append(_diagnostic("ARCHIVE-INDEX-LINKS", ARCHIVE_INDEX.as_posix()))
     record_link_counts = dict(record_report.record_link_counts)
@@ -1599,8 +1804,7 @@ def validate_repository_archive(
         if int(row[-1]) != record_link_counts.get(path, -1):
             diagnostics.append(_diagnostic("ARCHIVE-INDEX-LINKS", path))
     namespace_counts = tuple(
-        (namespace, len(namespaces.get(namespace, ())))
-        for namespace, _policy, _minimum, _maximum in _NAMESPACE_CONTRACT
+        (namespace, len(namespaces.get(namespace, ()))) for namespace in _NAMESPACE_IDS
     )
     return _report(
         diagnostics,
@@ -1808,9 +2012,7 @@ def _repository_identity(root: Path) -> int:
     )
 
 
-def _commit_types(
-    root: Path, commits: tuple[str, ...]
-) -> dict[str, str | None]:
+def _commit_types(root: Path, commits: tuple[str, ...]) -> dict[str, str | None]:
     if not commits:
         return {}
     result = _git_command(
@@ -1963,9 +2165,7 @@ def _batch_commit_path_members(
         raise ArchiveContractError("RECOVERY-TREE-INVALID", "tree lookup failed")
     lines = exact.stdout.splitlines()
     if len(lines) != total:
-        raise ArchiveContractError(
-            "RECOVERY-TREE-INVALID", "tree lookup is incomplete"
-        )
+        raise ArchiveContractError("RECOVERY-TREE-INVALID", "tree lookup is incomplete")
     offset = 0
     members_by_commit: dict[str, dict[str, _GitTreeMember]] = {}
     for commit, paths in ordered:
@@ -2048,9 +2248,7 @@ def _parse_git_path_batch_output(
         )
     lines = output.splitlines()
     if len(lines) != len(paths):
-        raise ArchiveContractError(
-            "RECOVERY-TREE-INVALID", "tree lookup is incomplete"
-        )
+        raise ArchiveContractError("RECOVERY-TREE-INVALID", "tree lookup is incomplete")
     members: dict[str, _GitTreeMember] = {}
     for path, line in zip(paths, lines, strict=True):
         missing = f"{missing_prefix}{path} missing".encode("utf-8")
@@ -2128,7 +2326,11 @@ def _batch_recover(
         members = valid_by_commit[commit]
         kind = commit_types.get(commit)
         if kind != "commit":
-            code = "RECOVERY-OBJECT-MISSING" if kind is None else "RECOVERY-OBJECT-NOT-COMMIT"
+            code = (
+                "RECOVERY-OBJECT-MISSING"
+                if kind is None
+                else "RECOVERY-OBJECT-NOT-COMMIT"
+            )
             errors.update({item.archive_path: code for item in members})
             continue
         originals = {item.original_path for item in members}
@@ -2196,13 +2398,7 @@ def _batch_recover(
             tuple(sorted({member.object_id for member in source_members.values()})),
         )
     except ArchiveContractError as exc:
-        errors.update(
-            {
-                path: exc.code
-                for path in source_members
-                if path not in errors
-            }
-        )
+        errors.update({path: exc.code for path in source_members if path not in errors})
         blobs = {}
     for item in envelopes:
         if item.archive_path in errors:

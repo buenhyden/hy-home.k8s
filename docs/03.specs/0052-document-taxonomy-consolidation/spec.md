@@ -751,7 +751,7 @@ hosted CI, remote settings, secret safety, deployment, or live operation.
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-0008-FR-0001](../../01.requirements/0008-workspace-document-taxonomy-consolidation.md#functional-requirements) | VAL-WDTC-001 | Mapping and terminal route/locality fixtures prove Stage 03 co-location and Stage 04 retirement. |
 | N/A — REQ-0008-FR-0002 shares the PRD source above. | VAL-WDTC-003 | Filename/frontmatter inventory and exception fixtures prove stable identity. |

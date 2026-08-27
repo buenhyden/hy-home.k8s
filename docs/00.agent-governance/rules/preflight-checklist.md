@@ -65,7 +65,7 @@ the active Task or handoff before proceeding.
 - [ ] A `memory/progress.md` update is planned for repo-changing work.
 - [ ] Any ignored `.agent-work/checkpoint.json` recovery context is bounded,
       non-sensitive, non-authoritative, and subordinate to repository evidence.
-- [ ] If a standalone memory file will be created or updated, `docs/99.templates/templates/common/memory.template.md` has been read and a matching `progress.md` entry is planned.
+- [ ] If a standalone memory file will be created or updated, `docs/99.templates/templates/governance/memory.template.md` has been read and a matching `progress.md` entry is planned.
 
 ## Related Documents
 

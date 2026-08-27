@@ -100,7 +100,9 @@ class PreEditAcceptanceTest(unittest.TestCase):
             self.skipTest("repository has no linked worktree to exercise")
         worktree = worktrees[0]
 
-        result = run_hook(scalar_payload(str(worktree / SAMPLE_DOCUMENT)), main_checkout())
+        result = run_hook(
+            scalar_payload(str(worktree / SAMPLE_DOCUMENT)), main_checkout()
+        )
 
         self.assertEqual(result.returncode, 0, result.stderr)
 
@@ -115,7 +117,9 @@ class PreEditAcceptanceTest(unittest.TestCase):
             self.skipTest("repository has no linked worktree to exercise")
         worktree = worktrees[0]
 
-        result = run_hook(scalar_payload(str(worktree / SAMPLE_DOCUMENT)), main_checkout())
+        result = run_hook(
+            scalar_payload(str(worktree / SAMPLE_DOCUMENT)), main_checkout()
+        )
 
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn(f"`{SAMPLE_DOCUMENT}`", result.stdout)
@@ -123,12 +127,36 @@ class PreEditAcceptanceTest(unittest.TestCase):
 
     def test_not_yet_existing_deep_path_is_accepted(self):
         """`Write` creates files, so resolution cannot require the path to exist."""
-        target = ROOT / "docs/03.specs/999-not-created-yet/spec.md"
+        target = ROOT / "docs/03.specs/9999-not-created-yet/spec.md"
         self.assertFalse(target.exists())
 
         result = run_hook(scalar_payload(str(target)), ROOT)
 
         self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_terminal_requirement_route_is_selected_from_registry(self):
+        target = "docs/01.requirements/9999-example-feature.md"
+
+        result = run_hook(scalar_payload(target), ROOT)
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("`sdlc/requirement-package`", result.stdout)
+        self.assertIn(
+            "`docs/99.templates/templates/requirements/requirement-package.template.md`",
+            result.stdout,
+        )
+
+    def test_terminal_spec_task_route_is_selected_from_registry(self):
+        target = "docs/03.specs/9999-example-feature/tasks/tsk-0001-implement.md"
+
+        result = run_hook(scalar_payload(target), ROOT)
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("`sdlc/task`", result.stdout)
+        self.assertIn(
+            "`docs/99.templates/templates/specs/task.template.md`",
+            result.stdout,
+        )
 
 
 class PreEditRejectionTest(unittest.TestCase):
@@ -148,7 +176,9 @@ class PreEditRejectionTest(unittest.TestCase):
 
     def test_credential_path_outside_the_repository_is_rejected(self):
         home = Path(os.path.expanduser("~"))
-        self.assert_rejected(scalar_payload(str(home / ".ssh/config")), "HOOK-PATH-ROOT")
+        self.assert_rejected(
+            scalar_payload(str(home / ".ssh/config")), "HOOK-PATH-ROOT"
+        )
 
     def test_sibling_directory_of_another_repository_is_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -191,6 +221,93 @@ class PreEditRejectionTest(unittest.TestCase):
         )
 
         self.assert_rejected(payload, "HOOK-PATH-ROOT", project_dir=main_checkout())
+
+    def test_every_retired_standalone_form_is_rejected_with_terminal_owner(self):
+        cases = (
+            ("docs/01.requirements/prd-example-feature.md", "sdlc/requirement-package"),
+            ("docs/01.requirements/srs-example-feature.md", "sdlc/requirement-package"),
+            ("docs/01.requirements/ifc-example-feature.md", "sdlc/requirement-package"),
+            (
+                "docs/01.requirements/interface-example-feature.md",
+                "sdlc/requirement-package",
+            ),
+            ("docs/03.specs/9999-example-feature/design.md", "sdlc/spec"),
+            ("docs/03.specs/9999-example-feature/tests.md", "sdlc/spec"),
+            ("docs/03.specs/9999-example-feature/agent-design.md", "sdlc/spec"),
+            ("docs/03.specs/9999-example-feature/tasks.md", "sdlc/task"),
+        )
+        for path, owner in cases:
+            with self.subTest(path=path):
+                result = run_hook(scalar_payload(path), ROOT)
+                self.assertEqual(result.returncode, 2, result.stdout)
+                self.assertIn("HOOK-DOC-RETIRED", result.stderr)
+                self.assertIn(owner, result.stderr)
+
+    def test_registry_template_parent_symlink_is_rejected(self):
+        import json
+
+        with tempfile.TemporaryDirectory() as directory:
+            project = Path(directory) / "repository"
+            outside = Path(directory) / "outside"
+            registry_dir = project / "docs/99.templates"
+            outside.mkdir()
+            registry_dir.mkdir(parents=True)
+            (outside / "requirement-package.template.md").write_text(
+                "# escaped\n", encoding="utf-8"
+            )
+            (registry_dir / "templates").symlink_to(outside, target_is_directory=True)
+            (registry_dir / "registry.json").write_text(
+                json.dumps(
+                    {
+                        "profiles": [
+                            {
+                                "id": "sdlc/requirement-package",
+                                "pathPattern": (
+                                    r"^docs/01\.requirements/[0-9]{4}-[a-z-]+\.md$"
+                                ),
+                                "template": (
+                                    "docs/99.templates/templates/"
+                                    "requirement-package.template.md"
+                                ),
+                            }
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            result = run_hook(
+                scalar_payload("docs/01.requirements/9999-example-feature.md"),
+                project,
+            )
+
+        self.assertEqual(result.returncode, 2, result.stdout)
+        self.assertIn("HOOK-DOC-TEMPLATE", result.stderr)
+        self.assertIn("symlink component", result.stderr)
+
+    def test_registry_parent_symlink_is_rejected(self):
+        import json
+
+        with tempfile.TemporaryDirectory() as directory:
+            project = Path(directory) / "repository"
+            outside = Path(directory) / "outside"
+            (project / "docs").mkdir(parents=True)
+            outside.mkdir()
+            (outside / "registry.json").write_text(
+                json.dumps({"profiles": []}), encoding="utf-8"
+            )
+            (project / "docs/99.templates").symlink_to(
+                outside, target_is_directory=True
+            )
+
+            result = run_hook(
+                scalar_payload("docs/01.requirements/9999-example-feature.md"),
+                project,
+            )
+
+        self.assertEqual(result.returncode, 2, result.stdout)
+        self.assertIn("HOOK-DOC-REGISTRY", result.stderr)
+        self.assertIn("symlink component", result.stderr)
 
 
 class PreEditGitDegradationTest(unittest.TestCase):

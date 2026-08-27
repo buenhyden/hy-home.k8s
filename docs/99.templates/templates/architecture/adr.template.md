@@ -1,7 +1,7 @@
 ---
 title: 'ADR-####: {Short Title}'
 type: sdlc/adr
-status: draft
+status: proposed
 owner: platform
 updated: YYYY-MM-DD
 ---

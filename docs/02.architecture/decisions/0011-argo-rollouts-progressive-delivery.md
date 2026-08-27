@@ -59,8 +59,8 @@ Accepted — 2026-03-30
 
 - [ADR-0002](./0002-argocd-helm-and-gitops-model.md) — ArgoCD GitOps 모델
 - [ADR-0012](./0012-argo-notifications-slack.md) — Rollouts 이벤트 알림
-- [PRD](../../01.requirements/001-argo-rollouts-progressive-delivery.md)
-- [ARD](../requirements/0004-argo-rollouts-progressive-delivery.md)
-- [Spec](../../03.specs/004-argo-rollouts-progressive-delivery/spec.md)
-- [Plan](../../03.specs/004-argo-rollouts-progressive-delivery/plan.md)
-- [Task](../../03.specs/004-argo-rollouts-progressive-delivery/tasks.md)
+- [PRD](../../01.requirements/0001-argo-rollouts-progressive-delivery.md)
+- [ARD](../descriptions/0004-argo-rollouts-progressive-delivery.md)
+- [Spec](../../03.specs/0004-argo-rollouts-progressive-delivery/spec.md)
+- [Plan](../../03.specs/0004-argo-rollouts-progressive-delivery/plan.md)
+- [Task](../../03.specs/0004-argo-rollouts-progressive-delivery/README.md)

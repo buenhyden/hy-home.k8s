@@ -185,12 +185,9 @@ def _optional_profile_by_id(
 
 
 def _stateful(profile: DocumentProfile) -> bool:
-    return profile.admission.create.mode in {
-        "states",
-        "paired",
-        "baseline-only",
-        "archive-envelope",
-    }
+    """A profile participates in lifecycle validation only through its domain."""
+
+    return profile.mode == "authored" and profile.lifecycle_domain is not None
 
 
 def _state_diagnostic(
@@ -207,18 +204,13 @@ def _state_diagnostic(
         if profile.lifecycle_domain is not None
         else ()
     )
-    compatibility_states = tuple(
-        state for state in profile.status_domain if state not in lifecycle_states
-    )
-    allowed_states = (*lifecycle_states, *compatibility_states)
+    allowed_states = lifecycle_states
     validation_class = (
         profile.lifecycle_domain.validation_class(document.status)
         if profile.lifecycle_domain is not None and document.status is not None
         else None
     )
-    if document.state_issue is None and (
-        validation_class is not None or document.status in compatibility_states
-    ):
+    if document.state_issue is None and validation_class is not None:
         return None
     observed = (
         document.state_issue
@@ -269,7 +261,6 @@ def _create_diagnostics(
     base_mode: LifecycleBaseMode,
 ) -> list[LifecycleDiagnostic]:
     diagnostics: list[LifecycleDiagnostic] = []
-    paired: dict[tuple[str, str], list[LifecycleDocument]] = {}
     for document in documents:
         profile = _optional_profile_by_id(registry, document.profile_id)
         if profile is None:
@@ -285,48 +276,17 @@ def _create_diagnostics(
                 )
             )
             continue
+        if profile.mode == "template":
+            continue
         state_failure = _state_diagnostic(
             document, profile, base_mode=base_mode, side="proposed"
         )
         if state_failure is not None:
             diagnostics.append(state_failure)
             continue
-        admission = profile.admission
+        domain = profile.lifecycle_domain
         observed = f"absent -> {document.status or 'not-applicable'}"
-        if admission.create.mode in {"states", "archive-envelope"}:
-            if document.status not in admission.create.states:
-                diagnostics.append(
-                    _diagnostic(
-                        "LIFECYCLE-CREATE",
-                        path=document.path,
-                        profile=document.profile_id,
-                        expected=f"create in {admission.create.states!r}",
-                        observed=observed,
-                        base_mode=base_mode,
-                        evidence_gap=f"admission policy {admission.policy_id}",
-                    )
-                )
-        elif admission.create.mode == "paired":
-            if document.status not in admission.create.states:
-                diagnostics.append(
-                    _diagnostic(
-                        "LIFECYCLE-CREATE",
-                        path=document.path,
-                        profile=document.profile_id,
-                        expected=(
-                            "same-diff Plan/Task creation in one allowed state "
-                            f"{admission.create.states!r}"
-                        ),
-                        observed=observed,
-                        base_mode=base_mode,
-                        evidence_gap=f"admission policy {admission.policy_id}",
-                    )
-                )
-            else:
-                paired.setdefault((admission.policy_id, document.status), []).append(
-                    document
-                )
-        else:
+        if domain is None:
             diagnostics.append(
                 _diagnostic(
                     "LIFECYCLE-CREATE",
@@ -335,31 +295,24 @@ def _create_diagnostics(
                     expected="no lifecycle creation",
                     observed=observed,
                     base_mode=base_mode,
-                    evidence_gap=f"admission policy {admission.policy_id}",
+                    evidence_gap="profile has no lifecycle domain",
                 )
             )
-
-    for (policy_id, status), candidates in paired.items():
-        plans = [item for item in candidates if item.profile_id == "sdlc/plan"]
-        tasks = [item for item in candidates if item.profile_id == "sdlc/task"]
-        if len(plans) == 1 and len(tasks) == 1:
             continue
-        for document in candidates:
+        inbound = {target for _, target in domain.transitions}
+        initial_states = tuple(
+            state for state, _ in domain.states if state not in inbound
+        )
+        if document.status not in initial_states:
             diagnostics.append(
                 _diagnostic(
                     "LIFECYCLE-CREATE",
                     path=document.path,
                     profile=document.profile_id,
-                    expected=(
-                        "exactly one Plan and one Task creation in the same "
-                        f"proposal state {status!r}"
-                    ),
-                    observed=f"Plan count {len(plans)}, Task count {len(tasks)}",
+                    expected=f"create in zero-indegree lifecycle state {initial_states!r}",
+                    observed=observed,
                     base_mode=base_mode,
-                    evidence_gap=(
-                        f"paired admission {policy_id}; reciprocal/direct-Spec "
-                        "evidence is deferred to DSLC-004"
-                    ),
+                    evidence_gap="profile lifecycle domain owns creation states",
                 )
             )
     return diagnostics
@@ -397,12 +350,8 @@ def _archive_creation_evidence(
         expected_archive_path = (
             _mirrored_archive_path(original_path) if original_path is not None else None
         )
-        if (
-            profile is None
-            or profile.admission.create.evidence_predicate_id
-            != "archive-source-removal"
-        ):
-            gaps.append("registry archive creation predicate is unavailable")
+        if profile is None or profile.lifecycle_domain is None:
+            gaps.append("registry archive lifecycle domain is unavailable")
         if original_path is None:
             gaps.append("archive original_path evidence is missing")
         elif expected_archive_path != document.path:
@@ -441,11 +390,49 @@ def _archive_creation_evidence(
 SPECIFICATION_PROFILES = frozenset(
     {
         "sdlc/spec",
-        "sdlc/agent-design",
         "sdlc/data-model",
+        "exception/native-contract-openapi",
+        "exception/native-contract-graphql",
+        "exception/native-contract-protobuf",
+    }
+)
+_RETIRED_SPECIFICATION_PROFILES = frozenset(
+    {
+        "sdlc/agent-design",
         "sdlc/tests",
     }
 )
+_RETIRED_REQUIREMENT_PROFILES = frozenset(
+    {
+        "sdlc/prd",
+        "sdlc/srs",
+        "sdlc/interface",
+    }
+)
+
+
+def specification_relationship_profiles(registry: Registry) -> frozenset[str]:
+    """Return current Spec-package profiles plus snapshot-only retired aliases."""
+
+    registry_profile_ids = frozenset(
+        profile.profile_id for profile in registry.profiles
+    )
+    current = SPECIFICATION_PROFILES & registry_profile_ids
+    if "sdlc/spec" not in current:
+        raise ValueError("registry lacks the canonical sdlc/spec relationship profile")
+    return current | (_RETIRED_SPECIFICATION_PROFILES & registry_profile_ids)
+
+
+def requirement_relationship_profiles(registry: Registry) -> frozenset[str]:
+    """Return the terminal Requirement owner plus snapshot-only retired aliases."""
+
+    registry_profile_ids = frozenset(
+        profile.profile_id for profile in registry.profiles
+    )
+    current = frozenset({"sdlc/requirement-package"}) & registry_profile_ids
+    if not current:
+        raise ValueError("registry lacks the canonical Requirement Package profile")
+    return current | (_RETIRED_REQUIREMENT_PROFILES & registry_profile_ids)
 
 
 def _predicate_for_edge(
@@ -480,12 +467,13 @@ def _candidate_pair(
     target: LifecycleDocument,
     context: LifecycleEvidenceContext,
     *,
-    registry: Registry | None = None,
+    registry: Registry,
     require_dependency_ready: bool = False,
 ) -> tuple[tuple[tuple[PurePosixPath, PurePosixPath, PurePosixPath], ...], str | None]:
     """Resolve one reciprocal Plan/Task pair with one direct Spec identity."""
 
     views = context.proposed_documents
+    specification_profiles = specification_relationship_profiles(registry)
     target_view = views.get(target.path)
     if target_view is None:
         return (), "target is absent from the proposed snapshot"
@@ -531,23 +519,23 @@ def _candidate_pair(
                 linked
                 for linked in plan_view.relationship_links
                 if linked in views
-                and views[linked].document.profile_id in SPECIFICATION_PROFILES
+                and views[linked].document.profile_id in specification_profiles
             }
             task_specs = {
                 linked
                 for linked in task_view.relationship_links
                 if linked in views
-                and views[linked].document.profile_id in SPECIFICATION_PROFILES
+                and views[linked].document.profile_id in specification_profiles
             }
             if len(plan_specs) != 1 or len(task_specs) != 1 or plan_specs != task_specs:
                 split_identity = True
                 continue
             spec = next(iter(plan_specs))
-            if target.profile_id in SPECIFICATION_PROFILES and spec != target.path:
+            if target.profile_id in specification_profiles and spec != target.path:
                 split_identity = True
                 continue
             if (
-                target.profile_id not in SPECIFICATION_PROFILES
+                target.profile_id not in specification_profiles
                 and views[spec].document.profile_id != "sdlc/spec"
             ):
                 split_identity = True
@@ -555,7 +543,7 @@ def _candidate_pair(
             if target.profile_id not in {
                 "sdlc/plan",
                 "sdlc/task",
-                *SPECIFICATION_PROFILES,
+                *specification_profiles,
             } and (
                 task not in target_view.relationship_links
                 or target.path not in task_view.body_table_links
@@ -571,8 +559,6 @@ def _candidate_pair(
         ),
     )
     if require_dependency_ready:
-        if registry is None:
-            raise ValueError("dependency-ready pair resolution requires the registry")
         ready_paths: set[PurePosixPath] = set()
         wrong_ready_state_paths: set[PurePosixPath] = set()
         for program in registry.program_lineage:
@@ -620,8 +606,9 @@ def _program_evidence(
     context: LifecycleEvidenceContext,
 ) -> tuple[tuple[PurePosixPath, ...], tuple[str, ...]]:
     views = context.proposed_documents
+    requirement_profiles = requirement_relationship_profiles(registry)
     target_view = views.get(target.path)
-    if target.profile_id == "sdlc/prd":
+    if target.profile_id in requirement_profiles:
         owner_paths = (target.path,)
     elif target_view is None:
         owner_paths = ()
@@ -630,7 +617,7 @@ def _program_evidence(
             path
             for path in target_view.relationship_links
             if path in views
-            and views[path].document.profile_id == "sdlc/prd"
+            and views[path].document.profile_id in requirement_profiles
             and target.path in views[path].relationship_links
         )
     if len(owner_paths) != 1:
@@ -675,7 +662,9 @@ def _program_evidence(
         else set()
     )
     if linked_specs != set(relation_paths):
-        gaps.append("program PRD relationship does not resolve the exact declared Spec set")
+        gaps.append(
+            "program PRD relationship does not resolve the exact declared Spec set"
+        )
     base_unfinished = [
         path
         for path in relation_paths
@@ -866,7 +855,7 @@ def validate_transition_evidence(
                 "architecture evidence does not link back through its relationship"
             )
     elif predicate.predicate_id == "terminate-reviewed-reference":
-        pairs, pair_gap = _candidate_pair(target, context)
+        pairs, pair_gap = _candidate_pair(target, context, registry=registry)
         if pair_gap is not None:
             gaps.append(pair_gap)
         evidence_paths = tuple(path for plan, task, _ in pairs for path in (plan, task))
@@ -1113,10 +1102,7 @@ def compare_lifecycle(
                     expected=f"profile remains {base.profile_id}",
                     observed=f"{base.profile_id} -> {proposed.profile_id}",
                     base_mode=base_mode,
-                    evidence_gap=(
-                        "profile-change admission is "
-                        f"{proposed_profile.admission.profile_change}"
-                    ),
+                    evidence_gap="registry profile classification is immutable",
                 )
             )
             continue
@@ -1147,16 +1133,10 @@ def compare_lifecycle(
             continue
         if base.status == proposed.status or not _stateful(profile):
             continue
-        transition_edges = {
-            (edge.from_state, edge.to_state) for edge in profile.lifecycle.edges
-        }
-        terminal_edges = (
+        allowed_edges = (
             set(profile.lifecycle_domain.transitions)
             if profile.lifecycle_domain is not None
             else set()
-        )
-        allowed_edges = terminal_edges | (
-            transition_edges if registry.route_state == "transition" else set()
         )
         if (base.status, proposed.status) not in allowed_edges:
             diagnostics.append(
@@ -1170,25 +1150,10 @@ def compare_lifecycle(
                     evidence_gap="declared forward lifecycle edge",
                 )
             )
-        elif evidence_context is not None and (
-            base.status,
-            proposed.status,
-        ) in transition_edges:
-            assert base.status is not None and proposed.status is not None
-            diagnostics.extend(
-                validate_transition_evidence(
-                    registry,
-                    proposed,
-                    base.status,
-                    proposed.status,
-                    evidence_context,
-                    base_mode=base_mode,
-                )
-            )
         elif (
             evidence_context is not None
             and proposed.status == "superseded"
-            and (base.status, proposed.status) in terminal_edges
+            and (base.status, proposed.status) in allowed_edges
         ):
             diagnostics.extend(
                 _terminal_supersession_evidence(
@@ -1223,7 +1188,7 @@ def compare_lifecycle(
         document = base_documents[path]
         profile = _optional_profile_by_id(registry, document.profile_id)
         admission_gap = (
-            f"delete admission is {profile.admission.delete}"
+            "profile lifecycle domain requires document retention"
             if profile is not None
             else "unclassified target Markdown deletion is denied"
         )
@@ -1239,48 +1204,6 @@ def compare_lifecycle(
             )
         )
 
-    if evidence_context is not None:
-        failed_creation_paths = {item.path for item in creation_diagnostics}
-        for document in created:
-            if (
-                document.path in failed_creation_paths
-                or document.profile_id not in {"sdlc/plan", "sdlc/task"}
-                or document.status not in {"draft", "active"}
-            ):
-                continue
-            pairs, pair_gap = _candidate_pair(
-                document,
-                evidence_context,
-                registry=registry,
-                require_dependency_ready=True,
-            )
-            if pair_gap is not None:
-                diagnostics.append(
-                    _diagnostic(
-                        "LIFECYCLE-EVIDENCE",
-                        path=document.path,
-                        profile=document.profile_id,
-                        expected=(
-                            "one reciprocal Plan/Task creation pair with one "
-                            "shared direct Spec identity"
-                        ),
-                        observed=f"paired admission evidence {pairs!r}",
-                        base_mode=base_mode,
-                        evidence_gap=pair_gap,
-                    )
-                )
-            elif document.status == "active":
-                diagnostics.extend(
-                    validate_transition_evidence(
-                        registry,
-                        document,
-                        "draft",
-                        "active",
-                        evidence_context,
-                        base_mode=base_mode,
-                        allow_created_target=True,
-                    )
-                )
     return tuple(sorted(diagnostics, key=lifecycle_diagnostic_sort_key))
 
 

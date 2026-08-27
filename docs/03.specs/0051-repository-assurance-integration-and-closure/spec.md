@@ -243,7 +243,7 @@ read-only remote metadata commands in addition to this terminal sequence.
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-0007-FR-0010](../../01.requirements/0007-repository-delivery-and-platform-assurance.md#functional-requirements) | VAL-RAIC-001 | Program-lineage and execution-component validation proves predecessor closure. |
 | N/A — REQ-0007-FR-0003 through REQ-0007-FR-0008 share the PRD-0007 source linked above. | VAL-RAIC-002 | Contract, schema, native projection, and validator evidence proves integrated ownership. |

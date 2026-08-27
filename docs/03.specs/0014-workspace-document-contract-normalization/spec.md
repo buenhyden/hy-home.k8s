@@ -47,9 +47,9 @@ taxonomy outside the existing Stage 00 to Stage 99 model.
 
 - **Config Contract**:
   - Markdown document metadata follows
-    [Template Frontmatter Schema](../../99.templates/support/document-contract.md).
+    [Template Frontmatter Schema](../../99.templates/README.md).
   - Route selection follows
-    [Template Routing Contract](../../99.templates/support/document-contract.md).
+    [Template Routing Contract](../../99.templates/README.md).
   - README files remain frontmatter-free unless a future support contract
     explicitly changes that rule.
   - GitHub-native control Markdown under `.github/ABOUT.md`,
@@ -361,8 +361,8 @@ bash scripts/validate-policy-gates.sh .
   `docs/03.specs/0014-workspace-document-contract-normalization/plan.md`.
 - **Tasks**: planned path
   `docs/03.specs/0014-workspace-document-contract-normalization/README.md#task-records`.
-- [Template Routing Contract](../../99.templates/support/document-contract.md)
-- [Frontmatter Schema](../../99.templates/support/document-contract.md)
+- [Template Routing Contract](../../99.templates/README.md)
+- [Frontmatter Schema](../../99.templates/README.md)
 - **Completed evolution**: [011](../0011-template-contract-governance-migration/spec.md) -> [012](../0012-template-governance-audit-enhancement/spec.md) -> [013](../0013-workspace-document-governance-hardening/spec.md) -> [014](./spec.md) -> [020](../0020-workspace-contract-governance-normalization/spec.md) -> [021](../0021-sdlc-lifecycle-contract/spec.md) -> [022](../0022-control-cloud-doc-normalization/spec.md) -> [023](../0023-stage03-04-repo-static-gap-closure/spec.md).
 ### Related inputs
 

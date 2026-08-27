@@ -257,7 +257,7 @@ their recorded `DEFER` or `ABSENT` verdicts.
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-0003-FR-0008](../../01.requirements/0003-workspace-agent-governance-platform.md#functional-requirements) | VAL-PNME-001 | Path ownership proves four distinct projections. |
 | N/A — VAL-PNME-002 shares the PRD-0003 source linked in VAL-PNME-001 | VAL-PNME-002 | Provider-schema fixtures prove supported metadata and cutoff confidence. |

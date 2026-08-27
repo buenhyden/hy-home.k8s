@@ -374,7 +374,7 @@ evidence update. The next workstream is Spec 045.
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-0003-NFR-0001](../../01.requirements/0003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AREA-001 | Canonical-role validation proves the exact 12-role set. |
 | N/A — VAL-AREA-002 shares the PRD-0003 source linked in VAL-AREA-001 | VAL-AREA-002 | Four-surface validation proves exact 48-adapter parity. |

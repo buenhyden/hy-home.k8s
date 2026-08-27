@@ -1,7 +1,7 @@
 # Agent Progress and Memory Ledger
 
 This file is the repo-local progress and reusable memory ledger for AI agent
-work in `hy-home.k8s`. Use `docs/99.templates/templates/common/progress.template.md` for new
+work in `hy-home.k8s`. Use `docs/99.templates/templates/governance/progress.template.md` for new
 entries. Memory here supports future task intake, but current runtime truth
 stays in `docs/00.agent-governance/harness-catalog.md` and current script
 inventory stays in `scripts/README.md`.
@@ -4410,7 +4410,7 @@ each logical commit.
 #### Progress
 
 - Prepared the exact six-path reciprocal activation package for
-  [Spec 040](../../03.specs/040-contract-cutover-and-program-closure/spec.md):
+  [Spec 040](../../03.specs/0040-contract-cutover-and-program-closure/spec.md):
   the Spec backlink, new Plan, new Task, both Stage 04 indexes, and this shared
   handoff entry.
 - Observed the activation as
@@ -6849,7 +6849,7 @@ each logical commit.
 #### Progress
 
 - Completed the
-  [Workspace Contract Governance Normalization Task Record](../../03.specs/020-workspace-contract-governance-normalization/tasks.md).
+  [Workspace Contract Governance Normalization Task Record](../../03.specs/0020-workspace-contract-governance-normalization/README.md).
 - Introduced `_workspace/README.md` as the tracked contract for temporary,
   non-secret repository-support staging.
 - Kept scratch files ignored by default; `git ls-files _workspace` must list
@@ -6940,7 +6940,7 @@ each logical commit.
 - Refreshed tracked `graphify-out/**` artifacts so the four renamed active
   PRDs resolve through their numbered filenames.
 - Updated the
-  [Template Path Numbering Contract task record](../../03.specs/019-template-path-numbering-contract/tasks.md)
+  [Template Path Numbering Contract task record](../../03.specs/0019-template-path-numbering-contract/README.md)
   so TPN-002 evidence records the graph refresh and classifies remaining
   old-name matches from the requested scan.
 - Preserved the requested boundaries: no `docs/99.templates/**` or
@@ -7027,7 +7027,7 @@ each logical commit.
 #### Progress
 
 - Completed the
-  [Workspace Engineering Implementation Audit Pack Task Record](../../03.specs/018-workspace-engineering-implementation-audit-pack/tasks.md).
+  [Workspace Engineering Implementation Audit Pack Task Record](../../03.specs/0018-workspace-engineering-implementation-audit-pack/README.md).
 - Folderized existing root audit reports into dated folders under
   `docs/90.references/audits/`.
 - Added the dated
@@ -7087,7 +7087,7 @@ each logical commit.
 #### Progress
 
 - Completed WER-007 for the
-  [Workspace Engineering Research Pack Task Record](../../03.specs/017-workspace-engineering-research-pack/tasks.md).
+  [Workspace Engineering Research Pack Task Record](../../03.specs/0017-workspace-engineering-research-pack/README.md).
 - Added the dated `automation-pipeline-workflow-qa.md` reference with
   2026-07-05 metadata, source-checked date, authority boundary, repo-backed
   implementation comparison, workflow graph summary, evidence-lane separation,
@@ -7149,7 +7149,7 @@ each logical commit.
 #### Progress
 
 - Completed WER-006 for the
-  [Workspace Engineering Research Pack Task Record](../../03.specs/017-workspace-engineering-research-pack/tasks.md).
+  [Workspace Engineering Research Pack Task Record](../../03.specs/0017-workspace-engineering-research-pack/README.md).
 - Added the dated
   `kubernetes-infrastructure-security.md` reference with 2026-07-05 metadata,
   source-checked date, authority boundary, repo-backed implementation
@@ -7210,7 +7210,7 @@ each logical commit.
 #### Progress
 
 - Completed WER-005 for the
-  [Workspace Engineering Research Pack Task Record](../../03.specs/017-workspace-engineering-research-pack/tasks.md).
+  [Workspace Engineering Research Pack Task Record](../../03.specs/0017-workspace-engineering-research-pack/README.md).
 - Refreshed the dated `spec-sdlc-ci-qa-formatting.md` reference with
   2026-07-05 official/primary source coverage for GitHub Actions, NIST SSDF,
   NIST SP 800-204D, CodeQL/code scanning, Dependency Review, SLSA,
@@ -7265,7 +7265,7 @@ each logical commit.
 #### Progress
 
 - Completed WER-004 for the
-  [Workspace Engineering Research Pack Task Record](../../03.specs/017-workspace-engineering-research-pack/tasks.md).
+  [Workspace Engineering Research Pack Task Record](../../03.specs/0017-workspace-engineering-research-pack/README.md).
 - Refreshed the dated `harness-and-loop-engineering.md` reference with
   2026-07-04 metadata, official/primary source groups, provider agent-loop
   docs freshness triggers, common environment/rule-system construction,
@@ -7323,7 +7323,7 @@ each logical commit.
 #### Progress
 
 - Completed WER-003 for the
-  [Workspace Engineering Research Pack Task Record](../../03.specs/017-workspace-engineering-research-pack/tasks.md).
+  [Workspace Engineering Research Pack Task Record](../../03.specs/0017-workspace-engineering-research-pack/README.md).
 - Refreshed the dated
   `workspace-governance-baseline.md` reference with 2026-07-04 metadata,
   source-checked date, freshness triggers, required `Definitions / Facts`
@@ -7372,7 +7372,7 @@ each logical commit.
 #### Progress
 
 - Completed WER-002 for the
-  [Workspace Engineering Research Pack Task Record](../../03.specs/017-workspace-engineering-research-pack/tasks.md).
+  [Workspace Engineering Research Pack Task Record](../../03.specs/0017-workspace-engineering-research-pack/README.md).
 - Created the dated workspace engineering research pack README and updated the
   research and parent Stage 90 indexes to route current moved references through
   `docs/90.references/research/2026-07-04-wer/`.
@@ -7427,7 +7427,7 @@ each logical commit.
 #### Progress
 
 - Completed WER-001 baseline task evidence for the
-  [Workspace Engineering Research Pack Task Record](../../03.specs/017-workspace-engineering-research-pack/tasks.md).
+  [Workspace Engineering Research Pack Task Record](../../03.specs/0017-workspace-engineering-research-pack/README.md).
 - Created the Stage 04 task record, indexed it in the tasks README, and kept
   the work scoped to task evidence plus this progress ledger update.
 - Recorded the baseline branch/worktree check, task template intake, parent
@@ -7482,9 +7482,9 @@ each logical commit.
 
 - Completed ACS-005 for the active control surface governance hardening plan
   and closed the
-  [Plan](../../03.specs/016-active-control-surface-governance-hardening/plan.md)
+  [Plan](../../03.specs/0016-active-control-surface-governance-hardening/plan.md)
   and
-  [Task evidence](../../03.specs/016-active-control-surface-governance-hardening/tasks.md).
+  [Task evidence](../../03.specs/0016-active-control-surface-governance-hardening/README.md).
 - Marked the Stage 04 plan and task indexes as done for this workstream.
 - Confirmed active README, GitHub-native Markdown, snapshot-boundary,
   protected-surface, and repo-static validation contracts have aligned
@@ -7535,7 +7535,7 @@ each logical commit.
 
 - Completed ACS-004 for the active control surface governance hardening plan
   and updated the
-  [Task evidence](../../03.specs/016-active-control-surface-governance-hardening/tasks.md).
+  [Task evidence](../../03.specs/0016-active-control-surface-governance-hardening/README.md).
 - Aligned active README routing for scripts, GitOps, workloads, tests, Traefik,
   examples, and sample-app onboarding while preserving the common README
   profile and leaving AWS/Azure cloud example docs untouched.
@@ -7592,9 +7592,9 @@ each logical commit.
 
 - Completed T-005 for the workspace document governance hardening plan and
   updated the
-  [Plan](../../03.specs/013-workspace-document-governance-hardening/plan.md)
+  [Plan](../../03.specs/0013-workspace-document-governance-hardening/plan.md)
   and
-  [Task evidence](../../03.specs/013-workspace-document-governance-hardening/tasks.md).
+  [Task evidence](../../03.specs/0013-workspace-document-governance-hardening/README.md).
 - Hardened `scripts/validate-repo-quality-gates.sh` with deterministic,
   path-scoped checks for active README deprecated headings, active authored
   template residue, active template-routing owner drift, shared hook path
@@ -7646,7 +7646,7 @@ each logical commit.
 
 - Completed T-004 for the workspace document governance hardening plan and
   updated the
-  [Task evidence](../../03.specs/013-workspace-document-governance-hardening/tasks.md).
+  [Task evidence](../../03.specs/0013-workspace-document-governance-hardening/README.md).
 - Cleaned active README/profile drift in the governance hub, AWS example docs
   README, tests README, root README, and docs hub.
 - Updated active onboarding guidance in provider doc-writer surfaces, shared
@@ -7701,7 +7701,7 @@ each logical commit.
 
 - Completed T-003 for the workspace document governance hardening plan and
   updated the
-  [Task evidence](../../03.specs/013-workspace-document-governance-hardening/tasks.md).
+  [Task evidence](../../03.specs/0013-workspace-document-governance-hardening/README.md).
 - Kept root `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md` thin while aligning their
   provider roles: Codex/GPT starts from `AGENTS.md`, Claude starts from
   `CLAUDE.md`, and Gemini starts from `GEMINI.md`.
@@ -7764,7 +7764,7 @@ each logical commit.
 
 - Completed T-002 for the workspace document governance hardening plan and
   updated the
-  [Task evidence](../../03.specs/013-workspace-document-governance-hardening/tasks.md).
+  [Task evidence](../../03.specs/0013-workspace-document-governance-hardening/README.md).
 - Kept exact target-pattern/template routing in
   `docs/99.templates/support/template-routing.md`, with the Templates README as
   a synchronized route inventory.
@@ -7818,7 +7818,7 @@ each logical commit.
 - Completed Task 1 for the workspace document governance hardening plan:
   baseline status, tracked file inventory, frontmatter/README scans, provider
   scans, and CI/QA scans are recorded in the
-  [Task evidence](../../03.specs/013-workspace-document-governance-hardening/tasks.md).
+  [Task evidence](../../03.specs/0013-workspace-document-governance-hardening/README.md).
 - Created the Stage 90
   [workspace document governance hardening audit](../../90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md)
   because durable findings were found and should route to later tasks instead
@@ -7863,7 +7863,7 @@ each logical commit.
 #### Progress
 
 - Created the Stage 03
-  [workspace document governance hardening spec](../../03.specs/013-workspace-document-governance-hardening/spec.md)
+  [workspace document governance hardening spec](../../03.specs/0013-workspace-document-governance-hardening/spec.md)
   for the approved staged scope that combines audit inventory, core template
   contract hardening, provider entrypoint hardening, workspace-wide application,
   and final validation.
@@ -7873,9 +7873,9 @@ each logical commit.
   `docs/superpowers/` top-level folder, which the repository quality gate
   rejects.
 - Created the Stage 04
-  [implementation plan](../../03.specs/013-workspace-document-governance-hardening/plan.md)
+  [implementation plan](../../03.specs/0013-workspace-document-governance-hardening/plan.md)
   and
-  [task record](../../03.specs/013-workspace-document-governance-hardening/tasks.md)
+  [task record](../../03.specs/0013-workspace-document-governance-hardening/README.md)
   after user approval of the Stage 03 Spec.
 - Registered the new Plan and Task in the Stage 04 README indexes.
 
@@ -7910,9 +7910,9 @@ each logical commit.
 #### Progress
 
 - Created the Stage 04
-  [implementation plan](../../03.specs/012-template-governance-audit-enhancement/plan.md)
+  [implementation plan](../../03.specs/0012-template-governance-audit-enhancement/plan.md)
   and
-  [task record](../../03.specs/012-template-governance-audit-enhancement/tasks.md)
+  [task record](../../03.specs/0012-template-governance-audit-enhancement/README.md)
   for the approved follow-up audit and targeted enhancement pass over
   `docs/99.templates/**`.
 - Registered the new Plan and Task in the Stage 04 README indexes.
@@ -8154,9 +8154,9 @@ each logical commit.
 #### Progress
 
 - Created the Stage 04
-  [implementation plan](../../03.specs/011-template-contract-governance-migration/plan.md)
+  [implementation plan](../../03.specs/0011-template-contract-governance-migration/plan.md)
   and
-  [task record](../../03.specs/011-template-contract-governance-migration/tasks.md)
+  [task record](../../03.specs/0011-template-contract-governance-migration/README.md)
   for the approved template contract and governance migration.
 - Registered both execution documents in the Stage 04 plan and task README
   indexes.
@@ -8193,7 +8193,7 @@ each logical commit.
 #### Progress
 
 - Created the Stage 03
-  [Template Contract and Governance Migration Spec](../../03.specs/011-template-contract-governance-migration/spec.md)
+  [Template Contract and Governance Migration Spec](../../03.specs/0011-template-contract-governance-migration/spec.md)
   from the approved four-phase migration design.
 - Recorded the target `docs/99.templates/` model that separates template forms
   under `templates/**` from support contracts under `support/**`.
@@ -8251,10 +8251,10 @@ each logical commit.
   and
   [SDLC delivery practices](../../90.references/audits/2026-07-02-whia/sdlc-delivery-practices-implementation-audit.md).
 - Finalized the parent
-  [Spec](../../03.specs/010-workspace-harness-implementation-audit-pack/spec.md),
-  [Plan](../../03.specs/010-workspace-harness-implementation-audit-pack/plan.md),
+  [Spec](../../03.specs/0010-workspace-harness-implementation-audit-pack/spec.md),
+  [Plan](../../03.specs/0010-workspace-harness-implementation-audit-pack/plan.md),
   and
-  [Task](../../03.specs/010-workspace-harness-implementation-audit-pack/tasks.md)
+  [Task](../../03.specs/0010-workspace-harness-implementation-audit-pack/README.md)
   traceability by setting plan/task status and Stage 04 indexes to `Done`.
 - Updated the parent
   [references README](../../90.references/README.md), audits README, Stage 04
@@ -8332,7 +8332,7 @@ scripts/validate-repo-quality-gates.sh .` — PASS.
   plus four durable references covering governance baseline, harness/loop
   engineering, provider implementation status, and spec/SDLC/CI/QA/formatting.
 - Finalized
-  [T-006](../../03.specs/009-workspace-harness-research-pack/tasks.md)
+  [T-006](../../03.specs/0009-workspace-harness-research-pack/README.md)
   by marking the task and phase complete and recording the final repo-static
   validation bundle.
 - Confirmed the pack remains documentation-only reference material. Static
@@ -8959,9 +8959,9 @@ scripts/validate-repo-quality-gates.sh .` — PASS.
 - Audited authored Guide, Policy, and Runbook documents under
   [05.operations](../../05.operations/README.md) against their required
   templates:
-  [guide.template.md](../../99.templates/templates/sdlc/operations/guide.template.md),
-  [policy.template.md](../../99.templates/templates/sdlc/operations/policy.template.md), and
-  [runbook.template.md](../../99.templates/templates/sdlc/operations/runbook.template.md).
+  [guide.template.md](../../99.templates/templates/operations/guide.template.md),
+  [policy.template.md](../../99.templates/templates/operations/policy.template.md), and
+  [runbook.template.md](../../99.templates/templates/operations/runbook.template.md).
 - Confirmed the existing non-README Guide, Policy, and Runbook documents keep
   the required frontmatter, `owner: platform`, `type`, and required template
   headings.
@@ -9011,7 +9011,7 @@ scripts/validate-repo-quality-gates.sh .` — PASS.
 
 - Created [Phase 1 Decision Follow-up Plan](../../98.archive/README.md#document-index)
   as a Phase 2 planning artifact for the 2026-06-02 Phase 1 continuation decisions.
-- Updated [Plans README](../../04.execution/plans/README.md) so the new plan is indexed in the stage structure and document table.
+- Updated [Plans README](../../99.templates/templates/specs/plan.template.md) so the new plan is indexed in the stage structure and document table.
 - Implemented the plan by promoting it to `status: done` and checking its completion criteria after static validation.
 - Kept the scope documentation-only: no Stage 00 policy edits, Codex TOML edits, CI workflow edits, Kubernetes manifests, ArgoCD, Vault, or live cluster changes.
 
@@ -14150,7 +14150,7 @@ section separating static from live evidence.
 
 - Created the Stage 03 design spec for a follow-up workspace document contract
   normalization pass:
-  [Workspace Document Contract Normalization Spec](../../03.specs/014-workspace-document-contract-normalization/spec.md).
+  [Workspace Document Contract Normalization Spec](../../03.specs/0014-workspace-document-contract-normalization/spec.md).
 - Updated the Stage 03 README index to register the new spec.
 - Captured the approved scope decision: active documents and historical
   evidence will both be normalized to the current frontmatter, section, and
@@ -14191,9 +14191,9 @@ section separating static from live evidence.
 ### Progress
 
 - Created the Stage 04 implementation plan:
-  [Workspace Document Contract Normalization Plan](../../03.specs/014-workspace-document-contract-normalization/plan.md).
+  [Workspace Document Contract Normalization Plan](../../03.specs/0014-workspace-document-contract-normalization/plan.md).
 - Created the Stage 04 task record:
-  [Workspace Document Contract Normalization Tasks](../../03.specs/014-workspace-document-contract-normalization/tasks.md).
+  [Workspace Document Contract Normalization Tasks](../../03.specs/0014-workspace-document-contract-normalization/README.md).
 - Indexed the new Plan and Task in their stage README files.
 - Split execution into six logical commits: audit inventory, contract/template
   normalization, active SDLC document application, historical evidence
@@ -15768,7 +15768,7 @@ section separating static from live evidence.
 - **Status**: in-progress
 - **Tags**: #sdlc #spec-driven #agent-governance #taxonomy #validation
 - **Owner**: Codex root agent
-- **Canonical Owner**: [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md)
+- **Canonical Owner**: [Spec 052](../../03.specs/0052-document-taxonomy-consolidation/spec.md)
 - **Provenance**: Human-approved direction A and 2026-08-09 external/local audit
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain until Spec 052 reaches terminal disposition
@@ -15849,7 +15849,7 @@ section separating static from live evidence.
 - **Status**: complete
 - **Tags**: #sdlc #taxonomy #lineage #validation
 - **Owner**: platform
-- **Canonical Owner**: [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md)
+- **Canonical Owner**: [Spec 052](../../03.specs/0052-document-taxonomy-consolidation/spec.md)
 - **Provenance**: Reviewed written design and implementation planning
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain until Spec 052 reaches terminal disposition
@@ -15889,7 +15889,7 @@ section separating static from live evidence.
 - **Status**: complete
 - **Tags**: #sdlc #taxonomy #ad #validation
 - **Owner**: platform
-- **Canonical Owner**: [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md)
+- **Canonical Owner**: [Spec 052](../../03.specs/0052-document-taxonomy-consolidation/spec.md)
 - **Provenance**: WORK-105 tests-first implementation and staged-candidate review
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through terminal Spec 052 acceptance
@@ -15957,7 +15957,7 @@ section separating static from live evidence.
 - **Status**: complete
 - **Tags**: #sdlc #taxonomy #identity #migration
 - **Owner**: platform
-- **Canonical Owner**: [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md)
+- **Canonical Owner**: [Spec 052](../../03.specs/0052-document-taxonomy-consolidation/spec.md)
 - **Provenance**: WORK-106 tests-first implementation on WORK-105 commit `84bd7cf5`
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through terminal Spec 052 acceptance
@@ -16013,7 +16013,7 @@ section separating static from live evidence.
 - **Status**: complete
 - **Tags**: #sdlc #taxonomy #archive #migration
 - **Owner**: platform
-- **Canonical Owner**: [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md)
+- **Canonical Owner**: [Spec 052](../../03.specs/0052-document-taxonomy-consolidation/spec.md)
 - **Provenance**: WORK-107 tests-first implementation on WORK-106 commit `eaf4f21c`
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through terminal Spec 052 acceptance
@@ -16074,7 +16074,7 @@ section separating static from live evidence.
 - **Status**: complete
 - **Tags**: #sdlc #taxonomy #identity #archive
 - **Owner**: platform
-- **Canonical Owner**: [Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md)
+- **Canonical Owner**: [Spec 052](../../03.specs/0052-document-taxonomy-consolidation/spec.md)
 - **Provenance**: WORK-108 tests-first implementation on WORK-107 commit `db320b59`
 - **Sensitivity**: non-sensitive-redacted
 - **Retention / Expiry**: Retain through terminal Spec 052 acceptance
@@ -17660,3 +17660,17 @@ behavior.
 WP-004B must preserve this lifecycle catalog and bounded registry boundary
 while moving the Stage 01/02/03 corpus atomically with MIG-0004. WP-004C owns
 the later support/template convergence and transitional `tasks.md` migration.
+
+### 2026-08-23 - WP-004C lifecycle projection closeout
+
+The MIG-0004 projection now proves the authoritative fourteen WORK-054 rows
+against the exact Spec 0054 Task package: the sole source table, one-to-one
+README enumeration, `TSK-0054-####` identity, inherited state, WP identity,
+exact WORK row, and required package/Plan links. Missing, extra, or tampered
+Task records fail closed with a bounded task-path/field diagnostic.
+
+Validation: focused terminal projection and tamper tests, the focused
+lifecycle/archive module, normal staged lifecycle validation, MIG-0004
+recovery verification, focused archive validation, Python compilation, and
+worktree/cached diff checks passed. The four lifecycle/archive implementation
+paths are staged; no commit, push, remote, provider, or secret access occurred.

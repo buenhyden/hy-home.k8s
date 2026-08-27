@@ -76,8 +76,8 @@ configuration are changed in TPN-001.
 
 - **Parent Spec**: [../../03.specs/0019-template-path-numbering-contract/spec.md](spec.md)
 - **Parent Plan**: [../plans/2026-07-05-template-path-numbering-contract.md](plan.md)
-- **Task Template**: [../../99.templates/templates/sdlc/execution/task.template.md](../../99.templates/templates/sdlc/execution/task.template.md)
-- **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/support/document-contract.md)
+- **Task Template**: [../../99.templates/templates/specs/task.template.md](../../99.templates/templates/specs/task.template.md)
+- **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/README.md)
 - **Quality Gate**: [../../../scripts/validate-repo-quality-gates.sh](../../../scripts/validate-repo-quality-gates.sh)
 ## Goals & In-Scope
 
@@ -130,7 +130,7 @@ configuration are changed in TPN-001.
 | `docs/01.requirements/004-current-local-gitops-platform.md` | Renamed current local GitOps platform PRD. |
 | `docs/01.requirements/README.md` | Stage 01 structure, workflow, and document index. |
 | `docs/03.specs/README.md` | Stage 03 numbered feature-folder contract and index. |
-| `docs/99.templates/templates/sdlc/requirements/prd.template.md` | PRD target and related-document examples. |
+| `docs/99.templates/templates/requirements/requirement-package.template.md` | PRD target and related-document examples. |
 | `docs/99.templates/templates/sdlc/specs/*.template.md` | Stage 03 numbered feature-folder target and related-document examples. |
 | `docs/99.templates/templates/sdlc/specs/openapi.template.yaml` | Native OpenAPI target comment for numbered feature folder. |
 | `docs/99.templates/templates/sdlc/specs/schema.template.graphql` | Native GraphQL target comment for numbered feature folder. |
@@ -138,11 +138,11 @@ configuration are changed in TPN-001.
 | `docs/99.templates/templates/sdlc/architecture/*.template.md` | PRD and Spec related-document examples. |
 | `docs/99.templates/templates/sdlc/execution/*.template.md` | PRD and Spec related-document examples while preserving Stage 04 date routes. |
 | `docs/99.templates/templates/sdlc/operations/*.template.md` | Spec related-document examples for numbered feature folder. |
-| `docs/99.templates/templates/common/reference.template.md` | Spec related-document example for numbered feature folder. |
+| `docs/99.templates/templates/references/reference.template.md` | Spec related-document example for numbered feature folder. |
 | `docs/99.templates/README.md` | Template mapping and route guidance. |
 | `docs/99.templates/support/sdlc-governance.md` | SDLC route contract owner. |
-| `docs/99.templates/support/template-routing.md` | Structural template route map owner. |
-| `docs/99.templates/support/frontmatter-schema.md` | Frontmatter support notes if old route examples appear. |
+| `docs/99.templates/README.md` | Structural template route map owner. |
+| `docs/99.templates/contracts/frontmatter.schema.json` | Frontmatter support notes if old route examples appear. |
 | `docs/00.agent-governance/rules/document-stage-routing.md` | Stage routing guidance. |
 | `docs/00.agent-governance/rules/documentation-protocol.md` | Authored-document template routing guidance. |
 | `docs/00.agent-governance/rules/stage-authoring-matrix.md` | Stage-level authoring summary. |
@@ -172,9 +172,9 @@ configuration are changed in TPN-001.
 
 - Create: `docs/03.specs/0019-template-path-numbering-contract/README.md#task-records`
 - Modify: `docs/03.specs/0019-template-path-numbering-contract/README.md#task-records`
-- Read: `docs/99.templates/templates/sdlc/execution/task.template.md`
+- Read: `docs/99.templates/templates/specs/task.template.md`
 - Read: `docs/03.specs/019-template-path-numbering-contract/spec.md`
-- Read: `docs/99.templates/support/template-routing.md`
+- Read: `docs/99.templates/README.md`
 - Read: `scripts/validate-repo-quality-gates.sh`
 
 - [ ] **Step 1: Confirm clean branch state**
@@ -193,7 +193,7 @@ tree is clean after this plan commit.
 Run:
 
 ```bash
-sed -n '1,180p' docs/99.templates/templates/sdlc/execution/task.template.md
+sed -n '1,180p' docs/99.templates/templates/specs/task.template.md
 sed -n '1,360p' docs/03.specs/019-template-path-numbering-contract/spec.md
 ```
 
@@ -458,8 +458,8 @@ Expected: validation passes and the commit succeeds.
 
 **Files:**
 
-- Modify: `docs/99.templates/templates/sdlc/requirements/prd.template.md`
-- Modify: `docs/99.templates/templates/sdlc/specs/spec.template.md`
+- Modify: `docs/99.templates/templates/requirements/requirement-package.template.md`
+- Modify: `docs/99.templates/templates/specs/spec.template.md`
 - Modify: `docs/99.templates/templates/sdlc/specs/api-spec.template.md`
 - Modify: `docs/99.templates/templates/sdlc/specs/agent-design.template.md`
 - Modify: `docs/99.templates/templates/sdlc/specs/data-model.template.md`
@@ -467,18 +467,18 @@ Expected: validation passes and the commit succeeds.
 - Modify: `docs/99.templates/templates/sdlc/specs/openapi.template.yaml`
 - Modify: `docs/99.templates/templates/sdlc/specs/schema.template.graphql`
 - Modify: `docs/99.templates/templates/sdlc/specs/service.template.proto`
-- Modify: `docs/99.templates/templates/sdlc/architecture/adr.template.md`
+- Modify: `docs/99.templates/templates/architecture/adr.template.md`
 - Modify: `docs/99.templates/templates/sdlc/architecture/ard.template.md`
-- Modify: `docs/99.templates/templates/sdlc/execution/plan.template.md`
-- Modify: `docs/99.templates/templates/sdlc/execution/task.template.md`
-- Modify: `docs/99.templates/templates/sdlc/operations/incident.template.md`
-- Modify: `docs/99.templates/templates/sdlc/operations/policy.template.md`
-- Modify: `docs/99.templates/templates/sdlc/operations/postmortem.template.md`
-- Modify: `docs/99.templates/templates/sdlc/operations/runbook.template.md`
-- Modify: `docs/99.templates/templates/common/reference.template.md`
+- Modify: `docs/99.templates/templates/specs/plan.template.md`
+- Modify: `docs/99.templates/templates/specs/task.template.md`
+- Modify: `docs/99.templates/templates/operations/incident.template.md`
+- Modify: `docs/99.templates/templates/operations/policy.template.md`
+- Modify: `docs/99.templates/templates/operations/postmortem.template.md`
+- Modify: `docs/99.templates/templates/operations/runbook.template.md`
+- Modify: `docs/99.templates/templates/references/reference.template.md`
 - Modify: `docs/99.templates/README.md`
 - Modify: `docs/99.templates/support/sdlc-governance.md`
-- Modify: `docs/99.templates/support/template-routing.md`
+- Modify: `docs/99.templates/README.md`
 - Modify: `docs/03.specs/0019-template-path-numbering-contract/README.md#task-records`
 
 - [ ] **Step 1: Replace current PRD target pattern in template contracts**
@@ -498,7 +498,7 @@ docs/01.requirements/<###-Numbering>-<feature-or-system>.md
 Apply the replacement in current template examples and support route maps:
 
 ```bash
-perl -0pi -e 's#docs/01\\.requirements/YYYY-MM-DD-<feature-or-system>\\.md#docs/01.requirements/<###-Numbering>-<feature-or-system>.md#g; s#\\.\\./\\.\\./01\\.requirements/YYYY-MM-DD-<feature-or-system>\\.md#../../01.requirements/<###-Numbering>-<feature-or-system>.md#g; s#\\.\\./01\\.requirements/YYYY-MM-DD-<feature-or-system>\\.md#../01.requirements/<###-Numbering>-<feature-or-system>.md#g' docs/99.templates/templates/sdlc/requirements/prd.template.md docs/99.templates/templates/sdlc/architecture/adr.template.md docs/99.templates/templates/sdlc/architecture/ard.template.md docs/99.templates/templates/sdlc/execution/plan.template.md docs/99.templates/templates/sdlc/specs/spec.template.md docs/99.templates/templates/sdlc/specs/agent-design.template.md docs/99.templates/README.md docs/99.templates/support/sdlc-governance.md docs/99.templates/support/template-routing.md
+perl -0pi -e 's#docs/01\\.requirements/YYYY-MM-DD-<feature-or-system>\\.md#docs/01.requirements/<###-Numbering>-<feature-or-system>.md#g; s#\\.\\./\\.\\./01\\.requirements/YYYY-MM-DD-<feature-or-system>\\.md#../../01.requirements/<###-Numbering>-<feature-or-system>.md#g; s#\\.\\./01\\.requirements/YYYY-MM-DD-<feature-or-system>\\.md#../01.requirements/<###-Numbering>-<feature-or-system>.md#g' docs/99.templates/templates/requirements/requirement-package.template.md docs/99.templates/templates/architecture/adr.template.md docs/99.templates/templates/sdlc/architecture/ard.template.md docs/99.templates/templates/specs/plan.template.md docs/99.templates/templates/specs/spec.template.md docs/99.templates/templates/sdlc/specs/agent-design.template.md docs/99.templates/README.md docs/99.templates/support/sdlc-governance.md docs/99.templates/README.md
 ```
 
 Expected: PRD template target and related-document examples use the numeric
@@ -521,7 +521,7 @@ docs/03.specs/<###-Numbering>-<feature-id>/
 Apply the replacement in current template and support route surfaces:
 
 ```bash
-perl -0pi -e 's#docs/03\\.specs/<feature-id>#docs/03.specs/<###-Numbering>-<feature-id>#g; s#\\.\\./\\.\\./03\\.specs/<feature-id>#../../03.specs/<###-Numbering>-<feature-id>#g; s#\\.\\./\\.\\./\\.\\./\\.\\./03\\.specs/<feature-id>#../../../../03.specs/<###-Numbering>-<feature-id>#g' docs/99.templates/templates/sdlc/specs/spec.template.md docs/99.templates/templates/sdlc/specs/api-spec.template.md docs/99.templates/templates/sdlc/specs/agent-design.template.md docs/99.templates/templates/sdlc/specs/data-model.template.md docs/99.templates/templates/sdlc/specs/tests.template.md docs/99.templates/templates/sdlc/specs/openapi.template.yaml docs/99.templates/templates/sdlc/specs/schema.template.graphql docs/99.templates/templates/sdlc/specs/service.template.proto docs/99.templates/templates/sdlc/architecture/adr.template.md docs/99.templates/templates/sdlc/architecture/ard.template.md docs/99.templates/templates/sdlc/execution/plan.template.md docs/99.templates/templates/sdlc/execution/task.template.md docs/99.templates/templates/sdlc/operations/incident.template.md docs/99.templates/templates/sdlc/operations/policy.template.md docs/99.templates/templates/sdlc/operations/postmortem.template.md docs/99.templates/templates/sdlc/operations/runbook.template.md docs/99.templates/templates/common/reference.template.md docs/99.templates/README.md docs/99.templates/support/sdlc-governance.md docs/99.templates/support/template-routing.md
+perl -0pi -e 's#docs/03\\.specs/<feature-id>#docs/03.specs/<###-Numbering>-<feature-id>#g; s#\\.\\./\\.\\./03\\.specs/<feature-id>#../../03.specs/<###-Numbering>-<feature-id>#g; s#\\.\\./\\.\\./\\.\\./\\.\\./03\\.specs/<feature-id>#../../../../03.specs/<###-Numbering>-<feature-id>#g' docs/99.templates/templates/specs/spec.template.md docs/99.templates/templates/sdlc/specs/api-spec.template.md docs/99.templates/templates/sdlc/specs/agent-design.template.md docs/99.templates/templates/sdlc/specs/data-model.template.md docs/99.templates/templates/sdlc/specs/tests.template.md docs/99.templates/templates/sdlc/specs/openapi.template.yaml docs/99.templates/templates/sdlc/specs/schema.template.graphql docs/99.templates/templates/sdlc/specs/service.template.proto docs/99.templates/templates/architecture/adr.template.md docs/99.templates/templates/sdlc/architecture/ard.template.md docs/99.templates/templates/specs/plan.template.md docs/99.templates/templates/specs/task.template.md docs/99.templates/templates/operations/incident.template.md docs/99.templates/templates/operations/policy.template.md docs/99.templates/templates/operations/postmortem.template.md docs/99.templates/templates/operations/runbook.template.md docs/99.templates/templates/references/reference.template.md docs/99.templates/README.md docs/99.templates/support/sdlc-governance.md docs/99.templates/README.md
 ```
 
 Expected: Stage 03 route examples use the numbered feature-folder placeholder.
@@ -533,7 +533,7 @@ Run:
 
 ```bash
 sed -n '130,230p' docs/99.templates/README.md
-sed -n '34,75p' docs/99.templates/support/template-routing.md
+sed -n '34,75p' docs/99.templates/README.md
 sed -n '20,65p' docs/99.templates/support/sdlc-governance.md
 ```
 
@@ -960,8 +960,8 @@ merge, or PR mutation was performed.
   - `docs/03.specs/0019-template-path-numbering-contract/README.md#task-records`
   - `docs/03.specs/0019-template-path-numbering-contract/spec.md`
   - `docs/03.specs/0019-template-path-numbering-contract/plan.md`
-  - `docs/99.templates/templates/sdlc/execution/task.template.md`
-  - `docs/99.templates/support/template-routing.md`
+  - `docs/99.templates/templates/specs/task.template.md`
+  - `docs/99.templates/README.md`
   - `docs/01.requirements/README.md`
   - `docs/03.specs/README.md`
 - **Forbidden Paths**: runtime manifests, provider or CI settings, secret values, generated/local state, and paths outside the Template Path Numbering Contract work items and linked evidence owners.
@@ -977,8 +977,8 @@ merge, or PR mutation was performed.
   - `docs/03.specs/0019-template-path-numbering-contract/README.md#task-records`
   - `docs/03.specs/0019-template-path-numbering-contract/spec.md`
   - `docs/03.specs/0019-template-path-numbering-contract/plan.md`
-  - `docs/99.templates/templates/sdlc/execution/task.template.md`
-  - `docs/99.templates/support/template-routing.md`
+  - `docs/99.templates/templates/specs/task.template.md`
+  - `docs/99.templates/README.md`
 ## Completion Criteria
 
 - [ ] Stage 04 task evidence exists and is complete.
@@ -988,7 +988,7 @@ merge, or PR mutation was performed.
 - [ ] Stage 03 README and helper template examples use the numbered
   feature-folder route.
 - [ ] `docs/99.templates/README.md` and
-  `docs/99.templates/support/template-routing.md` have matching route maps.
+  `docs/99.templates/README.md` have matching route maps.
 - [ ] `scripts/validate-repo-quality-gates.sh` enforces numeric PRD and Stage
   03 route globs.
 - [ ] Old current-route pattern scans pass.
@@ -1000,8 +1000,8 @@ merge, or PR mutation was performed.
 
 - **Spec**: [../../03.specs/019-template-path-numbering-contract/spec.md](spec.md)
 - **Task**: [../tasks/2026-07-05-template-path-numbering-contract.md](README.md#task-records)
-- **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/support/document-contract.md)
-- **SDLC Governance**: [../../99.templates/support/sdlc-governance.md](../../99.templates/support/document-lifecycle.md)
+- **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/README.md)
+- **SDLC Governance**: [../../99.templates/support/sdlc-governance.md](../../99.templates/README.md)
 - **Templates README**: [../../99.templates/README.md](../../99.templates/README.md)
 - **Stage Authoring Matrix**: [../../00.agent-governance/rules/stage-authoring-matrix.md](../../00.agent-governance/rules/document-authoring.md)
 - **Documentation Protocol**: [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/document-authoring.md)
@@ -1011,5 +1011,5 @@ merge, or PR mutation was performed.
 
 - **Spec**: [../../03.specs/0019-template-path-numbering-contract/spec.md](spec.md)
 - **Plan**: [../plans/2026-07-05-template-path-numbering-contract.md](plan.md)
-- **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/support/document-contract.md)
-- **Task Template**: [../../99.templates/templates/sdlc/execution/task.template.md](../../99.templates/templates/sdlc/execution/task.template.md)
+- **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/README.md)
+- **Task Template**: [../../99.templates/templates/specs/task.template.md](../../99.templates/templates/specs/task.template.md)

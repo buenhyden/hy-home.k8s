@@ -243,7 +243,7 @@ The terminal commit contains exactly these 21 paths:
 - `docs/03.specs/0046-agent-governance-program-closure/plan.md`
 - `docs/03.specs/0046-agent-governance-program-closure/README.md#task-records`
 - `docs/03.specs/0046-agent-governance-program-closure/README.md#task-records`
-- `docs/99.templates/support/document-profiles.json`
+- `docs/99.templates/registry.json`
 - `scripts/validate-agent-governance-closure.py`
 - `tests/fixtures/agent-governance-closure.json`
 - `tests/test_validate_agent_governance_closure.py`

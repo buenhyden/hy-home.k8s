@@ -138,7 +138,7 @@ examples as dated snapshots.
 - Create: `docs/03.specs/0016-active-control-surface-governance-hardening/README.md#task-records`
 - Modify: `docs/03.specs/0016-active-control-surface-governance-hardening/README.md#task-records`
 - Modify: `docs/00.agent-governance/memory/progress.md`
-- Read: `docs/99.templates/templates/sdlc/execution/task.template.md`
+- Read: `docs/99.templates/templates/specs/task.template.md`
 - Read: `docs/03.specs/0016-active-control-surface-governance-hardening/spec.md`
 
 - [x] **Step 1: Confirm branch and clean state**
@@ -158,7 +158,7 @@ after the plan commit.
 Run:
 
 ```bash
-sed -n '1,260p' docs/99.templates/templates/sdlc/execution/task.template.md
+sed -n '1,260p' docs/99.templates/templates/specs/task.template.md
 ```
 
 Expected: output includes `type: sdlc/task`, `## Overview`,
@@ -275,8 +275,8 @@ record, tasks README, and progress ledger changes.
 **Files:**
 
 - Modify: `docs/99.templates/support/documentation-contract.md`
-- Modify: `docs/99.templates/support/template-routing.md`
-- Modify: `docs/99.templates/support/frontmatter-schema.md`
+- Modify: `docs/99.templates/README.md`
+- Modify: `docs/99.templates/contracts/frontmatter.schema.json`
 - Modify: `docs/99.templates/support/common-documentation-governance.md`
 - Modify: `docs/99.templates/support/legacy-cleanup-rules.md`
 - Modify: `docs/00.agent-governance/rules/documentation-protocol.md`
@@ -358,7 +358,7 @@ Run:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-git add docs/99.templates/support/documentation-contract.md docs/99.templates/support/template-routing.md docs/99.templates/support/frontmatter-schema.md docs/99.templates/support/common-documentation-governance.md docs/99.templates/support/legacy-cleanup-rules.md docs/00.agent-governance/rules/documentation-protocol.md docs/00.agent-governance/rules/document-stage-routing.md docs/00.agent-governance/rules/quality-standards.md docs/00.agent-governance/rules/approval-boundaries.md docs/03.specs/0016-active-control-surface-governance-hardening/README.md#task-records docs/00.agent-governance/memory/progress.md
+git add docs/99.templates/support/documentation-contract.md docs/99.templates/README.md docs/99.templates/contracts/frontmatter.schema.json docs/99.templates/support/common-documentation-governance.md docs/99.templates/support/legacy-cleanup-rules.md docs/00.agent-governance/rules/documentation-protocol.md docs/00.agent-governance/rules/document-stage-routing.md docs/00.agent-governance/rules/quality-standards.md docs/00.agent-governance/rules/approval-boundaries.md docs/03.specs/0016-active-control-surface-governance-hardening/README.md#task-records docs/00.agent-governance/memory/progress.md
 git commit -m "docs(governance): Define active control surface boundaries"
 ```
 
@@ -1064,10 +1064,10 @@ PY
 - **Prior Spec**: [Workspace Document Contract Normalization](../0014-workspace-document-contract-normalization/spec.md)
 - **Prior Spec**: [Agent Governance Contract Normalization](../0015-agent-governance-contract-normalization/spec.md)
 - **Task**: [../tasks/2026-07-04-active-control-surface-governance-hardening.md](README.md#task-records)
-- **Template Documentation Contract**: [documentation-contract.md](../../99.templates/support/document-contract.md)
-- **Template Routing Contract**: [template-routing.md](../../99.templates/support/document-contract.md)
-- **Frontmatter Schema**: [frontmatter-schema.md](../../99.templates/support/document-contract.md)
-- **Common Documentation Governance**: [common-documentation-governance.md](../../99.templates/support/document-lifecycle.md)
+- **Template Documentation Contract**: [documentation-contract.md](../../99.templates/README.md)
+- **Template Routing Contract**: [template-routing.md](../../99.templates/README.md)
+- **Frontmatter Schema**: [frontmatter-schema.md](../../99.templates/README.md)
+- **Common Documentation Governance**: [common-documentation-governance.md](../../99.templates/README.md)
 - **Documentation Protocol**: [documentation-protocol.md](../../00.agent-governance/rules/document-authoring.md)
 - **Quality Standards**: [quality-standards.md](../../00.agent-governance/rules/quality-standards.md)
 - **Approval Boundaries**: [approval-boundaries.md](../../00.agent-governance/rules/approval-boundaries.md)
@@ -1079,4 +1079,4 @@ PY
 - **Plan**:
   [../plans/2026-07-04-active-control-surface-governance-hardening.md](plan.md)
 - **Task Template**:
-  [../../99.templates/templates/sdlc/execution/task.template.md](../../99.templates/templates/sdlc/execution/task.template.md)
+  [../../99.templates/templates/specs/task.template.md](../../99.templates/templates/specs/task.template.md)

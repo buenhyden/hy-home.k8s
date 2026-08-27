@@ -60,7 +60,7 @@ discovery, retrieval quality, provider consumption, or live behavior.
 | `docs/90.references/llm-wiki/README.md` | `0cb1789c80811a6ec5833ae1cfc56b5c12cb327a` (2026-07-23) | Canonical link-map and review owner | Reviewed; this change refreshes its source/review metadata. |
 | `docs/00.agent-governance/README.md` | `138ce6ac28aa0eebac2b0295e4c50fd78d594db6` (2026-07-29) | Agent-governance hub | Reviewed; owner path remains current. |
 | `docs/00.agent-governance/harness-catalog.md` | `4fdea6a068aec6c65681bae32c44b67a5e95f09e` (2026-08-02) | Readable runtime/role catalog | Reviewed; owner path remains current. |
-| `docs/00.agent-governance/rules/document-stage-routing.md` | `38a2fe6b90bad694d0a9a021c7edce8d800e03ea` (2026-07-30) | Document stage-routing owner | Reviewed; owner path remains current. |
+| `docs/00.agent-governance/rules/document-authoring.md` | `38a2fe6b90bad694d0a9a021c7edce8d800e03ea` (2026-07-30) | Document stage-routing owner | Reviewed; authority moved to the terminal owner path. |
 | `docs/README.md` | `787b28fe1f2b1fff16d59936ed2a411e04d25db5` (2026-07-18) | Human documentation hub | Reviewed; owner path remains current. |
 | `scripts/README.md` | `4fdea6a068aec6c65681bae32c44b67a5e95f09e` (2026-08-02) | Script inventory | Reviewed; owner path remains current. |
 
@@ -109,7 +109,7 @@ docs/90.references/llm-wiki/
 
 | Domain | Canonical owner | Link map role | Freshness trigger |
 | --- | --- | --- | --- |
-| Documentation routing | [document-stage-routing.md](../../00.agent-governance/rules/document-stage-routing.md) | Points to stage ownership rules | Stage taxonomy or routing rule changes |
+| Documentation routing | [document-authoring.md](../../00.agent-governance/rules/document-authoring.md) | Points to stage ownership rules | Stage taxonomy or routing rule changes |
 | Agent-first runtime | [harness-catalog.md](../../00.agent-governance/harness-catalog.md), [agentic.md](../../00.agent-governance/rules/agentic.md) | Points to runtime matrix and execution rule owners | Agent, skill, model, hook, or provider routing changes |
 | LLM Wiki generated index | [wiki-index.md](./wiki-index.md) | Points to generated canonical-owner links | Generator, taxonomy, or owner path changes |
 | LLM Wiki operation | [0009-llm-wiki-curation-guide.md](../../05.operations/guides/0009-llm-wiki-curation-guide.md) | Points to refresh triggers and `wiki-curator` usage | Generator or `wiki-curator` contract changes |
@@ -124,7 +124,7 @@ docs/90.references/llm-wiki/
 
 - [Agent Governance Hub](../../00.agent-governance/README.md)
 - [Harness Catalog](../../00.agent-governance/harness-catalog.md)
-- [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)
+- [Document Stage Routing Rules](../../00.agent-governance/rules/document-authoring.md)
 - [Docs README](../../README.md)
 - [Examples README](../../../examples/README.md)
 - [Scripts README](../../../scripts/README.md)

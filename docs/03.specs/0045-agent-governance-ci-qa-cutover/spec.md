@@ -395,7 +395,7 @@ and the required QA ordering/formatter rerun.
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-0003-NFR-0002](../../01.requirements/0003-workspace-agent-governance-platform.md#functional-requirements) | VAL-AGQC-001 | Selector and aggregate fixtures prove the Spec 039 CI ownership boundary. |
 | N/A — VAL-AGQC-002 shares the REQ-0003-NFR-0002 source linked above | VAL-AGQC-002 | Workflow-security fixtures prove full-SHA and least-permission enforcement. |

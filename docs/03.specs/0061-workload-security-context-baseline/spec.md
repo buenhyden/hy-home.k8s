@@ -198,7 +198,7 @@ python3 scripts/validate-affected-surfaces.py --root .
 
 This Spec has no PRD or AD. Its authority is the direct human approval recorded
 in `## Overview`, registered through the `standaloneExecutions` entry in
-`docs/99.templates/support/document-profiles.json` and the lineage row in
+`docs/99.templates/registry.json` and the lineage row in
 ADR 0022.
 
 Its predecessor is `docs/03.specs/0060-platform-currency-defect-closure/spec.md`,

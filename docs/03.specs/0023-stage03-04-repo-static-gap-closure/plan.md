@@ -149,7 +149,7 @@ Run:
 
 ```bash
 sed -n '1,360p' docs/03.specs/0023-stage03-04-repo-static-gap-closure/spec.md
-sed -n '1,180p' docs/99.templates/templates/sdlc/execution/task.template.md
+sed -n '1,180p' docs/99.templates/templates/specs/task.template.md
 ```
 
 Expected: spec success criteria and task template requirements are visible.

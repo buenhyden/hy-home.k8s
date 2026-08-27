@@ -37,7 +37,7 @@ platform, Traefik, IaC, CI, or live-system changes owned by Specs 048-051.
 
 The current route owner is
 `docs/00.agent-governance/contracts/validation-surfaces.json`. Program lineage
-is owned by `docs/99.templates/support/document-profiles.json` and its strict
+is owned by `docs/99.templates/registry.json` and its strict
 registry validator. The preserved stash object is
 `6370311e020620cc2743005896cc88db97d15465`; implementation must resolve it by
 full object identity rather than assuming `stash@{0}` remains stable.
@@ -126,7 +126,7 @@ adoption, stash apply/pop/drop, remote, or live result.
 
 **Modify during execution:**
 
-- `docs/99.templates/support/document-profiles.json`
+- `docs/99.templates/registry.json`
 - `scripts/validate-document-contract-registry.py`
 - `scripts/validate-links-and-owners.py`
 - `tests/fixtures/links-and-owners.json`
@@ -166,7 +166,7 @@ adoption, stash apply/pop/drop, remote, or live result.
   rtk git status --short --branch
   rtk git rev-parse HEAD
   rtk git rev-parse refs/stash
-  rtk jq -r '.programLineage.programs[] | [.prd,.ard,([.tranches[].spec] | join(","))] | @tsv' docs/99.templates/support/document-profiles.json
+  rtk jq -r '.programLineage.programs[] | [.prd,.ard,([.tranches[].spec] | join(","))] | @tsv' docs/99.templates/registry.json
   ```
 
 - [ ] Add the PRD-0007 program with ordered Specs 047-051 and decision `0021`;
@@ -207,7 +207,7 @@ adoption, stash apply/pop/drop, remote, or live result.
   rtk git add docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md docs/02.architecture/decisions/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md
   rtk git commit -m "docs: activate repository delivery decision"
 
-  rtk git add docs/00.agent-governance/memory/progress.md docs/01.requirements/0007-repository-delivery-and-platform-assurance.md docs/01.requirements/README.md docs/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md docs/02.architecture/descriptions/README.md docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md docs/02.architecture/decisions/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/99.templates/support/document-profiles.json scripts/validate-document-contract-registry.py scripts/validate-links-and-owners.py tests/fixtures/links-and-owners.json
+  rtk git add docs/00.agent-governance/memory/progress.md docs/01.requirements/0007-repository-delivery-and-platform-assurance.md docs/01.requirements/README.md docs/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md docs/02.architecture/descriptions/README.md docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md docs/02.architecture/decisions/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/99.templates/registry.json scripts/validate-document-contract-registry.py scripts/validate-links-and-owners.py tests/fixtures/links-and-owners.json
   rtk git commit -m "docs: activate repository delivery program lineage"
   ```
 
@@ -304,7 +304,7 @@ adoption, stash apply/pop/drop, remote, or live result.
 - [ ] Commit closure without preclaiming its own SHA.
 
   ```bash
-  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/99.templates/support/document-profiles.json
+  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/99.templates/registry.json
   rtk git commit -m "docs: close current surface reconciliation tranche"
   ```
 

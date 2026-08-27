@@ -273,7 +273,9 @@ class ArchiveValidationTest(unittest.TestCase):
     def test_red_current_status_profile_markdown_and_path_contracts_fail_closed(
         self,
     ) -> None:
-        current_path = "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md"
+        current_path = (
+            "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md"
+        )
         cases = (
             (
                 "uppercase-status",
@@ -672,24 +674,20 @@ class ArchiveValidationTest(unittest.TestCase):
 
     def test_repository_archive_v2_has_closed_namespace_and_index_parity(self) -> None:
         registry = json.loads(
-            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
-                encoding="utf-8"
-            )
+            (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
         )
 
         report = archive_validation.validate_repository_archive(ROOT, registry)
 
         self.assertTrue(report.valid, report.diagnostics)
-        self.assertEqual(report.record_count, 93)
-        self.assertEqual(report.index_record_count, 93)
+        self.assertEqual(report.record_count, report.index_record_count)
         self.assertEqual(
-            dict(report.namespace_counts),
-            {
-                "arwb-base": 31,
-                "acer-additive": 12,
-                "wdtc-execution": 50,
-                "progress-snapshot": 0,
-            },
+            sum(count for _namespace, count in report.namespace_counts),
+            report.record_count,
+        )
+        self.assertEqual(
+            {namespace for namespace, _count in report.namespace_counts},
+            set(archive_validation._NAMESPACE_IDS),  # noqa: SLF001
         )
 
     def test_repository_inventory_separates_exact_archive_migration_controls(
@@ -700,7 +698,15 @@ class ArchiveValidationTest(unittest.TestCase):
         )
 
         self.assertEqual(diagnostics, [])
-        self.assertEqual(len(records), 93)
+        self.assertTrue(records)
+        self.assertTrue(
+            all(
+                path.startswith(
+                    ("docs/98.archive/changes/", "docs/98.archive/tombstones/")
+                )
+                for path in records
+            )
+        )
         self.assertNotIn(
             "docs/98.archive/migrations/mig-0001-sdlc-taxonomy-convergence.md",
             records,
@@ -739,8 +745,7 @@ class ArchiveValidationTest(unittest.TestCase):
                 "docs/98.archive/migrations/"
                 "mig-0002-sdlc-document-and-governance-consolidation.md",
                 (
-                    ROOT
-                    / "docs/98.archive/migrations/"
+                    ROOT / "docs/98.archive/migrations/"
                     "mig-0002-sdlc-document-and-governance-consolidation.md"
                 ).read_bytes(),
             )
@@ -763,10 +768,9 @@ class ArchiveValidationTest(unittest.TestCase):
                 self.codes(types.SimpleNamespace(diagnostics=diagnostics)),
             )
 
-    def test_mig0004_recovery_is_integrated_sealed_and_fully_pinned(self) -> None:
+    def test_mig0004_recovery_is_integrated_sealed_and_semantic(self) -> None:
         migration_path = (
-            "docs/98.archive/migrations/"
-            "0004-document-authority-convergence.md"
+            "docs/98.archive/migrations/0004-document-authority-convergence.md"
         )
         migration_bytes = (ROOT / migration_path).read_bytes()
 
@@ -776,41 +780,57 @@ class ArchiveValidationTest(unittest.TestCase):
             migration_bytes,
         )
 
-        self.assertEqual(len(rows), 66)
         self.assertEqual(
-            hashlib.sha256(migration_bytes).hexdigest(),
-            archive_validation.MIG0004_DOCUMENT_SHA256,
+            {
+                str(row["legacy_path"])
+                for row in rows
+                if str(row["legacy_path"]).startswith("docs/99.templates/")
+            },
+            set(archive_validation.MIG0004_STAGE99_ACTION_TARGETS),
         )
         self.assertEqual(
-            {action: sum(row["action"] == action for row in rows) for action in {
-                "moved", "merged", "replaced"
-            }},
-            {"moved": 8, "merged": 2, "replaced": 56},
-        )
-        for name, candidate in (
-            (
-                "accepted-status",
-                migration_bytes.replace(b'status: "sealed"', b'status: "accepted"', 1),
-            ),
-            ("trailing-prose", migration_bytes + b"\nUnreviewed trailing prose.\n"),
-        ):
-            with self.subTest(name=name), self.assertRaisesRegex(
-                archive_validation.ArchiveContractError,
-                "ARCHIVE-MIGRATION-PROFILE",
-            ):
-                archive_validation.parse_pinned_migration_control(
-                    migration_path,
-                    candidate,
+            [
+                row
+                for row in rows
+                if row["legacy_path"] == archive_validation.MIG0004_SPEC0054_LEDGER
+            ],
+            [
+                next(
+                    row
+                    for row in rows
+                    if row["legacy_path"] == archive_validation.MIG0004_SPEC0054_LEDGER
                 )
+            ],
+        )
+        accepted_growth = migration_bytes + b"\nAdditional recovery guidance.\n"
+        self.assertEqual(
+            archive_validation.parse_pinned_migration_control(
+                migration_path, accepted_growth
+            ),
+            rows,
+        )
+        invalid_status = migration_bytes.replace(
+            b'status: "sealed"', b'status: "accepted"', 1
+        )
+        with self.assertRaisesRegex(
+            archive_validation.ArchiveContractError,
+            "ARCHIVE-MIGRATION-PROFILE",
+        ):
+            archive_validation.parse_pinned_migration_control(
+                migration_path,
+                invalid_status,
+            )
 
     def test_recovery_rejects_a_full_but_unreachable_commit(self) -> None:
-        with tempfile.TemporaryDirectory(prefix="unreachable-migration-commit-") as temporary:
+        with tempfile.TemporaryDirectory(
+            prefix="unreachable-migration-commit-"
+        ) as temporary:
             root = Path(temporary)
             fixture = GitFixture(root)
             reachable, _blobs = fixture.commit_many({"reachable.md": b"reachable\n"})
-            durable_branch = fixture.run(
-                "symbolic-ref", "--short", "HEAD"
-            ).decode("ascii").strip()
+            durable_branch = (
+                fixture.run("symbolic-ref", "--short", "HEAD").decode("ascii").strip()
+            )
             fixture.run("checkout", "--quiet", "--orphan", "detached-source")
             unreachable, _blobs = fixture.commit_many(
                 {"reachable.md": b"reachable\n", "legacy.md": b"legacy\n"}
@@ -835,9 +855,9 @@ class ArchiveValidationTest(unittest.TestCase):
             root = Path(temporary)
             fixture = GitFixture(root)
             source, _blobs = fixture.commit_many({"legacy.md": b"legacy\n"})
-            short_branch = fixture.run(
-                "symbolic-ref", "--short", "HEAD"
-            ).decode("ascii").strip()
+            short_branch = (
+                fixture.run("symbolic-ref", "--short", "HEAD").decode("ascii").strip()
+            )
             durable_ref = f"refs/heads/{short_branch}"
 
             require_commits_reachable_from_durable_refs(
@@ -872,9 +892,9 @@ class ArchiveValidationTest(unittest.TestCase):
             root = Path(temporary)
             fixture = GitFixture(root)
             source, _blobs = fixture.commit_many({"legacy.md": b"legacy\n"})
-            source_branch = fixture.run(
-                "symbolic-ref", "--short", "HEAD"
-            ).decode("ascii").strip()
+            source_branch = (
+                fixture.run("symbolic-ref", "--short", "HEAD").decode("ascii").strip()
+            )
             fixture.run("checkout", "--quiet", "--orphan", "unrelated")
             fixture.commit_many({"unrelated.md": b"unrelated\n"})
 
@@ -888,9 +908,12 @@ class ArchiveValidationTest(unittest.TestCase):
                     ("refs/heads/unrelated",),
                 )
             for candidate in ("HEAD", f"refs/tags/{source_branch}"):
-                with self.subTest(candidate=candidate), self.assertRaisesRegex(
-                    archive_validation.ArchiveContractError,
-                    "RECOVERY-DURABLE-REF",
+                with (
+                    self.subTest(candidate=candidate),
+                    self.assertRaisesRegex(
+                        archive_validation.ArchiveContractError,
+                        "RECOVERY-DURABLE-REF",
+                    ),
                 ):
                     require_commits_reachable_from_durable_refs(
                         root.resolve(),
@@ -899,10 +922,11 @@ class ArchiveValidationTest(unittest.TestCase):
                     )
 
     @staticmethod
-    def _mig0004_current_fixture(root: Path) -> tuple[GitFixture, tuple[dict[str, object], ...]]:
+    def _mig0004_current_fixture(
+        root: Path,
+    ) -> tuple[GitFixture, tuple[dict[str, object], ...]]:
         migration_path = (
-            "docs/98.archive/migrations/"
-            "0004-document-authority-convergence.md"
+            "docs/98.archive/migrations/0004-document-authority-convergence.md"
         )
         rows = archive_validation.parse_pinned_migration_control(
             migration_path,
@@ -911,9 +935,7 @@ class ArchiveValidationTest(unittest.TestCase):
         files: dict[str, bytes] = {}
         for row in rows:
             target = (
-                row["stable_path"]
-                if row["action"] == "moved"
-                else row["replacement"]
+                row["stable_path"] if row["action"] == "moved" else row["replacement"]
             )
             assert isinstance(target, str)
             files[target] = (ROOT / target).read_bytes()
@@ -946,6 +968,199 @@ class ArchiveValidationTest(unittest.TestCase):
                     root.resolve(), rows
                 )
 
+    def test_mig0004_stage99_targets_are_index_bound_and_worktree_identical(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory(prefix="mig0004-stage99-index-") as temporary:
+            root = Path(temporary)
+            fixture, rows = self._mig0004_current_fixture(root)
+            moved = next(
+                row
+                for row in rows
+                if row["legacy_path"]
+                in archive_validation.MIG0004_STAGE99_ACTION_TARGETS
+                and row["action"] == "moved"
+            )
+            replaced = next(
+                row
+                for row in rows
+                if row["legacy_path"]
+                in archive_validation.MIG0004_STAGE99_ACTION_TARGETS
+                and row["action"] == "replaced"
+                and row["replacement"] == "docs/99.templates/registry.json"
+            )
+
+            moved_target = str(moved["stable_path"])
+            fixture.run("rm", "--cached", "--quiet", "--", moved_target)
+            self.assertTrue((root / moved_target).is_file())
+            with self.assertRaisesRegex(
+                archive_validation.ArchiveContractError,
+                "RECOVERY-MIGRATION-TARGET",
+            ):
+                archive_validation._validate_mig0004_rows_and_targets(  # noqa: SLF001
+                    root.resolve(), rows
+                )
+
+            fixture.run("add", "--", moved_target)
+            replaced_target = root / str(replaced["replacement"])
+            replaced_target.write_bytes(
+                replaced_target.read_bytes() + b"\nworktree drift\n"
+            )
+            with self.assertRaisesRegex(
+                archive_validation.ArchiveContractError,
+                "RECOVERY-MIGRATION-TARGET",
+            ):
+                archive_validation._validate_mig0004_rows_and_targets(  # noqa: SLF001
+                    root.resolve(), rows
+                )
+
+    def test_mig0004_stage99_target_rejects_symlink_escape(self) -> None:
+        with tempfile.TemporaryDirectory(
+            prefix="mig0004-stage99-symlink-"
+        ) as temporary:
+            root = Path(temporary)
+            _fixture, rows = self._mig0004_current_fixture(root)
+            row = next(
+                item
+                for item in rows
+                if item["legacy_path"]
+                in archive_validation.MIG0004_STAGE99_ACTION_TARGETS
+                and item["action"] == "replaced"
+                and item["replacement"] == "docs/99.templates/registry.json"
+            )
+            target = root / str(row["replacement"])
+            outside = root / "outside.json"
+            outside.write_bytes(target.read_bytes())
+            target.unlink()
+            target.symlink_to(outside)
+
+            with self.assertRaisesRegex(
+                archive_validation.ArchiveContractError,
+                "RECOVERY-MIGRATION-TARGET",
+            ):
+                archive_validation._validate_mig0004_rows_and_targets(  # noqa: SLF001
+                    root.resolve(), rows
+                )
+
+    def test_mig0004_accepts_canonical_non_terminal_row_growth(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="mig0004-growth-") as temporary:
+            root = Path(temporary)
+            fixture, rows = self._mig0004_current_fixture(root)
+            target = "docs/03.specs/9999-semantic-growth/README.md"
+            destination = root / target
+            destination.parent.mkdir(parents=True)
+            destination.write_text("# Semantic growth\n", encoding="utf-8")
+            fixture.run("add", "--", target)
+            added = {
+                "legacy_path": "docs/03.specs/9999-semantic-growth/tasks.md",
+                "stable_path": None,
+                "artifact_id": None,
+                "action": "replaced",
+                "replacement": target,
+                "source_commit": "a" * 40,
+                "source_blob": "b" * 40,
+                "content_sha256": "c" * 64,
+                "reason": "Canonical future task-ledger convergence.",
+            }
+            grown = tuple(
+                sorted((*rows, added), key=lambda row: str(row["legacy_path"]))
+            )
+
+            archive_validation._validate_mig0004_rows_and_targets(  # noqa: SLF001
+                root.resolve(), grown
+            )
+
+    def test_mig0004_requires_exact_stage99_and_sole_spec0054_rows(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="mig0004-required-") as temporary:
+            root = Path(temporary)
+            _fixture, rows = self._mig0004_current_fixture(root)
+            missing_stage99 = tuple(
+                row
+                for row in rows
+                if row["legacy_path"]
+                != next(iter(archive_validation.MIG0004_STAGE99_ACTION_TARGETS))
+            )
+            missing_spec0054 = tuple(
+                row
+                for row in rows
+                if row["legacy_path"] != archive_validation.MIG0004_SPEC0054_LEDGER
+            )
+            for candidate in (missing_stage99, missing_spec0054):
+                with self.subTest(rows=len(candidate)):
+                    with self.assertRaisesRegex(
+                        archive_validation.ArchiveContractError,
+                        "RECOVERY-MIGRATION-ROW",
+                    ):
+                        archive_validation._validate_mig0004_rows_and_targets(  # noqa: SLF001
+                            root.resolve(), candidate
+                        )
+
+    def test_mig0004_required_cutover_rows_reject_a_reachable_wrong_commit(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory(prefix="mig0004-wrong-boundary-") as temporary:
+            root = Path(temporary)
+            fixture, rows = self._mig0004_current_fixture(root)
+            fixture.run("commit", "--quiet", "-m", "reachable wrong boundary")
+            reachable = fixture.run("rev-parse", "HEAD").decode("ascii").strip()
+            self.assertNotEqual(
+                reachable,
+                archive_validation.MIG0004_TERMINAL_SOURCE_COMMIT,
+            )
+            changed = [dict(row) for row in rows]
+            index = next(
+                offset
+                for offset, row in enumerate(changed)
+                if row["legacy_path"]
+                in archive_validation.MIG0004_STAGE99_ACTION_TARGETS
+            )
+            changed[index]["source_commit"] = reachable
+
+            with self.assertRaisesRegex(
+                archive_validation.ArchiveContractError,
+                "RECOVERY-MIGRATION-ROW",
+            ):
+                archive_validation._validate_mig0004_rows_and_targets(  # noqa: SLF001
+                    root.resolve(), tuple(changed)
+                )
+
+    def test_mig0004_rejects_tampered_stage99_digest_and_target(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="mig0004-tamper-") as temporary:
+            root = Path(temporary)
+            _fixture, rows = self._mig0004_current_fixture(root)
+            moved_index = next(
+                index
+                for index, row in enumerate(rows)
+                if row["legacy_path"]
+                in archive_validation.MIG0004_STAGE99_ACTION_TARGETS
+                and row["action"] == "moved"
+            )
+            replaced_index = next(
+                index
+                for index, row in enumerate(rows)
+                if row["legacy_path"]
+                in archive_validation.MIG0004_STAGE99_ACTION_TARGETS
+                and row["action"] == "replaced"
+            )
+            digest_rows = [dict(row) for row in rows]
+            digest_rows[moved_index]["content_sha256"] = "0" * 64
+            target_rows = [dict(row) for row in rows]
+            target_rows[replaced_index]["replacement"] = (
+                "docs/99.templates/registry.json"
+            )
+            for candidate, rule_id in (
+                (tuple(digest_rows), "RECOVERY-MIGRATION-TARGET"),
+                (tuple(target_rows), "RECOVERY-MIGRATION-ROW"),
+            ):
+                with self.subTest(rule_id=rule_id):
+                    with self.assertRaisesRegex(
+                        archive_validation.ArchiveContractError,
+                        rule_id,
+                    ):
+                        archive_validation._validate_mig0004_rows_and_targets(  # noqa: SLF001
+                            root.resolve(), candidate
+                        )
+
     def test_mig0004_rejects_an_index_deleted_untracked_task(self) -> None:
         with tempfile.TemporaryDirectory(prefix="mig0004-untracked-task-") as temporary:
             root = Path(temporary)
@@ -964,7 +1179,9 @@ class ArchiveValidationTest(unittest.TestCase):
                 )
 
     def test_mig0004_rejects_oversized_current_consumers_before_reading(self) -> None:
-        with tempfile.TemporaryDirectory(prefix="mig0004-oversize-consumer-") as temporary:
+        with tempfile.TemporaryDirectory(
+            prefix="mig0004-oversize-consumer-"
+        ) as temporary:
             root = Path(temporary)
             fixture, rows = self._mig0004_current_fixture(root)
             consumer = root / "docs/03.specs/9999-oversized.md"
@@ -1033,13 +1250,16 @@ class ArchiveValidationTest(unittest.TestCase):
                     replaced = True
                 return chunk
 
-            with mock.patch.object(
-                archive_validation.os,
-                "read",
-                side_effect=replace_after_read,
-            ), self.assertRaisesRegex(
-                archive_validation.ArchiveContractError,
-                "RECOVERY-MIGRATION-TARGET",
+            with (
+                mock.patch.object(
+                    archive_validation.os,
+                    "read",
+                    side_effect=replace_after_read,
+                ),
+                self.assertRaisesRegex(
+                    archive_validation.ArchiveContractError,
+                    "RECOVERY-MIGRATION-TARGET",
+                ),
             ):
                 archive_validation.read_worktree_regular_bounded(
                     root, "docs/pkg/record.md", max_bytes=32
@@ -1107,21 +1327,26 @@ class ArchiveValidationTest(unittest.TestCase):
                 aggregate_limits.append(kwargs["aggregate_limit"])
                 return real_reader(*args, **kwargs)
 
-            with mock.patch.object(
-                archive_validation,
-                "MAX_GIT_BATCH_OBJECTS",
-                2,
-            ), mock.patch.object(
-                archive_validation,
-                "CURRENT_MARKDOWN_TOTAL_BYTES",
-                100,
-            ), mock.patch.object(
-                archive_validation,
-                "_read_git_blob_batch",
-                side_effect=read_batch,
-            ), self.assertRaisesRegex(
-                archive_validation.ArchiveContractError,
-                "RECOVERY-RESOURCE-LIMIT",
+            with (
+                mock.patch.object(
+                    archive_validation,
+                    "MAX_GIT_BATCH_OBJECTS",
+                    2,
+                ),
+                mock.patch.object(
+                    archive_validation,
+                    "CURRENT_MARKDOWN_TOTAL_BYTES",
+                    100,
+                ),
+                mock.patch.object(
+                    archive_validation,
+                    "_read_git_blob_batch",
+                    side_effect=read_batch,
+                ),
+                self.assertRaisesRegex(
+                    archive_validation.ArchiveContractError,
+                    "RECOVERY-RESOURCE-LIMIT",
+                ),
             ):
                 archive_validation._staged_markdown_documents(  # noqa: SLF001
                     root.resolve(), inventory, tuple(paths)
@@ -1156,17 +1381,20 @@ class ArchiveValidationTest(unittest.TestCase):
             ),
         )
         for name, relative, content, expected_code in cases:
-            with self.subTest(name=name), tempfile.TemporaryDirectory(
-                prefix="archive-migration-profile-"
-            ) as temporary:
+            with (
+                self.subTest(name=name),
+                tempfile.TemporaryDirectory(
+                    prefix="archive-migration-profile-"
+                ) as temporary,
+            ):
                 root = Path(temporary)
                 target = root / relative
                 target.parent.mkdir(parents=True)
                 target.write_bytes(content)
 
-                records, diagnostics = (
-                    archive_validation._repository_archive_records(root)  # noqa: SLF001
-                )
+                records, diagnostics = archive_validation._repository_archive_records(
+                    root
+                )  # noqa: SLF001
 
                 self.assertEqual(records, {})
                 self.assertIn(
@@ -1203,8 +1431,9 @@ class ArchiveValidationTest(unittest.TestCase):
                 ),
             ),
         ):
-            with self.subTest(name=name), self.assertRaises(
-                archive_validation.ArchiveContractError
+            with (
+                self.subTest(name=name),
+                self.assertRaises(archive_validation.ArchiveContractError),
             ):
                 archive_validation.parse_pinned_migration_control(
                     migration_path, candidate
@@ -1268,59 +1497,52 @@ class ArchiveValidationTest(unittest.TestCase):
 
         self.assertEqual(self.codes(report), ())
 
-    def test_repository_archive_rejects_open_or_overlapping_namespaces(self) -> None:
+    def test_repository_archive_ignores_retired_stage99_namespace_projection(
+        self,
+    ) -> None:
         registry = json.loads(
-            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
-                encoding="utf-8"
-            )
+            (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
         )
-        open_registry = dict(registry)
-        open_registry["archiveNamespaces"] = [
-            *registry["archiveNamespaces"],
-            {"id": "rogue", "policy": "exact-immutable", "records": []},
+        injected = dict(registry)
+        injected["archiveNamespaces"] = [
+            {
+                "id": "retired-stage99-projection",
+                "policy": "not-an-archive-owner",
+                "records": ["docs/98.archive/untrusted.md"],
+            }
         ]
-        overlapping = json.loads(json.dumps(registry))
-        overlapping["archiveNamespaces"][1]["records"][0] = (
-            overlapping["archiveNamespaces"][0]["records"][0]
-        )
 
-        open_report = archive_validation.validate_repository_archive(ROOT, open_registry)
-        overlap_report = archive_validation.validate_repository_archive(
-            ROOT, overlapping
-        )
+        report = archive_validation.validate_repository_archive(ROOT, injected)
 
-        self.assertIn("ARCHIVE-NAMESPACE-CONTRACT", self.codes(open_report))
-        self.assertIn("ARCHIVE-NAMESPACE-OVERLAP", self.codes(overlap_report))
+        self.assertTrue(report.valid, report.diagnostics)
+        self.assertNotIn("ARCHIVE-NAMESPACE-CONTRACT", self.codes(report))
 
-    def test_repository_archive_rejects_index_and_envelope_membership_drift(self) -> None:
+    def test_repository_archive_rejects_index_and_envelope_membership_drift(
+        self,
+    ) -> None:
         registry = json.loads(
-            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
-                encoding="utf-8"
-            )
+            (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
         )
-        missing_member = json.loads(json.dumps(registry))
-        missing_member["archiveNamespaces"][2]["records"].pop()
+        records, diagnostics = archive_validation._repository_archive_records(  # noqa: SLF001
+            ROOT
+        )
+        missing_member = dict(records)
+        missing_member.pop(next(iter(sorted(missing_member))))
 
-        report = archive_validation.validate_repository_archive(ROOT, missing_member)
+        with mock.patch.object(
+            archive_validation,
+            "_repository_archive_records",
+            return_value=(missing_member, diagnostics),
+        ):
+            report = archive_validation.validate_repository_archive(ROOT, registry)
 
-        self.assertIn("ARCHIVE-NAMESPACE-PARITY", self.codes(report))
+        self.assertIn("ARCHIVE-MIGRATION-PARITY", self.codes(report))
+        self.assertIn("ARCHIVE-INDEX-PARITY", self.codes(report))
 
-    def test_repository_archive_binds_reviewed_namespace_paths_and_metadata(self) -> None:
+    def test_repository_archive_binds_reviewed_manifest_metadata(self) -> None:
         registry = json.loads(
-            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
-                encoding="utf-8"
-            )
+            (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
         )
-        substituted = json.loads(json.dumps(registry))
-        acer_path = substituted["archiveNamespaces"][1]["records"][0]
-        wdtc_path = substituted["archiveNamespaces"][2]["records"][0]
-        substituted["archiveNamespaces"][1]["records"][0] = wdtc_path
-        substituted["archiveNamespaces"][2]["records"][0] = acer_path
-
-        path_report = archive_validation.validate_repository_archive(ROOT, substituted)
-
-        self.assertIn("ARCHIVE-NAMESPACE-REVIEWED", self.codes(path_report))
-
         reviewed = archive_validation._reviewed_manifest_records(ROOT)  # noqa: SLF001
         first_path, second_path = tuple(sorted(reviewed))[:2]
         metadata_substitution = dict(reviewed)
@@ -1344,19 +1566,16 @@ class ArchiveValidationTest(unittest.TestCase):
     ) -> None:
         index_text = (ROOT / "docs/98.archive/README.md").read_text(encoding="utf-8")
         invalid_null = index_text.replace("| `null` |", "| `NULL` |", 1)
-        rows, _total, diagnostics = archive_validation._parse_repository_index(  # noqa: SLF001
+        _rows, _total, diagnostics = archive_validation._parse_repository_index(  # noqa: SLF001
             invalid_null
         )
-        self.assertLess(len(rows), 93)
         self.assertIn(
             "ARCHIVE-INDEX-STRUCTURE",
             self.codes(types.SimpleNamespace(diagnostics=diagnostics)),
         )
 
         registry = json.loads(
-            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
-                encoding="utf-8"
-            )
+            (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
         )
         parsed_rows, link_total, parse_diagnostics = (
             archive_validation._parse_repository_index(index_text)  # noqa: SLF001
@@ -1382,9 +1601,7 @@ class ArchiveValidationTest(unittest.TestCase):
         self,
     ) -> None:
         registry = json.loads(
-            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
-                encoding="utf-8"
-            )
+            (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
         )
         real_popen = subprocess.Popen
         git_calls = 0
@@ -1395,7 +1612,9 @@ class ArchiveValidationTest(unittest.TestCase):
             if command and command[0] == "git":
                 git_calls += 1
                 if git_calls > 64:
-                    raise AssertionError("repository archive exceeded Git subprocess budget")
+                    raise AssertionError(
+                        "repository archive exceeded Git subprocess budget"
+                    )
             return real_popen(*args, **kwargs)
 
         started = time.monotonic()
@@ -1516,9 +1735,7 @@ class ArchiveValidationTest(unittest.TestCase):
         self,
     ) -> None:
         registry = json.loads(
-            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
-                encoding="utf-8"
-            )
+            (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
         )
         expected = {
             "docs/03.specs",
@@ -1527,9 +1744,9 @@ class ArchiveValidationTest(unittest.TestCase):
             "docs/03.specs/003-platform-expansion/spec.md",
             "docs/03.specs/README.md",
         }
-        records, inventory_diagnostics = (
-            archive_validation._repository_archive_records(ROOT)  # noqa: SLF001
-        )
+        records, inventory_diagnostics = archive_validation._repository_archive_records(
+            ROOT
+        )  # noqa: SLF001
         self.assertEqual(inventory_diagnostics, [])
         original_paths = {
             str(
@@ -1577,8 +1794,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         "docs/03.specs/0018-workspace-engineering-implementation-audit-pack/README.md"
     )
     archived_source = PurePosixPath(
-        "docs/04.execution/plans/"
-        "2026-05-24-p3-gitops-secret-runtime-remediation.md"
+        "docs/04.execution/plans/2026-05-24-p3-gitops-secret-runtime-remediation.md"
     )
 
     @classmethod
@@ -1601,8 +1817,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
     def test_exact_manifest_edges_route_to_collection_index(self) -> None:
         handoff = self.validator._archive_transition_handoff(self.context)
         actual = tuple(
-            (edge.source.as_posix(), edge.target.as_posix())
-            for edge in handoff.edges
+            (edge.source.as_posix(), edge.target.as_posix()) for edge in handoff.edges
         )
 
         self.assertEqual(actual, ())
@@ -1610,6 +1825,95 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             handoff.navigation_boundary,
             "docs/98.archive/README.md#document-index",
         )
+
+    def test_terminal_current_owners_are_derived_from_stage_owners(self) -> None:
+        governance = self.context.governance_current_paths
+        reference = self.context.reference_current_packs
+
+        self.assertTrue(governance)
+        self.assertEqual(self.context.governance_current_states, ("active",))
+        self.assertTrue(
+            all(
+                self.context.profiles[path].profile_id == "governance/reference"
+                and self.context.profiles[path].mode == "authored"
+                and self.context.metadata[path].get("status") == "active"
+                for path in governance
+            )
+        )
+        self.assertEqual(
+            [pack.id for pack in reference.packs], ["audits/2026-08-09-wgia"]
+        )
+        self.assertEqual(reference.profile_id, "content/reference")
+        self.assertEqual(reference.packs[0].allowed_states, ("draft",))
+        self.assertEqual(len(reference.packs[0].members), 9)
+
+    def test_terminal_current_owner_derivation_fails_closed_on_missing_ria_owner(
+        self,
+    ) -> None:
+        with (
+            mock.patch.object(
+                self.validator,
+                "load_ria_contract",
+                return_value={"currentPackBaselines": {}},
+                create=True,
+            ),
+            self.assertRaises(self.validator.ConfigurationError),
+        ):
+            self.validator._build_context(ROOT)
+
+    def test_mig0004_link_projection_accepts_semantically_valid_row_growth(
+        self,
+    ) -> None:
+        path = self.validator.WORK054_WP004B_MIGRATION_PATH
+        rows = self.validator.validate_pinned_migration_recovery(
+            self.context.root,
+            path.as_posix(),
+            self.context.texts[path].encode("utf-8"),
+        )
+        legacy = "docs/03.specs/9999-semantic-growth/tasks.md"
+        target = "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/README.md"
+        added = {
+            "legacy_path": legacy,
+            "stable_path": None,
+            "artifact_id": None,
+            "action": "replaced",
+            "replacement": target,
+            "source_commit": "a" * 40,
+            "source_blob": "b" * 40,
+            "content_sha256": "c" * 64,
+            "reason": "Canonical semantic growth fixture.",
+        }
+
+        with mock.patch.object(
+            self.validator,
+            "validate_pinned_migration_recovery",
+            return_value=(*rows, added),
+        ):
+            targets = self.validator._work054_wp004b_targets(self.context)
+
+        self.assertEqual(
+            targets[PurePosixPath(legacy)],
+            PurePosixPath(target),
+        )
+
+    def test_mig0004_link_projection_fails_closed_on_recovery_proof_error(
+        self,
+    ) -> None:
+        with (
+            mock.patch.object(
+                self.validator,
+                "validate_pinned_migration_recovery",
+                side_effect=self.validator.ArchiveContractError(
+                    "RECOVERY-MIGRATION-BLOB",
+                    "fixture proof differs",
+                ),
+            ),
+            self.assertRaisesRegex(
+                self.validator.ConfigurationError,
+                "migration recovery proof differs",
+            ),
+        ):
+            self.validator._work054_wp004b_targets(self.context)
 
     def _mutated_work109_context(self, mutate) -> object:
         path = self.validator.WORK109_MIGRATION_PATH
@@ -1702,75 +2006,9 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             move_targets,
         )
 
-    def test_work054_historical_edges_follow_sealed_migrations_without_source_pins(
-        self,
-    ) -> None:
+    def test_terminal_route_does_not_project_an_active_stale_owner_edge(self) -> None:
         source = PurePosixPath(
             "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md"
-        )
-        expected = {
-            PurePosixPath(
-                "docs/00.agent-governance/" + "common-" + "governance.md"
-            ): PurePosixPath("docs/00.agent-governance/harness-catalog.md"),
-            PurePosixPath(
-                "docs/03.specs/024-observability-and-network-review-agents/agent-design.md"
-            ): PurePosixPath(
-                "docs/03.specs/0024-observability-and-network-review-agents/spec.md"
-            ),
-            PurePosixPath(
-                "docs/99.templates/support/template-routing.md"
-            ): PurePosixPath("docs/99.templates/support/document-contract.md"),
-        }
-        added_links = "".join(
-            f"\n[retired]({self.validator.posixpath.relpath(retired, source.parent)})"
-            for retired in expected
-            for _ in range(2)
-        )
-        context = dataclasses.replace(
-            self.context,
-            texts={
-                **self.context.texts,
-                source: self.context.texts[source] + added_links + "\n",
-            },
-        )
-
-        edges = self._work054_edges(context)
-
-        for retired, terminal in expected.items():
-            with self.subTest(retired=retired):
-                self.assertEqual(
-                    edges[self.validator.ArchiveTransitionEdge(source, retired)],
-                    terminal,
-                )
-
-    def test_work054_historical_projection_ignores_non_link_formatting(self) -> None:
-        source = PurePosixPath(
-            "docs/03.specs/0015-agent-governance-contract-normalization/plan.md"
-        )
-        retired = next(
-            iter(self.validator._work054_wp003_owner_merges(self.context))
-        )
-        context = dataclasses.replace(
-            self.context,
-            texts={**self.context.texts, source: self.context.texts[source] + "\n"},
-        )
-
-        edges = self._work054_edges(context)
-
-        self.assertIn(
-            self.validator.ArchiveTransitionEdge(
-                source,
-                retired,
-            ),
-            edges,
-        )
-
-    def test_current_stage90_research_uses_migration_semantics_not_blob_pins(
-        self,
-    ) -> None:
-        source = PurePosixPath(
-            "docs/90.references/research/2026-08-08-wer/"
-            "spec-driven-sdlc-and-document-contracts.md"
         )
         retired = PurePosixPath(
             "docs/00.agent-governance/" + "common-" + "governance.md"
@@ -1780,23 +2018,193 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             self.context,
             texts={
                 **self.context.texts,
-                source: self.context.texts[source]
-                + f"\n[retired]({raw})\n[duplicate]({raw})\n",
+                source: self.context.texts[source] + f"\n[retired]({raw})\n",
             },
         )
-        _aliases, move_targets, _replacements = (
-            self.validator._document_taxonomy_transition_manifest(context)
+
+        projected = self._work054_edges(context)
+        self.assertNotIn(
+            self.validator.ArchiveTransitionEdge(source, retired),
+            projected,
+        )
+        self.assertEqual(
+            self.validator._reviewed_immutable_historical_alias_edges(context, {}),
+            {},
+        )
+        self.assertEqual(
+            self.validator._reviewed_completed_history_alias_edges(context, {}),
+            {},
         )
 
-        self.validator._reviewed_immutable_historical_alias_edges(
-            context,
+    def test_active_source_cannot_use_declared_migration_or_tasks_aliases(
+        self,
+    ) -> None:
+        source = PurePosixPath("docs/00.agent-governance/current-stale-link.md")
+        profile = self.validator.ProfileView(
+            "governance/reference", "governance", "authored"
+        )
+        targets = (
+            PurePosixPath("docs/99.templates/support/document-contract.md"),
+            PurePosixPath(
+                "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks.md"
+            ),
+        )
+        links = "\n".join(
+            f"[retired {index}]({self.validator.posixpath.relpath(target, source.parent)})"
+            for index, target in enumerate(targets, start=1)
+        )
+        context = dataclasses.replace(
+            self.context,
+            paths=(*self.context.paths, source),
+            profiles={**self.context.profiles, source: profile},
+            texts={**self.context.texts, source: links + "\n"},
+            metadata={**self.context.metadata, source: {"status": "active"}},
+            tracked_regular_paths=self.context.tracked_regular_paths | {source},
+        )
+
+        diagnostics = self.validator._link_diagnostics(context)
+
+        broken = {
+            item.actual
+            for item in diagnostics
+            if item.rule_id == "LINK-BROKEN" and item.path == source
+        }
+        self.assertEqual(broken, {target.as_posix() for target in targets})
+
+    def test_future_done_task_cannot_enter_historical_migration_waiver(
+        self,
+    ) -> None:
+        source = PurePosixPath(
+            "docs/03.specs/9999-future-change/tasks/tsk-0001-future.md"
+        )
+        retired = PurePosixPath("docs/99.templates/support/document-contract.md")
+        raw = self.validator.posixpath.relpath(retired, source.parent)
+        context = dataclasses.replace(
+            self.context,
+            paths=(*self.context.paths, source),
+            profiles={
+                **self.context.profiles,
+                source: self.validator.ProfileView("sdlc/task", "sdlc", "authored"),
+            },
+            texts={**self.context.texts, source: f"[retired]({raw})\n"},
+            metadata={**self.context.metadata, source: {"status": "done"}},
+            tracked_regular_paths=self.context.tracked_regular_paths | {source},
+        )
+
+        projected = self._work054_edges(context)
+
+        self.assertNotIn(
+            self.validator.ArchiveTransitionEdge(source, retired),
+            projected,
+        )
+
+    def test_future_accepted_adr_cannot_enter_historical_migration_waiver(
+        self,
+    ) -> None:
+        source = PurePosixPath("docs/02.architecture/decisions/9999-future-decision.md")
+        retired = PurePosixPath("docs/99.templates/support/document-contract.md")
+        raw = self.validator.posixpath.relpath(retired, source.parent)
+        context = dataclasses.replace(
+            self.context,
+            paths=(*self.context.paths, source),
+            profiles={
+                **self.context.profiles,
+                source: self.validator.ProfileView("sdlc/adr", "sdlc", "authored"),
+            },
+            texts={**self.context.texts, source: f"[retired]({raw})\n"},
+            metadata={**self.context.metadata, source: {"status": "accepted"}},
+            tracked_regular_paths=self.context.tracked_regular_paths | {source},
+        )
+
+        projected = self._work054_edges(context)
+
+        self.assertNotIn(
+            self.validator.ArchiveTransitionEdge(source, retired),
+            projected,
+        )
+
+    def test_terminal_current_progress_uses_no_historical_projection(
+        self,
+    ) -> None:
+        source = PurePosixPath("docs/00.agent-governance/memory/progress.md")
+        target = PurePosixPath(
+            "docs/03.specs/009-workspace-harness-research-pack/tasks.md"
+        )
+        edge = self.validator.ArchiveTransitionEdge(source, target)
+
+        projected = self.validator._reviewed_work054_historical_owner_edges(
+            self.context,
+            {},
+        )
+
+        self.assertNotIn(edge, projected)
+
+    def test_terminal_history_composes_taxonomy_mig0002_and_mig0004_edges(
+        self,
+    ) -> None:
+        source = PurePosixPath(
+            "docs/90.references/audits/2026-07-02-whia/"
+            "harness-loop-implementation-audit.md"
+        )
+        target = PurePosixPath(
+            "docs/04.execution/tasks/"
+            "2026-07-02-workspace-harness-implementation-audit-pack.md"
+        )
+        expected = PurePosixPath(
+            "docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md"
+        )
+        _move_blobs, move_targets, _archive_sources = (
+            self.validator._document_taxonomy_transition_manifest(self.context)
+        )
+
+        projected = self.validator._reviewed_work054_historical_owner_edges(
+            self.context,
             move_targets,
         )
-        edges = self._work054_edges(context)
 
         self.assertEqual(
-            edges[self.validator.ArchiveTransitionEdge(source, retired)],
-            PurePosixPath("docs/00.agent-governance/harness-catalog.md"),
+            projected[self.validator.ArchiveTransitionEdge(source, target)],
+            expected,
+        )
+
+    def test_terminal_history_uses_ria_retired_pack_profile_and_path_scope(
+        self,
+    ) -> None:
+        source = PurePosixPath("docs/90.references/audits/2026-07-11-weia/README.md")
+        target = PurePosixPath(
+            "docs/99.templates/templates/common/reference.template.md"
+        )
+        expected = PurePosixPath(
+            "docs/99.templates/templates/references/reference.template.md"
+        )
+
+        projected = self.validator._reviewed_work054_historical_owner_edges(
+            self.context,
+            {},
+        )
+
+        self.assertEqual(
+            projected[self.validator.ArchiveTransitionEdge(source, target)],
+            expected,
+        )
+
+    def test_terminal_history_keeps_exact_frozen_cloud_manifest_source(
+        self,
+    ) -> None:
+        source = PurePosixPath("docs/90.references/cloud-examples/README.md")
+        target = PurePosixPath("docs/03.specs/030-authored-document-migration/spec.md")
+        expected = PurePosixPath(
+            "docs/03.specs/0030-authored-document-migration/spec.md"
+        )
+
+        projected = self.validator._reviewed_work054_historical_owner_edges(
+            self.context,
+            {},
+        )
+
+        self.assertEqual(
+            projected[self.validator.ArchiveTransitionEdge(source, target)],
+            expected,
         )
 
     def test_work054_historical_projection_rejects_undeclared_retired_edge(
@@ -1860,9 +2268,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             "source-commit": lambda rows: rows[0].__setitem__(
                 "source_commit", "0" * 40
             ),
-            "source-blob": lambda rows: rows[0].__setitem__(
-                "source_blob", "0" * 40
-            ),
+            "source-blob": lambda rows: rows[0].__setitem__("source_blob", "0" * 40),
             "stable-target": lambda rows: rows[0].__setitem__(
                 "stable_path", "docs/01.requirements/9999-unreviewed.md"
             ),
@@ -1873,38 +2279,9 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
                 with self.assertRaises(self.validator.ConfigurationError):
                     self.validator._work109_four_digit_aliases(context)
 
-    def test_immutable_history_aliases_use_only_frozen_sources(self) -> None:
-        _, move_targets, _ = (
-            self.validator._document_taxonomy_transition_manifest(self.context)
-        )
-        edges = self.validator._reviewed_immutable_historical_alias_edges(
-            self.context,
-            move_targets,
-        )
-
-        self.assertEqual(
-            {edge.source for edge in edges},
-            set(self.validator.IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS),
-        )
-        self.assertTrue(
-            all(
-                replacement in self.context.tracked_regular_paths
-                for replacement in edges.values()
-            )
-        )
-
-    def test_immutable_history_source_blob_and_target_drift_fail_closed(
-        self,
-    ) -> None:
-        _, move_targets, _ = (
-            self.validator._document_taxonomy_transition_manifest(self.context)
-        )
+    def test_terminal_route_skips_transition_only_source_pins(self) -> None:
         source = next(
-            iter(
-                sorted(
-                    self.validator.IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS
-                )
-            )
+            iter(sorted(self.validator.IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS))
         )
         drifted_context = dataclasses.replace(
             self.context,
@@ -1913,201 +2290,63 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
                 source: self.context.texts[source] + "\n",
             },
         )
-        with self.assertRaises(self.validator.ConfigurationError):
+
+        self.assertEqual(
             self.validator._reviewed_immutable_historical_alias_edges(
                 drifted_context,
-                move_targets,
-            )
-
-        redirects = self.validator._immutable_historical_redirects(
-            self.context,
-            move_targets,
-        )
-        edges = self.validator._reviewed_immutable_historical_alias_edges(
-            self.context,
-            move_targets,
-        )
-        target = next(iter(sorted(edges))).target
-        drifted_redirects = {
-            **redirects,
-            target: PurePosixPath("docs/99.templates/unreviewed-target.md"),
-        }
-        with (
-            mock.patch.object(
-                self.validator,
-                "_immutable_historical_redirects",
-                return_value=drifted_redirects,
+                {},
             ),
-            self.assertRaises(self.validator.ConfigurationError),
-        ):
-            self.validator._reviewed_immutable_historical_alias_edges(
-                self.context,
-                move_targets,
-            )
-
-    def test_completed_history_aliases_are_exact_source_and_edge_sets(
-        self,
-    ) -> None:
-        _, move_targets, _ = (
-            self.validator._document_taxonomy_transition_manifest(self.context)
-        )
-        edges = self.validator._reviewed_completed_history_alias_edges(
-            self.context,
-            move_targets,
-        )
-
-        self.assertEqual(
-            len({edge.source for edge in edges}),
-            self.validator.COMPLETED_HISTORY_ALIAS_SOURCE_COUNT,
+            {},
         )
         self.assertEqual(
-            len(edges), self.validator.COMPLETED_HISTORY_ALIAS_EDGE_COUNT
-        )
-        self.assertTrue(
-            all(
-                replacement in self.context.tracked_regular_paths
-                for replacement in edges.values()
-            )
-        )
-        self.assertTrue(
-            {
-                PurePosixPath("docs/00.agent-governance/scopes/product.md"),
-                PurePosixPath("docs/01.requirements/README.md"),
-                PurePosixPath("docs/03.specs/README.md"),
-            }.isdisjoint(
-                self.validator.COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS
-            )
-        )
-
-    def test_completed_history_progress_accepts_only_exact_frozen_prefix(
-        self,
-    ) -> None:
-        _, move_targets, _ = (
-            self.validator._document_taxonomy_transition_manifest(self.context)
-        )
-        source = PurePosixPath(
-            "docs/00.agent-governance/memory/progress.md"
-        )
-        expected_blob = self.validator.COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS[
-            source
-        ]
-        prefix_size = (
-            self.validator.COMPLETED_HISTORY_APPEND_ONLY_PREFIX_BYTES[source]
-        )
-        current = self.context.texts[source]
-        current_bytes = current.encode("utf-8")
-
-        # The ledger is append-only, so it may be longer than the frozen
-        # prefix. Only the prefix itself is pinned, which the next assertion
-        # checks byte for byte.
-        self.assertGreaterEqual(len(current_bytes), prefix_size)
-        self.assertEqual(
-            self.validator._git_sha1_blob_bytes(current_bytes[:prefix_size]),
-            expected_blob,
-        )
-
-        appended_context = dataclasses.replace(
-            self.context,
-            texts={
-                **self.context.texts,
-                source: current + "\n<!-- append-only fixture -->\n",
-            },
-        )
-        edges = self.validator._reviewed_completed_history_alias_edges(
-            appended_context,
-            move_targets,
-        )
-        self.assertEqual(
-            len(edges), self.validator.COMPLETED_HISTORY_ALIAS_EDGE_COUNT
-        )
-
-        mutated_prefix = bytearray(current_bytes)
-        mutated_prefix[0] = ord("!")
-        drifted_context = dataclasses.replace(
-            self.context,
-            texts={
-                **self.context.texts,
-                source: mutated_prefix.decode("utf-8"),
-            },
-        )
-        with self.assertRaises(self.validator.ConfigurationError):
             self.validator._reviewed_completed_history_alias_edges(
                 drifted_context,
-                move_targets,
-            )
-
-    def test_completed_history_source_blob_and_target_drift_fail_closed(
-        self,
-    ) -> None:
-        _, move_targets, _ = (
-            self.validator._document_taxonomy_transition_manifest(self.context)
-        )
-        source = next(
-            iter(
-                sorted(
-                    set(
-                        self.validator.COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS
-                    )
-                    - set(
-                        self.validator.COMPLETED_HISTORY_APPEND_ONLY_PREFIX_BYTES
-                    )
-                )
-            )
-        )
-        drifted_context = dataclasses.replace(
-            self.context,
-            texts={
-                **self.context.texts,
-                source: self.context.texts[source] + "\n",
-            },
-        )
-        with self.assertRaises(self.validator.ConfigurationError):
-            self.validator._reviewed_completed_history_alias_edges(
-                drifted_context,
-                move_targets,
-            )
-
-        redirects = self.validator._immutable_historical_redirects(
-            self.context,
-            move_targets,
-        )
-        edges = self.validator._reviewed_completed_history_alias_edges(
-            self.context,
-            move_targets,
-        )
-        target = next(iter(sorted(edges))).target
-        drifted_redirects = {
-            **redirects,
-            target: PurePosixPath("docs/99.templates/unreviewed-target.md"),
-        }
-        with (
-            mock.patch.object(
-                self.validator,
-                "_immutable_historical_redirects",
-                return_value=drifted_redirects,
+                {},
             ),
-            self.assertRaises(self.validator.ConfigurationError),
-        ):
-            self.validator._reviewed_completed_history_alias_edges(
-                self.context,
-                move_targets,
-            )
+            {},
+        )
 
     def test_work107_stable_archive_aliases_are_exact_and_tracked(self) -> None:
         aliases = self.validator._work107_stable_archive_aliases(self.context)
 
-        self.assertEqual(len(aliases), 93)
-        self.assertEqual(len(set(aliases.values())), 93)
+        self.assertTrue(aliases)
+        self.assertEqual(len(set(aliases.values())), len(aliases))
         self.assertTrue(
-            all(target in self.context.tracked_regular_paths for target in aliases.values())
+            all(
+                target in self.context.tracked_regular_paths
+                for target in aliases.values()
+            )
         )
 
-    def test_work107_archive_index_is_only_the_reviewed_stable_projection(self) -> None:
-        self.assertTrue(
+    def test_terminal_archive_index_uses_current_semantic_targets(self) -> None:
+        source = PurePosixPath("docs/98.archive/README.md")
+        text = self.context.texts[source]
+        local_targets = {
+            target
+            for raw in self.validator._extract_links(text)
+            for kind, target in [self.validator._local_destination(source, raw)]
+            if kind == "local" and target is not None
+        }
+
+        self.assertFalse(
             self.validator._work107_stable_archive_index_source(
                 self.context,
-                PurePosixPath("docs/98.archive/README.md"),
+                source,
             )
+        )
+        self.assertTrue(
+            {
+                PurePosixPath(
+                    "docs/01.requirements/0004-current-local-gitops-platform.md"
+                ),
+                PurePosixPath(
+                    "docs/02.architecture/descriptions/"
+                    "0007-current-local-gitops-platform.md"
+                ),
+                PurePosixPath(
+                    "docs/03.specs/0008-current-local-gitops-platform/spec.md"
+                ),
+            }.issubset(local_targets)
         )
 
     def test_non_manifest_current_source_is_not_deferred(self) -> None:
@@ -2140,84 +2379,17 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         handoff = self.validator._archive_transition_handoff(terminal)
         self.assertEqual(handoff.edges, ())
 
-    def test_source_commit_drift_and_manifest_index_drift_fail_closed(self) -> None:
-        snapshot = self.validator._reviewed_taxonomy_manifest(self.context.root)
-        drifted = dataclasses.replace(snapshot, source_commit="0" * 40)
-        with mock.patch.object(
-            self.validator, "_reviewed_taxonomy_manifest", return_value=drifted
-        ), self.assertRaises(self.validator.ConfigurationError):
-            self.validator._archive_transition_handoff(self.context)
-
+    def test_terminal_handoff_does_not_consume_transition_manifest(self) -> None:
         with mock.patch.object(
             self.validator,
             "_reviewed_taxonomy_manifest",
             side_effect=self.validator.ConfigurationError(
                 "archive transition manifest worktree/index differs"
             ),
-        ), self.assertRaises(self.validator.ConfigurationError):
-            self.validator._archive_transition_handoff(self.context)
+        ):
+            handoff = self.validator._archive_transition_handoff(self.context)
 
-    def test_added_post_move_deferred_edge_is_rejected(self) -> None:
-        source = self.moved_target
-        original_text = self.context.texts[source]
-        _move_blobs, move_targets, archive_sources = (
-            self.validator._document_taxonomy_transition_manifest(self.context)
-        )
-        extra_target = next(target for target in sorted(archive_sources))
-
-        added_text = original_text + f"\n[unexpected]({self.validator.posixpath.relpath(extra_target.as_posix(), source.parent.as_posix())})\n"
-        added_context = dataclasses.replace(
-            self.context, texts={**self.context.texts, source: added_text}
-        )
-        with mock.patch.object(
-            self.validator,
-            "_document_taxonomy_transition_manifest",
-            return_value=(
-                {source: self.validator._git_sha1_blob(added_text)},
-                move_targets,
-                archive_sources,
-            ),
-        ), self.assertRaises(self.validator.ConfigurationError):
-            self.validator._archive_transition_handoff(added_context)
-
-    def _assert_added_legacy_move_edge_is_rejected(
-        self, source: PurePosixPath
-    ) -> None:
-        _move_blobs, move_targets, _archive_sources = (
-            self.validator._document_taxonomy_transition_manifest(self.context)
-        )
-        legacy_target = next(iter(sorted(move_targets)))
-        raw_target = self.validator.posixpath.relpath(
-            legacy_target.as_posix(), source.parent.as_posix()
-        )
-        added_text = self.context.texts[source] + f"\n[unexpected legacy]({raw_target})\n"
-        added_context = dataclasses.replace(
-            self.context, texts={**self.context.texts, source: added_text}
-        )
-
-        try:
-            diagnostics = self.validator._link_diagnostics(added_context)
-        except self.validator.ConfigurationError:
-            return
-        self.assertTrue(
-            any(
-                item.rule_id == "LINK-BROKEN" and item.path == source
-                for item in diagnostics
-            )
-        )
-
-    def test_stage05_does_not_waive_injected_legacy_move_edge(self) -> None:
-        self._assert_added_legacy_move_edge_is_rejected(
-            PurePosixPath(
-                "docs/05.operations/policies/"
-                "0004-rollouts-notifications-headlamp-policy.md"
-            )
-        )
-
-    def test_stage90_does_not_waive_injected_legacy_move_edge(self) -> None:
-        self._assert_added_legacy_move_edge_is_rejected(
-            PurePosixPath("docs/90.references/README.md")
-        )
+        self.assertEqual(handoff.edges, ())
 
 
 if __name__ == "__main__":

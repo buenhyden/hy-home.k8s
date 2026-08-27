@@ -334,7 +334,7 @@ execution rules.
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | N/A — direct human request for a closed Partial/DEFER candidate ledger | VAL-PDRR-001 | Candidate-set checker and independent admission review |
 | N/A — direct human request for explicit status closure | VAL-PDRR-002 | Ledger schema and mutation tests |

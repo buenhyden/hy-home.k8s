@@ -493,9 +493,7 @@ class ArchiveRecoveryTest(unittest.TestCase):
         with mock.patch.object(
             archive_recovery._DeadlineReader,  # noqa: SLF001
             "read",
-            side_effect=ArchiveContractError(
-                "RECOVERY-GIT-TIMEOUT", "bounded timeout"
-            ),
+            side_effect=ArchiveContractError("RECOVERY-GIT-TIMEOUT", "bounded timeout"),
         ):
             with self.assertRaisesRegex(
                 ArchiveContractError,
@@ -542,7 +540,7 @@ class ArchiveRecoveryTest(unittest.TestCase):
                     self.body_read = True
                     raise AssertionError("oversized body must not be read")
                 end = len(header) if size < 0 else min(len(header), self.offset + size)
-                result = header[self.offset:end]
+                result = header[self.offset : end]
                 self.offset = end
                 return result
 
@@ -585,9 +583,7 @@ class ArchiveRecoveryTest(unittest.TestCase):
         self.assertNotIn(sentinel.decode("ascii"), str(failure.exception))
         self.assertNotIn(second, str(failure.exception))
 
-        with self.assertRaisesRegex(
-            ArchiveContractError, r"^RECOVERY-RESOURCE-LIMIT:"
-        ):
+        with self.assertRaisesRegex(ArchiveContractError, r"^RECOVERY-RESOURCE-LIMIT:"):
             archive_recovery._read_git_blob_batch_protocol(  # noqa: SLF001
                 io.BytesIO(b""),
                 (first, second),
@@ -595,16 +591,21 @@ class ArchiveRecoveryTest(unittest.TestCase):
                 object_limit=1,
             )
 
-    def test_git_batch_rejects_truncated_and_extra_protocol_without_payload(self) -> None:
+    def test_git_batch_rejects_truncated_and_extra_protocol_without_payload(
+        self,
+    ) -> None:
         object_id = self.blob
         cases = {
             "truncated": f"{object_id} blob 5\nabc".encode("ascii"),
             "extra": f"{object_id} blob 3\nabc\nEXTRA-SENTINEL".encode("ascii"),
         }
         for name, response in cases.items():
-            with self.subTest(name=name), self.assertRaisesRegex(
-                ArchiveContractError, r"^RECOVERY-OBJECT-MISSING:"
-            ) as failure:
+            with (
+                self.subTest(name=name),
+                self.assertRaisesRegex(
+                    ArchiveContractError, r"^RECOVERY-OBJECT-MISSING:"
+                ) as failure,
+            ):
                 archive_recovery._read_git_blob_batch_protocol(  # noqa: SLF001
                     io.BytesIO(response),
                     (object_id,),
@@ -644,7 +645,13 @@ class ArchiveRecoveryTest(unittest.TestCase):
 
         self.assertEqual(
             archive_recovery.main(
-                ["--root", str(self.root), "--record", record.relative_to(self.root).as_posix(), "--verify"]
+                [
+                    "--root",
+                    str(self.root),
+                    "--record",
+                    record.relative_to(self.root).as_posix(),
+                    "--verify",
+                ]
             ),
             0,
         )
@@ -656,13 +663,22 @@ class ArchiveRecoveryTest(unittest.TestCase):
         self.addCleanup(lambda: output.unlink(missing_ok=True))
         self.assertEqual(
             archive_recovery.main(
-                ["--root", str(self.root), "--record", record.relative_to(self.root).as_posix(), "--output", str(output)]
+                [
+                    "--root",
+                    str(self.root),
+                    "--record",
+                    record.relative_to(self.root).as_posix(),
+                    "--output",
+                    str(output),
+                ]
             ),
             0,
         )
         self.assertEqual(output.read_bytes(), self.payload)
         with self.assertRaisesRegex(ArchiveContractError, r"^RECOVERY-OUTPUT-EXISTS:"):
-            archive_recovery.recover_archive_record(self.root, record.relative_to(self.root).as_posix(), output=output)
+            archive_recovery.recover_archive_record(
+                self.root, record.relative_to(self.root).as_posix(), output=output
+            )
 
     def test_recovery_output_rejects_repository_and_unconfined_paths(self) -> None:
         recovered = recover_git_blob(self.root, self.original_path, self.commit)
@@ -675,8 +691,11 @@ class ArchiveRecoveryTest(unittest.TestCase):
             self.root / "docs/recovered.md",
             Path("relative-output.md"),
         ):
-            with self.subTest(output=output), self.assertRaisesRegex(
-                ArchiveContractError, r"^RECOVERY-OUTPUT-CONFINEMENT:"
+            with (
+                self.subTest(output=output),
+                self.assertRaisesRegex(
+                    ArchiveContractError, r"^RECOVERY-OUTPUT-CONFINEMENT:"
+                ),
             ):
                 archive_recovery.recover_archive_record(
                     self.root,
@@ -695,9 +714,7 @@ class ArchiveRecoveryTest(unittest.TestCase):
         linked_parent.parent.mkdir(parents=True)
         linked_parent.symlink_to(real_parent, target_is_directory=True)
 
-        with self.assertRaisesRegex(
-            ArchiveContractError, r"^RECOVERY-RECORD-READ:"
-        ):
+        with self.assertRaisesRegex(ArchiveContractError, r"^RECOVERY-RECORD-READ:"):
             archive_recovery.recover_archive_record(
                 self.root,
                 "docs/98.archive/03.specs/900-fixture/spec.md",
@@ -749,10 +766,15 @@ class ArchiveRecoveryTest(unittest.TestCase):
             raise OSError("injected write failure")
 
         try:
-            with mock.patch.object(
-                archive_recovery.os, "write", side_effect=substitute_parent_then_fail
-            ), self.assertRaisesRegex(
-                ArchiveContractError, r"^RECOVERY-OUTPUT-WRITE:"
+            with (
+                mock.patch.object(
+                    archive_recovery.os,
+                    "write",
+                    side_effect=substitute_parent_then_fail,
+                ),
+                self.assertRaisesRegex(
+                    ArchiveContractError, r"^RECOVERY-OUTPUT-WRITE:"
+                ),
             ):
                 archive_recovery.recover_archive_record(
                     self.root,
@@ -772,9 +794,7 @@ class ArchiveRecoveryTest(unittest.TestCase):
 class PinnedMigrationRecoveryCliTest(unittest.TestCase):
     """Keep CLI migration recovery limited to the sealed MIG-0004 control."""
 
-    migration_path = (
-        "docs/98.archive/migrations/0004-document-authority-convergence.md"
-    )
+    migration_path = "docs/98.archive/migrations/0004-document-authority-convergence.md"
 
     @staticmethod
     def run_cli(root: Path, record: str, *, verify: bool = True) -> tuple[int, str]:
@@ -797,16 +817,24 @@ class PinnedMigrationRecoveryCliTest(unittest.TestCase):
     def test_cli_rejects_wrong_digest_and_status_before_git_recovery(self) -> None:
         migration = (ROOT / self.migration_path).read_bytes()
         cases = (
-            ("wrong-digest", migration + b"\n"),
+            (
+                "wrong-digest",
+                migration + b"\n",
+                "RECOVERY-MIGRATION-TARGET",
+            ),
             (
                 "wrong-status",
                 migration.replace(b'status: "sealed"', b'status: "accepted"', 1),
+                "ARCHIVE-MIGRATION-PROFILE",
             ),
         )
-        for name, content in cases:
-            with self.subTest(name=name), tempfile.TemporaryDirectory(
-                prefix="migration-recovery-cli-"
-            ) as temporary:
+        for name, content, expected_rule in cases:
+            with (
+                self.subTest(name=name),
+                tempfile.TemporaryDirectory(
+                    prefix="migration-recovery-cli-"
+                ) as temporary,
+            ):
                 root = Path(temporary)
                 fixture = GitFixture(root)
                 target = root / self.migration_path
@@ -819,7 +847,7 @@ class PinnedMigrationRecoveryCliTest(unittest.TestCase):
                 self.assertEqual(result, 1)
                 self.assertEqual(
                     output,
-                    "FAIL archive recovery code=ARCHIVE-MIGRATION-PROFILE\n",
+                    f"FAIL archive recovery code={expected_rule}\n",
                 )
 
     def test_cli_does_not_promote_wrong_or_unknown_migration_paths(self) -> None:
@@ -836,9 +864,12 @@ class PinnedMigrationRecoveryCliTest(unittest.TestCase):
             ),
         )
         for name, record in cases:
-            with self.subTest(name=name), tempfile.TemporaryDirectory(
-                prefix="migration-recovery-cli-"
-            ) as temporary:
+            with (
+                self.subTest(name=name),
+                tempfile.TemporaryDirectory(
+                    prefix="migration-recovery-cli-"
+                ) as temporary,
+            ):
                 root = Path(temporary)
                 _fixture = GitFixture(root)
                 target = root / record
@@ -891,9 +922,16 @@ class Work107StableArchiveContractTest(unittest.TestCase):
             else:
                 stage = stable.parts[3]
                 tombstones[stage] = tombstones.get(stage, 0) + 1
-            self.assertEqual(row["legacy_archive_commit"], archive_recovery.WORK107_LEGACY_ARCHIVE_COMMIT)
+            self.assertEqual(
+                row["legacy_archive_commit"],
+                archive_recovery.WORK107_LEGACY_ARCHIVE_COMMIT,
+            )
             actual_blob = subprocess.run(
-                ["git", "rev-parse", f'{row["legacy_archive_commit"]}:{row["legacy_path"]}'],
+                [
+                    "git",
+                    "rev-parse",
+                    f"{row['legacy_archive_commit']}:{row['legacy_path']}",
+                ],
                 cwd=ROOT,
                 check=True,
                 capture_output=True,
@@ -949,7 +987,7 @@ class Work107StableArchiveContractTest(unittest.TestCase):
 
         for row in (change, tombstone):
             legacy = subprocess.run(
-                ["git", "show", f'{row["legacy_archive_commit"]}:{row["legacy_path"]}'],
+                ["git", "show", f"{row['legacy_archive_commit']}:{row['legacy_path']}"],
                 cwd=ROOT,
                 check=True,
                 capture_output=True,
@@ -960,7 +998,9 @@ class Work107StableArchiveContractTest(unittest.TestCase):
 
             self.assertEqual(terminal_parsed.payload, legacy_parsed.payload)
             for key in ("source_commit", "source_blob", "content_sha256"):
-                self.assertEqual(terminal_parsed.metadata[key], legacy_parsed.metadata[key])
+                self.assertEqual(
+                    terminal_parsed.metadata[key], legacy_parsed.metadata[key]
+                )
             if row["record_kind"].startswith("change-"):
                 self.assertEqual(
                     terminal_parsed.metadata["change_id"],

@@ -68,7 +68,7 @@
 ## Add and Find
 
 1. 결정의 상위 요구와 참조 구조를 `01.requirements/`, `../descriptions/`에서 확인한다.
-2. 새 ADR은 `../../99.templates/templates/sdlc/architecture/adr.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/decisions/####-<short-title>.md`다.
+2. 새 ADR은 `../../99.templates/templates/architecture/adr.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/decisions/####-<short-title>.md`다.
 3. Superseded ADR은 Stage 02 decision log에 유지하고 predecessor/successor를 상호 연결한다. 본문 복제본을 Archive에 만들지 않는다.
 4. `Accepted` ADR의 현재 런타임 값은 GitOps manifest, 정적 검증 스크립트, current baseline ADR과 일치해야 한다.
 5. ADR이 구현 또는 운영 계약을 바꾸면 `03.specs/`, `05.operations/policies/` 링크를 갱신한다.
@@ -118,5 +118,5 @@
 - [02.architecture/descriptions](../descriptions/README.md)
 - [03.specs](../../03.specs/README.md)
 - [05.operations/policies](../../05.operations/policies/README.md)
-- [99.templates ADR Template](../../99.templates/templates/sdlc/architecture/adr.template.md)
+- [99.templates ADR Template](../../99.templates/templates/architecture/adr.template.md)
 - [Archive Index](../../98.archive/README.md)

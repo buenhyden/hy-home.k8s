@@ -45,7 +45,8 @@ in this repository.
 5. Write a Verification Plan section with concrete commands or checks.
 6. Write a Completion Criteria section with measurable, binary acceptance tests.
 7. Create or update `docs/03.specs/<id>-<slug>/plan.md` beside the driving `spec.md` using
-   `docs/99.templates/templates/sdlc/execution/plan.template.md` as the base.
+   profile `sdlc/plan` and
+   `docs/99.templates/templates/specs/plan.template.md` as the base.
 8. Link the plan from `docs/00.agent-governance/memory/progress.md`.
 
 ## Output Format

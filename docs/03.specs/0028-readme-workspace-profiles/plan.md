@@ -96,7 +96,7 @@ its compatibility exceptions have been removed.
 | --- | --- | --- |
 | Profile forms | Six `docs/99.templates/templates/common/readme-*.template.md` files | Provide minimal path-specific starter structures. |
 | Retired form | `docs/99.templates/templates/common/readme.template.md` | Delete after all routes, references, and bodies migrate. |
-| Profile registry | `docs/99.templates/support/document-profiles.json` | Own exact path-to-profile/template and H2 requirements. |
+| Profile registry | `docs/99.templates/registry.json` | Own exact path-to-profile/template and H2 requirements. |
 | Fixture handoff | `tests/fixtures/document-contracts/readme-profile-cases.json` | Record all final paths and fence-aware positive/negative expectations for Spec 029. |
 | Current compatibility gate | `scripts/validate-repo-quality-gates.sh` | Stop enforcing universal seven headings and consume finite migration expectations until Spec 029 replaces it. |
 | Baseline README corpus | The 67 paths listed below | Migrate topic-specific entrypoints to one profile each. |
@@ -355,7 +355,7 @@ Expected: commit succeeds.
 - Create: `docs/99.templates/templates/common/readme-implementation.template.md`
 - Create: `docs/99.templates/templates/common/readme-snapshot-pack.template.md`
 - Create: `docs/99.templates/templates/common/readme-workspace-staging.template.md`
-- Modify: `docs/99.templates/support/document-profiles.json`
+- Modify: `docs/99.templates/registry.json`
 - Create: `tests/fixtures/document-contracts/readme-profile-cases.json`
 - Modify: `tests/README.md`
 - Modify: `scripts/validate-document-contract-registry.py`
@@ -364,7 +364,7 @@ Expected: commit succeeds.
 - Modify: `scripts/validate-repo-quality-gates.sh`
 - Modify inventory/target-link rows only: `docs/99.templates/README.md`
 - Modify inventory/target-link rows only: `docs/99.templates/templates/README.md`
-- Modify: `docs/99.templates/support/template-routing.md`
+- Modify: `docs/99.templates/README.md`
 
 **Interfaces:**
 
@@ -471,8 +471,8 @@ git add docs/99.templates/templates/common/readme-repository.template.md \
   docs/99.templates/templates/common/readme-implementation.template.md \
   docs/99.templates/templates/common/readme-snapshot-pack.template.md \
   docs/99.templates/templates/common/readme-workspace-staging.template.md \
-  docs/99.templates/support/document-profiles.json \
-  docs/99.templates/support/template-routing.md \
+  docs/99.templates/registry.json \
+  docs/99.templates/README.md \
   docs/99.templates/README.md docs/99.templates/templates/README.md \
   scripts/validate-document-contract-registry.py \
   scripts/validate-repo-quality-gates.sh \
@@ -561,7 +561,7 @@ for name, (required, _) in expected_headings.items():
     assert all(marker not in text for marker in (
         'Selection Guide', 'Assembly Rules', 'SNIPPET LIBRARY'))
 
-registry=json.loads(Path('docs/99.templates/support/document-profiles.json').read_text())
+registry=json.loads(Path('docs/99.templates/registry.json').read_text())
 profiles={row['id']: row for row in registry['profiles']}
 old='docs/99.templates/templates/common/readme.template.md'
 legacy=profiles['template/readme/common']
@@ -618,8 +618,8 @@ python3 - <<'PY'
 import subprocess
 expected={
     'docs/99.templates/README.md',
-    'docs/99.templates/support/document-profiles.json',
-    'docs/99.templates/support/template-routing.md',
+    'docs/99.templates/registry.json',
+    'docs/99.templates/README.md',
     'docs/99.templates/templates/README.md',
     'docs/99.templates/templates/common/readme-collection-index.template.md',
     'docs/99.templates/templates/common/readme-implementation.template.md',
@@ -851,8 +851,8 @@ gates PASS.
 - Modify: `docs/99.templates/README.md`
 - Modify: `docs/99.templates/templates/README.md`
 - Modify: `docs/99.templates/support/common-documentation-governance.md`
-- Modify: `docs/99.templates/support/template-routing.md`
-- Modify: `docs/99.templates/support/document-profiles.json`
+- Modify: `docs/99.templates/README.md`
+- Modify: `docs/99.templates/registry.json`
 - Modify: `docs/00.agent-governance/rules/documentation-protocol.md`
 - Modify: `docs/00.agent-governance/rules/document-stage-routing.md`
 - Modify: `docs/00.agent-governance/rules/stage-authoring-matrix.md`
@@ -953,7 +953,7 @@ import json
 import subprocess
 from pathlib import Path
 
-registry_path=Path('docs/99.templates/support/document-profiles.json')
+registry_path=Path('docs/99.templates/registry.json')
 registry=json.loads(registry_path.read_text())
 registry_cases=json.loads(Path('tests/fixtures/document-contracts/registry-cases.json').read_text())
 compat=json.loads(Path('tests/fixtures/document-contracts/template-compatibility.json').read_text())
@@ -1073,8 +1073,8 @@ non-applicable-SKIP semantics.
 git add docs/99.templates/README.md docs/99.templates/templates/README.md \
   docs/99.templates/templates/common/readme.template.md \
   docs/99.templates/support/common-documentation-governance.md \
-  docs/99.templates/support/template-routing.md \
-  docs/99.templates/support/document-profiles.json \
+  docs/99.templates/README.md \
+  docs/99.templates/registry.json \
   docs/00.agent-governance/rules/documentation-protocol.md \
   docs/00.agent-governance/rules/document-stage-routing.md \
   docs/00.agent-governance/rules/stage-authoring-matrix.md \

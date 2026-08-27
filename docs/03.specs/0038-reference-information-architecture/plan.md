@@ -22,7 +22,7 @@ Current remediation overlays, proves source/freshness and generated ownership,
 and rejects duplicate Current or policy owners under `docs/90.references/`.
 
 **Architecture:** Require schema version 2 and keep `referenceCurrentPacks` in
-`docs/99.templates/support/document-profiles.json` as the sole owner of Current
+`docs/99.templates/registry.json` as the sole owner of Current
 pack identity, membership, lifecycle, and pointer mirrors. Add a separate
 closed-schema Stage 90 contract whose exact `currentPackBaselines` keys mirror
 those pack IDs and whose values pin committed comparison authority without
@@ -94,7 +94,7 @@ the Work Breakdown and reciprocal Task.
 
 ### Global Constraints
 
-- Preserve `docs/99.templates/support/document-profiles.json#referenceCurrentPacks`
+- Preserve `docs/99.templates/registry.json#referenceCurrentPacks`
   as the only Current-pack pointer and member authority.
 - Require schema version 2. Keep `snapshotGuard.sourceCommit` exclusive to the
   five Historical/Resolved audit packs and `research/2026-07-04-wer`; require
@@ -210,7 +210,7 @@ results.
 - [AD-0009](../../02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md)
 - [Current audit pack](../../90.references/audits/2026-07-11-weia/README.md)
 - `docs/90.references/research/2026-07-07-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
-- [Document profile registry](../../99.templates/support/document-profiles.json)
+- [Document profile registry](../../99.templates/registry.json)
 - `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`; [current lookup](../../90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md)
 - [Predecessor Spec 037 Task](../0037-active-corpus-and-execution-retention/README.md)
 ## Goals & In-Scope
@@ -351,7 +351,7 @@ results.
 **Interfaces:**
 
 - Consumes: `referenceCurrentPacks.packs[].id` from
-  `docs/99.templates/support/document-profiles.json`; repository root and an
+  `docs/99.templates/registry.json`; repository root and an
   optional contract path from the CLI.
 - Produces: `Finding(rule_id: str, path: str, message: str)`,
   `load_contract(root: Path, contract_path: Path) -> dict[str, object]`,
@@ -369,7 +369,7 @@ results.
     "$schema": "./reference-information-architecture.schema.json",
     "schemaVersion": 1,
     "evidenceCutoff": "2026-07-22",
-    "currentPackRegistry": "docs/99.templates/support/document-profiles.json",
+    "currentPackRegistry": "docs/99.templates/registry.json",
     "snapshotGuard": {
       "sourceCommit": "git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47",
       "historicalPackIds": [],
@@ -667,7 +667,7 @@ results.
 - Modify: `tests/test_reference_information_architecture.py`
 - Create: `tests/fixtures/reference-information-architecture/source-freshness.json`
 - Modify: `docs/90.references/data/README.md`
-- Modify: `docs/99.templates/templates/common/reference.template.md` only if a
+- Modify: `docs/99.templates/templates/references/reference.template.md` only if a
   production finding proves its existing source/scope/freshness prompts incomplete.
 
 **Interfaces:**

@@ -315,9 +315,9 @@ find docs/99.templates -maxdepth 5 -type f -print | sort
 - **Templates README**:
   [../../99.templates/README.md](../../99.templates/README.md)
 - **Template Routing Contract**:
-  [../../99.templates/support/template-routing.md](../../99.templates/support/document-contract.md)
+  [../../99.templates/support/template-routing.md](../../99.templates/README.md)
 - **Frontmatter Schema**:
-  [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/document-contract.md)
+  [../../99.templates/support/frontmatter-schema.md](../../99.templates/README.md)
 - **Documentation Protocol**:
   [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/document-authoring.md)
 - **Quality Gate**:
@@ -336,9 +336,9 @@ find docs/99.templates -maxdepth 5 -type f -print | sort
 - **Template README**:
   [../../99.templates/README.md](../../99.templates/README.md)
 - **Template Routing Contract**:
-  [../../99.templates/support/template-routing.md](../../99.templates/support/document-contract.md)
+  [../../99.templates/support/template-routing.md](../../99.templates/README.md)
 - **Frontmatter Schema**:
-  [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/document-contract.md)
+  [../../99.templates/support/frontmatter-schema.md](../../99.templates/README.md)
 - **Documentation Protocol**:
   [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/document-authoring.md)
 - **Repository Quality Gate**:

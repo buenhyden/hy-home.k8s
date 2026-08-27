@@ -206,7 +206,7 @@ copied.
   rtk python3 scripts/validate-markdown-profiles.py --root . --mode strict
   rtk python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts registry
   rtk git diff --check
-  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0049-platform-validation-and-security-evidence/spec.md docs/03.specs/README.md docs/03.specs/0049-platform-validation-and-security-evidence/plan.md docs/03.specs/0049-platform-validation-and-security-evidence/plan.md docs/03.specs/0049-platform-validation-and-security-evidence/README.md#task-records docs/03.specs/0049-platform-validation-and-security-evidence/README.md#task-records docs/99.templates/support/document-profiles.json
+  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0049-platform-validation-and-security-evidence/spec.md docs/03.specs/README.md docs/03.specs/0049-platform-validation-and-security-evidence/plan.md docs/03.specs/0049-platform-validation-and-security-evidence/plan.md docs/03.specs/0049-platform-validation-and-security-evidence/README.md#task-records docs/03.specs/0049-platform-validation-and-security-evidence/README.md#task-records docs/99.templates/registry.json
   rtk git commit -m "docs: activate platform validation evidence plan"
   ```
 
@@ -433,7 +433,7 @@ copied.
   ```bash
   rtk python3 scripts/validate-document-lifecycle.py --root . --mode staged
   rtk git diff --check
-  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0049-platform-validation-and-security-evidence/spec.md docs/03.specs/README.md docs/03.specs/0049-platform-validation-and-security-evidence/plan.md docs/03.specs/0049-platform-validation-and-security-evidence/plan.md docs/03.specs/0049-platform-validation-and-security-evidence/README.md#task-records docs/03.specs/0049-platform-validation-and-security-evidence/README.md#task-records docs/99.templates/support/document-profiles.json
+  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0049-platform-validation-and-security-evidence/spec.md docs/03.specs/README.md docs/03.specs/0049-platform-validation-and-security-evidence/plan.md docs/03.specs/0049-platform-validation-and-security-evidence/plan.md docs/03.specs/0049-platform-validation-and-security-evidence/README.md#task-records docs/03.specs/0049-platform-validation-and-security-evidence/README.md#task-records docs/99.templates/registry.json
   rtk git commit -m "docs: close platform validation evidence tranche"
   ```
 

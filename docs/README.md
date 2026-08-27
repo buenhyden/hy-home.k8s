@@ -62,14 +62,14 @@ docs/
 
 ## Authoring Workflow
 
-1. 새 문서를 만들기 전에 [Document Contract](./99.templates/support/document-contract.md)에서 canonical target pattern과 template를 확인한다.
+1. 새 문서를 만들기 전에 [Document Contract](./99.templates/README.md)에서 canonical target pattern과 template를 확인한다.
 2. 새 문서는 matching template에서 시작하고 [99.templates](./99.templates/README.md)는 inventory summary로 사용한다.
 3. 문서가 추가되거나 이동되면 해당 stage의 `README.md` 인덱스와 관련 링크를 같은 변경에서 갱신한다.
 4. 사람 대상 README와 개요 문서는 한국어를 유지하고, `00.agent-governance` 정책 문서는 영어를 유지한다.
 5. 사람 대상 문서 안에서도 `AI Agent Requirements`, `Agent Execution Notes`, tool/prompt contract처럼 AI Agent가 직접 따라야 하는 섹션은 영어를 우선한다.
 6. README 파일은 frontmatter를 요구하지 않는다. README는 경로 목적, scope, structure, workflow, link basis, related documents를 설명하는 entrypoint다.
 7. PRD/AD/ADR/Spec/Plan/Task와 운영·참조 authored 문서는 matching template의 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
-8. 템플릿이나 문서 lifecycle 규칙을 바꾸면 이 hub, 대상 stage README, [Document Contract](./99.templates/support/document-contract.md), [Document Lifecycle](./99.templates/support/document-lifecycle.md), [99.templates README](./99.templates/README.md), 이미 생성된 문서의 안전한 구조 반영 여부를 함께 점검한다.
+8. 템플릿이나 문서 lifecycle 규칙을 바꾸면 이 hub, 대상 stage README, [Document Contract](./99.templates/README.md), [Document Lifecycle](./00.agent-governance/policies/document-lifecycle.md), 이미 생성된 문서의 안전한 구조 반영 여부를 함께 점검한다.
 9. 일반 운영 변경은 GitOps-first 원칙을 따르며, 문서가 live `kubectl apply`나 외부 Vault 조작을 우회 절차처럼 안내하지 않도록 한다.
 10. cloud example 버전을 갱신할 때는 코드, README, [tech-stack-version-inventory.md](./90.references/data/tech-stack-version-inventory.md)를 같은 변경에서 맞춘다.
 11. 현재 구현과 상충하는 old 문서는 [`98.archive`](./98.archive/README.md)로 이동하고, 활성 문서는 archive index에만 연결한다.
@@ -123,17 +123,15 @@ version support boundary, generated-index contract처럼 사실 계약으로 소
 
 | Lifecycle Stage | Folder | Canonical Template | Required Responsibility |
 | --- | --- | --- | --- |
-| Product Requirement | [`01.requirements`](./01.requirements/README.md) | [`prd.template.md`](./99.templates/templates/sdlc/requirements/prd.template.md) | 사용자 문제, 범위, 기능 요구사항, 성공/수용 기준 |
-| System Requirement (optional) | [`01.requirements`](./01.requirements/README.md) | [`srs.template.md`](./99.templates/templates/sdlc/requirements/srs.template.md) | 필요한 경우 시스템·소프트웨어 요구와 품질 제약 |
-| Interface Requirement (optional) | [`01.requirements`](./01.requirements/README.md) | [`interface.template.md`](./99.templates/templates/sdlc/requirements/interface.template.md) | 필요한 경우 외부·내부 인터페이스 요구와 검증 경계 |
-| Architecture Description | [`02.architecture/descriptions`](./02.architecture/descriptions/README.md) | [`ad.template.md`](./99.templates/templates/sdlc/architecture/ad.template.md) | 시스템 경계, 품질 속성, 참조 구조 |
-| Architecture Decision | [`02.architecture/decisions`](./02.architecture/decisions/README.md) | [`adr.template.md`](./99.templates/templates/sdlc/architecture/adr.template.md) | 하나의 결정, 맥락, 결과, 대안 |
-| Specification | [`03.specs`](./03.specs/README.md) | [`spec.template.md`](./99.templates/templates/sdlc/specs/spec.template.md) | 구현 계약, 인터페이스, 검증 기준 |
-| Plan | [`03.specs/<id>-<slug>/plan.md`](./03.specs/README.md) | [`plan.template.md`](./99.templates/templates/sdlc/execution/plan.template.md) | 실행 순서, 리스크, rollout, verification gate |
-| Task | [`03.specs/<id>-<slug>/tasks.md`](./03.specs/README.md) | [`task.template.md`](./99.templates/templates/sdlc/execution/task.template.md) | 작업 단위, evidence, 완료 상태 |
+| Requirement Package | [`01.requirements`](./01.requirements/README.md) | [`requirement-package.template.md`](./99.templates/templates/requirements/requirement-package.template.md) | solution-independent 문제, 목표, 기능·비기능·interface 요구, acceptance 기준 |
+| Architecture Description | [`02.architecture/descriptions`](./02.architecture/descriptions/README.md) | [`ad.template.md`](./99.templates/templates/architecture/ad.template.md) | 시스템 경계, 품질 속성, 참조 구조 |
+| Architecture Decision | [`02.architecture/decisions`](./02.architecture/decisions/README.md) | [`adr.template.md`](./99.templates/templates/architecture/adr.template.md) | 하나의 결정, 맥락, 결과, 대안 |
+| Specification | [`03.specs`](./03.specs/README.md) | [`spec.template.md`](./99.templates/templates/specs/spec.template.md) | 구현 계약, 인터페이스, 검증 기준 |
+| Plan | [`03.specs/<id>-<slug>/plan.md`](./03.specs/README.md) | [`plan.template.md`](./99.templates/templates/specs/plan.template.md) | 실행 순서, 리스크, rollout, verification gate |
+| Task | [`03.specs/<id>-<slug>/tasks/tsk-####-<slug>.md`](./03.specs/README.md) | [`task.template.md`](./99.templates/templates/specs/task.template.md) | 작업 단위, evidence, 완료 상태 |
 | Operation | [`05.operations`](./05.operations/README.md) | guide/policy/runbook templates | 안정 상태 안내, 정책, 실행 절차 |
-| Reference | [`90.references`](./90.references/README.md) | [`reference.template.md`](./99.templates/templates/common/reference.template.md) | lookup material, glossary, appendix, version snapshot, dated source/freshness boundary |
-| Archive | [`98.archive`](./98.archive/README.md) | [`archive-record.template.md`](./99.templates/templates/common/archive-record.template.md) | old 문서의 original-path mirror, exact payload, provenance, index-only current navigation |
+| Reference | [`90.references`](./90.references/README.md) | [`reference.template.md`](./99.templates/templates/references/reference.template.md) | lookup material, glossary, appendix, version snapshot, dated source/freshness boundary |
+| Archive | [`98.archive`](./98.archive/README.md) | [`archive-record.template.md`](./99.templates/templates/archive/archive-record.template.md) | migration ledger와 최소 tombstone을 통한 복구 경로와 provenance |
 
 - README와 index 문서는 해당 폴더의 목적, scope, structure, workflow, link basis, related documents를 유지한다.
 - README와 index 문서는 frontmatter 없이 작성한다. 다른 authored stage 문서는 matching template의 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
@@ -143,7 +141,7 @@ version support boundary, generated-index contract처럼 사실 계약으로 소
 - Markdown 링크는 최종 문서 위치 기준 상대 경로를 사용한다. 아직 존재하지 않는 optional 경로나 placeholder는 Markdown 링크가 아니라 code literal로 남긴다.
 - stale 문서는 현재 구현과 비교해 갱신, 병합, archive 중 하나로 정리한다. 현재 구현과 상충하는 old 문서는 [`98.archive`](./98.archive/README.md)에 full-body Archive Record로 이동하고 활성 문서에서는 archive index만 연결한다.
 - 문서를 제거하거나 archive로 이동하는 일은 관련 링크 갱신, current replacement 확인, 리뷰 가능한 diff가 있을 때만 허용한다.
-- 문서 stage나 템플릿이 바뀌면 관련 stage README, [Document Contract](./99.templates/support/document-contract.md), [Document Lifecycle](./99.templates/support/document-lifecycle.md), [`99.templates/README.md`](./99.templates/README.md)를 같은 변경에서 맞춘다.
+- 문서 stage나 템플릿이 바뀌면 관련 stage README, [Document Contract](./99.templates/README.md), [Document Lifecycle](./00.agent-governance/policies/document-lifecycle.md)를 같은 변경에서 맞춘다.
 
 ### 구현 영역 연결
 
@@ -175,8 +173,8 @@ version support boundary, generated-index contract처럼 사실 계약으로 소
 - [Agent Governance Hub](./00.agent-governance/README.md)
 - [Document Stage Routing Rules](00.agent-governance/rules/document-authoring.md)
 - [Stage Authoring Matrix](00.agent-governance/rules/document-authoring.md)
-- [Document Contract](./99.templates/support/document-contract.md)
-- [Document Lifecycle](./99.templates/support/document-lifecycle.md)
+- [Document Contract](./99.templates/README.md)
+- [Document Lifecycle](./00.agent-governance/policies/document-lifecycle.md)
 - [Templates README](./99.templates/README.md)
 - [Archive Index](./98.archive/README.md)
 - [Scripts README](../scripts/README.md)

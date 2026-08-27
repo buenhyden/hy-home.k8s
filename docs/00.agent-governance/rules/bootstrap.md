@@ -23,7 +23,7 @@ Universal entry point for all agents in `hy-home.k8s`.
   [`../memory/README.md`](../memory/README.md). Use
   `docs/00.agent-governance/memory/progress.md` as the canonical durable shared
   progress ledger for repo-changing work.
-- Use `docs/99.templates/templates/common/memory.template.md` for standalone files under `docs/00.agent-governance/memory/`, and update `progress.md` in the same change.
+- Use `docs/99.templates/templates/governance/memory.template.md` for standalone files under `docs/00.agent-governance/memory/`, and update `progress.md` in the same change.
 - Load governance just-in-time, not full-repository-first.
 - Complete [Preflight Checklist](preflight-checklist.md) before substantial work.
 - Complete [Postflight Checklist](postflight-checklist.md) before final response.
@@ -67,7 +67,7 @@ Use [document-authoring.md](document-authoring.md) as the canonical authoring ma
 - `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md` remain thin gateways.
 - English-only policy is preserved under `docs/00.agent-governance/`.
 - References to checklist and matrix docs remain valid.
-- Repo-changing work has a `memory/progress.md` entry, and standalone memory files use `docs/99.templates/templates/common/memory.template.md`.
+- Repo-changing work has a `memory/progress.md` entry, and standalone memory files use `docs/99.templates/templates/governance/memory.template.md`.
 - GitOps-first and no-direct-cluster-mutation constraints remain visible.
 - Validation evidence or limitations are reported.
 - No new files created without explicit human request.

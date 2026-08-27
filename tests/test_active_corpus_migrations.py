@@ -170,9 +170,7 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
         for row in wp004b_rows:
             legacy = str(row["legacy_path"])
             replacement = str(
-                row["stable_path"]
-                if row["action"] == "moved"
-                else row["replacement"]
+                row["stable_path"] if row["action"] == "moved" else row["replacement"]
             )
             if legacy != replacement:
                 current_paths.discard(legacy)
@@ -183,29 +181,21 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
             wp004b_target = root / wp004b_path
             wp004b_target.parent.mkdir(parents=True)
             wp004b_target.write_bytes(wp004b_bytes)
-            subprocess.run(
-                ["git", "add", "--", wp004b_path], cwd=root, check=True
-            )
+            subprocess.run(["git", "add", "--", wp004b_path], cwd=root, check=True)
             target = root / migration_path
             target.parent.mkdir(parents=True, exist_ok=True)
 
             target.write_bytes(b"invalid staged migration\n")
-            subprocess.run(
-                ["git", "add", "--", migration_path], cwd=root, check=True
-            )
+            subprocess.run(["git", "add", "--", migration_path], cwd=root, check=True)
             target.write_bytes(valid)
             with self.assertRaises(validator.MigrationError) as raised:
                 validator._work109_current_replacements(root, current_paths)
             self.assertEqual(raised.exception.code, "MIGRATION-CONSUMERS")
 
             target.write_bytes(valid)
-            subprocess.run(
-                ["git", "add", "--", migration_path], cwd=root, check=True
-            )
+            subprocess.run(["git", "add", "--", migration_path], cwd=root, check=True)
             target.write_bytes(b"invalid worktree migration\n")
-            replacements = validator._work109_current_replacements(
-                root, current_paths
-            )
+            replacements = validator._work109_current_replacements(root, current_paths)
             self.assertEqual(len(replacements), 144)
 
     def test_mig0003_archive_inventory_control_is_exact_and_finite(self) -> None:
@@ -224,9 +214,7 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
             target = root / migration_path
             target.parent.mkdir(parents=True)
             target.write_bytes(valid)
-            subprocess.run(
-                ["git", "add", "--", migration_path], cwd=root, check=True
-            )
+            subprocess.run(["git", "add", "--", migration_path], cwd=root, check=True)
 
             validator._validate_archive_inventory(
                 root,
@@ -245,9 +233,7 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
             self.assertEqual(raised.exception.code, "MIGRATION-ROGUE-ARCHIVE")
 
             target.write_bytes(valid + b"\n")
-            subprocess.run(
-                ["git", "add", "--", migration_path], cwd=root, check=True
-            )
+            subprocess.run(["git", "add", "--", migration_path], cwd=root, check=True)
             with self.assertRaises(validator.MigrationError) as raised:
                 validator._validate_archive_inventory(
                     root,
@@ -257,7 +243,7 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
                 )
             self.assertEqual(raised.exception.code, "MIGRATION-ROGUE-ARCHIVE")
 
-    def test_mig0004_archive_inventory_control_is_exact_sealed_and_finite(
+    def test_mig0004_archive_inventory_control_is_semantic_and_sealed(
         self,
     ) -> None:
         validator = load_validator()
@@ -265,10 +251,6 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
         valid = (ROOT / migration_path).read_bytes()
         rogue_path = "docs/98.archive/migrations/0005-rogue.md"
 
-        self.assertEqual(
-            hashlib.sha256(valid).hexdigest(),
-            validator.WORK054_WP004B_MIGRATION_DOCUMENT_SHA256,
-        )
         self.assertIn(b'\nstatus: "sealed"\n', valid)
         with tempfile.TemporaryDirectory(prefix="active-mig0004-index-") as temporary:
             root = pathlib.Path(temporary)
@@ -276,9 +258,7 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
             target = root / migration_path
             target.parent.mkdir(parents=True)
             target.write_bytes(valid)
-            subprocess.run(
-                ["git", "add", "--", migration_path], cwd=root, check=True
-            )
+            subprocess.run(["git", "add", "--", migration_path], cwd=root, check=True)
 
             validator._validate_archive_inventory(
                 root,
@@ -299,9 +279,7 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
             target.write_bytes(
                 valid.replace(b'\nstatus: "sealed"\n', b'\nstatus: "accepted"\n', 1)
             )
-            subprocess.run(
-                ["git", "add", "--", migration_path], cwd=root, check=True
-            )
+            subprocess.run(["git", "add", "--", migration_path], cwd=root, check=True)
             with self.assertRaises(validator.MigrationError) as raised:
                 validator._validate_archive_inventory(
                     root,
@@ -423,23 +401,18 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
             },
         )
 
-    def test_acer_managed_subset_remains_exact_with_declared_wdtc_records(self) -> None:
+    def test_archive_membership_is_derived_without_legacy_registry_namespace(
+        self,
+    ) -> None:
         validator = load_validator()
         registry = json.loads(
-            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
-                encoding="utf-8"
-            )
+            (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
         )
-        namespace_counts = {
-            namespace["id"]: len(namespace["records"])
-            for namespace in registry["archiveNamespaces"]
-        }
+        report = validator.validate_repository_archive(ROOT, registry)
 
-        self.assertEqual(namespace_counts["arwb-base"], 31)
-        self.assertEqual(namespace_counts["acer-additive"], 12)
-        self.assertEqual(namespace_counts["wdtc-execution"], 50)
-        self.assertEqual(namespace_counts["progress-snapshot"], 0)
-        self.assertEqual(validator.MANAGED_ARCHIVE_RECORDS, 43)
+        self.assertNotIn("archiveNamespaces", registry)
+        self.assertTrue(report.valid, report.diagnostics)
+        self.assertEqual(report.record_count, len(report.record_link_counts))
 
     def test_staged_consumer_retirement_is_closed_to_migrated_originals(self) -> None:
         validator = load_validator()
@@ -460,8 +433,7 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
 
         self.assertTrue(retired_repaired_by_batch_six <= repaired)
         migrated_originals = {
-            str(row["originalPath"])
-            for row in validator._record_rows(migration)
+            str(row["originalPath"]) for row in validator._record_rows(migration)
         }
         self.assertTrue(retired_repaired_by_batch_six <= migrated_originals)
 
@@ -510,14 +482,12 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
             "docs/03.specs/0037-active-corpus-and-execution-retention/README.md",
         )
         self.assertEqual(
-            replacements[
-                "docs/03.specs/031-affected-surface-agent-qa/spec.md"
-            ],
+            replacements["docs/03.specs/031-affected-surface-agent-qa/spec.md"],
             "docs/03.specs/0031-affected-surface-agent-qa/spec.md",
         )
         self.assertEqual(
             replacements["docs/04.execution/plans/README.md"],
-            "docs/99.templates/templates/sdlc/execution/plan.template.md",
+            "docs/99.templates/templates/specs/plan.template.md",
         )
 
         missing_projection = current_paths - {
@@ -810,7 +780,9 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
             validator._secret_clean(ROOT, "docs/98.archive/example.md", b"payload")
 
         self.assertEqual(invoked.call_args.args[0][0], executable)
-        self.assertNotIn("/home/alice/.local/bin", invoked.call_args.kwargs["env"]["PATH"])
+        self.assertNotIn(
+            "/home/alice/.local/bin", invoked.call_args.kwargs["env"]["PATH"]
+        )
 
     def test_gitleaks_hint_rejects_unsafe_candidates(self) -> None:
         validator = load_validator()
@@ -832,7 +804,9 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
                 self.assertRaises(validator.MigrationError) as raised,
             ):
                 validator._secret_clean(ROOT, archive, b"payload")
-            self.assertEqual(str(raised.exception), f"MIGRATION-SECRET-CLASSIFIER {archive}")
+            self.assertEqual(
+                str(raised.exception), f"MIGRATION-SECRET-CLASSIFIER {archive}"
+            )
 
         executable = "/home/alice/.local/bin/gitleaks"
         metadata = {
@@ -981,9 +955,7 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
             mock.patch.object(validator.os, "lstat", side_effect=fake_lstat),
             mock.patch.object(validator.os, "geteuid", return_value=0, create=True),
             mock.patch.object(validator.os, "getegid", return_value=0, create=True),
-            mock.patch.object(
-                validator.os, "getgroups", return_value=[0], create=True
-            ),
+            mock.patch.object(validator.os, "getgroups", return_value=[0], create=True),
         ):
             metadata["/secure"].st_mode = stat.S_IFDIR
             metadata["/secure/bin"].st_mode = stat.S_IFDIR

@@ -345,10 +345,10 @@ bash infrastructure/tests/verify-contracts-static.sh
 - [Workspace Document Governance Hardening](../0013-workspace-document-governance-hardening/spec.md)
 - [Workspace Document Contract Normalization](../0014-workspace-document-contract-normalization/spec.md)
 - [Agent Governance Contract Normalization](../0015-agent-governance-contract-normalization/spec.md)
-- [Template Documentation Contract](../../99.templates/support/document-contract.md)
-- [Template Routing Contract](../../99.templates/support/document-contract.md)
-- [Common Documentation Template Governance](../../99.templates/support/document-lifecycle.md)
-- [Frontmatter Schema](../../99.templates/support/document-contract.md)
+- [Template Documentation Contract](../../99.templates/README.md)
+- [Template Routing Contract](../../99.templates/README.md)
+- [Common Documentation Template Governance](../../99.templates/README.md)
+- [Frontmatter Schema](../../99.templates/README.md)
 - [Documentation Protocol](../../00.agent-governance/rules/document-authoring.md)
 - [Git Workflow](../../00.agent-governance/rules/git-workflow.md)
 - [Quality Standards](../../00.agent-governance/rules/quality-standards.md)
@@ -408,8 +408,8 @@ Official source basis:
 Repository inputs:
 
 - `docs/99.templates/support/documentation-contract.md`
-- `docs/99.templates/support/template-routing.md`
-- `docs/99.templates/support/frontmatter-schema.md`
+- `docs/99.templates/README.md`
+- `docs/99.templates/contracts/frontmatter.schema.json`
 - `docs/99.templates/support/common-documentation-governance.md`
 - `docs/00.agent-governance/rules/documentation-protocol.md`
 - `docs/00.agent-governance/rules/git-workflow.md`

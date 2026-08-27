@@ -60,8 +60,8 @@ Slack token bootstrap은 사람이 승인한 외부 Vault 작업으로만 수행
 
 - [ADR-0011](./0011-argo-rollouts-progressive-delivery.md) — Rollouts 이벤트 소스
 - [ADR-0003](./0003-eso-vault-k8s-auth.md) — ESO/Vault 시크릿 관리 패턴
-- [PRD](../../01.requirements/002-argo-notifications-slack.md)
-- [ARD](../requirements/0005-argo-notifications-slack.md)
-- [Spec](../../03.specs/005-argo-notifications-slack/spec.md)
-- [Plan](../../03.specs/005-argo-notifications-slack/plan.md)
-- [Task](../../03.specs/005-argo-notifications-slack/tasks.md)
+- [PRD](../../01.requirements/0002-argo-notifications-slack.md)
+- [ARD](../descriptions/0005-argo-notifications-slack.md)
+- [Spec](../../03.specs/0005-argo-notifications-slack/spec.md)
+- [Plan](../../03.specs/0005-argo-notifications-slack/plan.md)
+- [Task](../../03.specs/0005-argo-notifications-slack/README.md)

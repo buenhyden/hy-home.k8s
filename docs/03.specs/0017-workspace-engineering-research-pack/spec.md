@@ -65,7 +65,7 @@ Out of scope:
 - **Data / Interface Contract**:
   - Each authored reference uses `type: content/reference` frontmatter and the
     required reference sections from
-    `docs/99.templates/templates/common/reference.template.md`.
+    `docs/99.templates/templates/references/reference.template.md`.
   - `README.md` files remain folder entrypoints and do not copy the complete
     reference template.
   - Source claims include source checked dates and freshness triggers.
@@ -346,7 +346,7 @@ rg -n "non-authoritative|market scan|Source checked|Review and Freshness" docs/9
 - **Current execution Task (2026-07-10)**:
   [Current Research Pack Fact-First Hardening Task](../../98.archive/README.md#document-index)
 - **Research README**: [../../90.references/research/README.md](../../90.references/research/README.md)
-- **Reference Template**: [../../99.templates/templates/common/reference.template.md](../../99.templates/templates/common/reference.template.md)
+- **Reference Template**: [../../99.templates/templates/references/reference.template.md](../../99.templates/templates/references/reference.template.md)
 - **Reference Maintenance Runbook**: [../../05.operations/runbooks/0011-reference-maintenance-runbook.md](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)
 ### Related inputs
 
@@ -366,10 +366,10 @@ Repository inputs:
 
 - [90.references README](../../90.references/README.md)
 - [Research README](../../90.references/research/README.md)
-- [Reference Template](../../99.templates/templates/common/reference.template.md)
+- [Reference Template](../../99.templates/templates/references/reference.template.md)
 - [Agent Governance Hub](../../00.agent-governance/README.md)
 - [Harness Catalog](../../00.agent-governance/harness-catalog.md)
-- [Harness Implementation Map](../../00.agent-governance/harness-implementation-map.md)
+- [Harness Implementation Map](../../00.agent-governance/harness-catalog.md)
 - [Repository Quality Gate](../../../scripts/validate-repo-quality-gates.sh)
 - [Harness Validation Wrapper](../../../scripts/validate-harness.sh)
 

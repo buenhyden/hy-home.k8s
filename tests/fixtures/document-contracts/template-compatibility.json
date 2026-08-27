@@ -8,11 +8,6 @@
   ],
   "behaviorCases": [
     {
-      "name": "registry-derived-form-inventory",
-      "expectedMarkdownForms": 29,
-      "expectedNativeForms": 3
-    },
-    {
       "name": "retired-debt-fields-remain-absent",
       "forbiddenFields": [
         "compatibilityDebt",

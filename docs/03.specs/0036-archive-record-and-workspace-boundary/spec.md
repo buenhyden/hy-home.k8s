@@ -198,7 +198,7 @@ unclaimed.
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | [REQ-0006-FR-0004](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md#functional-requirements) | VAL-ARWB-001 | Recovery check enumerates exact source commit and blob per path. |
 | N/A — VAL-ARWB-002 shares the PRD-0006 source linked in VAL-ARWB-001 | VAL-ARWB-002 | Archive schema and digest validation inspect every record. |

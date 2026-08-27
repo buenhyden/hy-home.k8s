@@ -41,9 +41,9 @@ outside the repository and outside this staging boundary.
 Promote a durable outcome to its canonical owner:
 
 - Stage 00 for agent governance and reusable memory.
-- Stage 04 for execution plans, tasks, and validation evidence.
+- Stage 03 for change-scoped Specs, Plans, Tasks, and validation contracts.
 - Stage 90 for durable audits and reference material.
-- Stage 99 for template and support contracts.
+- Stage 99 for registry, schema, and template contracts.
 
 Delete temporary artifacts before task closure when they have no durable
 destination. Promotion must preserve the destination document's template,
@@ -74,5 +74,5 @@ this rule.
 - [Documentation Protocol](../docs/00.agent-governance/rules/document-authoring.md)
 - [Approval Boundaries](../docs/00.agent-governance/rules/approval-boundaries.md)
 - [Subagent Protocol](../docs/00.agent-governance/subagent-protocol.md)
-- [Documentation Contract](../docs/99.templates/support/document-contract.md)
+- [Documentation Contract](../docs/99.templates/README.md)
 - [Workspace-staging README form](../docs/99.templates/templates/common/readme-workspace-staging.template.md)

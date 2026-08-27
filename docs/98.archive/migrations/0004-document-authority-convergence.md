@@ -14,8 +14,11 @@ migration_id: "MIG-0004"
 
 This atomic ledger seals the WP-004B Requirement Package, prefix-free
 Architecture Description, and Spec-package Task authority cutover at source
-commit `211e167f9ef0268c937303faa82d7ed297b33e38`. It records 48 Task replacements, eight AD moves,
-two agent-design dispositions, and eight same-path Requirement replacements.
+commit `211e167f9ef0268c937303faa82d7ed297b33e38`. Its approved finite WP-004C
+completion additionally pins the terminal Stage99 authority/form cutover at
+source commit `7a770c3c0eabaeda554c4030fc08fb17de164fe5`: 33 deleted or moved
+support, contract, and form objects, plus the one final Spec0054 `tasks.md`
+replacement. It does not add per-Task migration rows.
 
 ## Migration Ledger
 
@@ -673,6 +676,17 @@ two agent-design dispositions, and eight same-path Requirement replacements.
     "reason": "Monolithic ledger decomposed into package-local append-only Task records enumerated by the package router."
   },
   {
+    "legacy_path": "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks.md",
+    "stable_path": null,
+    "artifact_id": null,
+    "action": "replaced",
+    "replacement": "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/README.md",
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "465f24340b99c03a38b5150d517627b69fa7c717",
+    "content_sha256": "3fd4925824ad0b92748ff0f27e3a252dee3619c415caff02cc59a385e4c8fc08",
+    "reason": "Replace the final transitional Spec 0054 ledger with its package README router and append-only Task records."
+  },
+  {
     "legacy_path": "docs/03.specs/0055-workspace-governance-audit-and-remediation/tasks.md",
     "stable_path": null,
     "artifact_id": null,
@@ -748,8 +762,383 @@ two agent-design dispositions, and eight same-path Requirement replacements.
     "source_blob": "ab7622a359f68b724d186d232649544dbc2bcfa4",
     "content_sha256": "8ecbd34a901f24a5884f137bb90dde9b33e820a3756884c0587448d2f7afa7c1",
     "reason": "Monolithic ledger decomposed into package-local append-only Task records enumerated by the package router."
+  },
+  {
+    "legacy_path": "docs/99.templates/contracts/registry-form.schema.json",
+    "stable_path": null,
+    "artifact_id": null,
+    "action": "replaced",
+    "replacement": "docs/99.templates/contracts/document-profile.schema.json",
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "8a7428c78af244ed74912a09eb312ac1a964b875",
+    "content_sha256": "046b40d8771841324e07f295a290f9787f00f8673524faa02d8e0f19868a6fb2",
+    "reason": "Merge the registry-form constraint into the terminal document-profile schema."
+  },
+  {
+    "legacy_path": "docs/99.templates/contracts/route-contract.json",
+    "stable_path": null,
+    "artifact_id": null,
+    "action": "replaced",
+    "replacement": "docs/99.templates/registry.json",
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "c956b1571349efc60fb370d6d4bb8c2a63078ab8",
+    "content_sha256": "850459a15042575819ad6888713d61ddabd3fbb9726aefcfa4669ba60e7ccc48",
+    "reason": "Retire the route projection in favour of the root registry."
+  },
+  {
+    "legacy_path": "docs/99.templates/contracts/route-contract.schema.json",
+    "stable_path": null,
+    "artifact_id": null,
+    "action": "replaced",
+    "replacement": "docs/99.templates/registry.json",
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "1912c0fc757af1f71a0dccc688c8573a57566361",
+    "content_sha256": "8268892e23e47b5c644d829b40a031b929fd4154a0dc399cc9cec4a5acd1d756",
+    "reason": "Retire the route projection schema in favour of the root registry."
+  },
+  {
+    "legacy_path": "docs/99.templates/support/README.md",
+    "stable_path": null,
+    "artifact_id": null,
+    "action": "replaced",
+    "replacement": "docs/99.templates/README.md",
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "76a0fa42a697c52563e2bf7d21fb9148507c2876",
+    "content_sha256": "fb4bed2bab027161f7425226f4c3b9b61f25413ccd31a89654b49a25c45901a1",
+    "reason": "Merge support routing into the terminal Stage99 README."
+  },
+  {
+    "legacy_path": "docs/99.templates/support/document-contract.md",
+    "stable_path": null,
+    "artifact_id": null,
+    "action": "replaced",
+    "replacement": "docs/99.templates/README.md",
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "1ee845da3aa42262586de2eac2da753b5e63e8cf",
+    "content_sha256": "b181ed92176bf359f580e76872214c2252050d2022a95d82296da32d78febce5",
+    "reason": "Merge support guidance into the terminal Stage99 README."
+  },
+  {
+    "legacy_path": "docs/99.templates/support/document-lifecycle.md",
+    "stable_path": null,
+    "artifact_id": null,
+    "action": "replaced",
+    "replacement": "docs/99.templates/README.md",
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "5877d1989a45248918354f43d53e5ad71577fa76",
+    "content_sha256": "dab00c4c3f07f4ec5336413f3fb15b461b5fb0439ff60b77d23eb67e3e2e41b1",
+    "reason": "Merge lifecycle guidance into the terminal Stage99 README."
+  },
+  {
+    "legacy_path": "docs/99.templates/support/document-profiles.json",
+    "stable_path": null,
+    "artifact_id": null,
+    "action": "replaced",
+    "replacement": "docs/99.templates/registry.json",
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "2d6fd0d40ec4e2d8d8b0d621b4c5d286f1952da2",
+    "content_sha256": "ae873c96a1ace5069b891095abb5887271b5d53d523cfcd4ea2fa47499f94d42",
+    "reason": "Replace the flat profile projection with the root registry."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/README.md",
+    "stable_path": null,
+    "artifact_id": null,
+    "action": "replaced",
+    "replacement": "docs/99.templates/README.md",
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "f1081128f8271140166c2b92aa039cb8e987f8ed",
+    "content_sha256": "568c84c88ab19c876aa4416660853005130631b088061b81b713cc71a6e5d097",
+    "reason": "Use the terminal Stage99 README router."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/common/archive-migration.template.md",
+    "stable_path": "docs/99.templates/templates/archive/archive-migration.template.md",
+    "artifact_id": null,
+    "action": "moved",
+    "replacement": null,
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "dc3164eafd322e8139164cc16342de43fc3a72e8",
+    "content_sha256": "1cbf119fbdd0340f35a002c9e12232e7d5986bf80968e23e6bc1e3ad4edc295f",
+    "reason": "Move retained form to the terminal Stage99 group."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/common/archive-record.template.md",
+    "stable_path": "docs/99.templates/templates/archive/archive-record.template.md",
+    "artifact_id": null,
+    "action": "moved",
+    "replacement": null,
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "e4c080ec323f87d9745ac988d52561efe4ab1547",
+    "content_sha256": "6ee6974911b215217b4a59e377e144f6eff1aa28efbfd647dd2897cc087b6b24",
+    "reason": "Move retained form to the terminal Stage99 group."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/common/governance-reference.template.md",
+    "stable_path": "docs/99.templates/templates/governance/governance-reference.template.md",
+    "artifact_id": null,
+    "action": "moved",
+    "replacement": null,
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "a5209bd57c3edbc36cf5c0c980b04691f63c889c",
+    "content_sha256": "8877925295c0b6a2a6162146b97d2a9a51d29fb4a06f72f3ee9a3abc6f7e89db",
+    "reason": "Move retained form to the terminal Stage99 group."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/common/memory.template.md",
+    "stable_path": "docs/99.templates/templates/governance/memory.template.md",
+    "artifact_id": null,
+    "action": "moved",
+    "replacement": null,
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "b7f80ea24323e6e4b956dea9531a64827d488e48",
+    "content_sha256": "eaf93f9007ef3019b690d4f86431367c2dfc422c850bf4964f6425fa49848572",
+    "reason": "Move retained form to the terminal Stage99 group."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/common/progress.template.md",
+    "stable_path": "docs/99.templates/templates/governance/progress.template.md",
+    "artifact_id": null,
+    "action": "moved",
+    "replacement": null,
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "41eb12709d2a75ba137df87143774985d2401247",
+    "content_sha256": "b8261f60bf201d7bf8be0f7d8a7978dc02c070f6ea695bccb40e85b99ed7f5bb",
+    "reason": "Move retained form to the terminal Stage99 group."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/common/reference.template.md",
+    "stable_path": "docs/99.templates/templates/references/reference.template.md",
+    "artifact_id": null,
+    "action": "moved",
+    "replacement": null,
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "314ab057919f482a08879b05985981d8913ff426",
+    "content_sha256": "6257ad1286c3ef8bb1ae5933f22f841271e8eecfc88028b45b741830ffa20d63",
+    "reason": "Move retained form to the terminal Stage99 group."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/common/template-support.template.md",
+    "stable_path": null,
+    "artifact_id": null,
+    "action": "replaced",
+    "replacement": "docs/99.templates/README.md",
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "f24007775ce134141244625931238a14b9890a3e",
+    "content_sha256": "e94d2571bf27236bbbadd2c443f4608479a59e852ebaeb511b18b9da77550bea",
+    "reason": "Retire the template-support form in favour of the Stage99 router."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/sdlc/architecture/ad.template.md",
+    "stable_path": null,
+    "artifact_id": null,
+    "action": "replaced",
+    "replacement": "docs/99.templates/templates/architecture/ad.template.md",
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "1ed3a4ebf63989046aba2ecced312faba50b64ec",
+    "content_sha256": "a355f439a3de2c7d90932ad0dd2193b993140870a6b34034adf2e31d873690f2",
+    "reason": "Replace the predecessor form with the terminal Stage99 architecture form and its normalized requirement traceability example."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/sdlc/architecture/adr.template.md",
+    "stable_path": null,
+    "artifact_id": null,
+    "action": "replaced",
+    "replacement": "docs/99.templates/templates/architecture/adr.template.md",
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "85b16084042825695ac198837cfb773ad89d0acc",
+    "content_sha256": "62fbd0ac93025392032facedf6c4a8717c10634248d36d250544aad82395107e",
+    "reason": "Replace the retained form with the terminal Stage99 profile-bound form."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/sdlc/execution/plan.template.md",
+    "stable_path": "docs/99.templates/templates/specs/plan.template.md",
+    "artifact_id": null,
+    "action": "moved",
+    "replacement": null,
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "85868ea88dd80ffd5a2b1f00a39972ebe64ee000",
+    "content_sha256": "f5074f79bc1d55f3158f20b351ca966958add88d8edd5c3aa6576fc924509aa9",
+    "reason": "Move retained form to the terminal Stage99 group."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/sdlc/execution/task.template.md",
+    "stable_path": "docs/99.templates/templates/specs/task.template.md",
+    "artifact_id": null,
+    "action": "moved",
+    "replacement": null,
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "962d31d707d8e46e3e2b1b0c10cc48c1c87d48b5",
+    "content_sha256": "54a1e896195d55d1eded63aeb8ab1d3b5c7464b2f2af9d954285754805935e5d",
+    "reason": "Move retained form to the terminal Stage99 group."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/sdlc/operations/guide.template.md",
+    "stable_path": "docs/99.templates/templates/operations/guide.template.md",
+    "artifact_id": null,
+    "action": "moved",
+    "replacement": null,
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "f3a531cfa3434292a0d75a85a37030fa11871014",
+    "content_sha256": "c42537bdde247fda2eaf90660c76304240bc612e4be01bc3817b892253e7b9df",
+    "reason": "Move retained form to the terminal Stage99 group."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/sdlc/operations/incident.template.md",
+    "stable_path": null,
+    "artifact_id": null,
+    "action": "replaced",
+    "replacement": "docs/99.templates/templates/operations/incident.template.md",
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "207fd1f6a5c35623e6386ff11a3fad17e9343efd",
+    "content_sha256": "f9c10d1fc04c02d69dbcfaccb6927ac99902fac12c62510f988c3bd83789f4bf",
+    "reason": "Replace the retained form with the terminal Stage99 profile-bound form."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/sdlc/operations/policy.template.md",
+    "stable_path": "docs/99.templates/templates/operations/policy.template.md",
+    "artifact_id": null,
+    "action": "moved",
+    "replacement": null,
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "bdaf39f2df8b37cf124f2491cb3a6396cbd459a7",
+    "content_sha256": "61f5a1d7b2b2b5debcf2122672a632c5a13aabe16b64a214f5b6c2496acd1deb",
+    "reason": "Move retained form to the terminal Stage99 group."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/sdlc/operations/postmortem.template.md",
+    "stable_path": "docs/99.templates/templates/operations/postmortem.template.md",
+    "artifact_id": null,
+    "action": "moved",
+    "replacement": null,
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "03fe6d22e43a71f391e734f2291d98cf77623a2a",
+    "content_sha256": "269f3040cc2e15080b60187e357cd96a499efd199f0fa84a9fe5c4f371693b7b",
+    "reason": "Move retained form to the terminal Stage99 group."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/sdlc/operations/runbook.template.md",
+    "stable_path": "docs/99.templates/templates/operations/runbook.template.md",
+    "artifact_id": null,
+    "action": "moved",
+    "replacement": null,
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "7f040add638431b5f906702d80bce22e2d5c0bf2",
+    "content_sha256": "3d272e6ed14996c3d29a87cbf750410d2a5e96dbdaa98bdbfc6b8101f449e381",
+    "reason": "Move retained form to the terminal Stage99 group."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/sdlc/requirements/interface.template.md",
+    "stable_path": null,
+    "artifact_id": null,
+    "action": "replaced",
+    "replacement": "docs/99.templates/templates/requirements/requirement-package.template.md",
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "6fc69b5ce76fb2566e1a77801cab396b4410e203",
+    "content_sha256": "446146d22d19c9382131eb9918717e61f897c38d2ba06d5339c9f5af36be801d",
+    "reason": "Unify interface requirements under the Requirement Package form."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/sdlc/requirements/prd.template.md",
+    "stable_path": null,
+    "artifact_id": null,
+    "action": "replaced",
+    "replacement": "docs/99.templates/templates/requirements/requirement-package.template.md",
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "a0b01020dffc8ddd8fdbd0b3b3fb1a5ac7bdab48",
+    "content_sha256": "5b1f8a4698efa381d31eeb60ba7ec24a43ac54cfc895573c7cc46b3e723fc967",
+    "reason": "Replace the predecessor PRD form with the consolidated Requirement Package form and package-scoped member identities."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/sdlc/requirements/srs.template.md",
+    "stable_path": null,
+    "artifact_id": null,
+    "action": "replaced",
+    "replacement": "docs/99.templates/templates/requirements/requirement-package.template.md",
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "f8d8d8296d5621f3a1062af962198cbae3856711",
+    "content_sha256": "fe2d4e29404df7419183e01f1a0ea73fe198a97a70237dc46445321b1a9b6ed1",
+    "reason": "Unify SRS requirements under the Requirement Package form."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/sdlc/specs/agent-design.template.md",
+    "stable_path": null,
+    "artifact_id": null,
+    "action": "replaced",
+    "replacement": "docs/99.templates/templates/specs/spec.template.md",
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "6311798fa9a90e1eeef988c59d7f1c53b6e428d4",
+    "content_sha256": "b40f068f2406f07dabef823ff67bb9061534756bf10c9dcf80bd4a8cb7f0438a",
+    "reason": "Retire agent-design as a permanent document form in favour of Spec."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/sdlc/specs/data-model.template.md",
+    "stable_path": null,
+    "artifact_id": null,
+    "action": "replaced",
+    "replacement": "docs/99.templates/templates/specs/data-model.template.md",
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "d06a2716a20a514ec7bc308fbe2a9201b8b5b8f7",
+    "content_sha256": "f45c2b064c9e8e02837e78557cd09d38ded95d12f67dad2d046ec91d7c02403a",
+    "reason": "Replace the predecessor form with the terminal Stage99 data-model form and normalized requirement traceability contract."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/sdlc/specs/openapi.template.yaml",
+    "stable_path": "docs/99.templates/templates/specs/openapi.template.yaml",
+    "artifact_id": null,
+    "action": "moved",
+    "replacement": null,
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "7492ec59f553b1ecc7fedb945aace243d28a9149",
+    "content_sha256": "aba7ee08fd3c45e63edbc0557911c86ea8b31a47f9afbc3016d2439c65ed1176",
+    "reason": "Move retained form to the terminal Stage99 group."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/sdlc/specs/schema.template.graphql",
+    "stable_path": "docs/99.templates/templates/specs/schema.template.graphql",
+    "artifact_id": null,
+    "action": "moved",
+    "replacement": null,
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "f39499ce00d55b88e520400194a5eaad4c263386",
+    "content_sha256": "cd6d8b531799d3fd617fe404b441f80c5ab7dc2893bd8519c5ad053c3037dd4a",
+    "reason": "Move retained form to the terminal Stage99 group."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/sdlc/specs/service.template.proto",
+    "stable_path": "docs/99.templates/templates/specs/service.template.proto",
+    "artifact_id": null,
+    "action": "moved",
+    "replacement": null,
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "2d9288896bb3c83e7a2ef08f049662cd6e290df1",
+    "content_sha256": "b601274f4a078e14350e0d3694ad846544b266293d04764f68ac8decc7bca4b8",
+    "reason": "Move retained form to the terminal Stage99 group."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/sdlc/specs/spec.template.md",
+    "stable_path": null,
+    "artifact_id": null,
+    "action": "replaced",
+    "replacement": "docs/99.templates/templates/specs/spec.template.md",
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "37933bc3f5a84546c72eb7450c3915cf4d62e70b",
+    "content_sha256": "c390b1fa7a6c9a6bab5ed47ef882581d6ec071d23d0714b8dd86221d4b6fa1f5",
+    "reason": "Replace the predecessor form with the terminal Stage99 Spec form and normalized requirement traceability contract."
+  },
+  {
+    "legacy_path": "docs/99.templates/templates/sdlc/specs/tests.template.md",
+    "stable_path": null,
+    "artifact_id": null,
+    "action": "replaced",
+    "replacement": "docs/99.templates/templates/specs/spec.template.md",
+    "source_commit": "7a770c3c0eabaeda554c4030fc08fb17de164fe5",
+    "source_blob": "3688976891260e7d49c890ee6b0162eff1670a26",
+    "content_sha256": "9d8662cd3aafc415e7b99f04b9d865178db43c5ca07ee44f3701165c11b266ff",
+    "reason": "Retire permanent tests as a document form in favour of Spec."
   }
 ]
+
 ```
 
 ## Recovery

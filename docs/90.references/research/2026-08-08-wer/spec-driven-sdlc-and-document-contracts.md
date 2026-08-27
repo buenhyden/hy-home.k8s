@@ -23,7 +23,7 @@ approval, security control, or evidence of production operation.
 
 ## Authority Boundary
 
-`docs/99.templates/support/document-profiles.json` and its schema own typed
+`docs/99.templates/registry.json` and its schema own typed
 routes, frontmatter, status domains, required headings, templates, and
 traceability relations. Stage routing and the stage-authoring matrix own human
 timing and persona routing. This reference analyses those controls but cannot
@@ -202,7 +202,7 @@ edition.
 #### Structural contract re-verification
 
 `REQ-WERPC-034`, `035`, and `036` were re-verified against
-`docs/99.templates/support/document-profiles.json` at the level this pack claims:
+`docs/99.templates/registry.json` at the level this pack claims:
 route regex, frontmatter key set and order, status domain, the closed
 required-equals-allowed heading set, and the `bodyContract` reciprocity and
 identifier rule. `sdlc/spec` still declares eleven closed headings with
@@ -475,5 +475,5 @@ registered: `CLM-WERPC-010-10` (`REQ-WERPC-034`), `CLM-WERPC-010-11`
 - [Documentation architecture and Diátaxis](documentation-architecture-and-diataxis.md)
 - [LLM-WIKI routing](llm-wiki-and-knowledge-routing.md)
 - [Source coverage and migration ledger](source-coverage-and-migration-ledger.md)
-- [Document profiles](../../../99.templates/support/document-profiles.json)
-- [Stage authoring matrix](../../../00.agent-governance/rules/stage-authoring-matrix.md)
+- [Document profiles](../../../99.templates/registry.json)
+- [Stage authoring matrix](../../../00.agent-governance/rules/document-authoring.md)

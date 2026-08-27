@@ -59,14 +59,15 @@ updated: 2026-08-09
 | Architecture descriptions | [Architecture Descriptions README](../../02.architecture/descriptions/README.md) | Owns the AD architecture-description index | Architecture-description changes |
 | Architecture decisions | [Architecture Decisions README](../../02.architecture/decisions/README.md) | Owns ADR-style decision index | Architecture decision changes |
 | Specifications | [03.specs README](../../03.specs/README.md) | Owns implementation contract index | Spec path or README changes |
-| Execution plans | [04.execution/plans README](../../04.execution/plans/README.md) | Owns execution plan index | Plan additions, moves, or status changes |
-| Execution tasks | [04.execution/tasks README](../../04.execution/tasks/README.md) | Owns task evidence index | Task additions, moves, or status changes |
+| Execution plans | [03.specs README](../../03.specs/README.md) | Owns package-local execution plan index | Plan additions, moves, or status changes |
+| Execution tasks | [03.specs README](../../03.specs/README.md) | Owns package-local task evidence index | Task additions, moves, or status changes |
 | Operations guides | [05.operations/guides README](../../05.operations/guides/README.md) | Owns how-to guide index | Guide additions, moves, or status changes |
 | Operations policies | [05.operations/policies README](../../05.operations/policies/README.md) | Owns policy index | Policy additions, moves, or status changes |
 | Operations runbooks | [05.operations/runbooks README](../../05.operations/runbooks/README.md) | Owns executable operations procedure index | Runbook additions, moves, or status changes |
 | Operations incidents | [05.operations/incidents README](../../05.operations/incidents/README.md) | Owns incident and postmortem index | Incident additions or postmortem changes |
 | Reference inventory | [90.references README](../README.md) | Owns durable reference category index | Reference category additions or moves |
 | Version snapshots | [Tech Stack Version Inventory](../data/tech-stack-version-inventory.md) | Owns repo-backed version facts | Manifest, config, example, or provider support changes |
+| Document contracts | [Document Contract Registry](../../99.templates/registry.json) | Owns document profiles, lifecycle domains, paths, and template bindings | Registry or contract schema changes |
 | Templates | [Templates README](../../99.templates/README.md) | Owns documentation template inventory | Template additions or required heading changes |
 | Script inventory | [scripts README](../../../scripts/README.md) | Owns script lifecycle and command contracts | Script additions, removals, or command contract changes |
 | GitOps desired state | [gitops README](../../../gitops/README.md) | Owns desired-state layout and GitOps boundary | GitOps root app or platform layout changes |
@@ -77,7 +78,8 @@ updated: 2026-08-09
 - [LLM WIKI README](./README.md)
 - [Agent Governance Hub](../../00.agent-governance/README.md)
 - [Harness Catalog](../../00.agent-governance/harness-catalog.md)
-- [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)
+- [Document Stage Routing Rules](../../00.agent-governance/rules/document-authoring.md)
+- [Document Contract Registry](../../99.templates/registry.json)
 - [Docs README](../../README.md)
 - [Scripts README](../../../scripts/README.md)
 - [Examples README](../../../examples/README.md)

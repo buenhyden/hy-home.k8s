@@ -23,8 +23,8 @@ Incident Record와 Postmortem은 각각 고정 basename `incident.md`와
 
 | Artifact | Path rule | Template | Creation rule | Current state |
 | --- | --- | --- | --- | --- |
-| `Incident Record` | `./<year>/inc-####-<slug>/incident.md` | [incident.template.md](../../99.templates/templates/sdlc/operations/incident.template.md) | Create only for a real incident fact record. | No tracked incident records. |
-| `Postmortem` | `./<year>/inc-####-<slug>/postmortem.md` | [postmortem.template.md](../../99.templates/templates/sdlc/operations/postmortem.template.md) | Create only after incident stabilization when root cause/prevention analysis is needed. | No tracked postmortems. |
+| `Incident Record` | `./<year>/inc-####-<slug>/incident.md` | [incident.template.md](../../99.templates/templates/operations/incident.template.md) | Create only for a real incident fact record. | No tracked incident records. |
+| `Postmortem` | `./<year>/inc-####-<slug>/postmortem.md` | [postmortem.template.md](../../99.templates/templates/operations/postmortem.template.md) | Create only after incident stabilization when root cause/prevention analysis is needed. | No tracked postmortems. |
 
 ### Collection Readers
 
@@ -62,9 +62,9 @@ Incident Record와 Postmortem은 각각 고정 basename `incident.md`와
 
 ## Add and Find
 
-1. 대응 중에는 [incident.template.md](../../99.templates/templates/sdlc/operations/incident.template.md)로 사실 기록을 시작한다.
+1. 대응 중에는 [incident.template.md](../../99.templates/templates/operations/incident.template.md)로 사실 기록을 시작한다.
 2. Incident Record는 `<year>/inc-####-<slug>/incident.md`로 작성하고 frontmatter `artifact_id`를 `INC-<YYYY>-<DDDD>`와 일치시킨다.
-3. 사고 종료 후 구조 분석이 필요하면 [postmortem.template.md](../../99.templates/templates/sdlc/operations/postmortem.template.md)를 사용한다.
+3. 사고 종료 후 구조 분석이 필요하면 [postmortem.template.md](../../99.templates/templates/operations/postmortem.template.md)를 사용한다.
 4. Runbook/Operations/ADR/Spec 링크를 남겨 재발 방지 액션을 추적한다.
 5. 비밀 값, 토큰, 개인 식별 정보는 사고 기록에 직접 남기지 않는다.
 6. 사고가 없는 상태에서는 README만 유지하고 빈 placeholder 파일을 만들지 않는다.
@@ -110,5 +110,5 @@ Incident Record와 Postmortem은 각각 고정 basename `incident.md`와
 - [05.operations/policies](../policies/README.md)
 - [05.operations/runbooks](../runbooks/README.md)
 - [99.templates](../../99.templates/README.md)
-- [Incident Template](../../99.templates/templates/sdlc/operations/incident.template.md)
-- [Postmortem Template](../../99.templates/templates/sdlc/operations/postmortem.template.md)
+- [Incident Template](../../99.templates/templates/operations/incident.template.md)
+- [Postmortem Template](../../99.templates/templates/operations/postmortem.template.md)

@@ -298,8 +298,8 @@ Expected:
 **Files:**
 
 - Modify: `docs/99.templates/support/documentation-contract.md`
-- Modify: `docs/99.templates/support/frontmatter-schema.md`
-- Modify: `docs/99.templates/support/template-routing.md`
+- Modify: `docs/99.templates/contracts/frontmatter.schema.json`
+- Modify: `docs/99.templates/README.md`
 - Modify: `docs/99.templates/support/sdlc-governance.md`
 - Modify: `docs/99.templates/support/common-documentation-governance.md`
 - Modify: `docs/99.templates/support/legacy-cleanup-rules.md`
@@ -431,7 +431,7 @@ Expected:
 
 For each non-README Markdown file in active SDLC stages:
 
-- Match path to `docs/99.templates/support/template-routing.md`.
+- Match path to `docs/99.templates/README.md`.
 - Apply expected `type`.
 - Keep only required keys unless the support schema explicitly allows more.
 - Normalize key order to `title`, `type`, `status`, `owner`, `updated`.
@@ -1112,9 +1112,9 @@ Validation:
 
 - **Spec**: [Workspace Document Contract Normalization Spec](spec.md)
 - **Tasks**: [Workspace Document Contract Normalization Tasks](README.md#task-records)
-- **Template Routing Contract**: [Template Routing](../../99.templates/support/document-contract.md)
-- **Frontmatter Schema**: [Frontmatter Schema](../../99.templates/support/document-contract.md)
-- **Documentation Contract**: [Template Documentation Contract](../../99.templates/support/document-contract.md)
+- **Template Routing Contract**: [Template Routing](../../99.templates/README.md)
+- **Frontmatter Schema**: [Frontmatter Schema](../../99.templates/README.md)
+- **Documentation Contract**: [Template Documentation Contract](../../99.templates/README.md)
 - **CI/QA Guide**: [CI/CD and QA Reference Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
 
 ### Legacy Task traceability
@@ -1124,6 +1124,6 @@ Validation:
 - **Plan**:
   [Workspace Document Contract Normalization Plan](plan.md)
 - **Template Routing Contract**:
-  [Template Routing](../../99.templates/support/document-contract.md)
+  [Template Routing](../../99.templates/README.md)
 - **Frontmatter Schema**:
-  [Frontmatter Schema](../../99.templates/support/document-contract.md)
+  [Frontmatter Schema](../../99.templates/README.md)

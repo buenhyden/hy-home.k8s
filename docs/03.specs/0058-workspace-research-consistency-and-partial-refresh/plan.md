@@ -90,7 +90,7 @@ remaining work packages defined by the Plan.
 - [Spec 0058](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md)
 - [Implementation Plan](plan.md)
 - [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
-- [Document profile registry](../../99.templates/support/document-profiles.json)
+- [Document profile registry](../../99.templates/registry.json)
 - Direct human approval of the written Spec and Plan on 2026-08-14
 
 ### Topic ledger
@@ -225,7 +225,7 @@ explicit non-goal of this cycle.
 - Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/plan.md`
 - Create: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
 - Modify: `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`
-- Modify: `docs/99.templates/support/document-profiles.json`
+- Modify: `docs/99.templates/registry.json`
 - Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/plan.md`
 - Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
 
@@ -236,7 +236,7 @@ explicit non-goal of this cycle.
   `WRCP-000`–`WRCP-007` that later packages mark complete.
 
 - [ ] **Step 1: Create the Task from the current template.** Copy
-      `docs/99.templates/templates/sdlc/execution/task.template.md` to
+      `docs/99.templates/templates/specs/task.template.md` to
       `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`.
       Remove every author prompt. Set frontmatter `status: active`. Its H2 profile
       is fixed: `Overview`, `Inputs`, `Task Table`, `Approval and Safety
@@ -301,7 +301,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
   The validator matches these by exact regex. Do not reword them.
 
 - [ ] **Step 6: Register the standalone execution.** In
-      `docs/99.templates/support/document-profiles.json`, append this object to the
+      `docs/99.templates/registry.json`, append this object to the
       `standaloneExecutions` array, after the `"spec": "056"` object:
 
   ```json
@@ -335,7 +335,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
           docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/plan.md \
           docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records \
           docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md \
-          docs/99.templates/support/document-profiles.json \
+          docs/99.templates/registry.json \
           docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/plan.md docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records
   python3 scripts/validate-links-and-owners.py --root . --mode strict
   python3 scripts/validate-markdown-profiles.py --root . --mode strict
@@ -626,7 +626,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
       published site once; if it 429s again, record `unreachable` and move on.
 
 - [ ] **Step 2: Re-observe the workspace.** Re-read
-      `docs/99.templates/support/document-profiles.json` for the profile enum and
+      `docs/99.templates/registry.json` for the profile enum and
       `docs/05.operations/guides/` for the current Guide inventory. Record whether
       the `DOC-G1` enum enforcement gap is still open.
 
@@ -646,9 +646,9 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 
   | Family | Canonical path             | Profile and template                                                               |
   | ------ | -------------------------- | ---------------------------------------------------------------------------------- |
-  | Spec   | `docs/03.specs/`           | `sdlc/spec` profile; `docs/99.templates/templates/sdlc/specs/spec.template.md`     |
-  | Task   | `docs/03.specs/` | `sdlc/task` profile; `docs/99.templates/templates/sdlc/execution/task.template.md` |
-  | Plan   | `docs/03.specs/` | `sdlc/plan` profile; `docs/99.templates/templates/sdlc/execution/plan.template.md` |
+  | Spec   | `docs/03.specs/`           | `sdlc/spec` profile; `docs/99.templates/templates/specs/spec.template.md`     |
+  | Task   | `docs/03.specs/` | `sdlc/task` profile; `docs/99.templates/templates/specs/task.template.md` |
+  | Plan   | `docs/03.specs/` | `sdlc/plan` profile; `docs/99.templates/templates/specs/plan.template.md` |
 
   For each, record the enforced H2 profile, the lifecycle states the repository
   actually uses, the reciprocity rules its validator enforces, and what the
@@ -818,7 +818,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 - Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md`
 - Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/plan.md`
 - Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
-- Modify: `docs/99.templates/support/document-profiles.json`
+- Modify: `docs/99.templates/registry.json`
 - Modify: `docs/03.specs/README.md`, `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/plan.md`, `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
 
 **Interfaces:**
@@ -972,7 +972,7 @@ performs repository-static edits only.
 ### Legacy Task approval and rollback boundaries
 
 - **Allowed Paths**: this Task; Spec 057 and its index; the reciprocal Plan and
-  its index; ADR-0022; `docs/99.templates/support/document-profiles.json`;
+  its index; ADR-0022; `docs/99.templates/registry.json`;
   `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/plan.md`; `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`;
   and only this ignored report:
   `.superpowers/sdd/2026-08-14-workspace-research-consistency-and-partial-refresh/task-1-report.md`.

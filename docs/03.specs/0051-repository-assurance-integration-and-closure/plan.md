@@ -148,7 +148,7 @@ merge, stash, cleanup, remote, or live result.
 - `docs/03.specs/2026-08-02-*.md`
 - `docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records`
 - `docs/00.agent-governance/memory/progress.md`
-- `docs/99.templates/support/document-profiles.json`
+- `docs/99.templates/registry.json`
 
 **Consumed interfaces:**
 
@@ -190,7 +190,7 @@ merge, stash, cleanup, remote, or live result.
 - [ ] Commit the activation unit.
 
   ```bash
-  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0051-repository-assurance-integration-and-closure/spec.md docs/03.specs/README.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/99.templates/support/document-profiles.json
+  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0051-repository-assurance-integration-and-closure/spec.md docs/03.specs/README.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/99.templates/registry.json
   rtk git commit -m "docs: activate repository assurance closure"
   ```
 
@@ -402,7 +402,7 @@ merge, stash, cleanup, remote, or live result.
   SHA.
 
   ```bash
-  rtk git add docs/00.agent-governance/memory/progress.md docs/01.requirements/0007-repository-delivery-and-platform-assurance.md docs/01.requirements/README.md docs/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md docs/02.architecture/descriptions/README.md docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md docs/02.architecture/decisions/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/0048-github-routing-and-ci-evidence/spec.md docs/03.specs/0049-platform-validation-and-security-evidence/spec.md docs/03.specs/0050-example-iac-and-validator-qa/spec.md docs/03.specs/0051-repository-assurance-integration-and-closure/spec.md docs/03.specs/README.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/99.templates/support/document-profiles.json
+  rtk git add docs/00.agent-governance/memory/progress.md docs/01.requirements/0007-repository-delivery-and-platform-assurance.md docs/01.requirements/README.md docs/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md docs/02.architecture/descriptions/README.md docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md docs/02.architecture/decisions/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/0048-github-routing-and-ci-evidence/spec.md docs/03.specs/0049-platform-validation-and-security-evidence/spec.md docs/03.specs/0050-example-iac-and-validator-qa/spec.md docs/03.specs/0051-repository-assurance-integration-and-closure/spec.md docs/03.specs/README.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/plan.md docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/03.specs/0051-repository-assurance-integration-and-closure/README.md#task-records docs/99.templates/registry.json
   rtk git commit -m "docs: close repository delivery assurance program"
   ```
 

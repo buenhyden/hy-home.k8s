@@ -130,7 +130,7 @@ limitations, logical commits, and unresolved blockers.
 - [Implementation Plan](plan.md)
 - [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
 - [Audit collection](../../90.references/audits/README.md)
-- [Document profile registry](../../99.templates/support/document-profiles.json)
+- [Document profile registry](../../99.templates/registry.json)
 - [RIA data owner](../../90.references/data/reference-information-architecture.json)
 - Direct human design approval and Spec approval on 2026-08-09
 ## Goals & In-Scope
@@ -224,7 +224,7 @@ limitations, logical commits, and unresolved blockers.
 
 - Modify Spec 054, `docs/03.specs/README.md`, this Plan, its Task,
   `docs/03.specs/0055-workspace-governance-audit-and-remediation/plan.md`, `docs/03.specs/0055-workspace-governance-audit-and-remediation/README.md#task-records`, and
-  `docs/99.templates/support/document-profiles.json` for the exact active
+  `docs/99.templates/registry.json` for the exact active
   standalone relation.
 - Update `docs/00.agent-governance/memory/progress.md` only with durable,
   bounded progress and terminal evidence; detailed worker reports remain under
@@ -234,7 +234,7 @@ limitations, logical commits, and unresolved blockers.
 
 - Modify `docs/90.references/audits/README.md` and, only if currentness wording
   requires it, `docs/90.references/README.md`.
-- Modify `docs/99.templates/support/document-profiles.json` so
+- Modify `docs/99.templates/registry.json` so
   `referenceCurrentPacks.packs` names only `audits/2026-08-09-wgia` with the
   exact nine non-README members.
 - Modify `docs/90.references/data/reference-information-architecture.json`,

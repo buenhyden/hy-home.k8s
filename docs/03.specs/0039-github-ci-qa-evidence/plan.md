@@ -657,7 +657,7 @@ def canonical_package_name(value: str) -> str:
     "name": "contract-bulk-document-escalation",
     "lane": "ci",
     "paths": [
-      "docs/99.templates/support/document-profiles.json",
+      "docs/99.templates/registry.json",
       "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md",
       "docs/98.archive/03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md"
     ],
@@ -1032,7 +1032,7 @@ def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
 - Modify: `docs/03.specs/0039-github-ci-qa-evidence/plan.md`
 - Modify: `docs/03.specs/0039-github-ci-qa-evidence/README.md#task-records`
 - Modify: `docs/03.specs/0039-github-ci-qa-evidence/README.md#task-records`
-- Modify: `docs/99.templates/support/document-profiles.json`
+- Modify: `docs/99.templates/registry.json`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
 - [x] **Step 1: Prepare the exact terminal lifecycle proposal.** Change Spec,

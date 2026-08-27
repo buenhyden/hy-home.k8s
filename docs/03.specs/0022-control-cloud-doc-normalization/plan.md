@@ -209,8 +209,8 @@ approved spec and plan traceable to concrete commits and validation evidence.
 
 - **Spec**: [../../03.specs/0022-control-cloud-doc-normalization/spec.md](spec.md)
 - **Tasks**: [../tasks/2026-07-06-control-cloud-doc-normalization.md](README.md#task-records)
-- **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/support/document-contract.md)
-- **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/document-contract.md)
+- **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/README.md)
+- **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/README.md)
 - **Documentation Protocol**: [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/document-authoring.md)
 
 ### Legacy Task traceability
@@ -218,5 +218,5 @@ approved spec and plan traceable to concrete commits and validation evidence.
 - **Spec**: [../../03.specs/0022-control-cloud-doc-normalization/spec.md](spec.md)
 - **Plan**: [../plans/2026-07-06-control-cloud-doc-normalization.md](plan.md)
 - **Previous Control Surface Spec**: [../../03.specs/0016-active-control-surface-governance-hardening/spec.md](../0016-active-control-surface-governance-hardening/spec.md)
-- **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/support/document-contract.md)
-- **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/document-contract.md)
+- **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/README.md)
+- **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/README.md)

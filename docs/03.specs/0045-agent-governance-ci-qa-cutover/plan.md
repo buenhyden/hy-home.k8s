@@ -184,7 +184,7 @@ python3 scripts/validate-document-contract-registry.py --root . --mode strict
 python3 scripts/validate-document-lifecycle.py --root . --mode staged
 python3 scripts/validate-markdown-profiles.py --root . --mode strict
 python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts registry
-python3 -m json.tool docs/99.templates/support/document-profiles.json
+python3 -m json.tool docs/99.templates/registry.json
 git diff --check
 ```
 
@@ -322,12 +322,12 @@ only in AGQC-006.
   `docs/03.specs/0045-agent-governance-ci-qa-cutover/README.md#task-records`,
   `docs/03.specs/README.md`, `docs/03.specs/0045-agent-governance-ci-qa-cutover/plan.md`,
   `docs/03.specs/0045-agent-governance-ci-qa-cutover/README.md#task-records`,
-  `docs/99.templates/support/document-profiles.json`, and
+  `docs/99.templates/registry.json`, and
   `docs/00.agent-governance/memory/progress.md`
 - **Later Planned Paths**: `.github/**`, `.pre-commit-config.yaml`,
   root provider shims, `.agents/**`, `.claude/**`, `.codex/**`, `.gemini/**`,
   `docs/00.agent-governance/**`, the reciprocal Spec/Plan/Task/index owners,
-  `docs/99.templates/support/document-profiles.json`, `scripts/**`, and
+  `docs/99.templates/registry.json`, `scripts/**`, and
   `tests/**`; each later package requires its own bounded implementation scope
 - **Forbidden Paths**: credentials, auth caches/files, shell history, provider
   response bodies, private prompts/transcripts, Vault/ESO values, live

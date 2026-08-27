@@ -415,7 +415,7 @@ secret-value check is part of acceptance.
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
 | N/A — the direct human-approved research consolidation has no separate PRD; PRD-0008 is a conflicting input to reconcile, not the authority for deletion. | VAL-WER-001 | Exact tracked-file inventory proves the declared pack shape. |
 | N/A — VAL-WER-002 shares the direct approved requirement source above. | VAL-WER-002 | Coverage uniqueness validation and review prove one primary owner per requested topic. |

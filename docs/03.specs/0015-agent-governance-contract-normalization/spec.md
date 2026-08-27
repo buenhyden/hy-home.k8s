@@ -86,7 +86,7 @@ Out of scope:
   - Validation & Automation: `.github/**`, shared hook scripts, repository
     validators, CI workflow, PR template, and validation evidence surfaces.
 - **Key Dependencies**:
-  - `docs/99.templates/support/template-routing.md` for authored document
+  - `docs/99.templates/README.md` for authored document
     route ownership.
   - `docs/00.agent-governance/rules/documentation-protocol.md` for language,
     template, README, and memory ledger coupling.
@@ -313,12 +313,12 @@ surfaces change.
 
 - **Governance Hub**: [../../00.agent-governance/README.md](../../00.agent-governance/README.md)
 - **Bootstrap Governance**: [../../00.agent-governance/rules/bootstrap.md](../../00.agent-governance/rules/bootstrap.md)
-- **Common Governance**: [../../00.agent-governance/common-governance.md](../../00.agent-governance/common-governance.md)
+- **Common Governance**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Harness Catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
-- **Harness Implementation Map**: [../../00.agent-governance/harness-implementation-map.md](../../00.agent-governance/harness-implementation-map.md)
+- **Harness Implementation Map**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Subagent Protocol**: [../../00.agent-governance/subagent-protocol.md](../../00.agent-governance/subagent-protocol.md)
-- **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/support/template-routing.md)
-- **Spec Template**: [../../99.templates/templates/sdlc/specs/spec.template.md](../../99.templates/templates/sdlc/specs/spec.template.md)
+- **Template Routing Contract**: [../../99.templates/README.md](../../99.templates/README.md)
+- **Spec Template**: [../../99.templates/templates/specs/spec.template.md](../../99.templates/templates/specs/spec.template.md)
 - **Plan**: `../../04.execution/plans/2026-07-04-agent-governance-contract-normalization.md`
 - **Tasks**: `../../04.execution/tasks/2026-07-04-agent-governance-contract-normalization.md`
 - **Current implementation contract**: This completed normalization is an input to [Spec 025](../0025-governance-owner-and-roster-currentness/spec.md).

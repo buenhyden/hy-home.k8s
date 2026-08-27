@@ -69,7 +69,7 @@ runtimes, credentials, secret values, or third-party systems.
 
 - **Parent Spec**: [../../03.specs/0017-workspace-engineering-research-pack/spec.md](spec.md)
 - **Parent Plan**: [../plans/2026-07-04-workspace-engineering-research-pack.md](plan.md)
-- **Task Template**: [../../99.templates/templates/sdlc/execution/task.template.md](../../99.templates/templates/sdlc/execution/task.template.md)
+- **Task Template**: [../../99.templates/templates/specs/task.template.md](../../99.templates/templates/specs/task.template.md)
 ## Goals & In-Scope
 
 - **Goals**:
@@ -200,7 +200,7 @@ non-authoritative in the document section where it is used.
 - Create: `docs/03.specs/0017-workspace-engineering-research-pack/README.md#task-records`
 - Modify: `docs/03.specs/0017-workspace-engineering-research-pack/README.md#task-records`
 - Modify: `docs/00.agent-governance/memory/progress.md`
-- Read: `docs/99.templates/templates/sdlc/execution/task.template.md`
+- Read: `docs/99.templates/templates/specs/task.template.md`
 - Read: `docs/03.specs/0017-workspace-engineering-research-pack/spec.md`
 
 - [ ] **Step 1: Confirm branch and clean state**
@@ -219,7 +219,7 @@ worktree is clean after this plan commit.
 Run:
 
 ```bash
-sed -n '1,220p' docs/99.templates/templates/sdlc/execution/task.template.md
+sed -n '1,220p' docs/99.templates/templates/specs/task.template.md
 sed -n '1,420p' docs/03.specs/0017-workspace-engineering-research-pack/spec.md
 ```
 
@@ -576,7 +576,7 @@ Update `spec-sdlc-ci-qa-formatting.md` so it covers:
 - [ ] **Step 3: Create automation/pipeline/workflow/QA reference**
 
 Create `automation-pipeline-workflow-qa.md` from
-`docs/99.templates/templates/common/reference.template.md` with:
+`docs/99.templates/templates/references/reference.template.md` with:
 
 ```yaml
 title: 'Reference: Automation Pipeline Workflow QA Research'
@@ -651,7 +651,7 @@ policy-as-code, supply-chain, and security statements.
 - [ ] **Step 2: Create Kubernetes/infrastructure/security reference**
 
 Create `kubernetes-infrastructure-security.md` from
-`docs/99.templates/templates/common/reference.template.md` with:
+`docs/99.templates/templates/references/reference.template.md` with:
 
 ```yaml
 title: 'Reference: Kubernetes Infrastructure Security Research'
@@ -822,7 +822,7 @@ Expected: final closure commit exists and no unresolved drift remains.
 | Evidence                                                        | Result                                                                                                                                             |
 | --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `git status --short --branch`                                   | `## codex/workspace-engineering-research-pack`; worktree clean at intake.                                                                          |
-| `docs/99.templates/templates/sdlc/execution/task.template.md`   | Read; task documents are traceability-first, English, and require validation evidence.                                                             |
+| `docs/99.templates/templates/specs/task.template.md`   | Read; task documents are traceability-first, English, and require validation evidence.                                                             |
 | `docs/03.specs/0017-workspace-engineering-research-pack/spec.md` | Read; confirms documentation-only pack, dated research folder, source-priority rules, validation criteria, and no live/external mutation boundary. |
 
 ### Research Inventory
@@ -902,7 +902,7 @@ Summary:
   `docs/90.references/research/spec-sdlc-ci-qa-formatting.md`,
   `docs/99.templates/README.md`, existing Stage 90 audits, the four flat
   research references, `scripts/README.md`,
-  `docs/99.templates/support/template-routing.md`, `gitops/README.md`,
+  `docs/99.templates/README.md`, `gitops/README.md`,
   `infrastructure/README.md`, and repo-static validation scripts.
 
 ### WER-002 Evidence Summary
@@ -1373,7 +1373,7 @@ Boundary statement:
   - `docs/03.specs/0017-workspace-engineering-research-pack/README.md#task-records`
   - `docs/03.specs/0017-workspace-engineering-research-pack/spec.md`
   - `docs/03.specs/0017-workspace-engineering-research-pack/plan.md`
-  - `docs/99.templates/templates/sdlc/execution/task.template.md`
+  - `docs/99.templates/templates/specs/task.template.md`
   - `docs/90.references/research`
   - `docs/90.references`
   - `docs/90.references/research/workspace-governance-baseline.md`
@@ -1391,7 +1391,7 @@ Boundary statement:
   - `docs/03.specs/0017-workspace-engineering-research-pack/README.md#task-records`
   - `docs/03.specs/0017-workspace-engineering-research-pack/spec.md`
   - `docs/03.specs/0017-workspace-engineering-research-pack/plan.md`
-  - `docs/99.templates/templates/sdlc/execution/task.template.md`
+  - `docs/99.templates/templates/specs/task.template.md`
 ## Completion Criteria
 
 - [x] Dated research pack folder exists.
@@ -1410,8 +1410,8 @@ Boundary statement:
 - **Prior Research Spec**: [Workspace Harness Research Pack](../0009-workspace-harness-research-pack/spec.md)
 - **Task**: [../tasks/2026-07-04-workspace-engineering-research-pack.md](README.md#task-records)
 - **Research README**: [../../90.references/research/README.md](../../90.references/research/README.md)
-- **Reference Template**: [../../99.templates/templates/common/reference.template.md](../../99.templates/templates/common/reference.template.md)
-- **Task Template**: [../../99.templates/templates/sdlc/execution/task.template.md](../../99.templates/templates/sdlc/execution/task.template.md)
+- **Reference Template**: [../../99.templates/templates/references/reference.template.md](../../99.templates/templates/references/reference.template.md)
+- **Task Template**: [../../99.templates/templates/specs/task.template.md](../../99.templates/templates/specs/task.template.md)
 - **Reference Maintenance Runbook**: [../../05.operations/runbooks/0011-reference-maintenance-runbook.md](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)
 
 ### Legacy Task traceability
@@ -1419,5 +1419,5 @@ Boundary statement:
 - **Spec**: [../../03.specs/0017-workspace-engineering-research-pack/spec.md](spec.md)
 - **Plan**: [../plans/2026-07-04-workspace-engineering-research-pack.md](plan.md)
 - **Research README**: [../../90.references/research/README.md](../../90.references/research/README.md)
-- **Reference Template**: [../../99.templates/templates/common/reference.template.md](../../99.templates/templates/common/reference.template.md)
-- **Task Template**: [../../99.templates/templates/sdlc/execution/task.template.md](../../99.templates/templates/sdlc/execution/task.template.md)
+- **Reference Template**: [../../99.templates/templates/references/reference.template.md](../../99.templates/templates/references/reference.template.md)
+- **Task Template**: [../../99.templates/templates/specs/task.template.md](../../99.templates/templates/specs/task.template.md)

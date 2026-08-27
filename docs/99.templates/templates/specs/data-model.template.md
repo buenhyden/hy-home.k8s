@@ -50,6 +50,6 @@ updated: YYYY-MM-DD
 
 ### Lifecycle Traceability
 
-| PRD requirement | Spec criterion | Verification method |
+| Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
-| REQ-FEATURE-001 | VAL-FEATURE-001 | Named schema, migration, or integrity test |
+| REQ-0001-NFR-0001 | VAL-FEATURE-001 | Named schema, migration, or integrity test |

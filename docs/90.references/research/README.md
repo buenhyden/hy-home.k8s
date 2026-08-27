@@ -35,7 +35,7 @@ with their canonical owners in `docs/00.agent-governance/`, `docs/03.specs/`,
 - Durable source ledgers and source-priority notes
 - Official-source and repo-backed evidence summaries
 - Non-authoritative market scan summaries when clearly labeled
-- Reference documents created from `docs/99.templates/templates/common/reference.template.md`
+- Reference documents created from `docs/99.templates/templates/references/reference.template.md`
 
 ### Out of Scope
 
@@ -100,7 +100,7 @@ order-prefix filenames for current reports.
 ## Add and Find
 
 1. Read the parent spec, plan, and task before adding or changing research pack material.
-2. Create authored reference documents with [reference.template.md](../../99.templates/templates/common/reference.template.md).
+2. Create authored reference documents with [reference.template.md](../../99.templates/templates/references/reference.template.md).
 3. Keep source claims factual, dated, and explicitly bounded by `Source checked`, `Sources`, and `Review and Freshness`.
 4. Prefer official documentation and repo-backed evidence over market scan material.
 5. Label market findings as non-authoritative, and do not use them to override official or repo-backed sources.
@@ -138,13 +138,13 @@ owners.
 
 - [90.references README](../README.md)
 - [Workspace Engineering Research Pack (2026-08-08)](./2026-08-08-wer/README.md)
-- [Workspace Engineering Research Pack Spec](../../03.specs/017-workspace-engineering-research-pack/spec.md)
+- [Workspace Engineering Research Pack Spec](../../03.specs/0017-workspace-engineering-research-pack/spec.md)
 - [Workspace Engineering Research Pack Plan](../../98.archive/README.md#document-index)
 - [Archive Index](../../98.archive/README.md#document-index)
-- [Workspace Harness Research Pack Spec](../../03.specs/009-workspace-harness-research-pack/spec.md)
-- [Workspace Harness Research Pack Plan](../../04.execution/plans/2026-07-02-workspace-harness-research-pack.md)
-- [Workspace Harness Research Pack Task](../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md)
-- [Reference Template](../../99.templates/templates/common/reference.template.md)
+- [Workspace Harness Research Pack Spec](../../03.specs/0009-workspace-harness-research-pack/spec.md)
+- [Workspace Harness Research Pack Plan](../../03.specs/0009-workspace-harness-research-pack/plan.md)
+- [Workspace Harness Research Pack Tasks](../../03.specs/0009-workspace-harness-research-pack/README.md)
+- [Reference Template](../../99.templates/templates/references/reference.template.md)
 - [Templates README](../../99.templates/README.md)
 - [Agent Governance Hub](../../00.agent-governance/README.md)
 - [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

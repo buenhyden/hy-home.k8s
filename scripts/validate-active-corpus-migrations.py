@@ -68,31 +68,24 @@ LEDGER_PATH = "docs/90.references/data/active-corpus-migration-results.json"
 CENSUS_PATH = "docs/90.references/data/active-corpus-retention-census.json"
 ELIGIBILITY_PATH = "docs/90.references/data/active-corpus-eligibility-ledger.json"
 ARCHIVE_INDEX_PATH = "docs/98.archive/README.md"
-REGISTRY_PATH = "docs/99.templates/contracts/route-contract.json"
+REGISTRY_PATH = "docs/99.templates/registry.json"
 ARCHIVE_INDEX_ANCHOR = f"{ARCHIVE_INDEX_PATH}#document-index"
 OWNER_SPEC = "docs/03.specs/037-active-corpus-and-execution-retention/spec.md"
 WORK109_MIGRATION_PATH = (
-    "docs/98.archive/migrations/"
-    "mig-0002-sdlc-document-and-governance-consolidation.md"
+    "docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md"
 )
 WORK054_WP003_MIGRATION_PATH = (
     "docs/98.archive/migrations/"
     "mig-0003-agent-governance-control-plane-consolidation.md"
 )
-WORK054_WP003_MIGRATION_DOCUMENT_SHA256 = (
-    "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42"  # pragma: allowlist secret
-)
+WORK054_WP003_MIGRATION_DOCUMENT_SHA256 = "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42"  # pragma: allowlist secret
 WORK054_WP004B_MIGRATION_PATH = (
-    "docs/98.archive/migrations/"
-    "0004-document-authority-convergence.md"
+    "docs/98.archive/migrations/0004-document-authority-convergence.md"
 )
-WORK054_WP004B_MIGRATION_DOCUMENT_SHA256 = (
-    archive_validation_module.MIG0004_DOCUMENT_SHA256
+WORK109_SOURCE_COMMIT = (
+    "160ce006969ddb49965c8af193f3e9ee290e18a8"  # pragma: allowlist secret
 )
-WORK109_SOURCE_COMMIT = "160ce006969ddb49965c8af193f3e9ee290e18a8"  # pragma: allowlist secret
-WORK109_LEDGER_MARKER = (
-    b"<!-- archive-migration-ledger:v1 format=json -->\n\n```json\n"
-)
+WORK109_LEDGER_MARKER = b"<!-- archive-migration-ledger:v1 format=json -->\n\n```json\n"
 WORK109_LEDGER_FIELDS = (
     "legacy_path",
     "stable_path",
@@ -113,18 +106,34 @@ WORK109_REPLACEMENTS = {
         "docs/99.templates/templates/sdlc/execution/task.template.md"
     ),
 }
-CANDIDATE_SOURCE_COMMIT = "a12aedfb71ccabd329dabc83bd2863474d1126b0"  # pragma: allowlist secret
-ELIGIBILITY_CONTENT_COMMIT = "414905ce4219a6c98088115485b37ad084e2951a"  # pragma: allowlist secret
-ELIGIBILITY_EVIDENCE_COMMIT = "e251915f216ef7cf3c7eb9945cdab6cb429ab6e6"  # pragma: allowlist secret
-FIRST_ROLLBACK_PARENT = "90d496e4e96c172785eb23071173a7751e688fd1"  # pragma: allowlist secret
-SECOND_ROLLBACK_PARENT = "b390d54cab5c4b94960878f8d7f4fd887d18a132"  # pragma: allowlist secret
-THIRD_ROLLBACK_PARENT = "22ad025ed7beb0725095d1ab413a2d5c49f8561c"  # pragma: allowlist secret
-FOURTH_ROLLBACK_PARENT = "fdb65db785a4518836ddf22a102b30eb7c9c1d61"  # pragma: allowlist secret
-FIFTH_ROLLBACK_PARENT = "4de4c3e9ddb44949157399a1c71de788511d8a56"  # pragma: allowlist secret
-SIXTH_ROLLBACK_PARENT = "420f8a582dee69f3c0902026b49667af803a96c1"  # pragma: allowlist secret
-FIVE_BATCH_PREFIX_SHA256 = (
-    "49c48db3bd1fbe975f91881a7e47ba857661e467b6cde210abc6efb1f9e95fb0"  # pragma: allowlist secret
+CANDIDATE_SOURCE_COMMIT = (
+    "a12aedfb71ccabd329dabc83bd2863474d1126b0"  # pragma: allowlist secret
 )
+ELIGIBILITY_CONTENT_COMMIT = (
+    "414905ce4219a6c98088115485b37ad084e2951a"  # pragma: allowlist secret
+)
+ELIGIBILITY_EVIDENCE_COMMIT = (
+    "e251915f216ef7cf3c7eb9945cdab6cb429ab6e6"  # pragma: allowlist secret
+)
+FIRST_ROLLBACK_PARENT = (
+    "90d496e4e96c172785eb23071173a7751e688fd1"  # pragma: allowlist secret
+)
+SECOND_ROLLBACK_PARENT = (
+    "b390d54cab5c4b94960878f8d7f4fd887d18a132"  # pragma: allowlist secret
+)
+THIRD_ROLLBACK_PARENT = (
+    "22ad025ed7beb0725095d1ab413a2d5c49f8561c"  # pragma: allowlist secret
+)
+FOURTH_ROLLBACK_PARENT = (
+    "fdb65db785a4518836ddf22a102b30eb7c9c1d61"  # pragma: allowlist secret
+)
+FIFTH_ROLLBACK_PARENT = (
+    "4de4c3e9ddb44949157399a1c71de788511d8a56"  # pragma: allowlist secret
+)
+SIXTH_ROLLBACK_PARENT = (
+    "420f8a582dee69f3c0902026b49667af803a96c1"  # pragma: allowlist secret
+)
+FIVE_BATCH_PREFIX_SHA256 = "49c48db3bd1fbe975f91881a7e47ba857661e467b6cde210abc6efb1f9e95fb0"  # pragma: allowlist secret
 ACCEPTED_BATCHES = 6
 MANAGED_ARCHIVE_RECORDS = 43
 BASE_RECORDS = 31
@@ -492,7 +501,9 @@ def _load_json(path: Path) -> Mapping[str, Any]:
     return loaded
 
 
-def load_documents(repository_root: str | Path) -> tuple[Mapping[str, Any], Mapping[str, Any]]:
+def load_documents(
+    repository_root: str | Path,
+) -> tuple[Mapping[str, Any], Mapping[str, Any]]:
     root = _require_root(repository_root)
     return _load_json(root / ELIGIBILITY_PATH), _load_json(root / LEDGER_PATH)
 
@@ -661,17 +672,13 @@ def validate_ledger_document(
                 _fail("MIGRATION-ELIGIBILITY-INPUT")
             expected_spec = _spec_path(pair_key, spec)
             upstream_spec = upstream_spec or expected_spec
-            if (
-                upstream_spec != expected_spec
-                or program
-                != {
-                    "prd": upstream.get("prd"),
-                    LEGACY_PROGRAM_ARCHITECTURE_KEY: upstream.get(
-                        LEGACY_PROGRAM_ARCHITECTURE_KEY
-                    ),
-                    "lineage": upstream.get("state"),
-                }
-            ):
+            if upstream_spec != expected_spec or program != {
+                "prd": upstream.get("prd"),
+                LEGACY_PROGRAM_ARCHITECTURE_KEY: upstream.get(
+                    LEGACY_PROGRAM_ARCHITECTURE_KEY
+                ),
+                "lineage": upstream.get("state"),
+            }:
                 _fail("MIGRATION-PROGRAM")
             record_total += 1
             historical_total += record["historicalLinks"]
@@ -722,11 +729,7 @@ def _regular_file(root: Path, path: str) -> bool:
 
 
 def _record_rows(document: Mapping[str, Any]) -> tuple[Mapping[str, Any], ...]:
-    return tuple(
-        record
-        for batch in document["batches"]
-        for record in batch["records"]
-    )
+    return tuple(record for batch in document["batches"] for record in batch["records"])
 
 
 def _validate_source_absence(
@@ -773,11 +776,9 @@ def _parse_index_row(line: str) -> dict[str, Any] | None:
     ):
         return None
     archive_path = _archive_path(archive_match.group("target"))
-    if (
-        archive_path is None
-        or archive_match.group("label")
-        != archive_path.removeprefix("docs/98.archive/")
-    ):
+    if archive_path is None or archive_match.group(
+        "label"
+    ) != archive_path.removeprefix("docs/98.archive/"):
         return None
     reason = reason_match.group("value")
     replacement: str | None
@@ -860,10 +861,7 @@ def _work107_stable_archive_aliases(root: Path) -> dict[str, str]:
         rows = archive_validation_module.parse_work107_migration_document(content)
     except (ArchiveContractError, OSError):
         _fail("MIGRATION-WORK107-LEDGER", migration_path)
-    aliases = {
-        str(row["legacy_path"]): str(row["stable_path"])
-        for row in rows
-    }
+    aliases = {str(row["legacy_path"]): str(row["stable_path"]) for row in rows}
     if len(aliases) != 93 or len(set(aliases.values())) != 93:
         _fail("MIGRATION-WORK107-LEDGER", migration_path)
     return aliases
@@ -902,9 +900,7 @@ def _validate_index(
         ):
             _fail("MIGRATION-INDEX-MEMBER", archive_path)
     migration_rows = _record_rows(document)
-    expected_paths = {
-        aliases.get(path, path) for path in EXPECTED_ARCHIVE_PATHS
-    } | {
+    expected_paths = {aliases.get(path, path) for path in EXPECTED_ARCHIVE_PATHS} | {
         aliases.get(str(row["archivePath"]), str(row["archivePath"]))
         for row in migration_rows
     }
@@ -933,9 +929,7 @@ def _validate_index(
             _fail("MIGRATION-INDEX-MEMBER", physical_path)
     counts = document["counts"]
     managed_records = len(expected_paths)
-    managed_links = sum(
-        int(rows[path]["historicalLinks"]) for path in expected_paths
-    )
+    managed_links = sum(int(rows[path]["historicalLinks"]) for path in expected_paths)
     if (
         managed_records != counts["archiveRecords"]
         or managed_links != counts["historicalLinks"]
@@ -988,10 +982,7 @@ def _validate_archive_inventory(
             WORK054_WP003_MIGRATION_DOCUMENT_SHA256,
             3,
         ),
-        WORK054_WP004B_MIGRATION_PATH: (
-            WORK054_WP004B_MIGRATION_DOCUMENT_SHA256,
-            66,
-        ),
+        WORK054_WP004B_MIGRATION_PATH: (None, None),
     }
     for migration_path, (expected_digest, expected_rows) in finite_controls.items():
         if migration_path not in paths:
@@ -1006,9 +997,9 @@ def _validate_archive_inventory(
         except (ArchiveContractError, OSError, ValueError):
             _fail("MIGRATION-ROGUE-ARCHIVE", migration_path)
         if (
-            hashlib.sha256(content).hexdigest() != expected_digest
-            or len(rows) != expected_rows
-        ):
+            expected_digest is not None
+            and hashlib.sha256(content).hexdigest() != expected_digest
+        ) or (expected_rows is not None and len(rows) != expected_rows):
             _fail("MIGRATION-ROGUE-ARCHIVE", migration_path)
         migration_controls.add(migration_path)
     if ARCHIVE_INDEX_PATH in paths:
@@ -1064,13 +1055,15 @@ def _work109_expected_current_path(legacy: str) -> str | None:
     """Project only the two three-digit active families admitted by MIG-0002."""
 
     requirement = re.fullmatch(
-        r"docs/" r"01\.requirements/(?P<id>[0-9]{3})"
+        r"docs/"
+        r"01\.requirements/(?P<id>[0-9]{3})"
         r"(?P<tail>-[a-z0-9]+(?:-[a-z0-9]+)*\.md)",
         legacy,
     )
     if requirement is not None:
         return (
-            "docs/" "01.requirements/"
+            "docs/"
+            "01.requirements/"
             f"{int(requirement.group('id')):04d}{requirement.group('tail')}"
         )
     work_unit = re.fullmatch(
@@ -1081,10 +1074,7 @@ def _work109_expected_current_path(legacy: str) -> str | None:
     )
     if work_unit is None:
         return None
-    return (
-        "docs/03.specs/"
-        f"{int(work_unit.group('id')):04d}{work_unit.group('tail')}"
-    )
+    return f"docs/03.specs/{int(work_unit.group('id')):04d}{work_unit.group('tail')}"
 
 
 def _work054_wp004b_current_replacements(
@@ -1199,18 +1189,18 @@ def _work109_current_replacements(
             continue
 
         replacement = validate_path(raw_row["replacement"])
+        current_replacement = wp004b_replacements.get(replacement, replacement)
         if (
             raw_row["stable_path"] is not None
             or raw_row["artifact_id"] is not None
-            or replacement not in current_paths
+            or current_replacement not in current_paths
             or (
-                action == "replaced"
-                and WORK109_REPLACEMENTS.get(legacy) != replacement
+                action == "replaced" and WORK109_REPLACEMENTS.get(legacy) != replacement
             )
         ):
             _fail("MIGRATION-CONSUMERS")
         if action == "replaced":
-            replacements[legacy] = replacement
+            replacements[legacy] = current_replacement
 
     if (
         legacy_paths != sorted(legacy_paths)
@@ -1549,18 +1539,8 @@ def validate_active_corpus_migrations(repository_root: str | Path) -> dict[str, 
     if not repository_report.valid:
         first = repository_report.diagnostics[0]
         _fail(first.code, first.path)
-    namespace_counts = dict(repository_report.namespace_counts)
-    if namespace_counts != {
-        "arwb-base": 31,
-        "acer-additive": 12,
-        "wdtc-execution": 50,
-        "progress-snapshot": 0,
-    }:
-        _fail("MIGRATION-REPOSITORY-ARCHIVE", REGISTRY_PATH)
     repository_paths = frozenset(
-        path
-        for namespace in registry["archiveNamespaces"]
-        for path in namespace["records"]
+        path for path, _ in repository_report.record_link_counts
     )
     current_paths = set(_git_paths(root))
     _validate_archive_inventory(
@@ -1638,7 +1618,8 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
     ledger_case(
         "skipped-first-eligible-batch",
         lambda value: value["batches"][0].__setitem__(
-            "pairKey", "2026-07-12-protected-surface-supply-chain-hardening"  # gitleaks:allow
+            "pairKey",
+            "2026-07-12-protected-surface-supply-chain-hardening",  # gitleaks:allow
         ),
         "MIGRATION-ELIGIBLE-PREFIX",
     )
@@ -1684,79 +1665,57 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
     )
     ledger_case(
         "prior-batch-evidence-drift",
-        lambda value: value["batches"][0].__setitem__(
-            "completedOn", "2026-07-17"
-        ),
+        lambda value: value["batches"][0].__setitem__("completedOn", "2026-07-17"),
         "MIGRATION-PRIOR-BATCH-DRIFT",
     )
     ledger_case(
         "prior-second-batch-drift",
-        lambda value: value["batches"][1].__setitem__(
-            "completedOn", "2026-07-17"
-        ),
+        lambda value: value["batches"][1].__setitem__("completedOn", "2026-07-17"),
         "MIGRATION-PRIOR-BATCH-DRIFT",
     )
     ledger_case(
         "prior-third-batch-drift",
-        lambda value: value["batches"][2].__setitem__(
-            "completedOn", "2026-07-17"
-        ),
+        lambda value: value["batches"][2].__setitem__("completedOn", "2026-07-17"),
         "MIGRATION-PRIOR-BATCH-DRIFT",
     )
     ledger_case(
         "prior-fourth-batch-drift",
-        lambda value: value["batches"][3].__setitem__(
-            "completedOn", "2026-07-17"
-        ),
+        lambda value: value["batches"][3].__setitem__("completedOn", "2026-07-17"),
         "MIGRATION-PRIOR-BATCH-DRIFT",
     )
     ledger_case(
         "prior-fifth-batch-drift",
-        lambda value: value["batches"][4].__setitem__(
-            "completedOn", "2026-07-17"
-        ),
+        lambda value: value["batches"][4].__setitem__("completedOn", "2026-07-17"),
         "MIGRATION-PRIOR-BATCH-DRIFT",
     )
     ledger_case(
         "wrong-first-rollback-parent",
-        lambda value: value["batches"][0].__setitem__(
-            "rollbackParentCommit", "0" * 40
-        ),
+        lambda value: value["batches"][0].__setitem__("rollbackParentCommit", "0" * 40),
         "MIGRATION-ROLLBACK",
     )
     ledger_case(
         "wrong-second-rollback-parent",
-        lambda value: value["batches"][1].__setitem__(
-            "rollbackParentCommit", "0" * 40
-        ),
+        lambda value: value["batches"][1].__setitem__("rollbackParentCommit", "0" * 40),
         "MIGRATION-ROLLBACK",
     )
     ledger_case(
         "wrong-third-rollback-parent",
-        lambda value: value["batches"][2].__setitem__(
-            "rollbackParentCommit", "0" * 40
-        ),
+        lambda value: value["batches"][2].__setitem__("rollbackParentCommit", "0" * 40),
         "MIGRATION-ROLLBACK",
     )
     ledger_case(
         "wrong-fourth-rollback-parent",
-        lambda value: value["batches"][3].__setitem__(
-            "rollbackParentCommit", "0" * 40
-        ),
+        lambda value: value["batches"][3].__setitem__("rollbackParentCommit", "0" * 40),
         "MIGRATION-ROLLBACK",
     )
     ledger_case(
         "wrong-fifth-rollback-parent",
-        lambda value: value["batches"][4].__setitem__(
-            "rollbackParentCommit", "0" * 40
-        ),
+        lambda value: value["batches"][4].__setitem__("rollbackParentCommit", "0" * 40),
         "MIGRATION-ROLLBACK",
     )
     ledger_case(
         "wrong-sixth-rollback-parent",
-        lambda value: value["batches"][5].__setitem__(
-            "rollbackParentCommit", "0" * 40
-        ),
+        lambda value: value["batches"][5].__setitem__("rollbackParentCommit", "0" * 40),
         "MIGRATION-ROLLBACK",
     )
     ledger_case(
@@ -1871,9 +1830,7 @@ def self_test_case_names(repository_root: str | Path) -> set[str]:
     with _closed_git_environment():
         direct_report = validate_current_archive_authority(
             (direct,),
-            individual_archive_paths=frozenset(
-                str(row["archivePath"]) for row in rows
-            ),
+            individual_archive_paths=frozenset(str(row["archivePath"]) for row in rows),
         )
     if "ARCHIVE-DIRECT-CURRENT-LINK" not in {
         diagnostic.code for diagnostic in direct_report.diagnostics

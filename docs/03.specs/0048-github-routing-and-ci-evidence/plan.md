@@ -180,7 +180,7 @@ import CLI side effects or duplicate route data.
   rtk python3 scripts/validate-markdown-profiles.py --root . --mode strict
   rtk python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts registry
   rtk git diff --check
-  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0048-github-routing-and-ci-evidence/spec.md docs/03.specs/README.md docs/03.specs/0048-github-routing-and-ci-evidence/plan.md docs/03.specs/0048-github-routing-and-ci-evidence/plan.md docs/03.specs/0048-github-routing-and-ci-evidence/README.md#task-records docs/03.specs/0048-github-routing-and-ci-evidence/README.md#task-records docs/99.templates/support/document-profiles.json
+  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0048-github-routing-and-ci-evidence/spec.md docs/03.specs/README.md docs/03.specs/0048-github-routing-and-ci-evidence/plan.md docs/03.specs/0048-github-routing-and-ci-evidence/plan.md docs/03.specs/0048-github-routing-and-ci-evidence/README.md#task-records docs/03.specs/0048-github-routing-and-ci-evidence/README.md#task-records docs/99.templates/registry.json
   rtk git commit -m "docs: activate github routing evidence plan"
   ```
 
@@ -319,7 +319,7 @@ import CLI side effects or duplicate route data.
   progress so Spec 049 becomes first unfinished, then commit closure.
 
   ```bash
-  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0048-github-routing-and-ci-evidence/spec.md docs/03.specs/README.md docs/03.specs/0048-github-routing-and-ci-evidence/plan.md docs/03.specs/0048-github-routing-and-ci-evidence/plan.md docs/03.specs/0048-github-routing-and-ci-evidence/README.md#task-records docs/03.specs/0048-github-routing-and-ci-evidence/README.md#task-records docs/99.templates/support/document-profiles.json
+  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0048-github-routing-and-ci-evidence/spec.md docs/03.specs/README.md docs/03.specs/0048-github-routing-and-ci-evidence/plan.md docs/03.specs/0048-github-routing-and-ci-evidence/plan.md docs/03.specs/0048-github-routing-and-ci-evidence/README.md#task-records docs/03.specs/0048-github-routing-and-ci-evidence/README.md#task-records docs/99.templates/registry.json
   rtk git commit -m "docs: record github routing closure"
   ```
 

@@ -6,12 +6,9 @@ from __future__ import annotations
 import argparse
 import bisect
 import collections
-import contextlib
-import copy
 import hashlib
 import html
 import importlib.util
-import io
 import json
 import os
 import posixpath
@@ -19,10 +16,8 @@ import re
 import stat
 import subprocess
 import sys
-import tempfile
-import time
 import unicodedata
-from dataclasses import dataclass, field as dataclass_field, replace
+from dataclasses import dataclass, field as dataclass_field
 from functools import lru_cache
 from pathlib import Path
 from pathlib import PurePosixPath
@@ -52,6 +47,15 @@ except ModuleNotFoundError:  # Imported as a repository-root test module.
         validate_work107_migration_rows,
     )
 
+try:
+    from archive_validation import (
+        validate_pinned_migration_recovery,
+    )
+except ModuleNotFoundError:  # Imported as a repository-root test module.
+    from scripts.archive_validation import (
+        validate_pinned_migration_recovery,
+    )
+
 from document_contracts import (
     Diagnostic,
     DocumentContractError,
@@ -76,6 +80,7 @@ from reference_information_architecture import (
     _GitError as RiaGitError,
     _read_commit_path as _read_ria_commit_path,
     load_agent_cutover_projections,
+    load_contract as load_ria_contract,
 )
 
 
@@ -107,7 +112,6 @@ WORK054_MIGRATION_SHA256 = "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8e
 WORK054_WP004B_MIGRATION_PATH = PurePosixPath(
     "docs/98.archive/migrations/0004-document-authority-convergence.md"
 )
-WORK054_WP004B_MIGRATION_SHA256 = "6c769973de12023d8021792df4257be1401ee27f7b8293f336263352f849a3f6"  # pragma: allowlist secret
 ARCHIVE_INDEX_BOUNDARY = "docs/98.archive/README.md#document-index"
 ARCHIVE_INDEX_PATH = PurePosixPath("docs/98.archive/README.md")
 DOCUMENT_TAXONOMY_SOURCE_COMMIT = (
@@ -367,31 +371,6 @@ WERPC_DISPOSITION_COLUMNS = (
     "reason and evidence",
 )
 WERPC_DELETION_DISPOSITION = "Deleted in WERPC-008 after cutover gate"
-FIXTURE_GIT_EXECUTABLE = "/usr/bin/git"
-FIXTURE_GIT_TIMEOUT_SECONDS = 10
-FIXTURE_GIT_MAX_STDOUT = 65_536
-FIXTURE_GIT_MAX_STDERR = 16_384
-FIXTURE_GIT_ENVIRONMENT = {
-    "HOME": "/nonexistent",
-    "PATH": "/usr/bin:/bin",
-    "LANG": "C",
-    "LC_ALL": "C",
-    "GIT_CONFIG_NOSYSTEM": "1",
-    "GIT_CONFIG_GLOBAL": "/dev/null",
-    "GIT_LITERAL_PATHSPECS": "1",
-    "GIT_NO_LAZY_FETCH": "1",
-    "GIT_NO_REPLACE_OBJECTS": "1",
-    "GIT_OPTIONAL_LOCKS": "0",
-    "GIT_TERMINAL_PROMPT": "0",
-}
-FIXTURE_GIT_ARGUMENTS = frozenset(
-    {
-        ("init", "-q"),
-        ("add", "--", "."),
-        ("commit", "-q", "-m", "fixture baseline"),
-        ("rev-parse", "HEAD"),
-    }
-)
 WERPC_PREDECESSOR_PATHS = frozenset(
     {
         "docs/90.references/research/2026-07-04-wer/README.md",
@@ -494,10 +473,6 @@ IMPLEMENTED_RULES = frozenset(
 )
 GOVERNANCE_CURRENT_README = PurePosixPath("docs/00.agent-governance/README.md")
 GOVERNANCE_CURRENT_HEADING = "### Current Governance Authority Index"
-FIXTURE_GOVERNANCE_PATHS = (
-    PurePosixPath("docs/00.agent-governance/current-alpha.md"),
-    PurePosixPath("docs/00.agent-governance/current-beta.md"),
-)
 STATUS_MAP = {
     "draft": "draft",
     "active": "active",
@@ -554,14 +529,6 @@ RETIRED_REFERENCE_TERMINAL_STATUSES = frozenset(
         "retired",
         "superseded",
     }
-)
-SMDV_CLOSURE_OWNER_PATHS = (
-    PurePosixPath("docs/03.specs/0029-semantic-document-validation/spec.md"),
-    PurePosixPath("docs/03.specs/0029-semantic-document-validation/plan.md"),
-)
-ADM_CLOSURE_OWNER_PATHS = (
-    PurePosixPath("docs/03.specs/0030-authored-document-migration/spec.md"),
-    PurePosixPath("docs/03.specs/0030-authored-document-migration/plan.md"),
 )
 
 
@@ -622,16 +589,6 @@ COLLECTION_INDEXES = (
         "### Structure",
         "2026-08-08-wer/",
         "## Report Index",
-        "section",
-        False,
-    ),
-    CollectionIndex(
-        PurePosixPath("docs/99.templates/support/README.md"),
-        PurePosixPath("docs/99.templates/support"),
-        re.compile(r"^docs/99\.templates/support/[^/]+\.(?:md|json)$"),
-        "## Item Index",
-        "support/",
-        "### Support Document Index",
         "section",
         False,
     ),
@@ -1263,6 +1220,131 @@ def _profile_view(profile: DocumentProfile) -> ProfileView:
     return ProfileView(profile.profile_id, profile.profile_class, profile.mode)
 
 
+def _terminal_governance_current_owners(
+    registry: Registry,
+    paths: Sequence[PurePosixPath],
+    profiles: Mapping[PurePosixPath, ProfileView],
+    metadata: Mapping[PurePosixPath, Mapping[str, Any]],
+) -> tuple[tuple[PurePosixPath, ...], tuple[str, ...]]:
+    """Derive Stage 00 current owners from the terminal profile lifecycle."""
+
+    owner_profiles = tuple(
+        profile
+        for profile in registry.profiles
+        if profile.profile_id == "governance/reference"
+    )
+    lifecycle_domain = owner_profiles[0].lifecycle_domain if len(owner_profiles) == 1 else None
+    allowed_states = (
+        tuple(
+            state
+            for state, validation_class in lifecycle_domain.states
+            if validation_class == "current"
+        )
+        if lifecycle_domain is not None
+        else ()
+    )
+    if (
+        len(owner_profiles) != 1
+        or owner_profiles[0].mode != "authored"
+        or not allowed_states
+        or not set(allowed_states).issubset(owner_profiles[0].status_domain)
+    ):
+        raise ConfigurationError(
+            "terminal governance current-owner profile is unavailable"
+        )
+    current = tuple(
+        sorted(
+            path
+            for path in paths
+            if profiles[path].profile_id == "governance/reference"
+            and profiles[path].mode == "authored"
+            and str(metadata[path].get("status", "")).casefold() in allowed_states
+        )
+    )
+    if not current:
+        raise ConfigurationError("terminal governance current-owner set is empty")
+    return current, allowed_states
+
+
+def _terminal_reference_current_packs(
+    registry: Registry,
+    contract: Mapping[str, Any],
+    paths: Sequence[PurePosixPath],
+    profiles: Mapping[PurePosixPath, ProfileView],
+    metadata: Mapping[PurePosixPath, Mapping[str, Any]],
+) -> ReferenceCurrentPacks:
+    """Derive Stage 90 current packs from the schema-validated RIA owner."""
+
+    reference_profiles = tuple(
+        profile
+        for profile in registry.profiles
+        if profile.profile_id == "content/reference"
+    )
+    baselines = contract.get("currentPackBaselines")
+    if (
+        len(reference_profiles) != 1
+        or reference_profiles[0].mode not in {"authored", "classification-only"}
+        or not isinstance(baselines, Mapping)
+        or not baselines
+    ):
+        raise ConfigurationError("terminal reference Current-pack owner is unavailable")
+    status_domain = reference_profiles[0].status_domain
+    packs: list[ReferenceCurrentPack] = []
+    for pack_id, baseline in sorted(baselines.items()):
+        if (
+            not isinstance(pack_id, str)
+            or re.fullmatch(r"[a-z0-9][a-z0-9-]*(?:/[a-z0-9][a-z0-9-]*)+", pack_id)
+            is None
+            or not isinstance(baseline, str)
+            or GIT_SHA1_PATTERN.fullmatch(baseline) is None
+        ):
+            raise ConfigurationError("terminal reference Current-pack identity differs")
+        pack_root = PurePosixPath("docs/90.references") / pack_id
+        pack_readme = pack_root / "README.md"
+        collection_readme = pack_root.parent / "README.md"
+        if pack_readme not in paths or collection_readme not in paths:
+            raise ConfigurationError(
+                "terminal reference Current-pack router is missing"
+            )
+        members = tuple(
+            sorted(
+                path.name
+                for path in paths
+                if path.parent == pack_root
+                and path != pack_readme
+                and path.suffix == ".md"
+                and profiles[path].profile_id == "content/reference"
+                and profiles[path].mode in {"authored", "classification-only"}
+            )
+        )
+        member_states = {
+            str(metadata[pack_root / member].get("status", "")).casefold()
+            for member in members
+        }
+        if (
+            not members
+            or "" in member_states
+            or not member_states.issubset(status_domain)
+        ):
+            raise ConfigurationError(
+                "terminal reference Current-pack members are malformed"
+            )
+        allowed_states = tuple(
+            state for state in status_domain if state in member_states
+        )
+        packs.append(
+            ReferenceCurrentPack(
+                id=pack_id,
+                allowed_states=allowed_states,
+                members=members,
+            )
+        )
+    return ReferenceCurrentPacks(
+        profile_id=reference_profiles[0].profile_id,
+        packs=tuple(packs),
+    )
+
+
 def _build_context(
     root: Path, include_paths: tuple[PurePosixPath, ...] = ()
 ) -> Context:
@@ -1281,11 +1363,19 @@ def _build_context(
         metadata[path] = _frontmatter(text)
         if path == LEDGER_PATH:
             ledger_bytes = (root / path).read_bytes()
-    ria_contract_text = (
-        read_repository_text(root, RIA_CONTRACT_PATH)
-        if (root / RIA_CONTRACT_PATH).exists()
-        else None
-    )
+    try:
+        ria_contract = load_ria_contract(root, Path(RIA_CONTRACT_PATH.as_posix()))
+        ria_contract_text = read_repository_text(root, RIA_CONTRACT_PATH)
+    except (
+        DocumentContractError,
+        RiaContractError,
+        RiaGitError,
+        OSError,
+        ValueError,
+    ) as exc:
+        raise ConfigurationError(
+            "terminal reference Current-pack authority is unavailable"
+        ) from exc
     adapters: dict[PurePosixPath, PurePosixPath] = {}
     for adapter in inventory.current_symlink_paths:
         raw_target = os.readlink(root / adapter)
@@ -1308,6 +1398,21 @@ def _build_context(
         )
         if entry.stage == 0 and entry.mode in {"100644", "100755"}
     )
+    governance_current_paths, governance_current_states = (
+        _terminal_governance_current_owners(
+            registry,
+            inventory.current_paths,
+            profiles,
+            metadata,
+        )
+    )
+    reference_current_packs = _terminal_reference_current_packs(
+        registry,
+        ria_contract,
+        inventory.current_paths,
+        profiles,
+        metadata,
+    )
     return Context(
         root,
         inventory.current_paths,
@@ -1316,13 +1421,13 @@ def _build_context(
         texts,
         metadata,
         adapters,
-        registry.governance_current_owners.paths,
-        registry.governance_current_owners.allowed_states,
-        registry.reference_current_packs,
+        governance_current_paths,
+        governance_current_states,
+        reference_current_packs,
         tracked_regular_paths,
         ledger_bytes,
         ria_contract_text,
-        registry.route_state,
+        getattr(registry, "route_state", "terminal"),
     )
 
 
@@ -3081,7 +3186,9 @@ def _work109_migration_projection(
             artifact_id = row.get("artifact_id")
             expected = _work109_expected_stable_path(legacy)
             has_wp004b_cutover = expected in wp004b_targets
-            current_target = wp004b_targets.get(expected) if expected is not None else None
+            current_target = (
+                wp004b_targets.get(expected) if expected is not None else None
+            )
             if current_target is None:
                 current_target = expected
             if (
@@ -3113,6 +3220,13 @@ def _work109_migration_projection(
         replacement_value = row.get("replacement")
         expected_map = WORK109_REPLACEMENTS if action == "replaced" else WORK109_MERGES
         expected_replacement = expected_map.get(legacy)
+        current_replacement = (
+            wp004b_targets.get(expected_replacement)
+            if expected_replacement is not None
+            else None
+        )
+        if current_replacement is None:
+            current_replacement = expected_replacement
         if (
             action not in {"replaced", "merged"}
             or row.get("stable_path") is not None
@@ -3120,22 +3234,22 @@ def _work109_migration_projection(
             or not isinstance(replacement_value, str)
             or expected_replacement is None
             or replacement_value != expected_replacement.as_posix()
-            or expected_replacement not in context.tracked_regular_paths
+            or current_replacement not in context.tracked_regular_paths
             or not _path_exists_without_dereference(
-                context.root, expected_replacement, context.adapter_targets
+                context.root, current_replacement, context.adapter_targets
             )
         ):
             raise ConfigurationError("WORK-109 migration ledger replacement differs")
         if action == "replaced":
-            replacements[legacy] = expected_replacement
+            replacements[legacy] = current_replacement
         else:
-            merges[legacy] = expected_replacement
+            merges[legacy] = current_replacement
 
     if (
         len(aliases) != 141
         or len(pre_cutover_stable_paths) != 141
-        or replacements != WORK109_REPLACEMENTS
-        or merges != WORK109_MERGES
+        or set(replacements) != set(WORK109_REPLACEMENTS)
+        or set(merges) != set(WORK109_MERGES)
     ):
         raise ConfigurationError("WORK-109 migration ledger coverage differs")
     return aliases, replacements, merges
@@ -3144,7 +3258,7 @@ def _work109_migration_projection(
 def _work054_wp004b_targets(
     context: Context,
 ) -> dict[PurePosixPath, PurePosixPath]:
-    """Return the exact terminal targets sealed by MIG-0004."""
+    """Return terminal targets from MIG-0004's row-level recovery proof."""
 
     if (
         WORK054_WP004B_MIGRATION_PATH not in context.paths
@@ -3152,49 +3266,26 @@ def _work054_wp004b_targets(
     ):
         raise ConfigurationError("WORK-054 WP-004B migration ledger is unavailable")
     text = context.texts.get(WORK054_WP004B_MIGRATION_PATH)
-    if (
-        text is None
-        or hashlib.sha256(text.encode("utf-8")).hexdigest()
-        != WORK054_WP004B_MIGRATION_SHA256
-    ):
-        raise ConfigurationError("WORK-054 WP-004B migration ledger differs")
-    metadata = context.metadata.get(WORK054_WP004B_MIGRATION_PATH, {})
-    if (
-        metadata.get("artifact_id") != "MIG-0004"
-        or metadata.get("migration_id") != "MIG-0004"
-        or metadata.get("status") != "sealed"
-    ):
-        raise ConfigurationError("WORK-054 WP-004B migration identity differs")
-    marker = f"{WORK109_LEDGER_MARKER}\n\n```json\n"
-    if text.count(marker) != 1:
-        raise ConfigurationError("WORK-054 WP-004B migration ledger differs")
-    _prefix, remainder = text.split(marker, 1)
-    raw, fence, _suffix = remainder.partition("\n```\n")
-    if not fence:
+    if text is None:
         raise ConfigurationError("WORK-054 WP-004B migration ledger differs")
     try:
-        rows = json.loads(raw)
-    except (json.JSONDecodeError, UnicodeError) as exc:
-        raise ConfigurationError("WORK-054 WP-004B migration ledger differs") from exc
-    if not isinstance(rows, list) or len(rows) != 66:
-        raise ConfigurationError("WORK-054 WP-004B migration coverage differs")
+        rows = validate_pinned_migration_recovery(
+            context.root,
+            WORK054_WP004B_MIGRATION_PATH.as_posix(),
+            text.encode("utf-8"),
+        )
+    except (ArchiveContractError, OSError, UnicodeError, ValueError) as exc:
+        raise ConfigurationError(
+            "WORK-054 WP-004B migration recovery proof differs"
+        ) from exc
     targets: dict[PurePosixPath, PurePosixPath] = {}
-    previous: str | None = None
-    counts = {"moved": 0, "replaced": 0, "merged": 0}
     for row in rows:
-        if not isinstance(row, Mapping):
-            raise ConfigurationError("WORK-054 WP-004B migration row differs")
-        legacy_value = row.get("legacy_path")
         action = row.get("action")
-        target_value = row.get("stable_path") if action == "moved" else row.get("replacement")
-        if (
-            not isinstance(legacy_value, str)
-            or not isinstance(target_value, str)
-            or action not in counts
-            or row.get("source_commit")
-            != "211e167f9ef0268c937303faa82d7ed297b33e38"  # pragma: allowlist secret -- sealed migration source commit
-            or (previous is not None and legacy_value <= previous)
-        ):
+        legacy_value = row.get("legacy_path")
+        target_value = (
+            row.get("stable_path") if action == "moved" else row.get("replacement")
+        )
+        if not isinstance(legacy_value, str) or not isinstance(target_value, str):
             raise ConfigurationError("WORK-054 WP-004B migration row differs")
         legacy = PurePosixPath(legacy_value)
         target = PurePosixPath(target_value)
@@ -3213,10 +3304,6 @@ def _work054_wp004b_targets(
         ):
             raise ConfigurationError("WORK-054 WP-004B migration target differs")
         targets[legacy] = target
-        counts[action] += 1
-        previous = legacy_value
-    if counts != {"moved": 8, "replaced": 56, "merged": 2}:
-        raise ConfigurationError("WORK-054 WP-004B migration coverage differs")
     return targets
 
 
@@ -3677,6 +3764,153 @@ def _reviewed_completed_history_alias_edges(
     )
 
 
+def _terminal_historical_source_boundary(
+    context: Context,
+    source: PurePosixPath,
+) -> str | None:
+    """Return the validated Git boundary for one frozen Stage 90 source path."""
+
+    if (
+        context.ria_contract_text is None
+        or source not in context.paths
+        or source not in context.tracked_regular_paths
+    ):
+        return None
+    try:
+        contract = json.loads(context.ria_contract_text)
+    except (json.JSONDecodeError, UnicodeError) as exc:
+        raise ConfigurationError(
+            "terminal historical source authority is malformed"
+        ) from exc
+    if not isinstance(contract, Mapping):
+        raise ConfigurationError("terminal historical source authority is malformed")
+
+    candidates: list[
+        tuple[PurePosixPath, str, frozenset[str] | None, frozenset[str] | None]
+    ] = []
+    snapshot = contract.get("snapshotGuard")
+    if not isinstance(snapshot, Mapping):
+        raise ConfigurationError("terminal historical source authority is malformed")
+    snapshot_commit = snapshot.get("sourceCommit")
+    snapshot_ids = snapshot.get("historicalPackIds")
+    if (
+        not isinstance(snapshot_commit, str)
+        or GIT_SHA1_PATTERN.fullmatch(snapshot_commit) is None
+        or not isinstance(snapshot_ids, list)
+        or not snapshot_ids
+        or any(not isinstance(pack_id, str) for pack_id in snapshot_ids)
+        or len(snapshot_ids) != len(set(snapshot_ids))
+    ):
+        raise ConfigurationError("terminal historical source authority is malformed")
+    for pack_id in snapshot_ids:
+        candidates.append(
+            (
+                PurePosixPath("docs/90.references") / pack_id,
+                snapshot_commit.removeprefix("git-sha1:"),
+                None,
+                None,
+            )
+        )
+
+    retired = contract.get("retiredCurrentPackBaselines")
+    if not isinstance(retired, list):
+        raise ConfigurationError("terminal historical source authority is malformed")
+    for entry in retired:
+        if not isinstance(entry, Mapping):
+            raise ConfigurationError(
+                "terminal historical source authority is malformed"
+            )
+        pack_id = entry.get("id")
+        encoded_commit = entry.get("sourceCommit")
+        members = entry.get("members")
+        allowed_states = entry.get("allowedStates")
+        if (
+            not isinstance(pack_id, str)
+            or not isinstance(encoded_commit, str)
+            or GIT_SHA1_PATTERN.fullmatch(encoded_commit) is None
+            or not isinstance(members, list)
+            or not members
+            or any(
+                not isinstance(member, str)
+                or PurePosixPath(member).name != member
+                or PurePosixPath(member).suffix != ".md"
+                for member in members
+            )
+            or len(members) != len(set(members))
+            or not isinstance(allowed_states, list)
+            or not allowed_states
+            or any(not isinstance(state, str) for state in allowed_states)
+            or len(allowed_states) != len(set(allowed_states))
+        ):
+            raise ConfigurationError(
+                "terminal historical source authority is malformed"
+            )
+        candidates.append(
+            (
+                PurePosixPath("docs/90.references") / pack_id,
+                encoded_commit.removeprefix("git-sha1:"),
+                frozenset(members),
+                frozenset(allowed_states),
+            )
+        )
+
+    matches: list[str] = []
+    for pack_root, boundary, exact_members, allowed_states in candidates:
+        if source == pack_root / "README.md":
+            profile = context.profiles.get(source)
+            if profile is not None and profile.profile_id == "readme/snapshot-pack":
+                matches.append(boundary)
+            continue
+        if source.parent != pack_root or source.suffix != ".md":
+            continue
+        profile = context.profiles.get(source)
+        status = context.metadata.get(source, {}).get("status")
+        if profile is None or profile.profile_id != "content/reference":
+            continue
+        if exact_members is not None and source.name not in exact_members:
+            continue
+        if allowed_states is not None and status not in allowed_states:
+            continue
+        if allowed_states is None and status not in {
+            "draft",
+            "active",
+            "accepted",
+            "done",
+            "archived",
+        }:
+            continue
+        matches.append(boundary)
+    if len(matches) > 1:
+        raise ConfigurationError("terminal historical source authority is ambiguous")
+    return matches[0] if matches else None
+
+
+def _terminal_frozen_manifest_source(
+    context: Context,
+    source: PurePosixPath,
+) -> bool:
+    """Admit one byte-frozen cloud snapshot source from the reviewed manifest."""
+
+    expected_blob = IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS.get(source)
+    cloud_root = PurePosixPath("docs/90.references/cloud-examples")
+    if (
+        expected_blob is None
+        or not source.is_relative_to(cloud_root)
+        or source not in context.paths
+        or source not in context.tracked_regular_paths
+    ):
+        return False
+    profile = context.profiles.get(source)
+    if profile is None or profile.profile_id not in {
+        "content/reference",
+        "readme/collection-index",
+        "readme/snapshot-pack",
+    }:
+        return False
+    text = context.texts.get(source)
+    return text is not None and _git_sha1_blob(text) == expected_blob
+
+
 def _reviewed_source_pinned_alias_edges(
     context: Context,
     move_targets: Mapping[PurePosixPath, PurePosixPath],
@@ -3753,10 +3987,7 @@ def _reviewed_source_pinned_alias_edges(
             and len(source_blobs) != expected_source_count
         )
         or contributing_sources != set(source_blobs)
-        or (
-            expected_edge_count is not None
-            and len(edges) != expected_edge_count
-        )
+        or (expected_edge_count is not None and len(edges) != expected_edge_count)
         or (
             expected_occurrence_count is not None
             and occurrence_count != expected_occurrence_count
@@ -3777,11 +4008,9 @@ def _reviewed_work054_historical_owner_edges(
 ) -> dict[ArchiveTransitionEdge, PurePosixPath]:
     """Resolve rendered retired links through the sealed migration chain."""
 
-    if context.route_state != "transition":
-        return {}
-    del move_targets
     aliases, replacements, work109_merges = _work109_migration_projection(context)
     migration_projections = (
+        move_targets,
         aliases,
         replacements,
         work109_merges,
@@ -3812,8 +4041,18 @@ def _reviewed_work054_historical_owner_edges(
         if terminal != retired:
             terminal_redirects[retired] = terminal
 
+    reviewed_sources: set[PurePosixPath] = set()
+    for source in context.paths:
+        if _terminal_historical_source_boundary(
+            context, source
+        ) or _terminal_frozen_manifest_source(context, source):
+            reviewed_sources.add(source)
     edges: dict[ArchiveTransitionEdge, PurePosixPath] = {}
-    for source, text in context.texts.items():
+    for source in sorted(reviewed_sources):
+        text = context.texts.get(source)
+        if text is None:
+            continue
+        candidates: list[tuple[PurePosixPath, PurePosixPath]] = []
         for raw in _extract_links(text):
             kind, target = _local_destination(source, raw)
             if kind != "local" or target is None:
@@ -3823,6 +4062,11 @@ def _reviewed_work054_historical_owner_edges(
                 context.root, target, context.adapter_targets
             ):
                 continue
+            candidates.append((target, replacement))
+        if not candidates:
+            continue
+
+        for target, replacement in candidates:
             if (
                 replacement not in context.tracked_regular_paths
                 or not _path_exists_without_dereference(
@@ -3840,9 +4084,7 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
     diagnostics: list[Diagnostic] = []
     archive_handoff = _archive_transition_handoff(context)
     deferred_archive_edges = frozenset(archive_handoff.edges)
-    move_targets: dict[PurePosixPath, PurePosixPath] = {}
-    if context.route_state == "transition":
-        _, move_targets, _ = _document_taxonomy_transition_manifest(context)
+    _, move_targets, _ = _document_taxonomy_transition_manifest(context)
     reviewed_stage90_move_edges = _reviewed_stage90_move_edges(context, move_targets)
     reviewed_historical_alias_edges = _reviewed_immutable_historical_alias_edges(
         context,
@@ -3923,7 +4165,7 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
                         source,
                         profile,
                         "existing repository target",
-                        "target is missing",
+                        target.as_posix(),
                     )
                 )
                 continue
@@ -4546,33 +4788,8 @@ def lifecycle_markdown_evidence(
         relationship_links = tuple(collected)
         unresolved_relationship_links = tuple(unresolved)
     else:
-        heading = profile.role_decision.relationship_section
-        section = (
-            _exact_rendered_heading_section(text, f"## {heading}")
-            if heading is not None
-            else None
-        )
-        relationship_section_valid = section is not None
-        if section is not None:
-            rendered_definitions = _rendered_markdown(text)
-            raw_relationship_links = local_links(
-                _extract_rendered_links(
-                    section, definitions_rendered=rendered_definitions
-                )
-            )
-            relationship_links = tuple(
-                target
-                for target in raw_relationship_links
-                if target in snapshot_profiles
-            )
-            unresolved_relationship_links = tuple(
-                target
-                for target in raw_relationship_links
-                if target not in snapshot_profiles
-            )
-        body_contract_valid = (
-            required_headings_valid and allowed_headings_valid and section is not None
-        )
+        relationship_section_valid = required_headings_valid and allowed_headings_valid
+        body_contract_valid = relationship_section_valid
 
     task_terminal_valid = True
     if profile.profile_id == "sdlc/task":
@@ -4650,9 +4867,7 @@ PROGRAM_TRANSITION_OWNER_CONTRACTS = {
     ),
     "sdlc/ad": (
         "sdlc/ad",
-        re.compile(
-            r"^docs/02\.architecture/descriptions/({identifier})-[^/]+\.md$"
-        ),
+        re.compile(r"^docs/02\.architecture/descriptions/({identifier})-[^/]+\.md$"),
     ),
 }
 PROGRAM_LIFECYCLE_AUTHORITY = {
@@ -4672,7 +4887,10 @@ def _program_owner_path(
 
     owner_profile_id = profile_id
     pattern_template = PROGRAM_PATHS[profile_id].pattern
-    if context.route_state == "transition" and profile_id in PROGRAM_TRANSITION_OWNER_CONTRACTS:
+    if (
+        context.route_state == "transition"
+        and profile_id in PROGRAM_TRANSITION_OWNER_CONTRACTS
+    ):
         owner_profile_id, pattern = PROGRAM_TRANSITION_OWNER_CONTRACTS[profile_id]
         pattern_template = pattern.pattern
     pattern = re.compile(pattern_template.format(identifier=re.escape(identifier)))
@@ -5459,6 +5677,8 @@ def _historical_exception_diagnostics(
     program: ProgramLineage,
     follow_up: ProgramFollowUp,
 ) -> list[Diagnostic]:
+    if context.route_state == "terminal":
+        return []
     if follow_up.evidence_mode != "successor-record":
         return []
     spec = _program_owner_path(context, "sdlc/spec", follow_up.spec_id)
@@ -5794,7 +6014,9 @@ def _program_execution_diagnostics(
         package_task_targets = {
             task: _program_local_targets(context, task) for task in package_tasks
         }
-        plan_targets = graph.get(plans[0], frozenset()) if len(plans) == 1 else frozenset()
+        plan_targets = (
+            graph.get(plans[0], frozenset()) if len(plans) == 1 else frozenset()
+        )
         package_direct_spec_links = (
             len(plans) == 1
             and spec in plan_targets
@@ -5806,9 +6028,8 @@ def _program_execution_diagnostics(
             and all(plans[0] in package_task_targets[task] for task in package_tasks)
             and any(task in plan_targets for task in package_tasks)
         )
-        package_component_complete = (
-            len(plans) == 1
-            and set(tasks) == set(current_package_tasks)
+        package_component_complete = len(plans) == 1 and set(tasks) == set(
+            current_package_tasks
         )
         package_statuses = tuple(
             _program_status(context, task) for task in package_tasks
@@ -5998,7 +6219,12 @@ def _standalone_execution_diagnostics(
         assert spec is not None and decision is not None
         for path in (spec, plan, task):
             actual_state = _program_status(context, path)
-            if actual_state != relation.state:
+            task_current_state = (
+                path == task
+                and relation.state == "active"
+                and actual_state in PROGRAM_CURRENT_TASK_STATES
+            )
+            if actual_state != relation.state and not task_current_state:
                 diagnostics.append(
                     _diag(
                         "STANDALONE-EXECUTION-STATE",
@@ -6071,13 +6297,13 @@ def _standalone_execution_diagnostics(
         if relation.state == "active":
             component = _current_execution_component(context, spec, execution_index)
             owned_paths.update(component)
-            if set(component) != {plan, task}:
+            if plan not in component or task not in component:
                 diagnostics.append(
                     _diag(
                         "STANDALONE-EXECUTION-COMPONENT",
                         spec,
                         "sdlc/spec",
-                        "exactly the declared active Plan and Task execution component",
+                        "declared active Plan and Task included in the execution component",
                         repr([path.as_posix() for path in component]),
                     )
                 )
@@ -6605,6 +6831,8 @@ def _governance_mirror_rows(
 
 def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
     diagnostics: list[Diagnostic] = []
+    if not context.governance_current_paths:
+        return diagnostics
     declared = set(context.governance_current_paths)
     allowed = set(context.governance_current_states)
     for path in context.governance_current_paths:
@@ -6844,6 +7072,8 @@ def _reference_pack_rows(
 
 def _reference_current_pack_diagnostics(context: Context) -> list[Diagnostic]:
     diagnostics: list[Diagnostic] = []
+    if not context.reference_current_packs.packs:
+        return diagnostics
     for pack in context.reference_current_packs.packs:
         collection = pack.id.split("/", 1)[0]
         collection_profile = context.profiles[pack.collection_readme].profile_id
@@ -6923,7 +7153,7 @@ def _reference_current_pack_diagnostics(context: Context) -> list[Diagnostic]:
             if (
                 profile is None
                 or profile.profile_id != context.reference_current_packs.profile_id
-                or profile.mode != "authored"
+                or profile.mode not in {"authored", "classification-only"}
             ):
                 diagnostics.append(
                     _diag(
@@ -6932,7 +7162,7 @@ def _reference_current_pack_diagnostics(context: Context) -> list[Diagnostic]:
                         profile.profile_id
                         if profile
                         else context.reference_current_packs.profile_id,
-                        f"authored {context.reference_current_packs.profile_id}",
+                        f"authorized {context.reference_current_packs.profile_id}",
                         "declared member is missing or has the wrong profile",
                     )
                 )
@@ -7198,37 +7428,18 @@ def _protected_historical_predecessor_link(
         if expected_pack not in raw_packs:
             return False
         return source_bytes == context.texts[source].encode("utf-8")
-    guard = contract.get("snapshotGuard")
-    if not isinstance(guard, dict):
+    boundary = _terminal_historical_source_boundary(context, source)
+    if boundary is None:
         return False
-    encoded = guard.get("sourceCommit")
-    historical_pack_ids = guard.get("historicalPackIds")
-    if (
-        not isinstance(encoded, str)
-        or GIT_SHA1_PATTERN.fullmatch(encoded) is None
-        or not isinstance(historical_pack_ids, list)
-        or not historical_pack_ids
-        or any(not isinstance(pack_id, str) for pack_id in historical_pack_ids)
-        or len(historical_pack_ids) != len(set(historical_pack_ids))
-    ):
-        return False
-    matching_packs = [
-        pack_id
-        for pack_id in historical_pack_ids
-        if source.is_relative_to(PurePosixPath("docs/90.references") / pack_id)
-    ]
-    if len(matching_packs) != 1:
-        return False
-    oid = encoded.removeprefix("git-sha1:")
     try:
-        source_bytes = _read_ria_commit_path(
+        _read_ria_commit_path(
             context.root,
-            oid,
+            boundary,
             Path(source.as_posix()),
         )
     except (RiaContractError, RiaGitError):
         return False
-    return source_bytes == context.texts[source].encode("utf-8")
+    return True
 
 
 def _work105_accepted_history_source(
@@ -7547,6 +7758,8 @@ def _ledger_diagnostics(context: Context) -> list[Diagnostic]:
                     "empty required cell",
                 )
             )
+    if context.route_state == "terminal":
+        return diagnostics
     counter = collections.Counter(ledger_paths)
     if not protected:
         # The ledger records one authored-document migration. Its coverage
@@ -7908,5082 +8121,6 @@ def _text_rows(rows: list[tuple[str, Diagnostic]]) -> list[str]:
     ]
 
 
-def _fixture_context(root: Path, tree: dict[str, Any]) -> Context:
-    if list(tree) != [
-        "documents",
-        "collectionArtifacts",
-        "declaredIndexes",
-        "ledgerColumns",
-        "symlinkAdapters",
-        "governanceCurrentOwners",
-        "governanceMirrorPath",
-        "referenceCurrentPacks",
-    ]:
-        raise ConfigurationError("fixture baseTree keys differ")
-    documents = tree["documents"]
-    if not isinstance(documents, list):
-        raise ConfigurationError("fixture documents must be a list")
-    document_keys = [
-        "path",
-        "profile",
-        "profileClass",
-        "mode",
-        "title",
-        "type",
-        "status",
-        "body",
-    ]
-    if any(
-        not isinstance(item, dict) or list(item) != document_keys for item in documents
-    ):
-        raise ConfigurationError("fixture document keys differ")
-    paths = tuple(PurePosixPath(item["path"]) for item in documents)
-    if tree["declaredIndexes"] != [item.path.as_posix() for item in DECLARED_INDEXES]:
-        raise ConfigurationError("fixture declared indexes differ")
-    if tuple(tree["ledgerColumns"]) != LEDGER_COLUMNS:
-        raise ConfigurationError("fixture ledger columns differ")
-    governance_current_paths = tuple(
-        PurePosixPath(value) for value in tree["governanceCurrentOwners"]
-    )
-    if governance_current_paths != FIXTURE_GOVERNANCE_PATHS:
-        raise ConfigurationError("fixture governance current-owner declaration differs")
-    if tree["governanceMirrorPath"] != GOVERNANCE_CURRENT_README.as_posix():
-        raise ConfigurationError("fixture governance mirror path differs")
-    if paths != tuple(sorted(paths, key=lambda path: path.as_posix())) or len(
-        paths
-    ) != len(set(paths)):
-        raise ConfigurationError("fixture paths must be sorted and unique")
-    collection_artifacts = tuple(
-        PurePosixPath(value) for value in tree["collectionArtifacts"]
-    )
-    if collection_artifacts != tuple(
-        sorted(collection_artifacts, key=lambda path: path.as_posix())
-    ) or len(collection_artifacts) != len(set(collection_artifacts)):
-        raise ConfigurationError(
-            "fixture collection artifacts must be sorted and unique"
-        )
-    raw_reference = tree["referenceCurrentPacks"]
-    if list(raw_reference) != ["profileId", "packs"]:
-        raise ConfigurationError("fixture reference Current-pack declaration differs")
-    reference_current_packs = ReferenceCurrentPacks(
-        profile_id=raw_reference["profileId"],
-        packs=tuple(
-            ReferenceCurrentPack(
-                id=item["id"],
-                allowed_states=tuple(item["allowedStates"]),
-                members=tuple(item["members"]),
-            )
-            for item in raw_reference["packs"]
-        ),
-    )
-
-    def authored(title: str, doc_type: str, status: str, body: str) -> str:
-        return f"---\ntitle: {title}\ntype: {doc_type}\nstatus: {status}\nowner: platform\nupdated: 2026-07-12\n---\n\n# {title}\n\n{body}\n"
-
-    texts: dict[PurePosixPath, str] = {}
-    profile_map: dict[PurePosixPath, ProfileView] = {}
-    for item, path in zip(documents, paths, strict=True):
-        profile_map[path] = ProfileView(
-            item["profile"], item["profileClass"], item["mode"]
-        )
-        if item["mode"] in {"frontmatter-free", "classification-only"}:
-            texts[path] = item["body"]
-        elif item["body"] != "@ledger":
-            texts[path] = authored(
-                item["title"], item["type"], item["status"], item["body"]
-            )
-    header = "| " + " | ".join(LEDGER_COLUMNS) + " |"
-    alignment = "| " + " | ".join("---" for _ in LEDGER_COLUMNS) + " |"
-    rows = []
-    for path in paths:
-        cells = [
-            f"`{path.as_posix()}`",
-            "Fixture",
-            profile_map[path].profile_id,
-            "",
-            "preserve",
-            f"`{path.as_posix()}`",
-            "fixture",
-            "not applicable",
-            "2026-07-12",
-            "repository-specific",
-            "retain",
-            "contract change",
-            "platform",
-            "reviewed",
-        ]
-        rows.append("| " + " | ".join(cells) + " |")
-    ledger_item = next(
-        (item for item in documents if item["path"] == LEDGER_PATH.as_posix()), None
-    )
-    if ledger_item is None or ledger_item["body"] != "@ledger":
-        raise ConfigurationError("fixture ledger marker differs")
-    texts[LEDGER_PATH] = authored(
-        ledger_item["title"],
-        ledger_item["type"],
-        ledger_item["status"],
-        "\n".join((header, alignment, *rows)),
-    )
-    for path, text in texts.items():
-        destination = root / path
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        destination.write_text(text, encoding="utf-8")
-    for path in collection_artifacts:
-        destination = root / path
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        destination.write_text("{}\n", encoding="utf-8")
-    adapter_targets: dict[PurePosixPath, PurePosixPath] = {}
-    for adapter in tree["symlinkAdapters"]:
-        if list(adapter) != ["path", "target"]:
-            raise ConfigurationError("fixture symlink adapter keys differ")
-        adapter_path = PurePosixPath(adapter["path"])
-        link_path = root / adapter_path
-        link_path.parent.mkdir(parents=True, exist_ok=True)
-        link_path.symlink_to(adapter["target"])
-        normalized = posixpath.normpath(
-            posixpath.join(adapter_path.parent.as_posix(), adapter["target"])
-        )
-        adapter_targets[adapter_path] = PurePosixPath(normalized)
-    metadata = {path: _frontmatter(texts[path]) for path in paths}
-    fixture_baseline_commit = _fixture_baseline_commit(
-        root,
-        (
-            PurePosixPath("docs/90.references/audits/2026-07-05-wea/historical.md"),
-            PurePosixPath("docs/90.references/audits/2026-08-09-wgia/audit.md"),
-        ),
-        reference_current_packs,
-    )
-    return Context(
-        root,
-        paths,
-        frozenset(paths),
-        profile_map,
-        texts,
-        metadata,
-        adapter_targets,
-        governance_current_paths,
-        ("active", "accepted"),
-        reference_current_packs,
-        frozenset((*paths, *collection_artifacts)),
-        texts[LEDGER_PATH].encode("utf-8"),
-        json.dumps(
-            {
-                "currentPackBaselines": {
-                    "audits/2026-08-09-wgia": "git-sha1:" + fixture_baseline_commit
-                },
-                "retiredCurrentPackBaselines": [
-                    {
-                        "id": "audits/2026-07-11-weia",
-                        "sourceCommit": "git-sha1:" + fixture_baseline_commit,
-                        "allowedStates": ["done"],
-                        "members": ["audit.md"],
-                        "retiredBy": "audits/2026-08-09-wgia",
-                        "reason": "Fixture Current audit retirement.",
-                    }
-                ],
-                "snapshotGuard": {
-                    "sourceCommit": "git-sha1:" + fixture_baseline_commit,
-                    "historicalPackIds": ["audits/2026-07-05-wea"],
-                },
-            }
-        ),
-        work105_history_base_commit=fixture_baseline_commit,
-    )
-
-
-def _fixture_baseline_commit(
-    root: Path,
-    protected_sources: tuple[PurePosixPath, ...],
-    reference_current_packs: ReferenceCurrentPacks,
-) -> str:
-    """Create one closed baseline commit for protected-link self-tests."""
-
-    source_bytes = {
-        protected_source: (root / protected_source).read_bytes()
-        for protected_source in protected_sources
-    }
-    registry_path = root / RETIRED_DOCUMENT_PROFILES_PATH
-    original_registry_bytes = registry_path.read_bytes()
-    predecessor = sorted(WERPC_PREDECESSOR_PATHS)[0]
-    for protected_source, original_bytes in source_bytes.items():
-        relative_target = posixpath.relpath(
-            predecessor,
-            start=protected_source.parent.as_posix(),
-        )
-        (root / protected_source).write_bytes(
-            original_bytes + f"\n[historical predecessor]({relative_target})\n".encode()
-        )
-    registry_path.write_text(
-        json.dumps(
-            {
-                "referenceCurrentPacks": {
-                    "profileId": reference_current_packs.profile_id,
-                    "packs": [
-                        {
-                            "id": pack.id,
-                            "allowedStates": list(pack.allowed_states),
-                            "members": list(pack.members),
-                        }
-                        for pack in reference_current_packs.packs
-                    ],
-                }
-            }
-        ),
-        encoding="utf-8",
-    )
-    _run_fixture_git(root, ("init", "-q"))
-    _run_fixture_git(root, ("add", "--", "."))
-    _run_fixture_git(root, ("commit", "-q", "-m", "fixture baseline"))
-    commit = _run_fixture_git(root, ("rev-parse", "HEAD")).decode("ascii").strip()
-    for protected_source, original_bytes in source_bytes.items():
-        (root / protected_source).write_bytes(original_bytes)
-    registry_path.write_bytes(original_registry_bytes)
-    return commit
-
-
-def _run_fixture_git(root: Path, arguments: tuple[str, ...]) -> bytes:
-    """Run one fixed self-test Git command without user config, hooks, or signing."""
-
-    if arguments not in FIXTURE_GIT_ARGUMENTS:
-        raise ValueError("fixture Git argv is outside the closed allowlist")
-    command = [
-        FIXTURE_GIT_EXECUTABLE,
-        "-c",
-        "core.hooksPath=/dev/null",
-        "-c",
-        "commit.gpgSign=false",
-        "-c",
-        "user.name=fixture",
-        "-c",
-        "user.email=fixture@example.invalid",
-        *arguments,
-    ]
-    completed = subprocess.run(
-        command,
-        cwd=root,
-        env=FIXTURE_GIT_ENVIRONMENT,
-        stdin=subprocess.DEVNULL,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        check=False,
-        timeout=FIXTURE_GIT_TIMEOUT_SECONDS,
-    )
-    if (
-        completed.returncode != 0
-        or len(completed.stdout) > FIXTURE_GIT_MAX_STDOUT
-        or len(completed.stderr) > FIXTURE_GIT_MAX_STDERR
-    ):
-        raise subprocess.CalledProcessError(
-            completed.returncode or 1,
-            command,
-            output=completed.stdout[:FIXTURE_GIT_MAX_STDOUT],
-            stderr=completed.stderr[:FIXTURE_GIT_MAX_STDERR],
-        )
-    return completed.stdout
-
-
-def _program_lineage_fixture_context(
-    root: Path, tree: dict[str, Any]
-) -> tuple[Context, tuple[ProgramLineage, ...]]:
-    """Build an isolated typed lineage tree without loading production data."""
-
-    if list(tree) != ["documents", "programs"]:
-        raise ConfigurationError("program-lineage fixture tree keys differ")
-    documents = tree["documents"]
-    expected_document_keys = ["path", "profile", "status", "body"]
-    if not isinstance(documents, list) or any(
-        not isinstance(item, dict) or list(item) != expected_document_keys
-        for item in documents
-    ):
-        raise ConfigurationError("program-lineage fixture document keys differ")
-    paths = tuple(PurePosixPath(item["path"]) for item in documents)
-    if paths != tuple(sorted(paths, key=lambda item: item.as_posix())) or len(
-        paths
-    ) != len(set(paths)):
-        raise ConfigurationError(
-            "program-lineage fixture paths must be sorted and unique"
-        )
-    profiles: dict[PurePosixPath, ProfileView] = {}
-    texts: dict[PurePosixPath, str] = {}
-    metadata: dict[PurePosixPath, dict[str, Any]] = {}
-    for item, path in zip(documents, paths, strict=True):
-        profile_id = item["profile"]
-        profile_class = (
-            "sdlc"
-            if profile_id.startswith("sdlc/")
-            else "governance"
-            if profile_id.startswith("governance/")
-            else "common"
-        )
-        profiles[path] = ProfileView(profile_id, profile_class, "authored")
-        texts[path] = item["body"]
-        metadata[path] = {
-            "title": f"Fixture {path.stem}",
-            "type": profile_id,
-            "status": item["status"],
-            "owner": "platform",
-            "updated": "2026-07-15",
-        }
-
-    raw_programs = tree["programs"]
-    if not isinstance(raw_programs, list):
-        raise ConfigurationError("program-lineage fixture programs must be a list")
-    programs: list[ProgramLineage] = []
-    for raw_program in raw_programs:
-        if not isinstance(raw_program, dict) or list(raw_program) != [
-            "prd",
-            "ad",
-            "tranches",
-            "followUps",
-        ]:
-            raise ConfigurationError("program-lineage fixture program keys differ")
-        tranches = tuple(
-            ProgramRelation(
-                spec_id=item["spec"],
-                order=item["order"],
-                state=item["state"],
-                reason=item["reason"],
-                decision_id=item["decision"],
-            )
-            for item in raw_program["tranches"]
-        )
-        follow_ups = tuple(
-            ProgramFollowUp(
-                spec_id=item["spec"],
-                order=item["order"],
-                state=item["state"],
-                reason=item["reason"],
-                decision_id=item["decision"],
-                evidence_mode=item["evidenceMode"],
-            )
-            for item in raw_program["followUps"]
-        )
-        programs.append(
-            ProgramLineage(
-                prd_id=raw_program["prd"],
-                ad_id=raw_program["ad"],
-                tranches=tranches,
-                follow_ups=follow_ups,
-            )
-        )
-    context = Context(
-        root,
-        paths,
-        frozenset(),
-        profiles,
-        texts,
-        metadata,
-        {},
-        (),
-        (),
-        ReferenceCurrentPacks("content/reference", ()),
-        frozenset(paths),
-    )
-    return context, tuple(programs)
-
-
-def _standalone_execution_fixture_context(
-    context: Context, raw_relation: Mapping[str, Any]
-) -> tuple[Context, StandaloneExecution]:
-    mutated = copy.deepcopy(context)
-    decision = PurePosixPath("docs/02.architecture/decisions/0022-fixture.md")
-    spec = PurePosixPath("docs/03.specs/0043-fixture/spec.md")
-    plan = PurePosixPath(raw_relation["plan"])
-    task = PurePosixPath(raw_relation["task"])
-    approval_statement, lifecycle_exclusion = STANDALONE_APPROVAL_STATEMENTS[
-        raw_relation["spec"]
-    ]
-    additions = {
-        decision: (
-            "sdlc/adr",
-            "accepted",
-            "[Spec](../../03.specs/0043-fixture/spec.md)",
-        ),
-        spec: (
-            "sdlc/spec",
-            raw_relation["state"],
-            f"{approval_statement}\n{lifecycle_exclusion}\n"
-            "[Decision](../../02.architecture/decisions/0022-fixture.md)\n"
-            "[Plan](plan.md)\n"
-            "[Task](tasks.md)",
-        ),
-        plan: (
-            "sdlc/plan",
-            raw_relation["state"],
-            "[Spec](spec.md)\n[Task](tasks.md)",
-        ),
-        task: (
-            "sdlc/task",
-            raw_relation["state"],
-            "[Spec](spec.md)\n[Plan](plan.md)",
-        ),
-    }
-    for path, (profile_id, status, body) in additions.items():
-        mutated.profiles[path] = ProfileView(profile_id, "sdlc", "authored")
-        mutated.metadata[path] = {"type": profile_id, "status": status}
-        mutated.texts[path] = body
-    mutated = replace(
-        mutated,
-        paths=tuple(
-            sorted((*mutated.paths, *additions), key=lambda item: item.as_posix())
-        ),
-        tracked_regular_paths=frozenset((*mutated.tracked_regular_paths, *additions)),
-    )
-    return mutated, StandaloneExecution(
-        spec_id=raw_relation["spec"],
-        plan_path=plan,
-        task_path=task,
-        state=raw_relation["state"],
-        reason=raw_relation["reason"],
-        decision_id=raw_relation["decision"],
-        approval_mode=raw_relation["approvalMode"],
-    )
-
-
-def _mutated_standalone_execution_fixture(
-    context: Context,
-    relation: StandaloneExecution,
-    mutation: str,
-) -> tuple[Context, StandaloneExecution]:
-    mutated = copy.deepcopy(context)
-    if mutation == "none":
-        return mutated, relation
-    if mutation == "standalone-state":
-        mutated.metadata[relation.task_path]["status"] = "draft"
-    elif mutation == "standalone-direct-approval":
-        spec = _program_owner_path(mutated, "sdlc/spec", relation.spec_id)
-        assert spec is not None
-        approval_statement, _ = STANDALONE_APPROVAL_STATEMENTS[relation.spec_id]
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            approval_statement, "Direct approval statement omitted."
-        )
-    elif mutation == "standalone-lifecycle-exclusion":
-        spec = _program_owner_path(mutated, "sdlc/spec", relation.spec_id)
-        assert spec is not None
-        _, lifecycle_exclusion = STANDALONE_APPROVAL_STATEMENTS[relation.spec_id]
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            lifecycle_exclusion,
-            "Standalone lifecycle exclusion statement omitted.",
-        )
-    elif mutation == "standalone-adr-reciprocal":
-        decision = _program_owner_path(mutated, "sdlc/adr", relation.decision_id)
-        assert decision is not None
-        mutated.texts[decision] = "Accepted standalone decision without reverse link."
-    elif mutation == "standalone-plan-task-reciprocal":
-        mutated.texts[relation.plan_path] = mutated.texts[relation.plan_path].replace(
-            "[Task](tasks.md)", "Task path omitted"
-        )
-    elif mutation == "standalone-foreign-spec":
-        mutated.texts[relation.plan_path] += (
-            "\n[Foreign Spec](../../03.specs/0034-fixture/spec.md)"
-        )
-    elif mutation == "standalone-extra-component":
-        extra = PurePosixPath(
-            "docs/04.execution/tasks/2026-07-18-fixture-0043-extra.md"
-        )
-        mutated = replace(
-            mutated,
-            paths=tuple(
-                sorted((*mutated.paths, extra), key=lambda item: item.as_posix())
-            ),
-            tracked_regular_paths=frozenset((*mutated.tracked_regular_paths, extra)),
-        )
-        mutated.profiles[extra] = ProfileView("sdlc/task", "sdlc", "authored")
-        mutated.metadata[extra] = {"type": "sdlc/task", "status": "active"}
-        mutated.texts[extra] = (
-            "[Spec](../../03.specs/0043-fixture/spec.md)\n"
-            "[Plan](../plans/2026-07-18-fixture-043.md)"
-        )
-        mutated.texts[relation.plan_path] += (
-            "\n[Extra Task](../tasks/2026-07-18-fixture-0043-extra.md)"
-        )
-    else:
-        raise ConfigurationError(f"unknown standalone fixture mutation: {mutation}")
-    return mutated, relation
-
-
-def _mutated_program_lineage_fixture(
-    context: Context,
-    programs: tuple[ProgramLineage, ...],
-    mutation: str,
-) -> tuple[Context, tuple[ProgramLineage, ...]]:
-    mutated = copy.deepcopy(context)
-    paths = mutated.paths
-    tracked_regular_paths = mutated.tracked_regular_paths
-    plan_034 = PurePosixPath("docs/03.specs/0034-fixture/plan.md")
-    task_034 = PurePosixPath("docs/03.specs/0034-fixture/tasks.md")
-
-    class _CanonicalExecutionFixtureText(str):
-        """Translate legacy mutation needles onto the canonical sibling route."""
-
-        _translations = (
-            ("../../03.specs/0034-fixture/spec.md", "spec.md"),
-            ("../../04.execution/plans/2026-07-15-fixture-034.md", "plan.md"),
-            ("../plans/2026-07-15-fixture-034.md", "plan.md"),
-            ("../tasks/2026-07-15-fixture-034.md", "tasks.md"),
-        )
-
-        @classmethod
-        def _canonical(cls, value: str) -> str:
-            for legacy, canonical in cls._translations:
-                value = value.replace(legacy, canonical)
-            return value
-
-        def replace(
-            self,
-            old: str,
-            new: str,
-            count: int = -1,
-        ) -> "_CanonicalExecutionFixtureText":
-            return type(self)(
-                super().replace(
-                    self._canonical(old),
-                    self._canonical(new),
-                    count,
-                )
-            )
-
-    for path in (
-        PurePosixPath("docs/03.specs/0034-fixture/spec.md"),
-        plan_034,
-        task_034,
-    ):
-        mutated.texts[path] = _CanonicalExecutionFixtureText(mutated.texts[path])
-
-    def remove_execution_path(path: PurePosixPath) -> None:
-        nonlocal paths, tracked_regular_paths
-        paths = tuple(item for item in paths if item != path)
-        tracked_regular_paths = frozenset(
-            item for item in tracked_regular_paths if item != path
-        )
-        mutated.profiles.pop(path)
-        mutated.metadata.pop(path)
-        mutated.texts.pop(path)
-
-    def add_execution_pair(
-        suffix: str, spec_id: str, *, status: str = "active"
-    ) -> None:
-        plan = PurePosixPath(f"docs/04.execution/plans/2026-07-15-fixture-{suffix}.md")
-        task = PurePosixPath(f"docs/04.execution/tasks/2026-07-15-fixture-{suffix}.md")
-
-        add_execution_node(
-            plan,
-            "sdlc/plan",
-            f"[Spec](../../03.specs/{spec_id}-fixture/spec.md)\n"
-            f"[Task](../tasks/2026-07-15-fixture-{suffix}.md)",
-            status=status,
-        )
-        add_execution_node(
-            task,
-            "sdlc/task",
-            f"[Spec](../../03.specs/{spec_id}-fixture/spec.md)\n"
-            f"[Plan](../plans/2026-07-15-fixture-{suffix}.md)",
-            status=status,
-        )
-
-    def add_execution_node(
-        path: PurePosixPath,
-        profile_id: str,
-        body: str,
-        *,
-        status: str = "active",
-    ) -> None:
-        nonlocal paths, tracked_regular_paths
-        paths = tuple(sorted((*paths, path), key=lambda item: item.as_posix()))
-        tracked_regular_paths = frozenset((*tracked_regular_paths, path))
-        mutated.profiles[path] = ProfileView(profile_id, "sdlc", "authored")
-        mutated.metadata[path] = {"type": profile_id, "status": status}
-        mutated.texts[path] = body
-
-    def close_original_034() -> None:
-        nonlocal programs
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        mutated.metadata[spec]["status"] = "done"
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "\n[Plan](../../04.execution/plans/2026-07-15-fixture-034.md)",
-            "",
-        )
-        remove_execution_path(plan_034)
-        remove_execution_path(task_034)
-        program = programs[1]
-        first = program.tranches[0]
-        successor = program.tranches[1]
-        closed = ProgramRelation(
-            spec_id=first.spec_id,
-            order=first.order,
-            state="done",
-            reason=first.reason,
-            decision_id=first.decision_id,
-        )
-        activated_successor = ProgramRelation(
-            spec_id=successor.spec_id,
-            order=successor.order,
-            state="active",
-            reason=successor.reason,
-            decision_id=successor.decision_id,
-        )
-        successor_spec = PurePosixPath("docs/03.specs/0035-fixture/spec.md")
-        mutated.metadata[successor_spec]["status"] = "active"
-        programs = (
-            programs[0],
-            ProgramLineage(
-                prd_id=program.prd_id,
-                ad_id=program.ad_id,
-                tranches=(closed, activated_successor, *program.tranches[2:]),
-                follow_ups=program.follow_ups,
-            ),
-            *programs[2:],
-        )
-
-    def add_original_036() -> None:
-        nonlocal programs
-        spec = PurePosixPath("docs/03.specs/0036-fixture/spec.md")
-        add_execution_node(
-            spec,
-            "sdlc/spec",
-            "[PRD](../../01.requirements/0006-fixture.md)\n"
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
-        )
-        prd = PurePosixPath("docs/01.requirements/0006-fixture.md")
-        ard = PurePosixPath("docs/02.architecture/descriptions/ad-0009-fixture.md")
-        mutated.texts[prd] += "\n[Spec 036](../03.specs/0036-fixture/spec.md)"
-        mutated.texts[ard] += "\n[Spec 036](../../03.specs/0036-fixture/spec.md)"
-        program = programs[1]
-        programs = (
-            programs[0],
-            ProgramLineage(
-                prd_id=program.prd_id,
-                ad_id=program.ad_id,
-                tranches=(
-                    *program.tranches,
-                    ProgramRelation(
-                        spec_id="0036",
-                        order=3,
-                        state="active",
-                        reason="Premature successor",
-                        decision_id="0017",
-                    ),
-                ),
-                follow_ups=program.follow_ups,
-            ),
-            *programs[2:],
-        )
-
-    def rename_document_path(source: PurePosixPath, target: PurePosixPath) -> None:
-        nonlocal paths, tracked_regular_paths
-        paths = tuple(
-            sorted(
-                (target if path == source else path for path in paths),
-                key=lambda item: item.as_posix(),
-            )
-        )
-        tracked_regular_paths = frozenset(
-            target if path == source else path for path in tracked_regular_paths
-        )
-        mutated.profiles[target] = mutated.profiles.pop(source)
-        mutated.metadata[target] = mutated.metadata.pop(source)
-        mutated.texts[target] = mutated.texts.pop(source)
-
-    if mutation in {"none", "program-execution-follow-up-absence"}:
-        return mutated, programs
-    if mutation == "program-state":
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        mutated.metadata[spec]["status"] = "done"
-    elif mutation == "program-reciprocal":
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)\n",
-            "",
-        )
-        mutated.texts[spec] += (
-            "\n`../../02.architecture/descriptions/ad-0009-fixture.md`"
-        )
-    elif mutation == "program-reciprocal-unicode-space-inline":
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md\u00a0)",
-        )
-    elif mutation == "program-execution-unicode-space-reference":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Spec](../../03.specs/0034-fixture/spec.md)",
-            "[Spec][owner]\n\n[owner]: ../../03.specs/0034-fixture/spec.md\u2003",
-        )
-    elif mutation == "program-reciprocal-balanced-escaped":
-        old_ard = PurePosixPath("docs/02.architecture/descriptions/ad-0009-fixture.md")
-        new_ard = PurePosixPath(
-            "docs/02.architecture/descriptions/ad-0009-fixture-(owner).md"
-        )
-        rename_document_path(old_ard, new_ard)
-        prd = PurePosixPath("docs/01.requirements/0006-fixture.md")
-        spec_034 = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        spec_035 = PurePosixPath("docs/03.specs/0035-fixture/spec.md")
-        mutated.texts[prd] = mutated.texts[prd].replace(
-            "0009-fixture.md", "0009-fixture-(owner).md"
-        )
-        mutated.texts[spec_034] = mutated.texts[spec_034].replace(
-            "0009-fixture.md", "0009-fixture-(owner).md"
-        )
-        mutated.texts[spec_035] = mutated.texts[spec_035].replace(
-            "0009-fixture.md", r"0009-fixture-\(owner\).md"
-        )
-    elif mutation == "program-reciprocal-cross-container":
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
-            "[AD\n> owner](../../02.architecture/descriptions/ad-0009-fixture.md)",
-        )
-    elif mutation == "program-reciprocal-cross-container-reference":
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
-            "[AD][owner\n> key]\n\n"
-            "[owner key]: ../../02.architecture/descriptions/ad-0009-fixture.md",
-        )
-    elif mutation == "program-reciprocal-outer-fence-nested":
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
-            "> ~~~markdown\n"
-            "> > [AD](../../02.architecture/descriptions/ad-0009-fixture.md)\n"
-            "> ~~~",
-        )
-    elif mutation in {
-        "program-reciprocal-invalid-reference-garbage",
-        "program-reciprocal-valid-reference-title",
-    }:
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        suffix = (
-            " garbage"
-            if mutation == "program-reciprocal-invalid-reference-garbage"
-            else ' "owner"'
-        )
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
-            "[AD][owner]\n\n"
-            "[owner]: ../../02.architecture/descriptions/ad-0009-fixture.md" + suffix,
-        )
-    elif mutation == "program-reciprocal-valid-double-title":
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
-            '[AD](../../02.architecture/descriptions/ad-0009-fixture.md "owner")',
-        )
-    elif mutation in {
-        "program-reciprocal-invalid-reference-angle-less-than",
-        "program-reciprocal-valid-reference-angle-escaped-less-than",
-    }:
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        fragment = (
-            "#<owner"
-            if mutation == "program-reciprocal-invalid-reference-angle-less-than"
-            else r"#\<owner"
-        )
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
-            "[AD][owner]\n\n"
-            "[owner]: "
-            "<../../02.architecture/descriptions/ad-0009-fixture.md"
-            f"{fragment}>",
-        )
-    elif mutation == "program-reciprocal-valid-double-title-closing-paren":
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md "
-            '"owner ) current")',
-        )
-    elif mutation == "program-reciprocal-list-marker-boundary":
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
-            "[AD\n- owner](../../02.architecture/descriptions/ad-0009-fixture.md)",
-        )
-    elif mutation == "program-reciprocal-bare-nonpunctuation-escape":
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
-            r"[AD](../../00\09-fixture.md)",
-        )
-    elif mutation == "program-reciprocal-reference-nonpunctuation-escape":
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
-            "[AD][owner]\n\n"
-            r"[owner]: ../../02.architecture/descriptions/ad-00\09-fixture.md",
-        )
-    elif mutation == "program-reciprocal-nested-link":
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
-            "[outer [inner](./unrelated.md)]"
-            "(../../02.architecture/descriptions/ad-0009-fixture.md)",
-        )
-    elif mutation == "program-reciprocal-adjacent-references":
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
-            "[Other][other][AD]\n\n"
-            "[other]: ./unrelated.md\n"
-            "[AD]: ../../02.architecture/descriptions/ad-0009-fixture.md",
-        )
-    elif mutation == "program-reciprocal-image-alt-subtree":
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
-            "![owner [AD]"
-            "(../../02.architecture/descriptions/ad-0009-fixture.md)]"
-            "(./owner.png)",
-        )
-    elif mutation == "program-reciprocal-unresolved-before-inline":
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
-            "[literal][AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
-        )
-    elif mutation == "program-reciprocal-unresolved-before-full-reference":
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
-            "[literal][AD][owner]\n\n"
-            "[owner]: ../../02.architecture/descriptions/ad-0009-fixture.md",
-        )
-    elif mutation == "program-reciprocal-escaped-literal-before-shortcut":
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
-            "\\[literal][AD]\n\n"
-            "[AD]: ../../02.architecture/descriptions/ad-0009-fixture.md",
-        )
-    elif mutation == "program-reciprocal-unresolved-image-inline":
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
-            "![literal [AD](../../02.architecture/descriptions/ad-0009-fixture.md)]",
-        )
-    elif mutation == "program-reciprocal-unresolved-image-full-reference":
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
-            "![literal [AD][owner]]\n\n"
-            "[owner]: ../../02.architecture/descriptions/ad-0009-fixture.md",
-        )
-    elif mutation in {
-        "program-reciprocal-link-destination-span",
-        "program-reciprocal-link-title-span",
-        "program-reciprocal-image-title-span",
-    }:
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        evidence = {
-            "program-reciprocal-link-destination-span": (
-                "[Other](<./unrelated.md#[AD]>)"
-            ),
-            "program-reciprocal-link-title-span": ('[Other](./unrelated.md "[AD]")'),
-            "program-reciprocal-image-title-span": ('![Other](./owner.png "[AD]")'),
-        }[mutation]
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
-            evidence
-            + "\n\n"
-            + "[AD]: ../../02.architecture/descriptions/ad-0009-fixture.md",
-        )
-    elif mutation in {
-        "program-reciprocal-definition-title-span",
-        "program-reciprocal-multiline-single-title",
-        "program-reciprocal-escaped-paren-title",
-        "program-reciprocal-nested-paren-title",
-        "program-reciprocal-blank-definition-continuation",
-        "program-reciprocal-unclosed-definition-title",
-        "program-reciprocal-space-remainder-valid-title-span",
-        "program-reciprocal-tab-remainder-valid-title-span",
-        "program-reciprocal-space-remainder-nested-paren-title",
-        "program-reciprocal-tab-remainder-unclosed-title",
-        "program-reciprocal-next-line-title-trailing-garbage",
-        "program-reciprocal-invalid-next-line-title-phantom",
-        "program-reciprocal-continued-destination-invalid-title",
-        "program-reciprocal-definition-before-thematic",
-        "program-reciprocal-setext-destination-first-wins",
-        "program-reciprocal-paragraph-definition-setext",
-        "program-reciprocal-html-numeric-destination",
-        "program-reciprocal-html-backslash-destination",
-        "program-reciprocal-quote-lazy-setext-definition",
-        "program-reciprocal-inline-html-attribute",
-        "program-reciprocal-markdown-inside-inline-html",
-        "program-reciprocal-inline-html-definition-lookalike",
-        "program-reciprocal-type7-html-quoted-greater",
-        "program-reciprocal-inline-html-shortcut-collision",
-        "program-reciprocal-inline-html-shortcut-identical",
-        "program-reciprocal-inline-html-label-999",
-        "program-reciprocal-inline-html-label-1000",
-        "program-reciprocal-comment-block-trailing",
-        "program-reciprocal-invalid-inline-comment",
-        "program-reciprocal-inline-html-blank-boundary",
-        "program-reciprocal-multiline-definition-label",
-        "program-reciprocal-inline-backtick-suffix",
-        "program-reciprocal-quote-comment-leaf",
-        "program-reciprocal-root-declaration-leaf",
-        "program-reciprocal-escaped-definition-label-close",
-        "program-reciprocal-destination-continuation-zero",
-        "program-reciprocal-destination-continuation-four",
-        "program-reciprocal-destination-continuation-tab",
-        "program-reciprocal-title-continuation-zero",
-        "program-reciprocal-title-continuation-four",
-        "program-reciprocal-title-continuation-tab",
-        "program-reciprocal-title-continuation-multiline",
-        "program-reciprocal-invalid-blank-title-rendered",
-        "program-reciprocal-complete-definition-four-space-code",
-        "program-reciprocal-definition-paragraph-interruption",
-        "program-reciprocal-definition-blank-boundary",
-        "program-reciprocal-definition-heading-boundary",
-        "program-reciprocal-failed-inline-shortcut-fallback",
-        "program-reciprocal-ordered-123-tilde-fence",
-        "program-reciprocal-unordered-indented-code",
-        "program-reciprocal-unordered-empty-four-code",
-        "program-reciprocal-ordered-empty-five-code",
-        "program-reciprocal-unordered-tab-code",
-        "program-reciprocal-list-lazy-continuation",
-        "program-reciprocal-list-sibling-boundary",
-        "program-reciprocal-whitespace-shortcut-label",
-        "program-reciprocal-normal-spaced-label",
-        "program-reciprocal-setext-indented-code",
-        "program-reciprocal-standalone-setext-equals-indented-continuation",
-        "program-reciprocal-definition-standalone-equals-indented-continuation",
-        "program-reciprocal-quote-lazy-hyphen-indented-continuation",
-        "program-reciprocal-quote-definition-indented-code",
-        "program-reciprocal-invalid-quote-definition-indented-lazy",
-        "program-reciprocal-multiline-quote-definition-indented-code",
-        "program-reciprocal-multiline-list-definition-indented-code",
-        "program-reciprocal-explicit-quote-setext-indented-code",
-        "program-reciprocal-thematic-definition-indented-code",
-        "program-reciprocal-list-atx-definition-indented-code",
-        "program-reciprocal-shortcut-label-999",
-        "program-reciprocal-full-label-1000",
-        "program-reciprocal-failed-inline-label-999",
-        "program-reciprocal-escaped-label-1000",
-        "program-reciprocal-code-label-closing-bracket",
-        "program-reciprocal-code-label-mixed-run",
-        "program-reciprocal-raw-pua-html-collision",
-        "program-reciprocal-inline-html-tag-casefold",
-        "program-reciprocal-orphan-inline-suffix-backtick",
-        "program-reciprocal-code-closing-backslash",
-    }:
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        target = "../../02.architecture/descriptions/ad-0009-fixture.md"
-        raw_pua_html_identity = (
-            str(_mask_inline_html_tokens("<i>"))
-            + "AD"
-            + str(_mask_inline_html_tokens("</i>"))
-        )
-        evidence = {
-            "program-reciprocal-definition-title-span": (
-                f'[Other][owner]\n\n[owner]: ./unrelated.md "[AD]"\n[AD]: {target}'
-            ),
-            "program-reciprocal-multiline-single-title": (
-                f"[AD][owner]\n\n[owner]:\n  {target}\n  'owner'"
-            ),
-            "program-reciprocal-escaped-paren-title": (
-                f"[AD][owner]\n\n[owner]: {target} (\\(owner)"
-            ),
-            "program-reciprocal-nested-paren-title": (
-                f"[AD][owner]\n\n[owner]: {target} ((nested)"
-            ),
-            "program-reciprocal-blank-definition-continuation": (
-                f"[AD][owner]\n\n[owner]:\n\n  {target}"
-            ),
-            "program-reciprocal-unclosed-definition-title": (
-                f'[AD][owner]\n\n[owner]: {target} "owner'
-            ),
-            "program-reciprocal-space-remainder-valid-title-span": (
-                "[Other][owner]\n\n"
-                "[owner]: ./unrelated.md   \n"
-                '  "[AD]"\n'
-                f"[AD]: {target}"
-            ),
-            "program-reciprocal-tab-remainder-valid-title-span": (
-                f"[Other][owner]\n\n[owner]: ./unrelated.md\t\n  '[AD]'\n[AD]: {target}"
-            ),
-            "program-reciprocal-space-remainder-nested-paren-title": (
-                f"[AD][owner]\n\n[owner]: {target}   \n  ((nested)"
-            ),
-            "program-reciprocal-tab-remainder-unclosed-title": (
-                f'[AD][owner]\n\n[owner]: {target}\t\n  "owner'
-            ),
-            "program-reciprocal-next-line-title-trailing-garbage": (
-                f'[AD][owner]\n\n[owner]: {target}\n  "owner" garbage'
-            ),
-            "program-reciprocal-invalid-next-line-title-phantom": (
-                f'[Other][owner]\n\n[owner]: ./unrelated.md\n  "[AD]({target})" garbage'
-            ),
-            "program-reciprocal-continued-destination-invalid-title": (
-                f'[AD][owner]\n\n[owner]:\n    {target}\n    "owner" garbage'
-            ),
-            "program-reciprocal-definition-before-thematic": (
-                f"[AD][owner]\n\n[owner]:\n{target}\n---"
-            ),
-            "program-reciprocal-setext-destination-first-wins": (
-                f"[AD][owner]\n\n[owner]:\n===\n[owner]: {target}"
-            ),
-            "program-reciprocal-paragraph-definition-setext": (
-                f"Ordinary paragraph\n[owner]: {target}\n---\n[AD][owner]"
-            ),
-            "program-reciprocal-html-numeric-destination": (
-                "[AD](../../02.architecture/descriptions/ad-0009&#45;fixture.md)"
-            ),
-            "program-reciprocal-html-backslash-destination": (
-                "[AD](../../02.architecture/descriptions/"
-                r"ad-0009\&#45;fixture.md)"
-            ),
-            "program-reciprocal-quote-lazy-setext-definition": (
-                f"> paragraph\n===\n> [owner]: {target}\n> [AD][owner]"
-            ),
-            "program-reciprocal-inline-html-attribute": (
-                f'<span title="[AD]({target})">ok</span>'
-            ),
-            "program-reciprocal-markdown-inside-inline-html": (
-                f"<span>[AD]({target})</span>"
-            ),
-            "program-reciprocal-inline-html-definition-lookalike": (
-                f"[AD][owner]\n\n<b>[owner]: {target}"
-            ),
-            "program-reciprocal-type7-html-quoted-greater": (
-                f'\n<x title=">">\n[AD]({target})'
-            ),
-            "program-reciprocal-inline-html-shortcut-collision": (
-                f"[<i>AD</i>]\n\n[<b>AD</b>]: {target}"
-            ),
-            "program-reciprocal-inline-html-shortcut-identical": (
-                f"[<i>AD</i>]\n\n[<i>AD</i>]: {target}"
-            ),
-            "program-reciprocal-inline-html-label-999": (
-                f"[<i>{'x' * 992}</i>]\n\n[<i>{'x' * 992}</i>]: {target}"
-            ),
-            "program-reciprocal-inline-html-label-1000": (
-                f"[<i>{'x' * 993}</i>]\n\n[<i>{'x' * 993}</i>]: {target}"
-            ),
-            "program-reciprocal-comment-block-trailing": (
-                f"\n<!-- owner evidence --> [AD]({target})"
-            ),
-            "program-reciprocal-invalid-inline-comment": (
-                f"before <!-- invalid -- [AD]({target}) --> after"
-            ),
-            "program-reciprocal-inline-html-blank-boundary": (
-                f'<span\n\n title="[AD]({target})">ok</span>'
-            ),
-            "program-reciprocal-multiline-definition-label": (
-                f"[AD][owner key]\n\n[owner\nkey]: {target}"
-            ),
-            "program-reciprocal-inline-backtick-suffix": (f"[AD]({target} `suffix`)"),
-            "program-reciprocal-quote-comment-leaf": (
-                f"> paragraph\n> <!-- owner -->\n    [AD]({target})"
-            ),
-            "program-reciprocal-root-declaration-leaf": (
-                f"paragraph\n<!A owner>\n    [AD]({target})"
-            ),
-            "program-reciprocal-escaped-definition-label-close": (
-                f"[AD][owner\\]]\n\n[owner\\]]: {target}"
-            ),
-            "program-reciprocal-destination-continuation-zero": (
-                f"[AD][owner]\n\n[owner]:\n{target}"
-            ),
-            "program-reciprocal-destination-continuation-four": (
-                f"[AD][owner]\n\n[owner]:\n    {target}"
-            ),
-            "program-reciprocal-destination-continuation-tab": (
-                f"[AD][owner]\n\n[owner]:\n\t{target}"
-            ),
-            "program-reciprocal-title-continuation-zero": (
-                f'[Other][owner]\n\n[owner]: ./unrelated.md\n"[AD]({target})"'
-            ),
-            "program-reciprocal-title-continuation-four": (
-                f'[Other][owner]\n\n[owner]: ./unrelated.md\n    "[AD]({target})"'
-            ),
-            "program-reciprocal-title-continuation-tab": (
-                f'[Other][owner]\n\n[owner]: ./unrelated.md\n\t"[AD]({target})"'
-            ),
-            "program-reciprocal-title-continuation-multiline": (
-                "[Other][owner]\n\n"
-                '[owner]: ./unrelated.md "first line\n'
-                f"[AD]({target})\n"
-                'last line"'
-            ),
-            "program-reciprocal-invalid-blank-title-rendered": (
-                "[Other][owner]\n\n"
-                '[owner]: ./unrelated.md "first line\n\n'
-                f"[AD]({target})\n"
-                'last line"'
-            ),
-            "program-reciprocal-complete-definition-four-space-code": (
-                f"[Other][owner]\n\n[owner]: ./unrelated.md\n    [AD]({target})"
-            ),
-            "program-reciprocal-definition-paragraph-interruption": (
-                f"[AD][owner]\n\nOrdinary paragraph continuation\n[owner]: {target}"
-            ),
-            "program-reciprocal-definition-blank-boundary": (
-                f"[AD][owner]\n\nCompleted paragraph.\n\n[owner]: {target}"
-            ),
-            "program-reciprocal-definition-heading-boundary": (
-                f"[AD][owner]\n\n# Reference definitions\n[owner]: {target}"
-            ),
-            "program-reciprocal-failed-inline-shortcut-fallback": (
-                f"[AD](not a link)\n\n[AD]: {target}"
-            ),
-            "program-reciprocal-ordered-123-tilde-fence": (
-                f"123. fenced block\n     ~~~markdown\n     [AD]({target})\n     ~~~"
-            ),
-            "program-reciprocal-unordered-indented-code": (f"-\n      [AD]({target})"),
-            "program-reciprocal-unordered-empty-four-code": (
-                f"-    \n      [AD]({target})"
-            ),
-            "program-reciprocal-ordered-empty-five-code": (
-                f"1.     \n       [AD]({target})"
-            ),
-            "program-reciprocal-unordered-tab-code": (f"-\t    [AD]({target})"),
-            "program-reciprocal-list-lazy-continuation": (f"- [AD\n]({target})"),
-            "program-reciprocal-list-sibling-boundary": (f"- [AD\n- ]({target})"),
-            "program-reciprocal-whitespace-shortcut-label": (f"[ ]\n\n[ ]: {target}"),
-            "program-reciprocal-normal-spaced-label": (
-                f"[AD][ owner key ]\n\n[owner   key]: {target}"
-            ),
-            "program-reciprocal-setext-indented-code": (
-                f"Reference evidence\n---\n    [AD]({target})"
-            ),
-            "program-reciprocal-standalone-setext-equals-indented-continuation": (
-                f"\n===\n    [AD]({target})"
-            ),
-            "program-reciprocal-definition-standalone-equals-indented-continuation": (
-                f"\n[r]: /u\n===\n    [AD]({target})"
-            ),
-            "program-reciprocal-quote-lazy-hyphen-indented-continuation": (
-                f"> paragraph\n--\n    [AD]({target})"
-            ),
-            "program-reciprocal-quote-definition-indented-code": (
-                f"> [r]: /u\n    [AD]({target})"
-            ),
-            "program-reciprocal-invalid-quote-definition-indented-lazy": (
-                f"> [r]: <unterminated\n    [AD]({target})"
-            ),
-            "program-reciprocal-multiline-quote-definition-indented-code": (
-                f"> [r]:\n /u\n    [AD]({target})"
-            ),
-            "program-reciprocal-multiline-list-definition-indented-code": (
-                f"- [r]:\n /u\n      [AD]({target})"
-            ),
-            "program-reciprocal-explicit-quote-setext-indented-code": (
-                f"> paragraph\n> ===\n    [AD]({target})"
-            ),
-            "program-reciprocal-thematic-definition-indented-code": (
-                f"***\n[r]: /u\n    [AD]({target})"
-            ),
-            "program-reciprocal-list-atx-definition-indented-code": (
-                f"- # Heading\n  [r]: /u\n      [AD]({target})"
-            ),
-            "program-reciprocal-shortcut-label-999": (
-                f"[{'s' * 999}]\n\n[{'s' * 999}]: {target}"
-            ),
-            "program-reciprocal-full-label-1000": (
-                f"[AD][{'f' * 1000}]\n\n[{'f' * 1000}]: {target}"
-            ),
-            "program-reciprocal-failed-inline-label-999": (
-                f"[{'i' * 999}](not a link)\n\n[{'i' * 999}]: {target}"
-            ),
-            "program-reciprocal-escaped-label-1000": (
-                f"[AD][{r'\*' * 500}]\n\n[{r'\*' * 500}]: {target}"
-            ),
-            "program-reciprocal-code-label-closing-bracket": (f"[AD `]`]({target})"),
-            "program-reciprocal-code-label-mixed-run": (
-                f"[AD ``code `]` still``]({target})"
-            ),
-            "program-reciprocal-raw-pua-html-collision": (
-                f"[<i>AD</i>]\n\n[{raw_pua_html_identity}]: {target}"
-            ),
-            "program-reciprocal-inline-html-tag-casefold": (
-                f"[<I>AD</I>]\n\n[<i>ad</i>]: {target}"
-            ),
-            "program-reciprocal-orphan-inline-suffix-backtick": (
-                f"orphan](`[AD]({target})`)"
-            ),
-            "program-reciprocal-code-closing-backslash": ("`[AD](" + target + ")\\`"),
-        }[mutation]
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
-            evidence,
-        )
-    elif mutation == "program-reciprocal-code-paragraph-recovery":
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "[AD](../../02.architecture/descriptions/ad-0009-fixture.md)",
-            "`unmatched\n\n[AD](../../02.architecture/descriptions/ad-0009-fixture.md)`",
-        )
-    elif mutation == "program-historical-exception":
-        roadmap = PurePosixPath(
-            "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md"
-        )
-        mutated.texts[roadmap] = mutated.texts[roadmap].replace(
-            "[Spec\n033](../../../03.specs/0033-fixture/spec.md)",
-            "Spec 033",
-        )
-        mutated.texts[roadmap] += "\n`../../../03.specs/0033-fixture/spec.md`"
-    elif mutation in {
-        "program-historical-paragraph-break",
-        "program-historical-raw-html",
-        "program-historical-indented-code",
-        "program-historical-heading-indented-code",
-        "program-historical-paragraph-continuation",
-        "program-historical-blockquote-raw-html",
-        "program-historical-blockquote-tilde-fence",
-        "program-historical-blockquote-indented-code",
-        "program-historical-raw-html-heading",
-        "program-historical-root-to-quote",
-        "program-historical-quote-to-root",
-        "program-historical-quote-depth-transition",
-        "program-historical-quote-depth-return",
-        "program-historical-sibling-quotes",
-        "program-historical-same-quote-soft-break",
-        "program-historical-reference-root-to-quote",
-        "program-historical-reference-quote-to-root",
-        "program-historical-reference-quote-depth",
-        "program-historical-reference-same-quote",
-        "program-historical-outer-raw-nested",
-        "program-historical-nested-indented",
-        "program-historical-valid-angle-destination",
-        "program-historical-valid-angle-parentheses",
-        "program-historical-invalid-unmatched-angle",
-        "program-historical-atx-boundary",
-        "program-historical-setext-boundary",
-        "program-historical-thematic-boundary",
-        "program-historical-table-cell-boundary",
-        "program-historical-angle-nonpunctuation-escape",
-        "program-historical-image-only",
-        "program-historical-image-in-link",
-        "program-historical-unresolved-before-collapsed",
-        "program-historical-multiline-double-title",
-        "program-historical-valid-single-title",
-        "program-historical-code-paragraph-recovery",
-        "program-historical-code-container-recovery",
-        "program-historical-code-soft-break",
-        "program-historical-ordered-1-normal-paragraph",
-        "program-historical-nested-list-raw-html",
-        "program-historical-ordered-empty-two-code",
-        "program-historical-unordered-four-content",
-        "program-historical-unordered-five-content",
-        "program-historical-unordered-tab-content",
-        "program-historical-ordered-tab-content",
-        "program-historical-blockquote-lazy-continuation",
-        "program-historical-tab-only-label",
-        "program-historical-soft-break-whitespace-label",
-        "program-historical-setext-indented-code",
-        "program-historical-thematic-indented-code",
-        "program-historical-standalone-setext-hyphen-indented-continuation",
-        "program-historical-standalone-thematic-hyphen-indented-code",
-        "program-historical-definition-indented-code",
-        "program-historical-list-second-paragraph",
-        "program-historical-quote-definition-indented-code",
-        "program-historical-quote-paragraph-indented-lazy",
-        "program-historical-multiline-quote-definition-indented-code",
-        "program-historical-invalid-multiline-quote-definition-indented-lazy",
-        "program-historical-explicit-quote-setext-indented-code",
-        "program-historical-explicit-normal-quote-indented-lazy",
-        "program-historical-atx-definition-indented-code",
-        "program-historical-quote-atx-definition-indented-code",
-        "program-historical-paragraph-definition-lookalike-indented-continuation",
-        "program-historical-shortcut-label-1000",
-        "program-historical-collapsed-label-999",
-        "program-historical-failed-inline-label-1000",
-        "program-historical-soft-line-label-999",
-        "program-historical-definition-before-thematic",
-        "program-historical-setext-destination-first-wins",
-        "program-historical-paragraph-definition-setext",
-        "program-historical-html-named-destination",
-        "program-historical-list-lazy-setext-definition",
-        "program-historical-inline-html-anchor-attribute",
-        "program-historical-escaped-inline-html-opener",
-        "program-historical-inline-html-comment",
-        "program-historical-inline-html-reference-label",
-        "program-historical-invalid-type7-html-opener",
-        "program-historical-inline-html-collapsed-collision",
-        "program-historical-inline-html-collapsed-identical",
-        "program-historical-comment-block-multiline-trailing",
-        "program-historical-valid-inline-comment-trailing",
-        "program-historical-escaped-multiline-definition-label",
-        "program-historical-short-table-cell-boundary",
-        "program-historical-definition-backtick-title",
-        "program-historical-quote-processing-leaf",
-        "program-historical-code-span-fake-link",
-        "program-historical-raw-pua-identical",
-        "program-historical-inline-html-casefold-distinct-tag",
-        "program-historical-double-backslash-code-span",
-        "program-historical-orphan-inline-suffix-backtick",
-    }:
-        roadmap = PurePosixPath(
-            "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md"
-        )
-        heading = "### 2026-07-15 template lifecycle disposition overlay"
-        target = "../../../03.specs/0033-fixture/spec.md"
-        evidence = {
-            "program-historical-paragraph-break": (f"[Spec\n   \n033]({target})"),
-            "program-historical-raw-html": (f"<div>\n[Spec 033]({target})\n</div>"),
-            "program-historical-indented-code": (f"    [Spec 033]({target})"),
-            "program-historical-heading-indented-code": (f"    [Spec 033]({target})"),
-            "program-historical-paragraph-continuation": (
-                f"Continuation paragraph\n    [Spec 033]({target})"
-            ),
-            "program-historical-blockquote-raw-html": (
-                f"> <div>\n> [Spec 033]({target})\n> </div>"
-            ),
-            "program-historical-blockquote-tilde-fence": (
-                f"> ~~~markdown\n> [Spec 033]({target})\n> ~~~"
-            ),
-            "program-historical-blockquote-indented-code": (
-                f">     [Spec 033]({target})"
-            ),
-            "program-historical-raw-html-heading": (
-                f"<div>\n{heading}\n[Spec 033]({target})\n</div>"
-            ),
-            "program-historical-root-to-quote": (f"[Spec\n> 033]({target})"),
-            "program-historical-quote-to-root": (f"> [Spec\n# 033]({target})"),
-            "program-historical-quote-depth-transition": (
-                f"> [Spec\n> > 033]({target})"
-            ),
-            "program-historical-quote-depth-return": (f"> > [Spec\n> # 033]({target})"),
-            "program-historical-sibling-quotes": (f"> [Spec\n\n> 033]({target})"),
-            "program-historical-same-quote-soft-break": (f"> [Spec\n> 033]({target})"),
-            "program-historical-reference-root-to-quote": (
-                f"[Spec 033][owner\n> key]\n\n[owner key]: {target}"
-            ),
-            "program-historical-reference-quote-to-root": (
-                f"> [Spec 033][owner\n- key]\n\n[owner - key]: {target}"
-            ),
-            "program-historical-reference-quote-depth": (
-                f"> [Spec 033][owner\n> > key]\n\n[owner key]: {target}"
-            ),
-            "program-historical-reference-same-quote": (
-                f"> [Spec 033][owner\n> key]\n>\n> [owner key]: {target}"
-            ),
-            "program-historical-outer-raw-nested": (
-                f"> <div>\n> > [Spec 033]({target})\n> </div>"
-            ),
-            "program-historical-nested-indented": (f">     > [Spec 033]({target})"),
-            "program-historical-valid-angle-destination": (f"[Spec 033](<{target}>)"),
-            "program-historical-valid-angle-parentheses": (
-                f"[Spec 033](<{target}#)(>)"
-            ),
-            "program-historical-invalid-unmatched-angle": (f"[Spec 033](<{target})"),
-            "program-historical-atx-boundary": (f"[Spec\n# 033]({target})"),
-            "program-historical-setext-boundary": (
-                f"[Spec\nHeading\n---\n033]({target})"
-            ),
-            "program-historical-thematic-boundary": (f"[Spec\n***\n033]({target})"),
-            "program-historical-table-cell-boundary": (
-                f"Label | Target\n--- | ---\n[Spec | 033]({target})"
-            ),
-            "program-historical-angle-nonpunctuation-escape": (
-                r"[Spec 033](<../../../03.specs/\0033-fixture/spec.md>)"
-            ),
-            "program-historical-image-only": (f"![Spec 033]({target})"),
-            "program-historical-image-in-link": (
-                f"[![Spec icon](./icon.png)]({target})"
-            ),
-            "program-historical-unresolved-before-collapsed": (
-                f"[literal][Spec 033][]\n\n[Spec 033]: {target}"
-            ),
-            "program-historical-multiline-double-title": (
-                f'[Spec 033][owner]\n\n[owner]: {target}\n  "history"'
-            ),
-            "program-historical-valid-single-title": (
-                f"[Spec 033]({target} 'history')"
-            ),
-            "program-historical-code-paragraph-recovery": (
-                f"`unmatched\n\n[Spec 033]({target})`"
-            ),
-            "program-historical-code-container-recovery": (
-                f"`unmatched\n> [Spec 033]({target})`"
-            ),
-            "program-historical-code-soft-break": (f"`code\n[Spec 033]({target})`"),
-            "program-historical-ordered-1-normal-paragraph": (
-                f"1.\n   [Spec 033]({target})"
-            ),
-            "program-historical-nested-list-raw-html": (
-                "12. outer item\n"
-                "    - inner item\n"
-                "      <div>\n"
-                f"      [Spec 033]({target})\n"
-                "      </div>"
-            ),
-            "program-historical-ordered-empty-two-code": (
-                f"1.  \n       [Spec 033]({target})"
-            ),
-            "program-historical-unordered-four-content": (f"-    [Spec 033]({target})"),
-            "program-historical-unordered-five-content": (
-                f"-     [Spec 033]({target})"
-            ),
-            "program-historical-unordered-tab-content": (f"-\t[Spec 033]({target})"),
-            "program-historical-ordered-tab-content": (f"123.\t[Spec 033]({target})"),
-            "program-historical-blockquote-lazy-continuation": (
-                f"> [Spec 033\n]({target})"
-            ),
-            "program-historical-tab-only-label": (f"[Spec 033][\t]\n\n[\t]: {target}"),
-            "program-historical-soft-break-whitespace-label": (
-                f"[Spec 033][ \n\t]\n\n[ ]: {target}"
-            ),
-            "program-historical-setext-indented-code": (
-                f"Historical evidence\n===\n    [Spec 033]({target})"
-            ),
-            "program-historical-thematic-indented-code": (
-                f"***\n    [Spec 033]({target})"
-            ),
-            "program-historical-standalone-setext-hyphen-indented-continuation": (
-                f"--\n    [Spec 033]({target})"
-            ),
-            "program-historical-standalone-thematic-hyphen-indented-code": (
-                f"---\n    [Spec 033]({target})"
-            ),
-            "program-historical-definition-indented-code": (
-                f"[r]: /u\n    [Spec 033]({target})"
-            ),
-            "program-historical-list-second-paragraph": (
-                f"- paragraph\n\n    [Spec 033]({target})"
-            ),
-            "program-historical-quote-definition-indented-code": (
-                f"> [r]: /u\n    [Spec 033]({target})"
-            ),
-            "program-historical-quote-paragraph-indented-lazy": (
-                f"> paragraph\n    [Spec 033]({target})"
-            ),
-            "program-historical-multiline-quote-definition-indented-code": (
-                f"> [r]:\n /u\n    [Spec 033]({target})"
-            ),
-            "program-historical-invalid-multiline-quote-definition-indented-lazy": (
-                f"> [r]:\n <unterminated\n    [Spec 033]({target})"
-            ),
-            "program-historical-explicit-quote-setext-indented-code": (
-                f"> paragraph\n> ===\n    [Spec 033]({target})"
-            ),
-            "program-historical-explicit-normal-quote-indented-lazy": (
-                f"> paragraph\n> continuation\n    [Spec 033]({target})"
-            ),
-            "program-historical-atx-definition-indented-code": (
-                f"# Heading\n[r]: /u\n    [Spec 033]({target})"
-            ),
-            "program-historical-quote-atx-definition-indented-code": (
-                f"> # Heading\n> [r]: /u\n>     [Spec 033]({target})"
-            ),
-            "program-historical-paragraph-definition-lookalike-indented-continuation": (
-                f"ordinary paragraph\n[r]: /u\n    [Spec 033]({target})"
-            ),
-            "program-historical-shortcut-label-1000": (
-                f"[{'s' * 1000}]\n\n[{'s' * 1000}]: {target}"
-            ),
-            "program-historical-collapsed-label-999": (
-                f"[{'c' * 999}][]\n\n[{'c' * 999}]: {target}"
-            ),
-            "program-historical-failed-inline-label-1000": (
-                f"[{'i' * 1000}](not a link)\n\n[{'i' * 1000}]: {target}"
-            ),
-            "program-historical-soft-line-label-999": (
-                f"[Spec 033][{'m' * 997}\nn]\n\n[{'m' * 997} n]: {target}"
-            ),
-            "program-historical-definition-before-thematic": (
-                f"> [Spec 033][owner]\n>\n> [owner]:\n> {target}\n> ---"
-            ),
-            "program-historical-setext-destination-first-wins": (
-                f"> [Spec 033][owner]\n>\n> [owner]:\n> ===\n> [owner]: {target}"
-            ),
-            "program-historical-paragraph-definition-setext": (
-                f"> Ordinary paragraph\n> [owner]: {target}\n> ---\n> [Spec 033][owner]"
-            ),
-            "program-historical-html-named-destination": (
-                "[Spec 033](..&sol;..&sol;..&sol;03.specs&sol;0033-fixture&sol;spec.md)"
-            ),
-            "program-historical-list-lazy-setext-definition": (
-                f"- paragraph\n===\n  [owner]: {target}\n  [Spec 033][owner]"
-            ),
-            "program-historical-inline-html-anchor-attribute": (
-                f'<a href="[Spec 033]({target})">ok</a>'
-            ),
-            "program-historical-escaped-inline-html-opener": (
-                f'\\<span title="[Spec 033]({target})">ok</span>'
-            ),
-            "program-historical-inline-html-comment": (
-                f"before <!-- [Spec 033]({target}) --> after"
-            ),
-            "program-historical-inline-html-reference-label": (
-                f"[<i>Spec 033</i>]\n\n[Spec 033]: {target}"
-            ),
-            "program-historical-invalid-type7-html-opener": (
-                f"<x !!!>\n[Spec 033]({target})"
-            ),
-            "program-historical-inline-html-collapsed-collision": (
-                '[<span title="x">Spec 033</span>][]\n\n'
-                f'[<span title="y">Spec 033</span>]: {target}'
-            ),
-            "program-historical-inline-html-collapsed-identical": (
-                '[<span title="x">Spec 033</span>][]\n\n'
-                f'[<span title="x">Spec 033</span>]: {target}'
-            ),
-            "program-historical-comment-block-multiline-trailing": (
-                f"<!-- owner evidence\nend --> [Spec 033]({target})"
-            ),
-            "program-historical-valid-inline-comment-trailing": (
-                f"before <!-- owner evidence --> [Spec 033]({target})"
-            ),
-            "program-historical-escaped-multiline-definition-label": (
-                r"[owner\] key][]"
-                "\n\n"
-                r"[owner\]"
-                "\n"
-                f"key]: {target}"
-            ),
-            "program-historical-short-table-cell-boundary": (
-                f"| Label | Target |\n| - | :-: |\n| [Spec | 033]({target}) |"
-            ),
-            "program-historical-definition-backtick-title": (
-                f"[Spec 033][owner]\n\n[owner]: {target} `title`"
-            ),
-            "program-historical-quote-processing-leaf": (
-                f"> paragraph\n> <? owner ?>\n    [Spec 033]({target})"
-            ),
-            "program-historical-code-span-fake-link": (f"`[Spec 033]({target})`"),
-            "program-historical-raw-pua-identical": (
-                f"[Spec 033][\ue000owner]\n\n[\ue000owner]: {target}"
-            ),
-            "program-historical-inline-html-casefold-distinct-tag": (
-                f"[<I>Spec 033</I>][]\n\n[<b>spec 033</b>]: {target}"
-            ),
-            "program-historical-double-backslash-code-span": (
-                f"\\\\`[Spec 033]({target})`"
-            ),
-            "program-historical-orphan-inline-suffix-backtick": (
-                f"orphan](`[Spec 033]({target})`)"
-            ),
-        }[mutation]
-        if mutation == "program-historical-raw-html-heading":
-            mutated.texts[roadmap] = evidence
-        elif mutation == "program-historical-heading-indented-code":
-            mutated.texts[roadmap] = f"{heading}\n\n#### Evidence\n{evidence}"
-        else:
-            mutated.texts[roadmap] = f"{heading}\n\n{evidence}"
-    elif mutation == "program-execution-draft-preplanning":
-        add_execution_pair("035", "0035", status="draft")
-    elif mutation == "program-execution-draft-plan-only":
-        add_execution_node(
-            PurePosixPath("docs/04.execution/plans/2026-07-15-fixture-035.md"),
-            "sdlc/plan",
-            "[Spec](../../03.specs/0035-fixture/spec.md)",
-            status="draft",
-        )
-    elif mutation == "program-execution-draft-task-only":
-        add_execution_node(
-            PurePosixPath("docs/04.execution/tasks/2026-07-15-fixture-035.md"),
-            "sdlc/task",
-            "[Spec](../../03.specs/0035-fixture/spec.md)",
-            status="draft",
-        )
-    elif mutation == "program-execution-draft-nonreciprocal":
-        add_execution_pair("035", "0035", status="draft")
-        plan = PurePosixPath("docs/04.execution/plans/2026-07-15-fixture-035.md")
-        mutated.texts[plan] = mutated.texts[plan].replace(
-            "[Task](../tasks/2026-07-15-fixture-035.md)",
-            "Task pending",
-        )
-    elif mutation == "program-execution-draft-multiple":
-        add_execution_pair("035", "0035", status="draft")
-        add_execution_pair("035-extra", "0035", status="draft")
-    elif mutation == "program-execution-draft-connected-extra":
-        add_execution_pair("035", "0035", status="draft")
-        add_execution_node(
-            PurePosixPath("docs/04.execution/tasks/2026-07-15-fixture-0035-extra.md"),
-            "sdlc/task",
-            "[Plan](../plans/2026-07-15-fixture-035.md)",
-            status="draft",
-        )
-    elif mutation == "program-execution-draft-status-mismatch":
-        add_execution_pair("035", "0035", status="draft")
-        task = PurePosixPath("docs/04.execution/tasks/2026-07-15-fixture-035.md")
-        mutated.metadata[task]["status"] = "active"
-    elif mutation == "program-execution-gate":
-        plan = PurePosixPath("docs/04.execution/plans/2026-07-15-fixture-035.md")
-        task = PurePosixPath("docs/04.execution/tasks/2026-07-15-fixture-035.md")
-        spec = PurePosixPath("docs/03.specs/0035-fixture/spec.md")
-        paths = tuple(sorted((*paths, plan, task), key=lambda item: item.as_posix()))
-        mutated.profiles[plan] = ProfileView("sdlc/plan", "sdlc", "authored")
-        mutated.profiles[task] = ProfileView("sdlc/task", "sdlc", "authored")
-        mutated.metadata[plan] = {"type": "sdlc/plan", "status": "active"}
-        mutated.metadata[task] = {"type": "sdlc/task", "status": "active"}
-        mutated.texts[plan] = (
-            "[Spec](../../03.specs/0035-fixture/spec.md)\n"
-            "[Task](../tasks/2026-07-15-fixture-035.md)"
-        )
-        mutated.texts[task] = (
-            "[Spec](../../03.specs/0035-fixture/spec.md)\n"
-            "[Plan](../plans/2026-07-15-fixture-035.md)"
-        )
-        mutated.texts[spec] += (
-            "\n[Plan](../../04.execution/plans/2026-07-15-fixture-035.md)"
-        )
-        tracked_regular_paths = frozenset((*tracked_regular_paths, plan, task))
-    elif mutation == "program-execution-no-pair":
-        remove_execution_path(plan_034)
-        remove_execution_path(task_034)
-    elif mutation == "program-execution-closure-gap":
-        close_original_034()
-    elif mutation == "program-execution-closure-planning-gate":
-        close_original_034()
-        add_execution_pair("035", "0035")
-    elif mutation == "program-execution-closure-plan-only":
-        close_original_034()
-        add_execution_node(
-            PurePosixPath("docs/04.execution/plans/2026-07-15-fixture-035.md"),
-            "sdlc/plan",
-            "[Spec](../../03.specs/0035-fixture/spec.md)",
-        )
-    elif mutation == "program-execution-closure-task-only":
-        close_original_034()
-        add_execution_node(
-            PurePosixPath("docs/04.execution/tasks/2026-07-15-fixture-035.md"),
-            "sdlc/task",
-            "[Spec](../../03.specs/0035-fixture/spec.md)",
-        )
-    elif mutation == "program-execution-closure-nonreciprocal":
-        close_original_034()
-        add_execution_pair("035", "0035")
-        plan = PurePosixPath("docs/04.execution/plans/2026-07-15-fixture-035.md")
-        mutated.texts[plan] = mutated.texts[plan].replace(
-            "[Task](../tasks/2026-07-15-fixture-035.md)",
-            "Task pending",
-        )
-    elif mutation == "program-execution-closure-multiple":
-        close_original_034()
-        add_execution_pair("035", "0035")
-        add_execution_pair("035-extra", "0035")
-    elif mutation == "program-execution-closure-connected-extra":
-        close_original_034()
-        add_execution_pair("035", "0035")
-        add_execution_node(
-            PurePosixPath("docs/04.execution/tasks/2026-07-15-fixture-0035-extra.md"),
-            "sdlc/task",
-            "[Plan](../plans/2026-07-15-fixture-035.md)",
-        )
-    elif mutation == "program-execution-premature-0036-pair":
-        close_original_034()
-        add_original_036()
-        add_execution_pair("036", "0036")
-    elif mutation == "program-execution-plan-only":
-        remove_execution_path(task_034)
-    elif mutation == "program-execution-task-only":
-        remove_execution_path(plan_034)
-    elif mutation == "program-execution-multiple":
-        add_execution_pair("034-extra", "0034")
-    elif mutation == "program-execution-one-plan-two-tasks":
-        add_execution_node(
-            PurePosixPath("docs/04.execution/tasks/2026-07-15-fixture-0034-extra.md"),
-            "sdlc/task",
-            "[Plan](../plans/2026-07-15-fixture-034.md)",
-        )
-    elif mutation == "program-execution-two-plans-one-task":
-        add_execution_node(
-            PurePosixPath("docs/04.execution/plans/2026-07-15-fixture-0034-extra.md"),
-            "sdlc/plan",
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-        )
-    elif mutation == "program-execution-mixed-ready-state":
-        mutated.metadata[task_034]["status"] = "draft"
-    elif mutation == "program-execution-unrelated-component":
-        spec = PurePosixPath("docs/03.specs/0999-fixture/spec.md")
-        paths = tuple(sorted((*paths, spec), key=lambda item: item.as_posix()))
-        tracked_regular_paths = frozenset((*tracked_regular_paths, spec))
-        mutated.profiles[spec] = ProfileView("sdlc/spec", "sdlc", "authored")
-        mutated.metadata[spec] = {"type": "sdlc/spec", "status": "active"}
-        mutated.texts[spec] = "# Unregistered Spec fixture\n"
-        add_execution_pair("999", "0999")
-    elif mutation == "program-execution-active-follow-up-direct":
-        add_execution_pair("042", "0042")
-    elif mutation == "program-execution-draft-follow-up-indirect":
-        spec = PurePosixPath("docs/03.specs/0042-fixture/spec.md")
-        mutated.metadata[spec]["status"] = "draft"
-        program = programs[2]
-        follow_up = program.follow_ups[0]
-        draft_follow_up = ProgramFollowUp(
-            spec_id=follow_up.spec_id,
-            order=follow_up.order,
-            state="draft",
-            reason=follow_up.reason,
-            decision_id=follow_up.decision_id,
-            evidence_mode=follow_up.evidence_mode,
-        )
-        programs = (
-            *programs[:2],
-            ProgramLineage(
-                prd_id=program.prd_id,
-                ad_id=program.ad_id,
-                tranches=program.tranches,
-                follow_ups=(draft_follow_up,),
-            ),
-            *programs[3:],
-        )
-        add_execution_node(
-            PurePosixPath("docs/04.execution/plans/2026-07-15-fixture-0042-draft.md"),
-            "sdlc/plan",
-            "[Spec](../../03.specs/0042-fixture/spec.md)\n"
-            "[Task](../tasks/2026-07-15-fixture-0042-draft.md)",
-        )
-        add_execution_node(
-            PurePosixPath("docs/04.execution/tasks/2026-07-15-fixture-0042-draft.md"),
-            "sdlc/task",
-            "[Plan](../plans/2026-07-15-fixture-0042-draft.md)",
-        )
-    elif mutation == "program-execution-balanced-escaped":
-        remove_execution_path(plan_034)
-        remove_execution_path(task_034)
-        plan = PurePosixPath("docs/04.execution/plans/2026-07-15-fixture-(034).md")
-        task = PurePosixPath("docs/04.execution/tasks/2026-07-15-fixture-(034).md")
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "2026-07-15-fixture-034.md",
-            "2026-07-15-fixture-(034).md",
-        )
-        add_execution_node(
-            plan,
-            "sdlc/plan",
-            "[Spec](../../03.specs/0034-fixture/spec.md)\n"
-            "[Task](../tasks/2026-07-15-fixture-(034).md)",
-        )
-        add_execution_node(
-            task,
-            "sdlc/task",
-            "[Spec](../../03.specs/0034-fixture/spec.md)\n"
-            r"[Plan](../plans/2026-07-15-fixture-\(034\).md)",
-        )
-    elif mutation == "program-execution-cross-container":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "[Task\n> current](../tasks/2026-07-15-fixture-034.md)",
-        )
-    elif mutation == "program-execution-cross-container-destination":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "[Task](../tasks/2026-07-15-fixture-034.md\n> )",
-        )
-    elif mutation == "program-execution-cross-container-reference":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "[Task][owner\n> key]\n\n[owner key]: ../tasks/2026-07-15-fixture-034.md",
-        )
-    elif mutation == "program-execution-outer-fence-nested":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "> ~~~markdown\n> > [Task](../tasks/2026-07-15-fixture-034.md)\n> ~~~",
-        )
-    elif mutation == "program-execution-invalid-inline-garbage":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "[Task](../tasks/2026-07-15-fixture-034.md garbage)",
-        )
-    elif mutation == "program-execution-invalid-inline-angle-less-than":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "[Task](<../tasks/2026-07-15-fixture-034.md#<owner>)",
-        )
-    elif mutation == "program-execution-valid-paren-title":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "[Task](../tasks/2026-07-15-fixture-034.md (current))",
-        )
-    elif mutation == "program-execution-valid-single-title-closing-paren":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "[Task](../tasks/2026-07-15-fixture-034.md 'current ) owner')",
-        )
-    elif mutation == "program-execution-table-row-boundary":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "Label | Target\n"
-            "--- | ---\n"
-            "[Task | start\n"
-            "current](../tasks/2026-07-15-fixture-034.md) | owner",
-        )
-    elif mutation == "program-execution-multiline-reference-definition":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "[Task][owner]\n\n[owner]:\n  ../tasks/2026-07-15-fixture-034.md",
-        )
-    elif mutation == "program-execution-definition-before-thematic":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "- [Task][owner]\n  \n  [owner]:\n"
-            "  ../tasks/2026-07-15-fixture-034.md\n  ---",
-        )
-    elif mutation == "program-execution-setext-destination-first-wins":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "- [Task][owner]\n  \n  [owner]:\n  ===\n"
-            "  [owner]: ../tasks/2026-07-15-fixture-034.md",
-        )
-    elif mutation == "program-execution-paragraph-definition-setext":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "- Ordinary paragraph\n"
-            "  [owner]: ../tasks/2026-07-15-fixture-034.md\n"
-            "  ---\n  [Task][owner]",
-        )
-    elif mutation == "program-execution-html-percent-destination":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "[Task](tasks&#37;2Emd)",
-        )
-    elif mutation == "program-execution-quote-lazy-setext-definition":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "> paragraph\n===\n"
-            "> [owner]: ../tasks/2026-07-15-fixture-034.md\n"
-            "> [Task][owner]",
-        )
-    elif mutation == "program-execution-inline-html-multiline-attribute":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            '<span\n title="[Task](../tasks/2026-07-15-fixture-034.md)">\nok</span>',
-        )
-    elif mutation == "program-execution-invalid-inline-html-tag":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "<x [Task](../tasks/2026-07-15-fixture-034.md)>ok</x>",
-        )
-    elif mutation == "program-execution-escaped-html-comment-opener":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "\\<!-- [Task](../tasks/2026-07-15-fixture-034.md) -->",
-        )
-    elif mutation == "program-execution-inline-html-full-unicode-collision":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            '[Task][<span title="가">owner</span>]\n\n'
-            '[<span title="나">owner</span>]: '
-            "../tasks/2026-07-15-fixture-034.md",
-        )
-    elif mutation == "program-execution-inline-html-full-unicode-identical":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            '[Task][<span title="가">owner</span>]\n\n'
-            '[<span title="가">owner</span>]: '
-            "../tasks/2026-07-15-fixture-034.md",
-        )
-    elif mutation == "program-execution-comment-block-next-line":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "\n<!-- owner evidence --> ignored\n"
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-        )
-    elif mutation in {
-        "program-execution-multiline-definition-label-999",
-        "program-execution-multiline-definition-label-1000",
-    }:
-        second_length = 498 if mutation.endswith("label-999") else 499
-        first = "a" * 500
-        second = "b" * second_length
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            f"[Task][{first} {second}]\n\n"
-            f"[{first}\n{second}]: "
-            "../tasks/2026-07-15-fixture-034.md",
-        )
-    elif mutation == "program-execution-code-span-link":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "`[Task](../tasks/2026-07-15-fixture-034.md)`",
-        )
-    elif mutation == "program-execution-list-cdata-leaf":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "- paragraph\n"
-            "  <![CDATA[owner]]>\n"
-            "      [Task](../tasks/2026-07-15-fixture-034.md)",
-        )
-    elif mutation == "program-execution-overlapping-comment-closer":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "\n<!-->\n[Task](../tasks/2026-07-15-fixture-034.md)",
-        )
-    elif mutation == "program-execution-invalid-html-destination":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "[Task](../tasks/2026-07-15-fixture-034&bogus;.md)",
-        )
-    elif mutation == "program-execution-completed-follow-up-component":
-        add_execution_pair("033", "0033")
-    elif mutation == "program-execution-unresolved-before-shortcut":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "[literal][Task]\n\n[Task]: ../tasks/2026-07-15-fixture-034.md",
-        )
-    elif mutation == "program-execution-multiline-paren-title":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "[Task][owner]\n\n[owner]: ../tasks/2026-07-15-fixture-034.md\n  (current)",
-        )
-    elif mutation == "program-execution-inline-nested-paren-title":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "[Task](../tasks/2026-07-15-fixture-034.md ((nested))",
-        )
-    elif mutation == "program-execution-ordered-12-indented-code":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "12.\n        [Task](../tasks/2026-07-15-fixture-034.md)",
-        )
-    elif mutation == "program-execution-ordered-empty-three-code":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "12.   \n        [Task](../tasks/2026-07-15-fixture-034.md)",
-        )
-    elif mutation == "program-execution-ordered-tab-code":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "12.\t    [Task](../tasks/2026-07-15-fixture-034.md)",
-        )
-    elif mutation == "program-execution-tab-continuation-code":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "12.\n\t    [Task](../tasks/2026-07-15-fixture-034.md)",
-        )
-    elif mutation == "program-execution-list-lazy-continuation":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "- [Task\n](../tasks/2026-07-15-fixture-034.md)",
-        )
-    elif mutation == "program-execution-whitespace-collapsed-label":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "[ \t][]\n\n[ \t]: ../tasks/2026-07-15-fixture-034.md",
-        )
-    elif mutation == "program-execution-normal-tab-spaced-label":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "[Task][ owner\tkey ]\n\n[owner key]: ../tasks/2026-07-15-fixture-034.md",
-        )
-    elif mutation == "program-execution-setext-indented-code":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "Execution evidence\n---\n    [Task](../tasks/2026-07-15-fixture-034.md)",
-        )
-    elif mutation == "program-execution-standalone-setext-equals-indented-continuation":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "\n===\n    [Task](../tasks/2026-07-15-fixture-034.md)",
-        )
-    elif mutation == "program-execution-quote-lazy-equals-indented-continuation":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "> paragraph\n===\n    [Task](../tasks/2026-07-15-fixture-034.md)",
-        )
-    elif mutation == "program-execution-quote-definition-indented-code":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "> [r]: /u\n    [Task](../tasks/2026-07-15-fixture-034.md)",
-        )
-    elif mutation == "program-execution-multiline-quote-definition-indented-code":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "> [r]:\n /u\n    [Task](../tasks/2026-07-15-fixture-034.md)",
-        )
-    elif (
-        mutation == "program-execution-invalid-multiline-list-definition-indented-lazy"
-    ):
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "- [r]:\n <unterminated\n      [Task](../tasks/2026-07-15-fixture-034.md)",
-        )
-    elif mutation == "program-execution-explicit-quote-setext-indented-code":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "> paragraph\n> ===\n    [Task](../tasks/2026-07-15-fixture-034.md)",
-        )
-    elif mutation == "program-execution-setext-definition-indented-code":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "Heading\n===\n[r]: /u\n    [Task](../tasks/2026-07-15-fixture-034.md)",
-        )
-    elif mutation == "program-execution-full-label-999":
-        label = "f" * 999
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            f"[Task][{label}]\n\n[{label}]: ../tasks/2026-07-15-fixture-034.md",
-        )
-    elif mutation == "program-execution-collapsed-label-1000":
-        label = "c" * 1000
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            f"[{label}][]\n\n[{label}]: ../tasks/2026-07-15-fixture-034.md",
-        )
-    elif mutation == "program-execution-soft-line-label-1000":
-        usage = "m" * 998 + "\n" + "n"
-        definition = "m" * 998 + " n"
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            f"[Task][{usage}]\n\n[{definition}]: ../tasks/2026-07-15-fixture-034.md",
-        )
-    elif mutation == "program-execution-escaped-label-999":
-        label = r"\*" * 499 + "x"
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            f"[Task][{label}]\n\n[{label}]: ../tasks/2026-07-15-fixture-034.md",
-        )
-    elif mutation == "program-execution-escaped-backtick-link":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "\\`[Task](../tasks/2026-07-15-fixture-034.md)`",
-        )
-    elif mutation == "program-execution-code-first-html-overlap":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            '`<a x="`">[Task](../tasks/2026-07-15-fixture-034.md)`',
-        )
-    elif mutation == "program-execution-inline-html-attribute-casefold":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            '[Task][<SPAN TITLE="가">OWNER</SPAN>]\n\n'
-            '[<span title="가">owner</span>]: '
-            "../tasks/2026-07-15-fixture-034.md",
-        )
-    elif mutation == "program-execution-angle-destination-backtick":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "[Other](<foo`bar>)[Task](../tasks/2026-07-15-fixture-034.md)`",
-        )
-    elif mutation == "program-execution-html-attribute-backtick":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            '<span title="`">[Task](../tasks/2026-07-15-fixture-034.md)</span>`',
-        )
-    elif mutation == "program-execution-invalid-inline-title-backtick":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            '[Other](./unrelated.md "<span title=`bad>) [Task]'
-            "(../tasks/2026-07-15-fixture-034.md)`",
-        )
-    elif mutation == "program-execution-invalid-reference-title-backtick":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "[Other][owner]\n\n"
-            '[owner]: ./unrelated.md "<span title=`bad>\n'
-            "[Task](../tasks/2026-07-15-fixture-034.md)`",
-        )
-    elif mutation == "program-execution-valid-inline-title-backtick":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            '[Other](./unrelated.md "<span title=`bad>") [Task]'
-            "(../tasks/2026-07-15-fixture-034.md)`",
-        )
-    elif mutation == "program-execution-valid-reference-title-backtick":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "[Other][owner]\n\n"
-            '[owner]: ./unrelated.md "<span title=`bad>"\n'
-            "[Task](../tasks/2026-07-15-fixture-034.md)`",
-        )
-    elif mutation == "program-execution-orphan-inline-suffix-backtick":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "orphan](`[Task](../tasks/2026-07-15-fixture-034.md)`)",
-        )
-    elif mutation == "program-execution-unmatched-outer-title-backtick":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            '[`[Task](../tasks/2026-07-15-fixture-034.md "`")',
-        )
-    elif mutation in {
-        "program-execution-raw-pua-label-999",
-        "program-execution-raw-pua-label-1000",
-    }:
-        label = "\ue000" * (
-            999 if mutation == "program-execution-raw-pua-label-999" else 1000
-        )
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            f"[Task][{label}]\n\n[{label}]: ../tasks/2026-07-15-fixture-034.md",
-        )
-    elif mutation == "program-execution-code-paragraph-recovery":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "`unmatched\n\n[Task](../tasks/2026-07-15-fixture-034.md)`",
-        )
-    elif mutation == "program-execution-nonreciprocal":
-        mutated.texts[plan_034] = mutated.texts[plan_034].replace(
-            "[Task](../tasks/2026-07-15-fixture-034.md)",
-            "`../tasks/2026-07-15-fixture-034.md`",
-        )
-    elif mutation == "program-diagnostic-contract":
-        spec = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-        mutated.metadata[spec]["status"] = "done"
-        add_execution_node(
-            PurePosixPath("docs/03.specs/0034-fixture/tasks-extra.md"),
-            "sdlc/task",
-            "[Plan](plan.md)",
-        )
-    elif mutation == "program-ordered-123-indented-code-authority":
-        stage_zero = PurePosixPath("docs/00.agent-governance/lineage-fixture.md")
-        table = (
-            "Document Family | Lifecycle Transition\n"
-            "--- | ---\n"
-            "PRD | `draft -> active -> done \\| archived`\n"
-            "AD/ADR | `draft -> active -> accepted \\| archived`\n"
-            "Spec | `draft -> active -> done \\| archived`\n"
-            "Plan/Task | `draft -> active -> done \\| archived`\n"
-            "Operations | `draft -> active -> accepted \\| archived`\n"
-            "Archive Record | `archived` only"
-        )
-        indented = "\n".join(f"         {line}" for line in table.splitlines())
-        mutated.texts[stage_zero] += f"\n\n123.\n{indented}"
-    elif mutation == "program-ordered-empty-four-code-authority":
-        stage_zero = PurePosixPath("docs/00.agent-governance/lineage-fixture.md")
-        table = (
-            "Document Family | Lifecycle Transition\n"
-            "--- | ---\n"
-            "PRD | `draft -> active -> done \\| archived`\n"
-            "AD/ADR | `draft -> active -> accepted \\| archived`\n"
-            "Spec | `draft -> active -> done \\| archived`\n"
-            "Plan/Task | `draft -> active -> done \\| archived`\n"
-            "Operations | `draft -> active -> accepted \\| archived`\n"
-            "Archive Record | `archived` only"
-        )
-        indented = "\n".join(f"         {line}" for line in table.splitlines())
-        mutated.texts[stage_zero] += f"\n\n123.    \n{indented}"
-    elif mutation == "program-thematic-indented-code-authority":
-        stage_zero = PurePosixPath("docs/00.agent-governance/lineage-fixture.md")
-        table = (
-            "Document Family | Lifecycle Transition\n"
-            "--- | ---\n"
-            "PRD | `draft -> active -> done \\| archived`\n"
-            "AD/ADR | `draft -> active -> accepted \\| archived`\n"
-            "Spec | `draft -> active -> done \\| archived`\n"
-            "Plan/Task | `draft -> active -> done \\| archived`\n"
-            "Operations | `draft -> active -> accepted \\| archived`\n"
-            "Archive Record | `archived` only"
-        )
-        indented = "\n".join(f"    {line}" for line in table.splitlines())
-        mutated.texts[stage_zero] += f"\n\n***\n{indented}"
-    elif mutation in {
-        "program-lazy-quote-pseudo-authority",
-        "program-explicit-quote-authority",
-    }:
-        stage_zero = PurePosixPath("docs/00.agent-governance/lineage-fixture.md")
-        rows = [
-            "Document Family | Lifecycle Transition",
-            "--- | ---",
-            "PRD | `draft -> active -> done \\| archived`",
-            "AD/ADR | `draft -> active -> accepted \\| archived`",
-            "Spec | `draft -> active -> done \\| archived`",
-            "Plan/Task | `draft -> active -> done \\| archived`",
-            "Operations | `draft -> active -> accepted \\| archived`",
-            "Archive Record | `archived` only",
-        ]
-        if mutation == "program-lazy-quote-pseudo-authority":
-            table = "> paragraph\n" + "\n".join(rows)
-        else:
-            table = "\n".join(f"> {row}" for row in rows)
-        mutated.texts[stage_zero] += "\n\n" + table
-    elif mutation in {
-        "program-duplicate-authority",
-        "program-duplicate-authority-leading",
-        "program-duplicate-authority-trailing",
-        "program-duplicate-authority-shortcut",
-        "program-duplicate-authority-collapsed",
-        "program-duplicate-authority-full-reference",
-        "program-duplicate-authority-balanced",
-        "program-duplicate-authority-blockquote",
-        "program-duplicate-authority-extra-prd",
-        "program-duplicate-authority-wrapper-columns",
-        "program-invalid-authority-link-garbage",
-        "program-code-wrapped-authority-link",
-        "program-code-label-authority-link",
-        "program-code-html-literal-authority",
-        "program-invalid-authority-reference-definition",
-        "program-duplicate-authority-html-numeric",
-        "program-duplicate-authority-html-named",
-        "program-invalid-authority-html-reference",
-        "program-duplicate-authority-html-headers",
-        "program-duplicate-authority-html-family",
-        "program-duplicate-authority-html-transition",
-        "program-duplicate-authority-one-hyphen-delimiter",
-        "program-duplicate-authority-two-hyphen-delimiter",
-    }:
-        stage_zero = PurePosixPath("docs/00.agent-governance/lineage-fixture.md")
-        rows = [
-            "**[Ｄｏｃｕｍｅｎｔ Ｆａｍｉｌｙ](./family.md)** | *Lifecycle   Transition*",
-            "--- | ---",
-            "[*ＰＲＤ*](./prd.md) | `draft → active → done \\| archived`",
-            "AD/ADR | `draft -> active -> accepted \\| archived`",
-            "Spec | `draft -> active -> done \\| archived`",
-            "Plan/Task | `draft -> active -> done \\| archived`",
-            "Operations | `draft -> active -> accepted \\| archived`",
-            "Archive Record | `archived` only",
-        ]
-        definitions = ""
-        if mutation == "program-duplicate-authority-leading":
-            rows = [f"| {row}" for row in rows]
-        elif mutation == "program-duplicate-authority-trailing":
-            rows = [f"{row} |" for row in rows]
-        elif mutation == "program-duplicate-authority-shortcut":
-            rows[2] = "[ＰＲＤ] | `draft -> active -> done \\| archived`"
-            definitions = "\n\n[ＰＲＤ]: ./prd_(owner).md"
-        elif mutation == "program-duplicate-authority-collapsed":
-            rows[2] = "[ＰＲＤ][] | `draft -> active -> done \\| archived`"
-            definitions = "\n\n[ＰＲＤ]: ./prd_(owner).md"
-        elif mutation == "program-duplicate-authority-full-reference":
-            rows[2] = "[*ＰＲＤ*][prd-owner] | `draft -> active -> done \\| archived`"
-            definitions = "\n\n[prd-owner]: ./prd_(owner).md"
-        elif mutation == "program-duplicate-authority-balanced":
-            rows[2] = (
-                "[*ＰＲＤ*](./prd_(owner).md) | `draft -> active -> done \\| archived`"
-            )
-        elif mutation == "program-duplicate-authority-blockquote":
-            rows = [f"> > {row}" for row in rows]
-        elif mutation == "program-duplicate-authority-extra-prd":
-            rows.append("PRD | `draft -> archived`")
-        elif mutation == "program-duplicate-authority-wrapper-columns":
-            rows = [
-                "Owner | Lifecycle Transition | Document Family | Notes",
-                "--- | --- | --- | ---",
-                "platform | `draft -> active -> done \\| archived` | PRD | current",
-                "platform | `draft -> active -> accepted \\| archived` | AD/ADR | current",
-                "platform | `draft -> active -> done \\| archived` | Spec | current",
-                "platform | `draft -> active -> done \\| archived` | Plan/Task | current",
-                "platform | `draft -> active -> accepted \\| archived` | Operations | current",
-                "platform | `archived` only | Archive Record | current",
-            ]
-        elif mutation == "program-invalid-authority-link-garbage":
-            rows[2] = (
-                "[*ＰＲＤ*](./prd.md garbage) | `draft -> active -> done \\| archived`"
-            )
-        elif mutation == "program-code-wrapped-authority-link":
-            rows[2] = "`[ＰＲＤ](./prd.md)` | `draft -> active -> done \\| archived`"
-        elif mutation == "program-code-label-authority-link":
-            rows[2] = "[`ＰＲＤ`](./prd.md) | `draft -> active -> done \\| archived`"
-        elif mutation == "program-code-html-literal-authority":
-            rows[2] = "`<i>`PRD | `draft -> active -> done \\| archived`"
-        elif mutation == "program-invalid-authority-reference-definition":
-            rows[2] = "[ＰＲＤ][owner] | `draft -> active -> done \\| archived`"
-            definitions = "\n\n[owner]: ./prd.md garbage"
-        elif mutation == "program-duplicate-authority-html-numeric":
-            rows[2] = "[PR&#68;](./prd.md) | `draft -> active -> done \\| archived`"
-        elif mutation == "program-duplicate-authority-html-named":
-            rows[2] = "[PR&Dopf;](./prd.md) | `draft -> active -> done \\| archived`"
-        elif mutation == "program-invalid-authority-html-reference":
-            rows[2] = "[PR&bogus;](./prd.md) | `draft -> active -> done \\| archived`"
-        elif mutation == "program-duplicate-authority-html-headers":
-            rows[0] = "<span>Document Family</span> | <b>Lifecycle Transition</b>"
-        elif mutation == "program-duplicate-authority-html-family":
-            rows[2] = (
-                '<span title="AD/ADR">PRD</span> | '
-                "`draft -> active -> done \\| archived`"
-            )
-        elif mutation == "program-duplicate-authority-html-transition":
-            rows[2] = "PRD | <span>draft -> active -> done \\| archived</span>"
-        elif mutation == "program-duplicate-authority-one-hyphen-delimiter":
-            rows = [f"| {row} |" for row in rows]
-            rows[1] = "| - | :-: |"
-        elif mutation == "program-duplicate-authority-two-hyphen-delimiter":
-            rows[1] = "-- | :--:"
-        mutated.texts[stage_zero] += "\n\n" + "\n".join(rows) + definitions
-    elif mutation == "program-nonrendered-authority":
-        stage_zero = PurePosixPath("docs/00.agent-governance/lineage-fixture.md")
-        table = (
-            "| Document Family | Lifecycle Transition |\n"
-            "| --- | --- |\n"
-            "| PRD | `draft -> active -> done \\| archived` |\n"
-            "| AD/ADR | `draft -> active -> accepted \\| archived` |\n"
-            "| Spec | `draft -> active -> done \\| archived` |\n"
-            "| Plan/Task | `draft -> active -> done \\| archived` |\n"
-            "| Operations | `draft -> active -> accepted \\| archived` |\n"
-            "| Archive Record | `archived` only |"
-        )
-        mutated.texts[stage_zero] += (
-            f"\n\n```markdown\n{table}\n```\n\n<!--\n{table}\n-->"
-        )
-    elif mutation == "program-nonrendered-authority-blockquote-fence":
-        stage_zero = PurePosixPath("docs/00.agent-governance/lineage-fixture.md")
-        table = (
-            "Document Family | Lifecycle Transition\n"
-            "--- | ---\n"
-            "PRD | `draft -> active -> done \\| archived`\n"
-            "AD/ADR | `draft -> active -> accepted \\| archived`\n"
-            "Spec | `draft -> active -> done \\| archived`\n"
-            "Plan/Task | `draft -> active -> done \\| archived`\n"
-            "Operations | `draft -> active -> accepted \\| archived`\n"
-            "Archive Record | `archived` only"
-        )
-        quoted = "\n".join(f"> > {line}" for line in table.splitlines())
-        mutated.texts[stage_zero] += f"\n\n> > ```markdown\n{quoted}\n> > ```"
-    elif mutation in {
-        "program-nonrendered-authority-outer-fence-nested",
-        "program-nonrendered-authority-outer-raw-nested",
-    }:
-        stage_zero = PurePosixPath("docs/00.agent-governance/lineage-fixture.md")
-        table = (
-            "Document Family | Lifecycle Transition\n"
-            "--- | ---\n"
-            "PRD | `draft -> active -> done \\| archived`\n"
-            "AD/ADR | `draft -> active -> accepted \\| archived`\n"
-            "Spec | `draft -> active -> done \\| archived`\n"
-            "Plan/Task | `draft -> active -> done \\| archived`\n"
-            "Operations | `draft -> active -> accepted \\| archived`\n"
-            "Archive Record | `archived` only"
-        )
-        quoted = "\n".join(f"> > {line}" for line in table.splitlines())
-        if mutation == "program-nonrendered-authority-outer-fence-nested":
-            mutated.texts[stage_zero] += f"\n\n> ~~~markdown\n{quoted}\n> ~~~"
-        else:
-            mutated.texts[stage_zero] += f"\n\n> <div>\n{quoted}\n> </div>"
-    elif mutation == "program-unmatched-bracket-performance":
-        stage_zero = PurePosixPath("docs/00.agent-governance/lineage-fixture.md")
-        mutated.texts[stage_zero] += (
-            "\n\n" + "[" * 20_000 + " | Lifecycle Transition\n--- | ---\nPRD | active"
-        )
-    elif mutation == "program-unmatched-code-run-performance":
-        stage_zero = PurePosixPath("docs/00.agent-governance/lineage-fixture.md")
-        mutated.texts[stage_zero] += "\n\n" + "\n".join(
-            "`" * length + "x" for length in range(1, 501)
-        )
-    elif mutation == "program-failed-inline-candidate-performance":
-        mutated.texts[plan_034] += "\n\n" + "[x](" * 4_000
-    elif mutation in {
-        "program-inline-angle-destination-contract",
-        "program-reference-angle-destination-contract",
-        "program-inline-ownership-sweep-2000",
-        "program-inline-ownership-sweep-4000",
-        "program-inline-ownership-sweep-8000",
-        "program-code-wrapped-html-sweep-2000",
-        "program-code-wrapped-html-sweep-4000",
-        "program-code-wrapped-html-sweep-8000",
-        "program-provisional-self-visibility-contract",
-        "program-nested-link-suppression-2000",
-        "program-nested-link-suppression-4000",
-        "program-nested-link-suppression-8000",
-        "program-escaped-adjacent-backtick-contract",
-        "program-bare-destination-depth-whitespace-contract",
-        "program-backtick-owned-paragraph-sweep-2000",
-        "program-backtick-owned-paragraph-sweep-4000",
-        "program-backtick-owned-paragraph-sweep-8000",
-        "program-execution-component-chain-500",
-        "program-execution-component-chain-1000",
-        "program-execution-component-chain-2000",
-        "program-execution-component-chain-4000",
-        "program-commonmark-character-predicate-contract",
-        "program-opaque-label-index-sweep-2000",
-        "program-opaque-label-index-sweep-4000",
-        "program-opaque-label-index-sweep-8000",
-    }:
-        pass
-    else:
-        raise ConfigurationError(
-            f"unknown program-lineage fixture mutation: {mutation}"
-        )
-    return (
-        Context(
-            mutated.root,
-            paths,
-            mutated.baseline_paths,
-            mutated.profiles,
-            mutated.texts,
-            mutated.metadata,
-            mutated.adapter_targets,
-            mutated.governance_current_paths,
-            mutated.governance_current_states,
-            mutated.reference_current_packs,
-            tracked_regular_paths,
-        ),
-        programs,
-    )
-
-
-def _mutated_context(context: Context, mutation: str) -> Context:
-    paths = context.paths
-    profiles = dict(context.profiles)
-    texts = dict(context.texts)
-    metadata = copy.deepcopy(context.metadata)
-    governance_current_paths = context.governance_current_paths
-    reference_current_packs = context.reference_current_packs
-    tracked_regular_paths = context.tracked_regular_paths
-    ria_contract_text = context.ria_contract_text
-    source = PurePosixPath("docs/05.operations/guides/9999-source.md")
-    if mutation == "link-broken":
-        texts[source] += "\n[bad](./missing.md)\n"
-    elif mutation.startswith("link-work105-history-"):
-        history_source = PurePosixPath("docs/05.operations/guides/9997-history.md")
-        if mutation == "link-work105-history-valid":
-            pass
-        elif mutation in {
-            "link-work105-history-active",
-            "link-work105-history-draft",
-            "link-work105-history-accepted",
-        }:
-            status = mutation.rsplit("-", 1)[1]
-            texts[history_source] = texts[history_source].replace(
-                "status: done", f"status: {status}"
-            )
-            metadata[history_source]["status"] = status
-        elif mutation == "link-work105-history-byte-drift":
-            texts[history_source] += "\nchanged completed-history line\n"
-        elif mutation == "link-work105-history-outside-target":
-            texts[history_source] = texts[history_source].replace(
-                "requirements/0011-document-taxonomy-consolidation-architecture.md",
-                "requirements/0012-outside-work105-census.md",
-            )
-        else:
-            raise ConfigurationError(
-                f"unknown WORK-105 history fixture mutation: {mutation}"
-            )
-    elif mutation in {
-        "link-protected-historical-predecessor",
-        "link-protected-historical-unprotected-source",
-        "link-protected-historical-disposition-drift",
-        "link-protected-historical-byte-drift",
-        "link-snapshot-historical-predecessor",
-        "link-snapshot-historical-source-commit-drift",
-        "link-snapshot-historical-byte-drift",
-    }:
-        predecessor = sorted(WERPC_PREDECESSOR_PATHS)[0]
-        protected_source = PurePosixPath(
-            "docs/90.references/audits/2026-08-09-wgia/audit.md"
-        )
-        snapshot_source = PurePosixPath(
-            "docs/90.references/audits/2026-07-05-wea/historical.md"
-        )
-        if mutation == "link-protected-historical-unprotected-source":
-            link_source = source
-        elif mutation.startswith("link-snapshot-historical"):
-            link_source = snapshot_source
-        else:
-            link_source = protected_source
-        relative_target = posixpath.relpath(
-            predecessor,
-            start=link_source.parent.as_posix(),
-        )
-        texts[link_source] += f"\n[historical predecessor]({relative_target})\n"
-        if mutation == "link-protected-historical-byte-drift":
-            texts[protected_source] += "\nprotected byte drift\n"
-        elif mutation == "link-snapshot-historical-byte-drift":
-            texts[snapshot_source] += "\nsnapshot byte drift\n"
-        elif mutation == "link-snapshot-historical-source-commit-drift":
-            contract = json.loads(ria_contract_text or "{}")
-            contract["snapshotGuard"]["sourceCommit"] = "git-sha1:" + "1" * 40
-            ria_contract_text = json.dumps(contract)
-        disposition_rows = [
-            "| Old path | Source commit | Topic or heading | Verification | New owner | "
-            "Disposition | Reason and evidence |",
-            "| --- | --- | --- | --- | --- | --- | --- |",
-        ]
-        for index, path in enumerate(sorted(WERPC_PREDECESSOR_PATHS)):
-            new_owner = (
-                ""
-                if mutation == "link-protected-historical-disposition-drift"
-                and index == 0
-                else "source-coverage-and-migration-ledger.md"
-            )
-            disposition_rows.append(
-                f"| `{path}` | `{'0' * 40}` | historical fixture | "
-                f"sourceCommit-pinned | `{new_owner}` | "
-                f"{WERPC_DELETION_DISPOSITION} | fixture disposition |"
-            )
-        texts[LEDGER_PATH] += "\n\n" + "\n".join(disposition_rows) + "\n"
-    elif mutation in {
-        "link-retired-evidence",
-        "link-retired-active",
-        "link-retired-current-reference",
-    }:
-        replacement = context.root / ".github/README.md"
-        replacement.parent.mkdir(parents=True, exist_ok=True)
-        replacement.write_text("# GitHub Configuration\n", encoding="utf-8")
-        if mutation == "link-retired-evidence":
-            evidence_source = PurePosixPath(
-                "docs/90.references/audits/2026-07-11-weia/audit.md"
-            )
-            texts[evidence_source] += "\n[retired hub](../../../../.github/ABOUT.md)\n"
-        elif mutation == "link-retired-current-reference":
-            reference_source = PurePosixPath(
-                "docs/90.references/research/2026-08-08-wer/accepted.md"
-            )
-            texts[reference_source] += "\n[retired hub](../../../../.github/ABOUT.md)\n"
-        else:
-            texts[source] += "\n[retired hub](../../../.github/ABOUT.md)\n"
-    elif mutation == "link-absolute":
-        texts[source] += "\n[bad](/etc/passwd)\n"
-    elif mutation == "link-file-uri":
-        texts[source] += "\n[bad](file:///tmp/x)\n"
-    elif mutation == "link-escape":
-        texts[source] += "\n[bad](../../../../escape.md)\n"
-    elif mutation == "link-archive-bypass":
-        texts[source] += "\n[bad](../../98.archive/0999-fixture.md)\n"
-    elif mutation == "link-adapter-missing":
-        texts[source] += "\n[bad](../../../.claude/skills/missing/skill.md)\n"
-    elif mutation == "links-excluded":
-        texts[source] += (
-            "\n```md\n[bad](./missing.md)\n```\n<!-- [bad](./missing.md) -->\n"
-        )
-    elif mutation == "link-inline-code-excluded":
-        texts[source] += (
-            "\n`[inline](./missing-inline.md)`\n"
-            "``[full][missing full] [collapsed][] [shortcut]``\n"
-            "```[different](./missing-different.md)```\n"
-            "[missing full]: ./missing-full.md\n"
-            "[collapsed]: ./missing-collapsed.md\n"
-            "[shortcut]: ./missing-shortcut.md\n"
-        )
-    elif mutation == "link-odd-escaped-excluded":
-        texts[source] += (
-            "\n\\[inline](./missing-inline.md)\n"
-            "\\[collapsed][]\n"
-            "\\[shortcut]\n"
-            "[collapsed]: ./missing-collapsed.md\n"
-            "[shortcut]: ./missing-shortcut.md\n"
-        )
-    elif mutation == "link-even-escaped-active":
-        texts[source] += (
-            "\n\\\\[inline](./missing-inline.md)\n"
-            "\\\\[full][missing full]\n"
-            "\\\\[collapsed][]\n"
-            "\\\\[shortcut]\n"
-            "[missing full]: ./missing-full.md\n"
-            "[collapsed]: ./missing-collapsed.md\n"
-            "[shortcut]: ./missing-shortcut.md\n"
-        )
-    elif mutation in {
-        "link-even-escaped-inline",
-        "link-even-escaped-full-reference",
-        "link-even-escaped-collapsed-reference",
-        "link-even-escaped-shortcut-reference",
-    }:
-        rendered = {
-            "link-even-escaped-inline": "\\\\[inline](./missing-inline.md)",
-            "link-even-escaped-full-reference": "\\\\[full][missing full]",
-            "link-even-escaped-collapsed-reference": "\\\\[collapsed][]",
-            "link-even-escaped-shortcut-reference": "\\\\[escaped shortcut]",
-        }
-        texts[source] += (
-            f"\n{rendered[mutation]}\n\n"
-            "[missing full]: ./missing-full.md\n"
-            "[collapsed]: ./missing-collapsed.md\n"
-            "[shortcut]: ./missing-shortcut.md\n"
-            "[escaped shortcut]: ./missing-escaped-shortcut.md\n"
-        )
-    elif mutation == "link-invalid-fence-closer":
-        texts[source] += (
-            "\n```md\n[bad](./missing.md)\n``` still-open\n"
-            "[also-bad](./missing-two.md)\n```\n"
-        )
-    elif mutation == "index-missing":
-        path = DECLARED_INDEXES[0].path
-        texts[path] = "\n".join(
-            line
-            for line in texts[path].splitlines()
-            if "[`./0999-fixture/spec.md`]" not in line
-        )
-    elif mutation == "index-stale":
-        path = DECLARED_INDEXES[0].path
-        texts[path] += "| [`./stale/spec.md`](./stale/spec.md) | stale | Active |\n"
-    elif mutation == "index-duplicate":
-        path = DECLARED_INDEXES[0].path
-        row = next(
-            line
-            for line in texts[path].splitlines()
-            if "[`./0999-fixture/spec.md`]" in line
-        )
-        texts[path] += row + "\n"
-    elif mutation == "index-status":
-        path = DECLARED_INDEXES[0].path
-        texts[path] = texts[path].replace("| Active |", "| Done |")
-    elif mutation == "index-tree":
-        path = DECLARED_INDEXES[0].path
-        texts[path] = texts[path].replace("    ├── spec.md\n", "")
-    elif mutation == "index-anchor-prose":
-        path = DECLARED_INDEXES[0].path
-        texts[path] = texts[path].replace(
-            "### Current Spec Index",
-            "This prose mentions ### Current Spec Index",
-        )
-    elif mutation == "index-multi-order":
-        path = DECLARED_INDEXES[0].path
-        texts[path] = "\n".join(
-            line
-            for line in texts[path].splitlines()
-            if "[`./0998-second/spec.md`]" not in line
-            and "[`./0999-fixture/spec.md`]" not in line
-        )
-    elif mutation == "owner-duplicate":
-        plan = PurePosixPath("docs/03.specs/0999-fixture/plan.md")
-        task = PurePosixPath("docs/03.specs/0999-fixture/tasks.md")
-        metadata[task]["type"] = metadata[plan]["type"]
-        metadata[task]["title"] = metadata[plan]["title"]
-        traceability = (
-            "\n## Traceability\n\n[up](../../01.requirements/0999-fixture.md)\n"
-        )
-        texts[plan] += traceability
-        texts[task] += traceability
-    elif mutation == "owner-missing":
-        metadata[PurePosixPath("docs/01.requirements/0999-fixture.md")]["title"] = ""
-    elif mutation in {
-        "ledger-settled-inventory-growth",
-        "ledger-settled-byte-drift",
-        "ledger-settled-malformed-metadata",
-        "ledger-settled-from-commit-drift",
-        "ledger-settled-reason-drift",
-    }:
-        original_ledger_bytes = (
-            context.ledger_bytes
-            if context.ledger_bytes is not None
-            else context.texts[LEDGER_PATH].encode("utf-8")
-        )
-        transition_commit = "git-sha1:" + "2" * 40
-        settlement: dict[str, Any] = {
-            "id": LEDGER_SETTLEMENT_ID,
-            "packId": LEDGER_SETTLEMENT_PACK_ID,
-            "fromCommit": LEDGER_SETTLEMENT_FROM_COMMIT,
-            "subject": LEDGER_SETTLEMENT_SUBJECT,
-            "targetSha256": hashlib.sha256(original_ledger_bytes).hexdigest(),
-            "targetByteLength": len(original_ledger_bytes),
-            "reason": LEDGER_SETTLEMENT_REASON,
-            "transitionCommit": transition_commit,
-        }
-        if mutation == "ledger-settled-malformed-metadata":
-            settlement["targetByteLength"] = "malformed"
-        elif mutation == "ledger-settled-from-commit-drift":
-            settlement["fromCommit"] = "git-sha1:" + "3" * 40
-        elif mutation == "ledger-settled-reason-drift":
-            settlement["reason"] = "Tampered fixture settlement reason"
-        ria_contract_text = json.dumps(
-            {
-                "currentPackBaselines": {
-                    LEDGER_SETTLEMENT_PACK_ID: transition_commit,
-                },
-                "baselineTransitions": [],
-                "baselineSettlements": [settlement],
-            }
-        )
-        if mutation == "ledger-settled-inventory-growth":
-            retired_path = PurePosixPath(
-                "docs/05.operations/guides/9998-target file.md"
-            )
-            additions = (
-                (
-                    PurePosixPath("docs/05.operations/guides/10000-post-settlement.md"),
-                    ProfileView("sdlc/guide", "sdlc", "authored"),
-                    {
-                        "title": "Post-settlement Guide",
-                        "type": "sdlc/guide",
-                        "status": "active",
-                    },
-                ),
-                (
-                    PurePosixPath("docs/98.archive/1000-post-settlement.md"),
-                    ProfileView("content/archive", "common", "archive-envelope"),
-                    {
-                        "title": "Post-settlement Archive",
-                        "type": "content/archive",
-                        "status": "archived",
-                    },
-                ),
-            )
-            for path, profile, frontmatter in additions:
-                profiles[path] = profile
-                metadata[path] = frontmatter
-                texts[path] = f"# {frontmatter['title']}\n"
-            profiles.pop(retired_path)
-            metadata.pop(retired_path)
-            texts.pop(retired_path)
-            paths = tuple(
-                sorted(
-                    (
-                        *(path for path in paths if path != retired_path),
-                        *(path for path, _, _ in additions),
-                    ),
-                    key=lambda item: item.as_posix(),
-                )
-            )
-            tracked_regular_paths = frozenset(
-                (
-                    *(path for path in tracked_regular_paths if path != retired_path),
-                    *(path for path, _, _ in additions),
-                )
-            )
-        elif mutation == "ledger-settled-byte-drift":
-            texts[LEDGER_PATH] += "\n<!-- protected byte drift -->\n"
-    elif mutation in {
-        "ledger-predecessor-disposition-valid",
-        "ledger-predecessor-disposition-missing",
-        "ledger-predecessor-disposition-mismatched",
-    }:
-        predecessor = sorted(WERPC_PREDECESSOR_PATHS)[0]
-        texts[LEDGER_PATH] = texts[LEDGER_PATH].rstrip() + (
-            f"\n| `{predecessor}` | Historical predecessor | content/reference | | "
-            f"preserve | `{predecessor}` | sourceCommit-pinned WERPC evidence | "
-            "none | 2026-08-08 | historical | retain | source changes | platform | "
-            "inventory-reviewed |\n"
-        )
-        if mutation != "ledger-predecessor-disposition-missing":
-            disposition_rows = [
-                "| Old path | Source commit | Topic or heading | Verification | New owner | "
-                "Disposition | Reason and evidence |",
-                "| --- | --- | --- | --- | --- | --- | --- |",
-            ]
-            for index, path in enumerate(sorted(WERPC_PREDECESSOR_PATHS)):
-                source_commit = "0" * 40
-                if (
-                    mutation == "ledger-predecessor-disposition-mismatched"
-                    and index == 0
-                ):
-                    source_commit = "mismatched"
-                disposition_rows.append(
-                    f"| `{path}` | `{source_commit}` | historical fixture | "
-                    "sourceCommit-pinned | `source-coverage-and-migration-ledger.md` | "
-                    f"{WERPC_DELETION_DISPOSITION} | fixture disposition |"
-                )
-            texts[LEDGER_PATH] += "\n\n" + "\n".join(disposition_rows) + "\n"
-    elif mutation == "ledger-missing-row":
-        texts[LEDGER_PATH] = "\n".join(
-            line
-            for line in texts[LEDGER_PATH].splitlines()
-            if "`docs/01.requirements/0999-fixture.md`" not in line
-        )
-    elif mutation == "ledger-incomplete":
-        texts[LEDGER_PATH] = texts[LEDGER_PATH].replace(
-            "| path | title |", "| pathname | title |", 1
-        )
-    elif mutation == "ledger-unknown":
-        texts[LEDGER_PATH] = texts[LEDGER_PATH].rstrip() + (
-            "\n| `docs/unknown.md` | Fixture | content/reference | | preserve | "
-            "`docs/unknown.md` | fixture | none | 2026-07-12 | repo | retain | "
-            "change | platform | reviewed |\n"
-        )
-    elif mutation in {
-        "governance-declared-accepted",
-        "governance-declared-draft",
-        "governance-declared-done",
-        "governance-declared-archived",
-    }:
-        status = mutation.removeprefix("governance-declared-")
-        metadata[FIXTURE_GOVERNANCE_PATHS[0]]["status"] = status
-        texts[GOVERNANCE_CURRENT_README] = texts[GOVERNANCE_CURRENT_README].replace(
-            "| [`current-alpha.md`](current-alpha.md) | `active` |",
-            f"| [`current-alpha.md`](current-alpha.md) | `{status}` |",
-        )
-    elif mutation in {
-        "governance-undeclared-draft",
-        "governance-active-undeclared",
-        "governance-accepted-undeclared",
-        "governance-undeclared-done",
-        "governance-undeclared-archived",
-    }:
-        status = {
-            "governance-undeclared-draft": "draft",
-            "governance-active-undeclared": "active",
-            "governance-accepted-undeclared": "accepted",
-            "governance-undeclared-done": "done",
-            "governance-undeclared-archived": "archived",
-        }[mutation]
-        metadata[FIXTURE_GOVERNANCE_PATHS[0]]["status"] = status
-        governance_current_paths = (FIXTURE_GOVERNANCE_PATHS[1],)
-        texts[GOVERNANCE_CURRENT_README] = "\n".join(
-            line
-            for line in texts[GOVERNANCE_CURRENT_README].splitlines()
-            if "current-alpha.md" not in line
-        )
-    elif mutation == "governance-declared-missing":
-        missing = PurePosixPath("docs/00.agent-governance/current-missing.md")
-        governance_current_paths = (missing, FIXTURE_GOVERNANCE_PATHS[1])
-        metadata[FIXTURE_GOVERNANCE_PATHS[0]]["status"] = "draft"
-        texts[GOVERNANCE_CURRENT_README] = texts[GOVERNANCE_CURRENT_README].replace(
-            "| [`current-alpha.md`](current-alpha.md) | `active` |",
-            "| [`current-missing.md`](current-missing.md) | `active` |",
-        )
-    elif mutation == "governance-index-missing":
-        texts[GOVERNANCE_CURRENT_README] = "\n".join(
-            line
-            for line in texts[GOVERNANCE_CURRENT_README].splitlines()
-            if "current-alpha.md" not in line
-        )
-    elif mutation == "governance-index-stale":
-        texts[GOVERNANCE_CURRENT_README] += (
-            "\n| [`current-stale.md`](current-stale.md) | `active` |\n"
-        )
-    elif mutation == "governance-index-duplicate":
-        row = "| [`current-alpha.md`](current-alpha.md) | `active` |"
-        texts[GOVERNANCE_CURRENT_README] = texts[GOVERNANCE_CURRENT_README].replace(
-            row, f"{row}\n{row}"
-        )
-    elif mutation == "governance-index-status":
-        texts[GOVERNANCE_CURRENT_README] = texts[GOVERNANCE_CURRENT_README].replace(
-            "| [`current-alpha.md`](current-alpha.md) | `active` |",
-            "| [`current-alpha.md`](current-alpha.md) | `accepted` |",
-        )
-    elif mutation == "governance-index-swap":
-        texts[GOVERNANCE_CURRENT_README] = texts[GOVERNANCE_CURRENT_README].replace(
-            "| [`current-alpha.md`](current-alpha.md) | `active` |",
-            "| [`current-stale.md`](current-stale.md) | `active` |",
-        )
-    elif mutation == "governance-index-order":
-        alpha = "| [`current-alpha.md`](current-alpha.md) | `active` |"
-        beta = "| [`current-beta.md`](current-beta.md) | `active` |"
-        texts[GOVERNANCE_CURRENT_README] = texts[GOVERNANCE_CURRENT_README].replace(
-            f"{alpha}\n{beta}", f"{beta}\n{alpha}"
-        )
-    elif mutation == "governance-index-lookalike":
-        texts[GOVERNANCE_CURRENT_README] = texts[GOVERNANCE_CURRENT_README].replace(
-            GOVERNANCE_CURRENT_HEADING,
-            "Current Governance Authority Index",
-        ) + (
-            "\n```markdown\n"
-            + GOVERNANCE_CURRENT_HEADING
-            + "\n\n| Document | Lifecycle |\n| --- | --- |\n"
-            + "| [`current-alpha.md`](current-alpha.md) | `active` |\n```\n"
-        )
-    elif mutation in {"reference-valid", "collection-valid", "collection-machine-json"}:
-        pass
-    elif mutation in {
-        "reference-research-draft",
-        "reference-audit-done",
-        "reference-audit-active",
-    }:
-        target = {
-            "reference-research-draft": PurePosixPath(
-                "docs/90.references/research/2026-08-08-wer/accepted.md"
-            ),
-            "reference-audit-done": PurePosixPath(
-                "docs/90.references/audits/2026-08-09-wgia/audit.md"
-            ),
-            "reference-audit-active": PurePosixPath(
-                "docs/90.references/audits/2026-08-09-wgia/audit.md"
-            ),
-        }[mutation]
-        status = "active" if mutation == "reference-audit-active" else "done"
-        old_status = str(metadata[target]["status"])
-        metadata[target]["status"] = status
-        pack_readme = target.parent / "README.md"
-        texts[pack_readme] = texts[pack_readme].replace(
-            f"[{target.stem}]({target.name}) | `{old_status}` |",
-            f"[{target.stem}]({target.name}) | `{status}` |",
-        )
-    elif mutation == "reference-active-undeclared":
-        target = PurePosixPath(
-            "docs/90.references/research/2026-08-08-wer/undeclared.md"
-        )
-        paths = tuple(sorted((*paths, target), key=lambda item: item.as_posix()))
-        profiles[target] = ProfileView("content/reference", "common", "authored")
-        metadata[target] = {
-            "title": "Undeclared",
-            "type": "content/reference",
-            "status": "active",
-            "owner": "platform",
-            "updated": "2026-07-14",
-        }
-        texts[target] = "# Undeclared\n"
-        tracked_regular_paths = frozenset((*tracked_regular_paths, target))
-    elif mutation == "reference-declared-missing":
-        target = PurePosixPath("docs/90.references/research/2026-08-08-wer/accepted.md")
-        paths = tuple(path for path in paths if path != target)
-        profiles.pop(target)
-        metadata.pop(target)
-        texts.pop(target)
-        tracked_regular_paths = frozenset(
-            path for path in tracked_regular_paths if path != target
-        )
-    elif mutation.startswith("reference-collection-"):
-        owner = PurePosixPath("docs/90.references/research/README.md")
-        row = "| [current](./2026-08-08-wer/README.md) | Current pack |"
-        if mutation == "reference-collection-missing":
-            texts[owner] = texts[owner].replace(row + "\n", "")
-        elif mutation == "reference-collection-stale":
-            texts[owner] = texts[owner].replace(
-                row, "| [current](./2026-07-08-stale/README.md) | Current pack |"
-            )
-        elif mutation == "reference-collection-duplicate":
-            texts[owner] = texts[owner].replace(row, f"{row}\n{row}")
-        elif mutation == "reference-collection-wrong-parent":
-            texts[owner] = texts[owner].replace(
-                "### Research Pack Index",
-                "## Wrong Parent\n\n### Research Pack Index",
-            )
-        elif mutation == "reference-collection-fenced-lookalike":
-            texts[owner] = (
-                texts[owner].replace("### Research Pack Index", "Research Pack Index")
-                + "\n```markdown\n### Research Pack Index\n"
-                + row
-                + "\n```\n"
-            )
-    elif mutation.startswith("reference-index-"):
-        owner = PurePosixPath("docs/90.references/research/2026-08-08-wer/README.md")
-        accepted = "| [accepted](accepted.md) | `accepted` |"
-        active = "| [active](active.md) | `active` |"
-        if mutation == "reference-index-missing":
-            texts[owner] = texts[owner].replace(accepted + "\n", "")
-        elif mutation == "reference-index-malformed":
-            texts[owner] = texts[owner].replace(
-                "| Reference | Lifecycle |", "| Reference | Status |"
-            )
-        elif mutation == "reference-index-stale":
-            texts[owner] = texts[owner].replace(
-                active, active + "\n| [ghost](ghost.md) | `active` |"
-            )
-        elif mutation == "reference-index-duplicate":
-            texts[owner] = texts[owner].replace(accepted, accepted + "\n" + accepted)
-        elif mutation == "reference-index-status":
-            texts[owner] = texts[owner].replace(
-                accepted, "| [accepted](accepted.md) | `active` |"
-            )
-        elif mutation == "reference-index-swap":
-            texts[owner] = texts[owner].replace(
-                accepted, "| [ghost](ghost.md) | `accepted` |"
-            )
-        elif mutation == "reference-index-order":
-            texts[owner] = texts[owner].replace(
-                f"{accepted}\n{active}", f"{active}\n{accepted}"
-            )
-        elif mutation == "reference-index-fenced-lookalike":
-            texts[owner] = (
-                texts[owner].replace("## Report Index", "Report Index")
-                + "\n```markdown\n## Report Index\n```\n"
-            )
-    elif mutation == "reference-wrong-profile-member":
-        target = PurePosixPath("docs/90.references/research/2026-08-08-wer/accepted.md")
-        profiles[target] = ProfileView("content/archive", "common", "authored")
-    elif mutation.startswith("collection-"):
-        owner = PurePosixPath("docs/90.references/research/2026-08-08-wer/README.md")
-        tree_line = "├── accepted.md"
-        row = "| [accepted](accepted.md) | `accepted` |"
-        ghost_line = "├── ghost.md"
-        ghost_row = "| [ghost](ghost.md) | `accepted` |"
-        if mutation == "collection-tree-missing":
-            texts[owner] = texts[owner].replace(tree_line + "\n", "")
-        elif mutation == "collection-row-missing":
-            texts[owner] = texts[owner].replace(row + "\n", "")
-        elif mutation == "collection-tree-stale":
-            texts[owner] = texts[owner].replace(
-                tree_line, tree_line + "\n" + ghost_line
-            )
-        elif mutation == "collection-row-stale":
-            texts[owner] = texts[owner].replace(row, row + "\n" + ghost_row)
-        elif mutation == "collection-tree-duplicate":
-            texts[owner] = texts[owner].replace(tree_line, tree_line + "\n" + tree_line)
-        elif mutation == "collection-row-duplicate":
-            texts[owner] = texts[owner].replace(row, row + "\n" + row)
-        elif mutation == "collection-equal-count-swap":
-            texts[owner] = (
-                texts[owner].replace(tree_line, ghost_line).replace(row, ghost_row)
-            )
-        elif mutation == "collection-artifact-added":
-            target = owner.parent / "added.md"
-            paths = tuple(sorted((*paths, target), key=lambda item: item.as_posix()))
-            profiles[target] = ProfileView("content/reference", "common", "authored")
-            metadata[target] = {
-                "title": "Added",
-                "type": "content/reference",
-                "status": "accepted",
-                "owner": "platform",
-                "updated": "2026-07-14",
-            }
-            texts[target] = "# Added\n"
-            tracked_regular_paths = frozenset((*tracked_regular_paths, target))
-        elif mutation == "collection-artifact-removed":
-            target = owner.parent / "accepted.md"
-            paths = tuple(path for path in paths if path != target)
-            profiles.pop(target)
-            metadata.pop(target)
-            texts.pop(target)
-            tracked_regular_paths = frozenset(
-                path for path in tracked_regular_paths if path != target
-            )
-        elif mutation == "collection-heading-lookalike":
-            texts[owner] = (
-                texts[owner].replace("### Structure", "Structure")
-                + "\n```markdown\n### Structure\n```\n"
-            )
-        elif mutation == "collection-tree-comment":
-            texts[owner] = texts[owner].replace(tree_line, tree_line + " # retained")
-        elif mutation == "collection-tree-comment-hidden":
-            block = "```text\n2026-08-08-wer/\n├── README.md # pack index\n├── accepted.md\n├── active.md\n└── source-coverage-and-migration-ledger.md\n```"
-            texts[owner] = texts[owner].replace(block, f"<!--\n{block}\n-->")
-        elif mutation == "collection-h1-status-prose":
-            variants = (
-                (
-                    owner,
-                    "| [accepted](accepted.md) | `accepted` |",
-                    "| [accepted](accepted.md) | Status: Current \\| explanatory prose |",
-                ),
-                (
-                    PurePosixPath("docs/99.templates/support/README.md"),
-                    "| [Common](./common.md) | common |",
-                    "| [Common](./common.md) |",
-                ),
-                (
-                    PurePosixPath("docs/90.references/research/README.md"),
-                    "| [active](./2026-08-08-wer/active.md) | Included |",
-                    "| [active](./2026-08-08-wer/active.md) | Included | ignored |",
-                ),
-            )
-            for target, before, after in variants:
-                if texts[target].count(before) != 1:
-                    raise ConfigurationError(
-                        "collection-h1-status-prose fixture variant is missing: "
-                        f"{target.as_posix()}"
-                    )
-                texts[target] = texts[target].replace(before, after)
-    return Context(
-        context.root,
-        paths,
-        context.baseline_paths,
-        profiles,
-        texts,
-        metadata,
-        context.adapter_targets,
-        governance_current_paths,
-        context.governance_current_states,
-        reference_current_packs,
-        tracked_regular_paths,
-        (texts[LEDGER_PATH].encode("utf-8") if LEDGER_PATH in texts else None),
-        ria_contract_text,
-        context.route_state,
-        context.work105_history_base_commit,
-    )
-
-
-def _body_contract_fixture_context(
-    root: Path,
-    tree: dict[str, Any],
-    profiles_by_id: dict[str, DocumentProfile],
-) -> Context:
-    if list(tree) != ["documents"] or not isinstance(tree["documents"], list):
-        raise ConfigurationError("body-contract fixture tree differs")
-    expected_keys = ["path", "profile", "status", "body"]
-    if any(
-        not isinstance(item, dict) or list(item) != expected_keys
-        for item in tree["documents"]
-    ):
-        raise ConfigurationError("body-contract fixture document keys differ")
-    paths = tuple(PurePosixPath(item["path"]) for item in tree["documents"])
-    if paths != tuple(sorted(paths, key=lambda item: item.as_posix())):
-        raise ConfigurationError("body-contract fixture paths must be sorted")
-    profile_views: dict[PurePosixPath, ProfileView] = {}
-    texts: dict[PurePosixPath, str] = {}
-    metadata: dict[PurePosixPath, dict[str, Any]] = {}
-    for item, path in zip(tree["documents"], paths, strict=True):
-        profile = profiles_by_id[item["profile"]]
-        profile_views[path] = _profile_view(profile)
-        texts[path] = item["body"]
-        metadata[path] = {"status": item["status"]}
-    return Context(
-        root,
-        paths,
-        frozenset(),
-        profile_views,
-        texts,
-        metadata,
-        {},
-        (),
-        (),
-        ReferenceCurrentPacks("content/reference", ()),
-        frozenset(paths),
-    )
-
-
-def _mutated_body_contract_context(context: Context, mutation: str) -> Context:
-    mutated = copy.deepcopy(context)
-    prd = PurePosixPath("docs/01.requirements/0999-fixture.md")
-    spec = PurePosixPath("docs/03.specs/0999-fixture/spec.md")
-    plan = PurePosixPath("docs/03.specs/0999-fixture/plan.md")
-    incident = PurePosixPath(
-        "docs/05.operations/incidents/2026/inc-0999-fixture/incident.md"
-    )
-
-    class _CanonicalBodyFixtureText(str):
-        """Translate pre-cutover mutation needles to current sibling routes."""
-
-        _translations = (
-            ("../../03.specs/0999-fixture/spec.md", "spec.md"),
-            (
-                "../tasks/2026-07-15-fixture.md",
-                "tasks/tsk-0001-fixture.md",
-            ),
-            (
-                "../../04.execution/tasks/2026-07-15-fixture.md",
-                "../../../../03.specs/0999-fixture/tasks/tsk-0001-fixture.md",
-            ),
-            (
-                "../04.execution/tasks/2026-07-15-fixture.md",
-                "../03.specs/0999-fixture/tasks/tsk-0001-fixture.md",
-            ),
-        )
-
-        @classmethod
-        def _canonical(cls, value: str) -> str:
-            for legacy, canonical in cls._translations:
-                value = value.replace(legacy, canonical)
-            return value
-
-        def replace(
-            self,
-            old: str,
-            new: str,
-            count: int = -1,
-        ) -> "_CanonicalBodyFixtureText":
-            return type(self)(
-                super().replace(
-                    self._canonical(old),
-                    self._canonical(new),
-                    count,
-                )
-            )
-
-    for path, text in tuple(mutated.texts.items()):
-        mutated.texts[path] = _CanonicalBodyFixtureText(text)
-    if mutation in {"none", "feedback-positive"}:
-        return mutated
-    if mutation == "disallowed-source-profile":
-        mutated.texts[plan] = mutated.texts[plan].replace(
-            "../../03.specs/0999-fixture/spec.md",
-            "../../01.requirements/0999-fixture.md",
-            1,
-        )
-    elif mutation == "disallowed-target-profile":
-        mutated.texts[prd] = mutated.texts[prd].replace(
-            "../03.specs/0999-fixture/spec.md",
-            "../04.execution/tasks/2026-07-15-fixture.md",
-            1,
-        )
-        mutated.texts[prd] += "\n[Spec reciprocal](../03.specs/0999-fixture/spec.md)\n"
-    elif mutation == "missing-source-link":
-        mutated.texts[plan] = mutated.texts[plan].replace(
-            "[VAL-FIXTURE-001](../../03.specs/0999-fixture/spec.md)",
-            "VAL-FIXTURE-001",
-            1,
-        )
-    elif mutation == "missing-target-link":
-        mutated.texts[prd] = mutated.texts[prd].replace(
-            "[Spec](../03.specs/0999-fixture/spec.md)",
-            "Specification owner",
-            1,
-        )
-        mutated.texts[prd] += "\n[Spec reciprocal](../03.specs/0999-fixture/spec.md)\n"
-    elif mutation == "broken-link":
-        mutated.texts[plan] = mutated.texts[plan].replace(
-            "../tasks/2026-07-15-fixture.md",
-            "../tasks/2099-01-01-missing.md",
-            1,
-        )
-        mutated.texts[plan] += "\n[Task reciprocal](../tasks/2026-07-15-fixture.md)\n"
-    elif mutation == "missing-reciprocal":
-        mutated.texts[spec] = mutated.texts[spec].replace(
-            "[REQ-FIXTURE-001](../../01.requirements/0999-fixture.md)",
-            "N/A — standalone specification",
-            1,
-        )
-    elif mutation == "exclusion-without-reason":
-        mutated.texts[incident] = mutated.texts[incident].replace(
-            "[Task](../../04.execution/tasks/2026-07-15-fixture.md)",
-            "N/A",
-            1,
-        )
-    elif mutation == "superseded-status":
-        mutated.metadata[prd]["status"] = "superseded"
-        mutated.texts[prd] = mutated.texts[prd].replace(
-            "../03.specs/0999-fixture/spec.md",
-            "../04.execution/tasks/2026-07-15-fixture.md",
-            1,
-        )
-        mutated.texts[prd] += "\n[Spec reciprocal](../03.specs/0999-fixture/spec.md)\n"
-    elif mutation == "three-space-disallowed-target":
-        mutated.texts[prd] = mutated.texts[prd].replace("\n|", "\n   |")
-        mutated.texts[prd] = mutated.texts[prd].replace(
-            "../03.specs/0999-fixture/spec.md",
-            "../04.execution/tasks/2026-07-15-fixture.md",
-            1,
-        )
-        mutated.texts[prd] += "\n[Spec reciprocal](../03.specs/0999-fixture/spec.md)\n"
-    elif mutation == "commented-fence-disallowed-target":
-        mutated.texts[prd] = mutated.texts[prd].replace(
-            "### Lifecycle Traceability\n\n|",
-            "### Lifecycle Traceability\n\n<!--\n```markdown\n-->\n|",
-            1,
-        )
-        mutated.texts[prd] = mutated.texts[prd].replace(
-            "../03.specs/0999-fixture/spec.md",
-            "../04.execution/tasks/2026-07-15-fixture.md",
-            1,
-        )
-        mutated.texts[prd] += "\n[Spec reciprocal](../03.specs/0999-fixture/spec.md)\n"
-    elif mutation in {
-        "full-reference-disallowed-target",
-        "collapsed-reference-disallowed-target",
-        "shortcut-reference-disallowed-target",
-        "full-reference-whitespace-target",
-        "collapsed-reference-whitespace-target",
-        "shortcut-reference-whitespace-target",
-    }:
-        labels = {
-            "full-reference-disallowed-target": "[Task][wrong-target]",
-            "collapsed-reference-disallowed-target": "[wrong-target][]",
-            "shortcut-reference-disallowed-target": "[wrong-target]",
-            "full-reference-whitespace-target": "[Task][wrong   target]",
-            "collapsed-reference-whitespace-target": "[wrong\t\t target][]",
-            "shortcut-reference-whitespace-target": "[wrong\t target]",
-        }
-        definition_labels = {
-            "full-reference-whitespace-target": "wrong\t target",
-            "collapsed-reference-whitespace-target": "wrong target",
-            "shortcut-reference-whitespace-target": "wrong   target",
-        }
-        mutated.texts[prd] = mutated.texts[prd].replace(
-            "[Spec](../03.specs/0999-fixture/spec.md)",
-            labels[mutation],
-            1,
-        )
-        mutated.texts[prd] += (
-            "\n[Spec reciprocal]\n\n"
-            f"[{definition_labels.get(mutation, 'wrong-target')}]: "
-            "../04.execution/tasks/2026-07-15-fixture.md\n"
-            "[Spec reciprocal]: ../03.specs/0999-fixture/spec.md\n"
-        )
-    elif mutation in {
-        "full-reference-duplicate-definition",
-        "collapsed-reference-duplicate-definition",
-        "shortcut-reference-duplicate-definition",
-    }:
-        labels = {
-            "full-reference-duplicate-definition": "[Task][Dupe   Label]",
-            "collapsed-reference-duplicate-definition": "[dupe\tlabel][]",
-            "shortcut-reference-duplicate-definition": "[dupe label]",
-        }
-        mutated.texts[prd] = mutated.texts[prd].replace(
-            "[Spec](../03.specs/0999-fixture/spec.md)",
-            labels[mutation],
-            1,
-        )
-        mutated.texts[prd] += (
-            "\n[Spec reciprocal](../03.specs/0999-fixture/spec.md)\n\n"
-            "[ DUPE\tLABEL ]: ../04.execution/tasks/2026-07-15-fixture.md\n"
-            "[dupe   label]: ../03.specs/0999-fixture/spec.md\n"
-        )
-    elif mutation in {
-        "inline-code-nonrendered-target",
-        "odd-escaped-nonrendered-target",
-        "even-escaped-rendered-target",
-        "even-escaped-inline-target",
-        "even-escaped-full-reference-target",
-        "even-escaped-collapsed-reference-target",
-        "even-escaped-shortcut-reference-target",
-    }:
-        labels = {
-            "inline-code-nonrendered-target": (
-                "`[Task](../04.execution/tasks/2026-07-15-fixture.md)` "
-                "``[Task][bad ref] [bad ref][]`` ```[bad ref]```"
-            ),
-            "odd-escaped-nonrendered-target": (
-                "\\[Task](../04.execution/tasks/2026-07-15-fixture.md), "
-                "\\[bad ref][], \\[bad ref]"
-            ),
-            "even-escaped-rendered-target": (
-                "\\\\[Task](../04.execution/tasks/2026-07-15-fixture.md), "
-                "\\\\[Task][bad ref], \\\\[bad ref][], \\\\[bad ref]"
-            ),
-            "even-escaped-inline-target": (
-                "\\\\[Task](../04.execution/tasks/2026-07-15-fixture.md)"
-            ),
-            "even-escaped-full-reference-target": "\\\\[Task][bad ref]",
-            "even-escaped-collapsed-reference-target": "\\\\[bad ref][]",
-            "even-escaped-shortcut-reference-target": "\\\\[bad ref]",
-        }
-        mutated.texts[prd] = mutated.texts[prd].replace(
-            "[Spec](../03.specs/0999-fixture/spec.md)",
-            labels[mutation],
-            1,
-        )
-        mutated.texts[prd] += (
-            "\n[Spec reciprocal](../03.specs/0999-fixture/spec.md)\n\n"
-            "[bad ref]: ../04.execution/tasks/2026-07-15-fixture.md\n"
-        )
-    elif mutation in {
-        "blank-line-after-delimiter",
-        "html-comment-after-delimiter",
-    }:
-        spacing = (
-            "\n\n"
-            if mutation == "blank-line-after-delimiter"
-            else "\n<!-- spacing -->\n"
-        )
-        mutated.texts[prd] = mutated.texts[prd].replace(
-            "| --- | --- | --- |\n| REQ-FIXTURE-001",
-            f"| --- | --- | --- |{spacing}| REQ-FIXTURE-001",
-            1,
-        )
-    else:
-        raise ConfigurationError(f"unknown body-contract fixture mutation: {mutation}")
-    for path, text in tuple(mutated.texts.items()):
-        mutated.texts[path] = _CanonicalBodyFixtureText._canonical(text)
-    return mutated
-
-
-def _fixture_rule_ids(context: Context, mutation: str) -> list[str]:
-    mutated = _mutated_context(context, mutation)
-    if mutation.startswith("link") or mutation in {"links-excluded"}:
-        diagnostics = _link_diagnostics(mutated)
-    elif mutation.startswith("index"):
-        if mutation == "index-multi-order":
-            missing = [
-                item
-                for item in _index_diagnostics(mutated)
-                if item.rule_id == "INDEX-MISSING"
-            ]
-            targets = [item.expected.split(";", 1)[0] for item in missing]
-            return (
-                []
-                if len(missing) == 2
-                and targets == sorted(targets)
-                and len(set(targets)) == 2
-                else ["INDEX-MISSING"]
-            )
-        diagnostics = _index_diagnostics(mutated)
-    elif mutation.startswith("owner"):
-        if mutation == "owner-normalization":
-            plan = PurePosixPath("docs/03.specs/0999-fixture/plan.md")
-            mutated.metadata[plan]["type"] = "ＳＤＬＣ／ＰＬＡＮ"
-            mutated.metadata[plan]["title"] = "Ｆixture__Implementation Plan"
-            key, diagnostic = _owner_key(mutated, plan)
-            return (
-                []
-                if diagnostic is None
-                and key == "sdlc-plan|fixture|docs-03-specs-0999-fixture-spec-md"
-                else ["OWNER-KEY-MISSING"]
-            )
-        if mutation == "owner-first-upstream":
-            plan = PurePosixPath("docs/03.specs/0999-fixture/plan.md")
-            texts = dict(mutated.texts)
-            texts[plan] = (
-                "[local-ref]: ../../README.md\n[prd-ref]: ../../01.requirements/0999-fixture.md\n[spec-ref]: ../../03.specs/0999-fixture/spec.md\n\n## Traceability\n\n[local][local-ref]\n[prd][prd-ref]\n[spec][spec-ref]\n"
-            )
-            selected = Context(
-                mutated.root,
-                mutated.paths,
-                mutated.baseline_paths,
-                mutated.profiles,
-                texts,
-                mutated.metadata,
-                mutated.adapter_targets,
-                mutated.governance_current_paths,
-                mutated.governance_current_states,
-                mutated.reference_current_packs,
-                mutated.tracked_regular_paths,
-            )
-            key, diagnostic = _owner_key(selected, plan)
-            expected = "sdlc-plan|fixture|docs-01-requirements-0999-fixture-md"
-            return (
-                [] if diagnostic is None and key == expected else ["OWNER-KEY-MISSING"]
-            )
-        if mutation == "owner-fallback":
-            plan = PurePosixPath("docs/03.specs/0999-fixture/plan.md")
-            key, diagnostic = _owner_key(mutated, plan)
-            return (
-                []
-                if diagnostic is None
-                and key == "sdlc-plan|fixture|docs-03-specs-0999-fixture-spec-md"
-                else ["OWNER-KEY-MISSING"]
-            )
-        if mutation == "owner-exclusions":
-            key, diagnostic = _owner_key(mutated, LEDGER_PATH)
-            return (
-                []
-                if not key
-                and diagnostic is None
-                and not _owner_candidate(mutated, LEDGER_PATH)
-                else ["OWNER-DUPLICATE"]
-            )
-        diagnostics = _owner_diagnostics(mutated)
-    elif mutation.startswith("ledger"):
-        diagnostics = _ledger_diagnostics(mutated)
-    elif mutation.startswith("governance"):
-        diagnostics = _governance_current_owner_diagnostics(mutated)
-    elif mutation.startswith("reference"):
-        diagnostics = _reference_current_pack_diagnostics(mutated)
-    elif mutation.startswith("collection"):
-        diagnostics = _collection_index_diagnostics(mutated)
-        return [item.rule_id for item in sorted(diagnostics, key=diagnostic_sort_key)]
-    elif mutation in {"none", "link-normalization"}:
-        diagnostics = (
-            _link_diagnostics(mutated)
-            + _index_diagnostics(mutated)
-            + _collection_index_diagnostics(mutated)
-            + _governance_current_owner_diagnostics(mutated)
-            + _reference_current_pack_diagnostics(mutated)
-            + _owner_diagnostics(mutated)
-            + _ledger_diagnostics(mutated)
-        )
-    else:
-        raise ConfigurationError(f"unknown fixture mutation: {mutation}")
-    return sorted(set(item.rule_id for item in diagnostics))
-
-
-def _self_test(root: Path) -> list[str]:
-    fixture = json.loads((root / FIXTURE_PATH).read_text(encoding="utf-8"))
-    failures: list[str] = []
-    if (
-        list(fixture)
-        != [
-            "schemaVersion",
-            "baseTree",
-            "programLineageTree",
-            "standaloneExecutionTree",
-            "standaloneExecutionCases",
-            "programLineageCases",
-            "bodyContractTree",
-            "bodyContractCases",
-            "cases",
-        ]
-        or fixture["schemaVersion"] != 3
-    ):
-        return ["fixture schema differs"]
-    required = {
-        "valid-tree",
-        "broken-link",
-        "work105-completed-history-ard-links",
-        "work105-completed-history-active-rejected",
-        "work105-completed-history-draft-rejected",
-        "work105-completed-history-accepted-rejected",
-        "work105-completed-history-byte-drift-rejected",
-        "work105-completed-history-outside-target-rejected",
-        "protected-historical-predecessor-link",
-        "unprotected-historical-predecessor-link",
-        "protected-historical-predecessor-disposition-drift",
-        "protected-historical-predecessor-byte-drift",
-        "snapshot-historical-predecessor-link",
-        "snapshot-historical-predecessor-source-commit-drift",
-        "snapshot-historical-predecessor-byte-drift",
-        "retired-evidence-link",
-        "retired-active-link",
-        "retired-current-reference-link",
-        "absolute-link",
-        "archive-bypass",
-        "missing-index-row",
-        "stale-index-row",
-        "duplicate-current-owner",
-        "governance-declared-active",
-        "governance-declared-accepted",
-        "governance-undeclared-draft",
-        "governance-declared-draft",
-        "governance-declared-done",
-        "governance-declared-archived",
-        "governance-active-undeclared",
-        "governance-accepted-undeclared",
-        "governance-undeclared-done",
-        "governance-undeclared-archived",
-        "governance-declared-missing",
-        "governance-index-missing",
-        "governance-index-stale",
-        "governance-index-duplicate",
-        "governance-index-status",
-        "governance-index-equal-count-swap",
-        "governance-index-order",
-        "governance-index-fenced-lookalike",
-        "missing-ledger-row",
-        "incomplete-ledger-row",
-        "unknown-ledger-path",
-        "settled-ledger-inventory-growth",
-        "settled-ledger-byte-drift",
-        "settled-ledger-malformed-metadata",
-        "settled-ledger-from-commit-drift",
-        "settled-ledger-reason-drift",
-        "reference-valid",
-        "reference-research-draft",
-        "reference-audit-done",
-        "reference-audit-active",
-        "reference-active-undeclared",
-        "reference-declared-missing",
-        "reference-collection-missing",
-        "reference-collection-stale",
-        "reference-collection-duplicate",
-        "reference-collection-wrong-parent",
-        "reference-collection-fenced-lookalike",
-        "reference-index-missing",
-        "reference-index-malformed",
-        "reference-index-stale",
-        "reference-index-duplicate",
-        "reference-index-status",
-        "reference-index-equal-count-swap",
-        "reference-index-order",
-        "reference-index-fenced-lookalike",
-        "reference-wrong-profile-member",
-        "collection-valid",
-        "collection-tree-missing",
-        "collection-row-missing",
-        "collection-tree-stale",
-        "collection-row-stale",
-        "collection-tree-duplicate",
-        "collection-row-duplicate",
-        "collection-equal-count-swap",
-        "collection-artifact-added",
-        "collection-artifact-removed",
-        "collection-machine-json",
-        "collection-heading-lookalike",
-        "collection-tree-comment",
-        "collection-tree-comment-hidden",
-        "collection-h1-status-prose",
-    }
-    names = [case.get("name") for case in fixture["cases"]]
-    if not required.issubset(names) or len(names) != len(set(names)):
-        failures.append("required unique fixture cases are incomplete")
-    body_shape_probe = _first_visible_table(
-        "| Reference | Lifecycle |\n"
-        "| --- | --- |\n"
-        "| [short](short.md) |\n"
-        "| [extra](extra.md) | `active` | ignored |\n"
-    )
-    if body_shape_probe != (
-        ["Reference", "Lifecycle"],
-        [["[short](short.md)", ""], ["[extra](extra.md)", "`active`"]],
-    ):
-        failures.append("GFM body rows are not padded/truncated to the header")
-    ledger_existed_before = (root / LEDGER_PATH).exists()
-    with tempfile.TemporaryDirectory(prefix="smdv-cross-hostile-git-") as hostile:
-        hostile_root = Path(hostile)
-        hooks = hostile_root / "hooks"
-        hooks.mkdir()
-        pre_commit = hooks / "pre-commit"
-        pre_commit.write_text("#!/bin/sh\nexit 1\n", encoding="utf-8")
-        pre_commit.chmod(0o700)
-        false_gpg = hostile_root / "false-gpg"
-        false_gpg.write_text("#!/bin/sh\nexit 1\n", encoding="utf-8")
-        false_gpg.chmod(0o700)
-        hostile_config = hostile_root / "global.gitconfig"
-        hostile_config.write_text(
-            "[core]\n"
-            f"\thooksPath = {hooks.as_posix()}\n"
-            "[commit]\n"
-            "\tgpgSign = true\n"
-            "[gpg]\n"
-            f"\tprogram = {false_gpg.as_posix()}\n",
-            encoding="utf-8",
-        )
-        previous_global = os.environ.get("GIT_CONFIG_GLOBAL")
-        os.environ["GIT_CONFIG_GLOBAL"] = hostile_config.as_posix()
-        try:
-            try:
-                _fixture_context(hostile_root / "fixture", fixture["baseTree"])
-            except subprocess.CalledProcessError:
-                failures.append("fixture Git boundary inherited hostile global config")
-        finally:
-            if previous_global is None:
-                os.environ.pop("GIT_CONFIG_GLOBAL", None)
-            else:
-                os.environ["GIT_CONFIG_GLOBAL"] = previous_global
-    with tempfile.TemporaryDirectory(prefix="smdv-cross-") as temporary:
-        context = _fixture_context(Path(temporary), fixture["baseTree"])
-        for case in fixture["cases"]:
-            if case.get("tree") != {"base": "baseTree"} or list(case) != [
-                "name",
-                "tree",
-                "mutation",
-                "expected_rule_ids",
-            ]:
-                failures.append(f"{case.get('name')}: case tree/schema differs")
-                continue
-            if not isinstance(case["mutation"], dict) or list(case["mutation"]) != [
-                "kind"
-            ]:
-                failures.append(f"{case.get('name')}: structured mutation differs")
-                continue
-            expected = case["expected_rule_ids"]
-            actual = _fixture_rule_ids(context, case["mutation"]["kind"])
-            if actual != expected:
-                failures.append(f"{case['name']}: expected {expected}, actual {actual}")
-        program_context, program_lineage = _program_lineage_fixture_context(
-            Path(temporary), fixture["programLineageTree"]
-        )
-        standalone_cases = fixture.get("standaloneExecutionCases")
-        standalone_validator = globals().get("_standalone_execution_diagnostics")
-        required_standalone_cases = {
-            "standalone-execution-valid",
-            "standalone-execution-wrong-state",
-            "standalone-execution-missing-direct-approval",
-            "standalone-execution-missing-lifecycle-exclusion",
-            "standalone-execution-missing-adr-reciprocal",
-            "standalone-execution-missing-plan-task-reciprocal",
-            "standalone-execution-foreign-spec-link",
-            "standalone-execution-extra-component-node",
-        }
-        if (
-            not isinstance(standalone_cases, list)
-            or {case.get("name") for case in standalone_cases}
-            != required_standalone_cases
-        ):
-            failures.append("required unique standalone-execution cases are incomplete")
-        elif standalone_validator is None:
-            failures.append("standalone-execution diagnostics are unimplemented")
-        else:
-            standalone_context, standalone_relation = (
-                _standalone_execution_fixture_context(
-                    program_context,
-                    fixture["standaloneExecutionTree"],
-                )
-            )
-            for case in standalone_cases:
-                if list(case) != ["name", "mutation", "expected_rule_ids"]:
-                    failures.append(
-                        f"{case.get('name')}: standalone-execution case schema differs"
-                    )
-                    continue
-                mutated, relation = _mutated_standalone_execution_fixture(
-                    standalone_context,
-                    standalone_relation,
-                    case["mutation"],
-                )
-                graph = _current_execution_link_graph(mutated)
-                execution_index = _current_execution_index(graph)
-                diagnostics, _ = standalone_validator(
-                    mutated,
-                    (relation,),
-                    graph,
-                    execution_index,
-                )
-                actual = [
-                    item.rule_id
-                    for item in sorted(diagnostics, key=diagnostic_sort_key)
-                ]
-                if actual != case["expected_rule_ids"]:
-                    failures.append(
-                        f"{case['name']}: expected {case['expected_rule_ids']}, "
-                        f"actual {actual}"
-                    )
-        program_case_names = [
-            case.get("name") for case in fixture["programLineageCases"]
-        ]
-        required_program_cases = {
-            "program-lineage-valid",
-            "program-lineage-state-mismatch",
-            "program-lineage-missing-reciprocal",
-            "program-lineage-balanced-escaped-reciprocal-links",
-            "program-lineage-outer-fence-nested-reciprocal-is-not-evidence",
-            "program-lineage-invalid-reference-definition-garbage",
-            "program-lineage-valid-reference-definition-title",
-            "program-lineage-valid-inline-double-title",
-            "program-lineage-invalid-reference-angle-less-than",
-            "program-lineage-valid-reference-angle-escaped-less-than",
-            "program-lineage-valid-double-title-with-closing-paren",
-            "program-lineage-list-marker-is-hard-boundary",
-            "program-lineage-bare-nonpunctuation-escape-is-preserved",
-            "program-lineage-reference-nonpunctuation-escape-is-preserved",
-            "program-lineage-nested-link-outer-target-is-not-evidence",
-            "program-lineage-adjacent-full-and-shortcut-references",
-            "program-lineage-image-alt-subtree-link-is-not-evidence",
-            "program-lineage-unresolved-bracket-before-inline-link",
-            "program-lineage-unresolved-bracket-before-full-reference",
-            "program-lineage-escaped-literal-before-shortcut-reference",
-            "program-lineage-unresolved-image-opener-inline-link",
-            "program-lineage-unresolved-image-opener-full-reference",
-            "program-lineage-link-destination-span-is-consumed",
-            "program-lineage-link-title-span-is-consumed",
-            "program-lineage-image-title-span-is-consumed",
-            "program-lineage-reference-definition-title-span-is-nonrendered",
-            "program-lineage-valid-multiline-single-title-definition",
-            "program-lineage-valid-escaped-paren-title-definition",
-            "program-lineage-invalid-nested-paren-title-definition",
-            "program-lineage-invalid-blank-destination-continuation",
-            "program-lineage-invalid-unclosed-definition-title",
-            "program-lineage-space-remainder-valid-title-span-is-nonrendered",
-            "program-lineage-tab-remainder-valid-title-span-is-nonrendered",
-            "program-lineage-space-remainder-invalid-nested-paren-title-keeps-definition",
-            "program-lineage-tab-remainder-invalid-unclosed-title-keeps-definition",
-            "program-lineage-next-line-title-trailing-garbage-keeps-definition",
-            "program-lineage-invalid-next-line-title-phantom-remains-rendered",
-            "program-lineage-continued-destination-invalid-title-keeps-definition",
-            "program-lineage-escaped-close-in-reference-definition-label",
-            "program-lineage-zero-column-reference-destination-continuation",
-            "program-lineage-four-column-reference-destination-continuation",
-            "program-lineage-tab-reference-destination-continuation",
-            "program-lineage-zero-column-reference-title-span-is-nonrendered",
-            "program-lineage-four-column-reference-title-span-is-nonrendered",
-            "program-lineage-tab-reference-title-span-is-nonrendered",
-            "program-lineage-multiline-reference-title-span-is-nonrendered",
-            "program-lineage-blank-line-invalid-title-remains-rendered",
-            "program-lineage-complete-definition-followed-four-space-code",
-            "program-lineage-root-definition-before-thematic-boundary",
-            "program-lineage-root-setext-looking-destination-first-wins",
-            "program-lineage-quote-definition-before-thematic-boundary",
-            "program-lineage-quote-setext-looking-destination-first-wins",
-            "program-lineage-list-definition-before-thematic-boundary",
-            "program-lineage-list-setext-looking-destination-first-wins",
-            "program-lineage-root-paragraph-definition-lookalike-setext",
-            "program-lineage-quote-paragraph-definition-lookalike-setext",
-            "program-lineage-list-paragraph-definition-lookalike-setext",
-            "program-lineage-numeric-character-reference-destination",
-            "program-lineage-named-character-reference-destination",
-            "program-lineage-character-reference-before-percent-decode",
-            "program-lineage-escaped-ampersand-is-not-character-reference",
-            "program-lineage-invalid-character-reference-destination",
-            "program-lineage-numeric-character-reference-authority",
-            "program-lineage-named-character-reference-authority",
-            "program-lineage-invalid-character-reference-is-not-authority",
-            "program-lineage-quote-lazy-setext-does-not-admit-definition",
-            "program-lineage-list-lazy-setext-does-not-admit-definition",
-            "program-lineage-execution-quote-lazy-setext-does-not-admit-definition",
-            "program-lineage-inline-html-span-attribute-is-not-evidence",
-            "program-lineage-inline-html-anchor-attribute-is-not-evidence",
-            "program-lineage-multiline-inline-html-attribute-is-not-evidence",
-            "program-lineage-markdown-inside-inline-html-is-evidence",
-            "program-lineage-escaped-inline-html-opener-keeps-markdown",
-            "program-lineage-invalid-inline-html-tag-keeps-markdown",
-            "program-lineage-inline-html-comment-is-not-evidence",
-            "program-lineage-inline-html-before-definition-does-not-create-definition",
-            "program-lineage-inline-html-reference-label-remains-distinct",
-            "program-lineage-escaped-html-comment-opener-keeps-execution-link",
-            "program-lineage-valid-type7-html-quoted-greater-is-not-evidence",
-            "program-lineage-invalid-type7-html-opener-keeps-historical-link",
-            "program-lineage-inline-html-wrapped-authority-headers",
-            "program-lineage-inline-html-wrapped-authority-family-ignores-attributes",
-            "program-lineage-inline-html-wrapped-authority-transition",
-            "program-lineage-inline-html-shortcut-label-tags-remain-distinct",
-            "program-lineage-inline-html-collapsed-label-attributes-remain-distinct",
-            "program-lineage-inline-html-full-label-unicode-attributes-remain-distinct",
-            "program-lineage-identical-inline-html-shortcut-label-matches",
-            "program-lineage-identical-inline-html-collapsed-label-matches",
-            "program-lineage-identical-inline-html-full-unicode-label-matches",
-            "program-lineage-inline-html-reference-label-0999-count-is-preserved",
-            "program-lineage-inline-html-reference-label-1000-is-rejected",
-            "program-lineage-comment-block-closing-line-trailing-link-is-not-evidence",
-            "program-lineage-multiline-comment-block-closing-line-is-raw",
-            "program-lineage-comment-block-next-line-keeps-execution-link",
-            "program-lineage-invalid-inline-comment-keeps-reciprocal-link",
-            "program-lineage-valid-inline-comment-keeps-trailing-historical-link",
-            "program-lineage-inline-html-tag-cannot-cross-blank-paragraph",
-            "program-lineage-multiline-reference-definition-label-resolves",
-            "program-lineage-escaped-multiline-definition-label-resolves-collapsed",
-            "program-lineage-multiline-reference-definition-label-0999-resolves",
-            "program-lineage-multiline-reference-definition-label-1000-is-rejected",
-            "program-lineage-one-hyphen-delimiter-authority",
-            "program-lineage-two-hyphen-delimiter-authority",
-            "program-lineage-short-delimiter-table-cell-is-hard-boundary",
-            "program-lineage-inline-destination-backtick-suffix-is-invalid",
-            "program-lineage-reference-definition-backtick-title-is-invalid",
-            "program-lineage-code-span-link-remains-nonrendered",
-            "program-lineage-quote-comment-block-closes-paragraph",
-            "program-lineage-quote-processing-instruction-closes-paragraph",
-            "program-lineage-list-cdata-closes-paragraph",
-            "program-lineage-root-declaration-closes-paragraph",
-            "program-lineage-overlapping-comment-closer-ends-first-line",
-            "program-lineage-lazy-quote-pseudo-table-is-not-authority",
-            "program-lineage-explicit-quote-table-is-authority",
-            "program-lineage-reference-definition-cannot-interrupt-paragraph",
-            "program-lineage-reference-definition-after-blank-boundary",
-            "program-lineage-reference-definition-after-heading-boundary",
-            "program-lineage-failed-inline-candidate-falls-back-to-shortcut",
-            "program-lineage-ordered-123-tilde-fence-reciprocal-is-not-evidence",
-            "program-lineage-unordered-indented-code-reciprocal-is-not-evidence",
-            "program-lineage-ordered-1-normal-list-paragraph-is-evidence",
-            "program-lineage-nested-list-raw-html-is-not-evidence",
-            "program-lineage-ordered-12-indented-code-execution-is-not-evidence",
-            "program-lineage-ordered-123-indented-code-table-is-not-authority",
-            "program-lineage-unordered-empty-marker-four-spaces-code-is-not-evidence",
-            "program-lineage-ordered-empty-marker-five-spaces-code-is-not-evidence",
-            "program-lineage-ordered-empty-marker-two-spaces-code-is-not-evidence",
-            "program-lineage-unordered-four-space-same-line-content-is-evidence",
-            "program-lineage-unordered-five-space-same-line-content-is-code",
-            "program-lineage-ordered-empty-marker-three-spaces-code-is-not-execution",
-            "program-lineage-ordered-empty-marker-four-spaces-code-table-is-not-authority",
-            "program-lineage-unordered-tab-padding-code-is-not-reciprocal-evidence",
-            "program-lineage-list-lazy-continuation-reciprocal-is-evidence",
-            "program-lineage-list-sibling-is-hard-boundary",
-            "program-lineage-unordered-tab-normal-content-is-historical-evidence",
-            "program-lineage-ordered-tab-normal-content-is-historical-evidence",
-            "program-lineage-blockquote-lazy-continuation-is-historical-evidence",
-            "program-lineage-ordered-tab-padding-code-is-not-execution-evidence",
-            "program-lineage-tab-continuation-code-is-not-execution-evidence",
-            "program-lineage-list-lazy-continuation-is-execution-evidence",
-            "program-lineage-whitespace-shortcut-label-is-not-reciprocal-evidence",
-            "program-lineage-normal-spaced-reference-label-is-reciprocal-evidence",
-            "program-lineage-tab-only-full-reference-label-is-not-historical-evidence",
-            "program-lineage-soft-break-whitespace-reference-label-is-not-historical-evidence",
-            "program-lineage-whitespace-collapsed-label-is-not-execution-evidence",
-            "program-lineage-normal-tab-spaced-label-is-execution-evidence",
-            "program-lineage-setext-followed-indented-reciprocal-is-not-evidence",
-            "program-lineage-setext-followed-indented-historical-is-not-evidence",
-            "program-lineage-thematic-followed-indented-historical-is-not-evidence",
-            "program-lineage-setext-followed-indented-execution-is-not-evidence",
-            "program-lineage-thematic-followed-indented-table-is-not-authority",
-            "program-lineage-standalone-equals-before-indented-reciprocal-is-evidence",
-            "program-lineage-standalone-double-hyphen-before-indented-historical-is-evidence",
-            "program-lineage-standalone-equals-before-indented-execution-is-evidence",
-            "program-lineage-standalone-triple-hyphen-before-indented-historical-is-code",
-            "program-lineage-definition-then-standalone-equals-indented-reciprocal-is-evidence",
-            "program-lineage-definition-then-indented-historical-is-code",
-            "program-lineage-list-second-paragraph-is-historical-evidence",
-            "program-lineage-quote-lazy-equals-indented-execution-is-evidence",
-            "program-lineage-quote-lazy-double-hyphen-indented-reciprocal-is-evidence",
-            "program-lineage-valid-quote-definition-closes-reciprocal-paragraph",
-            "program-lineage-valid-quote-definition-closes-historical-paragraph",
-            "program-lineage-valid-quote-definition-closes-execution-paragraph",
-            "program-lineage-normal-quote-paragraph-indented-historical-is-lazy-evidence",
-            "program-lineage-invalid-quote-definition-indented-reciprocal-is-lazy-evidence",
-            "program-lineage-valid-multiline-quote-definition-closes-reciprocal-paragraph",
-            "program-lineage-valid-multiline-quote-definition-closes-historical-paragraph",
-            "program-lineage-valid-multiline-quote-definition-closes-execution-paragraph",
-            "program-lineage-invalid-multiline-quote-definition-indented-historical-is-lazy-evidence",
-            "program-lineage-valid-multiline-list-definition-then-code-is-not-reciprocal-evidence",
-            "program-lineage-invalid-multiline-list-definition-then-indent-is-execution-evidence",
-            "program-lineage-explicit-quote-setext-closes-reciprocal-paragraph",
-            "program-lineage-explicit-quote-setext-closes-historical-paragraph",
-            "program-lineage-explicit-quote-setext-closes-execution-paragraph",
-            "program-lineage-explicit-normal-quote-line-keeps-historical-lazy-paragraph",
-            "program-lineage-thematic-then-definition-indented-reciprocal-is-code",
-            "program-lineage-atx-then-definition-indented-historical-is-code",
-            "program-lineage-setext-then-definition-indented-execution-is-code",
-            "program-lineage-quote-atx-then-definition-indented-historical-is-code",
-            "program-lineage-list-atx-then-definition-indented-reciprocal-is-code",
-            "program-lineage-paragraph-definition-lookalike-indented-historical-is-evidence",
-            "program-lineage-shortcut-reference-label-0999-is-reciprocal-evidence",
-            "program-lineage-shortcut-reference-label-1000-is-not-historical-evidence",
-            "program-lineage-full-reference-label-0999-is-execution-evidence",
-            "program-lineage-full-reference-label-1000-is-not-reciprocal-evidence",
-            "program-lineage-collapsed-reference-label-0999-is-historical-evidence",
-            "program-lineage-collapsed-reference-label-1000-is-not-execution-evidence",
-            "program-lineage-failed-inline-fallback-label-0999-is-reciprocal-evidence",
-            "program-lineage-failed-inline-fallback-label-1000-is-not-historical-evidence",
-            "program-lineage-soft-line-reference-label-0999-is-historical-evidence",
-            "program-lineage-soft-line-reference-label-1000-is-not-execution-evidence",
-            "program-lineage-escaped-reference-label-0999-is-execution-evidence",
-            "program-lineage-escaped-reference-label-1000-is-not-reciprocal-evidence",
-            "program-lineage-unmatched-code-next-paragraph-reciprocal",
-            "program-lineage-cross-container-reciprocal-is-not-evidence",
-            "program-lineage-cross-container-reciprocal-reference-is-not-evidence",
-            "program-lineage-invalid-historical-exception",
-            "program-lineage-paragraph-break-is-not-evidence",
-            "program-lineage-raw-html-is-not-evidence",
-            "program-lineage-indented-code-is-not-evidence",
-            "program-lineage-heading-indented-code-is-not-evidence",
-            "program-lineage-paragraph-continuation-is-evidence",
-            "program-lineage-blockquote-raw-html-is-not-evidence",
-            "program-lineage-blockquote-tilde-fence-is-not-evidence",
-            "program-lineage-blockquote-indented-code-is-not-evidence",
-            "program-lineage-outer-raw-nested-link-is-not-evidence",
-            "program-lineage-nested-indented-link-is-not-evidence",
-            "program-lineage-valid-angle-destination",
-            "program-lineage-valid-angle-destination-parentheses",
-            "program-lineage-invalid-unmatched-angle-destination",
-            "program-lineage-atx-heading-is-hard-boundary",
-            "program-lineage-setext-heading-is-hard-boundary",
-            "program-lineage-thematic-break-is-hard-boundary",
-            "program-lineage-gfm-table-cell-is-hard-boundary",
-            "program-lineage-angle-nonpunctuation-escape-is-preserved",
-            "program-lineage-image-target-is-not-link-evidence",
-            "program-lineage-image-inside-link-preserves-outer-target",
-            "program-lineage-unresolved-bracket-before-collapsed-reference",
-            "program-lineage-valid-multiline-double-title-definition",
-            "program-lineage-valid-inline-single-title",
-            "program-lineage-unmatched-code-next-paragraph-historical",
-            "program-lineage-unmatched-code-next-container-historical",
-            "program-lineage-soft-break-code-span-is-not-evidence",
-            "program-lineage-raw-html-heading-is-not-section",
-            "program-lineage-root-to-quote-link-is-not-evidence",
-            "program-lineage-quote-to-root-link-is-not-evidence",
-            "program-lineage-quote-depth-link-is-not-evidence",
-            "program-lineage-quote-depth-return-link-is-not-evidence",
-            "program-lineage-sibling-quote-link-is-not-evidence",
-            "program-lineage-same-quote-soft-break-is-evidence",
-            "program-lineage-root-to-quote-reference-is-not-evidence",
-            "program-lineage-quote-to-root-reference-is-not-evidence",
-            "program-lineage-quote-depth-reference-is-not-evidence",
-            "program-lineage-same-quote-reference-soft-break-is-evidence",
-            "program-lineage-blocked-successor-execution",
-            "program-lineage-draft-successor-preplanning",
-            "program-lineage-draft-successor-plan-only",
-            "program-lineage-draft-successor-task-only",
-            "program-lineage-draft-successor-nonreciprocal-pair",
-            "program-lineage-draft-successor-multiple-pairs",
-            "program-lineage-draft-successor-connected-extra",
-            "program-lineage-draft-successor-status-mismatch",
-            "program-lineage-ready-preplanning-gap",
-            "program-lineage-successor-closure-gap",
-            "program-lineage-successor-planning-gate",
-            "program-lineage-successor-plan-only",
-            "program-lineage-successor-task-only",
-            "program-lineage-successor-nonreciprocal-pair",
-            "program-lineage-successor-multiple-pairs",
-            "program-lineage-successor-connected-extra",
-            "program-lineage-premature-third-tranche-pair",
-            "program-lineage-ready-plan-only",
-            "program-lineage-ready-task-only",
-            "program-lineage-ready-multiple-pairs",
-            "program-lineage-ready-one-plan-two-tasks",
-            "program-lineage-ready-two-plans-one-task",
-            "program-lineage-ready-mixed-state-pair",
-            "program-lineage-unrelated-execution-component",
-            "program-lineage-follow-up-current-execution-is-absent",
-            "program-lineage-active-follow-up-direct-execution-is-rejected",
-            "program-lineage-draft-follow-up-indirect-execution-is-rejected",
-            "program-lineage-balanced-escaped-execution-links",
-            "program-lineage-outer-fence-nested-execution-is-not-evidence",
-            "program-lineage-invalid-inline-destination-garbage",
-            "program-lineage-invalid-inline-angle-less-than",
-            "program-lineage-valid-inline-paren-title",
-            "program-lineage-valid-single-title-with-closing-paren",
-            "program-lineage-gfm-table-row-is-hard-boundary",
-            "program-lineage-multiline-reference-definition",
-            "program-lineage-completed-follow-up-rejects-current-execution",
-            "program-lineage-unresolved-bracket-before-shortcut-reference",
-            "program-lineage-valid-multiline-paren-title-definition",
-            "program-lineage-invalid-inline-nested-paren-title",
-            "program-lineage-unmatched-code-next-paragraph-execution",
-            "program-lineage-cross-container-execution-is-not-evidence",
-            "program-lineage-cross-container-destination-is-not-evidence",
-            "program-lineage-cross-container-execution-reference-is-not-evidence",
-            "program-lineage-ready-nonreciprocal-pair",
-            "program-lineage-stable-diagnostic-contract",
-            "program-lineage-duplicate-stage00-authority",
-            "program-lineage-leading-pipe-authority",
-            "program-lineage-trailing-pipe-authority",
-            "program-lineage-shortcut-reference-authority",
-            "program-lineage-collapsed-reference-authority",
-            "program-lineage-full-reference-authority",
-            "program-lineage-balanced-destination-authority",
-            "program-lineage-nested-blockquote-authority",
-            "program-lineage-duplicate-extra-family-row-authority",
-            "program-lineage-wrapper-column-authority",
-            "program-lineage-invalid-authority-link-garbage",
-            "program-lineage-code-wrapped-authority-link-is-not-family",
-            "program-lineage-code-label-inside-authority-link-is-family",
-            "program-lineage-invalid-reference-definition-is-not-authority",
-            "program-lineage-outer-fence-nested-table-is-not-authority",
-            "program-lineage-outer-raw-nested-table-is-not-authority",
-            "program-lineage-fenced-blockquote-is-not-authority",
-            "program-lineage-nonrendered-stage00-table",
-            "program-lineage-unmatched-bracket-performance",
-            "program-lineage-unmatched-code-run-performance",
-            "program-lineage-failed-inline-candidate-performance",
-            "program-lineage-inline-ownership-sweep-2000",
-            "program-lineage-inline-ownership-sweep-4000",
-            "program-lineage-inline-ownership-sweep-8000",
-            "program-lineage-code-wrapped-html-sweep-2000",
-            "program-lineage-code-wrapped-html-sweep-4000",
-            "program-lineage-code-wrapped-html-sweep-8000",
-            "program-lineage-provisional-self-visibility-is-source-ordered",
-            "program-lineage-nested-link-suppression-2000",
-            "program-lineage-nested-link-suppression-4000",
-            "program-lineage-nested-link-suppression-8000",
-            "program-lineage-escaped-adjacent-backtick-run-is-code",
-            "program-lineage-bare-destination-depth-whitespace-is-invalid",
-            "program-lineage-backtick-owned-paragraph-sweep-2000",
-            "program-lineage-backtick-owned-paragraph-sweep-4000",
-            "program-lineage-backtick-owned-paragraph-sweep-8000",
-            "program-lineage-execution-component-chain-500",
-            "program-lineage-execution-component-chain-1000",
-            "program-lineage-execution-component-chain-2000",
-            "program-lineage-execution-component-chain-4000",
-            "program-lineage-commonmark-character-predicates",
-            "program-lineage-opaque-label-index-sweep-2000",
-            "program-lineage-opaque-label-index-sweep-4000",
-            "program-lineage-opaque-label-index-sweep-8000",
-            "program-lineage-unicode-space-inline-is-not-reciprocal",
-            "program-lineage-unicode-space-reference-is-not-execution",
-            "program-lineage-link-label-code-span-bracket-does-not-close-link",
-            "program-lineage-code-span-fake-link-remains-nonrendered-run-control",
-            "program-lineage-odd-backslash-escapes-opening-code-run",
-            "program-lineage-backslash-inside-code-does-not-escape-closing-run",
-            "program-lineage-mixed-backtick-run-label-keeps-reciprocal-link",
-            "program-lineage-raw-pua-cannot-collide-with-html-identity",
-            "program-lineage-identical-raw-pua-reference-label-matches",
-            "program-lineage-raw-pua-reference-label-0999-resolves",
-            "program-lineage-raw-pua-reference-label-1000-is-rejected",
-            "program-lineage-html-backtick-does-not-close-outer-code-span",
-            "program-lineage-inline-angle-destination-is-link-grammar",
-            "program-lineage-reference-angle-destination-is-link-grammar",
-            "program-lineage-code-span-html-is-literal-not-authority",
-            "program-lineage-inline-html-label-casefolds-tags",
-            "program-lineage-inline-html-label-casefolds-attributes",
-            "program-lineage-inline-html-label-distinct-tags-after-casefold",
-            "program-lineage-even-backslash-keeps-opening-code-run",
-            "program-lineage-angle-destination-backtick-owns-syntax",
-            "program-lineage-html-attribute-backtick-owns-syntax",
-            "program-lineage-invalid-inline-title-does-not-own-backtick",
-            "program-lineage-invalid-reference-title-does-not-own-backtick",
-            "program-lineage-valid-inline-title-owns-backtick",
-            "program-lineage-valid-reference-title-owns-backtick",
-            "program-lineage-orphan-inline-suffix-does-not-own-reciprocal-backtick",
-            "program-lineage-orphan-inline-suffix-does-not-own-historical-backtick",
-            "program-lineage-orphan-inline-suffix-does-not-own-execution-backtick",
-            "program-lineage-unmatched-outer-bracket-opens-code-before-title-suffix",
-        }
-        if set(program_case_names) != required_program_cases or len(
-            program_case_names
-        ) != len(set(program_case_names)):
-            failures.append("required unique program-lineage cases are incomplete")
-        program_validator = globals().get("_program_lineage_diagnostics")
-        for case in fixture["programLineageCases"]:
-            if list(case) != ["name", "mutation", "expected_rule_ids"]:
-                failures.append(
-                    f"{case.get('name')}: program-lineage case schema differs"
-                )
-                continue
-            if program_validator is None:
-                failures.append(
-                    f"{case['name']}: PROGRAM-LINEAGE rules are unimplemented"
-                )
-                continue
-            mutated, mutated_programs = _mutated_program_lineage_fixture(
-                program_context, program_lineage, case["mutation"]
-            )
-            started = time.perf_counter()
-            diagnostics = sorted(
-                program_validator(mutated, mutated_programs),
-                key=diagnostic_sort_key,
-            )
-            elapsed = time.perf_counter() - started
-            actual = [item.rule_id for item in diagnostics]
-            if actual != case["expected_rule_ids"]:
-                failures.append(
-                    f"{case['name']}: expected {case['expected_rule_ids']}, "
-                    f"actual {actual}"
-                )
-            angle_contract = {
-                "program-inline-angle-destination-contract": (
-                    "[x](<foo>)",
-                    ("foo",),
-                ),
-                "program-reference-angle-destination-contract": (
-                    "[x]\n\n[x]: <foo>",
-                    ("foo",),
-                ),
-                "program-execution-unmatched-outer-title-backtick": (
-                    '[`[x](/t "`")',
-                    (),
-                ),
-                "program-provisional-self-visibility-contract": (
-                    '[y](/u "`")`[y](/u "`")',
-                    ("/u",),
-                ),
-                "program-escaped-adjacent-backtick-contract": (
-                    r"\``[Task](../tasks/t.md)`",
-                    (),
-                ),
-            }.get(case["mutation"])
-            if angle_contract is not None:
-                source, expected_links = angle_contract
-                actual_links = _extract_links(source)
-                if actual_links != expected_links:
-                    failures.append(
-                        f"{case['name']}: expected links "
-                        f"{expected_links!r}, actual {actual_links!r}"
-                    )
-            if case["mutation"] == "program-bare-destination-depth-whitespace-contract":
-                destination_contracts = (
-                    ("[Task](../tasks/t(foo bar).md)", ()),
-                    (
-                        "[Task]\n\n[Task]: ../tasks/t(foo bar).md",
-                        (),
-                    ),
-                    (
-                        "[outer]([Task](../tasks/t.md ))",
-                        ("../tasks/t.md",),
-                    ),
-                )
-                for source, expected_links in destination_contracts:
-                    actual_links = _extract_links(source)
-                    if actual_links != expected_links:
-                        failures.append(
-                            f"{case['name']}: destination input "
-                            f"{source!r} expected links "
-                            f"{expected_links!r}, actual "
-                            f"{actual_links!r}"
-                        )
-            if case["mutation"] == "program-commonmark-character-predicate-contract":
-                character_contracts = (
-                    ("[Task](../tasks/t.md\x1c)", ()),
-                    (
-                        "[Task](../tasks/t.md\u00a0x)",
-                        ("../tasks/t.md\u00a0x",),
-                    ),
-                    ("[x]\n\n[x]: /t\x1c", ()),
-                    ("[x]\n\n[x]: /t\u00a0x", ("/t\u00a0x",)),
-                    ('[x](/t\t"title")', ("/t",)),
-                    ('[x](/t\n"title")', ("/t",)),
-                    ('[x](/t\r\n"title")', ("/t",)),
-                    ('[x](\n/t "title")', ("/t",)),
-                    ('[x](\r\n/t "title")', ("/t",)),
-                    ('[x](/t "title"\n)', ("/t",)),
-                    ('[x](/t\x00"title")', ()),
-                    ('[x](/t\x0b"title")', ()),
-                    ('[x](/t\x0c"title")', ()),
-                    ('[x](/t\x1f"title")', ()),
-                    ('[x](/t\x7f"title")', ()),
-                    ("[x](/t\u2003x)", ("/t\u2003x",)),
-                    ("[x](/t\u3000x)", ("/t\u3000x",)),
-                    ('[x](/t\u00a0"title")', ('/t\u00a0"title"',)),
-                    ('[x](/t "a\u00a0b")', ("/t",)),
-                    ('[x](/t "a\x0bb")', ("/t",)),
-                    ('[x](/t "a\x1cb")', ("/t",)),
-                    ('[x](/t "a\n\u00a0\nb")', ("/t",)),
-                    ('[x](/t\n \n"title")', ()),
-                    ('[x](/t\r\n \r\n"title")', ()),
-                    ('[x](/t\x1c"title")', ()),
-                    ('[x]\n\n[x]: /t\t"title"', ("/t",)),
-                    ('[x]\n\n[x]: /t "a\x0bb"', ("/t",)),
-                    ('[x]\n\n[x]: /t "a\x1cb"', ("/t",)),
-                    ('[x]\n\n[x]: /t "a\n\u00a0\nb"', ("/t",)),
-                    ('[x]\n\n[x]: /t\x0b"title"', ()),
-                    ("[x](<http://[>)", ("http://[",)),
-                )
-                for source, expected_links in character_contracts:
-                    actual_links = _extract_links(source)
-                    if actual_links != expected_links:
-                        failures.append(
-                            f"{case['name']}: character-predicate input "
-                            f"{source!r} expected links "
-                            f"{expected_links!r}, actual "
-                            f"{actual_links!r}"
-                        )
-                local_destination_contracts = (
-                    ("http://[", ("external", None)),
-                    (r"C:\docs\owner.md", ("LINK-ABSOLUTE", None)),
-                )
-                for raw_target, expected_local in local_destination_contracts:
-                    try:
-                        actual_local = _local_destination(
-                            PurePosixPath("docs/spec.md"), raw_target
-                        )
-                    except ValueError as error:
-                        failures.append(
-                            f"{case['name']}: local destination {raw_target!r} "
-                            f"raised {error!r}"
-                        )
-                        continue
-                    if actual_local != expected_local:
-                        failures.append(
-                            f"{case['name']}: local destination {raw_target!r} "
-                            f"expected {expected_local!r}, actual {actual_local!r}"
-                        )
-            if case["mutation"] == "program-reciprocal-unicode-space-inline":
-                source_path = PurePosixPath("docs/03.specs/0034-fixture/spec.md")
-                canonical_raw = "../../02.architecture/descriptions/ad-0009-fixture.md"
-                canonical_path = PurePosixPath(
-                    "docs/02.architecture/descriptions/ad-0009-fixture.md"
-                )
-                canonical_contracts = (
-                    canonical_raw,
-                    canonical_raw.replace("0009-fixture", "0009%2Dfixture"),
-                )
-                for raw_target in canonical_contracts:
-                    actual_local = _local_destination(source_path, raw_target)
-                    if actual_local != ("local", canonical_path):
-                        failures.append(
-                            f"{case['name']}: canonical local input "
-                            f"{raw_target!r} resolved as {actual_local!r}"
-                        )
-                rendered_canonical_contracts = (
-                    f"[AD]({canonical_raw.replace('-', '&#45;', 1)})",
-                    "[AD](" + canonical_raw.replace("-", r"\-", 1) + ")",
-                )
-                for markdown_source in rendered_canonical_contracts:
-                    extracted = _extract_links(markdown_source)
-                    actual_local = (
-                        _local_destination(source_path, extracted[0])
-                        if len(extracted) == 1
-                        else None
-                    )
-                    if actual_local != ("local", canonical_path):
-                        failures.append(
-                            f"{case['name']}: grammar-normalized input "
-                            f"{markdown_source!r} resolved as {actual_local!r}"
-                        )
-                for unicode_space in ("\u00a0", "\u2003", "\u3000"):
-                    for raw_target in (
-                        canonical_raw + unicode_space,
-                        unicode_space + canonical_raw,
-                    ):
-                        actual_local = _local_destination(source_path, raw_target)
-                        if actual_local == ("local", canonical_path):
-                            failures.append(
-                                f"{case['name']}: Unicode-space target "
-                                f"{raw_target!r} collapsed to canonical path"
-                            )
-                        inline_source = f"[AD]({raw_target})"
-                        reference_source = "[AD][owner]\n\n[owner]: " + raw_target
-                        for markdown_source in (inline_source, reference_source):
-                            extracted = _extract_links(markdown_source)
-                            if extracted != (raw_target,):
-                                failures.append(
-                                    f"{case['name']}: rendered Unicode-space "
-                                    f"input {markdown_source!r} extracted "
-                                    f"{extracted!r}"
-                                )
-                            elif _local_destination(source_path, extracted[0]) == (
-                                "local",
-                                canonical_path,
-                            ):
-                                failures.append(
-                                    f"{case['name']}: rendered Unicode-space "
-                                    "target satisfied canonical ownership"
-                                )
-                control_target = canonical_raw + "\x1c"
-                if _local_destination(source_path, control_target) == (
-                    "local",
-                    canonical_path,
-                ):
-                    failures.append(
-                        f"{case['name']}: direct ASCII-control target "
-                        "collapsed to canonical path"
-                    )
-            opaque_label_scale = {
-                "program-opaque-label-index-sweep-2000": 2_000,
-                "program-opaque-label-index-sweep-4000": 4_000,
-                "program-opaque-label-index-sweep-8000": 8_000,
-            }.get(case["mutation"])
-            if opaque_label_scale is not None:
-                label_scan = globals().get("_normalize_reference_label_span_scan")
-                if label_scan is None:
-                    failures.append(
-                        f"{case['name']}: opaque-label interval index is unimplemented"
-                    )
-                else:
-                    source = ("<i></i>[x] " * opaque_label_scale) + "\n\n[x]: /t"
-                    masked = _mask_inline_html_tokens(source)
-                    label_spans = tuple(
-                        (match.start() + 1, match.end() - 1)
-                        for match in re.finditer(r"\[x\]", masked)
-                    )
-                    token_count = len(masked.opaque_tokens)
-                    if token_count != opaque_label_scale * 2:
-                        failures.append(
-                            f"{case['name']}: expected "
-                            f"{opaque_label_scale * 2} opaque tokens, actual "
-                            f"{token_count}"
-                        )
-                    if len(label_spans) != opaque_label_scale + 1:
-                        failures.append(
-                            f"{case['name']}: expected "
-                            f"{opaque_label_scale + 1} labels, actual "
-                            f"{len(label_spans)}"
-                        )
-                    total_steps = token_count
-                    for label_start, label_end in label_spans:
-                        scan_result = label_scan(masked, label_start, label_end)
-                        total_steps += scan_result.steps
-                        if scan_result.label != "x":
-                            failures.append(
-                                f"{case['name']}: opaque label normalized as "
-                                f"{scan_result.label!r}"
-                            )
-                            break
-                    work_bound = token_count + len(label_spans) * (
-                        token_count.bit_length() + 3
-                    )
-                    if total_steps > work_bound:
-                        failures.append(
-                            f"{case['name']}: opaque-label work "
-                            f"{total_steps} exceeded indexed bound "
-                            f"{work_bound}"
-                        )
-                    actual_links = _extract_links(source)
-                    if actual_links != ("/t",) * opaque_label_scale:
-                        failures.append(
-                            f"{case['name']}: expected "
-                            f"{opaque_label_scale} resolved shortcuts, actual "
-                            f"{len(actual_links)}"
-                        )
-                    if opaque_label_scale == 2_000:
-                        controls = _mask_inline_html_tokens("<i>x</i><b>y</b>")
-                        control_spans = (
-                            (0, 3),
-                            (0, len(controls)),
-                            (3, 4),
-                            (1, 2),
-                            (0, 2),
-                            (1, 4),
-                            (4, 8),
-                            (8, 11),
-                        )
-                        for label_start, label_end in control_spans:
-                            legacy_tokens = tuple(
-                                (
-                                    token_start - label_start,
-                                    token_end - label_start,
-                                    token_source,
-                                )
-                                for token_start, token_end, token_source in (
-                                    controls.opaque_tokens
-                                )
-                                if label_start <= token_start and token_end <= label_end
-                            )
-                            expected_label = _normalize_reference_label(
-                                controls[label_start:label_end],
-                                raw_pua_encoded=True,
-                                opaque_tokens=legacy_tokens,
-                            )
-                            scan_result = label_scan(controls, label_start, label_end)
-                            if scan_result.label != expected_label:
-                                failures.append(
-                                    f"{case['name']}: adjacent/covering/"
-                                    f"touching span {(label_start, label_end)} "
-                                    f"expected {expected_label!r}, actual "
-                                    f"{scan_result.label!r}"
-                                )
-            if case["mutation"] == "program-escaped-adjacent-backtick-contract":
-                escaped_run_contracts = (
-                    (r"\``[x](/t)`", ()),
-                    (r"\```[x](/t)``", ()),
-                    (r"\``[x](/t)``", ("/t",)),
-                    (r"\\``[x](/t)``", ()),
-                    (r"`open \``[x](/t)", ("/t",)),
-                )
-                for source, expected_links in escaped_run_contracts:
-                    actual_links = _extract_links(source)
-                    if actual_links != expected_links:
-                        failures.append(
-                            f"{case['name']}: escaped-run input "
-                            f"{source!r} expected links "
-                            f"{expected_links!r}, actual "
-                            f"{actual_links!r}"
-                        )
-            if case["mutation"] == "program-execution-unmatched-outer-title-backtick":
-                commonmark_code_contracts = (
-                    ('[`[x](/t "`")', ()),
-                    ('[x](/t "`")', ("/t",)),
-                    (r"\`[x](/t) `", ("/t",)),
-                    (r"`hidden \` [x](/t)", ("/t",)),
-                    (r"\\`[x](/t)`", ()),
-                    ("`[x](/t)`", ()),
-                )
-                for source, expected_links in commonmark_code_contracts:
-                    actual_links = _extract_links(source)
-                    if actual_links != expected_links:
-                        failures.append(
-                            f"{case['name']}: CommonMark source "
-                            f"{source!r} expected links "
-                            f"{expected_links!r}, actual "
-                            f"{actual_links!r}"
-                        )
-            if case["mutation"] == "program-provisional-self-visibility-contract":
-                source_order_contracts = (
-                    ('[y](/u "`")`[y](/u "`")', ("/u",)),
-                    ("[a](/a)[b](/b)", ("/a", "/b")),
-                    ('`[a](/hidden)`[b](/b "`")', ("/b",)),
-                    ('[a](/a "`")`[b](/hidden)`', ("/a",)),
-                )
-                for source, expected_links in source_order_contracts:
-                    actual_links = _extract_links(source)
-                    if actual_links != expected_links:
-                        failures.append(
-                            f"{case['name']}: source-order input "
-                            f"{source!r} expected links "
-                            f"{expected_links!r}, actual "
-                            f"{actual_links!r}"
-                        )
-            backtick_owned_scale = {
-                "program-backtick-owned-paragraph-sweep-2000": 2_000,
-                "program-backtick-owned-paragraph-sweep-4000": 4_000,
-                "program-backtick-owned-paragraph-sweep-8000": 8_000,
-            }.get(case["mutation"])
-            if backtick_owned_scale is not None:
-                closer_scan = globals().get("_backtick_closer_scan")
-                if closer_scan is None:
-                    failures.append(
-                        f"{case['name']}: backtick ownership scan is unimplemented"
-                    )
-                else:
-                    source = "\n\n".join(
-                        '[x](/t "`")' for _ in range(backtick_owned_scale)
-                    )
-                    owned_spans = _inline_link_syntax_spans(source)
-                    scan_result = closer_scan(source, owned_spans)
-                    if scan_result.closer_ends:
-                        failures.append(
-                            f"{case['name']}: owned backticks remained eligible: "
-                            f"{len(scan_result.closer_ends)}"
-                        )
-                    linear_bound = len(source) + len(owned_spans) * 2
-                    if scan_result.steps > linear_bound:
-                        failures.append(
-                            f"{case['name']}: backtick ownership work "
-                            f"{scan_result.steps} exceeded linear bound "
-                            f"{linear_bound}"
-                        )
-            execution_chain_scale = {
-                "program-execution-component-chain-500": 500,
-                "program-execution-component-chain-1000": 1_000,
-                "program-execution-component-chain-2000": 2_000,
-                "program-execution-component-chain-4000": 4_000,
-            }.get(case["mutation"])
-            if execution_chain_scale is not None:
-                index_builder = globals().get("_current_execution_index")
-                component_scan = globals().get("_current_execution_component_scan")
-                if index_builder is None or component_scan is None:
-                    failures.append(
-                        f"{case['name']}: execution adjacency index is unimplemented"
-                    )
-                else:
-                    spec = PurePosixPath("docs/03.specs/0999-chain/spec.md")
-                    nodes = tuple(
-                        PurePosixPath(
-                            f"docs/04.execution/tasks/0999-chain-{index:04d}.md"
-                        )
-                        for index in range(execution_chain_scale)
-                    )
-                    chain_graph: dict[PurePosixPath, frozenset[PurePosixPath]] = {}
-                    for index, node in enumerate(nodes):
-                        targets = {spec} if index == 0 else set()
-                        if index + 1 < len(nodes):
-                            targets.add(nodes[index + 1])
-                        chain_graph[node] = frozenset(targets)
-                    execution_index = index_builder(chain_graph)
-                    scan_result = component_scan(spec, frozenset(), execution_index)
-                    cached_result = component_scan(spec, frozenset(), execution_index)
-                    if scan_result.paths != nodes:
-                        failures.append(
-                            f"{case['name']}: expected ordered chain of "
-                            f"{execution_chain_scale}, actual "
-                            f"{len(scan_result.paths)}"
-                        )
-                    linear_bound = execution_chain_scale * 8 + 8
-                    total_steps = execution_index.steps + scan_result.steps
-                    if total_steps > linear_bound:
-                        failures.append(
-                            f"{case['name']}: execution graph work "
-                            f"{total_steps} exceeded linear bound "
-                            f"{linear_bound}"
-                        )
-                    if (
-                        cached_result.steps != 0
-                        or cached_result.paths is not scan_result.paths
-                    ):
-                        failures.append(
-                            f"{case['name']}: execution component cache "
-                            "was not reused safely"
-                        )
-            ownership_scale = {
-                "program-inline-ownership-sweep-2000": 2_000,
-                "program-inline-ownership-sweep-4000": 4_000,
-                "program-inline-ownership-sweep-8000": 8_000,
-            }.get(case["mutation"])
-            if ownership_scale is not None:
-                sweep_filter = globals().get("_intervals_not_contained")
-                if sweep_filter is None:
-                    failures.append(f"{case['name']}: interval sweep is unimplemented")
-                else:
-                    source = " ".join(
-                        f'[x{index}](/t{index}) <i data-n="{index}">v</i>'
-                        for index in range(ownership_scale)
-                    )
-                    link_spans, html_spans = _inline_syntax_ownership(source)
-                    if len(link_spans) != ownership_scale:
-                        failures.append(
-                            f"{case['name']}: expected "
-                            f"{ownership_scale} independent links, actual "
-                            f"{len(link_spans)}"
-                        )
-                    if len(html_spans) != ownership_scale * 2:
-                        failures.append(
-                            f"{case['name']}: expected "
-                            f"{ownership_scale * 2} independent HTML "
-                            f"tokens, actual {len(html_spans)}"
-                        )
-                    html_result = sweep_filter(
-                        _raw_inline_html_token_spans(source),
-                        _inline_link_syntax_spans(source),
-                    )
-                    link_result = sweep_filter(
-                        _inline_link_syntax_spans(source),
-                        html_result.spans,
-                    )
-                    total_intervals = ownership_scale * 3
-                    if (
-                        html_result.steps > total_intervals
-                        or link_result.steps > total_intervals
-                    ):
-                        failures.append(
-                            f"{case['name']}: interval sweep work exceeded "
-                            f"linear bound {total_intervals}: "
-                            f"html={html_result.steps}, "
-                            f"links={link_result.steps}"
-                        )
-                    if ownership_scale == 2_000:
-                        endpoint_result = sweep_filter(
-                            (
-                                (-1, 10),
-                                (0, 9),
-                                (0, 10),
-                                (0, 11),
-                                (1, 10),
-                                (9, 11),
-                                (19, 29),
-                                (20, 30),
-                                (21, 29),
-                                (21, 31),
-                                (30, 31),
-                            ),
-                            ((0, 10), (20, 30)),
-                        )
-                        expected_endpoints = (
-                            (-1, 10),
-                            (0, 11),
-                            (9, 11),
-                            (19, 29),
-                            (21, 31),
-                            (30, 31),
-                        )
-                        if endpoint_result.spans != expected_endpoints:
-                            failures.append(
-                                f"{case['name']}: endpoint/nesting/overlap "
-                                f"semantics differ: "
-                                f"{endpoint_result.spans!r}"
-                            )
-            wrapped_html_scale = {
-                "program-code-wrapped-html-sweep-2000": 2_000,
-                "program-code-wrapped-html-sweep-4000": 4_000,
-                "program-code-wrapped-html-sweep-8000": 8_000,
-            }.get(case["mutation"])
-            if wrapped_html_scale is not None:
-                overlap_filter = globals().get("_intervals_not_overlapping")
-                if overlap_filter is None:
-                    failures.append(
-                        f"{case['name']}: interval overlap sweep is unimplemented"
-                    )
-                else:
-                    source = " ".join("`<i>x</i>`" for _ in range(wrapped_html_scale))
-                    raw_html = _raw_inline_html_token_spans(source)
-                    code_spans = _inline_code_spans(source, syntax_owned_spans=())
-                    visible_html = _inline_html_token_spans(source)
-                    overlap_result = overlap_filter(raw_html, code_spans)
-                    if len(raw_html) != wrapped_html_scale * 2:
-                        failures.append(
-                            f"{case['name']}: expected "
-                            f"{wrapped_html_scale * 2} raw HTML tokens, "
-                            f"actual {len(raw_html)}"
-                        )
-                    if len(code_spans) != wrapped_html_scale:
-                        failures.append(
-                            f"{case['name']}: expected "
-                            f"{wrapped_html_scale} code spans, actual "
-                            f"{len(code_spans)}"
-                        )
-                    if visible_html or overlap_result.spans:
-                        failures.append(
-                            f"{case['name']}: code-wrapped HTML remained visible"
-                        )
-                    linear_bound = wrapped_html_scale * 3
-                    if overlap_result.steps > linear_bound:
-                        failures.append(
-                            f"{case['name']}: overlap sweep work "
-                            f"{overlap_result.steps} exceeded linear "
-                            f"bound {linear_bound}"
-                        )
-                    if wrapped_html_scale == 2_000:
-                        endpoint_result = overlap_filter(
-                            (
-                                (8, 10),
-                                (0, 2),
-                                (2, 4),
-                                (1, 6),
-                                (2, 5),
-                                (3, 4),
-                                (5, 7),
-                            ),
-                            ((2, 5),),
-                        )
-                        expected_endpoints = (
-                            (8, 10),
-                            (0, 2),
-                            (5, 7),
-                        )
-                        if endpoint_result.spans != expected_endpoints:
-                            failures.append(
-                                f"{case['name']}: overlap before/inside/"
-                                "covering/after/touching semantics or "
-                                "source order differ: "
-                                f"{endpoint_result.spans!r}"
-                            )
-                        html_contracts = (
-                            (
-                                "<i>v</i> `<b>h</b>` <u>v</u>",
-                                ("<i>", "</i>", "<u>", "</u>"),
-                            ),
-                            (r"\`<i>x</i> `", ("<i>", "</i>")),
-                            (r"\\`<i>x</i>`", ()),
-                            (
-                                r"`<i>x</i> \` <b>v</b>",
-                                ("<b>", "</b>"),
-                            ),
-                            ("`<i>x</i>`", ()),
-                        )
-                        for html_source, expected_tokens in html_contracts:
-                            actual_tokens = tuple(
-                                html_source[start:end]
-                                for start, end in _inline_html_token_spans(html_source)
-                            )
-                            if actual_tokens != expected_tokens:
-                                failures.append(
-                                    f"{case['name']}: HTML/code source "
-                                    f"{html_source!r} expected tokens "
-                                    f"{expected_tokens!r}, actual "
-                                    f"{actual_tokens!r}"
-                                )
-            nested_link_scale = {
-                "program-nested-link-suppression-2000": 2_000,
-                "program-nested-link-suppression-4000": 4_000,
-                "program-nested-link-suppression-8000": 8_000,
-            }.get(case["mutation"])
-            if nested_link_scale is not None:
-                suppression_helper = globals().get("_nested_link_suppression")
-                if suppression_helper is None:
-                    failures.append(
-                        f"{case['name']}: bracket-tree suppression is unimplemented"
-                    )
-                else:
-                    source = "[" * nested_link_scale + "x" + "](/t)" * nested_link_scale
-                    actual_links = _extract_links(source)
-                    brackets, parents = _bracket_pairs(source, code_spans=())
-                    suppression = suppression_helper(
-                        parents,
-                        frozenset(brackets),
-                        frozenset(),
-                        frozenset(),
-                    )
-                    if actual_links != ("/t",):
-                        failures.append(
-                            f"{case['name']}: expected deepest link only, "
-                            f"actual {actual_links!r}"
-                        )
-                    if len(suppression.suppressed) != nested_link_scale - 1:
-                        failures.append(
-                            f"{case['name']}: expected "
-                            f"{nested_link_scale - 1} suppressed ancestors, "
-                            f"actual {len(suppression.suppressed)}"
-                        )
-                    linear_bound = nested_link_scale * 3
-                    if suppression.steps > linear_bound:
-                        failures.append(
-                            f"{case['name']}: bracket-tree work "
-                            f"{suppression.steps} exceeded linear bound "
-                            f"{linear_bound}"
-                        )
-                    if nested_link_scale == 2_000:
-                        nested_contracts = (
-                            ("[[x](/inner)](broken", ("/inner",)),
-                            ("[[x](broken](/outer)", ("/outer",)),
-                            ("![alt [x](/hidden)](/image)", ()),
-                            ("[![alt](/image)](/outer)", ("/outer",)),
-                            ("![alt [x](/visible)", ("/visible",)),
-                        )
-                        for nested_source, expected_links in nested_contracts:
-                            actual_links = _extract_links(nested_source)
-                            if actual_links != expected_links:
-                                failures.append(
-                                    f"{case['name']}: nested/image input "
-                                    f"{nested_source!r} expected links "
-                                    f"{expected_links!r}, actual "
-                                    f"{actual_links!r}"
-                                )
-            if (
-                case["mutation"]
-                in {
-                    "program-unmatched-bracket-performance",
-                    "program-unmatched-code-run-performance",
-                    "program-failed-inline-candidate-performance",
-                }
-                and elapsed >= 2.0
-            ):
-                performance_subject = (
-                    "20k unmatched bracket scan"
-                    if case["mutation"] == "program-unmatched-bracket-performance"
-                    else (
-                        "500 unique unmatched backtick-run scan"
-                        if case["mutation"] == "program-unmatched-code-run-performance"
-                        else "4k failed inline-candidate scan"
-                    )
-                )
-                failures.append(
-                    f"{case['name']}: {performance_subject} took "
-                    f"{elapsed:.3f}s, expected <2.000s"
-                )
-            if case["mutation"] == "program-diagnostic-contract":
-                projection = tuple(
-                    (
-                        item.rule_id,
-                        item.path.as_posix(),
-                        item.profile,
-                        item.expected,
-                        item.actual,
-                        item.owner,
-                    )
-                    for item in diagnostics
-                )
-                expected_projection = (
-                    (
-                        "PROGRAM-LINEAGE-EXECUTION-GATE",
-                        "docs/03.specs/0034-fixture/spec.md",
-                        "sdlc/spec",
-                        "zero current execution component; or one closed reciprocal Plan/Task component with direct own-Spec links and relation-state parity for the first unfinished original tranche; draft original successors may retain one such draft pair while follow-ups remain component-free",
-                        "component=3, plans=1, tasks=2, direct-spec=False, execution-state=True, reciprocal=False, dependency-ready-original=True",
-                        OWNER,
-                    ),
-                    (
-                        "PROGRAM-LINEAGE-STATE",
-                        "docs/03.specs/0034-fixture/spec.md",
-                        "sdlc/spec",
-                        "active",
-                        "done",
-                        OWNER,
-                    ),
-                )
-                if projection != expected_projection:
-                    failures.append(
-                        f"{case['name']}: stable diagnostic tuples differ: "
-                        f"{projection!r}"
-                    )
-            elif case["mutation"] == "program-execution-unrelated-component":
-                projection = tuple(
-                    (
-                        item.rule_id,
-                        item.path.as_posix(),
-                        item.profile,
-                        item.expected,
-                        item.actual,
-                        item.owner,
-                    )
-                    for item in diagnostics
-                )
-                expected_projection = (
-                    (
-                        "PROGRAM-LINEAGE-EXECUTION-GATE",
-                        "docs/04.execution/plans/2026-07-15-fixture-999.md",
-                        "sdlc/plan",
-                        "every active Plan/Task component connected to one registry relation Spec",
-                        "unowned active execution component=2, active=2",
-                        OWNER,
-                    ),
-                )
-                if projection != expected_projection:
-                    failures.append(
-                        f"{case['name']}: stable unowned diagnostic tuple differs: "
-                        f"{projection!r}"
-                    )
-        registry = load_registry(root)
-        profiles_by_id = {profile.profile_id: profile for profile in registry.profiles}
-        body_context = _body_contract_fixture_context(
-            Path(temporary), fixture["bodyContractTree"], profiles_by_id
-        )
-        body_validator = globals().get("_body_contract_link_diagnostics")
-        body_case_keys = [
-            "name",
-            "mutation",
-            "bodyContracts",
-            "expected_rule_ids",
-        ]
-        for case in fixture["bodyContractCases"]:
-            expected_case_keys = body_case_keys.copy()
-            if "pathPrefixes" in case:
-                expected_case_keys.insert(3, "pathPrefixes")
-            if list(case) != expected_case_keys:
-                failures.append(
-                    f"{case.get('name')}: body-contract case schema differs"
-                )
-                continue
-            if body_validator is None:
-                failures.append(f"{case['name']}: BODY-LINK rules are unimplemented")
-                continue
-            mutated = _mutated_body_contract_context(body_context, case["mutation"])
-            try:
-                diagnostics = body_validator(
-                    mutated,
-                    profiles_by_id,
-                    case["bodyContracts"],
-                    tuple(
-                        PurePosixPath(value) for value in case.get("pathPrefixes", [])
-                    ),
-                )
-            except TypeError:
-                failures.append(f"{case['name']}: path-prefix scope is unimplemented")
-                continue
-            actual = sorted({item.rule_id for item in diagnostics})
-            if actual != case["expected_rule_ids"]:
-                failures.append(
-                    f"{case['name']}: expected {case['expected_rule_ids']}, actual {actual}"
-                )
-        try:
-            default_mode = _parser().parse_args([]).mode
-            explicit_mode = _parser().parse_args(["--mode", "strict"]).mode
-            default_body_contracts = _parser().parse_args([]).body_contracts
-            audit_body_contracts = (
-                _parser().parse_args(["--body-contracts", "audit"]).body_contracts
-            )
-            default_prefixes = _parser().parse_args([]).body_contract_path_prefix
-            repeated_prefixes = (
-                _parser()
-                .parse_args(
-                    [
-                        "--body-contracts",
-                        "audit",
-                        "--body-contract-path-prefix",
-                        "docs/01.requirements",
-                        "--body-contract-path-prefix",
-                        "docs/03.specs",
-                    ]
-                )
-                .body_contract_path_prefix
-            )
-        except (AttributeError, SystemExit):
-            failures.append("body-contract parser modes are unimplemented")
-        else:
-            if default_mode != "strict" or explicit_mode != "strict":
-                failures.append("validator parser mode defaults differ")
-            if default_body_contracts != "registry" or audit_body_contracts != "audit":
-                failures.append("body-contract parser mode defaults differ")
-            expected_prefixes = [
-                PurePosixPath("docs/01.requirements"),
-                PurePosixPath("docs/03.specs"),
-            ]
-            if default_prefixes != [] or repeated_prefixes != expected_prefixes:
-                failures.append("body-contract path-prefix parser differs")
-        for invalid_prefix in (
-            "",
-            ".",
-            "./docs/01.requirements",
-            "/docs/01.requirements",
-            "C:/docs/01.requirements",
-            "../docs/01.requirements",
-            "docs/../01.requirements",
-            "docs/01.requirements/",
-            "docs\\01.requirements",
-        ):
-            with contextlib.redirect_stderr(io.StringIO()):
-                try:
-                    _parser().parse_args(
-                        ["--body-contract-path-prefix", invalid_prefix]
-                    )
-                except SystemExit as exc:
-                    if exc.code == 2:
-                        continue
-            failures.append(
-                f"body-contract parser accepted invalid path prefix: {invalid_prefix!r}"
-            )
-    if (root / LEDGER_PATH).exists() != ledger_existed_before:
-        failures.append("self-test changed the repository ledger artifact")
-    if (root / DEBT_PATH).exists():
-        failures.append("retired semantic debt source is still present")
-    base = _load_debt(root, mode="strict")
-    singleton = {
-        "schemaVersion": 1,
-        "owner": "Spec 030",
-        "growthAllowed": False,
-        "items": [copy.deepcopy(DEBT_LITERAL)],
-    }
-    partial = copy.deepcopy(singleton)
-    partial["items"][0].pop("removeWhen")
-    mutations = (
-        ("empty source", base),
-        ("new debt", singleton),
-        ("partial source", partial),
-    )
-    for label, candidate in mutations:
-        for mode in ("compatibility", "strict"):
-            try:
-                _load_debt(root, candidate, mode=mode)
-            except ConfigurationError:
-                continue
-            failures.append(f"debt source mutation accepted in {mode}: {label}")
-    stdout = io.StringIO()
-    stderr = io.StringIO()
-    with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
-        try:
-            main(
-                [
-                    "--root",
-                    str(root),
-                    "--mode",
-                    "compatibility",
-                    "--format",
-                    "json",
-                ]
-            )
-        except SystemExit as exc:
-            return_code = exc.code
-        else:
-            return_code = None
-    if (
-        return_code != 2
-        or stdout.getvalue()
-        or "invalid choice: 'compatibility'" not in stderr.getvalue()
-    ):
-        failures.append("retired compatibility CLI value was not rejected")
-    if (root / DEBT_PATH).exists():
-        failures.append("retired semantic debt source was recreated")
-    proposed_forms = tuple(
-        path
-        for path in (
-            PurePosixPath(
-                "docs/99.templates/templates/common/archive-record.template.md"
-            ),
-            PurePosixPath(
-                "docs/98.archive/04.execution/plans/"
-                "2026-07-12-protected-surface-supply-chain-hardening.md"
-            ),
-            PurePosixPath(
-                "docs/98.archive/04.execution/tasks/"
-                "2026-07-12-protected-surface-supply-chain-hardening.md"
-            ),
-            PurePosixPath(
-                "docs/98.archive/04.execution/plans/"
-                "2026-07-14-template-lifecycle-contract-normalization.md"
-            ),
-            PurePosixPath(
-                "docs/98.archive/04.execution/tasks/"
-                "2026-07-14-template-lifecycle-contract-normalization.md"
-            ),
-            PurePosixPath(
-                "docs/98.archive/04.execution/plans/"
-                "2026-07-15-authority-and-lineage-foundation.md"
-            ),
-            PurePosixPath(
-                "docs/98.archive/04.execution/tasks/"
-                "2026-07-15-authority-and-lineage-foundation.md"
-            ),
-            PurePosixPath(
-                "docs/98.archive/04.execution/plans/"
-                "2026-07-16-document-schema-and-lifecycle-contract.md"
-            ),
-            PurePosixPath(
-                "docs/98.archive/04.execution/tasks/"
-                "2026-07-16-document-schema-and-lifecycle-contract.md"
-            ),
-            PurePosixPath(
-                "docs/98.archive/04.execution/plans/"
-                "2026-07-17-archive-record-and-workspace-boundary.md"
-            ),
-            PurePosixPath(
-                "docs/98.archive/04.execution/tasks/"
-                "2026-07-17-archive-record-and-workspace-boundary.md"
-            ),
-        )
-        if (root / path).is_file()
-    )
-    production_context = _build_context(root, include_paths=proposed_forms)
-    if (
-        _werpc_predecessor_disposition_map(
-            production_context.texts.get(LEDGER_PATH, "")
-        )
-        is None
-    ):
-        failures.append("production predecessor disposition table is unavailable")
-    production = validate_cross_document_contracts(
-        root,
-        "strict",
-        include_paths=proposed_forms,
-    )
-    if production:
-        failures.append("strict production repository diagnostics must be empty")
-    owner_keys, owner_diagnostics = _owner_state(production_context)
-    current_unique_keys = {key for key in owner_keys.values() if key}
-    governance_keys = [
-        owner_keys.get(path, "") for path in production_context.governance_current_paths
-    ]
-    if owner_diagnostics:
-        failures.append("production current-owner state has diagnostics")
-    if any(not key for key in governance_keys) or len(governance_keys) != len(
-        set(governance_keys)
-    ):
-        failures.append(
-            "declared Stage 00 current owners must have non-empty unique owner keys"
-        )
-
-    post_smdv_context = copy.deepcopy(production_context)
-    adm_tasks, _, adm_router_complete = _program_package_task_projection(
-        production_context,
-        ADM_CLOSURE_OWNER_PATHS[0],
-    )
-    adm_closure_valid = adm_router_complete and all(
-        production_context.metadata[path].get("status") == "done"
-        and not _owner_candidate(production_context, path)
-        and not owner_keys.get(path)
-        for path in adm_tasks
-    )
-    for path in ADM_CLOSURE_OWNER_PATHS:
-        if (
-            path not in production_context.metadata
-            or production_context.metadata[path].get("status") != "done"
-            or _owner_candidate(production_context, path)
-            or owner_keys.get(path)
-        ):
-            adm_closure_valid = False
-            break
-        post_smdv_context.metadata[path]["status"] = "active"
-    for path in adm_tasks:
-        post_smdv_context.metadata[path]["status"] = "in-progress"
-    if not adm_closure_valid:
-        failures.append(
-            "ADM closure package must expose exact done owners and routed Tasks"
-        )
-    else:
-        post_smdv_keys, post_smdv_diagnostics = _owner_state(post_smdv_context)
-        adm_transitioned_paths = {
-            path
-            for path in production_context.paths
-            if owner_keys.get(path) != post_smdv_keys.get(path)
-        }
-        post_smdv_unique_keys = {key for key in post_smdv_keys.values() if key}
-        if (
-            post_smdv_diagnostics
-            or adm_transitioned_paths != set(ADM_CLOSURE_OWNER_PATHS)
-            or any(
-                not post_smdv_keys.get(path) for path in ADM_CLOSURE_OWNER_PATHS
-            )
-            or len(post_smdv_unique_keys) - len(current_unique_keys)
-            != len(ADM_CLOSURE_OWNER_PATHS)
-        ):
-            failures.append(
-                "ADM done-to-current transition must change only its Spec/Plan "
-                "owners and add their non-empty unique owner keys"
-            )
-        pre_smdv_context = copy.deepcopy(post_smdv_context)
-        smdv_tasks, _, smdv_router_complete = _program_package_task_projection(
-            post_smdv_context,
-            SMDV_CLOSURE_OWNER_PATHS[0],
-        )
-        smdv_closure_valid = smdv_router_complete and all(
-            post_smdv_context.metadata[path].get("status") == "done"
-            and not _owner_candidate(post_smdv_context, path)
-            and not post_smdv_keys.get(path)
-            for path in smdv_tasks
-        )
-        for path in SMDV_CLOSURE_OWNER_PATHS:
-            if (
-                path not in post_smdv_context.metadata
-                or post_smdv_context.metadata[path].get("status") != "done"
-                or _owner_candidate(post_smdv_context, path)
-                or post_smdv_keys.get(path)
-            ):
-                smdv_closure_valid = False
-                break
-            pre_smdv_context.metadata[path]["status"] = "active"
-        for path in smdv_tasks:
-            pre_smdv_context.metadata[path]["status"] = "in-progress"
-        if not smdv_closure_valid:
-            failures.append(
-                "SMDV closure package must expose exact done owners and routed Tasks"
-            )
-        else:
-            pre_smdv_keys, pre_smdv_diagnostics = _owner_state(pre_smdv_context)
-            smdv_transitioned_paths = {
-                path
-                for path in post_smdv_context.paths
-                if post_smdv_keys.get(path) != pre_smdv_keys.get(path)
-            }
-            pre_smdv_unique_keys = {key for key in pre_smdv_keys.values() if key}
-            if (
-                pre_smdv_diagnostics
-                or smdv_transitioned_paths != set(SMDV_CLOSURE_OWNER_PATHS)
-                or any(
-                    not pre_smdv_keys.get(path)
-                    for path in SMDV_CLOSURE_OWNER_PATHS
-                )
-                or len(pre_smdv_unique_keys) - len(post_smdv_unique_keys)
-                != len(SMDV_CLOSURE_OWNER_PATHS)
-            ):
-                failures.append(
-                    "SMDV done-to-current transition must change only its Spec/Plan "
-                    "owners and add their non-empty unique owner keys"
-                )
-    return failures
-
-
 def _body_contract_path_prefix(value: str) -> PurePosixPath:
     """Parse one normalized repository-relative body-contract scope."""
 
@@ -13025,7 +8162,6 @@ def _parser() -> argparse.ArgumentParser:
             "repository-relative prefix"
         ),
     )
-    parser.add_argument("--self-test", action="store_true")
     parser.add_argument("--inventory", action="store_true")
     parser.add_argument("--include-path", action="append", default=[])
     return parser
@@ -13034,20 +8170,8 @@ def _parser() -> argparse.ArgumentParser:
 def main(argv: Sequence[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     try:
-        if args.self_test and (args.inventory or args.include_path):
-            raise ConfigurationError(
-                "--self-test is mutually exclusive with inventory and include paths"
-            )
         if args.inventory and args.format != "json":
             raise ConfigurationError("--inventory requires --format json")
-        if args.self_test:
-            failures = _self_test(args.root.absolute())
-            for failure in failures:
-                print(f"[FAIL] {failure}")
-            if failures:
-                return 1
-            print("[PASS] cross-document validator self-test passed")
-            return 0
         include_paths = tuple(PurePosixPath(value) for value in args.include_path)
         context = _build_context(args.root, include_paths)
         registry = load_registry(context.root)
