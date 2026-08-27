@@ -523,12 +523,18 @@ WORK054_WP004B_TASK_STATUSES = MappingProxyType(
         "canceled": "cancelled",
     }
 )
-WP004C_INLINE_MARKDOWN_LINK = re.compile(
-    r"(?P<label>\[[^\]\r\n]+\])\((?P<target>[^()\s]+)\)"
-)
 WP004C_FENCED_CODE = re.compile(r"^[ \t]{0,3}(?P<fence>`{3,}|~{3,})")
-WP004C_PRD_REQUIREMENT_HEADER = "| PRD requirement | Spec criterion | Verification method |"
-WP004C_REQUIREMENT_ID_HEADER = "| Requirement ID | Spec criterion | Verification method |"
+WP004C_HTML_BLOCK = re.compile(r"^[ \t]*<(?P<tag>[A-Za-z][A-Za-z0-9-]*)\b")
+WP004C_GFM_TABLE_SEPARATOR = re.compile(
+    r"^\|[ \t]*:?-{3,}:?[ \t]*\|[ \t]*:?-{3,}:?[ \t]*\|"
+    r"[ \t]*:?-{3,}:?[ \t]*\|[ \t]*$"
+)
+WP004C_PRD_REQUIREMENT_HEADER = (
+    "| PRD requirement | Spec criterion | Verification method |"
+)
+WP004C_REQUIREMENT_ID_HEADER = (
+    "| Requirement ID | Spec criterion | Verification method |"
+)
 
 
 @dataclass(frozen=True)
@@ -549,69 +555,159 @@ def _wp004c_link_repair_text(
 
     parent = path.parent.as_posix()
 
-    def replace(match: re.Match[str]) -> str:
-        target, marker, fragment = match.group("target").partition("#")
+    def replacement(label: str, target: str) -> str | None:
+        target, marker, fragment = target.partition("#")
         if not target or target.startswith(("/", "http:", "https:")):
-            return match.group(0)
+            return None
         resolved = PurePosixPath(posixpath.normpath(posixpath.join(parent, target)))
-        replacement = rewrites.get(resolved)
-        if replacement is None:
-            return match.group(0)
-        relative = posixpath.relpath(replacement.as_posix(), parent)
-        return f"{match.group('label')}({relative}{marker}{fragment})"
+        target_path = rewrites.get(resolved)
+        if target_path is None:
+            return None
+        relative = posixpath.relpath(target_path.as_posix(), parent)
+        return f"[{label}]({relative}{marker}{fragment})"
 
-    def rewrite_inline_code_free(line: str) -> str:
+    def escaped(value: str, index: int) -> bool:
+        cursor = index - 1
+        count = 0
+        while cursor >= 0 and value[cursor] == "\\":
+            count += 1
+            cursor -= 1
+        return count % 2 == 1
+
+    def rewrite_rendered_inline(
+        line: str, delimiter: str | None
+    ) -> tuple[str, str | None]:
         rendered: list[str] = []
         cursor = 0
-        delimiter: str | None = None
         while cursor < len(line):
-            tick = line.find("`", cursor)
-            if tick < 0:
-                segment = line[cursor:]
-                rendered.append(
-                    segment
-                    if delimiter is not None
-                    else WP004C_INLINE_MARKDOWN_LINK.sub(replace, segment)
-                )
-                break
-            segment = line[cursor:tick]
-            rendered.append(
-                segment
-                if delimiter is not None
-                else WP004C_INLINE_MARKDOWN_LINK.sub(replace, segment)
+            if line[cursor] == "`":
+                end = cursor
+                while end < len(line) and line[end] == "`":
+                    end += 1
+                ticks = line[cursor:end]
+                rendered.append(ticks)
+                if delimiter is None:
+                    delimiter = ticks
+                elif ticks == delimiter:
+                    delimiter = None
+                cursor = end
+                continue
+            if delimiter is not None or line[cursor] != "[" or escaped(line, cursor):
+                rendered.append(line[cursor])
+                cursor += 1
+                continue
+            if cursor > 0 and line[cursor - 1] == "!":
+                rendered.append(line[cursor])
+                cursor += 1
+                continue
+            label_end = cursor + 1
+            while label_end < len(line) and line[label_end] not in "\r\n":
+                if line[label_end] == "]" and not escaped(line, label_end):
+                    break
+                label_end += 1
+            if (
+                label_end >= len(line)
+                or not line[cursor + 1 : label_end]
+                or label_end + 1 >= len(line)
+                or line[label_end + 1] != "("
+                or escaped(line, label_end + 1)
+            ):
+                rendered.append(line[cursor])
+                cursor += 1
+                continue
+            target_end = label_end + 2
+            while target_end < len(line) and line[target_end] not in "\r\n":
+                if line[target_end] == ")" and not escaped(line, target_end):
+                    break
+                if line[target_end] in "( \t":
+                    break
+                target_end += 1
+            if target_end >= len(line) or line[target_end] != ")":
+                rendered.append(line[cursor])
+                cursor += 1
+                continue
+            replacement_text = replacement(
+                line[cursor + 1 : label_end], line[label_end + 2 : target_end]
             )
-            end = tick
-            while end < len(line) and line[end] == "`":
-                end += 1
-            ticks = line[tick:end]
-            rendered.append(ticks)
-            if delimiter is None:
-                delimiter = ticks
-            elif ticks == delimiter:
-                delimiter = None
-            cursor = end
-        return "".join(rendered)
+            if replacement_text is None:
+                rendered.append(line[cursor : target_end + 1])
+            else:
+                rendered.append(replacement_text)
+            cursor = target_end + 1
+        return "".join(rendered), delimiter
 
     rendered: list[str] = []
+    eligible_headers: list[bool] = []
+    safe_lines: list[bool] = []
     fenced: str | None = None
-    for line in text.splitlines(keepends=True):
+    inline_delimiter: str | None = None
+    html_block: str | None = None
+    comment_open = False
+    lines = text.splitlines(keepends=True)
+    for line in lines:
+        body = line.rstrip("\r\n")
         marker = WP004C_FENCED_CODE.match(line)
         if fenced is not None:
             rendered.append(line)
-            if marker is not None and marker.group("fence")[0] == fenced[0] and len(
-                marker.group("fence")
-            ) >= len(fenced):
+            eligible_headers.append(False)
+            safe_lines.append(False)
+            if (
+                marker is not None
+                and marker.group("fence")[0] == fenced[0]
+                and len(marker.group("fence")) >= len(fenced)
+            ):
                 fenced = None
             continue
         if marker is not None:
             fenced = marker.group("fence")
             rendered.append(line)
-        elif line.rstrip("\r\n") == WP004C_PRD_REQUIREMENT_HEADER:
-            rendered.append(
-                WP004C_REQUIREMENT_ID_HEADER + line[len(line.rstrip("\r\n")) :]
+            eligible_headers.append(False)
+            safe_lines.append(False)
+            continue
+        if comment_open or "<!--" in body:
+            rendered.append(line)
+            eligible_headers.append(False)
+            safe_lines.append(False)
+            comment_open = (
+                "-->" not in body[body.find("<!--") + 4 :]
+                if not comment_open
+                else "-->" not in body
             )
-        else:
-            rendered.append(rewrite_inline_code_free(line))
+            continue
+        html_match = WP004C_HTML_BLOCK.match(body)
+        if html_block is not None or html_match is not None:
+            rendered.append(line)
+            eligible_headers.append(False)
+            safe_lines.append(False)
+            if html_block is None and html_match is not None:
+                html_block = html_match.group("tag").lower()
+            if html_block is not None and re.search(
+                rf"</{re.escape(html_block)}[ \t> ]", body, re.IGNORECASE
+            ):
+                html_block = None
+            continue
+        if body.startswith(("    ", "\t")):
+            rendered.append(line)
+            eligible_headers.append(False)
+            safe_lines.append(False)
+            continue
+        was_inline_code = inline_delimiter is not None
+        rewritten, inline_delimiter = rewrite_rendered_inline(line, inline_delimiter)
+        rendered.append(rewritten)
+        safe_lines.append(not was_inline_code and inline_delimiter is None)
+        eligible_headers.append(
+            not was_inline_code
+            and inline_delimiter is None
+            and body == WP004C_PRD_REQUIREMENT_HEADER
+        )
+    for index, eligible in enumerate(eligible_headers[:-1]):
+        if (
+            eligible
+            and safe_lines[index + 1]
+            and WP004C_GFM_TABLE_SEPARATOR.fullmatch(lines[index + 1].rstrip("\r\n"))
+        ):
+            ending = rendered[index][len(rendered[index].rstrip("\r\n")) :]
+            rendered[index] = WP004C_REQUIREMENT_ID_HEADER + ending
     return "".join(rendered)
 
 

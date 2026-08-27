@@ -1866,10 +1866,12 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
         base = (
             "[approved](../old.md)\n"
             "| PRD requirement | Spec criterion | Verification method |\n"
+            "| --- | --- | --- |\n"
         )
         expected = (
             "[approved](../new.md)\n"
             "| Requirement ID | Spec criterion | Verification method |\n"
+            "| --- | --- | --- |\n"
         )
         repaired = VALIDATOR._wp004c_link_repair_text(path, base, rewrites)
 
@@ -1895,6 +1897,28 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
             "```markdown\n[approved](../old.md)\n```\n",
             "`| PRD requirement | Spec criterion | Verification method |`\n",
             "```markdown\n| PRD requirement | Spec criterion | Verification method |\n```\n",
+        ):
+            with self.subTest(payload=payload):
+                self.assertEqual(
+                    VALIDATOR._wp004c_link_repair_text(path, payload, rewrites),
+                    payload,
+                )
+
+    def test_mig0004_link_repair_fails_closed_for_opaque_markdown_contexts(
+        self,
+    ) -> None:
+        path = PurePosixPath("docs/guide/current.md")
+        rewrites = {
+            PurePosixPath("docs/old.md"): PurePosixPath("docs/new.md"),
+        }
+        header = "| PRD requirement | Spec criterion | Verification method |\n"
+        for payload in (
+            "`multiline\n[approved](../old.md)\ninline`\n",
+            "    [approved](../old.md)\n",
+            "\\[approved](../old.md)\n",
+            "<!-- [approved](../old.md) -->\n",
+            "<div>\n[approved](../old.md)\n</div>\n",
+            header,
         ):
             with self.subTest(payload=payload):
                 self.assertEqual(
