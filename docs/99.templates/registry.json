@@ -168,7 +168,6 @@
         "statusDomain": [
           "draft",
           "active",
-          "accepted",
           "superseded",
           "retired",
           "withdrawn"
@@ -3980,7 +3979,8 @@
       {
         "family": "requirement-architecture",
         "profileIds": [
-          "sdlc/requirement-package"
+          "sdlc/requirement-package",
+          "sdlc/ad"
         ],
         "states": {
           "draft": "mutable",
@@ -4004,46 +4004,6 @@
           ],
           [
             "active",
-            "retired"
-          ]
-        ]
-      },
-      {
-        "family": "architecture-description",
-        "profileIds": [
-          "sdlc/ad"
-        ],
-        "states": {
-          "draft": "mutable",
-          "active": "current",
-          "accepted": "current",
-          "superseded": "terminal",
-          "retired": "terminal",
-          "withdrawn": "terminal"
-        },
-        "transitions": [
-          [
-            "draft",
-            "active"
-          ],
-          [
-            "draft",
-            "accepted"
-          ],
-          [
-            "active",
-            "superseded"
-          ],
-          [
-            "active",
-            "retired"
-          ],
-          [
-            "accepted",
-            "superseded"
-          ],
-          [
-            "accepted",
             "retired"
           ]
         ]

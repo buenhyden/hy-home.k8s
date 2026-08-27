@@ -10,6 +10,7 @@ import hashlib
 import importlib.util
 import json
 import os
+import posixpath
 import re
 import subprocess
 import sys
@@ -522,8 +523,9 @@ WORK054_WP004B_TASK_STATUSES = MappingProxyType(
         "canceled": "cancelled",
     }
 )
-WP004C_DOCUMENT_PATH = re.compile(r"docs/[A-Za-z0-9_./#-]+")
-WP004C_MARKDOWN_LINK = re.compile(r"\[[^\]]+\]\((?!https?://)[^)\s]+\)")
+WP004C_MARKDOWN_DESTINATION = re.compile(r"(?P<prefix>\]\()(?P<target>[^)\s]+)(?P<suffix>\))")
+WP004C_PRD_REQUIREMENT_HEADER = "| PRD requirement | Spec criterion | Verification method |"
+WP004C_REQUIREMENT_ID_HEADER = "| Requirement ID | Spec criterion | Verification method |"
 
 
 @dataclass(frozen=True)
@@ -535,10 +537,30 @@ class _Work054Wp004bAdmission:
 _EMPTY_WORK054_WP004B_ADMISSION = _Work054Wp004bAdmission(frozenset(), frozenset())
 
 
-def _wp004c_link_repair_text(text: str) -> str:
-    normalized = WP004C_MARKDOWN_LINK.sub("[link](target)", text)
-    normalized = WP004C_DOCUMENT_PATH.sub("docs/<path>", normalized)
-    return normalized.replace("PRD requirement", "Requirement ID")
+def _wp004c_link_repair_text(
+    path: PurePosixPath,
+    text: str,
+    rewrites: Mapping[PurePosixPath, PurePosixPath],
+) -> str:
+    """Render only the sealed Stage99 link destinations for one document."""
+
+    parent = path.parent.as_posix()
+
+    def replace(match: re.Match[str]) -> str:
+        target, marker, fragment = match.group("target").partition("#")
+        if not target or target.startswith(("/", "http:", "https:")):
+            return match.group(0)
+        resolved = PurePosixPath(posixpath.normpath(posixpath.join(parent, target)))
+        replacement = rewrites.get(resolved)
+        if replacement is None:
+            return match.group(0)
+        relative = posixpath.relpath(replacement.as_posix(), parent)
+        return f"{match.group('prefix')}{relative}{marker}{fragment}{match.group('suffix')}"
+
+    return WP004C_MARKDOWN_DESTINATION.sub(replace, text).replace(
+        WP004C_PRD_REQUIREMENT_HEADER,
+        WP004C_REQUIREMENT_ID_HEADER,
+    )
 
 
 def _registry_profile_ids(raw_registry: Mapping[str, object]) -> frozenset[str]:
@@ -1752,7 +1774,7 @@ def _wp004c_mig0004_paths(
 
     consumed: set[PurePosixPath] = set()
     stage99_legacy: set[PurePosixPath] = set()
-    stage99_rewrites: dict[str, str] = {}
+    stage99_rewrites: dict[PurePosixPath, PurePosixPath] = {}
     for row in stage99_rows:
         legacy_raw = row.get("legacy_path")
         source_blob = row.get("source_blob")
@@ -1779,7 +1801,7 @@ def _wp004c_mig0004_paths(
         ):
             return frozenset()
         stage99_legacy.add(legacy)
-        stage99_rewrites[legacy.as_posix()] = target.as_posix()
+        stage99_rewrites[legacy] = target
         consumed.update((legacy, target))
 
     deleted_stage99 = {
@@ -1897,15 +1919,12 @@ def _wp004c_mig0004_paths(
         if path.suffix != ".md" or base_blobs[path] == proposed_blobs[path]:
             continue
         base_text = _blob_bytes(root, base_blobs[path]).decode("utf-8", errors="strict")
-        rewritten = base_text
-        for source, target in sorted(stage99_rewrites.items()):
-            rewritten = rewritten.replace(source, target)
         proposed_text = _blob_bytes(root, proposed_blobs[path]).decode(
             "utf-8", errors="strict"
         )
-        if rewritten == proposed_text or _wp004c_link_repair_text(
-            base_text
-        ) == _wp004c_link_repair_text(proposed_text):
+        if _wp004c_link_repair_text(
+            path, base_text, stage99_rewrites
+        ) == proposed_text:
             consumed.add(path)
     return frozenset(consumed)
 

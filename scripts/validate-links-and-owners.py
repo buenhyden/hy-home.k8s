@@ -7432,14 +7432,14 @@ def _protected_historical_predecessor_link(
     if boundary is None:
         return False
     try:
-        _read_ria_commit_path(
+        source_bytes = _read_ria_commit_path(
             context.root,
             boundary,
             Path(source.as_posix()),
         )
     except (RiaContractError, RiaGitError):
         return False
-    return True
+    return source_bytes == context.texts[source].encode("utf-8")
 
 
 def _work105_accepted_history_source(

@@ -1,7 +1,7 @@
 ---
 title: '{System or Domain Name} Architecture Description'
 type: sdlc/ad
-status: draft
+status: active
 owner: platform
 updated: YYYY-MM-DD
 ---

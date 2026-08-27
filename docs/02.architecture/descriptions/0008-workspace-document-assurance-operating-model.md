@@ -1,7 +1,7 @@
 ---
 title: 'Workspace Document Assurance Operating Model Architecture Description'
 type: sdlc/ad
-status: accepted
+status: active
 owner: platform
 updated: 2026-07-14
 artifact_id: "AD-0008"
@@ -124,6 +124,12 @@ against their source rather than becoming new owners.
   reviewers run at defined completion gates rather than after every edit.
 
 ## Traceability
+
+### Lifecycle Traceability
+
+| Upstream requirement | Quality attribute or boundary | ADR / Spec |
+| --- | --- | --- |
+| [REQ-0005-FR-0001](../../01.requirements/0005-workspace-document-assurance-modernization.md) | Registry-owned document assurance boundary | [ADR-0015](../decisions/0015-declarative-document-contract-registry.md) and [Spec 0026](../../03.specs/0026-document-contract-registry/spec.md) |
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/0005-workspace-document-assurance-modernization.md)
 - **ADRs**: [Declarative Document Contract Registry](../decisions/0015-declarative-document-contract-registry.md) and [Program-to-Tranche Lineage](../decisions/0016-program-to-tranche-document-lineage.md)

@@ -1,7 +1,7 @@
 ---
 title: 'Document Lifecycle and Evidence Operating Model Architecture Description'
 type: sdlc/ad
-status: accepted
+status: active
 owner: platform
 updated: 2026-07-28
 artifact_id: "AD-0009"

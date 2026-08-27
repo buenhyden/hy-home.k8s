@@ -796,6 +796,9 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
             authority.is_lifecycle_transition_allowed(lifecycle, "draft", "active")
         )
         self.assertFalse(
+            authority.is_lifecycle_transition_allowed(lifecycle, "draft", "accepted")
+        )
+        self.assertFalse(
             authority.is_lifecycle_transition_allowed(lifecycle, "draft", "retired")
         )
 
@@ -803,7 +806,7 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
         self,
     ):
         registry = load_registry(ROOT)
-        self.assertEqual(len(registry.lifecycle_domains), 13)
+        self.assertEqual(len(registry.lifecycle_domains), 12)
         requirement = next(
             domain
             for domain in registry.lifecycle_domains
@@ -1751,16 +1754,36 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
         self.assertTrue(lifecycle._stateful(requirement))
         self.assertFalse(lifecycle._stateful(readme))
 
+    @staticmethod
+    def _mig0004_baseline() -> tuple[str, dict[PurePosixPath, str], dict[PurePosixPath, str]]:
+        proposed = VALIDATOR._index_blob_map(ROOT)
+        migration = VALIDATOR._blob_bytes(
+            ROOT, proposed[VALIDATOR.WORK054_WP004B_MIGRATION_PATH]
+        )
+        rows = VALIDATOR.parse_pinned_migration_control(
+            VALIDATOR.WORK054_WP004B_MIGRATION_PATH.as_posix(), migration
+        )
+        terminal = {
+            str(row["source_commit"])
+            for row in rows
+            if str(row["legacy_path"]).startswith("docs/99.templates/")
+            or row["legacy_path"]
+            == "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks.md"
+        }
+        assert terminal == {"7a770c3c0eabaeda554c4030fc08fb17de164fe5"}  # pragma: allowlist secret - sealed migration source commit fixture
+        base_commit = terminal.pop()
+        return base_commit, VALIDATOR._tree_blob_map(ROOT, base_commit), proposed
+
     def test_mig0004_projects_only_the_pinned_stage99_and_spec0054_cutover(
         self,
     ) -> None:
-        base_commit = VALIDATOR._resolve_commit(ROOT, "HEAD", "HEAD")
+        base_commit, base_blobs, proposed_blobs = self._mig0004_baseline()
         admitted = VALIDATOR._wp004c_mig0004_paths(
             root=ROOT,
             mode="staged",
             base_commit=base_commit,
-            base_blobs=VALIDATOR._tree_blob_map(ROOT, base_commit),
-            proposed_blobs=VALIDATOR._index_blob_map(ROOT),
+            base_blobs=base_blobs,
+            proposed_blobs=proposed_blobs,
         )
         self.assertIn(
             PurePosixPath(
@@ -1780,9 +1803,7 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
         )
 
     def test_mig0004_rejects_missing_or_extra_task_records(self) -> None:
-        base_commit = VALIDATOR._resolve_commit(ROOT, "HEAD", "HEAD")
-        base_blobs = VALIDATOR._tree_blob_map(ROOT, base_commit)
-        proposed_blobs = VALIDATOR._index_blob_map(ROOT)
+        base_commit, base_blobs, proposed_blobs = self._mig0004_baseline()
         task_root = PurePosixPath(
             "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks"
         )
@@ -1805,9 +1826,7 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
                 )
 
     def test_mig0004_reports_the_exact_tampered_task_field(self) -> None:
-        base_commit = VALIDATOR._resolve_commit(ROOT, "HEAD", "HEAD")
-        base_blobs = VALIDATOR._tree_blob_map(ROOT, base_commit)
-        proposed_blobs = VALIDATOR._index_blob_map(ROOT)
+        base_commit, base_blobs, proposed_blobs = self._mig0004_baseline()
         task = PurePosixPath(
             "docs/03.specs/0054-sdlc-document-and-agent-governance-"
             "consolidation/tasks/tsk-0001-approved-design-authority.md"
@@ -1838,6 +1857,32 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
                     base_blobs=base_blobs,
                     proposed_blobs=mutated,
                 )
+
+    def test_mig0004_link_repair_preserves_every_nonapproved_byte(self) -> None:
+        path = PurePosixPath("docs/guide/current.md")
+        rewrites = {
+            PurePosixPath("docs/old.md"): PurePosixPath("docs/new.md"),
+        }
+        base = (
+            "[approved](../old.md)\n"
+            "| PRD requirement | Spec criterion | Verification method |\n"
+        )
+        expected = (
+            "[approved](../new.md)\n"
+            "| Requirement ID | Spec criterion | Verification method |\n"
+        )
+        repaired = VALIDATOR._wp004c_link_repair_text(path, base, rewrites)
+
+        self.assertEqual(repaired, expected)
+        for changed in (
+            expected.replace("../new.md", "../other.md"),
+            expected.replace("[approved]", "[renamed]"),
+            expected + "docs/old.md in prose\n",
+            expected + "`docs/old.md`\n",
+            expected + "PRD requirement remains prose\n",
+        ):
+            with self.subTest(changed=changed):
+                self.assertNotEqual(repaired, changed)
 
 
 if __name__ == "__main__":

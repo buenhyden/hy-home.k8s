@@ -32,6 +32,7 @@ if __package__:
         MAX_GIT_BATCH_BYTES,
         MAX_GIT_BATCH_OBJECTS,
         RecoveryResult,
+        WP004B_PINNED_MIGRATION_DOCUMENT_SHA256,
         WORK107_MIGRATION_DOCUMENT_SHA256,
         WORK107_MIGRATION_PATH,
         _git_capture_bounded,
@@ -49,6 +50,7 @@ else:  # Direct import-only execution from scripts/.
         MAX_GIT_BATCH_BYTES,
         MAX_GIT_BATCH_OBJECTS,
         RecoveryResult,
+        WP004B_PINNED_MIGRATION_DOCUMENT_SHA256,
         WORK107_MIGRATION_DOCUMENT_SHA256,
         WORK107_MIGRATION_PATH,
         _git_capture_bounded,
@@ -274,6 +276,7 @@ MIG0004_SPEC0054_LEDGER = (
 MIG0004_TERMINAL_SOURCE_COMMIT = (
     "7a770c3c0eabaeda554c4030fc08fb17de164fe5"  # pragma: allowlist secret
 )
+MIG0004_ROW_COUNT = 101
 MIG0004_STAGE99_ACTION_TARGETS = {
     "docs/99.templates/contracts/registry-form.schema.json": (
         "replaced",
@@ -436,9 +439,9 @@ _ARCHIVE_MIGRATION_CONTROLS = {
     ),
     _WORK054_WP004B_MIGRATION_PATH: (
         "MIG-0004",
-        None,
-        None,
-        None,
+        101,
+        {"merged": 2, "moved": 23, "replaced": 76},
+        WP004B_PINNED_MIGRATION_DOCUMENT_SHA256,
     ),
 }
 _MIGRATION_FRONTMATTER_KEYS = (
@@ -1016,6 +1019,10 @@ def _validate_mig0004_rows_and_targets(
 ) -> None:
     """Validate MIG-0004's finite disposition and current target inventory."""
 
+    if len(rows) != MIG0004_ROW_COUNT:
+        raise ArchiveContractError(
+            "RECOVERY-MIGRATION-ROW", "MIG-0004 row census differs"
+        )
     fields = (
         "legacy_path",
         "stable_path",

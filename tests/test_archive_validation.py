@@ -802,13 +802,19 @@ class ArchiveValidationTest(unittest.TestCase):
                 )
             ],
         )
-        accepted_growth = migration_bytes + b"\nAdditional recovery guidance.\n"
-        self.assertEqual(
-            archive_validation.parse_pinned_migration_control(
-                migration_path, accepted_growth
+        for changed in (
+            migration_bytes + b"\nAdditional recovery guidance.\n",
+            migration_bytes.replace(
+                b"This atomic ledger seals", b"This altered ledger seals", 1
             ),
-            rows,
-        )
+        ):
+            with self.subTest(changed=changed[-32:]), self.assertRaisesRegex(
+                archive_validation.ArchiveContractError,
+                "ARCHIVE-MIGRATION-PROFILE",
+            ):
+                archive_validation.parse_pinned_migration_control(
+                    migration_path, changed
+                )
         invalid_status = migration_bytes.replace(
             b'status: "sealed"', b'status: "accepted"', 1
         )
@@ -1042,7 +1048,7 @@ class ArchiveValidationTest(unittest.TestCase):
                     root.resolve(), rows
                 )
 
-    def test_mig0004_accepts_canonical_non_terminal_row_growth(self) -> None:
+    def test_mig0004_rejects_non_terminal_row_growth(self) -> None:
         with tempfile.TemporaryDirectory(prefix="mig0004-growth-") as temporary:
             root = Path(temporary)
             fixture, rows = self._mig0004_current_fixture(root)
@@ -1066,9 +1072,13 @@ class ArchiveValidationTest(unittest.TestCase):
                 sorted((*rows, added), key=lambda row: str(row["legacy_path"]))
             )
 
-            archive_validation._validate_mig0004_rows_and_targets(  # noqa: SLF001
-                root.resolve(), grown
-            )
+            with self.assertRaisesRegex(
+                archive_validation.ArchiveContractError,
+                "RECOVERY-MIGRATION-ROW",
+            ):
+                archive_validation._validate_mig0004_rows_and_targets(  # noqa: SLF001
+                    root.resolve(), grown
+                )
 
     def test_mig0004_requires_exact_stage99_and_sole_spec0054_rows(self) -> None:
         with tempfile.TemporaryDirectory(prefix="mig0004-required-") as temporary:
@@ -2186,6 +2196,20 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         self.assertEqual(
             projected[self.validator.ArchiveTransitionEdge(source, target)],
             expected,
+        )
+
+    def test_terminal_historical_source_rejects_pinned_blob_drift(self) -> None:
+        source = PurePosixPath("docs/90.references/audits/2026-07-11-weia/README.md")
+        drifted = dataclasses.replace(
+            self.context,
+            texts={
+                **self.context.texts,
+                source: self.context.texts[source] + "\n",
+            },
+        )
+
+        self.assertFalse(
+            self.validator._terminal_frozen_manifest_source(drifted, source)
         )
 
     def test_terminal_history_keeps_exact_frozen_cloud_manifest_source(
