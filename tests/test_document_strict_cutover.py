@@ -2302,7 +2302,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
             if (identity := validator._work106_derive_artifact_identity(path))
             is not None
         )
-        self.assertEqual(len(identities), 317)
+        self.assertEqual(len(identities), 320)
         self.assertEqual(
             validator._work106_artifact_diagnostics(records, terminal=True), ()
         )
