@@ -84,6 +84,9 @@ WP004B_PINNED_MIGRATION_PATH = (
 WP004B_PINNED_MIGRATION_DOCUMENT_SHA256 = (
     "503a65a5897301be651217fcc48def5351809f272d9af510f10621f2ec2d1fe6"  # pragma: allowlist secret -- sealed recovery contract
 )
+WP004C_SEALED_TARGET_COMMIT = (
+    "4aabcc1b371dd2f519f605d3fa669a7cf334c443"  # pragma: allowlist secret -- sealed MIG-0004 recovery identity, not a credential
+)
 WORK107_MIGRATION_DOCUMENT_SHA256 = (
     "4e62cb6ba2a394cd9ae546543c85a58c8f105cb5d1ff48cfd8dab8b8b1082206"  # pragma: allowlist secret
 )

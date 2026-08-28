@@ -42,6 +42,7 @@ import archive_cutover_manifest as CUTOVER_MANIFEST  # noqa: E402
 import document_contracts  # noqa: E402
 import document_lifecycle as lifecycle  # noqa: E402
 from archive_recovery import (  # noqa: E402
+    WP004C_SEALED_TARGET_COMMIT,
     WORK107_LEGACY_ARCHIVE_COMMIT,
     WORK107_MIGRATION_PATH,
     build_work107_migration_rows,
@@ -1770,7 +1771,8 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
             or row["legacy_path"]
             == "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks.md"
         }
-        assert terminal == {"7a770c3c0eabaeda554c4030fc08fb17de164fe5"}  # pragma: allowlist secret - sealed migration source commit fixture
+        source_commit = "7a770c3c0eabaeda554c4030fc08fb17de164fe5"  # pragma: allowlist secret
+        assert terminal == {source_commit}
         base_commit = terminal.pop()
         return base_commit, VALIDATOR._tree_blob_map(ROOT, base_commit), proposed
 
@@ -1858,73 +1860,137 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
                     proposed_blobs=mutated,
                 )
 
-    def test_mig0004_link_repair_preserves_every_nonapproved_byte(self) -> None:
-        path = PurePosixPath("docs/guide/current.md")
-        rewrites = {
-            PurePosixPath("docs/old.md"): PurePosixPath("docs/new.md"),
-        }
-        base = (
-            "[approved](../old.md)\n"
-            "| PRD requirement | Spec criterion | Verification method |\n"
-            "| --- | --- | --- |\n"
+    def test_mig0004_admits_the_exact_reviewed_target_blob(self) -> None:
+        base_commit, base_blobs, proposed_blobs = self._mig0004_baseline()
+        target_blobs = VALIDATOR._tree_blob_map(ROOT, WP004C_SEALED_TARGET_COMMIT)
+        path = next(
+            candidate
+            for candidate in sorted(set(base_blobs) & set(target_blobs))
+            if candidate.suffix == ".md"
+            and base_blobs[candidate] != target_blobs[candidate]
+            and proposed_blobs.get(candidate) == target_blobs[candidate]
         )
-        expected = (
-            "[approved](../new.md)\n"
-            "| Requirement ID | Spec criterion | Verification method |\n"
-            "| --- | --- | --- |\n"
+
+        admitted = VALIDATOR._wp004c_mig0004_paths(
+            root=ROOT,
+            mode="staged",
+            base_commit=base_commit,
+            base_blobs=base_blobs,
+            proposed_blobs=proposed_blobs,
         )
-        repaired = VALIDATOR._wp004c_link_repair_text(path, base, rewrites)
 
-        self.assertEqual(repaired, expected)
-        for changed in (
-            expected.replace("../new.md", "../other.md"),
-            expected.replace("[approved]", "[renamed]"),
-            expected + "docs/old.md in prose\n",
-            expected + "`docs/old.md`\n",
-            expected + "PRD requirement remains prose\n",
-        ):
-            with self.subTest(changed=changed):
-                self.assertNotEqual(repaired, changed)
+        self.assertIn(path, admitted)
 
-    def test_mig0004_link_repair_excludes_malformed_and_code_payloads(self) -> None:
-        path = PurePosixPath("docs/guide/current.md")
-        rewrites = {
-            PurePosixPath("docs/old.md"): PurePosixPath("docs/new.md"),
+    def test_mig0004_rejects_unsealed_markdown_blobs_by_target_parity(self) -> None:
+        base_commit, base_blobs, proposed_blobs = self._mig0004_baseline()
+        target_blobs = VALIDATOR._tree_blob_map(ROOT, WP004C_SEALED_TARGET_COMMIT)
+        path = next(
+            candidate
+            for candidate in sorted(set(base_blobs) & set(target_blobs))
+            if candidate.suffix == ".md"
+            and base_blobs[candidate] != target_blobs[candidate]
+            and proposed_blobs.get(candidate) == target_blobs[candidate]
+        )
+        target = VALIDATOR._blob_bytes(ROOT, target_blobs[path])
+        cases = {
+            "valid-link": (
+                target,
+                target + b"\n[approved](README.md)\n",
+            ),
+            "frontmatter": (
+                target,
+                b"---\nsealed: false\n---\n" + target,
+            ),
+            "code": (
+                target,
+                target + b"\n```markdown\n[approved](README.md)\n```\n",
+            ),
+            "html": (
+                target,
+                target + b"\n<div>[approved](README.md)</div>\n",
+            ),
+            "header": (
+                target,
+                target
+                + b"\n| Requirement ID | Spec criterion | Verification method |\n",
+            ),
+            "prose": (
+                target,
+                target + b"\nArbitrary prose mutation.\n",
+            ),
+            "one-byte": (
+                target,
+                target[:1] + bytes([target[0] ^ 1]) + target[1:],
+            ),
         }
-        for payload in (
-            "prose](../old.md)\n",
-            "`[approved](../old.md)`\n",
-            "```markdown\n[approved](../old.md)\n```\n",
-            "`| PRD requirement | Spec criterion | Verification method |`\n",
-            "```markdown\n| PRD requirement | Spec criterion | Verification method |\n```\n",
-        ):
-            with self.subTest(payload=payload):
-                self.assertEqual(
-                    VALIDATOR._wp004c_link_repair_text(path, payload, rewrites),
-                    payload,
-                )
+        original_reader = VALIDATOR._blob_bytes
 
-    def test_mig0004_link_repair_fails_closed_for_opaque_markdown_contexts(
+        for kind, (source, proposed) in cases.items():
+            with self.subTest(kind=kind):
+                source_oid = hashlib.sha1(
+                    b"blob " + str(len(source)).encode() + b"\0" + source
+                ).hexdigest()
+                proposed_oid = hashlib.sha1(
+                    b"blob " + str(len(proposed)).encode() + b"\0" + proposed
+                ).hexdigest()
+                candidate_base = dict(base_blobs)
+                candidate_proposed = dict(proposed_blobs)
+                candidate_base[path] = source_oid
+                candidate_proposed[path] = proposed_oid
+
+                def read_blob(root: Path, oid: str, **kwargs: object) -> bytes:
+                    if oid == source_oid:
+                        return source
+                    if oid == proposed_oid:
+                        return proposed
+                    return original_reader(root, oid, **kwargs)
+
+                with mock.patch.object(VALIDATOR, "_blob_bytes", side_effect=read_blob):
+                    self.assertEqual(
+                        VALIDATOR._wp004c_mig0004_paths(
+                            root=ROOT,
+                            mode="staged",
+                            base_commit=base_commit,
+                            base_blobs=candidate_base,
+                            proposed_blobs=candidate_proposed,
+                        ),
+                        frozenset(),
+                    )
+
+    def test_mig0004_rejects_a_source_base_other_than_the_sealed_migration(
         self,
     ) -> None:
-        path = PurePosixPath("docs/guide/current.md")
-        rewrites = {
-            PurePosixPath("docs/old.md"): PurePosixPath("docs/new.md"),
-        }
-        header = "| PRD requirement | Spec criterion | Verification method |\n"
-        for payload in (
-            "`multiline\n[approved](../old.md)\ninline`\n",
-            "    [approved](../old.md)\n",
-            "\\[approved](../old.md)\n",
-            "<!-- [approved](../old.md) -->\n",
-            "<div>\n[approved](../old.md)\n</div>\n",
-            header,
+        _, base_blobs, proposed_blobs = self._mig0004_baseline()
+
+        self.assertEqual(
+            VALIDATOR._wp004c_mig0004_paths(
+                root=ROOT,
+                mode="staged",
+                base_commit="0" * 40,
+                base_blobs=base_blobs,
+                proposed_blobs=proposed_blobs,
+            ),
+            frozenset(),
+        )
+
+    def test_mig0004_fails_closed_when_the_sealed_target_tree_is_missing(self) -> None:
+        base_commit, base_blobs, proposed_blobs = self._mig0004_baseline()
+
+        with mock.patch.object(
+            VALIDATOR,
+            "_tree_blob_map",
+            side_effect=VALIDATOR.InvocationError("target tree unavailable"),
         ):
-            with self.subTest(payload=payload):
-                self.assertEqual(
-                    VALIDATOR._wp004c_link_repair_text(path, payload, rewrites),
-                    payload,
-                )
+            self.assertEqual(
+                VALIDATOR._wp004c_mig0004_paths(
+                    root=ROOT,
+                    mode="staged",
+                    base_commit=base_commit,
+                    base_blobs=base_blobs,
+                    proposed_blobs=proposed_blobs,
+                ),
+                frozenset(),
+            )
 
     def test_ad_template_creates_in_zero_indegree_draft_state(self) -> None:
         registry = load_registry(ROOT)
