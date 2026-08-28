@@ -3,7 +3,7 @@ title: 'Reference: Scope Application Index'
 type: content/reference
 status: draft
 owner: platform
-updated: 2026-08-23
+updated: 2026-08-28
 ---
 
 # Reference: Scope Application Index
@@ -41,10 +41,11 @@ correct and this index is stale.
 
 ## Scope
 
-It covers the mapping between `REQ-WERPC-001`–`REQ-WERPC-033` and the ten
-governance scopes as they stood on 2026-08-14, the canonical paths that no scope
-currently lists, and the shared evidence classes that block the twelve `Partial`
-requirements.
+Its base map covers `REQ-WERPC-001`–`REQ-WERPC-033` and the ten governance
+scopes as they stood on 2026-08-14. The 2026-08-28 pack-level addendum also
+routes `REQ-WERPC-034`–`REQ-WERPC-036` without claiming a current scope-topology
+projection. Current scope ownership always comes from the scope registry, not
+from this dated map.
 
 It excludes any change to a requirement status, any new external source, and any
 evidence that requires cluster, hosted CI, provider runtime, or stakeholder
@@ -265,14 +266,43 @@ an expected legacy-allocation boundary, not a passing validation. This work does
 not widen the ignored checker or revive the legacy `tasks.md` control plane;
 Spec 0054 owns the terminal Task registry and validator/command cutover.
 
+### 2026-08-28 closed full-scope revalidation
+
+The requested corpus was re-observed across all 36 requirement owners using
+official or primary external sources and named repository-static selectors.
+The source ledger now extends through `SRC-WERPC-122` and
+`CLM-WERPC-015-11`. No requirement status, evidence class, document route,
+provider adapter, workflow, manifest, model, memory policy, or
+live/hosted state is promoted. The only currentness deltas are the new
+C4/arc42/ADR coverage, an advanced `agency-agents` main branch, newer upstream
+kube-state-metrics and Argo CD releases, and recovered NASA traceability-source
+availability.
+
+| Scope | Requests re-observed | 2026-08-28 outcome | Claim routing | Closed boundary / reopen condition |
+| --- | --- | --- | --- | --- |
+| harness, loop, provider, and common environment | REQ-WERPC-001–006 | unchanged | `CLM-WERPC-015-07` | Repository adapters and public provider documents do not prove discovery, hook delivery, child execution, authentication, approval effect, isolation, or Claude/Codex parity; reopen with authorized `provider-runtime` evidence. |
+| spec-driven SDLC and lifecycle documents | REQ-WERPC-007, REQ-WERPC-010–019, REQ-WERPC-034–036 | changed coverage, no status effect | `CLM-WERPC-015-01`, `CLM-WERPC-015-02`, `CLM-WERPC-015-08` in the [source delta](source-coverage-and-migration-ledger.md#2026-08-28-source-delta-increment) | C4 and arc42 are tailorable AD practices and ADR templates are plural; none replaces terminal AD/ADR profiles or activates a Release family. Spec 0054 owner materialization and reader/stakeholder judgement remain `DEFER`. |
+| documentation, Diátaxis, and LLM-WIKI | REQ-WERPC-020, REQ-WERPC-021 | unchanged | `CLM-WERPC-015-09` | Documentation modes remain distinct from lifecycle authority; retrieval quality, publication, promotion review, retention/deletion, and reader validation remain `DEFER`. |
+| Kubernetes and infrastructure | REQ-WERPC-008, REQ-WERPC-009 | upstream freshness changed, no status effect | `CLM-WERPC-015-04`, `CLM-WERPC-015-05` | v2.20.0/v3.5.2 are review triggers only. Compatibility, effective RBAC, reconciliation, health, recovery, and running versions require approved review or `live-cluster` evidence. |
+| security and approval | REQ-WERPC-025 | unchanged | `CLM-WERPC-015-10` | Static workload hardening, identity, admission, and supply-chain guidance do not prove effective RBAC, Vault/ESO health, policy enforcement, artifact trust, or recovery; reopen with `live-cluster` or approved trust evidence. |
+| CI/CD, GitHub Actions, and QA | REQ-WERPC-022–024 | unchanged | `CLM-WERPC-015-10` | Tracked workflows still contain no deployment, `id-token: write`, attestation, cloud-login, or environment consumer; repository settings, effective permissions, OIDC/trust, hosted checks, deployment, and rollback remain `hosted-ci` / admin `DEFER`. |
+| verification and validation | REQ-WERPC-033 | source availability recovered, no status effect | `CLM-WERPC-015-06` | Bidirectional traceability supports verification planning but does not supply a current trace graph, product conformance, representative users/operators, intended environment, or stakeholder acceptance. |
+| AI agents and agency-agents | REQ-WERPC-026, REQ-WERPC-027 | upstream changed, no local effect | `CLM-WERPC-015-03`; it supersedes only the currentness premise of `CLM-WERPC-014-10` | The retained pin remains reproducible and new upstream roles remain inspiration-only; reopen after bounded translation, license/security review, evaluation, approval, and provider-runtime evidence. |
+| model routing and memory tiers | REQ-WERPC-028–032 | unchanged | `CLM-WERPC-015-11` | Public model and provider-memory documentation does not prove parser resolution, entitlement, fitness, cost/latency/safety, retention/deletion, secure erasure, or repository authority; configured incumbents and repository-wins semantics remain. |
+
+This is a closed incremental finding ledger, not a claim that every retained
+`Partial` or `DEFER` has become reachable. The terminal blocking classes and
+their named reopen conditions remain unchanged. No new research directory,
+duplicate report, one-time artifact, transitional topology, or legacy checker
+expansion was created. The pack README and frozen SDLC/documentation owner
+bodies remain byte-unmodified for the queued Spec 0054 Stage 90 cutover.
+
 ## Sources
 
 - Workspace observation, 2026-08-14: the
   [Requirement Coverage Matrix](README.md) in this pack's README, re-read for
-  the 33 `REQ-WERPC` rows within this index's declared scope
-  (`REQ-WERPC-001`–`REQ-WERPC-033`) including topic, report anchor, canonical
-  owner, and status. The matrix separately grew to 36 rows this cycle; the
-  three admitted rows are outside this index's declared scope.
+  all 36 `REQ-WERPC` rows (`REQ-WERPC-001`–`REQ-WERPC-036`) including topic,
+  report anchor, canonical owner, and status.
 - Workspace observation, 2026-08-14: the ten scope documents under
   `docs/00.agent-governance/scopes/`, re-read for their `Authority Boundary`
   file ownership tables.
@@ -288,7 +318,8 @@ added or retired, when a `REQ-WERPC` status changes, or when the pack README's
 coverage matrix changes. The `docs` row was updated on 2026-08-11 after the
 tutorial and explanation question resolved to an existing approved decision. `docs/00.agent-governance/scopes/` is the current-truth
 owner for every scope statement here, and the pack README is the current-truth
-owner for every status. Scope and matrix observation is dated 2026-08-14.
+owner for every status. The base scope-map observation remains dated
+2026-08-14; the 2026-08-28 addendum does not claim a scope-registry refresh.
 
 The unowned-path list is the most drift-prone section, because adding a single
 ownership row to any scope document invalidates it without touching this file.
