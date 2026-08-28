@@ -3,13 +3,19 @@ title: 'Workspace Research Full-Corpus Reverification Task'
 type: sdlc/task
 status: active
 owner: platform
-updated: 2026-08-23
+updated: 2026-08-29
 artifact_id: "TASK-0062"
 ---
 
 # Workspace Research Full-Corpus Reverification Task (Task)
 
 ## Overview
+
+> **Current state (2026-08-29):** This active Task retains the dated execution
+> ledger below as history. Its approved
+> [current-main administrative closeout addendum](#approved-current-main-administrative-closeout-addendum-2026-08-29)
+> replaces future replay/guarded-completion work, not the historical facts,
+> evidence gaps, unchecked steps, or original `VAL-WRFR-*` results.
 
 This Task is the execution ledger for `WRFR-000` through `WRFR-009` in the
 reciprocal [Plan](plan.md), implementing [Spec 0062](spec.md). Direct human
@@ -1107,6 +1113,82 @@ Execution stops only for a destructive or irreversible action, a
 security-sensitive action not already approved, an external side effect such as
 push/merge/publication, or a Plan defect that leaves every path forward a guess.
 All other conflicts receive a recorded SDD ruling and continue under the Spec.
+
+### Approved Current-Main Administrative Closeout Addendum (2026-08-29)
+
+The human-approved disposition keeps the latest research and recorded
+identities, but discontinues future `WRFR-007` Path B and
+`WRFR-008`/`WRFR-009` guarded completion. It preserves the original replay as
+unexecuted and its evidence as unavailable. No original artifact is recreated;
+no old brief/review is fabricated; no historical result is retroactively
+`PASS`; no checkbox is blanket-completed; and no destructive replay or incident
+cleanup is authorized.
+
+The original SDD directory is absent. The current ledger blob
+`a3a1c6e0d17b5d98ef9feba6ac49ade966ef09b4` and scope-index blob
+`fdcc2b4502bc14d840f190026fc66c6a1d04dad0` differ from the old exact-replay
+successors; README blob `11719d258d0454d68f3e6b6ed0377c3d3b9de6b2` matches.
+The current-main shared SDD marker is a different file and is untouched. This
+replacement covers only retained current-main content and local conformance: it
+claims no new external observation, checker replay, sanitized-summary rebuild,
+remote/provider/live action, or human validation.
+
+Current-main reconciliation will retain the census of fourteen Markdown files,
+thirty-six owners, 122 sources, and 163 claims through the latest
+[source delta](../../90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md#2026-08-28-source-delta-increment)
+and [closed full-scope revalidation](../../90.references/research/2026-08-08-wer/scope-application-index.md#2026-08-28-closed-full-scope-revalidation).
+The sixty defined identifiers from `SRC-WERPC-091..122` and
+`CLM-WERPC-013..015` have no duplicate, missing, or out-of-corpus reference.
+The former `14/36/91/141` census remains dated history, not an external
+re-observation by this closeout.
+
+| Preflight conflict | Disposition |
+| --- | --- |
+| Old replay versus current bytes | Use current-main replacement verification; do not replay. |
+| Old SDD custody versus absent original workspace | Record the loss; do not recreate the workspace or alias. |
+| Original completion claims versus administrative disposition | Preserve claims and gaps; do not promote historical criteria. |
+| Two units sharing these lifecycle files | Sequential ownership: Unit 1 amendment first, Unit 2 reconciliation and review second. |
+
+The process adaptation is user-approved local completion on current main,
+superseding the old isolated-worktree/replay path. Do not call
+`sdd-workspace`, recreate the alias or original workspace, create a research
+branch, or use a generic finish/remove helper. The pre-dispatch brief and fresh
+reports/review packages belong only under `/tmp/spec0062-closeout.kcQxhA/`; they
+are new evidence, not recovered historical artifacts.
+
+### Bounded units and controller ruling
+
+| Unit | Scope | Status and limit |
+| --- | --- | --- |
+| 1 | Approved disposition amendment in this Spec/Plan/Task set. | Active in this commit; no registry, validator, or lifecycle-state change. |
+| 2 | Current-main reconciliation, verification, independent review, and final administrative disposition. It may update the existing Stage 03 index entry only. | Pending; no original replay, historical evidence claim, or full lifecycle completion is implied. |
+
+Controller ruling, 2026-08-29: later contract tracing found that the existing
+terminal done route can close a terminal Task when its Result/Evidence records
+the explicit administrative disposition, rather than claiming every original
+`VAL-WRFR-*` criterion passed. Unit 2 may use that existing route after narrow
+existing-allowlist, test, and registry-state synchronization. Unit 1 remains
+`active`; do not add a status enum, schema, or standalone registration, and do
+not infer a completed original execution.
+
+This Task is the durable closeout-evidence owner. It retains the dated progress
+entries above. The replacement acceptance IDs are
+[`CLOSEOUT-0062-001..005`](spec.md#approved-current-main-administrative-closeout-addendum-2026-08-29).
+Required handoff fields and result meanings follow the canonical
+[quality standards](../../00.agent-governance/rules/quality-standards.md).
+Before Unit 2, current-main reconciliation, independent review, terminal
+disposition, and all non-Unit-1 checks remain explicitly pending; they are not
+pre-filled `PASS`.
+
+| Handoff field | Unit 1 record |
+| --- | --- |
+| Scope and changed paths | This Spec, Plan, and Task only; acceptance `CLOSEOUT-0062-001..005`. |
+| Commands and tool/version | Pre-final targeted checks passed with Python 3.12.3: `git diff --check`; document-registry, Markdown-profile, and links/owners self-tests; and strict registry, Markdown-profile, and links/owners checks. The final canonical results and normal-hook logical commit are recorded by this Unit 1 commit/report; Unit 2 independently records its terminal run. |
+| Ordered validation results | The first affected run did not complete because its repository-quality child failed; it is not passing evidence. Unit 1 reruns targeted, affected, staged, tests, all-files, formatter-review, rerun, and diff checks before its commit; Unit 2 must not reuse those results as terminal evidence. |
+| Lanes and limitations | Remote/live `DEFER`; no external, provider, live, or human evidence is claimed. |
+| Reviewer and disposition | Unit 1 post-commit independent review is pending; Unit 2 has its own independent review. |
+| Rollback | Separate reviewed revert of this logical commit only; no reset, replay, or cleanup. |
+| Residual risk and next owner | Historical evidence remains unavailable; Unit 2 owns current-main reconciliation and final administrative disposition. |
 
 ## Verification Summary
 

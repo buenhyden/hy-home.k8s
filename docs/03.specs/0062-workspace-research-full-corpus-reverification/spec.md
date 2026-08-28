@@ -3,13 +3,20 @@ title: 'Workspace Research Full-Corpus Reverification Technical Specification'
 type: sdlc/spec
 status: active
 owner: platform
-updated: 2026-08-20
+updated: 2026-08-29
 artifact_id: "SPEC-0062"
 ---
 
 # Workspace Research Full-Corpus Reverification Technical Specification (Spec)
 
 ## Overview
+
+> **Current state (2026-08-29):** This active Spec retains its historical
+> observations and original `VAL-WRFR-*` results. The approved
+> [current-main administrative closeout addendum](#approved-current-main-administrative-closeout-addendum-2026-08-29)
+> replaces only future execution of the superseded replay and guarded-completion
+> procedure; it does not reconstruct its missing evidence or retroactively pass
+> it.
 
 This specification designs a new full-corpus reverification cycle over the
 existing [`2026-08-08-wer`](../../90.references/research/2026-08-08-wer/README.md)
@@ -401,6 +408,53 @@ explicitly admits that evidence class.
 | VAL-WRFR-013 | Each logical work unit has a commit, task review, and reproducible validation evidence |
 | VAL-WRFR-014 | A whole-branch review reports no unresolved Critical or Important finding before completion |
 | VAL-WRFR-015 | Canonical affected, staged, pre-commit, all-files, aggregate, formatter-review, and diff-check lanes pass on the terminal tree |
+
+### Approved Current-Main Administrative Closeout Addendum (2026-08-29)
+
+The human-approved disposition preserves the latest retained research and
+identities while replacing future execution of old `WRFR-007` Path B and
+`WRFR-008`/`WRFR-009` guarded completion. It does not alter historical facts,
+unfulfilled evidence, original `VAL-WRFR-*` results, or unchecked historical
+steps. In particular, it permits no retroactive `PASS`, fabricated brief or
+review, original-artifact recreation, blanket checkbox completion, destructive
+replay, or old incident cleanup.
+
+Observed preconditions are: the original SDD directory is absent; the current
+ledger blob `a3a1c6e0d17b5d98ef9feba6ac49ade966ef09b4` and scope-index blob
+`fdcc2b4502bc14d840f190026fc66c6a1d04dad0` differ from the old exact-replay
+successors; and the README blob
+`11719d258d0454d68f3e6b6ed0377c3d3b9de6b2` matches. Current main's shared SDD
+marker is a different file and remains untouched.
+
+The replacement accepts retained current-main content and local repository
+conformance only. It claims no new external observation date, original
+full-corpus-checker replay, sanitized-summary reconstruction, remote query,
+provider run, live action, or human validation.
+
+The current-main census is fourteen Markdown files, thirty-six owners,
+122 sources, and 163 claims. Its latest retained
+[source delta](../../90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md#2026-08-28-source-delta-increment)
+and [closed full-scope revalidation](../../90.references/research/2026-08-08-wer/scope-application-index.md#2026-08-28-closed-full-scope-revalidation)
+show no duplicate or missing identifier and no out-of-corpus reference among
+the sixty defined identifiers from `SRC-WERPC-091..122` and
+`CLM-WERPC-013..015`. The `14/36/91/141` baseline remains dated historical
+evidence, not a new external re-observation.
+
+| Acceptance ID | Replacement acceptance |
+| --- | --- |
+| CLOSEOUT-0062-001 | Preserve the latest research content and recorded identities. |
+| CLOSEOUT-0062-002 | Retain historical gaps and missing evidence truthfully. |
+| CLOSEOUT-0062-003 | Reconcile existing indexes, links, and the current census. |
+| CLOSEOUT-0062-004 | Record fresh canonical local validation and independent review. |
+| CLOSEOUT-0062-005 | Preserve protected worktrees and backups; remove only new task-owned temporary artifacts after their consumers. |
+
+Unit 1 records this disposition while the Spec remains `active`. A controller
+ruling dated 2026-08-29 supersedes the earlier current-contract-probe conclusion:
+Unit 2 may use the existing terminal done route after narrow synchronization of
+the existing allowlist, tests, and registry state. That route must retain this
+administrative disposition in Result/Evidence, keep original criteria non-PASS
+where evidence is absent, and introduces no status enum, schema, or new
+registration. It is administrative closeout, not reconstructed lifecycle work.
 
 ## Traceability
 

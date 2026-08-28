@@ -3,7 +3,7 @@ title: 'Workspace Research Full-Corpus Reverification Implementation Plan'
 type: sdlc/plan
 status: active
 owner: platform
-updated: 2026-08-23
+updated: 2026-08-29
 artifact_id: "PLAN-0062"
 ---
 
@@ -30,6 +30,11 @@ Superpowers subagent-driven development workspace.
 
 **Spec:**
 [`spec.md`](spec.md)
+
+> **Current state (2026-08-29):** The active Plan's historical work packages,
+> results, and unchecked steps remain historical scope, not restart commands.
+> The approved [current-main administrative closeout addendum](#approved-current-main-administrative-closeout-addendum-2026-08-29)
+> supersedes future Path B/replay execution only.
 
 ## Global Constraints
 
@@ -214,6 +219,11 @@ research agents own disjoint report paths.
 ---
 
 ## Overview
+
+> **Current state (2026-08-29):** Unit 1 records the approved disposition while
+> retaining `active` status. Unit 2 performs only the replacement
+> current-main reconciliation and review described in this addendum; it does
+> not execute the original SDD/replay path.
 
 This Plan executes [Spec 0062](spec.md) as ten work packages. It retains one
 Plan because the five research areas share the same closed corpus, identifier
@@ -2866,6 +2876,48 @@ is authorized or performed by this fix.
   execution, and later deletion of the temporary recovery executable each
   require their own recorded authority; no such action occurs in this
   correction.
+
+### Approved Current-Main Administrative Closeout Addendum (2026-08-29)
+
+The approved disposition replaces future execution of the old `WRFR-007` Path
+B replay and `WRFR-008`/`WRFR-009` guarded completion, not their historical
+facts, unchecked steps, or unavailable evidence. It prohibits retroactive
+`PASS`, recreated artifacts, fabricated reviews, blanket completion, destructive
+replay, and old incident cleanup. The observed current-main preconditions and
+replacement acceptance `CLOSEOUT-0062-001..005` are canonical in the
+[Spec addendum](spec.md#approved-current-main-administrative-closeout-addendum-2026-08-29).
+
+Execution is limited to two bounded units:
+
+| Unit | Work | Boundary |
+| --- | --- | --- |
+| 1 | Add this approved disposition to the existing Spec, Plan, and Task. | Keep all three documents active; preserve prior evidence as history. |
+| 2 | Reconcile current-main indexes, links, and census; run replacement local validation and independent review; record final administrative disposition. | It may update the existing Stage 03 index entry only; it may not call `sdd-workspace`, recreate the alias/workspace, create a research branch, or execute original replay/cleanup. |
+
+The controller ruling dated 2026-08-29 corrects the earlier contract-probe
+conclusion: Unit 2 may use the existing terminal done route after narrow
+existing-allowlist, test, and registry-state synchronization. It must retain
+the administrative disposition in Result/Evidence and the original non-PASS
+criteria where evidence is absent. Unit 1 makes no registry, schema, enum, or
+lifecycle-state change; this remains administrative closeout rather than
+reconstructed lifecycle execution.
+
+Unit 2's bounded existing-contract surface is limited to these three lifecycle
+documents; `docs/03.specs/README.md`; `docs/99.templates/registry.json` only
+for Spec 0062's standalone state/reason; and these exact existing checks/tests:
+
+| Unit 2 path | Permitted narrow update |
+| --- | --- |
+| `scripts/validate-active-corpus-residue-closure.py` | Only `SPEC0062_PROFILE_REGISTRY_BLOB` to the new registry OID and `POST_CLOSURE_SPEC_AUTHORITY_PATHS` to the exact Spec 0062 path. |
+| `tests/test_active_corpus_retention.py` | Expected Spec 0062 post-closure path plus the exact current registry-pin/staged-index assertion: update the new registry OID literal, read `:path` rather than `HEAD`, and retain unknown-blob rejection. |
+| `tests/test_document_strict_cutover.py` | Exact Spec 0062 state/reason expectation only. |
+
+The research-pack and collection READMEs are frozen by the current guard and
+remain read-only; Unit 2 records the current-main census in the Stage 03 row
+and existing Spec/Task addenda instead. The retained census is
+`14/36/122/163`; the dated `14/36/91/141` record remains history. No new state,
+schema, validator feature, broad authority surface, old registry baseline/route
+contract, or Spec 0054 change is permitted.
 
 ## Verification Plan
 
