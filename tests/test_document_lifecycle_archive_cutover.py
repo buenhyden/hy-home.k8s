@@ -1860,6 +1860,79 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
                     proposed_blobs=mutated,
                 )
 
+    def test_mig0004_rejects_an_unsealed_new_task_payload_after_structural_proof(
+        self,
+    ) -> None:
+        base_commit, base_blobs, proposed_blobs = self._mig0004_baseline()
+        task = PurePosixPath(
+            "docs/03.specs/0054-sdlc-document-and-agent-governance-"
+            "consolidation/tasks/tsk-0001-approved-design-authority.md"
+        )
+        original_oid = proposed_blobs[task]
+        altered = VALIDATOR._blob_bytes(ROOT, original_oid) + b"\nUnsealed payload.\n"
+        sentinel = "e" * 40
+        mutated = dict(proposed_blobs)
+        mutated[task] = sentinel
+        original_reader = VALIDATOR._blob_bytes
+
+        def read_blob(root: Path, oid: str, **kwargs: object) -> bytes:
+            if oid == sentinel:
+                return altered
+            return original_reader(root, oid, **kwargs)
+
+        with mock.patch.object(VALIDATOR, "_blob_bytes", side_effect=read_blob):
+            self.assertEqual(
+                VALIDATOR._wp004c_mig0004_paths(
+                    root=ROOT,
+                    mode="staged",
+                    base_commit=base_commit,
+                    base_blobs=base_blobs,
+                    proposed_blobs=mutated,
+                ),
+                frozenset(),
+            )
+
+    def test_mig0004_rejects_an_unsealed_stage99_target_blob(self) -> None:
+        base_commit, base_blobs, proposed_blobs = self._mig0004_baseline()
+        migration = VALIDATOR._blob_bytes(
+            ROOT, proposed_blobs[VALIDATOR.WORK054_WP004B_MIGRATION_PATH]
+        )
+        row = next(
+            row
+            for row in VALIDATOR.parse_pinned_migration_control(
+                VALIDATOR.WORK054_WP004B_MIGRATION_PATH.as_posix(), migration
+            )
+            if row["source_commit"] == base_commit
+            and row["action"] == "replaced"
+            and row["legacy_path"].startswith("docs/99.templates/")
+            and row["replacement"].endswith(".md")
+            and PurePosixPath(row["replacement"]) in proposed_blobs
+        )
+        path = PurePosixPath(row["replacement"])
+        original_oid = proposed_blobs[path]
+        altered = VALIDATOR._blob_bytes(ROOT, original_oid) + b"\nUnsealed payload.\n"
+        sentinel = "d" * 40
+        mutated = dict(proposed_blobs)
+        mutated[path] = sentinel
+        original_reader = VALIDATOR._blob_bytes
+
+        def read_blob(root: Path, oid: str, **kwargs: object) -> bytes:
+            if oid == sentinel:
+                return altered
+            return original_reader(root, oid, **kwargs)
+
+        with mock.patch.object(VALIDATOR, "_blob_bytes", side_effect=read_blob):
+            self.assertEqual(
+                VALIDATOR._wp004c_mig0004_paths(
+                    root=ROOT,
+                    mode="staged",
+                    base_commit=base_commit,
+                    base_blobs=base_blobs,
+                    proposed_blobs=mutated,
+                ),
+                frozenset(),
+            )
+
     def test_mig0004_admits_the_exact_reviewed_target_blob(self) -> None:
         base_commit, base_blobs, proposed_blobs = self._mig0004_baseline()
         target_blobs = VALIDATOR._tree_blob_map(ROOT, WP004C_SEALED_TARGET_COMMIT)
@@ -1880,6 +1953,62 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
         )
 
         self.assertIn(path, admitted)
+        self.assertIn(
+            PurePosixPath(
+                "docs/03.specs/0054-sdlc-document-and-agent-governance-"
+                "consolidation/README.md"
+            ),
+            admitted,
+        )
+
+    def test_mig0004_requires_the_current_named_durable_ref_for_target(
+        self,
+    ) -> None:
+        base_commit, base_blobs, proposed_blobs = self._mig0004_baseline()
+        durable_ref = VALIDATOR.current_named_durable_ref(ROOT)
+        with mock.patch.object(
+            VALIDATOR,
+            "require_commits_reachable_from_durable_refs",
+            wraps=VALIDATOR.require_commits_reachable_from_durable_refs,
+        ) as require_reachable:
+            admitted = VALIDATOR._wp004c_mig0004_paths(
+                root=ROOT,
+                mode="staged",
+                base_commit=base_commit,
+                base_blobs=base_blobs,
+                proposed_blobs=proposed_blobs,
+            )
+
+        require_reachable.assert_called_once_with(
+            ROOT,
+            (WP004C_SEALED_TARGET_COMMIT,),
+            (durable_ref,),
+        )
+        self.assertTrue(admitted)
+
+    def test_mig0004_rejects_existing_target_without_durable_reachability(
+        self,
+    ) -> None:
+        base_commit, base_blobs, proposed_blobs = self._mig0004_baseline()
+        self.assertTrue(VALIDATOR._tree_blob_map(ROOT, WP004C_SEALED_TARGET_COMMIT))
+        with mock.patch.object(
+            VALIDATOR,
+            "require_commits_reachable_from_durable_refs",
+            side_effect=VALIDATOR.ArchiveContractError(
+                "RECOVERY-OBJECT-UNREACHABLE",
+                "sealed target is not reachable from a durable ref",
+            ),
+        ):
+            self.assertEqual(
+                VALIDATOR._wp004c_mig0004_paths(
+                    root=ROOT,
+                    mode="staged",
+                    base_commit=base_commit,
+                    base_blobs=base_blobs,
+                    proposed_blobs=proposed_blobs,
+                ),
+                frozenset(),
+            )
 
     def test_mig0004_rejects_unsealed_markdown_blobs_by_target_parity(self) -> None:
         base_commit, base_blobs, proposed_blobs = self._mig0004_baseline()

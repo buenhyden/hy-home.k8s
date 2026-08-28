@@ -73,9 +73,11 @@ from archive_recovery import (
     WORK107_MIGRATION_PATH,
     WP004C_SEALED_TARGET_COMMIT,
     build_work107_migration_rows,
+    current_named_durable_ref,
     parse_work107_migration_document,
     render_work107_migration_document,
     render_work107_stable_envelope,
+    require_commits_reachable_from_durable_refs,
     validate_work107_migration_rows,
     _git_capture_bounded,
 )
@@ -1886,9 +1888,19 @@ def _wp004c_mig0004_paths(
         return frozenset()
     consumed.update((task_legacy, readme_path, *expected_tasks))
     try:
-        _run_git(root, ("cat-file", "-e", f"{WP004C_SEALED_TARGET_COMMIT}^{{commit}}"))
+        durable_ref = current_named_durable_ref(root)
+        require_commits_reachable_from_durable_refs(
+            root, (WP004C_SEALED_TARGET_COMMIT,), (durable_ref,)
+        )
         sealed_target_blobs = _tree_blob_map(root, WP004C_SEALED_TARGET_COMMIT)
-    except InvocationError:
+    except (ArchiveContractError, InvocationError):
+        return frozenset()
+    if any(
+        path.suffix == ".md"
+        and path in proposed_blobs
+        and sealed_target_blobs.get(path) != proposed_blobs[path]
+        for path in consumed
+    ):
         return frozenset()
     for path in set(base_blobs) & set(proposed_blobs):
         if path.suffix != ".md" or base_blobs[path] == proposed_blobs[path]:
