@@ -43,7 +43,11 @@ CANONICAL_SCHEMA_PATH = Path(
 DATA_ASSET_ROOT = Path("docs/90.references/data")
 DATA_ASSET_README = DATA_ASSET_ROOT / "README.md"
 REFERENCE_ROOT = Path("docs/90.references")
-REGISTRY_PATH = Path("docs/99.templates/support/document-profiles.json")
+# The combined registry the baseline commits hold. Baseline reads resolve it
+# from a pinned commit; the proposed side reads the published route contract
+# below, which is the pinned transition between the two.
+RETIRED_REGISTRY_PATH = Path("docs/99.templates/support/document-profiles.json")
+ROUTE_CONTRACT_PATH = Path("docs/99.templates/contracts/route-contract.json")
 DOCUMENT_TAXONOMY_MANIFEST_PATH = Path("scripts/document-taxonomy-migration.json")
 ARCHIVE_MIGRATION_PATH = Path(
     "docs/98.archive/migrations/mig-0001-sdlc-taxonomy-convergence.md"
@@ -1343,7 +1347,16 @@ def _validate_contract_boundaries(
     registry_path = parse_repository_path(
         contract.get("currentPackRegistry"), field="currentPackRegistry"
     )
-    if registry_path != REGISTRY_PATH:
+    # The Stage 99 contract split moved the pack declarations. A contract read
+    # from history still names the combined registry, and rewriting that claim
+    # would falsify the tree it describes, so the retired path is admitted only
+    # when the caller is reading history.
+    admitted_registry_paths = (
+        {ROUTE_CONTRACT_PATH, RETIRED_REGISTRY_PATH}
+        if allow_historical_v2
+        else {ROUTE_CONTRACT_PATH}
+    )
+    if registry_path not in admitted_registry_paths:
         raise ContractError(
             "RIA-BOUNDARY", "currentPackRegistry", "registry path is fixed"
         )
@@ -2468,7 +2481,7 @@ def _registry_projection(value: Mapping[str, object]) -> RegistryProjection:
     if not isinstance(root, Mapping):
         raise ContractError(
             "RIA-CONTRACT",
-            REGISTRY_PATH.as_posix(),
+            ROUTE_CONTRACT_PATH.as_posix(),
             "Current pack registry is malformed",
         )
     profile = root.get("profileId")
@@ -2476,7 +2489,7 @@ def _registry_projection(value: Mapping[str, object]) -> RegistryProjection:
     if not isinstance(profile, str) or not isinstance(records, list):
         raise ContractError(
             "RIA-CONTRACT",
-            REGISTRY_PATH.as_posix(),
+            ROUTE_CONTRACT_PATH.as_posix(),
             "Current pack registry is malformed",
         )
     packs: list[Pack] = []
@@ -2485,7 +2498,7 @@ def _registry_projection(value: Mapping[str, object]) -> RegistryProjection:
     for index, record in enumerate(records):
         if not isinstance(record, Mapping):
             raise ContractError(
-                "RIA-CONTRACT", REGISTRY_PATH.as_posix(), "registry pack is malformed"
+                "RIA-CONTRACT", ROUTE_CONTRACT_PATH.as_posix(), "registry pack is malformed"
             )
         pack_id = record.get("id")
         members = record.get("members")
@@ -2512,7 +2525,7 @@ def _registry_projection(value: Mapping[str, object]) -> RegistryProjection:
             if path in all_paths:
                 raise ContractError(
                     "RIA-CONTRACT",
-                    REGISTRY_PATH.as_posix(),
+                    ROUTE_CONTRACT_PATH.as_posix(),
                     "Current path is duplicated",
                 )
             all_paths.add(path)
@@ -2532,6 +2545,26 @@ def _encoded_baselines(contract: Mapping[str, object]) -> dict[str, str]:
             )
         result[key] = value
     return result
+
+
+def _proposed_registry_path(contract: Mapping[str, object] | None) -> Path:
+    """Return the registry path the contract itself declares.
+
+    The Stage 99 split moved the pack declarations, so the proposed read has to
+    follow the contract rather than the current constant: a contract loaded
+    from history names the combined registry, and the tree it describes holds
+    the packs only at that path.
+    """
+
+    if contract is None:
+        return ROUTE_CONTRACT_PATH
+    try:
+        declared = parse_repository_path(
+            contract.get("currentPackRegistry"), field="currentPackRegistry"
+        )
+    except ContractError:
+        return ROUTE_CONTRACT_PATH
+    return declared if declared == RETIRED_REGISTRY_PATH else ROUTE_CONTRACT_PATH
 
 
 def _proposed_path(
@@ -2775,10 +2808,12 @@ def _load_taxonomy_archive_transition(
     *,
     proposed_oid: str | None,
     runner: GitRunner | None,
+    contract: Mapping[str, object] | None = None,
 ) -> frozenset[str]:
+    registry_path = _proposed_registry_path(contract)
     registry = _decode_json_bytes(
-        _proposed_path(root, REGISTRY_PATH, proposed_oid, runner),
-        field=REGISTRY_PATH.as_posix(),
+        _proposed_path(root, registry_path, proposed_oid, runner),
+        field=registry_path.as_posix(),
     )
     manifest = _decode_json_bytes(
         _proposed_path(root, DOCUMENT_TAXONOMY_MANIFEST_PATH, proposed_oid, runner),
@@ -2843,9 +2878,14 @@ def _build_context(
     runner: GitRunner | None = None,
 ) -> ValidationContext:
     root = root.absolute()
-    proposed_registry_bytes = _proposed_path(root, REGISTRY_PATH, proposed_oid, runner)
+    proposed_registry_path = _proposed_registry_path(contract)
+    proposed_registry_bytes = _proposed_path(
+        root, proposed_registry_path, proposed_oid, runner
+    )
     proposed_registry = _registry_projection(
-        _decode_json_bytes(proposed_registry_bytes, field=REGISTRY_PATH.as_posix())
+        _decode_json_bytes(
+            proposed_registry_bytes, field=proposed_registry_path.as_posix()
+        )
     )
     baselines = _encoded_baselines(contract)
     if tuple(baselines) != proposed_registry.pack_ids:
@@ -2860,9 +2900,9 @@ def _build_context(
     for encoded in dict.fromkeys(baselines.values()):
         oid = parse_git_sha1(encoded, field="currentPackBaselines")
         baseline_oids[encoded] = oid
-        registry_bytes = _read_commit_path(root, oid, REGISTRY_PATH, runner)
+        registry_bytes = _read_commit_path(root, oid, RETIRED_REGISTRY_PATH, runner)
         registry = _registry_projection(
-            _decode_json_bytes(registry_bytes, field=REGISTRY_PATH.as_posix())
+            _decode_json_bytes(registry_bytes, field=RETIRED_REGISTRY_PATH.as_posix())
         )
         # Every pack that is still declared must match its baseline declaration
         # byte for byte. Retiring a whole collection from Current-pack
@@ -2886,7 +2926,7 @@ def _build_context(
         ):
             raise ContractError(
                 "RIA-TRANSITION",
-                REGISTRY_PATH.as_posix(),
+                ROUTE_CONTRACT_PATH.as_posix(),
                 "baseline and proposed Current registry projections differ",
             )
         baseline_registries[encoded] = registry
@@ -2932,7 +2972,7 @@ def validate_proposed_registry_authority(
     except (ContractError, _GitError) as error:
         if isinstance(error, ContractError):
             return [error.finding]
-        return [Finding("RIA-BOUNDARY", REGISTRY_PATH.as_posix(), error.message)]
+        return [Finding("RIA-BOUNDARY", ROUTE_CONTRACT_PATH.as_posix(), error.message)]
     return []
 
 
@@ -2964,8 +3004,13 @@ def validate_retired_current_baselines(
         )
         proposed_registry = _registry_projection(
             _decode_json_bytes(
-                _proposed_path(root.absolute(), REGISTRY_PATH, proposed_oid, runner),
-                field=REGISTRY_PATH.as_posix(),
+                _proposed_path(
+                    root.absolute(),
+                    _proposed_registry_path(contract),
+                    proposed_oid,
+                    runner,
+                ),
+                field=_proposed_registry_path(contract).as_posix(),
             )
         )
         current_ids = set(proposed_registry.pack_ids)
@@ -2997,8 +3042,8 @@ def validate_retired_current_baselines(
             )
             baseline_registry = _registry_projection(
                 _decode_json_bytes(
-                    _read_commit_path(root.absolute(), oid, REGISTRY_PATH, runner),
-                    field=REGISTRY_PATH.as_posix(),
+                    _read_commit_path(root.absolute(), oid, RETIRED_REGISTRY_PATH, runner),
+                    field=RETIRED_REGISTRY_PATH.as_posix(),
                 )
             )
             expected_pack = Pack(
@@ -4971,15 +5016,19 @@ def validate_duplicate_rules(
             ]
     root = root.absolute()
     try:
-        registry_payload = _proposed_path(root, REGISTRY_PATH, commit_oid, runner)
+        registry_payload = _proposed_path(
+            root, _proposed_registry_path(contract), commit_oid, runner
+        )
         registry = _registry_projection(
-            _decode_json_bytes(registry_payload, field=REGISTRY_PATH.as_posix())
+            _decode_json_bytes(
+                registry_payload, field=_proposed_registry_path(contract).as_posix()
+            )
         )
     except (ContractError, _GitError):
         return [
             Finding(
                 "RIA-DUPLICATE",
-                REGISTRY_PATH.as_posix(),
+                ROUTE_CONTRACT_PATH.as_posix(),
                 "Current owner registry is unavailable",
             )
         ]
@@ -5638,7 +5687,7 @@ def validate_overlay_guards(
         return [
             Finding(
                 "RIA-OVERLAY",
-                REGISTRY_PATH.as_posix(),
+                ROUTE_CONTRACT_PATH.as_posix(),
                 "Current authority is unavailable",
             )
         ]
@@ -5646,7 +5695,10 @@ def validate_overlay_guards(
     projections = _projection_map(contract)
     try:
         taxonomy_sources = _load_taxonomy_archive_transition(
-            root.absolute(), proposed_oid=proposed_oid, runner=runner
+            root.absolute(),
+            proposed_oid=proposed_oid,
+            runner=runner,
+            contract=contract,
         )
     except (ContractError, _GitError):
         taxonomy_sources = frozenset()
@@ -6023,9 +6075,9 @@ def _settlement_proof(
         _validate_contract_boundaries(c2_contract, allow_historical_v2=True)
         if not _matching_open_contract(settlement, c2_contract, contract):
             raise _GitError("transition contract does not match settlement")
-        c2_registry_bytes = _read_commit_path(root, c2_oid, REGISTRY_PATH, runner)
+        c2_registry_bytes = _read_commit_path(root, c2_oid, RETIRED_REGISTRY_PATH, runner)
         c2_registry = _registry_projection(
-            _decode_json_bytes(c2_registry_bytes, field=REGISTRY_PATH.as_posix())
+            _decode_json_bytes(c2_registry_bytes, field=RETIRED_REGISTRY_PATH.as_posix())
         )
         root_registry = context.baseline_registries[CURRENT_ROOT_COMMIT]
         if c2_registry != root_registry or c2_registry != context.proposed_registry:
@@ -6250,7 +6302,7 @@ def validate_baseline_transitions(
         return [
             Finding(
                 "RIA-TRANSITION",
-                REGISTRY_PATH.as_posix(),
+                ROUTE_CONTRACT_PATH.as_posix(),
                 "transition authority is unavailable",
             )
         ]
@@ -6422,7 +6474,7 @@ def _self_test_contract() -> dict[str, object]:
         "$schema": "./reference-information-architecture.schema.json",
         "schemaVersion": 2,
         "evidenceCutoff": "2026-07-22",
-        "currentPackRegistry": REGISTRY_PATH.as_posix(),
+        "currentPackRegistry": ROUTE_CONTRACT_PATH.as_posix(),
         "snapshotGuard": {
             "sourceCommit": HISTORICAL_SOURCE_COMMIT,
             "historicalPackIds": list(HISTORICAL_PACK_IDS),

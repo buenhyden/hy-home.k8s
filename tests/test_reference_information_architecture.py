@@ -115,7 +115,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         )
 
     def _write_registry(self, pack_ids: list[str]) -> None:
-        registry = self.root / "docs/99.templates/support/document-profiles.json"
+        registry = self.root / "docs/99.templates/contracts/route-contract.json"
         registry.parent.mkdir(parents=True, exist_ok=True)
         registry.write_text(
             json.dumps(
@@ -200,7 +200,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             Path("scripts/README.md"),
             Path("docs/90.references/README.md"),
             Path("docs/90.references/data/README.md"),
-            ria.REGISTRY_PATH,
+            ria.ROUTE_CONTRACT_PATH,
             ria.DOCUMENT_TAXONOMY_MANIFEST_PATH,
             ria.ARCHIVE_MIGRATION_PATH,
             ria.SDLC_CONSOLIDATION_MIGRATION_PATH,
@@ -285,7 +285,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             ),
         ]
         payloads = {
-            "docs/99.templates/support/document-profiles.json": json.dumps(
+            "docs/99.templates/contracts/route-contract.json": json.dumps(
                 {
                     "referenceCurrentPacks": {
                         "profileId": "content/reference",
@@ -513,9 +513,9 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
 
     def test_contract_paths_require_allowlisted_clean_posix_segments(self) -> None:
         invalid_paths = (
-            "/docs/99.templates/support/document-profiles.json",
+            "/docs/99.templates/contracts/route-contract.json",
             "docs/../document-profiles.json",
-            "./docs/99.templates/support/document-profiles.json",
+            "./docs/99.templates/contracts/route-contract.json",
             "docs//99.templates/support/document-profiles.json",
             "_workspace/private.json",
         )
@@ -877,13 +877,13 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         with self.assertRaisesRegex(ContractError, "RIA-BOUNDARY"):
             load_contract(self.root, symlink)
 
-        registry = self.root / "docs/99.templates/support/document-profiles.json"
+        registry = self.root / "docs/99.templates/contracts/route-contract.json"
         registry.unlink()
         registry.mkdir()
         with self.assertRaisesRegex(ContractError, "RIA-BOUNDARY"):
             ria._read_regular_file(  # noqa: SLF001
                 self.root,
-                Path("docs/99.templates/support/document-profiles.json"),
+                Path("docs/99.templates/contracts/route-contract.json"),
                 field="currentPackRegistry",
             )
 
@@ -1634,7 +1634,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             target.write_bytes(payload.replace(original, b"0" * 40, 1))
 
         def mutate_terminal_state(candidate: Path) -> None:
-            target = candidate / ria.REGISTRY_PATH
+            target = candidate / ria.ROUTE_CONTRACT_PATH
             payload = target.read_bytes()
             self.assertEqual(payload.count(b'"routeState": "transition"'), 1)
             target.write_bytes(
@@ -1754,7 +1754,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         ):
             with self.subTest(collection=collection):
                 root, contract, owners, _copies = self._duplicate_repository()
-                registry_path = root / ria.REGISTRY_PATH
+                registry_path = root / ria.ROUTE_CONTRACT_PATH
                 registry = json.loads(registry_path.read_text(encoding="utf-8"))
                 registry["referenceCurrentPacks"]["packs"].append(
                     {
@@ -1795,7 +1795,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                     root,
                     "add",
                     "--",
-                    ria.REGISTRY_PATH.as_posix(),
+                    ria.ROUTE_CONTRACT_PATH.as_posix(),
                     index_path.relative_to(root).as_posix(),
                     second_readme.relative_to(root).as_posix(),
                 )
@@ -3250,7 +3250,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
     def test_special_file_replacement_after_lstat_fails_closed_without_blocking(
         self,
     ) -> None:
-        registry = self.root / "docs/99.templates/support/document-profiles.json"
+        registry = self.root / "docs/99.templates/contracts/route-contract.json"
         original_open = os.open
         replaced = False
 
@@ -3274,7 +3274,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             with self.assertRaisesRegex(ContractError, "RIA-BOUNDARY"):
                 ria._read_regular_file(  # noqa: SLF001
                     self.root,
-                    Path("docs/99.templates/support/document-profiles.json"),
+                    Path("docs/99.templates/contracts/route-contract.json"),
                     field="currentPackRegistry",
                 )
         self.assertTrue(replaced)
@@ -3554,7 +3554,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             runner: ria.GitRunner | None,
         ) -> bytes:
             del root, proposed_oid, runner
-            if path == ria.REGISTRY_PATH:
+            if path == ria.ROUTE_CONTRACT_PATH:
                 return json.dumps(current_registry).encode()
             return b"drift" if path == target else b"protected"
 
@@ -3566,7 +3566,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         ) -> bytes:
             del root, runner
             baseline_reads.append((oid, path))
-            if path == ria.REGISTRY_PATH:
+            if path == ria.RETIRED_REGISTRY_PATH:
                 return json.dumps(historical_registry).encode()
             return b"protected"
 
@@ -3586,14 +3586,14 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             ],
         )
         self.assertIn(
-            (ROOT_BASELINE.removeprefix("git-sha1:"), ria.REGISTRY_PATH),
+            (ROOT_BASELINE.removeprefix("git-sha1:"), ria.RETIRED_REGISTRY_PATH),
             baseline_reads,
         )
         self.assertTrue(
             all(
                 oid == WGIA_BASELINE.removeprefix("git-sha1:")
                 for oid, path in baseline_reads
-                if path != ria.REGISTRY_PATH
+                if path != ria.RETIRED_REGISTRY_PATH
             )
         )
 
@@ -3607,7 +3607,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             runner: ria.GitRunner | None,
         ) -> bytes:
             del root, oid, runner
-            if path == ria.REGISTRY_PATH:
+            if path == ria.RETIRED_REGISTRY_PATH:
                 return json.dumps(missing).encode()
             return b"protected"
 
@@ -3857,7 +3857,7 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
 
     def test_taxonomy_archive_overlay_is_disabled_in_terminal_state(self) -> None:
         registry = json.loads(
-            (REPOSITORY_ROOT / ria.REGISTRY_PATH).read_text(encoding="utf-8")
+            (REPOSITORY_ROOT / ria.ROUTE_CONTRACT_PATH).read_text(encoding="utf-8")
         )
         manifest = json.loads(
             (REPOSITORY_ROOT / ria.DOCUMENT_TAXONOMY_MANIFEST_PATH).read_text(
@@ -4191,7 +4191,11 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 open_contract, separators=(",", ":")
             ).encode(),
             ria.CANONICAL_SCHEMA_PATH: SCHEMA.read_bytes(),
-            ria.REGISTRY_PATH: registry_payload,
+            # The settlement chain reads the transition commit from the retired
+            # path while the proposed side follows the contract's declaration,
+            # so the simulated tree supplies both.
+            ria.ROUTE_CONTRACT_PATH: registry_payload,
+            ria.RETIRED_REGISTRY_PATH: registry_payload,
             transition_path: target,
             **{path: baseline_bytes[(ROOT_BASELINE, path)] for path in non_targets},
         }
@@ -4367,7 +4371,11 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             (c2, selected): json.dumps(
                 open_contract, separators=(",", ":")
             ).encode(),
-            (c2, ria.REGISTRY_PATH): registry_payload,
+            # The settlement chain reads the transition commit from the
+            # retired path while the proposed side follows the contract's
+            # own declaration, so the simulated tree supplies both.
+            (c2, ria.RETIRED_REGISTRY_PATH): registry_payload,
+            (c2, ria.ROUTE_CONTRACT_PATH): registry_payload,
             (c2, target_path): target,
             (
                 ROOT_BASELINE.removeprefix("git-sha1:"),

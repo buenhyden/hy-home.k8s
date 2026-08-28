@@ -2,7 +2,7 @@
   "$schema": "./reference-information-architecture.schema.json",
   "schemaVersion": 2,
   "evidenceCutoff": "2026-08-18",
-  "currentPackRegistry": "docs/99.templates/support/document-profiles.json",
+  "currentPackRegistry": "docs/99.templates/contracts/route-contract.json",
   "snapshotGuard": {
     "sourceCommit": "git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47",
     "historicalPackIds": [
