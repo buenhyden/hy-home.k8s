@@ -100,7 +100,7 @@ hy-home.k8s/
 
 - `docs/00.agent-governance/**`: Agent 실행 정책과 provider/runtime 계약이므로 영어를 유지한다.
 - `docs/03.specs/**/spec.md`: 구현 명세이므로 영어로 작성한다.
-- `docs/03.specs/<id>-<slug>/plan.md`, `docs/03.specs/<id>-<slug>/tasks.md`: 실행 계획, 검증 증적, handoff 기록이므로 영어로 작성한다.
+- `docs/03.specs/<id>-<slug>/plan.md`, `docs/03.specs/<id>-<slug>/tasks/tsk-####-<slug>.md`: 실행 계획, 개별 Task 레코드, 검증 증적, handoff 기록이므로 영어로 작성한다.
 - `docs/05.operations/{guides,policies,runbooks,incidents}`: 운영자가 읽는 본문은 한국어를 사용할 수 있고, AI Agent 실행 지시나 tool/prompt contract는 영어로 분리한다.
 - `docs/90.references/**`: 사람용 overview와 lookup 설명은 한국어를 사용할 수 있고, `Authority Boundary`, `Sources`, `Review and Freshness`, version support boundary, generated-index contract는 영어를 우선한다.
 

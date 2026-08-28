@@ -712,6 +712,14 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 ):
                     self.assertIn(section, contents)
 
+    def test_root_readme_routes_package_tasks_to_task_records(self) -> None:
+        contents = (REPOSITORY_ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertNotIn("docs/03.specs/<id>-<slug>/tasks.md", contents)
+        self.assertIn(
+            "docs/03.specs/<id>-<slug>/tasks/tsk-####-<slug>.md",
+            contents,
+        )
+
     def test_mig0004_recovers_one_retired_spec0054_ledger(self) -> None:
         rows = [
             row
