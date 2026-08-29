@@ -34,6 +34,7 @@ SCHEMA_PATH = PurePosixPath(
 )
 FIXTURE_PATH = PurePosixPath("tests/fixtures/validation-surfaces.json")
 CI_WORKFLOW_PATH = PurePosixPath(".github/workflows/ci.yml")
+QUALITY_GATE_PATH = PurePosixPath("scripts/validate-repo-quality-gates.sh")
 SELECTOR_LANES = ("affected", "staged", "all-files", "ci")
 LANES = (
     "affected",
@@ -638,6 +639,42 @@ def github_output(contract: dict[str, Any], result: dict[str, Any]) -> str:
         f"{job['output']}={'true' if job['id'] in selected else 'false'}"
         for job in sorted(contract["ciJobs"], key=lambda row: row["output"])
     )
+
+
+def validate_required_validators_have_a_runner(
+    contract: Mapping[str, Any], root: Path
+) -> None:
+    """Refuse a required validator that no runner executes.
+
+    The contract declares what must run; the repository quality gate and the CI
+    workflow declare what does run.  Those are separate hand-maintained lists, so
+    a validator can be declared required and then invoked by neither, which is
+    how document-lifecycle came to run only through local hooks.  A validator
+    excluded from CI on purpose stays covered as long as the gate runs it.
+    """
+
+    try:
+        runners = (root / QUALITY_GATE_PATH).read_text(encoding="utf-8") + (
+            root / CI_WORKFLOW_PATH
+        ).read_text(encoding="utf-8")
+    except (OSError, UnicodeError) as exc:
+        fail("SURFACE-VALIDATOR-RUNNER", f"cannot read the runners: {exc}")
+
+    for validator in contract["validators"]:
+        if validator.get("optional"):
+            continue
+        scripts = [
+            argument
+            for argument in validator["argv"]
+            if argument.startswith("scripts/")
+        ]
+        if not scripts:
+            continue
+        if not any(script in runners for script in scripts):
+            fail(
+                "SURFACE-VALIDATOR-RUNNER",
+                f"{validator['id']} is required but no runner invokes it",
+            )
 
 
 def validate_ci_workflow_selector(root: Path) -> None:
@@ -1478,6 +1515,7 @@ def main() -> int:
             return 0
 
         contract = validate_contract(root)
+        validate_required_validators_have_a_runner(contract, root)
         paths = tracked_paths(root)
         observed_surfaces = {
             (
