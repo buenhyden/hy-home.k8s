@@ -3,7 +3,7 @@ title: 'Reference: Harness and Loop Engineering'
 type: content/reference
 status: active
 owner: platform
-updated: 2026-08-10
+updated: 2026-08-23
 ---
 
 # Reference: Harness and Loop Engineering
@@ -252,6 +252,114 @@ carries unreleased commits dated 2026-08-08 to 2026-08-10 touching approval,
 config, and hook surfaces, with no corresponding change to the published README
 or to any documented key. Unreleased source movement is not a documented
 behavior change and is not adopted here.
+
+### 2026-08-20 full-corpus reverification
+
+This increment re-observed both owner rows at workspace baseline
+`8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c`. External and workspace
+results remain independent. The allocation slice assigns no new source or
+claim ID, so this section cites the existing source identities and does not
+change the shared ledger.
+
+#### REQ-WERPC-001 harness re-observation
+
+- **Sources and external result:** `unchanged`; `SRC-WERPC-009` through
+  `SRC-WERPC-013` were re-observed on 2026-08-20. Current official Codex
+  pages still describe instruction, configuration, sandbox, model, subagent,
+  hook, and MCP surfaces. They do not establish this workspace runtime.
+- **Workspace selector and result:** `confirmed` at
+  `harness-and-loop-engineering.md#harness-baseline`. The repository-static
+  control plane still owns context, role and task instructions, bounded tools
+  and permissions, orchestration and isolation boundaries, evaluation,
+  checkpoint/recovery contracts, observability, and handoff evidence.
+- **As-Is, gap, and target:** the static harness remains `Verified`; native
+  instruction discovery, permission enforcement, hook delivery, MCP
+  connection, model resolution, execution, and runtime cost/latency telemetry
+  are not observed. Keep provider product surfaces separate from local
+  controls and admit runtime or cost evidence only through a separately
+  authorized observation.
+- **Evidence boundary:** depth is `repository-static`; blocking class and
+  retained execution boundary are `provider-runtime` / `DEFER`. Tracked files
+  and public documentation do not prove that a provider loaded or enforced
+  any control in this session.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the
+  linked Stage 00 harness contracts. After approval, use one read-only,
+  redacted canary for one named provider control; do not invoke credential or
+  live-GitOps paths. Refresh when a cited instruction, configuration, sandbox,
+  model, subagent, hook, MCP, or local harness contract materially changes.
+
+#### REQ-WERPC-002 loop re-observation
+
+- **Sources and external result:** `unchanged`; `SRC-WERPC-010` and
+  `SRC-WERPC-012` were re-observed on 2026-08-20. They remain supporting
+  context for orchestration surfaces; loop states and retry budgets remain
+  local policy.
+- **Workspace selector and result:** `confirmed` at
+  `harness-and-loop-engineering.md#loop-baseline`. The local contract still
+  defines ready/running/validating/retry-assessment and terminal states,
+  bounded retry and recovery budgets, second-identical-result no-progress
+  escalation, redaction, validation, and owned handoff.
+- **As-Is, gap, and target:** the repository-static loop remains `Verified`.
+  Provider event emission, actual checkpoint use, executed recovery, and
+  deterministic replay are not observed. Retain the local lifecycle as the
+  authority and require a redacted event record before asserting provider
+  execution or replay behavior.
+- **Evidence boundary:** depth is `repository-static`; blocking class and
+  retained execution boundary are `provider-runtime` / `DEFER`. Public hook
+  or configuration semantics do not prove that a provider followed this
+  state machine or that a retry made measurable progress.
+- **Owner, safe follow-up, and trigger:** owner is this reference and
+  `agent-loop-lifecycle.json`. After approval, run one non-secret canary for
+  an exact provider/version and retain only redacted transition, stop,
+  recovery, and handoff metadata. Refresh when a cited Codex orchestration
+  surface or the local lifecycle/checkpoint contract changes.
+
+### 2026-08-23 provider-control gap increment
+
+This gap-only increment follows the Spec 0054 terminal provider boundary:
+Claude and Codex are the provider adapters under comparison, while the shared
+repository contract remains provider-neutral. It changes no adapter, hook,
+model configuration, owner, validator, or document topology.
+
+#### Codex orchestration and hook delta
+
+- **Documented fact:** the current [Codex configuration
+  reference](https://learn.chatgpt.com/docs/config-file/config-reference) and
+  [subagent guide](https://learn.chatgpt.com/docs/agent-configuration/subagents)
+  describe multi-agent operation as stable and enabled by default. This
+  supersedes an experimental-only product-surface description, but it does not
+  prove native agent discovery or delegation in this worktree
+  (`SRC-WERPC-010`–`011`).
+- **Documented fact:** the current [Codex hooks
+  guide](https://learn.chatgpt.com/docs/hooks) includes lifecycle events such
+  as `Stop`, `SubagentStop`, `PreCompact`, and `PostCompact`
+  (`SRC-WERPC-012`). Their existence supplies interception and observation
+  points; it does not make hook coverage complete or a hook equivalent to the
+  workspace approval, sandbox, validation, or termination contracts.
+- **Loop rule:** the subagent permission contract is fail-closed. If a child
+  needs approval and cannot obtain it, the operation returns failure to the
+  parent. The local loop must classify that evidence as `FAIL`, `blocked`, or
+  `escalated` according to the owning contract; it must never infer `PASS` from
+  absent approval or absent hook output.
+
+#### Claude hook delta
+
+The current [Claude Code hooks
+guide](https://code.claude.com/docs/en/hooks-guide) distinguishes deterministic
+command hooks, suitable for production guardrails, from prompt- or agent-based
+hooks whose agent-hook surface is experimental (`SRC-WERPC-006`). A command
+hook can enforce its documented exit-code contract, but tracked configuration
+still does not prove trust, delivery, execution, or complete coverage. Agent
+hooks therefore remain advisory until separately validated and cannot replace
+the same approval and deterministic validation owners.
+
+**Disposition:** the public capability description changed, while local
+runtime evidence did not. Harness and loop contracts remain `Verified` at
+repository-static depth; provider discovery, hook delivery, approval handling,
+delegation, compaction-event delivery, and enforcement completeness remain
+`provider-runtime` / `DEFER`. Recheck on a provider lifecycle, permission, or
+multi-agent contract change, and admit promotion only from a separately
+authorized, non-secret runtime observation.
 
 ## Related Documents
 

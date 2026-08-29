@@ -3,7 +3,7 @@ title: 'Reference: CI/CD, GitHub Actions, and QA'
 type: content/reference
 status: active
 owner: platform
-updated: 2026-08-12
+updated: 2026-08-23
 ---
 
 # Reference: CI/CD, GitHub Actions, and QA
@@ -526,6 +526,124 @@ No `kubectl`, `k3d`, `helm`, `argocd`, `vault`, `gh`, or `gh api` command was
 run; only public documentation pages were fetched. No row is promoted to
 `Verified`; no row is `Contradicted`. New source registered: `SRC-WERPC-077`.
 New claims registered: `CLM-WERPC-010-13` through `CLM-WERPC-010-15`.
+
+### 2026-08-20 full-corpus reverification
+
+This closed-corpus increment consumes the immutable delivery/quality report
+for `REQ-WERPC-022`, `023`, `024`, and `033`, checked on 2026-08-20. The report
+re-opened the already registered GitHub, pre-commit, pip, SLSA, and NASA
+primary sources and found no adopted-claim contradiction. It proposes no new
+source or claim identity. The workspace baseline is commit
+`8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c`; observations below distinguish
+that repository-static baseline, the separately authorized remote metadata,
+and outcomes that remain unproven.
+
+#### Evidence boundary and remote metadata
+
+The guarded remote summary, SHA-256
+`da137936a4ec5cbb10c06303b96e22cc933188fec7042b8aa0dd774e627d4d21`,
+passed its schema, uniqueness, field-allowlist, and nine-class completeness
+check. That validation establishes only that the retained projection satisfies
+the evidence contract. It does not validate workflow behavior, policy
+effectiveness, stakeholder acceptance, deployment, or intended use.
+
+| Evidence class | Sanitized collection-period result (2026-08-21..22 UTC) | Bounded interpretation |
+| --- | --- | --- |
+| `actions-permissions` | Observed: Actions enabled, allowed-actions mode `all`, selected-actions URL absent. | Dated repository-setting metadata only; it does not override tracked full-SHA pins or prove effective per-run authorization. |
+| `workflow-permissions` | Observed: default workflow permission `read`; workflow approval of pull-request reviews disabled. | Default-policy projection, not evidence of a particular job token, fork path, secret, or review outcome. |
+| `rulesets` | Observed empty list. | No ruleset was returned at collection time; historical absence, bypass behavior, and enforcement are not inferred. |
+| `branch-protection` | Observed on `main`: required `ci-summary` check with app ID `15368`, `strict=false`, administrator enforcement disabled, approving-review count `0`, and stale-review dismissal disabled. | This records projected settings, not that a merge was blocked, a check covered the current local HEAD, or a review was sufficient. |
+| `environments` | Observed total `0`. | No environment was listed at collection time; environment history, secrets, approvals, deployment, and their absence are unproven. |
+| `artifacts` | Observed total `0`. | No retained artifact was listed at collection time; upload, deletion, retention correctness, historical existence, integrity, and provenance remain unproven. |
+| `runs` | Observed 20 retained records, all `completed`: 13 `success`, 7 `failure`, across 8 unique head SHAs. | Historical conclusion metadata only. It supplies no current-local-HEAD hosted result, failure root cause, requirement coverage, promotion, rollback, or live-health evidence. |
+| `workflows` | `unavailable`, reason `checker-auth-context-incompatible`. | The remote workflow inventory is unproven. No workflow-list or parity conclusion is adopted. |
+| `oidc` | `unavailable`, reason `checker-oidc-schema-incompatible`. | The actual repository OIDC setting, subject format, trust, claims, token exchange, and use remain unproven. |
+
+GitHub's existing OIDC source row (`SRC-WERPC-039`) continues to define the
+job-scoped identity design boundary. The current official
+[OIDC REST contract](https://docs.github.com/en/rest/actions/oidc) additionally
+defines `use_default` as boolean and `include_claim_keys` as optional and
+ignored when the default format is used. That API contract explains why a
+nullable projection needs checker handling, but the discarded raw response
+cannot establish this repository's value. The fixed local recovery therefore
+records compatibility unavailability, not an OIDC setting or absence claim.
+This diagnostic API contract is not a newly allocated ledger source and adopts
+no repository-setting claim.
+
+#### Closed request dispositions
+
+| Request | Workspace As-Is | Gap / retained boundary | Target | Verification / disposition |
+| --- | --- | --- | --- | --- |
+| `REQ-WERPC-022` | Five tracked workflows implement static CI, changelog review-artifact creation, and maintenance; no tracked deployment, publish, cloud-login, promotion, or rollback workflow was found. | Remote workflow inventory is unavailable, retained runs are historical metadata, and zero listed artifacts/environments do not prove historical or runtime absence. Hosted current-revision execution, promotion, rollback, reconciliation, and live health remain `DEFER` (`hosted-ci`). | If delivery is introduced, bind a protected promotion owner to artifact identity, claim-aware least privilege, bounded rollback, and independent post-change health evidence. | `Partial`. Reverify static declarations with focused validators; require a separately authorized run identity and remote/live record for deeper claims. |
+| `REQ-WERPC-023` | All five local workflows retain top-level `contents: read`, narrow maintenance writes, concurrency, full 40-character action SHAs with version comments, and checkout credential suppression where used. | Actions/default-token and branch-policy projections narrow only the evidence uncertainty; they neither strengthen nor prove per-run permission, authorization or enforcement, upstream action integrity, fork/bypass behavior, ruleset enforcement, secrets, or OIDC. | Preserve least privilege, immutable action references, script ownership, and explicit remote-setting evidence without treating any one control as supply-chain conformance. | `Partial`. Static Actions validators and the dated sanitized setting projection are distinct evidence; hosted effectiveness remains `DEFER` (`hosted-ci`). |
+| `REQ-WERPC-024` | The quality contract retains targeted, affected, staged, tests, all-files, formatter-review, rerun, and diff-check evidence; frozen hooks cover repository formatting, lint, syntax, and security surfaces. | A configured hook or static contract does not prove every command ran. No general browser/end-to-end or mutation-testing lane is declared for this infrastructure/documentation topology. | For each change, record the exact command, version, path/index scope, and result; add executable-surface-specific unit, integration, end-to-end, mutation, and coverage contracts only when such a surface exists. | `Verified` at repository-static depth (`repo-static`); command-specific outcomes are separately required and cannot promote hosted or live status. |
+| `REQ-WERPC-033` | Requirements Validation, Product/Artifact Verification, and Product/System Validation remain separate questions; testing is one method, not a synonym for any of them. | No current-HEAD requirement-result trace, discrepancy closure, risk-proportionate independent review, stakeholder/user participation, intended-use scenario, or representative environment was observed. | Bind an approved requirement/spec and artifact version to bidirectional verification evidence, then separately validate intended use with named stakeholders/users, representative scenarios/environment, discrepancies, corrective action, and closure. | `Partial`; product/stakeholder validation remains `DEFER` (`human-judgement`). A `VAL-*` identifier or static PASS is not a validation outcome. |
+
+#### Delivery and QA control matrix
+
+| Scope | Workspace As-Is | Gap / `DEFER` | Target | Verification rule |
+| --- | --- | --- | --- | --- |
+| Triggers and jobs | `ci.yml` declares `push`/`pull_request` on `main` plus manual dispatch, an explicit affected-surface `changes` job, selected static jobs, and fail-closed `ci-summary`; tag and maintenance workflows retain their narrower purposes. | Static YAML does not prove GitHub parsed, selected, scheduled, or completed the current revision. | Keep trigger, selection, dependency, timeout, and final failure semantics explicit. | Validate syntax/topology locally; use a retained hosted run identity for scheduler and conclusion claims. |
+| Concurrency | All five workflows declare scoped concurrency; CI cancels superseded ref runs while changelog retains tag runs. | Queue and cancellation behavior remain hosted-system outcomes. | Preserve scope-specific cancellation policy and revisit it when release/promotion semantics change. | Static declaration is repository evidence; actual ordering/cancellation needs run metadata. |
+| Artifact and environment | Changelog declares a seven-day `CHANGELOG.md` review artifact; delivery workflows declare no environment. Remote totals were both zero. | Neither declaration nor zero listing proves upload, access, retention/deletion, historical absence, protection, approval, secret handling, or integrity. | Define artifact identity, classification, retention, digest/signer checks, and protected environment only with an approved delivery design. | Require artifact/environment identifiers and dated administration or run evidence; otherwise `DEFER`. |
+| Promotion and rollback | Desired state changes only through governed Git; no workflow performs promotion, deployment, or rollback. | A Git revert contract is not proof of reconciliation, recovery time, or health. | Give promotion and rollback separate owners, authorization, stop conditions, and post-change health method. | Verify the changed artifact, then validate recovery in an authorized representative environment. |
+| Permissions and action references | Local defaults are read-only, maintenance writes are narrow, remote actions are full-SHA-pinned, and checkout credentials are suppressed where used. | A declaration or SHA does not audit source code, transitive dependencies, runner integrity, or effective token/secret use. | Retain least privilege and immutable references; review upstream code/provenance and runtime permission separately when risk requires it. | Run the static Actions/security validators; require per-run evidence for effective authorization. |
+| Shell and script ownership | Workflow orchestration owns bounded inline shell; reusable repository checks are routed through named `scripts/` or `infrastructure/tests/` owners. | Inline install/selection shell remains workflow-owned and can drift from script contracts; successful syntax is not semantic correctness. | Keep reusable policy in reviewed scripts and leave only bounded orchestration inline; extract repeated or growing logic through its canonical owner. | `actionlint`/shell/static contract checks cover syntax and declared linkage; behavior needs direct tests or hosted evidence. |
+| Supply chain | Frozen pre-commit revisions, full-SHA actions, hash-required binary-only Python installs, and a checksum-verified Gitleaks bootstrap are declared. | These controls do not establish transitive provenance, SLSA conformance, attestation, signer trust, or produced artifact integrity. | Bind dependencies and artifacts to digest, signer, provenance, and verification policy appropriate to the release. | Treat `SRC-WERPC-036`, `040`, `041`, and `043` as design benchmarks, not conformance evidence. |
+| Formatting, lint, and syntax | Pre-commit and repository validators cover whitespace, structured data, Markdown, shell, Actions, Dockerfile, and manifest/static contracts when selected. | Formatter success can mutate bytes and cannot prove semantics; dormant Prettier is not coverage. | Review mutations, restage the exact logical set, and rerun the affected gates. | Report each named command and path/index scope as `PASS`, `SKIP`, `FAIL`, or `DEFER`. |
+| Unit and integration tests | Validator self-tests and infrastructure/GitOps/secret/Vault-ESO contract tests exist for their named surfaces. | No generic application unit/integration suite or invented coverage percentage applies to this Bash/YAML/Markdown repository. | Add surface-specific tests and coverage criteria with a future executable feature. | A direct suite result proves only its selected behavior and fixture boundary. |
+| End-to-end and mutation | No reviewed CI job declares browser/end-to-end or mutation testing. | Missing lanes are not passing or skipped evidence; production-user flow and fault-detection strength remain unmeasured. | Introduce them only with a product surface, representative journey/fault model, owner, stable fixture, and result contract. | Until then, record the lane as absent/`DEFER`, never `PASS`. |
+| Affected, staged, all-files, and diff | The central quality contract defines affected selection, exact-index staged runner plus plain pre-commit, all-files pre-commit, formatter review/rerun, and unstaged/staged diff checks. | One lane cannot substitute for another, and a working-tree pass does not prove the Git index. | Preserve the ordered completion sequence and exact staged logical unit. | Record every command, selected path set, index state, formatter mutation, rerun, and final diff result independently. |
+
+#### Verification and Validation implementation matrix
+
+| Concern | Workspace As-Is | Gap / `DEFER` | Target | Required evidence |
+| --- | --- | --- | --- | --- |
+| Requirements Validation | PRD/Spec/acceptance review can inspect whether requirements are correct, complete, feasible, verifiable, and agreed before implementation (`SRC-WERPC-059`). | No named stakeholder agreement or current requirements-validation session was observed. | Resolve ambiguity and disagreement with requirements owners before treating the baseline as verification input. | Approved requirement revision, participants, review method, findings, changes, and agreement/closure. |
+| Product/Artifact Verification | Targeted checks, tests, analysis, inspection, review, and demonstrations can compare an identified artifact with approved criteria (`SRC-WERPC-058`). | Static PASS is bounded to the named command and does not establish intended-use fitness. | Maintain bidirectional requirement-to-result trace for the exact artifact/commit and method environment. | Requirement and criterion IDs, artifact identity, method/tool/version, result, discrepancy, corrective action, and re-verification closure. |
+| Product/System Validation | The workspace definition reserves validation for stakeholder expectations and intended use in an intended or representative environment (`SRC-WERPC-059`). | No named stakeholder/user/operator, intended-use scenario, representative environment, or acceptance result was collected. | Plan validation separately after sufficient verification, with realistic scenarios and affected users/operators. | Expected-versus-observed scenario results, participants, product/environment versions, discrepancies, corrective action, and revalidation. |
+| Testing as a method | Tests are one admissible verification or validation method when their oracle and environment answer the stated question. | A test name alone does not identify the requirement, oracle, representativeness, or independence. | Select test, analysis, inspection, or demonstration according to the risk and question. | Method rationale, inputs, oracle, setup, observed result, and limitation. |
+| Traceability | Spec/Task/Plan and `VAL-*` identifiers provide repository routing points. | Identifier presence is not a bidirectional requirement-to-result record or outcome. | Link requirements through design, implementation/artifact, method, result, discrepancy, and closure. | Both forward and backward links with versioned baselines and exact result identities. |
+| Discrepancy handling | Fail-closed local lanes expose nonconformance at their bounded surface. | No generic root-cause, waiver, corrective-action, or recurrence-prevention record follows from a failing conclusion alone. | Classify the discrepancy, preserve evidence, correct the artifact or method, and re-run; control any waiver explicitly. | Finding identity, impact, owner, root cause where known, decision, corrective action, and closure/retest evidence. |
+| Independence | Reviews and validators can be separated from implementation, proportionate to risk. | Tool execution or a second agent does not automatically establish organizational independence or IV&V. | Name reviewer authority, conflicts, method, and independence level required by risk. | Reviewer/authority record, scope, separation, findings, resolution, and approval limits. |
+| Representative users and environment | No local static command claims a production user, operator, hosted runner, cloud trust, cluster, or live workload. | Stakeholder acceptance and intended-use fitness cannot be inferred from repository or remote metadata. | Use named anticipated users/operators and a justified representative environment without exposing secrets. | Participant roles, scenario, environment equivalence/limitations, safety controls, expected/observed results, and closure. |
+
+The initial focused integration probe correctly returned
+`ERROR INTEGRATION_SECTION` before this append. After integration, the same
+probe returned `PASS validate-integration`; the Actions-security, CI-Python,
+affected-surface, agent-governance-CI, strict Markdown, strict links/owners,
+and diff checks also passed. These are named repository-static results only.
+No result in this section authorizes workflow dispatch, rerun, approval,
+setting mutation, deployment, publication, push, or merge.
+
+### 2026-08-23 conditional OIDC and supply-chain increment
+
+GitHub's current [OIDC security reference](https://docs.github.com/en/actions/reference/security/oidc)
+adds a date-sensitive boundary: the immutable subject-format behavior applies
+automatically to repositories created after 2026-07-15, while an existing
+repository can enter that format by opt-in or by a qualifying rename or
+transfer after that date. This public product rule does not establish this
+repository's creation, rename, or transfer history, opt-in state, effective
+subject format, issued JWT claims, cloud trust policy, token exchange, or
+workload identity. Those
+administration and runtime evidence classes remain `DEFER`.
+
+The tracked workflows still declare no `id-token: write` permission or cloud
+identity consumer. At repository-static depth, no immediate OIDC workflow or
+trust-configuration change is justified. If OIDC is later introduced, the
+owner must record the repository creation/rename/transfer history or opt-in
+decision, exact subject and audience contract, least-privilege job boundary,
+cloud-side trust conditions, and a separately authorized redacted exchange
+result.
+
+The [secure-use guidance](https://docs.github.com/en/actions/reference/security/secure-use)
+and [artifact-attestation guidance](https://docs.github.com/en/actions/concepts/security/artifact-attestations)
+do not change the existing boundary: a full commit SHA is the immutable action
+reference, not an upstream-code or transitive-provenance audit, and generating
+an attestation is distinct from consumer-side verification against explicit
+repository, workflow, signer, and digest expectations. No attestation,
+verification, hosted run, or release artifact was inspected; those outcomes
+remain `DEFER`.
 
 ## Related Documents
 

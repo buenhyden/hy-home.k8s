@@ -161,6 +161,45 @@ stage routing, script inventory, GitOps/examples/version ownership, or generated
 output changes; recheck the external proposal/spec when a web/MCP/retrieval
 design is proposed. Run the generator check after every owner-map change.
 
+### 2026-08-20 full-corpus reverification
+
+This increment consumes the reviewed `REQ-WERPC-021` row and its empty
+source/claim allocation slice. It preserves the distinction among canonical
+source ownership, deterministic routing output, publication, ingestion,
+retrieval, and provider runtime.
+
+#### REQ-WERPC-021 LLM-WIKI routing and retrieval boundary
+
+- **Sources and result:** `unchanged` / `confirmed`, using existing
+  `SRC-WERPC-021`, `SRC-WERPC-086`, and `SRC-WERPC-087` boundaries and selector
+  `llm-wiki-and-knowledge-routing.md#llm-wiki-baseline`. `llms.txt` remains a
+  community proposal, and MCP Resources remain URI-addressed server data whose
+  incorporation is application-driven.
+- **As-Is:** LLM-WIKI remains a deterministic Markdown canonical-owner link
+  map. Its README owns declared inputs, the generator owns output, and
+  `wiki-index.md` is generated state. The research report did not run the
+  generator; this integration task runs the existing `--check` lane and records
+  that result in lifecycle evidence without changing the immutable baseline
+  observation.
+- **Gap / Target:** no web publication, llms.txt consumer, MCP server/session,
+  capability negotiation, access policy, search index, RAG corpus, ingestion,
+  deletion, retrieval, or retrieval-quality evaluation was observed. Retain
+  canonical-owner-first routing and generator-only updates; design any future
+  discovery, publication, or retrieval surface under a separate authority.
+- **Evidence / rejected inference:** repository-static plus official/public
+  specification evidence. A Markdown map, current proposal, MCP specification,
+  or generator PASS cannot prove authority, source currency, publication,
+  ingestion, retrieval, access control, or model use.
+- **Disposition / retained boundary:** `Verified`; blocking class
+  `repo-static`. The current generator check is the only reachable static
+  follow-up in this workstream; all provider/runtime and hosted/user effects
+  remain `DEFER`.
+- **Owner / safe follow-up / trigger:** LLM-WIKI README/generator owners and
+  canonical content owners. Reopen on declared-input, generator, owner-path,
+  index-drift, llms.txt status, or MCP Resources revision change; require a
+  separately approved security and evaluation design before publication or
+  retrieval.
+
 ## Related Documents
 
 - [LLM-WIKI README](../../llm-wiki/README.md)

@@ -294,6 +294,42 @@ or a named reader-validation activity is approved.
 promotion. New source registered: `SRC-WERPC-076`. New claim registered:
 `CLM-WERPC-010-09`.
 
+### 2026-08-20 full-corpus reverification
+
+This increment consumes the reviewed `REQ-WERPC-020` row and its empty
+source/claim allocation slice. The current official pages remain unchanged and
+the workspace selector is normalized to
+`documentation-architecture-and-diataxis.md#ditaxis-baseline`. No provider,
+published site generator, or reader study was executed.
+
+#### REQ-WERPC-020 Diataxis architecture and reader evidence
+
+- **Sources and result:** `unchanged` / `confirmed`, using existing
+  `SRC-WERPC-020`, `SRC-WERPC-071`, and `SRC-WERPC-089` boundaries. The
+  official pages still separate tutorial, how-to, reference, and explanation
+  by reader need and still advise against creating empty four-part structures.
+- **As-Is:** `DOC-G2` and `DOC-G3` retain the deliberate absence of tutorial
+  and explanation routes. Guide and Runbook can remain how-to-shaped, Stage 90
+  remains reference-shaped, and ADR/research can explain while each keeps its
+  own authority and lifecycle. `DOC-G1` enum enforcement remains the open
+  repository decision path rather than a reason to add empty families.
+- **Gap / Target:** no named reader evidence establishes whether current
+  classification is useful, accessible, findable, understandable, or safe for
+  a real task. Retain the four purposes as authoring/review tests, preserve the
+  decided absences, and route `DOC-G1` through its existing WORK-013 owner.
+- **Evidence / rejected inference:** repository-static plus official public
+  documentation. The framework neither mandates local profiles nor proves
+  reader outcomes; a profile pass and a declared `how-to` value are not
+  usability or accessibility evidence.
+- **Disposition / retained boundary:** `Partial`; blocking class
+  `human-judgement`. Named reader validation and DOC-G1 execution evidence
+  remain `DEFER`.
+- **Owner / safe follow-up / trigger:** Spec 052 owns `DOC-G1..G3` and the
+  WORK-013 Plan owns enum implementation. Reopen if those decisions change, a
+  current Guide violates its contract, Diataxis materially changes, or a
+  separately approved activity names reader, task, environment, method,
+  threshold, and evidence owner.
+
 ## Related Documents
 
 - [SDLC document contracts](spec-driven-sdlc-and-document-contracts.md)

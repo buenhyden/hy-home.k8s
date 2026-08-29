@@ -16554,6 +16554,1327 @@ newly attained state.
 - No live, hosted, provider-runtime, remote, secret-value, push, publish, or
   deployment evidence was collected or claimed.
 
+## 2026-08-21 - WRFR-006 remote evidence incident and fixed recovery gate
+
+### Metadata
+
+- Date: 2026-08-21
+- Layer: docs, delivery, security
+- Status: blocked
+- Tags: workspace-research, github-actions, remote-evidence, recovery, cleanup
+- Owner: platform
+- Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md#wrfr-006-remote-incident-and-recovery-contract`
+- Provenance: approved pre-remote review, minimized preflights, guarded summary/inventory identities, sanitized checker diagnostic, metadata-only residue inspection, and reviewed recovery design
+- Sensitivity: internal; configuration, credential, state, and residue contents not directly inspected by the controller or checker
+- Retention: durable
+- Next Owner: checker implementer, then independent Python/security reviewers, then WRFR-006 delivery/security integrator
+
+### Progress
+
+WRFR-006 passed its pre-remote security review with `Approved With Minor`,
+Critical/Important/Minor `0/0/1`. The sole Minor was the bounded 403/404
+recognition. The local integration and missing-summary RED probes returned
+`ERROR INTEGRATION_SECTION` and `ERROR PATH_INVALID`. Authentication and exact
+repository-identity preflights then each ran once and succeeded; authentication
+output was discarded and the projected repository was exactly
+`buenhyden/hy-home.k8s`, its GitHub HTTPS URL, and default branch `main`.
+
+The guarded remote summary was initialized and registered. The `workflows`
+query ran once and stopped at `ERROR REMOTE_COMMAND`. The only retained payload
+is sanitized state `failed`, reason `non-allowlisted-failure`, and empty data.
+The bounded checker captured and classified stdout/stderr in memory, but raw
+output was not exposed to the controller or a human, copied into evidence, or
+persisted. No retry, fallback, alternate endpoint, second preflight, or later
+class query occurred. `runs`,
+`actions-permissions`, `workflow-permissions`, `rulesets`,
+`branch-protection`, `environments`, `oidc`, and `artifacts` retain their single
+budgets.
+
+The frozen incident identities are checker
+`584086b297a7446e0a6dea932f0693831a3748813cae6f281bee41eb889c765d`,
+summary
+`cc77a8ae007b71f32328ce159dd03f60d3a32390131710cb6eee675bdbee4b56`,
+and inventory
+`1dc24b116bbd09cb8e36f96a0bfb6c332dac8793f15b3cf33cc858efd8c9c22b`.
+No delivery owner was edited.
+
+### Incident boundary
+
+The checker child lacked authenticated GitHub config/state locations and
+created `.local/state/gh/device-id` in the repository. Its contents were not
+directly inspected by the controller or checker. The exact metadata-only
+identity is device `2096`, UID `1000`, common
+`mtime_ns`/`ctime_ns` `1787287593754570540`: `.local` inode `1747675`, size
+`4096`, mode `0755`, sole entry `state`; `state` inode `2221665`, size `4096`,
+mode `0755`, sole entry `gh`; `gh` inode `3263846`, size `4096`, mode `0755`,
+sole entry `device-id`; and `device-id` inode `3276459`, size `36`, mode `0600`,
+regular file. The controller/checker did not directly read content or compute a
+SHA.
+
+The fixed recovery order is now: commit the three-document contract; implement
+and test the checker; obtain fresh exact-byte Python/security approval; run
+`artifact-rebind-checker-only` once; run
+`remove-owned-gh-state-residue --root .` once; run the no-network
+`remote-recover-auth-context` once; then consume only the remaining eight query
+budgets in order. Neither preflight nor `workflows` may run again. The local
+recovery preserves `observedAt` and changes only the existing `workflows` entry
+to `unavailable`, reason `checker-auth-context-incompatible`, empty data.
+
+Every summary mutation must update the registered summary and same-index
+inventory record with exact FileVersion CAS and compensating rollback.
+Summary-only rollback is allowed only when inventory CAS did not commit. After
+inventory commit, later failure compensates inventory first against its exact
+returned FileVersion, then summary against its exact returned FileVersion, and
+postvalidates the old pair. Two-file atomicity is unavailable; any drift,
+contention, or compensation failure is a distinct fail-closed incident, not
+rollback success. Cleanup uses literal dirfds, `O_NOFOLLOW`, full metadata identity,
+exact entry sets, pre/post `fstat`, empty-directory removal, and final `.local`
+absence. Precondition failure guarantees no mutation. Unlink plus three rmdir
+operations are not one POSIX atomic action: a failure after unlink may leave a
+monotonic partial cleanup, which must return fixed `CLEANUP_PARTIAL`, must not be
+retried, and is never success. Success requires complete `.local` absence.
+Same-UID contention remains an explicit platform limitation.
+
+Remaining-query children receive only minimal `PATH`/locale, fixed
+`GH_CONFIG_DIR=/home/hy/.config/gh` and
+`XDG_STATE_HOME=/home/hy/.local/state`, plus only the Plan-enumerated non-secret
+prompt, pager, update-notifier, color, and terminal-prompt controls. `HOME`,
+tokens, `GH_HOST`, `GH_REPO`, `GH_DEBUG`, `LD_*`, proxy, `PAGER`,
+`XDG_CONFIG_HOME`, and other config variables are forbidden. The controller and
+checker may not directly read, hash, copy, print, or persist config/state
+contents. Only the approved `/usr/bin/gh` child may consume the standard-path
+bytes for authentication/state operation, without exposing them through raw
+output or evidence. The Plan pins the metadata-only leaf snapshot and the ancestor
+dirfd rules: `/` and `/home` are trusted system prefixes with no current-process
+write access; `/home/hy` downward is current-UID-owned with group/world write
+bits clear. String path resolution is not an identity check.
+
+### Handoff
+
+WRFR-006 is `In Progress` and blocked. The next permitted action is the reviewed
+checker TDD/recovery sequence, not a remote retry or delivery-owner edit. Any
+checker byte change invalidates prior approvals. Any metadata drift requires a
+new tracked amendment. No push, merge, publication, live infrastructure,
+provider-runtime, secret-value, or additional remote action occurred.
+
+## 2026-08-22 - WRFR-006 OIDC schema incident and fixed recovery gate
+
+### Metadata
+
+- Date: 2026-08-22
+- Layer: docs, delivery, security
+- Status: blocked
+- Tags: workspace-research, github-actions, remote-evidence, oidc, recovery
+- Owner: platform
+- Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md#wrfr-006-oidc-schema-incident-and-recovery-contract`
+- Provenance: approved first recovery, guarded registered-summary transitions, sanitized checker diagnostic, and GitHub primary OIDC REST documentation
+- Sensitivity: internal; raw response, configuration, credential, and state contents were not exposed, copied, or persisted
+- Retention: durable
+- Next Owner: checker implementer, independent Python/security reviewers, then WRFR-006 delivery/security integrator
+
+### Progress
+
+The first WRFR-006 recovery completed under its tracked contract. The approved
+checker was rebound; the repository `.local` residue was removed exactly once;
+`workflows` was converted through the fixed no-network recovery; `.local`
+absence and `residue` passed. No preflight or `workflows` retry occurred.
+`runs`, `actions-permissions`, `workflow-permissions`, `rulesets`,
+`branch-protection`, and `environments` then ran exactly once each in order and
+their sanitized observations were retained.
+
+The sole `oidc` query stopped with `ERROR REMOTE_SCHEMA`. Only state `failed`,
+reason `schema-invalid`, and empty data were persisted. The checker captured and
+classified the raw response in process memory, but did not expose it to the
+controller or a human, copy it, or persist it. The raw response is no longer
+available, so the actual returned shape and root cause remain unproven. No
+retry, fallback, alternate endpoint, second preflight, or `artifacts` query
+occurred. `.local` remains absent and `residue` passed.
+
+The second incident identities are checker
+`31a14c46f18bdaa690360f67d263ad78aa440a8345d76c9160c150ba1b4f56a3`,
+summary
+`6255a3734325aab127e81b5730a121c9bf97c38b0611d91c21b9c6f1f7dc9ee2`,
+and inventory
+`008be406a418348269cf5c58c3becf9cac024ba1db6adf1f430e0d9ae5fd927e`.
+The registered summary contains exactly the first eight class records and no
+`artifacts` record.
+The logical query-budget order remains the approved command sequence. The
+registered JSON writer uses `sort_keys=True`, so the persisted class map instead
+uses canonical lexicographic `tuple(sorted(REMOTE_CLASSES[:8]))`; that map order
+is an integrity precondition, not invocation-order evidence.
+
+GitHub's primary
+[OIDC REST documentation](https://docs.github.com/en/rest/actions/oidc)
+defines `use_default` as boolean and `include_claim_keys` as optional and
+ignored when `use_default` is true. That makes a nullable projection plausible,
+but does not prove the lost response contained one or establish the repository's
+OIDC configuration.
+The fixed jq object emits `include_claim_keys` even when the raw field is absent,
+so the permitted compatibility shape is post-projection `null`; a missing
+post-projection key remains invalid.
+
+### Fixed recovery
+
+The only local recovery interface is:
+
+```text
+remote-recover-oidc-schema --workspace DIR --inventory FILE --summary FILE \
+  --expected-inventory-sha256 OLD --expected-summary-sha256 OLD
+```
+
+The closed order is: commit the second three-document contract; add failing
+tests; change the validator so `include_claim_keys: null` is accepted only when
+`use_default` is exactly `true`; implement the fixed local recovery; run compile,
+normal/optimized self-tests, and Ruff; obtain exact-byte independent Python and
+security approval; run the exact checker-only rebind once; run OIDC recovery
+once; prove `.local` absent and run `residue`; invoke only `artifacts` once; then
+prove `.local` absent, run `residue`, and run `remote-validate`.
+
+Recovery performs no network or child process. It requires the exact incident
+hashes and summary shape, preserves repository identity, order, the seven prior
+class records, the OIDC `observedAt`, and `artifacts` absence, and changes only
+OIDC from `failed` / `schema-invalid` / `{}` to `unavailable` /
+`checker-oidc-schema-incompatible` / `{}`. It uses the existing compensating
+summary/inventory CAS and rollback contract. There is no caller-selected class
+or reason.
+
+### Handoff
+
+WRFR-006 remains `In Progress` and blocked. No preflight, first-eight-class
+query, checker mutation, registered-artifact mutation, delivery owner edit,
+raw-output inspection, push, merge, publication, or live mutation is permitted
+before the tracked contract commit and exact-byte checker review. `artifacts`
+is the only unconsumed remote query budget.
+
+## 2026-08-22 - WRFR-006 delivery and quality integration
+
+### Metadata
+
+- Date: 2026-08-22
+- Layer: docs, delivery, quality, security
+- Status: complete
+- Tags: workspace-research, github-actions, ci-cd, qa, verification, validation
+- Owner: platform
+- Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md#wrfr-006-delivery-and-quality-integration`
+- Provenance: immutable delivery/quality report, exact allocation slice, guarded nine-class remote summary, exact implementation commit, registered report/package, focused validators, and independent post-commit review
+- Sensitivity: internal; only sanitized remote fields and aggregate counts are retained here
+- Retention: durable
+- Next Owner: WRFR-007 sole ledger integrator
+
+### Progress
+
+The second fixed recovery gate completed without a preflight or evidence-class
+retry. Exact-byte checker review and checker-only rebind passed; the fixed
+no-network OIDC recovery retained the compatibility-unavailable boundary;
+repository `.local` absence and residue passed; only the untouched `artifacts`
+query then ran once. The final nine-class summary SHA-256 is
+`da137936a4ec5cbb10c06303b96e22cc933188fec7042b8aa0dd774e627d4d21`
+and `remote-validate` passed.
+
+The immutable delivery/quality report SHA-256 is
+`f55cc2285577530544c48f26fb497184b43bb9822236e46a736294ed8695d993`.
+Its exact allocation slice is `REQ-WERPC-022`, `023`, `024`, and `033`, with no
+new source or claim identity. The existing CI/CD, GitHub Actions, QA, and V&V
+owner now contains exactly one `### 2026-08-20 full-corpus reverification`
+section immediately before terminal Related Documents. No research folder,
+duplicate report, or shared-ledger projection was created.
+
+The sanitized summary contains seven observed classes. Actions is enabled with
+allowed-actions mode `all`; default workflow permission is `read`; rulesets are
+empty; the `main` projection requires `ci-summary` but has strict checking and
+administrator enforcement disabled and zero required approvals; environments
+and artifacts each total zero; and the latest-20 run sample contains 13 success
+and 7 failure conclusions over 8 unique head SHAs. `workflows` is unavailable
+with fixed reason `checker-auth-context-incompatible`; `oidc` is unavailable
+with fixed reason `checker-oidc-schema-incompatible`.
+
+These values are setting and historical metadata only. They do not establish a
+current-local-HEAD hosted run, effective merge or token enforcement, workflow
+inventory, failure cause, actual OIDC setting, secret value, artifact history or
+integrity, stakeholder acceptance, intended-use fitness, deployment,
+reconciliation, rollback, or live health. The GitHub OIDC REST contract was
+used only to bound the checker compatibility diagnosis; it is not a newly
+allocated ledger source or a repository-setting claim.
+
+### Verification and handoff
+
+The pre-edit integration probe exited `1` with exact
+`ERROR INTEGRATION_SECTION`. After the append, it returned
+`PASS validate-integration`. GitHub Actions security, CI Python contract,
+affected surfaces, agent-governance CI, strict Markdown, strict links/owners,
+and `git diff --check` all passed. The section covers local triggers/jobs,
+concurrency, artifacts/environments, promotion/rollback, permissions and
+full-SHA pins, shell/script ownership, supply-chain evidence, formatting,
+linting, syntax, unit/integration, end-to-end, mutation, affected, staged,
+all-files, diff, and the full Requirements Validation / Product Verification /
+Product Validation evidence matrix.
+
+Commit `ae7a22620ede8bfdb387c4528952f156e82a7aa2` contains the exact
+four-file logical unit. Registered report SHA-256 is
+`00856efaed17e3d5267e13d1c83399529bab7203201167d873bf83712aaec6a9`;
+registered review-package SHA-256 is
+`71a09244cce2ddb51bc2f1a1568ed874d1614837423e430fb8d3bbe816b3b876`
+for exact range `fcbcd869..ae7a2262`; final inventory SHA-256 is
+`68b4173514a287eaff1e9e1c3b50c7ad57d3e6dbce2eb01b6dcd10ba9d08c1bc`.
+The post-commit reviewer returned `APPROVED WITH MINOR`,
+Critical/Important/Minor `0/0/1`, with no material implementation defect. The
+sole Minor was the intentional pre-closure state corrected here.
+
+WRFR-006 is complete. WRFR-007 is queued and ready for the sole atomic
+source/claim/scope/README projection. No push, merge, publication, workflow
+dispatch, setting mutation, deployment, or live action is claimed here.
+
+### WRFR-007 pre-integration checker recovery gate
+
+At clean commit `cb494def67049706670e63d5157676886885faa7`, the first exact
+Task 8 shared-ledger command ran before any owner edit and exited `1` with
+`ERROR ARGUMENTS_INVALID`. Checker SHA-256 was
+`2308481b8b0ded1647c105a4ab9aad0292db1459e53b8989a49f1fd3bdd7b038` and
+inventory SHA-256 was
+`68b4173514a287eaff1e9e1c3b50c7ad57d3e6dbce2eb01b6dcd10ba9d08c1bc`.
+The registered baseline, allocation, reports, summary, and review artifacts
+were not changed.
+
+The checker parser recognizes only the five topical workstreams. Its
+no-workstream path also validates only those five, so both planned pseudo-mode
+commands are rejected and terminal validation can omit the shared ledger,
+scope projection, pack census, and lifecycle reconciliation. The tracked Plan
+now defines the append-only table schemas, exact `14/36/91/141` terminal
+census, derived report distributions, ten scopes, lifecycle/ADR/registry/
+progress relationships, fixed fail-code families, and terminal composition.
+
+WRFR-007 is blocked at the recovery gate. The next owner is the bounded checker
+repair: failing tests first, minimal implementation, compile, normal and
+optimized self-tests, Ruff, exact-byte Python/security review, and a tracked
+candidate-hash amendment. Only then may fixed
+`artifact-rebind-checker-only` run once against the identities above. After
+residue and self-test proof, the unchanged Task 8 probe must fail semantically
+with `ERROR INTEGRATION_SOURCE_PROJECTION`; only that RED can resume the sole
+ledger integrator. No remote query, live action, push, merge, publication, or
+new research owner is authorized.
+
+The bounded test-first repair is now exact-byte approved. Final checker SHA-256
+is `3cdaf66628e817663d9306b8e31c95788db0111fb30f1dcdcedc027fbdab338a`;
+size/mode/owner are 367108 bytes, `0600`, and `hy:hy`. All 128 normal and
+optimized self-tests, compile, Ruff check, and Ruff format-check pass. Fresh
+Python and security reviewers both returned `APPROVED` at
+Critical/Important/Minor `0/0/0`. The checker now composes the five topical
+modes with exact shared-ledger and reconciliation validators, uses registered
+reports through the production `main()` path, preserves the terminal ledger
+suffix, and validates the Plan's closed incremental table grammar. No candidate
+was rebound during review.
+
+One unregistered review cache remains before stateful execution. The fixed file
+identity is device/inode `2096/1754901`, 404505 bytes, mode `0600`, UID:GID
+`1000:1000`, mtime/ctime `1787398444410567416` ns, SHA-256
+`4589e081b801c768b74f855815e0d67f6a9c452dd8e2f1d54c6dabd43815f68e`.
+Its exact cache directory is device/inode `2096/1694147`, mode `0755`, UID:GID
+`1000:1000`, same mtime/ctime, with that one entry only; the retained SDD parent
+is device/inode `2096/4406235`, mode `0700`, UID:GID `1000:1000`. After this
+amendment commit, remove only the file and then the empty cache directory using
+the Plan's retained-dirfd, no-follow, complete-identity, hash, `fsync`, and
+post-absence procedure. Next, run the fixed checker-only rebind exactly once
+against inventory
+`68b4173514a287eaff1e9e1c3b50c7ad57d3e6dbce2eb01b6dcd10ba9d08c1bc`
+and old checker
+`2308481b8b0ded1647c105a4ab9aad0292db1459e53b8989a49f1fd3bdd7b038`,
+then residue/self-tests and the unchanged semantic Task 8 RED. WRFR-007 remains
+blocked until that ordered sequence completes.
+
+### WRFR-007 Stage 90 frozen-blob transition-guard recovery
+
+The checker recovery completed and Task 8 resumed through the three research
+owners. Shared integration, strict document-registry, strict Markdown-profile,
+and diff checks pass, but strict links exits `2` with
+`configuration error: reviewed Stage 90 move source differs from its frozen blob`.
+The source is `docs/90.references/research/2026-08-08-wer/README.md`; its frozen
+base Git blob is `6bfec251d8927dd82f5c12b49c013a598c64d088` and its reviewed Task 8
+successor Git blob is `11719d258d0454d68f3e6b6ed0377c3d3b9de6b2`.
+
+The recovery is closed to one source-specific `(base, target)` transition map
+used by both the Stage 90 reviewed-move and immutable-historical-alias checks.
+It must preserve the current move-edge count `29` and immutable alias
+source/edge/occurrence counts `27/93/169`, while rejecting foreign keys, base
+mismatch, non-lowercase-40hex values, an equal base and target, insertion or
+prefix overlap, and arbitrary mutation. Only
+`scripts/validate-links-and-owners.py` and
+`tests/test_archive_validation.py` may change in the repair.
+
+Next owner is the bounded transition-guard implementer after this three-document
+contract commit. Required order is focused TDD RED/GREEN; compile and Ruff;
+focused/full archive tests, validator self-test, strict links, and diff check;
+fresh independent code/security review; exact two-file guard commit; then the
+original Task 8 Step 5 rerun. WRFR-007 remains blocked/in progress. No Task 8
+completion, post-commit review, remote query, live action, push, merge, or
+publication is claimed.
+
+### WRFR-007 pre-commit integration handoff
+
+The pre-owner checker probe reached accepted semantic RED
+`ERROR INTEGRATION_SOURCE_PROJECTION`. The closed transition-guard recovery
+contract was committed as
+`0a9a9e656c0655617e1c9ea3c3df28b98ad56d34`, and its exact two-file
+implementation was committed as
+`545f114dd5080ac541ba2ae9bec9a18d24f58129`. Fresh independent final guard
+review returned Critical/Important/Minor `0/0/0`.
+
+Task 8 Steps 2 through 4 now own exactly the additive source/claim ledger block,
+the ten-scope projection, and the pack reconciliation. The original Step 5 is
+fully GREEN: shared integration returns `PASS validate-integration`; the strict
+document registry returns `540 paths`; strict Markdown profiles return `0`
+violations; strict links returns `PASS CROSS-DOCUMENT`; and
+`git diff --check` passes.
+
+WRFR-007 is in progress at Step 6. Next owner is the controller for the exact
+six-file integration diff, commit, registered package, and independent
+post-commit ledger/source-fidelity and task reviews. No integration commit,
+package, post-commit approval, WRFR-007 completion, remote query, live action,
+push, merge, or publication is claimed by this handoff.
+
+### WRFR-007 post-commit shared integration closure
+
+The exact six-file integration commit is
+`fef53976b97c560de0a9f020e87be1e7e0e1c3b8`
+(`docs: integrate full-corpus research evidence`). It modified only the shared
+source/claim ledger, scope projection, pack README, Plan, Task, and durable
+progress files. No new research folder, duplicate topical report, duplicate
+request owner, remote query, live action, push, merge, publication, workflow
+dispatch, or setting mutation occurred.
+
+Registered implementer report SHA-256 is
+`f781967ffc14a7e1d23421c06859a3eea0fc78cc510ea2df059165ab487ef7bd`.
+Registered review-package SHA-256 is
+`9c68c5f77a6473f6c6c4c106669514d90080d7a88f5558ef67e6db363e60952c` for exact
+range `cb494def..fef53976`. The package includes the checker-recovery,
+Stage 90 transition-guard recovery, and exact six-file integration commits so
+the review surface preserves the full WRFR-007 unblock chain.
+
+Post-commit owner review of ledger/source-fidelity and task/spec quality
+returned `APPROVED`, Critical/Important/Minor `0/0/0`. The reviewed evidence
+confirms that `SRC-WERPC-091` and `CLM-WERPC-013-01..06` are allocated exactly
+once, the ten-scope projection exists once, the terminal pack census is
+`markdownFiles=14, requests=36, sources=91, claims=141`, and prior ledger rows
+were not reflowed.
+
+Rerun validation after commit:
+
+- Shared integration: `PASS validate-integration`.
+- Strict document contract registry: `PASS document contract registry: 540 paths`.
+- Strict Markdown profiles: `0` violations.
+- Strict links/owners: `PASS CROSS-DOCUMENT`.
+- Diff hygiene: `git diff --check` PASS.
+- Artifact residue: `PASS residue` with `artifact-inventory.json`.
+
+WRFR-007 is complete. WRFR-008 is queued and ready for the reconciliation
+preprobe. No terminal lifecycle completion, whole-branch review, terminal
+cleanup, push, merge, publication, workflow dispatch, remote query, hosted
+state, provider-runtime state, or live infrastructure state is claimed here.
+
+### 2026-08-22 WRFR-007 provenance truth correction
+
+This correction explicitly supersedes the immediately preceding claim that the
+combined post-commit owner review was `APPROVED`, Critical/Important/Minor
+`0/0/0`, and that WRFR-007 was complete. The earlier section remains intact as
+historical evidence and is not deleted or rewritten.
+
+`task-8-brief.md` was generated and registered only after integration commit
+`fef53976b97c560de0a9f020e87be1e7e0e1c3b8`. It cannot prove registered brief
+consumption before implementer dispatch. The late brief, implementer report,
+and review package are preserved immutable and must not be rewritten to repair
+event order. Independent task/spec re-review therefore withdrew its prior
+approval and records one Important finding, Critical/Important/Minor `0/1/0`.
+The separate ledger/source content review remains `APPROVED`,
+Critical/Important/Minor `0/0/0`; integration commit and content, terminal
+counts, identifiers, scope projection, evidence boundaries, and all executed
+validation results remain preserved.
+
+WRFR-007 is blocked and not complete. Explicit human direction is required for
+exactly one of two allowed next paths: **A**, a documented one-time exception
+accepting the exact full Plan and scoped prompt as implementation evidence,
+without rewriting any late artifact and with a new scoped closure review; or
+**B**, a closed re-execution that withdraws and reapplies the three research
+projections after a registered pre-dispatch brief, followed by a new fix package
+and independent review. WRFR-008 remains queued but blocked and must not begin
+before that decision. No exception, re-execution, completion, push, merge,
+publication, remote query, provider-runtime action, or live action is claimed.
+
+### 2026-08-22 forbidden `sdd-workspace` helper incident
+
+After the Task 8 provenance truth correction, the controller mistakenly invoked
+the forbidden canonical `sdd-workspace` helper while recovering context. The
+command created empty `.superpowers/sdd/plan` with device/inode
+`2096/4541614`, mode `0755`, UID:GID `1000:1000`, and mtime/ctime
+`1787407543766841537` ns. It also rewrote `.superpowers/sdd/.gitignore` with
+identical bytes `*\n` and unchanged SHA-256
+`cdbcae15105d6b781e620813c79c7e868740d4e9cc53ce6f5fcbbc12387adf4b`.
+The marker remains device/inode `2096/4410802`, mode `0644`, UID:GID
+`1000:1000`; its mtime/ctime changed from the recorded
+`1787208168057628362` ns to `1787407543770964835` ns, invalidating its recorded
+FileVersion.
+
+The canonical Plan workspace remains device/inode `2096/4406235`, mode `0700`.
+Inventory SHA-256 remains
+`058cad35454e285dcc4c7b9b2be8ede06e111090ec45f78762cd5a001c14b545`,
+and no canonical task-artifact bytes changed. The foreign sibling and marker
+version drift add a separate WRFR-009 cleanup blocker. No deletion, chmod,
+restoration, or recovery was attempted.
+
+The Task 8 provenance decision still has exactly the two previously recorded
+paths A/B. This SDD incident is a separate mandatory gate: explicit human
+direction, a one-time cleanup-recovery design, and independent review are
+required before any recovery action or WRFR-009 cleanup. No procedure is
+invented or authorized here.
+
+### 2026-08-23 WRFR-007 correction-record review closure
+
+Truth-correction commit `62fccac1` (`docs: record WRFR007 provenance blockers`)
+changes exactly the three tracked Plan, Task, and durable-progress documents.
+Its initial correction review rejected only stale Tasks current-state and
+traceability wording, Critical/Important/Minor `0/1/0`. Scoped fix commit
+`e9be3f7a` (`docs: reconcile WRFR007 traceability`) changes exactly `tasks.md`,
+with `11 insertions(+), 8 deletions(-)`.
+
+The two registered review identities are:
+
+- `task-8-fix-1-review-package.md`, exact range `8df025d5..62fccac1`, one
+  commit, `25,554` bytes, SHA-256
+  `87785a9c160a9fffbbf1b928c2a09544eddbdfed0baf18d15b3c640e96e64cc1`;
+- `task-8-fix-2-review-package.md`, exact range `62fccac1..e9be3f7a`, one
+  commit, `6,830` bytes, SHA-256
+  `2ede5fdeae5d88ce7661fa354b2fa812fbe2f3182aa127cb65264a464ababbde`.
+
+Final affected and staged lanes each passed with repository-quality exit `0`
+and exactly one success marker. Plain exact-index pre-commit passed, and cached
+and uncached diff checks passed. Scoped re-review returned
+`ADDRESSED/APPROVED`, Critical/Important/Minor `0/0/0`. This approval closes
+only the truth-correction record's consistency; it does not approve the
+original Task 8 provenance, choose path A or B, authorize WRFR-008, or authorize
+cleanup recovery.
+
+The all-files detect-secrets findings at `tests/test_archive_validation.py`
+lines `1168`, `1169`, and `1754` remain classified as three deterministic Git
+blob-ID false positives, Critical/Important/Minor `0/0/3`. Separate inline
+pragma remediation was recommended but not implemented; this record does not
+authorize a secrets-baseline refresh.
+
+WRFR-007 and WRFR-008 remain blocked pending explicit human direction on the
+Task 8 A/B provenance decision. WRFR-009 remains separately blocked pending a
+human-approved cleanup-recovery design and independent review. No Task 8
+completion, WRFR-008 execution, cleanup recovery, preprobe, push, merge, remote,
+or live action is claimed.
+
+### 2026-08-23 WRFR-007 Path B and cleanup-recovery contract ruling
+
+#### Metadata
+
+- Date: 2026-08-23
+- Layer: docs
+- Status: in-progress
+- Tags: workspace-research, provenance, replay, cleanup-recovery
+- Owner: platform
+- Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
+- Provenance: human Path B ruling, separately approved reviewed cleanup design, Git object inspection, and read-only filesystem identity inspection at tracked `HEAD` `7ea1d08d59213e9aa975ae1c4bf04435ba09ac93`
+- Sensitivity: internal
+- Retention: durable through WRFR-009 closure
+- Next Owner: Task 8B replay controller; then independent WRFR-007 closure reviewer
+
+#### Progress
+
+The human selected Path B for the Task 8 provenance correction. This is a
+closed replay within `WRFR-007`, not a new Plan Task or WRFR. The `task-11-*`
+prefix is reserved only for replay evidence. Before this contract amendment no
+`task-11-*` artifact existed. Existing `task-8-*` and `task-12-*` artifacts are
+immutable and retain their original timing and meaning.
+
+Git proves the reviewed projection transition from predecessor commit
+`545f114dd5080ac541ba2ae9bec9a18d24f58129` to integration commit
+`fef53976b97c560de0a9f020e87be1e7e0e1c3b8`: ledger blob
+`a6feed2026d19261f42f475f52f3f746eeee4122` to
+`e4ed30b5602278b212a5e035a9dded222fae8d85`, scope-index blob
+`f7e4b60cce6a7d5ee5c706ab3a6a8fae663e9bed` to
+`6c2d4723c69821a9681fa45151ea70b528ff66fa`, and pack-README blob
+`6bfec251d8927dd82f5c12b49c013a598c64d088` to
+`11719d258d0454d68f3e6b6ed0377c3d3b9de6b2`. Task 8B requires exactly two
+adjacent three-path commits: withdrawal to all three predecessor blobs with
+semantic RED `ERROR INTEGRATION_SOURCE_PROJECTION`, followed by reapplication
+to all three successor blobs with GREEN validation. Separate single-commit
+`task-11-review-package.md` and `task-11-fix-1-review-package.md` reviews make
+both actions visible even though the combined tree delta is net zero. WRFR-008
+remains blocked through a fresh post-reapplication WRFR-007 closure review.
+
+The separately reviewed cleanup-recovery design is approved as a design only.
+It changes no checker and preserves historical bootstrap and incident
+provenance. Because ctime cannot be restored, terminal cleanup may match only
+the current reviewed marker successor identity: device/inode `2096/4410802`,
+regular non-symlink, mode `0644`, UID:GID `1000:1000`, size `2`, mtime/ctime
+`1787407543770964835` ns, bytes `*\n`, SHA-256
+`cdbcae15105d6b781e620813c79c7e868740d4e9cc53ce6f5fcbbc12387adf4b`.
+The foreign empty `plan` directory is device/inode `2096/4541614`, mode `0755`,
+UID:GID `1000:1000`, mtime/ctime `1787407543766841537` ns. The canonical Plan
+workspace remains device/inode `2096/4406235`, mode `0700`.
+
+The approved design requires a no-path-argument, descriptor-bound, source-hash
+frozen procedure that validates the exact identities, types, marker bytes/hash,
+empty directory, canonical workspace, and exact three-child parent set before
+mutation. Its only destructive order is descriptor-relative `rmdir(plan)` then
+`unlink(.gitignore)`, with rechecks and terminal proof. Precondition failure is
+zero mutation. A failure after the first call is recorded as partial and never
+recreated or automatically retried. The exact program must pass success,
+fail-closed, race/replacement, and partial-failure fixtures, real-state read-only
+preflight, and independent security/task review. A separate explicit human
+approval over its source hash, final identities, tests, reviews, and exact
+command is still required. No destructive cleanup or SDD finish is authorized.
+
+#### Evidence
+
+- Pre-amendment brief `task-12-brief.md`: device/inode `2096/4605976`, mode
+  `0600`, size `12085`, mtime/ctime `1787418652539336788` ns, SHA-256
+  `4380e06081f186dabb2c02709c397cca6dbf28b7368897b85f24451cdb4e63a2`.
+- Pre-amendment inventory: device/inode `2096/4605988`, mode `0600`, size
+  `11476`, mtime `1787418652699962725` ns, ctime `1787418652700051174` ns,
+  SHA-256 `c042b051df1345eaca531cacafac9c6d706cd768386c4769b6b7207382908598`.
+- Read-only inspection found exactly `.gitignore`, the canonical Plan workspace,
+  and foreign empty `plan` under `.superpowers/sdd`; no `task-11-*` artifact
+  existed. No checker, research projection, ignored incident object, inventory,
+  remote resource, or live resource was mutated.
+
+#### Handoff
+
+The next controller must first create and register `task-11-brief.md`, prove
+pre-dispatch consumption, and freeze the clean starting identities. It then owns
+the exact adjacent withdrawal/reapplication commits, separate packages and
+reviews, and final WRFR-007 closure review. Rollback is not a squashed net-zero
+claim: preserve both replay commits and use a separately reviewed additive fix
+if either identity is wrong. Residual risk is the still-unexecuted replay and
+the intentionally unexecuted destructive cleanup. WRFR-008 remains blocked;
+cleanup execution remains separately human-gated.
+
+### 2026-08-23 Task 12 fix round 1 contract correction
+
+#### Metadata
+
+- Date: 2026-08-23
+- Layer: docs
+- Status: in-progress
+- Tags: workspace-research, provenance, replay, cleanup-recovery, correction
+- Owner: platform
+- Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
+- Provenance: registered Task 13 fix brief, registered Task 14 clerical correction, exact test-only Commit A, and this three-document Commit B
+- Sensitivity: internal
+- Retention: durable through WRFR-009 closure
+- Next Owner: controller validation and narrow task/spec re-review
+
+#### Progress
+
+This entry additively supersedes only the rejected parts of the preceding Task
+12 ruling. The `task-13-*`, `task-14-*`, `task-15-*`, and `task-16-*`
+namespaces are Task 12 correction evidence only; none is a Plan Task or WRFR.
+Registered `task-14-brief.md` corrects only Task 13's mistyped third allowlist
+fixture. Registered `task-13-brief.md` is mode `0600`, size
+`26000`, SHA-256
+`d504dd23da4b4ee33668e735848ab0b5a75f832a3965462028fe940b3e5f993a`;
+registered `task-14-brief.md` is mode `0600`, size `2630`, SHA-256
+`0fbe797d4ef372e594763e196323aaa66f52feb7df66c3fb4d3cf9d19ee22043`.
+Post-registration inventory SHA-256 is
+`c32655b04a3b810c9a902a35512c8d45df8eeb8b7fb5ee153a55fbdb2efe605e`.
+Those artifacts, Task 12 artifacts, inventory, and ignored progress remain
+unchanged.
+
+Path B now has a possible two-state entry gate. Before guarded brief creation,
+all `task-11-*` entries must be absent/non-symlink. After registration and
+before dispatch, exactly the registered frozen `task-11-brief.md` may exist;
+every other `task-11-*` entry is foreign. Its complete FileVersion,
+post-registration inventory, proven pre-dispatch consumption, clean index/
+worktree, starting `HEAD`, and all three successor blobs are mandatory. Path B
+is human-selected but remains unexecuted, and WRFR-008 stays blocked through
+the replay and fresh WRFR-007 closure review.
+
+The cleanup-recovery design is human-approved but pending fresh independent
+security and task/spec re-review because the first security review rejected it.
+The future executable is fixed at
+`/tmp/wrfr-009-sdd-incident-recovery.py`; it must be absent/non-symlink before
+separately approved exclusive no-follow mode-`0600` creation, and its source,
+executed bytes, size, ownership, mode, and SHA-256 must be frozen under
+`C-WRFR-011`. It accepts only `--self-test`, `--check`, or `--execute`, no path
+argument, and runs from the frozen root with
+`PYTHONDONTWRITEBYTECODE=1 python3 -I -B`. This correction authorizes no
+creation, execution, or later deletion.
+
+After the last pre-cleanup consumer, the terminal approval manifest freshly
+binds the worktree root, `.superpowers`, retained `sdd`, incident empty `plan`,
+successor `.gitignore`, mutable canonical workspace, final inventory/protected
+artifacts, and executable. It records type/non-symlink, device, inode, mode,
+UID:GID, size where applicable, mtime, ctime, canonical exact entry sets and
+their hashes, and regular/protected content hashes/FileVersions. The historical
+inventory hash is not terminal evidence. The procedure retains no-follow
+descriptors and an advisory exclusive non-blocking `flock` on `sdd`; cooperating
+actors quiesce, while a non-cooperating same-UID writer remains a residual race
+handled by repeated identity checks and fail-closed results. `O_NOATIME` is used
+when supported without weakening other checks.
+
+Task 10 Step 9 now runs the exact incident recovery before its old marker branch
+and before the separate later SDD finish. After complete preconditions, its only
+namespace sequence is `rmdir(plan)`, `fsync(sdd_fd)`, absence/protected-state
+proof, `unlink(.gitignore)`, `fsync(sdd_fd)`, and final absence, canonical-child,
+protected-content, final-inventory, and residue proof. Any failure after the
+first mutation, including either fsync or final proof, is `RECOVERY_PARTIAL`;
+no completion, recreation, or automatic retry is allowed. A mismatch not exact
+to this incident returns to the old foreign-sibling fail-closed branch. Only a
+proved `PASS` or `RECOVERY_ALREADY_COMPLETE` permits the separate canonical SDD
+finish later.
+
+Result semantics are `0 PASS`, `20 RECOVERY_PRECONDITION`,
+`21 RECOVERY_PARTIAL`, `22 RECOVERY_ALREADY_COMPLETE`, and
+`23 RECOVERY_ARGUMENTS`. Every mode emits one stable `WRFR_SDD_RECOVERY` marker
+with mode, symbolic code, mutation count, and state. Zero mutation excludes
+access-time effects but preserves namespace, data, size, mode, owner, mtime, and
+ctime. Self-tests cover success, already-complete/arguments, every manifest and
+content mismatch, lock/race, non-empty sibling, pre-mutation, both fsync points,
+between-call, final-proof, and residue failure. Fresh reviews, passing `--check`,
+and a separate human approval over exact source/executable/manifest/tests/
+command remain hard gates.
+
+#### Evidence
+
+- Commit A `0577d1c0` (`test: allowlist reviewed blob fixtures`) changes only
+  `tests/test_archive_validation.py`, adding the three exact inline
+  `# pragma: allowlist secret` annotations. It does not change fixture values or
+  `.secrets.baseline`.
+- Full `tests.test_archive_validation`: PASS, `70` tests in `123.649s`.
+- Direct `detect-secrets scan tests/test_archive_validation.py`: PASS, zero
+  findings. `.secrets.baseline` remained SHA-256
+  `9e4117d7868cc4d770364ee2108cc1d4314a46121b97f2a443b595364bfebd94`.
+- The exact correction commits are
+  `0577d1c0ea3a1e8abee78a674cbe7918108a0dc7`,
+  `2d76516fbea3cecf71790b034882e81013286564`, and
+  `a3796481ab554765f29aacd0fe571096f8a947f7`. Registered mode-`0600`,
+  10484-byte `task-13-report.md` has SHA-256
+  `45bfb4af077f4ada1e8dc1a9056c15565711b3b9e6147f442c3e1d39974f011b`;
+  registered mode-`0600`, 59500-byte
+  `task-12-fix-1-review-package.md` has SHA-256
+  `075048d9add453d4420c01e2260012ee1de70f9c281557c0d56b8b556a96b84c`.
+- Independent Python and security reviews are `APPROVED`,
+  Critical/Important/Minor `0/0/0`. Task/spec review is `REJECTED`, `0/1/0`,
+  solely for the stale registered-evidence wording corrected here and awaits
+  narrow re-review.
+- No research projection, checker, Spec, lifecycle, inventory, ignored progress,
+  recovery namespace, remote/live resource, Path B replay, WRFR-008 action, or
+  cleanup action changed.
+
+#### Handoff
+
+The controller owns validation and narrow task/spec re-review of this
+documentation-only registered-evidence correction. The registered Task 13
+report and Task 12 fix package above already preserve the ordered completion
+evidence. Python and security review approved the exact correction with no
+finding; task/spec review rejected only the stale wording now corrected and
+must approve its narrow re-review before Path B begins. Residual risks are the
+unexecuted replay, the separately human-gated recovery design and destructive
+execution, the non-cooperating-writer race, and separately unapproved
+temporary-executable operations.
+
+## 2026-08-21 - WRFR-005 platform/security integration
+
+### Metadata
+
+- Date: 2026-08-21
+- Layer: docs
+- Status: complete
+- Tags: workspace-research, kubernetes, infrastructure, security, supply-chain
+- Owner: platform
+- Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
+- Provenance: registered platform/security report, allocation slice, exact implementation commit, guarded review package, focused validators, and independent post-commit review
+- Sensitivity: internal
+- Retention: durable
+- Next Owner: WRFR-006 delivery/security integrator after the required pre-remote security review
+
+### Progress
+
+WRFR-005 consumes registered report SHA-256
+`edff89e3b29fdcaa658044ffc768b7c297e39a02936bd39657c90bb759a7fbce`
+and allocation SHA-256
+`04025a6ecc56853d773bac598e2c8895a408a2d6a9252be9727f4264c50fe40b`.
+Its exact slice is `REQ-WERPC-008`, `009`, and `025`, with allocated
+`SRC-WERPC-091` and `CLM-WERPC-013-04..06`. Exactly one dated H3 was appended
+to the existing Kubernetes/infrastructure/security owner. Kubernetes desired
+state, infrastructure execution contracts, and security controls remain
+separate evidence layers.
+
+### Evidence
+
+- RED: exit `1`, exact fail-fast `ERROR INTEGRATION_SECTION` before edits.
+- GREEN: `PASS validate-integration` for all three assigned rows.
+- GitOps structure, static infrastructure contracts, 106-manifest syntax and
+  kube-linter, Vault/ESO contracts, and secret handling: PASS.
+- Strict Markdown: PASS with zero violations. Strict links/owners:
+  `PASS CROSS-DOCUMENT`. `git diff --check`: PASS.
+- Independent source-fidelity, spec/quality, and security reviews each returned
+  `APPROVED`, Critical/Important/Minor `0/0/0`.
+- Commit `63efc8de90227e1d3c32e2c4388876d4b850a94b` contains the exact
+  four-file logical unit. Registered report SHA-256 is
+  `dfe45681c38ec2312936315a465f8069b6f6d1474afda5f6a86d7e34f5804e78`;
+  registered review-package SHA-256 is
+  `88111b614c7bda7305cf0d2686d57bda598106c2e66a4bce38333ba32c5682c0`
+  for exact range `8ed7fae3..63efc8de`; final inventory SHA-256 is
+  `d844156bdfe0dab8ab90009e89ad7807aab6987571955aa8a2783f4784047f24`.
+- The post-commit reviewer returned `APPROVED WITH MINOR`,
+  Critical/Important/Minor `0/0/1`. This closure corrects its sole intentional
+  pre-closure lifecycle Minor; no content finding was reported.
+- No cluster, container runtime, registry, Argo CD, Helm, Vault, ESO, gateway,
+  cloud, Secret value, credential, token, trust store, artifact, signature,
+  attestation, recovery, remote, hosted, push, merge, publication, or deployment
+  evidence was accessed or claimed.
+
+### Handoff
+
+All three rows remain `Partial` with blocking class `live-cluster`. Effective
+RBAC, admission, CNI, reconciliation, Vault/ESO readiness, artifact trust,
+registry, and recovery results remain `DEFER`. WRFR-005 is complete. WRFR-006
+is queued and ready, but its required pre-remote security review remains a hard
+gate before any GitHub query. No provider, hosted, live, remote, secret-value,
+push, merge, publication, or deployment action occurred.
+
+## 2026-08-21 - WRFR-004 SDLC/documentation integration
+
+### Metadata
+
+- Date: 2026-08-21
+- Layer: docs
+- Status: complete
+- Tags: workspace-research, sdlc, document-contracts, diataxis, llm-wiki
+- Owner: platform
+- Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
+- Provenance: registered SDLC/documentation report, allocation slice, owner diff, and focused validators
+- Sensitivity: internal
+- Retention: durable
+- Next Owner: WRFR-005 platform/security integration
+
+### Progress
+
+WRFR-004 consumes registered report SHA-256
+`be273b3dad1b6b4f50d12285cf9114406ba5c3af94ded7646a71ceda5b47ae85`
+and allocation SHA-256
+`04025a6ecc56853d773bac598e2c8895a408a2d6a9252be9727f4264c50fe40b`.
+The exact sixteen-row slice is integrated into the three existing topical
+owners. Exactly one dated H3 appears immediately before terminal Related
+Documents in each owner; no research folder, duplicate topic report, request
+owner, or new source was created. Only allocated claims
+`CLM-WERPC-013-01..03` are cited for additive current-form AD corrections.
+
+### Evidence
+
+- RED: exit `1`, exact fail-fast `ERROR INTEGRATION_SECTION` before owner edits.
+- GREEN: `PASS validate-integration` for all sixteen rows.
+- Strict registry and Markdown: PASS; active-corpus audit and RIA self-test:
+  PASS; LLM-WIKI generator `--check`: PASS; diff check: PASS.
+- Strict links initially exposed that two required append targets were exact
+  historical alias blobs. Separate reviewed prerequisites `bdd36f09` and
+  `42222c33` changed only validator/test authority, passed Python and security
+  review with Critical/Important/Minor `0/0/0`, and are outside this six-file
+  logical unit. Production strict links then returned `PASS CROSS-DOCUMENT`.
+- Independent source-fidelity and spec/quality/security reviews both returned
+  `APPROVED`, Critical/Important/Minor `0/0/0`.
+- Release stays `Verified gap`; paid ISO evidence stays catalog-bounded;
+  Diataxis reader effectiveness and LLM-WIKI publication/MCP/retrieval/runtime
+  remain `DEFER`.
+
+### Handoff
+
+Commit `7bbe6517a014cbc3e79c896d5097a3ae8b99a283` contains the exact six-file
+logical unit and follows separately reviewed prerequisites `bdd36f09` and
+`42222c33`. Registered report SHA-256 is
+`c7749874d884d0cd4af617537cd583eb11432ff0ffd537b68212248a84845918`;
+registered review-package SHA-256 is
+`b996e1022dd709d3a0b70d21df9c58ef9d29c1122810041b377d90aca9cb709e`
+for exact range `615c3a87..7bbe6517`; final inventory SHA-256 is
+`0d60d1d3602fc357bbabe382dd4ede0bfedaba640e2742d367de021fed5936c0`.
+The post-commit reviewer returned `APPROVED WITH MINOR`,
+Critical/Important/Minor `0/0/1`, and allowed WRFR-005 to unblock. This closure
+corrects its sole stale-evidence Minor. WRFR-004 is complete; WRFR-005 is queued
+and ready, not executed. No provider, hosted, live, remote, secret-value,
+user-validation, push, merge, publication, or deployment action occurred.
+
+## 2026-08-21 - WRFR-003 provider/common integration
+
+### Metadata
+
+- Date: 2026-08-21
+- Layer: docs
+- Status: complete
+- Tags: workspace-research, provider, common-environment, claude, codex
+- Owner: platform
+- Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
+- Provenance: registered provider/common report, allocation slice, owner diff, and focused validators
+- Sensitivity: internal
+- Retention: durable
+- Next Owner: WRFR-004 SDLC/documentation integration
+
+### Progress
+
+WRFR-003 consumes registered provider/common report SHA-256
+`bf5728c6d4f69dce90cff533058372e243ffed28ed5b5ee8949444212250ce86`
+and allocation SHA-256
+`04025a6ecc56853d773bac598e2c8895a408a2d6a9252be9727f4264c50fe40b`.
+Its exact slice is `REQ-WERPC-003..006`, with no allocated new source or claim
+ID. Exactly one dated 2026-08-20 H3 was appended to each existing workspace-
+governance and provider-status owner.
+
+### Memory
+
+Official product documentation, tracked adapters, provider-native discovery,
+and authenticated execution are non-transitive evidence classes. A release
+advance does not prove local installation, and a failed current MCP re-fetch
+does not authorize an unchanged or replacement MCP claim.
+
+### Evidence
+
+- RED: the pre-edit probe exited `1` with fail-fast
+  `ERROR INTEGRATION_SECTION`; it reports the first missing owner rather than
+  two simultaneous diagnostics.
+- GREEN: `PASS validate-integration` for all four provider/common rows.
+- Provider config/evidence, roster-admission, and roster-currentness validators:
+  PASS.
+- Strict Markdown: PASS with zero violations. Strict links/owners:
+  `PASS CROSS-DOCUMENT`. `git diff --check`: PASS.
+- External results are two `changed` and two `unchanged`; workspace results are
+  four `confirmed`; dispositions remain three `Verified` and one `Partial`.
+- Native discovery, installation, authentication, entitlement, effective
+  permissions, hook delivery, model resolution, MCP connectivity, memory
+  behavior, and provider execution remain `DEFER`.
+- The first source-fidelity review reported Important `1`: REQ-WERPC-005
+  omitted existing memory source `SRC-WERPC-068` from its source boundary. The
+  owner was corrected, covering checks passed, and the independent
+  source-fidelity and spec/quality/security re-reviews both returned `APPROVED`
+  with Critical/Important/Minor `0/0/0`.
+
+### Handoff
+
+Commit `a41def9e570ed798c87d6a17adb766df394f4768` contains the exact five-file
+logical unit. Registered report SHA-256 is
+`39c9bdcd9710d66ea57c06e5404da326f07d8424423e85900d559fba60ddc996`;
+registered review-package SHA-256 is
+`889801d930e7e25e5beb828fea743e6a9ccb652ecc6ae0f979c474dc924d74d7`
+for exact range
+`8cd4721f06943f16302ada0c993187c9328d503b..a41def9e570ed798c87d6a17adb766df394f4768`;
+final inventory SHA-256 is
+`e949e9f191b8153486e1f2d43c9f903f65df583cb5f436ef91dd0a60a3bb3cce`.
+The post-commit reviewer returned `APPROVED WITH MINOR`,
+Critical/Important/Minor `0/0/1`, and allowed WRFR-004 to unblock. This closure
+corrects its sole stale-evidence Minor. WRFR-003 is complete; WRFR-004 is queued
+and ready, not executed. No browsing, remote query, provider invocation,
+hosted CI, live infrastructure, secret-value access, push, merge, publication,
+or deployment occurred.
+
+## 2026-08-21 - WRFR-002 agent-engineering integration
+
+### Metadata
+
+- Date: 2026-08-21
+- Layer: docs
+- Status: complete
+- Tags: workspace-research, agent-engineering, harness, loop, memory
+- Owner: platform
+- Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md#wrfr-002-agent-engineering-integration`
+- Provenance: registered agent-engineering report, allocation slice, owner diff, and focused validators
+- Sensitivity: internal
+- Retention: durable
+- Next Owner: WRFR-003 provider/common integration
+
+### Progress
+
+WRFR-002 consumed registered agent-engineering report SHA-256
+`f0dd1038b056d3f2bdc5e6c5e457e4f3c6cd93cdd5ab75375780101da9eca5b1`
+and allocation SHA-256
+`04025a6ecc56853d773bac598e2c8895a408a2d6a9252be9727f4264c50fe40b`.
+The exact slice is `REQ-WERPC-001`, `002`, and `026..032`, with no allocated
+new source or claim ID. Exactly one dated 2026-08-20 H3 was appended to each of
+the existing harness/loop, agent-system, model-routing, and memory owners.
+Commit `06b3d681b11e0a373afcbe6bc86031dba615f590` contains exactly the four
+owners plus Plan, Task, and durable progress.
+
+### Memory
+
+Public provider documentation and tracked adapters describe different evidence
+classes. A static or public-documentation PASS cannot promote provider
+discovery, permissions, execution, model fitness, memory lifecycle, checkpoint
+use, connected-resource behavior, cost, or latency. Existing source IDs and
+baseline selectors therefore remain sufficient for an unchanged observation;
+an empty allocation slice must not create a ledger record merely to restate it.
+
+### Evidence
+
+- Initial pre-recovery probe: exit `1`, `ERROR ALLOCATION_REFERENCE`; no owner
+  edit had occurred.
+- Accepted post-recovery RED: exit `1`, fail-fast
+  `ERROR INTEGRATION_SECTION`; the checker reports one first failure, not four
+  simultaneous diagnostics.
+- GREEN: `PASS validate-integration` for all nine agent-engineering rows.
+- Canonical harness, loop, roster-currentness, agent-evaluations,
+  model-fitness, and checkpoint validators: PASS.
+- Strict Markdown: PASS with zero violations. Strict links/owners: PASS.
+  `git diff --check`: PASS.
+- Independent pre-commit source-fidelity/content and
+  spec-compliance/quality reviews: both `APPROVED`,
+  Critical/Important/Minor `0/0/0`.
+- The first exact-seven-path affected run passed every selected agent and
+  document validator, then failed only at aggregate diagnostic
+  `CLOSURE-WORKTREE-INDEX-DRIFT` for the Plan because the reviewed logical unit
+  was not staged. It is retained as pre-stage evidence, not a PASS.
+- Exact-index affected and staged lanes, plain pre-commit, all-files,
+  formatter review, both diff checks, post-commit integration, and clean status:
+  PASS with no formatter mutation.
+- Registered Task 3 report SHA-256:
+  `9f589540cadf2893133d5a04b8fa8ee5b34747980117e4889fe98eaf9f1843ce`.
+  Registered review-package SHA-256:
+  `3fb6e7af4e5073e9ddde872c152a5332366763398654ca0eee15a1bf9e61f535`
+  for exact range `e8edd3fddb4171aad634ee31a278d136fd3e4529..06b3d681b11e0a373afcbe6bc86031dba615f590`.
+  Final inventory SHA-256:
+  `ec9863801083b29107e438a92998b40d121eca2183d6834cbfa3a5621b76fcfa`.
+- The post-commit reviewer returned `APPROVED WITH MINOR`,
+  Critical/Important/Minor `0/0/1`, and allowed WRFR-003 to unblock. The sole
+  Minor identified stale Task-table evidence that still said commit/package
+  review was pending; this closure unit changes that row to Done and records
+  the approved evidence.
+- External results remain nine `unchanged`; workspace results remain nine
+  `confirmed`. Dispositions remain six `Verified` and three `Partial`.
+- Provider runtime remains `DEFER` for `REQ-WERPC-001`, `002`, `026`, `028`,
+  and `032`. No remote, provider-runtime, hosted-CI, live-infrastructure,
+  secret-value, user-validation, push, merge, publication, or deployment
+  action occurred.
+
+### Handoff
+
+WRFR-002 is complete. WRFR-003 may consume the registered provider/common
+report and its allocation slice. It is queued and ready, not executed. Preserve
+all provider-runtime, hosted-CI, live-infrastructure, and human-validation
+`DEFER` boundaries.
+
+## 2026-08-21 - WRFR-002 allocation-order checker recovery gate
+
+### Metadata
+
+- Date: 2026-08-21
+- Layer: docs
+- Status: complete
+- Tags: workspace-research, checker, allocation, guarded-artifacts
+- Owner: platform
+- Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md#wrfr-002-one-time-allocation-order-checker-recovery-gate`
+- Provenance: registered Task 3 brief, immutable allocation, checker RED, and local self-tests
+- Sensitivity: internal
+- Retention: durable
+- Next Owner: WRFR-002 agent-engineering integrator
+
+### Progress
+
+Task 3 froze base commit
+`e8edd3fddb4171aad634ee31a278d136fd3e4529`, registered
+`task-3-brief.md` at SHA-256
+`0a04b10fadaa25f798e5b8648bc818c026d9c417dfe0f1d54a90370b82bb2de3`,
+and reached inventory SHA-256
+`79bd0803f575a594a7f7b9ee3dc59a9100c09790668c6cf438866c91ade49f63`.
+The first actual agent-engineering integration probe on 2026-08-21 returned
+exactly `ERROR ALLOCATION_REFERENCE`. The implementer was paused and changed no
+tracked file.
+
+The registered allocation remains exact and immutable. Its global claim list
+is contiguous `CLM-WERPC-013-01..06`; row traversal encounters the same complete
+unique set in request-row order `04,05,01,02,03,06`. The checker incorrectly
+compared those two orderings for sequence equality after already enforcing
+per-row ownership.
+
+### Memory
+
+An allocation has two legitimate orders: global identifier allocation order
+and owner-row traversal order. Referential integrity requires equal unique
+membership and cardinality plus owner correctness, not equal traversal order.
+A registered validator repair must recover only its own record; a generic
+artifact rebind or a report mutation would widen the exception unnecessarily.
+
+### Evidence
+
+- Actual pre-fix production probe: `ERROR ALLOCATION_REFERENCE`, exit `1`.
+- TDD RED: the new `allocation-row-reference-membership` case failed with that
+  exact error after the preceding eight cases passed.
+- Minimal semantic repair: compare exact cardinality, uniqueness, and sorted
+  membership; retain the existing owner loop. The new case also rejects
+  missing, duplicate, and wrong-owner references.
+- A fixed `artifact-rebind-checker-only` command has no generic target/report
+  argument. Its tests cover exact identity, complete non-target record
+  validation, same-index sole-checker replacement, target and inventory
+  contention, postvalidation rollback, and rollback contention.
+- First direct review of checker SHA-256
+  `71f4b499f1663c2aba2b8e31de5caeeb9b1ef2593dd1f4c95b3e891a43a3fac3`
+  produced security `APPROVED` at Critical/Important/Minor `0/0/0`, but Python
+  `CHANGES REQUIRED` with one Important post-lock CAS return-version race. Both
+  results are superseded because the checker bytes changed.
+- The TDD post-unlock-contention case failed before the fix because rollback
+  overwrote the simulated concurrent inventory. `_cas_file` now captures and
+  validates its replacement FileVersion while holding the update lock. The
+  case passes only when a post-unlock concurrent inventory survives and the
+  checker returns `REBIND_ROLLBACK_FAILED`.
+- Revised candidate checker SHA-256 is
+  `584086b297a7446e0a6dea932f0693831a3748813cae6f281bee41eb889c765d`;
+  mode/owner/size are `0600`, `hy:hy`, and `196902` bytes. All 89 named
+  self-tests pass in normal and optimized mode; `py_compile`, Ruff check, and
+  Ruff format check pass.
+- Registered old checker SHA-256 is
+  `425b2eac6616cbf986960070b38061d76a6584fa4c139748a97d2c6da3d3fc7d`.
+  Frozen Task 2 report SHA-256 remains
+  `bb5e198e7c99a7c510296d12cf9c7f94eb8af4eed4ea9a6eedec91e085379598`.
+- No stateful rebind, inventory/allocation/baseline/report/review-package/brief
+  mutation, owner edit, stage, commit, remote action, or live action occurred.
+- Fresh independent Python and security review approved final checker SHA-256
+  `584086b297a7446e0a6dea932f0693831a3748813cae6f281bee41eb889c765d`
+  and the tracked recovery contract with no Critical or Important finding.
+- The exact checker-only rebind ran once, exited `0` with no output, and was not
+  retried. The resulting inventory SHA-256 is
+  `befe28f3abe095ac359ff187850e84cdaf5fe2016fa27e0334653ef3e52dbc8f`;
+  report, allocation, baseline, review-package, and brief identities remained
+  unchanged. `residue` and all 89 normal/optimized self-tests passed.
+- The unchanged Task 3 probe then exited `1` with fail-fast
+  `ERROR INTEGRATION_SECTION`. This is the accepted missing-section RED; the
+  checker emits the first failing section rather than four diagnostics.
+
+### Handoff
+
+The checker-only recovery gate is complete. Its sole same-index checker-record
+delta, residue/self-test evidence, and accepted post-recovery RED unblocked the
+paused WRFR-002 implementer. The checker and inventory remain immutable inputs
+for the remaining integration tasks.
+
+## 2026-08-21 - WRFR helper workflow recovery after alias loss
+
+### Metadata
+
+- Date: 2026-08-21
+- Layer: docs
+- Status: complete
+- Tags: workspace-research, helper-loss, guarded-artifacts, task-review
+- Owner: platform
+- Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md#guarded-sdd-artifact-protocol`
+- Provenance: read-only alias, SDD workspace, marker, Git history, and helper-script observations
+- Sensitivity: internal
+- Retention: durable
+- Next Owner: WRFR-002
+
+### Progress
+
+At tracked `HEAD` `802193d33a08423f055615b621fb2667b0a99a1e`, the exact
+helper Plan alias
+`/tmp/0062-workspace-research-full-corpus-reverification-plan.md` was
+observed absent and non-symlink on 2026-08-21 after the bootstrap ledger had
+recorded its created FileVersion. No cause is proved. The existing exact SDD
+workspace remains current-user-owned, non-symlink, and mode `0700`.
+
+The initially absent shared marker is now the exact recorded helper-created
+current-user regular non-symlink with bytes `*\n`, SHA-256
+`cdbcae15105d6b781e620813c79c7e868740d4e9cc53ce6f5fcbbc12387adf4b`,
+device `2096`, inode `4410802`, size `2`, and recorded
+`mtime_ns`/`ctime_ns` `1787208168057628362`, but mode `0644`. The approved
+`restore-shared-marker` command requires mode `0600` and would reject this
+state. During that initial observation, no chmod, provenance change, helper
+alias recreation, ignored-artifact mutation, or cleanup was performed.
+
+The tracked Plan and Task routed every helper call after the alias-loss
+observation through the canonical Plan with a mandatory explicit
+absent output under the existing exact SDD workspace. Each call requires a
+guarded canonical-Plan read/freeze, workspace and output prechecks, `umask 077`,
+postvalidation, immediate artifact registration, and residue validation. The
+remaining workflow must not call `sdd-workspace`, select a default output,
+recreate the alias, or invoke `helper-sync`.
+
+### Memory
+
+An absent temporary alias whose loss has no proved cause is not safe evidence
+of ownership for a future deletion. Its terminal desired state is absent: skip
+`remove-owned-helper-plan` while it remains absent/non-symlink, but stop without
+deletion if it reappears. Likewise, an initially absent shared marker with a
+recorded exact identity but an incompatible mode must not be normalized merely
+to satisfy an existing cleanup command. After every consumer and SDD finish
+precondition completes, only a separately reviewed fd-bound cleanup may unlink
+that exact marker identity, and only when no foreign sibling exists.
+
+### Evidence
+
+- Task 2 base: `8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c`.
+- Pre-amendment Task 2 commits:
+  `ab1dcbae4b0b85a20e6b8c2236249ffa6559ca1f`,
+  `ce74dc29c3be4fd5a4198bafd01998881ffdd969`,
+  `19c270b17f8b8e303516eea8da68bf852d229e6f`, and
+  `802193d33a08423f055615b621fb2667b0a99a1e`.
+- Separately owned baseline-remediation commits after Task 2 are
+  `a8fffa6100b3178337cb72deaf56e24c7f14d008` for the Spec 0059 Task and
+  `09f7cf1d70f7f533f7323343bad8de02c1ace3f4` for `.secrets.baseline`.
+  They are outside all three WRFR-001 package ranges and are not Task 2
+  evidence.
+- The WRFR-001 implementation and evidence commit are complete; its
+  helper-loss amendment is commit `2716ce9f`, and the artifact-class correction
+  is commit `4f25be8b`. Checker-admitted replacement packages and independent
+  task review are complete. `WRFR-002` is queued and ready but not executed.
+- Package A is registered as `task-2-review-package.md`, SHA-256
+  `5ab1b0da2e51f8c2ece16a43265e2e3c02633bb969f4fc65d20b6799991867ec`,
+  for exact range `8d8c8e56..802193d3`. Inventory SHA-256 after Package A is
+  `255628ef76ca95e3dd1b41797bd58089c12fa06fc0a4a764672c683ff3cc46b5`.
+- The first Package B generation used rejected basename
+  `task-2-helper-loss-fix-review-package.md` for exact range
+  `09f7cf1d..2716ce9f`. It created one current-user mode-`0600` regular
+  non-symlink, size `50861`, SHA-256
+  `84776c9a4343572cb0bb0ef8c6cb634f7d30abbadf42ede1b3ee9799b71795bb`.
+  `artifact-register` returned exactly `ERROR ARTIFACT_CLASS`; the file was
+  absent from inventory, no reviewer consumed it, and no retry occurred.
+- Controller cleanup used `stat` to verify regular-file type, mode `0600`,
+  owner `hy`, and size `50861`; confirmed the SHA-256 above; ran `test ! -L`;
+  and proved the exact basename absent from inventory. It then ran `rm -f`
+  against the exact absolute path, proved that path absent, and obtained
+  `PASS residue`. Package A and the inventory identity above remained
+  unchanged.
+- Cleanup did not record device, inode, `mtime_ns`, or `ctime_ns`, retain a
+  complete FileVersion, or unlink through a bound directory descriptor. It
+  does not prove same-file continuity between the checks and `rm -f`; this
+  residual limitation is preserved, and the exception authorizes no further
+  deletion or retry.
+- Plan Task 2 Step 9 used two checker-admitted canonical-Plan, explicit-output
+  calls after cleanup. Regenerated Package B is
+  `task-2-fix-1-review-package.md`, exact range `09f7cf1d..2716ce9f`, SHA-256
+  `84776c9a4343572cb0bb0ef8c6cb634f7d30abbadf42ede1b3ee9799b71795bb`.
+  Separate Package C is `task-2-fix-2-review-package.md`, exact range
+  `2716ce9f..4f25be8b`, SHA-256
+  `81700dd345b9940c433cd8fb7d6e84a5506109c71547353753f5bec4e8dcfd11`.
+  Each package was immediately registered and residue-validated; final
+  inventory SHA-256 is
+  `021421d7341679884fed0976060465a5022c4ba72acc38e19c95cbf52d7038a4`,
+  and final `residue` returned `PASS`.
+- RTK `0.45.0` is installed, but `rtk gain` could not initialize its tracking
+  database because the user-local database path is read-only; direct commands
+  were used without inspecting private database or credential files.
+- Independent content review of the prior helper-loss amendment found one
+  Important range-topology issue. The disjoint Package A/B topology in commit
+  `2716ce9f` received fresh `APPROVED` re-review with
+  Critical/Important/Minor `0/0/0` before the production artifact-class
+  failure.
+- Strict document-registry, Markdown-profile, cross-document link/owner, and
+  scoped diff validation passed for commits `2716ce9f` and `4f25be8b`.
+- The first independent review of the artifact-class correction returned
+  `APPROVED`, but it read the subsequently corrected bound-directory/full-
+  FileVersion cleanup overclaim. That verdict is not completion evidence. A
+  fresh reviewer evaluated the actual `stat`/SHA/symlink/inventory checks,
+  exact-path `rm -f`, post-delete absence/residue evidence, and unclosed
+  check-to-delete substitution limitation and returned `APPROVED` with
+  Critical/Important/Minor `0/0/1`. The sole stale package-cardinality Minor was
+  corrected and scoped re-review returned `ADDRESSED` with no new Critical or
+  Important finding.
+- The same independent Task 2 reviewer consumed registered Packages A, B, and
+  C together and returned `APPROVED` with Critical/Important/Minor `0/0/0`,
+  explicitly unblocking `WRFR-002`.
+- Final `pre-commit run --all-files` exited `0`; every hook passed and reported
+  no mutation.
+
+### Handoff
+
+WRFR-002 may now consume its registered agent-engineering report and allocation
+slice. It is queued and ready, but no WRFR-002 implementation has run. Terminal
+cleanup preserves the alias and marker stop conditions above and leaves the two
+baseline-remediation commits, sibling workspaces, remote, live,
+provider-runtime, hosted-CI, secret, push, merge, and deployment state
+untouched.
+
+## 2026-08-20 - WRFR-001 full-corpus research evidence intake
+
+### Metadata
+
+- Date: 2026-08-20
+- Layer: docs
+- Status: complete
+- Tags: workspace-research, evidence-intake, closed-corpus, allocation
+- Owner: platform
+- Canonical Owner: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md#wrfr-001-evidence-intake-completion`
+- Provenance: immutable baseline, five registered research reports, guarded allocation, and artifact inventory
+- Sensitivity: internal
+- Retention: durable
+- Next Owner: WRFR-002
+
+### Progress
+
+WRFR-001 completed and committed the closed-corpus intake implementation at
+baseline commit `8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c`. The guarded
+checker validated the immutable `14 Markdown / 36 requests / 90 sources / 135
+claims` census and the exact 36-row union of five disjoint reports. All five
+report reviews approved their registered bytes, and the cross-report quality
+review returned Critical/Important/Minor `0/0/0`. The post-amendment task review
+subsequently approved Packages A/B/C with Critical/Important/Minor `0/0/0`, so
+the work package is complete.
+
+Allocation produced one new source, `SRC-WERPC-091`, for
+`REQ-WERPC-009`/platform-security and six claims without gaps or duplicates:
+`CLM-WERPC-013-01` through `013-03` for `REQ-WERPC-011` through `013` in
+SDLC/documentation, and `CLM-WERPC-013-04` through `013-06` for
+`REQ-WERPC-008`, `009`, and `025` in platform/security. No reservation record
+or unallocated identifier remains.
+
+### Memory
+
+The immutable baseline preserves the row 020 legacy selector exactly as
+observed. Validation normalizes only that observation to the real
+`#ditaxis-baseline` heading. Every research row must include its normalized
+baseline selector, while additional exact owner selectors remain allowed.
+
+The sole accepted out-of-ledger source is the official K3s v1.35 release-family
+page for `REQ-WERPC-009`; live-cluster and patch-suitability inferences were
+rejected. The registered NASA SWE-047 URL for `REQ-WERPC-033` was unreachable,
+so that row remains `Partial`/`human-judgement` with no new traceability claim.
+The registered GitHub Environments URL for `REQ-WERPC-022` and `023` was also
+unavailable, so neither row adopts an environment claim from it.
+
+### Evidence
+
+- Agent-engineering report: `f0dd1038b056d3f2bdc5e6c5e457e4f3c6cd93cdd5ab75375780101da9eca5b1` (`APPROVED`).
+- Provider/common report: `bf5728c6d4f69dce90cff533058372e243ffed28ed5b5ee8949444212250ce86` (`APPROVED`).
+- SDLC/documentation report: `be273b3dad1b6b4f50d12285cf9114406ba5c3af94ded7646a71ceda5b47ae85` (`APPROVED`).
+- Platform/security report: `edff89e3b29fdcaa658044ffc768b7c297e39a02936bd39657c90bb759a7fbce` (`APPROVED`).
+- Delivery/quality report: `f55cc2285577530544c48f26fb497184b43bb9822236e46a736294ed8695d993` (`APPROVED`).
+- Allocation: `04025a6ecc56853d773bac598e2c8895a408a2d6a9252be9727f4264c50fe40b`.
+- Artifact inventory after allocation registration: `39ef8f41848340daf9a0756a80611bcb549960080fc4bb5c8007a4ce625c8567`.
+- Baseline: `41d56cb71092d0cd9dee7caa90ddaf57183473170472695882e14707fe04ae5d`.
+- Post-registration `validate-research` and `residue`: `PASS`.
+
+### Handoff
+
+The WRFR-001 task reviewer approved the registered report identities,
+allocation, and Packages A/B/C described in the 2026-08-21 recovery entry.
+WRFR-002 may consume its registered agent-engineering slice and the exact
+allocation above; it is queued and has not executed. Later owners must preserve
+the approved report identities, selector ruling, and closed-corpus outcome
+boundaries. WRFR-001 performed no remote GitHub query, provider-runtime check,
+hosted-CI check, live-cluster validation, push, publication, or deployment.
+
+## 2026-08-20 - WRFR-000 lifecycle activation
+
+### Metadata
+
+- Owner: platform
+- Scope: `SPEC-0062`, `PLAN-0062`, `TASK-0062`, the Stage 03 index, ADR-0022,
+  the standalone-execution registry relation, and its validator regression
+- Evidence class: repository-static approval lineage and local strict-document
+  validation
+- Next Owner: `WRFR-001`
+
+### Progress
+
+Direct human approval dated 2026-08-20 activated the standalone Spec/Plan/Task
+relation for the full-corpus external-source and workspace reverification cycle.
+The logical activation commit is `docs: activate full-corpus research
+reverification`. The registry now records Spec `0062` with ADR-0022 and
+`spec-body-record` approval mode; the validator tuple is pinned to the exact
+approval and lifecycle-exclusion sentences in the Spec body.
+
+### Evidence
+
+- Focused approval-contract regression recorded RED against the draft approval
+  prose, then GREEN after the exact relation was activated.
+- Strict document registry, Markdown-profile, and cross-document link/owner
+  validation are the activation gates; no research, remote query, live,
+  provider-runtime, hosted-CI, secret, push, merge, or deployment work occurred.
+
 ## 2026-08-18 - PCDC platform currency defect closure
 
 ### Metadata
@@ -17622,6 +18943,95 @@ validator, RIA's `currentPackRegistry` value, two gate phrase checks, the
 - No live, hosted, provider-runtime, remote, secret-value, push, publish, or
   deployment evidence was collected or claimed.
 
+## 2026-08-19 - Stage 99 registry retirement: deleting the combined contract file
+
+### Metadata
+
+- Owner: platform
+- Scope: `docs/99.templates/support/`, `docs/99.templates/README.md`, `docs/00.agent-governance/hooks/k8s-pre-edit.sh`, `scripts/document_contracts.py`, `scripts/validate-document-lifecycle.py`, `scripts/validate-links-and-owners.py`, `scripts/validate-active-corpus-eligibility.py`, `scripts/generate-llm-wiki-index.sh`, `tests/`
+- Parent: WP-004, Stage 99 contract split follow-through
+- Evidence class: repository-static plus local execution of the full unittest suite and the repository quality gate
+
+### Progress
+
+`docs/99.templates/support/document-profiles.json` is deleted. The two published
+contracts published in the previous cycle are now the only tracked registry
+authority, and every reader that resolved the retired file from the working tree
+or the index has been moved onto them.
+
+**Classifying readers by where they read, not by what they read, decided every
+case.** A read pinned to a commit or a blob - `_load_pinned_json` against
+`EVIDENCE_COMMIT`, `_work107_commit_path_blobs` against
+`WORK107_LEGACY_ARCHIVE_COMMIT`, the WORK-105 base census, the wiki index's
+blob-OID overlay - resolves through git objects, so deletion at HEAD leaves it
+untouched and rewriting its path would falsify the tree it describes. Those keep
+the retired path, now with a comment saying why. A read against the worktree or
+the index had to move.
+
+**One reader was both.** `validate-document-lifecycle.py` compares a base tree
+against a proposed tree at the same path. Base commits predate the split and hold
+the combined file; the proposed side no longer does. `_registry_snapshot` now
+reads whichever form a side holds and projects both into the internal form, so
+the comparison stays valid across the split. The pinned WORK-105/107/108 blob-OID
+gates still key off the retired path, because that is the tree those pins
+describe.
+
+**`internal_payload_from_contracts` was factored out of `load_internal_payload`**
+so a caller holding contract bytes - a git blob, not a working tree - can project
+them without re-reading files.
+
+**Nine frozen historical links got a closed alias set.** Six terminal spec
+`tasks.md`, one audit, and two research documents name the retired registry.
+Rewriting them would falsify completed history, so
+`_reviewed_stage99_contract_split_edges` pins each source's blob and resolves
+exactly nine links to `docs/99.templates/registry.json`. The set is closed: the
+helper rejects any drift in source count, contributing sources, edge count, or
+occurrence count.
+
+**Stage 99 support prose stayed and was repointed.** `document-contract.md`,
+`document-lifecycle.md`, and both READMEs are current guidance, not history, so
+their links now name the published contracts.
+
+### Validation
+
+- `python3 -m unittest discover -s tests -q` -> `Ran 1049 tests`, three carried-forward `test_k8s_pre_edit_hook` worktree failures and no other failure
+- `bash scripts/validate-repo-quality-gates.sh .` -> `[PASS] repository quality gates passed`
+- `python3 scripts/validate-links-and-owners.py --root . --mode strict` -> `PASS CROSS-DOCUMENT`
+- Deletion was measured before it was performed: the link validator was run against a tree without the file, and the twelve resulting `LINK-BROKEN` diagnostics defined the work rather than an estimate
+- No cluster was created, deleted, or contacted
+
+### Handoff
+
+- **A first deletion attempt silently did nothing.** `rm` was aliased to prompt,
+  the prompt got no answer, and only `git rm --cached` took effect. The tree then
+  looked deleted to a tracked-artifact check but not to a file-existence check,
+  which made one measurement round misleading. Verify a deletion with `ls` and
+  `git status`, not with the command's exit.
+- **A two-line comment reopened a closed WORK-105 census.**
+  `validate-active-corpus-eligibility.py` is matched line by line against a
+  pinned blob, so inserting an explanatory comment shifted every later line and
+  reclassified six historical architecture-requirement occurrences as live.
+  The comment was reverted.
+  Annotating a positionally pinned file is not a free change.
+- **Three `test_k8s_pre_edit_hook` worktree failures predate this cycle.** The
+  hook's affected-surface selector rejects a path inside the linked
+  `.worktrees/spec-0054-authority-convergence` checkout and exits 2. The same
+  three failed before the deletion and with the hook reverted to `HEAD`, so they
+  are carried forward untouched, not introduced here.
+- **The wiki index transition overlay is now permanently unmatched.** It gates on
+  five exact blob OIDs including the retired registry's, so it can no longer fire.
+  It was already inert before this cycle; it is left in place rather than swept.
+- **`artifactIdPattern` is still published but inert**, and the two unreachable
+  schema defs are still unreachable. Neither changed this cycle.
+- **`main` is far ahead of `origin/main` and unpushed.** Pushing is operator work.
+- **Live verification is still owed.** The Baseline warning channel on `apps` and
+  `ingress-nginx` remains unread.
+- **Reusable lesson: a constant's name is not its classification.** Renaming eight
+  lifecycle-validator sites to `RETIRED_REGISTRY_PATH` in one pass read as
+  finished work; two of them were current-index reads that only the test suite
+  exposed. Classify each call site, then name it.
+- No live, hosted, provider-runtime, remote, secret-value, push, publish, or
+  deployment evidence was collected or claimed.
 ### 2026-08-20 - WORK-054-004A document authority foundation
 
 #### Metadata

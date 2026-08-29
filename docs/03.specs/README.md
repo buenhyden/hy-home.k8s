@@ -265,6 +265,10 @@ finite WP-004C input and is intentionally not presented as a current family.
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks/
+├── 0062-workspace-research-full-corpus-reverification/
+│   ├── spec.md
+│   ├── plan.md
+│   └── tasks/
 └── README.md
 ```
 
@@ -356,6 +360,7 @@ finite WP-004C input and is intentionally not presented as a current family.
 | [`./0059-workspace-research-full-corpus-refresh/spec.md`](./0059-workspace-research-full-corpus-refresh/spec.md)                                   | Full-corpus external and workspace re-observation with terminal blocking-class closure over the existing WER pack                             | Done   | 2026-08-17 직접 승인된 다섯 번째 리프레시 사이클로, 12행 `Partial` 표본을 반복하는 대신 36개 owner row 전수를 외부·워크스페이스 두 증거 클래스로 재관측하고, 잔존 `Partial`/`DEFER` 행마다 차단 evidence class를 확정해 정적 재검증 루프를 종료시킨다. 새 연구 팩·중복 보고서·요구사항 ID 신설은 금지한다.                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | 2026-08-17 |
 | [`./0060-platform-currency-defect-closure/spec.md`](./0060-platform-currency-defect-closure/spec.md)                                               | Bounded closure of live platform version-currency defects plus the source-integrity non-adoption decision                                     | Done | 2026-08-18 직접 승인된 제한 범위 보정 사이클로, 발화된 refresh trigger 평가에서 드러난 두 개의 현재 결함(kube-state-metrics 기본 수집기 RBAC 결손, bootstrap 단계 Helm chart 핀 부재)을 닫고 Argo CD source-integrity 미채택을 ADR 0023으로 확정한다. 네 건의 버전 업그레이드는 target·전제조건·차단 클래스와 함께 다음 사이클로 이연한다.                                                                                                                                                                                                                                                                                                                                                                                                                                       | 2026-08-18 |
 | [`./0061-workload-security-context-baseline/spec.md`](./0061-workload-security-context-baseline/spec.md) | Bounded closure of the workload security context asymmetry and of the sample template that propagates it | Done | 2026-08-18 직접 승인된 제한 범위 사이클로, house 하드닝 패턴에서 유일하게 빠져 있던 `adminer` Rollout에 이미지 UID·파일시스템과 무관하게 성립하는 컨트롤만 적용하고, 신규 워크로드가 복사해 가는 `examples/sample-app` 템플릿에는 완전한 기준선을 심는다. `runAsNonRoot`/`runAsUser` 커플링과 `readOnlyRootFilesystem`은 전제조건과 함께 이연한다. | 2026-08-18 |
+| [`./0062-workspace-research-full-corpus-reverification/spec.md`](./0062-workspace-research-full-corpus-reverification/spec.md) | Full-corpus external-source and workspace reverification design over the existing WER research pack | Active | 2026-08-20 직접 승인된 standalone 실행 관계로, 기존 36개 `REQ-WERPC` owner를 외부·workspace 증거로 전수 재검증하고 결과를 기존 14-file 연구 팩에 증분 통합한다. | 2026-08-20 |
 
 ### Helper Templates
 

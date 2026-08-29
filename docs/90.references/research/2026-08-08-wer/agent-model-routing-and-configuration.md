@@ -3,7 +3,7 @@ title: 'Reference: Agent Model Routing and Configuration'
 type: content/reference
 status: active
 owner: platform
-updated: 2026-08-10
+updated: 2026-08-23
 ---
 
 # Reference: Agent Model Routing and Configuration
@@ -265,6 +265,73 @@ model/evaluation selector materially changes.
 **Final disposition:** `Partial`, unchanged from the 2026-08-12 baseline. No
 promotion. New source registered: `SRC-WERPC-074`. New claim registered:
 `CLM-WERPC-010-03`.
+
+### 2026-08-20 full-corpus reverification
+
+The allocation slice assigns no new source or claim ID for this row.
+
+#### REQ-WERPC-028 model-routing re-observation
+
+- **Sources and external result:** `unchanged`; `SRC-WERPC-049`,
+  `SRC-WERPC-045`, and `SRC-WERPC-046` were re-observed on 2026-08-20. The
+  official provider pages still describe configuration, subagent model, and
+  reasoning surfaces without proving parser acceptance, entitlement, or
+  effective resolution.
+- **Workspace selector and result:** `confirmed` at baseline commit
+  `8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c` and
+  `agent-model-routing-and-configuration.md#model-routing-baseline`. Local
+  policy still maps task/role to provider, configured model tier, reasoning
+  effort, and bounded tool surface; the model-fitness contract remains the
+  evidence owner for each provider-role tuple.
+- **As-Is, gap, and target:** configured incumbent mappings remain `Partial`
+  at public-documentation depth. Exact parsing, account-level model and effort
+  resolution, task/tool fitness, same-suite quality and safety, cost, latency,
+  canary, rollback, and promotion evidence are absent. Preserve each
+  incumbent until those evidence classes and independent adjudication exist.
+- **Evidence boundary:** blocking class and retained boundary are
+  `provider-runtime` / `DEFER`. A documented model name or reasoning level is
+  not a stable local target and does not prove that the provider accepted or
+  applied the tuple; no runtime promotion is made.
+- **Owner, safe follow-up, and trigger:** owner is this reference and the Stage
+  00 model policy/model-fitness contract. After platform-owner approval, use
+  one non-secret parse/resolution canary for an exact provider-role tuple
+  without changing adapters. Refresh when cited configuration, model,
+  reasoning, precedence, tool mapping, or a local fitness selector changes.
+
+### 2026-08-23 Codex routing guidance gap increment
+
+This gap-only increment records current documentation without changing any
+model, role, adapter, effort value, evaluation binding, or terminal document
+topology. It applies only to the Spec 0054 Claude/Codex provider boundary.
+
+- **Precedence is a product contract, not runtime evidence.** The current
+  [Codex subagent
+  guide](https://learn.chatgpt.com/docs/agent-configuration/subagents)
+  documents agent-file model or reasoning overrides ahead of an explicit spawn
+  value, then `[agents]` defaults and the parent setting
+  (`SRC-WERPC-011`/`SRC-WERPC-045`). The [configuration
+  reference](https://learn.chatgpt.com/docs/config-file/config-reference)
+  remains a second required surface for accepted keys and values
+  (`SRC-WERPC-010`/`SRC-WERPC-049`). Neither page proves parsing, entitlement,
+  effective resolution, or absence of silent fallback in this workspace.
+- **Model names are recommendations only.** The current [Codex subagent
+  guide](https://learn.chatgpt.com/docs/agent-configuration/subagents) and
+  official model guidance assign
+  `gpt-5.6` to the most demanding work, `gpt-5.6-terra` to read-heavy analysis,
+  and `gpt-5.6-luna` to narrow high-volume work. These names and workload
+  descriptions are dated documentation facts, not admitted local routing
+  tuples or fitness results; see the [latest-model
+  guide](https://developers.openai.com/api/docs/guides/latest-model).
+- **Promotion remains closed.** Exact account availability, parser support,
+  price, latency, task/tool fitness, quality, safety, fallback behavior,
+  canary outcome, and promotion evidence all remain `DEFER`. Do not edit
+  configuration from this documentation alone. A future candidate must use
+  the same evaluation suite, independent adjudication, an exact resolution
+  check, rollback evidence, and platform-owner approval.
+
+**Disposition:** `REQ-WERPC-028` remains `Partial` at public-documentation plus
+repository-static depth. The dated guidance refines a candidate hypothesis; it
+does not change the model-fitness contract or any configured incumbent.
 
 ## Related Documents
 
