@@ -2283,6 +2283,39 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             {},
         )
 
+    def test_removed_directory_link_needs_every_file_proved(self) -> None:
+        """A directory link resolves only when each file it held moved to an owner."""
+
+        source = PurePosixPath("docs/90.references/audits/2099-01-01-dir/report.md")
+        profile = self.validator.ProfileView(
+            "content/reference", "common", "classification-only"
+        )
+        removed = PurePosixPath(".agents/workflows")
+        unproved = PurePosixPath(".agents/never-existed")
+        body = "\n".join(
+            f"[{target.name}]({self.validator.posixpath.relpath(target, source.parent)})"
+            for target in (removed, unproved)
+        )
+        context = dataclasses.replace(
+            self.context,
+            paths=(*self.context.paths, source),
+            profiles={**self.context.profiles, source: profile},
+            texts={**self.context.texts, source: body + "\n"},
+            metadata={**self.context.metadata, source: {"status": "draft"}},
+            tracked_regular_paths=self.context.tracked_regular_paths | {source},
+        )
+
+        broken = {
+            item.actual
+            for item in self.validator._link_diagnostics(context)
+            if item.rule_id == "LINK-BROKEN" and item.path == source
+        }
+
+        # Every file the directory held has a proved replacement, so the link stands.
+        self.assertNotIn(removed.as_posix(), broken)
+        # A directory with no disposition at all stays broken; the rule fails closed.
+        self.assertIn(unproved.as_posix(), broken)
+
     def test_active_source_cannot_use_declared_migration_or_tasks_aliases(
         self,
     ) -> None:

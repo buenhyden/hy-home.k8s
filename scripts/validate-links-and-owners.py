@@ -4366,6 +4366,8 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
                     continue
                 if _protected_historical_predecessor_link(context, source, target):
                     continue
+                if _migrated_directory_link(context, source, target):
+                    continue
                 diagnostics.append(
                     _diag(
                         "LINK-BROKEN",
@@ -7561,6 +7563,54 @@ def _werpc_predecessor_dispositions(text: str) -> frozenset[str] | None:
     if dispositions is None:
         return None
     return frozenset(path.as_posix() for path in dispositions)
+
+
+def _migrated_directory_link(
+    context: Context,
+    source: PurePosixPath,
+    target: PurePosixPath,
+) -> bool:
+    """Admit a removed directory whose every held file moved to a proved owner.
+
+    The migration ledger is file-scoped: every row carries a source blob, so a
+    directory can never own a row of its own. A historical document may still
+    link the directory it observed. Such a link is proved, not waived, when the
+    directory is gone, its files are dispositioned from one sealed commit, and
+    each of those files resolves to a different current tracked owner.
+    """
+
+    posix = target.as_posix()
+    prefix = posix + "/"
+    proof = _context_migration_proof(context)
+    commits = {
+        disposition.source_commit
+        for path, disposition in proof.dispositions.items()
+        if path.startswith(prefix)
+    }
+    if len(commits) != 1:
+        return False
+    (commit,) = commits
+    try:
+        tree = _run_git(
+            context.root, ("ls-tree", "-d", "--name-only", "-z", commit, "--", posix)
+        )
+        listing = _run_git(
+            context.root, ("ls-tree", "-r", "--name-only", "-z", commit, "--", posix)
+        )
+    except (OSError, ValueError, subprocess.SubprocessError):
+        return False
+    if not [entry for entry in tree.split(b"\0") if entry]:
+        return False
+    held = [entry.decode("utf-8") for entry in listing.split(b"\0") if entry]
+    if not held:
+        return False
+    for entry in held:
+        owner = proof.targets.get(entry)
+        if owner is None or owner == entry:
+            return False
+        if PurePosixPath(owner) not in context.tracked_regular_paths:
+            return False
+    return True
 
 
 def _protected_historical_predecessor_link(

@@ -3,7 +3,7 @@ title: 'CI/CD & QA 로컬-vs-GitHub 참조 가이드'
 type: sdlc/guide
 status: active
 owner: platform
-updated: 2026-07-26
+updated: 2026-08-29
 artifact_id: "GUIDE-0010"
 ---
 
@@ -137,7 +137,7 @@ bash -n docs/00.agent-governance/hooks/<hook-name>.sh
 
 ### 3. CI Job 구조 (`.github/workflows/ci.yml`)
 
-CI 파이프라인은 5개 검사 job과 1개 집계 job(`ci-summary`)으로 구성된다:
+CI 파이프라인은 6개 검사 job과 1개 집계 job(`ci-summary`)으로 구성된다:
 
 | Job                   | 트리거 조건                             | 로컬 재현 명령                                  |
 | --------------------- | --------------------------------------- | ----------------------------------------------- |
@@ -145,8 +145,22 @@ CI 파이프라인은 5개 검사 job과 1개 집계 job(`ci-summary`)으로 구
 | `changes`             | 항상 실행 (path filter)                 | 없음                                            |
 | `pre-commit`          | 모든 파일 변경                          | `pre-commit run --all-files`                    |
 | `repo-quality-static` | docs, .github, .agents, .claude, .codex, scripts 등 변경 | `bash scripts/validate-repo-quality-gates.sh .` |
+| `agent-governance-static` | .agents, .claude, .codex, docs/00.agent-governance 등 agent governance 표면 변경 | 아래 참조 |
 | `manifest-static`     | gitops, infrastructure YAML 변경        | 아래 참조                                       |
 | `ci-summary`          | 항상 실행 (집계)                        | 없음                                            |
+
+`agent-governance-static` 로컬 재현:
+
+```bash
+bash scripts/validate-repo-quality-gates.sh .
+python3 scripts/validate-agent-governance-closure.py --root . --self-test
+python3 scripts/validate-agent-governance-closure.py --root .
+```
+
+저장소 품질 게이트는 이 job이 실행하는 검증기를 대부분 포함하지만
+`validate-agent-governance-closure.py`는 포함하지 않는다. 게이트만 통과했다고
+해서 이 CI lane이 통과한다고 볼 수 없으므로 위 두 명령을 함께 실행한다.
+job이 실행하는 전체 명령 목록은 `.github/workflows/ci.yml`이 소유한다.
 
 `manifest-static` 로컬 재현:
 

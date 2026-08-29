@@ -3,7 +3,7 @@ title: 'WSL2 k3d/k3s GitOps HA Operations Policy'
 type: sdlc/policy
 status: active
 owner: platform
-updated: 2026-06-02
+updated: 2026-08-29
 artifact_id: "POLICY-0002"
 ---
 
@@ -44,7 +44,7 @@ artifact_id: "POLICY-0002"
   - AppProject `apps` wildcard 금지 + 최소 allow-list 유지
   - `argocd` egress는 Valkey + DNS + HTTPS 허용
   - CI 정적 게이트 필수화(`branch-policy`, `pre-commit`,
-    `repo-quality-static`, `manifest-static`)
+    `repo-quality-static`, `agent-governance-static`, `manifest-static`)
   - `fs.inotify.max_user_instances >= 512` (권장 1024) — k3d 4노드 안정 기동 조건
   - Vault 컨테이너는 k3d-hyhome Docker 네트워크에 연결 상태를 유지해야 한다
   - `vault-external` EndpointSlice IP는 Vault의 k3d-hyhome 네트워크 IP(`172.18.0.8`)를 사용해야 한다
@@ -73,8 +73,8 @@ artifact_id: "POLICY-0002"
 - CD는 ArgoCD pull 모델을 기준으로 유지한다.
 - GitHub Actions는 정적 검증 전용 게이트로 사용한다.
 - `.github/workflows/**` 변경은 현재 CI workflow의 `branch-policy`,
-  `pre-commit`, `repo-quality-static`, `manifest-static`
-  구조와 `ci-summary` 집계를 유지해야 한다.
+  `pre-commit`, `repo-quality-static`, `agent-governance-static`,
+  `manifest-static` 구조와 `ci-summary` 집계를 유지해야 한다.
 
 ## Exceptions
 
