@@ -130,7 +130,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.repo_quality == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -155,6 +155,9 @@ jobs:
       - name: Run repository quality gates
         run: |
           bash scripts/validate-repo-quality-gates.sh .
+      - name: Run the regression test suite
+        run: |
+          python3 -m unittest discover --start-directory tests --top-level-directory tests --pattern 'test_*.py'
 
   agent-governance-static:
     needs: changes

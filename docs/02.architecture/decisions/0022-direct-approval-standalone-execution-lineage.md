@@ -3,7 +3,7 @@ title: 'ADR-0022: Direct-Approval Standalone Execution Lineage'
 type: sdlc/adr
 status: accepted
 owner: platform
-updated: 2026-08-08
+updated: 2026-08-30
 artifact_id: "ADR-0022"
 ---
 
@@ -87,3 +87,4 @@ false upstream authority.
 | Direct human approval recorded in the Spec body | N/A — eighth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0060](../../03.specs/0060-platform-currency-defect-closure/spec.md) |
 | Direct human approval recorded in the Spec body | N/A — ninth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0061](../../03.specs/0061-workload-security-context-baseline/spec.md) |
 | Direct human approval recorded in the Spec body | N/A — tenth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0062](../../03.specs/0062-workspace-research-full-corpus-reverification/spec.md) |
+| Direct human approval recorded in the Spec body | N/A — eleventh typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0063](../../03.specs/0063-governance-invariant-consolidation/spec.md) |

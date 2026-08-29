@@ -1,9 +1,9 @@
 ---
 title: 'Governance Invariant Consolidation Technical Specification'
 type: sdlc/spec
-status: draft
+status: active
 owner: platform
-updated: 2026-08-29
+updated: 2026-08-30
 artifact_id: "SPEC-0063"
 ---
 
@@ -183,11 +183,12 @@ in `## Overview`.
 | N/A — standalone, direct approval | VAL-GIC-002 | Approval recorded in the Task before retirement begins |
 | N/A — standalone, direct approval | VAL-GIC-003 | Count of 40-hex constants in `scripts/` compared to the baseline |
 | N/A — standalone, direct approval | VAL-GIC-004 | Ledger rows parsed for recovery coordinates after deletion |
-| N/A — standalone, direct approval | VAL-GIC-005 | Declared validator set diffed against the gate script |
+| N/A — standalone, direct approval | VAL-GIC-005 | `SURFACE-VALIDATOR-RUNNER` fails when a required validator has no runner |
 | N/A — standalone, direct approval | VAL-GIC-006 | Gate and suite output recorded in the reciprocal Task |
 
 ### Related Documents
 
 - [Plan](plan.md)
 - [Task](tasks/tsk-0001-gic-000.md)
+- [ADR 0022 — direct-approval standalone execution lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
 - [ADR 0030 — authority-first SDLC and agent governance convergence](../../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)

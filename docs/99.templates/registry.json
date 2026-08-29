@@ -4419,6 +4419,15 @@
       "reason": "Direct human-approved full-corpus external-source and workspace reverification over the existing WER research pack",
       "decision": "0022",
       "approvalMode": "spec-body-record"
+    },
+    {
+      "spec": "0063",
+      "plan": "docs/03.specs/0063-governance-invariant-consolidation/plan.md",
+      "task": "docs/03.specs/0063-governance-invariant-consolidation/tasks/tsk-0001-gic-000.md",
+      "state": "active",
+      "reason": "Direct human-approved consolidation of governance invariants: retirement of completed-migration validation machinery, Stage 98 reduction to its ADR-0030 shape, and removal of duplicated document purpose",
+      "decision": "0022",
+      "approvalMode": "spec-body-record"
     }
   ]
 }

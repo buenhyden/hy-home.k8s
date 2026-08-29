@@ -1,9 +1,9 @@
 ---
 title: 'Governance Invariant Consolidation Implementation Plan'
 type: sdlc/plan
-status: draft
+status: active
 owner: platform
-updated: 2026-08-29
+updated: 2026-08-30
 artifact_id: "PLAN-0063"
 ---
 
