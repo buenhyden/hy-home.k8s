@@ -131,35 +131,6 @@
   ],
   "dataAssets": [
     {
-      "id": "active-corpus-retention-census",
-      "repositoryEvidence": [
-        "docs/90.references/data/active-corpus-retention-census.json"
-      ],
-      "refreshTrigger": "ACER-002 eligibility evidence, Spec 037 closure, ACER-004 role evidence, pinned object drift, proposal delta, or methodology-source change",
-      "sources": [
-        {
-          "url": "https://github.com/kubernetes/enhancements/blob/master/keps/README.md",
-          "checkedOn": "2026-07-22",
-          "adoptedScope": [
-            "Structured lifecycle records with explicit metadata, status, reviewers, and historical traceability"
-          ],
-          "rejectedScope": [
-            "Kubernetes enhancement status as authority for any local document disposition"
-          ]
-        },
-        {
-          "url": "https://www.archives.gov/records-mgmt/policy/managing-web-records-index.html",
-          "checkedOn": "2026-07-22",
-          "adoptedScope": [
-            "Explicit retention and disposition factors for trustworthy repository records"
-          ],
-          "rejectedScope": [
-            "Federal records-law applicability or archive authorization for this repository"
-          ]
-        }
-      ]
-    },
-    {
       "id": "agent-reference-index",
       "repositoryEvidence": [
         "docs/90.references/data/agent-reference-index.md"

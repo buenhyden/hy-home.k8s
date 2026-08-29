@@ -822,7 +822,6 @@ class ConsumerOwners:
     enforcement_paths: frozenset[str]
     helper_roles: Mapping[str, str]
     proof: Any
-    retention: ModuleType | None
 
 
 def _helper_artifact_role(path: str) -> str | None:
@@ -880,7 +879,6 @@ def _load_owners(
     candidate_set = set(candidates)
     terminal = compat.load_terminal_validator()
     affected = _trusted_script("validate-affected-surfaces.py")
-    retention = _trusted_script("validate-active-corpus-retention.py")
     for path in (
         terminal.REGISTRY_PATH,
         terminal.REGISTRY_SCHEMA_PATH,
@@ -950,7 +948,6 @@ def _load_owners(
     delegates = (
         terminal,
         affected,
-        retention,
         links,
         compat,
         documents,
@@ -974,7 +971,6 @@ def _load_owners(
         entrypoints | helpers,
         helper_roles,
         proof,
-        retention,
     )
 
 
@@ -1064,21 +1060,6 @@ def _scan_consumers_with_reader(
             "closed-fixture",
             "manifest-fixture",
         }:
-            evidence += 1
-            continue
-        if owners.retention is not None and path == owners.retention.SNAPSHOT_PATH:
-            try:
-                snapshot = _parse_json(text, path)
-                if not isinstance(snapshot, dict):
-                    fail("AGQC-LEGACY-JSON", "snapshot input must be an object")
-                owners.retention.validate_snapshot(
-                    snapshot,
-                    owners.retention.build_expected_snapshot(reader.root_path),
-                )
-            except ContractError:
-                raise
-            except (ValueError, OSError, KeyError, TypeError):
-                fail("AGQC-LEGACY-OWNER", "retention snapshot validation failed")
             evidence += 1
             continue
         # Unknown token-bearing text remains an enforceable consumer.

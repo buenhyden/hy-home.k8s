@@ -130,7 +130,6 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
                 rendered_dispositions={},
                 declarations={},
             ),
-            retention=None,
         )
         # Explicit owner facts isolate legacy scanning/IO from the full archive
         # corpus; public historical proof has separate real-Git tests.
@@ -414,30 +413,6 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
             with mock.patch.object(self.validator, "MAX_REGULAR_FILE_BYTES", 4):
                 with self.assertRaises(self.validator.ContractError):
                     reader.read_bytes(path, max_bytes=100)
-
-    def test_exact_retention_snapshot_uses_existing_typed_validator(self) -> None:
-        root = self.make_valid_root()
-        retention = self.validator._trusted_script(
-            "validate-active-corpus-retention.py"
-        )
-        expected = retention.build_expected_snapshot(REPO_ROOT)
-        self.owners.retention = types.SimpleNamespace(
-            SNAPSHOT_PATH=retention.SNAPSHOT_PATH,
-            validate_snapshot=retention.validate_snapshot,
-            build_expected_snapshot=lambda _root: expected,
-        )
-        self.add_text(root, retention.SNAPSHOT_PATH, json.dumps(expected))
-        with mock.patch.object(
-            self.validator,
-            "_owner_object",
-            side_effect=AssertionError("snapshot reopen"),
-        ):
-            self.assertEqual(
-                self.validator.validate_repository(root)["activeConsumers"], 0
-            )
-        changed = dict(expected, unknown=".github/ABOUT.md")
-        self.add_text(root, retention.SNAPSHOT_PATH, json.dumps(changed))
-        self.assert_rule(root, "AGQC-LEGACY-OWNER")
 
     def test_nonregular_roots_and_candidates_fail_closed(self) -> None:
         root = self.make_valid_root()

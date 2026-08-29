@@ -87,8 +87,6 @@ python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --root "$ROOT_DIR" --s
 python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-workspace-boundary.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-workspace-boundary.py" --root "$ROOT_DIR"
-python3 "$ROOT_DIR/scripts/validate-active-corpus-retention.py" --root "$ROOT_DIR" --self-test
-python3 "$ROOT_DIR/scripts/validate-active-corpus-retention.py" --root "$ROOT_DIR"
 python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_run_validation_lane.py"
 python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_post_validate_runner_result.py"
 python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_provider_post_validate_hook.py"
