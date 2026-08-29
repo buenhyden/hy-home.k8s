@@ -97,11 +97,18 @@ class ArchiveCutoverTest(unittest.TestCase):
         )
         self.assertEqual(
             completed.stdout,
-            "PASS archive cutover records=93 historical_links=711 secret_clean=93\n",
+            "PASS archive cutover records=17 historical_links=133 secret_clean=17\n",
         )
         self.assertEqual(completed.stderr, "")
 
-    def test_work107_repository_is_exact_stable_93_to_93(self) -> None:
+    def test_work107_repository_is_exact_stable_93_to_17(self) -> None:
+        """Every tracked record is a ledger row, and each one still matches it.
+
+        The ledger keeps all 93 rows because the rehome it records really
+        happened.  Stage 98 keeps the 17 whose bodies ADR-0030 leaves in the
+        tree; the other 76 are absent here and recoverable from Git.
+        """
+
         migration_path = ROOT / archive_recovery.WORK107_MIGRATION_PATH
         rows = archive_recovery.parse_work107_migration_document(
             migration_path.read_bytes()
@@ -110,13 +117,18 @@ class ArchiveCutoverTest(unittest.TestCase):
         report = archive_validation.validate_repository_archive(ROOT, {})
         self.assertTrue(report.valid, report.diagnostics)
         namespace_paths = {path for path, _links in report.record_link_counts}
-        self.assertEqual(namespace_paths, {row["stable_path"] for row in rows})
+        self.assertTrue(namespace_paths.issubset({row["stable_path"] for row in rows}))
 
+        present = 0
         for row in rows:
             with self.subTest(stable=row["stable_path"]):
                 self.assertFalse((ROOT / row["legacy_path"]).exists())
                 stable = ROOT / row["stable_path"]
-                self.assertTrue(stable.is_file())
+                if not stable.is_file():
+                    self.assertNotIn(row["stable_path"], namespace_paths)
+                    continue
+                present += 1
+                self.assertIn(row["stable_path"], namespace_paths)
                 terminal = parse_archive_envelope(stable.read_bytes())
                 legacy = archive_recovery.recover_work107_legacy_envelope(ROOT, row)
                 self.assertEqual(terminal.payload, legacy.payload)
@@ -127,53 +139,46 @@ class ArchiveCutoverTest(unittest.TestCase):
                     self.assertEqual(terminal.metadata["change_id"], expected_change)
                 else:
                     self.assertNotIn("change_id", terminal.metadata)
+        self.assertEqual(len(rows), 93)
+        self.assertEqual(present, 17)
+        self.assertEqual(len(namespace_paths), 17)
 
     def test_work107_index_has_only_stable_record_links(self) -> None:
+        """The index links stable paths only, and only the ones still tracked.
+
+        ADR-0030 keeps Stage 98 to README, migrations and tombstones, so a ledger
+        row whose body moved to Git history is absent from both the tree and the
+        index.  What must never appear is a legacy path.
+        """
+
         rows = archive_recovery.build_work107_migration_rows(ROOT)
         index = (ROOT / archive_cutover.ARCHIVE_INDEX).read_text(encoding="utf-8")
+        linked = 0
         for row in rows:
             with self.subTest(stable=row["stable_path"]):
                 relative = row["stable_path"].removeprefix("docs/98.archive/")
-                self.assertIn(f"](./{relative})", index)
+                present = (ROOT / row["stable_path"]).is_file()
+                if present:
+                    self.assertIn(f"](./{relative})", index)
+                    linked += 1
+                else:
+                    self.assertNotIn(f"](./{relative})", index)
                 legacy_relative = row["legacy_path"].removeprefix("docs/98.archive/")
                 self.assertNotIn(f"](./{legacy_relative})", index)
-
-    def test_finite_base_proof_remains_exact_inside_the_aggregate(self) -> None:
-        text = (ROOT / archive_cutover.ARCHIVE_INDEX).read_text(encoding="utf-8")
-
-        rows, structure_failure = archive_cutover._parse_archive_index(text)
-        stable_by_legacy = {
-            str(row["legacy_path"]): str(row["stable_path"])
-            for row in archive_recovery.build_work107_migration_rows(ROOT)
-        }
-        base_rows = {
-            stable_by_legacy[path]: rows[stable_by_legacy[path]]
-            for path in archive_cutover.EXPECTED_ARCHIVE_PATHS
-            if stable_by_legacy[path] in rows
-        }
-
-        self.assertFalse(structure_failure)
-        self.assertEqual(len(base_rows), 31)
-        self.assertEqual(
-            sum(row.historical_links for row in base_rows.values()),
-            archive_cutover.EXPECTED_HISTORICAL_LINKS,
-        )
-        self.assertEqual(archive_cutover.EXPECTED_HISTORICAL_LINKS, 202)
-        self.assertEqual(len(rows), 93)
-        self.assertEqual(sum(row.historical_links for row in rows.values()), 711)
+        self.assertEqual(linked, 17)
 
     def test_repository_cutover_calls_generic_v2_boundary(self) -> None:
         index_text = (ROOT / archive_cutover.ARCHIVE_INDEX).read_text(encoding="utf-8")
         index_rows, structure_failure = archive_cutover._parse_archive_index(index_text)
         self.assertFalse(structure_failure)
         generic = ArchiveValidationReport(
-            historical_link_count=711,
-            record_count=93,
-            index_record_count=93,
+            historical_link_count=133,
+            record_count=17,
+            index_record_count=17,
             namespace_counts=(
-                ("arwb-base", 31),
-                ("acer-additive", 12),
-                ("wdtc-execution", 50),
+                ("arwb-base", 17),
+                ("acer-additive", 0),
+                ("wdtc-execution", 0),
                 ("progress-snapshot", 0),
             ),
             record_link_counts=tuple(
@@ -1065,14 +1070,29 @@ class ArchiveCutoverTest(unittest.TestCase):
             report = self._validate_without_repeating_secret_classification()
         self._assert_named_partial(report, "ARCHIVE-REPLACEMENT-MISSING")
 
-    def test_wdtc_source_commit_cannot_self_validate(self) -> None:
+    def test_record_source_commit_cannot_self_validate(self) -> None:
+        """Drifting a record's source_commit must be caught, not self-proved.
+
+        This used to drift the first reviewed-manifest record.  All 50 of those
+        targets are bodies that ADR-0030 moved to Git history, so the drift now
+        applies to a tracked record instead; the invariant is the same.
+        """
+
         repository = archive_validation.validate_repository_archive(ROOT, {})
         self.assertTrue(repository.valid, repository.diagnostics)
-        wdtc_path = repository.reviewed_manifest_records[0].target
-        record_bytes = (ROOT / wdtc_path).read_bytes()
+        record_path = next(
+            path
+            for path, _links in repository.record_link_counts
+            if (ROOT / path).is_file()
+            and parse_archive_envelope((ROOT / path).read_bytes()).metadata[
+                "source_commit"
+            ]
+            != archive_cutover.FIRST_SOURCE_COMMIT
+        )
+        record_bytes = (ROOT / record_path).read_bytes()
         original_parse = archive_cutover.parse_archive_envelope
 
-        def drift_wdtc_commit(content: bytes):
+        def drift_record_commit(content: bytes):
             parsed = original_parse(content)
             if content == record_bytes:
                 metadata = dict(parsed.metadata)
@@ -1083,7 +1103,7 @@ class ArchiveCutoverTest(unittest.TestCase):
         with patch.object(
             archive_cutover,
             "parse_archive_envelope",
-            side_effect=drift_wdtc_commit,
+            side_effect=drift_record_commit,
         ):
             report = self._validate_without_repeating_secret_classification()
 

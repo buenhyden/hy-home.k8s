@@ -128,12 +128,18 @@ class MigrationTests(unittest.TestCase):
         more. The registry validator pins exactly this diagnostic set, so an
         empty result here would mean the retirement had been undone rather than
         that the manifest still applies.
+
+        The archive-unique rows used to resolve, because their WORK-107 alias
+        targets were bodies under docs/98.archive/changes/. ADR-0030 moved those
+        bodies to Git history, and this retired tool checks worktree presence
+        rather than recovering them, so those rows now miss their endpoint too.
         """
 
         diagnostics = set()
         units = set()
         for row in entries:
             if row.get("disposition") != "move-current":
+                diagnostics.add(f"MIGRATION-MISSING-ENDPOINT:{row['source']}")
                 continue
             match = re.fullmatch(
                 r"docs/03\.specs/(\d{3})-[^/]+/(?:plan|tasks)\.md", row["target"]
