@@ -3,7 +3,7 @@ title: 'Workspace Document Assurance Operating Model Architecture Description'
 type: sdlc/ad
 status: active
 owner: platform
-updated: 2026-07-14
+updated: 2026-08-29
 artifact_id: "AD-0008"
 ---
 
@@ -109,9 +109,9 @@ against their source rather than becoming new owners.
 ### Agent architecture requirements
 
 - **Model/Provider Strategy**: Capability tiers are canonical; provider notes
-  map Claude and Codex native adapters plus the local/Antigravity adapter to
-  declared model identifiers without duplicating names in every role. Gemini
-  CLI native model resolution remains `DEFER` until `.gemini/**` runtime evidence exists.
+  map the Claude and Codex native adapters to declared model identifiers without
+  duplicating names in every role. ADR-0030 admits those two provider-native
+  projections only, so no further native model resolution is deferred.
 - **Tooling Boundary**: Agents may use repository and read-only research tools;
   remote mutation and secret access require separate authority.
 - **Memory & Context Strategy**: Durable decisions live in PRD/AD/ADR/Spec and
@@ -119,7 +119,7 @@ against their source rather than becoming new owners.
   artifacts.
 - **Guardrail Boundary**: Shared roles define responsibility, output, prohibited
   action, stop, and handoff semantics; each adapter preserves its surface syntax
-  without turning local `.agents/**` files into Gemini CLI native evidence.
+  without turning shared `.agents/**` files into provider-native evidence.
 - **Latency / Cost Budget**: Affected-file checks are narrow; all-files and broad
   reviewers run at defined completion gates rather than after every edit.
 

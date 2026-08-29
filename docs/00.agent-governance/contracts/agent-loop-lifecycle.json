@@ -310,7 +310,7 @@
       },
       {
         "id": "instruction-clarification",
-        "ownerRef": "docs/00.agent-governance/rules/agentic.md"
+        "ownerRef": "docs/00.agent-governance/policies/agent-execution.md"
       },
       {
         "id": "validator-improvement",
@@ -322,7 +322,7 @@
       },
       {
         "id": "owned-external-limitation",
-        "ownerRef": "docs/03.specs/0043-agent-harness-loop-lifecycle/tasks.md"
+        "ownerRef": "docs/03.specs/0043-agent-harness-loop-lifecycle/README.md"
       }
     ]
   },

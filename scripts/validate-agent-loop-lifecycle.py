@@ -179,7 +179,7 @@ FEEDBACK_DESTINATIONS = (
     ),
     (
         "instruction-clarification",
-        "docs/00.agent-governance/rules/agentic.md",
+        "docs/00.agent-governance/policies/agent-execution.md",
     ),
     (
         "validator-improvement",
@@ -191,7 +191,7 @@ FEEDBACK_DESTINATIONS = (
     ),
     (
         "owned-external-limitation",
-        "docs/03.specs/0043-agent-harness-loop-lifecycle/tasks.md",
+        "docs/03.specs/0043-agent-harness-loop-lifecycle/README.md",
     ),
 )
 INTERFACE_SIGNATURES = {
