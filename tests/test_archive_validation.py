@@ -28,6 +28,7 @@ from scripts.archive_recovery import (  # noqa: E402
     render_fixture_archive_envelope,
 )
 from scripts import archive_validation  # noqa: E402
+from scripts.document_contracts import load_internal_payload  # noqa: E402
 from scripts.archive_validation import (  # noqa: E402
     ArchiveRecord,
     CurrentMarkdownDocument,
@@ -620,11 +621,7 @@ class ArchiveValidationTest(unittest.TestCase):
         self.assertEqual(self.codes(report), ())
 
     def test_repository_archive_v2_has_closed_namespace_and_index_parity(self) -> None:
-        registry = json.loads(
-            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
-                encoding="utf-8"
-            )
-        )
+        registry = load_internal_payload(ROOT)
 
         report = archive_validation.validate_repository_archive(ROOT, registry)
 
@@ -852,11 +849,7 @@ class ArchiveValidationTest(unittest.TestCase):
         self.assertEqual(self.codes(report), ())
 
     def test_repository_archive_rejects_open_or_overlapping_namespaces(self) -> None:
-        registry = json.loads(
-            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
-                encoding="utf-8"
-            )
-        )
+        registry = load_internal_payload(ROOT)
         open_registry = dict(registry)
         open_registry["archiveNamespaces"] = [
             *registry["archiveNamespaces"],
@@ -876,11 +869,7 @@ class ArchiveValidationTest(unittest.TestCase):
         self.assertIn("ARCHIVE-NAMESPACE-OVERLAP", self.codes(overlap_report))
 
     def test_repository_archive_rejects_index_and_envelope_membership_drift(self) -> None:
-        registry = json.loads(
-            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
-                encoding="utf-8"
-            )
-        )
+        registry = load_internal_payload(ROOT)
         missing_member = json.loads(json.dumps(registry))
         missing_member["archiveNamespaces"][2]["records"].pop()
 
@@ -889,11 +878,7 @@ class ArchiveValidationTest(unittest.TestCase):
         self.assertIn("ARCHIVE-NAMESPACE-PARITY", self.codes(report))
 
     def test_repository_archive_binds_reviewed_namespace_paths_and_metadata(self) -> None:
-        registry = json.loads(
-            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
-                encoding="utf-8"
-            )
-        )
+        registry = load_internal_payload(ROOT)
         substituted = json.loads(json.dumps(registry))
         acer_path = substituted["archiveNamespaces"][1]["records"][0]
         wdtc_path = substituted["archiveNamespaces"][2]["records"][0]
@@ -936,11 +921,7 @@ class ArchiveValidationTest(unittest.TestCase):
             self.codes(types.SimpleNamespace(diagnostics=diagnostics)),
         )
 
-        registry = json.loads(
-            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
-                encoding="utf-8"
-            )
-        )
+        registry = load_internal_payload(ROOT)
         parsed_rows, link_total, parse_diagnostics = (
             archive_validation._parse_repository_index(index_text)  # noqa: SLF001
         )
@@ -964,11 +945,7 @@ class ArchiveValidationTest(unittest.TestCase):
     def test_repository_archive_git_snapshot_is_bounded_and_under_sixty_seconds(
         self,
     ) -> None:
-        registry = json.loads(
-            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
-                encoding="utf-8"
-            )
-        )
+        registry = load_internal_payload(ROOT)
         real_popen = subprocess.Popen
         git_calls = 0
 
@@ -1097,11 +1074,7 @@ class ArchiveValidationTest(unittest.TestCase):
     def test_repository_four_spec_overlaps_use_only_exact_batch_evidence(
         self,
     ) -> None:
-        registry = json.loads(
-            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
-                encoding="utf-8"
-            )
-        )
+        registry = load_internal_payload(ROOT)
         expected = {
             "docs/03.specs",
             "docs/03.specs/001-wsl-k3d-argocd-platform/spec.md",

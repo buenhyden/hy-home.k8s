@@ -11,6 +11,7 @@ import pathlib
 import pwd
 import stat
 import subprocess
+import sys
 import tempfile
 import unittest
 from types import SimpleNamespace
@@ -19,6 +20,9 @@ from unittest import mock
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 VALIDATOR = ROOT / "scripts" / "validate-active-corpus-migrations.py"
+sys.path.insert(0, str(ROOT))
+
+from scripts.document_contracts import load_internal_payload  # noqa: E402
 
 PROPOSED_FIFTH_BATCH = {
     "sequence": 5,
@@ -316,11 +320,7 @@ class ActiveCorpusMigrationTests(unittest.TestCase):
 
     def test_acer_managed_subset_remains_exact_with_declared_wdtc_records(self) -> None:
         validator = load_validator()
-        registry = json.loads(
-            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
-                encoding="utf-8"
-            )
-        )
+        registry = load_internal_payload(ROOT)
         namespace_counts = {
             namespace["id"]: len(namespace["records"])
             for namespace in registry["archiveNamespaces"]

@@ -45,7 +45,10 @@ from archive_recovery import (  # noqa: E402
     render_work107_migration_document,
     render_work107_stable_envelope,
 )
-from document_contracts import load_registry  # noqa: E402
+from document_contracts import (  # noqa: E402
+    load_internal_payload,
+    load_registry,
+)
 from document_lifecycle import LifecycleDocument  # noqa: E402
 
 
@@ -56,7 +59,10 @@ LEGACY_TEMPLATE = PurePosixPath(
     "docs/99.templates/templates/common/archive-tombstone.template.md"
 )
 NEW_TEMPLATE = PurePosixPath(ARCHIVE_TEMPLATE)
-REGISTRY_PATH = "docs/99.templates/support/document-profiles.json"
+# The combined registry the pinned cutover commits hold. Synthetic roots
+# reproduce that layout, so they seed this path from the published
+# contracts' projection rather than from a tree that no longer has it.
+RETIRED_REGISTRY_PATH = "docs/99.templates/support/document-profiles.json"
 BASE_REGISTRY_BLOB_OID = getattr(CUTOVER_MANIFEST, "BASE_REGISTRY_BLOB_OID", "")
 PROPOSED_REGISTRY_BLOB_OID = getattr(CUTOVER_MANIFEST, "PROPOSED_REGISTRY_BLOB_OID", "")
 CUTOVER_PROPOSED_COMMIT = getattr(CUTOVER_MANIFEST, "CUTOVER_PROPOSED_COMMIT", "")
@@ -208,8 +214,8 @@ class FiniteArchiveCutoverAdmissionTest(unittest.TestCase):
         )
 
     def test_manifest_registry_blob_oids_match_exact_git_objects(self):
-        base = committed_blob_oid(CUTOVER_BASE_COMMIT, REGISTRY_PATH)
-        proposed = committed_blob_oid(CUTOVER_PROPOSED_COMMIT, REGISTRY_PATH)
+        base = committed_blob_oid(CUTOVER_BASE_COMMIT, RETIRED_REGISTRY_PATH)
+        proposed = committed_blob_oid(CUTOVER_PROPOSED_COMMIT, RETIRED_REGISTRY_PATH)
         self.assertEqual(BASE_REGISTRY_BLOB_OID, base)
         self.assertEqual(PROPOSED_REGISTRY_BLOB_OID, proposed)
 
@@ -256,12 +262,12 @@ class FiniteArchiveCutoverAdmissionTest(unittest.TestCase):
         for malformed_commit in ("", "HEAD", "0" * 39, "G" * 40):
             with self.subTest(malformed_commit=malformed_commit):
                 with self.assertRaises(GitFixtureResolutionError):
-                    committed_blob_oid(malformed_commit, REGISTRY_PATH)
+                    committed_blob_oid(malformed_commit, RETIRED_REGISTRY_PATH)
 
         with self.assertRaises(GitFixtureResolutionError):
-            committed_blob_oid("0" * 40, REGISTRY_PATH)
+            committed_blob_oid("0" * 40, RETIRED_REGISTRY_PATH)
         with self.assertRaises(GitFixtureResolutionError):
-            committed_blob_oid(PROPOSED_REGISTRY_BLOB_OID, REGISTRY_PATH)
+            committed_blob_oid(PROPOSED_REGISTRY_BLOB_OID, RETIRED_REGISTRY_PATH)
 
     def test_exact_staged_and_ci_cutover_consume_only_finite_manifest(self):
         expected = frozenset(PurePosixPath(path) for path in EXPECTED_ARCHIVE_PATHS) | {
@@ -342,7 +348,7 @@ class FiniteArchiveCutoverAdmissionTest(unittest.TestCase):
 
 
 class FiniteWork107ArchiveRehomeAdmissionTest(unittest.TestCase):
-    registry_path = PurePosixPath(REGISTRY_PATH)
+    registry_path = PurePosixPath(RETIRED_REGISTRY_PATH)
     migration_path = PurePosixPath(WORK107_MIGRATION_PATH)
     template_path = PurePosixPath(
         "docs/99.templates/templates/common/archive-migration.template.md"
@@ -720,16 +726,19 @@ class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
         self._git(root, "init", "--quiet")
         self._git(root, "config", "user.email", "fixture@example.invalid")
         self._git(root, "config", "user.name", "Lifecycle Archive Fixture")
-        registry_path = root / REGISTRY_PATH
+        registry_path = root / RETIRED_REGISTRY_PATH
         registry_path.parent.mkdir(parents=True, exist_ok=True)
-        registry_path.write_bytes((ROOT / REGISTRY_PATH).read_bytes())
+        registry_path.write_bytes(
+            json.dumps(load_internal_payload(ROOT), indent=2).encode("utf-8")
+            + b"\n"
+        )
         document_path = root / (self.archive_path if archived else self.original_path)
         document_path.parent.mkdir(parents=True, exist_ok=True)
         document_path.write_bytes(
             self._archive_bytes() if archived else self._source_bytes()
         )
         self._git(
-            root, "add", "--", REGISTRY_PATH, document_path.relative_to(root).as_posix()
+            root, "add", "--", RETIRED_REGISTRY_PATH, document_path.relative_to(root).as_posix()
         )
         self._git(root, "commit", "--quiet", "-m", "base")
         return temporary, root, self._git(root, "rev-parse", "HEAD")

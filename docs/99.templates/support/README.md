@@ -46,7 +46,6 @@ Primary readers:
 support/
 ├── document-contract.md
 ├── document-lifecycle.md
-├── document-profiles.json
 └── README.md
 ```
 
@@ -78,13 +77,13 @@ This README is located at `docs/99.templates/support/`.
 | --- | --- |
 | [Document Contract](./document-contract.md) | Owns exact-one-profile selection, form/body/frontmatter rationale, and the protected contract boundary. |
 | [Document Lifecycle](./document-lifecycle.md) | Owns lifecycle, supersession, retention, archive, date-exception, and legacy-disposition rationale. |
-| [Document Profile Registry](./document-profiles.json) | Canonical machine contract for document classification, paths, frontmatter, lifecycle domains, headings, templates, and ownership declarations. |
 
 ## Related Documents
 
 - [Templates README](../README.md)
 - [Document Registry Form Schema](../contracts/registry-form.schema.json)
-- [Document Profile Registry](./document-profiles.json)
+- [Document Profile Registry](../registry.json)
+- [Document Route Contract](../contracts/route-contract.json)
 - [Spec-Driven SDLC and Document Contracts](../../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md)
 - [Document Authoring Policy](../../00.agent-governance/rules/document-authoring.md)
 - [Migration Spec](../../03.specs/0011-template-contract-governance-migration/spec.md)

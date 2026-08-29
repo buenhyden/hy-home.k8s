@@ -33,7 +33,7 @@ archive payloads within their declared format boundaries.
 
 | Surface | Unique responsibility |
 | --- | --- |
-| `document-profiles.json` and schema | Sole machine owner of exact routes, profile identities, metadata keys and states, heading sets, body/relationship contracts, lifecycle values, forms, and exceptions |
+| `registry.json`, `contracts/route-contract.json`, and their schemas | Sole machine owner of exact routes, profile identities, metadata keys and states, heading sets, body/relationship contracts, lifecycle values, forms, and exceptions |
 | `docs/99.templates/templates/**` | Minimal starter forms copied or rendered for an authored target |
 | This support contract | Exact-One-Profile selection, form/body/frontmatter rationale, and protected change boundary |
 | [Document Lifecycle](./document-lifecycle.md) | Promotion, supersession, retention, archive, date exception, and legacy-disposition rationale |
@@ -180,7 +180,8 @@ hosted CI, remote execution, secret access, or live-cluster correctness.
 
 ## Related Documents
 
-- [Document Profile Registry](./document-profiles.json)
+- [Document Profile Registry](../registry.json)
+- [Document Route Contract](../contracts/route-contract.json)
 - [Document Registry Form Schema](../contracts/registry-form.schema.json)
 - [Document Lifecycle](./document-lifecycle.md)
 - [Document Authoring](../../00.agent-governance/rules/document-authoring.md)

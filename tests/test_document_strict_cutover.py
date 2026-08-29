@@ -39,10 +39,12 @@ CURRENT_COMMAND_CONTRACT_DOCS = (
 STAGE99_SUPPORT_DOCS = CURRENT_COMMAND_CONTRACT_DOCS[2:]
 STAGE99_TEMPLATES_ROOT = REPOSITORY_ROOT / "docs" / "99.templates" / "templates"
 STAGE99_SUPPORT_ROOT = REPOSITORY_ROOT / "docs" / "99.templates" / "support"
+STAGE99_ROOT = REPOSITORY_ROOT / "docs" / "99.templates"
 CURRENT_STAGE99_CONTRACT_SURFACES = tuple(
     sorted(
         {
-            STAGE99_SUPPORT_ROOT / "document-profiles.json",
+            STAGE99_ROOT / "registry.json",
+            STAGE99_ROOT / "contracts" / "route-contract.json",
             *(
                 path
                 for root in (STAGE99_TEMPLATES_ROOT, STAGE99_SUPPORT_ROOT)
@@ -323,11 +325,6 @@ class DocumentStrictCutoverTests(unittest.TestCase):
         canonical = json.loads(
             (REPOSITORY_ROOT / contracts.REGISTRY_PATH).read_text(encoding="utf-8")
         )
-        retired = json.loads(
-            (REPOSITORY_ROOT / contracts.RETIRED_REGISTRY_PATH).read_text(
-                encoding="utf-8"
-            )
-        )
 
         canonical_rows = canonical["standaloneExecutions"]
         canonical_spec_numbers = [int(row["spec"]) for row in canonical_rows]
@@ -337,8 +334,10 @@ class DocumentStrictCutoverTests(unittest.TestCase):
         self.assertEqual(
             canonical_spec_numbers, sorted(set(canonical_spec_numbers))
         )
-        self.assertNotIn(
-            "0062", [row["spec"] for row in retired["standaloneExecutions"]]
+        # The retired combined registry was the only other claimant, so its
+        # absence is the strongest form of the one-owner guarantee.
+        self.assertFalse(
+            (REPOSITORY_ROOT / contracts.RETIRED_REGISTRY_PATH).exists()
         )
 
     def test_registry_route_state_is_explicit_transition(self) -> None:
@@ -479,8 +478,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
 
         registry = json.loads(
             _staged_bytes(
-                REPOSITORY_ROOT
-                / "docs/99.templates/support/document-profiles.json"
+                REPOSITORY_ROOT / "docs/99.templates/contracts/route-contract.json"
             )
         )
         current_owners = registry["governanceCurrentOwners"]["paths"]
@@ -1385,10 +1383,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
 
     def test_work105_terminal_core_forms_and_retired_authored_routes(self) -> None:
         registry = json.loads(
-            _staged_bytes(
-                REPOSITORY_ROOT
-                / "docs/99.templates/support/document-profiles.json"
-            )
+            _staged_bytes(REPOSITORY_ROOT / "docs/99.templates/registry.json")
         )
         profiles = registry["profiles"]
         profile_ids = {profile["id"] for profile in profiles}
@@ -1424,16 +1419,11 @@ class DocumentStrictCutoverTests(unittest.TestCase):
             "docs/03.specs/999-retired/api-spec.md",
         ):
             with self.subTest(path=path):
-                matches = []
-                for profile in profiles:
-                    for route in profile["routes"]:
-                        if (
-                            route["kind"] == "exact" and route["value"] == path
-                        ) or (
-                            route["kind"] == "regex"
-                            and re.fullmatch(route["value"], path) is not None
-                        ):
-                            matches.append(profile["id"])
+                matches = [
+                    profile["id"]
+                    for profile in profiles
+                    if re.fullmatch(profile["pathPattern"], path) is not None
+                ]
                 self.assertEqual(matches, [])
 
         expected_templates = {
@@ -1458,10 +1448,7 @@ class DocumentStrictCutoverTests(unittest.TestCase):
 
     def test_work105_program_lineage_and_authority_gate_are_atomic(self) -> None:
         registry = json.loads(
-            _staged_bytes(
-                REPOSITORY_ROOT
-                / "docs/99.templates/support/document-profiles.json"
-            )
+            _staged_bytes(REPOSITORY_ROOT / "docs/99.templates/registry.json")
         )
         programs = registry["programLineage"]["programs"]
         self.assertEqual(len(programs), 5)

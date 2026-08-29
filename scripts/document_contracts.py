@@ -3109,6 +3109,19 @@ def load_internal_payload(root: Path) -> dict[str, Any]:
     routes = _load_published_contract(
         root, ROUTE_CONTRACT_PATH, ROUTE_CONTRACT_SCHEMA_PATH
     )
+    return internal_payload_from_contracts(registry, routes)
+
+
+def internal_payload_from_contracts(
+    registry: Mapping[str, Any],
+    routes: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Merge two already-loaded published contracts into the internal form.
+
+    Callers that hold contract bytes rather than a working tree - a comparison
+    against a git blob, say - project them here instead of re-reading files.
+    """
+
     payload: dict[str, Any] = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "$id": INTERNAL_FORM_ID,

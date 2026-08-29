@@ -39,8 +39,10 @@ from archive_cutover_manifest import (
     PROPOSED_REGISTRY_VERSION,
 )
 from document_contracts import (
+    REGISTRY_PATH,
     RETIRED_REGISTRY_PATH,
     ROOT_FILES,
+    ROUTE_CONTRACT_PATH,
     TARGET_ROOTS,
     DocumentContractError,
     DocumentProfile,
@@ -48,6 +50,8 @@ from document_contracts import (
     Route,
     classify_path,
     enumerate_target_markdown,
+    internal_payload_from_contracts,
+    load_internal_payload,
     load_json_file,
     load_registry,
     read_repository_text,
@@ -2154,13 +2158,13 @@ def _work054_wp002_transition_fixture_inputs(
     proposed_blobs = dict(_index_blob_map(root))
     production_registry = load_registry(root)
     base_registry_raw = dict(
-        _registry_blob(
+        _registry_snapshot(
             root,
-            _tree_blob_oid(root, WORK054_WP002_BASE_COMMIT, RETIRED_REGISTRY_PATH),
+            lambda path: _tree_blob_oid(root, WORK054_WP002_BASE_COMMIT, path),
         )
     )
     proposed_registry_raw = dict(
-        _registry_blob(root, _index_blob_oid(root, RETIRED_REGISTRY_PATH))
+        _registry_snapshot(root, lambda path: _index_blob_oid(root, path))
     )
     base_registry = _classification_registry(
         production_registry,
@@ -3359,6 +3363,29 @@ def _registry_blob(
     return MappingProxyType(loaded)
 
 
+def _registry_snapshot(
+    root: Path,
+    blob_oid_for: Callable[[PurePosixPath], str | None],
+) -> Mapping[str, object]:
+    """Read one comparison side's registry from whichever form it holds.
+
+    Trees written before the Stage 99 contract split hold the combined
+    registry; later trees hold the two published contracts. Both are projected
+    into the same internal form so the base and proposed sides stay comparable
+    across the split.
+    """
+
+    combined = blob_oid_for(RETIRED_REGISTRY_PATH)
+    if combined is not None:
+        return _registry_blob(root, combined)
+    profiles = _registry_blob(root, blob_oid_for(REGISTRY_PATH))
+    routes = _registry_blob(root, blob_oid_for(ROUTE_CONTRACT_PATH))
+    try:
+        return MappingProxyType(internal_payload_from_contracts(profiles, routes))
+    except DocumentContractError as exc:
+        raise InvocationError("comparison registry projection is invalid") from exc
+
+
 def _classification_registry(
     current_registry: Registry,
     raw_registry: Mapping[str, object],
@@ -3714,6 +3741,9 @@ def _evaluate_comparison(
         proposed_blobs = _index_blob_map(root)
         changes = _staged_changes(root)
         proposed_registry_oid = _index_blob_oid(root, RETIRED_REGISTRY_PATH)
+        proposed_registry_raw = _registry_snapshot(
+            root, lambda path: _index_blob_oid(root, path)
+        )
     else:
         if mode == "ci":
             assert base_ref is not None and to_ref is not None
@@ -3730,7 +3760,12 @@ def _evaluate_comparison(
         base_blobs = _tree_blob_map(root, base_commit)
         proposed_blobs = _tree_blob_map(root, proposed_commit)
         changes = _tree_changes(root, base_commit, proposed_commit)
-        proposed_registry_oid = _tree_blob_oid(root, proposed_commit, RETIRED_REGISTRY_PATH)
+        proposed_registry_oid = _tree_blob_oid(
+            root, proposed_commit, RETIRED_REGISTRY_PATH
+        )
+        proposed_registry_raw = _registry_snapshot(
+            root, lambda path: _tree_blob_oid(root, proposed_commit, path)
+        )
 
     base_agent_contract_blobs: Mapping[PurePosixPath, str] = MappingProxyType({})
     proposed_agent_contract_blobs: Mapping[PurePosixPath, str] = MappingProxyType({})
@@ -3752,8 +3787,9 @@ def _evaluate_comparison(
             )
 
     base_registry_oid = _tree_blob_oid(root, base_commit, RETIRED_REGISTRY_PATH)
-    base_registry_raw = _registry_blob(root, base_registry_oid)
-    proposed_registry_raw = _registry_blob(root, proposed_registry_oid)
+    base_registry_raw = _registry_snapshot(
+        root, lambda path: _tree_blob_oid(root, base_commit, path)
+    )
     base_classification_registry = _classification_registry(registry, base_registry_raw)
     proposed_classification_registry = _classification_registry(
         registry, proposed_registry_raw
@@ -4889,9 +4925,14 @@ def _git_case(
     registry: Registry,
     contract_root: Path,
 ) -> tuple[int, list[str]]:
+    # The self-test repository reproduces the pre-split layout the comparison
+    # reader still admits, so it seeds that path from the published projection.
     fixture_registry = root / RETIRED_REGISTRY_PATH
     fixture_registry.parent.mkdir(parents=True, exist_ok=True)
-    fixture_registry.write_bytes((contract_root / RETIRED_REGISTRY_PATH).read_bytes())
+    fixture_registry.write_bytes(
+        json.dumps(load_internal_payload(contract_root), indent=2).encode("utf-8")
+        + b"\n"
+    )
     spec_path = "docs/03.specs/0900-example/spec.md"
     case_registry = registry
     ready_spec_id, ready_spec_state, blocked_spec_id = _dependency_ready_tranche_window(

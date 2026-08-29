@@ -25,7 +25,10 @@ from scripts.archive_validation import (  # noqa: E402
     ArchiveDiagnostic,
     ArchiveValidationReport,
 )
-from scripts.document_contracts import load_registry  # noqa: E402
+from scripts.document_contracts import (  # noqa: E402
+    load_internal_payload,
+    load_registry,
+)
 from scripts.document_lifecycle import (  # noqa: E402
     LifecycleDocument,
     LifecycleEvidenceContext,
@@ -107,11 +110,7 @@ class ArchiveCutoverTest(unittest.TestCase):
             migration_path.read_bytes()
         )
         rows = archive_recovery.validate_work107_migration_rows(ROOT, rows)
-        registry = json.loads(
-            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
-                encoding="utf-8"
-            )
-        )
+        registry = load_internal_payload(ROOT)
         namespace_paths = {
             path
             for namespace in registry["archiveNamespaces"]
@@ -882,11 +881,7 @@ class ArchiveCutoverTest(unittest.TestCase):
                 )
 
     def test_registry_declares_archive_source_removal_evidence(self) -> None:
-        registry = json.loads(
-            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
-                encoding="utf-8"
-            )
-        )
+        registry = load_internal_payload(ROOT)
         contracts = registry["documentContracts"]
         admission = next(
             item
@@ -1059,11 +1054,7 @@ class ArchiveCutoverTest(unittest.TestCase):
         self._assert_named_partial(report, "ARCHIVE-REPLACEMENT-MISSING")
 
     def test_wdtc_source_commit_cannot_self_validate(self) -> None:
-        registry = json.loads(
-            (ROOT / "docs/99.templates/support/document-profiles.json").read_text(
-                encoding="utf-8"
-            )
-        )
+        registry = load_internal_payload(ROOT)
         wdtc_path = registry["archiveNamespaces"][2]["records"][0]
         record_bytes = (ROOT / wdtc_path).read_bytes()
         original_parse = archive_cutover.parse_archive_envelope

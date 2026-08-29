@@ -93,6 +93,7 @@ RIA_CONTRACT_PATH = PurePosixPath(
 RETIRED_DOCUMENT_PROFILES_PATH = PurePosixPath(
     "docs/99.templates/support/document-profiles.json"
 )
+PROFILE_REGISTRY_PATH = PurePosixPath("docs/99.templates/registry.json")
 ROUTE_CONTRACT_PATH = PurePosixPath("docs/99.templates/contracts/route-contract.json")
 DOCUMENT_TAXONOMY_MANIFEST_PATH = PurePosixPath(
     "scripts/document-taxonomy-migration.json"
@@ -140,6 +141,41 @@ WORK054_HISTORICAL_SOURCE_BLOBS = {
 WORK054_HISTORICAL_SOURCE_COUNT = 10
 WORK054_HISTORICAL_OCCURRENCE_COUNT = 41
 WORK054_HISTORICAL_EDGE_COUNT = 15
+# Stage 99 split: these terminal documents name the combined registry the
+# split retired. Rewriting them would falsify completed history, so each
+# frozen source resolves that one link to the published profile registry.
+STAGE99_SPLIT_ALIAS_SOURCE_BLOBS = {
+    PurePosixPath(
+        "docs/03.specs/0038-reference-information-architecture/tasks.md"
+    ): "142966c4c988d0e1521d398c942abc09720b6695",  # pragma: allowlist secret
+    PurePosixPath(
+        "docs/03.specs/0040-contract-cutover-and-program-closure/tasks.md"
+    ): "88345aeb2cfa3900b92423773bb83b8882c35004",  # pragma: allowlist secret
+    PurePosixPath(
+        "docs/03.specs/0055-workspace-governance-audit-and-remediation/tasks.md"
+    ): "977c227a84cb683e59e1898d4b1dda0afdc9163a",  # pragma: allowlist secret
+    PurePosixPath(
+        "docs/03.specs/0056-workspace-engineering-gap-only-refresh/tasks.md"
+    ): "4b506f33423325c0ebf7876388ff8edb4151b77c",  # pragma: allowlist secret
+    PurePosixPath(
+        "docs/03.specs/0057-workspace-engineering-partial-defer-incremental-refresh/tasks.md"
+    ): "24327ea1c8e60712c97c7ad92e76355d5217005e",  # pragma: allowlist secret
+    PurePosixPath(
+        "docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/tasks.md"
+    ): "7230cd5f5a92f3b59d0d6f4d6b19076c3d939644",  # pragma: allowlist secret
+    PurePosixPath(
+        "docs/90.references/audits/2026-08-09-wgia/spec-driven-sdlc-documentation-and-templates.md"
+    ): "67072beb060adc5744c6b7f65202eaf5f87a58e7",  # pragma: allowlist secret
+    PurePosixPath(
+        "docs/90.references/research/2026-08-08-wer/documentation-architecture-and-diataxis.md"
+    ): "ae960d6544b4a31a0a5e5162d8d62b6f2c757e70",  # pragma: allowlist secret
+    PurePosixPath(
+        "docs/90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md"
+    ): "9b769b512e9355d373092afcfe2453bce9b461c5",  # pragma: allowlist secret
+}
+STAGE99_SPLIT_ALIAS_SOURCE_COUNT = 9
+STAGE99_SPLIT_ALIAS_OCCURRENCE_COUNT = 9
+STAGE99_SPLIT_ALIAS_EDGE_COUNT = 9
 ARCHIVE_INDEX_BOUNDARY = "docs/98.archive/README.md#document-index"
 ARCHIVE_INDEX_PATH = PurePosixPath("docs/98.archive/README.md")
 DOCUMENT_TAXONOMY_SOURCE_COMMIT = (
@@ -3852,6 +3888,26 @@ def _reviewed_work054_historical_owner_edges(
     )
 
 
+def _reviewed_stage99_contract_split_edges(
+    context: Context,
+    move_targets: Mapping[PurePosixPath, PurePosixPath],
+) -> dict[ArchiveTransitionEdge, PurePosixPath]:
+    """Resolve only the frozen links the Stage 99 contract split retired."""
+
+    if context.route_state != "transition":
+        return {}
+    return _reviewed_source_pinned_alias_edges(
+        context,
+        move_targets,
+        source_blobs=STAGE99_SPLIT_ALIAS_SOURCE_BLOBS,
+        expected_source_count=STAGE99_SPLIT_ALIAS_SOURCE_COUNT,
+        expected_edge_count=STAGE99_SPLIT_ALIAS_EDGE_COUNT,
+        contract_name="Stage 99 contract split",
+        exact_redirects={RETIRED_DOCUMENT_PROFILES_PATH: PROFILE_REGISTRY_PATH},
+        expected_occurrence_count=STAGE99_SPLIT_ALIAS_OCCURRENCE_COUNT,
+    )
+
+
 def _link_diagnostics(context: Context) -> list[Diagnostic]:
     diagnostics: list[Diagnostic] = []
     archive_handoff = _archive_transition_handoff(context)
@@ -3868,6 +3924,10 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
         context, move_targets
     )
     reviewed_work054_owner_edges = _reviewed_work054_historical_owner_edges(
+        context,
+        move_targets,
+    )
+    reviewed_stage99_split_edges = _reviewed_stage99_contract_split_edges(
         context,
         move_targets,
     )
@@ -3910,6 +3970,11 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
                 if (
                     ArchiveTransitionEdge(source, target)
                     in reviewed_work054_owner_edges
+                ):
+                    continue
+                if (
+                    ArchiveTransitionEdge(source, target)
+                    in reviewed_stage99_split_edges
                 ):
                     continue
                 if ArchiveTransitionEdge(source, target) in reviewed_stage90_move_edges:

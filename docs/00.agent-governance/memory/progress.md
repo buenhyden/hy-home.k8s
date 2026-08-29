@@ -18942,3 +18942,93 @@ validator, RIA's `currentPackRegistry` value, two gate phrase checks, the
   consumer naming it.
 - No live, hosted, provider-runtime, remote, secret-value, push, publish, or
   deployment evidence was collected or claimed.
+
+## 2026-08-19 - Stage 99 registry retirement: deleting the combined contract file
+
+### Metadata
+
+- Owner: platform
+- Scope: `docs/99.templates/support/`, `docs/99.templates/README.md`, `docs/00.agent-governance/hooks/k8s-pre-edit.sh`, `scripts/document_contracts.py`, `scripts/validate-document-lifecycle.py`, `scripts/validate-links-and-owners.py`, `scripts/validate-active-corpus-eligibility.py`, `scripts/generate-llm-wiki-index.sh`, `tests/`
+- Parent: WP-004, Stage 99 contract split follow-through
+- Evidence class: repository-static plus local execution of the full unittest suite and the repository quality gate
+
+### Progress
+
+`docs/99.templates/support/document-profiles.json` is deleted. The two published
+contracts published in the previous cycle are now the only tracked registry
+authority, and every reader that resolved the retired file from the working tree
+or the index has been moved onto them.
+
+**Classifying readers by where they read, not by what they read, decided every
+case.** A read pinned to a commit or a blob - `_load_pinned_json` against
+`EVIDENCE_COMMIT`, `_work107_commit_path_blobs` against
+`WORK107_LEGACY_ARCHIVE_COMMIT`, the WORK-105 base census, the wiki index's
+blob-OID overlay - resolves through git objects, so deletion at HEAD leaves it
+untouched and rewriting its path would falsify the tree it describes. Those keep
+the retired path, now with a comment saying why. A read against the worktree or
+the index had to move.
+
+**One reader was both.** `validate-document-lifecycle.py` compares a base tree
+against a proposed tree at the same path. Base commits predate the split and hold
+the combined file; the proposed side no longer does. `_registry_snapshot` now
+reads whichever form a side holds and projects both into the internal form, so
+the comparison stays valid across the split. The pinned WORK-105/107/108 blob-OID
+gates still key off the retired path, because that is the tree those pins
+describe.
+
+**`internal_payload_from_contracts` was factored out of `load_internal_payload`**
+so a caller holding contract bytes - a git blob, not a working tree - can project
+them without re-reading files.
+
+**Nine frozen historical links got a closed alias set.** Six terminal spec
+`tasks.md`, one audit, and two research documents name the retired registry.
+Rewriting them would falsify completed history, so
+`_reviewed_stage99_contract_split_edges` pins each source's blob and resolves
+exactly nine links to `docs/99.templates/registry.json`. The set is closed: the
+helper rejects any drift in source count, contributing sources, edge count, or
+occurrence count.
+
+**Stage 99 support prose stayed and was repointed.** `document-contract.md`,
+`document-lifecycle.md`, and both READMEs are current guidance, not history, so
+their links now name the published contracts.
+
+### Validation
+
+- `python3 -m unittest discover -s tests -q` -> `Ran 1049 tests`, three carried-forward `test_k8s_pre_edit_hook` worktree failures and no other failure
+- `bash scripts/validate-repo-quality-gates.sh .` -> `[PASS] repository quality gates passed`
+- `python3 scripts/validate-links-and-owners.py --root . --mode strict` -> `PASS CROSS-DOCUMENT`
+- Deletion was measured before it was performed: the link validator was run against a tree without the file, and the twelve resulting `LINK-BROKEN` diagnostics defined the work rather than an estimate
+- No cluster was created, deleted, or contacted
+
+### Handoff
+
+- **A first deletion attempt silently did nothing.** `rm` was aliased to prompt,
+  the prompt got no answer, and only `git rm --cached` took effect. The tree then
+  looked deleted to a tracked-artifact check but not to a file-existence check,
+  which made one measurement round misleading. Verify a deletion with `ls` and
+  `git status`, not with the command's exit.
+- **A two-line comment reopened a closed WORK-105 census.**
+  `validate-active-corpus-eligibility.py` is matched line by line against a
+  pinned blob, so inserting an explanatory comment shifted every later line and
+  reclassified six historical architecture-requirement occurrences as live.
+  The comment was reverted.
+  Annotating a positionally pinned file is not a free change.
+- **Three `test_k8s_pre_edit_hook` worktree failures predate this cycle.** The
+  hook's affected-surface selector rejects a path inside the linked
+  `.worktrees/spec-0054-authority-convergence` checkout and exits 2. The same
+  three failed before the deletion and with the hook reverted to `HEAD`, so they
+  are carried forward untouched, not introduced here.
+- **The wiki index transition overlay is now permanently unmatched.** It gates on
+  five exact blob OIDs including the retired registry's, so it can no longer fire.
+  It was already inert before this cycle; it is left in place rather than swept.
+- **`artifactIdPattern` is still published but inert**, and the two unreachable
+  schema defs are still unreachable. Neither changed this cycle.
+- **`main` is far ahead of `origin/main` and unpushed.** Pushing is operator work.
+- **Live verification is still owed.** The Baseline warning channel on `apps` and
+  `ingress-nginx` remains unread.
+- **Reusable lesson: a constant's name is not its classification.** Renaming eight
+  lifecycle-validator sites to `RETIRED_REGISTRY_PATH` in one pass read as
+  finished work; two of them were current-index reads that only the test suite
+  exposed. Classify each call site, then name it.
+- No live, hosted, provider-runtime, remote, secret-value, push, publish, or
+  deployment evidence was collected or claimed.

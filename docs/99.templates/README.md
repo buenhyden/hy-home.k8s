@@ -9,7 +9,8 @@
 
 이 경로는 문서 작성에 쓰는 form과 그 form을 설명하는 support contract를
 분리한다. 정확한 경로, profile, frontmatter, 상태, heading, template 연결은
-[Document Profile Registry](./support/document-profiles.json)가 단독으로 소유한다.
+[Document Profile Registry](./registry.json)와
+[Route and Corpus Contract](./contracts/route-contract.json)가 나누어 소유한다.
 README는 해당 machine contract를 복제하지 않고 사람이 올바른 소유자를 찾도록
 안내한다.
 
@@ -19,7 +20,7 @@ README는 해당 machine contract를 복제하지 않고 사람이 올바른 소
 
 | Surface | Role | Canonical owner |
 | --- | --- | --- |
-| Machine contract | 경로를 정확히 하나의 profile과 form으로 분류하고 검증한다. | [Document Profile Registry](./support/document-profiles.json) |
+| Machine contract | 경로를 정확히 하나의 profile과 form으로 분류하고 검증한다. | [Document Profile Registry](./registry.json) |
 | Support | 역할, 수명주기, metadata, 선택 절차, legacy 정리의 이유와 방법을 설명한다. | [`support/`](./support/README.md) |
 | Forms | 작성자가 복사한 뒤 topic-specific 사실과 증거로 채우는 최소 구조를 제공한다. | [`templates/`](./templates/README.md) |
 | Authored documents | 요구, 결정, 명세, 실행, 운영, 참조, 보존 증거를 소유한다. | `docs/01.requirements`부터 `docs/05.operations`, `docs/90.references`, `docs/98.archive` |
@@ -57,7 +58,6 @@ progress 책임을 지원한다.
 │   ├── route-contract.json
 │   └── route-contract.schema.json
 ├── support/            # rationale, procedure, cleanup
-│   ├── document-profiles.json
 │   └── *.md
 ├── templates/          # copyable forms only
 │   ├── common/

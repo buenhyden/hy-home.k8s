@@ -3474,26 +3474,21 @@ class ActiveCorpusResidueClosureContractTests(unittest.TestCase):
             ).stdout.strip(),
             base_blob,
         )
-        self.assertEqual(
-            subprocess.run(
-                ["git", "rev-parse", f":{path}"],
-                cwd=REPOSITORY_ROOT,
-                check=True,
-                capture_output=True,
-                text=True,
-            ).stdout.strip(),
-            current_blob,
-        )
-        self.assertEqual(
-            subprocess.run(
-                ["git", "rev-parse", f"HEAD:{path}"],
-                cwd=REPOSITORY_ROOT,
-                check=True,
-                capture_output=True,
-                text=True,
-            ).stdout.strip(),
-            self.validator.MERGE_REGISTRY_BLOB,
-        )
+        # The Stage 99 split moved the tracked authority onto the two published
+        # contracts, so the index and HEAD assertions follow them rather than the
+        # retired file, which only the base-commit census above still names.
+        for authority, admitted in self.validator.REGISTRY_AUTHORITY_BLOBS.items():
+            for revision in (f":{authority}", f"HEAD:{authority}"):
+                self.assertIn(
+                    subprocess.run(
+                        ["git", "rev-parse", revision],
+                        cwd=REPOSITORY_ROOT,
+                        check=True,
+                        capture_output=True,
+                        text=True,
+                    ).stdout.strip(),
+                    admitted,
+                )
         self.assertNotEqual(work105_blob, work107_blob)
         self.assertNotEqual(work105_blob, current_blob)
         self.assertNotEqual(work107_blob, current_blob)

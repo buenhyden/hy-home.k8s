@@ -29,7 +29,7 @@ actual roles rather than forcing them into one delivery sequence.
 
 ### Lifecycle authority
 
-The [Document Profile Registry](./document-profiles.json) is the sole machine
+The [Document Profile Registry](../registry.json) is the sole machine
 owner of lifecycle domains, transitions, terminal states, evidence
 predicates, relationship classes, admission rules, routes, and registered
 exceptions. This document owns rationale and author procedure only.
@@ -209,7 +209,8 @@ the lifecycle change.
 
 ## Related Documents
 
-- [Document Profile Registry](./document-profiles.json)
+- [Document Profile Registry](../registry.json)
+- [Document Route Contract](../contracts/route-contract.json)
 - [Document Registry Form Schema](../contracts/registry-form.schema.json)
 - [Document Contract](./document-contract.md)
 - [Document Authoring](../../00.agent-governance/rules/document-authoring.md)

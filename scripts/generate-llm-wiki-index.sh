@@ -5,6 +5,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 ROOT_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd -P)"
 OUTPUT_PATH="$ROOT_DIR/docs/90.references/llm-wiki/wiki-index.md"
+# Only the transition overlay reads this; it describes one exact worktree
+# state that still held the combined registry, so the path stays as recorded.
 REGISTRY_PATH="$ROOT_DIR/docs/99.templates/support/document-profiles.json"
 TAXONOMY_MANIFEST_PATH="$ROOT_DIR/scripts/document-taxonomy-migration.json"
 ARCHIVE_MIGRATION_PATH="$ROOT_DIR/docs/98.archive/migrations/mig-0001-sdlc-taxonomy-convergence.md"
