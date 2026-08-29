@@ -4089,6 +4089,26 @@ def _taxonomy_overlay_matches(
     return proposed_text.count(f"]({archive_index})") == rule.get("archiveIndexLinks")
 
 
+def _baseline_pack_projection_bytes(
+    root: Path,
+    oid: str,
+    runner: GitRunner | None,
+) -> bytes:
+    """Read a baseline commit's pack projection from whichever form it holds.
+
+    Commits written before the Stage 99 split hold the combined registry; later
+    ones hold the published registry. A baseline that advances past the split
+    would otherwise read a path its own tree no longer has.
+    """
+
+    try:
+        return _read_commit_path(
+            root, oid, TRANSITION_CURRENT_PACK_PROJECTION_PATH, runner
+        )
+    except _GitError:
+        return _read_commit_path(root, oid, REGISTRY_PATH, runner)
+
+
 def _build_context(
     root: Path,
     contract: Mapping[str, object],
@@ -4137,9 +4157,7 @@ def _build_context(
     for encoded in dict.fromkeys(baselines.values()):
         oid = parse_git_sha1(encoded, field="currentPackBaselines")
         baseline_oids[encoded] = oid
-        registry_bytes = _read_commit_path(
-            root, oid, TRANSITION_CURRENT_PACK_PROJECTION_PATH, runner
-        )
+        registry_bytes = _baseline_pack_projection_bytes(root, oid, runner)
         registry = _historical_registry_projection(
             _decode_json_bytes(
                 registry_bytes,

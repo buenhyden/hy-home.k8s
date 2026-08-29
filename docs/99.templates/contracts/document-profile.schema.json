@@ -13,15 +13,12 @@
     "programLineage"
   ],
   "properties": {
-    "$schema": {
-      "description": "Relative pointer to this schema, which validates the registry.",
-      "const": "./contracts/document-profile.schema.json"
-    },
     "$id": {
       "const": "https://hy-home.k8s/docs/99.templates/registry.json"
     },
-    "schemaVersion": {
-      "const": 8
+    "$schema": {
+      "description": "Relative pointer to this schema, which validates the registry.",
+      "const": "./contracts/document-profile.schema.json"
     },
     "profiles": {
       "type": "array",
@@ -32,6 +29,12 @@
     },
     "programLineage": {
       "$ref": "#/$defs/programLineage"
+    },
+    "referenceCurrentPacks": {
+      "$ref": "#/$defs/referenceCurrentPacks"
+    },
+    "schemaVersion": {
+      "const": 8
     },
     "standaloneExecutions": {
       "type": "array",
@@ -229,7 +232,12 @@
     "lifecycleDomain": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["family", "profileIds", "states", "transitions"],
+      "required": [
+        "family",
+        "profileIds",
+        "states",
+        "transitions"
+      ],
       "properties": {
         "family": {
           "type": "string",
@@ -242,7 +250,11 @@
           "type": "object",
           "minProperties": 2,
           "additionalProperties": {
-            "enum": ["mutable", "current", "terminal"]
+            "enum": [
+              "mutable",
+              "current",
+              "terminal"
+            ]
           }
         },
         "transitions": {
@@ -252,8 +264,14 @@
           "items": {
             "type": "array",
             "prefixItems": [
-              {"type": "string", "minLength": 1},
-              {"type": "string", "minLength": 1}
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "string",
+                "minLength": 1
+              }
             ],
             "items": false,
             "minItems": 2,
@@ -350,8 +368,14 @@
       "allOf": [
         {
           "if": {
-            "properties": {"class": {"const": "readme"}},
-            "required": ["class"]
+            "properties": {
+              "class": {
+                "const": "readme"
+              }
+            },
+            "required": [
+              "class"
+            ]
           },
           "then": {
             "properties": {
@@ -360,7 +384,10 @@
             }
           },
           "else": {
-            "required": ["artifactIdPattern", "lifecycle"]
+            "required": [
+              "artifactIdPattern",
+              "lifecycle"
+            ]
           }
         }
       ]
@@ -501,6 +528,59 @@
         "decision": {
           "type": "string",
           "pattern": "^[0-9]{4}$"
+        }
+      }
+    },
+    "referenceCurrentPack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "allowedStates",
+        "members"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^(audits|research)/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+$"
+        },
+        "allowedStates": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "members": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^(?!README\\.md$)[A-Za-z0-9][A-Za-z0-9._-]*\\.md$"
+          }
+        }
+      }
+    },
+    "referenceCurrentPacks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileId",
+        "packs"
+      ],
+      "properties": {
+        "profileId": {
+          "const": "content/reference"
+        },
+        "packs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 2,
+          "items": {
+            "$ref": "#/$defs/referenceCurrentPack"
+          }
         }
       }
     },

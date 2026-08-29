@@ -25,6 +25,7 @@ TOP_LEVEL_KEYS = frozenset(
         "schemaVersion",
         "profiles",
         "programLineage",
+        "referenceCurrentPacks",
         "standaloneExecutions",
     }
 )

@@ -1270,16 +1270,67 @@
       "template": "docs/99.templates/templates/references/research.template.md",
       "requiredFrontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated", "superseded_by", "supersedes"],
-        "order": ["title", "type", "status", "owner", "updated", "superseded_by", "supersedes"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ]
       },
       "requiredSections": {
-        "required": ["Overview", "Reference Type", "Authority Boundary", "Scope", "Definitions / Facts", "Sources", "Review and Freshness", "Related Documents"],
-        "allowed": ["Overview", "Reference Type", "Authority Boundary", "Scope", "Definitions / Facts", "Sources", "Review and Freshness", "Related Documents"]
+        "required": [
+          "Overview",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ]
       },
-      "lifecycle": {"statusDomain": ["draft", "published", "superseded", "retired"], "appendContract": null},
-      "relationships": {"sourceProfileIds": [], "bodyContract": null},
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "published",
+          "superseded",
+          "retired"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
       "placeholderPolicy": "forbidden"
     },
     {
@@ -1291,16 +1342,66 @@
       "template": "docs/99.templates/templates/references/audit.template.md",
       "requiredFrontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated", "superseded_by", "supersedes"],
-        "order": ["title", "type", "status", "owner", "updated", "superseded_by", "supersedes"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ]
       },
       "requiredSections": {
-        "required": ["Overview", "Reference Type", "Authority Boundary", "Scope", "Definitions / Facts", "Sources", "Review and Freshness", "Related Documents"],
-        "allowed": ["Overview", "Reference Type", "Authority Boundary", "Scope", "Definitions / Facts", "Sources", "Review and Freshness", "Related Documents"]
+        "required": [
+          "Overview",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ]
       },
-      "lifecycle": {"statusDomain": ["draft", "completed", "invalidated"], "appendContract": null},
-      "relationships": {"sourceProfileIds": [], "bodyContract": null},
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "completed",
+          "invalidated"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
       "placeholderPolicy": "forbidden"
     },
     {
@@ -1312,16 +1413,68 @@
       "template": "docs/99.templates/templates/references/data.template.md",
       "requiredFrontmatter": {
         "mode": "required",
-        "required": ["title", "type", "status", "owner", "updated"],
-        "allowed": ["title", "type", "status", "owner", "updated", "superseded_by", "supersedes"],
-        "order": ["title", "type", "status", "owner", "updated", "superseded_by", "supersedes"]
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ]
       },
       "requiredSections": {
-        "required": ["Overview", "Reference Type", "Authority Boundary", "Scope", "Definitions / Facts", "Sources", "Review and Freshness", "Related Documents"],
-        "allowed": ["Overview", "Reference Type", "Authority Boundary", "Scope", "Definitions / Facts", "Sources", "Review and Freshness", "Related Documents"]
+        "required": [
+          "Overview",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ]
       },
-      "lifecycle": {"statusDomain": ["draft", "active", "stale", "superseded", "retired"], "appendContract": null},
-      "relationships": {"sourceProfileIds": [], "bodyContract": null},
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "stale",
+          "superseded",
+          "retired"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
       "placeholderPolicy": "forbidden"
     },
     {
@@ -2665,10 +2818,71 @@
       "pathPattern": "^docs/99\\.templates/templates/references/research\\.template\\.md$",
       "artifactIdPattern": null,
       "template": "docs/99.templates/templates/references/research.template.md",
-      "requiredFrontmatter": {"mode": "required", "required": ["title", "type", "status", "owner", "updated"], "allowed": ["title", "type", "status", "owner", "updated", "superseded_by", "supersedes"], "order": ["title", "type", "status", "owner", "updated", "superseded_by", "supersedes"]},
-      "requiredSections": {"required": ["Overview", "Reference Type", "Authority Boundary", "Scope", "Definitions / Facts", "Sources", "Review and Freshness", "Related Documents"], "allowed": ["Overview", "Reference Type", "Authority Boundary", "Scope", "Definitions / Facts", "Sources", "Review and Freshness", "Related Documents"]},
-      "lifecycle": {"statusDomain": ["draft", "published", "superseded", "retired"], "appendContract": null},
-      "relationships": {"sourceProfileIds": ["content/research"], "bodyContract": null},
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "published",
+          "superseded",
+          "retired"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "content/research"
+        ],
+        "bodyContract": null
+      },
       "placeholderPolicy": "template-only"
     },
     {
@@ -2678,10 +2892,70 @@
       "pathPattern": "^docs/99\\.templates/templates/references/audit\\.template\\.md$",
       "artifactIdPattern": null,
       "template": "docs/99.templates/templates/references/audit.template.md",
-      "requiredFrontmatter": {"mode": "required", "required": ["title", "type", "status", "owner", "updated"], "allowed": ["title", "type", "status", "owner", "updated", "superseded_by", "supersedes"], "order": ["title", "type", "status", "owner", "updated", "superseded_by", "supersedes"]},
-      "requiredSections": {"required": ["Overview", "Reference Type", "Authority Boundary", "Scope", "Definitions / Facts", "Sources", "Review and Freshness", "Related Documents"], "allowed": ["Overview", "Reference Type", "Authority Boundary", "Scope", "Definitions / Facts", "Sources", "Review and Freshness", "Related Documents"]},
-      "lifecycle": {"statusDomain": ["draft", "completed", "invalidated"], "appendContract": null},
-      "relationships": {"sourceProfileIds": ["content/audit"], "bodyContract": null},
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "completed",
+          "invalidated"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "content/audit"
+        ],
+        "bodyContract": null
+      },
       "placeholderPolicy": "template-only"
     },
     {
@@ -2691,10 +2965,72 @@
       "pathPattern": "^docs/99\\.templates/templates/references/data\\.template\\.md$",
       "artifactIdPattern": null,
       "template": "docs/99.templates/templates/references/data.template.md",
-      "requiredFrontmatter": {"mode": "required", "required": ["title", "type", "status", "owner", "updated"], "allowed": ["title", "type", "status", "owner", "updated", "superseded_by", "supersedes"], "order": ["title", "type", "status", "owner", "updated", "superseded_by", "supersedes"]},
-      "requiredSections": {"required": ["Overview", "Reference Type", "Authority Boundary", "Scope", "Definitions / Facts", "Sources", "Review and Freshness", "Related Documents"], "allowed": ["Overview", "Reference Type", "Authority Boundary", "Scope", "Definitions / Facts", "Sources", "Review and Freshness", "Related Documents"]},
-      "lifecycle": {"statusDomain": ["draft", "active", "stale", "superseded", "retired"], "appendContract": null},
-      "relationships": {"sourceProfileIds": ["content/data"], "bodyContract": null},
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "stale",
+          "superseded",
+          "retired"
+        ],
+        "appendContract": null
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "content/data"
+        ],
+        "bodyContract": null
+      },
       "placeholderPolicy": "template-only"
     },
     {
@@ -4550,6 +4886,28 @@
         ],
         "followUps": [],
         "ad": "0011"
+      }
+    ]
+  },
+  "referenceCurrentPacks": {
+    "profileId": "content/reference",
+    "packs": [
+      {
+        "id": "audits/2026-08-09-wgia",
+        "allowedStates": [
+          "draft"
+        ],
+        "members": [
+          "ai-agents-integrated-and-role-specific-agents.md",
+          "ci-cd-github-actions-qa-and-validation.md",
+          "harness-loop-fixtures-scripts-and-blockers.md",
+          "legacy-deprecated-and-one-shot-disposition-ledger.md",
+          "llm-wiki-memory-and-knowledge-management.md",
+          "remediation-and-integration-roadmap.md",
+          "security-and-approval-boundaries.md",
+          "spec-driven-sdlc-documentation-and-templates.md",
+          "workspace-purpose-governance-and-operating-contracts.md"
+        ]
       }
     ]
   },
