@@ -825,6 +825,29 @@ class ConsumerOwners:
     retention: ModuleType | None
 
 
+def _helper_artifact_role(path: str) -> str | None:
+    """Classify a tracked test artifact so fixtures are read as evidence.
+
+    A file that mentions a retired legacy token is either a test asserting the
+    token is gone or a live document still instructing agents to use it.  Only
+    the first is evidence.  Every artifact the retired role-audit manifests
+    admitted lived under tests/, so the directory and the format decide the
+    role; per-path admission is left to Git history.
+    """
+
+    if not path.startswith("tests/"):
+        return None
+    if path == "tests/README.md":
+        return "validation-evidence-boundary"
+    if path.endswith(".py"):
+        return "regression-test"
+    if path.endswith(".json"):
+        return "closed-fixture"
+    if path.endswith((".yaml", ".yml")):
+        return "manifest-fixture"
+    return None
+
+
 def _trusted_script(filename: str) -> ModuleType:
     path = Path(__file__).with_name(filename)
     name = "_legacy_owner_" + path.stem.replace("-", "_")
@@ -857,7 +880,6 @@ def _load_owners(
     candidate_set = set(candidates)
     terminal = compat.load_terminal_validator()
     affected = _trusted_script("validate-affected-surfaces.py")
-    roles = _trusted_script("validate-active-corpus-role-audit.py")
     retention = _trusted_script("validate-active-corpus-retention.py")
     for path in (
         terminal.REGISTRY_PATH,
@@ -928,7 +950,6 @@ def _load_owners(
     delegates = (
         terminal,
         affected,
-        roles,
         retention,
         links,
         compat,
@@ -945,7 +966,7 @@ def _load_owners(
     helper_roles = {
         path: role
         for path in candidates
-        if (role := roles.helper_artifact_role(path)) is not None
+        if (role := _helper_artifact_role(path)) is not None
     }
     return ConsumerOwners(
         proof.document_registry,

@@ -82,6 +82,21 @@ NATIVE_FAMILY_CONTRACT = (
     ),
 )
 SDLC_FRONTMATTER_KEYS = ("title", "type", "status", "owner", "updated")
+# Stage 05 holds only live, platform-owned operational documents.  The shared
+# registry cannot express either constraint: its status domain admits four
+# lifecycle states, and it constrains owner to any string.  Both values are
+# therefore pinned per profile here, where the other frontmatter values are
+# already checked.
+STAGE05_PROFILE_IDS = frozenset(
+    {
+        "sdlc/guide",
+        "sdlc/policy",
+        "sdlc/runbook",
+        "sdlc/incident",
+        "sdlc/postmortem",
+    }
+)
+STAGE05_PINNED_FRONTMATTER = {"status": "active", "owner": "platform"}
 NATIVE_TRACKED_PATHSPECS = (
     ".github/ISSUE_TEMPLATE",
     ".github/workflows",
@@ -1094,6 +1109,18 @@ def _value_contract_diagnostics(
                     repr(value),
                 )
             )
+        if profile.profile_id in STAGE05_PROFILE_IDS:
+            pinned = STAGE05_PINNED_FRONTMATTER.get(key)
+            if pinned is not None and not _same_scalar(value, pinned):
+                diagnostics.append(
+                    _diagnostic(
+                        _value_rule_id(key, "pattern"),
+                        path,
+                        profile,
+                        repr(pinned),
+                        repr(value),
+                    )
+                )
         if (
             key == "artifact_id"
             and profile.artifact_id_pattern is not None

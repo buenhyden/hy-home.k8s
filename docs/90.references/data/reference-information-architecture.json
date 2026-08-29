@@ -198,25 +198,6 @@
       ]
     },
     {
-      "id": "active-corpus-role-audit",
-      "repositoryEvidence": [
-        "docs/90.references/data/active-corpus-role-audit.json"
-      ],
-      "refreshTrigger": "Stage 05 authored-record change, frozen helper drift, post-closure manifest drift, README safety drift, or Spec 037 closure",
-      "sources": [
-        {
-          "url": "https://git-scm.com/docs/git-ls-files",
-          "checkedOn": "2026-07-22",
-          "adoptedScope": [
-            "Tracked index identity, regular-file mode, and stage evidence for the audited helper corpus"
-          ],
-          "rejectedScope": [
-            "Semantic role assignment, README membership, test execution, or live runtime behavior"
-          ]
-        }
-      ]
-    },
-    {
       "id": "agent-reference-index",
       "repositoryEvidence": [
         "docs/90.references/data/agent-reference-index.md"
