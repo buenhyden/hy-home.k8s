@@ -3968,7 +3968,7 @@ def validate_current_archive_authority(
             if target_path in canonical_individuals or (
                 target.is_relative_to(ARCHIVE_ROOT)
                 and target != ARCHIVE_INDEX
-                and target_path not in _ARCHIVE_MIGRATION_CONTROLS
+                and target_path != _WORK054_WP004B_MIGRATION_PATH
                 and generic_migration_id(target_path) is None
             ):
                 diagnostics.append(_diagnostic("ARCHIVE-DIRECT-CURRENT-LINK", path))

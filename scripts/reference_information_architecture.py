@@ -28,6 +28,8 @@ from jsonschema import Draft202012Validator
 
 from archive_recovery import ArchiveContractError
 from archive_validation import (
+    generic_migration_id,
+    parse_migration_control,
     parse_pinned_migration_control,
     repository_migration_proof,
 )
@@ -3127,7 +3129,7 @@ def _load_wp004b_transition_rows(
         runner,
     )
     try:
-        return parse_pinned_migration_control(
+        rows = parse_pinned_migration_control(
             WP004B_DOCUMENT_AUTHORITY_MIGRATION_PATH.as_posix(),
             migration_payload,
         )
@@ -3137,6 +3139,37 @@ def _load_wp004b_transition_rows(
             WP004B_DOCUMENT_AUTHORITY_MIGRATION_PATH.as_posix(),
             "WP-004B transition authority is unavailable",
         ) from error
+    return rows + _generic_transition_rows(root, proposed_oid, runner)
+
+
+def _generic_transition_rows(
+    root: Path,
+    proposed_oid: str | None,
+    runner: GitRunner | None,
+) -> tuple[dict[str, object], ...]:
+    """Return the rows of every migration that follows the pinned WP-004B one.
+
+    A Current document may name a later ledger for its lookup, so the mask has
+    to know those rows too or the link reads as unexplained drift.
+    """
+
+    directory = WP004B_DOCUMENT_AUTHORITY_MIGRATION_PATH.parent
+    rows: list[dict[str, object]] = []
+    for candidate in sorted((root / directory).glob("*.md")):
+        relative = directory / candidate.name
+        if generic_migration_id(relative.as_posix()) is None:
+            continue
+        payload = _proposed_path(root, relative, proposed_oid, runner)
+        try:
+            parsed = parse_migration_control(relative.as_posix(), payload)
+        except ArchiveContractError as error:
+            raise ContractError(
+                "RIA-TRANSITION",
+                relative.as_posix(),
+                "later transition authority is unavailable",
+            ) from error
+        rows.extend(parsed[0] if isinstance(parsed, tuple) and parsed else ())
+    return tuple(rows)
 
 
 def _rendered_inline_link_destination_spans(

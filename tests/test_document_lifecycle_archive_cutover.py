@@ -1757,7 +1757,10 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
 
     @staticmethod
     def _mig0004_baseline() -> tuple[str, dict[PurePosixPath, str], dict[PurePosixPath, str]]:
-        proposed = VALIDATOR._index_blob_map(ROOT)
+        # The gate admits one cutover: the sealed target tree is its proposed
+        # side. Reading the live index instead would pair a historical base with
+        # a tree that has advanced past the cutover, which never occurs in a run.
+        proposed = VALIDATOR._tree_blob_map(ROOT, VALIDATOR.WP004C_SEALED_TARGET_COMMIT)
         migration = VALIDATOR._blob_bytes(
             ROOT, proposed[VALIDATOR.WORK054_WP004B_MIGRATION_PATH]
         )

@@ -1654,6 +1654,15 @@ def _wp004c_mig0004_paths(
     if len(task_rows) != 1 or not stage99_rows:
         return frozenset()
 
+    try:
+        durable_ref = current_named_durable_ref(root)
+        require_commits_reachable_from_durable_refs(
+            root, (WP004C_SEALED_TARGET_COMMIT,), (durable_ref,)
+        )
+        sealed_target_blobs = _tree_blob_map(root, WP004C_SEALED_TARGET_COMMIT)
+    except (ArchiveContractError, InvocationError):
+        return frozenset()
+
     consumed: set[PurePosixPath] = set()
     stage99_legacy: set[PurePosixPath] = set()
     for row in stage99_rows:
@@ -1678,7 +1687,7 @@ def _wp004c_mig0004_paths(
             or legacy in proposed_blobs
             or target not in proposed_blobs
             or action not in {"moved", "replaced"}
-            or (action == "moved" and proposed_blobs[target] != source_blob)
+            or (action == "moved" and sealed_target_blobs.get(target) != source_blob)
         ):
             return frozenset()
         stage99_legacy.add(legacy)
@@ -1795,14 +1804,6 @@ def _wp004c_mig0004_paths(
     if expected_tasks != actual_tasks:
         return frozenset()
     consumed.update((task_legacy, readme_path, *expected_tasks))
-    try:
-        durable_ref = current_named_durable_ref(root)
-        require_commits_reachable_from_durable_refs(
-            root, (WP004C_SEALED_TARGET_COMMIT,), (durable_ref,)
-        )
-        sealed_target_blobs = _tree_blob_map(root, WP004C_SEALED_TARGET_COMMIT)
-    except (ArchiveContractError, InvocationError):
-        return frozenset()
     if any(
         path.suffix == ".md"
         and path in proposed_blobs
