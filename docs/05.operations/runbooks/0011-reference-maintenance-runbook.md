@@ -147,7 +147,7 @@ git diff --check
 - **Reference**: [LLM WIKI README](../../90.references/llm-wiki/README.md)
 - **Guide**: [LLM Wiki Curation Guide](../guides/0009-llm-wiki-curation-guide.md)
 - **Template**: [Reference Template](../../99.templates/templates/references/reference.template.md)
-- [Document Stage Routing Rules](../../00.agent-governance/rules/document-authoring.md)
+- [Document Stage Routing Rules](../../00.agent-governance/policies/document-authoring.md)
 
 ### Lifecycle Traceability
 

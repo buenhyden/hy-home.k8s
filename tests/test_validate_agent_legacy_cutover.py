@@ -1,154 +1,144 @@
 #!/usr/bin/env python3
-"""Focused regressions for the closed AGQC-003 legacy cutover contract."""
+"""Legacy instruction cutover and retained bounded-reader/Git regressions."""
 
 from __future__ import annotations
 
-import copy
 import importlib.util
 import json
 import os
-import shutil
 import subprocess
 import sys
 import tempfile
 import time
+import types
 import unittest
 from pathlib import Path
 from unittest import mock
 
-
 REPO_ROOT = Path(__file__).resolve().parents[1]
 VALIDATOR_PATH = REPO_ROOT / "scripts/validate-agent-legacy-cutover.py"
-CONTRACT_PATH = (
-    REPO_ROOT
-    / "docs/00.agent-governance/contracts/agent-legacy-cutover.json"
-)
-SCHEMA_PATH = CONTRACT_PATH.with_name("agent-legacy-cutover.schema.json")
-FIXTURE_PATH = REPO_ROOT / "tests/fixtures/agent-legacy-cutover.json"
-
-RETIRED_CONTRACT = Path(
-    "docs/00.agent-governance/contracts/agent-role-semantics.json"
-)
-HARNESS_CONTRACT = Path(
-    "docs/00.agent-governance/contracts/harness-contract.json"
-)
-REPLACEMENTS = (
-    HARNESS_CONTRACT,
-    Path("docs/00.agent-governance/contracts/harness-contract.schema.json"),
-    Path("scripts/validate-agent-harness-semantics.py"),
-    Path("tests/fixtures/agent-harness-semantics.json"),
-    Path(".github/README.md"),
-)
-
-WORK054_OWNER_RETIREMENTS = (
-    Path("docs/00.agent-governance/common-governance.md"),
-    Path("docs/00.agent-governance/harness-implementation-map.md"),
-    Path("docs/00.agent-governance/providers/agents-md.md"),
-)
-WORK054_MIGRATION = Path(
-    "docs/98.archive/migrations/"
-    "mig-0003-agent-governance-control-plane-consolidation.md"
-)
-WORK054_REPLACEMENTS = (
-    Path("docs/00.agent-governance/harness-catalog.md"),
-    Path("docs/00.agent-governance/providers/codex.md"),
-)
 
 
 def load_validator():
-    spec = importlib.util.spec_from_file_location(
-        "validate_agent_legacy_cutover",
-        VALIDATOR_PATH,
-    )
-    if spec is None or spec.loader is None:
-        raise RuntimeError(f"cannot load validator: {VALIDATOR_PATH}")
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
-    return module
-
-
-class AgentLegacyCutoverArtifactTests(unittest.TestCase):
-    def test_core_artifacts_exist(self) -> None:
-        missing = [
-            path.relative_to(REPO_ROOT).as_posix()
-            for path in (CONTRACT_PATH, SCHEMA_PATH, VALIDATOR_PATH, FIXTURE_PATH)
-            if not path.is_file()
-        ]
-        self.assertEqual(missing, [])
-
-    def test_work054_owner_retirement_contract_is_closed(self) -> None:
-        validator = load_validator()
-        self.assertEqual(
-            tuple(Path(row["legacy_path"]) for row in validator.WORK054_OWNER_RETIREMENTS),
-            WORK054_OWNER_RETIREMENTS,
+    sys.path.insert(0, str(REPO_ROOT / "scripts"))
+    try:
+        spec = importlib.util.spec_from_file_location(
+            "validate_agent_legacy_cutover", VALIDATOR_PATH
         )
-        self.assertEqual(Path(validator.WORK054_MIGRATION_PATH), WORK054_MIGRATION)
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = module
+        spec.loader.exec_module(module)
+        return module
+    finally:
+        sys.path.pop(0)
+
+
+class ValidatorArtifactOwnerTests(unittest.TestCase):
+    def setUp(self) -> None:
+        sys.path.insert(0, str(REPO_ROOT / "scripts"))
+        self.addCleanup(sys.path.remove, str(REPO_ROOT / "scripts"))
+        spec = importlib.util.spec_from_file_location(
+            "legacy_affected_owner", REPO_ROOT / "scripts/validate-affected-surfaces.py"
+        )
+        self.owner = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.owner)
+        self.contract = json.loads((REPO_ROOT / self.owner.CONTRACT_PATH).read_text())
+        self.schema = json.loads((REPO_ROOT / self.owner.SCHEMA_PATH).read_text())
+
+    def test_supplied_owner_facts_never_reopen_paths(self) -> None:
+        expected = self.owner.validator_script_paths(REPO_ROOT)
+        with mock.patch.object(
+            self.owner, "load_json", side_effect=AssertionError("reopen")
+        ):
+            actual = self.owner.validator_script_paths(
+                REPO_ROOT, self.contract, raw_schema=self.schema
+            )
+        self.assertEqual(actual, expected)
+        self.assertIn("scripts/validate-agent-legacy-cutover.py", actual)
+
+    def test_local_schema_references_preserve_default_validation(self) -> None:
+        schema = {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": "https://example.invalid/owner-schema",
+            "$defs": {"owner": self.schema},
+            "$ref": "#/$defs/owner",
+        }
         self.assertEqual(
-            {row["action"] for row in validator.WORK054_OWNER_RETIREMENTS},
-            {"merged"},
+            self.owner.validator_script_paths(
+                REPO_ROOT, self.contract, raw_schema=schema
+            ),
+            self.owner.validator_script_paths(REPO_ROOT),
         )
 
+    def test_external_schema_references_fail_offline_and_redacted(self) -> None:
+        sentinel = "private-schema-sentinel"
+        for reference in ("https://example.invalid/" + sentinel, "file:///" + sentinel):
+            with (
+                self.subTest(reference=reference),
+                mock.patch(
+                    "urllib.request.urlopen", side_effect=AssertionError("network")
+                ),
+                mock.patch.object(
+                    self.owner, "load_json", side_effect=AssertionError("reopen")
+                ),
+            ):
+                with self.assertRaises(self.owner.ContractError) as raised:
+                    self.owner.validator_script_paths(
+                        REPO_ROOT, self.contract, raw_schema={"$ref": reference}
+                    )
+                self.assertNotIn(sentinel, str(raised.exception))
+                self.assertEqual(raised.exception.code, "SURFACE-SCHEMA-DEFINITION")
 
-@unittest.skipUnless(
-    VALIDATOR_PATH.is_file() and CONTRACT_PATH.is_file() and SCHEMA_PATH.is_file(),
-    "validator is intentionally absent at the RED gate",
-)
+
 class AgentLegacyCutoverValidatorTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.validator = load_validator()
-        cls.fixture = json.loads(FIXTURE_PATH.read_text(encoding="utf-8"))
+        cls.documents = cls.validator.documents.load_registry(REPO_ROOT)
 
     def make_valid_root(self) -> Path:
         directory = tempfile.TemporaryDirectory(prefix="agent-legacy-cutover-")
         self.addCleanup(directory.cleanup)
         root = Path(directory.name)
-        for relative_text in dict.fromkeys(
-            self.validator.PACKAGE_REFERENCES
-            + self.validator.MIGRATION_REFERENCES
-        ):
-            relative = Path(relative_text)
-            source = REPO_ROOT / relative
+        self.targets = {
+            "docs/00.agent-governance/contracts/agent-role-semantics.json": ".agents/registry.json",
+            "docs/00.agent-governance/contracts/agent-role-semantics.schema.json": ".agents/contracts/agent-registry.schema.json",
+            "scripts/validate-agent-role-semantics.py": "scripts/validate-agent-harness-semantics.py",
+            "tests/fixtures/agent-role-semantics.json": ".agents/registry.json",
+            ".github/ABOUT.md": ".github/README.md",
+            "docs/00.agent-governance/common-governance.md": ".agents/registry.json",
+            "docs/00.agent-governance/harness-implementation-map.md": ".agents/registry.json",
+            "docs/00.agent-governance/providers/agents-md.md": "docs/00.agent-governance/providers/codex.md",
+        }
+        for relative in set(self.targets.values()):
             target = root / relative
             target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(source, target)
-        for record in self.validator.PROTECTED_EVIDENCE_FILES:
-            relative = Path(record["path"])
-            source = REPO_ROOT / relative
-            target = root / relative
-            target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(source, target)
-        for relative in REPLACEMENTS:
-            target = root / relative
-            target.parent.mkdir(parents=True, exist_ok=True)
-            if relative == HARNESS_CONTRACT:
-                target.write_text(
-                    json.dumps(
-                        {
-                            "consumers": [
-                                {
-                                    "id": "harness-semantics-validator",
-                                    "path": (
-                                        "scripts/"
-                                        "validate-agent-harness-semantics.py"
-                                    ),
-                                }
-                            ]
-                        },
-                        indent=2,
-                    )
-                    + "\n",
-                    encoding="utf-8",
-                )
-            elif relative.suffix == ".json":
-                target.write_text("{}\n", encoding="utf-8")
-            else:
-                target.write_text("canonical replacement\n", encoding="utf-8")
-        for relative in WORK054_REPLACEMENTS:
-            target = root / relative
-            target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_text("work054 replacement\n", encoding="utf-8")
+            target.write_text(
+                "{}\n" if relative.endswith(".json") else "Current artifact\n"
+            )
+        self.owners = types.SimpleNamespace(
+            document_registry=self.documents,
+            native_paths=frozenset({"AGENTS.md", ".codex/agents/reviewer.toml"}),
+            enforcement_paths=frozenset({"scripts/validate-agent-legacy-cutover.py"}),
+            helper_roles={
+                "tests/test_validate_agent_legacy_cutover.py": "regression-test",
+                "tests/fixtures/negative.json": "closed-fixture",
+            },
+            proof=types.SimpleNamespace(
+                terminal_targets=self.targets,
+                consumers={},
+                rendered_dispositions={},
+                declarations={},
+            ),
+            retention=None,
+        )
+        # Explicit owner facts isolate legacy scanning/IO from the full archive
+        # corpus; public historical proof has separate real-Git tests.
+        patcher = mock.patch.object(
+            self.validator, "_load_owners", return_value=self.owners
+        )
+        patcher.start()
+        self.addCleanup(patcher.stop)
         subprocess.run(
             ["/usr/bin/git", "init", "--quiet"],
             cwd=root,
@@ -160,10 +150,13 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
         return root
 
     def stage(self, root: Path, *paths: str | Path) -> None:
-        arguments = ["/usr/bin/git", "add", "--"]
-        arguments.extend(os.fspath(path) for path in paths or (".",))
         subprocess.run(
-            arguments,
+            [
+                "/usr/bin/git",
+                "add",
+                "--",
+                *(os.fspath(path) for path in paths or (".",)),
+            ],
             cwd=root,
             check=True,
             stdin=subprocess.DEVNULL,
@@ -177,479 +170,372 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
             },
         )
 
+    def add_text(self, root: Path, path: str, text: str) -> None:
+        target = root / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(text)
+        self.stage(root, path)
+
     def assert_rule(self, root: Path, rule_id: str) -> None:
         with self.assertRaises(self.validator.ContractError) as raised:
             self.validator.validate_repository(root)
         self.assertEqual(raised.exception.rule_id, rule_id)
 
-    def test_valid_cutover_root_passes(self) -> None:
-        counts = self.validator.validate_repository(self.make_valid_root())
-        self.assertEqual(counts["retiredSurfaces"], 5)
-        self.assertEqual(counts["replacementSurfaces"], 5)
-        self.assertEqual(counts["activeConsumers"], 0)
-        self.assertEqual(counts["work054RetiredOwners"], 3)
-        self.assertEqual(counts["work054MigrationRows"], 3)
-
-    def test_work054_retired_owner_path_and_current_consumer_fail_closed(self) -> None:
+    def test_valid_cutover_and_bounded_self_test(self) -> None:
         root = self.make_valid_root()
-        retained = root / WORK054_OWNER_RETIREMENTS[0]
-        retained.parent.mkdir(parents=True, exist_ok=True)
-        retained.write_text("retained legacy owner\n", encoding="utf-8")
-        self.stage(root, retained.relative_to(root))
-        self.assert_rule(root, "AGQC-LEGACY-RETIRED")
+        self.assertEqual(self.validator.validate_repository(root)["activeConsumers"], 0)
+        self.assertEqual(self.validator.run_self_test(root), (1, 1))
 
+    def test_plain_instructions_fail_for_every_published_or_unknown_artifact(
+        self,
+    ) -> None:
+        for path in (
+            "AGENTS.md",
+            "README.md",
+            "docs/90.references/research/2099-01-01-test/report.md",
+            "docs/99.templates/templates/common/readme-implementation.template.md",
+            "docs/00.agent-governance/memory/progress.md",
+            "tests/README.md",
+            ".codex/agents/reviewer.toml",
+            "scripts/tool",
+            "scripts/unknown.py",
+            "tests/unadmitted.py",
+        ):
+            for status in ("active", "accepted", "done"):
+                with self.subTest(path=path, status=status):
+                    root = self.make_valid_root()
+                    self.add_text(
+                        root,
+                        path,
+                        "---\nstatus: "
+                        + status
+                        + "\n---\nuse scripts/validate-agent-role-semantics.py\n",
+                    )
+                    self.assert_rule(root, "AGQC-LEGACY-CONSUMER")
+
+    def test_rendered_relative_retired_link_is_a_consumer(self) -> None:
         root = self.make_valid_root()
-        consumer = root / "README.md"
-        consumer.write_text(
-            f"use {WORK054_OWNER_RETIREMENTS[0].as_posix()}\n",
-            encoding="utf-8",
+        self.add_text(
+            root, "README.md", "[old](scripts/validate-agent-role-semantics.py)\n"
         )
-        self.stage(root, consumer.relative_to(root))
         self.assert_rule(root, "AGQC-LEGACY-CONSUMER")
 
-    def test_work054_migration_blob_or_digest_drift_fails_closed(self) -> None:
+    def test_declared_test_and_enforcement_artifacts_are_not_instructions(self) -> None:
         root = self.make_valid_root()
-        migration = root / WORK054_MIGRATION
-        migration.write_bytes(migration.read_bytes() + b"\n")
-        self.stage(root, migration.relative_to(root))
-        self.assert_rule(root, "AGQC-LEGACY-MIGRATION")
+        for path in (*self.owners.enforcement_paths, *self.owners.helper_roles):
+            self.add_text(root, path, '"scripts/validate-agent-role-semantics.py"\n')
+        self.assertEqual(self.validator.validate_repository(root)["activeConsumers"], 0)
 
-    def test_work054_lifecycle_control_allows_only_exact_projection(self) -> None:
-        path = REPO_ROOT / self.validator.WORK054_LIFECYCLE_CONTROL_PATH
-        raw = path.read_bytes()
-        counts = tuple(
-            raw.count(str(row["legacy_path"]).encode("utf-8"))
-            for row in self.validator.WORK054_OWNER_RETIREMENTS
+    def test_published_document_precedes_a_control_identity(self) -> None:
+        root = self.make_valid_root()
+        self.owners.enforcement_paths |= {"README.md"}
+        self.owners.helper_roles["tests/README.md"] = "regression-test"
+        for path in ("README.md", "tests/README.md"):
+            self.add_text(root, path, "use .github/ABOUT.md\n")
+        self.assert_rule(root, "AGQC-LEGACY-CONSUMER")
+
+    def test_exact_history_requires_applicable_disposition_and_rejects_append(
+        self,
+    ) -> None:
+        root = self.make_valid_root()
+        path = "docs/00.agent-governance/memory/progress.md"
+        raw = b"[old](../harness-implementation-map.md)\n"
+        self.add_text(root, path, raw.decode())
+        retired_path = "docs/00.agent-governance/harness-implementation-map.md"
+        self.owners.proof.consumers[path] = raw
+        self.owners.proof.rendered_dispositions[(path, retired_path)] = (
+            ".agents/registry.json"
+        )
+        self.assertEqual(self.validator.validate_repository(root)["activeConsumers"], 0)
+        self.add_text(root, path, raw.decode() + "new instruction\n")
+        self.assert_rule(root, "AGQC-LEGACY-CONSUMER")
+
+    def test_archive_payload_proof_requires_whole_input_and_scans_header(self) -> None:
+        root = self.make_valid_root()
+        path = "docs/90.references/research/2099-01-01-test/archive.md"
+        payload = b"scripts/validate-agent-role-semantics.py\n"
+        raw = b"Archive envelope header\n" + payload
+        self.add_text(root, path, raw.decode())
+        self.owners.proof.archive_payloads = {
+            path: types.SimpleNamespace(
+                input_bytes=raw,
+                remaining_text="Archive envelope header\n",
+            )
+        }
+        self.assertEqual(self.validator.validate_repository(root)["activeConsumers"], 0)
+        self.add_text(root, path, (raw + b"drift\n").decode())
+        self.assert_rule(root, "AGQC-LEGACY-OWNER")
+
+        root = self.make_valid_root()
+        header = "use .github/ABOUT.md\n"
+        self.add_text(root, path, header + payload.decode())
+        self.owners.proof.archive_payloads = {
+            path: types.SimpleNamespace(
+                input_bytes=(header.encode() + payload),
+                remaining_text=header,
+            )
+        }
+        self.assert_rule(root, "AGQC-LEGACY-CONSUMER")
+
+    def test_literal_only_history_requires_each_mention_to_be_consumer_scoped(
+        self,
+    ) -> None:
+        root = self.make_valid_root()
+        path = "docs/00.agent-governance/memory/progress.md"
+        retired_path = "docs/00.agent-governance/harness-implementation-map.md"
+        raw = (retired_path + "\n").encode()
+        self.add_text(root, path, raw.decode())
+        self.owners.proof.consumers[path] = raw
+        self.owners.proof.literal_dispositions = {
+            (path, retired_path): ".agents/registry.json"
+        }
+        self.assertEqual(self.validator.validate_repository(root)["activeConsumers"], 0)
+        self.add_text(root, path, raw.decode() + "use .github/ABOUT.md\n")
+        self.assert_rule(root, "AGQC-LEGACY-CONSUMER")
+
+    def test_literal_only_history_rejects_matching_raw_with_an_unproved_token(self):
+        path = "docs/00.agent-governance/memory/progress.md"
+        literal = "docs/00.agent-governance/harness-implementation-map.md"
+        extra = ".github/ABOUT.md"
+        raw = (literal + "\n" + extra + "\n").encode()
+        proof = types.SimpleNamespace(
+            consumers={path: raw},
+            literal_dispositions={(path, literal): ".agents/registry.json"},
+            rendered_dispositions={},
+            terminal_targets={
+                literal: ".agents/registry.json",
+                extra: ".github/README.md",
+            },
+        )
+        self.assertFalse(
+            self.validator._historical_dispositions_cover(
+                path, raw, frozenset({literal, extra}), proof
+            )
+        )
+
+    def test_rendered_history_keeps_terminal_coverage_when_it_also_has_literal_evidence(
+        self,
+    ) -> None:
+        path = "docs/00.agent-governance/memory/progress.md"
+        literal = "docs/00.agent-governance/harness-implementation-map.md"
+        rendered = "scripts/validate-agent-role-semantics.py"
+        raw = (literal + "\n" + rendered + "\n").encode()
+        proof = types.SimpleNamespace(
+            consumers={path: raw},
+            literal_dispositions={(path, literal): ".agents/registry.json"},
+            rendered_dispositions={
+                (path, rendered): "scripts/validate-agent-harness-semantics.py"
+            },
+            terminal_targets={
+                literal: ".agents/registry.json",
+                rendered: "scripts/validate-agent-harness-semantics.py",
+            },
         )
         self.assertTrue(
-            self.validator._is_exact_work054_lifecycle_control(
-                self.validator.WORK054_LIFECYCLE_CONTROL_PATH,
-                raw,
-                counts,
+            self.validator._historical_dispositions_cover(
+                path, raw, frozenset({literal, rendered}), proof
             )
         )
-        ordinary_use = raw + (
-            b"\n# use "
-            + str(
-                self.validator.WORK054_OWNER_RETIREMENTS[0]["legacy_path"]
-            ).encode("utf-8")
-            + b"\n"
+
+    def test_exact_membership_without_disposition_does_not_waive_retired_token(
+        self,
+    ) -> None:
+        root = self.make_valid_root()
+        path = "docs/90.references/research/2099-01-01-test/report.md"
+        raw = b"use scripts/validate-agent-role-semantics.py\n"
+        self.add_text(root, path, raw.decode())
+        self.owners.proof.consumers[path] = raw
+        self.owners.proof.terminal_targets.pop(
+            "scripts/validate-agent-role-semantics.py"
         )
-        drifted_sha = raw.replace(
-            self.validator.WORK054_MIGRATION_SHA256.encode("ascii"),
-            b"0" * 64,
-            1,
-        )
-        for name, candidate in (
-            ("ordinary-active-use", ordinary_use),
-            ("migration-sha-drift", drifted_sha),
+        self.assert_rule(root, "AGQC-LEGACY-REPLACEMENT")
+
+    def test_retained_surfaces_and_missing_successors_fail_closed(self) -> None:
+        for path in (
+            self.validator.RETIRED_SURFACES + self.validator.RETIRED_OWNER_PATHS
         ):
-            with self.subTest(name=name):
-                candidate_counts = tuple(
-                    candidate.count(str(row["legacy_path"]).encode("utf-8"))
-                    for row in self.validator.WORK054_OWNER_RETIREMENTS
-                )
-                self.assertFalse(
-                    self.validator._is_exact_work054_lifecycle_control(
-                        self.validator.WORK054_LIFECYCLE_CONTROL_PATH,
-                        candidate,
-                        candidate_counts,
-                    )
-                )
-
-    def test_work054_growth_in_allowed_reference_fails_closed(self) -> None:
-        root = self.make_valid_root()
-        relative = Path("scripts/validate-links-and-owners.py")
-        path = root / relative
-        path.write_bytes(
-            path.read_bytes()
-            + b"\n# ordinary active use: "
-            + str(
-                self.validator.WORK054_OWNER_RETIREMENTS[0]["legacy_path"]
-            ).encode("utf-8")
-            + b"\n"
-        )
-        self.stage(root, relative)
-        self.assert_rule(root, "AGQC-LEGACY-CONSUMER")
-
-    def test_work054_pinned_progress_reference_allows_safe_append(self) -> None:
-        root = self.make_valid_root()
-        relative = Path("docs/00.agent-governance/memory/progress.md")
-        path = root / relative
-        path.write_bytes(path.read_bytes() + b"\nappend-only safe progress\n")
-        self.stage(root, relative)
-        counts = self.validator.validate_repository(root)
-        self.assertEqual(counts["activeConsumers"], 0)
-
-    def test_work054_pinned_progress_reference_rejects_drift(self) -> None:
-        root = self.make_valid_root()
-        relative = Path("docs/00.agent-governance/memory/progress.md")
-        path = root / relative
-        original = path.read_bytes()
-        candidates = (
-            b"X" + original[1:],
-            original
-            + b"\n"
-            + str(
-                self.validator.WORK054_OWNER_RETIREMENTS[0]["legacy_path"]
-            ).encode("utf-8")
-            + b"\n",
-        )
-        for candidate in candidates:
-            with self.subTest(candidate_length=len(candidate)):
-                path.write_bytes(candidate)
-                self.stage(root, relative)
-                self.assert_rule(root, "AGQC-LEGACY-CONSUMER")
-
-    def test_self_test_is_deterministic_and_repo_is_unchanged(self) -> None:
-        before = CONTRACT_PATH.read_bytes()
-        self.assertEqual(self.validator.run_self_test(REPO_ROOT), (3, 24))
-        self.assertEqual(CONTRACT_PATH.read_bytes(), before)
-
-    def test_self_test_requires_index_admission_before_source_reads(self) -> None:
-        root = self.make_valid_root()
-        sentinel = self.validator.FIXTURE_PATH.as_posix()
-        subprocess.run(
-            ["/usr/bin/git", "rm", "--cached", "--", sentinel],
-            cwd=root,
-            check=True,
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            env=self.validator.GIT_ENVIRONMENT,
-        )
-        self.assertTrue((root / sentinel).is_file())
-        original_read_bytes = self.validator._RepositoryReader.read_bytes
-
-        def reject_sentinel(reader, value, **kwargs):
-            if reader.root_path == root and value == sentinel:
-                raise AssertionError("unadmitted source sentinel was opened")
-            return original_read_bytes(reader, value, **kwargs)
-
-        with mock.patch.object(
-            self.validator._RepositoryReader,
-            "read_bytes",
-            autospec=True,
-            side_effect=reject_sentinel,
-        ):
-            self.assert_rule_for_self_test(root, "AGQC-LEGACY-INPUT")
-
-    def assert_rule_for_self_test(self, root: Path, rule_id: str) -> None:
-        with self.assertRaises(self.validator.ContractError) as raised:
-            self.validator.run_self_test(root)
-        self.assertEqual(raised.exception.rule_id, rule_id)
-
-    def test_closed_schema_rejects_unknown_contract_key(self) -> None:
-        root = self.make_valid_root()
-        contract, schema = self.validator.load_contract_documents(root)
-        mutated = copy.deepcopy(contract)
-        mutated["unexpected"] = True
-        with self.assertRaises(self.validator.ContractError) as raised:
-            self.validator.validate_contract_data(mutated, schema)
-        self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-SCHEMA")
-
-        mutated = copy.deepcopy(contract)
-        mutated["scanPolicy"]["scanAllRegularFiles"] = True
-        with self.assertRaises(self.validator.ContractError) as raised:
-            self.validator.validate_contract_data(mutated, schema)
-        self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-SCHEMA")
-
-    def test_repository_root_and_candidate_paths_fail_closed(self) -> None:
-        directory = tempfile.TemporaryDirectory(prefix="agent-legacy-nongit-")
-        self.addCleanup(directory.cleanup)
-        with self.assertRaises(self.validator.ContractError) as raised:
-            self.validator.validate_repository(Path(directory.name))
-        self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-INPUT")
-
-        root = self.make_valid_root()
-        nested = root / "nested"
-        nested.mkdir()
-        with self.assertRaises(self.validator.ContractError) as raised:
-            self.validator.validate_repository(nested)
-        self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-INPUT")
-
-        for payload in (b"../outside\0", b"unterminated", b"invalid-\xff\0"):
-            with self.subTest(payload=payload):
-                with self.assertRaises(self.validator.ContractError) as raised:
-                    self.validator._parse_git_candidates(payload)
-                self.assertEqual(
-                    raised.exception.rule_id,
-                    "AGQC-LEGACY-INPUT",
-                )
-
-    def test_nul_safe_candidate_and_candidate_types_fail_closed(self) -> None:
-        root = self.make_valid_root()
-        proposed = root / "proposed\nconsumer.txt"
-        proposed.write_text(
-            f"use {RETIRED_CONTRACT.as_posix()}\n",
-            encoding="utf-8",
-        )
-        self.stage(root, proposed.name)
-        self.assert_rule(root, "AGQC-LEGACY-CONSUMER")
-
-        proposed.unlink()
-        self.stage(root)
-        link = root / "proposed-link"
-        link.symlink_to("AGENTS.md")
-        self.stage(root, link.name)
-        self.assert_rule(root, "AGQC-LEGACY-INPUT")
-
-        link.unlink()
-        fifo = root / "proposed-fifo"
-        os.mkfifo(fifo)
-        with self.assertRaises(self.validator.ContractError) as raised:
-            self.validator._candidate_payload(
-                root,
-                fifo.name,
-                read=True,
-            )
-        self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-INPUT")
-
-    def test_retained_surface_is_rejected(self) -> None:
-        root = self.make_valid_root()
-        path = root / RETIRED_CONTRACT
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text("{}\n", encoding="utf-8")
-        self.stage(root, path.relative_to(root))
-        self.assert_rule(root, "AGQC-LEGACY-RETIRED")
-
-    def test_missing_replacement_is_rejected(self) -> None:
+            with self.subTest(path=path):
+                root = self.make_valid_root()
+                self.add_text(root, path, "{}\n")
+                self.assert_rule(root, "AGQC-LEGACY-RETIRED")
         root = self.make_valid_root()
         (root / ".github/README.md").unlink()
         self.assert_rule(root, "AGQC-LEGACY-REPLACEMENT")
 
-    def test_stale_current_consumer_is_rejected(self) -> None:
+    def test_successor_symlink_is_rejected(self) -> None:
         root = self.make_valid_root()
-        (root / "AGENTS.md").write_text(
-            f"use {RETIRED_CONTRACT.as_posix()}\n",
-            encoding="utf-8",
-        )
-        self.stage(root, "AGENTS.md")
-        self.assert_rule(root, "AGQC-LEGACY-CONSUMER")
-
-    def test_ignored_unreadable_file_is_not_opened_or_counted(self) -> None:
-        root = self.make_valid_root()
-        (root / ".gitignore").write_text(
-            "ignored-private/\n",
-            encoding="utf-8",
-        )
-        baseline = self.validator.validate_repository(root)
-        sentinel = root / "ignored-private/retired-token.txt"
-        sentinel.parent.mkdir()
-        sentinel.write_text(
-            f"private {RETIRED_CONTRACT.as_posix()}\n",
-            encoding="utf-8",
-        )
-        sentinel.chmod(0)
-        self.addCleanup(sentinel.chmod, 0o600)
-
-        proposed = root / "proposed-consumer.txt"
-        proposed.write_text(
-            f"use {RETIRED_CONTRACT.as_posix()}\n",
-            encoding="utf-8",
-        )
-        proposed.chmod(0)
-        self.addCleanup(proposed.chmod, 0o600)
-
-        ignored = self.validator.validate_repository(root)
-        self.assertEqual(ignored, baseline)
-
-        proposed.chmod(0o600)
-        self.stage(root, proposed.name)
-        proposed.write_text(
-            f"use {RETIRED_CONTRACT.as_posix()}\n",
-            encoding="utf-8",
-        )
-        self.assert_rule(root, "AGQC-LEGACY-CONSUMER")
-
-    def test_terminal_and_digest_pinned_evidence_are_not_active_consumers(
-        self,
-    ) -> None:
-        root = self.make_valid_root()
-        terminal = root / "docs/04.execution/plans/completed.md"
-        terminal.parent.mkdir(parents=True, exist_ok=True)
-        terminal.write_text(
-            "---\nstatus: Done\n---\n"
-            f"historical: {RETIRED_CONTRACT.as_posix()}\n",
-            encoding="utf-8",
-        )
-        self.stage(root, terminal.relative_to(root))
-        protected_relative = Path(
-            "docs/90.references/data/active-corpus-retention-census.json"
-        )
-        protected = root / protected_relative
-        protected.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(REPO_ROOT / protected_relative, protected)
-        self.validator.validate_repository(root)
-
-    def test_digest_pinned_draft_reference_is_rejected(self) -> None:
-        root = self.make_valid_root()
-        contract, schema = self.validator.load_contract_documents(root)
-        mutated = copy.deepcopy(contract)
-        record = mutated["referencePolicy"]["protectedEvidenceFiles"][0]
-        record["path"] = (
-            "docs/90.references/audits/draft-stale-reference.md"
-        )
-        record["evidenceKind"] = "authored-document"
-        record["lifecycleStatus"] = "draft"
-        with self.assertRaises(self.validator.ContractError) as raised:
-            self.validator.validate_contract_data(mutated, schema)
-        self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-SCHEMA")
-
-    def test_missing_protected_evidence_is_rejected(self) -> None:
-        root = self.make_valid_root()
-        protected = root / self.validator.PROTECTED_EVIDENCE_FILES[0]["path"]
-        protected.unlink()
-        self.assert_rule(root, "AGQC-LEGACY-CONSUMER")
-
-    def test_protected_reference_removal_is_rejected(self) -> None:
-        root = self.make_valid_root()
-        record = self.validator.PROTECTED_EVIDENCE_FILES[0]
-        protected = root / record["path"]
-        raw = protected.read_bytes()
-        retired = record["retiredReference"].encode("utf-8")
-        replacement = record["supersededBy"].encode("utf-8")
-        self.assertEqual(raw.count(retired), record["count"])
-        protected.write_bytes(raw.replace(retired, replacement))
-        self.assert_rule(root, "AGQC-LEGACY-CONSUMER")
-
-    def test_active_and_accepted_reference_documents_are_consumers(self) -> None:
-        for status in ("active", "accepted"):
-            with self.subTest(status=status):
-                root = self.make_valid_root()
-                reference = (
-                    root
-                    / "docs/90.references/research/2026-08-08-wer"
-                    / f"unowned-{status}.md"
-                )
-                reference.parent.mkdir(parents=True, exist_ok=True)
-                reference.write_text(
-                    "---\n"
-                    "title: 'Current reference'\n"
-                    "type: content/reference\n"
-                    f"status: {status}\n"
-                    "owner: platform\n"
-                    "updated: 2026-07-30\n"
-                    "---\n\n"
-                    f"use {RETIRED_CONTRACT.as_posix()}\n",
-                    encoding="utf-8",
-                )
-                self.stage(root, reference.relative_to(root))
-                self.assert_rule(root, "AGQC-LEGACY-CONSUMER")
-
-    def test_old_harness_consumer_and_compatibility_are_rejected(self) -> None:
-        for mutation in ("consumer", "compatibility"):
-            with self.subTest(mutation=mutation):
-                root = self.make_valid_root()
-                harness = root / HARNESS_CONTRACT
-                value = json.loads(harness.read_text(encoding="utf-8"))
-                if mutation == "consumer":
-                    value["consumers"] = [
-                        {
-                            "id": "role-semantics-validator",
-                            "path": "scripts/validate-agent-role-semantics.py",
-                        }
-                    ]
-                else:
-                    value["compatibility"] = {
-                        "removalOwnerSpec": (
-                            "docs/03.specs/"
-                            "0045-agent-governance-ci-qa-cutover/spec.md"
-                        )
-                    }
-                harness.write_text(
-                    json.dumps(value, indent=2) + "\n",
-                    encoding="utf-8",
-                )
-                self.assert_rule(root, "AGQC-LEGACY-HARNESS")
-
-    def test_symlink_replacement_is_rejected(self) -> None:
-        root = self.make_valid_root()
-        hub = root / ".github/README.md"
-        target = hub.with_name("hub-copy.md")
-        shutil.copyfile(hub, target)
-        hub.unlink()
-        hub.symlink_to(target.name)
+        target = root / ".github/README.md"
+        target.unlink()
+        target.symlink_to("../.agents/registry.json")
         self.assert_rule(root, "AGQC-LEGACY-INPUT")
 
-    def test_malformed_and_duplicate_json_are_rejected(self) -> None:
-        for text in ('{"consumers": [', '{"consumers": [], "consumers": []}\n'):
-            with self.subTest(text=text):
-                root = self.make_valid_root()
-                (root / HARNESS_CONTRACT).write_text(text, encoding="utf-8")
-                self.assert_rule(root, "AGQC-LEGACY-JSON")
-
-    def test_undeclared_allowlist_growth_is_rejected(self) -> None:
+    def test_invalid_utf8_retired_consumer_fails_closed(self) -> None:
         root = self.make_valid_root()
-        contract, schema = self.validator.load_contract_documents(root)
-        for key, value, expected_rule in (
-            ("migrationReferences", "docs/unreviewed.md", "AGQC-LEGACY-SCHEMA"),
-            (
-                "protectedEvidenceFiles",
-                {
-                    "path": "docs/current.md",
-                    "sha256": "0" * 64,
-                },
-                "AGQC-LEGACY-SCHEMA",
+        (root / "tool").write_bytes(b"scripts/validate-agent-role-semantics.py\xff")
+        self.stage(root, "tool")
+        self.assert_rule(root, "AGQC-LEGACY-INPUT")
+
+    def test_untracked_files_are_never_read_or_counted(self) -> None:
+        root = self.make_valid_root()
+        baseline = self.validator.validate_repository(root)
+        self.add_text(root, ".gitignore", "ignored*\n")
+        for path in ("ignored-tool", "untracked-tool"):
+            target = root / path
+            target.write_text("use .github/ABOUT.md\n")
+            target.chmod(0)
+        counts = self.validator.validate_repository(root)
+        self.assertEqual(counts["activeConsumers"], 0)
+        self.assertEqual(counts["scannedFiles"], baseline["scannedFiles"] + 1)
+        (root / "untracked-tool").chmod(0o600)
+        self.stage(root, "untracked-tool")
+        self.assert_rule(root, "AGQC-LEGACY-CONSUMER")
+
+    def test_owner_inputs_reject_nonobjects_and_duplicate_json(self) -> None:
+        root = self.make_valid_root()
+        for raw in ('{"duplicate": 1, "duplicate": 2}', "[]", "null", "{"):
+            with self.subTest(raw=raw):
+                (root / ".agents/registry.json").write_text(raw)
+                with self.validator._RepositoryReader(root) as reader:
+                    with self.assertRaises(self.validator.ContractError):
+                        self.validator._owner_object(reader, ".agents/registry.json")
+
+    def test_held_reader_owner_limit_cannot_enlarge_legacy_limit(self) -> None:
+        root = self.make_valid_root()
+        path = "bounded-owner.json"
+        (root / path).write_bytes(b"12345")
+        with self.validator._RepositoryReader(root) as reader:
+            self.assertEqual(reader.read_bytes(path, max_bytes=5), b"12345")
+            for limit in (4, 0, -1, True, None):
+                with (
+                    self.subTest(limit=limit),
+                    self.assertRaises(self.validator.ContractError),
+                ):
+                    reader.read_bytes(path, max_bytes=limit)
+            with mock.patch.object(self.validator, "MAX_REGULAR_FILE_BYTES", 4):
+                with self.assertRaises(self.validator.ContractError):
+                    reader.read_bytes(path, max_bytes=100)
+
+    def test_exact_retention_snapshot_uses_existing_typed_validator(self) -> None:
+        root = self.make_valid_root()
+        retention = self.validator._trusted_script(
+            "validate-active-corpus-retention.py"
+        )
+        expected = retention.build_expected_snapshot(REPO_ROOT)
+        self.owners.retention = types.SimpleNamespace(
+            SNAPSHOT_PATH=retention.SNAPSHOT_PATH,
+            validate_snapshot=retention.validate_snapshot,
+            build_expected_snapshot=lambda _root: expected,
+        )
+        self.add_text(root, retention.SNAPSHOT_PATH, json.dumps(expected))
+        with mock.patch.object(
+            self.validator,
+            "_owner_object",
+            side_effect=AssertionError("snapshot reopen"),
+        ):
+            self.assertEqual(
+                self.validator.validate_repository(root)["activeConsumers"], 0
+            )
+        changed = dict(expected, unknown=".github/ABOUT.md")
+        self.add_text(root, retention.SNAPSHOT_PATH, json.dumps(changed))
+        self.assert_rule(root, "AGQC-LEGACY-OWNER")
+
+    def test_nonregular_roots_and_candidates_fail_closed(self) -> None:
+        root = self.make_valid_root()
+        alias = root / "root-alias"
+        alias.symlink_to(root, target_is_directory=True)
+        with self.assertRaises(self.validator.ContractError):
+            self.validator.validate_repository(alias)
+        (root / "directory").mkdir()
+        os.mkfifo(root / "fifo")
+        (root / "link").symlink_to(".agents/registry.json")
+        for path in ("directory", "fifo", "link"):
+            with (
+                self.subTest(path=path),
+                self.validator._RepositoryReader(root) as reader,
+            ):
+                with self.assertRaises(self.validator.ContractError):
+                    reader.candidate_payload(path, read=True)
+
+    def test_candidate_encoding_and_paths_fail_closed(self) -> None:
+        for raw in (b"unterminated", b"/absolute\0", b"../escape\0", b"bad\xff\0"):
+            with self.subTest(raw=raw), self.assertRaises(self.validator.ContractError):
+                self.validator._parse_git_candidates(raw)
+
+    def owner_candidates(self) -> tuple[str, ...]:
+        registry = json.loads(
+            (REPO_ROOT / self.validator.documents.REGISTRY_PATH).read_bytes()
+        )
+        return (
+            ".agents/registry.json",
+            ".agents/contracts/agent-registry.schema.json",
+            "docs/00.agent-governance/contracts/validation-surfaces.json",
+            "docs/00.agent-governance/contracts/validation-surfaces.schema.json",
+            self.validator.documents.REGISTRY_PATH.as_posix(),
+            self.validator.documents.SCHEMA_PATH.as_posix(),
+            *(
+                profile["template"]
+                for profile in registry["profiles"]
+                if profile["template"] is not None
+            ),
+        )
+
+    def test_missing_typed_document_registry_never_falls_back_to_reopen(self) -> None:
+        with (
+            self.validator._RepositoryReader(REPO_ROOT) as reader,
+            mock.patch.object(
+                self.validator.links,
+                "repository_historical_migration_proof",
+                return_value=types.SimpleNamespace(document_registry=None),
+            ),
+            mock.patch.object(
+                self.validator.documents,
+                "load_json_file",
+                side_effect=AssertionError("reopen"),
             ),
         ):
-            with self.subTest(key=key):
-                mutated = copy.deepcopy(contract)
-                mutated["referencePolicy"][key].append(value)
-                with self.assertRaises(self.validator.ContractError) as raised:
-                    self.validator.validate_contract_data(mutated, schema)
-                self.assertEqual(
-                    raised.exception.rule_id,
-                    expected_rule,
-                )
+            with self.assertRaises(self.validator.ContractError) as raised:
+                self.validator._load_owners(reader, self.owner_candidates())
+        self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-OWNER")
 
-    def test_path_escape_is_rejected(self) -> None:
-        root = self.make_valid_root()
-        contract, schema = self.validator.load_contract_documents(root)
-        mutated = copy.deepcopy(contract)
-        mutated["replacementSurfaces"][4] = "../outside.md"
-        with self.assertRaises(self.validator.ContractError) as raised:
-            self.validator.validate_contract_data(mutated, schema)
-        self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-SCHEMA")
-
-    def test_fixture_payload_path_changes_are_rejected_before_execution(
+    def test_owner_handoff_keeps_complete_held_inputs_and_checked_adapters(
         self,
     ) -> None:
-        for value in ("/tmp/outside", "../../outside"):
-            with self.subTest(value=value):
-                directory = tempfile.TemporaryDirectory(
-                    prefix="agent-legacy-fixture-"
-                )
-                self.addCleanup(directory.cleanup)
-                root = Path(directory.name)
-                fixture = copy.deepcopy(self.fixture)
-                fixture["mutationCases"][0]["mutation"]["path"] = value
-                path = root / "tests/fixtures/agent-legacy-cutover.json"
-                path.parent.mkdir(parents=True, exist_ok=True)
-                path.write_text(
-                    json.dumps(fixture, indent=2) + "\n",
-                    encoding="utf-8",
-                )
-                with self.assertRaises(
-                    self.validator.ContractError
-                ) as raised:
-                    self.validator._load_fixture(root)
-                self.assertEqual(
-                    raised.exception.rule_id,
-                    "AGQC-LEGACY-FIXTURE",
-                )
+        observed = []
+        expected = (REPO_ROOT / "README.md").read_bytes()
 
-    def test_fixture_write_rejects_symlink_parent(self) -> None:
-        directory = tempfile.TemporaryDirectory(prefix="agent-legacy-parent-")
-        outside = tempfile.TemporaryDirectory(prefix="agent-legacy-outside-")
-        self.addCleanup(directory.cleanup)
-        self.addCleanup(outside.cleanup)
-        root = Path(directory.name)
-        (root / "safe").symlink_to(Path(outside.name), target_is_directory=True)
-        with self.assertRaises(self.validator.ContractError) as raised:
-            self.validator._write_text(root, "safe/escape.md", "blocked\n")
-        self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-FIXTURE")
-        self.assertFalse((Path(outside.name) / "escape.md").exists())
+        def historical(root, *, registry, raw_schema, read_current_bytes, read_symlink):
+            self.assertEqual(root, REPO_ROOT)
+            self.assertIsInstance(registry, self.validator.documents.Registry)
+            self.assertIsInstance(raw_schema, dict)
+            self.assertEqual(read_current_bytes("README.md", len(expected)), expected)
+            with self.assertRaises(self.validator.ContractError):
+                read_current_bytes("README.md", len(expected) - 1)
+            self.assertEqual(read_symlink(".codex/skills"), "../.agents/skills")
+            with self.assertRaises(self.validator.ContractError):
+                read_symlink("README.md")
+            observed.append(registry)
+            return types.SimpleNamespace(document_registry=registry)
+
+        with (
+            self.validator._RepositoryReader(REPO_ROOT) as reader,
+            mock.patch.object(
+                self.validator.links,
+                "repository_historical_migration_proof",
+                side_effect=historical,
+            ),
+            mock.patch.object(
+                self.validator.documents,
+                "load_json_file",
+                side_effect=AssertionError("JSON reopen"),
+            ),
+            mock.patch.object(
+                self.validator.documents,
+                "_lstat_named_path",
+                side_effect=AssertionError("template reopen"),
+            ),
+        ):
+            owners = self.validator._load_owners(reader, self.owner_candidates())
+        self.assertIs(owners.document_registry, observed[0])
 
     def test_git_runner_is_absolute_closed_and_ambient_state_free(self) -> None:
         root = self.make_valid_root()
@@ -658,7 +544,7 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
         marker = root / "hostile-git-ran"
         hostile_git = hostile_bin / "git"
         hostile_git.write_text(
-            "#!/bin/sh\nprintf invoked > \"$HOSTILE_GIT_MARKER\"\nexit 127\n",
+            '#!/bin/sh\nprintf invoked > "$HOSTILE_GIT_MARKER"\nexit 127\n',
             encoding="utf-8",
         )
         hostile_git.chmod(0o700)
@@ -857,7 +743,9 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
         process = TimedOutProcess()
         with (
             mock.patch.object(self.validator.os, "killpg"),
-            mock.patch.object(self.validator.time, "monotonic", side_effect=lambda: clock[0]),
+            mock.patch.object(
+                self.validator.time, "monotonic", side_effect=lambda: clock[0]
+            ),
             self.assertRaises(self.validator.ContractError) as raised,
         ):
             self.validator._terminate_process(process)
@@ -922,11 +810,15 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
         safe.mkdir()
         (safe / "payload.txt").write_text("inside\n", encoding="utf-8")
 
-        with mock.patch.object(self.validator.os, "open", return_value=731), mock.patch.object(
-            self.validator.os,
-            "fstat",
-            side_effect=OSError("synthetic root fstat failure"),
-        ), mock.patch.object(self.validator.os, "close") as close:
+        with (
+            mock.patch.object(self.validator.os, "open", return_value=731),
+            mock.patch.object(
+                self.validator.os,
+                "fstat",
+                side_effect=OSError("synthetic root fstat failure"),
+            ),
+            mock.patch.object(self.validator.os, "close") as close,
+        ):
             with self.assertRaises(self.validator.ContractError) as raised:
                 self.validator._RepositoryReader(root)
         self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-INPUT")
@@ -942,6 +834,7 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
             original_close(descriptor)
 
         with self.validator._RepositoryReader(root) as reader:
+
             def fail_child_fstat(descriptor: int):
                 if descriptor != reader.root_fd:
                     raise OSError("synthetic child fstat failure")
@@ -949,7 +842,9 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
 
             with (
                 mock.patch.object(self.validator.os, "open", side_effect=original_open),
-                mock.patch.object(self.validator.os, "fstat", side_effect=fail_child_fstat),
+                mock.patch.object(
+                    self.validator.os, "fstat", side_effect=fail_child_fstat
+                ),
                 mock.patch.object(self.validator.os, "close", side_effect=record_close),
             ):
                 with self.assertRaises(self.validator.ContractError) as raised:
@@ -961,13 +856,16 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
         closed = []
 
         with self.validator._RepositoryReader(root) as reader:
+
             def fail_parent_entry(path, *args, **kwargs):
                 if path == "safe" and kwargs.get("dir_fd") == reader.root_fd:
                     raise OSError("synthetic parent entry stat failure")
                 return original_stat(path, *args, **kwargs)
 
             with (
-                mock.patch.object(self.validator.os, "stat", side_effect=fail_parent_entry),
+                mock.patch.object(
+                    self.validator.os, "stat", side_effect=fail_parent_entry
+                ),
                 mock.patch.object(self.validator.os, "close", side_effect=record_close),
             ):
                 with self.assertRaises(self.validator.ContractError) as raised:
@@ -1047,6 +945,7 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
                 swapped = False
 
                 with self.validator._RepositoryReader(root) as reader:
+
                     def swapping_open(path, flags, mode=0o777, *, dir_fd=None):
                         nonlocal swapped
                         if path == "payload.txt" and not swapped:
@@ -1067,13 +966,13 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
                         "open",
                         side_effect=swapping_open,
                     ):
-                        with self.assertRaises(
-                            self.validator.ContractError
-                        ) as raised:
+                        with self.assertRaises(self.validator.ContractError) as raised:
                             reader.read_bytes("safe/payload.txt")
                 self.assertTrue(swapped)
                 self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-INPUT")
-                self.assertEqual(outside.read_text(encoding="utf-8"), "outside sentinel\n")
+                self.assertEqual(
+                    outside.read_text(encoding="utf-8"), "outside sentinel\n"
+                )
 
     def test_oversized_and_growing_files_fail_closed(self) -> None:
         directory = tempfile.TemporaryDirectory(prefix="agent-legacy-size-")
@@ -1135,30 +1034,6 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
             len(long_raised.exception.detail.encode("utf-8")),
             self.validator.MAX_DIAGNOSTIC_DETAIL_BYTES,
         )
-
-    def test_every_allowed_reference_rejects_occurrence_growth(self) -> None:
-        for relative, _counts in self.validator.ALLOWED_REFERENCE_COUNTS:
-            with self.subTest(relative=relative):
-                root = self.make_valid_root()
-                path = root / relative
-                path.write_bytes(
-                    path.read_bytes()
-                    + b"\n"
-                    + self.validator.RETIRED_SURFACES[0].encode("utf-8")
-                    + b"\n"
-                )
-                _scanned, _evidence, consumers = (
-                    self.validator._scan_consumers(root)
-                )
-                self.assertTrue(
-                    any(
-                        consumer.startswith(
-                            f"{relative}:allowed-reference-count-drift"
-                        )
-                        for consumer in consumers
-                    ),
-                    consumers,
-                )
 
 
 if __name__ == "__main__":

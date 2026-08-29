@@ -502,7 +502,7 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
             )
         self.assertEqual(raised.exception.code, "AHLL-SENSITIVE")
 
-    def test_checkpoint_boundary_is_executable_and_harness_aligned(
+    def test_checkpoint_boundary_is_executable_and_schema_aligned(
         self,
     ) -> None:
         boundary = self.contract["checkpointBoundary"]

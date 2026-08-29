@@ -1,6 +1,6 @@
 ---
 name: k8s-implementer
-description: Author bounded Kubernetes desired-state changes that follow repository policy and the GitOps delivery path.
+description: Implement explicitly scoped Kubernetes and GitOps changes and validate the affected reconciliation surface.
 model: sonnet 4.6
 tools: Read, Write, Edit, Grep, Glob, Bash
 ---
@@ -10,9 +10,9 @@ tools: Read, Write, Edit, Grep, Glob, Bash
 ## Runtime Bootstrap
 
 - Load `CLAUDE.md`, `.claude/CLAUDE.md`, and this agent's imported scope before work.
-- Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.
+- Follow `docs/00.agent-governance/skills/work-lifecycle.md` for intake and completion.
 
-@import docs/00.agent-governance/scopes/infra.md
+@import docs/00.agent-governance/roles/infrastructure.md
 
 ## Role
 
@@ -37,13 +37,14 @@ Author bounded Kubernetes desired-state changes that follow repository policy an
 
 ## Capability and Evidence
 
-- Capability tier reference: `docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles/5/capabilityTier`.
+- Capability tier reference: `docs/00.agent-governance/policies/model-selection.md#worker`.
 - Required evidence: list changed manifest paths, rendered or static validation results, policy checks, and the GitOps review handoff.
 
 ## Handoff / Escalation
 
+- Registry handoff targets: `gitops-reviewer`, `security-auditor`, `supervisor`.
 - Hand off to `gitops-reviewer.md` for release and structure review.
 
 ## Postflight
 
-Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results.
+Run `docs/00.agent-governance/skills/work-lifecycle.md#completion` before returning results.

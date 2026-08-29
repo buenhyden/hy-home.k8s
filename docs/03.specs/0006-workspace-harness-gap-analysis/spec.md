@@ -48,8 +48,9 @@ pass.
 
 ## Contracts
 
-- **Config Contract**: root gateway files remain thin; recurring workflow and
-  task-to-skill routing are recorded in `docs/00.agent-governance/harness-catalog.md`.
+- **Config Contract**: root gateway files remain thin; recurring workflow belongs
+  to `docs/00.agent-governance/skills/work-lifecycle.md`, while role membership
+  and task-to-skill routing belong to `.agents/registry.json`.
 - **Data / Interface Contract**: no new runtime API is introduced. New
   execution evidence lives in `docs/03.specs/`, `docs/03.specs/`,
   `docs/03.specs/`, and `docs/00.agent-governance/memory/progress.md`.
@@ -514,8 +515,8 @@ clusterrolebinding` examples carry human-approved, bootstrap, break-glass,
 - **Audit Reference**: [../../90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md](../../90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md)
 - **P3 Plan**: [../../04.execution/plans/2026-05-24-p3-gitops-secret-runtime-remediation.md](../../98.archive/README.md#document-index)
 - **P3 Tasks**: [Archive Index](../../98.archive/README.md#document-index)
-- **Harness Catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
-- **Subagent Protocol**: [../../00.agent-governance/subagent-protocol.md](../../00.agent-governance/subagent-protocol.md)
+- **Agent Registry**: [../../../.agents/registry.json](../../../.agents/registry.json)
+- **Subagent Protocol**: [../../00.agent-governance/skills/delegated-development.md](../../00.agent-governance/skills/delegated-development.md)
 - **Docs Stage Conformance Skill**: [../../../.claude/skills/docs-stage-conformance/skill.md](../../../.claude/skills/docs-stage-conformance/skill.md)
 - **Workspace Harness Audit Skill**: [../../../.claude/skills/workspace-harness-audit/skill.md](../../../.claude/skills/workspace-harness-audit/skill.md)
 - **Scripts README**: [../../../scripts/README.md](../../../scripts/README.md)

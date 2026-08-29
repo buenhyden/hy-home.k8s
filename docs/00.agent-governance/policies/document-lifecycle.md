@@ -55,4 +55,4 @@ changes.
 - [Software Development Lifecycle](../sdlc.md)
 - [Governance Hub](../README.md)
 - [Document Profile Registry](../../99.templates/registry.json)
-- [Document Authoring Policy](../rules/document-authoring.md)
+- [Document Authoring Policy](document-authoring.md)

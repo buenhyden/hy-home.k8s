@@ -135,8 +135,8 @@
     },
     "requiredRouteClasses": {
       "type": "array",
-      "minItems": 12,
-      "maxItems": 12,
+      "minItems": 11,
+      "maxItems": 11,
       "uniqueItems": true,
       "items": {"$ref": "#/$defs/routeClass"}
     },
@@ -177,8 +177,7 @@
         "sequence",
         "commands",
         "consumerSurfaces",
-        "formatterCompletion",
-        "inventory"
+        "formatterCompletion"
       ],
       "properties": {
         "owner": {"type": "string", "minLength": 1},
@@ -211,8 +210,8 @@
         },
         "consumerSurfaces": {
           "type": "array",
-          "minItems": 9,
-          "maxItems": 9,
+          "minItems": 8,
+          "maxItems": 8,
           "uniqueItems": true,
           "items": {"type": "string", "minLength": 1}
         },
@@ -236,28 +235,6 @@
               "uniqueItems": true,
               "items": {"type": "string", "minLength": 1}
             }
-          }
-        },
-        "inventory": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "truthCases",
-            "mutationCases",
-            "delegatedChecks",
-            "deferredOwners",
-            "qaSurfaces",
-            "legacyPositiveCases",
-            "legacyMutationCases"
-          ],
-          "properties": {
-            "truthCases": {"type": "integer", "minimum": 1},
-            "mutationCases": {"type": "integer", "minimum": 1},
-            "delegatedChecks": {"type": "integer", "minimum": 1},
-            "deferredOwners": {"type": "integer", "minimum": 1},
-            "qaSurfaces": {"type": "integer", "minimum": 1},
-            "legacyPositiveCases": {"type": "integer", "minimum": 1},
-            "legacyMutationCases": {"type": "integer", "minimum": 1}
           }
         }
       }

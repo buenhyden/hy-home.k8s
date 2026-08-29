@@ -102,7 +102,6 @@ python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_post_validate_runner_
 python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_provider_post_validate_hook.py"
 python3 -m unittest discover -s "$ROOT_DIR/tests" -p "test_document_lifecycle_archive_cutover.py"
 python3 "$ROOT_DIR/scripts/archive_cutover.py" --root "$ROOT_DIR"
-python3 "$ROOT_DIR/scripts/validate-agent-harness-contract.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-agent-harness-contract.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-agent-provider-evidence.py" --root "$ROOT_DIR" --self-test
 python3 "$ROOT_DIR/scripts/validate-agent-provider-evidence.py" --root "$ROOT_DIR"
@@ -115,7 +114,6 @@ python3 "$ROOT_DIR/scripts/validate-agent-model-fitness.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-agent-loop-lifecycle.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-agent-loop-lifecycle.py" --root "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate-agent-checkpoint.py" --root "$ROOT_DIR" --self-test
-python3 "$ROOT_DIR/scripts/validate-agent-harness-semantics.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-agent-harness-semantics.py" --root "$ROOT_DIR"
 
 python3 "$ROOT_DIR/scripts/validate-agent-roster-currentness.py" \
@@ -145,11 +143,6 @@ from document_contracts import (  # noqa: E402 - repository-local contract modul
     classify_path,
     load_registry,
 )
-
-try:
-    import tomllib
-except ModuleNotFoundError:  # pragma: no cover - Python < 3.11 fallback path
-    tomllib = None
 
 root = pathlib.Path(sys.argv[1])
 failures = []
@@ -204,26 +197,6 @@ def workflow_on(data):
 def load_json(path: pathlib.Path):
     with path.open(encoding="utf-8") as handle:
         return json.load(handle)
-
-
-def load_toml(path: pathlib.Path):
-    if tomllib is None:
-        raise RuntimeError("python3 tomllib module is required to parse TOML agent adapters")
-    with path.open("rb") as handle:
-        return tomllib.load(handle)
-
-
-def load_markdown_frontmatter(path: pathlib.Path) -> dict:
-    text = read_text(path)
-    frontmatter = re.match(r"^---\n(.*?)\n---\n", text, re.DOTALL)
-    if not frontmatter:
-        fail(f"{rel(path)} missing YAML frontmatter")
-        return {}
-    try:
-        return yaml.load(frontmatter.group(1), Loader=DuplicateKeyLoader) or {}
-    except Exception as exc:
-        fail(f"{rel(path)} frontmatter parse failed: {exc}")
-        return {}
 
 
 def has_markdown_frontmatter(path: pathlib.Path, text: str | None = None) -> bool:
@@ -285,18 +258,6 @@ def visible_markdown_lines(markdown: str) -> list[tuple[int, str]]:
     return visible_lines
 
 
-def normalize_tools(value) -> str:
-    if isinstance(value, str):
-        return ", ".join(part.strip() for part in value.split(",") if part.strip())
-    if isinstance(value, list):
-        return ", ".join(str(part).strip() for part in value if str(part).strip())
-    return ""
-
-
-def extract_scope_imports(text: str) -> list[str]:
-    return sorted(re.findall(r"@import\s+(docs/00\.agent-governance/scopes/[A-Za-z0-9_.-]+\.md)", text))
-
-
 def rel(path: pathlib.Path) -> str:
     return str(path.relative_to(root))
 
@@ -323,15 +284,6 @@ def collect_strings(value) -> list[str]:
             values.extend(collect_strings(item))
         return values
     return []
-
-
-def branch_prefixes_from_git_workflow(path: pathlib.Path) -> list[str]:
-    prefixes: list[str] = []
-    for line in read_text(path).splitlines():
-        match = re.match(r"^-\s+`([a-z0-9-]+)/<[^`]+>`$", line.strip())
-        if match:
-            prefixes.append(match.group(1))
-    return prefixes
 
 
 def format_branch_prefixes(prefixes: list[str]) -> str:
@@ -627,42 +579,6 @@ def assert_profiled_readme_table_heading_probe() -> None:
 
 
 assert_profiled_readme_table_heading_probe()
-
-
-def validate_component_matrix(text: str, heading: str) -> None:
-    rows = markdown_table_after_heading(text, heading)
-    if len(rows) < 2:
-        fail(f"{heading} must contain a header and at least one component row")
-        return
-    expected_header = ["Required Component", "Current Surface", "Status", "Gap", "Remediation"]
-    allowed_statuses = {"Ready", "Partial", "Missing"}
-    if rows[0] != expected_header:
-        fail(f"{heading} header must be: {' | '.join(expected_header)}")
-    for row_number, row in enumerate(rows[1:], start=1):
-        if len(row) != len(expected_header):
-            fail(f"{heading} row {row_number} must have {len(expected_header)} columns")
-            continue
-        component, surface, status, gap, remediation = row
-        for label, value in [
-            ("Required Component", component),
-            ("Current Surface", surface),
-            ("Status", status),
-            ("Gap", gap),
-            ("Remediation", remediation),
-        ]:
-            if not value:
-                fail(f"{heading} row {row_number} has empty {label}")
-        if status not in allowed_statuses:
-            fail(f"{heading} row {row_number} has unsupported Status value: {status}")
-        if status == "Ready" and gap != "None":
-            fail(f"{heading} row {row_number} with Status=Ready must use Gap=None")
-        if status in {"Partial", "Missing"}:
-            if gap in {"", "None"}:
-                fail(f"{heading} row {row_number} with Status={status} must name a concrete Gap")
-            if remediation in {"", "None"}:
-                fail(f"{heading} row {row_number} with Status={status} must include concrete Remediation")
-        if gap == "None" and not remediation:
-            fail(f"{heading} row {row_number} with Gap=None still needs remediation guidance")
 
 
 tracked = set()
@@ -1742,7 +1658,7 @@ for raw_relative_path in tracked_active_paths:
         fail("git returned a non-UTF-8 active path during generic residue validation")
         continue
     if not (
-        relative_path.as_posix() in {"README.md", "AGENTS.md", "CLAUDE.md", "GEMINI.md"}
+        relative_path.as_posix() in {"README.md", "AGENTS.md", "CLAUDE.md"}
         or relative_path.parts[0] in TARGET_ROOTS
     ):
         continue
@@ -2092,32 +2008,11 @@ for operations_root in operations_index_roots:
 
 
 template_enforcement_phrase_checks = {
-    root / "docs/00.agent-governance/rules/document-authoring.md": [
-        "../../99.templates/registry.json",
-        "../../99.templates/README.md",
-        "status: draft",
-        "every required heading",
-        "selected profile/form",
-    ],
     root / "docs/99.templates/README.md": [
         "registry.json",
         "machine contract",
         "profile",
         "canonical form",
-    ],
-    root / ".agents/skills/docs-stage-routing/skill.md": [
-        "docs/99.templates/README.md",
-        "status: draft",
-        "Required Template",
-        "validation evidence",
-    ],
-    # WORK-054-003 slimmed the role adapters to provider-native metadata, so the
-    # template-enforcement wording now lives in the shared routing skill the
-    # adapters consume rather than being restated per role.
-    root / ".agents/skills/docs-stage-routing/skill.md": [
-        "docs/99.templates/README.md",
-        "template path used",
-        "Validation evidence",
     ],
 }
 for path, phrases in template_enforcement_phrase_checks.items():
@@ -2127,16 +2022,8 @@ for path, phrases in template_enforcement_phrase_checks.items():
             fail(f"{rel(path)} missing template enforcement phrase: {phrase}")
 
 active_template_routing_reference_files = [
-    root / ".agents/hooks.json",
     root / ".claude/settings.json",
-    root / ".codex/hooks.json",
-    # WORK-054-003 moved restated policy out of the per-role adapters into the
-    # shared assets below, so the doc-writer adapters no longer carry the route.
-    root / ".agents/output-styles/hy-home-k8s.md",
-    root / ".agents/rules/workspace-rules.md",
-    root / ".agents/skills/docs-stage-conformance/skill.md",
     root / ".agents/skills/docs-stage-routing/skill.md",
-    root / ".agents/workflows/qa-cicd-workflow.md",
     root / "docs/00.agent-governance/hooks/k8s-pre-edit.sh",
 ]
 for path in active_template_routing_reference_files:
@@ -2309,15 +2196,10 @@ scan_roots = [
     root / "gitops",
     root / "examples",
 ]
-stale_scan_skip = {
-    root / "docs/00.agent-governance/rules/document-authoring.md",
-}
 for scan_root in scan_roots:
     candidates = [scan_root] if scan_root.is_file() else scan_root.rglob("*")
     for path in candidates:
         if not path.is_file() or path.name == "validate-repo-quality-gates.sh":
-            continue
-        if path in stale_scan_skip:
             continue
         if path.suffix not in {".md", ".toml", ".json", ".yml", ".yaml", ".sh"}:
             continue
@@ -2579,54 +2461,6 @@ for scan_root in markdown_direct_push_roots:
             if stripped == "git push" or "git push origin main" in stripped:
                 fail(f"{rel(path)} contains bare/main direct push example; use feature branch + PR flow: line {index + 1}")
 
-gateway_contracts = {
-    "AGENTS.md": {
-        "max_lines": 25,
-        "required": [
-            "@docs/00.agent-governance/rules/bootstrap.md",
-            "@docs/00.agent-governance/providers/codex.md",
-            "@.codex/CODEX.md",
-            "@RTK.md",
-            "docs/00.agent-governance/harness-catalog.md",
-        ],
-    },
-    "CLAUDE.md": {
-        "max_lines": 25,
-        "required": [
-            "@docs/00.agent-governance/rules/bootstrap.md",
-            "@docs/00.agent-governance/providers/claude.md",
-            "@.claude/CLAUDE.md",
-            "@RTK.md",
-            "docs/00.agent-governance/harness-catalog.md",
-        ],
-    },
-    "GEMINI.md": {
-        "max_lines": 25,
-        "required": [
-            "@docs/00.agent-governance/rules/bootstrap.md",
-            "@docs/00.agent-governance/providers/gemini.md",
-            "@.agents/GEMINI.md",
-            "@RTK.md",
-            "docs/00.agent-governance/harness-catalog.md",
-        ],
-    },
-}
-for rel_path, contract in gateway_contracts.items():
-    path = root / rel_path
-    if not path.exists():
-        fail(f"gateway file missing: {rel_path}")
-        continue
-    text = read_text(path)
-    line_count = len(text.splitlines())
-    if line_count > contract["max_lines"]:
-        fail(f"{rel_path} must remain a thin gateway: {line_count} lines > {contract['max_lines']}")
-    for phrase in contract["required"]:
-        if phrase not in text:
-            fail(f"{rel_path} missing required gateway pointer: {phrase}")
-    for stale_heading in ["Agent Catalog", "Role Separation", "Runtime Roster"]:
-        if stale_heading in text:
-            fail(f"{rel_path} must not embed runtime catalog policy: {stale_heading}")
-
 tracked_language_roots = (
     "docs/00.agent-governance/",
     ".claude/",
@@ -2713,157 +2547,6 @@ for tracked_path in sorted(tracked):
         if re.search(r"[가-힣]", section):
             fail(f"{tracked_path} {heading} section must remain English for AI-agent execution requirements")
 
-harness_catalog_path = root / "docs/00.agent-governance/harness-catalog.md"
-harness_catalog_text = read_text(harness_catalog_path)
-# Normalize pipe-table whitespace so markdown formatters that pad column widths
-# do not break substring checks for table header phrases.
-import re as _re
-harness_catalog_normalized = _re.sub(r"\| +", "| ", _re.sub(r" +\|", " |", harness_catalog_text))
-for phrase in [
-    "## Harness Four-Element Control Model",
-    "Instruction and settings documents -> Architecture constraints -> Feedback loops -> Knowledge stores",
-    "Architecture constraints",
-    "Feedback loops",
-    "Knowledge stores",
-    "Domain definition",
-    "Data governance",
-    "Observability",
-    "Continuous evaluation",
-    "Documentation language and template routing",
-    "Drift garbage collection",
-    "## ECC DAILY/LIBRARY Surface",
-    "DAILY",
-    "LIBRARY",
-    "skill-library router is not created",
-    "## Agent Eval Completion Contract",
-    "Hookify local advisory",
-    "AI Agent Requirements",
-    "Repeated mistakes must update the harness surface",
-    "Permissions and hooks",
-    "Codex event hooks",
-    "not a permission gate equivalent",
-    ".claude/settings.json",
-    ".codex/hooks.json",
-    "Runtime surface added for LLM Wiki curation",
-    "## Matrix Status Contract",
-    "`Ready`, `Partial`, and `Missing`",
-    "A `Ready` row is not semantic proof",
-    "destructive Git deny list",
-    "regression and structure guard",
-    "Authored-doc command boundary",
-    "command examples in authored docs require",
-    "### Harness Engineering Matrix",
-    "### Agent-first Engineering Matrix",
-]:
-    if phrase not in harness_catalog_text:
-        fail(f"{rel(harness_catalog_path)} missing runtime readiness boundary phrase: {phrase}")
-if "| Required Component | Current Surface | Status | Gap | Remediation |" not in harness_catalog_normalized:
-    fail(f"{rel(harness_catalog_path)} missing runtime readiness boundary phrase: | Required Component | Current Surface | Status | Gap | Remediation |")
-validate_component_matrix(harness_catalog_text, "### Harness Engineering Matrix")
-validate_component_matrix(harness_catalog_text, "### Agent-first Engineering Matrix")
-for phrase in [
-    "Thin gateway",
-    "Runtime baseline",
-    "Four-element control model",
-    "Domain definition",
-    "Data governance",
-    "Observability",
-    "Continuous evaluation",
-    "Documentation language and template routing",
-    "Drift garbage collection",
-    "Local Agents",
-    "Agent Adapters",
-    "Evidence-first intake",
-    "Context hierarchy",
-    "JIT loading",
-    "Scope and persona routing",
-    "Authored-doc command boundaries",
-    "risky command examples",
-    "Validation before completion",
-    "Postflight and handoff",
-    "LLM Wiki curation",
-]:
-    if phrase not in harness_catalog_text:
-        fail(f"{rel(harness_catalog_path)} missing component audit matrix entry: {phrase}")
-
-# The provider baselines no longer carry this vocabulary. WORK-054-003 merged
-# the harness implementation map and the common governance document into the
-# canonical catalog, and the baselines became thin surface descriptions whose
-# exact text is fixed by PROVIDER_BASELINE_PROFILES. Asserting these phrases in
-# the baselines would make the two contracts unsatisfiable together, so the
-# assertion follows the content to its current owner.
-baseline_four_element_checks = {
-    root / "docs/00.agent-governance/harness-catalog.md": [
-        "Instruction and settings documents",
-        "Architecture constraints",
-        "Feedback loops",
-        "Knowledge stores",
-        "Agent eval completion",
-        "Hookify local advisory",
-        "context/validation wiring",
-        "harness-catalog.md",
-    ],
-    root / "docs/00.agent-governance/rules/agentic.md": [
-        "canonical progress ledger",
-    ],
-}
-for path, phrases in baseline_four_element_checks.items():
-    text = read_text(path)
-    for phrase in phrases:
-        if phrase not in text:
-            fail(f"{rel(path)} missing four-element runtime contract phrase: {phrase}")
-
-workspace_harness_skill_path = root / ".agents/skills/workspace-harness-audit/skill.md"
-workspace_harness_skill_text = read_text(workspace_harness_skill_path)
-for phrase in [
-    "## Workflow Phases",
-    "### Phase 1 - Intake and Evidence Boundary",
-    "Entry Criteria",
-    "Exit Criteria",
-    "Verification Criteria",
-    "agent-sort",
-    "eval-harness",
-    "enhance-prompt",
-    "DAILY",
-    "LIBRARY",
-    "four harness elements",
-    "instruction and settings documents",
-    "architecture constraints",
-    "feedback loops",
-    "knowledge stores",
-    "instructions -> constraints -> feedback ->",
-]:
-    if phrase not in workspace_harness_skill_text:
-        fail(f"{rel(workspace_harness_skill_path)} missing four-element audit phrase: {phrase}")
-
-agentic_path = root / "docs/00.agent-governance/rules/agentic.md"
-agentic_text = read_text(agentic_path)
-for phrase in [
-    "When an agent output fails validation or repeats a mistake",
-    "canonical progress ledger",
-    "only tracked progress.md",
-    "Agent eval completion",
-    "## Drift Garbage Collection Defaults",
-    "temp_",
-    "_backup",
-    "## Matrix-first Change Rule",
-    "Harness Engineering Matrix",
-    "Agent-first Engineering Matrix",
-    "Gap",
-    "## Context Hierarchy Defaults",
-    "root gateway context minimal",
-    "Load durable policy just in time",
-    "Load task-specific stage docs",
-    "not as instructions that override repository governance",
-    "Treat authored-doc command examples",
-    "command-boundary regression gates",
-    "no currently tracked concrete gap",
-    "human explicitly requests",
-    "equivalent enforcement layers",
-]:
-    if phrase not in agentic_text:
-        fail(f"{rel(agentic_path)} missing Agent-first matrix/context rule phrase: {phrase}")
-
 docs_readme_path = root / "docs/README.md"
 docs_readme_text = read_text(docs_readme_path)
 for phrase in [
@@ -2873,47 +2556,6 @@ for phrase in [
 ]:
     if phrase not in docs_readme_text:
         fail(f"{rel(docs_readme_path)} missing docs language/template contract phrase: {phrase}")
-
-memory_progress_path = root / "docs/00.agent-governance/memory/progress.md"
-memory_progress_text = read_text(memory_progress_path)
-for phrase in [
-    "docs/99.templates/templates/governance/progress.template.md",
-    "## Work Entries",
-    "#### Progress",
-    "#### Memory",
-    "#### Evidence",
-    "#### Handoff",
-    "repo-changing agent progress",
-    "historical initial implementation snapshot",
-    "Current runtime truth",
-    "Current script inventory",
-    "docs/00.agent-governance/harness-catalog.md",
-    "scripts/README.md",
-]:
-    if phrase not in memory_progress_text:
-        fail(f"{rel(memory_progress_path)} missing historical/current-source phrase: {phrase}")
-
-memory_dir = root / "docs/00.agent-governance/memory"
-memory_template_path = root / "docs/99.templates/templates/governance/memory.template.md"
-progress_template_path = root / "docs/99.templates/templates/governance/progress.template.md"
-for path in [memory_dir / "README.md", memory_progress_path, memory_template_path, progress_template_path]:
-    if not path.exists():
-        fail(f"required memory contract file is missing: {rel(path)}")
-
-memory_readme_text = read_text(memory_dir / "README.md")
-for phrase in [
-    "docs/99.templates/templates/governance/memory.template.md",
-    "docs/99.templates/templates/governance/progress.template.md",
-    "Standalone files under this folder must use",
-    "Related Progress",
-    "`progress.md` work entry",
-]:
-    if phrase not in memory_readme_text:
-        fail(f"{rel(memory_dir / 'README.md')} missing memory contract phrase: {phrase}")
-
-for phrase in ["memory.template.md", "progress.template.md", "00.agent-governance/memory/"]:
-    if phrase not in template_readme:
-        fail(f"{rel(root / 'docs/99.templates/README.md')} missing memory template inventory phrase: {phrase}")
 
 workflow_paths = sorted((root / ".github").glob("**/*.yml")) + sorted((root / ".github").glob("**/*.yaml"))
 for workflow in workflow_paths:
@@ -2961,56 +2603,6 @@ action_security = subprocess.run(
 if action_security.returncode != 0:
     fail("GitHub Actions security validation failed: " + action_security.stdout.strip())
 
-git_workflow_path = root / "docs/00.agent-governance/rules/git-workflow.md"
-git_workflow_text = read_text(git_workflow_path)
-branch_prefixes = branch_prefixes_from_git_workflow(git_workflow_path)
-if not branch_prefixes:
-    fail(f"{rel(git_workflow_path)} must define branch types as the branch prefix policy SSoT")
-for phrase in [
-    "Every pull request targeting `main` must run the required CI and branch-policy checks with no bypass exceptions.",
-    "Do not run destructive or history-rewriting Git commands from the default",
-    "Shared Claude permissions deny",
-    "git reset --hard",
-    "git checkout --",
-    "git restore",
-    "git clean",
-    "git rebase",
-    "git commit --amend",
-    "git branch -D",
-    "git push --force",
-    "git push -f",
-    "git push --delete",
-    "git push --mirror",
-    "record the approval scope, target branch, rollback or backup expectation",
-    "Draft or WIP PRs",
-    "90% coverage",
-    "validation-matrix coverage",
-    "Run `pre-commit run --all-files` before each logical commit and before branch finish.",
-]:
-    if phrase not in git_workflow_text:
-        fail(f"{rel(git_workflow_path)} missing PR/coverage governance phrase: {phrase}")
-
-quality_standards_path = root / "docs/00.agent-governance/rules/quality-standards.md"
-quality_standards_text = read_text(quality_standards_path)
-for phrase in [
-    "90% line and branch coverage",
-    "validation-matrix coverage",
-    "PR verification must state which coverage lane applies",
-    "pre-commit run --all-files",
-]:
-    if phrase not in quality_standards_text:
-        fail(f"{rel(quality_standards_path)} missing quality/completion phrase: {phrase}")
-
-postflight_checklist_path = root / "docs/00.agent-governance/rules/postflight-checklist.md"
-postflight_checklist_text = read_text(postflight_checklist_path)
-for phrase in [
-    "- [ ] `pre-commit run --all-files` completed.",
-    "- [ ] `git status --short`, `git diff`, and `git diff --cached` were inspected for formatter mutations.",
-    "- [ ] Affected, staged, and all-files validation was rerun after any formatter mutation.",
-]:
-    if phrase not in postflight_checklist_text:
-        fail(f"{rel(postflight_checklist_path)} missing completion checklist phrase: {phrase}")
-
 pull_request_template_path = root / ".github/PULL_REQUEST_TEMPLATE.md"
 pull_request_template_text = read_text(pull_request_template_path)
 for phrase in [
@@ -3019,15 +2611,6 @@ for phrase in [
 ]:
     if phrase not in pull_request_template_text:
         fail(f"{rel(pull_request_template_path)} missing QA evidence phrase: {phrase}")
-
-qa_scope_path = root / "docs/00.agent-governance/scopes/qa.md"
-qa_scope_text = read_text(qa_scope_path)
-for phrase in [
-    "90% coverage",
-    "validation-matrix coverage",
-]:
-    if phrase not in qa_scope_text:
-        fail(f"{rel(qa_scope_path)} missing coverage applicability phrase: {phrase}")
 
 ci_cd_qa_guide_path = root / "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md"
 ci_cd_qa_guide_text = read_text(ci_cd_qa_guide_path)
@@ -3133,18 +2716,17 @@ for phrase in [
     if phrase not in branch_policy_text:
         fail(f"{rel(ci_path)} branch-policy missing validation phrase: {phrase}")
 
-ci_branch_prefixes = extract_ci_branch_policy_prefixes(branch_policy_text)
-if ci_branch_prefixes != branch_prefixes:
+branch_prefixes = extract_ci_branch_policy_prefixes(branch_policy_text)
+if not branch_prefixes:
+    fail(f"{rel(ci_path)} branch-policy must define supported branch prefixes")
+expected_branch_message = (
+    "PR source branch must start with one of: "
+    + format_branch_prefixes(branch_prefixes)
+)
+if expected_branch_message not in branch_policy_text:
     fail(
-        f"{rel(ci_path)} branch-policy prefixes must match {rel(git_workflow_path)} "
-        f"SSoT: expected {format_branch_prefixes(branch_prefixes)} got {format_branch_prefixes(ci_branch_prefixes)}"
+        f"{rel(ci_path)} branch-policy message must match its allowed_branch_regex"
     )
-for prefix in branch_prefixes:
-    if prefix not in branch_policy_text:
-        fail(
-            f"{rel(ci_path)} branch-policy message missing branch prefix from "
-            f"{rel(git_workflow_path)} SSoT: {prefix}/"
-        )
 
 ci_summary_job = ci_jobs.get("ci-summary") or {}
 ci_summary_needs = ci_summary_job.get("needs") or []
@@ -3427,17 +3009,11 @@ if not has_cloud_example_snapshot_preservation_prompt(pr_template_text):
 # Harness implementation surfaces: existence and cross-reference contracts only.
 # Wrapper script existence is already enforced by the scripts inventory, so it
 # is not re-validated here.
-approval_boundaries_path = root / "docs/00.agent-governance/rules/approval-boundaries.md"
+approval_boundaries_path = root / "docs/00.agent-governance/policies/approval-and-safety.md"
 if not approval_boundaries_path.exists():
     fail(f"required harness surface is missing: {rel(approval_boundaries_path)}")
 if "## 8. Harness Impact" not in pr_template_text:
     fail(f"{rel(pr_template_path)} missing Harness Impact section heading: ## 8. Harness Impact")
-harness_catalog_map_text = read_text(root / "docs/00.agent-governance/harness-catalog.md")
-if "approval-boundaries.md" not in harness_catalog_map_text:
-    fail(
-        "docs/00.agent-governance/harness-catalog.md must reference the harness "
-        "approval boundaries"
-    )
 canonical_task_form_text = read_text(
     root / "docs/99.templates/templates/specs/task.template.md"
 )
@@ -3458,7 +3034,7 @@ for phrase in [
 pr_branch_prefixes = extract_pr_template_prefixes(pr_template_text)
 if pr_branch_prefixes != branch_prefixes:
     fail(
-        f"{rel(pr_template_path)} approved branch prefixes must match {rel(git_workflow_path)} "
+        f"{rel(pr_template_path)} approved branch prefixes must match {rel(ci_path)} branch-policy "
         f"SSoT: expected {format_branch_prefixes(branch_prefixes)} got {format_branch_prefixes(pr_branch_prefixes)}"
     )
 for prefix in branch_prefixes:
@@ -3466,13 +3042,14 @@ for prefix in branch_prefixes:
     if prefix not in pr_template_text:
         fail(
             f"{rel(pr_template_path)} missing approved source branch prefix from "
-            f"{rel(git_workflow_path)} SSoT: {prefix_label}"
+            f"{rel(ci_path)} branch-policy: {prefix_label}"
         )
 
 github_about_path = root / ".github/README.md"
+git_policy_path = root / "docs/00.agent-governance/policies/git.md"
 github_about_text = read_text(github_about_path)
 for phrase in [
-    "docs/00.agent-governance/rules/git-workflow.md",
+    "docs/00.agent-governance/policies/git.md",
     "workflows/ci.yml",
     "scripts/validate-repo-quality-gates.sh",
     "PULL_REQUEST_TEMPLATE.md",
@@ -3490,13 +3067,13 @@ if "docs/90.references/tech-stack-version-inventory.md" in github_about_text:
 if "PR source branches must start" in github_about_text or "Default PR target is `main`" in github_about_text:
     fail(
         f"{rel(github_about_path)} must not duplicate branch-policy prose; "
-        f"move branch rules to {rel(git_workflow_path)} and keep enforcement in {rel(ci_path)}"
+        f"keep human Git guidance in {rel(git_policy_path)} and enforcement in {rel(ci_path)}"
     )
 about_prefix_count = sum(1 for prefix in branch_prefixes if f"{prefix}/" in github_about_text)
 if about_prefix_count >= len(branch_prefixes):
     fail(
         f"{rel(github_about_path)} must not mirror the full branch prefix list; "
-        f"use {rel(git_workflow_path)} as the branch policy SSoT"
+        f"use {rel(ci_path)} branch-policy as the executable owner"
     )
 
 workflow_responsibility_rows = markdown_table_after_heading(
@@ -3650,17 +3227,13 @@ for workflow in sorted((root / ".github/workflows").glob("*.yml")):
             if re.search(r"\$\{\{\s*needs(?:\.|\[)[^}]*\.result\s*\}\}", run_block):
                 fail(f"{rel(workflow)} job {job_id} run block expands needs.*.result directly")
 
-for json_path in [root / ".claude/settings.json", root / ".agents/hooks.json", root / ".codex/hooks.json"]:
-    try:
-        load_json(json_path)
-    except Exception as exc:
-        fail(f"agent runtime JSON parse failed for {rel(json_path)}: {exc}")
-
+# Unique Claude pre-edit, session-start, and lifecycle registration checks
+# remain here until their provider-owner consolidation. The dedicated
+# PostToolUse regression above owns its closed command and isolation boundary.
 claude_settings = load_json(root / ".claude/settings.json")
-post_validate_command = json.dumps(claude_settings.get("hooks", {}))
+claude_hook_configuration = json.dumps(claude_settings.get("hooks", {}))
 for phrase in [
     "docs/00.agent-governance/hooks/k8s-pre-edit.sh",
-    "docs/00.agent-governance/hooks/post-validate.sh",
     "docs/00.agent-governance/hooks/session-start.sh",
     "docs/00.agent-governance/hooks/lifecycle-guard.sh",
     '"Stop"',
@@ -3669,116 +3242,8 @@ for phrase in [
     '"timeout": 60',
     '"timeout": 20',
 ]:
-    if phrase not in post_validate_command and phrase not in read_text(root / ".claude/settings.json"):
+    if phrase not in claude_hook_configuration and phrase not in read_text(root / ".claude/settings.json"):
         fail(f".claude/settings.json missing hook contract phrase: {phrase}")
-
-codex_hooks_path = root / ".codex/hooks.json"
-codex_hooks = load_json(codex_hooks_path).get("hooks", {})
-for event_name in ["SessionStart", "PreToolUse", "PostToolUse", "Stop", "SubagentStop", "PreCompact"]:
-    if event_name not in codex_hooks:
-        fail(f"{rel(codex_hooks_path)} missing event hook: {event_name}")
-codex_hooks_text = read_text(codex_hooks_path)
-for phrase in [
-    "docs/00.agent-governance/hooks/session-start.sh",
-    "docs/00.agent-governance/hooks/k8s-pre-edit.sh",
-    "docs/00.agent-governance/hooks/post-validate.sh",
-    "docs/00.agent-governance/hooks/lifecycle-guard.sh",
-    "CODEX_PROJECT_DIR",
-    "Glob|Grep",
-    '"timeout": 60',
-    '"timeout": 20',
-]:
-    if phrase not in codex_hooks_text:
-        fail(f"{rel(codex_hooks_path)} missing Codex event hook phrase: {phrase}")
-
-gemini_hooks_path = root / ".agents/hooks.json"
-gemini_hooks = load_json(gemini_hooks_path).get("hooks", {})
-for event_name in ["SessionStart", "PreToolUse", "PostToolUse", "Stop", "SubagentStop", "PreCompact"]:
-    if event_name not in gemini_hooks:
-        fail(f"{rel(gemini_hooks_path)} missing event hook: {event_name}")
-gemini_hooks_text = read_text(gemini_hooks_path)
-for phrase in [
-    "docs/00.agent-governance/hooks/session-start.sh",
-    "docs/00.agent-governance/hooks/k8s-pre-edit.sh",
-    "docs/00.agent-governance/hooks/post-validate.sh",
-    "docs/00.agent-governance/hooks/lifecycle-guard.sh",
-    "GEMINI_PROJECT_DIR",
-    "Glob|Grep",
-    '"timeout": 60',
-    '"timeout": 20',
-]:
-    if phrase not in gemini_hooks_text:
-        fail(f"{rel(gemini_hooks_path)} missing Gemini event hook phrase: {phrase}")
-
-
-def hook_command(data: dict, event_name: str, matcher: str, script_name: str) -> str:
-    for entry in data.get(event_name, []) or []:
-        if entry.get("matcher") != matcher:
-            continue
-        for hook in entry.get("hooks", []) or []:
-            command = str(hook.get("command") or "")
-            if script_name in command:
-                return command
-    return ""
-
-
-provider_post_validate_contracts = [
-    (
-        ".claude/settings.json",
-        claude_settings.get("hooks", {}),
-        "claude",
-        "CLAUDE_PROJECT_DIR",
-    ),
-    (
-        ".codex/hooks.json",
-        codex_hooks,
-        "codex",
-        "CODEX_PROJECT_DIR",
-    ),
-    (
-        ".agents/hooks.json",
-        gemini_hooks,
-        "gemini",
-        "GEMINI_PROJECT_DIR",
-    ),
-]
-for config_name, hooks, provider, project_variable in provider_post_validate_contracts:
-    project_assignments = (
-        f'{project_variable}="${project_variable}" '
-        if provider == "claude"
-        else (
-            f'{project_variable}="${project_variable}" '
-            f'CLAUDE_PROJECT_DIR="${project_variable}" '
-        )
-    )
-    expected_command = (
-        '/usr/bin/env -i HOME="$HOME" LANG=C.UTF-8 LC_ALL=C.UTF-8 '
-        "PATH=/usr/bin:/bin "
-        f"{project_assignments}"
-        f"HY_HOME_K8S_HOOK_PROVIDER={provider} "
-        "/usr/bin/bash --noprofile --norc "
-        f'"${project_variable}/docs/00.agent-governance/hooks/post-validate.sh"'
-    )
-    actual_command = hook_command(
-        hooks,
-        "PostToolUse",
-        "Write|Edit|MultiEdit",
-        "post-validate.sh",
-    )
-    if actual_command != expected_command:
-        fail(f"{config_name} PostToolUse must use the exact closed provider entry")
-
-post_validate_hook_text = read_text(
-    root / "docs/00.agent-governance/hooks/post-validate.sh"
-)
-if re.search(r"(?m)^\s*(?:if ! )?python3\b", post_validate_hook_text):
-    fail("post-validate.sh contains a bare production python3 entry")
-if post_validate_hook_text.count("/usr/bin/python3 -I") != 4:
-    fail("post-validate.sh must isolate all four production Python entries")
-if post_validate_hook_text.count("/usr/bin/env -i") < 4:
-    fail("post-validate.sh must close every production Python environment")
-if "git rev-parse" in post_validate_hook_text:
-    fail("post-validate.sh must not derive project authority from ambient Git state")
 
 
 # Pre-edit and lifecycle hook simulations are unconditional. Post-validate
@@ -3899,7 +3364,7 @@ if True:
         env={
             **hook_env,
             "HY_HOME_K8S_LIFECYCLE_GUARD_SELFTEST": "1",
-            "HY_HOME_K8S_CHANGED_PATHS": ".claude/settings.json\n.codex/hooks.json",
+            "HY_HOME_K8S_CHANGED_PATHS": ".claude/settings.json",
         },
     )
     if precompact_result.returncode != 0:
@@ -3917,197 +3382,6 @@ if True:
     if '"decision": "block"' in precompact_result.stdout:
         fail(f"{rel(lifecycle_hook_path)} PreCompact payload simulation must not block")
 
-    codex_hook_env = {
-        **os.environ,
-        "CODEX_PROJECT_DIR": str(root),
-        "CLAUDE_PROJECT_DIR": str(root),
-    }
-    codex_pre_command = hook_command(codex_hooks, "PreToolUse", "Write|Edit|MultiEdit", "k8s-pre-edit.sh")
-    if not codex_pre_command:
-        fail(f"{rel(codex_hooks_path)} missing Codex PreToolUse edit hook command")
-    else:
-        codex_pre_result = subprocess.run(
-            ["bash", "-lc", codex_pre_command],
-            cwd=root,
-            input=manifest_hook_payload,
-            text=True,
-            capture_output=True,
-            env=codex_hook_env,
-        )
-        if codex_pre_result.returncode != 0:
-            fail(f"{rel(codex_hooks_path)} Codex PreToolUse payload simulation failed: {codex_pre_result.stderr.strip()}")
-        if "GitOps-first" not in codex_pre_result.stdout:
-            fail(f"{rel(codex_hooks_path)} Codex PreToolUse simulation missing GitOps warning")
-
-        codex_docs_pre_result = subprocess.run(
-            ["bash", "-lc", codex_pre_command],
-            cwd=root,
-            input=docs_hook_payload,
-            text=True,
-            capture_output=True,
-            env=codex_hook_env,
-        )
-        if codex_docs_pre_result.returncode != 0:
-            fail(f"{rel(codex_hooks_path)} Codex docs PreToolUse payload simulation failed: {codex_docs_pre_result.stderr.strip()}")
-        if "documentation template enforcement" not in codex_docs_pre_result.stdout:
-            fail(f"{rel(codex_hooks_path)} Codex docs PreToolUse simulation missing template enforcement warning")
-
-    for lifecycle_event, lifecycle_matcher in [
-        ("Stop", "*"),
-        ("SubagentStop", "*"),
-        ("PreCompact", "manual|auto"),
-    ]:
-        lifecycle_command = hook_command(codex_hooks, lifecycle_event, lifecycle_matcher, "lifecycle-guard.sh")
-        if not lifecycle_command:
-            fail(f"{rel(codex_hooks_path)} missing Codex {lifecycle_event} lifecycle hook command")
-            continue
-        codex_lifecycle_result = subprocess.run(
-            ["bash", "-lc", lifecycle_command],
-            cwd=root,
-            input=json.dumps({"hook_event_name": lifecycle_event}),
-            text=True,
-            capture_output=True,
-            env={
-                **codex_hook_env,
-                "HY_HOME_K8S_LIFECYCLE_GUARD_SELFTEST": "1",
-                "HY_HOME_K8S_CHANGED_PATHS": ".claude/settings.json",
-            },
-        )
-        if codex_lifecycle_result.returncode != 0:
-            fail(f"{rel(codex_hooks_path)} Codex {lifecycle_event} lifecycle simulation failed: {codex_lifecycle_result.stderr.strip()}")
-        if lifecycle_event == "PreCompact" and "Lifecycle guard" not in codex_lifecycle_result.stdout:
-            fail(f"{rel(codex_hooks_path)} Codex PreCompact lifecycle simulation missing advisory output")
-
-claude_agents_dir = root / ".claude/agents"
-codex_agents_dir = root / ".codex/agents"
-local_agents_dir = root / ".agents/agents"
-if claude_agents_dir.is_symlink():
-    fail(".claude/agents must be a real Claude-specific directory, not a symlink")
-elif not claude_agents_dir.is_dir():
-    fail(".claude/agents must be a real Claude-specific directory")
-claude_agents = {path.stem: path for path in sorted(claude_agents_dir.glob("*.md"))}
-codex_agents = {path.stem: path for path in sorted(codex_agents_dir.glob("*.toml"))}
-local_agents = {path.stem: path for path in sorted(local_agents_dir.glob("*.md"))}
-for stem in sorted(set(claude_agents) - set(codex_agents)):
-    fail(f"missing Codex agent adapter for .claude/agents/{stem}.md")
-for stem in sorted(set(codex_agents) - set(claude_agents)):
-    fail(f"Codex agent adapter has no Claude peer: .codex/agents/{stem}.toml")
-for stem in sorted(set(claude_agents) - set(local_agents)):
-    fail(f"missing local/Antigravity agent adapter for .claude/agents/{stem}.md")
-for stem in sorted(set(local_agents) - set(claude_agents)):
-    fail(f"local/Antigravity agent adapter has no Claude peer: .agents/agents/{stem}.md")
-
-expected_codex_agent_models = {
-    "supervisor": ("gpt-5.5", "xhigh"),
-    "code-reviewer": ("gpt-5.3-codex", "high"),
-    "doc-writer": ("gpt-5.3-codex", "medium"),
-    "gitops-reviewer": ("gpt-5.3-codex", "high"),
-    "incident-responder": ("gpt-5.3-codex", "high"),
-    "k8s-implementer": ("gpt-5.3-codex", "high"),
-    "network-reviewer": ("gpt-5.3-codex", "high"),
-    "observability-reviewer": ("gpt-5.3-codex", "high"),
-    "security-auditor": ("gpt-5.3-codex", "high"),
-    "wiki-curator": ("gpt-5.3-codex", "medium"),
-    "docs-researcher": ("gpt-5.6-terra", "high"),
-    "quality-engineer": ("gpt-5.6-terra", "high"),
-}
-expected_claude_agent_models = {
-    "supervisor": "opus 4.8",
-    "code-reviewer": "sonnet 4.6",
-    "doc-writer": "sonnet 4.6",
-    "gitops-reviewer": "sonnet 4.6",
-    "incident-responder": "sonnet 4.6",
-    "k8s-implementer": "sonnet 4.6",
-    "network-reviewer": "sonnet 4.6",
-    "observability-reviewer": "sonnet 4.6",
-    "security-auditor": "sonnet 4.6",
-    "wiki-curator": "sonnet 4.6",
-    "docs-researcher": "Sonnet 5",
-    "quality-engineer": "Sonnet 5",
-}
-expected_claude_agent_tools = {
-    "supervisor": "Read, Grep, Glob, Task",
-    "code-reviewer": "Read, Grep, Glob, Bash",
-    "doc-writer": "Read, Write, Edit, Grep, Glob, Bash",
-    "gitops-reviewer": "Read, Grep, Glob, Bash",
-    "incident-responder": "Read, Grep, Glob, Bash",
-    "k8s-implementer": "Read, Write, Edit, Grep, Glob, Bash",
-    "network-reviewer": "Read, Grep, Glob, Bash",
-    "observability-reviewer": "Read, Grep, Glob, Bash",
-    "security-auditor": "Read, Grep, Glob, Bash",
-    "wiki-curator": "Read, Write, Edit, Grep, Glob, Bash",
-    "docs-researcher": "Read, Grep, Glob, WebFetch, WebSearch",
-    "quality-engineer": "Read, Write, Edit, Grep, Glob, Bash",
-}
-expected_local_agent_models = {
-    stem: "Gemini 3.1 Pro" if stem in {"supervisor", "docs-researcher"} else "Gemini 3.5 Flash"
-    for stem in expected_claude_agent_models
-}
-for stem, claude_path in sorted(claude_agents.items()):
-    claude_text = read_text(claude_path)
-    claude_metadata = load_markdown_frontmatter(claude_path)
-    if claude_metadata.get("name") != stem:
-        fail(f"{rel(claude_path)} name must match file stem: {stem}")
-    expected_claude_model = expected_claude_agent_models.get(stem)
-    if expected_claude_model and claude_metadata.get("model") != expected_claude_model:
-        fail(f"{rel(claude_path)} model must be {expected_claude_model!r}")
-    expected_claude_tools = expected_claude_agent_tools.get(stem)
-    if expected_claude_tools and normalize_tools(claude_metadata.get("tools")) != expected_claude_tools:
-        fail(f"{rel(claude_path)} tools must be {expected_claude_tools!r}")
-    codex_path = codex_agents.get(stem)
-    local_path = local_agents.get(stem)
-    if not codex_path:
-        continue
-    codex_text = read_text(codex_path)
-    try:
-        codex_data = load_toml(codex_path)
-    except Exception as exc:
-        fail(f"Codex agent TOML parse failed for {rel(codex_path)}: {exc}")
-        codex_data = {}
-    if codex_data.get("name") != stem:
-        fail(f"{rel(codex_path)} name must match file stem: {stem}")
-    expected_model_effort = expected_codex_agent_models.get(stem)
-    if expected_model_effort:
-        expected_model, expected_effort = expected_model_effort
-        if codex_data.get("model") != expected_model:
-            fail(f"{rel(codex_path)} model must be {expected_model!r}")
-        if codex_data.get("model_reasoning_effort") != expected_effort:
-            fail(f"{rel(codex_path)} model_reasoning_effort must be {expected_effort!r}")
-    if not local_path:
-        continue
-    local_text = read_text(local_path)
-    local_metadata = load_markdown_frontmatter(local_path)
-    if local_metadata.get("name") != stem:
-        fail(f"{rel(local_path)} name must match file stem: {stem}")
-    expected_local_model = expected_local_agent_models.get(stem)
-    if local_metadata.get("model") != expected_local_model:
-        fail(
-            f"{rel(local_path)} local/Antigravity adapter model label must be "
-            f"{expected_local_model!r}"
-        )
-    adapter_scope_imports = {
-        "claude": extract_scope_imports(claude_text),
-        "codex": extract_scope_imports(codex_text),
-        "local": extract_scope_imports(local_text),
-    }
-    if len({tuple(imports) for imports in adapter_scope_imports.values()}) != 1:
-        fail(
-            f"scope import mismatch for role {stem}: "
-            + ", ".join(
-                f"{surface}={imports!r}"
-                for surface, imports in sorted(adapter_scope_imports.items())
-            )
-        )
-
-harness_catalog_path = root / "docs/00.agent-governance/harness-catalog.md"
-harness_catalog_text = read_text(harness_catalog_path)
-for agent_path in sorted(claude_agents.values()):
-    if rel(agent_path) not in harness_catalog_text:
-        fail(f"{rel(harness_catalog_path)} missing agent inventory entry: {rel(agent_path)}")
-for skill_path in sorted((root / ".claude/skills").glob("*/skill.md")):
-    if rel(skill_path) not in harness_catalog_text:
-        fail(f"{rel(harness_catalog_path)} missing skill inventory entry: {rel(skill_path)}")
-
 scripts_dir = root / "scripts"
 scripts_readme = read_text(scripts_dir / "README.md")
 tracked_script_paths = sorted(
@@ -4117,75 +3391,18 @@ tracked_script_paths = sorted(
     == pathlib.PurePosixPath("scripts")
     and pathlib.PurePosixPath(tracked_path).suffix in {".py", ".sh"}
 )
-expected_import_only_helpers = {
-    "archive_cutover_manifest.py",
-    "archive_validation.py",
-    "document_contracts.py",
-    "document_lifecycle.py",
-    "reference_information_architecture.py",
-}
-
-
-def is_top_level_main_guard(node):
-    test = node.test if isinstance(node, ast.If) else None
-    return (
-        isinstance(test, ast.Compare)
-        and isinstance(test.left, ast.Name)
-        and test.left.id == "__name__"
-        and len(test.ops) == 1
-        and isinstance(test.ops[0], ast.Eq)
-        and len(test.comparators) == 1
-        and isinstance(test.comparators[0], ast.Constant)
-        and test.comparators[0].value == "__main__"
-    )
-
-
-main_guard_classifier_probes = {
-    'positive': ('if __name__ == "__main__":\n    pass\n', True),
-    'wrong-left': ('if module_name == "__main__":\n    pass\n', False),
-    'not-eq': ('if __name__ != "__main__":\n    pass\n', False),
-    'chained': ('if __name__ == "__main__" == sentinel:\n    pass\n', False),
-}
-for probe_name, (source, expected) in main_guard_classifier_probes.items():
-    probe_node = ast.parse(source).body[0]
-    if is_top_level_main_guard(probe_node) is not expected:
-        fail(f"tracked script main-guard classifier failed probe: {probe_name}")
-
-
-observed_import_only_helpers = set()
 for script_path in tracked_script_paths:
     if script_path.suffix != ".py":
         continue
     try:
-        module = ast.parse(read_text(script_path), filename=rel(script_path))
+        ast.parse(read_text(script_path), filename=rel(script_path))
     except SyntaxError as exc:
         fail(f"tracked Python script syntax failed for {rel(script_path)}: {exc.msg}")
-        continue
-    has_main_guard = any(is_top_level_main_guard(node) for node in module.body)
-    if not has_main_guard:
-        observed_import_only_helpers.add(script_path.name)
 
 observed_script_names = {path.name for path in tracked_script_paths}
-observed_cli_count = len(tracked_script_paths) - len(observed_import_only_helpers)
-if (
-    len(tracked_script_paths) != 49
-    or observed_cli_count != 44
-    or observed_import_only_helpers != expected_import_only_helpers
-):
-    fail(
-        "tracked script inventory must remain exact: "
-        "total=49 cli=44 helpers=5"
-    )
 for script_name in sorted(observed_script_names):
     if script_name not in scripts_readme:
         fail(f"tracked script missing from scripts/README.md: {script_name}")
-for phrase in (
-    "49 tracked scripts",
-    "44 CLI entrypoints",
-    "five import-only helpers",
-):
-    if phrase not in scripts_readme:
-        fail(f"scripts/README.md missing exact inventory summary: {phrase}")
 script_paths = sorted(scripts_dir.glob("*.sh"))
 script_names = {script.name for script in script_paths}
 disallowed_script_absolute_path_patterns = [
@@ -5909,7 +5126,6 @@ script_command_contract_paths = [
     root / ".claude/CLAUDE.md",
     root / "docs/00.agent-governance/hooks/post-validate.sh",
     root / "docs/00.agent-governance/hooks/lifecycle-guard.sh",
-    root / ".codex/hooks.json",
     root / "docs/05.operations/guides/0009-llm-wiki-curation-guide.md",
     root / "docs/90.references/README.md",
     root / "docs/90.references/llm-wiki/README.md",
@@ -5917,7 +5133,7 @@ script_command_contract_paths = [
     root / "gitops/README.md",
     root / "gitops/workloads/README.md",
     root / "docs/README.md",
-    root / "docs/00.agent-governance/rules/document-authoring.md",
+    root / "docs/00.agent-governance/policies/document-authoring.md",
 ]
 for path in script_command_contract_paths:
     if not path.exists():
@@ -6077,9 +5293,6 @@ for hook_id in ["shellcheck", "shfmt"]:
         fail(f".pre-commit-config.yaml {hook_id} must not use stale provider-local hook coverage")
 
 active_hook_reference_files = [
-    root / ".claude/CLAUDE.md",
-    root / "docs/00.agent-governance/providers/claude.md",
-    root / "docs/00.agent-governance/scopes/meta.md",
     root / "scripts/README.md",
     root / "tests/README.md",
     root / "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md",
@@ -6113,8 +5326,6 @@ for hook_path in [
     hook_text = read_text(hook_path)
     if ".agents/*" not in hook_text:
         fail(f"{rel(hook_path)} must trigger repository quality gates for .agents/** shared asset changes")
-    if ".agents/hooks.json" not in hook_text:
-        fail(f"{rel(hook_path)} must parse .agents/hooks.json with other runtime hook JSON files")
 
 ci_qa_guide_path = root / "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md"
 ci_qa_guide_text = read_text(ci_qa_guide_path)

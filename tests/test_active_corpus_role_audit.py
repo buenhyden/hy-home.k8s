@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import importlib.util
 import os
 import subprocess
@@ -28,6 +29,434 @@ def load_validator():
     return module
 
 
+class CurrentHelperManifestTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.validator = load_validator()
+
+    def test_post_closure_manifest_is_exact_and_identity_bound(self) -> None:
+        self.assertEqual(
+            self.validator.POST_CLOSURE_HELPER_MANIFEST,
+            {
+                "tests/fixtures/agent-checkpoint.json": (
+                    "json",
+                    "closed-fixture",
+                ),
+                "tests/fixtures/agent-governance-ci.json": (
+                    "json",
+                    "closed-fixture",
+                ),
+                "tests/fixtures/agent-loop-lifecycle.json": (
+                    "json",
+                    "closed-fixture",
+                ),
+                "tests/fixtures/agent-provider-runtime-evidence.json": (
+                    "json",
+                    "closed-fixture",
+                ),
+                "tests/fixtures/reference-information-architecture/current-owner.json": (
+                    "json",
+                    "closed-fixture",
+                ),
+                "tests/fixtures/reference-information-architecture/generator-collision.json": (
+                    "json",
+                    "closed-fixture",
+                ),
+                "tests/fixtures/reference-information-architecture/minimal-valid.json": (
+                    "json",
+                    "closed-fixture",
+                ),
+                "tests/fixtures/reference-information-architecture/overlay-mutation.json": (
+                    "json",
+                    "closed-fixture",
+                ),
+                "tests/fixtures/reference-information-architecture/policy-copy.json": (
+                    "json",
+                    "closed-fixture",
+                ),
+                "tests/fixtures/reference-information-architecture/snapshot-mutation.json": (
+                    "json",
+                    "closed-fixture",
+                ),
+                "tests/fixtures/reference-information-architecture/source-freshness.json": (
+                    "json",
+                    "closed-fixture",
+                ),
+                "tests/test_affected_surface_migration.py": (
+                    "python",
+                    "regression-test",
+                ),
+                "tests/test_archive_historical_proof.py": (
+                    "python",
+                    "regression-test",
+                ),
+                "tests/test_document_lifecycle_agent_roster_cutover.py": (
+                    "python",
+                    "regression-test",
+                ),
+                "tests/test_document_lifecycle_migration.py": (
+                    "python",
+                    "regression-test",
+                ),
+                "tests/test_document_strict_cutover.py": (
+                    "python",
+                    "regression-test",
+                ),
+                "tests/test_generic_migration_recovery.py": (
+                    "python",
+                    "regression-test",
+                ),
+                "tests/test_k8s_pre_edit_hook.py": (
+                    "python",
+                    "regression-test",
+                ),
+                "tests/test_reference_information_architecture.py": (
+                    "python",
+                    "regression-test",
+                ),
+                "tests/test_validate_agent_checkpoint.py": (
+                    "python",
+                    "regression-test",
+                ),
+                "tests/test_validate_agent_compatibility_clis.py": (
+                    "python",
+                    "regression-test",
+                ),
+                "tests/test_validate_agent_core_cutover.py": (
+                    "python",
+                    "regression-test",
+                ),
+                "tests/test_validate_agent_governance_ci.py": (
+                    "python",
+                    "regression-test",
+                ),
+                "tests/test_validate_agent_governance_closure.py": (
+                    "python",
+                    "regression-test",
+                ),
+                "tests/test_validate_agent_harness_contract.py": (
+                    "python",
+                    "regression-test",
+                ),
+                "tests/test_validate_agent_harness_semantics.py": (
+                    "python",
+                    "regression-test",
+                ),
+                "tests/test_validate_agent_legacy_cutover.py": (
+                    "python",
+                    "regression-test",
+                ),
+                "tests/test_validate_agent_loop_lifecycle.py": (
+                    "python",
+                    "regression-test",
+                ),
+                "tests/test_validate_agent_provider_canaries.py": (
+                    "python",
+                    "regression-test",
+                ),
+                "tests/test_validate_agent_provider_config.py": (
+                    "python",
+                    "regression-test",
+                ),
+                "tests/test_validate_agent_registry.py": (
+                    "python",
+                    "regression-test",
+                ),
+                "tests/test_validate_ci_python_contract.py": (
+                    "python",
+                    "regression-test",
+                ),
+                "tests/test_validate_gitops_change_set.py": (
+                    "python",
+                    "regression-test",
+                ),
+            },
+        )
+        self.assertEqual(
+            self.validator.TRANSITION_ONLY_HELPER_MANIFEST,
+            {
+                "tests/test_migrate_document_work_units.py": (
+                    "python",
+                    "regression-test",
+                )
+            },
+        )
+
+    def test_retired_post_closure_helpers_are_not_admitted(self) -> None:
+        retired = (
+            "tests/fixtures/agent-evaluations.json",
+            "tests/fixtures/agent-harness-contract.json",
+            "tests/fixtures/agent-model-fitness.json",
+            "tests/fixtures/agent-roster-admission.json",
+            "tests/test_validate_agent_evaluations.py",
+            "tests/test_validate_agent_model_fitness.py",
+            "tests/test_validate_agent_roster_admission.py",
+        )
+        for path in retired:
+            with self.subTest(path=path):
+                self.assertIsNone(self.validator.helper_artifact_role(path))
+
+    def test_helper_artifact_role_does_not_obtain_recovery_proof(self) -> None:
+        with mock.patch.object(
+            self.validator,
+            "repository_migration_proof",
+            side_effect=AssertionError("artifact classification must remain pure"),
+        ) as recover:
+            self.assertEqual(
+                self.validator.helper_artifact_role(
+                    "tests/fixtures/agent-harness-semantics.json"
+                ),
+                "closed-fixture",
+            )
+            self.assertIsNone(self.validator.helper_artifact_role("tests/unknown.py"))
+        recover.assert_not_called()
+
+
+class FrozenHelperRecoveryTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.validator = load_validator()
+        # Reuse the bounded Git fixture without exporting another TestCase or
+        # retaining its module's import-path adjustment in this test process.
+        with mock.patch.object(sys, "path", list(sys.path)):
+            from tests import test_generic_migration_recovery as fixtures
+
+        self.archive = fixtures.archive
+        self.fixture = fixtures.GenericMigrationRecoveryTest()
+        self.addCleanup(self.fixture.doCleanups)
+        self.fixture.setUp()
+        self.source = "tests/fixtures/agent-harness-semantics.json"
+        self.target = ".agents/registry.json"
+        self.payload = b'{"historicalFixture": true}\n'
+        commit, blobs = self.fixture.git.commit_many({self.source: self.payload})
+        self.row = dict(
+            legacy_path=self.source,
+            stable_path=None,
+            artifact_id=None,
+            action="merged",
+            replacement=self.target,
+            source_commit=commit,
+            source_blob=blobs[self.source],
+            content_sha256=hashlib.sha256(self.payload).hexdigest(),
+            reason="Consolidate current agent authority",
+        )
+        self.fixture.git.run("rm", "--quiet", "--", self.source)
+        target = self.fixture.root / self.target
+        target.parent.mkdir(parents=True)
+        target.write_bytes(b"{}\n")
+        self.fixture.git.run("add", "--", self.target)
+        self.fixture.write([self.fixture.row, self.row])
+        # The observed role rows are explicit owner facts, not a copied corpus.
+        # Source recovery, target regularity and index parity use real Git.
+        self.ledger = self.validator.load_ledger(REPOSITORY_ROOT, enforce_index=False)
+        self.observed = {
+            "stage05": {
+                "entries": copy.deepcopy(self.ledger["stage05"]["entries"]),
+                "counts": dict(self.validator.EXPECTED_STAGE_COUNTS),
+            }
+        }
+        entries = sorted(
+            self.validator._expected_frozen_helper_entries()
+            + self.validator._expected_post_closure_helper_entries(),
+            key=lambda entry: entry["path"],
+        )
+        self.set_entries([entry for entry in entries if entry["path"] != self.source])
+
+    def set_entries(self, entries) -> None:
+        counts = dict.fromkeys(self.validator.FINAL_HELPER_COUNTS, 0)
+        for entry in entries:
+            counts["total"] += 1
+            counts[entry["format"]] += 1
+        self.observed["helperTests"] = {"counts": counts, "entries": entries}
+        self.observed["readmeInventory"] = [entry["path"] for entry in entries]
+
+    def proof(self):
+        return self.archive.repository_migration_proof(self.fixture.root)
+
+    def validate(self, proof):
+        return self.validator.validate_ledger(
+            self.ledger, self.observed, migration_proof=proof
+        )
+
+    def test_exact_recovered_retirement_preserves_historical_membership(self):
+        proof = self.proof()
+        self.assertEqual(proof.dispositions[self.source].source_bytes, self.payload)
+        self.assertEqual(proof.dispositions[self.source].target, self.target)
+        self.assertEqual(proof.targets[self.source], self.target)
+        self.assertEqual(self.validate(proof)["frozen"], 33)
+        self.assertIn(self.source, self.ledger["readmeRemediation"]["finalInventory"])
+        self.assertNotIn(self.source, self.observed["readmeInventory"])
+        self.assertNotIn(self.target, self.observed["readmeInventory"])
+
+    def test_missing_frozen_member_requires_its_own_proof(self):
+        self.fixture.write()
+        for proof in (None, self.proof()):
+            with self.subTest(proof=proof is not None):
+                with self.assertRaises(self.validator.RoleAuditError) as raised:
+                    self.validate(proof)
+                self.assertEqual(raised.exception.code, "ROLE-AUDIT-HELPER-DRIFT")
+
+    def test_proof_for_one_retirement_cannot_cover_another_missing_member(self):
+        self.set_entries(
+            [
+                entry
+                for entry in self.observed["helperTests"]["entries"]
+                if entry["path"] != "tests/fixtures/agent-roster-currentness.json"
+            ]
+        )
+        with self.assertRaises(self.validator.RoleAuditError) as raised:
+            self.validate(self.proof())
+        self.assertEqual(raised.exception.code, "ROLE-AUDIT-HELPER-DRIFT")
+
+    def test_composed_nonself_successor_closes_exact_retirement(self):
+        middle = "tests/fixtures/retired-successor.json"
+        commit, blobs = self.fixture.git.commit_many({middle: self.payload})
+        self.fixture.git.run("rm", "--quiet", "--", middle)
+        successor = dict(
+            self.row,
+            legacy_path=middle,
+            source_commit=commit,
+            source_blob=blobs[middle],
+        )
+        self.fixture.write(
+            [self.fixture.row, dict(self.row, replacement=middle), successor]
+        )
+        proof = self.proof()
+        self.assertEqual(proof.dispositions[self.source].target, middle)
+        self.assertEqual(proof.targets[self.source], self.target)
+        self.assertEqual(self.validate(proof)["frozen"], 33)
+
+    def test_recovered_deletion_without_primary_successor_does_not_close_membership(
+        self,
+    ):
+        archive_index = self.fixture.root / "docs/98.archive/README.md"
+        archive_index.write_bytes(b"# Archive\n")
+        self.fixture.git.run("add", "--", "docs/98.archive/README.md")
+        self.fixture.write(
+            [self.fixture.row, dict(self.row, action="deleted", replacement=None)]
+        )
+        proof = self.proof()
+        with self.assertRaises(self.validator.RoleAuditError) as raised:
+            self.validate(proof)
+        self.assertEqual(raised.exception.code, "ROLE-AUDIT-HELPER-DRIFT")
+
+    def test_present_changed_role_is_not_excused_by_retirement(self):
+        proof = self.proof()
+        entries = sorted(
+            [
+                *self.observed["helperTests"]["entries"],
+                {"path": self.source, "format": "json", "role": "regression-test"},
+            ],
+            key=lambda entry: entry["path"],
+        )
+        self.set_entries(entries)
+        with self.assertRaises(self.validator.RoleAuditError) as raised:
+            self.validate(proof)
+        self.assertEqual(raised.exception.code, "ROLE-AUDIT-HELPER-DRIFT")
+
+    def test_duplicate_historical_members_still_fail(self):
+        self.ledger["helperTests"]["entries"].append(
+            copy.deepcopy(self.ledger["helperTests"]["entries"][0])
+        )
+        with self.assertRaises(self.validator.RoleAuditError):
+            self.validate(self.proof())
+
+    def test_duplicate_recovery_source_rows_still_fail(self):
+        self.fixture.write([self.fixture.row, self.row, self.row])
+        with self.assertRaises(self.validator.ArchiveContractError):
+            self.proof()
+
+    def test_unproved_source_identity_fails_recovery(self):
+        self.fixture.write([self.fixture.row, dict(self.row, content_sha256="0" * 64)])
+        with self.assertRaises(self.validator.ArchiveContractError):
+            self.proof()
+
+    def test_source_reappearance_and_symlink_fail_recovery(self):
+        source = self.fixture.root / self.source
+        source.parent.mkdir(parents=True, exist_ok=True)
+        for symlink in (False, True):
+            with self.subTest(symlink=symlink):
+                if symlink:
+                    source.symlink_to(self.fixture.root / self.target)
+                else:
+                    source.write_bytes(self.payload)
+                try:
+                    with self.assertRaises(self.validator.ArchiveContractError):
+                        self.proof()
+                finally:
+                    source.unlink()
+
+    def test_nonregular_and_missing_primary_successor_fail_recovery(self):
+        target = self.fixture.root / self.target
+        target.unlink()
+        for symlink in (False, True):
+            with self.subTest(symlink=symlink):
+                if symlink:
+                    target.symlink_to(self.fixture.root / self.fixture.target)
+                try:
+                    with self.assertRaises(self.validator.ArchiveContractError):
+                        self.proof()
+                finally:
+                    if symlink:
+                        target.unlink()
+
+    def test_self_successor_does_not_close_missing_membership(self):
+        self.fixture.write([self.fixture.row, dict(self.row, replacement=self.source)])
+        with self.assertRaises(self.validator.ArchiveContractError):
+            self.proof()
+
+    def test_outer_audit_obtains_real_proof_once_only_when_needed(self):
+        with (
+            mock.patch.object(
+                self.validator, "build_observed", return_value=self.observed
+            ),
+            mock.patch.object(self.validator, "load_ledger", return_value=self.ledger),
+            mock.patch.object(self.validator, "verify_authority_projection"),
+            mock.patch.object(
+                self.validator,
+                "repository_migration_proof",
+                wraps=self.archive.repository_migration_proof,
+            ) as recover,
+        ):
+            result = self.validator.validate_active_corpus_role_audit(
+                self.fixture.root, enforce_entrypoints=False
+            )
+            self.assertEqual(result["frozenHelpers"], 33)
+            recover.assert_called_once_with(self.fixture.root)
+            self.set_entries(
+                sorted(
+                    self.validator._expected_frozen_helper_entries()
+                    + self.validator._expected_post_closure_helper_entries(),
+                    key=lambda entry: entry["path"],
+                )
+            )
+            recover.reset_mock()
+            self.validator.validate_active_corpus_role_audit(
+                self.fixture.root, enforce_entrypoints=False
+            )
+            recover.assert_not_called()
+
+    def test_outer_recovery_failure_is_fixed_and_redacted(self):
+        with (
+            mock.patch.object(
+                self.validator, "build_observed", return_value=self.observed
+            ),
+            mock.patch.object(
+                self.validator,
+                "repository_migration_proof",
+                side_effect=self.validator.ArchiveContractError(
+                    "RECOVERY-MIGRATION-CONTENT", "synthetic-private-detail"
+                ),
+            ),
+            self.assertRaises(self.validator.RoleAuditError) as raised,
+        ):
+            self.validator.validate_active_corpus_role_audit(
+                self.fixture.root, enforce_entrypoints=False
+            )
+        self.assertEqual(
+            str(raised.exception),
+            f"ROLE-AUDIT-HELPER-RECOVERY {self.validator.LEDGER_PATH}",
+        )
+
+
 class ActiveCorpusRoleAuditTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -36,13 +465,23 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
             REPOSITORY_ROOT, enforce_index=False
         )
         cls.ledger = cls.validator.load_ledger(REPOSITORY_ROOT, enforce_index=False)
+        current_paths = {
+            entry["path"] for entry in cls.observed["helperTests"]["entries"]
+        }
+        cls.migration_proof = (
+            cls.validator.repository_migration_proof(REPOSITORY_ROOT)
+            if set(cls.validator.FROZEN_HELPER_PATHS) - current_paths
+            else None
+        )
 
     def fixture(self):
         return copy.deepcopy(self.ledger)
 
     def assert_audit_error(self, fixture, code: str) -> None:
         with self.assertRaises(self.validator.RoleAuditError) as raised:
-            self.validator.validate_ledger(fixture, self.observed)
+            self.validator.validate_ledger(
+                fixture, self.observed, migration_proof=self.migration_proof
+            )
         self.assertEqual(raised.exception.code, code)
 
     def write_git_corpus(self, root: Path, *, proposed_symlink: bool = False) -> Path:
@@ -116,6 +555,8 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
             enforce_index=False,
             enforce_entrypoints=False,
         )
+        post_closure = self.validator._expected_post_closure_helper_entries()
+        helper_counts = self.observed["helperTests"]["counts"]
         self.assertEqual(
             counts,
             {
@@ -125,11 +566,11 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 "runbooks": 9,
                 "incidents": 0,
                 "postmortems": 0,
-                "helpers": 69,
+                "helpers": helper_counts["total"],
                 "frozenHelpers": 33,
-                "postClosureHelpers": 36,
-                "python": 31,
-                "json": 31,
+                "postClosureHelpers": len(post_closure),
+                "python": helper_counts["python"],
+                "json": helper_counts["json"],
                 "yaml": 6,
                 "readme": 1,
                 "findings": 0,
@@ -190,9 +631,9 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
         migration = (REPOSITORY_ROOT / self.validator.MIGRATION_PATH).read_text(
             encoding="utf-8"
         )
-        wp004b = (
-            REPOSITORY_ROOT / self.validator.WP004B_MIGRATION_PATH
-        ).read_text(encoding="utf-8")
+        wp004b = (REPOSITORY_ROOT / self.validator.WP004B_MIGRATION_PATH).read_text(
+            encoding="utf-8"
+        )
         projection = self.validator.validate_authority_projection(
             migration,
             wp004b,
@@ -215,9 +656,9 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
         migration = (REPOSITORY_ROOT / self.validator.MIGRATION_PATH).read_text(
             encoding="utf-8"
         )
-        wp004b = (
-            REPOSITORY_ROOT / self.validator.WP004B_MIGRATION_PATH
-        ).read_text(encoding="utf-8")
+        wp004b = (REPOSITORY_ROOT / self.validator.WP004B_MIGRATION_PATH).read_text(
+            encoding="utf-8"
+        )
         owner_row = (
             '"legacy_path": "docs/03.specs/037-active-corpus-and-execution-retention/'
             'spec.md"'
@@ -283,170 +724,35 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
     def test_readme_inventory_is_exact_and_closed(self) -> None:
         actual = [entry["path"] for entry in self.observed["helperTests"]["entries"]]
         self.assertEqual(self.observed["readmeInventory"], actual)
-        self.assertEqual(len(actual), 69)
+        self.assertEqual(
+            actual,
+            sorted(
+                path
+                for path in (
+                    *self.validator.FROZEN_HELPER_PATHS,
+                    *self.validator.POST_CLOSURE_HELPER_MANIFEST,
+                    *self.validator.TRANSITION_ONLY_HELPER_MANIFEST,
+                )
+                if (REPOSITORY_ROOT / path).is_file()
+            ),
+        )
         self.assertEqual(len(self.ledger["readmeRemediation"]["finalInventory"]), 33)
 
-    def test_post_closure_manifest_is_exact_and_identity_bound(self) -> None:
-        self.assertEqual(
-            self.validator.POST_CLOSURE_HELPER_MANIFEST,
-            {
-                "tests/fixtures/agent-checkpoint.json": (
-                    "json",
-                    "closed-fixture",
-                ),
-                "tests/fixtures/agent-evaluations.json": (
-                    "json",
-                    "closed-fixture",
-                ),
-                "tests/fixtures/agent-governance-ci.json": (
-                    "json",
-                    "closed-fixture",
-                ),
-                "tests/fixtures/agent-governance-closure.json": (
-                    "json",
-                    "closed-fixture",
-                ),
-                "tests/fixtures/agent-harness-contract.json": (
-                    "json",
-                    "closed-fixture",
-                ),
-                "tests/fixtures/agent-legacy-cutover.json": (
-                    "json",
-                    "closed-fixture",
-                ),
-                "tests/fixtures/agent-loop-lifecycle.json": (
-                    "json",
-                    "closed-fixture",
-                ),
-                "tests/fixtures/agent-model-fitness.json": (
-                    "json",
-                    "closed-fixture",
-                ),
-                "tests/fixtures/agent-provider-runtime-evidence.json": (
-                    "json",
-                    "closed-fixture",
-                ),
-                "tests/fixtures/agent-roster-admission.json": (
-                    "json",
-                    "closed-fixture",
-                ),
-                "tests/fixtures/reference-information-architecture/current-owner.json": (
-                    "json",
-                    "closed-fixture",
-                ),
-                "tests/fixtures/reference-information-architecture/generator-collision.json": (
-                    "json",
-                    "closed-fixture",
-                ),
-                "tests/fixtures/reference-information-architecture/minimal-valid.json": (
-                    "json",
-                    "closed-fixture",
-                ),
-                "tests/fixtures/reference-information-architecture/overlay-mutation.json": (
-                    "json",
-                    "closed-fixture",
-                ),
-                "tests/fixtures/reference-information-architecture/policy-copy.json": (
-                    "json",
-                    "closed-fixture",
-                ),
-                "tests/fixtures/reference-information-architecture/snapshot-mutation.json": (
-                    "json",
-                    "closed-fixture",
-                ),
-                "tests/fixtures/reference-information-architecture/source-freshness.json": (
-                    "json",
-                    "closed-fixture",
-                ),
-                "tests/test_document_lifecycle_agent_roster_cutover.py": (
-                    "python",
-                    "regression-test",
-                ),
-                "tests/test_document_strict_cutover.py": (
-                    "python",
-                    "regression-test",
-                ),
-                "tests/test_k8s_pre_edit_hook.py": (
-                    "python",
-                    "regression-test",
-                ),
-                "tests/test_reference_information_architecture.py": (
-                    "python",
-                    "regression-test",
-                ),
-                "tests/test_validate_agent_checkpoint.py": (
-                    "python",
-                    "regression-test",
-                ),
-                "tests/test_validate_agent_evaluations.py": (
-                    "python",
-                    "regression-test",
-                ),
-                "tests/test_validate_agent_governance_ci.py": (
-                    "python",
-                    "regression-test",
-                ),
-                "tests/test_validate_agent_governance_closure.py": (
-                    "python",
-                    "regression-test",
-                ),
-                "tests/test_validate_agent_harness_contract.py": (
-                    "python",
-                    "regression-test",
-                ),
-                "tests/test_validate_agent_harness_semantics.py": (
-                    "python",
-                    "regression-test",
-                ),
-                "tests/test_validate_agent_legacy_cutover.py": (
-                    "python",
-                    "regression-test",
-                ),
-                "tests/test_validate_agent_loop_lifecycle.py": (
-                    "python",
-                    "regression-test",
-                ),
-                "tests/test_validate_agent_model_fitness.py": (
-                    "python",
-                    "regression-test",
-                ),
-                "tests/test_validate_agent_provider_canaries.py": (
-                    "python",
-                    "regression-test",
-                ),
-                "tests/test_validate_agent_provider_config.py": (
-                    "python",
-                    "regression-test",
-                ),
-                "tests/test_validate_agent_roster_admission.py": (
-                    "python",
-                    "regression-test",
-                ),
-                "tests/test_validate_ci_python_contract.py": (
-                    "python",
-                    "regression-test",
-                ),
-                "tests/test_validate_gitops_change_set.py": (
-                    "python",
-                    "regression-test",
-                ),
-            },
-        )
-        self.assertEqual(
-            self.validator.TRANSITION_ONLY_HELPER_MANIFEST,
-            {
-                "tests/test_migrate_document_work_units.py": (
-                    "python",
-                    "regression-test",
-                )
-            },
-        )
-
-    def test_frozen_helpers_are_an_exact_subset_with_safe_post_closure_additions(
+    def test_frozen_helpers_are_present_or_proved_retired_with_safe_additions(
         self,
     ) -> None:
-        partition = self.validator.validate_ledger(self.ledger, self.observed)
-        self.assertEqual(partition, {"frozen": 33, "postClosure": 36})
+        partition = self.validator.validate_ledger(
+            self.ledger, self.observed, migration_proof=self.migration_proof
+        )
+        self.assertEqual(
+            partition,
+            {
+                "frozen": 33,
+                "postClosure": len(
+                    self.validator._expected_post_closure_helper_entries()
+                ),
+            },
+        )
         self.assertEqual(
             self.ledger["helperTests"]["entries"],
             self.validator._expected_frozen_helper_entries(),
@@ -467,27 +773,7 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     "role": "closed-fixture",
                 },
                 {
-                    "path": "tests/fixtures/agent-evaluations.json",
-                    "format": "json",
-                    "role": "closed-fixture",
-                },
-                {
                     "path": "tests/fixtures/agent-governance-ci.json",
-                    "format": "json",
-                    "role": "closed-fixture",
-                },
-                {
-                    "path": "tests/fixtures/agent-governance-closure.json",
-                    "format": "json",
-                    "role": "closed-fixture",
-                },
-                {
-                    "path": "tests/fixtures/agent-harness-contract.json",
-                    "format": "json",
-                    "role": "closed-fixture",
-                },
-                {
-                    "path": "tests/fixtures/agent-legacy-cutover.json",
                     "format": "json",
                     "role": "closed-fixture",
                 },
@@ -497,17 +783,7 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     "role": "closed-fixture",
                 },
                 {
-                    "path": "tests/fixtures/agent-model-fitness.json",
-                    "format": "json",
-                    "role": "closed-fixture",
-                },
-                {
                     "path": "tests/fixtures/agent-provider-runtime-evidence.json",
-                    "format": "json",
-                    "role": "closed-fixture",
-                },
-                {
-                    "path": "tests/fixtures/agent-roster-admission.json",
                     "format": "json",
                     "role": "closed-fixture",
                 },
@@ -547,12 +823,32 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     "role": "closed-fixture",
                 },
                 {
+                    "path": "tests/test_affected_surface_migration.py",
+                    "format": "python",
+                    "role": "regression-test",
+                },
+                {
+                    "path": "tests/test_archive_historical_proof.py",
+                    "format": "python",
+                    "role": "regression-test",
+                },
+                {
                     "path": "tests/test_document_lifecycle_agent_roster_cutover.py",
                     "format": "python",
                     "role": "regression-test",
                 },
                 {
+                    "path": "tests/test_document_lifecycle_migration.py",
+                    "format": "python",
+                    "role": "regression-test",
+                },
+                {
                     "path": "tests/test_document_strict_cutover.py",
+                    "format": "python",
+                    "role": "regression-test",
+                },
+                {
+                    "path": "tests/test_generic_migration_recovery.py",
                     "format": "python",
                     "role": "regression-test",
                 },
@@ -577,7 +873,12 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     "role": "regression-test",
                 },
                 {
-                    "path": "tests/test_validate_agent_evaluations.py",
+                    "path": "tests/test_validate_agent_compatibility_clis.py",
+                    "format": "python",
+                    "role": "regression-test",
+                },
+                {
+                    "path": "tests/test_validate_agent_core_cutover.py",
                     "format": "python",
                     "role": "regression-test",
                 },
@@ -612,11 +913,6 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     "role": "regression-test",
                 },
                 {
-                    "path": "tests/test_validate_agent_model_fitness.py",
-                    "format": "python",
-                    "role": "regression-test",
-                },
-                {
                     "path": "tests/test_validate_agent_provider_canaries.py",
                     "format": "python",
                     "role": "regression-test",
@@ -627,7 +923,7 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                     "role": "regression-test",
                 },
                 {
-                    "path": "tests/test_validate_agent_roster_admission.py",
+                    "path": "tests/test_validate_agent_registry.py",
                     "format": "python",
                     "role": "regression-test",
                 },
@@ -742,10 +1038,6 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
     def test_harness_checkpoint_and_loop_helpers_are_exactly_admitted(self) -> None:
         exact = {
             "tests/fixtures/agent-checkpoint.json": (
-                "json",
-                "closed-fixture",
-            ),
-            "tests/fixtures/agent-harness-contract.json": (
                 "json",
                 "closed-fixture",
             ),
@@ -893,9 +1185,7 @@ class ActiveCorpusRoleAuditTests(unittest.TestCase):
                 )
                 with self.assertRaises(self.validator.RoleAuditError) as raised:
                     self.validator.build_observed(root)
-                self.assertEqual(
-                    raised.exception.code, "ROLE-AUDIT-HELPER-ADMISSION"
-                )
+                self.assertEqual(raised.exception.code, "ROLE-AUDIT-HELPER-ADMISSION")
 
     def test_helper_tracker_promotion_fails(self) -> None:
         fixture = self.fixture()

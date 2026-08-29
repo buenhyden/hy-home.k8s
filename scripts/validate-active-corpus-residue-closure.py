@@ -718,6 +718,7 @@ POST_CLOSURE_ADR_AUTHORITY_PATHS = frozenset(
 POST_CLOSURE_PINNED_AUTHORITY_BLOBS: dict[str, str] = {}
 ADR0030_PREDECESSORS = frozenset(
     {
+        "ADR-0013",
         "ADR-0015",
         "ADR-0018",
         "ADR-0019",

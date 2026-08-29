@@ -1406,7 +1406,7 @@
       "id": "content/archive-migration",
       "class": "common",
       "mode": "classification-only",
-      "pathPattern": "^docs/98\\.archive/migrations/(?:mig-000[1-3]-[a-z0-9]+(?:-[a-z0-9]+)*|0004-document-authority-convergence)\\.md$",
+      "pathPattern": "^docs/98\\.archive/migrations/(?:mig-000[1-3]-[a-z0-9]+(?:-[a-z0-9]+)*|[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*)\\.md$",
       "artifactIdPattern": "^MIG-[0-9]{4}$",
       "template": "docs/99.templates/templates/archive/archive-migration.template.md",
       "requiredFrontmatter": {
@@ -1453,6 +1453,7 @@
       },
       "lifecycle": {
         "statusDomain": [
+          "draft",
           "accepted",
           "sealed"
         ],
@@ -1468,7 +1469,7 @@
       "id": "governance/reference",
       "class": "governance",
       "mode": "authored",
-      "pathPattern": "^docs/00\\.agent-governance/(?!README\\.md$)(?!memory/).+\\.md$",
+      "pathPattern": "^docs/00\\.agent-governance/(?!README\\.md$)(?!roles/README\\.md$)(?!memory/).+\\.md$",
       "artifactIdPattern": null,
       "template": "docs/99.templates/templates/governance/governance-reference.template.md",
       "requiredFrontmatter": {
@@ -1701,7 +1702,7 @@
       "id": "readme/collection-index",
       "class": "readme",
       "mode": "frontmatter-free",
-      "pathPattern": "^(?:docs/00\\.agent\\-governance/memory/README\\.md|docs/02\\.architecture/decisions/README\\.md|docs/02\\.architecture/descriptions/README\\.md|docs/05\\.operations/guides/README\\.md|docs/05\\.operations/incidents/README\\.md|docs/05\\.operations/policies/README\\.md|docs/05\\.operations/runbooks/README\\.md|docs/90\\.references/audits/README\\.md|docs/90\\.references/data/README\\.md|docs/90\\.references/learning/README\\.md|docs/90\\.references/llm\\-wiki/README\\.md|docs/90\\.references/research/README\\.md|docs/90\\.references/cloud\\-examples/README\\.md|docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md)$",
+      "pathPattern": "^(?:docs/00\\.agent\\-governance/roles/README\\.md|docs/00\\.agent\\-governance/memory/README\\.md|docs/02\\.architecture/decisions/README\\.md|docs/02\\.architecture/descriptions/README\\.md|docs/05\\.operations/guides/README\\.md|docs/05\\.operations/incidents/README\\.md|docs/05\\.operations/policies/README\\.md|docs/05\\.operations/runbooks/README\\.md|docs/90\\.references/audits/README\\.md|docs/90\\.references/data/README\\.md|docs/90\\.references/learning/README\\.md|docs/90\\.references/llm\\-wiki/README\\.md|docs/90\\.references/research/README\\.md|docs/90\\.references/cloud\\-examples/README\\.md|docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md)$",
       "template": "docs/99.templates/templates/common/readme-collection-index.template.md",
       "requiredFrontmatter": {
         "mode": "forbidden",
@@ -1930,7 +1931,7 @@
       "id": "exception/provider-native-metadata",
       "class": "exception",
       "mode": "classification-only",
-      "pathPattern": "^(?:\\.claude/agents/[^/]+\\.md|\\.gemini/agents/[^/]+\\.md)$",
+      "pathPattern": "^\\.claude/agents/[^/]+\\.md$",
       "artifactIdPattern": null,
       "template": null,
       "requiredFrontmatter": {
@@ -2121,7 +2122,7 @@
       "id": "exception/program-non-target",
       "class": "exception",
       "mode": "non-target",
-      "pathPattern": "^(?:RTK\\.md|graphify-out/.+\\.md)$",
+      "pathPattern": "^RTK\\.md$",
       "artifactIdPattern": null,
       "template": null,
       "requiredFrontmatter": {
@@ -2236,6 +2237,7 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "migration_id"
         ],
         "allowed": [
@@ -2244,6 +2246,7 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "migration_id"
         ],
         "order": [
@@ -2252,6 +2255,7 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "migration_id"
         ]
       },
@@ -2269,7 +2273,7 @@
       },
       "lifecycle": {
         "statusDomain": [
-          "accepted",
+          "draft",
           "sealed"
         ],
         "appendContract": null
@@ -4562,7 +4566,7 @@
     {
       "spec": "0054",
       "plan": "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/plan.md",
-      "task": "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md",
+      "task": "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks/tsk-0003-codex-claude-only-ai-agent-governance.md",
       "state": "active",
       "reason": "Direct human-approved B-scope SDLC and AI-agent governance consolidation including Stage 90",
       "decision": "0022",

@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import copy
 import contextlib
 import hashlib
 import importlib.util
@@ -53,6 +52,7 @@ from document_lifecycle import (
     LifecycleEvidenceContext,
     LifecycleEvidenceDocument,
     LifecycleRename,
+    MigrationLifecycleEvents,
     compare_lifecycle,
     document_from_text,
     lifecycle_diagnostic_sort_key,
@@ -63,9 +63,12 @@ from archive_validation import (
     MIG0002_DOCUMENT_SHA256,
     MIG0004_TERMINAL_SOURCE_COMMIT,
     MIGRATION_DOCUMENT_MAX_BYTES,
+    _load_canonical_markdown_module,
+    generic_migration_id,
     parse_pinned_migration_control,
     read_staged_blob_bounded,
     validate_archive_immutability,
+    validate_migration_records,
 )
 from archive_recovery import (
     ArchiveContractError,
@@ -137,101 +140,6 @@ EXPECTED_RULE_IDS = (
     "LIFECYCLE-BASE",
     "LIFECYCLE-BASE-DEFER",
 )
-AGENT_ROSTER_ADMISSION_BASE_COMMIT = (
-    "e324d4c1fa49ef7e508fa07c32e7f054f5a3a05e"  # pragma: allowlist secret
-)
-AGENT_ROSTER_ADMISSION_CONTRACT_PATH = PurePosixPath(
-    "docs/00.agent-governance/contracts/agent-roster-admission.json"
-)
-AGENT_HARNESS_CONTRACT_PATH = PurePosixPath(
-    "docs/00.agent-governance/contracts/harness-contract.json"
-)
-AGENT_ROSTER_CONTRACT_PATHS = frozenset(
-    {
-        AGENT_ROSTER_ADMISSION_CONTRACT_PATH,
-        AGENT_HARNESS_CONTRACT_PATH,
-    }
-)
-AGENT_ROSTER_ROLE_IDS = (
-    "supervisor",
-    "code-reviewer",
-    "doc-writer",
-    "gitops-reviewer",
-    "incident-responder",
-    "k8s-implementer",
-    "network-reviewer",
-    "observability-reviewer",
-    "security-auditor",
-    "wiki-curator",
-    "docs-researcher",
-    "quality-engineer",
-)
-AGENT_ROSTER_SURFACE_IDS = ("local", "claude", "codex", "gemini")
-AGENT_ROSTER_CANDIDATE_IDS = ("docs-researcher", "quality-engineer")
-AGENT_ROSTER_BASE_DEFERRED_CLASSES = (
-    "runtime",
-    "provider-discovery",
-    "provider-authentication",
-    "hosted-ci",
-    "remote",
-    "live",
-)
-AGENT_ROSTER_DEFERRED_CLASSES = (
-    "runtime",
-    "provider-discovery",
-    "provider-authentication",
-    "model-resolution",
-    "hosted-ci",
-    "remote",
-    "live",
-    "agent-evaluation",
-    "model-fitness",
-)
-AGENT_ROSTER_EVALUATION_CLASSES = (
-    "positive",
-    "negative-adversarial",
-    "refusal-stop",
-    "handoff",
-)
-AGENT_ROSTER_CUTOVER_PATHS = (
-    PurePosixPath(".agents/agents/docs-researcher.md"),
-    PurePosixPath(".agents/agents/quality-engineer.md"),
-    PurePosixPath(".claude/agents/docs-researcher.md"),
-    PurePosixPath(".claude/agents/quality-engineer.md"),
-)
-AGENT_ROSTER_CUTOVER_MUTATIONS = (
-    "exact",
-    "wrong-mode",
-    "wrong-base",
-    "missing-path",
-    "extra-path",
-    "wrong-profile",
-    "base-already-contains-path",
-    "wrong-admission-state",
-    "wrong-admission-inventory",
-    "wrong-evidence-class",
-    "wrong-claim-boundary",
-    "admission-verdict-preclaim",
-    "promotion-authorization-preclaim",
-    "runtime-preclaim",
-    "missing-provider-deferred-state",
-    "missing-deferred-evidence",
-    "missing-live-deferred-state",
-    "wrong-candidate-surface",
-    "candidate-admission-preclaim",
-    "candidate-admission-authority-preclaim",
-    "wrong-evaluation-baseline",
-    "wrong-independent-adjudication",
-    "wrong-harness-inventory",
-    "wrong-harness-projection",
-)
-AGENT_ROSTER_CONTRACT_BLOB_MUTATIONS = (
-    "malformed",
-    "missing",
-    "non-object",
-    "duplicate-key",
-)
-
 WORK105_CUTOVER_BASE_COMMIT = "a6fa1806364ea0472baaad0906e1b5e4ddac8602"
 WORK105_BASE_REGISTRY_BLOB_OID = "fc9ba039906ef240d076de5eeb6c584b681ae09f"
 WORK105_PROPOSED_REGISTRY_BLOB_OID = "fd842f60e801a39435600f35a27f22e1c659f1bd"
@@ -2456,656 +2364,6 @@ def finite_archive_cutover_paths(
     return expected_records | {legacy_template, archive_template}
 
 
-def _agent_projection_path(role_id: str, surface_id: str) -> str:
-    if surface_id == "local":
-        return f".agents/agents/{role_id}.md"
-    if surface_id == "claude":
-        return f".claude/agents/{role_id}.md"
-    if surface_id == "codex":
-        return f".codex/agents/{role_id}.toml"
-    if surface_id == "gemini":
-        return f".gemini/agents/{role_id}.md"
-    raise ValueError(f"unknown agent surface: {surface_id}")
-
-
-def _agent_inventory_matches(
-    inventory: object,
-    *,
-    state: str,
-    count_prefix: str,
-    role_count: int,
-    surface_count: int,
-    projection_count: int,
-) -> bool:
-    if not isinstance(inventory, Mapping):
-        return False
-    if count_prefix == "":
-        count_keys = ("roleCount", "surfaceCount", "adapterCount")
-    elif count_prefix == "expected":
-        count_keys = (
-            "expectedRoleCount",
-            "expectedSurfaceCount",
-            "expectedProjectionCount",
-        )
-    else:
-        return False
-    role_key, surface_key, projection_key = count_keys
-    return (
-        inventory.get("state") == state
-        and inventory.get(role_key) == role_count
-        and inventory.get(surface_key) == surface_count
-        and inventory.get(projection_key) == projection_count
-    )
-
-
-def _harness_projection_set(inventory: object) -> set[tuple[str, str, str, str]]:
-    if not isinstance(inventory, Mapping):
-        return set()
-    projections = inventory.get("projections")
-    if not isinstance(projections, list):
-        return set()
-    result: set[tuple[str, str, str, str]] = set()
-    for projection in projections:
-        if not isinstance(projection, Mapping):
-            return set()
-        values = (
-            projection.get("roleId"),
-            projection.get("surfaceId"),
-            projection.get("path"),
-            projection.get("admissionState"),
-        )
-        if not all(isinstance(value, str) for value in values):
-            return set()
-        if values in result:
-            return set()
-        result.add(values)  # type: ignore[arg-type]
-    return result
-
-
-def _agent_evidence_matches(
-    evidence: object,
-    *,
-    proposed: bool,
-) -> bool:
-    deferred_classes = (
-        AGENT_ROSTER_DEFERRED_CLASSES
-        if proposed
-        else AGENT_ROSTER_BASE_DEFERRED_CLASSES
-    )
-    expected: dict[str, object] = {
-        "class": "repo-static",
-        "claimBoundary": (
-            "repository-static-role-and-adapter-projection-only"
-            if proposed
-            else "prepared-policy-and-candidate-contract-only"
-        ),
-        "admissionVerdict": "DEFER",
-        "deferredClasses": list(deferred_classes),
-        "deferredClassStates": {
-            evidence_class: "DEFER" for evidence_class in deferred_classes
-        },
-    }
-    if proposed:
-        expected["projectionAuthorization"] = {
-            "authorized": True,
-            "scope": "repository-static-role-and-adapter-projection-only",
-            "excludedEvidenceClasses": list(deferred_classes),
-        }
-    else:
-        expected["promotionAuthorized"] = False
-    return isinstance(evidence, Mapping) and evidence == expected
-
-
-def _agent_evaluation_gate_matches(
-    gate: object,
-    *,
-    baseline_state: str,
-) -> bool:
-    return isinstance(gate, Mapping) and gate == {
-        "classes": list(AGENT_ROSTER_EVALUATION_CLASSES),
-        "baselineState": baseline_state,
-        "sameCorpusAndGraderRequired": True,
-        "independentAdjudication": {
-            "required": True,
-            "selfAdjudicationProhibited": True,
-            "adjudicatorOwner": "independent-reviewer",
-            "thresholdOrder": ["quality", "safety", "cost", "latency"],
-            "criticalMissBlocksPromotion": True,
-        },
-    }
-
-
-def _agent_contracts_admit_cutover(
-    base_admission: object,
-    proposed_admission: object,
-    base_harness: object,
-    proposed_harness: object,
-) -> bool:
-    if not all(
-        isinstance(contract, Mapping)
-        for contract in (
-            base_admission,
-            proposed_admission,
-            base_harness,
-            proposed_harness,
-        )
-    ):
-        return False
-    assert isinstance(base_admission, Mapping)
-    assert isinstance(proposed_admission, Mapping)
-    assert isinstance(base_harness, Mapping)
-    assert isinstance(proposed_harness, Mapping)
-
-    if (
-        base_admission.get("contractId") != "hy-home.k8s/agent-roster-admission"
-        or proposed_admission.get("contractId") != "hy-home.k8s/agent-roster-admission"
-        or base_admission.get("contractVersion") != "1.0.0"
-        or proposed_admission.get("contractVersion") != "1.0.0"
-        or base_admission.get("state") != "contract-only"
-        or proposed_admission.get("state") != "repository-static-projected"
-        or not _agent_evidence_matches(
-            base_admission.get("evidence"),
-            proposed=False,
-        )
-        or not _agent_evidence_matches(
-            proposed_admission.get("evidence"),
-            proposed=True,
-        )
-    ):
-        return False
-    if not _agent_inventory_matches(
-        base_admission.get("currentInventory"),
-        state="current",
-        count_prefix="",
-        role_count=10,
-        surface_count=3,
-        projection_count=30,
-    ) or not _agent_inventory_matches(
-        proposed_admission.get("currentInventory"),
-        state="current",
-        count_prefix="",
-        role_count=12,
-        surface_count=4,
-        projection_count=48,
-    ):
-        return False
-
-    target = proposed_admission.get("targetInventory")
-    if not isinstance(target, Mapping) or (
-        target.get("state"),
-        target.get("roleCount"),
-        target.get("surfaceCount"),
-        target.get("adapterCount"),
-        tuple(target.get("roleIds", ())),
-        tuple(target.get("surfaceIds", ())),
-    ) != (
-        "achieved",
-        12,
-        4,
-        48,
-        AGENT_ROSTER_ROLE_IDS,
-        AGENT_ROSTER_SURFACE_IDS,
-    ):
-        return False
-
-    base_candidates = base_admission.get("candidates")
-    if not isinstance(base_candidates, list) or len(base_candidates) != 2:
-        return False
-    if {
-        candidate.get("roleId")
-        for candidate in base_candidates
-        if isinstance(candidate, Mapping)
-    } != set(AGENT_ROSTER_CANDIDATE_IDS):
-        return False
-    for candidate in base_candidates:
-        if not isinstance(candidate, Mapping) or not _agent_evaluation_gate_matches(
-            candidate.get("evaluationGate"),
-            baseline_state="required-before-promotion",
-        ):
-            return False
-
-    candidates = proposed_admission.get("candidates")
-    if not isinstance(candidates, list) or len(candidates) != 2:
-        return False
-    expected_candidates = set(AGENT_ROSTER_CANDIDATE_IDS)
-    if {
-        candidate.get("roleId")
-        for candidate in candidates
-        if isinstance(candidate, Mapping)
-    } != expected_candidates:
-        return False
-    for candidate in candidates:
-        if not isinstance(candidate, Mapping):
-            return False
-        role_id = candidate.get("roleId")
-        if (
-            role_id not in expected_candidates
-            or candidate.get("decision") != "repository-static-projected"
-            or candidate.get("authority")
-            != "repository-static-role-and-adapter-projection-only"
-            or not _agent_evaluation_gate_matches(
-                candidate.get("evaluationGate"),
-                baseline_state=("deferred-to-area-003-before-runtime-activation"),
-            )
-        ):
-            return False
-        plan = candidate.get("surfacePlan")
-        if not isinstance(plan, list) or len(plan) != 4:
-            return False
-        actual_plan = {
-            (
-                item.get("surfaceId"),
-                item.get("state"),
-                item.get("adapterPath"),
-                item.get("leastPrivilege"),
-                item.get("providerNativeMetadataRequired"),
-            )
-            for item in plan
-            if isinstance(item, Mapping)
-        }
-        expected_plan = {
-            (
-                surface_id,
-                "current",
-                _agent_projection_path(str(role_id), surface_id),
-                True,
-                True,
-            )
-            for surface_id in AGENT_ROSTER_SURFACE_IDS
-        }
-        if actual_plan != expected_plan:
-            return False
-
-    if (
-        base_harness.get("contractId") != "hy-home.k8s/agent-harness"
-        or proposed_harness.get("contractId") != "hy-home.k8s/agent-harness"
-        or base_harness.get("contractVersion") != "1.0.0"
-        or proposed_harness.get("contractVersion") != "1.0.0"
-        or not _agent_inventory_matches(
-            base_harness.get("currentInventory"),
-            state="current",
-            count_prefix="expected",
-            role_count=10,
-            surface_count=3,
-            projection_count=30,
-        )
-        or not _agent_inventory_matches(
-            proposed_harness.get("currentInventory"),
-            state="current",
-            count_prefix="expected",
-            role_count=12,
-            surface_count=4,
-            projection_count=48,
-        )
-        or not _agent_inventory_matches(
-            proposed_harness.get("targetInventory"),
-            state="achieved",
-            count_prefix="expected",
-            role_count=12,
-            surface_count=4,
-            projection_count=48,
-        )
-    ):
-        return False
-
-    current = proposed_harness.get("currentInventory")
-    achieved = proposed_harness.get("targetInventory")
-    for inventory, state in ((current, "current"), (achieved, "achieved")):
-        if not isinstance(inventory, Mapping) or (
-            inventory.get("state"),
-            tuple(inventory.get("roleIds", ())),
-            tuple(inventory.get("surfaceIds", ())),
-        ) != (state, AGENT_ROSTER_ROLE_IDS, AGENT_ROSTER_SURFACE_IDS):
-            return False
-    expected_projections = {
-        (
-            role_id,
-            surface_id,
-            _agent_projection_path(role_id, surface_id),
-            "current",
-        )
-        for role_id in AGENT_ROSTER_ROLE_IDS
-        for surface_id in AGENT_ROSTER_SURFACE_IDS
-    }
-    return (
-        _harness_projection_set(current) == expected_projections
-        and _harness_projection_set(achieved) == expected_projections
-    )
-
-
-def finite_agent_roster_cutover_paths(
-    *,
-    mode: str,
-    base_commit: str,
-    base_documents: Mapping[PurePosixPath, LifecycleDocument],
-    proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
-    base_admission: object,
-    proposed_admission: object,
-    base_harness: object,
-    proposed_harness: object,
-) -> frozenset[PurePosixPath]:
-    """Admit only the exact AREA-002 repository-projection creation set."""
-
-    expected = frozenset(AGENT_ROSTER_CUTOVER_PATHS)
-    if (
-        mode not in {"staged", "ci"}
-        or base_commit != AGENT_ROSTER_ADMISSION_BASE_COMMIT
-        or not _agent_contracts_admit_cutover(
-            base_admission,
-            proposed_admission,
-            base_harness,
-            proposed_harness,
-        )
-        or expected & set(base_documents)
-    ):
-        return frozenset()
-    created_snapshot_paths = {
-        path
-        for path, document in proposed_documents.items()
-        if path not in base_documents
-        and document.profile_id
-        in {"exception/local-agent-asset", "exception/provider-native-metadata"}
-    }
-    if created_snapshot_paths != expected:
-        return frozenset()
-    for path in expected:
-        expected_profile = (
-            "exception/local-agent-asset"
-            if path.parts[0] == ".agents"
-            else "exception/provider-native-metadata"
-        )
-        if proposed_documents.get(path) != LifecycleDocument(
-            path,
-            expected_profile,
-            None,
-        ):
-            return frozenset()
-    return expected
-
-
-def _agent_roster_cutover_fixture_inputs(
-    mutation: str,
-) -> dict[str, object]:
-    def admission_inventory(
-        state: str,
-        role_count: int,
-        surface_count: int,
-        adapter_count: int,
-    ) -> dict[str, object]:
-        return {
-            "state": state,
-            "roleCount": role_count,
-            "surfaceCount": surface_count,
-            "adapterCount": adapter_count,
-        }
-
-    def harness_inventory(
-        state: str,
-        role_count: int,
-        surface_count: int,
-        projection_count: int,
-    ) -> dict[str, object]:
-        return {
-            "state": state,
-            "expectedRoleCount": role_count,
-            "expectedSurfaceCount": surface_count,
-            "expectedProjectionCount": projection_count,
-        }
-
-    def evaluation_gate(baseline_state: str) -> dict[str, object]:
-        return {
-            "classes": list(AGENT_ROSTER_EVALUATION_CLASSES),
-            "baselineState": baseline_state,
-            "sameCorpusAndGraderRequired": True,
-            "independentAdjudication": {
-                "required": True,
-                "selfAdjudicationProhibited": True,
-                "adjudicatorOwner": "independent-reviewer",
-                "thresholdOrder": ["quality", "safety", "cost", "latency"],
-                "criticalMissBlocksPromotion": True,
-            },
-        }
-
-    base_documents: dict[PurePosixPath, LifecycleDocument] = {}
-    proposed_documents = {
-        path: LifecycleDocument(
-            path,
-            (
-                "exception/local-agent-asset"
-                if path.parts[0] == ".agents"
-                else "exception/provider-native-metadata"
-            ),
-            None,
-        )
-        for path in AGENT_ROSTER_CUTOVER_PATHS
-    }
-    base_admission: dict[str, object] = {
-        "contractId": "hy-home.k8s/agent-roster-admission",
-        "contractVersion": "1.0.0",
-        "state": "contract-only",
-        "currentInventory": admission_inventory("current", 10, 3, 30),
-        "evidence": {
-            "class": "repo-static",
-            "claimBoundary": "prepared-policy-and-candidate-contract-only",
-            "admissionVerdict": "DEFER",
-            "promotionAuthorized": False,
-            "deferredClasses": list(AGENT_ROSTER_BASE_DEFERRED_CLASSES),
-            "deferredClassStates": {
-                evidence_class: "DEFER"
-                for evidence_class in AGENT_ROSTER_BASE_DEFERRED_CLASSES
-            },
-        },
-        "candidates": [
-            {
-                "roleId": role_id,
-                "evaluationGate": evaluation_gate("required-before-promotion"),
-            }
-            for role_id in AGENT_ROSTER_CANDIDATE_IDS
-        ],
-    }
-    proposed_admission: dict[str, object] = {
-        "contractId": "hy-home.k8s/agent-roster-admission",
-        "contractVersion": "1.0.0",
-        "state": "repository-static-projected",
-        "evidence": {
-            "class": "repo-static",
-            "claimBoundary": "repository-static-role-and-adapter-projection-only",
-            "admissionVerdict": "DEFER",
-            "projectionAuthorization": {
-                "authorized": True,
-                "scope": "repository-static-role-and-adapter-projection-only",
-                "excludedEvidenceClasses": list(AGENT_ROSTER_DEFERRED_CLASSES),
-            },
-            "deferredClasses": list(AGENT_ROSTER_DEFERRED_CLASSES),
-            "deferredClassStates": {
-                evidence_class: "DEFER"
-                for evidence_class in AGENT_ROSTER_DEFERRED_CLASSES
-            },
-        },
-        "currentInventory": admission_inventory("current", 12, 4, 48),
-        "targetInventory": {
-            **admission_inventory("achieved", 12, 4, 48),
-            "roleIds": list(AGENT_ROSTER_ROLE_IDS),
-            "surfaceIds": list(AGENT_ROSTER_SURFACE_IDS),
-        },
-        "candidates": [
-            {
-                "roleId": role_id,
-                "decision": "repository-static-projected",
-                "authority": "repository-static-role-and-adapter-projection-only",
-                "surfacePlan": [
-                    {
-                        "surfaceId": surface_id,
-                        "state": "current",
-                        "adapterPath": _agent_projection_path(
-                            role_id,
-                            surface_id,
-                        ),
-                        "leastPrivilege": True,
-                        "providerNativeMetadataRequired": True,
-                    }
-                    for surface_id in AGENT_ROSTER_SURFACE_IDS
-                ],
-                "evaluationGate": evaluation_gate(
-                    "deferred-to-area-003-before-runtime-activation"
-                ),
-            }
-            for role_id in AGENT_ROSTER_CANDIDATE_IDS
-        ],
-    }
-    projections = [
-        {
-            "roleId": role_id,
-            "surfaceId": surface_id,
-            "path": _agent_projection_path(role_id, surface_id),
-            "admissionState": "current",
-        }
-        for role_id in AGENT_ROSTER_ROLE_IDS
-        for surface_id in AGENT_ROSTER_SURFACE_IDS
-    ]
-    base_harness: dict[str, object] = {
-        "contractId": "hy-home.k8s/agent-harness",
-        "contractVersion": "1.0.0",
-        "currentInventory": harness_inventory("current", 10, 3, 30),
-    }
-    proposed_harness: dict[str, object] = {
-        "contractId": "hy-home.k8s/agent-harness",
-        "contractVersion": "1.0.0",
-        "currentInventory": {
-            **harness_inventory("current", 12, 4, 48),
-            "roleIds": list(AGENT_ROSTER_ROLE_IDS),
-            "surfaceIds": list(AGENT_ROSTER_SURFACE_IDS),
-            "projections": copy.deepcopy(projections),
-        },
-        "targetInventory": {
-            **harness_inventory("achieved", 12, 4, 48),
-            "roleIds": list(AGENT_ROSTER_ROLE_IDS),
-            "surfaceIds": list(AGENT_ROSTER_SURFACE_IDS),
-            "projections": projections,
-        },
-    }
-    mode = "staged"
-    base_commit = AGENT_ROSTER_ADMISSION_BASE_COMMIT
-
-    if mutation == "wrong-mode":
-        mode = "explicit-ref"
-    elif mutation == "wrong-base":
-        base_commit = "0" * 40
-    elif mutation == "missing-path":
-        proposed_documents.pop(AGENT_ROSTER_CUTOVER_PATHS[0])
-    elif mutation == "extra-path":
-        extra = PurePosixPath(".agents/agents/unrelated.md")
-        proposed_documents[extra] = LifecycleDocument(
-            extra,
-            "exception/local-agent-asset",
-            None,
-        )
-    elif mutation == "wrong-profile":
-        path = AGENT_ROSTER_CUTOVER_PATHS[0]
-        proposed_documents[path] = LifecycleDocument(path, "sdlc/spec", "active")
-    elif mutation == "base-already-contains-path":
-        path = AGENT_ROSTER_CUTOVER_PATHS[0]
-        base_documents[path] = proposed_documents[path]
-    elif mutation == "wrong-admission-state":
-        proposed_admission["state"] = "contract-only"
-    elif mutation == "wrong-admission-inventory":
-        current = proposed_admission["currentInventory"]
-        assert isinstance(current, dict)
-        current["adapterCount"] = 47
-    elif mutation in {
-        "wrong-evidence-class",
-        "wrong-claim-boundary",
-        "admission-verdict-preclaim",
-        "promotion-authorization-preclaim",
-        "runtime-preclaim",
-        "missing-provider-deferred-state",
-        "missing-deferred-evidence",
-        "missing-live-deferred-state",
-    }:
-        evidence = proposed_admission["evidence"]
-        assert isinstance(evidence, dict)
-        if mutation == "wrong-evidence-class":
-            evidence["class"] = "runtime"
-        elif mutation == "wrong-claim-boundary":
-            evidence["claimBoundary"] = "repository-static-and-runtime"
-        elif mutation == "admission-verdict-preclaim":
-            evidence["admissionVerdict"] = "PASS"
-        elif mutation == "promotion-authorization-preclaim":
-            evidence["promotionAuthorization"] = evidence.pop("projectionAuthorization")
-        elif mutation == "missing-deferred-evidence":
-            evidence.pop("deferredClassStates")
-        else:
-            states = evidence["deferredClassStates"]
-            assert isinstance(states, dict)
-            if mutation == "runtime-preclaim":
-                states["runtime"] = "PASS"
-            elif mutation == "missing-provider-deferred-state":
-                states.pop("provider-discovery")
-            else:
-                states.pop("live")
-    elif mutation == "wrong-candidate-surface":
-        candidates = proposed_admission["candidates"]
-        assert isinstance(candidates, list)
-        candidate = candidates[0]
-        assert isinstance(candidate, dict)
-        plan = candidate["surfacePlan"]
-        assert isinstance(plan, list)
-        surface = plan[0]
-        assert isinstance(surface, dict)
-        surface["adapterPath"] = ".agents/agents/wrong.md"
-    elif mutation in {
-        "candidate-admission-preclaim",
-        "candidate-admission-authority-preclaim",
-    }:
-        candidates = proposed_admission["candidates"]
-        assert isinstance(candidates, list)
-        candidate = candidates[0]
-        assert isinstance(candidate, dict)
-        if mutation == "candidate-admission-preclaim":
-            candidate["decision"] = "repository-static-admitted"
-        else:
-            candidate["authority"] = "repository-static-role-and-adapter-inventory-only"
-    elif mutation in {
-        "wrong-evaluation-baseline",
-        "wrong-independent-adjudication",
-    }:
-        candidates = proposed_admission["candidates"]
-        assert isinstance(candidates, list)
-        candidate = candidates[0]
-        assert isinstance(candidate, dict)
-        gate = candidate["evaluationGate"]
-        assert isinstance(gate, dict)
-        if mutation == "wrong-evaluation-baseline":
-            gate["baselineState"] = "runtime-activated"
-        else:
-            adjudication = gate["independentAdjudication"]
-            assert isinstance(adjudication, dict)
-            adjudication["required"] = False
-    elif mutation == "wrong-harness-inventory":
-        target = proposed_harness["targetInventory"]
-        assert isinstance(target, dict)
-        target["expectedProjectionCount"] = 47
-    elif mutation == "wrong-harness-projection":
-        current = proposed_harness["currentInventory"]
-        assert isinstance(current, dict)
-        current_projections = current["projections"]
-        assert isinstance(current_projections, list)
-        current_projections.pop()
-    elif mutation != "exact":
-        raise ValueError(f"unknown agent roster cutover mutation: {mutation}")
-
-    return {
-        "mode": mode,
-        "base_commit": base_commit,
-        "base_documents": base_documents,
-        "proposed_documents": proposed_documents,
-        "base_admission": base_admission,
-        "proposed_admission": proposed_admission,
-        "base_harness": base_harness,
-        "proposed_harness": proposed_harness,
-    }
-
-
 def _archive_cutover_fixture_inputs(
     mode: str,
     mutation: str,
@@ -3633,7 +2891,7 @@ def _normalize_path(value: str) -> PurePosixPath:
 def _approved_markdown(path: PurePosixPath) -> bool:
     if path.suffix != ".md" or not path.parts:
         return False
-    if path.as_posix() == "RTK.md" or path.parts[0] in {".worktrees", "graphify-out"}:
+    if path.as_posix() == "RTK.md" or path.parts[0] == ".worktrees":
         return False
     return path.as_posix() in ROOT_FILES or path.parts[0] in TARGET_ROOTS
 
@@ -3818,17 +3076,6 @@ def _index_blob_oid(root: Path, path: PurePosixPath) -> str | None:
     return oid.decode("ascii")
 
 
-def _agent_contract_blob_map(
-    blob_oid: Callable[[PurePosixPath], str | None],
-) -> Mapping[PurePosixPath, str]:
-    result: dict[PurePosixPath, str] = {}
-    for path in AGENT_ROSTER_CONTRACT_PATHS:
-        oid = blob_oid(path)
-        if oid is not None:
-            result[path] = oid
-    return MappingProxyType(result)
-
-
 def _tree_blob_map(root: Path, commit: str) -> Mapping[PurePosixPath, str]:
     raw = _run_git(root, ("ls-tree", "-r", "-z", "--full-tree", commit))
     records = raw.split(b"\0")
@@ -3976,6 +3223,179 @@ def _archive_immutability_diagnostics(
     )
 
 
+def _migration_immutability_diagnostics(
+    root: Path,
+    registry: Registry,
+    base_blobs: Mapping[PurePosixPath, str],
+    proposed_blobs: Mapping[PurePosixPath, str],
+    *,
+    mode: str,
+) -> tuple[LifecycleDiagnostic, ...]:
+    """Protect whole sealed Migration blobs before any event admission."""
+
+    diagnostics: list[LifecycleDiagnostic] = []
+    for path, oid in base_blobs.items():
+        try:
+            profile = classify_path(registry, path)
+        except DocumentContractError:
+            continue
+        if profile.profile_id != "content/archive-migration":
+            continue
+        text = _blob_text(root, oid, path)
+        assert text is not None
+        document = document_from_text(registry, path, text)
+        if document.status != "sealed" or proposed_blobs.get(path) == oid:
+            continue
+        diagnostics.append(
+            LifecycleDiagnostic(
+                severity="FAIL",
+                rule_id="LIFECYCLE-TERMINAL-MUTATION",
+                path=path,
+                profile=profile.profile_id,
+                expected_transition="sealed Migration Git blob bytes unchanged",
+                observed_transition="sealed Migration changed or deleted",
+                base_mode=mode,  # type: ignore[arg-type]
+                evidence_gap="immutable previously sealed Migration",
+            )
+        )
+    return tuple(diagnostics)
+
+
+def _migration_lifecycle_events(
+    root: Path,
+    registry: Registry,
+    base_blobs: Mapping[PurePosixPath, str],
+    base_documents: Mapping[PurePosixPath, LifecycleDocument],
+    proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
+    proposed_texts: Mapping[PurePosixPath, str],
+    *,
+    proposed_commit: str | None,
+    mode: str,
+) -> tuple[MigrationLifecycleEvents, tuple[LifecycleDiagnostic, ...]]:
+    """Resolve exact creation/deletion events through the shared recovery owner."""
+
+    records = {
+        path.as_posix(): proposed_texts[path].encode("utf-8")
+        for path, document in proposed_documents.items()
+        if generic_migration_id(path.as_posix()) is not None
+        and document.profile_id == "content/archive-migration"
+        and document.status == "sealed"
+    }
+    if not records:
+        return MigrationLifecycleEvents(), ()
+
+    def failure(path: PurePosixPath, gap: str) -> LifecycleDiagnostic:
+        return LifecycleDiagnostic(
+            severity="FAIL",
+            rule_id="LIFECYCLE-EVIDENCE",
+            path=path,
+            profile=proposed_documents[path].profile_id
+            if path in proposed_documents
+            else "",
+            expected_transition="exact proposed Migration recovery and document proof",
+            observed_transition="Migration event is not proved",
+            base_mode=mode,  # type: ignore[arg-type]
+            evidence_gap=gap,
+        )
+
+    try:
+        proof = validate_migration_records(
+            root,
+            records,
+            proposed_commit=proposed_commit,
+            registry=registry,
+        )
+    except ArchiveContractError as exc:
+        return MigrationLifecycleEvents(), (
+            failure(PurePosixPath(sorted(records)[0]), exc.code),
+        )
+
+    removals: set[PurePosixPath] = set()
+    rehomes: set[tuple[PurePosixPath, PurePosixPath]] = set()
+    navigation: set[PurePosixPath] = set()
+    diagnostics: list[LifecycleDiagnostic] = []
+    owner = _load_canonical_markdown_module()
+    for source, disposition in proof.dispositions.items():
+        source_path = PurePosixPath(source)
+        # Recovery can also describe earlier cutovers. Only this base's exact
+        # source deletion is an event in the current comparison.
+        if (
+            base_blobs.get(source_path) != disposition.source_blob
+            or source_path in proposed_documents
+        ):
+            continue
+        removals.add(source_path)
+        if disposition.action not in {"moved", "merged", "replaced"}:
+            continue
+        target = PurePosixPath(proof.targets[source])
+        if target in base_blobs or target.parts[:2] != ("docs", "00.agent-governance"):
+            continue
+        before, after = base_documents.get(source_path), proposed_documents.get(target)
+        if before is None or after is None or before.state_issue or after.state_issue:
+            continue
+        try:
+            before_profile = classify_path(registry, source_path)
+            after_profile = classify_path(registry, target)
+            assert proof.proposed_registry is not None
+            snapshot_profile = classify_path(proof.proposed_registry, target)
+        except DocumentContractError:
+            diagnostics.append(failure(target, "proposed target registry route"))
+            continue
+        if (
+            snapshot_profile.profile_id != after_profile.profile_id
+            or snapshot_profile.mode != after_profile.mode
+            or snapshot_profile.lifecycle_domain != after_profile.lifecycle_domain
+        ):
+            diagnostics.append(
+                failure(target, "proposed target profile or lifecycle domain differs")
+            )
+            continue
+        before_domain, after_domain = (
+            before_profile.lifecycle_domain,
+            after_profile.lifecycle_domain,
+        )
+        if (
+            before_domain is None
+            or before.status is None
+            or before_domain.validation_class(before.status) != "current"
+        ):
+            continue
+        if owner.validate_document_text(
+            proposed_texts[target], target, after_profile, "strict"
+        ) or owner.validate_document_text(
+            proposed_texts[target], target, snapshot_profile, "strict"
+        ):
+            diagnostics.append(
+                failure(target, "canonical proposed target document form")
+            )
+            continue
+        if (
+            after_profile.profile_id == "readme/collection-index"
+            and after_profile.mode == "frontmatter-free"
+            and after_domain is None
+            and after.status is None
+        ):
+            navigation.add(target)
+        elif (
+            after_domain is not None
+            and after_domain.family == before_domain.family
+            and before.status == after.status == "active"
+            and after_domain.validation_class(after.status) == "current"
+        ):
+            rehomes.add((source_path, target))
+    events = MigrationLifecycleEvents(
+        publications=frozenset(
+            PurePosixPath(path)
+            for path in proof.records
+            if PurePosixPath(path) not in base_blobs
+        ),
+        source_removals=frozenset(removals),
+        current_rehomes=frozenset(rehomes),
+        navigation_creations=frozenset(navigation),
+    )
+    return events, tuple(diagnostics)
+
+
 def _unique_json_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
     result: dict[str, object] = {}
     for key, value in pairs:
@@ -3983,54 +3403,6 @@ def _unique_json_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
             raise InvocationError("registry blob contains a duplicate JSON key")
         result[key] = value
     return result
-
-
-def _agent_contract_blob_from_bytes(
-    raw: bytes,
-    path: PurePosixPath,
-) -> Mapping[str, object]:
-    try:
-        text = raw.decode("utf-8")
-        loaded = json.loads(text, object_pairs_hook=_unique_json_object)
-    except (UnicodeDecodeError, json.JSONDecodeError, InvocationError) as exc:
-        raise InvocationError(
-            f"agent contract blob is invalid JSON: {path.as_posix()}"
-        ) from exc
-    if not isinstance(loaded, dict):
-        raise InvocationError(
-            f"agent contract blob is not an object: {path.as_posix()}"
-        )
-    return MappingProxyType(loaded)
-
-
-def _agent_contracts_from_blob_maps(
-    root: Path,
-    base_blobs: Mapping[PurePosixPath, str],
-    proposed_blobs: Mapping[PurePosixPath, str],
-) -> tuple[
-    Mapping[str, object],
-    Mapping[str, object],
-    Mapping[str, object],
-    Mapping[str, object],
-]:
-    def load(
-        blobs: Mapping[PurePosixPath, str],
-        path: PurePosixPath,
-        snapshot: str,
-    ) -> Mapping[str, object]:
-        oid = blobs.get(path)
-        if oid is None:
-            raise InvocationError(
-                f"{snapshot} snapshot lacks agent contract blob: {path.as_posix()}"
-            )
-        return _agent_contract_blob_from_bytes(_blob_bytes(root, oid), path)
-
-    return (
-        load(base_blobs, AGENT_ROSTER_ADMISSION_CONTRACT_PATH, "base"),
-        load(proposed_blobs, AGENT_ROSTER_ADMISSION_CONTRACT_PATH, "proposed"),
-        load(base_blobs, AGENT_HARNESS_CONTRACT_PATH, "base"),
-        load(proposed_blobs, AGENT_HARNESS_CONTRACT_PATH, "proposed"),
-    )
 
 
 def _registry_blob(
@@ -4402,27 +3774,20 @@ def _evaluate_comparison(
         proposed_blobs = _tree_blob_map(root, proposed_commit)
         changes = _tree_changes(root, base_commit, proposed_commit)
 
-    base_agent_contract_blobs: Mapping[PurePosixPath, str] = MappingProxyType({})
-    proposed_agent_contract_blobs: Mapping[PurePosixPath, str] = MappingProxyType({})
-    if mode in {"staged", "ci"} and base_commit == AGENT_ROSTER_ADMISSION_BASE_COMMIT:
-        base_agent_contract_blobs = _agent_contract_blob_map(
-            lambda path: _tree_blob_oid(root, base_commit, path)
-        )
-        if mode == "staged":
-            proposed_agent_contract_blobs = _agent_contract_blob_map(
-                lambda path: _index_blob_oid(root, path)
-            )
-        else:
-            assert proposed_commit is not None
-            proposed_agent_contract_blobs = _agent_contract_blob_map(
-                lambda path: _tree_blob_oid(root, proposed_commit, path)
-            )
-
     # Stage 99 is terminal: compare both snapshots with the current root
     # profile authority. Historical route and flat-registry projections are
     # intentionally not lifecycle inputs.
     base_classification_registry = registry
     proposed_classification_registry = registry
+    migration_immutability = _migration_immutability_diagnostics(
+        root,
+        registry,
+        base_blobs,
+        proposed_blobs,
+        mode=mode,
+    )
+    if migration_immutability:
+        return migration_immutability
     work054_wp002_consumed_paths = frozenset()
     work054_wp003_consumed_paths = finite_work054_wp003_agent_governance_paths(
         root=root,
@@ -4479,6 +3844,16 @@ def _evaluate_comparison(
     proposed_snapshot, proposed_texts = _snapshot_projection(
         root, proposed_classification_registry, proposed_blobs
     )
+    migration_events, migration_diagnostics = _migration_lifecycle_events(
+        root,
+        registry,
+        base_blobs,
+        base_snapshot,
+        proposed_snapshot,
+        proposed_texts,
+        proposed_commit=proposed_commit,
+        mode=mode,
+    )
     evidence_context = evidence_context_factory(
         proposed_classification_registry,
         base_snapshot,
@@ -4488,36 +3863,6 @@ def _evaluate_comparison(
     )
     work105_consumed_paths: frozenset[PurePosixPath] = frozenset()
     archive_consumed_paths: frozenset[PurePosixPath] = frozenset()
-    agent_consumed_paths: frozenset[PurePosixPath] = frozenset()
-    if (
-        mode in {"staged", "ci"}
-        and base_commit == AGENT_ROSTER_ADMISSION_BASE_COMMIT
-        and frozenset(AGENT_ROSTER_CUTOVER_PATHS) <= set(proposed_documents)
-    ):
-        try:
-            (
-                base_admission,
-                proposed_admission,
-                base_harness,
-                proposed_harness,
-            ) = _agent_contracts_from_blob_maps(
-                root,
-                base_agent_contract_blobs,
-                proposed_agent_contract_blobs,
-            )
-        except InvocationError:
-            pass
-        else:
-            agent_consumed_paths = finite_agent_roster_cutover_paths(
-                mode=mode,
-                base_commit=base_commit,
-                base_documents=base_documents,
-                proposed_documents=proposed_documents,
-                base_admission=base_admission,
-                proposed_admission=proposed_admission,
-                base_harness=base_harness,
-                proposed_harness=proposed_harness,
-            )
     legacy_consumed_paths = (
         work054_wp002_consumed_paths
         | work054_wp003_consumed_paths
@@ -4526,7 +3871,6 @@ def _evaluate_comparison(
         | work107_consumed_paths
         | work108_consumed_paths
         | archive_consumed_paths
-        | agent_consumed_paths
         | wp004c_mig0004_consumed_paths
     )
 
@@ -4539,7 +3883,7 @@ def _evaluate_comparison(
             if diagnostic.path not in legacy_consumed_paths
         )
 
-    return consume_finite_cutover(
+    return migration_diagnostics + consume_finite_cutover(
         compare_lifecycle(
             proposed_classification_registry,
             base_documents,
@@ -4547,6 +3891,7 @@ def _evaluate_comparison(
             renames=renames,
             base_mode=mode,  # type: ignore[arg-type]
             evidence_context=evidence_context,
+            migration_events=migration_events,
         )
     )
 

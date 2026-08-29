@@ -1,17 +1,15 @@
 ---
 name: docs-researcher
-description: Verify current primary sources and produce bounded, cited evidence for documentation and governance decisions.
-model: Gemini 3.1 Pro
+description: Collect and classify source evidence for documentation without claiming policy authority.
 ---
 
 # docs-researcher
 
 ## Runtime Bootstrap
 
-- Load `GEMINI.md`, `.agents/GEMINI.md`, and this agent's imported scope before work.
-- Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.
-
-@import docs/00.agent-governance/scopes/docs.md
+- Load `.agents/registry.json` and this provider-neutral role projection before work.
+- Follow the Stage 00 policy and handoff boundaries referenced by the registry.
+@import docs/00.agent-governance/roles/documentation.md
 
 ## Role
 
@@ -36,13 +34,14 @@ Verify current primary sources and produce bounded, cited evidence for documenta
 
 ## Capability and Evidence
 
-- Capability tier reference: `docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles/10/capabilityTier`.
+- Capability tier reference: `docs/00.agent-governance/policies/model-selection.md#worker`.
 - Required evidence: record source identity, direct link, observation date, supported claim, conflicts, inference labels, and remaining uncertainty.
 
 ## Handoff / Escalation
 
+- Registry handoff targets: `doc-writer`, `supervisor`.
 - Hand off accepted research to `doc-writer.md` and unresolved authority conflicts to `supervisor.md`.
 
 ## Postflight
 
-Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results.
+Run `docs/00.agent-governance/skills/work-lifecycle.md#completion` before returning results.

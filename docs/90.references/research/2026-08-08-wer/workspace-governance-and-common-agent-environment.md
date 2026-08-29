@@ -41,9 +41,11 @@ and CI scope; harness and provider details are linked rather than duplicated.
 
 ### Common-system baseline
 
-The catalog at
-[`harness-catalog.md`](../../../00.agent-governance/harness-catalog.md) is the
-repository's current common-harness inventory. It identifies thin gateways,
+The 2026-08-08 baseline used `harness-catalog.md` as the repository's
+common-harness inventory. Current navigation starts at the
+[Agent Governance Hub](../../../00.agent-governance/README.md), with machine
+membership owned by the [Agent Registry](../../../../.agents/registry.json).
+The dated inventory identified thin gateways,
 runtime baselines, roles/adapters, shared assets, hooks, validation, memory,
 and escalation. `AGENTS.md` and `CLAUDE.md` are thin gateways, while
 `.codex/CODEX.md` and `.claude/CLAUDE.md` contain provider-local baselines.
@@ -319,5 +321,5 @@ promotion. New source registered: `SRC-WERPC-074`. New claim registered:
 - [Harness and loop engineering](harness-and-loop-engineering.md)
 - [Provider implementation status](provider-implementation-status.md)
 - [Source ledger](source-coverage-and-migration-ledger.md)
-- [Harness catalog](../../../00.agent-governance/harness-catalog.md)
-- [Bootstrap governance](../../../00.agent-governance/rules/bootstrap.md)
+- [Agent Governance Hub](../../../00.agent-governance/README.md)
+- [Work Lifecycle](../../../00.agent-governance/skills/work-lifecycle.md)

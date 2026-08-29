@@ -476,4 +476,4 @@ registered: `CLM-WERPC-010-10` (`REQ-WERPC-034`), `CLM-WERPC-010-11`
 - [LLM-WIKI routing](llm-wiki-and-knowledge-routing.md)
 - [Source coverage and migration ledger](source-coverage-and-migration-ledger.md)
 - [Document profiles](../../../99.templates/registry.json)
-- [Stage authoring matrix](../../../00.agent-governance/rules/document-authoring.md)
+- [Document Authoring Policy](../../../00.agent-governance/policies/document-authoring.md)

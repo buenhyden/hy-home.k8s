@@ -258,4 +258,4 @@ behavior change and is not adopted here.
 - [Workspace governance and common environment](workspace-governance-and-common-agent-environment.md)
 - [Provider implementation status](provider-implementation-status.md)
 - [Source ledger](source-coverage-and-migration-ledger.md)
-- [Agentic execution rules](../../../00.agent-governance/rules/agentic.md)
+- [Agent Execution Policy](../../../00.agent-governance/policies/agent-execution.md)

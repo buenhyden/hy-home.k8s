@@ -5,12 +5,13 @@ from __future__ import annotations
 
 import argparse
 import copy
-import hashlib
 import json
 import os
 import re
 import stat
 import sys
+import tomllib
+import yaml
 from datetime import date, datetime, timezone
 from pathlib import Path, PurePosixPath
 from typing import Any, NoReturn, Sequence
@@ -24,12 +25,8 @@ CONTRACT_PATH = PurePosixPath(
 SCHEMA_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/provider-runtime-evidence.schema.json"
 )
-FIXTURE_PATH = PurePosixPath(
-    "tests/fixtures/agent-provider-runtime-evidence.json"
-)
-HARNESS_PATH = PurePosixPath(
-    "docs/00.agent-governance/contracts/harness-contract.json"
-)
+FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-provider-runtime-evidence.json")
+AGENT_REGISTRY_PATH = PurePosixPath(".agents/registry.json")
 ROUTING_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/validation-surfaces.json"
 )
@@ -39,8 +36,8 @@ MAX_GOVERNED_INPUT_BYTES = 1024 * 1024
 
 CUTOFF_UTC = datetime(2026, 7, 10, 1, 0, 0, tzinfo=timezone.utc)
 CUTOFF_UTC_DATE = CUTOFF_UTC.date()
-PROVIDER_IDS = ("local", "claude", "codex", "gemini")
-SOURCE_PROVIDERS = ("claude", "codex", "gemini", "agency-agents")
+PROVIDER_IDS = ("claude", "codex")
+SOURCE_PROVIDERS = ("claude", "codex", "agency-agents")
 SOURCE_IDS = (
     "claude-code-changelog-2-1-206",
     "claude-code-changelog-2-1-154",
@@ -48,9 +45,6 @@ SOURCE_IDS = (
     "codex-release-0-144-1",
     "codex-release-0-145-0-alpha-2",
     "codex-config-reference-current",
-    "gemini-cli-release-0-50-0",
-    "gemini-cli-release-0-51-preview-0",
-    "gemini-cli-subagents-current",
     "agency-agents-pin-9f3e401c",
 )
 EVIDENCE_CLASSES = (
@@ -71,35 +65,11 @@ MCP_IDS = (
 MODEL_GATE_IDS = ("configParse", "runtimeResolution", "spec044Fitness")
 ROUTED_SURFACES = (
     "provider-gateways",
-    "agent-shared",
     "agent-claude",
     "agent-codex",
-    "agent-gemini",
     "governance-documents",
     "scripts",
     "tests",
-)
-HOOK_GRAPH_EXPECTATIONS = (
-    (
-        "local-compatibility-hook-graph",
-        "local",
-        ".agents/hooks.json",
-        "unsupported",
-        "ABSENT",
-        (
-            "03f1ce8362178ff638e6d54df9f6ed3532df262f5cd63767b0522ef4cda56cfe"  # pragma: allowlist secret
-        ),
-    ),
-    (
-        "codex-compatibility-hook-graph",
-        "codex",
-        ".codex/hooks.json",
-        "unverified",
-        "DEFER",
-        (
-            "666654f83dd15944e16828e30baa1c396f2884a50f001df38a47de476b096c9f"  # pragma: allowlist secret
-        ),
-    ),
 )
 FOCUSED_VALIDATORS = (
     (
@@ -464,9 +434,7 @@ def _open_governed_node(
                 )
 
             if not final_component:
-                if stat.S_ISLNK(checked.st_mode) or not stat.S_ISDIR(
-                    checked.st_mode
-                ):
+                if stat.S_ISLNK(checked.st_mode) or not stat.S_ISDIR(checked.st_mode):
                     fail(
                         "PNME-INPUT",
                         "governed input parent is not a real directory",
@@ -525,9 +493,7 @@ def _open_governed_node(
                     "governed input final node is not a regular file",
                     exit_code=2,
                 )
-            if expected_kind == "directory" and not stat.S_ISDIR(
-                checked.st_mode
-            ):
+            if expected_kind == "directory" and not stat.S_ISDIR(checked.st_mode):
                 fail(
                     "PNME-INPUT",
                     "governed input final node is not a real directory",
@@ -659,8 +625,7 @@ def load_json(root: Path, relative: PurePosixPath) -> Any:
 def schema_errors(contract: Any, schema: Any) -> list[str]:
     validator = Draft202012Validator(schema)
     return [
-        f"{'/'.join(str(part) for part in error.path) or '<root>'}: "
-        f"{error.message}"
+        f"{'/'.join(str(part) for part in error.path) or '<root>'}: {error.message}"
         for error in sorted(validator.iter_errors(contract), key=str)
     ]
 
@@ -717,7 +682,7 @@ def validate_sources(contract: dict[str, Any]) -> None:
         fail(
             "PNME-SOURCE-COVERAGE",
             f"missing official/comparison providers: {sorted(missing)}",
-    )
+        )
 
     for source in ledger:
         try:
@@ -839,10 +804,7 @@ def provider_map(contract: dict[str, Any]) -> dict[str, dict[str, Any]]:
             "PNME-PROVIDER-ORDER",
             f"expected {PROVIDER_IDS}, got {observed}",
         )
-    return {
-        provider["id"]: provider
-        for provider in contract["providers"]
-    }
+    return {provider["id"]: provider for provider in contract["providers"]}
 
 
 def validate_repo_path(raw_path: str, field: str) -> PurePosixPath:
@@ -857,21 +819,16 @@ def validate_repo_path(raw_path: str, field: str) -> PurePosixPath:
     return path
 
 
-def validate_observations(providers: dict[str, dict[str, Any]], contract: dict[str, Any]) -> None:
-    expected_current = {
-        "claude": ("present", "2.1.220 (Claude Code)"),
-        "codex": ("present", "codex-cli 0.140.0"),
-        "gemini": ("absent", None),
-    }
-    for provider_id, (installation, version) in expected_current.items():
+def validate_observations(
+    providers: dict[str, dict[str, Any]], contract: dict[str, Any]
+) -> None:
+    for provider_id in PROVIDER_IDS:
         observation = providers[provider_id]["localObservation"]
         if (
-            observation["installation"],
-            observation["version"],
             observation["observedAt"],
             observation["userReported"],
             observation["readinessClaim"],
-        ) != (installation, version, "2026-07-28", False, False):
+        ) != ("2026-07-28", False, False):
             fail(
                 "PNME-LOCAL-OBSERVATION",
                 f"{provider_id} current local observation drifted",
@@ -882,10 +839,8 @@ def validate_observations(providers: dict[str, dict[str, Any]], contract: dict[s
         item
         for item in prior
         if item["observationClass"] == "prior-user-report"
-        and item["providers"]["codex"]["version"]
-        == "codex-cli 0.145.0-alpha.27"
+        and item["providers"]["codex"]["version"] == "codex-cli 0.145.0-alpha.27"
         and item["providers"]["claude"]["installation"] == "absent"
-        and item["providers"]["gemini"]["installation"] == "absent"
         and item["readinessClaim"] is False
     ]
     if len(matching) != 1:
@@ -901,15 +856,19 @@ def validate_surface_parity(
     *,
     check_paths: bool,
 ) -> dict[str, Any]:
-    harness = load_json(root, HARNESS_PATH)
-    harness_surfaces = {
-        surface["id"]: surface
-        for surface in harness["surfaces"]
+    registry = load_json(root, AGENT_REGISTRY_PATH)
+    registry_providers = registry.get("providers")
+    if not isinstance(registry_providers, list):
+        fail("PNME-REGISTRY-PARITY", "agent registry providers must be an array")
+    provider_surfaces = {
+        item.get("id"): item
+        for item in registry_providers
+        if isinstance(item, dict) and isinstance(item.get("id"), str)
     }
-    if tuple(harness_surfaces) != PROVIDER_IDS:
+    if tuple(provider_surfaces) != PROVIDER_IDS or len(registry_providers) != 2:
         fail(
-            "PNME-HARNESS-PARITY",
-            f"harness surfaces drifted: {tuple(harness_surfaces)}",
+            "PNME-REGISTRY-PARITY",
+            f"agent registry providers drifted: {tuple(provider_surfaces)}",
         )
 
     for provider_id in PROVIDER_IDS:
@@ -918,11 +877,11 @@ def validate_surface_parity(
         surface_path_root = validate_repo_path(
             surface["pathRoot"], f"{provider_id}.trackedSurface.pathRoot"
         )
-        harness_surface = harness_surfaces[provider_id]
+        registry_surface = provider_surfaces[provider_id]
         expected = (
-            harness_surface["pathRoot"],
-            harness_surface["admissionState"],
-            harness_surface["evidenceClass"],
+            registry_surface.get("projection_root"),
+            "current",
+            "repo-static",
         )
         actual = (
             surface["pathRoot"],
@@ -943,9 +902,7 @@ def validate_surface_parity(
         project_paths = [
             (
                 item,
-                validate_repo_path(
-                    item["path"], f"{provider_id}.projectPaths.path"
-                ),
+                validate_repo_path(item["path"], f"{provider_id}.projectPaths.path"),
             )
             for item in provider["projectPaths"]
         ]
@@ -960,9 +917,7 @@ def validate_surface_parity(
                 root,
                 surface_path_root,
                 expected_kind=(
-                    "directory"
-                    if surface["presence"] == "present"
-                    else "absent"
+                    "directory" if surface["presence"] == "present" else "absent"
                 ),
             )
 
@@ -970,9 +925,7 @@ def validate_surface_parity(
                 expected_kind = "absent"
                 if item["state"] == "current":
                     expected_kind = (
-                        "directory"
-                        if item["kind"] == "role-directory"
-                        else "file"
+                        "directory" if item["kind"] == "role-directory" else "file"
                     )
                 _inspect_governed_node(
                     root,
@@ -980,26 +933,7 @@ def validate_surface_parity(
                     expected_kind=expected_kind,
                 )
 
-    if providers["local"]["trackedSurface"]["pathRoot"] != ".agents/agents":
-        fail(
-            "PNME-SURFACE-PARITY",
-            ".agents must remain the local projection",
-        )
-    if providers["gemini"]["trackedSurface"]["pathRoot"] != ".gemini/agents":
-        fail(
-            "PNME-SURFACE-PARITY",
-            "Gemini native projection must remain under .gemini",
-        )
-    if (
-        check_paths
-        and providers["gemini"]["trackedSurface"]["state"] != "current"
-    ):
-        _inspect_governed_node(
-            root,
-            PurePosixPath(".gemini"),
-            expected_kind="absent",
-        )
-    return harness
+    return registry
 
 
 def validate_evidence_lanes(providers: dict[str, dict[str, Any]]) -> None:
@@ -1027,18 +961,13 @@ def validate_evidence_lanes(providers: dict[str, dict[str, Any]]) -> None:
                     "PNME-EVIDENCE-LANE",
                     f"{provider_id}/{lane['id']} permits cross-lane promotion",
                 )
-            if (
-                provider["runtimeVerdicts"][runtime_keys[lane["id"]]]
-                != lane["verdict"]
-            ):
+            if provider["runtimeVerdicts"][runtime_keys[lane["id"]]] != lane["verdict"]:
                 fail(
                     "PNME-EVIDENCE-LANE",
                     f"{provider_id}/{lane['id']} compatibility verdict drifted",
                 )
             if lane["verdict"] != "PASS" and (
-                not lane["owner"]
-                or not lane["limitation"]
-                or not lane["retryTrigger"]
+                not lane["owner"] or not lane["limitation"] or not lane["retryTrigger"]
             ):
                 fail(
                     "PNME-EVIDENCE-LANE",
@@ -1047,147 +976,98 @@ def validate_evidence_lanes(providers: dict[str, dict[str, Any]]) -> None:
 
         by_id = {lane["id"]: lane["verdict"] for lane in lanes}
         if provider["localObservation"]["installation"] != "present" and (
-            by_id["native-discovery"] == "PASS"
-            or by_id["authenticated-run"] == "PASS"
+            by_id["native-discovery"] == "PASS" or by_id["authenticated-run"] == "PASS"
         ):
             fail(
                 "PNME-UNSUPPORTED-RUNTIME",
                 f"{provider_id} cannot claim runtime PASS without an installed runtime",
             )
-        if (
-            by_id["authenticated-run"] == "PASS"
-            and by_id["native-discovery"] != "PASS"
-        ):
+        if by_id["authenticated-run"] == "PASS" and by_id["native-discovery"] != "PASS":
             fail(
                 "PNME-EVIDENCE-LANE",
                 f"{provider_id} authenticated PASS lacks discovery PASS",
             )
-        if (
-            by_id["native-discovery"] == "PASS"
-            and by_id["repo-static"] != "PASS"
-        ):
+        if by_id["native-discovery"] == "PASS" and by_id["repo-static"] != "PASS":
             fail(
                 "PNME-EVIDENCE-LANE",
                 f"{provider_id} discovery PASS lacks repo-static PASS",
             )
 
 
-def validate_hook_graphs(
-    root: Path,
-    contract: dict[str, Any],
-    providers: dict[str, dict[str, Any]],
-    *,
-    check_paths: bool,
-) -> None:
-    if contract["capabilityEvidenceOwner"] != CAPABILITY_EVIDENCE_OWNER:
-        fail(
-            "PNME-HOOK-BOUNDARY",
-            "provider capability evidence must have one Stage 00 machine owner",
-        )
+def validate_unsupported_hook_surfaces(root: Path) -> None:
+    for relative in (".agents/hooks.json", ".codex/hooks.json"):
+        if os.path.lexists(root / relative):
+            fail("PNME-HOOK-UNSUPPORTED", "unsupported custom hook surface exists")
 
-    records = contract["hookGraphs"]
-    observed = tuple(
-        (
-            record["id"],
-            record["providerId"],
-            record["path"],
-            record["runtimeSupport"],
-            record["deliveryVerdict"],
-            record["contentSha256"],
-        )
-        for record in records
-    )
-    if observed != HOOK_GRAPH_EXPECTATIONS:
-        fail(
-            "PNME-HOOK-BOUNDARY",
-            f"retained hook graph inventory drifted: {observed}",
-        )
-    if len({record["path"] for record in records}) != len(records):
-        fail("PNME-HOOK-BOUNDARY", "hook graph paths must be unique")
 
-    for record in records:
-        key = f"{record['providerId']}/{record['path']}"
-        path = validate_repo_path(record["path"], f"{key}.path")
-        if (
-            record["classification"] != "custom-compatibility-bridge"
-            or record["evidenceClass"] != "repo-static"
+def validate_root_gateways(root: Path, registry: dict[str, Any]) -> None:
+    for provider in registry["providers"]:
+        provider_id = provider["id"]
+        gateway_path = provider.get("gateway")
+        if not isinstance(gateway_path, str) or not gateway_path:
+            fail("PNME-GATEWAY", "provider lacks a root gateway path")
+        gateway = validate_repo_path(gateway_path, "provider.gateway")
+        text = _read_regular_text(root, gateway)
+        if len(text.splitlines()) > 25:
+            fail("PNME-GATEWAY", "root gateway must remain a thin router")
+        for pointer in (
+            "@docs/00.agent-governance/skills/work-lifecycle.md",
+            f"@docs/00.agent-governance/providers/{provider_id}.md",
+            f"@.{provider_id}/{provider_id.upper()}.md",
+            "@RTK.md",
+            ".agents/registry.json",
         ):
-            fail(
-                "PNME-HOOK-BOUNDARY",
-                f"{key} is not a repo-static custom compatibility bridge",
-            )
-        if record["runtimeSupport"] != "supported" and (
-            record["deliveryVerdict"] == "PASS"
-        ):
-            fail(
-                "PNME-HOOK-BOUNDARY",
-                f"{key} claims delivery PASS for an unsupported or unverified runtime",
-            )
-        native_verdict = {
-            lane["id"]: lane["verdict"]
-            for lane in providers[record["providerId"]]["evidenceLanes"]
-        }["native-discovery"]
-        if record["deliveryVerdict"] == "PASS" and native_verdict != "PASS":
-            fail(
-                "PNME-HOOK-BOUNDARY",
-                f"{key} claims delivery PASS without native discovery PASS",
-            )
-        if not all(
-            record[field]
-            for field in (
-                "owner",
-                "limitation",
-                "retryTrigger",
-                "claimBoundary",
-                "embeddedDeclaration",
-            )
-        ):
-            fail(
-                "PNME-HOOK-BOUNDARY",
-                f"{key} lacks an actionable compatibility boundary",
-            )
+            if pointer not in text:
+                fail("PNME-GATEWAY", "root gateway lacks a required owner pointer")
+        for heading in ("Agent Catalog", "Role Separation", "Runtime Roster"):
+            if heading in text:
+                fail("PNME-GATEWAY", "root gateway embeds roster policy")
 
-        project_paths = {
-            (item["path"], item["kind"], item["state"])
-            for item in providers[record["providerId"]]["projectPaths"]
+
+def validate_native_metadata(provider: str, metadata: dict[str, Any]) -> None:
+    model = metadata.get("model")
+    if (
+        not isinstance(model, str)
+        or not model.strip()
+        or len(model) > 160
+        or any(ord(c) < 32 for c in model)
+    ):
+        fail("PNME-NATIVE-METADATA", "model must be a nonempty bounded identifier")
+    effort = metadata.get("model_reasoning_effort")
+    if provider == "codex" and (
+        not isinstance(effort, str)
+        or effort
+        not in {
+            "none",
+            "minimal",
+            "low",
+            "medium",
+            "high",
+            "xhigh",
         }
-        if (
-            record["path"],
-            "compatibility-hook-graph",
-            "current",
-        ) not in project_paths:
-            fail(
-                "PNME-HOOK-BOUNDARY",
-                f"{key} is not declared as a current compatibility hook graph",
-            )
+    ):
+        fail("PNME-NATIVE-METADATA", "unsupported configured reasoning effort")
 
-        if check_paths:
-            graph_bytes = _read_regular_bytes(root, path)
-            if hashlib.sha256(graph_bytes).hexdigest() != record["contentSha256"]:
-                fail(
-                    "PNME-HOOK-BOUNDARY",
-                    f"{key} bytes differ from the reviewed hook graph",
-                )
+
+def validate_native_projections(root: Path, registry: dict[str, Any]) -> None:
+    for role in registry["roles"]:
+        for provider in PROVIDER_IDS:
+            text = _read_regular_text(root, role["projections"][provider])
             try:
-                graph_text = graph_bytes.decode("utf-8")
-            except UnicodeError:
-                fail("PNME-HOOK-BOUNDARY", f"{key} is not UTF-8")
-            graph = decode_json_text(graph_text, str(path))
-            if not isinstance(graph, dict) or not isinstance(
-                graph.get("hooks"), dict
-            ):
-                fail(
-                    "PNME-HOOK-BOUNDARY",
-                    f"{key} does not contain a closed hook graph",
-                )
-            if graph.get("description") != record["embeddedDeclaration"]:
-                fail(
-                    "PNME-HOOK-BOUNDARY",
-                    f"{key} does not embed its repo-static delivery boundary",
-                )
+                if provider == "codex":
+                    metadata = tomllib.loads(text)
+                else:
+                    metadata = yaml.safe_load(text.split("---", 2)[1])
+                if not isinstance(metadata, dict):
+                    raise ValueError("metadata must be an object")
+            except (ValueError, IndexError, yaml.YAMLError):
+                fail("PNME-NATIVE-METADATA", "invalid native metadata")
+            validate_native_metadata(provider, metadata)
 
 
-def validate_models(contract: dict[str, Any], providers: dict[str, dict[str, Any]]) -> None:
+def validate_models(
+    contract: dict[str, Any], providers: dict[str, dict[str, Any]]
+) -> None:
     source_ids = {source["id"] for source in contract["sourceLedger"]}
     for provider_id, provider in providers.items():
         candidates = provider["modelCandidates"]
@@ -1222,8 +1102,7 @@ def validate_models(contract: dict[str, Any], providers: dict[str, dict[str, Any
                     f"{provider_id} model gates are incomplete",
                 )
             if candidate["idResolution"] == "configured-only" and (
-                candidate["configuredId"] is None
-                or candidate["observedId"] is not None
+                candidate["configuredId"] is None or candidate["observedId"] is not None
             ):
                 fail(
                     "PNME-MODEL-GATE",
@@ -1254,7 +1133,7 @@ def validate_models(contract: dict[str, Any], providers: dict[str, dict[str, Any
 
 def validate_mcp_inventory(
     contract: dict[str, Any],
-    harness: dict[str, Any],
+    registry: dict[str, Any],
 ) -> None:
     inventory = contract["mcpInventory"]
     ids = [server["id"] for server in inventory]
@@ -1263,7 +1142,12 @@ def validate_mcp_inventory(
             "PNME-MCP-BOUNDARY",
             f"expected MCP inventory {MCP_IDS}, got {ids}",
         )
-    allowed_roles = set(harness["targetInventory"]["roleIds"])
+    raw_roles = registry.get("roles")
+    if not isinstance(raw_roles, list) or not all(
+        isinstance(role, dict) and isinstance(role.get("id"), str) for role in raw_roles
+    ):
+        fail("PNME-REGISTRY-PARITY", "agent registry roles are malformed")
+    allowed_roles = {role["id"] for role in raw_roles}
     for server in inventory:
         unknown = set(server["allowedRoles"]).difference(allowed_roles)
         if unknown:
@@ -1300,9 +1184,7 @@ def validate_canary_policy(contract: dict[str, Any]) -> None:
         or policy["crossLanePromotionAllowed"] is not False
     ):
         fail("PNME-CANARY-POLICY", "safe canary policy drifted")
-    missing = REQUIRED_PROHIBITED_CONTENT.difference(
-        policy["prohibitedDurableContent"]
-    )
+    missing = REQUIRED_PROHIBITED_CONTENT.difference(policy["prohibitedDurableContent"])
     if missing:
         fail(
             "PNME-CANARY-POLICY",
@@ -1323,9 +1205,7 @@ def validate_routing(root: Path, contract: dict[str, Any]) -> None:
 
     routing = load_json(root, ROUTING_PATH)
     registrations = [
-        item
-        for item in routing["validators"]
-        if item["id"] == route["validatorId"]
+        item for item in routing["validators"] if item["id"] == route["validatorId"]
     ]
     if len(registrations) != 1:
         fail("PNME-ROUTING", "agent-provider-evidence route must be unique")
@@ -1354,7 +1234,7 @@ def validate_contract(
     validate_sources(contract)
     providers = provider_map(contract)
     validate_observations(providers, contract)
-    harness = validate_surface_parity(
+    registry = validate_surface_parity(
         root,
         providers,
         check_paths=check_paths,
@@ -1362,14 +1242,12 @@ def validate_contract(
     if check_paths:
         validate_claude_permissions(root)
     validate_evidence_lanes(providers)
-    validate_hook_graphs(
-        root,
-        contract,
-        providers,
-        check_paths=check_paths,
-    )
+    if check_paths:
+        validate_unsupported_hook_surfaces(root)
+        validate_root_gateways(root, registry)
+        validate_native_projections(root, registry)
     validate_models(contract, providers)
-    validate_mcp_inventory(contract, harness)
+    validate_mcp_inventory(contract, registry)
     validate_canary_policy(contract)
     if check_paths:
         validate_routing(root, contract)
@@ -1377,11 +1255,9 @@ def validate_contract(
         "providers": len(providers),
         "sources": len(contract["sourceLedger"]),
         "modelCandidates": sum(
-            len(provider["modelCandidates"])
-            for provider in providers.values()
+            len(provider["modelCandidates"]) for provider in providers.values()
         ),
         "mcpServers": len(contract["mcpInventory"]),
-        "hookGraphs": len(contract["hookGraphs"]),
     }
 
 
@@ -1392,9 +1268,7 @@ def apply_mutation(contract: dict[str, Any], name: str) -> None:
         contract["sourceLedger"][0]["sourceDate"] = "2026-07-11"
     elif name == "cutoff-source-same-day-after-cutoff":
         contract["sourceLedger"][0]["sourceDate"] = "2026-07-10"
-        contract["sourceLedger"][0][
-            "publishedAtUtc"
-        ] = "2026-07-10T01:00:01Z"
+        contract["sourceLedger"][0]["publishedAtUtc"] = "2026-07-10T01:00:01Z"
     elif name == "source-id-substitution":
         contract["sourceLedger"][0]["id"] = "replacement-source-id"
     elif name == "extra-source-new-id":
@@ -1405,33 +1279,28 @@ def apply_mutation(contract: dict[str, Any], name: str) -> None:
         contract["providers"][1]["projectPaths"][0]["path"] = "/etc/passwd"
     elif name == "invalid-calendar-source-date":
         contract["sourceLedger"][0]["sourceDate"] = "2026-02-30"
-    elif name == "gemini-current-while-absent":
-        contract["providers"][3]["trackedSurface"]["presence"] = "absent"
-    elif name == "agents-relabeled-as-gemini":
-        contract["providers"][0]["trackedSurface"]["pathRoot"] = ".gemini/agents"
+    elif name == "third-provider-added":
+        extra = copy.deepcopy(contract["providers"][0])
+        extra["id"] = "unsupported-third-provider"
+        contract["providers"].append(extra)
+    elif name == "provider-relabeled-as-neutral":
+        contract["providers"][0]["trackedSurface"]["pathRoot"] = ".agents/agents"
     elif name == "model-silent-fallback-enabled":
-        contract["providers"][2]["modelCandidates"][0]["fallback"][
+        contract["providers"][1]["modelCandidates"][0]["fallback"][
             "silentFallbackAllowed"
         ] = True
     elif name == "model-fitness-promoted-without-gates":
-        contract["providers"][2]["modelCandidates"][0][
-            "promotionState"
-        ] = "current-assignment"
-    elif name == "mcp-role-outside-harness":
+        contract["providers"][1]["modelCandidates"][0]["promotionState"] = (
+            "current-assignment"
+        )
+    elif name == "mcp-role-outside-registry":
         contract["mcpInventory"][0]["allowedRoles"].append("unowned-agent")
     elif name == "secret-like-contract-value":
         contract["sourceLedger"][0]["claim"] = "sk-test-not-a-real-secret"
-    elif name == "hook-graph-unclassified":
-        contract["hookGraphs"][0]["classification"] = "unclassified"
-    elif name == "hook-graph-runtime-pass":
-        contract["hookGraphs"][0]["deliveryVerdict"] = "PASS"
-    elif name == "hook-graph-digest-drift":
-        contract["hookGraphs"][0]["contentSha256"] = "0" * 64
     elif name == "absent-runtime-native-pass":
-        contract["providers"][3]["evidenceLanes"][1]["verdict"] = "PASS"
-        contract["providers"][3]["runtimeVerdicts"][
-            "nativeDiscovery"
-        ] = "PASS"
+        contract["providers"][0]["localObservation"]["installation"] = "absent"
+        contract["providers"][0]["evidenceLanes"][1]["verdict"] = "PASS"
+        contract["providers"][0]["runtimeVerdicts"]["nativeDiscovery"] = "PASS"
     else:
         fail("PNME-FIXTURE", f"unknown config mutation {name}")
 
@@ -1474,7 +1343,6 @@ def main(argv: Sequence[str] | None = None) -> int:
                 f"sources={counts['sources']} "
                 f"models={counts['modelCandidates']} "
                 f"mcp={counts['mcpServers']} "
-                f"hooks={counts['hookGraphs']}"
             )
         else:
             print(
@@ -1483,7 +1351,6 @@ def main(argv: Sequence[str] | None = None) -> int:
                 f"sources={counts['sources']} "
                 f"models={counts['modelCandidates']} "
                 f"mcp={counts['mcpServers']} "
-                f"hooks={counts['hookGraphs']}"
             )
         return 0
     except ProviderConfigError as exc:

@@ -18,11 +18,19 @@ from typing import Any
 
 try:
     from scripts.archive_recovery import ArchiveContractError
-    from scripts.archive_validation import parse_pinned_migration_control
+    from scripts.archive_validation import (
+        MigrationDisposition,
+        MigrationProof,
+        parse_pinned_migration_control,
+        repository_migration_proof,
+    )
 except ModuleNotFoundError:  # Direct execution from scripts/.
     from archive_recovery import ArchiveContractError  # type: ignore[no-redef]
     from archive_validation import (  # type: ignore[no-redef]
+        MigrationDisposition,
+        MigrationProof,
         parse_pinned_migration_control,
+        repository_migration_proof,
     )
 
 
@@ -203,23 +211,7 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "json",
         "closed-fixture",
     ),
-    "tests/fixtures/agent-evaluations.json": (
-        "json",
-        "closed-fixture",
-    ),
     "tests/fixtures/agent-governance-ci.json": (
-        "json",
-        "closed-fixture",
-    ),
-    "tests/fixtures/agent-governance-closure.json": (
-        "json",
-        "closed-fixture",
-    ),
-    "tests/fixtures/agent-harness-contract.json": (
-        "json",
-        "closed-fixture",
-    ),
-    "tests/fixtures/agent-legacy-cutover.json": (
         "json",
         "closed-fixture",
     ),
@@ -227,15 +219,7 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "json",
         "closed-fixture",
     ),
-    "tests/fixtures/agent-model-fitness.json": (
-        "json",
-        "closed-fixture",
-    ),
     "tests/fixtures/agent-provider-runtime-evidence.json": (
-        "json",
-        "closed-fixture",
-    ),
-    "tests/fixtures/agent-roster-admission.json": (
         "json",
         "closed-fixture",
     ),
@@ -267,11 +251,27 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "json",
         "closed-fixture",
     ),
+    "tests/test_affected_surface_migration.py": (
+        "python",
+        "regression-test",
+    ),
+    "tests/test_archive_historical_proof.py": (
+        "python",
+        "regression-test",
+    ),
     "tests/test_document_lifecycle_agent_roster_cutover.py": (
         "python",
         "regression-test",
     ),
+    "tests/test_document_lifecycle_migration.py": (
+        "python",
+        "regression-test",
+    ),
     "tests/test_document_strict_cutover.py": (
+        "python",
+        "regression-test",
+    ),
+    "tests/test_generic_migration_recovery.py": (
         "python",
         "regression-test",
     ),
@@ -287,7 +287,11 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "python",
         "regression-test",
     ),
-    "tests/test_validate_agent_evaluations.py": (
+    "tests/test_validate_agent_compatibility_clis.py": (
+        "python",
+        "regression-test",
+    ),
+    "tests/test_validate_agent_core_cutover.py": (
         "python",
         "regression-test",
     ),
@@ -315,10 +319,6 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "python",
         "regression-test",
     ),
-    "tests/test_validate_agent_model_fitness.py": (
-        "python",
-        "regression-test",
-    ),
     "tests/test_validate_agent_provider_canaries.py": (
         "python",
         "regression-test",
@@ -327,7 +327,7 @@ POST_CLOSURE_HELPER_MANIFEST = {
         "python",
         "regression-test",
     ),
-    "tests/test_validate_agent_roster_admission.py": (
+    "tests/test_validate_agent_registry.py": (
         "python",
         "regression-test",
     ),
@@ -788,6 +788,16 @@ def _helper_format_role(path: str) -> tuple[str, str]:
     return admitted
 
 
+def helper_artifact_role(path: str) -> str | None:
+    """Expose admitted test-artifact responsibility, not a directory exemption."""
+
+    try:
+        _format, role = _helper_format_role(path)
+    except RoleAuditError:
+        return None
+    return role
+
+
 def _readme_inventory(text: str) -> list[str]:
     match = re.search(
         r"(?ms)^## Structure\s*$.*?^```text\s*$\n(?P<body>.*?)^```\s*$", text
@@ -1093,9 +1103,7 @@ def validate_authority_projection(
     except (ArchiveContractError, UnicodeError, ValueError) as exc:
         raise RoleAuditError("ROLE-AUDIT-AUTHORITY", WP004B_MIGRATION_PATH) from exc
     task_rows = tuple(
-        row
-        for row in wp004b_rows
-        if row.get("legacy_path") == MIG0002_EXECUTION_TARGET
+        row for row in wp004b_rows if row.get("legacy_path") == MIG0002_EXECUTION_TARGET
     )
     if (
         len(task_rows) != 1
@@ -1161,7 +1169,12 @@ def verify_authority_projection(
     return validate_authority_projection(migration_text, wp004b_text, paths)
 
 
-def validate_ledger(ledger: Any, observed: Mapping[str, Any]) -> dict[str, int]:
+def validate_ledger(
+    ledger: Any,
+    observed: Mapping[str, Any],
+    *,
+    migration_proof: MigrationProof | None = None,
+) -> dict[str, int]:
     if not isinstance(ledger, Mapping) or set(ledger) != {
         "$schema",
         "observedAt",
@@ -1234,8 +1247,30 @@ def validate_ledger(ledger: Any, observed: Mapping[str, Any]) -> dict[str, int]:
 
     current_entries = _validate_observed_helpers(observed)
     current_by_path = {entry["path"]: entry for entry in current_entries}
-    if any(current_by_path.get(entry["path"]) != entry for entry in expected_frozen):
-        raise RoleAuditError("ROLE-AUDIT-HELPER-DRIFT")
+    for entry in expected_frozen:
+        path = entry["path"]
+        if path in current_by_path:
+            if current_by_path[path] != entry:
+                raise RoleAuditError("ROLE-AUDIT-HELPER-DRIFT")
+            continue
+        # Historical membership stays sealed. Only the generic recovery owner
+        # can establish source bytes, current absence and safe successor facts.
+        if not isinstance(migration_proof, MigrationProof):
+            raise RoleAuditError("ROLE-AUDIT-HELPER-DRIFT")
+        disposition = migration_proof.dispositions.get(path)
+        terminal = migration_proof.targets.get(path)
+        if (
+            not isinstance(disposition, MigrationDisposition)
+            or not isinstance(disposition.source_bytes, bytes)
+            or disposition.record_path not in migration_proof.records
+            or disposition.action not in {"moved", "merged", "replaced"}
+            or disposition.target == path
+            or not terminal
+            or terminal == path
+            or migration_proof.targets.get(disposition.target, disposition.target)
+            != terminal
+        ):
+            raise RoleAuditError("ROLE-AUDIT-HELPER-DRIFT")
     post_closure = [
         entry for entry in current_entries if entry["path"] not in FROZEN_HELPER_PATHS
     ]
@@ -1305,6 +1340,13 @@ def validate_active_corpus_role_audit(
         verify_entrypoints(normalized, runner) if enforce_entrypoints else None
     )
     observed = build_observed(normalized, runner, enforce_index=enforce_index)
+    current_paths = {entry["path"] for entry in observed["helperTests"]["entries"]}
+    migration_proof = None
+    if set(FROZEN_HELPER_PATHS) - current_paths:
+        try:
+            migration_proof = repository_migration_proof(Path(normalized))
+        except ArchiveContractError as exc:
+            raise RoleAuditError("ROLE-AUDIT-HELPER-RECOVERY") from exc
     helper_partition = validate_ledger(
         load_ledger(
             normalized,
@@ -1313,6 +1355,7 @@ def validate_active_corpus_role_audit(
             control_index=control_index,
         ),
         observed,
+        migration_proof=migration_proof,
     )
     verify_authority_projection(
         normalized,

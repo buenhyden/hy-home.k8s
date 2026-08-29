@@ -631,7 +631,7 @@ class BoundedValidationCommandTest(unittest.TestCase):
 
     def test_reviewed_limits_match_the_sole_quality_owner(self):
         owner = (
-            ROOT / "docs/00.agent-governance/rules/quality-standards.md"
+            ROOT / "docs/00.agent-governance/policies/quality.md"
         ).read_text(encoding="utf-8")
 
         self.assertEqual(RUNNER.VALIDATOR_TIMEOUT_SECONDS, 1_200.0)
@@ -1513,6 +1513,65 @@ class BoundedValidationCommandTest(unittest.TestCase):
 
 
 class PureAffectedSelectorRunnerTest(unittest.TestCase):
+    def test_deleted_markdown_is_not_classified_for_current_include_arguments(self):
+        contract_module = RUNNER.load_contract_module()
+        contract = contract_module.validate_contract(ROOT)
+        validator = next(
+            row for row in contract["validators"] if row["id"] == "markdown-profiles"
+        )
+        with tempfile.TemporaryDirectory(prefix="retired-runner-") as temporary:
+            with patch.object(
+                contract_module,
+                "classify_path",
+                side_effect=AssertionError("absent document was classified"),
+            ) as classify:
+                actual = RUNNER.validator_argv(
+                    Path(temporary),
+                    "affected",
+                    ["retired-policy.md"],
+                    validator,
+                    contract,
+                    contract_module,
+                )
+        self.assertEqual(actual, validator["argv"])
+        classify.assert_not_called()
+
+    def test_proven_deleted_markdown_keeps_scope_and_validator_failure(self):
+        contract_module = RUNNER.load_contract_module()
+        contract = contract_module.validate_contract(ROOT)
+        paths = ["retired-policy.md", "retired-policy.md"]
+        output = StringIO()
+        with (
+            tempfile.TemporaryDirectory(prefix="retired-runner-") as temporary,
+            patch.object(
+                contract_module,
+                "select_paths",
+                return_value={"validators": ["markdown-profiles"]},
+            ) as select,
+            patch.object(
+                contract_module,
+                "classify_path",
+                side_effect=AssertionError("absent document was classified"),
+            ),
+            patch.object(RUNNER.shutil, "which", return_value="/usr/bin/python3"),
+            patch.object(RUNNER, "secure_gitleaks_executable", return_value=None),
+            patch.object(
+                RUNNER,
+                "run_bounded_command",
+                return_value=bounded_result(returncode=7),
+            ) as invoked,
+            redirect_stdout(output),
+        ):
+            root = Path(temporary)
+            result = RUNNER.run_selected(
+                root, "affected", paths, contract, contract_module
+            )
+            select.assert_called_once_with(contract, paths, "affected", root)
+        self.assertEqual(result, 1)
+        self.assertIn("[FAIL] markdown-profiles", output.getvalue())
+        self.assertIn('scope="affected:paths=2"', output.getvalue())
+        self.assertNotIn("--include-path", invoked.call_args.args[0])
+
     @staticmethod
     def _run(paths: list[str], lane: str = "affected"):
         contract_module = RUNNER.load_contract_module()
@@ -1578,12 +1637,13 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
                 "agent-governance-closure": "PASS",
                 "agent-legacy-cutover": "PASS",
                 "document-contract-registry": "PASS",
+                "document-lifecycle": "PASS",
                 "links-and-owners": "PASS",
                 "markdown-profiles": "PASS",
                 "repository-quality": "PASS",
             },
         )
-        self.assertEqual(invoked.call_count, 7)
+        self.assertEqual(invoked.call_count, 8)
         self.assertGreaterEqual(output.count(path), 3)
 
     def test_staged_selector_executes_every_selected_validator(self):
@@ -1598,12 +1658,13 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
                 "agent-governance-closure": "PASS",
                 "agent-legacy-cutover": "PASS",
                 "document-contract-registry": "PASS",
+                "document-lifecycle": "PASS",
                 "links-and-owners": "PASS",
                 "markdown-profiles": "PASS",
                 "repository-quality": "PASS",
             },
         )
-        self.assertEqual(invoked.call_count, 7)
+        self.assertEqual(invoked.call_count, 8)
         self.assertIn('scope="staged:paths=1"', output)
         propagated = [
             call.args[0] for call in invoked.call_args_list if path in call.args[0]

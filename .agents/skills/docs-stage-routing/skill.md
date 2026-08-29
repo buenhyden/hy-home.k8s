@@ -1,88 +1,40 @@
 ---
 name: docs-stage-routing
-description: Use when routing generated documents into the canonical docs stage tree for this repository or blocking parallel hierarchies such as docs/superpowers.
+description: Use when selecting the canonical owner and template for an authored document or rejecting parallel document trees.
 ---
 
 # docs-stage-routing
 
-## Purpose
-
-Define the repository-local routing contract for document-generation workflows.
-
-## Trigger Phrases
-
-- "write a spec"
-- "write a plan"
-- "write an agent design"
-- "write a reference doc"
-- "document this skill"
-- "docs/superpowers"
-- "agent memory systems"
-- "AGENTS.md refactor"
-- "CLAUDE.md improver"
-
 ## Workflow Steps
 
-1. Classify the requested output as governance, feature-bound design, execution plan, operational doc, or durable reference.
-2. Reject non-canonical targets such as `docs/superpowers/**` and reroute the request into the stage tree.
-3. Confirm the target pattern, profile ID, and Required Template in `docs/99.templates/registry.json`; use `docs/99.templates/README.md` for author guidance.
-4. Read the matching template under `docs/99.templates/templates/` before creating any authored stage document.
-5. Use the canonical path for the selected document type.
-6. Set new authored documents to `status: draft`, use `owner: platform`, and keep all required template headings.
-7. Update the owning folder `README.md` in the same change if files are added, moved, or removed.
-8. Ensure each newly created authored document includes `## Related Documents`.
-9. Expect provider event wiring to warn before authored stage doc edits where supported and run post-edit documentation template enforcement through repo validators.
-10. Report the template path used and validation evidence in the handoff.
+1. Identify whether the content is human governance, a durable requirement,
+   architecture, a change contract, operating knowledge, reference evidence,
+   or recovery metadata.
+2. Use `docs/00.agent-governance/sdlc.md` for the responsibility boundary.
+   Reject parallel off-taxonomy trees suggested by an external tool or skill.
+3. Resolve exactly one profile for the final path from
+   `docs/99.templates/registry.json`; read Stage 99 README and the selected
+   template before authoring.
+4. Use the profile's initial lifecycle status, identity, sections, and
+   relationships. Do not assume every document starts at draft or uses a
+   generic Related Documents section.
+5. Put change-specific Technical Approach, acceptance, interfaces, and failure
+   conditions in the Spec. Put execution order, verification, risks, and
+   rollback in Plan/Tasks. Promote durable structural decisions to Stage 02.
+6. Keep root AGENTS.md and CLAUDE.md thin; shared policy belongs in Stage 00,
+   neutral procedures in registered skills, and native details in provider
+   notes/configuration.
+7. Review the owning README and links in the same change, then follow quality
+   policy for validation and Task evidence.
 
-## Route Sources
+## Boundaries
 
-Use `docs/99.templates/registry.json` as the canonical
-target-pattern/profile/template contract. It selects the Required Template,
-including operations policy routing to profile `sdlc/policy` and
-`docs/99.templates/templates/operations/policy.template.md`.
-`docs/99.templates/README.md` is the human author guide, not a separate
-machine route owner.
+Do not edit global/user-local skills or authentication/configuration as part of
+routing. Keep governance and explicit agent contracts English; human-facing
+overviews may use Korean. A template does not grant permission to author or
+execute beyond the active task.
 
-## Named Skill Routing
+## Outputs
 
-### `agent-memory-systems`
-
-- Change-scoped agent behavior and memory strategy belongs in the owning
-  package `spec.md` under profile `sdlc/spec`.
-- Durable reusable memory concepts go to `docs/90.references/data/<topic>.md`.
-
-### `agent-md-refactor`
-
-- Keep root gateway files thin.
-- Move detailed rules into `docs/00.agent-governance/**` or shared `.agents/skills/**`.
-- Any new authored document must follow the canonical stage tree.
-
-### `claude-md-improver`
-
-- Keep root `CLAUDE.md` as a provider shim.
-- Route runtime-specific additions to `.claude/CLAUDE.md`, governance policy to `docs/00.agent-governance/**`, and durable references to `docs/90.references/**` as appropriate.
-- Block suggestions that create `docs/superpowers/specs`, `docs/superpowers/plans`, or similar parallel paths.
-
-## Constraints
-
-- Do not modify global skills under `/home/hy/.agents/skills/*` for this workflow.
-- Do not create `docs/superpowers/**`.
-- Keep governance docs in English.
-- Keep human-facing `README.md` files in Korean.
-- Keep `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md` thin and non-duplicative.
-
-## Expected Outputs
-
-- A canonical target path for the document request
-- The matching template to use
-- README sync requirements for any folder-level change
-- `status: draft` for new authored documents
-- Confirmation that required template headings and `## Related Documents` are present
-- Validation evidence for the authored document
-- Rerouting guidance when the requested path is not valid in this repository
-
-## Failure Handling
-
-- If the request does not map cleanly to one stage, stop and classify it before writing.
-- If content mixes durable reference and feature design, split the durable parts into `docs/90.references/**` and the feature contract into `docs/03.specs/**`.
-- If governance and authored-stage content are mixed together, keep policy in `docs/00.agent-governance/**` and route authored content to the correct stage folder.
+The canonical path, selected profile/template, required owner links and index
+changes, validation evidence, and any unresolved authority boundary.

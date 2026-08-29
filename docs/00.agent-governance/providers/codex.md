@@ -1,171 +1,57 @@
 ---
-title: 'Reference: Codex Provider Notes'
+title: 'Codex Provider Notes'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-08-14
+updated: 2026-08-28
 ---
 
 # Codex Provider Notes
 
 ## Overview
 
-Guidance for Codex (GPT) execution in the `hy-home.k8s` repository.
-
-### Role
-
-Codex sessions act as a peer provider to Claude and Gemini. This document defines how Codex interacts with the shared governance model while maintaining its own runtime baseline.
+Describe Codex-native loading and configuration without duplicating shared
+execution policy or the agent roster.
 
 ## Authority Boundary
 
-### Permission & Hook Boundary
-
-Codex uses official `AGENTS.md`, configuration, sandbox, and approval-mode
-surfaces for its native execution boundary. `AGENTS.md` is the thin Codex/GPT
-gateway; shared policy belongs under `rules/` or `scopes/`, roster semantics
-belong in `contracts/harness-contract.json`, and readable adapter status belongs
-in `harness-catalog.md` and `subagent-protocol.md`. Claude and Gemini use their
-own root shims and do not import `AGENTS.md`.
-
-`.codex/hooks.json` is a retained custom compatibility bridge. Its tracked
-event graph is repo-static configuration only: current provider capability does
-not prove local parsing, feature enablement, trust, client dispatch, or event
-delivery. Delivery remains `DEFER` until a controlled canary proves the
-intended client path, and explicit validation remains required before handoff.
-
-Codex subagents are explicit orchestration only when requested by the user; use
-`.codex/agents/*.toml` role adapters and do not inline full role definitions
-when a local adapter exists.
-
-### Runtime Tooling Boundary
-
-Codex should follow `RTK.md` for shell command guidance. If `rtk` is not on
-PATH but `/home/hy/.local/bin/rtk --version` works, record the PATH limitation.
-If `rtk gain` cannot initialize its tracking database, do not inspect private
-databases or credential files; run the underlying command directly and record
-the limitation in the active task evidence.
+`AGENTS.md` is the thin Codex gateway; `.codex/CODEX.md` is the local
+baseline. Native sandbox, approval, and configuration surfaces govern the
+running client. The neutral registry owns shared role and permission meaning.
 
 ## Governance Context
 
-### Official Source Basis
-
-Cutoff-sensitive capability evidence was reconciled against
-`2026-07-10 10:00 Asia/Seoul` on 2026-07-28:
-
-- Codex release `rust-v0.144.1`: <https://github.com/openai/codex/releases/tag/rust-v0.144.1>
-- Codex release `rust-v0.145.0-alpha.2`: <https://github.com/openai/codex/releases/tag/rust-v0.145.0-alpha.2>
-- Codex custom instructions with `AGENTS.md`: <https://learn.chatgpt.com/docs/agent-configuration/agents-md>
-- Codex subagents: <https://learn.chatgpt.com/docs/agent-configuration/subagents>
-- Codex configuration and approval surfaces: <https://learn.chatgpt.com/docs/config-file/config-reference>
-- Codex hooks: <https://developers.openai.com/codex/hooks>
-
-The cutoff ledger records stable `0.144.1` and prerelease
-`0.145.0-alpha.2` as published before the cutoff. The current config reference
-is observation-time evidence; accepted `model_reasoning_effort` values and
-model IDs remain model/client dependent until the intended runtime parses and
-resolves them without silent fallback. A read-only `codex --version`
-observation on 2026-07-28 returned `0.140.0`. The earlier user-reported
-`0.145.0-alpha.27` is retained as a separate prior observation; neither
-observation proves authentication, model availability, agent discovery, or
-delegated execution.
-
-### Loading Model
-
-- Start with the Codex/GPT gateway: `AGENTS.md`
-- Follow the JIT loading sequence defined in `docs/00.agent-governance/rules/bootstrap.md`
-- Load the local Codex runtime baseline: `.codex/CODEX.md`
-
-### Context Strategy
-
-- Codex uses `.codex/agents/*.toml` as provider-native role adapters for the local agent roster.
-- `.codex/hooks.json` retains a custom compatibility graph that points to shared
-  lifecycle scripts. Its presence establishes neither native parsing nor event
-  delivery and it is **not** a permission gate.
-- Shared skills, workflows, and output styles resolve through `.codex/{skills,workflows,output-styles}` symlinks to the `.agents/` SSoT. Codex-specific rules stay in this provider note and Stage 00 rules; `.codex/rules/` is only a placeholder/adapter surface unless populated by a future approved adapter change.
-- Treat provider- or user-local recall as `provider-local-auxiliary`, ignored
-  `.agent-work/checkpoint.json` as `working-short-term`,
-  `memory/progress.md` as the shared `durable-long-term` ledger, and the owning
-  Spec/Runbook/Incident/Postmortem as `domain-scoped`. Repository evidence wins
-  conflicts.
-- Repo-static loop and checkpoint validators enforce the atomic/redacted
-  synthetic checkpoint contract, repository-wins resume,
-  promotion/refresh/expiry/archive-GC/conflict, compaction, handoff, and five
-  bounded reviewed feedback destinations. They neither read nor write the ignored
-  checkpoint and do not prove Codex discovery, event delivery, permissions,
-  model resolution, authenticated execution, hosted CI, remote,
-  credential-bearing, live, or actual checkpoint execution.
+Load the gateway, [work lifecycle](../skills/work-lifecycle.md), relevant
+responsibility, and current Task. Codex TOML role projections carry native
+model and reasoning metadata; configured values alone do not prove provider
+resolution or tool enforcement.
 
 ## Current Contract
 
-### Execution Expectations
-
-- **Symmetry**: Codex follows the same repo-static role parity rules as Claude, Gemini, and the local/Antigravity adapter while using Codex-native TOML metadata. This static parity does not assert provider runtime parity.
-- **GitOps-First**: Adhere strictly to the workspace constraints; never write plaintext secrets.
-- **Language**: Produce human-facing responses in Korean, but keep governance and policy documents in English.
-
-### QA Evidence Resolution
-
-- `contracts/harness-contract.json` version `1.0.0` is the provider-neutral
-  machine owner. Its current `12 roles / 4 surfaces / 48 adapters` inventory is
-  repository-static adapter evidence.
-- `model-policy.md` owns shared tier/reasoning vocabulary, while
-  `contracts/agent-model-fitness.json` version `1.1.0` owns exact
-  role/provider incumbent, configured and observed value, candidate, reasoning,
-  fallback, and decision state. All 12 Codex mappings remain `DEFER` because
-  their support is current-only rather than fixed-cutoff runtime evidence;
-  the global AREA-004 mapping result is `PASS` 21 / `DEFER` 27. Observed
-  fitness, threshold, promotion, canary, and runtime remain `DEFER` for all 48
-  tuples.
-- Codex adapter `model` and `model_reasoning_effort` values remain configured
-  incumbents until a future authorized, evidence-backed promotion. AREA-003
-  repository-static evaluation readiness is complete, while observed
-  same-suite evaluation and final admission remain `DEFER`.
-- Keep `repo-static`, `provider-runtime`, `ci`, and `remote-live` evidence
-  separate. A result in one class never proves another.
-- `contracts/provider-runtime-evidence.json` is the singular machine owner for
-  provider capability evidence, retained hook-graph classification, and
-  delivery verdicts. Unsupported or absent runtimes cannot receive runtime
-  `PASS`.
-- Spec 045 retired the former role-semantics compatibility inputs after
-  zero-consumer proof; the harness contract and harness-semantics validator
-  are the current semantic owners.
-- `contracts/agent-governance-closure.json` is the single Spec 046 program
-  result-classification owner. Its repository-static PASS cannot promote
-  Codex discovery, auth, model resolution, sandbox/approval enforcement,
-  hosted, remote, live, or actual evaluation evidence.
-- Resolve `affected`, `staged`, `all-files`, `message/manual`, `ci`, and
-  `remote/live` semantics plus handoff fields from
-  [`rules/quality-standards.md`](../rules/quality-standards.md).
-- Tracked `.codex/agents/*.toml` and `.codex/hooks.json` are repo-static
-  configuration. They do not prove native Codex discovery, role use, event
-  delivery, sandbox enforcement, approval handling, or remote execution.
-- Preserve Codex-native `model`, `model_reasoning_effort`, sandbox, and approval
-  validation while `contracts/harness-contract.json` owns shared role
-  semantics.
+- Use `.codex/agents/*.toml` projections selected by the neutral registry when
+  authorized delegation and the current runtime mechanism are available.
+- Read shared skills through `.codex/skills`, a view of the neutral owner.
+  File presence is not evidence of native skill discovery.
+- Use native sandbox and approval controls; do not treat a custom hook file as
+  a permission or completion gate.
+- Unsupported custom hook graphs are not a Codex execution surface. Run
+  explicit repository validation; do not infer event delivery from a file.
+- Keep provider-local memory advisory and re-observe repository/task state on
+  resume. Shared context and safety rules live in policies, not this note.
+- Follow `RTK.md` for shell tooling. Record an unavailable tool or runtime
+  instead of inspecting private configuration to manufacture readiness.
 
 ## Validation and Refresh
 
-Run the harness, provider/model, provider-neutral role, roster-currentness, and
-repository quality checks after changing Codex adapters, model metadata, or
-hook wiring:
-
-```bash
-python3 scripts/validate-agent-harness-contract.py --root .
-python3 scripts/validate-agent-provider-config.py --root .
-python3 scripts/validate-agent-provider-canaries.py --root .
-python3 scripts/validate-agent-model-fitness.py --root .
-python3 scripts/validate-agent-harness-semantics.py --root .
-python3 scripts/validate-agent-roster-currentness.py .
-python3 scripts/validate-agent-governance-closure.py --root .
-bash scripts/validate-repo-quality-gates.sh .
-```
-
-Recheck the official source basis when Codex changes its `AGENTS.md`, subagent,
-sandbox, approval, or configuration contract. Repository-static PASS does not
-establish native discovery, sandbox enforcement, or event delivery.
+Validate registry/projection semantics and native configuration after relevant
+changes. Check the intended installed client's documented configuration when a
+native capability changes. Separately evidence discovery, authenticated
+execution, model resolution, sandbox/approval behavior, and event delivery;
+repository-static PASS establishes none of them.
 
 ## Related Documents
 
-- [Bootstrap Governance](../rules/bootstrap.md)
-- [Local Harness Catalog](../harness-catalog.md)
-- [Model Selection Policy](../model-policy.md)
+- [Codex Baseline](../../../.codex/CODEX.md)
+- [Agent Registry](../../../.agents/registry.json)
+- [Model Selection](../policies/model-selection.md)
+- [Quality Policy](../policies/quality.md)

@@ -1,6 +1,6 @@
 ---
 name: observability-reviewer
-description: Review observability manifests and SLO documents for static wiring, ownership, and operational completeness.
+description: Review metrics, logs, alerts, dashboards, and operational observability coverage.
 model: sonnet 4.6
 tools: Read, Grep, Glob, Bash
 ---
@@ -10,9 +10,9 @@ tools: Read, Grep, Glob, Bash
 ## Runtime Bootstrap
 
 - Load `CLAUDE.md`, `.claude/CLAUDE.md`, and this agent's imported scope before work.
-- Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.
+- Follow `docs/00.agent-governance/skills/work-lifecycle.md` for intake and completion.
 
-@import docs/00.agent-governance/scopes/infra.md
+@import docs/00.agent-governance/roles/infrastructure.md
 
 ## Role
 
@@ -37,13 +37,14 @@ Review observability manifests and SLO documents for static wiring, ownership, a
 
 ## Capability and Evidence
 
-- Capability tier reference: `docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles/7/capabilityTier`.
+- Capability tier reference: `docs/00.agent-governance/policies/model-selection.md#worker`.
 - Required evidence: cite `file:line` scrape, alert, dashboard, or SLO findings and identify the static source supporting each conclusion.
 
 ## Handoff / Escalation
 
+- Registry handoff targets: `gitops-reviewer`, `security-auditor`, `supervisor`.
 - Escalate GitOps sync-structure or release concerns to `gitops-reviewer.md`.
 
 ## Postflight
 
-Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results.
+Run `docs/00.agent-governance/skills/work-lifecycle.md#completion` before returning results.

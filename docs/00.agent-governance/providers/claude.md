@@ -1,162 +1,58 @@
 ---
-title: 'Reference: Claude Provider Notes'
+title: 'Claude Provider Notes'
 type: governance/reference
 status: active
 owner: platform
-updated: 2026-08-14
+updated: 2026-08-28
 ---
 
 # Claude Provider Notes
 
 ## Overview
 
-Claude-specific guidance for `hy-home.k8s`.
+Describe Claude-native loading, permissions, and hooks without duplicating
+shared execution policy or the agent roster.
 
 ## Authority Boundary
 
-### Native Boundary
-
-- Claude's documented native project surface for permissions and hook
-  declarations is `.claude/settings.json`; the tracked file is the repository
-  projection of that configuration.
-- `.claude/agents/*.md` owns Claude subagent metadata, including `name`,
-  `description`, `model`, and least-privilege `tools:`.
-- Claude hooks may block objective repo-state failures only when an admitted
-  runtime loads and dispatches the tracked settings. Repository presence does
-  not prove hook delivery or live runtime readiness.
-- Claude native tools and permissions must not weaken the repository's
-  GitOps-first, no-live-mutation, and secret-handling boundaries.
+Root `CLAUDE.md` is the thin Claude gateway and must not import the Codex
+gateway. `.claude/CLAUDE.md` is the local baseline;
+`.claude/settings.json` carries native permission and hook declarations.
+These may restrict but never expand common approval boundaries.
 
 ## Governance Context
 
-### Official Source Basis
-
-Cutoff-sensitive capability evidence was reconciled against
-`2026-07-10 10:00 Asia/Seoul` on 2026-07-28:
-
-- Claude Code changelog: <https://code.claude.com/docs/en/changelog>
-- Claude Code settings: <https://code.claude.com/docs/en/settings>
-- Claude Code hooks: <https://code.claude.com/docs/en/hooks>
-- Claude Code subagents: <https://code.claude.com/docs/en/sub-agents>
-
-The dated changelog supports Claude Code `2.1.206` by the cutoff and records
-Opus 4.8 plus `/effort xhigh` in `2.1.154`. Current documentation is
-observation-time evidence for current syntax; it does not backdate every
-subagent field. A read-only `claude --version` observation on 2026-07-28
-returned `2.1.220 (Claude Code)`. Installation and version evidence do not prove project
-agent discovery, authentication, account entitlement, configured-model
-resolution, hooks, or delegated execution.
-
-### Loading Model
-
-- Keep root `CLAUDE.md` thin; it imports `@docs/00.agent-governance/rules/bootstrap.md` (shared governance), `@docs/00.agent-governance/providers/claude.md`, `@.claude/CLAUDE.md`, and `@RTK.md`. It must not import `@AGENTS.md`, which is the GPT/Codex provider shim.
-- Root `CLAUDE.md` must load the existing hierarchy; it must not copy RTK, graphify, catalog, or governance policy blocks inline.
-- Use `.claude/CLAUDE.md` as the local runtime baseline for agent roster and model hierarchy.
-- Use governance files under `docs/00.agent-governance/rules/*` as canonical policy.
-- Use `@RTK.md` for shell-command guidance when Claude needs that context.
-- Keep provider-specific details here; do not duplicate global rules.
-- Keep Claude-specific runtime wiring under `.claude/**`; do not create a parallel `.github/**` instruction layer for this repository.
-
-### Context Strategy
-
-- Prefer concise CLAUDE context files (target under 200 lines per file).
-- For larger projects, split rules into `.claude/rules/` files.
-- Use path-scoped rules where applicable to reduce always-loaded context.
-- Keep conflicting instructions out of CLAUDE hierarchy.
-- Avoid introducing provider-specific guidance outside the existing `CLAUDE.md` + `.claude/**` + `docs/00.agent-governance/**` hierarchy.
-
-### Memory and Context
-
-- Follow CLAUDE hierarchy: managed policy -> project -> user -> path-specific rules.
-- Use imports for modular instructions when needed.
-- Treat auto memory as `provider-local-auxiliary`: advisory only, never the
-  owner of repository facts, decisions, task status, or durable handoff
-  evidence. Re-observe a claim from the repository before review-promoting it.
-- Use `memory/progress.md` for `durable-long-term` shared progress and the
-  owning Spec/Runbook/Incident/Postmortem for `domain-scoped` knowledge.
-  Ignored `.agent-work/checkpoint.json` content is `working-short-term` only.
-- Repo-static loop and checkpoint validators enforce atomic/redacted synthetic
-  checkpoint shape, repository-wins resume,
-  promotion/refresh/expiry/archive-GC/conflict, compaction, handoff, and five
-  bounded reviewed feedback destinations across all four memory classes. They
-  neither read nor write ignored checkpoints and do not prove Claude discovery,
-  hooks, permissions, model resolution, authenticated execution, hosted CI,
-  remote, credential-bearing, live, or actual checkpoint execution.
+Load the gateway, [work lifecycle](../skills/work-lifecycle.md), relevant
+responsibility, and current Task. Claude Markdown role projections carry
+native model and least-privilege tool metadata; the neutral registry owns
+their shared responsibility and permission meaning.
 
 ## Current Contract
 
-### Execution Expectations
-
-- Use JIT loading: bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight.
-- Keep responses to users in Korean.
-- Keep governance control docs in English.
-- Use `contracts/harness-contract.json` as the machine roster owner and
-  `harness-catalog.md` as its readable runtime view.
-- Use `docs/00.agent-governance/hooks/lifecycle-guard.sh` as the shared lifecycle hook contract wired by `.claude/settings.json`: Stop/SubagentStop may block objective repo-state failures; PreCompact is advisory and must not replace validation evidence.
-- Keep `.claude/*.local.md`, including Hookify rules, as ignored local warning files only. Shared Claude enforcement stays in `.claude/settings.json`, `docs/00.agent-governance/hooks/*.sh`, and repository validators.
-
-### QA Evidence Resolution
-
-- `contracts/harness-contract.json` version `1.0.0` is the provider-neutral
-  machine owner. Its current `12 roles / 4 surfaces / 48 adapters` inventory is
-  repository-static adapter evidence.
-- `model-policy.md` owns shared tier/reasoning vocabulary, while
-  `contracts/agent-model-fitness.json` version `1.1.0` owns exact
-  role/provider incumbent, configured and observed value, candidate, reasoning,
-  fallback, and decision state. AREA-004 records nine cutoff-backed Claude
-  high-risk mappings as ready and three current-only Claude mappings as
-  `DEFER`; this contributes to the global mapping result `PASS` 21 /
-  `DEFER` 27. Observed fitness, threshold, promotion, canary, and runtime
-  remain `DEFER` for all 48 tuples.
-- Claude adapter model values remain configured incumbents until a future
-  authorized, evidence-backed promotion. AREA-003 repository-static evaluation
-  readiness is complete, while observed same-suite evaluation and final
-  admission remain `DEFER`.
-- Keep `repo-static`, `provider-runtime`, `ci`, and `remote-live` evidence
-  separate. A result in one class never proves another.
-- `contracts/provider-runtime-evidence.json` is the singular machine owner for
-  provider capability evidence and runtime verdicts. Unsupported or absent
-  runtimes cannot receive runtime `PASS`.
-- Spec 045 retired the former role-semantics compatibility inputs after
-  zero-consumer proof; the harness contract and harness-semantics validator
-  are the current semantic owners.
-- `contracts/agent-governance-closure.json` is the single Spec 046 program
-  result-classification owner. Its repository-static PASS cannot promote
-  Claude discovery, auth, model resolution, hook delivery, hosted, remote,
-  live, or actual evaluation evidence.
-- Resolve `affected`, `staged`, `all-files`, `message/manual`, `ci`, and
-  `remote/live` semantics plus handoff fields from
-  [`rules/quality-standards.md`](../rules/quality-standards.md).
-- Tracked `.claude/agents/*.md`, `.claude/settings.json`, and shared hook wiring
-  are repo-static evidence. They do not prove native Claude discovery, hook
-  delivery, delegated role use, permission enforcement, or remote execution.
-- Preserve Claude-native `model` and least-privilege `tools:` validation while
-  `contracts/harness-contract.json` owns shared role semantics.
+- Use `.claude/agents/*.md` projections selected by the neutral registry for
+  authorized delegation through the available runtime mechanism.
+- Read shared skills through `.claude/skills`, a view of the neutral owner.
+  File presence alone does not prove native discovery or use.
+- Tracked settings reference shared lifecycle hooks. A hook can enforce a
+  boundary only when the intended runtime actually loads and dispatches it;
+  advisory compaction output is not completion evidence.
+- Keep managed, project, and user instruction precedence intact. Use imports
+  for shared context rather than copying policy into provider files.
+- Treat auto-memory and ignored local warning files as auxiliary context, not
+  shared policy or a substitute for repository validators.
+- Do not add native metadata fields from assumptions about another client
+  version. Verify the intended runtime contract when configuration changes.
 
 ## Validation and Refresh
 
-Run the harness, provider/model, shared role-semantic, roster, and repository
-quality checks after changing Claude settings, hooks, model semantics, or agent
-adapters:
-
-```bash
-python3 scripts/validate-agent-harness-contract.py --root .
-python3 scripts/validate-agent-provider-config.py --root .
-python3 scripts/validate-agent-provider-canaries.py --root .
-python3 scripts/validate-agent-model-fitness.py --root .
-python3 scripts/validate-agent-harness-semantics.py --root .
-python3 scripts/validate-agent-roster-currentness.py .
-python3 scripts/validate-agent-governance-closure.py --root .
-bash scripts/validate-repo-quality-gates.sh .
-```
-
-Refresh this note when Claude's tracked settings, native agent schema, or root
-shim changes. Native hook delivery, permission enforcement, and delegated-agent
-use require separate Claude runtime evidence.
+Validate registry/projection semantics, tool metadata, settings, and hook
+configuration after relevant changes. Separately evidence native discovery,
+permission enforcement, hooks, model resolution, and authenticated operation.
+Repository-static or hosted CI results cannot establish runtime success.
 
 ## Related Documents
 
-- [Bootstrap Governance](../rules/bootstrap.md)
-- [Local Harness Catalog](../harness-catalog.md)
-- [Subagent Protocol](../subagent-protocol.md)
-- [Quality Standards](../rules/quality-standards.md)
+- [Claude Baseline](../../../.claude/CLAUDE.md)
+- [Agent Registry](../../../.agents/registry.json)
+- [Model Selection](../policies/model-selection.md)
+- [Quality Policy](../policies/quality.md)

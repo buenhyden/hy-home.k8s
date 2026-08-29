@@ -22,7 +22,7 @@ if SPEC is None or SPEC.loader is None:
 CONFIG = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(CONFIG)
 
-PROVIDER_IDS = ("local", "claude", "codex", "gemini")
+PROVIDER_IDS = ("claude", "codex")
 EVIDENCE_CLASSES = (
     "repo-static",
     "native-discovery",
@@ -202,9 +202,10 @@ def apply_mutation(contract: dict[str, Any], name: str) -> None:
         contract["providers"][1]["evidenceLanes"][2]["verdict"] = "PASS"
         contract["providers"][1]["runtimeVerdicts"]["authenticatedRun"] = "PASS"
     elif name == "absent-runtime-native-pass":
-        contract["canaryRecords"][10]["verdict"] = "PASS"
-        contract["providers"][3]["evidenceLanes"][1]["verdict"] = "PASS"
-        contract["providers"][3]["runtimeVerdicts"]["nativeDiscovery"] = "PASS"
+        contract["providers"][0]["localObservation"]["installation"] = "absent"
+        contract["canaryRecords"][1]["verdict"] = "PASS"
+        contract["providers"][0]["evidenceLanes"][1]["verdict"] = "PASS"
+        contract["providers"][0]["runtimeVerdicts"]["nativeDiscovery"] = "PASS"
     else:
         fail("PNME-FIXTURE", f"unknown canary mutation {name}")
 

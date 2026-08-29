@@ -11,6 +11,11 @@
 
 <!-- archive-manifest:v1 records=93 historical-links=711 -->
 
+[MIG-0005: Codex/Claude 거버넌스 수렴](./migrations/0005-codex-claude-agent-governance-convergence.md)은
+제거된 권한 소스의 Git 복구 tuple과 현재 후속 소유자, 변경하지 않은 역사 링크
+소비자의 유한 집합을 기록한다. 일반 행마다 full-body snapshot이나 tombstone을
+추가하지 않으며, 후속 소유자 없는 삭제는 이 Archive 조회 경계로 해석한다.
+
 ## Stage Contract
 
 ### In Scope
@@ -150,7 +155,7 @@ ArchiveEnvelope.v1 marker 다음 byte부터 EOF까지가 payload다. Closing del
 ## Related Documents
 
 - [Docs README](../README.md)
-- [Document Stage Routing](../00.agent-governance/rules/document-authoring.md)
+- [Document Stage Routing](../00.agent-governance/policies/document-authoring.md)
 - [Archive Record Decision](../02.architecture/decisions/0018-full-body-archive-record-and-retention.md)
 - [Archive Record Template](../99.templates/templates/archive/archive-record.template.md)
 - [Template Routing Contract](../99.templates/README.md)

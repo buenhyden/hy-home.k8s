@@ -12,7 +12,6 @@ from pathlib import Path, PurePosixPath
 from typing import Any, Literal, Mapping, NoReturn, Sequence
 
 import yaml
-from jsonschema import Draft202012Validator
 
 from document_authority import (
     AuthorityError,
@@ -22,10 +21,11 @@ from document_authority import (
     run_bounded_process,
     validate_registry_authority,
 )
+from json_schema_validation import SchemaEvaluationError, schema_errors
 
 
 BASELINE_SHA = "8e1b00b4dfb84b8431ba4d3d31b4ad0445a0019d"  # pragma: allowlist secret
-BASELINE_COUNT = 433
+BASELINE_COUNT = 432
 GIT_TIMEOUT_SECONDS = 10
 DOCUMENT_TEXT_MAX_BYTES = 16 * 1024 * 1024
 _LS_TREE_MODE_TYPES = {
@@ -36,7 +36,7 @@ _LS_TREE_MODE_TYPES = {
     b"160000": b"commit",
 }
 _LS_FILES_MODES = {b"100644", b"100755", b"120000", b"160000"}
-ROOT_FILES = ("AGENTS.md", "CLAUDE.md", "GEMINI.md", "README.md")
+ROOT_FILES = ("AGENTS.md", "CLAUDE.md", "README.md")
 TARGET_ROOTS = (
     "_workspace",
     ".agents",
@@ -60,6 +60,7 @@ PROFILE_SCHEMA_PATH = PurePosixPath(
 # Compatibility name for direct callers of ``validate_registry``.  The only
 # schema it may load is the root-registry profile schema.
 SCHEMA_PATH = PROFILE_SCHEMA_PATH
+_UNSET = object()
 
 
 @dataclass(frozen=True)
@@ -166,6 +167,7 @@ class LifecycleDomain:
 class DocumentProfile:
     profile_id: str
     profile_class: Literal["sdlc", "common", "governance", "readme", "exception"]
+    path_pattern: str
     routes: tuple[Route, ...]
     artifact_id_pattern: str | None
     frontmatter: FrontmatterContract
@@ -473,14 +475,8 @@ def _within_target_scope(path: PurePosixPath) -> bool:
         return False
     if not path.parts:
         return False
-    if path.parts[0] in {"graphify-out", ".worktrees"}:
+    if path.parts[0] == ".worktrees":
         return False
-    if (
-        len(path.parts) == 3
-        and path.parts[:2] == (".gemini", "agents")
-        and path.suffix == ".md"
-    ):
-        return True
     return path.as_posix() in ROOT_FILES or path.parts[0] in TARGET_ROOTS
 
 
@@ -762,6 +758,7 @@ def _body_contract(raw: Mapping[str, Any] | None) -> BodyContract | None:
 def _profile_from_mapping(
     raw: Mapping[str, Any],
     *,
+    path_pattern: str,
     lifecycle_domain: LifecycleDomain | None,
 ) -> DocumentProfile:
     template = raw["template"]
@@ -779,6 +776,7 @@ def _profile_from_mapping(
     return DocumentProfile(
         profile_id=raw["id"],
         profile_class=raw["class"],
+        path_pattern=path_pattern,
         routes=routes,
         artifact_id_pattern=raw["artifactIdPattern"],
         frontmatter=FrontmatterContract(
@@ -987,6 +985,8 @@ def _standalone_structure_diagnostics(
 def _terminal_semantic_diagnostics(
     root: Path,
     raw_registry: Mapping[str, Any],
+    *,
+    template_regular_paths: frozenset[PurePosixPath] | None = None,
 ) -> tuple[Diagnostic, ...]:
     """Validate relationships not expressible in the terminal JSON Schema."""
 
@@ -1132,8 +1132,12 @@ def _terminal_semantic_diagnostics(
                 template_path = _normalize_relative_path(template)
                 if template_path.as_posix() != template:
                     raise ValueError("path is not canonical")
-                mode = _lstat_named_path(root, template_path)
-                if not stat.S_ISREG(mode):
+                regular = (
+                    stat.S_ISREG(_lstat_named_path(root, template_path))
+                    if template_regular_paths is None
+                    else template_path in template_regular_paths
+                )
+                if not regular:
                     raise ValueError("template is not a regular file")
             except ValueError as exc:
                 diagnostics.append(
@@ -1247,6 +1251,7 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
         internal = _internal_profile_form(profile)
         return _profile_from_mapping(
             internal,
+            path_pattern=profile["pathPattern"],
             lifecycle_domain=domains_by_profile.get(profile["id"]),
         )
 
@@ -1276,22 +1281,52 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
     )
 
 
-def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
-    """Validate one terminal root-registry payload and return its typed view."""
+def validate_registry(
+    root: Path,
+    raw_registry: Mapping[str, Any],
+    *,
+    template_regular_paths: frozenset[PurePosixPath] | None = None,
+    trusted_registry: Registry | None = None,
+    raw_schema: object = _UNSET,
+) -> Registry:
+    """Validate a payload with filesystem or caller-proved Git template regularity.
+
+    Supplied paths replace only template existence/type lookup, never schema,
+    path normalization, profile, relationship, or lifecycle validation.
+    A supplied trusted registry binds every profile's literal executable patterns
+    before proposed pattern compilation, projection, or classification.
+    """
 
     root = root.absolute()
-    schema = load_json_file(root / SCHEMA_PATH, diagnostic_path=SCHEMA_PATH)
+    if raw_schema is not _UNSET and (
+        not isinstance(template_regular_paths, frozenset)
+        or any(not isinstance(path, PurePosixPath) for path in template_regular_paths)
+    ):
+        _fail(
+            "REGISTRY_SCHEMA",
+            expected="complete supplied schema and template regularity facts",
+            actual="template facts are unavailable",
+        )
+    schema = (
+        load_json_file(root / SCHEMA_PATH, diagnostic_path=SCHEMA_PATH)
+        if raw_schema is _UNSET
+        else raw_schema
+    )
     if not isinstance(schema, dict):
         _fail(
             "REGISTRY_SCHEMA",
             expected="a JSON Schema object",
             actual=type(schema).__name__,
         )
-    schema_errors = sorted(
-        Draft202012Validator(schema).iter_errors(raw_registry),
-        key=lambda error: tuple(str(part) for part in error.absolute_path),
-    )
-    if schema_errors:
+    try:
+        errors = schema_errors(schema, raw_registry)
+    except SchemaEvaluationError:
+        _fail(
+            "REGISTRY_SCHEMA",
+            expected="a valid local JSON Schema",
+            actual="schema configuration or evaluation failed",
+        )
+    if errors:
         raise DocumentContractError(
             tuple(
                 _diagnostic(
@@ -1299,9 +1334,32 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
                     expected=error.message,
                     actual="schema validation failed",
                 )
-                for error in schema_errors
+                for error in errors
             )
         )
+    if trusted_registry is not None:
+        proposed_profiles = raw_registry["profiles"]
+        proposed_ids = tuple(profile["id"] for profile in proposed_profiles)
+        trusted_ids = tuple(profile.profile_id for profile in trusted_registry.profiles)
+        matches = len(set(proposed_ids)) == len(proposed_ids) and set(
+            proposed_ids
+        ) == set(trusted_ids)
+        if matches:
+            trusted_profiles = {
+                profile.profile_id: profile for profile in trusted_registry.profiles
+            }
+            matches = all(
+                profile["pathPattern"] == trusted_profiles[profile["id"]].path_pattern
+                and profile.get("artifactIdPattern")
+                == trusted_profiles[profile["id"]].artifact_id_pattern
+                for profile in proposed_profiles
+            )
+        if not matches:
+            _fail(
+                "REGISTRY_EXECUTABLE_POLICY",
+                expected="the trusted profile identities and literal patterns",
+                actual="proposed executable policy differs",
+            )
     try:
         validate_registry_authority(raw_registry)
     except AuthorityError as exc:
@@ -1310,14 +1368,21 @@ def validate_registry(root: Path, raw_registry: Mapping[str, Any]) -> Registry:
             expected="the sole bounded Stage 99 document-profile authority",
             actual=str(exc),
         )
-    semantic_diagnostics = _terminal_semantic_diagnostics(root, raw_registry)
+    semantic_diagnostics = _terminal_semantic_diagnostics(
+        root, raw_registry, template_regular_paths=template_regular_paths
+    )
     if semantic_diagnostics:
         raise DocumentContractError(semantic_diagnostics)
     return _typed_registry_from_mapping(raw_registry)
 
 
 def _load_published_contract(
-    root: Path, path: PurePosixPath, schema_path: PurePosixPath
+    root: Path,
+    path: PurePosixPath,
+    schema_path: PurePosixPath,
+    *,
+    raw_payload: object = _UNSET,
+    raw_schema: object = _UNSET,
 ) -> dict[str, Any]:
     """Decode one published contract and validate it against its own schema.
 
@@ -1326,7 +1391,17 @@ def _load_published_contract(
     reaching a schema this repository no longer ships.
     """
 
-    payload = load_json_file(root / path, diagnostic_path=path)
+    if (raw_payload is _UNSET) != (raw_schema is _UNSET):
+        _fail(
+            "REGISTRY_SCHEMA",
+            expected="complete supplied registry and schema inputs",
+            actual="a supplied input is unavailable",
+        )
+    payload = (
+        load_json_file(root / path, diagnostic_path=path)
+        if raw_payload is _UNSET
+        else raw_payload
+    )
     if not isinstance(payload, dict):
         _fail(
             "REGISTRY_SCHEMA",
@@ -1343,17 +1418,25 @@ def _load_published_contract(
                 f"$id={payload.get('$id')!r}"
             ),
         )
-    schema = load_json_file(root / schema_path, diagnostic_path=schema_path)
+    schema = (
+        load_json_file(root / schema_path, diagnostic_path=schema_path)
+        if raw_schema is _UNSET
+        else raw_schema
+    )
     if not isinstance(schema, dict):
         _fail(
             "REGISTRY_SCHEMA",
             expected=f"a JSON Schema object at {schema_path.as_posix()}",
             actual=type(schema).__name__,
         )
-    errors = sorted(
-        Draft202012Validator(schema).iter_errors(payload),
-        key=lambda error: tuple(str(part) for part in error.absolute_path),
-    )
+    try:
+        errors = schema_errors(schema, payload)
+    except SchemaEvaluationError:
+        _fail(
+            "REGISTRY_SCHEMA",
+            expected="a valid local JSON Schema",
+            actual="schema configuration or evaluation failed",
+        )
     if errors:
         raise DocumentContractError(
             tuple(
@@ -1456,7 +1539,13 @@ def _internal_profile_form(profile: Mapping[str, Any]) -> dict[str, Any]:
     }
 
 
-def load_internal_payload(root: Path) -> dict[str, Any]:
+def load_internal_payload(
+    root: Path,
+    *,
+    raw_registry: object = _UNSET,
+    raw_schema: object = _UNSET,
+    template_regular_paths: frozenset[PurePosixPath] | None = None,
+) -> dict[str, Any]:
     """Return a defensive copy of the sole published Stage 99 registry.
 
     The terminal topology deliberately has no flat-registry or route-contract
@@ -1465,7 +1554,28 @@ def load_internal_payload(root: Path) -> dict[str, Any]:
     """
 
     root = root.absolute()
-    registry = _load_published_contract(root, REGISTRY_PATH, PROFILE_SCHEMA_PATH)
+    if (
+        raw_registry is not _UNSET
+        or raw_schema is not _UNSET
+        or template_regular_paths is not None
+    ) and (
+        raw_registry is _UNSET
+        or raw_schema is _UNSET
+        or not isinstance(template_regular_paths, frozenset)
+        or any(not isinstance(path, PurePosixPath) for path in template_regular_paths)
+    ):
+        _fail(
+            "REGISTRY_SCHEMA",
+            expected="complete supplied registry, schema and template regularity facts",
+            actual="a supplied input is unavailable or malformed",
+        )
+    registry = _load_published_contract(
+        root,
+        REGISTRY_PATH,
+        PROFILE_SCHEMA_PATH,
+        raw_payload=raw_registry,
+        raw_schema=raw_schema,
+    )
     try:
         validate_registry_authority(registry)
     except AuthorityError as exc:
@@ -1474,16 +1584,31 @@ def load_internal_payload(root: Path) -> dict[str, Any]:
             expected="the sole bounded Stage 99 document-profile authority",
             actual=str(exc),
         )
-    semantic_diagnostics = _terminal_semantic_diagnostics(root, registry)
+    semantic_diagnostics = _terminal_semantic_diagnostics(
+        root, registry, template_regular_paths=template_regular_paths
+    )
     if semantic_diagnostics:
         raise DocumentContractError(semantic_diagnostics)
     return copy.deepcopy(registry)
 
 
-def load_registry(root: Path) -> Registry:
+def load_registry(
+    root: Path,
+    *,
+    raw_registry: object = _UNSET,
+    raw_schema: object = _UNSET,
+    template_regular_paths: frozenset[PurePosixPath] | None = None,
+) -> Registry:
     """Build the typed view directly from the root registry authority."""
 
-    return _typed_registry_from_mapping(load_internal_payload(root))
+    return _typed_registry_from_mapping(
+        load_internal_payload(
+            root,
+            raw_registry=raw_registry,
+            raw_schema=raw_schema,
+            template_regular_paths=template_regular_paths,
+        )
+    )
 
 
 def _route_matches(route: Route, path: PurePosixPath) -> bool:

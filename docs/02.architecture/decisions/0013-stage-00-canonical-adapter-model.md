@@ -1,15 +1,20 @@
 ---
 title: 'ADR-0013: Stage 00 Canonical Adapter Model'
 type: sdlc/adr
-status: accepted
+status: superseded
 owner: platform
-updated: 2026-07-30
+updated: 2026-08-28
 artifact_id: "ADR-0013"
+superseded_by: "ADR-0030"
 ---
 
 # ADR-0013: Stage 00 Canonical Adapter Model
 
 ## Overview
+
+Superseded by [ADR-0030](0030-authority-first-sdlc-and-agent-governance-convergence.md).
+The historical decision below is retained; its provider and custom-hook model
+is no longer current authority.
 
 이 ADR은 `hy-home.k8s`의 AI Agent governance를 Stage 00 단일 공통 governance로 유지하고,
 provider별 native adapter, local adapter, 또는 symlink view를 명시적으로 구분한다는 결정을 기록한다.
@@ -110,10 +115,16 @@ policy를 복제하면 같은 규칙이 서로 다른 표현으로 drift될 수 
 
 ## Traceability
 
+### Lifecycle Traceability
+
+| Decision lineage | Replacement relation | Affected Spec |
+| --- | --- | --- |
+| [ADR-0030](0030-authority-first-sdlc-and-agent-governance-convergence.md) | Superseded by ADR-0030. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+
 - **PRD**: [../../01.requirements/003-workspace-agent-governance-platform.md](../../01.requirements/0003-workspace-agent-governance-platform.md)
 - **ARD**: [../requirements/0006-workspace-agent-governance-platform.md](../descriptions/0006-workspace-agent-governance-platform.md)
 - **Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/0006-workspace-harness-gap-analysis/spec.md)
 - **Plan**: [../../04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md](../../98.archive/README.md#document-index)
 - **Task**: [Archive Index](../../98.archive/README.md#document-index)
 - **Governance Hub**: [../../00.agent-governance/README.md](../../00.agent-governance/README.md)
-- **Harness Catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
+- **Agent Registry**: [../../../.agents/registry.json](../../../.agents/registry.json)

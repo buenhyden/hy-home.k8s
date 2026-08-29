@@ -121,6 +121,49 @@ class AgentCheckpointContractTests(unittest.TestCase):
         self.assertEqual(counts["remainingWork"], 2)
         self.assertEqual(counts["validationRecords"], 2)
 
+    def test_only_supported_provider_ids_are_accepted(self) -> None:
+        for provider in ("local", "gemini", "antigravity"):
+            with self.subTest(provider=provider):
+                checkpoint = self.checkpoint_copy()
+                checkpoint["identity"]["providerSurfaceId"] = provider
+                checkpoint["executor"]["providerId"] = provider
+                self.assert_rule(
+                    checkpoint, self.repository_state_copy(), "AHLL-CP-SCHEMA"
+                )
+
+    def test_executor_membership_comes_from_agent_registry(self) -> None:
+        registry = self.validator.load_json(
+            REPOSITORY_ROOT, self.validator.REGISTRY_PATH
+        )
+        role_id = self.fixture["syntheticCheckpoint"]["executor"]["roleId"]
+        for mutation in ("missing-role", "unsupported-provider", "duplicate-role"):
+            with self.subTest(mutation=mutation):
+                changed = copy.deepcopy(registry)
+                role = next(row for row in changed["roles"] if row["id"] == role_id)
+                if mutation == "missing-role":
+                    changed["roles"].remove(role)
+                elif mutation == "unsupported-provider":
+                    role["supported_providers"] = ["claude"]
+                else:
+                    changed["roles"].append(copy.deepcopy(role))
+                original_load = self.validator.load_json
+
+                def load_contract(root, path):
+                    if path == self.validator.REGISTRY_PATH:
+                        return changed
+                    return original_load(root, path)
+
+                with mock.patch.object(
+                    self.validator, "load_json", side_effect=load_contract
+                ):
+                    with self.assertRaises(self.validator.CheckpointError) as raised:
+                        self.validator.validate_checkpoint(
+                            REPOSITORY_ROOT,
+                            self.checkpoint_copy(),
+                            self.repository_state_copy(),
+                        )
+                self.assertEqual(raised.exception.code, "AHLL-CP-REGISTRY")
+
     def test_import_api_accepts_supplied_non_synthetic_checkpoint(self) -> None:
         checkpoint = self.checkpoint_copy()
         repository_state = self.repository_state_copy()
@@ -138,8 +181,7 @@ class AgentCheckpointContractTests(unittest.TestCase):
     def test_missing_loop_contract_fails_closed(self) -> None:
         required_inputs = (
             self.validator.SCHEMA_PATH,
-            self.validator.HARNESS_CONTRACT_PATH,
-            self.validator.MEMORY_README_PATH,
+            self.validator.REGISTRY_PATH,
         )
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)

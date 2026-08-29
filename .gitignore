@@ -74,23 +74,7 @@ kube-linter-linux.tar.gz
 
 .agent-work/
 
-!graphify-out/graph.html
-!graphify-out/GRAPH_REPORT.md
-!graphify-out/graph.json
-# Graphify is optional generated intelligence for local exploration.
-graphify-out/.graphify*
-
-# optional: commit for shared extraction speed, skip to keep repo small
-graphify-out/cache/
-
-# mtime-based, invalid after git clone - always gitignore this
-graphify-out/manifest.json
-
-# local token tracking, not useful to share
-graphify-out/cost.json
-
-!graphify-out/graph.html
-!graphify-out/GRAPH_REPORT.md
-!graphify-out/graph.json
+# Optional external graph exploration stays local.
+graphify-out/
 
 sessions/

@@ -21,8 +21,8 @@ Repository-static and pinned-upstream comparison research.
 
 ## Authority Boundary
 
-The harness catalog, roster-admission contract, provider adapters, and
-evaluation contracts own local role and admission truth. External catalogs are
+The [Agent Registry](../../../../.agents/registry.json) owns current local role
+and permission membership; provider notes own native behavior. External catalogs are
 comparison evidence, not automatic admission authority. Tracked adapters prove
 declared configuration only; discovery, authentication, tool enforcement,
 delegation, and effectiveness remain `DEFER` without matching runtime evidence.
@@ -37,9 +37,11 @@ are primary-owned by the sibling references.
 
 ### AI-agent-systems baseline
 
-The workspace has a repository-static 12-role, four-provider-surface roster
-described by the [harness catalog](../../../00.agent-governance/harness-catalog.md)
-and `contracts/harness-contract.json`. Roles define bounded ownership; their
+The 2026-08-08 observation described a repository-static 12-role,
+four-provider-surface roster in `harness-catalog.md` and
+`contracts/harness-contract.json`. Current membership is routed through the
+[Agent Registry](../../../../.agents/registry.json), not that dated roster.
+Roles define bounded ownership; their
 providers declare task instructions and configuration. The system requires a
 work-item owner, scoped inputs, least-privilege tool/sandbox selection,
 independent review for material risk, validation evidence, a rollback path, and
@@ -261,4 +263,4 @@ promotion. New source registered: `SRC-WERPC-074`. New claim registered:
 - [Model routing](agent-model-routing-and-configuration.md)
 - [Memory tiers](agent-memory-tiers-and-management.md)
 - [Source ledger](source-coverage-and-migration-ledger.md)
-- [Harness catalog](../../../00.agent-governance/harness-catalog.md)
+- [Agent Registry](../../../../.agents/registry.json)

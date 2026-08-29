@@ -21,7 +21,8 @@ from dataclasses import dataclass, field as dataclass_field
 from functools import lru_cache
 from pathlib import Path
 from pathlib import PurePosixPath
-from typing import Any, Iterable, Mapping, Sequence
+from types import MappingProxyType
+from typing import Any, Callable, Iterable, Mapping, Sequence
 from urllib.parse import unquote
 
 import yaml
@@ -34,6 +35,8 @@ try:
         WORK107_MIGRATION_PATH,
         WORK107_STABLE_INDEX_OVERVIEW,
         parse_work107_migration_document,
+        parse_archive_envelope,
+        recover_work107_legacy_envelope,
         validate_work107_migration_rows,
     )
 except ModuleNotFoundError:  # Imported as a repository-root test module.
@@ -44,19 +47,36 @@ except ModuleNotFoundError:  # Imported as a repository-root test module.
         WORK107_MIGRATION_PATH,
         WORK107_STABLE_INDEX_OVERVIEW,
         parse_work107_migration_document,
+        parse_archive_envelope,
+        recover_work107_legacy_envelope,
         validate_work107_migration_rows,
     )
 
 try:
     from archive_validation import (
+        MigrationProof,
         validate_pinned_migration_recovery,
+        repository_migration_proof,
+        compose_migration_targets,
+        MigrationDeclaration,
+        ArchiveRecord,
+        project_migration_declaration_fields,
+        validate_archive_records,
     )
 except ModuleNotFoundError:  # Imported as a repository-root test module.
     from scripts.archive_validation import (
+        MigrationProof,
         validate_pinned_migration_recovery,
+        repository_migration_proof,
+        compose_migration_targets,
+        MigrationDeclaration,
+        ArchiveRecord,
+        project_migration_declaration_fields,
+        validate_archive_records,
     )
 
 from document_contracts import (
+    DOCUMENT_TEXT_MAX_BYTES,
     Diagnostic,
     DocumentContractError,
     DocumentProfile,
@@ -76,15 +96,19 @@ from document_contracts import (
     read_repository_text,
 )
 from reference_information_architecture import (
+    CANONICAL_SCHEMA_PATH as RIA_SCHEMA_PATH,
+    MAX_BLOB_BYTES as RIA_MAX_BLOB_BYTES,
     ContractError as RiaContractError,
     _GitError as RiaGitError,
     _read_commit_path as _read_ria_commit_path,
     load_agent_cutover_projections,
     load_contract as load_ria_contract,
+    retired_baseline_protected_commit,
 )
 
 
 FIXTURE_PATH = Path("tests/fixtures/links-and-owners.json")
+_UNSET = object()
 DEBT_PATH = Path("tests/fixtures/document-contracts/semantic-compatibility-debt.json")
 LEDGER_PATH = PurePosixPath(
     "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md"
@@ -108,7 +132,6 @@ WORK054_MIGRATION_PATH = PurePosixPath(
     "docs/98.archive/migrations/"
     "mig-0003-agent-governance-control-plane-consolidation.md"
 )
-WORK054_MIGRATION_SHA256 = "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42"  # pragma: allowlist secret
 WORK054_WP004B_MIGRATION_PATH = PurePosixPath(
     "docs/98.archive/migrations/0004-document-authority-convergence.md"
 )
@@ -262,10 +285,10 @@ def _work107_stable_archive_rows(context: "Context") -> tuple[dict[str, object],
     """Load only the exact reviewed WORK-107 migration ledger from the candidate."""
 
     path = PurePosixPath(WORK107_MIGRATION_PATH)
-    try:
-        content = read_repository_text(context.root, path).encode("utf-8")
-    except (DocumentContractError, OSError, UnicodeError, ValueError):
+    text = context.texts.get(path)
+    if text is None:
         return ()
+    content = text.encode("utf-8")
     return _validated_work107_stable_archive_rows(
         str(context.root.absolute()),
         content,
@@ -489,47 +512,18 @@ OWNER_EXCLUSIONS = (
 RETIRED_REFERENCE_ALIASES = {
     PurePosixPath(
         "docs/00.agent-governance/contracts/agent-role-semantics.json"
-    ): PurePosixPath("docs/00.agent-governance/contracts/harness-contract.json"),
+    ): PurePosixPath(".agents/registry.json"),
     PurePosixPath(
         "docs/00.agent-governance/contracts/agent-role-semantics.schema.json"
-    ): PurePosixPath("docs/00.agent-governance/contracts/harness-contract.schema.json"),
+    ): PurePosixPath(".agents/contracts/agent-registry.schema.json"),
     PurePosixPath("scripts/validate-agent-role-semantics.py"): PurePosixPath(
         "scripts/validate-agent-harness-semantics.py"
     ),
     PurePosixPath("tests/fixtures/agent-role-semantics.json"): PurePosixPath(
-        "tests/fixtures/agent-harness-semantics.json"
+        ".agents/registry.json"
     ),
     PurePosixPath(".github/ABOUT.md"): PurePosixPath(".github/README.md"),
 }
-RETIRED_REFERENCE_PROTECTED_FILES = {
-    PurePosixPath(
-        "docs/90.references/audits/2026-07-05-wea/sdlc-ci-qa-formatting-automation.md"
-    ): "c81e25e2346241c4ffcb83fb073ba2d7c147541dbfeadd0bdeb21bc13e004bb8",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/90.references/audits/2026-07-03-wdgh/"
-        "workspace-document-governance-hardening-audit.md"
-    ): "16ebdfce8fcb4f2e82cfd47e76962b0509385c30823b3d4ece23c1b130994b4f",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/90.references/research/2026-07-04-wer/automation-pipeline-workflow-qa.md"
-    ): "9e4b828aae5e631ff5cf3daf6bc88223ecdb17ce377914b5e9b2f1a2af2601ab",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/90.references/audits/2026-07-04-wdcn/"
-        "workspace-document-contract-normalization-audit.md"
-    ): "bfa40f0f7e918df9dfaf0c44e5098e581a38969b7417bed2ab7fdabbdad80913",  # pragma: allowlist secret
-}
-RETIRED_REFERENCE_TERMINAL_STATUSES = frozenset(
-    {
-        "archived",
-        "cancelled",
-        "closed",
-        "complete",
-        "completed",
-        "done",
-        "rejected",
-        "retired",
-        "superseded",
-    }
-)
 
 
 @dataclass(frozen=True)
@@ -619,6 +613,9 @@ class Context:
     ria_contract_text: str | None = None
     route_state: str = "legacy"
     work105_history_base_commit: str = WORK105_HISTORY_SOURCE_COMMIT
+    document_registry: Registry | None = None
+    raw_schema: object = _UNSET
+    read_current_bytes: Callable[[str, int], bytes] | None = None
 
 
 @dataclass(frozen=True, order=True)
@@ -1233,7 +1230,9 @@ def _terminal_governance_current_owners(
         for profile in registry.profiles
         if profile.profile_id == "governance/reference"
     )
-    lifecycle_domain = owner_profiles[0].lifecycle_domain if len(owner_profiles) == 1 else None
+    lifecycle_domain = (
+        owner_profiles[0].lifecycle_domain if len(owner_profiles) == 1 else None
+    )
     allowed_states = (
         tuple(
             state
@@ -1345,11 +1344,48 @@ def _terminal_reference_current_packs(
     )
 
 
+def _held_context_inputs(
+    registry: Registry | None,
+    raw_schema: object,
+    read_current_bytes: Callable[[str, int], bytes] | None,
+) -> bool:
+    if registry is None and raw_schema is _UNSET and read_current_bytes is None:
+        return False
+    if (
+        not isinstance(registry, Registry)
+        or not isinstance(raw_schema, dict)
+        or not callable(read_current_bytes)
+    ):
+        raise ConfigurationError("held historical inputs are incomplete")
+    return True
+
+
+def _held_context_bytes(
+    read_current_bytes: Callable[[str, int], bytes],
+    path: PurePosixPath,
+    max_bytes: int,
+) -> bytes:
+    payload = read_current_bytes(path.as_posix(), max_bytes)
+    if type(payload) is not bytes or len(payload) > max_bytes:
+        raise ConfigurationError("held historical bytes are invalid or oversized")
+    return payload
+
+
 def _build_context(
-    root: Path, include_paths: tuple[PurePosixPath, ...] = ()
+    root: Path,
+    include_paths: tuple[PurePosixPath, ...] = (),
+    *,
+    registry: Registry | None = None,
+    raw_schema: object = _UNSET,
+    read_current_bytes: Callable[[str, int], bytes] | None = None,
+    read_symlink: Callable[[str], str] | None = None,
 ) -> Context:
     root = root.absolute()
-    registry = load_registry(root)
+    held = _held_context_inputs(registry, raw_schema, read_current_bytes)
+    if (held and not callable(read_symlink)) or (not held and read_symlink is not None):
+        raise ConfigurationError("held historical symlink inputs are incomplete")
+    if not held:
+        registry = load_registry(root)
     inventory = enumerate_target_markdown(root, include_paths=include_paths)
     profiles: dict[PurePosixPath, ProfileView] = {}
     texts: dict[PurePosixPath, str] = {}
@@ -1358,14 +1394,39 @@ def _build_context(
     for path in inventory.current_paths:
         profile = classify_path(registry, path)
         profiles[path] = _profile_view(profile)
-        text = read_repository_text(root, path)
+        if held:
+            assert read_current_bytes is not None
+            try:
+                text = _held_context_bytes(
+                    read_current_bytes, path, DOCUMENT_TEXT_MAX_BYTES
+                ).decode("utf-8", errors="strict")
+            except UnicodeError as exc:
+                raise ConfigurationError("held historical text is not UTF-8") from exc
+        else:
+            text = read_repository_text(root, path)
         texts[path] = text
         metadata[path] = _frontmatter(text)
         if path == LEDGER_PATH:
-            ledger_bytes = (root / path).read_bytes()
+            ledger_bytes = text.encode("utf-8")
     try:
-        ria_contract = load_ria_contract(root, Path(RIA_CONTRACT_PATH.as_posix()))
-        ria_contract_text = read_repository_text(root, RIA_CONTRACT_PATH)
+        if held:
+            assert read_current_bytes is not None
+            ria_bytes = _held_context_bytes(
+                read_current_bytes, RIA_CONTRACT_PATH, RIA_MAX_BLOB_BYTES
+            )
+            ria_schema_bytes = _held_context_bytes(
+                read_current_bytes, PurePosixPath(RIA_SCHEMA_PATH), RIA_MAX_BLOB_BYTES
+            )
+            ria_contract = load_ria_contract(
+                root,
+                Path(RIA_CONTRACT_PATH),
+                contract_bytes=ria_bytes,
+                schema_bytes=ria_schema_bytes,
+            )
+            ria_contract_text = ria_bytes.decode("utf-8", errors="strict")
+        else:
+            ria_contract = load_ria_contract(root, Path(RIA_CONTRACT_PATH.as_posix()))
+            ria_contract_text = read_repository_text(root, RIA_CONTRACT_PATH)
     except (
         DocumentContractError,
         RiaContractError,
@@ -1378,7 +1439,11 @@ def _build_context(
         ) from exc
     adapters: dict[PurePosixPath, PurePosixPath] = {}
     for adapter in inventory.current_symlink_paths:
-        raw_target = os.readlink(root / adapter)
+        raw_target = (
+            read_symlink(adapter.as_posix()) if held else os.readlink(root / adapter)
+        )
+        if not isinstance(raw_target, str):
+            raise ConfigurationError("held historical symlink target is invalid")
         normalized = posixpath.normpath(
             posixpath.join(adapter.parent.as_posix(), raw_target)
         )
@@ -1428,6 +1493,9 @@ def _build_context(
         ledger_bytes,
         ria_contract_text,
         getattr(registry, "route_state", "terminal"),
+        document_registry=registry if held else None,
+        raw_schema=raw_schema,
+        read_current_bytes=read_current_bytes,
     )
 
 
@@ -2976,26 +3044,6 @@ def _is_current_authority(context: Context, path: PurePosixPath) -> bool:
     return profile.mode == "authored" and status in {"active", "accepted"}
 
 
-def _retired_reference_replacement(
-    context: Context,
-    source: PurePosixPath,
-    target: PurePosixPath,
-) -> PurePosixPath | None:
-    replacement = RETIRED_REFERENCE_ALIASES.get(target)
-    if replacement is None:
-        return None
-    status = str(context.metadata.get(source, {}).get("status", "")).casefold()
-    if status in RETIRED_REFERENCE_TERMINAL_STATUSES:
-        return replacement
-    expected_digest = RETIRED_REFERENCE_PROTECTED_FILES.get(source)
-    if expected_digest is None:
-        return None
-    actual_digest = hashlib.sha256(
-        context.texts.get(source, "").encode("utf-8")
-    ).hexdigest()
-    return replacement if actual_digest == expected_digest else None
-
-
 def _work109_expected_stable_path(
     legacy: PurePosixPath,
 ) -> PurePosixPath | None:
@@ -3146,6 +3194,7 @@ def _work109_migration_projection(
         raise ConfigurationError("WORK-109 migration ledger source differs") from None
 
     wp004b_targets = _work054_wp004b_targets(context)
+    successors = _generic_migration_targets(context)
     aliases: dict[PurePosixPath, PurePosixPath] = {}
     replacements: dict[PurePosixPath, PurePosixPath] = {}
     merges: dict[PurePosixPath, PurePosixPath] = {}
@@ -3191,6 +3240,7 @@ def _work109_migration_projection(
             )
             if current_target is None:
                 current_target = expected
+            current_target = successors.get(current_target, current_target)
             if (
                 not isinstance(stable_value, str)
                 or expected is None
@@ -3227,6 +3277,7 @@ def _work109_migration_projection(
         )
         if current_replacement is None:
             current_replacement = expected_replacement
+        current_replacement = successors.get(current_replacement, current_replacement)
         if (
             action not in {"replaced", "merged"}
             or row.get("stable_path") is not None
@@ -3316,10 +3367,35 @@ def _work109_four_digit_aliases(
     return aliases
 
 
+def _context_migration_proof(context: Context) -> MigrationProof:
+    registry = getattr(context, "document_registry", None)
+    raw_schema = getattr(context, "raw_schema", _UNSET)
+    read_current_bytes = getattr(context, "read_current_bytes", None)
+    try:
+        if _held_context_inputs(registry, raw_schema, read_current_bytes):
+            return repository_migration_proof(
+                context.root,
+                registry=registry,
+                raw_schema=raw_schema,
+                read_current_bytes=read_current_bytes,
+            )
+        return repository_migration_proof(context.root)
+    except (ArchiveContractError, OSError, ValueError) as exc:
+        raise ConfigurationError("generic migration recovery proof differs") from exc
+
+
+def _generic_migration_targets(context: Context) -> dict[PurePosixPath, PurePosixPath]:
+    proof = _context_migration_proof(context)
+    return {
+        PurePosixPath(source): PurePosixPath(target)
+        for source, target in proof.targets.items()
+    }
+
+
 def _work054_wp003_owner_merges(
     context: Context,
 ) -> dict[PurePosixPath, PurePosixPath]:
-    """Return only the exact Stage 00 legacy owner merges from MIG-0003."""
+    """Use the recovery owner for MIG-0003 source proof, not another parser."""
 
     if (
         WORK054_MIGRATION_PATH not in context.paths
@@ -3327,81 +3403,28 @@ def _work054_wp003_owner_merges(
     ):
         raise ConfigurationError("WORK-054 WP-003 migration ledger is unavailable")
     text = context.texts.get(WORK054_MIGRATION_PATH)
-    if (
-        text is None
-        or hashlib.sha256(text.encode("utf-8")).hexdigest() != WORK054_MIGRATION_SHA256
-    ):
-        raise ConfigurationError("WORK-054 WP-003 migration ledger differs")
-    metadata = context.metadata.get(WORK054_MIGRATION_PATH, {})
-    if (
-        metadata.get("artifact_id") != "MIG-0003"
-        or metadata.get("migration_id") != "MIG-0003"
-        or metadata.get("status") != "accepted"
-    ):
-        raise ConfigurationError("WORK-054 WP-003 migration ledger identity differs")
-    marker = f"{WORK109_LEDGER_MARKER}\n\n```json\n"
-    if text.count(marker) != 1:
-        raise ConfigurationError("WORK-054 WP-003 migration ledger contract differs")
-    _prefix, remainder = text.split(marker, 1)
-    if remainder.count("\n```") != 1:
-        raise ConfigurationError("WORK-054 WP-003 migration ledger contract differs")
-    raw, suffix = remainder.split("\n```", 1)
-    if not suffix.startswith("\n\n## Recovery\n"):
-        raise ConfigurationError("WORK-054 WP-003 migration ledger contract differs")
+    if text is None:
+        raise ConfigurationError("WORK-054 WP-003 migration ledger is unavailable")
     try:
-        rows = json.loads(raw)
-    except (json.JSONDecodeError, UnicodeError) as exc:
-        raise ConfigurationError(
-            "WORK-054 WP-003 migration ledger contract differs"
-        ) from exc
-    expected = {
-        PurePosixPath("docs/00.agent-governance/common-governance.md"): PurePosixPath(
-            "docs/00.agent-governance/harness-catalog.md"
-        ),
-        PurePosixPath(
-            "docs/00.agent-governance/harness-implementation-map.md"
-        ): PurePosixPath("docs/00.agent-governance/harness-catalog.md"),
-        PurePosixPath("docs/00.agent-governance/providers/agents-md.md"): PurePosixPath(
-            "docs/00.agent-governance/providers/codex.md"
-        ),
-    }
+        rows = validate_pinned_migration_recovery(
+            context.root, WORK054_MIGRATION_PATH.as_posix(), text.encode("utf-8")
+        )
+    except (ArchiveContractError, OSError, ValueError) as exc:
+        raise ConfigurationError("WORK-054 WP-003 recovery proof differs") from exc
+    successors = _generic_migration_targets(context)
     result: dict[PurePosixPath, PurePosixPath] = {}
-    if not isinstance(rows, list) or len(rows) != len(expected):
-        raise ConfigurationError("WORK-054 WP-003 migration ledger coverage differs")
     for row in rows:
+        legacy = PurePosixPath(str(row["legacy_path"]))
+        replacement = PurePosixPath(str(row["replacement"]))
+        terminal = successors.get(replacement, replacement)
         if (
-            not isinstance(row, Mapping)
-            or tuple(row) != WORK109_LEDGER_FIELDS
-            or row.get("stable_path") is not None
-            or row.get("artifact_id") is not None
-            or row.get("action") != "merged"
-            or not isinstance(row.get("legacy_path"), str)
-            or not isinstance(row.get("replacement"), str)
-            or not isinstance(row.get("source_commit"), str)
-            or re.fullmatch(r"[0-9a-f]{40}", row["source_commit"]) is None
-            or not isinstance(row.get("source_blob"), str)
-            or re.fullmatch(r"[0-9a-f]{40}", row["source_blob"]) is None
-            or not isinstance(row.get("content_sha256"), str)
-            or re.fullmatch(r"[0-9a-f]{64}", row["content_sha256"]) is None
-            or not isinstance(row.get("reason"), str)
-            or not row["reason"].strip()
-        ):
-            raise ConfigurationError("WORK-054 WP-003 migration ledger entry differs")
-        legacy = PurePosixPath(row["legacy_path"])
-        replacement = PurePosixPath(row["replacement"])
-        if (
-            expected.get(legacy) != replacement
-            or replacement not in context.tracked_regular_paths
+            terminal not in context.tracked_regular_paths
             or not _path_exists_without_dereference(
-                context.root,
-                replacement,
-                context.adapter_targets,
+                context.root, terminal, context.adapter_targets
             )
         ):
-            raise ConfigurationError("WORK-054 WP-003 migration ledger target differs")
-        result[legacy] = replacement
-    if result != expected:
-        raise ConfigurationError("WORK-054 WP-003 migration ledger coverage differs")
+            raise ConfigurationError("WORK-054 WP-003 migration target differs")
+        result[legacy] = terminal
     return result
 
 
@@ -3848,7 +3871,7 @@ def _terminal_historical_source_boundary(
         candidates.append(
             (
                 PurePosixPath("docs/90.references") / pack_id,
-                encoded_commit.removeprefix("git-sha1:"),
+                retired_baseline_protected_commit(contract, entry),
                 frozenset(members),
                 frozenset(allowed_states),
             )
@@ -4002,82 +4025,275 @@ def _reviewed_source_pinned_alias_edges(
     return edges
 
 
-def _reviewed_work054_historical_owner_edges(
+@dataclass(frozen=True)
+class ArchivePayloadProof:
+    """One Archive-owned payload removed from instruction scanning only."""
+
+    input_bytes: bytes = dataclass_field(repr=False)
+    remaining_text: str = dataclass_field(repr=False)
+
+
+@dataclass(frozen=True)
+class HistoricalMigrationProof:
+    """Exact historical bytes and terminal dispositions; never a status waiver."""
+
+    terminal_targets: Mapping[str, str]
+    consumers: Mapping[str, bytes] = dataclass_field(repr=False)
+    rendered_dispositions: Mapping[tuple[str, str], str]
+    literal_dispositions: Mapping[tuple[str, str], str] = dataclass_field(
+        default_factory=dict
+    )
+    document_registry: Registry | None = None
+    declarations: Mapping[str, MigrationDeclaration] = dataclass_field(
+        default_factory=dict
+    )
+    archive_payloads: Mapping[str, ArchivePayloadProof] = dataclass_field(
+        default_factory=dict
+    )
+
+
+def repository_historical_migration_proof(
+    root: Path,
+    *,
+    registry: Registry | None = None,
+    raw_schema: object = _UNSET,
+    read_current_bytes: Callable[[str, int], bytes] | None = None,
+    read_symlink: Callable[[str], str] | None = None,
+) -> HistoricalMigrationProof:
+    """Expose the existing link owner's verified historical interpretations."""
+
+    if (
+        registry is None
+        and raw_schema is _UNSET
+        and read_current_bytes is None
+        and read_symlink is None
+    ):
+        context = _build_context(root)
+    else:
+        context = _build_context(
+            root,
+            registry=registry,
+            raw_schema=raw_schema,
+            read_current_bytes=read_current_bytes,
+            read_symlink=read_symlink,
+        )
+    _, move_targets, _ = _document_taxonomy_transition_manifest(context)
+    return _historical_migration_proof(context, move_targets)
+
+
+def _historical_migration_proof(
     context: Context,
     move_targets: Mapping[PurePosixPath, PurePosixPath],
-) -> dict[ArchiveTransitionEdge, PurePosixPath]:
-    """Resolve rendered retired links through the sealed migration chain."""
-
+) -> HistoricalMigrationProof:
+    proof = _context_migration_proof(context)
+    generic_targets = {
+        PurePosixPath(source): PurePosixPath(target)
+        for source, target in proof.targets.items()
+    }
     aliases, replacements, work109_merges = _work109_migration_projection(context)
+    archive_aliases = _work107_stable_archive_aliases(context)
+    if PurePosixPath(WORK107_MIGRATION_PATH) in context.paths and not archive_aliases:
+        raise ConfigurationError("historical archive migration proof differs")
     migration_projections = (
         move_targets,
         aliases,
         replacements,
         work109_merges,
+        archive_aliases,
         _work054_wp003_owner_merges(context),
         _work054_wp004b_targets(context),
+        generic_targets,
     )
-    redirects: dict[PurePosixPath, PurePosixPath] = {}
-    for projection in migration_projections:
-        for retired, target in projection.items():
-            previous = redirects.get(retired)
-            if previous is not None and previous != target:
-                raise ConfigurationError(
-                    "WORK-054 historical migration projection conflicts"
-                )
-            redirects[retired] = target
+    try:
+        composed = compose_migration_targets(
+            tuple(
+                {
+                    source.as_posix(): target.as_posix()
+                    for source, target in projection.items()
+                }
+                for projection in migration_projections
+            )
+        )
+    except ArchiveContractError as exc:
+        raise ConfigurationError("historical migration composition differs") from exc
+    redirects = dict(composed)
+    # These older unique cutovers are not Migration rows. Their current
+    # successors still require a tracked regular artifact, not a status label.
+    for source, target in RETIRED_REFERENCE_ALIASES.items():
+        terminal = redirects.get(target.as_posix(), target.as_posix())
+        if PurePosixPath(terminal) in context.tracked_regular_paths:
+            redirects[source.as_posix()] = terminal
 
-    terminal_redirects: dict[PurePosixPath, PurePosixPath] = {}
-    for retired, target in redirects.items():
-        visited = {retired}
-        terminal = target
-        while terminal in redirects and redirects[terminal] != terminal:
-            if terminal in visited:
-                raise ConfigurationError(
-                    "WORK-054 historical migration projection cycles"
-                )
-            visited.add(terminal)
-            terminal = redirects[terminal]
-        if terminal != retired:
-            terminal_redirects[retired] = terminal
+    declarations = dict(proof.declarations)
+    # Each old ledger's complete owner proof ran above. This view removes only
+    # typed path fields; no old or new ledger receives a whole-document waiver.
+    for record in (
+        PurePosixPath(WORK107_MIGRATION_PATH),
+        WORK109_MIGRATION_PATH,
+        WORK054_MIGRATION_PATH,
+        WORK054_WP004B_MIGRATION_PATH,
+    ):
+        if record in context.paths:
+            declarations[record.as_posix()] = project_migration_declaration_fields(
+                context.texts[record].encode("utf-8"), redirects
+            )
 
-    reviewed_sources: set[PurePosixPath] = set()
+    consumers: dict[str, bytes] = {}
     for source in context.paths:
-        if _terminal_historical_source_boundary(
-            context, source
-        ) or _terminal_frozen_manifest_source(context, source):
-            reviewed_sources.add(source)
-    edges: dict[ArchiveTransitionEdge, PurePosixPath] = {}
-    for source in sorted(reviewed_sources):
-        text = context.texts.get(source)
-        if text is None:
-            continue
-        candidates: list[tuple[PurePosixPath, PurePosixPath]] = []
-        for raw in _extract_links(text):
-            kind, target = _local_destination(source, raw)
-            if kind != "local" or target is None:
-                continue
-            replacement = terminal_redirects.get(target)
-            if replacement is None or _path_exists_without_dereference(
-                context.root, target, context.adapter_targets
-            ):
-                continue
-            candidates.append((target, replacement))
-        if not candidates:
-            continue
-
-        for target, replacement in candidates:
-            if (
-                replacement not in context.tracked_regular_paths
-                or not _path_exists_without_dereference(
-                    context.root, replacement, context.adapter_targets
+        raw = context.texts.get(source, "").encode("utf-8")
+        boundary = _terminal_historical_source_boundary(context, source)
+        if boundary is not None:
+            try:
+                historical = _read_ria_commit_path(
+                    context.root, boundary, Path(source.as_posix())
                 )
-            ):
+            except (RiaContractError, RiaGitError) as exc:
                 raise ConfigurationError(
-                    "WORK-054 historical owner replacement is unavailable"
+                    "historical reference source proof is unavailable"
+                ) from exc
+            if historical != raw:
+                raise ConfigurationError("historical reference source bytes differ")
+            consumers[source.as_posix()] = historical
+        elif _terminal_frozen_manifest_source(context, source):
+            consumers[source.as_posix()] = raw
+    for name, raw in proof.consumers.items():
+        source = PurePosixPath(name)
+        if (
+            source not in context.tracked_regular_paths
+            or source not in context.paths
+            or context.texts.get(source, "").encode("utf-8") != raw
+        ):
+            raise ConfigurationError("historical migration consumer source differs")
+        consumers[name] = raw
+
+    edges: dict[tuple[str, str], str] = {}
+    literals: dict[tuple[str, str], str] = {}
+    for name, raw in consumers.items():
+        source = PurePosixPath(name)
+        for link in rendered_local_links(raw.decode("utf-8", "strict"), source):
+            if link.kind != "local" or link.target is None:
+                continue
+            target = link.target.as_posix()
+            terminal = redirects.get(target)
+            if terminal is None or _path_exists_without_dereference(
+                context.root, link.target, context.adapter_targets
+            ):
+                continue
+            if (
+                PurePosixPath(terminal) not in context.tracked_regular_paths
+                or not _path_exists_without_dereference(
+                    context.root, PurePosixPath(terminal), context.adapter_targets
                 )
-            edges[ArchiveTransitionEdge(source, target)] = replacement
-    return edges
+            ):
+                raise ConfigurationError("historical replacement is unavailable")
+            edges[(name, target)] = terminal
+        for (owner, target), disposition in getattr(proof, "references", {}).items():
+            if owner != name:
+                continue
+            if disposition.kind == "literal-path":
+                literals[owner, target] = disposition.terminal_path
+            elif disposition.kind == "symlink-view" and target in {
+                link.target.as_posix()
+                for link in rendered_local_links(raw.decode("utf-8", "strict"), source)
+                if link.kind == "local" and link.target is not None
+            }:
+                existing = edges.get((owner, target))
+                if existing is not None and existing != disposition.terminal_path:
+                    raise ConfigurationError(
+                        "historical view disposition conflicts with existing owner"
+                    )
+                edges[owner, target] = disposition.terminal_path
+        if (
+            name in proof.consumers
+            and not any(owner == name for owner, _ in edges)
+            and not any(owner == name for owner, _ in literals)
+        ):
+            raise ConfigurationError(
+                "historical migration consumer has no reviewed disposition"
+            )
+    archive_payloads = _archive_payload_proofs(context)
+    return HistoricalMigrationProof(
+        MappingProxyType(redirects),
+        MappingProxyType(consumers),
+        MappingProxyType(edges),
+        MappingProxyType(literals),
+        proof.proposed_registry,
+        MappingProxyType(declarations),
+        archive_payloads,
+    )
+
+
+def _archive_payload_proofs(
+    context: Context,
+) -> Mapping[str, ArchivePayloadProof]:
+    """Prove stable Archive payloads without reopening the held candidates."""
+
+    rows = _work107_stable_archive_rows(context)
+    stable_paths = frozenset(str(row["stable_path"]) for row in rows)
+    records_by_path = {
+        path.as_posix(): ArchiveRecord(path.as_posix(), text.encode("utf-8"))
+        for path in context.paths
+        if path in context.tracked_regular_paths
+        and path in context.profiles
+        and context.profiles[path].profile_id == "content/archive"
+        and (text := context.texts.get(path)) is not None
+    }
+    report = validate_archive_records(
+        context.root,
+        tuple(records_by_path.values()),
+        stable_archive_paths=stable_paths,
+    )
+    if not report.valid:
+        raise ConfigurationError("historical archive owner validation failed")
+
+    proofs: dict[str, ArchivePayloadProof] = {}
+    rows_by_stable_path = {str(row["stable_path"]): row for row in rows}
+    for archive_path, record in sorted(records_by_path.items()):
+        try:
+            parsed = parse_archive_envelope(record.content)
+        except ArchiveContractError as exc:
+            raise ConfigurationError("historical archive input differs") from exc
+        if archive_path in stable_paths:
+            try:
+                historical = recover_work107_legacy_envelope(
+                    context.root, rows_by_stable_path[archive_path]
+                )
+            except ArchiveContractError as exc:
+                raise ConfigurationError(
+                    "historical archive provenance differs"
+                ) from exc
+            if (
+                parsed.metadata.get("original_path")
+                != historical.metadata.get("original_path")
+                or parsed.metadata.get("source_commit")
+                != historical.metadata.get("source_commit")
+                or parsed.metadata.get("source_blob")
+                != historical.metadata.get("source_blob")
+                or parsed.metadata.get("content_sha256")
+                != historical.metadata.get("content_sha256")
+                or parsed.payload != historical.payload
+            ):
+                raise ConfigurationError("historical archive provenance differs")
+        remaining = record.content[: len(record.content) - len(parsed.payload)]
+        try:
+            remaining_text = remaining.decode("utf-8", errors="strict")
+        except UnicodeError as exc:
+            raise ConfigurationError("historical archive input differs") from exc
+        proofs[archive_path] = ArchivePayloadProof(record.content, remaining_text)
+    return MappingProxyType(proofs)
+
+
+def _reviewed_work054_historical_owner_edges(
+    context: Context,
+    move_targets: Mapping[PurePosixPath, PurePosixPath],
+) -> dict[ArchiveTransitionEdge, PurePosixPath]:
+    proof = _historical_migration_proof(context, move_targets)
+    return {
+        ArchiveTransitionEdge(
+            PurePosixPath(source), PurePosixPath(target)
+        ): PurePosixPath(terminal)
+        for (source, target), terminal in proof.rendered_dispositions.items()
+    }
 
 
 def _link_diagnostics(context: Context) -> list[Diagnostic]:
@@ -4149,15 +4365,6 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
                 if _work105_completed_history_ard_link(context, source, target):
                     continue
                 if _protected_historical_predecessor_link(context, source, target):
-                    continue
-                replacement = _retired_reference_replacement(
-                    context,
-                    source,
-                    target,
-                )
-                if replacement is not None and _path_exists_without_dereference(
-                    context.root, replacement, context.adapter_targets
-                ):
                     continue
                 diagnostics.append(
                     _diag(
@@ -7709,6 +7916,8 @@ def _ledger_diagnostics(context: Context) -> list[Diagnostic]:
                 DEBT_LITERAL["actual"],
             )
         ]
+    if context.route_state == "terminal":
+        return []
     columns, rows = _ledger_rows(context.texts[LEDGER_PATH])
     if columns != LEDGER_COLUMNS:
         return [
@@ -7758,8 +7967,6 @@ def _ledger_diagnostics(context: Context) -> list[Diagnostic]:
                     "empty required cell",
                 )
             )
-    if context.route_state == "terminal":
-        return diagnostics
     counter = collections.Counter(ledger_paths)
     if not protected:
         # The ledger records one authored-document migration. Its coverage

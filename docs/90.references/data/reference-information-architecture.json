@@ -437,8 +437,8 @@
       "inputRoots": [
         "docs/90.references/llm-wiki/README.md",
         "docs/00.agent-governance/README.md",
-        "docs/00.agent-governance/harness-catalog.md",
-        "docs/00.agent-governance/rules/document-stage-routing.md",
+        "docs/00.agent-governance/roles/README.md",
+        "docs/00.agent-governance/policies/document-authoring.md",
         "docs/README.md",
         "scripts/README.md"
       ],

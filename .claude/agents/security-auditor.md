@@ -1,6 +1,6 @@
 ---
 name: security-auditor
-description: Audit repository security controls across RBAC, isolation, sensitive-data handling, and supply-chain boundaries.
+description: Audit repository changes for secret exposure, privilege escalation, isolation failure, and policy violations.
 model: sonnet 4.6
 tools: Read, Grep, Glob, Bash
 ---
@@ -10,9 +10,9 @@ tools: Read, Grep, Glob, Bash
 ## Runtime Bootstrap
 
 - Load `CLAUDE.md`, `.claude/CLAUDE.md`, and this agent's imported scope before work.
-- Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.
+- Follow `docs/00.agent-governance/skills/work-lifecycle.md` for intake and completion.
 
-@import docs/00.agent-governance/scopes/security.md
+@import docs/00.agent-governance/roles/security.md
 
 ## Role
 
@@ -37,13 +37,14 @@ Audit repository security controls across RBAC, isolation, sensitive-data handli
 
 ## Capability and Evidence
 
-- Capability tier reference: `docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles/8/capabilityTier`.
+- Capability tier reference: `docs/00.agent-governance/policies/model-selection.md#top`.
 - Required evidence: cite each RBAC, NetworkPolicy, or secret-handling finding with `file:line`, severity, control impact, and remediation basis.
 
 ## Handoff / Escalation
 
+- Registry handoff targets: `k8s-implementer`, `supervisor`.
 - Escalate implementation work to `k8s-implementer.md` only after findings are clear.
 
 ## Postflight
 
-Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results.
+Run `docs/00.agent-governance/skills/work-lifecycle.md#completion` before returning results.

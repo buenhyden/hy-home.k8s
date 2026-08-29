@@ -1,17 +1,15 @@
 ---
 name: wiki-curator
-description: Maintain repository-local discovery entrypoints and generated owner maps without duplicating canonical policy.
-model: Gemini 3.5 Flash
+description: Maintain knowledge navigation and canonical links without creating duplicate policy authority.
 ---
 
 # wiki-curator
 
 ## Runtime Bootstrap
 
-- Load `GEMINI.md`, `.agents/GEMINI.md`, and this agent's imported scope before work.
-- Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.
-
-@import docs/00.agent-governance/scopes/docs.md
+- Load `.agents/registry.json` and this provider-neutral role projection before work.
+- Follow the Stage 00 policy and handoff boundaries referenced by the registry.
+@import docs/00.agent-governance/roles/documentation.md
 
 ## Role
 
@@ -36,13 +34,14 @@ Maintain repository-local discovery entrypoints and generated owner maps without
 
 ## Capability and Evidence
 
-- Capability tier reference: `docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles/9/capabilityTier`.
+- Capability tier reference: `docs/00.agent-governance/policies/model-selection.md#worker`.
 - Required evidence: identify each changed entrypoint, canonical owner target, stale-link result, and generated-index validation outcome.
 
 ## Handoff / Escalation
 
+- Registry handoff targets: `doc-writer`, `supervisor`.
 - Escalate to `doc-writer.md` when a new operations guide, runbook, incident note, or template-aligned document is needed.
 
 ## Postflight
 
-Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results.
+Run `docs/00.agent-governance/skills/work-lifecycle.md#completion` before returning results.

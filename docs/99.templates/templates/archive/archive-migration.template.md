@@ -1,9 +1,10 @@
 ---
 title: "MIG-{NNNN}: {Migration Title}"
 type: "content/archive-migration"
-status: "accepted"
+status: "draft"
 owner: "platform"
 updated: "YYYY-MM-DD"
+artifact_id: "MIG-0000"
 migration_id: "MIG-0000"
 ---
 
@@ -11,35 +12,40 @@ migration_id: "MIG-0000"
 
 ## Overview
 
-<!-- Author prompt: state the reviewed archive migration boundary and exact record census. -->
+<!-- Author prompt: state the reviewed scope and source identity. The registry owns draft-to-sealed lifecycle; seal only the reviewed finite mapping, never a branch-current census. -->
 
 ## Migration Ledger
 
-<!-- Author prompt: replace the example with the exact reviewed 14-field legacy-to-stable ledger rows. -->
+<!-- Author prompt: replace the example with ordered, unique nine-field recovery rows. Use moved only for identical bytes, merged/replaced for changed responsibility, and deleted with null replacement for Archive lookup without a live successor. -->
 
 <!-- archive-migration-ledger:v1 format=json -->
 
 ```json
 [
   {
-    "schema_version": 1,
-    "migration_id": "MIG-{NNNN}",
-    "legacy_path": "docs/98.archive/<legacy-path>.md",
-    "stable_path": "docs/98.archive/<stable-path>.md",
-    "artifact_id": "<typed-stable-id>",
-    "action": "moved",
-    "replacement": null,
+    "legacy_path": "docs/00.agent-governance/<retired-owner>.md",
+    "stable_path": null,
+    "artifact_id": null,
+    "action": "merged",
+    "replacement": "docs/00.agent-governance/policies/<current-owner>.md",
     "source_commit": "0000000000000000000000000000000000000000",
-    "legacy_archive_commit": "1111111111111111111111111111111111111111",
-    "legacy_envelope_blob": "2222222222222222222222222222222222222222",
     "source_blob": "3333333333333333333333333333333333333333",
     "content_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
-    "record_kind": "change-plan",
-    "reason": "Reviewed stable Stage 98 rehome"
+    "reason": "Reviewed authority consolidation"
   }
 ]
 ```
 
 ## Recovery
 
-<!-- Author prompt: identify the exact old-envelope and terminal-record recovery checks. -->
+<!-- Author prompt: identify the durable named ref retaining source commits and the public archive_recovery.py --record ... --verify command. State source-mode, source/blob/digest, target, and index/worktree proof. Do not copy whole original bodies or treat derived symlinks as regular recovery payloads. -->
+
+<!-- Author prompt: list only approved finite unchanged historical consumers, grouped by immutable source commit. Use an empty array when none. Every admitted consumer must match its complete source bytes and synchronized index; its rendered retired references need validated dispositions. A lifecycle status, directory or matching token is not an exception. -->
+
+<!-- Author prompt: add optional typed historical-reference evidence only when an approved literal path or historical symlink view needs it. Its closed data shape is owned by the Archive migration parser; ordinary consumer records need no such block. -->
+
+<!-- archive-historical-consumers:v1 format=json -->
+
+```json
+[]
+```

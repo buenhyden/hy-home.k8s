@@ -3,7 +3,7 @@ title: 'SDLC Document and AI Agent Governance Consolidation Implementation Plan'
 type: sdlc/plan
 status: active
 owner: platform
-updated: 2026-08-20
+updated: 2026-08-29
 artifact_id: "PLAN-0054"
 ---
 
@@ -426,6 +426,44 @@ between.
   explicitly sealed evidence, or a reachable Archive recovery object. Remove
   unsupported local hook graphs rather than treating executability alone as a
   digest-retention reason.
+- [ ] Apply the approved C-SDLC-009 clarification in the authority/projection
+  unit: validate MIG-0005 source-backed historical links without changing
+  completed bodies, and separate MIG-0004 historical target recovery from
+  current Stage 99 template validation. Preserve the existing sealed record
+  and source/target identities; reject source drift, missing targets, cycles,
+  and unregistered historical consumers. Do not introduce a status-wide
+  exception or a new mutable SHA/census control plane.
+- [ ] Apply the 2026-08-29 C-SDLC-009 extension in the same first unit:
+  explicitly source-backed historical fenced-command literals and separately
+  typed removed-view references may resolve only through their proved
+  Migration or Archive lookup owner. Preserve ordinary rendered admission,
+  regular recovery's symlink rejection, bounded held-input validation and
+  unchanged terminal bodies. Add focused positive and independent negative
+  regressions before implementing the two reference types. Synchronize the
+  missing historical-consumer data, current Stage 00 index format, execution
+  Task pointer, Archive policy link and ADR Traceability in the same reviewed
+  correction; do not broaden their validators to hide stale data.
+- [ ] Apply the subsequent 2026-08-29 C-SDLC-009 approval in this first unit:
+  admit only source-proved closed quoted inline paths followed by a comma and
+  whitespace/EOF, retaining all other token and recovery boundaries. Add the
+  three deferred Spec consumers and their exact literal declarations only
+  after the focused positive and independent negative regressions pass.
+- [ ] Retire the WER ledger's duplicated first historical inventory table and
+  its obsolete terminal shape obligation together, with latest full-file Git
+  recovery and Stage 98 partial-content disposition. Preserve the other
+  tables, missing-ledger and settlement checks, predecessor-disposition owner,
+  and current ledger path; do not add a table or status waiver.
+- [ ] Retire the four graphify outputs named in C-SDLC-009 with their current
+  consumers and atomic Stage 98 recovery evidence. This approved exception
+  advances only that cleanup from WP-012 and substitutes verified Git recovery
+  and consumer-zero for the unavailable reproduction procedure. Do not run an
+  external generator, claim regeneration, or move historical progress early.
+- [ ] In the second logical unit, activate the context/memory policy from its
+  first-unit `draft` through the legal `draft → active` transition. Apply the
+  approved C-SDLC-007 cumulative CI/ref proof using bounded actual intermediate
+  Git history, without changing the requested base or adding SHA/path waivers.
+  Verify both staged and cumulative comparison modes; per-commit staged PASS
+  alone does not prove the cumulative mode.
 - [ ] Run:
 
   ```bash
@@ -690,6 +728,10 @@ the execution handoff begins.
 
 ### WP-008 — Stage 90 ownership cutover
 
+The narrowly approved WER historical-table retirement occurs in WP-003 under
+C-SDLC-009. Reuse that disposition; the remaining Stage 90 cutover still
+requires WP-007 and does not repeat or expand that earlier cleanup.
+
 **Files:**
 
 - Modify only Stage 90 indexes and current references authorized by WP-007.
@@ -885,8 +927,10 @@ the execution handoff begins.
   `docs/00.agent-governance/memory/progress.md` to the owning Spec Task records
   and Git history. Remove the Stage 00 memory surface after consumer-zero and
   reachable recovery proof; do not create a new global progress ledger.
-- Review and remove tracked stale `graphify-out/**` only after current-consumer
-  and reproducibility proof; add atomic Stage 98 disposition evidence.
+- Verify the four graphify retirements advanced to WP-003 under C-SDLC-009;
+  do not recreate their outputs or repeat their recovery record. Other
+  generated-current cleanup still requires its own current-consumer and
+  reproducibility proof plus atomic Stage 98 disposition evidence.
 - Modify only the indexes, ignores, contracts, tests, and current links needed
   for that recovery boundary.
 

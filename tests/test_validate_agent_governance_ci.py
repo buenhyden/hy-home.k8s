@@ -31,11 +31,8 @@ AFFECTED_PATH = (
 AGGREGATE_PATH = REPO_ROOT / "scripts/validate-repo-quality-gates.sh"
 PROVIDER_AGGREGATE_PATH = REPO_ROOT / "scripts/validate-agent-provider-evidence.py"
 PRE_COMMIT_PATH = REPO_ROOT / ".pre-commit-config.yaml"
-QUALITY_STANDARDS_PATH = (
-    REPO_ROOT / "docs/00.agent-governance/rules/quality-standards.md"
-)
-POSTFLIGHT_PATH = REPO_ROOT / "docs/00.agent-governance/rules/postflight-checklist.md"
-SHARED_QA_WORKFLOW_PATH = REPO_ROOT / ".agents/workflows/qa-cicd-workflow.md"
+QUALITY_POLICY_PATH = REPO_ROOT / "docs/00.agent-governance/policies/quality.md"
+WORK_LIFECYCLE_PATH = REPO_ROOT / "docs/00.agent-governance/skills/work-lifecycle.md"
 PULL_REQUEST_TEMPLATE_PATH = REPO_ROOT / ".github/PULL_REQUEST_TEMPLATE.md"
 GITHUB_README_PATH = REPO_ROOT / ".github/README.md"
 SCRIPTS_README_PATH = REPO_ROOT / "scripts/README.md"
@@ -67,7 +64,6 @@ REQUIRED_ROUTE_CLASSES = {
     "agent-shared",
     "agent-claude",
     "agent-codex",
-    "agent-gemini",
     "github-automation",
     "governance-documents",
     "template-documents",
@@ -85,9 +81,8 @@ REQUIRED_INPUTS = (
     Path("scripts/run-validation-lane.py"),
     Path("scripts/validate-repo-quality-gates.sh"),
     Path("scripts/validate-agent-provider-evidence.py"),
-    Path("docs/00.agent-governance/rules/quality-standards.md"),
-    Path("docs/00.agent-governance/rules/postflight-checklist.md"),
-    Path(".agents/workflows/qa-cicd-workflow.md"),
+    Path("docs/00.agent-governance/policies/quality.md"),
+    Path("docs/00.agent-governance/skills/work-lifecycle.md"),
     Path(".github/PULL_REQUEST_TEMPLATE.md"),
     Path(".github/README.md"),
     Path("scripts/README.md"),
@@ -284,10 +279,14 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
 
     def test_repository_root_passes(self) -> None:
         counts = self.validator.validate_repository(REPO_ROOT)
-        self.assertEqual(counts["routeClasses"], 12)
+        self.assertEqual(counts["routeClasses"], 11)
         self.assertEqual(counts["delegatedChecks"], 18)
         self.assertEqual(counts["deferredOwners"], 1)
-        self.assertEqual(counts["qaSurfaces"], 10)
+        contract = json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))
+        self.assertEqual(
+            counts["qaSurfaces"],
+            1 + len(contract["localQa"]["consumerSurfaces"]),
+        )
 
     def test_legacy_dependency_install_command_is_rejected(self) -> None:
         root = self.make_valid_root()
@@ -308,7 +307,7 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
         workflow.write_text(mutated, encoding="utf-8")
         self.assert_rule(root, "AGQC-CI-SECURITY")
 
-    def test_evidence_vocabulary_matches_harness_owned_literal(self) -> None:
+    def test_evidence_vocabulary_preserves_runtime_separation(self) -> None:
         contract = self.validator.load_json_document(
             CONTRACT_PATH,
             "AGQC-CI-JSON",
@@ -476,7 +475,7 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
         )
         self.assertEqual(
             contract["localQa"]["owner"],
-            "docs/00.agent-governance/rules/quality-standards.md",
+            "docs/00.agent-governance/policies/quality.md",
         )
         self.assertEqual(contract["localQa"]["sequence"], LOCAL_QA_SEQUENCE)
         self.assertEqual(
@@ -510,75 +509,110 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
                 "scripts/run-validation-lane.py",
                 ".pre-commit-config.yaml",
                 "scripts/validate-repo-quality-gates.sh",
-                ".agents/workflows/qa-cicd-workflow.md",
-                "docs/00.agent-governance/rules/postflight-checklist.md",
+                "docs/00.agent-governance/skills/work-lifecycle.md",
                 ".github/PULL_REQUEST_TEMPLATE.md",
                 ".github/README.md",
                 "scripts/README.md",
                 "tests/README.md",
             ],
         )
-        self.assertEqual(
-            contract["localQa"]["inventory"],
-            {
-                "truthCases": 6,
-                "mutationCases": 45,
-                "delegatedChecks": 18,
-                "deferredOwners": 1,
-                "qaSurfaces": 10,
-                "legacyPositiveCases": 3,
-                "legacyMutationCases": 22,
-            },
-        )
+        self.assertNotIn("inventory", contract["localQa"])
         scripts_readme = SCRIPTS_README_PATH.read_text(encoding="utf-8")
         implicit_provider_self_test = (
             "python3 scripts/validate-agent-provider-evidence.py --self-test"
         )
-        explicit_provider_self_test = (
-            "python3 scripts/validate-agent-provider-evidence.py --root . --self-test"
-        )
         self.assertNotIn(implicit_provider_self_test, scripts_readme)
-        self.assertEqual(
-            scripts_readme.count(explicit_provider_self_test),
-            3,
-        )
+        self.assertIn(PROVIDER_AGGREGATE_COMMAND, scripts_readme)
 
-    def test_local_qa_order_and_inventory_drift_fail_closed(self) -> None:
+    def test_current_qa_owners_accept_links_without_copied_prose(self) -> None:
+        root = self.make_valid_root()
+        for path in (
+            WORK_LIFECYCLE_PATH,
+            PULL_REQUEST_TEMPLATE_PATH,
+            GITHUB_README_PATH,
+            SCRIPTS_README_PATH,
+            TESTS_README_PATH,
+        ):
+            target = root / path.relative_to(REPO_ROOT)
+            owner = os.path.relpath(
+                root / QUALITY_POLICY_PATH.relative_to(REPO_ROOT), target.parent
+            )
+            target.write_text(
+                f"# QA\n\nFollow [quality]({owner}#canonical-completion-sequence).\n",
+                encoding="utf-8",
+            )
+        self.validator.validate_repository(root)
+
+    def test_qa_consumers_require_actual_current_owner_links(self) -> None:
+        for path in (
+            WORK_LIFECYCLE_PATH,
+            PULL_REQUEST_TEMPLATE_PATH,
+            GITHUB_README_PATH,
+            SCRIPTS_README_PATH,
+            TESTS_README_PATH,
+        ):
+            owner = os.path.relpath(QUALITY_POLICY_PATH, path.parent)
+            for replacement in (
+                "[quality](../rules/quality-standards.md)",
+                "docs/00.agent-governance/policies/quality.md",
+                f"`[quality]({owner})`",
+                f"<!-- [quality]({owner}) -->",
+                f"![quality]({owner})",
+                f"![see [quality]({owner})](image.png)",
+            ):
+                with self.subTest(path=path, replacement=replacement):
+                    root = self.make_valid_root()
+                    target = root / path.relative_to(REPO_ROOT)
+                    target.write_text(replacement, encoding="utf-8")
+                    self.assert_rule(root, "AGQC-QA-OWNER")
+
+    def test_malformed_markdown_cannot_fabricate_qa_owner_links(self) -> None:
+        cases = {
+            "escaped-label-closer": r"[quality\](../policies/quality.md)",
+            "false-closing-fence": (
+                "```markdown\n```not-a-closing-fence\n"
+                "[quality](../policies/quality.md)\n"
+            ),
+            "comment-spliced-destination": (
+                "[quality](../policies/qual<!-- hidden -->ity.md)"
+            ),
+        }
+        for name, markdown in cases.items():
+            with self.subTest(case=name):
+                root = self.make_valid_root()
+                target = root / WORK_LIFECYCLE_PATH.relative_to(REPO_ROOT)
+                target.write_text(markdown, encoding="utf-8")
+                self.assert_rule(root, "AGQC-QA-OWNER")
+
+    def test_reference_style_links_route_to_current_qa_owner(self) -> None:
+        root = self.make_valid_root()
+        target = root / WORK_LIFECYCLE_PATH.relative_to(REPO_ROOT)
+        target.write_text(
+            "Follow [quality][qa-owner].\n\n"
+            "[qa-owner]: ../policies/quality.md#canonical-completion-sequence\n",
+            encoding="utf-8",
+        )
+        self.validator.validate_repository(root)
+
+    def test_local_qa_order_and_evidence_drift_fail_closed(self) -> None:
         cases = (
             (
                 "quality-order",
-                QUALITY_STANDARDS_PATH,
+                QUALITY_POLICY_PATH,
                 "1. **targeted**:",
                 "1. **focused-only**:",
                 "AGQC-QA-ORDER",
             ),
             (
-                "workflow-owner",
-                SHARED_QA_WORKFLOW_PATH,
-                "docs/00.agent-governance/rules/quality-standards.md",
-                "docs/00.agent-governance/rules/postflight-checklist.md",
-                "AGQC-QA-OWNER",
-            ),
-            (
-                "scripts-inventory",
-                SCRIPTS_README_PATH,
-                "delegated_checks=18",
-                "delegated_checks=13",
-                "AGQC-QA-INVENTORY",
-            ),
-            (
                 "formatter-evidence",
-                PULL_REQUEST_TEMPLATE_PATH,
-                (
-                    "targeted -> affected -> staged -> tests -> all-files -> "
-                    "formatter-review -> rerun -> diff-checks"
-                ),
-                "targeted -> affected -> staged -> tests -> all-files",
+                QUALITY_POLICY_PATH,
+                "A mutating invocation is not\n   completion evidence",
+                "A mutating invocation is\n   completion evidence",
                 "AGQC-QA-EVIDENCE",
             ),
             (
                 "cached-diff-evidence",
-                QUALITY_STANDARDS_PATH,
+                QUALITY_POLICY_PATH,
                 "`git diff --cached --check`",
                 "`git diff --check`",
                 "AGQC-QA-EVIDENCE",
@@ -624,7 +658,10 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
     def test_self_test_executes_closed_fixture(self) -> None:
         self.assertEqual(
             self.validator.run_self_test(REPO_ROOT),
-            (6, 45),
+            (
+                len(self.fixture["truthTableCases"]),
+                len(self.fixture["mutationCases"]),
+            ),
         )
 
     def test_unknown_contract_key_is_rejected(self) -> None:

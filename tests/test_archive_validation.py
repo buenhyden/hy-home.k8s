@@ -808,9 +808,12 @@ class ArchiveValidationTest(unittest.TestCase):
                 b"This atomic ledger seals", b"This altered ledger seals", 1
             ),
         ):
-            with self.subTest(changed=changed[-32:]), self.assertRaisesRegex(
-                archive_validation.ArchiveContractError,
-                "ARCHIVE-MIGRATION-PROFILE",
+            with (
+                self.subTest(changed=changed[-32:]),
+                self.assertRaisesRegex(
+                    archive_validation.ArchiveContractError,
+                    "ARCHIVE-MIGRATION-PROFILE",
+                ),
             ):
                 archive_validation.parse_pinned_migration_control(
                     migration_path, changed
@@ -1169,6 +1172,9 @@ class ArchiveValidationTest(unittest.TestCase):
                     ):
                         archive_validation._validate_mig0004_rows_and_targets(  # noqa: SLF001
                             root.resolve(), candidate
+                        )
+                        archive_validation.validate_mig0004_historical_targets(
+                            ROOT, candidate
                         )
 
     def test_mig0004_rejects_an_index_deleted_untracked_task(self) -> None:
@@ -1981,6 +1987,197 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             "LEDGER-UNKNOWN-PATH",
             {item.rule_id for item in diagnostics},
         )
+
+    def _predecessor_disposition_table(self) -> str:
+        ledger = self.context.texts[self.validator.LEDGER_PATH]
+        start = ledger.index("| Old path |")
+        end = ledger.index("\n### Section-level split dispositions", start)
+        return ledger[start:end]
+
+    def _source_deleted_merge_history_table(self) -> str:
+        ledger = self.context.texts[self.validator.LEDGER_PATH]
+        start = ledger.index("### Source-deleted merge history")
+        start = ledger.index("| path |", start)
+        end = ledger.index("\n<!-- WERPC-007-HISTORICAL-ADM-TABLE -->", start)
+        return ledger[start:end]
+
+    def _terminal_ledger_context(self, ledger: str) -> object:
+        return dataclasses.replace(
+            self.context,
+            route_state="terminal",
+            ria_contract_text=None,
+            ledger_bytes=ledger.encode("utf-8"),
+            texts={**self.context.texts, self.validator.LEDGER_PATH: ledger},
+        )
+
+    def test_terminal_ledger_accepts_source_deleted_merge_history_only(
+        self,
+    ) -> None:
+        diagnostics = self.validator._ledger_diagnostics(
+            self._terminal_ledger_context(self._source_deleted_merge_history_table())
+        )
+
+        self.assertEqual(diagnostics, [])
+
+    def test_terminal_ledger_does_not_consult_the_retired_inventory_parser(
+        self,
+    ) -> None:
+        context = self._terminal_ledger_context(
+            self._source_deleted_merge_history_table()
+        )
+
+        with mock.patch.object(
+            self.validator,
+            "_ledger_rows",
+            side_effect=AssertionError("terminal route parsed retired inventory"),
+        ):
+            diagnostics = self.validator._ledger_diagnostics(context)
+
+        self.assertEqual(diagnostics, [])
+
+    def test_terminal_ledger_missing_path_or_text_still_fails(self) -> None:
+        for name, paths, texts in (
+            (
+                "path",
+                tuple(
+                    path
+                    for path in self.context.paths
+                    if path != self.validator.LEDGER_PATH
+                ),
+                self.context.texts,
+            ),
+            (
+                "text",
+                self.context.paths,
+                {
+                    path: text
+                    for path, text in self.context.texts.items()
+                    if path != self.validator.LEDGER_PATH
+                },
+            ),
+        ):
+            with self.subTest(name=name):
+                context = dataclasses.replace(
+                    self.context,
+                    route_state="terminal",
+                    ria_contract_text=None,
+                    ledger_bytes=None,
+                    paths=paths,
+                    texts=texts,
+                )
+
+                diagnostics = self.validator._ledger_diagnostics(context)
+
+                self.assertEqual(
+                    [item.rule_id for item in diagnostics], ["LEDGER-MISSING"]
+                )
+
+    def test_terminal_ledger_protection_control_and_drift_precede_return(
+        self,
+    ) -> None:
+        ledger = self.context.texts[self.validator.LEDGER_PATH]
+        settlement = {
+            "id": self.validator.LEDGER_SETTLEMENT_ID,
+            "packId": self.validator.LEDGER_SETTLEMENT_PACK_ID,
+            "fromCommit": self.validator.LEDGER_SETTLEMENT_FROM_COMMIT,
+            "subject": self.validator.LEDGER_SETTLEMENT_SUBJECT,
+            "targetSha256": hashlib.sha256(ledger.encode("utf-8")).hexdigest(),
+            "targetByteLength": len(ledger.encode("utf-8")),
+            "reason": self.validator.LEDGER_SETTLEMENT_REASON,
+            "transitionCommit": "git-sha1:" + "a" * 40,
+        }
+        contract = {
+            "baselineTransitions": [],
+            "baselineSettlements": [settlement],
+            "currentPackBaselines": {
+                self.validator.LEDGER_SETTLEMENT_PACK_ID: settlement["transitionCommit"]
+            },
+        }
+        with mock.patch.object(
+            self.validator,
+            "load_agent_cutover_projections",
+            return_value={},
+        ):
+            control = dataclasses.replace(
+                self.context,
+                route_state="terminal",
+                ria_contract_text=json.dumps(contract),
+                ledger_bytes=ledger.encode("utf-8"),
+            )
+            self.assertEqual(self.validator._ledger_diagnostics(control), [])
+
+            for name, changed_contract, changed_ledger in (
+                (
+                    "metadata",
+                    {
+                        **contract,
+                        "baselineSettlements": [{**settlement, "reason": "tampered"}],
+                    },
+                    ledger,
+                ),
+                ("bytes", contract, ledger + "\nTampered."),
+            ):
+                with self.subTest(name=name):
+                    context = dataclasses.replace(
+                        self.context,
+                        route_state="terminal",
+                        ria_contract_text=json.dumps(changed_contract),
+                        ledger_bytes=changed_ledger.encode("utf-8"),
+                        texts={
+                            **self.context.texts,
+                            self.validator.LEDGER_PATH: changed_ledger,
+                        },
+                    )
+
+                    diagnostics = self.validator._ledger_diagnostics(context)
+
+                    self.assertEqual(
+                        [item.rule_id for item in diagnostics],
+                        ["LEDGER-PROTECTED-DRIFT"],
+                    )
+
+    def test_predecessor_disposition_validation_stays_complete_and_exact(self) -> None:
+        table = self._predecessor_disposition_table()
+        first_row = next(
+            line for line in table.splitlines() if line.startswith("| `docs/")
+        )
+        invalid_commit = first_row.replace(
+            "`147b27badd56e4ec10f8725c59e312a6d12c63f4`",
+            "`not-a-commit`",
+            1,
+        )
+        invalid_disposition = first_row.replace(
+            self.validator.WERPC_DELETION_DISPOSITION,
+            "Retained",
+            1,
+        )
+        missing_row = table.replace(first_row + "\n", "", 1)
+        duplicate_row = table.rstrip() + "\n" + first_row
+
+        self.assertEqual(
+            len(self.validator._werpc_predecessor_disposition_map(table)),
+            len(self.validator.WERPC_PREDECESSOR_PATHS),
+        )
+        for name, changed in (
+            ("missing", missing_row),
+            ("duplicate", duplicate_row),
+            ("commit", table.replace(first_row, invalid_commit, 1)),
+            ("disposition", table.replace(first_row, invalid_disposition, 1)),
+        ):
+            with self.subTest(name=name):
+                self.assertIsNone(
+                    self.validator._werpc_predecessor_disposition_map(changed)
+                )
+
+    def test_nonterminal_ledger_keeps_retired_inventory_shape_rejection(self) -> None:
+        context = dataclasses.replace(
+            self._terminal_ledger_context(self._predecessor_disposition_table()),
+            route_state="transition",
+        )
+
+        diagnostics = self.validator._ledger_diagnostics(context)
+
+        self.assertEqual([item.rule_id for item in diagnostics], ["LEDGER-INCOMPLETE"])
 
     def test_work054_mig0003_historical_projection_is_byte_exact(self) -> None:
         projection = self.validator._work054_wp003_owner_merges(self.context)

@@ -40,7 +40,7 @@ If yes, please describe the impact and migration path.
 
 Describe the manual verification or automated tests conducted.
 
-Record the canonical order from [Agent Quality Standards](../docs/00.agent-governance/rules/quality-standards.md):
+Record the canonical order from [Agent Quality Standards](../docs/00.agent-governance/policies/quality.md):
 
 `targeted -> affected -> staged -> tests -> all-files -> formatter-review -> rerun -> diff-checks`
 
@@ -100,4 +100,4 @@ Secret handling:
 - [ ] No secret values, Vault tokens, private keys, or credential material are included
 - [ ] Secret-related changes record only path, key, property, mount, and redacted evidence
 
-See [Approval Boundaries](../docs/00.agent-governance/rules/approval-boundaries.md) and the [Local Harness Catalog](../docs/00.agent-governance/harness-catalog.md).
+See [Approval Boundaries](../docs/00.agent-governance/policies/approval-and-safety.md) and the [Local Harness Catalog](../docs/00.agent-governance/roles/README.md).

@@ -1438,10 +1438,34 @@ def validate_document(
 ) -> list[Diagnostic]:
     """Validate one source using only its registry-selected profile contract."""
 
+    return validate_document_text(
+        read_repository_text(root, path),
+        path,
+        profile,
+        mode,
+        append_context=append_context,
+        today=today,
+        body_contracts=body_contracts,
+        body_contract_path_prefixes=body_contract_path_prefixes,
+    )
+
+
+def validate_document_text(
+    text: str,
+    path: PurePosixPath,
+    profile: DocumentProfile,
+    mode: str,
+    *,
+    append_context: AppendContext | None = None,
+    today: dt.date | None = None,
+    body_contracts: str = "registry",
+    body_contract_path_prefixes: tuple[PurePosixPath, ...] = (),
+) -> list[Diagnostic]:
+    """Validate exact caller-supplied text without consulting filesystem bytes."""
+
     if mode not in {"compatibility", "strict"}:
         raise ValueError("mode must be compatibility or strict")
     effective_today = today or dt.datetime.now(ZoneInfo("Asia/Seoul")).date()
-    text = read_repository_text(root, path)
     diagnostics: list[Diagnostic] = []
     body = _frontmatter_body(text, path, profile, diagnostics, effective_today)
     diagnostics.extend(_body_diagnostics(path, profile, body, append_context))

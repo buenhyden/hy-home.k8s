@@ -3,9 +3,9 @@ title: 'ADR-0030: Authority-First SDLC and Agent Governance Convergence'
 type: sdlc/adr
 status: accepted
 owner: platform
-updated: 2026-08-20
+updated: 2026-08-28
 artifact_id: "ADR-0030"
-supersedes: "[ADR-0015, ADR-0018, ADR-0019, ADR-0023, ADR-0024, ADR-0025]"
+supersedes: "[ADR-0013, ADR-0015, ADR-0018, ADR-0019, ADR-0023, ADR-0024, ADR-0025]"
 ---
 
 # ADR-0030: Authority-First SDLC and Agent Governance Convergence
@@ -322,6 +322,7 @@ the Stage 99 foundation is active.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
+| [ADR-0013](0013-stage-00-canonical-adapter-model.md) | This decision replaces its provider-specific shared surfaces and custom-hook model while preserving its historical decision body and stable identity. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [ADR-0015](./0015-declarative-document-contract-registry.md) | Partially supersedes its fixed metadata baseline and old profile inventory; preserves the declarative document registry as sole document machine authority. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [ADR-0018](./0018-full-body-archive-record-and-retention.md) | Supersedes mandatory full-body, one-record-per-source, and no-Tombstone clauses; preserves explicit recovery and non-authoritative history. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [ADR-0019](./0019-provider-native-agent-harness-and-loop-model.md) | Supersedes four-provider, Gemini/Antigravity, fixed 12/48, and harness-machine-owner clauses; preserves provider-native deltas, evidence classes, bounded execution, and least privilege. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |

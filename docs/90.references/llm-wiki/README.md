@@ -24,7 +24,7 @@ deterministic check:
 
 - Canonical owner: `docs/90.references/llm-wiki/README.md`
 - Declared inputs, in contract order: this README, the Agent Governance Hub,
-  Harness Catalog, Document Stage Routing Rules, Docs README, and Scripts README
+  Agent Responsibilities, Document Authoring Policy, Docs README, and Scripts README
 - Generator: `scripts/generate-llm-wiki-index.sh`
 - Output: `docs/90.references/llm-wiki/wiki-index.md`
 - Check: `bash scripts/generate-llm-wiki-index.sh --check`
@@ -46,14 +46,19 @@ LLM과 사람이 저장소의 문서 경계를 빠르게 찾도록 돕는다. �
 
 - Type: durable-concept / faq
 - Source checked: 2026-08-09
-- Declared input review: all six inputs in `docs/90.references/data/reference-information-architecture.json#generatedAssets[id=llm-wiki-index].inputRoots`.
+- Declared input review: the ordered inputs in `docs/90.references/data/reference-information-architecture.json#generatedAssets[id=llm-wiki-index].inputRoots`.
 - Refresh trigger: any declared input, canonical docs taxonomy, Agent governance routing, examples taxonomy, or version inventory path changes.
 
 ### Declared Input Review
 
-The six RIA-declared inputs were reviewed together on 2026-08-09. This records
-repository-static link-map freshness only; it does not establish runtime
-discovery, retrieval quality, provider consumption, or live behavior.
+Current input routing was reviewed on 2026-08-28. Agent Responsibilities routes
+human responsibility selection; `.agents/registry.json` separately owns machine
+membership and is linked without becoming a declared generator input.
+
+The following table preserves the 2026-08-09 review of the then-declared inputs,
+including their historical paths and review results. It is not the current input
+declaration. Both reviews establish repository-static navigation evidence only,
+not runtime discovery, retrieval quality, provider consumption, or live behavior.
 
 | Declared input | Last-change evidence reviewed | Link-map role | Result |
 | --- | --- | --- | --- |
@@ -109,8 +114,9 @@ docs/90.references/llm-wiki/
 
 | Domain | Canonical owner | Link map role | Freshness trigger |
 | --- | --- | --- | --- |
-| Documentation routing | [document-authoring.md](../../00.agent-governance/rules/document-authoring.md) | Points to stage ownership rules | Stage taxonomy or routing rule changes |
-| Agent-first runtime | [harness-catalog.md](../../00.agent-governance/harness-catalog.md), [agentic.md](../../00.agent-governance/rules/agentic.md) | Points to runtime matrix and execution rule owners | Agent, skill, model, hook, or provider routing changes |
+| Documentation routing | [Document Authoring Policy](../../00.agent-governance/policies/document-authoring.md) | Points to document ownership and authoring procedure | Stage taxonomy or authoring policy changes |
+| Agent responsibilities | [Agent Responsibilities](../../00.agent-governance/roles/README.md) | Points to human responsibility routing, not machine roster or model facts | Responsibility routing changes |
+| Agent-first runtime | [Agent Registry](../../../.agents/registry.json), [Agent Execution Policy](../../00.agent-governance/policies/agent-execution.md) | Points to machine membership and shared execution owners | Registry or execution policy changes |
 | LLM Wiki generated index | [wiki-index.md](./wiki-index.md) | Points to generated canonical-owner links | Generator, taxonomy, or owner path changes |
 | LLM Wiki operation | [0009-llm-wiki-curation-guide.md](../../05.operations/guides/0009-llm-wiki-curation-guide.md) | Points to refresh triggers and `wiki-curator` usage | Generator or `wiki-curator` contract changes |
 | Workspace documentation hub | [docs README](../../README.md) | Points to human-facing docs map | Docs top-level or README hub changes |
@@ -123,8 +129,8 @@ docs/90.references/llm-wiki/
 ### Sources
 
 - [Agent Governance Hub](../../00.agent-governance/README.md)
-- [Harness Catalog](../../00.agent-governance/harness-catalog.md)
-- [Document Stage Routing Rules](../../00.agent-governance/rules/document-authoring.md)
+- [Agent Responsibilities](../../00.agent-governance/roles/README.md)
+- [Document Authoring Policy](../../00.agent-governance/policies/document-authoring.md)
 - [Docs README](../../README.md)
 - [Examples README](../../../examples/README.md)
 - [Scripts README](../../../scripts/README.md)
@@ -133,8 +139,8 @@ docs/90.references/llm-wiki/
 ### Review and Freshness
 
 - Review cadence: on source change
-- Last reviewed: 2026-08-09
-- Next review trigger: any change to one of the six RIA-declared inputs, `docs/` taxonomy, `examples/` taxonomy, Agent governance routing, script inventory, `wiki-curator`, generator output, or version inventory path.
+- Last routing review: 2026-08-28 (repository-static only; external-source review unchanged).
+- Next review trigger: any change to the RIA-declared inputs, `docs/` taxonomy, `examples/` taxonomy, Agent governance routing, script inventory, `wiki-curator`, generator output, or version inventory path.
 
 ## Add and Find
 
@@ -160,6 +166,6 @@ docs/90.references/llm-wiki/
 - [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)
 - [Docs README](../../README.md)
 - [Agent Governance Hub](../../00.agent-governance/README.md)
-- [Agentic Execution Rule](../../00.agent-governance/rules/agentic.md)
-- [Harness Catalog](../../00.agent-governance/harness-catalog.md)
+- [Agent Execution Policy](../../00.agent-governance/policies/agent-execution.md)
+- [Agent Registry](../../../.agents/registry.json)
 - [Examples README](../../../examples/README.md)

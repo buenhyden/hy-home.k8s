@@ -5,32 +5,24 @@ from __future__ import annotations
 
 import argparse
 import copy
-import json
 import os
 import re
 import stat
 import sys
-import tempfile
 import tomllib
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 from typing import Any, NoReturn
 
 import yaml
-from jsonschema import Draft202012Validator
 from yaml.constructor import ConstructorError
 from yaml.nodes import MappingNode
 
+from agent_registry_compat import load_terminal_validator
 
-CONTRACT_PATH = PurePosixPath(
-    "docs/00.agent-governance/contracts/harness-contract.json"
-)
-SCHEMA_PATH = PurePosixPath(
-    "docs/00.agent-governance/contracts/harness-contract.schema.json"
-)
-FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-harness-semantics.json")
+
+REGISTRY_PATH = PurePosixPath(".agents/registry.json")
 PROVIDER_BASELINE_PATHS = {
-    "local": PurePosixPath(".agents/GEMINI.md"),
     "claude": PurePosixPath(".claude/CLAUDE.md"),
     "codex": PurePosixPath(".codex/CODEX.md"),
 }
@@ -54,39 +46,18 @@ ROLE_ADAPTER_HEADING_ORDER = (
     "Postflight",
 )
 ROLE_ADAPTER_HEADINGS = ROLE_ADAPTER_HEADING_ORDER
-ROLE_SCOPE_IMPORTS = {
-    "supervisor": ("docs/00.agent-governance/scopes/meta.md",),
-    "code-reviewer": ("docs/00.agent-governance/scopes/architecture.md",),
-    "doc-writer": ("docs/00.agent-governance/scopes/docs.md",),
-    "gitops-reviewer": ("docs/00.agent-governance/scopes/infra.md",),
-    "incident-responder": (
-        "docs/00.agent-governance/scopes/ops.md",
-        "docs/00.agent-governance/scopes/infra.md",
-    ),
-    "k8s-implementer": ("docs/00.agent-governance/scopes/infra.md",),
-    "network-reviewer": ("docs/00.agent-governance/scopes/infra.md",),
-    "observability-reviewer": ("docs/00.agent-governance/scopes/infra.md",),
-    "security-auditor": ("docs/00.agent-governance/scopes/security.md",),
-    "wiki-curator": ("docs/00.agent-governance/scopes/docs.md",),
-    "docs-researcher": ("docs/00.agent-governance/scopes/docs.md",),
-    "quality-engineer": ("docs/00.agent-governance/scopes/qa.md",),
-}
 SURFACE_BOOTSTRAP_UNITS = {
-    "local": (
-        "Load `GEMINI.md`, `.agents/GEMINI.md`, and this agent's imported scope before work.",
-        "Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.",
+    "neutral": (
+        "Load `.agents/registry.json` and this provider-neutral role projection before work.",
+        "Follow the Stage 00 policy and handoff boundaries referenced by the registry.",
     ),
     "claude": (
         "Load `CLAUDE.md`, `.claude/CLAUDE.md`, and this agent's imported scope before work.",
-        "Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.",
+        "Follow `docs/00.agent-governance/skills/work-lifecycle.md` for intake and completion.",
     ),
     "codex": (
         "Load `AGENTS.md`, `.codex/CODEX.md`, and this agent's imported scope before work.",
-        "Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.",
-    ),
-    "gemini": (
-        "Load `GEMINI.md` and this Gemini-native agent file before work.",
-        "Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.",
+        "Follow `docs/00.agent-governance/skills/work-lifecycle.md` for intake and completion.",
     ),
 }
 CLAUDE_PERMISSION_TOOLS = {
@@ -101,115 +72,53 @@ CLAUDE_PERMISSION_TOOLS = {
         "default": "Read, Grep, Glob, Task",
     },
 }
-POSTFLIGHT_UNIT = (
-    "Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results."
-)
+POSTFLIGHT_UNIT = "Run `docs/00.agent-governance/skills/work-lifecycle.md#completion` before returning results."
 BASELINE_COMMON_REFERENCES = (
-    "Common execution policy: `docs/00.agent-governance/rules/agentic.md`.",
+    "Common execution policy: `docs/00.agent-governance/policies/agent-execution.md`.",
     "Provider facts: `docs/00.agent-governance/providers/{provider}.md`.",
-    "Role inventory and semantics: `docs/00.agent-governance/harness-catalog.md` and `docs/00.agent-governance/contracts/harness-contract.json`.",
-    "Validation lanes and handoff: `docs/00.agent-governance/rules/quality-standards.md`.",
-    "Shared lifecycle hooks: `docs/00.agent-governance/hooks`.",
+    "Role inventory and semantics: `.agents/registry.json` and `.agents/agents/`.",
+    "Validation lanes and handoff: `docs/00.agent-governance/policies/quality.md`.",
     "Shell guidance: `RTK.md`.",
 )
 PROVIDER_BASELINE_PROFILES = {
-    "local": {
-        "heading": "Local Adapter Baseline (Antigravity / Gemini-Family)",
-        "Purpose": (
-            "Thin repository-static baseline for the local/Antigravity `.agents/**` surface. It routes durable policy to Stage 00 and is not Gemini CLI native configuration.",
-        ),
-        "Loading Order": (
-            "Load root `GEMINI.md`, then follow the JIT sequence in `docs/00.agent-governance/rules/bootstrap.md` with the Gemini provider note and the relevant scope.",
-        ),
-        "Provider Metadata": (
-            "Local role adapters: `.agents/agents/*.md`.",
-            "Shared assets: `.agents/{skills,workflows,output-styles}/`.",
-            "Behavioral wiring: `.agents/hooks.json`; it is neither Gemini CLI settings nor a Claude-style permission gate.",
-        ),
-        "Evidence Boundary": (
-            "Tracked local adapters and hooks prove repository configuration only. They do not prove Gemini CLI discovery, policy loading, event delivery, authentication, model resolution, or execution.",
-        ),
-    },
     "claude": {
         "heading": "Local Runtime Baseline (Claude)",
         "Purpose": (
-            "Thin baseline for the tracked Claude-native `.claude/**` surface. Durable common policy remains in Stage 00.",
+            "Thin baseline for the tracked Claude-native surface. Shared policy and responsibility remain in Stage 00.",
         ),
         "Loading Order": (
-            "Load root `CLAUDE.md`, then follow the JIT sequence in `docs/00.agent-governance/rules/bootstrap.md` with the Claude provider note and the relevant scope.",
+            "Load root `CLAUDE.md`, then `docs/00.agent-governance/skills/work-lifecycle.md`, the Claude provider note, and the relevant responsibility and active Task.",
         ),
         "Provider Metadata": (
-            "Native role adapters: `.claude/agents/*.md` with provider-owned model and least-privilege tool metadata.",
-            "Native permission and event wiring: `.claude/settings.json`.",
-            "Shared asset views: `.claude/{skills,workflows,output-styles}/` symlinks to `.agents/**`.",
+            "Native role projections: `.claude/agents/*.md`, with native model and least-privilege tool metadata.",
+            "Native permission and event declarations: `.claude/settings.json`.",
+            "Shared skill view: `.claude/skills` points to `.agents/skills`.",
         ),
         "Evidence Boundary": (
-            "Tracked Claude adapters and settings prove repository configuration only. They do not prove native discovery, hook delivery, authentication, model resolution, permission enforcement, or execution.",
+            "Tracked projections and settings prove repository configuration only, not native discovery, hook delivery, authentication, model resolution, permission enforcement, or execution.",
         ),
     },
     "codex": {
         "heading": "Local Runtime Baseline (Codex)",
         "Purpose": (
-            "Thin baseline for the tracked Codex-native `.codex/**` surface. Durable common policy remains in Stage 00.",
+            "Thin baseline for the tracked Codex-native surface. Shared policy and responsibility remain in Stage 00.",
         ),
         "Loading Order": (
-            "Load root `AGENTS.md`, then follow the JIT sequence in `docs/00.agent-governance/rules/bootstrap.md` with the Codex provider note and the relevant scope.",
+            "Load root `AGENTS.md`, then `docs/00.agent-governance/skills/work-lifecycle.md`, the Codex provider note, and the relevant responsibility and active Task.",
         ),
         "Provider Metadata": (
-            "Native role adapters: `.codex/agents/*.toml` with provider-owned model and reasoning-effort metadata.",
-            "Context and validation wiring: `.codex/hooks.json`; it is not a Claude-style permission gate.",
-            "Shared asset views: `.codex/{skills,workflows,output-styles}/` symlinks to `.agents/**`.",
+            "Native role projections: `.codex/agents/*.toml`, with native model and reasoning-effort metadata.",
+            "Native sandbox and approval controls belong to the running client.",
+            "Shared skill view: `.codex/skills` points to `.agents/skills`.",
+            "Run explicit repository validation; custom hook graphs are not a supported Codex execution or permission surface.",
         ),
         "Evidence Boundary": (
-            "Tracked Codex adapters and hooks prove repository configuration only. They do not prove native discovery, context delivery, authentication, model resolution, sandbox or approval enforcement, or execution.",
+            "Tracked projections prove repository configuration only, not native discovery, authentication, model resolution, sandbox or approval enforcement, event delivery, or execution.",
         ),
     },
 }
-CONTRACT_VERSION = "1.0.0"
-CONSUMER_ID = "harness-semantics-validator"
 ALLOWED_EXTENSIONS = frozenset({".md", ".toml"})
-GEMINI_FRONTMATTER_KEYS = (
-    "name",
-    "description",
-    "kind",
-    "max_turns",
-    "timeout_mins",
-)
-GEMINI_METADATA_MUTATIONS = (
-    "missing-description",
-    "extra-key",
-    "duplicate-kind",
-    "malformed-description",
-    "wildcard-kind",
-    "wrong-kind",
-    "malformed-max-turns",
-    "wrong-timeout",
-    "key-order-drift",
-)
-GEMINI_METADATA_MUTATION_COUNT = len(GEMINI_METADATA_MUTATIONS)
-CATEGORY_RULES = {
-    "responsibilities": "ROLE-RESPONSIBILITY",
-    "outputs": "ROLE-OUTPUT",
-    "prohibitedActions": "ROLE-PROHIBITED",
-    "stopConditions": "ROLE-STOP",
-    "handoffs": "ROLE-HANDOFF",
-    "capabilityTierRef": "ROLE-CAPABILITY-TIER-REF",
-    "requiredEvidence": "ROLE-EVIDENCE",
-    "adapterStem": "ROLE-ADAPTER-STEM",
-}
-CONTRACT_CATEGORIES = tuple(
-    category for category in CATEGORY_RULES if category != "adapterStem"
-)
-CATEGORY_SECTIONS = {
-    "responsibilities": "Role",
-    "outputs": "Outputs",
-    "prohibitedActions": "Guardrails",
-    "stopConditions": "Guardrails",
-    "handoffs": "Handoff / Escalation",
-    "capabilityTierRef": "Capability and Evidence",
-    "requiredEvidence": "Capability and Evidence",
-}
-FORBIDDEN_COMMON_FIELDS = ("model", "tools", "modelReasoningEffort")
+MAX_ADAPTER_BYTES = 262_144
 NEGATION_STATES = (
     "false",
     "not true",
@@ -228,9 +137,9 @@ def _phrase_pattern(value: str) -> str:
     return re.escape(value).replace(r"\ ", r"\s+")
 
 
-NEGATION_STATE_PATTERN = "(?:" + "|".join(
-    _phrase_pattern(state) for state in NEGATION_STATES
-) + ")"
+NEGATION_STATE_PATTERN = (
+    "(?:" + "|".join(_phrase_pattern(state) for state in NEGATION_STATES) + ")"
+)
 NEGATION_PREDICATE_PATTERN = (
     rf"(?:(?:is|was)\s+{NEGATION_STATE_PATTERN}|does\s+not\s+apply)"
 )
@@ -243,12 +152,8 @@ REVOKED_CONTEXT = re.compile(
     rf"{NEGATION_PREDICATE_PATTERN}\b"
 )
 FENCE_START = re.compile(r"^(?: {0,3})(`{3,}|~{3,})(.*)$")
-BLOCKQUOTE_START = re.compile(
-    r"^ {0,3}(?:(?:[-+*]|\d+[.)])\s+)?(?:>\s*)+"
-)
-MARKDOWN_UNIT_START = re.compile(
-    r"^(?: {0,3})(?:#{1,6}\s|[-+*]\s|\d+[.)]\s|@import\b)"
-)
+BLOCKQUOTE_START = re.compile(r"^ {0,3}(?:(?:[-+*]|\d+[.)])\s+)?(?:>\s*)+")
+MARKDOWN_UNIT_START = re.compile(r"^(?: {0,3})(?:#{1,6}\s|[-+*]\s|\d+[.)]\s|@import\b)")
 BACK_REFERENCE_REVOCATION = re.compile(
     r"(?i)^(?:(?:this|that|the\s+(?:preceding|previous|above|prior))\s+)?"
     rf"(?:claim|statement|requirement|paragraph|item)\s+"
@@ -261,141 +166,7 @@ FORWARD_REVOCATION = re.compile(
     rf"{NEGATION_PREDICATE_PATTERN}\s*:?[.!]?$"
 )
 INLINE_CODE_UNIT = re.compile(r"^(`+)(.+)\1$")
-LIST_INDENTED_CODE = re.compile(
-    r"^ {0,3}(?:[-+*]|\d+[.)]) {4,}\S"
-)
-ADVERSARIAL_SCHEMA = {
-    "yaml-duplicate-name": (
-        "local", "code-reviewer", "adapterStem", "yamlDuplicateName",
-        "ROLE-ADAPTER-PARSE",
-    ),
-    "yaml-nonmapping-frontmatter": (
-        "claude", "doc-writer", "adapterStem", "yamlNonMapping",
-        "ROLE-ADAPTER-PARSE",
-    ),
-    "yaml-nonscalar-name": (
-        "local", "gitops-reviewer", "adapterStem", "yamlNonScalarName",
-        "ROLE-ADAPTER-PARSE",
-    ),
-    "fenced-responsibility": (
-        "codex", "incident-responder", "responsibilities", "fenced",
-        "ROLE-RESPONSIBILITY",
-    ),
-    "commented-output": (
-        "local", "k8s-implementer", "outputs", "htmlComment", "ROLE-OUTPUT",
-    ),
-    "struck-prohibition": (
-        "claude", "network-reviewer", "prohibitedActions", "strikethrough",
-        "ROLE-PROHIBITED",
-    ),
-    "revoked-stop": (
-        "codex", "observability-reviewer", "stopConditions", "revoked",
-        "ROLE-STOP",
-    ),
-    "contradicted-handoff": (
-        "local", "security-auditor", "handoffs", "contradicted",
-        "ROLE-HANDOFF",
-    ),
-    "commented-capability": (
-        "claude", "supervisor", "capabilityTierRef", "htmlComment",
-        "ROLE-CAPABILITY-TIER-REF",
-    ),
-    "fenced-evidence": (
-        "codex", "wiki-curator", "requiredEvidence", "fenced",
-        "ROLE-EVIDENCE",
-    ),
-    "struck-adapter-heading": (
-        "local", "code-reviewer", "adapterStem", "strikethrough",
-        "ROLE-ADAPTER-STEM",
-    ),
-    "wrapped-contradiction": (
-        "claude", "doc-writer", "requiredEvidence", "wrappedContradiction",
-        "ROLE-EVIDENCE",
-    ),
-    "quoted-responsibility": (
-        "local", "code-reviewer", "responsibilities", "blockquote",
-        "ROLE-RESPONSIBILITY",
-    ),
-    "nested-quoted-output": (
-        "claude", "doc-writer", "outputs", "nestedBlockquote", "ROLE-OUTPUT",
-    ),
-    "lazy-quoted-prohibition": (
-        "codex", "gitops-reviewer", "prohibitedActions", "lazyBlockquote",
-        "ROLE-PROHIBITED",
-    ),
-    "quoted-stop": (
-        "local", "incident-responder", "stopConditions", "blockquote",
-        "ROLE-STOP",
-    ),
-    "nested-quoted-handoff": (
-        "claude", "k8s-implementer", "handoffs", "nestedBlockquote",
-        "ROLE-HANDOFF",
-    ),
-    "lazy-quoted-capability": (
-        "codex", "network-reviewer", "capabilityTierRef", "lazyBlockquote",
-        "ROLE-CAPABILITY-TIER-REF",
-    ),
-    "quoted-evidence": (
-        "local", "observability-reviewer", "requiredEvidence", "blockquote",
-        "ROLE-EVIDENCE",
-    ),
-    "indented-tilde-output": (
-        "codex", "security-auditor", "outputs", "indentedTildeFence",
-        "ROLE-OUTPUT",
-    ),
-    "following-paragraph-revocation": (
-        "claude", "security-auditor", "responsibilities",
-        "followingParagraphRevocation", "ROLE-RESPONSIBILITY",
-    ),
-    "following-list-revocation": (
-        "codex", "supervisor", "handoffs", "followingListRevocation",
-        "ROLE-HANDOFF",
-    ),
-    "not-true-claim": (
-        "local", "wiki-curator", "prohibitedActions", "notTrue",
-        "ROLE-PROHIBITED",
-    ),
-    "forward-revocation": (
-        "claude", "supervisor", "responsibilities", "forwardRevocation",
-        "ROLE-RESPONSIBILITY",
-    ),
-    "external-negative-prefix": (
-        "codex", "incident-responder", "outputs", "negativePrefix",
-        "ROLE-OUTPUT",
-    ),
-    "inline-code-only-capability": (
-        "local", "k8s-implementer", "capabilityTierRef", "inlineCodeOnly",
-        "ROLE-CAPABILITY-TIER-REF",
-    ),
-    "list-contained-blockquote": (
-        "claude", "network-reviewer", "handoffs", "listBlockquote",
-        "ROLE-HANDOFF",
-    ),
-    "quoted-adapter-heading": (
-        "codex", "code-reviewer", "adapterStem", "blockquote",
-        "ROLE-ADAPTER-STEM",
-    ),
-    "nested-quoted-adapter-heading": (
-        "claude", "gitops-reviewer", "adapterStem", "nestedBlockquote",
-        "ROLE-ADAPTER-STEM",
-    ),
-    "unordered-list-indented-code": (
-        "local", "observability-reviewer", "outputs",
-        "unorderedListIndentedCode", "ROLE-OUTPUT",
-    ),
-    "ordered-list-indented-code": (
-        "codex", "security-auditor", "requiredEvidence",
-        "orderedListIndentedCode", "ROLE-EVIDENCE",
-    ),
-    "forward-false-revocation": (
-        "local", "doc-writer", "outputs", "forwardFalse",
-        "ROLE-OUTPUT",
-    ),
-    "backward-not-true-revocation": (
-        "codex", "gitops-reviewer", "stopConditions", "backwardNotTrue",
-        "ROLE-STOP",
-    ),
-}
+LIST_INDENTED_CODE = re.compile(r"^ {0,3}(?:[-+*]|\d+[.)]) {4,}\S")
 
 
 class UniqueKeySafeLoader(yaml.SafeLoader):
@@ -406,9 +177,7 @@ def _construct_unique_mapping(
     loader: UniqueKeySafeLoader, node: MappingNode, deep: bool = False
 ) -> dict[Any, Any]:
     if not isinstance(node, MappingNode):
-        raise ConstructorError(
-            None, None, "expected a mapping node", node.start_mark
-        )
+        raise ConstructorError(None, None, "expected a mapping node", node.start_mark)
     mapping: dict[Any, Any] = {}
     for key_node, value_node in node.value:
         key = loader.construct_object(key_node, deep=deep)
@@ -487,20 +256,6 @@ class Diagnostic:
         return f"ERR {self.code} {self.path} role={self.role}: {self.detail}"
 
 
-def load_json(root: Path, relative: PurePosixPath) -> Any:
-    path = safe_repo_path(
-        root,
-        relative,
-        final_kind="file",
-        code="ROLE-JSON",
-    )
-    try:
-        with path.open("r", encoding="utf-8") as handle:
-            return json.load(handle)
-    except (OSError, json.JSONDecodeError) as exc:
-        fail("ROLE-JSON", f"{path}: {exc}")
-
-
 def normalize_whitespace(value: str) -> str:
     """Normalize whitespace only; punctuation, case, and Markdown stay semantic."""
 
@@ -556,9 +311,7 @@ def safe_repo_path(
             fail(code, f"{raw}: parent component {segment!r} is not a directory")
         if is_final:
             expected = (
-                stat.S_ISREG(mode)
-                if final_kind == "file"
-                else stat.S_ISDIR(mode)
+                stat.S_ISREG(mode) if final_kind == "file" else stat.S_ISDIR(mode)
             )
             if not expected:
                 fail(code, f"{raw}: expected a regular non-symlink {final_kind}")
@@ -570,218 +323,112 @@ def safe_repo_path(
     return resolved
 
 
-def select_current_harness(contract: dict[str, Any]) -> HarnessSelection:
-    """Select the current adapter claims without a hard-coded roster or layout."""
+def select_current_harness(registry: dict[str, Any]) -> HarnessSelection:
+    """Select role and projection semantics only from the terminal registry."""
 
-    if contract.get("contractVersion") != CONTRACT_VERSION:
-        fail("ROLE-CONTRACT-VERSION", "harness contract version differs")
-    consumers = contract.get("consumers")
-    if not isinstance(consumers, list):
-        fail("ROLE-CONSUMER", "harness consumers must be a list")
-    selected = [
-        consumer for consumer in consumers
-        if isinstance(consumer, dict) and consumer.get("id") == CONSUMER_ID
-    ]
-    if len(selected) != 1 or (
-        selected[0].get("selectedContract"),
-        selected[0].get("selectedVersion"),
-        selected[0].get("migrationState"),
-    ) != ("harness-contract", CONTRACT_VERSION, "current"):
-        fail(
-            "ROLE-CONSUMER",
-            "role semantics validator must select harness-contract/1.0.0/current",
-        )
+    roles_raw = registry.get("roles")
+    if not isinstance(roles_raw, list) or not roles_raw:
+        fail("ROLE-IDS", "registry roles must be a non-empty list")
+    role_ids = tuple(role.get("id") for role in roles_raw)
+    if not all(isinstance(item, str) for item in role_ids):
+        fail("ROLE-IDS", "registry role identities must be strings")
 
-    inventory = contract.get("currentInventory")
-    if not isinstance(inventory, dict) or inventory.get("state") != "current":
-        fail("ROLE-INVENTORY", "currentInventory must be a current object")
-    role_ids = tuple(inventory.get("roleIds", ()))
-    surface_ids = tuple(inventory.get("surfaceIds", ()))
-    if (
-        not role_ids
-        or not surface_ids
-        or not all(isinstance(item, str) for item in (*role_ids, *surface_ids))
-        or len(role_ids) != len(set(role_ids))
-        or len(surface_ids) != len(set(surface_ids))
-    ):
-        fail("ROLE-INVENTORY", "current role and surface identities differ")
-    expected_counts = (
-        len(role_ids),
-        len(surface_ids),
-        len(role_ids) * len(surface_ids),
-    )
-    actual_counts = (
-        inventory.get("expectedRoleCount"),
-        inventory.get("expectedSurfaceCount"),
-        inventory.get("expectedProjectionCount"),
-    )
-    if actual_counts != expected_counts:
-        fail("ROLE-INVENTORY", "current inventory counts differ")
-
-    canonical = contract.get("canonicalRoles")
-    if not isinstance(canonical, list):
-        fail("ROLE-IDS", "canonicalRoles must be a list")
-    canonical_by_id = {
-        role.get("id"): role
-        for role in canonical
-        if isinstance(role, dict) and isinstance(role.get("id"), str)
-    }
-    semantic_keys = {
-        "admissionState",
-        "responsibilities",
-        "outputs",
-        "prohibitedActions",
-        "stopConditions",
-        "handoffs",
-        "requiredEvidence",
+    surface_ids = ("neutral", "claude", "codex")
+    locations = {
+        "neutral": (PurePosixPath(".agents/agents"), ".md"),
+        "claude": (PurePosixPath(".claude/agents"), ".md"),
+        "codex": (PurePosixPath(".codex/agents"), ".toml"),
     }
     roles: dict[str, dict[str, Any]] = {}
-    for role_id in role_ids:
-        role = canonical_by_id.get(role_id)
-        if not isinstance(role, dict) or role.get("admissionState") != "current":
-            fail("ROLE-IDS", f"{role_id} is not a current canonical role")
-        semantics = role.get("adapterSemantics")
-        if not isinstance(semantics, dict) or set(semantics) != semantic_keys:
-            fail("ROLE-CATEGORIES", f"{role_id} adapter semantics differ")
-        if semantics.get("admissionState") != "current":
-            fail("ROLE-CATEGORIES", f"{role_id} adapter semantics are not current")
+    projection_paths: dict[tuple[str, str], PurePosixPath] = {}
+    for role in roles_raw:
+        role_id = role["id"]
         roles[role_id] = {
             "id": role_id,
-            "purpose": role.get("purpose"),
-            "inputs": copy.deepcopy(role.get("inputs")),
-            "permissionClass": role.get("permissionClass"),
-            "capabilityTierRef": role.get("capabilityTierRef"),
-            **{
-                key: copy.deepcopy(value)
-                for key, value in semantics.items()
-                if key != "admissionState"
-            },
+            "purpose": role["responsibility"],
+            "permissionClass": role["permission_class"],
+            "capabilityTierRef": role["capability_tier_ref"],
+            "handoffIds": copy.deepcopy(role["handoff_to"]),
         }
-
-    surfaces = contract.get("surfaces")
-    if not isinstance(surfaces, list):
-        fail("ROLE-ADAPTER-SURFACES", "surfaces must be a list")
-    surface_by_id = {
-        surface.get("id"): surface
-        for surface in surfaces
-        if isinstance(surface, dict) and isinstance(surface.get("id"), str)
-    }
-    locations: dict[str, tuple[PurePosixPath, str]] = {}
-    for surface_id in surface_ids:
-        surface = surface_by_id.get(surface_id)
-        if not isinstance(surface, dict) or surface.get("admissionState") != "current":
-            fail(
-                "ROLE-ADAPTER-SURFACES",
-                f"{surface_id} is not a current canonical surface",
-            )
-        path_root = surface.get("pathRoot")
-        extension = surface.get("extension")
-        if (
-            not isinstance(path_root, str)
-            or not isinstance(extension, str)
-            or extension not in ALLOWED_EXTENSIONS
-        ):
-            fail(
-                "ROLE-ADAPTER-SURFACES",
-                f"{surface_id} adapter location differs",
-            )
-        locations[surface_id] = (safe_relative_root(path_root), extension)
-
-    projections = inventory.get("projections")
-    if not isinstance(projections, list):
-        fail("ROLE-INVENTORY", "current projections must be a list")
-    expected_projection_paths = {
-        (role_id, surface_id): (
-            locations[surface_id][0]
-            / f"{role_id}{locations[surface_id][1]}"
-        )
-        for role_id in role_ids
-        for surface_id in surface_ids
-    }
-    actual_projection_paths: dict[tuple[str, str], PurePosixPath] = {}
-    for projection in projections:
-        if not isinstance(projection, dict):
-            fail("ROLE-INVENTORY", "current projection must be an object")
-        key = (projection.get("roleId"), projection.get("surfaceId"))
-        path = projection.get("path")
-        if (
-            key not in expected_projection_paths
-            or projection.get("admissionState") != "current"
-            or not isinstance(path, str)
-            or PurePosixPath(path) != expected_projection_paths[key]
-            or key in actual_projection_paths
-        ):
-            fail("ROLE-INVENTORY", "current projection layout differs")
-        actual_projection_paths[key] = PurePosixPath(path)
-    if actual_projection_paths != expected_projection_paths:
-        fail("ROLE-INVENTORY", "current projection membership differs")
+        projections = role.get("projections")
+        if not isinstance(projections, dict) or tuple(projections) != surface_ids:
+            fail("ROLE-INVENTORY", f"{role_id} projection keys differ")
+        for surface in surface_ids:
+            path = PurePosixPath(projections[surface])
+            expected = locations[surface][0] / f"{role_id}{locations[surface][1]}"
+            if path != expected:
+                fail("ROLE-INVENTORY", f"{role_id}/{surface} path differs")
+            projection_paths[(role_id, surface)] = path
 
     return HarnessSelection(
         role_ids=role_ids,
         surface_ids=surface_ids,
         roles=roles,
         locations=locations,
-        projection_paths=actual_projection_paths,
+        projection_paths=projection_paths,
     )
 
 
 def validate_contract(
     root: Path, raw_contract: dict[str, Any] | None = None
 ) -> HarnessSelection:
-    schema = load_json(root, SCHEMA_PATH)
+    terminal = load_terminal_validator()
     try:
-        Draft202012Validator.check_schema(schema)
-    except Exception as exc:  # jsonschema exposes multiple schema subclasses
-        fail("ROLE-SCHEMA-DEFINITION", str(exc))
-    contract = (
-        copy.deepcopy(raw_contract)
-        if raw_contract is not None
-        else load_json(root, CONTRACT_PATH)
-    )
-    errors = sorted(
-        Draft202012Validator(schema).iter_errors(contract),
-        key=lambda item: tuple(str(part) for part in item.absolute_path),
-    )
-    if errors:
-        error = errors[0]
-        location = "/".join(str(part) for part in error.absolute_path) or "<root>"
-        fail("ROLE-SCHEMA", f"{location}: {error.message}")
-
-    selection = select_current_harness(contract)
-
-    anchors: dict[str, tuple[str, str]] = {}
-    for role in selection.roles.values():
-        role_id = role["id"]
-        if not isinstance(role["capabilityTierRef"], str) or not re.fullmatch(
-            r"docs/00\.agent-governance/contracts/agent-model-fitness\.json"
-            r"#/roleProfiles/\d+/capabilityTier",
-            role["capabilityTierRef"],
+        registry = (
+            terminal.load_json(root, REGISTRY_PATH)
+            if raw_contract is None
+            else copy.deepcopy(raw_contract)
+        )
+        terminal.validate_registry(
+            root,
+            registry,
+            check_files=raw_contract is None,
+        )
+    except terminal.HarnessError as exc:
+        fail("ROLE-REGISTRY", f"{exc.code}: {exc.detail}")
+    selection = select_current_harness(registry)
+    for role_id in selection.role_ids:
+        role = selection.roles[role_id]
+        path, source = adapter_source(root, selection, "neutral", role_id)
+        neutral = parse_adapter_text("neutral", path, source)
+        role["_neutralUnits"] = copy.deepcopy(neutral.section_units)
+        role["_neutralBody"] = neutral.raw_body
+        tier = (
+            f"Capability tier reference: {chr(96)}{role['capabilityTierRef']}{chr(96)}."
+        )
+        handoff = (
+            "Registry handoff targets: "
+            + ", ".join(f"{chr(96)}{item}{chr(96)}" for item in role["handoffIds"])
+            + "."
+        )
+        for declaration, section, prefix, code in (
+            (
+                tier,
+                "Capability and Evidence",
+                "Capability tier reference:",
+                "ROLE-REGISTRY-TIER",
+            ),
+            (
+                handoff,
+                "Handoff / Escalation",
+                "Registry handoff targets:",
+                "ROLE-REGISTRY-HANDOFF",
+            ),
         ):
-            fail(
-                "ROLE-CAPABILITY-TIER-REF",
-                f"{role_id} capability tier reference differs",
+            declarations = re.findall(
+                r"(?m)^[ \t]*(?:[-+*][ \t]+|\d+[.)][ \t]+)?"
+                + re.escape(prefix)
+                + r"[^\n]*",
+                neutral.raw_body,
             )
-        for category in CONTRACT_CATEGORIES:
-            claims = (
-                [f"Capability tier reference: `{role['capabilityTierRef']}`."]
-                if category == "capabilityTierRef"
-                else role[category]
-            )
-            for claim in claims:
-                normalized = normalize_whitespace(claim)
-                if normalized != claim:
-                    fail(
-                        "ROLE-ANCHOR-WHITESPACE",
-                        f"{role_id}/{category} anchor is not whitespace-normalized",
-                    )
-                if claim in anchors:
-                    other_role, other_category = anchors[claim]
-                    fail(
-                        "ROLE-ANCHOR-UNIQUE",
-                        f"{role_id}/{category} duplicates "
-                        f"{other_role}/{other_category}",
-                    )
-                anchors[claim] = (role_id, category)
+            if (
+                len(declarations) != 1
+                or neutral.section_units.get(section, ()).count(declaration) != 1
+            ):
+                fail(
+                    code,
+                    "projection declaration must uniquely match registry in its section",
+                )
     return selection
 
 
@@ -933,9 +580,7 @@ def _without_revoked_units(lines: list[str]) -> list[str]:
     revoke_next_unit = False
 
     def semantic_text(raw_unit: str) -> str:
-        return re.sub(
-            r"^(?:#{1,6}\s+|[-+*]\s+|\d+[.)]\s+)", "", raw_unit
-        )
+        return re.sub(r"^(?:#{1,6}\s+|[-+*]\s+|\d+[.)]\s+)", "", raw_unit)
 
     def flush() -> None:
         nonlocal previous_operative_indexes, revoke_next_unit
@@ -1030,48 +675,6 @@ def extract_section_headings(body: str) -> tuple[str, ...]:
     return tuple(re.findall(r"(?m)^## ([^\n]+?)\s*$", body))
 
 
-def validate_gemini_frontmatter(
-    metadata: dict[str, Any],
-    relative_path: PurePosixPath,
-) -> None:
-    role_id = relative_path.stem
-    if tuple(metadata) != GEMINI_FRONTMATTER_KEYS:
-        fail(
-            "ROLE-ADAPTER-PARSE",
-            f"{relative_path}: Gemini frontmatter keys or key order differ",
-        )
-    if metadata["name"] != role_id:
-        fail("ROLE-ADAPTER-PARSE", f"{relative_path}: name must match file stem")
-    description = metadata["description"]
-    if not isinstance(description, str) or not description.strip():
-        fail(
-            "ROLE-ADAPTER-PARSE",
-            f"{relative_path}: description must be a non-empty string",
-        )
-    wildcard_values = {"*", "all", "inherit", "inherited-all"}
-    for field in ("name", "description", "kind"):
-        value = metadata[field]
-        if isinstance(value, str) and value.strip().lower() in wildcard_values:
-            fail(
-                "ROLE-ADAPTER-PARSE",
-                f"{relative_path}: wildcard {field} is forbidden",
-            )
-    if metadata["kind"] != "local":
-        fail("ROLE-ADAPTER-PARSE", f"{relative_path}: kind must be local")
-    expected_limits = (12, 30) if role_id == "supervisor" else (8, 20)
-    actual_limits = (metadata["max_turns"], metadata["timeout_mins"])
-    if any(type(value) is not int for value in actual_limits):
-        fail(
-            "ROLE-ADAPTER-PARSE",
-            f"{relative_path}: turn and timeout limits must be integers",
-        )
-    if actual_limits != expected_limits:
-        fail(
-            "ROLE-ADAPTER-PARSE",
-            f"{relative_path}: turn and timeout limits differ from the closed role values",
-        )
-
-
 def parse_adapter_text(
     surface: str,
     relative_path: PurePosixPath,
@@ -1081,18 +684,13 @@ def parse_adapter_text(
     if suffix == ".md":
         metadata, body = parse_frontmatter(text, relative_path.as_posix())
         frontmatter_end = text.find("\n---\n", 4)
-        canonical_yaml_frontmatter(
-            text[4:frontmatter_end], relative_path.as_posix()
-        )
+        canonical_yaml_frontmatter(text[4:frontmatter_end], relative_path.as_posix())
         declared_name = metadata["name"]
         description = metadata.get("description")
         expected_metadata_keys = {
-            "local": ("name", "description", "model"),
+            "neutral": ("name", "description"),
             "claude": ("name", "description", "model", "tools"),
-            "gemini": GEMINI_FRONTMATTER_KEYS,
         }
-        if surface == "gemini":
-            validate_gemini_frontmatter(metadata, relative_path)
         if tuple(metadata) != expected_metadata_keys.get(surface, ()):
             fail(
                 "ROLE-ADAPTER-BOUNDS",
@@ -1150,50 +748,60 @@ def adapter_source(
 ) -> tuple[PurePosixPath, str]:
     relative_path = selection.projection_paths[(role_id, surface)]
     try:
-        text = safe_repo_path(
+        path = safe_repo_path(
             root,
             relative_path,
             final_kind="file",
             code="ROLE-ADAPTER-PARSE",
-        ).read_text(encoding="utf-8")
-    except OSError as exc:
+        )
+        descriptor = os.open(
+            path,
+            os.O_RDONLY | getattr(os, "O_CLOEXEC", 0) | getattr(os, "O_NOFOLLOW", 0),
+        )
+        try:
+            metadata = os.fstat(descriptor)
+            if not stat.S_ISREG(metadata.st_mode):
+                fail(
+                    "ROLE-ADAPTER-PARSE",
+                    f"{relative_path}: expected a regular file",
+                )
+            if metadata.st_size > MAX_ADAPTER_BYTES:
+                fail(
+                    "ROLE-ADAPTER-PARSE",
+                    f"{relative_path}: input exceeds {MAX_ADAPTER_BYTES} bytes",
+                )
+            payload = os.read(descriptor, MAX_ADAPTER_BYTES + 1)
+            if len(payload) > MAX_ADAPTER_BYTES:
+                fail(
+                    "ROLE-ADAPTER-PARSE",
+                    f"{relative_path}: input exceeds {MAX_ADAPTER_BYTES} bytes",
+                )
+            text = payload.decode("utf-8")
+        finally:
+            os.close(descriptor)
+    except (OSError, UnicodeError) as exc:
         fail("ROLE-ADAPTER-PARSE", f"{relative_path}: {exc}")
     return relative_path, text
-
-
-def _missing_claims(
-    adapter: Adapter, category: str, claims: list[str]
-) -> list[str]:
-    section = CATEGORY_SECTIONS[category]
-    operative_units = set(adapter.section_units.get(section, ()))
-    return [claim for claim in claims if claim not in operative_units]
 
 
 def expected_adapter_section_units(
     role: dict[str, Any], surface: str
 ) -> dict[str, tuple[str, ...]]:
-    role_id = role["id"]
+    """Project provider bootstrap onto registry-selected neutral semantics."""
+
+    neutral_units = role.get("_neutralUnits")
+    if not isinstance(neutral_units, dict):
+        fail("ROLE-ADAPTER-BOUNDS", f"{role['id']} neutral projection is missing")
+    units = copy.deepcopy(neutral_units)
+    if surface == "neutral":
+        return units
+    neutral_bootstrap = units.get("Runtime Bootstrap", ())
+    imports = tuple(unit for unit in neutral_bootstrap if unit.startswith("@import "))
     try:
-        bootstrap = SURFACE_BOOTSTRAP_UNITS[surface]
-        scope_imports = ROLE_SCOPE_IMPORTS[role_id]
+        units["Runtime Bootstrap"] = SURFACE_BOOTSTRAP_UNITS[surface] + imports
     except KeyError as exc:
-        fail("ROLE-ADAPTER-BOUNDS", f"unknown closed adapter profile: {exc}")
-    return {
-        "Runtime Bootstrap": bootstrap
-        + tuple(f"@import {path}" for path in scope_imports),
-        "Role": tuple(role["responsibilities"]),
-        "When to Use": (role["purpose"],),
-        "Inputs": tuple(role["inputs"]),
-        "Outputs": tuple(role["outputs"]),
-        "Guardrails": tuple(role["prohibitedActions"])
-        + tuple(role["stopConditions"]),
-        "Capability and Evidence": (
-            f"Capability tier reference: `{role['capabilityTierRef']}`.",
-            *role["requiredEvidence"],
-        ),
-        "Handoff / Escalation": tuple(role["handoffs"]),
-        "Postflight": (POSTFLIGHT_UNIT,),
-    }
+        fail("ROLE-ADAPTER-BOUNDS", f"unknown projection surface: {exc}")
+    return units
 
 
 def render_adapter_body(role: dict[str, Any], surface: str) -> str:
@@ -1208,22 +816,12 @@ def render_adapter_body(role: dict[str, Any], surface: str) -> str:
                 if unit.startswith("@import ") or heading in paragraph_sections
                 else f"- {unit}"
             )
-            if unit.startswith("Follow `bootstrap ->"):
+            if unit.startswith(
+                "Follow `docs/00.agent-governance/skills/work-lifecycle.md`"
+            ):
                 lines.append("")
         lines.append("")
     return "\n".join(lines).rstrip() + "\n"
-
-
-def _all_contract_claims_present(role: dict[str, Any], adapter: Adapter) -> bool:
-    for category in CONTRACT_CATEGORIES:
-        claims = (
-            [f"Capability tier reference: `{role['capabilityTierRef']}`."]
-            if category == "capabilityTierRef"
-            else role[category]
-        )
-        if _missing_claims(adapter, category, claims):
-            return False
-    return True
 
 
 def validate_adapter(role: dict[str, Any], adapter: Adapter) -> list[Diagnostic]:
@@ -1270,14 +868,10 @@ def validate_adapter(role: dict[str, Any], adapter: Adapter) -> list[Diagnostic]
 
     expected_units = expected_adapter_section_units(role, adapter.surface)
     expected_body = render_adapter_body(role, adapter.surface)
-    claims_present = _all_contract_claims_present(role, adapter)
-    if stem_values == (role_id, role_id, role_id) and (
-        claims_present
-        and (
-            adapter.raw_body != expected_body
-            or adapter.section_headings != ROLE_ADAPTER_HEADING_ORDER
-            or adapter.section_units != expected_units
-        )
+    if (
+        adapter.raw_body != expected_body
+        or adapter.section_headings != ROLE_ADAPTER_HEADING_ORDER
+        or adapter.section_units != expected_units
     ):
         diagnostics.append(
             Diagnostic(
@@ -1288,22 +882,6 @@ def validate_adapter(role: dict[str, Any], adapter: Adapter) -> list[Diagnostic]
             )
         )
 
-    for category in CONTRACT_CATEGORIES:
-        claims = (
-            [f"Capability tier reference: `{role['capabilityTierRef']}`."]
-            if category == "capabilityTierRef"
-            else role[category]
-        )
-        missing = _missing_claims(adapter, category, claims)
-        if missing:
-            diagnostics.append(
-                Diagnostic(
-                    CATEGORY_RULES[category],
-                    adapter.path,
-                    role_id,
-                    f"missing {category} claim: {missing[0]}",
-                )
-            )
     return diagnostics
 
 
@@ -1317,13 +895,10 @@ def validate_provider_baseline_text(
     operative = operative_markdown(source, relative_path.as_posix())
     headings = extract_section_headings(operative)
     profile = PROVIDER_BASELINE_PROFILES[surface]
-    provider = "gemini" if surface == "local" else surface
+    provider = surface
     expected_units = {
         heading: (
-            tuple(
-                unit.format(provider=provider)
-                for unit in BASELINE_COMMON_REFERENCES
-            )
+            tuple(unit.format(provider=provider) for unit in BASELINE_COMMON_REFERENCES)
             if heading == "Canonical References"
             else profile[heading]
         )
@@ -1381,179 +956,14 @@ def validate_repository(root: Path) -> list[Diagnostic]:
     ] + validate_provider_baselines(root)
 
 
-def validate_fixture(
-    fixture: dict[str, Any], selection: HarnessSelection
-) -> None:
-    expected_keys = {
-        "schemaVersion",
-        "adapterSurfaces",
-        "roles",
-        "categories",
-        "mutations",
-        "geminiMetadataMutations",
-        "forbiddenCommonFields",
-        "negationStates",
-        "adversarialCases",
-        "expectedCaseCount",
-    }
-    if set(fixture) != expected_keys or fixture["schemaVersion"] != 4:
-        fail("ROLE-FIXTURE", "fixture keys or schemaVersion differ")
-    if tuple(fixture["adapterSurfaces"]) != selection.surface_ids:
-        fail("ROLE-FIXTURE", "fixture adapter surfaces differ")
-    if tuple(fixture["roles"]) != selection.role_ids:
-        fail("ROLE-FIXTURE", "fixture roles differ")
-    if fixture["categories"] != CATEGORY_RULES:
-        fail("ROLE-FIXTURE", "fixture category rule IDs differ")
-    if tuple(fixture["mutations"]) != ("remove", "replace"):
-        fail("ROLE-FIXTURE", "fixture mutations must be remove then replace")
-    if tuple(fixture["geminiMetadataMutations"]) != GEMINI_METADATA_MUTATIONS:
-        fail("ROLE-FIXTURE", "Gemini metadata mutations differ")
-    if tuple(fixture["forbiddenCommonFields"]) != FORBIDDEN_COMMON_FIELDS:
-        fail("ROLE-FIXTURE", "forbidden common fields differ")
-    if tuple(fixture["negationStates"]) != NEGATION_STATES:
-        fail("ROLE-FIXTURE", "negation state vocabulary differs")
-    expected_count = (
-        len(selection.surface_ids)
-        * len(selection.role_ids)
-        * len(CATEGORY_RULES)
-        * 2
-    )
-    if fixture["expectedCaseCount"] != expected_count:
-        fail("ROLE-FIXTURE", f"expectedCaseCount must equal {expected_count}")
-    adversarial = fixture["adversarialCases"]
-    if not isinstance(adversarial, list):
-        fail("ROLE-FIXTURE", "adversarialCases must be a list")
-    actual_adversarial: dict[str, tuple[str, str, str, str, str]] = {}
-    required_case_keys = {
-        "name", "adapterSurface", "role", "category", "mutation", "expectedRule"
-    }
-    for case in adversarial:
-        if not isinstance(case, dict) or set(case) != required_case_keys:
-            fail("ROLE-FIXTURE", "adversarial case keys differ")
-        name = case["name"]
-        if not isinstance(name, str) or name in actual_adversarial:
-            fail("ROLE-FIXTURE", "adversarial case names must be unique strings")
-        actual_adversarial[name] = (
-            case["adapterSurface"], case["role"], case["category"],
-            case["mutation"], case["expectedRule"],
-        )
-    if actual_adversarial != ADVERSARIAL_SCHEMA:
-        fail("ROLE-FIXTURE", "adversarial case semantics differ")
-
-
-def category_anchor(
-    role: dict[str, Any],
-    category: str,
-) -> str:
-    if category == "adapterStem":
-        return f"# {role['id']}"
-    claims = (
-        [f"Capability tier reference: `{role['capabilityTierRef']}`."]
-        if category == "capabilityTierRef"
-        else role[category]
-    )
-    return claims[0]
-
-
-def replace_source_anchor(
-    source: str, anchor: str, replacement: str, path: PurePosixPath, label: str
-) -> str:
-    if source.count(anchor) != 1:
-        fail(
-            "ROLE-SELF-TEST",
-            f"{path}/{label} anchor must occur exactly once",
-        )
-    return source.replace(anchor, replacement, 1)
-
-
-def mutate_source(
-    source: str,
-    role: dict[str, Any],
-    category: str,
-    mutation: str,
-    path: PurePosixPath,
-) -> str:
-    anchor = category_anchor(role, category)
-    if mutation == "remove":
-        replacement = ""
-    elif mutation == "replace":
-        replacement = f"mutated-{category}-claim"
-    elif mutation == "fenced":
-        replacement = f"\n\n```text\n{anchor}\n```\n\n"
-    elif mutation == "indentedTildeFence":
-        replacement = f"\n\n   ~~~~ text\n{anchor}\n   ~~~~\n\n"
-    elif mutation == "unorderedListIndentedCode":
-        replacement = f"    {anchor}"
-    elif mutation == "orderedListIndentedCode":
-        replacement = f"\n1.     {anchor}"
-    elif mutation == "htmlComment":
-        replacement = f"<!-- {anchor} -->"
-    elif mutation == "strikethrough":
-        replacement = f"~~{anchor}~~"
-    elif mutation == "blockquote":
-        replacement = f"\n\n> {anchor}\n\n"
-    elif mutation == "nestedBlockquote":
-        replacement = f"\n\n> > {anchor}\n\n"
-    elif mutation == "lazyBlockquote":
-        replacement = f"\n\n> {anchor}\nlazy quoted continuation\n\n"
-    elif mutation == "listBlockquote":
-        replacement = f"> {anchor}"
-    elif mutation == "revoked":
-        replacement = f"REVOKED: {anchor}"
-    elif mutation == "contradicted":
-        replacement = f"CONTRADICTION: {anchor}"
-    elif mutation == "wrappedContradiction":
-        replacement = f"{anchor}\nThis statement is contradicted."
-    elif mutation == "followingParagraphRevocation":
-        replacement = f"{anchor}\n\nThis statement is contradicted."
-    elif mutation == "followingListRevocation":
-        replacement = f"{anchor}\n- The preceding statement is revoked."
-    elif mutation == "notTrue":
-        replacement = f"It is not true that {anchor}"
-    elif mutation == "forwardRevocation":
-        replacement = f"The following claim does not apply:\n{anchor}"
-    elif mutation == "negativePrefix":
-        replacement = f"Do not {anchor}"
-    elif mutation == "inlineCodeOnly":
-        replacement = f"``{anchor}``"
-    elif mutation == "forwardFalse":
-        replacement = f"The following statement is false:\n\n{anchor}"
-    elif mutation == "backwardNotTrue":
-        replacement = f"{anchor}\n\nThis statement is not true."
-    elif mutation == "yamlDuplicateName":
-        yaml_anchor = f"name: {role['id']}"
-        return replace_source_anchor(
-            source,
-            yaml_anchor,
-            f"{yaml_anchor}\nname: conflicting-role",
-            path,
-            mutation,
-        )
-    elif mutation == "yamlNonScalarName":
-        yaml_anchor = f"name: {role['id']}"
-        return replace_source_anchor(
-            source,
-            yaml_anchor,
-            "name:\n  nested: conflicting-role",
-            path,
-            mutation,
-        )
-    elif mutation == "yamlNonMapping":
-        end = source.find("\n---\n", 4)
-        if not source.startswith("---\n") or end < 0:
-            fail("ROLE-SELF-TEST", f"{path}: frontmatter boundary missing")
-        return "---\n- invalid-frontmatter\n---\n" + source[end + 5 :]
-    else:
-        fail("ROLE-SELF-TEST", f"{path}: unknown mutation {mutation!r}")
-    return replace_source_anchor(source, anchor, replacement, path, category)
-
-
 def validate_mutated_source(
     surface: str,
     path: PurePosixPath,
     source: str,
     role: dict[str, Any],
 ) -> list[str]:
+    """Return stable diagnostics for one in-memory projection mutation."""
+
     try:
         adapter = parse_adapter_text(surface, path, source)
     except ContractError as exc:
@@ -1561,243 +971,12 @@ def validate_mutated_source(
     return [diagnostic.code for diagnostic in validate_adapter(role, adapter)]
 
 
-def mutate_gemini_frontmatter(source: str, mutation: str) -> str:
-    if mutation == "missing-description":
-        return re.sub(
-            r"^description: .*\n", "", source, count=1, flags=re.MULTILINE
-        )
-    if mutation == "extra-key":
-        return source.replace(
-            "timeout_mins:",
-            "tools: [read_file]\n" "timeout_mins:",
-            1,
-        )
-    if mutation == "duplicate-kind":
-        return source.replace("kind:", "kind: local\nkind:", 1)
-    if mutation == "malformed-description":
-        return re.sub(
-            r"^description: .*$",
-            "description: [invalid]",
-            source,
-            count=1,
-            flags=re.MULTILINE,
-        )
-    if mutation == "wildcard-kind":
-        return re.sub(
-            r"^kind: .*$", 'kind: "*"', source, count=1, flags=re.MULTILINE
-        )
-    if mutation == "wrong-kind":
-        return re.sub(
-            r"^kind: .*$", "kind: remote", source, count=1, flags=re.MULTILINE
-        )
-    if mutation == "malformed-max-turns":
-        return re.sub(
-            r"^max_turns: .*$",
-            "max_turns: many",
-            source,
-            count=1,
-            flags=re.MULTILINE,
-        )
-    if mutation == "wrong-timeout":
-        return re.sub(
-            r"^timeout_mins: .*$",
-            "timeout_mins: 0",
-            source,
-            count=1,
-            flags=re.MULTILINE,
-        )
-    if mutation == "key-order-drift":
-        return re.sub(
-            r"^(max_turns: .*\n)(timeout_mins: .*\n)",
-            r"\2\1",
-            source,
-            count=1,
-            flags=re.MULTILINE,
-        )
-    fail("ROLE-SELF-TEST", f"unknown Gemini frontmatter mutation {mutation!r}")
-
-
-def run_self_test(root: Path) -> tuple[list[str], int]:
-    selection = validate_contract(root)
-    roles = selection.roles
-    fixture = load_json(root, FIXTURE_PATH)
-    validate_fixture(fixture, selection)
-    sources = {
-        (surface, role_id): adapter_source(
-            root, selection, surface, role_id
-        )
-        for surface in selection.surface_ids
-        for role_id in selection.role_ids
-    }
-    adapters = {
-        key: parse_adapter_text(key[0], path, source)
-        for key, (path, source) in sources.items()
-    }
-    baseline = [
-        diagnostic
-        for surface in selection.surface_ids
-        for role_id in selection.role_ids
-        for diagnostic in validate_adapter(roles[role_id], adapters[(surface, role_id)])
-    ]
-    if baseline:
-        return (["baseline adapters fail: " + baseline[0].render()], 0)
-
-    failures: list[str] = []
-    cases = 0
-    for surface in selection.surface_ids:
-        for role_id in selection.role_ids:
-            role = roles[role_id]
-            path, base_source = sources[(surface, role_id)]
-            for category, expected_rule in CATEGORY_RULES.items():
-                for mutation in fixture["mutations"]:
-                    cases += 1
-                    mutated_source = mutate_source(
-                        base_source, role, category, mutation, path
-                    )
-                    actual_rules = validate_mutated_source(
-                        surface,
-                        path,
-                        mutated_source,
-                        role,
-                    )
-                    if actual_rules != [expected_rule]:
-                        failures.append(
-                            f"{surface}/{role_id}/{category}/{mutation}: "
-                            f"expected {[expected_rule]!r}, got {actual_rules!r}"
-                        )
-
-    for case in fixture["adversarialCases"]:
-        surface = case["adapterSurface"]
-        role_id = case["role"]
-        role = roles[role_id]
-        path, base_source = sources[(surface, role_id)]
-        mutated_source = mutate_source(
-            base_source, role, case["category"], case["mutation"], path
-        )
-        actual_rules = validate_mutated_source(
-            surface,
-            path,
-            mutated_source,
-            role,
-        )
-        if actual_rules != [case["expectedRule"]]:
-            failures.append(
-                f"adversarial/{case['name']}: expected "
-                f"{[case['expectedRule']]!r}, got {actual_rules!r}"
-            )
-
-    gemini_path, gemini_source = sources[("gemini", "code-reviewer")]
-    gemini_role = roles["code-reviewer"]
-    for mutation in fixture["geminiMetadataMutations"]:
-        actual_rules = validate_mutated_source(
-            "gemini",
-            gemini_path,
-            mutate_gemini_frontmatter(gemini_source, mutation),
-            gemini_role,
-        )
-        if actual_rules != ["ROLE-ADAPTER-PARSE"]:
-            failures.append(
-                f"gemini-frontmatter/{mutation}: expected "
-                f"['ROLE-ADAPTER-PARSE'], got {actual_rules!r}"
-            )
-
-    vocabulary_surface = "local"
-    vocabulary_role = roles["code-reviewer"]
-    vocabulary_path, vocabulary_source = sources[
-        (vocabulary_surface, "code-reviewer")
-    ]
-    vocabulary_anchor = category_anchor(vocabulary_role, "responsibilities")
-    for state in fixture["negationStates"]:
-        predicate = (
-            "does not apply" if state == "does not apply" else f"is {state}"
-        )
-        for direction, replacement in (
-            (
-                "forward",
-                f"The following statement {predicate}:\n\n{vocabulary_anchor}",
-            ),
-            (
-                "backward",
-                f"{vocabulary_anchor}\n\nThis statement {predicate}.",
-            ),
-        ):
-            mutated_source = replace_source_anchor(
-                vocabulary_source,
-                vocabulary_anchor,
-                replacement,
-                vocabulary_path,
-                f"vocabulary-{direction}-{state}",
-            )
-            actual_rules = validate_mutated_source(
-                vocabulary_surface,
-                vocabulary_path,
-                mutated_source,
-                vocabulary_role,
-            )
-            if actual_rules != ["ROLE-RESPONSIBILITY"]:
-                failures.append(
-                    f"vocabulary/{direction}/{state}: expected "
-                    f"['ROLE-RESPONSIBILITY'], got {actual_rules!r}"
-                )
-
-    raw_contract = load_json(root, CONTRACT_PATH)
-    for forbidden in fixture["forbiddenCommonFields"]:
-        mutated_contract = copy.deepcopy(raw_contract)
-        mutated_contract["canonicalRoles"][0]["adapterSemantics"][
-            forbidden
-        ] = "adapter-owned"
-        try:
-            validate_contract(root, mutated_contract)
-        except ContractError as exc:
-            if exc.code != "ROLE-SCHEMA":
-                failures.append(
-                    f"forbidden field {forbidden}: expected ROLE-SCHEMA, got {exc.code}"
-                )
-        else:
-            failures.append(f"forbidden field {forbidden}: mutation passed")
-
-    with tempfile.TemporaryDirectory(
-        prefix="agent-harness-semantics-root-boundary-"
-    ) as directory:
-        symlink_root = Path(directory) / "repository-root-link"
-        symlink_root.symlink_to(root.absolute(), target_is_directory=True)
-        try:
-            validate_contract(symlink_root)
-        except ContractError as exc:
-            if exc.code != "ROLE-JSON":
-                failures.append(
-                    "symlink root: expected ROLE-JSON, "
-                    f"got {exc.code}"
-                )
-        else:
-            failures.append("symlink root: mutation passed")
-    return failures, cases
-
-
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=Path("."))
-    parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args()
     root = args.root.absolute()
     try:
-        if args.self_test:
-            failures, cases = run_self_test(root)
-            if failures:
-                for failure in failures:
-                    print(f"ERR ROLE-SELF-TEST {failure}", file=sys.stderr)
-                return 1
-            print(
-                "[PASS] agent harness semantics self-test passed: "
-                f"cases={cases} adversarial={len(ADVERSARIAL_SCHEMA)} "
-                f"vocabulary={len(NEGATION_STATES) * 2} "
-                f"geminiMetadata={GEMINI_METADATA_MUTATION_COUNT} "
-                f"roles={len(validate_contract(root).role_ids)} "
-                f"adapters={len(validate_contract(root).projection_paths)} "
-                f"categories={len(CATEGORY_RULES)}"
-            )
-            return 0
-
         selection = validate_contract(root)
         diagnostics = validate_repository(root)
         if diagnostics:
@@ -1808,7 +987,7 @@ def main() -> int:
             "[PASS] agent harness semantics validation passed: "
             f"roles={len(selection.role_ids)} "
             f"adapters={len(selection.projection_paths)} "
-            f"categories={len(CATEGORY_RULES)}"
+            f"surfaces={len(selection.surface_ids)}"
         )
         return 0
     except (ContractError, KeyError, TypeError, ValueError) as exc:

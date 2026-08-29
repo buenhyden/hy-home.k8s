@@ -1,17 +1,15 @@
 ---
 name: doc-writer
-description: Route and author governed documentation at its canonical SDLC or common-document owner.
-model: Gemini 3.5 Flash
+description: Author governed documentation at the canonical SDLC or common-document owner.
 ---
 
 # doc-writer
 
 ## Runtime Bootstrap
 
-- Load `GEMINI.md`, `.agents/GEMINI.md`, and this agent's imported scope before work.
-- Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.
-
-@import docs/00.agent-governance/scopes/docs.md
+- Load `.agents/registry.json` and this provider-neutral role projection before work.
+- Follow the Stage 00 policy and handoff boundaries referenced by the registry.
+@import docs/00.agent-governance/roles/documentation.md
 
 ## Role
 
@@ -31,18 +29,19 @@ Route and author governed documentation at its canonical SDLC or common-document
 
 ## Guardrails
 
-- Do not invent new durable policy in document files that belongs in `rules/` or `scopes/`.
+- Do not invent durable policy in domain documents; route it to the responsible Stage 00 policy or role owner.
 - Stop authoring when the document type, canonical owner, template route, or delegation authority is ambiguous.
 
 ## Capability and Evidence
 
-- Capability tier reference: `docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles/2/capabilityTier`.
+- Capability tier reference: `docs/00.agent-governance/policies/model-selection.md#worker`.
 - Required evidence: report the canonical target, template path, upstream references, and each validation result or limitation.
 
 ## Handoff / Escalation
 
+- Registry handoff targets: `docs-researcher`, `supervisor`, `wiki-curator`.
 - Escalate to `supervisor.md` when the correct document type or ownership path is unclear.
 
 ## Postflight
 
-Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results.
+Run `docs/00.agent-governance/skills/work-lifecycle.md#completion` before returning results.

@@ -2,36 +2,34 @@
 
 ## Purpose
 
-Thin baseline for the tracked Codex-native `.codex/**` surface. Durable common
-policy remains in Stage 00.
+Thin baseline for the tracked Codex-native surface. Shared policy and
+responsibility remain in Stage 00.
 
 ## Loading Order
 
-Load root `AGENTS.md`, then follow the JIT sequence in
-`docs/00.agent-governance/rules/bootstrap.md` with the Codex provider note and
-the relevant scope.
+Load root `AGENTS.md`, then
+`docs/00.agent-governance/skills/work-lifecycle.md`, the Codex provider note,
+and the relevant responsibility and active Task.
 
 ## Provider Metadata
 
-- Native role adapters: `.codex/agents/*.toml` with provider-owned model and
+- Native role projections: `.codex/agents/*.toml`, with native model and
   reasoning-effort metadata.
-- Context and validation wiring: `.codex/hooks.json`; it is not a Claude-style
-  permission gate.
-- Shared asset views: `.codex/{skills,workflows,output-styles}/` symlinks to
-  `.agents/**`.
+- Native sandbox and approval controls belong to the running client.
+- Shared skill view: `.codex/skills` points to `.agents/skills`.
+- Run explicit repository validation; custom hook graphs are not a supported
+  Codex execution or permission surface.
 
 ## Canonical References
 
-- Common execution policy: `docs/00.agent-governance/rules/agentic.md`.
+- Common execution policy: `docs/00.agent-governance/policies/agent-execution.md`.
 - Provider facts: `docs/00.agent-governance/providers/codex.md`.
-- Role inventory and semantics: `docs/00.agent-governance/harness-catalog.md`
-  and `docs/00.agent-governance/contracts/harness-contract.json`.
-- Validation lanes and handoff: `docs/00.agent-governance/rules/quality-standards.md`.
-- Shared lifecycle hooks: `docs/00.agent-governance/hooks`.
+- Role inventory and semantics: `.agents/registry.json` and `.agents/agents/`.
+- Validation lanes and handoff: `docs/00.agent-governance/policies/quality.md`.
 - Shell guidance: `RTK.md`.
 
 ## Evidence Boundary
 
-Tracked Codex adapters and hooks prove repository configuration only. They do
-not prove native discovery, context delivery, authentication, model resolution,
-sandbox or approval enforcement, or execution.
+Tracked projections prove repository configuration only, not native discovery,
+authentication, model resolution, sandbox or approval enforcement, event
+delivery, or execution.

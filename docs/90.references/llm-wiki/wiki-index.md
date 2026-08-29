@@ -3,7 +3,7 @@ title: 'Reference: LLM WIKI Generated Index'
 type: content/reference
 status: draft
 owner: platform
-updated: 2026-08-09
+updated: 2026-08-28
 ---
 
 # Reference: LLM WIKI Generated Index
@@ -26,7 +26,7 @@ updated: 2026-08-09
 
 - Type: durable-concept / faq
 - Source checked: 2026-08-09
-- Declared input review: exact six RIA-declared inputs reviewed together on 2026-08-09.
+- Declared input review: current RIA-declared input routing reviewed on 2026-08-28; the README retains the dated 2026-08-09 source review.
 - Refresh trigger: any declared input, docs taxonomy, Agent governance routing, runtime roster, script inventory, GitOps owner, examples taxonomy, or version inventory path changes.
 
 ## Authority Boundary
@@ -49,8 +49,9 @@ updated: 2026-08-09
 | Entry | Canonical owner | Link map role | Freshness trigger |
 | --- | --- | --- | --- |
 | Agent governance hub | [Agent Governance Hub](../../00.agent-governance/README.md) | Routes policy and runtime-governance discovery | Governance hub or rule path changes |
-| Runtime catalog | [Harness Catalog](../../00.agent-governance/harness-catalog.md) | Owns agent, skill, model, and mirror roster | Agent, skill, model, hook, or mirror changes |
-| Agent-first execution | [Agentic Execution Rules](../../00.agent-governance/rules/agentic.md) | Owns execution defaults and runtime-surface change rules | Agent-first rule changes |
+| Agent registry | [Agent Registry](../../../.agents/registry.json) | Owns machine role, skill, permission, and provider-projection membership | Registry membership or routing changes |
+| Agent responsibilities | [Agent Responsibilities](../../00.agent-governance/roles/README.md) | Routes human responsibility selection, not machine roster or model facts | Responsibility routing changes |
+| Agent-first execution | [Agent Execution Policy](../../00.agent-governance/policies/agent-execution.md) | Owns shared execution defaults and scope boundaries | Execution policy changes |
 | Runtime baseline | [Local Runtime Baseline](../../../.claude/CLAUDE.md) | Owns local `.claude` loading and tooling baseline | Runtime loading or local tooling changes |
 | LLM Wiki operation | [LLM Wiki Curation Guide](../../05.operations/guides/0009-llm-wiki-curation-guide.md) | Explains refresh triggers and wiki-curator usage | Generator, index, or wiki-curator contract changes |
 | Documentation hub | [Docs README](../../README.md) | Owns human-facing docs map | Top-level docs taxonomy changes |
@@ -77,8 +78,8 @@ updated: 2026-08-09
 
 - [LLM WIKI README](./README.md)
 - [Agent Governance Hub](../../00.agent-governance/README.md)
-- [Harness Catalog](../../00.agent-governance/harness-catalog.md)
-- [Document Stage Routing Rules](../../00.agent-governance/rules/document-authoring.md)
+- [Agent Responsibilities](../../00.agent-governance/roles/README.md)
+- [Document Authoring Policy](../../00.agent-governance/policies/document-authoring.md)
 - [Document Contract Registry](../../99.templates/registry.json)
 - [Docs README](../../README.md)
 - [Scripts README](../../../scripts/README.md)
@@ -87,13 +88,13 @@ updated: 2026-08-09
 ## Review and Freshness
 
 - Review cadence: on source change
-- Last reviewed: 2026-08-09
-- Next review trigger: any change to one of the six RIA-declared inputs, docs taxonomy, `wiki-curator`, generator output, Agent governance routing, script inventory, GitOps root ownership, examples taxonomy, or version inventory paths.
+- Last routing review: 2026-08-28 (repository-static only; external-source review unchanged).
+- Next review trigger: any change to the RIA-declared inputs, docs taxonomy, `wiki-curator`, generator output, Agent governance routing, script inventory, GitOps root ownership, examples taxonomy, or version inventory paths.
 
 ## Related Documents
 
 - [LLM WIKI README](./README.md)
 - [LLM Wiki Curation Guide](../../05.operations/guides/0009-llm-wiki-curation-guide.md)
-- [Harness Catalog](../../00.agent-governance/harness-catalog.md)
-- [Agentic Execution Rules](../../00.agent-governance/rules/agentic.md)
+- [Agent Registry](../../../.agents/registry.json)
+- [Agent Execution Policy](../../00.agent-governance/policies/agent-execution.md)
 - [90.references README](../README.md)

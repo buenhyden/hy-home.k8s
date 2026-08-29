@@ -57,5 +57,5 @@ evidence.
 
 - [Governance Hub](README.md)
 - [Document Lifecycle Policy](policies/document-lifecycle.md)
-- [Document Authoring Policy](rules/document-authoring.md)
+- [Document Authoring Policy](policies/document-authoring.md)
 - [Document Profile Registry](../99.templates/registry.json)

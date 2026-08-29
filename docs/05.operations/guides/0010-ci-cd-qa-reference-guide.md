@@ -169,7 +169,7 @@ git diff
 git diff --cached
 ```
 
-포맷터가 파일을 변경하면 affected, staged, all-files 검증을 다시 실행한다. 전체 완료 순서와 결과 어휘는 [Agent Quality Standards](../../00.agent-governance/rules/quality-standards.md)를 따른다. 로컬에서는 `pre-commit` 통과를 빠른 PR 생성 기준으로 삼을 수 있으며, 통합 및 정책 게이트 검증은 GitHub CI가 최종 판정한다. 다만 scripts, GitOps, QA/CI 문서, policy bundle 변경은 위의 `repo-quality-static`/`manifest-static` 재현 명령을 로컬에서도 실행해 evidence를 남긴다.
+포맷터가 파일을 변경하면 affected, staged, all-files 검증을 다시 실행한다. 전체 완료 순서와 결과 어휘는 [Agent Quality Standards](../../00.agent-governance/policies/quality.md)를 따른다. 로컬에서는 `pre-commit` 통과를 빠른 PR 생성 기준으로 삼을 수 있으며, 통합 및 정책 게이트 검증은 GitHub CI가 최종 판정한다. 다만 scripts, GitOps, QA/CI 문서, policy bundle 변경은 위의 `repo-quality-static`/`manifest-static` 재현 명령을 로컬에서도 실행해 evidence를 남긴다.
 신규 testable application/source code가 추가되는 변경은 해당 application test surface에서 90% coverage target을 검토하고 유지한다. Bash/YAML/Markdown infrastructure 변경은 application coverage claim 대신 validation-matrix evidence를 남긴다.
 repo-static 및 CI 검증은 live k3d, ArgoCD, Vault, ESO, deployment readiness 증거가 아니다. live runtime 증거는 별도 승인된 read-only 검증 또는 operator-owned runbook 결과로만 기록한다.
 

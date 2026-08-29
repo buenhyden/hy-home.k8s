@@ -1,47 +1,32 @@
 #!/usr/bin/env python3
-"""Validate the repository-static AGQC-003 legacy consumer cutover."""
+"""Validate retired agent surfaces and current instruction consumers."""
 
 from __future__ import annotations
 
 import argparse
-import copy
-import hashlib
+import importlib.util
 import json
 import os
-import re
 import selectors
 import signal
-import shutil
 import stat
 import subprocess
-import tempfile
+import sys
 import time
+from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
-from typing import Any, NoReturn
+from types import ModuleType
+from typing import Any, Mapping, NoReturn
 
-from jsonschema import Draft202012Validator
+import agent_registry_compat as compat
+import archive_recovery as recovery
+import archive_validation as archive
+import document_contracts as documents
+import json_schema_validation
+import reference_information_architecture as ria
 
+links = archive._load_canonical_link_module()
 
-CONTRACT_PATH = PurePosixPath(
-    "docs/00.agent-governance/contracts/agent-legacy-cutover.json"
-)
-SCHEMA_PATH = PurePosixPath(
-    "docs/00.agent-governance/contracts/agent-legacy-cutover.schema.json"
-)
-FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-legacy-cutover.json")
-FIXTURE_SHA256 = (
-    "3f208c26840ab3755b2a73a6300c514792093d393e13e47e20abc876a9d4306d"  # pragma: allowlist secret
-)
-
-SCHEMA_VERSION = 1
-CONTRACT_VERSION = "1.0.0"
-OWNER_SPEC = "docs/03.specs/0045-agent-governance-ci-qa-cutover/spec.md"
-RIA_SNAPSHOT_SOURCE_COMMIT = (
-    "8fb9821497aaa93d9ed5fc1a69b60c628b047b47"  # pragma: allowlist secret
-)
-RESULT_VOCABULARY = ("PASS", "FAIL")
-EVIDENCE_VOCABULARY = ("repo-static",)
-GIT_CANDIDATE_SOURCE = "git-ls-files-z-cached"
 GIT_EXECUTABLE = "/usr/bin/git"
 GIT_TIMEOUT_SECONDS = 10
 GIT_CLEANUP_TIMEOUT_SECONDS = 2
@@ -90,250 +75,14 @@ RETIRED_SURFACES = (
     "tests/fixtures/agent-role-semantics.json",
     ".github/ABOUT.md",
 )
-REPLACEMENT_SURFACES = (
-    "docs/00.agent-governance/contracts/harness-contract.json",
-    "docs/00.agent-governance/contracts/harness-contract.schema.json",
-    "scripts/validate-agent-harness-semantics.py",
-    "tests/fixtures/agent-harness-semantics.json",
-    ".github/README.md",
+RETIRED_OWNER_PATHS = (
+    "docs/00.agent-governance/common-governance.md",
+    "docs/00.agent-governance/harness-implementation-map.md",
+    "docs/00.agent-governance/providers/agents-md.md",
 )
-WORK054_MIGRATION_PATH = (
-    "docs/98.archive/migrations/"
-    "mig-0003-agent-governance-control-plane-consolidation.md"
-)
-WORK054_MIGRATION_SHA256 = (
-    "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42"  # pragma: allowlist secret
-)
-WORK054_OWNER_RETIREMENTS = (
-    {
-        "legacy_path": "docs/00.agent-governance/common-governance.md",
-        "stable_path": None,
-        "artifact_id": None,
-        "action": "merged",
-        "replacement": "docs/00.agent-governance/harness-catalog.md",
-        "source_commit": "128beada377f18bc9f942c8ebb3e27e1f2fdcfae",  # pragma: allowlist secret
-        "source_blob": "de7e7edfe177ff349cd3824aebd82418adff95d7",  # pragma: allowlist secret
-        "content_sha256": "c5da620d5f6c1aa26f2e0d99769872b90c6d2ec2fdb3c03813be27992f43e4ba",  # pragma: allowlist secret
-    },
-    {
-        "legacy_path": "docs/00.agent-governance/harness-implementation-map.md",
-        "stable_path": None,
-        "artifact_id": None,
-        "action": "merged",
-        "replacement": "docs/00.agent-governance/harness-catalog.md",
-        "source_commit": "128beada377f18bc9f942c8ebb3e27e1f2fdcfae",  # pragma: allowlist secret
-        "source_blob": "7e7a6d64a05be91658cc6657cd640491153a615a",  # pragma: allowlist secret
-        "content_sha256": "3ea2f89c3ba17fbf0bac64533cbb5a378a85c062a020881a3844cfa190c9c218",  # pragma: allowlist secret
-    },
-    {
-        "legacy_path": "docs/00.agent-governance/providers/agents-md.md",
-        "stable_path": None,
-        "artifact_id": None,
-        "action": "merged",
-        "replacement": "docs/00.agent-governance/providers/codex.md",
-        "source_commit": "128beada377f18bc9f942c8ebb3e27e1f2fdcfae",  # pragma: allowlist secret
-        "source_blob": "06d9a7a5453ac8b6e28268850467e3e96de06dc9",  # pragma: allowlist secret
-        "content_sha256": "5ea07c187ea54061f5ecc770a58a99edf40dfd73372ba8fc9e1d4ab14bf85bae",  # pragma: allowlist secret
-    },
-)
-WORK054_CONTROL_REFERENCE_FILES = (
-    "scripts/validate-agent-legacy-cutover.py",
-    "scripts/validate-links-and-owners.py",
-    "tests/test_validate_agent_legacy_cutover.py",
-    WORK054_MIGRATION_PATH,
-    "scripts/validate-document-lifecycle.py",
-)
-WORK054_LIFECYCLE_CONTROL_PATH = "scripts/validate-document-lifecycle.py"
-WORK054_PINNED_REFERENCE_FILES = {
-    "docs/00.agent-governance/memory/progress.md": {
-        "counts": (0, 1, 0),
-        "prefixLength": 768_684,
-        "prefixSha256": "18fa6c984acadfd2bb85db9100dd81a8023c3af3a1c4016225613b8ea816e709",  # pragma: allowlist secret
-    },
-}
-WORK054_LEDGER_FIELDS = (
-    "legacy_path",
-    "stable_path",
-    "artifact_id",
-    "action",
-    "replacement",
-    "source_commit",
-    "source_blob",
-    "content_sha256",
-    "reason",
-)
-HARNESS_CUTOVER = {
-    "contractPath": REPLACEMENT_SURFACES[0],
-    "schemaPath": REPLACEMENT_SURFACES[1],
-    "consumersKey": "consumers",
-    "selectedConsumer": {
-        "id": "harness-semantics-validator",
-        "path": REPLACEMENT_SURFACES[2],
-    },
-    "retiredConsumerIds": ["role-semantics-validator"],
-    "forbiddenTopLevelKeys": ["compatibility"],
-}
-CURRENT_AUTHORITY_MIGRATIONS = (
-    {
-        "path": (
-            "docs/90.references/research/2026-08-08-wer/README.md"
-        ),
-        "from": RETIRED_SURFACES[4],
-        "to": REPLACEMENT_SURFACES[4],
-        "count": 1,
-    },
-    {
-        "path": (
-            "docs/90.references/research/2026-08-08-wer/"
-            "ci-cd-github-actions-and-qa.md"
-        ),
-        "from": RETIRED_SURFACES[4],
-        "to": REPLACEMENT_SURFACES[4],
-        "count": 2,
-    },
-    {
-        "path": (
-            "docs/90.references/research/2026-08-08-wer/"
-            "source-coverage-and-migration-ledger.md"
-        ),
-        "from": RETIRED_SURFACES[4],
-        "to": REPLACEMENT_SURFACES[4],
-        "count": 1,
-    },
-)
-PACKAGE_REFERENCES = (
-    CONTRACT_PATH.as_posix(),
-    SCHEMA_PATH.as_posix(),
-    "scripts/validate-agent-legacy-cutover.py",
-    "scripts/validate-links-and-owners.py",
-    FIXTURE_PATH.as_posix(),
-    "tests/test_validate_agent_legacy_cutover.py",
-    "docs/90.references/data/reference-information-architecture.json",
-    "docs/90.references/data/reference-information-architecture.schema.json",
-    "scripts/reference_information_architecture.py",
-    "tests/test_reference_information_architecture.py",
-)
-MIGRATION_REFERENCES = (
-    OWNER_SPEC,
-    "docs/00.agent-governance/memory/progress.md",
-    WORK054_MIGRATION_PATH,
-)
-ALLOWED_REFERENCE_COUNTS = (
-    (CONTRACT_PATH.as_posix(), (1, 1, 1, 2, 7)),
-    (SCHEMA_PATH.as_posix(), (0, 0, 0, 0, 0)),
-    ("scripts/validate-agent-legacy-cutover.py", (1, 1, 1, 1, 1)),
-    ("scripts/validate-links-and-owners.py", (1, 1, 1, 1, 4)),
-    (FIXTURE_PATH.as_posix(), (1, 0, 0, 1, 1)),
-    ("tests/test_validate_agent_legacy_cutover.py", (1, 0, 1, 0, 0)),
-    (
-        "docs/90.references/data/reference-information-architecture.json",
-        (0, 0, 0, 0, 0),
-    ),
-    (
-        "docs/90.references/data/reference-information-architecture.schema.json",
-        (0, 0, 0, 0, 0),
-    ),
-    ("scripts/reference_information_architecture.py", (0, 0, 0, 0, 1)),
-    ("tests/test_reference_information_architecture.py", (0, 0, 0, 0, 4)),
-    (OWNER_SPEC, (1, 0, 1, 1, 4)),
-    ("docs/00.agent-governance/memory/progress.md", (0, 0, 0, 0, 9)),
-    (WORK054_MIGRATION_PATH, (0, 0, 0, 0, 0)),
-)
-PROTECTED_EVIDENCE_FILES = (
-    {
-        "path": "docs/90.references/data/active-corpus-retention-census.json",
-        "sha256": "d7052fac94af246d5254052935bc49e4a9070b06cb99160902a7e83dc7aad3e3",  # pragma: allowlist secret
-        "evidenceKind": "pinned-activation-snapshot",
-        "lifecycleStatus": "superseded",
-        "observedAt": "2026-07-18",
-        "sourceCommit": "9e2ec37f483145b322cf68a2f6e697dcf4fb80e1",  # pragma: allowlist secret
-        "retiredReference": RETIRED_SURFACES[3],
-        "supersededBy": REPLACEMENT_SURFACES[3],
-        "count": 1,
-    },
-    {
-        "path": (
-            "docs/90.references/audits/2026-07-05-wea/"
-            "sdlc-ci-qa-formatting-automation.md"
-        ),
-        "sha256": "c81e25e2346241c4ffcb83fb073ba2d7c147541dbfeadd0bdeb21bc13e004bb8",  # pragma: allowlist secret
-        "evidenceKind": "pinned-ria-snapshot",
-        "lifecycleStatus": "superseded",
-        "observedAt": "2026-07-05",
-        "sourceCommit": RIA_SNAPSHOT_SOURCE_COMMIT,
-        "retiredReference": RETIRED_SURFACES[4],
-        "supersededBy": REPLACEMENT_SURFACES[4],
-        "count": 12,
-    },
-    {
-        "path": (
-            "docs/90.references/audits/2026-07-03-wdgh/"
-            "workspace-document-governance-hardening-audit.md"
-        ),
-        "sha256": "16ebdfce8fcb4f2e82cfd47e76962b0509385c30823b3d4ece23c1b130994b4f",  # pragma: allowlist secret
-        "evidenceKind": "pinned-ria-snapshot",
-        "lifecycleStatus": "superseded",
-        "observedAt": "2026-07-04",
-        "sourceCommit": RIA_SNAPSHOT_SOURCE_COMMIT,
-        "retiredReference": RETIRED_SURFACES[4],
-        "supersededBy": REPLACEMENT_SURFACES[4],
-        "count": 2,
-    },
-    {
-        "path": (
-            "docs/90.references/audits/2026-07-04-wdcn/"
-            "workspace-document-contract-normalization-audit.md"
-        ),
-        "sha256": "bfa40f0f7e918df9dfaf0c44e5098e581a38969b7417bed2ab7fdabbdad80913",  # pragma: allowlist secret
-        "evidenceKind": "pinned-ria-snapshot",
-        "lifecycleStatus": "superseded",
-        "observedAt": "2026-07-04",
-        "sourceCommit": RIA_SNAPSHOT_SOURCE_COMMIT,
-        "retiredReference": RETIRED_SURFACES[4],
-        "supersededBy": REPLACEMENT_SURFACES[4],
-        "count": 3,
-    },
-)
-TERMINAL_STATUSES = (
-    "archived",
-    "cancelled",
-    "closed",
-    "complete",
-    "completed",
-    "done",
-    "rejected",
-    "retired",
-    "superseded",
-)
-EXCLUDED_ROOTS = (
-    ".agent-work",
-    ".git",
-    ".pytest_cache",
-    ".superpowers",
-    ".venv",
-    ".worktrees",
-    "__pycache__",
-    "graphify-out",
-    "node_modules",
-)
-ALWAYS_ACTIVE_PREFIXES = (
-    ".agents/",
-    ".claude/",
-    ".codex/",
-    ".gemini/",
-    ".github/",
-    "docs/00.agent-governance/",
-    "scripts/",
-    "tests/",
-)
-ALWAYS_ACTIVE_FILES = (
-    ".pre-commit-config.yaml",
-    "AGENTS.md",
-    "CLAUDE.md",
-    "GEMINI.md",
-    "README.md",
-    "pyproject.toml",
-)
+RETIRED_TOKENS = RETIRED_SURFACES + RETIRED_OWNER_PATHS
+
+
 ALLOWED_INTERNAL_SYMLINKS = (
     (".claude/output-styles", "../.agents/output-styles"),
     (".claude/skills", "../.agents/skills"),
@@ -342,51 +91,6 @@ ALLOWED_INTERNAL_SYMLINKS = (
     (".codex/skills", "../.agents/skills"),
     (".codex/workflows", "../.agents/workflows"),
 )
-COMMANDS = {
-    "selfTest": (
-        "python3 scripts/validate-agent-legacy-cutover.py "
-        "--root . --self-test"
-    ),
-    "production": "python3 scripts/validate-agent-legacy-cutover.py --root .",
-}
-EXIT_CODES = (
-    {"code": 0, "result": "PASS"},
-    {"code": 1, "result": "FAIL"},
-    {"code": 2, "result": "FAIL"},
-)
-EXPECTED_POSITIVE_CASES = (
-    ("clean-cutover", "none"),
-    ("terminal-reference-is-evidence", "add-terminal-reference"),
-    ("protected-reference-is-evidence", "verify-protected-evidence"),
-)
-EXPECTED_MUTATION_CASES = (
-    ("retained-role-contract", "filesystem", "add-retired-path", "AGQC-LEGACY-RETIRED"),
-    ("retained-old-github-hub", "filesystem", "add-retired-path", "AGQC-LEGACY-RETIRED"),
-    ("missing-replacement", "filesystem", "remove-replacement", "AGQC-LEGACY-REPLACEMENT"),
-    ("stale-active-consumer", "filesystem", "add-active-reference", "AGQC-LEGACY-CONSUMER"),
-    ("old-harness-consumer", "filesystem", "select-retired-consumer", "AGQC-LEGACY-HARNESS"),
-    ("old-harness-compatibility", "filesystem", "add-harness-compatibility", "AGQC-LEGACY-HARNESS"),
-    ("replacement-symlink", "filesystem", "symlink-replacement", "AGQC-LEGACY-INPUT"),
-    ("malformed-harness-json", "filesystem", "malform-harness-json", "AGQC-LEGACY-JSON"),
-    ("duplicate-harness-json-key", "filesystem", "duplicate-harness-json-key", "AGQC-LEGACY-JSON"),
-    ("migration-allowlist-growth", "contract", "add-migration-reference", "AGQC-LEGACY-SCHEMA"),
-    ("replacement-path-escape", "contract", "replace-replacement-path", "AGQC-LEGACY-SCHEMA"),
-    ("protected-evidence-allowlist-growth", "contract", "add-protected-evidence", "AGQC-LEGACY-SCHEMA"),
-    ("active-research-reference", "filesystem", "add-active-reference", "AGQC-LEGACY-CONSUMER"),
-    ("accepted-reference-pack-reference", "filesystem", "add-active-reference", "AGQC-LEGACY-CONSUMER"),
-    ("protected-data-drift", "filesystem", "mutate-protected-evidence", "AGQC-LEGACY-CONSUMER"),
-    ("protected-evidence-missing", "filesystem", "remove-protected-evidence", "AGQC-LEGACY-CONSUMER"),
-    ("protected-reference-removal", "filesystem", "replace-protected-reference", "AGQC-LEGACY-CONSUMER"),
-    ("digest-pinned-draft-reference", "contract", "replace-protected-evidence", "AGQC-LEGACY-SCHEMA"),
-    ("extensionless-active-reference", "filesystem", "add-active-reference", "AGQC-LEGACY-CONSUMER"),
-    ("invalid-utf8-reference", "filesystem", "add-invalid-utf8-reference", "AGQC-LEGACY-INPUT"),
-    ("allowed-reference-count-drift", "filesystem", "mutate-allowed-reference", "AGQC-LEGACY-CONSUMER"),
-    ("current-authority-migration-drift", "contract", "change-current-authority-migration", "AGQC-LEGACY-CONTRACT"),
-    ("candidate-source-drift", "contract", "change-candidate-source", "AGQC-LEGACY-SCHEMA"),
-    ("resource-limit-drift", "contract", "change-resource-limit", "AGQC-LEGACY-SCHEMA"),
-)
-STATUS_LINE = re.compile(r"^status\s*:\s*(.*?)\s*$", re.IGNORECASE)
-UPDATED_LINE = re.compile(r"^updated\s*:\s*(.*?)\s*$", re.IGNORECASE)
 
 
 def _bounded_diagnostic(detail: str) -> str:
@@ -445,8 +149,8 @@ def _reject_duplicate_pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
 def _parse_json(text: str, source: str) -> Any:
     try:
         return json.loads(text, object_pairs_hook=_reject_duplicate_pairs)
-    except (json.JSONDecodeError, DuplicateKeyError) as exc:
-        fail("AGQC-LEGACY-JSON", f"{source}: {exc}")
+    except (json.JSONDecodeError, DuplicateKeyError):
+        fail("AGQC-LEGACY-JSON", f"{source}: invalid JSON")
 
 
 def _relative_path(value: str) -> PurePosixPath:
@@ -569,9 +273,8 @@ class _RepositoryReader:
                 )
                 child_state = os.fstat(pending_descriptor)
                 entry_state = os.stat(part, dir_fd=current, follow_symlinks=False)
-                if (
-                    not stat.S_ISDIR(child_state.st_mode)
-                    or not _same_identity(child_state, entry_state)
+                if not stat.S_ISDIR(child_state.st_mode) or not _same_identity(
+                    child_state, entry_state
                 ):
                     fail(
                         "AGQC-LEGACY-INPUT",
@@ -616,9 +319,8 @@ class _RepositoryReader:
                     follow_symlinks=False,
                 )
                 child_state = os.fstat(child_fd)
-                if (
-                    not stat.S_ISDIR(entry_state.st_mode)
-                    or not _same_identity(entry_state, child_state)
+                if not stat.S_ISDIR(entry_state.st_mode) or not _same_identity(
+                    entry_state, child_state
                 ):
                     fail(
                         "AGQC-LEGACY-INPUT",
@@ -668,7 +370,11 @@ class _RepositoryReader:
         read: bool,
         allow_declared_symlink: bool,
         missing_rule: str,
+        max_bytes: int = MAX_REGULAR_FILE_BYTES,
     ) -> bytes | None:
+        if type(max_bytes) is not int or max_bytes <= 0:
+            fail("AGQC-LEGACY-INPUT", "owner byte limit must be a positive integer")
+        limit = min(max_bytes, MAX_REGULAR_FILE_BYTES)
         safe = _relative_path(value)
         parent_fd, descriptors, edges = self._open_parents(
             safe,
@@ -716,7 +422,7 @@ class _RepositoryReader:
                     "AGQC-LEGACY-INPUT",
                     f"repository path is not regular: {value}",
                 )
-            if before.st_size > MAX_REGULAR_FILE_BYTES:
+            if before.st_size > limit:
                 fail(
                     "AGQC-LEGACY-INPUT",
                     f"repository file exceeds the byte limit: {value}",
@@ -736,15 +442,14 @@ class _RepositoryReader:
                 dir_fd=parent_fd,
             )
             opened = os.fstat(file_descriptor)
-            if (
-                not stat.S_ISREG(opened.st_mode)
-                or not _same_stable_file_state(before, opened)
+            if not stat.S_ISREG(opened.st_mode) or not _same_stable_file_state(
+                before, opened
             ):
                 fail(
                     "AGQC-LEGACY-INPUT",
                     f"repository file changed type or identity: {value}",
                 )
-            if opened.st_size > MAX_REGULAR_FILE_BYTES:
+            if opened.st_size > limit:
                 fail(
                     "AGQC-LEGACY-INPUT",
                     f"repository file exceeds the byte limit: {value}",
@@ -753,7 +458,7 @@ class _RepositoryReader:
             chunks: list[bytes] = []
             total = 0
             while True:
-                remaining = MAX_REGULAR_FILE_BYTES - total
+                remaining = limit - total
                 chunk = os.read(
                     file_descriptor,
                     min(READ_CHUNK_BYTES, remaining + 1),
@@ -761,7 +466,7 @@ class _RepositoryReader:
                 if not chunk:
                     break
                 total += len(chunk)
-                if total > MAX_REGULAR_FILE_BYTES:
+                if total > limit:
                     fail(
                         "AGQC-LEGACY-INPUT",
                         f"repository file grew beyond the byte limit: {value}",
@@ -775,7 +480,7 @@ class _RepositoryReader:
                 follow_symlinks=False,
             )
             if (
-                final_state.st_size > MAX_REGULAR_FILE_BYTES
+                final_state.st_size > limit
                 or not _same_stable_file_state(opened, final_state)
                 or not _same_stable_file_state(final_state, final_entry)
             ):
@@ -805,12 +510,14 @@ class _RepositoryReader:
         value: str,
         *,
         missing_rule: str = "AGQC-LEGACY-INPUT",
+        max_bytes: int = MAX_REGULAR_FILE_BYTES,
     ) -> bytes:
         payload = self._payload(
             value,
             read=True,
             allow_declared_symlink=False,
             missing_rule=missing_rule,
+            max_bytes=max_bytes,
         )
         assert payload is not None
         return payload
@@ -820,9 +527,12 @@ class _RepositoryReader:
         value: str,
         *,
         missing_rule: str = "AGQC-LEGACY-INPUT",
+        max_bytes: int = MAX_REGULAR_FILE_BYTES,
     ) -> str:
         try:
-            return self.read_bytes(value, missing_rule=missing_rule).decode("utf-8")
+            return self.read_bytes(
+                value, missing_rule=missing_rule, max_bytes=max_bytes
+            ).decode("utf-8")
         except UnicodeError as exc:
             fail("AGQC-LEGACY-INPUT", f"repository file is not UTF-8 {value}: {exc}")
 
@@ -840,356 +550,12 @@ def _load_json_regular(
     value: str,
     *,
     missing_rule: str = "AGQC-LEGACY-INPUT",
+    max_bytes: int = MAX_REGULAR_FILE_BYTES,
 ) -> Any:
     return _parse_json(
-        reader.read_text(value, missing_rule=missing_rule),
+        reader.read_text(value, missing_rule=missing_rule, max_bytes=max_bytes),
         value,
     )
-
-
-def _load_contract_documents(
-    reader: _RepositoryReader,
-) -> tuple[dict[str, Any], dict[str, Any]]:
-    contract = _load_json_regular(reader, CONTRACT_PATH.as_posix())
-    schema = _load_json_regular(reader, SCHEMA_PATH.as_posix())
-    if not isinstance(contract, dict) or not isinstance(schema, dict):
-        fail("AGQC-LEGACY-JSON", "contract and schema roots must be objects")
-    return contract, schema
-
-
-def load_contract_documents(root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
-    """Load the contract and schema through one bounded repository reader."""
-
-    with _RepositoryReader(root) as reader:
-        return _load_contract_documents(reader)
-
-
-def _schema_error_detail(error: Any) -> str:
-    location = "/".join(str(part) for part in error.absolute_path) or "<root>"
-    return f"{location}: {error.message}"
-
-
-def validate_contract_data(
-    contract: dict[str, Any],
-    schema: dict[str, Any],
-) -> dict[str, Any]:
-    """Validate closed syntax and exact no-growth cutover semantics."""
-
-    try:
-        Draft202012Validator.check_schema(schema)
-    except Exception as exc:  # jsonschema exposes multiple schema exceptions
-        fail("AGQC-LEGACY-SCHEMA", f"schema definition is invalid: {exc}")
-    errors = sorted(
-        Draft202012Validator(schema).iter_errors(contract),
-        key=lambda item: tuple(str(part) for part in item.absolute_path),
-    )
-    if errors:
-        fail("AGQC-LEGACY-SCHEMA", _schema_error_detail(errors[0]))
-
-    if (
-        contract["schemaVersion"] != SCHEMA_VERSION
-        or contract["contractVersion"] != CONTRACT_VERSION
-        or contract["currentOwnerSpec"] != OWNER_SPEC
-    ):
-        fail("AGQC-LEGACY-CONTRACT", "version or current owner differs")
-    if tuple(contract["resultVocabulary"]) != RESULT_VOCABULARY:
-        fail("AGQC-LEGACY-CONTRACT", "result vocabulary or order differs")
-    if tuple(contract["evidenceVocabulary"]) != EVIDENCE_VOCABULARY:
-        fail("AGQC-LEGACY-CONTRACT", "evidence vocabulary differs")
-    if tuple(contract["retiredSurfaces"]) != RETIRED_SURFACES:
-        fail("AGQC-LEGACY-CONTRACT", "retired surface set or order differs")
-    if tuple(contract["replacementSurfaces"]) != REPLACEMENT_SURFACES:
-        fail(
-            "AGQC-LEGACY-CONTRACT",
-            "replacement surface set or order differs",
-        )
-    if contract["harnessCutover"] != HARNESS_CUTOVER:
-        fail("AGQC-LEGACY-CONTRACT", "harness cutover selector differs")
-    if contract["currentAuthorityMigrations"] != list(
-        CURRENT_AUTHORITY_MIGRATIONS
-    ):
-        fail(
-            "AGQC-LEGACY-CONTRACT",
-            "current authority migration set grew, shrank, or changed",
-        )
-
-    references = contract["referencePolicy"]
-    expected_references = {
-        "packageReferences": list(PACKAGE_REFERENCES),
-        "migrationReferences": list(MIGRATION_REFERENCES),
-        "allowedReferenceCounts": [
-            {"path": path, "counts": list(counts)}
-            for path, counts in ALLOWED_REFERENCE_COUNTS
-        ],
-        "protectedEvidenceFiles": copy.deepcopy(
-            list(PROTECTED_EVIDENCE_FILES)
-        ),
-        "terminalStatuses": list(TERMINAL_STATUSES),
-    }
-    if references != expected_references:
-        fail(
-            "AGQC-LEGACY-CONTRACT",
-            "reference allowlist grew, shrank, or changed order",
-        )
-
-    scan = contract["scanPolicy"]
-    expected_scan = {
-        "root": ".",
-        "excludedRoots": list(EXCLUDED_ROOTS),
-        "candidateSource": GIT_CANDIDATE_SOURCE,
-        "resourceLimits": RESOURCE_LIMITS,
-        "alwaysActivePrefixes": list(ALWAYS_ACTIVE_PREFIXES),
-        "alwaysActiveFiles": list(ALWAYS_ACTIVE_FILES),
-        "allowedInternalSymlinks": [
-            {"path": path, "target": target}
-            for path, target in ALLOWED_INTERNAL_SYMLINKS
-        ],
-    }
-    if scan != expected_scan:
-        fail("AGQC-LEGACY-CONTRACT", "scan policy or symlink set differs")
-    if contract["commands"] != COMMANDS:
-        fail("AGQC-LEGACY-CONTRACT", "command ownership differs")
-    if tuple(contract["exitCodes"]) != EXIT_CODES:
-        fail("AGQC-LEGACY-CONTRACT", "stable exit-code mapping differs")
-    return contract
-
-
-def _validate_replacements(
-    reader: _RepositoryReader,
-    candidates: set[str],
-) -> None:
-    for value in RETIRED_SURFACES:
-        if value in candidates:
-            reader.state(value)
-            fail("AGQC-LEGACY-RETIRED", f"retired surface remains: {value}")
-    for value in REPLACEMENT_SURFACES:
-        _require_candidate(
-            reader,
-            candidates,
-            value,
-            missing_rule="AGQC-LEGACY-REPLACEMENT",
-        )
-        reader.read_text(
-            value,
-            missing_rule="AGQC-LEGACY-REPLACEMENT",
-        )
-    for value in (
-        REPLACEMENT_SURFACES[0],
-        REPLACEMENT_SURFACES[1],
-        REPLACEMENT_SURFACES[3],
-    ):
-        _load_json_regular(
-            reader,
-            value,
-            missing_rule="AGQC-LEGACY-REPLACEMENT",
-        )
-
-
-def _all_strings(value: Any) -> list[str]:
-    values: list[str] = []
-    if isinstance(value, dict):
-        for key, child in value.items():
-            values.append(str(key))
-            values.extend(_all_strings(child))
-    elif isinstance(value, list):
-        for child in value:
-            values.extend(_all_strings(child))
-    elif isinstance(value, str):
-        values.append(value)
-    return values
-
-
-def _validate_harness(reader: _RepositoryReader) -> None:
-    harness = _load_json_regular(
-        reader,
-        REPLACEMENT_SURFACES[0],
-        missing_rule="AGQC-LEGACY-REPLACEMENT",
-    )
-    if not isinstance(harness, dict):
-        fail("AGQC-LEGACY-HARNESS", "harness contract root must be an object")
-    for key in HARNESS_CUTOVER["forbiddenTopLevelKeys"]:
-        if key in harness:
-            fail(
-                "AGQC-LEGACY-HARNESS",
-                f"retired harness compatibility owner remains: {key}",
-            )
-    consumers = harness.get(HARNESS_CUTOVER["consumersKey"])
-    if not isinstance(consumers, list) or any(
-        not isinstance(row, dict) for row in consumers
-    ):
-        fail("AGQC-LEGACY-HARNESS", "harness consumers must be an object list")
-    expected = HARNESS_CUTOVER["selectedConsumer"]
-    selected = [
-        row
-        for row in consumers
-        if row.get("id") == expected["id"]
-        and row.get("path") == expected["path"]
-    ]
-    if len(selected) != 1:
-        fail(
-            "AGQC-LEGACY-HARNESS",
-            "new harness semantics consumer is not selected exactly once",
-        )
-    retired_ids = set(HARNESS_CUTOVER["retiredConsumerIds"])
-    if any(row.get("id") in retired_ids for row in consumers):
-        fail("AGQC-LEGACY-HARNESS", "retired harness consumer remains")
-    flattened = _all_strings(harness)
-    stale = next(
-        (
-            token
-            for token in RETIRED_SURFACES
-            if any(token in value for value in flattened)
-        ),
-        None,
-    )
-    if stale is not None:
-        fail(
-            "AGQC-LEGACY-HARNESS",
-            f"harness contract retains retired token: {stale}",
-        )
-
-
-def _load_migration_rows(reader: _RepositoryReader) -> tuple[dict[str, Any], ...]:
-    raw = reader.read_bytes(
-        WORK054_MIGRATION_PATH,
-        missing_rule="AGQC-LEGACY-MIGRATION",
-    )
-    if hashlib.sha256(raw).hexdigest() != WORK054_MIGRATION_SHA256:
-        fail("AGQC-LEGACY-MIGRATION", "WORK-054 migration digest differs")
-    try:
-        text = raw.decode("utf-8")
-    except UnicodeError as exc:
-        fail("AGQC-LEGACY-MIGRATION", f"WORK-054 migration is not UTF-8: {exc}")
-    marker = "<!-- archive-migration-ledger:v1 format=json -->\n\n```json\n"
-    if text.count(marker) != 1:
-        fail("AGQC-LEGACY-MIGRATION", "WORK-054 migration marker differs")
-    _prefix, remainder = text.split(marker, 1)
-    if remainder.count("\n```") != 1:
-        fail("AGQC-LEGACY-MIGRATION", "WORK-054 migration fence differs")
-    raw_rows, suffix = remainder.split("\n```", 1)
-    if not suffix.startswith("\n\n## Recovery\n"):
-        fail("AGQC-LEGACY-MIGRATION", "WORK-054 migration recovery section differs")
-    try:
-        rows = json.loads(raw_rows)
-    except json.JSONDecodeError as exc:
-        fail("AGQC-LEGACY-MIGRATION", f"WORK-054 migration JSON differs: {exc}")
-    if not isinstance(rows, list) or not all(isinstance(row, dict) for row in rows):
-        fail("AGQC-LEGACY-MIGRATION", "WORK-054 migration rows must be objects")
-    return tuple(rows)
-
-
-def _validate_work054_retirements(
-    reader: _RepositoryReader,
-    candidates: set[str],
-) -> int:
-    if WORK054_MIGRATION_PATH not in candidates:
-        fail(
-            "AGQC-LEGACY-MIGRATION",
-            f"WORK-054 migration is absent from the Git index: {WORK054_MIGRATION_PATH}",
-        )
-    rows = _load_migration_rows(reader)
-    expected_rows = WORK054_OWNER_RETIREMENTS
-    if len(rows) != len(expected_rows):
-        fail("AGQC-LEGACY-MIGRATION", "WORK-054 migration row count differs")
-    for row, expected in zip(rows, expected_rows, strict=True):
-        if tuple(row) != WORK054_LEDGER_FIELDS:
-            fail("AGQC-LEGACY-MIGRATION", "WORK-054 migration field order differs")
-        for key, value in expected.items():
-            if row.get(key) != value:
-                fail("AGQC-LEGACY-MIGRATION", f"WORK-054 migration differs: {key}")
-        if not isinstance(row.get("reason"), str) or not row["reason"].strip():
-            fail("AGQC-LEGACY-MIGRATION", "WORK-054 migration reason is empty")
-        legacy = row["legacy_path"]
-        replacement = row["replacement"]
-        if legacy in candidates:
-            fail("AGQC-LEGACY-RETIRED", f"WORK-054 owner remains: {legacy}")
-        if replacement not in candidates:
-            fail(
-                "AGQC-LEGACY-MIGRATION",
-                f"WORK-054 replacement is absent from the Git index: {replacement}",
-            )
-        reader.read_text(replacement, missing_rule="AGQC-LEGACY-MIGRATION")
-    return len(rows)
-
-
-def _under_prefix(value: str, prefix: str) -> bool:
-    return value == prefix or value.startswith(prefix + "/")
-
-
-def _is_terminal_document(text: str) -> bool:
-    lines = text.splitlines()
-    if not lines or lines[0].strip() != "---":
-        return False
-    try:
-        end = next(
-            index
-            for index, line in enumerate(lines[1:], start=1)
-            if line.strip() == "---"
-        )
-    except StopIteration:
-        return False
-    statuses: list[str] = []
-    for line in lines[1:end]:
-        match = STATUS_LINE.fullmatch(line)
-        if match is not None:
-            value = match.group(1).split("#", 1)[0].strip().strip("'\"")
-            statuses.append(value.casefold())
-    return len(statuses) == 1 and statuses[0] in TERMINAL_STATUSES
-
-
-def _is_verified_protected_evidence(
-    raw: bytes,
-    text: str,
-    record: dict[str, Any],
-) -> bool:
-    """Accept only a closed superseding relation, never a digest alone."""
-
-    if hashlib.sha256(raw).hexdigest() != record["sha256"]:
-        return False
-    if (
-        record["lifecycleStatus"] != "superseded"
-        or record["supersededBy"] not in REPLACEMENT_SURFACES
-    ):
-        return False
-    if record["evidenceKind"] == "pinned-activation-snapshot":
-        try:
-            snapshot = _parse_json(text, record["path"])
-        except ContractError:
-            return False
-        if not isinstance(snapshot, dict):
-            return False
-        activation = snapshot.get("activation")
-        if not isinstance(activation, dict):
-            return False
-        if (
-            snapshot.get("observedAt") != record["observedAt"]
-            or activation.get("activationCommit") != record["sourceCommit"]
-        ):
-            return False
-    elif record["evidenceKind"] == "pinned-ria-snapshot":
-        if record["sourceCommit"] != RIA_SNAPSHOT_SOURCE_COMMIT:
-            return False
-        updated_values = [
-            match.group(1).split("#", 1)[0].strip().strip("'\"")
-            for line in text.splitlines()
-            if (match := UPDATED_LINE.fullmatch(line)) is not None
-        ]
-        if updated_values != [record["observedAt"]]:
-            return False
-    else:
-        return False
-    retired_reference = record["retiredReference"].encode("utf-8")
-    if raw.count(retired_reference) != record["count"]:
-        return False
-    if any(
-        token != record["retiredReference"]
-        and token.encode("utf-8") in raw
-        for token in RETIRED_SURFACES
-    ):
-        return False
-    if record["supersededBy"].encode("utf-8") in raw:
-        return False
-    return True
 
 
 def _validate_allowed_symlink(relative: str, target: str) -> None:
@@ -1449,754 +815,337 @@ def _require_candidate(
         )
 
 
-def _is_exact_work054_lifecycle_control(
-    relative: str,
-    raw: bytes,
-    observed_counts: tuple[int, ...],
-) -> bool:
-    """Admit only the exact MIG-0003 projection embedded in lifecycle control."""
+@dataclass(frozen=True)
+class ConsumerOwners:
+    document_registry: documents.Registry
+    native_paths: frozenset[str]
+    enforcement_paths: frozenset[str]
+    helper_roles: Mapping[str, str]
+    proof: Any
+    retention: ModuleType | None
 
-    if (
-        relative != WORK054_LIFECYCLE_CONTROL_PATH
-        or observed_counts != (1, 1, 1)
+
+def _trusted_script(filename: str) -> ModuleType:
+    path = Path(__file__).with_name(filename)
+    name = "_legacy_owner_" + path.stem.replace("-", "_")
+    specification = importlib.util.spec_from_file_location(name, path)
+    if specification is None or specification.loader is None:
+        fail("AGQC-LEGACY-OWNER", "owner implementation is unavailable")
+    module = importlib.util.module_from_spec(specification)
+    sys.modules[name] = module
+    specification.loader.exec_module(module)
+    return module
+
+
+def _owner_object(
+    reader: _RepositoryReader,
+    path: str,
+    *,
+    max_bytes: int = MAX_REGULAR_FILE_BYTES,
+) -> dict[str, Any]:
+    value = _load_json_regular(reader, path, max_bytes=max_bytes)
+    if not isinstance(value, dict):
+        fail("AGQC-LEGACY-JSON", "owner input must be an object")
+    return value
+
+
+def _load_owners(
+    reader: _RepositoryReader, candidates: tuple[str, ...]
+) -> ConsumerOwners:
+    """Use canonical typed owners; identity establishes responsibility, not correctness."""
+
+    candidate_set = set(candidates)
+    terminal = compat.load_terminal_validator()
+    affected = _trusted_script("validate-affected-surfaces.py")
+    roles = _trusted_script("validate-active-corpus-role-audit.py")
+    retention = _trusted_script("validate-active-corpus-retention.py")
+    for path in (
+        terminal.REGISTRY_PATH,
+        terminal.REGISTRY_SCHEMA_PATH,
+        affected.CONTRACT_PATH,
+        affected.SCHEMA_PATH,
+        documents.REGISTRY_PATH,
+        documents.SCHEMA_PATH,
     ):
-        return False
+        _require_candidate(reader, candidate_set, path.as_posix())
+    registry = _owner_object(reader, terminal.REGISTRY_PATH.as_posix())
+    contract = _owner_object(reader, affected.CONTRACT_PATH.as_posix())
+    schema = _owner_object(reader, affected.SCHEMA_PATH.as_posix())
+    document_registry = _owner_object(
+        reader,
+        documents.REGISTRY_PATH.as_posix(),
+        max_bytes=documents.REGISTRY_MAX_BYTES,
+    )
+    document_schema = _owner_object(
+        reader, documents.SCHEMA_PATH.as_posix(), max_bytes=documents.REGISTRY_MAX_BYTES
+    )
+
+    def read_current_bytes(path: str, max_bytes: int) -> bytes:
+        return reader.read_bytes(path, max_bytes=max_bytes)
+
+    def read_symlink(path: str) -> str:
+        if reader.candidate_payload(path, read=False) is not None:
+            fail("AGQC-LEGACY-INPUT", "declared adapter must be a checked symlink")
+        return dict(ALLOWED_INTERNAL_SYMLINKS)[path]
+
     try:
-        text = raw.decode("utf-8")
-    except UnicodeError:
-        return False
-    sha_declaration = (
-        'WORK054_WP003_MIGRATION_SHA256 = (\n'
-        f'    "{WORK054_MIGRATION_SHA256}"'
-    )
-    base_declaration = (
-        'WORK054_WP003_BASE_COMMIT = '
-        f'"{WORK054_OWNER_RETIREMENTS[0]["source_commit"]}"'
-    )
-    start_marker = "WORK054_WP003_OWNER_RETIREMENTS = (\n"
-    end_marker = "\n)\n\n\n"
-    if (
-        text.count(sha_declaration) != 1
-        or text.count(base_declaration) != 1
-        or text.count(start_marker) != 1
-    ):
-        return False
-    _prefix, remainder = text.split(start_marker, 1)
-    if end_marker not in remainder:
-        return False
-    block, _suffix = remainder.split(end_marker, 1)
-    if block.count('"legacy_path":') != len(WORK054_OWNER_RETIREMENTS):
-        return False
-    for row in WORK054_OWNER_RETIREMENTS:
-        required = (
-            f'"legacy_path": "{row["legacy_path"]}"',
-            f'"source_blob": "{row["source_blob"]}"',
-            f'"content_sha256": "{row["content_sha256"]}"',
+        terminal.validate_registry(reader.root_path, registry, check_files=True)
+        entrypoints = affected.validator_script_paths(
+            reader.root_path, contract, raw_schema=schema
         )
-        if any(block.count(value) != 1 for value in required):
-            return False
-    expected_replacements = {
-        str(row["replacement"]): sum(
-            candidate["replacement"] == row["replacement"]
-            for candidate in WORK054_OWNER_RETIREMENTS
+        templates = frozenset(
+            PurePosixPath(profile["template"])
+            for profile in document_registry.get("profiles", [])
+            if isinstance(profile, dict) and isinstance(profile.get("template"), str)
         )
-        for row in WORK054_OWNER_RETIREMENTS
+        for template in templates:
+            _require_candidate(reader, candidate_set, template.as_posix())
+        validated_registry = documents.load_registry(
+            reader.root_path,
+            raw_registry=document_registry,
+            raw_schema=document_schema,
+            template_regular_paths=templates,
+        )
+        proof = links.repository_historical_migration_proof(
+            reader.root_path,
+            registry=validated_registry,
+            raw_schema=document_schema,
+            read_current_bytes=read_current_bytes,
+            read_symlink=read_symlink,
+        )
+    except (ValueError, OSError, KeyError, TypeError):
+        fail("AGQC-LEGACY-OWNER", "canonical owner validation failed")
+    if not isinstance(proof.document_registry, documents.Registry):
+        fail("AGQC-LEGACY-OWNER", "validated document registry is unavailable")
+    native_paths = {
+        *(provider["gateway"] for provider in registry["providers"]),
+        *(skill["path"] for skill in registry["skills"]),
+        *(path for role in registry["roles"] for path in role["projections"].values()),
     }
-    if any(
-        block.count(f'"replacement": "{replacement}"') != expected_count
-        for replacement, expected_count in expected_replacements.items()
-    ):
-        return False
-    return (
-        block.count('"stable_path": None') == len(WORK054_OWNER_RETIREMENTS)
-        and block.count('"artifact_id": None') == len(WORK054_OWNER_RETIREMENTS)
-        and block.count('"action": "merged"') == len(WORK054_OWNER_RETIREMENTS)
-        and block.count('"source_commit": WORK054_WP003_BASE_COMMIT')
-        == len(WORK054_OWNER_RETIREMENTS)
+    # These are the particular trusted implementations delegated above, not a
+    # search through arbitrary imports, source suffixes, or candidate bytes.
+    source_root = Path(__file__).absolute().parent.parent
+    delegates = (
+        terminal,
+        affected,
+        roles,
+        retention,
+        links,
+        compat,
+        documents,
+        archive,
+        recovery,
+        ria,
+        json_schema_validation,
+    )
+    helpers = {
+        Path(module.__file__).absolute().relative_to(source_root).as_posix()
+        for module in delegates
+    }
+    helper_roles = {
+        path: role
+        for path in candidates
+        if (role := roles.helper_artifact_role(path)) is not None
+    }
+    return ConsumerOwners(
+        proof.document_registry,
+        frozenset(native_paths),
+        entrypoints | helpers,
+        helper_roles,
+        proof,
+        retention,
     )
 
 
-def _is_exact_work054_control_reference(
-    relative: str,
-    raw: bytes,
-    observed_counts: tuple[int, ...],
-) -> bool:
-    """Admit only the known, structurally pinned WORK-054 controls."""
-
-    if (
-        relative not in WORK054_CONTROL_REFERENCE_FILES
-        or observed_counts != (1, 1, 1)
-    ):
-        return False
-    if relative == WORK054_MIGRATION_PATH:
-        return hashlib.sha256(raw).hexdigest() == WORK054_MIGRATION_SHA256
-    if relative == WORK054_LIFECYCLE_CONTROL_PATH:
-        return _is_exact_work054_lifecycle_control(
-            relative,
-            raw,
-            observed_counts,
-        )
+def _published_or_native(path: str, owners: ConsumerOwners) -> bool:
+    if path in owners.native_paths:
+        return True
     try:
-        text = raw.decode("utf-8")
-    except UnicodeError:
-        return False
-    if relative == "tests/test_validate_agent_legacy_cutover.py":
-        return (
-            text.count("WORK054_OWNER_RETIREMENTS = (\n") == 1
-            and all(
-                text.count(f'Path("{row["legacy_path"]}")') == 1
-                for row in WORK054_OWNER_RETIREMENTS
-            )
-        )
-    if relative == "scripts/validate-links-and-owners.py":
-        if text.count(WORK054_MIGRATION_SHA256) != 1:
+        documents.classify_path(owners.document_registry, PurePosixPath(path))
+    except documents.DocumentContractError as exc:
+        if all(item.rule_id == "REGISTRY_ROUTE_UNCOVERED" for item in exc.diagnostics):
             return False
-        return all(
-            len(
-                re.findall(
-                    r'PurePosixPath\(\s*"'
-                    + re.escape(str(row["legacy_path"]))
-                    + r'"\s*\)',
-                    text,
-                )
-            )
-            == 1
-            for row in WORK054_OWNER_RETIREMENTS
-        )
-    if relative == "scripts/validate-agent-legacy-cutover.py":
-        if (
-            text.count("WORK054_OWNER_RETIREMENTS = (\n") != 1
-            or text.count(WORK054_MIGRATION_SHA256) != 1
-        ):
-            return False
-        _prefix, block = text.split("WORK054_OWNER_RETIREMENTS = (\n", 1)
-        end_marker = "\n)\nWORK054_CONTROL_REFERENCE_FILES = ("
-        if end_marker not in block:
-            return False
-        block, _suffix = block.split(end_marker, 1)
-        for row in WORK054_OWNER_RETIREMENTS:
-            required = (
-                f'"legacy_path": "{row["legacy_path"]}"',
-                f'"source_blob": "{row["source_blob"]}"',
-                f'"content_sha256": "{row["content_sha256"]}"',
-            )
-            if any(block.count(value) != 1 for value in required):
-                return False
-        return (
-            block.count('"action": "merged"')
-            == len(WORK054_OWNER_RETIREMENTS)
-            and block.count(
-                f'"source_commit": "{WORK054_OWNER_RETIREMENTS[0]["source_commit"]}"'
-            )
-            == len(WORK054_OWNER_RETIREMENTS)
-        )
-    return False
+        fail("AGQC-LEGACY-OWNER", "document classification is ambiguous")
+    return True
 
 
-def _is_exact_work054_pinned_reference(
-    relative: str,
-    raw: bytes,
-    observed_counts: tuple[int, ...],
+def _retired_mentions(path: str, text: str) -> frozenset[str]:
+    mentions = {token for token in RETIRED_TOKENS if token in text}
+    for link in links.rendered_local_links(text, PurePosixPath(path)):
+        if link.kind == "local" and link.target is not None:
+            target = link.target.as_posix()
+            if target in RETIRED_TOKENS:
+                mentions.add(target)
+    return frozenset(mentions)
+
+
+def _historical_dispositions_cover(
+    path: str, raw: bytes, mentions: frozenset[str], proof: Any
 ) -> bool:
-    """Admit an append-only historical reference only at its pinned blob."""
-
-    record = WORK054_PINNED_REFERENCE_FILES.get(relative)
-    if record is None or observed_counts != record["counts"]:
+    if proof.consumers.get(path) != raw:
         return False
-    prefix_length = int(record["prefixLength"])
-    return len(raw) >= prefix_length and hashlib.sha256(
-        raw[:prefix_length]
-    ).hexdigest() == record["prefixSha256"]
+    literal_dispositions = getattr(proof, "literal_dispositions", {})
+    rendered_dispositions = getattr(proof, "rendered_dispositions", {})
+    if any(owner == path for owner, _ in literal_dispositions) and not any(
+        owner == path for owner, _ in rendered_dispositions
+    ):
+        return all((path, token) in literal_dispositions for token in mentions)
+    return all(
+        isinstance(proof.terminal_targets.get(token), str)
+        and proof.terminal_targets[token] != token
+        for token in mentions
+    )
 
 
 def _scan_consumers_with_reader(
     reader: _RepositoryReader,
     candidates: tuple[str, ...] | None = None,
+    owners: ConsumerOwners | None = None,
 ) -> tuple[int, int, list[str]]:
     if candidates is None:
         candidates = _repository_candidates(reader)
-    allowed_counts = dict(ALLOWED_REFERENCE_COUNTS)
-    protected_files = {
-        record["path"]: record for record in PROTECTED_EVIDENCE_FILES
-    }
-    candidate_set = set(candidates)
-    for relative in allowed_counts:
-        _require_candidate(reader, candidate_set, relative)
-    for relative in protected_files:
-        _require_candidate(
-            reader,
-            candidate_set,
-            relative,
-            missing_rule="AGQC-LEGACY-CONSUMER",
-        )
-    excluded_roots = set(EXCLUDED_ROOTS)
-    scanned = 0
-    evidence = 0
+    if owners is None:
+        owners = _load_owners(reader, candidates)
+    scanned = evidence = 0
     consumers: list[str] = []
-
-    for relative in candidates:
-        excluded = any(
-            _under_prefix(relative, value) for value in excluded_roots
-        )
-        raw = reader.candidate_payload(relative, read=not excluded)
-        if raw is None or excluded:
+    for path in candidates:
+        raw = reader.candidate_payload(path, read=True)
+        if raw is None:
             continue
         scanned += 1
-        observed_counts = tuple(
-            raw.count(token.encode("utf-8"))
-            for token in RETIRED_SURFACES
-        )
-        work054_counts = tuple(
-            raw.count(str(row["legacy_path"]).encode("utf-8"))
-            for row in WORK054_OWNER_RETIREMENTS
-        )
-        retired = [
-            token
-            for token, count in zip(RETIRED_SURFACES, observed_counts)
-            if count
-        ]
-        work054_evidence = False
-        if any(work054_counts):
-            allowed_work054_evidence = (
-                _is_exact_work054_control_reference(
-                    relative,
-                    raw,
-                    work054_counts,
-                )
-                or _is_exact_work054_pinned_reference(
-                    relative,
-                    raw,
-                    work054_counts,
-                )
-                or relative.startswith("docs/90.references/")
-                or relative.startswith("docs/98.archive/")
-            )
-            if allowed_work054_evidence:
-                work054_evidence = True
-            else:
-                try:
-                    text = raw.decode("utf-8")
-                except UnicodeError as exc:
-                    fail(
-                        "AGQC-LEGACY-INPUT",
-                        f"candidate consumer is not UTF-8 {relative}: {exc}",
-                    )
-                if _is_terminal_document(text):
-                    work054_evidence = True
-                else:
-                    legacy = next(
-                        str(row["legacy_path"])
-                        for row, count in zip(
-                            WORK054_OWNER_RETIREMENTS,
-                            work054_counts,
-                        )
-                        if count
-                    )
-                    consumers.append(f"{relative}:{legacy}")
-        expected_counts = allowed_counts.get(relative)
-        if expected_counts is not None:
-            if observed_counts == expected_counts:
-                if retired:
-                    evidence += 1
-            else:
-                consumers.append(
-                    f"{relative}:allowed-reference-count-drift"
-                )
-            continue
-        protected_record = protected_files.get(relative)
-        if protected_record is not None:
-            try:
-                text = raw.decode("utf-8")
-            except UnicodeError as exc:
-                fail(
-                    "AGQC-LEGACY-INPUT",
-                    f"protected evidence is not UTF-8 {relative}: {exc}",
-                )
-            if not _is_verified_protected_evidence(
-                raw,
-                text,
-                protected_record,
-            ):
-                consumers.append(f"{relative}:protected-evidence-drift")
-            else:
-                evidence += 1
-            continue
-        if work054_evidence:
-            evidence += 1
-        if not retired:
-            continue
         try:
-            text = raw.decode("utf-8")
-        except UnicodeError as exc:
-            fail(
-                "AGQC-LEGACY-INPUT",
-                f"candidate consumer is not UTF-8 {relative}: {exc}",
-            )
-        always_active = (
-            relative in ALWAYS_ACTIVE_FILES
-            or any(
-                relative.startswith(prefix)
-                for prefix in ALWAYS_ACTIVE_PREFIXES
-            )
-        )
-        if not always_active and _is_terminal_document(text):
+            text = raw.decode("utf-8", errors="strict")
+        except UnicodeError:
+            if any(token.encode("utf-8") in raw for token in RETIRED_TOKENS):
+                fail("AGQC-LEGACY-INPUT", "candidate consumer is not UTF-8")
+            continue
+        declaration = owners.proof.declarations.get(path)
+        if declaration is not None:
+            if raw != declaration.source_bytes:
+                fail("AGQC-LEGACY-OWNER", "migration declaration bytes changed")
+            text = declaration.remaining_text
+        archive_payload = getattr(owners.proof, "archive_payloads", {}).get(path)
+        if archive_payload is not None:
+            if raw != archive_payload.input_bytes:
+                fail("AGQC-LEGACY-OWNER", "archive payload bytes changed")
+            text = archive_payload.remaining_text
+        mentions = _retired_mentions(path, text)
+        if not mentions:
+            continue
+        if _historical_dispositions_cover(path, raw, mentions, owners.proof):
             evidence += 1
             continue
-        consumers.append(f"{relative}:{retired[0]}")
+        if _published_or_native(path, owners):
+            consumers.append(path)
+            continue
+        if path in owners.enforcement_paths or owners.helper_roles.get(path) in {
+            "regression-test",
+            "closed-fixture",
+            "manifest-fixture",
+        }:
+            evidence += 1
+            continue
+        if owners.retention is not None and path == owners.retention.SNAPSHOT_PATH:
+            try:
+                snapshot = _parse_json(text, path)
+                if not isinstance(snapshot, dict):
+                    fail("AGQC-LEGACY-JSON", "snapshot input must be an object")
+                owners.retention.validate_snapshot(
+                    snapshot,
+                    owners.retention.build_expected_snapshot(reader.root_path),
+                )
+            except ContractError:
+                raise
+            except (ValueError, OSError, KeyError, TypeError):
+                fail("AGQC-LEGACY-OWNER", "retention snapshot validation failed")
+            evidence += 1
+            continue
+        # Unknown token-bearing text remains an enforceable consumer.
+        consumers.append(path)
     return scanned, evidence, consumers
 
 
 def _scan_consumers(
-    root: Path,
-    candidates: tuple[str, ...] | None = None,
+    root: Path, candidates: tuple[str, ...] | None = None
 ) -> tuple[int, int, list[str]]:
     with _RepositoryReader(root) as reader:
         return _scan_consumers_with_reader(reader, candidates)
 
 
 def validate_repository(root: Path) -> dict[str, int]:
-    """Validate a completed cutover using repository-static evidence only."""
+    """Check unique retired surfaces and instruction uses; delegate history proof."""
 
     with _RepositoryReader(root) as reader:
         candidates = _repository_candidates(reader)
         candidate_set = set(candidates)
-        for required in (CONTRACT_PATH.as_posix(), SCHEMA_PATH.as_posix()):
-            _require_candidate(reader, candidate_set, required)
-        contract, schema = _load_contract_documents(reader)
-        validate_contract_data(contract, schema)
-        _validate_replacements(reader, candidate_set)
-        _validate_harness(reader)
-        work054_rows = _validate_work054_retirements(reader, candidate_set)
+        for path in RETIRED_TOKENS:
+            if path in candidate_set:
+                reader.state(path)
+                fail("AGQC-LEGACY-RETIRED", "retired surface remains: " + path)
+        owners = _load_owners(reader, candidates)
+        for path in RETIRED_TOKENS:
+            target = owners.proof.terminal_targets.get(path)
+            if not isinstance(target, str) or target == path:
+                fail(
+                    "AGQC-LEGACY-REPLACEMENT",
+                    "terminal replacement proof is unavailable",
+                )
+            _require_candidate(
+                reader, candidate_set, target, missing_rule="AGQC-LEGACY-REPLACEMENT"
+            )
+            reader.read_bytes(target, missing_rule="AGQC-LEGACY-REPLACEMENT")
         scanned, evidence, consumers = _scan_consumers_with_reader(
-            reader,
-            candidates,
+            reader, candidates, owners
         )
         if consumers:
             fail(
                 "AGQC-LEGACY-CONSUMER",
-                "active consumer retains a retired token: " + consumers[0],
+                "current instruction retains a retired path: " + consumers[0],
             )
     return {
         "retiredSurfaces": len(RETIRED_SURFACES),
-        "replacementSurfaces": len(REPLACEMENT_SURFACES),
+        "retiredOwners": len(RETIRED_OWNER_PATHS),
         "activeConsumers": len(consumers),
         "scannedFiles": scanned,
         "evidenceReferences": evidence,
-        "work054RetiredOwners": len(WORK054_OWNER_RETIREMENTS),
-        "work054MigrationRows": work054_rows,
     }
 
 
-def _fixture_target(root: Path, relative: str) -> Path:
-    safe = _relative_path(relative)
-    current = root
-    for part in safe.parts[:-1]:
-        current = current / part
-        try:
-            mode = current.lstat().st_mode
-        except FileNotFoundError:
-            current.mkdir()
-            continue
-        except OSError as exc:
-            fail(
-                "AGQC-LEGACY-FIXTURE",
-                f"fixture parent is unavailable {relative}: {exc}",
-            )
-        if stat.S_ISLNK(mode) or not stat.S_ISDIR(mode):
-            fail(
-                "AGQC-LEGACY-FIXTURE",
-                f"fixture parent must be a non-symlink directory: {relative}",
-            )
-    return current / safe.name
-
-
-def _write_text(root: Path, relative: str, text: str) -> Path:
-    path = _fixture_target(root, relative)
-    path.write_text(text, encoding="utf-8")
-    return path
-
-
-def _write_bytes(root: Path, relative: str, payload: bytes) -> Path:
-    path = _fixture_target(root, relative)
-    path.write_bytes(payload)
-    return path
-
-
-def _fixture_regular_file(root: Path, relative: str) -> Path:
-    path = root / _relative_path(relative)
-    try:
-        mode = path.lstat().st_mode
-    except OSError:
-        mode = None
-    if mode is None or stat.S_ISLNK(mode) or not stat.S_ISREG(mode):
-        fail(
-            "AGQC-LEGACY-FIXTURE",
-            f"fixture target must be a regular non-symlink file: {relative}",
-        )
-    return path
-
-
-def _synthetic_git(target_root: Path, arguments: tuple[str, ...]) -> None:
-    if arguments not in (("init", "--quiet"), ("add", "--all")):
-        fail("AGQC-LEGACY-FIXTURE", "synthetic Git argv is not allowlisted")
-    try:
-        completed = subprocess.run(
-            [GIT_EXECUTABLE, *arguments],
-            cwd=target_root,
-            check=False,
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            shell=False,
-            env=dict(GIT_ENVIRONMENT),
-            timeout=GIT_TIMEOUT_SECONDS,
-        )
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        fail("AGQC-LEGACY-FIXTURE", f"synthetic Git setup failed: {exc}")
-    if completed.returncode != 0:
-        fail("AGQC-LEGACY-FIXTURE", "synthetic Git setup failed")
-
-
-def _create_baseline(
-    source_reader: _RepositoryReader,
-    target_root: Path,
-) -> None:
-    for relative in dict.fromkeys(PACKAGE_REFERENCES + MIGRATION_REFERENCES):
-        _write_bytes(target_root, relative, source_reader.read_bytes(relative))
-    for record in PROTECTED_EVIDENCE_FILES:
-        relative = record["path"]
-        _write_bytes(target_root, relative, source_reader.read_bytes(relative))
-    _write_text(
-        target_root,
-        REPLACEMENT_SURFACES[0],
-        json.dumps(
-            {
-                "consumers": [
-                    {
-                        "id": HARNESS_CUTOVER["selectedConsumer"]["id"],
-                        "path": HARNESS_CUTOVER["selectedConsumer"]["path"],
-                    }
-                ]
-            },
-            indent=2,
-        )
-        + "\n",
-    )
-    _write_text(target_root, REPLACEMENT_SURFACES[1], "{}\n")
-    _write_text(target_root, REPLACEMENT_SURFACES[2], "replacement\n")
-    _write_text(target_root, REPLACEMENT_SURFACES[3], "{}\n")
-    _write_text(target_root, REPLACEMENT_SURFACES[4], "replacement hub\n")
-    for row in WORK054_OWNER_RETIREMENTS:
-        _write_text(target_root, str(row["replacement"]), "work054 replacement\n")
-    _synthetic_git(target_root, ("init", "--quiet"))
-    _synthetic_git(target_root, ("add", "--all"))
-
-
-def _load_fixture_with_reader(reader: _RepositoryReader) -> dict[str, Any]:
-    try:
-        raw = reader.read_bytes(FIXTURE_PATH.as_posix())
-        text = raw.decode("utf-8")
-    except (ContractError, UnicodeError) as exc:
-        if isinstance(exc, ContractError):
-            raise
-        fail("AGQC-LEGACY-FIXTURE", f"fixture is unreadable: {exc}")
-    if hashlib.sha256(raw).hexdigest() != FIXTURE_SHA256:
-        fail("AGQC-LEGACY-FIXTURE", "fixture bytes differ from the closed set")
-    fixture = _parse_json(text, FIXTURE_PATH.as_posix())
-    if not isinstance(fixture, dict):
-        fail("AGQC-LEGACY-FIXTURE", "fixture root must be an object")
-    expected_keys = {"fixtureVersion", "positiveCases", "mutationCases"}
-    if set(fixture) != expected_keys or fixture["fixtureVersion"] != 1:
-        fail("AGQC-LEGACY-FIXTURE", "fixture keys or version differ")
-    positives = tuple(
-        (case.get("name"), case.get("mutation", {}).get("kind"))
-        for case in fixture["positiveCases"]
-        if isinstance(case, dict) and isinstance(case.get("mutation"), dict)
-    )
-    mutations = tuple(
-        (
-            case.get("name"),
-            case.get("target"),
-            case.get("mutation", {}).get("kind"),
-            case.get("expectedRule"),
-        )
-        for case in fixture["mutationCases"]
-        if isinstance(case, dict) and isinstance(case.get("mutation"), dict)
-    )
-    if positives != EXPECTED_POSITIVE_CASES or mutations != EXPECTED_MUTATION_CASES:
-        fail("AGQC-LEGACY-FIXTURE", "fixture case set or order differs")
-    return fixture
-
-
-def _load_fixture(root: Path) -> dict[str, Any]:
-    with _RepositoryReader(root) as reader:
-        return _load_fixture_with_reader(reader)
-
-
-def _require_self_test_sources(
-    reader: _RepositoryReader,
-    candidates: tuple[str, ...],
-) -> None:
-    """Admit every self-test source before its first content read."""
-
-    candidate_set = set(candidates)
-    required = dict.fromkeys(
-        (
-            CONTRACT_PATH.as_posix(),
-            SCHEMA_PATH.as_posix(),
-            FIXTURE_PATH.as_posix(),
-            *PACKAGE_REFERENCES,
-            *MIGRATION_REFERENCES,
-            *(record["path"] for record in PROTECTED_EVIDENCE_FILES),
-        )
-    )
-    for relative in required:
-        _require_candidate(reader, candidate_set, relative)
-
-
-def _apply_positive(root: Path, kind: str) -> None:
-    if kind == "none":
-        return
-    if kind == "add-terminal-reference":
-        _write_text(
-            root,
-            "docs/04.execution/plans/terminal-evidence.md",
-            "---\nstatus: Done\n---\n"
-            f"historical: {RETIRED_SURFACES[0]}\n",
-        )
-        return
-    if kind == "verify-protected-evidence":
-        if not all(
-            (root / PurePosixPath(record["path"])).is_file()
-            for record in PROTECTED_EVIDENCE_FILES
-        ):
-            fail(
-                "AGQC-LEGACY-FIXTURE",
-                "protected evidence baseline is incomplete",
-            )
-        return
-    fail("AGQC-LEGACY-FIXTURE", f"unknown positive mutation: {kind}")
-
-
-def _mutate_contract(contract: dict[str, Any], mutation: dict[str, Any]) -> None:
-    kind = mutation["kind"]
-    if kind == "add-migration-reference":
-        contract["referencePolicy"]["migrationReferences"].append(
-            mutation["path"]
-        )
-    elif kind == "replace-replacement-path":
-        contract["replacementSurfaces"][mutation["index"]] = mutation["path"]
-    elif kind == "add-protected-evidence":
-        contract["referencePolicy"]["protectedEvidenceFiles"].append(
-            {
-                "path": mutation["path"],
-                "sha256": mutation["sha256"],
-            }
-        )
-    elif kind == "replace-protected-evidence":
-        contract["referencePolicy"]["protectedEvidenceFiles"][0] = {
-            "path": mutation["path"],
-            "sha256": mutation["sha256"],
-            "evidenceKind": "authored-document",
-            "lifecycleStatus": mutation["lifecycleStatus"],
-            "observedAt": mutation["observedAt"],
-            "sourceCommit": mutation["sourceCommit"],
-            "retiredReference": mutation["retiredReference"],
-            "supersededBy": mutation["supersededBy"],
-            "count": mutation["count"],
-        }
-    elif kind == "change-current-authority-migration":
-        contract["currentAuthorityMigrations"][mutation["index"]][
-            mutation["field"]
-        ] = mutation["value"]
-    elif kind == "change-candidate-source":
-        contract["scanPolicy"]["candidateSource"] = mutation["value"]
-    elif kind == "change-resource-limit":
-        contract["scanPolicy"]["resourceLimits"][mutation["field"]] = mutation[
-            "value"
-        ]
-    else:
-        fail("AGQC-LEGACY-FIXTURE", f"unknown contract mutation: {kind}")
-
-
-def _mutate_filesystem(root: Path, mutation: dict[str, Any]) -> None:
-    kind = mutation["kind"]
-    harness_path = root / PurePosixPath(REPLACEMENT_SURFACES[0])
-    if kind == "add-retired-path":
-        _write_text(root, mutation["path"], "{}\n")
-    elif kind == "remove-replacement":
-        _fixture_regular_file(root, mutation["path"]).unlink()
-    elif kind == "add-active-reference":
-        _write_text(
-            root,
-            mutation["path"],
-            (
-                "---\n"
-                "title: 'Stale reference fixture'\n"
-                "type: content/reference\n"
-                f"status: {mutation.get('status', 'active')}\n"
-                "owner: platform\n"
-                "updated: 2026-07-30\n"
-                "---\n\n"
-                f"use {RETIRED_SURFACES[0]}\n"
-            ),
-        )
-    elif kind == "mutate-protected-evidence":
-        path = _fixture_regular_file(root, mutation["path"])
-        path.write_bytes(path.read_bytes() + b"\nprotected evidence drift\n")
-    elif kind == "remove-protected-evidence":
-        _fixture_regular_file(root, mutation["path"]).unlink()
-    elif kind == "replace-protected-reference":
-        path = _fixture_regular_file(root, mutation["path"])
-        raw = path.read_bytes()
-        retired = RETIRED_SURFACES[3].encode("utf-8")
-        replacement = REPLACEMENT_SURFACES[3].encode("utf-8")
-        if raw.count(retired) != 1:
-            fail(
-                "AGQC-LEGACY-FIXTURE",
-                "protected reference fixture count differs",
-            )
-        path.write_bytes(raw.replace(retired, replacement))
-    elif kind == "add-invalid-utf8-reference":
-        _write_bytes(
-            root,
-            mutation["path"],
-            RETIRED_SURFACES[0].encode("utf-8") + b"\xff\n",
-        )
-    elif kind == "mutate-allowed-reference":
-        path = _fixture_regular_file(root, mutation["path"])
-        path.write_bytes(
-            path.read_bytes()
-            + b"\n"
-            + RETIRED_SURFACES[0].encode("utf-8")
-            + b"\n"
-        )
-    elif kind == "select-retired-consumer":
-        _write_text(
-            root,
-            REPLACEMENT_SURFACES[0],
-            json.dumps(
-                {
-                    "consumers": [
-                        {
-                            "id": "role-semantics-validator",
-                            "path": RETIRED_SURFACES[2],
-                        }
-                    ]
-                },
-                indent=2,
-            )
-            + "\n",
-        )
-    elif kind == "add-harness-compatibility":
-        value = _parse_json(
-            harness_path.read_text(encoding="utf-8"),
-            REPLACEMENT_SURFACES[0],
-        )
-        value["compatibility"] = {"removalOwnerSpec": OWNER_SPEC}
-        harness_path.write_text(
-            json.dumps(value, indent=2) + "\n",
-            encoding="utf-8",
-        )
-    elif kind == "symlink-replacement":
-        path = _fixture_regular_file(root, mutation["path"])
-        copy_path = path.with_name("replacement-copy" + path.suffix)
-        shutil.copyfile(path, copy_path)
-        path.unlink()
-        path.symlink_to(copy_path.name)
-    elif kind == "malform-harness-json":
-        harness_path.write_text('{"consumers": [', encoding="utf-8")
-    elif kind == "duplicate-harness-json-key":
-        harness_path.write_text(
-            '{"consumers": [], "consumers": []}\n',
-            encoding="utf-8",
-        )
-    else:
-        fail("AGQC-LEGACY-FIXTURE", f"unknown filesystem mutation: {kind}")
-
-
 def run_self_test(root: Path) -> tuple[int, int]:
-    """Execute deterministic fixtures in temporary repositories only."""
+    """Exercise the public gate and one bounded, write-free instruction negative."""
 
-    with _RepositoryReader(root) as source_reader:
-        candidates = _repository_candidates(source_reader)
-        _require_self_test_sources(source_reader, candidates)
-        contract, schema = _load_contract_documents(source_reader)
-        validate_contract_data(contract, schema)
-        fixture = _load_fixture_with_reader(source_reader)
-
-        for case in fixture["positiveCases"]:
-            with tempfile.TemporaryDirectory(
-                prefix="agent-legacy-cutover-positive-"
-            ) as directory:
-                target = Path(directory)
-                _create_baseline(source_reader, target)
-                _apply_positive(target, case["mutation"]["kind"])
-                _synthetic_git(target, ("add", "--all"))
-                validate_repository(target)
-
-        for case in fixture["mutationCases"]:
-            expected = case["expectedRule"]
-            try:
-                if case["target"] == "contract":
-                    mutated = copy.deepcopy(contract)
-                    _mutate_contract(mutated, case["mutation"])
-                    validate_contract_data(mutated, schema)
-                elif case["target"] == "filesystem":
-                    with tempfile.TemporaryDirectory(
-                        prefix="agent-legacy-cutover-negative-"
-                    ) as directory:
-                        target = Path(directory)
-                        _create_baseline(source_reader, target)
-                        _mutate_filesystem(target, case["mutation"])
-                        _synthetic_git(target, ("add", "--all"))
-                        validate_repository(target)
-                else:
-                    fail(
-                        "AGQC-LEGACY-FIXTURE",
-                        f"unknown mutation target: {case['target']}",
-                    )
-            except ContractError as exc:
-                if exc.rule_id != expected:
-                    fail(
-                        "AGQC-LEGACY-FIXTURE",
-                        f"{case['name']}: expected {expected}, got {exc.rule_id}",
-                    )
-            else:
-                fail(
-                    "AGQC-LEGACY-FIXTURE",
-                    f"{case['name']}: mutation was accepted",
-                )
-    return len(fixture["positiveCases"]), len(fixture["mutationCases"])
+    validate_repository(root)
+    if not _retired_mentions("README.md", "use " + RETIRED_SURFACES[0]):
+        fail("AGQC-LEGACY-SELFTEST", "plain instruction negative was not detected")
+    return 1, 1
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--root", type=Path, default=Path.cwd())
+    parser.add_argument(
+        "--root", type=Path, default=Path(__file__).resolve().parents[1]
+    )
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args()
     try:
         if args.self_test:
-            positive_count, mutation_count = run_self_test(args.root)
+            positive, negative = run_self_test(args.root)
             print(
-                "[PASS] agent legacy cutover self-test passed: "
-                f"positive_cases={positive_count} "
-                f"mutation_cases={mutation_count}"
+                f"[PASS] agent legacy cutover self-test: positive_cases={positive} mutation_cases={negative}"
             )
-            return 0
-        counts = validate_repository(args.root)
-        print(
-            "[PASS] agent legacy cutover validation passed: "
-            f"retired_surfaces={counts['retiredSurfaces']} "
-            f"replacement_surfaces={counts['replacementSurfaces']} "
-            f"active_consumers={counts['activeConsumers']} "
-            f"scanned_files={counts['scannedFiles']} "
-            f"evidence_references={counts['evidenceReferences']}"
-        )
-        return 0
+        else:
+            counts = validate_repository(args.root)
+            print(
+                "[PASS] agent legacy cutover: "
+                + " ".join(f"{key}={value}" for key, value in counts.items())
+            )
     except ContractError as exc:
-        print(f"[FAIL] {exc}")
+        print(f"[FAIL] {exc.rule_id}: {exc.detail}", file=sys.stderr)
         return 1
+    except Exception:
+        print("[FAIL] AGQC-LEGACY-INPUT: invalid input", file=sys.stderr)
+        return 2
+    return 0
 
 
 if __name__ == "__main__":

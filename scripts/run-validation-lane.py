@@ -1189,12 +1189,13 @@ def validator_argv(
     for raw_path in include_candidates:
         if not raw_path.endswith(".md"):
             continue
+        target = root.joinpath(*PurePosixPath(raw_path).parts)
+        if not target.exists() and not target.is_symlink():
+            continue
         surface = contract_module.classify_path(contract, raw_path)
         if validator["id"] not in surface["validators"]:
             continue
-        target = root.joinpath(*PurePosixPath(raw_path).parts)
-        if target.exists() or target.is_symlink():
-            argv.extend(("--include-path", raw_path))
+        argv.extend(("--include-path", raw_path))
     return argv
 
 

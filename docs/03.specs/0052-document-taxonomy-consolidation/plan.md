@@ -300,7 +300,7 @@ routes, refuses overwrite, and never restores directly into the repository.
 
 #### Terminal document owners
 
-- `docs/00.agent-governance/rules/document-authoring.md` — agent-facing stage
+- `docs/00.agent-governance/policies/document-authoring.md` — agent-facing stage
   selection, timing, language, safety, lifecycle, checklist, and validation
   procedure.
 - `docs/99.templates/README.md` — exact-one-profile
@@ -324,7 +324,7 @@ Their body and link guidance changes to sibling `spec.md`, `plan.md`, and
   `approvalBoundaryProjection` owner.
 - `docs/00.agent-governance/contracts/provider-runtime-evidence.json` and
   schema — provider observation/reference shape; no raw runtime body.
-- `docs/00.agent-governance/rules/approval-boundaries.md` — human-readable
+- `docs/00.agent-governance/policies/approval-and-safety.md` — human-readable
   input matrix with stable surface IDs; it is not a second machine registry.
 - Existing harness/provider validators and fixtures — schema and semantic
   enforcement; no new duplicate validator executable.

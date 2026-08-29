@@ -75,11 +75,6 @@
       "validatorId": "agent-governance-ci"
     },
     {
-      "surfaceId": "agent-gemini",
-      "jobId": "agent-governance-static",
-      "validatorId": "agent-governance-ci"
-    },
-    {
       "surfaceId": "github-automation",
       "jobId": "agent-governance-static",
       "validatorId": "agent-governance-ci"
@@ -272,7 +267,7 @@
     }
   ],
   "localQa": {
-    "owner": "docs/00.agent-governance/rules/quality-standards.md",
+    "owner": "docs/00.agent-governance/policies/quality.md",
     "sequence": [
       "targeted",
       "affected",
@@ -295,8 +290,7 @@
       "scripts/run-validation-lane.py",
       ".pre-commit-config.yaml",
       "scripts/validate-repo-quality-gates.sh",
-      ".agents/workflows/qa-cicd-workflow.md",
-      "docs/00.agent-governance/rules/postflight-checklist.md",
+      "docs/00.agent-governance/skills/work-lifecycle.md",
       ".github/PULL_REQUEST_TEMPLATE.md",
       ".github/README.md",
       "scripts/README.md",
@@ -306,15 +300,6 @@
       "mutationResult": "not-completion-evidence",
       "requiredFinalResult": "PASS",
       "rerun": ["affected", "staged", "all-files"]
-    },
-    "inventory": {
-      "truthCases": 6,
-      "mutationCases": 45,
-      "delegatedChecks": 18,
-      "deferredOwners": 1,
-      "qaSurfaces": 10,
-      "legacyPositiveCases": 3,
-      "legacyMutationCases": 22
     }
   }
 }

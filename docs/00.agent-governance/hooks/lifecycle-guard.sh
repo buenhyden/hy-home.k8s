@@ -104,7 +104,7 @@ fi
 
 # Shared implementations remain under docs/00.agent-governance/hooks. The
 # canonical selector covers .agents/* and runtime config paths such as
-# .agents/hooks.json; the selected repository-quality argv owns detailed checks.
+# .claude/settings.json; the selected repository-quality argv owns detailed checks.
 
 declare -a FAILURES=()
 

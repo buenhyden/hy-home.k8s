@@ -1,16 +1,17 @@
-@docs/00.agent-governance/rules/bootstrap.md
+@docs/00.agent-governance/skills/work-lifecycle.md
 @docs/00.agent-governance/providers/claude.md
 @.claude/CLAUDE.md
 @RTK.md
 
 # CLAUDE.md
 
-Thin Claude provider shim for `hy-home.k8s`.
+Thin Claude provider gateway for `hy-home.k8s`.
 
-- Runtime and role roster: `docs/00.agent-governance/harness-catalog.md`
-- Validation lanes, results, and handoff evidence: `docs/00.agent-governance/rules/quality-standards.md`
-- Completion checklist: `docs/00.agent-governance/rules/postflight-checklist.md`
-- Template selection: `docs/99.templates/README.md`
+- Shared execution policy: `docs/00.agent-governance/policies/agent-execution.md`
+- Role and skill authority: `.agents/registry.json`
+- Responsibilities: `docs/00.agent-governance/roles/README.md`
+- Validation and handoff: `docs/00.agent-governance/policies/quality.md`
+- Document authoring: `docs/99.templates/README.md`
 
-Tracked adapters are repo-static configuration; native Claude discovery or
-consumption requires separate runtime evidence from the provider note.
+Tracked projections are repository-static configuration, not native discovery
+or runtime enforcement evidence.

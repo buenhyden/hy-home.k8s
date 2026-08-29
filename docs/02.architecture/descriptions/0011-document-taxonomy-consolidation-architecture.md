@@ -3,7 +3,7 @@ title: 'Document Taxonomy Consolidation Architecture Description'
 type: sdlc/ad
 status: active
 owner: platform
-updated: 2026-08-22
+updated: 2026-08-29
 artifact_id: "AD-0011"
 ---
 
@@ -270,11 +270,12 @@ must equal the tracked executable set for governed lanes.
 
 ### Memory and generated data
 
-The live progress ledger becomes a bounded current window. Closed sections
-move through the approved archive mechanism and remain discoverable from an
-index. Tracked stale `graphify-out/**` output is removed only after its current
-consumers and reproducibility are proved; future generated output belongs in
-ignored scratch unless a governed snapshot route explicitly admits it.
+Progress remains unchanged until WP012 transfers the remaining work to its
+owning Tasks and Git evidence. Under
+[Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md),
+WP003 may retire exactly the four C-SDLC-009 graph outputs after consumer-zero
+and Git recovery, without a reproduction claim. Other generated cleanup retains
+its own reproduction and consumer proof.
 
 ## Infrastructure & Deployment
 

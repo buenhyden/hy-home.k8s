@@ -7,13 +7,17 @@ import argparse
 import ast
 import copy
 import hashlib
+import importlib.util
 import json
 import os
 import re
 import shutil
 import stat
+import sys
 import tempfile
+from functools import lru_cache
 from pathlib import Path, PurePosixPath
+from types import ModuleType
 from typing import Any, NoReturn
 
 import yaml
@@ -37,13 +41,8 @@ PROVIDER_EVIDENCE_AGGREGATE_PATH = PurePosixPath(
     "scripts/validate-agent-provider-evidence.py"
 )
 RUNNER_PATH = PurePosixPath("scripts/run-validation-lane.py")
-QUALITY_STANDARDS_PATH = PurePosixPath(
-    "docs/00.agent-governance/rules/quality-standards.md"
-)
-POSTFLIGHT_PATH = PurePosixPath(
-    "docs/00.agent-governance/rules/postflight-checklist.md"
-)
-SHARED_QA_WORKFLOW_PATH = PurePosixPath(".agents/workflows/qa-cicd-workflow.md")
+QUALITY_POLICY_PATH = PurePosixPath("docs/00.agent-governance/policies/quality.md")
+WORK_LIFECYCLE_PATH = PurePosixPath("docs/00.agent-governance/skills/work-lifecycle.md")
 PULL_REQUEST_TEMPLATE_PATH = PurePosixPath(".github/PULL_REQUEST_TEMPLATE.md")
 GITHUB_README_PATH = PurePosixPath(".github/README.md")
 SCRIPTS_README_PATH = PurePosixPath("scripts/README.md")
@@ -113,7 +112,6 @@ ROUTE_CLASSES = (
     "agent-shared",
     "agent-claude",
     "agent-codex",
-    "agent-gemini",
     "github-automation",
     "governance-documents",
     "template-documents",
@@ -299,7 +297,7 @@ LOCAL_QA_SEQUENCE = (
     "rerun",
     "diff-checks",
 )
-LOCAL_QA_OWNER = QUALITY_STANDARDS_PATH.as_posix()
+LOCAL_QA_OWNER = QUALITY_POLICY_PATH.as_posix()
 LOCAL_QA_COMMANDS = {
     "affectedRunner": (
         "python3 scripts/run-validation-lane.py --root . --lane affected "
@@ -318,23 +316,12 @@ LOCAL_QA_CONSUMERS = (
     RUNNER_PATH,
     PRE_COMMIT_PATH,
     AGGREGATE_PATH,
-    SHARED_QA_WORKFLOW_PATH,
-    POSTFLIGHT_PATH,
+    WORK_LIFECYCLE_PATH,
     PULL_REQUEST_TEMPLATE_PATH,
     GITHUB_README_PATH,
     SCRIPTS_README_PATH,
     TESTS_README_PATH,
 )
-LOCAL_QA_COMPACT_SEQUENCE = " -> ".join(LOCAL_QA_SEQUENCE)
-LOCAL_QA_INVENTORY = {
-    "truthCases": 6,
-    "mutationCases": 45,
-    "delegatedChecks": 18,
-    "deferredOwners": 1,
-    "qaSurfaces": 10,
-    "legacyPositiveCases": 3,
-    "legacyMutationCases": 22,
-}
 EXPECTED_MUTATION_NAMES = (
     "unknown-contract-key",
     "contract-version-drift",
@@ -379,7 +366,7 @@ EXPECTED_MUTATION_NAMES = (
     "local-qa-sequence-drift",
     "staged-runner-disabled",
     "formatter-rerun-evidence-missing",
-    "qa-inventory-stale",
+    "qa-owner-link-broken",
     "cached-diff-evidence-missing",
 )
 INPUT_PATHS = (
@@ -392,9 +379,8 @@ INPUT_PATHS = (
     AGGREGATE_PATH,
     PROVIDER_EVIDENCE_AGGREGATE_PATH,
     RUNNER_PATH,
-    QUALITY_STANDARDS_PATH,
-    POSTFLIGHT_PATH,
-    SHARED_QA_WORKFLOW_PATH,
+    QUALITY_POLICY_PATH,
+    WORK_LIFECYCLE_PATH,
     PULL_REQUEST_TEMPLATE_PATH,
     GITHUB_README_PATH,
     SCRIPTS_README_PATH,
@@ -490,9 +476,7 @@ def _read_regular_bytes(root: Path, relative: PurePosixPath) -> bytes:
             "AGQC-CI-INPUT",
             f"repository root is unavailable: {exc.strerror}",
         )
-    if stat.S_ISLNK(root_metadata.st_mode) or not stat.S_ISDIR(
-        root_metadata.st_mode
-    ):
+    if stat.S_ISLNK(root_metadata.st_mode) or not stat.S_ISDIR(root_metadata.st_mode):
         fail(
             "AGQC-CI-INPUT",
             "repository root must be a regular non-symlink directory",
@@ -535,9 +519,7 @@ def _read_regular_bytes(root: Path, relative: PurePosixPath) -> bytes:
             parent_descriptor = child_descriptor
 
         file_flags = (
-            os.O_RDONLY
-            | getattr(os, "O_CLOEXEC", 0)
-            | getattr(os, "O_NOFOLLOW", 0)
+            os.O_RDONLY | getattr(os, "O_CLOEXEC", 0) | getattr(os, "O_NOFOLLOW", 0)
         )
         if hasattr(os, "O_NONBLOCK"):
             file_flags |= os.O_NONBLOCK
@@ -883,12 +865,11 @@ def validate_contract_data(
             "requiredFinalResult": "PASS",
             "rerun": ["affected", "staged", "all-files"],
         },
-        "inventory": LOCAL_QA_INVENTORY,
     }
     if contract["localQa"] != expected_local_qa:
         if contract["localQa"].get("sequence") != list(LOCAL_QA_SEQUENCE):
             fail("AGQC-QA-ORDER", "local QA sequence or order differs")
-        fail("AGQC-QA-CONTRACT", "local QA owner, command, or inventory differs")
+        fail("AGQC-QA-CONTRACT", "local QA owner, command, or consumer differs")
     return contract
 
 
@@ -1375,6 +1356,36 @@ def _validate_integrations(
         )
 
 
+@lru_cache(maxsize=1)
+def _load_link_validator() -> ModuleType:
+    """Load the existing parser beside this validator, not from the input root."""
+    script_path = Path(__file__).with_name("validate-links-and-owners.py")
+    module_name = f"_ci_canonical_links_{id(_load_link_validator):x}"
+    spec = importlib.util.spec_from_file_location(module_name, script_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("canonical rendered-link adapter is unavailable")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    scripts_path = str(script_path.parent)
+    inserted = scripts_path not in sys.path
+    if inserted:
+        sys.path.insert(0, scripts_path)
+    try:
+        spec.loader.exec_module(module)
+    finally:
+        sys.modules.pop(module_name, None)
+        if inserted:
+            sys.path.remove(scripts_path)
+    return module
+
+
+def _routes_to_quality_owner(path: PurePosixPath, text: str) -> bool:
+    return any(
+        link.kind == "local" and link.target == QUALITY_POLICY_PATH
+        for link in _load_link_validator().rendered_local_links(text, path)
+    )
+
+
 def _validate_local_qa_surfaces(
     root: Path,
     contract: dict[str, Any],
@@ -1387,7 +1398,7 @@ def _validate_local_qa_surfaces(
     if local_qa["consumerSurfaces"] != expected_consumers:
         fail("AGQC-QA-OWNER", "local QA consumer surface inventory differs")
 
-    quality_text = texts[QUALITY_STANDARDS_PATH]
+    quality_text = texts[QUALITY_POLICY_PATH]
     markers = [
         f"{index}. **{identifier}**:"
         for index, identifier in enumerate(LOCAL_QA_SEQUENCE, start=1)
@@ -1407,52 +1418,22 @@ def _validate_local_qa_surfaces(
                 f"canonical local QA owner lacks {marker}",
             )
 
-    workflow_text = texts[SHARED_QA_WORKFLOW_PATH]
-    github_text = texts[GITHUB_README_PATH]
-    if LOCAL_QA_OWNER not in workflow_text or LOCAL_QA_OWNER not in github_text:
-        fail("AGQC-QA-OWNER", "QA consumers do not route to the canonical owner")
-
-    for path in (
-        SHARED_QA_WORKFLOW_PATH,
-        POSTFLIGHT_PATH,
-        PULL_REQUEST_TEMPLATE_PATH,
-        SCRIPTS_README_PATH,
-        TESTS_README_PATH,
+    rerun_text = " ".join(quality_text[positions[6] : positions[7]].split())
+    if "not completion evidence" not in rerun_text or any(
+        lane not in rerun_text for lane in ("affected", "staged", "all-files")
     ):
-        if LOCAL_QA_COMPACT_SEQUENCE not in texts[path]:
+        fail("AGQC-QA-EVIDENCE", "canonical formatter rerun evidence differs")
+
+    for path in LOCAL_QA_CONSUMERS:
+        if path.suffix == ".md" and not _routes_to_quality_owner(path, texts[path]):
             fail(
-                "AGQC-QA-EVIDENCE",
-                f"{path.as_posix()} lacks the canonical local QA sequence",
+                "AGQC-QA-OWNER",
+                f"{path.as_posix()} lacks a link to the canonical local QA owner",
             )
 
     runner_text = texts[RUNNER_PATH]
     if 'LOCAL_LANES = ("affected", "staged", "all-files")' not in runner_text:
         fail("AGQC-QA-RUNNER", "local runner lane set differs")
-    for marker in (
-        "--lane affected",
-        "--lane staged",
-        "pre-commit run",
-        "pre-commit run --all-files",
-    ):
-        if marker not in workflow_text:
-            fail("AGQC-QA-RUNNER", f"shared QA workflow lacks {marker}")
-
-    inventory_markers = (
-        "truth_cases=6 mutation_cases=45",
-        "delegated_checks=18",
-        "deferred_owners=1",
-        "qa_surfaces=10",
-        "positive_cases=3 mutation_cases=24",
-    )
-    for path in (SCRIPTS_README_PATH, TESTS_README_PATH):
-        text = texts[path]
-        for marker in inventory_markers:
-            if marker not in text:
-                fail(
-                    "AGQC-QA-INVENTORY",
-                    f"{path.as_posix()} lacks current inventory {marker}",
-                )
-
     command_paths = {
         PurePosixPath(match)
         for command in local_qa["commands"].values()
@@ -1543,10 +1524,9 @@ def _load_repository_inputs(
     qa_texts = {
         path: _read_regular_text(root, path)
         for path in (
-            QUALITY_STANDARDS_PATH,
+            QUALITY_POLICY_PATH,
             RUNNER_PATH,
-            SHARED_QA_WORKFLOW_PATH,
-            POSTFLIGHT_PATH,
+            WORK_LIFECYCLE_PATH,
             PULL_REQUEST_TEMPLATE_PATH,
             GITHUB_README_PATH,
             SCRIPTS_README_PATH,
@@ -1787,9 +1767,8 @@ def _run_filesystem_mutation(
         workflow_path = target_root / WORKFLOW_PATH
         provider_aggregate_path = target_root / PROVIDER_EVIDENCE_AGGREGATE_PATH
         runner_path = target_root / RUNNER_PATH
-        pull_request_path = target_root / PULL_REQUEST_TEMPLATE_PATH
-        scripts_readme_path = target_root / SCRIPTS_README_PATH
-        quality_standards_path = target_root / QUALITY_STANDARDS_PATH
+        work_lifecycle_path = target_root / WORK_LIFECYCLE_PATH
+        quality_policy_path = target_root / QUALITY_POLICY_PATH
         if kind == "symlink-input":
             copy_path = contract_path.with_name("contract-copy.json")
             shutil.copyfile(contract_path, copy_path)
@@ -1831,28 +1810,27 @@ def _run_filesystem_mutation(
                 encoding="utf-8",
             )
         elif kind == "remove-formatter-rerun-evidence":
-            text = pull_request_path.read_text(encoding="utf-8")
-            pull_request_path.write_text(
+            text = quality_policy_path.read_text(encoding="utf-8")
+            quality_policy_path.write_text(
                 text.replace(
-                    LOCAL_QA_COMPACT_SEQUENCE,
-                    "targeted -> affected -> staged -> tests -> all-files",
+                    "not\n   completion evidence",
+                    "completion evidence",
                     1,
                 ),
                 encoding="utf-8",
             )
-        elif kind == "stale-qa-inventory":
-            text = scripts_readme_path.read_text(encoding="utf-8")
-            scripts_readme_path.write_text(
+        elif kind == "break-qa-owner-link":
+            text = work_lifecycle_path.read_text(encoding="utf-8")
+            work_lifecycle_path.write_text(
                 text.replace(
-                    "delegated_checks=18",
-                    "delegated_checks=13",
-                    1,
+                    "../policies/quality.md",
+                    "../rules/quality-standards.md",
                 ),
                 encoding="utf-8",
             )
         elif kind == "remove-cached-diff-evidence":
-            text = quality_standards_path.read_text(encoding="utf-8")
-            quality_standards_path.write_text(
+            text = quality_policy_path.read_text(encoding="utf-8")
+            quality_policy_path.write_text(
                 text.replace(
                     "`git diff --cached --check`",
                     "`git diff --check`",

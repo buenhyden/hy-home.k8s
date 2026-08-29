@@ -1,52 +1,32 @@
 ---
 name: requirements-to-design
-description: Use when connecting requirement documents to architecture or design documents, verifying docs/01→02 traceability, or ensuring PRD requirements map to AD/ADR artifacts in hy-home.k8s.
+description: Use when tracing Requirement Package members to relevant Architecture Descriptions, ADRs, and Spec contracts.
 ---
 
 # requirements-to-design
 
-## Purpose
-
-Maintain traceable links between product requirement documents (`docs/01.requirements/`) and
-architecture artifacts (`docs/02.architecture/`) in this repository's SDD lifecycle.
-
-## Trigger Phrases
-
-- "trace requirements to design"
-- "check requirements coverage"
-- "link PRD to architecture"
-- "verify 01→02 connection"
-- "requirements traceability"
-- "which ADR covers this requirement"
-
-## When to Use
-
-- Creating or updating an AD and needing to confirm which PRD requirements it satisfies.
-- Creating an ADR and needing to reference the driving requirement or AD.
-- Auditing whether all PRD requirements have a corresponding architecture artifact.
-- Reviewing a new feature request to identify which existing architecture decisions apply.
-
-## When NOT to Use
-
-- Authoring the PRD or ADR content itself; use `docs-stage-routing` to select the template.
-- Narrow template conformance or link drift cleanup; use `docs-stage-conformance`.
-- Execution planning or task breakdown; use `execution-plan` or `task-breakdown`.
-
 ## Workflow Steps
 
-1. Read the target PRD (`docs/01.requirements/`) to extract numbered requirements.
-2. Scan `docs/02.architecture/descriptions/` for ADs that reference those requirements.
-3. Scan `docs/02.architecture/decisions/` for ADRs that reference the PRD or AD.
-4. Build a coverage matrix: Requirement → AD → ADR (with status: covered, partial, missing).
-5. For each missing or partial coverage, record the gap with the requirement ID and the
-   nearest existing artifact that partially addresses it.
-6. Report the coverage matrix and gaps. Do not auto-create architecture artifacts;
-   present the gap list and recommend which template to use.
-7. Update `## Related Documents` in the PRD to list confirmed AD/ADR links.
+1. Read the Requirement Package and extract complete member IDs such as
+   `REQ-0001-FR-0001`, `REQ-0001-NFR-0001`, and `REQ-0001-IF-0001`.
+2. Identify relevant current Architecture Descriptions and accepted ADRs.
+   Requirement evidence does not require an invented architecture artifact
+   when no structural decision or view is needed.
+3. Trace each relevant requirement to architecture rationale and the owning
+   Spec's behavior/acceptance contract. Executable OpenAPI, GraphQL, and Proto
+   definitions belong to that Spec package, not Stage 01.
+4. Report covered, partial, missing, or not-applicable relationships with
+   evidence. Do not auto-create an ADR or implementation document.
+5. When authorized, update reciprocal/current links through the selected
+   profiles and verify complete stable IDs and path ownership.
 
-## Coverage Matrix Format
+## Boundaries
 
-| Requirement | Covered By (AD/ADR) | Status  | Gap / Note                                                 |
-| ----------- | -------------------- | ------- | ---------------------------------------------------------- |
-| REQ-001     | AD-0001, ADR-0003    | covered | —                                                          |
-| REQ-002     | —                    | missing | No AD addresses scalability under WSL2 memory constraints  |
+Requirements remain solution-independent. Architecture owns structure and
+durable choices; Spec owns change-specific implementation behavior. Use
+docs-stage-routing for authoring and execution-plan for implementation order.
+
+## Outputs
+
+A bounded traceability/gap map with full requirement IDs and current owners,
+plus any authorized link repair and validation evidence.

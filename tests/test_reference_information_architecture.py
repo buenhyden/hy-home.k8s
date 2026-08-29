@@ -12,7 +12,7 @@ import tempfile
 import time
 import tracemalloc
 import unittest
-from contextlib import redirect_stderr
+from contextlib import ExitStack, redirect_stderr
 from io import StringIO
 import importlib.util
 from unittest import mock
@@ -25,6 +25,7 @@ SCRIPTS = REPOSITORY_ROOT / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
 import reference_information_architecture as ria  # noqa: E402
+from json_schema_validation import SchemaEvaluationError  # noqa: E402
 
 from reference_information_architecture import (  # noqa: E402
     ContractError,
@@ -89,6 +90,13 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
     maxDiff = None
 
     def setUp(self) -> None:
+        # RIA-only fixtures have no agent migration corpus; make the unrelated
+        # dependency explicit, never use this stub in public source-proof tests.
+        self.cutover_projection_patch = mock.patch.object(
+            ria, "load_agent_cutover_projections", return_value={}
+        )
+        self.cutover_projection_patch.start()
+        self.addCleanup(self.cutover_projection_patch.stop)
         self.temporary_directory = tempfile.TemporaryDirectory()
         self.root = Path(self.temporary_directory.name)
         self.contract_path = (
@@ -207,8 +215,8 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
             Path("docs/90.references/llm-wiki/README.md"),
             Path("docs/90.references/llm-wiki/wiki-index.md"),
             Path("docs/00.agent-governance/README.md"),
-            Path("docs/00.agent-governance/harness-catalog.md"),
-            Path("docs/00.agent-governance/rules/document-authoring.md"),
+            Path("docs/00.agent-governance/roles/README.md"),
+            Path("docs/00.agent-governance/policies/document-authoring.md"),
             Path("docs/README.md"),
             Path("scripts/README.md"),
             Path("docs/90.references/README.md"),
@@ -502,6 +510,103 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 "audits/2026-07-05-wea",
             ],
         )
+
+    def test_schema_document_delegates_benign_input_to_offline_owner(self) -> None:
+        contract = self._minimal_contract()
+        schema = {"type": "object"}
+        with mock.patch.object(
+            ria, "schema_errors", return_value=[], create=True
+        ) as validate:
+            ria._validate_schema_document(contract, schema)
+        validate.assert_called_once_with(schema, contract)
+
+    def test_schema_document_maps_offline_owner_failure_without_payload(self) -> None:
+        sentinel = "schema-evaluation-private-sentinel"
+        with (
+            mock.patch.object(
+                ria,
+                "schema_errors",
+                side_effect=SchemaEvaluationError(sentinel),
+                create=True,
+            ),
+            self.assertRaises(ContractError) as raised,
+        ):
+            ria._validate_schema_document(self._minimal_contract(), {"type": "object"})
+        self.assertEqual(
+            raised.exception.finding,
+            ria.Finding("RIA-CONTRACT", "$schema", "schema is invalid"),
+        )
+        self.assertNotIn(sentinel, str(raised.exception))
+
+    def test_schema_document_keeps_local_refs_and_closed_instance_findings(
+        self,
+    ) -> None:
+        contract = self._minimal_contract()
+        schema = {
+            "$defs": {
+                "contract": {
+                    "type": "object",
+                    "properties": {"schemaVersion": {"const": 2}},
+                }
+            },
+            "$ref": "#/$defs/contract",
+        }
+        ria._validate_schema_document(contract, schema)
+        with self.assertRaises(ContractError) as raised:
+            ria._validate_schema_document(dict(contract, schemaVersion=3), schema)
+        self.assertEqual(
+            raised.exception.finding,
+            ria.Finding(
+                "RIA-CONTRACT", "schemaVersion", "contract does not match closed schema"
+            ),
+        )
+        with (
+            mock.patch.object(ria, "schema_errors") as validate,
+            self.assertRaises(ContractError) as raised,
+        ):
+            ria._validate_schema_document(
+                dict(contract, **{"$schema": "not-canonical"}), schema
+            )
+        validate.assert_not_called()
+        self.assertEqual(raised.exception.finding.path, "$schema")
+
+    def test_schema_document_rejects_external_missing_and_invalid_schemas_offline(
+        self,
+    ) -> None:
+        sentinel = "private-schema-resource-sentinel"
+        transports = (
+            "requests.get",
+            "urllib.request.urlopen",
+            "jsonschema.validators.urlopen",
+            "urllib.request.OpenerDirector.open",
+            "socket.socket",
+            "socket.getaddrinfo",
+        )
+        for schema in (
+            {"$ref": "https://schema.invalid/" + sentinel},
+            {"$ref": "file:///" + sentinel},
+            {"$ref": "#/$defs/" + sentinel},
+            {"type": sentinel},
+        ):
+            with self.subTest(schema=schema), ExitStack() as stack:
+                blockers = [
+                    stack.enter_context(
+                        mock.patch(
+                            name, side_effect=AssertionError("resource fetch blocked")
+                        )
+                    )
+                    for name in transports
+                ]
+                with self.assertRaises(ContractError) as raised:
+                    ria._validate_schema_document(self._minimal_contract(), schema)
+                self.assertEqual(
+                    raised.exception.finding,
+                    ria.Finding("RIA-CONTRACT", "$schema", "schema is invalid"),
+                )
+                self.assertNotIn(sentinel, str(raised.exception))
+                self.assertNotIn(sentinel, repr(raised.exception.__cause__))
+                for blocker in blockers:
+                    blocker.assert_not_called()
 
     def test_duplicate_json_key_is_a_contract_error(self) -> None:
         self.contract_path.write_text(
@@ -843,6 +948,90 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                 ):
                     self.assertEqual(cli.main(["--root", str(self.root), *mode]), 2)
                 production_loader.assert_called_once()
+
+    def test_retired_protected_boundary_preserves_existing_fsm_selections(self) -> None:
+        record = {"sourceCommit": "git-sha1:" + "a" * 40}
+        for state, settlements, expected in (
+            ("audit-settled", [{"toCommit": "git-sha1:" + "b" * 40}], "b" * 40),
+            (
+                "audit-settled",
+                [],
+                ria.MERGE_RETIRED_AUDIT_COMMIT.removeprefix("git-sha1:"),
+            ),
+            ("baseline", [], "a" * 40),
+        ):
+            with (
+                self.subTest(state=state, settlements=settlements),
+                mock.patch.object(ria, "_fsm_state", return_value=(state, None)),
+            ):
+                self.assertEqual(
+                    ria.retired_baseline_protected_commit(
+                        {"baselineSettlements": settlements}, record
+                    ),
+                    expected,
+                )
+        with mock.patch.object(
+            ria, "_fsm_state", return_value=("audit-settled", object())
+        ):
+            self.assertEqual(
+                ria.retired_baseline_protected_commit({}, record), "a" * 40
+            )
+
+    def test_held_contract_schema_bytes_never_reopen_and_keep_index_parity(
+        self,
+    ) -> None:
+        self._git_in(self.root, "init", "--quiet")
+        self._git_in(self.root, "add", "--", ria.CANONICAL_SCHEMA_PATH.as_posix())
+        contract_bytes = self.contract_path.read_bytes()
+        schema_bytes = (self.root / ria.CANONICAL_SCHEMA_PATH).read_bytes()
+        with mock.patch.object(
+            ria, "_read_regular_file", side_effect=AssertionError("held input reopened")
+        ):
+            self.assertEqual(
+                ria.load_contract(
+                    self.root,
+                    self.contract_path,
+                    contract_bytes=contract_bytes,
+                    schema_bytes=schema_bytes,
+                ),
+                self._minimal_contract(),
+            )
+            with self.assertRaisesRegex(ContractError, "RIA-CONTRACT"):
+                ria.load_contract(
+                    self.root,
+                    self.contract_path,
+                    contract_bytes=contract_bytes,
+                    schema_bytes=schema_bytes + b"\n",
+                )
+
+    def test_held_contract_inputs_reject_partial_invalid_and_oversized_bytes(
+        self,
+    ) -> None:
+        schema_bytes = (self.root / ria.CANONICAL_SCHEMA_PATH).read_bytes()
+        contract_bytes = self.contract_path.read_bytes()
+        cases = (
+            {"contract_bytes": contract_bytes},
+            {"schema_bytes": schema_bytes},
+            {"contract_bytes": None, "schema_bytes": schema_bytes},
+            {"contract_bytes": contract_bytes, "schema_bytes": None},
+            {"contract_bytes": b'{"a": 1, "a": 2}', "schema_bytes": schema_bytes},
+            {"contract_bytes": b"\xff", "schema_bytes": schema_bytes},
+            {"contract_bytes": b"[]", "schema_bytes": schema_bytes},
+            {
+                "contract_bytes": b" " * (ria.MAX_BLOB_BYTES + 1),
+                "schema_bytes": schema_bytes,
+            },
+            {
+                "contract_bytes": contract_bytes,
+                "schema_bytes": b" " * (ria.MAX_BLOB_BYTES + 1),
+            },
+        )
+        with mock.patch.object(
+            ria, "_read_regular_file", side_effect=AssertionError("held input reopened")
+        ):
+            for inputs in cases:
+                with self.subTest(keys=tuple(inputs)), self.assertRaises(ContractError):
+                    ria.load_contract(self.root, self.contract_path, **inputs)
 
     def test_duplicate_pack_ids_output_paths_and_mutable_paths_fail_closed(
         self,
@@ -1451,6 +1640,119 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
         self._assert_generator_failure(
             ria.validate_generated_assets(root, self._generator_contract([stale_owner]))
         )
+
+    def test_generator_uses_current_canonical_inputs_without_overlay(self) -> None:
+        expected_inputs = [
+            "docs/90.references/llm-wiki/README.md",
+            "docs/00.agent-governance/README.md",
+            "docs/00.agent-governance/roles/README.md",
+            "docs/00.agent-governance/policies/document-authoring.md",
+            "docs/README.md",
+            "scripts/README.md",
+        ]
+        contract = json.loads(
+            (REPOSITORY_ROOT / ria.DEFAULT_CONTRACT_PATH).read_text(encoding="utf-8")
+        )
+        self.assertEqual(contract["generatedAssets"][0]["inputRoots"], expected_inputs)
+        self.assertEqual(
+            [path.as_posix() for path in ria.GENERATOR_INPUT_ROOTS], expected_inputs
+        )
+        self.assertEqual(
+            self._generator_fixture()["validRelation"]["inputRoots"], expected_inputs
+        )
+        root = self._generator_repository()
+        with mock.patch.object(ria, "_generator_transition_overlay_matches") as overlay:
+            self.assertEqual(ria.validate_generated_assets(root, contract), [])
+        overlay.assert_not_called()
+        output = (root / ria.GENERATOR_OUTPUT_PATH).read_text(encoding="utf-8")
+        for target in (
+            "../../../.agents/registry.json",
+            "../../00.agent-governance/roles/README.md",
+            "../../00.agent-governance/policies/document-authoring.md",
+            "../../00.agent-governance/policies/agent-execution.md",
+        ):
+            self.assertIn(f"]({target})", output)
+        for retired in (
+            "harness-catalog.md",
+            "rules/agentic.md",
+            "rules/document-authoring.md",
+        ):
+            self.assertNotIn(retired, output)
+
+    def test_generator_current_inputs_reject_retired_and_unsafe_paths(self) -> None:
+        relation = self._generator_fixture()["validRelation"]
+        for slot, retired in (
+            (2, "docs/00.agent-governance/harness-catalog.md"),
+            (3, "docs/00.agent-governance/rules/document-stage-routing.md"),
+            (3, "docs/00.agent-governance/rules/document-authoring.md"),
+        ):
+            with self.subTest(retired=retired):
+                candidate = dict(relation)
+                candidate["inputRoots"] = list(relation["inputRoots"])
+                candidate["inputRoots"][slot] = retired
+                self._assert_generator_failure(
+                    ria.validate_generated_assets(
+                        self._generator_repository(),
+                        self._generator_contract([candidate]),
+                    )
+                )
+        for path in relation["inputRoots"][2:4]:
+            for mutation in ("untracked", "drift", "symlink"):
+                with self.subTest(path=path, mutation=mutation):
+                    root = self._generator_repository()
+                    target = root / path
+                    if mutation == "untracked":
+                        self._git_in(root, "rm", "--cached", "--quiet", "--", path)
+                    elif mutation == "drift":
+                        target.write_bytes(target.read_bytes() + b"\nChanged input\n")
+                    else:
+                        target.unlink()
+                        target.symlink_to("../README.md")
+                    self._assert_generator_failure(
+                        ria.validate_generated_assets(
+                            root, self._generator_contract([relation])
+                        )
+                    )
+
+    def test_generator_historical_inputs_require_named_source_authority(self) -> None:
+        historical = ria.load_contract_at_commit(REPOSITORY_ROOT, HISTORICAL_E09_COMMIT)
+        with mock.patch.object(ria, "_run_generator_check") as check:
+            self.assertEqual(
+                ria.validate_generated_assets(
+                    REPOSITORY_ROOT, historical, proposed_commit=HISTORICAL_E09_COMMIT
+                ),
+                [],
+            )
+        check.assert_not_called()
+        self._assert_generator_failure(
+            ria.validate_generated_assets(REPOSITORY_ROOT, historical)
+        )
+        for mutation in (
+            "changed-input",
+            "current-inputs",
+            "wrong-source",
+            "malformed-commit",
+        ):
+            with self.subTest(mutation=mutation):
+                candidate = json.loads(json.dumps(historical))
+                keywords = {"proposed_commit": HISTORICAL_E09_COMMIT}
+                if mutation == "changed-input":
+                    candidate["generatedAssets"][0]["inputRoots"][2] = "docs/README.md"
+                elif mutation == "current-inputs":
+                    candidate["generatedAssets"][0]["inputRoots"] = [
+                        path.as_posix() for path in ria.GENERATOR_INPUT_ROOTS
+                    ]
+                elif mutation == "wrong-source":
+                    keywords["contract_path"] = Path(
+                        "docs/alternate/reference-information-architecture.json"
+                    )
+                else:
+                    keywords["proposed_commit"] = "HEAD"
+                self._assert_generator_failure(
+                    ria.validate_generated_assets(
+                        REPOSITORY_ROOT, candidate, **keywords
+                    )
+                )
 
     def test_generator_transition_overlay_is_exact_and_fail_closed(self) -> None:
         rule = ria.GENERATOR_TRANSITION_RULE
@@ -4007,38 +4309,12 @@ class ReferenceInformationArchitectureTests(unittest.TestCase):
                         state=state,
                     )
 
-    def test_agent_cutover_projection_authority_is_fully_pinned(self) -> None:
-        self.assertEqual(
-            ria.AGENT_LEGACY_CUTOVER_SHA256,
-            "5d78bc4bde363769cd949824b5c39b044044ecb333e0dd6a82bc9cf28da53aa7",  # pragma: allowlist secret
-        )
-        self.assertEqual(
-            ria.AGENT_LEGACY_CUTOVER_SCHEMA_SHA256,
-            "a317502d95cf55642863bd8750f12ae88f88c14ce262c82baf509204b16f203b",  # pragma: allowlist secret
-        )
-        projections = ria.load_agent_cutover_projections(
-            REPOSITORY_ROOT,
-            None,
-        )
-        self.assertEqual(
-            tuple(path.as_posix() for path in projections),
-            tuple(path for path, _count in ria.AGENT_CUTOVER_CURRENT_PATH_COUNTS),
-        )
-        for digest_name in (
-            "AGENT_LEGACY_CUTOVER_SHA256",
-            "AGENT_LEGACY_CUTOVER_SCHEMA_SHA256",
-        ):
-            with self.subTest(digest_name=digest_name):
-                with mock.patch.object(
-                    ria,
-                    digest_name,
-                    "0" * 64,
-                ):
-                    with self.assertRaises(ria._GitError):  # noqa: SLF001
-                        ria.load_agent_cutover_projections(
-                            REPOSITORY_ROOT,
-                            None,
-                        )
+    def test_agent_cutover_projection_requires_real_source_proof(self) -> None:
+        self.cutover_projection_patch.stop()
+        # No migration evidence exists in this RIA-only fixture. Real-Git source
+        # proof and historical interpretation live in test_archive_historical_proof.
+        with self.assertRaises(ria._GitError):
+            ria.load_agent_cutover_projections(self.root, None)
 
     def test_generator_route_projection_is_exactly_pinned_to_mig0002(self) -> None:
         expected = {

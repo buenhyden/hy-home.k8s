@@ -977,6 +977,21 @@ def _validate_archive_inventory(
         archive_validation_module.WORK107_MIGRATION_PATH,
         WORK109_MIGRATION_PATH,
     }
+    # Migrations numbered five and later carry no pinned digest; the archive
+    # owner parses them generically, so they are controls rather than records.
+    for path in paths:
+        if archive_validation_module.generic_migration_id(path) is None:
+            continue
+        try:
+            content = read_staged_blob_bounded(
+                root,
+                path,
+                max_bytes=MIGRATION_DOCUMENT_MAX_BYTES,
+            )
+            archive_validation_module.parse_migration_control(path, content)
+        except (ArchiveContractError, OSError, ValueError):
+            _fail("MIGRATION-ROGUE-ARCHIVE", path)
+        migration_controls.add(path)
     finite_controls = {
         WORK054_WP003_MIGRATION_PATH: (
             WORK054_WP003_MIGRATION_DOCUMENT_SHA256,
@@ -1123,7 +1138,84 @@ def _work054_wp004b_current_replacements(
         replacements[legacy] = target
     if len(replacements) != projected_rows:
         _fail("MIGRATION-CONSUMERS")
+    replacements.update(_generic_migration_replacements(root, current_paths))
     return replacements
+
+
+def _generic_migration_replacements(
+    root: Path,
+    current_paths: set[str],
+) -> dict[str, str]:
+    """Project retired Stage documents declared by MIG-0005 and later.
+
+    Later migrations retire owners that earlier ledgers still name, so their
+    replacements compose onto the WP-004B aliases before MIG-0002 rows are
+    checked against the current tree. Only ``docs/`` rows are projected,
+    because that is the corpus the current inventory enumerates.
+    """
+
+    replacements: dict[str, str] = {}
+    for path in sorted(_git_paths(root)) + sorted(_generic_migration_paths(root)):
+        if archive_validation_module.generic_migration_id(path) is None:
+            continue
+        try:
+            content = read_staged_blob_bounded(
+                root,
+                path,
+                max_bytes=MIGRATION_DOCUMENT_MAX_BYTES,
+            )
+            parsed = archive_validation_module.parse_migration_control(path, content)
+        except (ArchiveContractError, OSError, ValueError):
+            _fail("MIGRATION-CONSUMERS")
+        # The generic parser returns the ledger rows beside a partial-content
+        # disposition block; only the rows carry replacement targets.
+        rows = parsed[0] if isinstance(parsed, tuple) and parsed else ()
+        for row in rows:
+            if not isinstance(row, Mapping):
+                _fail("MIGRATION-CONSUMERS")
+            action = row.get("action")
+            legacy_value = row.get("legacy_path")
+            target_value = (
+                row.get("stable_path") if action == "moved" else row.get("replacement")
+            )
+            if not isinstance(legacy_value, str) or not isinstance(target_value, str):
+                continue
+            if not legacy_value.startswith("docs/") or not target_value.startswith(
+                "docs/"
+            ):
+                continue
+            legacy = validate_path(legacy_value)
+            target = validate_path(target_value)
+            if legacy == target or target not in current_paths:
+                continue
+            if legacy in current_paths or replacements.get(legacy, target) != target:
+                _fail("MIGRATION-CONSUMERS")
+            replacements[legacy] = target
+    return replacements
+
+
+def _generic_migration_paths(root: Path) -> tuple[str, ...]:
+    """List the tracked migration documents the generic archive owner parses."""
+
+    completed = _git(
+        root,
+        "ls-files",
+        "-z",
+        "--cached",
+        "--others",
+        "--exclude-standard",
+        "--",
+        "docs/98.archive/migrations",
+    )
+    if completed.returncode != 0 or not completed.stdout.endswith(b"\0"):
+        _fail("MIGRATION-GIT-INVENTORY", "docs/98.archive/migrations")
+    return tuple(
+        sorted(
+            item.decode("utf-8")
+            for item in completed.stdout.split(b"\0")[:-1]
+            if item
+        )
+    )
 
 
 def _work109_current_replacements(
@@ -1276,11 +1368,13 @@ def _current_documents(
                 profile=(
                     "content/archive-migration"
                     if path in archive_validation_module._ARCHIVE_MIGRATION_CONTROLS
+                    or archive_validation_module.generic_migration_id(path) is not None
                     else "content/reference"
                 ),
                 status=(
                     "sealed"
                     if path == WORK054_WP004B_MIGRATION_PATH
+                    or archive_validation_module.generic_migration_id(path) is not None
                     else "accepted"
                     if path in archive_validation_module._ARCHIVE_MIGRATION_CONTROLS
                     else "active"

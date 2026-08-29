@@ -73,11 +73,11 @@ class ProviderCanaryContractTests(unittest.TestCase):
 
     def test_production_canaries_cover_every_provider_and_lane(self) -> None:
         counts = self.validator.validate_canaries(REPOSITORY_ROOT)
-        self.assertEqual(counts["records"], 12)
-        self.assertEqual(counts["providers"], 4)
+        self.assertEqual(counts["records"], 6)
+        self.assertEqual(counts["providers"], 2)
         expected = {
             (provider, lane)
-            for provider in ("local", "claude", "codex", "gemini")
+            for provider in ("claude", "codex")
             for lane in (
                 "repo-static",
                 "native-discovery",

@@ -84,4 +84,4 @@ Template은 frontmatter의 `type` 값으로 registry profile ID를 소비하며 
 
 - [Docs README](../README.md)
 - [Agent Governance Hub](../00.agent-governance/README.md)
-- [Document Authoring Policy](../00.agent-governance/rules/document-authoring.md)
+- [Document Authoring Policy](../00.agent-governance/policies/document-authoring.md)

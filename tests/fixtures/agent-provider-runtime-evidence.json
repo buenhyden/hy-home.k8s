@@ -29,11 +29,11 @@
       "expectedRule": "PNME-SOURCE-CUTOFF"
     },
     {
-      "name": "gemini-current-while-absent",
-      "expectedRule": "PNME-SURFACE-PARITY"
+      "name": "third-provider-added",
+      "expectedRule": "PNME-SCHEMA"
     },
     {
-      "name": "agents-relabeled-as-gemini",
+      "name": "provider-relabeled-as-neutral",
       "expectedRule": "PNME-SURFACE-PARITY"
     },
     {
@@ -45,24 +45,12 @@
       "expectedRule": "PNME-SCHEMA"
     },
     {
-      "name": "mcp-role-outside-harness",
+      "name": "mcp-role-outside-registry",
       "expectedRule": "PNME-MCP-BOUNDARY"
     },
     {
       "name": "secret-like-contract-value",
       "expectedRule": "PNME-SENSITIVE-CONTENT"
-    },
-    {
-      "name": "hook-graph-unclassified",
-      "expectedRule": "PNME-SCHEMA"
-    },
-    {
-      "name": "hook-graph-runtime-pass",
-      "expectedRule": "PNME-HOOK-BOUNDARY"
-    },
-    {
-      "name": "hook-graph-digest-drift",
-      "expectedRule": "PNME-HOOK-BOUNDARY"
     },
     {
       "name": "absent-runtime-native-pass",

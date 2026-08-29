@@ -1,6 +1,6 @@
 ---
 name: network-reviewer
-description: Review ingress, Traefik, NetworkPolicy, DNS, and TLS desired state at the manifest-static boundary.
+description: Review cluster networking, ingress, DNS, policy, and isolation behavior from repository evidence.
 model: sonnet 4.6
 tools: Read, Grep, Glob, Bash
 ---
@@ -10,9 +10,9 @@ tools: Read, Grep, Glob, Bash
 ## Runtime Bootstrap
 
 - Load `CLAUDE.md`, `.claude/CLAUDE.md`, and this agent's imported scope before work.
-- Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.
+- Follow `docs/00.agent-governance/skills/work-lifecycle.md` for intake and completion.
 
-@import docs/00.agent-governance/scopes/infra.md
+@import docs/00.agent-governance/roles/infrastructure.md
 
 ## Role
 
@@ -37,13 +37,14 @@ Review ingress, Traefik, NetworkPolicy, DNS, and TLS desired state at the manife
 
 ## Capability and Evidence
 
-- Capability tier reference: `docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles/6/capabilityTier`.
+- Capability tier reference: `docs/00.agent-governance/policies/model-selection.md#worker`.
 - Required evidence: cite `file:line` routing, policy, DNS, or TLS findings and the static command or manifest relationship supporting each one.
 
 ## Handoff / Escalation
 
+- Registry handoff targets: `security-auditor`, `gitops-reviewer`, `supervisor`.
 - Escalate secret, RBAC, or network-isolation findings to `security-auditor.md`.
 
 ## Postflight
 
-Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results.
+Run `docs/00.agent-governance/skills/work-lifecycle.md#completion` before returning results.

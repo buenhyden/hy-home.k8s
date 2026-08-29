@@ -3,7 +3,7 @@ title: 'SDLC Document and AI Agent Governance Consolidation Technical Specificat
 type: sdlc/spec
 status: active
 owner: platform
-updated: 2026-08-20
+updated: 2026-08-29
 artifact_id: "SPEC-0054"
 ---
 
@@ -410,6 +410,14 @@ use the profile's legal transitions and, where replacement is meaningful,
 reciprocal `supersedes` and `superseded_by` links. Stable IDs are never reused
 after deletion or retirement.
 
+For cumulative CI/ref comparisons, a newly introduced document's required
+initial state and subsequent legal transitions may be proved from bounded
+actual intermediate Git history within the supplied comparison range. This
+preserves draft-first creation; it does not waive initial-state requirements,
+alter the comparison base, or admit unproved transitions. Missing or ambiguous
+history fails closed. Do not add a fixed SHA list, path exception, or separate
+gate for this proof.
+
 The stable ID families are `REQ-####` and package-scoped requirement member
 IDs, `AD-####`, `ADR-####`, `SPEC-####`, `PLAN-####`,
 `TSK-<SPEC-NUMBER>-####`, `GDE-####`, `POL-####`, `RUN-####`,
@@ -517,6 +525,62 @@ and other restatable Git inventories are removed. WP-009 reviews the existing
 Archive corpus path by path and reduces it to minimal Migration or Tombstone
 evidence only when Git recovery and consumer-zero are proven; otherwise the
 record is retained with an explicit reason.
+
+The directly approved WP-003 recovery clarification separates historical
+identity from current authoring:
+
+- MIG-0005 may name a finite set of completed historical consumers and their
+  immutable source commit. Their bodies remain unchanged. Historical links
+  are interpreted only when the proposed consumer bytes match that recovered
+  source and the target follows a validated migration disposition. A terminal
+  status alone, a directory-wide exclusion, or an unverified old path never
+  grants an exception. Conflicts, cycles, missing targets, and source drift
+  fail closed.
+- The 2026-08-29 approval additionally admits explicitly declared historical
+  fenced-command path literals when the complete consumer bytes match their
+  Git source and each declared literal follows an existing proved migration
+  disposition. An unrelated token, an unregistered consumer, or membership
+  alone is insufficient. Ordinary rendered-link admission remains unchanged.
+- The subsequent 2026-08-29 approval includes a closed quoted inline path
+  followed by a comma and whitespace or end-of-input. Exact consumer bytes
+  and the existing proved disposition remain mandatory. A comma inside the
+  quote, comma-attached suffix, prefix, other punctuation, or unregistered
+  occurrence is not admitted by this extension.
+- Removed provider symlink views may have separate typed historical-reference
+  evidence: the Git source mode, blob and link-target text, exact historical
+  consumer bytes, current absence, and explicit Archive README lookup owner
+  must all validate. This evidence interprets old references only; it does not
+  make symlinks regular recovery payloads, restore a view, or choose an
+  arbitrary successor from a retired directory. Unsafe, drifting, conflicting
+  or cyclic evidence fails closed, including in supplied-input validation.
+- MIG-0004's sealed original record, source objects, and reviewed target
+  objects remain recovery evidence. Subsequent current template content is
+  validated by the Stage 99 document contract, not pinned indefinitely to the
+  earlier template bytes. Historical move parity is checked against the sealed
+  historical target, never inferred from a mutable working-tree copy.
+
+These boundaries do not authorize terminal body rewrites, a current-path alias
+allowlist, new gates, current-state SHA or line-number ledgers, or weakened
+regular source/target recovery verification.
+
+The same approval brings two bounded cleanup operations into WP-003 without
+renumbering WPs or activating the remainder of WP-008 or WP-012:
+
+- Remove only the duplicated first 14-column historical inventory table in
+  the WER source-coverage-and-migration ledger, preserving the latest complete
+  file in verified Git recovery and recording the partial-content disposition
+  in Stage 98. Remove the obsolete terminal table-shape obligation together
+  with the table. Keep the ledger file, other evidence tables, missing-ledger
+  checks, settlement protection and predecessor-disposition validation. The
+  older stated source does not contain all later evidence and is insufficient
+  for this recovery. Do not freeze the current ledger or add a table exemption.
+- Remove `graphify-out/graph.json`, `graphify-out/graph.html`,
+  `graphify-out/GRAPH_TREE.html` and `graphify-out/GRAPH_REPORT.md` after their
+  current consumers are removed and Git recovery is verified with atomic
+  Stage 98 evidence. No repository-owned reproduction procedure exists for
+  these four outputs: this explicit retirement uses recovery and consumer-zero
+  instead, without claiming regeneration or weakening requirements for other
+  generated artifacts. Historical progress remains WP-012 work.
 
 ### C-SDLC-010 — scripts ownership and module boundaries
 

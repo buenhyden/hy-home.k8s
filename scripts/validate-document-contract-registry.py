@@ -10,7 +10,7 @@ from dataclasses import replace
 from pathlib import Path, PurePosixPath
 from typing import Any
 
-from document_authority import AuthorityError, load_bounded_json, run_bounded_process
+from document_authority import AuthorityError, run_bounded_process
 from document_contracts import (
     DocumentContractError,
     FrontmatterContract,
@@ -19,22 +19,12 @@ from document_contracts import (
     classify_path,
     classify_paths,
     enumerate_target_markdown,
-    load_json_file,
     load_registry,
 )
 
 
-GEMINI_NATIVE_CURRENT_SURFACE_RULE = "REGISTRY_GEMINI_NATIVE_CURRENT_SURFACE"
-GEMINI_NATIVE_CURRENT_SURFACE_ERROR = (
-    f"{GEMINI_NATIVE_CURRENT_SURFACE_RULE}: Gemini CLI native surface must be "
-    "a closed repository-static current projection"
-)
 DOCUMENT_REGISTRY_ROOT_ERROR = (
     "REGISTRY_ROOT_BOUNDARY: repository root must be an existing non-symlink directory"
-)
-GEMINI_SETTINGS_SCHEMA_URL = (
-    "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/"
-    "schemas/settings.schema.json"
 )
 RETIRED_CLOUD_SDLC_SURFACE_RULE = "REGISTRY_RETIRED_CLOUD_SDLC_SURFACE"
 RETIRED_CLOUD_SDLC_SURFACE_ERROR = (
@@ -53,7 +43,6 @@ TERMINAL_TEMPLATE_GROUPS = frozenset(
         "specs",
     }
 )
-GEMINI_SETTINGS_MAX_BYTES = 16 * 1024
 GIT_TIMEOUT_SECONDS = 10
 GIT_INVENTORY_MAX_BYTES = 16 * 1024
 
@@ -110,117 +99,6 @@ def _assert_repository_root_directory(
         return absolute_root.resolve(strict=True)
     except OSError as exc:
         raise AssertionError(error) from exc
-
-
-def _repo_path_without_symlinks(
-    root: Path,
-    relative: PurePosixPath,
-    *,
-    final_kind: str,
-) -> Path:
-    if relative.is_absolute() or any(
-        part in {"", ".", ".."} for part in relative.parts
-    ):
-        raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR)
-    strict_root = _assert_repository_root_directory(
-        root,
-        error=GEMINI_NATIVE_CURRENT_SURFACE_ERROR,
-    )
-    candidate = strict_root
-    for index, part in enumerate(relative.parts):
-        candidate = candidate / part
-        try:
-            mode = candidate.lstat().st_mode
-        except OSError as exc:
-            raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR) from exc
-        if stat.S_ISLNK(mode):
-            raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR)
-        final = index == len(relative.parts) - 1
-        if not final and not stat.S_ISDIR(mode):
-            raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR)
-        if final and final_kind == "directory" and not stat.S_ISDIR(mode):
-            raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR)
-        if final and final_kind == "file" and not stat.S_ISREG(mode):
-            raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR)
-    try:
-        candidate.resolve(strict=True).relative_to(strict_root)
-    except (OSError, ValueError) as exc:
-        raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR) from exc
-    return candidate
-
-
-def _load_gemini_settings_json(path: Path) -> dict[str, Any]:
-    try:
-        payload = load_bounded_json(path, max_bytes=GEMINI_SETTINGS_MAX_BYTES)
-    except AuthorityError as exc:
-        raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR) from exc
-    if not isinstance(payload, dict):
-        raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR)
-    return payload
-
-
-def _expected_gemini_settings_json() -> dict[str, Any]:
-    return {"$schema": GEMINI_SETTINGS_SCHEMA_URL, "agents": {"overrides": {}}}
-
-
-def _harness_current_role_ids(root: Path) -> tuple[str, ...]:
-    harness = load_json_file(
-        root / "docs/00.agent-governance/contracts/harness-contract.json"
-    )
-    try:
-        inventory = harness["currentInventory"]
-        role_ids = tuple(inventory["roleIds"])
-    except (KeyError, TypeError) as exc:
-        raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR) from exc
-    if (
-        inventory.get("state") != "current"
-        or inventory.get("expectedRoleCount") != 12
-        or inventory.get("expectedSurfaceCount") != 4
-        or inventory.get("expectedProjectionCount") != 48
-        or len(role_ids) != 12
-        or len(role_ids) != len(set(role_ids))
-        or any(not isinstance(role_id, str) or not role_id for role_id in role_ids)
-    ):
-        raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR)
-    return role_ids
-
-
-def _assert_gemini_native_current_surface(root: Path) -> None:
-    """Preserve the provider surface until its owning WP-003 cutover."""
-
-    strict_root = _assert_repository_root_directory(
-        root,
-        error=GEMINI_NATIVE_CURRENT_SURFACE_ERROR,
-    )
-    role_ids = _harness_current_role_ids(strict_root)
-    agents_dir = _repo_path_without_symlinks(
-        strict_root,
-        PurePosixPath(".gemini/agents"),
-        final_kind="directory",
-    )
-    settings_path = _repo_path_without_symlinks(
-        strict_root,
-        PurePosixPath(".gemini/settings.json"),
-        final_kind="file",
-    )
-    expected_names = {f"{role_id}.md" for role_id in role_ids}
-    try:
-        entries = tuple(agents_dir.iterdir())
-    except OSError as exc:
-        raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR) from exc
-    actual_names: set[str] = set()
-    for entry in entries:
-        try:
-            mode = entry.lstat().st_mode
-        except OSError as exc:
-            raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR) from exc
-        if stat.S_ISLNK(mode) or not stat.S_ISREG(mode) or entry.suffix != ".md":
-            raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR)
-        actual_names.add(entry.name)
-    if actual_names != expected_names:
-        raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR)
-    if _load_gemini_settings_json(settings_path) != _expected_gemini_settings_json():
-        raise AssertionError(GEMINI_NATIVE_CURRENT_SURFACE_ERROR)
 
 
 def _assert_retired_cloud_sdlc_surfaces_absent(root: Path) -> None:
@@ -372,7 +250,6 @@ def main() -> int:
         root = _assert_repository_root_directory(args.root)
         registry = load_registry(root)
         _assert_template_source_parity(registry)
-        _assert_gemini_native_current_surface(root)
         _assert_retired_cloud_sdlc_surfaces_absent(root)
         profile_ids = {profile.profile_id for profile in registry.profiles}
         readme_family = args.profile == "readme"

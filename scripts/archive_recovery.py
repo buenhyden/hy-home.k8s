@@ -81,15 +81,9 @@ WORK107_MIGRATION_PATH = (
 WP004B_PINNED_MIGRATION_PATH = (
     "docs/98.archive/migrations/0004-document-authority-convergence.md"
 )
-WP004B_PINNED_MIGRATION_DOCUMENT_SHA256 = (
-    "503a65a5897301be651217fcc48def5351809f272d9af510f10621f2ec2d1fe6"  # pragma: allowlist secret -- sealed recovery contract
-)
-WP004C_SEALED_TARGET_COMMIT = (
-    "4aabcc1b371dd2f519f605d3fa669a7cf334c443"  # pragma: allowlist secret -- sealed MIG-0004 recovery identity, not a credential
-)
-WORK107_MIGRATION_DOCUMENT_SHA256 = (
-    "4e62cb6ba2a394cd9ae546543c85a58c8f105cb5d1ff48cfd8dab8b8b1082206"  # pragma: allowlist secret
-)
+WP004B_PINNED_MIGRATION_DOCUMENT_SHA256 = "503a65a5897301be651217fcc48def5351809f272d9af510f10621f2ec2d1fe6"  # pragma: allowlist secret -- sealed recovery contract
+WP004C_SEALED_TARGET_COMMIT = "4aabcc1b371dd2f519f605d3fa669a7cf334c443"  # pragma: allowlist secret -- sealed MIG-0004 recovery identity, not a credential
+WORK107_MIGRATION_DOCUMENT_SHA256 = "4e62cb6ba2a394cd9ae546543c85a58c8f105cb5d1ff48cfd8dab8b8b1082206"  # pragma: allowlist secret
 WORK107_LEGACY_INDEX_OVERVIEW = (
     "`98.archive/`는 원래 경로를 mirror한 43개의 immutable `content/archive` "
     "record를 보관한다. ARWB-003의 유한 base proof는 정확히 31 record와 202 "
@@ -470,18 +464,24 @@ def _read_git_blob_batch_protocol(
             kind = header[1].decode("ascii", errors="strict")
             size = int(header[2])
         except (UnicodeDecodeError, ValueError) as exc:
-            raise _error("RECOVERY-OBJECT-MISSING", "Git batch header is malformed") from exc
+            raise _error(
+                "RECOVERY-OBJECT-MISSING", "Git batch header is malformed"
+            ) from exc
         if returned != expected or kind != "blob" or size < 0:
             raise _error("RECOVERY-OBJECT-MISSING", "Git batch identity differs")
         if size > per_blob_limit or aggregate + size > aggregate_limit:
-            raise _error("RECOVERY-RESOURCE-LIMIT", "Git blob bytes exceed their budget")
+            raise _error(
+                "RECOVERY-RESOURCE-LIMIT", "Git blob bytes exceed their budget"
+            )
         payload = _read_exact(stream, size)
         if stream.read(1) != b"\n":
             raise _error("RECOVERY-OBJECT-MISSING", "Git batch separator is malformed")
         try:
             payload.decode("utf-8", errors="strict")
         except UnicodeDecodeError as exc:
-            raise _error("RECOVERY-NON-UTF8", "source blob is not UTF-8 Markdown") from exc
+            raise _error(
+                "RECOVERY-NON-UTF8", "source blob is not UTF-8 Markdown"
+            ) from exc
         blobs[expected] = payload
         aggregate += size
     if stream.read(1) != b"":
@@ -571,9 +571,7 @@ def _require_repository(root: Path) -> tuple[Path, int]:
     )
 
 
-_DURABLE_REF = re.compile(
-    r"refs/(?:heads|remotes)/[A-Za-z0-9][A-Za-z0-9._/-]*\Z"
-)
+_DURABLE_REF = re.compile(r"refs/(?:heads|remotes)/[A-Za-z0-9][A-Za-z0-9._/-]*\Z")
 
 
 def current_named_durable_ref(repository_root: str | Path) -> str:
@@ -1120,7 +1118,9 @@ def _work107_commit_path_blobs(
         or len(paths) > MAX_GIT_BATCH_OBJECTS
     ):
         raise _error("ARCHIVE-MIGRATION-PROVENANCE", "reviewed commit input differs")
-    canonical = tuple(_require_git_tree_path(path, field="legacy_path") for path in paths)
+    canonical = tuple(
+        _require_git_tree_path(path, field="legacy_path") for path in paths
+    )
     if len(set(canonical)) != len(canonical):
         raise _error("ARCHIVE-MIGRATION-PROVENANCE", "legacy paths are not unique")
     tree = _git(
@@ -1153,9 +1153,7 @@ def _work107_commit_path_blobs(
             or len(object_id) != object_id_length
             or _FULL_OBJECT_ID.fullmatch(object_id) is None
         ):
-            raise _error(
-                "ARCHIVE-MIGRATION-PROVENANCE", "legacy tree member differs"
-            )
+            raise _error("ARCHIVE-MIGRATION-PROVENANCE", "legacy tree member differs")
         object_ids[path] = object_id
     if frozenset(object_ids) != frozenset(canonical):
         raise _error("ARCHIVE-MIGRATION-PROVENANCE", "legacy tree is incomplete")
@@ -1177,11 +1175,7 @@ def _work107_registry_archive_paths(root: Path) -> tuple[str, ...]:
     try:
         loaded = json.loads(registry.decode("utf-8"))
         namespaces = loaded["archiveNamespaces"]
-        paths = tuple(
-            path
-            for namespace in namespaces
-            for path in namespace["records"]
-        )
+        paths = tuple(path for namespace in namespaces for path in namespace["records"])
     except (KeyError, TypeError, UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise _error(
             "ARCHIVE-MIGRATION-PROVENANCE", "reviewed archive registry is malformed"
@@ -1196,9 +1190,7 @@ def _work107_registry_archive_paths(root: Path) -> tuple[str, ...]:
             for path in paths
         )
     ):
-        raise _error(
-            "ARCHIVE-MIGRATION-PROVENANCE", "reviewed archive census differs"
-        )
+        raise _error("ARCHIVE-MIGRATION-PROVENANCE", "reviewed archive census differs")
     return tuple(sorted(paths))
 
 
@@ -1275,9 +1267,7 @@ def build_work107_migration_rows(
         if legacy_path in execution:
             slug, leaf = execution[legacy_path]
             number = change_numbers[slug]
-            stable_path = (
-                f"docs/98.archive/changes/chg-{number:04d}-{slug}/{leaf}.md"
-            )
+            stable_path = f"docs/98.archive/changes/chg-{number:04d}-{slug}/{leaf}.md"
             prefix = "PLAN" if leaf == "plan" else "TASK"
             artifact_id = f"{prefix}-CHG-{number:04d}"
             record_kind = f"change-{leaf}"
@@ -1364,7 +1354,9 @@ def _work107_validate_closed_census(rows: tuple[Mapping[str, object], ...]) -> N
             tombstones[stage] = tombstones.get(stage, 0) + 1
         else:
             raise _error("ARCHIVE-MIGRATION-IDENTITY", "record kind differs")
-    if not all(len(values) == 93 for values in (legacy_paths, stable_paths, artifact_ids)):
+    if not all(
+        len(values) == 93 for values in (legacy_paths, stable_paths, artifact_ids)
+    ):
         raise _error("ARCHIVE-MIGRATION-BIJECTION", "ledger identity is not unique")
     shapes = tuple(frozenset(leaves) for leaves in change_leaves.values())
     if (
@@ -1395,7 +1387,9 @@ def validate_work107_migration_rows(
     _work107_validate_closed_census(materialized)
     expected = build_work107_migration_rows(repository_root)
     if materialized != expected:
-        raise _error("ARCHIVE-MIGRATION-REVIEWED", "ledger differs from reviewed mapping")
+        raise _error(
+            "ARCHIVE-MIGRATION-REVIEWED", "ledger differs from reviewed mapping"
+        )
     return materialized
 
 
@@ -1439,7 +1433,9 @@ def render_work107_migration_document(
 
 
 def parse_work107_migration_document(content: bytes) -> tuple[dict[str, object], ...]:
-    if not isinstance(content, bytes) or not content.startswith(_work107_migration_metadata_bytes()):
+    if not isinstance(content, bytes) or not content.startswith(
+        _work107_migration_metadata_bytes()
+    ):
         raise _error("ARCHIVE-MIGRATION-DOCUMENT", "migration frontmatter differs")
     marker = WORK107_LEDGER_MARKER.encode("ascii") + b"\n\n```json\n"
     if content.count(marker) != 1 or not content.endswith(
@@ -1450,7 +1446,9 @@ def parse_work107_migration_document(content: bytes) -> tuple[dict[str, object],
     try:
         loaded = json.loads(raw.decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
-        raise _error("ARCHIVE-MIGRATION-DOCUMENT", "migration ledger JSON differs") from exc
+        raise _error(
+            "ARCHIVE-MIGRATION-DOCUMENT", "migration ledger JSON differs"
+        ) from exc
     if not isinstance(loaded, list) or any(not isinstance(row, dict) for row in loaded):
         raise _error("ARCHIVE-MIGRATION-DOCUMENT", "migration ledger shape differs")
     rows = tuple(dict(row) for row in loaded)
@@ -1498,7 +1496,9 @@ def render_work107_stable_envelope(
         elif key in parsed.metadata:
             metadata[key] = parsed.metadata[key]
     validate_archive_metadata(metadata)
-    rendered = _metadata_bytes(metadata) + ARCHIVE_ENVELOPE_MARKER + b"\n" + parsed.payload
+    rendered = (
+        _metadata_bytes(metadata) + ARCHIVE_ENVELOPE_MARKER + b"\n" + parsed.payload
+    )
     reparsed = parse_archive_envelope(rendered)
     if reparsed.payload != parsed.payload:
         raise _error("ARCHIVE-MIGRATION-PAYLOAD", "stable payload differs")
@@ -1517,7 +1517,9 @@ def recover_work107_legacy_envelope(
     commit = str(materialized["legacy_archive_commit"])
     legacy_path = str(materialized["legacy_path"])
     root, _object_id_length = _require_repository(Path(repository_root))
-    blob_id, content = _work107_commit_path_blobs(root, commit, (legacy_path,))[legacy_path]
+    blob_id, content = _work107_commit_path_blobs(root, commit, (legacy_path,))[
+        legacy_path
+    ]
     if blob_id != materialized["legacy_envelope_blob"]:
         raise _error("ARCHIVE-MIGRATION-PROVENANCE", "legacy envelope object differs")
     parsed = parse_archive_envelope(content)
@@ -1577,7 +1579,7 @@ def _read_archive_record(root: Path, record: object) -> tuple[str, bytes]:
         parent_fd, name = _open_parent_at(root, pure, code="RECOVERY-RECORD-READ")
         descriptor = os.open(
             name,
-            os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC,
+            os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW | os.O_CLOEXEC,
             dir_fd=parent_fd,
         )
         metadata = os.fstat(descriptor)
@@ -1597,9 +1599,7 @@ def _read_archive_record(root: Path, record: object) -> tuple[str, bytes]:
             chunks.append(chunk)
             total += len(chunk)
             if total > MAX_ARCHIVE_RECORD_BYTES:
-                raise _error(
-                    "RECOVERY-RECORD-SIZE", "archive record exceeds the limit"
-                )
+                raise _error("RECOVERY-RECORD-SIZE", "archive record exceeds the limit")
         content = b"".join(chunks)
         after = os.fstat(descriptor)
         linked = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
@@ -1612,12 +1612,16 @@ def _read_archive_record(root: Path, record: object) -> tuple[str, bytes]:
             try:
                 os.close(descriptor)
             except OSError as exc:
-                raise _error("RECOVERY-RECORD-READ", "archive record close failed") from exc
+                raise _error(
+                    "RECOVERY-RECORD-READ", "archive record close failed"
+                ) from exc
         if parent_fd is not None:
             try:
                 os.close(parent_fd)
             except OSError as exc:
-                raise _error("RECOVERY-RECORD-READ", "archive parent close failed") from exc
+                raise _error(
+                    "RECOVERY-RECORD-READ", "archive parent close failed"
+                ) from exc
     if (
         metadata.st_dev != after.st_dev
         or metadata.st_ino != after.st_ino
@@ -1640,7 +1644,9 @@ def _confined_output(root: Path, output: object):
     try:
         temporary_root = Path(tempfile.gettempdir()).resolve(strict=True)
     except (OSError, RuntimeError) as exc:
-        raise _error("RECOVERY-OUTPUT-CONFINEMENT", "output parent is unavailable") from exc
+        raise _error(
+            "RECOVERY-OUTPUT-CONFINEMENT", "output parent is unavailable"
+        ) from exc
     if (
         any(part in {".", ".."} for part in candidate.parts)
         or not candidate.is_relative_to(temporary_root)
@@ -1760,28 +1766,36 @@ def verify_declared_migration_record(
     repository_root: str | Path,
     record: object,
 ) -> str | None:
-    """Verify only the sealed migration explicitly admitted at this CLI boundary."""
+    """Verify sealed historical or numbered generic migration evidence."""
 
     canonical = _require_repository_path(record, field="record")
-    if canonical != WP004B_PINNED_MIGRATION_PATH:
-        return None
-    root, _object_length = _require_repository(Path(repository_root))
-    _record_path, content = _read_archive_record(root, canonical)
     if __package__:
         from scripts.archive_validation import (  # noqa: PLC0415
             ArchiveContractError as MigrationContractError,
             validate_pinned_migration_recovery,
+            generic_migration_id,
+            repository_migration_proof,
         )
     else:
         from archive_validation import (  # type: ignore[no-redef]  # noqa: PLC0415
             ArchiveContractError as MigrationContractError,
             validate_pinned_migration_recovery,
+            generic_migration_id,
+            repository_migration_proof,
         )
+    identity = generic_migration_id(canonical)
+    if canonical != WP004B_PINNED_MIGRATION_PATH and identity is None:
+        return None
+    root, _object_length = _require_repository(Path(repository_root))
+    _record_path, content = _read_archive_record(root, canonical)
     try:
-        validate_pinned_migration_recovery(root, canonical, content)
+        if identity is None:
+            validate_pinned_migration_recovery(root, canonical, content)
+        else:
+            repository_migration_proof(root, requested_record=(canonical, content))
     except MigrationContractError as exc:
         raise _error(exc.code, "declared migration recovery differs") from exc
-    return "MIG-0004"
+    return identity or "MIG-0004"
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -1803,10 +1817,7 @@ def main(argv: list[str] | None = None) -> int:
             else None
         )
         if migration_id is not None:
-            print(
-                "PASS archive recovery "
-                f"operation=verify migration={migration_id}"
-            )
+            print(f"PASS archive recovery operation=verify migration={migration_id}")
             return 0
         recovered = recover_archive_record(
             args.root,

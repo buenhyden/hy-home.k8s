@@ -156,5 +156,5 @@ data/
 
 - [90.references README](../README.md)
 - [Agent Governance Hub](../../00.agent-governance/README.md)
-- [Harness Catalog](../../00.agent-governance/harness-catalog.md)
+- [Agent Registry](../../../.agents/registry.json)
 - [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

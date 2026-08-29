@@ -326,10 +326,10 @@
       "expectedRule": "AGQC-QA-EVIDENCE"
     },
     {
-      "name": "qa-inventory-stale",
+      "name": "qa-owner-link-broken",
       "target": "filesystem",
-      "mutation": {"kind": "stale-qa-inventory"},
-      "expectedRule": "AGQC-QA-INVENTORY"
+      "mutation": {"kind": "break-qa-owner-link"},
+      "expectedRule": "AGQC-QA-OWNER"
     },
     {
       "name": "cached-diff-evidence-missing",

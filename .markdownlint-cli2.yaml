@@ -50,9 +50,6 @@ ignores:
   - "docs/98.archive/05.operations/"
   - "docs/98.archive/changes/"
   - "docs/98.archive/tombstones/"
-  - "graphify-out/GRAPH_REPORT.md"
-  - "graphify-out/graph.html"
-  - "graphify-out/graph.json"
 
 
 # Safe auto-fixes such as whitespace cleanup are allowed during markdown linting.

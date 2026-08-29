@@ -20,7 +20,7 @@
       "expected": "reject"
     }
   ],
-  "localAgentFixtureSamplePath": ".agents/GEMINI.md",
+  "localAgentFixtureSamplePath": ".agents/agents/doc-writer.md",
   "productionProgramLineageProjection": {
     "prd": "0008",
     "ad": "0011",

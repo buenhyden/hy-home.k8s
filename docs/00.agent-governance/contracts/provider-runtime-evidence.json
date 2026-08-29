@@ -84,42 +84,6 @@
       "claim": "Current model and model_reasoning_effort syntax is observation-time evidence; exact configured IDs remain gated by local parse and runtime resolution."
     },
     {
-      "id": "gemini-cli-release-0-50-0",
-      "provider": "gemini",
-      "publisher": "Google",
-      "url": "https://github.com/google-gemini/gemini-cli/releases/tag/v0.50.0",
-      "sourceDate": "2026-07-08",
-      "publishedAtUtc": "2026-07-08T18:31:54Z",
-      "dateBasis": "release",
-      "cutoffApplicability": "cutoff-applicable",
-      "confidence": "dated-primary",
-      "claim": "Gemini CLI v0.50.0 was published before the cutoff; exact native project model fields still require tagged-schema or runtime evidence."
-    },
-    {
-      "id": "gemini-cli-release-0-51-preview-0",
-      "provider": "gemini",
-      "publisher": "Google",
-      "url": "https://github.com/google-gemini/gemini-cli/releases/tag/v0.51.0-preview.0",
-      "sourceDate": "2026-07-08",
-      "publishedAtUtc": "2026-07-08T17:45:50Z",
-      "dateBasis": "release",
-      "cutoffApplicability": "cutoff-applicable",
-      "confidence": "dated-primary",
-      "claim": "Gemini CLI v0.51.0-preview.0 was published before the cutoff; preview publication does not promote project-native readiness or model support."
-    },
-    {
-      "id": "gemini-cli-subagents-current",
-      "provider": "gemini",
-      "publisher": "Google",
-      "url": "https://geminicli.com/docs/core/subagents/",
-      "sourceDate": "2026-07-28",
-      "publishedAtUtc": null,
-      "dateBasis": "observed",
-      "cutoffApplicability": "current-only",
-      "confidence": "current-primary",
-      "claim": "Current .gemini/agents syntax is target design input only and does not relabel the repository's .agents tree as Gemini-native."
-    },
-    {
       "id": "agency-agents-pin-9f3e401c",
       "provider": "agency-agents",
       "publisher": "GitHub",
@@ -147,144 +111,12 @@
         "codex": {
           "installation": "present",
           "version": "codex-cli 0.145.0-alpha.27"
-        },
-        "gemini": {
-          "installation": "absent",
-          "version": null
         }
       },
       "claimBoundary": "Preserved prior user report only; it is not current local state, cutoff evidence, authentication evidence, or runtime readiness."
     }
   ],
   "providers": [
-    {
-      "id": "local",
-      "displayName": "Local / Antigravity",
-      "trackedSurface": {
-        "pathRoot": ".agents/agents",
-        "state": "current",
-        "presence": "present",
-        "evidenceClass": "repo-static",
-        "claimBoundary": "Tracked local Markdown projection only; .agents is not Gemini-native runtime evidence."
-      },
-      "projectPaths": [
-        {
-          "path": ".agents/agents",
-          "kind": "role-directory",
-          "state": "current"
-        },
-        {
-          "path": ".agents/GEMINI.md",
-          "kind": "provider-adapter",
-          "state": "current"
-        },
-        {
-          "path": ".agents/hooks.json",
-          "kind": "compatibility-hook-graph",
-          "state": "current"
-        },
-        {
-          "path": "GEMINI.md",
-          "kind": "provider-shim",
-          "state": "current"
-        }
-      ],
-      "localObservation": {
-        "installation": "not-applicable",
-        "version": null,
-        "verdict": "PASS",
-        "observedAt": "2026-07-28",
-        "observationClass": "repo-static-local",
-        "userReported": false,
-        "readinessClaim": false,
-        "evidence": "Local projection files are present; no provider-native or authenticated runtime is inferred."
-      },
-      "runtimeVerdicts": {
-        "repoStatic": "PASS",
-        "nativeDiscovery": "DEFER",
-        "authenticatedRun": "DEFER"
-      },
-      "evidenceLanes": [
-        {
-          "id": "repo-static",
-          "verdict": "PASS",
-          "owner": "platform",
-          "limitation": null,
-          "retryTrigger": null,
-          "crossLanePromotion": false
-        },
-        {
-          "id": "native-discovery",
-          "verdict": "DEFER",
-          "owner": "platform",
-          "limitation": "Local projection has no distinct provider-native discovery gate.",
-          "retryTrigger": "Define and approve a local native-discovery boundary.",
-          "crossLanePromotion": false
-        },
-        {
-          "id": "authenticated-run",
-          "verdict": "DEFER",
-          "owner": "platform",
-          "limitation": "No authenticated local provider run is in repository-static scope.",
-          "retryTrigger": "Approve a bounded provider-specific runtime canary.",
-          "crossLanePromotion": false
-        }
-      ],
-      "modelCandidates": [
-        {
-          "roleClass": "planning-supervisor",
-          "candidate": "Gemini 3.1 Pro",
-          "sourceIds": [],
-          "configuredId": "Gemini 3.1 Pro",
-          "observedId": null,
-          "idResolution": "configured-only",
-          "promotionState": "candidate-only",
-          "effort": {
-            "candidate": null,
-            "configured": null,
-            "observed": null,
-            "support": "not-declared"
-          },
-          "fallback": {
-            "policy": "fail-closed",
-            "configuredId": null,
-            "observedId": null,
-            "silentFallbackAllowed": false
-          },
-          "gates": {
-            "configParse": "PASS",
-            "runtimeResolution": "DEFER",
-            "spec044Fitness": "DEFER"
-          }
-        },
-        {
-          "roleClass": "worker-subagent",
-          "candidate": "Gemini 3.5 Flash",
-          "sourceIds": [],
-          "configuredId": "Gemini 3.5 Flash",
-          "observedId": null,
-          "idResolution": "configured-only",
-          "promotionState": "candidate-only",
-          "effort": {
-            "candidate": null,
-            "configured": null,
-            "observed": null,
-            "support": "not-declared"
-          },
-          "fallback": {
-            "policy": "fail-closed",
-            "configuredId": null,
-            "observedId": null,
-            "silentFallbackAllowed": false
-          },
-          "gates": {
-            "configParse": "PASS",
-            "runtimeResolution": "DEFER",
-            "spec044Fitness": "DEFER"
-          }
-        }
-      ]
-    },
     {
       "id": "claude",
       "displayName": "Claude Code",
@@ -434,11 +266,6 @@
           "state": "absent"
         },
         {
-          "path": ".codex/hooks.json",
-          "kind": "compatibility-hook-graph",
-          "state": "current"
-        },
-        {
           "path": "AGENTS.md",
           "kind": "provider-shim",
           "state": "current"
@@ -543,167 +370,6 @@
           }
         }
       ]
-    },
-    {
-      "id": "gemini",
-      "displayName": "Gemini CLI",
-      "trackedSurface": {
-        "pathRoot": ".gemini/agents",
-        "state": "current",
-        "presence": "present",
-        "evidenceClass": "repo-static",
-        "claimBoundary": "Tracked Gemini-native project adapter syntax only; CLI installation, native discovery, event delivery, authentication, and model resolution remain absent or deferred."
-      },
-      "projectPaths": [
-        {
-          "path": ".gemini/agents",
-          "kind": "role-directory",
-          "state": "current"
-        },
-        {
-          "path": ".gemini/settings.json",
-          "kind": "tracked-settings",
-          "state": "current"
-        },
-        {
-          "path": "GEMINI.md",
-          "kind": "provider-shim",
-          "state": "current"
-        }
-      ],
-      "localObservation": {
-        "installation": "absent",
-        "version": null,
-        "verdict": "ABSENT",
-        "observedAt": "2026-07-28",
-        "observationClass": "local-cli-version",
-        "userReported": false,
-        "readinessClaim": false,
-        "evidence": "Gemini CLI is locally absent; no installation, authentication, native discovery, or runtime claim is made."
-      },
-      "runtimeVerdicts": {
-        "repoStatic": "PASS",
-        "nativeDiscovery": "ABSENT",
-        "authenticatedRun": "DEFER"
-      },
-      "evidenceLanes": [
-        {
-          "id": "repo-static",
-          "verdict": "PASS",
-          "owner": "platform",
-          "limitation": "Only tracked .gemini syntax and settings metadata are present; runtime discovery and model resolution are not claimed.",
-          "retryTrigger": "Run an approved Gemini CLI native-discovery canary after installation and authentication are authorized.",
-          "crossLanePromotion": false
-        },
-        {
-          "id": "native-discovery",
-          "verdict": "ABSENT",
-          "owner": "platform",
-          "limitation": "Gemini CLI installation and native discovery are absent; tracked project files are repo-static evidence only.",
-          "retryTrigger": "Approve installation separately, then run a no-mutation native-discovery canary against the tracked project surface.",
-          "crossLanePromotion": false
-        },
-        {
-          "id": "authenticated-run",
-          "verdict": "DEFER",
-          "owner": "platform",
-          "limitation": "Installation, authentication, and execution are outside repository-static scope.",
-          "retryTrigger": "After native admission, approve a bounded authenticated Gemini no-mutation canary.",
-          "crossLanePromotion": false
-        }
-      ],
-      "modelCandidates": [
-        {
-          "roleClass": "planning-supervisor",
-          "candidate": "gemini-pro-family-unresolved",
-          "sourceIds": [
-            "gemini-cli-release-0-50-0",
-            "gemini-cli-subagents-current"
-          ],
-          "configuredId": null,
-          "observedId": null,
-          "idResolution": "unresolved",
-          "promotionState": "candidate-only",
-          "effort": {
-            "candidate": null,
-            "configured": null,
-            "observed": null,
-            "support": "requires-native-resolution"
-          },
-          "fallback": {
-            "policy": "fail-closed",
-            "configuredId": null,
-            "observedId": null,
-            "silentFallbackAllowed": false
-          },
-          "gates": {
-            "configParse": "DEFER",
-            "runtimeResolution": "DEFER",
-            "spec044Fitness": "DEFER"
-          }
-        },
-        {
-          "roleClass": "worker-subagent",
-          "candidate": "gemini-flash-or-auto-family-unresolved",
-          "sourceIds": [
-            "gemini-cli-release-0-50-0",
-            "gemini-cli-subagents-current"
-          ],
-          "configuredId": null,
-          "observedId": null,
-          "idResolution": "unresolved",
-          "promotionState": "candidate-only",
-          "effort": {
-            "candidate": null,
-            "configured": null,
-            "observed": null,
-            "support": "requires-native-resolution"
-          },
-          "fallback": {
-            "policy": "fail-closed",
-            "configuredId": null,
-            "observedId": null,
-            "silentFallbackAllowed": false
-          },
-          "gates": {
-            "configParse": "DEFER",
-            "runtimeResolution": "DEFER",
-            "spec044Fitness": "DEFER"
-          }
-        }
-      ]
-    }
-  ],
-  "hookGraphs": [
-    {
-      "id": "local-compatibility-hook-graph",
-      "providerId": "local",
-      "path": ".agents/hooks.json",
-      "classification": "custom-compatibility-bridge",
-      "evidenceClass": "repo-static",
-      "runtimeSupport": "unsupported",
-      "deliveryVerdict": "ABSENT",
-      "owner": "platform",
-      "limitation": "No provider-native runtime owns or consumes .agents/hooks.json; the retained Claude-shaped graph requires an explicitly approved custom compatibility consumer.",
-      "retryTrigger": "Identify and approve a bounded local compatibility runtime, then capture separate discovery and event-delivery evidence.",
-      "claimBoundary": "Tracked graph shape and shared-script references are repository-static evidence only; they do not establish Gemini CLI or any other provider event delivery.",
-      "embeddedDeclaration": "Repo-static custom compatibility bridge only; retained hook shape does not prove native discovery or event delivery.",
-      "contentSha256": "03f1ce8362178ff638e6d54df9f6ed3532df262f5cd63767b0522ef4cda56cfe"
-    },
-    {
-      "id": "codex-compatibility-hook-graph",
-      "providerId": "codex",
-      "path": ".codex/hooks.json",
-      "classification": "custom-compatibility-bridge",
-      "evidenceClass": "repo-static",
-      "runtimeSupport": "unverified",
-      "deliveryVerdict": "DEFER",
-      "owner": "platform",
-      "limitation": "The retained graph has not been parsed, trusted, or dispatched by the locally observed Codex runtime in a controlled canary.",
-      "retryTrigger": "Approve and run a secret-free Codex hook discovery and event-delivery canary for the intended client and feature configuration.",
-      "claimBoundary": "Tracked graph shape and shared-script references are repository-static compatibility evidence only; current provider capability does not prove this repository's native event delivery.",
-      "embeddedDeclaration": "Repo-static custom compatibility bridge only; retained hook shape does not prove native discovery or event delivery.",
-      "contentSha256": "666654f83dd15944e16828e30baa1c396f2884a50f001df38a47de476b096c9f"
     }
   ],
   "mcpInventory": [
@@ -847,84 +513,6 @@
     ]
   },
   "canaryRecords": [
-    {
-      "id": "local-repo-static",
-      "providerId": "local",
-      "evidenceClass": "repo-static",
-      "verdict": "PASS",
-      "synthetic": true,
-      "mutationMode": "no-mutation",
-      "executionState": "synthetic-static-observation",
-      "configuredModelId": null,
-      "observedModelId": null,
-      "effort": null,
-      "fallbackObserved": false,
-      "allowedTools": [],
-      "resultAssertion": "Tracked local projection exists; no provider-native inference.",
-      "owner": "platform",
-      "limitation": null,
-      "retryTrigger": null,
-      "redaction": {
-        "status": "PASS",
-        "rawPromptStored": false,
-        "providerBodyStored": false,
-        "credentialsStored": false,
-        "authPathsStored": false
-      },
-      "crossLanePromotion": false
-    },
-    {
-      "id": "local-native-discovery",
-      "providerId": "local",
-      "evidenceClass": "native-discovery",
-      "verdict": "DEFER",
-      "synthetic": true,
-      "mutationMode": "no-mutation",
-      "executionState": "not-executed",
-      "configuredModelId": null,
-      "observedModelId": null,
-      "effort": null,
-      "fallbackObserved": false,
-      "allowedTools": [],
-      "resultAssertion": "No local provider-native discovery boundary was executed.",
-      "owner": "platform",
-      "limitation": "Local projection has no distinct native discovery gate.",
-      "retryTrigger": "Define and approve a local native-discovery boundary.",
-      "redaction": {
-        "status": "PASS",
-        "rawPromptStored": false,
-        "providerBodyStored": false,
-        "credentialsStored": false,
-        "authPathsStored": false
-      },
-      "crossLanePromotion": false
-    },
-    {
-      "id": "local-authenticated-run",
-      "providerId": "local",
-      "evidenceClass": "authenticated-run",
-      "verdict": "DEFER",
-      "synthetic": true,
-      "mutationMode": "no-mutation",
-      "executionState": "not-executed",
-      "configuredModelId": null,
-      "observedModelId": null,
-      "effort": null,
-      "fallbackObserved": false,
-      "allowedTools": [],
-      "resultAssertion": "No authenticated local provider run was executed.",
-      "owner": "platform",
-      "limitation": "Authenticated local provider execution is outside repository-static scope.",
-      "retryTrigger": "Approve a bounded provider-specific runtime canary.",
-      "redaction": {
-        "status": "PASS",
-        "rawPromptStored": false,
-        "providerBodyStored": false,
-        "credentialsStored": false,
-        "authPathsStored": false
-      },
-      "crossLanePromotion": false
-    },
     {
       "id": "claude-repo-static",
       "providerId": "claude",
@@ -1080,84 +668,6 @@
         "authPathsStored": false
       },
       "crossLanePromotion": false
-    },
-    {
-      "id": "gemini-repo-static",
-      "providerId": "gemini",
-      "evidenceClass": "repo-static",
-      "verdict": "PASS",
-      "synthetic": true,
-      "mutationMode": "no-mutation",
-      "executionState": "synthetic-static-observation",
-      "configuredModelId": null,
-      "observedModelId": null,
-      "effort": null,
-      "fallbackObserved": false,
-      "allowedTools": [],
-      "resultAssertion": "Gemini-native .gemini adapter and settings surface is tracked as repository-static syntax evidence.",
-      "owner": "platform",
-      "limitation": "This canary does not execute Gemini CLI or resolve any model.",
-      "retryTrigger": "Approve Gemini CLI installation/authentication and run a native discovery canary.",
-      "redaction": {
-        "status": "PASS",
-        "rawPromptStored": false,
-        "providerBodyStored": false,
-        "credentialsStored": false,
-        "authPathsStored": false
-      },
-      "crossLanePromotion": false
-    },
-    {
-      "id": "gemini-native-discovery",
-      "providerId": "gemini",
-      "evidenceClass": "native-discovery",
-      "verdict": "ABSENT",
-      "synthetic": true,
-      "mutationMode": "no-mutation",
-      "executionState": "not-executed",
-      "configuredModelId": null,
-      "observedModelId": null,
-      "effort": null,
-      "fallbackObserved": false,
-      "allowedTools": [],
-      "resultAssertion": "Gemini native discovery was not available.",
-      "owner": "platform",
-      "limitation": "Gemini CLI installation is absent; tracked .gemini files alone do not prove native discovery.",
-      "retryTrigger": "Approve installation separately, then run native project-surface discovery.",
-      "redaction": {
-        "status": "PASS",
-        "rawPromptStored": false,
-        "providerBodyStored": false,
-        "credentialsStored": false,
-        "authPathsStored": false
-      },
-      "crossLanePromotion": false
-    },
-    {
-      "id": "gemini-authenticated-run",
-      "providerId": "gemini",
-      "evidenceClass": "authenticated-run",
-      "verdict": "DEFER",
-      "synthetic": true,
-      "mutationMode": "no-mutation",
-      "executionState": "not-executed",
-      "configuredModelId": null,
-      "observedModelId": null,
-      "effort": null,
-      "fallbackObserved": false,
-      "allowedTools": [],
-      "resultAssertion": "Gemini authenticated no-mutation task was not executed.",
-      "owner": "platform",
-      "limitation": "Installation, authentication, and execution are outside repository-static scope.",
-      "retryTrigger": "After native admission, approve a bounded authenticated Gemini no-mutation canary.",
-      "redaction": {
-        "status": "PASS",
-        "rawPromptStored": false,
-        "providerBodyStored": false,
-        "credentialsStored": false,
-        "authPathsStored": false
-      },
-      "crossLanePromotion": false
     }
   ],
   "routeIntegration": {
@@ -1184,14 +694,12 @@
     ],
     "surfaces": [
       "provider-gateways",
-    "agent-shared",
-    "agent-claude",
-    "agent-codex",
-    "agent-gemini",
-    "governance-documents",
-    "scripts",
-    "tests"
-  ],
+      "agent-claude",
+      "agent-codex",
+      "governance-documents",
+      "scripts",
+      "tests"
+    ],
     "excludedSurfaces": [
       "infrastructure",
       "gitops",

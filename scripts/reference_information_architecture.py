@@ -27,8 +27,12 @@ from urllib.parse import urlsplit
 from jsonschema import Draft202012Validator
 
 from archive_recovery import ArchiveContractError
-from archive_validation import parse_pinned_migration_control
+from archive_validation import (
+    parse_pinned_migration_control,
+    repository_migration_proof,
+)
 from document_authority import AuthorityError, validate_registry_authority
+from json_schema_validation import SchemaEvaluationError, schema_errors
 
 
 DEFAULT_CONTRACT_PATH = Path(
@@ -97,6 +101,7 @@ REPOSITORY_PATH_PATTERN = re.compile(
 GIT_EXECUTABLE = "/usr/bin/git"
 GIT_TIMEOUT_SECONDS = 10
 MAX_BLOB_BYTES = 2_000_000
+_UNSET = object()
 MAX_METADATA_BYTES = 65_536
 MAX_STDERR_BYTES = 16_384
 CLOSED_GIT_ENVIRONMENT = {
@@ -294,6 +299,15 @@ GENERATOR_EXECUTABLE = "/usr/bin/bash"
 GENERATOR_RELATION_ID = "llm-wiki-index"
 GENERATOR_PATH = Path("scripts/generate-llm-wiki-index.sh")
 GENERATOR_INPUT_ROOTS = (
+    Path("docs/90.references/llm-wiki/README.md"),
+    Path("docs/00.agent-governance/README.md"),
+    Path("docs/00.agent-governance/roles/README.md"),
+    Path("docs/00.agent-governance/policies/document-authoring.md"),
+    Path("docs/README.md"),
+    Path("scripts/README.md"),
+)
+# Only an exact named-commit contract may retain the pre-cutover input relation.
+HISTORICAL_GENERATOR_INPUT_ROOTS = (
     Path("docs/90.references/llm-wiki/README.md"),
     Path("docs/00.agent-governance/README.md"),
     Path("docs/00.agent-governance/harness-catalog.md"),
@@ -1072,12 +1086,20 @@ def _read_index_path(root: Path, path: Path, runner: GitRunner | None = None) ->
 
 
 def read_proposed_regular_file(
-    root: Path, path: Path, runner: GitRunner | None = None
+    root: Path,
+    path: Path,
+    runner: GitRunner | None = None,
+    *,
+    worktree_bytes: object = _UNSET,
 ) -> bytes:
     """Read one exact stage-zero blob and require equal no-follow worktree bytes."""
 
     indexed = _read_index_path(root, path, runner)
-    worktree = _read_regular_file(root, path, field=path.as_posix())
+    worktree = (
+        _read_regular_file(root, path, field=path.as_posix())
+        if worktree_bytes is _UNSET
+        else _bounded_supplied_bytes(worktree_bytes, field=path.as_posix())
+    )
     if indexed != worktree:
         raise ContractError(
             "RIA-BOUNDARY", path.as_posix(), "index and worktree bytes differ"
@@ -1136,12 +1158,8 @@ def _validate_schema_document(
             "RIA-CONTRACT", "$schema", "schema reference is not canonical"
         )
     try:
-        Draft202012Validator.check_schema(schema)
-        errors = sorted(
-            Draft202012Validator(schema).iter_errors(contract),
-            key=lambda error: list(error.absolute_path),
-        )
-    except Exception as error:
+        errors = schema_errors(schema, contract)
+    except SchemaEvaluationError as error:
         raise ContractError("RIA-CONTRACT", "$schema", "schema is invalid") from error
     if errors:
         location = ".".join(str(part) for part in errors[0].absolute_path) or "$"
@@ -1155,12 +1173,19 @@ def _validate_schema(
     contract: dict[str, object],
     contract_path: Path,
     runner: GitRunner | None = None,
+    *,
+    schema_bytes: object = _UNSET,
 ) -> None:
     schema_path = contract_path.with_name(
         "reference-information-architecture.schema.json"
     )
     try:
-        payload = read_proposed_regular_file(root, schema_path, runner)
+        if schema_bytes is _UNSET:
+            payload = read_proposed_regular_file(root, schema_path, runner)
+        else:
+            payload = read_proposed_regular_file(
+                root, schema_path, runner, worktree_bytes=schema_bytes
+            )
     except (ContractError, _GitError) as error:
         raise ContractError(
             "RIA-CONTRACT", "$schema", "proposed schema authority is unavailable"
@@ -1515,19 +1540,40 @@ def _validate_contract_boundaries(
             outputs.add(output)
 
 
+def _bounded_supplied_bytes(payload: object, *, field: str) -> bytes:
+    if type(payload) is not bytes or len(payload) > MAX_BLOB_BYTES:
+        raise ContractError(
+            "RIA-CONTRACT", field, "held bytes are invalid or oversized"
+        )
+    return payload
+
+
 def load_contract(
     root: Path,
     contract_path: Path,
     *,
     runner: GitRunner | None = None,
+    contract_bytes: object = _UNSET,
+    schema_bytes: object = _UNSET,
 ) -> dict[str, object]:
     """Load a contract whose schema has exact proposed index authority."""
 
     root = root.absolute()
     relative = normalize_contract_path(root, contract_path)
-    contract = _load_json(root, relative, field="contract")
+    if (contract_bytes is _UNSET) != (schema_bytes is _UNSET):
+        raise ContractError("RIA-CONTRACT", "contract", "held inputs are incomplete")
+    if contract_bytes is _UNSET:
+        contract = _load_json(root, relative, field="contract")
+    else:
+        contract = _decode_json_bytes(
+            _bounded_supplied_bytes(contract_bytes, field="contract"), field="contract"
+        )
+        _bounded_supplied_bytes(schema_bytes, field="$schema")
     _validate_path_fields(contract)
-    _validate_schema(root, contract, relative, runner)
+    if schema_bytes is _UNSET:
+        _validate_schema(root, contract, relative, runner)
+    else:
+        _validate_schema(root, contract, relative, runner, schema_bytes=schema_bytes)
     _validate_contract_boundaries(contract)
     return contract
 
@@ -2186,6 +2232,7 @@ def validate_generated_assets(
     root: Path,
     contract: Mapping[str, object],
     *,
+    contract_path: Path = DEFAULT_CONTRACT_PATH,
     proposed_commit: object | None = None,
     runner: GitRunner | None = None,
 ) -> list[Finding]:
@@ -2195,6 +2242,32 @@ def validate_generated_assets(
     blobs and owner link. It deliberately does not attribute a current
     worktree process result to that historical commit.
     """
+
+    commit_oid: str | None = None
+    if proposed_commit is not None:
+        try:
+            commit_oid = parse_git_sha1(proposed_commit, field="--commit")
+            selected_path = normalize_contract_path(root, contract_path)
+            authority_unavailable = (
+                _contract_authority_finding(
+                    root.absolute(),
+                    contract,
+                    contract_path=selected_path,
+                    commit=proposed_commit,
+                    runner=runner,
+                )
+                is not None
+            )
+        except ContractError:
+            authority_unavailable = True
+        if authority_unavailable:
+            return [
+                Finding(
+                    "RIA-GENERATOR",
+                    "--commit",
+                    "generator relation authority is unavailable",
+                )
+            ]
 
     findings: list[Finding] = []
     assets = contract.get("generatedAssets")
@@ -2334,7 +2407,13 @@ def validate_generated_assets(
             if mapped_relation is not None and (
                 relation_id != mapped_relation[1]
                 or generator_path != mapped_relation[2]
-                or tuple(inputs) != mapped_relation[3]
+                or (
+                    tuple(inputs) != mapped_relation[3]
+                    and not (
+                        commit_oid is not None
+                        and tuple(inputs) == HISTORICAL_GENERATOR_INPUT_ROOTS
+                    )
+                )
                 or output_path != mapped_relation[4]
                 or canonical_owner_path != mapped_relation[5]
             ):
@@ -2370,19 +2449,6 @@ def validate_generated_assets(
 
     if findings:
         return sorted(set(findings))
-
-    commit_oid: str | None = None
-    if proposed_commit is not None:
-        try:
-            commit_oid = parse_git_sha1(proposed_commit, field="--commit")
-        except ContractError:
-            return [
-                Finding(
-                    "RIA-GENERATOR",
-                    "--commit",
-                    "generator relation authority is unavailable",
-                )
-            ]
 
     root = root.absolute()
     authoritative: dict[Path, bytes] = {}
@@ -4119,6 +4185,32 @@ def validate_proposed_registry_authority(
     return []
 
 
+def retired_baseline_protected_commit(
+    contract: Mapping[str, object], record: Mapping[str, object]
+) -> str:
+    """Select the existing FSM's exact byte boundary for a retired Current pack."""
+
+    source = parse_git_sha1(
+        record.get("sourceCommit"), field="retiredCurrentPackBaselines.sourceCommit"
+    )
+    state, state_finding = _fsm_state(contract)
+    if state == "audit-settled" and state_finding is None:
+        settlements = contract.get("baselineSettlements")
+        if isinstance(settlements, list) and settlements:
+            settlement = settlements[0]
+            assert isinstance(settlement, Mapping)
+            return parse_git_sha1(
+                settlement.get("toCommit"), field="baselineSettlements[0].toCommit"
+            )
+        # The settlement-free consolidation rewrote the retired pack's links;
+        # neither its earlier sourceCommit nor its successor holds these bytes.
+        return parse_git_sha1(
+            MERGE_RETIRED_AUDIT_COMMIT,
+            field="retiredCurrentPackBaselines[0].protectedCommit",
+        )
+    return source
+
+
 def validate_retired_current_baselines(
     root: Path,
     contract: Mapping[str, object],
@@ -4209,27 +4301,7 @@ def validate_retired_current_baselines(
                     )
                 )
                 continue
-            protected_oid = oid
-            state, state_finding = _fsm_state(contract)
-            if state == "audit-settled" and state_finding is None:
-                settlements = contract.get("baselineSettlements")
-                if isinstance(settlements, list) and settlements:
-                    settlement = settlements[0]
-                    assert isinstance(settlement, Mapping)
-                    protected_oid = parse_git_sha1(
-                        settlement.get("toCommit"),
-                        field="baselineSettlements[0].toCommit",
-                    )
-                else:
-                    # Settlement-free cutover. The retired pack's protected bytes
-                    # are pinned at the consolidation commit that produced them:
-                    # that program rewrote the pack's links to the four-digit
-                    # routes, so neither the pack's own sourceCommit nor the
-                    # successor's baseline holds its current bytes any more.
-                    protected_oid = parse_git_sha1(
-                        MERGE_RETIRED_AUDIT_COMMIT,
-                        field="retiredCurrentPackBaselines[0].protectedCommit",
-                    )
+            protected_oid = retired_baseline_protected_commit(contract, record)
             for path in (expected_pack.readme_path, *expected_pack.member_paths):
                 baseline = _read_commit_path(
                     root.absolute(), protected_oid, path, runner
@@ -6871,26 +6943,28 @@ def load_agent_cutover_projections(
     root: Path,
     runner: GitRunner | None,
 ) -> dict[Path, Mapping[str, object]]:
-    authority = root / AGENT_LEGACY_CUTOVER_PATH
+    """Interpret only source bytes proved by the generic migration owner."""
+
     try:
-        mode = authority.lstat().st_mode
-    except FileNotFoundError:
-        return {}
-    except OSError as error:
-        raise _GitError("agent cutover projection authority is unavailable") from error
-    if not stat.S_ISREG(mode):
-        raise _GitError("agent cutover projection authority is not regular")
+        proof = repository_migration_proof(root)
+        inputs = tuple(
+            proof.dispositions[path.as_posix()].source_bytes
+            for path in (AGENT_LEGACY_CUTOVER_PATH, AGENT_LEGACY_CUTOVER_SCHEMA_PATH)
+        )
+    except (ArchiveContractError, KeyError, OSError, ValueError) as error:
+        raise _GitError(
+            "agent cutover projection source proof is unavailable"
+        ) from error
+    return _interpret_agent_cutover_projections(*inputs)
+
+
+def _interpret_agent_cutover_projections(
+    payload: bytes,
+    schema_payload: bytes,
+) -> dict[Path, Mapping[str, object]]:
+    """Retain the historical RIA transformation contract, not current authority."""
+
     try:
-        payload = read_proposed_regular_file(
-            root,
-            AGENT_LEGACY_CUTOVER_PATH,
-            runner,
-        )
-        schema_payload = read_proposed_regular_file(
-            root,
-            AGENT_LEGACY_CUTOVER_SCHEMA_PATH,
-            runner,
-        )
         if (
             hashlib.sha256(payload).hexdigest() != AGENT_LEGACY_CUTOVER_SHA256
             or hashlib.sha256(schema_payload).hexdigest()
@@ -6910,6 +6984,7 @@ def load_agent_cutover_projections(
             raise _GitError("agent cutover projection authority schema differs")
     except (ContractError, _GitError) as error:
         raise _GitError("agent cutover projection authority is unavailable") from error
+
     expected = [
         {
             "path": path,
@@ -7784,7 +7859,11 @@ def validate_reference_architecture(
         *validate_overlay_guards(root, contract, proposed_commit=commit, runner=runner),
         *validate_data_assets(root, contract, proposed_commit=commit, runner=runner),
         *validate_generated_assets(
-            root, contract, proposed_commit=commit, runner=runner
+            root,
+            contract,
+            contract_path=normalized_contract_path,
+            proposed_commit=commit,
+            runner=runner,
         ),
         *validate_duplicate_rules(
             root, contract, proposed_commit=commit, runner=runner

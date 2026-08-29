@@ -1,18 +1,16 @@
 ---
 name: incident-responder
-description: Reconstruct incidents from approved evidence and prepare remediation-ready handoff without unauthorized live action.
-model: Gemini 3.5 Flash
+description: Triage incidents, bound impact, and produce evidence-based response and corrective-action guidance.
 ---
 
 # incident-responder
 
 ## Runtime Bootstrap
 
-- Load `GEMINI.md`, `.agents/GEMINI.md`, and this agent's imported scope before work.
-- Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.
-
-@import docs/00.agent-governance/scopes/ops.md
-@import docs/00.agent-governance/scopes/infra.md
+- Load `.agents/registry.json` and this provider-neutral role projection before work.
+- Follow the Stage 00 policy and handoff boundaries referenced by the registry.
+@import docs/00.agent-governance/roles/operations.md
+@import docs/00.agent-governance/roles/infrastructure.md
 
 ## Role
 
@@ -37,13 +35,14 @@ Reconstruct incidents from approved evidence and prepare remediation-ready hando
 
 ## Capability and Evidence
 
-- Capability tier reference: `docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles/4/capabilityTier`.
+- Capability tier reference: `docs/00.agent-governance/policies/model-selection.md#top`.
 - Required evidence: preserve timestamped observations, affected scope, impact, confidence, and approved-source references for every conclusion.
 
 ## Handoff / Escalation
 
+- Registry handoff targets: `security-auditor`, `k8s-implementer`, `supervisor`.
 - Escalate security-breach indicators to `security-auditor.md`.
 
 ## Postflight
 
-Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results.
+Run `docs/00.agent-governance/skills/work-lifecycle.md#completion` before returning results.

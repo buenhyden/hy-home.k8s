@@ -19,8 +19,6 @@ HOOK_RELATIVE_PATH = "docs/00.agent-governance/hooks/post-validate.sh"
 
 PROVIDERS = {
     "claude": (ROOT / ".claude/settings.json", "CLAUDE_PROJECT_DIR"),
-    "codex": (ROOT / ".codex/hooks.json", "CODEX_PROJECT_DIR"),
-    "gemini": (ROOT / ".agents/hooks.json", "GEMINI_PROJECT_DIR"),
 }
 
 EXPECTED_VALIDATORS = {
@@ -29,6 +27,7 @@ EXPECTED_VALIDATORS = {
         "agent-governance-closure",
         "agent-legacy-cutover",
         "document-contract-registry",
+        "document-lifecycle",
         "links-and-owners",
         "markdown-profiles",
         "repository-quality",
@@ -177,6 +176,7 @@ class ProviderPostValidateEntryTest(unittest.TestCase):
             "scripts/run-validation-lane.py",
             "scripts/select-affected-surfaces.py",
             "scripts/validate-affected-surfaces.py",
+            "scripts/json_schema_validation.py",
         )
         for relative_path in fixture_files:
             source = ROOT / relative_path

@@ -23,14 +23,9 @@ SCHEMA_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/agent-checkpoint.schema.json"
 )
 FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-checkpoint.json")
-HARNESS_CONTRACT_PATH = PurePosixPath(
-    "docs/00.agent-governance/contracts/harness-contract.json"
-)
+REGISTRY_PATH = PurePosixPath(".agents/registry.json")
 LOOP_CONTRACT_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/agent-loop-lifecycle.json"
-)
-MEMORY_README_PATH = PurePosixPath(
-    "docs/00.agent-governance/memory/README.md"
 )
 SPEC_PATH = PurePosixPath(
     "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
@@ -1125,52 +1120,44 @@ def validate_memory_lifecycle(checkpoint: dict[str, Any]) -> None:
 
 
 def _validate_contract_refs(root: Path, checkpoint: dict[str, Any]) -> None:
-    harness = load_json(root, HARNESS_CONTRACT_PATH)
+    registry = load_json(root, REGISTRY_PATH)
     try:
-        memory = harness["memory"]
-        harness_class_ids = tuple(
-            record["id"] for record in memory["classes"]
-        )
+        provider_rows = registry["providers"]
+        role_rows = registry["roles"]
+        if not isinstance(provider_rows, list) or not isinstance(role_rows, list):
+            raise TypeError
+        providers = {row["id"] for row in provider_rows}
+        roles = {row["id"]: row["supported_providers"] for row in role_rows}
+        if (
+            len(providers) != len(provider_rows)
+            or len(roles) != len(role_rows)
+            or not all(isinstance(provider, str) for provider in providers)
+            or not all(
+                isinstance(role_id, str)
+                and isinstance(supported, list)
+                and bool(supported)
+                and all(isinstance(provider, str) for provider in supported)
+                and len(set(supported)) == len(supported)
+                and set(supported).issubset(providers)
+                for role_id, supported in roles.items()
+            )
+        ):
+            raise TypeError
     except (KeyError, TypeError):
         fail(
-            "AHLL-CP-HARNESS-CONTRACT",
-            "harness memory declaration is incomplete",
+            "AHLL-CP-REGISTRY",
+            "agent registry role or provider declaration is invalid",
             exit_code=2,
         )
+    executor = checkpoint["executor"]
     if (
-        memory.get("transientCheckpointPath") != CHECKPOINT_PATH
-        or memory.get("executableLifecycleOwner") != SPEC_PATH.as_posix()
-        or harness_class_ids != MEMORY_CLASS_IDS
+        executor["providerId"] not in providers
+        or executor["providerId"] not in roles.get(executor["roleId"], ())
     ):
         fail(
-            "AHLL-CP-HARNESS-CONTRACT",
-            "checkpoint or memory owner drifted from the harness contract",
+            "AHLL-CP-REGISTRY",
+            "checkpoint executor is not supported by the agent registry",
         )
-    for memory_class in memory["classes"]:
-        memory_id = memory_class["id"]
-        if (
-            memory_class.get("owner") != CANONICAL_OWNERS[memory_id]
-            or memory_class.get("authority", {}).get("mode")
-            != AUTHORITY_MODES[memory_id]
-            or memory_class.get("promotion", {}).get("targetClass")
-            != PROMOTION_TARGETS[memory_id]
-            or memory_class.get("promotion", {}).get("reviewRequired")
-            is not True
-            or memory_class.get("sensitivity", {}).get(
-                "secretMaterialAllowed"
-            )
-            is not False
-            or memory_class.get("sensitivity", {}).get(
-                "rawPromptOrTranscriptAllowed"
-            )
-            is not False
-        ):
-            fail(
-                "AHLL-CP-HARNESS-CONTRACT",
-                f"{memory_id} lifecycle boundary drifted from the harness",
-            )
-
-    _read_regular_bytes(root, MEMORY_README_PATH)
     ignored_lines = {
         line.strip()
         for line in _read_regular_text(
@@ -1181,7 +1168,7 @@ def _validate_contract_refs(root: Path, checkpoint: dict[str, Any]) -> None:
     }
     if ".agent-work/" not in ignored_lines:
         fail(
-            "AHLL-CP-HARNESS-CONTRACT",
+            "AHLL-CP-LOOP-CONTRACT",
             "transient checkpoint parent is not ignored",
         )
 

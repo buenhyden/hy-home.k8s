@@ -194,7 +194,7 @@ for path in "${CHANGED_PATHS[@]}"; do
 done
 
 # The canonical selector covers .agents/* and runtime config paths such as
-# .agents/hooks.json; repository-quality owns their detailed static parsing.
+# .claude/settings.json; repository-quality owns their detailed static parsing.
 
 failure=0
 

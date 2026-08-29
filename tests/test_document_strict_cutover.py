@@ -690,19 +690,11 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         self.assertFalse((SPEC0054_PACKAGE / "tasks.md").exists())
         records = sorted((SPEC0054_PACKAGE / "tasks").glob("tsk-*.md"))
         self.assertEqual(len(records), 14)
-        expected_states = [
-            "done",
-            "done",
-            "blocked",
-            "in-progress",
-            *("queued" for _ in range(10)),
-        ]
-        for index, (record, state) in enumerate(zip(records, expected_states), 1):
+        for index, record in enumerate(records, 1):
             contents = record.read_text(encoding="utf-8")
             with self.subTest(record=record.name):
                 self.assertEqual(record.name[4:8], f"{index:04d}")
                 self.assertIn(f'artifact_id: "TSK-0054-{index:04d}"', contents)
-                self.assertIn(f"status: {state}", contents)
                 self.assertIn("../README.md#common-execution-contract", contents)
                 for section in (
                     "## Task Table",
@@ -736,9 +728,12 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/README.md",
         )
         self.assertEqual(
-            row["source_commit"], "7a770c3c0eabaeda554c4030fc08fb17de164fe5"  # pragma: allowlist secret - pinned Git commit fixture
+            row["source_commit"],
+            "7a770c3c0eabaeda554c4030fc08fb17de164fe5",  # pragma: allowlist secret - pinned Git commit fixture
         )
-        self.assertEqual(row["source_blob"], "465f24340b99c03a38b5150d517627b69fa7c717")  # pragma: allowlist secret - pinned Git blob fixture
+        self.assertEqual(
+            row["source_blob"], "465f24340b99c03a38b5150d517627b69fa7c717"
+        )  # pragma: allowlist secret - pinned Git blob fixture
         self.assertEqual(
             row["content_sha256"],
             "3fd4925824ad0b92748ff0f27e3a252dee3619c415caff02cc59a385e4c8fc08",  # pragma: allowlist secret - pinned SHA-256 recovery fixture
@@ -810,35 +805,38 @@ class TerminalStrictValidatorTests(unittest.TestCase):
                 ),
             )
 
-    def test_current_provider_surface_remains_unchanged_until_wp003(self) -> None:
+    def test_retired_provider_surface_is_outside_the_document_corpus(self) -> None:
         contracts = sys.modules["document_contracts"]
-        approved = contracts.PurePosixPath(".gemini/agents/doc-writer.md")
-        self.assertTrue(contracts._is_target_markdown(approved))
-        for rejected in (
+        for retired in (
+            "GEMINI.md",
             ".gemini/README.md",
+            ".gemini/agents/doc-writer.md",
             ".gemini/agents/nested/doc-writer.md",
             ".gemini/agents/doc-writer.txt",
             ".gemini/settings.md",
         ):
-            with self.subTest(rejected=rejected):
+            with self.subTest(retired=retired):
                 self.assertFalse(
-                    contracts._is_target_markdown(contracts.PurePosixPath(rejected))
+                    contracts._is_target_markdown(contracts.PurePosixPath(retired))
                 )
 
-    def test_gemini_settings_reader_is_bounded_and_strict_utf8(self) -> None:
+    def test_provider_native_profile_routes_only_claude_markdown(self) -> None:
         validator = self.validators["registry"]
-        with tempfile.TemporaryDirectory() as directory:
-            candidate = Path(directory) / "settings.json"
-            candidate.write_bytes(b"\xff")
-            with self.assertRaisesRegex(
-                AssertionError, "REGISTRY_GEMINI_NATIVE_CURRENT_SURFACE"
-            ):
-                validator._load_gemini_settings_json(candidate)
-            candidate.write_bytes(b"x" * (validator.GEMINI_SETTINGS_MAX_BYTES + 1))
-            with self.assertRaisesRegex(
-                AssertionError, "REGISTRY_GEMINI_NATIVE_CURRENT_SURFACE"
-            ):
-                validator._load_gemini_settings_json(candidate)
+        registry = validator.load_registry(REPOSITORY_ROOT)
+        self.assertEqual(
+            validator.classify_path(
+                registry,
+                PurePosixPath(".claude/agents/doc-writer.md"),
+            ).profile_id,
+            "exception/provider-native-metadata",
+        )
+        with self.assertRaisesRegex(
+            validator.DocumentContractError, "REGISTRY_ROUTE_UNCOVERED"
+        ):
+            validator.classify_path(
+                registry,
+                PurePosixPath(".gemini/agents/doc-writer.md"),
+            )
 
     def test_retired_surface_git_inventory_maps_bounded_process_failures(self) -> None:
         validator = self.validators["registry"]

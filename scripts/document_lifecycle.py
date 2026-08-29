@@ -65,6 +65,16 @@ class LifecycleRename:
 
 
 @dataclass(frozen=True)
+class MigrationLifecycleEvents:
+    """Proof-backed events, never permission to suppress a path's diagnostics."""
+
+    publications: frozenset[PurePosixPath] = frozenset()
+    source_removals: frozenset[PurePosixPath] = frozenset()
+    current_rehomes: frozenset[tuple[PurePosixPath, PurePosixPath]] = frozenset()
+    navigation_creations: frozenset[PurePosixPath] = frozenset()
+
+
+@dataclass(frozen=True)
 class LifecycleEvidenceDocument:
     """One proposed-snapshot document and its canonical rendered evidence."""
 
@@ -187,7 +197,9 @@ def _optional_profile_by_id(
 def _stateful(profile: DocumentProfile) -> bool:
     """A profile participates in lifecycle validation only through its domain."""
 
-    return profile.mode == "authored" and profile.lifecycle_domain is not None
+    return profile.lifecycle_domain is not None and (
+        profile.mode == "authored" or profile.profile_id == "content/archive-migration"
+    )
 
 
 def _state_diagnostic(
@@ -259,6 +271,7 @@ def _create_diagnostics(
     documents: Sequence[LifecycleDocument],
     *,
     base_mode: LifecycleBaseMode,
+    migration_events: MigrationLifecycleEvents = MigrationLifecycleEvents(),
 ) -> list[LifecycleDiagnostic]:
     diagnostics: list[LifecycleDiagnostic] = []
     for document in documents:
@@ -283,6 +296,31 @@ def _create_diagnostics(
         )
         if state_failure is not None:
             diagnostics.append(state_failure)
+            continue
+        if (
+            (
+                document.path in migration_events.publications
+                and document.profile_id == "content/archive-migration"
+                and document.status == "sealed"
+            )
+            or (
+                any(
+                    target == document.path
+                    for _, target in migration_events.current_rehomes
+                )
+                and document.status == "active"
+                and profile.lifecycle_domain is not None
+                and profile.lifecycle_domain.validation_class(document.status)
+                == "current"
+            )
+            or (
+                document.path in migration_events.navigation_creations
+                and profile.profile_id == "readme/collection-index"
+                and profile.mode == "frontmatter-free"
+                and profile.lifecycle_domain is None
+                and document.status is None
+            )
+        ):
             continue
         domain = profile.lifecycle_domain
         observed = f"absent -> {document.status or 'not-applicable'}"
@@ -1029,6 +1067,7 @@ def compare_lifecycle(
     renames: Sequence[LifecycleRename] = (),
     base_mode: Literal["staged", "ci", "explicit-ref"],
     evidence_context: LifecycleEvidenceContext | None = None,
+    migration_events: MigrationLifecycleEvents = MigrationLifecycleEvents(),
 ) -> tuple[LifecycleDiagnostic, ...]:
     """Compare independently classified snapshots with fixed event precedence.
 
@@ -1051,6 +1090,10 @@ def compare_lifecycle(
             raise ValueError(
                 "exact rename must name one base and one proposed document"
             )
+        if (rename.old_path, rename.new_path) in migration_events.current_rehomes:
+            # A proven move remains a create/delete pair so state validation is
+            # still performed; only its exact rename event is admitted.
+            continue
         consumed_base.add(rename.old_path)
         consumed_proposed.add(rename.new_path)
         diagnostics.append(
@@ -1169,7 +1212,9 @@ def compare_lifecycle(
         proposed_documents[path]
         for path in sorted(created_paths, key=PurePosixPath.as_posix)
     ]
-    creation_diagnostics = _create_diagnostics(registry, created, base_mode=base_mode)
+    creation_diagnostics = _create_diagnostics(
+        registry, created, base_mode=base_mode, migration_events=migration_events
+    )
     diagnostics.extend(creation_diagnostics)
     archive_evidence_diagnostics, admitted_source_removals = _archive_creation_evidence(
         registry,
@@ -1182,7 +1227,11 @@ def compare_lifecycle(
     diagnostics.extend(archive_evidence_diagnostics)
 
     deleted_paths = (
-        set(base_documents) - consumed_base - common_paths - admitted_source_removals
+        set(base_documents)
+        - consumed_base
+        - common_paths
+        - admitted_source_removals
+        - migration_events.source_removals
     )
     for path in sorted(deleted_paths, key=PurePosixPath.as_posix):
         document = base_documents[path]
@@ -1310,6 +1359,23 @@ def document_from_text(
             status=None,
             state_issue="frontmatter status is missing or not a string",
         )
+    if (
+        selected_profile.profile_id == "content/archive-migration"
+        and status == "accepted"
+    ):
+        # Only byte-verified historical controls use the predecessor spelling.
+        # The registry domain continues to reject accepted for future records.
+        from archive_validation import (
+            ArchiveContractError,
+            parse_pinned_migration_control,
+        )
+
+        try:
+            parse_pinned_migration_control(path.as_posix(), text.encode("utf-8"))
+        except ArchiveContractError:
+            profile_issue = "unverified historical Migration state"
+        else:
+            status = "sealed"
     original_path: PurePosixPath | None = None
     if profile_id == "content/archive":
         raw_original_path = metadata.get("original_path")

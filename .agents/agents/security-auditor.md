@@ -1,17 +1,15 @@
 ---
 name: security-auditor
-description: Audit repository security controls across RBAC, isolation, sensitive-data handling, and supply-chain boundaries.
-model: Gemini 3.5 Flash
+description: Audit repository changes for secret exposure, privilege escalation, isolation failure, and policy violations.
 ---
 
 # security-auditor
 
 ## Runtime Bootstrap
 
-- Load `GEMINI.md`, `.agents/GEMINI.md`, and this agent's imported scope before work.
-- Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.
-
-@import docs/00.agent-governance/scopes/security.md
+- Load `.agents/registry.json` and this provider-neutral role projection before work.
+- Follow the Stage 00 policy and handoff boundaries referenced by the registry.
+@import docs/00.agent-governance/roles/security.md
 
 ## Role
 
@@ -36,13 +34,14 @@ Audit repository security controls across RBAC, isolation, sensitive-data handli
 
 ## Capability and Evidence
 
-- Capability tier reference: `docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles/8/capabilityTier`.
+- Capability tier reference: `docs/00.agent-governance/policies/model-selection.md#top`.
 - Required evidence: cite each RBAC, NetworkPolicy, or secret-handling finding with `file:line`, severity, control impact, and remediation basis.
 
 ## Handoff / Escalation
 
+- Registry handoff targets: `k8s-implementer`, `supervisor`.
 - Escalate implementation work to `k8s-implementer.md` only after findings are clear.
 
 ## Postflight
 
-Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results.
+Run `docs/00.agent-governance/skills/work-lifecycle.md#completion` before returning results.

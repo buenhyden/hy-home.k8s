@@ -792,7 +792,7 @@ class ArchiveRecoveryTest(unittest.TestCase):
 
 
 class PinnedMigrationRecoveryCliTest(unittest.TestCase):
-    """Keep CLI migration recovery limited to the sealed MIG-0004 control."""
+    """Retain the sealed MIG-0004 proof alongside generic migration recovery."""
 
     migration_path = "docs/98.archive/migrations/0004-document-authority-convergence.md"
 
@@ -820,7 +820,7 @@ class PinnedMigrationRecoveryCliTest(unittest.TestCase):
             (
                 "wrong-digest",
                 migration + b"\n",
-                "RECOVERY-MIGRATION-TARGET",
+                "ARCHIVE-MIGRATION-PROFILE",
             ),
             (
                 "wrong-status",
@@ -881,7 +881,13 @@ class PinnedMigrationRecoveryCliTest(unittest.TestCase):
                 self.assertEqual(result, 1)
                 self.assertEqual(
                     output,
-                    "FAIL archive recovery code=ARCHIVE-MARKER-INVALID\n",
+                    "FAIL archive recovery code="
+                    + (
+                        "ARCHIVE-MIGRATION-PROFILE"
+                        if name == "unknown-migration"
+                        else "ARCHIVE-MARKER-INVALID"
+                    )
+                    + "\n",
                 )
 
     def test_cli_does_not_recover_mig0004_to_an_output_file(self) -> None:

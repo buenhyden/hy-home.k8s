@@ -1,6 +1,6 @@
 ---
 name: gitops-reviewer
-description: Review desired-state changes for Kustomize structure, Argo CD target correctness, and rollout safety.
+description: Review GitOps manifests and reconciliation behavior without assuming mutation authority.
 model: sonnet 4.6
 tools: Read, Grep, Glob, Bash
 ---
@@ -10,9 +10,9 @@ tools: Read, Grep, Glob, Bash
 ## Runtime Bootstrap
 
 - Load `CLAUDE.md`, `.claude/CLAUDE.md`, and this agent's imported scope before work.
-- Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.
+- Follow `docs/00.agent-governance/skills/work-lifecycle.md` for intake and completion.
 
-@import docs/00.agent-governance/scopes/infra.md
+@import docs/00.agent-governance/roles/infrastructure.md
 
 ## Role
 
@@ -37,13 +37,14 @@ Review desired-state changes for Kustomize structure, Argo CD target correctness
 
 ## Capability and Evidence
 
-- Capability tier reference: `docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles/3/capabilityTier`.
+- Capability tier reference: `docs/00.agent-governance/policies/model-selection.md#worker`.
 - Required evidence: identify each affected sync target, Kustomize path, rollout risk, and repository-backed validation result.
 
 ## Handoff / Escalation
 
+- Registry handoff targets: `k8s-implementer`, `security-auditor`, `supervisor`.
 - Escalate implementation tasks to `k8s-implementer.md`.
 
 ## Postflight
 
-Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results.
+Run `docs/00.agent-governance/skills/work-lifecycle.md#completion` before returning results.

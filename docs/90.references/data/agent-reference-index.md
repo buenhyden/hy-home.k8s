@@ -3,7 +3,7 @@ title: 'Reference: Agent Reference Index'
 type: content/reference
 status: active
 owner: platform
-updated: 2026-07-05
+updated: 2026-08-28
 ---
 
 # Reference: Agent Reference Index
@@ -53,7 +53,7 @@ Stage 00 또는 Stage 03으로 라우팅해야 하는 Agent runtime contract를
 ## Definitions / Facts
 
 - **Runtime governance owner**: `docs/00.agent-governance/**`.
-- **Runtime roster owner**: `docs/00.agent-governance/harness-catalog.md`.
+- **Machine roster owner**: `.agents/registry.json`.
 - **Feature-local Agent design owner**: `docs/03.specs/<###-Numbering>-<feature-id>/agent-design.md`.
 - **Repo-changing progress owner**: `docs/00.agent-governance/memory/progress.md`.
 - **Reference data owner**: `docs/90.references/data/**` for durable lookup
@@ -62,8 +62,8 @@ Stage 00 또는 Stage 03으로 라우팅해야 하는 Agent runtime contract를
 ## Sources
 
 - [Agent Governance Hub](../../00.agent-governance/README.md)
-- [Harness Catalog](../../00.agent-governance/harness-catalog.md)
-- [Document Stage Routing Rules](../../00.agent-governance/rules/document-authoring.md)
+- [Agent Registry](../../../.agents/registry.json)
+- [Document Authoring Policy](../../00.agent-governance/policies/document-authoring.md)
 - [Template Routing](../../99.templates/README.md)
 - [Data README](./README.md)
 
@@ -72,6 +72,7 @@ Stage 00 또는 Stage 03으로 라우팅해야 하는 Agent runtime contract를
 - Review cadence: on Agent reference addition, provider adapter change, or
   Stage 00 runtime governance change.
 - Last reviewed: 2026-07-03.
+- Current owner routing reviewed: 2026-08-28; source-check date unchanged.
 - Next review trigger: a PR that changes `.claude/agents/**`,
   `.codex/agents/**`, `.agents/agents/**`, `docs/00.agent-governance/**`, or
   `docs/03.specs/**/agent-design.md` routing.
@@ -81,6 +82,6 @@ Stage 00 또는 Stage 03으로 라우팅해야 하는 Agent runtime contract를
 - [90.references README](../README.md)
 - [Data README](./README.md)
 - [Agent Governance Hub](../../00.agent-governance/README.md)
-- [Harness Catalog](../../00.agent-governance/harness-catalog.md)
+- [Agent Registry](../../../.agents/registry.json)
 - [03.specs README](../../03.specs/README.md)
 - [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

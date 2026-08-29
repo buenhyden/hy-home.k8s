@@ -26,9 +26,6 @@ SCHEMA_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/agent-loop-lifecycle.schema.json"
 )
 FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-loop-lifecycle.json")
-HARNESS_PATH = PurePosixPath(
-    "docs/00.agent-governance/contracts/harness-contract.json"
-)
 CHECKPOINT_SCHEMA_PATH = (
     "docs/00.agent-governance/contracts/agent-checkpoint.schema.json"
 )
@@ -771,22 +768,6 @@ def _validate_checkpoint_boundary(
         fail(
             "AHLL-CHECKPOINT-BOUNDARY",
             "checkpoint schema version differs from the loop boundary",
-        )
-
-    harness = load_json(root, HARNESS_PATH)
-    try:
-        harness_memory_ids = tuple(
-            item["id"] for item in harness["memory"]["classes"]
-        )
-    except (KeyError, TypeError):
-        fail(
-            "AHLL-CHECKPOINT-BOUNDARY",
-            "harness memory class declaration is unreadable",
-        )
-    if harness_memory_ids != MEMORY_CLASS_IDS:
-        fail(
-            "AHLL-CHECKPOINT-BOUNDARY",
-            "loop checkpoint memory IDs differ from the harness contract",
         )
 
 

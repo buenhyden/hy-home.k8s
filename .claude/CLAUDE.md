@@ -2,35 +2,32 @@
 
 ## Purpose
 
-Thin baseline for the tracked Claude-native `.claude/**` surface. Durable
-common policy remains in Stage 00.
+Thin baseline for the tracked Claude-native surface. Shared policy and
+responsibility remain in Stage 00.
 
 ## Loading Order
 
-Load root `CLAUDE.md`, then follow the JIT sequence in
-`docs/00.agent-governance/rules/bootstrap.md` with the Claude provider note and
-the relevant scope.
+Load root `CLAUDE.md`, then
+`docs/00.agent-governance/skills/work-lifecycle.md`, the Claude provider note,
+and the relevant responsibility and active Task.
 
 ## Provider Metadata
 
-- Native role adapters: `.claude/agents/*.md` with provider-owned model and
+- Native role projections: `.claude/agents/*.md`, with native model and
   least-privilege tool metadata.
-- Native permission and event wiring: `.claude/settings.json`.
-- Shared asset views: `.claude/{skills,workflows,output-styles}/` symlinks to
-  `.agents/**`.
+- Native permission and event declarations: `.claude/settings.json`.
+- Shared skill view: `.claude/skills` points to `.agents/skills`.
 
 ## Canonical References
 
-- Common execution policy: `docs/00.agent-governance/rules/agentic.md`.
+- Common execution policy: `docs/00.agent-governance/policies/agent-execution.md`.
 - Provider facts: `docs/00.agent-governance/providers/claude.md`.
-- Role inventory and semantics: `docs/00.agent-governance/harness-catalog.md`
-  and `docs/00.agent-governance/contracts/harness-contract.json`.
-- Validation lanes and handoff: `docs/00.agent-governance/rules/quality-standards.md`.
-- Shared lifecycle hooks: `docs/00.agent-governance/hooks`.
+- Role inventory and semantics: `.agents/registry.json` and `.agents/agents/`.
+- Validation lanes and handoff: `docs/00.agent-governance/policies/quality.md`.
 - Shell guidance: `RTK.md`.
 
 ## Evidence Boundary
 
-Tracked Claude adapters and settings prove repository configuration only. They
-do not prove native discovery, hook delivery, authentication, model resolution,
-permission enforcement, or execution.
+Tracked projections and settings prove repository configuration only, not
+native discovery, hook delivery, authentication, model resolution, permission
+enforcement, or execution.

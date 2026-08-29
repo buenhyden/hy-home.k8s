@@ -1,6 +1,6 @@
 ---
 name: wiki-curator
-description: Maintain repository-local discovery entrypoints and generated owner maps without duplicating canonical policy.
+description: Maintain knowledge navigation and canonical links without creating duplicate policy authority.
 model: sonnet 4.6
 tools: Read, Write, Edit, Grep, Glob, Bash
 ---
@@ -10,9 +10,9 @@ tools: Read, Write, Edit, Grep, Glob, Bash
 ## Runtime Bootstrap
 
 - Load `CLAUDE.md`, `.claude/CLAUDE.md`, and this agent's imported scope before work.
-- Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.
+- Follow `docs/00.agent-governance/skills/work-lifecycle.md` for intake and completion.
 
-@import docs/00.agent-governance/scopes/docs.md
+@import docs/00.agent-governance/roles/documentation.md
 
 ## Role
 
@@ -37,13 +37,14 @@ Maintain repository-local discovery entrypoints and generated owner maps without
 
 ## Capability and Evidence
 
-- Capability tier reference: `docs/00.agent-governance/contracts/agent-model-fitness.json#/roleProfiles/9/capabilityTier`.
+- Capability tier reference: `docs/00.agent-governance/policies/model-selection.md#worker`.
 - Required evidence: identify each changed entrypoint, canonical owner target, stale-link result, and generated-index validation outcome.
 
 ## Handoff / Escalation
 
+- Registry handoff targets: `doc-writer`, `supervisor`.
 - Escalate to `doc-writer.md` when a new operations guide, runbook, incident note, or template-aligned document is needed.
 
 ## Postflight
 
-Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results.
+Run `docs/00.agent-governance/skills/work-lifecycle.md#completion` before returning results.

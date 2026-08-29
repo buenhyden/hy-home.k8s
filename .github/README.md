@@ -15,7 +15,7 @@ source of truth.
 
 ## Policy Routing
 
-- Branch strategy policy lives in `docs/00.agent-governance/rules/git-workflow.md`.
+- Branch strategy policy lives in `docs/00.agent-governance/policies/git.md`.
 - CI enforcement lives in `workflows/ci.yml`, `scripts/validate-repo-quality-gates.sh`, and the `manifest-static` script bundle.
 - The four validation jobs select Python 3.12, resolve the three direct pins
   owned by `requirements/ci-validation.in` through the fully hashed
@@ -30,7 +30,7 @@ source of truth.
   inventory.
 - The sole canonical local completion-order, lane, result, formatter, and
   handoff owner is
-  [`quality-standards.md`](../docs/00.agent-governance/rules/quality-standards.md);
+  [`quality-standards.md`](../docs/00.agent-governance/policies/quality.md);
   this hub and the PR template only route GitHub-specific consumers there.
 - Current validator command and fixture inventories live in
   [`scripts/README.md`](../scripts/README.md) and

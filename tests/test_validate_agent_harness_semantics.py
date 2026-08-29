@@ -234,12 +234,7 @@ class ThinAdapterBoundaryTest(unittest.TestCase):
                     inject_extra_metadata_key(surface, source),
                     role,
                 )
-                expected = (
-                    ["ROLE-ADAPTER-PARSE"]
-                    if surface == "gemini"
-                    else ["ROLE-ADAPTER-BOUNDS"]
-                )
-                self.assertEqual(expected, actual)
+                self.assertEqual(["ROLE-ADAPTER-BOUNDS"], actual)
 
     def test_role_adapter_rejects_description_drift(self):
         role = self.selection.roles["code-reviewer"]
@@ -351,6 +346,18 @@ class RepositoryEnumerationBoundaryTest(unittest.TestCase):
             encoding="utf-8"
         )
         self.assertNotIn(".rglob(", source)
+
+    def test_semantics_gate_has_no_legacy_snapshot_or_self_test_dependency(self):
+        source = (SCRIPTS / "validate-agent-harness-semantics.py").read_text(
+            encoding="utf-8"
+        )
+        self.assertNotIn("harness-contract.json", source)
+        self.assertNotIn("agent-model-fitness.json", source)
+        self.assertNotIn("agent-harness-semantics.json", source)
+        self.assertNotIn("--self-test", source)
+        self.assertFalse(
+            (ROOT / "tests/fixtures/agent-harness-semantics.json").exists()
+        )
 
 
 if __name__ == "__main__":  # pragma: no cover

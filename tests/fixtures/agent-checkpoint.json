@@ -38,7 +38,7 @@
       "loopState": "running"
     },
     "executor": {
-      "roleId": "governance-steward",
+      "roleId": "quality-engineer",
       "providerId": "codex"
     },
     "counters": {

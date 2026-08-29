@@ -235,10 +235,8 @@
         },
         "providerSurfaceId": {
           "enum": [
-            "local",
             "claude",
-            "codex",
-            "gemini"
+            "codex"
           ]
         },
         "providerSessionInstanceDigest": {
@@ -328,10 +326,8 @@
         },
         "providerId": {
           "enum": [
-            "local",
             "claude",
-            "codex",
-            "gemini"
+            "codex"
           ]
         }
       }

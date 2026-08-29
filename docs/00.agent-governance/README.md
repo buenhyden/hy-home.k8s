@@ -1,166 +1,72 @@
 # AI Agent Governance Hub
 
-> Central governance entry point for AI agents operating in `hy-home.k8s`.
-
 ## Overview
 
-This directory is the policy SSoT for local agent execution in `hy-home.k8s`.
-It also routes the human SDLC flow and lifecycle policy without duplicating
-the Stage 99 machine registry.
-It keeps gateway files thin by hosting durable rules, execution checklists,
-scope routing, provider notes, reusable memory, shared hook scripts, model
-policy, and the canonical runtime catalog used by Claude-native
-`.claude/agents/*.md`, Codex-native `.codex/agents/*.toml`, repository-local
-runtime baselines and shared/local `.agents/**` assets. Gemini CLI native
-`.gemini/**` adoption remains a separate `DEFER` boundary.
-
-### Stage Readers
-
-This README is primarily for:
-
-- Repository maintainers
-- Agent authors
-- Runtime operators
-- AI agents loading governance context
+Stage 00 owns human governance for agent work in this GitOps workspace.
+Codex and Claude are the supported providers; `.agents/` is provider-neutral.
 
 ## Stage Contract
 
-### In Scope
+- `policies/`: approval, safety, quality, data, Git, and SDLC norms.
+- `roles/`: responsibility boundaries and handoff meaning.
+- `providers/`: native loading and capability differences only.
+- `skills/`: reusable governance procedures and their approval boundary.
+- `sdlc.md`: Requirements → Architecture → Spec → Implementation → Operations.
 
-- Governance rules and execution checklists
-- Scope-specific policy for agent work
-- Provider-specific notes for supported engines
-- Canonical runtime roster and subagent protocol
-- Reusable operational memory entries
-- Documentation language, template routing, and drift garbage-collection policy
-- Human SDLC flow and document-lifecycle policy
+The [agent registry](../../.agents/registry.json) owns exact role IDs,
+permissions, handoffs, skill references, and projection paths. The
+[Stage 99 registry](../99.templates/registry.json) owns document contracts.
+Scripts own executable checks; neither registry is duplicated in this router.
 
-### Out of Scope
-
-- Product, architecture, feature-local execution, operations, reference, archive, and template SSoT under `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/05.operations`, `docs/90.references`, `docs/98.archive`, and `docs/99.templates`
-- Runtime bridge content under `.claude/**`
-- Human-facing project onboarding outside this governance area
-
-### Current Adapter Surface Matrix
-
-| Surface | Ownership and current meaning |
-| --- | --- |
-| `.claude/agents/*.md` | Claude native role definitions; `.claude/CLAUDE.md` is the repository-local Claude baseline. |
-| `.codex/agents/*.toml` | Codex native role definitions; `.codex/CODEX.md` is the repository-local Codex baseline. |
-| `.agents/agents/*.md` | Local/Antigravity role adapters, not Gemini CLI native roles. |
-| `.agents/{skills,workflows,output-styles}/` | Shared SSoT exposed through the tracked Claude/Codex symlink views. |
-| `.codex/hooks.json`, `.agents/hooks.json` | Context/validation wiring; the latter is local/Antigravity wiring. |
-| `.gemini/agents/**`, `.gemini/settings.json` | Gemini CLI native project surfaces tracked as repo-static evidence; runtime discovery, event delivery, auth, and model resolution remain `DEFER` or `ABSENT`. |
+Shared hooks and the remaining contracts still have explicit migration owners
+in Spec 0054. They are transitional executable consumers, not additional human
+policy owners. The [memory router](memory/README.md) explains the retained
+historical progress boundary without requiring new ledger entries.
 
 ## Document Index
-
-The document-profile registry owns this exhaustive path set. Each lifecycle
-cell mirrors the target document's frontmatter and is validated for exact path,
-status, uniqueness, and order.
 
 ### Current Governance Authority Index
 
 | Document | Lifecycle |
 | --- | --- |
-| [`harness-catalog.md`](harness-catalog.md) | `active` |
-| [`model-policy.md`](model-policy.md) | `active` |
+| [`agent-execution.md`](policies/agent-execution.md) | `active` |
+| [`approval-and-safety.md`](policies/approval-and-safety.md) | `active` |
+| [`document-authoring.md`](policies/document-authoring.md) | `active` |
 | [`document-lifecycle.md`](policies/document-lifecycle.md) | `active` |
+| [`git.md`](policies/git.md) | `active` |
+| [`model-selection.md`](policies/model-selection.md) | `active` |
+| [`quality.md`](policies/quality.md) | `active` |
 | [`claude.md`](providers/claude.md) | `active` |
 | [`codex.md`](providers/codex.md) | `active` |
-| [`gemini.md`](providers/gemini.md) | `active` |
-| [`agentic.md`](rules/agentic.md) | `active` |
-| [`approval-boundaries.md`](rules/approval-boundaries.md) | `active` |
-| [`bootstrap.md`](rules/bootstrap.md) | `active` |
-| [`document-authoring.md`](rules/document-authoring.md) | `active` |
-| [`git-workflow.md`](rules/git-workflow.md) | `active` |
-| [`persona.md`](rules/persona.md) | `active` |
-| [`postflight-checklist.md`](rules/postflight-checklist.md) | `active` |
-| [`preflight-checklist.md`](rules/preflight-checklist.md) | `active` |
-| [`quality-standards.md`](rules/quality-standards.md) | `active` |
-| [`standards.md`](rules/standards.md) | `active` |
-| [`architecture.md`](scopes/architecture.md) | `active` |
-| [`backend.md`](scopes/backend.md) | `active` |
-| [`docs.md`](scopes/docs.md) | `active` |
-| [`frontend.md`](scopes/frontend.md) | `active` |
-| [`infra.md`](scopes/infra.md) | `active` |
-| [`meta.md`](scopes/meta.md) | `active` |
-| [`ops.md`](scopes/ops.md) | `active` |
-| [`product.md`](scopes/product.md) | `active` |
-| [`qa.md`](scopes/qa.md) | `active` |
-| [`security.md`](scopes/security.md) | `active` |
+| [`architecture.md`](roles/architecture.md) | `active` |
+| [`documentation.md`](roles/documentation.md) | `active` |
+| [`infrastructure.md`](roles/infrastructure.md) | `active` |
+| [`operations.md`](roles/operations.md) | `active` |
+| [`quality.md`](roles/quality.md) | `active` |
+| [`security.md`](roles/security.md) | `active` |
+| [`supervision.md`](roles/supervision.md) | `active` |
 | [`sdlc.md`](sdlc.md) | `active` |
-| [`subagent-protocol.md`](subagent-protocol.md) | `active` |
-
-### Directory Map
-
-Key folders in this area:
-
-- `rules/`: global policy, document authoring, and execution checklists
-- `scopes/`: layer-specific execution rules
-- `providers/`: provider-specific notes
-- `hooks/`: shared lifecycle/edit hook scripts invoked by provider wiring
-- `memory/`: agent progress ledger and reusable operational lessons
-- `policies/`: lifecycle and SDLC norms that apply across document families
-
-```text
-docs/00.agent-governance/
-├── rules/              # Global policy, document authoring, and checklists
-├── scopes/             # Layer-specific execution rules
-├── providers/          # Provider-specific notes for Claude, Gemini, and gateways
-├── hooks/              # Shared lifecycle/edit hook scripts reused by providers
-├── memory/             # Reusable lessons and operational findings
-├── policies/           # Human lifecycle and SDLC norms
-├── sdlc.md             # Requirements-to-operations flow
-├── harness-catalog.md  # Canonical runtime roster for local agents and skills
-├── model-policy.md     # Cross-provider model tier and effort policy
-├── subagent-protocol.md
-└── README.md           # This file
-```
+| [`delegated-development.md`](skills/delegated-development.md) | `active` |
+| [`work-lifecycle.md`](skills/work-lifecycle.md) | `active` |
 
 ## Authoring Workflow
 
-1. Start from repository gateway files: `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md`.
-2. Follow the JIT loading order in `rules/bootstrap.md` and `rules/preflight-checklist.md`.
-3. Use `docs/99.templates/` when creating or restructuring governance documents.
-4. Use `rules/document-authoring.md` for stage selection, language,
-   Template-First execution, lifecycle checks, and validation handoff.
-5. Treat repeated agent failures as harness feedback: update the smallest
-   relevant rule, prompt/skill, hook, validator, template, README index, or
-   memory entry.
-6. Update `harness-catalog.md` and this README in the same change set when the runtime roster changes.
-
-### Relative Link Rules
-
-Links in this README are relative to `docs/00.agent-governance/`.
-
-- Governance rules use `rules/<file>.md`.
-- Scope and provider notes use `scopes/<file>.md` and `providers/<file>.md`.
-- Repository-root runtime files use `../../<path>`.
-- Template links use `../99.templates/templates/**/<template>`.
-
-### Governance Entry Points
-
-- [Model Policy](model-policy.md)
-- [Preflight Checklist](rules/preflight-checklist.md)
-- [Postflight Checklist](rules/postflight-checklist.md)
-- [Document Authoring Policy](rules/document-authoring.md)
-- [SDLC Flow](sdlc.md)
-- [Document Lifecycle Policy](policies/document-lifecycle.md)
-- [Local Harness Catalog](harness-catalog.md)
-- [Subagent Protocol](subagent-protocol.md)
-- [Codex Provider Notes](providers/codex.md)
+1. Start from root `AGENTS.md` or `CLAUDE.md`.
+2. Follow [work lifecycle](skills/work-lifecycle.md) and load only relevant
+   policies, responsibilities, provider notes, and task evidence.
+3. Use [document authoring](policies/document-authoring.md) and the Stage 99
+   selected template for document work.
+4. Change the single responsible owner, migrate current links, and record
+   applicable Git-backed recovery in the same logical cutover.
+5. Validate the affected registry, projections, semantics, and document
+   contracts; keep repository-static and runtime evidence separate.
 
 ## Related Documents
 
-- [AGENTS.md](../../AGENTS.md)
-- [Runtime Baseline](../../.claude/CLAUDE.md)
-- [Codex Runtime Baseline](../../.codex/CODEX.md)
-- [Claude Provider Notes](providers/claude.md)
-- [Codex Provider Notes](providers/codex.md)
-- [Gemini Provider Notes](providers/gemini.md)
-
-### Examples
-
-- Add a new execution rule under `rules/`.
-- Add a provider note under `providers/`.
-- Add work progress and reusable memory under `memory/progress.md` using `docs/99.templates/templates/governance/progress.template.md`.
+- [SDLC Flow](sdlc.md)
+- [Agent Registry](../../.agents/registry.json)
+- [Roles router](roles/README.md) selects responsibilities without copying the
+  machine roster.
+- [Templates](../99.templates/README.md)
+- [Archive](../98.archive/README.md)
+- [Scripts](../../scripts/README.md)

@@ -26,7 +26,7 @@
 - `infrastructure/` 아래의 클러스터/Helm 값/부트스트랩 및 검증 스크립트
 - `traefik/` 아래의 k3d 로컬 노출 보조용 dynamic config
 - `examples/` 아래의 앱 온보딩 및 AWS/Azure cloud target 참조 예시
-- 에이전트 게이트웨이 파일(`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`)
+- 에이전트 게이트웨이 파일(`AGENTS.md`, `CLAUDE.md`)
 - 저장소 차원의 CI, pre-commit, 문서/정적 검증 설정
 
 ### Out of Scope
@@ -41,7 +41,7 @@
 
 ```text
 hy-home.k8s/
-├── docs/                  # PRD/AD/ADR/Spec/Plan/Task/Operations/Runbook 체계
+├── docs/                  # Requirement Package/AD/ADR/Spec/Plan/Task/Operations/Runbook 체계
 ├── gitops/                # ArgoCD가 동기화하는 선언형 GitOps 리소스
 ├── infrastructure/        # k3d, ArgoCD values, bootstrap 및 검증 스크립트
 ├── examples/              # 앱 온보딩 및 AWS/Azure cloud target 참조 예시
@@ -53,7 +53,6 @@ hy-home.k8s/
 ├── .github/               # GitHub Actions, PR template, CODEOWNERS, labeler, zizmor
 ├── AGENTS.md              # Codex/GPT 전용 얇은 게이트웨이
 ├── CLAUDE.md              # Claude 전용 얇은 오버레이
-├── GEMINI.md              # Gemini 전용 얇은 오버레이
 └── README.md              # This file
 ```
 
@@ -63,7 +62,7 @@ hy-home.k8s/
 
 | Area                                                     | Responsibility                                                                 | Template                                                                                                                                                                                                                                                                                                                         |
 | -------------------------------------------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`docs/01.requirements`](docs/01.requirements/README.md) | 제품 요구사항, 사용자 문제, 범위, 성공/수용 기준                               | [`prd.template.md`](docs/99.templates/templates/requirements/requirement-package.template.md)                                                                                                                                                                                                                                                                           |
+| [`docs/01.requirements`](docs/01.requirements/README.md) | 제품 요구사항, 사용자 문제, 범위, 성공/수용 기준                               | [`requirement-package.template.md`](docs/99.templates/templates/requirements/requirement-package.template.md)                                                                                                                                                                                                                                                                           |
 | [`docs/02.architecture`](docs/02.architecture/README.md) | 아키텍처 요구사항, 참조 구조, 의사결정                                         | [`ad.template.md`](docs/99.templates/templates/architecture/ad.template.md), [`adr.template.md`](docs/99.templates/templates/architecture/adr.template.md)                                                                                                                                                                                                                   |
 | [`docs/03.specs`](docs/03.specs/README.md)               | 기능/워크플로우/시스템 구현 명세와 feature-local API/Agent/Data/Test 계약      | [`spec.template.md`](docs/99.templates/templates/specs/spec.template.md), helper templates는 [`03.specs README`](docs/03.specs/README.md) 참조                                                                                                                                                                                                   |
 | [`docs/05.operations`](docs/05.operations/README.md)     | 운영 가이드, 정책, 런북, 사고 기록                                             | [`guide.template.md`](docs/99.templates/templates/operations/guide.template.md), [`policy.template.md`](docs/99.templates/templates/operations/policy.template.md), [`runbook.template.md`](docs/99.templates/templates/operations/runbook.template.md), [`incident.template.md`](docs/99.templates/templates/operations/incident.template.md), [`postmortem.template.md`](docs/99.templates/templates/operations/postmortem.template.md) |
@@ -79,14 +78,14 @@ hy-home.k8s/
 
 ### Repository Workflow
 
-1. 저장소를 처음 읽을 때는 `README.md -> docs/README.md -> 해당 provider shim(AGENTS.md, CLAUDE.md, GEMINI.md) -> 관련 stage 문서` 순서로 진입한다.
+1. 저장소를 처음 읽을 때는 `README.md -> docs/README.md -> 해당 provider shim(AGENTS.md, CLAUDE.md) -> 관련 stage 문서` 순서로 진입한다.
 2. 설계/구현/운영 판단은 가능한 한 `docs/01.requirements`부터 `docs/05.operations/runbooks`까지의 문서 체인을 기준으로 추적한다.
 3. 새 README나 authored stage 문서는 [Template Routing Contract](docs/99.templates/README.md)에서 target pattern을 확인한 뒤 matching template에서 시작한다.
 4. 문서 링크는 상대 경로를 사용하고, 사람 대상 README는 한국어를 유지한다.
 5. `docs/00.agent-governance/*`는 영어로 유지하며, 게이트웨이 파일에는 규칙을 중복 복사하지 않는다.
 6. README 파일은 기본적으로 frontmatter를 요구하지 않는다. PRD/AD/ADR/Spec/Plan/Task/Guide/Operations Policy/Runbook/Incident/Postmortem/Reference 같은 authored stage 문서는 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
 7. 문서 체계나 템플릿을 바꾸면 [`docs/README.md`](docs/README.md), 해당 stage README, [Template Routing Contract](docs/99.templates/README.md), [`docs/99.templates/README.md`](docs/99.templates/README.md), 생성 문서 적용 범위를 같은 변경에서 점검한다.
-8. 브랜치 전략은 `main` 중심 PR flow를 기본으로 하며, 상세 규칙은 [`docs/00.agent-governance/rules/git-workflow.md`](docs/00.agent-governance/rules/git-workflow.md)를 따른다.
+8. 브랜치 전략은 `main` 중심 PR flow를 기본으로 하며, 상세 규칙은 [`docs/00.agent-governance/policies/git.md`](docs/00.agent-governance/policies/git.md)를 따른다.
 9. 인프라 변경은 GitOps-first로 다룬다. 일반 변경에서 live cluster mutation, `kubectl apply`, 외부 Vault 조작을 도입하지 않는다.
 10. `.github` 자동화나 QA gate를 바꿀 때는 [`.github/README.md`](.github/README.md)와 PR template의 검증 체크리스트를 함께 확인한다.
 11. 외부 서비스 계약이나 부트스트랩 명령을 변경했다면 관련 README, runbook, 운영 정책 링크도 함께 점검한다.
@@ -143,12 +142,10 @@ hy-home.k8s/
 - `traefik/` - k3d 로컬 ingress-nginx 뒤에서 ArgoCD/Headlamp/Kiali/Rollouts를 노출하는 보조 dynamic config
 - `examples/` - 앱 GitOps 온보딩용 참조 구현과 AWS/Azure cloud target 예시
 - `scripts/` - 저장소 유지보수와 자동화 보조 스크립트
-- `graphify-out/` - 공유된 graphify 탐색 산출물. `GRAPH_REPORT.md`, `GRAPH_TREE.html`, `graph.json`, `graph.html`만 추적한다. `.codex/hooks.json`의 PreToolUse 컨텍스트와 `.codex/CODEX.md`가 이 산출물을 읽으므로 일회성 잔여물이 아니다.
 - `.github/` - `main` PR flow용 CI, release evidence, PR/issue intake, CODEOWNERS, labeler, zizmor 설정
-- `.agents/` - 공유/local Antigravity 에이전트 자산. provider-native 실행 증거의 정본이 아니다.
+- `.agents/` - 공급자 중립 역할·스킬과 registry. Codex/Claude projection의 공통 의미를 소유하며 native 실행을 증명하지 않는다.
 - `.claude/` - 추적되는 Claude project adapter. 실제 native discovery와 적용은 별도 runtime 증거가 필요하다.
 - `.codex/` - 추적되는 Codex project adapter. 실제 native discovery와 적용은 별도 runtime 증거가 필요하다.
-- `.gemini/` - 추적되는 Gemini project surface의 repository-static 증거. 실제 native discovery와 적용은 별도 runtime 증거가 필요하다.
 
 ### Tech Stack
 
@@ -196,7 +193,7 @@ cd hy-home.k8s
 
 1. [README.md](./README.md) - 저장소 개요
 2. [docs/README.md](./docs/README.md) - 단계형 문서 체계 개요
-3. [AGENTS.md](./AGENTS.md), [CLAUDE.md](./CLAUDE.md), [GEMINI.md](./GEMINI.md) - provider별 얇은 에이전트 게이트웨이
+3. [AGENTS.md](./AGENTS.md), [CLAUDE.md](./CLAUDE.md) - provider별 얇은 에이전트 게이트웨이
 4. [docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md](./docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md) - 실제 부트스트랩 절차
 
 ### 3. External Dependencies Readiness
@@ -251,7 +248,7 @@ bash scripts/validate-policy-gates.sh .
 find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' -exec bash -n {} +
 ```
 
-하네스 표면 변경은 위 repo-static 게이트를 묶은 `bash scripts/validate-harness.sh`로 한 번에 검증한다. 표면별 승인 경계는 [`approval-boundaries.md`](docs/00.agent-governance/rules/approval-boundaries.md)를 참조하고, agent roster와 adapter 구현 위치는 [`harness-catalog.md`](docs/00.agent-governance/harness-catalog.md)를 참조한다. live k3d/ArgoCD/Vault 검증은 기본 경로가 아니라 승인된 운영 runbook에서만 실행한다.
+하네스 표면 변경은 위 repo-static 게이트를 묶은 `bash scripts/validate-harness.sh`로 한 번에 검증한다. 표면별 승인 경계는 [승인·안전 정책](docs/00.agent-governance/policies/approval-and-safety.md)를 참조하고, agent roster와 adapter 구현 위치는 [역할 책임 안내](docs/00.agent-governance/roles/README.md)를 참조한다. live k3d/ArgoCD/Vault 검증은 기본 경로가 아니라 승인된 운영 runbook에서만 실행한다.
 
 `validate-repo-quality-gates.sh`는 authored docs에서 bare/main direct push 예시와 PR-flow 문맥 없는 push 예시 회귀를 차단하고, README/examples 등 broader Markdown roots에서는 bare/main direct push 예시를 차단한다. 또한 `generate-llm-wiki-index.sh --check`로 LLM WIKI generated index freshness를 확인한다. `pre-commit`, `kube-linter`, `zizmor`, `actionlint`, `shellcheck`는 로컬에 있으면 사용한다. 로컬 `PATH`에 없을 때는 위의 repo-backed 검증을 먼저 실행하고, 전체 hook/tool matrix는 GitHub Actions에서 확인한다.
 

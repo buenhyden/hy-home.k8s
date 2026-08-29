@@ -5,15 +5,25 @@ from __future__ import annotations
 
 import argparse
 import copy
+import importlib.util
 import json
 import re
 import stat
 import subprocess
+import sys
 import tempfile
 from pathlib import Path, PurePosixPath
 from typing import Any, NoReturn, Sequence
 
-from jsonschema import Draft202012Validator
+_schema_spec = importlib.util.spec_from_file_location(
+    "_affected_schema_owner", Path(__file__).with_name("json_schema_validation.py")
+)
+if _schema_spec is None or _schema_spec.loader is None:
+    raise ImportError("local schema owner is unavailable")
+_schema_owner = importlib.util.module_from_spec(_schema_spec)
+_schema_spec.loader.exec_module(_schema_owner)
+SchemaEvaluationError = _schema_owner.SchemaEvaluationError
+schema_errors = _schema_owner.schema_errors
 
 
 CONTRACT_PATH = PurePosixPath(
@@ -58,7 +68,6 @@ EXPECTED_AGENT_GOVERNANCE_SURFACES = frozenset(
         "agent-shared",
         "agent-claude",
         "agent-codex",
-        "agent-gemini",
         "github-automation",
         "governance-documents",
         "template-documents",
@@ -176,7 +185,7 @@ def _unique_ids(rows: Sequence[dict[str, Any]], kind: str) -> dict[str, dict[str
     return indexed
 
 
-def _validate_direct_script_argv(identifier: str, argv: Sequence[str]) -> None:
+def _validate_direct_script_argv(identifier: str, argv: Sequence[str]) -> str:
     if any(SAFE_ARG.fullmatch(argument) is None for argument in argv):
         fail(
             "SURFACE-VALIDATOR-ARGV",
@@ -243,25 +252,44 @@ def _validate_direct_script_argv(identifier: str, argv: Sequence[str]) -> None:
             "SURFACE-VALIDATOR-ARGV-SCRIPT",
             f"{identifier} script {normalized_script!r} does not match {executable}",
         )
+    return normalized_script
+
+
+def validator_script_paths(
+    root: Path,
+    raw_contract: dict[str, Any] | None = None,
+    *,
+    raw_schema: dict[str, Any] | None = None,
+) -> frozenset[str]:
+    """Return executable artifact identities from the validated owner contract."""
+
+    contract = validate_contract(root, raw_contract, raw_schema=raw_schema)
+    return frozenset(
+        _validate_direct_script_argv(row["id"], row["argv"])
+        for row in contract["validators"]
+    )
 
 
 def validate_contract(
-    root: Path, raw_contract: dict[str, Any] | None = None
+    root: Path,
+    raw_contract: dict[str, Any] | None = None,
+    *,
+    raw_schema: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    schema = load_json(root / SCHEMA_PATH)
-    try:
-        Draft202012Validator.check_schema(schema)
-    except Exception as exc:  # jsonschema exposes several schema subclasses
-        fail("SURFACE-SCHEMA-DEFINITION", str(exc))
+    schema = (
+        copy.deepcopy(raw_schema)
+        if raw_schema is not None
+        else load_json(root / SCHEMA_PATH)
+    )
     contract = (
         copy.deepcopy(raw_contract)
         if raw_contract is not None
         else load_json(root / CONTRACT_PATH)
     )
-    errors = sorted(
-        Draft202012Validator(schema).iter_errors(contract),
-        key=lambda item: tuple(str(part) for part in item.absolute_path),
-    )
+    try:
+        errors = schema_errors(schema, contract)
+    except SchemaEvaluationError:
+        fail("SURFACE-SCHEMA-DEFINITION", "invalid local JSON Schema")
     if errors:
         error = errors[0]
         location = "/".join(str(part) for part in error.absolute_path) or "<root>"
@@ -455,6 +483,69 @@ def reject_symlink_traversal(
         fail("SURFACE-PATH-NODE", raw_path)
 
 
+def _repository_migration_proof(root: Path) -> Any:
+    """Call the canonical proof with fixed sibling owners in a temporary scope."""
+
+    owners = (
+        "document_authority",
+        "archive_cutover_manifest",
+        "archive_recovery",
+        "document_contracts",
+        "archive_validation",
+        "reference_information_architecture",
+    )
+    missing = object()
+    aliases = ("json_schema_validation", *owners, "_links_document_taxonomy_migration")
+    previous = {name: sys.modules.get(name, missing) for name in aliases}
+    private_names: list[str] = []
+    try:
+        directory = Path(__file__).resolve(strict=True).parent
+        sys.modules["json_schema_validation"] = _schema_owner
+        for owner in owners:
+            path = (directory / f"{owner}.py").resolve(strict=True)
+            if path.parent != directory:
+                raise ImportError("canonical migration owner is unavailable")
+            name = f"_affected_migration_{id(missing):x}_{owner}"
+            while name in sys.modules:
+                name += "_private"
+            spec = importlib.util.spec_from_file_location(name, path)
+            if spec is None or spec.loader is None:
+                raise ImportError("canonical migration owner is unavailable")
+            module = importlib.util.module_from_spec(spec)
+            private_names.append(name)
+            sys.modules[name] = module
+            sys.modules[owner] = module
+            spec.loader.exec_module(module)
+        archive = sys.modules["archive_validation"]
+        proof = archive.repository_migration_proof(root)
+        if not isinstance(proof, archive.MigrationProof) or any(
+            not isinstance(item, archive.MigrationDisposition)
+            for item in proof.dispositions.values()
+        ):
+            raise ValueError("canonical migration proof type differs")
+        return proof
+    except Exception:
+        fail("SURFACE-MIGRATION-PROOF", "canonical migration proof is unavailable")
+    finally:
+        for name, module in previous.items():
+            if module is missing:
+                sys.modules.pop(name, None)
+            else:
+                sys.modules[name] = module
+        for name in private_names:
+            sys.modules.pop(name, None)
+
+
+def _path_is_absent(root: Path, path: str) -> bool:
+    try:
+        (root / path).lstat()
+    except FileNotFoundError:
+        return True
+    except OSError:
+        fail("SURFACE-PATH-NODE", "path state is unavailable")
+    return False
+
+
 def select_paths(
     contract: dict[str, Any],
     paths: Sequence[str],
@@ -470,16 +561,55 @@ def select_paths(
     ci_job_ids: set[str] = set()
     unmatched_paths: set[str] = set()
     maximum = 0
+    migration_proof = None
     for raw_path in paths:
         if root is not None:
             reject_symlink_traversal(root, raw_path)
         try:
             surface = classify_path(contract, raw_path)
         except ContractError as exc:
-            if collect_unmatched and exc.code == "SURFACE-PATH-UNMATCHED":
-                unmatched_paths.add(normalize_path(raw_path))
-                continue
-            raise
+            if exc.code != "SURFACE-PATH-UNMATCHED":
+                raise
+            surface = None
+            if root is not None and _path_is_absent(root, raw_path):
+                if migration_proof is None:
+                    migration_proof = _repository_migration_proof(root)
+                disposition = migration_proof.dispositions.get(raw_path)
+                target = migration_proof.targets.get(raw_path)
+                if disposition is not None or target is not None:
+                    if (
+                        disposition is None
+                        or disposition.record_path not in migration_proof.records
+                        or not isinstance(disposition.source_bytes, bytes)
+                        or disposition.action
+                        not in {"moved", "merged", "replaced", "deleted"}
+                        or not isinstance(target, str)
+                        or target == raw_path
+                        or migration_proof.targets.get(
+                            disposition.target, disposition.target
+                        )
+                        != target
+                    ):
+                        fail(
+                            "SURFACE-MIGRATION-PROOF",
+                            "source disposition is unavailable",
+                        )
+                    reject_symlink_traversal(root, raw_path)
+                    if not _path_is_absent(root, raw_path):
+                        raise exc
+                    try:
+                        reject_symlink_traversal(root, target, require_present=True)
+                        surface = classify_path(contract, target)
+                    except ContractError:
+                        fail(
+                            "SURFACE-MIGRATION-TARGET",
+                            "current terminal surface is unavailable",
+                        )
+            if surface is None:
+                if collect_unmatched:
+                    unmatched_paths.add(normalize_path(raw_path))
+                    continue
+                raise
         for identifier in surface["validators"]:
             if lane in validators_by_id[identifier]["lanes"]:
                 validator_ids.add(identifier)
