@@ -87,15 +87,6 @@ EXPECTED_LIFECYCLE_TRANSITIONS = {
         ("resolved", "closed"),
     },
     "postmortem": {("draft", "published"), ("published", "superseded")},
-    "research": {
-        ("draft", "published"), ("published", "superseded"),
-        ("published", "retired"),
-    },
-    "audit": {("draft", "completed"), ("completed", "invalidated")},
-    "data": {
-        ("draft", "active"), ("active", "stale"),
-        ("stale", "superseded"), ("stale", "retired"),
-    },
     "migration-tombstone": {("draft", "sealed")},
     "template-profile": {
         ("draft", "active"), ("active", "superseded"),

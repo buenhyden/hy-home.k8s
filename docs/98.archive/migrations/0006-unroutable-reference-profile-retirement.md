@@ -1,7 +1,7 @@
 ---
 title: "MIG-0006: Unroutable Reference Profile Retirement"
 type: "content/archive-migration"
-status: "draft"
+status: "sealed"
 owner: "platform"
 updated: "2026-08-30"
 artifact_id: "MIG-0006"
@@ -67,21 +67,20 @@ glossary, or evidence reference". The retired templates duplicated its purpose.
 ]
 ```
 
-## Historical Consumers
-
-No current document cites the three retired templates. Their only references
-were the six registry entries retired with them, so this block records an empty
-consumer set rather than admitting any path.
-
-<!-- archive-historical-consumers:v1 format=json -->
-
-```json
-[]
-```
-
 ## Recovery
 
 For every row, recover the legacy bytes with `git show
 <source_commit>:<legacy_path>` and verify both `source_blob` and
 `content_sha256`. Merged rows resolve through `replacement`; their legacy bytes
 remain recoverable from Git history.
+
+### Historical consumers
+
+No current document cites the three retired templates. Their only references
+were the six registry entries retired with them, so this block admits no path.
+
+<!-- archive-historical-consumers:v1 format=json -->
+
+```json
+[]
+```

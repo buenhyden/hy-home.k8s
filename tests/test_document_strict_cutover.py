@@ -136,8 +136,10 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             set(self.registry["programLineage"]),
             {"lifecycleDomains", "programs"},
         )
-        self.assertEqual(len(self.registry["profiles"]), 65)
-        self.assertEqual(len(self.registry["programLineage"]["lifecycleDomains"]), 12)
+        # 65 profiles and 12 domains before content/audit, content/research
+        # and content/data retired with their template profiles.
+        self.assertEqual(len(self.registry["profiles"]), 59)
+        self.assertEqual(len(self.registry["programLineage"]["lifecycleDomains"]), 9)
 
     def test_profile_schema_accepts_terminal_registry(self) -> None:
         schema = json.loads(PROFILE_SCHEMA_PATH.read_text(encoding="utf-8"))

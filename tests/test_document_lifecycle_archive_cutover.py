@@ -814,7 +814,9 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
         self,
     ):
         registry = load_registry(ROOT)
-        self.assertEqual(len(registry.lifecycle_domains), 12)
+        # 12 before the content/audit, content/research and content/data
+        # families retired with their unroutable profiles.
+        self.assertEqual(len(registry.lifecycle_domains), 9)
         requirement = next(
             domain
             for domain in registry.lifecycle_domains
