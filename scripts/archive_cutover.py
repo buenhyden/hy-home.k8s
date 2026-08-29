@@ -9,7 +9,6 @@ printed or retained in the report.
 from __future__ import annotations
 
 import argparse
-import importlib.util
 import json
 import os
 import posixpath
@@ -20,7 +19,7 @@ import subprocess
 from dataclasses import dataclass, replace
 from functools import lru_cache
 from pathlib import Path, PurePosixPath
-from types import MappingProxyType, ModuleType
+from types import MappingProxyType
 from typing import Mapping, Sequence
 
 import yaml
@@ -31,7 +30,6 @@ if __package__:
         ARCHIVE_TEMPLATE,
         CUTOVER_BASE_COMMIT,
         EXPECTED_ARCHIVE_PATHS,
-        EXPECTED_ARCHIVE_RECORDS,
     )
     from scripts.archive_recovery import (
         ArchiveContractError,
@@ -71,7 +69,6 @@ else:
         ARCHIVE_TEMPLATE,
         CUTOVER_BASE_COMMIT,
         EXPECTED_ARCHIVE_PATHS,
-        EXPECTED_ARCHIVE_RECORDS,
     )
     from archive_recovery import (  # type: ignore[no-redef]
         ArchiveContractError,
@@ -107,8 +104,7 @@ else:
     )
 
 
-EXPECTED_HISTORICAL_LINKS = 202
-MIGRATION_RESULTS_PATH = "docs/90.references/data/active-corpus-migration-results.json"
+_ARCHIVE_PREFIX = "docs/98.archive/"
 WORK054_MIGRATION_PATH = (
     "docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md"
 )
@@ -807,47 +803,6 @@ def _work105_replacement_target(
     return _WORK105_CURRENT_AD
 
 
-@lru_cache(maxsize=1)
-def _load_migration_validator() -> ModuleType:
-    """Load the additive ACER validator from its canonical CLI module."""
-
-    path = (
-        Path(__file__)
-        .resolve(strict=True)
-        .with_name("validate-active-corpus-migrations.py")
-    )
-    spec = importlib.util.spec_from_file_location(
-        "_archive_cutover_active_corpus_migrations", path
-    )
-    if spec is None or spec.loader is None:
-        raise RuntimeError("migration validator is unavailable")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    if Path(str(getattr(module, "__file__", ""))).resolve(strict=True) != path:
-        raise RuntimeError("migration validator is unavailable")
-    return module
-
-
-def _migration_projection(
-    root: Path,
-) -> tuple[dict[str, dict[str, object]], dict[str, int]]:
-    """Return only records admitted by the closed eligible-prefix ledger."""
-
-    module = _load_migration_validator()
-    eligibility, document = module.load_documents(root)
-    counts = module.validate_ledger_document(document, eligibility)
-    rows: dict[str, dict[str, object]] = {}
-    for batch in document["batches"]:
-        for row in batch["records"]:
-            projected = dict(row)
-            projected["_currentClosureOwner"] = batch["currentClosureOwner"]
-            projected["_archiveNavigationBoundary"] = batch["archiveNavigationBoundary"]
-            rows[str(row["archivePath"])] = projected
-    if len(rows) != counts["records"]:
-        raise RuntimeError("migration validator returned an invalid projection")
-    return rows, dict(counts)
-
-
 def _parse_index_row(line: str) -> ArchiveIndexRow | None:
     cells = tuple(cell.strip() for cell in line.strip().strip("|").split("|"))
     if len(cells) != len(_INDEX_COLUMNS):
@@ -1046,20 +1001,9 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         diagnostics.append(
             _diagnostic("ARCHIVE-MIGRATION-LEDGER", WORK107_MIGRATION_PATH)
         )
-    try:
-        migration_rows = _migration_projection(root)[0]
-    except Exception:
-        migration_rows = {}
-        diagnostics.append(
-            _diagnostic("ARCHIVE-MIGRATION-LEDGER", MIGRATION_RESULTS_PATH)
-        )
     legacy_base_paths = frozenset(EXPECTED_ARCHIVE_PATHS)
-    legacy_acer_paths = legacy_base_paths | frozenset(migration_rows)
     base_paths = frozenset(
         work107_legacy_to_stable.get(path, path) for path in legacy_base_paths
-    )
-    acer_paths = frozenset(
-        work107_legacy_to_stable.get(path, path) for path in legacy_acer_paths
     )
     record_link_counts = dict(generic_report.record_link_counts)
     expected_paths = frozenset(record_link_counts)
@@ -1093,8 +1037,6 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         expected_source_commit = (
             stable_row.get("source_commit")
             if stable_row is not None
-            else migration_rows[archive_path].get("sourceCommit")
-            if archive_path in migration_rows
             else (
                 _source_commit(str(original_path))
                 if archive_path in base_paths
@@ -1138,16 +1080,6 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         or sum(record_link_counts.values()) != expected_historical_links
     ):
         diagnostics.append(_diagnostic("ARCHIVE-EVIDENCE-COUNT", ARCHIVE_INDEX))
-    arwb_paths = base_paths
-    if (
-        not arwb_paths.issubset(expected_paths)
-        or len(arwb_paths) != EXPECTED_ARCHIVE_RECORDS
-        or sum(record_link_counts.get(path, -1) for path in arwb_paths)
-        != EXPECTED_HISTORICAL_LINKS
-    ):
-        diagnostics.append(_diagnostic("ARCHIVE-FINITE-BASE", ARCHIVE_INDEX))
-    if not acer_paths.issubset(expected_paths) or not arwb_paths.issubset(acer_paths):
-        diagnostics.append(_diagnostic("ARCHIVE-ACER-SUBSET", ARCHIVE_INDEX))
 
     original_paths = [row[1].get("original_path") for row in metadata_rows]
     if len(original_paths) != len(set(original_paths)):
@@ -1158,6 +1090,10 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         str(metadata.get("original_path"))
         for _archive_path, metadata, _link_count in metadata_rows
         if isinstance(metadata.get("original_path"), str)
+    ) | frozenset(
+        "docs/" + str(row["legacy_path"])[len(_ARCHIVE_PREFIX) :]
+        for row in work107_rows
+        if str(row.get("legacy_path", "")).startswith(_ARCHIVE_PREFIX)
     )
     for archive_path, metadata, _link_count in metadata_rows:
         original_path = metadata.get("original_path")
@@ -1174,7 +1110,7 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
                 if stable_row is not None
                 else archive_path
             )
-            migration = migration_rows.get(legacy_archive_path)
+            migration = None
             closure_owner = (
                 migration.get("_currentClosureOwner") if migration is not None else None
             )

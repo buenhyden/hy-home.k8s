@@ -667,22 +667,29 @@ class ArchiveCutoverMigrationGraphTests(unittest.TestCase):
 
 
 class FiniteWork108ArtifactIdentityAdmissionTest(unittest.TestCase):
-    @staticmethod
-    def _git_bytes(specifier: str) -> bytes:
-        result = subprocess.run(
-            ["git", "show", specifier],
-            cwd=ROOT,
-            check=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-        return result.stdout
+    """Exercise the WORK-108 projection over a built envelope.
+
+    The helper is a pure function over bytes.  It used to be fed the stored
+    bytes of a Stage 98 body record; those bodies now live in Git history, so
+    the fixture is built here instead.  The identity and path still come from
+    the digest-pinned WORK-107 ledger, which survives.
+    """
 
     def test_outer_artifact_projection_is_exact_and_fail_closed(self):
         row = build_work107_migration_rows(ROOT)[0]
         path = str(row["stable_path"])
-        proposed = self._git_bytes(f":{path}")
         artifact_line = f'artifact_id: "{row["artifact_id"]}"\n'.encode()
+        proposed = (
+            b"---\n"
+            b'title: "Affected Surface and Agent QA Implementation Plan"\n'
+            b'type: "content/archive"\n'
+            b'status: "archived"\n'
+            b'owner: "platform"\n'
+            b'updated: "2026-07-18"\n' + artifact_line + b"---\n"
+            b"<!-- archive-envelope:v1 payload=rest-of-file"
+            b" encoding=git-blob-bytes -->\n"
+            b"payload bytes\n"
+        )
         self.assertEqual(proposed.count(artifact_line), 1)
         base = proposed.replace(artifact_line, b"", 1)
         helper = getattr(VALIDATOR, "_work108_artifact_projection", None)

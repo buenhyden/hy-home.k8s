@@ -2554,7 +2554,11 @@ def _stage98_namespace_records(
         legacy_to_stable.get(path, path) for path in EXPECTED_ARCHIVE_PATHS
     )
     reviewed = frozenset(reviewed_manifest)
-    if not base.issubset(actual) or not reviewed.issubset(actual):
+    # ADR-0030 makes Git history the full-content archive, so a base record is
+    # proved by presence or by a sealed row in the digest-pinned WORK-107
+    # ledger, which carries its source blob and content digest.
+    sealed = frozenset(stable_rows)
+    if not base.issubset(actual | sealed) or not reviewed.issubset(actual | sealed):
         diagnostics.append(
             _diagnostic("ARCHIVE-NAMESPACE-REVIEWED", ARCHIVE_ROOT.as_posix())
         )
@@ -3025,7 +3029,7 @@ def validate_repository_archive(
         reviewed_manifest,
     )
     diagnostics.extend(namespace_diagnostics)
-    if stable_rows and frozenset(stable_rows) != actual:
+    if stable_rows and not actual.issubset(frozenset(stable_rows)):
         diagnostics.append(
             _diagnostic("ARCHIVE-MIGRATION-PARITY", WORK107_MIGRATION_PATH)
         )

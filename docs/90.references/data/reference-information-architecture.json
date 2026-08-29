@@ -179,25 +179,6 @@
       ]
     },
     {
-      "id": "active-corpus-migration-results",
-      "repositoryEvidence": [
-        "docs/90.references/data/active-corpus-migration-results.json"
-      ],
-      "refreshTrigger": "Archive or index drift, consumer repair, validation-result change, or rollback-parent change",
-      "sources": [
-        {
-          "url": "https://git-scm.com/docs/git-mv",
-          "checkedOn": "2026-07-22",
-          "adoptedScope": [
-            "Tracked path movement and index-update mechanics considered by the migration ledger"
-          ],
-          "rejectedScope": [
-            "Proof that a local migration batch, consumer repair, rollback, remote job, or CI run succeeded"
-          ]
-        }
-      ]
-    },
-    {
       "id": "agent-reference-index",
       "repositoryEvidence": [
         "docs/90.references/data/agent-reference-index.md"
