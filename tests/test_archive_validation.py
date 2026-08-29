@@ -2504,11 +2504,13 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         self.assertEqual(
             set(statements),
             # 0055-0061 are the renumbered successors the consolidation
-            # merge introduced alongside the original three.
+            # merge introduced alongside the original three, and 0062 is the
+            # standalone execution the same merge declared in the registry.
             {
                 "0043",
                 "0053",
                 "0054",
+                "0062",
                 "0055",
                 "0056",
                 "0057",
