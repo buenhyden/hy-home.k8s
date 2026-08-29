@@ -127,6 +127,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 "$schema",
                 "profiles",
                 "programLineage",
+                "referenceCurrentPacks",
                 "schemaVersion",
                 "standaloneExecutions",
             },

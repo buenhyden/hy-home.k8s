@@ -57,9 +57,19 @@ design-system 전용 정본이다.
    [품질·증거 정책](00.agent-governance/policies/quality.md)에 따라 검증하고
    현재 Task에 결과·제한·다음 담당자를 기록한다.
 
-사람용 README와 운영 설명은 한국어를 사용할 수 있다. Stage 00,
-Spec/Plan/Task 및 명시적인 AI Agent 실행 계약은 영어로 유지한다.
 정적 검증은 live cluster 변경 승인이나 실제 provider 실행 증거가 아니다.
+
+### 문서 역할과 언어 계약
+
+사람이 읽는 안내와 요약은 한국어를 우선하고, AI Agent가 실행 기준으로 삼는
+정책·프롬프트·도구·검증 계약은 영어를 우선한다. 한 문서가 두 독자를 함께
+상대하면 사람용 맥락은 한국어로, `AI Agent Requirements` 같은 에이전트용
+요구사항 섹션은 영어로 작성한다.
+
+실행 계약에 가까운 문서는 영어를 기본값으로 둔다. Stage 00, `spec.md`,
+`plan.md`, 개별 Task는 계획·검증·handoff 증적이므로 영어로 작성한다. README와
+운영 안내처럼 사람이 먼저 읽는 문서는 한국어로 두되, 그 안에 들어가는 AI Agent
+실행 지시나 도구 계약은 영어로 분리한다.
 
 ## Related Documents
 

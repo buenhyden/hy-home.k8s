@@ -1342,6 +1342,10 @@ def canonical_form_content_errors(
     archive_migration_marker = (
         "<!-- archive-migration-ledger:v1 format=json -->"
     )
+    # The migration form also opens the consumer block the Archive parser owns.
+    archive_consumers_marker = (
+        "<!-- archive-historical-consumers:v1 format=json -->"
+    )
     for form_path, source in sorted(form_sources.items(), key=lambda item: str(item[0])):
         for marker in retired_markers:
             if marker in source:
@@ -1357,6 +1361,7 @@ def canonical_form_content_errors(
                 markdownlint_directive,
                 archive_envelope_marker,
                 archive_migration_marker,
+                archive_consumers_marker,
             } or author_comment.fullmatch(comment):
                 continue
             errors.append(f"{form_path} contains a non-author form comment")
