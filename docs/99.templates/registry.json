@@ -4933,7 +4933,7 @@
     {
       "spec": "0062",
       "plan": "docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md",
-      "task": "docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md",
+      "task": "docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/tsk-0008-wrfr-007.md",
       "state": "active",
       "reason": "Direct human-approved full-corpus external-source and workspace reverification over the existing WER research pack",
       "decision": "0022",

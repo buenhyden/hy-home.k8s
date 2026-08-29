@@ -6366,6 +6366,10 @@ STANDALONE_APPROVAL_STATEMENTS = {
         "Direct human approval on 2026-08-13 authorizes this standalone execution relation.",
         "No separate PRD or Architecture Description is required or part of this standalone lifecycle.",
     ),
+    "0062": (
+        "Direct human approval on 2026-08-20 authorizes this standalone execution relation.",
+        "No separate PRD or Architecture Description is required or part of this standalone lifecycle.",
+    ),
     "0055": (
         "Direct human approval on 2026-08-09 authorizes this standalone execution relation.",
         "No separate PRD or Architecture Description is required or part of this standalone lifecycle.",

@@ -355,7 +355,7 @@ replayed by an implementer.
 
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/spec.md`
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md`
-- Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
+- Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/`
 - Modify: `docs/03.specs/README.md`
 - Modify: `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`
 - Modify: `docs/99.templates/registry.json`
@@ -426,7 +426,7 @@ replayed by an implementer.
     approval is pending with the active authorization date, activation commit,
     and next owner `WRFR-001`;
   - add Spec 0062's Plan and Task to the Spec's Related Documents;
-  - expand the Stage 03 tree entry to `spec.md`, `plan.md`, and `tasks.md`, and
+  - expand the Stage 03 tree entry to `spec.md`, `plan.md`, and `tasks/`, and
     change the index row to `Active`;
   - append ADR 0022's tenth standalone lineage row for Spec 0062;
   - append this sorted registry row after `0054`:
@@ -435,7 +435,7 @@ replayed by an implementer.
     {
       "spec": "0062",
       "plan": "docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md",
-      "task": "docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md",
+      "task": "docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/",
       "state": "active",
       "reason": "Direct human-approved full-corpus external-source and workspace reverification over the existing WER research pack",
       "decision": "0022",
@@ -466,7 +466,7 @@ replayed by an implementer.
   ```bash
   git add docs/03.specs/0062-workspace-research-full-corpus-reverification/spec.md \
     docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md \
-    docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md \
+    docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/ \
     docs/03.specs/README.md \
     docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md \
     docs/99.templates/registry.json \
@@ -511,7 +511,7 @@ replayed by an implementer.
 - Create in ignored SDD workspace: `research-platform-security.json`
 - Create in ignored SDD workspace: `research-delivery-quality.json`
 - Create in ignored SDD workspace: `allocation.json`
-- Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
+- Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/`
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
@@ -790,7 +790,7 @@ replayed by an implementer.
 
   ```bash
   git add docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md \
-    docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md \
+    docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/ \
     docs/00.agent-governance/memory/progress.md
   git diff --cached --check
   git commit -m "docs: record full-corpus research evidence intake"
@@ -1011,7 +1011,7 @@ of this recovery.
 - Modify: `docs/90.references/research/2026-08-08-wer/ai-agents-and-agency-agents.md`
 - Modify: `docs/90.references/research/2026-08-08-wer/agent-model-routing-and-configuration.md`
 - Modify: `docs/90.references/research/2026-08-08-wer/agent-memory-tiers-and-management.md`
-- Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
+- Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/`
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
@@ -1110,7 +1110,7 @@ of this recovery.
     docs/90.references/research/2026-08-08-wer/agent-model-routing-and-configuration.md \
     docs/90.references/research/2026-08-08-wer/agent-memory-tiers-and-management.md \
     docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md \
-    docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md \
+    docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/ \
     docs/00.agent-governance/memory/progress.md
   git diff --cached --check
   git commit -m "docs: reverify agent engineering research"
@@ -1148,7 +1148,7 @@ of this recovery.
 
 - Modify: `docs/90.references/research/2026-08-08-wer/workspace-governance-and-common-agent-environment.md`
 - Modify: `docs/90.references/research/2026-08-08-wer/provider-implementation-status.md`
-- Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
+- Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/`
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
@@ -1225,7 +1225,7 @@ of this recovery.
   git add docs/90.references/research/2026-08-08-wer/workspace-governance-and-common-agent-environment.md \
     docs/90.references/research/2026-08-08-wer/provider-implementation-status.md \
     docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md \
-    docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md \
+    docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/ \
     docs/00.agent-governance/memory/progress.md
   git diff --cached --check
   git commit -m "docs: reverify provider and common environment research"
@@ -1264,7 +1264,7 @@ of this recovery.
 - Modify: `docs/90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md`
 - Modify: `docs/90.references/research/2026-08-08-wer/documentation-architecture-and-diataxis.md`
 - Modify: `docs/90.references/research/2026-08-08-wer/llm-wiki-and-knowledge-routing.md`
-- Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
+- Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/`
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
@@ -1351,7 +1351,7 @@ of this recovery.
     docs/90.references/research/2026-08-08-wer/documentation-architecture-and-diataxis.md \
     docs/90.references/research/2026-08-08-wer/llm-wiki-and-knowledge-routing.md \
     docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md \
-    docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md \
+    docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/ \
     docs/00.agent-governance/memory/progress.md
   git diff --cached --check
   git commit -m "docs: reverify SDLC and documentation research"
@@ -1381,7 +1381,7 @@ of this recovery.
 **Files:**
 
 - Modify: `docs/90.references/research/2026-08-08-wer/kubernetes-infrastructure-and-security.md`
-- Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
+- Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/`
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
@@ -1458,7 +1458,7 @@ of this recovery.
   ```bash
   git add docs/90.references/research/2026-08-08-wer/kubernetes-infrastructure-and-security.md \
     docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md \
-    docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md \
+    docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/ \
     docs/00.agent-governance/memory/progress.md
   git diff --cached --check
   git commit -m "docs: reverify platform and security research"
@@ -1497,7 +1497,7 @@ of this recovery.
 **Files:**
 
 - Modify: `docs/90.references/research/2026-08-08-wer/ci-cd-github-actions-and-qa.md`
-- Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
+- Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/`
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 - Create in ignored SDD workspace: `remote-github-summary.json`
@@ -1921,7 +1921,7 @@ nine-class summary SHA-256 is
   ```bash
   git add docs/90.references/research/2026-08-08-wer/ci-cd-github-actions-and-qa.md \
     docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md \
-    docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md \
+    docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/ \
     docs/00.agent-governance/memory/progress.md
   git diff --cached --check
   git commit -m "docs: reverify delivery and quality research"
@@ -2212,7 +2212,7 @@ command passes, and Step 6 remains controller-owned review and commit work.
 - Modify: `docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md`
 - Modify: `docs/90.references/research/2026-08-08-wer/scope-application-index.md`
 - Modify: `docs/90.references/research/2026-08-08-wer/README.md`
-- Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
+- Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/`
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
@@ -2314,7 +2314,7 @@ command passes, and Step 6 remains controller-owned review and commit work.
     docs/90.references/research/2026-08-08-wer/scope-application-index.md \
     docs/90.references/research/2026-08-08-wer/README.md \
     docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md \
-    docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md \
+    docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/ \
     docs/00.agent-governance/memory/progress.md
   git diff --cached --check
   git commit -m "docs: integrate full-corpus research evidence"
@@ -2591,7 +2591,7 @@ is authorized or performed by this fix.
 - Modify: `docs/90.references/research/2026-08-08-wer/README.md`
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/spec.md`
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md`
-- Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
+- Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/`
 - Modify: `docs/03.specs/README.md`
 - Modify: `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`
 - Modify: `docs/99.templates/registry.json`
@@ -2650,7 +2650,7 @@ is authorized or performed by this fix.
     docs/90.references/research/2026-08-08-wer/README.md \
     docs/03.specs/0062-workspace-research-full-corpus-reverification/spec.md \
     docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md \
-    docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md \
+    docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/ \
     docs/03.specs/README.md \
     docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md \
     docs/99.templates/registry.json \
@@ -2669,7 +2669,7 @@ is authorized or performed by this fix.
 
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/spec.md`
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md`
-- Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md`
+- Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/`
 - Modify: `docs/03.specs/README.md`
 - Modify: `docs/99.templates/registry.json`
 - Modify: `scripts/validate-active-corpus-residue-closure.py`
@@ -2802,7 +2802,7 @@ is authorized or performed by this fix.
   ```bash
   git add docs/03.specs/0062-workspace-research-full-corpus-reverification/spec.md \
     docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md \
-    docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks.md \
+    docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/ \
     docs/03.specs/README.md \
     docs/99.templates/registry.json \
     scripts/validate-active-corpus-residue-closure.py \
@@ -2993,28 +2993,28 @@ the lifecycle evidence is final. The second complete run is authoritative.
 
 | Spec criterion | Work package | Expected Task |
 | --- | --- | --- |
-| [VAL-WRFR-001](spec.md) | WRFR-001 | [WRFR-001](tasks.md) records exact 36-row union |
-| [VAL-WRFR-002](spec.md) | WRFR-001..007 | [WRFR-001..007](tasks.md) record dual evidence |
-| [VAL-WRFR-003](spec.md) | WRFR-001 | [WRFR-001](tasks.md) records request coverage |
-| [VAL-WRFR-004](spec.md) | WRFR-001..007 | [WRFR-001..007](tasks.md) record source reviews |
-| [VAL-WRFR-005](spec.md) | WRFR-001..006 | [WRFR-001..006](tasks.md) record selector checks |
-| [VAL-WRFR-006](spec.md) | WRFR-001, 007 | [WRFR-001](tasks.md) records vocabulary mutation tests |
-| [VAL-WRFR-007](spec.md) | WRFR-001, 007 | [WRFR-007](tasks.md) records every retained boundary |
-| [VAL-WRFR-008](spec.md) | WRFR-002..008 | [WRFR-008](tasks.md) records terminal pack inventory |
-| [VAL-WRFR-009](spec.md) | WRFR-001, 007 | [WRFR-007](tasks.md) records ID continuity |
-| [VAL-WRFR-010](spec.md) | WRFR-007..009 | [WRFR-009](tasks.md) records projection agreement |
-| [VAL-WRFR-011](spec.md) | WRFR-006, 009 | [WRFR-006](tasks.md) records remote/security evidence |
-| [VAL-WRFR-012](spec.md) | WRFR-000, 009 | [WRFR-009](tasks.md) records owned residue absence |
-| [VAL-WRFR-013](spec.md) | WRFR-000..009 | [WRFR-000..009](tasks.md) record commits/reviews |
-| [VAL-WRFR-014](spec.md) | WRFR-009 | [WRFR-009](tasks.md) records whole-branch verdict |
-| [VAL-WRFR-015](spec.md) | WRFR-009 | [WRFR-009](tasks.md) records terminal lanes |
+| [VAL-WRFR-001](spec.md) | WRFR-001 | [WRFR-001](tasks/tsk-0002-wrfr-001.md) records exact 36-row union |
+| [VAL-WRFR-002](spec.md) | WRFR-001..007 | [WRFR-001..007](tasks/tsk-0002-wrfr-001.md) record dual evidence |
+| [VAL-WRFR-003](spec.md) | WRFR-001 | [WRFR-001](tasks/tsk-0002-wrfr-001.md) records request coverage |
+| [VAL-WRFR-004](spec.md) | WRFR-001..007 | [WRFR-001..007](tasks/tsk-0002-wrfr-001.md) record source reviews |
+| [VAL-WRFR-005](spec.md) | WRFR-001..006 | [WRFR-001..006](tasks/tsk-0002-wrfr-001.md) record selector checks |
+| [VAL-WRFR-006](spec.md) | WRFR-001, 007 | [WRFR-001](tasks/tsk-0002-wrfr-001.md) records vocabulary mutation tests |
+| [VAL-WRFR-007](spec.md) | WRFR-001, 007 | [WRFR-007](tasks/tsk-0008-wrfr-007.md) records every retained boundary |
+| [VAL-WRFR-008](spec.md) | WRFR-002..008 | [WRFR-008](tasks/tsk-0009-wrfr-008.md) records terminal pack inventory |
+| [VAL-WRFR-009](spec.md) | WRFR-001, 007 | [WRFR-007](tasks/tsk-0008-wrfr-007.md) records ID continuity |
+| [VAL-WRFR-010](spec.md) | WRFR-007..009 | [WRFR-009](tasks/tsk-0010-wrfr-009.md) records projection agreement |
+| [VAL-WRFR-011](spec.md) | WRFR-006, 009 | [WRFR-006](tasks/tsk-0007-wrfr-006.md) records remote/security evidence |
+| [VAL-WRFR-012](spec.md) | WRFR-000, 009 | [WRFR-009](tasks/tsk-0010-wrfr-009.md) records owned residue absence |
+| [VAL-WRFR-013](spec.md) | WRFR-000..009 | [WRFR-000..009](tasks/tsk-0001-wrfr-000.md) record commits/reviews |
+| [VAL-WRFR-014](spec.md) | WRFR-009 | [WRFR-009](tasks/tsk-0010-wrfr-009.md) records whole-branch verdict |
+| [VAL-WRFR-015](spec.md) | WRFR-009 | [WRFR-009](tasks/tsk-0010-wrfr-009.md) records terminal lanes |
 
 ### Related Documents
 
 - [Spec 0062](spec.md)
-- [Reciprocal Task](tasks.md)
+- [Reciprocal Task](README.md#task-records)
 - [Current WER research pack](../../90.references/research/2026-08-08-wer/README.md)
 - [Source coverage and migration ledger](../../90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md)
 - [Scope application index](../../90.references/research/2026-08-08-wer/scope-application-index.md)
 - [ADR 0022 — direct-approval standalone execution lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
-- [Quality standards](../../00.agent-governance/rules/quality-standards.md)
+- [Quality standards](../../00.agent-governance/policies/quality.md)

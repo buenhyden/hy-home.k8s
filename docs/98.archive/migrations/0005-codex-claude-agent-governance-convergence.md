@@ -922,7 +922,6 @@ and retirement sources retain their independent pre-existing source protections.
   {
     "source_commit": "bb55a1ae93c9fc3017f64b5f2246af11442265d3",
     "paths": [
-      "docs/00.agent-governance/memory/progress.md",
       "docs/03.specs/0009-workspace-harness-research-pack/plan.md",
       "docs/03.specs/0010-workspace-harness-implementation-audit-pack/plan.md",
       "docs/03.specs/0011-template-contract-governance-migration/plan.md",
@@ -970,6 +969,12 @@ and retirement sources retain their independent pre-existing source protections.
       "docs/90.references/audits/2026-08-09-wgia/harness-loop-fixtures-scripts-and-blockers.md",
       "docs/90.references/audits/2026-08-09-wgia/security-and-approval-boundaries.md",
       "docs/90.references/audits/2026-08-09-wgia/workspace-purpose-governance-and-operating-contracts.md"
+    ]
+  },
+  {
+    "source_commit": "15b11453bf2ec4f8081d6588088dbce5c6e863b9",
+    "paths": [
+      "docs/00.agent-governance/memory/progress.md"
     ]
   }
 ]
