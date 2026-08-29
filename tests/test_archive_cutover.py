@@ -439,7 +439,7 @@ class ArchiveCutoverTest(unittest.TestCase):
                 "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md"
             ),
             "docs/00.agent-governance/rules/document-stage-routing.md": (
-                "docs/00.agent-governance/rules/document-authoring.md"
+                "docs/00.agent-governance/policies/document-authoring.md"
             ),
             "docs/04.execution/plans/README.md": (
                 "docs/99.templates/templates/specs/plan.template.md"

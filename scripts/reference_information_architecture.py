@@ -131,7 +131,7 @@ HISTORICAL_PACK_IDS = (
 )
 AUDIT_PACK_ID = "audits/2026-07-11-weia"
 WGIA_PACK_ID = "audits/2026-08-09-wgia"
-WGIA_SOURCE_COMMIT = "git-sha1:7102b78afbba121c70c0e41821ac0f96df198413"
+WGIA_SOURCE_COMMIT = "git-sha1:761759b7075c9140dd029a3626103be10bdd40ca"
 # Consolidation commit holding the retired audit pack's current bytes.
 MERGE_RETIRED_AUDIT_COMMIT = "git-sha1:0b53e9a1f7406d11a326a8783761be3520835ec2"
 # A mutable index is projected forward from the commit that holds its

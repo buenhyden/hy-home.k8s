@@ -72,7 +72,7 @@ POLICY_COPY = (
 ROOT_BASELINE = "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe"
 HISTORICAL_BASELINE = "git-sha1:8fb9821497aaa93d9ed5fc1a69b60c628b047b47"
 # The commit that holds the current pack's reviewed member bytes.
-WGIA_BASELINE = "git-sha1:7102b78afbba121c70c0e41821ac0f96df198413"
+WGIA_BASELINE = "git-sha1:761759b7075c9140dd029a3626103be10bdd40ca"
 # The earlier commit whose contract predates retiredCurrentPackBaselines.
 # It is read as history, never as the current pack's source.
 HISTORICAL_E09_COMMIT = "git-sha1:e09a0b976a555c5200cdab2aeb9abf6759b77588"

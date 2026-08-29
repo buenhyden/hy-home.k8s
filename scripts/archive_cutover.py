@@ -57,6 +57,8 @@ if __package__:
         CurrentMarkdownDocument,
         MIG0002_DOCUMENT_SHA256,
         MIGRATION_DOCUMENT_MAX_BYTES,
+        generic_migration_id,
+        parse_migration_control,
         parse_pinned_migration_control,
         read_staged_blob_bounded,
         read_worktree_regular_bounded,
@@ -95,6 +97,8 @@ else:
         CurrentMarkdownDocument,
         MIG0002_DOCUMENT_SHA256,
         MIGRATION_DOCUMENT_MAX_BYTES,
+        generic_migration_id,
+        parse_migration_control,
         parse_pinned_migration_control,
         read_staged_blob_bounded,
         read_worktree_regular_bounded,
@@ -321,7 +325,12 @@ def _git_paths(root: Path) -> tuple[str, ...]:
 
 
 def _tracked_regular_blobs(root: Path) -> Mapping[str, str]:
-    """Return stage-zero regular docs paths and exact index blob identities."""
+    """Return stage-zero regular authority paths and index blob identities.
+
+    The corpus is `docs/`, plus the shared `.agents` control plane: a migration
+    may retire a document into that authority, and a terminal target has to be
+    verifiable wherever it now lives.
+    """
 
     try:
         completed = subprocess.run(
@@ -336,6 +345,7 @@ def _tracked_regular_blobs(root: Path) -> Mapping[str, str]:
                 "-z",
                 "--",
                 "docs",
+                ".agents",
             ],
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
@@ -359,7 +369,7 @@ def _tracked_regular_blobs(root: Path) -> Mapping[str, str]:
             path = raw_path.decode("utf-8")
             pure_path = PurePosixPath(path)
             if (
-                not path.startswith("docs/")
+                not path.startswith(("docs/", ".agents/"))
                 or "\\" in path
                 or any(
                     ord(character) < 32 or ord(character) == 127 for character in path
@@ -425,6 +435,40 @@ def _resolve_migration_graph(
     return resolved
 
 
+def _later_ledger_edges(
+    root: Path,
+    tracked_regular_blobs: Mapping[str, str],
+    failure: str,
+) -> dict[str, str]:
+    """Return the document replacements declared after the pinned ledgers."""
+
+    edges: dict[str, str] = {}
+    for path in sorted(tracked_regular_blobs):
+        if generic_migration_id(path) is None:
+            continue
+        try:
+            staged = read_staged_blob_bounded(
+                root, path, max_bytes=MIGRATION_DOCUMENT_MAX_BYTES
+            )
+            parsed = parse_migration_control(path, staged)
+        except (ArchiveContractError, OSError, ValueError):
+            raise RuntimeError(failure) from None
+        for row in parsed[0] if isinstance(parsed, tuple) and parsed else ():
+            if not isinstance(row, Mapping):
+                continue
+            action = row.get("action")
+            legacy = row.get("legacy_path")
+            target = (
+                row.get("stable_path") if action == "moved" else row.get("replacement")
+            )
+            if not isinstance(legacy, str) or not isinstance(target, str):
+                continue
+            if legacy == target or not legacy.startswith("docs/"):
+                continue
+            edges[legacy] = target
+    return edges
+
+
 def _work054_migration_projection(
     root: Path,
     tracked_regular_blobs: Mapping[str, str],
@@ -459,6 +503,7 @@ def _work054_migration_projection(
 
     edges: dict[str, str] = {}
     action_counts: dict[str, int] = {}
+    later_edges = _later_ledger_edges(root, tracked_regular_blobs, failure)
     for migration_path in WORK054_MIGRATION_PATHS:
         previous_legacy = ""
         for row in rows_by_path[migration_path]:
@@ -490,7 +535,9 @@ def _work054_migration_projection(
             ):
                 raise RuntimeError(f"{failure}: row {legacy or migration_path}")
             previous_legacy = legacy
-            edges[legacy] = target
+            # A later ledger may retire this target in turn, and the pinned rows
+            # cannot name a successor that did not exist when they were sealed.
+            edges[legacy] = later_edges.get(target, target)
             action_counts[action] = action_counts.get(action, 0) + 1
 
     terminal_paths = {

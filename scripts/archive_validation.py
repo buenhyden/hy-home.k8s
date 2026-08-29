@@ -1347,9 +1347,17 @@ def validate_migration_records(
             if member.kind == "blob" and member.mode in {"100644", "100755"}
         }
     current: dict[str, bytes] = {}
-    for path in sorted(selected):
+    ordered = sorted(selected)
+    for path in ordered:
         _require_regular_current_target(path, inventory)
-        expected = _batch_blob_bytes(root, (inventory[path],))[inventory[path]]
+    # One batch for the whole selection: a ledger names as many targets as it
+    # has rows, and a subprocess per row spends the run's budget on process
+    # startup rather than on reading.
+    expected_blobs = _batch_blob_bytes(
+        root, tuple(sorted({inventory[path] for path in ordered}))
+    )
+    for path in ordered:
+        expected = expected_blobs[inventory[path]]
         content = (
             expected
             if proposed_commit is not None
@@ -3305,7 +3313,15 @@ def _git_command(
     )
 
 
+@lru_cache(maxsize=8)
 def _repository_identity(root: Path) -> int:
+    """Resolve the repository top level and object format once per root.
+
+    The answer is a property of the checkout, and every archive reader asks for
+    it, so probing per call spends the run's whole subprocess budget on a
+    constant.
+    """
+
     top = _git_command(root, "rev-parse", "--show-toplevel")
     object_format = _git_command(root, "rev-parse", "--show-object-format")
     try:
