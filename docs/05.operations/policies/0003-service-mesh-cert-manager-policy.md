@@ -3,7 +3,7 @@ title: 'Service Mesh & cert-manager Operations Policy'
 type: sdlc/policy
 status: active
 owner: platform
-updated: 2026-05-21
+updated: 2026-08-29
 artifact_id: "POLICY-0003"
 ---
 
@@ -26,7 +26,7 @@ artifact_id: "POLICY-0003"
 
 ## Applies To
 
-- **Systems**: `gitops/platform/{cert-manager,headlamp,istio,kiali}/`, `infrastructure/bootstrap-local.sh`
+- **Systems**: `gitops/platform/{cert-manager,headlamp,kiali}/`, `gitops/apps/root/platform-istio-base-app.yaml`, `gitops/apps/root/platform-istiod-app.yaml`, `infrastructure/bootstrap-local.sh`
 - **Agents**: 문서/운영 자동화 에이전트
 - **Environments**: WSL2 local cluster
 
