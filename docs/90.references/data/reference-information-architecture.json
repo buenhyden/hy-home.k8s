@@ -217,35 +217,6 @@
       ]
     },
     {
-      "id": "active-corpus-residue-closure",
-      "repositoryEvidence": [
-        "docs/90.references/data/active-corpus-residue-closure.json"
-      ],
-      "refreshTrigger": "Successor migration evidence, Plan or Task inventory, migration result, ADR or Spec authority, ACER-004 input, link evidence, or closure result changes",
-      "sources": [
-        {
-          "url": "https://www.archives.gov/records-mgmt/policy/managing-web-records-index.html",
-          "checkedOn": "2026-07-22",
-          "adoptedScope": [
-            "Separation of retained records, disposition rationale, and preservation evidence"
-          ],
-          "rejectedScope": [
-            "Federal retention schedules or authority to close, retain, or archive a local SDLC record"
-          ]
-        },
-        {
-          "url": "https://git-scm.com/docs/git-ls-files",
-          "checkedOn": "2026-07-22",
-          "adoptedScope": [
-            "Exact tracked-path and stage evidence for the residue inventory boundary"
-          ],
-          "rejectedScope": [
-            "Successor completion, semantic closure, cross-link validity, or remote execution status"
-          ]
-        }
-      ]
-    },
-    {
       "id": "agent-reference-index",
       "repositoryEvidence": [
         "docs/90.references/data/agent-reference-index.md"
