@@ -160,25 +160,6 @@
       ]
     },
     {
-      "id": "active-corpus-eligibility-ledger",
-      "repositoryEvidence": [
-        "docs/90.references/data/active-corpus-eligibility-ledger.json"
-      ],
-      "refreshTrigger": "ACER-003 cutover, pinned object or lineage evidence drift, or an owned upstream evidence change",
-      "sources": [
-        {
-          "url": "https://git-scm.com/docs/git-ls-files",
-          "checkedOn": "2026-07-22",
-          "adoptedScope": [
-            "Index-backed tracked-path, object, mode, and stage evidence used by the dry-run ledger"
-          ],
-          "rejectedScope": [
-            "Eligibility, ownership, migration approval, or live repository state beyond the pinned evidence"
-          ]
-        }
-      ]
-    },
-    {
       "id": "agent-reference-index",
       "repositoryEvidence": [
         "docs/90.references/data/agent-reference-index.md"
