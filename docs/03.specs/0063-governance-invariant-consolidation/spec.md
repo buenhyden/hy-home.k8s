@@ -157,8 +157,18 @@ python3 -m unittest discover -s tests
 | VAL-GIC-002 | The discard list classifies each candidate rule and is approved before retirement |
 | VAL-GIC-003 | Commit-bound constants for completed migrations are removed |
 | VAL-GIC-004 | `docs/98.archive/changes/` holds no full-body copies and no ledger row loses its recovery coordinates |
-| VAL-GIC-005 | The gate executes exactly the validator set the contract declares |
+| VAL-GIC-005 | Every validator the contract declares required is executed by at least one runner, and a required validator with no runner is refused |
 | VAL-GIC-006 | Gates and the full suite pass in a clean checkout after every commit |
+
+VAL-GIC-005 was revised during execution. As first written it required the gate
+to execute exactly the contract's validator set. Two measurements disproved that
+premise. The contract is a lane-selection contract, not a validator registry:
+the gate runs six validators it does not declare, including
+`validate-affected-surfaces.py`, which validates the contract itself. And CI
+runs three validator jobs behind separate path filters, so sixteen validators
+appear in two runners deliberately — a validator listed in only one would leave
+a hole for one class of change. The revised criterion states the invariant that
+actually protects coverage, and `SURFACE-VALIDATOR-RUNNER` enforces it.
 
 ## Traceability
 
