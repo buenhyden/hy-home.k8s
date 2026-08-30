@@ -2315,10 +2315,6 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             self.validator._reviewed_immutable_historical_alias_edges(context, {}),
             {},
         )
-        self.assertEqual(
-            self.validator._reviewed_completed_history_alias_edges(context, {}),
-            {},
-        )
 
     def test_removed_directory_link_needs_every_file_proved(self) -> None:
         """A directory link resolves only when each file it held moved to an owner."""
@@ -2671,13 +2667,6 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
 
         self.assertEqual(
             self.validator._reviewed_immutable_historical_alias_edges(
-                drifted_context,
-                {},
-            ),
-            {},
-        )
-        self.assertEqual(
-            self.validator._reviewed_completed_history_alias_edges(
                 drifted_context,
                 {},
             ),

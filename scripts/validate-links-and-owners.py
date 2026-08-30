@@ -650,188 +650,6 @@ IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS = {
         "docs/98.archive/README.md"
     ): "35b69ced14f3f5511a3b13dff35e337000297333",  # pragma: allowlist secret
 }
-COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS = {
-    PurePosixPath("docs/00.agent-governance/memory/progress.md"): (
-        "28a2051203f38118c721c78142c3a97c5d0040ce"  # pragma: allowlist secret
-    ),
-    PurePosixPath(
-        "docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md"
-    ): (
-        "bb06fdad8e0cb549588a224646f9c95de7898c79"  # pragma: allowlist secret
-    ),
-    PurePosixPath("docs/02.architecture/decisions/0003-eso-vault-k8s-auth.md"): (
-        "e448ec7e0fe77a3c1dd61128692d38f8fe183e6c"  # pragma: allowlist secret
-    ),
-    PurePosixPath(
-        "docs/02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md"
-    ): "bbe7b9dda188d9a47a84d97e62c291ba3ebec917",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/02.architecture/decisions/0008-istio-install-and-ingress-coexist.md"
-    ): "836fa60c6147570f700e03aff23ddbbe5bd2bcaa",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/02.architecture/decisions/0009-kiali-external-observability.md"
-    ): "a8bddd66fd35951af39c0508fcf028964f36831b",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md"
-    ): "b2df216e29e11e8ffb527ed5cadbc14c4d5f0b50",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/02.architecture/decisions/0012-argo-notifications-slack.md"
-    ): "6b96d659ab43a7c57598a1048bc2c85f508aebf2",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md"
-    ): "c3301468aa74520218520ec1db7ecf2eb2e1f5a9",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md"
-    ): "199b78e8f5e97add093047e0e10c7cd025dff19e",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/02.architecture/decisions/0015-declarative-document-contract-registry.md"
-    ): "73a8d7f1ec829c1ff57f2ca394dab643fb439156",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/02.architecture/decisions/0016-program-to-tranche-document-lineage.md"
-    ): "cf6865cc3344451dd6be3cdde3784e7a30eb126c",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/02.architecture/decisions/0017-program-follow-up-lineage-semantics.md"
-    ): "3bb50cd3843a849bf556cb902231b9874ce018ec",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/02.architecture/decisions/0018-full-body-archive-record-and-retention.md"
-    ): "25ee16479edd7cdc422c1ea0794d7e201085d1d0",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md"
-    ): "f5a58b7258ad2a6f1dffa8728359249b35bf24a7",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/02.architecture/decisions/0020-document-lifecycle-program-closure-evidence.md"
-    ): "1f7f94c14039981ad0a096a029f32205eb07dcdc",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md"
-    ): "ebb953d1754c36297c07d45979998f8708392d4a",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md"
-    ): "2f22375561663fed2a51640cad2c53257dd10282",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0011-template-contract-governance-migration/plan.md"
-    ): "5210767fba3f1c544800269463d3bd62c6e8d3ba",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0011-template-contract-governance-migration/spec.md"
-    ): "deafd77af8b763a3f2ab1c51ae9a78f492afb251",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0012-template-governance-audit-enhancement/plan.md"
-    ): "ab30fd08751419c681b7f0fee7e698fb5e6a6aba",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0012-template-governance-audit-enhancement/spec.md"
-    ): "578bc34eb44b981c2c4f3aebf73da8164fb6a3ca",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0012-template-governance-audit-enhancement/tasks.md"
-    ): "d36582cb46e3393f73685b93e8882f8bd46ba6ab",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0013-workspace-document-governance-hardening/plan.md"
-    ): "e8c78292e7b20db5d3b13fe27fd757be88a48ce5",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0013-workspace-document-governance-hardening/spec.md"
-    ): "43b51e639ace9cb1022df110df2811c17d6b7259",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0013-workspace-document-governance-hardening/tasks.md"
-    ): "0b5da61efd463647d3b0e638e5e8fcde48d8be09",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0014-workspace-document-contract-normalization/plan.md"
-    ): "65985555b5338f1acbff5902111496287517e238",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0014-workspace-document-contract-normalization/spec.md"
-    ): "9e00c5f185f8948c8a76a7622b3cf7fc5de2fb8b",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0014-workspace-document-contract-normalization/tasks.md"
-    ): "695daa7f8cbd30bd0fe099efe68ce4534f4ee9c5",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0015-agent-governance-contract-normalization/spec.md"
-    ): "47c45671ac536bf2298251f55286395ac02e0b0e",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0016-active-control-surface-governance-hardening/plan.md"
-    ): "c46beb3ba446feb61cb71740f12ee19edb3b5e25",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0016-active-control-surface-governance-hardening/spec.md"
-    ): "a593ba13e2604bc4eae3f3b491cc5bb62277027d",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0018-workspace-engineering-implementation-audit-pack/tasks.md"
-    ): "5668b1364b53042481b647092427588057df79c1",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0019-template-path-numbering-contract/plan.md"
-    ): "7f8533d371a31d1e4630783e66980c0b1a2941c8",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0019-template-path-numbering-contract/spec.md"
-    ): "e1c050de881fde49eb76731d82d5549330b7212e",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0019-template-path-numbering-contract/tasks.md"
-    ): "6d6400bdce5c6637ae0f381985c3773d266a24c3",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0020-workspace-contract-governance-normalization/plan.md"
-    ): "6cdd348961f86bad63c70e6b3f1f2baa9a4afef0",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0020-workspace-contract-governance-normalization/spec.md"
-    ): "fb9ac8bb20c9359a9485602e3edb5a51472775a7",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0020-workspace-contract-governance-normalization/tasks.md"
-    ): "89543eef0400f056d6ee048108aad5c4fd458a66",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0021-sdlc-lifecycle-contract/tasks.md"
-    ): "782be7dce2d20d080ec48d5248d527109406bd31",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0022-control-cloud-doc-normalization/plan.md"
-    ): "57c212d8279c47dffc11558b91771fe41e0ade5f",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0022-control-cloud-doc-normalization/spec.md"
-    ): "2108eb8e8c6a678510ddcebfb4ecabb677d1318f",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0022-control-cloud-doc-normalization/tasks.md"
-    ): "521e6963457a00be55af477d344481e64d3d6f54",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0023-stage03-04-repo-static-gap-closure/spec.md"
-    ): "2c2aea2aaaa44113b8b10f96c136fab3bcb5abd6",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0025-governance-owner-and-roster-currentness/spec.md"
-    ): "9f1b797290befea3aab70f296b8c595cfb9f54d8",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/03.specs/0027-template-contract-consolidation/spec.md"
-    ): "f609274b7c1faf9f5ebae949abab511ac95391ea",  # pragma: allowlist secret
-}
-COMPLETED_HISTORY_ALIAS_SOURCE_COUNT = 46
-COMPLETED_HISTORY_ALIAS_EDGE_COUNT = 70
-COMPLETED_HISTORY_APPEND_ONLY_PREFIX_BYTES = {
-    PurePosixPath("docs/00.agent-governance/memory/progress.md"): 768_684,
-}
-
-# WP-004B removes monolithic Task ledgers and edits the superseded ADR set.
-# Those current paths no longer need a historical-link waiver; their retired
-# identities are recoverable through MIG-0004 and ADR-0030 respectively.
-_WP004B_RETIRED_COMPLETED_SOURCES = frozenset(
-    {
-        path
-        for path in COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS
-        if path.parts[:2] == ("docs", "03.specs")
-    }
-    | {
-        PurePosixPath(
-            "docs/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md"
-        ),
-        PurePosixPath(
-            "docs/02.architecture/decisions/0015-declarative-document-contract-registry.md"
-        ),
-        PurePosixPath(
-            "docs/02.architecture/decisions/0018-full-body-archive-record-and-retention.md"
-        ),
-        PurePosixPath(
-            "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md"
-        ),
-        PurePosixPath(
-            "docs/02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md"
-        ),
-    }
-)
-COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS = {
-    path: blob
-    for path, blob in COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS.items()
-    if path not in _WP004B_RETIRED_COMPLETED_SOURCES
-}
-COMPLETED_HISTORY_ALIAS_SOURCE_COUNT = len(COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS)
-
 
 @dataclass(frozen=True)
 class ArchiveTransitionHandoff:
@@ -3679,51 +3497,6 @@ def _reviewed_immutable_historical_alias_edges(
     )
 
 
-def _reviewed_completed_history_alias_edges(
-    context: Context,
-    move_targets: Mapping[PurePosixPath, PurePosixPath],
-) -> dict[ArchiveTransitionEdge, PurePosixPath]:
-    """Resolve only exact append-only or terminal completed-history links."""
-
-    if context.route_state != "transition":
-        return {}
-    for source in COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS:
-        metadata = context.metadata.get(source, {})
-        profile = context.profiles.get(source)
-        if source == PurePosixPath("docs/00.agent-governance/memory/progress.md"):
-            valid = (
-                profile is not None
-                and profile.profile_id == "governance/progress-ledger"
-            )
-        elif source.parts[:3] == ("docs", "02.architecture", "decisions"):
-            valid = (
-                profile is not None
-                and profile.profile_id == "sdlc/adr"
-                and metadata.get("status") == "accepted"
-            )
-        else:
-            valid = (
-                source.parts[:2] == ("docs", "03.specs")
-                and profile is not None
-                and profile.profile_id in {"sdlc/spec", "sdlc/plan", "sdlc/task"}
-                and metadata.get("status") == "done"
-            )
-        if not valid:
-            raise ConfigurationError(
-                "completed history alias source is not terminal history: "
-                f"{source.as_posix()}"
-            )
-    return _reviewed_source_pinned_alias_edges(
-        context,
-        move_targets,
-        source_blobs=COMPLETED_HISTORY_ALIAS_SOURCE_BLOBS,
-        expected_source_count=COMPLETED_HISTORY_ALIAS_SOURCE_COUNT,
-        expected_edge_count=COMPLETED_HISTORY_ALIAS_EDGE_COUNT,
-        contract_name="completed history alias",
-        append_only_prefix_bytes=(COMPLETED_HISTORY_APPEND_ONLY_PREFIX_BYTES),
-    )
-
-
 def _terminal_historical_source_boundary(
     context: Context,
     source: PurePosixPath,
@@ -3879,7 +3652,6 @@ def _reviewed_source_pinned_alias_edges(
     expected_source_count: int | None,
     expected_edge_count: int | None,
     contract_name: str,
-    append_only_prefix_bytes: Mapping[PurePosixPath, int] | None = None,
     exact_redirects: Mapping[PurePosixPath, PurePosixPath] | None = None,
     expected_occurrence_count: int | None = None,
 ) -> dict[ArchiveTransitionEdge, PurePosixPath]:
@@ -3887,11 +3659,6 @@ def _reviewed_source_pinned_alias_edges(
 
     if context.route_state != "transition":
         return {}
-    prefix_sizes = append_only_prefix_bytes or {}
-    if not set(prefix_sizes).issubset(source_blobs) or any(
-        size <= 0 for size in prefix_sizes.values()
-    ):
-        raise ConfigurationError(f"{contract_name} append-only prefix contract differs")
     redirects = (
         dict(exact_redirects)
         if exact_redirects is not None
@@ -3902,18 +3669,7 @@ def _reviewed_source_pinned_alias_edges(
     occurrence_count = 0
     for source, expected_blob in source_blobs.items():
         text = context.texts.get(source)
-        content = text.encode("utf-8") if text is not None else b""
-        prefix_size = prefix_sizes.get(source)
-        source_matches = (
-            _git_sha1_blob(text) == expected_blob
-            if text is not None and prefix_size is None
-            else (
-                text is not None
-                and prefix_size is not None
-                and len(content) >= prefix_size
-                and _git_sha1_blob_bytes(content[:prefix_size]) == expected_blob
-            )
-        )
+        source_matches = text is not None and _git_sha1_blob(text) == expected_blob
         if (
             text is None
             or source not in context.tracked_regular_paths
@@ -4249,9 +4005,6 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
         context,
         move_targets,
     )
-    reviewed_completed_history_alias_edges = _reviewed_completed_history_alias_edges(
-        context, move_targets
-    )
     reviewed_work054_owner_edges = _reviewed_work054_historical_owner_edges(
         context,
         move_targets,
@@ -4285,11 +4038,6 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
                 if (
                     ArchiveTransitionEdge(source, target)
                     in reviewed_historical_alias_edges
-                ):
-                    continue
-                if (
-                    ArchiveTransitionEdge(source, target)
-                    in reviewed_completed_history_alias_edges
                 ):
                     continue
                 if (
@@ -5848,10 +5596,9 @@ def _historical_exception_diagnostics(
     reviewed_alias_edges: dict[ArchiveTransitionEdge, PurePosixPath] = {}
     if context.route_state == "transition":
         _, move_targets, _ = _document_taxonomy_transition_manifest(context)
-        reviewed_alias_edges = {
-            **_reviewed_immutable_historical_alias_edges(context, move_targets),
-            **_reviewed_completed_history_alias_edges(context, move_targets),
-        }
+        reviewed_alias_edges = _reviewed_immutable_historical_alias_edges(
+            context, move_targets
+        )
 
     def source_pinned_targets(source: PurePosixPath) -> set[PurePosixPath]:
         return {
