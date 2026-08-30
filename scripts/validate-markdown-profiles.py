@@ -134,12 +134,6 @@ TOKEN_BEARING_DEBT_RULES = frozenset(
 )
 IMPLEMENTED_RULE_IDS = frozenset(
     {
-        "APPEND-CONTEXT",
-        "APPEND-ENTRY-LEVEL",
-        "APPEND-PARENT-H2",
-        "APPEND-PARENT-PROFILE",
-        "APPEND-SECTION-LEVEL",
-        "APPEND-SECTION-REQUIRED",
         "BODY-AUTHOR-PROMPT",
         "BODY-CONTRACT-CELL",
         "BODY-CONTRACT-COLUMNS",
@@ -1241,113 +1235,12 @@ def _frontmatter_body(
     return body
 
 
-def _append_diagnostics(
-    path: PurePosixPath,
-    profile: DocumentProfile,
-    scan: HeadingScan,
-    append_context: AppendContext | None,
-) -> list[Diagnostic]:
-    diagnostics: list[Diagnostic] = []
-    contract = profile.append_contract
-    if contract is None:
-        return diagnostics
-    if append_context is None:
-        diagnostics.append(
-            _diagnostic(
-                "APPEND-CONTEXT", path, profile, "an explicit parent context", "missing"
-            )
-        )
-    else:
-        if append_context.parent_profile.profile_id != contract.parent_profile_id:
-            diagnostics.append(
-                _diagnostic(
-                    "APPEND-PARENT-PROFILE",
-                    path,
-                    profile,
-                    contract.parent_profile_id,
-                    append_context.parent_profile.profile_id,
-                )
-            )
-        if append_context.parent_h2 != contract.parent_h2:
-            diagnostics.append(
-                _diagnostic(
-                    "APPEND-PARENT-H2",
-                    path,
-                    profile,
-                    contract.parent_h2,
-                    append_context.parent_h2,
-                )
-            )
-    h3 = [
-        title
-        for level, title in scan.headings
-        if level == contract.entry_heading_level
-        and title not in contract.required_sections
-    ]
-    h4 = [
-        title
-        for level, title in scan.headings
-        if level == contract.section_heading_level
-    ]
-    if len(h3) != 1:
-        diagnostics.append(
-            _diagnostic(
-                "APPEND-ENTRY-LEVEL",
-                path,
-                profile,
-                "exactly one H3 entry heading",
-                json.dumps(h3),
-            )
-        )
-    seen_any_level = {title for _, title in scan.headings}
-    missing = [
-        section
-        for section in contract.required_sections
-        if section not in h4 and section not in seen_any_level
-    ]
-    if missing:
-        diagnostics.extend(
-            _diagnostic(
-                "APPEND-SECTION-REQUIRED", path, profile, "required H4 section", section
-            )
-            for section in missing
-        )
-    wrong_levels = [
-        title
-        for level, title in scan.headings
-        if title in contract.required_sections
-        and level != contract.section_heading_level
-    ]
-    if wrong_levels:
-        diagnostics.extend(
-            _diagnostic(
-                "APPEND-SECTION-LEVEL", path, profile, "required sections use H4", title
-            )
-            for title in wrong_levels
-        )
-    return diagnostics
-
-
 def _body_diagnostics(
     path: PurePosixPath,
     profile: DocumentProfile,
     body: str,
-    append_context: AppendContext | None,
 ) -> list[Diagnostic]:
     scan = scan_headings(body)
-    if profile.append_contract is not None:
-        diagnostics = _append_diagnostics(path, profile, scan, append_context)
-        if scan.unclosed_fence:
-            diagnostics.append(
-                _diagnostic(
-                    "BODY-FENCE-UNCLOSED",
-                    path,
-                    profile,
-                    "all fenced blocks are closed",
-                    "unclosed",
-                )
-            )
-        return diagnostics
     if (
         profile.frontmatter.mode == "not-applicable"
         and not profile.headings.required
@@ -1443,20 +1336,12 @@ def _body_diagnostics(
     return diagnostics
 
 
-@dataclass(frozen=True)
-class AppendContext:
-    parent_path: PurePosixPath
-    parent_profile: DocumentProfile
-    parent_h2: str
-
-
 def validate_document(
     root: Path,
     path: PurePosixPath,
     profile: DocumentProfile,
     mode: str,
     *,
-    append_context: AppendContext | None = None,
     today: dt.date | None = None,
     body_contracts: str = "registry",
     body_contract_path_prefixes: tuple[PurePosixPath, ...] = (),
@@ -1468,7 +1353,6 @@ def validate_document(
         path,
         profile,
         mode,
-        append_context=append_context,
         today=today,
         body_contracts=body_contracts,
         body_contract_path_prefixes=body_contract_path_prefixes,
@@ -1481,7 +1365,6 @@ def validate_document_text(
     profile: DocumentProfile,
     mode: str,
     *,
-    append_context: AppendContext | None = None,
     today: dt.date | None = None,
     body_contracts: str = "registry",
     body_contract_path_prefixes: tuple[PurePosixPath, ...] = (),
@@ -1493,7 +1376,7 @@ def validate_document_text(
     effective_today = today or dt.datetime.now(ZoneInfo("Asia/Seoul")).date()
     diagnostics: list[Diagnostic] = []
     body = _frontmatter_body(text, path, profile, diagnostics, effective_today)
-    diagnostics.extend(_body_diagnostics(path, profile, body, append_context))
+    diagnostics.extend(_body_diagnostics(path, profile, body))
     status = ""
     metadata: dict[str, Any] = {}
     if profile.frontmatter.mode == "required":
@@ -1582,32 +1465,7 @@ def _mutation_source(
         return source + "\n```markdown\n"
     if kind == "duplicate-h1":
         return source + "\n# Duplicate fixture title\n"
-    if kind == "append-missing-section":
-        section = profile.append_contract.required_sections[0]
-        return source.replace(f"#### {section}\n\nFixture evidence.\n\n", "", 1)
-    if kind == "append-wrong-entry-level":
-        return source.replace("### 2026-07-12", "## 2026-07-12", 1)
-    if kind == "append-wrong-section-level":
-        return source.replace("#### Metadata", "### Metadata", 1)
     return source
-
-
-def _append_context(
-    registry_profiles: dict[str, DocumentProfile], mutation_kind: str | None
-) -> AppendContext | None:
-    if mutation_kind == "append-missing-context":
-        return None
-    parent = registry_profiles["governance/progress-ledger"]
-    parent_h2 = (
-        "Wrong Parent" if mutation_kind == "append-wrong-parent-h2" else "Work Entries"
-    )
-    if mutation_kind == "append-wrong-parent-profile":
-        parent = registry_profiles["governance/reference"]
-    return AppendContext(
-        parent_path=PurePosixPath("docs/00.agent-governance/memory/progress.md"),
-        parent_profile=parent,
-        parent_h2=parent_h2,
-    )
 
 
 def _rule_ids(diagnostics: Sequence[Diagnostic]) -> list[str]:
@@ -1756,7 +1614,6 @@ def _run_source_case(
     source: str,
     profile: DocumentProfile,
     *,
-    append_context: AppendContext | None = None,
     today: dt.date = dt.date(2026, 7, 12),
 ) -> list[str]:
     source = _self_test_artifact_source(source, profile)
@@ -1767,7 +1624,6 @@ def _run_source_case(
             path,
             profile,
             "strict",
-            append_context=append_context,
             today=today,
             # Matrix, metadata, section, and date fixtures are independent from
             # the dedicated bodyContractCases below. Keep template forms always
@@ -1807,24 +1663,13 @@ def _repository_diagnostics(
     diagnostics: list[Diagnostic] = []
     for path in inventory.current_paths:
         profile = classify_path(registry, path)
-        append_context = None
-        if profile.append_contract is not None:
-            parent = profiles[profile.append_contract.parent_profile_id]
-            append_context = AppendContext(
-                parent_path=PurePosixPath(
-                    "docs/00.agent-governance/memory/progress.md"
-                ),
-                parent_profile=parent,
-                parent_h2=profile.append_contract.parent_h2,
-            )
         diagnostics.extend(
             validate_document(
                 root,
                 path,
                 profile,
                 "strict",
-                append_context=append_context,
-                today=today,
+                    today=today,
                 body_contracts=body_contracts,
                 body_contract_path_prefixes=body_contract_path_prefixes,
             )
@@ -2463,7 +2308,6 @@ def _self_test(root: Path) -> list[str]:
             applicability = row["applicability"]
             if applicability not in {
                 "validate-document",
-                "append-fragment",
                 "classification-only",
                 "excluded",
             }:
@@ -2474,10 +2318,11 @@ def _self_test(root: Path) -> list[str]:
                 and not profile.headings.required
                 and not profile.headings.allowed
             )
-            if applicability == "validate-document" and (
-                profile.mode not in {"authored", "template", "frontmatter-free"}
-                or profile.append_contract is not None
-            ):
+            if applicability == "validate-document" and profile.mode not in {
+                "authored",
+                "template",
+                "frontmatter-free",
+            }:
                 failures.append(f"invalid validate-document mode: {profile.profile_id}")
             if applicability == "classification-only" and (
                 profile.mode not in {"classification-only", "generated"}
@@ -2485,13 +2330,6 @@ def _self_test(root: Path) -> list[str]:
             ):
                 failures.append(
                     f"invalid classification-only mode: {profile.profile_id}"
-                )
-            if (applicability == "append-fragment") != (
-                profile.append_contract is not None
-            ):
-                failures.append(
-                    f"append-fragment applicability differs from the declared "
-                    f"append contract: {profile.profile_id}"
                 )
             try:
                 fixture_path = _fixture_path(row["fixturePath"])
@@ -2577,18 +2415,12 @@ def _self_test(root: Path) -> list[str]:
                             f"classification negative {profile.profile_id}: expected={mutation['expectedRuleIds']} actual={actual_rules}"
                         )
                 continue
-            context = (
-                _append_context(profiles, None)
-                if applicability == "append-fragment"
-                else None
-            )
             positive_source = _profile_matrix_source(root, row, profile)
             actual_rules = _run_source_case(
                 temp_root,
                 path,
                 positive_source,
                 profile,
-                append_context=context,
             )
             if actual_rules:
                 failures.append(
@@ -2601,17 +2433,11 @@ def _self_test(root: Path) -> list[str]:
             for mutation in row["negativeMutations"]:
                 kind = mutation["kind"]
                 source = _mutation_source(positive_source, mutation, profile)
-                mutation_context = (
-                    _append_context(profiles, kind)
-                    if applicability == "append-fragment"
-                    else None
-                )
                 actual_rules = _run_source_case(
                     temp_root,
                     path,
                     source,
                     profile,
-                    append_context=mutation_context,
                 )
                 if actual_rules != mutation["expectedRuleIds"]:
                     failures.append(
@@ -3406,26 +3232,14 @@ def main(argv: Sequence[str] | None = None) -> int:
                 include_paths=native_include_paths,
             )
         )
-        profiles = {profile.profile_id: profile for profile in registry.profiles}
         for path in inventory.current_paths:
             profile = classify_path(registry, path)
-            append_context = None
-            if profile.append_contract is not None:
-                parent = profiles[profile.append_contract.parent_profile_id]
-                append_context = AppendContext(
-                    parent_path=PurePosixPath(
-                        "docs/00.agent-governance/memory/progress.md"
-                    ),
-                    parent_profile=parent,
-                    parent_h2=profile.append_contract.parent_h2,
-                )
             diagnostics.extend(
                 validate_document(
                     root,
                     path,
                     profile,
                     args.mode,
-                    append_context=append_context,
                     body_contracts=args.body_contracts,
                     body_contract_path_prefixes=tuple(args.body_contract_path_prefix),
                 )

@@ -74,8 +74,7 @@
           "superseded",
           "retired",
           "withdrawn"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -171,8 +170,7 @@
           "superseded",
           "retired",
           "withdrawn"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -273,8 +271,7 @@
           "accepted",
           "rejected",
           "superseded"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -375,8 +372,7 @@
           "done",
           "superseded",
           "withdrawn"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -481,8 +477,7 @@
           "done",
           "superseded",
           "withdrawn"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -586,8 +581,7 @@
           "done",
           "superseded",
           "withdrawn"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -683,8 +677,7 @@
           "blocked",
           "done",
           "cancelled"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -781,8 +774,7 @@
           "active",
           "superseded",
           "retired"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -875,8 +867,7 @@
           "active",
           "superseded",
           "retired"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -969,8 +960,7 @@
           "active",
           "superseded",
           "retired"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -1064,8 +1054,7 @@
           "mitigated",
           "resolved",
           "closed"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -1158,8 +1147,7 @@
           "draft",
           "published",
           "superseded"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -1252,8 +1240,7 @@
           "accepted",
           "done",
           "archived"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -1330,8 +1317,7 @@
       "lifecycle": {
         "statusDomain": [
           "archived"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -1393,8 +1379,7 @@
           "draft",
           "accepted",
           "sealed"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -1461,8 +1446,7 @@
           "active",
           "superseded",
           "retired"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -1708,8 +1692,7 @@
         "allowed": []
       },
       "lifecycle": {
-        "statusDomain": [],
-        "appendContract": null
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -1735,8 +1718,7 @@
         "allowed": []
       },
       "lifecycle": {
-        "statusDomain": [],
-        "appendContract": null
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -1762,8 +1744,7 @@
         "allowed": []
       },
       "lifecycle": {
-        "statusDomain": [],
-        "appendContract": null
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -1789,8 +1770,7 @@
         "allowed": []
       },
       "lifecycle": {
-        "statusDomain": [],
-        "appendContract": null
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -1816,8 +1796,7 @@
         "allowed": []
       },
       "lifecycle": {
-        "statusDomain": [],
-        "appendContract": null
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -1845,8 +1824,7 @@
       "lifecycle": {
         "statusDomain": [
           "transition"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -1872,8 +1850,7 @@
         "allowed": []
       },
       "lifecycle": {
-        "statusDomain": [],
-        "appendContract": null
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -1899,8 +1876,7 @@
         "allowed": []
       },
       "lifecycle": {
-        "statusDomain": [],
-        "appendContract": null
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -1926,8 +1902,7 @@
         "allowed": []
       },
       "lifecycle": {
-        "statusDomain": [],
-        "appendContract": null
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -1953,8 +1928,7 @@
         "allowed": []
       },
       "lifecycle": {
-        "statusDomain": [],
-        "appendContract": null
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -1980,8 +1954,7 @@
         "allowed": []
       },
       "lifecycle": {
-        "statusDomain": [],
-        "appendContract": null
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -2055,8 +2028,7 @@
       "lifecycle": {
         "statusDomain": [
           "archived"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [
@@ -2119,8 +2091,7 @@
         "statusDomain": [
           "draft",
           "sealed"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [
@@ -2426,8 +2397,7 @@
           "accepted",
           "done",
           "archived"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [
@@ -2498,8 +2468,7 @@
           "accepted",
           "rejected",
           "superseded"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [
@@ -2590,8 +2559,7 @@
           "mitigated",
           "resolved",
           "closed"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [
@@ -2692,8 +2660,7 @@
           "active",
           "done",
           "archived"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [
@@ -2788,8 +2755,7 @@
           "blocked",
           "done",
           "cancelled"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [
@@ -2884,8 +2850,7 @@
           "draft",
           "published",
           "superseded"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [
@@ -2977,8 +2942,7 @@
           "active",
           "accepted",
           "archived"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [
@@ -3067,8 +3031,7 @@
           "active",
           "accepted",
           "archived"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [
@@ -3164,8 +3127,7 @@
           "active",
           "accepted",
           "archived"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [
@@ -3255,8 +3217,7 @@
           "active",
           "accepted",
           "archived"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [
@@ -3357,8 +3318,7 @@
           "active",
           "done",
           "archived"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [
@@ -3458,8 +3418,7 @@
           "active",
           "done",
           "archived"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [
@@ -3564,8 +3523,7 @@
           "active",
           "done",
           "archived"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [
@@ -3665,8 +3623,7 @@
           "accepted",
           "done",
           "archived"
-        ],
-        "appendContract": null
+        ]
       },
       "relationships": {
         "sourceProfileIds": [

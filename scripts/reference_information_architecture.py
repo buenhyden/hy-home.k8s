@@ -3496,10 +3496,8 @@ def _wp004b_support_profile_projection(
     lifecycle = profile.get("lifecycle")
     if lifecycle is None and profile.get("class") == "readme":
         status_domain: object = []
-        append_contract: object = None
     elif isinstance(lifecycle, Mapping):
         status_domain = lifecycle.get("statusDomain")
-        append_contract = lifecycle.get("appendContract")
     else:
         raise ContractError(
             "RIA-BOUNDARY",
@@ -3526,7 +3524,6 @@ def _wp004b_support_profile_projection(
             relationships.get("sourceProfileIds")
         ),
         "placeholderPolicy": profile.get("placeholderPolicy"),
-        "appendContract": append_contract,
         "bodyContract": projected_body,
     }
 
@@ -3688,7 +3685,6 @@ def _wp004b_requirement_split_profile(
         "template": split["template"],
         "sourceProfileIds": [],
         "placeholderPolicy": root_profile.get("placeholderPolicy"),
-        "appendContract": None,
         "bodyContract": body,
     }
 

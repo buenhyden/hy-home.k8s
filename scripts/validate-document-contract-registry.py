@@ -166,18 +166,6 @@ def _assert_template_source_parity(registry: Registry) -> None:
         source = profiles.get(source_id)
         if source is None:
             raise AssertionError(f"{profile_id}: unknown source profile {source_id}")
-        if profile.append_contract is not None:
-            # An append template produces a fragment of its parent rather than a
-            # whole document, so it inherits no contract to compare. What must
-            # hold is that the parent it appends into is the source profile it
-            # declares; the heading levels and section names belong to the
-            # registry entry, which the schema already constrains.
-            if profile.append_contract.parent_profile_id != source_id:
-                raise AssertionError(
-                    f"{profile_id}: append parent differs from source {source_id}"
-                )
-            checked.add(profile_id)
-            continue
         source_frontmatter = source.frontmatter
         if (
             "artifact_id" in source_frontmatter.required

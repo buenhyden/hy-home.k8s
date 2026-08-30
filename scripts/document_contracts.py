@@ -94,15 +94,6 @@ class HeadingContract:
 
 
 @dataclass(frozen=True)
-class AppendContract:
-    parent_profile_id: str
-    parent_h2: str
-    entry_heading_level: Literal[3]
-    section_heading_level: Literal[4]
-    required_sections: tuple[str, ...]
-
-
-@dataclass(frozen=True)
 class IdentifierColumn:
     column: str
     kind: Literal["requirement", "criterion", "work-item"]
@@ -184,7 +175,6 @@ class DocumentProfile:
     ]
     source_profile_ids: tuple[str, ...]
     placeholder_policy: Literal["forbidden", "template-only"]
-    append_contract: AppendContract | None
     body_contract: BodyContract | None
     lifecycle_domain: LifecycleDomain | None
 
@@ -722,18 +712,6 @@ def _schema_rule_id(error: Any) -> str:
     return "REGISTRY_SCHEMA"
 
 
-def _append_contract(raw: Mapping[str, Any] | None) -> AppendContract | None:
-    if raw is None:
-        return None
-    return AppendContract(
-        parent_profile_id=raw["parentProfileId"],
-        parent_h2=raw["parentH2"],
-        entry_heading_level=raw["entryHeadingLevel"],
-        section_heading_level=raw["sectionHeadingLevel"],
-        required_sections=tuple(raw["requiredSections"]),
-    )
-
-
 def _body_contract(raw: Mapping[str, Any] | None) -> BodyContract | None:
     if raw is None:
         return None
@@ -794,7 +772,6 @@ def _profile_from_mapping(
         mode=raw["mode"],
         source_profile_ids=tuple(raw["sourceProfileIds"]),
         placeholder_policy=raw["placeholderPolicy"],
-        append_contract=_append_contract(raw["appendContract"]),
         body_contract=_body_contract(raw["bodyContract"]),
         lifecycle_domain=lifecycle_domain,
     )
@@ -1028,20 +1005,6 @@ def _terminal_semantic_diagnostics(
                 )
 
         lifecycle = raw_profile.get("lifecycle")
-        append_contract = lifecycle.get("appendContract") if lifecycle else None
-        if (
-            append_contract is not None
-            and append_contract["parentProfileId"] not in profiles_by_id
-        ):
-            diagnostics.append(
-                _diagnostic(
-                    "REGISTRY_APPEND_PROFILE",
-                    profile=profile_id,
-                    expected="a declared append parent profile ID",
-                    actual=append_contract["parentProfileId"],
-                )
-            )
-
         body_contract = relationships["bodyContract"]
         if body_contract is not None:
             required_headings = raw_profile["requiredSections"]["required"]
@@ -1534,7 +1497,6 @@ def _internal_profile_form(profile: Mapping[str, Any]) -> dict[str, Any]:
         "template": profile["template"],
         "sourceProfileIds": profile["relationships"]["sourceProfileIds"],
         "placeholderPolicy": profile["placeholderPolicy"],
-        "appendContract": profile.get("lifecycle", {}).get("appendContract"),
         "bodyContract": profile["relationships"]["bodyContract"],
     }
 

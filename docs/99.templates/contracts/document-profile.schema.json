@@ -44,36 +44,6 @@
     }
   },
   "$defs": {
-    "appendContract": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "parentProfileId",
-        "parentH2",
-        "entryHeadingLevel",
-        "sectionHeadingLevel",
-        "requiredSections"
-      ],
-      "properties": {
-        "parentProfileId": {
-          "type": "string",
-          "minLength": 1
-        },
-        "parentH2": {
-          "type": "string",
-          "minLength": 1
-        },
-        "entryHeadingLevel": {
-          "const": 3
-        },
-        "sectionHeadingLevel": {
-          "const": 4
-        },
-        "requiredSections": {
-          "$ref": "#/$defs/nonEmptyStringArray"
-        }
-      }
-    },
     "bodyContract": {
       "type": "object",
       "additionalProperties": false,
@@ -206,26 +176,15 @@
       }
     },
     "lifecycle": {
-      "description": "Status domain and append rule for this profile.",
+      "description": "Status domain for this profile.",
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "statusDomain",
-        "appendContract"
+        "statusDomain"
       ],
       "properties": {
         "statusDomain": {
           "$ref": "#/$defs/stringArray"
-        },
-        "appendContract": {
-          "oneOf": [
-            {
-              "type": "null"
-            },
-            {
-              "$ref": "#/$defs/appendContract"
-            }
-          ]
         }
       }
     },

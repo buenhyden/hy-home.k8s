@@ -1363,14 +1363,6 @@ def canonical_form_content_errors(
         if source is None or form_path.suffix != ".md":
             continue
         required_section_groups = [(2, profile.headings.required, False)]
-        if profile.append_contract is not None:
-            required_section_groups.append(
-                (
-                    profile.append_contract.section_heading_level,
-                    profile.append_contract.required_sections,
-                    True,
-                )
-            )
         for (
             heading_level,
             required_headings,
@@ -1594,7 +1586,7 @@ def canonical_markdown_owns_generic_residue(path: pathlib.Path) -> bool:
         )
     except DocumentContractError:
         return False
-    if profile.placeholder_policy != "forbidden" or profile.append_contract is not None:
+    if profile.placeholder_policy != "forbidden":
         return False
     if (
         profile.frontmatter.mode == "not-applicable"
