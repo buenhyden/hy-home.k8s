@@ -26,7 +26,7 @@ use without requiring cluster access delegation.
 - Documenting bootstrap, recovery, deployment, backup, or incident response procedures.
 - Reviewing an existing runbook for correctness, completeness, and safety.
 - Translating a break-glass or operator-bound action into a reproducible, step-by-step guide.
-- Producing files under `docs/05.operations/runbooks/` or `docs/05.operations/playbooks/`.
+- Producing files under `docs/05.operations/runbooks/`.
 
 ## When NOT to Use
 
@@ -43,8 +43,8 @@ use without requiring cluster access delegation.
 5. Write a Rollback section that undoes each step in reverse order.
 6. State post-conditions that confirm the procedure succeeded.
 7. Link to the relevant ArgoCD apps, Vault paths, or ESO SecretStore resources.
-8. Save the file under `docs/05.operations/runbooks/` or `docs/05.operations/playbooks/`
-   following the existing naming convention.
+8. Save the file under `docs/05.operations/runbooks/` following the existing
+   naming convention.
 9. Update `docs/05.operations/README.md` to include the new runbook link.
 
 ## Safety Rules
