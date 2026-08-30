@@ -277,6 +277,10 @@ finite WP-004C input and is intentionally not presented as a current family.
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks/
+├── 0065-transition-residue-retirement/
+│   ├── spec.md
+│   ├── plan.md
+│   └── tasks/
 └── README.md
 ```
 
@@ -371,6 +375,7 @@ finite WP-004C input and is intentionally not presented as a current family.
 | [`./0062-workspace-research-full-corpus-reverification/spec.md`](./0062-workspace-research-full-corpus-reverification/spec.md) | Full-corpus external-source and workspace reverification design over the existing WER research pack | Active | 2026-08-20 직접 승인된 standalone 실행 관계로, 기존 36개 `REQ-WERPC` owner를 외부·workspace 증거로 전수 재검증하고 결과를 기존 14-file 연구 팩에 증분 통합한다. | 2026-08-20 |
 | [`./0063-governance-invariant-consolidation/spec.md`](./0063-governance-invariant-consolidation/spec.md) | Retirement of completed-migration validation machinery and unification of the declared contract with the executed gate | Done | 2026-08-29 직접 승인된 standalone 실행 관계로, 완료된 이관에 묶인 검증기와 핀을 은퇴시키고 ADR-0030의 Stage 98 경계를 집행하며 계약을 실행 목록의 단일 소유자로 만든다. | 2026-08-30 |
 | [`./0064-agent-governance-surface-consolidation/spec.md`](./0064-agent-governance-surface-consolidation/spec.md) | Correction of the agent-governance surfaces so each states only what is currently true, with one owner per fact | Done | 2026-08-30 직접 승인된 standalone 실행 관계로, `docs/00.agent-governance/`·`.agents/`·`.claude/`·`.codex/` 98개 파일을 6개 축으로 감사해 자기모순 상태의 progress 원장을 Stage 98 최소 Tombstone으로 은퇴시키고, 소유되지 않은 경로를 지시하는 skill과 참조 없는 스캐폴드를 제거한다. 기각된 후보 8건도 근거와 함께 기록한다. | 2026-08-30 |
+| [`./0065-transition-residue-retirement/spec.md`](./0065-transition-residue-retirement/spec.md) | Retirement of the three transition residues Spec 0054 WP-012 recorded | Draft | 2026-08-30 직접 승인된 standalone 실행 관계로, 실행될 수 없는 route-state 분기와 그 별칭 기계를 은퇴시키고, 봉인된 MIG-0004의 Stage 99 대상에 덧붙은 현재 트리 존재 요구를 후속 봉인 행이 은퇴시킨 대상에 한해 해제하며, 이를 통해 두 governance form과 그것을 라우팅하는 세 profile 및 Stage 00 memory 디렉터리를 정리한다. | 2026-08-30 |
 
 ### Helper Templates
 
