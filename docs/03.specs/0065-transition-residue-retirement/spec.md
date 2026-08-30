@@ -1,9 +1,9 @@
 ---
 title: 'Transition Residue Retirement Technical Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
-updated: 2026-08-30
+updated: 2026-08-31
 artifact_id: "SPEC-0065"
 ---
 
