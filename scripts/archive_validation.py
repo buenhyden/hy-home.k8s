@@ -1347,9 +1347,21 @@ def validate_migration_records(
             raise ArchiveContractError(
                 "RECOVERY-MIGRATION-REFERENCE", "reference kind differs"
             )
+    # A historical consumer proves that a retired path's disposition was
+    # reviewed in a real document at a real commit, and that proof reads the
+    # document from Git below.  Once a sealed row retires the consumer itself,
+    # requiring the current tree to keep its exact bytes freezes the present
+    # without proving anything further about the past.  The retiring row is the
+    # stronger record, because it carries source commit, blob and digest and is
+    # itself proved by RECOVERY-MIGRATION-CONTENT.
+    retired_consumers = {
+        path
+        for path in consumer_commits
+        if path in edges and targets.get(path, path) != path
+    }
     selected = (
         set(targets.values())
-        | set(consumer_commits)
+        | (set(consumer_commits) - retired_consumers)
         | lookup_paths
         | reference_terminals
     )
@@ -1445,7 +1457,7 @@ def validate_migration_records(
     consumers = {}
     for path, commit in consumer_commits.items():
         content = sources[commit, path][1]
-        if current[path] != content:
+        if path not in retired_consumers and current[path] != content:
             raise ArchiveContractError(
                 "RECOVERY-MIGRATION-CONSUMER", "historical consumer source differs"
             )

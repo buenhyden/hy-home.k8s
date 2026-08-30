@@ -493,6 +493,56 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
         self.assertEqual(proof.targets[self.source], self.target)
         self.assertNotIn(draft_source, proof.targets)
 
+    def test_a_sealed_row_releases_a_registered_consumer_from_the_tree(self):
+        # A historical consumer proves that a retired path's disposition was
+        # reviewed in a real document at a real commit.  The proof reads that
+        # document's bytes from Git, so it still holds once the consumer is
+        # itself retired by a later sealed row.  Requiring the current tree to
+        # keep those bytes freezes the present without proving more about the
+        # past, and a sealed row carrying source commit, blob and digest is the
+        # stronger record of the two.
+        self.write()
+        retirement = "docs/98.archive/migrations/0006-consumer-retirement.md"
+        blob = (
+            self.git.run("rev-parse", f"{self.commit}:{self.consumer}")
+            .decode("ascii")
+            .strip()
+        )
+        row = dict(
+            self.row,
+            legacy_path=self.consumer,
+            replacement=None,
+            action="deleted",
+            source_blob=blob,
+            content_sha256=hashlib.sha256(self.consumer_bytes).hexdigest(),
+            reason="Retire the reviewed consumer; Git retains its exact source.",
+        )
+        # A deleted row points its edge at the Archive index, which this
+        # fixture otherwise never needs.
+        index = self.root / "docs/98.archive/README.md"
+        index.write_bytes(b"# Archive\n")
+        self.git.run("add", "--", "docs/98.archive/README.md")
+        self.write([row], consumers=[], path=retirement)
+        self.git.run("rm", "--quiet", "--", self.consumer)
+
+        proof = archive.repository_migration_proof(self.root)
+
+        self.assertEqual(proof.consumers[self.consumer], self.consumer_bytes)
+        self.assertEqual(proof.targets[self.source], self.target)
+
+    def test_an_unretired_consumer_still_freezes_to_its_historical_source(self):
+        # The release is scoped to a consumer that a sealed row retires.  A
+        # consumer with no such row keeps the parity rule, so the narrowing
+        # cannot be used to edit a reviewed disposition out of a live document.
+        self.write()
+        (self.root / self.consumer).write_bytes(self.consumer_bytes + b"\n# later\n")
+        self.git.run("add", "--", self.consumer)
+
+        with self.assertRaises(recovery.ArchiveContractError) as raised:
+            archive.repository_migration_proof(self.root)
+
+        self.assertEqual(raised.exception.code, "RECOVERY-MIGRATION-CONSUMER")
+
     def test_cli_uses_validated_successor_records(self):
         first, second = self.chain(self.payload, action="merged")
         first_bytes = self.write([first])
