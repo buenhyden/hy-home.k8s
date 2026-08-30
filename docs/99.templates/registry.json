@@ -4428,6 +4428,15 @@
       "reason": "Direct human-approved consolidation of governance invariants: retirement of completed-migration validation machinery, Stage 98 reduction to its ADR-0030 shape, and removal of duplicated document purpose",
       "decision": "0022",
       "approvalMode": "spec-body-record"
+    },
+    {
+      "spec": "0064",
+      "plan": "docs/03.specs/0064-agent-governance-surface-consolidation/plan.md",
+      "task": "docs/03.specs/0064-agent-governance-surface-consolidation/tasks/tsk-0001-ags-000.md",
+      "state": "active",
+      "reason": "Direct human-approved correction of the agent-governance surfaces: retirement of the self-contradicting progress ledger to a Stage 98 tombstone, removal of unowned path instructions, and removal of unreferenced scaffolding",
+      "decision": "0022",
+      "approvalMode": "spec-body-record"
     }
   ]
 }
