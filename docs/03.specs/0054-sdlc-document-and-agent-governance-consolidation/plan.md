@@ -249,7 +249,7 @@ work packages. The lossless identity map is:
 | WP-009 | TSK-0054-0009 | queued |
 | WP-010 | TSK-0054-0010 | queued |
 | WP-011 | TSK-0054-0011 | queued |
-| WP-012 | TSK-0054-0012 | in-progress |
+| WP-012 | TSK-0054-0012 | done |
 | WP-013 | TSK-0054-0013 | queued |
 | WP-014 | TSK-0054-0014 | queued |
 

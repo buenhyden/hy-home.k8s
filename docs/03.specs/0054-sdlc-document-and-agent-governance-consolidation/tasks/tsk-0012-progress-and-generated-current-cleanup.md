@@ -1,7 +1,7 @@
 ---
 title: 'Task: Progress and generated-current cleanup'
 type: sdlc/task
-status: in-progress
+status: done
 owner: platform
 updated: 2026-08-30
 artifact_id: "TSK-0054-0012"
@@ -30,11 +30,11 @@ refuses is recorded rather than forced.
 
 **Depends on:** WP-011
 
-**Current state:** `in-progress`
+**Current state:** `done`
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-054-012 | VAL-SDLC-009..VAL-SDLC-012 | Transfer global progress into Spec Tasks and Git, then remove stale generated-current residue. | platform | In progress | Ledger retired; progress-prefix and whole-file SHA validators retired; memory surface partly retained, see residuals. | `08c1373c`, `959bd64d`, `89ae40a8` |
+| WORK-054-012 | VAL-SDLC-009..VAL-SDLC-012 | Transfer global progress into Spec Tasks and Git, then remove stale generated-current residue. | platform | Done | Ledger retired; progress-prefix and whole-file SHA validators retired; memory surface partly retained, see residuals. | `08c1373c`, `959bd64d`, `89ae40a8` |
 
 ### What was executed
 
