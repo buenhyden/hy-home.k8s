@@ -1083,6 +1083,94 @@ class ArchiveValidationTest(unittest.TestCase):
                     root.resolve(), rows
                 )
 
+    @staticmethod
+    def _sealed_retirement_record(legacy_path: str) -> bytes:
+        """Return a sealed MIG-0009 record whose only row retires one path."""
+
+        row = {
+            "legacy_path": legacy_path,
+            "stable_path": None,
+            "artifact_id": None,
+            "action": "deleted",
+            "replacement": None,
+            "source_commit": "a" * 40,
+            "source_blob": "b" * 40,
+            "content_sha256": "c" * 64,
+            "reason": "Retire a Stage 99 form whose owner no longer routes to it.",
+        }
+        return (
+            "---\n"
+            'title: "MIG-0009: Stage 99 Form Retirement"\n'
+            'type: "content/archive-migration"\n'
+            'status: "sealed"\n'
+            'owner: "platform"\n'
+            'updated: "2026-08-30"\n'
+            'artifact_id: "MIG-0009"\n'
+            'migration_id: "MIG-0009"\n'
+            "---\n\n"
+            "# MIG-0009: Stage 99 Form Retirement\n\n"
+            "## Migration Ledger\n\n"
+            "<!-- archive-migration-ledger:v1 format=json -->\n\n"
+            "```json\n"
+            f"{json.dumps([row], indent=2)}\n"
+            "```\n\n"
+            "### Historical consumers\n\n"
+            "<!-- archive-historical-consumers:v1 format=json -->\n\n"
+            "```json\n"
+            "[]\n"
+            "```\n"
+        ).encode("utf-8")
+
+    def test_a_stage99_target_retired_by_a_sealed_row_may_be_absent(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="mig0004-stage99-retired-") as temporary:
+            root = Path(temporary)
+            fixture, rows = self._mig0004_current_fixture(root)
+            retired = "docs/99.templates/templates/governance/progress.template.md"
+            self.assertIn(
+                retired,
+                {
+                    target
+                    for _action, target in (
+                        archive_validation.MIG0004_STAGE99_ACTION_TARGETS.values()
+                    )
+                },
+            )
+
+            fixture.run("rm", "--quiet", "-f", "--", retired)
+            self.assertFalse((root / retired).exists())
+
+            record = "docs/98.archive/migrations/0009-stage99-form-retirement.md"
+            destination = root / record
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(self._sealed_retirement_record(retired))
+            fixture.run("add", "--", record)
+
+            archive_validation._validate_mig0004_rows_and_targets(  # noqa: SLF001
+                root.resolve(), rows
+            )
+
+    def test_a_stage99_target_without_a_retiring_row_stays_required(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="mig0004-stage99-required-") as temporary:
+            root = Path(temporary)
+            fixture, rows = self._mig0004_current_fixture(root)
+            retired = "docs/99.templates/templates/governance/progress.template.md"
+            other = "docs/99.templates/templates/governance/memory.template.md"
+
+            fixture.run("rm", "--quiet", "-f", "--", retired)
+            record = "docs/98.archive/migrations/0009-stage99-form-retirement.md"
+            destination = root / record
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(self._sealed_retirement_record(other))
+            fixture.run("add", "--", record)
+
+            with self.assertRaisesRegex(
+                archive_validation.ArchiveContractError,
+                "RECOVERY-MIGRATION-TARGET",
+            ):
+                archive_validation._validate_mig0004_rows_and_targets(  # noqa: SLF001
+                    root.resolve(), rows
+                )
+
     def test_mig0004_rejects_non_terminal_row_growth(self) -> None:
         with tempfile.TemporaryDirectory(prefix="mig0004-growth-") as temporary:
             root = Path(temporary)

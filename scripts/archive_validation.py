@@ -2306,6 +2306,27 @@ def _require_regular_current_target(
         )
 
 
+def _sealed_row_retired_paths(root: Path) -> frozenset[str]:
+    """Return every legacy path a sealed generic migration row retires."""
+
+    inventory = _staged_regular_blob_inventory(
+        root, paths=((ARCHIVE_ROOT / "migrations").as_posix(),)
+    )
+    retired: set[str] = set()
+    for path in sorted(inventory):
+        if generic_migration_id(path) is None:
+            continue
+        content = read_staged_blob_bounded(root, path)
+        if not is_sealed_migration(content):
+            continue
+        rows, _consumers = parse_migration_control(path, content)
+        for row in rows:
+            legacy = row.get("legacy_path")
+            if isinstance(legacy, str):
+                retired.add(legacy)
+    return frozenset(retired)
+
+
 def _validate_mig0004_rows_and_targets(
     root: Path,
     rows: tuple[dict[str, object], ...],
@@ -2345,9 +2366,14 @@ def _validate_mig0004_rows_and_targets(
     previous: str | None = None
     legacy_paths: set[str] = set()
     inventory = _staged_regular_blob_inventory(root)
+    # A sealed generic row already refuses a legacy path that is still present,
+    # and validate_mig0004_historical_targets proves each sealed Stage 99 move
+    # against its pinned historical commit. Requiring the target to remain in
+    # the current tree adds no proof about the past; it only forbids a later
+    # reviewed retirement, so a retired target is released from the inventory.
     stage99_targets = frozenset(
         target for _action, target in MIG0004_STAGE99_ACTION_TARGETS.values()
-    )
+    ) - _sealed_row_retired_paths(root)
     consumer_paths = tuple(
         path
         for path in inventory
