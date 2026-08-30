@@ -82,6 +82,7 @@ false upstream authority.
 | Direct human approval recorded in the Spec body | N/A — tenth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0062](../../03.specs/0062-workspace-research-full-corpus-reverification/spec.md) |
 | Direct human approval recorded in the Spec body | N/A — eleventh typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0063](../../03.specs/0063-governance-invariant-consolidation/spec.md) |
 | Direct human approval recorded in the Spec body | N/A — twelfth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0064](../../03.specs/0064-agent-governance-surface-consolidation/spec.md) |
+| Direct human approval recorded in the Spec body | N/A — thirteenth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0065](../../03.specs/0065-transition-residue-retirement/spec.md) |
 
 Specs 0055 through 0061 were executed under this same direct-approval semantics,
 each with the approval recorded in its own Spec body, and are named here without

@@ -4437,6 +4437,15 @@
       "reason": "Direct human-approved correction of the agent-governance surfaces: retirement of the self-contradicting progress ledger to a Stage 98 tombstone, removal of unowned path instructions, and removal of unreferenced scaffolding",
       "decision": "0022",
       "approvalMode": "spec-body-record"
+    },
+    {
+      "spec": "0065",
+      "plan": "docs/03.specs/0065-transition-residue-retirement/plan.md",
+      "task": "docs/03.specs/0065-transition-residue-retirement/tasks/tsk-0001-trr-000.md",
+      "state": "active",
+      "reason": "Direct human-approved retirement of the three transition residues Spec 0054 WP-012 recorded",
+      "decision": "0022",
+      "approvalMode": "spec-body-record"
     }
   ]
 }
