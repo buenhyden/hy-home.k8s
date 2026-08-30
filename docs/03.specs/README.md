@@ -281,6 +281,10 @@ finite WP-004C input and is intentionally not presented as a current family.
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks/
+├── 0066-validation-tooling-ownership/
+│   ├── spec.md
+│   ├── plan.md
+│   └── tasks/
 └── README.md
 ```
 
@@ -376,6 +380,7 @@ finite WP-004C input and is intentionally not presented as a current family.
 | [`./0063-governance-invariant-consolidation/spec.md`](./0063-governance-invariant-consolidation/spec.md) | Retirement of completed-migration validation machinery and unification of the declared contract with the executed gate | Done | 2026-08-29 직접 승인된 standalone 실행 관계로, 완료된 이관에 묶인 검증기와 핀을 은퇴시키고 ADR-0030의 Stage 98 경계를 집행하며 계약을 실행 목록의 단일 소유자로 만든다. | 2026-08-30 |
 | [`./0064-agent-governance-surface-consolidation/spec.md`](./0064-agent-governance-surface-consolidation/spec.md) | Correction of the agent-governance surfaces so each states only what is currently true, with one owner per fact | Done | 2026-08-30 직접 승인된 standalone 실행 관계로, `docs/00.agent-governance/`·`.agents/`·`.claude/`·`.codex/` 98개 파일을 6개 축으로 감사해 자기모순 상태의 progress 원장을 Stage 98 최소 Tombstone으로 은퇴시키고, 소유되지 않은 경로를 지시하는 skill과 참조 없는 스캐폴드를 제거한다. 기각된 후보 8건도 근거와 함께 기록한다. | 2026-08-30 |
 | [`./0065-transition-residue-retirement/spec.md`](./0065-transition-residue-retirement/spec.md) | Retirement of the three transition residues Spec 0054 WP-012 recorded | Done | 2026-08-30 직접 승인된 standalone 실행 관계로, 실행될 수 없는 route-state 분기와 그 별칭 기계를 은퇴시키고, 봉인된 MIG-0004의 Stage 99 대상에 덧붙은 현재 트리 존재 요구를 후속 봉인 행이 은퇴시킨 대상에 한해 해제하며, 이를 통해 두 governance form과 그것을 라우팅하는 세 profile 및 Stage 00 memory 디렉터리를 정리한다. | 2026-08-31 |
+| [`./0066-validation-tooling-ownership/spec.md`](./0066-validation-tooling-ownership/spec.md) | Restructure of the validation tooling trees onto one role-first owner per module | Draft | 2026-08-31 직접 승인된 standalone 실행 관계로, 하위 디렉터리와 `.py`를 조용히 놓치는 script 참조 규칙을 먼저 고친 뒤 `scripts/`와 `tests/`를 role-first 구조로 옮기고, case table의 소유자를 하나로 정하며, 800줄 상한을 넘는 37개 파일과 분류되지 않은 104개 commit pin을 정리한다. `validation-surfaces.json`은 읽기 전용이다. | 2026-08-31 |
 
 ### Helper Templates
 
