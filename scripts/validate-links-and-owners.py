@@ -134,7 +134,6 @@ WORK054_MIGRATION_PATH = PurePosixPath(
 WORK054_WP004B_MIGRATION_PATH = PurePosixPath(
     "docs/98.archive/migrations/0004-document-authority-convergence.md"
 )
-ARCHIVE_INDEX_BOUNDARY = "docs/98.archive/README.md#document-index"
 ARCHIVE_INDEX_PATH = PurePosixPath("docs/98.archive/README.md")
 DOCUMENT_TAXONOMY_SOURCE_COMMIT = (
     "713dff1fc3de58a2d1682970a7f24faa39c14263"  # pragma: allowlist secret
@@ -257,9 +256,6 @@ WORK105_LEDGER_PATH_ALIASES = {
         "docs/99.templates/templates/sdlc/architecture/ard.template.md"
     ): PurePosixPath("docs/99.templates/templates/sdlc/architecture/ad.template.md"),
 }
-WORK105_LEDGER_RETIRED_PATHS = frozenset(
-    {PurePosixPath("docs/99.templates/templates/sdlc/specs/api-spec.template.md")}
-)
 
 
 @lru_cache(maxsize=4)
@@ -367,22 +363,6 @@ LEDGER_SETTLEMENT_KEYS = frozenset(
 GIT_SHA1_PATTERN = re.compile(r"git-sha1:[0-9a-f]{40}")
 SHA256_PATTERN = re.compile(r"[0-9a-f]{64}")
 MAX_LEDGER_BYTES = 2_000_000
-LEDGER_COLUMNS = (
-    "path",
-    "title",
-    "profile",
-    "owner-key",
-    "disposition",
-    "destination",
-    "local-evidence",
-    "official-sources",
-    "observed-version",
-    "applicability",
-    "content-decision",
-    "refresh-trigger",
-    "reviewer",
-    "result",
-)
 WERPC_DISPOSITION_COLUMNS = (
     "old path",
     "source commit",
@@ -563,61 +543,10 @@ class ArchiveTransitionEdge:
     target: PurePosixPath
 
 
-EXPECTED_ARCHIVE_TRANSITION_EDGES: tuple[ArchiveTransitionEdge, ...] = ()
-REVIEWED_STAGE90_MOVE_SOURCE_BLOBS = {
-    PurePosixPath(
-        "docs/90.references/audits/2026-07-02-whia/harness-loop-implementation-audit.md"
-    ): "39f7d5dbc4d69e53485fb0b9d482a151e9b44b86",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/90.references/audits/2026-07-02-whia/provider-harness-loop-implementation-audit.md"
-    ): "0403e861994bc322fbcaaabfceb1b5c8ada02572",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/90.references/audits/2026-07-02-whia/sdlc-delivery-practices-implementation-audit.md"
-    ): "693b0b2b29899b4a6a54acbb2aa697b9ff5c0818",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/90.references/audits/2026-07-02-whia/workspace-governance-implementation-audit.md"
-    ): "0965758eccd42bba5e884f01270ed738c9d6410a",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md"
-    ): "9f60551f8e5035cee01941a039a9be3336021916",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/90.references/audits/2026-07-04-wdcn/workspace-document-contract-normalization-audit.md"
-    ): "21151b591f787179f50dbbea0cd02913acb8f2e3",  # pragma: allowlist secret
-    PurePosixPath("docs/90.references/audits/2026-07-05-wea/README.md"): (
-        "9a7c9c70336c7510e23634b62eb0ee7b41d0db43"  # pragma: allowlist secret
-    ),
-    PurePosixPath(
-        "docs/90.references/audits/2026-07-05-wea/governance-harness-loop-providers.md"
-    ): "84830e0fa7178f820bfb189d9f129fd34209af18",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/90.references/audits/2026-07-05-wea/implementation-roadmap-and-automation-opportunities.md"
-    ): "5cf2c6b9b24ab510b3cfa48eca6f7afa7d0feec5",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/90.references/audits/2026-07-05-wea/kubernetes-infrastructure-security.md"
-    ): "cdab943dcb4d9d50b5252afad13db8e0bb3ce39a",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/90.references/audits/2026-07-05-wea/sdlc-ci-qa-formatting-automation.md"
-    ): "ceca294a1902fd38d33f4dec6aa0b41dc6e3ed15",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md"
-    ): "9fc02988093b418d8e27b464d1d341ab877c5562",  # pragma: allowlist secret
-    PurePosixPath("docs/90.references/research/2026-08-08-wer/README.md"): (
-        "6bfec251d8927dd82f5c12b49c013a598c64d088"  # pragma: allowlist secret
-    ),
-    PurePosixPath("docs/90.references/research/README.md"): (
-        "a21d2cfeae6dfcd4cdc98f6661c1f7a190c49523"  # pragma: allowlist secret
-    ),
-}
-REVIEWED_STAGE90_MOVE_EDGE_COUNT = 29
+# The frozen cloud-example snapshot sources.  `_terminal_frozen_manifest_source`
+# is the only reader and admits a source only under this directory, so no other
+# entry can be reached.
 IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS = {
-    **REVIEWED_STAGE90_MOVE_SOURCE_BLOBS,
-    PurePosixPath(
-        "docs/90.references/audits/2026-07-11-weia/governance-harness-loop-providers.md"
-    ): "b35dce197ca96bb9341b590ef505040e86d18577",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/90.references/audits/2026-07-11-weia/"
-        "sdlc-document-lifecycle-frontmatter.md"
-    ): "39cdc99f265ca91c35f1f0ede114cf626359837e",  # pragma: allowlist secret
     PurePosixPath(
         "docs/90.references/cloud-examples/README.md"
     ): "841d76f65390f1dfa37e282dbda8eeb6738c2d30",  # pragma: allowlist secret
@@ -633,30 +562,8 @@ IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS = {
     PurePosixPath(
         "docs/90.references/cloud-examples/azure/README.md"
     ): "a3d5bea92ec2ef78115aa473e77fc044d0d8426e",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/90.references/data/agent-reference-index.md"
-    ): "4c8b4a08b7965da2c9e108c9cc83a41c2d5f8439",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/90.references/llm-wiki/README.md"
-    ): "3451f28cb08bab9e23a798998e00489bdf6959b8",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/90.references/llm-wiki/wiki-index.md"
-    ): "0c0941ad247d91e049c7d810010feea08de4d075",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/90.references/research/2026-08-08-wer/"
-        "documentation-architecture-and-diataxis.md"
-    ): "e5f0495270e6a4b5b4aeb97401957d501989eb33",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/98.archive/README.md"
-    ): "35b69ced14f3f5511a3b13dff35e337000297333",  # pragma: allowlist secret
 }
 
-@dataclass(frozen=True)
-class ArchiveTransitionHandoff:
-    """Closed transition projection to the collection archive boundary."""
-
-    navigation_boundary: str
-    edges: tuple[ArchiveTransitionEdge, ...]
 
 
 @dataclass(frozen=True)
@@ -3355,146 +3262,14 @@ def _git_sha1_blob(text: str) -> str:
     return _git_sha1_blob_bytes(text.encode("utf-8"))
 
 
-def _archive_transition_handoff(context: Context) -> ArchiveTransitionHandoff:
-    """Project exact frozen-source edges only while the registry is transition."""
-
-    if context.route_state != "transition":
-        return ArchiveTransitionHandoff(ARCHIVE_INDEX_BOUNDARY, ())
-    move_blobs, _, archive_sources = _document_taxonomy_transition_manifest(context)
-    if (
-        ARCHIVE_INDEX_PATH not in context.paths
-        or ARCHIVE_INDEX_PATH not in context.tracked_regular_paths
-        or not _path_exists_without_dereference(
-            context.root, ARCHIVE_INDEX_PATH, context.adapter_targets
-        )
-    ):
-        raise ConfigurationError("archive transition index boundary is unavailable")
-    edges: set[ArchiveTransitionEdge] = set()
-    for source, source_blob in move_blobs.items():
-        text = context.texts.get(source)
-        if (
-            text is None
-            or source not in context.paths
-            or source not in context.tracked_regular_paths
-            or _git_sha1_blob(text) != source_blob
-        ):
-            continue
-        for raw in _extract_links(text):
-            kind, target = _local_destination(source, raw)
-            if kind == "local" and target in archive_sources:
-                assert target is not None
-                edges.add(ArchiveTransitionEdge(source, target))
-    ordered_edges = tuple(sorted(edges))
-    if ordered_edges != EXPECTED_ARCHIVE_TRANSITION_EDGES:
-        raise ConfigurationError("archive transition deferred edge set differs")
-    return ArchiveTransitionHandoff(ARCHIVE_INDEX_BOUNDARY, ordered_edges)
 
 
-def _archive_transition_target(
-    context: Context,
-    source: PurePosixPath,
-    target: PurePosixPath,
-) -> str | None:
-    """Resolve one admitted transition edge to the collection index anchor."""
-
-    handoff = _archive_transition_handoff(context)
-    edge = ArchiveTransitionEdge(source, target)
-    return handoff.navigation_boundary if edge in handoff.edges else None
 
 
-def _reviewed_stage90_move_edges(
-    context: Context,
-    move_targets: Mapping[PurePosixPath, PurePosixPath],
-) -> frozenset[ArchiveTransitionEdge]:
-    """Admit only legacy move edges frozen by reviewed Stage 90 blobs."""
-
-    if context.route_state != "transition":
-        return frozenset()
-    edges: set[ArchiveTransitionEdge] = set()
-    contributing_sources: set[PurePosixPath] = set()
-    for source, expected_blob in REVIEWED_STAGE90_MOVE_SOURCE_BLOBS.items():
-        text = context.texts.get(source)
-        if (
-            text is None
-            or source not in context.tracked_regular_paths
-            or _git_sha1_blob(text) != expected_blob
-        ):
-            raise ConfigurationError(
-                "reviewed Stage 90 move source differs from its frozen blob"
-            )
-        for raw in _extract_links(text):
-            kind, target = _local_destination(source, raw)
-            if kind != "local" or target not in move_targets:
-                continue
-            assert target is not None
-            if _path_exists_without_dereference(
-                context.root, target, context.adapter_targets
-            ):
-                continue
-            replacement = move_targets[target]
-            if (
-                replacement not in context.tracked_regular_paths
-                or not _path_exists_without_dereference(
-                    context.root, replacement, context.adapter_targets
-                )
-            ):
-                raise ConfigurationError(
-                    "reviewed Stage 90 move replacement is unavailable"
-                )
-            edges.add(ArchiveTransitionEdge(source, target))
-            contributing_sources.add(source)
-    if len(edges) != REVIEWED_STAGE90_MOVE_EDGE_COUNT or contributing_sources != set(
-        REVIEWED_STAGE90_MOVE_SOURCE_BLOBS
-    ):
-        raise ConfigurationError("reviewed Stage 90 move edge set differs")
-    return frozenset(edges)
 
 
-def _immutable_historical_redirects(
-    context: Context,
-    move_targets: Mapping[PurePosixPath, PurePosixPath],
-) -> dict[PurePosixPath, PurePosixPath]:
-    """Compose exact current/archive replacements without a general alias."""
-
-    aliases, replacements, merges = _work109_migration_projection(context)
-    redirects = {
-        **aliases,
-        **replacements,
-        **merges,
-        **move_targets,
-        **WORK105_LEDGER_PATH_ALIASES,
-        **RETIRED_REFERENCE_ALIASES,
-    }
-    for legacy_archive, stable_archive in _work107_stable_archive_aliases(
-        context
-    ).items():
-        redirects.setdefault(legacy_archive, stable_archive)
-        if legacy_archive.parts[:2] == ("docs", "98.archive"):
-            original = PurePosixPath("docs", *legacy_archive.parts[2:])
-            redirects.setdefault(original, stable_archive)
-    wp004b_targets = _work054_wp004b_targets(context)
-    redirects = {
-        source: wp004b_targets.get(target, target)
-        for source, target in redirects.items()
-    }
-    redirects.update(wp004b_targets)
-    return redirects
 
 
-def _reviewed_immutable_historical_alias_edges(
-    context: Context,
-    move_targets: Mapping[PurePosixPath, PurePosixPath],
-) -> dict[ArchiveTransitionEdge, PurePosixPath]:
-    """Resolve only source-blob-pinned immutable Stage 90/98 links."""
-
-    return _reviewed_source_pinned_alias_edges(
-        context,
-        move_targets,
-        source_blobs=IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS,
-        expected_source_count=None,
-        expected_edge_count=None,
-        contract_name="immutable historical alias",
-    )
 
 
 def _terminal_historical_source_boundary(
@@ -3644,78 +3419,6 @@ def _terminal_frozen_manifest_source(
     return text is not None and _git_sha1_blob(text) == expected_blob
 
 
-def _reviewed_source_pinned_alias_edges(
-    context: Context,
-    move_targets: Mapping[PurePosixPath, PurePosixPath],
-    *,
-    source_blobs: Mapping[PurePosixPath, str],
-    expected_source_count: int | None,
-    expected_edge_count: int | None,
-    contract_name: str,
-    exact_redirects: Mapping[PurePosixPath, PurePosixPath] | None = None,
-    expected_occurrence_count: int | None = None,
-) -> dict[ArchiveTransitionEdge, PurePosixPath]:
-    """Resolve source-pinned historical aliases with optional finite totals."""
-
-    if context.route_state != "transition":
-        return {}
-    redirects = (
-        dict(exact_redirects)
-        if exact_redirects is not None
-        else _immutable_historical_redirects(context, move_targets)
-    )
-    edges: dict[ArchiveTransitionEdge, PurePosixPath] = {}
-    contributing_sources: set[PurePosixPath] = set()
-    occurrence_count = 0
-    for source, expected_blob in source_blobs.items():
-        text = context.texts.get(source)
-        source_matches = text is not None and _git_sha1_blob(text) == expected_blob
-        if (
-            text is None
-            or source not in context.tracked_regular_paths
-            or not source_matches
-        ):
-            raise ConfigurationError(
-                f"{contract_name} source differs from its frozen blob"
-            )
-        for raw in _extract_links(text):
-            kind, target = _local_destination(source, raw)
-            if kind != "local" or target is None:
-                continue
-            replacement = redirects.get(target)
-            if replacement is None or _path_exists_without_dereference(
-                context.root, target, context.adapter_targets
-            ):
-                continue
-            if (
-                replacement not in context.tracked_regular_paths
-                or not _path_exists_without_dereference(
-                    context.root, replacement, context.adapter_targets
-                )
-            ):
-                raise ConfigurationError(f"{contract_name} replacement is unavailable")
-            edges[ArchiveTransitionEdge(source, target)] = replacement
-            contributing_sources.add(source)
-            occurrence_count += 1
-    if (
-        (
-            expected_source_count is not None
-            and len(source_blobs) != expected_source_count
-        )
-        or contributing_sources != set(source_blobs)
-        or (expected_edge_count is not None and len(edges) != expected_edge_count)
-        or (
-            expected_occurrence_count is not None
-            and occurrence_count != expected_occurrence_count
-        )
-    ):
-        raise ConfigurationError(
-            f"{contract_name} edge set differs "
-            f"(sources {len(source_blobs)}/{expected_source_count} "
-            f"edges {len(edges)}/{expected_edge_count} "
-            f"occurrences {occurrence_count}/{expected_occurrence_count})"
-        )
-    return edges
 
 
 @dataclass(frozen=True)
@@ -3997,14 +3700,7 @@ def _reviewed_work054_historical_owner_edges(
 
 def _link_diagnostics(context: Context) -> list[Diagnostic]:
     diagnostics: list[Diagnostic] = []
-    archive_handoff = _archive_transition_handoff(context)
-    deferred_archive_edges = frozenset(archive_handoff.edges)
     _, move_targets, _ = _document_taxonomy_transition_manifest(context)
-    reviewed_stage90_move_edges = _reviewed_stage90_move_edges(context, move_targets)
-    reviewed_historical_alias_edges = _reviewed_immutable_historical_alias_edges(
-        context,
-        move_targets,
-    )
     reviewed_work054_owner_edges = _reviewed_work054_historical_owner_edges(
         context,
         move_targets,
@@ -4037,17 +3733,8 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
             ):
                 if (
                     ArchiveTransitionEdge(source, target)
-                    in reviewed_historical_alias_edges
-                ):
-                    continue
-                if (
-                    ArchiveTransitionEdge(source, target)
                     in reviewed_work054_owner_edges
                 ):
-                    continue
-                if ArchiveTransitionEdge(source, target) in reviewed_stage90_move_edges:
-                    continue
-                if ArchiveTransitionEdge(source, target) in deferred_archive_edges:
                     continue
                 if _work105_immutable_history_ard_link(context, source, target):
                     continue
@@ -4736,12 +4423,6 @@ def _links_back_to(
     return False
 
 
-PROGRAM_LINEAGE_ROADMAP = PurePosixPath(
-    "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md"
-)
-PROGRAM_LINEAGE_OVERLAY_HEADING = (
-    "### 2026-07-15 template lifecycle disposition overlay"
-)
 PROGRAM_MUTABLE_STATES = frozenset({"draft", "active"})
 PROGRAM_CURRENT_EXECUTION_STATES = frozenset(
     {"draft", "active", "queued", "in-progress", "blocked"}
@@ -4760,16 +4441,6 @@ PROGRAM_PATHS = {
     ),
     "sdlc/spec": re.compile(r"^docs/03\.specs/({identifier})-[^/]+/spec\.md$"),
 }
-PROGRAM_TRANSITION_OWNER_CONTRACTS = {
-    "sdlc/prd": (
-        "sdlc/requirement-package",
-        re.compile(r"^docs/01\.requirements/({identifier})-[^/]+\.md$"),
-    ),
-    "sdlc/ad": (
-        "sdlc/ad",
-        re.compile(r"^docs/02\.architecture/descriptions/({identifier})-[^/]+\.md$"),
-    ),
-}
 PROGRAM_LIFECYCLE_AUTHORITY = {
     "prd": "draft -> active -> done | archived",
     "ad/adr": "draft -> active -> accepted | archived",
@@ -4787,12 +4458,6 @@ def _program_owner_path(
 
     owner_profile_id = profile_id
     pattern_template = PROGRAM_PATHS[profile_id].pattern
-    if (
-        context.route_state == "transition"
-        and profile_id in PROGRAM_TRANSITION_OWNER_CONTRACTS
-    ):
-        owner_profile_id, pattern = PROGRAM_TRANSITION_OWNER_CONTRACTS[profile_id]
-        pattern_template = pattern.pattern
     pattern = re.compile(pattern_template.format(identifier=re.escape(identifier)))
     matches = tuple(
         path
@@ -4810,16 +4475,11 @@ def _program_local_targets(
 
     targets: set[PurePosixPath] = set()
     accepted_history = _work105_accepted_history_source(context, source)
-    transition_aliases: dict[PurePosixPath, PurePosixPath] = {}
-    if accepted_history and context.route_state == "transition":
-        transition_aliases, _, _ = _work109_migration_projection(context)
     for raw_link in _extract_links(context.texts.get(source, "")):
         kind, target = _local_destination(source, raw_link)
         if kind == "local" and target is not None:
             if target in WORK105_LEDGER_PATH_ALIASES and accepted_history:
                 target = WORK105_LEDGER_PATH_ALIASES[target]
-            elif target in transition_aliases:
-                target = transition_aliases[target]
             targets.add(target)
     return frozenset(targets)
 
@@ -5572,94 +5232,6 @@ def _program_reciprocal_diagnostics(
     ]
 
 
-def _historical_exception_diagnostics(
-    context: Context,
-    program: ProgramLineage,
-    follow_up: ProgramFollowUp,
-) -> list[Diagnostic]:
-    if context.route_state == "terminal":
-        return []
-    if follow_up.evidence_mode != "successor-record":
-        return []
-    spec = _program_owner_path(context, "sdlc/spec", follow_up.spec_id)
-    prd = _program_owner_path(context, "sdlc/prd", program.prd_id)
-    ard = _program_owner_path(context, "sdlc/ad", program.ad_id)
-    decision = _program_owner_path(context, "sdlc/adr", follow_up.decision_id)
-    exact_relation = (
-        program.prd_id == "0005"
-        and program.ad_id == "0008"
-        and follow_up.spec_id == "0033"
-        and follow_up.decision_id == "0017"
-        and follow_up.state == "done"
-    )
-    move_targets: dict[PurePosixPath, PurePosixPath] = {}
-    reviewed_alias_edges: dict[ArchiveTransitionEdge, PurePosixPath] = {}
-    if context.route_state == "transition":
-        _, move_targets, _ = _document_taxonomy_transition_manifest(context)
-        reviewed_alias_edges = _reviewed_immutable_historical_alias_edges(
-            context, move_targets
-        )
-
-    def source_pinned_targets(source: PurePosixPath) -> set[PurePosixPath]:
-        return {
-            reviewed_alias_edges.get(ArchiveTransitionEdge(source, target), target)
-            for raw_link in _extract_links(context.texts.get(source, ""))
-            for kind, target in (_local_destination(source, raw_link),)
-            if kind == "local" and target is not None
-        }
-
-    adr_agrees = (
-        spec is not None
-        and prd is not None
-        and ard is not None
-        and decision is not None
-        and _program_status(context, decision) == "accepted"
-        and {spec, prd, ard}.issubset(source_pinned_targets(decision))
-    )
-    roadmap_section = (
-        _exact_rendered_heading_section(
-            context.texts.get(PROGRAM_LINEAGE_ROADMAP, ""),
-            PROGRAM_LINEAGE_OVERLAY_HEADING,
-        )
-        if PROGRAM_LINEAGE_ROADMAP in context.texts
-        else None
-    )
-    overlay_targets = (
-        {
-            target
-            for raw_link in _extract_rendered_links(roadmap_section)
-            for kind, target in [_local_destination(PROGRAM_LINEAGE_ROADMAP, raw_link)]
-            if kind == "local" and target is not None
-        }
-        if roadmap_section is not None
-        else set()
-    )
-    projected_overlay_targets = {
-        reviewed_alias_edges.get(
-            ArchiveTransitionEdge(PROGRAM_LINEAGE_ROADMAP, target), target
-        )
-        for target in overlay_targets
-    }
-    overlay_agrees = (
-        spec is not None
-        and roadmap_section is not None
-        and spec in projected_overlay_targets
-    )
-    if exact_relation and adr_agrees and overlay_agrees:
-        return []
-    owner = spec or decision or prd or PROGRAM_LINEAGE_ROADMAP
-    profile = (
-        context.profiles[owner].profile_id if owner in context.profiles else "sdlc/spec"
-    )
-    return [
-        _diag(
-            "PROGRAM-LINEAGE-HISTORICAL-EXCEPTION",
-            owner,
-            profile,
-            "exact PRD-0005/AD-0008/Spec-033/ADR-0017 registry, ADR, and Current-overlay agreement",
-            "successor-record evidence is incomplete or outside the named exception",
-        )
-    ]
 
 
 def _current_execution_link_graph(
@@ -6306,10 +5878,6 @@ def _program_lineage_diagnostics(
                         context, program, relation, follow_up=False
                     )
                 )
-        for follow_up in program.follow_ups:
-            diagnostics.extend(
-                _historical_exception_diagnostics(context, program, follow_up)
-            )
         diagnostics.extend(
             _program_execution_diagnostics(
                 context,
@@ -7280,13 +6848,6 @@ def _werpc_predecessor_disposition_map(
     return dispositions
 
 
-def _werpc_predecessor_dispositions(text: str) -> frozenset[str] | None:
-    """Return the exact predecessor set only for a complete deletion ledger."""
-
-    dispositions = _werpc_predecessor_disposition_map(text)
-    if dispositions is None:
-        return None
-    return frozenset(path.as_posix() for path in dispositions)
 
 
 def _migrated_directory_link(
@@ -7694,248 +7255,12 @@ def _ledger_diagnostics(context: Context) -> list[Diagnostic]:
                 DEBT_LITERAL["actual"],
             )
         ]
-    if context.route_state == "terminal":
-        return []
-    columns, rows = _ledger_rows(context.texts[LEDGER_PATH])
-    if columns != LEDGER_COLUMNS:
-        return [
-            _diag(
-                "LEDGER-INCOMPLETE",
-                LEDGER_PATH,
-                "content/reference",
-                "exact ordered fourteen columns",
-                "ledger columns differ",
-            )
-        ]
-    diagnostics: list[Diagnostic] = []
-    ledger_paths: list[str] = []
-    for row in rows:
-        if len(row) != 14:
-            diagnostics.append(
-                _diag(
-                    "LEDGER-INCOMPLETE",
-                    LEDGER_PATH,
-                    "content/reference",
-                    "fourteen cells per row",
-                    f"{len(row)} cells",
-                )
-            )
-            continue
-        raw_path = row[0]
-        if not (raw_path.startswith("`") and raw_path.endswith("`")):
-            diagnostics.append(
-                _diag(
-                    "LEDGER-INCOMPLETE",
-                    LEDGER_PATH,
-                    "content/reference",
-                    "backtick repository path",
-                    "path cell format",
-                )
-            )
-            continue
-        ledger_paths.append(raw_path[1:-1])
-        required_indexes = [index for index in range(14) if index != 3]
-        if any(not row[index] for index in required_indexes):
-            diagnostics.append(
-                _diag(
-                    "LEDGER-INCOMPLETE",
-                    LEDGER_PATH,
-                    "content/reference",
-                    "complete ledger row",
-                    "empty required cell",
-                )
-            )
-    counter = collections.Counter(ledger_paths)
-    if not protected:
-        # The ledger records one authored-document migration. Its coverage
-        # obligation is the baseline corpus that migration moved, not documents
-        # authored by later programs. Scoping to the baseline keeps the ledger a
-        # record of what happened instead of forcing invented rows for paths
-        # that were never migrated.
-        inventory_paths = {
-            path.as_posix() for path in context.paths if path in context.baseline_paths
-        }
-        for missing in sorted(inventory_paths - set(counter)):
-            diagnostics.append(
-                _diag(
-                    "LEDGER-MISSING",
-                    LEDGER_PATH,
-                    "content/reference",
-                    "one row per inventory path",
-                    "inventory row is missing",
-                )
-            )
-        archived_original_paths: set[str] = set()
-        try:
-            raw_registry = json.loads(
-                read_repository_text(context.root, ROUTE_CONTRACT_PATH)
-            )
-        except (OSError, UnicodeDecodeError, ValueError, json.JSONDecodeError):
-            raw_registry = {}
-        raw_namespaces = (
-            raw_registry.get("archiveNamespaces", ())
-            if isinstance(raw_registry, dict)
-            else ()
-        )
-        if isinstance(raw_namespaces, list):
-            for namespace in raw_namespaces:
-                raw_records = (
-                    namespace.get("records", ()) if isinstance(namespace, dict) else ()
-                )
-                if not isinstance(raw_records, list):
-                    continue
-                for raw_target in raw_records:
-                    if not isinstance(raw_target, str):
-                        continue
-                    target = PurePosixPath(raw_target)
-                    if (
-                        target.as_posix() != raw_target
-                        or len(target.parts) <= 2
-                        or target.parts[:2] != ("docs", "98.archive")
-                        or target.name == "README.md"
-                        or not _path_exists_without_dereference(
-                            context.root, target, context.adapter_targets
-                        )
-                    ):
-                        continue
-                    try:
-                        target_mode = (context.root / target).lstat().st_mode
-                    except OSError:
-                        continue
-                    if stat.S_ISREG(target_mode):
-                        archived_original_paths.add(
-                            PurePosixPath("docs", *target.parts[2:]).as_posix()
-                        )
-        known_paths = (
-            inventory_paths
-            | {path.as_posix() for path in context.paths}
-            | archived_original_paths
-        )
-        wp004b_targets = (
-            _work054_wp004b_targets(context)
-            if context.route_state == "transition"
-            else {}
-        )
-        work105_targets = {
-            source: wp004b_targets.get(target, target)
-            for source, target in WORK105_LEDGER_PATH_ALIASES.items()
-        }
-        if all(
-            target in context.tracked_regular_paths
-            and _path_exists_without_dereference(
-                context.root, target, context.adapter_targets
-            )
-            for target in work105_targets.values()
-        ):
-            known_paths |= {source.as_posix() for source in work105_targets}
-        if not any(
-            profile.profile_id == "sdlc/api-spec"
-            for profile in context.profiles.values()
-        ) and all(path not in context.paths for path in WORK105_LEDGER_RETIRED_PATHS):
-            known_paths |= {path.as_posix() for path in WORK105_LEDGER_RETIRED_PATHS}
-        if context.route_state == "transition":
-            _, move_targets, _ = _document_taxonomy_transition_manifest(context)
-            if all(
-                target in context.tracked_regular_paths
-                and _path_exists_without_dereference(
-                    context.root, target, context.adapter_targets
-                )
-                for target in move_targets.values()
-            ):
-                known_paths |= {source.as_posix() for source in move_targets}
-            work109_moves, work109_replacements, work109_merges = (
-                _work109_migration_projection(context)
-            )
-            work109_ledger_redirects = {
-                **work109_moves,
-                **work109_replacements,
-                **work109_merges,
-            }
-            if all(
-                target in context.tracked_regular_paths
-                and _path_exists_without_dereference(
-                    context.root, target, context.adapter_targets
-                )
-                for target in work109_ledger_redirects.values()
-            ):
-                known_paths |= {
-                    source.as_posix() for source in work109_ledger_redirects
-                }
-            work109_aliases, work109_replacements, work109_merges = (
-                _work109_migration_projection(context)
-            )
-            work109_targets = {
-                **work109_aliases,
-                **work109_replacements,
-                **work109_merges,
-            }
-            work109_targets.update(_work054_wp003_owner_merges(context))
-            if all(
-                target in context.tracked_regular_paths
-                and _path_exists_without_dereference(
-                    context.root, target, context.adapter_targets
-                )
-                for target in work109_targets.values()
-            ):
-                known_paths |= {source.as_posix() for source in work109_targets}
-            if all(
-                target in context.tracked_regular_paths
-                and _path_exists_without_dereference(
-                    context.root, target, context.adapter_targets
-                )
-                for target in wp004b_targets.values()
-            ):
-                known_paths |= {source.as_posix() for source in wp004b_targets}
-        stable_archive_aliases = _work107_stable_archive_aliases(context)
-        if stable_archive_aliases and all(
-            target in context.tracked_regular_paths
-            and _path_exists_without_dereference(
-                context.root, target, context.adapter_targets
-            )
-            for target in stable_archive_aliases.values()
-        ):
-            known_paths |= {source.as_posix() for source in stable_archive_aliases}
-            known_paths |= {
-                PurePosixPath("docs", *source.parts[2:]).as_posix()
-                for source in stable_archive_aliases
-                if source.parts[:2] == ("docs", "98.archive")
-            }
-        unknown_paths = set(counter) - known_paths
-        predecessor_unknown = unknown_paths & WERPC_PREDECESSOR_PATHS
-        if predecessor_unknown:
-            dispositions = _werpc_predecessor_dispositions(context.texts[LEDGER_PATH])
-            if dispositions is None or not predecessor_unknown <= dispositions:
-                diagnostics.append(
-                    _diag(
-                        "LEDGER-PREDECESSOR-DISPOSITION",
-                        LEDGER_PATH,
-                        "content/reference",
-                        "complete exact predecessor source, owner, and deletion dispositions",
-                        "historical predecessor disposition is missing or malformed",
-                    )
-                )
-            unknown_paths -= predecessor_unknown
-        for unknown in sorted(unknown_paths):
-            diagnostics.append(
-                _diag(
-                    "LEDGER-UNKNOWN-PATH",
-                    LEDGER_PATH,
-                    "content/reference",
-                    "tracked inventory path",
-                    "unknown ledger path",
-                )
-            )
-    if any(count > 1 for count in counter.values()):
-        diagnostics.append(
-            _diag(
-                "LEDGER-INCOMPLETE",
-                LEDGER_PATH,
-                "content/reference",
-                "unique path rows",
-                "duplicate ledger path",
-            )
-        )
-    return diagnostics
+    # Every remaining rule below examined the ledger only while the registry
+    # route state was "transition".  That value is fixed at "terminal", so the
+    # ledger's own protection and presence are all that can be checked here.
+    return []
+
+
 
 
 def _load_debt(

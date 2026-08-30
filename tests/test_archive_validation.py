@@ -1907,17 +1907,6 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         cls.validator = validator
         cls.context = validator._build_context(ROOT)
 
-    def test_exact_manifest_edges_route_to_collection_index(self) -> None:
-        handoff = self.validator._archive_transition_handoff(self.context)
-        actual = tuple(
-            (edge.source.as_posix(), edge.target.as_posix()) for edge in handoff.edges
-        )
-
-        self.assertEqual(actual, ())
-        self.assertEqual(
-            handoff.navigation_boundary,
-            "docs/98.archive/README.md#document-index",
-        )
 
     def test_terminal_current_owners_are_derived_from_stage_owners(self) -> None:
         governance = self.context.governance_current_paths
@@ -2246,15 +2235,6 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
                     self.validator._werpc_predecessor_disposition_map(changed)
                 )
 
-    def test_nonterminal_ledger_keeps_retired_inventory_shape_rejection(self) -> None:
-        context = dataclasses.replace(
-            self._terminal_ledger_context(self._predecessor_disposition_table()),
-            route_state="transition",
-        )
-
-        diagnostics = self.validator._ledger_diagnostics(context)
-
-        self.assertEqual([item.rule_id for item in diagnostics], ["LEDGER-INCOMPLETE"])
 
     def test_work054_mig0003_historical_projection_is_byte_exact(self) -> None:
         projection = self.validator._work054_wp003_owner_merges(self.context)
@@ -2310,10 +2290,6 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         self.assertNotIn(
             self.validator.ArchiveTransitionEdge(source, retired),
             projected,
-        )
-        self.assertEqual(
-            self.validator._reviewed_immutable_historical_alias_edges(context, {}),
-            {},
         )
 
     def test_removed_directory_link_needs_every_file_proved(self) -> None:
@@ -2653,25 +2629,6 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
                 with self.assertRaises(self.validator.ConfigurationError):
                     self.validator._work109_four_digit_aliases(context)
 
-    def test_terminal_route_skips_transition_only_source_pins(self) -> None:
-        source = next(
-            iter(sorted(self.validator.IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS))
-        )
-        drifted_context = dataclasses.replace(
-            self.context,
-            texts={
-                **self.context.texts,
-                source: self.context.texts[source] + "\n",
-            },
-        )
-
-        self.assertEqual(
-            self.validator._reviewed_immutable_historical_alias_edges(
-                drifted_context,
-                {},
-            ),
-            {},
-        )
 
     def test_work107_stable_archive_aliases_are_exact_and_tracked(self) -> None:
         """Aliases stay unique, and each target is tracked or gone to Git history.
@@ -2727,47 +2684,13 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             }.issubset(local_targets)
         )
 
-    def test_non_manifest_current_source_is_not_deferred(self) -> None:
-        source = PurePosixPath(
-            "docs/01.requirements/0004-current-local-gitops-platform.md"
-        )
-        target = self.archived_source
-
-        self.assertIsNone(
-            self.validator._archive_transition_target(self.context, source, target)
-        )
 
     def test_moved_manifest_source_is_absent_and_target_is_current(self) -> None:
         self.assertNotIn(self.moved_source, self.context.texts)
         self.assertIn(self.moved_target, self.context.texts)
 
-    def test_unknown_archived_target_is_not_deferred(self) -> None:
-        source = self.moved_target
-        target = PurePosixPath(
-            "docs/04.execution/tasks/2099-01-01-unknown-archive-source.md"
-        )
 
-        self.assertIsNone(
-            self.validator._archive_transition_target(self.context, source, target)
-        )
 
-    def test_terminal_route_rejects_transition_residue(self) -> None:
-        terminal = dataclasses.replace(self.context, route_state="terminal")
-
-        handoff = self.validator._archive_transition_handoff(terminal)
-        self.assertEqual(handoff.edges, ())
-
-    def test_terminal_handoff_does_not_consume_transition_manifest(self) -> None:
-        with mock.patch.object(
-            self.validator,
-            "_reviewed_taxonomy_manifest",
-            side_effect=self.validator.ConfigurationError(
-                "archive transition manifest worktree/index differs"
-            ),
-        ):
-            handoff = self.validator._archive_transition_handoff(self.context)
-
-        self.assertEqual(handoff.edges, ())
 
 
 if __name__ == "__main__":
