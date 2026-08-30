@@ -44,10 +44,12 @@ canonical owners before using remembered paths, results, or approvals.
   Refresh, supersede, or retire durable knowledge through its profile contract.
 - Do not read or store credentials, secret values, auth configuration, shell
   history, environment dumps, raw prompts, or complete provider transcripts.
-- The `memory/progress.md` ledger is retired under Spec 0054 WP-012. Its bytes
-  are recoverable from Git through `MIG-0007`. Progress and task status belong
-  to the owning Spec Task; the memory README states what may be written under
-  `memory/`.
+- The `memory/progress.md` ledger is retired under Spec 0054 WP-012 and the
+  `memory/` directory under Spec 0065; their bytes are recoverable from Git
+  through `MIG-0007` and `MIG-0009`. Progress and task status belong to the
+  owning Spec Task. No governance memory directory remains, so durable
+  knowledge routes to the responsible policy, skill, operating document, or
+  reference owner instead.
 - Ignored checkpoints are optional recovery aids. Static validation of a
   synthetic checkpoint proves neither actual checkpoint execution nor provider
   memory, hook, or compaction behavior.
@@ -62,5 +64,5 @@ it. Use [quality policy](quality.md) for evidence and handoff classification.
 
 - [Work Lifecycle](../skills/work-lifecycle.md)
 - [Document Lifecycle](document-lifecycle.md)
-- [Memory Transition Router](../memory/README.md)
+- [Archive Index](../../98.archive/README.md)
 - [Approval and Safety](approval-and-safety.md)

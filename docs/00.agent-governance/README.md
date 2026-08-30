@@ -20,8 +20,9 @@ Scripts own executable checks; neither registry is duplicated in this router.
 
 Shared hooks and the remaining contracts still have explicit migration owners
 in Spec 0054. They are transitional executable consumers, not additional human
-policy owners. The [memory router](memory/README.md) explains the retained
-historical progress boundary without requiring new ledger entries.
+policy owners. [Context and memory](policies/context-and-memory.md) owns the
+progress and memory boundary; the `memory/` directory retired under
+[MIG-0009](../98.archive/migrations/0009-governance-memory-retirement.md).
 
 ## Document Index
 

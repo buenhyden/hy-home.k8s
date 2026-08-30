@@ -1471,68 +1471,6 @@
       "placeholderPolicy": "forbidden"
     },
     {
-      "id": "governance/memory",
-      "class": "governance",
-      "mode": "authored",
-      "pathPattern": "^docs/00\\.agent-governance/memory/(?!README\\.md$)(?!progress\\.md$)[^/]+\\.md$",
-      "artifactIdPattern": null,
-      "template": "docs/99.templates/templates/governance/memory.template.md",
-      "requiredFrontmatter": {
-        "mode": "required",
-        "required": [
-          "title",
-          "type",
-          "status",
-          "owner",
-          "updated"
-        ],
-        "allowed": [
-          "title",
-          "type",
-          "status",
-          "owner",
-          "updated"
-        ],
-        "order": [
-          "title",
-          "type",
-          "status",
-          "owner",
-          "updated"
-        ]
-      },
-      "requiredSections": {
-        "required": [
-          "Problem",
-          "Context",
-          "Resolution",
-          "Prevention",
-          "Related Progress"
-        ],
-        "allowed": [
-          "Problem",
-          "Context",
-          "Resolution",
-          "Prevention",
-          "Related Progress"
-        ]
-      },
-      "lifecycle": {
-        "statusDomain": [
-          "draft",
-          "active",
-          "superseded",
-          "retired"
-        ],
-        "appendContract": null
-      },
-      "relationships": {
-        "sourceProfileIds": [],
-        "bodyContract": null
-      },
-      "placeholderPolicy": "forbidden"
-    },
-    {
       "id": "readme/repository",
       "class": "readme",
       "mode": "frontmatter-free",
@@ -1608,7 +1546,7 @@
       "id": "readme/collection-index",
       "class": "readme",
       "mode": "frontmatter-free",
-      "pathPattern": "^(?:docs/00\\.agent\\-governance/roles/README\\.md|docs/00\\.agent\\-governance/memory/README\\.md|docs/02\\.architecture/decisions/README\\.md|docs/02\\.architecture/descriptions/README\\.md|docs/05\\.operations/guides/README\\.md|docs/05\\.operations/incidents/README\\.md|docs/05\\.operations/policies/README\\.md|docs/05\\.operations/runbooks/README\\.md|docs/90\\.references/audits/README\\.md|docs/90\\.references/data/README\\.md|docs/90\\.references/learning/README\\.md|docs/90\\.references/llm\\-wiki/README\\.md|docs/90\\.references/research/README\\.md|docs/90\\.references/cloud\\-examples/README\\.md|docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md)$",
+      "pathPattern": "^(?:docs/00\\.agent\\-governance/roles/README\\.md|docs/02\\.architecture/decisions/README\\.md|docs/02\\.architecture/descriptions/README\\.md|docs/05\\.operations/guides/README\\.md|docs/05\\.operations/incidents/README\\.md|docs/05\\.operations/policies/README\\.md|docs/05\\.operations/runbooks/README\\.md|docs/90\\.references/audits/README\\.md|docs/90\\.references/data/README\\.md|docs/90\\.references/learning/README\\.md|docs/90\\.references/llm\\-wiki/README\\.md|docs/90\\.references/research/README\\.md|docs/90\\.references/cloud\\-examples/README\\.md|docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md)$",
       "template": "docs/99.templates/templates/common/readme-collection-index.template.md",
       "requiredFrontmatter": {
         "mode": "forbidden",
@@ -2187,71 +2125,6 @@
       "relationships": {
         "sourceProfileIds": [
           "content/archive-migration"
-        ],
-        "bodyContract": null
-      },
-      "placeholderPolicy": "template-only"
-    },
-    {
-      "id": "template/governance/memory",
-      "class": "governance",
-      "mode": "template",
-      "pathPattern": "^docs/99\\.templates/templates/governance/memory\\.template\\.md$",
-      "artifactIdPattern": null,
-      "template": "docs/99.templates/templates/governance/memory.template.md",
-      "requiredFrontmatter": {
-        "mode": "required",
-        "required": [
-          "title",
-          "type",
-          "status",
-          "owner",
-          "updated"
-        ],
-        "allowed": [
-          "title",
-          "type",
-          "status",
-          "owner",
-          "updated"
-        ],
-        "order": [
-          "title",
-          "type",
-          "status",
-          "owner",
-          "updated"
-        ]
-      },
-      "requiredSections": {
-        "required": [
-          "Problem",
-          "Context",
-          "Resolution",
-          "Prevention",
-          "Related Progress"
-        ],
-        "allowed": [
-          "Problem",
-          "Context",
-          "Resolution",
-          "Prevention",
-          "Related Progress"
-        ]
-      },
-      "lifecycle": {
-        "statusDomain": [
-          "draft",
-          "active",
-          "accepted",
-          "done",
-          "archived"
-        ],
-        "appendContract": null
-      },
-      "relationships": {
-        "sourceProfileIds": [
-          "governance/memory"
         ],
         "bodyContract": null
       },
@@ -3938,8 +3811,7 @@
           "sdlc/guide",
           "sdlc/policy",
           "sdlc/runbook",
-          "governance/reference",
-          "governance/memory"
+          "governance/reference"
         ],
         "states": {
           "draft": "mutable",
@@ -4031,7 +3903,6 @@
         "profileIds": [
           "template/content/archive",
           "template/content/archive-migration",
-          "template/governance/memory",
           "template/content/reference",
           "template/sdlc/adr",
           "template/sdlc/ad",

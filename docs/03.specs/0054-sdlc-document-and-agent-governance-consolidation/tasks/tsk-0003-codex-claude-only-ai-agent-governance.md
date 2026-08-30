@@ -83,10 +83,13 @@ Plan section.
   19 recovery and 40 strict document tests; code/spec, Python and security
   re-reviews approve. The original public attack now rejects promptly.
   No index-dependent or full Archive result is claimed as passing.
-- The retained memory router is not a deleted Migration source. Its extracted
-  context policy will first be published as `draft` in WP-003A and activated
-  through `draft → active` in WP-003B, with current-owner navigation updated
-  at each step. Existing execution and checkpoint/loop safeguards remain.
+- The memory router clause is superseded by Spec 0065. It described a document
+  whose role was routing a reader to the progress ledger; `MIG-0007` retired
+  that ledger and `MIG-0009` retired the router and its directory. WP-003B
+  still owes the extracted context policy's `draft → active` activation, which
+  `MIG-0009` neither performs nor claims; until then that policy's own
+  Authority Boundary names the active owners that govern, and existing
+  execution and checkpoint/loop safeguards remain.
   Cumulative CI/ref lifecycle comparison still needs separate verification;
   per-commit staged results do not prove that comparison mode. Direct user
   approval on 2026-08-28 authorizes bounded actual-history proof for cumulative
