@@ -45,8 +45,10 @@ canonical owners before using remembered paths, results, or approvals.
 - Do not read or store credentials, secret values, auth configuration, shell
   history, environment dumps, raw prompts, or complete provider transcripts.
 - The retained `memory/progress.md` is transitional historical context, not an
-  intake prerequisite or new-work destination. Its later disposition belongs
-  to the approved progress-owner retirement work package.
+  authority. It is byte-frozen by the sealed `MIG-0005` consumer proof, so the
+  approved progress-owner retirement cannot complete while that migration
+  stands; the memory README, not the ledger header, states what may be written
+  there.
 - Ignored checkpoints are optional recovery aids. Static validation of a
   synthetic checkpoint proves neither actual checkpoint execution nor provider
   memory, hook, or compaction behavior.

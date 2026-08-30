@@ -4433,7 +4433,7 @@
       "spec": "0064",
       "plan": "docs/03.specs/0064-agent-governance-surface-consolidation/plan.md",
       "task": "docs/03.specs/0064-agent-governance-surface-consolidation/tasks/tsk-0001-ags-000.md",
-      "state": "active",
+      "state": "done",
       "reason": "Direct human-approved correction of the agent-governance surfaces: retirement of the self-contradicting progress ledger to a Stage 98 tombstone, removal of unowned path instructions, and removal of unreferenced scaffolding",
       "decision": "0022",
       "approvalMode": "spec-body-record"

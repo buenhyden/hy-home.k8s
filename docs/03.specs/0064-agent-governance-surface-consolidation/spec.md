@@ -1,7 +1,7 @@
 ---
 title: 'Agent Governance Surface Consolidation Technical Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
 updated: 2026-08-30
 artifact_id: "SPEC-0064"
