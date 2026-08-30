@@ -526,6 +526,11 @@ class MigrationProof:
     references: Mapping[tuple[str, str], HistoricalReferenceDisposition] = field(
         default_factory=dict
     )
+    # Consumers a sealed row retires.  They keep their historical bytes in
+    # `consumers` and their Git-side proof, and are absent from the current
+    # tree.  One owner, so a caller reading the proof does not re-derive the
+    # predicate from `targets` and drift from it.
+    retired_consumers: frozenset[str] = frozenset()
 
 
 def generic_migration_id(path: str) -> str | None:
@@ -1511,6 +1516,7 @@ def validate_migration_records(
             }
         ),
         MappingProxyType(references),
+        frozenset(retired_consumers),
     )
 
 
@@ -3654,14 +3660,40 @@ def _parse_git_path_batch_output(
 
 
 def _batch_blob_bytes(root: Path, object_ids: tuple[str, ...]) -> dict[str, bytes]:
-    return _read_git_blob_batch(
-        root,
-        object_ids,
-        object_id_length=len(object_ids[0]) if object_ids else 40,
-        per_blob_limit=_ARCHIVE_RECORD_LIMIT,
-        aggregate_limit=MAX_GIT_BATCH_BYTES,
-        object_limit=MAX_GIT_BATCH_OBJECTS,
-    )
+    """Read every requested blob, one bounded `cat-file --batch` at a time.
+
+    MAX_GIT_BATCH_OBJECTS bounds a single read, not the whole request. Reading
+    the request in one call made the budget a cliff instead of a guard: a
+    repository sitting at the budget lost its entire recovery proof the moment
+    one migration row or historical consumer was added. The aggregate byte
+    budget, which is the actual memory bound, is threaded across the reads so
+    chunking cannot multiply it. This is the same shape `_current_target_bytes`
+    already uses for the current-tree read.
+    """
+
+    if not object_ids:
+        return {}
+    object_id_length = len(object_ids[0])
+    blobs: dict[str, bytes] = {}
+    remaining_bytes = MAX_GIT_BATCH_BYTES
+    for offset in range(0, len(object_ids), MAX_GIT_BATCH_OBJECTS):
+        batch = object_ids[offset : offset + MAX_GIT_BATCH_OBJECTS]
+        batch_blobs = _read_git_blob_batch(
+            root,
+            batch,
+            object_id_length=object_id_length,
+            per_blob_limit=_ARCHIVE_RECORD_LIMIT,
+            aggregate_limit=remaining_bytes,
+            object_limit=MAX_GIT_BATCH_OBJECTS,
+        )
+        batch_bytes = sum(len(content) for content in batch_blobs.values())
+        if batch_bytes > remaining_bytes:
+            raise ArchiveContractError(
+                "RECOVERY-RESOURCE-LIMIT", "Git blob bytes exceed their budget"
+            )
+        remaining_bytes -= batch_bytes
+        blobs.update(batch_blobs)
+    return blobs
 
 
 def _batch_recover(

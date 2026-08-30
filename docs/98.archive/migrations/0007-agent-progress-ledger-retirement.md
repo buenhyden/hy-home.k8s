@@ -1,7 +1,7 @@
 ---
 title: "MIG-0007: Agent Progress Ledger Retirement"
 type: "content/archive-migration"
-status: "draft"
+status: "sealed"
 owner: "platform"
 updated: "2026-08-30"
 artifact_id: "MIG-0007"
@@ -68,13 +68,31 @@ through the Archive index.
 
 ### Historical consumers
 
-This record admits no historical consumer. It retires a path that MIG-0005
-registers as one of its consumers, and that registration keeps its own Git-side
-proof at MIG-0005's recorded commit; a second registration here would be an
+Twelve current documents link the retired ledger. Eight already resolve through
+MIG-0005, which registers them as its own consumers. The four below are the
+remainder, and each is terminal: the registry classifies `done` as terminal for
+`sdlc/spec` and `sdlc/plan`, so their bytes cannot be edited to drop the link.
+Registration is what admits such a link; terminal status alone is not, because
+registration records that a reviewer examined the citation at a named commit.
+Each renders a link the ledger row retires, which is the reviewed disposition
+this block requires.
+
+The retired ledger itself is not registered here. MIG-0005 already registers it
+as one of that record's consumers, and a second registration would be an
 ambiguous consumer identity.
 
 <!-- archive-historical-consumers:v1 format=json -->
 
 ```json
-[]
+[
+  {
+    "source_commit": "2a74c122284604cef69e3a2ad344e8545bcbb314",
+    "paths": [
+      "docs/03.specs/0023-stage03-04-repo-static-gap-closure/plan.md",
+      "docs/03.specs/0023-stage03-04-repo-static-gap-closure/spec.md",
+      "docs/03.specs/0060-platform-currency-defect-closure/plan.md",
+      "docs/03.specs/0061-workload-security-context-baseline/plan.md"
+    ]
+  }
+]
 ```

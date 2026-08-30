@@ -1826,6 +1826,56 @@ class ArchiveValidationTest(unittest.TestCase):
         self.assertLessEqual(surviving_originals, exact_batch_paths)
 
 
+class ArchiveBlobBatchTest(unittest.TestCase):
+    """Reading more blobs than one batch admits must not fail the whole proof."""
+
+    def setUp(self) -> None:
+        self.temporary = tempfile.TemporaryDirectory(prefix="archive-batch-")
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        self.git = GitFixture(self.root)
+
+    def test_blob_batch_reads_more_objects_than_one_batch_admits(self) -> None:
+        # The object budget bounds one `git cat-file --batch` read, not the
+        # whole request.  A repository at the budget would otherwise lose its
+        # entire recovery proof the moment one migration row or consumer is
+        # added, which is a cliff rather than a guard.
+        count = archive_validation.MAX_GIT_BATCH_OBJECTS + 4
+        payloads = {f"docs/f{index:04d}.md": f"# {index}\n".encode() for index in range(count)}
+        _, blobs = self.git.commit_many(payloads)
+        object_ids = tuple(sorted(set(blobs.values())))
+        self.assertEqual(len(object_ids), count)
+
+        read = archive_validation._batch_blob_bytes(self.root, object_ids)
+
+        self.assertEqual(set(read), set(object_ids))
+        self.assertEqual(
+            sorted(read.values()), sorted(payloads.values())
+        )
+
+    def test_blob_batch_keeps_one_aggregate_budget_across_batches(self) -> None:
+        # Chunking must not multiply the byte budget by the number of chunks.
+        count = archive_validation.MAX_GIT_BATCH_OBJECTS + 4
+        payloads = {f"docs/f{index:04d}.md": f"# {index}\n".encode() for index in range(count)}
+        _, blobs = self.git.commit_many(payloads)
+        object_ids = tuple(sorted(set(blobs.values())))
+        total = sum(len(payload) for payload in payloads.values())
+
+        with mock.patch.object(
+            archive_validation, "MAX_GIT_BATCH_BYTES", total - 1
+        ):
+            with self.assertRaises(
+                archive_validation.ArchiveContractError
+            ) as raised:
+                archive_validation._batch_blob_bytes(self.root, object_ids)
+
+        # The byte budget must be what refuses it, not the object count: the
+        # request is split into batches that each fit the object budget.
+        self.assertEqual(raised.exception.code, "RECOVERY-RESOURCE-LIMIT")
+        self.assertIn("bytes", str(raised.exception))
+        self.assertNotIn("object count", str(raised.exception))
+
+
 class ArchiveTransitionLinkTest(unittest.TestCase):
     """Close the deferred archive-edge handoff after the 82 current moves."""
 

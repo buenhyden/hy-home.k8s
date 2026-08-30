@@ -4095,6 +4095,12 @@ def _historical_migration_proof(
             consumers[source.as_posix()] = raw
     for name, raw in proof.consumers.items():
         source = PurePosixPath(name)
+        # A consumer a sealed row retires is absent from the current tree by
+        # design.  Its reviewed disposition is still composed below from the
+        # historical bytes the proof carries, which is where the evidence lives.
+        if name in proof.retired_consumers:
+            consumers[name] = raw
+            continue
         if (
             source not in context.tracked_regular_paths
             or source not in context.paths
