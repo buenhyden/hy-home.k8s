@@ -804,21 +804,6 @@
       ]
     },
     {
-      "profile": "governance/progress-ledger",
-      "mode": "frontmatter-free",
-      "applicability": "validate-document",
-      "fixturePath": "docs/00.agent-governance/memory/progress.md",
-      "positiveSource": "# Fixture Document\n\n## Work Entries\n\nFixture content.\n",
-      "negativeMutations": [
-        {
-          "kind": "remove-required-heading",
-          "expectedRuleIds": [
-            "BODY-HEADING-REQUIRED"
-          ]
-        }
-      ]
-    },
-    {
       "profile": "readme/repository",
       "mode": "frontmatter-free",
       "applicability": "validate-document",
@@ -1438,51 +1423,6 @@
           "kind": "remove-required-heading",
           "expectedRuleIds": [
             "BODY-HEADING-REQUIRED"
-          ]
-        }
-      ]
-    },
-    {
-      "profile": "governance/progress-entry",
-      "mode": "template",
-      "applicability": "append-fragment",
-      "fixturePath": "docs/99.templates/templates/common/progress.template.md",
-      "positiveSource": "### 2026-07-12 - Fixture entry\n\n#### Metadata\n\nFixture evidence.\n\n#### Progress\n\nFixture evidence.\n\n#### Memory\n\nFixture evidence.\n\n#### Evidence\n\nFixture evidence.\n\n#### Handoff\n\nFixture evidence.\n",
-      "negativeMutations": [
-        {
-          "kind": "append-missing-section",
-          "expectedRuleIds": [
-            "APPEND-SECTION-REQUIRED"
-          ]
-        },
-        {
-          "kind": "append-wrong-entry-level",
-          "expectedRuleIds": [
-            "APPEND-ENTRY-LEVEL"
-          ]
-        },
-        {
-          "kind": "append-wrong-section-level",
-          "expectedRuleIds": [
-            "APPEND-SECTION-LEVEL"
-          ]
-        },
-        {
-          "kind": "append-wrong-parent-h2",
-          "expectedRuleIds": [
-            "APPEND-PARENT-H2"
-          ]
-        },
-        {
-          "kind": "append-wrong-parent-profile",
-          "expectedRuleIds": [
-            "APPEND-PARENT-PROFILE"
-          ]
-        },
-        {
-          "kind": "append-missing-context",
-          "expectedRuleIds": [
-            "APPEND-CONTEXT"
           ]
         }
       ]

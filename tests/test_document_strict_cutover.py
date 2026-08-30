@@ -55,6 +55,8 @@ RETIRED_PROFILE_IDS = frozenset(
         "template/sdlc/tests",
         "template/sdlc/release",
         "template/governance/template-support",
+        "governance/progress-ledger",
+        "governance/progress-entry",
     }
 )
 
@@ -137,8 +139,10 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             {"lifecycleDomains", "programs"},
         )
         # 65 profiles and 12 domains before content/audit, content/research
-        # and content/data retired with their template profiles.
-        self.assertEqual(len(self.registry["profiles"]), 59)
+        # and content/data retired with their template profiles, then 59 before
+        # governance/progress-ledger and governance/progress-entry retired with
+        # the append form under MIG-0008.
+        self.assertEqual(len(self.registry["profiles"]), 57)
         self.assertEqual(len(self.registry["programLineage"]["lifecycleDomains"]), 9)
 
     def test_profile_schema_accepts_terminal_registry(self) -> None:

@@ -452,11 +452,23 @@ class ArchiveCutoverTest(unittest.TestCase):
         }
         for legacy, current in mandatory.items():
             self.assertEqual(projection.current_by_legacy[legacy], current)
+        _later_edges, later_retired = archive_cutover._later_ledger_edges(
+            ROOT, tracked, "fixture"
+        )
+        composed = 0
         for legacy, (
             _action,
             current,
         ) in archive_validation.MIG0004_STAGE99_ACTION_TARGETS.items():
+            if current in later_retired:
+                # A later sealed record deleted the endpoint.  Archive terminals
+                # are not current owners, so the row composes nothing rather
+                # than naming a path the tree no longer holds.
+                self.assertNotIn(legacy, projection.current_by_legacy)
+                continue
             self.assertEqual(projection.current_by_legacy[legacy], current)
+            composed += 1
+        self.assertTrue(composed, "Stage 99 rows must still compose current owners")
         spec0054_ledger = archive_validation.MIG0004_SPEC0054_LEDGER
         self.assertEqual(
             projection.current_by_legacy[spec0054_ledger],

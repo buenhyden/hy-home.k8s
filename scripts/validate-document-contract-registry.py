@@ -146,7 +146,6 @@ def _assert_template_source_parity(registry: Registry) -> None:
         if profile.mode == "template"
     }
     checked: set[str] = set()
-    append_profiles: set[str] = set()
     for profile_id in sorted(declared_templates):
         profile = profiles[profile_id]
         if profile.template is None or len(profile.routes) != 1:
@@ -168,20 +167,14 @@ def _assert_template_source_parity(registry: Registry) -> None:
         if source is None:
             raise AssertionError(f"{profile_id}: unknown source profile {source_id}")
         if profile.append_contract is not None:
-            append_profiles.add(profile_id)
-            contract = profile.append_contract
-            if (
-                profile_id != "governance/progress-entry"
-                or source_id != "governance/progress-ledger"
-                or contract.parent_profile_id != "governance/progress-ledger"
-                or contract.parent_h2 != "Work Entries"
-                or contract.entry_heading_level != 3
-                or contract.section_heading_level != 4
-                or contract.required_sections
-                != ("Metadata", "Progress", "Memory", "Evidence", "Handoff")
-            ):
+            # An append template produces a fragment of its parent rather than a
+            # whole document, so it inherits no contract to compare. What must
+            # hold is that the parent it appends into is the source profile it
+            # declares; the heading levels and section names belong to the
+            # registry entry, which the schema already constrains.
+            if profile.append_contract.parent_profile_id != source_id:
                 raise AssertionError(
-                    "governance/progress-entry append contract differs"
+                    f"{profile_id}: append parent differs from source {source_id}"
                 )
             checked.add(profile_id)
             continue
@@ -210,10 +203,6 @@ def _assert_template_source_parity(registry: Registry) -> None:
         checked.add(profile_id)
     if checked != declared_templates:
         raise AssertionError("template/source parity did not cover every template")
-    if append_profiles != {"governance/progress-entry"}:
-        raise AssertionError(
-            "governance/progress-entry must be the sole append template"
-        )
 
 
 def _readme_family_counts(

@@ -1334,8 +1334,6 @@ def _body_diagnostics(
     body: str,
     append_context: AppendContext | None,
 ) -> list[Diagnostic]:
-    if profile.profile_id == "governance/progress-ledger":
-        body = body.split("\n## Historical Entries\n", 1)[0]
     scan = scan_headings(body)
     if profile.append_contract is not None:
         diagnostics = _append_diagnostics(path, profile, scan, append_context)
@@ -2488,18 +2486,13 @@ def _self_test(root: Path) -> list[str]:
                 failures.append(
                     f"invalid classification-only mode: {profile.profile_id}"
                 )
-            if (
-                applicability == "append-fragment"
-                and profile.profile_id != "governance/progress-entry"
+            if (applicability == "append-fragment") != (
+                profile.append_contract is not None
             ):
                 failures.append(
-                    f"invalid append-fragment profile: {profile.profile_id}"
+                    f"append-fragment applicability differs from the declared "
+                    f"append contract: {profile.profile_id}"
                 )
-            if (
-                profile.profile_id == "governance/progress-entry"
-                and applicability != "append-fragment"
-            ):
-                failures.append("governance/progress-entry must be append-fragment")
             try:
                 fixture_path = _fixture_path(row["fixturePath"])
             except ValueError as exc:

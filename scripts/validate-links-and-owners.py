@@ -2991,6 +2991,7 @@ def _work054_wp004b_targets(
         raise ConfigurationError(
             "WORK-054 WP-004B migration recovery proof differs"
         ) from exc
+    successors = _generic_migration_targets(context)
     targets: dict[PurePosixPath, PurePosixPath] = {}
     for row in rows:
         action = row.get("action")
@@ -3010,13 +3011,19 @@ def _work054_wp004b_targets(
             or ".." in legacy.parts
             or ".." in target.parts
             or legacy in targets
-            or target not in context.tracked_regular_paths
-            or not _path_exists_without_dereference(
-                context.root, target, context.adapter_targets
+        ):
+            raise ConfigurationError("WORK-054 WP-004B migration target differs")
+        # A later sealed row may retire this edge's endpoint in turn, and the
+        # pinned MIG-0004 rows cannot name a successor that did not exist when
+        # they were sealed.  A deleted endpoint composes to the Archive index.
+        terminal = successors.get(target, target)
+        if terminal not in context.tracked_regular_paths or (
+            not _path_exists_without_dereference(
+                context.root, terminal, context.adapter_targets
             )
         ):
             raise ConfigurationError("WORK-054 WP-004B migration target differs")
-        targets[legacy] = target
+        targets[legacy] = terminal
     return targets
 
 

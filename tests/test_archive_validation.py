@@ -979,9 +979,18 @@ class ArchiveValidationTest(unittest.TestCase):
                 row["stable_path"] if row["action"] == "moved" else row["replacement"]
             )
             assert isinstance(target, str)
-            files[target] = (ROOT / target).read_bytes()
+            source = ROOT / target
+            if not source.is_file():
+                # A later sealed record retired this target.  The fixture
+                # mirrors the current tree, so it stages what the tree holds.
+                continue
+            files[target] = source.read_bytes()
         for task in ROOT.glob("docs/03.specs/*/tasks/tsk-*.md"):
             files[task.relative_to(ROOT).as_posix()] = task.read_bytes()
+        # Sealed generic records are what release a retired Stage 99 target
+        # from the current inventory, so the fixture carries them too.
+        for record in ROOT.glob("docs/98.archive/migrations/[0-9][0-9][0-9][0-9]-*.md"):
+            files[record.relative_to(ROOT).as_posix()] = record.read_bytes()
         fixture = GitFixture(root)
         for relative, payload in files.items():
             destination = root / relative
@@ -1125,7 +1134,10 @@ class ArchiveValidationTest(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="mig0004-stage99-retired-") as temporary:
             root = Path(temporary)
             fixture, rows = self._mig0004_current_fixture(root)
-            retired = "docs/99.templates/templates/governance/progress.template.md"
+            retired = (
+                "docs/99.templates/templates/governance/"
+                "governance-reference.template.md"
+            )
             self.assertIn(
                 retired,
                 {
@@ -1153,7 +1165,10 @@ class ArchiveValidationTest(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="mig0004-stage99-required-") as temporary:
             root = Path(temporary)
             fixture, rows = self._mig0004_current_fixture(root)
-            retired = "docs/99.templates/templates/governance/progress.template.md"
+            retired = (
+                "docs/99.templates/templates/governance/"
+                "governance-reference.template.md"
+            )
             other = "docs/99.templates/templates/governance/memory.template.md"
 
             fixture.run("rm", "--quiet", "-f", "--", retired)
@@ -2064,6 +2079,31 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         self.assertEqual(
             targets[PurePosixPath(legacy)],
             PurePosixPath(target),
+        )
+
+    def test_mig0004_link_projection_composes_through_a_later_sealed_row(
+        self,
+    ) -> None:
+        path = self.validator.WORK054_WP004B_MIGRATION_PATH
+        rows = self.validator.validate_pinned_migration_recovery(
+            self.context.root,
+            path.as_posix(),
+            self.context.texts[path].encode("utf-8"),
+        )
+        legacy = "docs/99.templates/templates/common/progress.template.md"
+        self.assertTrue(
+            any(row.get("legacy_path") == legacy for row in rows),
+            "MIG-0004 must still carry the sealed move this case composes",
+        )
+
+        targets = self.validator._work054_wp004b_targets(self.context)
+
+        # MIG-0008 retired the sealed move's endpoint, so the pinned row
+        # resolves to the Archive index rather than to a path the tree no
+        # longer holds.
+        self.assertEqual(
+            targets[PurePosixPath(legacy)],
+            PurePosixPath("docs/98.archive/README.md"),
         )
 
     def test_mig0004_link_projection_fails_closed_on_recovery_proof_error(

@@ -431,10 +431,11 @@ def _later_ledger_edges(
     root: Path,
     tracked_regular_blobs: Mapping[str, str],
     failure: str,
-) -> dict[str, str]:
-    """Return the document replacements declared after the pinned ledgers."""
+) -> tuple[dict[str, str], set[str]]:
+    """Return replacements and deletions declared after the pinned ledgers."""
 
     edges: dict[str, str] = {}
+    retired: set[str] = set()
     for path in sorted(tracked_regular_blobs):
         if generic_migration_id(path) is None:
             continue
@@ -455,12 +456,15 @@ def _later_ledger_edges(
             target = (
                 row.get("stable_path") if action == "moved" else row.get("replacement")
             )
-            if not isinstance(legacy, str) or not isinstance(target, str):
+            if not isinstance(legacy, str) or not legacy.startswith("docs/"):
                 continue
-            if legacy == target or not legacy.startswith("docs/"):
+            if action == "deleted" and target is None:
+                retired.add(legacy)
+                continue
+            if not isinstance(target, str) or legacy == target:
                 continue
             edges[legacy] = target
-    return edges
+    return edges, retired
 
 
 def _work054_migration_projection(
@@ -496,8 +500,11 @@ def _work054_migration_projection(
         raise RuntimeError(failure) from None
 
     edges: dict[str, str] = {}
+    dropped: set[str] = set()
     action_counts: dict[str, int] = {}
-    later_edges = _later_ledger_edges(root, tracked_regular_blobs, failure)
+    later_edges, later_retired = _later_ledger_edges(
+        root, tracked_regular_blobs, failure
+    )
     for migration_path in WORK054_MIGRATION_PATHS:
         previous_legacy = ""
         for row in rows_by_path[migration_path]:
@@ -513,6 +520,7 @@ def _work054_migration_projection(
                 legacy is None
                 or legacy <= previous_legacy
                 or legacy in edges
+                or legacy in dropped
                 or action not in {"merged", "moved", "replaced"}
                 or target is None
                 or (action == "moved" and row.get("replacement") is not None)
@@ -529,10 +537,17 @@ def _work054_migration_projection(
             ):
                 raise RuntimeError(f"{failure}: row {legacy or migration_path}")
             previous_legacy = legacy
+            action_counts[action] = action_counts.get(action, 0) + 1
             # A later ledger may retire this target in turn, and the pinned rows
             # cannot name a successor that did not exist when they were sealed.
-            edges[legacy] = later_edges.get(target, target)
-            action_counts[action] = action_counts.get(action, 0) + 1
+            terminal = later_edges.get(target, target)
+            if terminal in later_retired:
+                # The later ledger deleted the endpoint rather than moving it,
+                # so this row composes no current owner and resolves through
+                # the Archive index instead.
+                dropped.add(legacy)
+                continue
+            edges[legacy] = terminal
 
     terminal_paths = {
         target

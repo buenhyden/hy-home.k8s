@@ -1533,37 +1533,6 @@
       "placeholderPolicy": "forbidden"
     },
     {
-      "id": "governance/progress-ledger",
-      "class": "governance",
-      "mode": "frontmatter-free",
-      "pathPattern": "^docs/00\\.agent\\-governance/memory/progress\\.md$",
-      "artifactIdPattern": null,
-      "template": null,
-      "requiredFrontmatter": {
-        "mode": "forbidden",
-        "required": [],
-        "allowed": [],
-        "order": []
-      },
-      "requiredSections": {
-        "required": [
-          "Work Entries"
-        ],
-        "allowed": [
-          "Work Entries"
-        ]
-      },
-      "lifecycle": {
-        "statusDomain": [],
-        "appendContract": null
-      },
-      "relationships": {
-        "sourceProfileIds": [],
-        "bodyContract": null
-      },
-      "placeholderPolicy": "forbidden"
-    },
-    {
       "id": "readme/repository",
       "class": "readme",
       "mode": "frontmatter-free",
@@ -3760,47 +3729,6 @@
           "reciprocalEvidence": true,
           "allowExplicitExclusion": true
         }
-      },
-      "placeholderPolicy": "template-only"
-    },
-    {
-      "id": "governance/progress-entry",
-      "class": "governance",
-      "mode": "template",
-      "pathPattern": "^docs/99\\.templates/templates/governance/progress\\.template\\.md$",
-      "artifactIdPattern": null,
-      "template": "docs/99.templates/templates/governance/progress.template.md",
-      "requiredFrontmatter": {
-        "mode": "forbidden",
-        "required": [],
-        "allowed": [],
-        "order": []
-      },
-      "requiredSections": {
-        "required": [],
-        "allowed": []
-      },
-      "lifecycle": {
-        "statusDomain": [],
-        "appendContract": {
-          "parentProfileId": "governance/progress-ledger",
-          "parentH2": "Work Entries",
-          "entryHeadingLevel": 3,
-          "sectionHeadingLevel": 4,
-          "requiredSections": [
-            "Metadata",
-            "Progress",
-            "Memory",
-            "Evidence",
-            "Handoff"
-          ]
-        }
-      },
-      "relationships": {
-        "sourceProfileIds": [
-          "governance/progress-ledger"
-        ],
-        "bodyContract": null
       },
       "placeholderPolicy": "template-only"
     },
