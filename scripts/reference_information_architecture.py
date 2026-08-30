@@ -29,6 +29,7 @@ from jsonschema import Draft202012Validator
 from archive_recovery import ArchiveContractError
 from archive_validation import (
     generic_migration_id,
+    is_sealed_migration,
     parse_migration_control,
     parse_pinned_migration_control,
     repository_migration_proof,
@@ -3160,6 +3161,8 @@ def _generic_transition_rows(
         if generic_migration_id(relative.as_posix()) is None:
             continue
         payload = _proposed_path(root, relative, proposed_oid, runner)
+        if not is_sealed_migration(payload):
+            continue
         try:
             parsed = parse_migration_control(relative.as_posix(), payload)
         except ArchiveContractError as error:

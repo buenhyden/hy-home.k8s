@@ -473,6 +473,26 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
         self.write(list(rows))
         self.assertEqual(self.verify(), "MIG-0005")
 
+    def test_draft_migration_is_inert_until_it_is_sealed(self):
+        # document_lifecycle admits a migration only in draft, so every
+        # migration exists as a draft before it is sealed.  A draft is not yet
+        # evidence: it must contribute no target rather than break the proof
+        # for the whole repository, or no migration can ever be opened in a
+        # green commit.
+        self.write()
+        draft_path = "docs/98.archive/migrations/0006-next-policy-convergence.md"
+        draft_source = "docs/00.agent-governance/policies/draft-only.md"
+        row = dict(self.row, legacy_path=draft_source)
+        data = self.write([row], consumers=[], path=draft_path)
+        record = self.root / draft_path
+        record.write_bytes(data.replace(b'status: "sealed"', b'status: "draft"'))
+        self.git.run("add", "--", draft_path)
+
+        proof = archive.repository_migration_proof(self.root)
+
+        self.assertEqual(proof.targets[self.source], self.target)
+        self.assertNotIn(draft_source, proof.targets)
+
     def test_cli_uses_validated_successor_records(self):
         first, second = self.chain(self.payload, action="merged")
         first_bytes = self.write([first])

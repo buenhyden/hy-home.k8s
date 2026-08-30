@@ -651,6 +651,26 @@ def project_migration_declaration_fields(
     )
 
 
+def is_sealed_migration(content: bytes) -> bool:
+    """Report whether a discovered migration document is sealed evidence.
+
+    document_lifecycle admits a migration only in `draft`, so every migration
+    exists as a draft before it is sealed.  Rejecting a draft here would break
+    the recovery proof for the whole repository between those two changes, which
+    makes it impossible to open a migration in a green commit.  A draft is not
+    yet evidence, so it is skipped rather than refused; `LIFECYCLE-DELETE` still
+    reads only sealed rows, so nothing is admitted early.
+    """
+
+    try:
+        _, metadata, _ = _load_canonical_markdown_module().extract_frontmatter(
+            content.decode("utf-8", errors="strict")
+        )
+    except (ValueError, UnicodeError, KeyError, TypeError):
+        return True
+    return metadata.get("status") == "sealed"
+
+
 def parse_migration_control(
     path: str, content: bytes
 ) -> tuple[tuple[dict[str, object], ...], tuple[dict[str, object], ...]]:
@@ -1661,6 +1681,8 @@ def repository_migration_proof(
                 content = _migration_current_bytes(
                     root, path, MIGRATION_DOCUMENT_MAX_BYTES, read_current_bytes
                 )
+                if not is_sealed_migration(content):
+                    continue
                 total += len(content)
                 if total > MAX_GIT_BATCH_BYTES:
                     raise ArchiveContractError(
@@ -1716,6 +1738,8 @@ def _migration_control_diagnostics(
     contract = _ARCHIVE_MIGRATION_CONTROLS.get(path)
     if contract is None:
         if generic_migration_id(path) is not None:
+            if not is_sealed_migration(content):
+                return ()
             try:
                 parse_migration_control(path, content)
             except ArchiveContractError:
@@ -2704,7 +2728,7 @@ def _repository_archive_records(
     generic_controls = {
         path: content
         for path, content in migration_controls.items()
-        if generic_migration_id(path) is not None
+        if generic_migration_id(path) is not None and is_sealed_migration(content)
     }
     if generic_controls:
         try:

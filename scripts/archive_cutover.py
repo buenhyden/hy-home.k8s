@@ -55,6 +55,7 @@ if __package__:
         CurrentMarkdownDocument,
         MIGRATION_DOCUMENT_MAX_BYTES,
         generic_migration_id,
+        is_sealed_migration,
         parse_migration_control,
         parse_pinned_migration_control,
         read_staged_blob_bounded,
@@ -93,6 +94,7 @@ else:
         CurrentMarkdownDocument,
         MIGRATION_DOCUMENT_MAX_BYTES,
         generic_migration_id,
+        is_sealed_migration,
         parse_migration_control,
         parse_pinned_migration_control,
         read_staged_blob_bounded,
@@ -440,6 +442,8 @@ def _later_ledger_edges(
             staged = read_staged_blob_bounded(
                 root, path, max_bytes=MIGRATION_DOCUMENT_MAX_BYTES
             )
+            if not is_sealed_migration(staged):
+                continue
             parsed = parse_migration_control(path, staged)
         except (ArchiveContractError, OSError, ValueError):
             raise RuntimeError(failure) from None
