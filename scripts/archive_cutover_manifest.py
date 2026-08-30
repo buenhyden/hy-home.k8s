@@ -62,4 +62,3 @@ EXPECTED_ARCHIVE_PATHS = (
     "docs/98.archive/05.operations/runbooks/0005-headlamp-keycloak-runbook.md",
 )
 
-EXPECTED_ARCHIVE_RECORDS = len(EXPECTED_ARCHIVE_PATHS)

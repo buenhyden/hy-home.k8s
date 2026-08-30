@@ -8041,7 +8041,3 @@ def run_self_test() -> None:
         raise AssertionError("hostile blob size was accepted")
 
 
-# RIA's frozen Current-pack baselines predate the root registry. The transition
-# path above is a finite reference-pack projection only; document profile and
-# lifecycle authority remains the terminal root registry. WP-007/WP-009 retire it.
-DOCUMENT_PROFILE_AUTHORITY_PATH = Path("docs/99.templates/registry.json")

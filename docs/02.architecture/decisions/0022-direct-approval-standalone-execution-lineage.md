@@ -79,12 +79,15 @@ false upstream authority.
 | --- | --- | --- |
 | Direct human approval recorded in the Spec body | N/A — first typed standalone-execution relation; preserves ADR-0016/0017 program lineage semantics | [Spec 053](../../03.specs/0053-workspace-engineering-research-pack-consolidation/spec.md) |
 | Direct human approval recorded in the Spec body | B-scope SDLC and AI-agent governance consolidation including Stage 90 | [Spec 054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| Direct human approval recorded in the Spec body | N/A — third typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0055](../../03.specs/0055-workspace-governance-audit-and-remediation/spec.md) |
-| Direct human approval recorded in the Spec body | N/A — fourth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0056](../../03.specs/0056-workspace-engineering-gap-only-refresh/spec.md) |
-| Direct human approval recorded in the Spec body | N/A — fifth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0057](../../03.specs/0057-workspace-engineering-partial-defer-incremental-refresh/spec.md) |
-| Direct human approval recorded in the Spec body | N/A — sixth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0058](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) |
-| Direct human approval recorded in the Spec body | N/A — seventh typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0059](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) |
-| Direct human approval recorded in the Spec body | N/A — eighth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0060](../../03.specs/0060-platform-currency-defect-closure/spec.md) |
-| Direct human approval recorded in the Spec body | N/A — ninth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0061](../../03.specs/0061-workload-security-context-baseline/spec.md) |
 | Direct human approval recorded in the Spec body | N/A — tenth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0062](../../03.specs/0062-workspace-research-full-corpus-reverification/spec.md) |
 | Direct human approval recorded in the Spec body | N/A — eleventh typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0063](../../03.specs/0063-governance-invariant-consolidation/spec.md) |
+
+Specs 0055 through 0061 were executed under this same direct-approval semantics,
+each with the approval recorded in its own Spec body, and are named here without
+links because the registry does not declare them as relations. Their Plans route
+Tasks through a README index rather than linking them, which the reciprocity half
+of the relation contract requires, and Plan, Task and Spec are all terminal, so
+the shape cannot be corrected. A linked Spec above is a declared relation, which
+`STANDALONE-DECISION-ROSTER` holds equal to the registry; naming these seven
+without links records the execution without asserting a relation the registry
+cannot hold.

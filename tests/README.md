@@ -54,7 +54,6 @@ tests/fixtures/gitops-change-set/cases.json
 tests/fixtures/gitops-change-set/head/added-service.yaml
 tests/fixtures/gitops-change-set/head/kustomization.yaml
 tests/fixtures/gitops-change-set/head/moved-retained-configmap.yaml
-tests/fixtures/links-and-owners.json
 tests/fixtures/markdown-profiles.json
 tests/fixtures/reference-information-architecture/current-owner.json
 tests/fixtures/reference-information-architecture/generator-collision.json
@@ -347,25 +346,6 @@ adapter PASS does not prove provider runtime consumption.
   5개/leading SDLC five-key negative 5개를 별도의 `10/10` 경계로 검증한다.
   이 수는 64-row profile applicability에 더하지 않으며, native syntax
   toolchain coverage나 하나의 합산 case total로 보고하지 않는다.
-- `tests/fixtures/links-and-owners.json`은 synthetic Stage 00 current-authority
-  declaration과 exact README mirror의 reciprocal lifecycle cases를 소유하며,
-  production 32-path set을 복제하지 않는다. 같은 79-case schema v2 fixture는
-  Current
-  research/audit pointer, member lifecycle, accepted/active/done 상태, 누락·교체·순서·
-  fenced lookalike와 Git-derived collection tree/table add/remove/equal-count swap,
-  nested research pack, machine JSON, escaped-pipe status-prose 무관성, GFM body
-  short-row padding/extra-cell truncation과 HTML comment 안에 숨은 tree의 거부도
-  검증한다. 또한 fence 및 HTML comment 밖의 inline/reference
-  link, URL decode 경계, 선언된 세 stage index, owner-key 정규화·제외·중복, exact
-  fourteen-column ledger를 production component로 검증한다. Semantic debt fixture는
-  ADM-002가 ledger와 468-path self-row를 같은 commit에서 만들 때 제거하는 exact
-  `LEDGER-MISSING` 한 건만 허용하며 alias, glob, growth, duplicate, unknown rule을
-  configuration error로 거부한다. Program-lineage 실행 사례는 registry relation
-  Spec에 연결되지 않은 active Plan/Task component를 fail-closed로 거부하며,
-  relation에 연결된 component의 dependency-ready·reciprocal·direct-Spec 규칙과
-  함께 검증한다.
-
-
 - `tests/fixtures/agent-governance-ci.json`은 selected/result 조합의 exact
   six-row truth table과 45개 closed mutation을 고정한다.
   `tests/test_validate_agent_governance_ci.py`의 32 focused tests는 adjacent

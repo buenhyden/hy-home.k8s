@@ -107,7 +107,6 @@ from reference_information_architecture import (
 )
 
 
-FIXTURE_PATH = Path("tests/fixtures/links-and-owners.json")
 _UNSET = object()
 DEBT_PATH = Path("tests/fixtures/document-contracts/semantic-compatibility-debt.json")
 LEDGER_PATH = PurePosixPath(
@@ -432,68 +431,6 @@ DEBT_LITERAL = {
     "ownerTask": "ADM-002",
     "removeWhen": "ledger exists, has the exact fourteen columns, and covers the inventory once",
 }
-IMPLEMENTED_RULES = frozenset(
-    {
-        "BODY-LINK-BROKEN",
-        "BODY-LINK-EXCLUSION",
-        "BODY-LINK-RECIPROCAL",
-        "BODY-LINK-SOURCE",
-        "BODY-LINK-SOURCE-PROFILE",
-        "BODY-LINK-TARGET",
-        "BODY-LINK-TARGET-PROFILE",
-        "LINK-BROKEN",
-        "LINK-ABSOLUTE",
-        "LINK-FILE-URI",
-        "LINK-ESCAPE",
-        "LINK-ARCHIVE-BYPASS",
-        "INDEX-MISSING",
-        "INDEX-STALE",
-        "INDEX-DUPLICATE",
-        "INDEX-STATUS",
-        "INDEX-TREE",
-        "OWNER-KEY-MISSING",
-        "OWNER-DUPLICATE",
-        "LEDGER-MISSING",
-        "LEDGER-INCOMPLETE",
-        "LEDGER-UNKNOWN-PATH",
-        "LEDGER-PREDECESSOR-DISPOSITION",
-        "LEDGER-PROTECTED-DRIFT",
-        "DEBT-UNUSED",
-        "REGISTRY_GOVERNANCE_CURRENT_OWNER_MISSING",
-        "REGISTRY_GOVERNANCE_CURRENT_OWNER_PROFILE",
-        "GOVERNANCE-OWNER-STATUS",
-        "GOVERNANCE-OWNER-UNDECLARED",
-        "GOVERNANCE-OWNER-ROUTE",
-        "GOVERNANCE-INDEX-MISSING",
-        "GOVERNANCE-INDEX-STALE",
-        "GOVERNANCE-INDEX-DUPLICATE",
-        "GOVERNANCE-INDEX-STATUS",
-        "GOVERNANCE-INDEX-ORDER",
-        "REFERENCE-PACK-OWNER-UNDECLARED",
-        "REFERENCE-PACK-OWNER-STATUS",
-        "REFERENCE-PACK-COLLECTION-MISSING",
-        "REFERENCE-PACK-COLLECTION-STALE",
-        "REFERENCE-PACK-COLLECTION-DUPLICATE",
-        "REFERENCE-PACK-INDEX-MISSING",
-        "REFERENCE-PACK-INDEX-STALE",
-        "REFERENCE-PACK-INDEX-DUPLICATE",
-        "REFERENCE-PACK-INDEX-STATUS",
-        "REFERENCE-PACK-INDEX-ORDER",
-        "REGISTRY_REFERENCE_CURRENT_PACK_PROFILE",
-        "COLLECTION-INDEX-PARSE",
-        "COLLECTION-INDEX-TREE-MISSING",
-        "COLLECTION-INDEX-TREE-STALE",
-        "COLLECTION-INDEX-TREE-DUPLICATE",
-        "COLLECTION-INDEX-ROW-MISSING",
-        "COLLECTION-INDEX-ROW-STALE",
-        "COLLECTION-INDEX-ROW-DUPLICATE",
-        "PROGRAM-LINEAGE-STATE",
-        "PROGRAM-LINEAGE-RECIPROCAL",
-        "PROGRAM-LINEAGE-HISTORICAL-EXCEPTION",
-        "PROGRAM-LINEAGE-EXECUTION-GATE",
-        "PROGRAM-LINEAGE-DUPLICATE-AUTHORITY",
-    }
-)
 GOVERNANCE_CURRENT_README = PurePosixPath("docs/00.agent-governance/README.md")
 GOVERNANCE_CURRENT_HEADING = "### Current Governance Authority Index"
 STATUS_MAP = {
@@ -6354,12 +6291,16 @@ def _unowned_active_execution_diagnostics(
     return diagnostics
 
 
+STANDALONE_DECISION_PATH = PurePosixPath(
+    "docs/02.architecture/decisions/"
+    "0022-direct-approval-standalone-execution-lineage.md"
+)
+_STANDALONE_DECISION_SPEC_LINK = re.compile(
+    r"\]\(\.\./\.\./03\.specs/(?P<spec>[0-9]{4})-[a-z0-9-]+/spec\.md\)"
+)
+
+
 STANDALONE_APPROVAL_STATEMENTS = {
-    # 0043 is the closed synthetic self-test relation.
-    "0043": (
-        "Direct human approval on 2026-08-08 authorizes this standalone execution relation.",
-        "No separate PRD or AD is required or part of this standalone lifecycle.",
-    ),
     "0053": (
         "Direct human approval on 2026-08-08 authorizes this standalone execution relation.",
         "No separate PRD or AD is required or part of this standalone lifecycle.",
@@ -6376,35 +6317,50 @@ STANDALONE_APPROVAL_STATEMENTS = {
         "Direct human approval on 2026-08-29 authorizes this standalone execution relation.",
         "No separate PRD or Architecture Description is required or part of this standalone lifecycle.",
     ),
-    "0055": (
-        "Direct human approval on 2026-08-09 authorizes this standalone execution relation.",
-        "No separate PRD or Architecture Description is required or part of this standalone lifecycle.",
-    ),
-    "0056": (
-        "Direct human approval on 2026-08-09 authorizes this standalone execution relation.",
-        "No separate PRD or Architecture Description is required or part of this standalone lifecycle.",
-    ),
-    "0057": (
-        "Direct human approval on 2026-08-12 authorizes this standalone execution relation.",
-        "No separate PRD or Architecture Description is required or part of this standalone lifecycle.",
-    ),
-    "0058": (
-        "Direct human approval on 2026-08-14 authorizes this standalone execution relation.",
-        "No separate PRD or Architecture Description is required or part of this standalone lifecycle.",
-    ),
-    "0059": (
-        "Direct human approval on 2026-08-17 authorizes this standalone execution relation.",
-        "No separate PRD or Architecture Description is required or part of this standalone lifecycle.",
-    ),
-    "0060": (
-        "Direct human approval on 2026-08-18 authorizes this standalone execution relation.",
-        "No separate PRD or Architecture Description is required or part of this standalone lifecycle.",
-    ),
-    "0061": (
-        "Direct human approval on 2026-08-18 authorizes this standalone execution relation.",
-        "No separate PRD or Architecture Description is required or part of this standalone lifecycle.",
-    ),
 }
+
+
+def _standalone_decision_roster_diagnostics(
+    context: Context,
+    standalone_executions: Sequence[StandaloneExecution],
+) -> list[Diagnostic]:
+    """Refuse a standalone roster its accepted decision does not match.
+
+    ADR-0022 names the relations in prose and the registry declares them for
+    machines.  Nothing compared the two, so the decision came to link seven
+    Specs the registry never held, each with an approval sentence pinned in
+    this module: declaring any one of them later would have satisfied
+    STANDALONE-EXECUTION-APPROVAL with no human approving it.  A Spec the
+    decision links is a Spec the registry declares.  An execution the registry
+    cannot hold is named in the decision without a link.
+    """
+
+    text = context.texts.get(STANDALONE_DECISION_PATH)
+    if text is None:
+        return [
+            _diag(
+                "STANDALONE-DECISION-ROSTER",
+                STANDALONE_DECISION_PATH,
+                "sdlc/adr",
+                "the accepted standalone-execution decision",
+                "the decision is absent or untracked",
+            )
+        ]
+    linked = {
+        match.group("spec") for match in _STANDALONE_DECISION_SPEC_LINK.finditer(text)
+    }
+    declared = {relation.spec_id for relation in standalone_executions}
+    if linked != declared:
+        return [
+            _diag(
+                "STANDALONE-DECISION-ROSTER",
+                STANDALONE_DECISION_PATH,
+                "sdlc/adr",
+                f"linked Specs equal to the declared roster {sorted(declared)}",
+                f"linked={sorted(linked)}",
+            )
+        ]
+    return []
 
 
 def _standalone_execution_diagnostics(
@@ -6547,6 +6503,9 @@ def _program_lineage_diagnostics(
                 program_owned_paths.update(
                     _current_execution_component(context, spec, execution_index)
                 )
+    diagnostics.extend(
+        _standalone_decision_roster_diagnostics(context, standalone_executions)
+    )
     standalone_diagnostics, standalone_owned_paths = _standalone_execution_diagnostics(
         context,
         standalone_executions,

@@ -31,7 +31,6 @@ ROUTING_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/validation-surfaces.json"
 )
 CLAUDE_SETTINGS_PATH = PurePosixPath(".claude/settings.json")
-CAPABILITY_EVIDENCE_OWNER = CONTRACT_PATH.as_posix()
 MAX_GOVERNED_INPUT_BYTES = 1024 * 1024
 
 CUTOFF_UTC = datetime(2026, 7, 10, 1, 0, 0, tzinfo=timezone.utc)

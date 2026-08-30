@@ -37,16 +37,6 @@ MAX_CANDIDATE_PATH_BYTES = 1_024
 MAX_REGULAR_FILE_BYTES = 8_388_608
 MAX_DIAGNOSTIC_DETAIL_BYTES = 512
 READ_CHUNK_BYTES = 65_536
-RESOURCE_LIMITS = {
-    "gitTimeoutSeconds": GIT_TIMEOUT_SECONDS,
-    "gitCleanupTimeoutSeconds": GIT_CLEANUP_TIMEOUT_SECONDS,
-    "gitStdoutBytes": MAX_GIT_STDOUT_BYTES,
-    "gitStderrBytes": MAX_GIT_STDERR_BYTES,
-    "candidateCount": MAX_CANDIDATES,
-    "candidatePathBytes": MAX_CANDIDATE_PATH_BYTES,
-    "regularFileBytes": MAX_REGULAR_FILE_BYTES,
-    "diagnosticDetailBytes": MAX_DIAGNOSTIC_DETAIL_BYTES,
-}
 GIT_ENVIRONMENT = {
     "GIT_ASKPASS": "/bin/false",
     "GIT_CONFIG_GLOBAL": "/dev/null",

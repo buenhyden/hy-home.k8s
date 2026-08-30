@@ -125,21 +125,6 @@ GIT_GLOBAL_ARGUMENTS = (
 GIT_CAPTURE_MAX_BYTES = 2 * 1024 * 1024
 GIT_SIZE_OUTPUT_MAX_BYTES = 64
 DOCUMENT_BLOB_MAX_BYTES = 1024 * 1024
-EXPECTED_ENTRYPOINTS = (
-    "scripts/document_lifecycle.py",
-    "scripts/validate-document-lifecycle.py",
-)
-EXPECTED_RULE_IDS = (
-    "LIFECYCLE-CREATE",
-    "LIFECYCLE-DELETE",
-    "LIFECYCLE-RENAME",
-    "LIFECYCLE-PROFILE-CHANGE",
-    "LIFECYCLE-STATE",
-    "LIFECYCLE-EDGE",
-    "LIFECYCLE-EVIDENCE",
-    "LIFECYCLE-BASE",
-    "LIFECYCLE-BASE-DEFER",
-)
 WORK105_CUTOVER_BASE_COMMIT = "a6fa1806364ea0472baaad0906e1b5e4ddac8602"
 WORK105_BASE_REGISTRY_BLOB_OID = "fc9ba039906ef240d076de5eeb6c584b681ae09f"
 WORK105_PROPOSED_REGISTRY_BLOB_OID = "fd842f60e801a39435600f35a27f22e1c659f1bd"
@@ -259,10 +244,6 @@ WORK054_WP002_LIFECYCLE_MERGE_REASON = (
 WORK054_WP002_CONTRACT_MERGE_REASON = (
     "Merge route, frontmatter, and profile-selection guidance into the canonical "
     "Stage 99 document-contract owner."
-)
-WORK054_WP002_LEDGER_OVERVIEW = (
-    "It records 141 three-to-four-digit moves, the three Stage 04 index "
-    "replacements, and ten route-sensitive Stage 00/99 owner merges."
 )
 WORK054_WP002_STAGE04_REPLACEMENTS = MappingProxyType(
     {

@@ -3,7 +3,7 @@ title: 'Workspace Agent Governance Platform Architecture Description'
 type: sdlc/ad
 status: active
 owner: platform
-updated: 2026-08-22
+updated: 2026-08-30
 artifact_id: "AD-0006"
 ---
 
@@ -90,7 +90,7 @@ consumer-zero proof.
 | --- | --- | --- | --- |
 | Governance map | `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, provider baseline | 짧은 bootstrap과 deeper owner routing | Thin-gateway/duplicate-policy lint |
 | Durable policy | `docs/00.agent-governance/**` | scope, role, model, quality, approval, lifecycle | Document profile/current-owner/cross-link validation |
-| Machine harness contract | `docs/00.agent-governance/contracts/harness-contract.json` plus schema | roles, semantics, surface projection, evidence, stop/handoff | JSON schema, semantic/parity validators |
+| Machine harness contract | `.agents/registry.json` plus `.agents/contracts/agent-registry.schema.json` | roles, semantics, surface projection, evidence, stop/handoff | JSON schema, semantic/parity validators |
 | Shared/local surface | `.agents/**` | shared skill/workflow/output style와 local/Antigravity adapter | Parse, link and role projection checks |
 | Claude surface | `.claude/**` | Claude-native agent/settings/hooks projection | Static schema plus authenticated Claude canary |
 | Codex surface | `.codex/**` | Codex-native agents/project config projection | TOML parse plus authenticated Codex canary |

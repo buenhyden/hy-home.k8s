@@ -317,11 +317,6 @@ INVENTORY_FENCE_PATTERN = re.compile(
     r".*?^```yaml[ \t]*\n(?P<yaml>.*?)^```[ \t]*$",
     re.MULTILINE | re.DOTALL,
 )
-PRE_COMMIT_REPO_HEADER_PATTERN = re.compile(
-    r"^  - repo: (?P<repo>\S+)$"
-)
-
-
 class ContractError(ValueError):
     """A stable CI Python contract finding."""
 

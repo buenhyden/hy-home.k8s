@@ -53,7 +53,6 @@ if __package__:
     from scripts.document_lifecycle import document_from_text
     from scripts.archive_validation import (
         CurrentMarkdownDocument,
-        MIG0002_DOCUMENT_SHA256,
         MIGRATION_DOCUMENT_MAX_BYTES,
         generic_migration_id,
         parse_migration_control,
@@ -92,7 +91,6 @@ else:
     from document_lifecycle import document_from_text  # type: ignore[no-redef]
     from archive_validation import (  # type: ignore[no-redef]
         CurrentMarkdownDocument,
-        MIG0002_DOCUMENT_SHA256,
         MIGRATION_DOCUMENT_MAX_BYTES,
         generic_migration_id,
         parse_migration_control,
@@ -113,10 +111,6 @@ WORK054_MIGRATION_PATHS = (
     "docs/98.archive/migrations/"
     "mig-0003-agent-governance-control-plane-consolidation.md",
     "docs/98.archive/migrations/0004-document-authority-convergence.md",
-)
-WORK054_MIGRATION_SHA256 = MIG0002_DOCUMENT_SHA256
-WORK054_SOURCE_COMMIT = (
-    "160ce006969ddb49965c8af193f3e9ee290e18a8"  # pragma: allowlist secret
 )
 WORK054_LEDGER_FIELDS = (
     "legacy_path",

@@ -15,22 +15,6 @@ from document_contracts import DocumentProfile, Registry, classify_path
 
 LifecycleSeverity = Literal["FAIL", "DEFER"]
 LifecycleBaseMode = Literal["staged", "ci", "explicit-ref", "snapshot", "unknown"]
-LIFECYCLE_RULE_IDS = frozenset(
-    {
-        "LIFECYCLE-CREATE",
-        "LIFECYCLE-DELETE",
-        "LIFECYCLE-RENAME",
-        "LIFECYCLE-PROFILE-CHANGE",
-        "LIFECYCLE-STATE",
-        "LIFECYCLE-EDGE",
-        "LIFECYCLE-TERMINAL-MUTATION",
-        "LIFECYCLE-EVIDENCE",
-        "LIFECYCLE-BASE",
-        "LIFECYCLE-BASE-DEFER",
-    }
-)
-
-
 @dataclass(frozen=True)
 class LifecycleDiagnostic:
     """Stable lifecycle failure/defer envelope shared by every base mode."""

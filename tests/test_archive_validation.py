@@ -2521,28 +2521,73 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
     def test_standalone_approval_statements_are_relation_specific(self) -> None:
         statements = self.validator.STANDALONE_APPROVAL_STATEMENTS
 
+        registry = json.loads(
+            (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
+        )
+
+        # The registry owns which relations are standalone executions.  A
+        # statement for a relation the registry does not declare is a
+        # pre-minted approval: the moment anyone declares that relation,
+        # STANDALONE-EXECUTION-APPROVAL is satisfied without a human having
+        # approved it.  Holding the two rosters equal removes the second
+        # owner instead of restating it here.
         self.assertEqual(
             set(statements),
-            # 0055-0061 are the renumbered successors the consolidation
-            # merge introduced alongside the original three, and 0062 is the
-            # standalone execution the same merge declared in the registry.
-            {
-                "0043",
-                "0053",
-                "0054",
-                "0062",
-                "0055",
-                "0056",
-                "0057",
-                "0058",
-                "0059",
-                "0060",
-                "0061",
-            },
+            {entry["spec"] for entry in registry["standaloneExecutions"]},
         )
         self.assertIn("2026-08-08", statements["0053"][0])
         self.assertIn("2026-08-13", statements["0054"][0])
         self.assertNotEqual(statements["0053"], statements["0054"])
+
+    def test_standalone_decision_roster_must_equal_the_registry(self) -> None:
+        validator = self.validator
+        registry = json.loads(
+            (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
+        )
+        declared = [
+            types.SimpleNamespace(spec_id=entry["spec"])
+            for entry in registry["standaloneExecutions"]
+        ]
+        decision = (
+            ROOT / validator.STANDALONE_DECISION_PATH.as_posix()
+        ).read_text(encoding="utf-8")
+
+        # The repository agrees today: every Spec ADR-0022 links is declared.
+        context = types.SimpleNamespace(
+            texts={validator.STANDALONE_DECISION_PATH: decision}
+        )
+        self.assertEqual(
+            validator._standalone_decision_roster_diagnostics(context, declared), []
+        )
+
+        # A Spec linked by the decision but absent from the registry is what
+        # let seven relations accumulate unnoticed, so it must fail closed.
+        drifted = types.SimpleNamespace(
+            texts={
+                validator.STANDALONE_DECISION_PATH: decision
+                + "| x | y | [Spec 0055](../../03.specs/0055-a/spec.md) |\n"
+            }
+        )
+        self.assertEqual(
+            [
+                item.rule_id
+                for item in validator._standalone_decision_roster_diagnostics(
+                    drifted, declared
+                )
+            ],
+            ["STANDALONE-DECISION-ROSTER"],
+        )
+
+        # So must a registry relation the decision does not link.
+        self.assertEqual(
+            [
+                item.rule_id
+                for item in validator._standalone_decision_roster_diagnostics(
+                    context, [*declared, types.SimpleNamespace(spec_id="9999")]
+                )
+            ],
+            ["STANDALONE-DECISION-ROSTER"],
+        )
 
     def test_work109_mig0002_source_commit_blob_and_target_drift_fail_closed(
         self,

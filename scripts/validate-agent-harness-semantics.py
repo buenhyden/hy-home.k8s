@@ -72,7 +72,6 @@ CLAUDE_PERMISSION_TOOLS = {
         "default": "Read, Grep, Glob, Task",
     },
 }
-POSTFLIGHT_UNIT = "Run `docs/00.agent-governance/skills/work-lifecycle.md#completion` before returning results."
 BASELINE_COMMON_REFERENCES = (
     "Common execution policy: `docs/00.agent-governance/policies/agent-execution.md`.",
     "Provider facts: `docs/00.agent-governance/providers/{provider}.md`.",
@@ -117,7 +116,6 @@ PROVIDER_BASELINE_PROFILES = {
         ),
     },
 }
-ALLOWED_EXTENSIONS = frozenset({".md", ".toml"})
 MAX_ADAPTER_BYTES = 262_144
 NEGATION_STATES = (
     "false",

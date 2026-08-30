@@ -508,8 +508,7 @@
         "docs/90.references/research/2026-08-08-wer/README.md",
         "docs/99.templates/README.md",
         "scripts/validate-links-and-owners.py",
-        "scripts/validate-repo-quality-gates.sh",
-        "tests/fixtures/links-and-owners.json"
+        "scripts/validate-repo-quality-gates.sh"
       ],
       "expected": {
         "validators": [

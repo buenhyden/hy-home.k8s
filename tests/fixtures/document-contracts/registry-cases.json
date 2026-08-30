@@ -22667,138 +22667,6 @@
       },
       {
         "patternId": "ard",
-        "path": "tests/fixtures/links-and-owners.json",
-        "line": 51,
-        "matchedLineSha256": "e6486952580584dcb562cfeced8fa64dad737059f55448b33a48b629a05c9ca4",
-        "occurrenceCount": 2,
-        "consumerClass": "retired-route-control",
-        "disposition": "retired-route-negative",
-        "target": "WORK-105 retired authored-route controls",
-        "reason": "Retain an explicit retired-route assertion or negative fixture line."
-      },
-      {
-        "patternId": "ard",
-        "path": "tests/fixtures/links-and-owners.json",
-        "line": 52,
-        "matchedLineSha256": "0c9cd204925b1e284d42b4e13ffef1b352a55c3c04b17aba80caea6509ff149e",
-        "occurrenceCount": 2,
-        "consumerClass": "retired-route-control",
-        "disposition": "retired-route-negative",
-        "target": "WORK-105 retired authored-route controls",
-        "reason": "Retain an explicit retired-route assertion or negative fixture line."
-      },
-      {
-        "patternId": "ard",
-        "path": "tests/fixtures/links-and-owners.json",
-        "line": 54,
-        "matchedLineSha256": "d32d9bbe274bd073633e3de27d073f772842004e9697829f446a650a9002774c",
-        "occurrenceCount": 1,
-        "consumerClass": "current-ard-consumer",
-        "disposition": "migrate-current",
-        "target": "sdlc/ad at docs/02.architecture/descriptions/ad-<id>-<slug>.md",
-        "reason": "Migrate the current ARD profile, route, template, label, and relationship consumer."
-      },
-      {
-        "patternId": "ard",
-        "path": "tests/fixtures/links-and-owners.json",
-        "line": 56,
-        "matchedLineSha256": "c4fa42a87fd777fb9d3c42038d354efc26d4da8b76ca1a207a072c853236b535",
-        "occurrenceCount": 3,
-        "consumerClass": "current-ard-consumer",
-        "disposition": "migrate-current",
-        "target": "sdlc/ad at docs/02.architecture/descriptions/ad-<id>-<slug>.md",
-        "reason": "Migrate the current ARD profile, route, template, label, and relationship consumer."
-      },
-      {
-        "patternId": "ard",
-        "path": "tests/fixtures/links-and-owners.json",
-        "line": 57,
-        "matchedLineSha256": "5e07e02bfaa9544cd593930f044031ea00dd37aec81ecd911dcb2e238d8d3336",
-        "occurrenceCount": 2,
-        "consumerClass": "current-ard-consumer",
-        "disposition": "migrate-current",
-        "target": "sdlc/ad at docs/02.architecture/descriptions/ad-<id>-<slug>.md",
-        "reason": "Migrate the current ARD profile, route, template, label, and relationship consumer."
-      },
-      {
-        "patternId": "ard",
-        "path": "tests/fixtures/links-and-owners.json",
-        "line": 58,
-        "matchedLineSha256": "1206dec82b684b165f69db69600fc42fb1793dcf63bd5713e00e01c38b6db567",
-        "occurrenceCount": 2,
-        "consumerClass": "current-ard-consumer",
-        "disposition": "migrate-current",
-        "target": "sdlc/ad at docs/02.architecture/descriptions/ad-<id>-<slug>.md",
-        "reason": "Migrate the current ARD profile, route, template, label, and relationship consumer."
-      },
-      {
-        "patternId": "ard",
-        "path": "tests/fixtures/links-and-owners.json",
-        "line": 61,
-        "matchedLineSha256": "6dcf659ec0d417e20e6e4af6ae4a5f7148f6d02663c46b90fbcb3c9610835c05",
-        "occurrenceCount": 2,
-        "consumerClass": "retired-route-control",
-        "disposition": "retired-route-negative",
-        "target": "WORK-105 retired authored-route controls",
-        "reason": "Retain an explicit retired-route assertion or negative fixture line."
-      },
-      {
-        "patternId": "ard",
-        "path": "tests/fixtures/links-and-owners.json",
-        "line": 62,
-        "matchedLineSha256": "b1685b83657b042ba739b559a5d3300fb14b130f115e0593be28e828bf21c85d",
-        "occurrenceCount": 2,
-        "consumerClass": "retired-route-control",
-        "disposition": "retired-route-negative",
-        "target": "WORK-105 retired authored-route controls",
-        "reason": "Retain an explicit retired-route assertion or negative fixture line."
-      },
-      {
-        "patternId": "ard",
-        "path": "tests/fixtures/links-and-owners.json",
-        "line": 64,
-        "matchedLineSha256": "42337bd1512abdbaab3662c743a76b75af4438078641cb9c689d2460e133b66d",
-        "occurrenceCount": 2,
-        "consumerClass": "retired-route-control",
-        "disposition": "retired-route-negative",
-        "target": "WORK-105 retired authored-route controls",
-        "reason": "Retain an explicit retired-route assertion or negative fixture line."
-      },
-      {
-        "patternId": "ard",
-        "path": "tests/fixtures/links-and-owners.json",
-        "line": 70,
-        "matchedLineSha256": "8d09c6d0875d25fd7310d905838e6dcf677a2b2934288bc996e1bbb458b61f75",
-        "occurrenceCount": 1,
-        "consumerClass": "current-ard-consumer",
-        "disposition": "migrate-current",
-        "target": "sdlc/ad at docs/02.architecture/descriptions/ad-<id>-<slug>.md",
-        "reason": "Migrate the current ARD profile, route, template, label, and relationship consumer."
-      },
-      {
-        "patternId": "ard",
-        "path": "tests/fixtures/links-and-owners.json",
-        "line": 71,
-        "matchedLineSha256": "522995181a813dda80604ea9a8d1d091b82231a06978faac450267785d90d2b5",
-        "occurrenceCount": 1,
-        "consumerClass": "current-ard-consumer",
-        "disposition": "migrate-current",
-        "target": "sdlc/ad at docs/02.architecture/descriptions/ad-<id>-<slug>.md",
-        "reason": "Migrate the current ARD profile, route, template, label, and relationship consumer."
-      },
-      {
-        "patternId": "ard",
-        "path": "tests/fixtures/links-and-owners.json",
-        "line": 72,
-        "matchedLineSha256": "21b00fd72e2dba2ade8bc44f7bb6f7b2888cce5d384f6ed27a824d58e3ba1604",
-        "occurrenceCount": 1,
-        "consumerClass": "current-ard-consumer",
-        "disposition": "migrate-current",
-        "target": "sdlc/ad at docs/02.architecture/descriptions/ad-<id>-<slug>.md",
-        "reason": "Migrate the current ARD profile, route, template, label, and relationship consumer."
-      },
-      {
-        "patternId": "ard",
         "path": "tests/fixtures/markdown-profiles.json",
         "line": 490,
         "matchedLineSha256": "b10a4756ded52b7e89a097ba5d8ff7ffe7cb7fdb7fb4d0e31b686be3780cb590",
@@ -24003,26 +23871,89 @@
     }
   ],
   "work106ArtifactIdentityCases": [
-    {"path": "docs/01.requirements/0008-workspace-document-taxonomy-consolidation.md", "artifactId": "REQ-0008"},
-    {"path": "docs/01.requirements/srs-0009-platform-runtime.md", "artifactId": "SRS-0009"},
-    {"path": "docs/01.requirements/ifc-0009-control-plane-api.md", "artifactId": "IFC-0009-CONTROL-PLANE-API"},
-    {"path": "docs/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md", "artifactId": "AD-0011"},
-    {"path": "docs/02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md", "artifactId": "ADR-0024"},
-    {"path": "docs/03.specs/0052-document-taxonomy-consolidation/spec.md", "artifactId": "SPEC-0052"},
-    {"path": "docs/03.specs/0052-document-taxonomy-consolidation/agent-design.md", "artifactId": "AGENT-DESIGN-0052"},
-    {"path": "docs/03.specs/0052-document-taxonomy-consolidation/data-model.md", "artifactId": "DATA-MODEL-0052"},
-    {"path": "docs/03.specs/0052-document-taxonomy-consolidation/tests.md", "artifactId": "TESTS-0052"},
-    {"path": "docs/03.specs/0052-document-taxonomy-consolidation/plan.md", "artifactId": "PLAN-0052"},
-    {"path": "docs/03.specs/0052-document-taxonomy-consolidation/tasks/tsk-0017-work-115.md", "artifactId": "TSK-0052-0017"},
-    {"path": "docs/05.operations/guides/0009-llm-wiki-curation-guide.md", "artifactId": "GUIDE-0009"},
-    {"path": "docs/05.operations/policies/0007-app-gitops-onboarding-policy.md", "artifactId": "POLICY-0007"},
-    {"path": "docs/05.operations/runbooks/0011-reference-maintenance-runbook.md", "artifactId": "RUNBOOK-0011"},
-    {"path": "docs/05.operations/incidents/2026/inc-0007-control-plane/incident.md", "artifactId": "INC-2026-0007"},
-    {"path": "docs/05.operations/incidents/2026/inc-0007-control-plane/postmortem.md", "artifactId": "POSTMORTEM-2026-0007"},
-    {"path": "docs/98.archive/changes/chg-0001-bootstrap/plan.md", "artifactId": "PLAN-CHG-0001", "changeId": "CHG-0001"},
-    {"path": "docs/98.archive/changes/chg-0001-bootstrap/task.md", "artifactId": "TASK-CHG-0001", "changeId": "CHG-0001"},
-    {"path": "docs/98.archive/migrations/0004-document-authority-convergence.md", "artifactId": "MIG-0004", "migrationId": "MIG-0004"},
-    {"path": "docs/98.archive/tombstones/02.architecture/tmb-ad-0011.md", "artifactId": "TMB-AD-0011"}
+    {
+      "path": "docs/01.requirements/0008-workspace-document-taxonomy-consolidation.md",
+      "artifactId": "REQ-0008"
+    },
+    {
+      "path": "docs/01.requirements/srs-0009-platform-runtime.md",
+      "artifactId": "SRS-0009"
+    },
+    {
+      "path": "docs/01.requirements/ifc-0009-control-plane-api.md",
+      "artifactId": "IFC-0009-CONTROL-PLANE-API"
+    },
+    {
+      "path": "docs/02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md",
+      "artifactId": "AD-0011"
+    },
+    {
+      "path": "docs/02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md",
+      "artifactId": "ADR-0024"
+    },
+    {
+      "path": "docs/03.specs/0052-document-taxonomy-consolidation/spec.md",
+      "artifactId": "SPEC-0052"
+    },
+    {
+      "path": "docs/03.specs/0052-document-taxonomy-consolidation/agent-design.md",
+      "artifactId": "AGENT-DESIGN-0052"
+    },
+    {
+      "path": "docs/03.specs/0052-document-taxonomy-consolidation/data-model.md",
+      "artifactId": "DATA-MODEL-0052"
+    },
+    {
+      "path": "docs/03.specs/0052-document-taxonomy-consolidation/tests.md",
+      "artifactId": "TESTS-0052"
+    },
+    {
+      "path": "docs/03.specs/0052-document-taxonomy-consolidation/plan.md",
+      "artifactId": "PLAN-0052"
+    },
+    {
+      "path": "docs/03.specs/0052-document-taxonomy-consolidation/tasks/tsk-0017-work-115.md",
+      "artifactId": "TSK-0052-0017"
+    },
+    {
+      "path": "docs/05.operations/guides/0009-llm-wiki-curation-guide.md",
+      "artifactId": "GUIDE-0009"
+    },
+    {
+      "path": "docs/05.operations/policies/0007-app-gitops-onboarding-policy.md",
+      "artifactId": "POLICY-0007"
+    },
+    {
+      "path": "docs/05.operations/runbooks/0011-reference-maintenance-runbook.md",
+      "artifactId": "RUNBOOK-0011"
+    },
+    {
+      "path": "docs/05.operations/incidents/2026/inc-0007-control-plane/incident.md",
+      "artifactId": "INC-2026-0007"
+    },
+    {
+      "path": "docs/05.operations/incidents/2026/inc-0007-control-plane/postmortem.md",
+      "artifactId": "POSTMORTEM-2026-0007"
+    },
+    {
+      "path": "docs/98.archive/changes/chg-0001-bootstrap/plan.md",
+      "artifactId": "PLAN-CHG-0001",
+      "changeId": "CHG-0001"
+    },
+    {
+      "path": "docs/98.archive/changes/chg-0001-bootstrap/task.md",
+      "artifactId": "TASK-CHG-0001",
+      "changeId": "CHG-0001"
+    },
+    {
+      "path": "docs/98.archive/migrations/0004-document-authority-convergence.md",
+      "artifactId": "MIG-0004",
+      "migrationId": "MIG-0004"
+    },
+    {
+      "path": "docs/98.archive/tombstones/02.architecture/tmb-ad-0011.md",
+      "artifactId": "TMB-AD-0011"
+    }
   ],
   "work106MigrationLedger": {
     "row": {
@@ -24042,10 +23973,18 @@
       "reason": "Reviewed stable rehome"
     },
     "negativeMutations": [
-      "missing-field", "extra-field", "bad-legacy-path", "bad-source-commit",
-      "bad-content-digest", "artifact-path-mismatch", "kind-path-mismatch",
-      "moved-replacement", "bad-replacement-id", "duplicate-legacy-path",
-      "duplicate-stable-path", "duplicate-artifact-id"
+      "missing-field",
+      "extra-field",
+      "bad-legacy-path",
+      "bad-source-commit",
+      "bad-content-digest",
+      "artifact-path-mismatch",
+      "kind-path-mismatch",
+      "moved-replacement",
+      "bad-replacement-id",
+      "duplicate-legacy-path",
+      "duplicate-stable-path",
+      "duplicate-artifact-id"
     ]
   },
   "routingCases": [
