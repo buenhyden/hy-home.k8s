@@ -139,13 +139,29 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             set(self.registry["programLineage"]),
             {"lifecycleDomains", "programs"},
         )
-        # 65 profiles and 12 domains before content/audit, content/research
-        # and content/data retired with their template profiles, then 59 before
-        # governance/progress-ledger and governance/progress-entry retired with
-        # the append form under MIG-0008, then 57 before governance/memory and
-        # template/governance/memory retired with the directory under MIG-0009.
-        self.assertEqual(len(self.registry["profiles"]), 54)
-        self.assertEqual(len(self.registry["programLineage"]["lifecycleDomains"]), 9)
+        profile_ids = [profile["id"] for profile in self.registry["profiles"]]
+        self.assertEqual(len(profile_ids), len(set(profile_ids)))
+        self.assertTrue(
+            {
+                "content/reference",
+                "readme/audit-pack",
+                "readme/data-pack",
+                "readme/research-pack",
+                "sdlc/incident",
+                "sdlc/postmortem",
+            }.issubset(profile_ids)
+        )
+
+        lifecycle_families = [
+            domain["family"]
+            for domain in self.registry["programLineage"]["lifecycleDomains"]
+        ]
+        self.assertEqual(len(lifecycle_families), len(set(lifecycle_families)))
+        self.assertTrue(
+            {"incident", "postmortem", "task", "template-profile"}.issubset(
+                lifecycle_families
+            )
+        )
 
     def test_profile_schema_accepts_terminal_registry(self) -> None:
         schema = json.loads(PROFILE_SCHEMA_PATH.read_text(encoding="utf-8"))

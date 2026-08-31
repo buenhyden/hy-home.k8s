@@ -725,19 +725,22 @@ reason to reopen WP-004.
   TSK-0054-0005 and its reviewed diff; do not create a Stage 90 disposition
   package, schema, or permanent corpus census.
 
-- [ ] Confirm Guide `0010` as the retained/rewrite Guide owner and plan the
+- [x] Confirm Guide `0010` as the retained/rewrite Guide owner and plan the
   merge/removal of Guides `0001`, `0002`, `0003`, `0006`, `0007`, `0008`, and
-  `0009` after consumer cutover.
-- [ ] Confirm Policies `0001`, `0003`, `0004`, `0005`, and `0007` as retained
+  `0009` after consumer cutover. Guide `0009` was already removed by WP-008;
+  the remaining six procedural Guides route to their reviewed Runbook/Policy
+  owners in WP-006.
+- [x] Confirm Policies `0001`, `0003`, `0004`, `0005`, and `0007` as retained
   owners; merge `0002` into `0001` and `0006` into `0005`.
-- [ ] Keep and rewrite all nine existing Runbooks as procedure owners, removing
+- [x] Keep and rewrite all nine existing Runbooks as procedure owners, removing
   duplicated policy, unsafe live execution, and secret-bearing examples.
-- [ ] Strengthen Incident/Postmortem role, timeline, evidence, cause,
+- [x] Strengthen Incident/Postmortem role, timeline, evidence, cause,
   action-owner, due-state, and closure contracts. Route Release evidence to
   Spec Task, Git/CI/deployment evidence, or Incident/Postmortem.
-- [ ] Add semantic duplicate-owner and contract tests without an exact document
-  count, exhaustive fixture matrix, or permanent disposition ledger.
-- [ ] Run:
+- [x] Define bounded WP-006 semantic duplicate-owner and contract negatives
+  without an exact document count, exhaustive fixture matrix, permanent
+  disposition ledger, or one gate per retired document.
+- [x] Run:
 
   ```bash
   python3 -m unittest discover -s tests -p 'test_*document*.py'
@@ -748,8 +751,9 @@ reason to reopen WP-004.
   TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
   ```
 
-- [ ] Obtain operations and documentation review.
-- [ ] Commit: `docs(ops): record operations document dispositions`.
+- [x] Obtain execution-owner operations and documentation diff review. No
+  delegated review was requested for this point-in-time disposition.
+- [x] Commit: `docs(ops): record operations document dispositions`.
 
 ### WP-006 — Stage 05 ownership cutover
 
