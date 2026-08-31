@@ -25,7 +25,7 @@ This is the queued parent acceptance-owner record for delegated WP-011.
 
 **Plan label:** WP-011
 
-**Depends on:** WP-009 and the TSK-0054-0010 activation transaction
+**Depends on:** the TSK-0054-0010 activation transaction
 
 **Current state:** `queued; parent acceptance handoff designed but not activated`
 

@@ -3,7 +3,7 @@ title: 'Task: Convergence and branch completion'
 type: sdlc/task
 status: queued
 owner: platform
-updated: 2026-08-22
+updated: 2026-08-31
 artifact_id: "TSK-0054-0014"
 ---
 
@@ -24,7 +24,7 @@ This is the terminal queued Task record for WP-014.
 
 **Plan label:** WP-014
 
-**Depends on:** WP-013
+**Depends on:** WP-009 and WP-013
 
 **Current state:** `queued`
 

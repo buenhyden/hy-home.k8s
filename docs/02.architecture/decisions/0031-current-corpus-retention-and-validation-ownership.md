@@ -68,7 +68,7 @@ The terminal ownership map is:
 | Document profiles, frontmatter, lifecycle domains, and document relations | `docs/99.templates/registry.json` | The registry describes document kinds and normalized lifecycle rules, not current execution instances. |
 | Validation selection, routing, command arguments, and CI projection | `scripts/validation/registry.json` | The existing Stage 00 validation-surfaces contract and schema move atomically to this path and are reused rather than copied. |
 | Agent role, permission, skill, and handoff topology | `.agents/registry.json` | Provider projections consume this registry and do not redefine shared authority. |
-| Terminal execution and content history | Git | Stage 98 adds only a bounded lookup record when Git history alone cannot preserve a required immutable link. |
+| Terminal execution and content history | Git | Stage 98 is an isolated historical archive, not an active-document dependency or current recovery control plane. |
 
 Stage 00 remains a human-readable governance stage. Executable contracts
 under Stage 00 move to their machine-owner path or are retired after every
@@ -90,6 +90,13 @@ historical body that is not a decision record and has no current consumer is
 removed rather than kept as a current rule source. A current index reports
 semantic ownership and lifecycle; exact document, script, fixture, negative
 case, role, adapter, or entrypoint counts are observations, not policy.
+
+Current documents under Stages 00, 01, 02, 03, 05, and 90 neither cite nor
+cross-link Stage 98 records. They link to a current semantic owner when one
+exists and name Git history, without an Archive path, when historical recovery
+is relevant. Stage 98 may organize retained historical material internally,
+but that material never becomes a prerequisite for understanding or validating
+the current corpus.
 
 ### Package-local execution authority
 
@@ -165,12 +172,14 @@ to recover a deleted path are valid uses. A working branch, baseline branch,
 current HEAD, ordinary document, validator, registry, template, line number,
 or corpus snapshot must not be pinned as permanent current policy.
 
-Git is the default full-body archive. Stage 98 contains no prior-body clone or
-redirect chain. A Migration may record one bounded authority or path mapping;
-a Tombstone may record one minimal stable-path replacement only when an actual
-immutable historical link requires it. Routine move, merge, supersession, and
-deletion rely on Git and current links without generating one archival record
-per source document.
+Git is the default full-body archive. Stage 98 contains no newly generated
+prior-body clone or redirect chain. A retained historical record is managed
+inside the Archive and receives only bounded safety and readability checks;
+it is not validated against current document SHAs, current branch identity, or
+a current consumer roster. The `migrations/` family is temporary historical
+material and may be removed when it no longer supplies unique archive-internal
+context. Routine move, merge, supersession, and deletion rely on Git and
+current links without generating one archival record per source document.
 
 ## Explicit Non-goals
 
@@ -200,8 +209,9 @@ per source document.
   routing state is no longer mixed with policy prose.
 - Current-document edits use semantic validation instead of mutable branch
   identity and exact-count rebaselines.
-- Git recovery and minimal Stage 98 mappings eliminate tracked full-body
-  archive duplication.
+- Git recovery and Stage 98 isolation eliminate tracked full-body archive
+  duplication and prevent historical records from becoming current control
+  dependencies.
 
 ### Costs and transition constraints
 

@@ -11,8 +11,8 @@ artifact_id: "TSK-0054-0010"
 
 ## Overview
 
-This is the queued parent activation-owner record for WP-010. After WP-009 and
-its owning Task complete, the active owner hands off to this Task as the sole
+This is the queued parent activation-owner record for WP-010. After WP-006 and
+WP-008 complete, the active owner hands off to this Task as the sole
 `in-progress` Task in a separate lifecycle-valid change. This Task then owns
 only the exact-index activation and delegated-state transfer; it does not
 execute the validation-tooling implementation delegated to Spec 0066.
@@ -29,7 +29,7 @@ execute the validation-tooling implementation delegated to Spec 0066.
 
 **Plan label:** WP-010
 
-**Depends on:** WP-009
+**Depends on:** WP-006 and WP-008
 
 **Current state:** `queued; transfer to Spec 0066 designed but not activated`
 
@@ -54,8 +54,8 @@ Spec 0054 retains integration acceptance; Spec 0066 owns the detailed execution
 and evidence after activation. This record remains `queued` during the design
 checkpoint and has no accepted execution evidence.
 
-After the written design and implementation plan are reviewed and WP-009 and
-its owning Task are complete, this Task first becomes the sole `in-progress`
+After the written design and implementation plan are reviewed and WP-006 and
+WP-008 are complete, this Task first becomes the sole `in-progress`
 parent Task through a separate lifecycle-valid handoff. The same handoff moves
 the existing Spec 0054 `standaloneExecutions` task pointer to this Task. It then
 owns the activation transaction that accepts ADR-0031, moves all five named

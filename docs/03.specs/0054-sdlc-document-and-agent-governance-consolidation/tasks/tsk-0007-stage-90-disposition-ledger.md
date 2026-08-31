@@ -30,7 +30,7 @@ This is the sole active Spec 0054 Task record for WP-007.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-054-007 | VAL-SDLC-008, VAL-SDLC-011, VAL-SDLC-012 | Record the reviewed Stage 90 semantic destinations without mutating evidence or creating a permanent census. | platform | In Progress | Read-only preflight identifies the latest external-research pack as the preservation boundary and Audit/Data plus their RIA control plane as removal candidates after consumer cutover. | `research/2026-08-08-wer/`: 14 pack files; collection router: one file; `audits/`: 34 files; `data/`: seven files; research commits `5b35d207`, `ab117c49`, `4f2aceb3` |
+| WORK-054-007 | VAL-SDLC-008, VAL-SDLC-011, VAL-SDLC-012 | Record the reviewed Stage 90 semantic destinations without mutating evidence or creating a permanent census. | platform | In Progress | Read-only preflight identifies the latest external-research pack as the preservation boundary and the existing Audit/Data bodies plus their RIA control plane as removal candidates after consumer cutover. Audit, Research, and Data remain valid Stage 90 roles when a future document has distinct provenance, freshness, and non-authoritative purpose. | `research/2026-08-08-wer/`: 14 pack files; collection router: one file; `audits/`: 34 files; `data/`: seven files; research commits `5b35d207`, `ab117c49`, `4f2aceb3` |
 
 ## Approval and Safety Boundaries
 
@@ -49,6 +49,17 @@ The current tree contains no second research pack. Audit and Data files may be
 removed only after active consumers route to canonical owners or direct
 repository sources; Git is the default full-body recovery owner and no
 redirect or full-body Stage 98 copy is authorized.
+
+The user-confirmed stage boundary assigns AI-agent governance, roles, and
+skills to Stage 00; Requirements, Architecture, and Specs to the coherent SDLC
+chain; operational Guides, Incidents, Postmortems, and Runbooks to Stage 05;
+workspace Audit, external Research, and Data to Stage 90; historical archive
+material to Stage 98; and reusable document forms to Stage 99. A repository
+preflight found 794 direct Archive-link-pattern matches across 434 active-stage
+files. Those inbound historical dependencies are outside WP-007/WP-008's
+Stage 90 mutation scope and are scheduled for current-corpus cutover before
+Stage 98 minimization. No active Stage 00/01/02/03/05/90 document may retain or
+replace such a link with another Stage 98 citation.
 
 ## Traceability
 

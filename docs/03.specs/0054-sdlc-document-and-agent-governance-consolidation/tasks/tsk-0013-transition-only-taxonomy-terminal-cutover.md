@@ -26,7 +26,7 @@ dispositions are execution candidates, not permanent corpus-count policy.
 
 **Plan label:** WP-013
 
-**Depends on:** WP-012; accepted ADR-0031; accepted and completed Spec 0066
+**Depends on:** WP-006; WP-008; WP-012; accepted ADR-0031; accepted and completed Spec 0066
 result with TSK-0066-0001, Plan 0066, and Spec 0066 all `done`; completed
 TSK-0054-0011 parent handoff; and the existing Spec 0054 compatibility pointer
 naming this queued Task
@@ -35,7 +35,7 @@ naming this queued Task
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-054-013 | VAL-SDLC-001..VAL-SDLC-004, VAL-SDLC-006, VAL-SDLC-009..VAL-SDLC-012 | After the completed child and parent handoffs, converge the reviewed Stage 01/02/03/99 current-owner set, transfer unfinished work and unique authority, then retire residual transition assets against the accepted and completed Spec 0066 routing result without a fixed corpus census. | platform | Queued | Not executed. | Terminal Spec 0066 states, completed TSK-0054-0011, compatibility pointer to this queued Task, consumer/trace/lifecycle parity, Git-first recovery, registry/template parity, delegated routing evidence, and ordered logical commits |
+| WORK-054-013 | VAL-SDLC-001..VAL-SDLC-004, VAL-SDLC-006, VAL-SDLC-009..VAL-SDLC-012 | After the completed child and parent handoffs, converge the reviewed Stage 01/02/03/99 current-owner set, remove active Archive citations and cross-links, transfer unfinished work and unique authority, then retire residual transition assets against the accepted and completed Spec 0066 routing result without a fixed corpus census. | platform | Queued | Not executed. | Terminal Spec 0066 states, completed TSK-0054-0011, compatibility pointer to this queued Task, zero inbound Archive links, consumer/trace/lifecycle parity, Git-first recovery, registry/template parity, delegated routing evidence, and ordered logical commits |
 
 ## Approval and Safety Boundaries
 

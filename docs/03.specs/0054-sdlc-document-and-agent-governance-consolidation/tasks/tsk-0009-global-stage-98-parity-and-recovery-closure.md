@@ -1,13 +1,13 @@
 ---
-title: 'Task: Global Stage 98 parity and recovery closure'
+title: 'Task: Isolated Stage 98 archive minimization'
 type: sdlc/task
 status: queued
 owner: platform
-updated: 2026-08-22
+updated: 2026-08-31
 artifact_id: "TSK-0054-0009"
 ---
 
-# Task: Global Stage 98 parity and recovery closure
+# Task: Isolated Stage 98 archive minimization
 
 ## Overview
 
@@ -24,13 +24,13 @@ This is the terminal queued Task record for WP-009.
 
 **Plan label:** WP-009
 
-**Depends on:** WP-008
+**Depends on:** WP-013
 
 **Current state:** `queued`
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-054-009 | VAL-SDLC-009, VAL-SDLC-011, VAL-SDLC-012 | Reduce Archive to Git-backed Migrations/Tombstones and close reachable recovery without count/line/current-state pins. | platform | Queued | Not executed. | Archive inventory/recovery/lifecycle/link parity and logical commit |
+| WORK-054-009 | VAL-SDLC-009, VAL-SDLC-011, VAL-SDLC-012 | Minimize the isolated historical Archive after active citations and cross-links are zero, without count, current-consumer, branch, or current-state SHA gates. | platform | Queued | Not executed. | Zero inbound active links, minimal safety/readability checks, Git recovery, and logical commit |
 
 ## Approval and Safety Boundaries
 

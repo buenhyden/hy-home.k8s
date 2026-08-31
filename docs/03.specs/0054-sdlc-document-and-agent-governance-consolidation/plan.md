@@ -10,16 +10,18 @@ artifact_id: "PLAN-0054"
 # SDLC Document and AI Agent Governance Consolidation Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use
-> `superpowers:subagent-driven-development` to implement this plan task by
-> task. Each task requires a fresh implementer, specification review,
+> `superpowers:executing-plans` for inline execution. Use
+> `superpowers:subagent-driven-development` only when the human explicitly
+> requests delegated agent work. Each task requires specification review,
 > code-quality review, and focused RED/GREEN evidence. Each independently
 > testable logical unit gets one scoped commit; a WP may own ordered commits.
 > Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Converge the repository on flat four-digit Requirement Packages,
 prefix-free Architecture and Operations paths, work-unit-local Spec-driven
-execution, Codex/Claude-only AI-agent governance, minimal Stage 90/98/99
-control surfaces, and responsibility-oriented validation modules.
+execution, Codex/Claude-only AI-agent governance, a bounded Stage 90 reference
+library, an isolated historical Stage 98 archive, a minimal Stage 99 document
+control surface, and responsibility-oriented validation modules.
 
 **Architecture:** Stage 00 owns human agent policy, while `.agents/registry.json`
 owns the provider-neutral agent roster and Stage 99 owns only document
@@ -27,8 +29,9 @@ profiles. Stage 01 Requirement Packages, Stage 02 Architecture, and Stage 03
 Spec Packages form the active delivery chain; Stage 05 owns Guides, Policies,
 Runbooks, and Incident packages but no Release family. Stage 90 retains the
 latest externally researched pack as its durable evidence collection and
-removes Audit/Data control-plane copies; Stage 98 is a temporary, minimal
-Git-backed historical lookup. Focused validators consume these owners, aggregates
+removes obsolete Audit/Data control-plane copies without banning those
+reference roles; Stage 98 is an isolated historical archive with no inbound
+current-document links. Focused validators consume these owners, aggregates
 only orchestrate, and every cutover is staged-index-aware, fail-closed, and
 committed as an independently testable logical unit.
 
@@ -42,10 +45,9 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
 
 - Preserve Git history and unrelated user changes.
 - Do not edit existing immutable Stage 98 envelopes or source blobs to satisfy
-  current validators. Remove one only in WP-009 after consumer-zero and Git
-  recovery are independently proven. Keep MIG-0006 through MIG-0009
-  byte-for-byte and defer their deletion until authorized remote or full-clone
-  ancestry proof is available.
+  current validators. Remove redundant records only in WP-009 after WP-013
+  removes active citations and Git recovery is confirmed. Do not require
+  remote or mutable-branch ancestry as current policy.
 - Preserve source provenance while Stage 90 content moves to its semantic
   owner. Point-in-time dispositions belong to the Task/diff, not a permanent
   corpus ledger or digest.
@@ -65,11 +67,14 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
 - Do not restore the retired Stage 02 requirements or Stage 04 execution
   routes; Requirement Packages, Architecture Descriptions, and Stage 03
   siblings are their current replacement owners.
-- Limit Stage 90 to `research/`, `audits/`, and `data/` numbered packages;
+- Use Stage 90 for Audit, external Research, Data, and other bounded
+  non-authoritative workspace references. Remove the existing Audit/Data
+  bodies only because their reviewed current purpose is obsolete or duplicated;
   route `learning/` content to a Stage 05 Guide or Research.
-- Limit Stage 98 to README, prefix-free numbered Migrations, and only the
-  minimal Tombstones genuinely required for immutable historical lookup; Git
-  history is the default full-body archive.
+- Treat Stage 98 as an isolated historical archive. Stages 00, 01, 02, 03, 05,
+  and 90 must neither cite nor cross-link a Stage 98 document or file. Keep
+  validation minimal, treat `migrations/` as temporary historical material,
+  and use Git history as the default full-body recovery source.
 - Make `docs/99.templates/registry.json` the only document-profile machine
   authority, with normalized top-level `lifecycleDomains` and one human router
   in Stage 99 README. Do not gate schema, profile, or template counts.
@@ -100,8 +105,8 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
   identity, explicitly sealed evidence bytes, or a Git-reachable Archive
   recovery object, and record that purpose explicitly.
 - Delete a legacy, deprecated, duplicate, or one-time asset only after every
-  current consumer is migrated and Git recovery is proven. Add Stage 98
-  evidence only for a genuinely necessary immutable historical lookup.
+  current consumer is migrated and Git recovery is proven. Do not create a
+  Stage 98 record as a routine deletion dependency.
 - Treat repository-static, provider-runtime, hosted-CI, remote-live, and
   actual-evaluation evidence as distinct classes.
 - Apply simplification in every WP: when a touched rule, gate, fixture, SHA
@@ -145,7 +150,7 @@ the delegated execution package for WP-010 and WP-011; its queued execution reco
 It is not a standalone program. This design checkpoint does not activate Spec
 0066 or change any Task lifecycle state.
 
-After written-design approval and completion of WP-009 and its owning Task, the
+After written-design approval and completion of WP-006 and WP-008, the
 active owner hands off to TSK-0054-0010 as the sole `in-progress` parent Task in
 a separate lifecycle-valid change. That handoff also moves the existing Spec
 0054 `standaloneExecutions` task pointer to TSK-0054-0010; the compatibility
@@ -256,12 +261,12 @@ references, archive evidence, and scripts. Deletions are deliberately late.
 | WP-006 | Reconcile Stage 05 ownership and remove Release family | WP-005 | Operations owner review complete | Canonical operations owners, strengthened incident contracts, Release consumer-zero, and Git recovery GREEN |
 | WP-007 | Review Stage 90 semantic destinations | WP-003 | Agent governance closure complete and direct user preservation boundary recorded | Latest external-research owner and Audit/Data removals reviewed in the Task/diff; permanent RIA census contract rejected |
 | WP-008 | Reconcile Stage 90 semantic owners | WP-007 | Stage 90 destination review complete | Latest external-research content preserved; obsolete audit, data, RIA, and dependent gate overlap removed |
-| WP-009 | Minimize Stage 98 and close recovery | WP-006 and WP-008 | Stage 05 and Stage 90 consumers and Git recovery mapped | Retained lookup records minimally valid; redundant full-body/redirect records removed; empty historical families removed |
-| WP-010 | Close the script, gate, fixture, and SHA ownership graph through delegated Spec 0066 | WP-009 and approved written design | Existing validation-surface contract and consumers mapped | Delegated Task evidence proves one routing owner, removes safe duplicates, and reports acceptance to Spec 0054 |
+| WP-009 | Isolate and minimize Stage 98 | WP-013 | Active Archive citations and cross-links are zero; Git recovery is confirmed | Historical records receive only minimal validation; redundant full-body/redirect records and empty historical families are removed |
+| WP-010 | Close the script, gate, fixture, and SHA ownership graph through delegated Spec 0066 | WP-006, WP-008, and approved written design | Stage 05 and Stage 90 cutovers complete; existing validation-surface contract and consumers mapped | Delegated Task evidence proves one routing owner, removes safe duplicates, and reports acceptance to Spec 0054 |
 | WP-011 | Cut over compatibility wrappers and scripts topology through delegated Spec 0066 | WP-010 within Spec 0066 | Wrapper and path consumers mapped | Responsibility directories active; wrappers deleted only at consumer-zero; TSK-0054-0011 records parent acceptance; no fixed census policy |
 | WP-012 | Rotate progress and remove stale generated-current residue | WP-011 | Earlier program evidence stable | Spec Task/Git evidence and generated-current ownership GREEN |
-| WP-013 | Cut over the remaining current corpus and close transition references | WP-012; accepted and completed Spec 0066 result; completed TSK-0054-0011 parent handoff | ADR-0031 accepted; TSK-0066-0001, Plan 0066, and Spec 0066 are `done`; TSK-0054-0011 is `done`; the existing Spec 0054 compatibility pointer names queued TSK-0054-0013 | Stage 01/02/03/99 disposition, residual transition consumer-zero, and Git-first recovery GREEN |
-| WP-014 | Final convergence and branch completion | WP-013 and accepted Spec 0066 result | All logical commits present | Ownership/fixed-point/focused/affected/staged/aggregate/all-files/review GREEN |
+| WP-013 | Cut over the remaining current corpus and close transition references | WP-012; WP-006; WP-008; accepted and completed Spec 0066 result; completed TSK-0054-0011 parent handoff | ADR-0031 accepted; TSK-0066-0001, Plan 0066, and Spec 0066 are `done`; TSK-0054-0011 is `done`; the existing Spec 0054 compatibility pointer names queued TSK-0054-0013 | Stage 01/02/03/99 disposition, zero active Archive citations/cross-links, residual transition consumer-zero, and Git-first recovery GREEN |
+| WP-014 | Final convergence and branch completion | WP-009, WP-013, and accepted Spec 0066 result | All logical commits present | Ownership/fixed-point/focused/affected/staged/aggregate/all-files/review GREEN |
 
 WP-012 is a closed historical scheduling exception, not a reusable dependency
 rule. Its terminal Task keeps the originally declared WP-011 dependency and is
@@ -274,8 +279,11 @@ On 2026-08-31 the user directly prioritized Stage 90 cleanup after WP-003 and
 required preservation of the latest externally researched material under
 `docs/90.references/research/2026-08-08-wer/`. WP-007 and WP-008 therefore run
 before queued WP-005 and WP-006. After WP-008, the active pointer returns to
-WP-005; WP-009 joins both WP-006 and WP-008 so the schedule change cannot skip
-Stage 05 acceptance or global recovery closure.
+WP-005. After WP-006, WP-010 activates delegated Spec 0066. WP-013 removes the
+remaining current-corpus conflicts and every active citation or cross-link to
+Stage 98 before WP-009 minimizes that isolated historical archive. This order
+prevents Archive cleanup from preserving the very inbound dependencies that
+the approved terminal contract rejects.
 
 Work follows the dependency table, not one global closed order. Each Spec
 Package may have at most one `in-progress` Task. After the reviewed activation
@@ -307,7 +315,7 @@ work packages. The lossless identity map is:
 
 TSK-0054-0011 has an earlier lifecycle activation dependency than the
 delegated WP-011 implementation: it starts only as the parent acceptance owner
-after WP-009 and the TSK-0054-0010 activation transaction. Spec 0066 WP-011
+after the TSK-0054-0010 activation transaction. Spec 0066 WP-011
 still depends on Spec 0066 WP-010 and cannot execute early.
 
 Each terminal Task file preserves its WP label, prior result/evidence, current
@@ -794,6 +802,9 @@ reason to reopen WP-004.
 - Retire the large reference-information-architecture SHA/FSM/current-pack
   contract and its exclusive fixtures/gates rather than porting it as the new
   owner.
+- Record that Audit, external Research, Data, and other bounded reference
+  material are valid Stage 90 roles. Removal decisions apply to the reviewed
+  existing bodies, not to the category names themselves.
 
 The approved preservation boundary is the current
 `research/2026-08-08-wer/` pack plus its collection and Stage 90 routers. The
@@ -806,10 +817,10 @@ research commits when determining recency.
 - [ ] Mark `llm-wiki`, its generator and gates for consumer-zero deletion.
   Merge or remove older Audit packages and overlapping Data assets by semantic
   owner.
-- [ ] Define terminal Stage 90 checks only for numbered date-free package
+- [ ] Define terminal Stage 90 checks only for semantic category, stable
   identity, owner, lifecycle, freshness, consumers, and bounded supporting
-  assets. Do not add file-count, corpus-digest, or disposition completeness
-  gates.
+  assets. Preserve the current external-research path while Spec 0062 consumes
+  it; do not add file-count, corpus-digest, or disposition completeness gates.
 - [ ] Run:
 
   ```bash
@@ -840,8 +851,10 @@ it does not recreate the retired RIA or a permanent disposition ledger.
   move observation dates into frontmatter/source metadata.
 - [ ] Preserve the current `research/2026-08-08-wer/` external-research pack
   byte-for-byte through the Audit/Data cutover. Remove Audit and Data bodies
-  after their live consumers route to canonical Stage 00-05 owners or direct
-  repository sources; Git remains their full-body recovery owner.
+  from the reviewed existing corpus only after their live consumers route to
+  canonical Stage 00-05 owners or direct repository sources; Git remains their
+  full-body recovery owner. Do not encode a ban on future valid Audit or Data
+  references.
 - [ ] Move `learning/` content to a Stage 05 Guide or numbered Research package,
   remove `res-`/`aud-` path prefixes while preserving stable IDs, and delete
   deprecated redirects after consumer-zero.
@@ -865,47 +878,47 @@ it does not recreate the retired RIA or a permanent disposition ledger.
 
 ### WP-009 — global Stage 98 parity and recovery closure
 
-Stage 98 and its `migrations/` directory are temporary historical lookup
-surfaces, not a current governance or corpus owner. Validation is limited to
-the retained record's minimal shape, safe bounded recovery, and an actual
-consumer. If no such record remains, the directory is removed instead of
-preserved by a permanent census or remote-ancestry gate.
+Stage 98 is an isolated historical archive, not a current governance or
+recovery control plane. Its `migrations/` directory is temporary historical
+material. WP-009 starts only after WP-013 has removed every citation and
+cross-link from Stages 00, 01, 02, 03, 05, and 90. Validation is limited to
+retained-record safety, readability, and declared sealed-byte integrity; it
+does not require a current consumer, permanent census, or remote-ancestry gate.
 
 **Files:**
 
-- Reduce `docs/98.archive/` to README, prefix-free numbered Migrations, and
-  only the minimal Tombstones required for immutable historical lookup. Git is
-  the default full-body archive. Never preserve secret-bearing history through
-  ordinary Stage 98; route it to incident, rotation, and explicitly approved
-  history-removal handling.
+- Reduce Stage 98 to a small historical index and only the records with unique
+  historical value. Git is the default full-body recovery source. Never
+  preserve secret-bearing history through ordinary Stage 98; route it to
+  incident, rotation, and explicitly approved history-removal handling.
 - Modify archive validation/recovery and focused tests only to close global
   parity across evidence committed in WP-002, WP-004, WP-003, WP-006, and
   WP-008.
 
-- [ ] Add semantic RED cases for an in-place sealed-record edit, a remaining
-  consumer of a proposed removal, an unresolved immutable historical link,
-  unsafe recovery, and an active direct Tombstone link.
+- [ ] Add semantic RED cases for an in-place sealed-record edit, an inbound
+  active-stage Archive link, unsafe or unbounded reads, and a malformed
+  retained record.
 - [ ] Never compact or rewrite a sealed record in place. Delete full-body
-  Tombstones and redirect chains only after consumer-zero and Git recovery are
-  proven; keep point-in-time decisions in the Task/diff rather than an Archive
-  census.
-- [ ] Retain MIG-0006 through MIG-0009 byte-for-byte only while they have a
-  current immutable lookup consumer. Delete them at consumer-zero when their
-  source objects remain reachable in the current repository; do not require a
-  mutable branch-head or remote-ancestry pin as current policy.
+  Tombstones and redirect chains after Git recovery is confirmed; keep
+  point-in-time decisions in the Task/diff rather than an Archive census.
+- [ ] Retain a Migration only while it supplies unique archive-internal
+  historical context. Remove obsolete Migration records and empty families
+  without creating a meta-Migration; do not require a mutable branch-head or
+  remote-ancestry pin as current policy.
 - [ ] Require the minimal Migration/Tombstone fields from C-SDLC-009 and reject
   line-number hashes, full-corpus digests, current-document pins, and copied
   completed Spec/Plan/Task bodies without an approved exception.
 - [ ] Create a new Migration or minimal Tombstone only when an actual immutable
   lookup cannot be resolved through Git and maintained mappings. Do not create
   one record per deletion or a meta-Migration solely to delete Migrations.
-- [ ] Apply bounded object/path/decoding and sealed-byte checks only to each
-  recovery lookup that remains. Do not run a full Archive census, compare
-  unrelated current files with historical SHAs, or validate unused records.
-  Route secret-bearing history through
+- [ ] Apply bounded path/decoding and sealed-byte checks only where each
+  retained record declares that contract. Do not run a full Archive census,
+  compare unrelated current files with historical SHAs, require an inbound
+  consumer, or validate branch ancestry. Route secret-bearing history through
   incident/rotation/removal rules.
-- [ ] Remove direct active-document links to individual Tombstones; route human
-  recovery lookup through Archive README or the relevant Migration.
+- [ ] Verify that Stages 00, 01, 02, 03, 05, and 90 contain no Archive citation
+  or cross-link. Do not replace removed direct links with an Archive README or
+  Migration link.
 - [ ] Run:
 
   ```bash
@@ -991,7 +1004,7 @@ preserved by a permanent census or remote-ancestry gate.
 **Activation and transfer checkpoint:**
 
 - [ ] Only after the written design and implementation plan are reviewed and
-  WP-009 and its owning Task are complete, hand off to TSK-0054-0010 as the sole
+  WP-006 and WP-008 are complete, hand off to TSK-0054-0010 as the sole
   `in-progress` Task in a separate lifecycle-valid change. TSK-0054-0010 owns
   the activation index and its evidence; TSK-0054-0011 remains `queued`. Move
   the existing Spec 0054 `standaloneExecutions` task pointer from the prior
@@ -1112,6 +1125,10 @@ preserved by a permanent census or remote-ancestry gate.
   graph. Migrate remaining consumers to their current semantic owners and
   delete those assets only after consumer-zero; do not preserve the retired
   RIA as an intermediary.
+- Remove every citation and cross-link from Stages 00, 01, 02, 03, 05, and 90
+  to a Stage 98 document or file. Replace current navigation with the current
+  semantic owner; retain only a path-free Git-history recovery statement where
+  historical recovery is relevant.
 
 - [ ] Add RED cases that reject a removed current owner,
   unresolved trace or template consumer, duplicate-purpose retained document,
@@ -1127,6 +1144,9 @@ preserved by a permanent census or remote-ancestry gate.
   consumer-zero against the accepted Spec 0066 result. Assert current
   document/registry parity and absence of transition authority without a fixed
   script or document count.
+- [ ] Assert zero active Archive citations and cross-links without enumerating
+  a permanent allowed-path list. Complete the state-only handoff from
+  TSK-0054-0013 to TSK-0054-0009 only after this invariant is green.
 - [ ] Reject retired Stage 01/02/03/99 owners, the transition profile,
   manifest, tool, and every live three-digit/Stage 04 residue without
   recreating a `route_state` field or a permanent corpus census.
@@ -1152,6 +1172,8 @@ preserved by a permanent census or remote-ancestry gate.
   `refactor(templates): reduce document control plane`.
 - [ ] Commit taxonomy transition consumer-zero retirement as
   `refactor(validation): retire taxonomy transition controls`.
+- [ ] Commit active Archive-link isolation as
+  `refactor(docs): isolate historical archive`.
 
 ### WP-014 — convergence and branch completion
 
@@ -1225,7 +1247,7 @@ documents, registries, templates, or scripts.
 | --- | --- |
 | Mixed inherited index/worktree makes a false-green candidate | Candidate disposition plus staged-index readers and exact restaging before every broad gate |
 | Broad replacements alter historical or native terms | Exact path maps, profile-aware classification, protected blob checks, and focused negative fixtures |
-| Stage 90 cleanup destroys provenance | Task-local semantic disposition, current-consumer cutover, and Git recovery precede removal; add Stage 98 only for an unresolved immutable lookup and never rewrite sealed bytes |
+| Stage 90 cleanup destroys provenance | Task-local semantic disposition, current-consumer cutover, and Git recovery precede removal; do not create an active Archive dependency or rewrite sealed bytes |
 | Governance adapters drift from canonical semantics | `.agents` owns neutral semantics; adapters carry provider-native metadata only; parity tests cover Codex and Claude |
 | Script deletion breaks hidden consumers | Tracked consumer sweep plus consumer-zero and unique-diagnostic checks precede each deletion |
 | Guide/Runbook consolidation removes necessary audiences | Purpose and trigger matrix reviewed by operations and documentation reviewers |
