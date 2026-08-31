@@ -3041,7 +3041,8 @@ for phrase in [
     "workflows/ci.yml",
     "scripts/validate-repo-quality-gates.sh",
     "PULL_REQUEST_TEMPLATE.md",
-    "docs/90.references/data/tech-stack-version-inventory.md",
+    ".github/requirements/ci-validation.txt",
+    ".pre-commit-config.yaml",
     "branch protection/rulesets enforce direct-push restrictions",
     "QA gates and release-evidence automation, not deploy CD",
     "Source Basis",
@@ -3050,8 +3051,6 @@ for phrase in [
 ]:
     if phrase not in github_about_text:
         fail(f"{rel(github_about_path)} must route to the policy/enforcement SSoT instead of duplicating policy: {phrase}")
-if "docs/90.references/tech-stack-version-inventory.md" in github_about_text:
-    fail(f"{rel(github_about_path)} contains stale version inventory path without versions/ segment")
 if "PR source branches must start" in github_about_text or "Default PR target is `main`" in github_about_text:
     fail(
         f"{rel(github_about_path)} must not duplicate branch-policy prose; "
@@ -5165,112 +5164,6 @@ for obsolete in ["k3d_kubeconfig.yaml"]:
 for tracked_path in tracked:
     if tracked_path.startswith("docs/" + legacy_postmortems + "/") or tracked_path.startswith("docs/" + legacy_learning + "/"):
         fail(f"obsolete tracked docs path remains: {tracked_path}")
-
-inventory_path = root / "docs/90.references/data/tech-stack-version-inventory.md"
-inventory_text = read_text(inventory_path)
-match = re.search(r"```yaml\n(.*?)\n```", inventory_text, re.DOTALL)
-if not match:
-    fail(f"missing YAML inventory block in {rel(inventory_path)}")
-    inventory = {}
-else:
-    inventory = yaml.safe_load(match.group(1)) or {}
-
-k3d_config = load_yaml(root / "infrastructure/k3d/k3d-cluster.yaml")
-actual_k3s_image = k3d_config.get("image")
-if inventory.get("k3s_image") != actual_k3s_image:
-    fail(f"k3s image drift: inventory={inventory.get('k3s_image')} actual={actual_k3s_image}")
-
-def _collect_container_images(node, sink):
-    if isinstance(node, dict):
-        image = node.get("image")
-        if isinstance(image, str) and node.get("name") and ":" in image:
-            sink.add(image)
-        for value in node.values():
-            _collect_container_images(value, sink)
-    elif isinstance(node, list):
-        for value in node:
-            _collect_container_images(value, sink)
-
-
-actual_workload_images = {}
-for raw_dir in ["gitops/platform", "gitops/workloads"]:
-    for manifest in sorted((root / raw_dir).rglob("*.yaml")):
-        images = set()
-        for document in load_yaml_documents(manifest):
-            _collect_container_images(document, images)
-        for image in images:
-            actual_workload_images[image] = rel(manifest)
-
-expected_workload_images = inventory.get("workload_images") or {}
-declared_refs = set()
-for name, expected in sorted(expected_workload_images.items()):
-    repository = str(expected.get("image", "")).removeprefix("docker.io/")
-    reference = f"{repository}:{expected.get('version')}"
-    declared_by = expected.get("declaredBy")
-    declared_refs.add(reference)
-    actual_manifest = actual_workload_images.get(reference)
-    if actual_manifest is None:
-        fail(f"workload image drift for {name}: inventory={reference} is declared by no tracked manifest")
-    elif actual_manifest != declared_by:
-        fail(f"workload image declaredBy drift for {name}: inventory={declared_by} actual={actual_manifest}")
-for reference in sorted(set(actual_workload_images) - declared_refs):
-    fail(f"workload image missing from inventory: {reference} in {actual_workload_images[reference]}")
-
-actual_charts = {}
-for app_file in sorted((root / "gitops/apps/root").glob("*.yaml")):
-    data = load_yaml(app_file)
-    source = ((data.get("spec") or {}).get("source") or {})
-    if source.get("chart"):
-        actual_charts[(data.get("metadata") or {}).get("name")] = {
-            "repoURL": source.get("repoURL"),
-            "chart": source.get("chart"),
-            "targetRevision": str(source.get("targetRevision")),
-        }
-expected_charts = inventory.get("helm_charts") or {}
-for name, expected in sorted(expected_charts.items()):
-    actual = actual_charts.get(name)
-    if actual != expected:
-        fail(f"Helm chart drift for {name}: inventory={expected} actual={actual}")
-for name in sorted(set(actual_charts) - set(expected_charts)):
-    fail(f"Helm chart missing from inventory: {name}")
-
-actual_actions = {}
-for workflow in sorted((root / ".github/workflows").glob("*.yml")):
-    data = load_yaml(workflow)
-    for job in (data.get("jobs") or {}).values():
-        for step in job.get("steps") or []:
-            uses = step.get("uses")
-            if not uses:
-                continue
-            if "@" not in uses:
-                fail(f"GitHub Action is not pinned with @version in {rel(workflow)}: {uses}")
-                continue
-            action, version = uses.rsplit("@", 1)
-            previous = actual_actions.get(action)
-            if previous and previous != version:
-                fail(f"GitHub Action version conflict for {action}: {previous} vs {version}")
-            actual_actions[action] = version
-expected_actions = inventory.get("github_actions") or {}
-for action, expected in sorted(expected_actions.items()):
-    actual = actual_actions.get(action)
-    if actual != expected:
-        fail(f"GitHub Action version drift for {action}: inventory={expected} actual={actual}")
-for action in sorted(set(actual_actions) - set(expected_actions)):
-    fail(f"GitHub Action missing from inventory: {action}")
-
-pre_commit_data = load_yaml(root / ".pre-commit-config.yaml")
-actual_pre_commit = {
-    repo_entry.get("repo"): str(repo_entry.get("rev"))
-    for repo_entry in pre_commit_data.get("repos") or []
-    if repo_entry.get("repo") and repo_entry.get("rev")
-}
-expected_pre_commit = inventory.get("pre_commit") or {}
-for repo_url, expected in sorted(expected_pre_commit.items()):
-    actual = actual_pre_commit.get(repo_url)
-    if actual != expected:
-        fail(f"pre-commit version drift for {repo_url}: inventory={expected} actual={actual}")
-for repo_url in sorted(set(actual_pre_commit) - set(expected_pre_commit)):
-    fail(f"pre-commit repo missing from inventory: {repo_url}")
 
 pre_commit_text = read_text(root / ".pre-commit-config.yaml")
 stale_pre_commit_hook_regex = "\\." + "claude/hooks/.*\\.sh"

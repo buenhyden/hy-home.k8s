@@ -20,9 +20,6 @@ DIRECT_REQUIREMENTS_PATH = Path(".github/requirements/ci-validation.in")
 LOCK_PATH = Path(".github/requirements/ci-validation.txt")
 WORKFLOW_PATH = Path(".github/workflows/ci.yml")
 PRE_COMMIT_CONFIG_PATH = Path(".pre-commit-config.yaml")
-INVENTORY_PATH = Path(
-    "docs/90.references/data/tech-stack-version-inventory.md"
-)
 EXPECTED_REQUIREMENT_LINES = (
     "jsonschema==4.26.0",
     "pre-commit==4.6.1",
@@ -50,11 +47,6 @@ EXPECTED_RESOLVED_PINS = {
     "rpds-py": "2026.6.3",
     "typing-extensions": "4.16.0",
     "virtualenv": "21.7.0",
-}
-EXPECTED_INVENTORY_PINS = {
-    "jsonschema": "4.26.0",
-    "pre-commit": "4.6.1",
-    "PyYAML": "6.0.3",
 }
 EXPECTED_PRE_COMMIT_REVISIONS = {
     "https://github.com/commitizen-tools/commitizen": (
@@ -114,7 +106,7 @@ GITLEAKS_SHA256 = (
 EXPECTED_CI_PYTHON_LOCK_SHA256 = (
     "6d0685e84a4fb19b24e44c5ae965f16d7215e8608b210cbf0559d4a203a9cc13"  # pragma: allowlist secret
 )
-EXPECTED_GITLEAKS_INVENTORY = {
+EXPECTED_GITLEAKS_TOOL = {
     "version": "8.30.0",
     "asset": "gitleaks_8.30.0_linux_x64.tar.gz",
     "sha256": GITLEAKS_SHA256,
@@ -131,7 +123,6 @@ STABLE_RULE_IDS = (
     "CI-PYTHON-INPUT",
     "CI-PYTHON-PIN",
     "CI-PYTHON-LOCK",
-    "CI-PYTHON-INVENTORY",
     "CI-PYTHON-WORKFLOW",
     "CI-PYTHON-VERSION",
     "CI-PRECOMMIT-ACTION",
@@ -312,11 +303,6 @@ WRAPPER_OPTIONS_WITH_VALUE = {
     "nice": frozenset({"-n", "--adjustment"}),
     "timeout": frozenset({"-k", "--kill-after"}),
 }
-INVENTORY_FENCE_PATTERN = re.compile(
-    r"^### Version Contracts[^\n]*\n"
-    r".*?^```yaml[ \t]*\n(?P<yaml>.*?)^```[ \t]*$",
-    re.MULTILINE | re.DOTALL,
-)
 class ContractError(ValueError):
     """A stable CI Python contract finding."""
 
@@ -1309,71 +1295,17 @@ def _lock_entries(text: str) -> tuple[dict[str, str], int]:
     return observed, binary_directive_count
 
 
-def _validate_lock(
-    text: str,
-    inventory: dict[str, Any],
-) -> dict[str, str]:
+def _validate_lock(text: str) -> dict[str, str]:
     resolved, _ = _lock_entries(text)
     observed_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
     if observed_digest != EXPECTED_CI_PYTHON_LOCK_SHA256:
         fail("CI-PYTHON-LOCK", "lock digest differs from the reviewed runtime authority")
-    lock_contract = inventory.get("ci_python_lock")
-    if isinstance(lock_contract, dict):
-        expected_digest = lock_contract.get("sha256")
-        if isinstance(expected_digest, str) and expected_digest != observed_digest:
-            fail("CI-PYTHON-LOCK", "lock digest differs from the inventory owner")
     return resolved
-
-
-def _inventory_contract(text: str) -> dict[str, Any]:
-    matches = list(INVENTORY_FENCE_PATTERN.finditer(text))
-    if len(matches) != 1:
-        fail(
-            "CI-PYTHON-INVENTORY",
-            "technology inventory must contain one Version Contracts YAML fence",
-        )
-    return _load_yaml(
-        matches[0].group("yaml"),
-        "CI-PYTHON-INVENTORY",
-        INVENTORY_PATH,
-    )
-
-
-def _validate_inventory(
-    inventory: dict[str, Any],
-    lock_text: str,
-) -> None:
-    if inventory.get("ci_python") != EXPECTED_PYTHON:
-        fail("CI-PYTHON-INVENTORY", "ci_python must mirror Python 3.12")
-    dependencies = inventory.get("ci_python_dependencies")
-    if dependencies != EXPECTED_INVENTORY_PINS:
-        fail(
-            "CI-PYTHON-INVENTORY",
-            "ci_python_dependencies must mirror the exact requirements owner",
-        )
-    expected_lock = {
-        "lane": "linux-cpython-3.12",
-        "input": DIRECT_REQUIREMENTS_PATH.as_posix(),
-        "lock": LOCK_PATH.as_posix(),
-        "sha256": hashlib.sha256(lock_text.encode("utf-8")).hexdigest(),
-        "resolved_packages": len(EXPECTED_RESOLVED_PINS),
-    }
-    if inventory.get("ci_python_lock") != expected_lock:
-        fail(
-            "CI-PYTHON-INVENTORY",
-            "ci_python_lock must own the exact CPython 3.12 lock shape and digest",
-        )
-    if inventory.get("ci_gitleaks") != EXPECTED_GITLEAKS_INVENTORY:
-        fail(
-            "CI-GITLEAKS-TOOL",
-            "ci_gitleaks must mirror the exact release asset, digest, and install path",
-        )
 
 
 def _validate_pre_commit_revisions(
     text: str,
     config: dict[str, Any],
-    inventory: dict[str, Any],
 ) -> None:
     repositories = config.get("repos")
     if not isinstance(repositories, list) or any(
@@ -1411,17 +1343,6 @@ def _validate_pre_commit_revisions(
             "CI-PRECOMMIT-REV",
             "pre-commit repository revisions differ from the exact frozen mapping",
         )
-    if inventory.get("pre_commit") != EXPECTED_PRE_COMMIT_REVISIONS:
-        fail(
-            "CI-PRECOMMIT-REV",
-            "inventory pre_commit mapping must mirror the exact frozen commits",
-        )
-    if inventory.get("pre_commit_source_tags") != EXPECTED_PRE_COMMIT_SOURCE_TAGS:
-        fail(
-            "CI-PRECOMMIT-REV",
-            "inventory source tags must mirror the frozen commit provenance",
-        )
-
     try:
         root_node = yaml.compose(text, Loader=DuplicateKeyLoader)
     except yaml.YAMLError:
@@ -1718,11 +1639,6 @@ def validate_repository(root: Path) -> int:
         LOCK_PATH,
         "CI-PYTHON-LOCK",
     )
-    inventory_text = _read_regular_text(
-        root,
-        INVENTORY_PATH,
-        "CI-PYTHON-INVENTORY",
-    )
     workflow_text = _read_regular_text(
         root,
         WORKFLOW_PATH,
@@ -1735,24 +1651,19 @@ def validate_repository(root: Path) -> int:
     )
 
     _validate_direct_requirements(direct_requirements_text)
-    inventory = _inventory_contract(inventory_text)
-    _validate_lock(lock_text, inventory)
-    _validate_inventory(inventory, lock_text)
+    _validate_lock(lock_text)
     workflow = _load_yaml(workflow_text, "CI-PYTHON-WORKFLOW", WORKFLOW_PATH)
     pre_commit = _load_yaml(
         pre_commit_text,
         "CI-PRECOMMIT-REV",
         PRE_COMMIT_CONFIG_PATH,
     )
-    _validate_pre_commit_revisions(pre_commit_text, pre_commit, inventory)
+    _validate_pre_commit_revisions(pre_commit_text, pre_commit)
 
-    if (
-        "pre-commit/action" in workflow_text.lower()
-        or "pre-commit/action" in inventory_text.lower()
-    ):
+    if "pre-commit/action" in workflow_text.lower():
         fail(
             "CI-PRECOMMIT-ACTION",
-            "pre-commit/action must be absent from workflow and inventory",
+            "pre-commit/action must be absent from the workflow",
         )
 
     job_steps = {
@@ -1774,40 +1685,7 @@ def _valid_self_test_content() -> tuple[str, str, str, str, str]:
     lock = (Path(__file__).resolve().parents[1] / LOCK_PATH).read_text(
         encoding="utf-8"
     )
-    pre_commit_inventory = "\n".join(
-        f"  '{repo}': '{revision}'"
-        for repo, revision in EXPECTED_PRE_COMMIT_REVISIONS.items()
-    )
-    source_tag_inventory = "\n".join(
-        f"  '{repo}': '{tag}'"
-        for repo, tag in EXPECTED_PRE_COMMIT_SOURCE_TAGS.items()
-    )
-    inventory = f"""\
-### Version Contracts
-
-```yaml
-ci_python: '3.12'
-ci_python_dependencies:
-  jsonschema: '4.26.0'
-  pre-commit: '4.6.1'
-  PyYAML: '6.0.3'
-ci_python_lock:
-  lane: 'linux-cpython-3.12'
-  input: '.github/requirements/ci-validation.in'
-  lock: '.github/requirements/ci-validation.txt'
-  sha256: '{hashlib.sha256(lock.encode("utf-8")).hexdigest()}'
-  resolved_packages: 16
-ci_gitleaks:
-  version: '8.30.0'
-  asset: 'gitleaks_8.30.0_linux_x64.tar.gz'
-  sha256: '{GITLEAKS_SHA256}' # pragma: allowlist secret
-  install_path: '/usr/local/bin/gitleaks'
-pre_commit:
-{pre_commit_inventory}
-pre_commit_source_tags:
-{source_tag_inventory}
-```
-"""
+    inventory = ""
     workflow = f"""\
 name: CI
 jobs:
@@ -1890,15 +1768,14 @@ def _write_self_test_root(
     workflow: str,
     pre_commit: str,
 ) -> None:
+    del inventory
     (root / DIRECT_REQUIREMENTS_PATH.parent).mkdir(parents=True)
     (root / WORKFLOW_PATH.parent).mkdir(parents=True, exist_ok=True)
-    (root / INVENTORY_PATH.parent).mkdir(parents=True)
     (root / DIRECT_REQUIREMENTS_PATH).write_text(
         direct_requirements,
         encoding="utf-8",
     )
     (root / LOCK_PATH).write_text(lock, encoding="utf-8")
-    (root / INVENTORY_PATH).write_text(inventory, encoding="utf-8")
     (root / WORKFLOW_PATH).write_text(workflow, encoding="utf-8")
     (root / PRE_COMMIT_CONFIG_PATH).write_text(pre_commit, encoding="utf-8")
 
@@ -2029,14 +1906,6 @@ def run_self_test() -> int:
             direct_requirements.replace("jsonschema==", "jsonschema>=", 1),
             lock,
             inventory,
-            workflow,
-            pre_commit,
-        ),
-        (
-            "CI-PYTHON-INVENTORY",
-            direct_requirements,
-            lock,
-            inventory.replace("4.26.0", "4.25.1", 1),
             workflow,
             pre_commit,
         ),
@@ -2199,7 +2068,7 @@ def run_self_test() -> int:
             lock,
             inventory,
             workflow.replace(
-                EXPECTED_GITLEAKS_INVENTORY["sha256"],
+                EXPECTED_GITLEAKS_TOOL["sha256"],
                 "0" * 64,
                 1,
             ),
@@ -2304,14 +2173,6 @@ def run_self_test() -> int:
             inventory,
             workflow,
             duplicate_pre_commit,
-        ),
-        (
-            "CI-PYTHON-INVENTORY",
-            direct_requirements,
-            lock,
-            inventory.replace("resolved_packages: 16", "resolved_packages: 15", 1),
-            workflow,
-            pre_commit,
         ),
     )
 

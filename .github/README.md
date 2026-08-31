@@ -39,7 +39,9 @@ source of truth.
 - ARWB-003 records its 31-record/202-link full cutover proof as explicit local/manual evidence, so `repo-quality-static` does not invoke that separate proof. The blocking ACER migration validator does classify its additive archive payloads with the exact security-validated Gitleaks executable supplied to the closed lane.
 - `ci.yml` validates pull request shape; GitHub branch protection/rulesets enforce direct-push restrictions outside repo-local files.
 - PR author and reviewer prompts live in `PULL_REQUEST_TEMPLATE.md`.
-- Version inventory and action tag policy live in `docs/90.references/data/tech-stack-version-inventory.md`.
+- CI Python dependency identity lives in `.github/requirements/ci-validation.txt`;
+  pre-commit repository revisions and source-tag provenance live in
+  `.pre-commit-config.yaml`.
 - Full-SHA Action pinning is enforced by the repository quality gate; no zizmor suppression file is required.
 
 ## Workflow Roles

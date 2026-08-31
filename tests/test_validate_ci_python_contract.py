@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import importlib.util
-import hashlib
 import os
 import shutil
 import subprocess
@@ -155,47 +154,6 @@ GITLEAKS_SHA256 = (
 )
 
 
-def make_inventory(lock: str) -> str:
-    lock_sha256 = hashlib.sha256(lock.encode("utf-8")).hexdigest()
-    pre_commit = "\n".join(
-        f"  '{repo}': '{revision}'"
-        for repo, revision in PRE_COMMIT_REVISIONS.items()
-    )
-    source_tags = "\n".join(
-        f"  '{repo}': '{tag}'"
-        for repo, tag in PRE_COMMIT_SOURCE_TAGS.items()
-    )
-    return f"""\
-# Version inventory
-
-### Version Contracts
-
-```yaml
-github_actions:
-  'actions/checkout': '0000000000000000000000000000000000000000'
-ci_python: '3.12'
-ci_python_dependencies:
-  jsonschema: '4.26.0'
-  pre-commit: '4.6.1'
-  PyYAML: '6.0.3'
-ci_python_lock:
-  lane: 'linux-cpython-3.12'
-  input: '.github/requirements/ci-validation.in'
-  lock: '.github/requirements/ci-validation.txt'
-  sha256: '{lock_sha256}'
-  resolved_packages: 16
-ci_gitleaks:
-  version: '8.30.0'
-  asset: 'gitleaks_8.30.0_linux_x64.tar.gz'
-  sha256: '{GITLEAKS_SHA256}' # pragma: allowlist secret
-  install_path: '/usr/local/bin/gitleaks'
-pre_commit:
-{pre_commit}
-pre_commit_source_tags:
-{source_tags}
-```
-"""
-
 GITLEAKS_INSTALL = f"""\
 set -euo pipefail
 curl --fail --location --silent --show-error \\
@@ -223,11 +181,6 @@ GOVERNED_TEXT_OWNERS = (
         "CI-PYTHON-WORKFLOW",
     ),
     (
-        "inventory",
-        Path("docs/90.references/data/tech-stack-version-inventory.md"),
-        "CI-PYTHON-INVENTORY",
-    ),
-    (
         "pre-commit config",
         Path(".pre-commit-config.yaml"),
         "CI-PRECOMMIT-REV",
@@ -238,7 +191,6 @@ EXPECTED_STABLE_RULE_IDS = (
     "CI-PYTHON-INPUT",
     "CI-PYTHON-PIN",
     "CI-PYTHON-LOCK",
-    "CI-PYTHON-INVENTORY",
     "CI-PYTHON-WORKFLOW",
     "CI-PYTHON-VERSION",
     "CI-PRECOMMIT-ACTION",
@@ -551,7 +503,6 @@ class CiPythonContractTests(unittest.TestCase):
         root = Path(directory.name)
         (root / ".github/requirements").mkdir(parents=True)
         (root / ".github/workflows").mkdir(parents=True)
-        (root / "docs/90.references/data").mkdir(parents=True)
         lock = make_lock()
         (root / ".github/requirements/ci-validation.in").write_text(
             DIRECT_INPUT,
@@ -562,9 +513,6 @@ class CiPythonContractTests(unittest.TestCase):
             encoding="utf-8",
         )
         (root / ".github/workflows/ci.yml").write_text(WORKFLOW, encoding="utf-8")
-        (
-            root / "docs/90.references/data/tech-stack-version-inventory.md"
-        ).write_text(make_inventory(lock), encoding="utf-8")
         (root / ".pre-commit-config.yaml").write_text(
             make_pre_commit_config(),
             encoding="utf-8",
@@ -575,6 +523,11 @@ class CiPythonContractTests(unittest.TestCase):
         with self.assertRaises(VALIDATOR.ContractError) as raised:
             VALIDATOR.validate_repository(root)
         self.assertEqual(raised.exception.rule_id, rule_id)
+
+    def test_reference_inventory_is_not_a_ci_contract_input(self) -> None:
+        root = self.make_valid_root()
+
+        self.assertEqual(VALIDATOR.validate_repository(root), 4)
 
     def assert_value_free_rule(
         self,
@@ -665,7 +618,7 @@ class CiPythonContractTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn(
             "[PASS] CI Python contract self-test passed: "
-            f"rules={len(EXPECTED_STABLE_RULE_IDS)} cases=33",
+            f"rules={len(EXPECTED_STABLE_RULE_IDS)} cases=31",
             result.stdout,
         )
 
@@ -892,7 +845,7 @@ class CiPythonContractTests(unittest.TestCase):
         )
         self.assert_rule(root, "CI-PYTHON-LOCK")
 
-    def test_lock_digest_must_match_the_inventory_owner(self) -> None:
+    def test_lock_digest_must_match_the_reviewed_runtime_authority(self) -> None:
         root = self.make_valid_root()
         lock = root / ".github/requirements/ci-validation.txt"
         lock.write_text(
@@ -904,44 +857,6 @@ class CiPythonContractTests(unittest.TestCase):
             encoding="utf-8",
         )
         self.assert_rule(root, "CI-PYTHON-LOCK")
-
-    def test_inventory_must_own_the_exact_lock_shape(self) -> None:
-        root = self.make_valid_root()
-        inventory = root / "docs/90.references/data/tech-stack-version-inventory.md"
-        inventory.write_text(
-            inventory.read_text(encoding="utf-8").replace(
-                "resolved_packages: 16",
-                "resolved_packages: 15",
-            ),
-            encoding="utf-8",
-        )
-        self.assert_rule(root, "CI-PYTHON-INVENTORY")
-
-    def test_inventory_must_mirror_exact_pre_commit_revisions(self) -> None:
-        root = self.make_valid_root()
-        inventory = root / "docs/90.references/data/tech-stack-version-inventory.md"
-        expected = next(iter(PRE_COMMIT_REVISIONS.values()))
-        inventory.write_text(
-            inventory.read_text(encoding="utf-8").replace(
-                expected,
-                "f" * 40,
-                1,
-            ),
-            encoding="utf-8",
-        )
-        self.assert_rule(root, "CI-PRECOMMIT-REV")
-
-    def test_inventory_must_mirror_exact_versions(self) -> None:
-        root = self.make_valid_root()
-        inventory = root / "docs/90.references/data/tech-stack-version-inventory.md"
-        inventory.write_text(
-            inventory.read_text(encoding="utf-8").replace(
-                "jsonschema: '4.26.0'",
-                "jsonschema: '4.25.1'",
-            ),
-            encoding="utf-8",
-        )
-        self.assert_rule(root, "CI-PYTHON-INVENTORY")
 
     def test_validation_job_must_pin_python_312(self) -> None:
         root = self.make_valid_root()
