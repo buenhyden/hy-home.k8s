@@ -719,7 +719,7 @@
       "class": "sdlc",
       "mode": "authored",
       "pathPattern": "^docs/05\\.operations/guides/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
-      "artifactIdPattern": "^GUIDE-[0-9]{4}$",
+      "artifactIdPattern": "^GDE-[0-9]{4}$",
       "template": "docs/99.templates/templates/operations/guide.template.md",
       "requiredFrontmatter": {
         "mode": "required",
@@ -810,7 +810,7 @@
       "class": "sdlc",
       "mode": "authored",
       "pathPattern": "^docs/05\\.operations/policies/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
-      "artifactIdPattern": "^POLICY-[0-9]{4}$",
+      "artifactIdPattern": "^POL-[0-9]{4}$",
       "template": "docs/99.templates/templates/operations/policy.template.md",
       "requiredFrontmatter": {
         "mode": "required",
@@ -903,7 +903,7 @@
       "class": "sdlc",
       "mode": "authored",
       "pathPattern": "^docs/05\\.operations/runbooks/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
-      "artifactIdPattern": "^RUNBOOK-[0-9]{4}$",
+      "artifactIdPattern": "^RUN-[0-9]{4}$",
       "template": "docs/99.templates/templates/operations/runbook.template.md",
       "requiredFrontmatter": {
         "mode": "required",
@@ -1030,21 +1030,25 @@
         "required": [
           "Overview",
           "Incident Metadata",
+          "Roles and Coordination",
           "Impact",
           "Timeline",
           "Response State",
           "Evidence",
           "Follow-up Actions",
+          "Closure",
           "Traceability"
         ],
         "allowed": [
           "Overview",
           "Incident Metadata",
+          "Roles and Coordination",
           "Impact",
           "Timeline",
           "Response State",
           "Evidence",
           "Follow-up Actions",
+          "Closure",
           "Traceability"
         ]
       },
@@ -1061,9 +1065,11 @@
         "bodyContract": {
           "section": "Traceability",
           "tableHeading": "Lifecycle Traceability",
-          "enforcedStatuses": [
-            "open"
-          ],
+         "enforcedStatuses": [
+            "open",
+            "mitigated",
+            "resolved"
+         ],
           "requiredColumns": [
             "Timeline or action",
             "Evidence",
@@ -1122,10 +1128,12 @@
           "Incident Link and Impact Summary",
           "Root Cause Analysis",
           "Contributing Factors",
+          "Detection and Response Review",
           "What Went Well",
           "What Went Wrong",
           "Action Items",
           "Prevention and Verification",
+          "Action Closure",
           "Documentation Feedback Loop",
           "Traceability"
         ],
@@ -1134,10 +1142,12 @@
           "Incident Link and Impact Summary",
           "Root Cause Analysis",
           "Contributing Factors",
+          "Detection and Response Review",
           "What Went Well",
           "What Went Wrong",
           "Action Items",
           "Prevention and Verification",
+          "Action Closure",
           "Documentation Feedback Loop",
           "Traceability"
         ]
@@ -1154,9 +1164,10 @@
         "bodyContract": {
           "section": "Traceability",
           "tableHeading": "Lifecycle Traceability",
-          "enforcedStatuses": [
-            "draft"
-          ],
+         "enforcedStatuses": [
+            "draft",
+            "published"
+         ],
           "requiredColumns": [
             "Root cause or action",
             "Owner and due state",
@@ -2934,21 +2945,24 @@
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "requiredSections": {
@@ -2974,8 +2988,9 @@
       "lifecycle": {
         "statusDomain": [
           "draft",
-          "published",
-          "superseded"
+          "active",
+          "superseded",
+          "retired"
         ]
       },
       "relationships": {
@@ -3023,51 +3038,58 @@
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "requiredSections": {
         "required": [
           "Overview",
           "Incident Metadata",
+          "Roles and Coordination",
           "Impact",
           "Timeline",
           "Response State",
           "Evidence",
           "Follow-up Actions",
+          "Closure",
           "Traceability"
         ],
         "allowed": [
           "Overview",
           "Incident Metadata",
+          "Roles and Coordination",
           "Impact",
           "Timeline",
           "Response State",
           "Evidence",
           "Follow-up Actions",
+          "Closure",
           "Traceability"
         ]
       },
       "lifecycle": {
         "statusDomain": [
-          "draft",
-          "active",
-          "accepted",
-          "archived"
+          "open",
+          "mitigated",
+          "resolved",
+          "closed"
         ]
       },
       "relationships": {
@@ -3078,7 +3100,9 @@
           "section": "Traceability",
           "tableHeading": "Lifecycle Traceability",
           "enforcedStatuses": [
-            "open"
+          "open",
+          "mitigated",
+          "resolved"
           ],
           "requiredColumns": [
             "Timeline or action",
@@ -3112,21 +3136,24 @@
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "requiredSections": {
@@ -3155,8 +3182,8 @@
         "statusDomain": [
           "draft",
           "active",
-          "accepted",
-          "archived"
+          "superseded",
+          "retired"
         ]
       },
       "relationships": {
@@ -3204,21 +3231,24 @@
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "requiredSections": {
@@ -3227,10 +3257,12 @@
           "Incident Link and Impact Summary",
           "Root Cause Analysis",
           "Contributing Factors",
+          "Detection and Response Review",
           "What Went Well",
           "What Went Wrong",
           "Action Items",
           "Prevention and Verification",
+          "Action Closure",
           "Documentation Feedback Loop",
           "Traceability"
         ],
@@ -3239,10 +3271,12 @@
           "Incident Link and Impact Summary",
           "Root Cause Analysis",
           "Contributing Factors",
+          "Detection and Response Review",
           "What Went Well",
           "What Went Wrong",
           "Action Items",
           "Prevention and Verification",
+          "Action Closure",
           "Documentation Feedback Loop",
           "Traceability"
         ]
@@ -3250,9 +3284,8 @@
       "lifecycle": {
         "statusDomain": [
           "draft",
-          "active",
-          "accepted",
-          "archived"
+          "published",
+          "superseded"
         ]
       },
       "relationships": {
@@ -3263,7 +3296,8 @@
           "section": "Traceability",
           "tableHeading": "Lifecycle Traceability",
           "enforcedStatuses": [
-            "draft"
+          "draft",
+          "published"
           ],
           "requiredColumns": [
             "Root cause or action",
@@ -3298,21 +3332,24 @@
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "requiredSections": {
@@ -3341,8 +3378,8 @@
         "statusDomain": [
           "draft",
           "active",
-          "accepted",
-          "archived"
+          "superseded",
+          "retired"
         ]
       },
       "relationships": {

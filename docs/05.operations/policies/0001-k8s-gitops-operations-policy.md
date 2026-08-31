@@ -1,108 +1,120 @@
 ---
-title: 'K8s GitOps Platform Operations Policy'
+title: "K8s GitOps Platform Operations Policy"
 type: sdlc/policy
 status: active
 owner: platform
-updated: 2026-05-21
-artifact_id: "POLICY-0001"
+updated: 2026-09-01
+artifact_id: "POL-0001"
 ---
 
 # K8s GitOps Platform Operations Policy
 
 ## Overview
 
-이 문서는 WSL2 기반 k3d/k3s GitOps 플랫폼의 운영 정책을 정의한다.
-외부 서비스 런타임 분리, Vault 기반 시크릿 통제, GitOps 경로 검증 게이트, 포트 계약 준수 기준을 명시한다.
+이 문서는 WSL2 기반 로컬 k3d GitOps 플랫폼의 운영 통제를 정의한다.
+여기서 multi-node 또는 HA는 production 고가용성 보장이 아니라
+`infrastructure/k3d/k3d-cluster.yaml`의 `servers: 1`, `agents: 3` 로컬
+검증 baseline을 뜻한다.
 
 ## Policy Scope
 
-- k3d 클러스터와 ArgoCD GitOps 운영
-- ESO + Vault 연동
-- 외부 서비스 인터페이스 계약(`valkey-external`, `postgres-write-external`, `postgres-read-external`)
-- 문서/검증 증적 운영 기준
-- 외부 서비스 런타임 분리 원칙(외부 repo 관리)
+- k3d cluster와 ArgoCD pull 기반 GitOps 운영
+- ESO와 외부 Vault의 시크릿 경계
+- 외부 PostgreSQL·Valkey·Vault 서비스 인터페이스
+- ingress-nginx, 외부 Traefik, AppProject, NetworkPolicy 통제
+- repository 정적 검증과 승인된 runtime 검증의 증적 경계
 
 ## Applies To
 
-- **Systems**: k3d cluster, ArgoCD, External Secrets Operator, Vault, platform namespace services
-- **Agents**: Docs/DevOps/GitOps automation agents
-- **Environments**: Local WSL2 development platform
+- **Systems**: `infrastructure/`, `gitops/`, `.github/workflows/`
+- **Roles**: Platform Owner, Security Reviewer, GitOps/Docs automation agents
+- **Environment**: WSL2 local cluster와 GitHub Actions
 
 ## Controls
 
-- **Required**:
-  - 외부 서비스 런타임은 별도 워크스페이스(repo)에서만 운영한다.
-  - Vault를 시크릿 단일 소스로 사용한다.
-    - `secret/platform/argocd` -> `valkey_password`
-    - `secret/platform/postgres-app` -> `db_name`, `username`, `password`
-  - 시크릿 평문(비밀번호/토큰/API Key)을 문서, YAML, Git history에 저장하지 않는다.
-  - GitOps 경로/브랜치 검증 게이트를 적용한다.
-    - `root-platform.spec.source.path`는 원격 브랜치 실재 경로여야 한다.
-    - `targetRevision`과 실제 운영 브랜치가 일치해야 한다.
-  - 외부 서비스 포트 계약을 준수한다.
-    - Valkey: `6379`
-    - PostgreSQL write: `15432`
-    - PostgreSQL read: `15433`
-  - RBAC 최소권한 + AppProject source/destination 제한을 유지한다.
-  - NetworkPolicy 기반 egress 제한을 유지한다.
-  - 문서 변경 시 해당 폴더 `README.md` 인덱스를 동기화한다.
-- **Allowed**:
-  - 승인된 버전 범위 내 업그레이드
-  - 표준 Runbook 기반 복구 및 재동기화
-  - 운영 점검 목적의 read-only 진단 커맨드 실행
-- **Disallowed**:
-  - 평문 시크릿 Git 저장
-  - 승인 없는 권한 확장
-  - 검증 없는 배포 승격
-  - 외부 런타임 의존 리소스를 임의 로컬 값으로 하드코딩
+### Responsibilities
+
+| Role | Responsibility | Escalation owner |
+| --- | --- | --- |
+| Platform Owner | GitOps desired state, external endpoint, runtime baseline을 승인한다. | Workspace Owner |
+| Security Reviewer | Vault, RBAC, NetworkPolicy, 예외의 최소권한을 검토한다. | Workspace Owner |
+| Change author | 정적 검증과 필요한 승인·runtime 증적을 handoff한다. | Platform Owner |
+
+### Control Register
+
+| Control | Accountable role | Enforcement surface | Evidence |
+| --- | --- | --- | --- |
+| PLAT-001 topology | Platform Owner | `infrastructure/k3d/k3d-cluster.yaml` | `servers: 1`, `agents: 3`; inotify preflight `>= 512` |
+| PLAT-002 external desired state | Platform Owner | `gitops/platform/external-services/*.yaml` | reviewed Service/EndpointSlice definitions |
+| PLAT-003 secret boundary | Security Reviewer | Vault, ESO, secret scanners | no plaintext secret; approved Vault/ESO health evidence |
+| PLAT-004 ingress and TLS | Platform Owner | ingress-nginx, Traefik, ArgoCD ingress | host, TLS secret, route target agreement |
+| PLAT-005 least privilege | Security Reviewer | AppProject, RBAC, NetworkPolicy | wildcard absence and destination/egress review |
+| PLAT-006 validation | Change author | local validators and GitHub Actions | static PASS plus separately approved runtime evidence when required |
+
+### Required
+
+- External-service Service와 EndpointSlice desired state는
+  `gitops/platform/external-services/*.yaml`을 single source of truth로 삼는다.
+- 포트 계약은 Vault `8200`, Valkey `6379`, PostgreSQL write `15432`,
+  PostgreSQL read `15433`을 유지한다.
+- Vault는 시크릿의 단일 소스이며 문서, manifest, Git history에 평문 토큰,
+  비밀번호, API key를 저장하지 않는다.
+- 호스트 접근은 `https://vault.127.0.0.1.nip.io`, cluster 내부 ESO 접근은
+  `vault-external.platform.svc`를 사용한다.
+- Vault Kubernetes auth는 현재 API endpoint와 reviewer JWT/CA 경계를
+  소유 Runbook의 검증 대상으로 유지한다.
+- ArgoCD host는 `argocd.127.0.0.1.nip.io`, TLS secret은
+  `argocd-local-tls`이며, 외부 Traefik `websecure/443`은 ingress-nginx
+  LoadBalancer endpoint로 라우팅한다.
+- AppProject source/destination과 RBAC는 최소 allow-list, NetworkPolicy는
+  필요한 DNS·HTTPS·external-service egress만 허용한다.
+- CD는 ArgoCD pull/reconciliation이 소유한다. GitHub Actions와 로컬 gate는
+  정적 검증 증적이며 배포 완료 증적을 대신하지 않는다.
+
+### Allowed
+
+- 검토된 Git desired state 변경과 ArgoCD reconciliation
+- read-only 진단과 소유 Runbook에 따른 복구
+- 명시적 human approval과 증적을 갖춘 bootstrap/break-glass 작업
+
+### Disallowed
+
+- 평문 시크릿 커밋, 승인 없는 권한 확장, wildcard AppProject 허용
+- 로컬 파일 또는 정적 PASS만으로 runtime 배포·복구 완료 선언
+- k3d agent 동시 재시작 또는 production HA로의 과장된 증적 표현
+- Git desired state 없이 EndpointSlice를 상시 수동 관리
 
 ## Exceptions
 
-- 임시 운영 예외는 아래 순서로 승인한다.
-  1. 요청자가 범위/기간/위험/복구 조건을 명시한다.
-  2. Platform Owner 1차 승인, Security Reviewer 2차 승인.
-  3. 만료 시각(UTC)과 종료 조건을 문서화한다.
-  4. 만료 후 기본 정책으로 복귀했는지 검증 증적을 남긴다.
+EndpointSlice patch, AppProject live 반영, 외부 Vault 변경은 즉시 복구가
+필요하고 Platform Owner가 범위·기간·위험·rollback을 승인한 bootstrap 또는
+break-glass 상황에서만 허용한다. 실행 후 실제 상태를 Git desired state와
+맞추고 승인·검증 증적을 남긴다. 예외는 만료 시 기본 통제로 복귀한다.
 
 ## Verification
 
-- 정책 준수 여부는 아래 증적으로 확인한다.
-
 | Control Area | Required Evidence | Runbook Owner |
 | --- | --- | --- |
-| GitOps root path/branch | `root-platform` Application source path와 `targetRevision`이 운영 계약과 일치함 | [`../runbooks/0001-argocd-platform-bootstrap-runbook.md`](../runbooks/0001-argocd-platform-bootstrap-runbook.md) |
-| External service contract | `platform` namespace Service/EndpointSlice가 PostgreSQL/Valkey 서비스명, IP, 포트 계약을 만족함 | [`../runbooks/0001-argocd-platform-bootstrap-runbook.md`](../runbooks/0001-argocd-platform-bootstrap-runbook.md) |
-| Secret plane | ESO와 ArgoCD external secret 동기화 상태가 정상이며 평문 secret manifest가 없음 | [`../runbooks/0001-argocd-platform-bootstrap-runbook.md`](../runbooks/0001-argocd-platform-bootstrap-runbook.md) |
-
-- 문서 검증 항목:
-  - 템플릿 필수 섹션 누락 0건
-  - 상대 링크 오류 0건
-  - 평문 비밀번호/토큰 기재 0건
+| Bootstrap and GitOps root | source path, revision, AppProject가 current Git 계약과 일치 | [RUN-0001](../runbooks/0001-argocd-platform-bootstrap-runbook.md) |
+| External endpoints | Service/EndpointSlice 이름, IP, 포트가 reviewed desired state와 일치 | [RUN-0001](../runbooks/0001-argocd-platform-bootstrap-runbook.md) |
+| Vault and ESO recovery | auth, network, ExternalSecret 상태와 plaintext 부재 | [RUN-0002](../runbooks/0002-argocd-eso-vault-recovery-runbook.md) |
+| Static controls | affected validators와 hosted CI 결과; runtime claim과 분리 | [GDE-0010](../guides/0010-ci-cd-qa-reference-guide.md) |
 
 ## Review Cadence
 
-- 정기: 월 1회
-- 비정기: 아래 변경 시 즉시 리뷰
-  - 외부 서비스 접속 계약(포트/서비스명/경로) 변경
-  - Vault 경로/권한 모델 변경
-  - GitOps 루트 경로/브랜치 전략 변경
-
-### AI Agent Policy Section
-
-- **Model / Prompt Change Process**: 운영 정책/런북 자동 수정 작업은 PR 단위 증적(변경 파일 + 검증 커맨드 결과)을 남긴다.
-- **Eval / Guardrail Threshold**: 링크 오류 0건, 평문 시크릿 0건, 계약 포트 불일치 0건.
-- **Log / Trace Retention**: 정책 변경 검증 로그를 관련 Plan/Task/Runbook에 기록한다.
-- **Safety Incident Thresholds**: 비밀 유출, 무승인 권한 확장, 운영 경로 불일치 탐지 시 즉시 에스컬레이션한다.
+월 1회 또는 topology, external endpoint, Vault auth, ingress/TLS, AppProject,
+NetworkPolicy, CI workflow 계약이 바뀔 때 즉시 검토한다. 고정된 job 수나
+문서 수가 아니라 현재 source와 semantic contract를 검토한다.
 
 ## Traceability
 
-- **AD**: [AD-0007 Current Local GitOps Platform](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
-- **Spec**: [`../../03.specs/0008-current-local-gitops-platform/spec.md`](../../03.specs/0008-current-local-gitops-platform/spec.md)
-- **Runbook**: [`../runbooks/0001-argocd-platform-bootstrap-runbook.md`](../runbooks/0001-argocd-platform-bootstrap-runbook.md)
-- **Postmortem Index**: [`../incidents/README.md`](../incidents/README.md)
+- [AD-0007 Current Local GitOps Platform](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
+- [Spec 0008 Current Local GitOps Platform](../../03.specs/0008-current-local-gitops-platform/spec.md)
+- [Platform Bootstrap Runbook](../runbooks/0001-argocd-platform-bootstrap-runbook.md)
+- [ArgoCD/ESO/Vault Recovery Runbook](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)
 
 ### Lifecycle Traceability
 
 | Promoted owner | Control owner | Enforcement surface |
 | --- | --- | --- |
-| N/A — this steady-state policy consolidates the current architecture, Spec 008, and operating evidence, but no eligible upstream document carries a reciprocal policy link | Platform Owner for GitOps and external-service controls; Security Reviewer for exceptions and secret boundaries | Vault/ESO contract validation, GitOps root path and AppProject review, external-service port contracts, NetworkPolicy review, and secret-handling gates |
+| [Spec 0008](../../03.specs/0008-current-local-gitops-platform/spec.md) | Platform Owner; Security Reviewer for secrets and exceptions | k3d topology, GitOps desired state, Vault/ESO, ingress, AppProject, NetworkPolicy, static and approved runtime evidence |

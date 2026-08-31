@@ -50,12 +50,10 @@
 
 ```text
 docs/05.operations/policies/
-├── 0001-k8s-gitops-operations-policy.md                         # k3d/ArgoCD/ESO/Vault 운영 정책
-├── 0002-wsl2-k3d-gitops-ha-operations-policy.md                 # WSL2 HA + TLS/최소권한 + CI 게이트 정책
+├── 0001-k8s-gitops-operations-policy.md                         # 로컬 k3d/GitOps/Vault 통합 운영 정책
 ├── 0003-service-mesh-cert-manager-policy.md                     # cert-manager/Istio/Kiali 운영 통제
 ├── 0004-rollouts-notifications-headlamp-policy.md               # Rollouts/Notifications/Headlamp 운영 통제
-├── 0005-observability-platform-operations-policy.md             # ArgoCD/Grafana/포트 계약 정책
-├── 0006-k8s-observability-operations-policy.md                  # 관측성 스택 운영 정책
+├── 0005-observability-platform-operations-policy.md             # 메트릭/로그/Grafana/포트 통합 정책
 ├── 0007-app-gitops-onboarding-policy.md                         # 앱 GitOps 온보딩 운영 정책
 └── README.md                                                    # This file
 ```
@@ -95,7 +93,7 @@ docs/05.operations/policies/
 
 - 같은 폴더의 Policy 문서는 `./`로 시작한다.
 - sibling operations folder는 `../guides/`, `../runbooks/`, `../incidents/`로 연결한다.
-- upstream docs stage는 `../../02.architecture/`, `../../03.specs/`, `../../04.execution/`로 연결한다.
+- upstream docs stage는 `../../02.architecture/`, `../../03.specs/`로 연결한다.
 
 ## Related Documents
 
@@ -113,10 +111,8 @@ docs/05.operations/policies/
 
 | 문서                                                                                                     | 설명                                                                                    | 상태   | 최종 수정  |
 | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------ | ---------- |
-| [`./0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md)                         | 외부 런타임 분리 + Vault 단일 소스 + GitOps 게이트 운영 정책                            | Active | 2026-05-21 |
-| [`./0002-wsl2-k3d-gitops-ha-operations-policy.md`](./0002-wsl2-k3d-gitops-ha-operations-policy.md)         | WSL2 HA 운영 통제(TLS/Traefik 경계, EndpointSlice, 최소권한, CI 게이트, 감사 항목) 정책 | Active | 2026-08-29 |
-| [`./0003-service-mesh-cert-manager-policy.md`](./0003-service-mesh-cert-manager-policy.md)                 | cert-manager/Headlamp/Istio/Kiali 운영 통제(TLS/sidecar/Kiali auth/Traefik 계약) 정책   | Active | 2026-08-29 |
-| [`./0004-rollouts-notifications-headlamp-policy.md`](./0004-rollouts-notifications-headlamp-policy.md)     | Argo Rollouts/Notifications(Slack)/Headlamp 운영 통제 정책                              | Active | 2026-05-21 |
-| [`./0005-observability-platform-operations-policy.md`](./0005-observability-platform-operations-policy.md) | Istio 포트 네이밍/Grafana Anonymous Access/ArgoCD NodePort 예약 정책                    | Active | 2026-05-22 |
-| [`./0006-k8s-observability-operations-policy.md`](./0006-k8s-observability-operations-policy.md)           | k8s 메트릭 NodePort 예약/in-cluster Alloy/alert_rules 로드 패턴 정책                    | Active | 2026-05-22 |
-| [`./0007-app-gitops-onboarding-policy.md`](./0007-app-gitops-onboarding-policy.md)                         | 앱 온보딩 운영 정책 (Rollout 필수/AnalysisTemplate/이미지 태그/Istio 포트 명명/Traefik/Vault 규칙)       | Active | 2026-06-04 |
+| [`./0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md) | 로컬 multi-node/GitOps/Vault/ingress/최소권한 통합 정책 | Active | 2026-09-01 |
+| [`./0003-service-mesh-cert-manager-policy.md`](./0003-service-mesh-cert-manager-policy.md) | cert-manager/Headlamp/Istio/Kiali 운영 통제 정책 | Active | 2026-09-01 |
+| [`./0004-rollouts-notifications-headlamp-policy.md`](./0004-rollouts-notifications-headlamp-policy.md) | Argo Rollouts/Notifications/Headlamp 운영 통제 정책 | Active | 2026-09-01 |
+| [`./0005-observability-platform-operations-policy.md`](./0005-observability-platform-operations-policy.md) | 메트릭·로그·Grafana·NodePort·AppProject 통합 정책 | Active | 2026-09-01 |
+| [`./0007-app-gitops-onboarding-policy.md`](./0007-app-gitops-onboarding-policy.md) | Rollout/AnalysisTemplate/network/TLS/Vault 기반 앱 온보딩 정책 | Active | 2026-09-01 |

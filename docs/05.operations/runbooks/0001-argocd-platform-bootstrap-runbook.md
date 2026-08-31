@@ -3,8 +3,8 @@ title: 'ArgoCD Platform Bootstrap Runbook'
 type: sdlc/runbook
 status: active
 owner: platform
-updated: 2026-05-22
-artifact_id: "RUNBOOK-0001"
+updated: 2026-09-01
+artifact_id: "RUN-0001"
 ---
 
 # ArgoCD Platform Bootstrap Runbook
@@ -195,7 +195,6 @@ argocd app list
 - [`../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`](../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md)
 - [`../../02.architecture/decisions/0003-eso-vault-k8s-auth.md`](../../02.architecture/decisions/0003-eso-vault-k8s-auth.md)
 - [`../../03.specs/0008-current-local-gitops-platform/spec.md`](../../03.specs/0008-current-local-gitops-platform/spec.md)
-- [`../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md`](../../98.archive/README.md#document-index)
 
 ### Lifecycle Traceability
 

@@ -4,6 +4,7 @@ type: sdlc/policy
 status: draft
 owner: platform
 updated: YYYY-MM-DD
+artifact_id: "POL-####"
 ---
 
 # [Policy or Standard Name] Operations Policy

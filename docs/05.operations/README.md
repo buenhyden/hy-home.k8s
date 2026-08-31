@@ -93,14 +93,14 @@ high-risk command 예시를 스캔해 boundary marker가 없는 경우 실패한
 2. 사고가 없으면 `incidents/`는 README만 유지하고, 첫 사고 기록이 생길 때만 `incidents/<year>/inc-####-<slug>/` 폴더를 만든다. Incident와 Postmortem은 같은 폴더에서 각각 `incident.md`와 `postmortem.md`를 사용한다.
 3. live cluster mutation 예시는 승인 조건, bootstrap-only 예외, break-glass 문맥 없이 추가하지 않는다.
 4. 운영 문서가 현재 `bootstrap-local.sh`, `gitops/platform/external-services`, 정적 검증 계약과 충돌하지 않게 유지한다.
-5. 현재 구현과 충돌하거나 missing GitOps desired state를 active 운영 계약처럼 설명하는 old guide/runbook은 검증된 full-body Archive Record로 보존하고, 현재 탐색은 `../98.archive/README.md` 인덱스로만 연결한다.
+5. 현재 구현과 충돌하거나 소유 문서와 중복되는 운영 문서는 활성 소비자를 현재 Policy/Runbook으로 전환한 뒤 삭제한다. 필요한 과거 내용은 Git 이력에서 복구한다.
 
 ### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/05.operations/`다.
 
 - 하위 운영 폴더는 `./guides/`, `./policies/`, `./runbooks/`, `./incidents/`로 연결한다.
-- upstream docs stage는 `../01.requirements/`, `../02.architecture/`, `../03.specs/`, `../04.execution/`로 연결한다.
+- upstream docs stage는 `../01.requirements/`, `../02.architecture/`, `../03.specs/`로 연결한다.
 - root-level runtime evidence는 `../../gitops/`, `../../infrastructure/`, `../../scripts/`처럼 repository root 기준으로 올라간다.
 
 ## Related Documents

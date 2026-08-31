@@ -939,16 +939,6 @@ if "key: secret/apps/<appname>/config" in sample_app_external_secret:
 
 active_app_secret_contracts = [
     (
-        root / "docs/05.operations/guides/0008-github-app-gitops-onboarding-guide.md",
-        [
-            "secret/apps/<appname>/config",
-            "remoteRef.key",
-            "apps/<appname>/config",
-            "mount prefix",
-            "gitops/workloads/adminer/",
-        ],
-    ),
-    (
         root / "docs/05.operations/policies/0007-app-gitops-onboarding-policy.md",
         [
             "Vault 경로 규칙",
@@ -2524,15 +2514,6 @@ for phrase in [
 ]:
     if phrase not in pull_request_template_text:
         fail(f"{rel(pull_request_template_path)} missing QA evidence phrase: {phrase}")
-
-ci_cd_qa_guide_path = root / "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md"
-ci_cd_qa_guide_text = read_text(ci_cd_qa_guide_path)
-for phrase in [
-    "90% coverage",
-    "validation-matrix",
-]:
-    if phrase not in ci_cd_qa_guide_text:
-        fail(f"{rel(ci_cd_qa_guide_path)} missing coverage applicability phrase: {phrase}")
 
 ci_path = root / ".github/workflows/ci.yml"
 ci_text = read_text(ci_path)
@@ -5098,7 +5079,6 @@ for hook_id in ["shellcheck", "shfmt"]:
 active_hook_reference_files = [
     root / "scripts/README.md",
     root / "tests/README.md",
-    root / "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md",
     root / "docs/00.agent-governance/hooks/post-validate.sh",
     root / "docs/00.agent-governance/hooks/lifecycle-guard.sh",
 ]
@@ -5129,20 +5109,6 @@ for hook_path in [
     hook_text = read_text(hook_path)
     if ".agents/*" not in hook_text:
         fail(f"{rel(hook_path)} must trigger repository quality gates for .agents/** shared asset changes")
-
-ci_qa_guide_path = root / "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md"
-ci_qa_guide_text = read_text(ci_qa_guide_path)
-for phrase in [
-    "## Source Basis",
-    "Parent Spec",
-    "GitHub Actions documentation",
-    "GitHub Actions CI gate definitions",
-]:
-    if phrase not in ci_qa_guide_text:
-        fail(f"{rel(ci_qa_guide_path)} missing CI/QA source basis phrase: {phrase}")
-stale_shell_job = "`" + "shell" + "-static" + "`"
-if stale_shell_job in ci_qa_guide_text:
-    fail(f"{rel(ci_qa_guide_path)} must not list stale shell static job as an active CI job")
 
 if failures:
     print("=== validate-repo-quality-gates ===")

@@ -3,8 +3,8 @@ title: 'Kiali Observability 연결 복구 Runbook'
 type: sdlc/runbook
 status: active
 owner: platform
-updated: 2026-05-09
-artifact_id: "RUNBOOK-0007"
+updated: 2026-09-01
+artifact_id: "RUN-0007"
 ---
 
 # Kiali Observability 연결 복구 Runbook
@@ -374,7 +374,6 @@ argocd app set platform-external-services \
 - **Operations Policy**: [`../policies/0005-observability-platform-operations-policy.md`](../policies/0005-observability-platform-operations-policy.md)
 - **ArgoCD Metrics Runbook**: [`./0008-argocd-metrics-prometheus-runbook.md`](./0008-argocd-metrics-prometheus-runbook.md)
 - **External Services**: [`../../../gitops/platform/external-services`](../../../gitops/platform/external-services)
-- [`../guides/0006-argocd-prometheus-grafana-guide.md`](../guides/0006-argocd-prometheus-grafana-guide.md)
 
 ### Lifecycle Traceability
 

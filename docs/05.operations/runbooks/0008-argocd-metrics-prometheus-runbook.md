@@ -3,8 +3,8 @@ title: 'ArgoCD 메트릭 Prometheus 수집 복구 Runbook'
 type: sdlc/runbook
 status: active
 owner: platform
-updated: 2026-05-09
-artifact_id: "RUNBOOK-0008"
+updated: 2026-09-01
+artifact_id: "RUN-0008"
 ---
 
 # ArgoCD 메트릭 Prometheus 수집 복구 Runbook
@@ -306,7 +306,6 @@ docker exec infra-prometheus promtool check config /etc/prometheus/prometheus.ym
 - **Kiali Connectivity Runbook**: [`./0007-kiali-observability-connectivity-runbook.md`](./0007-kiali-observability-connectivity-runbook.md)
 - **k8s Observability Runbook**: [`./0009-k8s-observability-runbook.md`](./0009-k8s-observability-runbook.md)
 - [Operations Policy](../policies/0005-observability-platform-operations-policy.md)
-- [Guide](../guides/0006-argocd-prometheus-grafana-guide.md)
 - [NodePort YAML](../../../gitops/platform/argocd/argocd-metrics-nodeport.yaml)
 - External sibling workspace path: `hy-home.docker/infra/06-observability/prometheus/config/prometheus.yml`
 

@@ -127,7 +127,6 @@ PR review 후 `main`에 병합되면 ArgoCD `apps-generator` ApplicationSet이 �
 
 ## Related Documents
 
-- Guide: [`../../docs/05.operations/guides/0008-github-app-gitops-onboarding-guide.md`](../../docs/05.operations/guides/0008-github-app-gitops-onboarding-guide.md)
 - Runbook: [`../../docs/05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md`](../../docs/05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md)
-- Operations: [`../../docs/05.operations/policies/0007-app-gitops-onboarding-policy.md`](../../docs/05.operations/policies/0007-app-gitops-onboarding-policy.md)
+- Policy: [`../../docs/05.operations/policies/0007-app-gitops-onboarding-policy.md`](../../docs/05.operations/policies/0007-app-gitops-onboarding-policy.md)
 - 참조 구현: [`../../gitops/workloads/adminer`](../../gitops/workloads/adminer)

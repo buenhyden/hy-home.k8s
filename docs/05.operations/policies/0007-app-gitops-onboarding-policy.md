@@ -3,8 +3,8 @@ title: '앱 GitOps 온보딩 정책'
 type: sdlc/policy
 status: active
 owner: platform
-updated: 2026-06-04
-artifact_id: "POLICY-0007"
+updated: 2026-09-01
+artifact_id: "POL-0007"
 ---
 
 # 앱 GitOps 온보딩 정책
@@ -18,12 +18,8 @@ artifact_id: "POLICY-0007"
 
 ### Current Contract Note
 
-이 정책은 현재 앱 온보딩의 기준 계약이다. 실행 절차는
-[GitHub 앱 GitOps 온보딩 가이드](../guides/0008-github-app-gitops-onboarding-guide.md)와
+이 정책은 현재 앱 온보딩의 기준 계약이다. 실행 순서와 검증·복구 절차는
 [GitHub 앱 GitOps 온보딩 런북](../runbooks/0010-github-app-gitops-onboarding-runbook.md)이 담당한다.
-기존 범용 온보딩 문서(0005 가이드, 0006 런북)는 삭제됐으며
-[0008 가이드](../guides/0008-github-app-gitops-onboarding-guide.md)와
-[0010 런북](../runbooks/0010-github-app-gitops-onboarding-runbook.md)으로 대체됐다.
 
 ### Purpose
 
@@ -44,7 +40,7 @@ artifact_id: "POLICY-0007"
 ## Controls
 
 세부 통제는 아래 1-4장에 정의한다. 모든 신규 앱은 Rollout, AnalysisTemplate, 명시적 ingress/TLS, GitOps PR flow, secret/Vault 경계를 따라야 한다.
-구체적인 manifest 작성 순서와 검증 명령은 [GitHub 앱 GitOps 온보딩 가이드](../guides/0008-github-app-gitops-onboarding-guide.md)와 [GitHub 앱 GitOps 온보딩 런북](../runbooks/0010-github-app-gitops-onboarding-runbook.md)이 소유한다.
+구체적인 manifest 작성 순서와 검증 명령은 [GitHub 앱 GitOps 온보딩 런북](../runbooks/0010-github-app-gitops-onboarding-runbook.md)이 소유한다.
 
 ---
 
@@ -187,7 +183,7 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 ## Review Cadence
 
 - 새 앱 온보딩 또는 `examples/sample-app/` 변경 시마다 검토한다.
-- Rollouts, Istio, cert-manager, Vault/ESO 계약 변경 시 관련 guide/runbook과 함께 검토한다.
+- Rollouts, Istio, cert-manager, Vault/ESO 계약 변경 시 관련 policy/runbook과 함께 검토한다.
 
 ### AI Agent Policy Section
 
@@ -196,7 +192,6 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 
 ## Traceability
 
-- **Guide**: [`../guides/0008-github-app-gitops-onboarding-guide.md`](../guides/0008-github-app-gitops-onboarding-guide.md)
 - **Runbook**: [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md)
 - **예시 템플릿**: [`../../../examples/sample-app`](../../../examples/sample-app)
 - **참조 구현**: [`../../../gitops/workloads/adminer`](../../../gitops/workloads/adminer)

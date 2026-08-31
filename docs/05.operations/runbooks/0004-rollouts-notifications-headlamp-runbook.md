@@ -3,8 +3,8 @@ title: 'Argo Rollouts, Notifications & Headlamp Runbook'
 type: sdlc/runbook
 status: active
 owner: platform
-updated: 2026-05-09
-artifact_id: "RUNBOOK-0004"
+updated: 2026-09-01
+artifact_id: "RUN-0004"
 ---
 
 # Argo Rollouts, Notifications & Headlamp Runbook
@@ -36,18 +36,18 @@ Rollouts, Notifications, Headlamp 운영 상태를 빠르게 확인하고, 초�
 
 ### Procedure 1: Vault Notifications Secret 준비 (최초 1회)
 
-```bash
-# Slack Bot Token 준비 후 Vault에 저장
-export VAULT_TOKEN='<redacted>'
-# external secret operation; human-approved bootstrap only
-vault kv put secret/platform/notifications \
-  slack_token="xoxb-your-slack-bot-token"
+Notifications token provisioning은 이 저장소의 실행 transcript 밖에서 승인된
+Vault operator가 수행하는 external secret operation이다. token 값, login
+명령, Vault write 명령은 문서·shell history·검증 로그에 남기지 않는다.
+이 런북은 ESO가 생성한 리소스의 상태를 읽는 지점에서 시작한다.
 
-# 확인
-vault kv get secret/platform/notifications
+```bash
+kubectl -n argocd get externalsecret
+kubectl -n argocd get secret argocd-notifications-secret
 ```
 
-> **주의**: token은 반드시 Vault에 저장. 평문 커밋 금지.
+> **주의**: secret value를 출력하는 `kubectl get secret -o yaml/json` 형태는
+> 증적 수집에 사용하지 않는다.
 
 ---
 

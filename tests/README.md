@@ -129,10 +129,8 @@ those step or result semantics.
 | Archive and agent-registry lifecycle regression | `python3 -m unittest tests/test_document_lifecycle_archive_cutover.py`; `python3 -m unittest tests/test_document_lifecycle_agent_roster_cutover.py`; `python3 scripts/validate-document-lifecycle.py --root . --mode staged` | Archive-focused tests preserve sealed migration and immutable recovery rules. The agent-registry regression verifies that current neutral and Claude Markdown projections route through terminal document profiles, the provider set is exactly Codex and Claude, and the retired Spec 044 mutable-base/four-surface admission gate is no longer lifecycle authority. |
 | Workspace boundary regression | `python3 -m unittest tests/test_workspace_boundary.py`; `python3 scripts/validate-workspace-boundary.py --self-test`; `python3 scripts/validate-workspace-boundary.py --root .` | Sixteen focused methods plus the isolated self-test prove exact stage-zero `100644` README and root-ignore cardinality; full SHA-1/SHA-256 root-ignore OIDs; bounded immutable blob retrieval; extra/force-added, symlink/gitlink/nonregular/conflict, malformed-index, startup, and timeout rejection; and stable path-only diagnostics. Two hostile ignored-child policies and one divergent worktree-root policy prove only the staged root blob controls probe ignored/README unignored results. Four actual-repository index/object queries precede three isolated-context init/ignore queries; no actual-worktree `check-ignore` runs. Actual-path traversal/open/stat sentinels allow only isolated policy evaluation. |
 | Repository quality gates | `bash scripts/validate-repo-quality-gates.sh .` | Repo-static |
-| Document strict cutover regression | `python3 tests/test_document_strict_cutover.py` | Six focused tests prove that all three public document validators default to strict, accept only explicit strict, reject the retired compatibility value with argparse exit `2`, keep current command contracts free of compatibility invocations and stale v7 claims, prevent retired Stage 99 archive profile/form reintroduction, and preserve the exact Spec 033 no-growth retirement guard while the retired semantic-debt fixture remains absent. |
-| Markdown profile self-test | `python3 scripts/validate-markdown-profiles.py --self-test` | Repo-static |
+| Document strict cutover regression | `python3 tests/test_document_strict_cutover.py` | Strict-only validator contracts, terminal Stage 99 authority, Stage 05 owner/identity boundaries, retired-stage link absence, and current Incident/Postmortem template alignment. |
 | Markdown profile repository check | `python3 scripts/validate-markdown-profiles.py --root .`; `python3 scripts/validate-markdown-profiles.py --root . --mode strict` | Repo-static strict-only evidence; omitting the mode is equivalent to explicit strict |
-| Cross-document self-test | `python3 scripts/validate-links-and-owners.py --self-test` | Repo-static link, stage/collection-index, Stage 00 and Current-pack lifecycle-mirror, owner, and ledger mutation evidence |
 | Cross-document repository check | `python3 scripts/validate-links-and-owners.py --root .`; `python3 scripts/validate-links-and-owners.py --root . --mode strict` | Repo-static strict-only evidence; the retired compatibility value is an argparse exit `2` boundary |
 | Cross-document inventory | `python3 scripts/validate-links-and-owners.py --root . --inventory --format json` | Repo-static ordered registry population |
 | Agent registry regression | `python3 -m unittest tests.test_validate_agent_registry tests.test_validate_agent_harness_contract` | Closed providers, roles, permissions, references, projections, and safe-input mutations. |
@@ -317,12 +315,10 @@ adapter PASS does not prove provider runtime consumption.
   고정하고, registry-derived canonical form 수가 Markdown 27개와 native
   3개임을 검증한다. 이 파일은 debt admission이나 `DEFER` 목록을 소유하지
   않는다.
-- `tests/fixtures/markdown-profiles.json`은 registry의 정확한 64개 행을
-  `validate-document` 55개, `classification-only` 7개,
-  `append-fragment` 1개, `excluded` 1개로 구분한다. Fixed `2026-07-12`
-  기준일, leap-day,
-  template placeholder, append context, stable rule-ID mutation은 모두 production
-  entry point를 통과한다.
+- `tests/fixtures/markdown-profiles.json`은 registry profile별 applicability와
+  positive/negative mutation을 구분한다. Fixed `2026-07-12` 기준일,
+  leap-day, template placeholder, append context, stable rule-ID mutation은
+  모두 production entry point를 통과한다. Fixture 총개수는 계약이 아니다.
 - `tests/fixtures/document-contracts/native-surface-cases.json`은 GitHub issue
   form, workflow, OpenAPI, GraphQL, protobuf의 정확한 5개 family와 positive
   5개/leading SDLC five-key negative 5개를 별도의 `10/10` 경계로 검증한다.

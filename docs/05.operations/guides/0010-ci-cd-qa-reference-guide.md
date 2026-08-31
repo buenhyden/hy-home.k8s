@@ -1,210 +1,94 @@
 ---
-title: 'CI/CD & QA 로컬-vs-GitHub 참조 가이드'
+title: "CI/CD 및 QA 검증 경계 가이드"
 type: sdlc/guide
 status: active
 owner: platform
-updated: 2026-08-29
-artifact_id: "GUIDE-0010"
+updated: 2026-09-01
+artifact_id: "GDE-0010"
 ---
 
-# CI/CD & QA 로컬-vs-GitHub 참조 가이드
-
----
+# CI/CD 및 QA 검증 경계 가이드
 
 ## Overview
 
-이 가이드는 `hy-home.k8s` 워크스페이스의 QA/CI 검증 체계를 설명한다.
-로컬 개발 환경에서 실행 가능한 검증 명령과 GitHub Actions에서만 실행되는 작업을
-명확히 구분하여, 커밋 전 로컬 검증 패턴과 원격 CI 게이트 구조를 이해하도록 돕는다.
+이 가이드는 변경 작성자가 로컬 정적 검증, GitHub Actions 호스팅 검증,
+승인된 런타임 검증을 서로 다른 증적 등급으로 해석하도록 돕는다. 실행 순서나
+복구 절차를 복제하지 않고, 현재 검증 진입점과 증적의 한계를 안내한다.
 
 ## Guide Type
 
-`how-to`
+Concept guide. 검증 명령의 구현은 `scripts/README.md`, CI job 구성은
+`.github/workflows/ci.yml`, 실행·복구 절차는 연결된 Runbook이 소유한다.
 
 ## Target Audience
 
-- 플랫폼 팀 개발자
-- AI 에이전트 (문서 및 GitOps 변경 작업 시)
-- 새로운 기여자
-
-### Purpose
-
-커밋 전 로컬에서 실행 가능한 검증 명령을 정의하고, GitHub Actions에서만 수행되는
-CI 게이트와의 경계를 명확히 한다. 이 가이드를 따르면 PR 제출 전 로컬에서
-CI 실패를 사전에 예방할 수 있다.
-
-### Source Basis
-
-- Parent Spec: [Workspace Document Governance Hardening Spec](../../03.specs/0013-workspace-document-governance-hardening/spec.md)는 GitHub Actions documentation, supply-chain evidence, CommonMark/YAML formatting, GitOps boundary claims의 official-source basis를 소유한다.
-- Reference: [CI/CD, GitHub Actions, and QA Research](../../90.references/research/0001-workspace-engineering/ci-cd-github-actions-and-qa.md)는 workflow syntax/events, formatting, linting, testing, and static evidence boundaries를 semantic research pack과 observation metadata로 유지한다.
-- 이 가이드의 GitHub Actions CI gate definitions는 `.github/workflows/ci.yml`, `.github/README.md`, `scripts/README.md`, `tests/README.md`의 tracked repository evidence와 대조해 유지한다.
+- 문서·GitOps·자동화 변경을 작성하거나 검토하는 개발자
+- 정적 검증 결과를 운영 증적으로 해석하는 플랫폼 운영자
+- 허용된 범위 안에서 검증을 수행하고 handoff를 작성하는 AI Agent
 
 ## Prerequisites
 
-- WSL2 + k3d 환경 구성 완료 (`docs/05.operations/guides/0002-wsl2-k3d-argocd-ha-setup-guide.md`)
-- `pre-commit` 설치: `pip install pre-commit && pre-commit install`
-- Python 3.x 설치 및 `pyyaml` 패키지: `pip install pyyaml`
-- Bash 4.x 이상 (WSL2 기본 제공)
+- 저장소 checkout과 변경 범위에 대한 읽기 권한
+- [Quality Policy](../../00.agent-governance/policies/quality.md)의 증적 경계 이해
+- 변경한 표면의 소유 Spec, Policy, Runbook 확인
+- live cluster나 외부 서비스 검증이 필요하면 별도의 명시적 승인
 
 ## Step-by-step Instructions
 
-### 1. 로컬 실행 — 커밋 전 필수 검증
+### 1. 변경 표면을 먼저 분류한다
 
-로컬 개발 환경에서는 **빠른 피드백**을 위해 `pre-commit` 기반의 린트와 문법 검사를 우선 수행한다.
-PR 전 기본 기준은 pre-commit이며, CI 실패 디버깅이나 scripts/GitOps/docs 변경의 full 재현이 필요할 때 repo-static bundle을 로컬에서 실행한다.
+`python3 scripts/validate-affected-surfaces.py --root .`는 변경된 경로에 맞는
+정적 검증 후보를 제시한다. 이 결과는 실행 권한을 부여하지 않으며, 변경하지
+않은 표면까지 무조건 검증하라는 고정 fixture도 아니다.
 
-#### 1-1. pre-commit 전체 실행
+### 2. 가장 작은 로컬 검증에서 시작한다
 
-```bash
-pre-commit run --all-files
-```
+| 변경 상태 | 권장 진입점 | 증적 의미 |
+| --- | --- | --- |
+| 작업 트리 변경 | 영향 표면별 validator/test | 해당 변경의 빠른 정적 확인 |
+| staged 변경 | `python3 scripts/run-validation-lane.py --root . --lane staged --paths-file <paths.nul> --delimiter nul` | 커밋 후보 범위의 통합 확인 |
+| 전체 저장소 | `bash scripts/validate-repo-quality-gates.sh .` | 현재 checkout의 정적 계약 확인 |
 
-포함 훅: commitizen, gitleaks, detect-secrets, markdownlint-cli2,
-check-dependabot, shellcheck, shfmt, actionlint, kube-linter, hadolint, check-jsonschema
+명령과 옵션의 현재 정의는 [`scripts/README.md`](../../../scripts/README.md)를
+따른다. 문서에 고정된 validator 개수나 fixture 개수를 성공 기준으로 삼지
+않는다.
 
-단일 파일 격리 실행 (오류 발생 시):
+### 3. 호스팅 CI의 소유 경계를 확인한다
 
-```bash
-pre-commit run --files <path/to/file>
-```
+`.github/workflows/ci.yml`이 job 이름, 의존 관계, 실행 조건의 canonical
+source다. 현재 주요 검증 면은 branch policy, change classification,
+pre-commit, repository quality, agent governance, manifest validation,
+summary로 나뉜다. 로컬 성공은 호스팅 환경의 권한·event·required-check
+상태까지 증명하지 않는다.
 
-#### 1-2. 디버깅 및 CI 스크립트 (선택 사항)
+### 4. 증적 등급을 구분해 handoff한다
 
-무거운 구조/매니페스트 검사는 GitHub Actions CI에서 항상 수행된다. 로컬에서 CI 실패를 디버깅하거나 scripts/GitOps/docs 변경을 명시적으로 검증할 때 아래의 스크립트들을 활용한다.
+- 로컬 정적 검증: checkout에 있는 파일과 도구의 계약을 확인한다.
+- 호스팅 CI: GitHub event와 workflow 환경에서 동일 변경을 확인한다.
+- 런타임 검증: 승인된 운영자가 실제 cluster/service 상태를 확인한다.
 
-```bash
-bash scripts/validate-repo-quality-gates.sh .
-bash scripts/validate-gitops-structure.sh
-bash scripts/validate-k8s-manifests.sh .
-bash scripts/check-secret-handling.sh .
-bash scripts/validate-policy-gates.sh .
-```
-
-`validate-repo-quality-gates.sh`는 문서 변경 시 다음 archive/currentness 계약도 함께 검증한다.
-
-- `docs/98.archive`는 허용된 canonical docs stage이며 모든 Archive Record는 `archive-record.template.md`의 ArchiveEnvelope.v1 구조를 따른다.
-- `docs/98.archive/README.md`는 01-05 stage별 Archive Index를 소유하며, `05.operations/{guides,policies,runbooks,incidents}` mirror 구조를 포함해야 한다.
-- active `docs/01-05` 문서는 오래된 UI/endpoint runtime contract를 historical 또는 superseded 메모만으로 보존할 수 없다.
-- active 문서는 archived Headlamp OIDC/Keycloak guide/runbook, removed OIDC secret contract, removed OIDC ExternalSecret filename, or missing Headlamp values-file contract를 current 운영 기준처럼 참조할 수 없다.
-- active 문서는 provider-local hook path나 현재 CI에 없는 stale job 이름을 active verification command로 노출할 수 없다.
-- active Rollouts 문서는 현재 adminer/sample-app AnalysisTemplate 구현을 future-only 또는 analysis-free 기본 계약처럼 설명할 수 없다.
-- active app onboarding 문서는 Deployment가 apps AppProject allow-list에 이미 들어있다고 설명할 수 없다.
-- Archive Record는 provenance가 검증된 원본 전체 바이트를 marker 뒤 payload로 보존하며, 현재 문서는 개별 record가 아니라 `docs/98.archive/README.md`만 탐색 진입점으로 사용한다.
-- `docs/99.templates/templates/references/reference.template.md`는 archive 정책이나 archive wording을 포함하지 않는다.
-
-#### 1-8. Shell 문법 검사 (단일 파일)
-
-```bash
-bash -n scripts/<script-name>.sh
-bash -n docs/00.agent-governance/hooks/<hook-name>.sh
-```
-
-### 2. GitHub Actions 전용 — 로컬 재현 불가
-
-다음 작업들은 GitHub 이벤트 컨텍스트 또는 저장소 권한이 필요하여
-로컬에서 실행되지 않는다.
-
-#### 2-1. branch-policy (`.github/workflows/ci.yml`)
-
-- **트리거**: PR 오픈/동기화 시에만 실행
-- **역할**: PR base branch = `main` 강제, source branch 접두사 검증
-- **허용 접두사**: `feat/`, `fix/`, `docs/`, `refactor/`, `test/`, `chore/`, `ci/`, `release/`, `hotfix/`, `codex/`, `dependabot/`
-- **로컬 대안**: 없음 (branch policy는 PR 컨텍스트 필요)
-
-#### 2-2. generate-changelog (`.github/workflows/generate-changelog.yml`)
-
-- **트리거**: `v*.*.*` 태그 푸시 시
-- **역할**: git-cliff로 CHANGELOG 자동 생성 및 아티팩트 업로드
-- **로컬 대안**: `git cliff --output CHANGELOG.md` (git-cliff 설치 시 로컬 미리보기 가능)
-
-#### 2-3. labeler (`.github/workflows/labeler.yml`)
-
-- **트리거**: PR 오픈/동기화 시
-- **역할**: 변경 경로 기반 자동 PR 라벨 부여
-- **로컬 대안**: 없음 (GitHub API 필요)
-
-#### 2-4. stale (`.github/workflows/stale.yml`)
-
-- **트리거**: 매일 01:30 UTC (cron)
-- **역할**: 30일(이슈)/45일(PR) 비활성 시 `stale` 라벨 부착, 이후 5일(이슈)/10일(PR) 경과 시 자동 닫기
-- **로컬 대안**: 없음 (GitHub API 필요)
-
-#### 2-5. greetings (`.github/workflows/greetings.yml`)
-
-- **트리거**: 최초 PR/이슈 오픈 시
-- **역할**: 첫 기여자 자동 환영 메시지
-- **로컬 대안**: 없음 (GitHub API 필요)
-
-### 3. CI Job 구조 (`.github/workflows/ci.yml`)
-
-CI 파이프라인은 6개 검사 job과 1개 집계 job(`ci-summary`)으로 구성된다:
-
-| Job                   | 트리거 조건                             | 로컬 재현 명령                                  |
-| --------------------- | --------------------------------------- | ----------------------------------------------- |
-| `branch-policy`       | PR 이벤트 전용                          | 없음                                            |
-| `changes`             | 항상 실행 (path filter)                 | 없음                                            |
-| `pre-commit`          | 모든 파일 변경                          | `pre-commit run --all-files`                    |
-| `repo-quality-static` | docs, .github, .agents, .claude, .codex, scripts 등 변경 | `bash scripts/validate-repo-quality-gates.sh .` |
-| `agent-governance-static` | .agents, .claude, .codex, docs/00.agent-governance 등 agent governance 표면 변경 | 아래 참조 |
-| `manifest-static`     | gitops, infrastructure YAML 변경        | 아래 참조                                       |
-| `ci-summary`          | 항상 실행 (집계)                        | 없음                                            |
-
-`agent-governance-static` 로컬 재현:
-
-```bash
-bash scripts/validate-repo-quality-gates.sh .
-python3 scripts/validate-agent-governance-closure.py --root . --self-test
-python3 scripts/validate-agent-governance-closure.py --root .
-```
-
-저장소 품질 게이트는 이 job이 실행하는 검증기를 대부분 포함하지만
-`validate-agent-governance-closure.py`는 포함하지 않는다. 게이트만 통과했다고
-해서 이 CI lane이 통과한다고 볼 수 없으므로 위 두 명령을 함께 실행한다.
-job이 실행하는 전체 명령 목록은 `.github/workflows/ci.yml`이 소유한다.
-
-`manifest-static` 로컬 재현:
-
-```bash
-bash infrastructure/tests/verify-contracts-static.sh
-bash scripts/validate-gitops-structure.sh
-bash scripts/validate-k8s-manifests.sh .
-bash scripts/check-secret-handling.sh .
-bash scripts/validate-policy-gates.sh .
-```
-
-### 4. 커밋 전 로컬 체크리스트
-
-모든 변경 사항 발생 시:
-
-```bash
-pre-commit run --all-files
-git status --short
-git diff
-git diff --cached
-```
-
-포맷터가 파일을 변경하면 affected, staged, all-files 검증을 다시 실행한다. 전체 완료 순서와 결과 어휘는 [Agent Quality Standards](../../00.agent-governance/policies/quality.md)를 따른다. 로컬에서는 `pre-commit` 통과를 빠른 PR 생성 기준으로 삼을 수 있으며, 통합 및 정책 게이트 검증은 GitHub CI가 최종 판정한다. 다만 scripts, GitOps, QA/CI 문서, policy bundle 변경은 위의 `repo-quality-static`/`manifest-static` 재현 명령을 로컬에서도 실행해 evidence를 남긴다.
-신규 testable application/source code가 추가되는 변경은 해당 application test surface에서 90% coverage target을 검토하고 유지한다. Bash/YAML/Markdown infrastructure 변경은 application coverage claim 대신 validation-matrix evidence를 남긴다.
-repo-static 및 CI 검증은 live k3d, ArgoCD, Vault, ESO, deployment readiness 증거가 아니다. live runtime 증거는 별도 승인된 read-only 검증 또는 operator-owned runbook 결과로만 기록한다.
+handoff에는 실행한 진입점, 결과, 실행하지 못한 검증과 그 이유를 기록한다.
+브랜치 SHA나 고정된 문서 수를 별도의 운영 진실로 복제하지 않는다.
 
 ## Common Pitfalls
 
-- **markdownlint auto-fix**: `pre-commit run --all-files` 첫 실행 시 파일이 자동 수정됨 → 수정된 파일을 스테이징 후 재실행
-- **archive cutover 실패**: `python3 scripts/archive_cutover.py --root .`이 31개 ArchiveEnvelope.v1 record, 202개 historical link, source provenance, payload digest, secret classification, registry/template 권위, index-only current navigation 중 하나의 불일치를 발견한 경우 발생 → path-only diagnostic을 따라 envelope, manifest, current link를 원자적으로 정리
-- **active docs stale contract 실패**: `docs/01-05` 활성 문서에 old UI/endpoint runtime claim, archived Headlamp OIDC contract, stale hook path, stale CI job name이 남은 경우 발생 → current replacement 문서로 갱신하거나 archive로 이동
-- **branch-policy 실패**: PR source branch 접두사 오류 → branch를 재생성하거나 GitHub에서 PR base를 확인
-- **validate-policy-gates.sh conftest 미설치**: conftest 바이너리가 없으면 스크립트가 built-in fallback으로 plaintext Secret, `CreateNamespace=true`, AppProject wildcard, `latest` image 정책을 계속 검사한다. Conftest 설치 시 Rego bundle도 함께 검증된다.
+- 로컬 PASS를 required check 또는 배포 성공으로 표현하지 않는다.
+- 문서에 CI job 수나 fixture 수를 고정해 currentness를 대체하지 않는다.
+- 실패한 aggregate gate를 더 작은 PASS 몇 개로 상쇄하지 않는다.
+- live cluster, Vault, 외부 API 검증은 정적 QA의 기본 범위로 확장하지 않는다.
+- 퇴역 문서의 경로를 redirect 문서로 유지하지 않고 현재 owner로 소비자를
+  직접 연결한다.
 
 ## Traceability
 
-- **CI 워크플로우**: [`.github/workflows/ci.yml`](../../../.github/workflows/ci.yml)
-- **Parent Spec**: [`../../03.specs/0013-workspace-document-governance-hardening/spec.md`](../../03.specs/0013-workspace-document-governance-hardening/spec.md)
-- **Scripts 인벤토리**: [`../../../scripts/README.md`](../../../scripts/README.md)
-- **K8s GitOps 정책**: [`../policies/0001-k8s-gitops-operations-policy.md`](../policies/0001-k8s-gitops-operations-policy.md)
-- **HA 플랫폼 가이드**: [`0002-wsl2-k3d-argocd-ha-setup-guide.md`](0002-wsl2-k3d-argocd-ha-setup-guide.md)
+- [Quality Policy](../../00.agent-governance/policies/quality.md)
+- [Agent Execution Policy](../../00.agent-governance/policies/agent-execution.md)
+- [Scripts Router](../../../scripts/README.md)
+- [Reference Maintenance Runbook](../runbooks/0011-reference-maintenance-runbook.md)
+- [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)
 
 ### Lifecycle Traceability
 
 | Promoted owner | Audience outcome | Operating surface |
 | --- | --- | --- |
-| [Workspace Document Governance Hardening Spec](../../03.specs/0013-workspace-document-governance-hardening/spec.md) | Contributors and AI agents can choose the correct local QA command, understand GitHub-only gates, and report static evidence without implying live readiness. | pre-commit hooks, repository quality and manifest validation scripts, `.github/workflows/ci.yml`, and CI-only event/API jobs |
+| [TSK-0054-0006](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks/tsk-0006-stage-05-ownership-cutover.md) | 검증 결과의 범위와 한계를 구분해 handoff한다. | local validators, GitHub Actions, approved runtime evidence |

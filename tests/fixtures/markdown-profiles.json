@@ -643,7 +643,7 @@
       "mode": "authored",
       "applicability": "validate-document",
       "fixturePath": "docs/05.operations/guides/9999-fixture.md",
-      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/guide\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Guide Type\n\nFixture content.\n\n## Target Audience\n\nFixture content.\n\n## Prerequisites\n\nFixture content.\n\n## Step-by-step Instructions\n\nFixture content.\n\n## Common Pitfalls\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/guide\nstatus: draft\nowner: platform\nupdated: 2026-07-12\nartifact_id: \"GDE-9999\"\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Guide Type\n\nFixture content.\n\n## Target Audience\n\nFixture content.\n\n## Prerequisites\n\nFixture content.\n\n## Step-by-step Instructions\n\nFixture content.\n\n## Common Pitfalls\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
       "negativeMutations": [
         {
           "kind": "remove-required-heading",
@@ -658,7 +658,7 @@
       "mode": "authored",
       "applicability": "validate-document",
       "fixturePath": "docs/05.operations/policies/9999-fixture.md",
-      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/policy\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Policy Scope\n\nFixture content.\n\n## Applies To\n\nFixture content.\n\n## Controls\n\nFixture content.\n\n## Exceptions\n\nFixture content.\n\n## Verification\n\nFixture content.\n\n## Review Cadence\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/policy\nstatus: draft\nowner: platform\nupdated: 2026-07-12\nartifact_id: \"POL-9999\"\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Policy Scope\n\nFixture content.\n\n## Applies To\n\nFixture content.\n\n## Controls\n\nFixture content.\n\n## Exceptions\n\nFixture content.\n\n## Verification\n\nFixture content.\n\n## Review Cadence\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
       "negativeMutations": [
         {
           "kind": "remove-required-heading",
@@ -673,7 +673,7 @@
       "mode": "authored",
       "applicability": "validate-document",
       "fixturePath": "docs/05.operations/runbooks/9999-fixture.md",
-      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/runbook\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Runbook Type\n\nFixture content.\n\n## When to Use\n\nFixture content.\n\n## Procedure or Checklist\n\nFixture content.\n\n## Verification Steps\n\nFixture content.\n\n## Observability and Evidence Sources\n\nFixture content.\n\n## Safe Rollback or Recovery Procedure\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/runbook\nstatus: draft\nowner: platform\nupdated: 2026-07-12\nartifact_id: \"RUN-9999\"\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Runbook Type\n\nFixture content.\n\n## When to Use\n\nFixture content.\n\n## Procedure or Checklist\n\nFixture content.\n\n## Verification Steps\n\nFixture content.\n\n## Observability and Evidence Sources\n\nFixture content.\n\n## Safe Rollback or Recovery Procedure\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
       "negativeMutations": [
         {
           "kind": "remove-required-heading",
@@ -688,7 +688,7 @@
       "mode": "authored",
       "applicability": "validate-document",
       "fixturePath": "docs/05.operations/incidents/2026/inc-0999-fixture/incident.md",
-      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/incident\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Incident Metadata\n\nFixture content.\n\n## Impact\n\nFixture content.\n\n## Timeline\n\nFixture content.\n\n## Response State\n\nFixture content.\n\n## Evidence\n\nFixture content.\n\n## Follow-up Actions\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/incident\nstatus: open\nowner: platform\nupdated: 2026-07-12\nartifact_id: \"INC-2026-0999\"\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Incident Metadata\n\nFixture content.\n\n## Roles and Coordination\n\nFixture content.\n\n## Impact\n\nFixture content.\n\n## Timeline\n\nFixture content.\n\n## Response State\n\nFixture content.\n\n## Evidence\n\nFixture content.\n\n## Follow-up Actions\n\nFixture content.\n\n## Closure\n\nFixture content.\n\n## Traceability\n\n### Lifecycle Traceability\n\n| Timeline or action | Evidence | Follow-up Task |\n| --- | --- | --- |\n| Detection | N/A — fixture evidence | N/A — no follow-up required |\n",
       "negativeMutations": [
         {
           "kind": "remove-required-heading",
@@ -703,7 +703,7 @@
       "mode": "authored",
       "applicability": "validate-document",
       "fixturePath": "docs/05.operations/incidents/2026/inc-0999-fixture/postmortem.md",
-      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/postmortem\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Incident Link and Impact Summary\n\nFixture content.\n\n## Root Cause Analysis\n\nFixture content.\n\n## Contributing Factors\n\nFixture content.\n\n## What Went Well\n\nFixture content.\n\n## What Went Wrong\n\nFixture content.\n\n## Action Items\n\nFixture content.\n\n## Prevention and Verification\n\nFixture content.\n\n## Documentation Feedback Loop\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/postmortem\nstatus: draft\nowner: platform\nupdated: 2026-07-12\nartifact_id: \"POSTMORTEM-2026-0999\"\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Incident Link and Impact Summary\n\nFixture content.\n\n## Root Cause Analysis\n\nFixture content.\n\n## Contributing Factors\n\nFixture content.\n\n## Detection and Response Review\n\nFixture content.\n\n## What Went Well\n\nFixture content.\n\n## What Went Wrong\n\nFixture content.\n\n## Action Items\n\nFixture content.\n\n## Prevention and Verification\n\nFixture content.\n\n## Action Closure\n\nFixture content.\n\n## Documentation Feedback Loop\n\nFixture content.\n\n## Traceability\n\n### Lifecycle Traceability\n\n| Root cause or action | Owner and due state | Follow-up Task | Feedback target |\n| --- | --- | --- | --- |\n| N/A — fixture cause | fixture owner / no due date / fixture | N/A — no follow-up required | N/A — fixture only |\n",
       "negativeMutations": [
         {
           "kind": "remove-required-heading",
@@ -717,7 +717,7 @@
       "profile": "content/reference",
       "mode": "authored",
       "applicability": "validate-document",
-      "fixturePath": "docs/90.references/research/fixture.md",
+      "fixturePath": "docs/90.references/research/9999-fixture/fixture.md",
       "positiveSource": "---\ntitle: Fixture Document\ntype: content/reference\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Reference Type\n\nFixture content.\n\n## Authority Boundary\n\nFixture content.\n\n## Scope\n\nFixture content.\n\n## Definitions / Facts\n\nFixture content.\n\n## Sources\n\nFixture content.\n\n## Review and Freshness\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
       "negativeMutations": [
         {
@@ -1296,8 +1296,8 @@
       "profile": "template/sdlc/guide",
       "mode": "template",
       "applicability": "validate-document",
-      "fixturePath": "docs/99.templates/templates/sdlc/operations/guide.template.md",
-      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/guide\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Guide Type\n\nFixture content.\n\n## Target Audience\n\nFixture content.\n\n## Prerequisites\n\nFixture content.\n\n## Step-by-step Instructions\n\nFixture content.\n\n## Common Pitfalls\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "fixturePath": "docs/99.templates/templates/operations/guide.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/guide\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\nartifact_id: \"GDE-####\"\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Guide Type\n\nFixture content.\n\n## Target Audience\n\nFixture content.\n\n## Prerequisites\n\nFixture content.\n\n## Step-by-step Instructions\n\nFixture content.\n\n## Common Pitfalls\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
       "negativeMutations": [
         {
           "kind": "remove-required-heading",
@@ -1311,8 +1311,8 @@
       "profile": "template/sdlc/incident",
       "mode": "template",
       "applicability": "validate-document",
-      "fixturePath": "docs/99.templates/templates/sdlc/operations/incident.template.md",
-      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/incident\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Incident Metadata\n\nFixture content.\n\n## Impact\n\nFixture content.\n\n## Timeline\n\nFixture content.\n\n## Response State\n\nFixture content.\n\n## Evidence\n\nFixture content.\n\n## Follow-up Actions\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "fixturePath": "docs/99.templates/templates/operations/incident.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/incident\nstatus: open\nowner: platform\nupdated: YYYY-MM-DD\nartifact_id: \"INC-YYYY-####\"\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Incident Metadata\n\nFixture content.\n\n## Roles and Coordination\n\nFixture content.\n\n## Impact\n\nFixture content.\n\n## Timeline\n\nFixture content.\n\n## Response State\n\nFixture content.\n\n## Evidence\n\nFixture content.\n\n## Follow-up Actions\n\nFixture content.\n\n## Closure\n\nFixture content.\n\n## Traceability\n\n### Lifecycle Traceability\n\n| Timeline or action | Evidence | Follow-up Task |\n| --- | --- | --- |\n| Detection | N/A — fixture evidence | N/A — no follow-up required |\n",
       "negativeMutations": [
         {
           "kind": "remove-required-heading",
@@ -1326,8 +1326,8 @@
       "profile": "template/sdlc/policy",
       "mode": "template",
       "applicability": "validate-document",
-      "fixturePath": "docs/99.templates/templates/sdlc/operations/policy.template.md",
-      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/policy\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Policy Scope\n\nFixture content.\n\n## Applies To\n\nFixture content.\n\n## Controls\n\nFixture content.\n\n## Exceptions\n\nFixture content.\n\n## Verification\n\nFixture content.\n\n## Review Cadence\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "fixturePath": "docs/99.templates/templates/operations/policy.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/policy\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\nartifact_id: \"POL-####\"\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Policy Scope\n\nFixture content.\n\n## Applies To\n\nFixture content.\n\n## Controls\n\nFixture content.\n\n## Exceptions\n\nFixture content.\n\n## Verification\n\nFixture content.\n\n## Review Cadence\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
       "negativeMutations": [
         {
           "kind": "remove-required-heading",
@@ -1341,8 +1341,8 @@
       "profile": "template/sdlc/postmortem",
       "mode": "template",
       "applicability": "validate-document",
-      "fixturePath": "docs/99.templates/templates/sdlc/operations/postmortem.template.md",
-      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/postmortem\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Incident Link and Impact Summary\n\nFixture content.\n\n## Root Cause Analysis\n\nFixture content.\n\n## Contributing Factors\n\nFixture content.\n\n## What Went Well\n\nFixture content.\n\n## What Went Wrong\n\nFixture content.\n\n## Action Items\n\nFixture content.\n\n## Prevention and Verification\n\nFixture content.\n\n## Documentation Feedback Loop\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "fixturePath": "docs/99.templates/templates/operations/postmortem.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/postmortem\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\nartifact_id: \"POSTMORTEM-YYYY-####\"\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Incident Link and Impact Summary\n\nFixture content.\n\n## Root Cause Analysis\n\nFixture content.\n\n## Contributing Factors\n\nFixture content.\n\n## Detection and Response Review\n\nFixture content.\n\n## What Went Well\n\nFixture content.\n\n## What Went Wrong\n\nFixture content.\n\n## Action Items\n\nFixture content.\n\n## Prevention and Verification\n\nFixture content.\n\n## Action Closure\n\nFixture content.\n\n## Documentation Feedback Loop\n\nFixture content.\n\n## Traceability\n\n### Lifecycle Traceability\n\n| Root cause or action | Owner and due state | Follow-up Task | Feedback target |\n| --- | --- | --- | --- |\n| N/A — fixture cause | fixture owner / no due date / fixture | N/A — no follow-up required | N/A — fixture only |\n",
       "negativeMutations": [
         {
           "kind": "remove-required-heading",
@@ -1356,8 +1356,8 @@
       "profile": "template/sdlc/runbook",
       "mode": "template",
       "applicability": "validate-document",
-      "fixturePath": "docs/99.templates/templates/sdlc/operations/runbook.template.md",
-      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/runbook\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Runbook Type\n\nFixture content.\n\n## When to Use\n\nFixture content.\n\n## Procedure or Checklist\n\nFixture content.\n\n## Verification Steps\n\nFixture content.\n\n## Observability and Evidence Sources\n\nFixture content.\n\n## Safe Rollback or Recovery Procedure\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "fixturePath": "docs/99.templates/templates/operations/runbook.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/runbook\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\nartifact_id: \"RUN-####\"\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Runbook Type\n\nFixture content.\n\n## When to Use\n\nFixture content.\n\n## Procedure or Checklist\n\nFixture content.\n\n## Verification Steps\n\nFixture content.\n\n## Observability and Evidence Sources\n\nFixture content.\n\n## Safe Rollback or Recovery Procedure\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
       "negativeMutations": [
         {
           "kind": "remove-required-heading",

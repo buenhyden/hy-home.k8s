@@ -4,6 +4,7 @@ type: sdlc/incident
 status: open
 owner: platform
 updated: YYYY-MM-DD
+artifact_id: "INC-YYYY-####"
 ---
 
 # Incident: [Incident Title]
@@ -14,7 +15,18 @@ updated: YYYY-MM-DD
 
 ## Incident Metadata
 
-<!-- Author prompt: record incident ID, severity, owners, start time, and declared state. -->
+<!-- Author prompt: record incident ID, severity, start/detection time, declared state, affected environment, and next checkpoint. -->
+
+| Field | Value |
+| --- | --- |
+| Severity | SEV-1 / SEV-2 / SEV-3 / SEV-4 |
+| Started / detected | YYYY-MM-DDTHH:MM:SSZ / YYYY-MM-DDTHH:MM:SSZ |
+| Current state | open / mitigated / resolved / closed |
+| Next checkpoint | YYYY-MM-DDTHH:MM:SSZ or N/A — closed |
+
+## Roles and Coordination
+
+<!-- Author prompt: name the incident commander, operations lead, communications owner, and escalation owner; use N/A only with a reason. -->
 
 ## Impact
 
@@ -34,7 +46,11 @@ updated: YYYY-MM-DD
 
 ## Follow-up Actions
 
-<!-- Author prompt: create owned follow-up Tasks without performing root-cause analysis here. -->
+<!-- Author prompt: create owned follow-up Tasks with due state without performing root-cause analysis here. -->
+
+## Closure
+
+<!-- Author prompt: record resolution/closure time, closure owner, remaining risk, and the evidence that permits the current state. -->
 
 ## Traceability
 

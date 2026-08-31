@@ -103,7 +103,7 @@ bash scripts/validate-k8s-manifests.sh .
 
 ## Success Criteria & Verification Plan
 
-- **VAL-SPC-001**: Repo quality gate passes with archive Tombstone policy enabled.
+- **VAL-SPC-001**: Repo quality gate passes and active documents have no Stage 98 dependency.
 - **VAL-SPC-002**: Static contract verification passes against current GitOps manifests.
 - **VAL-SPC-003**: GitOps structure check passes.
 - **VAL-SPC-004**: Kubernetes manifest syntax validation passes.
@@ -114,7 +114,7 @@ bash scripts/validate-k8s-manifests.sh .
 
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
-| N/A — [Acceptance criterion 04](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | VAL-SPC-001 | `scripts/validate-repo-quality-gates.sh .` checks current active-document and archive Tombstone policy. |
+| N/A — [Acceptance criterion 04](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | VAL-SPC-001 | `scripts/validate-repo-quality-gates.sh .` checks current active-document contracts without an Archive dependency. |
 | N/A — [Acceptance criterion 01](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | VAL-SPC-002 | `infrastructure/tests/verify-contracts-static.sh` verifies the current GitOps manifest contracts. |
 | N/A — [Acceptance criterion 02](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | VAL-SPC-003 | `scripts/validate-gitops-structure.sh` checks root Application, platform Application, and workload ApplicationSet ownership. |
 | N/A — [Acceptance criterion 03](../../01.requirements/0004-current-local-gitops-platform.md) remains package-owned | VAL-SPC-004 | `scripts/validate-k8s-manifests.sh .` validates tracked Kubernetes YAML syntax. |
@@ -127,7 +127,6 @@ bash scripts/validate-k8s-manifests.sh .
 
 ### Delivery and References
 
-- **Plan**: [../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md](../../98.archive/README.md#document-index)
-- **Tasks**: [Archive Index](../../98.archive/README.md#document-index)
+- **Operations Policy**: [../../05.operations/policies/0001-k8s-gitops-operations-policy.md](../../05.operations/policies/0001-k8s-gitops-operations-policy.md)
 - **Runbook**: [../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)
-- **Archive Index**: [../../98.archive/README.md](../../98.archive/README.md)
+- **GitOps desired state**: [../../../gitops](../../../gitops)

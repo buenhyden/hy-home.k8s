@@ -19,6 +19,7 @@ This is the sole active Spec 0054 Task record for WP-006.
 - [Spec 0054](../spec.md)
 - [Plan 0054](../plan.md)
 - [WP-006 execution boundary](../plan.md#wp-006--stage-05-ownership-cutover)
+- [CI/CD and QA validation boundary Guide](../../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
 
 ## Task Table
 

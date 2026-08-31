@@ -4,6 +4,7 @@ type: sdlc/postmortem
 status: draft
 owner: platform
 updated: YYYY-MM-DD
+artifact_id: "POSTMORTEM-YYYY-####"
 ---
 
 # Postmortem: [Incident Title]
@@ -24,6 +25,10 @@ updated: YYYY-MM-DD
 
 <!-- Author prompt: record technical, process, and organizational contributors without blame. -->
 
+## Detection and Response Review
+
+<!-- Author prompt: explain how the incident was detected, which response decisions helped or delayed mitigation, and cite the Incident timeline evidence. -->
+
 ## What Went Well
 
 <!-- Author prompt: identify controls or response behaviors that reduced impact. -->
@@ -39,6 +44,10 @@ updated: YYYY-MM-DD
 ## Prevention and Verification
 
 <!-- Author prompt: define how actions will prevent recurrence and how closure is verified. -->
+
+## Action Closure
+
+<!-- Author prompt: list action owner, due date/state, completion evidence, residual risk, and the closure approver. -->
 
 ## Documentation Feedback Loop
 

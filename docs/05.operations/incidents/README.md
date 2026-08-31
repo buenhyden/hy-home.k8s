@@ -64,10 +64,12 @@ Incident Record와 Postmortem은 각각 고정 basename `incident.md`와
 
 1. 대응 중에는 [incident.template.md](../../99.templates/templates/operations/incident.template.md)로 사실 기록을 시작한다.
 2. Incident Record는 `<year>/inc-####-<slug>/incident.md`로 작성하고 frontmatter `artifact_id`를 `INC-<YYYY>-<DDDD>`와 일치시킨다.
-3. 사고 종료 후 구조 분석이 필요하면 [postmortem.template.md](../../99.templates/templates/operations/postmortem.template.md)를 사용한다.
-4. Runbook/Operations/ADR/Spec 링크를 남겨 재발 방지 액션을 추적한다.
-5. 비밀 값, 토큰, 개인 식별 정보는 사고 기록에 직접 남기지 않는다.
-6. 사고가 없는 상태에서는 README만 유지하고 빈 placeholder 파일을 만들지 않는다.
+3. Incident status는 `open → mitigated → resolved → closed` 순서를 따르고, 역할·다음 checkpoint·종료 근거를 함께 갱신한다.
+4. 사고 종료 후 구조 분석이 필요하면 [postmortem.template.md](../../99.templates/templates/operations/postmortem.template.md)를 사용하고 `artifact_id`를 `POSTMORTEM-<YYYY>-<DDDD>`로 기록한다.
+5. Postmortem status는 `draft → published → superseded`를 따르며 action closure evidence 없이 완료를 선언하지 않는다.
+6. Runbook/Policy/ADR/Spec 링크를 남겨 재발 방지 액션을 추적한다.
+7. 비밀 값, 토큰, 개인 식별 정보는 사고 기록에 직접 남기지 않는다.
+8. 사고가 없는 상태에서는 README만 유지하고 빈 placeholder 파일을 만들지 않는다.
 
 ### Record Purpose
 
@@ -78,17 +80,22 @@ Incident Record와 Postmortem은 각각 고정 basename `incident.md`와
 
 ### Expected Record Shape
 
-기록 문서는 가능한 경우 다음 항목을 포함한다.
+Incident Record는 다음 항목을 포함한다.
 
-- Summary
-- Impact
-- Affected Systems / Routes
-- Timeline
-- Current Conditions / Observations (Incident Record)
-- Root Cause / Contributing Factors (Postmortem only)
-- Immediate Remediation
-- Follow-up Actions
-- Related Specs / ADRs / Runbooks / Policies
+- Overview와 Incident Metadata
+- Roles and Coordination
+- Impact, Timeline, Response State
+- Evidence와 Follow-up Actions
+- Closure와 Lifecycle Traceability
+
+Postmortem은 다음 항목을 포함한다.
+
+- Incident Link and Impact Summary
+- Root Cause Analysis와 Contributing Factors
+- Detection and Response Review
+- What Went Well / What Went Wrong
+- Action Items, Prevention and Verification, Action Closure
+- Documentation Feedback Loop과 Lifecycle Traceability
 
 ### Review Expectations
 

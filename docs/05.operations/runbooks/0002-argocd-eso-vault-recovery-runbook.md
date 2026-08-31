@@ -3,8 +3,8 @@ title: 'ArgoCD ESO Vault Recovery Runbook'
 type: sdlc/runbook
 status: active
 owner: platform
-updated: 2026-06-02
-artifact_id: "RUNBOOK-0002"
+updated: 2026-09-01
+artifact_id: "RUN-0002"
 ---
 
 # ArgoCD ESO Vault Recovery Runbook
@@ -219,6 +219,8 @@ export VAULT_CA_FILE="$PWD/secrets/certs/rootCA.pem"
 
 ## Safe Rollback or Recovery Procedure
 
+아래 live 삭제는 Platform Owner가 승인한 break-glass 복구에서만 수행한다.
+
 ```bash
 kubectl -n platform delete endpointslice vault-external-1
 ```
@@ -233,15 +235,13 @@ kubectl -n platform delete endpointslice vault-external-1
 
 ## Traceability
 
-- **Guide**: [`../guides/0002-wsl2-k3d-argocd-ha-setup-guide.md`](../guides/0002-wsl2-k3d-argocd-ha-setup-guide.md)
-- **Operations Policy**: [`../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md`](../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md)
+- **Operations Policy**: [`../policies/0001-k8s-gitops-operations-policy.md`](../policies/0001-k8s-gitops-operations-policy.md)
 - [`../../02.architecture/descriptions/ad-0007-current-local-gitops-platform.md`](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - [`../../03.specs/0008-current-local-gitops-platform/spec.md`](../../03.specs/0008-current-local-gitops-platform/spec.md)
-- [`../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md`](../../98.archive/README.md#document-index)
 
 ### Lifecycle Traceability
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
-| [WSL2 k3d GitOps HA Operations Policy](../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md) | `vault-backend` or dependent ExternalSecrets are not Ready because sealed state, endpoint/network drift, or Kubernetes-auth drift must be distinguished. | Platform operator records secret-safe snapshots and readiness metadata; external Vault operator owns unseal/auth changes, and approved break-glass owners reconcile endpoint changes back to Git. |
+| [K8s GitOps Platform Operations Policy](../policies/0001-k8s-gitops-operations-policy.md) | `vault-backend` or dependent ExternalSecrets are not Ready because sealed state, endpoint/network drift, or Kubernetes-auth drift must be distinguished. | Platform operator records secret-safe snapshots and readiness metadata; external Vault operator owns unseal/auth changes, and approved break-glass owners reconcile endpoint changes back to Git. |

@@ -3,8 +3,8 @@ title: 'Argo Rollouts, Notifications & Headlamp Operations Policy'
 type: sdlc/policy
 status: active
 owner: platform
-updated: 2026-05-21
-artifact_id: "POLICY-0004"
+updated: 2026-09-01
+artifact_id: "POL-0004"
 ---
 
 # Argo Rollouts, Notifications & Headlamp Operations Policy

@@ -31,6 +31,7 @@ VALIDATOR_PATHS = {
     "links": SCRIPTS_ROOT / "validate-links-and-owners.py",
 }
 STAGE99_TEMPLATES_ROOT = REPOSITORY_ROOT / "docs/99.templates/templates"
+STAGE05_ROOT = REPOSITORY_ROOT / "docs/05.operations"
 SPEC0054_PACKAGE = (
     REPOSITORY_ROOT
     / "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation"
@@ -757,12 +758,106 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             "7a770c3c0eabaeda554c4030fc08fb17de164fe5",  # pragma: allowlist secret - pinned Git commit fixture
         )
         self.assertEqual(
-            row["source_blob"], "465f24340b99c03a38b5150d517627b69fa7c717"
-        )  # pragma: allowlist secret - pinned Git blob fixture
+            row["source_blob"],
+            "465f24340b99c03a38b5150d517627b69fa7c717",  # pragma: allowlist secret - pinned Git blob fixture
+        )
         self.assertEqual(
             row["content_sha256"],
             "3fd4925824ad0b92748ff0f27e3a252dee3619c415caff02cc59a385e4c8fc08",  # pragma: allowlist secret - pinned SHA-256 recovery fixture
         )
+
+
+class Stage05TerminalOwnershipTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+
+    def test_terminal_guide_owner_is_singular(self) -> None:
+        guides = sorted(
+            path.name
+            for path in (STAGE05_ROOT / "guides").glob("*.md")
+            if path.name != "README.md"
+        )
+        self.assertEqual(guides, ["0010-ci-cd-qa-reference-guide.md"])
+        self.assertFalse((STAGE05_ROOT / "releases").exists())
+
+    def test_operation_artifact_ids_match_path_numbers(self) -> None:
+        seen: set[str] = set()
+        for directory, prefix in (
+            ("guides", "GDE"),
+            ("policies", "POL"),
+            ("runbooks", "RUN"),
+        ):
+            for path in sorted((STAGE05_ROOT / directory).glob("*.md")):
+                if path.name == "README.md":
+                    continue
+                contents = path.read_text(encoding="utf-8")
+                match = re.search(
+                    r"(?m)^artifact_id:\s*[\"']?([^\"'\s]+)",
+                    contents,
+                )
+                with self.subTest(path=path.relative_to(REPOSITORY_ROOT).as_posix()):
+                    self.assertIsNotNone(match)
+                    artifact_id = match.group(1)
+                    self.assertEqual(artifact_id, f"{prefix}-{path.name[:4]}")
+                    self.assertNotIn(artifact_id, seen)
+                seen.add(artifact_id)
+
+    def test_active_operations_do_not_reference_retired_stages(self) -> None:
+        retired_stage = re.compile(r"(?:docs/)?(?:04\.execution|98\.archive)")
+        for path in sorted(STAGE05_ROOT.rglob("*.md")):
+            with self.subTest(path=path.relative_to(REPOSITORY_ROOT).as_posix()):
+                self.assertIsNone(
+                    retired_stage.search(path.read_text(encoding="utf-8"))
+                )
+
+    def test_active_operations_omit_secret_value_examples(self) -> None:
+        unsafe_examples = re.compile(
+            r"xoxb-|changeme|export\s+VAULT_TOKEN",
+            re.IGNORECASE,
+        )
+        for path in sorted(STAGE05_ROOT.rglob("*.md")):
+            with self.subTest(path=path.relative_to(REPOSITORY_ROOT).as_posix()):
+                self.assertIsNone(
+                    unsafe_examples.search(path.read_text(encoding="utf-8"))
+                )
+
+    def test_operation_templates_share_authored_lifecycle_and_fields(self) -> None:
+        profiles = {profile["id"]: profile for profile in self.registry["profiles"]}
+        expectations = {
+            "sdlc/guide": ("template/sdlc/guide",),
+            "sdlc/incident": (
+                "template/sdlc/incident",
+                "Roles and Coordination",
+                "Closure",
+            ),
+            "sdlc/postmortem": (
+                "template/sdlc/postmortem",
+                "Detection and Response Review",
+                "Action Closure",
+            ),
+            "sdlc/policy": ("template/sdlc/policy",),
+            "sdlc/runbook": ("template/sdlc/runbook",),
+        }
+        for authored_id, expected in expectations.items():
+            template_id, *sections = expected
+            authored = profiles[authored_id]
+            template = profiles[template_id]
+            with self.subTest(profile=authored_id):
+                self.assertEqual(
+                    authored["lifecycle"]["statusDomain"],
+                    template["lifecycle"]["statusDomain"],
+                )
+                self.assertTrue(
+                    set(sections).issubset(authored["requiredSections"]["required"])
+                )
+                self.assertTrue(
+                    set(sections).issubset(template["requiredSections"]["required"])
+                )
+                self.assertIn(
+                    "artifact_id",
+                    template["requiredFrontmatter"]["required"],
+                )
 
 
 class TerminalStrictValidatorTests(unittest.TestCase):

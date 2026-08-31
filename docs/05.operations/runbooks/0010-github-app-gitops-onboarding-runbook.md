@@ -3,8 +3,8 @@ title: 'GitHub 앱 GitOps 온보딩 런북'
 type: sdlc/runbook
 status: active
 owner: platform
-updated: 2026-05-26
-artifact_id: "RUNBOOK-0010"
+updated: 2026-09-01
+artifact_id: "RUN-0010"
 ---
 
 # GitHub 앱 GitOps 온보딩 런북
@@ -224,33 +224,22 @@ Procedure 4의 abort/rollback 절차를 우선 사용한다. GitOps manifest 수
 
 ### Procedure 5: Vault 시크릿 연동 추가
 
+애플리케이션 시크릿이 필요하면 승인된 Vault operator가 저장소 transcript
+밖의 비밀 채널에서 `secret/apps/${APP}/config`를 생성한다. 이 Runbook은
+값, login, Vault write 또는 policy write 명령을 기록하지 않는다.
+
+Git 변경에서 `external-secret.yaml`을 활성화하고 Rollout의 `envFrom`을
+연결한다. `ExternalSecret remoteRef.key`는 `apps/${APP}/config` 형식이며,
+Vault CLI 경로의 `mount prefix secret/`은 remoteRef에서 제외한다.
+승인된 operator가 Vault policy를 별도 절차로 갱신한 뒤 다음 read-only 상태만
+확인한다.
+
 ```bash
-# 1. Vault에 시크릿 등록
-export VAULT_ADDR=http://172.18.0.8:8200
-vault login
-# external secret operation; human-approved only
-vault kv put secret/apps/${APP}/config \
-  db_password="changeme" api_key="changeme" # pragma: allowlist secret
-
-# 2. Vault 정책 갱신
-cat >> infrastructure/vault/policies/eso-read.hcl << EOF
-
-path "secret/data/apps/${APP}/*" {
-  capabilities = ["read"]
-}
-EOF
-# external secret operation; human-approved policy change only
-vault policy write eso-read infrastructure/vault/policies/eso-read.hcl
-
-# 3. kustomization.yaml에서 external-secret.yaml 주석 해제 후 커밋
-# (rollout.yaml에 envFrom 추가도 필요)
-#    ExternalSecret remoteRef.key는 apps/${APP}/config 형식이다.
-#    Vault CLI 경로 secret/apps/${APP}/config에서 mount prefix secret/은 제외한다.
-
-# 4. ExternalSecret 동기화 확인
 kubectl get externalsecret -n apps ${APP}-secret
-# 출력: READY=True, STATUS=SecretSynced
 ```
+
+성공 기준은 `READY=True`, `STATUS=SecretSynced`이며 secret value는 출력하지
+않는다.
 
 ---
 
@@ -314,7 +303,6 @@ kubectl apply -f gitops/clusters/local/appproject-apps.yaml
 
 ## Traceability
 
-- **Guide**: [`../guides/0008-github-app-gitops-onboarding-guide.md`](../guides/0008-github-app-gitops-onboarding-guide.md)
 - **Operations 정책**: [`../policies/0007-app-gitops-onboarding-policy.md`](../policies/0007-app-gitops-onboarding-policy.md)
 - **ESO/Vault Recovery**: [`./0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md)
 - **예시 템플릿**: [`../../../examples/sample-app`](../../../examples/sample-app)

@@ -3,8 +3,8 @@ title: 'k8s Observability 복구 Runbook'
 type: sdlc/runbook
 status: active
 owner: platform
-updated: 2026-05-09
-artifact_id: "RUNBOOK-0009"
+updated: 2026-09-01
+artifact_id: "RUN-0009"
 ---
 
 # k8s Observability 복구 Runbook
@@ -359,8 +359,6 @@ curl -s -G "http://172.18.0.13:3100/loki/api/v1/query" \
 
 ## Traceability
 
-- [k8s 관측성 부트스트랩 가이드](../guides/0007-k8s-observability-bootstrap-guide.md)
-- [k8s Observability 운영 정책](../policies/0006-k8s-observability-operations-policy.md)
 - [Observability Platform Policy](../policies/0005-observability-platform-operations-policy.md)
 - [ArgoCD 메트릭 런북](./0008-argocd-metrics-prometheus-runbook.md)
 - [`../../../gitops/platform/monitoring`](../../../gitops/platform/monitoring)
@@ -369,4 +367,4 @@ curl -s -G "http://172.18.0.13:3100/loki/api/v1/query" \
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
-| [k8s Observability Operations Policy](../policies/0006-k8s-observability-operations-policy.md) | Cluster metrics targets, Alloy log/event collection, alert-rule loading, or monitoring AppProject admission is degraded. | Platform operator captures NodePort, target, pod, Loki, rule-group, and ArgoCD evidence; GitOps owner restores cluster resources and the observability owner persists external Prometheus/Loki corrections. |
+| [Observability Platform Operations Policy](../policies/0005-observability-platform-operations-policy.md) | Cluster metrics targets, Alloy log/event collection, alert-rule loading, or monitoring AppProject admission is degraded. | Platform operator captures NodePort, target, pod, Loki, rule-group, and ArgoCD evidence; GitOps owner restores cluster resources and the observability owner persists external Prometheus/Loki corrections. |

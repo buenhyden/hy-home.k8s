@@ -45,13 +45,7 @@
 
 ```text
 docs/05.operations/guides/
-├── 0001-wsl-k3d-argocd-bootstrap-guide.md         # WSL2 k3d + ArgoCD 부트스트랩 가이드
-├── 0002-wsl2-k3d-argocd-ha-setup-guide.md         # WSL2 HA + TLS + 정적 검증 분리 가이드
-├── 0003-platform-expansion-bootstrap-guide.md      # cert-manager/Headlamp/Istio/Kiali 확장 가이드
-├── 0006-argocd-prometheus-grafana-guide.md         # ArgoCD 메트릭/Prometheus/Grafana 가이드
-├── 0007-k8s-observability-bootstrap-guide.md       # 관측성 스택 부트스트랩 가이드
-├── 0008-github-app-gitops-onboarding-guide.md      # GitHub 앱 GitOps 온보딩 가이드
-├── 0010-ci-cd-qa-reference-guide.md                # CI/CD & QA 로컬-vs-GitHub 참조 가이드
+├── 0010-ci-cd-qa-reference-guide.md                # CI/CD & QA 검증 경계 안내
 └── README.md                                       # This file
 ```
 
@@ -86,7 +80,7 @@ Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 
 - 같은 폴더의 Guide 문서는 `./`로 시작한다.
 - sibling operations folder는 `../policies/`, `../runbooks/`, `../incidents/`로 연결한다.
-- upstream docs stage는 `../../01.requirements/`, `../../02.architecture/`, `../../03.specs/`, `../../04.execution/`로 연결한다.
+- upstream docs stage는 `../../01.requirements/`, `../../02.architecture/`, `../../03.specs/`로 연결한다.
 
 ## Related Documents
 
@@ -105,10 +99,4 @@ Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 
 | 문서                                                                                           | 설명                                                                    | 상태   | 최종 수정  |
 | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------ | ---------- |
-| [`./0001-wsl-k3d-argocd-bootstrap-guide.md`](./0001-wsl-k3d-argocd-bootstrap-guide.md)         | 외부 서비스 분리 운영 + Vault 기반 부트스트랩/검증 가이드               | Active | 2026-05-22 |
-| [`./0002-wsl2-k3d-argocd-ha-setup-guide.md`](./0002-wsl2-k3d-argocd-ha-setup-guide.md)         | WSL2 멀티노드 HA + TLS + 런타임/CI 정적 검증 절차를 분리한 운영 가이드  | Active | 2026-06-02 |
-| [`./0003-platform-expansion-bootstrap-guide.md`](./0003-platform-expansion-bootstrap-guide.md) | cert-manager/Headlamp/Istio/Kiali 포함 확장 플랫폼 부트스트랩 가이드    | Active | 2026-06-02 |
-| [`./0006-argocd-prometheus-grafana-guide.md`](./0006-argocd-prometheus-grafana-guide.md)       | ArgoCD 메트릭 NodePort 수집 + Prometheus 설정 + Grafana 대시보드 가이드 | Active | 2026-05-09 |
-| [`./0007-k8s-observability-bootstrap-guide.md`](./0007-k8s-observability-bootstrap-guide.md)   | k3d 클러스터 메트릭/로그 수집 관측성 스택 부트스트랩 가이드             | Active | 2026-05-09 |
-| [`./0008-github-app-gitops-onboarding-guide.md`](./0008-github-app-gitops-onboarding-guide.md) | GitHub 레포 기반 앱 GitOps 온보딩 (최소 템플릿 + active reference 구분) | Active | 2026-05-26 |
-| [`./0010-ci-cd-qa-reference-guide.md`](./0010-ci-cd-qa-reference-guide.md)                     | CI/CD QA 검증 로컬-vs-GitHub Actions 경계, script gate, currentness gate 참조 가이드 | Active | 2026-08-29 |
+| [`./0010-ci-cd-qa-reference-guide.md`](./0010-ci-cd-qa-reference-guide.md) | CI/CD QA 검증의 로컬·호스팅 경계와 증적 해석 안내 | Active | 2026-09-01 |

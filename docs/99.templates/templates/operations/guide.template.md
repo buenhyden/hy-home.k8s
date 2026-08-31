@@ -4,6 +4,7 @@ type: sdlc/guide
 status: draft
 owner: platform
 updated: YYYY-MM-DD
+artifact_id: "GDE-####"
 ---
 
 # [Topic Name] Guide

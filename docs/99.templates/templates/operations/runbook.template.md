@@ -4,6 +4,7 @@ type: sdlc/runbook
 status: draft
 owner: platform
 updated: YYYY-MM-DD
+artifact_id: "RUN-####"
 ---
 
 # [Topic Name] Runbook

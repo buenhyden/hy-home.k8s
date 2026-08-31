@@ -1,181 +1,115 @@
 ---
-title: 'Observability Platform Operations Policy'
+title: "Observability Platform Operations Policy"
 type: sdlc/policy
 status: active
 owner: platform
-updated: 2026-05-22
-artifact_id: "POLICY-0005"
+updated: 2026-09-01
+artifact_id: "POL-0005"
 ---
 
 # Observability Platform Operations Policy
 
 ## Overview
 
-이 문서는 Prometheus/Grafana/Kiali 기반 관측성 플랫폼의 운영 통제 기준을 정의한다.
-Istio 서비스 포트 네이밍 규칙, Grafana 인증 정책, ArgoCD 메트릭 수집 NodePort 할당을 포함한다.
+이 문서는 local cluster와 외부 observability backend 사이의 메트릭·로그
+수집 통제를 하나의 정책으로 정의한다. 서비스 포트, 고정 NodePort, Alloy,
+Prometheus rule loading, Grafana 접근, AppProject destination을 다룬다.
 
 ## Policy Scope
 
-- Istio 서비스 포트 네이밍 (`gitops/platform/external-services/`)
-- Grafana anonymous access 정책 (`hy-home.docker/infra/06-observability/docker-compose.yml`)
-- ArgoCD 메트릭 NodePort 할당 (`gitops/platform/argocd/argocd-metrics-nodeport.yaml`)
-- Prometheus scrape 설정 (`hy-home.docker/infra/06-observability/prometheus/config/prometheus.yml`)
+- `gitops/platform/external-services/`의 Istio 포트 명명
+- `gitops/platform/argocd/`와 `gitops/platform/monitoring/`의 metrics endpoint
+- in-cluster Alloy에서 외부 Loki로 이어지는 로그 경계
+- 외부 Prometheus/Grafana 설정과 `monitoring` AppProject destination
 
 ## Applies To
 
-- **Systems**: `gitops/platform/external-services/`, `gitops/platform/argocd/`, `hy-home.docker/infra/06-observability/`
-- **Agents**: 문서/운영 자동화 에이전트
-- **Environments**: WSL2 local cluster
-
----
+- **Systems**: `gitops/platform/`, `gitops/clusters/local/`, external observability workspace
+- **Roles**: Platform Owner, Observability Owner, approved operator
+- **Environment**: WSL2 local cluster와 연결된 external observability services
 
 ## Controls
 
-### Istio 서비스 포트 네이밍 (KIA0601)
+### Responsibilities
 
-Kiali는 Service 포트 이름이 Istio 프로토콜 규칙을 따르는지 검사한다(KIA0601). 이름이 잘못되면 Kiali가 프로토콜을 인식하지 못해 트래픽 관리 및 메시 정책이 올바르게 적용되지 않는다.
+| Role | Responsibility | Escalation owner |
+| --- | --- | --- |
+| Platform Owner | Service, NodePort, AppProject GitOps 계약을 승인한다. | Workspace Owner |
+| Observability Owner | Prometheus, Grafana, Loki, Alloy 수집 계약을 유지한다. | Platform Owner |
+| Approved operator | Runbook에 따라 runtime 증적과 복구 결과를 기록한다. | Platform Owner |
 
-**Required**:
+### Control Register
 
-- Service 및 EndpointSlice 포트 이름은 반드시 `<protocol>[-suffix]` 형식을 따른다.
-- 프로토콜이 이름의 **앞**에 와야 한다. 유효 프로토콜: `grpc`, `http`, `https`, `tcp`, `udp`, `tls`, `mongo`, `mysql`, `redis`, `http2`, `grpc-web`
+| Control | Accountable role | Enforcement surface | Evidence |
+| --- | --- | --- | --- |
+| OBS-001 port naming | Platform Owner | Service and EndpointSlice manifests | protocol-prefixed port names |
+| OBS-002 ArgoCD metrics | Observability Owner | NodePorts 30082-30086 | Prometheus target evidence |
+| OBS-003 cluster metrics | Observability Owner | NodePorts 30090-30092 | expected services and targets |
+| OBS-004 logs and rules | Observability Owner | Alloy deployment and Prometheus config | Ready streams and loaded rule groups |
+| OBS-005 access | Platform Owner | Grafana role and AppProject destinations | Viewer-only API and monitoring destination |
 
-**현재 적용된 포트 이름 계약:**
+### Service Port Naming
 
-| 서비스                  | 포트  | 포트 이름            | 프로토콜 근거  |
-| ----------------------- | ----- | -------------------- | -------------- |
-| alloy-external          | 4317  | `grpc-otlp`          | OTLP gRPC      |
-| alloy-external          | 4318  | `http-otlp`          | OTLP HTTP/1.1  |
-| valkey-external         | 6379  | `tcp-valkey`         | Redis 호환 TCP |
-| postgres-write-external | 15432 | `tcp-postgres-write` | PostgreSQL TCP |
-| postgres-read-external  | 15433 | `tcp-postgres-read`  | PostgreSQL TCP |
+Service와 EndpointSlice 포트 이름은 `<protocol>[-suffix]` 형식이어야 한다.
+현재 외부 계약은 Alloy `grpc-otlp`/`http-otlp`, Valkey `tcp-valkey`,
+PostgreSQL `tcp-postgres-write`/`tcp-postgres-read`를 사용한다. suffix-only
+이름이나 프로토콜이 없는 이름은 금지한다.
 
-**Allowed**:
+### Metrics NodePort Reservations
 
-- `grpc-*`, `http-*`, `tcp-*` 접두사로 신규 포트 이름 추가
-- Kiali 재확인은 [Kiali 연결 런북](../runbooks/0007-kiali-observability-connectivity-runbook.md)의 절차를 따른다.
+| Range | Reserved services | Owner |
+| --- | --- | --- |
+| 30082-30086 | ArgoCD application-controller, server, repo-server, ApplicationSet, notifications metrics | [RUN-0008](../runbooks/0008-argocd-metrics-prometheus-runbook.md) |
+| 30090 | istiod metrics | [RUN-0009](../runbooks/0009-k8s-observability-runbook.md) |
+| 30091 | kube-state-metrics | [RUN-0009](../runbooks/0009-k8s-observability-runbook.md) |
+| 30092 | argo-rollouts metrics | [RUN-0009](../runbooks/0009-k8s-observability-runbook.md) |
 
-**Disallowed**:
+예약 번호를 다른 서비스에 재사용하거나 Prometheus 접근을 위해 과도한
+kubeconfig 권한을 부여하지 않는다.
 
-- 프로토콜 없이 서비스명만으로 포트 이름 설정 (예: `valkey`, `postgres-write`)
-- 프로토콜을 suffix에 배치 (예: `otlp-grpc` → 위반)
+### Logs, Rules, and Access
 
-**주의사항**: EndpointSlice는 ArgoCD `resource.exclusions`에 포함되어 자동 동기화되지 않을 수 있다. 기본 경로는 Git 파일 수정, 리뷰, 증적 기록이다. EndpointSlice 적용/패치 같은 실행 절차는 운영자가 명시 승인한 bootstrap 또는 break-glass 상황에서만 [Kiali 연결 런북](../runbooks/0007-kiali-observability-connectivity-runbook.md)을 따라 수행한다.
-
----
-
-### Grafana Anonymous Access
-
-Kiali 및 기타 내부 서비스는 Grafana API 엔드포인트(`/api/frontend/settings`, `/api/health`)를 헬스체크에 사용한다. Grafana가 OAuth 전용(`GF_AUTH_DISABLE_LOGIN_FORM=true`)으로 설정된 경우 인증 없는 API 호출이 401을 반환하여 Kiali가 Grafana를 Unreachable로 표시한다.
-
-**Required**:
-
-- Grafana에 Anonymous Viewer 접근 활성화:
-  - `GF_AUTH_ANONYMOUS_ENABLED=true`
-  - `GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer`
-- 설정 파일: `hy-home.docker/infra/06-observability/docker-compose.yml` grafana 서비스 환경 변수
-
-**Allowed**:
-
-- Anonymous Org Role을 `Viewer`로 제한
-- 브라우저 접근은 `GF_AUTH_OAUTH_AUTO_LOGIN=true`로 Keycloak OAuth 리다이렉트 유지
-
-**Disallowed**:
-
-- Anonymous Role을 `Editor` 또는 `Admin`으로 설정
-- Anonymous 접근 비활성화 상태에서 Kiali Grafana URL 설정 (Unreachable 유발)
-
-**보안 근거**: Grafana는 k3d-hyhome 내부 Docker 네트워크(172.18.0.0/16)에서만 접근 가능하다. Anonymous Viewer는 대시보드 조회만 허용하며 편집 권한이 없다. 브라우저에서의 Grafana 접근은 여전히 Keycloak OAuth 인증을 거친다.
-
-**Verification evidence**:
-
-- `/api/frontend/settings`와 `/api/health`가 내부 네트워크에서 인증 없는 Viewer 수준 응답을 반환한다.
-- Grafana 설정이 Anonymous Viewer로 제한되어 있고 Editor/Admin 권한이 노출되지 않는다.
-- 상세 진단 명령은 [Kiali 연결 런북](../runbooks/0007-kiali-observability-connectivity-runbook.md)을 따른다.
-
----
-
-### ArgoCD 메트릭 NodePort 할당
-
-Prometheus(Docker)가 k8s 내부 ArgoCD 메트릭을 수집하기 위해 NodePort 서비스를 사용한다. NodePort 번호는 고정값으로 재사용하지 않는다.
-
-**Required**:
-
-- NodePort 서비스는 `argocd` namespace에만 생성
-- 아래 NodePort 번호 예약, 다른 서비스에 사용 금지
-
-**NodePort 예약표:**
-
-| 서비스 이름                                 | Pod Port      | NodePort  | 컴포넌트                  |
-| ------------------------------------------- | ------------- | --------- | ------------------------- |
-| argocd-application-controller-metrics-np    | 8082          | **30082** | application-controller    |
-| argocd-server-metrics-np                    | 8083          | **30083** | server                    |
-| argocd-repo-server-metrics-np               | 8084          | **30084** | repo-server               |
-| argocd-applicationset-controller-metrics-np | 8080(metrics) | **30085** | applicationset-controller |
-| argocd-notifications-controller-metrics-np  | 9001(metrics) | **30086** | notifications-controller  |
-
-- Prometheus scrape 대상: `172.18.0.2:30082` ~ `172.18.0.2:30086` (k3d-hyhome-server-0)
-- GitOps 파일: `gitops/platform/argocd/argocd-metrics-nodeport.yaml` (ArgoCD 관리)
-- Prometheus job 이름 prefix: `argocd-`, label `domain: gitops`
-
-**Allowed**:
-
-- k3d 노드 IP 변경 시 Prometheus scrape target IP만 업데이트 (NodePort 번호 유지)
-- Prometheus 무중단 reload는 [ArgoCD 메트릭 런북](../runbooks/0008-argocd-metrics-prometheus-runbook.md)의 절차를 따른다.
-
-**Disallowed**:
-
-- 30082-30086 NodePort를 다른 서비스에 재사용
-- Prometheus 컨테이너에 kubeconfig 마운트 (불필요한 k8s 권한 확대)
-- ArgoCD metrics 수집을 위해 kube-prometheus-stack 별도 배포 (중복 구성)
-
-**Verification evidence**:
-
-- `argocd` namespace의 metrics NodePort 서비스가 예약 번호 30082-30086을 사용한다.
-- Prometheus target에서 `argocd-*` jobs가 `up`이고 `argocd_app_info` 결과가 수집된다.
-- 상세 진단/복구 명령은 [ArgoCD 메트릭 런북](../runbooks/0008-argocd-metrics-prometheus-runbook.md)을 따른다.
-
----
+- in-cluster `alloy-k8s-logs`는 `monitoring` namespace에서 Kubernetes API를
+  통해 pod logs/events를 수집하고 `loki-external.platform.svc.cluster.local:3100`으로 전송한다.
+- Alloy는 read-only root filesystem과 전용 storage path를 유지하며, k3d
+  containerd 로그를 Docker socket 또는 host file mount로 수집하지 않는다.
+- Prometheus `rule_files`는 필요한 고정 파일을 명시적으로 나열한다. glob이
+  고정 파일의 존재를 암묵적으로 보장한다고 간주하지 않는다.
+- Grafana 내부 health/settings API의 anonymous role은 Viewer로 제한한다.
+  Editor/Admin anonymous access는 금지한다.
+- `gitops/clusters/local/appproject-platform.yaml`은 `monitoring` destination을
+  명시하며 wildcard destination으로 대체하지 않는다.
 
 ## Exceptions
 
-- EndpointSlice 또는 AppProject live 반영은 운영자가 명시 승인한 bootstrap 또는 break-glass 상황에서만 허용한다.
-- NodePort 번호 변경은 관련 Prometheus scrape config, README, runbook을 같은 변경에서 갱신할 때만 허용한다.
+NodePort 또는 AppProject live 변경은 Platform Owner가 승인한 bootstrap 또는
+break-glass 상황에서만 허용한다. 변경 시 manifest, external scrape target,
+관련 Runbook을 같은 변경으로 동기화하고 GitOps reconciliation 증적을 남긴다.
 
 ## Verification
 
-정책 준수 여부는 아래 증적으로 확인한다. 실행 가능한 명령 순서, break-glass 적용, Prometheus reload 절차는 소유 런북으로 이동한다.
-
-### Evidence Matrix
-
 | Control Area | Required Evidence | Runbook Owner |
 | --- | --- | --- |
-| Istio port naming | `platform` Service/EndpointSlice port names use valid protocol prefixes and avoid suffix-only protocol naming | [`../runbooks/0007-kiali-observability-connectivity-runbook.md`](../runbooks/0007-kiali-observability-connectivity-runbook.md) |
-| Grafana anonymous viewer | Grafana internal API health/settings endpoints are reachable while anonymous role remains Viewer-only | [`../runbooks/0007-kiali-observability-connectivity-runbook.md`](../runbooks/0007-kiali-observability-connectivity-runbook.md) |
-| ArgoCD metrics NodePort | Reserved NodePorts 30082-30086 are present only for ArgoCD metrics services | [`../runbooks/0008-argocd-metrics-prometheus-runbook.md`](../runbooks/0008-argocd-metrics-prometheus-runbook.md) |
-| Prometheus ArgoCD targets | `argocd-*` Prometheus targets are `up` and `argocd_app_info` is populated | [`../runbooks/0008-argocd-metrics-prometheus-runbook.md`](../runbooks/0008-argocd-metrics-prometheus-runbook.md) |
-
----
+| Istio and Grafana connectivity | protocol port names, Viewer-only API health | [RUN-0007](../runbooks/0007-kiali-observability-connectivity-runbook.md) |
+| ArgoCD metrics | reserved 30082-30086 services, `argocd-*` targets, metric presence | [RUN-0008](../runbooks/0008-argocd-metrics-prometheus-runbook.md) |
+| Cluster metrics | reserved 30090-30092 services and expected targets | [RUN-0009](../runbooks/0009-k8s-observability-runbook.md) |
+| Alloy and Loki | deployment Ready and cluster-labelled streams received | [RUN-0009](../runbooks/0009-k8s-observability-runbook.md) |
+| Rules and AppProject | required rule groups load; monitoring destination present | [RUN-0009](../runbooks/0009-k8s-observability-runbook.md) |
 
 ## Review Cadence
 
-- 관측성 포트, external service, Prometheus scrape target 변경 시마다 검토한다.
-- Ingress/Grafana/Kiali 인증 경계 변경 시 관련 policy/runbook과 함께 검토한다.
-
-### AI Agent Policy Section
-
-이 정책은 인프라 리소스를 직접 관리하며 AI Agent 모델/프롬프트/평가 정책이 별도 적용되지 않는다.
-단, Agent가 이 정책 범위의 리소스를 조작할 경우 [운영 거버넌스](../../00.agent-governance/README.md)에 따른다.
+Service/EndpointSlice port, NodePort reservation, scrape target, Alloy version,
+rule file, Grafana role, Loki endpoint, AppProject destination 변경 시 검토한다.
 
 ## Traceability
 
-- [ArgoCD 메트릭 가이드](../guides/0006-argocd-prometheus-grafana-guide.md)
-- [ArgoCD 메트릭 런북](../runbooks/0008-argocd-metrics-prometheus-runbook.md)
-- [Kiali 연결 런북](../runbooks/0007-kiali-observability-connectivity-runbook.md)
-- [Service Mesh Policy](./0003-service-mesh-cert-manager-policy.md)
+- [Service Mesh and cert-manager Policy](./0003-service-mesh-cert-manager-policy.md)
+- [Kiali Connectivity Runbook](../runbooks/0007-kiali-observability-connectivity-runbook.md)
+- [ArgoCD Metrics Runbook](../runbooks/0008-argocd-metrics-prometheus-runbook.md)
+- [K8s Observability Runbook](../runbooks/0009-k8s-observability-runbook.md)
 
 ### Lifecycle Traceability
 
 | Promoted owner | Control owner | Enforcement surface |
 | --- | --- | --- |
-| N/A — the observability control set is promoted from current GitOps and sibling-workspace contracts, with no eligible upstream document carrying a reciprocal policy link | Platform Owner for service/NodePort contracts; observability owner for Prometheus and Grafana configuration | Istio service-port naming, Grafana Viewer-only anonymous API boundary, reserved ArgoCD NodePorts 30082-30086, scrape targets, and owning runbooks |
+| N/A — current GitOps and external observability contracts have no reciprocal Spec or Task policy link | Platform Owner and Observability Owner | service naming, NodePort manifests, Alloy, Prometheus/Grafana/Loki config, AppProject destination, owning Runbooks |
