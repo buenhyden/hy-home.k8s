@@ -586,7 +586,7 @@ policy activation, closure validation, and state-only handoff.
   handoff. Resolve every Critical or Important finding and rerun the checks
   affected by corrections. Record that static security review makes no
   provider-runtime claim.
-- [ ] After every acceptance-bearing check and review passes, make one final
+- [x] After every acceptance-bearing check and review passes, make one final
   state-only logical commit: set TSK-0054-0003 to `done`, set TSK-0054-0007 to
   `in-progress`, and move the existing Spec 0054 `standaloneExecutions` task
   pointer from TSK-0054-0003 to TSK-0054-0007. Do not activate Spec 0066 or

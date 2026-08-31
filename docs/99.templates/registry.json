@@ -4161,7 +4161,7 @@
     {
       "spec": "0054",
       "plan": "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/plan.md",
-      "task": "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks/tsk-0003-codex-claude-only-ai-agent-governance.md",
+      "task": "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks/tsk-0007-stage-90-disposition-ledger.md",
       "state": "active",
       "reason": "Direct human-approved B-scope SDLC and AI-agent governance consolidation including Stage 90",
       "decision": "0022",

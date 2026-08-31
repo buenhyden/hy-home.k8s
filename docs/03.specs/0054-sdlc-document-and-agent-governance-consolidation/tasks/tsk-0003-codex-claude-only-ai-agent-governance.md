@@ -1,7 +1,7 @@
 ---
 title: 'Task: Codex Claude-only AI agent governance'
 type: sdlc/task
-status: in-progress
+status: done
 owner: platform
 updated: 2026-08-31
 artifact_id: "TSK-0054-0003"
@@ -11,11 +11,10 @@ artifact_id: "TSK-0054-0003"
 
 ## Overview
 
-This is the single current Spec 0054 execution Task. The Codex/Claude registry
+This is the completed Spec 0054 WP-003 Task. The Codex/Claude registry
 and projection cutover, context/memory policy activation, cumulative lifecycle
-behavior, broad checks, and independent reviews are complete. WP-003 remains
-`in-progress` only for the state-only handoff to TSK-0054-0007 required by the
-user-prioritized Stage 90 cleanup.
+behavior, broad checks, and independent reviews are complete. The state-only
+handoff to TSK-0054-0007 is recorded in the same commit as this terminal state.
 
 ## Inputs
 
@@ -33,11 +32,11 @@ user-prioritized Stage 90 cleanup.
 
 **Depends on:** WP-004
 
-**Current state:** `in-progress`
+**Current state:** `done`
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-054-003 | VAL-SDLC-005, VAL-SDLC-011, VAL-SDLC-012 | Close Codex/Claude-only governance and activate the context/memory policy with cumulative lifecycle proof. | platform | In Progress | Implementation and acceptance evidence are complete; only the atomic Task/pointer handoff remains. | Cumulative implementation `332f0ad10cd8e8fe3f5df2f4b42dd954d2c27396..ab524c37613423555e881a0f3195ca71a89d8304`; activation `56138ed518288e3950c99554af39767a041258df`; router correction `50d66876c2b0240697a0e3d1745cbcc24b64a9fd`; affected lane exit `0`; [handoff step](../plan.md#wp-003--codexclaude-only-ai-agent-governance) |
+| WORK-054-003 | VAL-SDLC-005, VAL-SDLC-011, VAL-SDLC-012 | Close Codex/Claude-only governance and activate the context/memory policy with cumulative lifecycle proof. | platform | Done | Implementation, acceptance evidence, and atomic Task/pointer handoff are complete. | Cumulative implementation `332f0ad10cd8e8fe3f5df2f4b42dd954d2c27396..ab524c37613423555e881a0f3195ca71a89d8304`; activation `56138ed518288e3950c99554af39767a041258df`; router correction `50d66876c2b0240697a0e3d1745cbcc24b64a9fd`; affected lane exit `0`; handoff commit |
 
 ## Approval and Safety Boundaries
 
@@ -106,10 +105,8 @@ restore Gemini/Antigravity surfaces.
   reported `PASS`. Independent specification, quality, and security reviews
   are clean after the thin-router correction. These are repository-static
   results and make no provider-runtime or hosted-CI claim.
-- No terminal completion is claimed until the state-only handoff commit.
-  TSK-0054-0003 remains `in-progress`, TSK-0054-0007 remains `queued`, the Spec
-  0054 compatibility pointer remains on this Task, and Spec 0066 remains
-  inactive.
+- WP-003 is terminally complete. TSK-0054-0007 is the sole `in-progress` Spec
+  0054 Task and the compatibility pointer names it. Spec 0066 remains inactive.
 
 ## Traceability
 
@@ -117,4 +114,4 @@ restore Gemini/Antigravity surfaces.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-054-003](../plan.md#wp-003--codexclaude-only-ai-agent-governance) | In Progress. | Codex/Claude authority and generic cumulative lifecycle implementation are committed and reviewed. Policy activation, closure validation/review, and state-only handoff remain; no completion is claimed. |
+| [WORK-054-003](../plan.md#wp-003--codexclaude-only-ai-agent-governance) | Done. | Codex/Claude authority, cumulative lifecycle implementation, context/memory activation, broad validation, independent review, and state-only handoff are complete. |

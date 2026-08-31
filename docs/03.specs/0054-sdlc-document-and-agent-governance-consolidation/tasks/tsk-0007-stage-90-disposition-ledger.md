@@ -1,7 +1,7 @@
 ---
 title: 'Task: Stage 90 disposition ledger'
 type: sdlc/task
-status: queued
+status: in-progress
 owner: platform
 updated: 2026-08-31
 artifact_id: "TSK-0054-0007"
@@ -11,7 +11,7 @@ artifact_id: "TSK-0054-0007"
 
 ## Overview
 
-This is the terminal queued Task record for WP-007.
+This is the sole active Spec 0054 Task record for WP-007.
 
 ## Inputs
 
@@ -26,11 +26,11 @@ This is the terminal queued Task record for WP-007.
 
 **Depends on:** WP-003
 
-**Current state:** `queued`
+**Current state:** `in-progress`
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-054-007 | VAL-SDLC-008, VAL-SDLC-011, VAL-SDLC-012 | Record the reviewed Stage 90 semantic destinations without mutating evidence or creating a permanent census. | platform | Queued | Read-only preflight identifies the latest external-research pack as the preservation boundary and Audit/Data plus their RIA control plane as removal candidates after consumer cutover. | `research/2026-08-08-wer/`: 14 pack files; collection router: one file; `audits/`: 34 files; `data/`: seven files; research commits `5b35d207`, `ab117c49`, `4f2aceb3` |
+| WORK-054-007 | VAL-SDLC-008, VAL-SDLC-011, VAL-SDLC-012 | Record the reviewed Stage 90 semantic destinations without mutating evidence or creating a permanent census. | platform | In Progress | Read-only preflight identifies the latest external-research pack as the preservation boundary and Audit/Data plus their RIA control plane as removal candidates after consumer cutover. | `research/2026-08-08-wer/`: 14 pack files; collection router: one file; `audits/`: 34 files; `data/`: seven files; research commits `5b35d207`, `ab117c49`, `4f2aceb3` |
 
 ## Approval and Safety Boundaries
 
@@ -40,7 +40,7 @@ reviews, rollback, and logical commit are owned by its linked Plan section.
 
 ## Verification Summary
 
-WP-007 is queued for the atomic handoff from WP-003. Direct user approval on
+WP-007 is active after the atomic handoff from WP-003. Direct user approval on
 2026-08-31 requires the latest externally researched material under
 `docs/90.references/research/2026-08-08-wer/` to be preserved. Later commit
 `e8bb8319` is a mechanical governance cutover and does not supersede the latest
@@ -56,4 +56,4 @@ redirect or full-body Stage 98 copy is authorized.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-054-007](../plan.md#wp-007--stage-90-disposition-ledger) | Queued. | No accepted execution evidence yet. |
+| [WORK-054-007](../plan.md#wp-007--stage-90-disposition-ledger) | In Progress. | The preservation boundary and removal candidates are recorded; consumer classification and independent review remain. |
