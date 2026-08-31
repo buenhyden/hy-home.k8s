@@ -3,7 +3,7 @@ title: 'SDLC Document and AI Agent Governance Consolidation Implementation Plan'
 type: sdlc/plan
 status: active
 owner: platform
-updated: 2026-08-29
+updated: 2026-08-31
 artifact_id: "PLAN-0054"
 ---
 
@@ -42,9 +42,12 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
 - Preserve Git history and unrelated user changes.
 - Do not edit existing immutable Stage 98 envelopes or source blobs to satisfy
   current validators. Remove one only in WP-009 after consumer-zero and Git
-  recovery are independently proven.
-- Preserve Stage 90 audit/source evidence byte-for-byte unless its reviewed
-  disposition authorizes a migration with recoverable provenance.
+  recovery are independently proven. Keep MIG-0006 through MIG-0009
+  byte-for-byte and defer their deletion until authorized remote or full-clone
+  ancestry proof is available.
+- Preserve source provenance while Stage 90 content moves to its semantic
+  owner. Point-in-time dispositions belong to the Task/diff, not a permanent
+  corpus ledger or digest.
 - Use four digits for every active numeric SDLC identity.
 - Use `docs/01.requirements/####-<slug>.md` with package ID `REQ-####`.
   Member IDs are exactly `REQ-####-(FR|NFR|IF)-####`, use the containing
@@ -58,17 +61,17 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
   validators, fixtures, links, and directories.
 - Keep ordinary active filenames free of dates; retain dates in frontmatter or
   typed evidence metadata.
-- Do not restore retired `docs/02.architecture/requirements/` or
-  `docs/03.specs/` routes; Requirement Packages, Architecture
-  Descriptions, and Stage 03 siblings are their current replacement owners.
+- Do not restore the retired Stage 02 requirements or Stage 04 execution
+  routes; Requirement Packages, Architecture Descriptions, and Stage 03
+  siblings are their current replacement owners.
 - Limit Stage 90 to `research/`, `audits/`, and `data/` numbered packages;
   route `learning/` content to a Stage 05 Guide or Research.
-- Limit Stage 98 to README, prefix-free numbered Migrations, and numbered
-  Tombstones grouped by original stage; Git history is the default full-body
-  archive.
+- Limit Stage 98 to README, prefix-free numbered Migrations, and only the
+  minimal Tombstones genuinely required for immutable historical lookup; Git
+  history is the default full-body archive.
 - Make `docs/99.templates/registry.json` the only document-profile machine
-  authority, with exactly two schemas under `contracts/` and one human router
-  in Stage 99 README.
+  authority, with normalized top-level `lifecycleDomains` and one human router
+  in Stage 99 README. Do not gate schema, profile, or template counts.
 - Make `.agents/registry.json` plus its schema the only provider-neutral agent
   roster, role, permission, and skill machine authority. Keep `.agents/agents/`
   and `.agents/skills/` provider-neutral; retain only Claude and Codex provider
@@ -88,15 +91,16 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
   aggregate rules in the same logical cutover.
 - Give each permanent rule one machine owner and one validator. Aggregate
   scripts orchestrate canonical validators and do not reimplement rules.
-- Keep one representative positive fixture per profile/contract and one
-  independent negative per rule family; generate bounded combinations as
-  mutations instead of permanent fixture matrices.
+- Keep only bounded fixtures needed to prove semantic rule families; generate
+  combinations as mutations instead of permanent fixture matrices or fixed
+  case-count gates.
 - Remove branch-HEAD, current-document, current-validator, line-number, and
   snapshot-count SHA policies. Retain a digest only for external supply-chain
   identity, explicitly sealed evidence bytes, or a Git-reachable Archive
   recovery object, and record that purpose explicitly.
 - Delete a legacy, deprecated, duplicate, or one-time asset only after every
-  current consumer is migrated and Stage 98 recovery evidence is valid.
+  current consumer is migrated and Git recovery is proven. Add Stage 98
+  evidence only for a genuinely necessary immutable historical lookup.
 - Treat repository-static, provider-runtime, hosted-CI, remote-live, and
   actual-evaluation evidence as distinct classes.
 - Apply simplification in every WP: when a touched rule, gate, fixture, SHA
@@ -104,14 +108,14 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
   merge it in that same logical unit. WP-010 closes the repository-wide
   ownership graph and WP-014 closes the final fixed point; neither defers an
   already-safe local cleanup.
-- Organize `scripts/` by responsibility under `docs/`, `setup/`, `qa/`,
+- After ADR-0031 is accepted with the reciprocal ADR-0030 scoped-amendment
+  evidence, organize `scripts/` by responsibility under `docs/`, `setup/`, `qa/`,
   `validation/{documents,agents,archive,repository}`, and `lib/`. Keep focused
-  validator tests and fixtures with their production responsibility under
-  `scripts/validation/tests/`; retain
-  top-level application/infrastructure tests only where they are not validator
-  contract tests. Prefer 200–400-line modules, treat 800 lines as a review
-  ceiling, and use thin temporary compatibility wrappers only with an explicit
-  consumer-zero retirement gate.
+  validator tests and fixtures independent under top-level `tests/` and
+  `tests/fixtures/`; production modules must not import or read them. Split
+  modules by responsibility, duplication, and change risk rather than a fixed
+  line ceiling. Use thin temporary compatibility wrappers only with an
+  explicit consumer-zero retirement gate.
 - Production validators expose production checks only; remove embedded
   `--self-test` matrices after equivalent focused test modules exist. All
   governed reads are bounded, timeout-controlled, strict-decoding, and exact
@@ -132,18 +136,47 @@ Interface split, prefixed Architecture paths, expanded Stage 90/98 contracts,
 and Stage 99 support layout are not terminal authority after the approved
 2026-08-20 design amendments.
 
+Spec 0054 remains the integration and acceptance owner. Draft Spec 0066 at
+`../0066-validation-tooling-ownership/spec.md` is the delegated execution
+package for WP-010 and WP-011; its queued execution record is
+`TSK-0066-0001`. Cross-package navigation is owned by the
+[Current Spec Index](../README.md#current-spec-index). The relation is governed by
+[proposed ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md).
+It is not a standalone program. This design checkpoint does not activate Spec
+0066 or change any Task lifecycle state.
+
+After written-design approval and completion of WP-009 and its owning Task, the
+active owner hands off to TSK-0054-0010 as the sole `in-progress` parent Task in
+a separate lifecycle-valid change. That handoff also moves the existing Spec
+0054 `standaloneExecutions` task pointer to TSK-0054-0010; the compatibility
+row remains parent-only and creates no Spec 0066 authority. TSK-0054-0010 then
+owns one activation transaction before delegated execution starts. That
+transaction accepts ADR-0031; moves ADR-0016/0017/0020/0021/0022 from
+`accepted` to `superseded` with reciprocal ADR-0031 relations; adds the
+two-clause ADR-0030 amendment evidence without changing ADR-0030 status;
+updates the Decisions README and every current `Proposed ADR-0031` label plus
+the Stage 03 validator-test placement rule; updates the thin Spec 0066 README's
+current-state prose and the Current Spec Index row from `Draft` to `Active`;
+adds the narrow delegated-component ownership gate and focused tests; verifies
+the updated router and index; activates Spec/Plan/Task 0066; completes
+TSK-0054-0010; moves the existing Spec 0054 row
+to TSK-0054-0011; and moves that Task from `queued` to `in-progress` as the sole
+parent acceptance owner. TSK-0066-0001 does not execute or partially own the
+transaction that activates it, and no standalone Spec 0066 row is created.
+
 The predecessor worktree contained a reviewed but uncommitted WP-003 candidate.
-Its valid AI-agent governance, provider evidence, and thin-adapter semantics
-remain recoverable candidate input, but WP-003 is blocked until WP-004 activates
-the new document, lifecycle, and recovery authorities. Its Gemini/Antigravity surfaces, Stage
-98 full-document pinning, Stage 99 support-registry coupling, or other conflicts
-with ADR-0030 are discarded rather than ported. No edit is accepted solely
-because it was staged in a predecessor worktree.
+WP-004 has since completed the document, lifecycle, and recovery authority
+activation, and WP-003 is now `in-progress` on those owners. The candidate's
+valid AI-agent governance, provider evidence, and thin-adapter semantics remain
+recoverable input. Its Gemini/Antigravity surfaces, Stage 98 full-document
+pinning, Stage 99 support-registry coupling, or other conflicts with ADR-0030
+are discarded rather than ported. No edit is accepted solely because it was
+staged in a predecessor worktree.
 
 Execution continues in the linked worktree created from the approved design
-authority. WP-004 establishes the terminal document registry, generic recovery
-contract, lifecycle vocabulary, and Spec Task layout first. WP-003 then resumes
-on those owners. Old transition exceptions, branch/current-document SHA pins,
+authority. Completed WP-004 established the document registry, generic
+recovery contract, lifecycle vocabulary, and Spec Task layout; WP-003 now uses
+those owners. Old transition exceptions, branch/current-document SHA pins,
 fixture matrices, and census controls are not copied as a unit.
 
 The execution sequence first records a lossless candidate disposition, then
@@ -166,9 +199,9 @@ references, archive evidence, and scripts. Deletions are deliberately late.
 - Stage 90 has `learning/`, cloud snapshots, generated projections, loose data
   ledgers, dated packs, and stale links outside the terminal three-family
   package model.
-- Stage 98 has 185 historical files across expanded changes, migrations, and
-  tombstones; each requires an explicit retain or minimal Git-backed
-  compaction decision.
+- Stage 98 contains full-body Tombstones and redirect chains that duplicate Git
+  recovery. Sealed records cannot be compacted in place; consumer-zero and the
+  applicable recovery proof determine whether each can be deleted.
 - Stage 99 still splits human rules and machine values across `support/`,
   `templates/sdlc/`, profile JSON/schema, and duplicate template forms.
 - `scripts/` is a flat mixed-responsibility surface with large validators,
@@ -186,10 +219,11 @@ references, archive evidence, and scripts. Deletions are deliberately late.
 - Make Stage 00, Stage 99, validators, and provider adapters agree.
 - Make Stage 05 families purpose-disjoint and Incident-ready.
 - Classify and reconcile every Stage 90 file.
-- Reduce Stage 98 to the minimum lookup and Git-recovery evidence required for
-  every removal or consolidation.
-- Reduce Stage 99 to one registry, two schemas, one human README, and one
-  directly copyable template per active profile.
+- Reduce Stage 98 to bounded lookup evidence that Git cannot supply; do not
+  require a record for every removal or consolidation.
+- Reduce Stage 99 to profile definitions, normalized top-level lifecycle
+  domains, one human router, and only the schemas/templates required by active
+  profiles.
 - Remove duplicate gate logic, fixture matrices, and unjustified mutable SHA
   pins as each work package touches them.
 - Reorganize scripts by responsibility, split overgrown validators at touched
@@ -218,20 +252,31 @@ references, archive evidence, and scripts. Deletions are deliberately late.
 | WP-002 | Preserve completed four-digit and Stage 04 intermediate boundary | WP-001 | Historical execution evidence | Prior GREEN evidence retained as migration input, not terminal topology |
 | WP-003 | Reconcile Codex/Claude-only AI-agent governance | WP-004 | Document registry, lifecycle, and generic recovery authority active | `.agents` registry, Gemini/Antigravity consumer-zero, and canonical policy/provider projections GREEN |
 | WP-004 | Activate document, lifecycle, Spec Task, and recovery authorities | WP-002 | ADR-0030 and Plan/Task update committed | Flat Requirement, prefix-free Architecture, lifecycle, Stage 99, recovery, and link gates GREEN |
-| WP-005 | Record Stage 05 responsibility ledger | WP-003 | Governance and template contracts stable | Exact Guide/Policy/Runbook/Incident/Release disposition with no deletion |
-| WP-006 | Reconcile Stage 05 ownership and remove Release family | WP-005 | Operations dispositions approved | Prefix-free operations, Release consumer-zero, and recovery tests GREEN |
-| WP-007 | Record complete Stage 90 disposition ledger | WP-006 | Active owners stable | Every Stage 90 file classified exactly once without mutation; main staged RIA candidate disposition recorded |
-| WP-008 | Reconcile Stage 90 with atomic Stage 98 evidence | WP-007 | Stage 90 dispositions approved | Research/Audit/Data freshness, generator, link, migration, and recovery GREEN |
-| WP-009 | Minimize Stage 98 and close Git recovery | WP-008 | Current moves/deletions have atomic evidence | Existing Archive files reduced by retain/compact/delete disposition and reachable recovery proof |
-| WP-010 | Close the script, gate, fixture, and SHA ownership graph | WP-009 | Responsibility inventory complete | Every retained control has one owner; duplicate aggregates/self-tests/fixtures/pins classified and safe local duplicates removed |
-| WP-011 | Cut over compatibility wrappers and scripts topology | WP-010 | Wrapper and path consumers mapped | Responsibility directories active; wrappers deleted only at consumer-zero; no fixed census policy |
+| WP-005 | Review Stage 05 semantic owners | WP-003 | Governance and template contracts stable | Reviewed Guide/Policy/Runbook/Incident/Postmortem target and Task-local cutover decisions |
+| WP-006 | Reconcile Stage 05 ownership and remove Release family | WP-005 | Operations owner review complete | Canonical operations owners, strengthened incident contracts, Release consumer-zero, and Git recovery GREEN |
+| WP-007 | Review Stage 90 semantic destinations | WP-006 | Active owners stable | Research/Audit/Data/Guide destinations reviewed in the Task/diff; permanent RIA census contract rejected |
+| WP-008 | Reconcile Stage 90 semantic owners | WP-007 | Stage 90 destination review complete | Current package ownership/freshness GREEN; obsolete wiki, generator, gate, redirect, audit, and data overlap removed |
+| WP-009 | Minimize Stage 98 and close recovery | WP-008 | Current consumers and Git recovery mapped | Sealed records unchanged; redundant full-body/redirect records removed; remote-dependent records explicitly deferred |
+| WP-010 | Close the script, gate, fixture, and SHA ownership graph through delegated Spec 0066 | WP-009 and approved written design | Existing validation-surface contract and consumers mapped | Delegated Task evidence proves one routing owner, removes safe duplicates, and reports acceptance to Spec 0054 |
+| WP-011 | Cut over compatibility wrappers and scripts topology through delegated Spec 0066 | WP-010 within Spec 0066 | Wrapper and path consumers mapped | Responsibility directories active; wrappers deleted only at consumer-zero; TSK-0054-0011 records parent acceptance; no fixed census policy |
 | WP-012 | Rotate progress and remove stale generated-current residue | WP-011 | Earlier program evidence stable | Spec Task/Git evidence and generated-current ownership GREEN |
-| WP-013 | Retire transition-only taxonomy controls | WP-012 | Permanent owners carry terminal invariants | Transition assets and exceptions at consumer-zero; terminal registry and recovery GREEN |
-| WP-014 | Final convergence and branch completion | WP-013 | All logical commits present | Ownership/fixed-point/focused/affected/staged/aggregate/all-files/review GREEN |
+| WP-013 | Cut over the remaining current corpus and close transition references | WP-012; accepted and completed Spec 0066 result; completed TSK-0054-0011 parent handoff | ADR-0031 accepted; TSK-0066-0001, Plan 0066, and Spec 0066 are `done`; TSK-0054-0011 is `done`; the existing Spec 0054 compatibility pointer names queued TSK-0054-0013 | Stage 01/02/03/99 disposition, residual transition consumer-zero, and Git-first recovery GREEN |
+| WP-014 | Final convergence and branch completion | WP-013 and accepted Spec 0066 result | All logical commits present | Ownership/fixed-point/focused/affected/staged/aggregate/all-files/review GREEN |
 
-The closed execution order is exactly
-`WP-004 → WP-003 → WP-005 → WP-006 → WP-007 → WP-008 → WP-009 → WP-010 → WP-011 → WP-012 → WP-013 → WP-014`.
-WP-001 and WP-002 remain completed evidence and are not re-entered.
+WP-012 is a closed historical scheduling exception, not a reusable dependency
+rule. Its terminal Task keeps the originally declared WP-011 dependency and is
+not rewritten. It executed before WP-011 under direct human approval on
+2026-08-30, after Spec 0052 `WORK-113` had transferred and Spec 0064 had
+recorded the `VAL-AGS-002` blocker. This record explains existing Git evidence;
+it grants no current or future Task authority to bypass a declared dependency.
+
+Work follows the dependency table, not one global closed order. Each Spec
+Package may have at most one `in-progress` Task. After the reviewed activation
+checkpoint, Spec 0066 may execute its own WP-001 through WP-012 plan for the
+delegated parent WP-010/WP-011 scope while TSK-0054-0011 remains Spec 0054's
+sole parent acceptance Task. No unrelated Spec 0054 Task runs in that window;
+parent WP-014 later joins both results. Parent WP-001 and WP-002 remain
+completed evidence and are not re-entered.
 
 WP-004 migrates the transitional `tasks.md` ledger without renumbering its
 work packages. The lossless identity map is:
@@ -240,18 +285,23 @@ work packages. The lossless identity map is:
 | --- | --- | --- |
 | WP-001 | TSK-0054-0001 | done |
 | WP-002 | TSK-0054-0002 | done |
-| WP-003 | TSK-0054-0003 | blocked |
-| WP-004 | TSK-0054-0004 | queued; change to `in-progress` only when execution starts after the Plan/Task commit |
+| WP-003 | TSK-0054-0003 | in-progress |
+| WP-004 | TSK-0054-0004 | done |
 | WP-005 | TSK-0054-0005 | queued |
 | WP-006 | TSK-0054-0006 | queued |
 | WP-007 | TSK-0054-0007 | queued |
 | WP-008 | TSK-0054-0008 | queued |
 | WP-009 | TSK-0054-0009 | queued |
-| WP-010 | TSK-0054-0010 | queued |
-| WP-011 | TSK-0054-0011 | queued |
+| WP-010 | TSK-0054-0010 | queued; transfer to Spec 0066 is not effective until its activation checkpoint |
+| WP-011 | TSK-0054-0011 | queued; becomes the parent acceptance owner at the Spec 0066 activation checkpoint |
 | WP-012 | TSK-0054-0012 | done |
 | WP-013 | TSK-0054-0013 | queued |
 | WP-014 | TSK-0054-0014 | queued |
+
+TSK-0054-0011 has an earlier lifecycle activation dependency than the
+delegated WP-011 implementation: it starts only as the parent acceptance owner
+after WP-009 and the TSK-0054-0010 activation transaction. Spec 0066 WP-011
+still depends on Spec 0066 WP-010 and cannot execute early.
 
 Each terminal Task file preserves its WP label, prior result/evidence, current
 status, dependencies, ordered logical commit units, rollback, and review state.
@@ -289,10 +339,10 @@ cannot satisfy the terminal completion criteria.
 
 **Files:**
 
-- Activate the direct-approval lineage and change Spec/Plan/Task 0054 from
-  `draft` to `active` atomically in
-  `docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/`, the
-  Stage 03 index, and the registry `standaloneExecutions` projection.
+- Historical WP-002 activated Spec/Plan/Task 0054 and its then-current
+  direct-approval projection. That evidence is not authority to recreate the
+  `standaloneExecutions` roster; proposed ADR-0031 replaces it with
+  package-local relationships.
 - Reconcile the inherited WORK-109 candidate in
   `docs/03.specs/0052-document-taxonomy-consolidation/{spec.md,plan.md,tasks.md}`
   so WORK-109 through WORK-115 have one explicit `superseded`, `transferred`,
@@ -340,7 +390,7 @@ cannot satisfy the terminal completion criteria.
   ```bash
   python3 -m unittest tests.test_document_strict_cutover
   python3 scripts/validate-document-contract-registry.py --self-test
-  python3 scripts/validate-document-contract-registry.py --mode strict --route-state transition
+  python3 scripts/validate-document-contract-registry.py --mode strict
   python3 scripts/validate-markdown-profiles.py --root . --self-test
   python3 scripts/validate-markdown-profiles.py --root . --mode strict
   python3 scripts/validate-links-and-owners.py --root . --self-test
@@ -358,10 +408,10 @@ cannot satisfy the terminal completion criteria.
 
 ### WP-003 — Codex/Claude-only AI-agent governance
 
-WP-003 is `blocked` until WP-004 commits the Stage 99 document registry,
-profile lifecycle, Spec Task topology, and generic recovery contract. It
-resumes immediately after that dependency; no other WP may become active in
-between.
+WP-003 is `in-progress`. Completed WP-004 supplied the Stage 99 document
+registry, profile lifecycle, Spec Task topology, and generic recovery contract
+that unblocked this package. Its accepted Task record is the current execution
+state owner.
 
 **Files:**
 
@@ -416,11 +466,13 @@ between.
   fixture, validator rule, CI/pre-commit invocation, and aggregate command that
   exists only for them. Preserve historical mention only in Git or minimal
   migration evidence.
-- [ ] Split touched agent validators by contract responsibility, move their
-  tests/fixtures beside the modules, remove production `--self-test`, and make
-  the aggregate call only the three terminal agent gates: registry/schema
-  integrity, provider projection/config integrity, and semantic/permission
-  integrity. Affected-surface selection remains repository orchestration.
+- [ ] Split touched agent validators by contract responsibility and remove
+  production `--self-test`. Relocate their tests/fixtures to top-level `tests/`
+  only after ADR-0031 acceptance; until then preserve ADR-0030's current layout
+  without adding duplication. Make the aggregate call only the three terminal
+  agent gates: registry/schema integrity, provider projection/config integrity,
+  and semantic/permission integrity. Affected-surface selection remains
+  repository orchestration.
 - [ ] Remove current-state/provider-document SHA pins. Retain raw-byte digests
   only when a payload is externally supplied and supply-chain-pinned,
   explicitly sealed evidence, or a reachable Archive recovery object. Remove
@@ -491,44 +543,45 @@ between.
 
 ### WP-004 — document, lifecycle, Task, and registry authority activation
 
-WP-004 is the first implementation package after this Plan/Task update. It
-establishes the owners required by every later WP and supersedes the
-conflicting terminal assumptions of completed WP-002 without rewriting its
-historical evidence. It remains queued until this Plan/Task update commits and
-the execution handoff begins.
+WP-004 is completed historical execution. It established the owners required
+by later work and superseded the conflicting terminal assumptions of completed
+WP-002 without rewriting that evidence. Its accepted Task and commits are the
+execution record; sealed MIG-0004 is not regenerated. Terminal corpus
+reductions introduced by proposed ADR-0031 are prospective WP-013 work, not a
+reason to reopen WP-004.
 
-**Files:**
+**Accepted historical boundary:**
 
-- Create or converge `docs/00.agent-governance/{README.md,sdlc.md,policies/**}`
-  for human SDLC and lifecycle policy; defer provider-specific content to
+- Converged `docs/00.agent-governance/{README.md,sdlc.md,policies/**}`
+  for human SDLC and lifecycle policy; provider-specific content remained with
   WP-003.
-- Replace the eight Stage 01 records with flat
-  `docs/01.requirements/####-<slug>.md` Requirement Packages. Merge overlapping
-  document-governance requirements without reusing any issued ID.
-- Rename only `docs/02.architecture/descriptions/ad-####-<slug>.md` to
-  prefix-free routes, preserve AD frontmatter IDs, retain the already
-  prefix-free Decision routes, keep superseded ADRs in Stage 02, and activate
+- Converted the eight Stage 01 records to flat
+  `docs/01.requirements/####-<slug>.md` Requirement Packages without reusing
+  any issued ID.
+- Renamed `docs/02.architecture/descriptions/ad-####-<slug>.md` to
+  prefix-free routes, preserved AD frontmatter IDs, retained the already
+  prefix-free Decision routes, kept superseded ADRs in Stage 02, and activated
   reciprocal supersession links for ADR-0030 and its predecessors.
-- Convert active Spec Packages to
-  `{README.md,spec.md,plan.md,tasks/tsk-####-<slug>.md}`. Merge `design.md` and
-  `tests.md` content into Spec/Plan/Task or promote durable decisions to AD/ADR
-  before deletion. Migrate this transitional `tasks.md` ledger last in WP-004.
-- Create `docs/99.templates/{README.md,registry.json,contracts/**,templates/**}`
+- Converted active Spec Packages to
+  `{README.md,spec.md,plan.md,tasks/tsk-####-<slug>.md}`, migrated unique
+  `design.md` and `tests.md` content to its semantic owner, and migrated the
+  transitional `tasks.md` ledger last.
+- Created `docs/99.templates/{README.md,registry.json,contracts/**,templates/**}`
   with exactly the approved document template groups and no Release profile.
-- Create
-  `docs/98.archive/migrations/0004-document-authority-convergence.md` for this
-  large authority/path cutover and minimal Tombstones only where stable deleted
-  paths are not adequately represented by that Migration.
-- Split touched document-validator internals by responsibility and extract
+- Created and sealed
+  `docs/98.archive/migrations/0004-document-authority-convergence.md` for the
+  authority/path cutover; this Plan does not recreate or edit it.
+- Split touched document-validator internals by responsibility and extracted
   bounded readers behind stable interfaces, while preserving current root CLI
   and `tests/` paths as compatibility surfaces through WP-011.
 
 **Interfaces:**
 
 - `docs/99.templates/registry.json` owns document path, profile, required
-  sections, lifecycle, ID pattern, and relationships. It has only `$schema`,
-  `$id`, `schemaVersion`, `profiles`, `programLineage`, and
-  `standaloneExecutions` at top level.
+  sections, lifecycle, ID pattern, and normalized lifecycle domains. It does
+  not own current program, execution-instance, approval-sentence, or reference
+  pack rosters; package-local Spec/Plan/Task relationships own execution
+  delegation and approval traceability.
 - Every authored profile has `id`, `pathPattern`, `artifactIdPattern`,
   `template`, `requiredFrontmatter`, `requiredSections`, `lifecycle`, and
   `relationships`; README router profiles have no artifact ID or lifecycle.
@@ -538,46 +591,44 @@ the execution handoff begins.
 - Lifecycle transitions exactly match C-SDLC-007; global IDs and per-package
   member/Task numbers are append-only and never reused.
 
-- [ ] **RED — topology and identity:** reject directory Requirement Packages,
+- [x] **RED — topology and identity:** reject directory Requirement Packages,
   PRD/SRS/IFC profiles, abbreviated member IDs, reused IDs, `ad-`/`adr-` path
   prefixes, missing reciprocal ADR links, Stage 03 `design.md`/`tests.md`/
   `tasks.md`, a Release profile/path, and a path/frontmatter sequence mismatch.
-- [ ] **RED — authority and lifecycle:** reject a Stage 99 support owner, agent
+- [x] **RED — authority and lifecycle:** reject a Stage 99 support owner, agent
   roster fields in Stage 99, an illegal
   profile transition, mutable supersession without reciprocal links, a
   hardcoded template destination, and a production `--self-test` switch.
-- [ ] Run focused tests and record the exact diagnostics before any move.
-- [ ] Create the Stage 99 registry/two schemas; move existing document
+- [x] Ran focused tests and recorded the exact diagnostics before each move.
+- [x] Created the Stage 99 registry/two schemas and moved existing document
   validators to this authority with bounded strict reads and staged-index/
   worktree drift detection.
-- [ ] Convert Stage 01 to flat Requirement Packages. Assign normative source
+- [x] Converted Stage 01 to flat Requirement Packages. Assigned normative source
   statements in source order to `REQ-####-FR-####`, `REQ-####-NFR-####`, and
-  `REQ-####-IF-####`; preserve acceptance text and full-ID trace links.
-- [ ] Move the prefixed AD routes, keep the already prefix-free ADR routes, and
-  reconcile ADR-0015, ADR-0018, ADR-0019, ADR-0023, ADR-0024, ADR-0025, and
-  ADR-0030 according to the ADR-0030 supersession table. Do not archive
+  `REQ-####-IF-####`; preserved acceptance text and full-ID trace links.
+- [x] Moved the prefixed AD routes, kept the already prefix-free ADR routes, and
+  reconciled ADR-0015, ADR-0018, ADR-0019, ADR-0023, ADR-0024, ADR-0025, and
+  ADR-0030 according to the ADR-0030 supersession table without archiving
   superseded ADR bodies.
-- [ ] Convert Spec Packages and migrate unique design/test content to its
-  owner. For each logical unit create a Task with `TSK-<SPEC>-####`, focused
+- [x] Converted Spec Packages and migrated unique design/test content to its
+  owner. Each logical unit received a `TSK-<SPEC>-####` Task with focused
   RED/GREEN evidence, rollback, review result, and intended commit boundary;
-  record the resulting commit in Git/handoff or a later evidence update rather
-  than requiring a Task to predict its own commit ID. Keep package README as a
-  thin router.
-- [ ] Reorganize Stage 99 templates, merge PRD/SRS/Interface into Requirement,
-  rename `changes/` to `specs/`, delete design/tests/Release templates, and
-  consolidate unique support prose into the Stage 99 README.
-- [ ] Remove duplicate aggregate rules, embedded self-test matrices,
+  package READMEs remained thin routers.
+- [x] Reorganized Stage 99 templates, merged PRD/SRS/Interface into Requirement,
+  renamed `changes/` to `specs/`, deleted design/tests/Release templates, and
+  consolidated unique support prose into the Stage 99 README.
+- [x] Removed duplicate aggregate rules, embedded self-test matrices,
   exhaustive permanent fixture combinations, and unjustified current-state
-  SHA pins in every touched document validator. Keep representative positives
-  and independent mutation negatives beside the production module.
-- [ ] Add the exact migration/recovery mapping atomically with moves and prove
+  SHA pins in every touched document validator. Kept representative positives
+  and independent mutation negatives under top-level `tests/`.
+- [x] Added the exact migration/recovery mapping atomically with moves and proved
   full commit OID, durable-ref reachability, regular legacy blob resolution,
   bounded strict reads, and sealed digest match where applicable.
-- [ ] Run:
+- [x] Recorded GREEN execution for:
 
   ```bash
   python3 -m unittest tests.test_document_strict_cutover tests.test_document_lifecycle_archive_cutover tests.test_archive_recovery
-  python3 scripts/validate-document-contract-registry.py --mode strict --route-state transition
+  python3 scripts/validate-document-contract-registry.py --mode strict
   python3 scripts/validate-markdown-profiles.py --root . --mode strict
   python3 scripts/validate-links-and-owners.py --root . --mode strict
   python3 scripts/validate-document-lifecycle.py --root . --mode staged
@@ -589,47 +640,40 @@ the execution handoff begins.
   TMPDIR=/tmp pre-commit run
   ```
 
-- [ ] Obtain documentation-contract, architecture, Python, and security review.
-- [ ] Commit document authority and lifecycle as
+- [x] Obtained documentation-contract, architecture, Python, and security review.
+- [x] Committed document authority and lifecycle as
   `refactor(governance): activate document lifecycle authority`.
-- [ ] Commit Requirement/Architecture/Spec route cutover and recovery evidence
+- [x] Committed Requirement/Architecture/Spec route cutover and recovery evidence
   as `refactor(docs): converge SDLC packages`.
-- [ ] Commit templates, validator tests, fixtures, and support-prose removal as
+- [x] Committed templates, validator tests, fixtures, and support-prose removal as
   `refactor(validation): simplify document contracts`.
 
-### WP-005 — Stage 05 responsibility ledger
+### WP-005 — Stage 05 semantic-owner review
 
 **Files:**
 
-- Create a numbered Stage 90 Data package under
-  `docs/90.references/data/####-operations-document-disposition/` with a
-  stable `DATA-####` identity, bounded ledger, and schema covering every Stage
-  05 README and authored file. The package includes its own thin `README.md`.
-- Extend `scripts/validate-active-corpus-role-audit.py` and its focused
-  tests/fixtures; do not add a duplicate executable. WP-011 later moves this
-  responsibility unit and its tests together.
-- Review every Guide, Policy, Runbook, Incident/Postmortem, legacy Release
-  surface, and collection README without modifying or deleting bodies in this
-  package.
+- Review Stage 05 READMEs, Guides, Policies, Runbooks, Incident/Postmortem
+  contracts, and Release surfaces. Record point-in-time decisions only in
+  TSK-0054-0005 and its reviewed diff; do not create a Stage 90 disposition
+  package, schema, or permanent corpus census.
 
-- [ ] Add RED tests for an operation document with two canonical owners, a
-  Guide containing privileged mutation ownership, a Runbook lacking trigger
-  or recovery, malformed Incident/Postmortem metadata, and a missing or
-  duplicate disposition row.
-- [ ] Record owner, purpose, audience, trigger, procedure ownership, consumers,
-  overlap group, disposition, successor, and retirement gate. Record a source
-  commit only where the disposition requires Git recovery; do not pin current
-  file bytes or corpus counts.
-- [ ] Classify every Release path/profile/template/link as `delete` with its
-  replacement evidence owner: Spec Task, Git/CI/deployment evidence, or
-  Incident/Postmortem.
-- [ ] Prove the ledger covers the exact current corpus and makes no content
-  mutation or deletion.
+- [ ] Confirm Guide `0010` as the retained/rewrite Guide owner and plan the
+  merge/removal of Guides `0001`, `0002`, `0003`, `0006`, `0007`, `0008`, and
+  `0009` after consumer cutover.
+- [ ] Confirm Policies `0001`, `0003`, `0004`, `0005`, and `0007` as retained
+  owners; merge `0002` into `0001` and `0006` into `0005`.
+- [ ] Keep and rewrite all nine existing Runbooks as procedure owners, removing
+  duplicated policy, unsafe live execution, and secret-bearing examples.
+- [ ] Strengthen Incident/Postmortem role, timeline, evidence, cause,
+  action-owner, due-state, and closure contracts. Route Release evidence to
+  Spec Task, Git/CI/deployment evidence, or Incident/Postmortem.
+- [ ] Add semantic duplicate-owner and contract tests without an exact document
+  count, exhaustive fixture matrix, or permanent disposition ledger.
 - [ ] Run:
 
   ```bash
-  python3 -m unittest tests.test_active_corpus_role_audit
-  python3 scripts/validate-active-corpus-role-audit.py --root .
+  python3 -m unittest discover -s tests -p 'test_*document*.py'
+  python3 scripts/validate-document-contract-registry.py --mode strict
   python3 scripts/validate-markdown-profiles.py --root . --mode strict
   python3 scripts/validate-links-and-owners.py --root . --mode strict
   python3 scripts/validate-affected-surfaces.py --root .
@@ -648,13 +692,12 @@ the execution handoff begins.
 - Modify affected Stage 05 templates, registry body contracts, hooks, fixtures,
   indexes, and current links. Preserve only WP-002's lowercase Incident
   grammar; supersede its prefixed Guide/Policy/Runbook routes.
-- Create `docs/98.archive/migrations/0006-operations-family-convergence.md` for
-  the accepted operations path/profile/Release cutover.
-- Add the matching migration/tombstone row and recoverable source evidence to
-  Stage 98 in this same commit for every merge, replacement, or deletion.
+- Create at most one bounded operations Migration only if an immutable
+  historical lookup cannot be resolved through Git. Do not create per-file
+  Tombstones.
 
-- [ ] Start from the accepted WP-005 ledger; reject any path or disposition
-  absent from it.
+- [ ] Start from the reviewed WP-005 semantic targets and re-check consumers in
+  the candidate diff before mutation.
 - [ ] Resolve the reviewed bootstrap, platform-expansion, observability,
   metrics, and GitOps-onboarding Guide/Runbook overlaps.
 - [ ] Strengthen Incident role/timeline/severity/evidence fields and Postmortem
@@ -668,57 +711,46 @@ the execution handoff begins.
 - [ ] Run:
 
   ```bash
-  python3 -m unittest tests.test_active_corpus_role_audit tests.test_archive_recovery
-  python3 scripts/validate-active-corpus-role-audit.py --root .
-  python3 scripts/validate-document-contract-registry.py --mode strict --route-state transition
+  python3 -m unittest discover -s tests -p 'test_*document*.py'
+  python3 -m unittest tests.test_archive_recovery
+  python3 scripts/validate-document-contract-registry.py --mode strict
+  python3 scripts/validate-document-contract-registry.py --mode strict
   python3 scripts/validate-markdown-profiles.py --root . --mode strict
   python3 scripts/validate-links-and-owners.py --root . --mode strict
   python3 scripts/validate-document-lifecycle.py --root . --mode staged
-  python3 scripts/archive_recovery.py --root . --record docs/98.archive/migrations/0006-operations-family-convergence.md --verify
   bash scripts/check-secret-handling.sh
   TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
   ```
 
-  Also run the recovery validator once for every newly admitted Migration or
-  Tombstone path and require durable-ref reachability plus legacy blob proof.
+  Run the recovery validator only when this cutover adds a bounded Migration
+  or minimal Tombstone.
 - [ ] Obtain operations and security review.
 - [ ] Commit: `refactor(ops): clarify operations document ownership`.
 
-### WP-007 — Stage 90 disposition ledger
+### WP-007 — Stage 90 semantic-destination review
 
 **Files:**
 
-- Create a numbered Data package under
-  `docs/90.references/data/####-reference-disposition/` with the disposition
-  ledger, schema, thin `README.md`, and stable `DATA-####` identity.
-- Modify `scripts/reference_information_architecture.py`, its CLI, schema,
-  finite fixtures, and `tests/test_reference_information_architecture.py`;
-  WP-011 later moves this responsibility unit together.
-- Do not rename, merge, delete, regenerate, or edit a Stage 90 evidence body in
-  this package.
+- Review Stage 90 packages and their consumers by semantic family. Record the
+  point-in-time destination in TSK-0054-0007 and its reviewed diff; do not
+  create a permanent disposition Data package or schema.
+- Retire the large reference-information-architecture SHA/FSM/current-pack
+  contract and its exclusive fixtures/gates rather than porting it as the new
+  owner.
 
-- [ ] Inspect exactly these preserved main-worktree candidate paths by semantic
-  diff: `docs/90.references/data/reference-information-architecture.json`,
-  `scripts/reference_information_architecture.py`,
-  `tests/fixtures/reference-information-architecture/minimal-valid.json`, and
-  `tests/test_reference_information_architecture.py`. Record each hunk as
-  `port`, `rework`, or `discard`; do not stage or modify the main worktree and
-  do not use its index as authority for this branch.
-- [ ] Enumerate every Stage 90 file with path, profile, current owner,
-  `reviewed_at`, `source_as_of`, `review_due`, consumers, recovery requirement,
-  and one closed disposition. Do not add current-file blob or corpus-digest
-  pins.
-- [ ] Add RED tests for missing/duplicate disposition, a current reference
-  claiming policy authority, and an unowned freshness or generator contract.
-- [ ] Require an exact one-to-one census of all tracked Stage 90 files,
-  including indexes, data/schema assets, generated outputs, dated evidence
-  packs, snapshots, and current semantic references.
+- [ ] Route `cloud-examples` and relevant maintained snapshots to numbered
+  Research packages, and route the learning roadmap to Stage 05 Guide `0010`.
+- [ ] Mark `llm-wiki`, its generator and gates for consumer-zero deletion.
+  Merge or remove older Audit packages and overlapping Data assets by semantic
+  owner.
+- [ ] Define terminal Stage 90 checks only for numbered date-free package
+  identity, owner, lifecycle, freshness, consumers, and bounded supporting
+  assets. Do not add file-count, corpus-digest, or disposition completeness
+  gates.
 - [ ] Run:
 
   ```bash
-  python3 -m unittest tests.test_reference_information_architecture
-  python3 scripts/validate-reference-information-architecture.py --root . --staged --require-settled-baselines
-  bash scripts/generate-llm-wiki-index.sh --check
+  python3 -m unittest discover -s tests -p 'test_*reference*.py'
   python3 scripts/validate-links-and-owners.py --root . --mode strict
   TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
   ```
@@ -728,28 +760,23 @@ the execution handoff begins.
 
 ### WP-008 — Stage 90 ownership cutover
 
-The narrowly approved WER historical-table retirement occurs in WP-003 under
-C-SDLC-009. Reuse that disposition; the remaining Stage 90 cutover still
-requires WP-007 and does not repeat or expand that earlier cleanup.
+The remaining Stage 90 cutover starts from WP-007's Task-local semantic review;
+it does not recreate the retired RIA or a permanent disposition ledger.
 
 **Files:**
 
-- Modify only Stage 90 indexes and current references authorized by WP-007.
-- Modify the RIA and reference-index generator modules, schemas, finite
-  fixtures, and focused tests only as needed to enforce the approved
-  disposition.
-- Add Stage 98 migration/tombstone and recovery evidence atomically for every
-  Stage 90 move, merge, replacement, or deletion.
-- Use `docs/98.archive/migrations/0007-reference-library-convergence.md` as the
-  single large-cutover mapping when WP-007 dispositions authorize those moves.
+- Modify Stage 90 indexes, current semantic packages, consumers, and focused
+  semantic tests selected by WP-007.
+- Remove the obsolete RIA and llm-wiki generator/gate surfaces with their
+  exclusive fixtures after consumer-zero. Add one bounded Stage 98 Migration
+  only if an immutable historical lookup cannot be resolved through Git.
 
-- [ ] Reject a stale Stage 04 link, an altered historical source record, an
-  unauthorized dated-current path, and a generated output without safe check
-  mode before applying the ledger.
+- [ ] Reject a stale Stage 04 link, an unauthorized dated-current path, and a
+  maintained generated output without safe check mode before cutover.
 - [ ] Convert maintained current references to semantic undated filenames and
   move observation dates into frontmatter/source metadata.
-- [ ] Merge duplicate research findings into one current owner; preserve source
-  coverage and source commits.
+- [ ] Merge duplicate research findings, older Audit packages, and overlapping
+  Data assets into one semantic owner while preserving useful provenance.
 - [ ] Keep all current Research/Audit/Data package paths date-free and store
   observation dates only in `reviewed_at`, `source_as_of`, `review_due`, and
   other profile-approved metadata.
@@ -762,17 +789,15 @@ requires WP-007 and does not repeat or expand that earlier cleanup.
 - [ ] Run:
 
   ```bash
-  python3 -m unittest tests.test_reference_information_architecture tests.test_archive_recovery
-  python3 scripts/validate-reference-information-architecture.py --root . --staged --require-settled-baselines
-  bash scripts/generate-llm-wiki-index.sh --check
+  python3 -m unittest discover -s tests -p 'test_*reference*.py'
+  python3 -m unittest discover -s tests -p 'test_*archive*.py'
   python3 scripts/validate-markdown-profiles.py --root . --mode strict
   python3 scripts/validate-links-and-owners.py --root . --mode strict
-  python3 scripts/archive_recovery.py --root . --record docs/98.archive/migrations/0007-reference-library-convergence.md --verify
   TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
   ```
 
-  Also verify every newly admitted Migration/Tombstone with the canonical
-  recovery validator.
+  Verify a newly admitted bounded Migration or minimal Tombstone only when the
+  cutover actually requires one.
 - [ ] Obtain documentation, architecture, and Python review.
 - [ ] Commit: `refactor(references): reconcile Stage 90 ownership`.
 
@@ -781,36 +806,39 @@ requires WP-007 and does not repeat or expand that earlier cleanup.
 **Files:**
 
 - Reduce `docs/98.archive/` to README, prefix-free numbered Migrations, and
-  minimal Tombstones grouped by original stage. Preserve a full historical
-  body only for a documented audit/legal exception. Never preserve
-  secret-bearing history through ordinary Stage 98; route it to incident,
-  rotation, and explicitly approved history-removal handling.
+  only the minimal Tombstones required for immutable historical lookup. Git is
+  the default full-body archive. Never preserve secret-bearing history through
+  ordinary Stage 98; route it to incident, rotation, and explicitly approved
+  history-removal handling.
 - Modify archive validation/recovery and focused tests only to close global
   parity across evidence committed in WP-002, WP-004, WP-003, WP-006, and
   WP-008.
 
-- [ ] Add RED cases for duplicate artifact IDs, malformed stable IDs,
-  path/frontmatter mismatch, missing source commits, missing replacement,
-  orphan deletion, changed source blob, and active direct Archive-record links.
-- [ ] Classify every existing Archive file as `retain`, `compact`, or `delete`;
-  the observed starting count is evidence only and must not become a terminal
-  snapshot-count assertion.
+- [ ] Add semantic RED cases for an in-place sealed-record edit, a remaining
+  consumer of a proposed removal, an unresolved immutable historical link,
+  unsafe recovery, and an active direct Tombstone link.
+- [ ] Never compact or rewrite a sealed record in place. Delete full-body
+  Tombstones and redirect chains only after consumer-zero and Git recovery are
+  proven; keep point-in-time decisions in the Task/diff rather than an Archive
+  census.
+- [ ] Retain MIG-0006 through MIG-0009 byte-for-byte in this cutover. Mark
+  deletion `DEFER` until an authorized remote operation or full clone proves
+  the required `origin/main` ancestry; local `main` evidence is insufficient.
 - [ ] Require the minimal Migration/Tombstone fields from C-SDLC-009 and reject
   line-number hashes, full-corpus digests, current-document pins, and copied
   completed Spec/Plan/Task bodies without an approved exception.
-- [ ] Join each current deletion/consolidation to exactly one already-atomic
-  migration or tombstone record and a recoverable source object; reject late
-  evidence created only to mask an earlier unproved deletion.
-- [ ] For every authorized deletion, require a full commit OID reachable from
-  a named durable ref, a regular legacy blob at that path, bounded reads,
-  strict UTF-8 for text, and a sealed digest only when the payload is declared
-  sealed. Route secret-bearing history through incident/rotation/removal rules.
+- [ ] Create a new Migration or minimal Tombstone only when an actual immutable
+  lookup cannot be resolved through Git and maintained mappings. Do not create
+  one record per deletion or a meta-Migration solely to delete Migrations.
+- [ ] Apply bounded object/path/decoding and sealed-byte checks only to the
+  recovery lookup that remains. Route secret-bearing history through
+  incident/rotation/removal rules.
 - [ ] Remove direct active-document links to individual Tombstones; route human
   recovery lookup through Archive README or the relevant Migration.
 - [ ] Run:
 
   ```bash
-  python3 -m unittest tests.test_archive_validation tests.test_archive_cutover tests.test_archive_recovery tests.test_active_corpus_migrations tests.test_active_corpus_retention tests.test_document_lifecycle_archive_cutover
+  python3 -m unittest tests.test_archive_validation tests.test_archive_cutover tests.test_archive_recovery tests.test_document_lifecycle_archive_cutover
   python3 scripts/archive_cutover.py --root .
   python3 scripts/validate-document-lifecycle.py --root . --mode staged
   python3 scripts/validate-links-and-owners.py --root . --mode strict
@@ -822,102 +850,120 @@ requires WP-007 and does not repeat or expand that earlier cleanup.
 
 ### WP-010 — script, gate, fixture, and SHA ownership fixed point
 
-**Files:**
+**Delegation boundary:**
 
-- Create or converge `scripts/validation/registry.json` and its schema as the
-  machine owner for validation responsibilities, lanes, entrypoints,
-  consumers, and compatibility retirement gates.
-- Modify `scripts/README.md`, affected-surface selection, CI/pre-commit
-  consumers, aggregate orchestration, and focused tests under
-  `tests/test_run_validation_lane.py` and the existing affected-surface test
-  modules. WP-011 moves the complete responsibility unit afterward.
-- Use a numbered Stage 90 Data package only for the point-in-time audit that
-  justifies the ownership graph; it has a stable `DATA-####` identity and is
-  a thin `README.md`, and is not a second executable registry.
+- Spec 0054 owns the WP-010 acceptance criteria and integration decision.
+  Draft Spec 0066 at `../0066-validation-tooling-ownership/spec.md`, through
+  `TSK-0066-0001`, owns execution, detailed file batches, focused tests, review
+  evidence, and rollback after its activation checkpoint. The
+  [Current Spec Index](../README.md#current-spec-index) owns cross-package
+  navigation while the legacy standalone boundary remains current.
+- Atomically move, rather than copy,
+  `docs/00.agent-governance/contracts/validation-surfaces.json` and its schema
+  to `scripts/validation/registry.json` and its schema. The moved contract owns
+  validation responsibility, lane selection, executable entrypoints, and
+  supported consumers; it is not a second registry or a per-file inventory.
+- Keep point-in-time disposition in the Spec 0066 Task and reviewed diff. Do
+  not create a Stage 90 census package, fixed file count, inventory digest, or
+  permanent field-complete ledger for scripts, tests, fixtures, hooks, and
+  pins.
+- After ADR-0031 acceptance, preserve top-level `tests/` and
+  `tests/fixtures/` as independent test surfaces. Production code must not
+  import or read them.
+- The activation owner changes `scripts/validate-links-and-owners.py` and adds
+  focused coverage under top-level `tests/` before Spec 0066 becomes active.
+  A delegated component is admitted only when its Spec/Plan/Task links are
+  closed and package-local, the parent and delegate Specs link reciprocally,
+  accepted ADR-0031 authorizes both, exactly one registry-owned parent package
+  is found, lifecycle states agree, and no child standalone row exists. Tests
+  reject missing reciprocity, proposed ADR authority, multiple parents,
+  foreign Plan/Task links, and duplicate child authority. Existing roster
+  consumers continue for unrelated rows until WP-013; this is not a broad
+  bypass.
 
-- [ ] Add RED tests that reject an unregistered production entrypoint, two
-  owners for one rule, aggregate reimplementation, production `--self-test`,
-  orphan fixture, matrix fixture without a generator, unexplained SHA pin,
-  unbounded read, missing timeout, and index/worktree ambiguity.
-- [ ] Record every current script, test, fixture, gate, hook, CI consumer, and
-  SHA pin in the ownership graph without a fixed terminal count or inventory
-  digest.
-- [ ] For every row require responsibility owner, interface, consumers,
-  diagnostics, tests, fixtures, evidence class, recovery need, disposition,
-  replacement, and retirement gate. Filename similarity is not a merge reason.
-- [ ] Remove safe duplicates immediately: aggregate rule copies, embedded
-  self-tests already covered by focused modules, redundant fixtures, and
-  current-state SHA pins. Leave only blockers with explicit consumer/recovery
-  gates for WP-011 or WP-013.
-- [ ] Run:
+**Parent acceptance:**
 
-  ```bash
-  python3 -m unittest tests.test_run_validation_lane
-  python3 scripts/validate-affected-surfaces.py --root .
-  TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
-  git diff --cached --name-only -z > /tmp/spec-0054-staged.nul
-  python3 scripts/run-validation-lane.py --root . --lane staged --paths-file /tmp/spec-0054-staged.nul --delimiter nul
-  TMPDIR=/tmp pre-commit run
-  ```
-
-- [ ] Obtain script and code-quality review.
-- [ ] Commit: `refactor(validation): close control ownership graph`.
+- [ ] TSK-0054-0011 owns this checklist after activation while
+  TSK-0066-0001 remains the sole delegated execution owner. It reviews
+  committed, review-ready evidence and does not edit or claim the delegated
+  implementation.
+- [ ] Reject duplicate rule owners, aggregate reimplementation, production
+  `--self-test`, orphan fixtures, unjustified current-state SHA pins,
+  unbounded reads, missing timeouts, and staged-index/worktree ambiguity.
+- [ ] Preserve SHA identity only for external immutable dependencies, sealed
+  evidence bytes, or explicitly verified Git recovery.
+- [ ] Require one routing owner and deterministic diagnostics without fixing
+  the number of entrypoints, files, negative cases, or module lines.
+- [ ] Accept Spec 0066's focused and broad validation, independent review,
+  rollback evidence, and logical commits in TSK-0054-0011 before Spec 0066
+  closes and WP-013 starts.
 
 ### WP-011 — responsibility topology and compatibility cutover
 
-**Files:**
+**Delegation boundary:**
 
-- Modify `scripts/README.md`, validation surfaces, CI/pre-commit contracts,
-  root and governance command documentation, fixtures, and current work-unit
-  consumers.
-- Move scripts into `docs/`, `setup/`, `qa/`, `validation/`, and `lib/` by the
-  WP-010 responsibility graph. Delete `validate-harness.sh` and any other
-  approved thin compatibility wrapper only after consumer-zero proof; add
-  minimal recovery evidence in the same commit when the stable path requires
-  it.
-- Map document contracts, lifecycle, Markdown, links, RIA, and active-document
-  role checks to `scripts/validation/documents/`; agent governance to
-  `scripts/validation/agents/`; archive/recovery/retention/migration to
-  `scripts/validation/archive/`; affected-surface, lane, workspace, CI, and
-  validation-registry controls to `scripts/validation/repository/`.
-- Map generators and migration utilities to `scripts/docs/`, bootstrap/render
-  helpers to `scripts/setup/`, aggregate/security/GitOps/Kubernetes/Vault
-  checks to `scripts/qa/`, and shared bounded Git/path/UTF-8 primitives to
-  `scripts/lib/`.
-- Expose exactly four canonical validator entrypoints after the move:
-  `scripts/validation/documents/validate.py`,
-  `scripts/validation/agents/validate.py`,
-  `scripts/validation/archive/validate.py`, and
-  `scripts/validation/repository/validate.py`. The aggregate entrypoint is the
-  thin shell `scripts/qa/validate-repository.sh` and contains no rule logic.
+- Spec 0066 owns the responsibility-batch implementation under `scripts/docs/`,
+  `scripts/setup/`, `scripts/qa/`, `scripts/validation/`, and `scripts/lib/`.
+  These responsibility domains guide placement but do not impose exactly four
+  validator entrypoints.
+- Preserve required CI check names until remote branch-protection evidence is
+  available. Internal job commands, local lanes, and aggregate orchestration
+  may simplify while retaining their observable selection and diagnostics.
+- Delete a compatibility wrapper only after consumer-zero and unique-diagnostic
+  checks pass. Git history is the default recovery owner; use a bounded sealed
+  Migration only for a required immutable lookup that Git alone cannot
+  resolve, and a minimal Tombstone only when both are insufficient.
+- The retired `route_state` option is not reintroduced. Spec 0066 owns current
+  executable commands and negative behaviors rather than inheriting stale
+  command lines from this parent Plan.
 
-- [ ] Add RED cases for each current executable or command consumer of the
-  wrapper and for any wrapper-only unique diagnostic or ordering semantic.
-- [ ] Migrate README, PR template, approval rule, fixture, CI, hook, and manual
-  consumers from `validate-harness.sh` to canonical aggregate/affected lanes.
-- [ ] Move modules and co-located tests in bounded responsibility batches;
-  repair imports, CI, pre-commit, docs, affected-surface selection, and shell
-  entrypoints atomically in each batch.
-- [ ] Prove zero current consumers and zero unique diagnostics before deleting
-  each wrapper. Assert registry/path parity rather than an exact file count.
-- [ ] Run:
+**Activation and transfer checkpoint:**
 
-  ```bash
-  git ls-files -z 'scripts/**/*.sh' | xargs -0 -r -n1 bash -n
-  python3 -m unittest discover -s scripts/validation/tests -p 'test_*.py'
-  python3 scripts/validation/documents/validate.py --root . --mode staged --route-state transition
-  python3 scripts/validation/agents/validate.py --root .
-  python3 scripts/validation/archive/validate.py --root .
-  python3 scripts/validation/repository/validate.py --root . --lane affected
-  bash scripts/qa/validate-repository.sh .
-  TMPDIR=/tmp pre-commit run
-  ```
-
-  Run ShellCheck as an additional `PASS` or explicit optional-tool `SKIP` when
-  it is available.
-- [ ] Obtain script and code-quality review.
-- [ ] Commit responsibility batches separately, ending with
-  `refactor(scripts): retire compatibility wrappers`.
+- [ ] Only after the written design and implementation plan are reviewed and
+  WP-009 and its owning Task are complete, hand off to TSK-0054-0010 as the sole
+  `in-progress` Task in a separate lifecycle-valid change. TSK-0054-0010 owns
+  the activation index and its evidence; TSK-0054-0011 remains `queued`. Move
+  the existing Spec 0054 `standaloneExecutions` task pointer from the prior
+  current parent Task to TSK-0054-0010 in that same handoff.
+- [ ] While TSK-0054-0010 is the active owner, prepare one activation index that
+  transitions ADR-0031 from `proposed` to `accepted`; adds its `supersedes`
+  relation; changes ADR-0016, ADR-0017, ADR-0020, ADR-0021, and ADR-0022 from
+  `accepted` to `superseded` with reciprocal `superseded_by: ADR-0031`; adds
+  ADR-0030's two-clause scoped-amendment Traceability note without lifecycle
+  supersession or status change; updates the Decisions README state and
+  explanation, every current Stage 02/03 and Spec-package `Proposed ADR-0031`
+  label, and the Stage 03 validator-test placement rule; updates the thin Spec
+  0066 README from design-checkpoint `draft`/`queued` prose to the active
+  execution projection and changes its Current Spec Index row from `Draft` to
+  `Active`; adds the package-local delegated ownership rule in
+  `scripts/validate-links-and-owners.py` plus focused positive and negative
+  tests; verifies that Spec 0066 Plan/Task have no rendered parent Plan/Task
+  link and that the router/index projections agree; changes Spec
+  0066 Spec/Plan to `active` and TSK-0066-0001 to `in-progress`; changes
+  TSK-0054-0010 to `done`; moves the existing Spec 0054 compatibility pointer
+  from TSK-0054-0010 to TSK-0054-0011; and changes TSK-0054-0011 from `queued`
+  to `in-progress` as the sole parent acceptance owner. Do not create a Spec
+  0066 standalone row. All Task transitions already exist in the Stage 99
+  lifecycle domain; do not edit the lifecycle registry, schema, or its code
+  projection in this activation transaction.
+- [ ] Validate and commit that exact index as one logical transaction. Do not
+  expose an intermediate accepted-ADR, illegal Task edge, ownerless change, or
+  dual-`in-progress` state inside either package. The intended concurrent pair
+  is one parent Task and one delegated child Task. Until that transaction
+  commits, TSK-0066-0001 remains `queued` and carries no accepted execution
+  evidence.
+- [ ] WP-011 completes only when Spec 0066 reports consumer-zero wrapper
+  retirement, current registry/path parity, focused and broad validation,
+  independent review, rollback evidence, and logical commits to
+  TSK-0054-0011. All implementation, independent review, and
+  acceptance-bearing focused and broad gates are committed before that Task
+  records integrated acceptance. It remains `in-progress` while Spec 0066
+  performs only the state closure: TSK-0066-0001 moves `in-progress → done`,
+  and its Plan and Spec move `active → done`, followed by post-state lifecycle
+  and diff confirmation. In the next parent handoff, move TSK-0054-0011 to
+  `done` and the existing Spec 0054 compatibility pointer to queued
+  TSK-0054-0013 atomically. TSK-0054-0013 may activate only in a later
+  lifecycle-valid change.
 
 ### WP-012 — progress and generated-current cleanup
 
@@ -930,65 +976,111 @@ requires WP-007 and does not repeat or expand that earlier cleanup.
 - Verify the four graphify retirements advanced to WP-003 under C-SDLC-009;
   do not recreate their outputs or repeat their recovery record. Other
   generated-current cleanup still requires its own current-consumer and
-  reproducibility proof plus atomic Stage 98 disposition evidence.
+  reproducibility proof plus Git recovery. Add Stage 98 evidence only when an
+  immutable historical lookup cannot otherwise be resolved.
 - Modify only the indexes, ignores, contracts, tests, and current links needed
   for that recovery boundary.
 
-- [ ] Restore the transferred intent of Spec 0052 WORK-113 explicitly; do not
-  leave it as a competing queued item.
-- [ ] Prove the old progress path is recoverable, every unfinished item has one
-  current Task owner, generated-current ownership is explicit, and stale graph
-  residue has zero current consumers. Remove progress-prefix and whole-file
-  SHA validators after the transfer.
-- [ ] Run:
+- [x] Restored the transferred intent of Spec 0052 WORK-113 without leaving a
+  competing queued item, as recorded by terminal TSK-0054-0012.
+- [x] Proved the old progress path recoverable, assigned current Task owners,
+  and retired the progress-prefix and whole-file SHA validators. The terminal
+  Task records three bounded residuals rather than claiming forced completion.
+- [x] Ran the closing validation recorded by TSK-0054-0012 and its commits:
 
   ```bash
-  python3 -m unittest discover -s scripts/validation/tests/archive -p 'test_*.py'
-  python3 -m unittest discover -s scripts/validation/tests/documents -p 'test_*.py'
-  python3 scripts/validation/documents/validate.py --root . --mode staged --route-state transition
-  python3 scripts/validation/archive/validate.py --root .
-  python3 scripts/validation/repository/validate.py --root . --lane affected
-  python3 scripts/docs/generate-reference-index.py --root . --check
-  bash scripts/qa/validate-repository.sh .
+  python3 -m unittest discover -s tests -p 'test_*archive*.py'
+  python3 -m unittest discover -s tests -p 'test_*document*.py'
+  python3 scripts/validate-document-contract-registry.py --mode strict
+  python3 scripts/validate-markdown-profiles.py --root . --mode strict
+  python3 scripts/validate-links-and-owners.py --root . --mode strict
+  python3 scripts/validate-document-lifecycle.py --root . --mode staged
+  python3 scripts/validate-affected-surfaces.py --root .
+  TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
   ```
-- [ ] Obtain archive and documentation review.
-- [ ] Commit: `chore(governance): close progress and generated residue`.
+- [x] Recorded the review limitation: the historical execution was
+  self-reviewed and had no second reviewer. This is evidence about that closed
+  exception, not a precedent that relaxes current review requirements.
+- [x] Closed the Task through `aeb22636` and `eb68a4fe`; its logical
+  implementation commits remain listed in TSK-0054-0012. Do not rerun WP-012.
 
-### WP-013 — transition-only taxonomy terminal cutover
+### WP-013 — current corpus and transition-control cutover
 
 **Files:**
 
-- Migrate permanent consumers of the taxonomy transition manifest and migration
-  tool at their WP-011 responsibility paths.
-- Modify registry, RIA, generator, residue, links, Markdown fixtures, tests,
-  scripts README, and Stage 98 recovery evidence.
-- Delete the transition JSON/tool and its transition-only test after closure.
+- Enter only after ADR-0031 is accepted with its reciprocal evidence and Spec
+  0054 has accepted the completed Spec 0066 result. That result is an immutable
+  dependency boundary: Spec 0066 no longer mutates registry, runner, wrapper,
+  pin, test, or fixture surfaces while WP-013 owns the remaining transition
+  closure.
+- Re-check the named Stage 01, 02, 03, and 99 dispositions against current
+  consumers immediately before mutation. These names are the reviewed cutover
+  candidate, not a permanent corpus-count invariant.
+- Retain and rewrite Requirement Packages `0001` through `0004`. Transfer any
+  unique current requirement or trace link from `0005` through `0008` to those
+  owners, then remove `0005` through `0008` only at consumer-zero.
+- Retain and update Architecture Descriptions `0004` through `0007`. Transfer
+  current traceability from Descriptions `0008` through `0011`, then retire
+  those four descriptions. Keep every ADR body in the Stage 02 decision log
+  with accurate lifecycle and reciprocal supersession relations.
+- Retain Spec Packages `0004`, `0005`, `0008`, `0054`, and delegated `0066` as
+  the reviewed current-owner set. For every other Stage 03 package, first
+  transfer unfinished work and unique current authority or prove it obsolete,
+  completed, duplicated, or conflicting; then remove it from the current tree
+  with Git-first recovery.
+- Reduce Stage 99 to the human router, authored profiles, normalized top-level
+  `lifecycleDomains`, required schemas, and templates used by retained
+  profiles. Remove `programLineage.programs`, `referenceCurrentPacks`,
+  `standaloneExecutions`, the data-model and full-body archive templates, and
+  stale progress/memory forms after their current consumers move. The Spec
+  0054 pointer rotations above are a bounded compatibility bridge, not a new
+  authority; remove that row and its consumers rather than adding a Spec 0066
+  row.
+- Re-evaluate the taxonomy transition manifest, migration tool, and
+  transition-only tests against the accepted Spec 0066 routing and consumer
+  graph. Migrate remaining consumers to their current semantic owners and
+  delete those assets only after consumer-zero; do not preserve the retired
+  RIA as an intermediary.
 
-- [ ] Add RED tests that list every remaining transition consumer and prevent
-  retirement while one exists.
-- [ ] Move terminal invariants to permanent registry, migration ledger, archive
-  envelope, or frozen regression fixtures according to ownership.
-- [ ] Prove current consumers zero and historical recovery from the source
-  commit succeeds.
+- [ ] Add RED cases that reject a removed current owner,
+  unresolved trace or template consumer, duplicate-purpose retained document,
+  execution-instance roster, full-body archive template, and document reference
+  or executable consumer of a retired transition asset.
+- [ ] Move terminal invariants and unfinished work to the current semantic
+  document, registry, production module, Spec Task, or focused behavioral test
+  before removing a source.
+- [ ] Prove current consumers zero and recovery from reachable Git history.
+  Add one bounded Migration only when an immutable lookup cannot be resolved
+  through Git, and one minimal Tombstone only when both are insufficient.
 - [ ] Delete the transition manifest/tool and transition-only tests after
-  consumer-zero. Assert validation-registry parity and absence of transition
-  authority rather than a fixed script count.
-- [ ] Change the registry to terminal route state atomically and reject the
-  transition profile, manifest, tool, and every live three-digit/Stage 04
-  residue.
+  consumer-zero against the accepted Spec 0066 result. Assert current
+  document/registry parity and absence of transition authority without a fixed
+  script or document count.
+- [ ] Reject retired Stage 01/02/03/99 owners, the transition profile,
+  manifest, tool, and every live three-digit/Stage 04 residue without
+  recreating a `route_state` field or a permanent corpus census.
 - [ ] Run:
 
   ```bash
-  python3 -m unittest discover -s scripts/validation/tests -p 'test_*.py'
-  python3 scripts/validation/documents/validate.py --root . --mode strict --route-state terminal
-  python3 scripts/validation/agents/validate.py --root . --mode strict
-  python3 scripts/validation/archive/validate.py --root . --mode strict
-  python3 scripts/validation/repository/validate.py --root . --mode staged
-  TMPDIR=/tmp bash scripts/qa/validate-repository.sh .
+  python3 -m unittest discover -s tests -p 'test_*.py'
+  python3 scripts/validate-document-contract-registry.py --mode strict
+  python3 scripts/validate-markdown-profiles.py --root . --mode strict
+  python3 scripts/validate-links-and-owners.py --root . --mode strict
+  python3 scripts/validate-document-lifecycle.py --root . --mode staged
+  python3 scripts/validate-affected-surfaces.py --root .
+  TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
   TMPDIR=/tmp pre-commit run
   ```
-- [ ] Obtain Python, archive, and code-quality review.
-- [ ] Commit: `refactor(scripts): retire taxonomy transition assets`.
+- [ ] Obtain architecture, documentation, Python, archive, and code-quality
+  review.
+- [ ] Commit the Stage 01/02 owner and traceability cutover as
+  `refactor(docs): converge requirements and architecture corpus`.
+- [ ] Commit the Stage 03 unfinished-work transfer and current-owner cutover as
+  `refactor(specs): converge current execution packages`.
+- [ ] Commit the Stage 99 profile/lifecycle/template reduction as
+  `refactor(templates): reduce document control plane`.
+- [ ] Commit taxonomy transition consumer-zero retirement as
+  `refactor(validation): retire taxonomy transition controls`.
 
 ### WP-014 — convergence and branch completion
 
@@ -1022,29 +1114,29 @@ production validator. WP-004, WP-003, and WP-005 through WP-014 run affected
 and staged lanes when
 they change a validator-selected surface. Aggregate and pre-commit run at every
 route, evidence, generated-output, or deletion boundary and at final
-convergence. `transition` is valid only through WP-012; WP-013 and WP-014 must
-validate the terminal state.
+convergence. The retired `route_state` interface is never reintroduced; the
+current registry and executable paths define the validated state.
 
 The owner creates NUL-delimited, normalized path files for the exact affected
 and staged scopes and invokes the lanes without shell reconstruction. These
 temporary path files are execution inputs, not durable SHA-pinned evidence:
 
 ```bash
-python3 scripts/validation/repository/validate.py --root . --mode affected --paths-file /tmp/spec-0054-affected.nul --delimiter nul
-python3 scripts/validation/repository/validate.py --root . --mode staged --paths-file /tmp/spec-0054-staged.nul --delimiter nul
+python3 scripts/run-validation-lane.py --root . --lane affected --paths-file /tmp/spec-0054-affected.nul --delimiter nul
+python3 scripts/run-validation-lane.py --root . --lane staged --paths-file /tmp/spec-0054-staged.nul --delimiter nul
 TMPDIR=/tmp pre-commit run
 ```
 
 The terminal minimum is:
 
 ```bash
-python3 -m unittest discover -s scripts/validation/tests -p 'test_*.py'
-python3 scripts/validation/documents/validate.py --root . --mode strict --route-state terminal
-python3 scripts/docs/generate-reference-index.py --root . --check
-python3 scripts/validation/agents/validate.py --root . --mode strict
-python3 scripts/validation/archive/validate.py --root . --mode strict
-python3 scripts/validation/repository/validate.py --root . --mode staged
-TMPDIR=/tmp bash scripts/qa/validate-repository.sh .
+python3 -m unittest discover -s tests -p 'test_*.py'
+python3 scripts/validate-document-contract-registry.py --mode strict
+python3 scripts/validate-markdown-profiles.py --root . --mode strict
+python3 scripts/validate-links-and-owners.py --root . --mode strict
+python3 scripts/validate-document-lifecycle.py --root . --mode staged
+python3 scripts/validate-affected-surfaces.py --root .
+TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
 TMPDIR=/tmp pre-commit run
 TMPDIR=/tmp pre-commit run --all-files
 git diff --check
@@ -1062,11 +1154,11 @@ documents, registries, templates, or scripts.
 | --- | --- |
 | Mixed inherited index/worktree makes a false-green candidate | Candidate disposition plus staged-index readers and exact restaging before every broad gate |
 | Broad replacements alter historical or native terms | Exact path maps, profile-aware classification, protected blob checks, and focused negative fixtures |
-| Stage 90 cleanup destroys provenance | Complete disposition ledger, reachable source commits, and Stage 98 migration before removal; sealed byte pins only when declared |
+| Stage 90 cleanup destroys provenance | Task-local semantic disposition, current-consumer cutover, and Git recovery precede removal; add Stage 98 only for an unresolved immutable lookup and never rewrite sealed bytes |
 | Governance adapters drift from canonical semantics | `.agents` owns neutral semantics; adapters carry provider-native metadata only; parity tests cover Codex and Claude |
-| Script deletion breaks hidden consumers | Complete consumer graph and zero-consumer negative gate before each deletion |
+| Script deletion breaks hidden consumers | Tracked consumer sweep plus consumer-zero and unique-diagnostic checks precede each deletion |
 | Guide/Runbook consolidation removes necessary audiences | Purpose and trigger matrix reviewed by operations and documentation reviewers |
-| Large validator files become harder to maintain | Split touched modules by responsibility, use 200–400-line targets and an 800-line review ceiling, and centralize bounded I/O in `scripts/lib/` |
+| Large validator files become harder to maintain | Split touched modules when responsibility, duplication, or change risk warrants it, and centralize bounded I/O in `scripts/lib/`; line counts remain review signals rather than policy gates |
 | Static validation is mistaken for live proof | Preserve separate evidence classes and explicit DEFER states |
 
 ## Completion Criteria
@@ -1083,10 +1175,13 @@ documents, registries, templates, or scripts.
 - Stage 05 Guide/Policy/Runbook/Incident responsibilities are disjoint,
   reviewed duplicates have one owner, and the Release family is absent.
 - Every Stage 90 file has one valid disposition and every authorized removal
-  has Stage 98 evidence.
-- The script validation registry and tracked responsibility paths are equal;
-  there are no duplicate rule owners, production self-tests, orphan fixtures,
-  unexplained current-state SHA pins, or expired compatibility wrappers.
+  has reachable Git recovery; Stage 98 exists only for a required immutable
+  lookup that Git alone cannot resolve.
+- Every validation-registry command and route resolves, and dynamic discovery
+  proves every production validator is reachable without turning the
+  routing-only registry into a tracked-path census. There are no duplicate rule
+  owners, production self-tests, orphan fixtures, unexplained current-state SHA
+  pins, or expired compatibility wrappers.
 - All required validation and independent review gates pass without mutation.
 - Each logical work package is represented by its own commit.
 
@@ -1094,17 +1189,24 @@ documents, registries, templates, or scripts.
 
 ### Lifecycle Traceability
 
+For VAL-SDLC-010 through VAL-SDLC-012, TSK-0054-0010 and
+TSK-0054-0011 own the pending transfer and parent acceptance relation;
+TSK-0066-0001 owns delegated execution evidence after activation. The parent
+Tasks do not claim delegated implementation evidence: TSK-0054-0010 closes the
+activation transfer, and TSK-0054-0011 records only the integrated acceptance
+before it transitions to `done`.
+
 | Spec criterion | Work package | Expected Task |
 | --- | --- | --- |
 | [VAL-SDLC-001](spec.md#success-criteria--verification-plan) | WP-001, WP-002, WP-004, WP-003, WP-006, WP-008, WP-009, WP-011, WP-013, WP-014 | [TSK-0054-0001](tasks/tsk-0001-approved-design-authority.md), [TSK-0054-0002](tasks/tsk-0002-terminal-topology-and-four-digit-identity.md), [TSK-0054-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [TSK-0054-0003](tasks/tsk-0003-codex-claude-only-ai-agent-governance.md), [TSK-0054-0006](tasks/tsk-0006-stage-05-ownership-cutover.md), [TSK-0054-0008](tasks/tsk-0008-stage-90-ownership-cutover.md), [TSK-0054-0009](tasks/tsk-0009-global-stage-98-parity-and-recovery-closure.md), [TSK-0054-0011](tasks/tsk-0011-responsibility-topology-and-compatibility-cutover.md), [TSK-0054-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
-| [VAL-SDLC-002](spec.md#success-criteria--verification-plan) | WP-002, WP-004, WP-006, WP-008, WP-009, WP-014 | [TSK-0054-0002](tasks/tsk-0002-terminal-topology-and-four-digit-identity.md), [TSK-0054-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [TSK-0054-0006](tasks/tsk-0006-stage-05-ownership-cutover.md), [TSK-0054-0008](tasks/tsk-0008-stage-90-ownership-cutover.md), [TSK-0054-0009](tasks/tsk-0009-global-stage-98-parity-and-recovery-closure.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
+| [VAL-SDLC-002](spec.md#success-criteria--verification-plan) | WP-002, WP-004, WP-006, WP-008, WP-009, WP-013, WP-014 | [TSK-0054-0002](tasks/tsk-0002-terminal-topology-and-four-digit-identity.md), [TSK-0054-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [TSK-0054-0006](tasks/tsk-0006-stage-05-ownership-cutover.md), [TSK-0054-0008](tasks/tsk-0008-stage-90-ownership-cutover.md), [TSK-0054-0009](tasks/tsk-0009-global-stage-98-parity-and-recovery-closure.md), [TSK-0054-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
 | [VAL-SDLC-003](spec.md#success-criteria--verification-plan) | WP-002, WP-004, WP-005, WP-006, WP-014 | [TSK-0054-0002](tasks/tsk-0002-terminal-topology-and-four-digit-identity.md), [TSK-0054-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [TSK-0054-0005](tasks/tsk-0005-stage-05-responsibility-ledger.md), [TSK-0054-0006](tasks/tsk-0006-stage-05-ownership-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
-| [VAL-SDLC-004](spec.md#success-criteria--verification-plan) | WP-002, WP-004, WP-014 | [TSK-0054-0002](tasks/tsk-0002-terminal-topology-and-four-digit-identity.md), [TSK-0054-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
+| [VAL-SDLC-004](spec.md#success-criteria--verification-plan) | WP-002, WP-004, WP-013, WP-014 | [TSK-0054-0002](tasks/tsk-0002-terminal-topology-and-four-digit-identity.md), [TSK-0054-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [TSK-0054-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
 | [VAL-SDLC-005](spec.md#success-criteria--verification-plan) | WP-003, WP-014 | [TSK-0054-0003](tasks/tsk-0003-codex-claude-only-ai-agent-governance.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
-| [VAL-SDLC-006](spec.md#success-criteria--verification-plan) | WP-004, WP-014 | [TSK-0054-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
+| [VAL-SDLC-006](spec.md#success-criteria--verification-plan) | WP-004, WP-013, WP-014 | [TSK-0054-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [TSK-0054-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
 | [VAL-SDLC-007](spec.md#success-criteria--verification-plan) | WP-005, WP-006, WP-014 | [TSK-0054-0005](tasks/tsk-0005-stage-05-responsibility-ledger.md), [TSK-0054-0006](tasks/tsk-0006-stage-05-ownership-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
 | [VAL-SDLC-008](spec.md#success-criteria--verification-plan) | WP-007, WP-008, WP-014 | [TSK-0054-0007](tasks/tsk-0007-stage-90-disposition-ledger.md), [TSK-0054-0008](tasks/tsk-0008-stage-90-ownership-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
 | [VAL-SDLC-009](spec.md#success-criteria--verification-plan) | WP-002, WP-004, WP-003, WP-006, WP-008, WP-009, WP-011, WP-012, WP-013, WP-014 | [TSK-0054-0002](tasks/tsk-0002-terminal-topology-and-four-digit-identity.md), [TSK-0054-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [TSK-0054-0003](tasks/tsk-0003-codex-claude-only-ai-agent-governance.md), [TSK-0054-0006](tasks/tsk-0006-stage-05-ownership-cutover.md), [TSK-0054-0008](tasks/tsk-0008-stage-90-ownership-cutover.md), [TSK-0054-0009](tasks/tsk-0009-global-stage-98-parity-and-recovery-closure.md), [TSK-0054-0011](tasks/tsk-0011-responsibility-topology-and-compatibility-cutover.md), [TSK-0054-0012](tasks/tsk-0012-progress-and-generated-current-cleanup.md), [TSK-0054-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
-| [VAL-SDLC-010](spec.md#success-criteria--verification-plan) | WP-010, WP-011, WP-012, WP-013, WP-014 | [TSK-0054-0010](tasks/tsk-0010-script-gate-fixture-and-sha-ownership-fixed-point.md), [TSK-0054-0011](tasks/tsk-0011-responsibility-topology-and-compatibility-cutover.md), [TSK-0054-0012](tasks/tsk-0012-progress-and-generated-current-cleanup.md), [TSK-0054-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
-| [VAL-SDLC-011](spec.md#success-criteria--verification-plan) | WP-004, WP-003, WP-005, WP-006, WP-007, WP-008, WP-009, WP-010, WP-011, WP-012, WP-013, WP-014 | [TSK-0054-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [TSK-0054-0003](tasks/tsk-0003-codex-claude-only-ai-agent-governance.md), [TSK-0054-0005](tasks/tsk-0005-stage-05-responsibility-ledger.md), [TSK-0054-0006](tasks/tsk-0006-stage-05-ownership-cutover.md), [TSK-0054-0007](tasks/tsk-0007-stage-90-disposition-ledger.md), [TSK-0054-0008](tasks/tsk-0008-stage-90-ownership-cutover.md), [TSK-0054-0009](tasks/tsk-0009-global-stage-98-parity-and-recovery-closure.md), [TSK-0054-0010](tasks/tsk-0010-script-gate-fixture-and-sha-ownership-fixed-point.md), [TSK-0054-0011](tasks/tsk-0011-responsibility-topology-and-compatibility-cutover.md), [TSK-0054-0012](tasks/tsk-0012-progress-and-generated-current-cleanup.md), [TSK-0054-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
-| [VAL-SDLC-012](spec.md#success-criteria--verification-plan) | WP-001, WP-002, WP-004, WP-003, WP-005, WP-006, WP-007, WP-008, WP-009, WP-010, WP-011, WP-012, WP-013, WP-014 | [TSK-0054-0001](tasks/tsk-0001-approved-design-authority.md), [TSK-0054-0002](tasks/tsk-0002-terminal-topology-and-four-digit-identity.md), [TSK-0054-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [TSK-0054-0003](tasks/tsk-0003-codex-claude-only-ai-agent-governance.md), [TSK-0054-0005](tasks/tsk-0005-stage-05-responsibility-ledger.md), [TSK-0054-0006](tasks/tsk-0006-stage-05-ownership-cutover.md), [TSK-0054-0007](tasks/tsk-0007-stage-90-disposition-ledger.md), [TSK-0054-0008](tasks/tsk-0008-stage-90-ownership-cutover.md), [TSK-0054-0009](tasks/tsk-0009-global-stage-98-parity-and-recovery-closure.md), [TSK-0054-0010](tasks/tsk-0010-script-gate-fixture-and-sha-ownership-fixed-point.md), [TSK-0054-0011](tasks/tsk-0011-responsibility-topology-and-compatibility-cutover.md), [TSK-0054-0012](tasks/tsk-0012-progress-and-generated-current-cleanup.md), [TSK-0054-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
+| [VAL-SDLC-010](spec.md#success-criteria--verification-plan) | WP-010, WP-011, WP-012, WP-013, WP-014 | `TSK-0066-0001` (delegated execution), [TSK-0054-0010](tasks/tsk-0010-script-gate-fixture-and-sha-ownership-fixed-point.md), [TSK-0054-0011](tasks/tsk-0011-responsibility-topology-and-compatibility-cutover.md), [TSK-0054-0012](tasks/tsk-0012-progress-and-generated-current-cleanup.md), [TSK-0054-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
+| [VAL-SDLC-011](spec.md#success-criteria--verification-plan) | WP-004, WP-003, WP-005, WP-006, WP-007, WP-008, WP-009, WP-010, WP-011, WP-012, WP-013, WP-014 | `TSK-0066-0001` (delegated execution), [TSK-0054-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [TSK-0054-0003](tasks/tsk-0003-codex-claude-only-ai-agent-governance.md), [TSK-0054-0005](tasks/tsk-0005-stage-05-responsibility-ledger.md), [TSK-0054-0006](tasks/tsk-0006-stage-05-ownership-cutover.md), [TSK-0054-0007](tasks/tsk-0007-stage-90-disposition-ledger.md), [TSK-0054-0008](tasks/tsk-0008-stage-90-ownership-cutover.md), [TSK-0054-0009](tasks/tsk-0009-global-stage-98-parity-and-recovery-closure.md), [TSK-0054-0010](tasks/tsk-0010-script-gate-fixture-and-sha-ownership-fixed-point.md), [TSK-0054-0011](tasks/tsk-0011-responsibility-topology-and-compatibility-cutover.md), [TSK-0054-0012](tasks/tsk-0012-progress-and-generated-current-cleanup.md), [TSK-0054-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
+| [VAL-SDLC-012](spec.md#success-criteria--verification-plan) | WP-001, WP-002, WP-004, WP-003, WP-005, WP-006, WP-007, WP-008, WP-009, WP-010, WP-011, WP-012, WP-013, WP-014 | `TSK-0066-0001` (delegated execution), [TSK-0054-0001](tasks/tsk-0001-approved-design-authority.md), [TSK-0054-0002](tasks/tsk-0002-terminal-topology-and-four-digit-identity.md), [TSK-0054-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [TSK-0054-0003](tasks/tsk-0003-codex-claude-only-ai-agent-governance.md), [TSK-0054-0005](tasks/tsk-0005-stage-05-responsibility-ledger.md), [TSK-0054-0006](tasks/tsk-0006-stage-05-ownership-cutover.md), [TSK-0054-0007](tasks/tsk-0007-stage-90-disposition-ledger.md), [TSK-0054-0008](tasks/tsk-0008-stage-90-ownership-cutover.md), [TSK-0054-0009](tasks/tsk-0009-global-stage-98-parity-and-recovery-closure.md), [TSK-0054-0010](tasks/tsk-0010-script-gate-fixture-and-sha-ownership-fixed-point.md), [TSK-0054-0011](tasks/tsk-0011-responsibility-topology-and-compatibility-cutover.md), [TSK-0054-0012](tasks/tsk-0012-progress-and-generated-current-cleanup.md), [TSK-0054-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |

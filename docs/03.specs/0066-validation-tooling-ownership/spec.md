@@ -11,200 +11,285 @@ artifact_id: "SPEC-0066"
 
 ## Overview
 
-Direct human approval on 2026-08-31 authorizes this standalone execution relation.
-No separate PRD or Architecture Description is required or part of this standalone lifecycle.
+Spec 0066 is the delegated execution owner for Spec 0054 WP-010 and WP-011.
+It does not create a standalone program, replace Spec 0054, or weaken the
+parent package's acceptance authority. Spec 0054 owns the integrated governance
+outcome; this package owns the bounded validation-tooling transition and its
+evidence under proposed [ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md).
 
-`scripts/README.md` states the rule that governs the directory: consolidation is
-considered only when four conditions hold, and deletion requires a precheck whose
-reference sweep is `rg -n "scripts/<name>\.sh|<name>\.sh" .`. It then concludes
-that the current scripts are kept separate, and records the count it reasoned
-over as eight.
+The current validators can report green while executable references, routing,
+fixtures, and rule ownership remain inconsistent. The main causes are a script
+reference check that does not cover every executable shape, broad selection
+that makes affected validation effectively global, duplicated runner and hook
+paths, production self-tests, and fixtures consumed from production code.
+Measured counts are audit evidence only. They are not permanent governance
+invariants.
 
-`scripts/` holds forty-eight tracked files. Thirty-nine are Python. The stated
-conclusion is still true of the eight shell scripts it was written about, so no
-gate reports a defect, and the thirty-nine Python modules have never entered the
-criteria that decide consolidation, deletion, or ownership.
-
-The same narrowing is compiled into the gate. `validate-repo-quality-gates.sh`
-defines `script_ref_pattern = re.compile(r"scripts/[A-Za-z0-9_.-]+\.sh")` and
-applies it at two sites. The character class excludes `/`, so a reference to a
-script at any depth below `scripts/` matches nothing, and a `.py` reference has
-never matched. A restructure therefore does not break this rule; it silences it.
-
-This Spec makes the rule reach its subject before moving the subject, then moves
-`scripts/` and `tests/` onto one role-first structure with one owner per fact.
+This document is a design checkpoint. The Spec and Plan remain `draft`, and the
+Task remains `queued`, until the design is reviewed and the package is
+explicitly activated. Its thin README already exists as the lifecycle-free
+navigation projection required by accepted ADR-0030; creating that router does
+not activate the Spec, Plan, or Task and requires no Stage 98 record.
 
 ## Strategic Boundaries & Non-goals
 
-In scope: the tracked contents of `scripts/` and `tests/`, the two script
-reference rules in `validate-repo-quality-gates.sh`, `scripts/README.md` and
-`tests/README.md`, and the runner and hook surfaces that name a moved path.
+In scope are the tracked validation implementation under `scripts/`, independent
+tests and fixtures under `tests/`, validator runners, hooks, CI consumers,
+validation documentation, and the existing validation-surface contract.
 
-Protected: `docs/00.agent-governance/contracts/validation-surfaces.json` is read
-but not rewritten. Its routes are `^scripts/.*$` and `^tests/.*$`, and the
-selection contract was exercised against the proposed paths before this Spec was
-written: five hypothetical restructured paths select the same sixteen validators
-as the current paths, with `unmatchedPaths` empty. A restructure that requires
-editing the surface contract is out of contract and must stop.
+Before this Spec executes, Spec 0054 owns one atomic activation transaction:
+ADR-0031 `proposed → accepted` plus its `supersedes` relation; all five
+predecessor `accepted → superseded` transitions and reciprocal
+`superseded_by: ADR-0031` relations; ADR-0030's two-clause scoped amendment
+Traceability note without changing its accepted status; the Decisions and
+Stage 03 READMEs; all current `Proposed ADR-0031` label updates; this package
+README's active-execution prose and the Current Spec Index `Draft → Active`
+projection; the Spec 0054 delegation Tasks; and verification of the unchanged
+Stage 99 Task lifecycle rules. After TSK-0054-0010 becomes the sole active
+parent Task, that Task owns the exact activation index and evidence. The
+transaction establishes the
+reviewed authority and legal transfer, adds a narrow package-local delegated
+ownership rule with focused positive and negative tests, activates this Spec,
+Plan, and Task, moves the existing Spec 0054 compatibility pointer from
+TSK-0054-0010 to TSK-0054-0011, completes TSK-0054-0010, and activates
+TSK-0054-0011 as the sole parent acceptance Task. It creates no Spec 0066
+standalone row.
+It is an external precondition, not work executed by the queued
+TSK-0066-0001. No lifecycle-domain, schema, or code-projection edit is part of
+that activation.
 
-Non-goals: no validator's failure semantics change; no declared `argv` loses
-`--self-test`; no live, hosted, provider-runtime, or cluster evidence is claimed.
-The `scripts` surface fan-out — sixteen validators on any change — is
-investigated and its disposition recorded, but reducing it is not promised here:
-its declared fallback states that validator changes rerun every dependent static
-lane, and narrowing that is a separate authority decision.
+The contract currently located at
+`docs/00.agent-governance/contracts/validation-surfaces.json` and its schema are
+reused by moving them atomically to `scripts/validation/registry.json` and
+`scripts/validation/registry.schema.json`. The move does not create a second
+registry. The target registry owns only the routing graph: validation surfaces,
+lanes, executable arguments, CI routing, and their consumers. Rule semantics
+remain in validator modules, and point-in-time disposition evidence remains in
+the active Task and Git diff.
+
+Out of scope are live cluster changes, provider-runtime claims, hosted-CI
+claims, branch protection mutation, push, merge, and deployment. This design
+does not require a fixed validator count, a fixed entrypoint count, a line-count
+ceiling, or a permanent inventory ledger.
+
+Existing required CI check names are retained until the remote protection rules
+are verified through an authorized remote operation. Internal jobs, commands,
+and routing may be simplified without renaming those external checks.
+
+### Authority and Ownership
+
+| Concern | Single owner |
+| --- | --- |
+| Integrated SDLC acceptance for WP-010 and WP-011 | Spec 0054 through TSK-0054-0011 |
+| Validation-tooling transition and execution evidence | Spec 0066 |
+| Surface, lane, executable, and CI routing graph | `scripts/validation/registry.json` |
+| Rule semantics and diagnostics | The responsible validator module |
+| Independent behavior verification | Tests under `tests/` |
+| Current execution history and rollback | Git and the active Task |
+| Historical path recovery | Reachable Git history by default; a sealed Stage 98 Migration only for a required immutable lookup Git alone cannot resolve |
+
+One permanent rule has one semantic owner. Aggregates and runners dispatch to
+that owner; they do not reimplement the rule. The registry declares routing but
+does not become an executable rule engine.
 
 ## Contracts
 
-1. A tracked reference to an executable under `scripts/` is checked for
-   existence regardless of the file's extension or its depth in the tree.
-2. `scripts/README.md` governs every tracked file under `scripts/`. Its
-   consolidation criteria and deletion precheck name no single extension.
-3. A module under `scripts/validation/` does not import another module under
-   `scripts/validation/`. Shared code is reached only through `scripts/lib/`.
-4. A case table has exactly one owner. No module under `scripts/` reads a path
-   under `tests/`.
-5. One module-loading convention holds across `scripts/`, and one across
-   `tests/`.
-6. A repository-internal commit pin is either resolved through a sealed
-   migration record or is itself the sealed record's coordinate.
+1. Spec 0066 executes only the delegated Spec 0054 WP-010/WP-011 scope and
+   reports acceptance evidence back to Spec 0054. The thin package README is a
+   lifecycle-free navigation projection and exists before activation. Its Plan
+   and Task form one closed package-local execution component with their own
+   Spec; they do not render links to a parent Plan or Task. Parent/delegate
+   ownership is instead proved by reciprocal Spec links, accepted ADR-0031,
+   one unambiguous registry-owned parent during transition, lifecycle parity,
+   and absence of a child standalone row.
+2. The existing validation-surface JSON and schema move to the scripts-owned
+   location in one logical change. Source and target may not coexist as current
+   authorities.
+3. During that atomic move, the selected validators and unmatched-path result
+   are equivalent before and after. Later routing changes may intentionally
+   alter selection when their reason and focused evidence are recorded.
+4. A current reference to an executable resolves to an executable in the
+   current tree. Reachable Git history is the default historical recovery
+   owner. An explicit sealed Migration is added only for a required immutable
+   lookup that Git alone cannot resolve, and a minimal Tombstone only when both
+   are insufficient. An active Spec that merely proposes a future path does
+   not make a missing current executable valid.
+5. A rule has one semantic owner and one diagnostic contract. A thin aggregate,
+   dispatcher, or compatibility runner contains no duplicate rule meaning.
+6. Production validators do not embed `--self-test`. Independent tests exercise
+   their importable contracts.
+7. Validator tests and fixtures remain under top-level `tests/` and
+   `tests/fixtures/`. Production code does not import from or read those paths.
+8. A wrapper is removed only after all current consumers are absent and it has
+   no unique diagnostic or recovery behavior. Otherwise it remains explicit.
+9. Repository reads and subprocesses are bounded, text decoding is explicit
+   UTF-8, and subprocesses have timeouts with actionable diagnostics.
+10. Staged validation uses the Git index as its subject and fails closed when
+    index/worktree ambiguity would make the result unreliable.
+11. Branch-tip SHAs and generated digests do not track current repository
+    state. Full SHAs are limited to immutable external dependencies and sealed
+    recovery coordinates with an owner and update or recovery path.
+12. Each package has at most one `in-progress` Task. This package has none while
+    its only Task is `queued`.
 
 ## Core Design
 
-The structure is role-first. Domain is the second axis, never the first, because
-a tree that mixes both at the top has two valid homes for most files and drifts
-on the next addition.
+The target separates declaration, semantics, dispatch, and verification:
 
-```
+```text
 scripts/
-├── README.md              entry point only
-├── docs/                  the directory's own inventory, tiers, command contract
-├── lib/                   shared modules with no entry point
 ├── validation/
-│   ├── agent/ document/ archive/ gitops/ ci/
-│   └── cases/             the single owner of case tables
-├── qa/                    aggregate, selection, and lane runners
-└── setup/                 generators
-tests/                     mirrors the scripts tree; stays top-level
+│   ├── registry.json
+│   ├── registry.schema.json
+│   └── <responsibility-owned validator modules>
+├── qa/
+│   └── <thin aggregate and operational runners>
+└── lib/
+    └── <shared bounded Git, path, UTF-8, and subprocess primitives>
+tests/
+├── <independent validator tests>
+└── fixtures/
+    └── <test-only case data>
 ```
 
-`tests/` stays at the top level rather than moving under `scripts/validation/`.
-The two are separate routed surfaces with different protection levels —
-`scripts` is `protected`, `tests` is `review`. Merging them would place every
-case-table edit behind the protected approval boundary. Mirroring satisfies the
-requirement that tests be split along the same responsibility units as the
-production modules without moving that boundary.
+Responsibility boundaries, not an exact file count, determine whether a
+validator is split or combined. Dead code is removed before decomposition.
+Large modules are split when they combine independent rule ownership, duplicate
+logic, or materially increase review and failure risk; size alone is supporting
+evidence, not a gate.
 
-Case tables move to `scripts/validation/cases/` rather than staying under
-`tests/`. Thirteen production modules currently read `tests/fixtures/`, and
-thirteen modules carry a `--self-test`; the fixtures serve both and are owned by
-neither. Moving them under the validators makes production read its own
-directory and makes tests read upward into production, which is the direction
-that composes. Removing `--self-test` instead was rejected: it appears in the
-declared `argv` of a routed validator, so removing it would edit the protected
-surface contract this Spec does not touch.
-
-Order is forced by the silence. The reference rule must reach `.py` and reach
-depth **before** anything moves. A move made first would be verified by a rule
-that no longer looks, and the resulting green would carry no information.
+The aggregate selects and invokes responsible validators from the registry. It
+may normalize results and exit status, but it cannot contain rule predicates or
+authoritative diagnostic text. Domain runners follow the same rule.
 
 ## Data Modeling & Storage Strategy
 
-Case tables are JSON and keep their current schemas; only their path owner
-changes. Each move is a rename that Git records; no case table is rewritten in
-the same commit that moves it, so a reviewer can read a pure rename.
+The registry cutover is one reviewable logical change:
 
-`scripts/document-taxonomy-migration.json` is not a migration residue and does
-not move to an archive. Three validators read it as an authority table —
-`validate-links-and-owners.py`, `reference_information_architecture.py`, and
-`validate-markdown-profiles.py`. `migrate-document-work-units.py` is likewise
-referenced by `validate-links-and-owners.py` and `archive_validation.py`, so it
-cannot be deleted as a completed one-off until those references are promoted to
-`lib/`. Both are recorded here as refused deletion candidates with their reason.
+1. Move the existing JSON and schema without forking their authority.
+2. Update every current consumer to the target paths in the same change.
+3. Verify schema validity and routing-selection equivalence across the move.
+4. Remove the source paths before the change is considered complete.
+
+After cutover, the registry may be simplified intentionally. Such a change
+records the affected paths, the old and new selected lanes, the reason for the
+change, and focused verification. Permanent rows for every script, fixture,
+hook, pin, and audit decision are prohibited; those facts belong to code,
+tests, current consumers, or Task evidence.
 
 ## Interfaces & Data Structures
 
-Every moved path changes three strings that must move together: the module's own
-location, the `argv` of any validator that names it, and the runner text that
-invokes it. `validate_required_validators_have_a_runner` compares the two latter
-by substring, so a partial update fails loudly rather than silently — this is the
-one existing rule that already survives the restructure correctly.
+Independent tests cover the behaviors that previously depended on embedded
+`--self-test` branches. Behavior cases include missing executable references,
+duplicate rule owners, aggregate rule reimplementation, orphan fixtures,
+unbounded I/O, subprocesses without timeouts, unexplained pins, and staged
+index/worktree ambiguity. The list may evolve with the implementation; its
+cardinality is not a contract.
+
+Fixtures remain test-only. If production needs the same data, the data is moved
+to a production-owned authority under `scripts/` and tests consume that owner or
+maintain clearly scoped test input. Tests do not become a runtime dependency.
 
 ## Edge Cases & Error Handling
 
-A reference inside a sealed Stage 98 migration record names a path as it existed
-at a pinned commit. The corrected reference rule must not require such a path to
-exist in the current tree; that is the exact defect Spec 0065 removed in four
-owners, and reintroducing it here would undo that work.
+Before removing a compatibility wrapper, the Task records a current-consumer
+sweep covering scripts, tests, hooks, workflows, pre-commit, and current docs.
+It also compares diagnostic and recovery behavior. A wrapper with either a
+consumer or unique behavior stays until a later cutover proves both conditions
+false.
 
-A `.md` line that mentions a script inside a fenced historical transcript is a
-record, not a live reference. The corrected rule resolves a moved path through
-the sealed migration record rather than through a hard-coded redirect map, so
-the map does not grow with each move.
+Historical references inside sealed Stage 98 records remain historical. They
+do not require the old executable to exist in the current tree, and they do not
+justify a current redirect copy. A new Migration is created only when an
+immutable historical link needs an explicit recovery mapping that reachable
+Git history alone cannot provide.
+
+Spec 0065 retired `route_state`. No command, schema, test, or compatibility path
+in this work may reintroduce that option.
 
 ## Failure Modes & Fallback / Human Escalation
 
-If the corrected reference rule cannot be made to go red on the current tree,
-the rule is not reaching its subject and the restructure stops: a green from a
-rule that cannot fail is the condition this Spec exists to remove.
+- If the reference validator cannot distinguish current references from sealed
+  historical references, restructuring stops until that distinction is tested.
+- If the registry move changes selection, the atomic move stops. Intentional
+  selection changes occur only after the move as separately evidenced work.
+- If remote branch-protection state cannot be verified, required CI check names
+  remain unchanged and the limitation is recorded.
+- If a wrapper's current consumers or unique diagnostics are uncertain, the
+  wrapper remains.
+- If staged validation cannot bind to the index deterministically, it fails
+  closed rather than silently falling back to worktree state.
 
-If a move requires editing `validation-surfaces.json`, the move is out of
-contract. Stop, record the path that failed to route, and escalate.
-
-Rollback is per commit. Each commit is one logical unit — one rule, one role
-directory, or one module split — so any single step reverts without unwinding
-the rest.
+Rollback is per logical commit. No rollback edits a sealed Stage 98 record or
+restores a body-copy redirect.
 
 ## Verification Commands
 
+Each logical change runs focused independent tests plus these currently
+resolvable control-plane checks:
+
 ```bash
-bash scripts/validate-repo-quality-gates.sh .
-python3 -m unittest discover --start-directory tests --top-level-directory tests --pattern 'test_*.py'
-python3 scripts/select-affected-surfaces.py --root . --lane affected \
-  --paths-file <paths> --delimiter nul --format json
+python3 -B scripts/validate-document-contract-registry.py --mode strict
+python3 -B scripts/validate-markdown-profiles.py --root . --mode strict
+python3 -B scripts/validate-links-and-owners.py --root . --mode strict
+python3 -B scripts/validate-document-lifecycle.py --root . --mode staged
+python3 -B scripts/validate-affected-surfaces.py --root .
+git diff --check
+git diff --cached --check
 ```
 
-These are repository-static. They do not prove native agent discovery, hook
-delivery, authenticated provider runtime, CI, or live cluster readiness.
+The active Task records additional focused commands only after their executable
+paths exist. The registry move updates those commands atomically and compares
+routing selection before and after using the same path cases; a planned path is
+never treated as an executable command merely because this Spec names it.
+
+All evidence is repository-static. It does not prove native agent discovery,
+hook delivery, authenticated provider runtime, hosted CI, or live cluster
+readiness.
 
 ## Success Criteria & Verification Plan
 
 | ID | Criterion |
 | --- | --- |
-| VAL-VTO-001 | The script-reference rule reaches every executable extension at every depth under `scripts/`, proven by a case that fails on the current tree before the fix |
-| VAL-VTO-002 | `scripts/README.md` governs all forty-eight tracked files, and its consolidation criteria and deletion precheck name no single extension |
-| VAL-VTO-003 | Every module sits in one role directory, and no `validation/` module imports another `validation/` module |
-| VAL-VTO-004 | Case tables have one owner under `scripts/validation/cases/`, and no module under `scripts/` reads a path under `tests/` |
-| VAL-VTO-005 | One module-loading convention holds across `scripts/`, and one across `tests/` |
-| VAL-VTO-006 | No tracked file under `scripts/` or `tests/` exceeds the 800-line ceiling |
-| VAL-VTO-007 | Every repository-internal commit pin is classified, and each retired pin is resolved through a sealed record while each kept pin names the record it belongs to |
-| VAL-VTO-008 | The declared validator set and the executed runner set name each other exactly, and every CLI has a declared route or a recorded Tier C reason |
-| VAL-VTO-009 | Surface selection is unchanged by the restructure, evidenced by identical validator sets before and after |
-| VAL-VTO-010 | Gates and the full suite pass in a clean checkout at the branch tip |
+| VAL-VTO-001 | Spec 0066 remains a delegated execution package for Spec 0054 WP-010/WP-011, with no standalone or replacement authority; its lifecycle-free thin router exists before activation; its Plan/Task component remains package-local; and the TSK-0054-0010-owned activation establishes reciprocal Spec/accepted-ADR ownership, focused fail-closed tests, legal state transfer, and the parent-only compatibility-pointer rotation without a child roster row |
+| VAL-VTO-002 | The existing validation-surface JSON and schema are moved atomically to `scripts/validation/registry.*`, every consumer is updated, and no second current registry remains |
+| VAL-VTO-003 | Selection is equivalent across the registry move; later intentional routing changes carry an explicit before/after explanation and focused evidence |
+| VAL-VTO-004 | Every current executable reference resolves to a current executable; historical recovery uses reachable Git by default and adds sealed Stage 98 evidence only for a required immutable lookup Git alone cannot resolve |
+| VAL-VTO-005 | Each permanent rule has one semantic owner, and aggregates, dispatchers, runners, and compatibility paths contain no duplicate rule meaning |
+| VAL-VTO-006 | Production `--self-test` branches are removed only after independent top-level tests cover their behavior; production code has no dependency on `tests/` or `tests/fixtures/` |
+| VAL-VTO-007 | Each removed wrapper has recorded consumer-zero and unique-diagnostic-zero evidence; retained wrappers name their current consumer or unique behavior |
+| VAL-VTO-008 | Validation I/O is bounded and UTF-8 explicit, subprocesses time out, and staged validation fails closed on unreliable index/worktree state |
+| VAL-VTO-009 | Current-state branch SHAs and generated digests are absent; retained SHAs are limited to owned external immutable dependencies or sealed recovery coordinates |
+| VAL-VTO-010 | Existing required CI check names remain stable until authorized remote branch-protection verification permits a separate rename decision |
+| VAL-VTO-011 | Focused tests, affected and staged gates, diff checks, and the integrated Spec 0054 acceptance lane pass at completion |
 
 ## Traceability
 
-This Spec has no PRD or AD. Its authority is the direct human approval recorded
-in `## Overview`.
+Spec 0054 remains the upstream acceptance authority. Proposed ADR-0031 defines
+the current-corpus and validation-routing ownership used here; ADR-0022's
+standalone execution model is not an authority for this delegated package and
+is intended to be superseded only when ADR-0031 is accepted.
 
 ### Lifecycle Traceability
 
 | Requirement ID | Spec criterion | Verification method |
 | --- | --- | --- |
-| N/A — standalone, direct approval | VAL-VTO-001 | RED-first case against the uncorrected rule, then its passing result |
-| N/A — standalone, direct approval | VAL-VTO-002 | Tracked-file census compared against the count the document reasons over |
-| N/A — standalone, direct approval | VAL-VTO-003 | Import census across `scripts/validation/` recorded in the Task |
-| N/A — standalone, direct approval | VAL-VTO-004 | Grep for `tests/` inside `scripts/`, expected empty |
-| N/A — standalone, direct approval | VAL-VTO-005 | Loader census before and after, recorded as counts per convention |
-| N/A — standalone, direct approval | VAL-VTO-006 | Line-count census over tracked files |
-| N/A — standalone, direct approval | VAL-VTO-007 | Pin classification table reviewed in the Task before any pin is retired |
-| N/A — standalone, direct approval | VAL-VTO-008 | Declared `argv` set differenced against runner and hook invocations |
-| N/A — standalone, direct approval | VAL-VTO-009 | `select-affected-surfaces.py` output compared before and after |
-| N/A — standalone, direct approval | VAL-VTO-010 | Gate and suite output recorded in the reciprocal Task |
+| N/A — Spec 0054 integrated acceptance | VAL-VTO-001 | ADR/README reciprocity, package-local delegation, and lifecycle traceability |
+| N/A — delegated Spec 0054 WP-010 | VAL-VTO-002 | Atomic registry cutover and consumer sweep |
+| N/A — delegated Spec 0054 WP-011 | VAL-VTO-003 | Routing before/after evidence |
+| N/A — delegated Spec 0054 WP-010 | VAL-VTO-004 | Current-reference and Git-first bounded-recovery cases |
+| N/A — delegated Spec 0054 WP-011 | VAL-VTO-005 | Rule-owner and thin-runner audit |
+| N/A — delegated Spec 0054 WP-010 | VAL-VTO-006 | Independent test and production fixture-dependency audit |
+| N/A — delegated Spec 0054 WP-011 | VAL-VTO-007 | Wrapper consumer and diagnostic evidence |
+| N/A — delegated Spec 0054 WP-010 | VAL-VTO-008 | Bounded-I/O, timeout, and staged-index cases |
+| N/A — delegated Spec 0054 WP-010 | VAL-VTO-009 | Pin owner and recovery classification |
+| N/A — delegated Spec 0054 WP-011 | VAL-VTO-010 | Required CI check-name compatibility evidence |
+| N/A — Spec 0054 integrated acceptance | VAL-VTO-011 | Focused suites, staged gates, diff checks, and parent acceptance evidence |
 
 ### Related Documents
 
-- [Plan](plan.md)
-- [Task](tasks/tsk-0001-vto-000.md)
-- [ADR 0022 — direct-approval standalone execution lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
-- [ADR 0030 — authority-first SDLC and agent governance convergence](../../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)
+- [Proposed ADR-0031 — current corpus retention and validation ownership](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)
+- [ADR-0030 — authority-first SDLC and agent governance convergence](../../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)
+- [Spec 0054](../0054-sdlc-document-and-agent-governance-consolidation/spec.md)
+- [Plan 0066](plan.md)
+- [TSK-0066-0001](tasks/tsk-0001-vto-000.md)

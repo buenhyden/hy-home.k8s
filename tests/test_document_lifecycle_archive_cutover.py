@@ -1181,6 +1181,40 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
         )
         self.assertIn("terminal", terminal[0].expected_transition)
 
+    def test_lifecycle_free_navigation_creation_needs_no_migration_event(self):
+        registry = load_registry(ROOT)
+        path = PurePosixPath(
+            "docs/03.specs/9999-navigation-fixture/README.md"
+        )
+        created = lifecycle.document_from_text(registry, path, "# Fixture\n")
+
+        self.assertEqual(created.profile_id, "readme/collection-index")
+
+        actual = compare_lifecycle(
+            registry,
+            {},
+            {path: created},
+            base_mode="staged",
+        )
+
+        self.assertEqual(actual, ())
+
+    def test_stage_index_creation_still_requires_lifecycle_admission(self):
+        registry = load_registry(ROOT)
+        path = PurePosixPath("docs/03.specs/README.md")
+        created = lifecycle.document_from_text(registry, path, "# Fixture\n")
+
+        self.assertEqual(created.profile_id, "readme/stage-index")
+
+        actual = compare_lifecycle(
+            registry,
+            {},
+            {path: created},
+            base_mode="staged",
+        )
+
+        self.assertEqual([item.rule_id for item in actual], ["LIFECYCLE-CREATE"])
+
     def test_terminal_supersession_uses_reciprocal_production_evidence(self):
         registry = load_registry(ROOT)
         source = PurePosixPath("docs/03.specs/9998-source/spec.md")

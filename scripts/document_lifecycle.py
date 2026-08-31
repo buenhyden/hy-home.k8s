@@ -55,7 +55,6 @@ class MigrationLifecycleEvents:
     publications: frozenset[PurePosixPath] = frozenset()
     source_removals: frozenset[PurePosixPath] = frozenset()
     current_rehomes: frozenset[tuple[PurePosixPath, PurePosixPath]] = frozenset()
-    navigation_creations: frozenset[PurePosixPath] = frozenset()
 
 
 @dataclass(frozen=True)
@@ -297,13 +296,13 @@ def _create_diagnostics(
                 and profile.lifecycle_domain.validation_class(document.status)
                 == "current"
             )
-            or (
-                document.path in migration_events.navigation_creations
-                and profile.profile_id == "readme/collection-index"
-                and profile.mode == "frontmatter-free"
-                and profile.lifecycle_domain is None
-                and document.status is None
-            )
+        ):
+            continue
+        if (
+            profile.profile_id == "readme/collection-index"
+            and profile.mode == "frontmatter-free"
+            and profile.lifecycle_domain is None
+            and document.status is None
         ):
             continue
         domain = profile.lifecycle_domain

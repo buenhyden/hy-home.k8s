@@ -3,7 +3,7 @@ title: 'SDLC Document and AI Agent Governance Consolidation Technical Specificat
 type: sdlc/spec
 status: active
 owner: platform
-updated: 2026-08-29
+updated: 2026-08-31
 artifact_id: "SPEC-0054"
 ---
 
@@ -25,23 +25,38 @@ OpenAI, Anthropic, and repository evidence reviewed through 2026-08-20.
 
 This specification succeeds, reconciles, or retires conflicting current
 instructions. It does not silently rewrite completed evidence. Current rules
-that conflict with this specification are migrated, tombstoned, or archived
-with an explicit disposition before their active owners are removed.
+that conflict with this specification receive a package-local disposition and
+consumer/recovery proof before their active owners are removed. Git is the
+default recovery source; Stage 98 records only a necessary durable lookup.
 
 Direct human approval on 2026-08-13 authorizes B-scope consolidation including
-Stage 90. This standalone program inherits the incomplete WORK-109 candidate
+Stage 90. This integrated program inherits the incomplete WORK-109 candidate
 from [Spec 0052](../0052-document-taxonomy-consolidation/spec.md), but accepts
 only the portions that satisfy this specification after staged-index review.
-The direct-approval lineage follows
-[ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md).
+The original direct-approval lineage was recorded by
+[ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md),
+which remains predecessor context but no longer owns a global standalone
+execution projection under
+[proposed ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md).
 The four-digit current-path and Incident identity decision is
 [ADR-0025](../../02.architecture/decisions/0025-four-digit-document-path-identity.md),
 which transfers the active WORK-109 implementation from Spec 0052 to this
 specification's WORK-054-002 package.
 
+Direct human approval on 2026-08-13 authorizes this Spec-owned execution
+relation. No separate PRD or Architecture Description is required for this
+package-local lifecycle. ADR-0025 owns the topology decision; proposed
+ADR-0031 owns the replacement current-corpus and validation-routing model once
+accepted.
+
+Until ADR-0031 is accepted and its validator cutover is atomic, the current
+registry still requires these two historical compatibility statements:
+
 Direct human approval on 2026-08-13 authorizes this standalone execution relation.
 No separate PRD or Architecture Description is required or part of this standalone lifecycle.
-ADR-0022 owns its approval lineage and ADR-0025 owns the topology decision.
+
+They preserve the current gate input only; they do not create a second program
+owner or override the package-local delegation designed by ADR-0031.
 
 Direct human approval on 2026-08-14 refines that topology into package-oriented
 requirements, prefix-free architecture paths, a three-family Stage 90 library,
@@ -64,6 +79,11 @@ decisions while preserving their transition-safety and recoverability goals.
 
 The reciprocal execution artifacts are [Plan 0054](plan.md) and
 [Tasks 0054](README.md#task-records).
+Spec 0054 remains the integrated acceptance owner. Draft
+[Spec 0066](../0066-validation-tooling-ownership/spec.md) is the approved
+delegated-execution design for WP-010 and WP-011; it is not a standalone
+program and does not become active until its reviewed activation checkpoint.
+TSK-0054-0011 is the planned parent acceptance record after activation.
 
 ## Strategic Boundaries & Non-goals
 
@@ -86,20 +106,24 @@ The reciprocal execution artifacts are [Plan 0054](plan.md) and
 - Review every tracked file in `scripts/`, migrate consumers, and remove only
   assets whose replacement and recovery evidence are complete.
 - Review Stage 90 current references, generated indexes, research packs,
-  snapshots, and audits through a complete disposition ledger.
-- Record moved, merged, replaced, or deleted material in Stage 98 migration or
-  tombstone evidence.
+  snapshots, and audits by semantic owner. Keep the point-in-time disposition
+  in the executing Task and reviewed diff rather than a permanent census.
+- Use reachable Git history as the default recovery owner. Record a bounded
+  Stage 98 Migration only when a required immutable lookup cannot be resolved
+  by Git; use a minimal Tombstone only when neither Git nor that Migration
+  resolves a deleted stable path.
 - Commit each independently testable logical unit separately.
 
 ### Protected boundaries
 
 - Git history is not rewritten.
-- Existing Stage 98 archive envelopes, source blobs, and immutable records are
-  not edited to make current validators pass. They may be removed only by the
-  later approved Archive-compaction package after consumer-zero and Git
-  recovery are independently proven.
+- Existing sealed Stage 98 records are not edited or compacted to make current
+  validators pass. A record may be removed only after consumer-zero and the
+  applicable local or remote Git recovery proof; an unproved remote ancestry
+  requirement remains explicitly deferred.
 - Stage 90 audit and source-provenance evidence is not cosmetically rewritten.
-  It is retained in place or moved through reviewed Stage 98 evidence.
+  It is retained, merged, or removed through a reviewed disposition, with
+  minimal Stage 98 lookup only when Git history is insufficient.
 - External publication, deployment, push, merge, release creation, live
   provider execution, and credential-bearing actions are outside this scope.
 - `docs/05.operations/releases/` is not a supported family. Deployment
@@ -194,9 +218,13 @@ scripts/
 │   ├── documents/
 │   ├── agents/
 │   ├── archive/
-│   ├── repository/
-│   └── tests/
+│   └── repository/
 └── lib/
+
+tests/
+├── <independent validator tests>
+└── fixtures/
+    └── <test-only case data>
 ```
 
 `00`, `90`, `98`, and `99` are a control plane, reference library, historical
@@ -250,6 +278,18 @@ The retired Stage 02 requirements route is not an active terminal owner. Any
 remaining record is merged into a Requirement Package, converted to an
 Architecture Description, or dispositioned as historical evidence.
 
+The reviewed convergence target keeps and rewrites Requirement Packages
+`0001` through `0004`; Packages `0005` through `0008` are removed after their
+unique requirements and mutable consumers move to those owners. Architecture
+Descriptions `0004` through `0007` remain current and are updated;
+Descriptions `0008` through `0011` are retired after their unique structural
+content and consumers move. These sets are reviewed semantic targets, not
+fixed-count gate inputs.
+
+All ADRs remain in the Stage 02 decision log. Their status and reciprocal
+supersession links are reconciled, including proposed ADR-0031; an obsolete
+decision is superseded rather than deleted as corpus cleanup.
+
 ### C-SDLC-003 — work-unit-local Spec-driven execution
 
 One work unit owns a thin router `README.md`, `spec.md`, `plan.md`, and one or
@@ -273,15 +313,40 @@ Stage 03 does not own `design.md`, `tests.md`, `agent-design.md`,
 Change-local design moves to `spec.md`; ordering, test strategy, and rollback
 move to `plan.md`; execution evidence moves to Task records. A long-lived
 structural description or important choice is promoted to Stage 02 before the
-old file is removed. Executable tests remain with their production module.
+old file is removed. After ADR-0031 acceptance, validator tests and fixtures
+remain independent under the top-level `tests/` tree and production validators
+never import or read them; until that gate, ADR-0030's current layout clause
+remains authoritative.
 
 Executable interface contracts such as OpenAPI, GraphQL, and Protobuf belong
 to the Spec Package that implements and validates them. Stage 01 records the
 solution-independent external interface requirement and links to that
 executable contract without duplicating it.
 
-`docs/03.specs/` is not restored as an active owner. Its numeric slot
-remains unused so retired links are not silently reinterpreted.
+Concurrency is package-local: each Spec Package has at most one
+`in-progress` Task. A parent integration Spec and an explicitly delegated
+execution Spec may therefore progress concurrently while preserving one
+acceptance owner and one execution owner for each criterion. Spec 0054 owns
+integration acceptance through TSK-0054-0011; Spec 0066 owns delegated
+execution of WP-010 and WP-011 after activation.
+
+Execution-component links remain package-local. Spec 0066 Plan and Task link
+reciprocally to each other and their own Spec; they do not link a parent Plan
+or Task merely to inherit its registry ownership. Spec 0054 and Spec 0066 link
+reciprocally at Spec level, and accepted ADR-0031 authorizes that delegation.
+The link gate added by TSK-0054-0010 admits exactly that closed delegated
+relation and rejects missing reciprocity, a proposed decision, multiple parent
+owners, foreign execution-component links, or a duplicate Spec 0066
+standalone row.
+
+The current-corpus convergence target retains packages `0004`, `0005`,
+`0008`, `0054`, and `0066`. Other packages are migration input, not a
+permanent roster: they leave the current tree only after lifecycle
+normalization, mutable-consumer cutover, and Git recovery are proven. The
+observed candidate count is never a validation invariant.
+
+The retired Stage 04 execution route is not restored as an active owner. Its
+numeric slot remains unused so retired links are not silently reinterpreted.
 
 ### C-SDLC-004 — four-digit and date policy
 
@@ -320,6 +385,16 @@ owner remains for each procedure. Release publication remains owned by Git
 tags/GitHub Releases. Any current local Release profile, template, route,
 fixture, validator rule, or document is deleted after consumer migration and
 recoverability proof; this program does not preserve a dormant Release family.
+
+The reviewed Stage 05 convergence keeps and rewrites Guide `0010`; Guides
+`0001`, `0002`, `0003`, `0006`, `0007`, `0008`, and `0009` merge into their
+semantic owners and are then removed. Policies `0001`, `0003`, `0004`,
+`0005`, and `0007` remain current; Policy `0002` merges into `0001` and Policy
+`0006` merges into `0005`. The nine existing Runbooks remain procedure owners
+and are rewritten to remove duplicated policy, unsafe live actions, and
+secret-bearing examples. These reviewed sets guide the cutover but are not
+cardinality invariants. Incident and Postmortem profiles are strengthened for
+role, timeline, evidence, cause, action-owner, due-state, and closure semantics.
 
 ### C-SDLC-006 — integrated AI-agent governance
 
@@ -368,9 +443,11 @@ identity is the security contract.
 
 ### C-SDLC-007 — template and validator single contract
 
-Every authored profile has exactly one canonical template, route, deterministic
-identity rule, frontmatter contract, lifecycle, relationship contract, and
-negative fixture set. `docs/99.templates/registry.json` is the only machine
+Every active authored profile has one canonical registry definition for its
+route, identity, frontmatter, lifecycle, and relationship rules, plus a
+directly copyable template when authoring requires one. Semantic tests cover
+the contract without making a fixture, schema, profile, or template count a
+policy invariant. `docs/99.templates/registry.json` is the only machine
 authority for path, profile, required sections, lifecycle, and ID rules.
 `contracts/frontmatter.schema.json` and
 `contracts/document-profile.schema.json` validate frontmatter and the registry
@@ -386,6 +463,15 @@ Requirement templates converge into the Spec/Plan/Tasks and Requirement
 Package templates. Templates reference a registry profile ID rather than
 hardcoding their destination paths or restating validator behavior.
 
+The registry retains profile definitions and one normalized top-level
+`lifecycleDomains` owner. It does not retain current-instance rosters or
+parallel program/reference control planes: `programLineage.programs`,
+`referenceCurrentPacks`, and `standaloneExecutions` are removed. The
+`data-model` profile/template, full-body Archive profile/template, and stale
+progress or memory forms are removed with their consumers. A minimal Tombstone
+contract remains only if a durable tombstone still exists after Stage 98
+cleanup.
+
 The registry owns these profile-specific lifecycle domains and transitions:
 
 | Profile family | Lifecycle |
@@ -393,7 +479,7 @@ The registry owns these profile-specific lifecycle domains and transitions:
 | Requirement Package / Architecture Description | `draft → active → superseded \| retired`; `draft → withdrawn` |
 | ADR | `proposed → accepted \| rejected`; `accepted → superseded` |
 | Spec / Plan | `draft → active → done \| superseded \| withdrawn` |
-| Task | `queued → in-progress → done \| cancelled`; `in-progress ↔ blocked` |
+| Task | `queued → in-progress`; `in-progress → done \| cancelled`; `in-progress ↔ blocked` |
 | Governance / Guide / Policy / Runbook | `draft → active → superseded \| retired` |
 | Incident | `open → mitigated → resolved → closed` |
 | Postmortem | `draft → published → superseded` |
@@ -402,6 +488,19 @@ The registry owns these profile-specific lifecycle domains and transitions:
 | Data | `draft → active → stale → superseded \| retired` |
 | Migration / Tombstone | `draft → sealed` |
 | Template / Profile | `draft → active → superseded \| retired` |
+
+No new Task transition is required for delegated ownership transfer. The
+activation transaction uses existing edges: TSK-0054-0010 moves from
+`in-progress` to `done`, TSK-0054-0011 moves from `queued` to
+`in-progress` as the parent acceptance owner, and TSK-0066-0001 moves from
+`queued` to `in-progress` as the execution owner. The existing Spec 0054
+compatibility row moves with the parent owner from TSK-0054-0010 to
+TSK-0054-0011; no Spec 0066 row is added. After TSK-0054-0011 records
+acceptance while remaining `in-progress`, Spec 0066 closes. A later parent
+handoff atomically moves TSK-0054-0011 to `done` and the compatibility row to
+queued TSK-0054-0013; only then can TSK-0054-0013 activate. The activation does
+not modify the Stage 99 Task lifecycle domain, schema, or its current code
+projection, and WP-013 removes the temporary row and its consumers.
 
 The registry maps each profile status to the internal `mutable`, `current`, or
 `terminal` validation class; documents do not duplicate that class in
@@ -428,8 +527,9 @@ traceability uses complete IDs rather than ambiguous short forms such as
 `FR-0001`.
 
 Legacy, deprecated, compatibility-only, conflicting, contradictory, or
-duplicate owners are removed after their active consumers reach zero and their
-Stage 98 disposition is valid.
+duplicate owners are removed after their active consumers reach zero and Git
+recovery is proven. Stage 98 is added only when an immutable historical lookup
+cannot be resolved from Git and a maintained Migration.
 
 ### C-SDLC-008 — Stage 90 reference reconciliation
 
@@ -443,36 +543,28 @@ docs/90.references/
 └── data/####-<slug>/
 ```
 
-Each package has a `README.md` owner and only the bounded supporting source or
-data files that it indexes. Research owns external evidence and investigation;
-Audit owns point-in-time gap or conformance assessment; Data owns repository
-inventory and structured reference data. `RES-####` and `AUD-####` remain
-frontmatter identities, but `res-` and `aud-` are not repeated in paths.
-Maintained reference packages declare the applicable freshness evidence from
-`reviewed_at`, `source_as_of`, and `review_due`; lifecycle state, not a dated
-filename, determines whether the reference is current.
+Each package has a numbered, date-free identity, a `README.md` owner, lifecycle
+state, freshness responsibility, current consumers, and only the bounded
+supporting source or data files it indexes. Research owns external evidence and
+investigation; Audit owns point-in-time gap or conformance assessment; Data
+owns repository inventory and structured reference data. Stage 90 never owns
+current governance or operational procedure.
 
-Every existing Stage 90 file receives exactly one disposition:
+The cutover classifies current material by semantic destination in the
+executing Task and reviewed diff. `cloud-examples` and relevant maintained
+snapshots become numbered Research packages; the learning roadmap moves to
+Stage 05 Guide `0010`; `llm-wiki`, its generator and gates are removed after
+consumer-zero. Older Audit packages and overlapping Data assets are merged
+into the maintained owner or removed after Git recovery. This point-in-time
+classification is not persisted as a Stage 90 disposition ledger or exact
+corpus gate.
 
-- `retain-current`: maintained reference with a named freshness owner;
-- `regenerate`: generated projection with deterministic source and check mode;
-- `merge`: content moves into one canonical current reference;
-- `replace`: a current successor owns the material;
-- `archive`: historical audit or research evidence moves through Stage 98;
-- `delete`: content is redundant and recoverable from a recorded source
-  commit, with no live consumer.
-
-Current `learning/` content becomes a Stage 05 Guide when it teaches repository
-operation, or Research when it records external evidence. Deprecated redirect
-documents are removed after consumer migration. A Stage 90 link to a retired
-path is not preserved as if it were current; the historical claim is converted
-to a Git source commit or Stage 98 evidence when needed. Stage 90 never
-overrides rules owned by Stage 00, 01, 02, 03, or 05.
-
-Observation dates remain in frontmatter or source-check metadata. Historical
-source claims and audit evidence remain recoverable through their recorded Git
-source or an approved Archive record; byte-for-byte copies are not created by
-default.
+The large reference-information-architecture SHA, finite-state, current-pack,
+and census contract is retired with its exclusive fixtures and gates. Current
+reference validation checks package identity, semantic ownership, lifecycle,
+freshness, consumers, bounded reads, and deterministic generation only where a
+maintained generated projection remains. Observation dates stay in frontmatter
+or source metadata, not filenames.
 
 ### C-SDLC-009 — Stage 98 migration evidence
 
@@ -486,117 +578,56 @@ docs/98.archive/
 └── tombstones/<original-stage>/####-<slug>.md
 ```
 
-A Migration records a large path or authority cutover as a bounded mapping. A
-Tombstone exists only when a deleted stable path needs a durable lookup record
-for replacement, reason, and recovery commit. Routine moves and merges do not
-create one Tombstone per source when one Migration and Git history provide the
-required mapping and recovery. The minimum applicable evidence is:
+A Migration is created only when immutable historical links need a durable,
+bounded path or authority mapping that Git lookup alone does not provide. A
+minimal Tombstone exists only when neither Git nor a maintained Migration can
+resolve a deleted stable path. Routine deletion, move, merge, and replacement
+do not require one record per source, and deleting obsolete Migrations does not
+create a meta-Migration.
 
-```yaml
-legacy_path:
-stable_path:
-artifact_id:
-action: moved | merged | replaced | deleted
-replacement:
-recovery_commit:
-reason:
-```
+Sealed records are immutable: they are retained byte-for-byte or deleted after
+consumer-zero and recovery proof, never edited or compacted in place. Existing
+full-body Tombstones and redirect chains are removed when their consumers are
+zero and Git supplies recovery. Active documents link to the Archive README or
+an applicable bounded Migration rather than individual Tombstones. Superseded
+ADRs remain in Stage 02, and completed Spec/Plan/Task bodies are not copied to
+Stage 98.
 
-The validator enforces global artifact-ID uniqueness, typed four-digit stable
-ID patterns, path/frontmatter identity equality, no unapproved date-based
-active paths, disposition evidence for deletion or consolidation, and no
-active direct links to individual Archive records.
+Migrations `0006` through `0009` remain byte-for-byte in this cutover. Their
+deletion is explicitly deferred until an authorized push/merge or a full clone
+proves the required `origin/main` ancestry and recovery; local `main` evidence
+alone is insufficient. This defer state does not justify a branch-HEAD pin,
+current-document digest, exact Archive count, or per-file recovery ledger.
 
-A `recovery_commit` is valid only when it is a full Git object ID that resolves
-to a commit, is reachable from the named durable current or protected ref, and
-contains `legacy_path` as a regular blob. Recovery validation performs bounded
-object reads, strict UTF-8 where text is claimed, and a digest match when the
-record declares sealed byte identity. A missing, unreachable, wrong-type,
-wrong-path, oversized, undecodable, or digest-drifting object fails before
-deletion. Secret-bearing history is not preserved through the ordinary
-Archive path; it follows incident handling, credential rotation, and approved
-secret-removal procedure.
-
-Completed Spec/Plan/Task bodies are not copied into Archive without a specific
-audit or legal retention requirement. Active documents link to the Archive
-README or an applicable Migration, not to individual Tombstones. Superseded
-ADRs remain in Stage 02. Line-number SHA ledgers, full Archive snapshot counts,
-and other restatable Git inventories are removed. WP-009 reviews the existing
-Archive corpus path by path and reduces it to minimal Migration or Tombstone
-evidence only when Git recovery and consumer-zero are proven; otherwise the
-record is retained with an explicit reason.
-
-The directly approved WP-003 recovery clarification separates historical
-identity from current authoring:
-
-- MIG-0005 may name a finite set of completed historical consumers and their
-  immutable source commit. Their bodies remain unchanged. Historical links
-  are interpreted only when the proposed consumer bytes match that recovered
-  source and the target follows a validated migration disposition. A terminal
-  status alone, a directory-wide exclusion, or an unverified old path never
-  grants an exception. Conflicts, cycles, missing targets, and source drift
-  fail closed.
-- The 2026-08-29 approval additionally admits explicitly declared historical
-  fenced-command path literals when the complete consumer bytes match their
-  Git source and each declared literal follows an existing proved migration
-  disposition. An unrelated token, an unregistered consumer, or membership
-  alone is insufficient. Ordinary rendered-link admission remains unchanged.
-- The subsequent 2026-08-29 approval includes a closed quoted inline path
-  followed by a comma and whitespace or end-of-input. Exact consumer bytes
-  and the existing proved disposition remain mandatory. A comma inside the
-  quote, comma-attached suffix, prefix, other punctuation, or unregistered
-  occurrence is not admitted by this extension.
-- Removed provider symlink views may have separate typed historical-reference
-  evidence: the Git source mode, blob and link-target text, exact historical
-  consumer bytes, current absence, and explicit Archive README lookup owner
-  must all validate. This evidence interprets old references only; it does not
-  make symlinks regular recovery payloads, restore a view, or choose an
-  arbitrary successor from a retired directory. Unsafe, drifting, conflicting
-  or cyclic evidence fails closed, including in supplied-input validation.
-- MIG-0004's sealed original record, source objects, and reviewed target
-  objects remain recovery evidence. Subsequent current template content is
-  validated by the Stage 99 document contract, not pinned indefinitely to the
-  earlier template bytes. Historical move parity is checked against the sealed
-  historical target, never inferred from a mutable working-tree copy.
-
-These boundaries do not authorize terminal body rewrites, a current-path alias
-allowlist, new gates, current-state SHA or line-number ledgers, or weakened
-regular source/target recovery verification.
-
-The same approval brings two bounded cleanup operations into WP-003 without
-renumbering WPs or activating the remainder of WP-008 or WP-012:
-
-- Remove only the duplicated first 14-column historical inventory table in
-  the WER source-coverage-and-migration ledger, preserving the latest complete
-  file in verified Git recovery and recording the partial-content disposition
-  in Stage 98. Remove the obsolete terminal table-shape obligation together
-  with the table. Keep the ledger file, other evidence tables, missing-ledger
-  checks, settlement protection and predecessor-disposition validation. The
-  older stated source does not contain all later evidence and is insufficient
-  for this recovery. Do not freeze the current ledger or add a table exemption.
-- Remove `graphify-out/graph.json`, `graphify-out/graph.html`,
-  `graphify-out/GRAPH_TREE.html` and `graphify-out/GRAPH_REPORT.md` after their
-  current consumers are removed and Git recovery is verified with atomic
-  Stage 98 evidence. No repository-owned reproduction procedure exists for
-  these four outputs: this explicit retirement uses recovery and consumer-zero
-  instead, without claiming regeneration or weakening requirements for other
-  generated artifacts. Historical progress remains WP-012 work.
+Recovery validation is proportional to the retained lookup: bounded object
+reads, strict decoding for text, object/path checks, and a digest only when
+sealed byte identity is the contract. SHA identity remains justified only for
+external immutable dependencies, sealed evidence bytes, or verified Git
+recovery. Secret-bearing history follows incident, rotation, and approved
+history-removal procedure rather than ordinary Stage 98 retention.
 
 ### C-SDLC-010 — scripts ownership and module boundaries
 
-Every current `scripts/` asset receives a reviewed machine-readable
-disposition containing owner, purpose, consumers, supported interface,
-diagnostics, fixtures, evidence, recovery, and retirement gate. Historical
-census values, including earlier `50 → 49 → 47` projections, are evidence of a
-review point rather than terminal policy. The terminal inventory is whatever
-the closed ownership and consumer graph proves necessary.
+This section is the accepted Spec target but does not override ADR-0030 while
+ADR-0031 remains `proposed`. Its top-level test location and removal of the
+mandatory 800-line exception threshold become executable only after ADR-0031
+is accepted and ADR-0030 records the reciprocal scoped-amendment note without
+an ADR lifecycle supersession relation.
+
+The existing Stage 00 validation-surface contract moves atomically to
+`scripts/validation/registry.json` with its schema. This registry owns only
+the current routing graph: responsibility, lane selection, executable
+entrypoints, and supported consumers. Point-in-time file disposition belongs
+to the executing Task and reviewed diff rather than a permanent per-file
+ledger. Historical census values, including earlier `50 → 49 → 47`
+projections, are review evidence rather than terminal policy.
 
 Production code converges under `docs/`, `setup/`, `qa/`,
 `validation/{documents,agents,archive,repository}`, and `lib/`. Validator tests
-and fixtures are co-located under `scripts/validation/tests/`; application and
-infrastructure tests may remain top-level when their production owner is not a
-script validator. Modules are normally 200–400 lines and must not exceed 800
-lines without an explicit reviewed exception.
+and fixtures remain under top-level `tests/` and `tests/fixtures/`; production
+modules never import or read them. Modules split when responsibility,
+duplication, or change risk warrants it; line counts are review signals, not a
+policy ceiling.
 
 Compatibility entrypoints are temporary thin wrappers only. Production
 validators do not embed a `--self-test` suite; independent tests exercise their
@@ -629,12 +660,13 @@ reimplement their rules in shell or prose. A CLI wrapper and importable library
 remain separate only when they provide genuinely different supported
 interfaces.
 
-Fixtures remain finite: one representative positive per profile or contract
-and one independent negative per semantic rule family. Tests generate bounded
-mutations for combinatorial cases instead of storing an exhaustive matrix in
-large static fixture files. A completed transition gate, fixture, ledger, or
-helper is removed after its permanent invariants, current consumers, and Stage
-98 recovery evidence have moved to their terminal owners.
+Fixtures remain finite and behavior-oriented. Tests keep only the examples
+needed to prove semantic rule families and generate bounded mutations for
+combinatorial cases instead of storing an exhaustive matrix or mandatory case
+count. Point-in-time fixture, gate, and SHA dispositions live in the executing
+Task and reviewed diff. A completed transition gate, fixture, ledger, or helper
+is removed after its permanent semantics move, consumers reach zero, and Git
+recovery is proven.
 
 Mutable current-state SHA pins are not policy. Branch HEADs, current documents,
 validators, templates, registries, aggregate line numbers, and corpus counts
@@ -658,37 +690,45 @@ than one broad rewrite. Requirement Package, prefix-free Architecture, and
 route-sensitive Stage 99 changes are atomic. An existing governance candidate
 that depends on the superseded registry or expanded Archive model is not
 accepted until that foundation exists. A deletion, move, merge, or replacement
-is atomic with its Stage 98 migration or tombstone evidence; a later global
-archive package verifies parity but does not retroactively repair an evidence
-gap.
+is atomic with semantic-owner cutover, consumer-zero, and Git recovery proof;
+Stage 98 changes in that boundary only when immutable historical lookup needs
+them.
 
 WP-001 and WP-002 remain completed historical evidence, but any terminal
-assumption they made that conflicts with ADR-0030 is superseded. The closed
-remaining order is:
+assumption they made that conflicts with ADR-0030 or proposed ADR-0031 is
+superseded when the successor is accepted. The following list describes
+integration dependencies, not a global scheduling lock:
 
-1. **WP-004** establishes the terminal Stage 99 document authority, Requirement
-   Package, prefix-free Architecture, Stage 03 package, and lifecycle contract.
-2. **WP-003** remains blocked until WP-004 is complete, then resumes to converge
-   Stage 00 and `.agents/`, retain only Codex/Claude projections, and remove
+1. **WP-004** completed the Stage 99 document-authority, Requirement Package,
+   prefix-free Architecture, Stage 03 package, and lifecycle activation. Its
+   sealed MIG-0004 and accepted Task evidence are historical inputs, not work
+   to regenerate.
+2. **WP-003** entered `in-progress` after WP-004 completed. It converges Stage
+   00 and `.agents/`, retains only Codex/Claude projections, and removes
    Gemini/Antigravity current surfaces.
-3. **WP-005** records the Stage 05 responsibility and deletion ledger,
-   including the local Release family.
-4. **WP-006** performs the Stage 05 cutover and atomic recovery evidence.
-5. **WP-007** records the Stage 90 disposition ledger, including an explicit
-   retain/merge/replace/delete decision for the pre-existing staged RIA changes
-   preserved outside this worktree.
-6. **WP-008** performs the Stage 90 cutover and deterministic generation
-   reconciliation.
-7. **WP-009** compacts Stage 98 to its minimal Git-backed recovery role.
-8. **WP-010** closes the complete script ownership, consumer, gate, fixture,
-   and digest-purpose graph without prescribing a terminal file count.
-9. **WP-011** migrates compatibility entrypoints and CLI consumers.
-10. **WP-012** removes duplicate progress, closure, snapshot, and generated
+3. **WP-005** reviews Stage 05 semantic owners and records the point-in-time
+   cutover decisions in its Task and diff.
+4. **WP-006** performs the Stage 05 owner cutover and strengthens operational
+   contracts.
+5. **WP-007** reviews Stage 90 semantic destinations and retires the permanent
+   RIA/census control plane.
+6. **WP-008** performs the Stage 90 owner cutover and removes obsolete
+   generators, redirects, and overlapping reference assets.
+7. **WP-009** removes redundant Stage 98 bodies and redirects without editing
+   sealed records, preserving explicit remote-recovery deferrals.
+8. **WP-010** and **WP-011** form the delegated Spec 0066 branch. After the
+   reviewed activation checkpoint they run while TSK-0054-0011 remains the
+   sole parent acceptance Task, and remain sequential within Spec 0066. No
+   unrelated Spec 0054 Task runs during this delegated acceptance window.
+9. **WP-012** removes duplicate progress, closure, snapshot, and generated
     current-state owners.
-11. **WP-013** retires transition-only assets and converges permanent modules,
-    tests, and fixtures.
-12. **WP-014** proves the all-files ownership, lifecycle, recovery, security,
-    test, and branch fixed point and performs final independent reviews.
+10. **WP-013** starts only after Spec 0054 accepts the completed Spec 0066
+    result, performs the remaining Stage 01/02/03/99 current-corpus cutover,
+    then retires residual taxonomy transition assets without concurrent
+    delegated mutation.
+11. **WP-014** joins the delegated result with the parent integration path,
+    proves the all-files ownership, lifecycle, recovery, security, test, and
+    branch fixed point, and performs final independent reviews.
 
 Every cutover starts with a focused failing test that proves the old conflict
 or missing invariant. Implementation is minimal until that test passes. Broad
@@ -711,11 +751,12 @@ rule owners.
 ## Data Modeling & Storage Strategy
 
 `docs/99.templates/registry.json` remains the machine authority for active
-document profiles. `.agents/registry.json` is the separate machine authority
-for agent roles, permissions, handoffs, and skill references. A
-separate reviewed disposition ledger owns current-path migrations, Stage 90
-classification, and script retirement. Frozen archive evidence remains in
-Stage 98 and is never used as a mutable current-policy store.
+document profiles and normalized top-level lifecycle domains.
+`.agents/registry.json` is the separate machine authority for agent roles,
+permissions, handoffs, and skill references. Current-path, Stage 90, and script
+dispositions live in the executing Task and reviewed diff; they do not form a
+third permanent registry. Sealed Archive evidence remains immutable and is
+never used as a mutable current-policy store.
 
 Generated projections must name their canonical inputs, pin the transition
 boundary when necessary, provide `--check` behavior, and leave protected output
@@ -733,9 +774,9 @@ The canonical interfaces are:
 - Stage 00 policy and role documents as human governance, with point-in-time
   provider/model evidence owned by Stage 90 Data and execution evidence owned
   by Spec Tasks or Git;
-- a document migration/disposition ledger for current path changes;
-- a Stage 90 disposition ledger for reference ownership and freshness;
-- a script disposition ledger for executable ownership and retirement;
+- package-local Task/diff evidence for current path and Stage 90 cutovers;
+- `scripts/validation/registry.json` and its schema for validation routing,
+  lane selection, executable entrypoints, and supported consumers;
 - Stage 98 migration and tombstone records for historical recovery;
 - aggregate validation as the terminal repository-static decision surface.
 
@@ -758,11 +799,13 @@ duplicate machine inventories or independently redefine lifecycle states.
   Incident route, nested unexpected path, or path/frontmatter mismatch fails.
 - An `ad-`, `adr-`, `res-`, or `aud-` path prefix fails even when the stable
   frontmatter ID is valid.
-- A deleted path without migration/tombstone proof fails.
+- A deleted path with a current consumer or without Git recovery fails; a
+  Stage 98 lookup is required only when an immutable historical reference
+  cannot otherwise resolve it.
 - A current reference that claims policy authority fails Stage 90
   classification.
-- A generated reference whose canonical input or output pin drifts fails
-  closed and does not rewrite output in check mode.
+- A maintained generated reference whose canonical input or output drifts
+  fails closed and does not rewrite output in check mode.
 - A provider adapter claiming runtime support without provider-runtime evidence
   fails evidence classification.
 - A Gemini/Antigravity current consumer, `.gemini/` surface, root `GEMINI.md`,
@@ -796,19 +839,21 @@ or expansion beyond the approved B scope stops for human approval.
 
 ## Verification Commands
 
-The detailed implementation plan will bind exact commands to each logical
-task. The terminal gate set must include independent test discovery, each
-canonical validator, the thin aggregate, security checks, and both staged and
-all-files fixed points. Production validators must not execute embedded
-self-tests. The target command shape is:
+The detailed implementation plan binds exact, currently resolvable commands to
+each logical task and updates them atomically when an executable moves. The
+terminal gate set includes independent test discovery, focused validators, the
+thin aggregate, security checks, and both staged and all-files fixed points.
+Production validators must not execute embedded self-tests. The current command
+shape is:
 
 ```bash
-python3 -m unittest discover -s scripts/validation/tests -p 'test_*.py'
-python3 scripts/validation/documents/validate.py --root . --mode strict
-python3 scripts/validation/agents/validate.py --root . --mode strict
-python3 scripts/validation/archive/validate.py --root . --mode strict
-python3 scripts/validation/repository/validate.py --root . --mode staged
-TMPDIR=/tmp bash scripts/qa/validate-repository.sh .
+python3 -m unittest discover -s tests -p 'test_*.py'
+python3 scripts/validate-document-contract-registry.py --mode strict
+python3 scripts/validate-markdown-profiles.py --root . --mode strict
+python3 scripts/validate-links-and-owners.py --root . --mode strict
+python3 scripts/validate-document-lifecycle.py --root . --mode staged
+python3 scripts/validate-affected-surfaces.py --root .
+TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
 TMPDIR=/tmp pre-commit run
 TMPDIR=/tmp pre-commit run --all-files
 git diff --check
@@ -832,11 +877,11 @@ hosted CI, deployment, incident response, or live platform correctness.
 | VAL-SDLC-003 | Incident and Postmortem paths, templates, metadata, links, and negative fixtures use the exact lowercase co-located route. |
 | VAL-SDLC-004 | Every work unit has a thin README router, Spec, Plan, and append-only `TSK-<SPEC>-####` records with reciprocal criteria and profile-valid state consistency; no separate design/tests artifact remains. |
 | VAL-SDLC-005 | Stage 00 human governance, `.agents` machine registry, and Codex/Claude thin projections have disjoint owners; the three permanent agent gates pass with no hard-coded roster/adaptor cardinality, tracked secret, private-auth mutation, hosted provider credential, unredacted canary result, or over-privileged CI claim. |
-| VAL-SDLC-006 | Stage 99 has one registry, two contract schemas, one human README, and one directly copyable template per active authored profile. |
+| VAL-SDLC-006 | Stage 99 has one registry containing profile definitions and normalized top-level lifecycle domains, one human router, and only the schemas/templates required by active authored profiles; no current-instance program, reference-pack, or standalone-execution roster remains. |
 | VAL-SDLC-007 | Guide, Policy, Runbook, Incident, and Postmortem roles are disjoint; reviewed duplicate procedures have one owner. |
-| VAL-SDLC-008 | Every Stage 90 file resolves to Research, Audit, Data, Stage 05 Guide, Git history, Stage 98 evidence, or deletion exactly once; reference material cannot own active policy. |
-| VAL-SDLC-009 | Stage 98 contains only the minimal README, Migration, and Tombstone topology needed for mapping and Git recovery; every deletion proves full-OID commit existence, durable-ref reachability, regular `legacy_path` blob recovery, bounded read, and sealed digest when applicable, with no active direct Tombstone link, redundant snapshot/count ledger, or ordinary retention of secret-bearing history. |
-| VAL-SDLC-010 | The script ownership and consumer graph is complete; production modules obey responsibility and size boundaries, tests/fixtures are co-located, aggregate duplication and embedded self-tests are absent, and no terminal file-count invariant remains. |
+| VAL-SDLC-008 | Stage 90 contains only numbered, date-free Research, Audit, and Data packages with identity, owner, lifecycle, freshness, and consumer semantics; learning guidance moves to Stage 05, obsolete wiki/generator/gate surfaces are absent, and no permanent disposition census or RIA current-pack machine remains. |
+| VAL-SDLC-009 | Stage 98 retains only bounded Migrations and genuinely necessary minimal Tombstones; sealed records are unchanged, full-body copies and redirect chains are absent at consumer-zero, and MIG-0006 through MIG-0009 remain byte-for-byte with remote recovery explicitly deferred until authorized ancestry proof. |
+| VAL-SDLC-010 | After ADR-0031 acceptance, the validation routing and consumer graph has one owner; production modules obey responsibility boundaries, independent tests/fixtures remain under top-level `tests/`, aggregate duplication and embedded self-tests are absent, and no terminal entrypoint, file, case, or line-count invariant remains. |
 | VAL-SDLC-011 | Focused, affected, staged, aggregate, secret, all-files, and independent review gates pass at each required boundary; permanent rules have one machine owner and validator, with zero aggregate duplication, unjustified current-state SHA pins, or consumer-free transition fixtures at the terminal fixed point. |
 | VAL-SDLC-012 | Each independently testable logical unit is committed separately with no unrelated user changes included. |
 

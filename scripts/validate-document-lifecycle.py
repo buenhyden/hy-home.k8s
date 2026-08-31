@@ -3294,7 +3294,6 @@ def _migration_lifecycle_events(
 
     removals: set[PurePosixPath] = set()
     rehomes: set[tuple[PurePosixPath, PurePosixPath]] = set()
-    navigation: set[PurePosixPath] = set()
     diagnostics: list[LifecycleDiagnostic] = []
     owner = _load_canonical_markdown_module()
     for source, disposition in proof.dispositions.items():
@@ -3352,13 +3351,6 @@ def _migration_lifecycle_events(
             )
             continue
         if (
-            after_profile.profile_id == "readme/collection-index"
-            and after_profile.mode == "frontmatter-free"
-            and after_domain is None
-            and after.status is None
-        ):
-            navigation.add(target)
-        elif (
             after_domain is not None
             and after_domain.family == before_domain.family
             and before.status == after.status == "active"
@@ -3373,7 +3365,6 @@ def _migration_lifecycle_events(
         ),
         source_removals=frozenset(removals),
         current_rehomes=frozenset(rehomes),
-        navigation_creations=frozenset(navigation),
     )
     return events, tuple(diagnostics)
 

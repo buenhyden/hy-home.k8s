@@ -26,25 +26,48 @@
 - [Spec 0054](spec.md)
 - [Plan 0054](plan.md)
 - Predecessor Spec 0052 and its inherited WORK-109 evidence
-- [ADR-0022 direct approval lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
+- [Historical ADR-0022 direct approval lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md),
+  retained as predecessor context rather than current projection authority
 - [ADR-0024 historical terminal-taxonomy decision](../../02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md),
   superseded where ADR-0030 defines the new terminal authority
 - [ADR-0030 authority-first convergence](../../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)
+- [Proposed ADR-0031 current-corpus and validation ownership](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md),
+  which defines the target package-local model only after acceptance. The
+  current Spec 0066 delegation derives from direct human approval and active
+  Spec 0054; ADR-0022 remains compatibility input until the atomic cutover.
 - The Git parent of the WP-001 design-authority commit and the exact inherited
   WORK-109 staged/unstaged inventory recorded by WP-002
 - External primary-source basis embedded in [Spec 0054](spec.md#external-basis)
 
 ### Scheduling and Completion
 
-- Only one Task may be `in-progress` at a time. A dependency-blocked Task is
-  `blocked`, is not the active execution Task, and may resume only after its
-  declared dependency closes.
-- The closed successor order is
-  `WP-004 → WP-003 → WP-005 → WP-006 → WP-007 → WP-008 → WP-009 → WP-010 → WP-011 → WP-012 → WP-013 → WP-014`.
-  WP-001 and WP-002 are completed evidence and are not re-entered.
+- Each Spec Package may have at most one `in-progress` Task. A
+  dependency-blocked Task is `blocked`, is not that package's active execution
+  Task, and may resume only after its declared dependency closes.
+- Spec 0054 owns integrated acceptance. Spec 0066 is its delegated execution
+  package for WP-010 and WP-011, so the two packages may each have one active
+  Task concurrently after the Spec 0066 activation checkpoint. This is not an
+  independent standalone program and does not relax either package's local
+  single-`in-progress` rule.
+- After activation, TSK-0054-0011 is the sole active parent acceptance Task
+  while TSK-0066-0001 is the delegated execution Task. TSK-0054-0011 records
+  only integrated acceptance and never claims the delegated implementation.
+- Until WP-013 removes execution-instance rosters, the existing Spec 0054
+  compatibility row follows only the current parent Task: activation owner
+  TSK-0054-0010, acceptance owner TSK-0054-0011, then queued continuation
+  TSK-0054-0013. Spec 0066 receives no standalone row; its execution ownership
+  is proved by its package-local links and reciprocal Spec-level delegation.
+- Work packages follow their declared dependencies rather than one global
+  closed order. WP-001 and WP-002 are completed evidence and are not
+  re-entered.
 - A Task becomes `done` only after its focused RED/GREEN evidence, assigned
   broad gates, independent specification and code-quality review, any
   WP-specific domain reviews, and all ordered logical commits exist.
+- A terminal Task is not rewritten to retrofit later scheduling policy. When
+  Git proves an earlier directly approved out-of-order execution, the active
+  Plan may record one bounded historical exception with its approval and
+  prerequisite evidence. That record grants no current or future dependency
+  bypass.
 - Each independently testable logical unit gets one scoped commit. When a WP
   owns ordered commits, their order and exact commit subjects are defined by
   that WP's section in [Plan 0054](plan.md#work-breakdown).
@@ -80,9 +103,9 @@
   review, and independent code-quality review for each Task. Obtain the
   WP-specific domain reviews named in Plan 0054 and resolve every Critical or
   Important finding before committing.
-- **Evidence Location**: append-only Spec Task records, bounded machine
-  disposition ledgers, minimal Stage 98 Migration/Tombstone records, and Git
-  commits.
+- **Evidence Location**: package-local Spec Task records and reviewed diffs,
+  minimal Stage 98 Migration/Tombstone lookup only when Git history is not a
+  sufficient durable reference, and Git commits.
 
 Every Task record below inherits this contract without exception and links its
 own Plan section for the exact file boundary, validation commands, reviews,

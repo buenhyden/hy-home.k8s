@@ -52,6 +52,14 @@ governed body families; `tasks/` denotes package-local `TSK-*` records rather
 than one package-wide ledger. Spec 0054's transitional execution ledger is a
 finite WP-004C input and is intentionally not presented as a current family.
 
+The convergence target retains current packages `0004`, `0005`, `0008`,
+`0054`, and `0066`. The larger tree and table below are a point-in-time
+migration inventory, not a permanent roster or count invariant. A predecessor
+package leaves the current tree only after lifecycle normalization, mutable
+consumer cutover, and Git recovery are proven. Spec 0054 owns integrated
+acceptance; draft Spec 0066 is the approved delegated-execution design for
+WP-010 and WP-011, with lifecycle activation still pending.
+
 ```text
 03.specs/
 ├── 0004-argo-rollouts-progressive-delivery/
@@ -291,10 +299,10 @@ finite WP-004C input and is intentionally not presented as a current family.
 ## Authoring Workflow
 
 1. 관련 Requirement Package, AD, ADR 링크를 확인하고 Spec의 입력으로 고정한다.
-2. 새 Spec은 `../99.templates/templates/sdlc/specs/spec.template.md`에서 시작하고, canonical target pattern은 `docs/03.specs/<####-numbering>-<feature-id>/spec.md`다.
+2. 새 Spec은 `../99.templates/templates/specs/spec.template.md`에서 시작하고, canonical target pattern은 `docs/03.specs/<####-slug>/spec.md`다.
 3. 변경 한정 설계와 실행 계약은 `spec.md`, 구현 순서·위험·검증·rollback은 `plan.md`, 실행 증거는 package-local Task record가 소유한다. 실행 가능한 API 계약은 해당 Spec Package가 소유한다.
 4. 장기 구조는 Stage 02 Architecture Description으로, 중요한 장기 결정은 ADR로 승격한다. 폐기된 Stage 04 경로는 새 문서에서 사용하지 않는다.
-5. 삭제된 경로의 이전 본문은 Git history가 보존하며, 필요한 lookup/recovery만 Stage 98 Migration 또는 Tombstone이 기록한다.
+5. 삭제된 경로의 이전 본문은 Git history가 보존한다. 실제 immutable lookup이 Git만으로 해소되지 않을 때만 Stage 98 Migration을 사용하고, Tombstone은 Git과 Migration 모두로 해결되지 않을 때만 최소 형태로 둔다.
 
 ### Relative Link Rules
 
@@ -368,7 +376,7 @@ finite WP-004C input and is intentionally not presented as a current family.
 | [`./0051-repository-assurance-integration-and-closure/spec.md`](./0051-repository-assurance-integration-and-closure/spec.md) | Cross-tranche integration, lifecycle closure, local main merge, stash retirement, and cleanup specification | Draft | 두 machine contract와 최종 target matrix를 통합하고 전체 QA/review 후 local-only fast-forward 및 cleanup을 수행하며 hosted/provider/remote/live 증거는 분리한다. | 2026-08-02 |
 | [`./0052-document-taxonomy-consolidation/spec.md`](./0052-document-taxonomy-consolidation/spec.md) | Stage 03 work-unit migration, governance authority, agent controls, disposition, and validator reconciliation specification | Active | 2026-08-09 승인 설계에 따라 Stage 03에 Spec/Plan/Task를 통합하고 Stage 04 execution을 폐지하되 Stage 05를 유지한다. Release 제외, stable filename/date 예외, fail-closed transition, Archive/observation 무결성, harness-contract 확장, script/validator 의미 보존 및 기준선 실패 해결을 소유한다. | 2026-08-09 |
 | [`./0053-workspace-engineering-research-pack-consolidation/spec.md`](./0053-workspace-engineering-research-pack-consolidation/spec.md) | Workspace engineering research pack consolidation and replacement specification | Done | 2026-08-08 승인에 따라 신규 13-file `2026-08-08-wer` 통합 팩, 25개 predecessor disposition, mutable consumer 전환, 세 predecessor 팩 삭제, whole-branch 검토와 repository-static 게이트를 완료했다. Stage 98은 불변이고 provider/runtime/hosted/remote/live 증거는 주장하지 않는다. | 2026-08-09 |
-| [`./0054-sdlc-document-and-agent-governance-consolidation/spec.md`](./0054-sdlc-document-and-agent-governance-consolidation/spec.md) | SDLC document and AI-agent governance consolidation specification | Active | 승인된 B 범위(Stage 90 포함)에 따라 4자리 문서 identity, co-located Spec/Plan/Task, 통합 agent governance, Stage 05/90/98 disposition, template/validator/script convergence를 실행한다. | 2026-08-13 |
+| [`./0054-sdlc-document-and-agent-governance-consolidation/spec.md`](./0054-sdlc-document-and-agent-governance-consolidation/spec.md) | SDLC document and AI-agent governance consolidation specification | Active | 승인된 B 범위(Stage 90 포함)의 통합 수용 소유자로서 문서·agent governance·operations·reference·archive·template 수렴을 관리하고, WP-010/WP-011 실행은 리뷰된 활성화 경계 이후 Spec 0066에 위임한다. | 2026-08-31 |
 | [`./0055-workspace-governance-audit-and-remediation/spec.md`](./0055-workspace-governance-audit-and-remediation/spec.md)                           | Workspace governance audit, canonical-owner remediation, current-pointer cutover, and evidence-gated cleanup specification                    | Done   | 승인된 30개 요청 범위를 신규 10-file Current 감사 팩으로 조사하고 canonical owner 보정, sole-Current 전환, 증거 기반 no-deletion 결과, terminal QA와 review를 완료했다. 기존 감사 팩은 source-commit 고정 역사 증거로 보존하며 hosted/provider/remote/live 결과는 `DEFER`한다.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | 2026-08-09 |
 | [`./0056-workspace-engineering-gap-only-refresh/spec.md`](./0056-workspace-engineering-gap-only-refresh/spec.md)                                   | Existing 2026-08-08 WER gap-only external-source refresh specification                                                                        | Done   | 기존 팩에서 조사되지 않았거나 외부 근거가 불충분한 `Partial` 질문만 2026-08-10 공식 1차 출처와 현재 workspace evidence로 보강했다. 새 팩·중복 보고서·provider/runtime/hosted/remote/live 증거는 범위 밖이다.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | 2026-08-10 |
 | [`./0057-workspace-engineering-partial-defer-incremental-refresh/spec.md`](./0057-workspace-engineering-partial-defer-incremental-refresh/spec.md) | Existing WER pack Partial/DEFER closed-ledger incremental refresh design                                                                      | Done   | 2026-08-12 직접 승인된 standalone execution은 12개 base `Partial` 행과 조건부 qualified `DEFER` 증거만 폐쇄형 원장으로 재검토한다. 공식 공개 1차 출처, 현재 repository-static 증거, 허용된 GitHub Actions/설정 읽기 전용 메타데이터만 사용하며 새 연구 팩·중복 보고서·원격 변경·secret value·provider/runtime/cluster/live 증거는 금지한다.                                                                                                                                                                                                                                                                                                                                                                                                                                               | 2026-08-12 |
@@ -380,20 +388,18 @@ finite WP-004C input and is intentionally not presented as a current family.
 | [`./0063-governance-invariant-consolidation/spec.md`](./0063-governance-invariant-consolidation/spec.md) | Retirement of completed-migration validation machinery and unification of the declared contract with the executed gate | Done | 2026-08-29 직접 승인된 standalone 실행 관계로, 완료된 이관에 묶인 검증기와 핀을 은퇴시키고 ADR-0030의 Stage 98 경계를 집행하며 계약을 실행 목록의 단일 소유자로 만든다. | 2026-08-30 |
 | [`./0064-agent-governance-surface-consolidation/spec.md`](./0064-agent-governance-surface-consolidation/spec.md) | Correction of the agent-governance surfaces so each states only what is currently true, with one owner per fact | Done | 2026-08-30 직접 승인된 standalone 실행 관계로, `docs/00.agent-governance/`·`.agents/`·`.claude/`·`.codex/` 98개 파일을 6개 축으로 감사해 자기모순 상태의 progress 원장을 Stage 98 최소 Tombstone으로 은퇴시키고, 소유되지 않은 경로를 지시하는 skill과 참조 없는 스캐폴드를 제거한다. 기각된 후보 8건도 근거와 함께 기록한다. | 2026-08-30 |
 | [`./0065-transition-residue-retirement/spec.md`](./0065-transition-residue-retirement/spec.md) | Retirement of the three transition residues Spec 0054 WP-012 recorded | Done | 2026-08-30 직접 승인된 standalone 실행 관계로, 실행될 수 없는 route-state 분기와 그 별칭 기계를 은퇴시키고, 봉인된 MIG-0004의 Stage 99 대상에 덧붙은 현재 트리 존재 요구를 후속 봉인 행이 은퇴시킨 대상에 한해 해제하며, 이를 통해 두 governance form과 그것을 라우팅하는 세 profile 및 Stage 00 memory 디렉터리를 정리한다. | 2026-08-31 |
-| [`./0066-validation-tooling-ownership/spec.md`](./0066-validation-tooling-ownership/spec.md) | Restructure of the validation tooling trees onto one role-first owner per module | Draft | 2026-08-31 직접 승인된 standalone 실행 관계로, 하위 디렉터리와 `.py`를 조용히 놓치는 script 참조 규칙을 먼저 고친 뒤 `scripts/`와 `tests/`를 role-first 구조로 옮기고, case table의 소유자를 하나로 정하며, 800줄 상한을 넘는 37개 파일과 분류되지 않은 104개 commit pin을 정리한다. `validation-surfaces.json`은 읽기 전용이다. | 2026-08-31 |
+| [`./0066-validation-tooling-ownership/spec.md`](./0066-validation-tooling-ownership/spec.md) | Restructure of validation tooling onto one routing owner per responsibility | Draft | Spec 0054 WP-010/WP-011의 위임 실행 설계다. 기존 validation-surface 계약을 `scripts/validation/registry.json`으로 원자 이동하고, 테스트는 top-level에서 독립 유지하며, 중복 gate·self-test·fixture·mutable SHA·wrapper를 consumer-zero와 동작 증거에 따라 정리한다. 고정 entrypoint·파일·case·line·pin 수는 불변식이 아니다. | 2026-08-31 |
 
 ### Helper Templates
 
-아래 템플릿은 `docs/03.specs/<###-Numbering>-<feature-id>/` 아래에서 `spec.md`를 보조하는 계약 문서에만 사용한다.
+아래 템플릿은 `docs/03.specs/<####-slug>/` 패키지와 해당 Spec이 소유하는 실행 가능 인터페이스 계약에 사용한다.
 
-- `../99.templates/templates/sdlc/specs/spec.template.md`
-- `../99.templates/templates/sdlc/specs/interface.template.md`
-- `../99.templates/templates/sdlc/specs/agent-design.template.md`
-- `../99.templates/templates/sdlc/specs/data-model.template.md`
-- `../99.templates/templates/sdlc/specs/tests.template.md`
-- `../99.templates/templates/sdlc/specs/openapi.template.yaml`
-- `../99.templates/templates/sdlc/specs/service.template.proto`
-- `../99.templates/templates/sdlc/specs/schema.template.graphql`
+- `../99.templates/templates/specs/spec.template.md`
+- `../99.templates/templates/specs/plan.template.md`
+- `../99.templates/templates/specs/task.template.md`
+- `../99.templates/templates/specs/openapi.template.yaml`
+- `../99.templates/templates/specs/service.template.proto`
+- `../99.templates/templates/specs/schema.template.graphql`
 
 ## Related Documents
 

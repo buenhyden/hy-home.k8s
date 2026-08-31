@@ -62,6 +62,7 @@
 ├── 0028-pod-security-admission-per-namespace-adoption.md
 ├── 0029-mutable-target-revision-retention.md
 ├── 0030-authority-first-sdlc-and-agent-governance-convergence.md
+├── 0031-current-corpus-retention-and-validation-ownership.md
 └── README.md
 ```
 
@@ -79,7 +80,7 @@
 
 - 같은 폴더의 ADR 문서는 `./`로 시작한다.
 - sibling AD stage는 `../descriptions/`로 연결한다.
-- upstream/downstream docs stage는 `../../01.requirements/`, `../../03.specs/`, `../../04.execution/`, `../../05.operations/`로 연결한다.
+- upstream/downstream docs stage는 `../../01.requirements/`, `../../03.specs/`, `../../05.operations/`로 연결한다. Retired Stage 04 execution route는 current link target으로 사용하지 않는다.
 - 새 ADR의 실제 Markdown 링크는 최종 ADR 파일 위치 기준으로 다시 계산하고, placeholder target은 code literal로 남긴다.
 
 ### Current ADR Index
@@ -111,6 +112,7 @@
 | [`./0028-pod-security-admission-per-namespace-adoption.md`](./0028-pod-security-admission-per-namespace-adoption.md) | Pod Security Admission 네임스페이스별 도입 결정 | Accepted | ADR-0027의 역전 조건 발화 후 재판단이다. 네임스페이스마다 자체 증거가 뒷받침하는 최대 강도를 부여한다: `istio-system`은 CNI DaemonSet 때문에 영구 `privileged`, `monitoring`/`platform`은 `enforce=restricted`, Helm 소유 4곳은 차트 버전 종속이라 `audit`/`warn`만, 주입 2곳은 CNI 라이브 미검증이라 `baseline` warn/audit을 검증 신호로 쓴다. `enforce`만 버전 고정한다. |
 | [`./0029-mutable-target-revision-retention.md`](./0029-mutable-target-revision-retention.md) | 가변 targetRevision 유지 결정 | Accepted | ADR-0026이 선호 통제로 남긴 commit-SHA 핀을 기각한다. 12개 선언은 모두 이 저장소 자신을 가리키며 외부 차트는 이미 버전 핀이다. 핀은 하드닝이 아니라 자동 reconcile을 수동 promotion으로 바꾸는 배포 모델 변경이고, 핀 커밋은 자기 자신을 참조할 수 없어 구조적으로 한 커밋 뒤처진다. 운영자 추가·환경 추가·force-push 워크플로 도입 시 재검토한다. |
 | [`./0030-authority-first-sdlc-and-agent-governance-convergence.md`](./0030-authority-first-sdlc-and-agent-governance-convergence.md) | Authority-first SDLC document, agent governance, Archive, template, and script convergence decision | Accepted | Spec 0054의 terminal authority다. WP-004 foundation, WP-003 agent convergence, WP-010 ownership graph, WP-014 fixed point 순서를 지배한다. |
+| [`./0031-current-corpus-retention-and-validation-ownership.md`](./0031-current-corpus-retention-and-validation-ownership.md) | Current corpus retention, package-local execution lineage, and validation routing ownership decision | Proposed | ADR-0016/0017/0020/0021/0022의 successor 후보이며, 수용 시 ADR-0030의 `validation/tests/` co-location과 800-line exception 조항만 lifecycle supersession 없는 범위 한정 개정으로 변경한다. 나머지 ADR-0030 topology와 `accepted` 상태는 유지하며 Spec 0054가 통합 수용을, Spec 0066이 위임된 validation-tooling 실행을 소유한다. |
 
 ## Related Documents
 
