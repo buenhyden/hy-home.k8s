@@ -135,6 +135,7 @@ CUMULATIVE_HISTORY_CACHE_MAX_SNAPSHOTS = 4
 CUMULATIVE_HISTORY_CACHE_MAX_EVIDENCE = 2
 CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES = 4 * 1024 * 1024
 CUMULATIVE_HISTORY_MAX_SNAPSHOT_WORK_BYTES = 16 * 1024 * 1024
+CUMULATIVE_HISTORY_MAX_SNAPSHOT_OBJECTS = 4_096
 WORK105_CUTOVER_BASE_COMMIT = "a6fa1806364ea0472baaad0906e1b5e4ddac8602"
 WORK105_BASE_REGISTRY_BLOB_OID = "fc9ba039906ef240d076de5eeb6c584b681ae09f"
 WORK105_PROPOSED_REGISTRY_BLOB_OID = "fd842f60e801a39435600f35a27f22e1c659f1bd"
@@ -3849,6 +3850,65 @@ class _CumulativeHistoryBudgetExceeded(RuntimeError):
     """A bounded cumulative-history cache cannot safely serve this invocation."""
 
 
+def _snapshot_blob_size(
+    root: Path, blobs: Mapping[PurePosixPath, str]
+) -> int:
+    """Preflight exact per-path blob bytes without reading snapshot content."""
+
+    object_ids = tuple(dict.fromkeys(blobs.values()))
+    if (
+        len(object_ids) > CUMULATIVE_HISTORY_MAX_SNAPSHOT_OBJECTS
+        or any(OBJECT_ID.fullmatch(oid) is None for oid in object_ids)
+    ):
+        raise _CumulativeHistoryBudgetExceeded
+    if not object_ids:
+        return 0
+    request = ("\n".join(object_ids) + "\n").encode("ascii")
+    output_limit = len(object_ids) * (GIT_SIZE_OUTPUT_MAX_BYTES * 2)
+    if len(request) > GIT_CAPTURE_MAX_BYTES or output_limit > GIT_CAPTURE_MAX_BYTES:
+        raise _CumulativeHistoryBudgetExceeded
+    try:
+        raw = _run_git(
+            root,
+            ("cat-file", "--batch-check=%(objectname) %(objecttype) %(objectsize)"),
+            input_bytes=request,
+            output_limit=output_limit,
+        )
+    except InvocationError as exc:
+        raise _CumulativeHistoryBudgetExceeded from exc
+    lines = raw.splitlines()
+    if len(lines) != len(object_ids):
+        raise _CumulativeHistoryBudgetExceeded
+    sizes: dict[str, int] = {}
+    for expected, line in zip(object_ids, lines, strict=True):
+        fields = line.split(b" ")
+        if len(fields) != 3:
+            raise _CumulativeHistoryBudgetExceeded
+        try:
+            returned = fields[0].decode("ascii", errors="strict")
+            object_type = fields[1].decode("ascii", errors="strict")
+            size_text = fields[2].decode("ascii", errors="strict")
+        except UnicodeDecodeError as exc:
+            raise _CumulativeHistoryBudgetExceeded from exc
+        if (
+            returned != expected
+            or object_type != "blob"
+            or not size_text.isascii()
+            or not size_text.isdecimal()
+        ):
+            raise _CumulativeHistoryBudgetExceeded
+        size = int(size_text)
+        if size > DOCUMENT_BLOB_MAX_BYTES:
+            raise _CumulativeHistoryBudgetExceeded
+        if returned in sizes:
+            raise _CumulativeHistoryBudgetExceeded
+        sizes[returned] = size
+    total = sum(sizes[oid] for oid in blobs.values())
+    if total < 0:
+        raise _CumulativeHistoryBudgetExceeded
+    return total
+
+
 @dataclass
 class _CumulativeHistoryCache:
     """Share bounded snapshot and evidence work across one comparison's paths."""
@@ -3873,14 +3933,12 @@ class _CumulativeHistoryCache:
             self.snapshots.move_to_end(commit)
             return cached
         blobs = _tree_blob_map(self.root, commit)
-        snapshot = _snapshot_projection(self.root, self.registry, blobs)
-        size = sum(len(text.encode("utf-8")) for text in snapshot[1].values())
+        size = _snapshot_blob_size(self.root, blobs)
         if size > CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES or (
             self.snapshot_work_bytes + size
             > CUMULATIVE_HISTORY_MAX_SNAPSHOT_WORK_BYTES
         ):
             raise _CumulativeHistoryBudgetExceeded
-        self.snapshot_work_bytes += size
         while self.snapshots and (
             len(self.snapshots) >= CUMULATIVE_HISTORY_CACHE_MAX_SNAPSHOTS
             or self.cached_snapshot_bytes + size
@@ -3893,6 +3951,8 @@ class _CumulativeHistoryCache:
                     del self.evidence[key]
         if self.cached_snapshot_bytes + size > CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES:
             raise _CumulativeHistoryBudgetExceeded
+        snapshot = _snapshot_projection(self.root, self.registry, blobs)
+        self.snapshot_work_bytes += size
         self.snapshots[commit] = snapshot
         self.snapshot_sizes[commit] = size
         self.cached_snapshot_bytes += size

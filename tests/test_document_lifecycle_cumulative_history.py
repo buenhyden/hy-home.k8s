@@ -478,7 +478,12 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
             cache._snapshot(active)
         self.assertEqual(len(cache.snapshots), 1)
 
-        with mock.patch.object(VALIDATOR, "CUMULATIVE_HISTORY_MAX_SNAPSHOT_WORK_BYTES", 1):
+        with (
+            mock.patch.object(VALIDATOR, "CUMULATIVE_HISTORY_MAX_SNAPSHOT_WORK_BYTES", 1),
+            mock.patch.object(
+                VALIDATOR, "_snapshot_projection", side_effect=AssertionError
+            ) as projection,
+        ):
             actual = VALIDATOR._admit_cumulative_create_diagnostics(
                 candidates,
                 root=self.root,
@@ -490,6 +495,16 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                 proposed_blobs=blobs,
             )
         self.assertEqual(actual, candidates)
+        projection.assert_not_called()
+
+        with (
+            mock.patch.object(VALIDATOR, "_run_git", return_value=b"malformed\n"),
+            self.assertRaises(VALIDATOR._CumulativeHistoryBudgetExceeded),
+        ):
+            VALIDATOR._snapshot_blob_size(
+                self.root,
+                {PurePosixPath(self.path): blobs[PurePosixPath(self.path)]},
+            )
 
         with mock.patch.object(
             VALIDATOR,
