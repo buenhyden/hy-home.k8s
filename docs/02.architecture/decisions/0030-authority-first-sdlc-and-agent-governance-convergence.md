@@ -3,7 +3,7 @@ title: 'ADR-0030: Authority-First SDLC and Agent Governance Convergence'
 type: sdlc/adr
 status: accepted
 owner: platform
-updated: 2026-08-28
+updated: 2026-09-01
 artifact_id: "ADR-0030"
 supersedes: "[ADR-0013, ADR-0015, ADR-0018, ADR-0019, ADR-0023, ADR-0024, ADR-0025]"
 ---
@@ -311,6 +311,14 @@ have different lifecycle and review responsibilities even when co-located.
 
 ## Traceability
 
+Accepted [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md)
+amends exactly two validation-layout clauses in this decision: independent
+validator tests and fixtures remain under top-level `tests/` and
+`tests/fixtures/` rather than `validation/tests/`, and module review follows
+semantic responsibility and risk rather than a mandatory exception above 800
+lines. This is a scoped amendment, not lifecycle supersession; every other
+ADR-0030 clause and its `accepted` status remain authoritative.
+
 The current registry does not yet admit the terminal `superseded` lifecycle and
 reciprocal frontmatter fields. This design-authority commit records the direct
 successor relations here and in the decision index without mutating closed
@@ -329,3 +337,4 @@ the Stage 99 foundation is active.
 | [ADR-0023](./0023-work-unit-document-taxonomy-and-governance-authority.md) | Partially supersedes `tasks.md`, old agent-contract, and ArchiveEnvelope clauses; preserves Stage 03 co-location, retired Stage 04, stable Stage 05, no Release, and consumer-first migration. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [ADR-0024](./0024-terminal-artifact-identity-and-archive-layout.md) | Supersedes its terminal form split, prefixed AD path, mandatory child forms, exact Archive/census/SHA design, and fixed script inventory; preserves AD/ADR meaning, stable identity integrity, native interface contracts, consumer-zero, provenance, and recovery intent. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | [ADR-0025](./0025-four-digit-document-path-identity.md) | Partially supersedes only its old family table; preserves four-digit identity, lowercase Incident package, atomic migration, and immutable historical paths. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Scoped amendment only: top-level independent tests/fixtures and responsibility/risk-based module review replace the two validation-layout clauses named above; ADR-0030 remains accepted. | [Spec 0066](../../03.specs/0066-validation-tooling-ownership/spec.md) |

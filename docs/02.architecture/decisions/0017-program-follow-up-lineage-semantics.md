@@ -1,10 +1,11 @@
 ---
 title: 'ADR-0017: Program Follow-up Lineage Semantics'
 type: sdlc/adr
-status: accepted
+status: superseded
 owner: platform
-updated: 2026-07-15
+updated: 2026-09-01
 artifact_id: "ADR-0017"
+superseded_by: ADR-0031
 ---
 
 # ADR-0017: Program Follow-up Lineage Semantics
@@ -77,3 +78,4 @@ leaving the registry unchanged makes machine lineage contradict it.
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
 | ADR-0016 original program lineage | Complementary successor; original decision remains accepted | [Spec 034](../../03.specs/0034-authority-and-lineage-foundation/spec.md) |
+| [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Supersedes the permanent follow-up instance roster and validation-routing ownership; preserves this record's historical lineage context. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |

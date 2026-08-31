@@ -1,30 +1,31 @@
 ---
 title: 'ADR-0031: Current Corpus Retention and Validation Ownership'
 type: sdlc/adr
-status: proposed
+status: accepted
 owner: platform
-updated: 2026-08-31
+updated: 2026-09-01
 artifact_id: "ADR-0031"
+supersedes: "[ADR-0016, ADR-0017, ADR-0020, ADR-0021, ADR-0022]"
 ---
 
 # ADR-0031: Current Corpus Retention and Validation Ownership
 
 ## Overview
 
-This proposed decision reduces the current document and validation control
+This accepted decision reduces the current document and validation control
 planes to one owner per responsibility. It retains only current, distinct
 authority in the active corpus; moves validation routing out of human
 governance; removes execution-instance rosters and mutable branch identity
 from permanent contracts; and makes Git the default terminal-history owner.
 
-Upon acceptance, this decision is the successor to ADR-0016, ADR-0017,
+This decision is the successor to ADR-0016, ADR-0017,
 ADR-0020, ADR-0021, and ADR-0022. Their decision bodies remain in the Stage 02
 decision log. The acceptance transaction changes each predecessor from
 `accepted` to `superseded`, adds this ADR's `supersedes` relation, adds each
 predecessor's reciprocal `superseded_by: ADR-0031`, and updates the Decisions
-README state and explanation. This proposal does not change predecessor status
-or reciprocal links before acceptance. Upon acceptance, it makes exactly two scoped
-amendments to ADR-0030: validator tests and fixtures remain under top-level
+README state and explanation. The acceptance transaction changed those
+predecessor states and reciprocal links atomically. It also makes exactly two
+scoped amendments to ADR-0030: validator tests and fixtures remain under top-level
 `tests/` rather than `validation/tests/`, and module review follows
 responsibility and risk rather than a mandatory above-800-line exception.
 These are scoped normative amendments, not an ADR lifecycle supersession:
@@ -194,8 +195,8 @@ current links without generating one archival record per source document.
   count.
 - Amending ADR-0030 beyond the validator-test location and mandatory 800-line
   exception clauses identified by this decision.
-- Activating Spec 0066 or changing accepted predecessor status as part of this
-  proposed design checkpoint.
+- Executing Spec 0066's delegated validation-tooling implementation inside the
+  parent-owned acceptance and activation transaction.
 
 ## Consequences
 
@@ -264,37 +265,37 @@ byte identity is meaningful.
 
 ## Traceability
 
-Upon acceptance, this ADR will supersede the current lineage and routing
+This ADR supersedes the current lineage and routing
 control-plane decisions in
 [ADR-0016](./0016-program-to-tranche-document-lineage.md),
 [ADR-0017](./0017-program-follow-up-lineage-semantics.md),
 [ADR-0020](./0020-document-lifecycle-program-closure-evidence.md),
 [ADR-0021](./0021-canonical-surface-routing-and-evidence-depth.md), and
 [ADR-0022](./0022-direct-approval-standalone-execution-lineage.md). Their
-historical decision bodies remain in Stage 02. Acceptance must atomically add
-the `supersedes` relation to this ADR, change each predecessor from `accepted`
-to `superseded`, add reciprocal `superseded_by: ADR-0031` evidence to each
-predecessor, and update the Decisions README state and explanation; this
-proposed checkpoint deliberately does none of those changes.
+historical decision bodies remain in Stage 02. The acceptance transaction
+atomically added the `supersedes` relation to this ADR, changed each predecessor
+from `accepted` to `superseded`, added reciprocal `superseded_by: ADR-0031`
+evidence to each predecessor, and updated the Decisions README state and
+explanation.
 
-The same acceptance unit must add a reciprocal scoped-amendment note to
+The same acceptance unit added a reciprocal scoped-amendment note to
 ADR-0030's Traceability and update the Decisions README. That note identifies
 only the `validation/tests/` co-location and mandatory above-800-line exception
 clauses as governed by the later ADR-0031 decision. ADR-0030 keeps status
 `accepted`; its ADR lifecycle relation does not become `superseded_by`, and no
-other ADR-0030 clause is amended. Spec 0066 cannot activate before this
-reciprocal evidence and the ADR-0031 `proposed → accepted` transition are
-committed and validated together.
+other ADR-0030 clause is amended. Spec 0066 activated only after this reciprocal
+evidence and the ADR-0031 `proposed → accepted` transition were validated in
+the same transaction.
 
-That same acceptance index rewrites every current Stage 02/03 navigation and
-Spec-package label that calls ADR-0031 `Proposed` or `proposed` to an
-accepted/current description. Historical bodies are not rewritten merely for
-terminology. ADR-0030 stays `accepted`; only the five named predecessors move
+That same acceptance index rewrote every current Stage 02/03 navigation and
+Spec-package label that called ADR-0031 `Proposed` or `proposed` to an
+accepted/current description. Historical bodies were not rewritten merely for
+terminology. ADR-0030 stays `accepted`; only the five named predecessors moved
 to `superseded`.
 
 [ADR-0030](./0030-authority-first-sdlc-and-agent-governance-convergence.md)
-remains the accepted topology and convergence authority. Upon acceptance,
-ADR-0031 governs only ADR-0030's physical `validation/tests/` co-location
+remains the accepted topology and convergence authority. ADR-0031 governs only
+ADR-0030's physical `validation/tests/` co-location
 requirement and mandatory reviewed exception above 800 lines as later scoped
 amendments. Those clauses become top-level independent tests and
 responsibility/risk-based module review. It preserves
@@ -307,5 +308,5 @@ narrower validation-routing and execution-instance boundaries needed by Specs
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| N/A — predecessor reciprocal links are deferred until this proposal is accepted | Intended successor to ADR-0016, ADR-0017, ADR-0020, ADR-0021, and ADR-0022; scoped amendment, not lifecycle supersession, of the two identified ADR-0030 validation-layout clauses | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| N/A — delegated validation transition starts only after design acceptance | Spec 0066 implements the validation-owner move under Spec 0054 | [Spec 0066](../../03.specs/0066-validation-tooling-ownership/spec.md) |
+| [ADR-0016](./0016-program-to-tranche-document-lineage.md), [ADR-0017](./0017-program-follow-up-lineage-semantics.md), [ADR-0020](./0020-document-lifecycle-program-closure-evidence.md), [ADR-0021](./0021-canonical-surface-routing-and-evidence-depth.md), and [ADR-0022](./0022-direct-approval-standalone-execution-lineage.md) | Supersedes their current instance-roster and validation-routing authority; scoped amendment, not lifecycle supersession, of the two identified ADR-0030 validation-layout clauses | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
+| [ADR-0030](./0030-authority-first-sdlc-and-agent-governance-convergence.md) | Preserves ADR-0030 as accepted while applying the reciprocal two-clause scoped amendment | [Spec 0066](../../03.specs/0066-validation-tooling-ownership/spec.md) |

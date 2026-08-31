@@ -3,9 +3,10 @@
 ## Overview
 
 Spec 0066 is the delegated execution package for Spec 0054 WP-010 and WP-011.
-Spec 0054 retains integrated acceptance authority through TSK-0054-0011 after
-activation. This package remains a design checkpoint while its Spec and Plan
-are `draft` and its Task is `queued`.
+Spec 0054 retains integrated acceptance authority through TSK-0054-0011. The
+activation checkpoint is complete: this package's Spec and Plan are `active`,
+and TSK-0066-0001 is the sole `in-progress` delegated execution Task. No
+validation-tooling implementation result is claimed by that state transition.
 
 ## Scope
 
@@ -30,4 +31,4 @@ lifecycle state.
 
 - [Current Spec Index](../README.md#current-spec-index)
 - [Spec 0054](../0054-sdlc-document-and-agent-governance-consolidation/spec.md)
-- [Proposed ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)
+- [Accepted ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)

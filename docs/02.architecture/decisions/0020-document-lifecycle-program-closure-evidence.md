@@ -1,10 +1,11 @@
 ---
 title: 'ADR-0020: Document Lifecycle Program Closure Evidence'
 type: sdlc/adr
-status: accepted
+status: superseded
 owner: platform
-updated: 2026-07-28
+updated: 2026-09-01
 artifact_id: "ADR-0020"
+superseded_by: ADR-0031
 ---
 
 # ADR-0020: Document Lifecycle Program Closure Evidence
@@ -106,3 +107,4 @@ bounded, current role-decision evidence path.
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
 | [ARD-0009](../descriptions/0009-document-lifecycle-evidence-operating-model.md) | Supplies the reciprocal same-diff accepted role-decision evidence for final PRD-006 / ARD-0009 closure; existing ADR-0017 and ADR-0018 remain unchanged accepted history. | [Spec 040](../../03.specs/0040-contract-cutover-and-program-closure/spec.md) owns exact terminal closure commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9` and preserves external `DEFER`. |
+| [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Supersedes the permanent closure-instance roster and current-state SHA ownership; preserves this record's historical closure evidence. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |

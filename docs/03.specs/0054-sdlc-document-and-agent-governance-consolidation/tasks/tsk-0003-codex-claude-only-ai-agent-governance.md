@@ -22,7 +22,7 @@ handoff to TSK-0054-0007 is recorded in the same commit as this terminal state.
 - [Spec 0054](../spec.md)
 - [Plan 0054](../plan.md)
 - [WP-003 execution boundary](../plan.md#wp-003--codexclaude-only-ai-agent-governance)
-- [Proposed ADR-0031 ownership boundary](../../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)
+- [Accepted ADR-0031 ownership boundary](../../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)
 - Delegated child identifier: `SPEC-0066`; relationship authority remains in
   the parent Spec, reciprocal Spec relation, ADR-0031, and Current Spec Index.
 
@@ -105,8 +105,9 @@ restore Gemini/Antigravity surfaces.
   reported `PASS`. Independent specification, quality, and security reviews
   are clean after the thin-router correction. These are repository-static
   results and make no provider-runtime or hosted-CI claim.
-- WP-003 is terminally complete. TSK-0054-0007 is the sole `in-progress` Spec
-  0054 Task and the compatibility pointer names it. Spec 0066 remains inactive.
+- WP-003 is terminally complete. Its handoff-time owner and compatibility
+  pointer were TSK-0054-0007; current execution has since advanced to the
+  accepted Spec 0066 delegation without reopening this evidence.
 
 ## Traceability
 

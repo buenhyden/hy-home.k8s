@@ -1,10 +1,11 @@
 ---
 title: 'ADR-0022: Direct-Approval Standalone Execution Lineage'
 type: sdlc/adr
-status: accepted
+status: superseded
 owner: platform
-updated: 2026-08-30
+updated: 2026-09-01
 artifact_id: "ADR-0022"
+superseded_by: ADR-0031
 ---
 
 # ADR-0022: Direct-Approval Standalone Execution Lineage
@@ -83,6 +84,7 @@ false upstream authority.
 | Direct human approval recorded in the Spec body | N/A — eleventh typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0063](../../03.specs/0063-governance-invariant-consolidation/spec.md) |
 | Direct human approval recorded in the Spec body | N/A — twelfth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0064](../../03.specs/0064-agent-governance-surface-consolidation/spec.md) |
 | Direct human approval recorded in the Spec body | N/A — thirteenth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0065](../../03.specs/0065-transition-residue-retirement/spec.md) |
+| [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Supersedes permanent standalone instance-roster authority with package-local execution ownership; preserves direct human approval as historical context. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 
 Specs 0055 through 0061 were executed under this same direct-approval semantics,
 each with the approval recorded in its own Spec body, and are named here without

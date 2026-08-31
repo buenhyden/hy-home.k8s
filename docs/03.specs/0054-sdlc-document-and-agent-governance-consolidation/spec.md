@@ -3,7 +3,7 @@ title: 'SDLC Document and AI Agent Governance Consolidation Technical Specificat
 type: sdlc/spec
 status: active
 owner: platform
-updated: 2026-08-31
+updated: 2026-09-01
 artifact_id: "SPEC-0054"
 ---
 
@@ -38,7 +38,7 @@ The original direct-approval lineage was recorded by
 [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md),
 which remains predecessor context but no longer owns a global standalone
 execution projection under
-[proposed ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md).
+[accepted ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md).
 The four-digit current-path and Incident identity decision is
 [ADR-0025](../../02.architecture/decisions/0025-four-digit-document-path-identity.md),
 which transfers the active WORK-109 implementation from Spec 0052 to this
@@ -46,12 +46,11 @@ specification's WORK-054-002 package.
 
 Direct human approval on 2026-08-13 authorizes this Spec-owned execution
 relation. No separate PRD or Architecture Description is required for this
-package-local lifecycle. ADR-0025 owns the topology decision; proposed
-ADR-0031 owns the replacement current-corpus and validation-routing model once
-accepted.
+package-local lifecycle. ADR-0025 owns the topology decision; accepted
+ADR-0031 owns the current-corpus and validation-routing model.
 
-Until ADR-0031 is accepted and its validator cutover is atomic, the current
-registry still requires these two historical compatibility statements:
+Until WP-013 removes the parent-only compatibility roster, the current registry
+still requires these two historical compatibility statements:
 
 Direct human approval on 2026-08-13 authorizes this standalone execution relation.
 No separate PRD or Architecture Description is required or part of this standalone lifecycle.
@@ -80,11 +79,10 @@ decisions while preserving their transition-safety and recoverability goals.
 
 The reciprocal execution artifacts are [Plan 0054](plan.md) and
 [Tasks 0054](README.md#task-records).
-Spec 0054 remains the integrated acceptance owner. Draft
-[Spec 0066](../0066-validation-tooling-ownership/spec.md) is the approved
-delegated-execution design for WP-010 and WP-011; it is not a standalone
-program and does not become active until its reviewed activation checkpoint.
-TSK-0054-0011 is the planned parent acceptance record after activation.
+Spec 0054 remains the integrated acceptance owner. Active
+[Spec 0066](../0066-validation-tooling-ownership/spec.md) is the delegated
+execution package for WP-010 and WP-011; it is not a standalone program.
+TSK-0054-0011 is the current parent acceptance record.
 
 ## Strategic Boundaries & Non-goals
 
@@ -304,8 +302,9 @@ content and consumers move. These sets are reviewed semantic targets, not
 fixed-count gate inputs.
 
 All ADRs remain in the Stage 02 decision log. Their status and reciprocal
-supersession links are reconciled, including proposed ADR-0031; an obsolete
-decision is superseded rather than deleted as corpus cleanup.
+supersession links are reconciled, including accepted ADR-0031 and its five
+superseded predecessors; an obsolete decision is superseded rather than
+deleted as corpus cleanup.
 
 ### C-SDLC-003 — work-unit-local Spec-driven execution
 
@@ -330,10 +329,9 @@ Stage 03 does not own `design.md`, `tests.md`, `agent-design.md`,
 Change-local design moves to `spec.md`; ordering, test strategy, and rollback
 move to `plan.md`; execution evidence moves to Task records. A long-lived
 structural description or important choice is promoted to Stage 02 before the
-old file is removed. After ADR-0031 acceptance, validator tests and fixtures
+old file is removed. Under accepted ADR-0031, validator tests and fixtures
 remain independent under the top-level `tests/` tree and production validators
-never import or read them; until that gate, ADR-0030's current layout clause
-remains authoritative.
+never import or read them.
 
 Executable interface contracts such as OpenAPI, GraphQL, and Protobuf belong
 to the Spec Package that implements and validates them. Stage 01 records the
@@ -633,11 +631,9 @@ ordinary Stage 98 retention.
 
 ### C-SDLC-010 — scripts ownership and module boundaries
 
-This section is the accepted Spec target but does not override ADR-0030 while
-ADR-0031 remains `proposed`. Its top-level test location and removal of the
-mandatory 800-line exception threshold become executable only after ADR-0031
-is accepted and ADR-0030 records the reciprocal scoped-amendment note without
-an ADR lifecycle supersession relation.
+Accepted ADR-0031 makes this section the current scripts-ownership target.
+ADR-0030 remains accepted and records the two-clause scoped amendment for the
+top-level test location and responsibility/risk-based module boundaries.
 
 The existing Stage 00 validation-surface contract moves atomically to
 `scripts/validation/registry.json` with its schema. This registry owns only
@@ -719,8 +715,8 @@ is atomic with semantic-owner cutover, consumer-zero, and Git recovery proof.
 Stage 98 cleanup remains a later isolated historical operation.
 
 WP-001 and WP-002 remain completed historical evidence, but any terminal
-assumption they made that conflicts with ADR-0030 or proposed ADR-0031 is
-superseded when the successor is accepted. The following list describes
+assumption they made that conflicts with ADR-0030 or accepted ADR-0031 is
+superseded. The following list describes
 integration dependencies, not a global scheduling lock:
 
 1. **WP-004** completed the Stage 99 document-authority, Requirement Package,

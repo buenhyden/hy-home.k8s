@@ -5406,6 +5406,238 @@ def _standalone_execution_diagnostics(
     return diagnostics, owned_paths
 
 
+def _delegation_authorities(
+    context: Context,
+    parent: PurePosixPath,
+    child: PurePosixPath,
+) -> tuple[PurePosixPath, ...]:
+    """Return ADRs linked reciprocally by one parent/delegate Spec pair."""
+
+    shared_targets = _program_local_targets(context, parent) & _program_local_targets(
+        context, child
+    )
+    return tuple(
+        sorted(
+            (
+                target
+                for target in shared_targets
+                if target in context.profiles
+                and context.profiles[target].profile_id == "sdlc/adr"
+                and parent in _program_local_targets(context, target)
+                and child in _program_local_targets(context, target)
+            ),
+            key=lambda item: item.as_posix(),
+        )
+    )
+
+
+def _delegated_execution_diagnostics(
+    context: Context,
+    registry_owned_spec_ids: frozenset[str],
+    standalone_spec_ids: frozenset[str],
+    graph: dict[PurePosixPath, frozenset[PurePosixPath]],
+    execution_index: CurrentExecutionIndex,
+) -> tuple[list[Diagnostic], set[PurePosixPath]]:
+    """Admit closed package-local execution delegated by one owned parent."""
+
+    diagnostics: list[Diagnostic] = []
+    owned_paths: set[PurePosixPath] = set()
+    spec_paths = {
+        path.parent.name[:4]: path
+        for path in context.paths
+        if context.profiles[path].profile_id == "sdlc/spec"
+        and re.fullmatch(r"[0-9]{4}-[^/]+", path.parent.name) is not None
+    }
+    registry_owned_specs = {
+        path
+        for identifier in registry_owned_spec_ids
+        for path in (spec_paths.get(identifier),)
+        if path is not None
+    }
+
+    standalone_specs = tuple(
+        sorted(
+            (
+                path
+                for identifier in standalone_spec_ids
+                for path in (spec_paths.get(identifier),)
+                if path is not None
+            ),
+            key=lambda item: item.as_posix(),
+        )
+    )
+    for index, left in enumerate(standalone_specs):
+        left_targets = _program_local_targets(context, left)
+        for right in standalone_specs[index + 1 :]:
+            right_targets = _program_local_targets(context, right)
+            if (
+                right not in left_targets
+                and left not in right_targets
+                or not _delegation_authorities(context, left, right)
+            ):
+                continue
+            diagnostics.append(
+                _diag(
+                    "DELEGATED-EXECUTION-DUPLICATE-AUTHORITY",
+                    right,
+                    "sdlc/spec",
+                    "a delegated child absent from standalone execution authority",
+                    f"standalone pair also renders delegation evidence: {left.as_posix()}, {right.as_posix()}",
+                )
+            )
+
+    for child in sorted(spec_paths.values(), key=lambda item: item.as_posix()):
+        child_id = child.parent.name[:4]
+        if (
+            child_id in registry_owned_spec_ids
+            or _program_status(context, child) != "active"
+        ):
+            continue
+        component = _current_execution_component(context, child, execution_index)
+        if not component:
+            continue
+        owned_paths.update(component)
+
+        child_targets = _program_local_targets(context, child)
+        parent_candidates = tuple(
+            sorted(
+                (
+                    parent
+                    for parent in registry_owned_specs
+                    if parent in child_targets
+                    or child in _program_local_targets(context, parent)
+                ),
+                key=lambda item: item.as_posix(),
+            )
+        )
+        parent = parent_candidates[0] if len(parent_candidates) == 1 else None
+        parent_reciprocal = (
+            parent is not None
+            and parent in child_targets
+            and child in _program_local_targets(context, parent)
+            and _program_status(context, parent) == "active"
+        )
+        if not parent_reciprocal:
+            diagnostics.append(
+                _diag(
+                    "DELEGATED-EXECUTION-PARENT",
+                    child,
+                    "sdlc/spec",
+                    "one active registry-owned parent Spec with reciprocal rendered parent/delegate links",
+                    f"candidates={[path.as_posix() for path in parent_candidates]}, reciprocal={parent_reciprocal}",
+                )
+            )
+
+        authorities = (
+            _delegation_authorities(context, parent, child)
+            if parent is not None
+            else ()
+        )
+        accepted_authorities = tuple(
+            authority
+            for authority in authorities
+            if _program_status(context, authority) == "accepted"
+        )
+        if not accepted_authorities:
+            diagnostics.append(
+                _diag(
+                    "DELEGATED-EXECUTION-AUTHORITY",
+                    child,
+                    "sdlc/spec",
+                    "one or more reciprocal accepted ADRs shared by the parent and delegate Specs",
+                    repr(
+                        [
+                            (path.as_posix(), _program_status(context, path))
+                            for path in authorities
+                        ]
+                    ),
+                )
+            )
+
+        plans = tuple(
+            path
+            for path in component
+            if context.profiles[path].profile_id == "sdlc/plan"
+        )
+        tasks = tuple(
+            path
+            for path in component
+            if context.profiles[path].profile_id == "sdlc/task"
+        )
+        package_tasks, current_tasks, router_complete = _program_package_task_projection(
+            context, child
+        )
+        plan = plans[0] if len(plans) == 1 else None
+        plan_targets = graph.get(plan, frozenset()) if plan is not None else frozenset()
+        direct_spec_links = all(child in graph[path] for path in component)
+        child_closes_component = (
+            plan is not None
+            and plan in child_targets
+            and all(task in child_targets for task in current_tasks)
+        )
+        plan_task_reciprocal = (
+            plan is not None
+            and bool(current_tasks)
+            and all(plan in graph.get(task, frozenset()) for task in current_tasks)
+            and all(task in plan_targets for task in current_tasks)
+        )
+        allowed_execution_targets = {child, *plans, *package_tasks}
+        foreign_execution_targets = tuple(
+            sorted(
+                {
+                    target
+                    for source in component
+                    for target in _program_local_targets(context, source)
+                    if target in context.profiles
+                    and context.profiles[target].profile_id
+                    in {"sdlc/spec", "sdlc/plan", "sdlc/task"}
+                    and target not in allowed_execution_targets
+                },
+                key=lambda item: item.as_posix(),
+            )
+        )
+        package_closed = (
+            router_complete
+            and plan is not None
+            and plan.parent == child.parent
+            and set(tasks) == set(current_tasks)
+            and direct_spec_links
+            and child_closes_component
+            and plan_task_reciprocal
+            and not foreign_execution_targets
+        )
+        if not package_closed:
+            diagnostics.append(
+                _diag(
+                    "DELEGATED-EXECUTION-PACKAGE",
+                    child,
+                    "sdlc/spec",
+                    "one router-complete package-local Plan/current-Task component with reciprocal own-Spec links and no foreign execution target",
+                    f"plans={len(plans)}, tasks={len(tasks)}, current-tasks={len(current_tasks)}, router={router_complete}, direct-spec={direct_spec_links}, child-closure={child_closes_component}, reciprocal={plan_task_reciprocal}, foreign={[path.as_posix() for path in foreign_execution_targets]}",
+                )
+            )
+
+        package_statuses = tuple(_program_status(context, task) for task in package_tasks)
+        state_matches = (
+            plan is not None
+            and _program_status(context, plan) == "active"
+            and package_statuses.count("in-progress") == 1
+            and all(status in PROGRAM_TASK_STATUS_DOMAIN for status in package_statuses)
+        )
+        if not state_matches:
+            diagnostics.append(
+                _diag(
+                    "DELEGATED-EXECUTION-STATE",
+                    child,
+                    "sdlc/spec",
+                    "active Spec and Plan with exactly one in-progress package Task",
+                    f"spec={_program_status(context, child)}, plan={_program_status(context, plan)}, tasks={list(package_statuses)}",
+                )
+            )
+
+    return diagnostics, owned_paths
+
+
 def _program_lineage_diagnostics(
     context: Context,
     program_lineage: Sequence[ProgramLineage],
@@ -5435,6 +5667,23 @@ def _program_lineage_diagnostics(
     )
     diagnostics.extend(standalone_diagnostics)
     program_owned_paths.update(standalone_owned_paths)
+    registry_owned_spec_ids = frozenset(
+        relation.spec_id
+        for program in program_lineage
+        for relation in (*program.tranches, *program.follow_ups)
+    ) | frozenset(relation.spec_id for relation in standalone_executions)
+    standalone_spec_ids = frozenset(
+        relation.spec_id for relation in standalone_executions
+    )
+    delegated_diagnostics, delegated_owned_paths = _delegated_execution_diagnostics(
+        context,
+        registry_owned_spec_ids,
+        standalone_spec_ids,
+        graph,
+        execution_index,
+    )
+    diagnostics.extend(delegated_diagnostics)
+    program_owned_paths.update(delegated_owned_paths)
     for program in program_lineage:
         for relation in (*program.tranches, *program.follow_ups):
             spec = _program_owner_path(context, "sdlc/spec", relation.spec_id)

@@ -145,32 +145,27 @@ Interface split, prefixed Architecture paths, expanded Stage 90/98 contracts,
 and Stage 99 support layout are not terminal authority after the approved
 2026-08-20 design amendments.
 
-Spec 0054 remains the integration and acceptance owner. Draft `SPEC-0066` is
-the delegated execution package for WP-010 and WP-011; its queued execution record is
-`TSK-0066-0001`. Cross-package navigation is owned by the
+Spec 0054 remains the integration and acceptance owner. Active `SPEC-0066` is
+the delegated execution package for WP-010 and WP-011; its current execution
+record is `TSK-0066-0001`. Cross-package navigation is owned by the
 [Current Spec Index](../README.md#current-spec-index). The relation is governed by
-[proposed ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md).
-It is not a standalone program. This design checkpoint does not activate Spec
-0066 or change any Task lifecycle state.
+[accepted ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md).
+It is not a standalone program.
 
-After written-design approval and completion of WP-006 and WP-008, the
-active owner hands off to TSK-0054-0010 as the sole `in-progress` parent Task in
-a separate lifecycle-valid change. That handoff also moves the existing Spec
-0054 `standaloneExecutions` task pointer to TSK-0054-0010; the compatibility
-row remains parent-only and creates no Spec 0066 authority. TSK-0054-0010 then
-owns one activation transaction before delegated execution starts. That
-transaction accepts ADR-0031; moves ADR-0016/0017/0020/0021/0022 from
-`accepted` to `superseded` with reciprocal ADR-0031 relations; adds the
-two-clause ADR-0030 amendment evidence without changing ADR-0030 status;
-updates the Decisions README and every current `Proposed ADR-0031` label plus
-the Stage 03 validator-test placement rule; updates the thin Spec 0066 README's
-current-state prose and the Current Spec Index row from `Draft` to `Active`;
-adds the narrow delegated-component ownership gate and focused tests; verifies
-the updated router and index; activates Spec/Plan/Task 0066; completes
-TSK-0054-0010; moves the existing Spec 0054 row
-to TSK-0054-0011; and moves that Task from `queued` to `in-progress` as the sole
-parent acceptance owner. TSK-0066-0001 does not execute or partially own the
-transaction that activates it, and no standalone Spec 0066 row is created.
+After written-design approval and completion of WP-006 and WP-008,
+TSK-0054-0010 became the sole `in-progress` parent activation owner in a
+separate lifecycle-valid handoff. It then completed one atomic activation
+transaction before delegated execution began. That transaction accepted
+ADR-0031; moved ADR-0016/0017/0020/0021/0022 from `accepted` to `superseded`
+with reciprocal ADR-0031 relations; added the two-clause ADR-0030 amendment
+evidence without changing ADR-0030 status; aligned the Decisions README,
+current ADR-0031 labels, Stage 03 test-placement rule, Spec 0066 router, and
+Current Spec Index; added the narrow delegated-component ownership gate and
+focused tests; activated Spec/Plan/Task 0066; completed TSK-0054-0010; moved
+the existing Spec 0054 row to TSK-0054-0011; and moved that Task from `queued`
+to `in-progress` as the sole parent acceptance owner. TSK-0066-0001 did not
+execute or partially own the transaction that activated it, and no standalone
+Spec 0066 row was created.
 
 The predecessor worktree contained a reviewed but uncommitted WP-003 candidate.
 WP-004 has since completed the document, lifecycle, and recovery authority
@@ -311,8 +306,8 @@ work packages. The lossless identity map is:
 | WP-007 | TSK-0054-0007 | queued |
 | WP-008 | TSK-0054-0008 | queued |
 | WP-009 | TSK-0054-0009 | queued |
-| WP-010 | TSK-0054-0010 | queued; transfer to Spec 0066 is not effective until its activation checkpoint |
-| WP-011 | TSK-0054-0011 | queued; becomes the parent acceptance owner at the Spec 0066 activation checkpoint |
+| WP-010 | TSK-0054-0010 | done; completed the Spec 0066 activation transaction |
+| WP-011 | TSK-0054-0011 | in-progress; current parent acceptance owner for delegated Spec 0066 execution |
 | WP-012 | TSK-0054-0012 | done |
 | WP-013 | TSK-0054-0013 | queued |
 | WP-014 | TSK-0054-0014 | queued |
@@ -360,7 +355,7 @@ cannot satisfy the terminal completion criteria.
 
 - Historical WP-002 activated Spec/Plan/Task 0054 and its then-current
   direct-approval projection. That evidence is not authority to recreate the
-  `standaloneExecutions` roster; proposed ADR-0031 replaces it with
+  `standaloneExecutions` roster; accepted ADR-0031 replaces it with
   package-local relationships.
 - Reconcile the inherited WORK-109 candidate in
   `docs/03.specs/0052-document-taxonomy-consolidation/{spec.md,plan.md,tasks.md}`
@@ -615,7 +610,7 @@ WP-004 is completed historical execution. It established the owners required
 by later work and superseded the conflicting terminal assumptions of completed
 WP-002 without rewriting that evidence. Its accepted Task and commits are the
 execution record; no historical Archive record is regenerated. Terminal corpus
-reductions introduced by proposed ADR-0031 are prospective WP-013 work, not a
+reductions introduced by accepted ADR-0031 are prospective WP-013 work, not a
 reason to reopen WP-004.
 
 **Accepted historical boundary:**
@@ -956,9 +951,8 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
 **Delegation boundary:**
 
 - Spec 0054 owns the WP-010 acceptance criteria and integration decision.
-  Draft `SPEC-0066`, through `TSK-0066-0001`, owns execution, detailed file
-  batches, focused tests, review evidence, and rollback after its activation
-  checkpoint. The
+  Active `SPEC-0066`, through `TSK-0066-0001`, owns execution, detailed file
+  batches, focused tests, review evidence, and rollback. The
   [Current Spec Index](../README.md#current-spec-index) owns cross-package
   navigation while the legacy standalone boundary remains current.
 - Atomically move, rather than copy,
@@ -970,7 +964,7 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
   not create a Stage 90 census package, fixed file count, inventory digest, or
   permanent field-complete ledger for scripts, tests, fixtures, hooks, and
   pins.
-- After ADR-0031 acceptance, preserve top-level `tests/` and
+- Under accepted ADR-0031, preserve top-level `tests/` and
   `tests/fixtures/` as independent test surfaces. Production code must not
   import or read them.
 - The activation owner changes `scripts/validate-links-and-owners.py` and adds
@@ -986,7 +980,7 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
 
 **Parent acceptance:**
 
-- [ ] TSK-0054-0011 owns this checklist after activation while
+- [x] TSK-0054-0011 owns this checklist after activation while
   TSK-0066-0001 remains the sole delegated execution owner. It reviews
   committed, review-ready evidence and does not edit or claim the delegated
   implementation.
@@ -1021,39 +1015,27 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
 
 **Activation and transfer checkpoint:**
 
-- [ ] Only after the written design and implementation plan are reviewed and
-  WP-006 and WP-008 are complete, hand off to TSK-0054-0010 as the sole
-  `in-progress` Task in a separate lifecycle-valid change. TSK-0054-0010 owns
-  the activation index and its evidence; TSK-0054-0011 remains `queued`. Move
-  the existing Spec 0054 `standaloneExecutions` task pointer from the prior
-  current parent Task to TSK-0054-0010 in that same handoff.
-- [ ] While TSK-0054-0010 is the active owner, prepare one activation index that
-  transitions ADR-0031 from `proposed` to `accepted`; adds its `supersedes`
-  relation; changes ADR-0016, ADR-0017, ADR-0020, ADR-0021, and ADR-0022 from
-  `accepted` to `superseded` with reciprocal `superseded_by: ADR-0031`; adds
-  ADR-0030's two-clause scoped-amendment Traceability note without lifecycle
-  supersession or status change; updates the Decisions README state and
-  explanation, every current Stage 02/03 and Spec-package `Proposed ADR-0031`
-  label, and the Stage 03 validator-test placement rule; updates the thin Spec
-  0066 README from design-checkpoint `draft`/`queued` prose to the active
-  execution projection and changes its Current Spec Index row from `Draft` to
-  `Active`; adds the package-local delegated ownership rule in
-  `scripts/validate-links-and-owners.py` plus focused positive and negative
-  tests; verifies that Spec 0066 Plan/Task have no rendered parent Plan/Task
-  link and that the router/index projections agree; changes Spec
-  0066 Spec/Plan to `active` and TSK-0066-0001 to `in-progress`; changes
-  TSK-0054-0010 to `done`; moves the existing Spec 0054 compatibility pointer
-  from TSK-0054-0010 to TSK-0054-0011; and changes TSK-0054-0011 from `queued`
-  to `in-progress` as the sole parent acceptance owner. Do not create a Spec
-  0066 standalone row. All Task transitions already exist in the Stage 99
-  lifecycle domain; do not edit the lifecycle registry, schema, or its code
-  projection in this activation transaction.
-- [ ] Validate and commit that exact index as one logical transaction. Do not
-  expose an intermediate accepted-ADR, illegal Task edge, ownerless change, or
-  dual-`in-progress` state inside either package. The intended concurrent pair
-  is one parent Task and one delegated child Task. Until that transaction
-  commits, TSK-0066-0001 remains `queued` and carries no accepted execution
-  evidence.
+- [x] After the written design and implementation plan were reviewed and
+  WP-006 and WP-008 completed, a separate lifecycle-valid handoff made
+  TSK-0054-0010 the sole `in-progress` activation owner and moved the parent
+  compatibility pointer to it.
+- [x] TSK-0054-0010 prepared one activation index that moves ADR-0031 from
+  `proposed` to `accepted` with its `supersedes` relation; moves ADR-0016,
+  ADR-0017, ADR-0020, ADR-0021, and ADR-0022 to `superseded` with reciprocal
+  `superseded_by: ADR-0031`; adds ADR-0030's two-clause scoped-amendment trace
+  without changing its accepted status; aligns the Decisions README, current
+  Stage 02/03 ADR labels, Stage 03 validator-test placement rule, Spec 0066
+  router, and Current Spec Index; adds the delegated-ownership rule and focused
+  cases; activates Spec/Plan/Task 0066; completes TSK-0054-0010; moves the
+  compatibility pointer to TSK-0054-0011; and activates TSK-0054-0011 as the
+  sole parent acceptance owner. The index creates no Spec 0066 standalone row
+  and makes no Stage 99 lifecycle-domain, schema, or projection change.
+- [x] Validate and commit that exact index as one logical transaction without
+  exposing an intermediate accepted-ADR, illegal Task edge, ownerless change,
+  or dual-`in-progress` state inside either package. Focused delegated cases,
+  strict cross-document validation, staged lifecycle validation,
+  Archive/Recovery regression, and aggregate repository quality gates pass for
+  the intended pair of one parent Task and one delegated child Task.
 - [ ] WP-011 completes only when Spec 0066 reports consumer-zero wrapper
   retirement, current registry/path parity, focused and broad validation,
   independent review, rollback evidence, and logical commits to

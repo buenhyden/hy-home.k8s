@@ -1,9 +1,9 @@
 ---
 title: 'Validation Tooling Ownership Implementation Plan'
 type: sdlc/plan
-status: draft
+status: active
 owner: platform
-updated: 2026-08-31
+updated: 2026-09-01
 artifact_id: "PLAN-0066"
 ---
 
@@ -13,15 +13,10 @@ artifact_id: "PLAN-0066"
 
 - Spec 0066 is the delegated execution owner for Spec 0054 WP-010 and WP-011.
   Spec 0054 retains integrated acceptance ownership.
-- Proposed [ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)
-  defines the target current-corpus and validation-routing ownership. It does
-  not activate this Plan while it remains proposed. Activation first requires
-  its `proposed → accepted` transition and `supersedes` relation; all five
-  predecessors' `accepted → superseded` transitions and reciprocal
-  `superseded_by: ADR-0031` links; and the two-clause ADR-0030 scoped-amendment
-  note plus Decisions README state/explanation and current `Proposed ADR-0031`
-  label updates in one validated logical change. ADR-0030 otherwise remains
-  `accepted` and gains no lifecycle supersession relation.
+- Accepted [ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)
+  defines the current-corpus and validation-routing ownership. Its five named
+  predecessors are superseded with reciprocal relations, and ADR-0030 remains
+  accepted with only the two-clause scoped-amendment trace.
 - The existing validation-surface JSON and schema move atomically from
   `docs/00.agent-governance/contracts/` to `scripts/validation/registry.*`.
   Source and target never operate as two current registries.
@@ -36,26 +31,15 @@ artifact_id: "PLAN-0066"
   deleted only with current-consumer-zero and unique-diagnostic-zero evidence.
 - Existing required CI check names remain stable until authorized remote
   protection-rule verification supports a separate decision.
-- This Plan remains `draft`, and its only Task remains `queued`, until the
-  design review and activation checkpoint are complete.
-- After WP-009 and its owning Task finish, TSK-0054-0010 becomes the sole active
-  parent Task in a separate lifecycle-valid handoff. That handoff also moves
-  the existing Spec 0054 `standaloneExecutions` task pointer to
-  TSK-0054-0010. It then owns one atomic activation transaction before this
-  Plan executes: accept ADR-0031; supersede its five named predecessors with
-  reciprocal relations; update the two scoped ADR-0030 clauses, the Decisions
-  README, every current `Proposed ADR-0031` label, and the Stage 03
-  validator-test placement rules; update this package README's current-state
-  prose and the Current Spec Index row from `Draft` to `Active`; add the narrow
-  package-local delegated-component gate and focused tests; activate
-  Spec/Plan/Task 0066, move the parent compatibility pointer to TSK-0054-0011,
-  complete TSK-0054-0010, and activate TSK-0054-0011 as the sole parent
-  acceptance Task. The thin package README already exists; its state projection
-  and the Current Spec Index are updated and verified in that transaction.
-  TSK-0066-0001 does not activate itself or split that transfer
-  across batches. No Spec 0066 standalone row is created, and existing Task
-  transitions are reused without a Stage 99 lifecycle or code-projection
-  change.
+- This Plan is `active`, and TSK-0066-0001 is its sole `in-progress` Task.
+- TSK-0054-0010 completed the atomic activation transaction before this Plan
+  began execution. That transaction aligned ADR and README state, added the
+  package-local delegated-component gate and focused tests, activated the
+  Spec 0066 component, moved the existing parent compatibility pointer to
+  TSK-0054-0011, completed TSK-0054-0010, and activated TSK-0054-0011 as the
+  sole parent acceptance Task. It created no Spec 0066 standalone row and made
+  no Stage 99 lifecycle-domain, schema, or projection change. TSK-0066-0001
+  did not activate itself and has not yet claimed implementation results.
 
 ## Overview
 
@@ -181,12 +165,11 @@ cluster success.
 
 ## Completion Criteria
 
-Activation occurs only after design review through the parent-owned atomic
-transaction described above. That precondition moves Spec and Plan to `active`,
-TSK-0066-0001 and TSK-0054-0011 to `in-progress`, and TSK-0054-0010 to
-`done`. WP-001 begins only after those states and their focused evidence
-exist. No ADR acceptance or activation change is part of this design
-checkpoint.
+Activation completed through the parent-owned atomic transaction described
+above. Spec and Plan are `active`, TSK-0066-0001 and TSK-0054-0011 are
+`in-progress`, and TSK-0054-0010 is `done`. WP-001 now verifies those states
+and captures the validation-tooling baseline; it does not repeat or claim the
+parent activation work.
 
 Completion requires all Spec criteria to hold, focused and broad static checks
 to pass in a clean checkout, all remaining wrappers and pins to name their
@@ -225,7 +208,7 @@ subsequent lifecycle-valid change may activate TSK-0054-0013.
 
 - [Spec](spec.md)
 - [Task](tasks/tsk-0001-vto-000.md)
-- [Proposed ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)
+- [Accepted ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)
 - [Current Spec Index](../README.md#current-spec-index)
 - Parent acceptance boundary: `SPEC-0054`, `WP-010`, `WP-011`,
   `TSK-0054-0010`, and `TSK-0054-0011`; the reciprocal rendered relation is

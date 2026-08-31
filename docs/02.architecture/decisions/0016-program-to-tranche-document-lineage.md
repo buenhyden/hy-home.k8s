@@ -1,10 +1,11 @@
 ---
 title: 'ADR-0016: Program-to-Tranche Document Lineage'
 type: sdlc/adr
-status: accepted
+status: superseded
 owner: platform
-updated: 2026-07-12
+updated: 2026-09-01
 artifact_id: "ADR-0016"
+superseded_by: ADR-0031
 ---
 
 # ADR-0016: Program-to-Tranche Document Lineage
@@ -78,4 +79,13 @@ program PRDs would weaken either family uniqueness or product ownership.
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/0005-workspace-document-assurance-modernization.md)
 - **ARD**: [Workspace Document Assurance Operating Model](../descriptions/0008-workspace-document-assurance-operating-model.md)
 - **Related ADR**: [Declarative Document Contract Registry](./0015-declarative-document-contract-registry.md)
+- **Successor decision**: [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md)
+  supersedes the program-instance roster and validation-routing ownership in
+  this decision while preserving this record's historical program context.
 - **Specs**: [Document Contract Registry](../../03.specs/0026-document-contract-registry/spec.md) through [Protected Surface and Supply Chain Hardening](../../03.specs/0032-protected-surface-supply-chain-hardening/spec.md)
+
+### Lifecycle Traceability
+
+| Decision lineage | Replacement relation | Affected Spec |
+| --- | --- | --- |
+| [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Supersedes the permanent program-instance roster and validation-routing ownership while preserving this record's historical program context. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |

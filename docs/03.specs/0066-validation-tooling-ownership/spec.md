@@ -1,9 +1,9 @@
 ---
 title: 'Validation Tooling Ownership Technical Specification'
 type: sdlc/spec
-status: draft
+status: active
 owner: platform
-updated: 2026-08-31
+updated: 2026-09-01
 artifact_id: "SPEC-0066"
 ---
 
@@ -15,7 +15,7 @@ Spec 0066 is the delegated execution owner for Spec 0054 WP-010 and WP-011.
 It does not create a standalone program, replace Spec 0054, or weaken the
 parent package's acceptance authority. Spec 0054 owns the integrated governance
 outcome; this package owns the bounded validation-tooling transition and its
-evidence under proposed [ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md).
+evidence under accepted [ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md).
 
 The current validators can report green while executable references, routing,
 fixtures, and rule ownership remain inconsistent. The main causes are a script
@@ -25,11 +25,10 @@ paths, production self-tests, and fixtures consumed from production code.
 Measured counts are audit evidence only. They are not permanent governance
 invariants.
 
-This document is a design checkpoint. The Spec and Plan remain `draft`, and the
-Task remains `queued`, until the design is reviewed and the package is
-explicitly activated. Its thin README already exists as the lifecycle-free
-navigation projection required by accepted ADR-0030; creating that router does
-not activate the Spec, Plan, or Task and requires no Stage 98 record.
+The reviewed activation checkpoint is complete. This Spec and its Plan are
+`active`, and TSK-0066-0001 is the package's sole `in-progress` Task. The
+activation establishes execution authority only; validation-tooling moves,
+deletions, and implementation results remain to be recorded by that Task.
 
 ## Strategic Boundaries & Non-goals
 
@@ -37,26 +36,18 @@ In scope are the tracked validation implementation under `scripts/`, independent
 tests and fixtures under `tests/`, validator runners, hooks, CI consumers,
 validation documentation, and the existing validation-surface contract.
 
-Before this Spec executes, Spec 0054 owns one atomic activation transaction:
-ADR-0031 `proposed → accepted` plus its `supersedes` relation; all five
-predecessor `accepted → superseded` transitions and reciprocal
-`superseded_by: ADR-0031` relations; ADR-0030's two-clause scoped amendment
-Traceability note without changing its accepted status; the Decisions and
-Stage 03 READMEs; all current `Proposed ADR-0031` label updates; this package
-README's active-execution prose and the Current Spec Index `Draft → Active`
-projection; the Spec 0054 delegation Tasks; and verification of the unchanged
-Stage 99 Task lifecycle rules. After TSK-0054-0010 becomes the sole active
-parent Task, that Task owns the exact activation index and evidence. The
-transaction establishes the
-reviewed authority and legal transfer, adds a narrow package-local delegated
-ownership rule with focused positive and negative tests, activates this Spec,
-Plan, and Task, moves the existing Spec 0054 compatibility pointer from
-TSK-0054-0010 to TSK-0054-0011, completes TSK-0054-0010, and activates
-TSK-0054-0011 as the sole parent acceptance Task. It creates no Spec 0066
-standalone row.
-It is an external precondition, not work executed by the queued
-TSK-0066-0001. No lifecycle-domain, schema, or code-projection edit is part of
-that activation.
+Spec 0054 completed one atomic activation transaction before delegated
+implementation began. It accepted ADR-0031 and its `supersedes` relation,
+superseded all five named predecessors with reciprocal relations, recorded
+ADR-0030's two-clause scoped amendment without changing ADR-0030's accepted
+status, aligned the Decisions and Stage 03 indexes, added the narrow
+package-local delegated-ownership rule and focused cases, activated this
+Spec/Plan/Task component, moved the parent compatibility pointer to
+TSK-0054-0011, completed TSK-0054-0010, and activated TSK-0054-0011 as the
+sole parent acceptance Task. The transaction created no Spec 0066 standalone
+row and did not change the Stage 99 lifecycle domain, schema, or projection.
+It is a completed external precondition, not implementation performed by
+TSK-0066-0001.
 
 The contract currently located at
 `docs/00.agent-governance/contracts/validation-surfaces.json` and its schema are
@@ -129,8 +120,8 @@ does not become an executable rule engine.
 11. Branch-tip SHAs and generated digests do not track current repository
     state. Full SHAs are limited to immutable external dependencies and sealed
     recovery coordinates with an owner and update or recovery path.
-12. Each package has at most one `in-progress` Task. This package has none while
-    its only Task is `queued`.
+12. Each package has at most one `in-progress` Task. TSK-0066-0001 is this
+    package's sole `in-progress` Task during active execution.
 
 ## Core Design
 
@@ -265,10 +256,10 @@ readiness.
 
 ## Traceability
 
-Spec 0054 remains the upstream acceptance authority. Proposed ADR-0031 defines
-the current-corpus and validation-routing ownership used here; ADR-0022's
-standalone execution model is not an authority for this delegated package and
-is intended to be superseded only when ADR-0031 is accepted.
+Spec 0054 remains the upstream acceptance authority. Accepted ADR-0031 defines
+the current-corpus and validation-routing ownership used here; superseded
+ADR-0022 remains predecessor context and is not authority for this delegated
+package.
 
 ### Lifecycle Traceability
 
@@ -288,7 +279,7 @@ is intended to be superseded only when ADR-0031 is accepted.
 
 ### Related Documents
 
-- [Proposed ADR-0031 — current corpus retention and validation ownership](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)
+- [Accepted ADR-0031 — current corpus retention and validation ownership](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)
 - [ADR-0030 — authority-first SDLC and agent governance convergence](../../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)
 - [Spec 0054](../0054-sdlc-document-and-agent-governance-consolidation/spec.md)
 - [Plan 0066](plan.md)

@@ -1,10 +1,11 @@
 ---
 title: 'ADR-0021: Canonical Surface Routing and Evidence-Depth Architecture'
 type: sdlc/adr
-status: accepted
+status: superseded
 owner: platform
-updated: 2026-08-02
+updated: 2026-09-01
 artifact_id: "ADR-0021"
+superseded_by: ADR-0031
 ---
 
 # ADR-0021: Canonical Surface Routing and Evidence-Depth Architecture
@@ -113,3 +114,4 @@ state with an older snapshot.
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
 | [ARD-0010](../descriptions/0010-repository-delivery-evidence-architecture.md) | N/A — first repository-delivery assurance decision; preserves accepted ADR-0014 as the platform topology owner | [Spec 047](../../03.specs/0047-current-surface-and-stash-reconciliation/spec.md), [Spec 048](../../03.specs/0048-github-routing-and-ci-evidence/spec.md), [Spec 049](../../03.specs/0049-platform-validation-and-security-evidence/spec.md), [Spec 050](../../03.specs/0050-example-iac-and-validator-qa/spec.md), and [Spec 051](../../03.specs/0051-repository-assurance-integration-and-closure/spec.md) are authored. |
+| [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Supersedes validation-surface routing as a Stage 00/current-roster concern; preserves the historical evidence-depth rationale. | [Spec 0066](../../03.specs/0066-validation-tooling-ownership/spec.md) |
