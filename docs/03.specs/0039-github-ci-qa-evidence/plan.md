@@ -242,7 +242,7 @@ claim its own commit.
 - [PRD-0006](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - [AD-0009](../../02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md)
 - [ADR-0017](../../02.architecture/decisions/0017-program-follow-up-lineage-semantics.md)
-- [Affected-surface contract](../../00.agent-governance/contracts/validation-surfaces.json)
+- [Validation routing registry](../../../scripts/validation/registry.json)
 - [Agent quality standards](../../00.agent-governance/rules/quality-standards.md)
 - [Git workflow](../../00.agent-governance/rules/git-workflow.md)
 - [GitHub configuration hub](../../../.github/README.md)

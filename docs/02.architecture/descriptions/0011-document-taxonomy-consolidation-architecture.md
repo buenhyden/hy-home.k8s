@@ -110,7 +110,7 @@ execution lineage. Stage 04 remains retired and is not silently reused.
 | Document route, profile, heading, status, template, and relationship values | `docs/99.templates/registry.json` plus its two schemas | Stage 00, templates, README indexes, and validators consume or explain values; they do not redefine them. |
 | Template projection | Registry-selected templates | Template forms reference their registry profile and contain copyable structure only. |
 | Agent system, role, permission, and handoff shape | Terminal `.agents/registry.json` owner defined by ADR-0030 | WP-003 migrates provider-neutral and Codex/Claude projections without treating the predecessor harness as a parallel terminal owner. |
-| Validator lane and command selection | `validation-surfaces.json` | Pre-commit, affected selection, CI, and aggregate wrappers invoke the declared owner. |
+| Validator lane and command selection | `scripts/validation/registry.json` | Pre-commit, affected selection, CI, and aggregate wrappers invoke the declared owner. |
 | Historical evidence | Git history by default; retained sealed Stage 98 records only for distinct archive-internal value | Active Stages 00/01/02/03/05/90 do not cite or cross-link Stage 98 and never rewrite sealed payloads to make current validation pass. |
 
 ### Migration state model

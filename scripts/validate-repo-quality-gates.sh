@@ -5043,7 +5043,7 @@ for tracked_path in sorted(tracked):
         fail(f"executable reference source is not UTF-8: {tracked_path}")
 
 validation_surface_contract = load_json(
-    root / "docs/00.agent-governance/contracts/validation-surfaces.json"
+    root / "scripts/validation/registry.json"
 )
 try:
     executable_suffixes = executable_suffixes_from_registry(

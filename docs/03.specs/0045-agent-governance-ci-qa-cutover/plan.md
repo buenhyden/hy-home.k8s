@@ -113,7 +113,7 @@ provider resume/handoff canaries, remote execution, and live evidence remain
   [provider-runtime-evidence.json](../../00.agent-governance/contracts/provider-runtime-evidence.json)
 - Current machine owners:
   [harness-contract.json](../../00.agent-governance/contracts/harness-contract.json),
-  [validation-surfaces.json](../../00.agent-governance/contracts/validation-surfaces.json),
+  [validation routing registry](../../../scripts/validation/registry.json),
   and
   [agent-loop-lifecycle.json](../../00.agent-governance/contracts/agent-loop-lifecycle.json)
 ## Goals & In-Scope

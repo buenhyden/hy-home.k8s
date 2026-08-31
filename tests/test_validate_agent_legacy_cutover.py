@@ -443,8 +443,8 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
         return (
             ".agents/registry.json",
             ".agents/contracts/agent-registry.schema.json",
-            "docs/00.agent-governance/contracts/validation-surfaces.json",
-            "docs/00.agent-governance/contracts/validation-surfaces.schema.json",
+            "scripts/validation/registry.json",
+            "scripts/validation/registry.schema.json",
             self.validator.documents.REGISTRY_PATH.as_posix(),
             self.validator.documents.SCHEMA_PATH.as_posix(),
             *(

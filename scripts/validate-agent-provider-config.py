@@ -27,9 +27,7 @@ SCHEMA_PATH = PurePosixPath(
 )
 FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-provider-runtime-evidence.json")
 AGENT_REGISTRY_PATH = PurePosixPath(".agents/registry.json")
-ROUTING_PATH = PurePosixPath(
-    "docs/00.agent-governance/contracts/validation-surfaces.json"
-)
+ROUTING_PATH = PurePosixPath("scripts/validation/registry.json")
 CLAUDE_SETTINGS_PATH = PurePosixPath(".claude/settings.json")
 MAX_GOVERNED_INPUT_BYTES = 1024 * 1024
 

@@ -49,11 +49,9 @@ row and did not change the Stage 99 lifecycle domain, schema, or projection.
 It is a completed external precondition, not implementation performed by
 TSK-0066-0001.
 
-The contract currently located at
-`docs/00.agent-governance/contracts/validation-surfaces.json` and its schema are
-reused by moving them atomically to `scripts/validation/registry.json` and
-`scripts/validation/registry.schema.json`. The move does not create a second
-registry. The target registry owns only the routing graph: validation surfaces,
+The contract and schema now reside only at `scripts/validation/registry.json`
+and `scripts/validation/registry.schema.json`; their former Stage 00 sources
+were removed in the same atomic change. The target registry owns only the routing graph: validation surfaces,
 lanes, executable arguments, CI routing, and their consumers. Rule semantics
 remain in validator modules, and point-in-time disposition evidence remains in
 the active Task and Git diff.

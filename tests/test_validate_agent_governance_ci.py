@@ -25,9 +25,7 @@ CONTRACT_PATH = (
 SCHEMA_PATH = CONTRACT_PATH.with_name("agent-governance-ci.schema.json")
 FIXTURE_PATH = REPO_ROOT / "tests/fixtures/agent-governance-ci.json"
 WORKFLOW_PATH = REPO_ROOT / ".github/workflows/ci.yml"
-AFFECTED_PATH = (
-    REPO_ROOT / "docs/00.agent-governance/contracts/validation-surfaces.json"
-)
+AFFECTED_PATH = REPO_ROOT / "scripts/validation/registry.json"
 AGGREGATE_PATH = REPO_ROOT / "scripts/validate-repo-quality-gates.sh"
 PROVIDER_AGGREGATE_PATH = REPO_ROOT / "scripts/validate-agent-provider-evidence.py"
 PRE_COMMIT_PATH = REPO_ROOT / ".pre-commit-config.yaml"
@@ -74,7 +72,7 @@ REQUIRED_ROUTE_CLASSES = {
 REQUIRED_INPUTS = (
     Path("docs/00.agent-governance/contracts/agent-governance-ci.json"),
     Path("docs/00.agent-governance/contracts/agent-governance-ci.schema.json"),
-    Path("docs/00.agent-governance/contracts/validation-surfaces.json"),
+    Path("scripts/validation/registry.json"),
     Path("tests/fixtures/agent-governance-ci.json"),
     Path(".github/workflows/ci.yml"),
     Path(".pre-commit-config.yaml"),

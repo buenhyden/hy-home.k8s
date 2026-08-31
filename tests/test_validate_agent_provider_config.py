@@ -29,9 +29,7 @@ SCHEMA_PATH = (
     / "docs/00.agent-governance/contracts/provider-runtime-evidence.schema.json"
 )
 AGENT_REGISTRY_PATH = REPOSITORY_ROOT / ".agents/registry.json"
-ROUTING_PATH = (
-    REPOSITORY_ROOT / "docs/00.agent-governance/contracts/validation-surfaces.json"
-)
+ROUTING_PATH = REPOSITORY_ROOT / "scripts/validation/registry.json"
 CAPABILITY_OWNER = "docs/00.agent-governance/contracts/provider-runtime-evidence.json"
 
 GOVERNED_JSON_OWNERS = (
@@ -59,7 +57,7 @@ GOVERNED_JSON_OWNERS = (
     ),
     (
         "routing",
-        Path("docs/00.agent-governance/contracts/validation-surfaces.json"),
+        Path("scripts/validation/registry.json"),
         "contract",
     ),
 )

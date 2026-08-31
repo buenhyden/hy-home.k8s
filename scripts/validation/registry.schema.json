@@ -17,7 +17,7 @@
   ],
   "properties": {
     "$schema": {
-      "const": "./validation-surfaces.schema.json"
+      "const": "./registry.schema.json"
     },
     "schemaVersion": {
       "const": 2

@@ -22,7 +22,7 @@ built-in Kubernetes schemas and explicit external-GVK dispositions, add
 Traefik product-semantic validation, and prove the existing policy, secret,
 GitOps, Vault/ESO, and image controls through direct regressions.
 
-**Architecture:** `validation-surfaces.json` remains the sole path router.
+**Architecture:** `scripts/validation/registry.json` remains the sole path router.
 `platform-validation-evidence.json` owns target, depth, tool, result,
 limitation, and retry metadata. A focused Python orchestrator invokes existing
 canonical validators, while a second focused validator owns Traefik reference
@@ -67,7 +67,7 @@ runner or operator temporary storage and never become tracked artifacts.
   authorized.
 - Preserve result vocabulary `PASS`, `FAIL`, `SKIP`, and `DEFER`; a lower
   depth never promotes a higher one and a required-lane tool failure is FAIL.
-- `validation-surfaces.json` owns paths; the new contract references surface
+- `scripts/validation/registry.json` owns paths; the new contract references surface
   IDs and must not copy routing patterns.
 - `manifest-static` owns the hosted platform command graph. Repository-quality
   may invoke the focused package locally, but no second CI job may duplicate
@@ -89,7 +89,7 @@ download, hosted-current result, remote Helm result, or live evidence.
 - [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md),
   [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md),
   and [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
-- Spec 048 target/routing handoff and current `validation-surfaces.json`
+- Spec 048 target/routing handoff and current `scripts/validation/registry.json`
 - Current Kustomize roots, GitOps/infrastructure desired state, policy Rego,
   tracked secret contract, Vault/ESO contract, Traefik dynamic files, CI,
   aggregate, inventories, and exact official tool/checksum sources
@@ -152,7 +152,7 @@ download, hosted-current result, remote Helm result, or live evidence.
 
 **Modify when evidence requires:**
 
-- `docs/00.agent-governance/contracts/validation-surfaces.json`
+- `scripts/validation/registry.json`
 - `tests/fixtures/validation-surfaces.json`
 - `.github/workflows/ci.yml`
 - `scripts/validate-ci-python-contract.py`
@@ -391,7 +391,7 @@ copied.
 - [ ] Commit integration as one rollback unit.
 
   ```bash
-  rtk git add .github/workflows/ci.yml .pre-commit-config.yaml docs/00.agent-governance/contracts/validation-surfaces.json scripts/README.md scripts/validate-ci-python-contract.py scripts/validate-repo-quality-gates.sh tests/README.md tests/fixtures/validation-surfaces.json tests/test_validate_ci_python_contract.py traefik/README.md
+  rtk git add .github/workflows/ci.yml .pre-commit-config.yaml scripts/validation/registry.json scripts/README.md scripts/validate-ci-python-contract.py scripts/validate-repo-quality-gates.sh tests/README.md tests/fixtures/validation-surfaces.json tests/test_validate_ci_python_contract.py traefik/README.md
   rtk git commit -m "ci: route layered platform validation"
   ```
 

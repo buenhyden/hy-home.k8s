@@ -32,7 +32,7 @@ not Stage 90 mirrors.
   platform validation depth; exact tool and fallback evidence; ordered tranche
   execution; and local integration evidence.
 - **Consumes**: REQ-0004/AD-0007/ADR-0014/Spec 008 current topology,
-  `validation-surfaces.json` path routing, workflows, validators, tests,
+  `scripts/validation/registry.json` path routing, workflows, validators, tests,
   desired state, executable configuration, and reviewed dependency locks.
 - **Does not own**: platform component selection, live reconciliation state,
   document-profile route definitions, provider installation or authentication,
@@ -68,7 +68,7 @@ not Stage 90 mirrors.
 The control flow has six layers:
 
 1. Git and repository indexes produce the tracked, in-scope path inventory.
-2. `validation-surfaces.json` resolves each path to its canonical surface and
+2. `scripts/validation/registry.json` resolves each path to its canonical surface and
    validator set.
 3. `github-surface-routing.json` projects selected surface identifiers into
    label and CODEOWNERS expectations without restating path patterns.
@@ -91,7 +91,7 @@ surface contract:
 
 | Contract | Owns | Must reference | Must not duplicate |
 | --- | --- | --- | --- |
-| `github-surface-routing.json` | Surface identifier to GitHub label and CODEOWNERS projection, projection state, evidence, and exceptions | `validation-surfaces.json` surface IDs | Route regexes, validator argv, workflow job bodies, or branch-protection settings |
+| `github-surface-routing.json` | Surface identifier to GitHub label and CODEOWNERS projection, projection state, evidence, and exceptions | `scripts/validation/registry.json` surface IDs | Route regexes, validator argv, workflow job bodies, or branch-protection settings |
 | `platform-validation-evidence.json` | Target class, required depth, exact tool/version/checksum source, execution mode, fallback, evidence lane, limitation, owner, and retry trigger | Existing surface IDs, executable manifests/configuration, reviewed locks, and validator IDs | Full path registries, credentials, live results, or technology research prose |
 
 Each contract has a colocated JSON Schema and focused validator. Stable enums

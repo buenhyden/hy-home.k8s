@@ -20,7 +20,7 @@ artifact_id: "PLAN-0047"
 target against current canonical owners, and reconcile the preserved stash by
 reviewed semantic disposition without applying or dropping it.
 
-**Architecture:** `validation-surfaces.json` remains the only path-to-surface
+**Architecture:** `scripts/validation/registry.json` remains the only path-to-surface
 router. The reciprocal Task becomes the durable current-target matrix and
 stash ledger, while any temporary inventory lives only in non-sensitive
 ignored `_workspace` scratch and is removed before closure.
@@ -35,8 +35,7 @@ is the foundation tranche for PRD-0007. It is authorized to observe, classify,
 and record current state; it is not authorized to implement the GitHub,
 platform, Traefik, IaC, CI, or live-system changes owned by Specs 048-051.
 
-The current route owner is
-`docs/00.agent-governance/contracts/validation-surfaces.json`. Program lineage
+The current route owner is `scripts/validation/registry.json`. Program lineage
 is owned by `docs/99.templates/registry.json` and its strict
 registry validator. The preserved stash object is
 `6370311e020620cc2743005896cc88db97d15465`; implementation must resolve it by
@@ -51,7 +50,7 @@ full object identity rather than assuming `stash@{0}` remains stable.
 - Never run `git stash apply`, `git stash pop`, or `git stash drop` in this
   tranche, and never inspect the untracked-parent payload.
 - Do not add another path-routing contract or copy route regexes out of
-  `validation-surfaces.json`.
+  `scripts/validation/registry.json`.
 - Every target receives exactly one `change`, `no-change`, or `defer`
   disposition and one canonical owner. Every stash hunk receives exactly one
   `already-present`, `port`, `regenerate-current`, `superseded`, or
@@ -74,7 +73,7 @@ adoption, stash apply/pop/drop, remote, or live result.
 - [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md),
   [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md),
   and [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
-- Current `validation-surfaces.json`, document profile registry, Current audit
+- Current `scripts/validation/registry.json`, document profile registry, Current audit
   pack, tracked repository inventory, and affected-surface validators
 - Preserved stash object
   `6370311e020620cc2743005896cc88db97d15465`; ordinal and parents must be

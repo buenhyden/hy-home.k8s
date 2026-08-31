@@ -30,9 +30,7 @@ CONTRACT_PATH = PurePosixPath(
 SCHEMA_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/agent-governance-ci.schema.json"
 )
-AFFECTED_PATH = PurePosixPath(
-    "docs/00.agent-governance/contracts/validation-surfaces.json"
-)
+AFFECTED_PATH = PurePosixPath("scripts/validation/registry.json")
 FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-governance-ci.json")
 WORKFLOW_PATH = PurePosixPath(".github/workflows/ci.yml")
 PRE_COMMIT_PATH = PurePosixPath(".pre-commit-config.yaml")

@@ -20,7 +20,7 @@ artifact_id: "PLAN-0048"
 parity validator, align native labeler/CODEOWNERS/hub claims, and preserve
 intentional CI lanes without claiming hosted evidence for local work.
 
-**Architecture:** `validation-surfaces.json` remains the sole path router.
+**Architecture:** `scripts/validation/registry.json` remains the sole path router.
 `github-surface-routing.json` maps existing surface IDs to label and owner
 classes, while the focused validator resolves tracked paths and compares the
 machine projection with native `.github` files and workflow claims.
@@ -48,7 +48,7 @@ SHA and current unpushed hosted evidence remains `DEFER`.
 
 - Every shell command begins with `rtk`.
 - No copied path/regex values are allowed in the new contract; every mapping
-  references an existing `validation-surfaces.json` surface ID.
+  references an existing `scripts/validation/registry.json` surface ID.
 - Do not read workflow logs, ignored/private state, secrets, credentials,
   auth caches, shell history, provider payloads, or RTK logs.
 - No push, PR, workflow dispatch/rerun, remote merge, branch-rule/ruleset
@@ -74,7 +74,7 @@ evidence.
   [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md),
   and [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - Spec 047 target disposition and successor matrix
-- Current `validation-surfaces.json`, `.github/labeler.yml`,
+- Current `scripts/validation/registry.json`, `.github/labeler.yml`,
   `.github/CODEOWNERS`, `.github/README.md`, workflow YAML, repository
   aggregate, GitHub security validator, and read-only remote metadata
 ## Goals & In-Scope
@@ -132,7 +132,7 @@ evidence.
 - `.github/labeler.yml`
 - `.github/CODEOWNERS`
 - `.github/README.md`
-- `docs/00.agent-governance/contracts/validation-surfaces.json`
+- `scripts/validation/registry.json`
 - `tests/fixtures/validation-surfaces.json`
 - `scripts/validate-repo-quality-gates.sh`
 - `scripts/README.md`
@@ -223,7 +223,7 @@ import CLI side effects or duplicate route data.
   and `remoteObservations`.
 
 - [ ] Add contract data that points `sourceContract.path` to
-  `docs/00.agent-governance/contracts/validation-surfaces.json`, records source
+  `scripts/validation/registry.json`, records source
   schema version `2`, and uses only surface IDs in `mappings`.
 
 - [ ] Implement duplicate-key JSON loading, source compatibility, tracked path
@@ -281,7 +281,7 @@ import CLI side effects or duplicate route data.
   point at stale native state.
 
   ```bash
-  rtk git add .github/CODEOWNERS .github/README.md .github/labeler.yml docs/00.agent-governance/contracts/github-surface-routing.json docs/00.agent-governance/contracts/validation-surfaces.json tests/fixtures/validation-surfaces.json scripts/validate-repo-quality-gates.sh scripts/README.md tests/README.md
+  rtk git add .github/CODEOWNERS .github/README.md .github/labeler.yml docs/00.agent-governance/contracts/github-surface-routing.json scripts/validation/registry.json tests/fixtures/validation-surfaces.json scripts/validate-repo-quality-gates.sh scripts/README.md tests/README.md
   rtk git commit -m "ci: align github projection evidence"
   ```
 

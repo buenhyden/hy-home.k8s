@@ -34,7 +34,7 @@ state with an older snapshot.
 
 ## Decision
 
-- Keep `validation-surfaces.json` as the only path-to-surface,
+- Keep `scripts/validation/registry.json` as the only path-to-surface,
   path-to-validator, and CI selection owner.
 - Add `github-surface-routing.json` and its closed schema as the sole mapping
   from referenced surface IDs to expected labels, CODEOWNERS classes,

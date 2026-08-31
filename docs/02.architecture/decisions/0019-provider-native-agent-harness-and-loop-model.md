@@ -71,7 +71,7 @@ terminal lifecycle change가 이 결정을 수락했다.
   semantic을 복제하거나 unsupported native capability를 주장하지 않는다.
 - Spec 041이 구형 역할 의미 계약의 소비자를 전환했고 Spec 045가
   zero-consumer 증거 뒤 그 compatibility 입력을 제거한다.
-  `validation-surfaces.json`은 validation routing owner로 별도 유지한다.
+  `scripts/validation/registry.json`은 validation routing owner로 별도 유지한다.
 
 ### Provider-native metadata, config and evidence
 

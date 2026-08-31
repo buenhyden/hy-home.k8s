@@ -73,7 +73,7 @@ claimed; those evidence lanes remain `DEFER`.
 - Spec 040 closure content commit `c5adc27b` and postflight evidence update
   `4335ea60`
 - [Current role semantics](../../00.agent-governance/contracts/harness-contract.json)
-- [Independent validation routing owner](../../00.agent-governance/contracts/validation-surfaces.json)
+- [Independent validation routing owner](../../../scripts/validation/registry.json)
 - [Memory boundary](../../00.agent-governance/memory/README.md)
 ## Goals & In-Scope
 

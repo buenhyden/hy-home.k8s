@@ -101,7 +101,8 @@ consumer-zero proof.
 구형 역할 의미 contract와 schema는 새 contract의 병행 SSoT가 아니다.
 Spec 041이 소비자를 새 contract로 이동했고 Spec 045가 zero-consumer 증거
 뒤 compatibility 입력과 stale references를 제거한다.
-`validation-surfaces.json`은 validation routing을 소유하므로 역할 semantic contract와 합치지 않는다.
+`scripts/validation/registry.json`은 validation routing을 소유하므로 역할
+semantic contract와 합치지 않는다.
 
 ### Surface projection contract
 

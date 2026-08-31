@@ -127,7 +127,7 @@ cannot silently advance a task to completion.
 
 ## Related Documents
 
-- [Validation Surface Contract](../contracts/validation-surfaces.json)
+- [Validation Routing Registry](../../../scripts/validation/registry.json)
 - [Approval and Safety](approval-and-safety.md)
 - [Work Lifecycle](../skills/work-lifecycle.md)
 - [Git Policy](git.md)

@@ -651,5 +651,5 @@ remain `DEFER`.
 - [Source coverage and migration ledger](source-coverage.md)
 - [GitHub configuration hub](../../../../.github/README.md)
 - [Quality and Evidence Policy](../../../00.agent-governance/policies/quality.md)
-- [Validation surface contract](../../../00.agent-governance/contracts/validation-surfaces.json)
+- [Validation routing registry](../../../../scripts/validation/registry.json)
 - [Scripts inventory](../../../../scripts/README.md)

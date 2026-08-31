@@ -92,7 +92,9 @@ scripts/
 ├── validate-repo-quality-gates.sh    # Repository governance, workflow, docs, and inventory gates
 ├── validate-workspace-boundary.py    # Staged root-ignore object and isolated `_workspace` ignore validation
 ├── validation/
-│   └── current_executable_references.py # Current/proposal/history/sealed executable-reference owner
+│   ├── current_executable_references.py # Current/proposal/history/sealed executable-reference owner
+│   ├── registry.json                    # Validation surface, lane, command, and CI routing owner
+│   └── registry.schema.json             # Closed validation routing schema
 └── README.md                         # This file
 ```
 

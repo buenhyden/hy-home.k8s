@@ -955,9 +955,8 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
   batches, focused tests, review evidence, and rollback. The
   [Current Spec Index](../README.md#current-spec-index) owns cross-package
   navigation while the legacy standalone boundary remains current.
-- Atomically move, rather than copy,
-  `docs/00.agent-governance/contracts/validation-surfaces.json` and its schema
-  to `scripts/validation/registry.json` and its schema. The moved contract owns
+- Atomically move, rather than copy, the validation-surface contract formerly
+  under Stage 00 to `scripts/validation/registry.json` and its schema. The moved contract owns
   validation responsibility, lane selection, executable entrypoints, and
   supported consumers; it is not a second registry or a per-file inventory.
 - Keep point-in-time disposition in the Spec 0066 Task and reviewed diff. Do

@@ -26,12 +26,8 @@ SchemaEvaluationError = _schema_owner.SchemaEvaluationError
 schema_errors = _schema_owner.schema_errors
 
 
-CONTRACT_PATH = PurePosixPath(
-    "docs/00.agent-governance/contracts/validation-surfaces.json"
-)
-SCHEMA_PATH = PurePosixPath(
-    "docs/00.agent-governance/contracts/validation-surfaces.schema.json"
-)
+CONTRACT_PATH = PurePosixPath("scripts/validation/registry.json")
+SCHEMA_PATH = PurePosixPath("scripts/validation/registry.schema.json")
 FIXTURE_PATH = PurePosixPath("tests/fixtures/validation-surfaces.json")
 CI_WORKFLOW_PATH = PurePosixPath(".github/workflows/ci.yml")
 QUALITY_GATE_PATH = PurePosixPath("scripts/validate-repo-quality-gates.sh")

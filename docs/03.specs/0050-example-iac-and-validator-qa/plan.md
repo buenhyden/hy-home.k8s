@@ -70,7 +70,7 @@ preparation dependency, while no cloud credential or provider API is required.
 - Developer tool absence may be bounded `SKIP`; CI-equivalent required tool or
   network preparation failure is FAIL and cannot close the tranche.
 - `platform-validation-evidence.json` remains the only platform/IaC evidence
-  contract, and `validation-surfaces.json` remains the only path router.
+  contract, and `scripts/validation/registry.json` remains the only path router.
 - Preserve current example topology unless a native static failure proves an
   in-scope defect and a focused regression covers the repair.
 
@@ -156,7 +156,7 @@ or live result.
 - `scripts/validate-platform-evidence.py`
 - `tests/test_validate_platform_evidence.py`
 - `docs/90.references/data/tech-stack-version-inventory.md`
-- `docs/00.agent-governance/contracts/validation-surfaces.json`
+- `scripts/validation/registry.json`
 - `tests/fixtures/validation-surfaces.json`
 - `scripts/validate-repo-quality-gates.sh`
 - `.github/workflows/ci.yml`
@@ -406,7 +406,7 @@ stdout/stderr is not durable evidence.
 - [ ] Commit CI/routing/inventory/cleanup as one rollback unit.
 
   ```bash
-  rtk git add .github/workflows/ci.yml .gitignore docs/00.agent-governance/contracts/validation-surfaces.json scripts/README.md scripts/validate-ci-python-contract.py scripts/validate-repo-quality-gates.sh tests/README.md tests/fixtures/validation-surfaces.json tests/test_validate_ci_python_contract.py
+  rtk git add .github/workflows/ci.yml .gitignore scripts/validation/registry.json scripts/README.md scripts/validate-ci-python-contract.py scripts/validate-repo-quality-gates.sh tests/README.md tests/fixtures/validation-surfaces.json tests/test_validate_ci_python_contract.py
   rtk git add -u examples/.gitkeep
   rtk git commit -m "ci: route example iac validation"
   ```

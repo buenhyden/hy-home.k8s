@@ -1,5 +1,5 @@
 {
-  "$schema": "./validation-surfaces.schema.json",
+  "$schema": "./registry.schema.json",
   "schemaVersion": 2,
   "pathSemantics": {
     "separator": "posix",
@@ -1136,6 +1136,7 @@
         "agent-loop-lifecycle",
         "agent-provider-evidence",
         "agent-roster-admission",
+        "agent-roster-currentness",
         "agent-evaluations",
         "agent-model-fitness",
         "gitops-structure",

@@ -171,8 +171,8 @@ class ProviderPostValidateEntryTest(unittest.TestCase):
         fixture_files = (
             "docs/00.agent-governance/hooks/post-validate.sh",
             "docs/00.agent-governance/hooks/post-validate-runner-result.py",
-            "docs/00.agent-governance/contracts/validation-surfaces.schema.json",
-            "docs/00.agent-governance/contracts/validation-surfaces.json",
+            "scripts/validation/registry.schema.json",
+            "scripts/validation/registry.json",
             "scripts/run-validation-lane.py",
             "scripts/select-affected-surfaces.py",
             "scripts/validate-affected-surfaces.py",
@@ -184,9 +184,7 @@ class ProviderPostValidateEntryTest(unittest.TestCase):
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(source, target)
 
-        contract_path = (
-            fixture_root / "docs/00.agent-governance/contracts/validation-surfaces.json"
-        )
+        contract_path = fixture_root / "scripts/validation/registry.json"
         contract = json.loads(contract_path.read_text(encoding="utf-8"))
         for validator in contract["validators"]:
             validator["argv"] = [
