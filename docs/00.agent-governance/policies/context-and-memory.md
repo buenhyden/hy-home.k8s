@@ -1,9 +1,9 @@
 ---
 title: 'Context and Memory Policy'
 type: governance/reference
-status: draft
+status: active
 owner: platform
-updated: 2026-08-28
+updated: 2026-08-31
 ---
 
 # Context and Memory Policy
@@ -15,9 +15,10 @@ owning SDLC document, not a memory ledger, determine current truth.
 
 ## Authority Boundary
 
-This extracted policy awaits activation in WP-003B. Until then, the active
-execution and approval policies and existing checkpoint/loop protections
-continue to govern; this draft grants no new authority.
+This policy owns repository context retention, resume verification, and the
+boundary for advisory provider-local memory. It grants no provider/runtime
+capability, execution permission, or approval authority; the active execution,
+approval, and provider controls continue to own those concerns.
 
 The active Task owns work status, verification, and handoff. Requirements,
 ADRs, Specs, Runbooks, and incident records own durable domain knowledge.

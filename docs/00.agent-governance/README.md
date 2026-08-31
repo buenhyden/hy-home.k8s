@@ -32,6 +32,7 @@ progress and memory boundary; the `memory/` directory retired under
 | --- | --- |
 | [`agent-execution.md`](policies/agent-execution.md) | `active` |
 | [`approval-and-safety.md`](policies/approval-and-safety.md) | `active` |
+| [`context-and-memory.md`](policies/context-and-memory.md) | `active` |
 | [`document-authoring.md`](policies/document-authoring.md) | `active` |
 | [`document-lifecycle.md`](policies/document-lifecycle.md) | `active` |
 | [`git.md`](policies/git.md) | `active` |

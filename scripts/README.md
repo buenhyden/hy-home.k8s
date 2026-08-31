@@ -319,11 +319,12 @@ contradictory line을 제외한 operative Markdown에서 whitespace만 정규화
 
 현재 역할·권한·handoff·skill·projection 경로의 machine authority는
 `.agents/registry.json`이며 harness-contract CLI는 해당 registry를 검증한다.
-Context와 memory 규칙을 추출한
-`docs/00.agent-governance/policies/context-and-memory.md`는 draft이며
-WP-003B activation을 기다린다. 그동안 active execution·approval 정책과
-기존 checkpoint/loop 보호를 따르며, 별도 harness snapshot이나 memory class
-표를 정본으로 유지하지 않는다.
+Context와 memory 규칙의 active owner는
+`docs/00.agent-governance/policies/context-and-memory.md`다. 저장소와 owning
+SDLC document가 현재 truth이고 provider-local memory는 advisory이며,
+repository-static validation은 provider/runtime 실행 증거가 아니다. 별도
+harness snapshot, memory class 표, progress ledger, governance memory directory를
+정본으로 유지하지 않는다.
 
 ```bash
 python3 scripts/validate-agent-harness-contract.py --self-test
