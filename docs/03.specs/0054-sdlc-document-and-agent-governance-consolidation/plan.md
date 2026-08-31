@@ -136,9 +136,8 @@ Interface split, prefixed Architecture paths, expanded Stage 90/98 contracts,
 and Stage 99 support layout are not terminal authority after the approved
 2026-08-20 design amendments.
 
-Spec 0054 remains the integration and acceptance owner. Draft Spec 0066 at
-`../0066-validation-tooling-ownership/spec.md` is the delegated execution
-package for WP-010 and WP-011; its queued execution record is
+Spec 0054 remains the integration and acceptance owner. Draft `SPEC-0066` is
+the delegated execution package for WP-010 and WP-011; its queued execution record is
 `TSK-0066-0001`. Cross-package navigation is owned by the
 [Current Spec Index](../README.md#current-spec-index). The relation is governed by
 [proposed ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md).
@@ -408,138 +407,177 @@ cannot satisfy the terminal completion criteria.
 
 ### WP-003 — Codex/Claude-only AI-agent governance
 
-WP-003 is `in-progress`. Completed WP-004 supplied the Stage 99 document
-registry, profile lifecycle, Spec Task topology, and generic recovery contract
-that unblocked this package. Its accepted Task record is the current execution
-state owner.
+WP-003 remains `in-progress`. WP-004 supplied the document registry,
+lifecycle, Task, and generic recovery prerequisites at
+`bb55a1ae93c9fc3017f64b5f2246af11442265d3`. This section is the current
+execution contract; the long candidate/index checkpoint narrative in the Task
+is historical Git evidence, not pending work.
 
-**Files:**
+**Landed baseline:**
 
-- Modify `docs/00.agent-governance/{README.md,sdlc.md,policies/**,roles/**,
-  providers/claude.md,providers/codex.md,skills/**}`.
-- Populate `.agents/{registry.json,contracts/agent-registry.schema.json,
-  agents/**,skills/**}` as provider-neutral machine authority and reusable
-  projections.
-- Keep root `AGENTS.md` and `CLAUDE.md`, `.claude/**`, and `.codex/**` as thin
-  provider-native gateways. Delete root `GEMINI.md`, `.gemini/**`, Gemini and
-  Antigravity provider documents, contracts, canaries, hooks, fixtures, and
-  adapter projections.
-- Split touched agent-validator internals by responsibility while preserving
-  their current root CLIs as compatibility shims through WP-011. Keep focused
-  tests in `tests/test_validate_agent_*.py` until the responsibility-path
-  cutover moves them and their finite fixtures together.
-- Create
-  `docs/98.archive/migrations/0005-codex-claude-agent-governance-convergence.md`
-  only for the large governance authority cutover; use minimal Tombstones for
-  deleted stable routes whose recovery cannot be found from that Migration.
+- Commit `74817983629850a6e5a22a78285083342c01e37d` established the initial
+  agent-governance control-plane cutover. Commit
+  `e8bb831926b28c90639aed267d0c538857cffafc` completed the current
+  `.agents/registry.json` and schema authority, thin Codex/Claude projections,
+  Stage 00 policy/role/provider routing, Gemini/Antigravity consumer removal,
+  and sealed MIG-0005 recovery integration. Later current-tree commits closed
+  the memory/progress and document-contract residue without reopening a third
+  provider.
+- The current tracked tree has no root `GEMINI.md`, `.gemini/**`,
+  `.agents/GEMINI.md`, or Gemini provider document. The registry names only
+  Codex and Claude, and the focused registry, provider-evidence, semantic, and
+  governance-CI production gates pass. These are repository-static facts, not
+  provider-runtime or hosted-CI claims.
+- The authority/projection cutover is therefore not re-executed and no
+  predecessor candidate is restaged. Historical path and byte recovery remains
+  in Git and sealed MIG-0005.
 
-**Interfaces:**
+**Deferred to ADR-0031-activated Spec 0066:**
 
-- `.agents/registry.json` owns role ID, responsibility, permission class,
-  capability tier reference, supported providers, skill references, and
-  projection paths. Stage 99 MUST NOT duplicate these fields.
-- Stage 00 policy owns approval, security, quality, data, Git, SDLC, handoff,
-  and evidence rules. Provider notes own only provider-specific discovery and
-  capability differences.
-- Tracked provider configuration and evidence are secret-free; hosted CI has
-  no provider credentials; authenticated canaries are manual/local with
-  redacted results.
+- moving the validation-surface registry and schema to their responsibility
+  path;
+- separating production `--self-test` branches and production fixture reads
+  into independent top-level tests and fixtures;
+- reducing aggregates to thin routing, including the former three-terminal-
+  agent-gate target; and
+- retiring current-state SHA/digest pins and compatibility wrappers.
 
-- [ ] **RED — unsupported surfaces:** add focused tests that reject a Gemini or
-  Antigravity provider, `.gemini` projection, Gemini canary, provider-specific
-  meaning under `.agents`, and a third supported provider.
-- [ ] **RED — authority and injection:** preserve tests that reject duplicate
-  role owners, runtime claims from repository-static evidence, arbitrary or
-  hidden adapter instructions, extra metadata keys, command injection, CRLF
-  hook drift, permission escalation, unbounded input, and secret-bearing
-  evidence.
-- [ ] Run the focused tests and require the expected missing-terminal-owner and
-  forbidden-provider diagnostics before porting any predecessor candidate.
-- [ ] Migrate unique policy prose from `rules/`, `controls/`, scopes, catalogs,
-  and duplicate provider guides into the approved policies/roles/providers/
-  skills owners; delete a source in the same commit once its consumers reach
-  zero.
-- [ ] Populate the agent registry, generate or normalize provider-neutral role
-  and skill projections, and reduce Claude/Codex gateways to the exact
-  provider-native metadata and imports allowed by the registry.
-- [ ] Remove Gemini/Antigravity surfaces and every current link, schema branch,
-  fixture, validator rule, CI/pre-commit invocation, and aggregate command that
-  exists only for them. Preserve historical mention only in Git or minimal
-  migration evidence.
-- [ ] Split touched agent validators by contract responsibility and remove
-  production `--self-test`. Relocate their tests/fixtures to top-level `tests/`
-  only after ADR-0031 acceptance; until then preserve ADR-0030's current layout
-  without adding duplication. Make the aggregate call only the three terminal
-  agent gates: registry/schema integrity, provider projection/config integrity,
-  and semantic/permission integrity. Affected-surface selection remains
-  repository orchestration.
-- [ ] Remove current-state/provider-document SHA pins. Retain raw-byte digests
-  only when a payload is externally supplied and supply-chain-pinned,
-  explicitly sealed evidence, or a reachable Archive recovery object. Remove
-  unsupported local hook graphs rather than treating executability alone as a
-  digest-retention reason.
-- [ ] Apply the approved C-SDLC-009 clarification in the authority/projection
-  unit: validate MIG-0005 source-backed historical links without changing
-  completed bodies, and separate MIG-0004 historical target recovery from
-  current Stage 99 template validation. Preserve the existing sealed record
-  and source/target identities; reject source drift, missing targets, cycles,
-  and unregistered historical consumers. Do not introduce a status-wide
-  exception or a new mutable SHA/census control plane.
-- [ ] Apply the 2026-08-29 C-SDLC-009 extension in the same first unit:
-  explicitly source-backed historical fenced-command literals and separately
-  typed removed-view references may resolve only through their proved
-  Migration or Archive lookup owner. Preserve ordinary rendered admission,
-  regular recovery's symlink rejection, bounded held-input validation and
-  unchanged terminal bodies. Add focused positive and independent negative
-  regressions before implementing the two reference types. Synchronize the
-  missing historical-consumer data, current Stage 00 index format, execution
-  Task pointer, Archive policy link and ADR Traceability in the same reviewed
-  correction; do not broaden their validators to hide stale data.
-- [ ] Apply the subsequent 2026-08-29 C-SDLC-009 approval in this first unit:
-  admit only source-proved closed quoted inline paths followed by a comma and
-  whitespace/EOF, retaining all other token and recovery boundaries. Add the
-  three deferred Spec consumers and their exact literal declarations only
-  after the focused positive and independent negative regressions pass.
-- [ ] Retire the WER ledger's duplicated first historical inventory table and
-  its obsolete terminal shape obligation together, with latest full-file Git
-  recovery and Stage 98 partial-content disposition. Preserve the other
-  tables, missing-ledger and settlement checks, predecessor-disposition owner,
-  and current ledger path; do not add a table or status waiver.
-- [ ] Retire the four graphify outputs named in C-SDLC-009 with their current
-  consumers and atomic Stage 98 recovery evidence. This approved exception
-  advances only that cleanup from WP-012 and substitutes verified Git recovery
-  and consumer-zero for the unavailable reproduction procedure. Do not run an
-  external generator, claim regeneration, or move historical progress early.
-- [ ] In the second logical unit, activate the context/memory policy from its
-  first-unit `draft` through the legal `draft → active` transition. Apply the
-  approved C-SDLC-007 cumulative CI/ref proof using bounded actual intermediate
-  Git history, without changing the requested base or adding SHA/path waivers.
-  Verify both staged and cumulative comparison modes; per-commit staged PASS
-  alone does not prove the cumulative mode.
-- [ ] Run:
+WP-003 must not duplicate those WP-010/WP-011 responsibilities before
+ADR-0031 and Spec 0066 activate. Its only remaining implementation is the
+generic cumulative lifecycle proof and the context/memory policy activation.
+
+**Remaining files:**
+
+- Modify `scripts/validate-document-lifecycle.py` to prove a net-created
+  current document through bounded actual intermediate Git commits in `ci` and
+  `explicit-ref` modes. Keep `scripts/document_lifecycle.py` as the pure
+  lifecycle rule owner unless the generic comparison API itself must change.
+- Add `tests/test_document_lifecycle_cumulative_history.py` for focused
+  temporary-repository and CLI regressions. Its reusable
+  `assert_real_context_history` test helper accepts an explicit root, path,
+  base commit, and target commit for one execution-time real-path proof. Do
+  not add a fixture matrix or a path/SHA allowlist.
+- Activate
+  `docs/00.agent-governance/policies/context-and-memory.md`, update its
+  activation boundary, add it to the current Stage 00 policy index in
+  `docs/00.agent-governance/README.md`, and replace the draft statement in
+  `scripts/README.md` with the active owner relation.
+- Update this Plan and TSK-0054-0003 only with observed evidence. The final
+  state-only handoff also updates TSK-0054-0005 and the existing Spec 0054
+  `standaloneExecutions` pointer in `docs/99.templates/registry.json`.
+
+**TDD and diagnostic contract:**
+
+- [ ] **RED — actual intermediate history:** create a temporary repository in
+  which the target is absent at the supplied base, created in the profile's
+  zero-indegree state, and promoted through every declared edge in later
+  commits. The current net comparison must expose `LIFECYCLE-CREATE`; GREEN
+  must accept both `ci` and `explicit-ref` only after validating each actual
+  intermediate transition.
+- [ ] **RED — real Git boundaries:** prove in the same disposable repository
+  that both comparison modes use committed blobs rather than checkout bytes.
+  Exercise the low-level history function over the real context path from the
+  approved base to the committed activation, proving only that path's actual
+  `absent → draft → active` chain. Use the full CLI only for the clean,
+  recent committed `draft → active` range. Preserve `--include-path` as the
+  additive selector documented by `scripts/README.md`; it is not a focus
+  filter and this WP must not change its meaning.
+- [ ] **RED — fail closed:** direct active creation, an illegal intermediate
+  transition, missing history, a non-ancestral range, ambiguous history, and
+  malformed or bounds-exceeding Git output must remain unadmitted. Retain the
+  exact existing `LIFECYCLE-CREATE` for an unproved net creation, or the
+  validator's existing invocation diagnostic where resolution cannot proceed;
+  do not require a new diagnostic ID or exit code. No checkout bytes,
+  branch-name rule, fixed commit list, or target-path exception may substitute
+  for commit evidence.
+- [ ] **GREEN — bounded proof:** resolve commit objects with the existing
+  strict ref/object checks; require an ancestral supplied range; enumerate a
+  bounded, uniquely ordered chain of target-affecting commits; load the target
+  blob from each commit; prove `absent → initial` and then every consecutive
+  declared transition; and consume only the exact `LIFECYCLE-CREATE`
+  diagnostic proved by that chain. Preserve every other diagnostic and the
+  existing additive include-path behavior. The focused low-level real-path
+  proof returns only path-chain evidence and does not consume unrelated
+  aggregate diagnostics; it is not a waiver or a separate gate.
+- [ ] Run focused GREEN and adjacent lifecycle regressions:
+
+  ```bash
+  python3 -m unittest tests.test_document_lifecycle_cumulative_history
+  python3 -m unittest tests.test_document_lifecycle_archive_cutover tests.test_document_lifecycle_migration
+  ```
+
+**Activation and cumulative proof:**
+
+- [ ] Commit the generic lifecycle behavior and its tests as one independently
+  reversible logical unit. The commit subject is chosen at execution time and
+  is not a validation invariant.
+- [ ] In a second logical unit, change the context/memory policy from `draft`
+  to `active`, remove its waiting language, and update the Stage 00 and scripts
+  routers. Pass staged lifecycle and strict document checks, then commit this
+  activation without changing either Task state.
+- [ ] Resolve the activation and its clean committed draft parent to full
+  object IDs, record them in TSK-0054-0003 as execution evidence rather than a
+  code/config allowlist, and run both modes over the actual adjacent ranges:
+
+  ```bash
+  ACTIVATION_COMMIT="$(git rev-parse HEAD)"
+  DRAFT_BASE_COMMIT="$(git rev-parse "${ACTIVATION_COMMIT}^")"
+  git cat-file -e "${ACTIVATION_COMMIT}^{commit}"
+  git cat-file -e "${DRAFT_BASE_COMMIT}^{commit}"
+  git merge-base --is-ancestor "${DRAFT_BASE_COMMIT}" "${ACTIVATION_COMMIT}"
+  python3 -c 'from pathlib import Path; import sys; from tests.test_document_lifecycle_cumulative_history import assert_real_context_history; assert_real_context_history(Path("."), "docs/00.agent-governance/policies/context-and-memory.md", sys.argv[1], sys.argv[2])' bb55a1ae93c9fc3017f64b5f2246af11442265d3 "${ACTIVATION_COMMIT}"
+  python3 scripts/validate-document-lifecycle.py --root . --mode ci --base-ref "${DRAFT_BASE_COMMIT}" --to-ref "${ACTIVATION_COMMIT}" --include-path docs/00.agent-governance/policies/context-and-memory.md
+  python3 scripts/validate-document-lifecycle.py --root . --mode explicit-ref --from-ref "${DRAFT_BASE_COMMIT}" --to-ref "${ACTIVATION_COMMIT}" --include-path docs/00.agent-governance/policies/context-and-memory.md
+  ```
+
+  The low-level call proves only the real context path's actual
+  `absent → draft → active` chain. The CLI pair proves the recent committed
+  `draft → active` edge, while disposable real-Git fixtures prove the generic
+  cumulative behavior in both modes. The whole approved-base-to-activation CLI
+  comparison remains blocked by unrelated archive/legacy cutover diagnostics
+  and is deferred until WP-009 removes that overreach. It is neither waived
+  nor claimed as a PASS.
+
+**Closure checks, reviews, and handoff:**
+
+- [ ] Re-run the current agent authority gates and document checks:
 
   ```bash
   python3 -m unittest discover -s tests -p 'test_validate_agent_*.py'
   python3 scripts/validate-agent-harness-contract.py --root .
   python3 scripts/validate-agent-provider-evidence.py --root .
   python3 scripts/validate-agent-harness-semantics.py --root .
-  python3 scripts/validate-affected-surfaces.py --root .
-  python3 scripts/validate-document-lifecycle.py --root . --mode staged
+  python3 scripts/validate-agent-governance-ci.py --root .
+  python3 scripts/validate-document-contract-registry.py --root . --mode strict
+  python3 scripts/validate-markdown-profiles.py --root . --mode strict
   python3 scripts/validate-links-and-owners.py --root . --mode strict
-  python3 scripts/archive_recovery.py --root . --record docs/98.archive/migrations/0005-codex-claude-agent-governance-convergence.md --verify
+  python3 scripts/validate-document-lifecycle.py --root . --mode staged
+  python3 scripts/validate-affected-surfaces.py --root .
   bash scripts/check-secret-handling.sh
   TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
-  git diff --cached --name-only -z > /tmp/spec-0054-staged.nul
-  python3 scripts/run-validation-lane.py --root . --lane staged --paths-file /tmp/spec-0054-staged.nul --delimiter nul
+  git diff --cached --name-only -z > /tmp/spec-0054-wp003-staged.nul
+  python3 scripts/run-validation-lane.py --root . --lane staged --paths-file /tmp/spec-0054-wp003-staged.nul --delimiter nul
   TMPDIR=/tmp pre-commit run
+  TMPDIR=/tmp pre-commit run --all-files
+  git diff --check
+  git diff --cached --check
   ```
 
-- [ ] Obtain architecture, security, and code-quality review and resolve every
-  Critical/Important finding.
-- [ ] Commit authority/projection cutover as
-  `refactor(governance): support Codex and Claude only`.
-- [ ] Commit validator/test consolidation as
-  `refactor(validation): simplify agent governance gates`.
+- [ ] Obtain independent specification, code-quality, Python, and static
+  security review. Resolve every Critical or Important finding and rerun the
+  checks affected by corrections. Record that static security review makes no
+  provider-runtime claim.
+- [ ] After every acceptance-bearing check and review passes, make one final
+  state-only logical commit: set TSK-0054-0003 to `done`, set TSK-0054-0005 to
+  `in-progress`, and move the existing Spec 0054 `standaloneExecutions` task
+  pointer from TSK-0054-0003 to TSK-0054-0005. Do not activate Spec 0066 or
+  modify another Spec 0054 Task in this handoff.
+
+**Rollback:** stop before the state-only handoff on any failed proof. With
+authorization, revert only the failing logical unit: router/policy activation
+first, then cumulative-history behavior if necessary. After handoff, revert
+the state-only commit before reverting activation. Do not reset shared history,
+edit sealed MIG-0005, or restore Gemini/Antigravity surfaces.
 
 ### WP-004 — document, lifecycle, Task, and registry authority activation
 
@@ -853,9 +891,9 @@ it does not recreate the retired RIA or a permanent disposition ledger.
 **Delegation boundary:**
 
 - Spec 0054 owns the WP-010 acceptance criteria and integration decision.
-  Draft Spec 0066 at `../0066-validation-tooling-ownership/spec.md`, through
-  `TSK-0066-0001`, owns execution, detailed file batches, focused tests, review
-  evidence, and rollback after its activation checkpoint. The
+  Draft `SPEC-0066`, through `TSK-0066-0001`, owns execution, detailed file
+  batches, focused tests, review evidence, and rollback after its activation
+  checkpoint. The
   [Current Spec Index](../README.md#current-spec-index) owns cross-package
   navigation while the legacy standalone boundary remains current.
 - Atomically move, rather than copy,
