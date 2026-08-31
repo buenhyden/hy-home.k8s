@@ -497,6 +497,45 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self.assertEqual(actual, candidates)
         projection.assert_not_called()
 
+        repeated = {
+            PurePosixPath(self.path): blobs[PurePosixPath(self.path)],
+            PurePosixPath("docs/00.agent-governance/repeated.md"): blobs[
+                PurePosixPath(self.path)
+            ],
+        }
+        cache = VALIDATOR._CumulativeHistoryCache(self.root, self.registry)
+        with (
+            mock.patch.object(VALIDATOR, "CUMULATIVE_HISTORY_MAX_SNAPSHOT_PATHS", 1),
+            mock.patch.object(VALIDATOR, "_tree_blob_map", return_value=repeated),
+            mock.patch.object(VALIDATOR, "_run_git", side_effect=AssertionError) as batch,
+            mock.patch.object(
+                VALIDATOR, "_snapshot_projection", side_effect=AssertionError
+            ) as projection,
+            self.assertRaises(VALIDATOR._CumulativeHistoryBudgetExceeded),
+        ):
+            cache._snapshot(self.base)
+        batch.assert_not_called()
+        projection.assert_not_called()
+
+        with (
+            mock.patch.object(VALIDATOR, "CUMULATIVE_HISTORY_MAX_SNAPSHOT_PATHS", 1),
+            mock.patch.object(
+                VALIDATOR, "_snapshot_projection", side_effect=AssertionError
+            ) as projection,
+        ):
+            actual = VALIDATOR._admit_cumulative_create_diagnostics(
+                candidates,
+                root=self.root,
+                registry=self.registry,
+                mode="explicit-ref",
+                base_commit=self.base,
+                proposed_commit=active,
+                base_blobs={},
+                proposed_blobs=blobs,
+            )
+        self.assertEqual(actual, candidates)
+        projection.assert_not_called()
+
         with (
             mock.patch.object(VALIDATOR, "_run_git", return_value=b"malformed\n"),
             self.assertRaises(VALIDATOR._CumulativeHistoryBudgetExceeded),

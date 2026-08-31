@@ -135,6 +135,7 @@ CUMULATIVE_HISTORY_CACHE_MAX_SNAPSHOTS = 4
 CUMULATIVE_HISTORY_CACHE_MAX_EVIDENCE = 2
 CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES = 4 * 1024 * 1024
 CUMULATIVE_HISTORY_MAX_SNAPSHOT_WORK_BYTES = 16 * 1024 * 1024
+CUMULATIVE_HISTORY_MAX_SNAPSHOT_PATHS = 4_096
 CUMULATIVE_HISTORY_MAX_SNAPSHOT_OBJECTS = 4_096
 WORK105_CUTOVER_BASE_COMMIT = "a6fa1806364ea0472baaad0906e1b5e4ddac8602"
 WORK105_BASE_REGISTRY_BLOB_OID = "fc9ba039906ef240d076de5eeb6c584b681ae09f"
@@ -3855,6 +3856,8 @@ def _snapshot_blob_size(
 ) -> int:
     """Preflight exact per-path blob bytes without reading snapshot content."""
 
+    if len(blobs) > CUMULATIVE_HISTORY_MAX_SNAPSHOT_PATHS:
+        raise _CumulativeHistoryBudgetExceeded
     object_ids = tuple(dict.fromkeys(blobs.values()))
     if (
         len(object_ids) > CUMULATIVE_HISTORY_MAX_SNAPSHOT_OBJECTS
