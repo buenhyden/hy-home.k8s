@@ -132,6 +132,11 @@ from document_contracts import (  # noqa: E402 - repository-local contract modul
     classify_path,
     load_registry,
 )
+from validation.current_executable_references import (  # noqa: E402
+    executable_suffixes_from_registry,
+    reachable_git_path_exists,
+    validate_current_executable_references,
+)
 
 root = pathlib.Path(sys.argv[1])
 failures = []
@@ -5008,31 +5013,7 @@ for path in sorted([*traefik_configs, root / "examples/sample-app/traefik-k3d.ya
     if "https://172.18.0.240:443" not in text:
         fail(f"{rel(path)} must reference ingress-nginx LoadBalancer backend https://172.18.0.240:443")
 
-script_ref_pattern = re.compile(r"scripts/[A-Za-z0-9_.-]+\.sh")
-script_command_contract_paths = [
-    root / "README.md",
-    scripts_dir / "README.md",
-    root / ".github/workflows/ci.yml",
-    root / ".github/PULL_REQUEST_TEMPLATE.md",
-    root / ".github/README.md",
-    root / ".claude/settings.json",
-    root / ".claude/CLAUDE.md",
-    root / "docs/00.agent-governance/hooks/post-validate.sh",
-    root / "docs/00.agent-governance/hooks/lifecycle-guard.sh",
-    root / "docs/90.references/README.md",
-    root / "gitops/README.md",
-    root / "gitops/workloads/README.md",
-    root / "docs/README.md",
-    root / "docs/00.agent-governance/policies/document-authoring.md",
-]
-for path in script_command_contract_paths:
-    if not path.exists():
-        continue
-    for match in sorted(set(script_ref_pattern.findall(read_text(path)))):
-        if not (root / match).exists():
-            fail(f"script reference points to missing file in {rel(path)}: {match}")
-
-broad_script_reference_suffixes = {
+executable_reference_source_suffixes = {
     ".md",
     ".toml",
     ".json",
@@ -5043,13 +5024,48 @@ broad_script_reference_suffixes = {
     ".bicep",
     ".txt",
 }
+executable_reference_sources = {}
 for tracked_path in sorted(tracked):
-    path = root / tracked_path
-    if not path.is_file() or path.suffix not in broad_script_reference_suffixes:
+    if tracked_path.startswith(("docs/98.archive/", "tests/fixtures/")):
         continue
-    for match in sorted(set(script_ref_pattern.findall(read_text(path)))):
-        if not (root / match).is_file():
-            fail(f"tracked script reference points to missing file in {rel(path)}: {match}")
+    path = root / tracked_path
+    if (
+        not path.is_file()
+        or path.is_symlink()
+        or path.suffix not in executable_reference_source_suffixes
+    ):
+        continue
+    try:
+        executable_reference_sources[pathlib.PurePosixPath(tracked_path)] = (
+            path.read_text(encoding="utf-8", errors="strict")
+        )
+    except UnicodeError:
+        fail(f"executable reference source is not UTF-8: {tracked_path}")
+
+validation_surface_contract = load_json(
+    root / "docs/00.agent-governance/contracts/validation-surfaces.json"
+)
+try:
+    executable_suffixes = executable_suffixes_from_registry(
+        validation_surface_contract
+    )
+except ValueError as exc:
+    fail(f"validation executable suffix ownership differs: {exc}")
+    executable_suffixes = frozenset()
+
+executable_reference_diagnostics = (
+    validate_current_executable_references(
+        root,
+        tracked_paths=frozenset(pathlib.PurePosixPath(path) for path in tracked),
+        source_texts=executable_reference_sources,
+        executable_suffixes=executable_suffixes,
+        historical_path_exists=lambda target: reachable_git_path_exists(root, target),
+    )
+    if executable_suffixes
+    else ()
+)
+for diagnostic in executable_reference_diagnostics:
+    fail(str(diagnostic))
 
 secret_scanner_text = read_text(scripts_dir / "check-secret-handling.sh")
 for phrase in [

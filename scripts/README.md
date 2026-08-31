@@ -5,14 +5,22 @@
 ## Overview
 
 `scripts/`는 k3d/GitOps 저장소를 live cluster mutation 없이 검증하기 위한 repo-backed 유틸리티를 보관한다.
-2026-07-04 기준 현재 `*.sh` 스크립트 8개는 모두 유지 대상이며, unused 또는 one-off 삭제 후보는 없다. 단, `render-platform-chart-kinds.sh`는 기본 로컬/CI bundle이 아니라 platform AppProject allow-list 변경 시 실행하는 manual review helper다.
+현재 shell entrypoint와 Python module의 보존·통합·삭제 여부는 extension이나
+고정 파일 수가 아니라 현재 consumer, 고유 진단, recovery 책임으로 결정한다.
+`render-platform-chart-kinds.sh`는 기본 로컬/CI bundle이 아니라 platform
+AppProject allow-list 변경 시 실행하는 manual review helper다.
 
 이 영역은 GitOps manifest 자체(`gitops/`)나 live runtime 점검(`infrastructure/tests/`)을 대체하지 않는다.
 대신 CI, post-edit hook, 필수 품질 게이트, 수동 검증 문서가 호출하거나 허용하는 반복 가능한 정적 검증 명령을 제공한다.
 
 보존 근거(retention evidence), 명령·문서 표면(command/documentation surface), broad reference sweep은 분리해서 판단한다.
 Tier A와 Tier B만 보존 근거이며, Tier C는 유지보수자가 갱신해야 하는 명령 계약 표면일 뿐 그 자체로 보존 근거가 아니다.
-tracked text의 `scripts/*.sh` 참조는 삭제·리네임 safety net으로 모두 실제 파일을 가리켜야 하지만, 참조가 있다는 사실만으로 보존 근거가 되지는 않는다.
+현재 실행 표면의 `scripts/` 참조는 routing registry의 실제 argv에서 파생한
+executable suffix와 임의 depth에 대해 tracked regular file을 가리켜야 하지만,
+참조가 있다는 사실만으로 보존 근거가 되지는 않는다. 비종결 Stage 03은
+proposal이며 current executable을 주장하지 않는다. 종결 문서와 Stage 90은
+reachable Git을 기본 recovery owner로 사용하고, Stage 98은 선행 Archive
+validator가 소유한다.
 
 ### Audience
 
@@ -83,6 +91,8 @@ scripts/
 ├── validate-policy-gates.sh          # OPA/Conftest-style policy gate with built-in fallback
 ├── validate-repo-quality-gates.sh    # Repository governance, workflow, docs, and inventory gates
 ├── validate-workspace-boundary.py    # Staged root-ignore object and isolated `_workspace` ignore validation
+├── validation/
+│   └── current_executable_references.py # Current/proposal/history/sealed executable-reference owner
 └── README.md                         # This file
 ```
 
@@ -104,7 +114,9 @@ readiness evidence.
 semantics를 다시 구현하지 않는다. Python/PyYAML/JSON Schema 전제 조건을
 확인한 뒤 document registry, Markdown profile, cross-document, affected-
 surface, agent-harness-semantics, roster-currentness 정본 validator를 strict
-blocking mode로 호출한다. Registry가 role/skill/projection membership을,
+blocking mode로 호출하고 executable-reference 의미는
+`validation/current_executable_references.py`에 위임한다. Registry가
+role/skill/projection membership을,
 semantics가 role prose와 permission parity를, provider-config가 native
 metadata와 thin root gateway를 소유한다. Wrapper 내부에는 아직 별도 소유자로
 이관하지 않은 Claude pre-edit/session-start/lifecycle 등록 검사와 pre-edit/

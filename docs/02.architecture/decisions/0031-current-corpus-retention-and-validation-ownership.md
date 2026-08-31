@@ -160,6 +160,14 @@ UTF-8, subprocess timeouts, index/worktree drift, missing current executable
 references, and unresolved transition aliases. A missing executable cannot be
 treated as current merely because an active Spec proposes it.
 
+Executable-reference ownership distinguishes four source states. Current
+execution surfaces require a tracked regular target. A non-terminal Stage 03
+package is a proposal and does not claim that its future path exists. Terminal
+documents and Stage 90 evidence use reachable Git as the default recovery
+owner. Stage 98 remains under its bounded Archive validator and is never turned
+back into a current-path requirement. Executable extensions come from the
+registry-owned argv graph rather than a single hard-coded extension.
+
 Required hosted check names remain stable until authorized evidence confirms
 that external branch-protection consumers can migrate safely. Internal job
 steps and local routing may simplify without claiming that external settings
