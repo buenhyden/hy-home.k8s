@@ -3,7 +3,7 @@ title: 'Task: Stage 90 disposition ledger'
 type: sdlc/task
 status: queued
 owner: platform
-updated: 2026-08-22
+updated: 2026-08-31
 artifact_id: "TSK-0054-0007"
 ---
 
@@ -24,13 +24,13 @@ This is the terminal queued Task record for WP-007.
 
 **Plan label:** WP-007
 
-**Depends on:** WP-006
+**Depends on:** WP-003
 
 **Current state:** `queued`
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-054-007 | VAL-SDLC-008, VAL-SDLC-011, VAL-SDLC-012 | Record one owner/freshness/disposition for every Stage 90 path and classify the preserved main-worktree RIA candidate without mutating evidence. | platform | Queued | Not executed. | Dynamic Stage 90 coverage, candidate port/rework/discard decision, RIA disposition gates, logical commit |
+| WORK-054-007 | VAL-SDLC-008, VAL-SDLC-011, VAL-SDLC-012 | Record the reviewed Stage 90 semantic destinations without mutating evidence or creating a permanent census. | platform | Queued | Read-only preflight identifies the latest external-research pack as the preservation boundary and Audit/Data plus their RIA control plane as removal candidates after consumer cutover. | `research/2026-08-08-wer/`: 14 pack files; collection router: one file; `audits/`: 34 files; `data/`: seven files; research commits `5b35d207`, `ab117c49`, `4f2aceb3` |
 
 ## Approval and Safety Boundaries
 
@@ -40,7 +40,15 @@ reviews, rollback, and logical commit are owned by its linked Plan section.
 
 ## Verification Summary
 
-WP-007 is queued and has no accepted execution evidence.
+WP-007 is queued for the atomic handoff from WP-003. Direct user approval on
+2026-08-31 requires the latest externally researched material under
+`docs/90.references/research/2026-08-08-wer/` to be preserved. Later commit
+`e8bb8319` is a mechanical governance cutover and does not supersede the latest
+external-research commits `5b35d207`, `ab117c49`, and `4f2aceb3` for recency.
+The current tree contains no second research pack. Audit and Data files may be
+removed only after active consumers route to canonical owners or direct
+repository sources; Git is the default full-body recovery owner and no
+redirect or full-body Stage 98 copy is authorized.
 
 ## Traceability
 

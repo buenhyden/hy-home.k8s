@@ -59,8 +59,8 @@ They preserve the current gate input only; they do not create a second program
 owner or override the package-local delegation designed by ADR-0031.
 
 Direct human approval on 2026-08-14 refines that topology into package-oriented
-requirements, prefix-free architecture paths, a three-family Stage 90 library,
-a minimal Git-backed Stage 98 index, and a single Stage 99 registry. This
+requirements, prefix-free architecture paths, a bounded Stage 90 library,
+a temporary minimal Stage 98 lookup, and a single Stage 99 registry. This
 revision supersedes the earlier PRD/SRS/Interface Requirement form split,
 `ad-`/`adr-` route prefixes, support-prose control plane, and snapshot-count or
 line-digest Archive design. It retains the approved four-digit identity,
@@ -352,7 +352,7 @@ numeric slot remains unused so retired links are not silently reinterpreted.
 
 Active SDLC filenames and directory identities use four digits. Parent
 directories determine Requirement Package, Architecture Description, ADR,
-Research, Audit, and Data types; their paths do not repeat type prefixes.
+and Research types; their paths do not repeat type prefixes.
 Stable frontmatter IDs retain their typed forms, including `REQ-`, `AD-`,
 `ADR-`, `RES-`, and `AUD-`. The Incident route retains its required `inc-`
 prefix. Ordinary active filenames do not contain dates. Dates stay in
@@ -533,31 +533,30 @@ cannot be resolved from Git and a maintained Migration.
 
 ### C-SDLC-008 — Stage 90 reference reconciliation
 
-The terminal Stage 90 topology contains only:
+The terminal Stage 90 topology contains only the Stage router, the research
+collection router, and the latest externally researched pack:
 
 ```text
 docs/90.references/
 ├── README.md
-├── research/####-<slug>/
-├── audits/####-<slug>/
-└── data/####-<slug>/
+└── research/
+    ├── README.md
+    └── <preserved-current-pack>/
 ```
 
-Each package has a numbered, date-free identity, a `README.md` owner, lifecycle
-state, freshness responsibility, current consumers, and only the bounded
-supporting source or data files it indexes. Research owns external evidence and
-investigation; Audit owns point-in-time gap or conformance assessment; Data
-owns repository inventory and structured reference data. Stage 90 never owns
-current governance or operational procedure.
+The preserved pack owns dated external evidence, source coverage, and bounded
+research synthesis only. It does not own current governance, repository
+inventory, validation routing, operational procedure, or a permanent corpus
+census. Its existing path remains stable while active Spec 0062 consumes it;
+future observation dates belong in source metadata rather than a parallel pack.
 
 The cutover classifies current material by semantic destination in the
-executing Task and reviewed diff. `cloud-examples` and relevant maintained
-snapshots become numbered Research packages; the learning roadmap moves to
-Stage 05 Guide `0010`; `llm-wiki`, its generator and gates are removed after
-consumer-zero. Older Audit packages and overlapping Data assets are merged
-into the maintained owner or removed after Git recovery. This point-in-time
-classification is not persisted as a Stage 90 disposition ledger or exact
-corpus gate.
+executing Task and reviewed diff. Audit snapshots and Data control-plane
+copies are removed after live consumers route to canonical Stage 00-05 owners
+or direct repository sources. `cloud-examples`, learning, and `llm-wiki`
+retain their separately reviewed disposition until their own consumer cutover.
+This point-in-time classification is not persisted as a Stage 90 disposition
+ledger or exact corpus gate.
 
 The large reference-information-architecture SHA, finite-state, current-pack,
 and census contract is retired with its exclusive fixtures and gates. Current
@@ -568,8 +567,8 @@ or source metadata, not filenames.
 
 ### C-SDLC-009 — Stage 98 migration evidence
 
-Git history is the default full-content archive. Stage 98 is a minimal lookup
-and recovery index:
+Git history is the default full-content archive. Stage 98 is a temporary,
+minimal lookup and recovery surface:
 
 ```text
 docs/98.archive/
@@ -578,12 +577,13 @@ docs/98.archive/
 └── tombstones/<original-stage>/####-<slug>.md
 ```
 
-A Migration is created only when immutable historical links need a durable,
+A Migration is retained only while immutable historical links need a durable,
 bounded path or authority mapping that Git lookup alone does not provide. A
 minimal Tombstone exists only when neither Git nor a maintained Migration can
 resolve a deleted stable path. Routine deletion, move, merge, and replacement
 do not require one record per source, and deleting obsolete Migrations does not
-create a meta-Migration.
+create a meta-Migration. If no lookup remains, `migrations/` or `tombstones/`
+is removed rather than preserved as an empty permanent family.
 
 Sealed records are immutable: they are retained byte-for-byte or deleted after
 consumer-zero and recovery proof, never edited or compacted in place. Existing
@@ -593,18 +593,22 @@ an applicable bounded Migration rather than individual Tombstones. Superseded
 ADRs remain in Stage 02, and completed Spec/Plan/Task bodies are not copied to
 Stage 98.
 
-Migrations `0006` through `0009` remain byte-for-byte in this cutover. Their
-deletion is explicitly deferred until an authorized push/merge or a full clone
-proves the required `origin/main` ancestry and recovery; local `main` evidence
-alone is insufficient. This defer state does not justify a branch-HEAD pin,
-current-document digest, exact Archive count, or per-file recovery ledger.
+Migrations `0006` through `0009` remain byte-for-byte only while a current
+immutable lookup consumes them. At consumer-zero they may be deleted when the
+required source object remains reachable in the current repository. Remote or
+mutable branch ancestry is not a permanent validation requirement. No defer
+state justifies a branch-HEAD pin, current-document digest, exact Archive
+count, or per-file recovery ledger.
 
-Recovery validation is proportional to the retained lookup: bounded object
-reads, strict decoding for text, object/path checks, and a digest only when
-sealed byte identity is the contract. SHA identity remains justified only for
-external immutable dependencies, sealed evidence bytes, or verified Git
-recovery. Secret-bearing history follows incident, rotation, and approved
-history-removal procedure rather than ordinary Stage 98 retention.
+Recovery validation is proportional to each retained lookup: minimal required
+fields, bounded object reads, strict decoding for text, object/path checks, and
+a digest only when sealed byte identity is the contract. It does not compare
+unrelated current documents to historical SHAs, enforce a full Archive census,
+or keep consumer-free records alive. SHA identity remains justified only for
+external immutable dependencies, sealed evidence bytes, or the exact Git
+recovery lookup being exercised. Secret-bearing history follows incident,
+rotation, and approved history-removal procedure rather than ordinary Stage 98
+retention.
 
 ### C-SDLC-010 — scripts ownership and module boundaries
 
@@ -706,16 +710,18 @@ integration dependencies, not a global scheduling lock:
 2. **WP-003** entered `in-progress` after WP-004 completed. It converges Stage
    00 and `.agents/`, retains only Codex/Claude projections, and removes
    Gemini/Antigravity current surfaces.
-3. **WP-005** reviews Stage 05 semantic owners and records the point-in-time
+3. **WP-007** reviews Stage 90 semantic destinations and retires the permanent
+   RIA/census control plane under the user-approved research preservation
+   boundary.
+4. **WP-008** performs the Audit/Data ownership cutover while preserving the
+   latest external-research pack.
+5. **WP-005** reviews Stage 05 semantic owners and records the point-in-time
    cutover decisions in its Task and diff.
-4. **WP-006** performs the Stage 05 owner cutover and strengthens operational
+6. **WP-006** performs the Stage 05 owner cutover and strengthens operational
    contracts.
-5. **WP-007** reviews Stage 90 semantic destinations and retires the permanent
-   RIA/census control plane.
-6. **WP-008** performs the Stage 90 owner cutover and removes obsolete
-   generators, redirects, and overlapping reference assets.
-7. **WP-009** removes redundant Stage 98 bodies and redirects without editing
-   sealed records, preserving explicit remote-recovery deferrals.
+7. **WP-009** joins the completed Stage 05 and Stage 90 paths, then removes
+   redundant Stage 98 bodies and redirects without editing sealed records,
+   preserving explicit remote-recovery deferrals.
 8. **WP-010** and **WP-011** form the delegated Spec 0066 branch. After the
    reviewed activation checkpoint they run while TSK-0054-0011 remains the
    sole parent acceptance Task, and remain sequential within Spec 0066. No
@@ -879,8 +885,8 @@ hosted CI, deployment, incident response, or live platform correctness.
 | VAL-SDLC-005 | Stage 00 human governance, `.agents` machine registry, and Codex/Claude thin projections have disjoint owners; the three permanent agent gates pass with no hard-coded roster/adaptor cardinality, tracked secret, private-auth mutation, hosted provider credential, unredacted canary result, or over-privileged CI claim. |
 | VAL-SDLC-006 | Stage 99 has one registry containing profile definitions and normalized top-level lifecycle domains, one human router, and only the schemas/templates required by active authored profiles; no current-instance program, reference-pack, or standalone-execution roster remains. |
 | VAL-SDLC-007 | Guide, Policy, Runbook, Incident, and Postmortem roles are disjoint; reviewed duplicate procedures have one owner. |
-| VAL-SDLC-008 | Stage 90 contains only numbered, date-free Research, Audit, and Data packages with identity, owner, lifecycle, freshness, and consumer semantics; learning guidance moves to Stage 05, obsolete wiki/generator/gate surfaces are absent, and no permanent disposition census or RIA current-pack machine remains. |
-| VAL-SDLC-009 | Stage 98 retains only bounded Migrations and genuinely necessary minimal Tombstones; sealed records are unchanged, full-body copies and redirect chains are absent at consumer-zero, and MIG-0006 through MIG-0009 remain byte-for-byte with remote recovery explicitly deferred until authorized ancestry proof. |
+| VAL-SDLC-008 | Stage 90 preserves the latest externally researched pack and its routers; Audit/Data bodies and their RIA current-pack/SHA/FSM machine are absent after consumer cutover, with no permanent disposition census or exact corpus gate. |
+| VAL-SDLC-009 | Stage 98 retains only currently consumed bounded Migrations and genuinely necessary minimal Tombstones; retained records receive minimal shape and safe-recovery validation, full-body copies and redirects are absent, and empty historical families are removed. |
 | VAL-SDLC-010 | After ADR-0031 acceptance, the validation routing and consumer graph has one owner; production modules obey responsibility boundaries, independent tests/fixtures remain under top-level `tests/`, aggregate duplication and embedded self-tests are absent, and no terminal entrypoint, file, case, or line-count invariant remains. |
 | VAL-SDLC-011 | Focused, affected, staged, aggregate, secret, all-files, and independent review gates pass at each required boundary; permanent rules have one machine owner and validator, with zero aggregate duplication, unjustified current-state SHA pins, or consumer-free transition fixtures at the terminal fixed point. |
 | VAL-SDLC-012 | Each independently testable logical unit is committed separately with no unrelated user changes included. |

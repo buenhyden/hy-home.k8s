@@ -12,10 +12,10 @@ artifact_id: "TSK-0054-0003"
 ## Overview
 
 This is the single current Spec 0054 execution Task. The Codex/Claude registry
-and projection cutover is committed and current; WP-003 remains `in-progress`
-for context/memory policy activation, closure evidence, and the state-only
-handoff to TSK-0054-0005. Generic cumulative lifecycle behavior is implemented
-and reviewed.
+and projection cutover, context/memory policy activation, cumulative lifecycle
+behavior, broad checks, and independent reviews are complete. WP-003 remains
+`in-progress` only for the state-only handoff to TSK-0054-0007 required by the
+user-prioritized Stage 90 cleanup.
 
 ## Inputs
 
@@ -37,7 +37,7 @@ and reviewed.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-054-003 | VAL-SDLC-005, VAL-SDLC-011, VAL-SDLC-012 | Close Codex/Claude-only governance and activate the context/memory policy with cumulative lifecycle proof. | platform | In Progress | The agent authority cutover and generic cumulative lifecycle behavior are committed. Policy activation, broad closure, and handoff remain. | Cumulative implementation `332f0ad10cd8e8fe3f5df2f4b42dd954d2c27396..ab524c37613423555e881a0f3195ca71a89d8304`; 14 focused PASS; 74 Archive/Migration PASS in 167.533 seconds; [remaining Plan steps](../plan.md#wp-003--codexclaude-only-ai-agent-governance) |
+| WORK-054-003 | VAL-SDLC-005, VAL-SDLC-011, VAL-SDLC-012 | Close Codex/Claude-only governance and activate the context/memory policy with cumulative lifecycle proof. | platform | In Progress | Implementation and acceptance evidence are complete; only the atomic Task/pointer handoff remains. | Cumulative implementation `332f0ad10cd8e8fe3f5df2f4b42dd954d2c27396..ab524c37613423555e881a0f3195ca71a89d8304`; activation `56138ed518288e3950c99554af39767a041258df`; router correction `50d66876c2b0240697a0e3d1745cbcc24b64a9fd`; affected lane exit `0`; [handoff step](../plan.md#wp-003--codexclaude-only-ai-agent-governance) |
 
 ## Approval and Safety Boundaries
 
@@ -78,8 +78,9 @@ restore Gemini/Antigravity surfaces.
 
   The results prove current registry, projection, semantic, and CI-routing
   contracts only; they do not prove provider-runtime or hosted-CI behavior.
-- `docs/00.agent-governance/policies/context-and-memory.md` is still `draft`.
-  Its legal activation is not implied by the earlier commits or by MIG-0009.
+- `docs/00.agent-governance/policies/context-and-memory.md` is `active` in
+  commit `56138ed518288e3950c99554af39767a041258df`; thin-router correction
+  `50d66876c2b0240697a0e3d1745cbcc24b64a9fd` removes duplicated policy prose.
 - Generic cumulative behavior is implemented in
   `332f0ad10cd8e8fe3f5df2f4b42dd954d2c27396` through
   `ab524c37613423555e881a0f3195ca71a89d8304`. Disposable real Git fixtures
@@ -97,14 +98,18 @@ restore Gemini/Antigravity surfaces.
   before commit and by `ci` plus `explicit-ref` over the clean committed
   adjacent `draft → active` range. Whole approved-base comparisons remain
   unclaimed and deferred to WP-009; they are neither waived nor a PASS.
-- Remaining acceptance is exactly: policy/router activation; staged and both
-  adjacent-range lifecycle modes against the committed activation object;
-  strict, affected, aggregate, staged, pre-commit, secret-handling and diff
-  checks; independent activation/closure reviews; and the final state-only
-  handoff.
-- No completion is claimed. TSK-0054-0003 remains `in-progress`,
-  TSK-0054-0005 remains `queued`, the Spec 0054 compatibility pointer remains
-  on this Task, and Spec 0066 remains inactive.
+- Adjacent-range CI and explicit-ref lifecycle checks passed for
+  `754f89380ed9f86a6fba92eed5e35669e802bab0` to
+  `56138ed518288e3950c99554af39767a041258df`. The final affected lane over the
+  three selected paths exited `0`; its document, policy, repository-quality,
+  secret-handling, agent, infrastructure, and Kubernetes validators all
+  reported `PASS`. Independent specification, quality, and security reviews
+  are clean after the thin-router correction. These are repository-static
+  results and make no provider-runtime or hosted-CI claim.
+- No terminal completion is claimed until the state-only handoff commit.
+  TSK-0054-0003 remains `in-progress`, TSK-0054-0007 remains `queued`, the Spec
+  0054 compatibility pointer remains on this Task, and Spec 0066 remains
+  inactive.
 
 ## Traceability
 
