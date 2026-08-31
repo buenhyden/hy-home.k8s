@@ -443,20 +443,29 @@ is historical Git evidence, not pending work.
 - retiring current-state SHA/digest pins and compatibility wrappers.
 
 WP-003 must not duplicate those WP-010/WP-011 responsibilities before
-ADR-0031 and Spec 0066 activate. Its only remaining implementation is the
-generic cumulative lifecycle proof and the context/memory policy activation.
+ADR-0031 and Spec 0066 activate. Generic cumulative lifecycle behavior is
+implemented and reviewed; the remaining WP-003 work is the context/memory
+policy activation, closure validation, and state-only handoff.
+
+**Completed cumulative implementation:**
+
+- The reviewed implementation spans
+  `332f0ad10cd8e8fe3f5df2f4b42dd954d2c27396` through
+  `ab524c37613423555e881a0f3195ca71a89d8304`. These object IDs are execution
+  evidence, not a validator allowlist or current-state pin.
+- Disposable real Git fixtures prove generic cumulative creation and legal
+  transition behavior in both `ci` and `explicit-ref` modes. Focused tests
+  passed 14 cases; the final Archive/Migration regression run passed 74 cases
+  in 167.533 seconds.
+- Focused specification, Python, and static security reviews are clean after
+  four fix rounds. Static security review makes no provider-runtime claim.
+- Git records snapshots, not rename identity. A first-appearance commit that
+  also contains a deletion is ambiguous and cannot receive cumulative
+  admission. No path/SHA exception, real-path override, or new provenance
+  ledger is permitted.
 
 **Remaining files:**
 
-- Modify `scripts/validate-document-lifecycle.py` to prove a net-created
-  current document through bounded actual intermediate Git commits in `ci` and
-  `explicit-ref` modes. Keep `scripts/document_lifecycle.py` as the pure
-  lifecycle rule owner unless the generic comparison API itself must change.
-- Add `tests/test_document_lifecycle_cumulative_history.py` for focused
-  temporary-repository and CLI regressions. Its reusable
-  `assert_real_context_history` test helper accepts an explicit root, path,
-  base commit, and target commit for one execution-time real-path proof. Do
-  not add a fixture matrix or a path/SHA allowlist.
 - Activate
   `docs/00.agent-governance/policies/context-and-memory.md`, update its
   activation boundary, add it to the current Stage 00 policy index in
@@ -468,21 +477,19 @@ generic cumulative lifecycle proof and the context/memory policy activation.
 
 **TDD and diagnostic contract:**
 
-- [ ] **RED — actual intermediate history:** create a temporary repository in
+- [x] **RED — actual intermediate history:** create a temporary repository in
   which the target is absent at the supplied base, created in the profile's
   zero-indegree state, and promoted through every declared edge in later
   commits. The current net comparison must expose `LIFECYCLE-CREATE`; GREEN
   must accept both `ci` and `explicit-ref` only after validating each actual
   intermediate transition.
-- [ ] **RED — real Git boundaries:** prove in the same disposable repository
-  that both comparison modes use committed blobs rather than checkout bytes.
-  Exercise the low-level history function over the real context path from the
-  approved base to the committed activation, proving only that path's actual
-  `absent → draft → active` chain. Use the full CLI only for the clean,
-  recent committed `draft → active` range. Preserve `--include-path` as the
-  additive selector documented by `scripts/README.md`; it is not a focus
-  filter and this WP must not change its meaning.
-- [ ] **RED — fail closed:** direct active creation, an illegal intermediate
+- [x] **RED — provenance boundary:** prove in disposable real Git repositories
+  that both comparison modes use committed blobs rather than checkout bytes
+  and reject an ambiguous first appearance whose commit also deletes a path.
+  Preserve `--include-path` as the additive selector documented by
+  `scripts/README.md`; it is not a focus filter and this WP does not change its
+  meaning.
+- [x] **RED — fail closed:** direct active creation, an illegal intermediate
   transition, missing history, a non-ancestral range, ambiguous history, and
   malformed or bounds-exceeding Git output must remain unadmitted. Retain the
   exact existing `LIFECYCLE-CREATE` for an unproved net creation, or the
@@ -490,27 +497,32 @@ generic cumulative lifecycle proof and the context/memory policy activation.
   do not require a new diagnostic ID or exit code. No checkout bytes,
   branch-name rule, fixed commit list, or target-path exception may substitute
   for commit evidence.
-- [ ] **GREEN — bounded proof:** resolve commit objects with the existing
+- [x] **GREEN — bounded proof:** resolve commit objects with the existing
   strict ref/object checks; require an ancestral supplied range; enumerate a
   bounded, uniquely ordered chain of target-affecting commits; load the target
   blob from each commit; prove `absent → initial` and then every consecutive
   declared transition; and consume only the exact `LIFECYCLE-CREATE`
   diagnostic proved by that chain. Preserve every other diagnostic and the
-  existing additive include-path behavior. The focused low-level real-path
-  proof returns only path-chain evidence and does not consume unrelated
-  aggregate diagnostics; it is not a waiver or a separate gate.
-- [ ] Run focused GREEN and adjacent lifecycle regressions:
+  existing additive include-path behavior. Ambiguous first appearances remain
+  unadmitted without a waiver or separate gate.
+- [x] Run focused GREEN and Archive/Migration lifecycle regressions:
 
   ```bash
   python3 -m unittest tests.test_document_lifecycle_cumulative_history
   python3 -m unittest tests.test_document_lifecycle_archive_cutover tests.test_document_lifecycle_migration
   ```
 
+  The focused run passed 14 tests. The final Archive/Migration run passed 74
+  tests in 167.533 seconds.
+- [x] Complete focused specification, Python, and static security review over
+  commits `332f0ad10cd8e8fe3f5df2f4b42dd954d2c27396` through
+  `ab524c37613423555e881a0f3195ca71a89d8304`; all four fix rounds are clean.
+
 **Activation and cumulative proof:**
 
-- [ ] Commit the generic lifecycle behavior and its tests as one independently
-  reversible logical unit. The commit subject is chosen at execution time and
-  is not a validation invariant.
+- [x] Commit the generic lifecycle behavior and four reviewed correction rounds
+  from `332f0ad10cd8e8fe3f5df2f4b42dd954d2c27396` through
+  `ab524c37613423555e881a0f3195ca71a89d8304`.
 - [ ] In a second logical unit, change the context/memory policy from `draft`
   to `active`, remove its waiting language, and update the Stage 00 and scripts
   routers. Pass staged lifecycle and strict document checks, then commit this
@@ -525,18 +537,16 @@ generic cumulative lifecycle proof and the context/memory policy activation.
   git cat-file -e "${ACTIVATION_COMMIT}^{commit}"
   git cat-file -e "${DRAFT_BASE_COMMIT}^{commit}"
   git merge-base --is-ancestor "${DRAFT_BASE_COMMIT}" "${ACTIVATION_COMMIT}"
-  python3 -c 'from pathlib import Path; import sys; from tests.test_document_lifecycle_cumulative_history import assert_real_context_history; assert_real_context_history(Path("."), "docs/00.agent-governance/policies/context-and-memory.md", sys.argv[1], sys.argv[2])' bb55a1ae93c9fc3017f64b5f2246af11442265d3 "${ACTIVATION_COMMIT}"
   python3 scripts/validate-document-lifecycle.py --root . --mode ci --base-ref "${DRAFT_BASE_COMMIT}" --to-ref "${ACTIVATION_COMMIT}" --include-path docs/00.agent-governance/policies/context-and-memory.md
   python3 scripts/validate-document-lifecycle.py --root . --mode explicit-ref --from-ref "${DRAFT_BASE_COMMIT}" --to-ref "${ACTIVATION_COMMIT}" --include-path docs/00.agent-governance/policies/context-and-memory.md
   ```
 
-  The low-level call proves only the real context path's actual
-  `absent → draft → active` chain. The CLI pair proves the recent committed
-  `draft → active` edge, while disposable real-Git fixtures prove the generic
-  cumulative behavior in both modes. The whole approved-base-to-activation CLI
-  comparison remains blocked by unrelated archive/legacy cutover diagnostics
-  and is deferred until WP-009 removes that overreach. It is neither waived
-  nor claimed as a PASS.
+  The CLI pair proves only the clean committed `draft → active` edge.
+  Disposable real-Git fixtures already prove generic cumulative behavior in
+  both modes. The whole approved-base-to-activation comparison, including any
+  real-path `absent → draft → active` claim, remains unclaimed and deferred
+  until WP-009 removes archive/legacy cutover overreach. It is neither waived
+  nor a PASS.
 
 **Closure checks, reviews, and handoff:**
 
@@ -564,8 +574,9 @@ generic cumulative lifecycle proof and the context/memory policy activation.
   ```
 
 - [ ] Obtain independent specification, code-quality, Python, and static
-  security review. Resolve every Critical or Important finding and rerun the
-  checks affected by corrections. Record that static security review makes no
+  security review for the policy activation, closure evidence, and state-only
+  handoff. Resolve every Critical or Important finding and rerun the checks
+  affected by corrections. Record that static security review makes no
   provider-runtime claim.
 - [ ] After every acceptance-bearing check and review passes, make one final
   state-only logical commit: set TSK-0054-0003 to `done`, set TSK-0054-0005 to

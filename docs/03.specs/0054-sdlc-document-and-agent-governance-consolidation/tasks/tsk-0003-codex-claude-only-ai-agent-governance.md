@@ -13,8 +13,9 @@ artifact_id: "TSK-0054-0003"
 
 This is the single current Spec 0054 execution Task. The Codex/Claude registry
 and projection cutover is committed and current; WP-003 remains `in-progress`
-only for the generic cumulative lifecycle proof, context/memory policy
-activation, closure evidence, and state-only handoff to TSK-0054-0005.
+for context/memory policy activation, closure evidence, and the state-only
+handoff to TSK-0054-0005. Generic cumulative lifecycle behavior is implemented
+and reviewed.
 
 ## Inputs
 
@@ -36,7 +37,7 @@ activation, closure evidence, and state-only handoff to TSK-0054-0005.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-054-003 | VAL-SDLC-005, VAL-SDLC-011, VAL-SDLC-012 | Close Codex/Claude-only governance and activate the context/memory policy with cumulative lifecycle proof. | platform | In Progress | The agent authority cutover and unsupported-provider removal are committed. Cumulative lifecycle behavior, policy activation, broad closure, and handoff remain. | Commits `74817983629850a6e5a22a78285083342c01e37d` and `e8bb831926b28c90639aed267d0c538857cffafc`; current focused gate results below; [remaining Plan steps](../plan.md#wp-003--codexclaude-only-ai-agent-governance) |
+| WORK-054-003 | VAL-SDLC-005, VAL-SDLC-011, VAL-SDLC-012 | Close Codex/Claude-only governance and activate the context/memory policy with cumulative lifecycle proof. | platform | In Progress | The agent authority cutover and generic cumulative lifecycle behavior are committed. Policy activation, broad closure, and handoff remain. | Cumulative implementation `332f0ad10cd8e8fe3f5df2f4b42dd954d2c27396..ab524c37613423555e881a0f3195ca71a89d8304`; 14 focused PASS; 74 Archive/Migration PASS in 167.533 seconds; [remaining Plan steps](../plan.md#wp-003--codexclaude-only-ai-agent-governance) |
 
 ## Approval and Safety Boundaries
 
@@ -79,23 +80,28 @@ restore Gemini/Antigravity surfaces.
   contracts only; they do not prove provider-runtime or hosted-CI behavior.
 - `docs/00.agent-governance/policies/context-and-memory.md` is still `draft`.
   Its legal activation is not implied by the earlier commits or by MIG-0009.
-- The current approved-base-to-HEAD `ci` and `explicit-ref` comparisons fail on
-  unrelated historical Stage 98 deletions. `--include-path` is intentionally
-  additive, not a focus filter, so WP-003 will not change it to hide those
-  diagnostics. Disposable real-Git fixtures prove the generic cumulative
-  `absent → draft → active` behavior; a focused low-level function proves
-  only the real context path's chain from the approved base to activation; and
-  the clean recent committed range proves `draft → active` through both CLI
-  modes. The whole approved-base-to-activation CLI remains blocked until
-  WP-009 removes the archive/legacy cutover overreach. No full-range PASS is
-  claimed.
-- Remaining acceptance is exactly: focused RED/GREEN tests for bounded actual
-  intermediate history; fail-closed missing, ambiguous, non-ancestral, and
-  malformed cases; policy/router activation; staged and both focused cumulative
-  modes against the committed activation object; strict, affected, aggregate,
-  staged, pre-commit, secret-handling and diff checks; independent
-  specification, code-quality, Python, and static security review; and the
-  final state-only handoff.
+- Generic cumulative behavior is implemented in
+  `332f0ad10cd8e8fe3f5df2f4b42dd954d2c27396` through
+  `ab524c37613423555e881a0f3195ca71a89d8304`. Disposable real Git fixtures
+  passed 14 focused tests for `ci` and `explicit-ref`; the final
+  Archive/Migration regression run passed 74 tests in 167.533 seconds.
+  Focused specification, Python, and static security reviews are clean after
+  four fix rounds. These commits are execution evidence, not current-state
+  pins.
+- Git stores snapshots rather than rename identity. Any first-appearance commit
+  with a deletion is ambiguous and receives no cumulative admission. The
+  historical commit that first creates `context-and-memory.md` has that shape.
+  No low-level successful real-path call, approved-base path admission, path
+  exception, or SHA allowlist is claimed. `--include-path` remains additive.
+- Actual context-policy activation must be proved only by staged validation
+  before commit and by `ci` plus `explicit-ref` over the clean committed
+  adjacent `draft → active` range. Whole approved-base comparisons remain
+  unclaimed and deferred to WP-009; they are neither waived nor a PASS.
+- Remaining acceptance is exactly: policy/router activation; staged and both
+  adjacent-range lifecycle modes against the committed activation object;
+  strict, affected, aggregate, staged, pre-commit, secret-handling and diff
+  checks; independent activation/closure reviews; and the final state-only
+  handoff.
 - No completion is claimed. TSK-0054-0003 remains `in-progress`,
   TSK-0054-0005 remains `queued`, the Spec 0054 compatibility pointer remains
   on this Task, and Spec 0066 remains inactive.
@@ -106,4 +112,4 @@ restore Gemini/Antigravity surfaces.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-054-003](../plan.md#wp-003--codexclaude-only-ai-agent-governance) | In Progress. | Codex/Claude authority cutover is committed and current focused gates pass. The Plan's cumulative-history, activation, closure, review, and state-only handoff acceptance remains; no completion is claimed. |
+| [WORK-054-003](../plan.md#wp-003--codexclaude-only-ai-agent-governance) | In Progress. | Codex/Claude authority and generic cumulative lifecycle implementation are committed and reviewed. Policy activation, closure validation/review, and state-only handoff remain; no completion is claimed. |
