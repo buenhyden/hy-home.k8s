@@ -767,23 +767,22 @@ reason to reopen WP-004.
 - Do not create an Archive record, redirect, or body copy for the operations
   cutover. Reachable Git history owns full-content recovery.
 
-- [ ] Start from the reviewed WP-005 semantic targets and re-check consumers in
+- [x] Start from the reviewed WP-005 semantic targets and re-check consumers in
   the candidate diff before mutation.
-- [ ] Resolve the reviewed bootstrap, platform-expansion, observability,
+- [x] Resolve the reviewed bootstrap, platform-expansion, observability,
   metrics, and GitOps-onboarding Guide/Runbook overlaps.
-- [ ] Strengthen Incident role/timeline/severity/evidence fields and Postmortem
+- [x] Strengthen Incident role/timeline/severity/evidence fields and Postmortem
   cause/action-owner/due-state/closure fields.
-- [ ] Rename Guide/Policy/Runbook files to prefix-free four-digit routes while
+- [x] Rename Guide/Policy/Runbook files to prefix-free four-digit routes while
   preserving `GDE-####`, `POL-####`, and `RUN-####` frontmatter IDs.
-- [ ] Migrate every Release consumer to its approved evidence owner, delete the
+- [x] Migrate every Release consumer to its approved evidence owner, delete the
   Release documents/directory/profile/template/fixtures/gates, and prove zero
   current consumers. Do not create a Release tombstone or redirect.
-- [ ] Run:
+- [x] Run:
 
   ```bash
   python3 -m unittest discover -s tests -p 'test_*document*.py'
   python3 -m unittest tests.test_archive_recovery
-  python3 scripts/validate-document-contract-registry.py --mode strict
   python3 scripts/validate-document-contract-registry.py --mode strict
   python3 scripts/validate-markdown-profiles.py --root . --mode strict
   python3 scripts/validate-links-and-owners.py --root . --mode strict
@@ -792,8 +791,11 @@ reason to reopen WP-004.
   TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
   ```
 
-- [ ] Obtain operations and security review.
-- [ ] Commit: `refactor(ops): clarify operations document ownership`.
+- [x] Obtain execution-owner operations and static security review backed by
+  focused semantic tests, secret handling, staged validation, aggregate quality,
+  and pre-commit. No live-runtime claim is accepted.
+- [x] Commit: `refactor(ops): clarify operations document ownership`
+  (`b8d35ff`).
 
 ### WP-007 — Stage 90 semantic-destination review
 
