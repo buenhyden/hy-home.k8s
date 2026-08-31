@@ -35,7 +35,7 @@ naming this queued Task
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-054-013 | VAL-SDLC-001..VAL-SDLC-004, VAL-SDLC-006, VAL-SDLC-009..VAL-SDLC-012 | After the completed child and parent handoffs, converge the reviewed Stage 01/02/03/99 current-owner set, remove active Archive citations and cross-links, transfer unfinished work and unique authority, then retire residual transition assets against the accepted and completed Spec 0066 routing result without a fixed corpus census. | platform | Queued | Not executed. | Terminal Spec 0066 states, completed TSK-0054-0011, compatibility pointer to this queued Task, zero inbound Archive links, consumer/trace/lifecycle parity, Git-first recovery, registry/template parity, delegated routing evidence, and ordered logical commits |
+| WORK-054-013 | VAL-SDLC-001..VAL-SDLC-004, VAL-SDLC-006, VAL-SDLC-009..VAL-SDLC-012 | After the completed child and parent handoffs, reconcile retained Stage 01 Requirements and Stage 02 Architecture bidirectionally with the current implementation, converge the reviewed Stage 01/02/03/99 current-owner set, remove active Archive citations and cross-links, transfer unfinished work and unique authority, then retire residual transition assets against the accepted and completed Spec 0066 routing result without a fixed corpus census. | platform | Queued | Not executed. | Terminal Spec 0066 states, completed TSK-0054-0011, compatibility pointer to this queued Task, manifest/configuration/code/validator/operational-interface evidence mapped to retained Requirement Packages and Architecture Descriptions, zero inbound Archive links, consumer/trace/lifecycle parity, Git-first recovery, registry/template parity, delegated routing evidence, and ordered logical commits |
 
 ## Approval and Safety Boundaries
 
@@ -52,6 +52,16 @@ until the existing Spec 0054 compatibility pointer already names it while it is
 still `queued`.
 Each unit is independently validated and can stop before the next unit without
 rolling back an already accepted predecessor unit.
+
+The Stage 01/02 unit is not a prose-only consolidation. It compares retained
+Requirement Packages `0001` through `0004` and Architecture Descriptions
+`0004` through `0007` with current manifests, configuration, executable code,
+validators, and supported operational interfaces. Unique current facts move
+from removal candidates before deletion. Durable implemented behavior without
+an appropriate current Requirement/Architecture owner and retained current
+claims without implementation evidence are both blocking findings; raw
+inventories remain direct repository evidence rather than duplicated document
+authority.
 
 ## Verification Summary
 

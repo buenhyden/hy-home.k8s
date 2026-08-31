@@ -69,8 +69,11 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
   siblings are their current replacement owners.
 - Use Stage 90 for Audit, external Research, Data, and other bounded
   non-authoritative workspace references. Remove the existing Audit/Data
-  bodies only because their reviewed current purpose is obsolete or duplicated;
-  route `learning/` content to a Stage 05 Guide or Research.
+  bodies only because their reviewed current purpose is obsolete or
+  duplicated. Remove the existing `cloud-examples`, `learning`, and `llm-wiki`
+  bodies after consumer cutover; do not misclassify the learning roadmap as an
+  operational Guide or create a replacement package without a distinct
+  current owner.
 - Treat Stage 98 as an isolated historical archive. Stages 00, 01, 02, 03, 05,
   and 90 must neither cite nor cross-link a Stage 98 document or file. Keep
   validation minimal, treat `migrations/` as temporary historical material,
@@ -224,8 +227,9 @@ references, archive evidence, and scripts. Deletions are deliberately late.
 - Make Stage 00, Stage 99, validators, and provider adapters agree.
 - Make Stage 05 families purpose-disjoint and Incident-ready.
 - Classify and reconcile every Stage 90 file.
-- Reduce Stage 98 to bounded lookup evidence that Git cannot supply; do not
-  require a record for every removal or consolidation.
+- Isolate and minimize Stage 98 as historical material with only bounded
+  safety/readability checks; do not make a record a current-document or
+  deletion dependency.
 - Reduce Stage 99 to profile definitions, normalized top-level lifecycle
   domains, one human router, and only the schemas/templates required by active
   profiles.
@@ -377,10 +381,9 @@ cannot satisfy the terminal completion criteria.
   `scripts/validate-document-lifecycle.py`,
   `scripts/validate-links-and-owners.py`,
   `scripts/validate-markdown-profiles.py`, and their focused fixtures/tests.
-- Create or extend the current-path rows in
-  `docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md`
-  in the same commit as every move or deletion; do not defer evidence to
-  WP-009.
+- The completed historical cutover paired moves and deletions with its
+  then-current recovery evidence. Current work relies on reachable Git history
+  and does not reuse that historical mapping as a dependency.
 
 - [x] Inventory the inherited staged and unstaged paths against the exact
   WP-002/003/004 disposition. Reject unknown paths and correct the inherited
@@ -436,7 +439,7 @@ is historical Git evidence, not pending work.
   `e8bb831926b28c90639aed267d0c538857cffafc` completed the current
   `.agents/registry.json` and schema authority, thin Codex/Claude projections,
   Stage 00 policy/role/provider routing, Gemini/Antigravity consumer removal,
-  and sealed MIG-0005 recovery integration. Later current-tree commits closed
+  and its then-required recovery evidence. Later current-tree commits closed
   the memory/progress and document-contract residue without reopening a third
   provider.
 - The current tracked tree has no root `GEMINI.md`, `.gemini/**`,
@@ -446,7 +449,7 @@ is historical Git evidence, not pending work.
   provider-runtime or hosted-CI claims.
 - The authority/projection cutover is therefore not re-executed and no
   predecessor candidate is restaged. Historical path and byte recovery remains
-  in Git and sealed MIG-0005.
+  in reachable Git history.
 
 **Deferred to ADR-0031-activated Spec 0066:**
 
@@ -604,14 +607,14 @@ policy activation, closure validation, and state-only handoff.
 authorization, revert only the failing logical unit: router/policy activation
 first, then cumulative-history behavior if necessary. After handoff, revert
 the state-only commit before reverting activation. Do not reset shared history,
-edit sealed MIG-0005, or restore Gemini/Antigravity surfaces.
+edit retained historical records, or restore Gemini/Antigravity surfaces.
 
 ### WP-004 — document, lifecycle, Task, and registry authority activation
 
 WP-004 is completed historical execution. It established the owners required
 by later work and superseded the conflicting terminal assumptions of completed
 WP-002 without rewriting that evidence. Its accepted Task and commits are the
-execution record; sealed MIG-0004 is not regenerated. Terminal corpus
+execution record; no historical Archive record is regenerated. Terminal corpus
 reductions introduced by proposed ADR-0031 are prospective WP-013 work, not a
 reason to reopen WP-004.
 
@@ -633,9 +636,9 @@ reason to reopen WP-004.
   transitional `tasks.md` ledger last.
 - Created `docs/99.templates/{README.md,registry.json,contracts/**,templates/**}`
   with exactly the approved document template groups and no Release profile.
-- Created and sealed
-  `docs/98.archive/migrations/0004-document-authority-convergence.md` for the
-  authority/path cutover; this Plan does not recreate or edit it.
+- Recorded the then-required authority/path recovery evidence. Current work
+  uses reachable Git history and neither recreates nor cites that historical
+  record as a dependency.
 - Split touched document-validator internals by responsibility and extracted
   bounded readers behind stable interfaces, while preserving current root CLI
   and `tests/` paths as compatibility surfaces through WP-011.
@@ -686,9 +689,10 @@ reason to reopen WP-004.
   exhaustive permanent fixture combinations, and unjustified current-state
   SHA pins in every touched document validator. Kept representative positives
   and independent mutation negatives under top-level `tests/`.
-- [x] Added the exact migration/recovery mapping atomically with moves and proved
+- [x] Added the then-required recovery mapping atomically with moves and proved
   full commit OID, durable-ref reachability, regular legacy blob resolution,
-  bounded strict reads, and sealed digest match where applicable.
+  bounded strict reads, and sealed digest match where applicable. The current
+  rule retains only the reachable Git recovery principle.
 - [x] Recorded GREEN execution for:
 
   ```bash
@@ -697,7 +701,6 @@ reason to reopen WP-004.
   python3 scripts/validate-markdown-profiles.py --root . --mode strict
   python3 scripts/validate-links-and-owners.py --root . --mode strict
   python3 scripts/validate-document-lifecycle.py --root . --mode staged
-  python3 scripts/archive_recovery.py --root . --record docs/98.archive/migrations/0004-document-authority-convergence.md --verify
   python3 scripts/validate-affected-surfaces.py --root .
   TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
   git diff --cached --name-only -z > /tmp/spec-0054-staged.nul
@@ -757,9 +760,8 @@ reason to reopen WP-004.
 - Modify affected Stage 05 templates, registry body contracts, hooks, fixtures,
   indexes, and current links. Preserve only WP-002's lowercase Incident
   grammar; supersede its prefixed Guide/Policy/Runbook routes.
-- Create at most one bounded operations Migration only if an immutable
-  historical lookup cannot be resolved through Git. Do not create per-file
-  Tombstones.
+- Do not create an Archive record, redirect, or body copy for the operations
+  cutover. Reachable Git history owns full-content recovery.
 
 - [ ] Start from the reviewed WP-005 semantic targets and re-check consumers in
   the candidate diff before mutation.
@@ -771,8 +773,7 @@ reason to reopen WP-004.
   preserving `GDE-####`, `POL-####`, and `RUN-####` frontmatter IDs.
 - [ ] Migrate every Release consumer to its approved evidence owner, delete the
   Release documents/directory/profile/template/fixtures/gates, and prove zero
-  current consumers. Do not create Release tombstones when the Migration and
-  reachable Git history already identify the removed stable paths.
+  current consumers. Do not create a Release tombstone or redirect.
 - [ ] Run:
 
   ```bash
@@ -787,8 +788,6 @@ reason to reopen WP-004.
   TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
   ```
 
-  Run the recovery validator only when this cutover adds a bounded Migration
-  or minimal Tombstone.
 - [ ] Obtain operations and security review.
 - [ ] Commit: `refactor(ops): clarify operations document ownership`.
 
@@ -812,11 +811,14 @@ The approved preservation boundary is the current
 cutover. Later mechanical governance edits do not outrank the latest external
 research commits when determining recency.
 
-- [ ] Route `cloud-examples` and relevant maintained snapshots to numbered
-  Research packages, and route the learning roadmap to Stage 05 Guide `0010`.
-- [ ] Mark `llm-wiki`, its generator and gates for consumer-zero deletion.
-  Merge or remove older Audit packages and overlapping Data assets by semantic
-  owner.
+- [ ] Mark `cloud-examples`, `learning`, `llm-wiki`, its generator, and its
+  gates for consumer-zero deletion. Do not route the learning roadmap to Guide
+  `0010`, which already owns CI/CD QA reference operations; no reviewed body in
+  these families has a distinct current owner that warrants a replacement
+  Research package.
+- [ ] Merge or remove existing Audit packages and overlapping Data assets by
+  semantic owner while preserving Audit and Data as valid future Stage 90
+  roles.
 - [ ] Define terminal Stage 90 checks only for semantic category, stable
   identity, owner, lifecycle, freshness, consumers, and bounded supporting
   assets. Preserve the current external-research path while Spec 0062 consumes
@@ -842,22 +844,25 @@ it does not recreate the retired RIA or a permanent disposition ledger.
 - Modify Stage 90 indexes, current semantic packages, consumers, and focused
   semantic tests selected by WP-007.
 - Remove the obsolete RIA and llm-wiki generator/gate surfaces with their
-  exclusive fixtures after consumer-zero. Add one bounded Stage 98 Migration
-  only if an immutable historical lookup cannot be resolved through Git.
+  exclusive fixtures after consumer-zero. Do not create an Archive record or
+  redirect; reachable Git history owns removed full bodies.
 
 - [ ] Reject a stale Stage 04 link, an unauthorized dated-current path, and a
   maintained generated output without safe check mode before cutover.
-- [ ] Convert maintained current references to semantic undated filenames and
-  move observation dates into frontmatter/source metadata.
+- [ ] Convert any newly retained current reference to a semantic undated
+  filename and move observation dates into frontmatter/source metadata. Keep
+  the approved `research/2026-08-08-wer/` path stable while Spec 0062 consumes
+  it.
 - [ ] Preserve the current `research/2026-08-08-wer/` external-research pack
   byte-for-byte through the Audit/Data cutover. Remove Audit and Data bodies
   from the reviewed existing corpus only after their live consumers route to
   canonical Stage 00-05 owners or direct repository sources; Git remains their
   full-body recovery owner. Do not encode a ban on future valid Audit or Data
   references.
-- [ ] Move `learning/` content to a Stage 05 Guide or numbered Research package,
-  remove `res-`/`aud-` path prefixes while preserving stable IDs, and delete
-  deprecated redirects after consumer-zero.
+- [ ] Remove `cloud-examples`, `learning`, and `llm-wiki` after routing every
+  live consumer to a current semantic owner or direct source. Remove obsolete
+  `res-`/`aud-` paths and redirects after consumer-zero; do not create a
+  replacement document solely to preserve old content.
 - [ ] Ensure generated indexes use canonical inputs, bounded reads, check mode,
   and no write during check. A generated-output digest is allowed only when the
   output is explicitly sealed evidence, not as a current-state freshness pin.
@@ -871,8 +876,6 @@ it does not recreate the retired RIA or a permanent disposition ledger.
   TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
   ```
 
-  Verify a newly admitted bounded Migration or minimal Tombstone only when the
-  cutover actually requires one.
 - [ ] Obtain documentation, architecture, and Python review.
 - [ ] Commit: `refactor(references): reconcile Stage 90 ownership`.
 
@@ -908,9 +911,10 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
 - [ ] Require the minimal Migration/Tombstone fields from C-SDLC-009 and reject
   line-number hashes, full-corpus digests, current-document pins, and copied
   completed Spec/Plan/Task bodies without an approved exception.
-- [ ] Create a new Migration or minimal Tombstone only when an actual immutable
-  lookup cannot be resolved through Git and maintained mappings. Do not create
-  one record per deletion or a meta-Migration solely to delete Migrations.
+- [ ] Do not create a new Migration, Tombstone, redirect, or body copy during
+  this cleanup. Retain or remove existing records only by archive-internal
+  historical value and reachable Git recovery; never to satisfy a current
+  consumer.
 - [ ] Apply bounded path/decoding and sealed-byte checks only where each
   retained record declares that contract. Do not run a full Archive census,
   compare unrelated current files with historical SHAs, require an inbound
@@ -994,9 +998,8 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
   available. Internal job commands, local lanes, and aggregate orchestration
   may simplify while retaining their observable selection and diagnostics.
 - Delete a compatibility wrapper only after consumer-zero and unique-diagnostic
-  checks pass. Git history is the default recovery owner; use a bounded sealed
-  Migration only for a required immutable lookup that Git alone cannot
-  resolve, and a minimal Tombstone only when both are insufficient.
+  checks pass. Reachable Git history is the default recovery owner; do not
+  create an Archive record, redirect, or body copy for wrapper retirement.
 - The retired `route_state` option is not reintroduced. Spec 0066 owns current
   executable commands and negative behaviors rather than inheriting stale
   command lines from this parent Plan.
@@ -1060,8 +1063,8 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
 - Verify the four graphify retirements advanced to WP-003 under C-SDLC-009;
   do not recreate their outputs or repeat their recovery record. Other
   generated-current cleanup still requires its own current-consumer and
-  reproducibility proof plus Git recovery. Add Stage 98 evidence only when an
-  immutable historical lookup cannot otherwise be resolved.
+  reproducibility proof plus reachable Git recovery; it does not add an
+  Archive dependency.
 - Modify only the indexes, ignores, contracts, tests, and current links needed
   for that recovery boundary.
 
@@ -1102,11 +1105,16 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
   candidate, not a permanent corpus-count invariant.
 - Retain and rewrite Requirement Packages `0001` through `0004`. Transfer any
   unique current requirement or trace link from `0005` through `0008` to those
-  owners, then remove `0005` through `0008` only at consumer-zero.
+  owners, then remove `0005` through `0008` only at consumer-zero. Compare the
+  retained requirements with current manifests, configuration, code,
+  validators, and supported operational interfaces so durable implemented
+  behavior has a solution-independent Requirement owner.
 - Retain and update Architecture Descriptions `0004` through `0007`. Transfer
   current traceability from Descriptions `0008` through `0011`, then retire
-  those four descriptions. Keep every ADR body in the Stage 02 decision log
-  with accurate lifecycle and reciprocal supersession relations.
+  those four descriptions. Reconcile every retained description with the
+  actual current structure, boundaries, components, data/control/deployment
+  flows, and implementation evidence. Keep every ADR body in the Stage 02
+  decision log with accurate lifecycle and reciprocal supersession relations.
 - Retain Spec Packages `0004`, `0005`, `0008`, `0054`, and delegated `0066` as
   the reviewed current-owner set. For every other Stage 03 package, first
   transfer unfinished work and unique current authority or prove it obsolete,
@@ -1133,13 +1141,21 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
 - [ ] Add RED cases that reject a removed current owner,
   unresolved trace or template consumer, duplicate-purpose retained document,
   execution-instance roster, full-body archive template, and document reference
-  or executable consumer of a retired transition asset.
+  or executable consumer of a retired transition asset. Also reject durable
+  implemented behavior with no appropriate Requirement/Architecture owner and
+  a retained current Architecture claim with no repository implementation
+  evidence.
 - [ ] Move terminal invariants and unfinished work to the current semantic
   document, registry, production module, Spec Task, or focused behavioral test
   before removing a source.
 - [ ] Prove current consumers zero and recovery from reachable Git history.
-  Add one bounded Migration only when an immutable lookup cannot be resolved
-  through Git, and one minimal Tombstone only when both are insufficient.
+  Do not create an Archive record or redirect as part of the current-corpus
+  cutover.
+- [ ] Record the implementation evidence used for each retained Requirement
+  Package and Architecture Description, transfer unique current facts from
+  removal candidates, and correct or retire claims that conflict with the
+  repository. Keep raw inventories in direct repository evidence rather than
+  duplicating them in Stage 01/02 prose.
 - [ ] Delete the transition manifest/tool and transition-only tests after
   consumer-zero against the accepted Spec 0066 result. Assert current
   document/registry parity and absence of transition authority without a fixed
@@ -1268,8 +1284,12 @@ documents, registries, templates, or scripts.
 - Stage 05 Guide/Policy/Runbook/Incident responsibilities are disjoint,
   reviewed duplicates have one owner, and the Release family is absent.
 - Every Stage 90 file has one valid disposition and every authorized removal
-  has reachable Git recovery; Stage 98 exists only for a required immutable
-  lookup that Git alone cannot resolve.
+  has reachable Git recovery; Stage 98 is isolated historical material with
+  no inbound current-document dependency and only minimal validation.
+- Every retained Stage 01 Requirement Package and Stage 02 Architecture
+  Description reflects the current implementation at the appropriate
+  abstraction level, with no durable implemented behavior lacking an owner and
+  no current architectural claim lacking implementation evidence.
 - Every validation-registry command and route resolves, and dynamic discovery
   proves every production validator is reachable without turning the
   routing-only registry into a tracked-path census. There are no duplicate rule
