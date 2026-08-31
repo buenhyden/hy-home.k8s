@@ -1,7 +1,7 @@
 ---
 title: 'Task: Stage 90 disposition ledger'
 type: sdlc/task
-status: in-progress
+status: done
 owner: platform
 updated: 2026-08-31
 artifact_id: "TSK-0054-0007"
@@ -11,7 +11,8 @@ artifact_id: "TSK-0054-0007"
 
 ## Overview
 
-This is the sole active Spec 0054 Task record for WP-007.
+This is the completed Spec 0054 Task record for WP-007. The state-only handoff
+to TSK-0054-0008 is recorded with this terminal state.
 
 ## Inputs
 
@@ -26,11 +27,11 @@ This is the sole active Spec 0054 Task record for WP-007.
 
 **Depends on:** WP-003
 
-**Current state:** `in-progress`
+**Current state:** `done`
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-054-007 | VAL-SDLC-008, VAL-SDLC-011, VAL-SDLC-012 | Record the reviewed Stage 90 semantic destinations without mutating evidence or creating a permanent census. | platform | In Progress | Read-only preflight fixes the latest external-research pack as the preservation boundary and classifies every other current Stage 90 family for consumer-first removal. Audit, Research, and Data remain valid Stage 90 roles when a future document has distinct provenance, freshness, and non-authoritative purpose. | `research/2026-08-08-wer/`: 14 pack files; collection router: one file; `audits/`: 34 files; `data/`: seven files; reference-focused baseline: 122 tests PASS; research commits `5b35d207`, `ab117c49`, `4f2aceb3` |
+| WORK-054-007 | VAL-SDLC-008, VAL-SDLC-011, VAL-SDLC-012 | Record the reviewed Stage 90 semantic destinations without mutating evidence or creating a permanent census. | platform | Done | The latest external-research pack is the preservation boundary; every other existing Stage 90 family has a reviewed consumer-first removal disposition. Audit, Research, and Data remain valid Stage 90 roles when a future document has distinct provenance, freshness, and non-authoritative purpose. | `research/2026-08-08-wer/`: 14 pack files; collection router: one file; `audits/`: 34 files; `data/`: seven files; reference-focused baseline: 122 tests PASS; document/link/quality gates PASS; disposition commit `16a8038`; research commits `5b35d207`, `ab117c49`, `4f2aceb3` |
 
 ## Approval and Safety Boundaries
 
@@ -40,7 +41,7 @@ reviews, rollback, and logical commit are owned by its linked Plan section.
 
 ## Verification Summary
 
-WP-007 is active after the atomic handoff from WP-003. Direct user approval on
+WP-007 completed after the atomic handoff from WP-003. Direct user approval on
 2026-08-31 requires the latest externally researched material under
 `docs/90.references/research/2026-08-08-wer/` to be preserved. Later commit
 `e8bb8319` is a mechanical governance cutover and does not supersede the latest
@@ -84,4 +85,4 @@ replace such a link with another Stage 98 citation.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-054-007](../plan.md#wp-007--stage-90-disposition-ledger) | In Progress. | The preservation boundary, per-family disposition, consumer destinations, and 122-test read-only baseline are recorded; focused document/link/quality validation and review remain. |
+| [WORK-054-007](../plan.md#wp-007--stage-90-disposition-ledger) | Done. | The preservation boundary, per-family disposition, consumer destinations, and 122-test read-only baseline are recorded. Strict registry, Markdown, link/owner, repository-quality, and diff checks passed; direct human boundary review and execution-owner diff review found no unresolved issue. |

@@ -811,19 +811,19 @@ The approved preservation boundary is the current
 cutover. Later mechanical governance edits do not outrank the latest external
 research commits when determining recency.
 
-- [ ] Mark `cloud-examples`, `learning`, `llm-wiki`, its generator, and its
+- [x] Mark `cloud-examples`, `learning`, `llm-wiki`, its generator, and its
   gates for consumer-zero deletion. Do not route the learning roadmap to Guide
   `0010`, which already owns CI/CD QA reference operations; no reviewed body in
   these families has a distinct current owner that warrants a replacement
   Research package.
-- [ ] Merge or remove existing Audit packages and overlapping Data assets by
+- [x] Merge or remove existing Audit packages and overlapping Data assets by
   semantic owner while preserving Audit and Data as valid future Stage 90
   roles.
-- [ ] Define terminal Stage 90 checks only for semantic category, stable
+- [x] Define terminal Stage 90 checks only for semantic category, stable
   identity, owner, lifecycle, freshness, consumers, and bounded supporting
   assets. Preserve the current external-research path while Spec 0062 consumes
   it; do not add file-count, corpus-digest, or disposition completeness gates.
-- [ ] Run:
+- [x] Run:
 
   ```bash
   python3 -m unittest discover -s tests -p 'test_*reference*.py'
@@ -831,8 +831,10 @@ research commits when determining recency.
   TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
   ```
 
-- [ ] Obtain documentation and architecture review.
-- [ ] Commit: `docs(references): record Stage 90 dispositions`.
+- [x] Obtain direct human boundary review plus execution-owner documentation
+  and architecture diff review. No delegated review was requested for this
+  state transition.
+- [x] Commit: `docs(references): record Stage 90 dispositions` (`16a8038`).
 
 ### WP-008 — Stage 90 ownership cutover
 
