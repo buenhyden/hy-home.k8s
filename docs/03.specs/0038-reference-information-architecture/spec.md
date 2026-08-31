@@ -326,7 +326,7 @@ hook, validator, scanner behavior, or CI topology is changed here.
 
 - **Foundation**: [Spec 035](../0035-document-schema-and-lifecycle-contract/spec.md)
 - **Final integrator**: [Spec 040](../0040-contract-cutover-and-program-closure/spec.md)
-- **Current audit**: [2026-07-11 WEIA](../../90.references/audits/2026-07-11-weia/README.md)
+- **Current external research**: [Workspace Engineering Research Pack](../../90.references/research/0001-workspace-engineering/README.md)
 - **PRD**: [PRD-0006](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - **AD**: [AD-0009](../../02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md)
 - **Plan**: [Reference Information Architecture Implementation Plan](plan.md)

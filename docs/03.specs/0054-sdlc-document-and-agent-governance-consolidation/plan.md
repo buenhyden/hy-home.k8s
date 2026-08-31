@@ -3,7 +3,7 @@ title: 'SDLC Document and AI Agent Governance Consolidation Implementation Plan'
 type: sdlc/plan
 status: active
 owner: platform
-updated: 2026-08-31
+updated: 2026-09-01
 artifact_id: "PLAN-0054"
 ---
 
@@ -281,7 +281,7 @@ it grants no current or future Task authority to bypass a declared dependency.
 
 On 2026-08-31 the user directly prioritized Stage 90 cleanup after WP-003 and
 required preservation of the latest externally researched material under
-`docs/90.references/research/2026-08-08-wer/`. WP-007 and WP-008 therefore run
+`docs/90.references/research/0001-workspace-engineering/`. WP-007 and WP-008 therefore run
 before queued WP-005 and WP-006. After WP-008, the active pointer returns to
 WP-005. After WP-006, WP-010 activates delegated Spec 0066. WP-013 removes the
 remaining current-corpus conflicts and every active citation or cross-link to
@@ -806,7 +806,7 @@ reason to reopen WP-004.
   existing bodies, not to the category names themselves.
 
 The approved preservation boundary is the current
-`research/2026-08-08-wer/` pack plus its collection and Stage 90 routers. The
+`research/0001-workspace-engineering/` pack plus its collection and Stage 90 routers. The
 34 Audit files and seven Data files are removal candidates after consumer
 cutover. Later mechanical governance edits do not outrank the latest external
 research commits when determining recency.
@@ -849,26 +849,31 @@ it does not recreate the retired RIA or a permanent disposition ledger.
   exclusive fixtures after consumer-zero. Do not create an Archive record or
   redirect; reachable Git history owns removed full bodies.
 
-- [ ] Reject a stale Stage 04 link, an unauthorized dated-current path, and a
+- [x] Reject a stale Stage 04 link, an unauthorized dated-current path, and a
   maintained generated output without safe check mode before cutover.
-- [ ] Convert any newly retained current reference to a semantic undated
+- [x] Convert any newly retained current reference to a semantic undated
   filename and move observation dates into frontmatter/source metadata. Keep
-  the approved `research/2026-08-08-wer/` path stable while Spec 0062 consumes
+  the approved `research/0001-workspace-engineering/` path stable while Spec 0062 consumes
   it.
-- [ ] Preserve the current `research/2026-08-08-wer/` external-research pack
-  byte-for-byte through the Audit/Data cutover. Remove Audit and Data bodies
+- [x] Preserve the current `research/0001-workspace-engineering/` external-research pack's
+  external sources, observations, and claims through the Audit/Data cutover.
+  Permit only the numbering cutover, frontmatter normalization, link repair,
+  and current local-implementation corrections required by the approved
+  governance model. Remove Audit and Data bodies
   from the reviewed existing corpus only after their live consumers route to
   canonical Stage 00-05 owners or direct repository sources; Git remains their
   full-body recovery owner. Do not encode a ban on future valid Audit or Data
   references.
-- [ ] Remove `cloud-examples`, `learning`, and `llm-wiki` after routing every
+- [x] Remove `cloud-examples`, `learning`, and `llm-wiki` after routing every
   live consumer to a current semantic owner or direct source. Remove obsolete
   `res-`/`aud-` paths and redirects after consumer-zero; do not create a
   replacement document solely to preserve old content.
-- [ ] Ensure generated indexes use canonical inputs, bounded reads, check mode,
+- [x] Ensure retained generated indexes use canonical inputs, bounded reads, check mode,
   and no write during check. A generated-output digest is allowed only when the
   output is explicitly sealed evidence, not as a current-state freshness pin.
-- [ ] Run:
+  Remove the obsolete LLM Wiki generator and generated index instead of
+  preserving a second reference control plane.
+- [x] Run:
 
   ```bash
   python3 -m unittest discover -s tests -p 'test_*reference*.py'
@@ -878,8 +883,10 @@ it does not recreate the retired RIA or a permanent disposition ledger.
   TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
   ```
 
-- [ ] Obtain documentation, architecture, and Python review.
-- [ ] Commit: `refactor(references): reconcile Stage 90 ownership`.
+- [x] Obtain execution-owner documentation, architecture, and Python diff
+  review backed by strict profile/link validation, 93 lifecycle tests, 223
+  Archive tests, focused reference tests, and the repository quality aggregate.
+- [x] Commit: `refactor(references): reconcile Stage 90 ownership`.
 
 ### WP-009 — global Stage 98 parity and recovery closure
 

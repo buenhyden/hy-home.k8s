@@ -12,7 +12,7 @@ artifact_id: "SPEC-0056"
 ## Overview
 
 This specification designs a gap-only external-source refresh of the existing
-`docs/90.references/research/2026-08-08-wer/` pack. It does not create a new
+`docs/90.references/research/0001-workspace-engineering/` pack. It does not create a new
 dated pack and does not repeat the broad research completed by
 [Spec 053](../0053-workspace-engineering-research-pack-consolidation/spec.md).
 The refresh admits only two evidence classes selected by the human requester:
@@ -25,7 +25,7 @@ The refresh admits only two evidence classes selected by the human requester:
 
 The user approved this design direction and the written specification on
 2026-08-09, selected subagent-driven execution, and directed the result to be
-integrated into the existing `2026-08-08-wer` pack. WERG-000 activates the
+integrated into the existing `0001-workspace-engineering` pack. WERG-000 activates the
 reciprocal [Plan](plan.md)
 and [Task](README.md#task-records)
 through a standalone execution relation governed by
@@ -63,7 +63,7 @@ implementation evidence and deeper evidence that remains `DEFER`.
   `README.md`, `spec-driven-sdlc-and-document-contracts.md`,
   `ci-cd-github-actions-and-qa.md`,
   `kubernetes-infrastructure-and-security.md`, and
-  `source-coverage-and-migration-ledger.md`.
+  `source-coverage.md`.
 - Use disjoint research workers, independent content and quality review,
   logical-unit commits, and repository-static validation.
 
@@ -102,7 +102,7 @@ research is referenced, not rewritten.
 ### C-WERG-002 — existing-pack ownership
 
 All accepted findings are integrated into the existing
-`2026-08-08-wer` owners. No new pack, addendum, duplicate topic owner, or
+`0001-workspace-engineering` owners. No new pack, addendum, duplicate topic owner, or
 parallel current navigation is created. The pack date remains its original
 identity; every new source and claim records the separate check date
 `2026-08-10`.
@@ -179,7 +179,7 @@ record the final admission result for every requested category.
 | `spec-driven-sdlc-and-document-contracts.md` | Add official external semantics for admitted PRD, AD, Policy, Runbook, and broader Release-record questions; preserve local profile/lifecycle facts and the Spec 052 DOC-G1/DOC-G5 decisions. |
 | `ci-cd-github-actions-and-qa.md` | Add the externally sourced Verification/Validation distinction and a responsibility/evidence/failure matrix across SDLC, QA, delivery, and operations. |
 | `kubernetes-infrastructure-and-security.md` | Add only line-level admitted security deltas after proving the current report does not already close the question. |
-| `source-coverage-and-migration-ledger.md` | Append only new source and claim rows, including checked date, adoption boundary, rejected inference, refresh trigger, workspace evidence, uncertainty, and owner link. |
+| `source-coverage.md` | Append only new source and claim rows, including checked date, adoption boundary, rejected inference, refresh trigger, workspace evidence, uncertainty, and owner link. |
 
 ### Research and review flow
 
@@ -248,7 +248,7 @@ their numbers or counts.
 
 ### Snapshot identity
 
-The directory identity remains `2026-08-08-wer`. New material is visibly
+The directory identity remains `0001-workspace-engineering`. New material is visibly
 labeled as a `2026-08-10 gap-only source refresh`. This separates the original
 consolidated snapshot from later source verification without pretending that
 all original sources were rechecked on the later date.
@@ -264,7 +264,7 @@ and before branch completion.
 
 ### Inputs
 
-- The exact current thirteen-file `2026-08-08-wer` pack.
+- The exact current thirteen-file `0001-workspace-engineering` pack.
 - The 32-row request matrix and current source/claim registers.
 - The current repository paths cited by each candidate question.
 - Official external sources checked on 2026-08-10.
@@ -383,6 +383,6 @@ credential-bearing, or live success.
 - **Research-pack terminal design**: [Spec 053](../0053-workspace-engineering-research-pack-consolidation/spec.md)
 - **Direct-approval lineage decision**: [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
 - **Document taxonomy decisions**: [Spec 052](../0052-document-taxonomy-consolidation/spec.md)
-- **Current research pack**: [2026-08-08 WER](../../90.references/research/2026-08-08-wer/README.md)
+- **Current research pack**: [2026-08-08 WER](../../90.references/research/0001-workspace-engineering/README.md)
 - **Plan**: [active gap-only refresh Plan](plan.md)
 - **Task**: [active gap-only refresh Task](README.md#task-records)

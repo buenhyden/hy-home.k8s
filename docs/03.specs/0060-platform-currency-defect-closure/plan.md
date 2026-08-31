@@ -45,8 +45,8 @@ registry, or CI run was contacted, and no reconciliation is claimed.
 - [Spec 0060](../../03.specs/0060-platform-currency-defect-closure/spec.md)
 - [Plan](plan.md)
 - [ADR-0029](../../02.architecture/decisions/0026-argo-cd-source-integrity-non-adoption.md)
-- [Tech stack version inventory](../../90.references/data/tech-stack-version-inventory.md)
-- [Kubernetes, infrastructure, and security research](../../90.references/research/2026-08-08-wer/kubernetes-infrastructure-and-security.md)
+- [Kubernetes infrastructure and security research](../../90.references/research/0001-workspace-engineering/kubernetes-infrastructure-and-security.md)
+- [Kubernetes, infrastructure, and security research](../../90.references/research/0001-workspace-engineering/kubernetes-infrastructure-and-security.md)
 
 ### Drift inventory that scoped this cycle
 
@@ -342,7 +342,7 @@ literals rather than duplicated links.
 - Reciprocal Task:
   `docs/03.specs/0060-platform-currency-defect-closure/README.md#task-records`
 - [ADR-0026 — Argo CD source integrity non-adoption](../../02.architecture/decisions/0026-argo-cd-source-integrity-non-adoption.md)
-- [Tech stack version inventory](../../90.references/data/tech-stack-version-inventory.md)
+- [Kubernetes infrastructure and security research](../../90.references/research/0001-workspace-engineering/kubernetes-infrastructure-and-security.md)
 
 ### Legacy Task traceability
 

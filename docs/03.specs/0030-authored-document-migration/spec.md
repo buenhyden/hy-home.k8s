@@ -291,7 +291,7 @@ git diff --check
 - **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md)
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Validation Spec**: [Semantic Document Validation](../0029-semantic-document-validation/spec.md)
-- **Current Audit**: [SDLC, Document Lifecycle, and Frontmatter](../../90.references/audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md)
+- **Current Research**: [Spec-driven SDLC and Document Contracts](../../90.references/research/0001-workspace-engineering/spec-driven-sdlc-and-document-contracts.md)
 
 ### Delivery and References
 

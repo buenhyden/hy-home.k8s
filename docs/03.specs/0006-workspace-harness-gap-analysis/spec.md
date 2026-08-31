@@ -172,7 +172,6 @@ Not applicable. This work does not expose an API.
 
 ```bash
 bash scripts/validate-repo-quality-gates.sh .
-bash scripts/generate-llm-wiki-index.sh --check
 bash scripts/validate-gitops-structure.sh
 bash scripts/validate-k8s-manifests.sh .
 bash scripts/check-secret-handling.sh .
@@ -512,7 +511,7 @@ clusterrolebinding` examples carry human-approved, bootstrap, break-glass,
 | --- | --- | --- |
 | N/A — this repository-governance baseline predates and does not implement a single product requirement | VAL-SPC-006-059 | The existing workspace-wide P0 overlay and repository-static quality gates verify the summarized harness-gap baseline; current Stage 00 product ownership remains outside this Spec. |
 
-- **Audit Reference**: [../../90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md](../../90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md)
+- **Current Research Reference**: [Workspace Engineering Research Pack](../../90.references/research/0001-workspace-engineering/README.md)
 - **P3 Plan**: [../../04.execution/plans/2026-05-24-p3-gitops-secret-runtime-remediation.md](../../98.archive/README.md#document-index)
 - **P3 Tasks**: [Archive Index](../../98.archive/README.md#document-index)
 - **Agent Registry**: [../../../.agents/registry.json](../../../.agents/registry.json)

@@ -31,7 +31,7 @@ to TSK-0054-0008 is recorded with this terminal state.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-054-007 | VAL-SDLC-008, VAL-SDLC-011, VAL-SDLC-012 | Record the reviewed Stage 90 semantic destinations without mutating evidence or creating a permanent census. | platform | Done | The latest external-research pack is the preservation boundary; every other existing Stage 90 family has a reviewed consumer-first removal disposition. Audit, Research, and Data remain valid Stage 90 roles when a future document has distinct provenance, freshness, and non-authoritative purpose. | `research/2026-08-08-wer/`: 14 pack files; collection router: one file; `audits/`: 34 files; `data/`: seven files; reference-focused baseline: 122 tests PASS; document/link/quality gates PASS; disposition commit `16a8038`; research commits `5b35d207`, `ab117c49`, `4f2aceb3` |
+| WORK-054-007 | VAL-SDLC-008, VAL-SDLC-011, VAL-SDLC-012 | Record the reviewed Stage 90 semantic destinations without mutating evidence or creating a permanent census. | platform | Done | The latest external-research pack is the preservation boundary; every other existing Stage 90 family has a reviewed consumer-first removal disposition. Audit, Research, and Data remain valid Stage 90 roles when a future document has distinct provenance, freshness, and non-authoritative purpose. | `research/0001-workspace-engineering/`: 14 pack files; collection router: one file; `audits/`: 34 files; `data/`: seven files; reference-focused baseline: 122 tests PASS; document/link/quality gates PASS; disposition commit `16a8038`; research commits `5b35d207`, `ab117c49`, `4f2aceb3` |
 
 ## Approval and Safety Boundaries
 
@@ -43,7 +43,7 @@ reviews, rollback, and logical commit are owned by its linked Plan section.
 
 WP-007 completed after the atomic handoff from WP-003. Direct user approval on
 2026-08-31 requires the latest externally researched material under
-`docs/90.references/research/2026-08-08-wer/` to be preserved. Later commit
+`docs/90.references/research/0001-workspace-engineering/` to be preserved. Later commit
 `e8bb8319` is a mechanical governance cutover and does not supersede the latest
 external-research commits `5b35d207`, `ab117c49`, and `4f2aceb3` for recency.
 The current tree contains no second research pack. Audit and Data files may be
@@ -55,7 +55,7 @@ The reviewed point-in-time dispositions are:
 
 | Existing family | Disposition | Required consumer cutover |
 | --- | --- | --- |
-| Stage router, Research router, and `research/2026-08-08-wer/` | Preserve at the current paths while Spec 0062 consumes the pack. Do not rewrite its external-research bodies during the Audit/Data cutover. | Keep current Spec 0062 provenance links; remove obsolete RIA/llm-wiki validation dependencies separately. |
+| Stage router, Research router, and `research/0001-workspace-engineering/` | Preserve at the current paths while Spec 0062 consumes the pack. Do not rewrite its external-research bodies during the Audit/Data cutover. | Keep current Spec 0062 provenance links; remove obsolete RIA/llm-wiki validation dependencies separately. |
 | `audits/` | Remove the 34 existing bodies after consumer-zero. This does not ban future distinct Audit evidence. | Route current normative claims to Stage 00-05 owners; Requirement `0005` and Architecture Description `0008` are already WP-013 removal candidates after unique-content transfer. |
 | `data/` | Remove the seven existing snapshot/control-plane bodies after consumer-zero. This does not ban future distinct Data evidence. | Route ADR and README consumers to current ADR/Architecture/Requirement owners, direct manifests/configuration, or official upstream sources; remove RIA registry/schema pins. |
 | `cloud-examples/` | Remove the five snapshot/example bodies after consumer-zero; no replacement Research pack is justified. | Replace navigation and validator path assumptions with direct canonical sources. |

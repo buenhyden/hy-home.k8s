@@ -97,7 +97,6 @@ class HistoricalMigrationProofTest(unittest.TestCase):
             ),
             adapter_targets={},
             route_state="terminal",
-            ria_contract_text=None,
         )
         # These old sealed corpora do not exist in this minimal repository.
         # Generic records, source objects, staged parity and renderer are real.
@@ -455,8 +454,9 @@ class HistoricalMigrationProofTest(unittest.TestCase):
         (self.root / self.fixture.consumer).write_bytes(changed)
         self.fixture.git.run("add", "--", self.fixture.consumer)
         self.context.texts[self.consumer] = changed.decode()
-        with self.assertRaises(self.links.ConfigurationError):
+        with self.assertRaises(legacy.ContractError) as raised:
             self.validate_legacy_with_public_proof(legacy)
+        self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-CONSUMER")
 
     def test_quoted_comma_literal_disposition_flows_to_legacy_scanner(self):
         legacy, rows = self.legacy_declaration_fixture()
@@ -490,8 +490,9 @@ class HistoricalMigrationProofTest(unittest.TestCase):
         (self.root / self.fixture.consumer).write_bytes(changed)
         self.fixture.git.run("add", "--", self.fixture.consumer)
         self.context.texts[self.consumer] = changed.decode()
-        with self.assertRaises(self.links.ConfigurationError):
+        with self.assertRaises(legacy.ContractError) as raised:
             self.validate_legacy_with_public_proof(legacy)
+        self.assertEqual(raised.exception.rule_id, "AGQC-LEGACY-CONSUMER")
 
     def test_fresh_migration_reason_retired_instruction_fails(self):
         legacy, rows = self.legacy_declaration_fixture()
@@ -617,15 +618,10 @@ class HistoricalMigrationProofTest(unittest.TestCase):
                     self.assertEqual(historical.rendered_dispositions[key], terminal)
                     self.assertNotIn(key, historical.literal_dispositions)
 
-    def test_held_context_reuses_markdown_ria_bytes_and_generic_inputs(self):
+    def test_held_context_reuses_markdown_and_generic_inputs(self):
         documents, registry, _raw, schema, _templates = (
             self.fixture.held_document_inputs()
         )
-        for relative in (self.links.RIA_CONTRACT_PATH, self.links.RIA_SCHEMA_PATH):
-            target = self.root / relative
-            target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_bytes((fixtures.ROOT / relative).read_bytes())
-        self.fixture.git.run("add", "--", str(self.links.RIA_SCHEMA_PATH))
         inventory = types.SimpleNamespace(
             current_paths=(self.consumer,),
             baseline_paths=(),
@@ -634,11 +630,9 @@ class HistoricalMigrationProofTest(unittest.TestCase):
         legacy = load_validator()
         (self.root / ".codex").mkdir()
         (self.root / ".codex/skills").symlink_to("../.agents/skills")
-        reads = []
         with legacy._RepositoryReader(self.root) as reader:
 
             def read_current_bytes(path, max_bytes):
-                reads.append((path, max_bytes))
                 return reader.read_bytes(path, max_bytes=max_bytes)
 
             def read_symlink(path):
@@ -664,13 +658,6 @@ class HistoricalMigrationProofTest(unittest.TestCase):
                     "_terminal_governance_current_owners",
                     return_value=((), ()),
                 ),
-                mock.patch.object(
-                    self.links,
-                    "_terminal_reference_current_packs",
-                    return_value=self.links.ReferenceCurrentPacks(
-                        "content/reference", ()
-                    ),
-                ),
             ):
                 context = self.build_context(
                     self.root,
@@ -685,15 +672,8 @@ class HistoricalMigrationProofTest(unittest.TestCase):
                 context.texts[self.consumer].encode(), self.fixture.consumer_bytes
             )
             self.assertEqual(
-                context.ria_contract_text.encode(),
-                (self.root / self.links.RIA_CONTRACT_PATH).read_bytes(),
-            )
-            self.assertEqual(
                 context.adapter_targets[PurePosixPath(".codex/skills")],
                 PurePosixPath(".agents/skills"),
-            )
-            self.assertEqual(
-                [path for path, _ in reads].count(str(self.links.RIA_CONTRACT_PATH)), 1
             )
             with mock.patch.object(
                 self.links,
@@ -786,14 +766,16 @@ class HistoricalMigrationProofTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             declaration.path_dispositions["unproved"] = "unproved"
 
-    def test_public_proof_rejects_changed_exact_historical_consumer(self):
+    def test_public_proof_keeps_historical_bytes_when_current_consumer_changes(self):
         fixture = self.fixture
-        (self.root / fixture.consumer).write_bytes(
-            fixture.consumer_bytes + b"\nnew use\n"
-        )
+        changed = fixture.consumer_bytes + b"\nnew use\n"
+        (self.root / fixture.consumer).write_bytes(changed)
         fixture.git.run("add", "--", fixture.consumer)
-        with self.assertRaises(self.links.ConfigurationError):
-            self.proof()
+
+        proof = self.proof()
+
+        self.assertEqual(proof.consumers[fixture.consumer], fixture.consumer_bytes)
+        self.assertNotEqual(proof.consumers[fixture.consumer], changed)
 
     def test_membership_does_not_admit_a_token_only_consumer(self):
         fixture = self.fixture
@@ -805,67 +787,6 @@ class HistoricalMigrationProofTest(unittest.TestCase):
         self.context.texts[self.consumer] = raw.decode()
         with self.assertRaises(self.links.ConfigurationError):
             self.proof()
-
-    def test_ria_eligibility_requires_actual_exact_source_bytes(self):
-        fixture = self.fixture
-        source = PurePosixPath("docs/90.references/audits/fixture/report.md")
-        raw = b"[policy](../../../00.agent-governance/old.md)\n"
-        commit, _ = fixture.git.commit_many({str(source): raw})
-        self.context.paths += (source,)
-        self.context.texts[source] = raw.decode()
-        self.context.profiles[source] = types.SimpleNamespace(
-            profile_id="content/reference"
-        )
-        self.context.metadata[source] = {"status": "done"}
-        self.context.tracked_regular_paths |= {source}
-        self.context.ria_contract_text = json.dumps(
-            {
-                "snapshotGuard": {
-                    "sourceCommit": "git-sha1:" + commit,
-                    "historicalPackIds": ["audits/fixture"],
-                },
-                "retiredCurrentPackBaselines": [],
-            }
-        )
-        proof = self.proof()
-        self.assertEqual(proof.consumers[str(source)], raw)
-        self.context.texts[source] += "new instruction\n"
-        with self.assertRaises(self.links.ConfigurationError):
-            self.proof()
-
-    def test_audit_settled_retired_readme_uses_real_protected_git_bytes(self):
-        source = PurePosixPath("docs/90.references/audits/2026-07-11-weia/README.md")
-        contract_text = (fixtures.ROOT / self.links.RIA_CONTRACT_PATH).read_text()
-        contract = json.loads(contract_text)
-        record = next(
-            record
-            for record in contract["retiredCurrentPackBaselines"]
-            if record["id"] == "audits/2026-07-11-weia"
-        )
-        current = (fixtures.ROOT / source).read_bytes()
-        old = self.links._read_ria_commit_path(
-            fixtures.ROOT,
-            record["sourceCommit"].removeprefix("git-sha1:"),
-            Path(source),
-        )
-        self.assertNotEqual(old, current)
-        self.context.root = fixtures.ROOT
-        self.context.paths = (source,)
-        self.context.texts = {source: current.decode()}
-        self.context.metadata = {source: {}}
-        self.context.profiles = {
-            source: types.SimpleNamespace(profile_id="readme/snapshot-pack")
-        }
-        self.context.tracked_regular_paths = frozenset({source})
-        self.context.ria_contract_text = contract_text
-        # This case proves actual RIA Git bytes, not unrelated migration corpora.
-        with mock.patch.object(
-            self.links,
-            "repository_migration_proof",
-            return_value=fixtures.archive.MigrationProof({}, {}),
-        ):
-            proof = self.proof()
-        self.assertEqual(proof.consumers[str(source)], current)
 
     def test_terminal_status_alone_never_proves_historical_links(self):
         source = PurePosixPath("docs/03.specs/unproved/spec.md")
@@ -881,59 +802,6 @@ class HistoricalMigrationProofTest(unittest.TestCase):
         self.assertFalse(
             any(owner == str(source) for owner, _ in proof.rendered_dispositions)
         )
-
-    def test_ria_projection_uses_proven_removed_contract_and_schema_bytes(self):
-        from scripts import reference_information_architecture as ria
-
-        fixture = self.fixture
-        paths = (ria.AGENT_LEGACY_CUTOVER_PATH, ria.AGENT_LEGACY_CUTOVER_SCHEMA_PATH)
-        source_inputs = {}
-        for path in paths:
-            current = fixtures.ROOT / path
-            if current.is_file():
-                source_inputs[str(path)] = current.read_bytes()
-                continue
-            migration = "docs/98.archive/migrations/0005-codex-claude-agent-governance-convergence.md"
-            rows, _ = fixtures.archive.parse_migration_control(
-                migration, (fixtures.ROOT / migration).read_bytes()
-            )
-            row = next(row for row in rows if row["legacy_path"] == str(path))
-            source_inputs[str(path)] = self.links._read_ria_commit_path(
-                fixtures.ROOT, row["source_commit"], path
-            )
-        commit, blobs = fixture.git.commit_many(source_inputs)
-        target = "scripts/current-legacy-validator.py"
-        (self.root / target).parent.mkdir()
-        (self.root / target).write_bytes(b"# Current validator\n")
-        fixture.git.run("add", "--", target)
-        rows = [fixture.row]
-        for path, raw in source_inputs.items():
-            fixture.git.run("rm", "--quiet", "--", path)
-            rows.append(
-                dict(
-                    legacy_path=path,
-                    stable_path=None,
-                    artifact_id=None,
-                    action="merged",
-                    replacement=target,
-                    source_commit=commit,
-                    source_blob=blobs[path],
-                    content_sha256=hashlib.sha256(raw).hexdigest(),
-                    reason="Retire duplicate current authority; retain its historical interpretation",
-                )
-            )
-        fixture.write(rows)
-        projections = ria.load_agent_cutover_projections(self.root, None)
-        self.assertEqual(
-            tuple(map(str, projections)),
-            tuple(path for path, _ in ria.AGENT_CUTOVER_CURRENT_PATH_COUNTS),
-        )
-        # No authority reappears in the current fixture tree.
-        self.assertTrue(all(not (self.root / path).exists() for path in paths))
-        fixture.write(rows[:-1])
-        with self.assertRaises(ria._GitError):
-            ria.load_agent_cutover_projections(self.root, None)
-
 
 if __name__ == "__main__":
     unittest.main()

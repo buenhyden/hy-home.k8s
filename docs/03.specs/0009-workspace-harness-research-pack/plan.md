@@ -232,7 +232,6 @@ Run:
 sed -n '1,260p' AGENTS.md
 sed -n '1,280p' docs/00.agent-governance/rules/bootstrap.md
 sed -n '1,300p' docs/00.agent-governance/harness-catalog.md
-sed -n '1,260p' docs/00.agent-governance/harness-implementation-map.md
 sed -n '1,260p' docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md
 sed -n '1,220p' scripts/README.md
 ```
@@ -458,7 +457,7 @@ Run:
 
 ```bash
 git diff --check
-bash scripts/generate-llm-wiki-index.sh --check
+python3 scripts/validate-markdown-profiles.py --root . --mode strict
 bash scripts/validate-repo-quality-gates.sh .
 rg --files | rg '(^|/)progress\.md$'
 ```
@@ -466,7 +465,7 @@ rg --files | rg '(^|/)progress\.md$'
 Expected:
 
 - `git diff --check`: no output and exit 0.
-- `generate-llm-wiki-index.sh --check`: `[PASS] LLM WIKI generated index is current`.
+- `validate-markdown-profiles.py`: zero profile violations.
 - `validate-repo-quality-gates.sh .`: `[PASS] repository quality gates passed`.
 - `rg --files | rg '(^|/)progress\.md$'`: only
   `docs/00.agent-governance/memory/progress.md`.
@@ -517,7 +516,7 @@ Expected: one final integration commit.
 | ID | Level | Description | Command / How to Run | Pass Criteria |
 | --- | --- | --- | --- | --- |
 | VAL-PLN-001 | Structural | Markdown whitespace check | `git diff --check` | Exit 0 with no output. |
-| VAL-PLN-002 | Generated index | LLM Wiki freshness | `bash scripts/generate-llm-wiki-index.sh --check` | Prints `[PASS] LLM WIKI generated index is current`. |
+| VAL-PLN-002 | Reference profiles | Stage 90 Markdown contract | `python3 scripts/validate-markdown-profiles.py --root . --mode strict` | Reports zero profile violations. |
 | VAL-PLN-003 | Repo quality | Template, README, link, and governance gates | `bash scripts/validate-repo-quality-gates.sh .` | Prints `[PASS] repository quality gates passed`. |
 | VAL-PLN-004 | Memory singleton | Confirm only canonical progress ledger exists | `rg --files \| rg '(^\|/)progress\.md$'` | Prints only `docs/00.agent-governance/memory/progress.md`. |
 | VAL-PLN-005 | Source attribution | Confirm each reference has `Sources` and `Review and Freshness` | Manual review plus repo gate | Every reference document contains required sections and source-checked date. |
@@ -526,7 +525,7 @@ Expected: one final integration commit.
 
 - **Test Commands**:
   - `git diff --check`
-  - `bash scripts/generate-llm-wiki-index.sh --check`
+  - `python3 scripts/validate-markdown-profiles.py --root . --mode strict`
   - `bash scripts/validate-repo-quality-gates.sh .`
   - `rg --files | rg '(^|/)progress\.md$'`
 - **Eval Commands**:
@@ -555,7 +554,7 @@ Expected: one final integration commit.
 | 2026-07-02 | T-005 | `git diff --check` | PASS; no output |
 | 2026-07-02 | T-005 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
 | 2026-07-02 | T-006 | `git diff --check` | PASS; no output |
-| 2026-07-02 | T-006 | `bash scripts/generate-llm-wiki-index.sh --check` | PASS; `[PASS] LLM WIKI generated index is current` |
+| 2026-07-02 | T-006 | Retired LLM Wiki generated-index check (historical) | PASS at execution time; the generator and output are no longer current surfaces |
 | 2026-07-02 | T-006 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
 | 2026-07-02 | T-006 | `rg --files \| rg '(^\|/)progress\.md$'` | PASS; returned only `docs/00.agent-governance/memory/progress.md` |
 | 2026-07-02 | T-006 | Final review remediation | PASS; aligned plan/task frontmatter, Stage 04 indexes, plan checkboxes, and completion criteria to `Done` |
@@ -594,7 +593,7 @@ Expected: one final integration commit.
 - **Approval Required**: Human approval is required before publishing Workspace Harness Research Pack research, changing active policy/runtime behavior, deleting evidence, contacting providers, push, merge, or corpus expansion.
 - **Static Validation**: Preserve the Workspace Harness Research Pack outcomes and limitations recorded in Verification Summary; use these recorded checks:
   - `git diff --check`
-  - `bash scripts/generate-llm-wiki-index.sh --check`
+  - `python3 scripts/validate-markdown-profiles.py --root . --mode strict`
   - `bash scripts/validate-repo-quality-gates.sh .`
   - `rg --files | rg '(^|/)progress\.md$'`
 - **Live Validation**: DEFER — Workspace Harness Research Pack is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.

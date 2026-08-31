@@ -440,8 +440,6 @@ git diff --check
 python3 scripts/validate-document-contract-registry.py --root . --mode strict
 python3 scripts/validate-markdown-profiles.py --root . --mode strict
 python3 scripts/validate-links-and-owners.py --root . --mode strict
-python3 scripts/validate-reference-information-architecture.py --root .
-bash scripts/generate-llm-wiki-index.sh --check
 python3 scripts/validate-github-actions-security.py --root .
 python3 scripts/validate-ci-python-contract.py --root .
 python3 scripts/validate-affected-surfaces.py --root .

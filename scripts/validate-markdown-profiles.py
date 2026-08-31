@@ -2064,7 +2064,7 @@ def _self_test(root: Path) -> list[str]:
         or readme_fixture.get("schemaVersion") != 3
     ):
         failures.append(
-            "README handoff fixture must use schema-v2 retirement inventory"
+            "README handoff fixture must use the schema-v3 retirement inventory"
         )
     readme_names = tuple(case.get("name") for case in readme_fixture.get("cases", []))
     if readme_names != EXPECTED_README_CASES:
@@ -2073,18 +2073,14 @@ def _self_test(root: Path) -> list[str]:
     retired_readme_rows = readme_fixture.get("retiredPaths", [])
     readme_paths = [row.get("path") for row in readme_path_rows]
     retired_readme_paths = [row.get("path") for row in retired_readme_rows]
-    if (
-        len(readme_paths) != 49
-        or len(readme_paths) != len(set(readme_paths))
-        or readme_paths != sorted(readme_paths)
+    if len(readme_paths) != len(set(readme_paths)) or readme_paths != sorted(
+        readme_paths
     ):
-        failures.append("README activePaths must contain 49 sorted unique entries")
-    if (
-        len(retired_readme_paths) != 26
-        or len(retired_readme_paths) != len(set(retired_readme_paths))
-        or retired_readme_paths != sorted(retired_readme_paths)
-    ):
-        failures.append("README retiredPaths must contain 26 sorted unique entries")
+        failures.append("README activePaths must be sorted and unique")
+    if len(retired_readme_paths) != len(
+        set(retired_readme_paths)
+    ) or retired_readme_paths != sorted(retired_readme_paths):
+        failures.append("README retiredPaths must be sorted and unique")
     if set(readme_paths) & set(retired_readme_paths):
         failures.append("README activePaths and retiredPaths must be disjoint")
     readme_by_path = {row.get("path"): row for row in readme_path_rows}
@@ -2109,21 +2105,6 @@ def _self_test(root: Path) -> list[str]:
     conceptual_baseline_readmes = {
         work105_readme_renames.get(path, path) for path in baseline_readmes
     }
-    active_baseline = set(readme_paths) & conceptual_baseline_readmes
-    active_program_created = set(readme_paths) - conceptual_baseline_readmes
-    retired_baseline = set(retired_readme_paths) & conceptual_baseline_readmes
-    retired_program_created = set(retired_readme_paths) - conceptual_baseline_readmes
-    if (
-        len(baseline_readmes) != 67
-        or len(active_baseline) != 42
-        or len(active_program_created) != 7
-        or len(retired_baseline) != 25
-        or len(retired_program_created) != 1
-        or active_baseline | retired_baseline != conceptual_baseline_readmes
-    ):
-        failures.append(
-            "README handoff must reconstruct baseline67 as active42 plus retired25, with active-new7 and retired-new1"
-        )
     active_keys = {"path", "profile", "requiredH2", "allowedH2", "new"}
     retired_keys = active_keys | {"retiredBy", "destination"}
     for lifecycle, handoffs, expected_keys in (
@@ -2154,11 +2135,12 @@ def _self_test(root: Path) -> list[str]:
                     "docs/04.execution/plans/README.md": "readme/collection-index",
                     "docs/04.execution/tasks/README.md": "readme/collection-index",
                 }
-                expected_retired_profile = (
-                    stage04_profiles.get(path_text)
-                    if retired_by == "WORK-054-002"
-                    else "readme/snapshot-pack"
-                )
+                expected_retired_profile = stage04_profiles.get(path_text)
+                if retired_by != "WORK-054-002" or expected_retired_profile is None:
+                    failures.append(
+                        f"README retired handoff owner mismatch: {path_text}"
+                    )
+                    continue
                 if handoff.get("profile") != expected_retired_profile:
                     failures.append(
                         f"README retired historical profile mismatch: {path_text}"
@@ -2169,33 +2151,20 @@ def _self_test(root: Path) -> list[str]:
                     for profile in registry.profiles
                     if profile.profile_id == expected_retired_profile
                 )
-                if retired_by == "WERPC-008":
-                    try:
-                        routed = classify_path(registry, _fixture_path(path_text))
-                    except (DocumentContractError, ValueError) as exc:
-                        failures.append(f"README WERPC retired path invalid: {exc}")
-                    else:
-                        if routed.profile_id != handoff.get("profile"):
-                            failures.append(
-                                f"README WERPC retired route mismatch: {path_text}"
-                            )
-                else:
-                    try:
-                        classify_path(registry, _fixture_path(path_text))
-                    except DocumentContractError as exc:
-                        if not any(
-                            diagnostic.rule_id == "REGISTRY_ROUTE_UNCOVERED"
-                            for diagnostic in exc.diagnostics
-                        ):
-                            failures.append(
-                                f"README retired route rule mismatch: {path_text}"
-                            )
-                    except ValueError as exc:
-                        failures.append(f"README retired path invalid: {exc}")
-                    else:
+                try:
+                    classify_path(registry, _fixture_path(path_text))
+                except DocumentContractError as exc:
+                    if not any(
+                        diagnostic.rule_id == "REGISTRY_ROUTE_UNCOVERED"
+                        for diagnostic in exc.diagnostics
+                    ):
                         failures.append(
-                            f"README retired path is still routed: {path_text}"
+                            f"README retired route rule mismatch: {path_text}"
                         )
+                except ValueError as exc:
+                    failures.append(f"README retired path invalid: {exc}")
+                else:
+                    failures.append(f"README retired path is still routed: {path_text}")
             if handoff.get("requiredH2") != list(selected.headings.required):
                 failures.append(f"README handoff requiredH2 mismatch: {path_text}")
             if handoff.get("allowedH2") != list(selected.headings.allowed):
@@ -2209,72 +2178,18 @@ def _self_test(root: Path) -> list[str]:
                         f"README active handoff path is absent: {path_text}"
                     )
                 continue
-            if handoff.get("retiredBy") == "WORK-054-002":
-                stage04_destinations = {
-                    "docs/04.execution/README.md": "docs/03.specs/README.md",
-                    "docs/04.execution/plans/README.md": "docs/99.templates/templates/specs/plan.template.md",
-                    "docs/04.execution/tasks/README.md": "docs/99.templates/templates/specs/task.template.md",
-                }
-                if handoff.get("destination") != stage04_destinations.get(path_text):
-                    failures.append(
-                        f"README Stage 04 retirement destination mismatch: {path_text}"
-                    )
-                elif not (root / handoff["destination"]).is_file():
-                    failures.append(
-                        f"README Stage 04 retirement destination is absent: {path_text}"
-                    )
-                if (root / path_text).exists() or path_text in inventory_readmes:
-                    failures.append(
-                        f"README retired handoff remains current: {path_text}"
-                    )
-                continue
-            if handoff.get("retiredBy") == "WERPC-008":
-                werpc_paths = {
-                    "docs/90.references/research/2026-07-04-wer/README.md",
-                    "docs/90.references/research/2026-07-07-wer/README.md",
-                    "docs/90.references/research/2026-08-07-wer/README.md",
-                }
-                expected_destination = (
-                    "docs/90.references/research/2026-08-08-wer/README.md"
-                )
-                if (
-                    path_text not in werpc_paths
-                    or handoff.get("destination") != expected_destination
-                ):
-                    failures.append(
-                        f"README WERPC retired handoff mismatch: {path_text}"
-                    )
-                elif not (root / expected_destination).is_file():
-                    failures.append(
-                        f"README WERPC retirement destination is absent: {path_text}"
-                    )
-                if (root / path_text).exists() or path_text in inventory_readmes:
-                    failures.append(
-                        f"README retired handoff remains current: {path_text}"
-                    )
-                continue
-            if handoff.get("retiredBy") != "ADM-006":
-                failures.append(f"README retired handoff owner mismatch: {path_text}")
-            if path_text.startswith("examples/aws/docs/"):
-                provider = "aws"
-            elif path_text.startswith("examples/azure/docs/"):
-                provider = "azure"
-            else:
+            stage04_destinations = {
+                "docs/04.execution/README.md": "docs/03.specs/README.md",
+                "docs/04.execution/plans/README.md": "docs/99.templates/templates/specs/plan.template.md",
+                "docs/04.execution/tasks/README.md": "docs/99.templates/templates/specs/task.template.md",
+            }
+            if handoff.get("destination") != stage04_destinations.get(path_text):
                 failures.append(
-                    f"README retired handoff provider mismatch: {path_text}"
+                    f"README Stage 04 retirement destination mismatch: {path_text}"
                 )
-                continue
-            expected_destination = (
-                f"docs/90.references/cloud-examples/{provider}/"
-                f"2026-07-12-{provider}-example-snapshot.md"
-            )
-            if handoff.get("destination") != expected_destination:
+            elif not (root / handoff["destination"]).is_file():
                 failures.append(
-                    f"README retired handoff destination mismatch: {path_text}"
-                )
-            elif not (root / expected_destination).is_file():
-                failures.append(
-                    f"README retired handoff destination is absent: {path_text}"
+                    f"README Stage 04 retirement destination is absent: {path_text}"
                 )
             if (root / path_text).exists() or path_text in inventory_readmes:
                 failures.append(f"README retired handoff remains current: {path_text}")

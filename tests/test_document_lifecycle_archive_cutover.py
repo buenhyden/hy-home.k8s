@@ -1137,7 +1137,7 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
             frozenset(),
         )
 
-    def test_production_compare_uses_validation_class_to_freeze_terminal_documents(
+    def test_production_compare_allows_body_maintenance_without_state_change(
         self,
     ):
         registry = load_registry(ROOT)
@@ -1171,15 +1171,9 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
                 ),
             )
 
-        for status in ("draft", "active"):
+        for status in ("draft", "active", "done"):
             with self.subTest(status=status):
                 self.assertEqual(compare_body_change(status), ())
-        terminal = compare_body_change("done")
-        self.assertEqual(
-            [item.rule_id for item in terminal],
-            ["LIFECYCLE-TERMINAL-MUTATION"],
-        )
-        self.assertIn("terminal", terminal[0].expected_transition)
 
     def test_lifecycle_free_navigation_creation_needs_no_migration_event(self):
         registry = load_registry(ROOT)
@@ -1198,6 +1192,42 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
         )
 
         self.assertEqual(actual, ())
+
+    def test_classification_only_reference_creation_is_not_a_lifecycle_event(self):
+        registry = load_registry(ROOT)
+        path = PurePosixPath(
+            "docs/90.references/audits/0001-example-audit/findings.md"
+        )
+        created = lifecycle.document_from_text(
+            registry,
+            path,
+            """---
+title: 'Reference: Example Audit Findings'
+type: content/reference
+status: active
+owner: platform
+updated: 2026-09-01
+---
+
+# Reference: Example Audit Findings
+""",
+        )
+
+        self.assertEqual(created.profile_id, "content/reference")
+        self.assertEqual(
+            compare_lifecycle(registry, {}, {path: created}, base_mode="staged"),
+            (),
+        )
+
+    def test_deletion_is_owned_by_consumer_and_git_recovery_gates(self):
+        registry = load_registry(ROOT)
+        path = PurePosixPath("docs/05.operations/guides/9999-obsolete.md")
+        document = LifecycleDocument(path, "sdlc/guide", "active")
+
+        self.assertEqual(
+            compare_lifecycle(registry, {path: document}, {}, base_mode="staged"),
+            (),
+        )
 
     def test_stage_index_creation_still_requires_lifecycle_admission(self):
         registry = load_registry(ROOT)
@@ -1593,7 +1623,7 @@ class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
         self._git(root, "commit", "--quiet", "-m", "base")
         return temporary, root, self._git(root, "rev-parse", "HEAD")
 
-    def test_staged_adapter_rejects_terminal_body_mutation(self) -> None:
+    def test_staged_adapter_allows_terminal_body_maintenance(self) -> None:
         path = "docs/03.specs/9001-terminal-mutation/spec.md"
         base = (
             b"---\n"
@@ -1615,10 +1645,7 @@ class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
                 load_registry(ROOT),
                 mode="staged",
             )
-        self.assertEqual(
-            [(item.rule_id, item.path.as_posix()) for item in diagnostics],
-            [("LIFECYCLE-TERMINAL-MUTATION", path)],
-        )
+        self.assertEqual(diagnostics, ())
 
     def test_ci_adapter_rejects_supersession_without_reciprocal_link(
         self,
@@ -1733,11 +1760,7 @@ class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
                     )
                 self.assertEqual(
                     [(item.rule_id, item.path.as_posix()) for item in diagnostics],
-                    [
-                        ("LIFECYCLE-DELETE", self.original_path),
-                        ("LIFECYCLE-CREATE", self.archive_path),
-                        ("LIFECYCLE-EVIDENCE", self.archive_path),
-                    ],
+                    [("LIFECYCLE-EVIDENCE", self.archive_path)],
                 )
 
 

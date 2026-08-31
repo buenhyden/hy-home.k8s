@@ -180,35 +180,6 @@ class DocumentProfile:
 
 
 @dataclass(frozen=True)
-class ReferenceCurrentPack:
-    id: str
-    allowed_states: tuple[str, ...]
-    members: tuple[str, ...]
-
-    @property
-    def collection_readme(self) -> PurePosixPath:
-        collection = self.id.split("/", 1)[0]
-        return PurePosixPath(f"docs/90.references/{collection}/README.md")
-
-    @property
-    def pack_readme(self) -> PurePosixPath:
-        return PurePosixPath(f"docs/90.references/{self.id}/README.md")
-
-    @property
-    def member_paths(self) -> tuple[PurePosixPath, ...]:
-        return tuple(
-            PurePosixPath(f"docs/90.references/{self.id}/{member}")
-            for member in self.members
-        )
-
-
-@dataclass(frozen=True)
-class ReferenceCurrentPacks:
-    profile_id: str
-    packs: tuple[ReferenceCurrentPack, ...]
-
-
-@dataclass(frozen=True)
 class ProgramRelation:
     spec_id: str
     order: int

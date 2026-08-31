@@ -3,7 +3,7 @@ title: 'Repository Delivery Evidence Architecture Description'
 type: sdlc/ad
 status: active
 owner: platform
-updated: 2026-08-02
+updated: 2026-09-01
 artifact_id: "AD-0010"
 ---
 
@@ -22,18 +22,18 @@ Spec 047 foundation tranche.
 
 The architecture consumes the existing validation-surface registry, document
 profiles, current local GitOps baseline, protected-surface validators, CI
-workflow topology, and dated audit observations. It introduces only the two
-machine contracts needed to close the residual routing and evidence-depth
-gaps.
+workflow topology, and the latest external research as non-authoritative
+support. Current behavior and versions come from executable repository owners,
+not Stage 90 mirrors.
 
 ## Boundaries & Non-goals
 
 - **Owns**: repository delivery assurance boundaries; GitHub projection parity;
   platform validation depth; exact tool and fallback evidence; ordered tranche
   execution; and local integration evidence.
-- **Consumes**: PRD-0004/AD-0007/ADR-0014/Spec 008 current topology,
-  `validation-surfaces.json` path routing, existing technology inventory,
-  workflows, validators, tests, desired state, and the Current audit pack.
+- **Consumes**: REQ-0004/AD-0007/ADR-0014/Spec 008 current topology,
+  `validation-surfaces.json` path routing, workflows, validators, tests,
+  desired state, executable configuration, and reviewed dependency locks.
 - **Does not own**: platform component selection, live reconciliation state,
   document-profile route definitions, provider installation or authentication,
   branch-protection policy, cloud resources, credentials, or secret values.
@@ -50,7 +50,8 @@ gaps.
   path copies, unknown evidence depths, ownerless limitations, and stale
   projections.
 - **Traceability**: every result binds surface, validator, exact tool identity,
-  lane, depth, commit or observation SHA, limitation, owner, and retry trigger.
+  lane, depth, relevant immutable source or observation date, limitation,
+  owner, and retry trigger without pinning a mutable branch head.
 - **Reproducibility**: required tools are exact-version and checksum verified;
   required CI lanes fail when tool preparation fails.
 - **Security**: ignored state is never read; Actions remain immutable and
@@ -125,6 +126,17 @@ scratch or an old stash.
   pre-commit configuration, dependency locks, Terraform constraints, and Bicep
   parameters. Stage 90 reference material is not an execution dependency or a
   mirrored version authority.
+- Repository-self-referencing Argo CD Applications retain
+  `targetRevision: main` under the current single-operator continuous
+  reconciliation model. External Helm chart Applications retain exact chart
+  revisions. Multi-operator, multi-environment, or history-rewrite workflows
+  reopen ADR-0029 rather than adding a branch-SHA census.
+- Namespace Pod Security Admission labels are desired-state evidence. The
+  repository uses `enforce` where repo-authored workload evidence is bounded,
+  and `audit`/`warn` where Helm charts, injection, node agents, or runtime
+  behavior remain uncertain. `platform-istio-cni-app.yaml` proves declared
+  Istio CNI installation intent only; live DaemonSet, admission, and network
+  behavior require separate runtime evidence.
 - GitHub remote metadata is read-only and SHA-bound. No push, workflow dispatch,
   setting mutation, release, or branch-rule change is part of this architecture.
 

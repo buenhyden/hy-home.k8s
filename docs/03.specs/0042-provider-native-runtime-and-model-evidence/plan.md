@@ -59,7 +59,7 @@ removes stale future-gate wording before this tranche activates.
 - [AD-0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md)
 - [ADR-0019](../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - [Harness machine contract](../../00.agent-governance/contracts/harness-contract.json)
-- `docs/90.references/research/2026-07-07-wer/provider-implementation-status.md`; [current lookup](../../90.references/research/2026-08-08-wer/provider-implementation-status.md)
+- `docs/90.references/research/2026-07-07-wer/provider-implementation-status.md`; [current lookup](../../90.references/research/0001-workspace-engineering/provider-implementation-status.md)
 - Spec 041 closure `1a3232ce73a653371634e99d773d71ab03f87967`,
   postflight `6c35268793f09c1ba3f70cdbe3ece9293828ec16`, and terminal
   evidence reconciliation `fdc3d457`

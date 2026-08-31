@@ -3,7 +3,7 @@ title: 'Workspace Document Taxonomy Consolidation Requirement Package'
 type: sdlc/requirement-package
 status: active
 owner: platform
-updated: 2026-08-22
+updated: 2026-09-01
 artifact_id: "REQ-0008"
 supersedes: "[REQ-0005, REQ-0006]"
 ---
@@ -57,7 +57,7 @@ model. [GitHub Spec Kit](https://github.com/github/spec-kit/blob/main/docs/index
 and [OpenSpec](https://github.com/Fission-AI/OpenSpec/blob/main/docs/overview.md)
 provide bounded implementation examples in which specification, design or
 plan, and tasks are organized around one change. The local research boundary
-is recorded in the [Spec-driven SDLC reference](../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md).
+is recorded in the [Spec-driven SDLC reference](../90.references/research/0001-workspace-engineering/spec-driven-sdlc-and-document-contracts.md).
 
 REQ-0007 remains the product authority for repository delivery assurance, but
 its Specs 047 through 051 stay suspended while this program changes their
@@ -152,26 +152,27 @@ be deleted with provenance and disposition evidence.
 | Requirement ID | Requirement | Priority | Verification intent |
 | --- | --- | --- | --- |
 | REQ-0008-FR-0001 | Co-locate each live work unit's Spec, Plan, router, and append-only Task records under `docs/03.specs/<NNNN>-<slug>/`. | Must | Every retained execution record maps to `spec.md`, `plan.md`, `README.md`, or `tasks/tsk-*.md` in one work unit, and no live Stage 04 execution route remains. |
-| REQ-0008-FR-0002 | Use stable identifiers or slugs for mutable authored filenames and retain dates in frontmatter; allow dates only when they are part of immutable observation or event identity. | Must | No mutable live PRD, SRS, Interface Requirement, AD, ADR, Spec, Plan, Task, Guide, Policy, or Runbook filename begins with a date; only Stage 90 snapshots and real incidents/postmortems are classified date-identity exceptions, and terminal Stage 98 paths contain no date or year component. |
+| REQ-0008-FR-0002 | Use stable identifiers or semantic slugs for authored filenames and retain dates in frontmatter or observation metadata. Stage 90 packs exist only under `audits/####-<slug>/`, `data/####-<slug>/`, or `research/####-<slug>/`; their slugs are not dates. | Must | No current authored filename begins with a date; each Stage 90 pack uses a category-local four-digit identity and matching category template, while only real Incident/Postmortem routing may retain a year partition. |
 | REQ-0008-FR-0003 | Keep `docs/05.operations/` and its guide, incident, policy, and runbook collections at the current stage number. | Must | No `docs/04.operations/` route or link is introduced and every current Stage 05 consumer remains resolvable. |
 | REQ-0008-FR-0004 | Preserve existing lifecycle identifiers, slugs, and reviewed states through terminal form changes and use registry-owned reciprocal relationships for cross-stage lineage. | Must | The exact eight-record ARD-0004 through ARD-0011 source census converts one-to-one to AD-0004 through AD-0011 without renumbering, slug drift, or active/accepted state drift; every current lineage resolves with required reciprocal evidence. |
 | REQ-0008-FR-0005 | Consolidate human authoring rules into disjoint Stage 00 and Stage 99 owners without duplicating machine-owned routes, headings, states, or schemas. | Must | Each rule family has one prose owner and the document-profile registry remains the sole machine contract. |
 | REQ-0008-FR-0006 | Update template forms and support contracts for the approved SDLC, including Stage 03 Plan/Task placement and the date exception policy. | Must | Every physical form has one registry owner and current consumers pass template/profile parity checks. |
 | REQ-0008-FR-0007 | Do not create a Release document type, Release template, releases folder, or release lifecycle in this program. | Must | Registry, templates, indexes, and live operations paths contain no new Release-family owner. |
-| REQ-0008-FR-0008 | Classify retired material before disposition: archive unique history, preserve dated observations, and delete only duplicate, generated, superseded, or zero-consumer material with evidence. | Must | Every removed path has a reviewed archive, successor, provenance, or deletion disposition. |
-| REQ-0008-FR-0009 | Preserve every existing Stage 98 payload byte, digest, original `source_commit`, `source_blob`, and the old ArchiveEnvelope commit/blob while permitting only the reviewed terminal wrapper/path cutover. | Must | The schema-versioned migration ledger distinguishes original-source provenance from `legacy_archive_commit`/`legacy_envelope_blob`, proves a recoverable 93-row bijection, and resolves every path transformation to both evidence sources. |
-| REQ-0008-FR-0010 | Introduce old/new route compatibility before migration and remove old-route support only after an explicit zero-consumer cutover. | Must | Negative fixtures reject uncovered or ambiguous states in both transition and terminal modes. |
+| REQ-0008-FR-0008 | Classify retired material before disposition: retain distinct current authority, preserve observation facts, and delete duplicate, generated, superseded, or zero-consumer material after reviewed consumer and Git-recovery evidence. | Must | Every removed path has a named current owner or an explicit deletion decision in its Task/diff; Git is the default full-body recovery owner and no replacement document is created solely for retention. |
+| REQ-0008-FR-0009 | Preserve the declared bytes of retained sealed Stage 98 evidence without making Stage 98 a current-document dependency or requiring parity with ordinary current files. | Must | Sealed records retain their declared integrity checks; current stages contain no Stage 98 links, and routine current moves/deletions recover from Git without a fixed Archive census. |
+| REQ-0008-FR-0010 | Use route compatibility only for a bounded transition with a known consumer, then remove it at consumer-zero; do not retain body copies or redirects for routine moves. | Must | Negative fixtures reject ambiguous current ownership, while the terminal tree contains no obsolete compatibility owner or redirect-only document. |
 | REQ-0008-FR-0011 | Consolidate validator orchestration and duplicate-purpose scripts without merging validators that enforce distinct contracts. | Must | One declared lane owns selection/orchestration; registry, Markdown, link/owner, security, CI, and archive contracts retain independent evidence where their semantics differ. |
 | REQ-0008-FR-0012 | Retire `validate-harness.sh` only after all consumers migrate, and retain active-corpus or lifecycle validators until rule, consumer, and fixture audits prove retirement safe. | Must | No deleted executable has a live consumer or unique negative fixture; the declared/executable inventory agrees. |
 | REQ-0008-FR-0013 | Extend the existing harness contract, rather than creating a parallel governance registry, with system risk policy, tool/data trust, oversight, stop, approval/trace record shapes, evaluation, and component-provenance controls. | Must | Schema negative tests reject missing high-risk policy or evidence-reference fields and static evidence cannot satisfy runtime-enforcement fields. |
 | REQ-0008-FR-0014 | Distinguish repository-declared, provider-runtime-enforced, hosted-CI, and authorized remote/live evidence states. | Must | No state transition or report promotes evidence across classes without a matching observed record. |
 | REQ-0008-FR-0015 | Rotate the shared progress ledger and remove tracked stale generated graph output only after recoverability and consumer checks pass. | Should | Current memory is bounded, retained history is indexed, generated graph output is reproducible or ignored, and no consumer breaks. |
 | REQ-0008-FR-0016 | Resolve the recorded pre-change validator failures without weakening the corresponding contracts. | Must | The final all-files gate passes with explicit false-positive adjudication and deterministic temporary-directory behavior. |
+| REQ-0008-FR-0017 | Keep lifecycle validation focused on registry-classified profile, state, and allowed edge changes for retained authored documents. Terminal body maintenance, classification-only Reference/router creation, and consumer-zero deletion are governed by semantic/profile validation, link ownership, reviewed Task evidence, and Git recovery rather than ordinary-document byte pins. | Must | Illegal status/profile/edge changes and unproved sealed Archive mutations fail; ordinary current-body corrections and reviewed deletions do not require one Migration, Tombstone, or SHA row per file. |
 | REQ-0008-NFR-0001 | Keep REQ-0007 Specs 047–051 suspended until the consolidated topology and validator owners are active, then provide a reviewed resumption route. | Must | No suspended tranche executes during migration and every path is valid at resumption. |
 | REQ-0008-NFR-0002 | Keep platform desired state, remote services, credentials, provider runtime, and live cluster changes outside this program. | Must | Handoff reports these evidence classes as not performed or separately deferred. |
 | REQ-0008-NFR-0003 | Use one flat Requirement Package profile, prefix-free Architecture Description paths, and ADR authority while preserving predecessor recovery evidence. | Must | Stage 01 has eight `REQ-####` packages; current AD filenames are `####-<slug>.md`; no PRD/SRS/Interface or prefixed-AD current route remains. |
 | REQ-0008-NFR-0004 | Require exactly one globally unique, path-derived `artifact_id` on every mandatory terminal outer profile and prohibit the field on every excluded profile/surface. | Must | The closed active, operations, and Stage 98 grammars pass mandatory-presence, prohibited-presence, global uniqueness, canonical token, collision, and path/frontmatter equality fixtures without reallocating an existing numeric identity. |
-| REQ-0008-NFR-0005 | Preserve removed current-authority bytes through bounded, schema-versioned migration ledgers without making a fixed Archive corpus count normative. | Must | Every changed or removed authority path has one ordered recovery row with reachable commit, regular blob, source OID, digest, and successor disposition. |
+| REQ-0008-NFR-0005 | Preserve removed current-authority bytes through reachable Git history; retain a bounded Migration only when it supplies unique mapping context not recoverable from the reviewed change itself. | Must | Recovery resolves the removed path from Git, while ordinary documents, working branches, current registries, templates, line numbers, and corpus snapshots are not permanent SHA-pinned inputs. |
 | REQ-0008-NFR-0006 | Remove a script only after its consumers, unique rules, and negative fixtures have explicit successor evidence; no fixed script inventory is terminal authority. | Must | Declared consumers and executable inventory agree and no deleted executable retains a live consumer or unique test responsibility. |
 
 The mandatory terminal outer profiles are Requirement Package, prefix-free AD,
@@ -287,11 +288,10 @@ Future `merged` or `replaced` rows retain a unique tombstone and non-null
 replacement; `deleted` rows retain a unique tombstone and null replacement.
 Many-to-one stable paths are forbidden.
 
-The direct-link validator scans mutable/current registry-selected Markdown
-outside Stage 98 and excludes historical observation profiles and embedded
-immutable archive payloads. Stage 98's README and migration ledger may link to
-individual stable records for index/provenance. Every other current document
-may link only to the Stage 98 collection README.
+The direct-link validator scans current registry-selected Markdown. Documents
+under Stages 00, 01, 02, 03, 05, and 90 neither cite nor cross-link Stage 98;
+historical recovery is named as Git history without an Archive path. Stage 98
+may maintain bounded archive-internal navigation only.
 
 ## Success / Acceptance Criteria
 
@@ -299,18 +299,19 @@ may link only to the Stage 98 collection README.
 | --- | --- |
 | ACC-WDTC-001 | Stage 03 is the only live Spec/Plan/Task work-unit owner; every package has a thin router and package-local Task records, and retired Stage 04 has no live consumer. |
 | ACC-WDTC-002 | `docs/05.operations/` remains stable and no Release-family surface is created. |
-| ACC-WDTC-003 | Mutable active filenames are date-free, while every date-identity exception is explicit and validated. |
+| ACC-WDTC-003 | Current authored filenames are date-free; Stage 90 pack roots use category-local `####-<slug>` identities and dates remain metadata, while the Incident/Postmortem year partition is the only active event-route exception. |
 | ACC-WDTC-004 | Registry-owned lineage, route, template, heading, and lifecycle contracts have no competing prose or machine owner. |
-| ACC-WDTC-005 | Every removed document or script has a reviewed archive, successor, provenance, consumer, and fixture disposition. |
+| ACC-WDTC-005 | Every removed document or script has a reviewed successor-or-delete decision, consumer-zero evidence, and Git recovery; a tracked Archive replacement is required only for distinct historical value. |
 | ACC-WDTC-006 | Agent governance records risk, trust boundaries, tool-bound approval, oversight, provenance, and evidence depth without claiming provider enforcement from static files. |
 | ACC-WDTC-007 | Baseline validator defects and migration regressions are closed; aggregate and all-files repository-static gates pass. |
-| ACC-WDTC-008 | Existing archive payloads remain byte-stable and dated observation bodies preserve their historical meaning. |
+| ACC-WDTC-008 | Retained sealed Archive payloads remain byte-stable and observation bodies preserve their historical meaning after semantic Stage 90 routing. |
 | ACC-WDTC-009 | Logical-unit commits remain independently reviewable and revertible, with measured before/after inventories. |
 | ACC-WDTC-010 | REQ-0007 has a valid consolidated resumption route and no remote or live action is implied. |
 | ACC-WDTC-011 | Terminal active requirements and architecture expose one flat Requirement Package profile, package-scoped FR/NFR/IF members, prefix-free AD paths, and ADR decisions. The exact eight legacy-form records map to AD-0004 through AD-0011 with preserved slugs/states and zero live legacy consumers; native API contracts and classified history remain evidence. |
 | ACC-WDTC-012 | After WORK-105's complete AD conversion, WORK-108 gives every mandatory terminal outer profile one globally unique, type-valid, path-derived `artifact_id`; every excluded profile, including the retired authored API Spec profile, prohibits it; positive API Spec coverage becomes retired-route negative coverage; native contract identity remains separate; and virtual `change_id` never enters the artifact namespace. |
-| ACC-WDTC-013 | Every removed authority path has bounded recoverable Git evidence or an applicable minimal Migration/Tombstone disposition; no fixed Archive snapshot count is terminal policy. |
+| ACC-WDTC-013 | Every removed authority path is recoverable from Git; a minimal Migration/Tombstone exists only for unique lookup value, and no current-file parity, branch identity, or fixed Archive snapshot count is terminal policy. |
 | ACC-WDTC-014 | Script inventory is derived from the closed owner/consumer graph; no fixed script count is terminal policy. |
+| ACC-WDTC-015 | Lifecycle validation rejects illegal profile/state/edge changes and sealed-evidence mutation without freezing ordinary terminal bodies or blocking reviewed consumer-zero deletions and classification-only Reference/router creation. |
 
 ## Scope and Non-goals
 
@@ -339,7 +340,7 @@ surface.
 | ID | Risk, dependency, or assumption | Owner | Mitigation or validation |
 | --- | --- | --- | --- |
 | RISK-WDTC-001 | A broad path rewrite can silently corrupt links or create dual ownership. | Platform maintainer | Enumerated `git mv` map, transitional negative fixtures, zero-consumer cutoff, and affected/all-files validation. |
-| RISK-WDTC-002 | Archived or dated observation content can be falsified by a global rewrite. | Governance steward | Keep Stage 90 observation bodies and Stage 98 payload/provenance immutable; permit a Stage 98 outer-wrapper/path change only through the reviewed schema-versioned ledger and recovery proof. |
+| RISK-WDTC-002 | Archived or observation-dated content can be falsified by a global rewrite. | Governance steward | Keep retained sealed Stage 98 payload/provenance immutable; preserve Stage 90 claims and source dates while allowing reviewed semantic pack routing and current-link correction. |
 | RISK-WDTC-003 | Script reduction can delete a unique contract behind a similar filename. | Quality engineer | Consumer graph, rule comparison, negative-fixture comparison, and explicit retain/merge/retire disposition. |
 | RISK-WDTC-004 | Contract consolidation can turn static declarations into false runtime-readiness claims. | AI agent operator | Separate evidence classes and enforcement availability; require observed provider or action records for promotion. |
 | RISK-WDTC-005 | The design could be presented as standards conformance. | Governance steward | Cite only bounded external claims; record every path and filename rule as a local decision. |
@@ -376,6 +377,7 @@ surface.
 | REQ-0008-FR-0014 | ACC-WDTC-006 | N/A — accepted ADR-0023 records the non-promotable evidence-depth decision. |
 | REQ-0008-FR-0015 | ACC-WDTC-009 | N/A — Spec 052 owns memory and generated-output cleanup. |
 | REQ-0008-FR-0016 | ACC-WDTC-007 | N/A — Spec 052 owns the named baseline remediation. |
+| REQ-0008-FR-0017 | ACC-WDTC-015 | [AD-0011](../02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md) owns lifecycle, consumer, and Git-recovery responsibility separation. |
 | REQ-0008-NFR-0001 | ACC-WDTC-010 | N/A — Spec 052 owns suspension and resumption evidence. |
 | REQ-0008-NFR-0002 | ACC-WDTC-010 | N/A — AD-0011 owns the local-only system boundary. |
 | REQ-0008-NFR-0003 | ACC-WDTC-011 | [AD-0011](../02.architecture/descriptions/0011-document-taxonomy-consolidation-architecture.md) describes Requirement Package, prefix-free Architecture, and package-local Task topology under the current authority named above. |

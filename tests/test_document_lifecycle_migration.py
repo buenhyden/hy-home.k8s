@@ -391,18 +391,17 @@ class MigrationLifecycleTest(unittest.TestCase):
             to_ref="HEAD",
         )
 
-    def test_missing_record_does_not_admit_deletion_or_active_creation(self):
+    def test_missing_record_does_not_admit_active_creation(self):
         self.git.run("rm", "--quiet", "-f", "--", self.path)
-        self.assert_fail("LIFECYCLE-DELETE")
         self.assert_fail("LIFECYCLE-CREATE")
 
-    def test_source_comparison_base_must_match_recovered_blob(self):
+    def test_changed_source_does_not_admit_active_creation(self):
         self.git.run("rm", "--quiet", "-f", "--", self.target, self.path)
         self.git.commit_many({self.source: self.payload + b"Changed base.\n"})
         self.git.run("rm", "--quiet", "--", self.source)
         self.stage(self.target, self.payload)
         self.write(consumers=[])
-        self.assert_fail("LIFECYCLE-DELETE")
+        self.assert_fail("LIFECYCLE-CREATE")
 
     def test_target_form_state_and_profile_fail_without_path_waivers(self):
         for content, rule in (

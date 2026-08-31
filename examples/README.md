@@ -4,9 +4,9 @@
 
 ## Overview
 
-이 경로는 실제 운영 manifest의 복제본이 아니라, 새 앱 또는 cloud target을 설계할 때 참고하는 예시를 담는다. `sample-app/`은 로컬 k3d GitOps 최소 온보딩 템플릿이고, `aws/`, `azure/`의 실행 자산은 provider별 참조 구현이다. 통합된 문서 근거의 durable destination은 [dated Stage 90 snapshots](../docs/90.references/cloud-examples/README.md)다.
+이 경로는 실제 운영 manifest의 복제본이 아니라, 새 앱 또는 cloud target을 설계할 때 참고하는 예시를 담는다. `sample-app/`은 로컬 k3d GitOps 최소 온보딩 템플릿이고, `aws/`, `azure/`의 실행 자산과 인접 README는 provider별 참조 구현의 공동 소유자다.
 
-AWS/Azure 예시는 계정이나 live cluster를 변경하지 않는다. 기존 `examples/<provider>/docs/**` source59 문서는 retired 상태이며 provider별 dated Stage 90 snapshot에 통합되었다. 실제 배포를 계획할 때는 새 provider 검증 결과로 `Cloud Example Snapshot`을 갱신하고 비용, IAM/RBAC, 네트워크 경계를 다시 확인해야 한다.
+AWS/Azure 예시는 계정이나 live cluster를 변경하지 않는다. 기존 `examples/<provider>/docs/**` 문서는 retired 상태이며 Git history에서 복구할 수 있다. 실제 배포를 계획할 때는 현재 provider 공식 자료와 승인된 runtime 검증으로 비용, IAM/RBAC, 네트워크 경계를 다시 확인해야 한다.
 
 활성 desired state의 정본은 `gitops/`이며, `examples/`는 복사하거나 비교하기 위한 reference-only 영역이다.
 
@@ -27,7 +27,7 @@ AWS/Azure 예시는 계정이나 live cluster를 변경하지 않는다. 기존 
 - GitOps 앱 온보딩 예시와 placeholder 치환 흐름
 - AWS EKS 1.35 target Terraform 참조 구현
 - AKS 1.35 target Bicep/Kubernetes 참조 구현
-- Stage 90에 통합된 cloud migration snapshot과 실행 자산 매핑
+- provider별 실행 자산과 인접 운영 경계
 
 #### Out of Scope
 
@@ -65,8 +65,8 @@ These repository-static checks do not prove provider or live-cluster readiness.
 ### Working Procedure
 
 1. 로컬 앱 온보딩은 [sample-app](sample-app/README.md)을 복사해 시작한다.
-2. AWS/Azure 예시는 [dated Stage 90 snapshot index](../docs/90.references/cloud-examples/README.md)와 `Cloud Example Snapshot` 기준에 맞춰 검토한다.
-3. provider module, Kubernetes version, ingress/gateway 선택이 바뀌면 관련 README, dated snapshot, 실행 자산 매핑을 같은 변경에서 갱신한다.
+2. AWS/Azure 예시는 각 provider README와 현재 공식 자료를 함께 검토한다.
+3. provider module, Kubernetes version, ingress/gateway 선택이 바뀌면 관련 README와 실행 자산을 같은 변경에서 갱신한다.
 4. 변경 후 `bash scripts/validate-repo-quality-gates.sh .`와 outdated marker scan을 실행한다.
 
 ### Link Basis
@@ -96,8 +96,8 @@ These repository-static checks do not prove provider or live-cluster readiness.
 | Example path | Role | Active source of truth | Validation |
 | --- | --- | --- | --- |
 | `sample-app/` | Minimal local k3d GitOps onboarding template with placeholders. | Compare with `../gitops/workloads/adminer/` before copying patterns beyond Rollout, Service, Ingress, AnalysisTemplate, ExternalSecret, and Traefik dynamic config; it becomes active desired state only after copy to `../gitops/workloads/<appname>/`, placeholder replacement, and validation. | `bash scripts/validate-repo-quality-gates.sh .`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
-| `aws/` | Cloud migration reference snapshot for AWS. | Cloud Example Snapshot durable documentation: `../docs/90.references/cloud-examples/aws/2026-07-12-aws-example-snapshot.md`; executable assets remain under `aws/`; not live provider-latest guidance. | `bash scripts/validate-repo-quality-gates.sh .`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
-| `azure/` | Cloud migration reference snapshot for Azure. | Cloud Example Snapshot durable documentation: `../docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md`; executable assets remain under `azure/`; not live provider-latest guidance. | `bash scripts/validate-repo-quality-gates.sh .`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
+| `aws/` | Cloud migration reference implementation for AWS. | [`aws/README.md`](aws/README.md) and adjacent executable assets; not live provider-latest guidance. | `bash scripts/validate-repo-quality-gates.sh .`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
+| `azure/` | Cloud migration reference implementation for Azure. | [`azure/README.md`](azure/README.md) and adjacent executable assets; not live provider-latest guidance. | `bash scripts/validate-repo-quality-gates.sh .`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
 
 ### 사용 방법
 

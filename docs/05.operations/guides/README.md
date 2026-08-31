@@ -51,7 +51,6 @@ docs/05.operations/guides/
 ├── 0006-argocd-prometheus-grafana-guide.md         # ArgoCD 메트릭/Prometheus/Grafana 가이드
 ├── 0007-k8s-observability-bootstrap-guide.md       # 관측성 스택 부트스트랩 가이드
 ├── 0008-github-app-gitops-onboarding-guide.md      # GitHub 앱 GitOps 온보딩 가이드
-├── 0009-llm-wiki-curation-guide.md                 # LLM Wiki curation 가이드
 ├── 0010-ci-cd-qa-reference-guide.md                # CI/CD & QA 로컬-vs-GitHub 참조 가이드
 └── README.md                                       # This file
 ```
@@ -99,8 +98,6 @@ Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 - [PRD](../../01.requirements/0004-current-local-gitops-platform.md)
 - [AD](../../02.architecture/descriptions/0007-current-local-gitops-platform.md)
 - [Spec](../../03.specs/0008-current-local-gitops-platform/spec.md)
-- [Plan](../../98.archive/README.md#document-index)
-- [Archive Index](../../98.archive/README.md#document-index)
 - [Guide Template](../../99.templates/templates/operations/guide.template.md)
 - [Collection Index README Form](../../99.templates/templates/common/readme-collection-index.template.md)
 
@@ -114,5 +111,4 @@ Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 | [`./0006-argocd-prometheus-grafana-guide.md`](./0006-argocd-prometheus-grafana-guide.md)       | ArgoCD 메트릭 NodePort 수집 + Prometheus 설정 + Grafana 대시보드 가이드 | Active | 2026-05-09 |
 | [`./0007-k8s-observability-bootstrap-guide.md`](./0007-k8s-observability-bootstrap-guide.md)   | k3d 클러스터 메트릭/로그 수집 관측성 스택 부트스트랩 가이드             | Active | 2026-05-09 |
 | [`./0008-github-app-gitops-onboarding-guide.md`](./0008-github-app-gitops-onboarding-guide.md) | GitHub 레포 기반 앱 GitOps 온보딩 (최소 템플릿 + active reference 구분) | Active | 2026-05-26 |
-| [`./0009-llm-wiki-curation-guide.md`](./0009-llm-wiki-curation-guide.md)                       | LLM Wiki generated index와 `wiki-curator` agent 사용 가이드             | Active | 2026-05-10 |
 | [`./0010-ci-cd-qa-reference-guide.md`](./0010-ci-cd-qa-reference-guide.md)                     | CI/CD QA 검증 로컬-vs-GitHub Actions 경계, script gate, currentness gate 참조 가이드 | Active | 2026-08-29 |

@@ -963,7 +963,7 @@ class ArchiveCutoverTest(unittest.TestCase):
         )
         self.assertFalse((ROOT / "docs/99.templates/support").exists())
 
-    def test_future_archive_creation_requires_lifecycle_entry_state(self) -> None:
+    def test_future_archive_creation_uses_archive_evidence_not_entry_state(self) -> None:
         registry = load_registry(ROOT)
         source_path = PurePosixPath("docs/03.specs/900-example/spec.md")
         archive_path = PurePosixPath("docs/98.archive/03.specs/900-example/spec.md")
@@ -992,10 +992,7 @@ class ArchiveCutoverTest(unittest.TestCase):
             base_mode="staged",
             evidence_context=evidence,
         )
-        self.assertIn(
-            "LIFECYCLE-CREATE",
-            {diagnostic.rule_id for diagnostic in accepted},
-        )
+        self.assertEqual(accepted, ())
 
     def test_partial_finite_cutover_base_is_rejected(self) -> None:
         diagnostic = archive_cutover.CutoverDiagnostic(

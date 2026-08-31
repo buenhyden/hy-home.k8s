@@ -1166,6 +1166,13 @@ def _work107_commit_path_blobs(
     return {path: (object_ids[path], blobs[object_ids[path]]) for path in canonical}
 
 
+def read_commit_path_blob(root: Path, commit: str, path: str | PurePosixPath) -> bytes:
+    """Read one regular file from an exact reviewed commit with bounded Git I/O."""
+
+    canonical = PurePosixPath(path).as_posix()
+    return _work107_commit_path_blobs(root, commit, (canonical,))[canonical][1]
+
+
 def _work107_registry_archive_paths(root: Path) -> tuple[str, ...]:
     registry = _work107_commit_path_blobs(
         root,

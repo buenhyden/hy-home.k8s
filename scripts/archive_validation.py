@@ -112,7 +112,9 @@ CURRENT_MARKDOWN_PROFILES = frozenset(
         "readme/stage-index",
         "readme/collection-index",
         "readme/implementation",
-        "readme/snapshot-pack",
+        "readme/audit-pack",
+        "readme/data-pack",
+        "readme/research-pack",
         "readme/workspace-staging",
     }
 )
@@ -526,11 +528,6 @@ class MigrationProof:
     references: Mapping[tuple[str, str], HistoricalReferenceDisposition] = field(
         default_factory=dict
     )
-    # Consumers a sealed row retires.  They keep their historical bytes in
-    # `consumers` and their Git-side proof, and are absent from the current
-    # tree.  One owner, so a caller reading the proof does not re-derive the
-    # predicate from `targets` and drift from it.
-    retired_consumers: frozenset[str] = frozenset()
 
 
 def generic_migration_id(path: str) -> str | None:
@@ -1352,24 +1349,7 @@ def validate_migration_records(
             raise ArchiveContractError(
                 "RECOVERY-MIGRATION-REFERENCE", "reference kind differs"
             )
-    # A historical consumer proves that a retired path's disposition was
-    # reviewed in a real document at a real commit, and that proof reads the
-    # document from Git below.  Once a sealed row retires the consumer itself,
-    # requiring the current tree to keep its exact bytes freezes the present
-    # without proving anything further about the past.  The retiring row is the
-    # stronger record, because it carries source commit, blob and digest and is
-    # itself proved by RECOVERY-MIGRATION-CONTENT.
-    retired_consumers = {
-        path
-        for path in consumer_commits
-        if path in edges and targets.get(path, path) != path
-    }
-    selected = (
-        set(targets.values())
-        | (set(consumer_commits) - retired_consumers)
-        | lookup_paths
-        | reference_terminals
-    )
+    selected = set(targets.values()) | lookup_paths | reference_terminals
     paths = tuple(sorted(selected | set(edges)))
     if proposed_commit is None:
         inventory = _staged_regular_blob_inventory(root, paths=paths)
@@ -1382,6 +1362,9 @@ def validate_migration_records(
             for path, member in members.items()
             if member.kind == "blob" and member.mode in {"100644", "100755"}
         }
+    # Historical consumer bytes and their reference occurrence are proven from
+    # the reviewed source commit below. Current consumers belong to the active
+    # document validators and may evolve or disappear independently of Archive.
     current: dict[str, bytes] = {}
     ordered = sorted(selected)
     for path in ordered:
@@ -1462,10 +1445,6 @@ def validate_migration_records(
     consumers = {}
     for path, commit in consumer_commits.items():
         content = sources[commit, path][1]
-        if path not in retired_consumers and current[path] != content:
-            raise ArchiveContractError(
-                "RECOVERY-MIGRATION-CONSUMER", "historical consumer source differs"
-            )
         rendered = {
             link.target.as_posix()
             for link in _validated_rendered_links(
@@ -1516,7 +1495,6 @@ def validate_migration_records(
             }
         ),
         MappingProxyType(references),
-        frozenset(retired_consumers),
     )
 
 

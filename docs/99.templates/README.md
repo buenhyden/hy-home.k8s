@@ -33,6 +33,9 @@ README는 해당 machine contract를 복제하지 않고 사람이 올바른 소
 - **Common forms**: README profile, governance reference, durable reference,
   archive record, archive migration control, memory, progress entry를 위한
   Markdown form이다.
+- **Reference pack forms**: Stage 90 Audit, Data, Research pack README는 각각
+  `audit-pack`, `data-pack`, `research-pack` form을 사용하고, pack 내부 report는
+  공통 `reference.template.md`를 사용한다.
 - **Core SDLC forms**: Requirement Package, AD, ADR, Spec, Plan, Task의 단계별 책임과
   handoff를 기록한다.
 - **Spec helper and native forms**: data model과
@@ -68,6 +71,8 @@ progress 책임을 지원한다.
    profile이 선택되는지 확인한다.
 2. **Copy**: 선택된 profile의 canonical form을 복사한다. 이웃 파일명이나 README
    목록으로 form을 추측하지 않는다.
+   Stage 90 pack은 반드시 `audits|data|research/####-<slug>/` 아래에서
+   category와 일치하는 pack form을 선택한다.
 3. **Author**: 모든 prompt와 placeholder를 제거하고, 각 section을 문서의 topic에
    맞는 조사 결과, 결정, 링크, 검증 증거로 채운다. 상대 링크는 최종 target
    위치에서 다시 계산한다.

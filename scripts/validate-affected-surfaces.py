@@ -493,7 +493,6 @@ def _repository_migration_proof(root: Path) -> Any:
         "archive_recovery",
         "document_contracts",
         "archive_validation",
-        "reference_information_architecture",
     )
     missing = object()
     aliases = ("json_schema_validation", *owners, "_links_document_taxonomy_migration")
@@ -1110,7 +1109,7 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
         "examples",
         "authored-doc",
         "current-research-report",
-        "current-audit-pack",
+        "numbered-audit-pack",
         "generated-record",
         "root-config",
     }

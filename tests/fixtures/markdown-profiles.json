@@ -864,11 +864,41 @@
       ]
     },
     {
-      "profile": "readme/snapshot-pack",
+      "profile": "readme/audit-pack",
       "mode": "frontmatter-free",
       "applicability": "validate-document",
-      "fixturePath": "docs/90.references/research/2026-07-12-fixture/README.md",
-      "positiveSource": "# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Snapshot Contract\n\nFixture content.\n\n## Report Index\n\nFixture content.\n\n## Refresh and Succession\n\nFixture content.\n\n## Evidence Boundary\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "fixturePath": "docs/90.references/audits/0001-fixture/README.md",
+      "positiveSource": "# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Audit Contract\n\nFixture content.\n\n## Report Index\n\nFixture content.\n\n## Review and Closure\n\nFixture content.\n\n## Evidence Boundary\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "README_H2_REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "readme/data-pack",
+      "mode": "frontmatter-free",
+      "applicability": "validate-document",
+      "fixturePath": "docs/90.references/data/0001-fixture/README.md",
+      "positiveSource": "# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Data Contract\n\nFixture content.\n\n## Item Index\n\nFixture content.\n\n## Refresh and Retention\n\nFixture content.\n\n## Evidence Boundary\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "README_H2_REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "readme/research-pack",
+      "mode": "frontmatter-free",
+      "applicability": "validate-document",
+      "fixturePath": "docs/90.references/research/0001-fixture/README.md",
+      "positiveSource": "# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Research Contract\n\nFixture content.\n\n## Report Index\n\nFixture content.\n\n## Refresh and Succession\n\nFixture content.\n\n## Evidence Boundary\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
       "negativeMutations": [
         {
           "kind": "remove-required-heading",
@@ -1014,21 +1044,6 @@
       ]
     },
     {
-      "profile": "exception/generated-record",
-      "mode": "generated",
-      "applicability": "classification-only",
-      "fixturePath": "docs/90.references/llm-wiki/wiki-index.md",
-      "positiveSource": "# Fixture Document\n",
-      "negativeMutations": [
-        {
-          "kind": "classification-route-mismatch",
-          "expectedRuleIds": [
-            "REGISTRY_ROUTE_UNCOVERED"
-          ]
-        }
-      ]
-    },
-    {
       "profile": "exception/program-non-target",
       "mode": "non-target",
       "applicability": "excluded",
@@ -1143,11 +1158,41 @@
       ]
     },
     {
-      "profile": "template/readme/snapshot-pack",
+      "profile": "template/readme/audit-pack",
       "mode": "template",
       "applicability": "validate-document",
-      "fixturePath": "docs/99.templates/templates/common/readme-snapshot-pack.template.md",
-      "positiveSource": "# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Snapshot Contract\n\nFixture content.\n\n## Report Index\n\nFixture content.\n\n## Refresh and Succession\n\nFixture content.\n\n## Evidence Boundary\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "fixturePath": "docs/99.templates/templates/references/audit-pack.template.md",
+      "positiveSource": "# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Audit Contract\n\nFixture content.\n\n## Report Index\n\nFixture content.\n\n## Review and Closure\n\nFixture content.\n\n## Evidence Boundary\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "README_H2_REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/readme/data-pack",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/references/data-pack.template.md",
+      "positiveSource": "# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Data Contract\n\nFixture content.\n\n## Item Index\n\nFixture content.\n\n## Refresh and Retention\n\nFixture content.\n\n## Evidence Boundary\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "README_H2_REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/readme/research-pack",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/references/research-pack.template.md",
+      "positiveSource": "# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Research Contract\n\nFixture content.\n\n## Report Index\n\nFixture content.\n\n## Refresh and Succession\n\nFixture content.\n\n## Evidence Boundary\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
       "negativeMutations": [
         {
           "kind": "remove-required-heading",

@@ -3,7 +3,7 @@ title: 'Document Taxonomy Consolidation Architecture Description'
 type: sdlc/ad
 status: active
 owner: platform
-updated: 2026-08-29
+updated: 2026-09-01
 artifact_id: "AD-0011"
 ---
 
@@ -38,11 +38,15 @@ Current document topology and recovery follow
 [ADR-0030](../decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)
 and [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md).
 Git history is the default full-content archive. A current deletion or move
-requires bounded consumer-zero and recovery evidence; sealed historical
-payloads are not rewritten to make current validation pass.
+requires bounded consumer-zero evidence from the link/owner boundary and a
+recoverable base Git blob. Lifecycle validation owns retained authored
+profile, state, and edge changes; it does not freeze ordinary terminal bodies
+or require a Migration row for each reviewed deletion. Sealed historical
+payloads remain protected by their archive-specific integrity checks.
 
-Stage 90 dated observations retain the facts and paths observed at their
-cutoff. A current navigational index or an explicit historical annotation may
+Stage 90 observation-dated material retains the facts observed at its cutoff,
+while current pack paths use category-local `####-<slug>` identities. A current
+navigational index or an explicit historical annotation may
 change when its contract allows; observation prose is not silently rewritten
 to look current.
 
@@ -107,7 +111,7 @@ execution lineage. Stage 04 remains retired and is not silently reused.
 | Template projection | Registry-selected templates | Template forms reference their registry profile and contain copyable structure only. |
 | Agent system, role, permission, and handoff shape | Terminal `.agents/registry.json` owner defined by ADR-0030 | WP-003 migrates provider-neutral and Codex/Claude projections without treating the predecessor harness as a parallel terminal owner. |
 | Validator lane and command selection | `validation-surfaces.json` | Pre-commit, affected selection, CI, and aggregate wrappers invoke the declared owner. |
-| Historical evidence | Stage 98 archive index and immutable envelopes | Active documents link through the index; they do not rewrite archive payloads. |
+| Historical evidence | Git history by default; retained sealed Stage 98 records only for distinct archive-internal value | Active Stages 00/01/02/03/05/90 do not cite or cross-link Stage 98 and never rewrite sealed payloads to make current validation pass. |
 
 ### Migration state model
 
@@ -122,6 +126,12 @@ The route migration has three explicit states:
 Tests and registry compatibility land before document moves. An explicit
 source-to-target mapping drives `git mv`; runtime slug inference is forbidden.
 The terminal contract is activated only after old-route consumer count is zero.
+
+This route state model does not make terminal document bodies byte-frozen.
+Same-status body maintenance is ordinary current-document work; illegal status
+or profile changes remain lifecycle failures. Deletion is admitted only after
+the separate link/owner lane proves no current consumer, with Git retaining the
+base bytes.
 
 ### Material disposition model
 
@@ -146,9 +156,10 @@ similar in name to another file.
 ### Document identity and date policy
 
 Identity is carried by a stable stage identifier or slug. Mutable authoring and
-review dates remain in frontmatter. A date may remain in a path only when it is
-part of immutable observation or event identity: dated Stage 90 packs and
-snapshots, real Incident/Postmortem identities, and Stage 98 mirror paths.
+review dates remain in frontmatter. Stage 90 packs use category-local
+`####-<slug>` identities and keep observation dates in document metadata. A
+date may remain in a path only when it is part of a real Incident/Postmortem
+identity or an existing Stage 98 historical path.
 
 Cross-stage lineage continues to use the registry's closed program or
 standalone relationship data and reciprocal document links. This program does
@@ -162,8 +173,8 @@ remain linked predecessor evidence rather than competing current owners.
 The WORK-105 through WORK-108 clauses below describe a completed predecessor
 transition only. They are non-authoritative for new topology, corpus
 cardinality, or Archive design. Current terminal authority is ADR-0030 and
-Spec 0054; current path recovery is indexed by the applicable Stage 98
-Migration and Git history.
+Spec 0054; current path recovery uses Git history. A retained Stage 98
+Migration is archive-internal context, not an active-document dependency.
 
 WORK-105 and WORK-106 change no Stage 98 path or byte. WORK-105 acceptance and
 a green WORK-106 validator tranche are both preconditions. WORK-107 only may
@@ -268,6 +279,15 @@ disposition, not assumed dead. Each needs an input-consumer graph, unique-rule
 inventory, and negative-fixture comparison. The final declared executable set
 must equal the tracked executable set for governed lanes.
 
+The current lifecycle owner validates registry-classified profile, state, and
+declared edge changes for retained authored documents. It treats
+classification-only Reference documents and frontmatter-free package/pack
+routers as non-lifecycle projections. Terminal body maintenance and deletion
+are not byte-identity events: Markdown/profile validation checks the proposed
+content, the link/owner validator checks consumer-zero, and Git owns recovery.
+Archive-specific validation continues to reject unproved creation or mutation
+of sealed evidence.
+
 ### Memory and generated data
 
 Progress remains unchanged until WP012 transfers the remaining work to its
@@ -279,8 +299,8 @@ its own reproduction and consumer proof.
 
 ## Infrastructure & Deployment
 
-Implementation occurs in the isolated local branch
-`codex/docs-sdlc-governance-consolidation` through logical-unit commits. No
+Implementation occurs in an isolated local working branch through
+logical-unit commits. No
 dependency is deployed and no remote or live action is part of this
 architecture.
 

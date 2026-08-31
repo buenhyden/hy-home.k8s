@@ -57,7 +57,7 @@ separate provider/runtime evidence and is not established by this snapshot.
 
 1. [infrastructure/main.bicep](../infrastructure/main.bicep)에서 생성된 Client ID 등을 매니페스트에 반영한다.
 2. 매니페스트 변경은 반드시 GitOps 풀 모델(ArgoCD)을 통해 클러스터에 반영되어야 한다.
-3. [Azure dated snapshot](../../../docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md#definitions--facts)에 보존된 인터페이스 규격과 현재 공식 자료를 함께 검토한다.
+3. [Azure example boundary](../README.md)와 현재 Azure 공식 자료를 함께 검토한다.
 
 ### Link Basis
 
@@ -69,9 +69,9 @@ separate provider/runtime evidence and is not established by this snapshot.
 
 ### Reference Links
 
-- **Spec snapshot**: [Azure retained specification](../../../docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md#definitions--facts)
+- **Example boundary**: [Azure reference implementation](../README.md)
 - **Infrastructure**: [../infrastructure/README.md](../infrastructure/README.md)
-- **Runbook snapshot**: [Azure retained operations](../../../docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md#definitions--facts)
+- **Repository operations**: [GitOps platform runbook](../../../docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)
 
 ### AI Agent Guidance
 
@@ -82,4 +82,3 @@ separate provider/runtime evidence and is not established by this snapshot.
 ## Related Documents
 
 - [Azure executable example entrypoint](../README.md)
-- [Azure provider snapshot handoff](../../../docs/90.references/cloud-examples/azure/README.md)

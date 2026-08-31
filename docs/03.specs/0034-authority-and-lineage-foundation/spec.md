@@ -158,7 +158,7 @@ only after an explicit reciprocal Plan/Task pair is created.
 - **PRD**: [Workspace Document Lifecycle and Evidence Consolidation](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - **AD**: [Document Lifecycle and Evidence Operating Model](../../02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md)
 - **Lineage decision**: [ADR-0017](../../02.architecture/decisions/0017-program-follow-up-lineage-semantics.md)
-- **Current audit**: [2026-07-11 WEIA](../../90.references/audits/2026-07-11-weia/README.md)
+- **Current external research**: [Workspace Engineering Research Pack](../../90.references/research/0001-workspace-engineering/README.md)
 - **Completed execution history**: [Archive Index](../../98.archive/README.md#document-index)
 - **Successor**: [Spec 035](../0035-document-schema-and-lifecycle-contract/spec.md)
 

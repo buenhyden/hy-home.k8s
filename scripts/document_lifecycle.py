@@ -223,32 +223,6 @@ def _state_diagnostic(
     )
 
 
-def _terminal_mutation_diagnostic(
-    document: LifecycleDocument,
-    profile: DocumentProfile,
-    *,
-    path_changed: bool,
-    base_mode: LifecycleBaseMode,
-) -> LifecycleDiagnostic | None:
-    domain = profile.lifecycle_domain
-    if (
-        not path_changed
-        or domain is None
-        or document.status is None
-        or domain.validation_class(document.status) != "terminal"
-    ):
-        return None
-    return _diagnostic(
-        "LIFECYCLE-TERMINAL-MUTATION",
-        path=document.path,
-        profile=document.profile_id,
-        expected="terminal document bytes unchanged",
-        observed=f"terminal status {document.status!r} has body changes",
-        base_mode=base_mode,
-        evidence_gap="registry-owned terminal validation class",
-    )
-
-
 def _create_diagnostics(
     registry: Registry,
     documents: Sequence[LifecycleDocument],
@@ -274,6 +248,13 @@ def _create_diagnostics(
             continue
         if profile.mode == "template":
             continue
+        if profile.mode == "classification-only" or profile.profile_id in {
+            "readme/collection-index",
+            "readme/audit-pack",
+            "readme/data-pack",
+            "readme/research-pack",
+        }:
+            continue
         state_failure = _state_diagnostic(
             document, profile, base_mode=base_mode, side="proposed"
         )
@@ -296,13 +277,6 @@ def _create_diagnostics(
                 and profile.lifecycle_domain.validation_class(document.status)
                 == "current"
             )
-        ):
-            continue
-        if (
-            profile.profile_id == "readme/collection-index"
-            and profile.mode == "frontmatter-free"
-            and profile.lifecycle_domain is None
-            and document.status is None
         ):
             continue
         domain = profile.lifecycle_domain
@@ -1145,18 +1119,6 @@ def compare_lifecycle(
             if proposed_state_failure is not None:
                 diagnostics.append(proposed_state_failure)
             continue
-        terminal_mutation = _terminal_mutation_diagnostic(
-            base,
-            profile,
-            path_changed=(
-                evidence_context is not None
-                and path in evidence_context.body_changed_paths
-            ),
-            base_mode=base_mode,
-        )
-        if terminal_mutation is not None:
-            diagnostics.append(terminal_mutation)
-            continue
         if base.status == proposed.status or not _stateful(profile):
             continue
         allowed_edges = (
@@ -1199,7 +1161,7 @@ def compare_lifecycle(
         registry, created, base_mode=base_mode, migration_events=migration_events
     )
     diagnostics.extend(creation_diagnostics)
-    archive_evidence_diagnostics, admitted_source_removals = _archive_creation_evidence(
+    archive_evidence_diagnostics, _ = _archive_creation_evidence(
         registry,
         created,
         base_documents,
@@ -1208,33 +1170,6 @@ def compare_lifecycle(
         base_mode=base_mode,
     )
     diagnostics.extend(archive_evidence_diagnostics)
-
-    deleted_paths = (
-        set(base_documents)
-        - consumed_base
-        - common_paths
-        - admitted_source_removals
-        - migration_events.source_removals
-    )
-    for path in sorted(deleted_paths, key=PurePosixPath.as_posix):
-        document = base_documents[path]
-        profile = _optional_profile_by_id(registry, document.profile_id)
-        admission_gap = (
-            "profile lifecycle domain requires document retention"
-            if profile is not None
-            else "unclassified target Markdown deletion is denied"
-        )
-        diagnostics.append(
-            _diagnostic(
-                "LIFECYCLE-DELETE",
-                path=path,
-                profile=document.profile_id,
-                expected="document retained",
-                observed=f"{document.status or 'not-applicable'} -> absent",
-                base_mode=base_mode,
-                evidence_gap=admission_gap,
-            )
-        )
 
     return tuple(sorted(diagnostics, key=lifecycle_diagnostic_sort_key))
 

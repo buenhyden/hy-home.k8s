@@ -530,18 +530,16 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
         self.assertEqual(proof.consumers[self.consumer], self.consumer_bytes)
         self.assertEqual(proof.targets[self.source], self.target)
 
-    def test_an_unretired_consumer_still_freezes_to_its_historical_source(self):
-        # The release is scoped to a consumer that a sealed row retires.  A
-        # consumer with no such row keeps the parity rule, so the narrowing
-        # cannot be used to edit a reviewed disposition out of a live document.
+    def test_current_consumer_can_evolve_after_historical_proof(self):
+        # Archive proves the reviewed consumer bytes from Git. Current document
+        # evolution is governed by active validators, not by a historical record.
         self.write()
         (self.root / self.consumer).write_bytes(self.consumer_bytes + b"\n# later\n")
         self.git.run("add", "--", self.consumer)
 
-        with self.assertRaises(recovery.ArchiveContractError) as raised:
-            archive.repository_migration_proof(self.root)
+        proof = archive.repository_migration_proof(self.root)
 
-        self.assertEqual(raised.exception.code, "RECOVERY-MIGRATION-CONSUMER")
+        self.assertEqual(proof.consumers[self.consumer], self.consumer_bytes)
 
     def test_cli_uses_validated_successor_records(self):
         first, second = self.chain(self.payload, action="merged")
@@ -714,7 +712,6 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
             ),
             adapter_targets={},
             route_state="terminal",
-            ria_contract_text=None,
         )
         # Unrelated sealed migration corpora do not exist in this disposable repo.
         # The generic migration/source/index proof and actual renderer remain real.
@@ -1112,8 +1109,8 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
         with self.assertRaisesRegex(recovery.ArchiveContractError, "UNREACHABLE"):
             self.verify()
 
-    def test_rejects_material_index_worktree_and_consumer_drift(self):
-        for path in [self.path, self.target, self.consumer]:
+    def test_rejects_record_and_target_drift_but_not_current_consumer_change(self):
+        for path in [self.path, self.target]:
             saved = (self.root / path).read_bytes()
             (self.root / path).write_bytes(saved + b"changed\n")
             with (
@@ -1124,8 +1121,8 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
             (self.root / path).write_bytes(saved)
         (self.root / self.consumer).write_bytes(self.consumer_bytes + b"changed\n")
         self.git.run("add", "--", self.consumer)
-        with self.assertRaisesRegex(recovery.ArchiveContractError, "CONSUMER"):
-            self.verify()
+        proof = archive.repository_migration_proof(self.root)
+        self.assertEqual(proof.consumers[self.consumer], self.consumer_bytes)
 
     def test_rejects_duplicate_consumers_utf8_and_read_bounds(self):
         self.write(

@@ -230,8 +230,6 @@ Run:
 ```bash
 sed -n '1,260p' docs/90.references/research/workspace-governance-baseline.md
 sed -n '1,260p' docs/00.agent-governance/harness-catalog.md
-sed -n '1,220p' docs/00.agent-governance/common-governance.md
-sed -n '1,220p' docs/00.agent-governance/harness-implementation-map.md
 sed -n '1,220p' scripts/README.md
 sed -n '1,220p' docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md
 ```
@@ -313,7 +311,6 @@ Run:
 ```bash
 sed -n '1,320p' docs/90.references/research/harness-and-loop-engineering.md
 sed -n '1,300p' docs/00.agent-governance/harness-catalog.md
-sed -n '1,260p' docs/00.agent-governance/harness-implementation-map.md
 sed -n '1,220p' docs/00.agent-governance/subagent-protocol.md
 sed -n '1,220p' docs/00.agent-governance/rules/agentic.md
 sed -n '1,220p' docs/00.agent-governance/memory/README.md
@@ -379,7 +376,7 @@ sed -n '1,340p' docs/90.references/research/provider-implementation-status.md
 sed -n '1,220p' docs/00.agent-governance/providers/claude.md
 sed -n '1,220p' docs/00.agent-governance/providers/codex.md
 sed -n '1,220p' docs/00.agent-governance/providers/gemini.md
-sed -n '1,220p' docs/00.agent-governance/common-governance.md
+sed -n '1,300p' docs/00.agent-governance/harness-catalog.md
 find .claude/agents .codex/agents .agents/agents -maxdepth 1 -type f | sort
 ```
 
@@ -529,7 +526,7 @@ Run:
 
 ```bash
 git diff --check
-bash scripts/generate-llm-wiki-index.sh --check
+python3 scripts/validate-markdown-profiles.py --root . --mode strict
 bash scripts/validate-repo-quality-gates.sh .
 rg --files | rg '(^|/)progress\.md$'
 rg -n '^status: draft|^- \\[ \\]' docs/03.specs/0010-workspace-harness-implementation-audit-pack/plan.md docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md#task-records
@@ -539,7 +536,7 @@ rg -n 'workspace-harness-implementation-audit-pack.*\\| Draft \\|' docs/03.specs
 Expected:
 
 - `git diff --check`: no output.
-- LLM wiki check: `[PASS] LLM WIKI generated index is current`.
+- Markdown profile check: zero profile violations.
 - Quality gate: `[PASS] repository quality gates passed`.
 - Progress singleton: only `docs/00.agent-governance/memory/progress.md`.
 - Stale-marker scan: no rows for the audit pack remain `Draft` or unchecked.
@@ -576,7 +573,7 @@ git commit -m "docs(audit): Finalize workspace harness implementation audit pack
 | ID | Level | Description | Command / How to Run | Pass Criteria |
 | --- | --- | --- | --- | --- |
 | VAL-PLN-001 | Structural | Diff whitespace check | `git diff --check` | No output and zero exit code. |
-| VAL-PLN-002 | Generated index | LLM wiki index freshness | `bash scripts/generate-llm-wiki-index.sh --check` | Prints `[PASS] LLM WIKI generated index is current`. |
+| VAL-PLN-002 | Reference profiles | Stage 90 Markdown contract | `python3 scripts/validate-markdown-profiles.py --root . --mode strict` | Reports zero profile violations. |
 | VAL-PLN-003 | Repo quality | Repository quality gates | `bash scripts/validate-repo-quality-gates.sh .` | Prints `[PASS] repository quality gates passed`. |
 | VAL-PLN-004 | Progress singleton | Canonical progress ledger uniqueness | `rg --files \| rg '(^\|/)progress\.md$'` | Prints only `docs/00.agent-governance/memory/progress.md`. |
 | VAL-PLN-005 | Status alignment | No stale audit-pack draft/checklist markers | Targeted `rg` commands from Task 6 Step 3 | No audit-pack frontmatter remains `draft`, no audit-pack checklist remains unchecked, and no audit-pack README row remains `Draft`. |
@@ -585,7 +582,7 @@ git commit -m "docs(audit): Finalize workspace harness implementation audit pack
 
 - **Test Commands**:
   - `git diff --check`
-  - `bash scripts/generate-llm-wiki-index.sh --check`
+  - `python3 scripts/validate-markdown-profiles.py --root . --mode strict`
   - `bash scripts/validate-repo-quality-gates.sh .`
   - `rg --files | rg '(^|/)progress\.md$'`
 - **Eval Commands**:
@@ -603,7 +600,7 @@ git commit -m "docs(audit): Finalize workspace harness implementation audit pack
 | --- | --- | --- | --- |
 | 2026-07-02 | Plan | Manual plan review | PASS; plan and task records created from approved Spec with six logical units and repo-static validation criteria |
 | 2026-07-02 | Plan | `git diff --check` | PASS; no output |
-| 2026-07-02 | Plan | `bash scripts/generate-llm-wiki-index.sh --check` | PASS; `[PASS] LLM WIKI generated index is current` |
+| 2026-07-02 | Plan | Retired LLM Wiki generated-index check (historical) | PASS at execution time; the generator and output are no longer current surfaces |
 | 2026-07-02 | Plan | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
 | 2026-07-02 | T-001 | Manual README/template review | PASS; reviewed parent Spec, parent Plan, README template, reference template, parent reference README, and existing audit precedent |
 | 2026-07-02 | T-001 | `git diff --check` | PASS; no output |
@@ -632,7 +629,7 @@ git commit -m "docs(audit): Finalize workspace harness implementation audit pack
 | 2026-07-03 | T-005 quality review fix | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
 | 2026-07-03 | T-006 | Manual final integration review | PASS; marked plan/task complete, updated Stage 04 indexes to `Done`, verified all four 2026-07-02 audit reports are linked as `Current`, and refreshed progress memory |
 | 2026-07-03 | T-006 | `git diff --check` | PASS; no output |
-| 2026-07-03 | T-006 | `bash scripts/generate-llm-wiki-index.sh --check` | PASS; `[PASS] LLM WIKI generated index is current` |
+| 2026-07-03 | T-006 | Retired LLM Wiki generated-index check (historical) | PASS at execution time; the generator and output are no longer current surfaces |
 | 2026-07-03 | T-006 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
 | 2026-07-03 | T-006 | `rg --files \| rg '(^\|/)progress\.md$'` | PASS; returned only `docs/00.agent-governance/memory/progress.md` |
 | 2026-07-03 | T-006 | Targeted audit-pack stale-marker scans | PASS; no audit-pack frontmatter remained `draft`, no audit-pack checklist remained unchecked, and no audit-pack README row remained `Draft` |
@@ -671,7 +668,7 @@ git commit -m "docs(audit): Finalize workspace harness implementation audit pack
 - **Approval Required**: Human approval is required before publishing Workspace Harness Implementation Audit Pack research, changing active policy/runtime behavior, deleting evidence, contacting providers, push, merge, or corpus expansion.
 - **Static Validation**: Preserve the Workspace Harness Implementation Audit Pack outcomes and limitations recorded in Verification Summary; use these recorded checks:
   - `git diff --check`
-  - `bash scripts/generate-llm-wiki-index.sh --check`
+  - `python3 scripts/validate-markdown-profiles.py --root . --mode strict`
   - `bash scripts/validate-repo-quality-gates.sh .`
   - `rg --files | rg '(^|/)progress\.md$'`
 - **Live Validation**: DEFER — Workspace Harness Implementation Audit Pack is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.

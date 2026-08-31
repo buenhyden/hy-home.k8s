@@ -30,9 +30,6 @@
     "programLineage": {
       "$ref": "#/$defs/programLineage"
     },
-    "referenceCurrentPacks": {
-      "$ref": "#/$defs/referenceCurrentPacks"
-    },
     "schemaVersion": {
       "const": 8
     },
@@ -487,59 +484,6 @@
         "decision": {
           "type": "string",
           "pattern": "^[0-9]{4}$"
-        }
-      }
-    },
-    "referenceCurrentPack": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "id",
-        "allowedStates",
-        "members"
-      ],
-      "properties": {
-        "id": {
-          "type": "string",
-          "pattern": "^(audits|research)/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+$"
-        },
-        "allowedStates": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {
-            "type": "string"
-          }
-        },
-        "members": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {
-            "type": "string",
-            "pattern": "^(?!README\\.md$)[A-Za-z0-9][A-Za-z0-9._-]*\\.md$"
-          }
-        }
-      }
-    },
-    "referenceCurrentPacks": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "profileId",
-        "packs"
-      ],
-      "properties": {
-        "profileId": {
-          "const": "content/reference"
-        },
-        "packs": {
-          "type": "array",
-          "minItems": 1,
-          "maxItems": 2,
-          "items": {
-            "$ref": "#/$defs/referenceCurrentPack"
-          }
         }
       }
     },

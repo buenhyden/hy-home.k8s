@@ -292,7 +292,6 @@ class RetiredSurfaceSelectionTest(unittest.TestCase):
                 "archive_recovery",
                 "document_contracts",
                 "archive_validation",
-                "reference_information_architecture",
                 "_links_document_taxonomy_migration",
             )
         }
@@ -351,7 +350,7 @@ spec.loader.exec_module(module)
 before = sys.path[:]
 names = ('json_schema_validation', 'document_authority', 'archive_cutover_manifest',
          'archive_recovery', 'document_contracts', 'archive_validation',
-         'reference_information_architecture', '_links_document_taxonomy_migration')
+         '_links_document_taxonomy_migration')
 owners_before = {name: sys.modules[name] for name in names if name in sys.modules}
 contract = module.validate_contract(path.parent.parent)
 result = module.select_paths(contract, [sys.argv[3]], 'affected', pathlib.Path(sys.argv[2]))

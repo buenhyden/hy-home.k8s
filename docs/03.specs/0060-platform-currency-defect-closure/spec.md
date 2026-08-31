@@ -263,6 +263,6 @@ No separate PRD or Architecture Description is required or part of this standalo
 
 - [ADR 0022 — direct-approval standalone execution lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
 - [ADR-0026 — Argo CD source integrity non-adoption](../../02.architecture/decisions/0026-argo-cd-source-integrity-non-adoption.md)
-- [Tech stack version inventory](../../90.references/data/tech-stack-version-inventory.md)
-- [Kubernetes, infrastructure, and security research](../../90.references/research/2026-08-08-wer/kubernetes-infrastructure-and-security.md)
+- [Kubernetes infrastructure and security research](../../90.references/research/0001-workspace-engineering/kubernetes-infrastructure-and-security.md)
+- [Kubernetes, infrastructure, and security research](../../90.references/research/0001-workspace-engineering/kubernetes-infrastructure-and-security.md)
 - [Quality standards](../../00.agent-governance/rules/quality-standards.md)

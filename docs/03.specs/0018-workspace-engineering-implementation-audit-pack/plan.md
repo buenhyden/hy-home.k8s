@@ -96,8 +96,8 @@ and closes validation through local static checks.
 - **Parent Spec**: [../../03.specs/0018-workspace-engineering-implementation-audit-pack/spec.md](spec.md)
 - **Parent Plan**: [../plans/2026-07-05-workspace-engineering-implementation-audit-pack.md](plan.md)
 - **Task Template**: [../../99.templates/templates/specs/task.template.md](../../99.templates/templates/specs/task.template.md)
-- **Research Pack**: `docs/90.references/research/2026-07-04-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
-- **Audits Index**: [../../90.references/audits/README.md](../../90.references/audits/README.md)
+- **Research Pack**: `docs/90.references/research/2026-07-04-wer/README.md`; [current lookup](../../90.references/research/0001-workspace-engineering/README.md)
+- **Stage 90 Router**: [../../90.references/README.md](../../90.references/README.md)
 ## Goals & In-Scope
 
 - **Goals**:
@@ -410,7 +410,6 @@ sed -n '1,220p' docs/90.references/research/2026-07-04-wer/workspace-governance-
 sed -n '1,260p' docs/90.references/research/2026-07-04-wer/harness-and-loop-engineering.md
 sed -n '1,260p' docs/90.references/research/2026-07-04-wer/provider-implementation-status.md
 sed -n '1,220p' docs/00.agent-governance/harness-catalog.md
-sed -n '1,220p' docs/00.agent-governance/harness-implementation-map.md
 ```
 
 Expected: benchmark definitions and repo implementation surfaces are visible.
@@ -549,7 +548,7 @@ Run:
 ```bash
 sed -n '1,260p' docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md
 sed -n '1,260p' docs/90.references/research/2026-07-04-wer/automation-pipeline-workflow-qa.md
-sed -n '1,220p' .github/ABOUT.md
+sed -n '1,220p' .github/README.md
 sed -n '1,260p' .github/workflows/ci.yml
 sed -n '1,260p' .pre-commit-config.yaml
 sed -n '1,220p' docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md
@@ -941,7 +940,7 @@ Expected: commit succeeds and the worktree is clean.
     `docs/90.references/audits/2026-07-04-wdcn/workspace-document-contract-normalization-audit.md`
 - Updated the Stage 90 audit index structure, links, Link Basis note, and
   planned/current `2026-07-05-wea/`
-  directory entry in [../../90.references/audits/README.md](../../90.references/audits/README.md).
+  directory entry in the [Stage 90 router](../../90.references/README.md).
 - Updated current navigational links and moved-report relative links in:
   - [../../00.agent-governance/memory/progress.md](../../00.agent-governance/memory/progress.md)
   - [../../03.specs/0006-workspace-harness-gap-analysis/spec.md](../0006-workspace-harness-gap-analysis/spec.md)
@@ -1006,14 +1005,12 @@ Expected: commit succeeds and the worktree is clean.
   - `docs/90.references/research/2026-07-04-wer/harness-and-loop-engineering.md`
   - `docs/90.references/research/2026-07-04-wer/provider-implementation-status.md`
   - `docs/00.agent-governance/harness-catalog.md`
-  - `docs/00.agent-governance/harness-implementation-map.md`
   - `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`
   - `.claude/CLAUDE.md`, `.codex/CODEX.md`, `.agents/GEMINI.md`
   - `.claude/settings.json`, `.codex/hooks.json`, `.agents/hooks.json`
   - `docs/00.agent-governance/providers/claude.md`
   - `docs/00.agent-governance/providers/codex.md`
   - `docs/00.agent-governance/providers/gemini.md`
-  - `docs/00.agent-governance/providers/agents-md.md`
   - `.claude/agents/`, `.codex/agents/`, `.agents/agents/`,
     `.agents/skills/`, `.agents/workflows/`, and `.agents/output-styles/`
 - **WEA-003 Matrix Rows Recorded**:
@@ -1050,7 +1047,7 @@ Expected: commit succeeds and the worktree is clean.
   - `docs/03.specs/0018-workspace-engineering-implementation-audit-pack/plan.md` Task 4
   - `docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md`
   - `docs/90.references/research/2026-07-04-wer/automation-pipeline-workflow-qa.md`
-  - `.github/ABOUT.md`
+  - `.github/README.md`
   - `.github/workflows/ci.yml`
   - `.github/workflows/generate-changelog.yml`
   - `.github/workflows/labeler.yml`
@@ -1303,8 +1300,8 @@ mutation.
 - **Research Pack Spec**: [../../03.specs/0017-workspace-engineering-research-pack/spec.md](../0017-workspace-engineering-research-pack/spec.md)
 - **Prior Audit Pack Spec**: [../../03.specs/0010-workspace-harness-implementation-audit-pack/spec.md](../0010-workspace-harness-implementation-audit-pack/spec.md)
 - **Task**: [../tasks/2026-07-05-workspace-engineering-implementation-audit-pack.md](README.md#task-records)
-- **Research Pack README**: `docs/90.references/research/2026-07-04-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
-- **Audits README**: [../../90.references/audits/README.md](../../90.references/audits/README.md)
+- **Research Pack README**: `docs/90.references/research/2026-07-04-wer/README.md`; [current lookup](../../90.references/research/0001-workspace-engineering/README.md)
+- **Stage 90 Router**: [../../90.references/README.md](../../90.references/README.md)
 - **Reference Template**: [../../99.templates/templates/references/reference.template.md](../../99.templates/templates/references/reference.template.md)
 - **Task Template**: [../../99.templates/templates/specs/task.template.md](../../99.templates/templates/specs/task.template.md)
 
@@ -1312,6 +1309,6 @@ mutation.
 
 - **Spec**: [../../03.specs/0018-workspace-engineering-implementation-audit-pack/spec.md](spec.md)
 - **Plan**: [../plans/2026-07-05-workspace-engineering-implementation-audit-pack.md](plan.md)
-- **Research Pack README**: `docs/90.references/research/2026-07-04-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
-- **Audits README**: [../../90.references/audits/README.md](../../90.references/audits/README.md)
+- **Research Pack README**: `docs/90.references/research/2026-07-04-wer/README.md`; [current lookup](../../90.references/research/0001-workspace-engineering/README.md)
+- **Stage 90 Router**: [../../90.references/README.md](../../90.references/README.md)
 - **Task Index**: [README.md](../../99.templates/templates/specs/task.template.md)

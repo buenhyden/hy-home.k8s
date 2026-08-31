@@ -190,5 +190,5 @@ namespaces, which is the event those labels exist to surface.
 ### Related Documents
 
 - [ADR-0027 — Pod Security Standards staged adoption](0027-pod-security-standards-staged-adoption.md)
-- [Pod Security Compliance Inventory](../../90.references/data/pod-security-compliance-inventory.md)
-- [Istio CNI Adoption Evaluation](../../90.references/data/istio-cni-adoption-evaluation.md)
+- [Kubernetes infrastructure and security research](../../90.references/research/0001-workspace-engineering/kubernetes-infrastructure-and-security.md)
+- [Istio CNI application](../../../gitops/apps/root/platform-istio-cni-app.yaml)

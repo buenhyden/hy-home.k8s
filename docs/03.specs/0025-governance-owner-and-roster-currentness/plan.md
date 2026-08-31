@@ -1190,9 +1190,9 @@ git commit -m "docs(governance): close roster currentness evidence"
 - **Task**:
   [../tasks/2026-07-11-governance-owner-and-roster-currentness.md](README.md#task-records)
 - **Current Audit Pack**:
-  [../../90.references/audits/2026-07-11-weia/README.md](../../90.references/audits/2026-07-11-weia/README.md)
+  [current external research pack](../../90.references/research/0001-workspace-engineering/README.md)
 - **Remediation Roadmap**:
-  [../../90.references/audits/2026-07-11-weia/remediation-roadmap.md](../../90.references/audits/2026-07-11-weia/remediation-roadmap.md)
+  [scope application index](../../90.references/research/0001-workspace-engineering/scope-application-index.md)
 - **Harness Catalog**:
   [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Archive Index**: [../../98.archive/README.md](../../98.archive/README.md)
@@ -1204,8 +1204,8 @@ git commit -m "docs(governance): close roster currentness evidence"
 - **Plan**:
   [../plans/2026-07-11-governance-owner-and-roster-currentness.md](plan.md)
 - **Current Audit Pack**:
-  [../../90.references/audits/2026-07-11-weia/README.md](../../90.references/audits/2026-07-11-weia/README.md)
+  [current external research pack](../../90.references/research/0001-workspace-engineering/README.md)
 - **Remediation Roadmap**:
-  [../../90.references/audits/2026-07-11-weia/remediation-roadmap.md](../../90.references/audits/2026-07-11-weia/remediation-roadmap.md)
+  [scope application index](../../90.references/research/0001-workspace-engineering/scope-application-index.md)
 - **Harness Catalog**:
   [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)

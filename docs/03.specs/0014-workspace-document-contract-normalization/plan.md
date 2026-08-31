@@ -666,7 +666,7 @@ Run:
 
 ```bash
 sed -n '1,240p' .github/workflows/ci.yml
-sed -n '1,220p' .github/ABOUT.md
+sed -n '1,220p' .github/README.md
 sed -n '1,240p' docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md
 sed -n '1,240p' scripts/README.md
 sed -n '1,200p' tests/README.md
@@ -856,13 +856,13 @@ Status: Done.
 Evidence:
 
 - Added the dated audit report:
-  [Workspace Document Contract Normalization Audit](../../90.references/audits/2026-07-04-wdcn/workspace-document-contract-normalization-audit.md).
+  [Spec-driven SDLC and Document Contracts](../../90.references/research/0001-workspace-engineering/spec-driven-sdlc-and-document-contracts.md).
 - Updated the audit report index in
-  [Audit References README](../../90.references/audits/README.md).
+  [Stage 90 Router](../../90.references/README.md).
 - Focused docs Markdown inventory counted 206 Markdown files, 181 authored
   frontmatter documents, 23 README files, 2 intentional common-template
   frontmatter-free exceptions, and 32 archive Tombstones.
-- `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and
+- `.github/README.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and
   `.github/SECURITY.md` were recorded as active frontmatter-free repository
   surfaces that need explicit contract treatment in T-002 or T-005.
 - Read-only subagent cross-check found no validator-blocking drift and added
@@ -882,7 +882,7 @@ Status: Done.
 
 Evidence:
 
-- Clarified `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and
+- Clarified `.github/README.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and
   `.github/SECURITY.md` as frontmatter-free GitHub-native control Markdown in
   template support contracts, Stage 00 routing rules, and the repository
   quality gate.
@@ -924,7 +924,7 @@ Status: Done.
 Evidence:
 
 - Updated the parent spec so active repository-control Markdown under
-  `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and
+  `.github/README.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and
   `.github/SECURITY.md` is modeled as a frontmatter-free GitHub-native control
   surface instead of a missing authored-document profile.
 - Added `repository-control` evidence and `control` validator scope to the
@@ -1092,7 +1092,7 @@ Validation:
   - `docs/03.specs/0014-workspace-document-contract-normalization/README.md#task-records`
   - `docs/03.specs/0014-workspace-document-contract-normalization/spec.md`
   - `docs/03.specs/0014-workspace-document-contract-normalization/plan.md`
-  - `.github/ABOUT.md`
+  - `.github/README.md`
   - `.github/PULL_REQUEST_TEMPLATE.md`
 ## Completion Criteria
 

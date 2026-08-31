@@ -563,8 +563,8 @@ retains responsibility for final integration, validation, and branch finishing.
 
 ## Traceability
 
-- [Current Audit Pack](../../90.references/audits/2026-07-11-weia/README.md)
-- [Remediation Roadmap](../../90.references/audits/2026-07-11-weia/remediation-roadmap.md)
+- [Current External Research Pack](../../90.references/research/0001-workspace-engineering/README.md)
+- [Scope Application Index](../../90.references/research/0001-workspace-engineering/scope-application-index.md)
 - [Spec Stage](../README.md)
 - [Execution Plan](plan.md)
 - [Execution Task](README.md#task-records)

@@ -12,7 +12,7 @@ artifact_id: "SPEC-0053"
 ## Overview
 
 This specification defines a new dated workspace engineering research pack at
-`docs/90.references/research/2026-08-08-wer/`. The pack re-researches the full
+`docs/90.references/research/0001-workspace-engineering/`. The pack re-researches the full
 requested scope against current official or primary external sources and the
 current repository, integrates the valid findings and provenance from all 25
 files in the `2026-07-04-wer`, `2026-07-07-wer`, and `2026-08-07-wer` packs,
@@ -80,7 +80,7 @@ typed relationship is governed by
 
 ### C-WER-001 — single live pack owner
 
-`docs/90.references/research/2026-08-08-wer/` becomes the sole live research
+`docs/90.references/research/0001-workspace-engineering/` becomes the sole live research
 pack owner for the requested topics. The three predecessor directories do not
 exist after cutover.
 
@@ -150,7 +150,7 @@ cutover.
 | `ai-agents-and-agency-agents.md` | AI-agent system design, pinned `msitarzewski/agency-agents` evidence, roster comparison, Adopt/Adapt/Skip decisions, and admission rules. |
 | `agent-model-routing-and-configuration.md` | Task-characteristic model selection, product-surface separation, reasoning controls, evaluation, fallback, cost/latency, and promotion. |
 | `agent-memory-tiers-and-management.md` | Working short-term, durable long-term, domain-scoped, and provider-local auxiliary memory with lifecycle controls. |
-| `source-coverage-and-migration-ledger.md` | Old-file and material-section disposition, source commits, checked dates, new owners, omissions, and cutover evidence. |
+| `source-coverage.md` | Old-file and material-section disposition, source commits, checked dates, new owners, omissions, and cutover evidence. |
 
 ### Research flow
 
@@ -361,7 +361,7 @@ bash scripts/validate-repo-quality-gates.sh .
 Focused acceptance checks must also prove:
 
 ```bash
-test -d docs/90.references/research/2026-08-08-wer
+test -d docs/90.references/research/0001-workspace-engineering
 test ! -e docs/90.references/research/2026-07-04-wer
 test ! -e docs/90.references/research/2026-07-07-wer
 test ! -e docs/90.references/research/2026-08-07-wer

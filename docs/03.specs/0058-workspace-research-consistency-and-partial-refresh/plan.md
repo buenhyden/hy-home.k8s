@@ -14,7 +14,7 @@ artifact_id: "PLAN-0058"
 This Plan executes the combined constraint-consistency and `Partial`
 re-observation cycle designed by
 [Spec 0058](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md)
-over the existing `2026-08-08-wer` research pack.
+over the existing `0001-workspace-engineering` research pack.
 
 **Goal.** Reconcile the pack against its current repository shape and record a
 dated 2026-08-14 delta for the twelve `Partial` requirement rows, without
@@ -81,7 +81,7 @@ The typed relation is governed by
 [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md).
 
 This Task tracks the eight-work-package cycle over the existing
-`2026-08-08-wer` research pack: a constraint-consistency pass over scope
+`0001-workspace-engineering` research pack: a constraint-consistency pass over scope
 projection, approved one-off artifact cleanup, and a dated re-observation of
 the twelve `Partial` requirement rows. WRCP-000 activates the standalone
 execution relation itself; WRCP-001 through WRCP-007 execute and close the
@@ -484,11 +484,11 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 
 **Files:**
 
-- Modify: `docs/90.references/research/2026-08-08-wer/workspace-governance-and-common-agent-environment.md`
-- Modify: `docs/90.references/research/2026-08-08-wer/ai-agents-and-agency-agents.md`
-- Modify: `docs/90.references/research/2026-08-08-wer/agent-model-routing-and-configuration.md`
-- Modify: `docs/90.references/research/2026-08-08-wer/agent-memory-tiers-and-management.md`
-- Modify: `docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/workspace-governance-and-common-agent-environment.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/ai-agents-and-agency-agents.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/agent-model-routing-and-configuration.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/agent-memory-tiers-and-management.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/source-coverage.md`
 - Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
 
 **Interfaces:**
@@ -498,7 +498,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
   `032`, and ledger rows starting at `SRC-WERPC-074` and `CLM-WERPC-010-01`.
 
 - [ ] **Step 1: Read the registered sources for these four rows.** Open
-      `source-coverage-and-migration-ledger.md` and list every `SRC-WERPC-*` row
+      `source-coverage.md` and list every `SRC-WERPC-*` row
       whose adopted scope covers common-system, AI-agent-system, model-routing, or
       memory evidence. Record the exact URLs and their `Checked on` dates. These
       are the only external sources this package re-checks.
@@ -547,7 +547,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 - [ ] **Step 7: Commit.**
 
   ```bash
-  git add docs/90.references/research/2026-08-08-wer/ docs/03.specs/
+  git add docs/90.references/research/0001-workspace-engineering/ docs/03.specs/
   git commit -m "docs: refresh agent governance and memory evidence"
   ```
 
@@ -555,8 +555,8 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 
 **Files:**
 
-- Modify: `docs/90.references/research/2026-08-08-wer/kubernetes-infrastructure-and-security.md`
-- Modify: `docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/kubernetes-infrastructure-and-security.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/source-coverage.md`
 - Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
 
 **Interfaces:**
@@ -598,7 +598,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
   ```bash
   python3 scripts/validate-links-and-owners.py --root . --mode strict
   python3 scripts/validate-markdown-profiles.py --root . --mode strict
-  git add docs/90.references/research/2026-08-08-wer/ docs/03.specs/
+  git add docs/90.references/research/0001-workspace-engineering/ docs/03.specs/
   git commit -m "docs: refresh Kubernetes infrastructure and security evidence"
   ```
 
@@ -606,9 +606,9 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 
 **Files:**
 
-- Modify: `docs/90.references/research/2026-08-08-wer/documentation-architecture-and-diataxis.md`
-- Modify: `docs/90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md`
-- Modify: `docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/documentation-architecture-and-diataxis.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/spec-driven-sdlc-and-document-contracts.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/source-coverage.md`
 - Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
 
 **Interfaces:**
@@ -670,7 +670,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
   ```bash
   python3 scripts/validate-links-and-owners.py --root . --mode strict
   python3 scripts/validate-markdown-profiles.py --root . --mode strict
-  git add docs/90.references/research/2026-08-08-wer/ docs/03.specs/
+  git add docs/90.references/research/0001-workspace-engineering/ docs/03.specs/
   git commit -m "docs: refresh Guide and documentation architecture evidence"
   ```
 
@@ -678,8 +678,8 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 
 **Files:**
 
-- Modify: `docs/90.references/research/2026-08-08-wer/ci-cd-github-actions-and-qa.md`
-- Modify: `docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/ci-cd-github-actions-and-qa.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/source-coverage.md`
 - Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
 
 **Interfaces:**
@@ -723,7 +723,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
   ```bash
   python3 scripts/validate-links-and-owners.py --root . --mode strict
   python3 scripts/validate-markdown-profiles.py --root . --mode strict
-  git add docs/90.references/research/2026-08-08-wer/ docs/03.specs/
+  git add docs/90.references/research/0001-workspace-engineering/ docs/03.specs/
   git commit -m "docs: refresh CI CD Actions and QA evidence"
   ```
 
@@ -731,8 +731,8 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 
 **Files:**
 
-- Modify: `docs/90.references/research/2026-08-08-wer/scope-application-index.md`
-- Modify: `docs/90.references/research/2026-08-08-wer/README.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/scope-application-index.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/README.md`
 - Modify: `docs/90.references/research/README.md`
 - Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
 
@@ -1047,8 +1047,8 @@ relation are recorded the same way.
 - Decision source:
   `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`
 - Immediate predecessor cycle: spec `056`
-- [Research pack README](../../90.references/research/2026-08-08-wer/README.md)
-- [Scope application index](../../90.references/research/2026-08-08-wer/scope-application-index.md)
+- [Research pack README](../../90.references/research/0001-workspace-engineering/README.md)
+- [Scope application index](../../90.references/research/0001-workspace-engineering/scope-application-index.md)
 - [Quality standards](../../00.agent-governance/rules/quality-standards.md)
 
 ### Legacy Task traceability

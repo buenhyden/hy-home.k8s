@@ -42,7 +42,6 @@ tests/fixtures/agent-loop-lifecycle.json
 tests/fixtures/agent-provider-runtime-evidence.json
 tests/fixtures/document-contracts/native-surface-cases.json
 tests/fixtures/document-contracts/readme-profile-cases.json
-tests/fixtures/document-contracts/registry-cases.json
 tests/fixtures/document-contracts/template-compatibility.json
 tests/fixtures/document-contracts/template-source-parity.json
 tests/fixtures/document-lifecycle.json
@@ -55,13 +54,6 @@ tests/fixtures/gitops-change-set/head/added-service.yaml
 tests/fixtures/gitops-change-set/head/kustomization.yaml
 tests/fixtures/gitops-change-set/head/moved-retained-configmap.yaml
 tests/fixtures/markdown-profiles.json
-tests/fixtures/reference-information-architecture/current-owner.json
-tests/fixtures/reference-information-architecture/generator-collision.json
-tests/fixtures/reference-information-architecture/minimal-valid.json
-tests/fixtures/reference-information-architecture/overlay-mutation.json
-tests/fixtures/reference-information-architecture/policy-copy.json
-tests/fixtures/reference-information-architecture/snapshot-mutation.json
-tests/fixtures/reference-information-architecture/source-freshness.json
 tests/fixtures/validation-surfaces.json
 tests/fixtures/vault-eso-contracts.json
 tests/test_affected_surface_migration.py
@@ -78,7 +70,6 @@ tests/test_k8s_pre_edit_hook.py
 tests/test_migrate_document_work_units.py
 tests/test_post_validate_runner_result.py
 tests/test_provider_post_validate_hook.py
-tests/test_reference_information_architecture.py
 tests/test_run_validation_lane.py
 tests/test_validate_agent_checkpoint.py
 tests/test_validate_agent_compatibility_clis.py
@@ -137,7 +128,6 @@ those step or result semantics.
 | Archive cutover regression | `python3 -m unittest tests/test_archive_cutover.py` | Production worktree snapshot evidence that the cutover is atomic and emits named `ARCHIVE-CUTOVER-INCOMPLETE` diagnostics for any partial state; the GREEN snapshot preserves the immutable 31-record/202-link base proof and derives the ledger-backed 43-record/362-link/43-secret-clean aggregate, registry v8/template authority, manifest closure, and index-only replacement evolution. Real temporary-Git mismatches prove a staged draft or invalid UTF-8 blob is rejected even when the worktree copy is current, while a stage-zero regular current blob remains authoritative without a worktree copy; sanitized bounded blob errors fail closed without displaying payload or secret matches. |
 | Archive and agent-registry lifecycle regression | `python3 -m unittest tests/test_document_lifecycle_archive_cutover.py`; `python3 -m unittest tests/test_document_lifecycle_agent_roster_cutover.py`; `python3 scripts/validate-document-lifecycle.py --root . --mode staged` | Archive-focused tests preserve sealed migration and immutable recovery rules. The agent-registry regression verifies that current neutral and Claude Markdown projections route through terminal document profiles, the provider set is exactly Codex and Claude, and the retired Spec 044 mutable-base/four-surface admission gate is no longer lifecycle authority. |
 | Workspace boundary regression | `python3 -m unittest tests/test_workspace_boundary.py`; `python3 scripts/validate-workspace-boundary.py --self-test`; `python3 scripts/validate-workspace-boundary.py --root .` | Sixteen focused methods plus the isolated self-test prove exact stage-zero `100644` README and root-ignore cardinality; full SHA-1/SHA-256 root-ignore OIDs; bounded immutable blob retrieval; extra/force-added, symlink/gitlink/nonregular/conflict, malformed-index, startup, and timeout rejection; and stable path-only diagnostics. Two hostile ignored-child policies and one divergent worktree-root policy prove only the staged root blob controls probe ignored/README unignored results. Four actual-repository index/object queries precede three isolated-context init/ignore queries; no actual-worktree `check-ignore` runs. Actual-path traversal/open/stat sentinels allow only isolated policy evaluation. |
-| Reference information architecture regression | `python3 -m unittest tests/test_reference_information_architecture.py`; focused aggregate selector: `python3 -m unittest tests.test_reference_information_architecture.ReferenceInformationArchitectureTests.test_aggregate_runs_self_test_before_production -v`; `python3 scripts/validate-reference-information-architecture.py --self-test`; production: `python3 scripts/validate-reference-information-architecture.py --root . [--contract <path>] [--staged\|--commit git-sha1:<C3>] [--require-settled-baselines]` | The aggregate invokes exactly one isolated self-test before exactly one normal `--root` production check, without changing CI topology or the LLM-wiki generator owner. `--self-test` accepts no validation-mode arguments; normal, staged, and literal explicit-commit evidence modes are mutually exclusive, while terminal settlement is orthogonal. Exits are `0` for the named repository-static scope, `1` for ordered `RIA-CONTRACT`, `RIA-BOUNDARY`, `RIA-SNAPSHOT`, `RIA-OVERLAY`, `RIA-TRANSITION`, `RIA-SOURCE`, `RIA-GENERATOR`, or `RIA-DUPLICATE` findings, and `2` for input/configuration failure. Fixed bounded Git argv and descriptor-safe reads reject unsafe root/path/symlink/untracked authority, ambient Git steering, ignored `_workspace` traversal, and payload-bearing diagnostics; explicit mode alone provides C3 lineage evidence, and no mode claims CI, provider, remote, or live state. |
 | Repository quality gates | `bash scripts/validate-repo-quality-gates.sh .` | Repo-static |
 | Document strict cutover regression | `python3 tests/test_document_strict_cutover.py` | Six focused tests prove that all three public document validators default to strict, accept only explicit strict, reject the retired compatibility value with argparse exit `2`, keep current command contracts free of compatibility invocations and stale v7 claims, prevent retired Stage 99 archive profile/form reintroduction, and preserve the exact Spec 033 no-growth retirement guard while the retired semantic-debt fixture remains absent. |
 | Markdown profile self-test | `python3 scripts/validate-markdown-profiles.py --self-test` | Repo-static |
@@ -317,18 +307,10 @@ adapter PASS does not prove provider runtime consumption.
   정확히 18개 finding으로 의도적으로 FAIL한다. 이 RED는 PSH-003 입력이며
   아직 aggregate repository quality gate나 remote/runtime readiness 증거가 아니다.
 
-- `tests/fixtures/document-contracts/registry-cases.json`의 각 사례는 하나의
-  mutation과 정확한 기대 rule ID 목록을 담는다. 이 fixture는 비밀값을
-  포함하지 않으며 registry/config self-test의 repo-static 입력으로만
-  사용한다.
 - `tests/fixtures/document-contracts/readme-profile-cases.json` schema v3는
-  현재 `activePaths` 52개와 `retiredPaths` 23개를 분리해 보존한다. Active
-  baseline 45개와 retired baseline 22개가 immutable baseline 67개를
-  재구성하며, program-created handoff는 active 7개와 retired 1개다.
-  ADM-006의 20행은 provider-correct snapshot destination과 uncovered route를
-  유지하고, WERPC-008의 3행은 삭제된 predecessor README 경로와 새 pack
-  README 목적지 및 snapshot route를 보존한다. 여덟 parser 사례는 active
-  경로만 참조한다.
+  현재 production README inventory와 Stage 04 retirement handoff를
+  정렬·중복 없이 보존한다. 고정 개수나 과거 branch census를 재구성하지
+  않으며, 각 active 경로가 registry-selected profile과 일치하는지 검증한다.
 - `tests/fixtures/document-contracts/template-compatibility.json`은 Spec 033
   소유의 finite no-growth retirement guard다. Schema v2는
   `compatibilityDebt`와 `semanticDebtCaps`가 퇴역 필드로 계속 부재함을

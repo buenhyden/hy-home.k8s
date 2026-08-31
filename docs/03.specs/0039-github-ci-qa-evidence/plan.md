@@ -135,7 +135,7 @@ claim its own commit.
 | `docs/00.agent-governance/rules/postflight-checklist.md` | Completion checklist consuming the canonical QA semantics. |
 | `docs/00.agent-governance/rules/git-workflow.md` | Logical-commit and branch-finish QA obligations. |
 | `.github/PULL_REQUEST_TEMPLATE.md` | Reviewer-facing all-files and evidence-class checklist. |
-| `.github/ABOUT.md` | GitHub surface routing and current workflow responsibility claims. |
+| `.github/README.md` | GitHub surface routing and current workflow responsibility claims. |
 | `docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md` | Operator-facing CI/QA command and evidence guidance. |
 | `scripts/README.md`, `tests/README.md` | Command and test inventory updates. |
 | Spec/Plan/Task/index/progress files | Reciprocal activation, implementation evidence, review, rollback, and terminal lifecycle records. The settled 446-row migration snapshot is a protected input, not an activation output. |
@@ -246,8 +246,8 @@ claim its own commit.
 - [Agent quality standards](../../00.agent-governance/rules/quality-standards.md)
 - [Git workflow](../../00.agent-governance/rules/git-workflow.md)
 - [GitHub configuration hub](../../../.github/README.md)
-- [Technology version inventory](../../90.references/data/tech-stack-version-inventory.md)
-- `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`; [current lookup](../../90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md)
+- [Kubernetes infrastructure and security research](../../90.references/research/0001-workspace-engineering/kubernetes-infrastructure-and-security.md)
+- `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`; [current lookup](../../90.references/research/0001-workspace-engineering/source-coverage.md)
 - [Predecessor Spec 038 Task](../0038-reference-information-architecture/README.md)
 ## Goals & In-Scope
 
@@ -516,7 +516,7 @@ def _create_non_regular_fixture(
 - Modify: `tests/fixtures/validation-surfaces.json`
 - Modify: `scripts/validate-repo-quality-gates.sh`
 - Modify: `docs/90.references/data/tech-stack-version-inventory.md`
-- Modify: `.github/ABOUT.md`
+- Modify: `.github/README.md`
 - Modify: `scripts/README.md`
 - Modify: `tests/README.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
@@ -692,7 +692,7 @@ def canonical_package_name(value: str) -> str:
   `pre-commit/action`.
 
 - [x] **Step 9: Update current GitHub and command inventories.** Replace
-  `.github/ABOUT.md`'s deferred Spec 039 statement with the implemented
+  `.github/README.md`'s deferred Spec 039 statement with the implemented
   full-history, pinned-dependency, explicit all-files path. Document the new
   validator and tests without duplicating package-version authority.
 
@@ -725,7 +725,7 @@ def canonical_package_name(value: str) -> str:
 - Modify: `tests/fixtures/github-actions-security.json`
 - Modify: `scripts/validate-github-actions-security.py`
 - Modify: `.github/workflows/generate-changelog.yml`
-- Modify: `.github/ABOUT.md`
+- Modify: `.github/README.md`
 - Modify: `scripts/README.md`
 - Modify: `tests/README.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
@@ -856,7 +856,7 @@ def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
 - Modify: `docs/00.agent-governance/rules/postflight-checklist.md`
 - Modify: `docs/00.agent-governance/rules/git-workflow.md`
 - Modify: `.github/PULL_REQUEST_TEMPLATE.md`
-- Modify: `.github/ABOUT.md`
+- Modify: `.github/README.md`
 - Modify: `docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md`
 - Modify: `scripts/README.md`
 - Modify: `tests/README.md`
@@ -923,7 +923,7 @@ def _validate_artifact_retention(path: Path, data: dict) -> list[str]:
 
 - [x] **Step 5: Update each consumer in its own role.** Keep README-style
   routing concise, replace the PR template's vague “Relevant pre-commit hooks”
-  line, remove `.github/ABOUT.md`'s stale future Spec 039 claim, and make the
+  line, remove `.github/README.md`'s stale future Spec 039 claim, and make the
   operations guide reproduce the exact local commands without redefining the
   result vocabulary.
 
@@ -1245,7 +1245,7 @@ remain `DEFER`. This evidence update does not identify or claim its own commit.
   lineage; the settled migration snapshot is read-only validation input;
   `.github/workflows/ci.yml`,
   `.github/workflows/generate-changelog.yml`,
-  `.github/requirements/ci-validation.txt`, `.github/ABOUT.md`,
+  `.github/requirements/ci-validation.txt`, `.github/README.md`,
   `.github/PULL_REQUEST_TEMPLATE.md`; the focused CI, GitOps, Actions,
   affected-surface, aggregate, runner, hook-result, unit-test, fixture,
   governance, operations-guide, script/test inventory, technology-inventory,

@@ -17,7 +17,7 @@ artifact_id: "PLAN-0056"
 > task and separate workers perform specification/content and quality review.
 
 **Goal:** Add only previously unresearched or externally under-sourced
-`Partial` evidence to the existing `2026-08-08-wer` pack, with explicit
+`Partial` evidence to the existing `0001-workspace-engineering` pack, with explicit
 Verification/Validation treatment, exact workspace reconciliation, logical
 commits, and no deeper-evidence overclaim.
 
@@ -38,13 +38,13 @@ repository-quality validators.
 **Global constraints:**
 
 - Research output remains inside
-  `docs/90.references/research/2026-08-08-wer/`; no new research directory or
+  `docs/90.references/research/0001-workspace-engineering/`; no new research directory or
   addendum is created.
 - The only research-pack files eligible for modification are `README.md`,
   `spec-driven-sdlc-and-document-contracts.md`,
   `ci-cd-github-actions-and-qa.md`,
   `kubernetes-infrastructure-and-security.md`, and
-  `source-coverage-and-migration-ledger.md`.
+  `source-coverage.md`.
 - Every requested category receives exactly one admission result:
   `complete-existing`, `admit-unresearched`,
   `admit-under-sourced-partial`, or `exclude-deep-evidence`.
@@ -85,7 +85,7 @@ adequate official-source coverage. The work therefore treats the broad request
 as an admission corpus, not as permission to rewrite every topic.
 
 The planned output is an in-place evidence refresh. The directory keeps its
-`2026-08-08-wer` identity while every additive section and ledger row records a
+`0001-workspace-engineering` identity while every additive section and ledger row records a
 separate `2026-08-10 gap-only source refresh` boundary. Lifecycle documents,
 indexes, the standalone registry relation, and durable progress evidence are
 execution metadata and do not become research-topic owners.
@@ -158,7 +158,7 @@ that directly supports the claim.
 ### Legacy Task ledger inputs
 
 This Task is the execution-evidence owner for the approved gap-only refresh of
-the existing `docs/90.references/research/2026-08-08-wer/` pack. It admits
+the existing `docs/90.references/research/0001-workspace-engineering/` pack. It admits
 only previously unresearched questions or externally under-sourced `Partial`
 questions, keeps authenticated/provider-runtime/hosted/remote/live evidence
 out of scope, and records one logical commit per non-empty work package.
@@ -173,7 +173,7 @@ edit begins.
 - [Active Spec 055](../../03.specs/0056-workspace-engineering-gap-only-refresh/spec.md)
 - [Active implementation Plan](plan.md)
 - [ADR-0022 direct-approval standalone lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
-- [Existing 2026-08-08 WER research pack](../../90.references/research/2026-08-08-wer/README.md)
+- [Existing 2026-08-08 WER research pack](../../90.references/research/0001-workspace-engineering/README.md)
 - Terminal predecessor: `docs/03.specs/053-workspace-engineering-research-pack-consolidation/spec.md`
 - Document taxonomy decision: `docs/03.specs/052-document-taxonomy-consolidation/spec.md`
 - [Quality standards](../../00.agent-governance/rules/quality-standards.md)
@@ -331,7 +331,7 @@ git commit -m "docs: activate WER gap-only research refresh"
 **Files:**
 
 - Modify: `docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records`
-- Modify: `docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/source-coverage.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
 **Interfaces:**
@@ -350,7 +350,7 @@ self-test plus baseline mode:
 
 ```bash
 python3 /tmp/werg-gap-refresh-check.py --self-test
-python3 /tmp/werg-gap-refresh-check.py admission --root . --task docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records --pack docs/90.references/research/2026-08-08-wer --expected-pack-files 13 --expected-request-rows 32 --extra-topic verification-validation --expect baseline-gap
+python3 /tmp/werg-gap-refresh-check.py admission --root . --task docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records --pack docs/90.references/research/0001-workspace-engineering --expected-pack-files 13 --expected-request-rows 32 --extra-topic verification-validation --expect baseline-gap
 ```
 
 The checker parses the README request matrix, all thirteen pack files, and all
@@ -379,7 +379,7 @@ existing source/claim boundary, or the deeper evidence that makes the topic
 Run the reviewed-matrix mode:
 
 ```bash
-python3 /tmp/werg-gap-refresh-check.py admission --root . --task docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records --pack docs/90.references/research/2026-08-08-wer --expected-pack-files 13 --expected-request-rows 32 --extra-topic verification-validation --require-complete
+python3 /tmp/werg-gap-refresh-check.py admission --root . --task docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records --pack docs/90.references/research/0001-workspace-engineering --expected-pack-files 13 --expected-request-rows 32 --extra-topic verification-validation --require-complete
 ```
 
 The command requires:
@@ -415,10 +415,10 @@ git commit -m "docs: classify WER gap-only research scope"
 
 **Files:**
 
-- Modify: `docs/90.references/research/2026-08-08-wer/README.md`
-- Modify: `docs/90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md`
-- Modify: `docs/90.references/research/2026-08-08-wer/ci-cd-github-actions-and-qa.md`
-- Modify: `docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/README.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/spec-driven-sdlc-and-document-contracts.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/ci-cd-github-actions-and-qa.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/source-coverage.md`
 - Modify: `docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
@@ -437,7 +437,7 @@ Run the evidence checker against the activation commit before browsing:
 ```bash
 WERG_ADMISSION_COMMIT="$(git log -1 --format=%H --grep='^docs: classify WER gap-only research scope$')"
 test "${#WERG_ADMISSION_COMMIT}" -eq 40
-python3 /tmp/werg-gap-refresh-check.py evidence --root . --baseline-ref "$WERG_ADMISSION_COMMIT" --pack docs/90.references/research/2026-08-08-wer --task docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records --phase baseline --check-date 2026-08-10
+python3 /tmp/werg-gap-refresh-check.py evidence --root . --baseline-ref "$WERG_ADMISSION_COMMIT" --pack docs/90.references/research/0001-workspace-engineering --task docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records --phase baseline --check-date 2026-08-10
 ```
 
 The command emits exact missing field and owner identifiers while showing:
@@ -503,7 +503,7 @@ Run:
 ```bash
 WERG_ADMISSION_COMMIT="$(git log -1 --format=%H --grep='^docs: classify WER gap-only research scope$')"
 test "${#WERG_ADMISSION_COMMIT}" -eq 40
-python3 /tmp/werg-gap-refresh-check.py evidence --root . --baseline-ref "$WERG_ADMISSION_COMMIT" --pack docs/90.references/research/2026-08-08-wer --task docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records --phase final --check-date 2026-08-10 --allowed-owner README.md --allowed-owner spec-driven-sdlc-and-document-contracts.md --allowed-owner ci-cd-github-actions-and-qa.md --allowed-owner kubernetes-infrastructure-and-security.md --allowed-owner source-coverage-and-migration-ledger.md
+python3 /tmp/werg-gap-refresh-check.py evidence --root . --baseline-ref "$WERG_ADMISSION_COMMIT" --pack docs/90.references/research/0001-workspace-engineering --task docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records --phase final --check-date 2026-08-10 --allowed-owner README.md --allowed-owner spec-driven-sdlc-and-document-contracts.md --allowed-owner ci-cd-github-actions-and-qa.md --allowed-owner kubernetes-infrastructure-and-security.md --allowed-owner source-coverage.md
 ```
 
 Record the resolved full commit in the Task. The command requires:
@@ -538,9 +538,9 @@ git commit -m "docs: research WER document and validation gaps"
 
 **Files:**
 
-- Modify when non-empty: `docs/90.references/research/2026-08-08-wer/README.md`
-- Modify when non-empty: `docs/90.references/research/2026-08-08-wer/kubernetes-infrastructure-and-security.md`
-- Modify when non-empty: `docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md`
+- Modify when non-empty: `docs/90.references/research/0001-workspace-engineering/README.md`
+- Modify when non-empty: `docs/90.references/research/0001-workspace-engineering/kubernetes-infrastructure-and-security.md`
+- Modify when non-empty: `docs/90.references/research/0001-workspace-engineering/source-coverage.md`
 - Modify: `docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
@@ -653,14 +653,14 @@ in the next non-empty Task evidence commit.
 
 **Files:**
 
-- Modify: `docs/90.references/research/2026-08-08-wer/README.md`
-- Modify: `docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/README.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/source-coverage.md`
 - Modify only when required by accepted evidence:
-  `docs/90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md`
+  `docs/90.references/research/0001-workspace-engineering/spec-driven-sdlc-and-document-contracts.md`
 - Modify only when required by accepted evidence:
-  `docs/90.references/research/2026-08-08-wer/ci-cd-github-actions-and-qa.md`
+  `docs/90.references/research/0001-workspace-engineering/ci-cd-github-actions-and-qa.md`
 - Modify only when required by accepted evidence:
-  `docs/90.references/research/2026-08-08-wer/kubernetes-infrastructure-and-security.md`
+  `docs/90.references/research/0001-workspace-engineering/kubernetes-infrastructure-and-security.md`
 - Modify: `docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
@@ -679,7 +679,7 @@ WERG-001:
 ```bash
 WERG_ADMISSION_COMMIT="$(git log -1 --format=%H --grep='^docs: classify WER gap-only research scope$')"
 test "${#WERG_ADMISSION_COMMIT}" -eq 40
-python3 /tmp/werg-gap-refresh-check.py integration --root . --baseline-ref "$WERG_ADMISSION_COMMIT" --pack docs/90.references/research/2026-08-08-wer --task docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records --check-date 2026-08-10 --allowed-owner README.md --allowed-owner spec-driven-sdlc-and-document-contracts.md --allowed-owner ci-cd-github-actions-and-qa.md --allowed-owner kubernetes-infrastructure-and-security.md --allowed-owner source-coverage-and-migration-ledger.md
+python3 /tmp/werg-gap-refresh-check.py integration --root . --baseline-ref "$WERG_ADMISSION_COMMIT" --pack docs/90.references/research/0001-workspace-engineering --task docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records --check-date 2026-08-10 --allowed-owner README.md --allowed-owner spec-driven-sdlc-and-document-contracts.md --allowed-owner ci-cd-github-actions-and-qa.md --allowed-owner kubernetes-infrastructure-and-security.md --allowed-owner source-coverage.md
 ```
 
 The checker rejects a missing or non-40-hex commit. It parses the final README,
@@ -817,10 +817,10 @@ paths and prove their absence:
 WERG_ADMISSION_COMMIT="$(git log -1 --format=%H --grep='^docs: classify WER gap-only research scope$')"
 test "${#WERG_ADMISSION_COMMIT}" -eq 40
 python3 /tmp/werg-gap-refresh-check.py --self-test
-python3 /tmp/werg-gap-refresh-check.py admission --root . --task docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records --pack docs/90.references/research/2026-08-08-wer --expected-pack-files 13 --expected-request-rows 33 --extra-topic verification-validation --require-complete
-python3 /tmp/werg-gap-refresh-check.py evidence --root . --baseline-ref "$WERG_ADMISSION_COMMIT" --pack docs/90.references/research/2026-08-08-wer --task docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records --phase final --check-date 2026-08-10 --allowed-owner README.md --allowed-owner spec-driven-sdlc-and-document-contracts.md --allowed-owner ci-cd-github-actions-and-qa.md --allowed-owner kubernetes-infrastructure-and-security.md --allowed-owner source-coverage-and-migration-ledger.md
-python3 /tmp/werg-gap-refresh-check.py kubernetes --root . --pack docs/90.references/research/2026-08-08-wer --report docs/90.references/research/2026-08-08-wer/kubernetes-infrastructure-and-security.md --ledger docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md --task docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records --require-line-level-admission
-python3 /tmp/werg-gap-refresh-check.py integration --root . --baseline-ref "$WERG_ADMISSION_COMMIT" --pack docs/90.references/research/2026-08-08-wer --task docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records --check-date 2026-08-10 --allowed-owner README.md --allowed-owner spec-driven-sdlc-and-document-contracts.md --allowed-owner ci-cd-github-actions-and-qa.md --allowed-owner kubernetes-infrastructure-and-security.md --allowed-owner source-coverage-and-migration-ledger.md
+python3 /tmp/werg-gap-refresh-check.py admission --root . --task docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records --pack docs/90.references/research/0001-workspace-engineering --expected-pack-files 13 --expected-request-rows 33 --extra-topic verification-validation --require-complete
+python3 /tmp/werg-gap-refresh-check.py evidence --root . --baseline-ref "$WERG_ADMISSION_COMMIT" --pack docs/90.references/research/0001-workspace-engineering --task docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records --phase final --check-date 2026-08-10 --allowed-owner README.md --allowed-owner spec-driven-sdlc-and-document-contracts.md --allowed-owner ci-cd-github-actions-and-qa.md --allowed-owner kubernetes-infrastructure-and-security.md --allowed-owner source-coverage.md
+python3 /tmp/werg-gap-refresh-check.py kubernetes --root . --pack docs/90.references/research/0001-workspace-engineering --report docs/90.references/research/0001-workspace-engineering/kubernetes-infrastructure-and-security.md --ledger docs/90.references/research/0001-workspace-engineering/source-coverage.md --task docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records --require-line-level-admission
+python3 /tmp/werg-gap-refresh-check.py integration --root . --baseline-ref "$WERG_ADMISSION_COMMIT" --pack docs/90.references/research/0001-workspace-engineering --task docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records --check-date 2026-08-10 --allowed-owner README.md --allowed-owner spec-driven-sdlc-and-document-contracts.md --allowed-owner ci-cd-github-actions-and-qa.md --allowed-owner kubernetes-infrastructure-and-security.md --allowed-owner source-coverage.md
 python3 /tmp/werg-gap-refresh-check.py residue --root . --owned-temp /tmp/werg-gap-refresh-check.py --owned-temp /tmp/werg-paths.nul --owned-temp /tmp/werg-ledger-before.md
 rm -f /tmp/werg-gap-refresh-check.py /tmp/werg-ledger-before.md
 test ! -e /tmp/werg-gap-refresh-check.py
@@ -901,7 +901,7 @@ WERG-003 invokes the same checker exactly as follows before and after accepted
 Kubernetes research:
 
 ```bash
-python3 /tmp/werg-gap-refresh-check.py kubernetes --root . --pack docs/90.references/research/2026-08-08-wer --report docs/90.references/research/2026-08-08-wer/kubernetes-infrastructure-and-security.md --ledger docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md --task docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records --require-line-level-admission
+python3 /tmp/werg-gap-refresh-check.py kubernetes --root . --pack docs/90.references/research/0001-workspace-engineering --report docs/90.references/research/0001-workspace-engineering/kubernetes-infrastructure-and-security.md --ledger docs/90.references/research/0001-workspace-engineering/source-coverage.md --task docs/03.specs/0056-workspace-engineering-gap-only-refresh/README.md#task-records --require-line-level-admission
 ```
 
 Before any affected or staged lane, create its exact NUL input and validate the
@@ -1264,7 +1264,7 @@ rows are duplicate-research stops or deeper-evidence exclusions.
 - **Reciprocal Task**:
   [Task](README.md#task-records)
 - **Research owner**:
-  [2026-08-08 WER pack](../../90.references/research/2026-08-08-wer/README.md)
+  [2026-08-08 WER pack](../../90.references/research/0001-workspace-engineering/README.md)
 
 ### Legacy Task traceability
 
@@ -1279,4 +1279,4 @@ rows are duplicate-research stops or deeper-evidence exclusions.
 | N/A — WERG-004 shares the Plan and Spec sources above                                                                 | Completed | Exact 13/33/65/65 pack, request, source, and claim counts plus five-owner integration/residue closure pass independent review and the exact five-path canonical commit gates.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | N/A — WERG-005 shares the Plan and Spec sources above                                                                 | Completed | Whole-branch specification/content, quality, and security reviews, terminal repository-static validation, scratch cleanup, and lifecycle closure completed in `22002d91`; merge commit `79e44638` records the selected branch finish. Hosted, provider-runtime, remote, credential-bearing, and live evidence remains `DEFER`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | N/A — WERG-006 closure re-verification, 2026-08-10                                                                    | Completed | A seven-group disjoint re-verification tested all 33 requested rows against a four-element rule (official source, exact workspace reconciliation, named uncertainty boundary, refresh trigger). Result: 30 rows `covered`; `REQ-WERPC-004`, `REQ-WERPC-006`, and `REQ-WERPC-021` failed workspace reconciliation and were corrected in `b9e16079`; precision items were closed in `25b4a450`. Three limits are recorded honestly: the earlier WERG-005 reviews recorded `Approved` while these three defects were present, so review approval is not evidence of factual reconciliation; the `Spec 055` closure state additionally required registration in `POST_CLOSURE_SPEC_AUTHORITY_PATHS`, without which `validate-active-corpus-residue-closure.py` fails `CLOSURE-AUTHORITY-SCOPE`; and the WERG-002/WERG-003 all-files pre-commit statements were inaccurate, as corrected in the next row. |
-| N/A — all-files pre-commit correction, 2026-08-10                                                                     | Corrected | The WERG-002 and WERG-003 evidence paragraphs state that the all-files pre-commit lane passed. Re-running `pre-commit run --all-files` on 2026-08-10 failed `detect-secrets` at `source-coverage-and-migration-ledger.md:242` and `kubernetes-infrastructure-and-security.md:276`/`:288`. All three are Kubernetes RBAC prose about Secret objects, hold no credential value, and came from the WERG-003 rows; the commit-time hook did not catch them because it scans only changed files. The three false positives were recorded in `.secrets.baseline` after human approval on 2026-08-10. A before/after comparison confirms no entry, plugin, or custom exclusion pattern was removed. The lane now passes with no hook-induced file mutation.                                                                                                                                                 |
+| N/A — all-files pre-commit correction, 2026-08-10                                                                     | Corrected | The WERG-002 and WERG-003 evidence paragraphs state that the all-files pre-commit lane passed. Re-running `pre-commit run --all-files` on 2026-08-10 failed `detect-secrets` at `source-coverage.md:242` and `kubernetes-infrastructure-and-security.md:276`/`:288`. All three are Kubernetes RBAC prose about Secret objects, hold no credential value, and came from the WERG-003 rows; the commit-time hook did not catch them because it scans only changed files. The three false positives were recorded in `.secrets.baseline` after human approval on 2026-08-10. A before/after comparison confirms no entry, plugin, or custom exclusion pattern was removed. The lane now passes with no hook-induced file mutation.                                                                                                                                                 |

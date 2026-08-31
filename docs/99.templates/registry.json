@@ -1180,7 +1180,7 @@
       "id": "content/reference",
       "class": "common",
       "mode": "classification-only",
-      "pathPattern": "^docs/90\\.references/(?!(?:research|audits|data)/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/)(?!.*(?:/)?README\\.md$)(?!llm-wiki/wiki-index\\.md$).+\\.md$",
+      "pathPattern": "^docs/90\\.references/(?:audits|data|research)/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/(?!README\\.md$).+\\.md$",
       "artifactIdPattern": null,
       "template": "docs/99.templates/templates/references/reference.template.md",
       "requiredFrontmatter": {
@@ -1530,7 +1530,7 @@
       "id": "readme/collection-index",
       "class": "readme",
       "mode": "frontmatter-free",
-      "pathPattern": "^(?:docs/00\\.agent\\-governance/roles/README\\.md|docs/02\\.architecture/decisions/README\\.md|docs/02\\.architecture/descriptions/README\\.md|docs/05\\.operations/guides/README\\.md|docs/05\\.operations/incidents/README\\.md|docs/05\\.operations/policies/README\\.md|docs/05\\.operations/runbooks/README\\.md|docs/90\\.references/audits/README\\.md|docs/90\\.references/data/README\\.md|docs/90\\.references/learning/README\\.md|docs/90\\.references/llm\\-wiki/README\\.md|docs/90\\.references/research/README\\.md|docs/90\\.references/cloud\\-examples/README\\.md|docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md)$",
+      "pathPattern": "^(?:docs/00\\.agent\\-governance/roles/README\\.md|docs/02\\.architecture/decisions/README\\.md|docs/02\\.architecture/descriptions/README\\.md|docs/05\\.operations/guides/README\\.md|docs/05\\.operations/incidents/README\\.md|docs/05\\.operations/policies/README\\.md|docs/05\\.operations/runbooks/README\\.md|docs/90\\.references/(?:audits|data|research)/README\\.md|docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md)$",
       "template": "docs/99.templates/templates/common/readme-collection-index.template.md",
       "requiredFrontmatter": {
         "mode": "forbidden",
@@ -1602,11 +1602,11 @@
       "placeholderPolicy": "forbidden"
     },
     {
-      "id": "readme/snapshot-pack",
+      "id": "readme/audit-pack",
       "class": "readme",
       "mode": "frontmatter-free",
-      "pathPattern": "^(?:docs/90\\.references/(?:audits|research)/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+/README\\.md|docs/90\\.references/cloud-examples/(?:aws|azure)/README\\.md)$",
-      "template": "docs/99.templates/templates/common/readme-snapshot-pack.template.md",
+      "pathPattern": "^docs/90\\.references/audits/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md$",
+      "template": "docs/99.templates/templates/references/audit-pack.template.md",
       "requiredFrontmatter": {
         "mode": "forbidden",
         "required": [],
@@ -1616,7 +1616,81 @@
       "requiredSections": {
         "required": [
           "Overview",
-          "Snapshot Contract",
+          "Audit Contract",
+          "Report Index",
+          "Review and Closure",
+          "Evidence Boundary",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Audit Contract",
+          "Report Index",
+          "Review and Closure",
+          "Evidence Boundary",
+          "Related Documents",
+          "Method"
+        ]
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "readme/data-pack",
+      "class": "readme",
+      "mode": "frontmatter-free",
+      "pathPattern": "^docs/90\\.references/data/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md$",
+      "template": "docs/99.templates/templates/references/data-pack.template.md",
+      "requiredFrontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Data Contract",
+          "Item Index",
+          "Refresh and Retention",
+          "Evidence Boundary",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Data Contract",
+          "Item Index",
+          "Refresh and Retention",
+          "Evidence Boundary",
+          "Related Documents",
+          "Method"
+        ]
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "readme/research-pack",
+      "class": "readme",
+      "mode": "frontmatter-free",
+      "pathPattern": "^docs/90\\.references/research/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\\.md$",
+      "template": "docs/99.templates/templates/references/research-pack.template.md",
+      "requiredFrontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Research Contract",
           "Report Index",
           "Refresh and Succession",
           "Evidence Boundary",
@@ -1624,7 +1698,7 @@
         ],
         "allowed": [
           "Overview",
-          "Snapshot Contract",
+          "Research Contract",
           "Report Index",
           "Refresh and Succession",
           "Evidence Boundary",
@@ -1891,32 +1965,6 @@
       "pathPattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/contracts/service\\.proto$",
       "artifactIdPattern": null,
       "template": "docs/99.templates/templates/specs/service.template.proto",
-      "requiredFrontmatter": {
-        "mode": "not-applicable",
-        "required": [],
-        "allowed": [],
-        "order": []
-      },
-      "requiredSections": {
-        "required": [],
-        "allowed": []
-      },
-      "lifecycle": {
-        "statusDomain": []
-      },
-      "relationships": {
-        "sourceProfileIds": [],
-        "bodyContract": null
-      },
-      "placeholderPolicy": "forbidden"
-    },
-    {
-      "id": "exception/generated-record",
-      "class": "exception",
-      "mode": "generated",
-      "pathPattern": "^docs/90\\.references/llm\\-wiki/wiki\\-index\\.md$",
-      "artifactIdPattern": null,
-      "template": null,
       "requiredFrontmatter": {
         "mode": "not-applicable",
         "required": [],
@@ -2257,11 +2305,11 @@
       "placeholderPolicy": "template-only"
     },
     {
-      "id": "template/readme/snapshot-pack",
+      "id": "template/readme/audit-pack",
       "class": "readme",
       "mode": "template",
-      "pathPattern": "^docs/99\\.templates/templates/common/readme\\-snapshot\\-pack\\.template\\.md$",
-      "template": "docs/99.templates/templates/common/readme-snapshot-pack.template.md",
+      "pathPattern": "^docs/99\\.templates/templates/references/audit\\-pack\\.template\\.md$",
+      "template": "docs/99.templates/templates/references/audit-pack.template.md",
       "requiredFrontmatter": {
         "mode": "forbidden",
         "required": [],
@@ -2271,7 +2319,85 @@
       "requiredSections": {
         "required": [
           "Overview",
-          "Snapshot Contract",
+          "Audit Contract",
+          "Report Index",
+          "Review and Closure",
+          "Evidence Boundary",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Audit Contract",
+          "Report Index",
+          "Review and Closure",
+          "Evidence Boundary",
+          "Related Documents",
+          "Method"
+        ]
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "readme/audit-pack"
+        ],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/readme/data-pack",
+      "class": "readme",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/references/data\\-pack\\.template\\.md$",
+      "template": "docs/99.templates/templates/references/data-pack.template.md",
+      "requiredFrontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Data Contract",
+          "Item Index",
+          "Refresh and Retention",
+          "Evidence Boundary",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Data Contract",
+          "Item Index",
+          "Refresh and Retention",
+          "Evidence Boundary",
+          "Related Documents",
+          "Method"
+        ]
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "readme/data-pack"
+        ],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/readme/research-pack",
+      "class": "readme",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/references/research\\-pack\\.template\\.md$",
+      "template": "docs/99.templates/templates/references/research-pack.template.md",
+      "requiredFrontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Research Contract",
           "Report Index",
           "Refresh and Succession",
           "Evidence Boundary",
@@ -2279,7 +2405,7 @@
         ],
         "allowed": [
           "Overview",
-          "Snapshot Contract",
+          "Research Contract",
           "Report Index",
           "Refresh and Succession",
           "Evidence Boundary",
@@ -2289,7 +2415,7 @@
       },
       "relationships": {
         "sourceProfileIds": [
-          "readme/snapshot-pack"
+          "readme/research-pack"
         ],
         "bodyContract": null
       },
@@ -4126,28 +4252,6 @@
       }
     ]
   },
-  "referenceCurrentPacks": {
-    "profileId": "content/reference",
-    "packs": [
-      {
-        "id": "audits/2026-08-09-wgia",
-        "allowedStates": [
-          "draft"
-        ],
-        "members": [
-          "ai-agents-integrated-and-role-specific-agents.md",
-          "ci-cd-github-actions-qa-and-validation.md",
-          "harness-loop-fixtures-scripts-and-blockers.md",
-          "legacy-deprecated-and-one-shot-disposition-ledger.md",
-          "llm-wiki-memory-and-knowledge-management.md",
-          "remediation-and-integration-roadmap.md",
-          "security-and-approval-boundaries.md",
-          "spec-driven-sdlc-documentation-and-templates.md",
-          "workspace-purpose-governance-and-operating-contracts.md"
-        ]
-      }
-    ]
-  },
   "standaloneExecutions": [
     {
       "spec": "0053",
@@ -4161,7 +4265,7 @@
     {
       "spec": "0054",
       "plan": "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/plan.md",
-      "task": "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks/tsk-0008-stage-90-ownership-cutover.md",
+      "task": "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks/tsk-0005-stage-05-responsibility-ledger.md",
       "state": "active",
       "reason": "Direct human-approved B-scope SDLC and AI-agent governance consolidation including Stage 90",
       "decision": "0022",

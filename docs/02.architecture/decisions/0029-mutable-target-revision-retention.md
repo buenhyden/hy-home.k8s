@@ -139,4 +139,4 @@ deployed.
 ### Related Documents
 
 - [ADR-0026 — Argo CD source integrity non-adoption](0026-argo-cd-source-integrity-non-adoption.md)
-- [Tech Stack Version Inventory](../../90.references/data/tech-stack-version-inventory.md)
+- [Current local GitOps platform](../descriptions/0007-current-local-gitops-platform.md)

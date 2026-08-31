@@ -12,7 +12,7 @@ artifact_id: "SPEC-0057"
 ## Overview
 
 This specification designs a closed-ledger incremental refresh of the existing
-[`2026-08-08-wer`](../../90.references/research/2026-08-08-wer/README.md)
+[`0001-workspace-engineering`](../../90.references/research/0001-workspace-engineering/README.md)
 research pack. It targets unresolved `Partial` and explicitly qualified
 `DEFER` evidence without repeating the completed broad research owned by
 [Spec 053](../0053-workspace-engineering-research-pack-consolidation/spec.md)
@@ -60,7 +60,7 @@ no separate PRD or AD program authority is asserted.
   or variable values.
 - Use official or primary sources first. Preserve source context, edition,
   checked date, uncertainty, adopted scope, and rejected inference.
-- Integrate results into existing `2026-08-08-wer` owners as 2026-08-11 dated
+- Integrate results into existing `0001-workspace-engineering` owners as 2026-08-11 dated
   sections and update only the shared README, source/claim ledger, and scope
   index projections required by accepted findings.
 - Use disjoint research workstreams, independent review, deterministic

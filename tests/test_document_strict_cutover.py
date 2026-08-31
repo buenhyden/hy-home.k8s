@@ -131,7 +131,6 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 "$schema",
                 "profiles",
                 "programLineage",
-                "referenceCurrentPacks",
                 "schemaVersion",
                 "standaloneExecutions",
             },
@@ -145,7 +144,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         # governance/progress-ledger and governance/progress-entry retired with
         # the append form under MIG-0008, then 57 before governance/memory and
         # template/governance/memory retired with the directory under MIG-0009.
-        self.assertEqual(len(self.registry["profiles"]), 55)
+        self.assertEqual(len(self.registry["profiles"]), 54)
         self.assertEqual(len(self.registry["programLineage"]["lifecycleDomains"]), 9)
 
     def test_profile_schema_accepts_terminal_registry(self) -> None:

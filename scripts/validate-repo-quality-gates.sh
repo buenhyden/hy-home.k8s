@@ -110,8 +110,6 @@ python3 "$ROOT_DIR/scripts/validate-agent-harness-semantics.py" --root "$ROOT_DI
 python3 "$ROOT_DIR/scripts/validate-agent-roster-currentness.py" \
   "$ROOT_DIR" --self-test
 python3 "$ROOT_DIR/scripts/validate-agent-roster-currentness.py" "$ROOT_DIR"
-python3 "$ROOT_DIR/scripts/validate-reference-information-architecture.py" --self-test
-python3 "$ROOT_DIR/scripts/validate-reference-information-architecture.py" --root "$ROOT_DIR"
 
 python3 - "$ROOT_DIR" <<'PY'
 import ast
@@ -256,7 +254,6 @@ def rel(path: pathlib.Path) -> str:
 def is_historical_evidence_path(path: pathlib.Path) -> bool:
     return (
         path == root / "docs/00.agent-governance/memory/progress.md"
-        or path.is_relative_to(root / "docs/90.references/audits")
         or path.is_relative_to(root / "docs/98.archive")
     )
 
@@ -304,23 +301,17 @@ def extract_pr_template_prefixes(text: str) -> list[str]:
     return [prefix.rstrip("/") for prefix in re.findall(r"`([a-z0-9-]+/)`", text)]
 
 
-def has_cloud_example_snapshot_preservation_prompt(text: str) -> bool:
+def has_provider_example_boundary_prompt(text: str) -> bool:
     required_terms = [
         "examples/aws",
         "examples/azure",
-        "cloud example snapshot",
-        "approved",
-        "provider",
-        "refresh",
-        "spec",
+        "adjacent executable assets",
+        "not live provider-latest guidance",
+        "approved provider refresh spec",
     ]
     for line in text.splitlines():
         normalized = line.casefold()
-        if (
-            all(term in normalized for term in required_terms)
-            and "preserv" in normalized
-            and "boundar" in normalized
-        ):
+        if all(term in normalized for term in required_terms):
             return True
     return False
 
@@ -877,10 +868,17 @@ else:
                 if phrase not in source_of_truth:
                     fail(f"examples/README.md sample-app source of truth missing activation phrase: {phrase}")
         else:
-            if "Cloud Example Snapshot" not in source_of_truth:
-                fail(f"examples/README.md {example_path} source of truth must cite Cloud Example Snapshot")
-            if "not live provider-latest guidance" not in source_of_truth:
-                fail(f"examples/README.md {example_path} must not claim live provider-latest guidance")
+            provider = example_path.rstrip("/")
+            for phrase in [
+                f"{provider}/README.md",
+                "adjacent executable assets",
+                "not live provider-latest guidance",
+            ]:
+                if phrase not in source_of_truth:
+                    fail(
+                        f"examples/README.md {example_path} source of truth "
+                        f"missing provider boundary phrase: {phrase}"
+                    )
     if indexed_example_paths != expected_example_paths:
         fail(
             "examples/README.md Example Role Matrix row order must be: "
@@ -1560,14 +1558,17 @@ for provider in ["aws", "azure"]:
         text = read_text(example_doc)
         if example_doc.name == "README.md":
             continue
-        if "## Snapshot Boundary" not in text:
-            fail(f"{rel(example_doc)} missing example-local snapshot heading: ## Snapshot Boundary")
+        if "## Provider Example Boundary" not in text:
+            fail(
+                f"{rel(example_doc)} missing example-local boundary heading: "
+                "## Provider Example Boundary"
+            )
         for required_phrase in [
-            "Cloud Example Snapshot",
+            "adjacent executable assets",
             "not live provider-latest guidance",
         ]:
             if required_phrase not in text:
-                fail(f"{rel(example_doc)} missing snapshot boundary phrase: {required_phrase}")
+                fail(f"{rel(example_doc)} missing provider boundary phrase: {required_phrase}")
         for stale_heading in [
             "## Azure Migration Product Requirements",
             "## Azure Migration Specification",
@@ -2050,82 +2051,6 @@ for scan_root in legacy_scan_roots:
             if literal in text:
                 fail(f"{rel(candidate)} contains {replacement} literal: {literal}")
 
-llm_wiki_dir = root / "docs/90.references/llm-wiki"
-llm_wiki_readme = llm_wiki_dir / "README.md"
-llm_wiki_index = llm_wiki_dir / "wiki-index.md"
-llm_wiki_generator = root / "scripts/generate-llm-wiki-index.sh"
-if not llm_wiki_readme.exists():
-    fail(f"LLM WIKI reference index is missing: {rel(llm_wiki_readme)}")
-else:
-    llm_wiki_text = read_text(llm_wiki_readme)
-    for phrase in [
-        "reference-only",
-        "deterministic",
-        "link map",
-        "not a runtime surface",
-        "not a static wiki site",
-        "not a vector store",
-        "not a retrieval service",
-        "generated Markdown",
-        "scripts/generate-llm-wiki-index.sh",
-        "wiki-index.md",
-        "does not define policy",
-        "canonical owner",
-    ]:
-        if phrase not in llm_wiki_text:
-            fail(f"{rel(llm_wiki_readme)} missing LLM WIKI reference-only boundary phrase: {phrase}")
-if not llm_wiki_index.exists():
-    fail(f"generated LLM WIKI index is missing: {rel(llm_wiki_index)}")
-if not llm_wiki_generator.exists():
-    fail(f"LLM WIKI generator is missing: {rel(llm_wiki_generator)}")
-if llm_wiki_dir.exists():
-    disallowed_llm_wiki_suffixes = {
-        ".db",
-        ".sqlite",
-        ".sqlite3",
-        ".faiss",
-        ".npy",
-        ".npz",
-        ".parquet",
-        ".lock",
-    }
-    disallowed_llm_wiki_names = {
-        "package.json",
-        "package-lock.json",
-        "pnpm-lock.yaml",
-        "yarn.lock",
-        "poetry.lock",
-        "uv.lock",
-        "requirements.txt",
-        "pyproject.toml",
-        "Cargo.toml",
-        "go.mod",
-    }
-    disallowed_llm_wiki_path_names = {
-        ".cache",
-        ".venv",
-        "__pycache__",
-        "cache",
-        "dist",
-        "embeddings",
-        "node_modules",
-        "runtime",
-        "site",
-        "vector",
-        "vectors",
-        "venv",
-    }
-    for path in sorted(llm_wiki_dir.rglob("*")):
-        relative_parts = set(path.relative_to(llm_wiki_dir).parts)
-        if relative_parts & disallowed_llm_wiki_path_names:
-            fail(f"LLM WIKI must not contain generated runtime/cache/vector/static-site paths: {rel(path)}")
-        if path.is_dir():
-            continue
-        if path.suffix in disallowed_llm_wiki_suffixes or path.name in disallowed_llm_wiki_names:
-            fail(f"LLM WIKI must remain a reference-only index, not a generated/runtime store: {rel(path)}")
-        if path.suffix != ".md":
-            fail(f"LLM WIKI may only contain Markdown reference files: {rel(path)}")
-
 legacy_postmortems = "11" + ".postmortems"
 legacy_learning = "50" + ".Learning"
 legacy_stage_range = "00" + "~" + "11"
@@ -2240,7 +2165,7 @@ active_currentness_roots = [
 ]
 migration_evidence_ledger_path = (
     root
-    / "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md"
+    / "docs/90.references/research/0001-workspace-engineering/source-coverage.md"
 )
 def is_currentness_evidence_only(path: pathlib.Path) -> bool:
     return path == migration_evidence_ledger_path
@@ -2988,10 +2913,11 @@ for phrase in [
 ]:
     if phrase not in pr_template_text:
         fail(f"{rel(pr_template_path)} missing branch-policy clarification: {phrase}")
-if not has_cloud_example_snapshot_preservation_prompt(pr_template_text):
+if not has_provider_example_boundary_prompt(pr_template_text):
     fail(
-        f"{rel(pr_template_path)} missing Cloud Example Snapshot checklist line with "
-        "examples/aws, examples/azure, boundary preservation, and approved provider refresh spec terms"
+        f"{rel(pr_template_path)} missing provider example checklist line with "
+        "examples/aws, examples/azure, adjacent executable assets, provider-latest, "
+        "and approved provider refresh spec terms"
     )
 
 # Harness implementation surfaces: existence and cross-reference contracts only.
@@ -3467,7 +3393,6 @@ expected_script_classifications = {
     "validate-gitops-structure.sh": "operations-critical/reusable",
     "validate-k8s-manifests.sh": "operations-critical/reusable",
     "check-secret-handling.sh": "operations-critical/reusable",
-    "generate-llm-wiki-index.sh": "development-helper/reusable",
     "render-platform-chart-kinds.sh": "development-helper/reusable",
     "validate-policy-gates.sh": "operations-critical/reusable",
 }
@@ -5113,10 +5038,7 @@ script_command_contract_paths = [
     root / ".claude/CLAUDE.md",
     root / "docs/00.agent-governance/hooks/post-validate.sh",
     root / "docs/00.agent-governance/hooks/lifecycle-guard.sh",
-    root / "docs/05.operations/guides/0009-llm-wiki-curation-guide.md",
     root / "docs/90.references/README.md",
-    root / "docs/90.references/llm-wiki/README.md",
-    root / "docs/90.references/llm-wiki/wiki-index.md",
     root / "gitops/README.md",
     root / "gitops/workloads/README.md",
     root / "docs/README.md",

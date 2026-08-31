@@ -19,7 +19,7 @@ artifact_id: "SPEC-0062"
 > it.
 
 This specification designs a new full-corpus reverification cycle over the
-existing [`2026-08-08-wer`](../../90.references/research/2026-08-08-wer/README.md)
+existing [`0001-workspace-engineering`](../../90.references/research/0001-workspace-engineering/README.md)
 research pack. The direct human request enumerates the same topic families that
 the pack already projects onto thirty-six `REQ-WERPC-*` owner rows, including
 harness and loop engineering, provider integration, the common agent
@@ -371,7 +371,6 @@ The terminal repository-static lane includes at least:
 python3 scripts/validate-document-contract-registry.py --root . --mode strict
 python3 scripts/validate-markdown-profiles.py --root . --mode strict
 python3 scripts/validate-links-and-owners.py --root . --mode strict
-python3 scripts/validate-reference-information-architecture.py --root . --require-settled-baselines
 bash scripts/validate-repo-quality-gates.sh .
 pre-commit run
 pre-commit run --all-files
@@ -433,8 +432,8 @@ provider run, live action, or human validation.
 
 The current-main census is fourteen Markdown files, thirty-six owners,
 122 sources, and 163 claims. Its latest retained
-[source delta](../../90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md#2026-08-28-source-delta-increment)
-and [closed full-scope revalidation](../../90.references/research/2026-08-08-wer/scope-application-index.md#2026-08-28-closed-full-scope-revalidation)
+[source delta](../../90.references/research/0001-workspace-engineering/source-coverage.md#2026-08-28-source-delta-increment)
+and [closed full-scope revalidation](../../90.references/research/0001-workspace-engineering/scope-application-index.md#2026-08-28-closed-full-scope-revalidation)
 show no duplicate or missing identifier and no out-of-corpus reference among
 the sixty defined identifiers from `SRC-WERPC-091..122` and
 `CLM-WERPC-013..015`. The `14/36/91/141` baseline remains dated historical
@@ -490,6 +489,6 @@ retained and strengthened here.
 - [Task records](README.md#task-records)
 - [ADR 0022 — direct-approval standalone execution lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
 - [Spec 0059 — Workspace Research Full-Corpus Refresh](../0059-workspace-research-full-corpus-refresh/spec.md)
-- [Current WER research pack](../../90.references/research/2026-08-08-wer/README.md)
+- [Current WER research pack](../../90.references/research/0001-workspace-engineering/README.md)
 - [Research collection contract](../../90.references/research/README.md)
 - [Quality standards](../../00.agent-governance/policies/quality.md)

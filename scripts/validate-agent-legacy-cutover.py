@@ -23,7 +23,6 @@ import archive_recovery as recovery
 import archive_validation as archive
 import document_contracts as documents
 import json_schema_validation
-import reference_information_architecture as ria
 
 links = archive._load_canonical_link_module()
 
@@ -943,7 +942,6 @@ def _load_owners(
         documents,
         archive,
         recovery,
-        ria,
         json_schema_validation,
     )
     helpers = {

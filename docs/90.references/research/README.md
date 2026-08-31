@@ -9,14 +9,15 @@
 
 `research/` stores durable reference material for workspace harness and
 workspace engineering research packs. It is a stable lookup area for
-source-backed findings, dated source checks, and synthesis that later plans,
+source-backed findings, observation-dated source checks, and synthesis that later plans,
 specs, guides, or tasks can cite without turning this folder into an active
 policy owner.
 
 This folder does not define active governance policy, runtime permissions,
 deployment procedure, live cluster readiness, or provider contracts. Those stay
-with their canonical owners in `docs/00.agent-governance/`, `docs/03.specs/`,
-`docs/04.execution/`, and `docs/05.operations/`.
+with their canonical owners in `docs/00.agent-governance/`,
+`docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`, and
+`docs/05.operations/`.
 
 ### Collection Readers
 
@@ -35,7 +36,8 @@ with their canonical owners in `docs/00.agent-governance/`, `docs/03.specs/`,
 - Durable source ledgers and source-priority notes
 - Official-source and repo-backed evidence summaries
 - Non-authoritative market scan summaries when clearly labeled
-- Reference documents created from `docs/99.templates/templates/references/reference.template.md`
+- Pack READMEs created from `docs/99.templates/templates/references/research-pack.template.md`
+- Reports created from `docs/99.templates/templates/references/reference.template.md`
 
 ### Out of Scope
 
@@ -49,7 +51,7 @@ with their canonical owners in `docs/00.agent-governance/`, `docs/03.specs/`,
 
 ```text
 research/
-├── 2026-08-08-wer/
+├── 0001-workspace-engineering/
 │   ├── README.md
 │   ├── agent-memory-tiers-and-management.md
 │   ├── agent-model-routing-and-configuration.md
@@ -61,7 +63,7 @@ research/
 │   ├── llm-wiki-and-knowledge-routing.md
 │   ├── provider-implementation-status.md
 │   ├── scope-application-index.md
-│   ├── source-coverage-and-migration-ledger.md
+│   ├── source-coverage.md
 │   ├── spec-driven-sdlc-and-document-contracts.md
 │   └── workspace-governance-and-common-agent-environment.md
 └── README.md                            # This file
@@ -72,35 +74,39 @@ research/
 | Material                                                                                                                      | Status      | Role                                                                      | Authority Boundary                                                                                        |
 | ----------------------------------------------------------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | [README.md](./README.md)                                                                                                      | Index       | Research folder entry point and source-priority guide                     | Authoritative for folder routing only; not active policy                                                  |
-| [2026-08-08-wer/README.md](./2026-08-08-wer/README.md)                                                                        | Active pack | Successor workspace engineering research pack entry point                 | Dated research routing and coverage only; canonical owners retain current policy/runtime authority        |
-| [agent-memory-tiers-and-management.md](./2026-08-08-wer/agent-memory-tiers-and-management.md)                                 | Active pack | Working, durable, domain-scoped, and provider-local memory research       | Descriptive reference only; memory lifecycle contract remains with Stage 00                               |
-| [agent-model-routing-and-configuration.md](./2026-08-08-wer/agent-model-routing-and-configuration.md)                         | Active pack | Model-routing and configuration research                                  | Descriptive reference only; provider availability and observed model resolution require separate evidence |
-| [ai-agents-and-agency-agents.md](./2026-08-08-wer/ai-agents-and-agency-agents.md)                                             | Active pack | AI-agent-system and agency-agents research                                | Descriptive reference only; roster and admission remain with canonical Stage 00 owners                    |
-| [ci-cd-github-actions-and-qa.md](./2026-08-08-wer/ci-cd-github-actions-and-qa.md)                                             | Active pack | CI/CD, GitHub Actions, and QA research                                    | Descriptive reference only; static validation does not prove hosted CI or deployment                      |
-| [documentation-architecture-and-diataxis.md](./2026-08-08-wer/documentation-architecture-and-diataxis.md)                     | Active pack | Documentation architecture and Diátaxis research                          | Descriptive mapping only; document profiles and templates remain canonical                                |
-| [harness-and-loop-engineering.md](./2026-08-08-wer/harness-and-loop-engineering.md)                                           | Active pack | Harness components, loop state machine, recovery, and evaluation research | Descriptive reference only; Stage 00 contracts remain the executable control owners                       |
-| [kubernetes-infrastructure-and-security.md](./2026-08-08-wer/kubernetes-infrastructure-and-security.md)                       | Active pack | Kubernetes, infrastructure, GitOps, and security research                 | Descriptive reference only; no live-cluster or active security-policy claim                               |
-| [llm-wiki-and-knowledge-routing.md](./2026-08-08-wer/llm-wiki-and-knowledge-routing.md)                                       | Active pack | LLM-WIKI routing and knowledge-management research                        | Descriptive reference only; generated/index owners remain canonical                                       |
-| [provider-implementation-status.md](./2026-08-08-wer/provider-implementation-status.md)                                       | Active pack | Claude/Codex product-surface and static-adapter status research           | Product and static evidence only; native discovery/authenticated runtime remain separate                  |
-| [scope-application-index.md](./2026-08-08-wer/scope-application-index.md)                                                     | Active pack | Governance-scope routing over the pack's requirement coverage             | Routing index only; Stage 00 scopes retain scope authority and the pack README retains status authority   |
-| [source-coverage-and-migration-ledger.md](./2026-08-08-wer/source-coverage-and-migration-ledger.md)                           | Active pack | Source, claim, predecessor-disposition, and cutover ledger                | Ledger preserves provenance; it does not make external/runtime claims authoritative                       |
-| [spec-driven-sdlc-and-document-contracts.md](./2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md)                     | Active pack | Spec-driven SDLC and document-contract research                           | Descriptive reference only; lifecycle documents and templates retain authority                            |
-| [workspace-governance-and-common-agent-environment.md](./2026-08-08-wer/workspace-governance-and-common-agent-environment.md) | Active pack | Provider-neutral workspace control-plane research                         | Descriptive reference only; provider permissions and active governance remain canonical elsewhere         |
+| [0001-workspace-engineering/README.md](./0001-workspace-engineering/README.md)                                                                        | Active pack | Successor workspace engineering research pack entry point                 | Research routing and observation-dated coverage only; canonical owners retain current authority           |
+| [agent-memory-tiers-and-management.md](./0001-workspace-engineering/agent-memory-tiers-and-management.md)                                 | Active pack | Working, durable, domain-scoped, and provider-local memory research       | Descriptive reference only; memory lifecycle contract remains with Stage 00                               |
+| [agent-model-routing-and-configuration.md](./0001-workspace-engineering/agent-model-routing-and-configuration.md)                         | Active pack | Model-routing and configuration research                                  | Descriptive reference only; provider availability and observed model resolution require separate evidence |
+| [ai-agents-and-agency-agents.md](./0001-workspace-engineering/ai-agents-and-agency-agents.md)                                             | Active pack | AI-agent-system and agency-agents research                                | Descriptive reference only; roster and admission remain with canonical Stage 00 owners                    |
+| [ci-cd-github-actions-and-qa.md](./0001-workspace-engineering/ci-cd-github-actions-and-qa.md)                                             | Active pack | CI/CD, GitHub Actions, and QA research                                    | Descriptive reference only; static validation does not prove hosted CI or deployment                      |
+| [documentation-architecture-and-diataxis.md](./0001-workspace-engineering/documentation-architecture-and-diataxis.md)                     | Active pack | Documentation architecture and Diátaxis research                          | Descriptive mapping only; document profiles and templates remain canonical                                |
+| [harness-and-loop-engineering.md](./0001-workspace-engineering/harness-and-loop-engineering.md)                                           | Active pack | Harness components, loop state machine, recovery, and evaluation research | Descriptive reference only; Stage 00 contracts remain the executable control owners                       |
+| [kubernetes-infrastructure-and-security.md](./0001-workspace-engineering/kubernetes-infrastructure-and-security.md)                       | Active pack | Kubernetes, infrastructure, GitOps, and security research                 | Descriptive reference only; no live-cluster or active security-policy claim                               |
+| [llm-wiki-and-knowledge-routing.md](./0001-workspace-engineering/llm-wiki-and-knowledge-routing.md)                                       | Active pack | LLM-WIKI routing and knowledge-management research                        | Descriptive reference only; generated/index owners remain canonical                                       |
+| [provider-implementation-status.md](./0001-workspace-engineering/provider-implementation-status.md)                                       | Active pack | Claude/Codex product-surface and static-adapter status research           | Product and static evidence only; native discovery/authenticated runtime remain separate                  |
+| [scope-application-index.md](./0001-workspace-engineering/scope-application-index.md)                                                     | Active pack | Governance-scope routing over the pack's requirement coverage             | Routing index only; Stage 00 scopes retain scope authority and the pack README retains status authority   |
+| [source-coverage.md](./0001-workspace-engineering/source-coverage.md)                                                   | Active pack | Source and claim coverage with bounded historical disposition             | Preserves provenance; it does not make external or runtime claims authoritative                           |
+| [spec-driven-sdlc-and-document-contracts.md](./0001-workspace-engineering/spec-driven-sdlc-and-document-contracts.md)                     | Active pack | Spec-driven SDLC and document-contract research                           | Descriptive reference only; lifecycle documents and templates retain authority                            |
+| [workspace-governance-and-common-agent-environment.md](./0001-workspace-engineering/workspace-governance-and-common-agent-environment.md) | Active pack | Provider-neutral workspace control-plane research                         | Descriptive reference only; provider permissions and active governance remain canonical elsewhere         |
 
 `Active pack` and `Index` are collection roles,
 not report lifecycle values. This collection declares no Current pack in the
 document-profile registry; report lifecycle is owned by the selected pack's
-`## Report Index`, and predecessor disposition is owned by the active pack's
-[source coverage and migration ledger](./2026-08-08-wer/source-coverage-and-migration-ledger.md).
+`## Report Index`, and source coverage is owned by the active pack's
+[source coverage](./0001-workspace-engineering/source-coverage.md).
 
-Dated research packs must use `YYYY-MM-DD-<sdlc_key>/` folders. Reference files
-inside a pack use semantic topic names only; do not use `part-*.md` or numeric
-order-prefix filenames for current reports.
+Current research packs exist only at `research/####-<slug>/`. The four-digit
+number is unique within Research and the slug is semantic kebab-case, never a
+date. Reference files inside a pack use semantic topic names only; do not use
+`part-*.md`, dates, or numeric order prefixes for current report filenames.
 
 ## Add and Find
 
 1. Read the parent spec, plan, and task before adding or changing research pack material.
-2. Create authored reference documents with [reference.template.md](../../99.templates/templates/references/reference.template.md).
+2. Create the pack README with
+   [research-pack.template.md](../../99.templates/templates/references/research-pack.template.md)
+   and authored reports with
+   [reference.template.md](../../99.templates/templates/references/reference.template.md).
 3. Keep source claims factual, dated, and explicitly bounded by `Source checked`, `Sources`, and `Review and Freshness`.
 4. Prefer official documentation and repo-backed evidence over market scan material.
 5. Label market findings as non-authoritative, and do not use them to override official or repo-backed sources.
@@ -112,10 +118,10 @@ order-prefix filenames for current reports.
 이 README의 링크 기준 위치는 `docs/90.references/research/`다.
 
 - Same-folder research references use `./` only after the target file exists.
-- Dated pack references use `./2026-08-08-wer/<filename>.md` after the target
+- Numbered semantic pack references use `./0001-workspace-engineering/<filename>.md` after the target
   file exists.
 - Parent reference routing uses `../README.md`.
-- Canonical owner stages use `../../00.agent-governance/`, `../../03.specs/`, `../../04.execution/`, and `../../05.operations/`.
+- Canonical owner stages use `../../00.agent-governance/`, `../../01.requirements/`, `../../02.architecture/`, `../../03.specs/`, and `../../05.operations/`.
 - Root-level repository sources use `../../../<path>` from authored research reference files.
 - Optional or planned target paths remain code literals until the target exists.
 
@@ -137,10 +143,8 @@ owners.
 ## Related Documents
 
 - [90.references README](../README.md)
-- [Workspace Engineering Research Pack (2026-08-08)](./2026-08-08-wer/README.md)
+- [Workspace Engineering Research Pack](./0001-workspace-engineering/README.md)
 - [Workspace Engineering Research Pack Spec](../../03.specs/0017-workspace-engineering-research-pack/spec.md)
-- [Workspace Engineering Research Pack Plan](../../98.archive/README.md#document-index)
-- [Archive Index](../../98.archive/README.md#document-index)
 - [Workspace Harness Research Pack Spec](../../03.specs/0009-workspace-harness-research-pack/spec.md)
 - [Workspace Harness Research Pack Plan](../../03.specs/0009-workspace-harness-research-pack/plan.md)
 - [Workspace Harness Research Pack Tasks](../../03.specs/0009-workspace-harness-research-pack/README.md)

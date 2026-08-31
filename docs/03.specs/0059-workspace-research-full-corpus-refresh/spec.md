@@ -12,7 +12,7 @@ artifact_id: "SPEC-0059"
 ## Overview
 
 This specification designs the fifth refresh cycle over the existing
-[`2026-08-08-wer`](../../90.references/research/2026-08-08-wer/README.md)
+[`0001-workspace-engineering`](../../90.references/research/0001-workspace-engineering/README.md)
 research pack. The direct human request enumerated twenty-three research
 topics. Because several request lines name more than one document family — one
 line names Spec, Task, Plan, PRD, AD, and ADR, another names six operations
@@ -186,7 +186,7 @@ recorded in the cycle Task.
 
 ### C-WRFC-011 — formatter-safe ledger writes
 
-Rows added to `source-coverage-and-migration-ledger.md` are written through a
+Rows added to `source-coverage.md` are written through a
 shell heredoc rather than the editing tools, because the Markdown formatter
 re-pads every cell of a table to its widest cell and previously inflated that
 file from 797 KB to 3.0 MB without changing content. Post-write byte size is
@@ -246,7 +246,7 @@ Findings live with their existing owners; this cycle adds no storage location.
 | ---------------------- | ------------------------------------------------------------- |
 | Dated finding sections | the eleven topical reports, as H3 under `Definitions / Facts` |
 | Cycle reconciliation   | pack `README.md`, as H3 under `Overview`                      |
-| Source and claim rows  | `source-coverage-and-migration-ledger.md`                     |
+| Source and claim rows  | `source-coverage.md`                     |
 | Scope projection       | `scope-application-index.md`                                  |
 | Blocking-class closure | `scope-application-index.md`, as a dated H3                   |
 | Durable cycle record   | `docs/00.agent-governance/memory/progress.md`                 |
@@ -389,7 +389,7 @@ under ADR 0022, with a reciprocal
 [Plan](plan.md)
 and [Task](README.md#task-records)
 authored under the repository's standalone execution rules. Its refresh target is
-the [2026-08-08 WER pack](../../90.references/research/2026-08-08-wer/README.md),
+the [2026-08-08 WER pack](../../90.references/research/0001-workspace-engineering/README.md),
 and its predecessor cycle is
 [Spec 0058](../0058-workspace-research-consistency-and-partial-refresh/spec.md).
 
@@ -417,4 +417,4 @@ and its predecessor cycle is
 - [Spec 056 — Partial/DEFER incremental refresh](../0057-workspace-engineering-partial-defer-incremental-refresh/spec.md)
 - [Spec 053 — research pack consolidation](../0053-workspace-engineering-research-pack-consolidation/spec.md)
 - [Quality standards](../../00.agent-governance/rules/quality-standards.md)
-- [Source coverage and migration ledger](../../90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md)
+- [Source coverage and migration ledger](../../90.references/research/0001-workspace-engineering/source-coverage.md)

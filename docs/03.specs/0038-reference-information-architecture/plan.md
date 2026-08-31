@@ -208,10 +208,10 @@ results.
 - [Spec 038](spec.md)
 - [PRD-0006](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - [AD-0009](../../02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md)
-- [Current audit pack](../../90.references/audits/2026-07-11-weia/README.md)
-- `docs/90.references/research/2026-07-07-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
+- [Current external research pack](../../90.references/research/0001-workspace-engineering/README.md)
+- `docs/90.references/research/2026-07-07-wer/README.md`; [current lookup](../../90.references/research/0001-workspace-engineering/README.md)
 - [Document profile registry](../../99.templates/registry.json)
-- `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`; [current lookup](../../90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md)
+- `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`; [current lookup](../../90.references/research/0001-workspace-engineering/source-coverage.md)
 - [Predecessor Spec 037 Task](../0037-active-corpus-and-execution-retention/README.md)
 ## Goals & In-Scope
 
@@ -727,8 +727,8 @@ results.
 
 - Consumes: RIA-003 safe reads and ordered finding interface.
 - Produces: `validate_generated_assets(root, contract) -> list[Finding]`; the
-  only executable mapping is the exact contract string
-  `bash scripts/generate-llm-wiki-index.sh --check` to a fixed argv tuple.
+  historical implementation allowed one fixed-argv LLM Wiki drift check. That
+  generator relation is now retired and is not a current validation surface.
 
 - [x] **Step 1: Write exact generator RED tests.** Add
   `test_generator_requires_unique_owner_relation`,
@@ -747,10 +747,10 @@ results.
   it without a shell in a sanitized environment, and return path-only
   `RIA-GENERATOR` diagnostics. Contract data may not introduce another command.
 
-- [x] **Step 4: Populate one production relation.** Register
-  `scripts/generate-llm-wiki-index.sh`, its declared input roots,
-  `docs/90.references/llm-wiki/wiki-index.md`, and the exact check command.
-  Run `bash scripts/generate-llm-wiki-index.sh --check` and require zero drift.
+- [x] **Step 4: Populate one production relation.** The completed task
+  registered the then-current LLM Wiki generator, declared inputs, output, and
+  fixed check. That relation and its generated output are now retired; current
+  validation must not recreate them.
 
 - [x] **Step 5: Run focused and production GREEN.** Run the full unit module,
   CLI self-test/production, direct generator no-diff, and strict links. Expect
@@ -1192,8 +1192,8 @@ restoring the observation, generator, or owner relation it protects.
 - **Task**: [Reference Information Architecture Task](README.md#task-records)
 - **PRD**: [PRD-0006](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - **AD**: [AD-0009](../../02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md)
-- **Current audit**: [2026-07-11 WEIA](../../90.references/audits/2026-07-11-weia/README.md)
-- **Current research**: `docs/90.references/research/2026-07-07-wer/README.md`; [current lookup](../../90.references/research/2026-08-08-wer/README.md)
+- **Current external research**: [Workspace Engineering Research Pack](../../90.references/research/0001-workspace-engineering/README.md)
+- **Current research**: `docs/90.references/research/2026-07-07-wer/README.md`; [current lookup](../../90.references/research/0001-workspace-engineering/README.md)
 
 ### Lifecycle Traceability
 

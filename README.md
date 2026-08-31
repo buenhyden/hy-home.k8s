@@ -158,7 +158,7 @@ hy-home.k8s/
 | Ingress        | ingress-nginx, Traefik dynamic config                                                           | 로컬 k3d 유지. Ingress NGINX upstream retirement 이후 cloud target은 Gateway API/ALB/AGC로 분리 |
 | Secrets        | External Secrets Operator, Vault                                                                | 외부 시크릿 동기화 계약                                                                         |
 | Data Services  | External PostgreSQL, External Valkey                                                            | 저장소 외부 런타임을 Service 계약으로 연결                                                      |
-| Cloud Examples | AWS EKS 1.35 target, AKS 1.35 target, Terraform AWS provider 6.x                                | `Cloud Example Snapshot` 기준 참조 구현                                                         |
+| Cloud Examples | AWS EKS 1.35 target, AKS 1.35 target, Terraform AWS provider 6.x                                | provider README와 인접 실행 자산이 함께 소유하는 bounded 참조 구현                              |
 | CI / Quality   | GitHub Actions, pre-commit, markdownlint, shellcheck, kube-linter, hadolint, actionlint, zizmor | 정적 검증 및 정책 게이트                                                                        |
 
 ## Prerequisites

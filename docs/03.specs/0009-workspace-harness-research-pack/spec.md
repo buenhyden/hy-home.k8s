@@ -240,7 +240,6 @@ No external API is introduced.
 
 ```bash
 git diff --check
-bash scripts/generate-llm-wiki-index.sh --check
 bash scripts/validate-repo-quality-gates.sh .
 ```
 

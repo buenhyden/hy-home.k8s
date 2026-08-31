@@ -58,8 +58,9 @@ not as a description of the current repository contract.
   to their canonical contract owner.
 - **STORY-04**: A repository change selects all required local and CI validators
   from one affected-surface contract.
-- **STORY-05**: AWS and Azure reference knowledge has one dated snapshot owner
-  under `docs/90.references`, while `examples/**` contains executable assets.
+- **STORY-05**: AWS and Azure reference implementations and their local guidance
+  are owned together under `examples/**`; Stage 90 does not duplicate them as
+  snapshots.
 - **STORY-06**: Protected workflow and GitOps changes receive static security
   checks without reading secrets or mutating live systems.
 
@@ -71,16 +72,16 @@ not as a description of the current repository contract.
 - **REQ-0005-FR-0002**: Align Stage 99 support contracts and templates with the
   registry and remove legacy or duplicate forms.
 - **REQ-0005-FR-0003**: Define repository, stage, collection, implementation,
-  snapshot-pack, and workspace-staging README profiles.
+  audit-pack, data-pack, research-pack, and workspace-staging README profiles.
 - **REQ-0005-FR-0004**: Validate YAML frontmatter as a repository convention,
   parse Markdown with fenced-code awareness, and maintain positive and negative
   fixtures.
 - **REQ-0005-FR-0005**: Migrate authored documents in bounded waves, preserving
-  completed Plans, Tasks, audits, research snapshots, ADR history, and archive
-  evidence.
-- **REQ-0005-FR-0006**: Consolidate example-local cloud SDLC documents into
-  provider snapshots under `docs/90.references` and repair every index and
-  cross-link.
+  completed Task evidence, the latest external research, ADR history, and
+  Git-recoverable historical evidence.
+- **REQ-0005-FR-0006**: Keep example-local cloud guidance with its executable
+  provider implementation under `examples/**` and repair every index and
+  cross-link without creating Stage 90 snapshot copies.
 - **REQ-0005-FR-0007**: Create one affected-surface contract consumed by local
   hooks, AI-agent guidance, repository validation, and CI job selection.
 - **REQ-0005-FR-0008**: Pin third-party GitHub Actions to full commit SHAs and
@@ -177,4 +178,4 @@ or external environment verification.
 - **AD**: [Workspace Document Assurance Operating Model](../02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md)
 - **ADRs**: [Declarative Document Contract Registry](../02.architecture/decisions/0015-declarative-document-contract-registry.md) and [Program-to-Tranche Lineage](../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Specs**: [Document Contract Registry](../03.specs/0026-document-contract-registry/spec.md) through [Protected Surface and Supply Chain Hardening](../03.specs/0032-protected-surface-supply-chain-hardening/spec.md)
-- **Current Audit**: [2026-07-11 Workspace Engineering Implementation Audit](../90.references/audits/2026-07-11-weia/README.md)
+- **Current External Research**: [Workspace Engineering Research Pack](../90.references/research/0001-workspace-engineering/README.md)

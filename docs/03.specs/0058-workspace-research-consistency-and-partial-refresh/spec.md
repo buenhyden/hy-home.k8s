@@ -12,7 +12,7 @@ artifact_id: "SPEC-0058"
 ## Overview
 
 This specification designs a single combined cycle over the existing
-[`2026-08-08-wer`](../../90.references/research/2026-08-08-wer/README.md)
+[`0001-workspace-engineering`](../../90.references/research/0001-workspace-engineering/README.md)
 research pack. It joins two requested workstreams that share one integration
 surface: a constraint-consistency pass over scope projection, one-off artifact
 cleanup, and cross-link integrity; and an incremental re-observation of the
@@ -28,7 +28,7 @@ thirty-six owner rows in the topic ledger. It refreshes and reconciles what
 the pack already owns.
 
 The three exceptions are the Spec, Task, and Plan document families. The pack's
-[document-family contract matrix](../../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md)
+[document-family contract matrix](../../90.references/research/0001-workspace-engineering/spec-driven-sdlc-and-document-contracts.md)
 already describes all twelve families, but the coverage matrix registers owners
 for only nine — `REQ-WERPC-011` through `REQ-WERPC-019`. Spec, Task, and Plan
 therefore carry researched content with no traceable requirement owner. Three
@@ -48,7 +48,7 @@ No separate PRD or Architecture Description is required or part of this standalo
 ### Prior-cycle constraint
 
 The pack's own
-[scope application index](../../90.references/research/2026-08-08-wer/scope-application-index.md)
+[scope application index](../../90.references/research/0001-workspace-engineering/scope-application-index.md)
 records that all twelve `Partial` rows are blocked by evidence classes that
 repository-static work cannot obtain: live cluster and effective RBAC, hosted
 CI run outcomes, provider runtime behavior, and human usability or stakeholder
@@ -222,9 +222,9 @@ Markdown and JSON already tracked by the repository.
 
 | Store                   | Path                                                                                 | Role in this cycle                                    |
 | ----------------------- | ------------------------------------------------------------------------------------ | ----------------------------------------------------- |
-| Pack README             | `docs/90.references/research/2026-08-08-wer/README.md`                               | Requirement coverage matrix and reconciliation counts |
-| Source and claim ledger | `docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md` | Append-only `SRC`/`CLM` registration                  |
-| Scope application index | `docs/90.references/research/2026-08-08-wer/scope-application-index.md`              | Scope re-projection and unowned-path list             |
+| Pack README             | `docs/90.references/research/0001-workspace-engineering/README.md`                               | Requirement coverage matrix and reconciliation counts |
+| Source and claim ledger | `docs/90.references/research/0001-workspace-engineering/source-coverage.md` | Append-only `SRC`/`CLM` registration                  |
+| Scope application index | `docs/90.references/research/0001-workspace-engineering/scope-application-index.md`              | Scope re-projection and unowned-path list             |
 | Topic reports           | eight owner files in the same pack                                                   | Dated `2026-08-14` subsections                        |
 | Collection README       | `docs/90.references/research/README.md`                                              | Folder routing and item index                         |
 | Durable progress ledger | `docs/00.agent-governance/memory/progress.md`                                        | Repo-changing work record                             |
@@ -366,9 +366,9 @@ standalone execution rules.
 
 ### Related Documents
 
-- [Research pack README](../../90.references/research/2026-08-08-wer/README.md)
-- [Scope application index](../../90.references/research/2026-08-08-wer/scope-application-index.md)
-- [Source coverage and migration ledger](../../90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md)
+- [Research pack README](../../90.references/research/0001-workspace-engineering/README.md)
+- [Scope application index](../../90.references/research/0001-workspace-engineering/scope-application-index.md)
+- [Source coverage and migration ledger](../../90.references/research/0001-workspace-engineering/source-coverage.md)
 - [Spec 053 — research pack consolidation](../0053-workspace-engineering-research-pack-consolidation/spec.md)
 - [Spec 055 — gap-only refresh](../0056-workspace-engineering-gap-only-refresh/spec.md)
 - [Spec 056 — Partial/DEFER incremental refresh](../0057-workspace-engineering-partial-defer-incremental-refresh/spec.md)

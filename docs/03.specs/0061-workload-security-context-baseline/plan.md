@@ -44,7 +44,7 @@ or CI run was contacted, and no container start is claimed.
 - [Spec 0061](../../03.specs/0061-workload-security-context-baseline/spec.md)
 - [Plan](plan.md)
 - Predecessor Spec: `docs/03.specs/0060-platform-currency-defect-closure/spec.md`
-- [Tech stack version inventory](../../90.references/data/tech-stack-version-inventory.md)
+- [Kubernetes infrastructure and security research](../../90.references/research/0001-workspace-engineering/kubernetes-infrastructure-and-security.md)
 
 ### Workload sweep that scoped this cycle
 

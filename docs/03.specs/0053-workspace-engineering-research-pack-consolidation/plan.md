@@ -15,7 +15,7 @@ artifact_id: "PLAN-0053"
 > checkbox (`- [ ]`) state in this Plan only as an execution checklist. The
 > Task document is the durable result and evidence owner.
 
-**Goal:** Publish one source-backed `2026-08-08-wer` research pack that owns the
+**Goal:** Publish one source-backed `0001-workspace-engineering` research pack that owns the
 complete approved scope, preserves reviewed provenance from all 25 predecessor
 files, migrates current consumers without weakening controls, and removes the
 three predecessor directories.
@@ -36,7 +36,7 @@ repository quality-gate shell entrypoint.
 ## Global Constraints
 
 - The output root is exactly
-  `docs/90.references/research/2026-08-08-wer/`.
+  `docs/90.references/research/0001-workspace-engineering/`.
 - The pack contains exactly one `README.md` and the twelve reference filenames
   declared by Spec 053.
 - External source checks use the observation date `2026-08-08`; material
@@ -113,7 +113,7 @@ owners.
 
 This Task records execution and review evidence for the ten WERPC work
 packages that replace three dated research packs with one source-backed
-`2026-08-08-wer` pack. Rows advance only after the logical commit, required
+`0001-workspace-engineering` pack. Rows advance only after the logical commit, required
 repository-static gates, implementation report, specification review, and
 quality review are accepted.
 
@@ -183,7 +183,7 @@ or live-cluster result is produced or claimed.
 
 ### New pack files
 
-- `docs/90.references/research/2026-08-08-wer/README.md` — pack boundary,
+- `docs/90.references/research/0001-workspace-engineering/README.md` — pack boundary,
   evidence classes, reading order, request-to-primary-owner matrix, and current
   workspace evidence routing.
 - `workspace-governance-and-common-agent-environment.md` — workspace purpose,
@@ -212,7 +212,7 @@ or live-cluster result is produced or claimed.
   reasoning selection, evaluation, fallback, cost/latency, and promotion.
 - `agent-memory-tiers-and-management.md` — working, durable, domain-scoped,
   and provider-local auxiliary memory lifecycle.
-- `source-coverage-and-migration-ledger.md` — source register, 25-file and
+- `source-coverage.md` — source register, 25-file and
   split-section dispositions, mutable-reference classification, omissions,
   corrections, and cutover evidence.
 
@@ -426,7 +426,7 @@ Canonical follow-up owner | Refresh trigger
   Run:
 
   ```bash
-  test "$(find docs/90.references/research/2026-08-08-wer -maxdepth 1 -type f | wc -l)" -eq 13
+  test "$(find docs/90.references/research/0001-workspace-engineering -maxdepth 1 -type f | wc -l)" -eq 13
   test "$(git ls-files 'docs/90.references/research/2026-07-04-wer/**' 'docs/90.references/research/2026-07-07-wer/**' 'docs/90.references/research/2026-08-07-wer/**' | wc -l)" -eq 25
   python3 scripts/validate-markdown-profiles.py --root .
   python3 scripts/validate-links-and-owners.py --root . --mode strict
@@ -439,7 +439,7 @@ Canonical follow-up owner | Refresh trigger
 
   ```bash
   bash scripts/validate-repo-quality-gates.sh .
-  git add docs/90.references/research/2026-08-08-wer \
+  git add docs/90.references/research/0001-workspace-engineering \
     docs/03.specs/0053-workspace-engineering-research-pack-consolidation/README.md#task-records \
     docs/00.agent-governance/memory/progress.md
   git commit -m "docs: establish consolidated research pack"
@@ -505,7 +505,7 @@ Canonical follow-up owner | Refresh trigger
   bash scripts/validate-harness.sh
   bash scripts/validate-repo-quality-gates.sh .
   git diff --check
-  git add docs/90.references/research/2026-08-08-wer \
+  git add docs/90.references/research/0001-workspace-engineering \
     docs/03.specs/0053-workspace-engineering-research-pack-consolidation/README.md#task-records \
     docs/00.agent-governance/memory/progress.md
   git commit -m "docs: research harness loop and provider systems"
@@ -562,12 +562,11 @@ Canonical follow-up owner | Refresh trigger
 - [ ] **Step 6: Validate and commit**
 
   ```bash
-  bash scripts/generate-llm-wiki-index.sh --check
   python3 scripts/validate-markdown-profiles.py --root .
   python3 scripts/validate-links-and-owners.py --root . --mode strict
   bash scripts/validate-repo-quality-gates.sh .
   git diff --check
-  git add docs/90.references/research/2026-08-08-wer \
+  git add docs/90.references/research/0001-workspace-engineering \
     docs/03.specs/0053-workspace-engineering-research-pack-consolidation/README.md#task-records \
     docs/00.agent-governance/memory/progress.md
   git commit -m "docs: research spec driven documentation systems"
@@ -619,7 +618,7 @@ Canonical follow-up owner | Refresh trigger
   bash scripts/validate-harness.sh
   bash scripts/validate-repo-quality-gates.sh .
   git diff --check
-  git add docs/90.references/research/2026-08-08-wer \
+  git add docs/90.references/research/0001-workspace-engineering \
     docs/03.specs/0053-workspace-engineering-research-pack-consolidation/README.md#task-records \
     docs/00.agent-governance/memory/progress.md
   git commit -m "docs: research kubernetes infrastructure security"
@@ -671,7 +670,7 @@ Canonical follow-up owner | Refresh trigger
   python3 scripts/validate-links-and-owners.py --root . --mode strict
   bash scripts/validate-repo-quality-gates.sh .
   git diff --check
-  git add docs/90.references/research/2026-08-08-wer \
+  git add docs/90.references/research/0001-workspace-engineering \
     docs/03.specs/0053-workspace-engineering-research-pack-consolidation/README.md#task-records \
     docs/00.agent-governance/memory/progress.md
   git commit -m "docs: research ci github actions and qa"
@@ -733,7 +732,7 @@ Canonical follow-up owner | Refresh trigger
   bash scripts/validate-harness.sh
   bash scripts/validate-repo-quality-gates.sh .
   git diff --check
-  git add docs/90.references/research/2026-08-08-wer \
+  git add docs/90.references/research/0001-workspace-engineering \
     docs/03.specs/0053-workspace-engineering-research-pack-consolidation/README.md#task-records \
     docs/00.agent-governance/memory/progress.md
   git commit -m "docs: research agent model and memory systems"
@@ -774,7 +773,7 @@ Canonical follow-up owner | Refresh trigger
 
 - [ ] **Step 2: Write failing focused fixtures before machine changes**
 
-  Update test inputs to expect `2026-08-08-wer` as the surviving research
+  Update test inputs to expect `0001-workspace-engineering` as the surviving research
   owner and to reject current navigation to the three deleted pack roots. Run:
 
   ```bash
@@ -848,7 +847,7 @@ Canonical follow-up owner | Refresh trigger
 
 - Consumes: reviewed 25/25 file coverage, split-section dispositions, source
   ledger, and occurrence classification.
-- Produces: one live `2026-08-08-wer` pack and three absent predecessor roots.
+- Produces: one live `0001-workspace-engineering` pack and three absent predecessor roots.
 
 - [x] **Step 1: Re-run pre-deletion gates**
 
@@ -874,7 +873,7 @@ Canonical follow-up owner | Refresh trigger
   test ! -e docs/90.references/research/2026-07-04-wer
   test ! -e docs/90.references/research/2026-07-07-wer
   test ! -e docs/90.references/research/2026-08-07-wer
-  test "$(find docs/90.references/research/2026-08-08-wer -maxdepth 1 -type f | wc -l)" -eq 13
+  test "$(find docs/90.references/research/0001-workspace-engineering -maxdepth 1 -type f | wc -l)" -eq 13
   ```
 
 - [x] **Step 4: Run post-deletion validation**
@@ -954,7 +953,7 @@ Canonical follow-up owner | Refresh trigger
   git diff --name-only $(git merge-base HEAD main)..HEAD -- docs/98.archive
   git ls-files | rg '(^|/)(tmp|temp|scratch|draft-output)(/|$)|\.bak$|\.orig$'
   rg -n 'hosted.*PASS|provider-runtime.*PASS|live.*PASS|remote.*PASS' \
-    docs/90.references/research/2026-08-08-wer \
+    docs/90.references/research/0001-workspace-engineering \
     docs/03.specs/0053-workspace-engineering-research-pack-consolidation/README.md#task-records
   ```
 

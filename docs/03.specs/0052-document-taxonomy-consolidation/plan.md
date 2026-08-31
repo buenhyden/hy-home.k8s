@@ -148,8 +148,8 @@ is performed or claimed.
 - **Accepted transition predecessor**:
   [ADR-0023](../../02.architecture/decisions/0023-work-unit-document-taxonomy-and-governance-authority.md)
 - **External evidence**:
-  [Spec-driven SDLC and document contracts](../../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md)
-  and [AI agents and Agency Agents](../../90.references/research/2026-08-08-wer/ai-agents-and-agency-agents.md)
+  [Spec-driven SDLC and document contracts](../../90.references/research/0001-workspace-engineering/spec-driven-sdlc-and-document-contracts.md)
+  and [AI agents and Agency Agents](../../90.references/research/0001-workspace-engineering/ai-agents-and-agency-agents.md)
 - **Design baseline**: transition design `14a0a75c`; approved terminal
   amendment carried by `1452dbfd` through `446e336a`.
 ## Goals & In-Scope

@@ -744,8 +744,8 @@ hosted CI, remote settings, secret safety, deployment, or live operation.
   [legacy Plan](plan.md)
   and [legacy Task](README.md#task-records)
 - **External evidence boundary**:
-  [Spec-driven SDLC and document contracts](../../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md)
-  and [AI agents and Agency Agents](../../90.references/research/2026-08-08-wer/ai-agents-and-agency-agents.md)
+  [Spec-driven SDLC and document contracts](../../90.references/research/0001-workspace-engineering/spec-driven-sdlc-and-document-contracts.md)
+  and [AI agents and Agency Agents](../../90.references/research/0001-workspace-engineering/ai-agents-and-agency-agents.md)
 - **Suspended program**:
   [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
 

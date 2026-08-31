@@ -3,7 +3,7 @@ title: 'Repository Delivery and Platform Assurance Requirement Package'
 type: sdlc/requirement-package
 status: active
 owner: platform
-updated: 2026-08-07
+updated: 2026-09-01
 artifact_id: "REQ-0007"
 ---
 
@@ -11,24 +11,17 @@ artifact_id: "REQ-0007"
 
 ## Overview
 
-This program turns the repository's current audit findings into a bounded,
-evidence-driven assurance path for GitHub automation, Kubernetes and GitOps
+This package defines a bounded, evidence-driven assurance path for GitHub
+automation, Kubernetes and GitOps
 desired state, infrastructure examples, policy, scripts, tests, secret
 boundaries, and Traefik dynamic configuration. It complements rather than
-replaces the current local platform baseline owned by PRD-0004, AD-0007,
+replaces the current local platform baseline owned by REQ-0004, AD-0007,
 ADR-0014, and Spec 008.
 
-PRD-0007 remains active and governing. Its execution is paused as of 2026-08-07
-for the duration of the PRD-0008 document taxonomy consolidation program, because
-Specs 049 and 050 would author validators against a surface that program
-consolidates. Spec 047 returns to draft and Specs 048-051 remain planned draft
-successors. Execution resumes in the consolidated structure when Spec 052
-reaches `done`.
-
-The program starts from the clean local `main` baseline observed on
-2026-08-02. It preserves the Current audit pack as observation evidence, uses
-read-only GitHub metadata as a separate remote lane, and reconciles the one
-saved stash by semantic hunk disposition instead of wholesale application.
+Current execution follows the active Spec index and the Spec 0054/0066
+consolidation boundary. The latest Stage 90 research is supporting evidence,
+not a current implementation or version owner. Repository files, the staged
+diff, manifests, configuration, and reviewed locks determine current truth.
 
 ## Vision
 
@@ -47,9 +40,9 @@ into a parallel control plane. Local evidence still does not imply hosted CI,
 provider runtime, or live-cluster evidence.
 
 Leaving those gaps implicit encourages either overclaiming shallow evidence or
-duplicating commands and ownership across CI lanes. Applying the saved stash
-wholesale would also reintroduce stale agent-governance and generated-object
-state that current `main` has already superseded.
+duplicating commands and ownership across CI lanes. Uncommitted or recovered
+changes require semantic review against current owners rather than wholesale
+application or branch-SHA parity.
 
 ## Personas
 
@@ -72,15 +65,15 @@ state that current `main` has already superseded.
    validation without planning, applying, authenticating, or deploying.
 4. A reviewer can distinguish repository-static, hosted CI, and remote/live
    observations and see why any `SKIP` or `DEFER` remains open.
-5. The saved stash is retired only after every hunk has a durable disposition
-   and every adopted result passes review and repository QA.
+5. A resumed or recovered worktree change is accepted only after every adopted
+   hunk matches a current owner and passes repository QA.
 
 ## Functional Requirements
 
 | Requirement ID | Requirement | Priority | Verification intent |
 | --- | --- | --- | --- |
 | REQ-0007-FR-0001 | Inventory every in-scope tracked surface and classify it as change, evidence-backed no-change, or bounded DEFER without forcing cosmetic edits. | Must | A reviewed current-surface matrix covers `.github`, `examples`, `gitops`, `infrastructure`, `policy`, `scripts`, `secrets`, `tests`, and `traefik`. |
-| REQ-0007-FR-0002 | Reconcile saved stash object `6370311e...` by hunk disposition and regenerate derived object identities from current HEAD. | Must | The Task records every disposition, no stale generated object ID is copied, and the matching stash is dropped only after verified local integration. |
+| REQ-0007-FR-0002 | Reconcile resumed, recovered, or uncommitted changes by semantic owner without branch-HEAD, stash-object, or generated-object identity pins. | Must | The Task records adopted and rejected scope, and no stale generated identity becomes a current authority. |
 | REQ-0007-FR-0003 | Keep one machine owner for affected-path routing and add a non-duplicative GitHub label/CODEOWNERS projection contract. | Must | Schema, parity validator, and negative fixtures reject missing, extra, ambiguous, or duplicated routing facts. |
 | REQ-0007-FR-0004 | Preserve intentional CI evidence lanes, one aggregate verdict, immutable Action identity, least privilege, and explicit remote observation boundaries. | Must | Workflow topology and routing tests pass without manufacturing a hosted run for an unpushed SHA. |
 | REQ-0007-FR-0005 | Record platform evidence depth as syntax, render, schema or policy, product semantic, and live observation rather than one undifferentiated PASS. | Must | All 13 Kustomize roots and every platform validator have an exact tool, result, fallback, lane, and depth record. |
@@ -90,6 +83,8 @@ state that current `main` has already superseded.
 | REQ-0007-FR-0009 | Preserve secret, ignored-state, remote-action, and live-system approval boundaries throughout implementation. | Must | Diff and review evidence show no ignored secret read, credential change, push, remote mutation, or live mutation. |
 | REQ-0007-FR-0010 | Execute as ordered Specs with separate Plans, Tasks, logical commits, independent reviews, rollback units, and final local-only integration. | Must | Each tranche has reciprocal evidence and passes its gate before its successor begins. |
 | REQ-0007-FR-0011 | Keep exact infrastructure, workflow, dependency, and cloud-example version constraints with their executable source or reviewed lock; do not require a Stage 90 mirror as an execution input. | Must | Validators read manifests, scripts, workflow configuration, dependency locks, Terraform, and Bicep directly, and reference-only documents are not required for execution. |
+| REQ-0007-FR-0012 | Retain `targetRevision: main` only for repository-self-referencing Argo CD sources under the current single-operator continuous-reconciliation model; keep external chart revisions exact and reconsider the branch policy when multi-operator, multi-environment, or history-rewrite workflows are introduced. | Must | Root and platform Application manifests show semantic self-source versus external-source treatment, and ADR-0029 records the reconsideration trigger. |
+| REQ-0007-FR-0013 | Keep Pod Security Admission labels aligned with repository-authored and statically verified workloads: use `enforce` only where the repository owns enough workload evidence, retain `audit`/`warn` for chart, injection, or runtime uncertainty, and treat Istio CNI as desired state rather than live proof. | Must | Namespace manifests, the Istio CNI Application, and related ADRs agree without claiming admission or cluster state. |
 | REQ-0007-NFR-0001 | Keep image and artifact assurance fail-closed without performing an unverified blanket digest migration. | Should | Current non-`latest` tag-or-digest checks pass and any digest, SBOM, or provenance follow-up names consumers, owner, and trigger. |
 | REQ-0007-NFR-0002 | Keep native README/frontmatter forms unchanged unless the selected profile or observed content proves a real contract defect. | Must | Strict registry, Markdown-profile, and link/owner validation passes with no template residue or arbitrary README section. |
 
@@ -109,42 +104,50 @@ state that current `main` has already superseded.
   non-deploy validation lanes in the required CI-equivalent environment.
 - **ACC-RDPA-006**: Required repository and CI gates never translate missing
   tooling or failed fallback behavior into PASS.
-- **ACC-RDPA-007**: The saved stash has a complete semantic disposition,
-  current generated identities, and no remaining matching stash after verified
-  local integration.
+- **ACC-RDPA-007**: Resumed or recovered changes have a reviewed semantic
+  disposition, no generated-current identity pin, and no orphaned worktree
+  state after verified local integration.
 - **ACC-RDPA-008**: Full repository QA, independent requirements and
   quality/security reviews, local `main` fast-forward integration, and cleanup
   complete without push or remote/live mutation.
-- **ACC-RDPA-009**: Remote GitHub metadata is dated and SHA-bound; current
+- **ACC-RDPA-009**: Remote GitHub metadata records its observation date and
+  relevant immutable source identity; current
   hosted CI, provider-runtime, credential-bearing, and live results remain
   `DEFER` unless actually observed within separate authority.
 - **ACC-RDPA-010**: Removing a reference inventory does not change the direct
   version constraints or make any required CI, bootstrap, Terraform, Bicep, or
   manifest validation unavailable.
+- **ACC-RDPA-011**: Repository-self-referencing Argo CD sources and external
+  chart sources retain their distinct revision policies and explicit
+  reconsideration triggers.
+- **ACC-RDPA-012**: PSA namespace labels and Istio CNI desired state are
+  documented without promoting repository-static evidence into a live-cluster
+  claim.
 
 ## Scope and Non-goals
 
 - **In scope**: `.github/**`, `examples/**`, `gitops/**`,
   `infrastructure/**`, `policy/**`, `scripts/**`, tracked `secrets/**`,
   `tests/**`, `traefik/**`, their canonical documentation contracts, the
-  minimum Stage 00 machine routing contracts they consume, and the Stage 01-04
+  minimum Stage 00 machine routing contracts they consume, and the Stage 01-03
   lineage required to govern the work.
 - **Authorized consolidation**: Protected-surface, contract, governance,
   workflow, validator, fixture, and obsolete placeholder changes are allowed
   when evidence identifies a real conflict, duplicate, or gap.
 - **Non-goals**: Redefining current local platform topology; replacing
-  PRD-0004, AD-0007, ADR-0014, or Spec 008; rewriting completed Specs or dated
-  audits; reading ignored/private state; changing credentials; pushing;
+  REQ-0004, AD-0007, ADR-0014, or Spec 008; reading ignored/private state;
+  changing credentials; pushing;
   changing branch protection or rulesets; dispatching remote workflows;
   applying manifests; deploying cloud resources; or mutating Kubernetes,
   Argo CD, Vault, ESO, DNS, or TLS state.
 
 ## Risks, Dependencies, and Assumptions
 
-- The Current audit pack is descriptive evidence pinned to an older SHA, not a
-  current policy owner; every finding must be re-observed before a change.
-- Local `main` is ahead of the observed remote SHA, so a historical remote
-  failure cannot establish the result of current local changes.
+- Stage 90 research is descriptive evidence, not a current policy, version, or
+  implementation owner; every local claim must be re-observed against current
+  repository sources.
+- Historical remote results cannot establish the result of current local
+  changes, regardless of branch ancestry.
 - The repository currently lacks local Terraform, Bicep, kubeconform, conftest,
   and Traefik CLIs. Required CI-equivalent validation therefore needs
   checksum-verified ephemeral tooling or must fail; developer-only diagnostics
@@ -154,11 +157,10 @@ state that current `main` has already superseded.
   second eligible reviewer exists.
 - Kubernetes, Terraform, Bicep, GitHub Actions, Vault, ESO, and Traefik
   behavior is grounded in their official documentation; exact tool versions
-  remain pinned in the existing technology inventory rather than floated as
-  `latest`.
-- Logical commits and semantic stash reconciliation make rollback possible,
-  but the stash must remain present until the integrated result is independently
-  reviewed and revalidated.
+  remain with executable configuration or reviewed dependency locks rather
+  than a Stage 90 inventory.
+- Logical commits and semantic worktree review make rollback possible without
+  preserving a stash or branch SHA as a permanent policy input.
 
 ## Traceability
 
@@ -176,5 +178,8 @@ state that current `main` has already superseded.
 | REQ-0007-FR-0008 | ACC-RDPA-006 | N/A — Specs 049 and 050 share the downstream owners linked in REQ-0007-FR-0005 and REQ-0007-FR-0007. |
 | REQ-0007-FR-0009 | ACC-RDPA-009 | N/A — Specs 047 through 051 share this approval boundary through the linked tranche owners. |
 | REQ-0007-FR-0010 | ACC-RDPA-008 | [Spec 051](../03.specs/0051-repository-assurance-integration-and-closure/spec.md) owns terminal integration and closure. |
+| REQ-0007-FR-0011 | ACC-RDPA-010 | [AD-0010](../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md) owns direct executable-source evidence. |
+| REQ-0007-FR-0012 | ACC-RDPA-011 | [AD-0010](../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md) owns the current delivery-evidence architecture and routes the `ADR-0029` decision. |
+| REQ-0007-FR-0013 | ACC-RDPA-012 | [AD-0010](../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md) owns the namespace evidence architecture and routes the `ADR-0028` decision. |
 | REQ-0007-NFR-0001 | ACC-RDPA-004 | N/A — Spec 049 shares the downstream owner stated in REQ-0007-FR-0005. |
 | REQ-0007-NFR-0002 | ACC-RDPA-001 | N/A — Specs 047 and 051 share the downstream owners linked in REQ-0007-FR-0001 and REQ-0007-FR-0010. |

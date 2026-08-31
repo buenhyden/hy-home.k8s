@@ -51,14 +51,14 @@ Implementation must preserve that baseline after every logical commit.
 
 | Path | Responsibility in this plan |
 | --- | --- |
-| `docs/90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md` | Durable audit inventory for frontmatter, README, provider, CI/QA, and workspace-wide drift classes found during Task 1. |
-| `docs/90.references/audits/README.md` | Audit index registration for the new audit report if the report is created. |
+| Package-local Task evidence | Durable audit inventory for frontmatter, README, provider, CI/QA, and workspace-wide drift classes found during Task 1; the former dated Stage 90 copy is retired. |
+| Current Workspace Engineering Research pack | External-source synthesis retained after the obsolete Audit corpus was removed. |
 | `docs/99.templates/support/*.md` | Current template support contract, frontmatter schema, SDLC/common governance, routing, and legacy cleanup owner. |
 | `docs/99.templates/templates/**` | Template forms that must match support contracts without carrying long governance bodies. |
 | `docs/00.agent-governance/**/*.md` | Agent-facing governance, provider routing, protected-surface rules, and provider capability boundaries. |
 | `AGENTS.md`, `CLAUDE.md`, `GEMINI.md` | Thin provider gateway shims that point to Stage 00 and provider runtime overlays. |
 | `.agents/**`, `.claude/**`, `.codex/**` | Shared and provider-specific agent runtime surfaces. |
-| `.github/ABOUT.md`, `.github/workflows/*.yml`, `.github/PULL_REQUEST_TEMPLATE.md` | CI/QA and repository automation documentation surfaces. |
+| `.github/README.md`, `.github/workflows/*.yml`, `.github/PULL_REQUEST_TEMPLATE.md` | CI/QA and repository automation documentation surfaces. |
 | `README.md`, `docs/**/README.md`, `examples/**/README.md`, `gitops/**/README.md`, `infrastructure/**/README.md`, `scripts/README.md`, `tests/README.md`, `traefik/README.md` | README entrypoints that must remain frontmatter-free and avoid duplicating contract bodies. |
 | `scripts/validate-repo-quality-gates.sh` | Deterministic enforcement surface for document routing, frontmatter, stale wording, provider, and CI/QA drift checks. |
 | `docs/03.specs/0013-workspace-document-governance-hardening/README.md#task-records` | Task evidence, status, validation results, and handoff notes for this plan. |
@@ -109,11 +109,11 @@ and Plan.
 
 | Task | Description | Files / Docs Affected | Target | Validation Criteria |
 | --- | --- | --- | --- | --- |
-| PLN-001 | Baseline audit inventory | `docs/90.references/audits/*`, Task evidence | VAL-WDGH-001, VAL-WDGH-007 | Audit report or task evidence records observed drift classes and no unsupported docs folders are introduced. |
+| PLN-001 | Baseline audit inventory | Task evidence; current Research synthesis where external context is required | VAL-WDGH-001, VAL-WDGH-007 | Task evidence records observed drift classes and no unsupported docs folders are introduced. |
 | PLN-002 | Core contract hardening | `docs/99.templates/**`, `docs/00.agent-governance/**`, validator | VAL-WDGH-002, VAL-WDGH-005 | Template routing, frontmatter schema, Stage 00 routing, and validator describe the same rules. |
 | PLN-003 | Provider entrypoint hardening | `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.agents/**`, `.claude/**`, `.codex/**` | VAL-WDGH-003 | Provider shims stay thin and provider-specific behavior remains in provider docs/runtime overlays. |
 | PLN-004 | Workspace document application | README/authored docs under requested workspace surfaces | VAL-WDGH-004, VAL-WDGH-005, VAL-WDGH-006 | Topic-specific fixes remove duplicated contract prose, legacy residue, and metadata drift without breaking gates. |
-| PLN-005 | Validator and CI/QA evidence finalization | `scripts/validate-repo-quality-gates.sh`, `.github/ABOUT.md`, operation guide, Task/progress | VAL-WDGH-006, VAL-WDGH-007, VAL-WDGH-008 | Local gates pass and final review finds no blocking governance contradiction. |
+| PLN-005 | Validator and CI/QA evidence finalization | `scripts/validate-repo-quality-gates.sh`, `.github/README.md`, operation guide, Task/progress | VAL-WDGH-006, VAL-WDGH-007, VAL-WDGH-008 | Local gates pass and final review finds no blocking governance contradiction. |
 
 ### Task Execution Details
 
@@ -124,12 +124,11 @@ and Plan.
 
 ### Task 1: Baseline Audit Inventory
 
-**Files:**
+**Historical files:**
 
-- Create if durable findings exist: `docs/90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md`
-- Modify if the audit report is created: `docs/90.references/audits/README.md`
-- Modify: `docs/03.specs/0013-workspace-document-governance-hardening/README.md#task-records`
-- Modify: `docs/00.agent-governance/memory/progress.md`
+- Package-local Task evidence retained the execution findings.
+- The dated Stage 90 Audit package and index were later retired after consumer
+  cutover; they are not current authoring or recovery inputs.
 
 - [ ] **Step 1: Capture baseline status**
 
@@ -197,102 +196,17 @@ rg -n "workflow|CI|QA|pre-commit|repo-quality-static|manifest-static|branch-poli
 Expected:
 
 - Provider-specific claims are traceable to provider docs or runtime overlays.
-- CI/QA claims match `.github/workflows/ci.yml`, `.github/ABOUT.md`,
+- CI/QA claims match `.github/workflows/ci.yml`, `.github/README.md`,
   `scripts/README.md`, `tests/README.md`, and the CI/CD QA guide.
 
-- [ ] **Step 5: Write audit evidence**
+- [x] **Step 5: Preserve audit evidence with its semantic owner**
 
-If the scans find durable findings, create
-`docs/90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md`
-with this frontmatter and section structure:
-
-```markdown
----
-title: 'Reference: Workspace Document Governance Hardening Audit'
-type: content/reference
-status: draft
-owner: platform
-updated: 2026-07-03
----
-
-# Reference: Workspace Document Governance Hardening Audit
-
-
-
-### Legacy Task supplemental evidence
-
-### Phase View
-
-### Phase 1: Audit Inventory
-
-- [x] T-001 Capture baseline document/provider/CI-QA audit inventory.
-
-### Phase 2: Core Contracts
-
-- [x] T-002 Harden core template, frontmatter, routing, Stage 00, and validator
-  contracts.
-
-### Phase 3: Provider Entrypoints
-
-- [x] T-003 Harden provider entrypoint contracts for AGENTS, Claude, Codex, and
-  Gemini surfaces.
-
-### Phase 4: Workspace Application
-
-- [x] T-004 Apply document governance profiles to workspace README and authored
-  documents.
-
-### Phase 5: Final Validation
-
-- [x] T-005 Finalize deterministic validator checks, CI/QA evidence, and final
-  review.
-## Overview
-
-This audit records repo-static findings for workspace document governance
-hardening.
-
-## Reference Type
-
-- audit
-
-## Authority Boundary
-
-This document owns observed audit evidence and remediation routing. Active
-execution policy remains in Stage 00 governance, template support contracts,
-and repository validators.
-
-## Findings
-
-| Finding ID | Surface | Evidence | Decision | Routed Task |
-| --- | --- | --- | --- | --- |
-
-## Implementation Checklist
-
-| Item | Owner Surface | Action | Status |
-| --- | --- | --- | --- |
-
-## Review and Freshness
-
-- Review date: 2026-07-03.
-- Refresh trigger: rerun when template routing, provider entrypoints, CI/QA
-  workflows, or validator contracts change.
-
-## Sources
-
-- Repository scans from tracked files.
-- Official source references listed in the parent Spec.
-
-## Related Documents
-
-- [Parent Spec](spec.md)
-- [Parent Plan](plan.md)
-- [Task Evidence](README.md#task-records)
-```
-
-If the scans find no durable findings beyond items already represented in the
-Task table, do not create the audit report. Instead, record "No separate Stage
-90 audit report was created because all findings are executable Task evidence"
-in the Task record.
+The original execution created a dated Audit report. That report and its
+category index were later retired after their current consumers moved to
+package-local Task evidence and the retained Workspace Engineering Research
+pack. Do not recreate the retired path. A genuinely new Audit must be a
+separately justified `audits/####-<slug>/` pack created from the matching Stage
+99 Audit pack template.
 
 - [ ] **Step 6: Validate and commit audit inventory**
 
@@ -305,12 +219,8 @@ bash scripts/validate-repo-quality-gates.sh .
 
 Expected: both commands pass.
 
-Commit:
-
-```bash
-git add docs/90.references/audits docs/03.specs/0013-workspace-document-governance-hardening/README.md#task-records docs/00.agent-governance/memory/progress.md
-git commit -m "docs(audit): Record workspace document governance baseline"
-```
+The historical commit remains recoverable from Git. It is evidence, not a
+current command or permission to recreate retired Stage 90 paths.
 
 ### Task 2: Core Contract Hardening
 
@@ -444,7 +354,6 @@ git commit -m "docs(governance): Harden document contract surfaces"
 - Modify as needed: `.codex/hooks.json`
 - Modify as needed: `.codex/agents/**`
 - Modify as needed: `docs/00.agent-governance/providers/*.md`
-- Modify as needed: `docs/00.agent-governance/common-governance.md`
 - Modify as needed: `docs/00.agent-governance/harness-catalog.md`
 - Modify as needed: `docs/00.agent-governance/subagent-protocol.md`
 - Modify: `docs/03.specs/0013-workspace-document-governance-hardening/README.md#task-records`
@@ -540,7 +449,7 @@ git commit -m "docs(providers): Align agent entrypoint contracts"
 
 - Modify as needed: `README.md`
 - Modify as needed: `DESIGN.md` if present
-- Modify as needed: `.github/ABOUT.md`
+- Modify as needed: `.github/README.md`
 - Modify as needed: `.github/PULL_REQUEST_TEMPLATE.md`
 - Modify as needed: `docs/**/*.md`
 - Modify as needed: `examples/**/*.md`
@@ -655,7 +564,7 @@ If `DESIGN.md` is absent, omit it from `git add`.
 **Files:**
 
 - Modify as needed: `scripts/validate-repo-quality-gates.sh`
-- Modify as needed: `.github/ABOUT.md`
+- Modify as needed: `.github/README.md`
 - Modify as needed: `docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md`
 - Modify: `docs/03.specs/0013-workspace-document-governance-hardening/plan.md`
 - Modify: `docs/03.specs/0013-workspace-document-governance-hardening/README.md#task-records`
@@ -697,7 +606,7 @@ Compare:
 
 ```bash
 sed -n '1,240p' .github/workflows/ci.yml
-sed -n '1,220p' .github/ABOUT.md
+sed -n '1,220p' .github/README.md
 sed -n '1,240p' docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md
 sed -n '1,240p' scripts/README.md
 sed -n '1,200p' tests/README.md
@@ -804,8 +713,9 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
 - **Logs / Evidence Location**:
   - This task record.
   - `docs/00.agent-governance/memory/progress.md`.
-  - `docs/90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md`
-    if durable audit findings justify a separate Stage 90 report.
+  - The retained Workspace Engineering Research pack when external-source
+    synthesis is needed; repository findings remain in this package's Task
+    evidence.
 
 ### Current Evidence
 
@@ -887,9 +797,7 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
 
   ```text
   docs/00.agent-governance/README.md
-  docs/00.agent-governance/common-governance.md
   docs/00.agent-governance/harness-catalog.md
-  docs/00.agent-governance/harness-implementation-map.md
   docs/00.agent-governance/hooks/k8s-pre-edit.sh
   docs/00.agent-governance/hooks/lifecycle-guard.sh
   docs/00.agent-governance/hooks/post-validate.sh
@@ -897,7 +805,6 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
   docs/00.agent-governance/memory/README.md
   docs/00.agent-governance/memory/progress.md
   docs/00.agent-governance/model-policy.md
-  docs/00.agent-governance/providers/agents-md.md
   docs/00.agent-governance/providers/claude.md
   docs/00.agent-governance/providers/codex.md
   docs/00.agent-governance/providers/gemini.md
@@ -961,7 +868,7 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
   protocol. No unsupported provider documentation tree was found during T-001.
 - Ran the required CI/QA scan across `.github`, `docs`, `scripts`, `tests`,
   and the root README. CI/QA claims trace to `.github/workflows/ci.yml`,
-  `.github/ABOUT.md`, `scripts/README.md`, `tests/README.md`, and the CI/CD QA
+  `.github/README.md`, `scripts/README.md`, `tests/README.md`, and the CI/CD QA
   guide.
 - Durable CI/QA drift found:
 
@@ -976,8 +883,8 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
 #### Audit Report Decision
 
 - Created the Stage 90 audit report because durable findings exist:
-  [Workspace Document Governance Hardening Audit](../../90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md).
-- Updated the audit index at `docs/90.references/audits/README.md`.
+  [Workspace Governance and Common Agent Environment](../../90.references/research/0001-workspace-engineering/workspace-governance-and-common-agent-environment.md).
+- The former dated Audit index was later retired after consumer cutover.
 - Task 1 stayed audit-only: no Task 2 core contract fixes, Task 3 provider
   fixes, Task 4 workspace cleanup, or Task 5 validator changes were applied.
 
@@ -1222,22 +1129,21 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
   deprecation, and legacy headings.
 - Reworked active template-residue scanning to cover root shims, docs,
   examples, GitOps, infrastructure, policy, scripts, tests, and Traefik
-  surfaces while skipping `docs/99.templates/templates/**`,
-  `docs/90.references/audits/**`, `docs/98.archive/**`, and the progress
-  ledger so historical evidence is not rejected.
+  surfaces while excluding templates and historical evidence. The current
+  validator no longer depends on a category-specific Stage 90 Audit skip.
 - Added deterministic route-owner checks for active onboarding, provider,
   hook, workflow, and doc-writer surfaces that must point exact template
   selection at `docs/99.templates/README.md`.
 - Extended shared-hook path coverage to `tests/README.md`, preserving
   `docs/00.agent-governance/hooks` as the active shell syntax owner.
-- Added CI/QA source-basis checks requiring `.github/ABOUT.md` and the CI/CD
+- Added CI/QA source-basis checks requiring `.github/README.md` and the CI/CD
   QA guide to point external GitHub Actions/tooling claims back to the parent
   Spec's official-source basis. No `.github/workflows/ci.yml` behavior was
   changed.
 
 #### CI/QA Reconciliation
 
-- Compared `.github/workflows/ci.yml`, `.github/ABOUT.md`,
+- Compared `.github/workflows/ci.yml`, `.github/README.md`,
   `docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md`,
   `scripts/README.md`, and `tests/README.md`.
 - Confirmed `ci.yml` remains the required QA gate for branch policy,
@@ -1250,7 +1156,7 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
   `bash scripts/validate-repo-quality-gates.sh .`, and `manifest-static` maps
   to `verify-contracts-static.sh`, GitOps structure, manifest syntax, secret
   handling, and policy gates.
-- Added source-basis text to `.github/ABOUT.md` and the CI/CD QA guide, and
+- Added source-basis text to `.github/README.md` and the CI/CD QA guide, and
   updated the operations guides README index for the guide date.
 
 #### Verification Evidence
@@ -1327,7 +1233,8 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
   - `docs/03.specs/0013-workspace-document-governance-hardening/spec.md`
   - `docs/03.specs/0013-workspace-document-governance-hardening/plan.md`
   - `docs/00.agent-governance/memory/progress.md`
-  - `docs/90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md`
+  - The current Workspace Engineering Research pack for retained external
+    synthesis; local findings remain package-owned.
 ## Completion Criteria
 
 - [x] Audit inventory is recorded in Task evidence or Stage 90 audit report.
@@ -1362,4 +1269,4 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
 - [Template Routing Contract](../../99.templates/README.md)
 - [Agent Governance Hub](../../00.agent-governance/README.md)
 - [CI/CD & QA Reference Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
-- [Workspace Document Governance Hardening Audit](../../90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md)
+- [Workspace Governance and Common Agent Environment](../../90.references/research/0001-workspace-engineering/workspace-governance-and-common-agent-environment.md)

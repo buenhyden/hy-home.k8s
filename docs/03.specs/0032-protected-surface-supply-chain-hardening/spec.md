@@ -151,7 +151,7 @@ git diff --check
 - **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md)
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Affected Surface Spec**: [Affected Surface and Agent QA](../0031-affected-surface-agent-qa/spec.md)
-- **Audit**: [Kubernetes Infrastructure and Security](../../90.references/audits/2026-07-11-weia/kubernetes-infrastructure-security.md)
+- **Research**: [Kubernetes Infrastructure and Security](../../90.references/research/0001-workspace-engineering/kubernetes-infrastructure-and-security.md)
 
 ### Delivery and References
 

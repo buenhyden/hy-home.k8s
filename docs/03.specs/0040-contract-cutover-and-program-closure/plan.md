@@ -81,8 +81,8 @@ evidence-update commit and the clean-tree repository-static aggregate passed.
 - [ADR-0018](../../02.architecture/decisions/0018-full-body-archive-record-and-retention.md)
 - [ADR-0020](../../02.architecture/decisions/0020-document-lifecycle-program-closure-evidence.md)
 - [Document profile registry](../../99.templates/registry.json)
-- [Current implementation audit index](../../90.references/audits/README.md)
-- `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`; [current lookup](../../90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md)
+- [Stage 90 reference router](../../90.references/README.md)
+- `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`; [current lookup](../../90.references/research/0001-workspace-engineering/source-coverage.md)
 - Spec 039 closure `e1d1e910840337327a557ab4b84e86f8fced11d6`
   and evidence update `11a020d9b299ae91b7af9278c22ed89ffccb5cfc`
 - [Document quality standards](../../00.agent-governance/rules/quality-standards.md)
@@ -109,7 +109,7 @@ evidence-update commit and the clean-tree repository-static aggregate passed.
 - Removing finite archive-cutover, registry-version, or transition fixtures
   that fail closed and prove a bounded historical event.
 - Implementing Specs 041-046, provider adapters, model routing, roster changes,
-  shared provider memory, or `.github/ABOUT.md` renaming.
+  shared provider memory, or unrelated `.github/README.md` changes.
 - Pushing, merging, dispatching GitHub Actions, modifying repository settings,
   publishing, installing dependencies, or mutating provider, Kubernetes,
   GitOps, Vault, ESO, Argo CD, cloud, credential, or secret state.

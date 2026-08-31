@@ -36,6 +36,7 @@ try:
         WORK107_STABLE_INDEX_OVERVIEW,
         parse_work107_migration_document,
         parse_archive_envelope,
+        read_commit_path_blob,
         recover_work107_legacy_envelope,
         validate_work107_migration_rows,
     )
@@ -48,6 +49,7 @@ except ModuleNotFoundError:  # Imported as a repository-root test module.
         WORK107_STABLE_INDEX_OVERVIEW,
         parse_work107_migration_document,
         parse_archive_envelope,
+        read_commit_path_blob,
         recover_work107_legacy_envelope,
         validate_work107_migration_rows,
     )
@@ -83,8 +85,6 @@ from document_contracts import (
     ProgramFollowUp,
     ProgramLineage,
     ProgramRelation,
-    ReferenceCurrentPack,
-    ReferenceCurrentPacks,
     Registry,
     StandaloneExecution,
     _parse_ls_files_stage_z,
@@ -95,31 +95,8 @@ from document_contracts import (
     load_registry,
     read_repository_text,
 )
-from reference_information_architecture import (
-    CANONICAL_SCHEMA_PATH as RIA_SCHEMA_PATH,
-    MAX_BLOB_BYTES as RIA_MAX_BLOB_BYTES,
-    ContractError as RiaContractError,
-    _GitError as RiaGitError,
-    _read_commit_path as _read_ria_commit_path,
-    load_agent_cutover_projections,
-    load_contract as load_ria_contract,
-    retired_baseline_protected_commit,
-)
-
-
 _UNSET = object()
 DEBT_PATH = Path("tests/fixtures/document-contracts/semantic-compatibility-debt.json")
-LEDGER_PATH = PurePosixPath(
-    "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md"
-)
-RIA_CONTRACT_PATH = PurePosixPath(
-    "docs/90.references/data/reference-information-architecture.json"
-)
-# History holds the combined registry at this path; the RIA commit read below
-# resolves it from a pinned commit rather than from the working tree.
-RETIRED_DOCUMENT_PROFILES_PATH = PurePosixPath(
-    "docs/99.templates/support/document-profiles.json"
-)
 ROUTE_CONTRACT_PATH = PurePosixPath("docs/99.templates/contracts/route-contract.json")
 DOCUMENT_TAXONOMY_MANIFEST_PATH = PurePosixPath(
     "scripts/document-taxonomy-migration.json"
@@ -313,12 +290,12 @@ def _work107_stable_archive_index_source(
     if len(rows) != 93:
         return False
     try:
-        legacy = _read_ria_commit_path(
+        legacy = read_commit_path_blob(
             context.root,
             WORK107_LEGACY_ARCHIVE_COMMIT,
             Path(source.as_posix()),
         ).decode("utf-8")
-    except (RiaContractError, RiaGitError, UnicodeDecodeError):
+    except (ArchiveContractError, UnicodeDecodeError):
         return False
     if legacy.count(WORK107_LEGACY_INDEX_OVERVIEW) != 1:
         return False
@@ -339,78 +316,6 @@ def _work107_stable_archive_index_source(
 
 
 OWNER = "cross-document-validator"
-LEDGER_SETTLEMENT_ID = "ria-0007-postflight-ledger"
-LEDGER_SETTLEMENT_PACK_ID = "research/2026-08-08-wer"
-LEDGER_SETTLEMENT_SUBJECT = "source-coverage-and-migration-ledger"
-LEDGER_SETTLEMENT_FROM_COMMIT = "git-sha1:15bba3d436ee2818f29d6f6880c7d5c4901aa0fe"
-LEDGER_SETTLEMENT_REASON = (
-    "Record observed C1 8c0dcea558212e11ac93a0fe626cddb31315859b "
-    "lifecycle closure and repository-static postflight evidence in the "
-    "protected migration ledger"
-)
-LEDGER_SETTLEMENT_KEYS = frozenset(
-    {
-        "id",
-        "packId",
-        "fromCommit",
-        "subject",
-        "targetSha256",
-        "targetByteLength",
-        "reason",
-        "transitionCommit",
-    }
-)
-GIT_SHA1_PATTERN = re.compile(r"git-sha1:[0-9a-f]{40}")
-SHA256_PATTERN = re.compile(r"[0-9a-f]{64}")
-MAX_LEDGER_BYTES = 2_000_000
-WERPC_DISPOSITION_COLUMNS = (
-    "old path",
-    "source commit",
-    "topic or heading",
-    "verification",
-    "new owner",
-    "disposition",
-    "reason and evidence",
-)
-WERPC_DELETION_DISPOSITION = "Deleted in WERPC-008 after cutover gate"
-WERPC_PREDECESSOR_PATHS = frozenset(
-    {
-        "docs/90.references/research/2026-07-04-wer/README.md",
-        "docs/90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md",
-        "docs/90.references/research/2026-07-04-wer/automation-pipeline-workflow-qa.md",
-        "docs/90.references/research/2026-07-04-wer/harness-and-loop-engineering.md",
-        "docs/90.references/research/2026-07-04-wer/kubernetes-infrastructure-security.md",
-        "docs/90.references/research/2026-07-04-wer/provider-implementation-status.md",
-        "docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md",
-        "docs/90.references/research/2026-07-04-wer/workspace-governance-baseline.md",
-        "docs/90.references/research/2026-07-07-wer/README.md",
-        "docs/90.references/research/2026-07-07-wer/ai-agents-roster-and-gap-analysis.md",
-        "docs/90.references/research/2026-07-07-wer/automation-pipeline-workflow-qa.md",
-        "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md",
-        "docs/90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md",
-        "docs/90.references/research/2026-07-07-wer/harness-and-loop-engineering.md",
-        "docs/90.references/research/2026-07-07-wer/kubernetes-infrastructure-security.md",
-        "docs/90.references/research/2026-07-07-wer/provider-implementation-status.md",
-        "docs/90.references/research/2026-07-07-wer/spec-sdlc-ci-qa-formatting.md",
-        "docs/90.references/research/2026-07-07-wer/workspace-governance-baseline.md",
-        "docs/90.references/research/2026-08-07-wer/README.md",
-        "docs/90.references/research/2026-08-07-wer/agent-memory-tiers-and-management.md",
-        "docs/90.references/research/2026-08-07-wer/agent-model-routing-and-configuration.md",
-        "docs/90.references/research/2026-08-07-wer/documentation-architecture-and-diataxis.md",
-        "docs/90.references/research/2026-08-07-wer/github-actions-and-ci-evidence.md",
-        "docs/90.references/research/2026-08-07-wer/llm-wiki-and-knowledge-routing.md",
-        "docs/90.references/research/2026-08-07-wer/research-consolidation-and-supersession-map.md",
-    }
-)
-DEBT_LITERAL = {
-    "ruleId": "LEDGER-MISSING",
-    "path": LEDGER_PATH.as_posix(),
-    "profile": "content/reference",
-    "expected": "ledger exists, has the exact fourteen columns, and covers the inventory once",
-    "actual": "ledger is missing",
-    "ownerTask": "ADM-002",
-    "removeWhen": "ledger exists, has the exact fourteen columns, and covers the inventory once",
-}
 GOVERNANCE_CURRENT_README = PurePosixPath("docs/00.agent-governance/README.md")
 GOVERNANCE_CURRENT_HEADING = "### Current Governance Authority Index"
 STATUS_MAP = {
@@ -421,9 +326,9 @@ STATUS_MAP = {
 }
 OWNER_EXCLUSIONS = (
     re.compile(
-        r"^docs/90\.references/(?:research|audits)/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+/"
+        r"^docs/90\.references/(?:audits|data|research)/"
+        r"[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/"
     ),
-    re.compile(r"^docs/90\.references/cloud-examples/"),
     re.compile(r"^examples/(?:aws|azure)/docs/"),
 )
 RETIRED_REFERENCE_ALIASES = {
@@ -485,7 +390,7 @@ COLLECTION_INDEXES = (
         PurePosixPath("docs/90.references/research"),
         re.compile(
             r"^docs/90\.references/research/(?:README\.md|"
-            r"2026-08-08-wer/[^/]+\.md)$"
+            r"[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/[^/]+\.md)$"
         ),
         "## Item Index",
         "research/",
@@ -494,11 +399,14 @@ COLLECTION_INDEXES = (
         True,
     ),
     CollectionIndex(
-        PurePosixPath("docs/90.references/research/2026-08-08-wer/README.md"),
-        PurePosixPath("docs/90.references/research/2026-08-08-wer"),
-        re.compile(r"^docs/90\.references/research/2026-08-08-wer/[^/]+\.md$"),
+        PurePosixPath("docs/90.references/research/0001-workspace-engineering/README.md"),
+        PurePosixPath("docs/90.references/research/0001-workspace-engineering"),
+        re.compile(
+            r"^docs/90\.references/research/"
+            r"0001-workspace-engineering/[^/]+\.md$"
+        ),
         "### Structure",
-        "2026-08-08-wer/",
+        "0001-workspace-engineering/",
         "## Report Index",
         "section",
         False,
@@ -524,10 +432,7 @@ class Context:
     adapter_targets: dict[PurePosixPath, PurePosixPath]
     governance_current_paths: tuple[PurePosixPath, ...]
     governance_current_states: tuple[str, ...]
-    reference_current_packs: ReferenceCurrentPacks
     tracked_regular_paths: frozenset[PurePosixPath]
-    ledger_bytes: bytes | None = None
-    ria_contract_text: str | None = None
     route_state: str = "legacy"
     work105_history_base_commit: str = WORK105_HISTORY_SOURCE_COMMIT
     document_registry: Registry | None = None
@@ -541,29 +446,6 @@ class ArchiveTransitionEdge:
 
     source: PurePosixPath
     target: PurePosixPath
-
-
-# The frozen cloud-example snapshot sources.  `_terminal_frozen_manifest_source`
-# is the only reader and admits a source only under this directory, so no other
-# entry can be reached.
-IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS = {
-    PurePosixPath(
-        "docs/90.references/cloud-examples/README.md"
-    ): "841d76f65390f1dfa37e282dbda8eeb6738c2d30",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/90.references/cloud-examples/aws/2026-07-12-aws-example-snapshot.md"
-    ): "e4cce69bb4eab38e1d5e848217e0aabd6ea93a5b",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/90.references/cloud-examples/aws/README.md"
-    ): "08a7f4d9d25bdde493dd4785e3c2ab35ed42d0b2",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md"
-    ): "7d2fea31e9174306b85d017624b1ed7df9f4c358",  # pragma: allowlist secret
-    PurePosixPath(
-        "docs/90.references/cloud-examples/azure/README.md"
-    ): "a3d5bea92ec2ef78115aa473e77fc044d0d8426e",  # pragma: allowlist secret
-}
-
 
 
 @dataclass(frozen=True)
@@ -927,85 +809,6 @@ def _terminal_governance_current_owners(
     return current, allowed_states
 
 
-def _terminal_reference_current_packs(
-    registry: Registry,
-    contract: Mapping[str, Any],
-    paths: Sequence[PurePosixPath],
-    profiles: Mapping[PurePosixPath, ProfileView],
-    metadata: Mapping[PurePosixPath, Mapping[str, Any]],
-) -> ReferenceCurrentPacks:
-    """Derive Stage 90 current packs from the schema-validated RIA owner."""
-
-    reference_profiles = tuple(
-        profile
-        for profile in registry.profiles
-        if profile.profile_id == "content/reference"
-    )
-    baselines = contract.get("currentPackBaselines")
-    if (
-        len(reference_profiles) != 1
-        or reference_profiles[0].mode not in {"authored", "classification-only"}
-        or not isinstance(baselines, Mapping)
-        or not baselines
-    ):
-        raise ConfigurationError("terminal reference Current-pack owner is unavailable")
-    status_domain = reference_profiles[0].status_domain
-    packs: list[ReferenceCurrentPack] = []
-    for pack_id, baseline in sorted(baselines.items()):
-        if (
-            not isinstance(pack_id, str)
-            or re.fullmatch(r"[a-z0-9][a-z0-9-]*(?:/[a-z0-9][a-z0-9-]*)+", pack_id)
-            is None
-            or not isinstance(baseline, str)
-            or GIT_SHA1_PATTERN.fullmatch(baseline) is None
-        ):
-            raise ConfigurationError("terminal reference Current-pack identity differs")
-        pack_root = PurePosixPath("docs/90.references") / pack_id
-        pack_readme = pack_root / "README.md"
-        collection_readme = pack_root.parent / "README.md"
-        if pack_readme not in paths or collection_readme not in paths:
-            raise ConfigurationError(
-                "terminal reference Current-pack router is missing"
-            )
-        members = tuple(
-            sorted(
-                path.name
-                for path in paths
-                if path.parent == pack_root
-                and path != pack_readme
-                and path.suffix == ".md"
-                and profiles[path].profile_id == "content/reference"
-                and profiles[path].mode in {"authored", "classification-only"}
-            )
-        )
-        member_states = {
-            str(metadata[pack_root / member].get("status", "")).casefold()
-            for member in members
-        }
-        if (
-            not members
-            or "" in member_states
-            or not member_states.issubset(status_domain)
-        ):
-            raise ConfigurationError(
-                "terminal reference Current-pack members are malformed"
-            )
-        allowed_states = tuple(
-            state for state in status_domain if state in member_states
-        )
-        packs.append(
-            ReferenceCurrentPack(
-                id=pack_id,
-                allowed_states=allowed_states,
-                members=members,
-            )
-        )
-    return ReferenceCurrentPacks(
-        profile_id=reference_profiles[0].profile_id,
-        packs=tuple(packs),
-    )
-
-
 def _held_context_inputs(
     registry: Registry | None,
     raw_schema: object,
@@ -1052,7 +855,6 @@ def _build_context(
     profiles: dict[PurePosixPath, ProfileView] = {}
     texts: dict[PurePosixPath, str] = {}
     metadata: dict[PurePosixPath, dict[str, Any]] = {}
-    ledger_bytes: bytes | None = None
     for path in inventory.current_paths:
         profile = classify_path(registry, path)
         profiles[path] = _profile_view(profile)
@@ -1068,37 +870,6 @@ def _build_context(
             text = read_repository_text(root, path)
         texts[path] = text
         metadata[path] = _frontmatter(text)
-        if path == LEDGER_PATH:
-            ledger_bytes = text.encode("utf-8")
-    try:
-        if held:
-            assert read_current_bytes is not None
-            ria_bytes = _held_context_bytes(
-                read_current_bytes, RIA_CONTRACT_PATH, RIA_MAX_BLOB_BYTES
-            )
-            ria_schema_bytes = _held_context_bytes(
-                read_current_bytes, PurePosixPath(RIA_SCHEMA_PATH), RIA_MAX_BLOB_BYTES
-            )
-            ria_contract = load_ria_contract(
-                root,
-                Path(RIA_CONTRACT_PATH),
-                contract_bytes=ria_bytes,
-                schema_bytes=ria_schema_bytes,
-            )
-            ria_contract_text = ria_bytes.decode("utf-8", errors="strict")
-        else:
-            ria_contract = load_ria_contract(root, Path(RIA_CONTRACT_PATH.as_posix()))
-            ria_contract_text = read_repository_text(root, RIA_CONTRACT_PATH)
-    except (
-        DocumentContractError,
-        RiaContractError,
-        RiaGitError,
-        OSError,
-        ValueError,
-    ) as exc:
-        raise ConfigurationError(
-            "terminal reference Current-pack authority is unavailable"
-        ) from exc
     adapters: dict[PurePosixPath, PurePosixPath] = {}
     for adapter in inventory.current_symlink_paths:
         raw_target = (
@@ -1133,13 +904,6 @@ def _build_context(
             metadata,
         )
     )
-    reference_current_packs = _terminal_reference_current_packs(
-        registry,
-        ria_contract,
-        inventory.current_paths,
-        profiles,
-        metadata,
-    )
     return Context(
         root,
         inventory.current_paths,
@@ -1150,10 +914,7 @@ def _build_context(
         adapters,
         governance_current_paths,
         governance_current_states,
-        reference_current_packs,
         tracked_regular_paths,
-        ledger_bytes,
-        ria_contract_text,
         getattr(registry, "route_state", "terminal"),
         document_registry=registry if held else None,
         raw_schema=raw_schema,
@@ -2748,7 +2509,7 @@ def _commit_path_evidence(
     """Read immutable Git provenance once per exact commit/path projection."""
 
     if re.fullmatch(r"[0-9a-f]{40}", commit) is None:
-        raise RiaGitError("commit evidence differs")
+        raise ValueError("commit evidence differs")
     requests: list[str] = []
     for value in paths:
         path = PurePosixPath(value)
@@ -2759,7 +2520,7 @@ def _commit_path_evidence(
             or "\n" in value
             or "\r" in value
         ):
-            raise RiaGitError("commit path evidence differs")
+            raise ValueError("commit path evidence differs")
         requests.append(f"{commit}:{value}")
     completed = subprocess.run(
         ["git", "cat-file", "--batch"],
@@ -2771,14 +2532,14 @@ def _commit_path_evidence(
         timeout=30,
     )
     if completed.returncode != 0 or completed.stderr:
-        raise RiaGitError("commit evidence differs")
+        raise ValueError("commit evidence differs")
     output = completed.stdout
     cursor = 0
     evidence: list[tuple[str, str]] = []
     for _ in requests:
         header_end = output.find(b"\n", cursor)
         if header_end < 0:
-            raise RiaGitError("commit evidence differs")
+            raise ValueError("commit evidence differs")
         header = output[cursor:header_end].decode("ascii", "strict").split()
         if (
             len(header) != 3
@@ -2786,17 +2547,17 @@ def _commit_path_evidence(
             or header[1] != "blob"
             or not header[2].isdigit()
         ):
-            raise RiaGitError("commit evidence differs")
+            raise ValueError("commit evidence differs")
         size = int(header[2])
         start = header_end + 1
         end = start + size
         if end >= len(output) or output[end : end + 1] != b"\n":
-            raise RiaGitError("commit evidence differs")
+            raise ValueError("commit evidence differs")
         payload = output[start:end]
         evidence.append((header[0], hashlib.sha256(payload).hexdigest()))
         cursor = end + 1
     if cursor != len(output):
-        raise RiaGitError("commit evidence differs")
+        raise ValueError("commit evidence differs")
     return tuple(evidence)
 
 
@@ -2852,7 +2613,7 @@ def _work109_migration_projection(
             WORK109_SOURCE_COMMIT,
             tuple(legacy_values),
         )
-    except (RiaContractError, RiaGitError):
+    except ValueError:
         raise ConfigurationError("WORK-109 migration ledger source differs") from None
 
     wp004b_targets = _work054_wp004b_targets(context)
@@ -3190,7 +2951,7 @@ def _document_taxonomy_transition_manifest(
             DOCUMENT_TAXONOMY_SOURCE_COMMIT,
             tuple(manifest_source_values),
         )
-    except (RiaContractError, RiaGitError):
+    except ValueError:
         raise ConfigurationError("archive transition manifest source differs") from None
     move_blobs: dict[PurePosixPath, str] = {}
     move_targets: dict[PurePosixPath, PurePosixPath] = {}
@@ -3275,155 +3036,6 @@ def _git_sha1_blob(text: str) -> str:
 
 
 
-
-
-
-
-def _terminal_historical_source_boundary(
-    context: Context,
-    source: PurePosixPath,
-) -> str | None:
-    """Return the validated Git boundary for one frozen Stage 90 source path."""
-
-    if (
-        context.ria_contract_text is None
-        or source not in context.paths
-        or source not in context.tracked_regular_paths
-    ):
-        return None
-    try:
-        contract = json.loads(context.ria_contract_text)
-    except (json.JSONDecodeError, UnicodeError) as exc:
-        raise ConfigurationError(
-            "terminal historical source authority is malformed"
-        ) from exc
-    if not isinstance(contract, Mapping):
-        raise ConfigurationError("terminal historical source authority is malformed")
-
-    candidates: list[
-        tuple[PurePosixPath, str, frozenset[str] | None, frozenset[str] | None]
-    ] = []
-    snapshot = contract.get("snapshotGuard")
-    if not isinstance(snapshot, Mapping):
-        raise ConfigurationError("terminal historical source authority is malformed")
-    snapshot_commit = snapshot.get("sourceCommit")
-    snapshot_ids = snapshot.get("historicalPackIds")
-    if (
-        not isinstance(snapshot_commit, str)
-        or GIT_SHA1_PATTERN.fullmatch(snapshot_commit) is None
-        or not isinstance(snapshot_ids, list)
-        or not snapshot_ids
-        or any(not isinstance(pack_id, str) for pack_id in snapshot_ids)
-        or len(snapshot_ids) != len(set(snapshot_ids))
-    ):
-        raise ConfigurationError("terminal historical source authority is malformed")
-    for pack_id in snapshot_ids:
-        candidates.append(
-            (
-                PurePosixPath("docs/90.references") / pack_id,
-                snapshot_commit.removeprefix("git-sha1:"),
-                None,
-                None,
-            )
-        )
-
-    retired = contract.get("retiredCurrentPackBaselines")
-    if not isinstance(retired, list):
-        raise ConfigurationError("terminal historical source authority is malformed")
-    for entry in retired:
-        if not isinstance(entry, Mapping):
-            raise ConfigurationError(
-                "terminal historical source authority is malformed"
-            )
-        pack_id = entry.get("id")
-        encoded_commit = entry.get("sourceCommit")
-        members = entry.get("members")
-        allowed_states = entry.get("allowedStates")
-        if (
-            not isinstance(pack_id, str)
-            or not isinstance(encoded_commit, str)
-            or GIT_SHA1_PATTERN.fullmatch(encoded_commit) is None
-            or not isinstance(members, list)
-            or not members
-            or any(
-                not isinstance(member, str)
-                or PurePosixPath(member).name != member
-                or PurePosixPath(member).suffix != ".md"
-                for member in members
-            )
-            or len(members) != len(set(members))
-            or not isinstance(allowed_states, list)
-            or not allowed_states
-            or any(not isinstance(state, str) for state in allowed_states)
-            or len(allowed_states) != len(set(allowed_states))
-        ):
-            raise ConfigurationError(
-                "terminal historical source authority is malformed"
-            )
-        candidates.append(
-            (
-                PurePosixPath("docs/90.references") / pack_id,
-                retired_baseline_protected_commit(contract, entry),
-                frozenset(members),
-                frozenset(allowed_states),
-            )
-        )
-
-    matches: list[str] = []
-    for pack_root, boundary, exact_members, allowed_states in candidates:
-        if source == pack_root / "README.md":
-            profile = context.profiles.get(source)
-            if profile is not None and profile.profile_id == "readme/snapshot-pack":
-                matches.append(boundary)
-            continue
-        if source.parent != pack_root or source.suffix != ".md":
-            continue
-        profile = context.profiles.get(source)
-        status = context.metadata.get(source, {}).get("status")
-        if profile is None or profile.profile_id != "content/reference":
-            continue
-        if exact_members is not None and source.name not in exact_members:
-            continue
-        if allowed_states is not None and status not in allowed_states:
-            continue
-        if allowed_states is None and status not in {
-            "draft",
-            "active",
-            "accepted",
-            "done",
-            "archived",
-        }:
-            continue
-        matches.append(boundary)
-    if len(matches) > 1:
-        raise ConfigurationError("terminal historical source authority is ambiguous")
-    return matches[0] if matches else None
-
-
-def _terminal_frozen_manifest_source(
-    context: Context,
-    source: PurePosixPath,
-) -> bool:
-    """Admit one byte-frozen cloud snapshot source from the reviewed manifest."""
-
-    expected_blob = IMMUTABLE_HISTORICAL_ALIAS_SOURCE_BLOBS.get(source)
-    cloud_root = PurePosixPath("docs/90.references/cloud-examples")
-    if (
-        expected_blob is None
-        or not source.is_relative_to(cloud_root)
-        or source not in context.paths
-        or source not in context.tracked_regular_paths
-    ):
-        return False
-    profile = context.profiles.get(source)
-    if profile is None or profile.profile_id not in {
-        "content/reference",
-        "readme/collection-index",
-        "readme/snapshot-pack",
-    }:
-        return False
-    text = context.texts.get(source)
-    return text is not None and _git_sha1_blob(text) == expected_blob
 
 
 
@@ -3541,39 +3153,10 @@ def _historical_migration_proof(
                 context.texts[record].encode("utf-8"), redirects
             )
 
-    consumers: dict[str, bytes] = {}
-    for source in context.paths:
-        raw = context.texts.get(source, "").encode("utf-8")
-        boundary = _terminal_historical_source_boundary(context, source)
-        if boundary is not None:
-            try:
-                historical = _read_ria_commit_path(
-                    context.root, boundary, Path(source.as_posix())
-                )
-            except (RiaContractError, RiaGitError) as exc:
-                raise ConfigurationError(
-                    "historical reference source proof is unavailable"
-                ) from exc
-            if historical != raw:
-                raise ConfigurationError("historical reference source bytes differ")
-            consumers[source.as_posix()] = historical
-        elif _terminal_frozen_manifest_source(context, source):
-            consumers[source.as_posix()] = raw
-    for name, raw in proof.consumers.items():
-        source = PurePosixPath(name)
-        # A consumer a sealed row retires is absent from the current tree by
-        # design.  Its reviewed disposition is still composed below from the
-        # historical bytes the proof carries, which is where the evidence lives.
-        if name in proof.retired_consumers:
-            consumers[name] = raw
-            continue
-        if (
-            source not in context.tracked_regular_paths
-            or source not in context.paths
-            or context.texts.get(source, "").encode("utf-8") != raw
-        ):
-            raise ConfigurationError("historical migration consumer source differs")
-        consumers[name] = raw
+    # The generic proof already validates each consumer from its reviewed Git
+    # commit. Active document currentness belongs to the current-path validators,
+    # so historical link composition never requires matching worktree bytes.
+    consumers = dict(proof.consumers)
 
     edges: dict[tuple[str, str], str] = {}
     literals: dict[tuple[str, str], str] = {}
@@ -3748,8 +3331,6 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
                 if _work105_accepted_history_ard_link(context, source, target):
                     continue
                 if _work105_completed_history_ard_link(context, source, target):
-                    continue
-                if _protected_historical_predecessor_link(context, source, target):
                     continue
                 if _migrated_directory_link(context, source, target):
                     continue
@@ -6496,367 +6077,6 @@ def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
     return diagnostics
 
 
-def _reference_collection_rows(
-    context: Context, collection: str
-) -> list[PurePosixPath] | None:
-    declaration = next(
-        pack
-        for pack in context.reference_current_packs.packs
-        if pack.id.startswith(collection + "/")
-    )
-    heading = (
-        "### Research Pack Index"
-        if collection == "research"
-        else "### Audit Pack Registry"
-    )
-    expected_parent = "## Item Index"
-    text = context.texts.get(declaration.collection_readme)
-    if text is None:
-        return None
-    visible = _visible_markdown(text).splitlines()
-    matches = [index for index, line in enumerate(visible) if line == heading]
-    if len(matches) != 1:
-        return None
-    parent = next(
-        (line for line in reversed(visible[: matches[0]]) if re.match(r"^##\s", line)),
-        "",
-    )
-    if parent != expected_parent:
-        return None
-    section = _exact_heading_section(text, heading)
-    table = _first_visible_table(section or "")
-    if table is None:
-        return None
-    header, rows = table
-    role_indexes = [
-        index
-        for index, cell in enumerate(header)
-        if cell.casefold() in {"status", "pack role"}
-    ]
-    if len(role_indexes) != 1:
-        return None
-    current: list[PurePosixPath] = []
-    for row in rows:
-        if row[role_indexes[0]].casefold() != "current pack":
-            continue
-        target = _first_cell_target(declaration.collection_readme, row[0])
-        if target is None:
-            return None
-        current.append(target)
-    return current
-
-
-def _reference_pack_rows(
-    context: Context, pack_readme: PurePosixPath
-) -> list[tuple[PurePosixPath, str]] | None:
-    text = context.texts.get(pack_readme)
-    if text is None:
-        return None
-    section = _exact_heading_section(text, "## Report Index")
-    table = _first_visible_table(section or "")
-    if table is None:
-        return None
-    header, rows = table
-    lifecycle_indexes = [
-        index for index, cell in enumerate(header) if cell.casefold() == "lifecycle"
-    ]
-    if len(lifecycle_indexes) != 1:
-        return None
-    lifecycle_index = lifecycle_indexes[0]
-    parsed: list[tuple[PurePosixPath, str]] = []
-    for row in rows:
-        target = _first_cell_target(pack_readme, row[0])
-        if target is None:
-            return None
-        if (
-            target.parent != pack_readme.parent
-            or target == pack_readme
-            or target.suffix != ".md"
-        ):
-            continue
-        match = re.fullmatch(r"`([a-z][a-z0-9-]*)`", row[lifecycle_index])
-        if match is None:
-            parsed.append((target, ""))
-        else:
-            parsed.append((target, match.group(1)))
-    return parsed
-
-
-def _reference_current_pack_diagnostics(context: Context) -> list[Diagnostic]:
-    diagnostics: list[Diagnostic] = []
-    if not context.reference_current_packs.packs:
-        return diagnostics
-    for pack in context.reference_current_packs.packs:
-        collection = pack.id.split("/", 1)[0]
-        collection_profile = context.profiles[pack.collection_readme].profile_id
-        current_rows = _reference_collection_rows(context, collection)
-        if current_rows is None:
-            diagnostics.append(
-                _diag(
-                    "REFERENCE-PACK-COLLECTION-MISSING",
-                    pack.collection_readme,
-                    collection_profile,
-                    f"one Current pack row for {pack.pack_readme.as_posix()}",
-                    "heading or table is missing or malformed",
-                )
-            )
-        else:
-            counter = collections.Counter(current_rows)
-            if counter[pack.pack_readme] == 0:
-                diagnostics.append(
-                    _diag(
-                        "REFERENCE-PACK-COLLECTION-MISSING",
-                        pack.collection_readme,
-                        collection_profile,
-                        f"one Current pack row for {pack.pack_readme.as_posix()}",
-                        "declared Current row is missing",
-                    )
-                )
-            for target in sorted(
-                set(current_rows) - {pack.pack_readme}, key=lambda item: item.as_posix()
-            ):
-                diagnostics.append(
-                    _diag(
-                        "REFERENCE-PACK-COLLECTION-STALE",
-                        pack.collection_readme,
-                        collection_profile,
-                        f"Current pack target={pack.pack_readme.as_posix()}",
-                        f"Current pack target={target.as_posix()}",
-                    )
-                )
-            for target, count in sorted(
-                counter.items(), key=lambda item: item[0].as_posix()
-            ):
-                if count > 1 or len(current_rows) > 1:
-                    diagnostics.append(
-                        _diag(
-                            "REFERENCE-PACK-COLLECTION-DUPLICATE",
-                            pack.collection_readme,
-                            collection_profile,
-                            "one visible Current pack row",
-                            f"target={target.as_posix()}; total={len(current_rows)}; count={count}",
-                        )
-                    )
-
-        declared_order = list(pack.member_paths)
-        declared = set(declared_order)
-        tracked = {
-            path
-            for path in context.paths
-            if path.parent == pack.pack_readme.parent
-            and path != pack.pack_readme
-            and path.suffix == ".md"
-            and context.profiles[path].profile_id
-            == context.reference_current_packs.profile_id
-            and context.profiles[path].mode == "authored"
-        }
-        for path in sorted(tracked - declared, key=lambda item: item.as_posix()):
-            diagnostics.append(
-                _diag(
-                    "REFERENCE-PACK-OWNER-UNDECLARED",
-                    path,
-                    context.profiles[path].profile_id,
-                    f"member declared in Current pack {pack.id}",
-                    "tracked direct member is undeclared",
-                )
-            )
-        for path in declared_order:
-            profile = context.profiles.get(path)
-            if (
-                profile is None
-                or profile.profile_id != context.reference_current_packs.profile_id
-                or profile.mode not in {"authored", "classification-only"}
-            ):
-                diagnostics.append(
-                    _diag(
-                        "REGISTRY_REFERENCE_CURRENT_PACK_PROFILE",
-                        path,
-                        profile.profile_id
-                        if profile
-                        else context.reference_current_packs.profile_id,
-                        f"authorized {context.reference_current_packs.profile_id}",
-                        "declared member is missing or has the wrong profile",
-                    )
-                )
-                continue
-            status = str(context.metadata[path].get("status", "")).casefold()
-            if status not in pack.allowed_states:
-                diagnostics.append(
-                    _diag(
-                        "REFERENCE-PACK-OWNER-STATUS",
-                        path,
-                        profile.profile_id,
-                        f"status in {list(pack.allowed_states)!r}",
-                        status or "missing",
-                    )
-                )
-
-        rows = _reference_pack_rows(context, pack.pack_readme)
-        pack_profile = context.profiles[pack.pack_readme].profile_id
-        if rows is None:
-            diagnostics.append(
-                _diag(
-                    "REFERENCE-PACK-INDEX-MISSING",
-                    pack.pack_readme,
-                    pack_profile,
-                    "one exact Report Index with one Lifecycle column",
-                    "heading or table is missing or malformed",
-                )
-            )
-            continue
-        row_paths = [path for path, _ in rows]
-        row_counter = collections.Counter(row_paths)
-        for path in declared_order:
-            if row_counter[path] == 0:
-                diagnostics.append(
-                    _diag(
-                        "REFERENCE-PACK-INDEX-MISSING",
-                        pack.pack_readme,
-                        pack_profile,
-                        f"one row for {path.as_posix()}",
-                        "declared member row is missing",
-                    )
-                )
-        for path in sorted(set(row_paths) - declared, key=lambda item: item.as_posix()):
-            diagnostics.append(
-                _diag(
-                    "REFERENCE-PACK-INDEX-STALE",
-                    pack.pack_readme,
-                    pack_profile,
-                    "registry-declared direct sibling",
-                    f"stale row for {path.as_posix()}",
-                )
-            )
-        for path, count in sorted(
-            row_counter.items(), key=lambda item: item[0].as_posix()
-        ):
-            if count > 1:
-                diagnostics.append(
-                    _diag(
-                        "REFERENCE-PACK-INDEX-DUPLICATE",
-                        pack.pack_readme,
-                        pack_profile,
-                        f"one row for {path.as_posix()}",
-                        f"{count} rows",
-                    )
-                )
-        for path, lifecycle in rows:
-            if path not in declared:
-                continue
-            expected_status = str(
-                context.metadata.get(path, {}).get("status", "")
-            ).casefold()
-            if lifecycle != expected_status:
-                diagnostics.append(
-                    _diag(
-                        "REFERENCE-PACK-INDEX-STATUS",
-                        pack.pack_readme,
-                        pack_profile,
-                        f"{path.as_posix()} lifecycle={expected_status}",
-                        f"lifecycle={lifecycle or 'malformed'}",
-                    )
-                )
-        if (
-            len(row_paths) == len(declared_order)
-            and collections.Counter(row_paths) == collections.Counter(declared_order)
-            and row_paths != declared_order
-        ):
-            diagnostics.append(
-                _diag(
-                    "REFERENCE-PACK-INDEX-ORDER",
-                    pack.pack_readme,
-                    pack_profile,
-                    "member rows in registry order",
-                    "member row order differs",
-                )
-            )
-    return diagnostics
-
-
-def _ledger_rows(text: str) -> tuple[tuple[str, ...] | None, list[list[str]]]:
-    lines = _visible_markdown(text).splitlines()
-    for index, line in enumerate(lines):
-        if not line.startswith("|"):
-            continue
-        columns = tuple(cell.strip().casefold() for cell in line.strip("|").split("|"))
-        if "path" not in columns:
-            continue
-        rows: list[list[str]] = []
-        for row_line in lines[index + 2 :]:
-            if not row_line.startswith("|"):
-                break
-            rows.append([cell.strip() for cell in row_line.strip("|").split("|")])
-        return columns, rows
-    return None, []
-
-
-def _werpc_predecessor_disposition_map(
-    text: str,
-) -> dict[PurePosixPath, PurePosixPath] | None:
-    """Return exact predecessor-to-current owners for a complete deletion ledger."""
-
-    lines = _visible_markdown(text).splitlines()
-    rows: list[list[str]] | None = None
-    for index, line in enumerate(lines):
-        if not line.startswith("|"):
-            continue
-        columns = tuple(cell.strip().casefold() for cell in line.strip("|").split("|"))
-        if columns != WERPC_DISPOSITION_COLUMNS:
-            continue
-        rows = []
-        for row_line in lines[index + 2 :]:
-            if not row_line.startswith("|"):
-                break
-            rows.append([cell.strip() for cell in row_line.strip("|").split("|")])
-        break
-    if rows is None:
-        return None
-    dispositions: dict[PurePosixPath, PurePosixPath] = {}
-    for row in rows:
-        if len(row) != 7:
-            return None
-        (
-            raw_path,
-            source_commit,
-            _topic,
-            verification,
-            new_owner,
-            disposition,
-            reason,
-        ) = row
-        if (
-            not raw_path.startswith("`")
-            or not raw_path.endswith("`")
-            or not source_commit.startswith("`")
-            or not source_commit.endswith("`")
-            or re.fullmatch(r"[0-9a-f]{40}", source_commit[1:-1]) is None
-            or not verification
-            or not new_owner.startswith("`")
-            or not new_owner.endswith("`")
-            or not new_owner[1:-1]
-            or disposition != WERPC_DELETION_DISPOSITION
-            or not reason
-        ):
-            return None
-        old_path = PurePosixPath(raw_path[1:-1])
-        owner_name = new_owner[1:-1]
-        owner_path = (
-            PurePosixPath("docs/90.references/research/2026-08-08-wer") / owner_name
-        )
-        if (
-            old_path in dispositions
-            or owner_name != PurePosixPath(owner_name).name
-            or owner_path.suffix != ".md"
-        ):
-            return None
-        dispositions[old_path] = owner_path
-    if frozenset(path.as_posix() for path in dispositions) != WERPC_PREDECESSOR_PATHS:
-        return None
-    return dispositions
-
-
-
-
 def _migrated_directory_link(
     context: Context,
     source: PurePosixPath,
@@ -6905,96 +6125,6 @@ def _migrated_directory_link(
     return True
 
 
-def _protected_historical_predecessor_link(
-    context: Context,
-    source: PurePosixPath,
-    target: PurePosixPath,
-) -> bool:
-    """Prove one missing target is immutable RIA-protected historical evidence."""
-
-    if (
-        target.as_posix() not in WERPC_PREDECESSOR_PATHS
-        or context.ria_contract_text is None
-        or LEDGER_PATH not in context.texts
-    ):
-        return False
-    dispositions = _werpc_predecessor_disposition_map(context.texts[LEDGER_PATH])
-    if dispositions is None:
-        return False
-    new_owner = dispositions.get(target)
-    if (
-        new_owner is None
-        or new_owner not in context.paths
-        or new_owner not in context.tracked_regular_paths
-    ):
-        return False
-    try:
-        contract = json.loads(context.ria_contract_text)
-    except (json.JSONDecodeError, UnicodeError):
-        return False
-    baselines = contract.get("currentPackBaselines")
-    if not isinstance(baselines, dict):
-        return False
-    for pack in context.reference_current_packs.packs:
-        protected_paths = (pack.pack_readme, *pack.member_paths)
-        if source not in protected_paths:
-            continue
-        encoded = baselines.get(pack.id)
-        if not isinstance(encoded, str) or GIT_SHA1_PATTERN.fullmatch(encoded) is None:
-            return False
-        oid = encoded.removeprefix("git-sha1:")
-        try:
-            registry_bytes = _read_ria_commit_path(
-                context.root,
-                oid,
-                Path(RETIRED_DOCUMENT_PROFILES_PATH.as_posix()),
-            )
-            source_bytes = _read_ria_commit_path(
-                context.root,
-                oid,
-                Path(source.as_posix()),
-            )
-            baseline_registry = json.loads(registry_bytes.decode("utf-8", "strict"))
-        except (
-            RiaContractError,
-            RiaGitError,
-            UnicodeDecodeError,
-            json.JSONDecodeError,
-        ):
-            return False
-        reference_packs = baseline_registry.get("referenceCurrentPacks")
-        if not isinstance(reference_packs, dict):
-            return False
-        if (
-            reference_packs.get("profileId")
-            != context.reference_current_packs.profile_id
-        ):
-            return False
-        raw_packs = reference_packs.get("packs")
-        if not isinstance(raw_packs, list):
-            return False
-        expected_pack = {
-            "id": pack.id,
-            "allowedStates": list(pack.allowed_states),
-            "members": list(pack.members),
-        }
-        if expected_pack not in raw_packs:
-            return False
-        return source_bytes == context.texts[source].encode("utf-8")
-    boundary = _terminal_historical_source_boundary(context, source)
-    if boundary is None:
-        return False
-    try:
-        source_bytes = _read_ria_commit_path(
-            context.root,
-            boundary,
-            Path(source.as_posix()),
-        )
-    except (RiaContractError, RiaGitError):
-        return False
-    return source_bytes == context.texts[source].encode("utf-8")
-
-
 def _work105_accepted_history_source(
     context: Context,
     source: PurePosixPath,
@@ -7015,12 +6145,12 @@ def _work105_accepted_history_source(
     if amended_digest is not None:
         return hashlib.sha256(source_bytes).hexdigest() == amended_digest
     try:
-        pinned = _read_ria_commit_path(
+        pinned = read_commit_path_blob(
             context.root,
             context.work105_history_base_commit,
             Path(source.as_posix()),
         )
-    except (RiaContractError, RiaGitError):
+    except ArchiveContractError:
         return False
     return source_bytes == pinned
 
@@ -7101,12 +6231,12 @@ def _work105_completed_history_ard_link(
     ):
         return False
     try:
-        source_bytes = _read_ria_commit_path(
+        source_bytes = read_commit_path_blob(
             context.root,
             context.work105_history_base_commit,
             Path(source.as_posix()),
         )
-    except (RiaContractError, RiaGitError):
+    except ArchiveContractError:
         return False
     current = context.texts[source].encode("utf-8")
     projected = _work108_without_history_artifact_id(source, current)
@@ -7137,137 +6267,14 @@ def _work105_immutable_history_ard_link(
     ):
         return True
     try:
-        source_bytes = _read_ria_commit_path(
+        source_bytes = read_commit_path_blob(
             context.root,
             context.work105_history_base_commit,
             Path(source.as_posix()),
         )
-    except (RiaContractError, RiaGitError):
+    except ArchiveContractError:
         return False
     return source_bytes == context.texts[source].encode("utf-8")
-
-
-def _ledger_protected_drift() -> Diagnostic:
-    return _diag(
-        "LEDGER-PROTECTED-DRIFT",
-        LEDGER_PATH,
-        "content/reference",
-        "settled RIA identity/provenance metadata and protected ledger bytes",
-        "settled metadata or protected bytes differ",
-    )
-
-
-def _project_settled_ledger_bytes(
-    context: Context,
-    ledger_bytes: bytes,
-) -> bytes | None:
-    try:
-        projections = load_agent_cutover_projections(context.root, None)
-    except (RiaContractError, RiaGitError):
-        return None
-    projection = projections.get(Path(LEDGER_PATH.as_posix()))
-    if projection is None:
-        return ledger_bytes
-    replacements = projection.get("literalReplacements")
-    if (
-        not isinstance(replacements, list)
-        or len(replacements) != 1
-        or not isinstance(replacements[0], Mapping)
-    ):
-        return None
-    migration = replacements[0]
-    try:
-        text = ledger_bytes.decode("utf-8", "strict")
-    except UnicodeDecodeError:
-        return None
-    source = str(migration["from"])
-    target = str(migration["to"])
-    count = int(migration["count"])
-    if text.count(source) != 0 or text.count(target) != count:
-        return None
-    return text.replace(target, source).encode("utf-8")
-
-
-def _ledger_protection_state(context: Context) -> tuple[bool, Diagnostic | None]:
-    """Return whether the terminal RIA settlement seals the ledger inventory."""
-
-    if context.ria_contract_text is None:
-        return False, None
-    try:
-        contract = json.loads(context.ria_contract_text)
-    except (json.JSONDecodeError, UnicodeError):
-        return True, _ledger_protected_drift()
-    if not isinstance(contract, dict):
-        return True, _ledger_protected_drift()
-    settlements = contract.get("baselineSettlements")
-    if settlements is None or settlements == []:
-        return False, None
-    if (
-        not isinstance(settlements, list)
-        or len(settlements) != 1
-        or not isinstance(settlements[0], dict)
-    ):
-        return True, _ledger_protected_drift()
-    settlement = settlements[0]
-    transition_commit = settlement.get("transitionCommit")
-    target_sha256 = settlement.get("targetSha256")
-    target_byte_length = settlement.get("targetByteLength")
-    reason = settlement.get("reason")
-    baselines = contract.get("currentPackBaselines")
-    if (
-        set(settlement) != LEDGER_SETTLEMENT_KEYS
-        or contract.get("baselineTransitions") != []
-        or settlement.get("id") != LEDGER_SETTLEMENT_ID
-        or settlement.get("packId") != LEDGER_SETTLEMENT_PACK_ID
-        or settlement.get("subject") != LEDGER_SETTLEMENT_SUBJECT
-        or settlement.get("fromCommit") != LEDGER_SETTLEMENT_FROM_COMMIT
-        or not isinstance(transition_commit, str)
-        or GIT_SHA1_PATTERN.fullmatch(transition_commit) is None
-        or not isinstance(baselines, dict)
-        or baselines.get(LEDGER_SETTLEMENT_PACK_ID) != transition_commit
-        or not isinstance(target_sha256, str)
-        or SHA256_PATTERN.fullmatch(target_sha256) is None
-        or not isinstance(target_byte_length, int)
-        or isinstance(target_byte_length, bool)
-        or not 1 <= target_byte_length <= MAX_LEDGER_BYTES
-        or reason != LEDGER_SETTLEMENT_REASON
-    ):
-        return True, _ledger_protected_drift()
-    ledger_bytes = context.ledger_bytes
-    if ledger_bytes is None and LEDGER_PATH in context.texts:
-        ledger_bytes = context.texts[LEDGER_PATH].encode("utf-8")
-    if ledger_bytes is not None:
-        ledger_bytes = _project_settled_ledger_bytes(context, ledger_bytes)
-    if (
-        ledger_bytes is None
-        or len(ledger_bytes) != target_byte_length
-        or hashlib.sha256(ledger_bytes).hexdigest() != target_sha256
-    ):
-        return True, _ledger_protected_drift()
-    return True, None
-
-
-def _ledger_diagnostics(context: Context) -> list[Diagnostic]:
-    protected, protected_drift = _ledger_protection_state(context)
-    if protected_drift is not None:
-        return [protected_drift]
-    expected_literal = DEBT_LITERAL["expected"]
-    if LEDGER_PATH not in context.paths or LEDGER_PATH not in context.texts:
-        return [
-            _diag(
-                "LEDGER-MISSING",
-                LEDGER_PATH,
-                "content/reference",
-                expected_literal,
-                DEBT_LITERAL["actual"],
-            )
-        ]
-    # Every remaining rule below examined the ledger only while the registry
-    # route state was "transition".  That value is fixed at "terminal", so the
-    # ledger's own protection and presence are all that can be checked here.
-    return []
-
-
 
 
 def _load_debt(
@@ -7328,9 +6335,7 @@ def _raw_diagnostics(
     diagnostics.extend(_index_diagnostics(context))
     diagnostics.extend(_collection_index_diagnostics(context))
     diagnostics.extend(_governance_current_owner_diagnostics(context))
-    diagnostics.extend(_reference_current_pack_diagnostics(context))
     diagnostics.extend(_owner_diagnostics(context))
-    diagnostics.extend(_ledger_diagnostics(context))
     diagnostics.extend(
         _program_lineage_diagnostics(
             context,
@@ -7512,7 +6517,6 @@ def main(argv: Sequence[str] | None = None) -> int:
                 + _index_diagnostics(context)
                 + _collection_index_diagnostics(context)
                 + _governance_current_owner_diagnostics(context)
-                + _reference_current_pack_diagnostics(context)
                 + _owner_diagnostics(context)
             )
             rows = [

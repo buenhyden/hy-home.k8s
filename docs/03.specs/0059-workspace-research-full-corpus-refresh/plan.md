@@ -14,7 +14,7 @@ artifact_id: "PLAN-0059"
 This plan executes the fifth refresh cycle designed by
 [Spec 0059](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md)
 over the existing
-[2026-08-08 WER pack](../../90.references/research/2026-08-08-wer/README.md).
+[2026-08-08 WER pack](../../90.references/research/0001-workspace-engineering/README.md).
 It sequences thirteen work packages, `WRFC-000` through `WRFC-012`, so that
 external source re-observation, workspace re-observation, blocking-class
 closure, scope re-projection, and cross-link reconciliation each land as one
@@ -72,9 +72,9 @@ credential-bearing, or deployment evidence was collected or claimed.
 
 - [Spec 0059](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md)
 - [Plan](plan.md)
-- [2026-08-08 WER pack](../../90.references/research/2026-08-08-wer/README.md)
-- [Source coverage and migration ledger](../../90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md)
-- [Scope application index](../../90.references/research/2026-08-08-wer/scope-application-index.md)
+- [2026-08-08 WER pack](../../90.references/research/0001-workspace-engineering/README.md)
+- [Source coverage and migration ledger](../../90.references/research/0001-workspace-engineering/source-coverage.md)
+- [Scope application index](../../90.references/research/0001-workspace-engineering/scope-application-index.md)
 - [Quality standards](../../00.agent-governance/rules/quality-standards.md)
 
 ### Topic ledger
@@ -457,15 +457,15 @@ These findings do not map onto any of the thirty-six owner rows, so under
   order. Ordering and precedence claims should be confirmed with a verbatim
   re-fetch before adoption.
 - `WRFC-004` executed without a shell tool, so checks requiring script execution
-  were not run in that package, including
-  `bash scripts/generate-llm-wiki-index.sh --check` and fresh repository-wide
-  instance tallies. Those counts rest on `Glob` listings plus the pack's
+  were not run in that package, including the then-current LLM Wiki
+  generated-index check and fresh repository-wide instance tallies. Those
+  counts rest on `Glob` listings plus the pack's
   2026-08-14 tallies and were reported as not independently re-tallied.
 - **Both of those limitations were subsequently closed with executed evidence**,
   after the cycle's content commits and before integration.
-  `bash scripts/generate-llm-wiki-index.sh --check` returns
-  `[PASS] LLM WIKI generated index is current`, so the freshness inferred from
-  unchanged frontmatter dates was correct. A fresh frontmatter tally, taken on
+  The historical generated-index check returned PASS, so the freshness inferred
+  from unchanged frontmatter dates was correct at that time. The generator and
+  output were later retired. A fresh frontmatter tally, taken on
   the cycle branch and adjusted for the one Spec, Plan, and Task this cycle adds,
   reproduces the pack's 2026-08-14 baseline exactly apart from one ordinary
   `active`-to-`done` transition per family: Spec 53 as 5 `draft` / 5 `active` /
@@ -521,8 +521,8 @@ literals rather than duplicated links.
   `docs/03.specs/0059-workspace-research-full-corpus-refresh/README.md#task-records`
 - [ADR 0022 — direct-approval standalone execution lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
 - [Quality standards](../../00.agent-governance/rules/quality-standards.md)
-- [Source coverage and migration ledger](../../90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md)
-- [Scope application index](../../90.references/research/2026-08-08-wer/scope-application-index.md)
+- [Source coverage and migration ledger](../../90.references/research/0001-workspace-engineering/source-coverage.md)
+- [Scope application index](../../90.references/research/0001-workspace-engineering/scope-application-index.md)
 
 ### Legacy Task traceability
 

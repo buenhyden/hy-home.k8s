@@ -98,12 +98,12 @@
     },
     {
       "name": "current-research-report",
-      "path": "docs/90.references/research/2026-08-08-wer/provider-implementation-status.md",
+      "path": "docs/90.references/research/0001-workspace-engineering/provider-implementation-status.md",
       "expectedSurface": "authored-documents"
     },
     {
-      "name": "current-audit-pack",
-      "path": "docs/90.references/audits/2026-08-09-wgia/README.md",
+      "name": "numbered-audit-pack",
+      "path": "docs/90.references/audits/0001-example-audit/README.md",
       "expectedSurface": "authored-documents"
     },
     {
@@ -505,7 +505,7 @@
       "lane": "affected",
       "paths": [
         "docs/90.references/research/README.md",
-        "docs/90.references/research/2026-08-08-wer/README.md",
+        "docs/90.references/research/0001-workspace-engineering/README.md",
         "docs/99.templates/README.md",
         "scripts/validate-links-and-owners.py",
         "scripts/validate-repo-quality-gates.sh"
@@ -656,7 +656,7 @@
       "lane": "ci",
       "paths": [
         "docs/99.templates/registry.json",
-        "docs/90.references/research/2026-08-08-wer/source-coverage-and-migration-ledger.md",
+        "docs/90.references/research/0001-workspace-engineering/source-coverage.md",
         "docs/98.archive/03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md"
       ],
       "expected": {

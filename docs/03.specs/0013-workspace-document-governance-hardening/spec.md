@@ -369,10 +369,10 @@ bash scripts/validate-policy-gates.sh .
   - [Template Contract Governance Migration](../0011-template-contract-governance-migration/spec.md)
   - [Template Governance Audit Enhancement](../0012-template-governance-audit-enhancement/spec.md)
 - **Research and Audit Inputs**:
-  - `docs/90.references/research/2026-07-04-wer/workspace-governance-baseline.md`; [current lookup](../../90.references/research/2026-08-08-wer/workspace-governance-and-common-agent-environment.md)
-  - `docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md`; [current lookup](../../90.references/research/2026-08-08-wer/spec-driven-sdlc-and-document-contracts.md)
-  - [Workspace Governance Implementation Audit](../../90.references/audits/2026-07-02-whia/workspace-governance-implementation-audit.md)
-  - [SDLC Delivery Practices Implementation Audit](../../90.references/audits/2026-07-02-whia/sdlc-delivery-practices-implementation-audit.md)
+  - `docs/90.references/research/2026-07-04-wer/workspace-governance-baseline.md`; [current lookup](../../90.references/research/0001-workspace-engineering/workspace-governance-and-common-agent-environment.md)
+  - `docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md`; [current lookup](../../90.references/research/0001-workspace-engineering/spec-driven-sdlc-and-document-contracts.md)
+  - [Workspace Governance and Common Agent Environment](../../90.references/research/0001-workspace-engineering/workspace-governance-and-common-agent-environment.md)
+  - [Spec-driven SDLC and Document Contracts](../../90.references/research/0001-workspace-engineering/spec-driven-sdlc-and-document-contracts.md)
 
 ### External reference basis
 
