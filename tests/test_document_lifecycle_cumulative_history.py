@@ -31,7 +31,7 @@ sys.modules[SPEC.name] = VALIDATOR
 SPEC.loader.exec_module(VALIDATOR)
 
 from document_contracts import load_registry  # noqa: E402
-from document_lifecycle import LifecycleDiagnostic  # noqa: E402
+from document_lifecycle import LifecycleDiagnostic, LifecycleDocument  # noqa: E402
 
 
 class CumulativeLifecycleHistoryTest(unittest.TestCase):
@@ -140,6 +140,15 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self.git.commit(self.path, self.document(status, body))
         return self.oid("HEAD")
 
+    def commit_path(
+        self,
+        path: str,
+        status: str,
+        body: str = "Reviewed policy.",
+    ) -> str:
+        self.git.commit(path, self.document(status, body))
+        return self.oid("HEAD")
+
     def invoke(self, mode: str, **refs: str) -> tuple[int, str]:
         arguments = ["--root", str(self.root), "--mode", mode]
         for name, value in refs.items():
@@ -204,12 +213,15 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         create = LifecycleDiagnostic(
             "FAIL", "LIFECYCLE-CREATE", path, "governance/reference", "draft", "active", "explicit-ref", ""
         )
+        duplicate = LifecycleDiagnostic(
+            "FAIL", "LIFECYCLE-CREATE", path, "governance/reference", "draft", "active", "explicit-ref", "duplicate"
+        )
         other = LifecycleDiagnostic(
             "FAIL", "LIFECYCLE-EVIDENCE", path, "governance/reference", "evidence", "missing", "explicit-ref", "missing"
         )
 
         actual = VALIDATOR._admit_cumulative_create_diagnostics(
-            (create, other),
+            (create, duplicate, other),
             root=self.root,
             registry=self.registry,
             mode="explicit-ref",
@@ -219,7 +231,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
             proposed_blobs={path: VALIDATOR._tree_blob_oid(self.root, active, path)},
         )
 
-        self.assertEqual(actual, (other,))
+        self.assertEqual(actual, (duplicate, other))
 
     def test_direct_active_creation_remains_rejected(self) -> None:
         active = self.commit("active")
@@ -233,6 +245,9 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         draft = self.commit("draft")
         retired = self.commit("retired")
         self.assertFalse(self.proved(self.base, retired))
+        result, output = self.explicit(self.base, retired)
+        self.assertNotEqual(result, 0, output)
+        self.assertIn("LIFECYCLE-CREATE", output)
 
         self.git.run("reset", "--hard", draft)
         self.commit("active")
@@ -245,13 +260,20 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self.git.run("commit", "--quiet", "-m", "delete")
         recreated = self.commit("active")
         self.assertFalse(self.proved(self.base, recreated))
+        result, output = self.explicit(self.base, recreated)
+        self.assertNotEqual(result, 0, output)
+        self.assertIn("LIFECYCLE-CREATE", output)
 
         self.git.run("reset", "--hard", self.base)
         source = "docs/00.agent-governance/source.md"
         self.git.commit(source, self.document("draft"))
         self.git.run("mv", source, self.path)
         self.git.run("commit", "--quiet", "-m", "rename")
-        self.assertFalse(self.proved(self.base, self.oid("HEAD")))
+        renamed = self.commit("active")
+        self.assertFalse(self.proved(self.base, renamed))
+        result, output = self.explicit(self.base, renamed)
+        self.assertNotEqual(result, 0, output)
+        self.assertIn("LIFECYCLE-CREATE", output)
 
     def test_side_branch_merge_and_non_ancestral_refs_are_not_admitted(self) -> None:
         self.git.run("checkout", "--quiet", "-b", "side", self.base)
@@ -260,9 +282,12 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self.git.run("checkout", "--quiet", self.primary_branch)
         self.git.commit("docs/00.agent-governance/other.md", self.document("draft"))
         self.git.run("merge", "--no-ff", "--no-edit", "side")
-        merged = self.oid("HEAD")
+        merged = self.commit("active")
         self.assertFalse(self.proved(self.base, merged))
         self.assertFalse(self.proved(side, self.base))
+        result, output = self.explicit(self.base, merged)
+        self.assertNotEqual(result, 0, output)
+        self.assertIn("LIFECYCLE-CREATE", output)
 
     def test_malformed_missing_and_bounded_history_evidence_fails_closed(self) -> None:
         self.commit("draft")
@@ -280,6 +305,145 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
 
         self.assertNotEqual(result, 0, output)
         self.assertIn("LIFECYCLE-CREATE", output)
+
+    def test_rename_rewrite_and_copy_into_target_remain_rejected(self) -> None:
+        source = "docs/00.agent-governance/source.md"
+        self.commit_path(source, "draft", "x" * 300)
+        self.git.run("mv", source, self.path)
+        self.git.commit(self.path, self.document("draft", "y" * 300))
+        renamed = self.commit("active")
+        result, output = self.explicit(self.base, renamed)
+        self.assertNotEqual(result, 0, output)
+        self.assertIn("LIFECYCLE-CREATE", output)
+
+        self.git.run("reset", "--hard", self.base)
+        self.commit_path(source, "draft")
+        (self.root / self.path).write_bytes((self.root / source).read_bytes())
+        self.git.run("add", "--", self.path)
+        self.git.run("commit", "--quiet", "-m", "copy")
+        copied = self.commit("active")
+        result, output = self.explicit(self.base, copied)
+        self.assertNotEqual(result, 0, output)
+        self.assertIn("LIFECYCLE-CREATE", output)
+
+    def test_missing_evidence_type_change_and_profile_change_retain_create(self) -> None:
+        self.commit("draft")
+        active = self.commit("active")
+        missing = LifecycleDiagnostic(
+            "FAIL", "LIFECYCLE-EVIDENCE", PurePosixPath(self.path), "governance/reference", "evidence", "missing", "explicit-ref", "missing"
+        )
+        with mock.patch.object(
+            VALIDATOR, "_history_event_diagnostics", return_value=(missing,)
+        ):
+            result, output = self.explicit(self.base, active)
+        self.assertNotEqual(result, 0, output)
+        self.assertIn("LIFECYCLE-CREATE", output)
+
+        self.git.run("reset", "--hard", self.base)
+        self.commit("draft")
+        target = self.root / self.path
+        target.unlink()
+        target.symlink_to("non-regular-history-target")
+        self.git.run("add", "--", self.path)
+        self.git.run("commit", "--quiet", "-m", "type change")
+        target.unlink()
+        typed = self.commit("active")
+        result, output = self.explicit(self.base, typed)
+        self.assertNotEqual(result, 0, output)
+        self.assertIn("LIFECYCLE-CREATE", output)
+
+        self.git.run("reset", "--hard", self.base)
+        self.commit("draft")
+        active = self.commit("active")
+        original = VALIDATOR._history_document
+
+        def changed_profile(*args):
+            document = original(*args)
+            if args[3] == VALIDATOR._tree_blob_oid(
+                self.root, active, PurePosixPath(self.path)
+            ):
+                return LifecycleDocument(
+                    document.path, "sdlc/ad", document.status, document.state_issue
+                )
+            return document
+
+        with mock.patch.object(VALIDATOR, "_history_document", side_effect=changed_profile):
+            result, output = self.explicit(self.base, active)
+        self.assertNotEqual(result, 0, output)
+        self.assertIn("LIFECYCLE-CREATE", output)
+
+    def test_aggregate_candidate_budget_fails_closed_before_proof_work(self) -> None:
+        second = "docs/00.agent-governance/cumulative-history-second.md"
+        self.commit_path(self.path, "draft")
+        self.commit_path(second, "draft")
+        self.commit_path(self.path, "active")
+        active = self.commit_path(second, "active")
+        candidates = (
+            LifecycleDiagnostic(
+                "FAIL", "LIFECYCLE-CREATE", PurePosixPath(self.path), "governance/reference", "draft", "active", "explicit-ref", ""
+            ),
+            LifecycleDiagnostic(
+                "FAIL", "LIFECYCLE-CREATE", PurePosixPath(second), "governance/reference", "draft", "active", "explicit-ref", ""
+            ),
+        )
+        blobs = {
+            PurePosixPath(self.path): VALIDATOR._tree_blob_oid(
+                self.root, active, PurePosixPath(self.path)
+            ),
+            PurePosixPath(second): VALIDATOR._tree_blob_oid(
+                self.root, active, PurePosixPath(second)
+            ),
+        }
+        with (
+            mock.patch.object(VALIDATOR, "CUMULATIVE_HISTORY_MAX_CANDIDATES", 1),
+            mock.patch.object(
+                VALIDATOR, "_first_parent_history", side_effect=AssertionError
+            ) as history,
+            mock.patch.object(
+                VALIDATOR, "_history_proves_cumulative_create", side_effect=AssertionError
+            ) as proof,
+        ):
+            actual = VALIDATOR._admit_cumulative_create_diagnostics(
+                candidates,
+                root=self.root,
+                registry=self.registry,
+                mode="explicit-ref",
+                base_commit=self.base,
+                proposed_commit=active,
+                base_blobs={},
+                proposed_blobs=blobs,
+            )
+        self.assertEqual(actual, candidates)
+        history.assert_not_called()
+        proof.assert_not_called()
+
+        with (
+            mock.patch.object(VALIDATOR, "CUMULATIVE_HISTORY_MAX_CANDIDATES", 2),
+            mock.patch.object(VALIDATOR, "CUMULATIVE_HISTORY_MAX_CANDIDATE_EVENTS", 1),
+            mock.patch.object(
+                VALIDATOR,
+                "_first_parent_history",
+                wraps=VALIDATOR._first_parent_history,
+            ) as history,
+            mock.patch.object(VALIDATOR, "_tree_blob_map", wraps=VALIDATOR._tree_blob_map) as snapshots,
+            mock.patch.object(
+                VALIDATOR, "_history_proves_cumulative_create", side_effect=AssertionError
+            ) as proof,
+        ):
+            actual = VALIDATOR._admit_cumulative_create_diagnostics(
+                candidates,
+                root=self.root,
+                registry=self.registry,
+                mode="explicit-ref",
+                base_commit=self.base,
+                proposed_commit=active,
+                base_blobs={},
+                proposed_blobs=blobs,
+            )
+        self.assertEqual(actual, candidates)
+        history.assert_called_once_with(self.root, self.base, active)
+        snapshots.assert_not_called()
+        proof.assert_not_called()
 
 
 if __name__ == "__main__":  # pragma: no cover
