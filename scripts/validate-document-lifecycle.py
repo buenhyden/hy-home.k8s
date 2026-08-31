@@ -125,6 +125,7 @@ GIT_GLOBAL_ARGUMENTS = (
 GIT_CAPTURE_MAX_BYTES = 2 * 1024 * 1024
 GIT_SIZE_OUTPUT_MAX_BYTES = 64
 DOCUMENT_BLOB_MAX_BYTES = 1024 * 1024
+CUMULATIVE_HISTORY_MAX_COMMITS = 256
 WORK105_CUTOVER_BASE_COMMIT = "a6fa1806364ea0472baaad0906e1b5e4ddac8602"
 WORK105_BASE_REGISTRY_BLOB_OID = "fc9ba039906ef240d076de5eeb6c584b681ae09f"
 WORK105_PROPOSED_REGISTRY_BLOB_OID = "fd842f60e801a39435600f35a27f22e1c659f1bd"
@@ -3710,6 +3711,286 @@ def _comparison_documents(
     return base_documents, proposed_documents, tuple(renames)
 
 
+def _first_parent_history(
+    root: Path, base_commit: str, proposed_commit: str
+) -> tuple[str, ...]:
+    """Return one complete, bounded first-parent path from base to proposal."""
+
+    if _run_git(root, ("rev-parse", "--is-shallow-repository")).strip() != b"false":
+        raise InvocationError("cumulative lifecycle history requires a full repository")
+    ancestor = _git_process(
+        root,
+        ("merge-base", "--is-ancestor", base_commit, proposed_commit),
+        output_limit=GIT_SIZE_OUTPUT_MAX_BYTES,
+    )
+    if ancestor.returncode != 0 or ancestor.stdout or ancestor.stderr:
+        raise InvocationError("comparison base is not an ancestor of the proposal")
+    output = _run_git(
+        root,
+        (
+            "rev-list",
+            "--first-parent",
+            "--reverse",
+            "--topo-order",
+            f"--max-count={CUMULATIVE_HISTORY_MAX_COMMITS + 1}",
+            f"{base_commit}..{proposed_commit}",
+        ),
+        output_limit=(CUMULATIVE_HISTORY_MAX_COMMITS + 1) * GIT_SIZE_OUTPUT_MAX_BYTES,
+    )
+    try:
+        commits = tuple(output.decode("ascii", errors="strict").splitlines())
+    except UnicodeDecodeError as exc:
+        raise InvocationError("cumulative lifecycle history is not ASCII") from exc
+    if (
+        not commits
+        or len(commits) > CUMULATIVE_HISTORY_MAX_COMMITS
+        or len(set(commits)) != len(commits)
+        or any(OBJECT_ID.fullmatch(commit) is None for commit in commits)
+        or commits[-1] != proposed_commit
+    ):
+        raise InvocationError("cumulative lifecycle history is malformed or exceeds its cap")
+    parent = base_commit
+    for commit in commits:
+        raw = _run_git(
+            root,
+            ("rev-list", "--parents", "--max-count=1", commit),
+            output_limit=GIT_SIZE_OUTPUT_MAX_BYTES * 4,
+        )
+        try:
+            lines = raw.decode("ascii", errors="strict").splitlines()
+            fields = lines[0].split() if len(lines) == 1 else []
+        except UnicodeDecodeError as exc:
+            raise InvocationError("cumulative lifecycle parent evidence is not ASCII") from exc
+        if (
+            len(fields) < 2
+            or fields[0] != commit
+            or any(OBJECT_ID.fullmatch(value) is None for value in fields)
+            or fields[1] != parent
+        ):
+            raise InvocationError("cumulative lifecycle first-parent evidence is malformed")
+        parent = commit
+    return commits
+
+
+def _history_rename_into_path(
+    root: Path,
+    parent: str,
+    commit: str,
+    path: PurePosixPath,
+) -> bool:
+    """Reject any detected rename whose destination is the admitted path."""
+
+    raw = _run_git(
+        root,
+        (
+            "diff",
+            "--no-ext-diff",
+            "--no-textconv",
+            "--ignore-submodules=none",
+            "--name-status",
+            "-z",
+            "--find-renames=1%",
+            "-l0",
+            parent,
+            commit,
+            "--",
+        ),
+    )
+    records = raw.split(b"\0")
+    if not records or records[-1] != b"":
+        raise InvocationError("cumulative lifecycle rename evidence is malformed")
+    cursor = 0
+    while cursor < len(records) - 1:
+        try:
+            status = records[cursor].decode("ascii", errors="strict")
+        except UnicodeDecodeError as exc:
+            raise InvocationError("cumulative lifecycle rename status is malformed") from exc
+        cursor += 1
+        if status.startswith("R") or status.startswith("C"):
+            if cursor + 1 >= len(records):
+                raise InvocationError("cumulative lifecycle rename evidence is truncated")
+            _decode_path(records[cursor])
+            destination = _decode_path(records[cursor + 1])
+            cursor += 2
+            if destination == path:
+                return True
+        elif status[:1] in {"A", "D", "M", "T"}:
+            if cursor >= len(records):
+                raise InvocationError("cumulative lifecycle change evidence is truncated")
+            _decode_path(records[cursor])
+            cursor += 1
+        else:
+            raise InvocationError("cumulative lifecycle change status is unsupported")
+    return False
+
+
+def _history_document(
+    root: Path,
+    registry: Registry,
+    path: PurePosixPath,
+    oid: str,
+) -> LifecycleDocument:
+    text = _blob_text(root, oid, path)
+    assert text is not None
+    document = document_from_text(registry, path, text)
+    profile = classify_path(registry, path)
+    if (
+        document.state_issue is not None
+        or document.profile_id != profile.profile_id
+        or profile.lifecycle_domain is None
+    ):
+        raise InvocationError("cumulative lifecycle path has no stable profile")
+    return document
+
+
+def _history_event_diagnostics(
+    root: Path,
+    registry: Registry,
+    path: PurePosixPath,
+    parent: str,
+    commit: str,
+    before: LifecycleDocument | None,
+    after: LifecycleDocument,
+) -> tuple[LifecycleDiagnostic, ...]:
+    """Use the normal lifecycle comparison with exact parent/commit evidence."""
+
+    base_blobs = _tree_blob_map(root, parent)
+    proposed_blobs = _tree_blob_map(root, commit)
+    base_snapshot, base_texts = _snapshot_projection(root, registry, base_blobs)
+    proposed_snapshot, proposed_texts = _snapshot_projection(
+        root, registry, proposed_blobs
+    )
+    evidence_context = _evidence_context(
+        registry, base_snapshot, proposed_snapshot, base_texts, proposed_texts
+    )
+    base_documents = {} if before is None else {path: before}
+    return compare_lifecycle(
+        registry,
+        base_documents,
+        {path: after},
+        base_mode="explicit-ref",
+        evidence_context=evidence_context,
+    )
+
+
+def _history_proves_cumulative_create(
+    root: Path,
+    registry: Registry,
+    path: PurePosixPath,
+    base_commit: str,
+    proposed_commit: str,
+    expected_proposed_blob: str | None = None,
+) -> bool:
+    """Prove a path's complete legal lifecycle on one closed first-parent path."""
+
+    try:
+        if _tree_blob_oid(root, base_commit, path) is not None:
+            return False
+        final_blob = _tree_blob_oid(root, proposed_commit, path)
+        if final_blob is None or (
+            expected_proposed_blob is not None and final_blob != expected_proposed_blob
+        ):
+            return False
+        commits = _first_parent_history(root, base_commit, proposed_commit)
+        appeared = False
+        prior_blob: str | None = None
+        prior_document: LifecycleDocument | None = None
+        parent = base_commit
+        for commit in commits:
+            current_blob = _tree_blob_oid(root, commit, path)
+            if current_blob is None:
+                if appeared:
+                    return False
+                parent = commit
+                continue
+            if _history_rename_into_path(root, parent, commit, path):
+                return False
+            parent_raw = _run_git(
+                root,
+                ("rev-list", "--parents", "--max-count=1", commit),
+                output_limit=GIT_SIZE_OUTPUT_MAX_BYTES * 4,
+            )
+            parent_fields = parent_raw.decode("ascii", errors="strict").split()
+            if len(parent_fields) != 2 and current_blob != prior_blob:
+                return False
+            if not appeared:
+                if prior_blob is not None:
+                    return False
+                current = _history_document(root, registry, path, current_blob)
+                profile = classify_path(registry, path)
+                domain = profile.lifecycle_domain
+                assert domain is not None
+                inbound = {target for _, target in domain.transitions}
+                if (
+                    current.status is None
+                    or current.status not in {state for state, _ in domain.states if state not in inbound}
+                    or _history_event_diagnostics(
+                        root, registry, path, parent, commit, None, current
+                    )
+                ):
+                    return False
+                appeared = True
+                prior_document = current
+            elif current_blob != prior_blob:
+                current = _history_document(root, registry, path, current_blob)
+                if (
+                    prior_document is None
+                    or current.profile_id != prior_document.profile_id
+                    or _history_event_diagnostics(
+                        root, registry, path, parent, commit, prior_document, current
+                    )
+                ):
+                    return False
+                prior_document = current
+            prior_blob = current_blob
+            parent = commit
+        return appeared and prior_blob == final_blob
+    except (DocumentContractError, InvocationError, UnicodeDecodeError, ValueError):
+        return False
+
+
+def _admit_cumulative_create_diagnostics(
+    diagnostics: Sequence[LifecycleDiagnostic],
+    *,
+    root: Path,
+    registry: Registry,
+    mode: str,
+    base_commit: str,
+    proposed_commit: str | None,
+    base_blobs: Mapping[PurePosixPath, str],
+    proposed_blobs: Mapping[PurePosixPath, str],
+) -> tuple[LifecycleDiagnostic, ...]:
+    """Remove only history-proved create diagnostics in committed comparisons."""
+
+    if mode not in {"ci", "explicit-ref"} or proposed_commit is None:
+        return tuple(diagnostics)
+    admitted: set[PurePosixPath] = set()
+    for diagnostic in diagnostics:
+        if (
+            diagnostic.rule_id != "LIFECYCLE-CREATE"
+            or diagnostic.path in admitted
+            or base_blobs.get(diagnostic.path) is not None
+            or proposed_blobs.get(diagnostic.path) is None
+        ):
+            continue
+        if _history_proves_cumulative_create(
+            root,
+            registry,
+            diagnostic.path,
+            base_commit,
+            proposed_commit,
+            proposed_blobs[diagnostic.path],
+        ):
+            admitted.add(diagnostic.path)
+    return tuple(
+        diagnostic
+        for diagnostic in diagnostics
+        if not (
+            diagnostic.rule_id == "LIFECYCLE-CREATE" and diagnostic.path in admitted
+        )
+    )
+
+
 def _evaluate_comparison(
     root: Path,
     registry: Registry,
@@ -3856,7 +4137,7 @@ def _evaluate_comparison(
             if diagnostic.path not in legacy_consumed_paths
         )
 
-    return migration_diagnostics + consume_finite_cutover(
+    diagnostics = consume_finite_cutover(
         compare_lifecycle(
             proposed_classification_registry,
             base_documents,
@@ -3866,6 +4147,16 @@ def _evaluate_comparison(
             evidence_context=evidence_context,
             migration_events=migration_events,
         )
+    )
+    return migration_diagnostics + _admit_cumulative_create_diagnostics(
+        diagnostics,
+        root=root,
+        registry=proposed_classification_registry,
+        mode=mode,
+        base_commit=base_commit,
+        proposed_commit=proposed_commit,
+        base_blobs=base_blobs,
+        proposed_blobs=proposed_blobs,
     )
 
 
