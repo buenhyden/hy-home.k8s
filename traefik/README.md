@@ -123,5 +123,4 @@ k3d desired-state failure.
 - [Root README](../README.md)
 - [GitOps README](../gitops/README.md)
 - [Infrastructure README](../infrastructure/README.md)
-- [Tech Stack Version Inventory](../docs/90.references/data/tech-stack-version-inventory.md)
 - [Ingress NGINX retirement statement](https://kubernetes.io/blog/2026/01/29/ingress-nginx-statement/)

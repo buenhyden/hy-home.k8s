@@ -91,7 +91,7 @@ surface contract:
 | Contract | Owns | Must reference | Must not duplicate |
 | --- | --- | --- | --- |
 | `github-surface-routing.json` | Surface identifier to GitHub label and CODEOWNERS projection, projection state, evidence, and exceptions | `validation-surfaces.json` surface IDs | Route regexes, validator argv, workflow job bodies, or branch-protection settings |
-| `platform-validation-evidence.json` | Target class, required depth, exact tool/version/checksum source, execution mode, fallback, evidence lane, limitation, owner, and retry trigger | Existing surface IDs, technology inventory, and validator IDs | Full path registries, credentials, live results, or technology research prose |
+| `platform-validation-evidence.json` | Target class, required depth, exact tool/version/checksum source, execution mode, fallback, evidence lane, limitation, owner, and retry trigger | Existing surface IDs, executable manifests/configuration, reviewed locks, and validator IDs | Full path registries, credentials, live results, or technology research prose |
 
 Each contract has a colocated JSON Schema and focused validator. Stable enums
 include `PASS`, `FAIL`, `SKIP`, and `DEFER`; evidence lanes remain
@@ -120,6 +120,11 @@ scratch or an old stash.
 - Terraform uses format, backend-disabled initialization, and validate only;
   Bicep uses lint and build only. Cloud authentication, plan/apply, deployment,
   and what-if remain outside the repository-static lane.
+- Exact versions and supported ranges are read from their direct executable
+  owners: bootstrap `--version` arguments, GitOps manifests, workflow and
+  pre-commit configuration, dependency locks, Terraform constraints, and Bicep
+  parameters. Stage 90 reference material is not an execution dependency or a
+  mirrored version authority.
 - GitHub remote metadata is read-only and SHA-bound. No push, workflow dispatch,
   setting mutation, release, or branch-rule change is part of this architecture.
 

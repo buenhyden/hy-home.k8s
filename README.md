@@ -89,7 +89,7 @@ hy-home.k8s/
 9. 인프라 변경은 GitOps-first로 다룬다. 일반 변경에서 live cluster mutation, `kubectl apply`, 외부 Vault 조작을 도입하지 않는다.
 10. `.github` 자동화나 QA gate를 바꿀 때는 [`.github/README.md`](.github/README.md)와 PR template의 검증 체크리스트를 함께 확인한다.
 11. 외부 서비스 계약이나 부트스트랩 명령을 변경했다면 관련 README, runbook, 운영 정책 링크도 함께 점검한다.
-12. AWS/Azure 예시는 [Tech Stack Version Inventory](./docs/90.references/data/tech-stack-version-inventory.md)의 `Cloud Example Snapshot`을 기준으로 관리하며, 실제 cloud 배포 절차가 아니라 참조 구현으로 다룬다.
+12. AWS/Azure 예시의 버전 핀과 지원 범위는 각 Terraform/Bicep/Kubernetes 소스에 직접 기록하며, 실제 cloud 배포 절차가 아니라 참조 구현으로 다룬다.
 
 ### Language Policy
 
@@ -238,7 +238,6 @@ cd hy-home.k8s
 repo-backed 정적 검증을 로컬에서 확인할 때는 아래 순서로 실행한다. 이 묶음은 CI의 `repo-quality-static`와 `manifest-static` 책임에 맞춰져 있고, shell syntax coverage는 pre-commit과 repo-static/manual checks가 담당한다.
 
 ```bash
-bash scripts/generate-llm-wiki-index.sh --check
 bash scripts/validate-repo-quality-gates.sh .
 bash infrastructure/tests/verify-contracts-static.sh
 bash scripts/validate-gitops-structure.sh
@@ -250,9 +249,9 @@ find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' 
 
 하네스 표면 변경은 위 repo-static 게이트를 묶은 `bash scripts/validate-harness.sh`로 한 번에 검증한다. 표면별 승인 경계는 [승인·안전 정책](docs/00.agent-governance/policies/approval-and-safety.md)를 참조하고, agent roster와 adapter 구현 위치는 [역할 책임 안내](docs/00.agent-governance/roles/README.md)를 참조한다. live k3d/ArgoCD/Vault 검증은 기본 경로가 아니라 승인된 운영 runbook에서만 실행한다.
 
-`validate-repo-quality-gates.sh`는 authored docs에서 bare/main direct push 예시와 PR-flow 문맥 없는 push 예시 회귀를 차단하고, README/examples 등 broader Markdown roots에서는 bare/main direct push 예시를 차단한다. 또한 `generate-llm-wiki-index.sh --check`로 LLM WIKI generated index freshness를 확인한다. `pre-commit`, `kube-linter`, `zizmor`, `actionlint`, `shellcheck`는 로컬에 있으면 사용한다. 로컬 `PATH`에 없을 때는 위의 repo-backed 검증을 먼저 실행하고, 전체 hook/tool matrix는 GitHub Actions에서 확인한다.
+`validate-repo-quality-gates.sh`는 authored docs에서 bare/main direct push 예시와 PR-flow 문맥 없는 push 예시 회귀를 차단하고, README/examples 등 broader Markdown roots에서는 bare/main direct push 예시를 차단한다. `pre-commit`, `kube-linter`, `zizmor`, `actionlint`, `shellcheck`는 로컬에 있으면 사용한다. 로컬 `PATH`에 없을 때는 위의 repo-backed 검증을 먼저 실행하고, 전체 hook/tool matrix는 GitHub Actions에서 확인한다.
 
-Cloud 예시의 버전 기준은 [Tech Stack Version Inventory](./docs/90.references/data/tech-stack-version-inventory.md)에 기록한다. 2026-03-24 이후 Ingress NGINX는 upstream retired 상태이므로 로컬 k3d 계약은 유지하되, AWS/Azure target은 ALB/Gateway API/AGC 계열로 분리한다.
+Cloud 예시의 정확한 버전 기준은 [`examples/aws/terraform`](./examples/aws/terraform)과 [`examples/azure/infrastructure`](./examples/azure/infrastructure)의 실행 소스가 소유한다. 2026-03-24 이후 Ingress NGINX는 upstream retired 상태이므로 로컬 k3d 계약은 유지하되, AWS/Azure target은 ALB/Gateway API/AGC 계열로 분리한다.
 
 ## Related Documents
 

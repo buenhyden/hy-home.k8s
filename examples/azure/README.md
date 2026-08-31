@@ -2,11 +2,10 @@
 
 ## Overview
 
-This entrypoint separates executable Azure example assets from the
-[dated consolidated snapshot](../../docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md). The Bicep, GitOps, and
-Kubernetes files are reference implementations, not active local desired state
-or proof of current Azure support, subscription readiness, cost, or
-provider-latest configuration.
+This entrypoint defines the boundary of the executable Azure example assets.
+The Bicep, GitOps, and Kubernetes files are reference implementations, not
+active local desired state or proof of current Azure support, subscription
+readiness, cost, or provider-latest configuration.
 
 ## Structure
 
@@ -15,13 +14,13 @@ provider-latest configuration.
 | [`infrastructure/`](infrastructure/README.md) | AKS, AGC, network, database, and cache Bicep examples. | Executable reference assets; provider inputs and approval remain external. |
 | [`gitops/`](gitops/README.md) | Managed Identity, Gateway API, and secret-provider platform examples. | Executable reference assets; not reconciled by the local ArgoCD tree. |
 | [`kubernetes/`](kubernetes/README.md) | Workload Identity, external-service, and application manifest examples. | Executable reference assets; validate before promotion to an owned desired-state tree. |
-| [Stage 90 snapshot](../../docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md) | Dated PRD, architecture, spec, execution, and operations snapshot. | Durable documentation destination; Spec 030 consolidation is complete. |
 
 ## Configuration Boundary
 
 Do not commit Azure credentials, subscription state that is not approved for
 publication, deployment outputs, kubeconfigs, tokens, keys, certificates, or
-secret values. Inject parameters through reviewed interfaces and re-check
+secret values. The exact Bicep, GitOps, and Kubernetes files own their version
+constraints. Inject parameters through reviewed interfaces and re-check
 official Azure support before any approved use.
 
 ## Validation
@@ -40,15 +39,12 @@ Vault, network, cost, secret, or provider readiness.
 
 ## Operations
 
-Start with the dated [Azure operations knowledge](../../docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md#definitions--facts)
-and [migration task history](../../docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md#scope), then obtain human
-approval before any provider or live-cluster action. Spec 030 retired the 33
-Azure source59 documentation paths after consolidating their durable knowledge;
-the executable assets remain under this provider tree.
+These assets do not define a provider operation. Review the exact source diff,
+current official Azure support, credentials boundary, cost, and rollback, then
+obtain human approval before any provider or live-cluster action.
 
 ## Related Documents
 
-- [Stage 90 Azure provider handoff](../../docs/90.references/cloud-examples/azure/README.md)
-- [Authored Document Migration Spec](../../docs/03.specs/0030-authored-document-migration/spec.md)
 - [Examples index](../README.md)
-- [Tech Stack Version Inventory](../../docs/90.references/data/tech-stack-version-inventory.md)
+- [Repository delivery requirements](../../docs/01.requirements/0007-repository-delivery-and-platform-assurance.md)
+- [Repository delivery evidence architecture](../../docs/02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)

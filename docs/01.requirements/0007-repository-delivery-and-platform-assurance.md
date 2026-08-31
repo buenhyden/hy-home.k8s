@@ -40,14 +40,11 @@ live evidence stays explicit and owned.
 
 ## Problem Statement
 
-The repository already has strong document, workflow, secret, GitOps, and
-agent-governance controls, but the remaining assurance gaps are distributed
-across prose, workflows, validators, examples, and dated audit observations.
-GitHub label and ownership projections can drift from the machine path
-registry; current local CI changes do not have hosted evidence; Kubernetes
-syntax checks do not establish render or schema validity; Traefik references
-lack a product-semantic gate; Terraform and Bicep examples lack native
-validation; and shell validators need direct negative and fallback tests.
+Repository delivery assurance spans documents, workflows, validators, examples,
+and deployment sources. Those surfaces must keep one owner for routing and
+version facts, preserve evidence depth, and avoid promoting reference snapshots
+into a parallel control plane. Local evidence still does not imply hosted CI,
+provider runtime, or live-cluster evidence.
 
 Leaving those gaps implicit encourages either overclaiming shallow evidence or
 duplicating commands and ownership across CI lanes. Applying the saved stash
@@ -88,10 +85,11 @@ state that current `main` has already superseded.
 | REQ-0007-FR-0004 | Preserve intentional CI evidence lanes, one aggregate verdict, immutable Action identity, least privilege, and explicit remote observation boundaries. | Must | Workflow topology and routing tests pass without manufacturing a hosted run for an unpushed SHA. |
 | REQ-0007-FR-0005 | Record platform evidence depth as syntax, render, schema or policy, product semantic, and live observation rather than one undifferentiated PASS. | Must | All 13 Kustomize roots and every platform validator have an exact tool, result, fallback, lane, and depth record. |
 | REQ-0007-FR-0006 | Validate Traefik references, Kubernetes GVK expectations, GitOps structure, policy, Vault/ESO contracts, secret handling, and explicit local-only transport exceptions. | Must | Positive and negative fixtures prove fail-closed reference, policy, secret, and exception behavior. |
-| REQ-0007-FR-0007 | Add provider-native Terraform and Bicep static validation for executable examples without cloud credentials or deployment. | Must | Terraform format/init/validate and Bicep lint/build evidence is recorded with pinned tool identity and no apply/deploy command. |
+| REQ-0007-FR-0007 | Validate executable Terraform and Bicep examples with provider-native static checks without cloud credentials or deployment. | Must | Terraform format/init/validate and Bicep lint/build evidence is recorded with pinned tool identity and no apply/deploy command. |
 | REQ-0007-FR-0008 | Add deterministic direct tests for malformed input, missing tools, fallback behavior, unsafe paths, and forbidden actions. | Must | Focused test suites fail on every named negative fixture and distinguish required-tool failure from diagnostic SKIP. |
 | REQ-0007-FR-0009 | Preserve secret, ignored-state, remote-action, and live-system approval boundaries throughout implementation. | Must | Diff and review evidence show no ignored secret read, credential change, push, remote mutation, or live mutation. |
 | REQ-0007-FR-0010 | Execute as ordered Specs with separate Plans, Tasks, logical commits, independent reviews, rollback units, and final local-only integration. | Must | Each tranche has reciprocal evidence and passes its gate before its successor begins. |
+| REQ-0007-FR-0011 | Keep exact infrastructure, workflow, dependency, and cloud-example version constraints with their executable source or reviewed lock; do not require a Stage 90 mirror as an execution input. | Must | Validators read manifests, scripts, workflow configuration, dependency locks, Terraform, and Bicep directly, and reference-only documents are not required for execution. |
 | REQ-0007-NFR-0001 | Keep image and artifact assurance fail-closed without performing an unverified blanket digest migration. | Should | Current non-`latest` tag-or-digest checks pass and any digest, SBOM, or provenance follow-up names consumers, owner, and trigger. |
 | REQ-0007-NFR-0002 | Keep native README/frontmatter forms unchanged unless the selected profile or observed content proves a real contract defect. | Must | Strict registry, Markdown-profile, and link/owner validation passes with no template residue or arbitrary README section. |
 
@@ -120,6 +118,9 @@ state that current `main` has already superseded.
 - **ACC-RDPA-009**: Remote GitHub metadata is dated and SHA-bound; current
   hosted CI, provider-runtime, credential-bearing, and live results remain
   `DEFER` unless actually observed within separate authority.
+- **ACC-RDPA-010**: Removing a reference inventory does not change the direct
+  version constraints or make any required CI, bootstrap, Terraform, Bicep, or
+  manifest validation unavailable.
 
 ## Scope and Non-goals
 

@@ -151,7 +151,7 @@ result boundaries recorded in the inventory below.
 - [Spec](../docs/03.specs/0008-current-local-gitops-platform/spec.md)
 - [Runbook](../docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)
 - [GitOps README](../gitops/README.md)
-- [Tech Stack Version Inventory](../docs/90.references/data/tech-stack-version-inventory.md)
+- [Bootstrap version pins](./bootstrap-local.sh)
 
 ### Validation Note
 

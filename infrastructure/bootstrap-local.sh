@@ -209,7 +209,7 @@ warn_tcp_dependency "grafana" "172.18.0.14" "3000"
 echo "[5/11] Install MetalLB and configure IP pool"
 helm repo add metallb https://metallb.github.io/metallb
 helm repo update metallb
-# chart 버전은 tech-stack-version-inventory.md의 bootstrap_helm_charts 계약과 일치시킨다.
+# 이 --version 값이 bootstrap용 MetalLB chart pin의 직접 소유자다.
 # 핀이 없으면 부트스트랩마다 다른 버전이 설치되어 재현이 불가능하다.
 helm upgrade --install metallb metallb/metallb \
   --version 0.16.1 \
@@ -246,7 +246,7 @@ kubectl apply -k "$ROOT_DIR/gitops/platform/external-services"
 echo "[8/11] Install ArgoCD via Helm"
 helm repo add argo https://argoproj.github.io/argo-helm
 helm repo update argo
-# chart 버전은 tech-stack-version-inventory.md의 bootstrap_helm_charts 계약과 일치시킨다.
+# 이 --version 값이 bootstrap용 Argo CD chart pin의 직접 소유자다.
 helm upgrade --install argocd argo/argo-cd \
   --version 10.4.0 \
   -n argocd \
