@@ -31,7 +31,7 @@ sys.modules[SPEC.name] = VALIDATOR
 SPEC.loader.exec_module(VALIDATOR)
 
 from document_contracts import load_registry  # noqa: E402
-from document_lifecycle import LifecycleDiagnostic, LifecycleDocument  # noqa: E402
+from document_lifecycle import LifecycleDiagnostic  # noqa: E402
 
 
 class CumulativeLifecycleHistoryTest(unittest.TestCase):
@@ -113,7 +113,9 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
     def oid(self, ref: str) -> str:
         return self.git.run("rev-parse", ref).decode("ascii").strip()
 
-    def document(self, status: str, body: str = "Reviewed policy.") -> bytes:
+    def document(self, status: str, body: str | None = None) -> bytes:
+        if body is None:
+            body = "unique cumulative history content " + "z" * 4_096
         sections = "".join(
             f"## {heading}\n\n{body}\n\n"
             for heading in (
@@ -136,7 +138,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
             f"{sections}"
         ).encode()
 
-    def commit(self, status: str, body: str = "Reviewed policy.") -> str:
+    def commit(self, status: str, body: str | None = None) -> str:
         self.git.commit(self.path, self.document(status, body))
         return self.oid("HEAD")
 
@@ -144,7 +146,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self,
         path: str,
         status: str,
-        body: str = "Reviewed policy.",
+        body: str | None = None,
     ) -> str:
         self.git.commit(path, self.document(status, body))
         return self.oid("HEAD")
@@ -307,8 +309,9 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self.assertIn("LIFECYCLE-CREATE", output)
 
     def test_rename_rewrite_and_copy_into_target_remain_rejected(self) -> None:
-        source = "docs/00.agent-governance/source.md"
-        self.commit_path(source, "draft", "x" * 300)
+        source = "notes/source.txt"
+        self.git.commit(source, b"x" * 20_000)
+        (self.root / self.path).parent.mkdir(parents=True, exist_ok=True)
         self.git.run("mv", source, self.path)
         self.git.commit(self.path, self.document("draft", "y" * 300))
         renamed = self.commit("active")
@@ -317,14 +320,47 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self.assertIn("LIFECYCLE-CREATE", output)
 
         self.git.run("reset", "--hard", self.base)
-        self.commit_path(source, "draft")
+        source = "docs/00.agent-governance/source.md"
+        source_body = "\n".join(f"source-{index}" for index in range(100))
+        target_body = "\n".join(
+            f"source-{index}" if index < 40 else f"target-{index}"
+            for index in range(100)
+        )
+        source_commit = self.commit_path(source, "draft", source_body)
         (self.root / self.path).write_bytes((self.root / source).read_bytes())
+        (self.root / self.path).write_bytes(self.document("draft", target_body))
         self.git.run("add", "--", self.path)
         self.git.run("commit", "--quiet", "-m", "copy")
+        copy_commit = self.oid("HEAD")
+        self.assertIn(
+            b"C",
+            self.git.run(
+                "diff",
+                "--find-copies=1%",
+                "--find-copies-harder",
+                "--name-status",
+                "-z",
+                source_commit,
+                copy_commit,
+            ),
+        )
+        self.assertTrue(
+            VALIDATOR._history_rename_or_copy_into_path(
+                self.root, source_commit, copy_commit, PurePosixPath(self.path)
+            )
+        )
         copied = self.commit("active")
+        self.assertFalse(self.proved(self.base, copied))
         result, output = self.explicit(self.base, copied)
         self.assertNotEqual(result, 0, output)
         self.assertIn("LIFECYCLE-CREATE", output)
+
+        self.git.run("reset", "--hard", self.base)
+        self.git.commit("notes/unchanged-source.bin", b"\0" * 20_000)
+        self.commit("draft")
+        independent = self.commit("active")
+        result, output = self.explicit(self.base, independent)
+        self.assertEqual(result, 0, output)
 
     def test_missing_evidence_type_change_and_profile_change_retain_create(self) -> None:
         self.commit("draft")
@@ -354,21 +390,12 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
 
         self.git.run("reset", "--hard", self.base)
         self.commit("draft")
+        mismatched = self.document("draft").replace(
+            b"type: governance/reference", b"type: sdlc/ad"
+        )
+        self.git.commit(self.path, mismatched)
         active = self.commit("active")
-        original = VALIDATOR._history_document
-
-        def changed_profile(*args):
-            document = original(*args)
-            if args[3] == VALIDATOR._tree_blob_oid(
-                self.root, active, PurePosixPath(self.path)
-            ):
-                return LifecycleDocument(
-                    document.path, "sdlc/ad", document.status, document.state_issue
-                )
-            return document
-
-        with mock.patch.object(VALIDATOR, "_history_document", side_effect=changed_profile):
-            result, output = self.explicit(self.base, active)
+        result, output = self.explicit(self.base, active)
         self.assertNotEqual(result, 0, output)
         self.assertIn("LIFECYCLE-CREATE", output)
 
@@ -444,6 +471,42 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         history.assert_called_once_with(self.root, self.base, active)
         snapshots.assert_not_called()
         proof.assert_not_called()
+
+        cache = VALIDATOR._CumulativeHistoryCache(self.root, self.registry)
+        with mock.patch.object(VALIDATOR, "CUMULATIVE_HISTORY_CACHE_MAX_SNAPSHOTS", 1):
+            cache._snapshot(self.base)
+            cache._snapshot(active)
+        self.assertEqual(len(cache.snapshots), 1)
+
+        with mock.patch.object(VALIDATOR, "CUMULATIVE_HISTORY_MAX_SNAPSHOT_WORK_BYTES", 1):
+            actual = VALIDATOR._admit_cumulative_create_diagnostics(
+                candidates,
+                root=self.root,
+                registry=self.registry,
+                mode="explicit-ref",
+                base_commit=self.base,
+                proposed_commit=active,
+                base_blobs={},
+                proposed_blobs=blobs,
+            )
+        self.assertEqual(actual, candidates)
+
+        with mock.patch.object(
+            VALIDATOR,
+            "_history_proves_cumulative_create",
+            side_effect=(True, VALIDATOR._CumulativeHistoryBudgetExceeded()),
+        ):
+            actual = VALIDATOR._admit_cumulative_create_diagnostics(
+                candidates,
+                root=self.root,
+                registry=self.registry,
+                mode="explicit-ref",
+                base_commit=self.base,
+                proposed_commit=active,
+                base_blobs={},
+                proposed_blobs=blobs,
+            )
+        self.assertEqual(actual, candidates)
 
 
 if __name__ == "__main__":  # pragma: no cover

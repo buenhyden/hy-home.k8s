@@ -12,6 +12,7 @@ import os
 import re
 import subprocess
 import sys
+from collections import OrderedDict
 from collections.abc import Iterator
 from dataclasses import dataclass, field, replace
 from pathlib import Path, PurePosixPath
@@ -130,6 +131,10 @@ CUMULATIVE_HISTORY_MAX_COMMITS = 256
 # deliberately not a repository corpus or document-count policy.
 CUMULATIVE_HISTORY_MAX_CANDIDATES = 32
 CUMULATIVE_HISTORY_MAX_CANDIDATE_EVENTS = 512
+CUMULATIVE_HISTORY_CACHE_MAX_SNAPSHOTS = 4
+CUMULATIVE_HISTORY_CACHE_MAX_EVIDENCE = 2
+CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES = 4 * 1024 * 1024
+CUMULATIVE_HISTORY_MAX_SNAPSHOT_WORK_BYTES = 16 * 1024 * 1024
 WORK105_CUTOVER_BASE_COMMIT = "a6fa1806364ea0472baaad0906e1b5e4ddac8602"
 WORK105_BASE_REGISTRY_BLOB_OID = "fc9ba039906ef240d076de5eeb6c584b681ae09f"
 WORK105_PROPOSED_REGISTRY_BLOB_OID = "fd842f60e801a39435600f35a27f22e1c659f1bd"
@@ -3794,7 +3799,7 @@ def _history_rename_or_copy_into_path(
             "--name-status",
             "-z",
             "--find-renames=1%",
-            "--find-copies=100%",
+            "--find-copies=1%",
             "--find-copies-harder",
             "-l0",
             parent,
@@ -3830,26 +3835,18 @@ def _history_rename_or_copy_into_path(
     return False
 
 
-def _history_first_appearance_is_ambiguous(
+def _history_first_appearance_has_deletion(
     root: Path,
-    registry: Registry,
-    path: PurePosixPath,
     parent: str,
     commit: str,
 ) -> bool:
-    """Reject a same-profile sibling deletion that Git cannot name as a rename."""
+    """Reject any concurrent deletion before admitting a first appearance."""
 
-    target_profile = classify_path(registry, path).profile_id
-    for change in _tree_changes(root, parent, commit):
-        if change.kind != "D" or change.path.parent != path.parent:
-            continue
-        source_oid = _tree_blob_oid(root, parent, change.path)
-        if source_oid is None:
-            raise InvocationError("cumulative lifecycle deletion lacks a source blob")
-        source = _history_document(root, registry, change.path, source_oid)
-        if source.profile_id == target_profile:
-            return True
-    return False
+    return any(change.kind == "D" for change in _tree_changes(root, parent, commit))
+
+
+class _CumulativeHistoryBudgetExceeded(RuntimeError):
+    """A bounded cumulative-history cache cannot safely serve this invocation."""
 
 
 @dataclass
@@ -3858,26 +3855,57 @@ class _CumulativeHistoryCache:
 
     root: Path
     registry: Registry
-    blobs: dict[str, Mapping[PurePosixPath, str]] = field(default_factory=dict)
-    snapshots: dict[
+    snapshots: OrderedDict[
         str, tuple[Mapping[PurePosixPath, LifecycleDocument], Mapping[PurePosixPath, str]]
-    ] = field(default_factory=dict)
-    evidence: dict[tuple[str, str], LifecycleEvidenceContext] = field(
-        default_factory=dict
+    ] = field(default_factory=OrderedDict)
+    snapshot_sizes: dict[str, int] = field(default_factory=dict)
+    cached_snapshot_bytes: int = 0
+    snapshot_work_bytes: int = 0
+    evidence: OrderedDict[tuple[str, str], LifecycleEvidenceContext] = field(
+        default_factory=OrderedDict
     )
 
     def _snapshot(
         self, commit: str
     ) -> tuple[Mapping[PurePosixPath, LifecycleDocument], Mapping[PurePosixPath, str]]:
-        if commit not in self.snapshots:
-            self.blobs[commit] = _tree_blob_map(self.root, commit)
-            self.snapshots[commit] = _snapshot_projection(
-                self.root, self.registry, self.blobs[commit]
-            )
-        return self.snapshots[commit]
+        cached = self.snapshots.get(commit)
+        if cached is not None:
+            self.snapshots.move_to_end(commit)
+            return cached
+        blobs = _tree_blob_map(self.root, commit)
+        snapshot = _snapshot_projection(self.root, self.registry, blobs)
+        size = sum(len(text.encode("utf-8")) for text in snapshot[1].values())
+        if size > CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES or (
+            self.snapshot_work_bytes + size
+            > CUMULATIVE_HISTORY_MAX_SNAPSHOT_WORK_BYTES
+        ):
+            raise _CumulativeHistoryBudgetExceeded
+        self.snapshot_work_bytes += size
+        while self.snapshots and (
+            len(self.snapshots) >= CUMULATIVE_HISTORY_CACHE_MAX_SNAPSHOTS
+            or self.cached_snapshot_bytes + size
+            > CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES
+        ):
+            evicted, _ = self.snapshots.popitem(last=False)
+            self.cached_snapshot_bytes -= self.snapshot_sizes.pop(evicted)
+            for key in tuple(self.evidence):
+                if evicted in key:
+                    del self.evidence[key]
+        if self.cached_snapshot_bytes + size > CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES:
+            raise _CumulativeHistoryBudgetExceeded
+        self.snapshots[commit] = snapshot
+        self.snapshot_sizes[commit] = size
+        self.cached_snapshot_bytes += size
+        return snapshot
 
     def evidence_context(self, parent: str, commit: str) -> LifecycleEvidenceContext:
         key = (parent, commit)
+        cached = self.evidence.get(key)
+        if cached is not None:
+            self.evidence.move_to_end(key)
+            return cached
+        if len(self.evidence) >= CUMULATIVE_HISTORY_CACHE_MAX_EVIDENCE:
+            self.evidence.popitem(last=False)
         if key not in self.evidence:
             base_snapshot, base_texts = self._snapshot(parent)
             proposed_snapshot, proposed_texts = self._snapshot(commit)
@@ -3977,9 +4005,7 @@ def _history_proves_cumulative_create(
                 root, parent, commit, path
             ) or (
                 not appeared
-                and _history_first_appearance_is_ambiguous(
-                    root, registry, path, parent, commit
-                )
+                and _history_first_appearance_has_deletion(root, parent, commit)
             ):
                 return False
             parent_raw = _run_git(
@@ -4080,23 +4106,24 @@ def _admit_cumulative_create_diagnostics(
     cache = _CumulativeHistoryCache(root, registry)
     admitted_indices: set[int] = set()
     proved_paths: set[PurePosixPath] = set()
-    for index, diagnostic in candidates:
-        if (
-            diagnostic.path in proved_paths
-        ):
-            continue
-        if _history_proves_cumulative_create(
-            root,
-            registry,
-            diagnostic.path,
-            base_commit,
-            proposed_commit,
-            proposed_blobs[diagnostic.path],
-            commits=history,
-            cache=cache,
-        ):
-            admitted_indices.add(index)
-            proved_paths.add(diagnostic.path)
+    try:
+        for index, diagnostic in candidates:
+            if diagnostic.path in proved_paths:
+                continue
+            if _history_proves_cumulative_create(
+                root,
+                registry,
+                diagnostic.path,
+                base_commit,
+                proposed_commit,
+                proposed_blobs[diagnostic.path],
+                commits=history,
+                cache=cache,
+            ):
+                admitted_indices.add(index)
+                proved_paths.add(diagnostic.path)
+    except _CumulativeHistoryBudgetExceeded:
+        return tuple(diagnostics)
     return tuple(
         diagnostic
         for index, diagnostic in enumerate(diagnostics)
