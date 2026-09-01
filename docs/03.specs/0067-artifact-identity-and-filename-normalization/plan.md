@@ -3,7 +3,7 @@ title: 'Artifact Identity and Filename Normalization Implementation Plan'
 version: "1.0"
 type: sdlc/plan
 layer: "03.specs"
-status: active
+status: done
 owner: platform
 updated: 2026-09-01
 artifact_id: "SPEC-0067-PLAN-0001"
