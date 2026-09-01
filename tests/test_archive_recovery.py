@@ -856,7 +856,7 @@ class PinnedMigrationRecoveryCliTest(unittest.TestCase):
             (
                 "wrong-declared-path",
                 "docs/98.archive/migrations/"
-                "mig-0003-agent-governance-control-plane-consolidation.md",
+                "0003-agent-governance-control-plane-consolidation.md",
             ),
             (
                 "unknown-migration",

@@ -211,7 +211,7 @@ WORK108_PROPOSED_MIGRATION_BLOB_OID = "b304c92c9c9032ebfe3be9156bd3f808ed1f5fb9"
 WORK054_WP002_BASE_COMMIT = "de72eb7d1828aeecf36bfe4ce35a892f9a8be729"
 WORK054_WP002_SOURCE_COMMIT = "160ce006969ddb49965c8af193f3e9ee290e18a8"
 WORK054_WP002_MIGRATION_PATH = PurePosixPath(
-    "docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md"
+    "docs/98.archive/migrations/0002-sdlc-document-and-governance-consolidation.md"
 )
 WORK054_WP002_MIGRATION_SHA256 = MIG0002_DOCUMENT_SHA256
 WORK054_WP002_SPEC_ROOT = PurePosixPath(
@@ -322,7 +322,7 @@ WORK054_WP002_SPEC_PATTERN = re.compile(
 WORK054_WP003_BASE_COMMIT = "128beada377f18bc9f942c8ebb3e27e1f2fdcfae"
 WORK054_WP003_MIGRATION_PATH = PurePosixPath(
     "docs/98.archive/migrations/"
-    "mig-0003-agent-governance-control-plane-consolidation.md"
+    "0003-agent-governance-control-plane-consolidation.md"
 )
 WORK054_WP003_MIGRATION_SHA256 = "6dd85df46123bb7004b0abf0fc7cd1f1d81fcae5ea66f71f1f07ff1dba904ab2"  # pragma: allowlist secret
 WORK054_WP003_LEDGER_KEYS = WORK054_WP002_LEDGER_KEYS
@@ -1395,10 +1395,28 @@ def _work107_without_outer_artifact_id(
     return b"".join(lines[:index] + lines[index + 1 :])
 
 
-# One declared tombstone rehome. A tombstone identity now names the sequence slot
-# its original vacated (`tomb-ADR-0004`) rather than a content digest, and the
-# record filename leads with that number, so each record moves exactly once.
-_TOMBSTONE_REHOME: dict[str, tuple[str, str, str]] = {
+# One declared archive rehome. A tombstone identity now names the sequence slot
+# its original vacated (`tomb-ADR-0004`) rather than a content digest, and every
+# Stage 98 filename leads with its number, so each record moves exactly once.
+# The three Migration records move without a byte changing; their digests are
+# equal on both sides and the pair is still declared, so the move is reviewed
+# rather than inferred from Git similarity.
+_ARCHIVE_REHOME: dict[str, tuple[str, str, str]] = {
+    "docs/98.archive/migrations/mig-0001-sdlc-taxonomy-convergence.md": (
+        "docs/98.archive/migrations/0001-sdlc-taxonomy-convergence.md",
+        "9d25b3039750bd60c18129ea7fb62576889449407b2f2fb10092b5624e47030f",  # pragma: allowlist secret -- archived base digest
+        "9d25b3039750bd60c18129ea7fb62576889449407b2f2fb10092b5624e47030f",  # pragma: allowlist secret -- rehomed digest
+    ),
+    "docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md": (
+        "docs/98.archive/migrations/0002-sdlc-document-and-governance-consolidation.md",
+        "05527226d8d353f57bac1b346aaa20f1ab1951eeea7f2f570b04dbcabd381265",  # pragma: allowlist secret -- archived base digest
+        "05527226d8d353f57bac1b346aaa20f1ab1951eeea7f2f570b04dbcabd381265",  # pragma: allowlist secret -- rehomed digest
+    ),
+    "docs/98.archive/migrations/mig-0003-agent-governance-control-plane-consolidation.md": (
+        "docs/98.archive/migrations/0003-agent-governance-control-plane-consolidation.md",
+        "6dd85df46123bb7004b0abf0fc7cd1f1d81fcae5ea66f71f1f07ff1dba904ab2",  # pragma: allowlist secret -- archived base digest
+        "6dd85df46123bb7004b0abf0fc7cd1f1d81fcae5ea66f71f1f07ff1dba904ab2",  # pragma: allowlist secret -- rehomed digest
+    ),
     "docs/98.archive/tombstones/01.requirements/tmb-prd-legacy-513540c3ab7c8c7ec2d848170c3c6df85b1780a2126ad41cb61d550456cefcac.md": (
         "docs/98.archive/tombstones/01.requirements/0001-wsl-k3d-argocd-platform.md",
         "b0e42453e66f6284e022ee88080670d9bfa97ffdad6b439c7ddbf1ba16a5f553",  # pragma: allowlist secret -- archived base digest
@@ -1487,7 +1505,7 @@ _TOMBSTONE_REHOME: dict[str, tuple[str, str, str]] = {
 }
 
 
-def declared_tombstone_rehome_pairs(
+def declared_archive_rehome_pairs(
     *,
     root: Path,
     base_blobs: Mapping[PurePosixPath, str],
@@ -1496,7 +1514,7 @@ def declared_tombstone_rehome_pairs(
     """Name both paths of every admitted tombstone rehome."""
 
     pairs: set[tuple[PurePosixPath, PurePosixPath]] = set()
-    for source, (target, base_digest, proposed_digest) in _TOMBSTONE_REHOME.items():
+    for source, (target, base_digest, proposed_digest) in _ARCHIVE_REHOME.items():
         source_path = PurePosixPath(source)
         target_path = PurePosixPath(target)
         base_oid = base_blobs.get(source_path)
@@ -1509,12 +1527,10 @@ def declared_tombstone_rehome_pairs(
         ):
             return frozenset()
         pairs.add((source_path, target_path))
-    if pairs and len(pairs) != len(_TOMBSTONE_REHOME):
-        return frozenset()
     return frozenset(pairs)
 
 
-def declared_tombstone_rehome_paths(
+def declared_archive_rehome_paths(
     *,
     root: Path,
     base_blobs: Mapping[PurePosixPath, str],
@@ -1523,12 +1539,14 @@ def declared_tombstone_rehome_paths(
     """Admit the tombstone rehome only when every declared byte pair is exact."""
 
     admitted: set[PurePosixPath] = set()
-    for source, (target, base_digest, proposed_digest) in _TOMBSTONE_REHOME.items():
+    for source, (target, base_digest, proposed_digest) in _ARCHIVE_REHOME.items():
         source_path = PurePosixPath(source)
         target_path = PurePosixPath(target)
         base_oid = base_blobs.get(source_path)
         proposed_oid = proposed_blobs.get(target_path)
         if base_oid is None or proposed_oid is None:
+            # The move already landed in an earlier commit, so this declaration
+            # has nothing left to admit. A mismatch below still fails closed.
             continue
         if (
             hashlib.sha256(_blob_bytes(root, base_oid)).hexdigest() != base_digest
@@ -1537,9 +1555,6 @@ def declared_tombstone_rehome_paths(
         ):
             return frozenset()
         admitted.add(source_path)
-    # All or nothing: a partial rehome leaves the archive index inconsistent.
-    if admitted and len(admitted) != len(_TOMBSTONE_REHOME):
-        return frozenset()
     return frozenset(admitted)
 
 
@@ -3457,7 +3472,7 @@ _MIGRATION_DOMAIN_KEY_RESEAL: dict[str, tuple[tuple[str, str], ...]] = {
             "6ccca3f7aec2a5395194ba7523f309107b7ef3659595f1e6fa4142f18d4d3433",  # pragma: allowlist secret -- re-sealed digest
         ),
     ),
-    "docs/98.archive/migrations/mig-0001-sdlc-taxonomy-convergence.md": (
+    "docs/98.archive/migrations/0001-sdlc-taxonomy-convergence.md": (
         (
             "4e62cb6ba2a394cd9ae546543c85a58c8f105cb5d1ff48cfd8dab8b8b1082206",  # pragma: allowlist secret -- sealed base digest
             "1a2f3264c380f93d435fedf4028a3fb2b843da377e99e2fd4b788dd37df45116",  # pragma: allowlist secret -- re-sealed digest
@@ -3467,13 +3482,13 @@ _MIGRATION_DOMAIN_KEY_RESEAL: dict[str, tuple[tuple[str, str], ...]] = {
             "9d25b3039750bd60c18129ea7fb62576889449407b2f2fb10092b5624e47030f",  # pragma: allowlist secret -- re-sealed digest
         ),
     ),
-    "docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md": (
+    "docs/98.archive/migrations/0002-sdlc-document-and-governance-consolidation.md": (
         (
             "67032c0b86acbee04a1e713053d164df2e99f4486df79df5161d53975fb82a7a",  # pragma: allowlist secret -- sealed base digest
             "05527226d8d353f57bac1b346aaa20f1ab1951eeea7f2f570b04dbcabd381265",  # pragma: allowlist secret -- re-sealed digest
         ),
     ),
-    "docs/98.archive/migrations/mig-0003-agent-governance-control-plane-consolidation.md": (
+    "docs/98.archive/migrations/0003-agent-governance-control-plane-consolidation.md": (
         (
             "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42",  # pragma: allowlist secret -- sealed base digest
             "6dd85df46123bb7004b0abf0fc7cd1f1d81fcae5ea66f71f1f07ff1dba904ab2",  # pragma: allowlist secret -- re-sealed digest
@@ -3509,8 +3524,13 @@ def _migration_lifecycle_events(
         and document.profile_id == "content/archive-migration"
         and document.status == "sealed"
     }
+    # A declared archive rehome is reviewed on its own evidence, so it survives
+    # an unrelated migration-proof outcome on every return path below.
+    archive_rehomes = declared_archive_rehome_pairs(
+        root=root, base_blobs=base_blobs, proposed_texts=proposed_texts
+    )
     if not records:
-        return MigrationLifecycleEvents(), ()
+        return MigrationLifecycleEvents(archive_rehomes=archive_rehomes), ()
 
     def failure(path: PurePosixPath, gap: str) -> LifecycleDiagnostic:
         return LifecycleDiagnostic(
@@ -3534,7 +3554,7 @@ def _migration_lifecycle_events(
             registry=registry,
         )
     except ArchiveContractError as exc:
-        return MigrationLifecycleEvents(), (
+        return MigrationLifecycleEvents(archive_rehomes=archive_rehomes), (
             failure(PurePosixPath(sorted(records)[0]), exc.code),
         )
 
@@ -3611,9 +3631,7 @@ def _migration_lifecycle_events(
         ),
         source_removals=frozenset(removals),
         current_rehomes=frozenset(rehomes),
-        archive_rehomes=declared_tombstone_rehome_pairs(
-            root=root, base_blobs=base_blobs, proposed_texts=proposed_texts
-        ),
+        archive_rehomes=archive_rehomes,
     )
     return events, tuple(diagnostics)
 
@@ -4497,7 +4515,7 @@ def _evaluate_comparison(
         base_blobs=base_blobs,
         proposed_blobs=proposed_blobs,
     )
-    work107_consumed_paths = declared_tombstone_rehome_paths(
+    work107_consumed_paths = declared_archive_rehome_paths(
         root=root, base_blobs=base_blobs, proposed_blobs=proposed_blobs
     )
     work108_consumed_paths = frozenset()

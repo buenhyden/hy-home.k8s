@@ -571,7 +571,7 @@ class ArchiveValidationTest(unittest.TestCase):
             current,
             markdown=(
                 "[wrong](../../98.archive/migrations/"
-                "mig-0003-agent-governance-control-plane-consolidation.md)\n"
+                "0003-agent-governance-control-plane-consolidation.md)\n"
             ),
         )
 
@@ -740,24 +740,24 @@ class ArchiveValidationTest(unittest.TestCase):
             )
         )
         self.assertNotIn(
-            "docs/98.archive/migrations/mig-0001-sdlc-taxonomy-convergence.md",
+            "docs/98.archive/migrations/0001-sdlc-taxonomy-convergence.md",
             records,
         )
         self.assertNotIn(
             "docs/98.archive/migrations/"
-            "mig-0002-sdlc-document-and-governance-consolidation.md",
+            "0002-sdlc-document-and-governance-consolidation.md",
             records,
         )
         self.assertNotIn(
             "docs/98.archive/migrations/"
-            "mig-0003-agent-governance-control-plane-consolidation.md",
+            "0003-agent-governance-control-plane-consolidation.md",
             records,
         )
 
     def test_mig0003_recovery_is_integrated_and_source_pinned(self) -> None:
         migration_path = (
             "docs/98.archive/migrations/"
-            "mig-0003-agent-governance-control-plane-consolidation.md"
+            "0003-agent-governance-control-plane-consolidation.md"
         )
         migration_bytes = (ROOT / migration_path).read_bytes()
 
@@ -775,10 +775,10 @@ class ArchiveValidationTest(unittest.TestCase):
             archive_validation.validate_pinned_migration_recovery(
                 ROOT,
                 "docs/98.archive/migrations/"
-                "mig-0002-sdlc-document-and-governance-consolidation.md",
+                "0002-sdlc-document-and-governance-consolidation.md",
                 (
                     ROOT / "docs/98.archive/migrations/"
-                    "mig-0002-sdlc-document-and-governance-consolidation.md"
+                    "0002-sdlc-document-and-governance-consolidation.md"
                 ).read_bytes(),
             )
 
@@ -1509,7 +1509,7 @@ class ArchiveValidationTest(unittest.TestCase):
     ) -> None:
         migration_path = (
             "docs/98.archive/migrations/"
-            "mig-0002-sdlc-document-and-governance-consolidation.md"
+            "0002-sdlc-document-and-governance-consolidation.md"
         )
         migration_bytes = (ROOT / migration_path).read_bytes()
         cases = (
@@ -1555,7 +1555,7 @@ class ArchiveValidationTest(unittest.TestCase):
     def test_mig0002_control_pins_full_document_and_resource_envelope(self) -> None:
         migration_path = (
             "docs/98.archive/migrations/"
-            "mig-0002-sdlc-document-and-governance-consolidation.md"
+            "0002-sdlc-document-and-governance-consolidation.md"
         )
         migration_bytes = (ROOT / migration_path).read_bytes()
 
@@ -1592,7 +1592,7 @@ class ArchiveValidationTest(unittest.TestCase):
     def test_staged_migration_blob_read_is_index_only_and_bounded(self) -> None:
         migration_path = (
             "docs/98.archive/migrations/"
-            "mig-0002-sdlc-document-and-governance-consolidation.md"
+            "0002-sdlc-document-and-governance-consolidation.md"
         )
         valid = (ROOT / migration_path).read_bytes()
         with tempfile.TemporaryDirectory(prefix="mig0002-index-boundary-") as temporary:
@@ -1631,7 +1631,7 @@ class ArchiveValidationTest(unittest.TestCase):
     ) -> None:
         migration_path = (
             "docs/98.archive/migrations/"
-            "mig-0002-sdlc-document-and-governance-consolidation.md"
+            "0002-sdlc-document-and-governance-consolidation.md"
         )
         report = validate_current_archive_authority(
             (

@@ -1057,6 +1057,9 @@ def compare_lifecycle(
             raise ValueError(
                 "exact rename must name one base and one proposed document"
             )
+        if (rename.old_path, rename.new_path) in migration_events.archive_rehomes:
+            # Already consumed above: a reviewed archive move, not a bare rename.
+            continue
         if (rename.old_path, rename.new_path) in migration_events.current_rehomes:
             # A proven move remains a create/delete pair so state validation is
             # still performed; only its exact rename event is admitted.

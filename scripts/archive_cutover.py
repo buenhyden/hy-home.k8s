@@ -106,12 +106,12 @@ else:
 
 _ARCHIVE_PREFIX = "docs/98.archive/"
 WORK054_MIGRATION_PATH = (
-    "docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md"
+    "docs/98.archive/migrations/0002-sdlc-document-and-governance-consolidation.md"
 )
 WORK054_MIGRATION_PATHS = (
     WORK054_MIGRATION_PATH,
     "docs/98.archive/migrations/"
-    "mig-0003-agent-governance-control-plane-consolidation.md",
+    "0003-agent-governance-control-plane-consolidation.md",
     "docs/98.archive/migrations/0004-document-authority-convergence.md",
 )
 WORK054_LEDGER_FIELDS = (

@@ -76,7 +76,7 @@ WORK107_LEGACY_ARCHIVE_COMMIT = (
 )
 WORK107_REGISTRY_PATH = "docs/99.templates/support/document-profiles.json"
 WORK107_MIGRATION_PATH = (
-    "docs/98.archive/migrations/mig-0001-sdlc-taxonomy-convergence.md"
+    "docs/98.archive/migrations/0001-sdlc-taxonomy-convergence.md"
 )
 WP004B_PINNED_MIGRATION_PATH = (
     "docs/98.archive/migrations/0004-document-authority-convergence.md"
@@ -96,7 +96,7 @@ WORK107_LEGACY_INDEX_OVERVIEW = (
 WORK107_STABLE_INDEX_OVERVIEW = (
     "`98.archive/`는 stable `changes/chg-####-<slug>/{plan.md,task.md}`와 typed "
     "`tombstones/<stage>/` 아래 93개의 `content/archive` record를 보관한다. "
-    "[`migrations/mig-0001-sdlc-taxonomy-convergence.md`](./migrations/mig-0001-sdlc-taxonomy-convergence.md)는 "
+    "[`migrations/0001-sdlc-taxonomy-convergence.md`](./migrations/0001-sdlc-taxonomy-convergence.md)는 "
     "legacy path와 stable path를 잇는 exact 14-field, 93-to-93 `moved` ledger다. 현재 "
     "census는 41 change directory(35 pair, 2 plan-only, 4 task-only)의 76 record와 "
     "17 tombstone(3/8/4/2)이다. 각 record의 ArchiveEnvelope payload와 source "

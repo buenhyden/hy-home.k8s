@@ -1343,7 +1343,7 @@
       "id": "content/archive-migration",
       "class": "common",
       "mode": "classification-only",
-      "pathPattern": "^docs/98\\.archive/migrations/(?:mig-000[1-3]-[a-z0-9]+(?:-[a-z0-9]+)*|[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*)\\.md$",
+      "pathPattern": "^docs/98\\.archive/migrations/[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md$",
       "artifactIdPattern": "^MIG-[0-9]{4}$",
       "template": "docs/99.templates/templates/archive/archive-migration.template.md",
       "requiredFrontmatter": {

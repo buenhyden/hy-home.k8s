@@ -721,7 +721,7 @@ docs_dir = root / "docs"
 actual_docs = {path.name for path in docs_dir.iterdir() if path.is_dir()}
 stage04_retirement_authority = (
     root
-    / "docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md"
+    / "docs/98.archive/migrations/0002-sdlc-document-and-governance-consolidation.md"
 )
 stage04_retirement_authority_sha256 = (
     "05527226d8d353f57bac1b346aaa20f1ab1951eeea7f2f570b04dbcabd381265"  # pragma: allowlist secret

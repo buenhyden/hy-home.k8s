@@ -7,7 +7,7 @@
 
 ## Overview
 
-`98.archive/`는 typed `tombstones/<stage>/` 아래 17개의 `content/archive` record를 보관한다. ADR-0030에 따라 Git history가 기본 full-content archive이며, Stage 98은 README, Migration, 필요한 Tombstone만 두는 minimal lookup layer다. [`migrations/mig-0001-sdlc-taxonomy-convergence.md`](./migrations/mig-0001-sdlc-taxonomy-convergence.md)는 legacy path와 stable path를 잇는 exact 14-field, 93-to-93 `moved` ledger로 남으며, 그 stable path 76개의 body는 각 row의 `source_commit`과 `source_blob`으로 Git에서 복원한다. 각 record의 ArchiveEnvelope payload와 source provenance는 보존되며, 현재 문서는 개별 record가 아니라 이 index만 참조한다.
+`98.archive/`는 typed `tombstones/<stage>/` 아래 17개의 `content/archive` record를 보관한다. ADR-0030에 따라 Git history가 기본 full-content archive이며, Stage 98은 README, Migration, 필요한 Tombstone만 두는 minimal lookup layer다. [`migrations/0001-sdlc-taxonomy-convergence.md`](./migrations/0001-sdlc-taxonomy-convergence.md)는 legacy path와 stable path를 잇는 exact 14-field, 93-to-93 `moved` ledger로 남으며, 그 stable path 76개의 body는 각 row의 `source_commit`과 `source_blob`으로 Git에서 복원한다. 각 record의 ArchiveEnvelope payload와 source provenance는 보존되며, 현재 문서는 개별 record가 아니라 이 index만 참조한다.
 
 <!-- archive-manifest:v1 records=17 historical-links=133 -->
 
