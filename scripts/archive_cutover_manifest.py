@@ -61,4 +61,3 @@ EXPECTED_ARCHIVE_PATHS = (
     "docs/98.archive/05.operations/guides/0004-headlamp-auth-oidc-guide.md",
     "docs/98.archive/05.operations/runbooks/0005-headlamp-keycloak-runbook.md",
 )
-
