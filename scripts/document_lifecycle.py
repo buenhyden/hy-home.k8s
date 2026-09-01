@@ -55,6 +55,11 @@ class MigrationLifecycleEvents:
     publications: frozenset[PurePosixPath] = frozenset()
     source_removals: frozenset[PurePosixPath] = frozenset()
     current_rehomes: frozenset[tuple[PurePosixPath, PurePosixPath]] = frozenset()
+    # An archive record is not a current document, so it cannot rehome through
+    # `current_rehomes`. A proven archive move consumes both of its paths: the
+    # record's bytes and provenance are checked by the archive owner, and the
+    # move itself is admitted only from a reviewed declaration.
+    archive_rehomes: frozenset[tuple[PurePosixPath, PurePosixPath]] = frozenset()
 
 
 @dataclass(frozen=True)
@@ -1037,6 +1042,11 @@ def compare_lifecycle(
     diagnostics: list[LifecycleDiagnostic] = []
     consumed_base: set[PurePosixPath] = set()
     consumed_proposed: set[PurePosixPath] = set()
+
+    for source, target in migration_events.archive_rehomes:
+        if source in base_documents and target in proposed_documents:
+            consumed_base.add(source)
+            consumed_proposed.add(target)
 
     for rename in sorted(
         renames, key=lambda item: (item.old_path.as_posix(), item.new_path.as_posix())

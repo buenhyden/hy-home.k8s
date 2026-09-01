@@ -1738,10 +1738,11 @@ class ArchiveValidationTest(unittest.TestCase):
         real_popen = subprocess.Popen
         git_calls = 0
         # The budget bounds process startup, not reading: every batch is one
-        # process regardless of how many objects it carries. MIG-0005 roughly
-        # doubled the declared evidence, so the cap is sized for the current
-        # corpus rather than the one it was first calibrated against.
-        budget = 160
+        # process regardless of how many objects it carries. Each distinct
+        # declared source commit costs one batched read plus its reachability
+        # check, so re-declaring a consumer at a newer commit moves the cap by a
+        # fixed two rather than by the number of paths it carries.
+        budget = 176
 
         def bounded_popen(*args, **kwargs):
             nonlocal git_calls

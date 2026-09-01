@@ -83,7 +83,7 @@ WP004B_PINNED_MIGRATION_PATH = (
 )
 WP004B_PINNED_MIGRATION_DOCUMENT_SHA256 = "e7eb94fc16f333a3888e8d5c4d5a17cc65a172bf3dbbf4a115b450e73724dd75"  # pragma: allowlist secret -- sealed recovery contract
 WP004C_SEALED_TARGET_COMMIT = "4aabcc1b371dd2f519f605d3fa669a7cf334c443"  # pragma: allowlist secret -- sealed MIG-0004 recovery identity, not a credential
-WORK107_MIGRATION_DOCUMENT_SHA256 = "1a2f3264c380f93d435fedf4028a3fb2b843da377e99e2fd4b788dd37df45116"  # pragma: allowlist secret
+WORK107_MIGRATION_DOCUMENT_SHA256 = "9d25b3039750bd60c18129ea7fb62576889449407b2f2fb10092b5624e47030f"  # pragma: allowlist secret
 WORK107_LEGACY_INDEX_OVERVIEW = (
     "`98.archive/`는 원래 경로를 mirror한 43개의 immutable `content/archive` "
     "record를 보관한다. ARWB-003의 유한 base proof는 정확히 31 record와 202 "
@@ -900,7 +900,11 @@ def validate_archive_metadata(
     artifact_id = metadata.get("artifact_id")
     if artifact_id is not None and (
         not isinstance(artifact_id, str)
-        or re.fullmatch(r"[A-Z0-9]+(?:-[A-Z0-9]+)*", artifact_id) is None
+        or re.fullmatch(
+            r"tomb-(?:PRD|AD|ADR|SPEC|GDE|RUN)-[0-9]{4}|(?:PLAN|TASK)-CHG-[0-9]{4}",
+            artifact_id,
+        )
+        is None
     ):
         raise _error("ARCHIVE-METADATA-IDENTITY", "artifact_id is non-canonical")
     change_id = metadata.get("change_id")
@@ -1200,10 +1204,58 @@ def _work107_registry_archive_paths(root: Path) -> tuple[str, ...]:
     return tuple(sorted(paths))
 
 
+# Retired numbers stay retired: every legacy path that carried one keeps it, so
+# a tombstone identity names the exact sequence slot its original vacated. The
+# three date-named PRDs predate family numbering entirely and take a
+# tombstone-local sequence in date order, under their own retired family token.
+_WORK107_NUMBERED_LEGACY = re.compile(
+    r"^docs/[0-9]{2}\.[a-z]+/(?:[a-z]+/)?(?P<number>[0-9]{3,4})-(?P<slug>[a-z0-9]+(?:-[a-z0-9]+)*)"
+    r"(?:/[a-z-]+)?\.md\Z"
+)
+_WORK107_DATED_LEGACY = re.compile(
+    r"^docs/[0-9]{2}\.[a-z]+/(?P<date>[0-9]{4}-[0-9]{2}-[0-9]{2})-(?P<slug>[a-z0-9]+(?:-[a-z0-9]+)*)\.md\Z"
+)
+_WORK107_DATED_SEQUENCE = (
+    "docs/01.requirements/2026-03-27-wsl-k3d-argocd-platform.md",
+    "docs/01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md",
+    "docs/01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md",
+)
+
+
+# `guide` and `runbook` kept their sequence under the current family tokens, so a
+# tombstone names the slot the way the corpus names it today. `prd` did not: the
+# requirement sequence restarted at REQ-0001 after these three were retired, so
+# they stay under their own retired token and claim no REQ slot.
+_WORK107_TOMBSTONE_ID_PREFIX = {
+    "PRD": "PRD",
+    "AD": "AD",
+    "ADR": "ADR",
+    "SPEC": "SPEC",
+    "GUIDE": "GDE",
+    "RUNBOOK": "RUN",
+}
+
+
+def _work107_tombstone_sequence(legacy_path: str) -> tuple[str, str]:
+    """Resolve the retired sequence slot and slug one tombstone stands for."""
+
+    # A date leads with four digits too, so the dated form is resolved first.
+    match = _WORK107_DATED_LEGACY.match(legacy_path)
+    if match is not None:
+        if legacy_path not in _WORK107_DATED_SEQUENCE:
+            raise _error("ARCHIVE-MIGRATION-IDENTITY", "legacy tombstone path differs")
+        index = _WORK107_DATED_SEQUENCE.index(legacy_path) + 1
+        return f"{index:04d}", match.group("slug")
+    match = _WORK107_NUMBERED_LEGACY.match(legacy_path)
+    if match is not None:
+        return f"{int(match.group('number')):04d}", match.group("slug")
+    raise _error("ARCHIVE-MIGRATION-IDENTITY", "legacy tombstone path differs")
+
+
 def _work107_tombstone_identity(
     legacy_path: str,
     original_type: str,
-    source_blob: str,
+    original_path: str,
 ) -> tuple[str, str]:
     parts = PurePosixPath(legacy_path).parts
     if len(parts) < 4:
@@ -1220,14 +1272,9 @@ def _work107_tombstone_identity(
         raise _error(
             "ARCHIVE-MIGRATION-IDENTITY", "legacy tombstone type is unsupported"
         )
-    digest = hashlib.sha256(
-        legacy_path.encode("utf-8") + b"\0" + source_blob.encode("ascii")
-    ).hexdigest()
-    stable_path = (
-        f"docs/98.archive/tombstones/{stage}/"
-        f"tmb-{terminal_type.lower()}-legacy-{digest}.md"
-    )
-    artifact_id = f"TMB-{terminal_type}-LEGACY-{digest.upper()}"
+    number, slug = _work107_tombstone_sequence(original_path)
+    stable_path = f"docs/98.archive/tombstones/{stage}/{number}-{slug}.md"
+    artifact_id = f"tomb-{_WORK107_TOMBSTONE_ID_PREFIX[terminal_type]}-{number}"
     return stable_path, artifact_id
 
 
@@ -1278,8 +1325,11 @@ def build_work107_migration_rows(
             artifact_id = f"{prefix}-CHG-{number:04d}"
             record_kind = f"change-{leaf}"
         else:
+            original_path = metadata.get("original_path")
+            if not isinstance(original_path, str):
+                raise _error("ARCHIVE-MIGRATION-PROVENANCE", "legacy metadata differs")
             stable_path, artifact_id = _work107_tombstone_identity(
-                legacy_path, str(original_type), str(source_blob)
+                legacy_path, str(original_type), original_path
             )
             record_kind = "tombstone"
         rows.append(
@@ -1407,7 +1457,6 @@ def _work107_migration_metadata_bytes() -> bytes:
         "owner": "platform",
         "updated": "2026-08-12",
         "artifact_id": WORK107_MIGRATION_ID,
-        "migration_id": WORK107_MIGRATION_ID,
     }
     return (
         "---\n"

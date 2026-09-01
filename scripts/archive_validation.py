@@ -434,7 +434,7 @@ _ARCHIVE_MIGRATION_CONTROLS = {
         "MIG-0001",
         93,
         {"moved": 93},
-        "1a2f3264c380f93d435fedf4028a3fb2b843da377e99e2fd4b788dd37df45116",  # pragma: allowlist secret -- sealed migration digest
+        "9d25b3039750bd60c18129ea7fb62576889449407b2f2fb10092b5624e47030f",  # pragma: allowlist secret -- sealed migration digest
     ),
     _WORK109_MIGRATION_PATH: (
         "MIG-0002",
@@ -473,6 +473,12 @@ _MIGRATION_LEGACY_BASE_SHA256 = {
     _WORK109_MIGRATION_PATH: "67032c0b86acbee04a1e713053d164df2e99f4486df79df5161d53975fb82a7a",  # pragma: allowlist secret -- pre-cutover digest
     _WORK054_WP003_MIGRATION_PATH: "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42",  # pragma: allowlist secret -- pre-cutover digest
     _WORK054_WP004B_MIGRATION_PATH: "503a65a5897301be651217fcc48def5351809f272d9af510f10621f2ec2d1fe6",  # pragma: allowlist secret -- pre-cutover digest
+}
+# A control whose ledger rows moved keeps its previous reviewed bytes parseable
+# under the current frontmatter contract, so a base snapshot taken between the
+# two cutover commits still verifies.
+_MIGRATION_SUPERSEDED_SHA256 = {
+    WORK107_MIGRATION_PATH: ("1a2f3264c380f93d435fedf4028a3fb2b843da377e99e2fd4b788dd37df45116",),  # pragma: allowlist secret -- superseded digest
 }
 _LEGACY_MIGRATION_FRONTMATTER_KEYS = _MIGRATION_FRONTMATTER_KEYS + ("migration_id",)
 
@@ -1784,6 +1790,7 @@ def _migration_control_diagnostics(
     expected_id, expected_rows, expected_actions, expected_sha256 = contract
     digest = hashlib.sha256(content).hexdigest()
     is_legacy_base = digest == _MIGRATION_LEGACY_BASE_SHA256.get(path)
+    is_superseded = digest in _MIGRATION_SUPERSEDED_SHA256.get(path, ())
     expected_keys = (
         _LEGACY_MIGRATION_FRONTMATTER_KEYS
         if is_legacy_base
@@ -1794,6 +1801,7 @@ def _migration_control_diagnostics(
             expected_sha256 is not None
             and digest != expected_sha256
             and not is_legacy_base
+            and not is_superseded
         ):
             raise ValueError
         text = content.decode("utf-8", errors="strict")

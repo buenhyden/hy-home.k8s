@@ -1267,7 +1267,7 @@
       "class": "common",
       "mode": "classification-only",
       "pathPattern": "^docs/98\\.archive/(?!migrations/)(?!.*(?:/)?README\\.md$).+\\.md$",
-      "artifactIdPattern": "^TMB-[A-Z]+(?:-[A-Z]+)*-[A-Z0-9]+(?:-[A-Z0-9]+)*$",
+      "artifactIdPattern": "^tomb-(?:PRD|AD|ADR|SPEC|GDE|RUN)-[0-9]{4}$",
       "template": "docs/99.templates/templates/archive/archive-record.template.md",
       "requiredFrontmatter": {
         "mode": "required",
