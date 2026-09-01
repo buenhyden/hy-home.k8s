@@ -91,4 +91,4 @@ handoff에는 실행한 진입점, 결과, 실행하지 못한 검증과 그 이
 
 | Promoted owner | Audience outcome | Operating surface |
 | --- | --- | --- |
-| [TSK-0054-0006](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks/tsk-0006-stage-05-ownership-cutover.md) | 검증 결과의 범위와 한계를 구분해 handoff한다. | local validators, GitHub Actions, approved runtime evidence |
+| [SPEC-0054-TSK-0006](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks/tsk-0006-stage-05-ownership-cutover.md) | 검증 결과의 범위와 한계를 구분해 handoff한다. | local validators, GitHub Actions, approved runtime evidence |

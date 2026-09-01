@@ -19,12 +19,12 @@
 
 ## Task Records
 
-- [`TSK-0047-0001` — `CSASR-000`](tasks/tsk-0001-csasr-000.md)
-- [`TSK-0047-0002` — `CSASR-001`](tasks/tsk-0002-csasr-001.md)
-- [`TSK-0047-0003` — `CSASR-002`](tasks/tsk-0003-csasr-002.md)
-- [`TSK-0047-0004` — `CSASR-003`](tasks/tsk-0004-csasr-003.md)
-- [`TSK-0047-0005` — `CSASR-004`](tasks/tsk-0005-csasr-004.md)
-- [`TSK-0047-0006` — `CSASR-005`](tasks/tsk-0006-csasr-005.md)
+- [`SPEC-0047-TSK-0001` — `CSASR-000`](tasks/tsk-0001-csasr-000.md)
+- [`SPEC-0047-TSK-0002` — `CSASR-001`](tasks/tsk-0002-csasr-001.md)
+- [`SPEC-0047-TSK-0003` — `CSASR-002`](tasks/tsk-0003-csasr-002.md)
+- [`SPEC-0047-TSK-0004` — `CSASR-003`](tasks/tsk-0004-csasr-003.md)
+- [`SPEC-0047-TSK-0005` — `CSASR-004`](tasks/tsk-0005-csasr-004.md)
+- [`SPEC-0047-TSK-0006` — `CSASR-005`](tasks/tsk-0006-csasr-005.md)
 
 ## Related Documents
 

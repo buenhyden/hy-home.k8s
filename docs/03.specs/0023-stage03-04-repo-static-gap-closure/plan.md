@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-13
-artifact_id: "PLAN-0023"
+artifact_id: "SPEC-0023-PLAN-0001"
 ---
 
 # Stage 03/04 Repo-Static Gap Closure Implementation Plan

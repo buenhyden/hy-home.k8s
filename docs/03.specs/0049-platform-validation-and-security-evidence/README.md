@@ -19,13 +19,13 @@
 
 ## Task Records
 
-- [`TSK-0049-0001` — `PVSE-000`](tasks/tsk-0001-pvse-000.md)
-- [`TSK-0049-0002` — `PVSE-001`](tasks/tsk-0002-pvse-001.md)
-- [`TSK-0049-0003` — `PVSE-002`](tasks/tsk-0003-pvse-002.md)
-- [`TSK-0049-0004` — `PVSE-003`](tasks/tsk-0004-pvse-003.md)
-- [`TSK-0049-0005` — `PVSE-004`](tasks/tsk-0005-pvse-004.md)
-- [`TSK-0049-0006` — `PVSE-005`](tasks/tsk-0006-pvse-005.md)
-- [`TSK-0049-0007` — `PVSE-006`](tasks/tsk-0007-pvse-006.md)
+- [`SPEC-0049-TSK-0001` — `PVSE-000`](tasks/tsk-0001-pvse-000.md)
+- [`SPEC-0049-TSK-0002` — `PVSE-001`](tasks/tsk-0002-pvse-001.md)
+- [`SPEC-0049-TSK-0003` — `PVSE-002`](tasks/tsk-0003-pvse-002.md)
+- [`SPEC-0049-TSK-0004` — `PVSE-003`](tasks/tsk-0004-pvse-003.md)
+- [`SPEC-0049-TSK-0005` — `PVSE-004`](tasks/tsk-0005-pvse-004.md)
+- [`SPEC-0049-TSK-0006` — `PVSE-005`](tasks/tsk-0006-pvse-005.md)
+- [`SPEC-0049-TSK-0007` — `PVSE-006`](tasks/tsk-0007-pvse-006.md)
 
 ## Related Documents
 

@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-14
-artifact_id: "PLAN-0026"
+artifact_id: "SPEC-0026-PLAN-0001"
 ---
 
 # Document Contract Registry Implementation Plan

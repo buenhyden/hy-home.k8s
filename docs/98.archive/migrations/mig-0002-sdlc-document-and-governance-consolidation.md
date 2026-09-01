@@ -5,7 +5,6 @@ status: "accepted"
 owner: "platform"
 updated: "2026-08-13"
 artifact_id: "MIG-0002"
-migration_id: "MIG-0002"
 ---
 
 # MIG-0002: SDLC Document and Governance Consolidation

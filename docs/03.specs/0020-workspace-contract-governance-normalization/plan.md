@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-13
-artifact_id: "PLAN-0020"
+artifact_id: "SPEC-0020-PLAN-0001"
 ---
 
 # Workspace Contract Governance Normalization Implementation Plan

@@ -4,7 +4,7 @@ type: sdlc/task
 status: done
 owner: platform
 updated: 2026-08-28
-artifact_id: "TSK-0054-0004"
+artifact_id: "SPEC-0054-TSK-0004"
 ---
 
 # Task: Document lifecycle, Task, and registry authority activation

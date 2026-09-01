@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-13
-artifact_id: "PLAN-0014"
+artifact_id: "SPEC-0014-PLAN-0001"
 ---
 
 # Workspace Document Contract Normalization Implementation Plan

@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-13
-artifact_id: "PLAN-0030"
+artifact_id: "SPEC-0030-PLAN-0001"
 ---
 
 # Authored Document Migration Implementation Plan

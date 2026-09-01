@@ -1115,7 +1115,6 @@ class ArchiveValidationTest(unittest.TestCase):
             'owner: "platform"\n'
             'updated: "2026-08-30"\n'
             'artifact_id: "MIG-0009"\n'
-            'migration_id: "MIG-0009"\n'
             "---\n\n"
             "# MIG-0009: Stage 99 Form Retirement\n\n"
             "## Migration Ledger\n\n"

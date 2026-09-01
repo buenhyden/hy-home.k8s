@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-08-31
-artifact_id: "PLAN-0065"
+artifact_id: "SPEC-0065-PLAN-0001"
 ---
 
 # Transition Residue Retirement Implementation Plan (Plan)
@@ -122,9 +122,9 @@ the branch tip.
 
 | Spec criterion | Work package | Expected Task |
 | --- | --- | --- |
-| [VAL-TRR-001](spec.md#success-criteria--verification-plan) | WP-001 | [TSK-0065-0001](tasks/tsk-0001-trr-000.md) |
-| [VAL-TRR-002](spec.md#success-criteria--verification-plan) | WP-002 | [TSK-0065-0001](tasks/tsk-0001-trr-000.md) |
-| [VAL-TRR-003](spec.md#success-criteria--verification-plan) | WP-003 | [TSK-0065-0001](tasks/tsk-0001-trr-000.md) |
-| [VAL-TRR-004](spec.md#success-criteria--verification-plan) | WP-004 | [TSK-0065-0001](tasks/tsk-0001-trr-000.md) |
-| [VAL-TRR-005](spec.md#success-criteria--verification-plan) | WP-004 | [TSK-0065-0001](tasks/tsk-0001-trr-000.md) |
-| [VAL-TRR-006](spec.md#success-criteria--verification-plan) | WP-005 | [TSK-0065-0001](tasks/tsk-0001-trr-000.md) |
+| [VAL-TRR-001](spec.md#success-criteria--verification-plan) | WP-001 | [SPEC-0065-TSK-0001](tasks/tsk-0001-trr-000.md) |
+| [VAL-TRR-002](spec.md#success-criteria--verification-plan) | WP-002 | [SPEC-0065-TSK-0001](tasks/tsk-0001-trr-000.md) |
+| [VAL-TRR-003](spec.md#success-criteria--verification-plan) | WP-003 | [SPEC-0065-TSK-0001](tasks/tsk-0001-trr-000.md) |
+| [VAL-TRR-004](spec.md#success-criteria--verification-plan) | WP-004 | [SPEC-0065-TSK-0001](tasks/tsk-0001-trr-000.md) |
+| [VAL-TRR-005](spec.md#success-criteria--verification-plan) | WP-004 | [SPEC-0065-TSK-0001](tasks/tsk-0001-trr-000.md) |
+| [VAL-TRR-006](spec.md#success-criteria--verification-plan) | WP-005 | [SPEC-0065-TSK-0001](tasks/tsk-0001-trr-000.md) |

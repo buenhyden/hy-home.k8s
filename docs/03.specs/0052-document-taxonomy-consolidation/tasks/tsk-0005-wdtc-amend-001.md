@@ -1,13 +1,13 @@
 ---
-title: "TSK-0052-0005: VAL-WDTC-013 through VAL-WDTC-016"
+title: "SPEC-0052-TSK-0005: VAL-WDTC-013 through VAL-WDTC-016"
 type: sdlc/task
 status: done
 owner: platform
 updated: 2026-08-12
-artifact_id: "TSK-0052-0005"
+artifact_id: "SPEC-0052-TSK-0005"
 ---
 
-# TSK-0052-0005: VAL-WDTC-013 through VAL-WDTC-016
+# SPEC-0052-TSK-0005: VAL-WDTC-013 through VAL-WDTC-016
 
 ## Overview
 
@@ -42,7 +42,7 @@ shared verification context is in the
 
 ## Traceability
 
-- Stable Task: `TSK-0052-0005`
+- Stable Task: `SPEC-0052-TSK-0005`
 - Legacy work item: `WDTC-AMEND-001`
 - Package inventory: [README](../README.md#task-records)
 - Legacy bytes: [MIG-0004](../../../98.archive/migrations/0004-document-authority-convergence.md)

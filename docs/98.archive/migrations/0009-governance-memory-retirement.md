@@ -5,7 +5,6 @@ status: "sealed"
 owner: "platform"
 updated: "2026-08-31"
 artifact_id: "MIG-0009"
-migration_id: "MIG-0009"
 ---
 
 # MIG-0009: Governance Memory Retirement

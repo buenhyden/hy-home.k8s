@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-13
-artifact_id: "PLAN-0016"
+artifact_id: "SPEC-0016-PLAN-0001"
 ---
 
 # Active Control Surface Governance Hardening Implementation Plan

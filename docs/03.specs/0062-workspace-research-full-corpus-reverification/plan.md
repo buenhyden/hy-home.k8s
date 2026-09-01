@@ -4,7 +4,7 @@ type: sdlc/plan
 status: active
 owner: platform
 updated: 2026-08-29
-artifact_id: "PLAN-0062"
+artifact_id: "SPEC-0062-PLAN-0001"
 ---
 
 # Workspace Research Full-Corpus Reverification Implementation Plan
@@ -367,7 +367,7 @@ replayed by an implementer.
 
 - Consumes: the approved `SPEC-0062`, this Plan, direct approval dated
   `2026-08-20`, and ADR 0022's standalone-execution relation.
-- Produces: active `SPEC-0062`/`PLAN-0062`/`TASK-0062`, registry relation
+- Produces: active `SPEC-0062`/`SPEC-0062-PLAN-0001`/`TASK-0062`, registry relation
   `spec=0062`, exact approval statement validation, and a durable activation
   record consumed by every later task.
 

@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-13
-artifact_id: "PLAN-0012"
+artifact_id: "SPEC-0012-PLAN-0001"
 ---
 
 # Template Governance Audit Enhancement Implementation Plan

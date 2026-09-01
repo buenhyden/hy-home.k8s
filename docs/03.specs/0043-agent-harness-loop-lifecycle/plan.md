@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-29
-artifact_id: "PLAN-0043"
+artifact_id: "SPEC-0043-PLAN-0001"
 ---
 
 # Agent Harness Loop Lifecycle Implementation Plan

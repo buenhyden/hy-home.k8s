@@ -19,12 +19,12 @@
 
 ## Task Records
 
-- [`TSK-0041-0001` — `SAGC-000`](tasks/tsk-0001-sagc-000.md)
-- [`TSK-0041-0002` — `SAGC-001`](tasks/tsk-0002-sagc-001.md)
-- [`TSK-0041-0003` — `SAGC-002`](tasks/tsk-0003-sagc-002.md)
-- [`TSK-0041-0004` — `SAGC-003`](tasks/tsk-0004-sagc-003.md)
-- [`TSK-0041-0005` — `SAGC-004`](tasks/tsk-0005-sagc-004.md)
-- [`TSK-0041-0006` — `SAGC-005`](tasks/tsk-0006-sagc-005.md)
+- [`SPEC-0041-TSK-0001` — `SAGC-000`](tasks/tsk-0001-sagc-000.md)
+- [`SPEC-0041-TSK-0002` — `SAGC-001`](tasks/tsk-0002-sagc-001.md)
+- [`SPEC-0041-TSK-0003` — `SAGC-002`](tasks/tsk-0003-sagc-002.md)
+- [`SPEC-0041-TSK-0004` — `SAGC-003`](tasks/tsk-0004-sagc-003.md)
+- [`SPEC-0041-TSK-0005` — `SAGC-004`](tasks/tsk-0005-sagc-004.md)
+- [`SPEC-0041-TSK-0006` — `SAGC-005`](tasks/tsk-0006-sagc-005.md)
 
 ## Related Documents
 

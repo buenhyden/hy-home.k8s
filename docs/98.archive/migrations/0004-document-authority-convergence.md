@@ -5,7 +5,6 @@ status: "sealed"
 owner: "platform"
 updated: "2026-08-21"
 artifact_id: "MIG-0004"
-migration_id: "MIG-0004"
 ---
 
 # MIG-0004: Document Authority Convergence

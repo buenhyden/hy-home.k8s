@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-08-01
-artifact_id: "PLAN-0046"
+artifact_id: "SPEC-0046-PLAN-0001"
 ---
 
 # Agent Governance Program Closure Implementation Plan

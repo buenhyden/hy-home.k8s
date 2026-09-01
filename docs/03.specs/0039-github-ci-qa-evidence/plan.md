@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-27
-artifact_id: "PLAN-0039"
+artifact_id: "SPEC-0039-PLAN-0001"
 ---
 
 # GitHub CI and QA Evidence Implementation Plan

@@ -19,14 +19,14 @@
 
 ## Task Records
 
-- [`TSK-0017-0001` — `WER-001`](tasks/tsk-0001-wer-001.md)
-- [`TSK-0017-0002` — `WER-002`](tasks/tsk-0002-wer-002.md)
-- [`TSK-0017-0003` — `WER-003`](tasks/tsk-0003-wer-003.md)
-- [`TSK-0017-0004` — `WER-004`](tasks/tsk-0004-wer-004.md)
-- [`TSK-0017-0005` — `WER-005`](tasks/tsk-0005-wer-005.md)
-- [`TSK-0017-0006` — `WER-006`](tasks/tsk-0006-wer-006.md)
-- [`TSK-0017-0007` — `WER-007`](tasks/tsk-0007-wer-007.md)
-- [`TSK-0017-0008` — `WER-008`](tasks/tsk-0008-wer-008.md)
+- [`SPEC-0017-TSK-0001` — `WER-001`](tasks/tsk-0001-wer-001.md)
+- [`SPEC-0017-TSK-0002` — `WER-002`](tasks/tsk-0002-wer-002.md)
+- [`SPEC-0017-TSK-0003` — `WER-003`](tasks/tsk-0003-wer-003.md)
+- [`SPEC-0017-TSK-0004` — `WER-004`](tasks/tsk-0004-wer-004.md)
+- [`SPEC-0017-TSK-0005` — `WER-005`](tasks/tsk-0005-wer-005.md)
+- [`SPEC-0017-TSK-0006` — `WER-006`](tasks/tsk-0006-wer-006.md)
+- [`SPEC-0017-TSK-0007` — `WER-007`](tasks/tsk-0007-wer-007.md)
+- [`SPEC-0017-TSK-0008` — `WER-008`](tasks/tsk-0008-wer-008.md)
 
 ## Related Documents
 

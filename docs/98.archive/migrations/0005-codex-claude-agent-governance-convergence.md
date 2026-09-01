@@ -5,7 +5,6 @@ status: "sealed"
 owner: "platform"
 updated: "2026-08-28"
 artifact_id: "MIG-0005"
-migration_id: "MIG-0005"
 ---
 
 # MIG-0005: Codex and Claude Agent Governance Convergence

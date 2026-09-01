@@ -81,9 +81,9 @@ WORK107_MIGRATION_PATH = (
 WP004B_PINNED_MIGRATION_PATH = (
     "docs/98.archive/migrations/0004-document-authority-convergence.md"
 )
-WP004B_PINNED_MIGRATION_DOCUMENT_SHA256 = "503a65a5897301be651217fcc48def5351809f272d9af510f10621f2ec2d1fe6"  # pragma: allowlist secret -- sealed recovery contract
+WP004B_PINNED_MIGRATION_DOCUMENT_SHA256 = "e7eb94fc16f333a3888e8d5c4d5a17cc65a172bf3dbbf4a115b450e73724dd75"  # pragma: allowlist secret -- sealed recovery contract
 WP004C_SEALED_TARGET_COMMIT = "4aabcc1b371dd2f519f605d3fa669a7cf334c443"  # pragma: allowlist secret -- sealed MIG-0004 recovery identity, not a credential
-WORK107_MIGRATION_DOCUMENT_SHA256 = "4e62cb6ba2a394cd9ae546543c85a58c8f105cb5d1ff48cfd8dab8b8b1082206"  # pragma: allowlist secret
+WORK107_MIGRATION_DOCUMENT_SHA256 = "1a2f3264c380f93d435fedf4028a3fb2b843da377e99e2fd4b788dd37df45116"  # pragma: allowlist secret
 WORK107_LEGACY_INDEX_OVERVIEW = (
     "`98.archive/`는 원래 경로를 mirror한 43개의 immutable `content/archive` "
     "record를 보관한다. ARWB-003의 유한 base proof는 정확히 31 record와 202 "
@@ -127,7 +127,6 @@ WORK107_MIGRATION_METADATA_KEYS = (
     "owner",
     "updated",
     "artifact_id",
-    "migration_id",
 )
 _WORK107_EXECUTION_PATH = re.compile(
     r"docs/98\.archive/04\.execution/(?P<collection>plans|tasks)/"

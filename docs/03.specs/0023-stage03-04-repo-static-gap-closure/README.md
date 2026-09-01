@@ -19,11 +19,11 @@
 
 ## Task Records
 
-- [`TSK-0023-0001` — `S34-001`](tasks/tsk-0001-s34-001.md)
-- [`TSK-0023-0002` — `S34-002`](tasks/tsk-0002-s34-002.md)
-- [`TSK-0023-0003` — `S34-003`](tasks/tsk-0003-s34-003.md)
-- [`TSK-0023-0004` — `S34-004`](tasks/tsk-0004-s34-004.md)
-- [`TSK-0023-0005` — `S34-005`](tasks/tsk-0005-s34-005.md)
+- [`SPEC-0023-TSK-0001` — `S34-001`](tasks/tsk-0001-s34-001.md)
+- [`SPEC-0023-TSK-0002` — `S34-002`](tasks/tsk-0002-s34-002.md)
+- [`SPEC-0023-TSK-0003` — `S34-003`](tasks/tsk-0003-s34-003.md)
+- [`SPEC-0023-TSK-0004` — `S34-004`](tasks/tsk-0004-s34-004.md)
+- [`SPEC-0023-TSK-0005` — `S34-005`](tasks/tsk-0005-s34-005.md)
 
 ## Related Documents
 

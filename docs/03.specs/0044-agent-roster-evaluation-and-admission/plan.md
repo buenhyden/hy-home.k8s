@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-30
-artifact_id: "PLAN-0044"
+artifact_id: "SPEC-0044-PLAN-0001"
 ---
 
 # Agent Roster Evaluation and Admission Implementation Plan

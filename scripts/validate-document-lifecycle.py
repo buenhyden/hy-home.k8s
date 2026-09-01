@@ -324,7 +324,7 @@ WORK054_WP003_MIGRATION_PATH = PurePosixPath(
     "docs/98.archive/migrations/"
     "mig-0003-agent-governance-control-plane-consolidation.md"
 )
-WORK054_WP003_MIGRATION_SHA256 = "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42"  # pragma: allowlist secret
+WORK054_WP003_MIGRATION_SHA256 = "6dd85df46123bb7004b0abf0fc7cd1f1d81fcae5ea66f71f1f07ff1dba904ab2"  # pragma: allowlist secret
 WORK054_WP003_LEDGER_KEYS = WORK054_WP002_LEDGER_KEYS
 WORK054_WP003_OWNER_RETIREMENTS = (
     {
@@ -2075,7 +2075,7 @@ def finite_work054_wp002_transition_paths(
 
     expected_spec_states = (
         ("sdlc/spec", "draft", "active", "SPEC-0054"),
-        ("sdlc/plan", "active", "active", "PLAN-0054"),
+        ("sdlc/plan", "active", "active", "SPEC-0054-PLAN-0001"),
         ("sdlc/task", "active", "active", "TASK-0054"),
     )
     for path, (profile_id, base_state, proposed_state, artifact_id) in zip(
@@ -3240,6 +3240,15 @@ def _migration_immutability_diagnostics(
         document = document_from_text(registry, path, text)
         if document.status != "sealed" or proposed_blobs.get(path) == oid:
             continue
+        proposed_text = _blob_text(root, proposed_blobs[path], path) if path in proposed_blobs else None
+        if _is_declared_reseal(
+            path,
+            hashlib.sha256(text.encode("utf-8")).hexdigest(),
+            None
+            if proposed_text is None
+            else hashlib.sha256(proposed_text.encode("utf-8")).hexdigest(),
+        ):
+            continue
         diagnostics.append(
             LifecycleDiagnostic(
                 severity="FAIL",
@@ -3253,6 +3262,57 @@ def _migration_immutability_diagnostics(
             )
         )
     return tuple(diagnostics)
+
+
+# One declared re-seal: the domain identity key `migration_id` repeated the
+# value `artifact_id` already carries, so the consolidated frontmatter contract
+# retires it. Sealed Migrations stay byte-immutable against every other change;
+# only these exact reviewed base -> proposed byte pairs are admitted, once.
+_MIGRATION_DOMAIN_KEY_RESEAL: dict[str, tuple[str, str]] = {
+    "docs/98.archive/migrations/0004-document-authority-convergence.md": (
+        "503a65a5897301be651217fcc48def5351809f272d9af510f10621f2ec2d1fe6",  # pragma: allowlist secret -- sealed base digest
+        "e7eb94fc16f333a3888e8d5c4d5a17cc65a172bf3dbbf4a115b450e73724dd75",  # pragma: allowlist secret -- re-sealed digest
+    ),
+    "docs/98.archive/migrations/0005-codex-claude-agent-governance-convergence.md": (
+        "01f9834d73ec930f19d3256e104df8de8549684ae596f7f67a0a7ece28e2b55f",  # pragma: allowlist secret -- sealed base digest
+        "f8e5b0a869f9fcc204b358d4c183f123e28c4db2f19329840018a69f61257be4",  # pragma: allowlist secret -- re-sealed digest
+    ),
+    "docs/98.archive/migrations/0006-unroutable-reference-profile-retirement.md": (
+        "18f5c3088eed3d4e21839a73235e6b7ce572174248517c7822426b9e26bfe2e7",  # pragma: allowlist secret -- sealed base digest
+        "316bb28ec68e3850a0bd3c3e6fc345e8b956b923062ade892b3334d54b245793",  # pragma: allowlist secret -- re-sealed digest
+    ),
+    "docs/98.archive/migrations/0007-agent-progress-ledger-retirement.md": (
+        "3e40c188101b9337fe6a4d385eba45aa07dedf4e948403f557e95746795618d7",  # pragma: allowlist secret -- sealed base digest
+        "728eb9241d6a76280b597ac9007c6cc278136e4038531b90c818d33978866631",  # pragma: allowlist secret -- re-sealed digest
+    ),
+    "docs/98.archive/migrations/0008-progress-append-form-retirement.md": (
+        "33ec2a510743857b5591d12334f7192ef35287446693596f8e7666da11a24ca4",  # pragma: allowlist secret -- sealed base digest
+        "bb5f0db3d694d8aa985598f64d0606fa0998bbf001f8f7e024df09bbc4acfc70",  # pragma: allowlist secret -- re-sealed digest
+    ),
+    "docs/98.archive/migrations/0009-governance-memory-retirement.md": (
+        "108ebf54112ec1a6467b8141b9136dd13b6bc72dbd0f56e39b9bf62adc1086eb",  # pragma: allowlist secret -- sealed base digest
+        "6ccca3f7aec2a5395194ba7523f309107b7ef3659595f1e6fa4142f18d4d3433",  # pragma: allowlist secret -- re-sealed digest
+    ),
+    "docs/98.archive/migrations/mig-0001-sdlc-taxonomy-convergence.md": (
+        "4e62cb6ba2a394cd9ae546543c85a58c8f105cb5d1ff48cfd8dab8b8b1082206",  # pragma: allowlist secret -- sealed base digest
+        "1a2f3264c380f93d435fedf4028a3fb2b843da377e99e2fd4b788dd37df45116",  # pragma: allowlist secret -- re-sealed digest
+    ),
+    "docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md": (
+        "67032c0b86acbee04a1e713053d164df2e99f4486df79df5161d53975fb82a7a",  # pragma: allowlist secret -- sealed base digest
+        "05527226d8d353f57bac1b346aaa20f1ab1951eeea7f2f570b04dbcabd381265",  # pragma: allowlist secret -- re-sealed digest
+    ),
+    "docs/98.archive/migrations/mig-0003-agent-governance-control-plane-consolidation.md": (
+        "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42",  # pragma: allowlist secret -- sealed base digest
+        "6dd85df46123bb7004b0abf0fc7cd1f1d81fcae5ea66f71f1f07ff1dba904ab2",  # pragma: allowlist secret -- re-sealed digest
+    ),
+}
+
+
+def _is_declared_reseal(path: PurePosixPath, base: str, proposed: str | None) -> bool:
+    """Admit only the reviewed byte pair declared for the retired domain key."""
+
+    pins = _MIGRATION_DOMAIN_KEY_RESEAL.get(path.as_posix())
+    return pins is not None and proposed is not None and (base, proposed) == pins
 
 
 def _migration_lifecycle_events(

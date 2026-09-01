@@ -110,7 +110,7 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
             'title: "MIG-0005: Policy convergence"\n'
             'type: "content/archive-migration"\nstatus: "sealed"\n'
             'owner: "platform"\nupdated: "2026-08-28"\n'
-            'artifact_id: "MIG-0005"\nmigration_id: "MIG-0005"\n---\n\n'
+            'artifact_id: "MIG-0005"\n---\n\n'
             "# MIG-0005: Policy convergence\n\n## Overview\n\nReviewed policy cutover.\n\n"
             "## Migration Ledger\n\n<!-- archive-migration-ledger:v1 format=json -->\n\n```json\n"
             + json.dumps(rows, indent=2)

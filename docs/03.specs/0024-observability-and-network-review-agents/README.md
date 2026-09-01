@@ -19,10 +19,10 @@
 
 ## Task Records
 
-- [`TSK-0024-0001` — `ONA-001`](tasks/tsk-0001-ona-001.md)
-- [`TSK-0024-0002` — `ONA-002`](tasks/tsk-0002-ona-002.md)
-- [`TSK-0024-0003` — `ONA-003`](tasks/tsk-0003-ona-003.md)
-- [`TSK-0024-0004` — `ONA-004`](tasks/tsk-0004-ona-004.md)
+- [`SPEC-0024-TSK-0001` — `ONA-001`](tasks/tsk-0001-ona-001.md)
+- [`SPEC-0024-TSK-0002` — `ONA-002`](tasks/tsk-0002-ona-002.md)
+- [`SPEC-0024-TSK-0003` — `ONA-003`](tasks/tsk-0003-ona-003.md)
+- [`SPEC-0024-TSK-0004` — `ONA-004`](tasks/tsk-0004-ona-004.md)
 
 ## Related Documents
 

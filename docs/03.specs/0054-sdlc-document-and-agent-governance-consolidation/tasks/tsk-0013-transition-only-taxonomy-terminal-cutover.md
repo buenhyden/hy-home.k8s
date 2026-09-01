@@ -4,7 +4,7 @@ type: sdlc/task
 status: queued
 owner: platform
 updated: 2026-08-31
-artifact_id: "TSK-0054-0013"
+artifact_id: "SPEC-0054-TSK-0013"
 ---
 
 # Task: Current corpus and transition-control cutover
@@ -27,15 +27,15 @@ dispositions are execution candidates, not permanent corpus-count policy.
 **Plan label:** WP-013
 
 **Depends on:** WP-006; WP-008; WP-012; accepted ADR-0031; accepted and completed Spec 0066
-result with TSK-0066-0001, Plan 0066, and Spec 0066 all `done`; completed
-TSK-0054-0011 parent handoff; and the existing Spec 0054 compatibility pointer
+result with SPEC-0066-TSK-0001, Plan 0066, and Spec 0066 all `done`; completed
+SPEC-0054-TSK-0011 parent handoff; and the existing Spec 0054 compatibility pointer
 naming this queued Task
 
 **Current state:** `queued`
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-054-013 | VAL-SDLC-001..VAL-SDLC-004, VAL-SDLC-006, VAL-SDLC-009..VAL-SDLC-012 | After the completed child and parent handoffs, reconcile retained Stage 01 Requirements and Stage 02 Architecture bidirectionally with the current implementation, converge the reviewed Stage 01/02/03/99 current-owner set, remove active Archive citations and cross-links, transfer unfinished work and unique authority, then retire residual transition assets against the accepted and completed Spec 0066 routing result without a fixed corpus census. | platform | Queued | Not executed. | Terminal Spec 0066 states, completed TSK-0054-0011, compatibility pointer to this queued Task, manifest/configuration/code/validator/operational-interface evidence mapped to retained Requirement Packages and Architecture Descriptions, zero inbound Archive links, consumer/trace/lifecycle parity, Git-first recovery, registry/template parity, delegated routing evidence, and ordered logical commits |
+| WORK-054-013 | VAL-SDLC-001..VAL-SDLC-004, VAL-SDLC-006, VAL-SDLC-009..VAL-SDLC-012 | After the completed child and parent handoffs, reconcile retained Stage 01 Requirements and Stage 02 Architecture bidirectionally with the current implementation, converge the reviewed Stage 01/02/03/99 current-owner set, remove active Archive citations and cross-links, transfer unfinished work and unique authority, then retire residual transition assets against the accepted and completed Spec 0066 routing result without a fixed corpus census. | platform | Queued | Not executed. | Terminal Spec 0066 states, completed SPEC-0054-TSK-0011, compatibility pointer to this queued Task, manifest/configuration/code/validator/operational-interface evidence mapped to retained Requirement Packages and Architecture Descriptions, zero inbound Archive links, consumer/trace/lifecycle parity, Git-first recovery, registry/template parity, delegated routing evidence, and ordered logical commits |
 
 ## Approval and Safety Boundaries
 
@@ -45,7 +45,7 @@ its unique authority and unfinished work are transferred or proven absent,
 current consumers are zero, and Git-first recovery succeeds. The linked Plan
 owns the exact candidate dispositions, reviews, rollback, and four ordered
 logical commits: Stage 01/02, Stage 03, Stage 99, then transition controls. The
-accepted and completed Spec 0066 result plus the completed TSK-0054-0011
+accepted and completed Spec 0066 result plus the completed SPEC-0054-TSK-0011
 parent handoff are fixed dependencies; their execution does not overlap the
 final WP-013 validation-side transition-control unit. This Task cannot activate
 until the existing Spec 0054 compatibility pointer already names it while it is

@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-28
-artifact_id: "PLAN-0041"
+artifact_id: "SPEC-0041-PLAN-0001"
 ---
 
 # Stage 00 Agent Governance Contract Implementation Plan

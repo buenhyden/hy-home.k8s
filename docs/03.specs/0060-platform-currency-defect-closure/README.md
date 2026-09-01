@@ -19,10 +19,10 @@
 
 ## Task Records
 
-- [`TSK-0060-0001` — `PCDC-001`](tasks/tsk-0001-pcdc-001.md)
-- [`TSK-0060-0002` — `PCDC-002`](tasks/tsk-0002-pcdc-002.md)
-- [`TSK-0060-0003` — `PCDC-003`](tasks/tsk-0003-pcdc-003.md)
-- [`TSK-0060-0004` — `PCDC-004`](tasks/tsk-0004-pcdc-004.md)
+- [`SPEC-0060-TSK-0001` — `PCDC-001`](tasks/tsk-0001-pcdc-001.md)
+- [`SPEC-0060-TSK-0002` — `PCDC-002`](tasks/tsk-0002-pcdc-002.md)
+- [`SPEC-0060-TSK-0003` — `PCDC-003`](tasks/tsk-0003-pcdc-003.md)
+- [`SPEC-0060-TSK-0004` — `PCDC-004`](tasks/tsk-0004-pcdc-004.md)
 
 ## Related Documents
 

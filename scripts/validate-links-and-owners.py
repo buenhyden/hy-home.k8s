@@ -2467,6 +2467,26 @@ def _is_current_authority(context: Context, path: PurePosixPath) -> bool:
     return profile.mode == "authored" and status in {"active", "accepted"}
 
 
+_SEALED_STAGE03_IDENTITY = re.compile(r"^(?:PLAN|TASK)-([0-9]{4})$")
+
+
+def _current_stage03_identity(artifact_id: str) -> str:
+    """Project a sealed Stage 03 ledger identity onto its current form.
+
+    A sealed Migration records the identity a document carried when it moved.
+    Stage 03 later re-formed Plan and Task identity to name the parent Spec, so
+    the ledger keeps its historical value and the comparison projects it
+    forward. Any other identity is returned unchanged.
+    """
+
+    match = _SEALED_STAGE03_IDENTITY.fullmatch(artifact_id)
+    if match is None:
+        return artifact_id
+    package = match.group(1)
+    kind = "PLAN" if artifact_id.startswith("PLAN-") else "TSK"
+    return f"SPEC-{package}-{kind}-0001"
+
+
 def _work109_expected_stable_path(
     legacy: PurePosixPath,
 ) -> PurePosixPath | None:
@@ -2578,7 +2598,6 @@ def _work109_migration_projection(
     metadata = context.metadata.get(WORK109_MIGRATION_PATH, {})
     if (
         metadata.get("artifact_id") != "MIG-0002"
-        or metadata.get("migration_id") != "MIG-0002"
         or metadata.get("status") != "accepted"
     ):
         raise ConfigurationError("WORK-109 migration ledger identity differs")
@@ -2678,7 +2697,7 @@ def _work109_migration_projection(
                 or (
                     not has_wp004b_cutover
                     and context.metadata.get(expected, {}).get("artifact_id")
-                    != artifact_id
+                    != _current_stage03_identity(artifact_id)
                 )
             ):
                 raise ConfigurationError(
@@ -4876,7 +4895,7 @@ def _program_package_task_projection(
     identities_complete = all(
         task.name[4:8] == f"{sequence:04d}"
         and context.metadata[task].get("artifact_id")
-        == f"TSK-{spec_identifier}-{sequence:04d}"
+        == f"SPEC-{spec_identifier}-TSK-{sequence:04d}"
         for sequence, task in enumerate(package_tasks, start=1)
     )
     router_complete = (

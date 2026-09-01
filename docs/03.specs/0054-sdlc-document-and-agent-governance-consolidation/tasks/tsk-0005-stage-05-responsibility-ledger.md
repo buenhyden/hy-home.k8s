@@ -4,7 +4,7 @@ type: sdlc/task
 status: done
 owner: platform
 updated: 2026-09-01
-artifact_id: "TSK-0054-0005"
+artifact_id: "SPEC-0054-TSK-0005"
 ---
 
 # Task: Stage 05 responsibility ledger

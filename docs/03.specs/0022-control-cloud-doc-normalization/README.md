@@ -19,12 +19,12 @@
 
 ## Task Records
 
-- [`TSK-0022-0001` — `CCDN-001`](tasks/tsk-0001-ccdn-001.md)
-- [`TSK-0022-0002` — `CCDN-002`](tasks/tsk-0002-ccdn-002.md)
-- [`TSK-0022-0003` — `CCDN-003`](tasks/tsk-0003-ccdn-003.md)
-- [`TSK-0022-0004` — `CCDN-004`](tasks/tsk-0004-ccdn-004.md)
-- [`TSK-0022-0005` — `CCDN-005`](tasks/tsk-0005-ccdn-005.md)
-- [`TSK-0022-0006` — `CCDN-006`](tasks/tsk-0006-ccdn-006.md)
+- [`SPEC-0022-TSK-0001` — `CCDN-001`](tasks/tsk-0001-ccdn-001.md)
+- [`SPEC-0022-TSK-0002` — `CCDN-002`](tasks/tsk-0002-ccdn-002.md)
+- [`SPEC-0022-TSK-0003` — `CCDN-003`](tasks/tsk-0003-ccdn-003.md)
+- [`SPEC-0022-TSK-0004` — `CCDN-004`](tasks/tsk-0004-ccdn-004.md)
+- [`SPEC-0022-TSK-0005` — `CCDN-005`](tasks/tsk-0005-ccdn-005.md)
+- [`SPEC-0022-TSK-0006` — `CCDN-006`](tasks/tsk-0006-ccdn-006.md)
 
 ## Related Documents
 

@@ -1,13 +1,13 @@
 ---
-title: "TSK-0053-0010: VAL-WER-003, VAL-WER-008, VAL-WER-009, VAL-WER-010"
+title: "SPEC-0053-TSK-0010: VAL-WER-003, VAL-WER-008, VAL-WER-009, VAL-WER-010"
 type: sdlc/task
 status: done
 owner: platform
 updated: 2026-08-09
-artifact_id: "TSK-0053-0010"
+artifact_id: "SPEC-0053-TSK-0010"
 ---
 
-# TSK-0053-0010: VAL-WER-003, VAL-WER-008, VAL-WER-009, VAL-WER-010
+# SPEC-0053-TSK-0010: VAL-WER-003, VAL-WER-008, VAL-WER-009, VAL-WER-010
 
 ## Overview
 
@@ -42,7 +42,7 @@ shared verification context is in the
 
 ## Traceability
 
-- Stable Task: `TSK-0053-0010`
+- Stable Task: `SPEC-0053-TSK-0010`
 - Legacy work item: `WERPC-008`
 - Package inventory: [README](../README.md#task-records)
 - Legacy bytes: [MIG-0004](../../../98.archive/migrations/0004-document-authority-convergence.md)

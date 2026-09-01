@@ -5,7 +5,6 @@ status: "sealed"
 owner: "platform"
 updated: "2026-08-31"
 artifact_id: "MIG-0008"
-migration_id: "MIG-0008"
 ---
 
 # MIG-0008: Progress Append Form Retirement

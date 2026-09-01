@@ -19,12 +19,12 @@
 
 ## Task Records
 
-- [`TSK-0048-0001` — `GRCE-000`](tasks/tsk-0001-grce-000.md)
-- [`TSK-0048-0002` — `GRCE-001`](tasks/tsk-0002-grce-001.md)
-- [`TSK-0048-0003` — `GRCE-002`](tasks/tsk-0003-grce-002.md)
-- [`TSK-0048-0004` — `GRCE-003`](tasks/tsk-0004-grce-003.md)
-- [`TSK-0048-0005` — `GRCE-004`](tasks/tsk-0005-grce-004.md)
-- [`TSK-0048-0006` — `GRCE-005`](tasks/tsk-0006-grce-005.md)
+- [`SPEC-0048-TSK-0001` — `GRCE-000`](tasks/tsk-0001-grce-000.md)
+- [`SPEC-0048-TSK-0002` — `GRCE-001`](tasks/tsk-0002-grce-001.md)
+- [`SPEC-0048-TSK-0003` — `GRCE-002`](tasks/tsk-0003-grce-002.md)
+- [`SPEC-0048-TSK-0004` — `GRCE-003`](tasks/tsk-0004-grce-003.md)
+- [`SPEC-0048-TSK-0005` — `GRCE-004`](tasks/tsk-0005-grce-004.md)
+- [`SPEC-0048-TSK-0006` — `GRCE-005`](tasks/tsk-0006-grce-005.md)
 
 ## Related Documents
 

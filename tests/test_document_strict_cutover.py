@@ -720,7 +720,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             contents = record.read_text(encoding="utf-8")
             with self.subTest(record=record.name):
                 self.assertEqual(record.name[4:8], f"{index:04d}")
-                self.assertIn(f'artifact_id: "TSK-0054-{index:04d}"', contents)
+                self.assertIn(f'artifact_id: "SPEC-0054-TSK-{index:04d}"', contents)
                 self.assertIn("../README.md#common-execution-contract", contents)
                 for section in (
                     "## Task Table",

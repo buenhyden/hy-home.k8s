@@ -19,13 +19,13 @@
 
 ## Task Records
 
-- [`TSK-0050-0001` — `EIVQ-000`](tasks/tsk-0001-eivq-000.md)
-- [`TSK-0050-0002` — `EIVQ-001`](tasks/tsk-0002-eivq-001.md)
-- [`TSK-0050-0003` — `EIVQ-002`](tasks/tsk-0003-eivq-002.md)
-- [`TSK-0050-0004` — `EIVQ-003`](tasks/tsk-0004-eivq-003.md)
-- [`TSK-0050-0005` — `EIVQ-004`](tasks/tsk-0005-eivq-004.md)
-- [`TSK-0050-0006` — `EIVQ-005`](tasks/tsk-0006-eivq-005.md)
-- [`TSK-0050-0007` — `EIVQ-006`](tasks/tsk-0007-eivq-006.md)
+- [`SPEC-0050-TSK-0001` — `EIVQ-000`](tasks/tsk-0001-eivq-000.md)
+- [`SPEC-0050-TSK-0002` — `EIVQ-001`](tasks/tsk-0002-eivq-001.md)
+- [`SPEC-0050-TSK-0003` — `EIVQ-002`](tasks/tsk-0003-eivq-002.md)
+- [`SPEC-0050-TSK-0004` — `EIVQ-003`](tasks/tsk-0004-eivq-003.md)
+- [`SPEC-0050-TSK-0005` — `EIVQ-004`](tasks/tsk-0005-eivq-004.md)
+- [`SPEC-0050-TSK-0006` — `EIVQ-005`](tasks/tsk-0006-eivq-005.md)
+- [`SPEC-0050-TSK-0007` — `EIVQ-006`](tasks/tsk-0007-eivq-006.md)
 
 ## Related Documents
 

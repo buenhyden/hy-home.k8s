@@ -82,7 +82,7 @@ The reciprocal execution artifacts are [Plan 0054](plan.md) and
 Spec 0054 remains the integrated acceptance owner. Active
 [Spec 0066](../0066-validation-tooling-ownership/spec.md) is the delegated
 execution package for WP-010 and WP-011; it is not a standalone program.
-TSK-0054-0011 is the current parent acceptance record.
+SPEC-0054-TSK-0011 is the current parent acceptance record.
 
 ## Strategic Boundaries & Non-goals
 
@@ -318,7 +318,7 @@ rollback, and recovery. Each Task owns one independently reviewable execution
 unit and its evidence.
 
 A Task path is `tasks/tsk-####-<slug>.md`; its stable identity is
-`TSK-<SPEC-NUMBER>-<TASK-SEQUENCE>`, for example `TSK-0054-0001`.
+`TSK-<SPEC-NUMBER>-<TASK-SEQUENCE>`, for example `SPEC-0054-TSK-0001`.
 The directory sequence and final Task sequence must agree. Task numbers are
 append-only within a Spec Package and are never reused. Cross-artifact
 validators reject identifier, lifecycle, criterion, path, dependency, or
@@ -342,14 +342,14 @@ Concurrency is package-local: each Spec Package has at most one
 `in-progress` Task. A parent integration Spec and an explicitly delegated
 execution Spec may therefore progress concurrently while preserving one
 acceptance owner and one execution owner for each criterion. Spec 0054 owns
-integration acceptance through TSK-0054-0011; Spec 0066 owns delegated
+integration acceptance through SPEC-0054-TSK-0011; Spec 0066 owns delegated
 execution of WP-010 and WP-011 after activation.
 
 Execution-component links remain package-local. Spec 0066 Plan and Task link
 reciprocally to each other and their own Spec; they do not link a parent Plan
 or Task merely to inherit its registry ownership. Spec 0054 and Spec 0066 link
 reciprocally at Spec level, and accepted ADR-0031 authorizes that delegation.
-The link gate added by TSK-0054-0010 admits exactly that closed delegated
+The link gate added by SPEC-0054-TSK-0010 admits exactly that closed delegated
 relation and rejects missing reciprocity, a proposed decision, multiple parent
 owners, foreign execution-component links, or a duplicate Spec 0066
 standalone row.
@@ -507,15 +507,15 @@ The registry owns these profile-specific lifecycle domains and transitions:
 | Template / Profile | `draft → active → superseded \| retired` |
 
 No new Task transition is required for delegated ownership transfer. The
-activation transaction uses existing edges: TSK-0054-0010 moves from
-`in-progress` to `done`, TSK-0054-0011 moves from `queued` to
-`in-progress` as the parent acceptance owner, and TSK-0066-0001 moves from
+activation transaction uses existing edges: SPEC-0054-TSK-0010 moves from
+`in-progress` to `done`, SPEC-0054-TSK-0011 moves from `queued` to
+`in-progress` as the parent acceptance owner, and SPEC-0066-TSK-0001 moves from
 `queued` to `in-progress` as the execution owner. The existing Spec 0054
-compatibility row moves with the parent owner from TSK-0054-0010 to
-TSK-0054-0011; no Spec 0066 row is added. After TSK-0054-0011 records
+compatibility row moves with the parent owner from SPEC-0054-TSK-0010 to
+SPEC-0054-TSK-0011; no Spec 0066 row is added. After SPEC-0054-TSK-0011 records
 acceptance while remaining `in-progress`, Spec 0066 closes. A later parent
-handoff atomically moves TSK-0054-0011 to `done` and the compatibility row to
-queued TSK-0054-0013; only then can TSK-0054-0013 activate. The activation does
+handoff atomically moves SPEC-0054-TSK-0011 to `done` and the compatibility row to
+queued SPEC-0054-TSK-0013; only then can SPEC-0054-TSK-0013 activate. The activation does
 not modify the Stage 99 Task lifecycle domain, schema, or its current code
 projection, and WP-013 removes the temporary row and its consumers.
 
@@ -736,7 +736,7 @@ integration dependencies, not a global scheduling lock:
 6. **WP-006** performs the Stage 05 owner cutover and strengthens operational
    contracts.
 7. **WP-010** and **WP-011** form the delegated Spec 0066 branch. After the
-   reviewed activation checkpoint they run while TSK-0054-0011 remains the
+   reviewed activation checkpoint they run while SPEC-0054-TSK-0011 remains the
    sole parent acceptance Task, and remain sequential within Spec 0066. No
    unrelated Spec 0054 Task runs during this delegated acceptance window.
 8. **WP-012** removes duplicate progress, closure, snapshot, and generated

@@ -19,13 +19,13 @@
 
 ## Task Records
 
-- [`TSK-0018-0001` — `WEA-001`](tasks/tsk-0001-wea-001.md)
-- [`TSK-0018-0002` — `WEA-002`](tasks/tsk-0002-wea-002.md)
-- [`TSK-0018-0003` — `WEA-003`](tasks/tsk-0003-wea-003.md)
-- [`TSK-0018-0004` — `WEA-004`](tasks/tsk-0004-wea-004.md)
-- [`TSK-0018-0005` — `WEA-005`](tasks/tsk-0005-wea-005.md)
-- [`TSK-0018-0006` — `WEA-006`](tasks/tsk-0006-wea-006.md)
-- [`TSK-0018-0007` — `WEA-007`](tasks/tsk-0007-wea-007.md)
+- [`SPEC-0018-TSK-0001` — `WEA-001`](tasks/tsk-0001-wea-001.md)
+- [`SPEC-0018-TSK-0002` — `WEA-002`](tasks/tsk-0002-wea-002.md)
+- [`SPEC-0018-TSK-0003` — `WEA-003`](tasks/tsk-0003-wea-003.md)
+- [`SPEC-0018-TSK-0004` — `WEA-004`](tasks/tsk-0004-wea-004.md)
+- [`SPEC-0018-TSK-0005` — `WEA-005`](tasks/tsk-0005-wea-005.md)
+- [`SPEC-0018-TSK-0006` — `WEA-006`](tasks/tsk-0006-wea-006.md)
+- [`SPEC-0018-TSK-0007` — `WEA-007`](tasks/tsk-0007-wea-007.md)
 
 ## Related Documents
 

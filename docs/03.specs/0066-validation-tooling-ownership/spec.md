@@ -26,8 +26,8 @@ Measured counts are audit evidence only. They are not permanent governance
 invariants.
 
 The delegated execution is complete. This Spec and its Plan are `done`, and
-TSK-0066-0001 is `done` after Spec 0054 recorded integrated acceptance through
-TSK-0054-0011. The validation-tooling moves, deletions, and implementation
+SPEC-0066-TSK-0001 is `done` after Spec 0054 recorded integrated acceptance through
+SPEC-0054-TSK-0011. The validation-tooling moves, deletions, and implementation
 results are recorded by that Task and by reachable Git history.
 
 ## Strategic Boundaries & Non-goals
@@ -43,11 +43,11 @@ ADR-0030's two-clause scoped amendment without changing ADR-0030's accepted
 status, aligned the Decisions and Stage 03 indexes, added the narrow
 package-local delegated-ownership rule and focused cases, activated this
 Spec/Plan/Task component, moved the parent compatibility pointer to
-TSK-0054-0011, completed TSK-0054-0010, and activated TSK-0054-0011 as the
+SPEC-0054-TSK-0011, completed SPEC-0054-TSK-0010, and activated SPEC-0054-TSK-0011 as the
 sole parent acceptance Task. The transaction created no Spec 0066 standalone
 row and did not change the Stage 99 lifecycle domain, schema, or projection.
 It is a completed external precondition, not implementation performed by
-TSK-0066-0001.
+SPEC-0066-TSK-0001.
 
 The contract and schema now reside only at `scripts/validation/registry.json`
 and `scripts/validation/registry.schema.json`; their former Stage 00 sources
@@ -69,7 +69,7 @@ and routing may be simplified without renaming those external checks.
 
 | Concern | Single owner |
 | --- | --- |
-| Integrated SDLC acceptance for WP-010 and WP-011 | Spec 0054 through TSK-0054-0011 |
+| Integrated SDLC acceptance for WP-010 and WP-011 | Spec 0054 through SPEC-0054-TSK-0011 |
 | Validation-tooling transition and execution evidence | Spec 0066 |
 | Surface, lane, executable, and CI routing graph | `scripts/validation/registry.json` |
 | Rule semantics and diagnostics | The responsible validator module |
@@ -118,7 +118,7 @@ does not become an executable rule engine.
 11. Branch-tip SHAs and generated digests do not track current repository
     state. Full SHAs are limited to immutable external dependencies and sealed
     recovery coordinates with an owner and update or recovery path.
-12. Each package has at most one `in-progress` Task. TSK-0066-0001 was this
+12. Each package has at most one `in-progress` Task. SPEC-0066-TSK-0001 was this
     package's sole `in-progress` Task during active execution and is now
     `done`.
 
@@ -241,7 +241,7 @@ readiness.
 
 | ID | Criterion |
 | --- | --- |
-| VAL-VTO-001 | Spec 0066 remains a delegated execution package for Spec 0054 WP-010/WP-011, with no standalone or replacement authority; its lifecycle-free thin router exists before activation; its Plan/Task component remains package-local; and the TSK-0054-0010-owned activation establishes reciprocal Spec/accepted-ADR ownership, focused fail-closed tests, legal state transfer, and the parent-only compatibility-pointer rotation without a child roster row |
+| VAL-VTO-001 | Spec 0066 remains a delegated execution package for Spec 0054 WP-010/WP-011, with no standalone or replacement authority; its lifecycle-free thin router exists before activation; its Plan/Task component remains package-local; and the SPEC-0054-TSK-0010-owned activation establishes reciprocal Spec/accepted-ADR ownership, focused fail-closed tests, legal state transfer, and the parent-only compatibility-pointer rotation without a child roster row |
 | VAL-VTO-002 | The existing validation-surface JSON and schema are moved atomically to `scripts/validation/registry.*`, every consumer is updated, and no second current registry remains |
 | VAL-VTO-003 | Selection is equivalent across the registry move; later intentional routing changes carry an explicit before/after explanation and focused evidence |
 | VAL-VTO-004 | Every current executable reference resolves to a current executable; historical recovery uses reachable Git by default and adds sealed Stage 98 evidence only for a required immutable lookup Git alone cannot resolve |
@@ -282,4 +282,4 @@ package.
 - [ADR-0030 — authority-first SDLC and agent governance convergence](../../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)
 - [Spec 0054](../0054-sdlc-document-and-agent-governance-consolidation/spec.md)
 - [Plan 0066](plan.md)
-- [TSK-0066-0001](tasks/tsk-0001-vto-000.md)
+- [SPEC-0066-TSK-0001](tasks/tsk-0001-vto-000.md)

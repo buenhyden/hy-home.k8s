@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-14
-artifact_id: "PLAN-0029"
+artifact_id: "SPEC-0029-PLAN-0001"
 ---
 
 # Semantic Document Validation Implementation Plan

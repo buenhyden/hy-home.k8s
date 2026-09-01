@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-08-18
-artifact_id: "PLAN-0060"
+artifact_id: "SPEC-0060-PLAN-0001"
 ---
 
 # Platform Currency Defect Closure Plan (Plan)

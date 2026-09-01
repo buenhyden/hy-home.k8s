@@ -71,6 +71,43 @@ machine configuration.
 The trailing group in a composite identity is the sequence inside the parent,
 not a repetition of the parent number. A parent owns its own numbering.
 
+### Domain identity keys
+
+A family whose documents are addressed by a domain identifier presents that
+identifier beside `artifact_id` and carries the same value. Stage 98 migrations
+already do this with `migration_id`, and the same shape extends to the families
+below. The domain key names how the family refers to itself; `artifact_id`
+names how governance refers to it.
+
+| Family | Domain key | Value |
+| --- | --- | --- |
+| Stage 05 incident | `incident_id` | equal to `artifact_id` |
+| Stage 05 postmortem | `incident_id` | equal to `artifact_id` |
+| Stage 90 audits member | `audit_id` | equal to `artifact_id` |
+| Stage 90 research member | `research_id` | equal to `artifact_id` |
+| Stage 90 data member | `data_id` | equal to `artifact_id` |
+| Stage 98 migration | `migration_id` | equal to `artifact_id` |
+
+Two keys that carry the same role are consolidated rather than multiplied.
+`type` already names the document's profile, so no separate `profile` key is
+introduced; a family without domain addressing presents `artifact_id` alone.
+The recency key is `updated`, and no `last-updated` spelling is admitted. A key
+that no document presents is retired from the schema rather than kept
+available, because an admitted but unused key is a form that will drift.
+
+### Title boundary
+
+`artifact_id` owns the document's identity, so `title` never repeats it. A
+title that carries its own identifier duplicates a value with one owner and
+drifts the moment that owner changes. Titles state what the document is.
+
+### Template authoring form
+
+A Stage 99 template presents the frontmatter its stage must author, using
+placeholders rather than real values: `title`, `type`, `status`, `owner`,
+`updated`, the family's `artifact_id`, and its domain key when the family has
+one. Templates express form, never a validator rule.
+
 ### Filenames
 
 A leaf document whose identity carries a number begins its filename with that
@@ -150,7 +187,9 @@ bash scripts/validate-repo-quality-gates.sh .
 | VAL-AIF-005 | Every Stage 98 tombstone presents a parent-derived identity, the recovery owner derives that identity, and no derivation collides. |
 | VAL-AIF-006 | Every numbered leaf filename begins with its number, preserving the Task and Stage 90 member prefixes. |
 | VAL-AIF-007 | No Stage 00 governance path, Stage 99 template path, or machine-loaded configuration path changes. |
-| VAL-AIF-008 | Stage 99 templates present the target identity form for every stage that has one. |
+| VAL-AIF-008 | Stage 99 templates present the target identity form and domain key for every stage that has one, as placeholders, with a consistent frontmatter guide. |
+| VAL-AIF-011 | Every family with domain addressing presents its domain key equal to `artifact_id`, and no frontmatter key without a presenting document remains available. |
+| VAL-AIF-012 | No `title` contains its document's artifact identifier, in the corpus or in a template. |
 | VAL-AIF-009 | Prose cross-references outside sealed Stage 98 payloads name the target identities. |
 | VAL-AIF-010 | The complete ordered validation sequence passes over the final bytes, and renames are recognized as Git renames. |
 
@@ -170,11 +209,13 @@ bash scripts/validate-repo-quality-gates.sh .
 | N/A — approved identity contract | VAL-AIF-008 | Per-stage template authoring-form review |
 | N/A — legacy and deprecated retirement | VAL-AIF-009 | Retired-form reference sweep outside sealed payloads |
 | N/A — drift and completion boundary | VAL-AIF-010 | Ordered completion sequence and Git rename recognition |
+| N/A — approved identity contract | VAL-AIF-011 | Domain-key parity sweep and unused frontmatter key retirement |
+| N/A — approved identity contract | VAL-AIF-012 | Title identifier sweep across corpus and templates |
 
 ### Related Documents
 
 - [Plan](plan.md)
-- [TSK-0067-0001](tasks/tsk-0001-aif-000.md)
+- [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md)
 - [Package router](README.md)
 - [Current Spec Index](../README.md#current-spec-index)
 - [ADR-0024 — terminal artifact identity and archive layout](../../02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md)

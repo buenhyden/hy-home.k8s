@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-13
-artifact_id: "PLAN-0004"
+artifact_id: "SPEC-0004-PLAN-0001"
 ---
 
 # Argo Rollouts Progressive Delivery Backfill Plan

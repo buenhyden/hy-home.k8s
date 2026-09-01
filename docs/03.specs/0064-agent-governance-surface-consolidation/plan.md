@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-08-30
-artifact_id: "PLAN-0064"
+artifact_id: "SPEC-0064-PLAN-0001"
 ---
 
 # Agent Governance Surface Consolidation Implementation Plan (Plan)
@@ -43,7 +43,7 @@ on whether the change was correct, not the prose that motivated it.
 
 ### WP-001 Diagnosis
 
-Record the audit in [TSK-0064-0001](tasks/tsk-0001-ags-000.md): three defects
+Record the audit in [SPEC-0064-TSK-0001](tasks/tsk-0001-ags-000.md): three defects
 and eight rejected candidates, each with the command whose output decided it.
 The rejected candidates carry the reason the first sweep form was wrong, being
 a basename match that missed composed paths, and a per-module constant read that
@@ -126,7 +126,7 @@ recovery coordinates only, because Git history is the archive.
 
 All five criteria in [Spec 0064](spec.md#success-criteria--verification-plan)
 are met, or an unmet criterion is recorded in
-[TSK-0064-0001](tasks/tsk-0001-ags-000.md) with the fact that blocked it.
+[SPEC-0064-TSK-0001](tasks/tsk-0001-ags-000.md) with the fact that blocked it.
 
 ## Traceability
 
@@ -134,11 +134,11 @@ are met, or an unmet criterion is recorded in
 
 | Spec criterion | Work package | Expected Task |
 | --- | --- | --- |
-| [VAL-AGS-001](spec.md#success-criteria--verification-plan) | WP-001 diagnosis | [TSK-0064-0001](tasks/tsk-0001-ags-000.md) |
-| [VAL-AGS-002](spec.md#success-criteria--verification-plan) | WP-002 ledger retirement | [TSK-0064-0001](tasks/tsk-0001-ags-000.md) |
-| [VAL-AGS-003](spec.md#success-criteria--verification-plan) | WP-003 unowned path | [TSK-0064-0001](tasks/tsk-0001-ags-000.md) |
-| [VAL-AGS-004](spec.md#success-criteria--verification-plan) | WP-004 scaffolding | [TSK-0064-0001](tasks/tsk-0001-ags-000.md) |
-| [VAL-AGS-005](spec.md#success-criteria--verification-plan) | WP-005 verification | [TSK-0064-0001](tasks/tsk-0001-ags-000.md) |
+| [VAL-AGS-001](spec.md#success-criteria--verification-plan) | WP-001 diagnosis | [SPEC-0064-TSK-0001](tasks/tsk-0001-ags-000.md) |
+| [VAL-AGS-002](spec.md#success-criteria--verification-plan) | WP-002 ledger retirement | [SPEC-0064-TSK-0001](tasks/tsk-0001-ags-000.md) |
+| [VAL-AGS-003](spec.md#success-criteria--verification-plan) | WP-003 unowned path | [SPEC-0064-TSK-0001](tasks/tsk-0001-ags-000.md) |
+| [VAL-AGS-004](spec.md#success-criteria--verification-plan) | WP-004 scaffolding | [SPEC-0064-TSK-0001](tasks/tsk-0001-ags-000.md) |
+| [VAL-AGS-005](spec.md#success-criteria--verification-plan) | WP-005 verification | [SPEC-0064-TSK-0001](tasks/tsk-0001-ags-000.md) |
 
 ### Related Documents
 

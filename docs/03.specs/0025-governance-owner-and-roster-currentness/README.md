@@ -19,12 +19,12 @@
 
 ## Task Records
 
-- [`TSK-0025-0001` — `RCR-001`](tasks/tsk-0001-rcr-001.md)
-- [`TSK-0025-0002` — `RCR-002`](tasks/tsk-0002-rcr-002.md)
-- [`TSK-0025-0003` — `RCR-003`](tasks/tsk-0003-rcr-003.md)
-- [`TSK-0025-0004` — `RCR-004`](tasks/tsk-0004-rcr-004.md)
-- [`TSK-0025-0005` — `RCR-005`](tasks/tsk-0005-rcr-005.md)
-- [`TSK-0025-0006` — `RCR-006`](tasks/tsk-0006-rcr-006.md)
+- [`SPEC-0025-TSK-0001` — `RCR-001`](tasks/tsk-0001-rcr-001.md)
+- [`SPEC-0025-TSK-0002` — `RCR-002`](tasks/tsk-0002-rcr-002.md)
+- [`SPEC-0025-TSK-0003` — `RCR-003`](tasks/tsk-0003-rcr-003.md)
+- [`SPEC-0025-TSK-0004` — `RCR-004`](tasks/tsk-0004-rcr-004.md)
+- [`SPEC-0025-TSK-0005` — `RCR-005`](tasks/tsk-0005-rcr-005.md)
+- [`SPEC-0025-TSK-0006` — `RCR-006`](tasks/tsk-0006-rcr-006.md)
 
 ## Related Documents
 

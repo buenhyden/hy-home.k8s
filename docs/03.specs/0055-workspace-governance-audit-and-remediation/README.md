@@ -19,21 +19,21 @@
 
 ## Task Records
 
-- [`TSK-0055-0001` — `WGIA-000`](tasks/tsk-0001-wgia-000.md)
-- [`TSK-0055-0002` — `WGIA-001`](tasks/tsk-0002-wgia-001.md)
-- [`TSK-0055-0003` — `WGIA-002`](tasks/tsk-0003-wgia-002.md)
-- [`TSK-0055-0004` — `WGIA-003`](tasks/tsk-0004-wgia-003.md)
-- [`TSK-0055-0005` — `WGIA-004`](tasks/tsk-0005-wgia-004.md)
-- [`TSK-0055-0006` — `WGIA-005`](tasks/tsk-0006-wgia-005.md)
-- [`TSK-0055-0007` — `WGIA-006`](tasks/tsk-0007-wgia-006.md)
-- [`TSK-0055-0008` — `WGIA-007`](tasks/tsk-0008-wgia-007.md)
-- [`TSK-0055-0009` — `WGIA-008`](tasks/tsk-0009-wgia-008.md)
-- [`TSK-0055-0010` — `WGIA-009`](tasks/tsk-0010-wgia-009.md)
-- [`TSK-0055-0011` — `WGIA-010`](tasks/tsk-0011-wgia-010.md)
-- [`TSK-0055-0012` — `WGIA-011`](tasks/tsk-0012-wgia-011.md)
-- [`TSK-0055-0013` — `WGIA-012`](tasks/tsk-0013-wgia-012.md)
-- [`TSK-0055-0014` — `WGIA-013`](tasks/tsk-0014-wgia-013.md)
-- [`TSK-0055-0015` — `WGIA-014`](tasks/tsk-0015-wgia-014.md)
+- [`SPEC-0055-TSK-0001` — `WGIA-000`](tasks/tsk-0001-wgia-000.md)
+- [`SPEC-0055-TSK-0002` — `WGIA-001`](tasks/tsk-0002-wgia-001.md)
+- [`SPEC-0055-TSK-0003` — `WGIA-002`](tasks/tsk-0003-wgia-002.md)
+- [`SPEC-0055-TSK-0004` — `WGIA-003`](tasks/tsk-0004-wgia-003.md)
+- [`SPEC-0055-TSK-0005` — `WGIA-004`](tasks/tsk-0005-wgia-004.md)
+- [`SPEC-0055-TSK-0006` — `WGIA-005`](tasks/tsk-0006-wgia-005.md)
+- [`SPEC-0055-TSK-0007` — `WGIA-006`](tasks/tsk-0007-wgia-006.md)
+- [`SPEC-0055-TSK-0008` — `WGIA-007`](tasks/tsk-0008-wgia-007.md)
+- [`SPEC-0055-TSK-0009` — `WGIA-008`](tasks/tsk-0009-wgia-008.md)
+- [`SPEC-0055-TSK-0010` — `WGIA-009`](tasks/tsk-0010-wgia-009.md)
+- [`SPEC-0055-TSK-0011` — `WGIA-010`](tasks/tsk-0011-wgia-010.md)
+- [`SPEC-0055-TSK-0012` — `WGIA-011`](tasks/tsk-0012-wgia-011.md)
+- [`SPEC-0055-TSK-0013` — `WGIA-012`](tasks/tsk-0013-wgia-012.md)
+- [`SPEC-0055-TSK-0014` — `WGIA-013`](tasks/tsk-0014-wgia-013.md)
+- [`SPEC-0055-TSK-0015` — `WGIA-014`](tasks/tsk-0015-wgia-014.md)
 
 ## Related Documents
 

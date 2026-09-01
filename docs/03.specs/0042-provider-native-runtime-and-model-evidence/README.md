@@ -19,12 +19,12 @@
 
 ## Task Records
 
-- [`TSK-0042-0001` — `PNME-000`](tasks/tsk-0001-pnme-000.md)
-- [`TSK-0042-0002` — `PNME-001`](tasks/tsk-0002-pnme-001.md)
-- [`TSK-0042-0003` — `PNME-002`](tasks/tsk-0003-pnme-002.md)
-- [`TSK-0042-0004` — `PNME-003`](tasks/tsk-0004-pnme-003.md)
-- [`TSK-0042-0005` — `PNME-004`](tasks/tsk-0005-pnme-004.md)
-- [`TSK-0042-0006` — `PNME-005`](tasks/tsk-0006-pnme-005.md)
+- [`SPEC-0042-TSK-0001` — `PNME-000`](tasks/tsk-0001-pnme-000.md)
+- [`SPEC-0042-TSK-0002` — `PNME-001`](tasks/tsk-0002-pnme-001.md)
+- [`SPEC-0042-TSK-0003` — `PNME-002`](tasks/tsk-0003-pnme-002.md)
+- [`SPEC-0042-TSK-0004` — `PNME-003`](tasks/tsk-0004-pnme-003.md)
+- [`SPEC-0042-TSK-0005` — `PNME-004`](tasks/tsk-0005-pnme-004.md)
+- [`SPEC-0042-TSK-0006` — `PNME-005`](tasks/tsk-0006-pnme-005.md)
 
 ## Related Documents
 

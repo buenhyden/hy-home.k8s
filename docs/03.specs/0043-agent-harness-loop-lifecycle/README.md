@@ -19,11 +19,11 @@
 
 ## Task Records
 
-- [`TSK-0043-0001` — `AHLL-000`](tasks/tsk-0001-ahll-000.md)
-- [`TSK-0043-0002` — `AHLL-001`](tasks/tsk-0002-ahll-001.md)
-- [`TSK-0043-0003` — `AHLL-002`](tasks/tsk-0003-ahll-002.md)
-- [`TSK-0043-0004` — `AHLL-003`](tasks/tsk-0004-ahll-003.md)
-- [`TSK-0043-0005` — `AHLL-004`](tasks/tsk-0005-ahll-004.md)
+- [`SPEC-0043-TSK-0001` — `AHLL-000`](tasks/tsk-0001-ahll-000.md)
+- [`SPEC-0043-TSK-0002` — `AHLL-001`](tasks/tsk-0002-ahll-001.md)
+- [`SPEC-0043-TSK-0003` — `AHLL-002`](tasks/tsk-0003-ahll-002.md)
+- [`SPEC-0043-TSK-0004` — `AHLL-003`](tasks/tsk-0004-ahll-003.md)
+- [`SPEC-0043-TSK-0005` — `AHLL-004`](tasks/tsk-0005-ahll-004.md)
 
 ## Related Documents
 

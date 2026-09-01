@@ -34,7 +34,7 @@ run only when it equals `"transition"`. None of them can execute.
 
 ## Strategic Boundaries & Non-goals
 
-In scope: the three residuals Task TSK-0054-0012 recorded, and only the owners
+In scope: the three residuals Task SPEC-0054-TSK-0012 recorded, and only the owners
 that state them.
 
 Not in scope: `_document_taxonomy_transition_manifest` and

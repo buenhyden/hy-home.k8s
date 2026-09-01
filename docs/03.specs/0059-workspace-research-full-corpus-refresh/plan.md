@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-08-17
-artifact_id: "PLAN-0059"
+artifact_id: "SPEC-0059-PLAN-0001"
 ---
 
 # Workspace Research Full-Corpus Refresh Plan (Plan)

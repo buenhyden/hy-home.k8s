@@ -19,10 +19,10 @@
 
 ## Task Records
 
-- [`TSK-0029-0001` — `SMDV-001`](tasks/tsk-0001-smdv-001.md)
-- [`TSK-0029-0002` — `SMDV-002`](tasks/tsk-0002-smdv-002.md)
-- [`TSK-0029-0003` — `SMDV-003`](tasks/tsk-0003-smdv-003.md)
-- [`TSK-0029-0004` — `SMDV-004`](tasks/tsk-0004-smdv-004.md)
+- [`SPEC-0029-TSK-0001` — `SMDV-001`](tasks/tsk-0001-smdv-001.md)
+- [`SPEC-0029-TSK-0002` — `SMDV-002`](tasks/tsk-0002-smdv-002.md)
+- [`SPEC-0029-TSK-0003` — `SMDV-003`](tasks/tsk-0003-smdv-003.md)
+- [`SPEC-0029-TSK-0004` — `SMDV-004`](tasks/tsk-0004-smdv-004.md)
 
 ## Related Documents
 

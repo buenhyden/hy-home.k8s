@@ -4,7 +4,7 @@ type: sdlc/task
 status: done
 owner: platform
 updated: 2026-08-31
-artifact_id: "TSK-0054-0003"
+artifact_id: "SPEC-0054-TSK-0003"
 ---
 
 # Task: Codex Claude-only AI agent governance
@@ -14,7 +14,7 @@ artifact_id: "TSK-0054-0003"
 This is the completed Spec 0054 WP-003 Task. The Codex/Claude registry
 and projection cutover, context/memory policy activation, cumulative lifecycle
 behavior, broad checks, and independent reviews are complete. The state-only
-handoff to TSK-0054-0007 is recorded in the same commit as this terminal state.
+handoff to SPEC-0054-TSK-0007 is recorded in the same commit as this terminal state.
 
 ## Inputs
 
@@ -106,7 +106,7 @@ restore Gemini/Antigravity surfaces.
   are clean after the thin-router correction. These are repository-static
   results and make no provider-runtime or hosted-CI claim.
 - WP-003 is terminally complete. Its handoff-time owner and compatibility
-  pointer were TSK-0054-0007; current execution has since advanced to the
+  pointer were SPEC-0054-TSK-0007; current execution has since advanced to the
   accepted Spec 0066 delegation without reopening this evidence.
 
 ## Traceability

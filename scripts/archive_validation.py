@@ -279,8 +279,8 @@ _WORK054_WP004B_MIGRATION_PATH = (
     "docs/98.archive/migrations/0004-document-authority-convergence.md"
 )
 MIGRATION_DOCUMENT_MAX_BYTES = 128 * 1024
-MIG0002_DOCUMENT_SHA256 = "67032c0b86acbee04a1e713053d164df2e99f4486df79df5161d53975fb82a7a"  # pragma: allowlist secret
-MIG0003_DOCUMENT_SHA256 = "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42"  # pragma: allowlist secret
+MIG0002_DOCUMENT_SHA256 = "05527226d8d353f57bac1b346aaa20f1ab1951eeea7f2f570b04dbcabd381265"  # pragma: allowlist secret
+MIG0003_DOCUMENT_SHA256 = "6dd85df46123bb7004b0abf0fc7cd1f1d81fcae5ea66f71f1f07ff1dba904ab2"  # pragma: allowlist secret
 MIG0004_SPEC0054_LEDGER = (
     "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks.md"
 )
@@ -434,7 +434,7 @@ _ARCHIVE_MIGRATION_CONTROLS = {
         "MIG-0001",
         93,
         {"moved": 93},
-        "4e62cb6ba2a394cd9ae546543c85a58c8f105cb5d1ff48cfd8dab8b8b1082206",  # pragma: allowlist secret -- sealed migration digest
+        "1a2f3264c380f93d435fedf4028a3fb2b843da377e99e2fd4b788dd37df45116",  # pragma: allowlist secret -- sealed migration digest
     ),
     _WORK109_MIGRATION_PATH: (
         "MIG-0002",
@@ -462,8 +462,20 @@ _MIGRATION_FRONTMATTER_KEYS = (
     "owner",
     "updated",
     "artifact_id",
-    "migration_id",
 )
+
+# Reviewed pre-cutover bytes of each pinned control. The retired `migration_id`
+# frontmatter key repeated `artifact_id`, so a control committed before that
+# retirement still parses -- against the legacy key tuple and only at these exact
+# digests. Any other byte string is rejected as before.
+_MIGRATION_LEGACY_BASE_SHA256 = {
+    WORK107_MIGRATION_PATH: "4e62cb6ba2a394cd9ae546543c85a58c8f105cb5d1ff48cfd8dab8b8b1082206",  # pragma: allowlist secret -- pre-cutover digest
+    _WORK109_MIGRATION_PATH: "67032c0b86acbee04a1e713053d164df2e99f4486df79df5161d53975fb82a7a",  # pragma: allowlist secret -- pre-cutover digest
+    _WORK054_WP003_MIGRATION_PATH: "51fe8d35febac457e562f997a711ce152a98cda67b3aec2ccd8ed08bd3ac3d42",  # pragma: allowlist secret -- pre-cutover digest
+    _WORK054_WP004B_MIGRATION_PATH: "503a65a5897301be651217fcc48def5351809f272d9af510f10621f2ec2d1fe6",  # pragma: allowlist secret -- pre-cutover digest
+}
+_LEGACY_MIGRATION_FRONTMATTER_KEYS = _MIGRATION_FRONTMATTER_KEYS + ("migration_id",)
+
 
 _GENERIC_MIGRATION_PATH = re.compile(
     r"docs/98\.archive/migrations/(?P<number>[0-9]{4})-[a-z0-9]+(?:-[a-z0-9]+)*\.md\Z"
@@ -692,7 +704,6 @@ def parse_migration_control(
         if (
             metadata.get("status") != "sealed"
             or metadata.get("artifact_id") != identity
-            or metadata.get("migration_id") != identity
         ):
             raise ValueError
         rows = _migration_json(content, _MIGRATION_LEDGER_PREFIX)
@@ -1771,10 +1782,18 @@ def _migration_control_diagnostics(
             return ()
         return (_diagnostic("ARCHIVE-MIGRATION-CONTROL", path),)
     expected_id, expected_rows, expected_actions, expected_sha256 = contract
+    digest = hashlib.sha256(content).hexdigest()
+    is_legacy_base = digest == _MIGRATION_LEGACY_BASE_SHA256.get(path)
+    expected_keys = (
+        _LEGACY_MIGRATION_FRONTMATTER_KEYS
+        if is_legacy_base
+        else _MIGRATION_FRONTMATTER_KEYS
+    )
     try:
         if (
             expected_sha256 is not None
-            and hashlib.sha256(content).hexdigest() != expected_sha256
+            and digest != expected_sha256
+            and not is_legacy_base
         ):
             raise ValueError
         text = content.decode("utf-8", errors="strict")
@@ -1791,13 +1810,12 @@ def _migration_control_diagnostics(
                 raise ValueError
             metadata[key] = value[1:-1]
         if (
-            tuple(metadata) != _MIGRATION_FRONTMATTER_KEYS
+            tuple(metadata) != expected_keys
             or metadata.get("type") != "content/archive-migration"
             or metadata.get("status")
             != ("sealed" if path == _WORK054_WP004B_MIGRATION_PATH else "accepted")
             or metadata.get("owner") != "platform"
             or metadata.get("artifact_id") != expected_id
-            or metadata.get("migration_id") != expected_id
             or not metadata.get("title", "").startswith(f"{expected_id}: ")
             or re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", metadata.get("updated", ""))
             is None
@@ -2615,7 +2633,7 @@ def _validate_mig0004_rows_and_targets(
                     "RECOVERY-MIGRATION-TASK", "Task path differs"
                 )
             spec = PurePosixPath(package).name[:4]
-            artifact = f"TSK-{spec}-{match.group('sequence')}"
+            artifact = f"SPEC-{spec}-TSK-{match.group('sequence')}"
             task_artifacts[relative] = artifact
     if len(task_artifacts) != len(set(task_artifacts.values())):
         raise ArchiveContractError(

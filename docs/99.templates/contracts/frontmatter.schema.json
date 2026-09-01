@@ -35,10 +35,6 @@
     "artifact_id": {
       "$ref": "#/$defs/artifactId"
     },
-    "change_id": {
-      "type": "string",
-      "pattern": "^CHG-[0-9]{4}$"
-    },
     "original_artifact_id": {
       "$ref": "#/$defs/artifactId"
     },
@@ -75,10 +71,6 @@
     "content_sha256": {
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
-    },
-    "migration_id": {
-      "type": "string",
-      "pattern": "^MIG-[0-9]{4}$"
     }
   },
   "$defs": {
@@ -97,13 +89,17 @@
     "artifactId": {
       "description": "Terminal identities plus the finite pre-WP-004 transition projection. New identities must use terminalArtifactId.",
       "oneOf": [
-        {"$ref": "#/$defs/terminalArtifactId"},
-        {"$ref": "#/$defs/transitionArtifactId"}
+        {
+          "$ref": "#/$defs/terminalArtifactId"
+        },
+        {
+          "$ref": "#/$defs/transitionArtifactId"
+        }
       ]
     },
     "terminalArtifactId": {
       "type": "string",
-      "pattern": "^(?:(?:REQ|AD|ADR|SPEC|PLAN|GDE|POL|RUN|RES|AUD|DATA|MIG)-[0-9]{4}|TSK-[0-9]{4}-[0-9]{4}|(?:INC|POSTMORTEM)-[0-9]{4}-[0-9]{4}|TMB-[A-Z]+(?:-[A-Z]+)*-[A-Z0-9]+(?:-[A-Z0-9]+)*)$"
+      "pattern": "^(?:(?:REQ|AD|ADR|SPEC|GDE|POL|RUN|MIG)-[0-9]{4}|SPEC-[0-9]{4}-(?:PLAN|TSK)-[0-9]{4}|inc-[0-9]{4}-[0-9]{4}(?:-PM)?|TMB-[A-Z]+(?:-[A-Z]+)*-[A-Z0-9]+(?:-[A-Z0-9]+)*)$"
     },
     "requirementMemberId": {
       "type": "string",

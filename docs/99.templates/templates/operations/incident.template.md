@@ -4,7 +4,7 @@ type: sdlc/incident
 status: open
 owner: platform
 updated: YYYY-MM-DD
-artifact_id: "INC-YYYY-####"
+artifact_id: "inc-YYYY-NNNN"
 ---
 
 # Incident: [Incident Title]

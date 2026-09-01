@@ -128,9 +128,9 @@ execution links, or duplicate roster authority fail closed.
 During the bounded transition before instance rosters are removed, the one
 existing Spec 0054 `standaloneExecutions` row may follow the current parent
 Task. It never points at Spec 0066 and never authorizes child execution. The
-parent handoff rotates that row to TSK-0054-0010, activation rotates it to
-TSK-0054-0011, and terminal parent handoff rotates it to queued
-TSK-0054-0013 before that Task activates. Each rotation is atomic with the
+parent handoff rotates that row to SPEC-0054-TSK-0010, activation rotates it to
+SPEC-0054-TSK-0011, and terminal parent handoff rotates it to queued
+SPEC-0054-TSK-0013 before that Task activates. Each rotation is atomic with the
 corresponding legal Task transition. WP-013 removes the compatibility row and
 its consumers after the package-local rule is current.
 

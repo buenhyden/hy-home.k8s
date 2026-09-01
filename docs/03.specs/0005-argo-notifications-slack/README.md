@@ -19,11 +19,11 @@
 
 ## Task Records
 
-- [`TSK-0005-0001` — `NOTIF-T-001`](tasks/tsk-0001-notif-t-001.md)
-- [`TSK-0005-0002` — `NOTIF-T-002`](tasks/tsk-0002-notif-t-002.md)
-- [`TSK-0005-0003` — `NOTIF-T-003`](tasks/tsk-0003-notif-t-003.md)
-- [`TSK-0005-0004` — `NOTIF-T-004`](tasks/tsk-0004-notif-t-004.md)
-- [`TSK-0005-0005` — `NOTIF-T-005`](tasks/tsk-0005-notif-t-005.md)
+- [`SPEC-0005-TSK-0001` — `NOTIF-T-001`](tasks/tsk-0001-notif-t-001.md)
+- [`SPEC-0005-TSK-0002` — `NOTIF-T-002`](tasks/tsk-0002-notif-t-002.md)
+- [`SPEC-0005-TSK-0003` — `NOTIF-T-003`](tasks/tsk-0003-notif-t-003.md)
+- [`SPEC-0005-TSK-0004` — `NOTIF-T-004`](tasks/tsk-0004-notif-t-004.md)
+- [`SPEC-0005-TSK-0005` — `NOTIF-T-005`](tasks/tsk-0005-notif-t-005.md)
 
 ## Related Documents
 

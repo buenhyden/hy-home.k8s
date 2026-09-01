@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-13
-artifact_id: "PLAN-0005"
+artifact_id: "SPEC-0005-PLAN-0001"
 ---
 
 # Argo Notifications Slack Backfill Plan

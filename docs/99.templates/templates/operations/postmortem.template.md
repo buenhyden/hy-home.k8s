@@ -4,7 +4,7 @@ type: sdlc/postmortem
 status: draft
 owner: platform
 updated: YYYY-MM-DD
-artifact_id: "POSTMORTEM-YYYY-####"
+artifact_id: "inc-YYYY-NNNN-PM"
 ---
 
 # Postmortem: [Incident Title]

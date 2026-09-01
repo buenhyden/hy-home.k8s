@@ -1,13 +1,13 @@
 ---
-title: "TSK-0047-0004: VAL-CSASR-004, VAL-CSASR-006, VAL-CSASR-007"
+title: "SPEC-0047-TSK-0004: VAL-CSASR-004, VAL-CSASR-006, VAL-CSASR-007"
 type: sdlc/task
 status: queued
 owner: platform
 updated: 2026-08-07
-artifact_id: "TSK-0047-0004"
+artifact_id: "SPEC-0047-TSK-0004"
 ---
 
-# TSK-0047-0004: VAL-CSASR-004, VAL-CSASR-006, VAL-CSASR-007
+# SPEC-0047-TSK-0004: VAL-CSASR-004, VAL-CSASR-006, VAL-CSASR-007
 
 ## Overview
 
@@ -42,7 +42,7 @@ shared verification context is in the
 
 ## Traceability
 
-- Stable Task: `TSK-0047-0004`
+- Stable Task: `SPEC-0047-TSK-0004`
 - Legacy work item: `CSASR-003`
 
 ### Lifecycle Traceability

@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-14
-artifact_id: "PLAN-0024"
+artifact_id: "SPEC-0024-PLAN-0001"
 ---
 
 # Observability and Network Review Agents Implementation Plan

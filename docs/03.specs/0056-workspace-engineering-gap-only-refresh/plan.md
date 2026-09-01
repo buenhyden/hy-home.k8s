@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-08-10
-artifact_id: "PLAN-0056"
+artifact_id: "SPEC-0056-PLAN-0001"
 ---
 
 # Workspace Engineering Gap-only Research Refresh Implementation Plan

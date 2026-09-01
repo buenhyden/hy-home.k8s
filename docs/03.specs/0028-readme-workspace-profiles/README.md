@@ -19,12 +19,12 @@
 
 ## Task Records
 
-- [`TSK-0028-0001` — `RWP-001`](tasks/tsk-0001-rwp-001.md)
-- [`TSK-0028-0002` — `RWP-002`](tasks/tsk-0002-rwp-002.md)
-- [`TSK-0028-0003` — `RWP-003`](tasks/tsk-0003-rwp-003.md)
-- [`TSK-0028-0004` — `RWP-004`](tasks/tsk-0004-rwp-004.md)
-- [`TSK-0028-0005` — `RWP-005`](tasks/tsk-0005-rwp-005.md)
-- [`TSK-0028-0006` — `RWP-006`](tasks/tsk-0006-rwp-006.md)
+- [`SPEC-0028-TSK-0001` — `RWP-001`](tasks/tsk-0001-rwp-001.md)
+- [`SPEC-0028-TSK-0002` — `RWP-002`](tasks/tsk-0002-rwp-002.md)
+- [`SPEC-0028-TSK-0003` — `RWP-003`](tasks/tsk-0003-rwp-003.md)
+- [`SPEC-0028-TSK-0004` — `RWP-004`](tasks/tsk-0004-rwp-004.md)
+- [`SPEC-0028-TSK-0005` — `RWP-005`](tasks/tsk-0005-rwp-005.md)
+- [`SPEC-0028-TSK-0006` — `RWP-006`](tasks/tsk-0006-rwp-006.md)
 
 ## Related Documents
 

@@ -19,11 +19,11 @@
 
 ## Task Records
 
-- [`TSK-0026-0001` — `DCR-001`](tasks/tsk-0001-dcr-001.md)
-- [`TSK-0026-0002` — `DCR-002`](tasks/tsk-0002-dcr-002.md)
-- [`TSK-0026-0003` — `DCR-003`](tasks/tsk-0003-dcr-003.md)
-- [`TSK-0026-0004` — `DCR-004`](tasks/tsk-0004-dcr-004.md)
-- [`TSK-0026-0005` — `DCR-005`](tasks/tsk-0005-dcr-005.md)
+- [`SPEC-0026-TSK-0001` — `DCR-001`](tasks/tsk-0001-dcr-001.md)
+- [`SPEC-0026-TSK-0002` — `DCR-002`](tasks/tsk-0002-dcr-002.md)
+- [`SPEC-0026-TSK-0003` — `DCR-003`](tasks/tsk-0003-dcr-003.md)
+- [`SPEC-0026-TSK-0004` — `DCR-004`](tasks/tsk-0004-dcr-004.md)
+- [`SPEC-0026-TSK-0005` — `DCR-005`](tasks/tsk-0005-dcr-005.md)
 
 ## Related Documents
 

@@ -19,12 +19,12 @@
 
 ## Task Records
 
-- [`TSK-0056-0001` — `WERG-000`](tasks/tsk-0001-werg-000.md)
-- [`TSK-0056-0002` — `WERG-001`](tasks/tsk-0002-werg-001.md)
-- [`TSK-0056-0003` — `WERG-002`](tasks/tsk-0003-werg-002.md)
-- [`TSK-0056-0004` — `WERG-003`](tasks/tsk-0004-werg-003.md)
-- [`TSK-0056-0005` — `WERG-004`](tasks/tsk-0005-werg-004.md)
-- [`TSK-0056-0006` — `WERG-005`](tasks/tsk-0006-werg-005.md)
+- [`SPEC-0056-TSK-0001` — `WERG-000`](tasks/tsk-0001-werg-000.md)
+- [`SPEC-0056-TSK-0002` — `WERG-001`](tasks/tsk-0002-werg-001.md)
+- [`SPEC-0056-TSK-0003` — `WERG-002`](tasks/tsk-0003-werg-002.md)
+- [`SPEC-0056-TSK-0004` — `WERG-003`](tasks/tsk-0004-werg-003.md)
+- [`SPEC-0056-TSK-0005` — `WERG-004`](tasks/tsk-0005-werg-004.md)
+- [`SPEC-0056-TSK-0006` — `WERG-005`](tasks/tsk-0006-werg-005.md)
 
 ## Related Documents
 

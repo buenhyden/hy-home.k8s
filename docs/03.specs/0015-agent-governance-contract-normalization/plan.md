@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-14
-artifact_id: "PLAN-0015"
+artifact_id: "SPEC-0015-PLAN-0001"
 ---
 
 # Agent Governance Contract Normalization Implementation Plan

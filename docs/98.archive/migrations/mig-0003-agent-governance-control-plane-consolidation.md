@@ -5,7 +5,6 @@ status: "accepted"
 owner: "platform"
 updated: "2026-08-14"
 artifact_id: "MIG-0003"
-migration_id: "MIG-0003"
 ---
 
 # MIG-0003: Agent Governance Control Plane Consolidation

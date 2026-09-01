@@ -19,12 +19,12 @@
 
 ## Task Records
 
-- [`TSK-0046-0001` — `AGPC-000`](tasks/tsk-0001-agpc-000.md)
-- [`TSK-0046-0002` — `AGPC-001`](tasks/tsk-0002-agpc-001.md)
-- [`TSK-0046-0003` — `AGPC-002`](tasks/tsk-0003-agpc-002.md)
-- [`TSK-0046-0004` — `AGPC-003`](tasks/tsk-0004-agpc-003.md)
-- [`TSK-0046-0005` — `AGPC-004`](tasks/tsk-0005-agpc-004.md)
-- [`TSK-0046-0006` — `AGPC-005`](tasks/tsk-0006-agpc-005.md)
+- [`SPEC-0046-TSK-0001` — `AGPC-000`](tasks/tsk-0001-agpc-000.md)
+- [`SPEC-0046-TSK-0002` — `AGPC-001`](tasks/tsk-0002-agpc-001.md)
+- [`SPEC-0046-TSK-0003` — `AGPC-002`](tasks/tsk-0003-agpc-002.md)
+- [`SPEC-0046-TSK-0004` — `AGPC-003`](tasks/tsk-0004-agpc-003.md)
+- [`SPEC-0046-TSK-0005` — `AGPC-004`](tasks/tsk-0005-agpc-004.md)
+- [`SPEC-0046-TSK-0006` — `AGPC-005`](tasks/tsk-0006-agpc-005.md)
 
 ## Related Documents
 

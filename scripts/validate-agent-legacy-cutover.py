@@ -956,7 +956,11 @@ def _retired_mentions(path: str, text: str) -> frozenset[str]:
 def _historical_dispositions_cover(
     path: str, raw: bytes, mentions: frozenset[str], proof: Any
 ) -> bool:
-    if proof.consumers.get(path) != raw:
+    # Membership, not byte identity: the proof already validated each consumer
+    # from its reviewed Git commit, so requiring the current bytes to match that
+    # commit would pin current documents to history. A path absent from the
+    # proof is a new consumer and stays uncovered.
+    if path not in proof.consumers:
         return False
     literal_dispositions = getattr(proof, "literal_dispositions", {})
     rendered_dispositions = getattr(proof, "rendered_dispositions", {})

@@ -19,12 +19,12 @@
 
 ## Task Records
 
-- [`TSK-0051-0001` — `RAIC-000`](tasks/tsk-0001-raic-000.md)
-- [`TSK-0051-0002` — `RAIC-001`](tasks/tsk-0002-raic-001.md)
-- [`TSK-0051-0003` — `RAIC-002`](tasks/tsk-0003-raic-002.md)
-- [`TSK-0051-0004` — `RAIC-003`](tasks/tsk-0004-raic-003.md)
-- [`TSK-0051-0005` — `RAIC-004`](tasks/tsk-0005-raic-004.md)
-- [`TSK-0051-0006` — `RAIC-005`](tasks/tsk-0006-raic-005.md)
+- [`SPEC-0051-TSK-0001` — `RAIC-000`](tasks/tsk-0001-raic-000.md)
+- [`SPEC-0051-TSK-0002` — `RAIC-001`](tasks/tsk-0002-raic-001.md)
+- [`SPEC-0051-TSK-0003` — `RAIC-002`](tasks/tsk-0003-raic-002.md)
+- [`SPEC-0051-TSK-0004` — `RAIC-003`](tasks/tsk-0004-raic-003.md)
+- [`SPEC-0051-TSK-0005` — `RAIC-004`](tasks/tsk-0005-raic-004.md)
+- [`SPEC-0051-TSK-0006` — `RAIC-005`](tasks/tsk-0006-raic-005.md)
 
 ## Related Documents
 

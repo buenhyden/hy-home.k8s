@@ -19,11 +19,11 @@
 
 ## Task Records
 
-- [`TSK-0040-0001` — `CCPC-000`](tasks/tsk-0001-ccpc-000.md)
-- [`TSK-0040-0002` — `CCPC-001`](tasks/tsk-0002-ccpc-001.md)
-- [`TSK-0040-0003` — `CCPC-002`](tasks/tsk-0003-ccpc-002.md)
-- [`TSK-0040-0004` — `CCPC-003`](tasks/tsk-0004-ccpc-003.md)
-- [`TSK-0040-0005` — `CCPC-004`](tasks/tsk-0005-ccpc-004.md)
+- [`SPEC-0040-TSK-0001` — `CCPC-000`](tasks/tsk-0001-ccpc-000.md)
+- [`SPEC-0040-TSK-0002` — `CCPC-001`](tasks/tsk-0002-ccpc-001.md)
+- [`SPEC-0040-TSK-0003` — `CCPC-002`](tasks/tsk-0003-ccpc-002.md)
+- [`SPEC-0040-TSK-0004` — `CCPC-003`](tasks/tsk-0004-ccpc-003.md)
+- [`SPEC-0040-TSK-0005` — `CCPC-004`](tasks/tsk-0005-ccpc-004.md)
 
 ## Related Documents
 

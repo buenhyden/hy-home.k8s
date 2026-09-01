@@ -122,7 +122,7 @@ REQ-0001-IF-0001
 ```
 
 Task identity is `TSK-<SPEC-NUMBER>-<TASK-SEQUENCE>`, such as
-`TSK-0054-0001`. IDs are never reused. Cross-document traceability uses full
+`SPEC-0054-TSK-0001`. IDs are never reused. Cross-document traceability uses full
 IDs. Path numbers, parent package numbers, frontmatter IDs, and internal
 member IDs must agree.
 

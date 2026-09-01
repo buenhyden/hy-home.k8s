@@ -5,7 +5,6 @@ status: "sealed"
 owner: "platform"
 updated: "2026-08-30"
 artifact_id: "MIG-0006"
-migration_id: "MIG-0006"
 ---
 
 # MIG-0006: Unroutable Reference Profile Retirement

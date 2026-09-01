@@ -4,7 +4,7 @@ type: sdlc/task
 status: done
 owner: platform
 updated: 2026-08-31
-artifact_id: "TSK-0054-0007"
+artifact_id: "SPEC-0054-TSK-0007"
 ---
 
 # Task: Stage 90 disposition ledger
@@ -12,7 +12,7 @@ artifact_id: "TSK-0054-0007"
 ## Overview
 
 This is the completed Spec 0054 Task record for WP-007. The state-only handoff
-to TSK-0054-0008 is recorded with this terminal state.
+to SPEC-0054-TSK-0008 is recorded with this terminal state.
 
 ## Inputs
 

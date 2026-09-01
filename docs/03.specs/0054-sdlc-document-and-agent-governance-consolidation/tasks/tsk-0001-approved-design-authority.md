@@ -4,7 +4,7 @@ type: sdlc/task
 status: done
 owner: platform
 updated: 2026-08-22
-artifact_id: "TSK-0054-0001"
+artifact_id: "SPEC-0054-TSK-0001"
 ---
 
 # Task: Approved design authority

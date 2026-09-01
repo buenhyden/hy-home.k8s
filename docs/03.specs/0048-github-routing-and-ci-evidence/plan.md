@@ -4,7 +4,7 @@ type: sdlc/plan
 status: draft
 owner: platform
 updated: 2026-08-02
-artifact_id: "PLAN-0048"
+artifact_id: "SPEC-0048-PLAN-0001"
 ---
 
 # GitHub Routing and CI Evidence Implementation Plan

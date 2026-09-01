@@ -5,7 +5,6 @@ status: "sealed"
 owner: "platform"
 updated: "2026-08-30"
 artifact_id: "MIG-0007"
-migration_id: "MIG-0007"
 ---
 
 # MIG-0007: Agent Progress Ledger Retirement

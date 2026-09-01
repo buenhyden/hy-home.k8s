@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-14
-artifact_id: "PLAN-0022"
+artifact_id: "SPEC-0022-PLAN-0001"
 ---
 
 # Control Surface and Cloud Example Documentation Normalization Implementation Plan

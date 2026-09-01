@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-08-18
-artifact_id: "PLAN-0061"
+artifact_id: "SPEC-0061-PLAN-0001"
 ---
 
 # Workload Security Context Baseline Plan (Plan)

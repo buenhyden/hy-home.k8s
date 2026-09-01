@@ -19,13 +19,13 @@
 
 ## Task Records
 
-- [`TSK-0045-0001` — `AGQC-000`](tasks/tsk-0001-agqc-000.md)
-- [`TSK-0045-0002` — `AGQC-001`](tasks/tsk-0002-agqc-001.md)
-- [`TSK-0045-0003` — `AGQC-002`](tasks/tsk-0003-agqc-002.md)
-- [`TSK-0045-0004` — `AGQC-003`](tasks/tsk-0004-agqc-003.md)
-- [`TSK-0045-0005` — `AGQC-004`](tasks/tsk-0005-agqc-004.md)
-- [`TSK-0045-0006` — `AGQC-005`](tasks/tsk-0006-agqc-005.md)
-- [`TSK-0045-0007` — `AGQC-006`](tasks/tsk-0007-agqc-006.md)
+- [`SPEC-0045-TSK-0001` — `AGQC-000`](tasks/tsk-0001-agqc-000.md)
+- [`SPEC-0045-TSK-0002` — `AGQC-001`](tasks/tsk-0002-agqc-001.md)
+- [`SPEC-0045-TSK-0003` — `AGQC-002`](tasks/tsk-0003-agqc-002.md)
+- [`SPEC-0045-TSK-0004` — `AGQC-003`](tasks/tsk-0004-agqc-003.md)
+- [`SPEC-0045-TSK-0005` — `AGQC-004`](tasks/tsk-0005-agqc-004.md)
+- [`SPEC-0045-TSK-0006` — `AGQC-005`](tasks/tsk-0006-agqc-005.md)
+- [`SPEC-0045-TSK-0007` — `AGQC-006`](tasks/tsk-0007-agqc-006.md)
 
 ## Related Documents
 

@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-29
-artifact_id: "PLAN-0042"
+artifact_id: "SPEC-0042-PLAN-0001"
 ---
 
 # Provider-Native Runtime and Model Evidence Implementation Plan

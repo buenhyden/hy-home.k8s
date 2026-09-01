@@ -19,14 +19,14 @@
 
 ## Task Records
 
-- [`TSK-0030-0001` — `ADM-001`](tasks/tsk-0001-adm-001.md)
-- [`TSK-0030-0002` — `ADM-002`](tasks/tsk-0002-adm-002.md)
-- [`TSK-0030-0003` — `ADM-003`](tasks/tsk-0003-adm-003.md)
-- [`TSK-0030-0004` — `ADM-004`](tasks/tsk-0004-adm-004.md)
-- [`TSK-0030-0005` — `ADM-005`](tasks/tsk-0005-adm-005.md)
-- [`TSK-0030-0006` — `ADM-006`](tasks/tsk-0006-adm-006.md)
-- [`TSK-0030-0007` — `ADM-006C`](tasks/tsk-0007-adm-006c.md)
-- [`TSK-0030-0008` — `ADM-007`](tasks/tsk-0008-adm-007.md)
+- [`SPEC-0030-TSK-0001` — `ADM-001`](tasks/tsk-0001-adm-001.md)
+- [`SPEC-0030-TSK-0002` — `ADM-002`](tasks/tsk-0002-adm-002.md)
+- [`SPEC-0030-TSK-0003` — `ADM-003`](tasks/tsk-0003-adm-003.md)
+- [`SPEC-0030-TSK-0004` — `ADM-004`](tasks/tsk-0004-adm-004.md)
+- [`SPEC-0030-TSK-0005` — `ADM-005`](tasks/tsk-0005-adm-005.md)
+- [`SPEC-0030-TSK-0006` — `ADM-006`](tasks/tsk-0006-adm-006.md)
+- [`SPEC-0030-TSK-0007` — `ADM-006C`](tasks/tsk-0007-adm-006c.md)
+- [`SPEC-0030-TSK-0008` — `ADM-007`](tasks/tsk-0008-adm-007.md)
 
 ## Related Documents
 

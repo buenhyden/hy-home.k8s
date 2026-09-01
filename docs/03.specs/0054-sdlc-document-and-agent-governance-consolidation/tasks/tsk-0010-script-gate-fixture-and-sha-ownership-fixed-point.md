@@ -4,7 +4,7 @@ type: sdlc/task
 status: done
 owner: platform
 updated: 2026-09-01
-artifact_id: "TSK-0054-0010"
+artifact_id: "SPEC-0054-TSK-0010"
 ---
 
 # Task: Script, gate, fixture, and SHA ownership fixed point
@@ -33,7 +33,7 @@ claim the validation-tooling implementation delegated to Spec 0066.
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-054-010 | VAL-SDLC-010..VAL-SDLC-012 | Own the reviewed ADR/lifecycle activation index, establish package-local delegated-component validation, and transfer WP-010/WP-011 execution to Spec 0066 without executing the delegated tooling work. | platform | Done | Accepted ADR-0031, reconciled its predecessor and scoped-amendment relations, established delegated-component validation, and transferred execution to active Spec 0066 while preserving parent acceptance ownership. No delegated tooling implementation is claimed. | WP-006 cutover commit `b8d35ff`; WP-008 cutover commit `124ef61`; exact-index activation gates; eight focused delegated-ownership cases; legal state transitions; parent compatibility-pointer rotation; transfer relation to `TSK-0066-0001` |
+| WORK-054-010 | VAL-SDLC-010..VAL-SDLC-012 | Own the reviewed ADR/lifecycle activation index, establish package-local delegated-component validation, and transfer WP-010/WP-011 execution to Spec 0066 without executing the delegated tooling work. | platform | Done | Accepted ADR-0031, reconciled its predecessor and scoped-amendment relations, established delegated-component validation, and transferred execution to active Spec 0066 while preserving parent acceptance ownership. No delegated tooling implementation is claimed. | WP-006 cutover commit `b8d35ff`; WP-008 cutover commit `124ef61`; exact-index activation gates; eight focused delegated-ownership cases; legal state transitions; parent compatibility-pointer rotation; transfer relation to `SPEC-0066-TSK-0001` |
 
 ## Approval and Safety Boundaries
 
@@ -54,7 +54,7 @@ reciprocity, proposed-only authority, multiple parents, foreign Plan/Task
 links, state mismatch, and duplicate child authority.
 
 The same index activated Spec/Plan/Task 0066, moved the parent compatibility
-pointer to TSK-0054-0011, completed this Task, and activated TSK-0054-0011 as
+pointer to SPEC-0054-TSK-0011, completed this Task, and activated SPEC-0054-TSK-0011 as
 the sole parent acceptance owner. It created no Spec 0066 standalone row and
 did not change the Stage 99 lifecycle domain, schema, or projection. Spec 0066
 now owns detailed implementation and evidence; this Task claims none of that
@@ -75,4 +75,4 @@ Repository-static activation evidence:
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-054-010](../plan.md#wp-010--script-gate-fixture-and-sha-ownership-fixed-point) | Done; activation transaction complete. | Completed WP-006/WP-008 evidence, eight focused delegated-ownership cases, active `TSK-0066-0001`, [Current Spec Index](../../README.md#current-spec-index), and accepted [ADR-0031](../../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md) |
+| [WORK-054-010](../plan.md#wp-010--script-gate-fixture-and-sha-ownership-fixed-point) | Done; activation transaction complete. | Completed WP-006/WP-008 evidence, eight focused delegated-ownership cases, active `SPEC-0066-TSK-0001`, [Current Spec Index](../../README.md#current-spec-index), and accepted [ADR-0031](../../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md) |

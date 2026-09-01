@@ -19,10 +19,10 @@
 
 ## Task Records
 
-- [`TSK-0061-0001` — `WSCB-001`](tasks/tsk-0001-wscb-001.md)
-- [`TSK-0061-0002` — `WSCB-002`](tasks/tsk-0002-wscb-002.md)
-- [`TSK-0061-0003` — `WSCB-003`](tasks/tsk-0003-wscb-003.md)
-- [`TSK-0061-0004` — `WSCB-004`](tasks/tsk-0004-wscb-004.md)
+- [`SPEC-0061-TSK-0001` — `WSCB-001`](tasks/tsk-0001-wscb-001.md)
+- [`SPEC-0061-TSK-0002` — `WSCB-002`](tasks/tsk-0002-wscb-002.md)
+- [`SPEC-0061-TSK-0003` — `WSCB-003`](tasks/tsk-0003-wscb-003.md)
+- [`SPEC-0061-TSK-0004` — `WSCB-004`](tasks/tsk-0004-wscb-004.md)
 
 ## Related Documents
 

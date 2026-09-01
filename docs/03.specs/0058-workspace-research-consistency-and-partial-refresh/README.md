@@ -19,14 +19,14 @@
 
 ## Task Records
 
-- [`TSK-0058-0001` — `WRCP-000`](tasks/tsk-0001-wrcp-000.md)
-- [`TSK-0058-0002` — `WRCP-001`](tasks/tsk-0002-wrcp-001.md)
-- [`TSK-0058-0003` — `WRCP-002`](tasks/tsk-0003-wrcp-002.md)
-- [`TSK-0058-0004` — `WRCP-003`](tasks/tsk-0004-wrcp-003.md)
-- [`TSK-0058-0005` — `WRCP-004`](tasks/tsk-0005-wrcp-004.md)
-- [`TSK-0058-0006` — `WRCP-005`](tasks/tsk-0006-wrcp-005.md)
-- [`TSK-0058-0007` — `WRCP-006`](tasks/tsk-0007-wrcp-006.md)
-- [`TSK-0058-0008` — `WRCP-007`](tasks/tsk-0008-wrcp-007.md)
+- [`SPEC-0058-TSK-0001` — `WRCP-000`](tasks/tsk-0001-wrcp-000.md)
+- [`SPEC-0058-TSK-0002` — `WRCP-001`](tasks/tsk-0002-wrcp-001.md)
+- [`SPEC-0058-TSK-0003` — `WRCP-002`](tasks/tsk-0003-wrcp-002.md)
+- [`SPEC-0058-TSK-0004` — `WRCP-003`](tasks/tsk-0004-wrcp-003.md)
+- [`SPEC-0058-TSK-0005` — `WRCP-004`](tasks/tsk-0005-wrcp-004.md)
+- [`SPEC-0058-TSK-0006` — `WRCP-005`](tasks/tsk-0006-wrcp-005.md)
+- [`SPEC-0058-TSK-0007` — `WRCP-006`](tasks/tsk-0007-wrcp-006.md)
+- [`SPEC-0058-TSK-0008` — `WRCP-007`](tasks/tsk-0008-wrcp-007.md)
 
 ## Related Documents
 

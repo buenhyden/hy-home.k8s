@@ -4,7 +4,7 @@ type: sdlc/plan
 status: draft
 owner: platform
 updated: 2026-09-01
-artifact_id: "PLAN-0067"
+artifact_id: "SPEC-0067-PLAN-0001"
 ---
 
 # Artifact Identity and Filename Normalization Implementation Plan
@@ -66,8 +66,8 @@ identity at all, and tombstone identity is a content digest that
 | WP-004 | Introduce Stage 90 pack member identity | WP-001 | Every pack member presents a unique member identity within its pack |
 | WP-005 | Move Stage 98 tombstone identity and its derivation owner | WP-001 | Derivation emits the parent-derived identity, collisions fail closed, and recovery still proves the pinned legacy tree |
 | WP-006 | Normalize numbered leaf filenames | WP-002, WP-004, WP-005 | Numbered leaf filenames begin with their number, the two authoring prefixes are preserved, and Git recognizes renames |
-| WP-007 | Update Stage 99 templates to the target authoring forms | WP-002, WP-003, WP-004, WP-005 | Each template presents its stage's identity form; no template restates a validator rule |
-| WP-008 | Retire legacy and deprecated identity forms and reconcile prose references | WP-002..WP-007 | No current document, validator, test, or contract names a retired form outside a sealed payload |
+| WP-007 | Update Stage 99 templates to the target authoring forms | WP-002, WP-003, WP-004, WP-005 | Each template presents its stage's identity form and domain key as placeholders under one frontmatter guide; no template restates a validator rule |
+| WP-008 | Retire legacy and deprecated identity forms, remove identifiers from titles, and reconcile prose references | WP-002..WP-007 | No current document, validator, test, or contract names a retired form outside a sealed payload, and no title repeats its own identifier |
 | WP-009 | Sweep for drift between owner, template, corpus, and test, then complete the ordered validation sequence | All | One owner per pattern, no second constant, and the complete ordered sequence passes over the final bytes |
 
 ## Verification Plan
@@ -104,16 +104,18 @@ move to their terminal states.
 
 | Spec criterion | Work package | Expected Task |
 | --- | --- | --- |
-| [VAL-AIF-001](spec.md#success-criteria--verification-plan) | WP-001 | [TSK-0067-0001](tasks/tsk-0001-aif-000.md) |
-| [VAL-AIF-002](spec.md#success-criteria--verification-plan) | WP-002 | [TSK-0067-0001](tasks/tsk-0001-aif-000.md) |
-| [VAL-AIF-003](spec.md#success-criteria--verification-plan) | WP-003 | [TSK-0067-0001](tasks/tsk-0001-aif-000.md) |
-| [VAL-AIF-004](spec.md#success-criteria--verification-plan) | WP-004 | [TSK-0067-0001](tasks/tsk-0001-aif-000.md) |
-| [VAL-AIF-005](spec.md#success-criteria--verification-plan) | WP-005 | [TSK-0067-0001](tasks/tsk-0001-aif-000.md) |
-| [VAL-AIF-006](spec.md#success-criteria--verification-plan) | WP-006 | [TSK-0067-0001](tasks/tsk-0001-aif-000.md) |
-| [VAL-AIF-007](spec.md#success-criteria--verification-plan) | WP-001, WP-006 | [TSK-0067-0001](tasks/tsk-0001-aif-000.md) |
-| [VAL-AIF-008](spec.md#success-criteria--verification-plan) | WP-007 | [TSK-0067-0001](tasks/tsk-0001-aif-000.md) |
-| [VAL-AIF-009](spec.md#success-criteria--verification-plan) | WP-008 | [TSK-0067-0001](tasks/tsk-0001-aif-000.md) |
-| [VAL-AIF-010](spec.md#success-criteria--verification-plan) | WP-009 | [TSK-0067-0001](tasks/tsk-0001-aif-000.md) |
+| [VAL-AIF-001](spec.md#success-criteria--verification-plan) | WP-001 | [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md) |
+| [VAL-AIF-002](spec.md#success-criteria--verification-plan) | WP-002 | [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md) |
+| [VAL-AIF-003](spec.md#success-criteria--verification-plan) | WP-003 | [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md) |
+| [VAL-AIF-004](spec.md#success-criteria--verification-plan) | WP-004 | [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md) |
+| [VAL-AIF-005](spec.md#success-criteria--verification-plan) | WP-005 | [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md) |
+| [VAL-AIF-006](spec.md#success-criteria--verification-plan) | WP-006 | [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md) |
+| [VAL-AIF-007](spec.md#success-criteria--verification-plan) | WP-001, WP-006 | [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md) |
+| [VAL-AIF-008](spec.md#success-criteria--verification-plan) | WP-007 | [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md) |
+| [VAL-AIF-009](spec.md#success-criteria--verification-plan) | WP-008 | [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md) |
+| [VAL-AIF-010](spec.md#success-criteria--verification-plan) | WP-009 | [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md) |
+| [VAL-AIF-011](spec.md#success-criteria--verification-plan) | WP-003, WP-004, WP-007, WP-008 | [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md) |
+| [VAL-AIF-012](spec.md#success-criteria--verification-plan) | WP-007, WP-008 | [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md) |
 
 ### Related Documents
 

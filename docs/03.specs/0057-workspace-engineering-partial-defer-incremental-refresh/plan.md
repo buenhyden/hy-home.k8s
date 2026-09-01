@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-08-13
-artifact_id: "PLAN-0057"
+artifact_id: "SPEC-0057-PLAN-0001"
 ---
 
 # Workspace Engineering Partial/DEFER Incremental Research Refresh Implementation Plan

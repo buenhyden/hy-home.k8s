@@ -85,8 +85,8 @@ def _context():
     metadata = {
         PARENT: {"status": "active", "artifact_id": "SPEC-0054"},
         CHILD: {"status": "active", "artifact_id": "SPEC-0066"},
-        PLAN: {"status": "active", "artifact_id": "PLAN-0066"},
-        TASK: {"status": "in-progress", "artifact_id": "TSK-0066-0001"},
+        PLAN: {"status": "active", "artifact_id": "SPEC-0066-PLAN-0001"},
+        TASK: {"status": "in-progress", "artifact_id": "SPEC-0066-TSK-0001"},
         ROUTER: {},
         ADR: {"status": "accepted", "artifact_id": "ADR-0031"},
     }
@@ -257,7 +257,7 @@ class DelegatedExecutionOwnershipTests(unittest.TestCase):
             },
             metadata={
                 **context.metadata,
-                foreign: {"status": "done", "artifact_id": "PLAN-0054"},
+                foreign: {"status": "done", "artifact_id": "SPEC-0054-PLAN-0001"},
             },
             tracked_regular_paths=context.tracked_regular_paths | {foreign},
         )
@@ -273,7 +273,7 @@ class DelegatedExecutionOwnershipTests(unittest.TestCase):
         context = _context()
         context.metadata[TASK] = {
             "status": "queued",
-            "artifact_id": "TSK-0066-0001",
+            "artifact_id": "SPEC-0066-TSK-0001",
         }
 
         diagnostics, _ = _evaluate(context)

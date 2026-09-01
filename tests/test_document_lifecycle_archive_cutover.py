@@ -1014,7 +1014,9 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
             original + b"\nunauthorized body drift\n",
             original.replace(b"status: done\n", b"status: queued\n", 1),
             original.replace(b"type: sdlc/task\n", b"type: sdlc/spec\n", 1),
-            original.replace(b'artifact_id: "TSK-', b'artifact_id: "TSK-9999-', 1),
+            original.replace(
+                b'artifact_id: "SPEC-', b'artifact_id: "SPEC-9999-', 1
+            ),
         )
         for mutation in mutations:
             with self.subTest(mutation=mutation[-48:]):

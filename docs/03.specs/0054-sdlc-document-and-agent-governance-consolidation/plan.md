@@ -4,7 +4,7 @@ type: sdlc/plan
 status: active
 owner: platform
 updated: 2026-09-01
-artifact_id: "PLAN-0054"
+artifact_id: "SPEC-0054-PLAN-0001"
 ---
 
 # SDLC Document and AI Agent Governance Consolidation Implementation Plan
@@ -147,13 +147,13 @@ and Stage 99 support layout are not terminal authority after the approved
 
 Spec 0054 remains the integration and acceptance owner. Active `SPEC-0066` is
 the delegated execution package for WP-010 and WP-011; its current execution
-record is `TSK-0066-0001`. Cross-package navigation is owned by the
+record is `SPEC-0066-TSK-0001`. Cross-package navigation is owned by the
 [Current Spec Index](../README.md#current-spec-index). The relation is governed by
 [accepted ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md).
 It is not a standalone program.
 
 After written-design approval and completion of WP-006 and WP-008,
-TSK-0054-0010 became the sole `in-progress` parent activation owner in a
+SPEC-0054-TSK-0010 became the sole `in-progress` parent activation owner in a
 separate lifecycle-valid handoff. It then completed one atomic activation
 transaction before delegated execution began. That transaction accepted
 ADR-0031; moved ADR-0016/0017/0020/0021/0022 from `accepted` to `superseded`
@@ -161,9 +161,9 @@ with reciprocal ADR-0031 relations; added the two-clause ADR-0030 amendment
 evidence without changing ADR-0030 status; aligned the Decisions README,
 current ADR-0031 labels, Stage 03 test-placement rule, Spec 0066 router, and
 Current Spec Index; added the narrow delegated-component ownership gate and
-focused tests; activated Spec/Plan/Task 0066; completed TSK-0054-0010; moved
-the existing Spec 0054 row to TSK-0054-0011; and moved that Task from `queued`
-to `in-progress` as the sole parent acceptance owner. TSK-0066-0001 did not
+focused tests; activated Spec/Plan/Task 0066; completed SPEC-0054-TSK-0010; moved
+the existing Spec 0054 row to SPEC-0054-TSK-0011; and moved that Task from `queued`
+to `in-progress` as the sole parent acceptance owner. SPEC-0066-TSK-0001 did not
 execute or partially own the transaction that activated it, and no standalone
 Spec 0066 row was created.
 
@@ -262,9 +262,9 @@ references, archive evidence, and scripts. Deletions are deliberately late.
 | WP-008 | Reconcile Stage 90 semantic owners | WP-007 | Stage 90 destination review complete | Latest external-research content preserved; obsolete audit, data, RIA, and dependent gate overlap removed |
 | WP-009 | Isolate and minimize Stage 98 | WP-013 | Active Archive citations and cross-links are zero; Git recovery is confirmed | Historical records receive only minimal validation; redundant full-body/redirect records and empty historical families are removed |
 | WP-010 | Close the script, gate, fixture, and SHA ownership graph through delegated Spec 0066 | WP-006, WP-008, and approved written design | Stage 05 and Stage 90 cutovers complete; existing validation-surface contract and consumers mapped | Delegated Task evidence proves one routing owner, removes safe duplicates, and reports acceptance to Spec 0054 |
-| WP-011 | Cut over compatibility wrappers and scripts topology through delegated Spec 0066 | WP-010 within Spec 0066 | Wrapper and path consumers mapped | Responsibility directories active; wrappers deleted only at consumer-zero; TSK-0054-0011 records parent acceptance; no fixed census policy |
+| WP-011 | Cut over compatibility wrappers and scripts topology through delegated Spec 0066 | WP-010 within Spec 0066 | Wrapper and path consumers mapped | Responsibility directories active; wrappers deleted only at consumer-zero; SPEC-0054-TSK-0011 records parent acceptance; no fixed census policy |
 | WP-012 | Rotate progress and remove stale generated-current residue | WP-011 | Earlier program evidence stable | Spec Task/Git evidence and generated-current ownership GREEN |
-| WP-013 | Cut over the remaining current corpus and close transition references | WP-012; WP-006; WP-008; accepted and completed Spec 0066 result; completed TSK-0054-0011 parent handoff | ADR-0031 accepted; TSK-0066-0001, Plan 0066, and Spec 0066 are `done`; TSK-0054-0011 is `done`; the existing Spec 0054 compatibility pointer names queued TSK-0054-0013 | Stage 01/02/03/99 disposition, zero active Archive citations/cross-links, residual transition consumer-zero, and Git-first recovery GREEN |
+| WP-013 | Cut over the remaining current corpus and close transition references | WP-012; WP-006; WP-008; accepted and completed Spec 0066 result; completed SPEC-0054-TSK-0011 parent handoff | ADR-0031 accepted; SPEC-0066-TSK-0001, Plan 0066, and Spec 0066 are `done`; SPEC-0054-TSK-0011 is `done`; the existing Spec 0054 compatibility pointer names queued SPEC-0054-TSK-0013 | Stage 01/02/03/99 disposition, zero active Archive citations/cross-links, residual transition consumer-zero, and Git-first recovery GREEN |
 | WP-014 | Final convergence and branch completion | WP-009, WP-013, and accepted Spec 0066 result | All logical commits present | Ownership/fixed-point/focused/affected/staged/aggregate/all-files/review GREEN |
 
 WP-012 is a closed historical scheduling exception, not a reusable dependency
@@ -287,7 +287,7 @@ the approved terminal contract rejects.
 Work follows the dependency table, not one global closed order. Each Spec
 Package may have at most one `in-progress` Task. After the reviewed activation
 checkpoint, Spec 0066 may execute its own WP-001 through WP-012 plan for the
-delegated parent WP-010/WP-011 scope while TSK-0054-0011 remains Spec 0054's
+delegated parent WP-010/WP-011 scope while SPEC-0054-TSK-0011 remains Spec 0054's
 sole parent acceptance Task. No unrelated Spec 0054 Task runs in that window;
 parent WP-014 later joins both results. Parent WP-001 and WP-002 remain
 completed evidence and are not re-entered.
@@ -297,24 +297,24 @@ work packages. The lossless identity map is:
 
 | Plan label | Terminal Task ID | Initial terminal status |
 | --- | --- | --- |
-| WP-001 | TSK-0054-0001 | done |
-| WP-002 | TSK-0054-0002 | done |
-| WP-003 | TSK-0054-0003 | in-progress |
-| WP-004 | TSK-0054-0004 | done |
-| WP-005 | TSK-0054-0005 | queued |
-| WP-006 | TSK-0054-0006 | queued |
-| WP-007 | TSK-0054-0007 | queued |
-| WP-008 | TSK-0054-0008 | queued |
-| WP-009 | TSK-0054-0009 | queued |
-| WP-010 | TSK-0054-0010 | done; completed the Spec 0066 activation transaction |
-| WP-011 | TSK-0054-0011 | in-progress; current parent acceptance owner for delegated Spec 0066 execution |
-| WP-012 | TSK-0054-0012 | done |
-| WP-013 | TSK-0054-0013 | queued |
-| WP-014 | TSK-0054-0014 | queued |
+| WP-001 | SPEC-0054-TSK-0001 | done |
+| WP-002 | SPEC-0054-TSK-0002 | done |
+| WP-003 | SPEC-0054-TSK-0003 | in-progress |
+| WP-004 | SPEC-0054-TSK-0004 | done |
+| WP-005 | SPEC-0054-TSK-0005 | queued |
+| WP-006 | SPEC-0054-TSK-0006 | queued |
+| WP-007 | SPEC-0054-TSK-0007 | queued |
+| WP-008 | SPEC-0054-TSK-0008 | queued |
+| WP-009 | SPEC-0054-TSK-0009 | queued |
+| WP-010 | SPEC-0054-TSK-0010 | done; completed the Spec 0066 activation transaction |
+| WP-011 | SPEC-0054-TSK-0011 | in-progress; current parent acceptance owner for delegated Spec 0066 execution |
+| WP-012 | SPEC-0054-TSK-0012 | done |
+| WP-013 | SPEC-0054-TSK-0013 | queued |
+| WP-014 | SPEC-0054-TSK-0014 | queued |
 
-TSK-0054-0011 has an earlier lifecycle activation dependency than the
+SPEC-0054-TSK-0011 has an earlier lifecycle activation dependency than the
 delegated WP-011 implementation: it starts only as the parent acceptance owner
-after the TSK-0054-0010 activation transaction. Spec 0066 WP-011
+after the SPEC-0054-TSK-0010 activation transaction. Spec 0066 WP-011
 still depends on Spec 0066 WP-010 and cannot execute early.
 
 Each terminal Task file preserves its WP label, prior result/evidence, current
@@ -485,8 +485,8 @@ policy activation, closure validation, and state-only handoff.
   activation boundary, add it to the current Stage 00 policy index in
   `docs/00.agent-governance/README.md`, and replace the draft statement in
   `scripts/README.md` with the active owner relation.
-- Update this Plan and TSK-0054-0003 only with observed evidence. The final
-  state-only handoff also updates TSK-0054-0007 and the existing Spec 0054
+- Update this Plan and SPEC-0054-TSK-0003 only with observed evidence. The final
+  state-only handoff also updates SPEC-0054-TSK-0007 and the existing Spec 0054
   `standaloneExecutions` pointer in `docs/99.templates/registry.json`.
 
 **TDD and diagnostic contract:**
@@ -542,7 +542,7 @@ policy activation, closure validation, and state-only handoff.
   routers. Pass staged lifecycle and strict document checks, then commit this
   activation without changing either Task state.
 - [x] Resolve the activation and its clean committed draft parent to full
-  object IDs, record them in TSK-0054-0003 as execution evidence rather than a
+  object IDs, record them in SPEC-0054-TSK-0003 as execution evidence rather than a
   code/config allowlist, and run both modes over the actual adjacent ranges:
 
   ```bash
@@ -593,9 +593,9 @@ policy activation, closure validation, and state-only handoff.
   affected by corrections. Record that static security review makes no
   provider-runtime claim.
 - [x] After every acceptance-bearing check and review passes, make one final
-  state-only logical commit: set TSK-0054-0003 to `done`, set TSK-0054-0007 to
+  state-only logical commit: set SPEC-0054-TSK-0003 to `done`, set SPEC-0054-TSK-0007 to
   `in-progress`, and move the existing Spec 0054 `standaloneExecutions` task
-  pointer from TSK-0054-0003 to TSK-0054-0007. Do not activate Spec 0066 or
+  pointer from SPEC-0054-TSK-0003 to SPEC-0054-TSK-0007. Do not activate Spec 0066 or
   modify another Spec 0054 Task in this handoff.
 
 **Rollback:** stop before the state-only handoff on any failed proof. With
@@ -717,7 +717,7 @@ reason to reopen WP-004.
 
 - Review Stage 05 READMEs, Guides, Policies, Runbooks, Incident/Postmortem
   contracts, and Release surfaces. Record point-in-time decisions only in
-  TSK-0054-0005 and its reviewed diff; do not create a Stage 90 disposition
+  SPEC-0054-TSK-0005 and its reviewed diff; do not create a Stage 90 disposition
   package, schema, or permanent corpus census.
 
 - [x] Confirm Guide `0010` as the retained/rewrite Guide owner and plan the
@@ -797,7 +797,7 @@ reason to reopen WP-004.
 **Files:**
 
 - Review Stage 90 packages and their consumers by semantic family. Record the
-  point-in-time destination in TSK-0054-0007 and its reviewed diff; do not
+  point-in-time destination in SPEC-0054-TSK-0007 and its reviewed diff; do not
   create a permanent disposition Data package or schema.
 - Retire the large reference-information-architecture SHA/FSM/current-pack
   contract and its exclusive fixtures/gates rather than porting it as the new
@@ -951,7 +951,7 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
 **Delegation boundary:**
 
 - Spec 0054 owns the WP-010 acceptance criteria and integration decision.
-  Active `SPEC-0066`, through `TSK-0066-0001`, owns execution, detailed file
+  Active `SPEC-0066`, through `SPEC-0066-TSK-0001`, owns execution, detailed file
   batches, focused tests, review evidence, and rollback. The
   [Current Spec Index](../README.md#current-spec-index) owns cross-package
   navigation while the legacy standalone boundary remains current.
@@ -979,8 +979,8 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
 
 **Parent acceptance:**
 
-- [x] TSK-0054-0011 owns this checklist after activation while
-  TSK-0066-0001 remains the sole delegated execution owner. It reviews
+- [x] SPEC-0054-TSK-0011 owns this checklist after activation while
+  SPEC-0066-TSK-0001 remains the sole delegated execution owner. It reviews
   committed, review-ready evidence and does not edit or claim the delegated
   implementation.
 - [ ] Reject duplicate rule owners, aggregate reimplementation, production
@@ -991,7 +991,7 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
 - [ ] Require one routing owner and deterministic diagnostics without fixing
   the number of entrypoints, files, negative cases, or module lines.
 - [ ] Accept Spec 0066's focused and broad validation, independent review,
-  rollback evidence, and logical commits in TSK-0054-0011 before Spec 0066
+  rollback evidence, and logical commits in SPEC-0054-TSK-0011 before Spec 0066
   closes and WP-013 starts.
 
 ### WP-011 — responsibility topology and compatibility cutover
@@ -1016,17 +1016,17 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
 
 - [x] After the written design and implementation plan were reviewed and
   WP-006 and WP-008 completed, a separate lifecycle-valid handoff made
-  TSK-0054-0010 the sole `in-progress` activation owner and moved the parent
+  SPEC-0054-TSK-0010 the sole `in-progress` activation owner and moved the parent
   compatibility pointer to it.
-- [x] TSK-0054-0010 prepared one activation index that moves ADR-0031 from
+- [x] SPEC-0054-TSK-0010 prepared one activation index that moves ADR-0031 from
   `proposed` to `accepted` with its `supersedes` relation; moves ADR-0016,
   ADR-0017, ADR-0020, ADR-0021, and ADR-0022 to `superseded` with reciprocal
   `superseded_by: ADR-0031`; adds ADR-0030's two-clause scoped-amendment trace
   without changing its accepted status; aligns the Decisions README, current
   Stage 02/03 ADR labels, Stage 03 validator-test placement rule, Spec 0066
   router, and Current Spec Index; adds the delegated-ownership rule and focused
-  cases; activates Spec/Plan/Task 0066; completes TSK-0054-0010; moves the
-  compatibility pointer to TSK-0054-0011; and activates TSK-0054-0011 as the
+  cases; activates Spec/Plan/Task 0066; completes SPEC-0054-TSK-0010; moves the
+  compatibility pointer to SPEC-0054-TSK-0011; and activates SPEC-0054-TSK-0011 as the
   sole parent acceptance owner. The index creates no Spec 0066 standalone row
   and makes no Stage 99 lifecycle-domain, schema, or projection change.
 - [x] Validate and commit that exact index as one logical transaction without
@@ -1038,14 +1038,14 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
 - [ ] WP-011 completes only when Spec 0066 reports consumer-zero wrapper
   retirement, current registry/path parity, focused and broad validation,
   independent review, rollback evidence, and logical commits to
-  TSK-0054-0011. All implementation, independent review, and
+  SPEC-0054-TSK-0011. All implementation, independent review, and
   acceptance-bearing focused and broad gates are committed before that Task
   records integrated acceptance. It remains `in-progress` while Spec 0066
-  performs only the state closure: TSK-0066-0001 moves `in-progress → done`,
+  performs only the state closure: SPEC-0066-TSK-0001 moves `in-progress → done`,
   and its Plan and Spec move `active → done`, followed by post-state lifecycle
-  and diff confirmation. In the next parent handoff, move TSK-0054-0011 to
+  and diff confirmation. In the next parent handoff, move SPEC-0054-TSK-0011 to
   `done` and the existing Spec 0054 compatibility pointer to queued
-  TSK-0054-0013 atomically. TSK-0054-0013 may activate only in a later
+  SPEC-0054-TSK-0013 atomically. SPEC-0054-TSK-0013 may activate only in a later
   lifecycle-valid change.
 
 ### WP-012 — progress and generated-current cleanup
@@ -1065,11 +1065,11 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
   for that recovery boundary.
 
 - [x] Restored the transferred intent of Spec 0052 WORK-113 without leaving a
-  competing queued item, as recorded by terminal TSK-0054-0012.
+  competing queued item, as recorded by terminal SPEC-0054-TSK-0012.
 - [x] Proved the old progress path recoverable, assigned current Task owners,
   and retired the progress-prefix and whole-file SHA validators. The terminal
   Task records three bounded residuals rather than claiming forced completion.
-- [x] Ran the closing validation recorded by TSK-0054-0012 and its commits:
+- [x] Ran the closing validation recorded by SPEC-0054-TSK-0012 and its commits:
 
   ```bash
   python3 -m unittest discover -s tests -p 'test_*archive*.py'
@@ -1085,7 +1085,7 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
   self-reviewed and had no second reviewer. This is evidence about that closed
   exception, not a precedent that relaxes current review requirements.
 - [x] Closed the Task through `aeb22636` and `eb68a4fe`; its logical
-  implementation commits remain listed in TSK-0054-0012. Do not rerun WP-012.
+  implementation commits remain listed in SPEC-0054-TSK-0012. Do not rerun WP-012.
 
 ### WP-013 — current corpus and transition-control cutover
 
@@ -1158,7 +1158,7 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
   script or document count.
 - [ ] Assert zero active Archive citations and cross-links without enumerating
   a permanent allowed-path list. Complete the state-only handoff from
-  TSK-0054-0013 to TSK-0054-0009 only after this invariant is green.
+  SPEC-0054-TSK-0013 to SPEC-0054-TSK-0009 only after this invariant is green.
 - [ ] Reject retired Stage 01/02/03/99 owners, the transition profile,
   manifest, tool, and every live three-digit/Stage 04 residue without
   recreating a `route_state` field or a permanent corpus census.
@@ -1298,24 +1298,24 @@ documents, registries, templates, or scripts.
 
 ### Lifecycle Traceability
 
-For VAL-SDLC-010 through VAL-SDLC-012, TSK-0054-0010 and
-TSK-0054-0011 own the pending transfer and parent acceptance relation;
-TSK-0066-0001 owns delegated execution evidence after activation. The parent
-Tasks do not claim delegated implementation evidence: TSK-0054-0010 closes the
-activation transfer, and TSK-0054-0011 records only the integrated acceptance
+For VAL-SDLC-010 through VAL-SDLC-012, SPEC-0054-TSK-0010 and
+SPEC-0054-TSK-0011 own the pending transfer and parent acceptance relation;
+SPEC-0066-TSK-0001 owns delegated execution evidence after activation. The parent
+Tasks do not claim delegated implementation evidence: SPEC-0054-TSK-0010 closes the
+activation transfer, and SPEC-0054-TSK-0011 records only the integrated acceptance
 before it transitions to `done`.
 
 | Spec criterion | Work package | Expected Task |
 | --- | --- | --- |
-| [VAL-SDLC-001](spec.md#success-criteria--verification-plan) | WP-001, WP-002, WP-004, WP-003, WP-006, WP-008, WP-009, WP-011, WP-013, WP-014 | [TSK-0054-0001](tasks/tsk-0001-approved-design-authority.md), [TSK-0054-0002](tasks/tsk-0002-terminal-topology-and-four-digit-identity.md), [TSK-0054-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [TSK-0054-0003](tasks/tsk-0003-codex-claude-only-ai-agent-governance.md), [TSK-0054-0006](tasks/tsk-0006-stage-05-ownership-cutover.md), [TSK-0054-0008](tasks/tsk-0008-stage-90-ownership-cutover.md), [TSK-0054-0009](tasks/tsk-0009-global-stage-98-parity-and-recovery-closure.md), [TSK-0054-0011](tasks/tsk-0011-responsibility-topology-and-compatibility-cutover.md), [TSK-0054-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
-| [VAL-SDLC-002](spec.md#success-criteria--verification-plan) | WP-002, WP-004, WP-006, WP-008, WP-009, WP-013, WP-014 | [TSK-0054-0002](tasks/tsk-0002-terminal-topology-and-four-digit-identity.md), [TSK-0054-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [TSK-0054-0006](tasks/tsk-0006-stage-05-ownership-cutover.md), [TSK-0054-0008](tasks/tsk-0008-stage-90-ownership-cutover.md), [TSK-0054-0009](tasks/tsk-0009-global-stage-98-parity-and-recovery-closure.md), [TSK-0054-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
-| [VAL-SDLC-003](spec.md#success-criteria--verification-plan) | WP-002, WP-004, WP-005, WP-006, WP-014 | [TSK-0054-0002](tasks/tsk-0002-terminal-topology-and-four-digit-identity.md), [TSK-0054-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [TSK-0054-0005](tasks/tsk-0005-stage-05-responsibility-ledger.md), [TSK-0054-0006](tasks/tsk-0006-stage-05-ownership-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
-| [VAL-SDLC-004](spec.md#success-criteria--verification-plan) | WP-002, WP-004, WP-013, WP-014 | [TSK-0054-0002](tasks/tsk-0002-terminal-topology-and-four-digit-identity.md), [TSK-0054-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [TSK-0054-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
-| [VAL-SDLC-005](spec.md#success-criteria--verification-plan) | WP-003, WP-014 | [TSK-0054-0003](tasks/tsk-0003-codex-claude-only-ai-agent-governance.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
-| [VAL-SDLC-006](spec.md#success-criteria--verification-plan) | WP-004, WP-013, WP-014 | [TSK-0054-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [TSK-0054-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
-| [VAL-SDLC-007](spec.md#success-criteria--verification-plan) | WP-005, WP-006, WP-014 | [TSK-0054-0005](tasks/tsk-0005-stage-05-responsibility-ledger.md), [TSK-0054-0006](tasks/tsk-0006-stage-05-ownership-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
-| [VAL-SDLC-008](spec.md#success-criteria--verification-plan) | WP-007, WP-008, WP-014 | [TSK-0054-0007](tasks/tsk-0007-stage-90-disposition-ledger.md), [TSK-0054-0008](tasks/tsk-0008-stage-90-ownership-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
-| [VAL-SDLC-009](spec.md#success-criteria--verification-plan) | WP-002, WP-004, WP-003, WP-006, WP-008, WP-009, WP-011, WP-012, WP-013, WP-014 | [TSK-0054-0002](tasks/tsk-0002-terminal-topology-and-four-digit-identity.md), [TSK-0054-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [TSK-0054-0003](tasks/tsk-0003-codex-claude-only-ai-agent-governance.md), [TSK-0054-0006](tasks/tsk-0006-stage-05-ownership-cutover.md), [TSK-0054-0008](tasks/tsk-0008-stage-90-ownership-cutover.md), [TSK-0054-0009](tasks/tsk-0009-global-stage-98-parity-and-recovery-closure.md), [TSK-0054-0011](tasks/tsk-0011-responsibility-topology-and-compatibility-cutover.md), [TSK-0054-0012](tasks/tsk-0012-progress-and-generated-current-cleanup.md), [TSK-0054-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
-| [VAL-SDLC-010](spec.md#success-criteria--verification-plan) | WP-010, WP-011, WP-012, WP-013, WP-014 | `TSK-0066-0001` (delegated execution), [TSK-0054-0010](tasks/tsk-0010-script-gate-fixture-and-sha-ownership-fixed-point.md), [TSK-0054-0011](tasks/tsk-0011-responsibility-topology-and-compatibility-cutover.md), [TSK-0054-0012](tasks/tsk-0012-progress-and-generated-current-cleanup.md), [TSK-0054-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
-| [VAL-SDLC-011](spec.md#success-criteria--verification-plan) | WP-004, WP-003, WP-005, WP-006, WP-007, WP-008, WP-009, WP-010, WP-011, WP-012, WP-013, WP-014 | `TSK-0066-0001` (delegated execution), [TSK-0054-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [TSK-0054-0003](tasks/tsk-0003-codex-claude-only-ai-agent-governance.md), [TSK-0054-0005](tasks/tsk-0005-stage-05-responsibility-ledger.md), [TSK-0054-0006](tasks/tsk-0006-stage-05-ownership-cutover.md), [TSK-0054-0007](tasks/tsk-0007-stage-90-disposition-ledger.md), [TSK-0054-0008](tasks/tsk-0008-stage-90-ownership-cutover.md), [TSK-0054-0009](tasks/tsk-0009-global-stage-98-parity-and-recovery-closure.md), [TSK-0054-0010](tasks/tsk-0010-script-gate-fixture-and-sha-ownership-fixed-point.md), [TSK-0054-0011](tasks/tsk-0011-responsibility-topology-and-compatibility-cutover.md), [TSK-0054-0012](tasks/tsk-0012-progress-and-generated-current-cleanup.md), [TSK-0054-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
-| [VAL-SDLC-012](spec.md#success-criteria--verification-plan) | WP-001, WP-002, WP-004, WP-003, WP-005, WP-006, WP-007, WP-008, WP-009, WP-010, WP-011, WP-012, WP-013, WP-014 | `TSK-0066-0001` (delegated execution), [TSK-0054-0001](tasks/tsk-0001-approved-design-authority.md), [TSK-0054-0002](tasks/tsk-0002-terminal-topology-and-four-digit-identity.md), [TSK-0054-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [TSK-0054-0003](tasks/tsk-0003-codex-claude-only-ai-agent-governance.md), [TSK-0054-0005](tasks/tsk-0005-stage-05-responsibility-ledger.md), [TSK-0054-0006](tasks/tsk-0006-stage-05-ownership-cutover.md), [TSK-0054-0007](tasks/tsk-0007-stage-90-disposition-ledger.md), [TSK-0054-0008](tasks/tsk-0008-stage-90-ownership-cutover.md), [TSK-0054-0009](tasks/tsk-0009-global-stage-98-parity-and-recovery-closure.md), [TSK-0054-0010](tasks/tsk-0010-script-gate-fixture-and-sha-ownership-fixed-point.md), [TSK-0054-0011](tasks/tsk-0011-responsibility-topology-and-compatibility-cutover.md), [TSK-0054-0012](tasks/tsk-0012-progress-and-generated-current-cleanup.md), [TSK-0054-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [TSK-0054-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
+| [VAL-SDLC-001](spec.md#success-criteria--verification-plan) | WP-001, WP-002, WP-004, WP-003, WP-006, WP-008, WP-009, WP-011, WP-013, WP-014 | [SPEC-0054-TSK-0001](tasks/tsk-0001-approved-design-authority.md), [SPEC-0054-TSK-0002](tasks/tsk-0002-terminal-topology-and-four-digit-identity.md), [SPEC-0054-TSK-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [SPEC-0054-TSK-0003](tasks/tsk-0003-codex-claude-only-ai-agent-governance.md), [SPEC-0054-TSK-0006](tasks/tsk-0006-stage-05-ownership-cutover.md), [SPEC-0054-TSK-0008](tasks/tsk-0008-stage-90-ownership-cutover.md), [SPEC-0054-TSK-0009](tasks/tsk-0009-global-stage-98-parity-and-recovery-closure.md), [SPEC-0054-TSK-0011](tasks/tsk-0011-responsibility-topology-and-compatibility-cutover.md), [SPEC-0054-TSK-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [SPEC-0054-TSK-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
+| [VAL-SDLC-002](spec.md#success-criteria--verification-plan) | WP-002, WP-004, WP-006, WP-008, WP-009, WP-013, WP-014 | [SPEC-0054-TSK-0002](tasks/tsk-0002-terminal-topology-and-four-digit-identity.md), [SPEC-0054-TSK-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [SPEC-0054-TSK-0006](tasks/tsk-0006-stage-05-ownership-cutover.md), [SPEC-0054-TSK-0008](tasks/tsk-0008-stage-90-ownership-cutover.md), [SPEC-0054-TSK-0009](tasks/tsk-0009-global-stage-98-parity-and-recovery-closure.md), [SPEC-0054-TSK-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [SPEC-0054-TSK-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
+| [VAL-SDLC-003](spec.md#success-criteria--verification-plan) | WP-002, WP-004, WP-005, WP-006, WP-014 | [SPEC-0054-TSK-0002](tasks/tsk-0002-terminal-topology-and-four-digit-identity.md), [SPEC-0054-TSK-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [SPEC-0054-TSK-0005](tasks/tsk-0005-stage-05-responsibility-ledger.md), [SPEC-0054-TSK-0006](tasks/tsk-0006-stage-05-ownership-cutover.md), [SPEC-0054-TSK-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
+| [VAL-SDLC-004](spec.md#success-criteria--verification-plan) | WP-002, WP-004, WP-013, WP-014 | [SPEC-0054-TSK-0002](tasks/tsk-0002-terminal-topology-and-four-digit-identity.md), [SPEC-0054-TSK-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [SPEC-0054-TSK-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [SPEC-0054-TSK-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
+| [VAL-SDLC-005](spec.md#success-criteria--verification-plan) | WP-003, WP-014 | [SPEC-0054-TSK-0003](tasks/tsk-0003-codex-claude-only-ai-agent-governance.md), [SPEC-0054-TSK-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
+| [VAL-SDLC-006](spec.md#success-criteria--verification-plan) | WP-004, WP-013, WP-014 | [SPEC-0054-TSK-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [SPEC-0054-TSK-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [SPEC-0054-TSK-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
+| [VAL-SDLC-007](spec.md#success-criteria--verification-plan) | WP-005, WP-006, WP-014 | [SPEC-0054-TSK-0005](tasks/tsk-0005-stage-05-responsibility-ledger.md), [SPEC-0054-TSK-0006](tasks/tsk-0006-stage-05-ownership-cutover.md), [SPEC-0054-TSK-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
+| [VAL-SDLC-008](spec.md#success-criteria--verification-plan) | WP-007, WP-008, WP-014 | [SPEC-0054-TSK-0007](tasks/tsk-0007-stage-90-disposition-ledger.md), [SPEC-0054-TSK-0008](tasks/tsk-0008-stage-90-ownership-cutover.md), [SPEC-0054-TSK-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
+| [VAL-SDLC-009](spec.md#success-criteria--verification-plan) | WP-002, WP-004, WP-003, WP-006, WP-008, WP-009, WP-011, WP-012, WP-013, WP-014 | [SPEC-0054-TSK-0002](tasks/tsk-0002-terminal-topology-and-four-digit-identity.md), [SPEC-0054-TSK-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [SPEC-0054-TSK-0003](tasks/tsk-0003-codex-claude-only-ai-agent-governance.md), [SPEC-0054-TSK-0006](tasks/tsk-0006-stage-05-ownership-cutover.md), [SPEC-0054-TSK-0008](tasks/tsk-0008-stage-90-ownership-cutover.md), [SPEC-0054-TSK-0009](tasks/tsk-0009-global-stage-98-parity-and-recovery-closure.md), [SPEC-0054-TSK-0011](tasks/tsk-0011-responsibility-topology-and-compatibility-cutover.md), [SPEC-0054-TSK-0012](tasks/tsk-0012-progress-and-generated-current-cleanup.md), [SPEC-0054-TSK-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [SPEC-0054-TSK-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
+| [VAL-SDLC-010](spec.md#success-criteria--verification-plan) | WP-010, WP-011, WP-012, WP-013, WP-014 | `SPEC-0066-TSK-0001` (delegated execution), [SPEC-0054-TSK-0010](tasks/tsk-0010-script-gate-fixture-and-sha-ownership-fixed-point.md), [SPEC-0054-TSK-0011](tasks/tsk-0011-responsibility-topology-and-compatibility-cutover.md), [SPEC-0054-TSK-0012](tasks/tsk-0012-progress-and-generated-current-cleanup.md), [SPEC-0054-TSK-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [SPEC-0054-TSK-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
+| [VAL-SDLC-011](spec.md#success-criteria--verification-plan) | WP-004, WP-003, WP-005, WP-006, WP-007, WP-008, WP-009, WP-010, WP-011, WP-012, WP-013, WP-014 | `SPEC-0066-TSK-0001` (delegated execution), [SPEC-0054-TSK-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [SPEC-0054-TSK-0003](tasks/tsk-0003-codex-claude-only-ai-agent-governance.md), [SPEC-0054-TSK-0005](tasks/tsk-0005-stage-05-responsibility-ledger.md), [SPEC-0054-TSK-0006](tasks/tsk-0006-stage-05-ownership-cutover.md), [SPEC-0054-TSK-0007](tasks/tsk-0007-stage-90-disposition-ledger.md), [SPEC-0054-TSK-0008](tasks/tsk-0008-stage-90-ownership-cutover.md), [SPEC-0054-TSK-0009](tasks/tsk-0009-global-stage-98-parity-and-recovery-closure.md), [SPEC-0054-TSK-0010](tasks/tsk-0010-script-gate-fixture-and-sha-ownership-fixed-point.md), [SPEC-0054-TSK-0011](tasks/tsk-0011-responsibility-topology-and-compatibility-cutover.md), [SPEC-0054-TSK-0012](tasks/tsk-0012-progress-and-generated-current-cleanup.md), [SPEC-0054-TSK-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [SPEC-0054-TSK-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |
+| [VAL-SDLC-012](spec.md#success-criteria--verification-plan) | WP-001, WP-002, WP-004, WP-003, WP-005, WP-006, WP-007, WP-008, WP-009, WP-010, WP-011, WP-012, WP-013, WP-014 | `SPEC-0066-TSK-0001` (delegated execution), [SPEC-0054-TSK-0001](tasks/tsk-0001-approved-design-authority.md), [SPEC-0054-TSK-0002](tasks/tsk-0002-terminal-topology-and-four-digit-identity.md), [SPEC-0054-TSK-0004](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md), [SPEC-0054-TSK-0003](tasks/tsk-0003-codex-claude-only-ai-agent-governance.md), [SPEC-0054-TSK-0005](tasks/tsk-0005-stage-05-responsibility-ledger.md), [SPEC-0054-TSK-0006](tasks/tsk-0006-stage-05-ownership-cutover.md), [SPEC-0054-TSK-0007](tasks/tsk-0007-stage-90-disposition-ledger.md), [SPEC-0054-TSK-0008](tasks/tsk-0008-stage-90-ownership-cutover.md), [SPEC-0054-TSK-0009](tasks/tsk-0009-global-stage-98-parity-and-recovery-closure.md), [SPEC-0054-TSK-0010](tasks/tsk-0010-script-gate-fixture-and-sha-ownership-fixed-point.md), [SPEC-0054-TSK-0011](tasks/tsk-0011-responsibility-topology-and-compatibility-cutover.md), [SPEC-0054-TSK-0012](tasks/tsk-0012-progress-and-generated-current-cleanup.md), [SPEC-0054-TSK-0013](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md), [SPEC-0054-TSK-0014](tasks/tsk-0014-convergence-and-branch-completion.md) |

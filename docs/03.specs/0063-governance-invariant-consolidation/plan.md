@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-08-30
-artifact_id: "PLAN-0063"
+artifact_id: "SPEC-0063-PLAN-0001"
 ---
 
 # Governance Invariant Consolidation Implementation Plan (Plan)
@@ -396,12 +396,12 @@ passes gates and the full suite in a clean checkout.
 
 | Spec criterion | Work package | Expected Task |
 | --- | --- | --- |
-| [VAL-GIC-001](spec.md#success-criteria--verification-plan) | WP-001 diagnosis | [TSK-0063-0001](tasks/tsk-0001-gic-000.md) |
-| [VAL-GIC-002](spec.md#success-criteria--verification-plan) | WP-002 discard list | [TSK-0063-0001](tasks/tsk-0001-gic-000.md) |
-| [VAL-GIC-003](spec.md#success-criteria--verification-plan) | WP-003 retirement | [TSK-0063-0001](tasks/tsk-0001-gic-000.md) |
-| [VAL-GIC-004](spec.md#success-criteria--verification-plan) | WP-004 Stage 98 execution | [TSK-0063-0001](tasks/tsk-0001-gic-000.md) |
-| [VAL-GIC-005](spec.md#success-criteria--verification-plan) | WP-005 contract unification | [TSK-0063-0001](tasks/tsk-0001-gic-000.md) |
-| [VAL-GIC-006](spec.md#success-criteria--verification-plan) | WP-006 document correction | [TSK-0063-0001](tasks/tsk-0001-gic-000.md) |
+| [VAL-GIC-001](spec.md#success-criteria--verification-plan) | WP-001 diagnosis | [SPEC-0063-TSK-0001](tasks/tsk-0001-gic-000.md) |
+| [VAL-GIC-002](spec.md#success-criteria--verification-plan) | WP-002 discard list | [SPEC-0063-TSK-0001](tasks/tsk-0001-gic-000.md) |
+| [VAL-GIC-003](spec.md#success-criteria--verification-plan) | WP-003 retirement | [SPEC-0063-TSK-0001](tasks/tsk-0001-gic-000.md) |
+| [VAL-GIC-004](spec.md#success-criteria--verification-plan) | WP-004 Stage 98 execution | [SPEC-0063-TSK-0001](tasks/tsk-0001-gic-000.md) |
+| [VAL-GIC-005](spec.md#success-criteria--verification-plan) | WP-005 contract unification | [SPEC-0063-TSK-0001](tasks/tsk-0001-gic-000.md) |
+| [VAL-GIC-006](spec.md#success-criteria--verification-plan) | WP-006 document correction | [SPEC-0063-TSK-0001](tasks/tsk-0001-gic-000.md) |
 
 ### Related Documents
 

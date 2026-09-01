@@ -19,17 +19,17 @@
 
 ## Task Records
 
-- [`TSK-0053-0001` — `WERPC-000`](tasks/tsk-0001-werpc-000.md)
-- [`TSK-0053-0002` — `WERPC-000A`](tasks/tsk-0002-werpc-000a.md)
-- [`TSK-0053-0003` — `WERPC-001`](tasks/tsk-0003-werpc-001.md)
-- [`TSK-0053-0004` — `WERPC-002`](tasks/tsk-0004-werpc-002.md)
-- [`TSK-0053-0005` — `WERPC-003`](tasks/tsk-0005-werpc-003.md)
-- [`TSK-0053-0006` — `WERPC-004`](tasks/tsk-0006-werpc-004.md)
-- [`TSK-0053-0007` — `WERPC-005`](tasks/tsk-0007-werpc-005.md)
-- [`TSK-0053-0008` — `WERPC-006`](tasks/tsk-0008-werpc-006.md)
-- [`TSK-0053-0009` — `WERPC-007`](tasks/tsk-0009-werpc-007.md)
-- [`TSK-0053-0010` — `WERPC-008`](tasks/tsk-0010-werpc-008.md)
-- [`TSK-0053-0011` — `WERPC-009`](tasks/tsk-0011-werpc-009.md)
+- [`SPEC-0053-TSK-0001` — `WERPC-000`](tasks/tsk-0001-werpc-000.md)
+- [`SPEC-0053-TSK-0002` — `WERPC-000A`](tasks/tsk-0002-werpc-000a.md)
+- [`SPEC-0053-TSK-0003` — `WERPC-001`](tasks/tsk-0003-werpc-001.md)
+- [`SPEC-0053-TSK-0004` — `WERPC-002`](tasks/tsk-0004-werpc-002.md)
+- [`SPEC-0053-TSK-0005` — `WERPC-003`](tasks/tsk-0005-werpc-003.md)
+- [`SPEC-0053-TSK-0006` — `WERPC-004`](tasks/tsk-0006-werpc-004.md)
+- [`SPEC-0053-TSK-0007` — `WERPC-005`](tasks/tsk-0007-werpc-005.md)
+- [`SPEC-0053-TSK-0008` — `WERPC-006`](tasks/tsk-0008-werpc-006.md)
+- [`SPEC-0053-TSK-0009` — `WERPC-007`](tasks/tsk-0009-werpc-007.md)
+- [`SPEC-0053-TSK-0010` — `WERPC-008`](tasks/tsk-0010-werpc-008.md)
+- [`SPEC-0053-TSK-0011` — `WERPC-009`](tasks/tsk-0011-werpc-009.md)
 
 ## Related Documents
 

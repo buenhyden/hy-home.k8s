@@ -520,7 +520,7 @@
       "class": "sdlc",
       "mode": "authored",
       "pathPattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/plan\\.md$",
-      "artifactIdPattern": "^PLAN-(?:CHG-)?[0-9]{4}$",
+      "artifactIdPattern": "^SPEC-[0-9]{4}-PLAN-[0-9]{4}$",
       "template": "docs/99.templates/templates/specs/plan.template.md",
       "requiredFrontmatter": {
         "mode": "required",
@@ -623,7 +623,7 @@
       "class": "sdlc",
       "mode": "authored",
       "pathPattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/tasks/tsk-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md$",
-      "artifactIdPattern": "^TSK-[0-9]{4}-[0-9]{4}$",
+      "artifactIdPattern": "^SPEC-[0-9]{4}-TSK-[0-9]{4}$",
       "template": "docs/99.templates/templates/specs/task.template.md",
       "requiredFrontmatter": {
         "mode": "required",
@@ -997,7 +997,7 @@
       "class": "sdlc",
       "mode": "authored",
       "pathPattern": "^docs/05\\.operations/incidents/[0-9]{4}/inc-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/incident\\.md$",
-      "artifactIdPattern": "^INC-[0-9]{4}-[0-9]{4}$",
+      "artifactIdPattern": "^inc-[0-9]{4}-[0-9]{4}$",
       "template": "docs/99.templates/templates/operations/incident.template.md",
       "requiredFrontmatter": {
         "mode": "required",
@@ -1065,11 +1065,11 @@
         "bodyContract": {
           "section": "Traceability",
           "tableHeading": "Lifecycle Traceability",
-         "enforcedStatuses": [
+          "enforcedStatuses": [
             "open",
             "mitigated",
             "resolved"
-         ],
+          ],
           "requiredColumns": [
             "Timeline or action",
             "Evidence",
@@ -1093,7 +1093,7 @@
       "class": "sdlc",
       "mode": "authored",
       "pathPattern": "^docs/05\\.operations/incidents/[0-9]{4}/inc-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/postmortem\\.md$",
-      "artifactIdPattern": "^POSTMORTEM-[0-9]{4}-[0-9]{4}$",
+      "artifactIdPattern": "^inc-[0-9]{4}-[0-9]{4}-PM$",
       "template": "docs/99.templates/templates/operations/postmortem.template.md",
       "requiredFrontmatter": {
         "mode": "required",
@@ -1164,10 +1164,10 @@
         "bodyContract": {
           "section": "Traceability",
           "tableHeading": "Lifecycle Traceability",
-         "enforcedStatuses": [
+          "enforcedStatuses": [
             "draft",
             "published"
-         ],
+          ],
           "requiredColumns": [
             "Root cause or action",
             "Owner and due state",
@@ -1351,8 +1351,7 @@
           "status",
           "owner",
           "updated",
-          "artifact_id",
-          "migration_id"
+          "artifact_id"
         ],
         "allowed": [
           "title",
@@ -1360,8 +1359,7 @@
           "status",
           "owner",
           "updated",
-          "artifact_id",
-          "migration_id"
+          "artifact_id"
         ],
         "order": [
           "title",
@@ -1369,8 +1367,7 @@
           "status",
           "owner",
           "updated",
-          "artifact_id",
-          "migration_id"
+          "artifact_id"
         ]
       },
       "requiredSections": {
@@ -2112,8 +2109,7 @@
           "status",
           "owner",
           "updated",
-          "artifact_id",
-          "migration_id"
+          "artifact_id"
         ],
         "allowed": [
           "title",
@@ -2121,8 +2117,7 @@
           "status",
           "owner",
           "updated",
-          "artifact_id",
-          "migration_id"
+          "artifact_id"
         ],
         "order": [
           "title",
@@ -2130,8 +2125,7 @@
           "status",
           "owner",
           "updated",
-          "artifact_id",
-          "migration_id"
+          "artifact_id"
         ]
       },
       "requiredSections": {
@@ -3100,9 +3094,9 @@
           "section": "Traceability",
           "tableHeading": "Lifecycle Traceability",
           "enforcedStatuses": [
-          "open",
-          "mitigated",
-          "resolved"
+            "open",
+            "mitigated",
+            "resolved"
           ],
           "requiredColumns": [
             "Timeline or action",
@@ -3296,8 +3290,8 @@
           "section": "Traceability",
           "tableHeading": "Lifecycle Traceability",
           "enforcedStatuses": [
-          "draft",
-          "published"
+            "draft",
+            "published"
           ],
           "requiredColumns": [
             "Root cause or action",

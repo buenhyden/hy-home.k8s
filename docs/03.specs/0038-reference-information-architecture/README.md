@@ -19,14 +19,14 @@
 
 ## Task Records
 
-- [`TSK-0038-0001` — `RIA-000`](tasks/tsk-0001-ria-000.md)
-- [`TSK-0038-0002` — `RIA-001`](tasks/tsk-0002-ria-001.md)
-- [`TSK-0038-0003` — `RIA-002`](tasks/tsk-0003-ria-002.md)
-- [`TSK-0038-0004` — `RIA-003`](tasks/tsk-0004-ria-003.md)
-- [`TSK-0038-0005` — `RIA-004`](tasks/tsk-0005-ria-004.md)
-- [`TSK-0038-0006` — `RIA-005`](tasks/tsk-0006-ria-005.md)
-- [`TSK-0038-0007` — `RIA-006`](tasks/tsk-0007-ria-006.md)
-- [`TSK-0038-0008` — `RIA-007`](tasks/tsk-0008-ria-007.md)
+- [`SPEC-0038-TSK-0001` — `RIA-000`](tasks/tsk-0001-ria-000.md)
+- [`SPEC-0038-TSK-0002` — `RIA-001`](tasks/tsk-0002-ria-001.md)
+- [`SPEC-0038-TSK-0003` — `RIA-002`](tasks/tsk-0003-ria-002.md)
+- [`SPEC-0038-TSK-0004` — `RIA-003`](tasks/tsk-0004-ria-003.md)
+- [`SPEC-0038-TSK-0005` — `RIA-004`](tasks/tsk-0005-ria-004.md)
+- [`SPEC-0038-TSK-0006` — `RIA-005`](tasks/tsk-0006-ria-005.md)
+- [`SPEC-0038-TSK-0007` — `RIA-006`](tasks/tsk-0007-ria-006.md)
+- [`SPEC-0038-TSK-0008` — `RIA-007`](tasks/tsk-0008-ria-007.md)
 
 ## Related Documents
 

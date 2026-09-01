@@ -1,13 +1,13 @@
 ---
-title: "TSK-0005-0002: Add Notifications Spec"
+title: "SPEC-0005-TSK-0002: Add Notifications Spec"
 type: sdlc/task
 status: done
 owner: platform
 updated: 2026-07-13
-artifact_id: "TSK-0005-0002"
+artifact_id: "SPEC-0005-TSK-0002"
 ---
 
-# TSK-0005-0002: Add Notifications Spec
+# SPEC-0005-TSK-0002: Add Notifications Spec
 
 ## Overview
 
@@ -42,7 +42,7 @@ shared verification context is in the
 
 ## Traceability
 
-- Stable Task: `TSK-0005-0002`
+- Stable Task: `SPEC-0005-TSK-0002`
 - Legacy work item: `NOTIF-T-002`
 - Package inventory: [README](../README.md#task-records)
 - Legacy bytes: [MIG-0004](../../../98.archive/migrations/0004-document-authority-convergence.md)

@@ -19,19 +19,19 @@
 
 ## Task Records
 
-- [`TSK-0059-0001` — `WRFC-000`](tasks/tsk-0001-wrfc-000.md)
-- [`TSK-0059-0002` — `WRFC-001`](tasks/tsk-0002-wrfc-001.md)
-- [`TSK-0059-0003` — `WRFC-002`](tasks/tsk-0003-wrfc-002.md)
-- [`TSK-0059-0004` — `WRFC-003`](tasks/tsk-0004-wrfc-003.md)
-- [`TSK-0059-0005` — `WRFC-004`](tasks/tsk-0005-wrfc-004.md)
-- [`TSK-0059-0006` — `WRFC-005`](tasks/tsk-0006-wrfc-005.md)
-- [`TSK-0059-0007` — `WRFC-006`](tasks/tsk-0007-wrfc-006.md)
-- [`TSK-0059-0008` — `WRFC-007`](tasks/tsk-0008-wrfc-007.md)
-- [`TSK-0059-0009` — `WRFC-008`](tasks/tsk-0009-wrfc-008.md)
-- [`TSK-0059-0010` — `WRFC-009`](tasks/tsk-0010-wrfc-009.md)
-- [`TSK-0059-0011` — `WRFC-010`](tasks/tsk-0011-wrfc-010.md)
-- [`TSK-0059-0012` — `WRFC-011`](tasks/tsk-0012-wrfc-011.md)
-- [`TSK-0059-0013` — `WRFC-012`](tasks/tsk-0013-wrfc-012.md)
+- [`SPEC-0059-TSK-0001` — `WRFC-000`](tasks/tsk-0001-wrfc-000.md)
+- [`SPEC-0059-TSK-0002` — `WRFC-001`](tasks/tsk-0002-wrfc-001.md)
+- [`SPEC-0059-TSK-0003` — `WRFC-002`](tasks/tsk-0003-wrfc-002.md)
+- [`SPEC-0059-TSK-0004` — `WRFC-003`](tasks/tsk-0004-wrfc-003.md)
+- [`SPEC-0059-TSK-0005` — `WRFC-004`](tasks/tsk-0005-wrfc-004.md)
+- [`SPEC-0059-TSK-0006` — `WRFC-005`](tasks/tsk-0006-wrfc-005.md)
+- [`SPEC-0059-TSK-0007` — `WRFC-006`](tasks/tsk-0007-wrfc-006.md)
+- [`SPEC-0059-TSK-0008` — `WRFC-007`](tasks/tsk-0008-wrfc-007.md)
+- [`SPEC-0059-TSK-0009` — `WRFC-008`](tasks/tsk-0009-wrfc-008.md)
+- [`SPEC-0059-TSK-0010` — `WRFC-009`](tasks/tsk-0010-wrfc-009.md)
+- [`SPEC-0059-TSK-0011` — `WRFC-010`](tasks/tsk-0011-wrfc-010.md)
+- [`SPEC-0059-TSK-0012` — `WRFC-011`](tasks/tsk-0012-wrfc-011.md)
+- [`SPEC-0059-TSK-0013` — `WRFC-012`](tasks/tsk-0013-wrfc-012.md)
 
 ## Related Documents
 

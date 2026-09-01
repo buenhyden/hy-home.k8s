@@ -19,11 +19,11 @@
 
 ## Task Records
 
-- [`TSK-0004-0001` — `ROL-T-001`](tasks/tsk-0001-rol-t-001.md)
-- [`TSK-0004-0002` — `ROL-T-002`](tasks/tsk-0002-rol-t-002.md)
-- [`TSK-0004-0003` — `ROL-T-003`](tasks/tsk-0003-rol-t-003.md)
-- [`TSK-0004-0004` — `ROL-T-004`](tasks/tsk-0004-rol-t-004.md)
-- [`TSK-0004-0005` — `ROL-T-005`](tasks/tsk-0005-rol-t-005.md)
+- [`SPEC-0004-TSK-0001` — `ROL-T-001`](tasks/tsk-0001-rol-t-001.md)
+- [`SPEC-0004-TSK-0002` — `ROL-T-002`](tasks/tsk-0002-rol-t-002.md)
+- [`SPEC-0004-TSK-0003` — `ROL-T-003`](tasks/tsk-0003-rol-t-003.md)
+- [`SPEC-0004-TSK-0004` — `ROL-T-004`](tasks/tsk-0004-rol-t-004.md)
+- [`SPEC-0004-TSK-0005` — `ROL-T-005`](tasks/tsk-0005-rol-t-005.md)
 
 ## Related Documents
 

@@ -49,13 +49,13 @@
   Task concurrently. This is not an
   independent standalone program and does not relax either package's local
   single-`in-progress` rule.
-- TSK-0054-0011 is the sole active parent acceptance Task
-  while TSK-0066-0001 is the delegated execution Task. TSK-0054-0011 records
+- SPEC-0054-TSK-0011 is the sole active parent acceptance Task
+  while SPEC-0066-TSK-0001 is the delegated execution Task. SPEC-0054-TSK-0011 records
   only integrated acceptance and never claims the delegated implementation.
 - Until WP-013 removes execution-instance rosters, the existing Spec 0054
   compatibility row points only to the current parent acceptance owner,
-  TSK-0054-0011; the next parent handoff will point it to queued continuation
-  TSK-0054-0013. Spec 0066 receives no standalone row; its execution ownership
+  SPEC-0054-TSK-0011; the next parent handoff will point it to queued continuation
+  SPEC-0054-TSK-0013. Spec 0066 receives no standalone row; its execution ownership
   is proved by its package-local links and reciprocal Spec-level delegation.
 - Work packages follow their declared dependencies rather than one global
   closed order. WP-001 and WP-002 are completed evidence and are not
@@ -113,20 +113,20 @@ rollback implications, and ordered logical commit boundary.
 
 ## Task Records
 
-- [`TSK-0054-0001`](tasks/tsk-0001-approved-design-authority.md)
-- [`TSK-0054-0002`](tasks/tsk-0002-terminal-topology-and-four-digit-identity.md)
-- [`TSK-0054-0003`](tasks/tsk-0003-codex-claude-only-ai-agent-governance.md)
-- [`TSK-0054-0004`](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md)
-- [`TSK-0054-0005`](tasks/tsk-0005-stage-05-responsibility-ledger.md)
-- [`TSK-0054-0006`](tasks/tsk-0006-stage-05-ownership-cutover.md)
-- [`TSK-0054-0007`](tasks/tsk-0007-stage-90-disposition-ledger.md)
-- [`TSK-0054-0008`](tasks/tsk-0008-stage-90-ownership-cutover.md)
-- [`TSK-0054-0009`](tasks/tsk-0009-global-stage-98-parity-and-recovery-closure.md)
-- [`TSK-0054-0010`](tasks/tsk-0010-script-gate-fixture-and-sha-ownership-fixed-point.md)
-- [`TSK-0054-0011`](tasks/tsk-0011-responsibility-topology-and-compatibility-cutover.md)
-- [`TSK-0054-0012`](tasks/tsk-0012-progress-and-generated-current-cleanup.md)
-- [`TSK-0054-0013`](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md)
-- [`TSK-0054-0014`](tasks/tsk-0014-convergence-and-branch-completion.md)
+- [`SPEC-0054-TSK-0001`](tasks/tsk-0001-approved-design-authority.md)
+- [`SPEC-0054-TSK-0002`](tasks/tsk-0002-terminal-topology-and-four-digit-identity.md)
+- [`SPEC-0054-TSK-0003`](tasks/tsk-0003-codex-claude-only-ai-agent-governance.md)
+- [`SPEC-0054-TSK-0004`](tasks/tsk-0004-document-lifecycle-task-and-registry-authority-activation.md)
+- [`SPEC-0054-TSK-0005`](tasks/tsk-0005-stage-05-responsibility-ledger.md)
+- [`SPEC-0054-TSK-0006`](tasks/tsk-0006-stage-05-ownership-cutover.md)
+- [`SPEC-0054-TSK-0007`](tasks/tsk-0007-stage-90-disposition-ledger.md)
+- [`SPEC-0054-TSK-0008`](tasks/tsk-0008-stage-90-ownership-cutover.md)
+- [`SPEC-0054-TSK-0009`](tasks/tsk-0009-global-stage-98-parity-and-recovery-closure.md)
+- [`SPEC-0054-TSK-0010`](tasks/tsk-0010-script-gate-fixture-and-sha-ownership-fixed-point.md)
+- [`SPEC-0054-TSK-0011`](tasks/tsk-0011-responsibility-topology-and-compatibility-cutover.md)
+- [`SPEC-0054-TSK-0012`](tasks/tsk-0012-progress-and-generated-current-cleanup.md)
+- [`SPEC-0054-TSK-0013`](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md)
+- [`SPEC-0054-TSK-0014`](tasks/tsk-0014-convergence-and-branch-completion.md)
 
 ## Related Documents
 

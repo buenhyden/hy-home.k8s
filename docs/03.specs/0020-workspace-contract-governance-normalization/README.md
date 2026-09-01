@@ -19,11 +19,11 @@
 
 ## Task Records
 
-- [`TSK-0020-0001` — `WCGN-001`](tasks/tsk-0001-wcgn-001.md)
-- [`TSK-0020-0002` — `WCGN-002`](tasks/tsk-0002-wcgn-002.md)
-- [`TSK-0020-0003` — `WCGN-003`](tasks/tsk-0003-wcgn-003.md)
-- [`TSK-0020-0004` — `WCGN-004`](tasks/tsk-0004-wcgn-004.md)
-- [`TSK-0020-0005` — `WCGN-005`](tasks/tsk-0005-wcgn-005.md)
+- [`SPEC-0020-TSK-0001` — `WCGN-001`](tasks/tsk-0001-wcgn-001.md)
+- [`SPEC-0020-TSK-0002` — `WCGN-002`](tasks/tsk-0002-wcgn-002.md)
+- [`SPEC-0020-TSK-0003` — `WCGN-003`](tasks/tsk-0003-wcgn-003.md)
+- [`SPEC-0020-TSK-0004` — `WCGN-004`](tasks/tsk-0004-wcgn-004.md)
+- [`SPEC-0020-TSK-0005` — `WCGN-005`](tasks/tsk-0005-wcgn-005.md)
 
 ## Related Documents
 

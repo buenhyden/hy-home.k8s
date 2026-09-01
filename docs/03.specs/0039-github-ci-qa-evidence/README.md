@@ -19,13 +19,13 @@
 
 ## Task Records
 
-- [`TSK-0039-0001` — `GCQE-000`](tasks/tsk-0001-gcqe-000.md)
-- [`TSK-0039-0002` — `GCQE-001`](tasks/tsk-0002-gcqe-001.md)
-- [`TSK-0039-0003` — `GCQE-002`](tasks/tsk-0003-gcqe-002.md)
-- [`TSK-0039-0004` — `GCQE-003`](tasks/tsk-0004-gcqe-003.md)
-- [`TSK-0039-0005` — `GCQE-004`](tasks/tsk-0005-gcqe-004.md)
-- [`TSK-0039-0006` — `GCQE-005`](tasks/tsk-0006-gcqe-005.md)
-- [`TSK-0039-0007` — `GCQE-006`](tasks/tsk-0007-gcqe-006.md)
+- [`SPEC-0039-TSK-0001` — `GCQE-000`](tasks/tsk-0001-gcqe-000.md)
+- [`SPEC-0039-TSK-0002` — `GCQE-001`](tasks/tsk-0002-gcqe-001.md)
+- [`SPEC-0039-TSK-0003` — `GCQE-002`](tasks/tsk-0003-gcqe-002.md)
+- [`SPEC-0039-TSK-0004` — `GCQE-003`](tasks/tsk-0004-gcqe-003.md)
+- [`SPEC-0039-TSK-0005` — `GCQE-004`](tasks/tsk-0005-gcqe-004.md)
+- [`SPEC-0039-TSK-0006` — `GCQE-005`](tasks/tsk-0006-gcqe-005.md)
+- [`SPEC-0039-TSK-0007` — `GCQE-006`](tasks/tsk-0007-gcqe-006.md)
 
 ## Related Documents
 

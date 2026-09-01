@@ -4,7 +4,7 @@ type: sdlc/task
 status: done
 owner: platform
 updated: 2026-08-30
-artifact_id: "TSK-0054-0012"
+artifact_id: "SPEC-0054-TSK-0012"
 ---
 
 # Task: Progress and generated-current cleanup

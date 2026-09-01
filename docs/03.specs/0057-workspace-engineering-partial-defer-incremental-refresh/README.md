@@ -19,14 +19,14 @@
 
 ## Task Records
 
-- [`TSK-0057-0001` — `PDRR-000`](tasks/tsk-0001-pdrr-000.md)
-- [`TSK-0057-0002` — `PDRR-001`](tasks/tsk-0002-pdrr-001.md)
-- [`TSK-0057-0003` — `PDRR-002`](tasks/tsk-0003-pdrr-002.md)
-- [`TSK-0057-0004` — `PDRR-003`](tasks/tsk-0004-pdrr-003.md)
-- [`TSK-0057-0005` — `PDRR-004`](tasks/tsk-0005-pdrr-004.md)
-- [`TSK-0057-0006` — `PDRR-005`](tasks/tsk-0006-pdrr-005.md)
-- [`TSK-0057-0007` — `PDRR-006`](tasks/tsk-0007-pdrr-006.md)
-- [`TSK-0057-0008` — `PDRR-007`](tasks/tsk-0008-pdrr-007.md)
+- [`SPEC-0057-TSK-0001` — `PDRR-000`](tasks/tsk-0001-pdrr-000.md)
+- [`SPEC-0057-TSK-0002` — `PDRR-001`](tasks/tsk-0002-pdrr-001.md)
+- [`SPEC-0057-TSK-0003` — `PDRR-002`](tasks/tsk-0003-pdrr-002.md)
+- [`SPEC-0057-TSK-0004` — `PDRR-003`](tasks/tsk-0004-pdrr-003.md)
+- [`SPEC-0057-TSK-0005` — `PDRR-004`](tasks/tsk-0005-pdrr-004.md)
+- [`SPEC-0057-TSK-0006` — `PDRR-005`](tasks/tsk-0006-pdrr-005.md)
+- [`SPEC-0057-TSK-0007` — `PDRR-006`](tasks/tsk-0007-pdrr-006.md)
+- [`SPEC-0057-TSK-0008` — `PDRR-007`](tasks/tsk-0008-pdrr-007.md)
 
 ## Related Documents
 

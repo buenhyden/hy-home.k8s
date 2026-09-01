@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-08-14
-artifact_id: "PLAN-0058"
+artifact_id: "SPEC-0058-PLAN-0001"
 ---
 
 # Workspace Research Consistency and Partial Refresh Plan

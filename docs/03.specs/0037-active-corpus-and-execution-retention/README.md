@@ -19,12 +19,12 @@
 
 ## Task Records
 
-- [`TSK-0037-0001` — `ACER-001`](tasks/tsk-0001-acer-001.md)
-- [`TSK-0037-0002` — `ACER-002`](tasks/tsk-0002-acer-002.md)
-- [`TSK-0037-0003` — `ACER-003`](tasks/tsk-0003-acer-003.md)
-- [`TSK-0037-0004` — `ACER-004`](tasks/tsk-0004-acer-004.md)
-- [`TSK-0037-0005` — `ACER-005`](tasks/tsk-0005-acer-005.md)
-- [`TSK-0037-0006` — `ACER-006`](tasks/tsk-0006-acer-006.md)
+- [`SPEC-0037-TSK-0001` — `ACER-001`](tasks/tsk-0001-acer-001.md)
+- [`SPEC-0037-TSK-0002` — `ACER-002`](tasks/tsk-0002-acer-002.md)
+- [`SPEC-0037-TSK-0003` — `ACER-003`](tasks/tsk-0003-acer-003.md)
+- [`SPEC-0037-TSK-0004` — `ACER-004`](tasks/tsk-0004-acer-004.md)
+- [`SPEC-0037-TSK-0005` — `ACER-005`](tasks/tsk-0005-acer-005.md)
+- [`SPEC-0037-TSK-0006` — `ACER-006`](tasks/tsk-0006-acer-006.md)
 
 ## Related Documents
 

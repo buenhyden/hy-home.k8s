@@ -4,7 +4,7 @@ type: sdlc/plan
 status: draft
 owner: platform
 updated: 2026-08-07
-artifact_id: "PLAN-0047"
+artifact_id: "SPEC-0047-PLAN-0001"
 ---
 
 # Current Surface and Stash Reconciliation Implementation Plan

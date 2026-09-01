@@ -3,9 +3,9 @@
 ## Overview
 
 Spec 0066 is the delegated execution package for Spec 0054 WP-010 and WP-011.
-Spec 0054 retains integrated acceptance authority through TSK-0054-0011. The
+Spec 0054 retains integrated acceptance authority through SPEC-0054-TSK-0011. The
 delegated execution is complete: this package's Spec and Plan are `done`, and
-TSK-0066-0001 is `done` after the parent recorded integrated acceptance. The
+SPEC-0066-TSK-0001 is `done` after the parent recorded integrated acceptance. The
 implementation result itself is owned by that Task and by reachable Git.
 
 ## Scope
@@ -19,7 +19,7 @@ lifecycle state.
 
 - [Spec](spec.md)
 - [Plan](plan.md)
-- [TSK-0066-0001](tasks/tsk-0001-vto-000.md)
+- [SPEC-0066-TSK-0001](tasks/tsk-0001-vto-000.md)
 
 ## Add and Find
 

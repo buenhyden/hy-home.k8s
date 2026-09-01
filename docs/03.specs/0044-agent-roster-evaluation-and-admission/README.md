@@ -19,12 +19,12 @@
 
 ## Task Records
 
-- [`TSK-0044-0001` — `AREA-000`](tasks/tsk-0001-area-000.md)
-- [`TSK-0044-0002` — `AREA-001`](tasks/tsk-0002-area-001.md)
-- [`TSK-0044-0003` — `AREA-002`](tasks/tsk-0003-area-002.md)
-- [`TSK-0044-0004` — `AREA-003`](tasks/tsk-0004-area-003.md)
-- [`TSK-0044-0005` — `AREA-004`](tasks/tsk-0005-area-004.md)
-- [`TSK-0044-0006` — `AREA-005`](tasks/tsk-0006-area-005.md)
+- [`SPEC-0044-TSK-0001` — `AREA-000`](tasks/tsk-0001-area-000.md)
+- [`SPEC-0044-TSK-0002` — `AREA-001`](tasks/tsk-0002-area-001.md)
+- [`SPEC-0044-TSK-0003` — `AREA-002`](tasks/tsk-0003-area-002.md)
+- [`SPEC-0044-TSK-0004` — `AREA-003`](tasks/tsk-0004-area-003.md)
+- [`SPEC-0044-TSK-0005` — `AREA-004`](tasks/tsk-0005-area-004.md)
+- [`SPEC-0044-TSK-0006` — `AREA-005`](tasks/tsk-0006-area-005.md)
 
 ## Related Documents
 

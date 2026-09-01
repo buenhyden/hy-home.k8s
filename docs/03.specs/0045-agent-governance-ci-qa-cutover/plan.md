@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-08-01
-artifact_id: "PLAN-0045"
+artifact_id: "SPEC-0045-PLAN-0001"
 ---
 
 # Agent Governance CI and QA Cutover Implementation Plan

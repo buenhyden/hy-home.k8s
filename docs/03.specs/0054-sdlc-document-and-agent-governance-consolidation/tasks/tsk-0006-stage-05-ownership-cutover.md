@@ -4,7 +4,7 @@ type: sdlc/task
 status: done
 owner: platform
 updated: 2026-09-01
-artifact_id: "TSK-0054-0006"
+artifact_id: "SPEC-0054-TSK-0006"
 ---
 
 # Task: Stage 05 ownership cutover
@@ -12,7 +12,7 @@ artifact_id: "TSK-0054-0006"
 ## Overview
 
 This is the completed Spec 0054 Task record for WP-006. The state-only handoff
-to TSK-0054-0010 is recorded with this terminal state.
+to SPEC-0054-TSK-0010 is recorded with this terminal state.
 
 ## Inputs
 

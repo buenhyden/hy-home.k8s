@@ -4,7 +4,7 @@ type: sdlc/task
 status: queued
 owner: platform
 updated: 2026-08-31
-artifact_id: "TSK-0054-0009"
+artifact_id: "SPEC-0054-TSK-0009"
 ---
 
 # Task: Isolated Stage 98 archive minimization

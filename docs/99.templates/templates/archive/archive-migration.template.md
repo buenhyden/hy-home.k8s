@@ -5,7 +5,6 @@ status: "draft"
 owner: "platform"
 updated: "YYYY-MM-DD"
 artifact_id: "MIG-0000"
-migration_id: "MIG-0000"
 ---
 
 # MIG-{NNNN}: {Migration Title}

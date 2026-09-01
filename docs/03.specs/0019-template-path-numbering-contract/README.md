@@ -19,11 +19,11 @@
 
 ## Task Records
 
-- [`TSK-0019-0001` — `TPN-001`](tasks/tsk-0001-tpn-001.md)
-- [`TSK-0019-0002` — `TPN-002`](tasks/tsk-0002-tpn-002.md)
-- [`TSK-0019-0003` — `TPN-003`](tasks/tsk-0003-tpn-003.md)
-- [`TSK-0019-0004` — `TPN-004`](tasks/tsk-0004-tpn-004.md)
-- [`TSK-0019-0005` — `TPN-005`](tasks/tsk-0005-tpn-005.md)
+- [`SPEC-0019-TSK-0001` — `TPN-001`](tasks/tsk-0001-tpn-001.md)
+- [`SPEC-0019-TSK-0002` — `TPN-002`](tasks/tsk-0002-tpn-002.md)
+- [`SPEC-0019-TSK-0003` — `TPN-003`](tasks/tsk-0003-tpn-003.md)
+- [`SPEC-0019-TSK-0004` — `TPN-004`](tasks/tsk-0004-tpn-004.md)
+- [`SPEC-0019-TSK-0005` — `TPN-005`](tasks/tsk-0005-tpn-005.md)
 
 ## Related Documents
 

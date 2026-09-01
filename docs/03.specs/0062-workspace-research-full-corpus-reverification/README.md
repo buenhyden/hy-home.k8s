@@ -19,16 +19,16 @@
 
 ## Task Records
 
-- [`TSK-0062-0001` — `WRFR-000`](tasks/tsk-0001-wrfr-000.md)
-- [`TSK-0062-0002` — `WRFR-001`](tasks/tsk-0002-wrfr-001.md)
-- [`TSK-0062-0003` — `WRFR-002`](tasks/tsk-0003-wrfr-002.md)
-- [`TSK-0062-0004` — `WRFR-003`](tasks/tsk-0004-wrfr-003.md)
-- [`TSK-0062-0005` — `WRFR-004`](tasks/tsk-0005-wrfr-004.md)
-- [`TSK-0062-0006` — `WRFR-005`](tasks/tsk-0006-wrfr-005.md)
-- [`TSK-0062-0007` — `WRFR-006`](tasks/tsk-0007-wrfr-006.md)
-- [`TSK-0062-0008` — `WRFR-007`](tasks/tsk-0008-wrfr-007.md)
-- [`TSK-0062-0009` — `WRFR-008`](tasks/tsk-0009-wrfr-008.md)
-- [`TSK-0062-0010` — `WRFR-009`](tasks/tsk-0010-wrfr-009.md)
+- [`SPEC-0062-TSK-0001` — `WRFR-000`](tasks/tsk-0001-wrfr-000.md)
+- [`SPEC-0062-TSK-0002` — `WRFR-001`](tasks/tsk-0002-wrfr-001.md)
+- [`SPEC-0062-TSK-0003` — `WRFR-002`](tasks/tsk-0003-wrfr-002.md)
+- [`SPEC-0062-TSK-0004` — `WRFR-003`](tasks/tsk-0004-wrfr-003.md)
+- [`SPEC-0062-TSK-0005` — `WRFR-004`](tasks/tsk-0005-wrfr-004.md)
+- [`SPEC-0062-TSK-0006` — `WRFR-005`](tasks/tsk-0006-wrfr-005.md)
+- [`SPEC-0062-TSK-0007` — `WRFR-006`](tasks/tsk-0007-wrfr-006.md)
+- [`SPEC-0062-TSK-0008` — `WRFR-007`](tasks/tsk-0008-wrfr-007.md)
+- [`SPEC-0062-TSK-0009` — `WRFR-008`](tasks/tsk-0009-wrfr-008.md)
+- [`SPEC-0062-TSK-0010` — `WRFR-009`](tasks/tsk-0010-wrfr-009.md)
 
 ## Related Documents
 

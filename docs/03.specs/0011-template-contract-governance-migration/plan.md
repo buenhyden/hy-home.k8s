@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-13
-artifact_id: "PLAN-0011"
+artifact_id: "SPEC-0011-PLAN-0001"
 ---
 
 # Template Contract and Governance Migration Implementation Plan

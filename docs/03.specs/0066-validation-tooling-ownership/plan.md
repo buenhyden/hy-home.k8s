@@ -4,7 +4,7 @@ type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-09-01
-artifact_id: "PLAN-0066"
+artifact_id: "SPEC-0066-PLAN-0001"
 ---
 
 # Validation Tooling Ownership Implementation Plan
@@ -31,14 +31,14 @@ artifact_id: "PLAN-0066"
   deleted only with current-consumer-zero and unique-diagnostic-zero evidence.
 - Existing required CI check names remain stable until authorized remote
   protection-rule verification supports a separate decision.
-- This Plan is `done`, and TSK-0066-0001 is its sole Task and is `done`.
-- TSK-0054-0010 completed the atomic activation transaction before this Plan
+- This Plan is `done`, and SPEC-0066-TSK-0001 is its sole Task and is `done`.
+- SPEC-0054-TSK-0010 completed the atomic activation transaction before this Plan
   began execution. That transaction aligned ADR and README state, added the
   package-local delegated-component gate and focused tests, activated the
   Spec 0066 component, moved the existing parent compatibility pointer to
-  TSK-0054-0011, completed TSK-0054-0010, and activated TSK-0054-0011 as the
+  SPEC-0054-TSK-0011, completed SPEC-0054-TSK-0010, and activated SPEC-0054-TSK-0011 as the
   sole parent acceptance Task. It created no Spec 0066 standalone row and made
-  no Stage 99 lifecycle-domain, schema, or projection change. TSK-0066-0001
+  no Stage 99 lifecycle-domain, schema, or projection change. SPEC-0066-TSK-0001
   did not activate itself and has not yet claimed implementation results.
 
 ## Overview
@@ -111,7 +111,7 @@ Spec 0054 work packages outside WP-010 and WP-011 remain with Spec 0054.
 
 | ID | Work package | Depends on | Exit evidence |
 | --- | --- | --- | --- |
-| WP-001 | Verify the parent-owned activation transaction is complete and capture the validation-tooling baseline before mutation; do not repeat any ADR, README, lifecycle, compatibility-pointer, or delegated-state transition | None | Accepted ADR/README reciprocity, active package-local states, Spec 0066 router and Current Spec Index active-state parity, no foreign parent Plan/Task execution link, no Spec 0066 standalone row, the existing Spec 0054 row pointing to active TSK-0054-0011, completed TSK-0054-0010, focused delegated-ownership test results, and point-in-time baseline evidence |
+| WP-001 | Verify the parent-owned activation transaction is complete and capture the validation-tooling baseline before mutation; do not repeat any ADR, README, lifecycle, compatibility-pointer, or delegated-state transition | None | Accepted ADR/README reciprocity, active package-local states, Spec 0066 router and Current Spec Index active-state parity, no foreign parent Plan/Task execution link, no Spec 0066 standalone row, the existing Spec 0054 row pointing to active SPEC-0054-TSK-0011, completed SPEC-0054-TSK-0010, focused delegated-ownership test results, and point-in-time baseline evidence |
 | WP-002 | Correct current executable-reference validation so extension and depth do not silence it; distinguish current references from Git-first historical recovery and bounded sealed-record exceptions | WP-001 | Focused cases for present, missing, Git-recoverable, and sealed-exception references |
 | WP-003 | Atomically move the existing validation-surface JSON and schema to `scripts/validation/registry.*` and update all consumers | WP-002 | No source copy remains; schema passes; identical selection across the move |
 | WP-004 | Build or adapt independent behavior tests for ownership duplication, aggregate rule leakage, missing references, orphan fixtures, bounded I/O, subprocess timeout, pin classification, and staged ambiguity | WP-002 | Each behavior fails against its defect and passes after its owner is corrected; no fixed case count |
@@ -122,7 +122,7 @@ Spec 0054 work packages outside WP-010 and WP-011 remain with Spec 0054.
 | WP-009 | Prove current-consumer-zero and unique-diagnostic-zero for each wrapper or alias, then retire only proven candidates | WP-008 | Per-candidate consumer sweep, diagnostic comparison, and recovery evidence |
 | WP-010 | Simplify registry selection, hook invocation, and CI jobs intentionally; preserve required CI check names pending authorized remote verification | WP-003, WP-008, WP-009 | Before/after selected lanes with rationale; duplicate invocation audit; external check names unchanged or separately approved |
 | WP-011 | Remove current-state SHA/digest tracking, retain only owned immutable external pins and sealed recovery coordinates, and update validation documentation | WP-005, WP-010 | Pin classification, owner/update-or-recovery evidence, current-state pin sweep |
-| WP-012 | Finish implementation and independent review; pass and commit every acceptance-bearing focused and broad gate; obtain Spec 0054 integrated acceptance through TSK-0054-0011; then perform only the Spec 0066 state closure and post-state lifecycle/diff confirmation | All | Committed clean-checkout evidence before acceptance, parent acceptance record, `TSK-0066-0001 in-progress → done`, Plan/Spec `active → done`, and post-state lifecycle/diff PASS |
+| WP-012 | Finish implementation and independent review; pass and commit every acceptance-bearing focused and broad gate; obtain Spec 0054 integrated acceptance through SPEC-0054-TSK-0011; then perform only the Spec 0066 state closure and post-state lifecycle/diff confirmation | All | Committed clean-checkout evidence before acceptance, parent acceptance record, `SPEC-0066-TSK-0001 in-progress → done`, Plan/Spec `active → done`, and post-state lifecycle/diff PASS |
 
 ## Verification Plan
 
@@ -138,7 +138,7 @@ records intentional routing differences and proves the resulting lane still
 covers the changed responsibility.
 
 WP-001 verifies the parent-owned activation cases in the focused top-level
-test module created by TSK-0054-0010. The positive case requires one closed
+test module created by SPEC-0054-TSK-0010. The positive case requires one closed
 package-local Spec 0066 Plan/Task component plus reciprocal Spec 0054↔0066
 links under accepted ADR-0031. Negative cases cover missing reciprocity,
 proposed ADR authority, multiple candidate parents, foreign Plan/Task links,
@@ -166,8 +166,8 @@ cluster success.
 ## Completion Criteria
 
 Activation completed through the parent-owned atomic transaction described
-above. Spec and Plan are `active`, TSK-0066-0001 and TSK-0054-0011 are
-`in-progress`, and TSK-0054-0010 is `done`. WP-001 now verifies those states
+above. Spec and Plan are `active`, SPEC-0066-TSK-0001 and SPEC-0054-TSK-0011 are
+`in-progress`, and SPEC-0054-TSK-0010 is `done`. WP-001 now verifies those states
 and captures the validation-tooling baseline; it does not repeat or claim the
 parent activation work.
 
@@ -176,15 +176,15 @@ to pass in a clean checkout, all remaining wrappers and pins to name their
 owners, and all intentional routing differences to be explained. All
 implementation, independent review, and acceptance-bearing focused, affected,
 staged, registry, Markdown, link, lifecycle, aggregate, and diff checks finish
-and are committed while TSK-0066-0001 remains `in-progress`. It then publishes
-that review-ready evidence. TSK-0054-0011 reviews it, records Spec 0054
+and are committed while SPEC-0066-TSK-0001 remains `in-progress`. It then publishes
+that review-ready evidence. SPEC-0054-TSK-0011 reviews it, records Spec 0054
 integrated acceptance, and remains `in-progress` while Spec 0066 performs a
-state-only closure: TSK-0066-0001 moves `in-progress → done`, and its Plan and
+state-only closure: SPEC-0066-TSK-0001 moves `in-progress → done`, and its Plan and
 Spec move `active → done`. The closure reruns lifecycle and diff checks only to
 confirm the terminal states; it does not add implementation or acceptance
-evidence. A later parent handoff atomically moves TSK-0054-0011 to `done` and
-the existing Spec 0054 compatibility pointer to queued TSK-0054-0013. Only a
-subsequent lifecycle-valid change may activate TSK-0054-0013.
+evidence. A later parent handoff atomically moves SPEC-0054-TSK-0011 to `done` and
+the existing Spec 0054 compatibility pointer to queued SPEC-0054-TSK-0013. Only a
+subsequent lifecycle-valid change may activate SPEC-0054-TSK-0013.
 
 ## Traceability
 
@@ -192,17 +192,17 @@ subsequent lifecycle-valid change may activate TSK-0054-0013.
 
 | Spec criterion | Work package | Expected Task |
 | --- | --- | --- |
-| [VAL-VTO-001](spec.md#success-criteria--verification-plan) | WP-001, WP-012 | [TSK-0066-0001](tasks/tsk-0001-vto-000.md) |
-| [VAL-VTO-002](spec.md#success-criteria--verification-plan) | WP-003 | [TSK-0066-0001](tasks/tsk-0001-vto-000.md) |
-| [VAL-VTO-003](spec.md#success-criteria--verification-plan) | WP-003, WP-010 | [TSK-0066-0001](tasks/tsk-0001-vto-000.md) |
-| [VAL-VTO-004](spec.md#success-criteria--verification-plan) | WP-002 | [TSK-0066-0001](tasks/tsk-0001-vto-000.md) |
-| [VAL-VTO-005](spec.md#success-criteria--verification-plan) | WP-005, WP-007, WP-008 | [TSK-0066-0001](tasks/tsk-0001-vto-000.md) |
-| [VAL-VTO-006](spec.md#success-criteria--verification-plan) | WP-004, WP-006 | [TSK-0066-0001](tasks/tsk-0001-vto-000.md) |
-| [VAL-VTO-007](spec.md#success-criteria--verification-plan) | WP-009 | [TSK-0066-0001](tasks/tsk-0001-vto-000.md) |
-| [VAL-VTO-008](spec.md#success-criteria--verification-plan) | WP-004, WP-007, WP-012 | [TSK-0066-0001](tasks/tsk-0001-vto-000.md) |
-| [VAL-VTO-009](spec.md#success-criteria--verification-plan) | WP-005, WP-011 | [TSK-0066-0001](tasks/tsk-0001-vto-000.md) |
-| [VAL-VTO-010](spec.md#success-criteria--verification-plan) | WP-010 | [TSK-0066-0001](tasks/tsk-0001-vto-000.md) |
-| [VAL-VTO-011](spec.md#success-criteria--verification-plan) | WP-012 | [TSK-0066-0001](tasks/tsk-0001-vto-000.md) |
+| [VAL-VTO-001](spec.md#success-criteria--verification-plan) | WP-001, WP-012 | [SPEC-0066-TSK-0001](tasks/tsk-0001-vto-000.md) |
+| [VAL-VTO-002](spec.md#success-criteria--verification-plan) | WP-003 | [SPEC-0066-TSK-0001](tasks/tsk-0001-vto-000.md) |
+| [VAL-VTO-003](spec.md#success-criteria--verification-plan) | WP-003, WP-010 | [SPEC-0066-TSK-0001](tasks/tsk-0001-vto-000.md) |
+| [VAL-VTO-004](spec.md#success-criteria--verification-plan) | WP-002 | [SPEC-0066-TSK-0001](tasks/tsk-0001-vto-000.md) |
+| [VAL-VTO-005](spec.md#success-criteria--verification-plan) | WP-005, WP-007, WP-008 | [SPEC-0066-TSK-0001](tasks/tsk-0001-vto-000.md) |
+| [VAL-VTO-006](spec.md#success-criteria--verification-plan) | WP-004, WP-006 | [SPEC-0066-TSK-0001](tasks/tsk-0001-vto-000.md) |
+| [VAL-VTO-007](spec.md#success-criteria--verification-plan) | WP-009 | [SPEC-0066-TSK-0001](tasks/tsk-0001-vto-000.md) |
+| [VAL-VTO-008](spec.md#success-criteria--verification-plan) | WP-004, WP-007, WP-012 | [SPEC-0066-TSK-0001](tasks/tsk-0001-vto-000.md) |
+| [VAL-VTO-009](spec.md#success-criteria--verification-plan) | WP-005, WP-011 | [SPEC-0066-TSK-0001](tasks/tsk-0001-vto-000.md) |
+| [VAL-VTO-010](spec.md#success-criteria--verification-plan) | WP-010 | [SPEC-0066-TSK-0001](tasks/tsk-0001-vto-000.md) |
+| [VAL-VTO-011](spec.md#success-criteria--verification-plan) | WP-012 | [SPEC-0066-TSK-0001](tasks/tsk-0001-vto-000.md) |
 
 ### Related Documents
 
@@ -211,5 +211,5 @@ subsequent lifecycle-valid change may activate TSK-0054-0013.
 - [Accepted ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)
 - [Current Spec Index](../README.md#current-spec-index)
 - Parent acceptance boundary: `SPEC-0054`, `WP-010`, `WP-011`,
-  `TSK-0054-0010`, and `TSK-0054-0011`; the reciprocal rendered relation is
+  `SPEC-0054-TSK-0010`, and `SPEC-0054-TSK-0011`; the reciprocal rendered relation is
   owned by this package's Spec rather than a foreign Plan/Task execution link.

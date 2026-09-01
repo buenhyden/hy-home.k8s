@@ -4,7 +4,7 @@ type: sdlc/plan
 status: active
 owner: platform
 updated: 2026-08-12
-artifact_id: "PLAN-0052"
+artifact_id: "SPEC-0052-PLAN-0001"
 ---
 
 # Document Taxonomy Consolidation Implementation Plan

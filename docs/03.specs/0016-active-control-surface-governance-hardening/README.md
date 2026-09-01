@@ -19,11 +19,11 @@
 
 ## Task Records
 
-- [`TSK-0016-0001` — `ACS-001`](tasks/tsk-0001-acs-001.md)
-- [`TSK-0016-0002` — `ACS-002`](tasks/tsk-0002-acs-002.md)
-- [`TSK-0016-0003` — `ACS-003`](tasks/tsk-0003-acs-003.md)
-- [`TSK-0016-0004` — `ACS-004`](tasks/tsk-0004-acs-004.md)
-- [`TSK-0016-0005` — `ACS-005`](tasks/tsk-0005-acs-005.md)
+- [`SPEC-0016-TSK-0001` — `ACS-001`](tasks/tsk-0001-acs-001.md)
+- [`SPEC-0016-TSK-0002` — `ACS-002`](tasks/tsk-0002-acs-002.md)
+- [`SPEC-0016-TSK-0003` — `ACS-003`](tasks/tsk-0003-acs-003.md)
+- [`SPEC-0016-TSK-0004` — `ACS-004`](tasks/tsk-0004-acs-004.md)
+- [`SPEC-0016-TSK-0005` — `ACS-005`](tasks/tsk-0005-acs-005.md)
 
 ## Related Documents
 
