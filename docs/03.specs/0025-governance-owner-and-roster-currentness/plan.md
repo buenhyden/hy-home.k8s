@@ -1192,7 +1192,7 @@ git commit -m "docs(governance): close roster currentness evidence"
 - **Current Audit Pack**:
   [current external research pack](../../90.references/research/0001-workspace-engineering/README.md)
 - **Remediation Roadmap**:
-  [scope application index](../../90.references/research/0001-workspace-engineering/scope-application-index.md)
+  [scope application index](../../90.references/research/0001-workspace-engineering/m0013-scope-application-index.md)
 - **Harness Catalog**:
   [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Archive Index**: [../../98.archive/README.md](../../98.archive/README.md)
@@ -1206,6 +1206,6 @@ git commit -m "docs(governance): close roster currentness evidence"
 - **Current Audit Pack**:
   [current external research pack](../../90.references/research/0001-workspace-engineering/README.md)
 - **Remediation Roadmap**:
-  [scope application index](../../90.references/research/0001-workspace-engineering/scope-application-index.md)
+  [scope application index](../../90.references/research/0001-workspace-engineering/m0013-scope-application-index.md)
 - **Harness Catalog**:
   [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)

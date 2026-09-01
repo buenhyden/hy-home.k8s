@@ -2100,7 +2100,7 @@ active_currentness_roots = [
 ]
 migration_evidence_ledger_path = (
     root
-    / "docs/90.references/research/0001-workspace-engineering/source-coverage.md"
+    / "docs/90.references/research/0001-workspace-engineering/m0012-source-coverage.md"
 )
 def is_currentness_evidence_only(path: pathlib.Path) -> bool:
     return path == migration_evidence_ledger_path

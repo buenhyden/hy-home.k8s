@@ -60,10 +60,10 @@ implementation evidence and deeper evidence that remains `DEFER`.
 - Compare every admitted external claim with exact current repository paths or
   selectors and classify the result without changing the implementation owner.
 - Integrate accepted evidence into exactly five research-pack owners:
-  `README.md`, `spec-driven-sdlc-and-document-contracts.md`,
-  `ci-cd-github-actions-and-qa.md`,
-  `kubernetes-infrastructure-and-security.md`, and
-  `source-coverage.md`.
+  `README.md`, `m0004-spec-driven-sdlc-and-document-contracts.md`,
+  `m0008-ci-cd-github-actions-and-qa.md`,
+  `m0007-kubernetes-infrastructure-and-security.md`, and
+  `m0012-source-coverage.md`.
 - Use disjoint research workers, independent content and quality review,
   logical-unit commits, and repository-static validation.
 
@@ -176,10 +176,10 @@ record the final admission result for every requested category.
 | Existing owner | Bounded addition |
 | --- | --- |
 | `README.md` | Add a `2026-08-10` gap-only refresh boundary; add or reconcile the explicit Verification/Validation request owner; update only source/status cells whose admitted evidence changed. |
-| `spec-driven-sdlc-and-document-contracts.md` | Add official external semantics for admitted PRD, AD, Policy, Runbook, and broader Release-record questions; preserve local profile/lifecycle facts and the Spec 052 DOC-G1/DOC-G5 decisions. |
-| `ci-cd-github-actions-and-qa.md` | Add the externally sourced Verification/Validation distinction and a responsibility/evidence/failure matrix across SDLC, QA, delivery, and operations. |
-| `kubernetes-infrastructure-and-security.md` | Add only line-level admitted security deltas after proving the current report does not already close the question. |
-| `source-coverage.md` | Append only new source and claim rows, including checked date, adoption boundary, rejected inference, refresh trigger, workspace evidence, uncertainty, and owner link. |
+| `m0004-spec-driven-sdlc-and-document-contracts.md` | Add official external semantics for admitted PRD, AD, Policy, Runbook, and broader Release-record questions; preserve local profile/lifecycle facts and the Spec 052 DOC-G1/DOC-G5 decisions. |
+| `m0008-ci-cd-github-actions-and-qa.md` | Add the externally sourced Verification/Validation distinction and a responsibility/evidence/failure matrix across SDLC, QA, delivery, and operations. |
+| `m0007-kubernetes-infrastructure-and-security.md` | Add only line-level admitted security deltas after proving the current report does not already close the question. |
+| `m0012-source-coverage.md` | Append only new source and claim rows, including checked date, adoption boundary, rejected inference, refresh trigger, workspace evidence, uncertainty, and owner link. |
 
 ### Research and review flow
 

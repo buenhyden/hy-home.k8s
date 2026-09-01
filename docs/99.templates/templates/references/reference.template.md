@@ -4,6 +4,7 @@ type: content/reference
 status: draft
 owner: platform
 updated: YYYY-MM-DD
+artifact_id: "RES-####-m####"
 ---
 
 # Reference: [Item Name]

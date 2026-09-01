@@ -4,6 +4,7 @@ type: content/reference
 status: active
 owner: platform
 updated: 2026-08-31
+artifact_id: "RES-0001-m0011"
 ---
 
 # Reference: Agent Memory Tiers and Management
@@ -102,7 +103,7 @@ this report cites is superseded.
 
 | Observation                      | Finding                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Effect on this report                                                                                                                                                           |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| MCP revision currency            | `2025-11-25` remains published and reachable, but the MCP versioning page states the current protocol revision is `2026-07-28` ([SRC-WERPC-066](source-coverage.md#source-register)). That revision pre-dates the 2026-08-08 check, so this is a missed-currency correction, not a two-day change.                                                                                                                                                        | The connected-resource statements here describe the `2025-11-25` semantics only. They remain accurate for that revision and must not be read as current-protocol claims.        |
+| MCP revision currency            | `2025-11-25` remains published and reachable, but the MCP versioning page states the current protocol revision is `2026-07-28` ([SRC-WERPC-066](m0012-source-coverage.md#source-register)). That revision pre-dates the 2026-08-08 check, so this is a missed-currency correction, not a two-day change.                                                                                                                                                        | The connected-resource statements here describe the `2025-11-25` semantics only. They remain accurate for that revision and must not be read as current-protocol claims.        |
 | MCP resource semantics delta     | At `2026-07-28`, `resources/subscribe` is replaced by `subscriptions/listen` with a `resourceSubscriptions` filter and a subscription id in `_meta`; `resources/list`, `resources/read`, and `resources/templates/list` gain `resultType`, `ttlMs`, and `cacheScope`; resource-not-found moves from `-32002` to `-32602` with `-32002` retained for compatibility; every request must carry `io.modelcontextprotocol/protocolVersion`, `clientInfo`, and `clientCapabilities`. | Any future domain-scoped memory design that assumes the cited retrieval and subscription shape must re-derive it from `2026-07-28`. This report does not adopt those semantics. |
 | Codex and Claude memory surfaces | `config-reference`, the Agents SDK sessions page, and the Claude Code memory page were reachable and consistent with the claims already recorded. None publishes a last-modified date, so "unchanged" here is content identity, not a publisher freshness signal.                                                                                                                                                                                                              | No claim changes. The absence of a publisher timestamp is itself a recorded limit.                                                                                              |
 
@@ -116,7 +117,7 @@ This increment is the fifth refresh cycle over this pack, executed under
 Spec 058. Unlike the three preceding cycles it re-observed every owner row in
 the pack rather than the twelve `Partial` rows, and it assigns each retained
 `Partial` or `DEFER` row a blocking class recorded in the
-[scope application index](scope-application-index.md). All observations are
+[scope application index](m0013-scope-application-index.md). All observations are
 dated **2026-08-17**. No live cluster, hosted CI run, provider runtime,
 authenticated execution, or secret value was observed.
 
@@ -289,7 +290,7 @@ auxiliary evidence and never replace a canonical repository owner.
   `SRC-WERPC-050`, and `SRC-WERPC-051` were re-observed on 2026-08-20 as
   public provider-memory and SDK-session context only.
 - **Workspace selector and result:** `confirmed` at
-  `agent-memory-tiers-and-management.md#short-term-memory-baseline`. The
+  `m0011-agent-memory-tiers-and-management.md#short-term-memory-baseline`. The
   checkpoint contract remains ignored, synthetic, atomic, redacted, advisory,
   compactable, and subordinate to repository re-observation on resume.
 - **As-Is, gap, and target:** the short-term contract remains `Verified` at
@@ -310,7 +311,7 @@ auxiliary evidence and never replace a canonical repository owner.
 - **Sources and external result:** `unchanged`; `SRC-WERPC-068`,
   `SRC-WERPC-050`, and `SRC-WERPC-051` were re-observed on 2026-08-20.
 - **Workspace selector and result:** `confirmed` at
-  `agent-memory-tiers-and-management.md#long-term-memory-baseline`. The durable
+  `m0011-agent-memory-tiers-and-management.md#long-term-memory-baseline`. The durable
   shared ledger remains the tracked long-term owner with canonical-owner,
   provenance, sensitivity, retention, review, and handoff fields.
 - **As-Is, gap, and target:** the durable lifecycle remains `Verified` at
@@ -333,7 +334,7 @@ auxiliary evidence and never replace a canonical repository owner.
   and its Resources specification remains protocol context rather than domain
   authority.
 - **Workspace selector and result:** `confirmed` at
-  `agent-memory-tiers-and-management.md#domain-scoped-memory-baseline`. Specs,
+  `m0011-agent-memory-tiers-and-management.md#domain-scoped-memory-baseline`. Specs,
   Runbooks, Incidents, and Postmortems remain the domain owners; archive and
   promotion preserve provenance and review.
 - **As-Is, gap, and target:** domain memory remains `Verified` at
@@ -354,7 +355,7 @@ auxiliary evidence and never replace a canonical repository owner.
   `SRC-WERPC-050`, `SRC-WERPC-051`, and `SRC-WERPC-066` were re-observed on
   2026-08-20.
 - **Workspace selector and result:** `confirmed` at
-  `agent-memory-tiers-and-management.md#memory-management-baseline`. The four
+  `m0011-agent-memory-tiers-and-management.md#memory-management-baseline`. The four
   local memory classes still require redaction, repository-wins conflict
   resolution, review-gated promotion, compaction, deletion/retention
   boundaries, handoff, and canonical-owner routing.
@@ -404,5 +405,5 @@ compaction, retention, deletion, retrieval, and secure-erasure behavior remain
 ## Related Documents
 
 - [Pack coverage matrix](README.md#requirement-coverage-matrix)
-- [Source ledger](source-coverage.md)
+- [Source ledger](m0012-source-coverage.md)
 - [Context and memory policy](../../../00.agent-governance/policies/context-and-memory.md)

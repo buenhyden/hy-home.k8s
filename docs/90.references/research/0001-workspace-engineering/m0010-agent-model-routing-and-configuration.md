@@ -4,6 +4,7 @@ type: content/reference
 status: active
 owner: platform
 updated: 2026-08-31
+artifact_id: "RES-0001-m0010"
 ---
 
 # Reference: Agent Model Routing and Configuration
@@ -113,7 +114,7 @@ This increment is the fifth refresh cycle over this pack, executed under
 Spec 058. Unlike the three preceding cycles it re-observed every owner row in
 the pack rather than the twelve `Partial` rows, and it assigns each retained
 `Partial` or `DEFER` row a blocking class recorded in the
-[scope application index](scope-application-index.md). All observations are
+[scope application index](m0013-scope-application-index.md). All observations are
 dated **2026-08-17**. No live cluster, hosted CI run, provider runtime,
 authenticated execution, or secret value was observed.
 
@@ -279,7 +280,7 @@ The allocation slice assigns no new source or claim ID for this row.
   effective resolution.
 - **Workspace selector and result:** `confirmed` at baseline commit
   `8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c` and
-  `agent-model-routing-and-configuration.md#model-routing-baseline`. Local
+  `m0010-agent-model-routing-and-configuration.md#model-routing-baseline`. Local
   policy still maps task/role to provider, configured model tier, reasoning
   effort, and bounded tool surface; the model-fitness contract remains the
   evidence owner for each provider-role tuple.
@@ -335,6 +336,6 @@ does not change the model-fitness contract or any configured incumbent.
 
 ## Related Documents
 
-- [Provider implementation status](provider-implementation-status.md)
-- [AI agents](ai-agents-and-agency-agents.md)
+- [Provider implementation status](m0003-provider-implementation-status.md)
+- [AI agents](m0009-ai-agents-and-agency-agents.md)
 - [Model Selection Policy](../../../00.agent-governance/policies/model-selection.md)

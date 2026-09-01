@@ -40,8 +40,8 @@ docs/90.references/research/
 `-- 2026-07-04-wer/
     |-- README.md
     |-- workspace-governance-baseline.md
-    |-- harness-and-loop-engineering.md
-    |-- provider-implementation-status.md
+    |-- m0002-harness-and-loop-engineering.md
+    |-- m0003-provider-implementation-status.md
     |-- spec-sdlc-ci-qa-formatting.md
     |-- kubernetes-infrastructure-security.md
     `-- automation-pipeline-workflow-qa.md
@@ -50,8 +50,8 @@ docs/90.references/research/
 The four current research references are moved into the dated folder:
 
 - `docs/90.references/research/workspace-governance-baseline.md`
-- `docs/90.references/research/harness-and-loop-engineering.md`
-- `docs/90.references/research/provider-implementation-status.md`
+- `docs/90.references/research/m0002-harness-and-loop-engineering.md`
+- `docs/90.references/research/m0003-provider-implementation-status.md`
 - `docs/90.references/research/spec-sdlc-ci-qa-formatting.md`
 
 External source claims must be checked during implementation. Official or
@@ -181,7 +181,7 @@ non-authoritative in the document section where it is used.
 | WER-001 | Create task evidence and baseline inventory | Task record, tasks README, progress memory | VAL-SPC-001, VAL-SPC-006 | Baseline repo/source inventory recorded; repo-quality gate passes |
 | WER-002 | Scaffold dated pack and move existing references | Research pack folder, moved references, research README, parent README | VAL-SPC-001, VAL-SPC-002 | `git mv` preserves history; stale flat links are updated or recorded |
 | WER-003 | Refresh workspace governance baseline | `workspace-governance-baseline.md` | VAL-SPC-003, VAL-SPC-004 | Purpose, roles, contracts, templates, scripts, integration, governance, and rules covered |
-| WER-004 | Refresh harness, loop, and provider references | `harness-and-loop-engineering.md`, `provider-implementation-status.md` | VAL-SPC-004, VAL-SPC-005 | Harness/loop/provider claims cite checked official or primary sources |
+| WER-004 | Refresh harness, loop, and provider references | `m0002-harness-and-loop-engineering.md`, `m0003-provider-implementation-status.md` | VAL-SPC-004, VAL-SPC-005 | Harness/loop/provider claims cite checked official or primary sources |
 | WER-005 | Refresh SDLC/CI/QA/formatting and add automation reference | `spec-sdlc-ci-qa-formatting.md`, `automation-pipeline-workflow-qa.md` | VAL-SPC-004, VAL-SPC-005 | Spec, SDLC, CI/CD, QA, formatting, linting, syntax, automation, pipeline, workflow covered |
 | WER-006 | Add Kubernetes, infrastructure, and security reference | `kubernetes-infrastructure-security.md` | VAL-SPC-004, VAL-SPC-005 | Kubernetes, infrastructure, GitOps, secrets, policy, supply-chain, security covered |
 | WER-007 | Close indexes, task evidence, progress, and validation | Research indexes, task evidence, progress memory | VAL-SPC-002, VAL-SPC-006, VAL-SPC-007 | Required validation passes and limitations are recorded |
@@ -330,8 +330,8 @@ Run:
 
 ```bash
 git mv docs/90.references/research/workspace-governance-baseline.md docs/90.references/research/2026-07-04-wer/workspace-governance-baseline.md
-git mv docs/90.references/research/harness-and-loop-engineering.md docs/90.references/research/2026-07-04-wer/harness-and-loop-engineering.md
-git mv docs/90.references/research/provider-implementation-status.md docs/90.references/research/2026-07-04-wer/provider-implementation-status.md
+git mv docs/90.references/research/m0002-harness-and-loop-engineering.md docs/90.references/research/2026-07-04-wer/harness-and-loop-engineering.md
+git mv docs/90.references/research/m0003-provider-implementation-status.md docs/90.references/research/2026-07-04-wer/provider-implementation-status.md
 git mv docs/90.references/research/spec-sdlc-ci-qa-formatting.md docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md
 ```
 
@@ -487,7 +487,7 @@ metadata.
 
 - [ ] **Step 2: Refresh harness and loop document**
 
-Update `harness-and-loop-engineering.md` so it covers:
+Update `m0002-harness-and-loop-engineering.md` so it covers:
 
 - harness engineering elements,
 - loop engineering elements,
@@ -500,7 +500,7 @@ Use the source checked date `2026-07-04`.
 
 - [ ] **Step 3: Refresh provider implementation status document**
 
-Update `provider-implementation-status.md` so it covers:
+Update `m0003-provider-implementation-status.md` so it covers:
 
 - Claude harness and loop implementation status,
 - Codex harness and loop implementation status,
@@ -840,8 +840,8 @@ Summary:
   under `docs/90.references` and both roots were scanned.
 - Current flat research references are present at:
   - `docs/90.references/research/workspace-governance-baseline.md`
-  - `docs/90.references/research/harness-and-loop-engineering.md`
-  - `docs/90.references/research/provider-implementation-status.md`
+  - `docs/90.references/research/m0002-harness-and-loop-engineering.md`
+  - `docs/90.references/research/m0003-provider-implementation-status.md`
   - `docs/90.references/research/spec-sdlc-ci-qa-formatting.md`
 - The new parent Spec and Plan are present:
   - `docs/03.specs/0017-workspace-engineering-research-pack/spec.md`
@@ -917,8 +917,8 @@ Summary:
   `Authority Boundary`, `Review and Freshness`, and `Related Documents`.
 - The Pack Index lists all six approved references:
   - Current: `workspace-governance-baseline.md`
-  - Current: `harness-and-loop-engineering.md`
-  - Current: `provider-implementation-status.md`
+  - Current: `m0002-harness-and-loop-engineering.md`
+  - Current: `m0003-provider-implementation-status.md`
   - Current: `spec-sdlc-ci-qa-formatting.md`
   - Planned: `kubernetes-infrastructure-security.md`
   - Planned: `automation-pipeline-workflow-qa.md`
@@ -930,8 +930,8 @@ Moved with `git mv`:
 | Source                                                          | Destination                                                                    |
 | --------------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | `docs/90.references/research/workspace-governance-baseline.md`  | `docs/90.references/research/2026-07-04-wer/workspace-governance-baseline.md`  |
-| `docs/90.references/research/harness-and-loop-engineering.md`   | `docs/90.references/research/2026-07-04-wer/harness-and-loop-engineering.md`   |
-| `docs/90.references/research/provider-implementation-status.md` | `docs/90.references/research/2026-07-04-wer/provider-implementation-status.md` |
+| `docs/90.references/research/m0002-harness-and-loop-engineering.md`   | `docs/90.references/research/2026-07-04-wer/harness-and-loop-engineering.md`   |
+| `docs/90.references/research/m0003-provider-implementation-status.md` | `docs/90.references/research/2026-07-04-wer/provider-implementation-status.md` |
 | `docs/90.references/research/spec-sdlc-ci-qa-formatting.md`     | `docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md`     |
 
 ### Index Updates
@@ -1377,7 +1377,7 @@ Boundary statement:
   - `docs/90.references/research`
   - `docs/90.references`
   - `docs/90.references/research/workspace-governance-baseline.md`
-  - `docs/90.references/research/harness-and-loop-engineering.md`
+  - `docs/90.references/research/m0002-harness-and-loop-engineering.md`
 - **Forbidden Paths**: active policy or runtime configuration not named by the Workspace Engineering Research Pack Task Record Task Table, provider settings, secret values, local diagnostics, and remote publication surfaces.
 - **Approval Required**: Human approval is required before publishing Workspace Engineering Research Pack Task Record research, changing active policy/runtime behavior, deleting evidence, contacting providers, push, merge, or corpus expansion.
 - **Static Validation**: Preserve the Workspace Engineering Research Pack Task Record outcomes and limitations recorded in Verification Summary; use these recorded checks:

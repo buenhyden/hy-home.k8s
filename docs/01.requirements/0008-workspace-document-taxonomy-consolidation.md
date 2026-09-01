@@ -57,7 +57,7 @@ model. [GitHub Spec Kit](https://github.com/github/spec-kit/blob/main/docs/index
 and [OpenSpec](https://github.com/Fission-AI/OpenSpec/blob/main/docs/overview.md)
 provide bounded implementation examples in which specification, design or
 plan, and tasks are organized around one change. The local research boundary
-is recorded in the [Spec-driven SDLC reference](../90.references/research/0001-workspace-engineering/spec-driven-sdlc-and-document-contracts.md).
+is recorded in the [Spec-driven SDLC reference](../90.references/research/0001-workspace-engineering/m0004-spec-driven-sdlc-and-document-contracts.md).
 
 REQ-0007 remains the product authority for repository delivery assurance, but
 its Specs 047 through 051 stay suspended while this program changes their

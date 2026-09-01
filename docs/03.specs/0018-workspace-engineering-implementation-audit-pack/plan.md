@@ -49,8 +49,8 @@ The current research benchmark lives at:
 docs/90.references/research/2026-07-04-wer/
 |-- README.md
 |-- workspace-governance-baseline.md
-|-- harness-and-loop-engineering.md
-|-- provider-implementation-status.md
+|-- m0002-harness-and-loop-engineering.md
+|-- m0003-provider-implementation-status.md
 |-- spec-sdlc-ci-qa-formatting.md
 |-- kubernetes-infrastructure-security.md
 `-- automation-pipeline-workflow-qa.md

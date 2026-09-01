@@ -51,8 +51,8 @@ are out of scope unless separately approved by a human.
 - **Goals**:
   - Create `docs/90.references/research/README.md`.
   - Create `workspace-governance-baseline.md`.
-  - Create `harness-and-loop-engineering.md`.
-  - Create `provider-implementation-status.md`.
+  - Create `m0002-harness-and-loop-engineering.md`.
+  - Create `m0003-provider-implementation-status.md`.
   - Create `spec-sdlc-ci-qa-formatting.md`.
   - Update `docs/90.references/README.md`, `docs/03.specs/0009-workspace-harness-research-pack/plan.md`,
     `docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records`, and
@@ -87,8 +87,8 @@ are out of scope unless separately approved by a human.
 | --- | --- |
 | `docs/90.references/research/README.md` | Entry point, reading order, folder scope, index, authority boundary, and related documents. |
 | `docs/90.references/research/workspace-governance-baseline.md` | Repo-first baseline for purpose, roles, governance, operating contract, automation, templates, scripts, CI/CD, QA, formatting, and evidence lanes. |
-| `docs/90.references/research/harness-and-loop-engineering.md` | Harness engineering and loop engineering definitions, official-source analysis, market scan, workspace application requirements, and checklist. |
-| `docs/90.references/research/provider-implementation-status.md` | Claude, Codex/OpenAI, and Gemini/Google implementation status for harness/loop capabilities and shared environment construction. |
+| `docs/90.references/research/m0002-harness-and-loop-engineering.md` | Harness engineering and loop engineering definitions, official-source analysis, market scan, workspace application requirements, and checklist. |
+| `docs/90.references/research/m0003-provider-implementation-status.md` | Claude, Codex/OpenAI, and Gemini/Google implementation status for harness/loop capabilities and shared environment construction. |
 | `docs/90.references/research/spec-sdlc-ci-qa-formatting.md` | Spec-driven development, SDLC, CI/CD, QA, formatting, and verification analysis mapped to this repo. |
 | `docs/90.references/README.md` | Parent reference index and structure update for the new `research/` folder. |
 | `docs/03.specs/0009-workspace-harness-research-pack/plan.md` | Plan index update. |
@@ -148,8 +148,8 @@ Market scan and comparative sources:
 | --- | --- | --- | --- | --- |
 | PLN-001 | Create research folder scaffold and source ledger | `docs/90.references/research/README.md`, `docs/90.references/README.md` | VAL-SPC-001, VAL-SPC-006 | README has Link Basis and Related Documents; parent README indexes `research/`. |
 | PLN-002 | Write workspace governance baseline reference | `docs/90.references/research/workspace-governance-baseline.md` | VAL-SPC-003, VAL-SPC-005 | Reference template headings present; repo-first categories covered. |
-| PLN-003 | Write harness and loop engineering reference | `docs/90.references/research/harness-and-loop-engineering.md` | VAL-SPC-004, VAL-SPC-005 | Harness, loop, market scan, and implementation checklist sections present. |
-| PLN-004 | Write provider implementation status reference | `docs/90.references/research/provider-implementation-status.md` | VAL-SPC-004, VAL-SPC-005 | Claude, Codex/OpenAI, and Gemini/Google sections cite current sources and mark unknowns. |
+| PLN-003 | Write harness and loop engineering reference | `docs/90.references/research/m0002-harness-and-loop-engineering.md` | VAL-SPC-004, VAL-SPC-005 | Harness, loop, market scan, and implementation checklist sections present. |
+| PLN-004 | Write provider implementation status reference | `docs/90.references/research/m0003-provider-implementation-status.md` | VAL-SPC-004, VAL-SPC-005 | Claude, Codex/OpenAI, and Gemini/Google sections cite current sources and mark unknowns. |
 | PLN-005 | Write spec/SDLC/CI/QA/formatting reference | `docs/90.references/research/spec-sdlc-ci-qa-formatting.md` | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | SDD, SDLC, CI/CD, QA, formatting, and validation matrix mapped to repo controls. |
 | PLN-006 | Integrate indexes, task evidence, memory, and validation | `docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records`, `docs/03.specs/0009-workspace-harness-research-pack/plan.md`, `docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records`, `docs/00.agent-governance/memory/progress.md` | VAL-SPC-006 | Repo-static validation passes and task evidence records executed commands. |
 
@@ -288,7 +288,7 @@ and evidence updates.
 
 **Files:**
 
-- Create: `docs/90.references/research/harness-and-loop-engineering.md`
+- Create: `docs/90.references/research/m0002-harness-and-loop-engineering.md`
 - Modify: `docs/90.references/research/README.md`
 - Modify: `docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records`
 
@@ -327,7 +327,7 @@ Run:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-git add docs/90.references/research/harness-and-loop-engineering.md docs/90.references/research/README.md docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records
+git add docs/90.references/research/m0002-harness-and-loop-engineering.md docs/90.references/research/README.md docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records
 git commit -m "docs(research): Analyze harness and loop engineering"
 ```
 
@@ -337,7 +337,7 @@ Expected: validation passes and the commit contains the harness/loop reference.
 
 **Files:**
 
-- Create: `docs/90.references/research/provider-implementation-status.md`
+- Create: `docs/90.references/research/m0003-provider-implementation-status.md`
 - Modify: `docs/90.references/research/README.md`
 - Modify: `docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records`
 
@@ -377,7 +377,7 @@ Run:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-git add docs/90.references/research/provider-implementation-status.md docs/90.references/research/README.md docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records
+git add docs/90.references/research/m0003-provider-implementation-status.md docs/90.references/research/README.md docs/03.specs/0009-workspace-harness-research-pack/README.md#task-records
 git commit -m "docs(research): Compare provider harness implementations"
 ```
 
@@ -544,10 +544,10 @@ Expected: one final integration commit.
 | 2026-07-02 | T-002 | Manual template/source review | PASS; created `../../90.references/research/workspace-governance-baseline.md` from `../../99.templates/templates/common/reference.template.md` using repo-backed governance, CI, scripts, template, and adapter evidence |
 | 2026-07-02 | T-002 | `git diff --check` | PASS; no output |
 | 2026-07-02 | T-002 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
-| 2026-07-02 | T-003 | Manual template/source review | PASS; created `../../90.references/research/harness-and-loop-engineering.md` from `../../99.templates/templates/common/reference.template.md` using required OpenAI, Anthropic, MCP, repo-backed, and non-authoritative market-scan sources checked on 2026-07-02 |
+| 2026-07-02 | T-003 | Manual template/source review | PASS; created `../../90.references/research/m0002-harness-and-loop-engineering.md` from `../../99.templates/templates/common/reference.template.md` using required OpenAI, Anthropic, MCP, repo-backed, and non-authoritative market-scan sources checked on 2026-07-02 |
 | 2026-07-02 | T-003 | `git diff --check` | PASS; no output |
 | 2026-07-02 | T-003 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
-| 2026-07-02 | T-004 | Manual template/source review | PASS; created `../../90.references/research/provider-implementation-status.md` from `../../99.templates/templates/common/reference.template.md` using required Claude Code, Claude Code release notes, Codex/OpenAI docs, OpenAI Codex agent-loop article, Gemini CLI, Gemini Code Assist agent mode, Google ADK, and repo-backed provider sources checked on 2026-07-02 |
+| 2026-07-02 | T-004 | Manual template/source review | PASS; created `../../90.references/research/m0003-provider-implementation-status.md` from `../../99.templates/templates/common/reference.template.md` using required Claude Code, Claude Code release notes, Codex/OpenAI docs, OpenAI Codex agent-loop article, Gemini CLI, Gemini Code Assist agent mode, Google ADK, and repo-backed provider sources checked on 2026-07-02 |
 | 2026-07-02 | T-004 | `git diff --check` | PASS; no output |
 | 2026-07-02 | T-004 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
 | 2026-07-02 | T-005 | Manual template/source review | PASS; created `../../90.references/research/spec-sdlc-ci-qa-formatting.md` from `../../99.templates/templates/common/reference.template.md` using required NIST SSDF, NIST SP 800-204D, GitHub Actions, GitHub Actions secure-use, pre-commit, GitHub Spec Kit, Martin Fowler CI, repo-backed validation, and non-authoritative market-scan sources checked on 2026-07-02 |

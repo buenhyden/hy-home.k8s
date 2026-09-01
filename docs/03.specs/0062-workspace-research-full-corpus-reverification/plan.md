@@ -1007,10 +1007,10 @@ of this recovery.
 
 **Files:**
 
-- Modify: `docs/90.references/research/0001-workspace-engineering/harness-and-loop-engineering.md`
-- Modify: `docs/90.references/research/0001-workspace-engineering/ai-agents-and-agency-agents.md`
-- Modify: `docs/90.references/research/0001-workspace-engineering/agent-model-routing-and-configuration.md`
-- Modify: `docs/90.references/research/0001-workspace-engineering/agent-memory-tiers-and-management.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0002-harness-and-loop-engineering.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0009-ai-agents-and-agency-agents.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0010-agent-model-routing-and-configuration.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0011-agent-memory-tiers-and-management.md`
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/`
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
@@ -1105,10 +1105,10 @@ of this recovery.
   Update Task/Plan/progress and commit only the seven named tracked files:
 
   ```bash
-  git add docs/90.references/research/0001-workspace-engineering/harness-and-loop-engineering.md \
-    docs/90.references/research/0001-workspace-engineering/ai-agents-and-agency-agents.md \
-    docs/90.references/research/0001-workspace-engineering/agent-model-routing-and-configuration.md \
-    docs/90.references/research/0001-workspace-engineering/agent-memory-tiers-and-management.md \
+  git add docs/90.references/research/0001-workspace-engineering/m0002-harness-and-loop-engineering.md \
+    docs/90.references/research/0001-workspace-engineering/m0009-ai-agents-and-agency-agents.md \
+    docs/90.references/research/0001-workspace-engineering/m0010-agent-model-routing-and-configuration.md \
+    docs/90.references/research/0001-workspace-engineering/m0011-agent-memory-tiers-and-management.md \
     docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md \
     docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/ \
     docs/00.agent-governance/memory/progress.md
@@ -1146,8 +1146,8 @@ of this recovery.
 
 **Files:**
 
-- Modify: `docs/90.references/research/0001-workspace-engineering/workspace-governance-and-common-agent-environment.md`
-- Modify: `docs/90.references/research/0001-workspace-engineering/provider-implementation-status.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0001-workspace-governance-and-common-agent-environment.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0003-provider-implementation-status.md`
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/`
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
@@ -1222,8 +1222,8 @@ of this recovery.
   Update Task/Plan/progress and commit only the five named tracked files:
 
   ```bash
-  git add docs/90.references/research/0001-workspace-engineering/workspace-governance-and-common-agent-environment.md \
-    docs/90.references/research/0001-workspace-engineering/provider-implementation-status.md \
+  git add docs/90.references/research/0001-workspace-engineering/m0001-workspace-governance-and-common-agent-environment.md \
+    docs/90.references/research/0001-workspace-engineering/m0003-provider-implementation-status.md \
     docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md \
     docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/ \
     docs/00.agent-governance/memory/progress.md
@@ -1261,9 +1261,9 @@ of this recovery.
 
 **Files:**
 
-- Modify: `docs/90.references/research/0001-workspace-engineering/spec-driven-sdlc-and-document-contracts.md`
-- Modify: `docs/90.references/research/0001-workspace-engineering/documentation-architecture-and-diataxis.md`
-- Modify: `docs/90.references/research/0001-workspace-engineering/llm-wiki-and-knowledge-routing.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0004-spec-driven-sdlc-and-document-contracts.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0005-documentation-architecture-and-diataxis.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0006-llm-wiki-and-knowledge-routing.md`
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/`
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
@@ -1345,9 +1345,9 @@ of this recovery.
   Update Task/Plan/progress and commit only the six named tracked files:
 
   ```bash
-  git add docs/90.references/research/0001-workspace-engineering/spec-driven-sdlc-and-document-contracts.md \
-    docs/90.references/research/0001-workspace-engineering/documentation-architecture-and-diataxis.md \
-    docs/90.references/research/0001-workspace-engineering/llm-wiki-and-knowledge-routing.md \
+  git add docs/90.references/research/0001-workspace-engineering/m0004-spec-driven-sdlc-and-document-contracts.md \
+    docs/90.references/research/0001-workspace-engineering/m0005-documentation-architecture-and-diataxis.md \
+    docs/90.references/research/0001-workspace-engineering/m0006-llm-wiki-and-knowledge-routing.md \
     docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md \
     docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/ \
     docs/00.agent-governance/memory/progress.md
@@ -1378,7 +1378,7 @@ of this recovery.
 
 **Files:**
 
-- Modify: `docs/90.references/research/0001-workspace-engineering/kubernetes-infrastructure-and-security.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0007-kubernetes-infrastructure-and-security.md`
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/`
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
@@ -1454,7 +1454,7 @@ of this recovery.
 - [x] **Step 4: commit platform findings**
 
   ```bash
-  git add docs/90.references/research/0001-workspace-engineering/kubernetes-infrastructure-and-security.md \
+  git add docs/90.references/research/0001-workspace-engineering/m0007-kubernetes-infrastructure-and-security.md \
     docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md \
     docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/ \
     docs/00.agent-governance/memory/progress.md
@@ -1494,7 +1494,7 @@ of this recovery.
 
 **Files:**
 
-- Modify: `docs/90.references/research/0001-workspace-engineering/ci-cd-github-actions-and-qa.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0008-ci-cd-github-actions-and-qa.md`
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/`
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
@@ -1917,7 +1917,7 @@ nine-class summary SHA-256 is
   Update Task/Plan/progress, then commit:
 
   ```bash
-  git add docs/90.references/research/0001-workspace-engineering/ci-cd-github-actions-and-qa.md \
+  git add docs/90.references/research/0001-workspace-engineering/m0008-ci-cd-github-actions-and-qa.md \
     docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md \
     docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/ \
     docs/00.agent-governance/memory/progress.md
@@ -2207,8 +2207,8 @@ command passes, and Step 6 remains controller-owned review and commit work.
 
 **Files:**
 
-- Modify: `docs/90.references/research/0001-workspace-engineering/source-coverage.md`
-- Modify: `docs/90.references/research/0001-workspace-engineering/scope-application-index.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0012-source-coverage.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0013-scope-application-index.md`
 - Modify: `docs/90.references/research/0001-workspace-engineering/README.md`
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/`
 - Modify: `docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md`
@@ -2250,7 +2250,7 @@ command passes, and Step 6 remains controller-owned review and commit work.
 
 - [x] **Step 3: re-project the ten governance scopes**
 
-  Append one 2026-08-20 H3 to `scope-application-index.md` that derives, rather
+  Append one 2026-08-20 H3 to `m0013-scope-application-index.md` that derives, rather
   than restates, the refreshed evidence for:
 
   ```text
@@ -2308,8 +2308,8 @@ command passes, and Step 6 remains controller-owned review and commit work.
   Review the local diff for accidental old-row reflow, then commit:
 
   ```bash
-  git add docs/90.references/research/0001-workspace-engineering/source-coverage.md \
-    docs/90.references/research/0001-workspace-engineering/scope-application-index.md \
+  git add docs/90.references/research/0001-workspace-engineering/m0012-source-coverage.md \
+    docs/90.references/research/0001-workspace-engineering/m0013-scope-application-index.md \
     docs/90.references/research/0001-workspace-engineering/README.md \
     docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md \
     docs/03.specs/0062-workspace-research-full-corpus-reverification/tasks/ \
@@ -2411,8 +2411,8 @@ The frozen projection transition is exact:
 
 | Research projection | Predecessor commit/blob | Reviewed successor commit/blob |
 | --- | --- | --- |
-| `source-coverage.md` | `545f114dd5080ac541ba2ae9bec9a18d24f58129` / `a6feed2026d19261f42f475f52f3f746eeee4122` | `fef53976b97c560de0a9f020e87be1e7e0e1c3b8` / `e4ed30b5602278b212a5e035a9dded222fae8d85` |
-| `scope-application-index.md` | `545f114dd5080ac541ba2ae9bec9a18d24f58129` / `f7e4b60cce6a7d5ee5c706ab3a6a8fae663e9bed` | `fef53976b97c560de0a9f020e87be1e7e0e1c3b8` / `6c2d4723c69821a9681fa45151ea70b528ff66fa` |
+| `m0012-source-coverage.md` | `545f114dd5080ac541ba2ae9bec9a18d24f58129` / `a6feed2026d19261f42f475f52f3f746eeee4122` | `fef53976b97c560de0a9f020e87be1e7e0e1c3b8` / `e4ed30b5602278b212a5e035a9dded222fae8d85` |
+| `m0013-scope-application-index.md` | `545f114dd5080ac541ba2ae9bec9a18d24f58129` / `f7e4b60cce6a7d5ee5c706ab3a6a8fae663e9bed` | `fef53976b97c560de0a9f020e87be1e7e0e1c3b8` / `6c2d4723c69821a9681fa45151ea70b528ff66fa` |
 | `README.md` | `545f114dd5080ac541ba2ae9bec9a18d24f58129` / `6bfec251d8927dd82f5c12b49c013a598c64d088` | `fef53976b97c560de0a9f020e87be1e7e0e1c3b8` / `11719d258d0454d68f3e6b6ed0377c3d3b9de6b2` |
 
 Replay must follow this closed order:
@@ -3010,7 +3010,7 @@ the lifecycle evidence is final. The second complete run is authoritative.
 - [Spec 0062](spec.md)
 - [Reciprocal Task](README.md#task-records)
 - [Current WER research pack](../../90.references/research/0001-workspace-engineering/README.md)
-- [Source coverage and migration ledger](../../90.references/research/0001-workspace-engineering/source-coverage.md)
-- [Scope application index](../../90.references/research/0001-workspace-engineering/scope-application-index.md)
+- [Source coverage and migration ledger](../../90.references/research/0001-workspace-engineering/m0012-source-coverage.md)
+- [Scope application index](../../90.references/research/0001-workspace-engineering/m0013-scope-application-index.md)
 - [ADR 0022 — direct-approval standalone execution lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
 - [Quality standards](../../00.agent-governance/policies/quality.md)

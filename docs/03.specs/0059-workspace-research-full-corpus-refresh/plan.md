@@ -73,8 +73,8 @@ credential-bearing, or deployment evidence was collected or claimed.
 - [Spec 0059](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md)
 - [Plan](plan.md)
 - [2026-08-08 WER pack](../../90.references/research/0001-workspace-engineering/README.md)
-- [Source coverage and migration ledger](../../90.references/research/0001-workspace-engineering/source-coverage.md)
-- [Scope application index](../../90.references/research/0001-workspace-engineering/scope-application-index.md)
+- [Source coverage and migration ledger](../../90.references/research/0001-workspace-engineering/m0012-source-coverage.md)
+- [Scope application index](../../90.references/research/0001-workspace-engineering/m0013-scope-application-index.md)
 - [Quality standards](../../00.agent-governance/rules/quality-standards.md)
 
 ### Topic ledger
@@ -440,7 +440,7 @@ These findings do not map onto any of the thirty-six owner rows, so under
   upstream has shipped `v1.35.5`, `v1.35.6`, and a `v1.36.X` line.
   `REQ-WERPC-009` has no registered external source row, so this drift has no
   ledger home; it reinforces the pack's own 2026-08-12 note at
-  `kubernetes-infrastructure-and-security.md:396`.
+  `m0007-kubernetes-infrastructure-and-security.md:396`.
 - The MCP revision jump to `2026-07-28` is broader than the Resources capability
   cited by `REQ-WERPC-021`. Any other owner still citing `2025-06-18` for tools,
   prompts, or authorization needs the same supersession note.
@@ -521,8 +521,8 @@ literals rather than duplicated links.
   `docs/03.specs/0059-workspace-research-full-corpus-refresh/README.md#task-records`
 - [ADR 0022 — direct-approval standalone execution lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
 - [Quality standards](../../00.agent-governance/rules/quality-standards.md)
-- [Source coverage and migration ledger](../../90.references/research/0001-workspace-engineering/source-coverage.md)
-- [Scope application index](../../90.references/research/0001-workspace-engineering/scope-application-index.md)
+- [Source coverage and migration ledger](../../90.references/research/0001-workspace-engineering/m0012-source-coverage.md)
+- [Scope application index](../../90.references/research/0001-workspace-engineering/m0013-scope-application-index.md)
 
 ### Legacy Task traceability
 

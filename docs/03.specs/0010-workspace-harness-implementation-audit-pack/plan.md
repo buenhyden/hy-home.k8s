@@ -98,8 +98,8 @@ Use these source groups during implementation:
 - Benchmark references:
   - `docs/90.references/research/README.md`
   - `docs/90.references/research/workspace-governance-baseline.md`
-  - `docs/90.references/research/harness-and-loop-engineering.md`
-  - `docs/90.references/research/provider-implementation-status.md`
+  - `docs/90.references/research/m0002-harness-and-loop-engineering.md`
+  - `docs/90.references/research/m0003-provider-implementation-status.md`
   - `docs/90.references/research/spec-sdlc-ci-qa-formatting.md`
 - Repo implementation evidence:
   - `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.codex/CODEX.md`
@@ -309,7 +309,7 @@ git commit -m "docs(audit): Assess workspace governance implementation"
 Run:
 
 ```bash
-sed -n '1,320p' docs/90.references/research/harness-and-loop-engineering.md
+sed -n '1,320p' docs/90.references/research/m0002-harness-and-loop-engineering.md
 sed -n '1,300p' docs/00.agent-governance/harness-catalog.md
 sed -n '1,220p' docs/00.agent-governance/subagent-protocol.md
 sed -n '1,220p' docs/00.agent-governance/rules/agentic.md
@@ -372,7 +372,7 @@ git commit -m "docs(audit): Assess harness and loop implementation"
 Run:
 
 ```bash
-sed -n '1,340p' docs/90.references/research/provider-implementation-status.md
+sed -n '1,340p' docs/90.references/research/m0003-provider-implementation-status.md
 sed -n '1,220p' docs/00.agent-governance/providers/claude.md
 sed -n '1,220p' docs/00.agent-governance/providers/codex.md
 sed -n '1,220p' docs/00.agent-governance/providers/gemini.md

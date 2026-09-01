@@ -98,7 +98,7 @@
     },
     {
       "name": "current-research-report",
-      "path": "docs/90.references/research/0001-workspace-engineering/provider-implementation-status.md",
+      "path": "docs/90.references/research/0001-workspace-engineering/m0003-provider-implementation-status.md",
       "expectedSurface": "authored-documents"
     },
     {
@@ -606,7 +606,7 @@
       "lane": "ci",
       "paths": [
         "docs/99.templates/registry.json",
-        "docs/90.references/research/0001-workspace-engineering/source-coverage.md",
+        "docs/90.references/research/0001-workspace-engineering/m0012-source-coverage.md",
         "docs/98.archive/03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md"
       ],
       "expected": {

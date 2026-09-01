@@ -1191,8 +1191,8 @@
       "id": "content/reference",
       "class": "common",
       "mode": "classification-only",
-      "pathPattern": "^docs/90\\.references/(?:audits|data|research)/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/(?!README\\.md$).+\\.md$",
-      "artifactIdPattern": null,
+      "pathPattern": "^docs/90\\.references/(?:audits|data|research)/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "artifactIdPattern": "^(?:AUD|RES|DATA)-[0-9]{4}-m[0-9]{4}$",
       "template": "docs/99.templates/templates/references/reference.template.md",
       "requiredFrontmatter": {
         "mode": "required",
@@ -1201,7 +1201,8 @@
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
@@ -1209,6 +1210,7 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "superseded_by",
           "supersedes"
         ],
@@ -1218,6 +1220,7 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "superseded_by",
           "supersedes"
         ]
@@ -2478,7 +2481,8 @@
           "type",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
@@ -2486,6 +2490,7 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "superseded_by",
           "supersedes"
         ],
@@ -2495,6 +2500,7 @@
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "superseded_by",
           "supersedes"
         ]

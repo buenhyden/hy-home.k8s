@@ -4,6 +4,7 @@ type: content/reference
 status: active
 owner: platform
 updated: 2026-08-31
+artifact_id: "RES-0001-m0007"
 ---
 
 # Reference: Kubernetes, Infrastructure, and Security
@@ -19,7 +20,7 @@ it is not a change authorization, live-cluster assessment, or certification.
 ## Reference Type
 
 Current-primary-source research combined with repository-static platform and
-security evidence. The source register is [the pack ledger](source-coverage.md#source-register).
+security evidence. The source register is [the pack ledger](m0012-source-coverage.md#source-register).
 
 ## Authority Boundary
 
@@ -83,7 +84,7 @@ Argo CD documents that automated sync acts on a Git-versus-live difference;
 `prune` and `selfHeal` are explicit settings, and an Application with automated
 sync enabled cannot use Argo CD rollback. The operational implication here is
 an evidence-backed, Git-revert-first recovery path rather than an inferred
-live rollback capability. [SRC-WERPC-027](source-coverage.md#source-register)
+live rollback capability. [SRC-WERPC-027](m0012-source-coverage.md#source-register)
 also treats App-of-Apps source write access as an administrative trust boundary.
 
 The intended secret path is:
@@ -109,7 +110,7 @@ external service is healthy.
 
 Kubernetes NetworkPolicy is meaningful only when the selected networking
 implementation enforces it; isolation behavior follows the policies selecting a
-Pod. [SRC-WERPC-023](source-coverage.md#source-register)
+Pod. [SRC-WERPC-023](m0012-source-coverage.md#source-register)
 is the upstream basis for that boundary. The repository has six egress-focused
 policies under `gitops/platform/network-policies/`, covering apps, platform
 external services, ESO-to-Vault, Argo CD-to-Valkey, monitoring, and Kiali.
@@ -162,14 +163,14 @@ Kubernetes documents Pod Security Admission as namespace-scoped enforcement,
 audit, and warning of Pod Security Standards. API admission can validate or
 mutate API writes. Gatekeeper, separately, is an OPA-backed validating/mutating
 webhook with audit capability. These are runtime or API-boundary mechanisms;
-they complement rather than replace repository linting. [SRC-WERPC-025](source-coverage.md#source-register),
-[SRC-WERPC-026](source-coverage.md#source-register), and
-[SRC-WERPC-028](source-coverage.md#source-register) define
+they complement rather than replace repository linting. [SRC-WERPC-025](m0012-source-coverage.md#source-register),
+[SRC-WERPC-026](m0012-source-coverage.md#source-register), and
+[SRC-WERPC-028](m0012-source-coverage.md#source-register) define
 the source boundary.
 
 Kubernetes documents Secrets as base64-encoded and unencrypted in etcd by
 default. No cluster encryption configuration, effective Secret RBAC, or
-generated Secret metadata/value was inspected here. [SRC-WERPC-024](source-coverage.md#source-register)
+generated Secret metadata/value was inspected here. [SRC-WERPC-024](m0012-source-coverage.md#source-register)
 is a platform benchmark, not evidence of the local setting.
 
 ### 2026-08-10 gap-only Kubernetes/Security refresh
@@ -178,7 +179,7 @@ This refresh admits only three question-level deltas left under-sourced by the
 baseline. The proposed targets are decision inputs, not manifest changes. The
 Namespace ingress/default-deny candidate was rejected as a duplicate: the
 existing [Kubernetes baseline](#kubernetes-baseline) and
-[SRC-WERPC-023](source-coverage.md#source-register) already
+[SRC-WERPC-023](m0012-source-coverage.md#source-register) already
 own the CNI dependency, selected-policy semantics, static directory evidence,
 and live-flow `DEFER` boundary.
 
@@ -192,8 +193,8 @@ authorization remains the stronger boundary: an API client authorized to
 `get`, `list`, or `watch` Secrets can receive the Secret objects, and Secret
 `list` output includes their data. Metadata-only exported metrics therefore do
 not make the underlying API permission metadata-only.
-[SRC-WERPC-060](source-coverage.md#source-register) and
-[SRC-WERPC-061](source-coverage.md#source-register) bound
+[SRC-WERPC-060](m0012-source-coverage.md#source-register) and
+[SRC-WERPC-061](m0012-source-coverage.md#source-register) bound
 this distinction.
 
 The checked `ClusterRole/kube-state-metrics` includes `secrets` with
@@ -206,8 +207,8 @@ a consumer requirement. Before changing it, inventory consumers of
 resource allow-list that excludes Secrets plus removal of the Secret RBAC
 rule. If only selected namespaces need the collector, evaluate upstream
 namespace restriction with namespaced Roles/RoleBindings rather than infer
-that the standard ClusterRole is necessary. [CLM-WERPC-008-01](source-coverage.md#werg-003-gap-only-claim-register)
-and [CLM-WERPC-008-02](source-coverage.md#werg-003-gap-only-claim-register)
+that the standard ClusterRole is necessary. [CLM-WERPC-008-01](m0012-source-coverage.md#werg-003-gap-only-claim-register)
+and [CLM-WERPC-008-02](m0012-source-coverage.md#werg-003-gap-only-claim-register)
 record the evidence and decision gate.
 
 #### Adminer workload and service-account boundary
@@ -233,9 +234,9 @@ Image UID,
 writable paths, readiness, canary behavior, API need, admission, and runtime
 remain `DEFER`; effective authorization also remains `DEFER` because group
 bindings, discovery access, and external authorization were not observed.
-[SRC-WERPC-062](source-coverage.md#source-register),
-[CLM-WERPC-008-03](source-coverage.md#werg-003-gap-only-claim-register),
-and [CLM-WERPC-008-04](source-coverage.md#werg-003-gap-only-claim-register)
+[SRC-WERPC-062](m0012-source-coverage.md#source-register),
+[CLM-WERPC-008-03](m0012-source-coverage.md#werg-003-gap-only-claim-register),
+and [CLM-WERPC-008-04](m0012-source-coverage.md#werg-003-gap-only-claim-register)
 own this boundary.
 
 #### Immutable identity and verifiable supply-chain evidence
@@ -252,8 +253,8 @@ origin. Argo CD renders Helm with `helm template`; its Git signature verificatio
 does not verify Helm chart or OCI signatures. The current Argo CD stable
 documentation labels the newer `sourceIntegrity` facility as version 3.5, so
 the repository's unpinned bootstrap leaves compatibility `DEFER`.
-[SRC-WERPC-063](source-coverage.md#source-register) and
-[SRC-WERPC-064](source-coverage.md#source-register) are the
+[SRC-WERPC-063](m0012-source-coverage.md#source-register) and
+[SRC-WERPC-064](m0012-source-coverage.md#source-register) are the
 direct product sources.
 
 Tracked Adminer, kube-state-metrics, and Alloy image references use tags with
@@ -266,9 +267,9 @@ expectations, artifact-digest match, and fail-closed verification policy;
 GitHub explicitly does not present an attestation as a security guarantee by
 itself. No Git signature enforcement, Helm `.prov`, image digest, Cosign
 signature, attestation, SLSA provenance, verification policy, or admission
-result was observed. [SRC-WERPC-065](source-coverage.md#source-register),
-[CLM-WERPC-008-05](source-coverage.md#werg-003-gap-only-claim-register),
-and [CLM-WERPC-008-06](source-coverage.md#werg-003-gap-only-claim-register)
+result was observed. [SRC-WERPC-065](m0012-source-coverage.md#source-register),
+[CLM-WERPC-008-05](m0012-source-coverage.md#werg-003-gap-only-claim-register),
+and [CLM-WERPC-008-06](m0012-source-coverage.md#werg-003-gap-only-claim-register)
 preserve these non-equivalences.
 
 | Delta                    | Exact repository selector                                                                                                                                                                     | As-Is                                                                                                                  | Gap / decision input                                                                               | Target acceptance evidence                                                                                                                                                                                              |
@@ -316,8 +317,8 @@ intent, not a completed recovery test.
 The current non-`latest` rule is tag hygiene, not immutable digest pinning or
 artifact authenticity. SLSA v1.2 and NIST SSDF are useful benchmarks for a
 future supply-chain mapping, but no SLSA level, SSDF conformance, SBOM,
-provenance, attestation, or signature verification was observed. [SRC-WERPC-032](source-coverage.md#source-register)
-and [SRC-WERPC-034](source-coverage.md#source-register)
+provenance, attestation, or signature verification was observed. [SRC-WERPC-032](m0012-source-coverage.md#source-register)
+and [SRC-WERPC-034](m0012-source-coverage.md#source-register)
 must not be converted into implementation claims.
 
 ### Workspace As-Is, gap, and target matrix
@@ -357,7 +358,7 @@ This increment is the fifth refresh cycle over this pack, executed under
 Spec 058. Unlike the three preceding cycles it re-observed every owner row in
 the pack rather than the twelve `Partial` rows, and it assigns each retained
 `Partial` or `DEFER` row a blocking class recorded in the
-[scope application index](scope-application-index.md). All observations are
+[scope application index](m0013-scope-application-index.md). All observations are
 dated **2026-08-17**. No live cluster, hosted CI run, provider runtime,
 authenticated execution, or secret value was observed.
 
@@ -520,7 +521,7 @@ behavior against this cluster remains `live-cluster` blocked.
 The dated baseline primary-source rows are `SRC-WERPC-023` through
 `SRC-WERPC-034`, and the admitted gap-only rows are `SRC-WERPC-060` through
 `SRC-WERPC-065`, in
-the [source register](source-coverage.md#source-register).
+the [source register](m0012-source-coverage.md#source-register).
 The first range was checked 2026-08-08; the second was checked 2026-08-10 and
 covers only kube-state-metrics Secret RBAC/metrics, Adminer token and hardening,
 and immutable Git/chart/image and verifiable-artifact distinctions. Product and
@@ -808,7 +809,7 @@ attestation, or recovery output was inspected.
 
 - **Sources and result:** `unchanged` / `drifted`, using existing
   `SRC-WERPC-060`, `SRC-WERPC-061`, and `SRC-WERPC-090`, plus selector
-  `kubernetes-infrastructure-and-security.md#kubernetes-baseline`.
+  `m0007-kubernetes-infrastructure-and-security.md#kubernetes-baseline`.
   `CLM-WERPC-013-04` records the current repository-static correction. The
   v2.19.1 upstream role retains the Secret authorization boundary documented
   at v2.14.0; metadata-oriented exported metrics do not narrow the underlying
@@ -847,7 +848,7 @@ attestation, or recovery output was inspected.
 - **Sources and result:** `changed` / `drifted`, using new
   `SRC-WERPC-091` with existing `SRC-WERPC-027`, `SRC-WERPC-032`, and
   `SRC-WERPC-064`, plus selector
-  `kubernetes-infrastructure-and-security.md#infrastructure-baseline`.
+  `m0007-kubernetes-infrastructure-and-security.md#infrastructure-baseline`.
   `SRC-WERPC-091` is only official K3s v1.35 release-family context;
   `CLM-WERPC-013-05` records the static infrastructure delta.
 - **As-Is:** `infrastructure/k3d/k3d-cluster.yaml:5,8-17` declares
@@ -885,7 +886,7 @@ attestation, or recovery output was inspected.
 - **Sources and result:** `unchanged` / `drifted`, using existing
   `SRC-WERPC-025`, `SRC-WERPC-026`, `SRC-WERPC-028`, `SRC-WERPC-062`, and
   `SRC-WERPC-065`, plus selector
-  `kubernetes-infrastructure-and-security.md#security-baseline`.
+  `m0007-kubernetes-infrastructure-and-security.md#security-baseline`.
   `CLM-WERPC-013-06` records the current Adminer hardening observation.
 - **As-Is:** `gitops/workloads/adminer/rollout.yaml:19-50` now declares
   non-root UID/GID, `RuntimeDefault` seccomp, disabled privilege escalation,
@@ -956,8 +957,8 @@ was inspected.
 
 ## Related Documents
 
-- [CI/CD and QA](ci-cd-github-actions-and-qa.md)
-- [Source coverage and migration ledger](source-coverage.md)
+- [CI/CD and QA](m0008-ci-cd-github-actions-and-qa.md)
+- [Source coverage and migration ledger](m0012-source-coverage.md)
 - [GitOps overview](../../../../gitops/README.md)
 - [Infrastructure overview](../../../../infrastructure/README.md)
 - [ArgoCD ESO Vault recovery runbook](../../../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md)

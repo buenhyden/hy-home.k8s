@@ -4,6 +4,7 @@ type: content/reference
 status: active
 owner: platform
 updated: 2026-08-31
+artifact_id: "RES-0001-m0005"
 ---
 
 # Reference: Documentation Architecture and Diataxis
@@ -95,7 +96,7 @@ reconciled against an approved decision.
 | Question                                                    | 2026-08-11 result                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | Evidence class                          |
 | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
 | Are `diataxis.fr/start-here/` and `diataxis.fr/` reachable? | No. A third attempt from a different client also returned HTTP 429. Three failed attempts across two days and two egresses make the block persistent.                                                                                                                                                                                                                                                                                                                                   | Direct observation                      |
-| Do the four modes and their authoring tests still hold?     | Yes. `source/start-here.rst` at `evildmp/diataxis-documentation-framework@main` states the four kinds are tutorials, how-to guides, reference, and explanation, and defines a tutorial as a lesson serving study, a how-to guide as addressing a real-world goal for an already-competent user at work, reference as neutral technical description, and explanation as context and background serving study ([SRC-WERPC-067](source-coverage.md#source-register)). | Upstream source, not the published page |
+| Do the four modes and their authoring tests still hold?     | Yes. `source/start-here.rst` at `evildmp/diataxis-documentation-framework@main` states the four kinds are tutorials, how-to guides, reference, and explanation, and defines a tutorial as a lesson serving study, a how-to guide as addressing a real-world goal for an already-competent user at work, reference as neutral technical description, and explanation as context and background serving study ([SRC-WERPC-067](m0012-source-coverage.md#source-register)). | Upstream source, not the published page |
 | Does the framework mandate creating the four sections?      | No, and it says the opposite. `source/how-to-use-diataxis.rst` states verbatim: "It certainly does not mean that you should create empty structures for tutorials/howto guides/reference/explanation with nothing in them. Don't do that. It's horrible." It adds that "Diátaxis changes the structure of your documentation from the inside."                                                                                                                                          | Upstream source, not the published page |
 
 The upstream repository is the source that builds the site, so it is stronger
@@ -132,7 +133,7 @@ This increment is the fifth refresh cycle over this pack, executed under
 Spec 058. Unlike the three preceding cycles it re-observed every owner row in
 the pack rather than the twelve `Partial` rows, and it assigns each retained
 `Partial` or `DEFER` row a blocking class recorded in the
-[scope application index](scope-application-index.md). All observations are
+[scope application index](m0013-scope-application-index.md). All observations are
 dated **2026-08-17**. No live cluster, hosted CI run, provider runtime,
 authenticated execution, or secret value was observed.
 
@@ -299,7 +300,7 @@ promotion. New source registered: `SRC-WERPC-076`. New claim registered:
 This increment consumes the reviewed `REQ-WERPC-020` row and its empty
 source/claim allocation slice. The current official pages remain unchanged and
 the workspace selector is normalized to
-`documentation-architecture-and-diataxis.md#ditaxis-baseline`. No provider,
+`m0005-documentation-architecture-and-diataxis.md#ditaxis-baseline`. No provider,
 published site generator, or reader study was executed.
 
 #### REQ-WERPC-020 Diataxis architecture and reader evidence
@@ -332,8 +333,8 @@ published site generator, or reader study was executed.
 
 ## Related Documents
 
-- [SDLC document contracts](spec-driven-sdlc-and-document-contracts.md)
-- [LLM-WIKI routing](llm-wiki-and-knowledge-routing.md)
+- [SDLC document contracts](m0004-spec-driven-sdlc-and-document-contracts.md)
+- [LLM-WIKI routing](m0006-llm-wiki-and-knowledge-routing.md)
 - [Template routing](../../../99.templates/README.md)
 - [Document profiles](../../../99.templates/registry.json)
-- [Source ledger](source-coverage.md)
+- [Source ledger](m0012-source-coverage.md)

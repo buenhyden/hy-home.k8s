@@ -154,4 +154,4 @@ orthogonal.
 ### Related Documents
 
 - [ADR 0022 — direct-approval standalone execution lineage](0022-direct-approval-standalone-execution-lineage.md)
-- [Kubernetes, infrastructure, and security research](../../90.references/research/0001-workspace-engineering/kubernetes-infrastructure-and-security.md)
+- [Kubernetes, infrastructure, and security research](../../90.references/research/0001-workspace-engineering/m0007-kubernetes-infrastructure-and-security.md)

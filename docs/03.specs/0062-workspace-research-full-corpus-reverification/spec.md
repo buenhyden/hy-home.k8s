@@ -432,8 +432,8 @@ provider run, live action, or human validation.
 
 The current-main census is fourteen Markdown files, thirty-six owners,
 122 sources, and 163 claims. Its latest retained
-[source delta](../../90.references/research/0001-workspace-engineering/source-coverage.md#2026-08-28-source-delta-increment)
-and [closed full-scope revalidation](../../90.references/research/0001-workspace-engineering/scope-application-index.md#2026-08-28-closed-full-scope-revalidation)
+[source delta](../../90.references/research/0001-workspace-engineering/m0012-source-coverage.md#2026-08-28-source-delta-increment)
+and [closed full-scope revalidation](../../90.references/research/0001-workspace-engineering/m0013-scope-application-index.md#2026-08-28-closed-full-scope-revalidation)
 show no duplicate or missing identifier and no out-of-corpus reference among
 the sixty defined identifiers from `SRC-WERPC-091..122` and
 `CLM-WERPC-013..015`. The `14/36/91/141` baseline remains dated historical

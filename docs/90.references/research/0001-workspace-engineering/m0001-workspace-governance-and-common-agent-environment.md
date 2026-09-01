@@ -4,6 +4,7 @@ type: content/reference
 status: active
 owner: platform
 updated: 2026-08-31
+artifact_id: "RES-0001-m0001"
 ---
 
 # Reference: Workspace Governance and Common Agent Environment
@@ -80,8 +81,8 @@ This separation follows the product evidence without collapsing it: Claude
 documents persistent `CLAUDE.md` context and contextual auto memory, while
 Codex documents `AGENTS.md` instruction chains and project configuration. Each
 fact supports a provider edge; neither changes the local canonical owner.
-[SRC-WERPC-004](source-coverage.md#source-register) and
-[SRC-WERPC-009](source-coverage.md#source-register) record
+[SRC-WERPC-004](m0012-source-coverage.md#source-register) and
+[SRC-WERPC-009](m0012-source-coverage.md#source-register) record
 the source boundaries.
 
 ### Application Rules by Scope
@@ -152,7 +153,7 @@ This increment is the fifth refresh cycle over this pack, executed under
 Spec 058. Unlike the three preceding cycles it re-observed every owner row in
 the pack rather than the twelve `Partial` rows, and it assigns each retained
 `Partial` or `DEFER` row a blocking class recorded in the
-[scope application index](scope-application-index.md). All observations are
+[scope application index](m0013-scope-application-index.md). All observations are
 dated **2026-08-17**. No live cluster, hosted CI run, provider runtime,
 authenticated execution, or secret value was observed.
 
@@ -223,7 +224,7 @@ provider contracts only; tracked files are repository-static evidence only.
 - **External/workspace result:** `unchanged` / `confirmed`, using the existing
   provider-source boundaries `SRC-WERPC-004` and `SRC-WERPC-009` and workspace
   selector
-  `docs/90.references/research/0001-workspace-engineering/workspace-governance-and-common-agent-environment.md#workspace-application-baseline`.
+  `docs/90.references/research/0001-workspace-engineering/m0001-workspace-governance-and-common-agent-environment.md#workspace-application-baseline`.
 - **As-Is:** at baseline commit `8d8c8e5634fe939f8daaf041fbf5dfb444ed4a9c`,
   `CLAUDE.md` and `AGENTS.md` remain parallel thin gateways. Each routes through
   bootstrap, its provider note and baseline, and `RTK.md`; neither imports the
@@ -251,7 +252,7 @@ provider contracts only; tracked files are repository-static evidence only.
 - **External/workspace result:** `changed` / `confirmed`, within existing
   `SRC-WERPC-004`, `SRC-WERPC-007`, `SRC-WERPC-009`, `SRC-WERPC-011`, and
   `SRC-WERPC-068` boundaries and workspace selector
-  `docs/90.references/research/0001-workspace-engineering/workspace-governance-and-common-agent-environment.md#common-system-baseline`.
+  `docs/90.references/research/0001-workspace-engineering/m0001-workspace-governance-and-common-agent-environment.md#common-system-baseline`.
 - **As-Is:** the harness catalog and contract still project twelve roles onto
   four tracked provider surfaces, forty-eight adapters in total. The shared
   layer owns scope, permission, tool, checkpoint, evaluation, evidence, and
@@ -409,8 +410,8 @@ transition instead of creating a duplicate report or competing authority.
 
 ## Related Documents
 
-- [Harness and loop engineering](harness-and-loop-engineering.md)
-- [Provider implementation status](provider-implementation-status.md)
-- [Source ledger](source-coverage.md)
+- [Harness and loop engineering](m0002-harness-and-loop-engineering.md)
+- [Provider implementation status](m0003-provider-implementation-status.md)
+- [Source ledger](m0012-source-coverage.md)
 - [Agent Governance Hub](../../../00.agent-governance/README.md)
 - [Work Lifecycle](../../../00.agent-governance/skills/work-lifecycle.md)

@@ -246,8 +246,8 @@ claim its own commit.
 - [Agent quality standards](../../00.agent-governance/rules/quality-standards.md)
 - [Git workflow](../../00.agent-governance/rules/git-workflow.md)
 - [GitHub configuration hub](../../../.github/README.md)
-- [Kubernetes infrastructure and security research](../../90.references/research/0001-workspace-engineering/kubernetes-infrastructure-and-security.md)
-- `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`; [current lookup](../../90.references/research/0001-workspace-engineering/source-coverage.md)
+- [Kubernetes infrastructure and security research](../../90.references/research/0001-workspace-engineering/m0007-kubernetes-infrastructure-and-security.md)
+- `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`; [current lookup](../../90.references/research/0001-workspace-engineering/m0012-source-coverage.md)
 - [Predecessor Spec 038 Task](../0038-reference-information-architecture/README.md)
 ## Goals & In-Scope
 

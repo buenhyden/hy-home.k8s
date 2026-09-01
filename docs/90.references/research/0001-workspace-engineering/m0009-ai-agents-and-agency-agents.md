@@ -4,6 +4,7 @@ type: content/reference
 status: active
 owner: platform
 updated: 2026-08-31
+artifact_id: "RES-0001-m0009"
 ---
 
 # Reference: AI Agents and Agency-Agents
@@ -108,7 +109,7 @@ This increment is the fifth refresh cycle over this pack, executed under
 Spec 058. Unlike the three preceding cycles it re-observed every owner row in
 the pack rather than the twelve `Partial` rows, and it assigns each retained
 `Partial` or `DEFER` row a blocking class recorded in the
-[scope application index](scope-application-index.md). All observations are
+[scope application index](m0013-scope-application-index.md). All observations are
 dated **2026-08-17**. No live cluster, hosted CI run, provider runtime,
 authenticated execution, or secret value was observed.
 
@@ -153,7 +154,7 @@ pinned commit or the local role count changes.
 - [OpenAI Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-045`).
 - [Anthropic Claude Code subagents](https://code.claude.com/docs/en/sub-agents), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-046`).
 - [Agency Agents pinned tree](https://github.com/msitarzewski/agency-agents/tree/ebe9c99acb5c96f9468de368d8bead775387d1a7), [MIT license](https://github.com/msitarzewski/agency-agents/blob/ebe9c99acb5c96f9468de368d8bead775387d1a7/LICENSE), and inspected converter/installer sources, checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-047`–`048`).
-- The [source ledger](source-coverage.md#source-register) records claim limits and refresh triggers.
+- The [source ledger](m0012-source-coverage.md#source-register) records claim limits and refresh triggers.
 
 ## Review and Freshness
 
@@ -272,7 +273,7 @@ Agency Agents comparison remain separate from local adoption authority.
   Claude subagent pages still document custom-agent configuration, model/tool
   controls, permissions, and scoped delegation without proving local use.
 - **Workspace selector and result:** `confirmed` at
-  `ai-agents-and-agency-agents.md#ai-agent-systems-baseline`. The baseline
+  `m0009-ai-agents-and-agency-agents.md#ai-agent-systems-baseline`. The baseline
   still records a twelve-role, four-provider-surface roster with bounded
   ownership, review, validation, rollback, and handoff contracts.
 - **As-Is, gap, and target:** the local agent system remains `Partial` at
@@ -296,7 +297,7 @@ Agency Agents comparison remain separate from local adoption authority.
   `ebe9c99acb5c96f9468de368d8bead775387d1a7`. The pinned tree, MIT license,
   and scripts remain reachable; no release superseded the fixed comparison.
 - **Workspace selector and result:** `confirmed` at
-  `ai-agents-and-agency-agents.md#agency-agents-baseline`. The canonical local
+  `m0009-ai-agents-and-agency-agents.md#agency-agents-baseline`. The canonical local
   roster remains the adapted surface; the upstream catalog remains comparison
   evidence only.
 - **As-Is, gap, and target:** the fixed-pin source comparison remains
@@ -315,7 +316,7 @@ Agency Agents comparison remain separate from local adoption authority.
 
 ## Related Documents
 
-- [Model routing](agent-model-routing-and-configuration.md)
-- [Memory tiers](agent-memory-tiers-and-management.md)
-- [Source ledger](source-coverage.md)
+- [Model routing](m0010-agent-model-routing-and-configuration.md)
+- [Memory tiers](m0011-agent-memory-tiers-and-management.md)
+- [Source ledger](m0012-source-coverage.md)
 - [Agent Registry](../../../../.agents/registry.json)

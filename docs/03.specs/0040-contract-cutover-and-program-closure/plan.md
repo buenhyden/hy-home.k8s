@@ -82,7 +82,7 @@ evidence-update commit and the clean-tree repository-static aggregate passed.
 - [ADR-0020](../../02.architecture/decisions/0020-document-lifecycle-program-closure-evidence.md)
 - [Document profile registry](../../99.templates/registry.json)
 - [Stage 90 reference router](../../90.references/README.md)
-- `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`; [current lookup](../../90.references/research/0001-workspace-engineering/source-coverage.md)
+- `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`; [current lookup](../../90.references/research/0001-workspace-engineering/m0012-source-coverage.md)
 - Spec 039 closure `e1d1e910840337327a557ab4b84e86f8fced11d6`
   and evidence update `11a020d9b299ae91b7af9278c22ed89ffccb5cfc`
 - [Document quality standards](../../00.agent-governance/rules/quality-standards.md)

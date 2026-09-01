@@ -88,10 +88,10 @@ Out of scope:
   - `workspace-governance-baseline.md`: repo-first baseline for workspace
     purpose, roles, operating contract, templates, scripts, integration guides,
     SDLC, governance, system structure, rules, and current evidence lanes.
-  - `harness-and-loop-engineering.md`: harness engineering and loop
+  - `m0002-harness-and-loop-engineering.md`: harness engineering and loop
     engineering definitions, elements, workspace application requirements,
     environment/rule needs, and implementation checklist items.
-  - `provider-implementation-status.md`: Claude, Codex, and Gemini harness and
+  - `m0003-provider-implementation-status.md`: Claude, Codex, and Gemini harness and
     loop capability comparison, including common environment, shared rules, and
     known differences between upstream capability and repo implementation.
   - `spec-sdlc-ci-qa-formatting.md`: spec-driven development, SDLC, CI/CD, QA,
@@ -137,8 +137,8 @@ interface WorkspaceEngineeringResearchPack {
   root: "docs/90.references/research/2026-07-04-wer";
   references: [
     "workspace-governance-baseline.md",
-    "harness-and-loop-engineering.md",
-    "provider-implementation-status.md",
+    "m0002-harness-and-loop-engineering.md",
+    "m0003-provider-implementation-status.md",
     "spec-sdlc-ci-qa-formatting.md",
     "kubernetes-infrastructure-security.md",
     "automation-pipeline-workflow-qa.md",
@@ -412,8 +412,8 @@ The Current pack retains this component boundary:
 | --- | --- |
 | `README.md` | Coverage matrix, source cutoff, reading order, changed-document summary, authority boundary, and pack-wide freshness. |
 | `workspace-governance-baseline.md` | Workspace purpose, roles, overview, operating contract, governance, rules, templates, scripts, integration guides, owner/authority matrix, and follow-up routes. |
-| `harness-and-loop-engineering.md` | Four-element harness, Observe/Plan/Act/Verify/Learn loop, evaluation, recovery, termination, memory, and the workspace system/environment/rule requirements. |
-| `provider-implementation-status.md` | Claude, Codex, and Gemini upstream capabilities, native runtime surfaces, local adapters, hooks, permissions, subagents, model lifecycle, and local-currentness comparison. |
+| `m0002-harness-and-loop-engineering.md` | Four-element harness, Observe/Plan/Act/Verify/Learn loop, evaluation, recovery, termination, memory, and the workspace system/environment/rule requirements. |
+| `m0003-provider-implementation-status.md` | Claude, Codex, and Gemini upstream capabilities, native runtime surfaces, local adapters, hooks, permissions, subagents, model lifecycle, and local-currentness comparison. |
 | `spec-sdlc-ci-qa-formatting.md` | Spec-driven development, full SDLC, PRD/AD/ADR/guide/incident/postmortem/policy/release/runbook roles, formatting, linting, syntax validation, and QA evidence lanes. |
 | `automation-pipeline-workflow-qa.md` | Actual GitHub Actions DAG, path filtering, pre-commit/hooks/CI/GitOps feedback topology, automation/pipeline/workflow distinction, and delivery measurement gaps. |
 | `kubernetes-infrastructure-security.md` | Kubernetes, Argo CD, infrastructure, RBAC, NetworkPolicy, ESO/Vault, policy-as-code, supply-chain security, and static/live evidence boundaries. |

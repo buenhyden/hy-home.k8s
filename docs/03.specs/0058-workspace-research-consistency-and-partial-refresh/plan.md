@@ -484,11 +484,11 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 
 **Files:**
 
-- Modify: `docs/90.references/research/0001-workspace-engineering/workspace-governance-and-common-agent-environment.md`
-- Modify: `docs/90.references/research/0001-workspace-engineering/ai-agents-and-agency-agents.md`
-- Modify: `docs/90.references/research/0001-workspace-engineering/agent-model-routing-and-configuration.md`
-- Modify: `docs/90.references/research/0001-workspace-engineering/agent-memory-tiers-and-management.md`
-- Modify: `docs/90.references/research/0001-workspace-engineering/source-coverage.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0001-workspace-governance-and-common-agent-environment.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0009-ai-agents-and-agency-agents.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0010-agent-model-routing-and-configuration.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0011-agent-memory-tiers-and-management.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0012-source-coverage.md`
 - Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
 
 **Interfaces:**
@@ -498,7 +498,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
   `032`, and ledger rows starting at `SRC-WERPC-074` and `CLM-WERPC-010-01`.
 
 - [ ] **Step 1: Read the registered sources for these four rows.** Open
-      `source-coverage.md` and list every `SRC-WERPC-*` row
+      `m0012-source-coverage.md` and list every `SRC-WERPC-*` row
       whose adopted scope covers common-system, AI-agent-system, model-routing, or
       memory evidence. Record the exact URLs and their `Checked on` dates. These
       are the only external sources this package re-checks.
@@ -555,8 +555,8 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 
 **Files:**
 
-- Modify: `docs/90.references/research/0001-workspace-engineering/kubernetes-infrastructure-and-security.md`
-- Modify: `docs/90.references/research/0001-workspace-engineering/source-coverage.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0007-kubernetes-infrastructure-and-security.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0012-source-coverage.md`
 - Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
 
 **Interfaces:**
@@ -586,7 +586,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 
 - [ ] **Step 5: Append the dated section.** Add
       `## 2026-08-14 consistency and Partial re-observation` to
-      `kubernetes-infrastructure-and-security.md`, covering all three requirements
+      `m0007-kubernetes-infrastructure-and-security.md`, covering all three requirements
       with the four required retention fields for each.
 
 - [ ] **Step 6: Register sources and claims.** Continue the `SRC-WERPC-*` and
@@ -606,9 +606,9 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 
 **Files:**
 
-- Modify: `docs/90.references/research/0001-workspace-engineering/documentation-architecture-and-diataxis.md`
-- Modify: `docs/90.references/research/0001-workspace-engineering/spec-driven-sdlc-and-document-contracts.md`
-- Modify: `docs/90.references/research/0001-workspace-engineering/source-coverage.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0005-documentation-architecture-and-diataxis.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0004-spec-driven-sdlc-and-document-contracts.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0012-source-coverage.md`
 - Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
 
 **Interfaces:**
@@ -653,7 +653,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
   For each, record the enforced H2 profile, the lifecycle states the repository
   actually uses, the reciprocity rules its validator enforces, and what the
   matrix row already claims. Append the result to the existing document-family
-  section of `spec-driven-sdlc-and-document-contracts.md` under the same dated
+  section of `m0004-spec-driven-sdlc-and-document-contracts.md` under the same dated
   `2026-08-14` heading. Do not restate the matrix row; record only what this
   re-observation adds or corrects.
 
@@ -678,8 +678,8 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 
 **Files:**
 
-- Modify: `docs/90.references/research/0001-workspace-engineering/ci-cd-github-actions-and-qa.md`
-- Modify: `docs/90.references/research/0001-workspace-engineering/source-coverage.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0008-ci-cd-github-actions-and-qa.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0012-source-coverage.md`
 - Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
 
 **Interfaces:**
@@ -712,7 +712,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 
 - [ ] **Step 5: Append the dated section.** Add
       `## 2026-08-14 consistency and Partial re-observation` to
-      `ci-cd-github-actions-and-qa.md` covering all three requirements with the
+      `m0008-ci-cd-github-actions-and-qa.md` covering all three requirements with the
       four retention fields each.
 
 - [ ] **Step 6: Register sources and claims.** Continue both sequences from the
@@ -731,7 +731,7 @@ link is deferred to WRCP-000 activation`, and every `Expected Task` cell
 
 **Files:**
 
-- Modify: `docs/90.references/research/0001-workspace-engineering/scope-application-index.md`
+- Modify: `docs/90.references/research/0001-workspace-engineering/m0013-scope-application-index.md`
 - Modify: `docs/90.references/research/0001-workspace-engineering/README.md`
 - Modify: `docs/90.references/research/README.md`
 - Modify: `docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/README.md#task-records`
@@ -1048,7 +1048,7 @@ relation are recorded the same way.
   `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`
 - Immediate predecessor cycle: spec `056`
 - [Research pack README](../../90.references/research/0001-workspace-engineering/README.md)
-- [Scope application index](../../90.references/research/0001-workspace-engineering/scope-application-index.md)
+- [Scope application index](../../90.references/research/0001-workspace-engineering/m0013-scope-application-index.md)
 - [Quality standards](../../00.agent-governance/rules/quality-standards.md)
 
 ### Legacy Task traceability
@@ -1060,8 +1060,8 @@ relation are recorded the same way.
 | [WRCP-000](plan.md#task-1-wrcp-000--activate-the-standalone-execution)               | In progress. The direct-approval standalone execution relation is being activated in this commit: registry entry, ADR reciprocity, three `active` statuses, stage indexes, and converted Lifecycle Traceability links.                                                                                                                                                                                                                                                                                     | This Task, Spec 057, reciprocal Plan, ADR-0022, `standaloneExecutions` entry, activation commit                                                                               |
 | [WRCP-001](plan.md#task-2-wrcp-001--topic-ledger-and-approved-cleanup)               | Not yet executed.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Not applicable                                                                                                                                                                |
 | [WRCP-002](plan.md#task-3-wrcp-002--governance-agents-model-memory-refresh)          | Done. `REQ-WERPC-006`/`026`/`028`/`032` re-observed on 2026-08-14; workspace canonical owners are `no-change` against the 2026-08-12 baseline; all nine registered external URLs were reachable and unchanged; all four dispositions remain `Partial`.                                                                                                                                                                                                                                                     | Dated 2026-08-14 sections in the four owner reports; `SRC-WERPC-074`; `CLM-WERPC-010-01` through `-04`                                                                        |
-| [WRCP-003](plan.md#task-4-wrcp-003--kubernetes-infrastructure-security-refresh)      | Done. `REQ-WERPC-008`/`009`/`025` re-observed on 2026-08-14; workspace selectors under `gitops/`, `policy/`, `infrastructure/`, and `traefik/` are `no-change` against the 2026-08-12 baseline (`a5d2dfbb`); the eighteen registered external sources were re-fetched with no material change except one inconclusive sub-claim; all three dispositions remain `Partial`.                                                                                                                                  | Dated 2026-08-14 section in `kubernetes-infrastructure-and-security.md`; `SRC-WERPC-075`; `CLM-WERPC-010-05` through `-07`                                                    |
-| [WRCP-004](plan.md#task-5-wrcp-004--guide-diátaxis-sdlc-and-document-family-refresh) | Done. `REQ-WERPC-014`/`020` re-observed on 2026-08-14; the workspace Guide/Diátaxis selectors and Spec 052 decisions are `no-change`; `SRC-WERPC-067` is unchanged and the published Diátaxis page was reachable on this attempt; both dispositions remain `Partial`. `REQ-WERPC-034`/`035`/`036` re-observed for the first time under Spec 057 `C-WRCP-010`; each is `Verified` on structural contract and `DEFER` on effectiveness.                                                                      | Dated 2026-08-14 sections in `documentation-architecture-and-diataxis.md` and `spec-driven-sdlc-and-document-contracts.md`; `SRC-WERPC-076`; `CLM-WERPC-010-08` through `-12` |
-| [WRCP-005](plan.md#task-6-wrcp-005--cicd-actions-qa-vv-refresh)                      | Done. `REQ-WERPC-022`/`023`/`033` re-observed on 2026-08-14; the workspace CI/CD/Actions/QA selectors (`.github/`, `.pre-commit-config.yaml`, `validation-surfaces.json`, `quality-standards.md`) are `no-change`; the twelve registered sources were re-fetched with eleven unchanged and one relocated (GitHub Actions environments page, equivalent content); all three dispositions remain `Partial`.                                                                                                  | Dated 2026-08-14 section in `ci-cd-github-actions-and-qa.md`; `SRC-WERPC-077`; `CLM-WERPC-010-13` through `-15`                                                               |
-| [WRCP-006](plan.md#task-7-wrcp-006--scope-re-projection-and-reconciliation)          | Done. Ten scope rows re-derived, none changed (registry unchanged since 2026-07-29); five unowned paths re-tested, unchanged; observation dates and frontmatter refreshed to 2026-08-14; `REQ-WERPC-034`/`035`/`036` registered as three new coverage-matrix owner rows (`Verified` contract / `DEFER` effect); reconciliation subsection added (14 files, 36 owners, 77 source IDs, 92 claim IDs, zero `Partial` cells changed); collection README confirmed accurate; scope index and pack README agree. | `scope-application-index.md`; pack `README.md`'s coverage matrix and `### 2026-08-14 consistency and Partial re-observation reconciliation` subsection                        |
+| [WRCP-003](plan.md#task-4-wrcp-003--kubernetes-infrastructure-security-refresh)      | Done. `REQ-WERPC-008`/`009`/`025` re-observed on 2026-08-14; workspace selectors under `gitops/`, `policy/`, `infrastructure/`, and `traefik/` are `no-change` against the 2026-08-12 baseline (`a5d2dfbb`); the eighteen registered external sources were re-fetched with no material change except one inconclusive sub-claim; all three dispositions remain `Partial`.                                                                                                                                  | Dated 2026-08-14 section in `m0007-kubernetes-infrastructure-and-security.md`; `SRC-WERPC-075`; `CLM-WERPC-010-05` through `-07`                                                    |
+| [WRCP-004](plan.md#task-5-wrcp-004--guide-diátaxis-sdlc-and-document-family-refresh) | Done. `REQ-WERPC-014`/`020` re-observed on 2026-08-14; the workspace Guide/Diátaxis selectors and Spec 052 decisions are `no-change`; `SRC-WERPC-067` is unchanged and the published Diátaxis page was reachable on this attempt; both dispositions remain `Partial`. `REQ-WERPC-034`/`035`/`036` re-observed for the first time under Spec 057 `C-WRCP-010`; each is `Verified` on structural contract and `DEFER` on effectiveness.                                                                      | Dated 2026-08-14 sections in `m0005-documentation-architecture-and-diataxis.md` and `m0004-spec-driven-sdlc-and-document-contracts.md`; `SRC-WERPC-076`; `CLM-WERPC-010-08` through `-12` |
+| [WRCP-005](plan.md#task-6-wrcp-005--cicd-actions-qa-vv-refresh)                      | Done. `REQ-WERPC-022`/`023`/`033` re-observed on 2026-08-14; the workspace CI/CD/Actions/QA selectors (`.github/`, `.pre-commit-config.yaml`, `validation-surfaces.json`, `quality-standards.md`) are `no-change`; the twelve registered sources were re-fetched with eleven unchanged and one relocated (GitHub Actions environments page, equivalent content); all three dispositions remain `Partial`.                                                                                                  | Dated 2026-08-14 section in `m0008-ci-cd-github-actions-and-qa.md`; `SRC-WERPC-077`; `CLM-WERPC-010-13` through `-15`                                                               |
+| [WRCP-006](plan.md#task-7-wrcp-006--scope-re-projection-and-reconciliation)          | Done. Ten scope rows re-derived, none changed (registry unchanged since 2026-07-29); five unowned paths re-tested, unchanged; observation dates and frontmatter refreshed to 2026-08-14; `REQ-WERPC-034`/`035`/`036` registered as three new coverage-matrix owner rows (`Verified` contract / `DEFER` effect); reconciliation subsection added (14 files, 36 owners, 77 source IDs, 92 claim IDs, zero `Partial` cells changed); collection README confirmed accurate; scope index and pack README agree. | `m0013-scope-application-index.md`; pack `README.md`'s coverage matrix and `### 2026-08-14 consistency and Partial re-observation reconciliation` subsection                        |
 | [WRCP-007](plan.md#task-8-wrcp-007--validation-closure-and-lifecycle-done)           | Not yet executed.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Not applicable                                                                                                                                                                |

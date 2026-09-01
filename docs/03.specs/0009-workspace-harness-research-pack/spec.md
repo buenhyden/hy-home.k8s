@@ -75,10 +75,10 @@ Out of scope:
   - `workspace-governance-baseline.md`: repo-first baseline covering purpose,
     roles, governance, operating contract, templates, scripts, automation, and
     current evidence lanes.
-  - `harness-and-loop-engineering.md`: definitions, external-source analysis,
+  - `m0002-harness-and-loop-engineering.md`: definitions, external-source analysis,
     market scan, and applicability checklist for harness engineering and loop
     engineering.
-  - `provider-implementation-status.md`: Claude, Codex/OpenAI, and
+  - `m0003-provider-implementation-status.md`: Claude, Codex/OpenAI, and
     Gemini/Google implementation status for harness and loop capabilities,
     including shared-environment construction patterns and known differences.
   - `spec-sdlc-ci-qa-formatting.md`: spec-driven development, SDLC, CI/CD, QA,

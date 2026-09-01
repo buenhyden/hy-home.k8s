@@ -856,7 +856,7 @@ Status: Done.
 Evidence:
 
 - Added the dated audit report:
-  [Spec-driven SDLC and Document Contracts](../../90.references/research/0001-workspace-engineering/spec-driven-sdlc-and-document-contracts.md).
+  [Spec-driven SDLC and Document Contracts](../../90.references/research/0001-workspace-engineering/m0004-spec-driven-sdlc-and-document-contracts.md).
 - Updated the audit report index in
   [Stage 90 Router](../../90.references/README.md).
 - Focused docs Markdown inventory counted 206 Markdown files, 181 authored

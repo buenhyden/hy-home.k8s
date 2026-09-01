@@ -111,7 +111,7 @@ the mesh's own init container is the dominant violation.
   Restricted; none was inspected at the time this decision was taken. That
   assessment has since been carried out against the repository manifests and is
   summarized in
-  [the Kubernetes security research](../../90.references/research/0001-workspace-engineering/kubernetes-infrastructure-and-security.md),
+  [the Kubernetes security research](../../90.references/research/0001-workspace-engineering/m0007-kubernetes-infrastructure-and-security.md),
   which amends the `warn`/`audit` alternative below without changing this
   decision.
 - It does not close the `adminer` deferred controls, which remain blocked on
@@ -162,7 +162,7 @@ subsequent survey disproved that.** Every deployed workload passes Baseline, so
 those namespaces would contribute no warnings at all, and the entire signal
 would be the Istio init container in two namespaces — precise, singular, and
 already understood. See
-[the Kubernetes security research](../../90.references/research/0001-workspace-engineering/kubernetes-infrastructure-and-security.md).
+[the Kubernetes security research](../../90.references/research/0001-workspace-engineering/m0007-kubernetes-infrastructure-and-security.md).
 
 The rejection therefore rests on a narrower and weaker argument than recorded:
 the one signal Baseline would produce is a fact this decision already documents,
@@ -215,4 +215,4 @@ constraint is the mesh's networking mechanism rather than any workload's spec.
 
 - [ADR-0026 — Argo CD source integrity non-adoption](0026-argo-cd-source-integrity-non-adoption.md)
 - [Spec 060 — workload security context baseline](../../03.specs/0061-workload-security-context-baseline/spec.md)
-- [Kubernetes, infrastructure, and security research](../../90.references/research/0001-workspace-engineering/kubernetes-infrastructure-and-security.md)
+- [Kubernetes, infrastructure, and security research](../../90.references/research/0001-workspace-engineering/m0007-kubernetes-infrastructure-and-security.md)

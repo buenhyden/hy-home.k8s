@@ -186,7 +186,7 @@ recorded in the cycle Task.
 
 ### C-WRFC-011 — formatter-safe ledger writes
 
-Rows added to `source-coverage.md` are written through a
+Rows added to `m0012-source-coverage.md` are written through a
 shell heredoc rather than the editing tools, because the Markdown formatter
 re-pads every cell of a table to its widest cell and previously inflated that
 file from 797 KB to 3.0 MB without changing content. Post-write byte size is
@@ -246,9 +246,9 @@ Findings live with their existing owners; this cycle adds no storage location.
 | ---------------------- | ------------------------------------------------------------- |
 | Dated finding sections | the eleven topical reports, as H3 under `Definitions / Facts` |
 | Cycle reconciliation   | pack `README.md`, as H3 under `Overview`                      |
-| Source and claim rows  | `source-coverage.md`                     |
-| Scope projection       | `scope-application-index.md`                                  |
-| Blocking-class closure | `scope-application-index.md`, as a dated H3                   |
+| Source and claim rows  | `m0012-source-coverage.md`                     |
+| Scope projection       | `m0013-scope-application-index.md`                                  |
+| Blocking-class closure | `m0013-scope-application-index.md`, as a dated H3                   |
 | Durable cycle record   | `docs/00.agent-governance/memory/progress.md`                 |
 | Per-package evidence   | the cycle Task                                                |
 
@@ -417,4 +417,4 @@ and its predecessor cycle is
 - [Spec 056 — Partial/DEFER incremental refresh](../0057-workspace-engineering-partial-defer-incremental-refresh/spec.md)
 - [Spec 053 — research pack consolidation](../0053-workspace-engineering-research-pack-consolidation/spec.md)
 - [Quality standards](../../00.agent-governance/rules/quality-standards.md)
-- [Source coverage and migration ledger](../../90.references/research/0001-workspace-engineering/source-coverage.md)
+- [Source coverage and migration ledger](../../90.references/research/0001-workspace-engineering/m0012-source-coverage.md)

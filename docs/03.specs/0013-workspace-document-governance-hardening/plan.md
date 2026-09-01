@@ -883,7 +883,7 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
 #### Audit Report Decision
 
 - Created the Stage 90 audit report because durable findings exist:
-  [Workspace Governance and Common Agent Environment](../../90.references/research/0001-workspace-engineering/workspace-governance-and-common-agent-environment.md).
+  [Workspace Governance and Common Agent Environment](../../90.references/research/0001-workspace-engineering/m0001-workspace-governance-and-common-agent-environment.md).
 - The former dated Audit index was later retired after consumer cutover.
 - Task 1 stayed audit-only: no Task 2 core contract fixes, Task 3 provider
   fixes, Task 4 workspace cleanup, or Task 5 validator changes were applied.
@@ -1269,4 +1269,4 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
 - [Template Routing Contract](../../99.templates/README.md)
 - [Agent Governance Hub](../../00.agent-governance/README.md)
 - [CI/CD & QA Reference Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
-- [Workspace Governance and Common Agent Environment](../../90.references/research/0001-workspace-engineering/workspace-governance-and-common-agent-environment.md)
+- [Workspace Governance and Common Agent Environment](../../90.references/research/0001-workspace-engineering/m0001-workspace-governance-and-common-agent-environment.md)

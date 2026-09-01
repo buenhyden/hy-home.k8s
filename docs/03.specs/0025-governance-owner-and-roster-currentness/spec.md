@@ -564,7 +564,7 @@ retains responsibility for final integration, validation, and branch finishing.
 ## Traceability
 
 - [Current External Research Pack](../../90.references/research/0001-workspace-engineering/README.md)
-- [Scope Application Index](../../90.references/research/0001-workspace-engineering/scope-application-index.md)
+- [Scope Application Index](../../90.references/research/0001-workspace-engineering/m0013-scope-application-index.md)
 - [Spec Stage](../README.md)
 - [Execution Plan](plan.md)
 - [Execution Task](README.md#task-records)

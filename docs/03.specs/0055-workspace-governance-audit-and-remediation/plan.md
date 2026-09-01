@@ -131,7 +131,7 @@ limitations, logical commits, and unresolved blockers.
 - [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
 - [Stage 90 reference router](../../90.references/README.md)
 - [Document profile registry](../../99.templates/registry.json)
-- [Current source coverage](../../90.references/research/0001-workspace-engineering/source-coverage.md)
+- [Current source coverage](../../90.references/research/0001-workspace-engineering/m0012-source-coverage.md)
 - Direct human design approval and Spec approval on 2026-08-09
 ## Goals & In-Scope
 
@@ -1703,7 +1703,7 @@ without history rewriting.
 - [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
 - [WGIA Task](README.md#task-records)
 - [Stage 90 reference router](../../90.references/README.md)
-- [Current source coverage](../../90.references/research/0001-workspace-engineering/source-coverage.md)
+- [Current source coverage](../../90.references/research/0001-workspace-engineering/m0012-source-coverage.md)
 
 ### Lifecycle Traceability
 

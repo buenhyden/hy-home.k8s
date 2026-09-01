@@ -55,7 +55,7 @@ surface domain validators owned by Spec 032.
 - **Key Dependencies**: Strict document validation from Spec 029 and migrated
   paths from Spec 030. After Spec 030 strict cutover, every program-created
   authored document must add its exact fourteen-column row to the durable
-  `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`; [current lookup](../../90.references/research/0001-workspace-engineering/source-coverage.md)
+  `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`; [current lookup](../../90.references/research/0001-workspace-engineering/m0012-source-coverage.md)
   in the same creation commit; validator or ledger coverage must not be weakened
   to admit an unaccounted path.
 - **Tech Stack**: JSON contract, repository scripts, pre-commit, GitHub Actions,
@@ -174,7 +174,7 @@ and live infrastructure remain `DEFER` for their separately authorized owners.
 - **AD**: [Workspace Document Assurance Operating Model](../../02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md)
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Migration Spec**: [Authored Document Migration](../0030-authored-document-migration/spec.md)
-- **Research**: [CI/CD, GitHub Actions, and QA](../../90.references/research/0001-workspace-engineering/ci-cd-github-actions-and-qa.md)
+- **Research**: [CI/CD, GitHub Actions, and QA](../../90.references/research/0001-workspace-engineering/m0008-ci-cd-github-actions-and-qa.md)
 
 ### Delivery and References
 

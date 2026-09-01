@@ -4,6 +4,7 @@ type: content/reference
 status: active
 owner: platform
 updated: 2026-08-31
+artifact_id: "RES-0001-m0002"
 ---
 
 # Reference: Harness and Loop Engineering
@@ -35,7 +36,7 @@ cluster or third-party mutation is authorized by this reference.
 This owner covers REQ-WERPC-001 (harness) and REQ-WERPC-002 (loop): definitions,
 components, transitions, evaluation, recovery, observability, and the resulting
 workspace target state. Provider-specific discovery and configuration belong in
-[provider status](provider-implementation-status.md).
+[provider status](m0003-provider-implementation-status.md).
 
 ## Definitions / Facts
 
@@ -58,8 +59,8 @@ This aligns with OpenAI's official Codex guidance that durable instructions,
 configuration, subagents, and MCP define a repeatable workflow, and
 with its instruction-discovery and hook documentation; those sources do not
 claim that this particular repository's configuration was consumed in a given
-session. See [SRC-WERPC-009](source-coverage.md#source-register)
-through [SRC-WERPC-013](source-coverage.md#source-register).
+session. See [SRC-WERPC-009](m0012-source-coverage.md#source-register)
+through [SRC-WERPC-013](m0012-source-coverage.md#source-register).
 
 ### Loop baseline
 
@@ -84,8 +85,8 @@ redaction. The intended human-readable loop is:
 The external Codex documentation supports the general orchestration surfaces
 (instructions, configuration, hooks, subagents, and approval/sandbox); the
 state names, retry numbers, and evidence rules below are workspace controls,
-not provider features. [SRC-WERPC-010](source-coverage.md#source-register)
-and [SRC-WERPC-012](source-coverage.md#source-register)
+not provider features. [SRC-WERPC-010](m0012-source-coverage.md#source-register)
+and [SRC-WERPC-012](m0012-source-coverage.md#source-register)
 are therefore supporting context, not authority for the local policy.
 
 ### State machine and termination
@@ -188,7 +189,7 @@ This increment is the fifth refresh cycle over this pack, executed under
 Spec 058. Unlike the three preceding cycles it re-observed every owner row in
 the pack rather than the twelve `Partial` rows, and it assigns each retained
 `Partial` or `DEFER` row a blocking class recorded in the
-[scope application index](scope-application-index.md). All observations are
+[scope application index](m0013-scope-application-index.md). All observations are
 dated **2026-08-17**. No live cluster, hosted CI run, provider runtime,
 authenticated execution, or secret value was observed.
 
@@ -268,7 +269,7 @@ change the shared ledger.
   pages still describe instruction, configuration, sandbox, model, subagent,
   hook, and MCP surfaces. They do not establish this workspace runtime.
 - **Workspace selector and result:** `confirmed` at
-  `harness-and-loop-engineering.md#harness-baseline`. The repository-static
+  `m0002-harness-and-loop-engineering.md#harness-baseline`. The repository-static
   control plane still owns context, role and task instructions, bounded tools
   and permissions, orchestration and isolation boundaries, evaluation,
   checkpoint/recovery contracts, observability, and handoff evidence.
@@ -295,7 +296,7 @@ change the shared ledger.
   context for orchestration surfaces; loop states and retry budgets remain
   local policy.
 - **Workspace selector and result:** `confirmed` at
-  `harness-and-loop-engineering.md#loop-baseline`. The local contract still
+  `m0002-harness-and-loop-engineering.md#loop-baseline`. The local contract still
   defines ready/running/validating/retry-assessment and terminal states,
   bounded retry and recovery budgets, second-identical-result no-progress
   escalation, redaction, validation, and owned handoff.
@@ -363,7 +364,7 @@ authorized, non-secret runtime observation.
 
 ## Related Documents
 
-- [Workspace governance and common environment](workspace-governance-and-common-agent-environment.md)
-- [Provider implementation status](provider-implementation-status.md)
-- [Source ledger](source-coverage.md)
+- [Workspace governance and common environment](m0001-workspace-governance-and-common-agent-environment.md)
+- [Provider implementation status](m0003-provider-implementation-status.md)
+- [Source ledger](m0012-source-coverage.md)
 - [Agent Execution Policy](../../../00.agent-governance/policies/agent-execution.md)

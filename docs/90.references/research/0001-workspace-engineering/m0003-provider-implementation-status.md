@@ -4,6 +4,7 @@ type: content/reference
 status: active
 owner: platform
 updated: 2026-08-31
+artifact_id: "RES-0001-m0003"
 ---
 
 # Reference: Provider Implementation Status
@@ -35,7 +36,7 @@ model availability, and live execution are outside this research scope and are
 This owner covers REQ-WERPC-004 (Claude) and REQ-WERPC-005 (Codex), including
 instruction discovery, configuration, hooks, subagents, MCP, sandbox/approval,
 memory, model, and runtime boundaries. Common control-plane findings route to
-[workspace governance](workspace-governance-and-common-agent-environment.md).
+[workspace governance](m0001-workspace-governance-and-common-agent-environment.md).
 
 ## Definitions / Facts
 
@@ -61,7 +62,7 @@ instructions from auto memory and says both are context rather than enforced
 configuration; it identifies a `PreToolUse` hook as the hard-blocking mechanism.
 The same official docs describe hierarchical/nested instruction loading,
 `.claude/rules/` path-scoped instructions, and project-local configuration.
-[SRC-WERPC-004](source-coverage.md#source-register) is the
+[SRC-WERPC-004](m0012-source-coverage.md#source-register) is the
 source of these bounded claims.
 
 The repository's root `CLAUDE.md` imports the bootstrap, the Claude provider
@@ -152,7 +153,7 @@ This increment is the fifth refresh cycle over this pack, executed under
 Spec 058. Unlike the three preceding cycles it re-observed every owner row in
 the pack rather than the twelve `Partial` rows, and it assigns each retained
 `Partial` or `DEFER` row a blocking class recorded in the
-[scope application index](scope-application-index.md). All observations are
+[scope application index](m0013-scope-application-index.md). All observations are
 dated **2026-08-17**. No live cluster, hosted CI run, provider runtime,
 authenticated execution, or secret value was observed.
 
@@ -222,7 +223,7 @@ provider client, account, credential, connected MCP, or live tool was inspected.
 - **External/workspace result:** `changed` / `confirmed`, using the existing
   `SRC-WERPC-004..008` and `SRC-WERPC-083` source boundaries and workspace
   selector
-  `docs/90.references/research/0001-workspace-engineering/provider-implementation-status.md#claude-baseline`.
+  `docs/90.references/research/0001-workspace-engineering/m0003-provider-implementation-status.md#claude-baseline`.
 - **As-Is:** current Anthropic pages continue to document `CLAUDE.md` context
   and memory, layered settings and permissions, lifecycle hooks, custom
   subagents with tool/MCP/model/context controls, and MCP configuration. The
@@ -251,7 +252,7 @@ provider client, account, credential, connected MCP, or live tool was inspected.
 
 - **External/workspace result:** `unchanged` / `confirmed`, using existing
   `SRC-WERPC-009..013` and `SRC-WERPC-068` boundaries and workspace selector
-  `docs/90.references/research/0001-workspace-engineering/provider-implementation-status.md#codex-baseline`.
+  `docs/90.references/research/0001-workspace-engineering/m0003-provider-implementation-status.md#codex-baseline`.
 - **As-Is:** current OpenAI pages continue to document the AGENTS instruction
   chain, layered configuration, custom subagents, sandbox and approval
   controls, hooks, memories, and model selection. The baseline worktree
@@ -358,8 +359,8 @@ surface.
 
 ## Related Documents
 
-- [Harness and loop engineering](harness-and-loop-engineering.md)
-- [Workspace governance and common environment](workspace-governance-and-common-agent-environment.md)
-- [Source ledger](source-coverage.md)
+- [Harness and loop engineering](m0002-harness-and-loop-engineering.md)
+- [Workspace governance and common environment](m0001-workspace-governance-and-common-agent-environment.md)
+- [Source ledger](m0012-source-coverage.md)
 - [Claude provider notes](../../../00.agent-governance/providers/claude.md)
 - [Codex provider notes](../../../00.agent-governance/providers/codex.md)

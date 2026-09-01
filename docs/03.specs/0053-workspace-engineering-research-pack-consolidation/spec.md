@@ -139,18 +139,18 @@ cutover.
 | Artifact | Primary scope and responsibility |
 | --- | --- |
 | `README.md` | Pack boundary, source priority, reading order, evidence classes, and requirement-to-owner coverage matrix. |
-| `workspace-governance-and-common-agent-environment.md` | Workspace purpose, operating contract, shared Claude/Codex environment, common rules, governance, templates, scripts, and integration routes. |
-| `harness-and-loop-engineering.md` | Harness elements; Observe/Plan/Act/Verify/Learn loop; evaluation, recovery, termination, memory, and workspace application requirements. |
-| `provider-implementation-status.md` | Claude and Codex upstream surfaces, local adapters, hooks, permissions, subagents, implementation status, parity limits, and common-system options. |
-| `spec-driven-sdlc-and-document-contracts.md` | Spec-driven development, SDLC governance, and PRD, AD, ADR, guide, incident, postmortem, policy, release, and runbook roles and rules. |
-| `documentation-architecture-and-diataxis.md` | Diataxis tutorial, how-to, reference, and explanation modes; workspace mapping; authoring rules; implementation gaps. |
-| `llm-wiki-and-knowledge-routing.md` | LLM-WIKI structure, deterministic indexes, JIT retrieval, authority routing, freshness, and drift controls. |
-| `kubernetes-infrastructure-and-security.md` | Kubernetes, infrastructure, GitOps, RBAC, NetworkPolicy, secrets, policy-as-code, supply-chain, and security boundaries. |
-| `ci-cd-github-actions-and-qa.md` | CI/CD, GitHub Actions, formatting, linting, testing, syntax validation, workflow security, promotion, rollback, and evidence lanes. |
-| `ai-agents-and-agency-agents.md` | AI-agent system design, pinned `msitarzewski/agency-agents` evidence, roster comparison, Adopt/Adapt/Skip decisions, and admission rules. |
-| `agent-model-routing-and-configuration.md` | Task-characteristic model selection, product-surface separation, reasoning controls, evaluation, fallback, cost/latency, and promotion. |
-| `agent-memory-tiers-and-management.md` | Working short-term, durable long-term, domain-scoped, and provider-local auxiliary memory with lifecycle controls. |
-| `source-coverage.md` | Old-file and material-section disposition, source commits, checked dates, new owners, omissions, and cutover evidence. |
+| `m0001-workspace-governance-and-common-agent-environment.md` | Workspace purpose, operating contract, shared Claude/Codex environment, common rules, governance, templates, scripts, and integration routes. |
+| `m0002-harness-and-loop-engineering.md` | Harness elements; Observe/Plan/Act/Verify/Learn loop; evaluation, recovery, termination, memory, and workspace application requirements. |
+| `m0003-provider-implementation-status.md` | Claude and Codex upstream surfaces, local adapters, hooks, permissions, subagents, implementation status, parity limits, and common-system options. |
+| `m0004-spec-driven-sdlc-and-document-contracts.md` | Spec-driven development, SDLC governance, and PRD, AD, ADR, guide, incident, postmortem, policy, release, and runbook roles and rules. |
+| `m0005-documentation-architecture-and-diataxis.md` | Diataxis tutorial, how-to, reference, and explanation modes; workspace mapping; authoring rules; implementation gaps. |
+| `m0006-llm-wiki-and-knowledge-routing.md` | LLM-WIKI structure, deterministic indexes, JIT retrieval, authority routing, freshness, and drift controls. |
+| `m0007-kubernetes-infrastructure-and-security.md` | Kubernetes, infrastructure, GitOps, RBAC, NetworkPolicy, secrets, policy-as-code, supply-chain, and security boundaries. |
+| `m0008-ci-cd-github-actions-and-qa.md` | CI/CD, GitHub Actions, formatting, linting, testing, syntax validation, workflow security, promotion, rollback, and evidence lanes. |
+| `m0009-ai-agents-and-agency-agents.md` | AI-agent system design, pinned `msitarzewski/agency-agents` evidence, roster comparison, Adopt/Adapt/Skip decisions, and admission rules. |
+| `m0010-agent-model-routing-and-configuration.md` | Task-characteristic model selection, product-surface separation, reasoning controls, evaluation, fallback, cost/latency, and promotion. |
+| `m0011-agent-memory-tiers-and-management.md` | Working short-term, durable long-term, domain-scoped, and provider-local auxiliary memory with lifecycle controls. |
+| `m0012-source-coverage.md` | Old-file and material-section disposition, source commits, checked dates, new owners, omissions, and cutover evidence. |
 
 ### Research flow
 

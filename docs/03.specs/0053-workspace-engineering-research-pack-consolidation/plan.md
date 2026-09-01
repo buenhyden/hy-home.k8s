@@ -186,33 +186,33 @@ or live-cluster result is produced or claimed.
 - `docs/90.references/research/0001-workspace-engineering/README.md` — pack boundary,
   evidence classes, reading order, request-to-primary-owner matrix, and current
   workspace evidence routing.
-- `workspace-governance-and-common-agent-environment.md` — workspace purpose,
+- `m0001-workspace-governance-and-common-agent-environment.md` — workspace purpose,
   common Claude/Codex governance, rules, environment, templates, scripts, and
   application route.
-- `harness-and-loop-engineering.md` — harness elements and the
+- `m0002-harness-and-loop-engineering.md` — harness elements and the
   Observe/Plan/Act/Verify/Learn loop, recovery, termination, evaluation, and
   workspace application controls.
-- `provider-implementation-status.md` — Claude/Codex upstream product
+- `m0003-provider-implementation-status.md` — Claude/Codex upstream product
   surfaces, local adapters, status, evidence depth, parity, and gaps.
-- `spec-driven-sdlc-and-document-contracts.md` — spec-driven development,
+- `m0004-spec-driven-sdlc-and-document-contracts.md` — spec-driven development,
   SDLC, and PRD/AD/ADR/guide/incident/postmortem/policy/release/runbook
   contracts.
-- `documentation-architecture-and-diataxis.md` — Diátaxis modes and the
+- `m0005-documentation-architecture-and-diataxis.md` — Diátaxis modes and the
   workspace documentation architecture mapping.
-- `llm-wiki-and-knowledge-routing.md` — deterministic knowledge routing,
+- `m0006-llm-wiki-and-knowledge-routing.md` — deterministic knowledge routing,
   indexes, JIT retrieval, freshness, authority, and drift control.
-- `kubernetes-infrastructure-and-security.md` — Kubernetes, infrastructure,
+- `m0007-kubernetes-infrastructure-and-security.md` — Kubernetes, infrastructure,
   GitOps, RBAC, NetworkPolicy, secrets, policy-as-code, supply chain, and
   security boundaries.
-- `ci-cd-github-actions-and-qa.md` — CI/CD, GitHub Actions, formatting,
+- `m0008-ci-cd-github-actions-and-qa.md` — CI/CD, GitHub Actions, formatting,
   linting, syntax, testing, promotion, rollback, and evidence lanes.
-- `ai-agents-and-agency-agents.md` — agent-system design, pinned
+- `m0009-ai-agents-and-agency-agents.md` — agent-system design, pinned
   `msitarzewski/agency-agents`, roster comparison, and admission decisions.
-- `agent-model-routing-and-configuration.md` — task-characteristic model and
+- `m0010-agent-model-routing-and-configuration.md` — task-characteristic model and
   reasoning selection, evaluation, fallback, cost/latency, and promotion.
-- `agent-memory-tiers-and-management.md` — working, durable, domain-scoped,
+- `m0011-agent-memory-tiers-and-management.md` — working, durable, domain-scoped,
   and provider-local auxiliary memory lifecycle.
-- `source-coverage.md` — source register, 25-file and
+- `m0012-source-coverage.md` — source register, 25-file and
   split-section dispositions, mutable-reference classification, omissions,
   corrections, and cutover evidence.
 
@@ -449,8 +449,8 @@ Canonical follow-up owner | Refresh trigger
 
 **Files:**
 
-- Modify: `workspace-governance-and-common-agent-environment.md`,
-  `harness-and-loop-engineering.md`, `provider-implementation-status.md`, the
+- Modify: `m0001-workspace-governance-and-common-agent-environment.md`,
+  `m0002-harness-and-loop-engineering.md`, `m0003-provider-implementation-status.md`, the
   source/migration ledger, WERPC Task, and progress ledger
 
 **Interfaces:**
@@ -515,9 +515,9 @@ Canonical follow-up owner | Refresh trigger
 
 **Files:**
 
-- Modify: `spec-driven-sdlc-and-document-contracts.md`,
-  `documentation-architecture-and-diataxis.md`,
-  `llm-wiki-and-knowledge-routing.md`, the source/migration ledger, WERPC Task,
+- Modify: `m0004-spec-driven-sdlc-and-document-contracts.md`,
+  `m0005-documentation-architecture-and-diataxis.md`,
+  `m0006-llm-wiki-and-knowledge-routing.md`, the source/migration ledger, WERPC Task,
   and progress ledger
 
 **Interfaces:**
@@ -576,7 +576,7 @@ Canonical follow-up owner | Refresh trigger
 
 **Files:**
 
-- Modify: `kubernetes-infrastructure-and-security.md`, the source/migration
+- Modify: `m0007-kubernetes-infrastructure-and-security.md`, the source/migration
   ledger, WERPC Task, and progress ledger
 
 **Interfaces:**
@@ -628,7 +628,7 @@ Canonical follow-up owner | Refresh trigger
 
 **Files:**
 
-- Modify: `ci-cd-github-actions-and-qa.md`, the source/migration ledger, WERPC
+- Modify: `m0008-ci-cd-github-actions-and-qa.md`, the source/migration ledger, WERPC
   Task, and progress ledger
 
 **Interfaces:**
@@ -680,9 +680,9 @@ Canonical follow-up owner | Refresh trigger
 
 **Files:**
 
-- Modify: `ai-agents-and-agency-agents.md`,
-  `agent-model-routing-and-configuration.md`,
-  `agent-memory-tiers-and-management.md`, the source/migration ledger, WERPC
+- Modify: `m0009-ai-agents-and-agency-agents.md`,
+  `m0010-agent-model-routing-and-configuration.md`,
+  `m0011-agent-memory-tiers-and-management.md`, the source/migration ledger, WERPC
   Task, and progress ledger
 
 **Interfaces:**

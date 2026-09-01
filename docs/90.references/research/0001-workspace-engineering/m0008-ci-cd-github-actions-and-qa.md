@@ -4,6 +4,7 @@ type: content/reference
 status: active
 owner: platform
 updated: 2026-08-31
+artifact_id: "RES-0001-m0008"
 ---
 
 # Reference: CI/CD, GitHub Actions, and QA
@@ -20,7 +21,7 @@ a workflow, branch rule, environment, cloud identity, release, or cluster.
 
 Current-primary-source research combined with repository-static workflow,
 validation-contract, and predecessor evidence. The dated source and claim
-records are in [the pack ledger](source-coverage.md).
+records are in [the pack ledger](m0012-source-coverage.md).
 
 ## Authority Boundary
 
@@ -90,7 +91,7 @@ current static QA setup as CD or SLSA conformance.
 
 GitHub defines a workflow as YAML in `.github/workflows/`, with events, jobs,
 permissions, conditions, dependencies, and concurrency as distinct controls
-([SRC-WERPC-035](source-coverage.md#source-register)).
+([SRC-WERPC-035](m0012-source-coverage.md#source-register)).
 The local `ci.yml` uses `push` and `pull_request` limited to `main`, plus
 `workflow_dispatch`; it derives paths in a dedicated `changes` job rather than
 using broad YAML path filters. GitHub documents that server-side path filtering
@@ -105,7 +106,7 @@ version comments; `actions/checkout` uses `persist-credentials: false` and
 full history where required. The GitHub secure-use guidance treats full-length
 commit pinning and least privilege as important controls, but a SHA pin is not
 an upstream-code audit, a provenance claim, or a hosted-run result
-([SRC-WERPC-036](source-coverage.md#source-register)).
+([SRC-WERPC-036](m0012-source-coverage.md#source-register)).
 
 ### Workflow control inventory
 
@@ -122,7 +123,7 @@ an upstream-code audit, a provenance claim, or a hosted-run result
 superseded runs; changelog retains tag runs; maintenance workflows cancel
 superseded per-item/scheduled runs. GitHub documents concurrency as deliberate
 overlap/cancellation control, but scheduler behavior is `DEFER` until a run is
-observed ([SRC-WERPC-037](source-coverage.md#source-register)).
+observed ([SRC-WERPC-037](m0012-source-coverage.md#source-register)).
 
 ### QA baseline
 
@@ -159,8 +160,8 @@ evidence depth that a result can support.
 
 | Term         | Question                                                                                                                                 | Actor                                                                                                                          | Input                                                                                                                                                       | Evidence                                                                                                                                                                                                                                                                                                  | Failure meaning                                                                                                                                                                                                                         | Workspace mapping                                                                                                                                                                                                                                                                                                                                                           |
 | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Verification | Was the artifact realized right: does the identified product or work product conform to its approved specified requirements?             | Implementer/engineer with QA or an independent reviewer proportionate to risk. Full IV&V is not implied.                       | Versioned requirement/specification baseline, acceptance criteria, artifact/commit version, approved method, tools, and environment.                        | Bidirectional requirement-to-result trace plus test, analysis, inspection, or demonstration record; method/tool/environment versions; pass/fail; discrepancies, waivers, corrective action, and closure ([SRC-WERPC-058](source-coverage.md#source-register)).                       | The artifact is nonconforming, or the method/procedure/environment was invalid. Stop, diagnose, correct and reverify, or process an explicitly controlled waiver.                                                                       | During SDLC implementation/review, targeted/affected/staged/tests and structural validators provide bounded conformance evidence. Release readiness links the approved Spec/Plan/Task/Policy baseline to artifact identity and results; operations use Runbook verification/evidence steps. `VAL-*` names a criterion, and static PASS is not intended-use or live fitness. |
-| Validation   | Was the right product realized: does the verified product satisfy stakeholder expectations and intended use in its intended environment? | Product/requirements owner, affected stakeholders, and anticipated users/operators; independent review strength is risk-based. | Verified product version, stakeholder expectation or requirement baseline, intended use/ConOps, scenarios, validation plan, and representative environment. | Expected-versus-observed scenario results under realistic or justified simulated conditions; participating stakeholder/user identities; environment/tool versions; discrepancies, corrective action, and revalidation closure ([SRC-WERPC-059](source-coverage.md#source-register)). | The setup was not representative, or the product/requirements/design cannot satisfy intended use. Correct the setup and repeat, or rework the expectation, requirement, design, or product with stakeholder involvement and revalidate. | Requirements validation begins during PRD/ARD/Spec review; product/system validation belongs at release readiness and operational scenarios with stakeholders/users. Without separately authorized intended-use, user/operator, hosted, remote, or live evidence, release/operations validation is `DEFER`, never inferred from repository-static PASS.                     |
+| Verification | Was the artifact realized right: does the identified product or work product conform to its approved specified requirements?             | Implementer/engineer with QA or an independent reviewer proportionate to risk. Full IV&V is not implied.                       | Versioned requirement/specification baseline, acceptance criteria, artifact/commit version, approved method, tools, and environment.                        | Bidirectional requirement-to-result trace plus test, analysis, inspection, or demonstration record; method/tool/environment versions; pass/fail; discrepancies, waivers, corrective action, and closure ([SRC-WERPC-058](m0012-source-coverage.md#source-register)).                       | The artifact is nonconforming, or the method/procedure/environment was invalid. Stop, diagnose, correct and reverify, or process an explicitly controlled waiver.                                                                       | During SDLC implementation/review, targeted/affected/staged/tests and structural validators provide bounded conformance evidence. Release readiness links the approved Spec/Plan/Task/Policy baseline to artifact identity and results; operations use Runbook verification/evidence steps. `VAL-*` names a criterion, and static PASS is not intended-use or live fitness. |
+| Validation   | Was the right product realized: does the verified product satisfy stakeholder expectations and intended use in its intended environment? | Product/requirements owner, affected stakeholders, and anticipated users/operators; independent review strength is risk-based. | Verified product version, stakeholder expectation or requirement baseline, intended use/ConOps, scenarios, validation plan, and representative environment. | Expected-versus-observed scenario results under realistic or justified simulated conditions; participating stakeholder/user identities; environment/tool versions; discrepancies, corrective action, and revalidation closure ([SRC-WERPC-059](m0012-source-coverage.md#source-register)). | The setup was not representative, or the product/requirements/design cannot satisfy intended use. Correct the setup and repeat, or rework the expectation, requirement, design, or product with stakeholder involvement and revalidate. | Requirements validation begins during PRD/ARD/Spec review; product/system validation belongs at release readiness and operational scenarios with stakeholders/users. Without separately authorized intended-use, user/operator, hosted, remote, or live evidence, release/operations validation is `DEFER`, never inferred from repository-static PASS.                     |
 
 Testing is a method available to both terms, not a synonym for either one.
 Requirements validation is an earlier agreement and quality check on the
@@ -173,14 +174,14 @@ scenarios rather than merely link filenames.
 
 | Control                 | Repository-static finding                                                                                                                                                            | Evidence and follow-up boundary                                                                                                                                                                                                      |
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Dependencies            | Four validation jobs use Python 3.12 and the reviewed fully pinned/all-hash Linux lock with `--only-binary :all:` and `--require-hashes`; direct pins and lock are separately owned. | pip describes hash checking and binary-only resolution as installation constraints ([SRC-WERPC-043](source-coverage.md#source-register)); this does not prove downloaded bytes, package safety, or portability. |
+| Dependencies            | Four validation jobs use Python 3.12 and the reviewed fully pinned/all-hash Linux lock with `--only-binary :all:` and `--require-hashes`; direct pins and lock are separately owned. | pip describes hash checking and binary-only resolution as installation constraints ([SRC-WERPC-043](m0012-source-coverage.md#source-register)); this does not prove downloaded bytes, package safety, or portability. |
 | Gitleaks bootstrap      | Two CI jobs download a fixed v8.30.0 Linux asset and verify its recorded SHA-256 before installation; a local contract validator reconciles the declaration.                         | Runtime download, publisher identity, GitHub-managed secrets, and history settings are `DEFER`.                                                                                                                                      |
-| Artifacts               | One pinned upload action retains a changelog artifact for seven days.                                                                                                                | GitHub artifact retention/deletion behavior is source-backed ([SRC-WERPC-038](source-coverage.md#source-register)); upload, retrieval, access control, and retention outcome are hosted/admin evidence.         |
+| Artifacts               | One pinned upload action retains a changelog artifact for seven days.                                                                                                                | GitHub artifact retention/deletion behavior is source-backed ([SRC-WERPC-038](m0012-source-coverage.md#source-register)); upload, retrieval, access control, and retention outcome are hosted/admin evidence.         |
 | Cache                   | No `actions/cache`, dependency cache, or cache-key policy was found.                                                                                                                 | Do not claim cache isolation or poisoning resistance. Before adding cache, model trusted writers/readers, keys, invalidation, secret exclusion, and release-input boundary.                                                          |
 | Environments/deployment | No job `environment`, deployment API/action, registry publish, or cloud login was found.                                                                                             | Protected environment, approval, and deployment state are `DEFER`; a deploy design needs a dedicated owner and evidence plan.                                                                                                        |
-| OIDC                    | No `id-token: write` or cloud trust declaration was found.                                                                                                                           | GitHub OIDC uses job-scoped tokens and requires claim-aware trust design ([SRC-WERPC-039](source-coverage.md#source-register)); no workload is currently evidenced as using it.                                 |
-| Attestation/SLSA        | No attestation permission/action, provenance/SBOM, signer verification, reusable build workflow, or admission enforcement was found.                                                 | GitHub attestation and SLSA documents provide a future benchmark ([SRC-WERPC-040](source-coverage.md#source-register)); no level or conformance is claimed.                                                     |
-| Hook supply chain       | Remote pre-commit repositories use unique full commits and frozen tag comments.                                                                                                      | The pre-commit update procedure preserves revision provenance ([SRC-WERPC-042](source-coverage.md#source-register)); transitive hook environments and cold offline replay remain `DEFER`.                       |
+| OIDC                    | No `id-token: write` or cloud trust declaration was found.                                                                                                                           | GitHub OIDC uses job-scoped tokens and requires claim-aware trust design ([SRC-WERPC-039](m0012-source-coverage.md#source-register)); no workload is currently evidenced as using it.                                 |
+| Attestation/SLSA        | No attestation permission/action, provenance/SBOM, signer verification, reusable build workflow, or admission enforcement was found.                                                 | GitHub attestation and SLSA documents provide a future benchmark ([SRC-WERPC-040](m0012-source-coverage.md#source-register)); no level or conformance is claimed.                                                     |
+| Hook supply chain       | Remote pre-commit repositories use unique full commits and frozen tag comments.                                                                                                      | The pre-commit update procedure preserves revision provenance ([SRC-WERPC-042](m0012-source-coverage.md#source-register)); transitive hook environments and cold offline replay remain `DEFER`.                       |
 
 ### Workspace As-Is, gap, and target matrix
 
@@ -202,7 +203,7 @@ This increment is the fifth refresh cycle over this pack, executed under
 Spec 058. Unlike the three preceding cycles it re-observed every owner row in
 the pack rather than the twelve `Partial` rows, and it assigns each retained
 `Partial` or `DEFER` row a blocking class recorded in the
-[scope application index](scope-application-index.md). All observations are
+[scope application index](m0013-scope-application-index.md). All observations are
 dated **2026-08-17**. No live cluster, hosted CI run, provider runtime,
 authenticated execution, or secret value was observed.
 
@@ -279,7 +280,7 @@ observation date for any pack file without reading the body.
 ## Sources
 
 Current primary-source rows are `SRC-WERPC-035` through `SRC-WERPC-044` in the
-[source register](source-coverage.md#source-register).
+[source register](m0012-source-coverage.md#source-register).
 They cover Actions syntax, secure use, concurrency, artifact retention, OIDC,
 attestations/SLSA, pre-commit update provenance, and secure pip installs.
 The gap-only V&V rows are `SRC-WERPC-058` and `SRC-WERPC-059`, checked
@@ -647,8 +648,8 @@ remain `DEFER`.
 
 ## Related Documents
 
-- [Platform security](kubernetes-infrastructure-and-security.md)
-- [Source coverage and migration ledger](source-coverage.md)
+- [Platform security](m0007-kubernetes-infrastructure-and-security.md)
+- [Source coverage and migration ledger](m0012-source-coverage.md)
 - [GitHub configuration hub](../../../../.github/README.md)
 - [Quality and Evidence Policy](../../../00.agent-governance/policies/quality.md)
 - [Validation routing registry](../../../../scripts/validation/registry.json)

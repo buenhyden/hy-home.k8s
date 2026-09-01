@@ -332,8 +332,8 @@ the implementation diff.
 - **Template Spec**: [Template Contract Consolidation](../0027-template-contract-consolidation/spec.md)
 - **Semantic Validation Spec**: [Semantic Document Validation](../0029-semantic-document-validation/spec.md)
 - **Authored Migration Spec**: [Authored Document Migration](../0030-authored-document-migration/spec.md)
-- **Current Research Finding**: [Spec-driven SDLC and Document Contracts](../../90.references/research/0001-workspace-engineering/spec-driven-sdlc-and-document-contracts.md)
-- **Current Application Index**: [Scope Application Index](../../90.references/research/0001-workspace-engineering/scope-application-index.md)
+- **Current Research Finding**: [Spec-driven SDLC and Document Contracts](../../90.references/research/0001-workspace-engineering/m0004-spec-driven-sdlc-and-document-contracts.md)
+- **Current Application Index**: [Scope Application Index](../../90.references/research/0001-workspace-engineering/m0013-scope-application-index.md)
 
 ### TLCN-002 registry evidence
 

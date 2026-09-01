@@ -4,6 +4,7 @@ type: content/reference
 status: active
 owner: platform
 updated: 2026-08-31
+artifact_id: "RES-0001-m0006"
 ---
 
 # Reference: LLM-WIKI and Knowledge Routing
@@ -103,7 +104,7 @@ This increment is the fifth refresh cycle over this pack, executed under
 Spec 058. Unlike the three preceding cycles it re-observed every owner row in
 the pack rather than the twelve `Partial` rows, and it assigns each retained
 `Partial` or `DEFER` row a blocking class recorded in the
-[scope application index](scope-application-index.md). All observations are
+[scope application index](m0013-scope-application-index.md). All observations are
 dated **2026-08-17**. No live cluster, hosted CI run, provider runtime,
 authenticated execution, or secret value was observed.
 
@@ -185,7 +186,7 @@ retrieval, and provider runtime.
 
 - **Sources and result:** `unchanged` / `confirmed`, using existing
   `SRC-WERPC-021`, `SRC-WERPC-086`, and `SRC-WERPC-087` boundaries and selector
-  `llm-wiki-and-knowledge-routing.md#llm-wiki-baseline`. `llms.txt` remains a
+  `m0006-llm-wiki-and-knowledge-routing.md#llm-wiki-baseline`. `llms.txt` remains a
   community proposal, and MCP Resources remain URI-addressed server data whose
   incorporation is application-driven.
 - **Observed As-Was:** LLM-WIKI was a deterministic Markdown canonical-owner
@@ -212,5 +213,5 @@ retrieval, and provider runtime.
 
 ## Related Documents
 
-- [Documentation architecture and Diátaxis](documentation-architecture-and-diataxis.md)
-- [Source coverage and migration ledger](source-coverage.md)
+- [Documentation architecture and Diátaxis](m0005-documentation-architecture-and-diataxis.md)
+- [Source coverage and migration ledger](m0012-source-coverage.md)
