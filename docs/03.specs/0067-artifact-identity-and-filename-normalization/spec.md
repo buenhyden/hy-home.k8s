@@ -3,7 +3,7 @@ title: 'Artifact Identity and Filename Normalization Technical Specification'
 version: "1.0"
 type: sdlc/spec
 layer: "03.specs"
-status: draft
+status: active
 owner: platform
 updated: 2026-09-01
 artifact_id: "SPEC-0067"
