@@ -1,6 +1,8 @@
 ---
 title: 'ADR-0027: Pod Security Standards Staged Adoption'
+version: "1.0"
 type: sdlc/adr
+layer: "02.architecture"
 status: accepted
 owner: platform
 updated: 2026-08-18

@@ -1,6 +1,8 @@
 ---
 title: 'Governance Invariant Consolidation Technical Specification'
+version: "1.0"
 type: sdlc/spec
+layer: "03.specs"
 status: done
 owner: platform
 updated: 2026-08-30

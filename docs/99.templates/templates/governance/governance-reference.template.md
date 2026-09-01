@@ -1,6 +1,8 @@
 ---
 title: '{Governance Topic} Governance Reference'
+version: "#.#"
 type: governance/reference
+layer: "00.agent-governance"
 status: draft
 owner: platform
 updated: YYYY-MM-DD

@@ -1,6 +1,8 @@
 ---
 title: 'Reference: Agent Model Routing and Configuration'
+version: "1.0"
 type: content/reference
+layer: "90.references"
 status: active
 owner: platform
 updated: 2026-08-31

@@ -1,6 +1,8 @@
 ---
 title: 'Postmortem: {Incident Title}'
+version: "#.#"
 type: sdlc/postmortem
+layer: "05.operations"
 status: draft
 owner: platform
 updated: YYYY-MM-DD

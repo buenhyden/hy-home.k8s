@@ -1,6 +1,8 @@
 ---
 title: 'Task: Document lifecycle, Task, and registry authority activation'
+version: "1.0"
 type: sdlc/task
+layer: "03.specs"
 status: done
 owner: platform
 updated: 2026-08-28

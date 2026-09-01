@@ -1,6 +1,8 @@
 ---
 title: 'Artifact Identity and Filename Normalization Implementation Plan'
+version: "1.0"
 type: sdlc/plan
+layer: "03.specs"
 status: draft
 owner: platform
 updated: 2026-09-01

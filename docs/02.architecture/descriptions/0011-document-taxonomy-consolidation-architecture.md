@@ -1,6 +1,8 @@
 ---
 title: 'Document Taxonomy Consolidation Architecture Description'
+version: "1.0"
 type: sdlc/ad
+layer: "02.architecture"
 status: active
 owner: platform
 updated: 2026-09-01

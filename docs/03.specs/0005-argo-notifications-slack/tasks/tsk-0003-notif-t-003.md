@@ -1,6 +1,8 @@
 ---
 title: "SPEC-0005-TSK-0003: Add Notifications Plan and Task"
+version: "1.0"
 type: sdlc/task
+layer: "03.specs"
 status: done
 owner: platform
 updated: 2026-07-13

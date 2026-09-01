@@ -1,6 +1,8 @@
 ---
 title: 'ADR-0003: ESO + Vault Kubernetes Auth for Runtime Secrets'
+version: "1.0"
 type: sdlc/adr
+layer: "02.architecture"
 status: accepted
 owner: platform
 updated: 2026-05-18

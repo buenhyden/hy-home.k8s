@@ -1,6 +1,8 @@
 ---
 title: 'ADR-0011: Argo Rollouts for Progressive Delivery'
+version: "1.0"
 type: sdlc/adr
+layer: "02.architecture"
 status: accepted
 owner: platform
 updated: 2026-07-13

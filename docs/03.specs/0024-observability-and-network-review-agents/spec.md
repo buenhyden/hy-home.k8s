@@ -1,6 +1,8 @@
 ---
 title: 'Observability and Network Review Agents Technical Specification'
+version: "1.0"
 type: sdlc/spec
+layer: "03.specs"
 status: done
 owner: platform
 updated: 2026-07-14

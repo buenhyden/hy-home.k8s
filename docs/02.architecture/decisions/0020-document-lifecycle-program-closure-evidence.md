@@ -1,6 +1,8 @@
 ---
 title: 'ADR-0020: Document Lifecycle Program Closure Evidence'
+version: "1.0"
 type: sdlc/adr
+layer: "02.architecture"
 status: superseded
 owner: platform
 updated: 2026-09-01

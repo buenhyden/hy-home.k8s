@@ -43,6 +43,7 @@ TERMINAL_TEMPLATE_GROUPS = frozenset(
         "operations",
         "references",
         "requirements",
+        "runtime",
         "specs",
     }
 )

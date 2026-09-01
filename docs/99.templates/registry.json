@@ -14,7 +14,9 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -22,7 +24,9 @@
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -32,7 +36,9 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -120,7 +126,9 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -128,7 +136,9 @@
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -136,7 +146,9 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -218,7 +230,9 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -226,7 +240,9 @@
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -236,7 +252,9 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -314,7 +332,9 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -322,7 +342,9 @@
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -330,7 +352,9 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -421,7 +445,9 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -429,7 +455,9 @@
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -437,7 +465,9 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -526,7 +556,9 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -534,7 +566,9 @@
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -542,7 +576,9 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -629,7 +665,9 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -637,7 +675,9 @@
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -645,7 +685,9 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -725,7 +767,9 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -733,7 +777,9 @@
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -741,7 +787,9 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -816,7 +864,9 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -824,7 +874,9 @@
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -832,7 +884,9 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -909,7 +963,9 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -917,7 +973,9 @@
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -925,7 +983,9 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -1003,7 +1063,9 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -1011,7 +1073,9 @@
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -1019,7 +1083,9 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -1099,7 +1165,9 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -1107,7 +1175,9 @@
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -1115,7 +1185,9 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -1198,7 +1270,9 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -1206,7 +1280,9 @@
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -1216,7 +1292,9 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -1409,14 +1487,18 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated"
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -1425,7 +1507,9 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -1791,12 +1875,21 @@
       "mode": "classification-only",
       "pathPattern": "^\\.agents/.+\\.md$",
       "artifactIdPattern": null,
-      "template": null,
+      "template": "docs/99.templates/templates/runtime/codex-agent-projection.template.md",
       "requiredFrontmatter": {
-        "mode": "not-applicable",
-        "required": [],
-        "allowed": [],
-        "order": []
+        "mode": "required",
+        "required": [
+          "name",
+          "description"
+        ],
+        "allowed": [
+          "name",
+          "description"
+        ],
+        "order": [
+          "name",
+          "description"
+        ]
       },
       "requiredSections": {
         "required": [],
@@ -1843,12 +1936,25 @@
       "mode": "classification-only",
       "pathPattern": "^\\.claude/agents/[^/]+\\.md$",
       "artifactIdPattern": null,
-      "template": null,
+      "template": "docs/99.templates/templates/runtime/claude-agent-projection.template.md",
       "requiredFrontmatter": {
-        "mode": "not-applicable",
-        "required": [],
-        "allowed": [],
-        "order": []
+        "mode": "required",
+        "required": [
+          "name",
+          "description"
+        ],
+        "allowed": [
+          "name",
+          "description",
+          "model",
+          "tools"
+        ],
+        "order": [
+          "name",
+          "description",
+          "model",
+          "tools"
+        ]
       },
       "requiredSections": {
         "required": [],
@@ -2478,7 +2584,9 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -2486,7 +2594,9 @@
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -2496,7 +2606,9 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -2555,26 +2667,35 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
-          "status",
-          "owner",
-          "updated"
-        ],
-        "allowed": [
-          "title",
-          "type",
+          "layer",
           "status",
           "owner",
           "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "version",
+          "type",
+          "layer",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
           "superseded_by",
           "supersedes"
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "superseded_by",
           "supersedes"
         ]
@@ -2650,24 +2771,33 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "requiredSections": {
@@ -2746,24 +2876,33 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "requiredSections": {
@@ -2847,24 +2986,33 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "requiredSections": {
@@ -2942,7 +3090,9 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -2950,7 +3100,9 @@
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -2958,7 +3110,9 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -3035,7 +3189,9 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -3043,7 +3199,9 @@
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -3051,7 +3209,9 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -3133,7 +3293,9 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -3141,7 +3303,9 @@
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -3149,7 +3313,9 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -3228,7 +3394,9 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -3236,7 +3404,9 @@
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -3244,7 +3414,9 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -3329,7 +3501,9 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -3337,7 +3511,9 @@
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -3345,7 +3521,9 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -3425,26 +3603,35 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
-          "status",
-          "owner",
-          "updated"
-        ],
-        "allowed": [
-          "title",
-          "type",
+          "layer",
           "status",
           "owner",
           "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "version",
+          "type",
+          "layer",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
           "superseded_by",
           "supersedes"
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "superseded_by",
           "supersedes"
         ]
@@ -3529,24 +3716,33 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "requiredSections": {
@@ -3632,24 +3828,33 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
-          "updated"
+          "updated",
+          "artifact_id"
         ]
       },
       "requiredSections": {
@@ -3737,14 +3942,18 @@
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated"
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -3753,7 +3962,9 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -3791,6 +4002,84 @@
       "relationships": {
         "sourceProfileIds": [
           "governance/reference"
+        ],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/exception/provider-native-metadata",
+      "class": "exception",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/runtime/claude\\-agent\\-projection\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/runtime/claude-agent-projection.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "name",
+          "description"
+        ],
+        "allowed": [
+          "name",
+          "description",
+          "model",
+          "tools"
+        ],
+        "order": [
+          "name",
+          "description",
+          "model",
+          "tools"
+        ]
+      },
+      "requiredSections": {
+        "required": [],
+        "allowed": []
+      },
+      "lifecycle": {
+        "statusDomain": []
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "exception/provider-native-metadata"
+        ],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/exception/local-agent-asset",
+      "class": "exception",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/runtime/codex\\-agent\\-projection\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/runtime/codex-agent-projection.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "name",
+          "description"
+        ],
+        "allowed": [
+          "name",
+          "description"
+        ],
+        "order": [
+          "name",
+          "description"
+        ]
+      },
+      "requiredSections": {
+        "required": [],
+        "allowed": []
+      },
+      "lifecycle": {
+        "statusDomain": []
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "exception/local-agent-asset"
         ],
         "bodyContract": null
       },

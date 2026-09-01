@@ -1,6 +1,8 @@
 ---
 title: 'Current Surface and Stash Reconciliation Technical Specification'
+version: "1.0"
 type: sdlc/spec
+layer: "03.specs"
 status: draft
 owner: platform
 updated: 2026-08-07

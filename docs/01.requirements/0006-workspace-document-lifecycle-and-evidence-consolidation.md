@@ -1,6 +1,8 @@
 ---
 title: 'Workspace Document Lifecycle and Evidence Consolidation Requirement Package'
+version: "1.0"
 type: sdlc/requirement-package
+layer: "01.requirements"
 status: superseded
 owner: platform
 updated: 2026-07-28

@@ -1,6 +1,8 @@
 ---
 title: 'Task: Stage 05 responsibility ledger'
+version: "1.0"
 type: sdlc/task
+layer: "03.specs"
 status: done
 owner: platform
 updated: 2026-09-01

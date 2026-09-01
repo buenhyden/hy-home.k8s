@@ -1,6 +1,8 @@
 ---
 title: "SPEC-0052-TSK-0005: VAL-WDTC-013 through VAL-WDTC-016"
+version: "1.0"
 type: sdlc/task
+layer: "03.specs"
 status: done
 owner: platform
 updated: 2026-08-12

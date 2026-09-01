@@ -1,6 +1,8 @@
 ---
 title: 'ADR-0026: Argo CD Source Integrity Non-adoption'
+version: "1.0"
 type: sdlc/adr
+layer: "02.architecture"
 status: accepted
 owner: platform
 updated: 2026-08-18

@@ -1,9 +1,12 @@
 ---
 title: '{System or Domain Name} Architecture Description'
+version: "#.#"
 type: sdlc/ad
+layer: "02.architecture"
 status: draft
 owner: platform
 updated: YYYY-MM-DD
+artifact_id: "AD-####"
 ---
 
 # [System or Domain Name] Architecture Description (AD)

@@ -1,6 +1,8 @@
 ---
 title: "SPEC-0047-TSK-0004: VAL-CSASR-004, VAL-CSASR-006, VAL-CSASR-007"
+version: "1.0"
 type: sdlc/task
+layer: "03.specs"
 status: queued
 owner: platform
 updated: 2026-08-07

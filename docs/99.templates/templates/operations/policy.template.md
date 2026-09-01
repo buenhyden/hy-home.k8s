@@ -1,6 +1,8 @@
 ---
 title: '{Policy or Standard Name} Operations Policy'
+version: "#.#"
 type: sdlc/policy
+layer: "05.operations"
 status: draft
 owner: platform
 updated: YYYY-MM-DD

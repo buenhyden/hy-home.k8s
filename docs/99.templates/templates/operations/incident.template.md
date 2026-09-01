@@ -1,6 +1,8 @@
 ---
 title: 'Incident: {Incident Title}'
+version: "#.#"
 type: sdlc/incident
+layer: "05.operations"
 status: open
 owner: platform
 updated: YYYY-MM-DD

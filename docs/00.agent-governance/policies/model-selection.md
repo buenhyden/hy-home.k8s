@@ -1,6 +1,8 @@
 ---
 title: 'Model Selection Policy'
+version: "1.0"
 type: governance/reference
+layer: "00.agent-governance"
 status: active
 owner: platform
 updated: 2026-08-28

@@ -1,9 +1,12 @@
 ---
 title: '{Feature Name} Implementation Plan'
+version: "#.#"
 type: sdlc/plan
+layer: "03.specs"
 status: draft
 owner: platform
 updated: YYYY-MM-DD
+artifact_id: "SPEC-####-PLAN-####"
 ---
 
 # [Feature Name] Implementation Plan

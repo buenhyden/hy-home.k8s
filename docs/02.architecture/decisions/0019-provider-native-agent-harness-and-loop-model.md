@@ -1,6 +1,8 @@
 ---
 title: 'ADR-0019: Provider-Native Agent Harness and Loop Model'
+version: "1.0"
 type: sdlc/adr
+layer: "02.architecture"
 status: superseded
 owner: platform
 updated: 2026-08-01

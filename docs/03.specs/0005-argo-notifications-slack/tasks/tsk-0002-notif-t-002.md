@@ -1,6 +1,8 @@
 ---
 title: "SPEC-0005-TSK-0002: Add Notifications Spec"
+version: "1.0"
 type: sdlc/task
+layer: "03.specs"
 status: done
 owner: platform
 updated: 2026-07-13

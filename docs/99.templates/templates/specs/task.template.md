@@ -1,9 +1,12 @@
 ---
 title: 'Task: {Task Name}'
+version: "#.#"
 type: sdlc/task
+layer: "03.specs"
 status: queued
 owner: platform
 updated: YYYY-MM-DD
+artifact_id: "SPEC-####-TSK-####"
 ---
 
 # Task: [Task Name]

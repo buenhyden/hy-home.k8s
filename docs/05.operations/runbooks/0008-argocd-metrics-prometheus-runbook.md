@@ -1,6 +1,8 @@
 ---
 title: 'ArgoCD 메트릭 Prometheus 수집 복구 Runbook'
+version: "1.0"
 type: sdlc/runbook
+layer: "05.operations"
 status: active
 owner: platform
 updated: 2026-09-01

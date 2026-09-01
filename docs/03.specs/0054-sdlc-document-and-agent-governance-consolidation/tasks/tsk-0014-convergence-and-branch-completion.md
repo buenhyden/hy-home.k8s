@@ -1,6 +1,8 @@
 ---
 title: 'Task: Convergence and branch completion'
+version: "1.0"
 type: sdlc/task
+layer: "03.specs"
 status: queued
 owner: platform
 updated: 2026-08-31

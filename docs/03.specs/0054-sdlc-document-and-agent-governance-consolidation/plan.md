@@ -1,6 +1,8 @@
 ---
 title: 'SDLC Document and AI Agent Governance Consolidation Implementation Plan'
+version: "1.0"
 type: sdlc/plan
+layer: "03.specs"
 status: active
 owner: platform
 updated: 2026-09-01

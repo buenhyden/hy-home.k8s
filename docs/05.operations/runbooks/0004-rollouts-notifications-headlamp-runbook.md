@@ -1,6 +1,8 @@
 ---
 title: 'Argo Rollouts, Notifications & Headlamp Runbook'
+version: "1.0"
 type: sdlc/runbook
+layer: "05.operations"
 status: active
 owner: platform
 updated: 2026-09-01

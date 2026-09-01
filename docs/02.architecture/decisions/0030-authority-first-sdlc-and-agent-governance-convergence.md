@@ -1,6 +1,8 @@
 ---
 title: 'ADR-0030: Authority-First SDLC and Agent Governance Convergence'
+version: "1.0"
 type: sdlc/adr
+layer: "02.architecture"
 status: accepted
 owner: platform
 updated: 2026-09-01

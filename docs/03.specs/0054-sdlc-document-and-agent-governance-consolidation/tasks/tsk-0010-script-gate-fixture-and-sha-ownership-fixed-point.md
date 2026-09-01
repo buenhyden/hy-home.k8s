@@ -1,6 +1,8 @@
 ---
 title: 'Task: Script, gate, fixture, and SHA ownership fixed point'
+version: "1.0"
 type: sdlc/task
+layer: "03.specs"
 status: done
 owner: platform
 updated: 2026-09-01

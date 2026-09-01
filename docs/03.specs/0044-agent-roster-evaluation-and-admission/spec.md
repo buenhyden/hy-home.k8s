@@ -1,6 +1,8 @@
 ---
 title: 'Agent Roster Evaluation and Admission Technical Specification'
+version: "1.0"
 type: sdlc/spec
+layer: "03.specs"
 status: done
 owner: platform
 updated: 2026-07-30

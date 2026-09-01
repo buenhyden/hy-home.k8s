@@ -1,6 +1,8 @@
 ---
 title: "SPEC-0053-TSK-0011: VAL-WER-001–012"
+version: "1.0"
 type: sdlc/task
+layer: "03.specs"
 status: done
 owner: platform
 updated: 2026-08-09

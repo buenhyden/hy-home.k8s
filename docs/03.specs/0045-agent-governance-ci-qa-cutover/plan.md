@@ -1,6 +1,8 @@
 ---
 title: 'Agent Governance CI and QA Cutover Implementation Plan'
+version: "1.0"
 type: sdlc/plan
+layer: "03.specs"
 status: done
 owner: platform
 updated: 2026-08-01

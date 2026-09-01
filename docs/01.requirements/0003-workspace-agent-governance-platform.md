@@ -1,6 +1,8 @@
 ---
 title: 'Workspace Agent Governance Platform Requirement Package'
+version: "1.0"
 type: sdlc/requirement-package
+layer: "01.requirements"
 status: active
 owner: platform
 updated: 2026-08-22

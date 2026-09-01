@@ -1,6 +1,8 @@
 ---
 title: 'ADR-0014: Current Local GitOps Platform Contract'
+version: "1.0"
 type: sdlc/adr
+layer: "02.architecture"
 status: accepted
 owner: platform
 updated: 2026-07-13

@@ -1,6 +1,8 @@
 ---
 title: '{Topic Name} Guide'
+version: "#.#"
 type: sdlc/guide
+layer: "05.operations"
 status: draft
 owner: platform
 updated: YYYY-MM-DD

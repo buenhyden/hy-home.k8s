@@ -1,6 +1,8 @@
 ---
 title: 'Reference: {Item Name}'
+version: "#.#"
 type: content/reference
+layer: "90.references"
 status: draft
 owner: platform
 updated: YYYY-MM-DD

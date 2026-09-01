@@ -1,6 +1,8 @@
 ---
 title: 'ADR-0025: Four-Digit Document Path Identity'
+version: "1.0"
 type: sdlc/adr
+layer: "02.architecture"
 status: superseded
 owner: platform
 updated: 2026-08-13

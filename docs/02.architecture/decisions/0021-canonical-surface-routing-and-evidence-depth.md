@@ -1,6 +1,8 @@
 ---
 title: 'ADR-0021: Canonical Surface Routing and Evidence-Depth Architecture'
+version: "1.0"
 type: sdlc/adr
+layer: "02.architecture"
 status: superseded
 owner: platform
 updated: 2026-09-01

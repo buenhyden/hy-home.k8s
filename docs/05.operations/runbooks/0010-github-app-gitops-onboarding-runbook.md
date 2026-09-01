@@ -1,6 +1,8 @@
 ---
 title: 'GitHub 앱 GitOps 온보딩 런북'
+version: "1.0"
 type: sdlc/runbook
+layer: "05.operations"
 status: active
 owner: platform
 updated: 2026-09-01

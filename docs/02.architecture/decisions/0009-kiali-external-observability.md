@@ -1,6 +1,8 @@
 ---
 title: 'ADR-0009: Kiali with External Observability Stack'
+version: "1.0"
 type: sdlc/adr
+layer: "02.architecture"
 status: accepted
 owner: platform
 updated: 2026-05-18

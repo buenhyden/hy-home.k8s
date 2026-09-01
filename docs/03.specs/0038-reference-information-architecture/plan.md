@@ -1,6 +1,8 @@
 ---
 title: 'Reference Information Architecture Implementation Plan'
+version: "1.0"
 type: sdlc/plan
+layer: "03.specs"
 status: done
 owner: platform
 updated: 2026-07-26

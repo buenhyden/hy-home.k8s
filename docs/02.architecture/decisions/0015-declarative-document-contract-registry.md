@@ -1,6 +1,8 @@
 ---
 title: 'ADR-0015: Declarative Document Contract Registry'
+version: "1.0"
 type: sdlc/adr
+layer: "02.architecture"
 status: superseded
 owner: platform
 updated: 2026-07-12

@@ -1,6 +1,8 @@
 ---
 title: '{Topic Name} Runbook'
+version: "#.#"
 type: sdlc/runbook
+layer: "05.operations"
 status: draft
 owner: platform
 updated: YYYY-MM-DD
