@@ -74,7 +74,7 @@ class ReferencePackRouteTest(unittest.TestCase):
                 profile = classify_path(
                     self.registry,
                     PurePosixPath(
-                        f"docs/90.references/{category}/0001-example/report.md"
+                        f"docs/90.references/{category}/0001-example/m0001-report.md"
                     ),
                 )
                 self.assertEqual(profile.profile_id, "content/reference")

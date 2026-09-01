@@ -43,8 +43,10 @@ class MigrationLifecycleTest(unittest.TestCase):
         self.stage(navigation["template"], (ROOT / navigation["template"]).read_bytes())
         self.git.run("rm", "--quiet", "-f", "--", self.target, self.path)
         self.payload = (
-            "---\ntitle: 'Policy'\ntype: governance/reference\nstatus: active\n"
-            "owner: platform\nupdated: 2026-08-28\n---\n\n# Policy\n\n"
+            "---\ntitle: 'Policy'\nversion: \"1.0\"\n"
+            "type: governance/reference\nlayer: \"00.agent-governance\"\n"
+            "status: active\nowner: platform\nupdated: 2026-08-28\n---\n\n"
+            "# Policy\n\n"
             + "".join(
                 f"## {heading}\n\nReviewed policy responsibility.\n\n"
                 for heading in (

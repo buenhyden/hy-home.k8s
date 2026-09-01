@@ -73,7 +73,6 @@ from archive_validation import (
 )
 from archive_recovery import (
     ArchiveContractError,
-    WORK107_LEGACY_ARCHIVE_COMMIT,
     WORK107_MIGRATION_PATH,
     WP004C_SEALED_TARGET_COMMIT,
     build_work107_migration_rows,
@@ -194,14 +193,6 @@ WORK105_ADR0023_RECIPROCAL_ROW = (
     "[Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md) |"
 )
 
-WORK107_BASE_REGISTRY_BLOB_OID = "fd842f60e801a39435600f35a27f22e1c659f1bd"
-WORK107_PROPOSED_REGISTRY_BLOB_OID = "7182c40ab8ee6b40173b408ec2c366314916f1e3"
-WORK107_MIGRATION_BLOB_OID = "619ddc09b38c0a0a5c8254de6fbdcf3c1deb60d6"
-WORK107_MIGRATION_DOCUMENT_SHA256 = "7049f8b94bdb80566ad94be5d9e9e899d7d06e1b9d31191ad769cd905717de5e"  # pragma: allowlist secret
-WORK107_MIGRATION_TEMPLATE_PATH = PurePosixPath(
-    "docs/99.templates/templates/common/archive-migration.template.md"
-)
-WORK107_MIGRATION_TEMPLATE_BLOB_OID = "dc3164eafd322e8139164cc16342de43fc3a72e8"
 WORK108_BASE_COMMIT = "db320b596904b52e184f01cd1b56467132ac9117"
 WORK108_BASE_REGISTRY_BLOB_OID = "7182c40ab8ee6b40173b408ec2c366314916f1e3"
 WORK108_PROPOSED_REGISTRY_BLOB_OID = "ce8da8f205cee1bba075bef7b26079a0708324b1"
@@ -1556,77 +1547,6 @@ def declared_archive_rehome_paths(
             return frozenset()
         admitted.add(source_path)
     return frozenset(admitted)
-
-
-def finite_work107_archive_rehome_paths(
-    *,
-    root: Path,
-    mode: str,
-    base_commit: str,
-    base_registry_oid: str,
-    proposed_registry_oid: str,
-    base_blobs: Mapping[PurePosixPath, str],
-    proposed_blobs: Mapping[PurePosixPath, str],
-) -> frozenset[PurePosixPath]:
-    """Admit only the reviewed 93-to-93 WORK-107 stable archive rehome."""
-
-    if (
-        mode not in {"staged", "ci"}
-        or base_commit != WORK107_LEGACY_ARCHIVE_COMMIT
-        or base_registry_oid != WORK107_BASE_REGISTRY_BLOB_OID
-        or proposed_registry_oid != WORK107_PROPOSED_REGISTRY_BLOB_OID
-    ):
-        return frozenset()
-
-    migration_path = PurePosixPath(WORK107_MIGRATION_PATH)
-    if (
-        migration_path in base_blobs
-        or proposed_blobs.get(migration_path) != WORK107_MIGRATION_BLOB_OID
-        or WORK107_MIGRATION_TEMPLATE_PATH in base_blobs
-        or proposed_blobs.get(WORK107_MIGRATION_TEMPLATE_PATH)
-        != WORK107_MIGRATION_TEMPLATE_BLOB_OID
-    ):
-        return frozenset()
-    migration_bytes = _blob_bytes(root, WORK107_MIGRATION_BLOB_OID)
-    if hashlib.sha256(migration_bytes).hexdigest() != WORK107_MIGRATION_DOCUMENT_SHA256:
-        return frozenset()
-    rows = build_work107_migration_rows(root)
-    expected_migration = _work107_without_outer_artifact_id(
-        render_work107_migration_document(rows),
-        "MIG-0001",
-    )
-    if expected_migration != migration_bytes:
-        return frozenset()
-
-    consumed: set[PurePosixPath] = {
-        migration_path,
-        WORK107_MIGRATION_TEMPLATE_PATH,
-    }
-    for row in rows:
-        legacy_path = PurePosixPath(str(row["legacy_path"]))
-        stable_path = PurePosixPath(str(row["stable_path"]))
-        legacy_oid = str(row["legacy_envelope_blob"])
-        if (
-            base_blobs.get(legacy_path) != legacy_oid
-            or legacy_path in proposed_blobs
-            or stable_path in base_blobs
-        ):
-            return frozenset()
-        stable_bytes = _work107_without_outer_artifact_id(
-            render_work107_stable_envelope(
-                _blob_bytes(root, legacy_oid),
-                row,
-            ),
-            str(row["artifact_id"]),
-        )
-        if stable_bytes is None:
-            return frozenset()
-        if proposed_blobs.get(stable_path) != _git_blob_oid(stable_bytes):
-            return frozenset()
-        consumed.update((legacy_path, stable_path))
-    if len(consumed) != 188:
-        return frozenset()
-    return frozenset(consumed)
 
 
 def _work108_artifact_projection(
@@ -4571,7 +4491,7 @@ def _evaluate_comparison(
         base_blobs=base_blobs,
         proposed_blobs=proposed_blobs,
     )
-    work107_consumed_paths = declared_archive_rehome_paths(
+    archive_rehome_consumed_paths = declared_archive_rehome_paths(
         root=root, base_blobs=base_blobs, proposed_blobs=proposed_blobs
     )
     work108_consumed_paths = frozenset()
@@ -4582,7 +4502,7 @@ def _evaluate_comparison(
         base_blobs,
         proposed_blobs,
         mode=mode,
-        admitted_rehome_paths=work107_consumed_paths | work108_consumed_paths,
+        admitted_rehome_paths=archive_rehome_consumed_paths | work108_consumed_paths,
     )
     if immutability_diagnostics:
         return immutability_diagnostics
@@ -4638,7 +4558,7 @@ def _evaluate_comparison(
         | work054_wp003_consumed_paths
         | work054_wp004a_consumed_paths
         | work105_consumed_paths
-        | work107_consumed_paths
+        | archive_rehome_consumed_paths
         | work108_consumed_paths
         | archive_consumed_paths
         | wp004c_mig0004_consumed_paths

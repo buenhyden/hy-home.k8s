@@ -120,6 +120,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 "operations",
                 "references",
                 "requirements",
+                "runtime",
                 "specs",
             ],
         )
@@ -699,8 +700,8 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             with self.subTest(template=relative_path):
                 self.assertNotIn("REQ-FEATURE-001", contents)
                 self.assertRegex(contents, r"REQ-0001-(?:FR|NFR|IF)-0001")
-        self.assertNotIn(
-            "artifact_id:",
+        self.assertIn(
+            'artifact_id: "REQ-####"',
             (
                 STAGE99_TEMPLATES_ROOT / "requirements/requirement-package.template.md"
             ).read_text(encoding="utf-8"),
