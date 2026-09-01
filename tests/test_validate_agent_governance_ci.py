@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import copy
-import hashlib
 import importlib.util
 import json
 import os
@@ -34,17 +33,15 @@ WORK_LIFECYCLE_PATH = REPO_ROOT / "docs/00.agent-governance/skills/work-lifecycl
 PULL_REQUEST_TEMPLATE_PATH = REPO_ROOT / ".github/PULL_REQUEST_TEMPLATE.md"
 GITHUB_README_PATH = REPO_ROOT / ".github/README.md"
 SCRIPTS_README_PATH = REPO_ROOT / "scripts/README.md"
-TESTS_README_PATH = REPO_ROOT / "tests/README.md"
-
-SELF_TEST_COMMAND = (
-    "python3 scripts/validate-agent-governance-ci.py --root . --self-test"
-)
 PRODUCTION_COMMAND = "python3 scripts/validate-agent-governance-ci.py --root ."
-CLOSURE_SELF_TEST_COMMAND = (
-    "python3 scripts/validate-agent-governance-closure.py --root . --self-test"
+AGENT_TEST_COMMAND = (
+    "python3 -m unittest discover --start-directory tests "
+    "--top-level-directory tests --pattern 'test_validate_agent_*.py'"
 )
-CLOSURE_PRODUCTION_COMMAND = (
-    "python3 scripts/validate-agent-governance-closure.py --root ."
+OWNERSHIP_TEST_COMMAND = (
+    "python3 -m unittest tests.test_validation_tooling_ownership "
+    "tests.test_affected_surface_migration "
+    "tests.test_current_executable_references"
 )
 AFFECTED_PRODUCTION_COMMAND = "python3 scripts/validate-affected-surfaces.py --root ."
 SECURE_DEPENDENCY_INSTALL_COMMAND = (
@@ -73,7 +70,6 @@ REQUIRED_INPUTS = (
     Path("docs/00.agent-governance/contracts/agent-governance-ci.json"),
     Path("docs/00.agent-governance/contracts/agent-governance-ci.schema.json"),
     Path("scripts/validation/registry.json"),
-    Path("tests/fixtures/agent-governance-ci.json"),
     Path(".github/workflows/ci.yml"),
     Path(".pre-commit-config.yaml"),
     Path("scripts/run-validation-lane.py"),
@@ -84,7 +80,6 @@ REQUIRED_INPUTS = (
     Path(".github/PULL_REQUEST_TEMPLATE.md"),
     Path(".github/README.md"),
     Path("scripts/README.md"),
-    Path("tests/README.md"),
 )
 
 LOCAL_QA_SEQUENCE = [
@@ -107,7 +102,6 @@ PROVIDER_AGGREGATE_COMMAND = (
     "python3 scripts/validate-agent-provider-evidence.py --root ."
 )
 PROVIDER_CONFIG_COMMAND = "python3 scripts/validate-agent-provider-config.py --root ."
-PROVIDER_AGGREGATE_SHA256 = "10e6ef9741bf671696307a83def8bc8a110460987c343a8888b5ec8ba92c96e5"  # pragma: allowlist secret
 PROVIDER_FOCUSED_VALIDATORS = [
     "validate-agent-provider-config.py",
     "validate-agent-provider-canaries.py",
@@ -136,55 +130,40 @@ class AgentGovernanceCiArtifactTests(unittest.TestCase):
         ]
         self.assertEqual(missing, [])
 
-    def test_workflow_invokes_self_test_before_production(self) -> None:
+    def test_workflow_invokes_production_gate_and_independent_tests(self) -> None:
         text = WORKFLOW_PATH.read_text(encoding="utf-8")
         lines = [line.strip() for line in text.splitlines()]
-        self.assertIn(SELF_TEST_COMMAND, lines)
         self.assertIn(PRODUCTION_COMMAND, lines)
-        self.assertLess(lines.index(SELF_TEST_COMMAND), lines.index(PRODUCTION_COMMAND))
+        self.assertIn(AGENT_TEST_COMMAND, lines)
+        self.assertIn(OWNERSHIP_TEST_COMMAND, lines)
+        self.assertLess(lines.index(PRODUCTION_COMMAND), lines.index(AGENT_TEST_COMMAND))
+        self.assertLess(lines.index(AGENT_TEST_COMMAND), lines.index(OWNERSHIP_TEST_COMMAND))
+        self.assertNotIn("--self-test", text)
+        self.assertNotIn("validate-agent-governance-closure.py", text)
 
-        self.assertEqual(lines.count(CLOSURE_SELF_TEST_COMMAND), 1)
-        self.assertEqual(lines.count(CLOSURE_PRODUCTION_COMMAND), 1)
-        self.assertLess(
-            lines.index(CLOSURE_SELF_TEST_COMMAND),
-            lines.index(CLOSURE_PRODUCTION_COMMAND),
-        )
-
-    def test_aggregate_invokes_self_test_before_production(self) -> None:
+    def test_aggregate_invokes_registry_all_files_runner_once(self) -> None:
         text = AGGREGATE_PATH.read_text(encoding="utf-8")
-        self.assertIn(
-            'python3 "$ROOT_DIR/scripts/validate-agent-governance-ci.py" '
-            '--root "$ROOT_DIR" --self-test',
-            text,
-        )
-        self.assertIn(
-            'python3 "$ROOT_DIR/scripts/validate-agent-governance-ci.py" '
-            '--root "$ROOT_DIR"',
-            text,
-        )
+        self.assertEqual(text.count("scripts/run-validation-lane.py"), 1)
+        self.assertEqual(text.count("--lane all-files"), 1)
+        self.assertNotIn("scripts/validate-agent-governance-ci.py", text)
 
-    def test_pre_commit_registers_both_gate_modes(self) -> None:
+    def test_pre_commit_registers_independent_guard_and_aggregate(self) -> None:
         text = PRE_COMMIT_PATH.read_text(encoding="utf-8")
         entries = [
             line.strip().removeprefix("entry: ")
             for line in text.splitlines()
             if line.strip().startswith("entry: ")
         ]
-        self.assertIn(SELF_TEST_COMMAND, entries)
-        self.assertIn(PRODUCTION_COMMAND, entries)
+        self.assertIn("python3 -m unittest tests.test_validation_tooling_ownership", entries)
+        self.assertIn("bash scripts/validate-repo-quality-gates.sh .", entries)
         self.assertLess(
-            entries.index(SELF_TEST_COMMAND), entries.index(PRODUCTION_COMMAND)
+            entries.index("python3 -m unittest tests.test_validation_tooling_ownership"),
+            entries.index("bash scripts/validate-repo-quality-gates.sh ."),
         )
-        self.assertEqual(entries.count(CLOSURE_SELF_TEST_COMMAND), 1)
-        self.assertEqual(entries.count(CLOSURE_PRODUCTION_COMMAND), 1)
-        self.assertLess(
-            entries.index(CLOSURE_SELF_TEST_COMMAND),
-            entries.index(CLOSURE_PRODUCTION_COMMAND),
-        )
-        self.assertLess(
-            entries.index(CLOSURE_PRODUCTION_COMMAND),
-            entries.index(AFFECTED_PRODUCTION_COMMAND),
-        )
+        self.assertNotIn(PRODUCTION_COMMAND, entries)
+        self.assertNotIn(AFFECTED_PRODUCTION_COMMAND, entries)
+        self.assertNotIn("--self-test", text)
+        self.assertNotIn("validate-agent-governance-closure.py", text)
 
     def test_affected_contract_registers_required_validator(self) -> None:
         contract = json.loads(AFFECTED_PATH.read_text(encoding="utf-8"))
@@ -209,25 +188,7 @@ class AgentGovernanceCiArtifactTests(unittest.TestCase):
                 "evidenceLane": "repo-static",
             },
         )
-        self.assertEqual(
-            registrations["agent-governance-closure"],
-            {
-                "id": "agent-governance-closure",
-                "argv": [
-                    "python3",
-                    "scripts/validate-agent-governance-closure.py",
-                    "--root",
-                    ".",
-                ],
-                "lanes": ["affected", "staged", "all-files", "ci"],
-                "optional": False,
-                "fallback": {
-                    "status": "FAIL",
-                    "reason": "Agent-governance closure validation is required.",
-                },
-                "evidenceLane": "repo-static",
-            },
-        )
+        self.assertNotIn("agent-governance-closure", registrations)
 
     def test_required_route_classes_select_gate(self) -> None:
         contract = json.loads(AFFECTED_PATH.read_text(encoding="utf-8"))
@@ -237,10 +198,6 @@ class AgentGovernanceCiArtifactTests(unittest.TestCase):
             with self.subTest(surface=surface_id):
                 self.assertIn(
                     "agent-governance-ci",
-                    surfaces[surface_id]["validators"],
-                )
-                self.assertIn(
-                    "agent-governance-closure",
                     surfaces[surface_id]["validators"],
                 )
                 self.assertIn(
@@ -278,7 +235,7 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
     def test_repository_root_passes(self) -> None:
         counts = self.validator.validate_repository(REPO_ROOT)
         self.assertEqual(counts["routeClasses"], 11)
-        self.assertEqual(counts["delegatedChecks"], 18)
+        self.assertEqual(counts["delegatedChecks"], 10)
         self.assertEqual(counts["deferredOwners"], 1)
         contract = json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))
         self.assertEqual(
@@ -340,31 +297,19 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
         self.assertEqual(run_lines.count(PROVIDER_AGGREGATE_COMMAND), 1)
         self.assertNotIn(PROVIDER_CONFIG_COMMAND, run_lines)
 
+        registry = json.loads(AFFECTED_PATH.read_text(encoding="utf-8"))
+        provider_owner = next(
+            row
+            for row in registry["validators"]
+            if row["id"] == "agent-provider-evidence"
+        )
+        self.assertEqual(provider_owner["argv"], PROVIDER_AGGREGATE_COMMAND.split())
+        self.assertIn("all-files", provider_owner["lanes"])
+
         quality_shell = AGGREGATE_PATH.read_text(encoding="utf-8")
-        inline_checker = quality_shell.split(
-            "agent_governance_runs =",
-            1,
-        )[1].split("manifest_static_steps =", 1)[0]
-        self.assertIn(
-            f'"{PROVIDER_AGGREGATE_COMMAND}",',
-            inline_checker,
-        )
-        self.assertNotIn(
-            f'"{PROVIDER_CONFIG_COMMAND}",',
-            inline_checker,
-        )
-        self.assertIn(
-            '"validate-agent-provider-config.py",',
-            inline_checker,
-        )
-        self.assertIn(
-            '"validate-agent-provider-canaries.py",',
-            inline_checker,
-        )
-        self.assertNotIn(
-            '"validate-agent-provider-evidence.py",',
-            inline_checker,
-        )
+        self.assertNotIn("validate-agent-provider-evidence.py", quality_shell)
+        self.assertNotIn("validate-agent-provider-config.py", quality_shell)
+        self.assertNotIn("validate-agent-provider-canaries.py", quality_shell)
 
     def test_provider_aggregate_is_static_and_credential_free(self) -> None:
         contract = self.validator.load_json_document(
@@ -382,17 +327,11 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
             contract["securityBoundary"]["providerEvidenceAggregate"],
             {
                 "path": "scripts/validate-agent-provider-evidence.py",
-                "sha256": PROVIDER_AGGREGATE_SHA256,
                 "focusedValidators": PROVIDER_FOCUSED_VALIDATORS,
             },
         )
 
-        source_bytes = PROVIDER_AGGREGATE_PATH.read_bytes()
-        self.assertEqual(
-            hashlib.sha256(source_bytes).hexdigest(),
-            PROVIDER_AGGREGATE_SHA256,
-        )
-        source = source_bytes.decode("utf-8")
+        source = PROVIDER_AGGREGATE_PATH.read_text(encoding="utf-8")
         lowered = source.casefold()
         for forbidden in (
             "secrets.",
@@ -408,14 +347,17 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
             with self.subTest(forbidden=forbidden):
                 self.assertNotIn(forbidden, lowered)
 
-    def test_provider_aggregate_source_drift_fails_closed(self) -> None:
+    def test_provider_aggregate_owner_list_drift_fails_closed(self) -> None:
         root = self.make_valid_root()
         aggregate = root / PROVIDER_AGGREGATE_PATH.relative_to(REPO_ROOT)
-        aggregate.write_text(
-            aggregate.read_text(encoding="utf-8")
-            + "\n# source drift must fail closed\n",
-            encoding="utf-8",
+        source = aggregate.read_text(encoding="utf-8")
+        mutated = source.replace(
+            '"validate-agent-provider-canaries.py",',
+            '"validate-agent-provider-config.py",',
+            1,
         )
+        self.assertNotEqual(mutated, source)
+        aggregate.write_text(mutated, encoding="utf-8")
         self.assert_rule(root, "AGQC-CI-PROVIDER-AGGREGATE")
 
     def test_provider_aggregate_removal_fails_closed(self) -> None:
@@ -431,16 +373,11 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
         workflow.write_text(mutated, encoding="utf-8")
         self.assert_rule(root, "AGQC-CI-DELEGATION")
 
-    def test_aggregate_affected_self_test_requires_explicit_root(self) -> None:
+    def test_aggregate_runner_requires_explicit_root(self) -> None:
         root = self.make_valid_root()
         aggregate = root / AGGREGATE_PATH.relative_to(REPO_ROOT)
-        explicit = (
-            'python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" '
-            '--root "$ROOT_DIR" --self-test'
-        )
-        implicit = (
-            'python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --self-test'
-        )
+        explicit = '--root "$ROOT_DIR"'
+        implicit = "--root ."
         text = aggregate.read_text(encoding="utf-8")
         self.assertIn(explicit, text)
         mutated = text.replace(explicit, implicit, 1)
@@ -448,23 +385,14 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
         aggregate.write_text(mutated, encoding="utf-8")
         self.assert_rule(root, "AGQC-CI-DELEGATION")
 
-    def test_aggregate_provider_self_test_requires_explicit_root(self) -> None:
-        root = self.make_valid_root()
-        aggregate = root / AGGREGATE_PATH.relative_to(REPO_ROOT)
-        explicit = (
-            'python3 "$ROOT_DIR/scripts/validate-agent-provider-evidence.py" '
-            '--root "$ROOT_DIR" --self-test'
+    def test_registry_provider_gate_requires_explicit_root(self) -> None:
+        registry = json.loads(AFFECTED_PATH.read_text(encoding="utf-8"))
+        provider_owner = next(
+            row
+            for row in registry["validators"]
+            if row["id"] == "agent-provider-evidence"
         )
-        implicit = (
-            'python3 "$ROOT_DIR/scripts/validate-agent-provider-evidence.py" '
-            "--self-test"
-        )
-        text = aggregate.read_text(encoding="utf-8")
-        self.assertIn(explicit, text)
-        mutated = text.replace(explicit, implicit, 1)
-        self.assertNotEqual(mutated, text)
-        aggregate.write_text(mutated, encoding="utf-8")
-        self.assert_rule(root, "AGQC-CI-DELEGATION")
+        self.assertEqual(provider_owner["argv"][-2:], ["--root", "."])
 
     def test_local_qa_contract_is_closed(self) -> None:
         contract = self.validator.load_json_document(
@@ -511,7 +439,6 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
                 ".github/PULL_REQUEST_TEMPLATE.md",
                 ".github/README.md",
                 "scripts/README.md",
-                "tests/README.md",
             ],
         )
         self.assertNotIn("inventory", contract["localQa"])
@@ -529,7 +456,6 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
             PULL_REQUEST_TEMPLATE_PATH,
             GITHUB_README_PATH,
             SCRIPTS_README_PATH,
-            TESTS_README_PATH,
         ):
             target = root / path.relative_to(REPO_ROOT)
             owner = os.path.relpath(
@@ -547,7 +473,6 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
             PULL_REQUEST_TEMPLATE_PATH,
             GITHUB_README_PATH,
             SCRIPTS_README_PATH,
-            TESTS_README_PATH,
         ):
             owner = os.path.relpath(QUALITY_POLICY_PATH, path.parent)
             for replacement in (
@@ -639,28 +564,26 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
         root = self.make_valid_root()
         workflow = root / WORKFLOW_PATH.relative_to(REPO_ROOT)
         text = workflow.read_text(encoding="utf-8")
+        marker = (
+            '          case "$AGENT_GOVERNANCE_STATIC_SELECTED:'
+            '$AGENT_GOVERNANCE_STATIC_RESULT" in\n'
+        )
+        prefix, agent_block = text.split(marker, 1)
+        mutated_block = agent_block.replace(
+            '            *)\n              verdict="FAIL"\n',
+            "            true:failure)\n"
+            '              verdict="PASS"\n'
+            "              ;;\n"
+            "            *)\n"
+            '              verdict="FAIL"\n',
+            1,
+        )
+        self.assertNotEqual(mutated_block, agent_block)
         workflow.write_text(
-            text.replace(
-                '            *)\n              verdict="FAIL"\n',
-                "            true:failure)\n"
-                '              verdict="PASS"\n'
-                "              ;;\n"
-                "            *)\n"
-                '              verdict="FAIL"\n',
-                1,
-            ),
+            prefix + marker + mutated_block,
             encoding="utf-8",
         )
         self.assert_rule(root, "AGQC-CI-TRUTH")
-
-    def test_self_test_executes_closed_fixture(self) -> None:
-        self.assertEqual(
-            self.validator.run_self_test(REPO_ROOT),
-            (
-                len(self.fixture["truthTableCases"]),
-                len(self.fixture["mutationCases"]),
-            ),
-        )
 
     def test_unknown_contract_key_is_rejected(self) -> None:
         contract = self.validator.load_json_document(
@@ -966,6 +889,22 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
                 "          set -euo pipefail\n          set +e\n          failed=0\n",
                 "AGQC-CI-TRUTH",
             ),
+            (
+                "summary-mid-run-reset",
+                "          case \"$AGENT_GOVERNANCE_STATIC_SELECTED:"
+                "$AGENT_GOVERNANCE_STATIC_RESULT\" in\n",
+                "          failed=0\n\n"
+                "          case \"$AGENT_GOVERNANCE_STATIC_SELECTED:"
+                "$AGENT_GOVERNANCE_STATIC_RESULT\" in\n",
+                "AGQC-CI-TRUTH",
+            ),
+            (
+                "summary-early-success-exit",
+                "          if [ \"$failed\" -ne 0 ]; then\n",
+                "          exit 0\n\n"
+                "          if [ \"$failed\" -ne 0 ]; then\n",
+                "AGQC-CI-TRUTH",
+            ),
         )
         for name, old, new, expected_rule in cases:
             with self.subTest(case=name):
@@ -982,26 +921,11 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
             CONTRACT_PATH,
             "AGQC-CI-JSON",
         )
-        checkpoint_command = (
-            "python3 scripts/validate-agent-checkpoint.py --root . --self-test"
-        )
-        self.assertEqual(len(contract["delegatedChecks"]), 18)
-        closure_commands = [
-            row["command"]
-            for row in contract["delegatedChecks"]
-            if row["id"].startswith("agent-governance-closure-")
-        ]
-        self.assertEqual(
-            closure_commands,
-            [CLOSURE_SELF_TEST_COMMAND, CLOSURE_PRODUCTION_COMMAND],
-        )
-        self.assertEqual(
-            [
-                row["command"]
-                for row in contract["delegatedChecks"]
-                if row["command"] == checkpoint_command
-            ],
-            [checkpoint_command],
+        self.assertEqual(len(contract["delegatedChecks"]), 10)
+        commands = [row["command"] for row in contract["delegatedChecks"]]
+        self.assertTrue(all("--self-test" not in command for command in commands))
+        self.assertFalse(
+            any("validate-agent-governance-closure.py" in command for command in commands)
         )
         self.assertEqual(
             [row["owner"] for row in contract["deferredEvidence"]],

@@ -17,6 +17,8 @@ from unittest import mock
 
 from jsonschema import Draft202012Validator
 
+from tests.agent_loop_lifecycle_mutations import apply_mutation
+
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = (
     REPOSITORY_ROOT / "scripts/validate-agent-loop-lifecycle.py"
@@ -579,9 +581,7 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
 
     def test_feedback_destination_id_drift_is_rejected(self) -> None:
         mutated = self.contract_copy()
-        self.validator.apply_mutation(
-            mutated, "feedback-destination-id-drift"
-        )
+        apply_mutation(mutated, "feedback-destination-id-drift")
         self.assert_rule(mutated, "AHLL-FEEDBACK-ROUTING")
 
     def test_duplicate_json_keys_fail_at_the_input_boundary(self) -> None:
@@ -747,7 +747,7 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
         for case in self.fixture["mutations"]:
             with self.subTest(case=case["name"]):
                 mutated = self.contract_copy()
-                self.validator.apply_mutation(mutated, case["name"])
+                apply_mutation(mutated, case["name"])
                 self.assert_rule(mutated, case["expectedRule"])
 
     def test_checkpoint_policy_families_have_negative_mutations(self) -> None:
@@ -787,32 +787,23 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
                     ),
                 )
 
-    def test_cli_production_and_self_test_modes_pass(self) -> None:
-        for extra_args, marker in (
-            (
-                [],
-                "[PASS] agent loop lifecycle validation passed",
-            ),
-            (
-                ["--self-test"],
-                "[PASS] agent loop lifecycle self-test passed",
-            ),
-        ):
-            with self.subTest(extra_args=extra_args):
-                result = subprocess.run(
-                    [
-                        sys.executable,
-                        str(SCRIPT_PATH),
-                        "--root",
-                        str(REPOSITORY_ROOT),
-                        *extra_args,
-                    ],
-                    check=False,
-                    capture_output=True,
-                    text=True,
-                )
-                self.assertEqual(result.returncode, 0, result.stderr)
-                self.assertIn(marker, result.stdout)
+    def test_production_cli_passes(self) -> None:
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(SCRIPT_PATH),
+                "--root",
+                str(REPOSITORY_ROOT),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn(
+            "[PASS] agent loop lifecycle validation passed",
+            result.stdout,
+        )
 
 
 if __name__ == "__main__":

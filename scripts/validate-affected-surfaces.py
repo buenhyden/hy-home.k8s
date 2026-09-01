@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the affected-surface contract and its deterministic fixtures."""
+"""Validate affected-surface routing and tracked-path coverage."""
 
 from __future__ import annotations
 
@@ -11,9 +11,16 @@ import re
 import stat
 import subprocess
 import sys
-import tempfile
 from pathlib import Path, PurePosixPath
 from typing import Any, NoReturn, Sequence
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from validation.repository.bounded_io import (  # noqa: E402
+    BoundedInputError,
+    BoundedOutputError,
+    read_bytes as read_bounded_bytes,
+    run as run_bounded_process,
+)
 
 _schema_spec = importlib.util.spec_from_file_location(
     "_affected_schema_owner", Path(__file__).with_name("json_schema_validation.py")
@@ -28,7 +35,6 @@ schema_errors = _schema_owner.schema_errors
 
 CONTRACT_PATH = PurePosixPath("scripts/validation/registry.json")
 SCHEMA_PATH = PurePosixPath("scripts/validation/registry.schema.json")
-FIXTURE_PATH = PurePosixPath("tests/fixtures/validation-surfaces.json")
 CI_WORKFLOW_PATH = PurePosixPath(".github/workflows/ci.yml")
 QUALITY_GATE_PATH = PurePosixPath("scripts/validate-repo-quality-gates.sh")
 SELECTOR_LANES = ("affected", "staged", "all-files", "ci")
@@ -43,21 +49,15 @@ LANES = (
 )
 PROTECTED_LEVELS = ("none", "review", "protected")
 EVIDENCE_LANES = ("repo-static", "ci", "remote/live")
+MAX_PATH_INPUT_BYTES = 4 * 1024 * 1024
+MAX_GIT_STDOUT_BYTES = 16 * 1024 * 1024
+MAX_GIT_STDERR_BYTES = 256 * 1024
 EXPECTED_CI_JOBS = {
     "agent-governance-static": "agent_governance",
     "manifest-static": "manifests",
     "pre-commit": "precommit",
     "repo-quality-static": "repo_quality",
 }
-SECURE_DEPENDENCY_INSTALL_COMMAND = (
-    "python -m pip install --disable-pip-version-check "
-    "--only-binary :all: --require-hashes "
-    "--requirement .github/requirements/ci-validation.txt"
-)
-LEGACY_DEPENDENCY_INSTALL_COMMAND = (
-    "python -m pip install --disable-pip-version-check "
-    "--requirement .github/requirements/ci-validation.txt"
-)
 EXPECTED_AGENT_GOVERNANCE_SURFACES = frozenset(
     (
         "root-config",
@@ -73,7 +73,6 @@ EXPECTED_AGENT_GOVERNANCE_SURFACES = frozenset(
         "tests",
     )
 )
-EXPECTED_AGENT_GOVERNANCE_CLOSURE_SURFACES = EXPECTED_AGENT_GOVERNANCE_SURFACES
 CANONICAL_SHARED_SYMLINKS = {
     ".claude/skills": "../.agents/skills",
     ".claude/workflows": "../.agents/workflows",
@@ -381,16 +380,6 @@ def validate_contract(
             "SURFACE-AGENT-GOVERNANCE-CI",
             "agent-governance-static surface ownership differs from the exact contract",
         )
-    closure_surfaces = {
-        identifier
-        for identifier, surface in surfaces.items()
-        if "agent-governance-closure" in surface["validators"]
-    }
-    if closure_surfaces != EXPECTED_AGENT_GOVERNANCE_CLOSURE_SURFACES:
-        fail(
-            "SURFACE-AGENT-GOVERNANCE-CLOSURE",
-            "agent-governance closure surface ownership differs from the exact contract",
-        )
     return contract
 
 
@@ -639,36 +628,30 @@ def github_output(contract: dict[str, Any], result: dict[str, Any]) -> str:
 def validate_required_validators_have_a_runner(
     contract: Mapping[str, Any], root: Path
 ) -> None:
-    """Refuse a required validator that no runner executes.
-
-    The contract declares what must run; the repository quality gate and the CI
-    workflow declare what does run.  Those are separate hand-maintained lists, so
-    a validator can be declared required and then invoked by neither, which is
-    how document-lifecycle came to run only through local hooks.  A validator
-    excluded from CI on purpose stays covered as long as the gate runs it.
-    """
+    """Refuse drift between the registry and its all-files aggregate runner."""
 
     try:
-        runners = (root / QUALITY_GATE_PATH).read_text(encoding="utf-8") + (
-            root / CI_WORKFLOW_PATH
-        ).read_text(encoding="utf-8")
+        aggregate = (root / QUALITY_GATE_PATH).read_text(encoding="utf-8")
     except (OSError, UnicodeError) as exc:
-        fail("SURFACE-VALIDATOR-RUNNER", f"cannot read the runners: {exc}")
+        fail("SURFACE-VALIDATOR-RUNNER", f"cannot read the aggregate: {exc}")
+
+    required_fragments = (
+        "scripts/run-validation-lane.py",
+        "--lane all-files",
+    )
+    if any(fragment not in aggregate for fragment in required_fragments):
+        fail(
+            "SURFACE-VALIDATOR-RUNNER",
+            "aggregate must invoke the registry all-files runner",
+        )
 
     for validator in contract["validators"]:
-        if validator.get("optional"):
+        if validator.get("optional") or validator["evidenceLane"] != "repo-static":
             continue
-        scripts = [
-            argument
-            for argument in validator["argv"]
-            if argument.startswith("scripts/")
-        ]
-        if not scripts:
-            continue
-        if not any(script in runners for script in scripts):
+        if "all-files" not in validator["lanes"]:
             fail(
                 "SURFACE-VALIDATOR-RUNNER",
-                f"{validator['id']} is required but no runner invokes it",
+                f"{validator['id']} is required but absent from all-files",
             )
 
 
@@ -740,51 +723,14 @@ def validate_ci_workflow_selector(root: Path) -> None:
     required_agent_fragments = (
         "needs: changes",
         "if: needs.changes.outputs.agent_governance == 'true'",
-        "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1",
-        "persist-credentials: false",
-        "fetch-depth: 0",
-        "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0",
-        "python-version: '3.12'",
-        SECURE_DEPENDENCY_INSTALL_COMMAND,
-        "python3 scripts/validate-agent-harness-contract.py --root .",
-        "python3 scripts/validate-agent-provider-evidence.py --root .",
-        "python3 scripts/validate-agent-loop-lifecycle.py --root .",
-        "python3 scripts/validate-agent-checkpoint.py --root . --self-test",
-        "python3 scripts/validate-agent-roster-admission.py --root .",
-        "python3 scripts/validate-agent-evaluations.py --root .",
-        "python3 scripts/validate-agent-model-fitness.py --root .",
-        "python3 scripts/validate-agent-roster-currentness.py .",
-        "python3 scripts/validate-agent-governance-ci.py --root . --self-test",
-        "python3 scripts/validate-agent-governance-ci.py --root .",
-        "python3 scripts/validate-agent-governance-closure.py --root . --self-test",
-        "python3 scripts/validate-agent-governance-closure.py --root .",
-        "python3 scripts/validate-affected-surfaces.py --root . --self-test",
         "python3 scripts/validate-affected-surfaces.py --root .",
-        "python3 scripts/validate-ci-python-contract.py --root . --self-test",
-        "python3 scripts/validate-ci-python-contract.py --root .",
-        "python3 scripts/validate-github-actions-security.py --root .",
     )
     missing_agent = [
         fragment for fragment in required_agent_fragments if fragment not in agent_job
     ]
-    forbidden_agent_fragments = (
-        "secrets.",
-        "validate-agent-provider-canaries.py",
-        "pull_request_target",
-        "id-token:",
-        "contents: write",
-        "gitleaks/releases/download",
-        LEGACY_DEPENDENCY_INSTALL_COMMAND,
-    )
-    present_agent = [
-        fragment for fragment in forbidden_agent_fragments if fragment in agent_job
-    ]
-    if missing_agent or present_agent:
+    if missing_agent:
         detail = []
-        if missing_agent:
-            detail.append(f"agent_missing={missing_agent!r}")
-        if present_agent:
-            detail.append(f"agent_forbidden={present_agent!r}")
+        detail.append(f"agent_missing={missing_agent!r}")
         fail("SURFACE-LOCAL-CI-MISMATCH", "; ".join(detail))
 
     required_summary_fragments = (
@@ -838,91 +784,11 @@ def validate_ci_workflow_selector(root: Path) -> None:
         fail("SURFACE-LOCAL-CI-MISMATCH", "; ".join(detail))
 
 
-def assert_ci_rename_range_preserves_both_paths() -> None:
-    """Prove the CI range command sees both sides of a protected-path rename."""
-    with tempfile.TemporaryDirectory(prefix="affected-surface-ci-rename-") as directory:
-        root = Path(directory)
-        subprocess.run(["git", "init", "--quiet"], cwd=root, check=True)
-        old_path = PurePosixPath("gitops/rename-probe.yaml")
-        new_path = PurePosixPath("docs/03.specs/999-rename-probe/spec.md")
-        old_target = root / old_path
-        old_target.parent.mkdir(parents=True, exist_ok=True)
-        old_target.write_text("kind: ConfigMap\n", encoding="utf-8")
-        subprocess.run(["git", "add", "--", old_path.as_posix()], cwd=root, check=True)
-        subprocess.run(
-            [
-                "git",
-                "-c",
-                "user.name=CI Rename Probe",
-                "-c",
-                "user.email=ci-rename-probe@example.invalid",
-                "commit",
-                "--quiet",
-                "-m",
-                "base",
-            ],
-            cwd=root,
-            check=True,
-        )
-        base = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
-            cwd=root,
-            check=True,
-            stdout=subprocess.PIPE,
-            text=True,
-        ).stdout.strip()
-        new_target = root / new_path
-        new_target.parent.mkdir(parents=True, exist_ok=True)
-        old_target.rename(new_target)
-        subprocess.run(["git", "add", "-A"], cwd=root, check=True)
-        subprocess.run(
-            [
-                "git",
-                "-c",
-                "user.name=CI Rename Probe",
-                "-c",
-                "user.email=ci-rename-probe@example.invalid",
-                "commit",
-                "--quiet",
-                "-m",
-                "rename",
-            ],
-            cwd=root,
-            check=True,
-        )
-        head = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
-            cwd=root,
-            check=True,
-            stdout=subprocess.PIPE,
-            text=True,
-        ).stdout.strip()
-        completed = subprocess.run(
-            ["git", "diff", "--no-renames", "--name-only", "-z", base, head],
-            cwd=root,
-            check=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-        if not completed.stdout.endswith(b"\0"):
-            fail("SURFACE-SELF-TEST", "CI rename range output is not NUL terminated")
-        observed = {
-            record.decode("utf-8")
-            for record in completed.stdout.removesuffix(b"\0").split(b"\0")
-        }
-        expected = {old_path.as_posix(), new_path.as_posix()}
-        if observed != expected:
-            fail(
-                "SURFACE-SELF-TEST",
-                f"CI rename range paths differ: expected={sorted(expected)!r} actual={sorted(observed)!r}",
-            )
-
-
 def read_nul_paths(path: Path) -> list[str]:
     try:
-        payload = path.read_bytes()
-    except OSError as exc:
-        fail("SURFACE-PATH-TRANSPORT", f"{path}: {exc}")
+        payload = read_bounded_bytes(path, max_bytes=MAX_PATH_INPUT_BYTES)
+    except BoundedInputError:
+        fail("SURFACE-PATH-TRANSPORT", "path input is unavailable or unsafe")
     if not payload:
         return []
     if not payload.endswith(b"\0"):
@@ -938,15 +804,17 @@ def read_nul_paths(path: Path) -> list[str]:
 
 def tracked_paths(root: Path) -> list[str]:
     try:
-        completed = subprocess.run(
+        completed = run_bounded_process(
             ["git", "ls-files", "-z"],
             cwd=root,
-            check=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            timeout=15,
+            stdout_limit=MAX_GIT_STDOUT_BYTES,
+            stderr_limit=MAX_GIT_STDERR_BYTES,
         )
-    except (OSError, subprocess.CalledProcessError) as exc:
-        fail("SURFACE-GIT-INVENTORY", str(exc))
+    except (BoundedOutputError, OSError, subprocess.SubprocessError, ValueError):
+        fail("SURFACE-GIT-INVENTORY", "bounded Git inventory failed")
+    if completed.returncode != 0:
+        fail("SURFACE-GIT-INVENTORY", "Git inventory exited non-zero")
     payload = completed.stdout
     if payload and not payload.endswith(b"\0"):
         fail("SURFACE-GIT-INVENTORY", "git ls-files output is not NUL terminated")
@@ -956,559 +824,12 @@ def tracked_paths(root: Path) -> list[str]:
         fail("SURFACE-GIT-INVENTORY", f"tracked path must be UTF-8: {exc}")
 
 
-def _mutate(contract: dict[str, Any], mutation: dict[str, Any]) -> None:
-    if mutation["kind"] == "append-route":
-        surface = next(
-            row for row in contract["surfaces"] if row["id"] == mutation["surfaceId"]
-        )
-        surface["routes"].append(copy.deepcopy(mutation["route"]))
-        return
-    if mutation["kind"] == "replace-argv":
-        validator = next(
-            row
-            for row in contract["validators"]
-            if row["id"] == mutation["validatorId"]
-        )
-        validator["argv"] = list(mutation["argv"])
-        return
-    if mutation["kind"] == "replace-validator-lanes":
-        validator = next(
-            row
-            for row in contract["validators"]
-            if row["id"] == mutation["validatorId"]
-        )
-        validator["lanes"] = list(mutation["lanes"])
-        return
-    if mutation["kind"] == "remove-validator-path-input":
-        validator = next(
-            row
-            for row in contract["validators"]
-            if row["id"] == mutation["validatorId"]
-        )
-        validator.pop("pathInput", None)
-        return
-    if mutation["kind"] == "add-validator-path-input":
-        validator = next(
-            row
-            for row in contract["validators"]
-            if row["id"] == mutation["validatorId"]
-        )
-        validator["pathInput"] = "include-existing-markdown"
-        return
-    if mutation["kind"] == "append-validator-reference":
-        surface = next(
-            row for row in contract["surfaces"] if row["id"] == mutation["surfaceId"]
-        )
-        surface["validators"].append(mutation["validatorId"])
-        return
-    if mutation["kind"] == "remove-validator-reference":
-        surface = next(
-            row for row in contract["surfaces"] if row["id"] == mutation["surfaceId"]
-        )
-        try:
-            surface["validators"].remove(mutation["validatorId"])
-        except ValueError:
-            fail(
-                "SURFACE-FIXTURE",
-                f"{mutation['surfaceId']} does not reference {mutation['validatorId']}",
-            )
-        return
-    if mutation["kind"] == "append-ci-job-reference":
-        surface = next(
-            row for row in contract["surfaces"] if row["id"] == mutation["surfaceId"]
-        )
-        surface["ciJobs"].append(mutation["ciJobId"])
-        return
-    if mutation["kind"] == "remove-ci-job-reference":
-        surface = next(
-            row for row in contract["surfaces"] if row["id"] == mutation["surfaceId"]
-        )
-        try:
-            surface["ciJobs"].remove(mutation["ciJobId"])
-        except ValueError:
-            fail(
-                "SURFACE-FIXTURE",
-                f"{mutation['surfaceId']} does not reference {mutation['ciJobId']}",
-            )
-        return
-    if mutation["kind"] == "replace-protected-level":
-        surface = next(
-            row for row in contract["surfaces"] if row["id"] == mutation["surfaceId"]
-        )
-        surface["protectedLevel"] = mutation["protectedLevel"]
-        return
-    if mutation["kind"] == "replace-fallback-status":
-        validator = next(
-            row
-            for row in contract["validators"]
-            if row["id"] == mutation["validatorId"]
-        )
-        validator["fallback"]["status"] = mutation["status"]
-        return
-    if mutation["kind"] == "replace-surface-fallback-status":
-        surface = next(
-            row for row in contract["surfaces"] if row["id"] == mutation["surfaceId"]
-        )
-        surface["fallback"]["status"] = mutation["status"]
-        return
-    if mutation["kind"] == "replace-evidence-lane":
-        validator = next(
-            row
-            for row in contract["validators"]
-            if row["id"] == mutation["validatorId"]
-        )
-        validator["evidenceLane"] = mutation["evidenceLane"]
-        return
-    if mutation["kind"] == "replace-ci-output":
-        job = next(
-            row for row in contract["ciJobs"] if row["id"] == mutation["ciJobId"]
-        )
-        job["output"] = mutation["output"]
-        return
-    fail("SURFACE-FIXTURE", f"unknown mutation {mutation['kind']!r}")
-
-
-def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
-    contract = validate_contract(root)
-    fixture = load_json(root / FIXTURE_PATH)
-    expected_keys = {
-        "schemaVersion",
-        "surfaceCases",
-        "selectionCases",
-        "ciRangeCases",
-        "rejectionCases",
-        "argvPositiveCases",
-        "mutationCases",
-    }
-    if set(fixture) != expected_keys or fixture["schemaVersion"] != 3:
-        fail("SURFACE-FIXTURE", "fixture shape or version differs")
-
-    surface_cases = fixture["surfaceCases"]
-    required_names = {
-        "workspace-readme",
-        "gitignore",
-        "environment-example",
-        "root-provider-gateway",
-        "governance",
-        "templates",
-        "shared-agent",
-        "claude-adapter",
-        "codex-adapter",
-        "github",
-        "gitops",
-        "infrastructure",
-        "policy",
-        "scripts",
-        "secrets",
-        "tests",
-        "traefik",
-        "examples",
-        "authored-doc",
-        "current-research-report",
-        "numbered-audit-pack",
-        "generated-record",
-        "root-config",
-    }
-    if {case.get("name") for case in surface_cases} != required_names:
-        fail("SURFACE-FIXTURE", "surface case coverage differs")
-    for case in surface_cases:
-        actual = classify_path(contract, case["path"])["id"]
-        if actual != case["expectedSurface"]:
-            fail("SURFACE-SELF-TEST", f"{case['name']}: {actual}")
-
-    selection_cases = fixture["selectionCases"]
-    selection_by_name = {case.get("name"): case for case in selection_cases}
-    if len(selection_by_name) != len(selection_cases):
-        fail("SURFACE-FIXTURE", "selection case names must be unique")
-    required_agent_selection_paths = {
-        "agent-governance-root-config": (".pre-commit-config.yaml",),
-        "agent-governance-template-documents": ("docs/99.templates/registry.json",),
-        "agent-governance-authored-lineage": (
-            "docs/01.requirements/0003-workspace-agent-governance-platform.md",
-            "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md",
-            "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md",
-            "docs/03.specs/0045-agent-governance-ci-qa-cutover/spec.md",
-            "docs/03.specs/0045-agent-governance-ci-qa-cutover/plan.md",
-            "docs/03.specs/0045-agent-governance-ci-qa-cutover/README.md",
-        ),
-        "agent-governance-scripts": ("scripts/validate-agent-governance-ci.py",),
-        "agent-governance-tests": ("tests/test_validate_agent_governance_ci.py",),
-    }
-    for name, paths in required_agent_selection_paths.items():
-        case = selection_by_name.get(name)
-        if (
-            case is None
-            or case.get("lane") != "ci"
-            or tuple(case.get("paths", ())) != paths
-            or "agent-governance-static"
-            not in case.get("expected", {}).get("ciJobs", ())
-            or "agent-governance-closure"
-            not in case.get("expected", {}).get("validators", ())
-        ):
-            fail("SURFACE-FIXTURE", f"{name}: broad CI route coverage differs")
-
-    for case in selection_cases:
-        actual = select_paths(contract, case["paths"], case["lane"], root)
-        if actual != case["expected"]:
-            fail(
-                "SURFACE-SELF-TEST",
-                f"{case['name']}: expected {case['expected']!r}, got {actual!r}",
-            )
-
-    required_ci_range_cases = {
-        "push-before-head-document-surfaces": ("push", "before-head"),
-        "pull-request-base-head-document-surfaces": ("pull_request", "base-head"),
-        "push-initial-head-tree-all-surfaces": ("push", "initial-head-tree"),
-        "pull-request-base-head-protected-surfaces": (
-            "pull_request",
-            "base-head",
-        ),
-        "pull-request-rename-protected-to-document": (
-            "pull_request",
-            "base-head-no-renames",
-        ),
-        "pull-request-agent-governance-broad-surfaces": (
-            "pull_request",
-            "base-head",
-        ),
-    }
-    ci_range_cases = fixture["ciRangeCases"]
-    observed_ci_ranges = {
-        case.get("name"): (case.get("event"), case.get("rangeKind"))
-        for case in ci_range_cases
-    }
-    if (
-        len(ci_range_cases) != len(required_ci_range_cases)
-        or observed_ci_ranges != required_ci_range_cases
-    ):
-        fail("SURFACE-FIXTURE", "push/pull-request range coverage differs")
-    required_ci_paths = {
-        "docs/03.specs/0031-affected-surface-agent-qa/spec.md",
-        "_workspace/README.md",
-        "policy/conftest/kubernetes.rego",
-        "gitops/clusters/local/root-application.yaml",
-        "infrastructure/tests/verify-contracts-static.sh",
-        "secrets/README.md",
-        "traefik/traefik.yaml",
-        ".agents/agents/supervisor.md",
-        "docs/99.templates/registry.json",
-        ".github/workflows/ci.yml",
-        "gitops/rename-probe.yaml",
-        "docs/03.specs/999-rename-probe/spec.md",
-        ".pre-commit-config.yaml",
-        "docs/01.requirements/0003-workspace-agent-governance-platform.md",
-        "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md",
-        "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md",
-        "docs/03.specs/0045-agent-governance-ci-qa-cutover/spec.md",
-        "docs/03.specs/0045-agent-governance-ci-qa-cutover/plan.md",
-        "docs/03.specs/0045-agent-governance-ci-qa-cutover/README.md",
-        "scripts/validate-agent-governance-ci.py",
-        "tests/test_validate_agent_governance_ci.py",
-    }
-    observed_ci_paths = {
-        path for case in ci_range_cases for path in case.get("paths", [])
-    }
-    if observed_ci_paths != required_ci_paths:
-        fail("SURFACE-FIXTURE", "CI range path coverage differs")
-    for case in ci_range_cases:
-        if set(case) != {
-            "name",
-            "event",
-            "rangeKind",
-            "paths",
-            "expectedJobs",
-            "expectedGithubOutput",
-        }:
-            fail("SURFACE-FIXTURE", f"{case.get('name')}: CI range shape differs")
-        actual = select_paths(contract, case["paths"], "ci", root)
-        actual_output = github_output(contract, actual)
-        if (
-            actual["ciJobs"] != case["expectedJobs"]
-            or actual_output != case["expectedGithubOutput"]
-        ):
-            fail(
-                "SURFACE-LOCAL-CI-MISMATCH",
-                f"{case['name']}: jobs={actual['ciJobs']!r} output={actual_output!r}",
-            )
-
-    validate_ci_workflow_selector(root)
-    assert_ci_rename_range_preserves_both_paths()
-
-    for case in fixture["rejectionCases"]:
-        try:
-            select_paths(contract, case["paths"], "affected", root)
-        except ContractError as exc:
-            if exc.code != case["expectedError"]:
-                fail("SURFACE-SELF-TEST", f"{case['name']}: {exc.code}")
-        else:
-            fail("SURFACE-SELF-TEST", f"{case['name']}: mutation was accepted")
-
-    positive_names = {
-        "bash-script-argument-c",
-        "python-script-argument-c",
-        "node-script-argument-e",
-        "bash-option-boundary",
-    }
-    if {case.get("name") for case in fixture["argvPositiveCases"]} != positive_names:
-        fail("SURFACE-FIXTURE", "direct-script positive argv coverage differs")
-    for case in fixture["argvPositiveCases"]:
-        mutated = copy.deepcopy(contract)
-        _mutate(
-            mutated,
-            {
-                "kind": "replace-argv",
-                "validatorId": case["validatorId"],
-                "argv": case["argv"],
-            },
-        )
-        validate_contract(root, mutated)
-
-    required_argv_mutations = {
-        "shell-eval-argv",
-        "python-eval-argv",
-        "node-eval-argv",
-        "bash-eval-bundle-lc",
-        "bash-eval-bundle-cl",
-        "python-eval-bundle-Ic",
-        "python-eval-bundle-cI",
-        "node-eval-bundle-pe",
-        "node-eval-bundle-ep",
-        "node-eval-assignment",
-        "node-print-assignment",
-        "bash-command-assignment",
-        "wrapper-trampoline",
-        "option-before-script",
-        "relative-executable-prefix",
-        "dot-executable-prefix",
-        "absolute-executable-prefix",
-        "parent-executable-prefix",
-        "executable-case-alias",
-    }
-    mutation_names = {case.get("name") for case in fixture["mutationCases"]}
-    if not required_argv_mutations.issubset(mutation_names):
-        fail("SURFACE-FIXTURE", "direct-script negative argv coverage differs")
-    required_agent_mutations = {
-        "remove-agent-governance-root-config": "root-config",
-        "remove-agent-governance-template-documents": "template-documents",
-        "remove-agent-governance-authored-documents": "authored-documents",
-        "remove-agent-governance-scripts": "scripts",
-        "remove-agent-governance-tests": "tests",
-    }
-    mutations_by_name = {case.get("name"): case for case in fixture["mutationCases"]}
-    for name, surface_id in required_agent_mutations.items():
-        case = mutations_by_name.get(name)
-        if (
-            case is None
-            or case.get("mutation")
-            != {
-                "kind": "remove-ci-job-reference",
-                "surfaceId": surface_id,
-                "ciJobId": "agent-governance-static",
-            }
-            or case.get("expectedError") != "SURFACE-AGENT-GOVERNANCE-CI"
-        ):
-            fail("SURFACE-FIXTURE", f"{name}: mutation coverage differs")
-
-    closure_mutation = mutations_by_name.get(
-        "remove-agent-governance-closure-governance-documents"
-    )
-    if (
-        closure_mutation is None
-        or closure_mutation.get("mutation")
-        != {
-            "kind": "remove-validator-reference",
-            "surfaceId": "governance-documents",
-            "validatorId": "agent-governance-closure",
-        }
-        or closure_mutation.get("expectedError") != "SURFACE-AGENT-GOVERNANCE-CLOSURE"
-    ):
-        fail(
-            "SURFACE-FIXTURE",
-            "agent-governance closure mutation coverage differs",
-        )
-
-    for case in fixture["mutationCases"]:
-        mutated = copy.deepcopy(contract)
-        _mutate(mutated, case["mutation"])
-        try:
-            validated = validate_contract(root, mutated)
-            select_paths(validated, case["paths"], "affected", root)
-        except ContractError as exc:
-            if exc.code != case["expectedError"]:
-                fail("SURFACE-SELF-TEST", f"{case['name']}: {exc.code}")
-        else:
-            fail("SURFACE-SELF-TEST", f"{case['name']}: mutation was accepted")
-
-    root_result = select_paths(contract, ["README.md"], "ci", root)
-    if json_output(root_result) != (
-        '{"ciJobs":["agent-governance-static","pre-commit","repo-quality-static"],'
-        '"protectedLevel":"review","unmatchedPaths":[],'
-        '"validators":["agent-governance-ci","agent-governance-closure",'
-        '"agent-legacy-cutover",'
-        '"repository-quality"]}'
-    ):
-        fail("SURFACE-SELF-TEST", "stable JSON output differs")
-    if github_output(contract, root_result) != (
-        "agent_governance=true\nmanifests=false\nprecommit=true\nrepo_quality=true"
-    ):
-        fail("SURFACE-SELF-TEST", "stable GitHub output differs")
-    mixed_result = select_paths(
-        contract,
-        ["unowned/z.txt", "README.md", "unowned/a.txt"],
-        "ci",
-        root,
-        collect_unmatched=True,
-    )
-    if mixed_result["unmatchedPaths"] != ["unowned/a.txt", "unowned/z.txt"]:
-        fail("SURFACE-SELF-TEST", "unmatched path output is not sorted")
-
-    boundary_failures: list[str] = []
-    with tempfile.TemporaryDirectory(
-        prefix="affected-surface-input-boundary-"
-    ) as directory:
-        boundary_root = Path(directory)
-        duplicate_json = boundary_root / "duplicate.json"
-        duplicate_json.write_text(
-            '{"schemaVersion":3,"schemaVersion":4}\n',
-            encoding="utf-8",
-        )
-        try:
-            load_json(duplicate_json)
-        except ContractError as exc:
-            if exc.code != "SURFACE-JSON-DUPLICATE-KEY":
-                boundary_failures.append("duplicate-json-wrong-rule")
-        else:
-            boundary_failures.append("duplicate-json-accepted")
-
-        (boundary_root / ".agents/skills").mkdir(parents=True)
-        (boundary_root / ".claude").mkdir()
-        (boundary_root / "scripts").mkdir()
-        (boundary_root / "docs").mkdir()
-        (boundary_root / "linked-parent-target").mkdir()
-        (boundary_root / ".claude/skills").symlink_to("../.agents/skills")
-        (boundary_root / ".claude/workflows").symlink_to("../.agents/skills")
-        (boundary_root / "scripts/regular.py").write_text(
-            "# synthetic\n",
-            encoding="utf-8",
-        )
-        (boundary_root / "scripts/unexpected.py").symlink_to("regular.py")
-        (boundary_root / "scripts/non-regular.py").mkdir()
-        (boundary_root / "linked-parent").symlink_to("linked-parent-target")
-
-        try:
-            reject_symlink_traversal(boundary_root, ".claude/skills")
-        except ContractError:
-            boundary_failures.append("canonical-shared-link-rejected")
-
-        for name, path, expected_rule in (
-            (
-                "wrong-shared-link-target",
-                ".claude/workflows",
-                "SURFACE-PATH-SYMLINK",
-            ),
-            (
-                "unexpected-final-symlink",
-                "scripts/unexpected.py",
-                "SURFACE-PATH-SYMLINK",
-            ),
-            (
-                "non-regular-final-node",
-                "scripts/non-regular.py",
-                "SURFACE-PATH-NODE",
-            ),
-            (
-                "intermediate-symlink",
-                "linked-parent/proposed.md",
-                "SURFACE-PATH-SYMLINK",
-            ),
-        ):
-            try:
-                reject_symlink_traversal(boundary_root, path)
-            except ContractError as exc:
-                if exc.code != expected_rule:
-                    boundary_failures.append(f"{name}-wrong-rule")
-            else:
-                boundary_failures.append(f"{name}-accepted")
-
-        try:
-            reject_symlink_traversal(boundary_root, "docs/proposed.md")
-        except ContractError:
-            boundary_failures.append("missing-proposal-rejected")
-
-        try:
-            reject_symlink_traversal(
-                boundary_root,
-                "docs/proposed.md",
-                require_present=True,
-            )
-        except TypeError:
-            boundary_failures.append("tracked-presence-not-implemented")
-        except ContractError as exc:
-            if exc.code != "SURFACE-PATH-MISSING":
-                boundary_failures.append("tracked-missing-wrong-rule")
-        else:
-            boundary_failures.append("tracked-missing-accepted")
-
-    if boundary_failures:
-        fail(
-            "SURFACE-SELF-TEST",
-            "input/node boundary cases failed: " + ",".join(boundary_failures),
-        )
-
-    with tempfile.TemporaryDirectory(prefix="affected-surface-") as directory:
-        path_file = Path(directory) / "paths.nul"
-        path_file.write_bytes(b"README.md\0gitops/README.md\0")
-        if read_nul_paths(path_file) != ["README.md", "gitops/README.md"]:
-            fail("SURFACE-SELF-TEST", "NUL records were not preserved")
-        path_file.write_bytes(b"README\n.md\0")
-        if read_nul_paths(path_file) != ["README\n.md"]:
-            fail("SURFACE-SELF-TEST", "newline data changed record boundaries")
-        path_file.write_bytes(b"README.md\n")
-        try:
-            read_nul_paths(path_file)
-        except ContractError as exc:
-            if exc.code != "SURFACE-PATH-TRANSPORT":
-                fail("SURFACE-SELF-TEST", f"transport: {exc.code}")
-        else:
-            fail("SURFACE-SELF-TEST", "newline transport was accepted")
-
-    return (
-        len(surface_cases),
-        len(fixture["selectionCases"]),
-        len(ci_range_cases),
-        len(fixture["rejectionCases"]),
-        len(fixture["argvPositiveCases"]),
-        len(fixture["mutationCases"]),
-    )
-
-
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path.cwd())
-    parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args()
     root = args.root.resolve()
     try:
-        if args.self_test:
-            (
-                path_count,
-                selection_count,
-                ci_range_count,
-                rejection_count,
-                argv_positive_count,
-                mutation_count,
-            ) = run_self_test(root)
-            contract = validate_contract(root)
-            print(
-                "[PASS] affected surface self-test passed: "
-                f"surfaces={len(contract['surfaces'])} path_cases={path_count} "
-                f"selection_cases={selection_count} rejection_cases={rejection_count} "
-                f"ci_range_cases={ci_range_count} "
-                f"argv_positive_cases={argv_positive_count} "
-                f"mutation_cases={mutation_count}"
-            )
-            return 0
-
         contract = validate_contract(root)
         validate_required_validators_have_a_runner(contract, root)
         paths = tracked_paths(root)

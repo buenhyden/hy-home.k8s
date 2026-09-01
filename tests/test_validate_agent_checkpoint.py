@@ -17,6 +17,11 @@ from datetime import datetime
 from pathlib import Path
 from unittest import mock
 
+from tests.agent_checkpoint_mutations import (
+    apply_duplicate_key_mutation,
+    apply_mutation,
+)
+
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = REPOSITORY_ROOT / "scripts/validate-agent-checkpoint.py"
@@ -74,11 +79,10 @@ class AgentCheckpointContractTests(unittest.TestCase):
             "validate_resume",
             "validate_memory_lifecycle",
             "scan_sensitive_payload",
-            "apply_mutation",
-            "validate_fixture",
-            "main",
         ):
             self.assertTrue(hasattr(self.validator, name), name)
+        self.assertFalse(hasattr(self.validator, "apply_mutation"))
+        self.assertFalse(hasattr(self.validator, "main"))
 
     def test_schema_is_draft_2020_12_and_closed_at_every_object(self) -> None:
         self.assertEqual(
@@ -377,13 +381,13 @@ class AgentCheckpointContractTests(unittest.TestCase):
                     with self.assertRaises(
                         self.validator.CheckpointError
                     ) as raised:
-                        self.validator.apply_duplicate_key_mutation()
+                        apply_duplicate_key_mutation(self.validator)
                     self.assertEqual(
                         raised.exception.code,
                         case["expectedRule"],
                     )
                     continue
-                self.validator.apply_mutation(
+                apply_mutation(
                     checkpoint,
                     repository_state,
                     case["name"],
@@ -670,33 +674,20 @@ class AgentCheckpointContractTests(unittest.TestCase):
             {"nextAction": "bounded synthetic marker only"}
         )
 
-    def test_production_validation_uses_only_tracked_fixture(self) -> None:
-        counts = self.validator.validate_fixture(REPOSITORY_ROOT)
+    def test_fixture_is_consumed_only_by_the_independent_test(self) -> None:
+        counts = self.validator.validate_checkpoint(
+            REPOSITORY_ROOT,
+            self.checkpoint_copy(),
+            self.repository_state_copy(),
+            check_repository_contracts=True,
+            require_synthetic=True,
+        )
         self.assertTrue(self.fixture["syntheticCheckpoint"]["synthetic"])
         self.assertEqual(
             self.fixture["syntheticCheckpoint"]["checkpointPath"],
             ".agent-work/checkpoint.json",
         )
-        self.assertGreater(counts["negativeMutations"], 0)
-
-    def test_cli_root_and_self_test_pass_on_tracked_fixture(self) -> None:
-        result = subprocess.run(
-            [
-                sys.executable,
-                str(SCRIPT_PATH),
-                "--root",
-                str(REPOSITORY_ROOT),
-                "--self-test",
-            ],
-            check=False,
-            capture_output=True,
-            text=True,
-        )
-        self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn(
-            "[PASS] agent checkpoint self-test passed",
-            result.stdout,
-        )
+        self.assertEqual(counts["memoryClasses"], 4)
 
 
 if __name__ == "__main__":

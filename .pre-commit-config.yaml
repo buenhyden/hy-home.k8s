@@ -11,51 +11,9 @@ repos:
   # --- 0a. 로컬 검증 계약 (pre-commit/manual 전용) ---
   - repo: local
     hooks:
-      - id: validate-agent-governance-ci-self-test
-        name: self-test agent-governance CI contract
-        entry: python3 scripts/validate-agent-governance-ci.py --root . --self-test
-        language: system
-        pass_filenames: false
-        always_run: true
-        stages: [pre-commit, manual]
-      - id: validate-agent-governance-ci
-        name: validate agent-governance CI contract
-        entry: python3 scripts/validate-agent-governance-ci.py --root .
-        language: system
-        pass_filenames: false
-        always_run: true
-        stages: [pre-commit, manual]
-      - id: validate-agent-legacy-cutover-self-test
-        name: self-test agent legacy cutover contract
-        entry: python3 scripts/validate-agent-legacy-cutover.py --root . --self-test
-        language: system
-        pass_filenames: false
-        always_run: true
-        stages: [pre-commit, manual]
-      - id: validate-agent-legacy-cutover
-        name: validate agent legacy cutover contract
-        entry: python3 scripts/validate-agent-legacy-cutover.py --root .
-        language: system
-        pass_filenames: false
-        always_run: true
-        stages: [pre-commit, manual]
-      - id: validate-agent-governance-closure-self-test
-        name: self-test agent-governance closure contract
-        entry: python3 scripts/validate-agent-governance-closure.py --root . --self-test
-        language: system
-        pass_filenames: false
-        always_run: true
-        stages: [pre-commit, manual]
-      - id: validate-agent-governance-closure
-        name: validate agent-governance closure contract
-        entry: python3 scripts/validate-agent-governance-closure.py --root .
-        language: system
-        pass_filenames: false
-        always_run: true
-        stages: [pre-commit, manual]
-      - id: validate-affected-surfaces
-        name: validate affected-surface contract
-        entry: python3 scripts/validate-affected-surfaces.py --root .
+      - id: validate-validation-tooling-ownership
+        name: validate validation-tooling ownership
+        entry: python3 -m unittest tests.test_validation_tooling_ownership
         language: system
         pass_filenames: false
         always_run: true

@@ -1175,13 +1175,15 @@ def validator_argv(
     contract_module: Any,
 ) -> list[str]:
     argv = list(validator["argv"])
-    if (
-        lane not in ("affected", "staged")
-        or validator.get("pathInput") != "include-existing-markdown"
-    ):
+    if validator.get("pathInput") != "include-existing-markdown":
+        return argv
+    if lane == "all-files":
+        include_candidates: list[str] = []
+    elif lane in ("affected", "staged"):
+        include_candidates = list(paths)
+    else:
         return argv
 
-    include_candidates = list(paths)
     archive_form = "docs/99.templates/templates/archive/archive-record.template.md"
     if (root / archive_form).is_file() and archive_form not in include_candidates:
         include_candidates.append(archive_form)
@@ -1222,6 +1224,10 @@ def run_selected(
         return 0
 
     selected = contract_module.select_paths(contract, paths, lane, root)
+    if lane == "all-files":
+        selected["validators"] = sorted(
+            row["id"] for row in contract["validators"] if lane in row["lanes"]
+        )
     validators = {row["id"]: row for row in contract["validators"]}
     if not selected["validators"]:
         print(
@@ -1348,16 +1354,26 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path.cwd())
     parser.add_argument("--lane", choices=LOCAL_LANES, required=True)
-    parser.add_argument("--paths-file", type=Path, required=True)
-    parser.add_argument("--delimiter", choices=("nul",), required=True)
+    parser.add_argument("--paths-file", type=Path)
+    parser.add_argument("--delimiter", choices=("nul",))
     args = parser.parse_args()
 
-    contract_module = load_contract_module()
     root = args.root.resolve()
+    if args.lane == "all-files":
+        if args.paths_file is not None or args.delimiter is not None:
+            parser.error("all-files discovers tracked paths and rejects path input")
+    elif args.paths_file is None or args.delimiter is None:
+        parser.error("affected and staged lanes require --paths-file and --delimiter")
+
+    contract_module = load_contract_module()
     scope = f"{args.lane}:paths=unknown"
     try:
         contract = contract_module.validate_contract(root)
-        paths = contract_module.read_nul_paths(args.paths_file)
+        paths = (
+            contract_module.tracked_paths(root)
+            if args.lane == "all-files"
+            else contract_module.read_nul_paths(args.paths_file)
+        )
         return run_selected(root, args.lane, paths, contract, contract_module)
     except contract_module.ContractError as exc:
         detail_metadata = bounded_metadata("detail", exc.detail)

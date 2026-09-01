@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import copy
 import json
 import os
 import re
@@ -25,7 +24,6 @@ CONTRACT_PATH = PurePosixPath(
 SCHEMA_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/provider-runtime-evidence.schema.json"
 )
-FIXTURE_PATH = PurePosixPath("tests/fixtures/agent-provider-runtime-evidence.json")
 AGENT_REGISTRY_PATH = PurePosixPath(".agents/registry.json")
 ROUTING_PATH = PurePosixPath("scripts/validation/registry.json")
 CLAUDE_SETTINGS_PATH = PurePosixPath(".claude/settings.json")
@@ -1258,97 +1256,22 @@ def validate_contract(
     }
 
 
-def apply_mutation(contract: dict[str, Any], name: str) -> None:
-    if name == "unknown-top-level-key":
-        contract["unexpected"] = True
-    elif name == "cutoff-source-after-cutoff":
-        contract["sourceLedger"][0]["sourceDate"] = "2026-07-11"
-    elif name == "cutoff-source-same-day-after-cutoff":
-        contract["sourceLedger"][0]["sourceDate"] = "2026-07-10"
-        contract["sourceLedger"][0]["publishedAtUtc"] = "2026-07-10T01:00:01Z"
-    elif name == "source-id-substitution":
-        contract["sourceLedger"][0]["id"] = "replacement-source-id"
-    elif name == "extra-source-new-id":
-        extra = copy.deepcopy(contract["sourceLedger"][0])
-        extra["id"] = "extra-source-new-id"
-        contract["sourceLedger"].append(extra)
-    elif name == "absolute-project-path":
-        contract["providers"][1]["projectPaths"][0]["path"] = "/etc/passwd"
-    elif name == "invalid-calendar-source-date":
-        contract["sourceLedger"][0]["sourceDate"] = "2026-02-30"
-    elif name == "third-provider-added":
-        extra = copy.deepcopy(contract["providers"][0])
-        extra["id"] = "unsupported-third-provider"
-        contract["providers"].append(extra)
-    elif name == "provider-relabeled-as-neutral":
-        contract["providers"][0]["trackedSurface"]["pathRoot"] = ".agents/agents"
-    elif name == "model-silent-fallback-enabled":
-        contract["providers"][1]["modelCandidates"][0]["fallback"][
-            "silentFallbackAllowed"
-        ] = True
-    elif name == "model-fitness-promoted-without-gates":
-        contract["providers"][1]["modelCandidates"][0]["promotionState"] = (
-            "current-assignment"
-        )
-    elif name == "mcp-role-outside-registry":
-        contract["mcpInventory"][0]["allowedRoles"].append("unowned-agent")
-    elif name == "secret-like-contract-value":
-        contract["sourceLedger"][0]["claim"] = "sk-test-not-a-real-secret"
-    elif name == "absent-runtime-native-pass":
-        contract["providers"][0]["localObservation"]["installation"] = "absent"
-        contract["providers"][0]["evidenceLanes"][1]["verdict"] = "PASS"
-        contract["providers"][0]["runtimeVerdicts"]["nativeDiscovery"] = "PASS"
-    else:
-        fail("PNME-FIXTURE", f"unknown config mutation {name}")
-
-
-def validate_fixture(root: Path) -> int:
-    contract = load_json(root, CONTRACT_PATH)
-    fixture = load_json(root, FIXTURE_PATH)
-    cases = fixture["configMutations"]
-    for case in cases:
-        mutated = copy.deepcopy(contract)
-        apply_mutation(mutated, case["name"])
-        try:
-            validate_contract(root, mutated, check_paths=True)
-        except ProviderConfigError as exc:
-            if exc.code != case["expectedRule"]:
-                fail(
-                    "PNME-FIXTURE",
-                    f"{case['name']} expected {case['expectedRule']} got {exc.code}",
-                )
-        else:
-            fail("PNME-FIXTURE", f"{case['name']} unexpectedly passed")
-    return len(cases)
-
-
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Validate provider runtime/config evidence."
     )
     parser.add_argument("--root", default=".")
-    parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args(argv)
     root = Path(args.root)
     try:
-        cases = validate_fixture(root) if args.self_test else 0
         counts = validate_contract(root)
-        if args.self_test:
-            print(
-                "[PASS] agent provider config self-test passed: "
-                f"cases={cases} providers={counts['providers']} "
-                f"sources={counts['sources']} "
-                f"models={counts['modelCandidates']} "
-                f"mcp={counts['mcpServers']} "
-            )
-        else:
-            print(
-                "[PASS] agent provider config validation passed: "
-                f"providers={counts['providers']} "
-                f"sources={counts['sources']} "
-                f"models={counts['modelCandidates']} "
-                f"mcp={counts['mcpServers']} "
-            )
+        print(
+            "[PASS] agent provider config validation passed: "
+            f"providers={counts['providers']} "
+            f"sources={counts['sources']} "
+            f"models={counts['modelCandidates']} "
+            f"mcp={counts['mcpServers']} "
+        )
         return 0
     except ProviderConfigError as exc:
         print(f"{exc.code}: {exc.detail}", file=sys.stderr)

@@ -16,9 +16,9 @@ import time
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 from types import ModuleType
-from typing import Any, Mapping, NoReturn
+from typing import Any, NoReturn
 
-import agent_registry_compat as compat
+import agent_registry_loader
 import archive_recovery as recovery
 import archive_validation as archive
 import document_contracts as documents
@@ -809,31 +809,7 @@ class ConsumerOwners:
     document_registry: documents.Registry
     native_paths: frozenset[str]
     enforcement_paths: frozenset[str]
-    helper_roles: Mapping[str, str]
     proof: Any
-
-
-def _helper_artifact_role(path: str) -> str | None:
-    """Classify a tracked test artifact so fixtures are read as evidence.
-
-    A file that mentions a retired legacy token is either a test asserting the
-    token is gone or a live document still instructing agents to use it.  Only
-    the first is evidence.  Every artifact the retired role-audit manifests
-    admitted lived under tests/, so the directory and the format decide the
-    role; per-path admission is left to Git history.
-    """
-
-    if not path.startswith("tests/"):
-        return None
-    if path == "tests/README.md":
-        return "validation-evidence-boundary"
-    if path.endswith(".py"):
-        return "regression-test"
-    if path.endswith(".json"):
-        return "closed-fixture"
-    if path.endswith((".yaml", ".yml")):
-        return "manifest-fixture"
-    return None
 
 
 def _trusted_script(filename: str) -> ModuleType:
@@ -866,7 +842,7 @@ def _load_owners(
     """Use canonical typed owners; identity establishes responsibility, not correctness."""
 
     candidate_set = set(candidates)
-    terminal = compat.load_terminal_validator()
+    terminal = agent_registry_loader.load_terminal_validator()
     affected = _trusted_script("validate-affected-surfaces.py")
     for path in (
         terminal.REGISTRY_PATH,
@@ -938,7 +914,6 @@ def _load_owners(
         terminal,
         affected,
         links,
-        compat,
         documents,
         archive,
         recovery,
@@ -948,16 +923,10 @@ def _load_owners(
         Path(module.__file__).absolute().relative_to(source_root).as_posix()
         for module in delegates
     }
-    helper_roles = {
-        path: role
-        for path in candidates
-        if (role := _helper_artifact_role(path)) is not None
-    }
     return ConsumerOwners(
         proof.document_registry,
         frozenset(native_paths),
         entrypoints | helpers,
-        helper_roles,
         proof,
     )
 
@@ -1014,6 +983,8 @@ def _scan_consumers_with_reader(
     scanned = evidence = 0
     consumers: list[str] = []
     for path in candidates:
+        if path.startswith("tests/"):
+            continue
         raw = reader.candidate_payload(path, read=True)
         if raw is None:
             continue
@@ -1043,11 +1014,7 @@ def _scan_consumers_with_reader(
         if _published_or_native(path, owners):
             consumers.append(path)
             continue
-        if path in owners.enforcement_paths or owners.helper_roles.get(path) in {
-            "regression-test",
-            "closed-fixture",
-            "manifest-fixture",
-        }:
+        if path in owners.enforcement_paths:
             evidence += 1
             continue
         # Unknown token-bearing text remains an enforceable consumer.
@@ -1101,34 +1068,18 @@ def validate_repository(root: Path) -> dict[str, int]:
     }
 
 
-def run_self_test(root: Path) -> tuple[int, int]:
-    """Exercise the public gate and one bounded, write-free instruction negative."""
-
-    validate_repository(root)
-    if not _retired_mentions("README.md", "use " + RETIRED_SURFACES[0]):
-        fail("AGQC-LEGACY-SELFTEST", "plain instruction negative was not detected")
-    return 1, 1
-
-
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--root", type=Path, default=Path(__file__).resolve().parents[1]
     )
-    parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args()
     try:
-        if args.self_test:
-            positive, negative = run_self_test(args.root)
-            print(
-                f"[PASS] agent legacy cutover self-test: positive_cases={positive} mutation_cases={negative}"
-            )
-        else:
-            counts = validate_repository(args.root)
-            print(
-                "[PASS] agent legacy cutover: "
-                + " ".join(f"{key}={value}" for key, value in counts.items())
-            )
+        counts = validate_repository(args.root)
+        print(
+            "[PASS] agent legacy cutover: "
+            + " ".join(f"{key}={value}" for key, value in counts.items())
+        )
     except ContractError as exc:
         print(f"[FAIL] {exc.rule_id}: {exc.detail}", file=sys.stderr)
         return 1

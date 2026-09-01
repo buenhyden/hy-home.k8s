@@ -182,76 +182,19 @@ def validate_canaries(
     }
 
 
-def apply_mutation(contract: dict[str, Any], name: str) -> None:
-    if name == "canary-allows-mutation":
-        contract["canaryRecords"][0]["mutationMode"] = "write"
-    elif name == "canary-stores-prompt":
-        contract["canaryRecords"][0]["redaction"]["rawPromptStored"] = True
-    elif name == "canary-stores-credentials":
-        contract["canaryRecords"][0]["redaction"]["credentialsStored"] = True
-    elif name == "canary-unowned-limitation":
-        contract["canaryRecords"][1]["owner"] = ""
-    elif name == "canary-missing-retry-trigger":
-        contract["canaryRecords"][1]["retryTrigger"] = None
-    elif name == "canary-cross-lane-promotion":
-        contract["canaryRecords"][1]["crossLanePromotion"] = True
-    elif name == "canary-verdict-drift":
-        contract["canaryRecords"][1]["verdict"] = "ABSENT"
-    elif name == "authenticated-pass-without-discovery":
-        contract["canaryRecords"][5]["verdict"] = "PASS"
-        contract["providers"][1]["evidenceLanes"][2]["verdict"] = "PASS"
-        contract["providers"][1]["runtimeVerdicts"]["authenticatedRun"] = "PASS"
-    elif name == "absent-runtime-native-pass":
-        contract["providers"][0]["localObservation"]["installation"] = "absent"
-        contract["canaryRecords"][1]["verdict"] = "PASS"
-        contract["providers"][0]["evidenceLanes"][1]["verdict"] = "PASS"
-        contract["providers"][0]["runtimeVerdicts"]["nativeDiscovery"] = "PASS"
-    else:
-        fail("PNME-FIXTURE", f"unknown canary mutation {name}")
-
-
-def validate_fixture(root: Path) -> int:
-    contract = _load_config_json(root, CONFIG.CONTRACT_PATH)
-    fixture = _load_config_json(root, CONFIG.FIXTURE_PATH)
-    cases = fixture["canaryMutations"]
-    for case in cases:
-        mutated = copy.deepcopy(contract)
-        apply_mutation(mutated, case["name"])
-        try:
-            validate_canaries(root, mutated)
-        except ProviderCanaryError as exc:
-            if exc.code != case["expectedRule"]:
-                fail(
-                    "PNME-FIXTURE",
-                    f"{case['name']} expected {case['expectedRule']} got {exc.code}",
-                )
-        else:
-            fail("PNME-FIXTURE", f"{case['name']} unexpectedly passed")
-    return len(cases)
-
-
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Validate provider canary evidence records."
     )
     parser.add_argument("--root", default=".")
-    parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args(argv)
     root = Path(args.root)
     try:
-        cases = validate_fixture(root) if args.self_test else 0
         counts = validate_canaries(root)
-        if args.self_test:
-            print(
-                "[PASS] agent provider canary self-test passed: "
-                f"cases={cases} records={counts['records']} "
-                f"providers={counts['providers']}"
-            )
-        else:
-            print(
-                "[PASS] agent provider canary validation passed: "
-                f"records={counts['records']} providers={counts['providers']}"
-            )
+        print(
+            "[PASS] agent provider canary validation passed: "
+            f"records={counts['records']} providers={counts['providers']}"
+        )
         return 0
     except ProviderCanaryError as exc:
         print(f"{exc.code}: {exc.detail}", file=sys.stderr)

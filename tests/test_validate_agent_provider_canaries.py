@@ -12,6 +12,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from tests.agent_provider_mutations import apply_canary_mutation
+
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = REPOSITORY_ROOT / "scripts/validate-agent-provider-canaries.py"
@@ -124,24 +126,23 @@ class ProviderCanaryContractTests(unittest.TestCase):
 
     def test_absent_runtime_native_pass_fails_closed(self) -> None:
         mutated = self.contract_copy()
-        self.validator.apply_mutation(mutated, "absent-runtime-native-pass")
+        apply_canary_mutation(mutated, "absent-runtime-native-pass")
         self.assert_rule(mutated, "PNME-UNSUPPORTED-RUNTIME")
 
     def test_all_canary_fixture_mutations_fail_with_declared_rule(self) -> None:
         for case in self.fixture["canaryMutations"]:
             with self.subTest(case=case["name"]):
                 mutated = self.contract_copy()
-                self.validator.apply_mutation(mutated, case["name"])
+                apply_canary_mutation(mutated, case["name"])
                 self.assert_rule(mutated, case["expectedRule"])
 
-    def test_self_test_cli_runs_real_records_and_mutations(self) -> None:
+    def test_production_cli_validates_real_records(self) -> None:
         result = subprocess.run(
             [
                 sys.executable,
                 str(SCRIPT_PATH),
                 "--root",
                 str(REPOSITORY_ROOT),
-                "--self-test",
             ],
             check=False,
             capture_output=True,
@@ -149,7 +150,7 @@ class ProviderCanaryContractTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn(
-            "[PASS] agent provider canary self-test passed", result.stdout
+            "[PASS] agent provider canary validation passed", result.stdout
         )
 
     def test_standalone_canary_preserves_a_symlink_root(self) -> None:

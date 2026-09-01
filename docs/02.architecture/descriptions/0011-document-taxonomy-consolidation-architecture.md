@@ -113,6 +113,31 @@ execution lineage. Stage 04 remains retired and is not silently reused.
 | Validator lane and command selection | `scripts/validation/registry.json` | Pre-commit, affected selection, CI, and aggregate wrappers invoke the declared owner. |
 | Historical evidence | Git history by default; retained sealed Stage 98 records only for distinct archive-internal value | Active Stages 00/01/02/03/05/90 do not cite or cross-link Stage 98 and never rewrite sealed payloads to make current validation pass. |
 
+### Current validation implementation
+
+`scripts/validation/registry.json` and its schema are the only executable
+routing and argv owner. `validate-repo-quality-gates.sh` performs dependency
+preflight and invokes `run-validation-lane.py --lane all-files` once. The lane
+runner discovers tracked paths with bounded Git I/O, selects every declared
+`all-files` owner, executes registry argv in stable ID order, and normalizes
+bounded results. Repository-wide semantics that do not yet have a narrower
+validator live in `scripts/validation/repository/quality.py`; the registry's
+`repository-quality` row points there rather than recursively to the aggregate.
+Focused document, Agent, archive, CI, security, and platform validators retain
+their own diagnostics and are selected through the registry.
+
+Independent behavior suites and synthetic fixtures remain under top-level
+`tests/` and `tests/fixtures/`. Production Python and shell sources neither
+import those modules nor read those fixtures as runtime data. Production CLIs
+expose current-repository checks only. Regular-file input, strict UTF-8, Git
+stdout/stderr, child output, and execution time use shared finite budgets;
+FIFO, symlink, oversized, invalid-UTF-8, output-overflow, and timeout boundaries
+fail closed with owner-specific diagnostics.
+and retired Agent compatibility entrypoints are absent after consumer and
+diagnostic ownership moved to their canonical validators. Local routing and CI
+steps may simplify, but the external job name `agent-governance-static`
+remains unchanged pending separately authorized remote evidence.
+
 ### Migration state model
 
 The route migration has three explicit states:
@@ -267,17 +292,20 @@ remote observation to PASS.
 
 ### Validator and script ownership
 
-`validate-repo-quality-gates.sh` remains the aggregate repository gate. The
-pre-commit and affected-surface runners converge on one declared selection and
-orchestration contract. `validate-harness.sh` is retired only after every
-consumer migrates. Registry, Markdown profile, links/owners, archive, security,
-CI, and agent semantic validators remain separate when they have different
-failure contracts.
+`validate-repo-quality-gates.sh` remains the aggregate repository gate as a
+preflight wrapper around the registry-owned `all-files` runner. Pre-commit
+contains one independent ownership guard and one aggregate hook rather than
+duplicating domain validators; affected-surface and CI projections converge on
+the same registry-owned selection contract. `validate-harness.sh` remains a thin manual
+dispatcher while its distinct command surface has consumers. Registry,
+Markdown profile, links/owners, archive, security, CI, repository-wide, and
+Agent semantic validators remain separate when they have different failure
+contracts.
 
-The active-corpus and historical-lifecycle validators are quarantined for
-disposition, not assumed dead. Each needs an input-consumer graph, unique-rule
-inventory, and negative-fixture comparison. The final declared executable set
-must equal the tracked executable set for governed lanes.
+An executable is retired only after its current consumers and unique
+diagnostics move to a canonical owner. The terminal declared executable graph
+must equal the tracked executable graph for governed lanes, but neither the
+number of files nor a fixture/case census is policy.
 
 The current lifecycle owner validates registry-classified profile, state, and
 declared edge changes for retained authored documents. It treats

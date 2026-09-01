@@ -120,10 +120,6 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
             document_registry=self.documents,
             native_paths=frozenset({"AGENTS.md", ".codex/agents/reviewer.toml"}),
             enforcement_paths=frozenset({"scripts/validate-agent-legacy-cutover.py"}),
-            helper_roles={
-                "tests/test_validate_agent_legacy_cutover.py": "regression-test",
-                "tests/fixtures/negative.json": "closed-fixture",
-            },
             proof=types.SimpleNamespace(
                 terminal_targets=self.targets,
                 consumers={},
@@ -180,10 +176,9 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
             self.validator.validate_repository(root)
         self.assertEqual(raised.exception.rule_id, rule_id)
 
-    def test_valid_cutover_and_bounded_self_test(self) -> None:
+    def test_valid_cutover_passes(self) -> None:
         root = self.make_valid_root()
         self.assertEqual(self.validator.validate_repository(root)["activeConsumers"], 0)
-        self.assertEqual(self.validator.run_self_test(root), (1, 1))
 
     def test_plain_instructions_fail_for_every_published_or_unknown_artifact(
         self,
@@ -194,11 +189,9 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
             "docs/90.references/research/2099-01-01-test/report.md",
             "docs/99.templates/templates/common/readme-implementation.template.md",
             "docs/00.agent-governance/memory/progress.md",
-            "tests/README.md",
             ".codex/agents/reviewer.toml",
             "scripts/tool",
             "scripts/unknown.py",
-            "tests/unadmitted.py",
         ):
             for status in ("active", "accepted", "done"):
                 with self.subTest(path=path, status=status):
@@ -219,18 +212,44 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
         )
         self.assert_rule(root, "AGQC-LEGACY-CONSUMER")
 
-    def test_declared_test_and_enforcement_artifacts_are_not_instructions(self) -> None:
+    def test_declared_enforcement_artifacts_are_not_instructions(self) -> None:
         root = self.make_valid_root()
-        for path in (*self.owners.enforcement_paths, *self.owners.helper_roles):
+        for path in self.owners.enforcement_paths:
             self.add_text(root, path, '"scripts/validate-agent-role-semantics.py"\n')
         self.assertEqual(self.validator.validate_repository(root)["activeConsumers"], 0)
+
+    def test_test_artifacts_are_never_opened_by_the_production_consumer_scan(self) -> None:
+        root = self.make_valid_root()
+        self.add_text(
+            root,
+            "tests/dynamic-regression.py",
+            'RETIRED = "scripts/validate-agent-role-semantics.py"\n',
+        )
+        with self.validator._RepositoryReader(root) as reader:
+            candidates = self.validator._repository_candidates(reader)
+            original = reader.candidate_payload
+
+            def guarded_payload(path: str, *, read: bool):
+                if read and path.startswith("tests/"):
+                    raise AssertionError(f"production opened {path}")
+                return original(path, read=read)
+
+            with mock.patch.object(
+                reader, "candidate_payload", side_effect=guarded_payload
+            ):
+                _scanned, _evidence, consumers = (
+                    self.validator._scan_consumers_with_reader(
+                        reader,
+                        candidates,
+                        self.owners,
+                    )
+                )
+        self.assertEqual(consumers, [])
 
     def test_published_document_precedes_a_control_identity(self) -> None:
         root = self.make_valid_root()
         self.owners.enforcement_paths |= {"README.md"}
-        self.owners.helper_roles["tests/README.md"] = "regression-test"
-        for path in ("README.md", "tests/README.md"):
-            self.add_text(root, path, "use .github/ABOUT.md\n")
+        self.add_text(root, "README.md", "use .github/ABOUT.md\n")
         self.assert_rule(root, "AGQC-LEGACY-CONSUMER")
 
     def test_exact_history_requires_applicable_disposition_and_rejects_append(

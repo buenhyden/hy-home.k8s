@@ -601,27 +601,6 @@ class CiPythonContractTests(unittest.TestCase):
             len(set(VALIDATOR.STABLE_RULE_IDS)),
         )
 
-    def test_self_test_reports_the_derived_stable_rule_count(self) -> None:
-        result = subprocess.run(
-            [
-                sys.executable,
-                str(VALIDATOR_PATH),
-                "--root",
-                str(REPO_ROOT),
-                "--self-test",
-            ],
-            cwd=REPO_ROOT,
-            text=True,
-            capture_output=True,
-            check=False,
-        )
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn(
-            "[PASS] CI Python contract self-test passed: "
-            f"rules={len(EXPECTED_STABLE_RULE_IDS)} cases=31",
-            result.stdout,
-        )
-
     def test_symlink_repository_root_fails_closed_without_target_disclosure(
         self,
     ) -> None:
@@ -845,7 +824,7 @@ class CiPythonContractTests(unittest.TestCase):
         )
         self.assert_rule(root, "CI-PYTHON-LOCK")
 
-    def test_lock_digest_must_match_the_reviewed_runtime_authority(self) -> None:
+    def test_structurally_valid_lock_hash_update_is_not_source_pinned(self) -> None:
         root = self.make_valid_root()
         lock = root / ".github/requirements/ci-validation.txt"
         lock.write_text(
@@ -856,7 +835,7 @@ class CiPythonContractTests(unittest.TestCase):
             ),
             encoding="utf-8",
         )
-        self.assert_rule(root, "CI-PYTHON-LOCK")
+        VALIDATOR.validate_repository(root)
 
     def test_validation_job_must_pin_python_312(self) -> None:
         root = self.make_valid_root()

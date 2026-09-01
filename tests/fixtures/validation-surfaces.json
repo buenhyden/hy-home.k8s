@@ -129,7 +129,6 @@
       "expected": {
         "validators": [
           "agent-governance-ci",
-          "agent-governance-closure",
           "agent-legacy-cutover",
           "document-contract-registry",
           "document-lifecycle",
@@ -155,17 +154,11 @@
       ],
       "expected": {
         "validators": [
-          "agent-checkpoint",
-          "agent-evaluations",
           "agent-governance-ci",
-          "agent-governance-closure",
           "agent-harness-contract",
           "agent-legacy-cutover",
           "agent-loop-lifecycle",
-          "agent-model-fitness",
           "agent-provider-evidence",
-          "agent-roster-admission",
-          "agent-roster-currentness",
           "document-contract-registry",
           "document-lifecycle",
           "links-and-owners",
@@ -189,16 +182,10 @@
       ],
       "expected": {
         "validators": [
-          "agent-checkpoint",
-          "agent-evaluations",
           "agent-governance-ci",
-          "agent-governance-closure",
           "agent-harness-contract",
           "agent-legacy-cutover",
           "agent-loop-lifecycle",
-          "agent-model-fitness",
-          "agent-roster-admission",
-          "agent-roster-currentness",
           "document-contract-registry",
           "document-lifecycle",
           "links-and-owners",
@@ -223,17 +210,11 @@
       ],
       "expected": {
         "validators": [
-          "agent-checkpoint",
-          "agent-evaluations",
           "agent-governance-ci",
-          "agent-governance-closure",
           "agent-harness-contract",
           "agent-legacy-cutover",
           "agent-loop-lifecycle",
-          "agent-model-fitness",
           "agent-provider-evidence",
-          "agent-roster-admission",
-          "agent-roster-currentness",
           "document-contract-registry",
           "document-lifecycle",
           "gitops-structure",
@@ -264,7 +245,6 @@
       "expected": {
         "validators": [
           "agent-governance-ci",
-          "agent-governance-closure",
           "agent-legacy-cutover",
           "repository-quality"
         ],
@@ -286,7 +266,6 @@
       "expected": {
         "validators": [
           "agent-governance-ci",
-          "agent-governance-closure",
           "agent-legacy-cutover",
           "repository-quality"
         ],
@@ -308,7 +287,6 @@
       "expected": {
         "validators": [
           "agent-governance-ci",
-          "agent-governance-closure",
           "agent-legacy-cutover",
           "document-contract-registry",
           "document-lifecycle",
@@ -339,7 +317,6 @@
       "expected": {
         "validators": [
           "agent-governance-ci",
-          "agent-governance-closure",
           "agent-legacy-cutover",
           "document-contract-registry",
           "document-lifecycle",
@@ -364,17 +341,11 @@
       ],
       "expected": {
         "validators": [
-          "agent-checkpoint",
-          "agent-evaluations",
           "agent-governance-ci",
-          "agent-governance-closure",
           "agent-harness-contract",
           "agent-legacy-cutover",
           "agent-loop-lifecycle",
-          "agent-model-fitness",
           "agent-provider-evidence",
-          "agent-roster-admission",
-          "agent-roster-currentness",
           "gitops-structure",
           "infrastructure-contracts",
           "k8s-manifests",
@@ -400,16 +371,11 @@
       ],
       "expected": {
         "validators": [
-          "agent-checkpoint",
-          "agent-evaluations",
           "agent-governance-ci",
-          "agent-governance-closure",
           "agent-harness-contract",
           "agent-legacy-cutover",
           "agent-loop-lifecycle",
-          "agent-model-fitness",
           "agent-provider-evidence",
-          "agent-roster-admission",
           "repository-quality"
         ],
         "ciJobs": [
@@ -469,19 +435,14 @@
       ],
       "expected": {
         "validators": [
-          "agent-checkpoint",
-          "agent-evaluations",
           "agent-governance-ci",
-          "agent-governance-closure",
           "agent-harness-contract",
           "agent-legacy-cutover",
           "agent-loop-lifecycle",
-          "agent-model-fitness",
           "agent-provider-evidence",
-          "agent-roster-admission",
-          "agent-roster-currentness",
           "document-contract-registry",
           "document-lifecycle",
+          "gitops-change-set",
           "gitops-structure",
           "infrastructure-contracts",
           "k8s-manifests",
@@ -513,17 +474,11 @@
       ],
       "expected": {
         "validators": [
-          "agent-checkpoint",
-          "agent-evaluations",
           "agent-governance-ci",
-          "agent-governance-closure",
           "agent-harness-contract",
           "agent-legacy-cutover",
           "agent-loop-lifecycle",
-          "agent-model-fitness",
           "agent-provider-evidence",
-          "agent-roster-admission",
-          "agent-roster-currentness",
           "document-contract-registry",
           "document-lifecycle",
           "gitops-structure",
@@ -576,7 +531,6 @@
       "expected": {
         "validators": [
           "agent-governance-ci",
-          "agent-governance-closure",
           "agent-legacy-cutover",
           "repository-quality"
         ],
@@ -617,16 +571,10 @@
       ],
       "expected": {
         "validators": [
-          "agent-checkpoint",
-          "agent-evaluations",
           "agent-governance-ci",
-          "agent-governance-closure",
           "agent-harness-contract",
           "agent-legacy-cutover",
           "agent-loop-lifecycle",
-          "agent-model-fitness",
-          "agent-roster-admission",
-          "agent-roster-currentness",
           "document-contract-registry",
           "document-lifecycle",
           "links-and-owners",
@@ -664,7 +612,6 @@
       "expected": {
         "validators": [
           "agent-governance-ci",
-          "agent-governance-closure",
           "agent-legacy-cutover",
           "document-contract-registry",
           "document-lifecycle",
@@ -1397,18 +1344,6 @@
         "tests/test_validate_ci_python_contract.py"
       ],
       "expectedError": "SURFACE-AGENT-GOVERNANCE-CI"
-    },
-    {
-      "name": "remove-agent-governance-closure-governance-documents",
-      "mutation": {
-        "kind": "remove-validator-reference",
-        "surfaceId": "governance-documents",
-        "validatorId": "agent-governance-closure"
-      },
-      "paths": [
-        "docs/00.agent-governance/rules/quality-standards.md"
-      ],
-      "expectedError": "SURFACE-AGENT-GOVERNANCE-CLOSURE"
     }
   ]
 }

@@ -161,8 +161,8 @@ be deleted with provenance and disposition evidence.
 | REQ-0008-FR-0008 | Classify retired material before disposition: retain distinct current authority, preserve observation facts, and delete duplicate, generated, superseded, or zero-consumer material after reviewed consumer and Git-recovery evidence. | Must | Every removed path has a named current owner or an explicit deletion decision in its Task/diff; Git is the default full-body recovery owner and no replacement document is created solely for retention. |
 | REQ-0008-FR-0009 | Preserve the declared bytes of retained sealed Stage 98 evidence without making Stage 98 a current-document dependency or requiring parity with ordinary current files. | Must | Sealed records retain their declared integrity checks; current stages contain no Stage 98 links, and routine current moves/deletions recover from Git without a fixed Archive census. |
 | REQ-0008-FR-0010 | Use route compatibility only for a bounded transition with a known consumer, then remove it at consumer-zero; do not retain body copies or redirects for routine moves. | Must | Negative fixtures reject ambiguous current ownership, while the terminal tree contains no obsolete compatibility owner or redirect-only document. |
-| REQ-0008-FR-0011 | Consolidate validator orchestration and duplicate-purpose scripts without merging validators that enforce distinct contracts. | Must | One declared lane owns selection/orchestration; registry, Markdown, link/owner, security, CI, and archive contracts retain independent evidence where their semantics differ. |
-| REQ-0008-FR-0012 | Retire `validate-harness.sh` only after all consumers migrate, and retain active-corpus or lifecycle validators until rule, consumer, and fixture audits prove retirement safe. | Must | No deleted executable has a live consumer or unique negative fixture; the declared/executable inventory agrees. |
+| REQ-0008-FR-0011 | Consolidate validator orchestration and duplicate-purpose scripts without merging validators that enforce distinct contracts. | Must | `scripts/validation/registry.json` is the sole lane and argv owner; the aggregate invokes its `all-files` runner once without embedded validator commands; registry, Markdown, link/owner, security, CI, archive, and repository-wide contracts retain independent evidence where their semantics differ. |
+| REQ-0008-FR-0012 | Retire a wrapper only after all consumers migrate, and retain focused validators or manual dispatchers while they own a distinct command or diagnostic contract. | Must | No deleted executable has a live consumer or unique negative fixture; retained wrappers add no rule semantics; the declared/executable graph agrees without a fixed file count. |
 | REQ-0008-FR-0013 | Extend the existing harness contract, rather than creating a parallel governance registry, with system risk policy, tool/data trust, oversight, stop, approval/trace record shapes, evaluation, and component-provenance controls. | Must | Schema negative tests reject missing high-risk policy or evidence-reference fields and static evidence cannot satisfy runtime-enforcement fields. |
 | REQ-0008-FR-0014 | Distinguish repository-declared, provider-runtime-enforced, hosted-CI, and authorized remote/live evidence states. | Must | No state transition or report promotes evidence across classes without a matching observed record. |
 | REQ-0008-FR-0015 | Rotate the shared progress ledger and remove tracked stale generated graph output only after recoverability and consumer checks pass. | Should | Current memory is bounded, retained history is indexed, generated graph output is reproducible or ignored, and no consumer breaks. |
@@ -299,7 +299,7 @@ may maintain bounded archive-internal navigation only.
 | --- | --- |
 | ACC-WDTC-001 | Stage 03 is the only live Spec/Plan/Task work-unit owner; every package has a thin router and package-local Task records, and retired Stage 04 has no live consumer. |
 | ACC-WDTC-002 | `docs/05.operations/` remains stable and no Release-family surface is created. |
-| ACC-WDTC-003 | Current authored filenames are date-free; Stage 90 pack roots use category-local `####-<slug>` identities and dates remain metadata, while the Incident/Postmortem year partition is the only active event-route exception. |
+| ACC-WDTC-003 | Current authored filenames are date-free; Stage 90 pack roots use category-local, number-unique `####-<slug>` identities, contain a regular `README.md` using the matching Stage 99 category template, and dates remain metadata, while the Incident/Postmortem year partition is the only active event-route exception. |
 | ACC-WDTC-004 | Registry-owned lineage, route, template, heading, and lifecycle contracts have no competing prose or machine owner. |
 | ACC-WDTC-005 | Every removed document or script has a reviewed successor-or-delete decision, consumer-zero evidence, and Git recovery; a tracked Archive replacement is required only for distinct historical value. |
 | ACC-WDTC-006 | Agent governance records risk, trust boundaries, tool-bound approval, oversight, provenance, and evidence depth without claiming provider enforcement from static files. |
@@ -312,6 +312,20 @@ may maintain bounded archive-internal navigation only.
 | ACC-WDTC-013 | Every removed authority path is recoverable from Git; a minimal Migration/Tombstone exists only for unique lookup value, and no current-file parity, branch identity, or fixed Archive snapshot count is terminal policy. |
 | ACC-WDTC-014 | Script inventory is derived from the closed owner/consumer graph; no fixed script count is terminal policy. |
 | ACC-WDTC-015 | Lifecycle validation rejects illegal profile/state/edge changes and sealed-evidence mutation without freezing ordinary terminal bodies or blocking reviewed consumer-zero deletions and classification-only Reference/router creation. |
+
+The current implementation uses `scripts/validation/registry.json` for route,
+lane, and argv selection. The orchestration-only
+`validate-repo-quality-gates.sh` invokes its bounded `all-files` runner once;
+focused production validators plus `validation/repository/quality.py` own
+distinct and residual rules. Independent top-level tests own synthetic
+mutations and fixtures, while production modules neither import nor read them.
+Tracked path input, Git output, subprocess output, and execution time are
+bounded and fail closed. Transitional Agent wrappers have no current consumer,
+and the externally required `agent-governance-static` job name remains stable.
+Stage 90 currently retains only the latest external research pack at
+`research/0001-workspace-engineering/`; topology tests reject date-based or
+loose entries, duplicate category-local numbers, missing pack README files,
+non-regular members, and category-template mismatch.
 
 ## Scope and Non-goals
 

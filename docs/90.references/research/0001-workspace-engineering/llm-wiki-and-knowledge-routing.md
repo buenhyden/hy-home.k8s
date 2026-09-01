@@ -10,9 +10,10 @@ updated: 2026-08-31
 
 ## Overview
 
-LLM-WIKI is a repository-local, generated canonical-owner link map. It makes
-the correct document easier to find; it is neither a knowledge store nor a
-retrieval system and cannot make its targets authoritative, fresh, or safe.
+At the recorded observation dates, LLM-WIKI was a repository-local generated
+canonical-owner link map. It made the correct document easier to find; it was
+neither a knowledge store nor a retrieval system and could not make its targets
+authoritative, fresh, or safe.
 
 > **Current implementation disposition (2026-08-31):** the local generated
 > LLM-WIKI README, index, generator, dedicated guide, and freshness gate were
@@ -42,12 +43,13 @@ freshness rules, and the boundary from llms.txt, MCP Resources, search, and RAG.
 
 ### LLM-WIKI baseline
 
-The current generator emits a fixed Markdown canonical-owner map to
-`docs/90.references/llm-wiki/wiki-index.md`; `--check` compares that output to
-the tracked file. Its README declares the current inputs and prohibits copied
+At the observation date, the now-retired generator emitted a fixed Markdown
+canonical-owner map to the then-tracked `docs/90.references/llm-wiki/wiki-index.md`
+and its `--check` mode compared generated output with that index. The retired
+README declared its inputs and prohibited copied
 policy/procedure content, vector data, embeddings, runtime configuration, and
-static-site output. This is a deterministic **link-map contract**, not a
-document-discovery experiment.
+static-site output. This was a deterministic **link-map contract**, not a
+document-discovery experiment; Git history preserves the former implementation.
 
 | Surface       | What it is                                                                                                        | What it is not                                                                                         | Evidence boundary                                                                                           |
 | ------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
@@ -186,12 +188,11 @@ retrieval, and provider runtime.
   `llm-wiki-and-knowledge-routing.md#llm-wiki-baseline`. `llms.txt` remains a
   community proposal, and MCP Resources remain URI-addressed server data whose
   incorporation is application-driven.
-- **As-Is:** LLM-WIKI remains a deterministic Markdown canonical-owner link
-  map. Its README owns declared inputs, the generator owns output, and
-  `wiki-index.md` is generated state. The research report did not run the
-  generator; this integration task runs the existing `--check` lane and records
-  that result in lifecycle evidence without changing the immutable baseline
-  observation.
+- **Observed As-Was:** LLM-WIKI was a deterministic Markdown canonical-owner
+  link map. Its README owned declared inputs, the generator owned output, and
+  its index was generated state. The research report did not run the generator;
+  the recorded integration task ran the then-existing `--check` lane without
+  changing the immutable baseline observation. That lane is now retired.
 - **Gap / Target:** no web publication, llms.txt consumer, MCP server/session,
   capability negotiation, access policy, search index, RAG corpus, ingestion,
   deletion, retrieval, or retrieval-quality evaluation was observed. Retain
@@ -201,15 +202,13 @@ retrieval, and provider runtime.
   specification evidence. A Markdown map, current proposal, MCP specification,
   or generator PASS cannot prove authority, source currency, publication,
   ingestion, retrieval, access control, or model use.
-- **Disposition / retained boundary:** `Verified`; blocking class
-  `repo-static`. The current generator check is the only reachable static
-  follow-up in this workstream; all provider/runtime and hosted/user effects
-  remain `DEFER`.
-- **Owner / safe follow-up / trigger:** LLM-WIKI README/generator owners and
-  canonical content owners. Reopen on declared-input, generator, owner-path,
-  index-drift, llms.txt status, or MCP Resources revision change; require a
-  separately approved security and evaluation design before publication or
-  retrieval.
+- **Disposition / retained boundary:** historical `Verified`; blocking class
+  `repo-static`. No current generator check remains. Provider/runtime and
+  hosted/user effects remain `DEFER`.
+- **Owner / safe follow-up / trigger:** this preserved research pack and current
+  canonical content owners. Reopen on a newly approved discovery surface,
+  llms.txt status, or MCP Resources revision change; require a separately
+  approved security and evaluation design before publication or retrieval.
 
 ## Related Documents
 

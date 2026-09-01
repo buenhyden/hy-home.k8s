@@ -1,0 +1,4730 @@
+#!/usr/bin/env python3
+"""Validate repository-wide contracts not owned by a focused validator."""
+
+import argparse
+import ast
+import collections
+import hashlib
+import json
+import os
+import pathlib
+import re
+import subprocess
+import sys
+import tempfile
+
+import yaml
+
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("--root", type=pathlib.Path, default=pathlib.Path.cwd())
+args = parser.parse_args()
+root = args.root.resolve()
+
+sys.path.insert(0, str(root / "scripts"))
+from document_contracts import (  # noqa: E402 - repository-local contract module
+    DocumentContractError,
+    TARGET_ROOTS,
+    classify_path,
+    load_registry,
+)
+from validation.current_executable_references import (  # noqa: E402
+    executable_suffixes_from_registry,
+    reachable_git_path_exists,
+    validate_current_executable_references,
+)
+from validation.repository.bounded_io import (  # noqa: E402
+    BoundedInputError,
+    BoundedOutputError,
+    read_bytes as read_bounded_bytes,
+    read_text as read_bounded_text,
+    run as run_bounded_process,
+)
+
+failures = []
+MAX_REPOSITORY_INPUT_BYTES = 8 * 1024 * 1024
+MAX_PROCESS_STDOUT_BYTES = 4 * 1024 * 1024
+MAX_PROCESS_STDERR_BYTES = 512 * 1024
+
+
+class DuplicateKeyLoader(yaml.SafeLoader):
+    pass
+
+
+def construct_mapping_without_duplicates(loader, node, deep=False):
+    seen = set()
+    for key_node, _ in node.value:
+        key = loader.construct_object(key_node, deep=deep)
+        if key in seen:
+            raise ValueError(f"duplicate YAML key: {key}")
+        seen.add(key)
+    return yaml.SafeLoader.construct_mapping(loader, node, deep=deep)
+
+
+DuplicateKeyLoader.add_constructor(
+    yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+    construct_mapping_without_duplicates,
+)
+
+
+def fail(message: str) -> None:
+    failures.append(f"ERR {message}")
+
+
+def display_path(path: pathlib.Path) -> str:
+    try:
+        return path.resolve(strict=False).relative_to(root).as_posix()
+    except (OSError, ValueError):
+        return path.name
+
+
+def read_text(path: pathlib.Path) -> str:
+    try:
+        return read_bounded_text(path, max_bytes=MAX_REPOSITORY_INPUT_BYTES)
+    except BoundedInputError:
+        fail(f"{display_path(path)} is not a bounded strict UTF-8 regular file")
+        return ""
+
+
+def read_bytes(path: pathlib.Path) -> bytes:
+    try:
+        return read_bounded_bytes(path, max_bytes=MAX_REPOSITORY_INPUT_BYTES)
+    except BoundedInputError:
+        fail(f"{display_path(path)} is not a bounded regular file")
+        return b""
+
+
+def bounded_process(
+    argv,
+    *,
+    cwd,
+    timeout,
+    input=None,
+    text=False,
+    capture_output=False,
+    env=None,
+    check=False,
+    stdout=None,
+):
+    """Compatibility adapter for captured validation subprocesses."""
+
+    if not capture_output and stdout is not subprocess.PIPE:
+        raise ValueError("bounded process output must be captured")
+    input_bytes = input.encode("utf-8") if text and input is not None else input
+    try:
+        completed = run_bounded_process(
+            argv,
+            cwd=pathlib.Path(cwd),
+            env=env,
+            input_bytes=input_bytes,
+            timeout=timeout,
+            stdout_limit=MAX_PROCESS_STDOUT_BYTES,
+            stderr_limit=MAX_PROCESS_STDERR_BYTES,
+        )
+    except (BoundedOutputError, subprocess.TimeoutExpired, OSError, ValueError):
+        fail(f"bounded subprocess failed: {pathlib.Path(argv[0]).name}")
+        empty = "" if text else b""
+        return subprocess.CompletedProcess(argv, 125, empty, empty)
+    if check and completed.returncode:
+        fail(f"bounded subprocess exited non-zero: {pathlib.Path(argv[0]).name}")
+    if not text:
+        return completed
+    try:
+        standard_output = completed.stdout.decode("utf-8", errors="strict")
+        standard_error = completed.stderr.decode("utf-8", errors="strict")
+    except UnicodeError:
+        fail(f"bounded subprocess output is not UTF-8: {pathlib.Path(argv[0]).name}")
+        standard_output = standard_error = ""
+    return subprocess.CompletedProcess(
+        argv,
+        completed.returncode,
+        standard_output,
+        standard_error,
+    )
+
+
+def load_yaml(path: pathlib.Path):
+    return yaml.load(read_text(path), Loader=DuplicateKeyLoader) or {}
+
+
+def load_yaml_documents(path: pathlib.Path) -> list:
+    return [
+        document or {}
+        for document in yaml.load_all(read_text(path), Loader=DuplicateKeyLoader)
+    ]
+
+
+def workflow_on(data):
+    return data.get("on") if "on" in data else data.get(True, {})
+
+
+def load_json(path: pathlib.Path):
+    try:
+        return json.loads(read_text(path))
+    except (json.JSONDecodeError, ValueError):
+        fail(f"{display_path(path)} is not valid JSON")
+        return {}
+
+
+def has_markdown_frontmatter(path: pathlib.Path, text: str | None = None) -> bool:
+    content = read_text(path) if text is None else text
+    return bool(re.match(r"^---\n.*?\n---\n", content, re.DOTALL))
+
+
+def strip_multiline_html_comments(line: str, in_comment: bool) -> tuple[str, bool]:
+    """Remove HTML comments while retaining visible text around them."""
+    visible = []
+    cursor = 0
+    while cursor < len(line):
+        if in_comment:
+            end = line.find("-->", cursor)
+            if end < 0:
+                return "".join(visible), True
+            cursor = end + 3
+            in_comment = False
+            continue
+        start = line.find("<!--", cursor)
+        if start < 0:
+            visible.append(line[cursor:])
+            break
+        visible.append(line[cursor:start])
+        cursor = start + 4
+        in_comment = True
+    return "".join(visible), in_comment
+
+
+def visible_markdown_lines(markdown: str) -> list[tuple[int, str]]:
+    """Return visible Markdown lines with their original zero-based offsets."""
+    visible_lines: list[tuple[int, str]] = []
+    fence_character = None
+    fence_length = 0
+    in_comment = False
+    opening_fence = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
+
+    for source_offset, raw_line in enumerate(markdown.splitlines()):
+        if fence_character is not None:
+            closing_fence = re.compile(
+                rf"^ {{0,3}}{re.escape(fence_character)}"
+                rf"{{{fence_length},}}[ \t]*$"
+            )
+            if closing_fence.match(raw_line):
+                fence_character = None
+                fence_length = 0
+            continue
+
+        line, in_comment = strip_multiline_html_comments(raw_line, in_comment)
+        fence_match = opening_fence.match(line)
+        if fence_match:
+            marker = fence_match.group(1)
+            fence_character = marker[0]
+            fence_length = len(marker)
+            continue
+
+        visible_lines.append((source_offset, line))
+
+    return visible_lines
+
+
+def rel(path: pathlib.Path) -> str:
+    return str(path.relative_to(root))
+
+
+def is_historical_evidence_path(path: pathlib.Path) -> bool:
+    return (
+        path == root / "docs/00.agent-governance/memory/progress.md"
+        or path.is_relative_to(root / "docs/98.archive")
+    )
+
+
+def collect_strings(value) -> list[str]:
+    if isinstance(value, str):
+        return [value]
+    if isinstance(value, dict):
+        values: list[str] = []
+        for item in value.values():
+            values.extend(collect_strings(item))
+        return values
+    if isinstance(value, list):
+        values: list[str] = []
+        for item in value:
+            values.extend(collect_strings(item))
+        return values
+    return []
+
+
+def format_branch_prefixes(prefixes: list[str]) -> str:
+    return ", ".join(f"{prefix}/" for prefix in prefixes)
+
+
+def parse_env_keys(path: pathlib.Path) -> list[str]:
+    keys: list[str] = []
+    for raw_line in read_text(path).splitlines():
+        stripped = raw_line.strip()
+        if not stripped or stripped.startswith("#") or "=" not in stripped:
+            continue
+        key = stripped.split("=", 1)[0].strip()
+        if key:
+            keys.append(key)
+    return keys
+
+
+def extract_ci_branch_policy_prefixes(branch_policy_text: str) -> list[str]:
+    match = re.search(r"allowed_branch_regex=['\"]\^\(([^)]+)\)/['\"]", branch_policy_text)
+    if not match:
+        return []
+    return match.group(1).split("|")
+
+
+def extract_pr_template_prefixes(text: str) -> list[str]:
+    return [prefix.rstrip("/") for prefix in re.findall(r"`([a-z0-9-]+/)`", text)]
+
+
+def has_provider_example_boundary_prompt(text: str) -> bool:
+    required_terms = [
+        "examples/aws",
+        "examples/azure",
+        "adjacent executable assets",
+        "not live provider-latest guidance",
+        "approved provider refresh spec",
+    ]
+    for line in text.splitlines():
+        normalized = line.casefold()
+        if all(term in normalized for term in required_terms):
+            return True
+    return False
+
+
+def markdown_table_after_heading(
+    text: str,
+    heading: str | tuple[str, ...],
+) -> list[list[str]]:
+    rows, diagnostic = parse_markdown_table_after_heading(text, heading)
+    if diagnostic:
+        fail(diagnostic)
+        return []
+    return rows
+
+
+def parse_markdown_table_after_heading(
+    text: str,
+    heading: str | tuple[str, ...],
+) -> tuple[list[list[str]], str | None]:
+    headings = (heading,) if isinstance(heading, str) else heading
+    visible_lines = visible_markdown_lines(text)
+    matches = [
+        (source_offset, candidate)
+        for source_offset, line in visible_lines
+        for candidate in headings
+        if line.strip() == candidate
+    ]
+    if not matches:
+        return [], f"missing visible markdown heading: one of {headings!r}"
+    if len(matches) != 1:
+        return (
+            [],
+            "ambiguous visible markdown table headings: "
+            f"{[candidate for _, candidate in matches]!r}",
+        )
+    start, _ = matches[0]
+
+    table_lines: list[str] = []
+    for source_offset, line in visible_lines:
+        if source_offset <= start:
+            continue
+        stripped = line.strip()
+        if not stripped:
+            if table_lines:
+                break
+            continue
+        if not stripped.startswith("|"):
+            if table_lines:
+                break
+            continue
+        table_lines.append(stripped)
+
+    rows: list[list[str]] = []
+    for line in table_lines:
+        cells = [cell.strip() for cell in line.strip("|").split("|")]
+        if cells and all(re.fullmatch(r":?-{3,}:?", cell) for cell in cells):
+            continue
+        rows.append(cells)
+    return rows, None
+
+
+def profiled_readme_table_headings(title: str) -> tuple[str, str]:
+    """Accept one visible legacy H2 or canonical implementation-profile H3."""
+    return (f"## {title}", f"### {title}")
+
+
+def assert_profiled_readme_table_heading_probe() -> None:
+    expected = [["Name", "Value"], ["alpha", "one"]]
+    consumer_titles = (
+        "Example Role Matrix",
+        "Service Coverage Matrix",
+        "External Service Contract Matrix",
+        "Secret Management Responsibility Matrix",
+        "Workload Coverage Matrix",
+        "AppProject Allow-list Rationale Matrix",
+        "Workload Image and Kind Policy Matrix",
+        "Namespace Ownership Matrix",
+        "Infrastructure Coverage Matrix",
+        "WSL2 Runtime Prerequisite Matrix",
+        "Bootstrap Boundary Matrix",
+        "Infrastructure Test Inventory",
+        "Traefik Route Inventory",
+    )
+    candidates = profiled_readme_table_headings("Probe Index")
+    documents = {
+        "visible legacy H2": """# Probe
+
+## Probe Index
+
+| Name | Value |
+| --- | --- |
+| alpha | one |
+""",
+        "visible canonical H3": """# Probe
+
+### Probe Index
+
+| Name | Value |
+| --- | --- |
+| alpha | one |
+""",
+        "visible plus fenced fakes": """# Probe
+
+```markdown
+## Probe Index
+| Name | Value |
+| fake-backtick | ignored |
+```
+
+~~~markdown
+### Probe Index
+| Name | Value |
+| fake-tilde | ignored |
+~~~
+
+### Probe Index
+
+| Name | Value |
+| --- | --- |
+| alpha | one |
+""",
+        "visible plus multiline-comment fake": """# Probe
+
+<!--
+## Probe Index
+| Name | Value |
+| fake-comment | ignored |
+-->
+
+### Probe Index
+
+| Name | Value |
+| --- | --- |
+| alpha | one |
+""",
+    }
+    for label, document in documents.items():
+        actual, diagnostic = parse_markdown_table_after_heading(
+            document,
+            candidates,
+        )
+        if diagnostic or actual != expected:
+            fail(
+                f"profiled README table heading probe failed for {label}: "
+                f"rows={actual!r} diagnostic={diagnostic!r}"
+            )
+
+    duplicate = """# Probe
+
+## Probe Index
+
+### Probe Index
+
+| Name | Value |
+| --- | --- |
+| alpha | one |
+"""
+    duplicate_rows, duplicate_diagnostic = parse_markdown_table_after_heading(
+        duplicate,
+        candidates,
+    )
+    if duplicate_rows or duplicate_diagnostic != (
+        "ambiguous visible markdown table headings: "
+        "['## Probe Index', '### Probe Index']"
+    ):
+        fail(
+            "profiled README table heading duplicate probe failed: "
+            f"rows={duplicate_rows!r} diagnostic={duplicate_diagnostic!r}"
+        )
+
+    for title in consumer_titles:
+        for level in ("##", "###"):
+            document = f"""# Probe
+
+{level} {title}
+
+| Name | Value |
+| --- | --- |
+| alpha | one |
+"""
+            actual, diagnostic = parse_markdown_table_after_heading(
+                document,
+                profiled_readme_table_headings(title),
+            )
+            if diagnostic or actual != expected:
+                fail(
+                    f"profiled README consumer probe failed for {level} {title}: "
+                    f"rows={actual!r} diagnostic={diagnostic!r}"
+                )
+
+        hidden = f"""# Probe
+
+```markdown
+## {title}
+| Name | Value |
+| hidden-fence | ignored |
+```
+
+<!--
+### {title}
+| Name | Value |
+| hidden-comment | ignored |
+-->
+
+### {title}
+
+| Name | Value |
+| --- | --- |
+| alpha | one |
+"""
+        hidden_rows, hidden_diagnostic = parse_markdown_table_after_heading(
+            hidden,
+            profiled_readme_table_headings(title),
+        )
+        if hidden_diagnostic or hidden_rows != expected:
+            fail(
+                f"profiled README hidden consumer probe failed for {title}: "
+                f"rows={hidden_rows!r} diagnostic={hidden_diagnostic!r}"
+            )
+
+        duplicate = f"""# Probe
+
+## {title}
+
+### {title}
+
+| Name | Value |
+| --- | --- |
+| alpha | one |
+"""
+        duplicate_rows, duplicate_diagnostic = parse_markdown_table_after_heading(
+            duplicate,
+            profiled_readme_table_headings(title),
+        )
+        expected_duplicate = (
+            "ambiguous visible markdown table headings: "
+            f"['## {title}', '### {title}']"
+        )
+        if duplicate_rows or duplicate_diagnostic != expected_duplicate:
+            fail(
+                f"profiled README duplicate consumer probe failed for {title}: "
+                f"rows={duplicate_rows!r} diagnostic={duplicate_diagnostic!r}"
+            )
+
+
+assert_profiled_readme_table_heading_probe()
+
+
+tracked = set()
+try:
+    proc = bounded_process(
+        ["git", "ls-files"],
+        cwd=root,
+        check=True,
+        text=True,
+        capture_output=True,
+        timeout=120,
+    )
+    tracked = set(proc.stdout.splitlines())
+except Exception as exc:
+    fail(f"git ls-files failed: {exc}")
+
+for tracked_path in sorted(tracked):
+    if re.fullmatch(r"\.claude/[^/]+\.local\.md", tracked_path):
+        fail(f"ignored local Claude/Hookify runtime rule must not be tracked: {tracked_path}")
+    if tracked_path == ".env":
+        fail(".env must remain untracked; commit .env.example only")
+    tracked_name = pathlib.Path(tracked_path).name
+    if tracked_name == "progress.md" and tracked_path != "docs/00.agent-governance/memory/progress.md":
+        fail(f"tracked progress.md must live only at docs/00.agent-governance/memory/progress.md: {tracked_path}")
+    if re.search(r"(^temp_|_(new|old|backup)(\.|$))", tracked_name):
+        fail(f"tracked temporary or backup-style file name is not allowed: {tracked_path}")
+
+requirements_stage = root / "docs/01.requirements"
+if requirements_stage.exists():
+    for requirement_doc in sorted(requirements_stage.glob("*.md")):
+        if requirement_doc.name == "README.md":
+            continue
+        if re.fullmatch(r"\d{4}-\d{2}-\d{2}-.+\.md", requirement_doc.name):
+            fail(
+                "active PRDs must use numeric route "
+                f"docs/01.requirements/<####-numbering>-<feature-or-system>.md: {rel(requirement_doc)}"
+            )
+        if not re.fullmatch(r"\d{4}-.+\.md", requirement_doc.name):
+            fail(
+                "active PRD filename must start with a four-digit numeric prefix: "
+                f"{rel(requirement_doc)}"
+            )
+
+specs_stage = root / "docs/03.specs"
+if specs_stage.exists():
+    for spec_entry in sorted(specs_stage.iterdir()):
+        if spec_entry.name == "README.md":
+            continue
+        if spec_entry.is_dir():
+            if not re.fullmatch(r"\d{4}-.+", spec_entry.name):
+                fail(
+                    "active Spec folder must start with a four-digit numeric prefix: "
+                    f"{rel(spec_entry)}"
+                )
+            continue
+        if spec_entry.is_file():
+            fail(f"docs/03.specs may contain only README.md and numbered Spec folders: {rel(spec_entry)}")
+
+env_ignore_check = subprocess.run(
+    ["git", "check-ignore", "-q", ".env"], cwd=root, timeout=120
+)
+if env_ignore_check.returncode == 1:
+    fail(".env must remain ignored by Git")
+elif env_ignore_check.returncode not in {0, 1}:
+    fail("git check-ignore failed while validating .env ignore contract")
+
+env_example_path = root / ".env.example"
+env_path = root / ".env"
+if not env_example_path.exists():
+    fail(".env.example is required as the tracked environment key contract")
+else:
+    env_example_keys = parse_env_keys(env_example_path)
+    duplicated_example_keys = sorted(key for key, count in collections.Counter(env_example_keys).items() if count > 1)
+    if duplicated_example_keys:
+        fail(".env.example contains duplicate keys: " + ", ".join(duplicated_example_keys))
+    if env_path.exists():
+        env_keys = parse_env_keys(env_path)
+        duplicated_env_keys = sorted(key for key, count in collections.Counter(env_keys).items() if count > 1)
+        if duplicated_env_keys:
+            fail(".env contains duplicate keys: " + ", ".join(duplicated_env_keys))
+        missing_env_keys = sorted(set(env_example_keys) - set(env_keys))
+        extra_env_keys = sorted(set(env_keys) - set(env_example_keys))
+        if missing_env_keys:
+            fail(".env is missing keys from .env.example: " + ", ".join(missing_env_keys))
+        if extra_env_keys:
+            fail(".env has keys not present in .env.example: " + ", ".join(extra_env_keys))
+
+
+
+claude_local_rule_paths = sorted((root / ".claude").glob("*.local.md"))
+for local_rule_path in claude_local_rule_paths:
+    local_rule_rel = rel(local_rule_path)
+    local_rule_ignore_check = subprocess.run(
+        ["git", "check-ignore", "-q", local_rule_rel], cwd=root, timeout=120
+    )
+    if local_rule_ignore_check.returncode == 1:
+        fail(f"{local_rule_rel} must remain ignored by Git")
+    elif local_rule_ignore_check.returncode not in {0, 1}:
+        fail(f"git check-ignore failed while validating local rule ignore contract: {local_rule_rel}")
+
+    if local_rule_path.name.startswith("hookify."):
+        text = read_text(local_rule_path)
+        frontmatter = re.match(r"^---\n(.*?)\n---\n", text, re.DOTALL)
+        if not frontmatter:
+            fail(f"{local_rule_rel} missing Hookify YAML frontmatter")
+            continue
+        try:
+            metadata = yaml.load(frontmatter.group(1), Loader=DuplicateKeyLoader) or {}
+        except Exception as exc:
+            fail(f"{local_rule_rel} Hookify frontmatter parse failed: {exc}")
+            continue
+        for field in ["name", "enabled", "event"]:
+            if field not in metadata:
+                fail(f"{local_rule_rel} missing Hookify frontmatter field: {field}")
+        if metadata.get("event") not in {"bash", "file", "stop", "prompt", "all"}:
+            fail(f"{local_rule_rel} has unsupported Hookify event: {metadata.get('event')}")
+        if "action" in metadata and metadata.get("action") not in {"warn", "block"}:
+            fail(f"{local_rule_rel} has unsupported Hookify action: {metadata.get('action')}")
+        if "pattern" not in metadata and "conditions" not in metadata:
+            fail(f"{local_rule_rel} must define Hookify pattern or conditions")
+
+local_agents_dir = root / ".agents"
+local_agents_skills_dir = root / ".agents" / "skills"
+if local_agents_dir.exists() and not local_agents_dir.is_dir():
+    fail(".agents must be a directory when present")
+if local_agents_skills_dir.exists() and not local_agents_skills_dir.is_dir():
+    fail(".agents/skills must be a directory when present")
+if local_agents_skills_dir.is_dir():
+    canonical_skill_paths = [
+        root / tracked_path
+        for tracked_path in sorted(tracked)
+        if re.fullmatch(r"\.claude/skills/[^/]+/skill\.md", tracked_path)
+    ]
+    for canonical_skill_path in canonical_skill_paths:
+        local_skill_path = local_agents_skills_dir / canonical_skill_path.parent.name / "skill.md"
+        if not local_skill_path.exists():
+            continue
+        if read_bytes(local_skill_path) != read_bytes(canonical_skill_path):
+            fail(
+                "shared skill mirror drift: "
+                f"{rel(local_skill_path)} differs from {rel(canonical_skill_path)}"
+            )
+
+allowed_top_level_docs = {
+    "00.agent-governance",
+    "01.requirements",
+    "02.architecture",
+    "03.specs",
+    "05.operations",
+    "90.references",
+    "98.archive",
+    "99.templates",
+}
+required_doc_dirs = {
+    "00.agent-governance",
+    "01.requirements",
+    "02.architecture",
+    "02.architecture/descriptions",
+    "02.architecture/decisions",
+    "03.specs",
+    "05.operations",
+    "05.operations/guides",
+    "05.operations/policies",
+    "05.operations/runbooks",
+    "05.operations/incidents",
+    "90.references",
+    "98.archive",
+    "99.templates",
+}
+old_top_level_docs = {
+    "01.prd",
+    "02.ard",
+    "03.adr",
+    "04.specs",
+    "05.plans",
+    "06.tasks",
+    "07.guides",
+    "08.operations",
+    "09.runbooks",
+    "10.incidents",
+}
+
+docs_dir = root / "docs"
+actual_docs = {path.name for path in docs_dir.iterdir() if path.is_dir()}
+stage04_retirement_authority = (
+    root
+    / "docs/98.archive/migrations/mig-0002-sdlc-document-and-governance-consolidation.md"
+)
+stage04_retirement_authority_sha256 = (
+    "67032c0b86acbee04a1e713053d164df2e99f4486df79df5161d53975fb82a7a"  # pragma: allowlist secret
+)
+if "04.execution" in actual_docs:
+    fail("retired docs/04.execution must remain absent after MIG-0002")
+else:
+    try:
+        stage04_retirement_payload = read_bytes(stage04_retirement_authority)
+    except OSError as exc:
+        fail(f"Stage 04 retirement authority is unavailable: {exc}")
+    else:
+        if (
+            hashlib.sha256(stage04_retirement_payload).hexdigest()
+            != stage04_retirement_authority_sha256
+        ):
+            fail("Stage 04 retirement requires the exact MIG-0002 authority")
+for name in sorted(actual_docs & old_top_level_docs):
+    fail(f"old docs stage folder must not exist after hard migration: docs/{name}")
+for name in sorted(actual_docs - allowed_top_level_docs):
+    fail(f"docs top-level folder is not allowed: docs/{name}")
+for name in sorted(allowed_top_level_docs - actual_docs):
+    fail(f"required docs top-level folder is missing: docs/{name}")
+
+example_docs_required = {
+    "01.requirements",
+    "02.architecture",
+    "02.architecture/descriptions",
+    "02.architecture/decisions",
+    "03.specs",
+    "04.execution",
+    "04.execution/plans",
+    "04.execution/tasks",
+    "05.operations",
+    "05.operations/guides",
+    "05.operations/policies",
+    "05.operations/runbooks",
+}
+example_docs_allowed_top_level = {
+    "01.requirements",
+    "02.architecture",
+    "03.specs",
+    "04.execution",
+    "05.operations",
+}
+expected_provider_asset_counts = {"aws": 8, "azure": 14}
+for provider in ["aws", "azure"]:
+    example_docs = root / "examples" / provider / "docs"
+    if example_docs.exists():
+        fail(f"retired example docs root must be absent after ADM-006: {rel(example_docs)}")
+    provider_root = root / "examples" / provider
+    executable_assets = [
+        path
+        for path in provider_root.rglob("*")
+        if path.is_file() and path.suffix.lower() != ".md"
+    ]
+    if len(executable_assets) != expected_provider_asset_counts[provider]:
+        fail(
+            f"{rel(provider_root)} executable asset count changed: "
+            f"{len(executable_assets)} != {expected_provider_asset_counts[provider]}"
+        )
+
+examples_readme_path = root / "examples/README.md"
+examples_readme_text = read_text(examples_readme_path)
+example_role_rows = markdown_table_after_heading(
+    examples_readme_text,
+    profiled_readme_table_headings("Example Role Matrix"),
+)
+expected_example_role_header = [
+    "Example path",
+    "Role",
+    "Active source of truth",
+    "Validation",
+]
+expected_example_paths = ["sample-app/", "aws/", "azure/"]
+if len(example_role_rows) < 2:
+    fail("examples/README.md Example Role Matrix must contain a header and example rows")
+elif example_role_rows[0] != expected_example_role_header:
+    fail(
+        "examples/README.md Example Role Matrix header must be: "
+        + " | ".join(expected_example_role_header)
+    )
+else:
+    indexed_example_paths: list[str] = []
+    for row_number, row in enumerate(example_role_rows[1:], start=1):
+        if len(row) != len(expected_example_role_header):
+            fail(
+                "examples/README.md Example Role Matrix "
+                f"row {row_number} must have {len(expected_example_role_header)} columns"
+            )
+            continue
+        path_cell, role, source_of_truth, validation = row
+        match = re.fullmatch(r"`([^`]+/)`", path_cell)
+        if not match:
+            fail(
+                "examples/README.md Example Role Matrix "
+                f"row {row_number} must start with a backticked example directory"
+            )
+            continue
+        example_path = match.group(1)
+        indexed_example_paths.append(example_path)
+        if not (root / "examples" / example_path.rstrip("/")).is_dir():
+            fail(f"examples/README.md Example Role Matrix references missing directory: examples/{example_path}")
+        for label, value in [
+            ("Role", role),
+            ("Active source of truth", source_of_truth),
+            ("Validation", validation),
+        ]:
+            if not value:
+                fail(f"examples/README.md Example Role Matrix row {row_number} has empty {label}")
+        for command in [
+            "scripts/validate-repo-quality-gates.sh",
+            "scripts/validate-k8s-manifests.sh",
+            "scripts/check-secret-handling.sh",
+        ]:
+            if command not in validation:
+                fail(f"examples/README.md Example Role Matrix row {row_number} must cite {command}")
+        if example_path == "sample-app/":
+            if "Minimal local k3d GitOps onboarding template" not in role:
+                fail("examples/README.md sample-app role must identify the minimal local k3d onboarding template")
+            if "../gitops/workloads/adminer/" not in source_of_truth:
+                fail("examples/README.md sample-app source of truth must point to ../gitops/workloads/adminer/")
+            for phrase in [
+                "../gitops/workloads/<appname>/",
+                "placeholder replacement",
+                "validation",
+                "active desired state",
+            ]:
+                if phrase not in source_of_truth:
+                    fail(f"examples/README.md sample-app source of truth missing activation phrase: {phrase}")
+        else:
+            provider = example_path.rstrip("/")
+            for phrase in [
+                f"{provider}/README.md",
+                "adjacent executable assets",
+                "not live provider-latest guidance",
+            ]:
+                if phrase not in source_of_truth:
+                    fail(
+                        f"examples/README.md {example_path} source of truth "
+                        f"missing provider boundary phrase: {phrase}"
+                    )
+    if indexed_example_paths != expected_example_paths:
+        fail(
+            "examples/README.md Example Role Matrix row order must be: "
+            + ", ".join(expected_example_paths)
+        )
+
+sample_app_dir = root / "examples/sample-app"
+expected_sample_app_files = [
+    "README.md",
+    "analysis-template.yaml",
+    "external-secret.yaml",
+    "ingress.yaml",
+    "kustomization.yaml",
+    "rollout.yaml",
+    "service.yaml",
+    "traefik-k3d.yaml.example",
+]
+actual_sample_app_files = sorted(path.name for path in sample_app_dir.iterdir() if path.is_file())
+if actual_sample_app_files != expected_sample_app_files:
+    fail(
+        "examples/sample-app file set must stay minimal onboarding template: "
+        + ", ".join(expected_sample_app_files)
+    )
+
+sample_app_readme = read_text(sample_app_dir / "README.md")
+for phrase in [
+    "최소 GitOps 템플릿",
+    "fuller active reference",
+    "gitops/workloads/adminer/",
+    "feature branch + PR flow",
+    "active GitOps desired state",
+    "remoteRef.key",
+    "secret values",
+]:
+    if phrase not in sample_app_readme:
+        fail(f"examples/sample-app/README.md missing onboarding boundary phrase: {phrase}")
+for active_reference_file in [
+    "service-stable.yaml",
+    "service-canary.yaml",
+    "virtual-service.yaml",
+    "destination-rule.yaml",
+    "peer-authentication.yaml",
+]:
+    if not (root / "gitops/workloads/adminer" / active_reference_file).is_file():
+        fail(f"gitops/workloads/adminer missing fuller active reference file: {active_reference_file}")
+
+sample_app_external_secret = read_text(sample_app_dir / "external-secret.yaml")
+for phrase in [
+    "secret/apps/<appname>/config",
+    "remoteRef.key",
+    "apps/<appname>/config",
+    "ClusterSecretStore path",
+]:
+    if phrase not in sample_app_external_secret:
+        fail(f"examples/sample-app/external-secret.yaml missing app secret path contract phrase: {phrase}")
+if "key: secret/apps/<appname>/config" in sample_app_external_secret:
+    fail("examples/sample-app/external-secret.yaml remoteRef.key must exclude the Vault mount prefix")
+
+active_app_secret_contracts = [
+    (
+        root / "docs/05.operations/policies/0007-app-gitops-onboarding-policy.md",
+        [
+            "Vault 경로 규칙",
+            "secret/apps/<appname>/config",
+            "ESO remoteRef",
+            "apps/<appname>/config",
+            "mount prefix 제외",
+        ],
+    ),
+    (
+        root / "docs/05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md",
+        [
+            "secret/apps/${APP}/config",
+            "ExternalSecret remoteRef.key",
+            "apps/${APP}/config",
+            "mount prefix secret/",
+        ],
+    ),
+    (
+        root / "gitops/README.md",
+        [
+            "Sample app ExternalSecret",
+            "ESO remoteRef key",
+            "apps/<appname>/config",
+            "Vault CLI path remains",
+            "secret/apps/<appname>/config",
+        ],
+    ),
+]
+for contract_path, phrases in active_app_secret_contracts:
+    contract_text = read_text(contract_path)
+    for phrase in phrases:
+        if phrase not in contract_text:
+            fail(f"{rel(contract_path)} missing app onboarding secret path contract phrase: {phrase}")
+
+github_native_markdown = [
+    root / ".github/README.md",
+    root / ".github/PULL_REQUEST_TEMPLATE.md",
+    root / ".github/SECURITY.md",
+]
+for github_doc in github_native_markdown:
+    if github_doc.exists() and has_markdown_frontmatter(github_doc):
+        fail(f"{rel(github_doc)} must remain frontmatter-free GitHub-native Markdown")
+
+def iter_markdown_link_targets(text: str):
+    in_fence = False
+    inline_link = re.compile(r"!?\[[^\]\n]*\]\(([^\)\n]+)\)")
+    reference_link = re.compile(r"^\[[^\]\n]+\]:\s+(\S+)")
+    for line in text.splitlines():
+        if line.lstrip().startswith("```"):
+            in_fence = not in_fence
+            continue
+        if in_fence:
+            continue
+        for match in inline_link.finditer(line):
+            yield match.group(1).strip()
+        match = reference_link.match(line.strip())
+        if match:
+            yield match.group(1).strip()
+
+
+def normalize_markdown_target(raw_target: str) -> str:
+    target = raw_target.strip()
+    if target.startswith("<") and ">" in target:
+        target = target[1 : target.index(">")]
+    else:
+        target = target.split()[0]
+    return target.strip()
+
+
+template_readme = read_text(root / "docs/99.templates/README.md")
+document_registry = load_registry(root)
+template_locations = {}
+for profile in document_registry.profiles:
+    if profile.template is None:
+        continue
+    location = profile.template.relative_to("docs/99.templates")
+    existing = template_locations.get(profile.template.name)
+    if existing is not None and existing != location.as_posix():
+        fail(
+            "registry template basenames must be unique: "
+            f"{profile.template.name}: {existing}, {location.as_posix()}"
+        )
+    template_locations[profile.template.name] = location.as_posix()
+
+def template_path(template_name: str) -> pathlib.Path:
+    location = template_locations.get(template_name)
+    if not location:
+        fail(f"template mapping points to an unknown template: {template_name}")
+    return root / "docs/99.templates" / location
+
+
+template_root = root / "docs/99.templates/templates"
+def collect_physical_form_paths(
+    repository_root: pathlib.Path,
+    forms_root: pathlib.Path,
+) -> set[pathlib.PurePosixPath]:
+    return {
+        pathlib.PurePosixPath(path.relative_to(repository_root).as_posix())
+        for path in forms_root.rglob("*")
+        if path.is_file() and path != forms_root / "README.md"
+    }
+
+
+physical_form_paths = collect_physical_form_paths(root, template_root)
+registry_form_references = [
+    (profile.profile_id, profile.template)
+    for profile in document_registry.profiles
+    if profile.template is not None
+]
+registry_profiles_by_id = {
+    profile.profile_id: profile for profile in document_registry.profiles
+}
+
+
+def is_derived_template_profile(profile) -> bool:
+    if profile.mode != "template" or not profile.source_profile_ids:
+        return False
+    source_profiles = [
+        registry_profiles_by_id.get(source_id)
+        for source_id in profile.source_profile_ids
+    ]
+    return any(
+        source_profile is not None
+        and source_profile.template == profile.template
+        for source_profile in source_profiles
+    )
+
+
+registry_form_owners = [
+    (profile.profile_id, profile.template)
+    for profile in document_registry.profiles
+    if profile.template is not None and not is_derived_template_profile(profile)
+]
+
+
+def canonical_form_contract_errors(
+    physical_forms: set[pathlib.PurePosixPath],
+    profile_form_references: list[tuple[str, pathlib.PurePosixPath]],
+    profile_form_owners: list[tuple[str, pathlib.PurePosixPath]],
+) -> list[str]:
+    owners_by_form: dict[pathlib.PurePosixPath, list[str]] = collections.defaultdict(list)
+    for profile_id, form_path in profile_form_owners:
+        owners_by_form[form_path].append(profile_id)
+    registry_forms = {form_path for _, form_path in profile_form_references}
+    errors = []
+    canonical_form_name = re.compile(
+        r"^[a-z0-9][a-z0-9-]*\.template\.(md|yaml|graphql|proto)$"
+    )
+    noncanonical_names = sorted(
+        str(form)
+        for form in physical_forms
+        if not canonical_form_name.fullmatch(form.name)
+    )
+    if noncanonical_names:
+        errors.append(
+            "physical form filenames must match "
+            "<name>.template.(md|yaml|graphql|proto): "
+            f"{noncanonical_names}"
+        )
+    missing = sorted(registry_forms - physical_forms, key=str)
+    if missing:
+        errors.append(f"registry-owned forms are missing: {missing}")
+    unowned = sorted(physical_forms - set(owners_by_form), key=str)
+    if unowned:
+        errors.append(f"physical forms have no registry owner: {unowned}")
+    duplicate_owners = {
+        str(form): sorted(owners)
+        for form, owners in owners_by_form.items()
+        if len(owners) != 1
+    }
+    if duplicate_owners:
+        errors.append(f"physical forms must have exactly one profile owner: {duplicate_owners}")
+    return errors
+
+
+canonical_form_errors = canonical_form_contract_errors(
+    physical_form_paths,
+    registry_form_references,
+    registry_form_owners,
+)
+for error in canonical_form_errors:
+    fail(error)
+
+# Independent mutations prove that the registry/form ownership assertion rejects
+# missing registry forms, unowned physical forms, duplicate profile owners, and
+# noncanonical filenames that would previously have been invisible.
+first_form = sorted(physical_form_paths, key=str)[0]
+if not canonical_form_contract_errors(
+    physical_form_paths - {first_form},
+    registry_form_references,
+    registry_form_owners,
+):
+    fail("canonical form mutation proof accepted a missing registry-owned form")
+unowned_form = pathlib.PurePosixPath(
+    "docs/99.templates/templates/common/unowned.template.md"
+)
+if not canonical_form_contract_errors(
+    physical_form_paths | {unowned_form},
+    registry_form_references,
+    registry_form_owners,
+):
+    fail("canonical form mutation proof accepted an unowned physical form")
+if not canonical_form_contract_errors(
+    physical_form_paths,
+    registry_form_references,
+    registry_form_owners + [("mutation/duplicate-owner", first_form)],
+):
+    fail("canonical form mutation proof accepted duplicate profile ownership")
+noncanonical_native_form = pathlib.PurePosixPath(
+    "docs/99.templates/templates/specs/openapi.yaml"
+)
+expected_noncanonical_diagnostic = (
+    "physical form filenames must match <name>.template.(md|yaml|graphql|proto): "
+    f"{[str(noncanonical_native_form)]}"
+)
+with tempfile.TemporaryDirectory(prefix="template-form-mutation-") as temp_dir:
+    mutation_root = pathlib.Path(temp_dir)
+    mutation_forms_root = mutation_root / "docs/99.templates/templates"
+    mutation_native_path = mutation_root / noncanonical_native_form
+    mutation_native_path.parent.mkdir(parents=True)
+    mutation_native_path.write_text("openapi: 3.1.0\n", encoding="utf-8")
+    mutation_physical_forms = collect_physical_form_paths(
+        mutation_root,
+        mutation_forms_root,
+    )
+    noncanonical_errors = canonical_form_contract_errors(
+        mutation_physical_forms,
+        registry_form_references,
+        registry_form_owners,
+    )
+if expected_noncanonical_diagnostic not in noncanonical_errors:
+    fail(
+        "canonical form mutation proof did not reject a noncanonical native filename "
+        "with the stable diagnostic"
+    )
+def canonical_form_content_errors(
+    form_sources: dict[pathlib.PurePosixPath, str],
+) -> list[str]:
+    def html_comments_balanced(source: str) -> bool:
+        offset = 0
+        in_comment = False
+        while offset < len(source):
+            marker = "-->" if in_comment else "<!--"
+            marker_offset = source.find(marker, offset)
+            opposite = "<!--" if in_comment else "-->"
+            opposite_offset = source.find(opposite, offset)
+            if opposite_offset != -1 and (
+                marker_offset == -1 or opposite_offset < marker_offset
+            ):
+                return False
+            if marker_offset == -1:
+                break
+            in_comment = not in_comment
+            offset = marker_offset + len(marker)
+        return not in_comment
+
+    def strip_html_comments(raw_line: str, in_comment: bool) -> tuple[str, bool]:
+        visible = []
+        offset = 0
+        while offset < len(raw_line):
+            if in_comment:
+                end = raw_line.find("-->", offset)
+                if end == -1:
+                    return "".join(visible), True
+                offset = end + 3
+                in_comment = False
+                continue
+            start = raw_line.find("<!--", offset)
+            if start == -1:
+                visible.append(raw_line[offset:])
+                break
+            visible.append(raw_line[offset:start])
+            offset = start + 4
+            in_comment = True
+        return "".join(visible), in_comment
+
+    def markdown_sections(source: str, heading_level: int) -> dict[str, str]:
+        sections: dict[str, list[str]] = collections.defaultdict(list)
+        current_heading = None
+        in_comment = False
+        fence_character = None
+        fence_length = 0
+        opening = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
+        for raw_line in source.splitlines(keepends=True):
+            if fence_character is not None:
+                closing = re.compile(
+                    rf"^ {{0,3}}{re.escape(fence_character)}"
+                    rf"{{{fence_length},}}[ \t]*(?:\r?\n)?$"
+                )
+                if closing.fullmatch(raw_line):
+                    fence_character = None
+                    fence_length = 0
+                if current_heading is not None:
+                    sections[current_heading].append(raw_line)
+                continue
+            visible, in_comment = strip_html_comments(raw_line, in_comment)
+            fence = opening.match(visible)
+            if fence:
+                marker = fence.group(1)
+                if marker[0] != "`" or "`" not in fence.group(2):
+                    fence_character = marker[0]
+                    fence_length = len(marker)
+                if current_heading is not None:
+                    sections[current_heading].append(raw_line)
+                continue
+            heading = re.match(
+                r"^ {0,3}(#{1,6})(?:[ \t]+|$)(.*?)[ \t]*(?:\r?\n)?$",
+                visible,
+            )
+            if heading and len(heading.group(1)) <= heading_level:
+                if len(heading.group(1)) == heading_level:
+                    current_heading = re.sub(
+                        r"[ \t]+##+[ \t]*$", "", heading.group(2).strip()
+                    )
+                    sections.setdefault(current_heading, [])
+                else:
+                    current_heading = None
+                continue
+            if current_heading is not None:
+                sections[current_heading].append(raw_line)
+        return {heading: "".join(lines) for heading, lines in sections.items()}
+
+    errors = []
+    retired_markers = (
+        "Target: " + "docs/",
+        "Owner docs from target directory",
+        "Replace every placeholder",
+        "Describe the topic-specific",
+    )
+    author_comment = re.compile(r"<!-- Author prompt: [^\n]+ -->")
+    useful_author_comment = re.compile(
+        r"(?m)^[ \t]*<!-- Author prompt: (?P<prompt>[^\n]*?) -->[ \t]*$"
+    )
+    markdownlint_directive = "<!-- markdownlint-disable-file MD033 MD041 -->"
+    archive_envelope_marker = (
+        "<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->"
+    )
+    archive_migration_marker = (
+        "<!-- archive-migration-ledger:v1 format=json -->"
+    )
+    # The migration form also opens the consumer block the Archive parser owns.
+    archive_consumers_marker = (
+        "<!-- archive-historical-consumers:v1 format=json -->"
+    )
+    for form_path, source in sorted(form_sources.items(), key=lambda item: str(item[0])):
+        for marker in retired_markers:
+            if marker in source:
+                errors.append(f"{form_path} contains retired form residue: {marker}")
+        if form_path.suffix != ".md":
+            continue
+        if not html_comments_balanced(source):
+            errors.append(f"{form_path} contains an unbalanced HTML comment")
+            continue
+        for match in re.finditer(r"<!--.*?-->", source, re.DOTALL):
+            comment = match.group(0)
+            if comment in {
+                markdownlint_directive,
+                archive_envelope_marker,
+                archive_migration_marker,
+                archive_consumers_marker,
+            } or author_comment.fullmatch(comment):
+                continue
+            errors.append(f"{form_path} contains a non-author form comment")
+
+    for profile_id, form_path in registry_form_owners:
+        profile = registry_profiles_by_id[profile_id]
+        source = form_sources.get(form_path)
+        if source is None or form_path.suffix != ".md":
+            continue
+        required_section_groups = [(2, profile.headings.required, False)]
+        for (
+            heading_level,
+            required_headings,
+            allow_structured_starter,
+        ) in required_section_groups:
+            sections = markdown_sections(source, heading_level)
+            for heading in required_headings:
+                section_body = sections.get(heading, "")
+                if allow_structured_starter and re.sub(
+                    r"<!--.*?-->", "", section_body, flags=re.DOTALL
+                ).strip():
+                    continue
+                prompts = [
+                    match.group("prompt").strip()
+                    for match in useful_author_comment.finditer(section_body)
+                ]
+                if not any(prompts):
+                    errors.append(
+                        f"{form_path} section {heading!r} must contain a useful Author prompt"
+                    )
+        contract = profile.body_contract
+        if contract is None:
+            continue
+        table_heading = f"### {contract.table_heading}"
+        table_header = "| " + " | ".join(contract.required_columns) + " |"
+        if source.count(table_heading) != 1 or source.count(table_header) != 1:
+            errors.append(
+                f"{form_path} must contain one exact registry-owned lifecycle table"
+            )
+    return errors
+
+
+form_sources = {
+    form_path: read_text(root / form_path) for form_path in physical_form_paths
+}
+for error in canonical_form_content_errors(form_sources):
+    fail(error)
+
+# Form-focused mutations keep retired route prose, generic comments, and
+# registry-table drift inside the aggregate repository gate without extending
+# authored-document semantic enforcement ahead of the lifecycle-table tranche.
+spec_form = pathlib.PurePosixPath(
+    "docs/99.templates/templates/specs/spec.template.md"
+)
+native_form = pathlib.PurePosixPath(
+    "docs/99.templates/templates/specs/openapi.template.yaml"
+)
+form_content_mutations = []
+retired_mutation = dict(form_sources)
+retired_mutation[spec_form] += "\n<!-- Target: " + "docs/example.md -->\n"
+form_content_mutations.append(("retired route residue", retired_mutation))
+comment_mutation = dict(form_sources)
+comment_mutation[spec_form] = comment_mutation[spec_form].replace(
+    "<!-- Author prompt:", "<!-- Generic prompt:", 1
+)
+form_content_mutations.append(("generic form comment", comment_mutation))
+table_mutation = dict(form_sources)
+table_mutation[spec_form] = table_mutation[spec_form].replace(
+    "### Lifecycle Traceability", "### Drifted Traceability", 1
+)
+form_content_mutations.append(("lifecycle table drift", table_mutation))
+native_mutation = dict(form_sources)
+native_mutation[native_form] = "# Owner docs from target directory\n" + native_mutation[native_form]
+form_content_mutations.append(("native owner comment", native_mutation))
+for label, mutation in form_content_mutations:
+    if not canonical_form_content_errors(mutation):
+        fail(f"canonical form content mutation accepted {label}")
+
+archive_record_form = pathlib.PurePosixPath(
+    "docs/99.templates/templates/archive/archive-record.template.md"
+)
+archive_marker_mutation = dict(form_sources)
+archive_marker_mutation[archive_record_form] = archive_marker_mutation[
+    archive_record_form
+].replace("archive-envelope:v1", "archive-envelope:v2", 1)
+expected_archive_marker_diagnostic = (
+    f"{archive_record_form} contains a non-author form comment"
+)
+if expected_archive_marker_diagnostic not in canonical_form_content_errors(
+    archive_marker_mutation
+):
+    fail(
+        "canonical form content mutation did not reject a drifted archive "
+        "envelope marker with the stable diagnostic"
+    )
+
+archive_migration_form = pathlib.PurePosixPath(
+    "docs/99.templates/templates/archive/archive-migration.template.md"
+)
+archive_migration_marker_mutation = dict(form_sources)
+archive_migration_marker_mutation[archive_migration_form] = (
+    archive_migration_marker_mutation[archive_migration_form].replace(
+        "archive-migration-ledger:v1", "archive-migration-ledger:v2", 1
+    )
+)
+expected_archive_migration_marker_diagnostic = (
+    f"{archive_migration_form} contains a non-author form comment"
+)
+if expected_archive_migration_marker_diagnostic not in canonical_form_content_errors(
+    archive_migration_marker_mutation
+):
+    fail(
+        "canonical form content mutation did not reject a drifted archive "
+        "migration marker with the stable diagnostic"
+    )
+
+prompt_profile_id, prompt_form = sorted(
+    (
+        (profile_id, form_path)
+        for profile_id, form_path in registry_form_owners
+        if form_path.suffix == ".md"
+        and registry_profiles_by_id[profile_id].headings.required
+        and registry_profiles_by_id[profile_id].body_contract is None
+    ),
+    key=lambda item: str(item[1]),
+)[0]
+prompt_heading = registry_profiles_by_id[prompt_profile_id].headings.required[0]
+prompt_match = re.search(
+    r"<!-- Author prompt: [^\n]+ -->", form_sources[prompt_form]
+)
+if prompt_match is None:
+    fail(f"canonical prompt mutation setup found no Author prompt in {prompt_form}")
+else:
+    prompt_removal_mutation = dict(form_sources)
+    prompt_removal_mutation[prompt_form] = (
+        form_sources[prompt_form][: prompt_match.start()]
+        + form_sources[prompt_form][prompt_match.end() :]
+    )
+    expected_prompt_diagnostic = (
+        f"{prompt_form} section {prompt_heading!r} must contain a useful Author prompt"
+    )
+    if expected_prompt_diagnostic not in canonical_form_content_errors(
+        prompt_removal_mutation
+    ):
+        fail(
+            "canonical form content mutation did not reject a removed Author prompt "
+            "with the stable diagnostic"
+        )
+
+    unbalanced_comment_mutation = dict(form_sources)
+    unbalanced_comment_mutation[prompt_form] = form_sources[prompt_form].replace(
+        prompt_match.group(0), prompt_match.group(0)[:-3], 1
+    )
+    expected_unbalanced_diagnostic = (
+        f"{prompt_form} contains an unbalanced HTML comment"
+    )
+    if expected_unbalanced_diagnostic not in canonical_form_content_errors(
+        unbalanced_comment_mutation
+    ):
+        fail(
+            "canonical form content mutation did not reject an unbalanced comment "
+            "with the stable diagnostic"
+        )
+
+missing_source_profile_id, missing_source_form = sorted(
+    (
+        (profile_id, form_path)
+        for profile_id, form_path in registry_form_owners
+        if form_path.suffix == ".md"
+        and registry_profiles_by_id[profile_id].body_contract is not None
+    ),
+    key=lambda item: str(item[1]),
+)[0]
+missing_source_mutation = dict(form_sources)
+missing_source_mutation.pop(missing_source_form)
+expected_missing_source_diagnostic = (
+    f"registry-owned forms are missing: {[missing_source_form]}"
+)
+missing_source_contract_errors = canonical_form_contract_errors(
+    set(missing_source_mutation),
+    registry_form_references,
+    registry_form_owners,
+)
+if missing_source_contract_errors != [expected_missing_source_diagnostic]:
+    fail(
+        "canonical form missing-source mutation did not retain the stable "
+        "ownership diagnostic"
+    )
+if canonical_form_content_errors(missing_source_mutation):
+    fail(
+        "canonical form content validation duplicated an already-reported "
+        "missing-source diagnostic"
+    )
+
+template_support_root = root / "docs/99.templates/support"
+if template_support_root.exists():
+    fail("docs/99.templates/support is a retired transition surface")
+
+
+for provider in ["aws", "azure"]:
+    docs_root = root / "examples" / provider / "docs"
+    if not docs_root.exists():
+        continue
+    for example_doc in sorted(docs_root.rglob("*.md")):
+        text = read_text(example_doc)
+        if example_doc.name == "README.md":
+            continue
+        if "## Provider Example Boundary" not in text:
+            fail(
+                f"{rel(example_doc)} missing example-local boundary heading: "
+                "## Provider Example Boundary"
+            )
+        for required_phrase in [
+            "adjacent executable assets",
+            "not live provider-latest guidance",
+        ]:
+            if required_phrase not in text:
+                fail(f"{rel(example_doc)} missing provider boundary phrase: {required_phrase}")
+        for stale_heading in [
+            "## Azure Migration Product Requirements",
+            "## Azure Migration Specification",
+            "## Azure Kubernetes Service Architecture Description",
+        ]:
+            if stale_heading in text:
+                fail(f"{rel(example_doc)} contains duplicate stale heading: {stale_heading}")
+        if re.search(r"^##\s+[0-9]+\.\s+.*관련 문서", text, re.MULTILINE):
+            fail(f"{rel(example_doc)} must use canonical ## Related Documents heading")
+
+def canonical_markdown_owns_generic_residue(path: pathlib.Path) -> bool:
+    try:
+        profile = classify_path(
+            document_registry,
+            pathlib.PurePosixPath(rel(path)),
+        )
+    except DocumentContractError:
+        return False
+    if profile.placeholder_policy != "forbidden":
+        return False
+    if (
+        profile.frontmatter.mode == "not-applicable"
+        and not profile.headings.required
+        and not profile.headings.allowed
+    ):
+        return False
+    return bool(profile.headings.required or profile.headings.allowed)
+
+
+authored_template_residue = ("Target: " + "docs/", "Use this " + "template")
+
+
+def generic_template_residue_lines(text: str) -> list[int]:
+    return [
+        line_number
+        for line_number, line in enumerate(text.splitlines(), start=1)
+        if any(marker in line for marker in authored_template_residue)
+    ]
+
+
+def assert_generic_residue_delegation_probe() -> None:
+    if generic_template_residue_lines("route: Use this " + "template") != [1]:
+        fail("generic residue mutation probe failed for active non-Markdown config")
+    if generic_template_residue_lines("Target: " + "docs/example.md") != [1]:
+        fail("generic residue mutation probe failed for non-structural Markdown")
+    structural = root / "docs/01.requirements/9999-projection.md"
+    if not canonical_markdown_owns_generic_residue(structural):
+        fail("generic residue delegation probe must delegate authored structural Markdown")
+    provider_shim = root / "AGENTS.md"
+    if canonical_markdown_owns_generic_residue(provider_shim):
+        fail("generic residue delegation probe must retain headingless provider shims")
+
+
+assert_generic_residue_delegation_probe()
+active_residue_suffixes = {
+    ".graphql",
+    ".json",
+    ".md",
+    ".proto",
+    ".sh",
+    ".toml",
+    ".yaml",
+    ".yml",
+}
+tracked_active_paths = bounded_process(
+    ["git", "-C", str(root), "ls-files", "-z"],
+    cwd=root,
+    stdout=subprocess.PIPE,
+    timeout=120,
+).stdout.split(b"\0")
+for raw_relative_path in tracked_active_paths:
+    if not raw_relative_path:
+        continue
+    try:
+        relative_path = pathlib.PurePosixPath(raw_relative_path.decode("utf-8"))
+    except UnicodeDecodeError:
+        fail("git returned a non-UTF-8 active path during generic residue validation")
+        continue
+    if not (
+        relative_path.as_posix() in {"README.md", "AGENTS.md", "CLAUDE.md"}
+        or relative_path.parts[0] in TARGET_ROOTS
+    ):
+        continue
+    path = root / relative_path
+    if path.suffix not in active_residue_suffixes or not path.is_file() or path.is_symlink():
+        continue
+    if path.is_relative_to(root / "docs/99.templates/templates"):
+        continue
+    if path.is_relative_to(root / "tests/fixtures"):
+        continue
+    if is_historical_evidence_path(path):
+        continue
+    if path.suffix == ".md" and canonical_markdown_owns_generic_residue(path):
+        continue
+    for line_number in generic_template_residue_lines(read_text(path)):
+        fail(f"active non-structural template residue in {rel(path)}:{line_number}")
+
+reference_template_path = template_path("reference.template.md")
+reference_template_text = read_text(reference_template_path)
+if re.search(r"archive", reference_template_text, re.IGNORECASE):
+    fail(f"{rel(reference_template_path)} must not contain archive wording")
+
+for path in docs_dir.rglob("*"):
+    if not path.is_file():
+        continue
+    if path.is_relative_to(root / "docs/99.templates"):
+        continue
+    if re.search(r"(^template\.md$|\.template\.|template\.)", path.name):
+        fail(f"template-like docs file must live in docs/99.templates: {rel(path)}")
+
+english_first_stage_globs = [
+    "docs/03.specs/*/spec.md",
+    "docs/04.execution/plans/*.md",
+    "docs/04.execution/tasks/*.md",
+]
+hangul_pattern = re.compile(r"[\uac00-\ud7a3]")
+for glob_pattern in english_first_stage_globs:
+    for path in sorted(root.glob(glob_pattern)):
+        if path.name == "README.md":
+            continue
+        for line_number, line in enumerate(read_text(path).splitlines(), start=1):
+            if hangul_pattern.search(line):
+                fail(f"{rel(path)}:{line_number} contains Korean text in an English-first Stage 03/04 artifact")
+
+operations_stage_path = root / "docs/05.operations"
+allowed_operations_buckets = {"guides", "policies", "runbooks", "incidents"}
+actual_operations_buckets = {
+    path.name
+    for path in operations_stage_path.iterdir()
+    if path.is_dir()
+}
+for name in sorted(allowed_operations_buckets - actual_operations_buckets):
+    fail(f"required operations bucket is missing: {rel(operations_stage_path / name)}")
+for name in sorted(actual_operations_buckets - allowed_operations_buckets):
+    fail(f"docs/05.operations contains unsupported bucket: {rel(operations_stage_path / name)}")
+
+operations_readme_path = operations_stage_path / "README.md"
+operations_readme_text = read_text(operations_readme_path)
+operations_routing_rows = markdown_table_after_heading(
+    operations_readme_text,
+    ("## Operations Routing Matrix", "### Operations Routing Matrix"),
+)
+expected_operations_routing_header = ["필요 상황", "사용할 위치", "시작 템플릿"]
+expected_operations_routing_targets = [
+    ("./guides/README.md", "../99.templates/templates/operations/guide.template.md"),
+    ("./policies/README.md", "../99.templates/templates/operations/policy.template.md"),
+    ("./runbooks/README.md", "../99.templates/templates/operations/runbook.template.md"),
+    ("./incidents/README.md", "../99.templates/templates/operations/incident.template.md"),
+    ("./incidents/README.md", "../99.templates/templates/operations/postmortem.template.md"),
+]
+if len(operations_routing_rows) < 2:
+    fail("docs/05.operations/README.md Operations Routing Matrix must contain a header and routing rows")
+elif operations_routing_rows[0] != expected_operations_routing_header:
+    fail(
+        "docs/05.operations/README.md Operations Routing Matrix header must be: "
+        + " | ".join(expected_operations_routing_header)
+    )
+else:
+    actual_operations_routing_targets: list[tuple[str, str]] = []
+    for row_number, row in enumerate(operations_routing_rows[1:], start=1):
+        if len(row) != len(expected_operations_routing_header):
+            fail(
+                "docs/05.operations/README.md Operations Routing Matrix "
+                f"row {row_number} must have {len(expected_operations_routing_header)} columns"
+            )
+            continue
+        situation, location_cell, template_cell = row
+        if not situation:
+            fail(f"docs/05.operations/README.md Operations Routing Matrix row {row_number} has empty 필요 상황")
+        location_targets = list(iter_markdown_link_targets(location_cell))
+        template_targets = list(iter_markdown_link_targets(template_cell))
+        if len(location_targets) != 1:
+            fail(
+                "docs/05.operations/README.md Operations Routing Matrix "
+                f"row {row_number} must have exactly one location link"
+            )
+            continue
+        if len(template_targets) != 1:
+            fail(
+                "docs/05.operations/README.md Operations Routing Matrix "
+                f"row {row_number} must have exactly one template link"
+            )
+            continue
+        location_target = normalize_markdown_target(location_targets[0])
+        template_target = normalize_markdown_target(template_targets[0])
+        if not (operations_readme_path.parent / pathlib.Path(location_target)).exists():
+            fail(
+                "docs/05.operations/README.md Operations Routing Matrix "
+                f"row {row_number} location target is missing: {location_target}"
+            )
+        if not (operations_readme_path.parent / pathlib.Path(template_target)).exists():
+            fail(
+                "docs/05.operations/README.md Operations Routing Matrix "
+                f"row {row_number} template target is missing: {template_target}"
+            )
+        actual_operations_routing_targets.append((location_target, template_target))
+    if actual_operations_routing_targets != expected_operations_routing_targets:
+        fail(
+            "docs/05.operations/README.md Operations Routing Matrix target order must be: "
+            + ", ".join(
+                f"{location} -> {template}"
+                for location, template in expected_operations_routing_targets
+            )
+        )
+
+incidents_readme_path = operations_stage_path / "incidents/README.md"
+incidents_readme_text = read_text(incidents_readme_path)
+incident_boundary_rows = markdown_table_after_heading(
+    incidents_readme_text,
+    ("## Incident Boundary Matrix", "### Incident Boundary Matrix"),
+)
+expected_incident_boundary_header = [
+    "Artifact",
+    "Path rule",
+    "Template",
+    "Creation rule",
+    "Current state",
+]
+expected_incident_boundary = [
+    {
+        "artifact": "Incident Record",
+        "path_rule": "./<year>/inc-####-<slug>/incident.md",
+        "template": "../../99.templates/templates/operations/incident.template.md",
+        "creation_phrase": "real incident fact record",
+        "current_state": "No tracked incident records.",
+    },
+    {
+        "artifact": "Postmortem",
+        "path_rule": "./<year>/inc-####-<slug>/postmortem.md",
+        "template": "../../99.templates/templates/operations/postmortem.template.md",
+        "creation_phrase": "root cause/prevention analysis",
+        "current_state": "No tracked postmortems.",
+    },
+]
+if len(incident_boundary_rows) < 2:
+    fail("docs/05.operations/incidents/README.md Incident Boundary Matrix must contain a header and boundary rows")
+elif incident_boundary_rows[0] != expected_incident_boundary_header:
+    fail(
+        "docs/05.operations/incidents/README.md Incident Boundary Matrix header must be: "
+        + " | ".join(expected_incident_boundary_header)
+    )
+else:
+    actual_incident_artifacts: list[str] = []
+    for row_number, (row, expected) in enumerate(
+        zip(incident_boundary_rows[1:], expected_incident_boundary),
+        start=1,
+    ):
+        if len(row) != len(expected_incident_boundary_header):
+            fail(
+                "docs/05.operations/incidents/README.md Incident Boundary Matrix "
+                f"row {row_number} must have {len(expected_incident_boundary_header)} columns"
+            )
+            continue
+        artifact_cell, path_rule_cell, template_cell, creation_rule, current_state = row
+        artifact_match = re.fullmatch(r"`([^`]+)`", artifact_cell)
+        path_rule_match = re.fullmatch(r"`([^`]+)`", path_rule_cell)
+        template_targets = list(iter_markdown_link_targets(template_cell))
+        if not artifact_match:
+            fail(
+                "docs/05.operations/incidents/README.md Incident Boundary Matrix "
+                f"row {row_number} must start with a backticked Artifact"
+            )
+            continue
+        if not path_rule_match:
+            fail(
+                "docs/05.operations/incidents/README.md Incident Boundary Matrix "
+                f"row {row_number} must use a backticked Path rule"
+            )
+            continue
+        artifact = artifact_match.group(1)
+        path_rule = path_rule_match.group(1)
+        actual_incident_artifacts.append(artifact)
+        if artifact != expected["artifact"]:
+            fail(
+                "docs/05.operations/incidents/README.md Incident Boundary Matrix "
+                f"row {row_number} Artifact must be {expected['artifact']!r}"
+            )
+        if path_rule != expected["path_rule"]:
+            fail(
+                "docs/05.operations/incidents/README.md Incident Boundary Matrix "
+                f"row {row_number} Path rule must be {expected['path_rule']!r}"
+            )
+        if len(template_targets) != 1:
+            fail(
+                "docs/05.operations/incidents/README.md Incident Boundary Matrix "
+                f"row {row_number} must have exactly one Template link"
+            )
+        else:
+            template_target = normalize_markdown_target(template_targets[0])
+            if template_target != expected["template"]:
+                fail(
+                    "docs/05.operations/incidents/README.md Incident Boundary Matrix "
+                    f"row {row_number} Template must be {expected['template']!r}"
+                )
+            if not (incidents_readme_path.parent / pathlib.Path(template_target)).exists():
+                fail(
+                    "docs/05.operations/incidents/README.md Incident Boundary Matrix "
+                    f"row {row_number} Template target is missing: {template_target}"
+                )
+        if expected["creation_phrase"] not in creation_rule:
+            fail(
+                "docs/05.operations/incidents/README.md Incident Boundary Matrix "
+                f"row {row_number} Creation rule must mention {expected['creation_phrase']!r}"
+            )
+        if current_state != expected["current_state"]:
+            fail(
+                "docs/05.operations/incidents/README.md Incident Boundary Matrix "
+                f"row {row_number} Current state must be {expected['current_state']!r}"
+            )
+    if actual_incident_artifacts != [item["artifact"] for item in expected_incident_boundary]:
+        fail("docs/05.operations/incidents/README.md Incident Boundary Matrix row order is invalid")
+
+tracked_incident_docs = [
+    path
+    for path in sorted((operations_stage_path / "incidents").rglob("*.md"))
+    if path.name != "README.md"
+]
+for path in tracked_incident_docs:
+    relative_incident_path = path.relative_to(operations_stage_path / "incidents")
+    parts = relative_incident_path.parts
+    if len(parts) != 3:
+        fail(
+            "docs/05.operations/incidents document must live at "
+            "<year>/inc-####-<slug>/incident.md or "
+            f"<year>/inc-####-<slug>/postmortem.md: {rel(path)}"
+        )
+        continue
+    year, incident_folder, filename = parts
+    if not re.fullmatch(r"[0-9]{4}", year):
+        fail(f"docs/05.operations/incidents document year folder must be YYYY: {rel(path)}")
+    if not re.fullmatch(r"inc-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*", incident_folder):
+        fail(f"docs/05.operations/incidents document folder must be inc-####-<slug>: {rel(path)}")
+    if filename not in {"incident.md", "postmortem.md"}:
+        fail(
+            "docs/05.operations/incidents document filename must be "
+            f"incident.md or postmortem.md: {rel(path)}"
+        )
+if not tracked_incident_docs:
+    for phrase in [
+        "현재 tracked incident record와 postmortem 문서는 없다.",
+        "No tracked incident records.",
+        "No tracked postmortems.",
+    ]:
+        if phrase not in incidents_readme_text:
+            fail(f"docs/05.operations/incidents/README.md missing no-incident state phrase: {phrase}")
+    unexpected_incident_dirs = [
+        path
+        for path in sorted((operations_stage_path / "incidents").iterdir())
+        if path.is_dir()
+    ]
+    if unexpected_incident_dirs:
+        fail(
+            "docs/05.operations/incidents has placeholder directory without tracked incident docs: "
+            + ", ".join(rel(path) for path in unexpected_incident_dirs)
+        )
+
+operations_index_roots = [
+    root / "docs/05.operations/guides",
+    root / "docs/05.operations/policies",
+    root / "docs/05.operations/runbooks",
+]
+for operations_root in operations_index_roots:
+    readme_path = operations_root / "README.md"
+    if not readme_path.exists():
+        fail(f"operations subfolder README is missing: {rel(readme_path)}")
+        continue
+
+    readme_text = read_text(readme_path)
+    rows = markdown_table_after_heading(
+        readme_text,
+        ("## 문서 인덱스", "### 문서 인덱스"),
+    )
+    expected_header = ["문서", "설명", "상태", "최종 수정"]
+    if len(rows) < 2:
+        fail(f"{rel(readme_path)} 문서 인덱스 must contain a header and document rows")
+        continue
+    if rows[0] != expected_header:
+        fail(f"{rel(readme_path)} 문서 인덱스 header must be: {' | '.join(expected_header)}")
+
+    indexed_rows: dict[str, list[str]] = {}
+    for row_number, row in enumerate(rows[1:], start=1):
+        if len(row) != len(expected_header):
+            fail(f"{rel(readme_path)} 문서 인덱스 row {row_number} must have {len(expected_header)} columns")
+            continue
+        match = re.search(r"\]\(\./([^)]+\.md)\)", row[0])
+        if not match:
+            fail(f"{rel(readme_path)} 문서 인덱스 row {row_number} must link to ./<document>.md")
+            continue
+        target_name = match.group(1)
+        if target_name in indexed_rows:
+            fail(f"{rel(readme_path)} 문서 인덱스 duplicates document: {target_name}")
+        indexed_rows[target_name] = row
+
+    operation_docs = sorted(path for path in operations_root.glob("*.md") if path.name != "README.md")
+    operation_doc_names = {path.name for path in operation_docs}
+    for doc_name in sorted(operation_doc_names - set(indexed_rows)):
+        fail(f"{rel(readme_path)} 문서 인덱스 missing document: {doc_name}")
+    for doc_name in sorted(set(indexed_rows) - operation_doc_names):
+        fail(f"{rel(readme_path)} 문서 인덱스 links to missing document: {doc_name}")
+
+    for doc_path in operation_docs:
+        row = indexed_rows.get(doc_path.name)
+        if not row:
+            continue
+        doc_text = read_text(doc_path)
+        frontmatter = re.match(r"^---\n(.*?)\n---\n", doc_text, re.DOTALL)
+        if not frontmatter:
+            fail(f"{rel(doc_path)} missing YAML frontmatter for operations index validation")
+            continue
+        try:
+            metadata = yaml.load(frontmatter.group(1), Loader=DuplicateKeyLoader) or {}
+        except Exception as exc:
+            fail(f"{rel(doc_path)} frontmatter parse failed for operations index validation: {exc}")
+            continue
+        status = str(metadata.get("status", "")).strip()
+        updated = str(metadata.get("updated", "")).strip()
+        row_status = row[2].strip()
+        row_updated = row[3].strip()
+        if not status:
+            fail(f"{rel(doc_path)} missing status for operations index validation")
+        elif row_status.lower() != status.lower():
+            fail(f"{rel(readme_path)} status mismatch for {doc_path.name}: index={row_status}, frontmatter={status}")
+        if not updated:
+            fail(f"{rel(doc_path)} missing updated for operations index validation")
+        elif row_updated != updated:
+            fail(f"{rel(readme_path)} updated mismatch for {doc_path.name}: index={row_updated}, frontmatter={updated}")
+
+
+template_enforcement_phrase_checks = {
+    root / "docs/99.templates/README.md": [
+        "registry.json",
+        "machine contract",
+        "profile",
+        "canonical form",
+    ],
+}
+for path, phrases in template_enforcement_phrase_checks.items():
+    text = read_text(path)
+    for phrase in phrases:
+        if phrase not in text:
+            fail(f"{rel(path)} missing template enforcement phrase: {phrase}")
+
+active_template_routing_reference_files = [
+    root / ".claude/settings.json",
+    root / ".agents/skills/docs-stage-routing/skill.md",
+    root / "docs/00.agent-governance/hooks/k8s-pre-edit.sh",
+]
+for path in active_template_routing_reference_files:
+    text = read_text(path)
+    if "99.templates/registry.json" not in text:
+        fail(f"{rel(path)} must route exact template selection through docs/99.templates/registry.json")
+
+for path in [root / "README.md", root / "docs/README.md"]:
+    if "99.templates/README.md" not in read_text(path):
+        fail(f"{rel(path)} must link the Stage 99 human author guide")
+
+legacy_denylist_literals = {
+    "operation" + ".template.md": "deprecated operations policy template route",
+    "platform" + "-" + "team": "deprecated owner value",
+    "Related " + "References": "deprecated README related-document heading",
+}
+legacy_scan_roots = [
+    root / "docs",
+    root / "scripts",
+    root / ".codex",
+    root / "AGENTS.md",
+    root / "RTK.md",
+]
+legacy_scan_suffixes = {".md", ".sh", ".py", ".toml", ".yaml", ".yml", ".json"}
+for scan_root in legacy_scan_roots:
+    if not scan_root.exists():
+        continue
+    candidates = [scan_root] if scan_root.is_file() else sorted(scan_root.rglob("*"))
+    for candidate in candidates:
+        if not candidate.is_file():
+            continue
+        if candidate.suffix not in legacy_scan_suffixes and candidate.name not in {"AGENTS.md", "RTK.md"}:
+            continue
+        text = read_text(candidate)
+        for literal, replacement in legacy_denylist_literals.items():
+            if literal in text:
+                fail(f"{rel(candidate)} contains {replacement} literal: {literal}")
+
+legacy_postmortems = "11" + ".postmortems"
+legacy_learning = "50" + ".Learning"
+legacy_stage_range = "00" + "~" + "11"
+legacy_docs_range = "01" + "~" + "99"
+legacy_stage_label = "Stage " + "11"
+legacy_harness = "H" + "100"
+legacy_harness_examples = "examples/" + "harness-100"
+old_docs_path_refs = [
+    "docs/" + name for name in sorted(old_top_level_docs)
+] + [
+    "../" + name for name in sorted(old_top_level_docs)
+]
+legacy_dashboard_app = "platform" + "-dashboard"
+legacy_dashboard_ns_file = "namespace" + "-kubernetes-dashboard"
+legacy_dashboard_kubectl = "kubectl -n " + "kubernetes-dashboard"
+legacy_dashboard_namespace_code = "`" + "kubernetes-dashboard" + "` namespace"
+legacy_dashboard_namespace_text = "kubernetes-dashboard " + "namespace"
+legacy_docs_traefik = "docs/" + "traefik"
+stale_patterns = [
+    *old_docs_path_refs,
+    "file://",
+    str(root),
+    "docs/" + legacy_postmortems,
+    "docs/" + legacy_learning,
+    legacy_postmortems,
+    legacy_learning,
+    legacy_stage_range,
+    legacy_docs_range,
+    legacy_stage_label,
+    legacy_harness,
+    legacy_harness_examples,
+]
+legacy_contract_patterns = [
+    legacy_dashboard_app,
+    legacy_dashboard_ns_file,
+    legacy_dashboard_kubectl,
+    legacy_dashboard_namespace_code,
+    legacy_dashboard_namespace_text,
+    legacy_docs_traefik,
+]
+legacy_contract_markers = [
+    "현재 실행계약 메모",
+    "Superseded",
+    "superseded",
+    "역사적",
+    "Headlamp Replaces Kubernetes Dashboard",
+]
+scan_roots = [
+    root / "README.md",
+    root / "docs",
+    root / ".claude",
+    root / ".codex",
+    root / ".github",
+    root / "scripts",
+    root / "infrastructure",
+    root / "gitops",
+    root / "examples",
+]
+for scan_root in scan_roots:
+    candidates = [scan_root] if scan_root.is_file() else scan_root.rglob("*")
+    for path in candidates:
+        if not path.is_file() or path.name == "validate-repo-quality-gates.sh":
+            continue
+        if path.suffix not in {".md", ".toml", ".json", ".yml", ".yaml", ".sh"}:
+            continue
+        text = read_text(path)
+        for pattern in stale_patterns:
+            if pattern in text:
+                fail(f"stale docs path reference found in {rel(path)}: {pattern}")
+        for pattern in legacy_contract_patterns:
+            if pattern in text and not any(marker in text for marker in legacy_contract_markers):
+                fail(f"legacy runtime contract reference lacks historical/superseded note in {rel(path)}: {pattern}")
+
+active_stale_contract_roots = [
+    root / "docs/01.requirements",
+    root / "docs/02.architecture",
+    root / "docs/03.specs",
+    root / "docs/04.execution",
+    root / "docs/05.operations",
+]
+active_stale_contract_patterns = [
+    "172.19",
+    "172.30",
+    "kubernetes-dashboard",
+    "Kubernetes Dashboard",
+    "k8s-dashboard",
+    "K8s Dashboard",
+    "platform-dashboard",
+    "dashboard-admin",
+]
+for scan_root in active_stale_contract_roots:
+    for path in sorted(scan_root.rglob("*.md")):
+        if path.name == "validate-repo-quality-gates.sh":
+            continue
+        if path.is_relative_to(root / "docs/98.archive"):
+            continue
+        text = read_text(path)
+        for pattern in active_stale_contract_patterns:
+            if pattern in text:
+                fail(
+                    f"active authored docs must not retain stale implementation "
+                    f"contract in {rel(path)}: {pattern}"
+                )
+
+active_currentness_roots = [
+    root / "docs/01.requirements",
+    root / "docs/02.architecture",
+    root / "docs/03.specs",
+    root / "docs/04.execution",
+    root / "docs/05.operations",
+    root / "docs/90.references",
+]
+migration_evidence_ledger_path = (
+    root
+    / "docs/90.references/research/0001-workspace-engineering/source-coverage.md"
+)
+def is_currentness_evidence_only(path: pathlib.Path) -> bool:
+    return path == migration_evidence_ledger_path
+
+
+if not is_currentness_evidence_only(migration_evidence_ledger_path):
+    fail("migration evidence ledger currentness exception must match its exact path")
+if is_currentness_evidence_only(root / "docs/90.references/README.md"):
+    fail("migration evidence ledger currentness exception must not widen to Stage 90")
+
+stale_provider_hook_path = "." + "claude/hooks"
+stale_shell_job_name = "shell" + "-static"
+stale_headlamp_oidc_patterns = [
+    "0004-" + "headlamp-auth-oidc-guide.md",
+    "0005-" + "headlamp-keycloak-runbook.md",
+    "headlamp-" + "oidc-secret",
+    "externalsecret-" + "oidc.yaml",
+    "gitops/platform/headlamp/" + "values.yaml",
+]
+stale_rollouts_currentness_patterns = [
+    (
+        "analysis-run 없이",
+        "stale Rollouts analysis-free promotion contract",
+    ),
+    (
+        "Prometheus analysis provider 연동 (후속 Phase)",
+        "stale Rollouts Prometheus analysis future-only contract",
+    ),
+]
+stale_app_onboarding_currentness_patterns = [
+    (
+        "Deployment는 `appproject-apps` whitelist에 포함",
+        "stale apps AppProject Deployment whitelist claim",
+    ),
+]
+for scan_root in active_currentness_roots:
+    for path in sorted(scan_root.rglob("*.md")):
+        if path.is_relative_to(root / "docs/98.archive"):
+            continue
+        if is_currentness_evidence_only(path):
+            continue
+        text = read_text(path)
+        if stale_provider_hook_path in text:
+            fail(
+                f"active authored docs must not retain stale provider-local hook path "
+                f"in {rel(path)}"
+            )
+        if stale_shell_job_name in text:
+            fail(
+                f"active authored docs must not list stale CI job name "
+                f"in {rel(path)}"
+            )
+        for pattern in stale_headlamp_oidc_patterns:
+            if pattern in text:
+                fail(
+                    f"active authored docs must not retain archived Headlamp OIDC "
+                    f"contract in {rel(path)}: {pattern}"
+                )
+        for pattern, description in [
+            *stale_rollouts_currentness_patterns,
+            *stale_app_onboarding_currentness_patterns,
+        ]:
+            if pattern in text:
+                fail(
+                    f"active authored docs must not retain {description} "
+                    f"in {rel(path)}: {pattern}"
+                )
+
+authored_command_roots = [
+    root / "docs/02.architecture/decisions",
+    root / "docs/03.specs",
+    root / "docs/05.operations/guides",
+    root / "docs/05.operations/policies",
+    root / "docs/05.operations/runbooks",
+    root / "docs/05.operations/incidents",
+]
+
+
+def has_nearby_marker(lines: list[str], index: int, markers: list[str]) -> bool:
+    start = max(0, index - 8)
+    end = min(len(lines), index + 5)
+    window = "\n".join(lines[start:end])
+    return any(marker in window for marker in markers)
+
+
+def is_pr_flow_push(lines: list[str], index: int) -> bool:
+    return has_nearby_marker(
+        lines,
+        index,
+        [
+            "PR review",
+            "PR flow",
+            "PR-flow",
+            "pull request",
+            "review/merge",
+            "review 후",
+            "merge되면",
+            "feature branch",
+        ],
+    )
+
+
+allowed_push_branch = re.compile(
+    r"\bgit\s+push\s+origin\s+(?:feat|fix|docs|refactor|chore|ci|release|hotfix|codex|dependabot)/\S+"
+)
+
+
+command_boundary_rules = [
+    (
+        "kubectl apply/patch",
+        re.compile(r"\bkubectl\b.*\b(?:apply|patch)\b"),
+        ["human-approved", "break-glass", "bootstrap-only", "bootstrap only", "operator-approved", "dry-run"],
+    ),
+    (
+        "kubectl create clusterrolebinding",
+        re.compile(r"\bkubectl\b.*\bcreate\s+clusterrolebinding\b"),
+        ["human-approved", "break-glass", "bootstrap-only", "bootstrap only", "operator-approved", "dry-run"],
+    ),
+    (
+        "kubectl get secret yaml/json",
+        re.compile(r"\bkubectl\s+get\s+secret\b.*\b-o\s+(?:yaml|json)\b"),
+        ["metadata-only", "status-only", "jsonpath", "no secret value", "redacted"],
+    ),
+    (
+        "argocd app sync",
+        re.compile(r"\bargocd\s+app\s+sync\b"),
+        ["operator-triggered reconciliation", "operator-approved", "break-glass"],
+    ),
+    (
+        "vault kv put",
+        re.compile(r"\bvault\s+kv\s+put\b"),
+        ["external secret operation", "human-approved"],
+    ),
+    (
+        "vault policy write",
+        re.compile(r"\bvault\s+policy\s+write\b"),
+        ["external secret operation", "operator-approved", "human-approved", "break-glass"],
+    ),
+    (
+        "terraform apply/destroy",
+        re.compile(r"\bterraform\s+(?:apply|destroy)\b"),
+        ["operator-approved", "break-glass", "human-approved", "approved DR change"],
+    ),
+    (
+        "helm install/upgrade",
+        re.compile(r"\bhelm\s+(?:install|upgrade)\b"),
+        ["operator-approved", "break-glass", "human-approved"],
+    ),
+    (
+        "az deployment group create",
+        re.compile(r"\baz\s+deployment\s+group\s+create\b"),
+        ["operator-approved", "break-glass", "human-approved"],
+    ),
+    (
+        "docker network mutation",
+        re.compile(r"\bdocker\s+network\s+(?:connect|disconnect|create|rm)\b"),
+        ["human-approved", "break-glass", "bootstrap-only", "bootstrap only", "operator-approved"],
+    ),
+    (
+        "kubeconfig mutation",
+        re.compile(r"\b(?:aws\s+eks\s+update-kubeconfig|az\s+aks\s+get-credentials|kubectl\s+config)\b"),
+        ["--kubeconfig", "--file", "temporary kubeconfig", "임시 kubeconfig"],
+    ),
+]
+
+command_boundary_roots = authored_command_roots + [root / "examples"]
+for command_root in command_boundary_roots:
+    candidates = command_root.rglob("*") if command_root == root / "examples" else command_root.rglob("*.md")
+    for path in sorted(candidates):
+        if not path.is_file():
+            continue
+        if command_root == root / "examples" and path.suffix not in {".md", ".yaml", ".yml", ".sh", ".tf", ".bicep"}:
+            continue
+        lines = read_text(path).splitlines()
+        for index, line in enumerate(lines):
+            stripped = line.strip()
+            if stripped == "git push" or "git push origin main" in stripped:
+                fail(f"{rel(path)} contains bare/main direct push example; use feature branch + PR flow: line {index + 1}")
+            elif re.search(r"\bgit\s+push\b", line):
+                if not allowed_push_branch.search(line) or not is_pr_flow_push(lines, index):
+                    fail(f"{rel(path)} contains push example without nearby PR-flow context: line {index + 1}")
+            for label, pattern, markers in command_boundary_rules:
+                if pattern.search(line) and not has_nearby_marker(lines, index, markers):
+                    fail(f"{rel(path)} has unmarked {label} example near line {index + 1}")
+
+markdown_direct_push_roots = [
+    root / "README.md",
+    root / "docs/README.md",
+    root / "gitops",
+    root / "infrastructure",
+    root / "traefik",
+    root / "examples",
+    root / "docs/05.operations",
+    root / "docs/90.references",
+]
+seen_markdown_direct_push_paths: set[pathlib.Path] = set()
+for scan_root in markdown_direct_push_roots:
+    candidates = [scan_root] if scan_root.is_file() else scan_root.rglob("*.md")
+    for path in sorted(candidates):
+        if not path.is_file() or path in seen_markdown_direct_push_paths:
+            continue
+        seen_markdown_direct_push_paths.add(path)
+        lines = read_text(path).splitlines()
+        for index, line in enumerate(lines):
+            stripped = line.strip()
+            if stripped == "git push" or "git push origin main" in stripped:
+                fail(f"{rel(path)} contains bare/main direct push example; use feature branch + PR flow: line {index + 1}")
+
+tracked_language_roots = (
+    "docs/00.agent-governance/",
+    ".claude/",
+    ".codex/",
+)
+for tracked_path in sorted(tracked):
+    if tracked_path == ".claude/settings.local.json":
+        continue
+    if not tracked_path.startswith(tracked_language_roots):
+        continue
+    path = root / tracked_path
+    if not path.is_file() or path.suffix not in {".md", ".toml", ".json", ".sh"}:
+        continue
+    if re.search(r"[가-힣]", read_text(path)):
+        fail(f"tracked governance/runtime file must remain English-only: {tracked_path}")
+
+agent_section_headings = [
+    "AI Agent Requirements",
+    "Agent Execution Notes",
+    "Agent Harness Requirements",
+]
+
+
+def current_agent_language_scan_text(tracked_path: str, source: str) -> str:
+    """Return current-document text while preserving archived payload bytes."""
+    if (
+        tracked_path.startswith("docs/98.archive/")
+        and tracked_path != "docs/98.archive/README.md"
+    ):
+        archive_marker = (
+            "<!-- archive-envelope:v1 payload=rest-of-file "
+            "encoding=git-blob-bytes -->"
+        )
+        marker_offset = source.find(archive_marker)
+        if marker_offset != -1:
+            return source[:marker_offset]
+    return source
+
+
+archive_language_probe = (
+    "---\ntitle: Archive probe\n---\n"
+    "<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->\n"
+    "## AI Agent Requirements\n보존 페이로드\n"
+)
+if re.search(
+    r"[가-힣]",
+    current_agent_language_scan_text(
+        "docs/98.archive/probe.md", archive_language_probe
+    ),
+):
+    fail("archive language scope mutation included immutable payload bytes")
+if not re.search(
+    r"[가-힣]",
+    current_agent_language_scan_text(
+        "docs/98.archive/README.md", archive_language_probe
+    ),
+):
+    fail("archive language scope mutation excluded the current archive index")
+if not re.search(
+    r"[가-힣]",
+    current_agent_language_scan_text(
+        "docs/03.specs/probe/spec.md", archive_language_probe
+    ),
+):
+    fail("archive language scope mutation excluded a current SDLC document")
+
+
+for tracked_path in sorted(tracked):
+    if not tracked_path.startswith("docs/") or not tracked_path.endswith(".md"):
+        continue
+    if tracked_path.startswith("docs/00.agent-governance/"):
+        continue
+    path = root / tracked_path
+    if not path.is_file():
+        continue
+    text = current_agent_language_scan_text(tracked_path, read_text(path))
+    for heading in agent_section_headings:
+        match = re.search(rf"^## {re.escape(heading)}(?:\s|\(|$).*?$", text, re.MULTILINE)
+        if not match:
+            continue
+        section_start = match.end()
+        next_heading = re.search(r"^##\s+", text[section_start:], re.MULTILINE)
+        section = text[section_start : section_start + next_heading.start()] if next_heading else text[section_start:]
+        if re.search(r"[가-힣]", section):
+            fail(f"{tracked_path} {heading} section must remain English for AI-agent execution requirements")
+
+docs_readme_path = root / "docs/README.md"
+docs_readme_text = read_text(docs_readme_path)
+for phrase in [
+    "## 문서 역할과 언어 계약",
+    "AI Agent Requirements",
+    "사람이 읽는 안내와 요약은 한국어를 우선",
+]:
+    if phrase not in docs_readme_text:
+        fail(f"{rel(docs_readme_path)} missing docs language/template contract phrase: {phrase}")
+
+workflow_paths = sorted((root / ".github").glob("**/*.yml")) + sorted((root / ".github").glob("**/*.yaml"))
+for workflow in workflow_paths:
+    try:
+        load_yaml(workflow)
+    except Exception as exc:
+        fail(f"GitHub Actions YAML parse failed for {rel(workflow)}: {exc}")
+
+for workflow in sorted((root / ".github/workflows").glob("*.yml")):
+    try:
+        data = load_yaml(workflow)
+    except Exception:
+        continue
+    for job_id, job in (data.get("jobs") or {}).items():
+        seen = collections.Counter()
+        for step in job.get("steps") or []:
+            label = step.get("name") or step.get("uses") or (step.get("run") or "").strip().splitlines()[0:1]
+            if isinstance(label, list):
+                label = label[0] if label else "<unnamed>"
+            seen[str(label)] += 1
+        for label, count in seen.items():
+            if label and label != "<unnamed>" and count > 1:
+                fail(f"duplicate workflow step in {rel(workflow)} job {job_id}: {label}")
+
+codeowners_path = root / ".github/CODEOWNERS"
+codeowners_text = read_text(codeowners_path)
+if not re.search(r"^/\.github/\s+@buenhyden(?:\s|$)", codeowners_text, re.MULTILINE):
+    fail(".github/CODEOWNERS must assign /.github/ ownership to @buenhyden")
+
+pull_request_template_path = root / ".github/PULL_REQUEST_TEMPLATE.md"
+pull_request_template_text = read_text(pull_request_template_path)
+for phrase in [
+    "- [ ] `all-files` result (`pre-commit run --all-files`):",
+    "- [ ] Every validation lane is explicitly classified as `PASS`, `SKIP`, `FAIL`, or `DEFER`.",
+]:
+    if phrase not in pull_request_template_text:
+        fail(f"{rel(pull_request_template_path)} missing QA evidence phrase: {phrase}")
+
+ci_path = root / ".github/workflows/ci.yml"
+ci_text = read_text(ci_path)
+try:
+    ci_data = load_yaml(ci_path)
+except Exception as exc:
+    fail(f"CI workflow parse failed for {rel(ci_path)}: {exc}")
+    ci_data = {}
+
+ci_on = workflow_on(ci_data)
+if ci_data.get("name") != "CI":
+    fail(f"{rel(ci_path)} workflow name must remain CI")
+if not isinstance(ci_on, dict):
+    fail(f"{rel(ci_path)} must declare structured push and pull_request triggers")
+else:
+    for event_name in ["push", "pull_request"]:
+        event_config = ci_on.get(event_name)
+        branches = []
+        if isinstance(event_config, dict):
+            branch_value = event_config.get("branches") or []
+            branches = branch_value if isinstance(branch_value, list) else [branch_value]
+        if branches != ["main"]:
+            fail(f"{rel(ci_path)} {event_name} trigger must target only main: {branches}")
+    if "workflow_dispatch" not in ci_on:
+        fail(f"{rel(ci_path)} must include workflow_dispatch for manual QA reruns")
+    if set(ci_on) != {"push", "pull_request", "workflow_dispatch"}:
+        fail(f"{rel(ci_path)} workflow triggers must remain exact Spec 031 triggers")
+
+ci_jobs = ci_data.get("jobs") or {}
+required_ci_jobs = {
+    "branch-policy",
+    "changes",
+    "pre-commit",
+    "repo-quality-static",
+    "agent-governance-static",
+    "manifest-static",
+    "ci-summary",
+}
+for job_id in sorted(required_ci_jobs - set(ci_jobs)):
+    fail(f"{rel(ci_path)} missing required CI job: {job_id}")
+if set(ci_jobs) != required_ci_jobs:
+    fail(f"{rel(ci_path)} job IDs must remain exact Spec 031 jobs: {sorted(required_ci_jobs)}")
+
+expected_job_needs = {
+    "branch-policy": [],
+    "changes": [],
+    "pre-commit": ["changes"],
+    "repo-quality-static": ["changes"],
+    "agent-governance-static": ["changes"],
+    "manifest-static": ["changes"],
+    "ci-summary": [
+        "branch-policy",
+        "changes",
+        "pre-commit",
+        "repo-quality-static",
+        "agent-governance-static",
+        "manifest-static",
+    ],
+}
+expected_job_if = {
+    "branch-policy": "github.event_name == 'pull_request'",
+    "changes": "",
+    "pre-commit": "needs.changes.outputs.precommit == 'true'",
+    "repo-quality-static": "needs.changes.outputs.repo_quality == 'true'",
+    "agent-governance-static": "needs.changes.outputs.agent_governance == 'true'",
+    "manifest-static": "needs.changes.outputs.manifests == 'true'",
+    "ci-summary": "always()",
+}
+delegated_ci_contract_jobs = {"agent-governance-static", "ci-summary"}
+for job_id in sorted(required_ci_jobs - delegated_ci_contract_jobs):
+    job = ci_jobs.get(job_id) or {}
+    needs = job.get("needs") or []
+    if isinstance(needs, str):
+        needs = [needs]
+    if needs != expected_job_needs[job_id]:
+        fail(f"{rel(ci_path)} {job_id} needs must remain {expected_job_needs[job_id]}")
+    if str(job.get("if") or "") != expected_job_if[job_id]:
+        fail(f"{rel(ci_path)} {job_id} if must remain {expected_job_if[job_id]!r}")
+
+branch_policy_job = ci_jobs.get("branch-policy") or {}
+branch_policy_if = str(branch_policy_job.get("if") or "")
+if "github.event_name == 'pull_request'" not in branch_policy_if:
+    fail(f"{rel(ci_path)} branch-policy must run only for pull_request")
+branch_policy_text = "\n".join(
+    str(step.get("run") or "")
+    for step in branch_policy_job.get("steps") or []
+)
+for phrase in [
+    "BASE_REF",
+    "HEAD_REF",
+    "allowed_branch_regex",
+    "PR base branch must be main",
+    "branch-policy=ok",
+]:
+    if phrase not in branch_policy_text:
+        fail(f"{rel(ci_path)} branch-policy missing validation phrase: {phrase}")
+
+branch_prefixes = extract_ci_branch_policy_prefixes(branch_policy_text)
+if not branch_prefixes:
+    fail(f"{rel(ci_path)} branch-policy must define supported branch prefixes")
+expected_branch_message = (
+    "PR source branch must start with one of: "
+    + format_branch_prefixes(branch_prefixes)
+)
+if expected_branch_message not in branch_policy_text:
+    fail(
+        f"{rel(ci_path)} branch-policy message must match its allowed_branch_regex"
+    )
+
+changes_job = ci_jobs.get("changes") or {}
+expected_changes_outputs = {
+    "agent_governance": "${{ steps.filter.outputs.agent_governance }}",
+    "precommit": "${{ steps.filter.outputs.precommit }}",
+    "repo_quality": "${{ steps.filter.outputs.repo_quality }}",
+    "manifests": "${{ steps.filter.outputs.manifests }}",
+}
+if changes_job.get("outputs") != expected_changes_outputs:
+    fail(
+        f"{rel(ci_path)} changes outputs must be canonical selector outputs: "
+        f"{expected_changes_outputs}"
+    )
+
+changes_steps = changes_job.get("steps") or []
+changes_checkout_steps = [
+    step
+    for step in changes_steps
+    if step.get("uses") == "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+]
+if len(changes_checkout_steps) != 1:
+    fail(f"{rel(ci_path)} changes job must have exactly one pinned checkout step")
+elif (changes_checkout_steps[0].get("with") or {}).get("fetch-depth") != 0:
+    fail(f"{rel(ci_path)} changes checkout must use fetch-depth: 0")
+
+selector_steps = [step for step in changes_steps if step.get("id") == "filter"]
+if len(selector_steps) != 1:
+    fail(f"{rel(ci_path)} changes job must have exactly one selector step with id=filter")
+    selector_step = {}
+else:
+    selector_step = selector_steps[0]
+if selector_step.get("uses"):
+    fail(f"{rel(ci_path)} canonical selector step must not delegate to an Action")
+selector_run = str(selector_step.get("run") or "")
+for marker in [
+    "git diff --no-renames --name-only -z",
+    "git ls-tree -r --name-only -z",
+    '"$RUNNER_TEMP/changed-paths.nul"',
+    "python3 scripts/select-affected-surfaces.py",
+    "--lane ci",
+    "--delimiter nul",
+    "--format github-output",
+    '>> "$GITHUB_OUTPUT"',
+]:
+    if marker not in selector_run:
+        fail(f"{rel(ci_path)} canonical selector step missing marker: {marker}")
+for forbidden_marker in ["$(", "`", "dorny/paths-filter", "filters: |"]:
+    if forbidden_marker in selector_run or forbidden_marker in ci_text:
+        fail(f"{rel(ci_path)} canonical selector contains forbidden marker: {forbidden_marker}")
+
+manifest_static_steps = (ci_jobs.get("manifest-static") or {}).get("steps") or []
+manifest_checkout_steps = [
+    step
+    for step in manifest_static_steps
+    if step.get("uses") == "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+]
+if len(manifest_checkout_steps) != 1:
+    fail(f"{rel(ci_path)} manifest-static must have exactly one pinned checkout step")
+else:
+    manifest_checkout_with = manifest_checkout_steps[0].get("with") or {}
+    if manifest_checkout_with.get("persist-credentials") is not False:
+        fail(f"{rel(ci_path)} manifest-static checkout must disable persisted credentials")
+    if manifest_checkout_with.get("fetch-depth") != 0:
+        fail(f"{rel(ci_path)} manifest-static checkout must use fetch-depth: 0")
+
+gitops_change_set_steps = [
+    step
+    for step in manifest_static_steps
+    if step.get("name") == "Review GitOps object identity and deletion set"
+]
+if len(gitops_change_set_steps) != 1:
+    fail(f"{rel(ci_path)} manifest-static must contain exactly one GitOps change-set step")
+else:
+    gitops_change_set_step = gitops_change_set_steps[0]
+    expected_gitops_change_set_env = {
+        "BASE_REF": "${{ github.event.pull_request.base.sha || github.event.before || github.sha }}"
+    }
+    if gitops_change_set_step.get("env") != expected_gitops_change_set_env:
+        fail(
+            f"{rel(ci_path)} GitOps change-set env must equal: "
+            f"{expected_gitops_change_set_env}"
+        )
+    expected_gitops_change_set_run = (
+        'python3 scripts/validate-gitops-change-set.py --root . --base-ref "$BASE_REF"'
+    )
+    if str(gitops_change_set_step.get("run") or "").strip() != expected_gitops_change_set_run:
+        fail(
+            f"{rel(ci_path)} GitOps change-set command must equal: "
+            f"{expected_gitops_change_set_run}"
+        )
+
+manifest_static_runs = "\n".join(
+    str(step.get("run") or "")
+    for step in manifest_static_steps
+)
+for command in [
+    'python3 scripts/validate-gitops-change-set.py --root . --base-ref "$BASE_REF"',
+    "bash infrastructure/tests/verify-contracts-static.sh",
+    "bash scripts/validate-gitops-structure.sh",
+    "bash scripts/validate-k8s-manifests.sh .",
+    "bash scripts/check-secret-handling.sh .",
+    "python3 scripts/validate-vault-eso-contracts.py --root .",
+    "bash scripts/validate-policy-gates.sh .",
+]:
+    if command not in manifest_static_runs:
+        fail(f"{rel(ci_path)} manifest-static missing command: {command}")
+
+static_contract_steps = [
+    step for step in manifest_static_steps if step.get("name") == "Run static contract checks"
+]
+expected_static_contract_commands = [
+    "bash infrastructure/tests/verify-contracts-static.sh",
+    "bash scripts/validate-gitops-structure.sh",
+    "bash scripts/validate-k8s-manifests.sh .",
+    "bash scripts/check-secret-handling.sh .",
+    "python3 scripts/validate-vault-eso-contracts.py --root .",
+    "bash scripts/validate-policy-gates.sh .",
+]
+if len(static_contract_steps) != 1:
+    fail(f"{rel(ci_path)} manifest-static must contain exactly one static contract step")
+else:
+    actual_static_contract_commands = [
+        line.strip()
+        for line in str(static_contract_steps[0].get("run") or "").splitlines()
+        if line.strip()
+    ]
+    if actual_static_contract_commands != expected_static_contract_commands:
+        fail(
+            f"{rel(ci_path)} manifest-static static commands must remain exact and ordered: "
+            f"{expected_static_contract_commands}"
+        )
+
+
+
+pr_template_path = root / ".github/PULL_REQUEST_TEMPLATE.md"
+pr_template_text = read_text(pr_template_path)
+
+for phrase in [
+    "Workflow path filters and job ownership reviewed",
+    "No live cluster mutation",
+    "approved prefix",
+    "`main`",
+]:
+    if phrase not in pr_template_text:
+        fail(f"{rel(pr_template_path)} missing GitHub/GitOps review phrase: {phrase}")
+for phrase in [
+    "any exception must update CI `branch-policy` and governance in the same change",
+    "No PR targeting `main` bypasses CI or branch-policy checks",
+    "Draft/WIP status is intentional",
+    "90% target for future testable application code",
+    "`test`: Tests or validation updates",
+    "`chore`: Maintenance updates",
+    "`infra` is a change type, not an approved branch prefix",
+    "branch protection/rulesets enforce direct-push restrictions",
+]:
+    if phrase not in pr_template_text:
+        fail(f"{rel(pr_template_path)} missing branch-policy clarification: {phrase}")
+if not has_provider_example_boundary_prompt(pr_template_text):
+    fail(
+        f"{rel(pr_template_path)} missing provider example checklist line with "
+        "examples/aws, examples/azure, adjacent executable assets, provider-latest, "
+        "and approved provider refresh spec terms"
+    )
+
+# Harness implementation surfaces: existence and cross-reference contracts only.
+# Wrapper script existence is already enforced by the scripts inventory, so it
+# is not re-validated here.
+approval_boundaries_path = root / "docs/00.agent-governance/policies/approval-and-safety.md"
+if not approval_boundaries_path.exists():
+    fail(f"required harness surface is missing: {rel(approval_boundaries_path)}")
+if "## 8. Harness Impact" not in pr_template_text:
+    fail(f"{rel(pr_template_path)} missing Harness Impact section heading: ## 8. Harness Impact")
+canonical_task_form_text = read_text(
+    root / "docs/99.templates/templates/specs/task.template.md"
+)
+for phrase in [
+    "## Approval and Safety Boundaries",
+    "**Allowed Paths**:",
+    "**Forbidden Paths**:",
+    "**Approval Required**:",
+    "**Static Validation**:",
+    "**Live Validation**:",
+    "**Secret / Vault Handling**:",
+    "**Rollback Plan**:",
+    "**Evidence Location**:",
+]:
+    if phrase not in canonical_task_form_text:
+        fail(f"canonical Task form missing approval/safety contract field: {phrase}")
+
+pr_branch_prefixes = extract_pr_template_prefixes(pr_template_text)
+if pr_branch_prefixes != branch_prefixes:
+    fail(
+        f"{rel(pr_template_path)} approved branch prefixes must match {rel(ci_path)} branch-policy "
+        f"SSoT: expected {format_branch_prefixes(branch_prefixes)} got {format_branch_prefixes(pr_branch_prefixes)}"
+    )
+for prefix in branch_prefixes:
+    prefix_label = f"{prefix}/"
+    if prefix not in pr_template_text:
+        fail(
+            f"{rel(pr_template_path)} missing approved source branch prefix from "
+            f"{rel(ci_path)} branch-policy: {prefix_label}"
+        )
+
+github_about_path = root / ".github/README.md"
+git_policy_path = root / "docs/00.agent-governance/policies/git.md"
+github_about_text = read_text(github_about_path)
+for phrase in [
+    "docs/00.agent-governance/policies/git.md",
+    "workflows/ci.yml",
+    "scripts/validate-repo-quality-gates.sh",
+    "PULL_REQUEST_TEMPLATE.md",
+    ".github/requirements/ci-validation.txt",
+    ".pre-commit-config.yaml",
+    "branch protection/rulesets enforce direct-push restrictions",
+    "QA gates and release-evidence automation, not deploy CD",
+    "Source Basis",
+    "Parent Spec",
+    "GitHub Actions documentation",
+]:
+    if phrase not in github_about_text:
+        fail(f"{rel(github_about_path)} must route to the policy/enforcement SSoT instead of duplicating policy: {phrase}")
+if "PR source branches must start" in github_about_text or "Default PR target is `main`" in github_about_text:
+    fail(
+        f"{rel(github_about_path)} must not duplicate branch-policy prose; "
+        f"keep human Git guidance in {rel(git_policy_path)} and enforcement in {rel(ci_path)}"
+    )
+about_prefix_count = sum(1 for prefix in branch_prefixes if f"{prefix}/" in github_about_text)
+if about_prefix_count >= len(branch_prefixes):
+    fail(
+        f"{rel(github_about_path)} must not mirror the full branch prefix list; "
+        f"use {rel(ci_path)} branch-policy as the executable owner"
+    )
+
+workflow_responsibility_rows = markdown_table_after_heading(
+    github_about_text,
+    "## Workflow Responsibility Matrix",
+)
+expected_workflow_responsibility_header = [
+    "Workflow",
+    "Role",
+    "Trigger / scope",
+    "Required evidence",
+    "Boundary",
+]
+expected_workflows = [path.name for path in sorted((root / ".github/workflows").glob("*.yml"))]
+if len(workflow_responsibility_rows) < 2:
+    fail(".github/README.md Workflow Responsibility Matrix must contain a header and workflow rows")
+elif workflow_responsibility_rows[0] != expected_workflow_responsibility_header:
+    fail(
+        ".github/README.md Workflow Responsibility Matrix header must be: "
+        + " | ".join(expected_workflow_responsibility_header)
+    )
+else:
+    indexed_workflows: list[str] = []
+    for row_number, row in enumerate(workflow_responsibility_rows[1:], start=1):
+        if len(row) != len(expected_workflow_responsibility_header):
+            fail(
+                ".github/README.md Workflow Responsibility Matrix "
+                f"row {row_number} must have {len(expected_workflow_responsibility_header)} columns"
+            )
+            continue
+        workflow_cell, role, trigger_scope, required_evidence, boundary = row
+        match = re.fullmatch(r"`([^`]+\.yml)`", workflow_cell)
+        if not match:
+            fail(
+                ".github/README.md Workflow Responsibility Matrix "
+                f"row {row_number} must start with a backticked workflow filename"
+            )
+            continue
+        workflow_name = match.group(1)
+        indexed_workflows.append(workflow_name)
+        if not (root / ".github/workflows" / workflow_name).is_file():
+            fail(f".github/README.md Workflow Responsibility Matrix references missing workflow: {workflow_name}")
+        for label, value in [
+            ("Role", role),
+            ("Trigger / scope", trigger_scope),
+            ("Required evidence", required_evidence),
+            ("Boundary", boundary),
+        ]:
+            if not value:
+                fail(f".github/README.md Workflow Responsibility Matrix row {row_number} has empty {label}")
+        if workflow_name == "ci.yml":
+            for phrase, value in [
+                ("Required QA gate", role),
+                ("repo-quality", role),
+                ("manifest", role),
+                ("secret", role),
+                ("push", trigger_scope),
+                ("pull_request", trigger_scope),
+                ("workflow_dispatch", trigger_scope),
+                ("ci-summary", required_evidence),
+                ("agent-governance-static", required_evidence),
+                ("repo-quality-static", required_evidence),
+                ("manifest-static", required_evidence),
+                ("No deploy CD", boundary),
+                ("direct Kubernetes mutation", boundary),
+                ("external Vault mutation", boundary),
+            ]:
+                if phrase not in value:
+                    fail(f".github/README.md ci.yml responsibility row missing phrase: {phrase}")
+        elif workflow_name == "generate-changelog.yml":
+            for phrase, value in [
+                ("Release-evidence", role),
+                ("release tag", trigger_scope),
+                ("CHANGELOG.md", required_evidence),
+                ("Does not commit", boundary),
+                ("push", boundary),
+                ("publish", boundary),
+            ]:
+                if phrase not in value:
+                    fail(f".github/README.md generate-changelog.yml responsibility row missing phrase: {phrase}")
+        elif workflow_name == "greetings.yml":
+            for phrase, value in [
+                ("maintenance greeting", role),
+                ("issue or PR", trigger_scope),
+                ("onboarding guidance", required_evidence),
+                ("Not a QA gate", boundary),
+                ("deployment automation", boundary),
+            ]:
+                if phrase not in value:
+                    fail(f".github/README.md greetings.yml responsibility row missing phrase: {phrase}")
+        elif workflow_name == "labeler.yml":
+            for phrase, value in [
+                ("maintenance labeling", role),
+                ("pull request", trigger_scope),
+                (".github/labeler.yml", required_evidence),
+                ("Not a QA gate", boundary),
+                ("CODEOWNERS", boundary),
+                ("human review", boundary),
+            ]:
+                if phrase not in value:
+                    fail(f".github/README.md labeler.yml responsibility row missing phrase: {phrase}")
+        elif workflow_name == "stale.yml":
+            for phrase, value in [
+                ("maintenance stale-item", role),
+                ("scheduled", trigger_scope),
+                ("stale", required_evidence),
+                ("Not a QA gate", boundary),
+                ("not release evidence", boundary),
+                ("deployment automation", boundary),
+            ]:
+                if phrase not in value:
+                    fail(f".github/README.md stale.yml responsibility row missing phrase: {phrase}")
+    if indexed_workflows != expected_workflows:
+        fail(
+            ".github/README.md Workflow Responsibility Matrix row order must match actual workflows: "
+            + ", ".join(expected_workflows)
+        )
+
+labeler_path = root / ".github/labeler.yml"
+labeler_data = load_yaml(labeler_path)
+test_label_globs = set(collect_strings(labeler_data.get("area/tests") or []))
+for expected_glob in ["tests/**", "infrastructure/tests/**"]:
+    if expected_glob not in test_label_globs:
+        fail(f"{rel(labeler_path)} area/tests missing glob: {expected_glob}")
+
+for workflow in sorted((root / ".github/workflows").glob("*.yml")):
+    workflow_text = read_text(workflow)
+    for command in [
+        "kubectl apply",
+        "kubectl patch",
+        "argocd app sync",
+        "argocd app set",
+        "vault kv",
+        "docker push",
+        "git push",
+    ]:
+        if command in workflow_text:
+            fail(f"{rel(workflow)} contains forbidden live mutation or publish command: {command}")
+
+    try:
+        workflow_data = load_yaml(workflow)
+    except Exception:
+        continue
+    if workflow.name in {"generate-changelog.yml", "labeler.yml", "stale.yml"} and "concurrency" not in workflow_data:
+        fail(f"{rel(workflow)} must declare workflow-level concurrency")
+    for job_id, job in (workflow_data.get("jobs") or {}).items():
+        if "timeout-minutes" not in job:
+            fail(f"{rel(workflow)} job {job_id} must declare timeout-minutes")
+        for step in job.get("steps") or []:
+            run_block = str(step.get("run") or "")
+            if re.search(r"\$\{\{\s*needs(?:\.|\[)[^}]*\.result\s*\}\}", run_block):
+                fail(f"{rel(workflow)} job {job_id} run block expands needs.*.result directly")
+
+# Unique Claude pre-edit, session-start, and lifecycle registration checks
+# remain here until their provider-owner consolidation. The dedicated
+# PostToolUse regression above owns its closed command and isolation boundary.
+claude_settings = load_json(root / ".claude/settings.json")
+claude_hook_configuration = json.dumps(claude_settings.get("hooks", {}))
+for phrase in [
+    "docs/00.agent-governance/hooks/k8s-pre-edit.sh",
+    "docs/00.agent-governance/hooks/session-start.sh",
+    "docs/00.agent-governance/hooks/lifecycle-guard.sh",
+    '"Stop"',
+    '"SubagentStop"',
+    '"PreCompact"',
+    '"timeout": 60',
+    '"timeout": 20',
+]:
+    if phrase not in claude_hook_configuration and phrase not in read_text(root / ".claude/settings.json"):
+        fail(f".claude/settings.json missing hook contract phrase: {phrase}")
+
+
+# Pre-edit and lifecycle hook simulations are unconditional. Post-validate
+# selector and runner behavior is exercised through the dedicated pure test
+# entrypoint above so the production hook always executes its real affected lane.
+if True:
+    hook_env = {
+        **os.environ,
+        "CLAUDE_PROJECT_DIR": str(root),
+    }
+    manifest_hook_payload = json.dumps(
+        {"tool_input": {"file_path": "gitops/platform/headlamp/headlamp-ingress.yaml"}}
+    )
+    docs_hook_payload = json.dumps(
+        {
+            "tool_input": {
+                "file_path": "docs/01.requirements/9999-example-feature.md"
+            }
+        }
+    )
+    pre_hook_path = root / "docs/00.agent-governance/hooks/k8s-pre-edit.sh"
+    pre_hook_result = bounded_process(
+        ["bash", str(pre_hook_path)],
+        cwd=root,
+        input=manifest_hook_payload,
+        text=True,
+        capture_output=True,
+        env=hook_env,
+        timeout=60,
+    )
+    if pre_hook_result.returncode != 0:
+        fail(f"{rel(pre_hook_path)} payload simulation failed: {pre_hook_result.stderr.strip()}")
+    for phrase in ["systemMessage", "GitOps-first", "PostToolUse hook"]:
+        if phrase not in pre_hook_result.stdout:
+            fail(f"{rel(pre_hook_path)} payload simulation missing output phrase: {phrase}")
+
+    docs_pre_hook_result = bounded_process(
+        ["bash", str(pre_hook_path)],
+        cwd=root,
+        input=docs_hook_payload,
+        text=True,
+        capture_output=True,
+        env=hook_env,
+        timeout=60,
+    )
+    if docs_pre_hook_result.returncode != 0:
+        fail(f"{rel(pre_hook_path)} docs payload simulation failed: {docs_pre_hook_result.stderr.strip()}")
+    for phrase in [
+        "Template-First",
+        "sdlc/requirement-package",
+        "docs/99.templates/README.md",
+        "docs/99.templates/templates/requirements/requirement-package.template.md",
+        "documentation template enforcement",
+    ]:
+        if phrase not in docs_pre_hook_result.stdout:
+            fail(f"{rel(pre_hook_path)} docs payload simulation missing output phrase: {phrase}")
+
+    lifecycle_hook_path = root / "docs/00.agent-governance/hooks/lifecycle-guard.sh"
+    lifecycle_selftest_env = {
+        **hook_env,
+        "HY_HOME_K8S_LIFECYCLE_GUARD_SELFTEST": "1",
+        "HY_HOME_K8S_CHANGED_PATHS": "docs/01.requirements/example.md",
+    }
+    clean_stop_result = bounded_process(
+        ["bash", str(lifecycle_hook_path)],
+        cwd=root,
+        input=json.dumps({"hook_event_name": "Stop"}),
+        text=True,
+        capture_output=True,
+        env=lifecycle_selftest_env,
+        timeout=60,
+    )
+    if clean_stop_result.returncode != 0:
+        fail(f"{rel(lifecycle_hook_path)} clean Stop payload simulation failed: {clean_stop_result.stderr.strip()}")
+    if "block" in clean_stop_result.stdout:
+        fail(f"{rel(lifecycle_hook_path)} clean Stop payload simulation unexpectedly blocked")
+    for phrase in [
+        "systemMessage",
+        "Task-unit commit discipline",
+        "git diff --cached",
+        "dirty state spans multiple SDD overlays",
+        "forward-only exception",
+    ]:
+        if phrase not in clean_stop_result.stdout:
+            fail(f"{rel(lifecycle_hook_path)} clean Stop payload simulation missing task-unit commit phrase: {phrase}")
+
+    failing_stop_result = bounded_process(
+        ["bash", str(lifecycle_hook_path)],
+        cwd=root,
+        input=json.dumps({"hook_event_name": "Stop"}),
+        text=True,
+        capture_output=True,
+        env={**lifecycle_selftest_env, "HY_HOME_K8S_FORCE_FAIL": "1"},
+        timeout=60,
+    )
+    if failing_stop_result.returncode != 0:
+        fail(f"{rel(lifecycle_hook_path)} failing Stop payload simulation exited non-zero")
+    for phrase in ["decision", "block", "validation failed"]:
+        if phrase not in failing_stop_result.stdout:
+            fail(f"{rel(lifecycle_hook_path)} failing Stop payload simulation missing output phrase: {phrase}")
+
+    failing_subagent_result = bounded_process(
+        ["bash", str(lifecycle_hook_path)],
+        cwd=root,
+        input=json.dumps({"hook_event_name": "SubagentStop"}),
+        text=True,
+        capture_output=True,
+        env={**lifecycle_selftest_env, "HY_HOME_K8S_FORCE_FAIL": "1"},
+        timeout=60,
+    )
+    if failing_subagent_result.returncode != 0:
+        fail(f"{rel(lifecycle_hook_path)} failing SubagentStop payload simulation exited non-zero")
+    for phrase in ["decision", "block", "SubagentStop"]:
+        if phrase not in failing_subagent_result.stdout:
+            fail(f"{rel(lifecycle_hook_path)} failing SubagentStop payload simulation missing output phrase: {phrase}")
+
+    precompact_result = bounded_process(
+        ["bash", str(lifecycle_hook_path)],
+        cwd=root,
+        input=json.dumps({"hook_event_name": "PreCompact", "trigger": "manual"}),
+        text=True,
+        capture_output=True,
+        env={
+            **hook_env,
+            "HY_HOME_K8S_LIFECYCLE_GUARD_SELFTEST": "1",
+            "HY_HOME_K8S_CHANGED_PATHS": ".claude/settings.json",
+        },
+        timeout=60,
+    )
+    if precompact_result.returncode != 0:
+        fail(f"{rel(lifecycle_hook_path)} PreCompact payload simulation failed: {precompact_result.stderr.strip()}")
+    for phrase in [
+        "systemMessage",
+        "Lifecycle guard",
+        "Suggested validation",
+        "Task-unit commit discipline",
+        "dirty state spans multiple SDD overlays",
+        "forward-only exception",
+    ]:
+        if phrase not in precompact_result.stdout:
+            fail(f"{rel(lifecycle_hook_path)} PreCompact payload simulation missing output phrase: {phrase}")
+    if '"decision": "block"' in precompact_result.stdout:
+        fail(f"{rel(lifecycle_hook_path)} PreCompact payload simulation must not block")
+
+scripts_dir = root / "scripts"
+tracked_script_paths = sorted(
+    root / tracked_path
+    for tracked_path in tracked
+    if pathlib.PurePosixPath(tracked_path).parent
+    == pathlib.PurePosixPath("scripts")
+    and pathlib.PurePosixPath(tracked_path).suffix in {".py", ".sh"}
+)
+for script_path in tracked_script_paths:
+    if script_path.suffix != ".py":
+        continue
+    if not script_path.is_file():
+        fail(f"tracked Python script is missing from the worktree: {rel(script_path)}")
+        continue
+    try:
+        ast.parse(read_text(script_path), filename=rel(script_path))
+    except SyntaxError as exc:
+        fail(f"tracked Python script syntax failed for {rel(script_path)}: {exc.msg}")
+
+script_paths = sorted(scripts_dir.glob("*.sh"))
+disallowed_script_absolute_path_patterns = [
+    re.compile(r"(?<![A-Za-z0-9_.-])/(?:home|Users|var|opt)/[A-Za-z0-9_.-]"),
+    re.compile(r"\b[A-Z]:\\\\"),
+]
+for script in script_paths:
+    script_text = read_text(script)
+    if not os.access(script, os.X_OK):
+        fail(f"script must be executable: {rel(script)}")
+    if not script_text.startswith("#!/usr/bin/env bash\n"):
+        fail(f"script must start with bash shebang: {rel(script)}")
+    for pattern in disallowed_script_absolute_path_patterns:
+        if pattern.search(script_text):
+            fail(f"{rel(script)} contains a hardcoded absolute machine path")
+
+kube_linter_config_path = root / ".kube-linter.yaml"
+kube_linter_config = load_yaml(kube_linter_config_path)
+expected_kube_linter_exclusions = [
+    "no-read-only-root-fs",
+    "no-anti-affinity",
+    "unset-cpu-requirements",
+    "unset-memory-requirements",
+    "run-as-non-root",
+    "latest-tag",
+    "dangling-service",
+]
+kube_linter_exclusions = (
+    (kube_linter_config.get("checks") or {}).get("exclude") or []
+)
+if kube_linter_exclusions != expected_kube_linter_exclusions:
+    fail(
+        ".kube-linter.yaml checks.exclude must match the documented exclusion order: "
+        + ", ".join(expected_kube_linter_exclusions)
+    )
+
+kube_linter_text = read_text(kube_linter_config_path)
+for exclusion in expected_kube_linter_exclusions:
+    match = re.search(rf'^\s*-\s+"{re.escape(exclusion)}"\s+#\s*(.+)$', kube_linter_text, re.MULTILINE)
+    if not match:
+        fail(f".kube-linter.yaml exclusion must have an inline rationale comment: {exclusion}")
+        continue
+    rationale = match.group(1).strip()
+    if len(rationale) < 12 or "TODO" in rationale or "TBD" in rationale:
+        fail(f".kube-linter.yaml exclusion rationale is too weak: {exclusion}")
+
+gitops_dir = root / "gitops"
+gitops_readme_path = gitops_dir / "README.md"
+gitops_readme = read_text(gitops_readme_path)
+expected_gitops_service_header = [
+    "Area",
+    "Purpose and owner",
+    "Lifecycle and config",
+    "Dependencies, routes, secrets",
+    "Validation and operations",
+]
+expected_gitops_service_areas = (
+    ["clusters/local", "apps/root"]
+    + [f"platform/{path.name}" for path in sorted((gitops_dir / "platform").iterdir()) if path.is_dir()]
+    + [f"workloads/{path.name}" for path in sorted((gitops_dir / "workloads").iterdir()) if path.is_dir()]
+)
+gitops_service_rows = markdown_table_after_heading(
+    gitops_readme,
+    profiled_readme_table_headings("Service Coverage Matrix"),
+)
+if len(gitops_service_rows) < 2:
+    fail("gitops/README.md Service Coverage Matrix must contain a header and service rows")
+elif gitops_service_rows[0] != expected_gitops_service_header:
+    fail(
+        "gitops/README.md Service Coverage Matrix header must be: "
+        + " | ".join(expected_gitops_service_header)
+    )
+else:
+    indexed_gitops_areas: list[str] = []
+    seen_gitops_areas: set[str] = set()
+    for row_number, row in enumerate(gitops_service_rows[1:], start=1):
+        if len(row) != len(expected_gitops_service_header):
+            fail(
+                "gitops/README.md Service Coverage Matrix "
+                f"row {row_number} must have {len(expected_gitops_service_header)} columns"
+            )
+            continue
+        area_cell, purpose, lifecycle, dependencies, validation = row
+        match = re.fullmatch(r"`([^`]+)`", area_cell)
+        if not match:
+            fail(
+                "gitops/README.md Service Coverage Matrix "
+                f"row {row_number} must start with a backticked area path"
+            )
+            continue
+        area = match.group(1)
+        if area in seen_gitops_areas:
+            fail(f"gitops/README.md Service Coverage Matrix duplicates area: {area}")
+        seen_gitops_areas.add(area)
+        indexed_gitops_areas.append(area)
+        area_path = gitops_dir / area
+        if not area_path.is_dir():
+            fail(f"gitops/README.md Service Coverage Matrix references missing directory: gitops/{area}")
+        for label, value in [
+            ("Purpose and owner", purpose),
+            ("Lifecycle and config", lifecycle),
+            ("Dependencies, routes, secrets", dependencies),
+            ("Validation and operations", validation),
+        ]:
+            if not value:
+                fail(f"gitops/README.md Service Coverage Matrix row {row_number} has empty {label}")
+        if "owned by" not in purpose:
+            fail(f"gitops/README.md Service Coverage Matrix row {row_number} must name ownership")
+        if not any(marker in validation for marker in ["`bash ", "Validate", "validate-", "verify-"]):
+            fail(f"gitops/README.md Service Coverage Matrix row {row_number} must cite a validation command")
+    if indexed_gitops_areas != expected_gitops_service_areas:
+        fail(
+            "gitops/README.md Service Coverage Matrix area order must match actual GitOps directories: "
+            + ", ".join(expected_gitops_service_areas)
+        )
+
+expected_external_contract_header = [
+    "Contract",
+    "Host / service",
+    "Port",
+    "Database or Vault path",
+    "Secret keys",
+    "TLS / CA",
+    "Rotation responsibility",
+    "Namespace convention",
+    "Validation",
+]
+expected_external_contracts = [
+    "Vault API",
+    "PostgreSQL write",
+    "PostgreSQL read",
+    "Valkey auth",
+]
+external_contract_rows = markdown_table_after_heading(
+    gitops_readme,
+    profiled_readme_table_headings("External Service Contract Matrix"),
+)
+if len(external_contract_rows) < 2:
+    fail("gitops/README.md External Service Contract Matrix must contain a header and contract rows")
+elif external_contract_rows[0] != expected_external_contract_header:
+    fail(
+        "gitops/README.md External Service Contract Matrix header must be: "
+        + " | ".join(expected_external_contract_header)
+    )
+else:
+    indexed_external_contracts: list[str] = []
+    for row_number, row in enumerate(external_contract_rows[1:], start=1):
+        if len(row) != len(expected_external_contract_header):
+            fail(
+                "gitops/README.md External Service Contract Matrix "
+                f"row {row_number} must have {len(expected_external_contract_header)} columns"
+            )
+            continue
+        contract_cell, host, port, database_or_path, secret_keys, tls_ca, rotation, namespace, validation = row
+        match = re.fullmatch(r"`([^`]+)`", contract_cell)
+        if not match:
+            fail(
+                "gitops/README.md External Service Contract Matrix "
+                f"row {row_number} must start with a backticked contract name"
+            )
+            continue
+        contract = match.group(1)
+        indexed_external_contracts.append(contract)
+        for label, value in [
+            ("Host / service", host),
+            ("Port", port),
+            ("Database or Vault path", database_or_path),
+            ("Secret keys", secret_keys),
+            ("TLS / CA", tls_ca),
+            ("Rotation responsibility", rotation),
+            ("Namespace convention", namespace),
+            ("Validation", validation),
+        ]:
+            if not value:
+                fail(f"gitops/README.md External Service Contract Matrix row {row_number} has empty {label}")
+        if "verify-contracts-static.sh" not in validation:
+            fail(
+                "gitops/README.md External Service Contract Matrix "
+                f"row {row_number} must cite infrastructure/tests/verify-contracts-static.sh"
+            )
+        if "platform" not in namespace:
+            fail(
+                "gitops/README.md External Service Contract Matrix "
+                f"row {row_number} must cite the platform namespace convention"
+            )
+        if "operator" not in rotation and "owner" not in rotation:
+            fail(
+                "gitops/README.md External Service Contract Matrix "
+                f"row {row_number} must name the rotation owner"
+            )
+        if "TLS" not in tls_ca or "CA" not in tls_ca:
+            fail(
+                "gitops/README.md External Service Contract Matrix "
+                f"row {row_number} must explicitly cover TLS/CA responsibility"
+            )
+        if contract == "Vault API":
+            for phrase, value in [
+                ("vault-external.platform.svc.cluster.local", host),
+                ("172.18.0.8", host),
+                ("8200", port),
+                ("ClusterSecretStore", database_or_path),
+                ("platform/argocd", database_or_path),
+                ("platform/postgres-app", database_or_path),
+                ("platform/notifications", database_or_path),
+                ("eso-read-platform", secret_keys),
+                ("http://", tls_ca),
+                ("external-secrets", namespace),
+            ]:
+                if phrase not in value:
+                    fail(f"gitops/README.md Vault API contract row missing phrase: {phrase}")
+        elif contract == "PostgreSQL write":
+            for phrase, value in [
+                ("postgres-write-external.platform.svc.cluster.local", host),
+                ("172.18.0.15", host),
+                ("15432", port),
+                ("db_name", database_or_path),
+                ("platform/postgres-app", database_or_path),
+                ("postgres-app-secret", secret_keys),
+                ("username", secret_keys),
+                ("password", secret_keys),
+                ("external PostgreSQL service workspace", tls_ca),
+                ("ESO refreshes", rotation),
+            ]:
+                if phrase not in value:
+                    fail(f"gitops/README.md PostgreSQL write contract row missing phrase: {phrase}")
+        elif contract == "PostgreSQL read":
+            for phrase, value in [
+                ("postgres-read-external.platform.svc.cluster.local", host),
+                ("172.18.0.15", host),
+                ("15433", port),
+                ("db_name", database_or_path),
+                ("postgres-app-secret", secret_keys),
+                ("read/write split", namespace),
+            ]:
+                if phrase not in value:
+                    fail(f"gitops/README.md PostgreSQL read contract row missing phrase: {phrase}")
+        elif contract == "Valkey auth":
+            for phrase, value in [
+                ("valkey-external.platform.svc.cluster.local", host),
+                ("172.18.0.9", host),
+                ("6379", port),
+                ("platform/argocd", database_or_path),
+                ("valkey_password", database_or_path),
+                ("argocd-external-valkey", secret_keys),
+                ("redis-password", secret_keys),
+                ("external Valkey service workspace", tls_ca),
+                ("argocd", namespace),
+                ("verify-secrets.sh", validation),
+            ]:
+                if phrase not in value:
+                    fail(f"gitops/README.md Valkey contract row missing phrase: {phrase}")
+    if indexed_external_contracts != expected_external_contracts:
+        fail(
+            "gitops/README.md External Service Contract Matrix row order must be: "
+            + ", ".join(expected_external_contracts)
+        )
+
+expected_secret_responsibility_header = [
+    "Responsibility",
+    "Source / auth contract",
+    "Destination / naming rule",
+    "Owner boundary",
+    "Value handling",
+    "Validation",
+]
+expected_secret_responsibilities = [
+    "ClusterSecretStore vault-backend",
+    "Platform postgres-app-secret",
+    "ArgoCD argocd-external-valkey",
+    "ArgoCD argocd-notifications-secret",
+    "Sample app ExternalSecret",
+]
+secret_responsibility_rows = markdown_table_after_heading(
+    gitops_readme,
+    profiled_readme_table_headings("Secret Management Responsibility Matrix"),
+)
+if len(secret_responsibility_rows) < 2:
+    fail("gitops/README.md Secret Management Responsibility Matrix must contain a header and responsibility rows")
+elif secret_responsibility_rows[0] != expected_secret_responsibility_header:
+    fail(
+        "gitops/README.md Secret Management Responsibility Matrix header must be: "
+        + " | ".join(expected_secret_responsibility_header)
+    )
+else:
+    indexed_secret_responsibilities: list[str] = []
+    for row_number, row in enumerate(secret_responsibility_rows[1:], start=1):
+        if len(row) != len(expected_secret_responsibility_header):
+            fail(
+                "gitops/README.md Secret Management Responsibility Matrix "
+                f"row {row_number} must have {len(expected_secret_responsibility_header)} columns"
+            )
+            continue
+        responsibility_cell, source, destination, owner, value_handling, validation = row
+        match = re.fullmatch(r"`([^`]+)`", responsibility_cell)
+        if not match:
+            fail(
+                "gitops/README.md Secret Management Responsibility Matrix "
+                f"row {row_number} must start with a backticked responsibility name"
+            )
+            continue
+        responsibility = match.group(1)
+        indexed_secret_responsibilities.append(responsibility)
+        for label, value in [
+            ("Source / auth contract", source),
+            ("Destination / naming rule", destination),
+            ("Owner boundary", owner),
+            ("Value handling", value_handling),
+            ("Validation", validation),
+        ]:
+            if not value:
+                fail(f"gitops/README.md Secret Management Responsibility Matrix row {row_number} has empty {label}")
+        if "Vault" not in source or "vault-backend" not in source:
+            fail(
+                "gitops/README.md Secret Management Responsibility Matrix "
+                f"row {row_number} must cite Vault and vault-backend"
+            )
+        if "Secret" not in destination and "secret" not in destination:
+            fail(
+                "gitops/README.md Secret Management Responsibility Matrix "
+                f"row {row_number} must cite a Kubernetes secret naming rule"
+            )
+        if "owner" not in owner and "owns" not in owner:
+            fail(
+                "gitops/README.md Secret Management Responsibility Matrix "
+                f"row {row_number} must name ownership"
+            )
+        if "outside Git" not in value_handling and "value-free" not in value_handling:
+            fail(
+                "gitops/README.md Secret Management Responsibility Matrix "
+                f"row {row_number} must keep secret values outside Git"
+            )
+        if "check-secret-handling.sh" not in validation:
+            fail(
+                "gitops/README.md Secret Management Responsibility Matrix "
+                f"row {row_number} must cite scripts/check-secret-handling.sh"
+            )
+        if responsibility == "ClusterSecretStore vault-backend":
+            for phrase, value in [
+                ("External Secrets Operator", source),
+                ("eso-read-platform", source),
+                ("kubernetes", source),
+                ("secret", source),
+                ("external-secrets", destination),
+                ("external Vault operator", owner),
+                ("reviewer JWT", value_handling),
+                ("verify-contracts-static.sh", validation),
+                ("verify-secrets.sh", validation),
+            ]:
+                if phrase not in value:
+                    fail(f"gitops/README.md ClusterSecretStore responsibility row missing phrase: {phrase}")
+        elif responsibility == "Platform postgres-app-secret":
+            for phrase, value in [
+                ("ExternalSecret", source),
+                ("platform/postgres-app", source),
+                ("db_name", source),
+                ("username", source),
+                ("password", source),
+                ("postgres-app-secret", destination),
+                ("platform", destination),
+                ("creationPolicy: Owner", destination),
+                ("external PostgreSQL owner", owner),
+                ("ESO refresh", value_handling),
+                ("verify-contracts-static.sh", validation),
+                ("verify-secrets.sh", validation),
+            ]:
+                if phrase not in value:
+                    fail(f"gitops/README.md postgres secret responsibility row missing phrase: {phrase}")
+        elif responsibility == "ArgoCD argocd-external-valkey":
+            for phrase, value in [
+                ("ExternalSecret", source),
+                ("platform/argocd", source),
+                ("valkey_password", source),
+                ("argocd-external-valkey", destination),
+                ("argocd", destination),
+                ("redis-password", destination),
+                ("external Valkey owner", owner),
+                ("ESO refresh", value_handling),
+                ("verify-secrets.sh", validation),
+            ]:
+                if phrase not in value:
+                    fail(f"gitops/README.md Valkey secret responsibility row missing phrase: {phrase}")
+        elif responsibility == "ArgoCD argocd-notifications-secret":
+            for phrase, value in [
+                ("ExternalSecret", source),
+                ("platform/notifications", source),
+                ("slack_token", source),
+                ("argocd-notifications-secret", destination),
+                ("argocd", destination),
+                ("slack-token", destination),
+                ("notification token owner", owner),
+                ("must not appear", value_handling),
+                ("verify-secrets.sh", validation),
+            ]:
+                if phrase not in value:
+                    fail(f"gitops/README.md notifications secret responsibility row missing phrase: {phrase}")
+        elif responsibility == "Sample app ExternalSecret":
+            for phrase, value in [
+                ("apps/<appname>/config", source),
+                ("<appname>-secret", destination),
+                ("apps", destination),
+                ("db_password", destination),
+                ("api_key", destination),
+                ("App operator", owner),
+                ("Vault policy", owner),
+                ("value-free", value_handling),
+                ("examples/sample-app/kustomization.yaml", value_handling),
+                ("validate-k8s-manifests.sh", validation),
+            ]:
+                if phrase not in value:
+                    fail(f"gitops/README.md sample app secret responsibility row missing phrase: {phrase}")
+    if indexed_secret_responsibilities != expected_secret_responsibilities:
+        fail(
+            "gitops/README.md Secret Management Responsibility Matrix row order must be: "
+            + ", ".join(expected_secret_responsibilities)
+        )
+
+workloads_readme_path = gitops_dir / "workloads/README.md"
+workloads_readme = read_text(workloads_readme_path)
+for phrase in [
+    "examples/sample-app",
+    "gitops/workloads/<appname>",
+    "active GitOps desired state",
+    "check-secret-handling.sh",
+]:
+    if phrase not in workloads_readme:
+        fail(f"gitops/workloads/README.md missing onboarding activation phrase: {phrase}")
+expected_workload_header = [
+    "Workload",
+    "Purpose and owner",
+    "Lifecycle and config",
+    "Dependencies, routes, secrets",
+    "Validation and operations",
+]
+expected_workloads = [
+    path.name for path in sorted((gitops_dir / "workloads").iterdir()) if path.is_dir()
+]
+workload_rows = markdown_table_after_heading(
+    workloads_readme,
+    profiled_readme_table_headings("Workload Coverage Matrix"),
+)
+if len(workload_rows) < 2:
+    fail("gitops/workloads/README.md Workload Coverage Matrix must contain a header and workload rows")
+elif workload_rows[0] != expected_workload_header:
+    fail(
+        "gitops/workloads/README.md Workload Coverage Matrix header must be: "
+        + " | ".join(expected_workload_header)
+    )
+else:
+    indexed_workloads: list[str] = []
+    seen_workloads: set[str] = set()
+    for row_number, row in enumerate(workload_rows[1:], start=1):
+        if len(row) != len(expected_workload_header):
+            fail(
+                "gitops/workloads/README.md Workload Coverage Matrix "
+                f"row {row_number} must have {len(expected_workload_header)} columns"
+            )
+            continue
+        workload_cell, purpose, lifecycle, dependencies, validation = row
+        match = re.fullmatch(r"`([^`]+)`", workload_cell)
+        if not match:
+            fail(
+                "gitops/workloads/README.md Workload Coverage Matrix "
+                f"row {row_number} must start with a backticked workload directory"
+            )
+            continue
+        workload = match.group(1)
+        if workload in seen_workloads:
+            fail(f"gitops/workloads/README.md Workload Coverage Matrix duplicates workload: {workload}")
+        seen_workloads.add(workload)
+        indexed_workloads.append(workload)
+        if not (gitops_dir / "workloads" / workload).is_dir():
+            fail(f"gitops/workloads/README.md Workload Coverage Matrix references missing workload: {workload}")
+        for label, value in [
+            ("Purpose and owner", purpose),
+            ("Lifecycle and config", lifecycle),
+            ("Dependencies, routes, secrets", dependencies),
+            ("Validation and operations", validation),
+        ]:
+            if not value:
+                fail(f"gitops/workloads/README.md Workload Coverage Matrix row {row_number} has empty {label}")
+        for command in [
+            "scripts/validate-gitops-structure.sh",
+            "scripts/validate-k8s-manifests.sh",
+            "scripts/check-secret-handling.sh",
+        ]:
+            if command not in validation:
+                fail(
+                    "gitops/workloads/README.md Workload Coverage Matrix "
+                    f"row {row_number} must cite {command}"
+                )
+    if indexed_workloads != expected_workloads:
+        fail(
+            "gitops/workloads/README.md Workload Coverage Matrix row order must match actual workloads: "
+            + ", ".join(expected_workloads)
+        )
+
+
+def gitops_yaml_documents_under(scope: pathlib.Path) -> list[tuple[pathlib.Path, dict]]:
+    documents: list[tuple[pathlib.Path, dict]] = []
+    yaml_paths = sorted(scope.rglob("*.yaml")) + sorted(scope.rglob("*.yml"))
+    for path in yaml_paths:
+        for document in load_yaml_documents(path):
+            if isinstance(document, dict):
+                documents.append((path, document))
+    return documents
+
+
+def collect_container_images(value) -> list[str]:
+    images: list[str] = []
+    if isinstance(value, dict):
+        for key, item in value.items():
+            if key in {"containers", "initContainers", "ephemeralContainers"} and isinstance(item, list):
+                for container in item:
+                    if isinstance(container, dict) and "image" in container:
+                        image = container.get("image")
+                        images.append(image if isinstance(image, str) else "")
+            images.extend(collect_container_images(item))
+    elif isinstance(value, list):
+        for item in value:
+            images.extend(collect_container_images(item))
+    return images
+
+
+def image_has_explicit_version(image: str) -> bool:
+    if "@sha256:" in image:
+        return True
+    last_segment = image.rsplit("/", 1)[-1]
+    return ":" in last_segment and not last_segment.endswith(":")
+
+
+def image_uses_latest(image: str) -> bool:
+    last_segment = image.rsplit("/", 1)[-1]
+    tag_segment = last_segment.split("@", 1)[0]
+    return tag_segment.endswith(":latest")
+
+
+def collect_container_image_entries(scope: pathlib.Path) -> list[tuple[pathlib.Path, str]]:
+    entries: list[tuple[pathlib.Path, str]] = []
+    for path, document in gitops_yaml_documents_under(scope):
+        if path.name == "kustomization.yaml":
+            continue
+        for image in collect_container_images(document):
+            entries.append((path, image))
+    return entries
+
+
+workload_image_entries = collect_container_image_entries(gitops_dir / "workloads")
+platform_image_entries = collect_container_image_entries(gitops_dir / "platform")
+for scope_name, entries in [
+    ("gitops/workloads", workload_image_entries),
+    ("gitops/platform", platform_image_entries),
+]:
+    if scope_name == "gitops/workloads" and not entries:
+        fail("active gitops/workloads container image scan found no images")
+    for path, image in entries:
+        if not image:
+            fail(f"{rel(path)} contains a container image field that is not a nonempty string")
+            continue
+        if image_uses_latest(image):
+            fail(f"{rel(path)} must not use latest container image tag: {image}")
+        if not image_has_explicit_version(image):
+            fail(f"{rel(path)} container image must use an explicit tag or sha256 digest: {image}")
+
+workload_manifest_kinds: set[str] = set()
+for path, document in gitops_yaml_documents_under(gitops_dir / "workloads"):
+    if path.name == "kustomization.yaml":
+        continue
+    kind = document.get("kind")
+    if isinstance(kind, str) and kind:
+        workload_manifest_kinds.add(kind)
+
+apps_project_path = gitops_dir / "clusters/local/appproject-apps.yaml"
+apps_project = load_yaml(apps_project_path)
+apps_cluster_kind_whitelist = {
+    item.get("kind")
+    for item in apps_project.get("spec", {}).get("clusterResourceWhitelist", [])
+    if isinstance(item, dict) and isinstance(item.get("kind"), str)
+}
+apps_namespace_kind_whitelist = {
+    item.get("kind")
+    for item in apps_project.get("spec", {}).get("namespaceResourceWhitelist", [])
+    if isinstance(item, dict) and isinstance(item.get("kind"), str)
+}
+if apps_cluster_kind_whitelist:
+    fail("gitops/clusters/local/appproject-apps.yaml clusterResourceWhitelist must be empty")
+if not apps_namespace_kind_whitelist:
+    fail("gitops/clusters/local/appproject-apps.yaml namespaceResourceWhitelist must not be empty")
+for kind in sorted(workload_manifest_kinds - apps_namespace_kind_whitelist):
+    fail(f"gitops/workloads manifest kind is not allowed by apps AppProject namespaceResourceWhitelist: {kind}")
+
+policy_apps_namespace_kinds = {"ExternalSecret"}
+expected_apps_namespace_kind_whitelist = workload_manifest_kinds | policy_apps_namespace_kinds
+if apps_namespace_kind_whitelist != expected_apps_namespace_kind_whitelist:
+    fail(
+        "gitops/clusters/local/appproject-apps.yaml namespaceResourceWhitelist must equal "
+        "active workload kinds plus policy-optional ExternalSecret: "
+        + ", ".join(sorted(expected_apps_namespace_kind_whitelist))
+    )
+expected_allowlist_header = [
+    "Project",
+    "Allow-list surface",
+    "Current allowed kinds",
+    "Evidence class",
+    "Tightening boundary",
+    "Validation",
+]
+expected_allowlist_surfaces = [
+    "apps|clusterResourceWhitelist",
+    "apps|active namespaceResourceWhitelist",
+    "apps|policy namespaceResourceWhitelist",
+    "platform|platform AppProject allow-lists",
+]
+allowlist_rows = markdown_table_after_heading(
+    gitops_readme,
+    profiled_readme_table_headings("AppProject Allow-list Rationale Matrix"),
+)
+if len(allowlist_rows) < 2:
+    fail("gitops/README.md AppProject Allow-list Rationale Matrix must contain a header and allow-list rows")
+elif allowlist_rows[0] != expected_allowlist_header:
+    fail(
+        "gitops/README.md AppProject Allow-list Rationale Matrix header must be: "
+        + " | ".join(expected_allowlist_header)
+    )
+else:
+    indexed_allowlist_surfaces: list[str] = []
+    for row_number, row in enumerate(allowlist_rows[1:], start=1):
+        if len(row) != len(expected_allowlist_header):
+            fail(
+                "gitops/README.md AppProject Allow-list Rationale Matrix "
+                f"row {row_number} must have {len(expected_allowlist_header)} columns"
+            )
+            continue
+        project_cell, surface_cell, kinds_cell, evidence, boundary, validation = row
+        project_match = re.fullmatch(r"`([^`]+)`", project_cell)
+        surface_match = re.search(r"`([^`]+)`", surface_cell)
+        if not project_match or not surface_match:
+            fail(
+                "gitops/README.md AppProject Allow-list Rationale Matrix "
+                f"row {row_number} must start with backticked project and surface"
+            )
+            continue
+        project = project_match.group(1)
+        surface = surface_match.group(1)
+        surface_key = f"{project}|{surface}"
+        indexed_allowlist_surfaces.append(surface_key)
+        for label, value in [
+            ("Evidence class", evidence),
+            ("Tightening boundary", boundary),
+            ("Validation", validation),
+        ]:
+            if not value:
+                fail(f"gitops/README.md AppProject Allow-list Rationale Matrix row {row_number} has empty {label}")
+        if "scripts/validate-repo-quality-gates.sh" not in validation:
+            fail(
+                "gitops/README.md AppProject Allow-list Rationale Matrix "
+                f"row {row_number} must cite scripts/validate-repo-quality-gates.sh"
+            )
+        documented_kinds = set(re.findall(r"`([^`]+)`", kinds_cell))
+        if surface_key == "apps|clusterResourceWhitelist":
+            if documented_kinds:
+                fail("gitops/README.md apps clusterResourceWhitelist rationale row must document no kinds")
+            for phrase in [
+                "Workloads own no cluster-scoped resources",
+                "app-owned cluster resource design",
+                "live reconciliation impact review",
+            ]:
+                if phrase not in evidence + " " + boundary:
+                    fail(f"gitops/README.md apps cluster allow-list row missing phrase: {phrase}")
+        elif surface_key == "apps|active namespaceResourceWhitelist":
+            if documented_kinds != workload_manifest_kinds:
+                fail(
+                    "gitops/README.md active apps namespaceResourceWhitelist rationale row must match active workload kinds: "
+                    + ", ".join(sorted(workload_manifest_kinds))
+                )
+            if "gitops/workloads/adminer" not in evidence:
+                fail("gitops/README.md active apps allow-list row must cite gitops/workloads/adminer")
+        elif surface_key == "apps|policy namespaceResourceWhitelist":
+            if documented_kinds != policy_apps_namespace_kinds:
+                fail(
+                    "gitops/README.md policy apps namespaceResourceWhitelist rationale row must match policy kinds: "
+                    + ", ".join(sorted(policy_apps_namespace_kinds))
+                )
+            for phrase in ["0007-app-gitops-onboarding-policy.md", "ESO", "app onboarding policy"]:
+                if phrase not in evidence + " " + boundary:
+                    fail(f"gitops/README.md policy apps allow-list row missing phrase: {phrase}")
+        elif surface_key == "platform|platform AppProject allow-lists":
+            for phrase in ["Helm charts", "raw manifest scan", "chart render review", "ArgoCD sync impact review"]:
+                if phrase not in evidence + " " + boundary:
+                    fail(f"gitops/README.md platform allow-list row missing phrase: {phrase}")
+        else:
+            fail(f"gitops/README.md AppProject Allow-list Rationale Matrix unexpected row: {surface_key}")
+    if indexed_allowlist_surfaces != expected_allowlist_surfaces:
+        fail(
+            "gitops/README.md AppProject Allow-list Rationale Matrix row order must be: "
+            + ", ".join(expected_allowlist_surfaces)
+        )
+
+expected_workload_policy_header = [
+    "Surface",
+    "Current image policy",
+    "Resource-kind policy",
+    "Current evidence",
+    "Deferred boundary",
+    "Validation",
+]
+expected_workload_policy_surfaces = [
+    "gitops/workloads/*",
+    "gitops/platform/*",
+    "examples/sample-app/*",
+]
+workload_policy_rows = markdown_table_after_heading(
+    gitops_readme,
+    profiled_readme_table_headings("Workload Image and Kind Policy Matrix"),
+)
+if len(workload_policy_rows) < 2:
+    fail("gitops/README.md Workload Image and Kind Policy Matrix must contain a header and policy rows")
+elif workload_policy_rows[0] != expected_workload_policy_header:
+    fail(
+        "gitops/README.md Workload Image and Kind Policy Matrix header must be: "
+        + " | ".join(expected_workload_policy_header)
+    )
+else:
+    indexed_policy_surfaces: list[str] = []
+    for row_number, row in enumerate(workload_policy_rows[1:], start=1):
+        if len(row) != len(expected_workload_policy_header):
+            fail(
+                "gitops/README.md Workload Image and Kind Policy Matrix "
+                f"row {row_number} must have {len(expected_workload_policy_header)} columns"
+            )
+            continue
+        surface_cell, image_policy, kind_policy, evidence, deferred_boundary, validation = row
+        match = re.fullmatch(r"`([^`]+)`", surface_cell)
+        if not match:
+            fail(
+                "gitops/README.md Workload Image and Kind Policy Matrix "
+                f"row {row_number} must start with a backticked surface"
+            )
+            continue
+        surface = match.group(1)
+        indexed_policy_surfaces.append(surface)
+        for label, value in [
+            ("Current image policy", image_policy),
+            ("Resource-kind policy", kind_policy),
+            ("Current evidence", evidence),
+            ("Deferred boundary", deferred_boundary),
+            ("Validation", validation),
+        ]:
+            if not value:
+                fail(f"gitops/README.md Workload Image and Kind Policy Matrix row {row_number} has empty {label}")
+        if "validate-repo-quality-gates.sh" not in validation:
+            fail(
+                "gitops/README.md Workload Image and Kind Policy Matrix "
+                f"row {row_number} must cite scripts/validate-repo-quality-gates.sh"
+            )
+        if surface == "gitops/workloads/*":
+            if "non-latest" not in image_policy or "tag or digest" not in image_policy:
+                fail("gitops/README.md workload policy row must require explicit non-latest tag or digest")
+            if "AppProject" not in kind_policy or "namespaceResourceWhitelist" not in kind_policy:
+                fail("gitops/README.md workload policy row must cite apps AppProject namespaceResourceWhitelist")
+            for image in sorted({image for _, image in workload_image_entries}):
+                if image not in evidence:
+                    fail(f"gitops/README.md workload policy row missing active image evidence: {image}")
+            for kind in sorted(workload_manifest_kinds):
+                if kind not in evidence:
+                    fail(f"gitops/README.md workload policy row missing active kind evidence: {kind}")
+            for phrase in ["app onboarding policy decision", "AppProject"]:
+                if phrase not in deferred_boundary:
+                    fail(f"gitops/README.md workload policy row deferred boundary missing phrase: {phrase}")
+        elif surface == "gitops/platform/*":
+            if "non-latest" not in image_policy or "tag or digest" not in image_policy:
+                fail("gitops/README.md platform policy row must require explicit non-latest tag or digest")
+            if "platform AppProject" not in kind_policy:
+                fail("gitops/README.md platform policy row must cite platform AppProject")
+            for image in sorted({image for _, image in platform_image_entries}):
+                if image not in evidence:
+                    fail(f"gitops/README.md platform policy row missing platform image evidence: {image}")
+            if "AppProject permissions" not in deferred_boundary:
+                fail("gitops/README.md platform policy row must defer AppProject permission changes")
+        elif surface == "examples/sample-app/*":
+            if "placeholder" not in image_policy or "ghcr.io/<owner>/<appname>:<tag>" not in evidence:
+                fail("gitops/README.md sample policy row must document the placeholder image boundary")
+            if "not active desired state" not in kind_policy:
+                fail("gitops/README.md sample policy row must say examples are not active desired state")
+            if "gitops/workloads/<appname>" not in deferred_boundary:
+                fail("gitops/README.md sample policy row must require replacement before workload copy")
+        else:
+            fail(f"gitops/README.md Workload Image and Kind Policy Matrix unexpected surface: {surface}")
+    if indexed_policy_surfaces != expected_workload_policy_surfaces:
+        fail(
+            "gitops/README.md Workload Image and Kind Policy Matrix row order must be: "
+            + ", ".join(expected_workload_policy_surfaces)
+        )
+
+
+def has_sync_option(spec: dict, option: str) -> bool:
+    sync_options = ((spec.get("syncPolicy") or {}).get("syncOptions")) or []
+    return option in sync_options
+
+
+create_namespace_applications: list[tuple[pathlib.Path, str, str]] = []
+create_namespace_application_sets: list[tuple[pathlib.Path, str, str]] = []
+for path, document in gitops_yaml_documents_under(gitops_dir):
+    kind = document.get("kind")
+    metadata = document.get("metadata") or {}
+    name = metadata.get("name")
+    if not isinstance(name, str) or not name:
+        continue
+    if kind == "Application":
+        spec = document.get("spec") or {}
+        destination = spec.get("destination") or {}
+        namespace = destination.get("namespace")
+        if has_sync_option(spec, "CreateNamespace=true"):
+            create_namespace_applications.append((path, name, namespace if isinstance(namespace, str) else ""))
+    elif kind == "ApplicationSet":
+        template_spec = (((document.get("spec") or {}).get("template") or {}).get("spec")) or {}
+        destination = template_spec.get("destination") or {}
+        namespace = destination.get("namespace")
+        if has_sync_option(template_spec, "CreateNamespace=true"):
+            create_namespace_application_sets.append((path, name, namespace if isinstance(namespace, str) else ""))
+
+namespace_manifest_files: dict[str, str] = {}
+for path, document in gitops_yaml_documents_under(gitops_dir / "platform/namespaces"):
+    if document.get("kind") == "Namespace":
+        namespace_name = (document.get("metadata") or {}).get("name")
+        if isinstance(namespace_name, str) and namespace_name:
+            namespace_manifest_files[namespace_name] = rel(path)
+
+if create_namespace_applications or create_namespace_application_sets:
+    for _, name, namespace in create_namespace_applications + create_namespace_application_sets:
+        fail(f"GitOps Application/ApplicationSet must not use CreateNamespace=true: {name} -> {namespace}")
+
+root_namespace_entries: list[tuple[str, str]] = []
+apps_namespace_entries: list[tuple[str, str]] = []
+platform_namespace_entries: list[tuple[str, str]] = []
+for path, document in gitops_yaml_documents_under(gitops_dir):
+    kind = document.get("kind")
+    metadata = document.get("metadata") or {}
+    name = metadata.get("name")
+    if not isinstance(name, str) or not name:
+        continue
+    if kind == "Application":
+        spec = document.get("spec") or {}
+        destination = spec.get("destination") or {}
+        namespace = destination.get("namespace")
+        if not isinstance(namespace, str) or not namespace:
+            continue
+        if rel(path) == "gitops/clusters/local/root-application.yaml":
+            root_namespace_entries.append((name, namespace))
+        elif rel(path).startswith("gitops/apps/root/") and namespace != "argocd":
+            platform_namespace_entries.append((name, namespace))
+    elif kind == "ApplicationSet":
+        template_spec = (((document.get("spec") or {}).get("template") or {}).get("spec")) or {}
+        destination = template_spec.get("destination") or {}
+        namespace = destination.get("namespace")
+        if rel(path) == "gitops/clusters/local/applicationset-apps.yaml" and isinstance(namespace, str) and namespace:
+            apps_namespace_entries.append((name, namespace))
+
+root_namespace_entries = sorted(root_namespace_entries)
+apps_namespace_entries = sorted(apps_namespace_entries)
+platform_namespace_entries = sorted(platform_namespace_entries)
+
+if root_namespace_entries != [("root-platform", "argocd")]:
+    fail("gitops root Application namespace surface must be root-platform -> argocd")
+if apps_namespace_entries != [("apps-generator", "apps")]:
+    fail("gitops apps ApplicationSet namespace surface must be apps-generator -> apps")
+if not platform_namespace_entries:
+    fail("gitops platform root Applications must have inventoried namespace surfaces")
+
+for name, namespace in apps_namespace_entries + platform_namespace_entries:
+    if namespace not in namespace_manifest_files:
+        fail(
+            f"GitOps destination {name} -> {namespace} must have a "
+            "gitops/platform/namespaces Namespace manifest"
+        )
+
+expected_namespace_ownership_header = [
+    "Surface",
+    "Namespace surface",
+    "Declared namespace owner",
+    "Current behavior",
+    "Remaining boundary",
+    "Validation",
+]
+expected_namespace_ownership_surfaces = [
+    "root Application",
+    "apps ApplicationSet",
+    "platform root Applications",
+]
+namespace_ownership_rows = markdown_table_after_heading(
+    gitops_readme,
+    profiled_readme_table_headings("Namespace Ownership Matrix"),
+)
+if len(namespace_ownership_rows) < 2:
+    fail("gitops/README.md Namespace Ownership Matrix must contain a header and ownership rows")
+elif namespace_ownership_rows[0] != expected_namespace_ownership_header:
+    fail(
+        "gitops/README.md Namespace Ownership Matrix header must be: "
+        + " | ".join(expected_namespace_ownership_header)
+    )
+else:
+    indexed_namespace_surfaces: list[str] = []
+    expected_pairs = {
+        "root Application": root_namespace_entries,
+        "apps ApplicationSet": apps_namespace_entries,
+        "platform root Applications": platform_namespace_entries,
+    }
+    for row_number, row in enumerate(namespace_ownership_rows[1:], start=1):
+        if len(row) != len(expected_namespace_ownership_header):
+            fail(
+                "gitops/README.md Namespace Ownership Matrix "
+                f"row {row_number} must have {len(expected_namespace_ownership_header)} columns"
+            )
+            continue
+        surface_cell, namespace_surface, owner, behavior, deferred_boundary, validation = row
+        match = re.fullmatch(r"`([^`]+)`", surface_cell)
+        if not match:
+            fail(
+                "gitops/README.md Namespace Ownership Matrix "
+                f"row {row_number} must start with a backticked surface"
+            )
+            continue
+        surface = match.group(1)
+        indexed_namespace_surfaces.append(surface)
+        for label, value in [
+            ("Namespace surface", namespace_surface),
+            ("Declared namespace owner", owner),
+            ("Current behavior", behavior),
+            ("Remaining boundary", deferred_boundary),
+            ("Validation", validation),
+        ]:
+            if not value:
+                fail(f"gitops/README.md Namespace Ownership Matrix row {row_number} has empty {label}")
+        for command in [
+            "scripts/validate-repo-quality-gates.sh",
+            "scripts/validate-gitops-structure.sh",
+        ]:
+            if command not in validation:
+                fail(
+                    "gitops/README.md Namespace Ownership Matrix "
+                    f"row {row_number} must cite {command}"
+                )
+        for name, namespace in expected_pairs.get(surface, []):
+            pair = f"{name} -> {namespace}"
+            if pair not in namespace_surface:
+                fail(f"gitops/README.md Namespace Ownership Matrix {surface} row missing pair: {pair}")
+        if surface == "root Application":
+            for phrase in ["bootstrap/ArgoCD installation boundary", "not by `gitops/platform/namespaces`"]:
+                if phrase not in owner:
+                    fail(f"gitops/README.md root namespace ownership row missing phrase: {phrase}")
+            for phrase in ["no longer uses `CreateNamespace=true`", "bootstrap must create `argocd`"]:
+                if phrase not in behavior:
+                    fail(f"gitops/README.md root namespace ownership row missing behavior phrase: {phrase}")
+            if "bootstrap/ArgoCD install ownership pass" not in deferred_boundary:
+                fail("gitops/README.md root namespace ownership row must retain bootstrap/ArgoCD install ownership boundary")
+        elif surface == "apps ApplicationSet":
+            namespace_file = namespace_manifest_files.get("apps", "")
+            if namespace_file not in owner:
+                fail(f"gitops/README.md apps namespace ownership row missing owner file: {namespace_file}")
+            for phrase in ["no longer uses `CreateNamespace=true`", "`platform/namespaces` is the Git SSoT"]:
+                if phrase not in behavior:
+                    fail(f"gitops/README.md apps namespace ownership row missing behavior phrase: {phrase}")
+            if "namespace owner manifests before onboarding" not in deferred_boundary:
+                fail("gitops/README.md apps namespace ownership row must require namespace owner manifests before onboarding")
+        elif surface == "platform root Applications":
+            for _, namespace in platform_namespace_entries:
+                namespace_file = namespace_manifest_files.get(namespace, "")
+                if namespace_file not in owner:
+                    fail(f"gitops/README.md platform namespace ownership row missing owner file: {namespace_file}")
+            for phrase in ["no longer use `CreateNamespace=true`", "namespace manifests remain the Git SSoT"]:
+                if phrase not in behavior:
+                    fail(f"gitops/README.md platform namespace ownership row missing behavior phrase: {phrase}")
+            if "platform AppProject destinations first" not in deferred_boundary:
+                fail("gitops/README.md platform namespace ownership row must require platform AppProject destinations first")
+        else:
+            fail(f"gitops/README.md Namespace Ownership Matrix unexpected surface: {surface}")
+    if indexed_namespace_surfaces != expected_namespace_ownership_surfaces:
+        fail(
+            "gitops/README.md Namespace Ownership Matrix row order must be: "
+            + ", ".join(expected_namespace_ownership_surfaces)
+        )
+
+infrastructure_dir = root / "infrastructure"
+infrastructure_readme_path = infrastructure_dir / "README.md"
+infrastructure_readme = read_text(infrastructure_readme_path)
+expected_infrastructure_coverage_header = [
+    "Area",
+    "Purpose and owner",
+    "Lifecycle and config",
+    "Dependencies, routes, secrets",
+    "Validation and operations",
+]
+expected_infrastructure_coverage_areas = [
+    "argocd/",
+    "k3d/",
+    "tests/",
+    "vault/",
+    "bootstrap-local.sh",
+    "ipaddresspool.yaml",
+    "l2advertisement.yaml",
+]
+infrastructure_coverage_rows = markdown_table_after_heading(
+    infrastructure_readme,
+    profiled_readme_table_headings("Infrastructure Coverage Matrix"),
+)
+if len(infrastructure_coverage_rows) < 2:
+    fail("infrastructure/README.md Infrastructure Coverage Matrix must contain a header and coverage rows")
+elif infrastructure_coverage_rows[0] != expected_infrastructure_coverage_header:
+    fail(
+        "infrastructure/README.md Infrastructure Coverage Matrix header must be: "
+        + " | ".join(expected_infrastructure_coverage_header)
+    )
+else:
+    indexed_infrastructure_areas: list[str] = []
+    seen_infrastructure_areas: set[str] = set()
+    for row_number, row in enumerate(infrastructure_coverage_rows[1:], start=1):
+        if len(row) != len(expected_infrastructure_coverage_header):
+            fail(
+                "infrastructure/README.md Infrastructure Coverage Matrix "
+                f"row {row_number} must have {len(expected_infrastructure_coverage_header)} columns"
+            )
+            continue
+        area_cell, purpose, lifecycle, dependencies, validation = row
+        area_names = re.findall(r"`([^`]+)`", area_cell)
+        if not area_names:
+            fail(
+                "infrastructure/README.md Infrastructure Coverage Matrix "
+                f"row {row_number} must name at least one backticked area path"
+            )
+            continue
+        for area in area_names:
+            if area in seen_infrastructure_areas:
+                fail(f"infrastructure/README.md Infrastructure Coverage Matrix duplicates area: {area}")
+            seen_infrastructure_areas.add(area)
+            indexed_infrastructure_areas.append(area)
+            area_path = infrastructure_dir / area.rstrip("/")
+            if area.endswith("/"):
+                if not area_path.is_dir():
+                    fail(
+                        "infrastructure/README.md Infrastructure Coverage Matrix "
+                        f"references missing directory: infrastructure/{area}"
+                    )
+            elif not area_path.is_file():
+                fail(
+                    "infrastructure/README.md Infrastructure Coverage Matrix "
+                    f"references missing file: infrastructure/{area}"
+                )
+        for label, value in [
+            ("Purpose and owner", purpose),
+            ("Lifecycle and config", lifecycle),
+            ("Dependencies, routes, secrets", dependencies),
+            ("Validation and operations", validation),
+        ]:
+            if not value:
+                fail(f"infrastructure/README.md Infrastructure Coverage Matrix row {row_number} has empty {label}")
+        if "owned by" not in purpose:
+            fail(f"infrastructure/README.md Infrastructure Coverage Matrix row {row_number} must name ownership")
+        if not any(marker in validation for marker in ["`bash ", "Validate", "Run ", "verify-"]):
+            fail(f"infrastructure/README.md Infrastructure Coverage Matrix row {row_number} must cite validation or operation evidence")
+    if indexed_infrastructure_areas != expected_infrastructure_coverage_areas:
+        fail(
+            "infrastructure/README.md Infrastructure Coverage Matrix area order must match actual infrastructure entrypoints: "
+            + ", ".join(expected_infrastructure_coverage_areas)
+        )
+
+wsl2_prerequisite_rows = markdown_table_after_heading(
+    infrastructure_readme,
+    profiled_readme_table_headings("WSL2 Runtime Prerequisite Matrix"),
+)
+expected_wsl2_prerequisite_header = [
+    "Prerequisite",
+    "Repository SSoT",
+    "Owner / responsibility",
+    "Validation / evidence",
+    "Failure boundary",
+]
+expected_wsl2_prerequisites = [
+    "WSL2 shell and Docker context",
+    "kubectl and k3d context",
+    "kubeconfig and TLS trust",
+    "Port and network contracts",
+    "WSL networking constraints",
+]
+if len(wsl2_prerequisite_rows) < 2:
+    fail("infrastructure/README.md WSL2 Runtime Prerequisite Matrix must contain a header and prerequisite rows")
+elif wsl2_prerequisite_rows[0] != expected_wsl2_prerequisite_header:
+    fail(
+        "infrastructure/README.md WSL2 Runtime Prerequisite Matrix header must be: "
+        + " | ".join(expected_wsl2_prerequisite_header)
+    )
+else:
+    indexed_wsl2_prerequisites: list[str] = []
+    for row_number, row in enumerate(wsl2_prerequisite_rows[1:], start=1):
+        if len(row) != len(expected_wsl2_prerequisite_header):
+            fail(
+                "infrastructure/README.md WSL2 Runtime Prerequisite Matrix "
+                f"row {row_number} must have {len(expected_wsl2_prerequisite_header)} columns"
+            )
+            continue
+        prerequisite_cell, ssot, owner, validation, failure_boundary = row
+        match = re.fullmatch(r"`([^`]+)`", prerequisite_cell)
+        if not match:
+            fail(
+                "infrastructure/README.md WSL2 Runtime Prerequisite Matrix "
+                f"row {row_number} must start with a backticked prerequisite name"
+            )
+            continue
+        prerequisite = match.group(1)
+        indexed_wsl2_prerequisites.append(prerequisite)
+        for label, value in [
+            ("Repository SSoT", ssot),
+            ("Owner / responsibility", owner),
+            ("Validation / evidence", validation),
+            ("Failure boundary", failure_boundary),
+        ]:
+            if not value:
+                fail(f"infrastructure/README.md WSL2 Runtime Prerequisite Matrix row {row_number} has empty {label}")
+        if prerequisite == "WSL2 shell and Docker context":
+            if "WSL-native Docker" not in ssot or "docker context show" not in validation:
+                fail("infrastructure/README.md Docker prerequisite row must cite WSL-native Docker and docker context show")
+            if "does not switch contexts automatically" not in failure_boundary:
+                fail("infrastructure/README.md Docker prerequisite row must keep context switching operator-owned")
+        elif prerequisite == "kubectl and k3d context":
+            for phrase in ["k3d-hyhome", "k3d/k3d-cluster.yaml"]:
+                if phrase not in ssot:
+                    fail(f"infrastructure/README.md kubectl/k3d prerequisite row missing SSoT phrase: {phrase}")
+            for command in ["k3d cluster list", "kubectl config current-context"]:
+                if command not in validation:
+                    fail(f"infrastructure/README.md kubectl/k3d prerequisite row missing validation command: {command}")
+        elif prerequisite == "kubeconfig and TLS trust":
+            if "~/.kube/config" not in ssot or "KUBECONFIG" not in ssot:
+                fail("infrastructure/README.md kubeconfig prerequisite row must cite ~/.kube/config and KUBECONFIG")
+            if "x509: certificate signed by unknown authority" not in validation:
+                fail("infrastructure/README.md kubeconfig prerequisite row must cite the x509 TLS blocker")
+            if "not an automatic" not in failure_boundary:
+                fail("infrastructure/README.md kubeconfig prerequisite row must keep TLS repair operator-owned")
+        elif prerequisite == "Port and network contracts":
+            for phrase in ["172.18.0.240:443", "172.18.0.9:6379", "172.18.0.15:15432/15433"]:
+                if phrase not in ssot:
+                    fail(f"infrastructure/README.md port/network prerequisite row missing contract: {phrase}")
+            for command in ["verify-contracts-static.sh", "run-all.sh"]:
+                if command not in validation:
+                    fail(f"infrastructure/README.md port/network prerequisite row missing validation command: {command}")
+        elif prerequisite == "WSL networking constraints":
+            if "127.0.0.1.nip.io" not in ssot or "Traefik dynamic configs" not in ssot:
+                fail("infrastructure/README.md WSL networking row must cite nip.io and Traefik dynamic configs")
+            if "outside repo-static ownership" not in failure_boundary:
+                fail("infrastructure/README.md WSL networking row must keep Windows/WSL gateway state outside repo-static ownership")
+    if indexed_wsl2_prerequisites != expected_wsl2_prerequisites:
+        fail(
+            "infrastructure/README.md WSL2 Runtime Prerequisite Matrix row order must be: "
+            + ", ".join(expected_wsl2_prerequisites)
+        )
+
+bootstrap_boundary_rows = markdown_table_after_heading(
+    infrastructure_readme,
+    profiled_readme_table_headings("Bootstrap Boundary Matrix"),
+)
+expected_bootstrap_boundary_header = [
+    "Boundary",
+    "Repository responsibility",
+    "Operator / external responsibility",
+    "Allowed command surface",
+    "Verification / evidence",
+    "Failure boundary",
+]
+expected_bootstrap_boundaries = [
+    "k3d cluster creation",
+    "ArgoCD installation",
+    "root app application",
+    "Vault connection contract",
+    "PostgreSQL and Valkey connection contract",
+]
+if len(bootstrap_boundary_rows) < 2:
+    fail("infrastructure/README.md Bootstrap Boundary Matrix must contain a header and boundary rows")
+elif bootstrap_boundary_rows[0] != expected_bootstrap_boundary_header:
+    fail(
+        "infrastructure/README.md Bootstrap Boundary Matrix header must be: "
+        + " | ".join(expected_bootstrap_boundary_header)
+    )
+else:
+    indexed_bootstrap_boundaries: list[str] = []
+    for row_number, row in enumerate(bootstrap_boundary_rows[1:], start=1):
+        if len(row) != len(expected_bootstrap_boundary_header):
+            fail(
+                "infrastructure/README.md Bootstrap Boundary Matrix "
+                f"row {row_number} must have {len(expected_bootstrap_boundary_header)} columns"
+            )
+            continue
+        boundary_cell, repo_resp, operator_resp, command_surface, verification, failure_boundary = row
+        match = re.fullmatch(r"`([^`]+)`", boundary_cell)
+        if not match:
+            fail(
+                "infrastructure/README.md Bootstrap Boundary Matrix "
+                f"row {row_number} must start with a backticked boundary name"
+            )
+            continue
+        boundary = match.group(1)
+        indexed_bootstrap_boundaries.append(boundary)
+        for label, value in [
+            ("Repository responsibility", repo_resp),
+            ("Operator / external responsibility", operator_resp),
+            ("Allowed command surface", command_surface),
+            ("Verification / evidence", verification),
+            ("Failure boundary", failure_boundary),
+        ]:
+            if not value:
+                fail(f"infrastructure/README.md Bootstrap Boundary Matrix row {row_number} has empty {label}")
+        if "Owns" not in repo_resp:
+            fail(f"infrastructure/README.md Bootstrap Boundary Matrix row {row_number} must name repository ownership")
+        if not any(marker in operator_resp for marker in ["Operator owns", "External", "external"]):
+            fail(f"infrastructure/README.md Bootstrap Boundary Matrix row {row_number} must name operator or external ownership")
+        if "bootstrap" not in command_surface and "Bootstrap" not in command_surface:
+            fail(f"infrastructure/README.md Bootstrap Boundary Matrix row {row_number} must describe bootstrap command boundary")
+        if not any(command in verification for command in ["verify-", "validate-", "check-secret-handling.sh", "k3d cluster list", "kubectl config current-context"]):
+            fail(f"infrastructure/README.md Bootstrap Boundary Matrix row {row_number} must cite verification evidence")
+        if "Repo-static checks do not" not in failure_boundary and "Steady-state" not in failure_boundary and "Agents do not" not in failure_boundary:
+            fail(f"infrastructure/README.md Bootstrap Boundary Matrix row {row_number} must state a fail-closed boundary")
+        if boundary == "k3d cluster creation":
+            for phrase, value in [
+                ("k3d/k3d-cluster.yaml", repo_resp),
+                ("k3d-hyhome", repo_resp),
+                ("WSL-native Docker", operator_resp),
+                ("human-approved", operator_resp),
+                ("k3d cluster create", command_surface),
+                ("infrastructure/tests/verify-cluster.sh", verification),
+                ("do not create", failure_boundary),
+            ]:
+                if phrase not in value:
+                    fail(f"infrastructure/README.md k3d bootstrap boundary row missing phrase: {phrase}")
+        elif boundary == "ArgoCD installation":
+            for phrase, value in [
+                ("argocd/values-local.yaml", repo_resp),
+                ("ingress/TLS", repo_resp),
+                ("certificate inputs", operator_resp),
+                ("helm upgrade --install", command_surface),
+                ("verify-contracts-static.sh", verification),
+                ("infrastructure/tests/verify-gitops.sh", verification),
+                ("outside approved bootstrap/break-glass", failure_boundary),
+            ]:
+                if phrase not in value:
+                    fail(f"infrastructure/README.md ArgoCD bootstrap boundary row missing phrase: {phrase}")
+        elif boundary == "root app application":
+            for phrase, value in [
+                ("gitops/clusters/local/root-application.yaml", repo_resp),
+                ("gitops/apps/root", repo_resp),
+                ("first root app apply", operator_resp),
+                ("kubectl apply", command_surface),
+                ("bootstrap-only exception", command_surface),
+                ("scripts/validate-gitops-structure.sh", verification),
+                ("direct apply is not normal operation", failure_boundary),
+            ]:
+                if phrase not in value:
+                    fail(f"infrastructure/README.md root app bootstrap boundary row missing phrase: {phrase}")
+        elif boundary == "Vault connection contract":
+            for phrase, value in [
+                ("vault-external.yaml", repo_resp),
+                ("vault-secret-store.yaml", repo_resp),
+                ("no-secret static checks", repo_resp),
+                ("External Vault operator", operator_resp),
+                ("secret values are not printed or committed", command_surface),
+                ("check-secret-handling.sh", verification),
+                ("verify-secrets.sh", verification),
+                ("do not read secret values", failure_boundary),
+                ("refresh Vault auth", failure_boundary),
+            ]:
+                if phrase not in value:
+                    fail(f"infrastructure/README.md Vault bootstrap boundary row missing phrase: {phrase}")
+        elif boundary == "PostgreSQL and Valkey connection contract":
+            for phrase, value in [
+                ("Service/EndpointSlice", repo_resp),
+                ("ExternalSecret target naming", repo_resp),
+                ("PostgreSQL/Valkey runtime", operator_resp),
+                ("TLS/CA material", operator_resp),
+                ("TCP reachability prechecks", command_surface),
+                ("ArgoCD Valkey Secret", command_surface),
+                ("verify-external-services.sh", verification),
+                ("verify-secrets.sh", verification),
+                ("do not start external services", failure_boundary),
+                ("change `.env` values", failure_boundary),
+            ]:
+                if phrase not in value:
+                    fail(f"infrastructure/README.md PostgreSQL/Valkey bootstrap boundary row missing phrase: {phrase}")
+    if indexed_bootstrap_boundaries != expected_bootstrap_boundaries:
+        fail(
+            "infrastructure/README.md Bootstrap Boundary Matrix row order must be: "
+            + ", ".join(expected_bootstrap_boundaries)
+        )
+
+infrastructure_shell_paths = sorted(
+    [infrastructure_dir / "bootstrap-local.sh"]
+    + list((infrastructure_dir / "tests").glob("*.sh"))
+)
+for script in infrastructure_shell_paths:
+    if not script.exists():
+        fail(f"infrastructure shell entrypoint is missing: {rel(script)}")
+        continue
+    if not os.access(script, os.X_OK):
+        fail(f"infrastructure shell entrypoint must be executable: {rel(script)}")
+    if not read_text(script).startswith("#!/usr/bin/env bash\n"):
+        fail(f"infrastructure shell entrypoint must start with bash shebang: {rel(script)}")
+
+infrastructure_test_rows = markdown_table_after_heading(
+    infrastructure_readme,
+    profiled_readme_table_headings("Infrastructure Test Inventory"),
+)
+expected_infra_test_header = [
+    "Test script",
+    "Type",
+    "Preconditions",
+    "Result semantics",
+    "Retention / command surface",
+]
+allowed_infra_test_types = {"Static", "Live", "Live aggregate"}
+test_script_paths = sorted((infrastructure_dir / "tests").glob("*.sh"))
+test_script_names = {path.name for path in test_script_paths}
+if len(infrastructure_test_rows) < 2:
+    fail("infrastructure/README.md Infrastructure Test Inventory must contain a header and test rows")
+elif infrastructure_test_rows[0] != expected_infra_test_header:
+    fail(
+        "infrastructure/README.md Infrastructure Test Inventory header must be: "
+        + " | ".join(expected_infra_test_header)
+    )
+else:
+    indexed_test_scripts: dict[str, list[str]] = {}
+    live_test_scripts: set[str] = set()
+    for row_number, row in enumerate(infrastructure_test_rows[1:], start=1):
+        if len(row) != len(expected_infra_test_header):
+            fail(
+                "infrastructure/README.md Infrastructure Test Inventory "
+                f"row {row_number} must have {len(expected_infra_test_header)} columns"
+            )
+            continue
+        match = re.fullmatch(r"`([^`]+\.sh)`", row[0])
+        if not match:
+            fail(
+                "infrastructure/README.md Infrastructure Test Inventory "
+                f"row {row_number} must start with a backticked test script name"
+            )
+            continue
+        script_name = match.group(1)
+        if script_name in indexed_test_scripts:
+            fail(f"infrastructure/README.md Infrastructure Test Inventory duplicates test script: {script_name}")
+        indexed_test_scripts[script_name] = row
+
+        test_type = row[1]
+        preconditions = row[2]
+        result_semantics = row[3]
+        retention_surface = row[4]
+        if test_type not in allowed_infra_test_types:
+            fail(
+                "infrastructure/README.md Infrastructure Test Inventory "
+                f"row {row_number} has unsupported Type: {test_type}"
+            )
+        for label, value in [
+            ("Preconditions", preconditions),
+            ("Result semantics", result_semantics),
+            ("Retention / command surface", retention_surface),
+        ]:
+            if not value:
+                fail(
+                    "infrastructure/README.md Infrastructure Test Inventory "
+                    f"row {row_number} has empty {label}"
+                )
+        if "Tier" not in retention_surface:
+            fail(
+                "infrastructure/README.md Infrastructure Test Inventory "
+                f"row {row_number} must cite a retention or command-surface Tier"
+            )
+        if test_type == "Live":
+            live_test_scripts.add(script_name)
+
+    for script_name in sorted(test_script_names - set(indexed_test_scripts)):
+        fail(f"infrastructure/README.md Infrastructure Test Inventory missing test script row: {script_name}")
+    for script_name in sorted(set(indexed_test_scripts) - test_script_names):
+        fail(f"infrastructure/README.md Infrastructure Test Inventory references missing test script: {script_name}")
+
+    run_all_path = infrastructure_dir / "tests/run-all.sh"
+    if run_all_path.exists():
+        run_all_called = set(
+            re.findall(r'bash "\$script_dir/([^"]+\.sh)"', read_text(run_all_path))
+        )
+        missing_run_all_calls = sorted(live_test_scripts - run_all_called)
+        extra_run_all_calls = sorted(run_all_called - live_test_scripts)
+        if missing_run_all_calls:
+            fail(
+                "infrastructure/tests/run-all.sh is missing live test call(s): "
+                + ", ".join(missing_run_all_calls)
+            )
+        if extra_run_all_calls:
+            fail(
+                "infrastructure/tests/run-all.sh calls test(s) not marked Live in Infrastructure Test Inventory: "
+                + ", ".join(extra_run_all_calls)
+            )
+
+traefik_dir = root / "traefik"
+traefik_readme_path = traefik_dir / "README.md"
+traefik_readme = read_text(traefik_readme_path)
+normalized_traefik_readme = re.sub(r"\s+", " ", traefik_readme)
+for phrase in [
+    "`k3d-hyhome-serverlb` is not the external Traefik gateway",
+    "hy-home.docker external gateway container",
+    "external Traefik dynamic config",
+    "not a k3d GitOps desired-state failure",
+    "repo-static 검증은 route manifest 계약만 확인",
+    "live port availability",
+    "operator-owned runtime evidence",
+]:
+    if phrase not in normalized_traefik_readme:
+        fail(f"traefik/README.md missing external gateway/serverlb boundary phrase: {phrase}")
+traefik_rows = markdown_table_after_heading(
+    traefik_readme,
+    profiled_readme_table_headings("Traefik Route Inventory"),
+)
+expected_traefik_header = ["Config", "Router host", "Backend URL", "Boundary", "Validation"]
+traefik_configs = sorted(traefik_dir.glob("*.yaml"))
+traefik_config_names = {path.name for path in traefik_configs}
+if len(traefik_rows) < 2:
+    fail("traefik/README.md Traefik Route Inventory must contain a header and route rows")
+elif traefik_rows[0] != expected_traefik_header:
+    fail(
+        "traefik/README.md Traefik Route Inventory header must be: "
+        + " | ".join(expected_traefik_header)
+    )
+else:
+    indexed_traefik_configs: dict[str, list[str]] = {}
+    for row_number, row in enumerate(traefik_rows[1:], start=1):
+        if len(row) != len(expected_traefik_header):
+            fail(f"traefik/README.md Traefik Route Inventory row {row_number} must have {len(expected_traefik_header)} columns")
+            continue
+        config_match = re.fullmatch(r"`([^`]+\.yaml)`", row[0])
+        host_match = re.fullmatch(r"`([^`]+)`", row[1])
+        backend_match = re.fullmatch(r"`([^`]+)`", row[2])
+        if not config_match:
+            fail(f"traefik/README.md Traefik Route Inventory row {row_number} must start with a backticked config filename")
+            continue
+        if not host_match:
+            fail(f"traefik/README.md Traefik Route Inventory row {row_number} must use a backticked Router host")
+            continue
+        if not backend_match:
+            fail(f"traefik/README.md Traefik Route Inventory row {row_number} must use a backticked Backend URL")
+            continue
+        config_name = config_match.group(1)
+        host = host_match.group(1)
+        backend_url = backend_match.group(1)
+        boundary = row[3]
+        validation = row[4]
+        if config_name in indexed_traefik_configs:
+            fail(f"traefik/README.md Traefik Route Inventory duplicates config: {config_name}")
+        indexed_traefik_configs[config_name] = row
+        if not boundary or "Reference-only" not in boundary:
+            fail(f"traefik/README.md Traefik Route Inventory row {row_number} must keep reference-only boundary")
+        if not validation or "validate-repo-quality-gates.sh" not in validation:
+            fail(f"traefik/README.md Traefik Route Inventory row {row_number} must cite repo quality validation")
+
+        config_path = traefik_dir / config_name
+        if not config_path.exists():
+            fail(f"traefik/README.md Traefik Route Inventory references missing config: {config_name}")
+            continue
+        try:
+            config = load_yaml(config_path)
+        except Exception as exc:
+            fail(f"Traefik config YAML parse failed for {rel(config_path)}: {exc}")
+            continue
+        http = config.get("http") if isinstance(config, dict) else {}
+        services = http.get("services") if isinstance(http, dict) else {}
+        routers = http.get("routers") if isinstance(http, dict) else {}
+        transports = http.get("serversTransports") if isinstance(http, dict) else {}
+        if not isinstance(services, dict) or len(services) != 1:
+            fail(f"{rel(config_path)} must define exactly one Traefik service")
+            continue
+        if not isinstance(routers, dict) or len(routers) != 1:
+            fail(f"{rel(config_path)} must define exactly one Traefik router")
+            continue
+        service_name, service = next(iter(services.items()))
+        router_name, router = next(iter(routers.items()))
+        load_balancer = service.get("loadBalancer") if isinstance(service, dict) else {}
+        servers = load_balancer.get("servers") if isinstance(load_balancer, dict) else []
+        urls = [
+            server.get("url")
+            for server in servers
+            if isinstance(server, dict) and server.get("url")
+        ]
+        if urls != [backend_url]:
+            fail(f"{rel(config_path)} backend URL must match README inventory: {backend_url}")
+        if load_balancer.get("passHostHeader") is not True:
+            fail(f"{rel(config_path)} loadBalancer.passHostHeader must be true")
+        transport_name = load_balancer.get("serversTransport")
+        if not transport_name or transport_name not in transports:
+            fail(f"{rel(config_path)} service must reference a defined serversTransport")
+        elif transports.get(transport_name, {}).get("insecureSkipVerify") is not True:
+            fail(f"{rel(config_path)} serversTransport must set insecureSkipVerify: true")
+        expected_rule = f"Host(`{host}`)"
+        if not isinstance(router, dict) or router.get("rule") != expected_rule:
+            fail(f"{rel(config_path)} router rule must match README inventory host: {expected_rule}")
+        entrypoints = router.get("entryPoints") if isinstance(router, dict) else []
+        if entrypoints != ["websecure"]:
+            fail(f"{rel(config_path)} router entryPoints must be exactly ['websecure']")
+        if router.get("service") != service_name:
+            fail(f"{rel(config_path)} router service must reference the defined service")
+        if "tls" not in router:
+            fail(f"{rel(config_path)} router must define tls")
+
+    for config_name in sorted(traefik_config_names - set(indexed_traefik_configs)):
+        fail(f"traefik/README.md Traefik Route Inventory missing config row: {config_name}")
+    for config_name in sorted(set(indexed_traefik_configs) - traefik_config_names):
+        fail(f"traefik/README.md Traefik Route Inventory references missing config: {config_name}")
+
+stale_traefik_backend_pattern = "k3d-hyhome-serverlb:443"
+for path in sorted([*traefik_configs, root / "examples/sample-app/traefik-k3d.yaml.example"]):
+    text = read_text(path)
+    if stale_traefik_backend_pattern in text:
+        fail(f"{rel(path)} contains stale Traefik backend: {stale_traefik_backend_pattern}")
+    if "https://172.18.0.240:443" not in text:
+        fail(f"{rel(path)} must reference ingress-nginx LoadBalancer backend https://172.18.0.240:443")
+
+executable_reference_source_suffixes = {
+    ".md",
+    ".toml",
+    ".json",
+    ".yml",
+    ".yaml",
+    ".sh",
+    ".tf",
+    ".bicep",
+    ".txt",
+}
+executable_reference_sources = {}
+for tracked_path in sorted(tracked):
+    if tracked_path.startswith(("docs/98.archive/", "tests/fixtures/")):
+        continue
+    path = root / tracked_path
+    if (
+        not path.is_file()
+        or path.is_symlink()
+        or path.suffix not in executable_reference_source_suffixes
+    ):
+        continue
+    executable_reference_sources[pathlib.PurePosixPath(tracked_path)] = read_text(path)
+
+validation_surface_contract = load_json(
+    root / "scripts/validation/registry.json"
+)
+try:
+    executable_suffixes = executable_suffixes_from_registry(
+        validation_surface_contract
+    )
+except ValueError as exc:
+    fail(f"validation executable suffix ownership differs: {exc}")
+    executable_suffixes = frozenset()
+
+executable_reference_diagnostics = (
+    validate_current_executable_references(
+        root,
+        tracked_paths=frozenset(pathlib.PurePosixPath(path) for path in tracked),
+        source_texts=executable_reference_sources,
+        executable_suffixes=executable_suffixes,
+        historical_path_exists=lambda target: reachable_git_path_exists(root, target),
+    )
+    if executable_suffixes
+    else ()
+)
+for diagnostic in executable_reference_diagnostics:
+    fail(str(diagnostic))
+
+secret_scanner_text = read_text(scripts_dir / "check-secret-handling.sh")
+for phrase in [
+    "examples/sample-app",
+    '-name "gitops"',
+    '-name "kubernetes"',
+    "value=<redacted>",
+]:
+    if phrase not in secret_scanner_text:
+        fail(f"{rel(scripts_dir / 'check-secret-handling.sh')} missing examples secret-scan contract phrase: {phrase}")
+
+for obsolete in ["k3d_kubeconfig.yaml"]:
+    if obsolete in tracked:
+        fail(f"obsolete tracked file remains: {obsolete}")
+for tracked_path in tracked:
+    if tracked_path.startswith("docs/" + legacy_postmortems + "/") or tracked_path.startswith("docs/" + legacy_learning + "/"):
+        fail(f"obsolete tracked docs path remains: {tracked_path}")
+
+pre_commit_text = read_text(root / ".pre-commit-config.yaml")
+stale_pre_commit_hook_regex = "\\." + "claude/hooks/.*\\.sh"
+for hook_id in ["shellcheck", "shfmt"]:
+    if "docs/00\\.agent-governance/hooks/.*\\.sh" not in pre_commit_text:
+        fail(f".pre-commit-config.yaml {hook_id} must include docs/00.agent-governance/hooks/*.sh coverage")
+    if stale_pre_commit_hook_regex in pre_commit_text:
+        fail(f".pre-commit-config.yaml {hook_id} must not use stale provider-local hook coverage")
+
+active_hook_reference_files = [
+    root / "scripts/README.md",
+    root / "docs/00.agent-governance/hooks/post-validate.sh",
+    root / "docs/00.agent-governance/hooks/lifecycle-guard.sh",
+]
+for path in active_hook_reference_files:
+    text = read_text(path)
+    if stale_provider_hook_path in text:
+        fail(f"{rel(path)} contains stale active hook path; use docs/00.agent-governance/hooks")
+    if "docs/00.agent-governance/hooks" not in text:
+        fail(f"{rel(path)} missing shared hook path docs/00.agent-governance/hooks")
+
+for hook_path in [
+    root / "docs/00.agent-governance/hooks/post-validate.sh",
+    root / "docs/00.agent-governance/hooks/lifecycle-guard.sh",
+]:
+    hook_text = read_text(hook_path)
+    if ".agents/*" not in hook_text:
+        fail(f"{rel(hook_path)} must trigger repository quality gates for .agents/** shared asset changes")
+
+if failures:
+    print("=== validate-repo-quality-gates ===")
+    for item in failures:
+        print(item)
+    sys.exit(1)
+
+print("[PASS] repository quality gates passed")

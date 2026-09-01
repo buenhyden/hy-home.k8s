@@ -4,6 +4,8 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import re
 import stat
 import subprocess
 from dataclasses import replace
@@ -21,6 +23,7 @@ from document_contracts import (
     enumerate_target_markdown,
     load_registry,
 )
+from validation.repository.bounded_io import BoundedInputError, read_bytes
 
 
 DOCUMENT_REGISTRY_ROOT_ERROR = (
@@ -45,6 +48,18 @@ TERMINAL_TEMPLATE_GROUPS = frozenset(
 )
 GIT_TIMEOUT_SECONDS = 10
 GIT_INVENTORY_MAX_BYTES = 16 * 1024
+REFERENCE_PACK_MAX_ENTRIES = 4096
+REFERENCE_PACK_GIT_MAX_BYTES = 4 * 1024 * 1024
+REFERENCE_PACK_FILE_MAX_BYTES = 8 * 1024 * 1024
+REFERENCE_PACK_TOTAL_MAX_BYTES = 64 * 1024 * 1024
+REFERENCE_PACK_PATTERN = re.compile(
+    r"(?P<number>[0-9]{4})-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\Z"
+)
+REFERENCE_PACK_CATEGORIES = (
+    ("audits", "audit"),
+    ("data", "data"),
+    ("research", "research"),
+)
 
 
 def _include_path_argument(raw: str) -> PurePosixPath:
@@ -125,6 +140,276 @@ def _assert_retired_cloud_sdlc_surfaces_absent(root: Path) -> None:
         )
     if completed.stdout:
         raise AssertionError(RETIRED_CLOUD_SDLC_SURFACE_ERROR)
+
+
+def _bounded_directory_entries(path: Path) -> tuple[Path, ...]:
+    """List one held topology level without following a directory symlink."""
+
+    try:
+        mode = path.lstat().st_mode
+    except OSError as exc:
+        raise AssertionError(
+            f"REFERENCE_PACK_DIRECTORY: {path.as_posix()} is unavailable"
+        ) from exc
+    if stat.S_ISLNK(mode) or not stat.S_ISDIR(mode):
+        raise AssertionError(
+            f"REFERENCE_PACK_DIRECTORY: {path.as_posix()} must be a regular directory"
+        )
+    entries: list[Path] = []
+    try:
+        for entry in path.iterdir():
+            entries.append(entry)
+            if len(entries) > REFERENCE_PACK_MAX_ENTRIES:
+                raise AssertionError(
+                    f"REFERENCE_PACK_LIMIT: {path.as_posix()} exceeds the entry budget"
+                )
+    except OSError as exc:
+        raise AssertionError(
+            f"REFERENCE_PACK_DIRECTORY: {path.as_posix()} cannot be enumerated"
+        ) from exc
+    return tuple(sorted(entries, key=lambda entry: entry.name))
+
+
+def _staged_reference_files(root: Path) -> dict[PurePosixPath, str]:
+    """Return canonical stage-zero regular files below the Stage 90 boundary."""
+
+    try:
+        completed = run_bounded_process(
+            [
+                "git",
+                "ls-files",
+                "--stage",
+                "-z",
+                "--",
+                "docs/90.references",
+            ],
+            cwd=root,
+            check=True,
+            timeout_seconds=GIT_TIMEOUT_SECONDS,
+            max_stdout_bytes=REFERENCE_PACK_GIT_MAX_BYTES,
+        )
+    except (AuthorityError, subprocess.SubprocessError) as exc:
+        raise AssertionError(
+            f"REFERENCE_PACK_INDEX: stage-zero inventory is unavailable: {exc}"
+        ) from exc
+    if completed.stdout and not completed.stdout.endswith(b"\0"):
+        raise AssertionError(
+            "REFERENCE_PACK_INDEX: stage-zero inventory is not NUL terminated"
+        )
+    records = completed.stdout.split(b"\0")
+    inventory: dict[PurePosixPath, str] = {}
+    try:
+        for record in records[:-1]:
+            header, raw_path = record.split(b"\t", 1)
+            mode, raw_object_id, stage = header.split(b" ", 2)
+            object_id = raw_object_id.decode("ascii", errors="strict")
+            decoded = raw_path.decode("utf-8", errors="strict")
+            path = PurePosixPath(decoded)
+            if (
+                mode not in {b"100644", b"100755"}
+                or re.fullmatch(r"(?:[0-9a-f]{40}|[0-9a-f]{64})", object_id)
+                is None
+                or stage != b"0"
+                or path.as_posix() != decoded
+                or path.is_absolute()
+                or ".." in path.parts
+                or path.parts[:2] != ("docs", "90.references")
+                or path in inventory
+            ):
+                raise ValueError
+            inventory[path] = object_id
+            if len(inventory) > REFERENCE_PACK_MAX_ENTRIES:
+                raise AssertionError(
+                    "REFERENCE_PACK_LIMIT: Stage 90 index exceeds the entry budget"
+                )
+    except (UnicodeDecodeError, ValueError) as exc:
+        raise AssertionError(
+            "REFERENCE_PACK_INDEX: stage-zero inventory is malformed"
+        ) from exc
+    return inventory
+
+
+def _assert_reference_pack_topology(root: Path, registry: Registry) -> None:
+    """Enforce the only current Stage 90 pack routes and their Stage 99 forms."""
+
+    stage_root = root / "docs/90.references"
+    staged_inventory = _staged_reference_files(root)
+    staged_files = frozenset(staged_inventory)
+    worktree_files: set[PurePosixPath] = set()
+    errors: list[str] = []
+    root_entries = _bounded_directory_entries(stage_root)
+    allowed_root_entries = {"README.md", *(item[0] for item in REFERENCE_PACK_CATEGORIES)}
+    for entry in root_entries:
+        try:
+            mode = entry.lstat().st_mode
+        except OSError:
+            errors.append(f"REFERENCE_PACK_ROOT_ENTRY: {entry.name} is unavailable")
+            continue
+        if entry.name == "README.md":
+            if not stat.S_ISREG(mode):
+                errors.append("REFERENCE_PACK_ROOT_ENTRY: README.md must be regular")
+            else:
+                worktree_files.add(
+                    PurePosixPath(entry.relative_to(root).as_posix())
+                )
+            continue
+        if stat.S_ISREG(mode):
+            worktree_files.add(PurePosixPath(entry.relative_to(root).as_posix()))
+        if entry.name not in allowed_root_entries or not stat.S_ISDIR(mode):
+            errors.append(
+                f"REFERENCE_PACK_ROOT_ENTRY: {entry.name} is outside audits/data/research"
+            )
+
+    for category, singular in REFERENCE_PACK_CATEGORIES:
+        category_root = stage_root / category
+        if not category_root.exists() and not category_root.is_symlink():
+            continue
+        entries = _bounded_directory_entries(category_root)
+        router = category_root / "README.md"
+        try:
+            router_mode = router.lstat().st_mode
+        except OSError:
+            errors.append(f"REFERENCE_PACK_CATEGORY_README: {category}/README.md is missing")
+        else:
+            if not stat.S_ISREG(router_mode):
+                errors.append(
+                    f"REFERENCE_PACK_CATEGORY_README: {category}/README.md must be regular"
+                )
+            else:
+                worktree_files.add(
+                    PurePosixPath(router.relative_to(root).as_posix())
+                )
+
+        numbers: dict[str, str] = {}
+        for entry in entries:
+            if entry.name == "README.md":
+                continue
+            try:
+                mode = entry.lstat().st_mode
+            except OSError:
+                errors.append(
+                    f"REFERENCE_PACK_ENTRY: {category}/{entry.name} is unavailable"
+                )
+                continue
+            match = REFERENCE_PACK_PATTERN.fullmatch(entry.name)
+            if match is None or stat.S_ISLNK(mode) or not stat.S_ISDIR(mode):
+                if stat.S_ISREG(mode):
+                    worktree_files.add(
+                        PurePosixPath(entry.relative_to(root).as_posix())
+                    )
+                errors.append(
+                    f"REFERENCE_PACK_ENTRY: {category}/{entry.name} must be ####-<slug>/"
+                )
+                continue
+            number = match.group("number")
+            if number in numbers:
+                errors.append(
+                    f"REFERENCE_PACK_NUMBER: {category}/{entry.name} duplicates "
+                    f"{numbers[number]}"
+                )
+            numbers[number] = entry.name
+
+            readme = entry / "README.md"
+            try:
+                readme_mode = readme.lstat().st_mode
+            except OSError:
+                errors.append(
+                    f"REFERENCE_PACK_README: {category}/{entry.name}/README.md is missing"
+                )
+            else:
+                if not stat.S_ISREG(readme_mode):
+                    errors.append(
+                        f"REFERENCE_PACK_README: {category}/{entry.name}/README.md "
+                        "must be regular"
+                    )
+                else:
+                    worktree_files.add(
+                        PurePosixPath(readme.relative_to(root).as_posix())
+                    )
+                    profile = classify_path(
+                        registry,
+                        PurePosixPath(
+                            f"docs/90.references/{category}/{entry.name}/README.md"
+                        ),
+                    )
+                    expected_template = PurePosixPath(
+                        "docs/99.templates/templates/references/"
+                        f"{singular}-pack.template.md"
+                    )
+                    if (
+                        profile.profile_id != f"readme/{singular}-pack"
+                        or profile.template != expected_template
+                    ):
+                        errors.append(
+                            f"REFERENCE_PACK_TEMPLATE: {category}/{entry.name}/README.md "
+                            f"must use {expected_template.as_posix()}"
+                        )
+
+            for member in _bounded_directory_entries(entry):
+                try:
+                    member_mode = member.lstat().st_mode
+                except OSError:
+                    errors.append(
+                        f"REFERENCE_PACK_MEMBER: {category}/{entry.name}/{member.name} "
+                        "is unavailable"
+                    )
+                    continue
+                if not stat.S_ISREG(member_mode):
+                    errors.append(
+                        f"REFERENCE_PACK_MEMBER: {category}/{entry.name}/{member.name} "
+                        "must be regular"
+                    )
+                else:
+                    worktree_files.add(
+                        PurePosixPath(member.relative_to(root).as_posix())
+                    )
+
+    if staged_files != worktree_files:
+        index_only = ",".join(
+            path.as_posix() for path in sorted(staged_files - worktree_files)[:3]
+        )
+        worktree_only = ",".join(
+            path.as_posix() for path in sorted(worktree_files - staged_files)[:3]
+        )
+        errors.append(
+            "REFERENCE_PACK_INDEX_DRIFT: stage-zero and worktree regular-file "
+            f"sets differ; index_only={index_only or '-'}; "
+            f"worktree_only={worktree_only or '-'}"
+        )
+    else:
+        total_bytes = 0
+        for path in sorted(staged_inventory):
+            try:
+                content = read_bytes(
+                    root.joinpath(*path.parts),
+                    max_bytes=REFERENCE_PACK_FILE_MAX_BYTES,
+                )
+            except BoundedInputError as exc:
+                errors.append(
+                    f"REFERENCE_PACK_INDEX_DRIFT: {path.as_posix()} cannot be "
+                    f"compared safely: {exc}"
+                )
+                continue
+            total_bytes += len(content)
+            if total_bytes > REFERENCE_PACK_TOTAL_MAX_BYTES:
+                errors.append(
+                    "REFERENCE_PACK_LIMIT: Stage 90 worktree bytes exceed the "
+                    "aggregate budget"
+                )
+                break
+            object_id = staged_inventory[path]
+            algorithm = "sha1" if len(object_id) == 40 else "sha256"
+            hasher = hashlib.new(algorithm, usedforsecurity=False)
+            hasher.update(f"blob {len(content)}\0".encode("ascii"))
+            hasher.update(content)
+            if hasher.hexdigest() != object_id:
+                errors.append(
+                    f"REFERENCE_PACK_INDEX_DRIFT: {path.as_posix()} differs "
+                    "between stage zero and worktree"
+                )
+
+    if errors:
+        raise AssertionError("\n".join(errors))
 
 
 def _without_artifact_id(contract: FrontmatterContract) -> FrontmatterContract:
@@ -227,6 +512,7 @@ def main() -> int:
         root = _assert_repository_root_directory(args.root)
         registry = load_registry(root)
         _assert_template_source_parity(registry)
+        _assert_reference_pack_topology(root, registry)
         _assert_retired_cloud_sdlc_surfaces_absent(root)
         profile_ids = {profile.profile_id for profile in registry.profiles}
         readme_family = args.profile == "readme"

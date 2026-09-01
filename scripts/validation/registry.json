@@ -28,45 +28,40 @@
   ],
   "validators": [
     {
-      "id": "agent-checkpoint",
+      "id": "affected-surface-contract",
       "argv": [
         "python3",
-        "scripts/validate-agent-checkpoint.py",
-        "--root",
-        ".",
-        "--self-test"
-      ],
-      "lanes": [
-        "affected",
-        "staged",
-        "all-files",
-        "ci"
-      ],
-      "optional": false,
-      "fallback": {
-        "status": "FAIL",
-        "reason": "Agent checkpoint validation is required."
-      },
-      "evidenceLane": "repo-static"
-    },
-    {
-      "id": "agent-evaluations",
-      "argv": [
-        "python3",
-        "scripts/validate-agent-evaluations.py",
+        "scripts/validate-affected-surfaces.py",
         "--root",
         "."
       ],
       "lanes": [
-        "affected",
-        "staged",
         "all-files",
         "ci"
       ],
       "optional": false,
       "fallback": {
         "status": "FAIL",
-        "reason": "Spec 044 role evaluation validation is required."
+        "reason": "Affected-surface registry validation is required."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "archive-cutover",
+      "argv": [
+        "python3",
+        "scripts/archive_cutover.py",
+        "--root",
+        "."
+      ],
+      "lanes": [
+        "all-files",
+        "ci"
+      ],
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Archive cutover validation is required."
       },
       "evidenceLane": "repo-static"
     },
@@ -92,27 +87,6 @@
       "evidenceLane": "repo-static"
     },
     {
-      "id": "agent-governance-closure",
-      "argv": [
-        "python3",
-        "scripts/validate-agent-governance-closure.py",
-        "--root",
-        "."
-      ],
-      "lanes": [
-        "affected",
-        "staged",
-        "all-files",
-        "ci"
-      ],
-      "optional": false,
-      "fallback": {
-        "status": "FAIL",
-        "reason": "Agent-governance closure validation is required."
-      },
-      "evidenceLane": "repo-static"
-    },
-    {
       "id": "agent-harness-contract",
       "argv": [
         "python3",
@@ -130,6 +104,25 @@
       "fallback": {
         "status": "FAIL",
         "reason": "Provider-neutral harness contract validation is required."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "agent-harness-semantics",
+      "argv": [
+        "python3",
+        "scripts/validate-agent-harness-semantics.py",
+        "--root",
+        "."
+      ],
+      "lanes": [
+        "all-files",
+        "ci"
+      ],
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Agent harness semantic validation is required."
       },
       "evidenceLane": "repo-static"
     },
@@ -176,27 +169,6 @@
       "evidenceLane": "repo-static"
     },
     {
-      "id": "agent-model-fitness",
-      "argv": [
-        "python3",
-        "scripts/validate-agent-model-fitness.py",
-        "--root",
-        "."
-      ],
-      "lanes": [
-        "affected",
-        "staged",
-        "all-files",
-        "ci"
-      ],
-      "optional": false,
-      "fallback": {
-        "status": "FAIL",
-        "reason": "Spec 044 model-fitness validation is required."
-      },
-      "evidenceLane": "repo-static"
-    },
-    {
       "id": "agent-provider-evidence",
       "argv": [
         "python3",
@@ -218,43 +190,21 @@
       "evidenceLane": "repo-static"
     },
     {
-      "id": "agent-roster-admission",
+      "id": "ci-python-contract",
       "argv": [
         "python3",
-        "scripts/validate-agent-roster-admission.py",
+        "scripts/validate-ci-python-contract.py",
         "--root",
         "."
       ],
       "lanes": [
-        "affected",
-        "staged",
         "all-files",
         "ci"
       ],
       "optional": false,
       "fallback": {
         "status": "FAIL",
-        "reason": "Spec 044 roster admission validation is required."
-      },
-      "evidenceLane": "repo-static"
-    },
-    {
-      "id": "agent-roster-currentness",
-      "argv": [
-        "python3",
-        "scripts/validate-agent-roster-currentness.py",
-        "."
-      ],
-      "lanes": [
-        "affected",
-        "staged",
-        "all-files",
-        "ci"
-      ],
-      "optional": false,
-      "fallback": {
-        "status": "FAIL",
-        "reason": "Canonical provider roster validation is required."
+        "reason": "CI Python dependency validation is required."
       },
       "evidenceLane": "repo-static"
     },
@@ -317,7 +267,8 @@
       ],
       "lanes": [
         "affected",
-        "staged"
+        "staged",
+        "all-files"
       ],
       "optional": false,
       "fallback": {
@@ -455,8 +406,9 @@
     {
       "id": "repository-quality",
       "argv": [
-        "bash",
-        "scripts/validate-repo-quality-gates.sh",
+        "python3",
+        "scripts/validation/repository/quality.py",
+        "--root",
         "."
       ],
       "lanes": [
@@ -469,6 +421,25 @@
       "fallback": {
         "status": "FAIL",
         "reason": "Repository quality validation is required."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "workspace-boundary",
+      "argv": [
+        "python3",
+        "scripts/validate-workspace-boundary.py",
+        "--root",
+        "."
+      ],
+      "lanes": [
+        "all-files",
+        "ci"
+      ],
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Workspace boundary validation is required."
       },
       "evidenceLane": "repo-static"
     },
@@ -619,7 +590,6 @@
       ],
       "validators": [
         "agent-governance-ci",
-        "agent-governance-closure",
         "agent-legacy-cutover",
         "repository-quality"
       ],
@@ -648,17 +618,11 @@
         }
       ],
       "validators": [
-        "agent-checkpoint",
-        "agent-evaluations",
         "agent-governance-ci",
-        "agent-governance-closure",
         "agent-harness-contract",
         "agent-legacy-cutover",
         "agent-loop-lifecycle",
-        "agent-model-fitness",
         "agent-provider-evidence",
-        "agent-roster-admission",
-        "agent-roster-currentness",
         "document-contract-registry",
         "document-lifecycle",
         "links-and-owners",
@@ -712,16 +676,10 @@
         }
       ],
       "validators": [
-        "agent-checkpoint",
-        "agent-evaluations",
         "agent-governance-ci",
-        "agent-governance-closure",
         "agent-harness-contract",
         "agent-legacy-cutover",
         "agent-loop-lifecycle",
-        "agent-model-fitness",
-        "agent-roster-admission",
-        "agent-roster-currentness",
         "document-contract-registry",
         "document-lifecycle",
         "links-and-owners",
@@ -749,17 +707,11 @@
         }
       ],
       "validators": [
-        "agent-checkpoint",
-        "agent-evaluations",
         "agent-governance-ci",
-        "agent-governance-closure",
         "agent-harness-contract",
         "agent-legacy-cutover",
         "agent-loop-lifecycle",
-        "agent-model-fitness",
         "agent-provider-evidence",
-        "agent-roster-admission",
-        "agent-roster-currentness",
         "document-contract-registry",
         "document-lifecycle",
         "links-and-owners",
@@ -787,17 +739,11 @@
         }
       ],
       "validators": [
-        "agent-checkpoint",
-        "agent-evaluations",
         "agent-governance-ci",
-        "agent-governance-closure",
         "agent-harness-contract",
         "agent-legacy-cutover",
         "agent-loop-lifecycle",
-        "agent-model-fitness",
         "agent-provider-evidence",
-        "agent-roster-admission",
-        "agent-roster-currentness",
         "document-contract-registry",
         "document-lifecycle",
         "links-and-owners",
@@ -826,7 +772,6 @@
       ],
       "validators": [
         "agent-governance-ci",
-        "agent-governance-closure",
         "agent-legacy-cutover",
         "repository-quality"
       ],
@@ -851,17 +796,11 @@
         }
       ],
       "validators": [
-        "agent-checkpoint",
-        "agent-evaluations",
         "agent-governance-ci",
-        "agent-governance-closure",
         "agent-harness-contract",
         "agent-legacy-cutover",
         "agent-loop-lifecycle",
-        "agent-model-fitness",
         "agent-provider-evidence",
-        "agent-roster-admission",
-        "agent-roster-currentness",
         "document-contract-registry",
         "document-lifecycle",
         "links-and-owners",
@@ -890,7 +829,6 @@
       ],
       "validators": [
         "agent-governance-ci",
-        "agent-governance-closure",
         "agent-legacy-cutover",
         "document-contract-registry",
         "document-lifecycle",
@@ -920,7 +858,6 @@
       ],
       "validators": [
         "agent-governance-ci",
-        "agent-governance-closure",
         "agent-legacy-cutover",
         "document-contract-registry",
         "document-lifecycle",
@@ -1128,17 +1065,11 @@
         }
       ],
       "validators": [
-        "agent-checkpoint",
         "agent-governance-ci",
-        "agent-governance-closure",
         "agent-harness-contract",
         "agent-legacy-cutover",
         "agent-loop-lifecycle",
         "agent-provider-evidence",
-        "agent-roster-admission",
-        "agent-roster-currentness",
-        "agent-evaluations",
-        "agent-model-fitness",
         "gitops-structure",
         "infrastructure-contracts",
         "k8s-manifests",
@@ -1192,16 +1123,11 @@
         }
       ],
       "validators": [
-        "agent-checkpoint",
         "agent-governance-ci",
-        "agent-governance-closure",
         "agent-harness-contract",
         "agent-legacy-cutover",
         "agent-loop-lifecycle",
         "agent-provider-evidence",
-        "agent-roster-admission",
-        "agent-evaluations",
-        "agent-model-fitness",
         "repository-quality"
       ],
       "ciJobs": [

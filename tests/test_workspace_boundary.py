@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import builtins
 import importlib.util
+import json
 import os
 import subprocess
 import sys
@@ -14,6 +15,7 @@ from unittest import mock
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 VALIDATOR_PATH = REPOSITORY_ROOT / "scripts" / "validate-workspace-boundary.py"
 AGGREGATE_PATH = REPOSITORY_ROOT / "scripts" / "validate-repo-quality-gates.sh"
+REGISTRY_PATH = REPOSITORY_ROOT / "scripts" / "validation" / "registry.json"
 OBJECT_ID = b"a" * 40
 README_RECORD = b"100644 " + OBJECT_ID + b" 0\t_workspace/README.md\0"
 ROOT_POLICY = b"_workspace/*\n!_workspace/README.md\n"
@@ -495,9 +497,14 @@ class WorkspaceBoundaryContractTests(unittest.TestCase):
 
 
 class WorkspaceBoundaryCliTests(unittest.TestCase):
-    def test_self_test_passes(self) -> None:
+    def test_production_cli_passes(self) -> None:
         result = subprocess.run(
-            [sys.executable, str(VALIDATOR_PATH), "--self-test"],
+            [
+                sys.executable,
+                str(VALIDATOR_PATH),
+                "--root",
+                str(REPOSITORY_ROOT),
+            ],
             cwd=REPOSITORY_ROOT,
             text=True,
             capture_output=True,
@@ -505,23 +512,31 @@ class WorkspaceBoundaryCliTests(unittest.TestCase):
         )
 
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(result.stdout, "[PASS] workspace boundary self-test\n")
+        self.assertEqual(
+            result.stdout,
+            "[PASS] workspace boundary: _workspace/README.md\n",
+        )
         self.assertEqual(result.stderr, "")
 
-    def test_aggregate_runs_self_test_then_production_validator(self) -> None:
+    def test_registry_routes_only_the_production_validator(self) -> None:
+        registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+        records = [
+            row for row in registry["validators"] if row["id"] == "workspace-boundary"
+        ]
+        self.assertEqual(len(records), 1)
+        record = records[0]
+        self.assertEqual(
+            record["argv"],
+            ["python3", "scripts/validate-workspace-boundary.py", "--root", "."],
+        )
+        self.assertIn("all-files", record["lanes"])
+        self.assertNotIn("--self-test", record["argv"])
+
+    def test_aggregate_delegates_without_embedding_the_rule(self) -> None:
         aggregate = AGGREGATE_PATH.read_text(encoding="utf-8")
-        self.assertIn(
-            'python3 "$ROOT_DIR/scripts/validate-workspace-boundary.py" --self-test',
-            aggregate,
-        )
-        self.assertIn(
-            'python3 "$ROOT_DIR/scripts/validate-workspace-boundary.py" --root "$ROOT_DIR"',
-            aggregate,
-        )
-        self.assertLess(
-            aggregate.index('validate-workspace-boundary.py" --self-test'),
-            aggregate.index('validate-workspace-boundary.py" --root'),
-        )
+        self.assertIn("run-validation-lane.py", aggregate)
+        self.assertNotIn("validate-workspace-boundary.py", aggregate)
+        self.assertNotIn("--self-test", aggregate)
         self.assertNotIn("workspace_scratch_ignore_check", aggregate)
         self.assertNotIn("workspace_tracked_paths", aggregate)
 

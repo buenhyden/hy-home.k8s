@@ -57,7 +57,13 @@ CONTRACT = {
     "validators": [
         {
             "id": "repository-quality",
-            "argv": ["bash", "scripts/validate-repo-quality-gates.sh", "."],
+            "argv": [
+                "python3",
+                "scripts/validation/repository/quality.py",
+                "--root",
+                ".",
+            ],
+            "lanes": ["affected", "staged", "all-files"],
             "evidenceLane": "repo-static",
             "optional": False,
             "fallback": {"status": "FAIL", "reason": "required"},
@@ -529,15 +535,23 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
             self.assertNotIn(variable, runner_text)
             self.assertNotIn(variable, hook_text)
 
-    def test_aggregate_executes_exact_archive_cutover(self):
+    def test_registry_dispatches_exact_archive_cutover(self):
         aggregate = (ROOT / "scripts/validate-repo-quality-gates.sh").read_text(
             encoding="utf-8"
         )
-
-        self.assertIn(
-            'python3 "$ROOT_DIR/scripts/archive_cutover.py" --root "$ROOT_DIR"',
-            aggregate,
+        registry = json.loads(
+            (ROOT / "scripts/validation/registry.json").read_text(encoding="utf-8")
         )
+        archive = next(
+            row for row in registry["validators"] if row["id"] == "archive-cutover"
+        )
+
+        self.assertEqual(
+            archive["argv"],
+            ["python3", "scripts/archive_cutover.py", "--root", "."],
+        )
+        self.assertIn("all-files", archive["lanes"])
+        self.assertNotIn("scripts/archive_cutover.py", aggregate)
 
     def test_remote_live_lane_defers_without_subprocess_and_succeeds(self):
         contract = {
@@ -1513,6 +1527,48 @@ class BoundedValidationCommandTest(unittest.TestCase):
 
 
 class PureAffectedSelectorRunnerTest(unittest.TestCase):
+    def test_all_files_executes_each_registry_owner_with_declared_argv(self):
+        contract_module = RUNNER.load_contract_module()
+        contract = contract_module.validate_contract(ROOT)
+        expected = sorted(
+            (
+                row
+                for row in contract["validators"]
+                if "all-files" in row["lanes"]
+            ),
+            key=lambda row: row["id"],
+        )
+        completed = bounded_result(QUALITY_MARKER + "\n")
+        output = StringIO()
+        with (
+            patch.object(
+                contract_module,
+                "select_paths",
+                return_value={"validators": []},
+            ),
+            patch.object(RUNNER.shutil, "which", return_value="/usr/bin/python3"),
+            patch.object(RUNNER, "secure_gitleaks_executable", return_value=None),
+            patch.object(
+                RUNNER,
+                "run_bounded_command",
+                return_value=completed,
+            ) as invoked,
+            redirect_stdout(output),
+        ):
+            result = RUNNER.run_selected(
+                ROOT,
+                "all-files",
+                ["README.md"],
+                contract,
+                contract_module,
+            )
+
+        self.assertEqual(result, 0)
+        self.assertEqual(invoked.call_count, len(expected))
+        for call, validator in zip(invoked.call_args_list, expected, strict=True):
+            actual = call.args[0]
+            self.assertEqual(actual[1 : len(validator["argv"])], validator["argv"][1:])
+
     def test_deleted_markdown_is_not_classified_for_current_include_arguments(self):
         contract_module = RUNNER.load_contract_module()
         contract = contract_module.validate_contract(ROOT)
@@ -1634,7 +1690,6 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
             statuses,
             {
                 "agent-governance-ci": "PASS",
-                "agent-governance-closure": "PASS",
                 "agent-legacy-cutover": "PASS",
                 "document-contract-registry": "PASS",
                 "document-lifecycle": "PASS",
@@ -1643,7 +1698,7 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
                 "repository-quality": "PASS",
             },
         )
-        self.assertEqual(invoked.call_count, 8)
+        self.assertEqual(invoked.call_count, 7)
         self.assertGreaterEqual(output.count(path), 3)
 
     def test_staged_selector_executes_every_selected_validator(self):
@@ -1655,7 +1710,6 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
             statuses,
             {
                 "agent-governance-ci": "PASS",
-                "agent-governance-closure": "PASS",
                 "agent-legacy-cutover": "PASS",
                 "document-contract-registry": "PASS",
                 "document-lifecycle": "PASS",
@@ -1664,7 +1718,7 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
                 "repository-quality": "PASS",
             },
         )
-        self.assertEqual(invoked.call_count, 8)
+        self.assertEqual(invoked.call_count, 7)
         self.assertIn('scope="staged:paths=1"', output)
         propagated = [
             call.args[0] for call in invoked.call_args_list if path in call.args[0]

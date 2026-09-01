@@ -18,7 +18,7 @@ import yaml
 from yaml.constructor import ConstructorError
 from yaml.nodes import MappingNode
 
-from agent_registry_compat import load_terminal_validator
+from agent_registry_loader import load_terminal_validator
 
 
 REGISTRY_PATH = PurePosixPath(".agents/registry.json")

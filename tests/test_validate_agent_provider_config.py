@@ -15,6 +15,8 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
+from tests.agent_provider_mutations import apply_config_mutation
+
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = REPOSITORY_ROOT / "scripts/validate-agent-provider-config.py"
@@ -44,11 +46,6 @@ GOVERNED_JSON_OWNERS = (
             "docs/00.agent-governance/contracts/provider-runtime-evidence.schema.json"
         ),
         "contract",
-    ),
-    (
-        "fixture",
-        Path("tests/fixtures/agent-provider-runtime-evidence.json"),
-        "fixture",
     ),
     (
         "agent-registry",
@@ -101,7 +98,6 @@ class ProviderConfigContractTests(unittest.TestCase):
         owners = (
             CONTRACT_PATH,
             SCHEMA_PATH,
-            FIXTURE_PATH,
             AGENT_REGISTRY_PATH,
             ROUTING_PATH,
         )
@@ -142,9 +138,7 @@ class ProviderConfigContractTests(unittest.TestCase):
         return root
 
     def run_boundary_owner(self, root: Path, runner: str) -> None:
-        if runner == "fixture":
-            self.validator.validate_fixture(root)
-            return
+        self.assertEqual(runner, "contract")
         self.validator.validate_contract(root)
 
     def assert_input_rule(self, callback, forbidden_value: str = "") -> None:
@@ -246,7 +240,7 @@ class ProviderConfigContractTests(unittest.TestCase):
 
     def test_absent_runtime_cannot_claim_native_discovery_pass(self) -> None:
         mutated = self.contract_copy()
-        self.validator.apply_mutation(mutated, "absent-runtime-native-pass")
+        apply_config_mutation(mutated, "absent-runtime-native-pass")
         self.assert_rule(mutated, "PNME-UNSUPPORTED-RUNTIME")
 
     def test_provider_order_and_local_observations_are_exact(self) -> None:
@@ -505,8 +499,6 @@ class ProviderConfigContractTests(unittest.TestCase):
                     "--root",
                     str(root),
                 ]
-                if runner == "fixture":
-                    command.append("--self-test")
                 result = subprocess.run(
                     command,
                     check=False,
@@ -643,26 +635,25 @@ class ProviderConfigContractTests(unittest.TestCase):
         for case in self.fixture["configMutations"]:
             with self.subTest(case=case["name"]):
                 mutated = self.contract_copy()
-                self.validator.apply_mutation(mutated, case["name"])
+                apply_config_mutation(mutated, case["name"])
                 self.assert_rule(mutated, case["expectedRule"])
 
-    def test_self_test_cli_runs_real_contract_and_mutations(self) -> None:
+    def test_production_cli_validates_real_contract(self) -> None:
         result = subprocess.run(
             [
                 sys.executable,
                 str(SCRIPT_PATH),
                 "--root",
                 str(REPOSITORY_ROOT),
-                "--self-test",
             ],
             check=False,
             capture_output=True,
             text=True,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("[PASS] agent provider config self-test passed", result.stdout)
+        self.assertIn("[PASS] agent provider config validation passed", result.stdout)
 
-    def test_provider_evidence_self_test_propagates_explicit_root_from_foreign_cwd(
+    def test_provider_evidence_propagates_explicit_root_from_foreign_cwd(
         self,
     ) -> None:
         with tempfile.TemporaryDirectory(prefix="provider-evidence-root-") as directory:
@@ -672,7 +663,6 @@ class ProviderConfigContractTests(unittest.TestCase):
                     str(AGGREGATE_PATH),
                     "--root",
                     str(REPOSITORY_ROOT),
-                    "--self-test",
                 ],
                 cwd=directory,
                 check=False,
@@ -682,9 +672,26 @@ class ProviderConfigContractTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn(
             "[PASS] agent provider evidence aggregate passed: "
-            "mode=self-test validators=2",
+            "validators=2",
             result.stdout,
         )
+
+    def test_provider_evidence_timeout_has_a_stable_fail_closed_diagnostic(self) -> None:
+        spec = importlib.util.spec_from_file_location(
+            "validate_agent_provider_evidence_timeout", AGGREGATE_PATH
+        )
+        assert spec is not None and spec.loader is not None
+        aggregate = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(aggregate)
+        with mock.patch.object(
+            aggregate.subprocess,
+            "run",
+            side_effect=subprocess.TimeoutExpired(["validator"], 120),
+        ), mock.patch("sys.stderr.write") as stderr_write:
+            self.assertEqual(aggregate.run(["--root", "."]), 124)
+        diagnostic = "".join(call.args[0] for call in stderr_write.call_args_list)
+        self.assertIn("provider evidence validator timed out", diagnostic)
+        self.assertNotIn("Traceback", diagnostic)
 
     def test_provider_evidence_aggregate_preserves_a_symlink_root(self) -> None:
         with tempfile.TemporaryDirectory(

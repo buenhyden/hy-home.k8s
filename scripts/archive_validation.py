@@ -1365,31 +1365,59 @@ def validate_migration_records(
     # Historical consumer bytes and their reference occurrence are proven from
     # the reviewed source commit below. Current consumers belong to the active
     # document validators and may evolve or disappear independently of Archive.
-    current: dict[str, bytes] = {}
+    target_contents: dict[str, bytes] = {}
+    historical_targets: dict[str, _GitTreeMember] = {}
     ordered = sorted(selected)
     for path in ordered:
-        _require_regular_current_target(path, inventory)
+        if path in present:
+            _require_regular_current_target(path, inventory)
+        elif proposed_commit is None and os.path.lexists(root / path):
+            _require_regular_current_target(path, inventory)
+        else:
+            historical_targets[path] = _reachable_historical_regular_target(
+                root,
+                path,
+                proposed_commit=proposed_commit,
+            )
     # One batch for the whole selection: a ledger names as many targets as it
     # has rows, and a subprocess per row spends the run's budget on process
     # startup rather than on reading.
     expected_blobs = _batch_blob_bytes(
-        root, tuple(sorted({inventory[path] for path in ordered}))
+        root,
+        tuple(
+            sorted(
+                {
+                    inventory[path]
+                    if path in inventory
+                    else historical_targets[path].object_id
+                    for path in ordered
+                }
+            )
+        ),
     )
     for path in ordered:
-        expected = expected_blobs[inventory[path]]
-        content = (
-            expected
-            if proposed_commit is not None
-            else _migration_current_bytes(
-                root, path, CURRENT_MARKDOWN_MAX_BYTES, read_current_bytes
-            )
+        object_id = (
+            inventory[path]
+            if path in inventory
+            else historical_targets[path].object_id
         )
-        if expected != content:
-            raise ArchiveContractError(
-                "ARCHIVE-MIGRATION-STAGED-DRIFT",
-                "target or consumer index/worktree differ",
+        expected = expected_blobs[object_id]
+        if path in inventory:
+            content = (
+                expected
+                if proposed_commit is not None
+                else _migration_current_bytes(
+                    root, path, CURRENT_MARKDOWN_MAX_BYTES, read_current_bytes
+                )
             )
-        current[path] = content
+            if expected != content:
+                raise ArchiveContractError(
+                    "ARCHIVE-MIGRATION-STAGED-DRIFT",
+                    "target or consumer index/worktree differ",
+                )
+        else:
+            content = expected
+        target_contents[path] = content
     for legacy in view_sources:
         if proposed_commit is None:
             present_view = _staged_path_is_present(root, legacy) or os.path.lexists(
@@ -1433,7 +1461,7 @@ def validate_migration_records(
             immediate_bytes = (
                 sources[str(successor_row["source_commit"]), immediate][1]
                 if successor_row is not None and immediate != source
-                else current.get(immediate)
+                else target_contents.get(immediate)
             )
             if (
                 immediate_bytes is None
@@ -2282,6 +2310,70 @@ def _require_regular_current_target(
             "RECOVERY-MIGRATION-TARGET",
             "migration target is not a tracked stage-zero regular blob",
         )
+
+
+def _reachable_historical_regular_target(
+    root: Path,
+    relative: str,
+    *,
+    proposed_commit: str | None,
+) -> _GitTreeMember:
+    """Prove an absent Migration target existed on the reachable branch history."""
+
+    if _canonical_path(relative) != relative:
+        raise ArchiveContractError(
+            "RECOVERY-MIGRATION-TARGET", "migration target path differs"
+        )
+    anchor = proposed_commit or current_named_durable_ref(root)
+    result = _git_capture_bounded(
+        root,
+        "log",
+        "-1",
+        "--format=%H",
+        "--diff-filter=AM",
+        "--no-renames",
+        anchor,
+        "--",
+        relative,
+        stdout_limit=_INDEX_CAPTURE_MAX_BYTES,
+    )
+    try:
+        commits = tuple(
+            line.decode("ascii", errors="strict")
+            for line in result.stdout.splitlines()
+            if line
+        )
+    except UnicodeDecodeError as exc:
+        raise ArchiveContractError(
+            "RECOVERY-MIGRATION-TARGET", "historical target lookup is malformed"
+        ) from exc
+    object_id_length = _repository_identity(root)
+    if (
+        result.returncode
+        or len(commits) != 1
+        or len(commits[0]) != object_id_length
+        or _FULL_OBJECT_ID.fullmatch(commits[0]) is None
+    ):
+        raise ArchiveContractError(
+            "RECOVERY-MIGRATION-TARGET",
+            "migration target has no reachable regular-file history",
+        )
+    member = _commit_tree_members(
+        root,
+        commits[0],
+        original_paths=(relative,),
+        historical_paths=(),
+        object_id_length=object_id_length,
+    ).get(relative)
+    if member is None or member.kind != "blob" or member.mode not in {
+        "100644",
+        "100755",
+    }:
+        raise ArchiveContractError(
+            "RECOVERY-MIGRATION-TARGET",
+            "migration target has no reachable regular-file history",
+        )
+    return member
 
 
 def _sealed_row_retired_paths(root: Path) -> frozenset[str]:

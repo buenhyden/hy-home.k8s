@@ -177,24 +177,15 @@ jobs:
           python -m pip install --disable-pip-version-check --only-binary :all: --require-hashes --requirement .github/requirements/ci-validation.txt
       - name: Run agent governance static checks
         run: |
-          python3 scripts/validate-agent-governance-ci.py --root . --self-test
           python3 scripts/validate-agent-governance-ci.py --root .
+          python3 -m unittest discover --start-directory tests --top-level-directory tests --pattern 'test_validate_agent_*.py'
+          python3 -m unittest tests.test_validation_tooling_ownership tests.test_affected_surface_migration tests.test_current_executable_references
           python3 scripts/validate-agent-harness-contract.py --root .
           python3 scripts/validate-agent-harness-semantics.py --root .
-          python3 scripts/validate-agent-legacy-cutover.py --root . --self-test
           python3 scripts/validate-agent-legacy-cutover.py --root .
-          python3 scripts/validate-agent-governance-closure.py --root . --self-test
-          python3 scripts/validate-agent-governance-closure.py --root .
           python3 scripts/validate-agent-provider-evidence.py --root .
           python3 scripts/validate-agent-loop-lifecycle.py --root .
-          python3 scripts/validate-agent-checkpoint.py --root . --self-test
-          python3 scripts/validate-agent-roster-admission.py --root .
-          python3 scripts/validate-agent-evaluations.py --root .
-          python3 scripts/validate-agent-model-fitness.py --root .
-          python3 scripts/validate-agent-roster-currentness.py .
-          python3 scripts/validate-affected-surfaces.py --root . --self-test
           python3 scripts/validate-affected-surfaces.py --root .
-          python3 scripts/validate-ci-python-contract.py --root . --self-test
           python3 scripts/validate-ci-python-contract.py --root .
           python3 scripts/validate-github-actions-security.py --root .
 

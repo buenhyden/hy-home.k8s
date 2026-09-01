@@ -4,24 +4,30 @@
 from __future__ import annotations
 
 import argparse
-import errno
-import json
 import os
 import re
 import stat
 import subprocess
 import sys
-import tempfile
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
-from typing import Any, Callable, Iterable, Literal
+from typing import Any, Iterable
 
 import yaml
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from validation.repository.bounded_io import (  # noqa: E402
+    BoundedOutputError,
+    run as run_bounded_process,
+)
 
 
 WORKTREE_REVISION = "WORKTREE"
 EMPTY_REVISION = "EMPTY"
 ZERO_REVISION = "0" * 40
+GIT_TIMEOUT_SECONDS = 30
+GIT_STDOUT_LIMIT_BYTES = 16 * 1024 * 1024
+GIT_STDERR_LIMIT_BYTES = 256 * 1024
 COMMIT_RE = re.compile(r"[0-9a-f]{40}\Z")
 SAFE_REF_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._/-]*\Z")
 DNS_LABEL = r"[a-z0-9](?:[-a-z0-9]*[a-z0-9])?"
@@ -33,32 +39,6 @@ KUSTOMIZATION_NAME = "kustomization.yaml"
 KUSTOMIZATION_API_VERSION = "kustomize.config.k8s.io/v1beta1"
 KUSTOMIZATION_KIND = "Kustomization"
 ALLOWED_KUSTOMIZATION_KEYS = frozenset(("apiVersion", "kind", "resources"))
-FIFO_UNSUPPORTED_ERRNOS = frozenset(
-    code
-    for code in (
-        getattr(errno, "ENOSYS", None),
-        getattr(errno, "ENOTSUP", None),
-        getattr(errno, "EOPNOTSUPP", None),
-    )
-    if code is not None
-)
-
-
-def _create_non_regular_fixture(
-    path: Path,
-    make_fifo: Callable[[Path], None] | None = getattr(os, "mkfifo", None),
-) -> Literal["fifo", "directory-fallback"]:
-    if make_fifo is not None:
-        try:
-            make_fifo(path)
-            return "fifo"
-        except OSError as exc:
-            if exc.errno not in FIFO_UNSUPPORTED_ERRNOS:
-                raise
-    path.mkdir()
-    return "directory-fallback"
-
-
 def _is_safe_repository_path(value: str) -> bool:
     if not value or not PATH_TOKEN_RE.fullmatch(value):
         return False
@@ -133,12 +113,17 @@ class ChangeSet:
 
 def _run_git(repo: Path, arguments: list[str]) -> subprocess.CompletedProcess[bytes]:
     try:
-        return subprocess.run(
+        return run_bounded_process(
             ["git", "-C", str(repo), *arguments],
-            check=False,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL,
+            cwd=repo,
+            timeout=GIT_TIMEOUT_SECONDS,
+            stdout_limit=GIT_STDOUT_LIMIT_BYTES,
+            stderr_limit=GIT_STDERR_LIMIT_BYTES,
         )
+    except BoundedOutputError as exc:
+        raise GitOpsValidationError("GIT_OUTPUT_LIMIT", ".") from exc
+    except subprocess.TimeoutExpired as exc:
+        raise GitOpsValidationError("GIT_TIMEOUT", ".") from exc
     except OSError as exc:
         raise GitOpsValidationError("GIT_UNAVAILABLE", ".") from exc
 
@@ -589,323 +574,8 @@ def _render_path_diff(base_root: Path, head_root: Path) -> list[str]:
     return _format_change_set(diff_identities(base, head))
 
 
-def _expect_self_test_error(code: str, operation: Any) -> None:
-    try:
-        operation()
-    except GitOpsValidationError as exc:
-        if exc.code != code or _diagnostic_path(exc.path) != exc.path:
-            raise GitOpsValidationError("SELF_TEST_MISMATCH", ".") from exc
-    else:
-        raise GitOpsValidationError("SELF_TEST_MISMATCH", ".")
-
-
-def _write_self_test_case(
-    parent: Path,
-    name: str,
-    kustomization: str,
-    files: tuple[tuple[str, str], ...] = (),
-) -> Path:
-    root = parent / name
-    root.mkdir()
-    (root / KUSTOMIZATION_NAME).write_text(kustomization, encoding="utf-8")
-    for relative, content in files:
-        (root / relative).write_text(content, encoding="utf-8")
-    return root
-
-
-def _render_self_test_case(root: Path) -> dict[ObjectIdentity, RenderedObject]:
-    return _render_path_root(root, WORKTREE_REVISION)
-
-
-def _run_self_test_git(repo: Path, arguments: list[str]) -> str:
-    result = _run_git(repo, arguments)
-    if result.returncode != 0:
-        raise GitOpsValidationError("SELF_TEST_MISMATCH", ".")
-    try:
-        return result.stdout.decode("ascii").strip()
-    except UnicodeDecodeError as exc:
-        raise GitOpsValidationError("SELF_TEST_MISMATCH", ".") from exc
-
-
-def _self_test_boundaries() -> None:
-    supported = (
-        f"apiVersion: {KUSTOMIZATION_API_VERSION}\n"
-        f"kind: {KUSTOMIZATION_KIND}\n"
-    )
-    manifest = "apiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: safe\n"
-
-    with tempfile.TemporaryDirectory(prefix="gitops-change-set-") as raw_temp:
-        temp = Path(raw_temp)
-
-        traversal = _write_self_test_case(
-            temp, "traversal", supported + "resources: [../outside.yaml]\n"
-        )
-        _expect_self_test_error(
-            "RESOURCE_ESCAPE", lambda: _render_self_test_case(traversal)
-        )
-
-        remote = _write_self_test_case(
-            temp, "remote", supported + "resources: [https://example.invalid/object.yaml]\n"
-        )
-        _expect_self_test_error(
-            "RESOURCE_REFERENCE", lambda: _render_self_test_case(remote)
-        )
-
-        symlink = _write_self_test_case(
-            temp,
-            "symlink",
-            supported + "resources: [linked.yaml]\n",
-            (("target.yaml", manifest),),
-        )
-        (symlink / "linked.yaml").symlink_to("target.yaml")
-        _expect_self_test_error(
-            "RESOURCE_SYMLINK", lambda: _render_self_test_case(symlink)
-        )
-
-        non_regular = _write_self_test_case(
-            temp, "non-regular", supported + "resources: [pipe.yaml]\n"
-        )
-        fixture_kind = _create_non_regular_fixture(non_regular / "pipe.yaml")
-        if fixture_kind not in {"fifo", "directory-fallback"}:
-            raise GitOpsValidationError("SELF_TEST_MISMATCH", ".")
-        _expect_self_test_error(
-            "RESOURCE_NOT_REGULAR", lambda: _render_self_test_case(non_regular)
-        )
-
-        cycle = _write_self_test_case(
-            temp, "cycle", supported + "resources: [kustomization.yaml]\n"
-        )
-        _expect_self_test_error(
-            "KUSTOMIZATION_CYCLE", lambda: _render_self_test_case(cycle)
-        )
-
-        duplicate_identity = _write_self_test_case(
-            temp,
-            "duplicate-identity",
-            supported + "resources: [one.yaml, two.yaml]\n",
-            (("one.yaml", manifest), ("two.yaml", manifest)),
-        )
-        _expect_self_test_error(
-            "IDENTITY_DUPLICATE", lambda: _render_self_test_case(duplicate_identity)
-        )
-
-        duplicate_key = _write_self_test_case(
-            temp,
-            "duplicate-key",
-            supported + "resources: [object.yaml]\n",
-            (("object.yaml", manifest + "kind: Service\n"),),
-        )
-        _expect_self_test_error(
-            "YAML_MALFORMED", lambda: _render_self_test_case(duplicate_key)
-        )
-
-        identity_mutations = (
-            (
-                "numeric",
-                "apiVersion: 1\nkind: ConfigMap\nmetadata: {name: safe}\n",
-                "IDENTITY_MISSING",
-            ),
-            (
-                "null",
-                "apiVersion: null\nkind: ConfigMap\nmetadata: {name: safe}\n",
-                "IDENTITY_MISSING",
-            ),
-            (
-                "mapping",
-                "apiVersion: v1\nkind: {unsafe: value}\nmetadata: {name: safe}\n",
-                "IDENTITY_MISSING",
-            ),
-            (
-                "list",
-                "apiVersion: v1\nkind: ConfigMap\n"
-                "metadata: {name: safe, namespace: [bad]}\n",
-                "IDENTITY_MISSING",
-            ),
-            (
-                "newline",
-                'apiVersion: v1\nkind: ConfigMap\nmetadata: {name: "bad\\nspec:"}\n',
-                "IDENTITY_TOKEN",
-            ),
-            (
-                "space",
-                "apiVersion: v1\nkind: 'Config Map'\nmetadata: {name: safe}\n",
-                "IDENTITY_TOKEN",
-            ),
-            (
-                "data-token",
-                "apiVersion: v1\nkind: ConfigMap\nmetadata: {name: 'data:'}\n",
-                "IDENTITY_TOKEN",
-            ),
-            (
-                "spec-token",
-                "apiVersion: v1\nkind: ConfigMap\n"
-                "metadata: {name: safe, namespace: 'spec:'}\n",
-                "IDENTITY_TOKEN",
-            ),
-            (
-                "kind-slash",
-                "apiVersion: v1\nkind: Config/Map\nmetadata: {name: safe}\n",
-                "IDENTITY_TOKEN",
-            ),
-            (
-                "name-slash",
-                "apiVersion: v1\nkind: ConfigMap\nmetadata: {name: unsafe/name}\n",
-                "IDENTITY_TOKEN",
-            ),
-            (
-                "namespace-slash",
-                "apiVersion: v1\nkind: ConfigMap\n"
-                "metadata: {name: safe, namespace: unsafe/name}\n",
-                "IDENTITY_TOKEN",
-            ),
-            (
-                "api-slashes",
-                "apiVersion: unsafe/group/v1\nkind: ConfigMap\nmetadata: {name: safe}\n",
-                "IDENTITY_TOKEN",
-            ),
-        )
-        for name, content, expected_code in identity_mutations:
-            mutation = _write_self_test_case(
-                temp,
-                f"identity-{name}",
-                supported + "resources: [object.yaml]\n",
-                (("object.yaml", content),),
-            )
-            _expect_self_test_error(
-                expected_code, lambda mutation=mutation: _render_self_test_case(mutation)
-            )
-
-        unsafe_path = _write_self_test_case(
-            temp, "unsafe-path", supported + "resources: ['bad path.yaml']\n"
-        )
-        _expect_self_test_error(
-            "RESOURCE_REFERENCE", lambda: _render_self_test_case(unsafe_path)
-        )
-        _expect_self_test_error(
-            "OUTPUT_PATH",
-            lambda: format_identity(
-                "RETAIN",
-                RenderedObject(ObjectIdentity("v1", "ConfigMap", "safe", "safe"), "bad path.yaml"),
-            ),
-        )
-
-        unsupported_version = _write_self_test_case(
-            temp,
-            "unsupported-version",
-            "apiVersion: kustomize.config.k8s.io/v1\nkind: Kustomization\nresources: []\n",
-        )
-        _expect_self_test_error(
-            "KUSTOMIZATION_UNSUPPORTED",
-            lambda: _render_self_test_case(unsupported_version),
-        )
-
-        unsupported_kind = _write_self_test_case(
-            temp,
-            "unsupported-kind",
-            f"apiVersion: {KUSTOMIZATION_API_VERSION}\nkind: ConfigMap\nresources: []\n",
-        )
-        _expect_self_test_error(
-            "KUSTOMIZATION_UNSUPPORTED", lambda: _render_self_test_case(unsupported_kind)
-        )
-
-        unsupported_directive = _write_self_test_case(
-            temp,
-            "unsupported-directive",
-            supported + "resources: []\ngenerators: []\n",
-        )
-        _expect_self_test_error(
-            "KUSTOMIZATION_UNSUPPORTED",
-            lambda: _render_self_test_case(unsupported_directive),
-        )
-
-        multi_document = _write_self_test_case(
-            temp,
-            "multi-document",
-            supported + "resources: [objects.yaml]\n",
-            (
-                (
-                    "objects.yaml",
-                    "apiVersion: v1\nkind: ConfigMap\nmetadata: {name: one}\n"
-                    "---\napiVersion: v1\nkind: Service\nmetadata: {name: two}\n",
-                ),
-            ),
-        )
-        multi_graph = _render_self_test_case(multi_document)
-        if len(multi_graph) != 2 or {item.path for item in multi_graph.values()} != {
-            "objects.yaml"
-        }:
-            raise GitOpsValidationError("SELF_TEST_MISMATCH", ".")
-
-        history = temp / "history"
-        history.mkdir()
-        _run_self_test_git(history, ["init", "--quiet"])
-        _run_self_test_git(history, ["config", "user.name", "GitOps Self Test"])
-        _run_self_test_git(history, ["config", "user.email", "gitops-self-test@example.invalid"])
-        (history / "state.txt").write_text("root\n", encoding="utf-8")
-        _run_self_test_git(history, ["add", "state.txt"])
-        _run_self_test_git(history, ["commit", "--quiet", "-m", "root"])
-        root_commit = _run_self_test_git(history, ["rev-parse", "HEAD"])
-        if _resolve_base_revision(history, ZERO_REVISION) != EMPTY_REVISION:
-            raise GitOpsValidationError("SELF_TEST_MISMATCH", ".")
-
-        for unsafe_ref in ("", "HEAD\nmain", "--help", "HEAD:state.txt", "refs//heads/main"):
-            _expect_self_test_error(
-                "BASE_REF",
-                lambda unsafe_ref=unsafe_ref: _resolve_base_revision(history, unsafe_ref),
-            )
-
-        (history / "state.txt").write_text("second\n", encoding="utf-8")
-        _run_self_test_git(history, ["add", "state.txt"])
-        _run_self_test_git(history, ["commit", "--quiet", "-m", "second"])
-        head_commit = _run_self_test_git(history, ["rev-parse", "HEAD"])
-        push_before = _resolve_base_revision(history, root_commit)
-        pull_request_base = _resolve_base_revision(history, head_commit)
-        zero_before = _resolve_base_revision(history, ZERO_REVISION)
-        if (push_before, pull_request_base, zero_before) != (
-            root_commit,
-            head_commit,
-            root_commit,
-        ):
-            raise GitOpsValidationError("SELF_TEST_MISMATCH", ".")
-
-        shallow = temp / "shallow"
-        _run_self_test_git(
-            temp,
-            ["clone", "--quiet", "--depth", "1", history.resolve().as_uri(), str(shallow)],
-        )
-        if _run_self_test_git(shallow, ["rev-parse", "--is-shallow-repository"]) != "true":
-            raise GitOpsValidationError("SELF_TEST_MISMATCH", ".")
-        _expect_self_test_error(
-            "BASE_REF", lambda: _resolve_base_revision(shallow, ZERO_REVISION)
-        )
-
-
-def _self_test() -> int:
-    fixture = Path(__file__).resolve().parents[1] / "tests/fixtures/gitops-change-set"
-    cases_path = fixture / "cases.json"
-    try:
-        cases = json.loads(cases_path.read_text(encoding="utf-8"))
-    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
-        raise GitOpsValidationError("SELF_TEST_FIXTURE", "cases.json") from exc
-    expected = cases.get("expected")
-    forbidden = cases.get("forbidden_output")
-    if not isinstance(expected, list) or not all(isinstance(row, str) for row in expected):
-        raise GitOpsValidationError("SELF_TEST_FIXTURE", "cases.json")
-    if not isinstance(forbidden, list) or not all(isinstance(row, str) for row in forbidden):
-        raise GitOpsValidationError("SELF_TEST_FIXTURE", "cases.json")
-    rows = _render_path_diff(fixture / "base", fixture / "head")
-    output = "\n".join(rows)
-    if rows != expected or any(value in output for value in forbidden):
-        raise GitOpsValidationError("SELF_TEST_MISMATCH", "cases.json")
-    _self_test_boundaries()
-    if rows:
-        print(output)
-    return 0
-
-
 def _parse_args(arguments: Iterable[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--self-test", action="store_true")
     parser.add_argument("--root", type=Path, default=Path.cwd())
     parser.add_argument("--base-ref", default=os.environ.get("BASE_REF", "HEAD"))
     return parser.parse_args(arguments)
@@ -914,8 +584,6 @@ def _parse_args(arguments: Iterable[str] | None = None) -> argparse.Namespace:
 def main(arguments: Iterable[str] | None = None) -> int:
     args = _parse_args(arguments)
     try:
-        if args.self_test:
-            return _self_test()
         base_revision = _resolve_base_revision(args.root, args.base_ref)
         rows = _render_diff(
             args.root,

@@ -24,7 +24,6 @@ PROVIDERS = {
 EXPECTED_VALIDATORS = {
     "docs": {
         "agent-governance-ci",
-        "agent-governance-closure",
         "agent-legacy-cutover",
         "document-contract-registry",
         "document-lifecycle",
@@ -173,6 +172,7 @@ class ProviderPostValidateEntryTest(unittest.TestCase):
             "docs/00.agent-governance/hooks/post-validate-runner-result.py",
             "scripts/validation/registry.schema.json",
             "scripts/validation/registry.json",
+            "scripts/validation/repository/bounded_io.py",
             "scripts/run-validation-lane.py",
             "scripts/select-affected-surfaces.py",
             "scripts/validate-affected-surfaces.py",

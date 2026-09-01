@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import json
 import tempfile
 import unittest
 from pathlib import Path, PurePosixPath
@@ -140,9 +141,29 @@ class CurrentExecutableReferenceTests(unittest.TestCase):
         aggregate = (ROOT / "scripts/validate-repo-quality-gates.sh").read_text(
             encoding="utf-8"
         )
+        owner = (
+            ROOT / "scripts/validation/repository/quality.py"
+        ).read_text(encoding="utf-8")
+        registry = json.loads(
+            (ROOT / "scripts/validation/registry.json").read_text(encoding="utf-8")
+        )
+        repository_quality = next(
+            row for row in registry["validators"] if row["id"] == "repository-quality"
+        )
 
         self.assertNotIn("script_ref_pattern =", aggregate)
-        self.assertIn("validate_current_executable_references(", aggregate)
+        self.assertNotIn("validate_current_executable_references(", aggregate)
+        self.assertNotIn("scripts/validation/repository/quality.py", aggregate)
+        self.assertEqual(
+            repository_quality["argv"],
+            [
+                "python3",
+                "scripts/validation/repository/quality.py",
+                "--root",
+                ".",
+            ],
+        )
+        self.assertIn("validate_current_executable_references(", owner)
 
 
 if __name__ == "__main__":

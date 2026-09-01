@@ -103,7 +103,6 @@
         "if",
         "selectedEnv",
         "resultEnv",
-        "runSha256",
         "truthTable",
         "defaultResult"
       ],
@@ -118,10 +117,6 @@
         "if": {"type": "string", "minLength": 1},
         "selectedEnv": {"type": "string", "minLength": 1},
         "resultEnv": {"type": "string", "minLength": 1},
-        "runSha256": {
-          "type": "string",
-          "pattern": "^[0-9a-f]{64}$"
-        },
         "truthTable": {
           "type": "array",
           "minItems": 1,
@@ -142,16 +137,15 @@
     },
     "delegatedChecks": {
       "type": "array",
-      "minItems": 18,
-      "maxItems": 18,
+      "minItems": 10,
+      "maxItems": 10,
       "items": {"$ref": "#/$defs/delegatedCheck"}
     },
     "gateCommands": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["selfTest", "production"],
+      "required": ["production"],
       "properties": {
-        "selfTest": {"type": "string", "minLength": 1},
         "production": {"type": "string", "minLength": 1}
       }
     },
@@ -210,8 +204,8 @@
         },
         "consumerSurfaces": {
           "type": "array",
-          "minItems": 8,
-          "maxItems": 8,
+          "minItems": 7,
+          "maxItems": 7,
           "uniqueItems": true,
           "items": {"type": "string", "minLength": 1}
         },
@@ -317,14 +311,10 @@
         "providerEvidenceAggregate": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["path", "sha256", "focusedValidators"],
+          "required": ["path", "focusedValidators"],
           "properties": {
             "path": {
               "const": "scripts/validate-agent-provider-evidence.py"
-            },
-            "sha256": {
-              "type": "string",
-              "pattern": "^[0-9a-f]{64}$"
             },
             "focusedValidators": {
               "type": "array",

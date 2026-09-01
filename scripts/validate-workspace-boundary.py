@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import builtins
 import os
 import re
 import subprocess
@@ -13,7 +12,6 @@ import tempfile
 from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import NamedTuple
-from unittest import mock
 
 
 GIT_TIMEOUT_SECONDS = 10
@@ -342,237 +340,21 @@ def validate_workspace_boundary(
     _validate_ignore_policy(root_ignore, runner)
 
 
-def _fixture_git(root: Path, arguments: Sequence[str]) -> None:
-    """Build only isolated self-test repositories; never used in production."""
-
-    result = subprocess.run(
-        [GIT_EXECUTABLE, *arguments],
-        cwd=root,
-        stdin=subprocess.DEVNULL,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        env=CLOSED_GIT_ENVIRONMENT,
-        timeout=GIT_TIMEOUT_SECONDS,
-        shell=False,
-        check=False,
-    )
-    if result.returncode != 0:
-        raise AssertionError("isolated Git fixture setup failed")
-
-
-def _isolated_fixture(
-    *,
-    readme: str = "regular",
-    force_extra: bool = False,
-    root_policy: bytes = b"_workspace/*\n!_workspace/README.md\n",
-    child_policy: bytes | None = None,
-) -> tuple[tempfile.TemporaryDirectory[str], Path]:
-    temporary = tempfile.TemporaryDirectory(prefix="workspace-boundary-")
-    root = Path(temporary.name)
-    _fixture_git(root, ("init", "--quiet"))
-    (root / ROOT_IGNORE).write_bytes(root_policy)
-    workspace = root / WORKSPACE_ROOT
-    workspace.mkdir()
-    if readme == "regular":
-        (workspace / "README.md").write_text("fixture\n", encoding="utf-8")
-    elif readme == "symlink":
-        (root / "fixture-target").write_text("target\n", encoding="utf-8")
-        (workspace / "README.md").symlink_to(root / "fixture-target")
-    elif readme != "missing":
-        raise AssertionError("unknown isolated fixture")
-    add_paths = [".gitignore"]
-    if readme != "missing":
-        add_paths.append(WORKSPACE_README)
-    _fixture_git(root, ("add", "--", *add_paths))
-    if child_policy is not None:
-        (workspace / ".gitignore").write_bytes(child_policy)
-    if force_extra:
-        (workspace / "forced.log").write_text("fixture\n", encoding="utf-8")
-        _fixture_git(root, ("add", "--force", "--", "_workspace/forced.log"))
-    return temporary, root
-
-
-def _injected_runner(
-    *,
-    index: bytes,
-    probe_status: int = 0,
-    readme_status: int = 1,
-) -> GitRunner:
-    object_id = "a" * 40
-    root_policy = b"_workspace/*\n!_workspace/README.md\n"
-
-    def run(_root: str, arguments: tuple[str, ...]):
-        if arguments == INDEX_ARGUMENTS:
-            return subprocess.CompletedProcess(arguments, 0, index, b"")
-        if arguments == ROOT_IGNORE_INDEX_ARGUMENTS:
-            root_ignore_index = (
-                b"100644 " + object_id.encode("ascii") + b" 0\t.gitignore\0"
-            )
-            return subprocess.CompletedProcess(arguments, 0, root_ignore_index, b"")
-        if arguments == ("cat-file", "-s", object_id):
-            size = f"{len(root_policy)}\n".encode("ascii")
-            return subprocess.CompletedProcess(arguments, 0, size, b"")
-        if arguments == ("cat-file", "blob", object_id):
-            return subprocess.CompletedProcess(arguments, 0, root_policy, b"")
-        if arguments == ISOLATED_INIT_ARGUMENTS:
-            return subprocess.CompletedProcess(arguments, 0, b"", b"")
-        if arguments == PROBE_IGNORE_ARGUMENTS:
-            return subprocess.CompletedProcess(arguments, probe_status, b"", b"")
-        if arguments == README_IGNORE_ARGUMENTS:
-            return subprocess.CompletedProcess(arguments, readme_status, b"", b"")
-        raise AssertionError("unexpected injected Git query")
-
-    return run
-
-
-def _expect_error(
-    runner: GitRunner,
-    expected: tuple[str, str],
-) -> None:
-    try:
-        validate_workspace_boundary("/injected/repository", runner)
-    except WorkspaceBoundaryError as exc:
-        if (exc.code, exc.path) != expected:
-            raise AssertionError("wrong injected diagnostic") from exc
-    else:
-        raise AssertionError("injected boundary case unexpectedly passed")
-
-
-def _run_self_test() -> None:
-    for fixture_options, expected in (
-        ({}, None),
-        (
-            {"force_extra": True},
-            ("WORKSPACE-TRACKED-EXTRA", "_workspace/forced.log"),
-        ),
-        (
-            {"readme": "symlink"},
-            ("WORKSPACE-TRACKED-NONREGULAR", WORKSPACE_README),
-        ),
-        (
-            {"readme": "missing"},
-            ("WORKSPACE-README-MISSING", WORKSPACE_README),
-        ),
-        (
-            {
-                "root_policy": (
-                    b"_workspace/.gitignore\n"
-                    b"!_workspace/probe.log\n"
-                    b"!_workspace/README.md\n"
-                ),
-                "child_policy": b"probe.log\n",
-            },
-            ("WORKSPACE-SCRATCH-NOT-IGNORED", WORKSPACE_PROBE),
-        ),
-        (
-            {
-                "child_policy": b"!probe.log\nREADME.md\n",
-            },
-            None,
-        ),
-    ):
-        temporary, root = _isolated_fixture(**fixture_options)
-        try:
-            if expected is None:
-                validate_workspace_boundary(root)
-            else:
-                try:
-                    validate_workspace_boundary(root)
-                except WorkspaceBoundaryError as exc:
-                    if (exc.code, exc.path) != expected:
-                        raise AssertionError("wrong isolated diagnostic") from exc
-                else:
-                    raise AssertionError("isolated negative unexpectedly passed")
-        finally:
-            temporary.cleanup()
-
-    object_id = b"a" * 40
-    readme = b"100644 " + object_id + b" 0\t_workspace/README.md\0"
-    _expect_error(
-        _injected_runner(index=b"100644 " + object_id + b" 2\t_workspace/README.md\0"),
-        ("WORKSPACE-INDEX-CONFLICT", WORKSPACE_README),
-    )
-    _expect_error(
-        _injected_runner(index=readme.rstrip(b"\0")),
-        ("WORKSPACE-INDEX-MALFORMED", WORKSPACE_ROOT),
-    )
-    _expect_error(
-        _injected_runner(index=readme, probe_status=1),
-        ("WORKSPACE-SCRATCH-NOT-IGNORED", WORKSPACE_PROBE),
-    )
-    _expect_error(
-        _injected_runner(index=readme, readme_status=0),
-        ("WORKSPACE-README-IGNORED", WORKSPACE_README),
-    )
-
-    actual_workspace = os.path.abspath("/injected/repository/_workspace")
-    actual_root_ignore = os.path.abspath("/injected/repository/.gitignore")
-
-    def is_actual_workspace(value: object) -> bool:
-        if isinstance(value, int):
-            return False
-        try:
-            candidate = os.path.abspath(os.fspath(value))
-        except TypeError:
-            return False
-        return (
-            candidate == actual_root_ignore
-            or candidate == actual_workspace
-            or candidate.startswith(actual_workspace + os.sep)
-        )
-
-    def guard(function: Callable):
-        def wrapped(value, *args, **kwargs):
-            if is_actual_workspace(value):
-                raise AssertionError("actual workspace traversal/open sentinel invoked")
-            return function(value, *args, **kwargs)
-
-        return wrapped
-
-    with (
-        mock.patch.object(builtins, "open", guard(builtins.open)),
-        mock.patch.object(os, "listdir", guard(os.listdir)),
-        mock.patch.object(os, "scandir", guard(os.scandir)),
-        mock.patch.object(os, "walk", guard(os.walk)),
-        mock.patch.object(os, "stat", guard(os.stat)),
-        mock.patch.object(Path, "glob", guard(Path.glob)),
-        mock.patch.object(Path, "rglob", guard(Path.rglob)),
-        mock.patch.object(Path, "iterdir", guard(Path.iterdir)),
-        mock.patch.object(Path, "open", guard(Path.open)),
-        mock.patch.object(Path, "read_bytes", guard(Path.read_bytes)),
-        mock.patch.object(Path, "read_text", guard(Path.read_text)),
-        mock.patch.object(Path, "stat", guard(Path.stat)),
-        mock.patch.object(Path, "lstat", guard(Path.lstat)),
-    ):
-        validate_workspace_boundary(
-            "/injected/repository", _injected_runner(index=readme)
-        )
-
-
 def _parse_args(argv: Sequence[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Validate the Git-metadata-only _workspace boundary."
     )
-    mode = parser.add_mutually_exclusive_group()
-    mode.add_argument("--root", default=None)
-    mode.add_argument("--self-test", action="store_true")
+    parser.add_argument("--root", default=".")
     return parser.parse_args(argv)
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     arguments = _parse_args(sys.argv[1:] if argv is None else argv)
     try:
-        if arguments.self_test:
-            _run_self_test()
-            print("[PASS] workspace boundary self-test")
-        else:
-            validate_workspace_boundary(arguments.root or ".")
-            print("[PASS] workspace boundary: _workspace/README.md")
+        validate_workspace_boundary(arguments.root)
+        print("[PASS] workspace boundary: _workspace/README.md")
     except WorkspaceBoundaryError as exc:
         print(f"ERR {exc}", file=sys.stderr)
-        return 1
-    except (AssertionError, OSError, subprocess.SubprocessError):
-        print("ERR WORKSPACE-SELF-TEST .", file=sys.stderr)
         return 1
     return 0
 

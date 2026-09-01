@@ -267,7 +267,7 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
         self.assertGreaterEqual(paths.count(self.path), 3)
         self.assertIn(str(documents.REGISTRY_PATH), paths)
         self.assertIn(self.target, paths)
-        self.assertIn(self.consumer, paths)
+        self.assertNotIn(self.consumer, paths)
         self.assertTrue(
             all(limit <= archive.CURRENT_MARKDOWN_MAX_BYTES for _, limit in reads)
         )
@@ -316,7 +316,6 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
             (self.path, 3),
             (documents.REGISTRY_PATH.as_posix(), 1),
             (self.target, 1),
-            (self.consumer, 1),
         ):
             counts = {}
 
@@ -614,8 +613,8 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
         self.git.run("add", "--", self.path)
         self.assertEqual(self.verify(), "MIG-0005")
 
-    def test_public_cli_rejects_record_target_and_consumer_fifos_promptly(self):
-        for relative in (self.path, self.target, self.consumer):
+    def test_public_cli_rejects_record_and_target_fifos_promptly(self):
+        for relative in (self.path, self.target):
             path = self.root / relative
             content = path.read_bytes()
             path.unlink()
@@ -654,6 +653,35 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
                 path.unlink()
                 path.write_bytes(content)
 
+    def test_public_cli_does_not_reopen_a_historical_consumer_fifo(self):
+        path = self.root / self.consumer
+        content = path.read_bytes()
+        path.unlink()
+        os.mkfifo(path)
+        try:
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(ROOT / "scripts/archive_recovery.py"),
+                    "--root",
+                    str(self.root),
+                    "--record",
+                    self.path,
+                    "--verify",
+                ],
+                capture_output=True,
+                text=True,
+                timeout=3,
+            )
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertEqual(
+                result.stdout,
+                "PASS archive recovery operation=verify migration=MIG-0005\n",
+            )
+        finally:
+            path.unlink()
+            path.write_bytes(content)
+
     def test_future_migration_public_cli_and_exact_consumers(self):
         self.assertEqual(self.verify(), "MIG-0005")
         result = subprocess.run(
@@ -675,6 +703,16 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
         )
         self.assertEqual(proof.targets, {self.source: self.target})
         self.assertEqual(proof.consumers, {self.consumer: self.consumer_bytes})
+
+    def test_accepts_a_target_retired_after_reachable_history_proved_it(self):
+        self.git.run("commit", "--quiet", "-m", "seal migration target")
+        self.git.run("rm", "--quiet", "--", self.target)
+
+        self.assertEqual(self.verify(), "MIG-0005")
+        proof = archive.validate_migration_records(
+            self.root, {self.path: (self.root / self.path).read_bytes()}
+        )
+        self.assertEqual(proof.targets, {self.source: self.target})
 
     def test_later_numbered_profile_is_not_a_per_migration_allowlist(self):
         from scripts.document_contracts import classify_path, load_registry

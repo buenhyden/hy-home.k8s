@@ -24,8 +24,6 @@ from document_authority import (
 from json_schema_validation import SchemaEvaluationError, schema_errors
 
 
-BASELINE_SHA = "8e1b00b4dfb84b8431ba4d3d31b4ad0445a0019d"  # pragma: allowlist secret
-BASELINE_COUNT = 432
 GIT_TIMEOUT_SECONDS = 10
 DOCUMENT_TEXT_MAX_BYTES = 16 * 1024 * 1024
 _LS_TREE_MODE_TYPES = {
@@ -530,23 +528,10 @@ def enumerate_target_markdown(
     include_paths: tuple[PurePosixPath, ...] = (),
 ) -> TargetInventory:
     root = root.absolute()
-    baseline_entries = _parse_ls_tree_z(
-        _run_git(root, ("ls-tree", "-rz", "--full-tree", BASELINE_SHA))
-    )
     current_entries = _parse_ls_files_stage_z(
         _run_git(root, ("ls-files", "--stage", "-z"))
     )
 
-    baseline_paths = {
-        entry.path
-        for entry in baseline_entries
-        if entry.mode.startswith("100") and _is_target_markdown(entry.path)
-    }
-    if len(baseline_paths) != BASELINE_COUNT:
-        raise ValueError(
-            "baseline Markdown inventory count mismatch: "
-            f"expected {BASELINE_COUNT}, actual {len(baseline_paths)}"
-        )
     current_paths: set[PurePosixPath] = set()
     for entry in current_entries:
         if not entry.mode.startswith("100") or not _is_target_markdown(entry.path):
@@ -557,11 +542,6 @@ def enumerate_target_markdown(
             continue
         if stat.S_ISREG(mode):
             current_paths.add(entry.path)
-    baseline_symlinks = {
-        entry.path
-        for entry in baseline_entries
-        if entry.mode == "120000" and _within_target_scope(entry.path)
-    }
     current_symlinks = {
         entry.path
         for entry in current_entries
@@ -590,10 +570,10 @@ def enumerate_target_markdown(
         current_paths.add(path)
 
     return TargetInventory(
-        baseline_paths=_sorted_paths(baseline_paths),
+        baseline_paths=(),
         current_paths=_sorted_paths(current_paths),
-        new_paths=_sorted_paths(current_paths - baseline_paths),
-        baseline_symlink_paths=_sorted_paths(baseline_symlinks),
+        new_paths=_sorted_paths(current_paths),
+        baseline_symlink_paths=(),
         current_symlink_paths=_sorted_paths(current_symlinks),
     )
 

@@ -1,7 +1,7 @@
 {
   "$schema": "./agent-governance-ci.schema.json",
   "schemaVersion": 1,
-  "contractVersion": "1.3.0",
+  "contractVersion": "1.4.0",
   "resultVocabulary": ["PASS", "FAIL", "SKIP", "DEFER"],
   "evidenceVocabulary": [
     "repo-static",
@@ -37,7 +37,6 @@
     "if": "always()",
     "selectedEnv": "AGENT_GOVERNANCE_STATIC_SELECTED",
     "resultEnv": "AGENT_GOVERNANCE_STATIC_RESULT",
-    "runSha256": "ec09bcd7bcfba533efe328c49bb3955e6889ec43f8c3a3ec63626ca7a83890eb",
     "truthTable": [
       {"selected": true, "conclusion": "success", "result": "PASS"},
       {"selected": false, "conclusion": "skipped", "result": "SKIP"},
@@ -107,6 +106,18 @@
   ],
   "delegatedChecks": [
     {
+      "id": "agent-focused-tests",
+      "command": "python3 -m unittest discover --start-directory tests --top-level-directory tests --pattern 'test_validate_agent_*.py'",
+      "evidence": "repo-static",
+      "allowedResults": ["PASS", "FAIL"]
+    },
+    {
+      "id": "validation-tooling-tests",
+      "command": "python3 -m unittest tests.test_validation_tooling_ownership tests.test_affected_surface_migration tests.test_current_executable_references",
+      "evidence": "repo-static",
+      "allowedResults": ["PASS", "FAIL"]
+    },
+    {
       "id": "agent-harness-contract",
       "command": "python3 scripts/validate-agent-harness-contract.py --root .",
       "evidence": "repo-static",
@@ -119,26 +130,8 @@
       "allowedResults": ["PASS", "FAIL"]
     },
     {
-      "id": "agent-legacy-cutover-self-test",
-      "command": "python3 scripts/validate-agent-legacy-cutover.py --root . --self-test",
-      "evidence": "repo-static",
-      "allowedResults": ["PASS", "FAIL"]
-    },
-    {
-      "id": "agent-legacy-cutover-production",
+      "id": "agent-legacy-cutover",
       "command": "python3 scripts/validate-agent-legacy-cutover.py --root .",
-      "evidence": "repo-static",
-      "allowedResults": ["PASS", "FAIL"]
-    },
-    {
-      "id": "agent-governance-closure-self-test",
-      "command": "python3 scripts/validate-agent-governance-closure.py --root . --self-test",
-      "evidence": "repo-static",
-      "allowedResults": ["PASS", "FAIL"]
-    },
-    {
-      "id": "agent-governance-closure-production",
-      "command": "python3 scripts/validate-agent-governance-closure.py --root .",
       "evidence": "repo-static",
       "allowedResults": ["PASS", "FAIL"]
     },
@@ -155,55 +148,13 @@
       "allowedResults": ["PASS", "FAIL"]
     },
     {
-      "id": "agent-checkpoint",
-      "command": "python3 scripts/validate-agent-checkpoint.py --root . --self-test",
-      "evidence": "repo-static",
-      "allowedResults": ["PASS", "FAIL"]
-    },
-    {
-      "id": "agent-roster-admission",
-      "command": "python3 scripts/validate-agent-roster-admission.py --root .",
-      "evidence": "repo-static",
-      "allowedResults": ["PASS", "FAIL"]
-    },
-    {
-      "id": "agent-evaluations",
-      "command": "python3 scripts/validate-agent-evaluations.py --root .",
-      "evidence": "repo-static",
-      "allowedResults": ["PASS", "FAIL"]
-    },
-    {
-      "id": "agent-model-fitness",
-      "command": "python3 scripts/validate-agent-model-fitness.py --root .",
-      "evidence": "repo-static",
-      "allowedResults": ["PASS", "FAIL"]
-    },
-    {
-      "id": "agent-roster-currentness",
-      "command": "python3 scripts/validate-agent-roster-currentness.py .",
-      "evidence": "repo-static",
-      "allowedResults": ["PASS", "FAIL"]
-    },
-    {
-      "id": "affected-surfaces-self-test",
-      "command": "python3 scripts/validate-affected-surfaces.py --root . --self-test",
-      "evidence": "repo-static",
-      "allowedResults": ["PASS", "FAIL"]
-    },
-    {
-      "id": "affected-surfaces-production",
+      "id": "affected-surfaces",
       "command": "python3 scripts/validate-affected-surfaces.py --root .",
       "evidence": "repo-static",
       "allowedResults": ["PASS", "FAIL"]
     },
     {
-      "id": "ci-python-self-test",
-      "command": "python3 scripts/validate-ci-python-contract.py --root . --self-test",
-      "evidence": "repo-static",
-      "allowedResults": ["PASS", "FAIL"]
-    },
-    {
-      "id": "ci-python-production",
+      "id": "ci-python",
       "command": "python3 scripts/validate-ci-python-contract.py --root .",
       "evidence": "repo-static",
       "allowedResults": ["PASS", "FAIL"]
@@ -216,7 +167,6 @@
     }
   ],
   "gateCommands": {
-    "selfTest": "python3 scripts/validate-agent-governance-ci.py --root . --self-test",
     "production": "python3 scripts/validate-agent-governance-ci.py --root ."
   },
   "securityBoundary": {
@@ -229,7 +179,6 @@
     "remoteUsesPin": "full-commit-sha",
     "providerEvidenceAggregate": {
       "path": "scripts/validate-agent-provider-evidence.py",
-      "sha256": "10e6ef9741bf671696307a83def8bc8a110460987c343a8888b5ec8ba92c96e5",
       "focusedValidators": [
         "validate-agent-provider-config.py",
         "validate-agent-provider-canaries.py"
@@ -293,8 +242,7 @@
       "docs/00.agent-governance/skills/work-lifecycle.md",
       ".github/PULL_REQUEST_TEMPLATE.md",
       ".github/README.md",
-      "scripts/README.md",
-      "tests/README.md"
+      "scripts/README.md"
     ],
     "formatterCompletion": {
       "mutationResult": "not-completion-evidence",

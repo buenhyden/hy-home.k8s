@@ -21,11 +21,6 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         description="Run provider configuration and canary evidence validation."
     )
     parser.add_argument("--root", default=".", help="Repository root.")
-    parser.add_argument(
-        "--self-test",
-        action="store_true",
-        help="Run both focused validators' synthetic self-tests.",
-    )
     return parser.parse_args(argv)
 
 
@@ -41,16 +36,26 @@ def run(argv: Sequence[str] | None = None) -> int:
             "--root",
             str(root),
         ]
-        if args.self_test:
-            command.append("--self-test")
-        completed = subprocess.run(command, check=False)
+        try:
+            completed = subprocess.run(command, check=False, timeout=120)
+        except subprocess.TimeoutExpired:
+            print(
+                "[FAIL] provider evidence validator timed out",
+                file=sys.stderr,
+            )
+            return 124
+        except OSError:
+            print(
+                "[FAIL] provider evidence validator could not start",
+                file=sys.stderr,
+            )
+            return 2
         if completed.returncode != 0:
             return completed.returncode
 
-    mode = "self-test" if args.self_test else "production"
     print(
         "[PASS] agent provider evidence aggregate passed: "
-        f"mode={mode} validators={len(FOCUSED_VALIDATORS)}"
+        f"validators={len(FOCUSED_VALIDATORS)}"
     )
     return 0
 
