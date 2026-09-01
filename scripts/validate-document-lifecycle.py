@@ -3483,11 +3483,31 @@ _MIGRATION_DOMAIN_KEY_RESEAL: dict[str, tuple[tuple[str, str], ...]] = {
         ),
         (
             "f8e5b0a869f9fcc204b358d4c183f123e28c4db2f19329840018a69f61257be4",  # pragma: allowlist secret -- sealed base digest
-            "b51a591707de24b5cf2f2af347d9f0affa157cb1952b4da2f16e403ffe641d97",  # pragma: allowlist secret -- re-sealed digest
+            "7779477ee36e9e41cc702649f6a1b3093521932f39fa9bab4d81962c18e112a0",  # pragma: allowlist secret -- re-sealed digest
         ),
         (
             "c6324af84cc73365f303e96c8e34cae4c0a7717c777017de3e8222b94c0aa7a5",  # pragma: allowlist secret -- sealed base digest
-            "b51a591707de24b5cf2f2af347d9f0affa157cb1952b4da2f16e403ffe641d97",  # pragma: allowlist secret -- re-sealed digest
+            "7779477ee36e9e41cc702649f6a1b3093521932f39fa9bab4d81962c18e112a0",  # pragma: allowlist secret -- re-sealed digest
+        ),
+        (
+            "864ac2748c0a21d9b98cc0ddf871fd7335377498d7e554470a9c1a1863e04fdf",  # pragma: allowlist secret -- sealed base digest
+            "7779477ee36e9e41cc702649f6a1b3093521932f39fa9bab4d81962c18e112a0",  # pragma: allowlist secret -- re-sealed digest
+        ),
+        (
+            "abf7a98e9cb9aa0b97ceda0187a0620c30f9eecb93111fa1e92e62dd86c5b6ea",  # pragma: allowlist secret -- sealed base digest
+            "864ac2748c0a21d9b98cc0ddf871fd7335377498d7e554470a9c1a1863e04fdf",  # pragma: allowlist secret -- re-sealed digest
+        ),
+        (
+            "3271e0c9e4cd6698a40736a49334c1186fb958106b62dc1070c520752c850c99",  # pragma: allowlist secret -- sealed base digest
+            "abf7a98e9cb9aa0b97ceda0187a0620c30f9eecb93111fa1e92e62dd86c5b6ea",  # pragma: allowlist secret -- re-sealed digest
+        ),
+        (
+            "3271e0c9e4cd6698a40736a49334c1186fb958106b62dc1070c520752c850c99",  # pragma: allowlist secret -- sealed base digest
+            "3271e0c9e4cd6698a40736a49334c1186fb958106b62dc1070c520752c850c99",  # pragma: allowlist secret -- re-sealed digest
+        ),
+        (
+            "b51a591707de24b5cf2f2af347d9f0affa157cb1952b4da2f16e403ffe641d97",  # pragma: allowlist secret -- sealed base digest
+            "3271e0c9e4cd6698a40736a49334c1186fb958106b62dc1070c520752c850c99",  # pragma: allowlist secret -- re-sealed digest
         ),
     ),
     "docs/98.archive/migrations/0006-unroutable-reference-profile-retirement.md": (

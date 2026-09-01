@@ -929,16 +929,12 @@ and retirement sources retain their independent pre-existing source protections.
       "docs/03.specs/0012-template-governance-audit-enhancement/spec.md",
       "docs/03.specs/0013-workspace-document-governance-hardening/plan.md",
       "docs/03.specs/0014-workspace-document-contract-normalization/plan.md",
-      "docs/03.specs/0014-workspace-document-contract-normalization/spec.md",
-      "docs/03.specs/0015-agent-governance-contract-normalization/spec.md",
-      "docs/03.specs/0016-active-control-surface-governance-hardening/spec.md",
       "docs/03.specs/0017-workspace-engineering-research-pack/spec.md",
       "docs/03.specs/0018-workspace-engineering-implementation-audit-pack/plan.md",
       "docs/03.specs/0018-workspace-engineering-implementation-audit-pack/spec.md",
       "docs/03.specs/0019-template-path-numbering-contract/plan.md",
       "docs/03.specs/0019-template-path-numbering-contract/spec.md",
       "docs/03.specs/0020-workspace-contract-governance-normalization/spec.md",
-      "docs/03.specs/0022-control-cloud-doc-normalization/spec.md",
       "docs/03.specs/0024-observability-and-network-review-agents/plan.md",
       "docs/03.specs/0024-observability-and-network-review-agents/spec.md",
       "docs/03.specs/0025-governance-owner-and-roster-currentness/plan.md",
@@ -951,7 +947,6 @@ and retirement sources retain their independent pre-existing source protections.
       "docs/03.specs/0043-agent-harness-loop-lifecycle/plan.md",
       "docs/03.specs/0044-agent-roster-evaluation-and-admission/plan.md",
       "docs/03.specs/0045-agent-governance-ci-qa-cutover/plan.md",
-      "docs/03.specs/0045-agent-governance-ci-qa-cutover/spec.md",
       "docs/03.specs/0056-workspace-engineering-gap-only-refresh/plan.md",
       "docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/plan.md",
       "docs/03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md",
@@ -973,12 +968,17 @@ and retirement sources retain their independent pre-existing source protections.
     ]
   },
   {
-    "source_commit": "b8267631e4f7da7a06dce94a3e9585bbcae037d6",
+    "source_commit": "4932a8158ffbbc926093aee76322f0402ce465b6",
     "paths": [
+      "docs/03.specs/0014-workspace-document-contract-normalization/spec.md",
       "docs/03.specs/0015-agent-governance-contract-normalization/plan.md",
+      "docs/03.specs/0015-agent-governance-contract-normalization/spec.md",
       "docs/03.specs/0016-active-control-surface-governance-hardening/plan.md",
+      "docs/03.specs/0016-active-control-surface-governance-hardening/spec.md",
       "docs/03.specs/0020-workspace-contract-governance-normalization/plan.md",
-      "docs/03.specs/0022-control-cloud-doc-normalization/plan.md"
+      "docs/03.specs/0022-control-cloud-doc-normalization/plan.md",
+      "docs/03.specs/0022-control-cloud-doc-normalization/spec.md",
+      "docs/03.specs/0045-agent-governance-ci-qa-cutover/spec.md"
     ]
   }
 ]
