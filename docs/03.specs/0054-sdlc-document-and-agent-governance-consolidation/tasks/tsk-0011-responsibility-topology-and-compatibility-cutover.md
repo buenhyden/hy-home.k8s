@@ -29,11 +29,11 @@ delegated implementation.
 
 **Depends on:** the TSK-0054-0010 activation transaction
 
-**Current state:** `in-progress; awaiting committed delegated implementation and review evidence`
+**Current state:** `in-progress; delegated implementation accepted, awaiting the later parent handoff`
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-054-011 | VAL-SDLC-010..VAL-SDLC-012 | Review the delegated responsibility-topology and compatibility evidence, then record Spec 0054 integrated acceptance without executing the delegated changes. | platform | In Progress | Activation and ownership handoff complete; no delegated implementation result accepted yet. | Spec 0066 registry/path parity, consumer-zero and unique-diagnostic evidence, reviews, logical commits, and parent acceptance record |
+| WORK-054-011 | VAL-SDLC-010..VAL-SDLC-012 | Review the delegated responsibility-topology and compatibility evidence, then record Spec 0054 integrated acceptance without executing the delegated changes. | platform | Done | Spec 0054 integrated acceptance is recorded. The delegated result establishes one routing owner, one owner per semantic rule, a dispatch-only aggregate, and consumer-zero retirement, with every review finding remediated before commit. | Committed `fa3d5a9d` and the isolated `913f284b`; TSK-0066-0001 review, disposition, and ordered lane evidence; accepted ADR-0031 |
 
 ## Approval and Safety Boundaries
 
@@ -52,10 +52,17 @@ Spec 0066 Spec/Plan are `active`, TSK-0066-0001 is `in-progress`, this Task is
 the sole `in-progress` parent acceptance owner, and the existing Spec 0054
 compatibility pointer names this Task. Spec 0066 has no standalone row.
 
-This Task now waits for committed, review-ready Spec 0066 implementation
-evidence. It records integrated acceptance only after the parent checklist
-passes and remains `in-progress` while Spec 0066 performs its state-only
-closure. A later parent handoff moves this Task to `done` and the compatibility
+The delegated evidence is committed and reviewed, and the parent checklist
+passes, so Spec 0054 integrated acceptance is recorded here. Acceptance rests
+on the delegated Task's own record: the validation registry has one owner under
+`scripts/validation/`, each semantic rule and residual repository contract names
+a single production owner, the aggregate shell dispatches without embedding a
+rule, transitional wrappers and current-state digests are retired with consumer
+and recovery proof, and the required external `agent-governance-static` check
+name is unchanged. Independent review and complete execution raised five
+defects, including a hosted-CI discovery failure and a provider post-validate
+fixture gap, and all were remediated before the implementation commit. This
+Task remains `in-progress` while Spec 0066 performs its state-only closure. A later parent handoff moves this Task to `done` and the compatibility
 pointer to queued TSK-0054-0013 atomically; TSK-0054-0013 activates only in a
 subsequent legal transition. Rejected evidence returns to Spec 0066 without
 changing ownership or claiming implementation here. The retired `route_state`
@@ -67,4 +74,4 @@ option is not reintroduced.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-054-011](../plan.md#wp-011--responsibility-topology-and-compatibility-cutover) | In Progress; activation complete and parent acceptance pending. | Active `TSK-0066-0001`, [Current Spec Index](../../README.md#current-spec-index), and accepted [ADR-0031](../../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md) |
+| [WORK-054-011](../plan.md#wp-011--responsibility-topology-and-compatibility-cutover) | Done; parent acceptance recorded for the committed delegated result. | Committed `fa3d5a9d`, `TSK-0066-0001` review and lane evidence, [Current Spec Index](../../README.md#current-spec-index), and accepted [ADR-0031](../../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md) |
