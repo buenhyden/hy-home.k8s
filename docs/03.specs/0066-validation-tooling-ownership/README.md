@@ -4,9 +4,9 @@
 
 Spec 0066 is the delegated execution package for Spec 0054 WP-010 and WP-011.
 Spec 0054 retains integrated acceptance authority through TSK-0054-0011. The
-activation checkpoint is complete: this package's Spec and Plan are `active`,
-and TSK-0066-0001 is the sole `in-progress` delegated execution Task. No
-validation-tooling implementation result is claimed by that state transition.
+delegated execution is complete: this package's Spec and Plan are `done`, and
+TSK-0066-0001 is `done` after the parent recorded integrated acceptance. The
+implementation result itself is owned by that Task and by reachable Git.
 
 ## Scope
 

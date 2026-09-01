@@ -1,7 +1,7 @@
 ---
 title: 'Validation Tooling Ownership Technical Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
 updated: 2026-09-01
 artifact_id: "SPEC-0066"
@@ -25,10 +25,10 @@ paths, production self-tests, and fixtures consumed from production code.
 Measured counts are audit evidence only. They are not permanent governance
 invariants.
 
-The reviewed activation checkpoint is complete. This Spec and its Plan are
-`active`, and TSK-0066-0001 is the package's sole `in-progress` Task. The
-activation establishes execution authority only; validation-tooling moves,
-deletions, and implementation results remain to be recorded by that Task.
+The delegated execution is complete. This Spec and its Plan are `done`, and
+TSK-0066-0001 is `done` after Spec 0054 recorded integrated acceptance through
+TSK-0054-0011. The validation-tooling moves, deletions, and implementation
+results are recorded by that Task and by reachable Git history.
 
 ## Strategic Boundaries & Non-goals
 
@@ -118,8 +118,9 @@ does not become an executable rule engine.
 11. Branch-tip SHAs and generated digests do not track current repository
     state. Full SHAs are limited to immutable external dependencies and sealed
     recovery coordinates with an owner and update or recovery path.
-12. Each package has at most one `in-progress` Task. TSK-0066-0001 is this
-    package's sole `in-progress` Task during active execution.
+12. Each package has at most one `in-progress` Task. TSK-0066-0001 was this
+    package's sole `in-progress` Task during active execution and is now
+    `done`.
 
 ## Core Design
 

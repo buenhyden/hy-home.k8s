@@ -1,7 +1,7 @@
 ---
 title: 'Validation Tooling Ownership Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
 updated: 2026-09-01
 artifact_id: "PLAN-0066"
@@ -31,7 +31,7 @@ artifact_id: "PLAN-0066"
   deleted only with current-consumer-zero and unique-diagnostic-zero evidence.
 - Existing required CI check names remain stable until authorized remote
   protection-rule verification supports a separate decision.
-- This Plan is `active`, and TSK-0066-0001 is its sole `in-progress` Task.
+- This Plan is `done`, and TSK-0066-0001 is its sole Task and is `done`.
 - TSK-0054-0010 completed the atomic activation transaction before this Plan
   began execution. That transaction aligned ADR and README state, added the
   package-local delegated-component gate and focused tests, activated the
