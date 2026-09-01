@@ -1,5 +1,5 @@
 ---
-title: "SPEC-0053-TSK-0009: VAL-WER-008, VAL-WER-010, VAL-WER-011"
+title: "VAL-WER-008, VAL-WER-010, VAL-WER-011"
 version: "1.0"
 type: sdlc/task
 layer: "03.specs"

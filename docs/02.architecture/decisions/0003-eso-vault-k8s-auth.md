@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0003: ESO + Vault Kubernetes Auth for Runtime Secrets'
+title: 'ESO + Vault Kubernetes Auth for Runtime Secrets'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

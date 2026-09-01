@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0025: Four-Digit Document Path Identity'
+title: 'Four-Digit Document Path Identity'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

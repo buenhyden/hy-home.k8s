@@ -1,5 +1,5 @@
 ---
-title: "SPEC-0047-TSK-0002: VAL-CSASR-001, VAL-CSASR-002, VAL-CSASR-006"
+title: "VAL-CSASR-001, VAL-CSASR-002, VAL-CSASR-006"
 version: "1.0"
 type: sdlc/task
 layer: "03.specs"

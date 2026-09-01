@@ -1,5 +1,5 @@
 ---
-title: "MIG-0006: Unroutable Reference Profile Retirement"
+title: "Unroutable Reference Profile Retirement"
 type: "content/archive-migration"
 status: "sealed"
 owner: "platform"

@@ -1,5 +1,5 @@
 ---
-title: "MIG-0004: Document Authority Convergence"
+title: "Document Authority Convergence"
 type: "content/archive-migration"
 status: "sealed"
 owner: "platform"

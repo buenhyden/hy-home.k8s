@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0015: Declarative Document Contract Registry'
+title: 'Declarative Document Contract Registry'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

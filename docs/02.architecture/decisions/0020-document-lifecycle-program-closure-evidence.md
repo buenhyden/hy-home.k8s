@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0020: Document Lifecycle Program Closure Evidence'
+title: 'Document Lifecycle Program Closure Evidence'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

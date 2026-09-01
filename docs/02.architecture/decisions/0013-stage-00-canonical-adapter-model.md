@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0013: Stage 00 Canonical Adapter Model'
+title: 'Stage 00 Canonical Adapter Model'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

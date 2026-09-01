@@ -1,5 +1,5 @@
 ---
-title: "MIG-0005: Codex and Claude agent governance convergence"
+title: "Codex and Claude agent governance convergence"
 type: "content/archive-migration"
 status: "sealed"
 owner: "platform"

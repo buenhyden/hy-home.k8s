@@ -1,5 +1,5 @@
 ---
-title: "MIG-0008: Progress Append Form Retirement"
+title: "Progress Append Form Retirement"
 type: "content/archive-migration"
 status: "sealed"
 owner: "platform"

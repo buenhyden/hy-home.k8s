@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0023: Work-Unit Document Taxonomy and Governance Authority'
+title: 'Work-Unit Document Taxonomy and Governance Authority'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

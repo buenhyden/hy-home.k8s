@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0019: Provider-Native Agent Harness and Loop Model'
+title: 'Provider-Native Agent Harness and Loop Model'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

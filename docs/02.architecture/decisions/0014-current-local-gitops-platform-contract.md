@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0014: Current Local GitOps Platform Contract'
+title: 'Current Local GitOps Platform Contract'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

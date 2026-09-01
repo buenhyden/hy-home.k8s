@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0018: Full-body Archive Record and Retention'
+title: 'Full-body Archive Record and Retention'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0006: cert-manager with mkcert CA as ClusterIssuer'
+title: 'cert-manager with mkcert CA as ClusterIssuer'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

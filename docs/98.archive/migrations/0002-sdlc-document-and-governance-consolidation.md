@@ -1,5 +1,5 @@
 ---
-title: "MIG-0002: SDLC Document and Governance Consolidation"
+title: "SDLC Document and Governance Consolidation"
 type: "content/archive-migration"
 status: "accepted"
 owner: "platform"

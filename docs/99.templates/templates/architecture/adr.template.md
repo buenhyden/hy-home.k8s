@@ -1,5 +1,5 @@
 ---
-title: 'ADR-####: {Short Title}'
+title: '{Short Title}'
 version: "#.#"
 type: sdlc/adr
 layer: "02.architecture"

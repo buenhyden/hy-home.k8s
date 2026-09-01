@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0009: Kiali with External Observability Stack'
+title: 'Kiali with External Observability Stack'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

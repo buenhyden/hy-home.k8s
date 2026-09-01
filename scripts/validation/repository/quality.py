@@ -724,7 +724,7 @@ stage04_retirement_authority = (
     / "docs/98.archive/migrations/0002-sdlc-document-and-governance-consolidation.md"
 )
 stage04_retirement_authority_sha256 = (
-    "05527226d8d353f57bac1b346aaa20f1ab1951eeea7f2f570b04dbcabd381265"  # pragma: allowlist secret
+    "847b8dab8f86b0b16b47decbf59dbf355f2fbae2869582626c43d949f61dfdce"  # pragma: allowlist secret
 )
 if "04.execution" in actual_docs:
     fail("retired docs/04.execution must remain absent after MIG-0002")

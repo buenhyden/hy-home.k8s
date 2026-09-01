@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0029: Mutable Target Revision Retention'
+title: 'Mutable Target Revision Retention'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

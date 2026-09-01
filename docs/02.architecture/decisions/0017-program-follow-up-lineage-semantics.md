@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0017: Program Follow-up Lineage Semantics'
+title: 'Program Follow-up Lineage Semantics'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

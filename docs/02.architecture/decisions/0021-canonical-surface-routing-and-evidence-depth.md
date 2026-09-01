@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0021: Canonical Surface Routing and Evidence-Depth Architecture'
+title: 'Canonical Surface Routing and Evidence-Depth Architecture'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

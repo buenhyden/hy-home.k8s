@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0027: Pod Security Standards Staged Adoption'
+title: 'Pod Security Standards Staged Adoption'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

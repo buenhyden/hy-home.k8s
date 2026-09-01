@@ -1,5 +1,5 @@
 ---
-title: "SPEC-0005-TSK-0005: Run static validation gates"
+title: "Run static validation gates"
 version: "1.0"
 type: sdlc/task
 layer: "03.specs"

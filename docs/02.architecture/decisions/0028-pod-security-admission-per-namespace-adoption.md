@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0028: Pod Security Admission Per-namespace Adoption'
+title: 'Pod Security Admission Per-namespace Adoption'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

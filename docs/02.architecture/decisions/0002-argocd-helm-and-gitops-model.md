@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0002: ArgoCD Helm Install with App-of-Apps and ApplicationSet'
+title: 'ArgoCD Helm Install with App-of-Apps and ApplicationSet'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

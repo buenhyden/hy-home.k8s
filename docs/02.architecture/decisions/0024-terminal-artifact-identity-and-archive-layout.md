@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0024: Terminal Artifact Identity and Archive Layout'
+title: 'Terminal Artifact Identity and Archive Layout'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

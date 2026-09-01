@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0030: Authority-First SDLC and Agent Governance Convergence'
+title: 'Authority-First SDLC and Agent Governance Convergence'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

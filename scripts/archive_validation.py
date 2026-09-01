@@ -279,8 +279,8 @@ _WORK054_WP004B_MIGRATION_PATH = (
     "docs/98.archive/migrations/0004-document-authority-convergence.md"
 )
 MIGRATION_DOCUMENT_MAX_BYTES = 128 * 1024
-MIG0002_DOCUMENT_SHA256 = "05527226d8d353f57bac1b346aaa20f1ab1951eeea7f2f570b04dbcabd381265"  # pragma: allowlist secret
-MIG0003_DOCUMENT_SHA256 = "6dd85df46123bb7004b0abf0fc7cd1f1d81fcae5ea66f71f1f07ff1dba904ab2"  # pragma: allowlist secret
+MIG0002_DOCUMENT_SHA256 = "847b8dab8f86b0b16b47decbf59dbf355f2fbae2869582626c43d949f61dfdce"  # pragma: allowlist secret
+MIG0003_DOCUMENT_SHA256 = "67ab2340b257e3dee0bca1a5d3bf757038082e2ffec919bece5d977d5eb919fd"  # pragma: allowlist secret
 MIG0004_SPEC0054_LEDGER = (
     "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks.md"
 )
@@ -434,7 +434,7 @@ _ARCHIVE_MIGRATION_CONTROLS = {
         "MIG-0001",
         93,
         {"moved": 93},
-        "9d25b3039750bd60c18129ea7fb62576889449407b2f2fb10092b5624e47030f",  # pragma: allowlist secret -- sealed migration digest
+        "7d5e02139b32b14b0b32e17f8b53f01757c54584e597de331808276dbf4ad739",  # pragma: allowlist secret -- sealed migration digest
     ),
     _WORK109_MIGRATION_PATH: (
         "MIG-0002",
@@ -478,7 +478,19 @@ _MIGRATION_LEGACY_BASE_SHA256 = {
 # under the current frontmatter contract, so a base snapshot taken between the
 # two cutover commits still verifies.
 _MIGRATION_SUPERSEDED_SHA256 = {
-    WORK107_MIGRATION_PATH: ("1a2f3264c380f93d435fedf4028a3fb2b843da377e99e2fd4b788dd37df45116",),  # pragma: allowlist secret -- superseded digest
+    WORK107_MIGRATION_PATH: (
+        "1a2f3264c380f93d435fedf4028a3fb2b843da377e99e2fd4b788dd37df45116",  # pragma: allowlist secret -- superseded digest
+        "9d25b3039750bd60c18129ea7fb62576889449407b2f2fb10092b5624e47030f",  # pragma: allowlist secret -- superseded digest
+    ),
+    _WORK109_MIGRATION_PATH: (
+        "05527226d8d353f57bac1b346aaa20f1ab1951eeea7f2f570b04dbcabd381265",  # pragma: allowlist secret -- superseded digest
+    ),
+    _WORK054_WP003_MIGRATION_PATH: (
+        "6dd85df46123bb7004b0abf0fc7cd1f1d81fcae5ea66f71f1f07ff1dba904ab2",  # pragma: allowlist secret -- superseded digest
+    ),
+    _WORK054_WP004B_MIGRATION_PATH: (
+        "e7eb94fc16f333a3888e8d5c4d5a17cc65a172bf3dbbf4a115b450e73724dd75",  # pragma: allowlist secret -- superseded digest
+    ),
 }
 _LEGACY_MIGRATION_FRONTMATTER_KEYS = _MIGRATION_FRONTMATTER_KEYS + ("migration_id",)
 
@@ -1824,7 +1836,8 @@ def _migration_control_diagnostics(
             != ("sealed" if path == _WORK054_WP004B_MIGRATION_PATH else "accepted")
             or metadata.get("owner") != "platform"
             or metadata.get("artifact_id") != expected_id
-            or not metadata.get("title", "").startswith(f"{expected_id}: ")
+            or metadata.get("title", "").startswith(f"{expected_id}: ")
+            is not (is_legacy_base or is_superseded)
             or re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", metadata.get("updated", ""))
             is None
         ):

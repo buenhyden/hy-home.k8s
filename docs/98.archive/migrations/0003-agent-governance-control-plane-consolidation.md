@@ -1,5 +1,5 @@
 ---
-title: "MIG-0003: Agent Governance Control Plane Consolidation"
+title: "Agent Governance Control Plane Consolidation"
 type: "content/archive-migration"
 status: "accepted"
 owner: "platform"

@@ -81,9 +81,9 @@ WORK107_MIGRATION_PATH = (
 WP004B_PINNED_MIGRATION_PATH = (
     "docs/98.archive/migrations/0004-document-authority-convergence.md"
 )
-WP004B_PINNED_MIGRATION_DOCUMENT_SHA256 = "e7eb94fc16f333a3888e8d5c4d5a17cc65a172bf3dbbf4a115b450e73724dd75"  # pragma: allowlist secret -- sealed recovery contract
+WP004B_PINNED_MIGRATION_DOCUMENT_SHA256 = "870aa210464f9059a4760411d3f8261ab14ae637f0719bd3355b59dd984634c6"  # pragma: allowlist secret -- sealed recovery contract
 WP004C_SEALED_TARGET_COMMIT = "4aabcc1b371dd2f519f605d3fa669a7cf334c443"  # pragma: allowlist secret -- sealed MIG-0004 recovery identity, not a credential
-WORK107_MIGRATION_DOCUMENT_SHA256 = "9d25b3039750bd60c18129ea7fb62576889449407b2f2fb10092b5624e47030f"  # pragma: allowlist secret
+WORK107_MIGRATION_DOCUMENT_SHA256 = "7d5e02139b32b14b0b32e17f8b53f01757c54584e597de331808276dbf4ad739"  # pragma: allowlist secret
 WORK107_LEGACY_INDEX_OVERVIEW = (
     "`98.archive/`는 원래 경로를 mirror한 43개의 immutable `content/archive` "
     "record를 보관한다. ARWB-003의 유한 base proof는 정확히 31 record와 202 "
@@ -1451,7 +1451,7 @@ def validate_work107_migration_rows(
 
 def _work107_migration_metadata_bytes() -> bytes:
     metadata = {
-        "title": "MIG-0001: SDLC Taxonomy Convergence",
+        "title": "SDLC Taxonomy Convergence",
         "type": "content/archive-migration",
         "status": "accepted",
         "owner": "platform",

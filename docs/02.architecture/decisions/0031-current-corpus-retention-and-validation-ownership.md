@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0031: Current Corpus Retention and Validation Ownership'
+title: 'Current Corpus Retention and Validation Ownership'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

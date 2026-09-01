@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0022: Direct-Approval Standalone Execution Lineage'
+title: 'Direct-Approval Standalone Execution Lineage'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0008: Istio Default Profile with ingress-nginx Coexistence'
+title: 'Istio Default Profile with ingress-nginx Coexistence'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

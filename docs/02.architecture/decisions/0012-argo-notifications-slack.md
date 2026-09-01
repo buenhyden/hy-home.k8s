@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0012: Argo Notifications with Slack Webhook'
+title: 'Argo Notifications with Slack Webhook'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

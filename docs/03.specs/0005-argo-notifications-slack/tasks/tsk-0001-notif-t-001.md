@@ -1,5 +1,5 @@
 ---
-title: "SPEC-0005-TSK-0001: Add Notifications AD"
+title: "Add Notifications AD"
 version: "1.0"
 type: sdlc/task
 layer: "03.specs"

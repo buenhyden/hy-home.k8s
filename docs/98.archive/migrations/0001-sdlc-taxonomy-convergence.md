@@ -1,5 +1,5 @@
 ---
-title: "MIG-0001: SDLC Taxonomy Convergence"
+title: "SDLC Taxonomy Convergence"
 type: "content/archive-migration"
 status: "accepted"
 owner: "platform"

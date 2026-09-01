@@ -1,5 +1,5 @@
 ---
-title: "MIG-0009: Governance Memory Retirement"
+title: "Governance Memory Retirement"
 type: "content/archive-migration"
 status: "sealed"
 owner: "platform"

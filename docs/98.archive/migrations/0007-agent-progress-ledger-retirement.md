@@ -1,5 +1,5 @@
 ---
-title: "MIG-0007: Agent Progress Ledger Retirement"
+title: "Agent Progress Ledger Retirement"
 type: "content/archive-migration"
 status: "sealed"
 owner: "platform"

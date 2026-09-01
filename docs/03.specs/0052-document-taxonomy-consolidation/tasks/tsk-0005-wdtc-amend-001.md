@@ -1,5 +1,5 @@
 ---
-title: "SPEC-0052-TSK-0005: VAL-WDTC-013 through VAL-WDTC-016"
+title: "VAL-WDTC-013 through VAL-WDTC-016"
 version: "1.0"
 type: sdlc/task
 layer: "03.specs"

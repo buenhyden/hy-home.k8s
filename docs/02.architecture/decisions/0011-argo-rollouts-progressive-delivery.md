@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0011: Argo Rollouts for Progressive Delivery'
+title: 'Argo Rollouts for Progressive Delivery'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

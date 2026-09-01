@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0026: Argo CD Source Integrity Non-adoption'
+title: 'Argo CD Source Integrity Non-adoption'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"

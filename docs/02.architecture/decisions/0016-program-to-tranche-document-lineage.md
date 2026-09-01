@@ -1,5 +1,5 @@
 ---
-title: 'ADR-0016: Program-to-Tranche Document Lineage'
+title: 'Program-to-Tranche Document Lineage'
 version: "1.0"
 type: sdlc/adr
 layer: "02.architecture"
