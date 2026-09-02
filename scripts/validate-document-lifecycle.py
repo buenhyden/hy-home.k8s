@@ -3533,6 +3533,10 @@ _MIGRATION_CONSUMER_REPIN_RESEAL: dict[str, tuple[tuple[str, str], ...]] = {
             "628753b0544558b5abd6863da3adf33f9cede484fd36cdce3a8a02330ed42f99",  # pragma: allowlist secret -- sealed base digest
             "fa28fe51353f0cd4ad2611592707dfd42415296cabd56f5a3b727acc9deed0b3",  # pragma: allowlist secret -- re-sealed digest
         ),
+        (
+            "fa28fe51353f0cd4ad2611592707dfd42415296cabd56f5a3b727acc9deed0b3",  # pragma: allowlist secret -- sealed base digest
+            "417f6034f225f7fa73f4ef3f6c72a583f2a2a872ed8321fbdc20a31644760ff1",  # pragma: allowlist secret -- re-sealed digest
+        ),
     ),
 }
 
