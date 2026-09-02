@@ -37,14 +37,18 @@ design-system rules only.
 3. Use the profile-owned initial status, metadata, sections, and relationships.
    Do not assume every profile starts at `draft`; router READMEs have no
    lifecycle or artifact ID.
-4. Write the shared frontmatter keys in one grammar: `title`, `version`,
-   `type`, `status`, `owner`, and `updated` are always present. `type` is
-   `<family>/<kind>`, `version` is `<major>.<minor>.<patch>`, and `updated` is
-   an ISO date. A `title` never repeats the document's `artifact_id`.
-5. Write `layer` only where the document lives in a numbered stage, as that
-   stage's slug without its numeric prefix. Stage 00 governance documents and
-   Stage 99 forms declare no `layer`, and a profile that declares no
-   `artifact_id` has none to write.
+4. Take the frontmatter key set and its order from the selected profile, and
+   each key's value grammar from the
+   [frontmatter schema](../../99.templates/contracts/frontmatter.schema.json).
+   This policy does not repeat either. One rule has no machine owner and is
+   stated here: a `title` never repeats the document's `artifact_id`, because
+   the identity is already a key and a title that restates it carries no
+   information.
+5. Treat a key the profile omits as a key the document has no business
+   declaring. `layer` names the numbered stage a document lives in, so Stage 00
+   sits above that numbering and a Stage 99 form is not the document it
+   produces; neither declares one. A profile that declares no `artifact_id`
+   describes something the repository does not give a stable identity.
 6. Replace prompts with concrete content, use complete stable IDs for
    traceability, and calculate links from the final target path.
 7. Keep a Requirement Package solution-independent. Put executable interface
@@ -59,10 +63,12 @@ design-system rules only.
 10. Do not add a router to a Spec package. `spec.md` owns the change contract,
     `plan.md` owns order and risk, and `tasks/` is the Task inventory; a
     package-level index only restates them and drifts from `tasks/`.
-11. Give a Stage 90 collection all three of its levels: the collection router
-    `{audits,data,research}/README.md`, a pack router
-    `####-<slug>/README.md`, and pack members `####-<slug>/m####-<slug>.md`.
-    Each level has its own Stage 99 form.
+11. Keep a Stage 90 collection complete at all three of its levels. The
+    registry routes each level and names its form; the reason they are distinct
+    is that a collection outlives any one pack, a pack owns its own observation
+    boundary and refresh trigger, and a member carries one dated finding. A
+    collection with a missing level pushes one of those three jobs onto a
+    document that does not own it.
 12. Treat a sealed retirement as retiring a document, not a location. A
     reviewed, tracked document may later occupy a retired path; never restore
     the retired bytes there.
