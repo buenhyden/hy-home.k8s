@@ -1,7 +1,7 @@
 ---
 title: 'Reference: Workspace Governance and Common Agent Environment'
 version: "1.0"
-type: content/reference
+type: content/research-reference
 layer: "90.references"
 status: active
 owner: platform

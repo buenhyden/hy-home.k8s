@@ -1260,12 +1260,174 @@
       "placeholderPolicy": "forbidden"
     },
     {
-      "id": "content/reference",
+      "id": "content/audit-reference",
       "class": "common",
       "mode": "classification-only",
-      "pathPattern": "^docs/90\\.references/(?:audits|data|research)/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
-      "artifactIdPattern": "^(?:AUD|RES|DATA)-[0-9]{4}-m[0-9]{4}$",
+      "pathPattern": "^docs/90\\.references/audits/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "artifactIdPattern": "^AUD-[0-9]{4}-m[0-9]{4}$",
+      "template": "docs/99.templates/templates/references/audit-reference.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "layer",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "version",
+          "type",
+          "layer",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
+          "superseded_by",
+          "supersedes"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
+          "layer",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
+          "superseded_by",
+          "supersedes"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "done",
+          "archived"
+        ]
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "content/research-reference",
+      "class": "common",
+      "mode": "classification-only",
+      "pathPattern": "^docs/90\\.references/research/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "artifactIdPattern": "^RES-[0-9]{4}-m[0-9]{4}$",
       "template": "docs/99.templates/templates/references/reference.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "layer",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "version",
+          "type",
+          "layer",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
+          "superseded_by",
+          "supersedes"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
+          "layer",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
+          "superseded_by",
+          "supersedes"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "done",
+          "archived"
+        ]
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "content/data-reference",
+      "class": "common",
+      "mode": "classification-only",
+      "pathPattern": "^docs/90\\.references/data/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "artifactIdPattern": "^DATA-[0-9]{4}-m[0-9]{4}$",
+      "template": "docs/99.templates/templates/references/data-reference.template.md",
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
@@ -2574,7 +2736,90 @@
       "placeholderPolicy": "template-only"
     },
     {
-      "id": "template/content/reference",
+      "id": "template/content/audit-reference",
+      "class": "common",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/references/audit\\-reference\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/references/audit-reference.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "layer",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "version",
+          "type",
+          "layer",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
+          "superseded_by",
+          "supersedes"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
+          "layer",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
+          "superseded_by",
+          "supersedes"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "done",
+          "archived"
+        ]
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "content/audit-reference"
+        ],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/content/research-reference",
       "class": "common",
       "mode": "template",
       "pathPattern": "^docs/99\\.templates/templates/references/reference\\.template\\.md$",
@@ -2650,7 +2895,90 @@
       },
       "relationships": {
         "sourceProfileIds": [
-          "content/reference"
+          "content/research-reference"
+        ],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/content/data-reference",
+      "class": "common",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/references/data\\-reference\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/references/data-reference.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "layer",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id"
+        ],
+        "allowed": [
+          "title",
+          "version",
+          "type",
+          "layer",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
+          "superseded_by",
+          "supersedes"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
+          "layer",
+          "status",
+          "owner",
+          "updated",
+          "artifact_id",
+          "superseded_by",
+          "supersedes"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "done",
+          "archived"
+        ]
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "content/data-reference"
         ],
         "bodyContract": null
       },
@@ -4312,7 +4640,9 @@
         "profileIds": [
           "template/content/archive",
           "template/content/archive-migration",
-          "template/content/reference",
+          "template/content/audit-reference",
+          "template/content/research-reference",
+          "template/content/data-reference",
           "template/sdlc/adr",
           "template/sdlc/ad",
           "template/sdlc/plan",

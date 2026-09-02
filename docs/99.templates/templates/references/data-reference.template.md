@@ -1,12 +1,12 @@
 ---
 title: 'Reference: {Item Name}'
 version: "#.#"
-type: content/research-reference
+type: content/data-reference
 layer: "90.references"
 status: draft
 owner: platform
 updated: YYYY-MM-DD
-artifact_id: "RES-####-m####"
+artifact_id: "DATA-####-m####"
 ---
 
 # Reference: [Item Name]

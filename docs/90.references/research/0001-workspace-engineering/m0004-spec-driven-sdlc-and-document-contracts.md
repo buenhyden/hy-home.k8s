@@ -1,7 +1,7 @@
 ---
 title: 'Reference: Spec-Driven SDLC and Document Contracts'
 version: "1.0"
-type: content/reference
+type: content/research-reference
 layer: "90.references"
 status: active
 owner: platform

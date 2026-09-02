@@ -145,7 +145,9 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         self.assertEqual(len(profile_ids), len(set(profile_ids)))
         self.assertTrue(
             {
-                "content/reference",
+                "content/audit-reference",
+                "content/data-reference",
+                "content/research-reference",
                 "readme/audit-pack",
                 "readme/data-pack",
                 "readme/research-pack",

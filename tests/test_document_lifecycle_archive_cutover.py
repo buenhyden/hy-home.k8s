@@ -1044,7 +1044,7 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
             """---
 title: 'Reference: Example Audit Findings'
 version: "1.0"
-type: content/reference
+type: content/audit-reference
 layer: "90.references"
 status: active
 owner: platform
@@ -1056,7 +1056,7 @@ artifact_id: "AUD-0001-m0001"
 """,
         )
 
-        self.assertEqual(created.profile_id, "content/reference")
+        self.assertEqual(created.profile_id, "content/audit-reference")
         self.assertEqual(
             compare_lifecycle(registry, {}, {path: created}, base_mode="staged"),
             (),
