@@ -3,6 +3,7 @@ from __future__ import annotations
 import contextlib
 import importlib.util
 import io
+import hashlib
 import json
 import re
 import shutil
@@ -113,6 +114,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         self.assertEqual(
             sorted(path.name for path in (stage99 / "templates").iterdir()),
             [
+                "README.md",
                 "architecture",
                 "archive",
                 "common",
@@ -217,9 +219,17 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         self.assertNotIn(
             "docs/99\\.templates/support", collection_profile["pathPattern"]
         )
-        self.assertNotIn(
+        # The form catalog is a route again.  MIG-0004 retired a support-era
+        # document, not the location: the row pins the bytes it retired, and the
+        # archive control refuses those bytes returning rather than the path.
+        self.assertIn(
             "docs/99\\.templates/templates/README",
             collection_profile["pathPattern"],
+        )
+        catalog = REPOSITORY_ROOT / "docs/99.templates/templates/README.md"
+        self.assertNotEqual(
+            hashlib.sha256(catalog.read_bytes()).hexdigest(),
+            "568c84c88ab19c876aa4416660853005130631b088061b81b713cc71a6e5d097",
         )
 
     def test_stage99_support_prose_cannot_be_a_machine_owner(self) -> None:

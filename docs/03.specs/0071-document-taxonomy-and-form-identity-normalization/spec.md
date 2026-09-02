@@ -122,6 +122,12 @@ authority; it is not superseded, revised, or re-approved.
   `{collection}/####-<slug>/m####-<slug>.md`. Each level has exactly one Stage
   99 form, and a collection is structural: it exists whether or not it
   currently holds a pack.
+- **C13 — A retirement retires a document, not a location.** A sealed ledger
+  row pins the bytes it retired, so the fact a retirement control protects is
+  that those bytes do not return. A different, reviewed, tracked document may
+  later occupy the same path; restoring the retired bytes there is still
+  refused. Reading a row as a permanent ban on its path proves nothing extra
+  and forbids ordinary reuse of a location.
 
 ## Core Design
 
@@ -301,6 +307,7 @@ bash scripts/validate-repo-quality-gates.sh .
 | VAL-DTF-010 | No Stage 03 package holds a `README.md`, and no current document links one | Package inventory sweep plus strict link validation |
 | VAL-DTF-011 | The package Task inventory is proved from `tasks/` alone, with no router document in the projection | Delegated-execution and program-relation validation |
 | VAL-DTF-012 | All three Stage 90 collections carry a router, and each of the three structural levels has exactly one Stage 99 form | Reference-pack topology check plus registry template parity |
+| VAL-DTF-013 | A retired path accepts a different tracked document and refuses the retired bytes | Focused MIG-0004 admission and resurrection cases |
 
 ## Traceability
 
@@ -324,6 +331,7 @@ authority is the direct human approval recorded above under
 | N/A — standalone, direct approval | VAL-DTF-010 | Package inventory sweep and strict link validation |
 | N/A — standalone, direct approval | VAL-DTF-011 | Delegated-execution projection check |
 | N/A — standalone, direct approval | VAL-DTF-012 | Reference-pack topology check |
+| N/A — standalone, direct approval | VAL-DTF-013 | Retirement admission and resurrection cases |
 
 ### Related Documents
 

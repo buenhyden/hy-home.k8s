@@ -63,10 +63,13 @@ design-system rules only.
     `{audits,data,research}/README.md`, a pack router
     `####-<slug>/README.md`, and pack members `####-<slug>/m####-<slug>.md`.
     Each level has its own Stage 99 form.
-12. Preserve accepted decisions and completed evidence. Use successors,
+12. Treat a sealed retirement as retiring a document, not a location. A
+    reviewed, tracked document may later occupy a retired path; never restore
+    the retired bytes there.
+13. Preserve accepted decisions and completed evidence. Use successors,
     reciprocal lifecycle relationships, and minimal Git-backed recovery
     mappings rather than rewriting history or leaving redirects.
-13. Run the checks selected by the affected paths and record evidence in the
+14. Run the checks selected by the affected paths and record evidence in the
     owning Task using [quality policy](quality.md).
 
 Governance and agent execution sections remain English. Human-facing root,

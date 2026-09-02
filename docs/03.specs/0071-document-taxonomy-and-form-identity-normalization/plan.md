@@ -86,6 +86,7 @@ hold.
 | WP-009 | Update the human owners: Stage 99 author guide, authoring policy, and the routers that name a form | WP-004 | Forms and identities are final | Strict link and owner run |
 | WP-010 | Retire the Stage 03 package router: move Spec 0054's shared execution contract into its Plan, repoint every citation, derive the Task inventory from `tasks/`, and seal the retirement as MIG-0011 | WP-005, WP-008 | Approved Spec contract C11 | Package inventory sweep, strict link run, and delegated-execution projection check |
 | WP-011 | Complete the Stage 90 structure: author the audits and data collection routers so all three collections carry the same three levels, each with one Stage 99 form | WP-004 | Approved Spec contract C12 | Reference-pack topology check and template parity |
+| WP-012 | Correct the retirement controls to compare retired bytes instead of banning the retired path, and author the Stage 99 form catalog the corrected rule admits | WP-008 | Approved Spec contract C13 | Focused admission and resurrection cases plus the archive gate |
 
 ## Verification Plan
 
@@ -139,6 +140,7 @@ work. Every check above reads tracked repository bytes only.
 | [VAL-DTF-010](spec.md#success-criteria--verification-plan) | WP-010 | [tsk-0001-dtf-000.md](tasks/tsk-0001-dtf-000.md) |
 | [VAL-DTF-011](spec.md#success-criteria--verification-plan) | WP-010 | [tsk-0001-dtf-000.md](tasks/tsk-0001-dtf-000.md) |
 | [VAL-DTF-012](spec.md#success-criteria--verification-plan) | WP-011 | [tsk-0001-dtf-000.md](tasks/tsk-0001-dtf-000.md) |
+| [VAL-DTF-013](spec.md#success-criteria--verification-plan) | WP-012 | [tsk-0001-dtf-000.md](tasks/tsk-0001-dtf-000.md) |
 
 ### Related Documents
 

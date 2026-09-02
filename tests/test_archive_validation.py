@@ -1020,6 +1020,71 @@ class ArchiveValidationTest(unittest.TestCase):
                     root.resolve(), rows
                 )
 
+    def test_a_retired_path_may_hold_a_different_reviewed_document(self) -> None:
+        """A ledger row retires a document, not the location it occupied.
+
+        The row pins the retired bytes, so the fact the control protects is that
+        those bytes do not return.  Reading it as a permanent ban on the path
+        forbids the ordinary case of a new document later occupying it and
+        proves nothing extra.
+        """
+
+        with tempfile.TemporaryDirectory(prefix="mig0004-retired-path-") as temporary:
+            root = Path(temporary)
+            fixture, rows = self._mig0004_current_fixture(root)
+            retired = next(
+                row
+                for row in rows
+                if row["action"] != "moved"
+                and row["replacement"] != row["legacy_path"]
+            )
+            legacy = str(retired["legacy_path"])
+
+            successor = root / legacy
+            successor.parent.mkdir(parents=True, exist_ok=True)
+            successor.write_bytes(b"# A different document at the same location\n")
+            fixture.run("--literal-pathspecs", "add", "--", legacy)
+
+            archive_validation._validate_mig0004_rows_and_targets(  # noqa: SLF001
+                root.resolve(), rows
+            )
+
+    def test_a_retired_path_may_not_restore_the_retired_bytes(self) -> None:
+        """Resurrecting the retired document is still refused."""
+
+        with tempfile.TemporaryDirectory(prefix="mig0004-resurrection-") as temporary:
+            root = Path(temporary)
+            fixture, rows = self._mig0004_current_fixture(root)
+            index = next(
+                position
+                for position, row in enumerate(rows)
+                if row["action"] != "moved"
+                and row["replacement"] != row["legacy_path"]
+            )
+            legacy = str(rows[index]["legacy_path"])
+
+            payload = b"# The exact bytes the row retired\n"
+            resurrected = root / legacy
+            resurrected.parent.mkdir(parents=True, exist_ok=True)
+            resurrected.write_bytes(payload)
+            fixture.run("--literal-pathspecs", "add", "--", legacy)
+
+            pinned = (
+                *rows[:index],
+                {
+                    **rows[index],
+                    "content_sha256": hashlib.sha256(payload).hexdigest(),
+                },
+                *rows[index + 1 :],
+            )
+            with self.assertRaisesRegex(
+                archive_validation.ArchiveContractError,
+                "RECOVERY-MIGRATION-TARGET",
+            ):
+                archive_validation._validate_mig0004_rows_and_targets(  # noqa: SLF001
+                    root.resolve(), pinned
+                )
+
     def test_mig0004_stage99_targets_are_index_bound_and_worktree_identical(
         self,
     ) -> None:
@@ -1740,8 +1805,11 @@ class ArchiveValidationTest(unittest.TestCase):
         # process regardless of how many objects it carries. Each distinct
         # declared source commit costs one batched read plus its reachability
         # check, so re-declaring a consumer at a newer commit moves the cap by a
-        # fixed two rather than by the number of paths it carries.
-        budget = 176
+        # fixed two rather than by the number of paths it carries. A retired
+        # path that now holds a different tracked document costs one batched
+        # read to prove its bytes are not the retired ones, so it moves the cap
+        # by a fixed one rather than by the size of the document.
+        budget = 177
 
         def bounded_popen(*args, **kwargs):
             nonlocal git_calls

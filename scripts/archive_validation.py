@@ -784,6 +784,41 @@ def parse_migration_control(
     return tuple(rows), tuple(consumers)
 
 
+def retired_source_is_distinct(
+    root: Path,
+    source: str,
+    retired_digest: object,
+    inventory: Mapping[str, str],
+) -> bool:
+    """Report whether a retired path now holds different tracked content.
+
+    A ledger row retires a document, not the location that document occupied.
+    The row already pins the retired bytes, so the fact this control has to
+    protect is that those bytes do not come back silently.  Reading the row as a
+    permanent ban on the path proves nothing extra and forbids the ordinary case
+    of a new, different document later occupying the same location.
+
+    Only a tracked blob whose digest differs from the retired one is admitted.
+    An untracked file at the path is still refused, because nothing reviewed it.
+    """
+
+    object_id = inventory.get(source)
+    if object_id is None or not isinstance(retired_digest, str):
+        return False
+    try:
+        content = _read_git_blob_batch(
+            root,
+            (object_id,),
+            object_id_length=_repository_identity(root),
+            per_blob_limit=CURRENT_MARKDOWN_MAX_BYTES,
+            aggregate_limit=CURRENT_MARKDOWN_MAX_BYTES,
+            object_limit=1,
+        )[object_id]
+    except (KeyError, OSError, RuntimeError, UnicodeDecodeError, ValueError):
+        return False
+    return hashlib.sha256(content).hexdigest() != retired_digest
+
+
 def compose_migration_targets(
     projections: Sequence[Mapping[str, str]],
 ) -> dict[str, str]:
@@ -1519,9 +1554,15 @@ def validate_migration_records(
     rows_by_source = {str(row["legacy_path"]): row for row in rows}
     for row in rows:
         source = str(row["legacy_path"])
-        if targets[source] != source and (
-            source in present
-            or (proposed_commit is None and os.path.lexists(root / source))
+        if (
+            targets[source] != source
+            and not retired_source_is_distinct(
+                root, source, row.get("content_sha256"), inventory
+            )
+            and (
+                source in present
+                or (proposed_commit is None and os.path.lexists(root / source))
+            )
         ):
             raise ArchiveContractError(
                 "RECOVERY-MIGRATION-TARGET", "retired source remains current"
@@ -2667,7 +2708,13 @@ def _validate_mig0004_rows_and_targets(
         if not stage99_row and target not in sealed_retired:
             _require_regular_current_target(target, inventory)
             target_paths.add(target)
-        if target != legacy and legacy in inventory:
+        if (
+            target != legacy
+            and legacy in inventory
+            and not retired_source_is_distinct(
+                root, legacy, row.get("content_sha256"), inventory
+            )
+        ):
             raise ArchiveContractError(
                 "RECOVERY-MIGRATION-TARGET", "retired source remains current"
             )

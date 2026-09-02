@@ -79,6 +79,7 @@ Profile ID는 같은 사실을 `<family>/<kind>`로 표현한다.
 │   ├── document-profile.schema.json
 │   └── frontmatter.schema.json
 ├── templates/          # copyable forms only
+│   ├── README.md       # form catalog
 │   ├── common/ governance/ requirements/ architecture/
 │   ├── specs/ (+ specs/contracts/)
 │   └── operations/ references/ archive/ runtime/
@@ -86,8 +87,11 @@ Profile ID는 같은 사실을 `<family>/<kind>`로 표현한다.
 └── README.md
 ```
 
+이 README는 stage router다. 어떤 form이 어디에 있고 새 form을 어떻게 등록하는지는
+form catalog가 소유한다.
+
 - [Document Profile Registry](./registry.json)
-- [Template Forms](./templates/)
+- [Form Catalog](./templates/README.md)
 
 ## Authoring Workflow
 

@@ -60,6 +60,7 @@ if __package__:
         parse_pinned_migration_control,
         read_staged_blob_bounded,
         read_worktree_regular_bounded,
+        retired_source_is_distinct,
         validate_current_archive_authority,
         validate_repository_archive,
     )
@@ -99,6 +100,7 @@ else:
         parse_pinned_migration_control,
         read_staged_blob_bounded,
         read_worktree_regular_bounded,
+        retired_source_is_distinct,
         validate_current_archive_authority,
         validate_repository_archive,
     )
@@ -533,6 +535,15 @@ def _work054_migration_projection(
                 or (
                     legacy != target
                     and (legacy in tracked_regular_blobs or _regular_file(root, legacy))
+                    # The row retires a document, not the location it held. Its
+                    # pinned digest is what must not come back; a different
+                    # tracked document at the same path is ordinary reuse.
+                    and not retired_source_is_distinct(
+                        root,
+                        legacy,
+                        row.get("content_sha256"),
+                        tracked_regular_blobs,
+                    )
                 )
             ):
                 raise RuntimeError(f"{failure}: row {legacy or migration_path}")
