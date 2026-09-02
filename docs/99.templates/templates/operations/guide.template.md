@@ -1,10 +1,9 @@
 ---
 title: '{Topic Name} Guide'
-version: "#.#"
-type: sdlc/guide
-layer: "05.operations"
+version: "#.#.#"
+type: operation/guide
 status: draft
-owner: platform
+owner: '{owner}'
 updated: YYYY-MM-DD
 artifact_id: "GDE-####"
 ---

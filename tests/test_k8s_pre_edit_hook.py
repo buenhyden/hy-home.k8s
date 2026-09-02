@@ -140,7 +140,7 @@ class PreEditAcceptanceTest(unittest.TestCase):
         result = run_hook(scalar_payload(target), ROOT)
 
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("`sdlc/requirement-package`", result.stdout)
+        self.assertIn("`sdlc/requirement`", result.stdout)
         self.assertIn(
             "`docs/99.templates/templates/requirements/requirement-package.template.md`",
             result.stdout,
@@ -224,12 +224,12 @@ class PreEditRejectionTest(unittest.TestCase):
 
     def test_every_retired_standalone_form_is_rejected_with_terminal_owner(self):
         cases = (
-            ("docs/01.requirements/prd-example-feature.md", "sdlc/requirement-package"),
-            ("docs/01.requirements/srs-example-feature.md", "sdlc/requirement-package"),
-            ("docs/01.requirements/ifc-example-feature.md", "sdlc/requirement-package"),
+            ("docs/01.requirements/prd-example-feature.md", "sdlc/requirement"),
+            ("docs/01.requirements/srs-example-feature.md", "sdlc/requirement"),
+            ("docs/01.requirements/ifc-example-feature.md", "sdlc/requirement"),
             (
                 "docs/01.requirements/interface-example-feature.md",
-                "sdlc/requirement-package",
+                "sdlc/requirement",
             ),
             ("docs/03.specs/9999-example-feature/design.md", "sdlc/spec"),
             ("docs/03.specs/9999-example-feature/tests.md", "sdlc/spec"),
@@ -261,7 +261,7 @@ class PreEditRejectionTest(unittest.TestCase):
                     {
                         "profiles": [
                             {
-                                "id": "sdlc/requirement-package",
+                                "id": "sdlc/requirement",
                                 "pathPattern": (
                                     r"^docs/01\.requirements/[0-9]{4}-[a-z-]+\.md$"
                                 ),

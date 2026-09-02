@@ -87,27 +87,32 @@ CURRENT_MARKDOWN_PROFILES = frozenset(
         "sdlc/prd",
         "sdlc/srs",
         "sdlc/interface",
-        "sdlc/requirement-package",
-        "sdlc/ad",
-        "sdlc/adr",
+        "sdlc/requirement",
+        "sdlc/architecture-description",
+        "sdlc/architecture-decision",
         "sdlc/spec",
         "sdlc/agent-design",
         "sdlc/data-model",
         "sdlc/tests",
         "sdlc/plan",
         "sdlc/task",
-        "sdlc/guide",
-        "sdlc/policy",
-        "sdlc/runbook",
-        "sdlc/incident",
-        "sdlc/postmortem",
+        "operation/guide",
+        "operation/policy",
+        "operation/runbook",
+        "operation/incident",
+        "operation/postmortem",
         "content/reference",
-        "content/audit-reference",
-        "content/research-reference",
-        "content/data-reference",
-        "content/archive",
-        "content/archive-migration",
-        "governance/reference",
+        "reference/audit",
+        "reference/research",
+        "reference/data",
+        "archive/tombstone",
+        "archive/migration",
+        "governance/contract",
+        "governance/control",
+        "governance/provider",
+        "governance/role",
+        "governance/rule",
+        "governance/skill",
         "governance/memory",
         "governance/template-support",
         "governance/progress-ledger",
@@ -282,8 +287,8 @@ _WORK054_WP004B_MIGRATION_PATH = (
     "docs/98.archive/migrations/0004-document-authority-convergence.md"
 )
 MIGRATION_DOCUMENT_MAX_BYTES = 128 * 1024
-MIG0002_DOCUMENT_SHA256 = "847b8dab8f86b0b16b47decbf59dbf355f2fbae2869582626c43d949f61dfdce"  # pragma: allowlist secret
-MIG0003_DOCUMENT_SHA256 = "67ab2340b257e3dee0bca1a5d3bf757038082e2ffec919bece5d977d5eb919fd"  # pragma: allowlist secret
+MIG0002_DOCUMENT_SHA256 = "2cac1634348c9efa985099bb3a2d736609e79849e3aa3d978a8f2a6858a2a45a"  # pragma: allowlist secret
+MIG0003_DOCUMENT_SHA256 = "7baa2a9b2682313d9e8cfc4d3504db14b4985f780f85ff673a4bf535ce4c755e"  # pragma: allowlist secret
 MIG0004_SPEC0054_LEDGER = (
     "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks.md"
 )
@@ -437,7 +442,7 @@ _ARCHIVE_MIGRATION_CONTROLS = {
         "MIG-0001",
         93,
         {"moved": 93},
-        "7d5e02139b32b14b0b32e17f8b53f01757c54584e597de331808276dbf4ad739",  # pragma: allowlist secret -- sealed migration digest
+        "bbc0620bd30c2f870aa6f396ba9f08ac09ba77534ccc783d6e7b73c2b10c4df3",  # pragma: allowlist secret -- sealed migration digest
     ),
     _WORK109_MIGRATION_PATH: (
         "MIG-0002",
@@ -460,12 +465,27 @@ _ARCHIVE_MIGRATION_CONTROLS = {
 }
 _MIGRATION_FRONTMATTER_KEYS = (
     "title",
+    "version",
+    "type",
+    "layer",
+    "status",
+    "owner",
+    "updated",
+    "artifact_id",
+)
+# Reviewed bytes from the generation before the shared key set and the
+# family/kind profile rename. A pinned control is parsed against the generation
+# its digest names, never against a later one.
+_PRIOR_MIGRATION_FRONTMATTER_KEYS = (
+    "title",
     "type",
     "status",
     "owner",
     "updated",
     "artifact_id",
 )
+MIGRATION_TYPE = "archive/migration"
+_PRIOR_MIGRATION_TYPE = "content/archive-migration"
 
 # Reviewed pre-cutover bytes of each pinned control. The retired `migration_id`
 # frontmatter key repeated `artifact_id`, so a control committed before that
@@ -482,20 +502,39 @@ _MIGRATION_LEGACY_BASE_SHA256 = {
 # two cutover commits still verifies.
 _MIGRATION_SUPERSEDED_SHA256 = {
     WORK107_MIGRATION_PATH: (
+        "7d5e02139b32b14b0b32e17f8b53f01757c54584e597de331808276dbf4ad739",  # pragma: allowlist secret -- superseded digest
         "1a2f3264c380f93d435fedf4028a3fb2b843da377e99e2fd4b788dd37df45116",  # pragma: allowlist secret -- superseded digest
         "9d25b3039750bd60c18129ea7fb62576889449407b2f2fb10092b5624e47030f",  # pragma: allowlist secret -- superseded digest
     ),
     _WORK109_MIGRATION_PATH: (
+        "847b8dab8f86b0b16b47decbf59dbf355f2fbae2869582626c43d949f61dfdce",  # pragma: allowlist secret -- superseded digest
         "05527226d8d353f57bac1b346aaa20f1ab1951eeea7f2f570b04dbcabd381265",  # pragma: allowlist secret -- superseded digest
     ),
     _WORK054_WP003_MIGRATION_PATH: (
+        "67ab2340b257e3dee0bca1a5d3bf757038082e2ffec919bece5d977d5eb919fd",  # pragma: allowlist secret -- superseded digest
         "6dd85df46123bb7004b0abf0fc7cd1f1d81fcae5ea66f71f1f07ff1dba904ab2",  # pragma: allowlist secret -- superseded digest
     ),
     _WORK054_WP004B_MIGRATION_PATH: (
+        "870aa210464f9059a4760411d3f8261ab14ae637f0719bd3355b59dd984634c6",  # pragma: allowlist secret -- superseded digest
         "e7eb94fc16f333a3888e8d5c4d5a17cc65a172bf3dbbf4a115b450e73724dd75",  # pragma: allowlist secret -- superseded digest
     ),
 }
-_LEGACY_MIGRATION_FRONTMATTER_KEYS = _MIGRATION_FRONTMATTER_KEYS + ("migration_id",)
+_LEGACY_MIGRATION_FRONTMATTER_KEYS = _PRIOR_MIGRATION_FRONTMATTER_KEYS + (
+    "migration_id",
+)
+# Reviewed generations that still restated the identity inside the title. A
+# later generation dropped that restatement, so the title rule follows the byte
+# generation rather than the fact that a digest is superseded.
+_MIGRATION_TITLE_PREFIXED_SHA256 = frozenset(
+    {
+        *_MIGRATION_LEGACY_BASE_SHA256.values(),
+        "1a2f3264c380f93d435fedf4028a3fb2b843da377e99e2fd4b788dd37df45116",  # pragma: allowlist secret -- superseded digest
+        "9d25b3039750bd60c18129ea7fb62576889449407b2f2fb10092b5624e47030f",  # pragma: allowlist secret -- superseded digest
+        "05527226d8d353f57bac1b346aaa20f1ab1951eeea7f2f570b04dbcabd381265",  # pragma: allowlist secret -- superseded digest
+        "6dd85df46123bb7004b0abf0fc7cd1f1d81fcae5ea66f71f1f07ff1dba904ab2",  # pragma: allowlist secret -- superseded digest
+        "e7eb94fc16f333a3888e8d5c4d5a17cc65a172bf3dbbf4a115b450e73724dd75",  # pragma: allowlist secret -- superseded digest
+    }
+)
 
 
 _GENERIC_MIGRATION_PATH = re.compile(
@@ -1145,7 +1184,7 @@ def validate_migration_records(
                 snapshot_registry, PurePosixPath(path)
             )
             if (
-                profile.profile_id != "content/archive-migration"
+                profile.profile_id != "archive/migration"
                 or snapshot_profile.profile_id != profile.profile_id
                 or snapshot_profile.mode != profile.mode
                 or snapshot_profile.lifecycle_domain != profile.lifecycle_domain
@@ -1806,11 +1845,15 @@ def _migration_control_diagnostics(
     digest = hashlib.sha256(content).hexdigest()
     is_legacy_base = digest == _MIGRATION_LEGACY_BASE_SHA256.get(path)
     is_superseded = digest in _MIGRATION_SUPERSEDED_SHA256.get(path, ())
+    prior_generation = is_legacy_base or is_superseded
     expected_keys = (
         _LEGACY_MIGRATION_FRONTMATTER_KEYS
         if is_legacy_base
+        else _PRIOR_MIGRATION_FRONTMATTER_KEYS
+        if is_superseded
         else _MIGRATION_FRONTMATTER_KEYS
     )
+    expected_type = _PRIOR_MIGRATION_TYPE if prior_generation else MIGRATION_TYPE
     try:
         if (
             expected_sha256 is not None
@@ -1834,13 +1877,13 @@ def _migration_control_diagnostics(
             metadata[key] = value[1:-1]
         if (
             tuple(metadata) != expected_keys
-            or metadata.get("type") != "content/archive-migration"
+            or metadata.get("type") != expected_type
             or metadata.get("status")
             != ("sealed" if path == _WORK054_WP004B_MIGRATION_PATH else "accepted")
             or metadata.get("owner") != "platform"
             or metadata.get("artifact_id") != expected_id
             or metadata.get("title", "").startswith(f"{expected_id}: ")
-            is not (is_legacy_base or is_superseded)
+            is not (digest in _MIGRATION_TITLE_PREFIXED_SHA256)
             or re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", metadata.get("updated", ""))
             is None
         ):
@@ -4159,7 +4202,7 @@ def validate_current_archive_authority(
         migration_control = (
             path in _ARCHIVE_MIGRATION_CONTROLS
             or generic_migration_id(path) is not None
-        ) and document.profile == "content/archive-migration"
+        ) and document.profile == "archive/migration"
         archive_record_path = (
             pure_path.is_relative_to(ARCHIVE_ROOT)
             and pure_path != ARCHIVE_INDEX
@@ -4167,7 +4210,7 @@ def validate_current_archive_authority(
         )
         if current and (
             archive_record_path
-            or document.profile == "content/archive"
+            or document.profile == "archive/tombstone"
             or path in canonical_individuals
         ):
             diagnostics.append(_diagnostic("ARCHIVE-REACTIVATED", path))

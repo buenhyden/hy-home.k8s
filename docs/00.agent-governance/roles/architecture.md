@@ -1,8 +1,7 @@
 ---
 title: 'Architecture Responsibility'
-version: "1.0"
-type: governance/reference
-layer: "00.agent-governance"
+version: "1.0.0"
+type: governance/role
 status: active
 owner: platform
 updated: 2026-08-28

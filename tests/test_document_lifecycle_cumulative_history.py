@@ -46,16 +46,16 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         registry_path = Path("docs/99.templates/registry.json")
         raw_registry = json.loads((ROOT / registry_path).read_text())
         selected = {
-            "governance/reference",
-            "sdlc/ad",
+            "governance/contract",
+            "sdlc/architecture-description",
             "sdlc/data-model",
             "sdlc/plan",
-            "content/archive",
+            "archive/tombstone",
         }
         for domain in raw_registry["programLineage"]["lifecycleDomains"]:
             selected.add(
-                "content/archive-migration"
-                if "content/archive-migration" in domain["profileIds"]
+                "archive/migration"
+                if "archive/migration" in domain["profileIds"]
                 else domain["profileIds"][0]
             )
             domain["profileIds"] = [
@@ -130,7 +130,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         return (
             "---\n"
             "title: 'Cumulative history'\n"
-            "type: governance/reference\n"
+            "type: governance/contract\n"
             f"status: {status}\n"
             "owner: platform\n"
             "updated: 2026-08-31\n"
@@ -213,13 +213,13 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         active = self.commit("active")
         path = PurePosixPath(self.path)
         create = LifecycleDiagnostic(
-            "FAIL", "LIFECYCLE-CREATE", path, "governance/reference", "draft", "active", "explicit-ref", ""
+            "FAIL", "LIFECYCLE-CREATE", path, "governance/contract", "draft", "active", "explicit-ref", ""
         )
         duplicate = LifecycleDiagnostic(
-            "FAIL", "LIFECYCLE-CREATE", path, "governance/reference", "draft", "active", "explicit-ref", "duplicate"
+            "FAIL", "LIFECYCLE-CREATE", path, "governance/contract", "draft", "active", "explicit-ref", "duplicate"
         )
         other = LifecycleDiagnostic(
-            "FAIL", "LIFECYCLE-EVIDENCE", path, "governance/reference", "evidence", "missing", "explicit-ref", "missing"
+            "FAIL", "LIFECYCLE-EVIDENCE", path, "governance/contract", "evidence", "missing", "explicit-ref", "missing"
         )
 
         actual = VALIDATOR._admit_cumulative_create_diagnostics(
@@ -366,7 +366,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self.commit("draft")
         active = self.commit("active")
         missing = LifecycleDiagnostic(
-            "FAIL", "LIFECYCLE-EVIDENCE", PurePosixPath(self.path), "governance/reference", "evidence", "missing", "explicit-ref", "missing"
+            "FAIL", "LIFECYCLE-EVIDENCE", PurePosixPath(self.path), "governance/contract", "evidence", "missing", "explicit-ref", "missing"
         )
         with mock.patch.object(
             VALIDATOR, "_history_event_diagnostics", return_value=(missing,)
@@ -391,7 +391,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self.git.run("reset", "--hard", self.base)
         self.commit("draft")
         mismatched = self.document("draft").replace(
-            b"type: governance/reference", b"type: sdlc/ad"
+            b"type: governance/contract", b"type: sdlc/architecture-description"
         )
         self.git.commit(self.path, mismatched)
         active = self.commit("active")
@@ -407,10 +407,10 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         active = self.commit_path(second, "active")
         candidates = (
             LifecycleDiagnostic(
-                "FAIL", "LIFECYCLE-CREATE", PurePosixPath(self.path), "governance/reference", "draft", "active", "explicit-ref", ""
+                "FAIL", "LIFECYCLE-CREATE", PurePosixPath(self.path), "governance/contract", "draft", "active", "explicit-ref", ""
             ),
             LifecycleDiagnostic(
-                "FAIL", "LIFECYCLE-CREATE", PurePosixPath(second), "governance/reference", "draft", "active", "explicit-ref", ""
+                "FAIL", "LIFECYCLE-CREATE", PurePosixPath(second), "governance/contract", "draft", "active", "explicit-ref", ""
             ),
         )
         blobs = {

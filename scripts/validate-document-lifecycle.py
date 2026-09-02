@@ -54,6 +54,7 @@ from document_lifecycle import (
     LifecycleEvidenceDocument,
     LifecycleRename,
     MigrationLifecycleEvents,
+    RETIRED_DOCUMENT_TYPES,
     compare_lifecycle,
     document_from_text,
     lifecycle_diagnostic_sort_key,
@@ -145,8 +146,8 @@ WORK105_RETIRED_PROFILE_IDS = frozenset(
 )
 WORK105_TERMINAL_PROFILE_IDS = frozenset(
     {
-        "sdlc/ad",
-        "template/sdlc/ad",
+        "sdlc/architecture-description",
+        "template/sdlc/architecture-description",
         "sdlc/interface",
         "template/sdlc/interface",
         "sdlc/srs",
@@ -303,7 +304,7 @@ WORK054_WP003_MIGRATION_PATH = PurePosixPath(
     "docs/98.archive/migrations/"
     "0003-agent-governance-control-plane-consolidation.md"
 )
-WORK054_WP003_MIGRATION_SHA256 = "67ab2340b257e3dee0bca1a5d3bf757038082e2ffec919bece5d977d5eb919fd"  # pragma: allowlist secret
+WORK054_WP003_MIGRATION_SHA256 = "7baa2a9b2682313d9e8cfc4d3504db14b4985f780f85ff673a4bf535ce4c755e"  # pragma: allowlist secret
 WORK054_WP003_LEDGER_KEYS = WORK054_WP002_LEDGER_KEYS
 WORK054_WP003_OWNER_RETIREMENTS = (
     {
@@ -361,7 +362,7 @@ WORK054_WP004B_MIGRATION_PATH = PurePosixPath(
 WORK054_WP004B_REQUIREMENT_PROFILES = frozenset(
     {"sdlc/prd", "sdlc/srs", "sdlc/interface"}
 )
-WORK054_WP004B_REQUIREMENT_PACKAGE_PROFILE = "sdlc/requirement-package"
+WORK054_WP004B_REQUIREMENT_PACKAGE_PROFILE = "sdlc/requirement"
 WORK054_WP004B_ROUTER_PATTERN = re.compile(
     r"^docs/03\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/README\.md$"
 )
@@ -498,7 +499,7 @@ def finite_work105_form_cutover_paths(
             or old_path in proposed_documents
             or new_path in base_documents
             or proposed_documents.get(new_path)
-            != LifecycleDocument(new_path, "sdlc/ad", status)
+            != LifecycleDocument(new_path, "sdlc/architecture-description", status)
         ):
             return frozenset()
         old_ad_paths.add(old_path)
@@ -515,7 +516,7 @@ def finite_work105_form_cutover_paths(
         or {
             path
             for path, document in proposed_documents.items()
-            if document.profile_id == "sdlc/ad"
+            if document.profile_id == "sdlc/architecture-description"
         }
         != new_ad_paths
         or any(
@@ -543,7 +544,7 @@ def finite_work105_form_cutover_paths(
         ),
         (
             "docs/99.templates/templates/sdlc/architecture/ad.template.md",
-            "template/sdlc/ad",
+            "template/sdlc/architecture-description",
             "proposed",
         ),
         (
@@ -829,7 +830,7 @@ def _work054_wp004b_admission(
         proposed_registry,
         WORK054_WP004B_MIGRATION_PATH,
         migration_oid,
-        profile_id="content/archive-migration",
+        profile_id="archive/migration",
         status="sealed",
         artifact_id="MIG-0004",
         blob_reader=read_blob,
@@ -842,7 +843,7 @@ def _work054_wp004b_admission(
         (
             WORK054_WP004B_MIGRATION_PATH,
             "LIFECYCLE-CREATE",
-            "content/archive-migration",
+            "archive/migration",
             "absent -> sealed",
         )
     }
@@ -956,7 +957,7 @@ def _work054_wp004b_admission(
                     base_registry,
                     legacy,
                     source_blob,
-                    profile_id="sdlc/ad",
+                    profile_id="sdlc/architecture-description",
                     status=base_status,
                     artifact_id=str(identity),
                     blob_reader=read_blob,
@@ -967,7 +968,7 @@ def _work054_wp004b_admission(
                     proposed_registry,
                     target,
                     proposed_blobs[target],
-                    profile_id="sdlc/ad",
+                    profile_id="sdlc/architecture-description",
                     status=base_status,
                     artifact_id=str(identity),
                     blob_reader=read_blob,
@@ -982,7 +983,7 @@ def _work054_wp004b_admission(
                     (
                         target,
                         "LIFECYCLE-RENAME",
-                        "sdlc/ad",
+                        "sdlc/architecture-description",
                         f"{legacy.as_posix()} -> {target.as_posix()}",
                     )
                 )
@@ -992,13 +993,13 @@ def _work054_wp004b_admission(
                         (
                             legacy,
                             "LIFECYCLE-DELETE",
-                            "sdlc/ad",
+                            "sdlc/architecture-description",
                             f"{base_status} -> absent",
                         ),
                         (
                             target,
                             "LIFECYCLE-CREATE",
-                            "sdlc/ad",
+                            "sdlc/architecture-description",
                             f"absent -> {base_status}",
                         ),
                     }
@@ -1518,6 +1519,111 @@ def declared_archive_rehome_paths(
         ):
             return frozenset()
         admitted.add(source_path)
+    return frozenset(admitted)
+
+
+# The shared frontmatter key set gave every archive record the same `version`
+# and `layer` keys, and the archive family's profile identity became
+# `archive/tombstone`. The sealed payload below the envelope is untouched, so
+# every `content_sha256` still verifies. Archive records stay byte-immutable
+# against every other change: only these exact reviewed base -> proposed byte
+# pairs are admitted, all seventeen or none.
+_ARCHIVE_NORMALIZATION: dict[str, tuple[str, str]] = {
+    "docs/98.archive/tombstones/01.requirements/0001-wsl-k3d-argocd-platform.md": (
+        "a41cb18ebf4724bdf5c8590c3e2ab386b70bd486bbde47ea546a94046f83fa85",  # pragma: allowlist secret -- sealed base digest
+        "4e43cbd06e48500c9f3bbead256b45356957219bc971a402d2b2c6a772a5f876",  # pragma: allowlist secret -- normalized digest
+    ),
+    "docs/98.archive/tombstones/01.requirements/0002-wsl2-k3d-argocd-ha-platform.md": (
+        "f7ba72179970cac74816f428d673f37bfcb9d211a1d5975ba7cdade923b86367",  # pragma: allowlist secret -- sealed base digest
+        "637e9e67f449a2ea18c62559ca222aa5656d424b01b70904ac8d5ee1ce49ba09",  # pragma: allowlist secret -- normalized digest
+    ),
+    "docs/98.archive/tombstones/01.requirements/0003-platform-expansion-dashboard-mesh.md": (
+        "58a5125b27aa177ccc9b4a2eb4dcafdb6c228591e5a4a067237ef48d9af92417",  # pragma: allowlist secret -- sealed base digest
+        "73a0dbc69cc91b5a05e3beb09003c6826ad8974ea87fb1bf4b473ccc9f5dc4f6",  # pragma: allowlist secret -- normalized digest
+    ),
+    "docs/98.archive/tombstones/02.architecture/0001-k3d-topology-and-network.md": (
+        "53f4916d68deaaf6119885aabe0f80b6e4fd1122899f0f44a105cadb42862847",  # pragma: allowlist secret -- sealed base digest
+        "336a44351a6472674c55f01d23261d262c4452c8e93ca1a082e65db047064743",  # pragma: allowlist secret -- normalized digest
+    ),
+    "docs/98.archive/tombstones/02.architecture/0001-wsl-k3d-argocd-platform.md": (
+        "5cfbf95f7385d11dfbc36f42843ca0e2f0bf1b18d29e7574ce0803800a721f8e",  # pragma: allowlist secret -- sealed base digest
+        "b13f253197369d21a019d18d8ac441b3186f29eed08c4f89d627e2ef07037f75",  # pragma: allowlist secret -- normalized digest
+    ),
+    "docs/98.archive/tombstones/02.architecture/0002-wsl2-k3d-argocd-ha-platform.md": (
+        "66779448d5636c690fe3e423ee3a1fa24ec3b5413b52db535a7bb601278f0ec8",  # pragma: allowlist secret -- sealed base digest
+        "d04ec775fd8aa8b9c8604b76ba97017717965dc00d70c7f1568096cb7f75ef30",  # pragma: allowlist secret -- normalized digest
+    ),
+    "docs/98.archive/tombstones/02.architecture/0003-platform-expansion-mesh-dashboard.md": (
+        "a6abe2b58911ffadd981f4c6caa84f580e79c1f2b7ac3fe9a3d45b65d371aac7",  # pragma: allowlist secret -- sealed base digest
+        "66a18fd86e264c6522654382a3e3b2a0b1435c5aece7ed98d7746a297dc18046",  # pragma: allowlist secret -- normalized digest
+    ),
+    "docs/98.archive/tombstones/02.architecture/0004-external-services-endpoints-and-valkey-backend.md": (
+        "09a3d613ff3416079dc143c6cde66be4eb39d4d5ac988d22f7d2a1e2c8bf5c0c",  # pragma: allowlist secret -- sealed base digest
+        "b0af3db33014aaccac22afb83b87cf749808ea497335f6fa409e13cf0b6b8ef9",  # pragma: allowlist secret -- normalized digest
+    ),
+    "docs/98.archive/tombstones/02.architecture/0005-wsl2-ha-baseline-and-external-endpoint-contract.md": (
+        "24b4437e3b0c5681328fcf936f4555853612c96e1a2bc9706fbb19215e406b16",  # pragma: allowlist secret -- sealed base digest
+        "a8ca737853057933403a27bb7f91e421cd7105711c75cb46bff6a609245040ef",  # pragma: allowlist secret -- normalized digest
+    ),
+    "docs/98.archive/tombstones/02.architecture/0007-kubernetes-dashboard-v3.md": (
+        "f832239a7b7225ecb12f627724f08a4c88e41e6d420007d8dd675fbeac9acf38",  # pragma: allowlist secret -- sealed base digest
+        "4ac8522cb93d4db90c21fc6d269540d7a17748ab1446087a43e6023e9698869c",  # pragma: allowlist secret -- normalized digest
+    ),
+    "docs/98.archive/tombstones/02.architecture/0010-headlamp-replaces-dashboard.md": (
+        "f96da0e330b72cb2dba4f05ef8a6c4ad0716533c99f100863e22e54c4672fac7",  # pragma: allowlist secret -- sealed base digest
+        "90a01ba9b580cf65fce2ddfcabeedef39d1ac29311888f2a83173021c4f41012",  # pragma: allowlist secret -- normalized digest
+    ),
+    "docs/98.archive/tombstones/03.specs/0001-wsl-k3d-argocd-platform.md": (
+        "a9892fa9c5ae3aad3c66fce3db5942c13ace8c9c5e74b732240340d235e32c16",  # pragma: allowlist secret -- sealed base digest
+        "e843f8b98a664f43335af929a50739e173086fac3476cff62f317edac9e36a20",  # pragma: allowlist secret -- normalized digest
+    ),
+    "docs/98.archive/tombstones/03.specs/0002-wsl2-k3d-argocd-ha-platform.md": (
+        "efc440a05e9b0207b41268f80c98a73536e61498a29f218cf34057629aadcb2e",  # pragma: allowlist secret -- sealed base digest
+        "07d944aca0f99c4ebd352366e8ed860f67ccfa58a52fefe68122bfe5064733a7",  # pragma: allowlist secret -- normalized digest
+    ),
+    "docs/98.archive/tombstones/03.specs/0003-platform-expansion.md": (
+        "fcb871124bc12d904cb7964713a5c9100ef03102db206c9b967820a977c36ad3",  # pragma: allowlist secret -- sealed base digest
+        "27123a0b202e09562aefcde10827b890997915fca9042ed72dd2ac8ac68d8671",  # pragma: allowlist secret -- normalized digest
+    ),
+    "docs/98.archive/tombstones/03.specs/0007-docs-governance-consistency.md": (
+        "7ef73d636b535fd514323bbfca89ae8cb61cb0eec6609294cd65882f12ba27b9",  # pragma: allowlist secret -- sealed base digest
+        "2b19853654b10e4221fb1cac83c921f96f0cb312e635321db597c0784d182e54",  # pragma: allowlist secret -- normalized digest
+    ),
+    "docs/98.archive/tombstones/05.operations/0004-headlamp-auth-oidc-guide.md": (
+        "316a1f1c0695154b4363e85267ba5470fd683244e2d144686c9f1a6e5c777867",  # pragma: allowlist secret -- sealed base digest
+        "e1123d3639f58e157c05f1372cb15e736551921b5ccbec279e7af207b3194f0c",  # pragma: allowlist secret -- normalized digest
+    ),
+    "docs/98.archive/tombstones/05.operations/0005-headlamp-keycloak-runbook.md": (
+        "621a2b8749e3128693680477ca459509191c9e34f349328ebcc9d76857986cd7",  # pragma: allowlist secret -- sealed base digest
+        "a7f0d10c433a281b06b878de2a5897de732541d2fe8c4f9949a81480f5b45302",  # pragma: allowlist secret -- normalized digest
+    ),
+}
+
+
+def declared_archive_normalization_paths(
+    *,
+    root: Path,
+    base_blobs: Mapping[PurePosixPath, str],
+    proposed_blobs: Mapping[PurePosixPath, str],
+) -> frozenset[PurePosixPath]:
+    """Admit the envelope normalization only when every declared pair is exact."""
+
+    admitted: set[PurePosixPath] = set()
+    for source, (base_digest, proposed_digest) in _ARCHIVE_NORMALIZATION.items():
+        path = PurePosixPath(source)
+        base_oid = base_blobs.get(path)
+        proposed_oid = proposed_blobs.get(path)
+        if base_oid is None or proposed_oid is None:
+            # The normalization already landed in an earlier commit, so this
+            # declaration has nothing left to admit. A mismatch still fails closed.
+            continue
+        if (
+            hashlib.sha256(_blob_bytes(root, base_oid)).hexdigest() != base_digest
+            or hashlib.sha256(_blob_bytes(root, proposed_oid)).hexdigest()
+            != proposed_digest
+        ):
+            return frozenset()
+        admitted.add(path)
     return frozenset(admitted)
 
 
@@ -2104,7 +2210,7 @@ def finite_work054_wp002_transition_paths(
         or decision_document
         != LifecycleDocument(
             WORK054_WP002_DECISION_PATH,
-            "sdlc/adr",
+            "sdlc/architecture-decision",
             "accepted",
         )
         or _work054_wp002_frontmatter_value(raw_decision, "artifact_id") != "ADR-0025"
@@ -2193,7 +2299,7 @@ def finite_work054_wp004a_authority_paths(
     ):
         return frozenset()
     expected = {
-        path: LifecycleDocument(path, "governance/reference", "active")
+        path: LifecycleDocument(path, "governance/rule", "active")
         for path in WORK054_WP004A_OWNER_PATHS
     }
     if any(
@@ -2392,7 +2498,7 @@ def _archive_cutover_fixture_inputs(
         unrelated = PurePosixPath("docs/03.specs/0999-unrelated/spec.md")
         base_documents[unrelated] = LifecycleDocument(unrelated, "sdlc/spec", "active")
         proposed_documents[unrelated] = LifecycleDocument(
-            unrelated, "sdlc/guide", "active"
+            unrelated, "operation/guide", "active"
         )
     elif mutation != "exact":
         raise ValueError(f"unknown archive cutover fixture mutation: {mutation}")
@@ -2527,7 +2633,7 @@ def _work105_form_cutover_fixture_inputs(
         old_path = PurePosixPath(f"docs/02.architecture/requirements/{token}.md")
         new_path = PurePosixPath(f"docs/02.architecture/descriptions/ad-{token}.md")
         base_documents[old_path] = LifecycleDocument(old_path, "sdlc/ard", status)
-        proposed_documents[new_path] = LifecycleDocument(new_path, "sdlc/ad", status)
+        proposed_documents[new_path] = LifecycleDocument(new_path, "sdlc/architecture-description", status)
 
     exact_forms = (
         (
@@ -2551,7 +2657,7 @@ def _work105_form_cutover_fixture_inputs(
             PurePosixPath(
                 "docs/99.templates/templates/sdlc/architecture/ad.template.md"
             ),
-            "template/sdlc/ad",
+            "template/sdlc/architecture-description",
             proposed_documents,
         ),
         (
@@ -2613,13 +2719,13 @@ def _work105_form_cutover_fixture_inputs(
         )
     elif mutation == "extra-ad":
         path = PurePosixPath("docs/02.architecture/descriptions/ad-9999-extra.md")
-        proposed_documents[path] = LifecycleDocument(path, "sdlc/ad", "active")
+        proposed_documents[path] = LifecycleDocument(path, "sdlc/architecture-description", "active")
     elif mutation == "wrong-status":
         path = PurePosixPath(
             "docs/02.architecture/descriptions/"
             "ad-0004-argo-rollouts-progressive-delivery.md"
         )
-        proposed_documents[path] = LifecycleDocument(path, "sdlc/ad", "accepted")
+        proposed_documents[path] = LifecycleDocument(path, "sdlc/architecture-description", "accepted")
     elif mutation == "missing-form":
         proposed_documents.pop(
             PurePosixPath(
@@ -2658,7 +2764,7 @@ def _work105_decision_evidence_fixture_inputs(
         root, WORK105_ADR0023_PROPOSED_BLOB_OID, WORK105_ADR0023_PATH
     )
     assert base_text is not None and proposed_text is not None
-    exact_document = LifecycleDocument(WORK105_ADR0023_PATH, "sdlc/adr", "accepted")
+    exact_document = LifecycleDocument(WORK105_ADR0023_PATH, "sdlc/architecture-decision", "accepted")
     path = WORK105_ADR0023_PATH
     base_document: LifecycleDocument | None = exact_document
     proposed_document = exact_document
@@ -2669,7 +2775,7 @@ def _work105_decision_evidence_fixture_inputs(
     if mutation == "wrong-owner":
         path = WORK105_ADR0024_PATH
     elif mutation == "wrong-base-profile":
-        base_document = replace(exact_document, profile_id="sdlc/ad")
+        base_document = replace(exact_document, profile_id="sdlc/architecture-description")
     elif mutation == "wrong-proposed-status":
         proposed_document = replace(exact_document, status="active")
     elif mutation == "base-blob-drift":
@@ -3196,7 +3302,7 @@ def _migration_immutability_diagnostics(
             profile = classify_path(registry, path)
         except DocumentContractError:
             continue
-        if profile.profile_id != "content/archive-migration":
+        if profile.profile_id != "archive/migration":
             continue
         text = _blob_text(root, oid, path)
         assert text is not None
@@ -3353,10 +3459,77 @@ _MIGRATION_DOMAIN_KEY_RESEAL: dict[str, tuple[tuple[str, str], ...]] = {
 }
 
 
-def _is_declared_reseal(path: PurePosixPath, base: str, proposed: str | None) -> bool:
-    """Admit only the reviewed byte pair declared for the retired domain key."""
+# A second declared re-seal: the shared frontmatter key set gave every profile
+# the same `version` and `layer` keys, and the archive family's profile identity
+# became `archive/migration`. Sealed Migrations stay byte-immutable against every
+# other change; only these exact reviewed base -> proposed byte pairs are
+# admitted, once.
+_MIGRATION_SHARED_KEY_RESEAL: dict[str, tuple[tuple[str, str], ...]] = {
+    "docs/98.archive/migrations/0001-sdlc-taxonomy-convergence.md": (
+        (
+            "7d5e02139b32b14b0b32e17f8b53f01757c54584e597de331808276dbf4ad739",  # pragma: allowlist secret -- sealed base digest
+            "bbc0620bd30c2f870aa6f396ba9f08ac09ba77534ccc783d6e7b73c2b10c4df3",  # pragma: allowlist secret -- re-sealed digest
+        ),
+    ),
+    "docs/98.archive/migrations/0002-sdlc-document-and-governance-consolidation.md": (
+        (
+            "847b8dab8f86b0b16b47decbf59dbf355f2fbae2869582626c43d949f61dfdce",  # pragma: allowlist secret -- sealed base digest
+            "2cac1634348c9efa985099bb3a2d736609e79849e3aa3d978a8f2a6858a2a45a",  # pragma: allowlist secret -- re-sealed digest
+        ),
+    ),
+    "docs/98.archive/migrations/0003-agent-governance-control-plane-consolidation.md": (
+        (
+            "67ab2340b257e3dee0bca1a5d3bf757038082e2ffec919bece5d977d5eb919fd",  # pragma: allowlist secret -- sealed base digest
+            "7baa2a9b2682313d9e8cfc4d3504db14b4985f780f85ff673a4bf535ce4c755e",  # pragma: allowlist secret -- re-sealed digest
+        ),
+    ),
+    "docs/98.archive/migrations/0004-document-authority-convergence.md": (
+        (
+            "870aa210464f9059a4760411d3f8261ab14ae637f0719bd3355b59dd984634c6",  # pragma: allowlist secret -- sealed base digest
+            "13ddbddac9c5ce8b50fbab900da20d43d29770113e7c2292db81799df6566b33",  # pragma: allowlist secret -- re-sealed digest
+        ),
+    ),
+    "docs/98.archive/migrations/0005-codex-claude-agent-governance-convergence.md": (
+        (
+            "3271e0c9e4cd6698a40736a49334c1186fb958106b62dc1070c520752c850c99",  # pragma: allowlist secret -- sealed base digest
+            "628753b0544558b5abd6863da3adf33f9cede484fd36cdce3a8a02330ed42f99",  # pragma: allowlist secret -- re-sealed digest
+        ),
+    ),
+    "docs/98.archive/migrations/0006-unroutable-reference-profile-retirement.md": (
+        (
+            "36a17557ddbd1afa7e25fc104b11bbc9d46eacddc00eb5928163150244a25ba7",  # pragma: allowlist secret -- sealed base digest
+            "403d318b65732ee70afbe63bf1311d5628145d87e10e2b2cab4c997e06d1548b",  # pragma: allowlist secret -- re-sealed digest
+        ),
+    ),
+    "docs/98.archive/migrations/0007-agent-progress-ledger-retirement.md": (
+        (
+            "3f4e86833f3b22f891c6ca21ec57467225d697e83d7cb2b97da34c3bd7347055",  # pragma: allowlist secret -- sealed base digest
+            "ba034edf349fb9f829d7b2429eb8c1eb02c51d8ee063de8286bb3172497b2f38",  # pragma: allowlist secret -- re-sealed digest
+        ),
+    ),
+    "docs/98.archive/migrations/0008-progress-append-form-retirement.md": (
+        (
+            "385fc26a65ae0a13c1764f433a524b789a75ceb28cdca968bc2254fe6bb05925",  # pragma: allowlist secret -- sealed base digest
+            "1dc87b772b16b466973f5b8c4fc2d915245bfc8772090f2d6fe3a770555725eb",  # pragma: allowlist secret -- re-sealed digest
+        ),
+    ),
+    "docs/98.archive/migrations/0009-governance-memory-retirement.md": (
+        (
+            "355324d455205d9840c6475f635b5717fdaba3a32541be8fe894b367f3cd27b3",  # pragma: allowlist secret -- sealed base digest
+            "41f1d334ab613c5e118b83190c413765bb6c26a278b26d916b35ef0be26b3352",  # pragma: allowlist secret -- re-sealed digest
+        ),
+    ),
+}
 
-    pins = _MIGRATION_DOMAIN_KEY_RESEAL.get(path.as_posix(), ())
+
+def _is_declared_reseal(path: PurePosixPath, base: str, proposed: str | None) -> bool:
+    """Admit only a reviewed byte pair declared for one retired frontmatter form."""
+
+    key = path.as_posix()
+    pins = (
+        *_MIGRATION_DOMAIN_KEY_RESEAL.get(key, ()),
+        *_MIGRATION_SHARED_KEY_RESEAL.get(key, ()),
+    )
     return proposed is not None and (base, proposed) in pins
 
 
@@ -3377,7 +3550,7 @@ def _migration_lifecycle_events(
         path.as_posix(): proposed_texts[path].encode("utf-8")
         for path, document in proposed_documents.items()
         if generic_migration_id(path.as_posix()) is not None
-        and document.profile_id == "content/archive-migration"
+        and document.profile_id == "archive/migration"
         and document.status == "sealed"
     }
     # A declared archive rehome is reviewed on its own evidence, so it survives
@@ -3533,22 +3706,53 @@ def _classification_registry(
     aliases = {
         LEGACY_ARCHIVE_PROFILE: ARCHIVE_PROFILE,
         LEGACY_ARCHIVE_TEMPLATE_PROFILE: ARCHIVE_TEMPLATE_PROFILE,
-        "sdlc/ard": "sdlc/ad",  # Retired WORK-105 comparison alias.
-        "template/sdlc/ard": "template/sdlc/ad",  # Retired comparison alias.
-        "sdlc/prd": "sdlc/requirement-package",  # Retired WP-004B alias.
-        "sdlc/srs": "sdlc/requirement-package",  # Retired WP-004B alias.
-        "sdlc/interface": "sdlc/requirement-package",  # Retired WP-004B alias.
-        "sdlc/api-spec": "sdlc/requirement-package",  # Retired comparison alias.
+        "sdlc/ard": "sdlc/architecture-description",  # Retired WORK-105 comparison alias.
+        # Retired by the family/kind profile rename. A base-commit registry
+        # still projects onto the current lifecycle contract through these.
+        "sdlc/ad": "sdlc/architecture-description",
+        "sdlc/adr": "sdlc/architecture-decision",
+        "sdlc/requirement-package": "sdlc/requirement",
+        "sdlc/guide": "operation/guide",
+        "sdlc/policy": "operation/policy",
+        "sdlc/runbook": "operation/runbook",
+        "sdlc/incident": "operation/incident",
+        "sdlc/postmortem": "operation/postmortem",
+        "content/audit-reference": "reference/audit",
+        "content/research-reference": "reference/research",
+        "content/data-reference": "reference/data",
+        "content/archive": ARCHIVE_PROFILE,
+        "content/archive-migration": "archive/migration",
+        "governance/reference": "governance/rule",
+        "template/sdlc/ad": "template/sdlc/architecture-description",
+        "template/sdlc/adr": "template/sdlc/architecture-decision",
+        "template/sdlc/requirement-package": "template/sdlc/requirement",
+        "template/sdlc/guide": "template/operation/guide",
+        "template/sdlc/policy": "template/operation/policy",
+        "template/sdlc/runbook": "template/operation/runbook",
+        "template/sdlc/incident": "template/operation/incident",
+        "template/sdlc/postmortem": "template/operation/postmortem",
+        "template/content/audit-reference": "template/reference/audit",
+        "template/content/research-reference": "template/reference/research",
+        "template/content/data-reference": "template/reference/data",
+        "template/content/archive": ARCHIVE_TEMPLATE_PROFILE,
+        "template/content/archive-migration": "template/archive/migration",
+        "template/governance/reference": "template/governance/rule",
+        "template/exception/local-agent-asset": "exception/local-agent-asset",
+        "template/sdlc/ard": "template/sdlc/architecture-description",  # Retired comparison alias.
+        "sdlc/prd": "sdlc/requirement",  # Retired WP-004B alias.
+        "sdlc/srs": "sdlc/requirement",  # Retired WP-004B alias.
+        "sdlc/interface": "sdlc/requirement",  # Retired WP-004B alias.
+        "sdlc/api-spec": "sdlc/requirement",  # Retired comparison alias.
         "sdlc/agent-design": "sdlc/spec",  # Retired WP-004C alias.
         "sdlc/tests": "sdlc/spec",  # Retired WP-004C alias.
-        "governance/template-support": "governance/reference",  # Retired WP-004C alias.
-        "template/sdlc/api-spec": "template/sdlc/requirement-package",  # Retired alias.
-        "template/sdlc/prd": "template/sdlc/requirement-package",  # Retired WP-004C alias.
-        "template/sdlc/srs": "template/sdlc/requirement-package",  # Retired WP-004C alias.
-        "template/sdlc/interface": "template/sdlc/requirement-package",  # Retired WP-004C alias.
+        "governance/template-support": "governance/rule",  # Retired WP-004C alias.
+        "template/sdlc/api-spec": "template/sdlc/requirement",  # Retired alias.
+        "template/sdlc/prd": "template/sdlc/requirement",  # Retired WP-004C alias.
+        "template/sdlc/srs": "template/sdlc/requirement",  # Retired WP-004C alias.
+        "template/sdlc/interface": "template/sdlc/requirement",  # Retired WP-004C alias.
         "template/sdlc/agent-design": "template/sdlc/spec",  # Retired WP-004C alias.
         "template/sdlc/tests": "template/sdlc/spec",  # Retired WP-004C alias.
-        "template/governance/template-support": "template/governance/reference",  # Retired WP-004C alias.
+        "template/governance/template-support": "template/governance/rule",  # Retired WP-004C alias.
     }
     projected: list[DocumentProfile] = []
     for raw_profile in raw_profiles:
@@ -3605,6 +3809,8 @@ def _snapshot_projection(
     root: Path,
     registry: Registry,
     blobs: Mapping[PurePosixPath, str],
+    *,
+    historical: bool = False,
 ) -> tuple[Mapping[PurePosixPath, LifecycleDocument], Mapping[PurePosixPath, str]]:
     documents: dict[PurePosixPath, LifecycleDocument] = {}
     texts: dict[PurePosixPath, str] = {}
@@ -3613,7 +3819,12 @@ def _snapshot_projection(
         assert text is not None
         texts[path] = text
         try:
-            documents[path] = document_from_text(registry, path, text)
+            documents[path] = document_from_text(
+                registry,
+                path,
+                text,
+                retired_types=RETIRED_DOCUMENT_TYPES if historical else None,
+            )
         except DocumentContractError:
             documents[path] = LifecycleDocument(
                 path=path,
@@ -3644,7 +3855,7 @@ def _work105_predecessor_unresolved_links(
 ) -> tuple[PurePosixPath, ...]:
     """Admit only WORK-105's blob-pinned reciprocal predecessor evidence."""
 
-    exact_document = LifecycleDocument(WORK105_ADR0023_PATH, "sdlc/adr", "accepted")
+    exact_document = LifecycleDocument(WORK105_ADR0023_PATH, "sdlc/architecture-decision", "accepted")
     exact = (
         path == WORK105_ADR0023_PATH
         and base_document == exact_document
@@ -3787,12 +3998,19 @@ def _comparison_documents(
         registry: Registry,
         path: PurePosixPath,
         oid: str | None,
+        *,
+        historical: bool = False,
     ) -> LifecycleDocument | None:
         text = _blob_text(root, oid, path)
         if text is None:
             return None
         try:
-            return document_from_text(registry, path, text)
+            return document_from_text(
+                registry,
+                path,
+                text,
+                retired_types=RETIRED_DOCUMENT_TYPES if historical else None,
+            )
         except DocumentContractError:
             return LifecycleDocument(
                 path=path,
@@ -3804,7 +4022,12 @@ def _comparison_documents(
     for change in changes:
         if change.kind == "R":
             assert change.old_path is not None
-            base = load(base_registry, change.old_path, base_oid(change.old_path))
+            base = load(
+                base_registry,
+                change.old_path,
+                base_oid(change.old_path),
+                historical=True,
+            )
             proposed = load(proposed_registry, change.path, proposed_oid(change.path))
             if base is None or proposed is None:
                 raise InvocationError("exact rename lacks a base or proposed blob")
@@ -3817,12 +4040,16 @@ def _comparison_documents(
                 raise InvocationError(f"added path lacks proposed blob: {change.path}")
             proposed_documents[change.path] = proposed
         elif change.kind == "D":
-            base = load(base_registry, change.path, base_oid(change.path))
+            base = load(
+                base_registry, change.path, base_oid(change.path), historical=True
+            )
             if base is None:
                 raise InvocationError(f"deleted path lacks base blob: {change.path}")
             base_documents[change.path] = base
         else:
-            base = load(base_registry, change.path, base_oid(change.path))
+            base = load(
+                base_registry, change.path, base_oid(change.path), historical=True
+            )
             proposed = load(proposed_registry, change.path, proposed_oid(change.path))
             if base is None or proposed is None:
                 raise InvocationError(
@@ -4065,7 +4292,9 @@ class _CumulativeHistoryCache:
                     del self.evidence[key]
         if self.cached_snapshot_bytes + size > CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES:
             raise _CumulativeHistoryBudgetExceeded
-        snapshot = _snapshot_projection(self.root, self.registry, blobs)
+        snapshot = _snapshot_projection(
+            self.root, self.registry, blobs, historical=True
+        )
         self.snapshot_work_bytes += size
         self.snapshots[commit] = snapshot
         self.snapshot_sizes[commit] = size
@@ -4373,6 +4602,8 @@ def _evaluate_comparison(
     )
     archive_rehome_consumed_paths = declared_archive_rehome_paths(
         root=root, base_blobs=base_blobs, proposed_blobs=proposed_blobs
+    ) | declared_archive_normalization_paths(
+        root=root, base_blobs=base_blobs, proposed_blobs=proposed_blobs
     )
 
     immutability_diagnostics = _archive_immutability_diagnostics(
@@ -4408,7 +4639,7 @@ def _evaluate_comparison(
     )
     work054_wp004a_consumed_paths: frozenset[PurePosixPath] = frozenset()
     base_snapshot, base_texts = _snapshot_projection(
-        root, base_classification_registry, base_blobs
+        root, base_classification_registry, base_blobs, historical=True
     )
     proposed_snapshot, proposed_texts = _snapshot_projection(
         root, proposed_classification_registry, proposed_blobs

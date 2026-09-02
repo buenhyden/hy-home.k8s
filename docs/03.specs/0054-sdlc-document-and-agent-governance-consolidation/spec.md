@@ -1,8 +1,8 @@
 ---
 title: 'SDLC Document and AI Agent Governance Consolidation Technical Specification'
-version: "1.0"
+version: "1.0.0"
 type: sdlc/spec
-layer: "03.specs"
+layer: "specs"
 status: active
 owner: platform
 updated: 2026-09-01

@@ -1,13 +1,13 @@
 ---
 title: 'Declarative Document Contract Registry'
-version: "1.0"
-type: sdlc/adr
-layer: "02.architecture"
+version: "1.0.0"
+type: sdlc/architecture-decision
+layer: "architecture"
 status: superseded
 owner: platform
 updated: 2026-07-12
 artifact_id: "ADR-0015"
-superseded_by: ADR-0030
+superseded_by: "ADR-0030"
 ---
 
 # ADR-0015: Declarative Document Contract Registry

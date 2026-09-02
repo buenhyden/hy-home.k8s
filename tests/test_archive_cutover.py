@@ -350,7 +350,7 @@ class ArchiveCutoverTest(unittest.TestCase):
         registry = load_registry(ROOT)
         tracked = archive_cutover._tracked_regular_blobs(ROOT)
         current = "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md"
-        template = "docs/99.templates/templates/archive/archive-record.template.md"
+        template = "docs/99.templates/templates/archive/tombstone.template.md"
 
         self.assertEqual(
             archive_cutover._replacement_target_diagnostic(
@@ -452,7 +452,7 @@ class ArchiveCutoverTest(unittest.TestCase):
         }
         for legacy, current in mandatory.items():
             self.assertEqual(projection.current_by_legacy[legacy], current)
-        _later_edges, later_retired = archive_cutover._later_ledger_edges(
+        later_edges, later_retired = archive_cutover._later_ledger_edges(
             ROOT, tracked, "fixture"
         )
         composed = 0
@@ -466,7 +466,15 @@ class ArchiveCutoverTest(unittest.TestCase):
                 # than naming a path the tree no longer holds.
                 self.assertNotIn(legacy, projection.current_by_legacy)
                 continue
-            self.assertEqual(projection.current_by_legacy[legacy], current)
+            # A later sealed record may have renamed or relocated the endpoint.
+            # Composition follows that chain, so the current owner is the end of
+            # the chain rather than the endpoint MIG-0004 itself named.
+            expected = current
+            seen = {expected}
+            while expected in later_edges and later_edges[expected] not in seen:
+                expected = later_edges[expected]
+                seen.add(expected)
+            self.assertEqual(projection.current_by_legacy[legacy], expected)
             composed += 1
         self.assertTrue(composed, "Stage 99 rows must still compose current owners")
         spec0054_ledger = archive_validation.MIG0004_SPEC0054_LEDGER
@@ -954,12 +962,12 @@ class ArchiveCutoverTest(unittest.TestCase):
             (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
         )
         profile = next(
-            item for item in registry["profiles"] if item["id"] == "content/archive"
+            item for item in registry["profiles"] if item["id"] == "archive/tombstone"
         )
         self.assertEqual(profile["lifecycle"]["statusDomain"], ["archived"])
         self.assertEqual(
             profile["template"],
-            "docs/99.templates/templates/archive/archive-record.template.md",
+            "docs/99.templates/templates/archive/tombstone.template.md",
         )
         self.assertFalse((ROOT / "docs/99.templates/support").exists())
 
@@ -970,7 +978,7 @@ class ArchiveCutoverTest(unittest.TestCase):
         source = LifecycleDocument(source_path, "sdlc/spec", "done")
         archive = LifecycleDocument(
             archive_path,
-            "content/archive",
+            "archive/tombstone",
             "archived",
             original_path=source_path,
         )

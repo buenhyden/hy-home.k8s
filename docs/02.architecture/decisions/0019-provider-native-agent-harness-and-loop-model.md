@@ -1,13 +1,13 @@
 ---
 title: 'Provider-Native Agent Harness and Loop Model'
-version: "1.0"
-type: sdlc/adr
-layer: "02.architecture"
+version: "1.0.0"
+type: sdlc/architecture-decision
+layer: "architecture"
 status: superseded
 owner: platform
 updated: 2026-08-01
 artifact_id: "ADR-0019"
-superseded_by: ADR-0030
+superseded_by: "ADR-0030"
 ---
 
 # ADR-0019: Provider-Native Agent Harness and Loop Model

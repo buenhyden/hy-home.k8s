@@ -413,12 +413,18 @@ def _assert_reference_pack_topology(root: Path, registry: Registry) -> None:
         raise AssertionError("\n".join(errors))
 
 
-def _without_artifact_id(contract: FrontmatterContract) -> FrontmatterContract:
+# A form declares only what its author must write into the copy. A Stage 99 file
+# is not the document it produces, so it carries neither the document's identity
+# nor the layer that document will live in.
+TEMPLATE_OMITTED_KEYS = ("artifact_id", "layer")
+
+
+def _without_key(contract: FrontmatterContract, key: str) -> FrontmatterContract:
     return replace(
         contract,
-        required=tuple(key for key in contract.required if key != "artifact_id"),
-        allowed=tuple(key for key in contract.allowed if key != "artifact_id"),
-        order=tuple(key for key in contract.order if key != "artifact_id"),
+        required=tuple(name for name in contract.required if name != key),
+        allowed=tuple(name for name in contract.allowed if name != key),
+        order=tuple(name for name in contract.order if name != key),
     )
 
 
@@ -453,11 +459,12 @@ def _assert_template_source_parity(registry: Registry) -> None:
         if source is None:
             raise AssertionError(f"{profile_id}: unknown source profile {source_id}")
         source_frontmatter = source.frontmatter
-        if (
-            "artifact_id" in source_frontmatter.required
-            and "artifact_id" not in profile.frontmatter.required
-        ):
-            source_frontmatter = _without_artifact_id(source_frontmatter)
+        for omitted in TEMPLATE_OMITTED_KEYS:
+            if (
+                omitted in source_frontmatter.allowed
+                and omitted not in profile.frontmatter.allowed
+            ):
+                source_frontmatter = _without_key(source_frontmatter, omitted)
         inherited = (
             profile.profile_class,
             profile.frontmatter,

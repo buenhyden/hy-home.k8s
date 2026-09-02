@@ -1,8 +1,8 @@
 ---
 title: 'Reference: Scope Application Index'
-version: "1.0"
-type: content/research-reference
-layer: "90.references"
+version: "1.0.0"
+type: reference/research
+layer: "references"
 status: draft
 owner: platform
 updated: 2026-08-31

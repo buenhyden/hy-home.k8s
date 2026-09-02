@@ -61,7 +61,7 @@ from document_lifecycle import (  # noqa: E402
 
 LEGACY_PROFILE = "content/archive-tombstone"
 LEGACY_TEMPLATE_PROFILE = "template/content/archive-tombstone"
-NEW_TEMPLATE_PROFILE = "template/content/archive"
+NEW_TEMPLATE_PROFILE = "template/archive/tombstone"
 LEGACY_TEMPLATE = PurePosixPath(
     "docs/99.templates/templates/common/archive-tombstone.template.md"
 )
@@ -349,7 +349,7 @@ class FiniteArchiveCutoverAdmissionTest(unittest.TestCase):
         base, proposed = exact_documents()
         unrelated = PurePosixPath("docs/03.specs/0999-unrelated/spec.md")
         base[unrelated] = LifecycleDocument(unrelated, "sdlc/spec", "active")
-        proposed[unrelated] = LifecycleDocument(unrelated, "sdlc/guide", "active")
+        proposed[unrelated] = LifecycleDocument(unrelated, "operation/guide", "active")
         self.assertFalse(self._admit(base_documents=base, proposed_documents=proposed))
 
     def test_snapshot_or_explicit_ref_mode_is_not_admitted(self):
@@ -519,7 +519,7 @@ class ArchiveCutoverMigrationGraphTests(unittest.TestCase):
         }
         profiles = {
             "docs/current.md": "sdlc/plan",
-            "docs/current-self.md": "sdlc/requirement-package",
+            "docs/current-self.md": "sdlc/requirement",
         }
         self.assertEqual(
             ARCHIVE_CUTOVER._resolve_migration_graph(edges, profiles),
@@ -762,7 +762,7 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
         proposed_document = VALIDATOR.document_from_text(
             converged_registry, requirement, changed
         )
-        self.assertEqual(base_document.profile_id, "sdlc/requirement-package")
+        self.assertEqual(base_document.profile_id, "sdlc/requirement")
         self.assertEqual(base_document.status, "active")
         self.assertIsNone(base_document.state_issue)
         self.assertEqual(
@@ -897,7 +897,7 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
             (
                 requirement,
                 requirement_bytes.replace(
-                    b"type: sdlc/requirement-package\n",
+                    b"type: sdlc/requirement\n",
                     b"type: sdlc/prd\n",
                     1,
                 ),
@@ -1043,9 +1043,9 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
             path,
             """---
 title: 'Reference: Example Audit Findings'
-version: "1.0"
-type: content/audit-reference
-layer: "90.references"
+version: "1.0.0"
+type: reference/audit
+layer: "references"
 status: active
 owner: platform
 updated: 2026-09-01
@@ -1056,7 +1056,7 @@ artifact_id: "AUD-0001-m0001"
 """,
         )
 
-        self.assertEqual(created.profile_id, "content/audit-reference")
+        self.assertEqual(created.profile_id, "reference/audit")
         self.assertEqual(
             compare_lifecycle(registry, {}, {path: created}, base_mode="staged"),
             (),
@@ -1065,7 +1065,7 @@ artifact_id: "AUD-0001-m0001"
     def test_deletion_is_owned_by_consumer_and_git_recovery_gates(self):
         registry = load_registry(ROOT)
         path = PurePosixPath("docs/05.operations/guides/9999-obsolete.md")
-        document = LifecycleDocument(path, "sdlc/guide", "active")
+        document = LifecycleDocument(path, "operation/guide", "active")
 
         self.assertEqual(
             compare_lifecycle(registry, {path: document}, {}, base_mode="staged"),
@@ -1235,7 +1235,7 @@ artifact_id: "AUD-0001-m0001"
         )
         required_paths = tuple(VALIDATOR.WORK054_WP004A_REQUIRED_CHANGED_PATHS)
         proposed_documents = {
-            path: LifecycleDocument(path, "governance/reference", "active")
+            path: LifecycleDocument(path, "governance/rule", "active")
             for path in owner_paths
         }
         base_blobs = {path: "1" * 40 for path in required_paths}
@@ -1374,7 +1374,7 @@ class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
         return (
             b"---\n"
             b'title: "Archive fixture"\n'
-            b'type: "content/archive"\n'
+            b'type: "archive/tombstone"\n'
             b'status: "archived"\n'
             b'owner: "platform"\n'
             b'updated: "2026-07-19"\n'
@@ -1500,7 +1500,7 @@ class LifecycleArchiveImmutabilityOperatingTest(unittest.TestCase):
             return (
                 b"---\n"
                 b'title: "ADR fixture"\n'
-                b'type: "sdlc/adr"\n'
+                b'type: "sdlc/architecture-decision"\n'
                 + f'status: "{status}"\n'.encode()
                 + b'owner: "platform"\n'
                 + b'updated: "2026-08-23"\n'
@@ -1636,7 +1636,7 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
         )
         self.assertEqual(
             lifecycle.requirement_relationship_profiles(registry),
-            frozenset({"sdlc/requirement-package"}),
+            frozenset({"sdlc/requirement"}),
         )
 
     def test_production_cli_has_no_embedded_self_test_surface(self) -> None:
@@ -1654,7 +1654,7 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
         requirement = next(
             profile
             for profile in registry.profiles
-            if profile.profile_id == "sdlc/requirement-package"
+            if profile.profile_id == "sdlc/requirement"
         )
         readme = next(
             profile
@@ -2036,7 +2036,7 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
     def test_ad_template_creates_in_zero_indegree_draft_state(self) -> None:
         registry = load_registry(ROOT)
         template = (
-            ROOT / "docs/99.templates/templates/architecture/ad.template.md"
+            ROOT / "docs/99.templates/templates/architecture/description.template.md"
         ).read_text(encoding="utf-8")
         path = PurePosixPath(
             "docs/02.architecture/descriptions/9999-template-admission.md"

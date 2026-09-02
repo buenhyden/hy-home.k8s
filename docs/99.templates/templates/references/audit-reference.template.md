@@ -1,10 +1,9 @@
 ---
 title: 'Reference: {Item Name}'
-version: "#.#"
-type: content/audit-reference
-layer: "90.references"
+version: "#.#.#"
+type: reference/audit
 status: draft
-owner: platform
+owner: '{owner}'
 updated: YYYY-MM-DD
 artifact_id: "AUD-####-m####"
 ---

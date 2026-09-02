@@ -1,13 +1,13 @@
 ---
 title: 'Workspace Document Taxonomy Consolidation Requirement Package'
-version: "1.0"
-type: sdlc/requirement-package
-layer: "01.requirements"
+version: "1.0.0"
+type: sdlc/requirement
+layer: "requirements"
 status: active
 owner: platform
 updated: 2026-09-01
 artifact_id: "REQ-0008"
-supersedes: "[REQ-0005, REQ-0006]"
+supersedes: ["REQ-0005", "REQ-0006"]
 ---
 
 # Workspace Document Taxonomy Consolidation Requirement Package
@@ -182,7 +182,7 @@ ADR, Spec, Plan, append-only Task, Guide, Policy,
 Runbook, Incident, Postmortem, Migration, and necessary Tombstone.
 Change-local design belongs to Spec and Plan; executable tests remain with
 their production module. Every declared `artifact_id` participates in one global uniqueness
-check. Stage 00 governance/reference, Stage 90 content/reference/observations,
+check. Stage 00 `governance/*` profiles, Stage 90 pack routers,
 governance memory/progress, Stage 99 support, README, template, fixture,
 native/generated, the retired authored API Spec surface, virtual change
 aggregate, and embedded archive payload surfaces MUST NOT declare
@@ -367,7 +367,7 @@ surface.
 | ASM-WDTC-001 | Existing identifiers are more valuable than a cosmetically contiguous stage sequence. | Platform maintainer | Human-approved direction A keeps Stage 05 stable and leaves the retired Stage 04 slot unused. |
 | ASM-WDTC-002 | [ISO/IEC/IEEE 29148:2018](https://www.iso.org/cms/render/live/en/sites/isoorg/contents/data/standard/07/20/72089.html) supports requirements information but does not mandate this repository's folder names. | Governance steward | Keep requirements traceable and testable while treating physical routing as local architecture. |
 | ASM-WDTC-003 | [NIST SSDF](https://csrc.nist.gov/pubs/sp/800/218/final) practices can integrate with the local SDLC but do not make Markdown or a passing template a security outcome. | Security reviewer | Bind security claims to named controls and separately observable evidence. |
-| ASM-WDTC-004 | [ISO/IEC/IEEE 42010:2022](https://www.iso.org/standard/74393.html) defines Architecture Description structure/expression and distinguishes architecture from its AD, but does not prescribe recording format or media. | Governance steward | Use Architecture Description as the local term while treating `sdlc/ad`, its route, filename, and ID rules as local decisions. |
+| ASM-WDTC-004 | [ISO/IEC/IEEE 42010:2022](https://www.iso.org/standard/74393.html) defines Architecture Description structure/expression and distinguishes architecture from its AD, but does not prescribe recording format or media. | Governance steward | Use Architecture Description as the local term while treating `sdlc/architecture-description`, its route, filename, and ID rules as local decisions. |
 | ASM-WDTC-005 | [ISO/IEC/IEEE 29148:2018](https://www.iso.org/standard/72089.html) covers requirements-engineering processes and information items without requiring the local PRD/SRS/Interface split. | Governance steward | Keep the three-form split optional where specified and do not claim the folder model is standards-mandated. |
 | ASM-WDTC-006 | [ISO/IEC/IEEE 15289:2019](https://www.iso.org/standard/74909.html) supports selecting an organization-appropriate information-item presentation/repository model. | Governance steward | Treat the terminal tree, stable IDs, pairing, and script disposition as human-approved local architecture rather than ISO conformance. |
 

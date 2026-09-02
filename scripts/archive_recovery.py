@@ -37,7 +37,9 @@ MAX_GIT_HEADER_BYTES = 256
 MAX_GIT_CAPTURE_BYTES = 2 * 1024 * 1024
 ARCHIVE_METADATA_KEYS = (
     "title",
+    "version",
     "type",
+    "layer",
     "status",
     "owner",
     "updated",
@@ -55,7 +57,10 @@ ARCHIVE_OPTIONAL_STABLE_KEYS = (
     "change_id",
     "original_artifact_id",
 )
-ARCHIVE_STABLE_METADATA_KEYS = (
+# Reviewed bytes from the generation before the shared key set and the
+# family/kind profile rename. A historical envelope is validated against the
+# generation its own keys name, never against a later one.
+_PRIOR_ARCHIVE_STABLE_METADATA_KEYS = (
     "title",
     "type",
     "status",
@@ -71,6 +76,28 @@ ARCHIVE_STABLE_METADATA_KEYS = (
     "source_blob",
     "content_sha256",
 )
+ARCHIVE_STABLE_METADATA_KEYS = (
+    "title",
+    "version",
+    "type",
+    "layer",
+    "status",
+    "owner",
+    "updated",
+    *ARCHIVE_OPTIONAL_STABLE_KEYS,
+    "original_type",
+    "original_path",
+    "archived_on",
+    "archive_reason",
+    "replacement",
+    "source_commit",
+    "source_blob",
+    "content_sha256",
+)
+ARCHIVE_TOMBSTONE_TYPE = "archive/tombstone"
+_PRIOR_ARCHIVE_TOMBSTONE_TYPE = "content/archive"
+ARCHIVE_LAYER = "archive"
+_SEMANTIC_VERSION = r"[0-9]+\.[0-9]+\.[0-9]+"
 WORK107_LEGACY_ARCHIVE_COMMIT = (
     "eaf4f21ca84b68d98e20cd0b41db8b8d08ba6d0c"  # pragma: allowlist secret
 )
@@ -81,9 +108,9 @@ WORK107_MIGRATION_PATH = (
 WP004B_PINNED_MIGRATION_PATH = (
     "docs/98.archive/migrations/0004-document-authority-convergence.md"
 )
-WP004B_PINNED_MIGRATION_DOCUMENT_SHA256 = "870aa210464f9059a4760411d3f8261ab14ae637f0719bd3355b59dd984634c6"  # pragma: allowlist secret -- sealed recovery contract
+WP004B_PINNED_MIGRATION_DOCUMENT_SHA256 = "13ddbddac9c5ce8b50fbab900da20d43d29770113e7c2292db81799df6566b33"  # pragma: allowlist secret -- sealed recovery contract
 WP004C_SEALED_TARGET_COMMIT = "4aabcc1b371dd2f519f605d3fa669a7cf334c443"  # pragma: allowlist secret -- sealed MIG-0004 recovery identity, not a credential
-WORK107_MIGRATION_DOCUMENT_SHA256 = "7d5e02139b32b14b0b32e17f8b53f01757c54584e597de331808276dbf4ad739"  # pragma: allowlist secret
+WORK107_MIGRATION_DOCUMENT_SHA256 = "bbc0620bd30c2f870aa6f396ba9f08ac09ba77534ccc783d6e7b73c2b10c4df3"  # pragma: allowlist secret
 WORK107_LEGACY_INDEX_OVERVIEW = (
     "`98.archive/`는 원래 경로를 mirror한 43개의 immutable `content/archive` "
     "record를 보관한다. ARWB-003의 유한 base proof는 정확히 31 record와 202 "
@@ -122,7 +149,9 @@ WORK107_LEDGER_FIELDS = (
 WORK107_LEDGER_MARKER = "<!-- archive-migration-ledger:v1 format=json -->"
 WORK107_MIGRATION_METADATA_KEYS = (
     "title",
+    "version",
     "type",
+    "layer",
     "status",
     "owner",
     "updated",
@@ -880,9 +909,15 @@ def validate_archive_metadata(
     if not isinstance(metadata, Mapping):
         raise _error("ARCHIVE-METADATA-TYPE", "metadata must be a mapping")
     keys = tuple(metadata)
+    prior_generation = "version" not in metadata and "layer" not in metadata
+    key_source = (
+        _PRIOR_ARCHIVE_STABLE_METADATA_KEYS
+        if prior_generation
+        else ARCHIVE_STABLE_METADATA_KEYS
+    )
     allowed_keys = tuple(
         key
-        for key in ARCHIVE_STABLE_METADATA_KEYS
+        for key in key_source
         if key not in ARCHIVE_OPTIONAL_STABLE_KEYS or key in metadata
     )
     if keys != allowed_keys:
@@ -891,8 +926,19 @@ def validate_archive_metadata(
         )
 
     _require_string(metadata, "title")
-    if metadata["type"] != "content/archive":
-        raise _error("ARCHIVE-METADATA-TYPE", "type must be content/archive")
+    expected_type = (
+        _PRIOR_ARCHIVE_TOMBSTONE_TYPE if prior_generation else ARCHIVE_TOMBSTONE_TYPE
+    )
+    if metadata["type"] != expected_type:
+        raise _error("ARCHIVE-METADATA-TYPE", f"type must be {expected_type}")
+    if not prior_generation:
+        version = metadata["version"]
+        if not isinstance(version, str) or re.fullmatch(
+            _SEMANTIC_VERSION, version
+        ) is None:
+            raise _error("ARCHIVE-METADATA-VERSION", "version must be semantic")
+        if metadata["layer"] != ARCHIVE_LAYER:
+            raise _error("ARCHIVE-METADATA-LAYER", f"layer must be {ARCHIVE_LAYER}")
     if metadata["status"] != "archived":
         raise _error("ARCHIVE-METADATA-STATUS", "status must be archived")
     _require_string(metadata, "owner")
@@ -1452,7 +1498,9 @@ def validate_work107_migration_rows(
 def _work107_migration_metadata_bytes() -> bytes:
     metadata = {
         "title": "SDLC Taxonomy Convergence",
-        "type": "content/archive-migration",
+        "version": "1.0.0",
+        "type": "archive/migration",
+        "layer": "archive",
         "status": "accepted",
         "owner": "platform",
         "updated": "2026-08-12",

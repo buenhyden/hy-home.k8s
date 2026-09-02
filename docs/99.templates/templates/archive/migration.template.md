@@ -1,13 +1,14 @@
 ---
-title: "MIG-{NNNN}: {Migration Title}"
-type: "content/archive-migration"
-status: "draft"
-owner: "platform"
-updated: "YYYY-MM-DD"
-artifact_id: "MIG-0000"
+title: "{Migration Title}"
+version: "#.#.#"
+type: archive/migration
+status: draft
+owner: '{owner}'
+updated: YYYY-MM-DD
+artifact_id: "MIG-####"
 ---
 
-# MIG-{NNNN}: {Migration Title}
+# MIG-####: {Migration Title}
 
 ## Overview
 

@@ -78,9 +78,7 @@ class ReferencePackRouteTest(unittest.TestCase):
                     ),
                 )
                 singular = category.removesuffix("s")
-                self.assertEqual(
-                    profile.profile_id, f"content/{singular}-reference"
-                )
+                self.assertEqual(profile.profile_id, f"reference/{singular}")
 
     def test_date_based_and_loose_reference_paths_are_uncovered(self) -> None:
         for category in ("audits", "data", "research"):
@@ -111,7 +109,7 @@ class ReferencePackRouteTest(unittest.TestCase):
                 self.assertIn(
                     profile.profile_id,
                     {
-                        f"content/{category.removesuffix('s')}-reference",
+                        f"reference/{category.removesuffix('s')}",
                         f"readme/{category.removesuffix('s')}-pack",
                     },
                 )

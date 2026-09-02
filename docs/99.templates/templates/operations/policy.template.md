@@ -1,10 +1,9 @@
 ---
 title: '{Policy or Standard Name} Operations Policy'
-version: "#.#"
-type: sdlc/policy
-layer: "05.operations"
+version: "#.#.#"
+type: operation/policy
 status: draft
-owner: platform
+owner: '{owner}'
 updated: YYYY-MM-DD
 artifact_id: "POL-####"
 ---

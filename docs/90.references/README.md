@@ -40,14 +40,20 @@ Stage 98의 문서나 파일을 인용하거나 cross-link하지 않는다. 삭�
 
 ```text
 docs/90.references/
+├── audits/
+│   └── README.md                      # Audit collection router
+├── data/
+│   └── README.md                      # Data collection router
 ├── research/
 │   ├── 0001-workspace-engineering/   # 보존된 최신 외부 조사 pack
 │   └── README.md                      # Research collection router
 └── README.md                          # Stage router
 ```
 
-현재 corpus가 Research만 포함하는 것은 현재 처분 결과일 뿐, 향후 고유 목적과
-출처 경계를 갖춘 Audit 또는 Data 문서를 금지하지 않는다.
+세 collection은 동일한 3단 구조를 따른다: collection router `README.md`,
+pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<slug>.md`.
+현재 pack을 보유한 collection이 Research뿐인 것은 현재 처분 결과일 뿐이며, 고유
+목적과 출처 경계를 갖춘 Audit 또는 Data pack의 추가를 금지하지 않는다.
 
 ## Authoring Workflow
 
@@ -62,9 +68,11 @@ docs/90.references/
    [Audit](../99.templates/templates/references/audit-pack.template.md),
    [Data](../99.templates/templates/references/data-pack.template.md), 또는
    [Research](../99.templates/templates/references/research-pack.template.md)
-   template을 사용한다. 내부 report는
-   [Reference Template](../99.templates/templates/references/reference.template.md)을
-   사용한다. 관찰일은 frontmatter 또는 source metadata에만 둔다.
+   template을 사용한다. 내부 report는 같은 family의
+   [Audit Reference](../99.templates/templates/references/audit-reference.template.md),
+   [Data Reference](../99.templates/templates/references/data-reference.template.md),
+   [Research Reference](../99.templates/templates/references/research-reference.template.md)
+   template을 사용한다. 관찰일은 frontmatter 또는 source metadata에만 둔다.
 5. 이 router와 category router를 같은 변경에서 갱신한다.
 6. 참조 자료를 실행 입력이나 중복 control plane으로 사용하지 않는다.
 7. 다음 최소 검증을 실행한다.
@@ -85,5 +93,5 @@ docs/90.references/
 - [Specs](../03.specs/README.md)
 - [Operations](../05.operations/README.md)
 - [Research Collection](./research/README.md)
-- [Reference Template](../99.templates/templates/references/reference.template.md)
+- [Research Reference Template](../99.templates/templates/references/research-reference.template.md)
 - [Reference Maintenance Runbook](../05.operations/runbooks/0011-reference-maintenance-runbook.md)

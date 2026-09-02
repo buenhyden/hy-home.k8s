@@ -1,9 +1,11 @@
----
-name: role-name
-description: One sentence naming the bounded responsibility this role executes.
----
-
-# role-name
+# Codex agent binding. The Codex runtime reads this file directly, so it
+# carries only provider-owned keys: the file name is the role name, and the
+# shared responsibility stays in `.agents/`.
+description = "One sentence naming the bounded responsibility this role executes."
+model = "{codex-model-id}"
+model_reasoning_effort = "{low|medium|high|xhigh}"
+developer_instructions = """
+# {role-name}
 
 ## Runtime Bootstrap
 
@@ -22,3 +24,4 @@ back rather than perform.
 ## Evidence
 
 Name the checks this role runs and the lane each result is reported under.
+"""

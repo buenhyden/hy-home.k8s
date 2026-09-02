@@ -1,10 +1,9 @@
 ---
 title: '{Feature Name} Technical Specification'
-version: "#.#"
+version: "#.#.#"
 type: sdlc/spec
-layer: "03.specs"
 status: draft
-owner: platform
+owner: '{owner}'
 updated: YYYY-MM-DD
 artifact_id: "SPEC-####"
 ---

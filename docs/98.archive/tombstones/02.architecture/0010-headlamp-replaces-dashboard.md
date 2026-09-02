@@ -1,6 +1,8 @@
 ---
 title: "Archive Record: ADR-0010: Headlamp Replaces Kubernetes Dashboard"
-type: "content/archive"
+version: "1.0.0"
+type: "archive/tombstone"
+layer: "archive"
 status: "archived"
 owner: "platform"
 updated: "2026-06-02"

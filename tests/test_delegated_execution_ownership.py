@@ -45,7 +45,7 @@ def _context():
         ROUTER: validator.ProfileView(
             "readme/collection-index", "navigation", "projection"
         ),
-        ADR: validator.ProfileView("sdlc/adr", "sdlc", "authored"),
+        ADR: validator.ProfileView("sdlc/architecture-decision", "sdlc", "authored"),
     }
     texts = {
         PARENT: "\n".join(
@@ -161,7 +161,7 @@ class DelegatedExecutionOwnershipTests(unittest.TestCase):
             paths=tuple(sorted((*context.paths, second), key=lambda path: path.as_posix())),
             profiles={
                 **context.profiles,
-                second: validator.ProfileView("sdlc/adr", "sdlc", "authored"),
+                second: validator.ProfileView("sdlc/architecture-decision", "sdlc", "authored"),
             },
             texts={
                 **context.texts,

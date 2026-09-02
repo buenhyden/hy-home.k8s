@@ -1,8 +1,8 @@
 ---
 title: 'Example IaC and Validator QA Technical Specification'
-version: "1.0"
+version: "1.0.0"
 type: sdlc/spec
-layer: "03.specs"
+layer: "specs"
 status: draft
 owner: platform
 updated: 2026-08-02

@@ -1,6 +1,8 @@
 ---
 title: "Archive Record: ADR-0004: External Service Access Model and ArgoCD Valkey Backend"
-type: "content/archive"
+version: "1.0.0"
+type: "archive/tombstone"
+layer: "archive"
 status: "archived"
 owner: "platform"
 updated: "2026-06-02"

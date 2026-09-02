@@ -145,14 +145,14 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         self.assertEqual(len(profile_ids), len(set(profile_ids)))
         self.assertTrue(
             {
-                "content/audit-reference",
-                "content/data-reference",
-                "content/research-reference",
+                "reference/audit",
+                "reference/data",
+                "reference/research",
                 "readme/audit-pack",
                 "readme/data-pack",
                 "readme/research-pack",
-                "sdlc/incident",
-                "sdlc/postmortem",
+                "operation/incident",
+                "operation/postmortem",
             }.issubset(profile_ids)
         )
 
@@ -298,7 +298,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         requirement = next(
             profile
             for profile in registry.profiles
-            if profile.profile_id == "sdlc/requirement-package"
+            if profile.profile_id == "sdlc/requirement"
         )
         self.assertEqual(requirement.frontmatter.required[-1], "artifact_id")
         self.assertEqual(requirement.artifact_id_pattern, "^REQ-[0-9]{4}$")
@@ -388,7 +388,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         mutations = {
             "unknown": lambda domains: domains[0]["profileIds"].append("sdlc/unknown"),
             "duplicate": lambda domains: domains[1]["profileIds"].append(
-                "sdlc/requirement-package"
+                "sdlc/requirement"
             ),
         }
         for name, mutate in mutations.items():
@@ -692,9 +692,9 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
 
         for relative_path in (
             "requirements/requirement-package.template.md",
-            "architecture/ad.template.md",
+            "architecture/description.template.md",
             "specs/spec.template.md",
-            "specs/data-model.template.md",
+            "specs/contracts/data-model.template.md",
         ):
             contents = (STAGE99_TEMPLATES_ROOT / relative_path).read_text(
                 encoding="utf-8"
@@ -828,19 +828,19 @@ class Stage05TerminalOwnershipTests(unittest.TestCase):
     def test_operation_templates_share_authored_lifecycle_and_fields(self) -> None:
         profiles = {profile["id"]: profile for profile in self.registry["profiles"]}
         expectations = {
-            "sdlc/guide": ("template/sdlc/guide",),
-            "sdlc/incident": (
-                "template/sdlc/incident",
+            "operation/guide": ("template/operation/guide",),
+            "operation/incident": (
+                "template/operation/incident",
                 "Roles and Coordination",
                 "Closure",
             ),
-            "sdlc/postmortem": (
-                "template/sdlc/postmortem",
+            "operation/postmortem": (
+                "template/operation/postmortem",
                 "Detection and Response Review",
                 "Action Closure",
             ),
-            "sdlc/policy": ("template/sdlc/policy",),
-            "sdlc/runbook": ("template/sdlc/runbook",),
+            "operation/policy": ("template/operation/policy",),
+            "operation/runbook": ("template/operation/runbook",),
         }
         for authored_id, expected in expectations.items():
             template_id, *sections = expected
@@ -915,7 +915,7 @@ class TerminalStrictValidatorTests(unittest.TestCase):
         profile = next(
             item
             for item in registry.profiles
-            if item.profile_id == "sdlc/requirement-package"
+            if item.profile_id == "sdlc/requirement"
         )
         ambiguous = replace(registry, profiles=(*registry.profiles, profile))
         with self.assertRaisesRegex(

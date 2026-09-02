@@ -132,7 +132,9 @@ class ArchiveValidationTest(unittest.TestCase):
         self.recovered = recover_git_blob(self.root, self.original_path, self.commit)
         self.metadata = {
             "title": "Archive: Historical fixture",
-            "type": "content/archive",
+            "version": "1.0.0",
+            "type": "archive/tombstone",
+            "layer": "archive",
             "status": "archived",
             "owner": "platform",
             "updated": "2026-07-18",
@@ -169,7 +171,7 @@ class ArchiveValidationTest(unittest.TestCase):
 
     def test_red_metadata_order_and_type_fail_closed(self) -> None:
         wrong_type = self.archive_bytes.replace(
-            b'type: "content/archive"', b'type: "content/invalid"', 1
+            b'type: "archive/tombstone"', b'type: "content/invalid"', 1
         )
         owner_line = b'owner: "platform"\n'
         updated_line = b'updated: "2026-07-18"\n'
@@ -275,7 +277,7 @@ class ArchiveValidationTest(unittest.TestCase):
         document = CurrentMarkdownDocument(
             path="docs/01.requirements/0001-fixture.md",
             markdown="# Requirement package\n",
-            profile="sdlc/requirement-package",
+            profile="sdlc/requirement",
             status="active",
         )
 
@@ -525,7 +527,7 @@ class ArchiveValidationTest(unittest.TestCase):
                 CurrentMarkdownDocument(
                     path=self.archive_path,
                     markdown="# Incorrectly active archive\n",
-                    profile="content/archive",
+                    profile="archive/tombstone",
                     status="active",
                 ),
             ),
@@ -1030,6 +1032,9 @@ class ArchiveValidationTest(unittest.TestCase):
                 if row["legacy_path"]
                 in archive_validation.MIG0004_STAGE99_ACTION_TARGETS
                 and row["action"] == "moved"
+                # The fixture only stages targets the current tree still holds,
+                # so a row a later sealed record retired cannot be unstaged.
+                and (ROOT / str(row["stable_path"])).is_file()
             )
             replaced = next(
                 row
@@ -1110,7 +1115,7 @@ class ArchiveValidationTest(unittest.TestCase):
         return (
             "---\n"
             'title: "MIG-0009: Stage 99 Form Retirement"\n'
-            'type: "content/archive-migration"\n'
+            'type: "archive/migration"\n'
             'status: "sealed"\n'
             'owner: "platform"\n'
             'updated: "2026-08-30"\n'
@@ -1133,10 +1138,7 @@ class ArchiveValidationTest(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="mig0004-stage99-retired-") as temporary:
             root = Path(temporary)
             fixture, rows = self._mig0004_current_fixture(root)
-            retired = (
-                "docs/99.templates/templates/governance/"
-                "governance-reference.template.md"
-            )
+            retired = "docs/99.templates/templates/specs/spec.template.md"
             self.assertIn(
                 retired,
                 {
@@ -1164,11 +1166,8 @@ class ArchiveValidationTest(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="mig0004-stage99-required-") as temporary:
             root = Path(temporary)
             fixture, rows = self._mig0004_current_fixture(root)
-            retired = (
-                "docs/99.templates/templates/governance/"
-                "governance-reference.template.md"
-            )
-            other = "docs/99.templates/templates/governance/memory.template.md"
+            retired = "docs/99.templates/templates/specs/spec.template.md"
+            other = "docs/99.templates/templates/requirements/requirement-package.template.md"
 
             fixture.run("rm", "--quiet", "-f", "--", retired)
             record = "docs/98.archive/migrations/0009-stage99-form-retirement.md"
@@ -1523,8 +1522,8 @@ class ArchiveValidationTest(unittest.TestCase):
                 "profile-drift",
                 migration_path,
                 migration_bytes.replace(
-                    b'type: "content/archive-migration"',
-                    b'type: "content/archive"',
+                    b'type: "archive/migration"',
+                    b'type: "archive/tombstone"',
                     1,
                 ),
                 "ARCHIVE-MIGRATION-PROFILE",
@@ -1638,7 +1637,7 @@ class ArchiveValidationTest(unittest.TestCase):
                 CurrentMarkdownDocument(
                     path=migration_path,
                     markdown=(ROOT / migration_path).read_text(encoding="utf-8"),
-                    profile="content/archive-migration",
+                    profile="archive/migration",
                     status="accepted",
                 ),
             ),
@@ -2018,7 +2017,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         self.assertEqual(self.context.governance_current_states, ("active",))
         self.assertTrue(
             all(
-                self.context.profiles[path].profile_id == "governance/reference"
+                self.context.profiles[path].profile_class == "governance"
                 and self.context.profiles[path].mode == "authored"
                 and self.context.metadata[path].get("status") == "active"
                 for path in governance
@@ -2244,7 +2243,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
     ) -> None:
         source = PurePosixPath("docs/00.agent-governance/current-stale-link.md")
         profile = self.validator.ProfileView(
-            "governance/reference", "governance", "authored"
+            "governance/rule", "governance", "authored"
         )
         targets = (
             PurePosixPath("docs/99.templates/support/document-contract.md"),
@@ -2312,7 +2311,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             paths=(*self.context.paths, source),
             profiles={
                 **self.context.profiles,
-                source: self.validator.ProfileView("sdlc/adr", "sdlc", "authored"),
+                source: self.validator.ProfileView("sdlc/architecture-decision", "sdlc", "authored"),
             },
             texts={**self.context.texts, source: f"[retired]({raw})\n"},
             metadata={**self.context.metadata, source: {"status": "accepted"}},

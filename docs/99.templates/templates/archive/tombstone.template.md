@@ -1,14 +1,16 @@
 ---
 title: "Archive Record: {Original Document Title}"
-type: "content/archive"
-status: "archived"
-owner: "platform"
-updated: "YYYY-MM-DD"
-original_type: "sdlc/spec"
-original_path: "docs/<original-path>.md"
-archived_on: "YYYY-MM-DD"
+version: "#.#.#"
+type: archive/tombstone
+status: archived
+owner: '{owner}'
+updated: YYYY-MM-DD
+artifact_id: "tomb-{FAMILY}-####"
+original_type: "{original-type-token}"
+original_path: "docs/{original-path}.md"
+archived_on: YYYY-MM-DD
 archive_reason: "superseded"
-replacement: "docs/<replacement-path>.md"
+replacement: "docs/{replacement-path}.md"
 source_commit: "0000000000000000000000000000000000000000"
 source_blob: "1111111111111111111111111111111111111111"
 content_sha256: "2222222222222222222222222222222222222222222222222222222222222222"

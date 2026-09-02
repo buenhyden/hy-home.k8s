@@ -155,7 +155,15 @@ class LifecycleDomain:
 @dataclass(frozen=True)
 class DocumentProfile:
     profile_id: str
-    profile_class: Literal["sdlc", "common", "governance", "readme", "exception"]
+    profile_class: Literal[
+        "sdlc",
+        "operation",
+        "reference",
+        "archive",
+        "governance",
+        "readme",
+        "exception",
+    ]
     path_pattern: str
     routes: tuple[Route, ...]
     artifact_id_pattern: str | None

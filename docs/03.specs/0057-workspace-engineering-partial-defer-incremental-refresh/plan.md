@@ -1,8 +1,8 @@
 ---
 title: 'Workspace Engineering Partial/DEFER Incremental Research Refresh Implementation Plan'
-version: "1.0"
+version: "1.0.0"
 type: sdlc/plan
-layer: "03.specs"
+layer: "specs"
 status: done
 owner: platform
 updated: 2026-08-13

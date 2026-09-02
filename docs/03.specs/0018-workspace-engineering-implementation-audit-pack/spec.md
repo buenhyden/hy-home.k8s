@@ -1,8 +1,8 @@
 ---
 title: 'Workspace Engineering Implementation Audit Pack Technical Specification'
-version: "1.0"
+version: "1.0.0"
 type: sdlc/spec
-layer: "03.specs"
+layer: "specs"
 status: done
 owner: platform
 updated: 2026-07-13

@@ -30,23 +30,36 @@ README는 해당 machine contract를 복제하지 않고 사람이 올바른 소
 
 ### Form Family Inventory
 
-- **Common forms**: README profile, governance reference, durable reference,
-  archive record, archive migration control, memory, progress entry를 위한
-  Markdown form이다.
-- **Reference pack forms**: Stage 90 Audit, Data, Research pack README는 각각
-  `audit-pack`, `data-pack`, `research-pack` form을 사용하고, pack 내부 report는
-  공통 `reference.template.md`를 사용한다.
-- **Core SDLC forms**: Requirement Package, AD, ADR, Spec, Plan, Task의 단계별 책임과
-  handoff를 기록한다.
-- **Spec helper and native forms**: data model과
-  OpenAPI, GraphQL, protobuf 계약을 feature Spec 아래에 둔다.
-- **Operations forms**: Guide, Policy, Runbook, Incident, Postmortem의 서로 다른
-  운영 증거 책임을 유지한다.
+Form directory 이름은 stage를, 파일 이름은 그 form이 만드는 문서 kind를 말한다.
+Profile ID는 같은 사실을 `<family>/<kind>`로 표현한다.
+
+- **Common forms** (`common/`): README profile별 `readme-*.template.md`.
+  frontmatter가 없고 heading contract만 가진다.
+- **Governance forms** (`governance/`): Stage 00의 여섯 owner kind에 각각
+  `contract`, `control`, `provider`, `role`, `rule`, `skill` form이 대응한다.
+  `governance/*` profile은 `artifact_id`를 선언하지 않는다.
+- **Core SDLC forms**: `requirements/requirement-package`,
+  `architecture/description`, `architecture/decision`, `specs/spec`,
+  `specs/plan`, `specs/task`가 단계별 책임과 handoff를 기록한다.
+- **Spec contract forms** (`specs/contracts/`): `data-model` Markdown form과
+  OpenAPI, GraphQL, protobuf native form. Native form 3종의 authored
+  destination은 `docs/03.specs/####-<slug>/contracts/`이고, data model은
+  package 루트의 `data-model.md`다. Form 쪽에서는 Spec이 소유하는 계약을 한
+  디렉터리로 모은다.
+- **Operations forms** (`operations/`): `guide`, `policy`, `runbook`,
+  `incident`, `postmortem`의 서로 다른 운영 증거 책임을 유지한다.
+- **Reference forms** (`references/`): Stage 90 pack README는 `audit-pack`,
+  `data-pack`, `research-pack` form을, pack 내부 report는 같은 family의
+  `audit-reference`, `data-reference`, `research-reference` form을 사용한다.
+- **Archive forms** (`archive/`): `migration` control과 `tombstone` record.
+- **Runtime forms** (`runtime/`): provider가 직접 읽는 binding만 담는다.
+  Claude는 `claude-agent.template.md`, Codex는 `codex-agent.template.toml`이며
+  두 form은 provider 소유 key(`name`/`description`/`model`/
+  `model_reasoning_effort`/`tools`)만 가지고 guided 문서 key는 갖지 않는다.
+  provider-neutral `.agents/`는 binding이 아니므로 form을 갖지 않는다.
 
 현재 physical form의 전체 목록과 각각의 소유 profile은 README나 support prose가
-아니라 registry와 repository quality gate에서 계산한다. `memory.template.md`와
-`progress.template.md`는 `00.agent-governance/memory/`의 서로 다른 memory와
-progress 책임을 지원한다.
+아니라 registry와 repository quality gate에서 계산한다.
 
 ## Document Index
 
@@ -54,10 +67,11 @@ progress 책임을 지원한다.
 99.templates/
 ├── contracts/          # machine contracts and their schemas
 │   ├── document-profile.schema.json
-│   ├── frontmatter.schema.json
+│   └── frontmatter.schema.json
 ├── templates/          # copyable forms only
-│   ├── governance/ requirements/ architecture/ specs/
-│   └── operations/ references/ archive/ common/
+│   ├── common/ governance/ requirements/ architecture/
+│   ├── specs/ (+ specs/contracts/)
+│   └── operations/ references/ archive/ runtime/
 ├── registry.json
 └── README.md
 ```
@@ -84,6 +98,30 @@ profile schema와 Stage 00 authoring policy를 따른다.
 README는 frontmatter-free이며 선택된 README profile의 heading contract만 따른다.
 Template은 frontmatter의 `type` 값으로 registry profile ID를 소비하며 실제
 작성 destination path를 hardcode하지 않는다.
+
+### Shared Frontmatter Grammar
+
+`type`과 `status`는 profile이 고정한 값이고, 나머지 공통 key는 form에서
+placeholder로 제공된다.
+
+| Key | 필수 | Grammar | Template placeholder |
+| --- | --- | --- | --- |
+| `title` | 항상 | 문서 이름. `artifact_id`를 반복하지 않는다. | `'{...}'` |
+| `version` | 항상 | `<major>.<minor>.<patch>` | `"#.#.#"` |
+| `type` | 항상 | `<family>/<kind>` = registry profile ID | 고정값 |
+| `status` | 항상 | profile의 `statusDomain` 중 initial state | 고정값 |
+| `owner` | 항상 | 책임 소유자 | `'{owner}'` |
+| `updated` | 항상 | ISO date | `YYYY-MM-DD` |
+| `layer` | 번호가 붙은 stage 문서만 | 숫자 접두어가 없는 stage slug (`specs`, `operations`, …) | 없음 |
+| `artifact_id` | 식별자를 가진 profile만 | profile의 `artifactIdPattern` | `"AD-####"` 형태 |
+
+값 문법은 [`contracts/frontmatter.schema.json`](./contracts/frontmatter.schema.json)이,
+profile별 required·allowed·order는 [`registry.json`](./registry.json)이 소유한다.
+
+Form은 자신이 만드는 문서가 아니므로 그 문서의 식별자도, 그 문서가 살게 될
+layer도 갖지 않는다. Stage 00 governance 문서 역시 번호가 붙은 stage에 속하지
+않으므로 `layer`를 선언하지 않으며, `governance/*`는 `artifact_id`도 갖지 않는다.
+`archive/tombstone`은 sealed envelope 전용 key를 추가로 갖는다.
 
 ## Related Documents
 

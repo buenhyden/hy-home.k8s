@@ -1,10 +1,9 @@
 ---
 title: '{Topic Name} Runbook'
-version: "#.#"
-type: sdlc/runbook
-layer: "05.operations"
+version: "#.#.#"
+type: operation/runbook
 status: draft
-owner: platform
+owner: '{owner}'
 updated: YYYY-MM-DD
 artifact_id: "RUN-####"
 ---

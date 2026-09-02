@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 from dataclasses import dataclass
 from pathlib import PurePosixPath
+from types import MappingProxyType
 from typing import Literal, Mapping, Sequence
 
 import yaml
@@ -186,7 +187,7 @@ def _stateful(profile: DocumentProfile) -> bool:
     """A profile participates in lifecycle validation only through its domain."""
 
     return profile.lifecycle_domain is not None and (
-        profile.mode == "authored" or profile.profile_id == "content/archive-migration"
+        profile.mode == "authored" or profile.profile_id == "archive/migration"
     )
 
 
@@ -269,7 +270,7 @@ def _create_diagnostics(
         if (
             (
                 document.path in migration_events.publications
-                and document.profile_id == "content/archive-migration"
+                and document.profile_id == "archive/migration"
                 and document.status == "sealed"
             )
             or (
@@ -342,7 +343,7 @@ def _archive_creation_evidence(
     diagnostics: list[LifecycleDiagnostic] = []
     admitted_source_removals: set[PurePosixPath] = set()
     for document in created:
-        if document.profile_id != "content/archive":
+        if document.profile_id != "archive/tombstone":
             continue
         profile = _optional_profile_by_id(registry, document.profile_id)
         gaps: list[str] = []
@@ -429,7 +430,7 @@ def requirement_relationship_profiles(registry: Registry) -> frozenset[str]:
     registry_profile_ids = frozenset(
         profile.profile_id for profile in registry.profiles
     )
-    current = frozenset({"sdlc/requirement-package"}) & registry_profile_ids
+    current = frozenset({"sdlc/requirement"}) & registry_profile_ids
     if not current:
         raise ValueError("registry lacks the canonical Requirement Package profile")
     return current | (_RETIRED_REQUIREMENT_PROFILES & registry_profile_ids)
@@ -846,7 +847,7 @@ def validate_transition_evidence(
         evidence_paths = tuple(
             path
             for path in raw_links
-            if path in views and views[path].document.profile_id == "sdlc/adr"
+            if path in views and views[path].document.profile_id == "sdlc/architecture-decision"
         )
         if any(
             target.path not in views[path].relationship_links for path in evidence_paths
@@ -1229,10 +1230,39 @@ def validate_snapshot_documents(
     return tuple(sorted(diagnostics, key=lifecycle_diagnostic_sort_key))
 
 
+# A base or historical snapshot spells a profile identity the way the registry
+# spelled it when those bytes were reviewed. Reading history through the current
+# registry alone would report every renamed profile as unknown, so a snapshot
+# that declares itself historical resolves a retired spelling through the route
+# the path selects today. The route, not a fixed successor, decides: one retired
+# identity split into six, and only the path says which kind a document became.
+# The proposed snapshot passes no retired set and therefore still rejects one.
+RETIRED_DOCUMENT_TYPES: frozenset[str] = frozenset(
+    {
+        "sdlc/ad",
+        "sdlc/adr",
+        "sdlc/requirement-package",
+        "sdlc/guide",
+        "sdlc/policy",
+        "sdlc/runbook",
+        "sdlc/incident",
+        "sdlc/postmortem",
+        "content/audit-reference",
+        "content/research-reference",
+        "content/data-reference",
+        "content/archive",
+        "content/archive-migration",
+        "governance/reference",
+    }
+)
+
+
 def document_from_text(
     registry: Registry,
     path: PurePosixPath,
     text: str,
+    *,
+    retired_types: frozenset[str] | None = None,
 ) -> LifecycleDocument:
     """Classify one document and extract only its registry-owned status."""
 
@@ -1269,6 +1299,12 @@ def document_from_text(
         )
     claimed_profile_id = metadata.get("type")
     known_profile_ids = {profile.profile_id for profile in registry.profiles}
+    if (
+        retired_types is not None
+        and isinstance(claimed_profile_id, str)
+        and claimed_profile_id in retired_types
+    ):
+        claimed_profile_id = selected_profile.profile_id
     profile_id = selected_profile.profile_id
     profile_issue: str | None = None
     if not isinstance(claimed_profile_id, str):
@@ -1291,7 +1327,7 @@ def document_from_text(
             state_issue="frontmatter status is missing or not a string",
         )
     if (
-        selected_profile.profile_id == "content/archive-migration"
+        selected_profile.profile_id == "archive/migration"
         and status == "accepted"
     ):
         # Only byte-verified historical controls use the predecessor spelling.
@@ -1308,7 +1344,7 @@ def document_from_text(
         else:
             status = "sealed"
     original_path: PurePosixPath | None = None
-    if profile_id == "content/archive":
+    if profile_id == "archive/tombstone":
         raw_original_path = metadata.get("original_path")
         if isinstance(raw_original_path, str):
             candidate = PurePosixPath(raw_original_path)

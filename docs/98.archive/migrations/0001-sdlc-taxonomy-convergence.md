@@ -1,6 +1,8 @@
 ---
 title: "SDLC Taxonomy Convergence"
-type: "content/archive-migration"
+version: "1.0.0"
+type: "archive/migration"
+layer: "archive"
 status: "accepted"
 owner: "platform"
 updated: "2026-08-12"

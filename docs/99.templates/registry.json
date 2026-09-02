@@ -4,7 +4,7 @@
   "schemaVersion": 8,
   "profiles": [
     {
-      "id": "sdlc/requirement-package",
+      "id": "sdlc/requirement",
       "class": "sdlc",
       "mode": "authored",
       "pathPattern": "^docs/01\\.requirements/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
@@ -106,7 +106,7 @@
           "targetLinkColumn": "Downstream owner",
           "allowedSourceProfileIds": [],
           "allowedTargetProfileIds": [
-            "sdlc/ad",
+            "sdlc/architecture-description",
             "sdlc/spec"
           ],
           "reciprocalEvidence": true,
@@ -116,12 +116,12 @@
       "placeholderPolicy": "forbidden"
     },
     {
-      "id": "sdlc/ad",
+      "id": "sdlc/architecture-description",
       "class": "sdlc",
       "mode": "authored",
       "pathPattern": "^docs/02\\.architecture/descriptions/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifactIdPattern": "^AD-[0-9]{4}$",
-      "template": "docs/99.templates/templates/architecture/ad.template.md",
+      "template": "docs/99.templates/templates/architecture/description.template.md",
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
@@ -207,10 +207,10 @@
           "sourceLinkColumn": "Upstream requirement",
           "targetLinkColumn": "ADR / Spec",
           "allowedSourceProfileIds": [
-            "sdlc/requirement-package"
+            "sdlc/requirement"
           ],
           "allowedTargetProfileIds": [
-            "sdlc/adr",
+            "sdlc/architecture-decision",
             "sdlc/spec"
           ],
           "reciprocalEvidence": true,
@@ -220,12 +220,12 @@
       "placeholderPolicy": "forbidden"
     },
     {
-      "id": "sdlc/adr",
+      "id": "sdlc/architecture-decision",
       "class": "sdlc",
       "mode": "authored",
       "pathPattern": "^docs/02\\.architecture/decisions/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifactIdPattern": "^ADR-[0-9]{4}$",
-      "template": "docs/99.templates/templates/architecture/adr.template.md",
+      "template": "docs/99.templates/templates/architecture/decision.template.md",
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
@@ -308,8 +308,8 @@
           "sourceLinkColumn": "Decision lineage",
           "targetLinkColumn": "Affected Spec",
           "allowedSourceProfileIds": [
-            "sdlc/ad",
-            "sdlc/adr"
+            "sdlc/architecture-description",
+            "sdlc/architecture-decision"
           ],
           "allowedTargetProfileIds": [
             "sdlc/spec",
@@ -425,7 +425,7 @@
           "sourceLinkColumn": "Requirement ID",
           "targetLinkColumn": null,
           "allowedSourceProfileIds": [
-            "sdlc/requirement-package"
+            "sdlc/requirement"
           ],
           "allowedTargetProfileIds": [],
           "reciprocalEvidence": true,
@@ -440,7 +440,7 @@
       "mode": "authored",
       "pathPattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/data-model\\.md$",
       "artifactIdPattern": "^DATA-MODEL-[0-9]{4}$",
-      "template": "docs/99.templates/templates/specs/data-model.template.md",
+      "template": "docs/99.templates/templates/specs/contracts/data-model.template.md",
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
@@ -536,7 +536,7 @@
           "sourceLinkColumn": "Requirement ID",
           "targetLinkColumn": null,
           "allowedSourceProfileIds": [
-            "sdlc/requirement-package"
+            "sdlc/requirement"
           ],
           "allowedTargetProfileIds": [],
           "reciprocalEvidence": true,
@@ -757,8 +757,8 @@
       "placeholderPolicy": "forbidden"
     },
     {
-      "id": "sdlc/guide",
-      "class": "sdlc",
+      "id": "operation/guide",
+      "class": "operation",
       "mode": "authored",
       "pathPattern": "^docs/05\\.operations/guides/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifactIdPattern": "^GDE-[0-9]{4}$",
@@ -854,8 +854,8 @@
       "placeholderPolicy": "forbidden"
     },
     {
-      "id": "sdlc/policy",
-      "class": "sdlc",
+      "id": "operation/policy",
+      "class": "operation",
       "mode": "authored",
       "pathPattern": "^docs/05\\.operations/policies/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifactIdPattern": "^POL-[0-9]{4}$",
@@ -953,8 +953,8 @@
       "placeholderPolicy": "forbidden"
     },
     {
-      "id": "sdlc/runbook",
-      "class": "sdlc",
+      "id": "operation/runbook",
+      "class": "operation",
       "mode": "authored",
       "pathPattern": "^docs/05\\.operations/runbooks/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifactIdPattern": "^RUN-[0-9]{4}$",
@@ -1043,7 +1043,7 @@
             "sdlc/spec",
             "sdlc/data-model",
             "sdlc/task",
-            "sdlc/policy"
+            "operation/policy"
           ],
           "allowedTargetProfileIds": [],
           "reciprocalEvidence": true,
@@ -1053,8 +1053,8 @@
       "placeholderPolicy": "forbidden"
     },
     {
-      "id": "sdlc/incident",
-      "class": "sdlc",
+      "id": "operation/incident",
+      "class": "operation",
       "mode": "authored",
       "pathPattern": "^docs/05\\.operations/incidents/[0-9]{4}/inc-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/incident\\.md$",
       "artifactIdPattern": "^inc-[0-9]{4}-[0-9]{4}$",
@@ -1155,8 +1155,8 @@
       "placeholderPolicy": "forbidden"
     },
     {
-      "id": "sdlc/postmortem",
-      "class": "sdlc",
+      "id": "operation/postmortem",
+      "class": "operation",
       "mode": "authored",
       "pathPattern": "^docs/05\\.operations/incidents/[0-9]{4}/inc-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/postmortem\\.md$",
       "artifactIdPattern": "^inc-[0-9]{4}-[0-9]{4}-PM$",
@@ -1260,8 +1260,8 @@
       "placeholderPolicy": "forbidden"
     },
     {
-      "id": "content/audit-reference",
-      "class": "common",
+      "id": "reference/audit",
+      "class": "reference",
       "mode": "classification-only",
       "pathPattern": "^docs/90\\.references/audits/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifactIdPattern": "^AUD-[0-9]{4}-m[0-9]{4}$",
@@ -1341,12 +1341,12 @@
       "placeholderPolicy": "forbidden"
     },
     {
-      "id": "content/research-reference",
-      "class": "common",
+      "id": "reference/research",
+      "class": "reference",
       "mode": "classification-only",
       "pathPattern": "^docs/90\\.references/research/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifactIdPattern": "^RES-[0-9]{4}-m[0-9]{4}$",
-      "template": "docs/99.templates/templates/references/reference.template.md",
+      "template": "docs/99.templates/templates/references/research-reference.template.md",
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
@@ -1422,8 +1422,8 @@
       "placeholderPolicy": "forbidden"
     },
     {
-      "id": "content/data-reference",
-      "class": "common",
+      "id": "reference/data",
+      "class": "reference",
       "mode": "classification-only",
       "pathPattern": "^docs/90\\.references/data/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifactIdPattern": "^DATA-[0-9]{4}-m[0-9]{4}$",
@@ -1503,17 +1503,19 @@
       "placeholderPolicy": "forbidden"
     },
     {
-      "id": "content/archive",
-      "class": "common",
+      "id": "archive/tombstone",
+      "class": "archive",
       "mode": "classification-only",
       "pathPattern": "^docs/98\\.archive/(?!migrations/)(?!.*(?:/)?README\\.md$).+\\.md$",
       "artifactIdPattern": "^tomb-(?:PRD|AD|ADR|SPEC|GDE|RUN)-[0-9]{4}$",
-      "template": "docs/99.templates/templates/archive/archive-record.template.md",
+      "template": "docs/99.templates/templates/archive/tombstone.template.md",
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -1529,7 +1531,9 @@
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -1547,7 +1551,9 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -1580,17 +1586,19 @@
       "placeholderPolicy": "forbidden"
     },
     {
-      "id": "content/archive-migration",
-      "class": "common",
+      "id": "archive/migration",
+      "class": "archive",
       "mode": "classification-only",
       "pathPattern": "^docs/98\\.archive/migrations/[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md$",
       "artifactIdPattern": "^MIG-[0-9]{4}$",
-      "template": "docs/99.templates/templates/archive/archive-migration.template.md",
+      "template": "docs/99.templates/templates/archive/migration.template.md",
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -1598,7 +1606,9 @@
         ],
         "allowed": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -1606,7 +1616,9 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
+          "layer",
           "status",
           "owner",
           "updated",
@@ -1639,19 +1651,18 @@
       "placeholderPolicy": "forbidden"
     },
     {
-      "id": "governance/reference",
+      "id": "governance/contract",
       "class": "governance",
       "mode": "authored",
-      "pathPattern": "^docs/00\\.agent-governance/(?!README\\.md$)(?!roles/README\\.md$)(?!memory/).+\\.md$",
+      "pathPattern": "^docs/00\\.agent-governance/(?!README\\.md$)(?:[a-z][a-z0-9]*(?:-[a-z0-9]+)*|contracts/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)\\.md$",
       "artifactIdPattern": null,
-      "template": "docs/99.templates/templates/governance/governance-reference.template.md",
+      "template": "docs/99.templates/templates/governance/contract.template.md",
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated"
@@ -1660,7 +1671,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -1671,7 +1681,356 @@
           "title",
           "version",
           "type",
-          "layer",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "superseded",
+          "retired"
+        ]
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "governance/control",
+      "class": "governance",
+      "mode": "authored",
+      "pathPattern": "^docs/00\\.agent-governance/controls/[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/governance/control.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "superseded",
+          "retired"
+        ]
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "governance/provider",
+      "class": "governance",
+      "mode": "authored",
+      "pathPattern": "^docs/00\\.agent-governance/providers/[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/governance/provider.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "superseded",
+          "retired"
+        ]
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "governance/role",
+      "class": "governance",
+      "mode": "authored",
+      "pathPattern": "^docs/00\\.agent-governance/roles/(?!README\\.md$)[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/governance/role.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "superseded",
+          "retired"
+        ]
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "governance/rule",
+      "class": "governance",
+      "mode": "authored",
+      "pathPattern": "^docs/00\\.agent-governance/policies/[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/governance/rule.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "superseded",
+          "retired"
+        ]
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "governance/skill",
+      "class": "governance",
+      "mode": "authored",
+      "pathPattern": "^docs/00\\.agent-governance/skills/[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/governance/skill.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
           "status",
           "owner",
           "updated",
@@ -2037,7 +2396,7 @@
       "mode": "classification-only",
       "pathPattern": "^\\.agents/.+\\.md$",
       "artifactIdPattern": null,
-      "template": "docs/99.templates/templates/runtime/codex-agent-projection.template.md",
+      "template": null,
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
@@ -2098,7 +2457,7 @@
       "mode": "classification-only",
       "pathPattern": "^\\.claude/agents/[^/]+\\.md$",
       "artifactIdPattern": null,
-      "template": "docs/99.templates/templates/runtime/claude-agent-projection.template.md",
+      "template": "docs/99.templates/templates/runtime/claude-agent.template.md",
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
@@ -2117,6 +2476,32 @@
           "model",
           "tools"
         ]
+      },
+      "requiredSections": {
+        "required": [],
+        "allowed": []
+      },
+      "lifecycle": {
+        "statusDomain": []
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
+      "id": "exception/codex-agent-binding",
+      "class": "exception",
+      "mode": "classification-only",
+      "pathPattern": "^\\.codex/agents/[^/]+\\.toml$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/runtime/codex-agent.template.toml",
+      "requiredFrontmatter": {
+        "mode": "not-applicable",
+        "required": [],
+        "allowed": [],
+        "order": []
       },
       "requiredSections": {
         "required": [],
@@ -2191,7 +2576,7 @@
       "mode": "classification-only",
       "pathPattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/contracts/openapi\\.yaml$",
       "artifactIdPattern": null,
-      "template": "docs/99.templates/templates/specs/openapi.template.yaml",
+      "template": "docs/99.templates/templates/specs/contracts/openapi.template.yaml",
       "requiredFrontmatter": {
         "mode": "not-applicable",
         "required": [],
@@ -2217,7 +2602,7 @@
       "mode": "classification-only",
       "pathPattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/contracts/schema\\.graphql$",
       "artifactIdPattern": null,
-      "template": "docs/99.templates/templates/specs/schema.template.graphql",
+      "template": "docs/99.templates/templates/specs/contracts/schema.template.graphql",
       "requiredFrontmatter": {
         "mode": "not-applicable",
         "required": [],
@@ -2243,7 +2628,7 @@
       "mode": "classification-only",
       "pathPattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/contracts/service\\.proto$",
       "artifactIdPattern": null,
-      "template": "docs/99.templates/templates/specs/service.template.proto",
+      "template": "docs/99.templates/templates/specs/contracts/service.template.proto",
       "requiredFrontmatter": {
         "mode": "not-applicable",
         "required": [],
@@ -2290,20 +2675,22 @@
       "placeholderPolicy": "forbidden"
     },
     {
-      "id": "template/content/archive",
-      "class": "common",
+      "id": "template/archive/tombstone",
+      "class": "archive",
       "mode": "template",
-      "pathPattern": "^docs/99\\.templates/templates/archive/archive\\-record\\.template\\.md$",
+      "pathPattern": "^docs/99\\.templates/templates/archive/tombstone\\.template\\.md$",
       "artifactIdPattern": null,
-      "template": "docs/99.templates/templates/archive/archive-record.template.md",
+      "template": "docs/99.templates/templates/archive/tombstone.template.md",
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "original_type",
           "original_path",
           "archived_on",
@@ -2315,10 +2702,12 @@
         ],
         "allowed": [
           "title",
+          "version",
           "type",
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "change_id",
           "original_artifact_id",
           "original_type",
@@ -2332,10 +2721,12 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
           "status",
           "owner",
           "updated",
+          "artifact_id",
           "change_id",
           "original_artifact_id",
           "original_type",
@@ -2359,23 +2750,24 @@
       },
       "relationships": {
         "sourceProfileIds": [
-          "content/archive"
+          "archive/tombstone"
         ],
         "bodyContract": null
       },
       "placeholderPolicy": "template-only"
     },
     {
-      "id": "template/content/archive-migration",
-      "class": "common",
+      "id": "template/archive/migration",
+      "class": "archive",
       "mode": "template",
-      "pathPattern": "^docs/99\\.templates/templates/archive/archive\\-migration\\.template\\.md$",
+      "pathPattern": "^docs/99\\.templates/templates/archive/migration\\.template\\.md$",
       "artifactIdPattern": null,
-      "template": "docs/99.templates/templates/archive/archive-migration.template.md",
+      "template": "docs/99.templates/templates/archive/migration.template.md",
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
           "title",
+          "version",
           "type",
           "status",
           "owner",
@@ -2384,6 +2776,7 @@
         ],
         "allowed": [
           "title",
+          "version",
           "type",
           "status",
           "owner",
@@ -2392,6 +2785,7 @@
         ],
         "order": [
           "title",
+          "version",
           "type",
           "status",
           "owner",
@@ -2419,7 +2813,7 @@
       },
       "relationships": {
         "sourceProfileIds": [
-          "content/archive-migration"
+          "archive/migration"
         ],
         "bodyContract": null
       },
@@ -2736,8 +3130,8 @@
       "placeholderPolicy": "template-only"
     },
     {
-      "id": "template/content/audit-reference",
-      "class": "common",
+      "id": "template/reference/audit",
+      "class": "reference",
       "mode": "template",
       "pathPattern": "^docs/99\\.templates/templates/references/audit\\-reference\\.template\\.md$",
       "artifactIdPattern": null,
@@ -2748,7 +3142,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -2758,7 +3151,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -2770,7 +3162,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -2812,26 +3203,25 @@
       },
       "relationships": {
         "sourceProfileIds": [
-          "content/audit-reference"
+          "reference/audit"
         ],
         "bodyContract": null
       },
       "placeholderPolicy": "template-only"
     },
     {
-      "id": "template/content/research-reference",
-      "class": "common",
+      "id": "template/reference/research",
+      "class": "reference",
       "mode": "template",
-      "pathPattern": "^docs/99\\.templates/templates/references/reference\\.template\\.md$",
+      "pathPattern": "^docs/99\\.templates/templates/references/research\\-reference\\.template\\.md$",
       "artifactIdPattern": null,
-      "template": "docs/99.templates/templates/references/reference.template.md",
+      "template": "docs/99.templates/templates/references/research-reference.template.md",
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -2841,7 +3231,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -2853,7 +3242,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -2895,15 +3283,15 @@
       },
       "relationships": {
         "sourceProfileIds": [
-          "content/research-reference"
+          "reference/research"
         ],
         "bodyContract": null
       },
       "placeholderPolicy": "template-only"
     },
     {
-      "id": "template/content/data-reference",
-      "class": "common",
+      "id": "template/reference/data",
+      "class": "reference",
       "mode": "template",
       "pathPattern": "^docs/99\\.templates/templates/references/data\\-reference\\.template\\.md$",
       "artifactIdPattern": null,
@@ -2914,7 +3302,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -2924,7 +3311,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -2936,7 +3322,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -2978,26 +3363,25 @@
       },
       "relationships": {
         "sourceProfileIds": [
-          "content/data-reference"
+          "reference/data"
         ],
         "bodyContract": null
       },
       "placeholderPolicy": "template-only"
     },
     {
-      "id": "template/sdlc/adr",
+      "id": "template/sdlc/architecture-decision",
       "class": "sdlc",
       "mode": "template",
-      "pathPattern": "^docs/99\\.templates/templates/architecture/adr\\.template\\.md$",
+      "pathPattern": "^docs/99\\.templates/templates/architecture/decision\\.template\\.md$",
       "artifactIdPattern": null,
-      "template": "docs/99.templates/templates/architecture/adr.template.md",
+      "template": "docs/99.templates/templates/architecture/decision.template.md",
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3007,7 +3391,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3019,7 +3402,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3058,7 +3440,7 @@
       },
       "relationships": {
         "sourceProfileIds": [
-          "sdlc/adr"
+          "sdlc/architecture-decision"
         ],
         "bodyContract": {
           "section": "Traceability",
@@ -3075,8 +3457,8 @@
           "sourceLinkColumn": "Decision lineage",
           "targetLinkColumn": "Affected Spec",
           "allowedSourceProfileIds": [
-            "sdlc/ad",
-            "sdlc/adr"
+            "sdlc/architecture-description",
+            "sdlc/architecture-decision"
           ],
           "allowedTargetProfileIds": [
             "sdlc/spec",
@@ -3089,19 +3471,18 @@
       "placeholderPolicy": "template-only"
     },
     {
-      "id": "template/sdlc/ad",
+      "id": "template/sdlc/architecture-description",
       "class": "sdlc",
       "mode": "template",
-      "pathPattern": "^docs/99\\.templates/templates/architecture/ad\\.template\\.md$",
+      "pathPattern": "^docs/99\\.templates/templates/architecture/description\\.template\\.md$",
       "artifactIdPattern": null,
-      "template": "docs/99.templates/templates/architecture/ad.template.md",
+      "template": "docs/99.templates/templates/architecture/description.template.md",
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3111,7 +3492,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3121,7 +3501,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3158,7 +3537,7 @@
       },
       "relationships": {
         "sourceProfileIds": [
-          "sdlc/ad"
+          "sdlc/architecture-description"
         ],
         "bodyContract": {
           "section": "Traceability",
@@ -3181,10 +3560,10 @@
           "sourceLinkColumn": "Upstream requirement",
           "targetLinkColumn": "ADR / Spec",
           "allowedSourceProfileIds": [
-            "sdlc/requirement-package"
+            "sdlc/requirement"
           ],
           "allowedTargetProfileIds": [
-            "sdlc/adr",
+            "sdlc/architecture-decision",
             "sdlc/spec"
           ],
           "reciprocalEvidence": true,
@@ -3206,7 +3585,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3216,7 +3594,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3226,7 +3603,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3316,7 +3692,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3326,7 +3701,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3336,7 +3710,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3408,8 +3781,8 @@
       "placeholderPolicy": "template-only"
     },
     {
-      "id": "template/sdlc/guide",
-      "class": "sdlc",
+      "id": "template/operation/guide",
+      "class": "operation",
       "mode": "template",
       "pathPattern": "^docs/99\\.templates/templates/operations/guide\\.template\\.md$",
       "artifactIdPattern": null,
@@ -3420,7 +3793,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3430,7 +3802,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3440,7 +3811,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3477,7 +3847,7 @@
       },
       "relationships": {
         "sourceProfileIds": [
-          "sdlc/guide"
+          "operation/guide"
         ],
         "bodyContract": {
           "section": "Traceability",
@@ -3507,8 +3877,8 @@
       "placeholderPolicy": "template-only"
     },
     {
-      "id": "template/sdlc/incident",
-      "class": "sdlc",
+      "id": "template/operation/incident",
+      "class": "operation",
       "mode": "template",
       "pathPattern": "^docs/99\\.templates/templates/operations/incident\\.template\\.md$",
       "artifactIdPattern": null,
@@ -3519,7 +3889,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3529,7 +3898,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3539,7 +3907,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3582,7 +3949,7 @@
       },
       "relationships": {
         "sourceProfileIds": [
-          "sdlc/incident"
+          "operation/incident"
         ],
         "bodyContract": {
           "section": "Traceability",
@@ -3611,8 +3978,8 @@
       "placeholderPolicy": "template-only"
     },
     {
-      "id": "template/sdlc/policy",
-      "class": "sdlc",
+      "id": "template/operation/policy",
+      "class": "operation",
       "mode": "template",
       "pathPattern": "^docs/99\\.templates/templates/operations/policy\\.template\\.md$",
       "artifactIdPattern": null,
@@ -3623,7 +3990,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3633,7 +3999,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3643,7 +4008,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3682,7 +4046,7 @@
       },
       "relationships": {
         "sourceProfileIds": [
-          "sdlc/policy"
+          "operation/policy"
         ],
         "bodyContract": {
           "section": "Traceability",
@@ -3712,8 +4076,8 @@
       "placeholderPolicy": "template-only"
     },
     {
-      "id": "template/sdlc/postmortem",
-      "class": "sdlc",
+      "id": "template/operation/postmortem",
+      "class": "operation",
       "mode": "template",
       "pathPattern": "^docs/99\\.templates/templates/operations/postmortem\\.template\\.md$",
       "artifactIdPattern": null,
@@ -3724,7 +4088,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3734,7 +4097,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3744,7 +4106,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3790,7 +4151,7 @@
       },
       "relationships": {
         "sourceProfileIds": [
-          "sdlc/postmortem"
+          "operation/postmortem"
         ],
         "bodyContract": {
           "section": "Traceability",
@@ -3819,8 +4180,8 @@
       "placeholderPolicy": "template-only"
     },
     {
-      "id": "template/sdlc/runbook",
-      "class": "sdlc",
+      "id": "template/operation/runbook",
+      "class": "operation",
       "mode": "template",
       "pathPattern": "^docs/99\\.templates/templates/operations/runbook\\.template\\.md$",
       "artifactIdPattern": null,
@@ -3831,7 +4192,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3841,7 +4201,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3851,7 +4210,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3890,7 +4248,7 @@
       },
       "relationships": {
         "sourceProfileIds": [
-          "sdlc/runbook"
+          "operation/runbook"
         ],
         "bodyContract": {
           "section": "Traceability",
@@ -3911,7 +4269,7 @@
             "sdlc/spec",
             "sdlc/data-model",
             "sdlc/task",
-            "sdlc/policy"
+            "operation/policy"
           ],
           "allowedTargetProfileIds": [],
           "reciprocalEvidence": true,
@@ -3921,7 +4279,7 @@
       "placeholderPolicy": "template-only"
     },
     {
-      "id": "template/sdlc/requirement-package",
+      "id": "template/sdlc/requirement",
       "class": "sdlc",
       "mode": "template",
       "pathPattern": "^docs/99\\.templates/templates/requirements/requirement\\-package\\.template\\.md$",
@@ -3933,7 +4291,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3943,7 +4300,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -3955,7 +4311,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -4000,7 +4355,7 @@
       },
       "relationships": {
         "sourceProfileIds": [
-          "sdlc/requirement-package"
+          "sdlc/requirement"
         ],
         "bodyContract": {
           "section": "Traceability",
@@ -4024,7 +4379,7 @@
           "targetLinkColumn": "Downstream owner",
           "allowedSourceProfileIds": [],
           "allowedTargetProfileIds": [
-            "sdlc/ad",
+            "sdlc/architecture-description",
             "sdlc/spec"
           ],
           "reciprocalEvidence": true,
@@ -4037,16 +4392,15 @@
       "id": "template/sdlc/data-model",
       "class": "sdlc",
       "mode": "template",
-      "pathPattern": "^docs/99\\.templates/templates/specs/data\\-model\\.template\\.md$",
+      "pathPattern": "^docs/99\\.templates/templates/specs/contracts/data\\-model\\.template\\.md$",
       "artifactIdPattern": null,
-      "template": "docs/99.templates/templates/specs/data-model.template.md",
+      "template": "docs/99.templates/templates/specs/contracts/data-model.template.md",
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -4056,7 +4410,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -4066,7 +4419,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -4136,7 +4488,7 @@
           "sourceLinkColumn": "Requirement ID",
           "targetLinkColumn": null,
           "allowedSourceProfileIds": [
-            "sdlc/requirement-package"
+            "sdlc/requirement"
           ],
           "allowedTargetProfileIds": [],
           "reciprocalEvidence": true,
@@ -4158,7 +4510,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -4168,7 +4519,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -4178,7 +4528,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -4250,7 +4599,7 @@
           "sourceLinkColumn": "Requirement ID",
           "targetLinkColumn": null,
           "allowedSourceProfileIds": [
-            "sdlc/requirement-package"
+            "sdlc/requirement"
           ],
           "allowedTargetProfileIds": [],
           "reciprocalEvidence": true,
@@ -4260,19 +4609,59 @@
       "placeholderPolicy": "template-only"
     },
     {
-      "id": "template/governance/reference",
+      "id": "template/exception/provider-native-metadata",
+      "class": "exception",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/runtime/claude\\-agent\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/runtime/claude-agent.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "name",
+          "description"
+        ],
+        "allowed": [
+          "name",
+          "description",
+          "model",
+          "tools"
+        ],
+        "order": [
+          "name",
+          "description",
+          "model",
+          "tools"
+        ]
+      },
+      "requiredSections": {
+        "required": [],
+        "allowed": []
+      },
+      "lifecycle": {
+        "statusDomain": []
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "exception/provider-native-metadata"
+        ],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/governance/contract",
       "class": "governance",
       "mode": "template",
-      "pathPattern": "^docs/99\\.templates/templates/governance/governance\\-reference\\.template\\.md$",
+      "pathPattern": "^docs/99\\.templates/templates/governance/contract\\.template\\.md$",
       "artifactIdPattern": null,
-      "template": "docs/99.templates/templates/governance/governance-reference.template.md",
+      "template": "docs/99.templates/templates/governance/contract.template.md",
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated"
@@ -4281,7 +4670,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -4292,7 +4680,6 @@
           "title",
           "version",
           "type",
-          "layer",
           "status",
           "owner",
           "updated",
@@ -4329,85 +4716,372 @@
       },
       "relationships": {
         "sourceProfileIds": [
-          "governance/reference"
+          "governance/contract"
         ],
         "bodyContract": null
       },
       "placeholderPolicy": "template-only"
     },
     {
-      "id": "template/exception/provider-native-metadata",
-      "class": "exception",
+      "id": "template/governance/control",
+      "class": "governance",
       "mode": "template",
-      "pathPattern": "^docs/99\\.templates/templates/runtime/claude\\-agent\\-projection\\.template\\.md$",
+      "pathPattern": "^docs/99\\.templates/templates/governance/control\\.template\\.md$",
       "artifactIdPattern": null,
-      "template": "docs/99.templates/templates/runtime/claude-agent-projection.template.md",
+      "template": "docs/99.templates/templates/governance/control.template.md",
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
-          "name",
-          "description"
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
         ],
         "allowed": [
-          "name",
-          "description",
-          "model",
-          "tools"
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
         ],
         "order": [
-          "name",
-          "description",
-          "model",
-          "tools"
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
         ]
       },
       "requiredSections": {
-        "required": [],
-        "allowed": []
+        "required": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ]
       },
       "lifecycle": {
-        "statusDomain": []
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "done",
+          "archived"
+        ]
       },
       "relationships": {
         "sourceProfileIds": [
-          "exception/provider-native-metadata"
+          "governance/control"
         ],
         "bodyContract": null
       },
       "placeholderPolicy": "template-only"
     },
     {
-      "id": "template/exception/local-agent-asset",
-      "class": "exception",
+      "id": "template/governance/provider",
+      "class": "governance",
       "mode": "template",
-      "pathPattern": "^docs/99\\.templates/templates/runtime/codex\\-agent\\-projection\\.template\\.md$",
+      "pathPattern": "^docs/99\\.templates/templates/governance/provider\\.template\\.md$",
       "artifactIdPattern": null,
-      "template": "docs/99.templates/templates/runtime/codex-agent-projection.template.md",
+      "template": "docs/99.templates/templates/governance/provider.template.md",
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
-          "name",
-          "description"
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
         ],
         "allowed": [
-          "name",
-          "description"
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
         ],
         "order": [
-          "name",
-          "description"
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
         ]
       },
       "requiredSections": {
-        "required": [],
-        "allowed": []
+        "required": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ]
       },
       "lifecycle": {
-        "statusDomain": []
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "done",
+          "archived"
+        ]
       },
       "relationships": {
         "sourceProfileIds": [
-          "exception/local-agent-asset"
+          "governance/provider"
+        ],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/governance/role",
+      "class": "governance",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/governance/role\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/governance/role.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "done",
+          "archived"
+        ]
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "governance/role"
+        ],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/governance/rule",
+      "class": "governance",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/governance/rule\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/governance/rule.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "done",
+          "archived"
+        ]
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "governance/rule"
+        ],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/governance/skill",
+      "class": "governance",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/governance/skill\\.template\\.md$",
+      "artifactIdPattern": null,
+      "template": "docs/99.templates/templates/governance/skill.template.md",
+      "requiredFrontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ],
+        "order": [
+          "title",
+          "version",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "superseded_by",
+          "supersedes"
+        ]
+      },
+      "requiredSections": {
+        "required": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ]
+      },
+      "lifecycle": {
+        "statusDomain": [
+          "draft",
+          "active",
+          "accepted",
+          "done",
+          "archived"
+        ]
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "governance/skill"
         ],
         "bodyContract": null
       },
@@ -4419,8 +5093,8 @@
       {
         "family": "requirement-architecture",
         "profileIds": [
-          "sdlc/requirement-package",
-          "sdlc/ad"
+          "sdlc/requirement",
+          "sdlc/architecture-description"
         ],
         "states": {
           "draft": "mutable",
@@ -4451,7 +5125,7 @@
       {
         "family": "adr",
         "profileIds": [
-          "sdlc/adr"
+          "sdlc/architecture-decision"
         ],
         "states": {
           "proposed": "mutable",
@@ -4545,10 +5219,15 @@
       {
         "family": "governance-guide-policy-runbook",
         "profileIds": [
-          "sdlc/guide",
-          "sdlc/policy",
-          "sdlc/runbook",
-          "governance/reference"
+          "operation/guide",
+          "operation/policy",
+          "operation/runbook",
+          "governance/contract",
+          "governance/control",
+          "governance/provider",
+          "governance/role",
+          "governance/rule",
+          "governance/skill"
         ],
         "states": {
           "draft": "mutable",
@@ -4574,7 +5253,7 @@
       {
         "family": "incident",
         "profileIds": [
-          "sdlc/incident"
+          "operation/incident"
         ],
         "states": {
           "open": "current",
@@ -4600,7 +5279,7 @@
       {
         "family": "postmortem",
         "profileIds": [
-          "sdlc/postmortem"
+          "operation/postmortem"
         ],
         "states": {
           "draft": "mutable",
@@ -4621,8 +5300,8 @@
       {
         "family": "migration-tombstone",
         "profileIds": [
-          "content/archive",
-          "content/archive-migration"
+          "archive/tombstone",
+          "archive/migration"
         ],
         "states": {
           "draft": "mutable",
@@ -4638,24 +5317,29 @@
       {
         "family": "template-profile",
         "profileIds": [
-          "template/content/archive",
-          "template/content/archive-migration",
-          "template/content/audit-reference",
-          "template/content/research-reference",
-          "template/content/data-reference",
-          "template/sdlc/adr",
-          "template/sdlc/ad",
+          "template/archive/tombstone",
+          "template/archive/migration",
+          "template/reference/audit",
+          "template/reference/research",
+          "template/reference/data",
+          "template/sdlc/architecture-decision",
+          "template/sdlc/architecture-description",
           "template/sdlc/plan",
           "template/sdlc/task",
-          "template/sdlc/guide",
-          "template/sdlc/incident",
-          "template/sdlc/policy",
-          "template/sdlc/postmortem",
-          "template/sdlc/runbook",
-          "template/sdlc/requirement-package",
+          "template/operation/guide",
+          "template/operation/incident",
+          "template/operation/policy",
+          "template/operation/postmortem",
+          "template/operation/runbook",
+          "template/sdlc/requirement",
           "template/sdlc/data-model",
           "template/sdlc/spec",
-          "template/governance/reference"
+          "template/governance/contract",
+          "template/governance/control",
+          "template/governance/provider",
+          "template/governance/role",
+          "template/governance/rule",
+          "template/governance/skill"
         ],
         "states": {
           "draft": "mutable",
@@ -4962,6 +5646,5 @@
       "reason": "Direct human-approved retirement of the three transition residues Spec 0054 WP-012 recorded",
       "decision": "0022",
       "approvalMode": "spec-body-record"
-    }
-  ]
+    }  ]
 }

@@ -1,8 +1,8 @@
 ---
 title: 'Task: Responsibility topology and compatibility cutover'
-version: "1.0"
+version: "1.0.0"
 type: sdlc/task
-layer: "03.specs"
+layer: "specs"
 status: in-progress
 owner: platform
 updated: 2026-09-01

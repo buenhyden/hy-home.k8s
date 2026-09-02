@@ -1,11 +1,11 @@
 ---
-name: role-name
-description: One sentence naming the bounded responsibility this role executes.
-model: sonnet 4.6
-tools: Read, Grep, Glob
+name: "{role-name}"
+description: "One sentence naming the bounded responsibility this role executes."
+model: "{claude-model-id}"
+tools: "{Read, Grep, Glob}"
 ---
 
-# role-name
+# {role-name}
 
 ## Runtime Bootstrap
 

@@ -1,6 +1,8 @@
 ---
 title: "Archive Record: WSL k3d/k3s ArgoCD Platform Architecture Reference Document"
-type: "content/archive"
+version: "1.0.0"
+type: "archive/tombstone"
+layer: "archive"
 status: "archived"
 owner: "platform"
 updated: "2026-06-02"

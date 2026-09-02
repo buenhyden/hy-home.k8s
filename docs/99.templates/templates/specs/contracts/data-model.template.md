@@ -1,10 +1,9 @@
 ---
 title: '{Feature Name} Data Model'
-version: "#.#"
+version: "#.#.#"
 type: sdlc/data-model
-layer: "03.specs"
 status: draft
-owner: platform
+owner: '{owner}'
 updated: YYYY-MM-DD
 artifact_id: "DATA-MODEL-####"
 ---

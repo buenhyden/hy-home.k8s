@@ -1,8 +1,8 @@
 ---
 title: "Observability Platform Operations Policy"
-version: "1.0"
-type: sdlc/policy
-layer: "05.operations"
+version: "1.0.0"
+type: operation/policy
+layer: "operations"
 status: active
 owner: platform
 updated: 2026-09-01

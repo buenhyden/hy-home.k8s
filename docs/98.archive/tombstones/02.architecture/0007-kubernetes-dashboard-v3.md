@@ -1,6 +1,8 @@
 ---
 title: "Archive Record: ADR-0007: Kubernetes Dashboard v3 Installation"
-type: "content/archive"
+version: "1.0.0"
+type: "archive/tombstone"
+layer: "archive"
 status: "archived"
 owner: "platform"
 updated: "2026-06-02"

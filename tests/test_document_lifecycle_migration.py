@@ -25,7 +25,7 @@ class MigrationLifecycleTest(unittest.TestCase):
         registry = json.loads((self.root / registry_path).read_text())
         canonical = json.loads((ROOT / registry_path).read_text())
         profile = next(
-            p for p in canonical["profiles"] if p["id"] == "governance/reference"
+            p for p in canonical["profiles"] if p["id"] == "governance/contract"
         )
         registry["profiles"].append(profile)
         navigation = next(
@@ -43,8 +43,8 @@ class MigrationLifecycleTest(unittest.TestCase):
         self.stage(navigation["template"], (ROOT / navigation["template"]).read_bytes())
         self.git.run("rm", "--quiet", "-f", "--", self.target, self.path)
         self.payload = (
-            "---\ntitle: 'Policy'\nversion: \"1.0\"\n"
-            "type: governance/reference\nlayer: \"00.agent-governance\"\n"
+            "---\ntitle: 'Policy'\nversion: \"1.0.0\"\n"
+            "type: governance/contract\n"
             "status: active\nowner: platform\nupdated: 2026-08-28\n---\n\n"
             "# Policy\n\n"
             + "".join(
@@ -131,9 +131,9 @@ class MigrationLifecycleTest(unittest.TestCase):
     def test_proposed_executable_patterns_are_rejected_before_evaluation(self):
         original = (self.root / "docs/99.templates/registry.json").read_bytes()
         for profile_id, field in (
-            ("governance/reference", "pathPattern"),
+            ("governance/contract", "pathPattern"),
             ("sdlc/data-model", "pathPattern"),
-            ("content/archive-migration", "artifactIdPattern"),
+            ("archive/migration", "artifactIdPattern"),
             ("sdlc/data-model", "artifactIdPattern"),
         ):
             with self.subTest(profile=profile_id, field=field):
@@ -223,7 +223,7 @@ class MigrationLifecycleTest(unittest.TestCase):
         )
         for profile_id, add_null in (
             ("readme/collection-index", True),
-            ("governance/reference", False),
+            ("governance/contract", False),
         ):
             with self.subTest(profile=profile_id):
                 raw = json.loads(original)
@@ -322,9 +322,9 @@ class MigrationLifecycleTest(unittest.TestCase):
         path = "docs/99.templates/registry.json"
         original = (self.root / path).read_bytes()
         for profile_id, field, value in (
-            ("content/archive-migration", "pathPattern", "^docs/never-matches\\.md$"),
-            ("governance/reference", "pathPattern", "^docs/never-matches\\.md$"),
-            ("governance/reference", "mode", "classification-only"),
+            ("archive/migration", "pathPattern", "^docs/never-matches\\.md$"),
+            ("governance/contract", "pathPattern", "^docs/never-matches\\.md$"),
+            ("governance/contract", "mode", "classification-only"),
         ):
             with self.subTest(profile=profile_id, field=field):
                 raw = json.loads(original)
@@ -346,7 +346,7 @@ class MigrationLifecycleTest(unittest.TestCase):
         registry_path = "docs/99.templates/registry.json"
         original = (self.root / registry_path).read_bytes()
         raw = json.loads(original)
-        next(p for p in raw["profiles"] if p["id"] == "governance/reference")[
+        next(p for p in raw["profiles"] if p["id"] == "governance/contract")[
             "template"
         ] = path
         self.stage(registry_path, json.dumps(raw).encode())
@@ -412,7 +412,7 @@ class MigrationLifecycleTest(unittest.TestCase):
                 "LIFECYCLE-CREATE",
             ),
             (
-                self.payload.replace(b"governance/reference", b"sdlc/spec"),
+                self.payload.replace(b"governance/contract", b"sdlc/spec"),
                 "LIFECYCLE-STATE",
             ),
             (
@@ -446,7 +446,7 @@ class MigrationLifecycleTest(unittest.TestCase):
     def test_record_profile_status_and_unproved_seal_fail(self):
         original = (self.root / self.path).read_bytes()
         for content in (
-            original.replace(b'"content/archive-migration"', b'"governance/reference"'),
+            original.replace(b'"archive/migration"', b'"governance/contract"'),
             original.replace(b'"sealed"', b'"accepted"'),
             original.replace(self.row["source_blob"].encode(), b"0" * 40),
         ):

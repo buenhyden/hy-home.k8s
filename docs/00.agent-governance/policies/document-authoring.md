@@ -1,8 +1,7 @@
 ---
 title: 'Document Authoring Policy'
-version: "1.0"
-type: governance/reference
-layer: "00.agent-governance"
+version: "1.0.0"
+type: governance/rule
 status: active
 owner: platform
 updated: 2026-08-28
@@ -38,22 +37,30 @@ design-system rules only.
 3. Use the profile-owned initial status, metadata, sections, and relationships.
    Do not assume every profile starts at `draft`; router READMEs have no
    lifecycle or artifact ID.
-4. Replace prompts with concrete content, use complete stable IDs for
+4. Write the shared frontmatter keys in one grammar: `title`, `version`,
+   `type`, `status`, `owner`, and `updated` are always present. `type` is
+   `<family>/<kind>`, `version` is `<major>.<minor>.<patch>`, and `updated` is
+   an ISO date. A `title` never repeats the document's `artifact_id`.
+5. Write `layer` only where the document lives in a numbered stage, as that
+   stage's slug without its numeric prefix. Stage 00 governance documents and
+   Stage 99 forms declare no `layer`, and a profile that declares no
+   `artifact_id` has none to write.
+6. Replace prompts with concrete content, use complete stable IDs for
    traceability, and calculate links from the final target path.
-5. Keep a Requirement Package solution-independent. Put executable interface
+7. Keep a Requirement Package solution-independent. Put executable interface
    contracts and change-scoped Technical Approach and Acceptance Contract in
    the owning Spec package; put order, risks, verification, and rollback in its
    Plan and execution evidence in its Task records.
-6. Promote durable cross-change decisions to an ADR and current system views
-   to an Architecture Description. Do not create parallel design, test,
-   release, or progress authority.
-7. Review the owning README after content or path changes and update stale
+8. Promote durable cross-change decisions to an Architecture Decision and
+   current system views to an Architecture Description. Do not create parallel
+   design, test, release, or progress authority.
+9. Review the owning README after content or path changes and update stale
    navigation in the same logical change.
-8. Preserve accepted decisions and completed evidence. Use successors,
-   reciprocal lifecycle relationships, and minimal Git-backed recovery
-   mappings rather than rewriting history or leaving redirects.
-9. Run the checks selected by the affected paths and record evidence in the
-   owning Task using [quality policy](quality.md).
+10. Preserve accepted decisions and completed evidence. Use successors,
+    reciprocal lifecycle relationships, and minimal Git-backed recovery
+    mappings rather than rewriting history or leaving redirects.
+11. Run the checks selected by the affected paths and record evidence in the
+    owning Task using [quality policy](quality.md).
 
 Governance and agent execution sections remain English. Human-facing root,
 folder, requirement, operations, and reference explanation may use Korean;

@@ -20,13 +20,13 @@ PROPOSED_REGISTRY_VERSION = 8
 BASE_REGISTRY_ID = "https://hy-home.k8s/schemas/document-profiles-7.schema.json"
 PROPOSED_REGISTRY_ID = "https://hy-home.k8s/schemas/document-profiles-8.schema.json"
 LEGACY_ARCHIVE_PROFILE = "content/archive-tombstone"
-ARCHIVE_PROFILE = "content/archive"
+ARCHIVE_PROFILE = "archive/tombstone"
 LEGACY_ARCHIVE_TEMPLATE_PROFILE = "template/content/archive-tombstone"
-ARCHIVE_TEMPLATE_PROFILE = "template/content/archive"
+ARCHIVE_TEMPLATE_PROFILE = "template/archive/tombstone"
 LEGACY_ARCHIVE_TEMPLATE = (
     "docs/99.templates/templates/common/archive-tombstone.template.md"
 )
-ARCHIVE_TEMPLATE = "docs/99.templates/templates/archive/archive-record.template.md"
+ARCHIVE_TEMPLATE = "docs/99.templates/templates/archive/tombstone.template.md"
 
 EXPECTED_ARCHIVE_PATHS = (
     "docs/98.archive/01.requirements/2026-03-27-wsl-k3d-argocd-platform.md",

@@ -1,13 +1,13 @@
 ---
 title: 'Current Corpus Retention and Validation Ownership'
-version: "1.0"
-type: sdlc/adr
-layer: "02.architecture"
+version: "1.0.0"
+type: sdlc/architecture-decision
+layer: "architecture"
 status: accepted
 owner: platform
 updated: 2026-09-01
 artifact_id: "ADR-0031"
-supersedes: "[ADR-0016, ADR-0017, ADR-0020, ADR-0021, ADR-0022]"
+supersedes: ["ADR-0016", "ADR-0017", "ADR-0020", "ADR-0021", "ADR-0022"]
 ---
 
 # ADR-0031: Current Corpus Retention and Validation Ownership

@@ -1,8 +1,8 @@
 ---
 title: "VAL-WER-004, VAL-WER-005, VAL-WER-007"
-version: "1.0"
+version: "1.0.0"
 type: sdlc/task
-layer: "03.specs"
+layer: "specs"
 status: done
 owner: platform
 updated: 2026-08-09

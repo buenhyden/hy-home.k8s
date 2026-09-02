@@ -1,8 +1,8 @@
 ---
 title: 'Istio Default Profile with ingress-nginx Coexistence'
-version: "1.0"
-type: sdlc/adr
-layer: "02.architecture"
+version: "1.0.0"
+type: sdlc/architecture-decision
+layer: "architecture"
 status: accepted
 owner: platform
 updated: 2026-05-18

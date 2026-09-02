@@ -1,8 +1,8 @@
 ---
 title: 'ArgoCD ESO Vault Recovery Runbook'
-version: "1.0"
-type: sdlc/runbook
-layer: "05.operations"
+version: "1.0.0"
+type: operation/runbook
+layer: "operations"
 status: active
 owner: platform
 updated: 2026-09-01

@@ -1,10 +1,9 @@
 ---
 title: '{Short Title}'
-version: "#.#"
-type: sdlc/adr
-layer: "02.architecture"
+version: "#.#.#"
+type: sdlc/architecture-decision
 status: proposed
-owner: platform
+owner: '{owner}'
 updated: YYYY-MM-DD
 artifact_id: "ADR-####"
 ---

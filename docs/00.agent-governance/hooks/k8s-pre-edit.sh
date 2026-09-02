@@ -288,7 +288,7 @@ def retired_document_owner(path: str) -> str:
     if path.startswith("docs/01.requirements/") and basename.startswith(
         ("prd-", "srs-", "ifc-", "interface-")
     ):
-        return "sdlc/requirement-package"
+        return "sdlc/requirement"
     if path.startswith("docs/03.specs/"):
         return {
             "design.md": "sdlc/spec",

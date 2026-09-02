@@ -37,7 +37,7 @@ with their canonical owners in `docs/00.agent-governance/`,
 - Official-source and repo-backed evidence summaries
 - Non-authoritative market scan summaries when clearly labeled
 - Pack READMEs created from `docs/99.templates/templates/references/research-pack.template.md`
-- Reports created from `docs/99.templates/templates/references/reference.template.md`
+- Reports created from `docs/99.templates/templates/references/research-reference.template.md`
 
 ### Out of Scope
 
@@ -106,7 +106,7 @@ date. Reference files inside a pack use semantic topic names only; do not use
 2. Create the pack README with
    [research-pack.template.md](../../99.templates/templates/references/research-pack.template.md)
    and authored reports with
-   [reference.template.md](../../99.templates/templates/references/reference.template.md).
+   [research-reference.template.md](../../99.templates/templates/references/research-reference.template.md).
 3. Keep source claims factual, dated, and explicitly bounded by `Source checked`, `Sources`, and `Review and Freshness`.
 4. Prefer official documentation and repo-backed evidence over market scan material.
 5. Label market findings as non-authoritative, and do not use them to override official or repo-backed sources.
@@ -148,7 +148,7 @@ owners.
 - [Workspace Harness Research Pack Spec](../../03.specs/0009-workspace-harness-research-pack/spec.md)
 - [Workspace Harness Research Pack Plan](../../03.specs/0009-workspace-harness-research-pack/plan.md)
 - [Workspace Harness Research Pack Tasks](../../03.specs/0009-workspace-harness-research-pack/README.md)
-- [Reference Template](../../99.templates/templates/references/reference.template.md)
+- [Research Reference Template](../../99.templates/templates/references/research-reference.template.md)
 - [Templates README](../../99.templates/README.md)
 - [Agent Governance Hub](../../00.agent-governance/README.md)
 - [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

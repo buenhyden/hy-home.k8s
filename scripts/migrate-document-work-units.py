@@ -848,7 +848,9 @@ def _archive_metadata(
     expected_type = "sdlc/plan" if source.parent.name == "plans" else "sdlc/task"
     return {
         "title": title if isinstance(title, str) and title else heading or source.stem,
-        "type": "content/archive",
+        "version": "1.0.0",
+        "type": "archive/tombstone",
+        "layer": "archive",
         "status": "archived",
         "owner": owner if isinstance(owner, str) and owner else "platform",
         "updated": (

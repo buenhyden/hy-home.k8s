@@ -724,7 +724,7 @@ stage04_retirement_authority = (
     / "docs/98.archive/migrations/0002-sdlc-document-and-governance-consolidation.md"
 )
 stage04_retirement_authority_sha256 = (
-    "847b8dab8f86b0b16b47decbf59dbf355f2fbae2869582626c43d949f61dfdce"  # pragma: allowlist secret
+    "2cac1634348c9efa985099bb3a2d736609e79849e3aa3d978a8f2a6858a2a45a"  # pragma: allowlist secret
 )
 if "04.execution" in actual_docs:
     fail("retired docs/04.execution must remain absent after MIG-0002")
@@ -1071,7 +1071,7 @@ def canonical_form_contract_errors(
     registry_forms = {form_path for _, form_path in profile_form_references}
     errors = []
     canonical_form_name = re.compile(
-        r"^[a-z0-9][a-z0-9-]*\.template\.(md|yaml|graphql|proto)$"
+        r"^[a-z0-9][a-z0-9-]*\.template\.(md|yaml|graphql|proto|toml)$"
     )
     noncanonical_names = sorted(
         str(form)
@@ -1081,7 +1081,7 @@ def canonical_form_contract_errors(
     if noncanonical_names:
         errors.append(
             "physical form filenames must match "
-            "<name>.template.(md|yaml|graphql|proto): "
+            "<name>.template.(md|yaml|graphql|proto|toml): "
             f"{noncanonical_names}"
         )
     missing = sorted(registry_forms - physical_forms, key=str)
@@ -1137,7 +1137,7 @@ noncanonical_native_form = pathlib.PurePosixPath(
     "docs/99.templates/templates/specs/openapi.yaml"
 )
 expected_noncanonical_diagnostic = (
-    "physical form filenames must match <name>.template.(md|yaml|graphql|proto): "
+    "physical form filenames must match <name>.template.(md|yaml|graphql|proto|toml): "
     f"{[str(noncanonical_native_form)]}"
 )
 with tempfile.TemporaryDirectory(prefix="template-form-mutation-") as temp_dir:
@@ -1340,7 +1340,7 @@ spec_form = pathlib.PurePosixPath(
     "docs/99.templates/templates/specs/spec.template.md"
 )
 native_form = pathlib.PurePosixPath(
-    "docs/99.templates/templates/specs/openapi.template.yaml"
+    "docs/99.templates/templates/specs/contracts/openapi.template.yaml"
 )
 form_content_mutations = []
 retired_mutation = dict(form_sources)
@@ -1364,7 +1364,7 @@ for label, mutation in form_content_mutations:
         fail(f"canonical form content mutation accepted {label}")
 
 archive_record_form = pathlib.PurePosixPath(
-    "docs/99.templates/templates/archive/archive-record.template.md"
+    "docs/99.templates/templates/archive/tombstone.template.md"
 )
 archive_marker_mutation = dict(form_sources)
 archive_marker_mutation[archive_record_form] = archive_marker_mutation[
@@ -1382,7 +1382,7 @@ if expected_archive_marker_diagnostic not in canonical_form_content_errors(
     )
 
 archive_migration_form = pathlib.PurePosixPath(
-    "docs/99.templates/templates/archive/archive-migration.template.md"
+    "docs/99.templates/templates/archive/migration.template.md"
 )
 archive_migration_marker_mutation = dict(form_sources)
 archive_migration_marker_mutation[archive_migration_form] = (
@@ -1600,7 +1600,7 @@ for raw_relative_path in tracked_active_paths:
     for line_number in generic_template_residue_lines(read_text(path)):
         fail(f"active non-structural template residue in {rel(path)}:{line_number}")
 
-reference_template_path = template_path("reference.template.md")
+reference_template_path = template_path("research-reference.template.md")
 reference_template_text = read_text(reference_template_path)
 if re.search(r"archive", reference_template_text, re.IGNORECASE):
     fail(f"{rel(reference_template_path)} must not contain archive wording")
@@ -2999,7 +2999,7 @@ if True:
         fail(f"{rel(pre_hook_path)} docs payload simulation failed: {docs_pre_hook_result.stderr.strip()}")
     for phrase in [
         "Template-First",
-        "sdlc/requirement-package",
+        "sdlc/requirement",
         "docs/99.templates/README.md",
         "docs/99.templates/templates/requirements/requirement-package.template.md",
         "documentation template enforcement",

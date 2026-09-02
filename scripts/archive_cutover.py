@@ -131,7 +131,7 @@ FIRST_SOURCE_COMMIT = (
 SECOND_SOURCE_COMMIT = (
     "82f0e1922d9748a88b1487a32a59629ba523f408"  # pragma: allowlist secret
 )
-ARCHIVE_TEMPLATE_PROFILE = "template/content/archive"
+ARCHIVE_TEMPLATE_PROFILE = "template/archive/tombstone"
 ARCHIVE_INDEX = "docs/98.archive/README.md"
 CURRENT_REPLACEMENT_STATUSES = frozenset({"active", "accepted", "done"})
 SECRET_DETECTED_EXIT = 17
@@ -420,7 +420,7 @@ def _resolve_migration_graph(
         if (
             not isinstance(profile, str)
             or not profile
-            or profile in {ARCHIVE_PROFILE, "content/archive-migration"}
+            or profile in {ARCHIVE_PROFILE, "archive/migration"}
         ):
             raise RuntimeError("migration graph target is not current")
         resolved[source] = current

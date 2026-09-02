@@ -1,12 +1,11 @@
 ---
 title: 'Incident: {Incident Title}'
-version: "#.#"
-type: sdlc/incident
-layer: "05.operations"
+version: "#.#.#"
+type: operation/incident
 status: open
-owner: platform
+owner: '{owner}'
 updated: YYYY-MM-DD
-artifact_id: "inc-YYYY-NNNN"
+artifact_id: "inc-YYYY-####"
 ---
 
 # Incident: [Incident Title]

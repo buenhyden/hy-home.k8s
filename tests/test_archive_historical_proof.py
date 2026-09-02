@@ -167,7 +167,9 @@ class HistoricalMigrationProofTest(unittest.TestCase):
         recovered = fixtures.recovery.recover_git_blob(self.root, source, source_commit)
         metadata = {
             "title": "Archive: completed payload source",
-            "type": "content/archive",
+            "version": "1.0.0",
+            "type": "archive/tombstone",
+            "layer": "archive",
             "status": "archived",
             "owner": "platform",
             "updated": "2026-08-29",
@@ -196,9 +198,9 @@ class HistoricalMigrationProofTest(unittest.TestCase):
         stable_key = PurePosixPath(stable_path)
         self.context.paths = (*self.context.paths, stable_key)
         self.context.texts[stable_key] = envelope.decode("utf-8")
-        self.context.metadata[stable_key] = {"type": "content/archive"}
+        self.context.metadata[stable_key] = {"type": "archive/tombstone"}
         self.context.profiles[stable_key] = self.links.ProfileView(
-            "content/archive", "common", "classification-only"
+            "archive/tombstone", "common", "classification-only"
         )
         self.context.tracked_regular_paths = frozenset(
             {*self.context.tracked_regular_paths, stable_key}
@@ -234,7 +236,9 @@ class HistoricalMigrationProofTest(unittest.TestCase):
         recovered = fixtures.recovery.recover_git_blob(self.root, source, source_commit)
         metadata = {
             "title": "Archive: completed canonical source",
-            "type": "content/archive",
+            "version": "1.0.0",
+            "type": "archive/tombstone",
+            "layer": "archive",
             "status": "archived",
             "owner": "platform",
             "updated": "2026-08-29",
@@ -259,9 +263,9 @@ class HistoricalMigrationProofTest(unittest.TestCase):
         archive_key = PurePosixPath(archive_path)
         self.context.paths = (*self.context.paths, archive_key)
         self.context.texts[archive_key] = envelope.decode("utf-8")
-        self.context.metadata[archive_key] = {"type": "content/archive"}
+        self.context.metadata[archive_key] = {"type": "archive/tombstone"}
         self.context.profiles[archive_key] = self.links.ProfileView(
-            "content/archive", "common", "classification-only"
+            "archive/tombstone", "common", "classification-only"
         )
         self.context.tracked_regular_paths = frozenset(
             {*self.context.tracked_regular_paths, archive_key}
@@ -328,7 +332,7 @@ class HistoricalMigrationProofTest(unittest.TestCase):
     def test_archive_candidate_admission_uses_profile_and_context_path(self):
         stable_path, envelope, row, _alternate = self.stable_archive_payload_fixture()
         malformed_type = envelope.replace(
-            b'type: "content/archive"', b'type: "content/invalid"', 1
+            b'type: "archive/tombstone"', b'type: "content/invalid"', 1
         )
         self.context.texts[stable_path] = malformed_type.decode("utf-8")
         self.context.metadata[stable_path] = {"type": "content/invalid"}
@@ -340,7 +344,7 @@ class HistoricalMigrationProofTest(unittest.TestCase):
         ):
             self.proof()
         self.context.texts[stable_path] = envelope.decode("utf-8")
-        self.context.metadata[stable_path] = {"type": "content/archive"}
+        self.context.metadata[stable_path] = {"type": "archive/tombstone"}
         self.context.paths = tuple(
             path for path in self.context.paths if path != stable_path
         )

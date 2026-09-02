@@ -1,14 +1,13 @@
 ---
-title: '{Governance Topic} Governance Reference'
-version: "#.#"
-type: governance/reference
-layer: "00.agent-governance"
+title: '{Rule Topic} Policy'
+version: "#.#.#"
+type: governance/rule
 status: draft
-owner: platform
+owner: '{owner}'
 updated: YYYY-MM-DD
 ---
 
-# [Governance Topic] Governance Reference
+# [Rule Topic] Policy
 
 ## Overview
 
@@ -20,7 +19,7 @@ updated: YYYY-MM-DD
 
 ## Governance Context
 
-<!-- Author prompt: state the decisions, constraints, and evidence that shape this contract. -->
+<!-- Author prompt: state the decisions, constraints, and evidence that shape this rule. -->
 
 ## Current Contract
 

@@ -1,8 +1,8 @@
 ---
 title: 'Current Local GitOps Platform Architecture Description'
-version: "1.0"
-type: sdlc/ad
-layer: "02.architecture"
+version: "1.0.0"
+type: sdlc/architecture-description
+layer: "architecture"
 status: active
 owner: platform
 updated: 2026-07-13

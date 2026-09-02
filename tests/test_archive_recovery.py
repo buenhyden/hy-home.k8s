@@ -105,7 +105,9 @@ class ArchiveRecoveryTest(unittest.TestCase):
     def metadata(self, **overrides: object) -> dict[str, object]:
         result: dict[str, object] = {
             "title": "Archive: Historical fixture",
-            "type": "content/archive",
+            "version": "1.0.0",
+            "type": "archive/tombstone",
+            "layer": "archive",
             "status": "archived",
             "owner": "platform",
             "updated": "2026-07-18",

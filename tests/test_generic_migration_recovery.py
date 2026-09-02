@@ -31,11 +31,11 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
         registry = json.loads((ROOT / registry_path).read_text())
         # Authority requires all lifecycle families. Keep representative real
         # profiles and their body-link dependencies, not the document corpus.
-        selected = {"sdlc/ad", "sdlc/data-model", "sdlc/plan", "content/archive"}
+        selected = {"sdlc/architecture-description", "sdlc/data-model", "sdlc/plan", "archive/tombstone"}
         for domain in registry["programLineage"]["lifecycleDomains"]:
             profile_id = (
-                "content/archive-migration"
-                if "content/archive-migration" in domain["profileIds"]
+                "archive/migration"
+                if "archive/migration" in domain["profileIds"]
                 else domain["profileIds"][0]
             )
             selected.add(profile_id)
@@ -108,7 +108,8 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
         data = (
             "---\n"
             'title: "MIG-0005: Policy convergence"\n'
-            'type: "content/archive-migration"\nstatus: "sealed"\n'
+            'version: "1.0.0"\n'
+            'type: "archive/migration"\nlayer: "archive"\nstatus: "sealed"\n'
             'owner: "platform"\nupdated: "2026-08-28"\n'
             'artifact_id: "MIG-0005"\n---\n\n'
             "# MIG-0005: Policy convergence\n\n## Overview\n\nReviewed policy cutover.\n\n"
@@ -720,7 +721,7 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
         future = "docs/98.archive/migrations/0123-future-convergence.md"
         self.assertEqual(
             classify_path(load_registry(ROOT), PurePosixPath(future)).profile_id,
-            "content/archive-migration",
+            "archive/migration",
         )
         content = self.write().replace(b"MIG-0005", b"MIG-0123")
         archive.parse_migration_control(future, content)

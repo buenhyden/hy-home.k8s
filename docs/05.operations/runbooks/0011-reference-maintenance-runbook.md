@@ -1,8 +1,8 @@
 ---
 title: 'Reference Maintenance Runbook'
-version: "1.0"
-type: sdlc/runbook
-layer: "05.operations"
+version: "1.0.0"
+type: operation/runbook
+layer: "operations"
 status: active
 owner: platform
 updated: 2026-09-01
@@ -51,10 +51,12 @@ artifact_id: "RUN-0011"
 3. 현재 동작 또는 버전 사실은 매니페스트, 설정, workflow, lock, 코드와
    Stage 01/02 설명을 먼저 갱신한다. Reference를 실행 입력이나 mirror로
    만들지 않는다.
-4. pack 내부의 새 authored report는
-   [Reference Template](../../99.templates/templates/references/reference.template.md)을
-   사용하고 provenance, observation date, authority boundary, freshness trigger를
-   작성한다.
+4. pack 내부의 새 authored report는 category와 일치하는
+   [Audit Reference](../../99.templates/templates/references/audit-reference.template.md),
+   [Data Reference](../../99.templates/templates/references/data-reference.template.md),
+   [Research Reference](../../99.templates/templates/references/research-reference.template.md)
+   template을 사용하고 provenance, observation date, authority boundary,
+   freshness trigger를 작성한다.
 5. category router와 `docs/90.references/README.md`를 같은 변경에서
    갱신한다. 빈 category나 redirect 문서는 만들지 않는다.
 6. 종료 대상의 current consumer를 canonical owner 또는 직접 저장소 소스로
@@ -107,7 +109,9 @@ rtk git diff --check
 - [Audit Pack Template](../../99.templates/templates/references/audit-pack.template.md)
 - [Data Pack Template](../../99.templates/templates/references/data-pack.template.md)
 - [Research Pack Template](../../99.templates/templates/references/research-pack.template.md)
-- [Reference Template](../../99.templates/templates/references/reference.template.md)
+- [Audit Reference Template](../../99.templates/templates/references/audit-reference.template.md)
+- [Data Reference Template](../../99.templates/templates/references/data-reference.template.md)
+- [Research Reference Template](../../99.templates/templates/references/research-reference.template.md)
 - Document authoring policy: `docs/00.agent-governance/policies/document-authoring.md`
 
 ### Lifecycle Traceability

@@ -1,6 +1,8 @@
 ---
 title: "Archive Record: WSL2 k3d/k3s ArgoCD HA Platform Product Requirements"
-type: "content/archive"
+version: "1.0.0"
+type: "archive/tombstone"
+layer: "archive"
 status: "archived"
 owner: "platform"
 updated: "2026-06-02"

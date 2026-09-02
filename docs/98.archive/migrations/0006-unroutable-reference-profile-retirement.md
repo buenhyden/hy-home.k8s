@@ -1,6 +1,8 @@
 ---
 title: "Unroutable Reference Profile Retirement"
-type: "content/archive-migration"
+version: "1.0.0"
+type: "archive/migration"
+layer: "archive"
 status: "sealed"
 owner: "platform"
 updated: "2026-08-30"

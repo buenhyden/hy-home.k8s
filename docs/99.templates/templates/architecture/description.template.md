@@ -1,10 +1,9 @@
 ---
 title: '{System or Domain Name} Architecture Description'
-version: "#.#"
-type: sdlc/ad
-layer: "02.architecture"
+version: "#.#.#"
+type: sdlc/architecture-description
 status: draft
-owner: platform
+owner: '{owner}'
 updated: YYYY-MM-DD
 artifact_id: "AD-####"
 ---

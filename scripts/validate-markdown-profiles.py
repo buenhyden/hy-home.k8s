@@ -13,11 +13,12 @@ import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
-from typing import Any, Sequence
+from typing import Any, Mapping, Sequence
 from zoneinfo import ZoneInfo
 
 import yaml
 
+from json_schema_validation import SchemaEvaluationError, schema_errors
 from document_contracts import (
     ConditionalConstraint,
     ConstantConstraint,
@@ -45,11 +46,11 @@ SDLC_FRONTMATTER_KEYS = ("title", "type", "status", "owner", "updated")
 # already checked.
 STAGE05_PROFILE_IDS = frozenset(
     {
-        "sdlc/guide",
-        "sdlc/policy",
-        "sdlc/runbook",
-        "sdlc/incident",
-        "sdlc/postmortem",
+        "operation/guide",
+        "operation/policy",
+        "operation/runbook",
+        "operation/incident",
+        "operation/postmortem",
     }
 )
 STAGE05_PINNED_FRONTMATTER = {"status": "active", "owner": "platform"}
@@ -59,6 +60,10 @@ NATIVE_TRACKED_PATHSPECS = (
     "docs/03.specs",
 )
 OWNER = "markdown-profile-validator"
+FRONTMATTER_SCHEMA_PATH = PurePosixPath(
+    "docs/99.templates/contracts/frontmatter.schema.json"
+)
+
 AUTHOR_PROMPT_MARKER = "Author prompt:"
 AUTHOR_PROMPT_COMMENT = re.compile(r"(?m)^[ \t]*<!-- Author prompt:")
 GENERIC_RESIDUE = (
@@ -199,7 +204,7 @@ def _has_exact_leading_sdlc_frontmatter(text: str) -> bool:
     return (
         tuple(keys) == SDLC_FRONTMATTER_KEYS
         and isinstance(document_type, str)
-        and re.fullmatch(r"sdlc/[a-z][a-z0-9-]*", document_type) is not None
+        and re.fullmatch(r"[a-z][a-z0-9]*/[a-z][a-z0-9-]*", document_type) is not None
     )
 
 
@@ -578,7 +583,7 @@ def _requirement_package_identity_diagnostics(
 ) -> list[Diagnostic]:
     """Bind an authored Requirement Package artifact ID to its path number."""
 
-    if profile.profile_id != "sdlc/requirement-package" or profile.mode != "authored":
+    if profile.profile_id != "sdlc/requirement" or profile.mode != "authored":
         return []
     package_number = _requirement_package_number(path)
     artifact_id = metadata.get("artifact_id")
@@ -739,7 +744,7 @@ def _body_contract_diagnostics(
                 continue
             if (
                 identifier.kind == "requirement"
-                and profile.profile_id == "sdlc/requirement-package"
+                and profile.profile_id == "sdlc/requirement"
                 and profile.mode == "authored"
             ):
                 package_number = _requirement_package_number(path)
@@ -1062,7 +1067,7 @@ def _value_contract_diagnostics(
             key == "artifact_id"
             and profile.artifact_id_pattern is not None
             and not (
-                profile.profile_id == "content/archive"
+                profile.profile_id == "archive/tombstone"
                 and path.parts[:3] == ("docs", "98.archive", "changes")
             )
             and re.search(profile.artifact_id_pattern, _value_pattern_text(value))
@@ -1080,12 +1085,78 @@ def _value_contract_diagnostics(
     return diagnostics
 
 
+def load_frontmatter_schema(root: Path) -> dict[str, Any] | None:
+    """Load the authored frontmatter value contract when the root ships one."""
+
+    path = root / FRONTMATTER_SCHEMA_PATH
+    if not path.is_file():
+        return None
+    schema = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(schema, dict):
+        raise ValueError("frontmatter schema must be a JSON object")
+    return schema
+
+
+def _schema_scalar(value: object) -> object:
+    """Render one YAML scalar the way the frontmatter schema declares it."""
+
+    if isinstance(value, dt.datetime):
+        return value.isoformat()
+    if isinstance(value, dt.date):
+        return value.isoformat()
+    return value
+
+
+def _frontmatter_schema_diagnostics(
+    path: PurePosixPath,
+    profile: DocumentProfile,
+    data: Mapping[str, object],
+    schema: Mapping[str, Any] | None,
+) -> list[Diagnostic]:
+    """Validate frontmatter values against the repository value contract.
+
+    Template forms are exempt: their placeholders deliberately spell a grammar
+    the authored contract rejects, which is what makes them placeholders.
+    """
+
+    if (
+        schema is None
+        or profile.mode == "template"
+        or profile.profile_class == "exception"
+    ):
+        return []
+    payload = {key: _schema_scalar(value) for key, value in data.items()}
+    try:
+        errors = schema_errors(dict(schema), payload)
+    except SchemaEvaluationError:
+        return [
+            _diagnostic(
+                "FM-SCHEMA",
+                path,
+                profile,
+                "an evaluable frontmatter value contract",
+                "schema evaluation failed",
+            )
+        ]
+    return [
+        _diagnostic(
+            "FM-SCHEMA",
+            path,
+            profile,
+            error.message,
+            error.json_path or "frontmatter",
+        )
+        for error in errors
+    ]
+
+
 def _frontmatter_body(
     text: str,
     path: PurePosixPath,
     profile: DocumentProfile,
     diagnostics: list[Diagnostic],
     today: dt.date,
+    frontmatter_schema: Mapping[str, Any] | None = None,
 ) -> str:
     contract = profile.frontmatter
     if contract.mode == "not-applicable":
@@ -1160,6 +1231,9 @@ def _frontmatter_body(
             )
 
     diagnostics.extend(_value_contract_diagnostics(path, profile, data, today))
+    diagnostics.extend(
+        _frontmatter_schema_diagnostics(path, profile, data, frontmatter_schema)
+    )
     if (
         "title" in data
         and profile.placeholder_policy == "forbidden"
@@ -1288,6 +1362,7 @@ def validate_document(
     today: dt.date | None = None,
     body_contracts: str = "registry",
     body_contract_path_prefixes: tuple[PurePosixPath, ...] = (),
+    frontmatter_schema: Mapping[str, Any] | None = None,
 ) -> list[Diagnostic]:
     """Validate one source using only its registry-selected profile contract."""
 
@@ -1299,6 +1374,7 @@ def validate_document(
         today=today,
         body_contracts=body_contracts,
         body_contract_path_prefixes=body_contract_path_prefixes,
+        frontmatter_schema=frontmatter_schema,
     )
 
 
@@ -1311,6 +1387,7 @@ def validate_document_text(
     today: dt.date | None = None,
     body_contracts: str = "registry",
     body_contract_path_prefixes: tuple[PurePosixPath, ...] = (),
+    frontmatter_schema: Mapping[str, Any] | None = None,
 ) -> list[Diagnostic]:
     """Validate exact caller-supplied text without consulting filesystem bytes."""
 
@@ -1318,7 +1395,9 @@ def validate_document_text(
         raise ValueError("mode must be compatibility or strict")
     effective_today = today or dt.datetime.now(ZoneInfo("Asia/Seoul")).date()
     diagnostics: list[Diagnostic] = []
-    body = _frontmatter_body(text, path, profile, diagnostics, effective_today)
+    body = _frontmatter_body(
+        text, path, profile, diagnostics, effective_today, frontmatter_schema
+    )
     diagnostics.extend(_body_diagnostics(path, profile, body))
     status = ""
     metadata: dict[str, Any] = {}
@@ -1521,6 +1600,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     root = args.root.resolve()
     try:
         registry = load_registry(root)
+        frontmatter_schema = load_frontmatter_schema(root)
         include_paths = tuple(PurePosixPath(value) for value in args.include_path)
         native_include_paths = tuple(
             path
@@ -1571,6 +1651,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                     args.mode,
                     body_contracts=args.body_contracts,
                     body_contract_path_prefixes=tuple(args.body_contract_path_prefix),
+                    frontmatter_schema=frontmatter_schema,
                 )
             )
         rows = _outcome_rows(root, diagnostics, args.mode)

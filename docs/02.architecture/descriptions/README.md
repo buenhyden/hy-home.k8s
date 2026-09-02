@@ -55,7 +55,7 @@ AD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선택
 ## Add and Find
 
 1. 관련 `01.requirements/` 문서를 먼저 읽어 요구사항 경계를 고정한다.
-2. 새 AD는 `../../99.templates/templates/architecture/ad.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/descriptions/####-<system-or-domain>.md`다. 안정 ID `AD-####`는 frontmatter에 둔다.
+2. 새 AD는 `../../99.templates/templates/architecture/description.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/descriptions/####-<system-or-domain>.md`다. 안정 ID `AD-####`는 frontmatter에 둔다.
 3. 주요 설계 결정은 `02.architecture/decisions/`에 별도 ADR로 연결한다.
 4. superseded 또는 삭제된 AD의 전체 본문은 Git history에서 복구한다. Stage 98은 registry가 요구하는 Migration 또는 최소 Tombstone lookup만 기록하며, full-body Archive Record를 새로 만들지 않는다.
 5. 구현 가능한 계약은 `03.specs/`로 내려보내고 양방향 링크를 유지한다.
@@ -88,5 +88,5 @@ AD는 참조 아키텍처와 품질 속성을 설명한다. 단일 기술 선택
 - [01.requirements](../../01.requirements/README.md)
 - [02.architecture/decisions](../decisions/README.md)
 - [03.specs](../../03.specs/README.md)
-- [99.templates AD Template](../../99.templates/templates/architecture/ad.template.md)
+- [99.templates AD Template](../../99.templates/templates/architecture/description.template.md)
 - [Archive Index](../../98.archive/README.md)

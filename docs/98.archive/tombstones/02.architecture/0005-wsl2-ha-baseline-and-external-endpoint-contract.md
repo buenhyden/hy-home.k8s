@@ -1,6 +1,8 @@
 ---
 title: "Archive Record: ADR-0005: WSL2 HA Baseline and External Endpoint Contract"
-type: "content/archive"
+version: "1.0.0"
+type: "archive/tombstone"
+layer: "archive"
 status: "archived"
 owner: "platform"
 updated: "2026-06-02"

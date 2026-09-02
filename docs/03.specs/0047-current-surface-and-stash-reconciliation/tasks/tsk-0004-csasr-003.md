@@ -1,8 +1,8 @@
 ---
 title: "VAL-CSASR-004, VAL-CSASR-006, VAL-CSASR-007"
-version: "1.0"
+version: "1.0.0"
 type: sdlc/task
-layer: "03.specs"
+layer: "specs"
 status: queued
 owner: platform
 updated: 2026-08-07

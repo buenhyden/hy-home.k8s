@@ -1184,7 +1184,7 @@ def validator_argv(
     else:
         return argv
 
-    archive_form = "docs/99.templates/templates/archive/archive-record.template.md"
+    archive_form = "docs/99.templates/templates/archive/tombstone.template.md"
     if (root / archive_form).is_file() and archive_form not in include_candidates:
         include_candidates.append(archive_form)
 

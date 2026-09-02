@@ -329,7 +329,9 @@ class MigrationTests(unittest.TestCase):
             recovered = recover_git_blob(root, row["source"], commit)
             metadata = {
                 "title": "Fixture archive",
-                "type": "content/archive",
+                "version": "1.0.0",
+                "type": "archive/tombstone",
+                "layer": "archive",
                 "status": "archived",
                 "owner": "test",
                 "updated": "2026-08-09",
@@ -504,7 +506,7 @@ class MigrationTests(unittest.TestCase):
             invalid = OrderedDict(
                 (
                     ("title", "invalid"),
-                    ("type", "content/archive"),
+                    ("type", "archive/tombstone"),
                 )
             )
             with (

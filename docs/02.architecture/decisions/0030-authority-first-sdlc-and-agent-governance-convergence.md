@@ -1,13 +1,13 @@
 ---
 title: 'Authority-First SDLC and Agent Governance Convergence'
-version: "1.0"
-type: sdlc/adr
-layer: "02.architecture"
+version: "1.0.0"
+type: sdlc/architecture-decision
+layer: "architecture"
 status: accepted
 owner: platform
 updated: 2026-09-01
 artifact_id: "ADR-0030"
-supersedes: "[ADR-0013, ADR-0015, ADR-0018, ADR-0019, ADR-0023, ADR-0024, ADR-0025]"
+supersedes: ["ADR-0013", "ADR-0015", "ADR-0018", "ADR-0019", "ADR-0023", "ADR-0024", "ADR-0025"]
 ---
 
 # ADR-0030: Authority-First SDLC and Agent Governance Convergence

@@ -268,7 +268,9 @@
         "class": {
           "enum": [
             "sdlc",
-            "common",
+            "operation",
+            "reference",
+            "archive",
             "governance",
             "readme",
             "exception"

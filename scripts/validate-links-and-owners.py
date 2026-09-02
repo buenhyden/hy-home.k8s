@@ -772,10 +772,14 @@ def _terminal_governance_current_owners(
     owner_profiles = tuple(
         profile
         for profile in registry.profiles
-        if profile.profile_id == "governance/reference"
+        if profile.profile_class == "governance" and profile.mode == "authored"
     )
+    owner_ids = {profile.profile_id for profile in owner_profiles}
+    lifecycle_domains = {
+        profile.lifecycle_domain for profile in owner_profiles
+    }
     lifecycle_domain = (
-        owner_profiles[0].lifecycle_domain if len(owner_profiles) == 1 else None
+        next(iter(lifecycle_domains)) if len(lifecycle_domains) == 1 else None
     )
     allowed_states = (
         tuple(
@@ -787,10 +791,12 @@ def _terminal_governance_current_owners(
         else ()
     )
     if (
-        len(owner_profiles) != 1
-        or owner_profiles[0].mode != "authored"
+        not owner_profiles
         or not allowed_states
-        or not set(allowed_states).issubset(owner_profiles[0].status_domain)
+        or any(
+            not set(allowed_states).issubset(profile.status_domain)
+            for profile in owner_profiles
+        )
     ):
         raise ConfigurationError(
             "terminal governance current-owner profile is unavailable"
@@ -799,7 +805,7 @@ def _terminal_governance_current_owners(
         sorted(
             path
             for path in paths
-            if profiles[path].profile_id == "governance/reference"
+            if profiles[path].profile_id in owner_ids
             and profiles[path].mode == "authored"
             and str(metadata[path].get("status", "")).casefold() in allowed_states
         )
@@ -3246,7 +3252,7 @@ def _archive_payload_proofs(
         for path in context.paths
         if path in context.tracked_regular_paths
         and path in context.profiles
-        and context.profiles[path].profile_id == "content/archive"
+        and context.profiles[path].profile_id == "archive/tombstone"
         and (text := context.texts.get(path)) is not None
     }
     report = validate_archive_records(
@@ -3316,7 +3322,7 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
     )
     for source in context.paths:
         profile = context.profiles[source].profile_id
-        if profile == "content/archive":
+        if profile == "archive/tombstone":
             # ArchiveEnvelope.v1 payload links are historical evidence. Their
             # authority is resolved against source_commit/original_path by the
             # archive validator, never against the current worktree.
@@ -4040,10 +4046,10 @@ PROGRAM_TASK_STATUS_DOMAIN = frozenset(
 )
 PROGRAM_PATHS = {
     "sdlc/prd": re.compile(r"^docs/01\.requirements/({identifier})-[^/]+\.md$"),
-    "sdlc/ad": re.compile(
+    "sdlc/architecture-description": re.compile(
         r"^docs/02\.architecture/descriptions/ad-({identifier})-[^/]+\.md$"
     ),
-    "sdlc/adr": re.compile(
+    "sdlc/architecture-decision": re.compile(
         r"^docs/02\.architecture/decisions/({identifier})-[^/]+\.md$"
     ),
     "sdlc/spec": re.compile(r"^docs/03\.specs/({identifier})-[^/]+/spec\.md$"),
@@ -4799,8 +4805,8 @@ def _program_reciprocal_diagnostics(
 ) -> list[Diagnostic]:
     spec = _program_owner_path(context, "sdlc/spec", relation.spec_id)
     prd = _program_owner_path(context, "sdlc/prd", program.prd_id)
-    ard = _program_owner_path(context, "sdlc/ad", program.ad_id)
-    decision = _program_owner_path(context, "sdlc/adr", relation.decision_id)
+    ard = _program_owner_path(context, "sdlc/architecture-description", program.ad_id)
+    decision = _program_owner_path(context, "sdlc/architecture-decision", relation.decision_id)
     if spec is None or prd is None or ard is None or (follow_up and decision is None):
         return []
     required_from_spec = {prd, ard}
@@ -5281,7 +5287,7 @@ def _standalone_decision_roster_diagnostics(
             _diag(
                 "STANDALONE-DECISION-ROSTER",
                 STANDALONE_DECISION_PATH,
-                "sdlc/adr",
+                "sdlc/architecture-decision",
                 "the accepted standalone-execution decision",
                 "the decision is absent or untracked",
             )
@@ -5295,7 +5301,7 @@ def _standalone_decision_roster_diagnostics(
             _diag(
                 "STANDALONE-DECISION-ROSTER",
                 STANDALONE_DECISION_PATH,
-                "sdlc/adr",
+                "sdlc/architecture-decision",
                 f"linked Specs equal to the declared roster {sorted(declared)}",
                 f"linked={sorted(linked)}",
             )
@@ -5313,12 +5319,12 @@ def _standalone_execution_diagnostics(
     owned_paths: set[PurePosixPath] = set()
     for relation in standalone_executions:
         spec = _program_owner_path(context, "sdlc/spec", relation.spec_id)
-        decision = _program_owner_path(context, "sdlc/adr", relation.decision_id)
+        decision = _program_owner_path(context, "sdlc/architecture-decision", relation.decision_id)
         plan = relation.plan_path
         task = relation.task_path
         owners = (
             (spec, "sdlc/spec"),
-            (decision, "sdlc/adr"),
+            (decision, "sdlc/architecture-decision"),
             (plan, "sdlc/plan"),
             (task, "sdlc/task"),
         )
@@ -5441,7 +5447,7 @@ def _delegation_authorities(
                 target
                 for target in shared_targets
                 if target in context.profiles
-                and context.profiles[target].profile_id == "sdlc/adr"
+                and context.profiles[target].profile_id == "sdlc/architecture-decision"
                 and parent in _program_local_targets(context, target)
                 and child in _program_local_targets(context, target)
             ),
@@ -6033,7 +6039,7 @@ def _owner_candidate(context: Context, path: PurePosixPath) -> bool:
     status = str(context.metadata[path].get("status", "")).casefold()
     if profile.mode != "authored" or profile.profile_class in {"readme", "exception"}:
         return False
-    if profile.profile_id == "content/archive" or status not in {
+    if profile.profile_id == "archive/tombstone" or status not in {
         "active",
         "accepted",
     }:
@@ -6202,20 +6208,20 @@ def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
                 _diag(
                     "REGISTRY_GOVERNANCE_CURRENT_OWNER_MISSING",
                     path,
-                    "governance/reference",
-                    "declared tracked governance/reference document",
+                    "governance",
+                    "declared tracked Stage 00 governance document",
                     "declared path is missing",
                 )
             )
             continue
         profile = context.profiles[path]
-        if profile.profile_id != "governance/reference" or profile.mode != "authored":
+        if profile.profile_class != "governance" or profile.mode != "authored":
             diagnostics.append(
                 _diag(
                     "REGISTRY_GOVERNANCE_CURRENT_OWNER_PROFILE",
                     path,
                     profile.profile_id,
-                    "authored governance/reference",
+                    "authored Stage 00 governance profile",
                     f"{profile.mode} {profile.profile_id}",
                 )
             )
@@ -6234,7 +6240,7 @@ def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
 
     for path in context.paths:
         profile = context.profiles[path]
-        if profile.profile_id != "governance/reference" or profile.mode != "authored":
+        if profile.profile_class != "governance" or profile.mode != "authored":
             continue
         status = str(context.metadata[path].get("status", "")).casefold()
         if status in allowed and path not in declared:

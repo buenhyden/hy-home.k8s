@@ -1,8 +1,8 @@
 ---
 title: 'Pod Security Standards Staged Adoption'
-version: "1.0"
-type: sdlc/adr
-layer: "02.architecture"
+version: "1.0.0"
+type: sdlc/architecture-decision
+layer: "architecture"
 status: accepted
 owner: platform
 updated: 2026-08-18
