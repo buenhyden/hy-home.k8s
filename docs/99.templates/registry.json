@@ -2365,6 +2365,42 @@
       "placeholderPolicy": "forbidden"
     },
     {
+      "id": "readme/runtime-governance",
+      "class": "readme",
+      "mode": "frontmatter-free",
+      "pathPattern": "^\\.github/README\\.md$",
+      "template": "docs/99.templates/templates/common/readme-runtime-governance.template.md",
+      "requiredFrontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [
+          "Content Mapping",
+          "Policy Routing",
+          "Workflow Roles",
+          "Source Basis",
+          "Workflow Responsibility Matrix",
+          "Boundaries"
+        ],
+        "allowed": [
+          "Content Mapping",
+          "Policy Routing",
+          "Workflow Roles",
+          "Source Basis",
+          "Workflow Responsibility Matrix",
+          "Boundaries"
+        ]
+      },
+      "relationships": {
+        "sourceProfileIds": [],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "forbidden"
+    },
+    {
       "id": "exception/root-provider-shim",
       "class": "exception",
       "mode": "frontmatter-free",
@@ -2520,7 +2556,7 @@
       "id": "exception/github-native-control",
       "class": "exception",
       "mode": "frontmatter-free",
-      "pathPattern": "^\\.github/(?:README|PULL_REQUEST_TEMPLATE|SECURITY)\\.md$",
+      "pathPattern": "^\\.github/(?:PULL_REQUEST_TEMPLATE|SECURITY)\\.md$",
       "artifactIdPattern": null,
       "template": null,
       "requiredFrontmatter": {
@@ -3124,6 +3160,44 @@
       "relationships": {
         "sourceProfileIds": [
           "readme/workspace-staging"
+        ],
+        "bodyContract": null
+      },
+      "placeholderPolicy": "template-only"
+    },
+    {
+      "id": "template/readme/runtime-governance",
+      "class": "readme",
+      "mode": "template",
+      "pathPattern": "^docs/99\\.templates/templates/common/readme\\-runtime\\-governance\\.template\\.md$",
+      "template": "docs/99.templates/templates/common/readme-runtime-governance.template.md",
+      "requiredFrontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "requiredSections": {
+        "required": [
+          "Content Mapping",
+          "Policy Routing",
+          "Workflow Roles",
+          "Source Basis",
+          "Workflow Responsibility Matrix",
+          "Boundaries"
+        ],
+        "allowed": [
+          "Content Mapping",
+          "Policy Routing",
+          "Workflow Roles",
+          "Source Basis",
+          "Workflow Responsibility Matrix",
+          "Boundaries"
+        ]
+      },
+      "relationships": {
+        "sourceProfileIds": [
+          "readme/runtime-governance"
         ],
         "bodyContract": null
       },
@@ -5646,5 +5720,6 @@
       "reason": "Direct human-approved retirement of the three transition residues Spec 0054 WP-012 recorded",
       "decision": "0022",
       "approvalMode": "spec-body-record"
-    }  ]
+    }
+  ]
 }

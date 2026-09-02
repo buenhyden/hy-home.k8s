@@ -33,8 +33,15 @@ README는 해당 machine contract를 복제하지 않고 사람이 올바른 소
 Form directory 이름은 stage를, 파일 이름은 그 form이 만드는 문서 kind를 말한다.
 Profile ID는 같은 사실을 `<family>/<kind>`로 표현한다.
 
-- **Common forms** (`common/`): README profile별 `readme-*.template.md`.
-  frontmatter가 없고 heading contract만 가진다.
+- **Common forms** (`common/`): 저장소의 다섯 entrypoint 종류가 공유하는 README
+  form. `readme-repository`는 repository entrypoint(`README.md`),
+  `readme-stage-index`는 documentation entrypoint(`docs/README.md`)와 각 stage
+  entrypoint, `readme-collection-index`는 stage 안의 package·collection
+  entrypoint, `readme-implementation`과 `readme-workspace-staging`은
+  runtime-governance entrypoint 중 구현 표면과 workspace staging,
+  `readme-runtime-governance`는 provider 런타임이 직접 읽는 제어 표면
+  (`.github/README.md`)을 담당한다. 모두 frontmatter가 없고 heading contract만
+  가진다.
 - **Governance forms** (`governance/`): Stage 00의 여섯 owner kind에 각각
   `contract`, `control`, `provider`, `role`, `rule`, `skill` form이 대응한다.
   `governance/*` profile은 `artifact_id`를 선언하지 않는다.
