@@ -73,15 +73,9 @@ from archive_validation import (
 )
 from archive_recovery import (
     ArchiveContractError,
-    WORK107_MIGRATION_PATH,
     WP004C_SEALED_TARGET_COMMIT,
-    build_work107_migration_rows,
     current_named_durable_ref,
-    parse_work107_migration_document,
-    render_work107_migration_document,
-    render_work107_stable_envelope,
     require_commits_reachable_from_durable_refs,
-    validate_work107_migration_rows,
     _git_capture_bounded,
 )
 from document_authority import (
@@ -192,12 +186,6 @@ WORK105_ADR0023_RECIPROCAL_ROW = (
     "every unrelated decision | "
     "[Spec 052](../../03.specs/052-document-taxonomy-consolidation/spec.md) |"
 )
-
-WORK108_BASE_COMMIT = "db320b596904b52e184f01cd1b56467132ac9117"
-WORK108_BASE_REGISTRY_BLOB_OID = "7182c40ab8ee6b40173b408ec2c366314916f1e3"
-WORK108_PROPOSED_REGISTRY_BLOB_OID = "ce8da8f205cee1bba075bef7b26079a0708324b1"
-WORK108_BASE_MIGRATION_BLOB_OID = "619ddc09b38c0a0a5c8254de6fbdcf3c1deb60d6"
-WORK108_PROPOSED_MIGRATION_BLOB_OID = "b304c92c9c9032ebfe3be9156bd3f808ed1f5fb9"
 
 WORK054_WP002_BASE_COMMIT = "de72eb7d1828aeecf36bfe4ce35a892f9a8be729"
 WORK054_WP002_SOURCE_COMMIT = "160ce006969ddb49965c8af193f3e9ee290e18a8"
@@ -1370,22 +1358,6 @@ def _git_blob_oid(content: bytes) -> str:
     return hashlib.sha1(header + content).hexdigest()  # noqa: S324 - Git identity
 
 
-def _work107_without_outer_artifact_id(
-    content: bytes, expected_artifact_id: str
-) -> bytes | None:
-    expected = f'artifact_id: "{expected_artifact_id}"'.encode("ascii")
-    lines = content.splitlines(keepends=True)
-    matches = [
-        index for index, line in enumerate(lines) if line.rstrip(b"\r\n") == expected
-    ]
-    if len(matches) != 1 or matches[0] == 0:
-        return None
-    index = matches[0]
-    if not lines[index - 1].startswith(b"updated:"):
-        return None
-    return b"".join(lines[:index] + lines[index + 1 :])
-
-
 # One declared archive rehome. A tombstone identity now names the sequence slot
 # its original vacated (`tomb-ADR-0004`) rather than a content digest, and every
 # Stage 98 filename leads with its number, so each record moves exactly once.
@@ -1547,98 +1519,6 @@ def declared_archive_rehome_paths(
             return frozenset()
         admitted.add(source_path)
     return frozenset(admitted)
-
-
-def _work108_artifact_projection(
-    path: str, base: bytes, proposed: bytes, expected_artifact_id: str
-) -> bool:
-    expected = f'artifact_id: "{expected_artifact_id}"'.encode("ascii")
-    lines = proposed.splitlines(keepends=True)
-    if not lines or lines[0].rstrip(b"\r\n") != b"---":
-        return False
-    try:
-        frontmatter_end = next(
-            index
-            for index, line in enumerate(lines[1:], 1)
-            if line.rstrip(b"\r\n") == b"---"
-        )
-    except StopIteration:
-        return False
-    matches = [
-        index
-        for index, line in enumerate(lines[:frontmatter_end])
-        if line.rstrip(b"\r\n") == expected
-    ]
-    if len(matches) != 1:
-        return False
-    index = matches[0]
-    return (
-        index > 0
-        and lines[index - 1].startswith(b"updated:")
-        and b"".join(lines[:index] + lines[index + 1 :]) == base
-        and PurePosixPath(path).as_posix() == path
-    )
-
-
-def finite_work108_artifact_identity_paths(
-    *,
-    root: Path,
-    mode: str,
-    base_commit: str,
-    base_registry_oid: str,
-    proposed_registry_oid: str,
-    base_blobs: Mapping[PurePosixPath, str],
-    proposed_blobs: Mapping[PurePosixPath, str],
-) -> frozenset[PurePosixPath]:
-    """Admit only the reviewed WORK-108 outer artifact-ID insertion."""
-
-    if (
-        mode not in {"staged", "ci"}
-        or base_commit != WORK108_BASE_COMMIT
-        or base_registry_oid != WORK108_BASE_REGISTRY_BLOB_OID
-        or proposed_registry_oid != WORK108_PROPOSED_REGISTRY_BLOB_OID
-    ):
-        return frozenset()
-    migration_path = PurePosixPath(WORK107_MIGRATION_PATH)
-    if (
-        base_blobs.get(migration_path) != WORK108_BASE_MIGRATION_BLOB_OID
-        or proposed_blobs.get(migration_path) != WORK108_PROPOSED_MIGRATION_BLOB_OID
-    ):
-        return frozenset()
-    base_migration = _blob_bytes(root, WORK108_BASE_MIGRATION_BLOB_OID)
-    proposed_migration = _blob_bytes(root, WORK108_PROPOSED_MIGRATION_BLOB_OID)
-    if not _work108_artifact_projection(
-        migration_path.as_posix(),
-        base_migration,
-        proposed_migration,
-        "MIG-0001",
-    ):
-        return frozenset()
-    try:
-        rows = validate_work107_migration_rows(
-            root,
-            parse_work107_migration_document(proposed_migration),
-        )
-    except ArchiveContractError:
-        return frozenset()
-    consumed = {migration_path}
-    for row in rows:
-        path = PurePosixPath(str(row["stable_path"]))
-        base_oid = base_blobs.get(path)
-        proposed_oid = proposed_blobs.get(path)
-        if base_oid is None or proposed_oid is None or base_oid == proposed_oid:
-            return frozenset()
-        if not _work108_artifact_projection(
-            path.as_posix(),
-            _blob_bytes(root, base_oid),
-            _blob_bytes(root, proposed_oid),
-            str(row["artifact_id"]),
-        ):
-            return frozenset()
-        consumed.add(path)
-    if len(consumed) != 94:
-        return frozenset()
-    return frozenset(consumed)
 
 
 def _work054_wp002_frontmatter_value(raw: bytes, key: str) -> str | None:
@@ -4494,7 +4374,6 @@ def _evaluate_comparison(
     archive_rehome_consumed_paths = declared_archive_rehome_paths(
         root=root, base_blobs=base_blobs, proposed_blobs=proposed_blobs
     )
-    work108_consumed_paths = frozenset()
 
     immutability_diagnostics = _archive_immutability_diagnostics(
         root,
@@ -4502,7 +4381,7 @@ def _evaluate_comparison(
         base_blobs,
         proposed_blobs,
         mode=mode,
-        admitted_rehome_paths=archive_rehome_consumed_paths | work108_consumed_paths,
+        admitted_rehome_paths=archive_rehome_consumed_paths,
     )
     if immutability_diagnostics:
         return immutability_diagnostics
@@ -4559,7 +4438,6 @@ def _evaluate_comparison(
         | work054_wp004a_consumed_paths
         | work105_consumed_paths
         | archive_rehome_consumed_paths
-        | work108_consumed_paths
         | archive_consumed_paths
         | wp004c_mig0004_consumed_paths
     )

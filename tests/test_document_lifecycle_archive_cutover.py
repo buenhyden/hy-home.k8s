@@ -554,56 +554,6 @@ class ArchiveCutoverMigrationGraphTests(unittest.TestCase):
                 ARCHIVE_CUTOVER._resolve_migration_graph(edges, profiles)
 
 
-class FiniteWork108ArtifactIdentityAdmissionTest(unittest.TestCase):
-    """Exercise the WORK-108 projection over a built envelope.
-
-    The helper is a pure function over bytes.  It used to be fed the stored
-    bytes of a Stage 98 body record; those bodies now live in Git history, so
-    the fixture is built here instead.  The identity and path still come from
-    the digest-pinned WORK-107 ledger, which survives.
-    """
-
-    def test_outer_artifact_projection_is_exact_and_fail_closed(self):
-        row = build_work107_migration_rows(ROOT)[0]
-        path = str(row["stable_path"])
-        artifact_line = f'artifact_id: "{row["artifact_id"]}"\n'.encode()
-        proposed = (
-            b"---\n"
-            b'title: "Affected Surface and Agent QA Implementation Plan"\n'
-            b'type: "content/archive"\n'
-            b'status: "archived"\n'
-            b'owner: "platform"\n'
-            b'updated: "2026-07-18"\n' + artifact_line + b"---\n"
-            b"<!-- archive-envelope:v1 payload=rest-of-file"
-            b" encoding=git-blob-bytes -->\n"
-            b"payload bytes\n"
-        )
-        self.assertEqual(proposed.count(artifact_line), 1)
-        base = proposed.replace(artifact_line, b"", 1)
-        helper = getattr(VALIDATOR, "_work108_artifact_projection", None)
-        self.assertTrue(callable(helper), "WORK-108 artifact projection is missing")
-        self.assertTrue(helper(path, base, proposed, str(row["artifact_id"])))
-        for mutation in (
-            proposed.replace(str(row["artifact_id"]).encode(), b"PLAN-CHG-9999", 1),
-            proposed + b"body drift\n",
-            proposed.replace(
-                f'artifact_id: "{row["artifact_id"]}"\n'.encode(),
-                b"",
-                1,
-            ),
-            proposed.replace(
-                f'artifact_id: "{row["artifact_id"]}"\n'.encode(),
-                (
-                    f'artifact_id: "{row["artifact_id"]}"\n'
-                    f'artifact_id: "{row["artifact_id"]}"\n'
-                ).encode(),
-                1,
-            ),
-        ):
-            with self.subTest(mutation=mutation[-32:]):
-                self.assertFalse(helper(path, base, mutation, str(row["artifact_id"])))
-
-
 class DocumentAuthorityLifecycleTests(unittest.TestCase):
     @staticmethod
     def _wp004b_committed_transition():
