@@ -252,14 +252,12 @@ def _create_diagnostics(
                 )
             )
             continue
-        if profile.mode == "template":
-            continue
-        if profile.mode == "classification-only" or profile.profile_id in {
-            "readme/collection-index",
-            "readme/audit-pack",
-            "readme/data-pack",
-            "readme/research-pack",
-        }:
+        if not _stateful(profile):
+            # A profile with no lifecycle domain declares no creation state, so
+            # its appearance is not a lifecycle event. The transition, snapshot
+            # and parsing paths all ask `_stateful`. Creation asked `mode`, and
+            # the two answers differed: a migration record was never checked,
+            # while a domainless README was reported for having no lifecycle.
             continue
         state_failure = _state_diagnostic(
             document, profile, base_mode=base_mode, side="proposed"
@@ -286,20 +284,8 @@ def _create_diagnostics(
         ):
             continue
         domain = profile.lifecycle_domain
+        assert domain is not None  # `_stateful` admits only a declared domain.
         observed = f"absent -> {document.status or 'not-applicable'}"
-        if domain is None:
-            diagnostics.append(
-                _diagnostic(
-                    "LIFECYCLE-CREATE",
-                    path=document.path,
-                    profile=document.profile_id,
-                    expected="no lifecycle creation",
-                    observed=observed,
-                    base_mode=base_mode,
-                    evidence_gap="profile has no lifecycle domain",
-                )
-            )
-            continue
         inbound = {target for _, target in domain.transitions}
         initial_states = tuple(
             state for state, _ in domain.states if state not in inbound

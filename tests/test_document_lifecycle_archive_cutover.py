@@ -49,7 +49,7 @@ from archive_recovery import (  # noqa: E402
     render_work107_migration_document,
     render_work107_stable_envelope,
 )
-from document_contracts import load_registry  # noqa: E402
+from document_contracts import DocumentContractError, load_registry  # noqa: E402
 from document_lifecycle import (  # noqa: E402
     LifecycleDocument,
     LifecycleEvidenceContext,
@@ -1072,21 +1072,27 @@ artifact_id: "AUD-0001-m0001"
             (),
         )
 
-    def test_stage_index_creation_still_requires_lifecycle_admission(self):
+    def test_stage_index_creation_is_bounded_by_the_registry_route(self):
+        # The lifecycle validator once reported creating a stage index as a
+        # failure for having no lifecycle, and each README that had to be
+        # created was exempted by id until the exemption list held four. The
+        # route already bounds these profiles: every domainless README pattern
+        # is a closed enumeration, so an unlisted path is refused outright and
+        # a listed one needs no lifecycle admission.
         registry = load_registry(ROOT)
         path = PurePosixPath("docs/03.specs/README.md")
         created = lifecycle.document_from_text(registry, path, "# Fixture\n")
 
         self.assertEqual(created.profile_id, "readme/stage-index")
-
-        actual = compare_lifecycle(
-            registry,
-            {},
-            {path: created},
-            base_mode="staged",
+        self.assertEqual(
+            compare_lifecycle(registry, {}, {path: created}, base_mode="staged"),
+            (),
         )
 
-        self.assertEqual([item.rule_id for item in actual], ["LIFECYCLE-CREATE"])
+        with self.assertRaises(DocumentContractError):
+            lifecycle.document_from_text(
+                registry, PurePosixPath("docs/04.invented/README.md"), "# Fixture\n"
+            )
 
     def test_terminal_supersession_uses_reciprocal_production_evidence(self):
         registry = load_registry(ROOT)
@@ -1663,6 +1669,62 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
         )
         self.assertTrue(lifecycle._stateful(requirement))
         self.assertFalse(lifecycle._stateful(readme))
+
+    def _created(self, path: str, profile_id: str, status: str | None, **events):
+        registry = load_registry(ROOT)
+        document = lifecycle.LifecycleDocument(
+            path=PurePosixPath(path), profile_id=profile_id, status=status
+        )
+        diagnostics = lifecycle._create_diagnostics(
+            registry,
+            [document],
+            base_mode="staged",
+            migration_events=lifecycle.MigrationLifecycleEvents(**events),
+        )
+        return [diagnostic.rule_id for diagnostic in diagnostics]
+
+    def test_creation_evaluates_the_migration_profile_it_declares_stateful(self):
+        # `_stateful` calls `archive/migration` stateful, and the transition and
+        # snapshot paths honour that. Creation asked `mode` instead, so it saw a
+        # classification-only profile and skipped every migration record: a new
+        # ledger could appear in a state its own domain has no node for.
+        record = "docs/98.archive/migrations/0099-undeclared.md"
+        self.assertEqual(
+            self._created(record, "archive/migration", "active"),
+            ["LIFECYCLE-STATE"],
+        )
+        self.assertEqual(
+            self._created(record, "archive/migration", "sealed"),
+            ["LIFECYCLE-CREATE"],
+        )
+        self.assertEqual(self._created(record, "archive/migration", "draft"), [])
+        self.assertEqual(
+            self._created(
+                record,
+                "archive/migration",
+                "sealed",
+                publications=frozenset({PurePosixPath(record)}),
+            ),
+            [],
+        )
+
+    def test_creation_is_silent_for_every_profile_without_a_lifecycle_domain(self):
+        # A profile carrying no domain declares no creation state, so creating
+        # one is not a lifecycle event. Naming four such profiles by hand left
+        # the rest reporting a lifecycle failure for having no lifecycle.
+        registry = load_registry(ROOT)
+        stateless = [
+            profile.profile_id
+            for profile in registry.profiles
+            if profile.lifecycle_domain is None
+        ]
+        self.assertIn("readme/stage-index", stateless)
+        for profile_id in stateless:
+            with self.subTest(profile=profile_id):
+                self.assertEqual(
+                    self._created("docs/01.requirements/README.md", profile_id, None),
+                    [],
+                )
 
     @staticmethod
     def _mig0004_baseline() -> tuple[str, dict[PurePosixPath, str], dict[PurePosixPath, str]]:
