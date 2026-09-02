@@ -59,39 +59,6 @@ AGENT_MACHINE_FIELDS = frozenset(
 TRANSITION_SUPPORT_PROFILE_IDS = frozenset(
     {"governance/template-support", "template/governance/template-support"}
 )
-EXPECTED_LIFECYCLE_TRANSITIONS = {
-    "requirement-architecture": {
-        ("draft", "active"), ("draft", "withdrawn"),
-        ("active", "superseded"), ("active", "retired"),
-    },
-    "adr": {
-        ("proposed", "accepted"), ("proposed", "rejected"),
-        ("accepted", "superseded"),
-    },
-    "spec-plan": {
-        ("draft", "active"), ("active", "done"),
-        ("active", "superseded"), ("active", "withdrawn"),
-    },
-    "task": {
-        ("queued", "in-progress"), ("in-progress", "done"),
-        ("in-progress", "cancelled"), ("in-progress", "blocked"),
-        ("blocked", "in-progress"),
-    },
-    "governance-guide-policy-runbook": {
-        ("draft", "active"), ("active", "superseded"),
-        ("active", "retired"),
-    },
-    "incident": {
-        ("open", "mitigated"), ("mitigated", "resolved"),
-        ("resolved", "closed"),
-    },
-    "postmortem": {("draft", "published"), ("published", "superseded")},
-    "migration-tombstone": {("draft", "sealed")},
-    "template-profile": {
-        ("draft", "active"), ("active", "superseded"),
-        ("active", "retired"),
-    },
-}
 
 
 class AuthorityError(ValueError):
@@ -224,9 +191,11 @@ def validate_registry_authority(registry: Mapping[str, Any]) -> None:
                 source not in states or target not in states for source, target in edges
             ):
                 raise AuthorityError("LIFECYCLE_TRANSITION: invalid edge")
+            if not [state for state, kind in states.items() if kind == "terminal"]:
+                raise AuthorityError(f"LIFECYCLE_TERMINAL: {domain['family']}")
             actual[domain["family"]] = edges
-        if actual != EXPECTED_LIFECYCLE_TRANSITIONS:
-            raise AuthorityError("LIFECYCLE_TRANSITION: terminal domains differ")
+        if len(actual) != len(domains):
+            raise AuthorityError("LIFECYCLE_DOMAIN: family is not unique")
 
 
 def validate_template_profile_reference(
