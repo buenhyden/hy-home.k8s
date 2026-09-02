@@ -109,6 +109,19 @@ authority; it is not superseded, revised, or re-approved.
 - **C10 — Generation-pinned sealed bytes.** A sealed Stage 98 record is parsed
   against the frontmatter generation its own digest names. A later key set or
   profile identity never retroactively invalidates reviewed bytes.
+- **C11 — A package proves its own navigation.** A Stage 03 package carries no
+  router document. `spec.md` owns the change contract, `plan.md` owns
+  implementation order and risk, and the `tasks/` directory is the Task
+  inventory. A separate index restated all three and had to be edited whenever
+  a Task was added, so the inventory is derived from `tasks/` rather than from
+  a second document that could disagree with it.
+- **C12 — One reference structure for all three collections.** Every Stage 90
+  collection carries the same three levels: a collection router
+  `{audits,data,research}/README.md`, a pack router
+  `{collection}/####-<slug>/README.md`, and pack members
+  `{collection}/####-<slug>/m####-<slug>.md`. Each level has exactly one Stage
+  99 form, and a collection is structural: it exists whether or not it
+  currently holds a pack.
 
 ## Core Design
 
@@ -285,6 +298,9 @@ bash scripts/validate-repo-quality-gates.sh .
 | VAL-DTF-007 | Every sealed Stage 98 record parses against its own generation and no payload byte changes | Strict lifecycle run plus archive payload diff |
 | VAL-DTF-008 | MIG-0010 seals all twelve form moves against pinned Git provenance | Sealed migration parse and recovery verification |
 | VAL-DTF-009 | No executable owner, test, or current document names a retired profile identity except as declared history | Retired-identity absence sweep |
+| VAL-DTF-010 | No Stage 03 package holds a `README.md`, and no current document links one | Package inventory sweep plus strict link validation |
+| VAL-DTF-011 | The package Task inventory is proved from `tasks/` alone, with no router document in the projection | Delegated-execution and program-relation validation |
+| VAL-DTF-012 | All three Stage 90 collections carry a router, and each of the three structural levels has exactly one Stage 99 form | Reference-pack topology check plus registry template parity |
 
 ## Traceability
 
@@ -305,10 +321,12 @@ authority is the direct human approval recorded above under
 | N/A — standalone, direct approval | VAL-DTF-007 | Strict lifecycle run and payload diff |
 | N/A — standalone, direct approval | VAL-DTF-008 | Sealed migration parse |
 | N/A — standalone, direct approval | VAL-DTF-009 | Retired-identity absence sweep |
+| N/A — standalone, direct approval | VAL-DTF-010 | Package inventory sweep and strict link validation |
+| N/A — standalone, direct approval | VAL-DTF-011 | Delegated-execution projection check |
+| N/A — standalone, direct approval | VAL-DTF-012 | Reference-pack topology check |
 
 ### Related Documents
 
-- [Package router](README.md)
 - [Implementation order and risk](plan.md)
 - [Current Spec Index](../README.md#current-spec-index)
 - [ADR-0030 — authority-first SDLC and agent governance convergence](../../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)

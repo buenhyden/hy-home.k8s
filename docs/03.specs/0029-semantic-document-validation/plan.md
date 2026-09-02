@@ -1508,7 +1508,7 @@ logical unit with its own progress entry.
 - [Operating Model AD](../../02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md)
 - [Registry ADR](../../02.architecture/decisions/0015-declarative-document-contract-registry.md)
 - [Semantic Validation Spec](spec.md)
-- [Semantic Validation Task](README.md#task-records)
+- [Semantic Validation Task](plan.md)
 - [Authored Migration Spec](../0030-authored-document-migration/spec.md)
 
 ### Legacy Task traceability

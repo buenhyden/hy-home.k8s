@@ -395,7 +395,7 @@ outcomes, formatter effects, limitations, and successor handoff.
 ## Traceability
 
 - **Spec**: [Current Surface and Stash Reconciliation](spec.md)
-- **Task**: [Current Surface and Stash Reconciliation Task](README.md#task-records)
+- **Task**: [Current Surface and Stash Reconciliation Task](plan.md)
 - **Program**: [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
 - **Architecture**: [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
 - **Decision**: [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)

@@ -288,13 +288,13 @@ promote no admission, scheduling, reconciliation, or container-start outcome.
 
 | Spec criterion                                                                | Work package  | Expected Task                                                                                                      |
 | ----------------------------------------------------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------ |
-| [VAL-WSCB-001](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-001..002 | [WSCB-001](README.md#task-records) will record both parse results               |
-| [VAL-WSCB-002](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-001      | [WSCB-001](README.md#task-records) will record the excluded-field assertion     |
-| [VAL-WSCB-003](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-002      | [WSCB-002](README.md#task-records) will record the coupled-field assertion      |
-| [VAL-WSCB-004](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-003      | [WSCB-003](README.md#task-records) will record the deferred control table       |
-| [VAL-WSCB-005](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-003      | [WSCB-003](README.md#task-records) will record the image-line evidence          |
-| [VAL-WSCB-006](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-004      | [WSCB-004](README.md#task-records) will record the full lane results            |
-| [VAL-WSCB-007](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-001..004 | [WSCB-001..004](README.md#task-records) will record one commit per logical unit |
+| [VAL-WSCB-001](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-001..002 | [WSCB-001](tasks/tsk-0001-wscb-001.md) will record both parse results               |
+| [VAL-WSCB-002](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-001      | [WSCB-001](tasks/tsk-0001-wscb-001.md) will record the excluded-field assertion     |
+| [VAL-WSCB-003](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-002      | [WSCB-002](tasks/tsk-0002-wscb-002.md) will record the coupled-field assertion      |
+| [VAL-WSCB-004](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-003      | [WSCB-003](tasks/tsk-0003-wscb-003.md) will record the deferred control table       |
+| [VAL-WSCB-005](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-003      | [WSCB-003](tasks/tsk-0003-wscb-003.md) will record the image-line evidence          |
+| [VAL-WSCB-006](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-004      | [WSCB-004](tasks/tsk-0004-wscb-004.md) will record the full lane results            |
+| [VAL-WSCB-007](../../03.specs/0061-workload-security-context-baseline/spec.md) | WSCB-001..004 | [WSCB-001..004](plan.md) will record one commit per logical unit |
 
 ### Related Documents
 

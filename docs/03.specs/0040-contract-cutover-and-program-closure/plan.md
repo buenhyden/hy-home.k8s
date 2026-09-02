@@ -15,7 +15,7 @@ artifact_id: "SPEC-0040-PLAN-0001"
 
 This completed Plan executes [Spec 040](spec.md)
 as the final PRD-0006 repository-static tranche. It activated a reciprocal
-[Task](README.md#task-records), removes
+[Task](plan.md), removes
 active compatibility-reader behavior, proves the final repository contract,
 and closes PRD-0006, AD-0009, ADR-0020, the Spec, Plan, Task, indexes, and
 program relation in exact terminal closure commit

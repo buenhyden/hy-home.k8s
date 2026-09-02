@@ -190,7 +190,7 @@ spec and plan while preserving logical commit boundaries.
 ## Traceability
 
 - **Spec**: [../../03.specs/0011-template-contract-governance-migration/spec.md](spec.md)
-- **Tasks**: [../tasks/2026-07-03-template-contract-governance-migration.md](README.md#task-records)
+- **Tasks**: [../tasks/2026-07-03-template-contract-governance-migration.md](plan.md)
 - **Templates README**: [../../99.templates/README.md](../../99.templates/README.md)
 - **Documentation Protocol**: [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/document-authoring.md)
 - **Document Stage Routing Rules**: [../../00.agent-governance/rules/document-stage-routing.md](../../00.agent-governance/rules/document-authoring.md)

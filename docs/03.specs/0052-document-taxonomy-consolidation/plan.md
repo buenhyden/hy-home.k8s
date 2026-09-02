@@ -578,7 +578,7 @@ accepted eight-AD authority gate remain green.
 - **Specification**:
   [Spec 052](spec.md)
 - **Execution evidence**:
-  [Task: Document Taxonomy Consolidation](README.md#task-records)
+  [Task: Document Taxonomy Consolidation](plan.md)
 
 ### Lifecycle Traceability
 

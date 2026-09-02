@@ -3010,7 +3010,7 @@ the lifecycle evidence is final. The second complete run is authoritative.
 ### Related Documents
 
 - [Spec 0062](spec.md)
-- [Reciprocal Task](README.md#task-records)
+- [Reciprocal Task](plan.md)
 - [Current WER research pack](../../90.references/research/0001-workspace-engineering/README.md)
 - [Source coverage and migration ledger](../../90.references/research/0001-workspace-engineering/m0012-source-coverage.md)
 - [Scope application index](../../90.references/research/0001-workspace-engineering/m0013-scope-application-index.md)

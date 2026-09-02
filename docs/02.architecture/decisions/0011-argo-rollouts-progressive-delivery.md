@@ -65,4 +65,4 @@ Accepted — 2026-03-30
 - [ARD](../descriptions/0004-argo-rollouts-progressive-delivery.md)
 - [Spec](../../03.specs/0004-argo-rollouts-progressive-delivery/spec.md)
 - [Plan](../../03.specs/0004-argo-rollouts-progressive-delivery/plan.md)
-- [Task](../../03.specs/0004-argo-rollouts-progressive-delivery/README.md)
+- [Task](../../03.specs/0004-argo-rollouts-progressive-delivery/plan.md)

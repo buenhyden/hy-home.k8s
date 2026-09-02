@@ -19,7 +19,7 @@ dispositions are execution candidates, not permanent corpus-count policy.
 
 ## Inputs
 
-- [Common execution contract](../README.md#common-execution-contract)
+- [Common execution contract](../plan.md#common-execution-contract)
 - [Spec 0054](../spec.md)
 - [Plan 0054](../plan.md)
 - [WP-013 execution boundary](../plan.md#wp-013--current-corpus-and-transition-control-cutover)
@@ -41,7 +41,7 @@ naming this queued Task
 
 ## Approval and Safety Boundaries
 
-The [common execution contract](../README.md#common-execution-contract) applies
+The [common execution contract](../plan.md#common-execution-contract) applies
 without exception. WP-013 may remove a current document or template only after
 its unique authority and unfinished work are transferred or proven absent,
 current consumers are zero, and Git-first recovery succeeds. The linked Plan

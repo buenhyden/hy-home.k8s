@@ -250,7 +250,7 @@ claim its own commit.
 - [GitHub configuration hub](../../../.github/README.md)
 - [Kubernetes infrastructure and security research](../../90.references/research/0001-workspace-engineering/m0007-kubernetes-infrastructure-and-security.md)
 - `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`; [current lookup](../../90.references/research/0001-workspace-engineering/m0012-source-coverage.md)
-- [Predecessor Spec 038 Task](../0038-reference-information-architecture/README.md)
+- [Predecessor Spec 038 Task](../0038-reference-information-architecture/plan.md)
 ## Goals & In-Scope
 
 - Make the GitOps self-test pass on FIFO-capable and FIFO-unsupported
@@ -1318,7 +1318,7 @@ remain `DEFER`. This evidence update does not identify or claim its own commit.
 - **Spec**:
   [GitHub CI and QA Evidence](spec.md)
 - **Task**:
-  [Task: GitHub CI and QA Evidence](README.md#task-records)
+  [Task: GitHub CI and QA Evidence](plan.md)
 - **PRD**:
   [PRD-0006](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - **AD**:
@@ -1342,7 +1342,7 @@ remain `DEFER`. This evidence update does not identify or claim its own commit.
 - **Spec**:
   [Spec 039](spec.md)
 - **Predecessor Task**:
-  [Reference Information Architecture Task](../0038-reference-information-architecture/README.md)
+  [Reference Information Architecture Task](../0038-reference-information-architecture/plan.md)
 
 #### Lifecycle Traceability
 

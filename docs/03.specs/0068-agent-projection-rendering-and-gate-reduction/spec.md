@@ -340,7 +340,6 @@ model resolution, authentication, or execution by a provider runtime.
 
 ### Related Documents
 
-- [Package router](README.md)
 - [Current Spec Index](../README.md#current-spec-index)
 - [ADR-0030 — authority-first SDLC and agent governance convergence](../../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)
 - [Agent Registry](../../../.agents/registry.json)

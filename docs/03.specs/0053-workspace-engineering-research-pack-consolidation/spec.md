@@ -413,7 +413,7 @@ secret-value check is part of acceptance.
 - **Execution artifacts**:
   [Plan](plan.md)
   and
-  [Task](README.md#task-records).
+  [Task](plan.md).
 
 ### Lifecycle Traceability
 

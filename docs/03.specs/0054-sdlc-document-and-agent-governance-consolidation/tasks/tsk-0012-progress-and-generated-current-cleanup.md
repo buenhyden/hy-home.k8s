@@ -19,7 +19,7 @@ refuses is recorded rather than forced.
 
 ## Inputs
 
-- [Common execution contract](../README.md#common-execution-contract)
+- [Common execution contract](../plan.md#common-execution-contract)
 - [Spec 0054](../spec.md)
 - [Plan 0054](../plan.md)
 - [WP-012 execution boundary](../plan.md#wp-012--progress-and-generated-current-cleanup)
@@ -91,7 +91,7 @@ consumer registration used instead.
 
 ## Approval and Safety Boundaries
 
-The [common execution contract](../README.md#common-execution-contract) applies
+The [common execution contract](../plan.md#common-execution-contract) applies
 without exception. Direct human approval on 2026-08-30 authorized the recovery
 proof change this Task required, after the blocking clause was measured and
 presented.

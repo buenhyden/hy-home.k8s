@@ -1061,7 +1061,7 @@ Expected: staged diff has no whitespace errors and the commit succeeds.
 ## Traceability
 
 - **Spec**: [../../03.specs/0020-workspace-contract-governance-normalization/spec.md](spec.md)
-- **Task**: [../tasks/2026-07-05-workspace-contract-governance-normalization.md](README.md#task-records)
+- **Task**: [../tasks/2026-07-05-workspace-contract-governance-normalization.md](plan.md)
 - **Template Documentation Contract**: [../../99.templates/support/documentation-contract.md](../../99.templates/README.md)
 - **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/README.md)
 - **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/README.md)

@@ -594,7 +594,7 @@ Stage 03 active Spec folders:
 ## Traceability
 
 - **Parent Spec**: [../../03.specs/0021-sdlc-lifecycle-contract/spec.md](spec.md)
-- **Task**: [../tasks/2026-07-06-sdlc-lifecycle-contract.md](README.md#task-records)
+- **Task**: [../tasks/2026-07-06-sdlc-lifecycle-contract.md](plan.md)
 - **Template Routing**: `../../99.templates/support/template-routing.md`
 - **Frontmatter Schema**: `../../99.templates/support/frontmatter-schema.md`
 - **SDLC Governance**: `../../99.templates/support/sdlc-governance.md`

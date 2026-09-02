@@ -18,7 +18,7 @@ to SPEC-0054-TSK-0008 is recorded with this terminal state.
 
 ## Inputs
 
-- [Common execution contract](../README.md#common-execution-contract)
+- [Common execution contract](../plan.md#common-execution-contract)
 - [Spec 0054](../spec.md)
 - [Plan 0054](../plan.md)
 - [WP-007 execution boundary](../plan.md#wp-007--stage-90-disposition-ledger)
@@ -37,7 +37,7 @@ to SPEC-0054-TSK-0008 is recorded with this terminal state.
 
 ## Approval and Safety Boundaries
 
-The [common execution contract](../README.md#common-execution-contract) applies
+The [common execution contract](../plan.md#common-execution-contract) applies
 without exception. WP-007's no-evidence-mutation scope, candidate disposition,
 reviews, rollback, and logical commit are owned by its linked Plan section.
 

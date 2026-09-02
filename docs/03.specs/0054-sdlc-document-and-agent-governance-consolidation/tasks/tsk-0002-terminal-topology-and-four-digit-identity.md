@@ -19,7 +19,7 @@ as terminal authority.
 
 ## Inputs
 
-- [Common execution contract](../README.md#common-execution-contract)
+- [Common execution contract](../plan.md#common-execution-contract)
 - [Spec 0054](../spec.md)
 - [Plan 0054](../plan.md)
 - [WP-002 execution boundary](../plan.md#wp-002--terminal-topology-and-four-digit-identity)
@@ -38,7 +38,7 @@ as terminal authority.
 
 ## Approval and Safety Boundaries
 
-The [common execution contract](../README.md#common-execution-contract) applies
+The [common execution contract](../plan.md#common-execution-contract) applies
 without exception. WP-002's exact files, immutable reported counts, review
 history, and logical commit boundary remain owned by its linked Plan section.
 

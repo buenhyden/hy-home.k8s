@@ -1022,17 +1022,17 @@ performs repository-static edits only.
 
 | Spec criterion                                                                                | Work package  | Expected Task                                                                                                                                                     |
 | --------------------------------------------------------------------------------------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [VAL-WRCP-001](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-001      | [WRCP-001](README.md#task-records) will record the thirty-six-row topic ledger with unique owners              |
-| [VAL-WRCP-002](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-002..005 | [WRCP-002..005](README.md#task-records) will record separated workspace and external results per requirement   |
-| [VAL-WRCP-003](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-002..005 | [WRCP-002..005](README.md#task-records) will record four retention fields per retained Partial or DEFER        |
-| [VAL-WRCP-004](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-002..005 | [WRCP-002..005](README.md#task-records) will record ledger before/after comparison and ID uniqueness           |
-| [VAL-WRCP-005](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-001      | [WRCP-001](README.md#task-records) will record consumer check result and the unchanged worktree                |
-| [VAL-WRCP-006](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-002..005 | [WRCP-002..005](README.md#task-records) will record unchanged pack file inventory with dated sections only     |
-| [VAL-WRCP-007](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-006      | [WRCP-006](README.md#task-records) will record scope re-derivation and the unowned-path re-test                |
-| [VAL-WRCP-008](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-006      | [WRCP-006](README.md#task-records) will record cross-document agreement on counts and statuses                 |
-| [VAL-WRCP-009](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-006      | [WRCP-006](README.md#task-records) will record reconciliation as the last content commit                       |
-| [VAL-WRCP-010](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-007      | [WRCP-007](README.md#task-records) will record full lane results compared against the baseline                 |
-| [VAL-WRCP-011](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-000..007 | [WRCP-000..007](README.md#task-records) will record one commit per package and terminal temporary-file absence |
+| [VAL-WRCP-001](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-001      | [WRCP-001](tasks/tsk-0002-wrcp-001.md) will record the thirty-six-row topic ledger with unique owners              |
+| [VAL-WRCP-002](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-002..005 | [WRCP-002..005](plan.md) will record separated workspace and external results per requirement   |
+| [VAL-WRCP-003](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-002..005 | [WRCP-002..005](plan.md) will record four retention fields per retained Partial or DEFER        |
+| [VAL-WRCP-004](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-002..005 | [WRCP-002..005](plan.md) will record ledger before/after comparison and ID uniqueness           |
+| [VAL-WRCP-005](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-001      | [WRCP-001](tasks/tsk-0002-wrcp-001.md) will record consumer check result and the unchanged worktree                |
+| [VAL-WRCP-006](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-002..005 | [WRCP-002..005](plan.md) will record unchanged pack file inventory with dated sections only     |
+| [VAL-WRCP-007](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-006      | [WRCP-006](tasks/tsk-0007-wrcp-006.md) will record scope re-derivation and the unowned-path re-test                |
+| [VAL-WRCP-008](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-006      | [WRCP-006](tasks/tsk-0007-wrcp-006.md) will record cross-document agreement on counts and statuses                 |
+| [VAL-WRCP-009](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-006      | [WRCP-006](tasks/tsk-0007-wrcp-006.md) will record reconciliation as the last content commit                       |
+| [VAL-WRCP-010](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-007      | [WRCP-007](tasks/tsk-0008-wrcp-007.md) will record full lane results compared against the baseline                 |
+| [VAL-WRCP-011](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-000..007 | [WRCP-000..007](plan.md) will record one commit per package and terminal temporary-file absence |
 
 ### Related documents
 

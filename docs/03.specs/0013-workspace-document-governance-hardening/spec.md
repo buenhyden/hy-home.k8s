@@ -355,7 +355,7 @@ bash scripts/validate-policy-gates.sh .
 - [Scripts README](../../../scripts/README.md)
 - [GitHub Configuration Hub](../../../.github/README.md)
 - [Plan](plan.md)
-- [Task](README.md#task-records)
+- [Task](plan.md)
 - **Completed evolution**: [011](../0011-template-contract-governance-migration/spec.md) -> [012](../0012-template-governance-audit-enhancement/spec.md) -> [013](./spec.md) -> [014](../0014-workspace-document-contract-normalization/spec.md) -> [020](../0020-workspace-contract-governance-normalization/spec.md) -> [021](../0021-sdlc-lifecycle-contract/spec.md) -> [022](../0022-control-cloud-doc-normalization/spec.md) -> [023](../0023-stage03-04-repo-static-gap-closure/spec.md).
 ### Related inputs
 

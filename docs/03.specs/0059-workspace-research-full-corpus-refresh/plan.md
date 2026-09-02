@@ -498,19 +498,19 @@ These findings do not map onto any of the thirty-six owner rows, so under
 
 | Spec criterion                                                                    | Work package  | Expected Task                                                                                                                                 |
 | --------------------------------------------------------------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| [VAL-WRFC-001](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-001      | [WRFC-001](README.md#task-records) will record the thirty-six-row topic ledger derived from the pack   |
-| [VAL-WRFC-002](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-002..006 | [WRFC-002..006](README.md#task-records) will record separated external and workspace results per row   |
-| [VAL-WRFC-003](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-007      | [WRFC-007](README.md#task-records) will record one blocking class per retained Partial or DEFER row    |
-| [VAL-WRFC-004](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-002..006 | [WRFC-002..006](README.md#task-records) will record ledger comparison and identifier uniqueness        |
-| [VAL-WRFC-005](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-002..006 | [WRFC-002..006](README.md#task-records) will record the unchanged pack inventory and heading-set check |
-| [VAL-WRFC-006](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-002..006 | [WRFC-002..006](README.md#task-records) will record every unreachable source as unreachable            |
-| [VAL-WRFC-007](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-008      | [WRFC-008](README.md#task-records) will record scope re-derivation and the unowned-path re-test        |
-| [VAL-WRFC-008](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-010      | [WRFC-010](README.md#task-records) will record cross-document agreement on all four counts             |
-| [VAL-WRFC-009](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-010      | [WRFC-010](README.md#task-records) will record reconciliation as the last content commit               |
-| [VAL-WRFC-010](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-009      | [WRFC-009](README.md#task-records) will record the graphify consumer enumeration and contract decision |
-| [VAL-WRFC-011](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-010      | [WRFC-010](README.md#task-records) will record ledger byte size before and after                       |
-| [VAL-WRFC-012](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-012      | [WRFC-012](README.md#task-records) will record full lane results compared against the baseline         |
-| [VAL-WRFC-013](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-000..012 | [WRFC-000..012](README.md#task-records) will record one commit per package and the terminal tree state |
+| [VAL-WRFC-001](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-001      | [WRFC-001](tasks/tsk-0002-wrfc-001.md) will record the thirty-six-row topic ledger derived from the pack   |
+| [VAL-WRFC-002](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-002..006 | [WRFC-002..006](plan.md) will record separated external and workspace results per row   |
+| [VAL-WRFC-003](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-007      | [WRFC-007](tasks/tsk-0008-wrfc-007.md) will record one blocking class per retained Partial or DEFER row    |
+| [VAL-WRFC-004](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-002..006 | [WRFC-002..006](plan.md) will record ledger comparison and identifier uniqueness        |
+| [VAL-WRFC-005](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-002..006 | [WRFC-002..006](plan.md) will record the unchanged pack inventory and heading-set check |
+| [VAL-WRFC-006](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-002..006 | [WRFC-002..006](plan.md) will record every unreachable source as unreachable            |
+| [VAL-WRFC-007](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-008      | [WRFC-008](tasks/tsk-0009-wrfc-008.md) will record scope re-derivation and the unowned-path re-test        |
+| [VAL-WRFC-008](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-010      | [WRFC-010](tasks/tsk-0011-wrfc-010.md) will record cross-document agreement on all four counts             |
+| [VAL-WRFC-009](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-010      | [WRFC-010](tasks/tsk-0011-wrfc-010.md) will record reconciliation as the last content commit               |
+| [VAL-WRFC-010](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-009      | [WRFC-009](tasks/tsk-0010-wrfc-009.md) will record the graphify consumer enumeration and contract decision |
+| [VAL-WRFC-011](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-010      | [WRFC-010](tasks/tsk-0011-wrfc-010.md) will record ledger byte size before and after                       |
+| [VAL-WRFC-012](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-012      | [WRFC-012](tasks/tsk-0013-wrfc-012.md) will record full lane results compared against the baseline         |
+| [VAL-WRFC-013](../../03.specs/0059-workspace-research-full-corpus-refresh/spec.md) | WRFC-000..012 | [WRFC-000..012](plan.md) will record one commit per package and the terminal tree state |
 
 ### Related Documents
 

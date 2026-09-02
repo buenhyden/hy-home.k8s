@@ -538,7 +538,7 @@ current PASS evidence.
 ## Traceability
 
 - **Spec**: [Example IaC and Validator QA](spec.md)
-- **Task**: [Example IaC and Validator QA Task](README.md#task-records)
+- **Task**: [Example IaC and Validator QA Task](plan.md)
 - **Program**: [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
 - **Architecture**: [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
 - **Decision**: [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)

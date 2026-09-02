@@ -19,7 +19,7 @@ delegated implementation.
 
 ## Inputs
 
-- [Common execution contract](../README.md#common-execution-contract)
+- [Common execution contract](../plan.md#common-execution-contract)
 - [Spec 0054](../spec.md)
 - [Plan 0054](../plan.md)
 - [WP-011 execution boundary](../plan.md#wp-011--responsibility-topology-and-compatibility-cutover)
@@ -39,7 +39,7 @@ delegated implementation.
 
 ## Approval and Safety Boundaries
 
-The [common execution contract](../README.md#common-execution-contract) applies
+The [common execution contract](../plan.md#common-execution-contract) applies
 without exception. Spec 0066 owns WP-011's responsibility graph,
 consumer-zero retirement, reviews, rollback, and ordered implementation
 commits. This Task owns only the parent acceptance checklist and record.

@@ -1254,7 +1254,7 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
 ## Traceability
 
 - [Parent Spec](spec.md)
-- [Task Evidence](README.md#task-records)
+- [Task Evidence](plan.md)
 - [Template Documentation Contract](../../99.templates/README.md)
 - [Template Frontmatter Schema](../../99.templates/README.md)
 - [Template Routing Contract](../../99.templates/README.md)

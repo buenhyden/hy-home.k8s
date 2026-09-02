@@ -139,7 +139,7 @@ writes are out of scope.
 - **AD**: [`../../02.architecture/descriptions/0005-argo-notifications-slack.md`](../../02.architecture/descriptions/0005-argo-notifications-slack.md)
 - **Spec**: [`../../03.specs/0005-argo-notifications-slack/spec.md`](spec.md)
 - **ADR**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md)
-- **Tasks**: [`../tasks/2026-05-18-argo-notifications-slack.md`](README.md#task-records)
+- **Tasks**: [`../tasks/2026-05-18-argo-notifications-slack.md`](plan.md)
 
 ### Legacy Task traceability
 

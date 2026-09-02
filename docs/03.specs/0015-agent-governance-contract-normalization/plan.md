@@ -1176,7 +1176,7 @@ Checked on 2026-07-04:
 ## Traceability
 
 - **Spec**: [../../03.specs/0015-agent-governance-contract-normalization/spec.md](spec.md)
-- **Task**: [../tasks/2026-07-04-agent-governance-contract-normalization.md](README.md#task-records)
+- **Task**: [../tasks/2026-07-04-agent-governance-contract-normalization.md](plan.md)
 - **Governance Hub**: [../../00.agent-governance/README.md](../../00.agent-governance/README.md)
 - **Common Governance**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Harness Catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)

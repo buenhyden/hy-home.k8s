@@ -222,7 +222,7 @@ Requirements review returned `COMPLIANT`; quality and security returned
 - **Predecessor**: [Spec 042](../0042-provider-native-runtime-and-model-evidence/spec.md)
 - **Successor**: [Spec 044](../0044-agent-roster-evaluation-and-admission/spec.md)
 - **Execution Plan**: [Agent Harness Loop Lifecycle Implementation Plan](plan.md)
-- **Task evidence**: [Agent Harness Loop Lifecycle Task](README.md#task-records)
+- **Task evidence**: [Agent Harness Loop Lifecycle Task](plan.md)
 
 ### Lifecycle Traceability
 

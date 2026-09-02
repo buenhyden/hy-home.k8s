@@ -507,7 +507,7 @@ advances. Draft status is not completion evidence.
 ## Traceability
 
 - **Spec**: [Repository Assurance Integration and Closure](spec.md)
-- **Task**: [Repository Assurance Integration and Closure Task](README.md#task-records)
+- **Task**: [Repository Assurance Integration and Closure Task](plan.md)
 - **Program**: [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
 - **Architecture**: [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
 - **Decision**: [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)

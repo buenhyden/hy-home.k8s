@@ -48,9 +48,12 @@ Profile ID는 같은 사실을 `<family>/<kind>`로 표현한다.
   디렉터리로 모은다.
 - **Operations forms** (`operations/`): `guide`, `policy`, `runbook`,
   `incident`, `postmortem`의 서로 다른 운영 증거 책임을 유지한다.
-- **Reference forms** (`references/`): Stage 90 pack README는 `audit-pack`,
-  `data-pack`, `research-pack` form을, pack 내부 report는 같은 family의
-  `audit-reference`, `data-reference`, `research-reference` form을 사용한다.
+- **Reference forms** (`references/`): Stage 90 collection 세 곳은 모두 같은 3단
+  구조를 갖는다. collection router `{audits,data,research}/README.md`는
+  `common/readme-collection-index` form을, pack router
+  `####-<slug>/README.md`는 `audit-pack`·`data-pack`·`research-pack` form을,
+  pack member `####-<slug>/m####-<slug>.md`는 같은 family의
+  `audit-reference`·`data-reference`·`research-reference` form을 사용한다.
 - **Archive forms** (`archive/`): `migration` control과 `tombstone` record.
 - **Runtime forms** (`runtime/`): provider가 직접 읽는 binding만 담는다.
   Claude는 `claude-agent.template.md`, Codex는 `codex-agent.template.toml`이며

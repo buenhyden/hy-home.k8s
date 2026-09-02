@@ -231,7 +231,7 @@ observed repository and SHA.
 - **Plan**:
   [GitHub Routing and CI Evidence Implementation Plan](plan.md)
 - **Task**:
-  [GitHub Routing and CI Evidence Task](README.md#task-records)
+  [GitHub Routing and CI Evidence Task](plan.md)
 - **Predecessor**:
   [Spec 047](../0047-current-surface-and-stash-reconciliation/spec.md)
 - **Successor**:

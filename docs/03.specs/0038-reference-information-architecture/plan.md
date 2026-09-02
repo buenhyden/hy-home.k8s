@@ -214,7 +214,7 @@ results.
 - `docs/90.references/research/2026-07-07-wer/README.md`; [current lookup](../../90.references/research/0001-workspace-engineering/README.md)
 - [Document profile registry](../../99.templates/registry.json)
 - `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`; [current lookup](../../90.references/research/0001-workspace-engineering/m0012-source-coverage.md)
-- [Predecessor Spec 037 Task](../0037-active-corpus-and-execution-retention/README.md)
+- [Predecessor Spec 037 Task](../0037-active-corpus-and-execution-retention/plan.md)
 ## Goals & In-Scope
 
 - Protect every Historical and Resolved audit observation body and every
@@ -1191,7 +1191,7 @@ restoring the observation, generator, or owner relation it protects.
 ## Traceability
 
 - **Spec**: [Reference Information Architecture](spec.md)
-- **Task**: [Reference Information Architecture Task](README.md#task-records)
+- **Task**: [Reference Information Architecture Task](plan.md)
 - **PRD**: [PRD-0006](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - **AD**: [AD-0009](../../02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md)
 - **Current external research**: [Workspace Engineering Research Pack](../../90.references/research/0001-workspace-engineering/README.md)
@@ -1212,7 +1212,7 @@ restoring the observation, generator, or owner relation it protects.
 
 - **Plan**: [Reference Information Architecture Implementation Plan](plan.md)
 - **Spec**: [Spec 038](spec.md)
-- **Predecessor Task**: [Active Corpus and Execution Retention Task](../0037-active-corpus-and-execution-retention/README.md)
+- **Predecessor Task**: [Active Corpus and Execution Retention Task](../0037-active-corpus-and-execution-retention/plan.md)
 
 #### Lifecycle Traceability
 

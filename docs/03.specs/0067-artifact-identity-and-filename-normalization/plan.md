@@ -122,6 +122,5 @@ move to their terminal states.
 ### Related Documents
 
 - [Spec](spec.md)
-- [Package router](README.md)
 - [Quality Policy](../../00.agent-governance/policies/quality.md)
 - [Git Policy](../../00.agent-governance/policies/git.md)

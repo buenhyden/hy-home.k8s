@@ -107,7 +107,7 @@ Rollouts GitOps 리소스와 운영 문서는 이미 저장소에 존재하며, 
 - **AD**: [`../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md`](../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md)
 - **Spec**: [`../03.specs/0004-argo-rollouts-progressive-delivery/spec.md`](../03.specs/0004-argo-rollouts-progressive-delivery/spec.md)
 - **Plan**: [`../04.execution/plans/2026-05-18-argo-rollouts-progressive-delivery.md`](../03.specs/0004-argo-rollouts-progressive-delivery/plan.md)
-- **Task**: [`../04.execution/tasks/2026-05-18-argo-rollouts-progressive-delivery.md`](../03.specs/0004-argo-rollouts-progressive-delivery/README.md)
+- **Task**: [Spec 0004 Plan](../03.specs/0004-argo-rollouts-progressive-delivery/plan.md)
 - **ADR**: [`../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md)
 - **ADR**: [`../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`](../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md)
 - **PRD**: [`./0004-current-local-gitops-platform.md`](./0004-current-local-gitops-platform.md) — cert-manager 의존

@@ -17,7 +17,7 @@ This is the completed Spec 0054 Task record for WP-005.
 
 ## Inputs
 
-- [Common execution contract](../README.md#common-execution-contract)
+- [Common execution contract](../plan.md#common-execution-contract)
 - [Spec 0054](../spec.md)
 - [Plan 0054](../plan.md)
 - [WP-005 execution boundary](../plan.md#wp-005--stage-05-responsibility-ledger)
@@ -112,7 +112,7 @@ non-terminal current state, not only the initial state.
 
 ## Approval and Safety Boundaries
 
-The [common execution contract](../README.md#common-execution-contract) applies
+The [common execution contract](../plan.md#common-execution-contract) applies
 without exception. WP-005's no-mutation ledger scope, validation, reviews,
 rollback, and logical commit are owned by its linked Plan section.
 

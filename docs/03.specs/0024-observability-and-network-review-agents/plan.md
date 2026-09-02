@@ -140,7 +140,7 @@ Boundary statement:
 
 - **Spec**: [../../03.specs/0024-observability-and-network-review-agents/spec.md](spec.md)
 - **Retired agent-design recovery**: [MIG-0004](../../98.archive/migrations/0004-document-authority-convergence.md)
-- **Task**: [../tasks/2026-07-06-observability-and-network-review-agents.md](README.md#task-records)
+- **Task**: [../tasks/2026-07-06-observability-and-network-review-agents.md](plan.md)
 - **Harness catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 
 ### Legacy Task traceability

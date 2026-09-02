@@ -519,42 +519,34 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             ):
                 contracts.load_registry(root)
 
-    def test_spec0054_common_execution_contract_is_profile_authorized(self) -> None:
+    def test_spec0054_common_execution_contract_lives_in_its_plan(self) -> None:
+        """The shared execution contract has an authorized owner, not a router.
+
+        It used to sit under an ``H2`` the package router profile had to allow
+        by name.  The router retired, so the Plan that already owns the
+        package's execution boundary carries it under ``Global Constraints``
+        and the Plan profile authorizes it without a form-specific exception.
+        """
+
         markdown = load_validator(
             "common_execution_contract", VALIDATOR_PATHS["markdown"]
         )
         registry = markdown.load_registry(REPOSITORY_ROOT)
         path = PurePosixPath(
-            "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/README.md"
+            "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation"
+            "/plan.md"
         )
-        profile = markdown.classify_path(registry, path)
-        positive = markdown.validate_document(REPOSITORY_ROOT, path, profile, "strict")
-        self.assertNotIn(
-            "README_H2_UNSUPPORTED",
-            {diagnostic.rule_id for diagnostic in positive},
-        )
+        contents = (REPOSITORY_ROOT / path).read_text(encoding="utf-8")
+        self.assertIn("\n## Global Constraints\n", contents)
+        self.assertIn("\n### Common Execution Contract\n", contents)
+        self.assertNotIn("\n## Common Execution Contract\n", contents)
 
-        denied_profile = replace(
-            profile,
-            headings=replace(
-                profile.headings,
-                allowed=tuple(
-                    heading
-                    for heading in profile.headings.allowed
-                    if heading != "Common Execution Contract"
-                ),
-            ),
-        )
-        negative = markdown.validate_document(
-            REPOSITORY_ROOT, path, denied_profile, "strict"
-        )
+        profile = markdown.classify_path(registry, path)
+        self.assertEqual(profile.profile_id, "sdlc/plan")
+        self.assertNotIn("Common Execution Contract", profile.headings.allowed)
         self.assertEqual(
-            [
-                diagnostic.actual
-                for diagnostic in negative
-                if diagnostic.rule_id == "README_H2_UNSUPPORTED"
-            ],
-            ["Common Execution Contract"],
+            markdown.validate_document(REPOSITORY_ROOT, path, profile, "strict"),
+            [],
         )
 
     def test_artifact_id_validation_uses_profile_pattern(self) -> None:
@@ -724,7 +716,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             with self.subTest(record=record.name):
                 self.assertEqual(record.name[4:8], f"{index:04d}")
                 self.assertIn(f'artifact_id: "SPEC-0054-TSK-{index:04d}"', contents)
-                self.assertIn("../README.md#common-execution-contract", contents)
+                self.assertIn("../plan.md#common-execution-contract", contents)
                 for section in (
                     "## Task Table",
                     "## Approval and Safety Boundaries",
@@ -1005,7 +997,7 @@ class TerminalStrictValidatorTests(unittest.TestCase):
                 "--mode",
                 "strict",
                 "--include-path",
-                "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/README.md",
+                "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/plan.md",
             ),
         )
         for name, *arguments in commands:

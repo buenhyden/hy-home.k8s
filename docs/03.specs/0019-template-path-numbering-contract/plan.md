@@ -1001,7 +1001,7 @@ merge, or PR mutation was performed.
 ## Traceability
 
 - **Spec**: [../../03.specs/019-template-path-numbering-contract/spec.md](spec.md)
-- **Task**: [../tasks/2026-07-05-template-path-numbering-contract.md](README.md#task-records)
+- **Task**: [../tasks/2026-07-05-template-path-numbering-contract.md](plan.md)
 - **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/README.md)
 - **SDLC Governance**: [../../99.templates/support/sdlc-governance.md](../../99.templates/README.md)
 - **Templates README**: [../../99.templates/README.md](../../99.templates/README.md)

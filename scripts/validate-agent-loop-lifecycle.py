@@ -190,7 +190,7 @@ FEEDBACK_DESTINATIONS = (
     ),
     (
         "owned-external-limitation",
-        "docs/03.specs/0043-agent-harness-loop-lifecycle/README.md",
+        "docs/03.specs/0043-agent-harness-loop-lifecycle/plan.md",
     ),
 )
 INTERFACE_SIGNATURES = {

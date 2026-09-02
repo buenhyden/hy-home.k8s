@@ -357,7 +357,7 @@ bash infrastructure/tests/verify-contracts-static.sh
 - [Repository Quality Gate](../../../scripts/validate-repo-quality-gates.sh)
 - [Harness Validation](../../../scripts/validate-harness.sh)
 - [Plan](plan.md)
-- [Task](README.md#task-records)
+- [Task](plan.md)
 ### Related inputs
 
 - **PRD**: No separate PRD exists. The upstream requirement is the approved

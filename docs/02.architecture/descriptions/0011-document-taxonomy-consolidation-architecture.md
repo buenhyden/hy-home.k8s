@@ -87,7 +87,6 @@ docs/
     decisions/           ADR                         ####-<slug>.md
   03.specs/              work unit                   ####-<slug>/
     ####-<slug>/
-      README.md           thin package router
       spec.md             technical contract
       plan.md             order, risk, validation, rollback
       tasks/

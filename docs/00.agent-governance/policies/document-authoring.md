@@ -56,10 +56,17 @@ design-system rules only.
    design, test, release, or progress authority.
 9. Review the owning README after content or path changes and update stale
    navigation in the same logical change.
-10. Preserve accepted decisions and completed evidence. Use successors,
+10. Do not add a router to a Spec package. `spec.md` owns the change contract,
+    `plan.md` owns order and risk, and `tasks/` is the Task inventory; a
+    package-level index only restates them and drifts from `tasks/`.
+11. Give a Stage 90 collection all three of its levels: the collection router
+    `{audits,data,research}/README.md`, a pack router
+    `####-<slug>/README.md`, and pack members `####-<slug>/m####-<slug>.md`.
+    Each level has its own Stage 99 form.
+12. Preserve accepted decisions and completed evidence. Use successors,
     reciprocal lifecycle relationships, and minimal Git-backed recovery
     mappings rather than rewriting history or leaving redirects.
-11. Run the checks selected by the affected paths and record evidence in the
+13. Run the checks selected by the affected paths and record evidence in the
     owning Task using [quality policy](quality.md).
 
 Governance and agent execution sections remain English. Human-facing root,

@@ -1190,7 +1190,7 @@ git commit -m "docs(governance): close roster currentness evidence"
 - **Spec**:
   [../../03.specs/0025-governance-owner-and-roster-currentness/spec.md](spec.md)
 - **Task**:
-  [../tasks/2026-07-11-governance-owner-and-roster-currentness.md](README.md#task-records)
+  [../tasks/2026-07-11-governance-owner-and-roster-currentness.md](plan.md)
 - **Current Audit Pack**:
   [current external research pack](../../90.references/research/0001-workspace-engineering/README.md)
 - **Remediation Roadmap**:

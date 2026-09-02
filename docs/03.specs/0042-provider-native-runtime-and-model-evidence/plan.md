@@ -218,7 +218,7 @@ post-closure evidence event.
 ## Traceability
 
 - **Spec**: [Provider-Native Runtime and Model Evidence](spec.md)
-- **Task**: [Provider-Native Runtime and Model Evidence Task](README.md#task-records)
+- **Task**: [Provider-Native Runtime and Model Evidence Task](plan.md)
 
 ### Lifecycle Traceability
 

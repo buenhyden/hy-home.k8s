@@ -1113,7 +1113,7 @@ Validation:
 ## Traceability
 
 - **Spec**: [Workspace Document Contract Normalization Spec](spec.md)
-- **Tasks**: [Workspace Document Contract Normalization Tasks](README.md#task-records)
+- **Tasks**: [Workspace Document Contract Normalization Tasks](plan.md)
 - **Template Routing Contract**: [Template Routing](../../99.templates/README.md)
 - **Frontmatter Schema**: [Frontmatter Schema](../../99.templates/README.md)
 - **Documentation Contract**: [Template Documentation Contract](../../99.templates/README.md)

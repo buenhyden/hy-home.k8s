@@ -204,7 +204,7 @@ kubectl -n argocd logs deploy/argocd-notifications-controller --tail=50 | grep -
 - **AD**: [`../../02.architecture/descriptions/0005-argo-notifications-slack.md`](../../02.architecture/descriptions/0005-argo-notifications-slack.md)
 - **Related ADRs**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md), [`../../02.architecture/decisions/0003-eso-vault-k8s-auth.md`](../../02.architecture/decisions/0003-eso-vault-k8s-auth.md)
 - **Plan**: [`../../04.execution/plans/2026-05-18-argo-notifications-slack.md`](plan.md)
-- **Tasks**: [`../../04.execution/tasks/2026-05-18-argo-notifications-slack.md`](README.md#task-records)
+- **Tasks**: [`../../04.execution/tasks/2026-05-18-argo-notifications-slack.md`](plan.md)
 - **Runbook**: [`../../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md)
 - **Operations Policy**: [`../../05.operations/policies/0004-rollouts-notifications-headlamp-policy.md`](../../05.operations/policies/0004-rollouts-notifications-headlamp-policy.md)
 ### Related inputs

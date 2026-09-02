@@ -18,7 +18,7 @@ to SPEC-0054-TSK-0010 is recorded with this terminal state.
 
 ## Inputs
 
-- [Common execution contract](../README.md#common-execution-contract)
+- [Common execution contract](../plan.md#common-execution-contract)
 - [Spec 0054](../spec.md)
 - [Plan 0054](../plan.md)
 - [WP-006 execution boundary](../plan.md#wp-006--stage-05-ownership-cutover)
@@ -38,7 +38,7 @@ to SPEC-0054-TSK-0010 is recorded with this terminal state.
 
 ## Approval and Safety Boundaries
 
-The [common execution contract](../README.md#common-execution-contract) applies
+The [common execution contract](../plan.md#common-execution-contract) applies
 without exception. WP-006's approved-disposition prerequisite, Release
 consumer-zero boundary, no-Archive-copy rule, reviews, rollback, and logical
 commit are owned by its linked Plan section.

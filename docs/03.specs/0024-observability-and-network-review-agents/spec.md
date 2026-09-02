@@ -150,7 +150,7 @@ bash scripts/validate-repo-quality-gates.sh .
 
 - **Retired agent-design recovery**: [MIG-0004](../../98.archive/migrations/0004-document-authority-convergence.md)
 - **Plan**: [../../04.execution/plans/2026-07-06-observability-and-network-review-agents.md](plan.md)
-- **Task**: [../../04.execution/tasks/2026-07-06-observability-and-network-review-agents.md](README.md#task-records)
+- **Task**: [../../04.execution/tasks/2026-07-06-observability-and-network-review-agents.md](plan.md)
 - **Gap-analysis reference**: `docs/90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md`; [current lookup](../../90.references/research/0001-workspace-engineering/m0009-ai-agents-and-agency-agents.md)
 - **Harness catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Model policy**: [../../00.agent-governance/model-policy.md](../../00.agent-governance/model-policy.md)

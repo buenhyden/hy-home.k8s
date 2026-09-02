@@ -66,4 +66,4 @@ Slack token bootstrap은 사람이 승인한 외부 Vault 작업으로만 수행
 - [ARD](../descriptions/0005-argo-notifications-slack.md)
 - [Spec](../../03.specs/0005-argo-notifications-slack/spec.md)
 - [Plan](../../03.specs/0005-argo-notifications-slack/plan.md)
-- [Task](../../03.specs/0005-argo-notifications-slack/README.md)
+- [Task](../../03.specs/0005-argo-notifications-slack/plan.md)

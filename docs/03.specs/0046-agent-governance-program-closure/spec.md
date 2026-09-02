@@ -282,7 +282,7 @@ tests.
 - **Plan**:
   [Agent Governance Program Closure Implementation Plan](plan.md)
 - **Task**:
-  [Task: Agent Governance Program Closure](README.md#task-records)
+  [Task: Agent Governance Program Closure](plan.md)
 
 ### Lifecycle Traceability
 

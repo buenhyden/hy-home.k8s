@@ -4888,15 +4888,6 @@ def _program_package_task_projection(
         for path in package_tasks
         if _program_status(context, path) in PROGRAM_CURRENT_TASK_STATES
     )
-    router = spec.parent / "README.md"
-    router_targets = tuple(
-        target
-        for raw_link in _extract_links(context.texts.get(router, ""))
-        for kind, target in (_local_destination(router, raw_link),)
-        if kind == "local" and target is not None
-        if target in context.profiles
-        and context.profiles[target].profile_id == "sdlc/task"
-    )
     spec_identifier = spec.parent.name[:4]
     identities_complete = all(
         task.name[4:8] == f"{sequence:04d}"
@@ -4904,20 +4895,19 @@ def _program_package_task_projection(
         == f"SPEC-{spec_identifier}-TSK-{sequence:04d}"
         for sequence, task in enumerate(package_tasks, start=1)
     )
-    router_complete = (
-        router in context.paths
-        and context.profiles[router].profile_id == "readme/collection-index"
-        and bool(package_tasks)
+    # The package directory is the Task inventory.  A separate router document
+    # restated it and had to be edited for every added Task, so the inventory
+    # is proved from `tasks/` itself rather than from a second index.
+    inventory_complete = (
+        bool(package_tasks)
         and all(task_name.fullmatch(path.name) is not None for path in package_tasks)
         and identities_complete
         and all(
             _program_status(context, path) in PROGRAM_TASK_STATUS_DOMAIN
             for path in package_tasks
         )
-        and len(router_targets) == len(set(router_targets))
-        and set(router_targets) == set(package_tasks)
     )
-    return package_tasks, current_tasks, router_complete
+    return package_tasks, current_tasks, inventory_complete
 
 
 @dataclass
@@ -5092,7 +5082,7 @@ def _program_execution_diagnostics(
             and execution_state_matches
             and reciprocal_pair
         )
-        package_tasks, current_package_tasks, router_complete = (
+        package_tasks, current_package_tasks, inventory_complete = (
             _program_package_task_projection(context, spec)
         )
         package_task_targets = {
@@ -5161,7 +5151,7 @@ def _program_execution_diagnostics(
             )
         )
         valid_execution_package = (
-            router_complete
+            inventory_complete
             and package_component_complete
             and package_direct_spec_links
             and package_reciprocal
@@ -5589,7 +5579,7 @@ def _delegated_execution_diagnostics(
             for path in component
             if context.profiles[path].profile_id == "sdlc/task"
         )
-        package_tasks, current_tasks, router_complete = _program_package_task_projection(
+        package_tasks, current_tasks, inventory_complete = _program_package_task_projection(
             context, child
         )
         plan = plans[0] if len(plans) == 1 else None
@@ -5622,7 +5612,7 @@ def _delegated_execution_diagnostics(
             )
         )
         package_closed = (
-            router_complete
+            inventory_complete
             and plan is not None
             and plan.parent == child.parent
             and set(tasks) == set(current_tasks)
@@ -5637,8 +5627,8 @@ def _delegated_execution_diagnostics(
                     "DELEGATED-EXECUTION-PACKAGE",
                     child,
                     "sdlc/spec",
-                    "one router-complete package-local Plan/current-Task component with reciprocal own-Spec links and no foreign execution target",
-                    f"plans={len(plans)}, tasks={len(tasks)}, current-tasks={len(current_tasks)}, router={router_complete}, direct-spec={direct_spec_links}, child-closure={child_closes_component}, reciprocal={plan_task_reciprocal}, foreign={[path.as_posix() for path in foreign_execution_targets]}",
+                    "one inventory-complete package-local Plan/current-Task component with reciprocal own-Spec links and no foreign execution target",
+                    f"plans={len(plans)}, tasks={len(tasks)}, current-tasks={len(current_tasks)}, inventory={inventory_complete}, direct-spec={direct_spec_links}, child-closure={child_closes_component}, reciprocal={plan_task_reciprocal}, foreign={[path.as_posix() for path in foreign_execution_targets]}",
                 )
             )
 

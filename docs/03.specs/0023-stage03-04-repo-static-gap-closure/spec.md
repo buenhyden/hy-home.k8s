@@ -297,7 +297,7 @@ bash scripts/validate-policy-gates.sh .
 - **Plan**: [../../04.execution/plans/2026-07-06-stage03-04-repo-static-gap-closure.md](plan.md)
 - **Planned Tasks Path**: `../../04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md`
 - **Plan**: [../../04.execution/plans/2026-07-04-workspace-engineering-research-pack.md](../0017-workspace-engineering-research-pack/plan.md)
-- **Tasks**: [../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md](../0017-workspace-engineering-research-pack/README.md)
+- **Tasks**: [../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md](../0017-workspace-engineering-research-pack/plan.md)
 - **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/README.md)
 - **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/README.md)
 - **Progress Memory**: [../../00.agent-governance/memory/progress.md](../../00.agent-governance/memory/progress.md)

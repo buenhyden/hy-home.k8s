@@ -329,7 +329,7 @@ bash scripts/validate-policy-gates.sh .
 - **Spec**: [Template Path Numbering Contract](../0019-template-path-numbering-contract/spec.md)
 - **Spec**: [SDLC Lifecycle Contract](../0021-sdlc-lifecycle-contract/spec.md)
 - **Plan**: [../../04.execution/plans/2026-07-06-control-cloud-doc-normalization.md](plan.md)
-- **Tasks**: [../../04.execution/tasks/2026-07-06-control-cloud-doc-normalization.md](README.md#task-records)
+- **Tasks**: [../../04.execution/tasks/2026-07-06-control-cloud-doc-normalization.md](plan.md)
 - **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/README.md)
 - **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/README.md)
 - **Common Documentation Governance**: [../../99.templates/support/common-documentation-governance.md](../../99.templates/README.md)

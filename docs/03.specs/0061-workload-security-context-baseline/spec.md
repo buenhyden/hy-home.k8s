@@ -221,6 +221,6 @@ whose handoff named the `adminer` `securityContext` gap.
 ### Related Documents
 
 - [Plan](plan.md)
-- [Task](README.md#task-records)
+- [Task](plan.md)
 - [ADR 0022 — direct-approval standalone execution lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
 - [Spec 059 — platform currency defect closure](../0060-platform-currency-defect-closure/spec.md)

@@ -228,7 +228,7 @@ or `git stash drop` in this tranche.
 - **Plan**:
   [Current Surface and Stash Reconciliation Implementation Plan](plan.md)
 - **Task**:
-  [Current Surface and Stash Reconciliation Task](README.md#task-records)
+  [Current Surface and Stash Reconciliation Task](plan.md)
 - **Successor**:
   [Spec 048](../0048-github-routing-and-ci-evidence/spec.md)
 

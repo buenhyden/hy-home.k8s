@@ -20,7 +20,7 @@ handoff to SPEC-0054-TSK-0007 is recorded in the same commit as this terminal st
 
 ## Inputs
 
-- [Common execution contract](../README.md#common-execution-contract)
+- [Common execution contract](../plan.md#common-execution-contract)
 - [Spec 0054](../spec.md)
 - [Plan 0054](../plan.md)
 - [WP-003 execution boundary](../plan.md#wp-003--codexclaude-only-ai-agent-governance)
@@ -42,7 +42,7 @@ handoff to SPEC-0054-TSK-0007 is recorded in the same commit as this terminal st
 
 ## Approval and Safety Boundaries
 
-The [common execution contract](../README.md#common-execution-contract) applies
+The [common execution contract](../plan.md#common-execution-contract) applies
 without exception. WP-003 may change only the files and logical units named in
 its Plan section. Validation-registry relocation, production self-test/fixture
 separation, aggregate three-gate simplification, compatibility retirement, and

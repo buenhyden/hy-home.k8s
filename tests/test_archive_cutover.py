@@ -478,9 +478,12 @@ class ArchiveCutoverTest(unittest.TestCase):
             composed += 1
         self.assertTrue(composed, "Stage 99 rows must still compose current owners")
         spec0054_ledger = archive_validation.MIG0004_SPEC0054_LEDGER
+        spec0054_owner = str(PurePosixPath(spec0054_ledger).with_name("README.md"))
+        while spec0054_owner in later_edges:
+            spec0054_owner = later_edges[spec0054_owner]
         self.assertEqual(
             projection.current_by_legacy[spec0054_ledger],
-            str(PurePosixPath(spec0054_ledger).with_name("README.md")),
+            spec0054_owner,
         )
         # Aggregate totals are intentionally not asserted. Canonical non-terminal
         # growth is owned by

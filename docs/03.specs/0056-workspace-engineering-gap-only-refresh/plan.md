@@ -94,7 +94,7 @@ execution metadata and do not become research-topic owners.
 
 The written Spec was approved by the human on 2026-08-09, and the human then
 selected subagent-driven execution. WERG-000 therefore activates this Plan,
-the reciprocal [Task](README.md#task-records),
+the reciprocal [Task](plan.md),
 their Spec/index owners, and the exact ADR-0022 standalone relation atomically.
 
 ## Context
@@ -131,7 +131,7 @@ their Spec/index owners, and the exact ADR-0022 standalone relation atomically.
   `gitops/workloads/adminer/rollout.yaml`, `.kube-linter.yaml`, and Argo CD
   Application manifests under `gitops/apps/root/`.
 - Execution evidence owner:
-  [Task](README.md#task-records).
+  [Task](plan.md).
 
 ### Candidate primary-source families
 
@@ -1264,7 +1264,7 @@ rows are duplicate-research stops or deeper-evidence exclusions.
 - **Document decision boundary**:
   `docs/03.specs/052-document-taxonomy-consolidation/spec.md`
 - **Reciprocal Task**:
-  [Task](README.md#task-records)
+  [Task](plan.md)
 - **Research owner**:
   [2026-08-08 WER pack](../../90.references/research/0001-workspace-engineering/README.md)
 

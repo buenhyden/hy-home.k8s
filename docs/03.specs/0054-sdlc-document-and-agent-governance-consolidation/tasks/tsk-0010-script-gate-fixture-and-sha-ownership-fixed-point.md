@@ -19,7 +19,7 @@ claim the validation-tooling implementation delegated to Spec 0066.
 
 ## Inputs
 
-- [Common execution contract](../README.md#common-execution-contract)
+- [Common execution contract](../plan.md#common-execution-contract)
 - [Spec 0054](../spec.md)
 - [Plan 0054](../plan.md)
 - [WP-010 execution boundary](../plan.md#wp-010--script-gate-fixture-and-sha-ownership-fixed-point)
@@ -39,7 +39,7 @@ claim the validation-tooling implementation delegated to Spec 0066.
 
 ## Approval and Safety Boundaries
 
-The [common execution contract](../README.md#common-execution-contract) applies
+The [common execution contract](../plan.md#common-execution-contract) applies
 without exception. This Task's completed scope is limited to the activation
 transaction defined by the linked Plan section. Spec 0066 owns the subsequent
 machine-ownership audit, cleanup, reviews, rollback, and logical commits.

@@ -1410,7 +1410,7 @@ Boundary statement:
 
 - **Spec**: [Workspace Engineering Research Pack](spec.md)
 - **Prior Research Spec**: [Workspace Harness Research Pack](../0009-workspace-harness-research-pack/spec.md)
-- **Task**: [../tasks/2026-07-04-workspace-engineering-research-pack.md](README.md#task-records)
+- **Task**: [../tasks/2026-07-04-workspace-engineering-research-pack.md](plan.md)
 - **Research README**: [../../90.references/research/README.md](../../90.references/research/README.md)
 - **Reference Template**: [../../99.templates/templates/references/research-reference.template.md](../../99.templates/templates/references/research-reference.template.md)
 - **Task Template**: [../../99.templates/templates/specs/task.template.md](../../99.templates/templates/specs/task.template.md)

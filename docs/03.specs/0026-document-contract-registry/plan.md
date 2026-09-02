@@ -870,7 +870,7 @@ Expected: one closure commit and a clean focused diff.
 - **ADR**: [Declarative Document Contract Registry](../../02.architecture/decisions/0015-declarative-document-contract-registry.md)
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Spec**: [Document Contract Registry](spec.md)
-- **Task**: [Document Contract Registry Task](README.md#task-records)
+- **Task**: [Document Contract Registry Task](plan.md)
 - **Next Spec**: [Template Contract Consolidation](../0027-template-contract-consolidation/spec.md)
 
 ### Legacy Task traceability

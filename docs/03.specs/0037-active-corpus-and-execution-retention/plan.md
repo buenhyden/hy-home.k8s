@@ -406,7 +406,7 @@ than forcing a migration. The activation proposal can be reversed to parent
 ## Traceability
 
 - **Spec**: [Active Corpus and Execution Retention](spec.md)
-- **Task**: [Active Corpus and Execution Retention Task](README.md#task-records)
+- **Task**: [Active Corpus and Execution Retention Task](plan.md)
 - **PRD**: [PRD-0006](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - **AD**: [AD-0009](../../02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md)
 - **Archive decision**: [ADR-0018](../../02.architecture/decisions/0018-full-body-archive-record-and-retention.md)

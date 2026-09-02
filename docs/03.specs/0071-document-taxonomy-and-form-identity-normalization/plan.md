@@ -84,6 +84,8 @@ hold.
 | WP-007 | Move every executable owner, comparison alias, and test onto the current identities | WP-002 | Registry identities are final | Retired-identity absence sweep and full suite |
 | WP-008 | Make the Stage 98 generation contracts generation-aware, re-pin superseded digests, and seal the form moves as MIG-0010 | WP-004, WP-005 | Stage 98 frontmatter is final | Strict lifecycle run and sealed migration parse |
 | WP-009 | Update the human owners: Stage 99 author guide, authoring policy, and the routers that name a form | WP-004 | Forms and identities are final | Strict link and owner run |
+| WP-010 | Retire the Stage 03 package router: move Spec 0054's shared execution contract into its Plan, repoint every citation, derive the Task inventory from `tasks/`, and seal the retirement as MIG-0011 | WP-005, WP-008 | Approved Spec contract C11 | Package inventory sweep, strict link run, and delegated-execution projection check |
+| WP-011 | Complete the Stage 90 structure: author the audits and data collection routers so all three collections carry the same three levels, each with one Stage 99 form | WP-004 | Approved Spec contract C12 | Reference-pack topology check and template parity |
 
 ## Verification Plan
 
@@ -94,6 +96,8 @@ hold.
 | WP-009 | `scripts/validate-links-and-owners.py --root . --mode strict` | repo-static |
 | WP-008 | `scripts/validate-document-lifecycle.py --root . --mode strict` | repo-static |
 | WP-007 | `python3 -m unittest discover --start-directory tests --top-level-directory tests` | repo-static |
+| WP-010 | `scripts/validate-agent-legacy-cutover.py --root .` | repo-static |
+| WP-010, WP-011 | `bash scripts/validate-repo-quality-gates.sh .` | repo-static |
 | All | `bash scripts/validate-repo-quality-gates.sh .` | repo-static |
 
 No live cluster, provider runtime, or hosted CI evidence is claimed by this
@@ -132,10 +136,12 @@ work. Every check above reads tracked repository bytes only.
 | [VAL-DTF-007](spec.md#success-criteria--verification-plan) | WP-008 | [tsk-0001-dtf-000.md](tasks/tsk-0001-dtf-000.md) |
 | [VAL-DTF-008](spec.md#success-criteria--verification-plan) | WP-008 | [tsk-0001-dtf-000.md](tasks/tsk-0001-dtf-000.md) |
 | [VAL-DTF-009](spec.md#success-criteria--verification-plan) | WP-007 | [tsk-0001-dtf-000.md](tasks/tsk-0001-dtf-000.md) |
+| [VAL-DTF-010](spec.md#success-criteria--verification-plan) | WP-010 | [tsk-0001-dtf-000.md](tasks/tsk-0001-dtf-000.md) |
+| [VAL-DTF-011](spec.md#success-criteria--verification-plan) | WP-010 | [tsk-0001-dtf-000.md](tasks/tsk-0001-dtf-000.md) |
+| [VAL-DTF-012](spec.md#success-criteria--verification-plan) | WP-011 | [tsk-0001-dtf-000.md](tasks/tsk-0001-dtf-000.md) |
 
 ### Related Documents
 
-- [Package router](README.md)
 - [Technical contract](spec.md)
 - [Current Spec Index](../README.md#current-spec-index)
 - [Document Authoring Policy](../../00.agent-governance/policies/document-authoring.md)

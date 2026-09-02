@@ -322,7 +322,7 @@
       },
       {
         "id": "owned-external-limitation",
-        "ownerRef": "docs/03.specs/0043-agent-harness-loop-lifecycle/README.md"
+        "ownerRef": "docs/03.specs/0043-agent-harness-loop-lifecycle/plan.md"
       }
     ]
   },

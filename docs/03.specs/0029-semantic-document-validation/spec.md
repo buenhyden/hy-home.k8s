@@ -140,6 +140,6 @@ establish live cluster or provider readiness.
 ### Delivery and References
 
 - **Execution Plan**: [Semantic Document Validation Implementation Plan](plan.md)
-- **Execution Task**: [Task: Semantic Document Validation](README.md#task-records)
+- **Execution Task**: [Task: Semantic Document Validation](plan.md)
 - **Next Spec**: [Authored Document Migration](../0030-authored-document-migration/spec.md)
 - **Parsing Basis**: [CommonMark](https://spec.commonmark.org/0.31.2/) and [JSON Schema validation](https://json-schema.org/draft/2020-12/json-schema-validation)

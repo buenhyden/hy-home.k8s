@@ -436,7 +436,7 @@ rule.
 - [Progress Ledger](../../00.agent-governance/memory/progress.md)
 - [Repository Quality Gate](../../../scripts/validate-repo-quality-gates.sh)
 - [Plan](plan.md)
-- [Task](README.md#task-records)
+- [Task](plan.md)
 - **Completed evolution**: [011](./spec.md) -> [012](../0012-template-governance-audit-enhancement/spec.md) -> [013](../0013-workspace-document-governance-hardening/spec.md) -> [014](../0014-workspace-document-contract-normalization/spec.md) -> [020](../0020-workspace-contract-governance-normalization/spec.md) -> [021](../0021-sdlc-lifecycle-contract/spec.md) -> [022](../0022-control-cloud-doc-normalization/spec.md) -> [023](../0023-stage03-04-repo-static-gap-closure/spec.md).
 - [GitHub Docs YAML frontmatter](https://docs.github.com/en/contributing/writing-for-github-docs/using-yaml-frontmatter)
 - [Diátaxis documentation framework](https://diataxis.fr/)

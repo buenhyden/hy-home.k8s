@@ -325,7 +325,7 @@ actual evaluation, fitness, admission, and promotion.
 ## Traceability
 
 - **Spec**: [Agent Governance Program Closure](spec.md)
-- **Task**: [Task: Agent Governance Program Closure](README.md#task-records)
+- **Task**: [Task: Agent Governance Program Closure](plan.md)
 - **Predecessor**: Spec 045 closure `de9a88e4` and postflight `06039611`
 - **Program**: [PRD 003](../../01.requirements/0003-workspace-agent-governance-platform.md),
   [AD 0006](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md),

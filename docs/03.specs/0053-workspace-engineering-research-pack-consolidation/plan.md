@@ -1168,7 +1168,7 @@ be reverted without altering Stage 98 or Git history.
 
 - [Spec 053](spec.md)
 - [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
-- [WERPC Task](README.md#task-records)
+- [WERPC Task](plan.md)
 - Predecessor `Spec 017` at
   `docs/03.specs/0017-workspace-engineering-research-pack/spec.md`
 - Conflicting `Spec 052` at

@@ -80,7 +80,7 @@ provider-cardinality, archive-census, and script-census clauses of earlier
 decisions while preserving their transition-safety and recoverability goals.
 
 The reciprocal execution artifacts are [Plan 0054](plan.md) and
-[Tasks 0054](README.md#task-records).
+[Tasks 0054](plan.md).
 Spec 0054 remains the integrated acceptance owner. Active
 [Spec 0066](../0066-validation-tooling-ownership/spec.md) is the delegated
 execution package for WP-010 and WP-011; it is not a standalone program.

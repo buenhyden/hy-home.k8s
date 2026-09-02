@@ -1703,7 +1703,7 @@ without history rewriting.
 
 - [Spec 0055](../../03.specs/0055-workspace-governance-audit-and-remediation/spec.md)
 - [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
-- [WGIA Task](README.md#task-records)
+- [WGIA Task](plan.md)
 - [Stage 90 reference router](../../90.references/README.md)
 - [Current source coverage](../../90.references/research/0001-workspace-engineering/m0012-source-coverage.md)
 

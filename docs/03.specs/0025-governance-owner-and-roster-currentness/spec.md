@@ -569,7 +569,7 @@ retains responsibility for final integration, validation, and branch finishing.
 - [Scope Application Index](../../90.references/research/0001-workspace-engineering/m0013-scope-application-index.md)
 - [Spec Stage](../README.md)
 - [Execution Plan](plan.md)
-- [Execution Task](README.md#task-records)
+- [Execution Task](plan.md)
 - [Plan Stage](../../99.templates/templates/specs/plan.template.md)
 - [Task Stage](../../99.templates/templates/specs/task.template.md)
 - [Agent Governance Normalization Spec](../0015-agent-governance-contract-normalization/spec.md)

@@ -626,7 +626,7 @@ Expected: one final integration commit.
 - **AD**: `../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md`
 - **Spec**: `../../03.specs/0009-workspace-harness-research-pack/spec.md`
 - **ADR**: `../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md`
-- **Task**: [../tasks/2026-07-02-workspace-harness-research-pack.md](README.md#task-records)
+- **Task**: [../tasks/2026-07-02-workspace-harness-research-pack.md](plan.md)
 
 ### Legacy Task traceability
 

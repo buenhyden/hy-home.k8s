@@ -136,10 +136,103 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
 - Do not perform push, merge, publication, live deployment, credential access,
   or provider-runtime mutation.
 
+### Common Execution Contract
+
+#### Common Inputs
+
+- [Spec 0054](spec.md)
+- [Plan 0054](#overview)
+- Predecessor Spec 0052 and its inherited WORK-109 evidence
+- [Historical ADR-0022 direct approval lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md),
+  retained as predecessor context rather than current projection authority
+- [ADR-0024 historical terminal-taxonomy decision](../../02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md),
+  superseded where ADR-0030 defines the new terminal authority
+- [ADR-0030 authority-first convergence](../../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)
+- [Accepted ADR-0031 current-corpus and validation ownership](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md),
+  which defines the current package-local delegated-execution model.
+  Superseded ADR-0022 remains bounded predecessor context for the parent-only
+  compatibility row until WP-013 removes that roster.
+- The Git parent of the WP-001 design-authority commit and the exact inherited
+  WORK-109 staged/unstaged inventory recorded by WP-002
+- External primary-source basis embedded in [Spec 0054](spec.md#external-basis)
+
+#### Scheduling and Completion
+
+- Each Spec Package may have at most one `in-progress` Task. A
+  dependency-blocked Task is `blocked`, is not that package's active execution
+  Task, and may resume only after its declared dependency closes.
+- Spec 0054 owns integrated acceptance. Spec 0066 is its delegated execution
+  package for WP-010 and WP-011, so the two packages may each have one active
+  Task concurrently. This is not an
+  independent standalone program and does not relax either package's local
+  single-`in-progress` rule.
+- SPEC-0054-TSK-0011 is the sole active parent acceptance Task
+  while SPEC-0066-TSK-0001 is the delegated execution Task. SPEC-0054-TSK-0011 records
+  only integrated acceptance and never claims the delegated implementation.
+- Until WP-013 removes execution-instance rosters, the existing Spec 0054
+  compatibility row points only to the current parent acceptance owner,
+  SPEC-0054-TSK-0011; the next parent handoff will point it to queued continuation
+  SPEC-0054-TSK-0013. Spec 0066 receives no standalone row; its execution ownership
+  is proved by its package-local links and reciprocal Spec-level delegation.
+- Work packages follow their declared dependencies rather than one global
+  closed order. WP-001 and WP-002 are completed evidence and are not
+  re-entered.
+- A Task becomes `done` only after its focused RED/GREEN evidence, assigned
+  broad gates, independent specification and code-quality review, any
+  WP-specific domain reviews, and all ordered logical commits exist.
+- A terminal Task is not rewritten to retrofit later scheduling policy. When
+  Git proves an earlier directly approved out-of-order execution, the active
+  Plan may record one bounded historical exception with its approval and
+  prerequisite evidence. That record grants no current or future dependency
+  bypass.
+- Each independently testable logical unit gets one scoped commit. When a WP
+  owns ordered commits, their order and exact commit subjects are defined by
+  that WP's section in [Plan 0054](#work-breakdown).
+- Each completed Task records exact commands, exit codes, finding counts,
+  staged-path shape, mutation status, reviewer disposition, commit identity,
+  and limitations. `PASS` without those bindings is insufficient.
+- Task IDs and package-local sequences are append-only and are never reused.
+
+#### Approval, Safety, Rollback, and Review Boundaries
+
+- **Allowed Paths**: repository files explicitly named by the active work
+  package in [Plan 0054](#work-breakdown).
+- **Forbidden Paths**: unrelated user changes; sealed Stage 98 payloads;
+  unapproved live infrastructure, credentials, provider runtime, remote CI,
+  release, push, merge, and publication surfaces.
+- **Approval Required**: new document families, reintroducing a Release family,
+  destructive history changes, credential access, live or remote mutation,
+  scope beyond the approved B boundary (which already includes Stage 90), or
+  deletion lacking consumer-zero and recovery evidence.
+- **Static Validation**: focused unit/contract tests, affected and staged
+  lanes, registry/Markdown/link/lifecycle/archive gates, aggregate quality,
+  pre-commit, all-files fixed point, and diff checks as assigned by the Plan.
+- **Live Validation**: DEFER. Repository-static evidence does not establish
+  provider-runtime, hosted-CI, deployment, incident-response, or platform
+  behavior.
+- **Secret / Vault Handling**: no secret-value read or output. Only the existing
+  redacted secret-handling validator and configured detect-secrets hooks may be
+  used.
+- **Rollback Plan**: stop at the failing work package; preserve the worktree;
+  revert only that package's logical commit if authorized. Never edit sealed
+  evidence as rollback.
+- **Review Boundary**: use a fresh implementer, independent specification
+  review, and independent code-quality review for each Task. Obtain the
+  WP-specific domain reviews named in Plan 0054 and resolve every Critical or
+  Important finding before committing.
+- **Evidence Location**: package-local Spec Task records and reviewed diffs,
+  minimal Stage 98 Migration/Tombstone lookup only when Git history is not a
+  sufficient durable reference, and Git commits.
+
+Every Task record below inherits this contract without exception and links its
+own Plan section for the exact file boundary, validation commands, reviews,
+rollback implications, and ordered logical commit boundary.
+
+
 ## Overview
 
 This plan executes [Spec 0054](spec.md), tracks its transitional
-[Tasks 0054](README.md#task-records), and supersedes conflicting unfinished instructions in
+[Tasks 0054](plan.md), and supersedes conflicting unfinished instructions in
 predecessor Spec 0052 only where Spec 0054 explicitly owns the outcome. WP-001
 and WP-002 remain completed historical evidence: their commits
 proved the former design and four-digit/Stage 04 boundary, but their PRD/SRS/

@@ -241,7 +241,7 @@ read-only remote metadata commands in addition to this terminal sequence.
 - **Implementation Plan**:
   [Repository Assurance Integration and Closure Implementation Plan](plan.md)
 - **Execution Task**:
-  [Task: Repository Assurance Integration and Closure](README.md#task-records)
+  [Task: Repository Assurance Integration and Closure](plan.md)
 
 ### Lifecycle Traceability
 

@@ -970,7 +970,7 @@ and retirement sources retain their independent pre-existing source protections.
     ]
   },
   {
-    "source_commit": "4932a8158ffbbc926093aee76322f0402ce465b6",
+    "source_commit": "4596915862db5891dbee1046fc0a758bf49f8948",
     "paths": [
       "docs/03.specs/0014-workspace-document-contract-normalization/spec.md",
       "docs/03.specs/0015-agent-governance-contract-normalization/plan.md",

@@ -1065,7 +1065,7 @@ PY
 - **Prior Spec**: [Workspace Document Governance Hardening](../0013-workspace-document-governance-hardening/spec.md)
 - **Prior Spec**: [Workspace Document Contract Normalization](../0014-workspace-document-contract-normalization/spec.md)
 - **Prior Spec**: [Agent Governance Contract Normalization](../0015-agent-governance-contract-normalization/spec.md)
-- **Task**: [../tasks/2026-07-04-active-control-surface-governance-hardening.md](README.md#task-records)
+- **Task**: [../tasks/2026-07-04-active-control-surface-governance-hardening.md](plan.md)
 - **Template Documentation Contract**: [documentation-contract.md](../../99.templates/README.md)
 - **Template Routing Contract**: [template-routing.md](../../99.templates/README.md)
 - **Frontmatter Schema**: [frontmatter-schema.md](../../99.templates/README.md)

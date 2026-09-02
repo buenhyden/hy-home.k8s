@@ -393,7 +393,7 @@ and the required QA ordering/formatter rerun.
   `279f8103`
 - **Successor**: [Spec 046](../0046-agent-governance-program-closure/spec.md)
 - **Execution Plan**: [Agent Governance CI and QA Cutover Implementation Plan](plan.md)
-- **Task evidence**: [Agent Governance CI and QA Cutover Task](README.md#task-records)
+- **Task evidence**: [Agent Governance CI and QA Cutover Task](plan.md)
 
 ### Lifecycle Traceability
 

@@ -744,7 +744,7 @@ hosted CI, remote settings, secret safety, deployment, or live operation.
   [ADR-0024](../../02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md)
 - **Approved implementation Plan and Task, to move during transition**:
   [legacy Plan](plan.md)
-  and [legacy Task](README.md#task-records)
+  and [legacy Task](plan.md)
 - **External evidence boundary**:
   [Spec-driven SDLC and document contracts](../../90.references/research/0001-workspace-engineering/m0004-spec-driven-sdlc-and-document-contracts.md)
   and [AI agents and Agency Agents](../../90.references/research/0001-workspace-engineering/m0009-ai-agents-and-agency-agents.md)

@@ -2526,9 +2526,12 @@ def _validate_mig0004_rows_and_targets(
     # against its pinned historical commit. Requiring the target to remain in
     # the current tree adds no proof about the past; it only forbids a later
     # reviewed retirement, so a retired target is released from the inventory.
+    # This holds for every MIG-0004 endpoint, not only the Stage 99 ones: a
+    # later sealed row is the reviewed record that released the path.
+    sealed_retired = _sealed_row_retired_paths(root)
     stage99_targets = frozenset(
         target for _action, target in MIG0004_STAGE99_ACTION_TARGETS.values()
-    ) - _sealed_row_retired_paths(root)
+    ) - sealed_retired
     consumer_paths = tuple(
         path
         for path in inventory
@@ -2661,7 +2664,7 @@ def _validate_mig0004_rows_and_targets(
             raise ArchiveContractError(
                 "RECOVERY-MIGRATION-TARGET", "migration target is invalid"
             )
-        if not stage99_row:
+        if not stage99_row and target not in sealed_retired:
             _require_regular_current_target(target, inventory)
             target_paths.add(target)
         if target != legacy and legacy in inventory:

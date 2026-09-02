@@ -17,7 +17,7 @@ This is the terminal queued Task record for WP-014.
 
 ## Inputs
 
-- [Common execution contract](../README.md#common-execution-contract)
+- [Common execution contract](../plan.md#common-execution-contract)
 - [Spec 0054](../spec.md)
 - [Plan 0054](../plan.md)
 - [WP-014 execution boundary](../plan.md#wp-014--convergence-and-branch-completion)
@@ -36,7 +36,7 @@ This is the terminal queued Task record for WP-014.
 
 ## Approval and Safety Boundaries
 
-The [common execution contract](../README.md#common-execution-contract) applies
+The [common execution contract](../plan.md#common-execution-contract) applies
 without exception. WP-014's evidence-only mutation scope, fixed-point gates,
 final independent reviews, rollback, closure commit, and finish-branch handoff
 are owned by its linked Plan section.

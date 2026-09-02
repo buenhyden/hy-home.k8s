@@ -75,7 +75,7 @@ settings, or provider mutation.
 - **Parent Spec**: [../../03.specs/0023-stage03-04-repo-static-gap-closure/spec.md](spec.md)
 - **Parent Plan**: [../plans/2026-07-06-stage03-04-repo-static-gap-closure.md](plan.md)
 - **WER Plan**: [../plans/2026-07-04-workspace-engineering-research-pack.md](../0017-workspace-engineering-research-pack/plan.md)
-- **WER Task**: [./2026-07-04-workspace-engineering-research-pack.md](../0017-workspace-engineering-research-pack/README.md)
+- **WER Task**: [./2026-07-04-workspace-engineering-research-pack.md](../0017-workspace-engineering-research-pack/plan.md)
 ## Goals & In-Scope
 
 - **Goals**:
@@ -741,7 +741,7 @@ and `sessions/` paths remain untouched.
 - **Spec**: [../../03.specs/0023-stage03-04-repo-static-gap-closure/spec.md](spec.md)
 - **Planned Tasks Path**: `../tasks/2026-07-06-stage03-04-repo-static-gap-closure.md`
 - **WER Plan**: [./2026-07-04-workspace-engineering-research-pack.md](../0017-workspace-engineering-research-pack/plan.md)
-- **WER Task**: [../tasks/2026-07-04-workspace-engineering-research-pack.md](../0017-workspace-engineering-research-pack/README.md)
+- **WER Task**: [../tasks/2026-07-04-workspace-engineering-research-pack.md](../0017-workspace-engineering-research-pack/plan.md)
 - **SDLC Lifecycle Contract Spec**: [../../03.specs/0021-sdlc-lifecycle-contract/spec.md](../0021-sdlc-lifecycle-contract/spec.md)
 - **Progress Memory**: [../../00.agent-governance/memory/progress.md](../../00.agent-governance/memory/progress.md)
 
@@ -750,5 +750,5 @@ and `sessions/` paths remain untouched.
 - **Spec**: [../../03.specs/0023-stage03-04-repo-static-gap-closure/spec.md](spec.md)
 - **Plan**: [../plans/2026-07-06-stage03-04-repo-static-gap-closure.md](plan.md)
 - **WER Plan**: [../plans/2026-07-04-workspace-engineering-research-pack.md](../0017-workspace-engineering-research-pack/plan.md)
-- **WER Task**: [./2026-07-04-workspace-engineering-research-pack.md](../0017-workspace-engineering-research-pack/README.md)
+- **WER Task**: [./2026-07-04-workspace-engineering-research-pack.md](../0017-workspace-engineering-research-pack/plan.md)
 - **Progress Memory**: [../../00.agent-governance/memory/progress.md](../../00.agent-governance/memory/progress.md)

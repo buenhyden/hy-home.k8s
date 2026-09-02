@@ -78,7 +78,7 @@ preserves reciprocal Spec, Plan, Task, and index lineage throughout the Spec
 - **Parent Plan**:
   [../plans/2026-07-12-template-contract-consolidation.md](plan.md)
 - **Completed Registry Task**:
-  [./2026-07-12-document-contract-registry.md](../0026-document-contract-registry/README.md)
+  [./2026-07-12-document-contract-registry.md](../0026-document-contract-registry/plan.md)
 ## Goals & In-Scope
 
 - Establish a type-to-source decision ledger for every template family.
@@ -815,7 +815,7 @@ Expected: commit succeeds.
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Registry Spec**: [Document Contract Registry](../0026-document-contract-registry/spec.md)
 - **Spec**: [Template Contract Consolidation](spec.md)
-- **Task**: [Template Contract Consolidation](README.md#task-records)
+- **Task**: [Template Contract Consolidation](plan.md)
 
 ### Legacy Task traceability
 
@@ -824,7 +824,7 @@ Expected: commit succeeds.
 - **Plan**:
   [../plans/2026-07-12-template-contract-consolidation.md](plan.md)
 - **Previous Tranche**:
-  [./2026-07-12-document-contract-registry.md](../0026-document-contract-registry/README.md)
+  [./2026-07-12-document-contract-registry.md](../0026-document-contract-registry/plan.md)
 - **README Body Owner**:
   [../../03.specs/0028-readme-workspace-profiles/spec.md](../0028-readme-workspace-profiles/spec.md)
 - **Authored Corpus Migration Owner**:

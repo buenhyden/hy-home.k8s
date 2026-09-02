@@ -17,7 +17,7 @@ This is the terminal queued Task record for WP-009.
 
 ## Inputs
 
-- [Common execution contract](../README.md#common-execution-contract)
+- [Common execution contract](../plan.md#common-execution-contract)
 - [Spec 0054](../spec.md)
 - [Plan 0054](../plan.md)
 - [WP-009 execution boundary](../plan.md#wp-009--global-stage-98-parity-and-recovery-closure)
@@ -36,7 +36,7 @@ This is the terminal queued Task record for WP-009.
 
 ## Approval and Safety Boundaries
 
-The [common execution contract](../README.md#common-execution-contract) applies
+The [common execution contract](../plan.md#common-execution-contract) applies
 without exception. WP-009's sealed-history and recovery boundaries, reviews,
 rollback, and logical commit are owned by its linked Plan section.
 

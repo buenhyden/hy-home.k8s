@@ -136,7 +136,7 @@ git diff --check
 - **Registry Spec**: [Document Contract Registry](../0026-document-contract-registry/spec.md)
 - **Template Spec**: [Template Contract Consolidation](../0027-template-contract-consolidation/spec.md)
 - **Execution Plan**: [README and Workspace Profiles Implementation Plan](plan.md)
-- **Execution Task**: [README and Workspace Profiles Task](README.md#task-records)
+- **Execution Task**: [README and Workspace Profiles Task](plan.md)
 - **Current Workspace Contract**: [Workspace Support Staging](../../../_workspace/README.md)
 
 ### Delivery and References

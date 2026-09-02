@@ -17,7 +17,7 @@ This is the completed Spec 0054 Task record for WP-008.
 
 ## Inputs
 
-- [Common execution contract](../README.md#common-execution-contract)
+- [Common execution contract](../plan.md#common-execution-contract)
 - [Spec 0054](../spec.md)
 - [Plan 0054](../plan.md)
 - [WP-008 execution boundary](../plan.md#wp-008--stage-90-ownership-cutover)
@@ -36,7 +36,7 @@ This is the completed Spec 0054 Task record for WP-008.
 
 ## Approval and Safety Boundaries
 
-The [common execution contract](../README.md#common-execution-contract) applies
+The [common execution contract](../plan.md#common-execution-contract) applies
 without exception. WP-008's accepted-disposition prerequisite, consumer-first
 cutover, reachable Git recovery, research preservation boundary, reviews,
 rollback, and logical commit are owned by its linked Plan section. It does not

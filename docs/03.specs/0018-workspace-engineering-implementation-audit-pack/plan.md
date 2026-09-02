@@ -951,8 +951,8 @@ Expected: commit succeeds and the worktree is clean.
   - [../../03.specs/0013-workspace-document-governance-hardening/spec.md](../0013-workspace-document-governance-hardening/spec.md)
   - [Archived P3 GitOps secret runtime remediation Plan](../../98.archive/README.md#document-index)
   - [Archived P3 GitOps secret runtime remediation Task](../../98.archive/README.md#document-index)
-  - [2026-07-03-workspace-document-governance-hardening.md](../0013-workspace-document-governance-hardening/README.md)
-  - [2026-07-04-workspace-document-contract-normalization.md](../0014-workspace-document-contract-normalization/README.md)
+  - [2026-07-03-workspace-document-governance-hardening.md](../0013-workspace-document-governance-hardening/plan.md)
+  - [2026-07-04-workspace-document-contract-normalization.md](../0014-workspace-document-contract-normalization/plan.md)
   - moved reports under `docs/90.references/audits/`
 - The required old-path scan still returns matches, all classified as
   historical evidence:
@@ -1301,7 +1301,7 @@ mutation.
 - **Spec**: [../../03.specs/0018-workspace-engineering-implementation-audit-pack/spec.md](spec.md)
 - **Research Pack Spec**: [../../03.specs/0017-workspace-engineering-research-pack/spec.md](../0017-workspace-engineering-research-pack/spec.md)
 - **Prior Audit Pack Spec**: [../../03.specs/0010-workspace-harness-implementation-audit-pack/spec.md](../0010-workspace-harness-implementation-audit-pack/spec.md)
-- **Task**: [../tasks/2026-07-05-workspace-engineering-implementation-audit-pack.md](README.md#task-records)
+- **Task**: [../tasks/2026-07-05-workspace-engineering-implementation-audit-pack.md](plan.md)
 - **Research Pack README**: `docs/90.references/research/2026-07-04-wer/README.md`; [current lookup](../../90.references/research/0001-workspace-engineering/README.md)
 - **Stage 90 Router**: [../../90.references/README.md](../../90.references/README.md)
 - **Reference Template**: [../../99.templates/templates/references/reference.template.md](../../99.templates/templates/references/reference.template.md)

@@ -741,7 +741,7 @@ Expected: commit succeeds after final validation evidence is recorded.
 ## Traceability
 
 - **Spec**: [../../03.specs/0012-template-governance-audit-enhancement/spec.md](spec.md)
-- **Tasks**: [../tasks/2026-07-03-template-governance-audit-enhancement.md](README.md#task-records)
+- **Tasks**: [../tasks/2026-07-03-template-governance-audit-enhancement.md](plan.md)
 - **Templates README**: [../../99.templates/README.md](../../99.templates/README.md)
 - **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/README.md)
 - **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/README.md)
@@ -754,7 +754,7 @@ Expected: commit succeeds after final validation evidence is recorded.
 - **Spec**: [../../03.specs/0012-template-governance-audit-enhancement/spec.md](spec.md)
 - **Plan**: [../plans/2026-07-03-template-governance-audit-enhancement.md](plan.md)
 - **Template Contract Migration Plan**: [../plans/2026-07-03-template-contract-governance-migration.md](../0011-template-contract-governance-migration/plan.md)
-- **Template Contract Migration Task**: [./2026-07-03-template-contract-governance-migration.md](../0011-template-contract-governance-migration/README.md)
+- **Template Contract Migration Task**: [./2026-07-03-template-contract-governance-migration.md](../0011-template-contract-governance-migration/plan.md)
 - **Templates README**: [../../99.templates/README.md](../../99.templates/README.md)
 - **Documentation Protocol**: [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/document-authoring.md)
 - **Document Stage Routing Rules**: [../../00.agent-governance/rules/document-stage-routing.md](../../00.agent-governance/rules/document-authoring.md)

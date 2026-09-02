@@ -138,7 +138,7 @@ traceability hardening; live cluster changes are out of scope.
 - **AD**: [`../../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md`](../../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md)
 - **Spec**: [`../../03.specs/0004-argo-rollouts-progressive-delivery/spec.md`](spec.md)
 - **ADR**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md)
-- **Tasks**: [`../tasks/2026-05-18-argo-rollouts-progressive-delivery.md`](README.md#task-records)
+- **Tasks**: [`../tasks/2026-05-18-argo-rollouts-progressive-delivery.md`](plan.md)
 
 ### Legacy Task traceability
 

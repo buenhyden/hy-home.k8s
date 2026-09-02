@@ -285,7 +285,7 @@ no matches after active links are updated.
 - **GitHub Docs Best Practices**: <https://docs.github.com/en/contributing/writing-for-github-docs/best-practices-for-github-docs>
 - **NIST SSDF SP 800-218**: <https://csrc.nist.gov/pubs/sp/800/218/final>
 - **Plan**: [../../04.execution/plans/2026-07-05-template-path-numbering-contract.md](plan.md)
-- **Task**: [../../04.execution/tasks/2026-07-05-template-path-numbering-contract.md](README.md#task-records)
+- **Task**: [../../04.execution/tasks/2026-07-05-template-path-numbering-contract.md](plan.md)
 ### Related inputs
 
 - **User request**: Normalize `docs/99.templates/**`, update PRD and Stage 03

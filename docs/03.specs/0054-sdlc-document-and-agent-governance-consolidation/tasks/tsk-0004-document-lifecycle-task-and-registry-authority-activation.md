@@ -18,7 +18,7 @@ consumes its registry, profile lifecycle, Task topology, and recovery boundary.
 
 ## Inputs
 
-- [Common execution contract](../README.md#common-execution-contract)
+- [Common execution contract](../plan.md#common-execution-contract)
 - [Spec 0054](../spec.md)
 - [Plan 0054](../plan.md)
 - [WP-004 execution boundary](../plan.md#wp-004--document-lifecycle-task-and-registry-authority-activation)
@@ -37,7 +37,7 @@ consumes its registry, profile lifecycle, Task topology, and recovery boundary.
 
 ## Approval and Safety Boundaries
 
-The [common execution contract](../README.md#common-execution-contract) applies
+The [common execution contract](../plan.md#common-execution-contract) applies
 without exception. WP-004's exact cutover files, validation commands, reviews,
 rollback, and three ordered logical commits are owned by its linked Plan
 section.

@@ -247,7 +247,7 @@ isolated environment described above, not an unreviewed ambient configuration.
 - **Plan**:
   [Example IaC and Validator QA Implementation Plan](plan.md)
 - **Task**:
-  [Example IaC and Validator QA Task](README.md#task-records)
+  [Example IaC and Validator QA Task](plan.md)
 - **Predecessor**:
   [Spec 049](../0049-platform-validation-and-security-evidence/spec.md)
 - **Successor**:

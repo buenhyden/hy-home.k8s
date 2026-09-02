@@ -235,7 +235,6 @@ bash scripts/validate-repo-quality-gates.sh .
 
 ### Related Documents
 
-- [Package router](README.md)
 - [Current Spec Index](../README.md#current-spec-index)
 - [ADR-0030 — authority-first SDLC and agent governance convergence](../../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)
 - [AD-0006 — workspace agent governance platform](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md)

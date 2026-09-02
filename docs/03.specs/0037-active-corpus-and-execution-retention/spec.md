@@ -221,7 +221,7 @@ Remote/live and CI/FIFO PASS results are unclaimed.
 - **PRD**: [PRD-0006](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - **AD**: [AD-0009](../../02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md)
 - **Plan**: [Active Corpus and Execution Retention Implementation Plan](plan.md)
-- **Task**: [Active Corpus and Execution Retention Task](README.md#task-records)
+- **Task**: [Active Corpus and Execution Retention Task](plan.md)
 
 ### Lifecycle Traceability
 

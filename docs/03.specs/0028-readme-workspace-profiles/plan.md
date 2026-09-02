@@ -1158,7 +1158,7 @@ cloud-document handoff consolidation.
 - **Template Spec**: [Template Contract Consolidation](../0027-template-contract-consolidation/spec.md)
 - **Spec**: [README and Workspace Profiles](spec.md)
 - **Next Spec**: [Semantic Document Validation](../0029-semantic-document-validation/spec.md)
-- **Task**: [README and Workspace Profiles](README.md#task-records)
+- **Task**: [README and Workspace Profiles](plan.md)
 
 ### Legacy Task traceability
 

@@ -755,7 +755,9 @@ def _work054_wp004b_render_task(
     return (
         f"---\n"
         f"title: {quoted_title}\n"
+        f'version: "1.0.0"\n'
         f"type: sdlc/task\n"
+        f'layer: "specs"\n'
         f"status: {status}\n"
         f"owner: {owner}\n"
         f"updated: {updated}\n"
@@ -767,7 +769,6 @@ def _work054_wp004b_render_task(
         f"decomposed monolithic ledger. The exact row below preserves its criterion,\n"
         f"dependency, owner, result, and evidence.\n\n"
         f"## Inputs\n\n"
-        f"- [Package router](../README.md)\n"
         f"- [Owning Spec](../spec.md)\n"
         f"- [Owning Plan](../plan.md)\n"
         f"- [Migration recovery ledger](../../../98.archive/migrations/0004-document-authority-convergence.md)\n\n"
@@ -787,7 +788,6 @@ def _work054_wp004b_render_task(
         f"- Stable Task: `{artifact_id}`\n"
         f"- Legacy work item: `{legacy_id}`\n"
         f"{lifecycle_trace}"
-        f"- Package inventory: [README](../README.md#task-records)\n"
         f"- Legacy bytes: [MIG-0004](../../../98.archive/migrations/0004-document-authority-convergence.md)\n"
     ).encode("utf-8")
 
@@ -3522,13 +3522,29 @@ _MIGRATION_SHARED_KEY_RESEAL: dict[str, tuple[tuple[str, str], ...]] = {
 }
 
 
+# A historical-consumer declaration covers its paths by byte identity, so a
+# reviewed change to a declared document invalidates the coverage until the
+# declaration names a commit carrying the new bytes.  A consumer identity may
+# belong to exactly one sealed record, so the re-pin has to happen inside the
+# record that already owns it rather than in a newer one.
+_MIGRATION_CONSUMER_REPIN_RESEAL: dict[str, tuple[tuple[str, str], ...]] = {
+    "docs/98.archive/migrations/0005-codex-claude-agent-governance-convergence.md": (
+        (
+            "628753b0544558b5abd6863da3adf33f9cede484fd36cdce3a8a02330ed42f99",  # pragma: allowlist secret -- sealed base digest
+            "fa28fe51353f0cd4ad2611592707dfd42415296cabd56f5a3b727acc9deed0b3",  # pragma: allowlist secret -- re-sealed digest
+        ),
+    ),
+}
+
+
 def _is_declared_reseal(path: PurePosixPath, base: str, proposed: str | None) -> bool:
-    """Admit only a reviewed byte pair declared for one retired frontmatter form."""
+    """Admit only a reviewed byte pair declared for one sealed record change."""
 
     key = path.as_posix()
     pins = (
         *_MIGRATION_DOMAIN_KEY_RESEAL.get(key, ()),
         *_MIGRATION_SHARED_KEY_RESEAL.get(key, ()),
+        *_MIGRATION_CONSUMER_REPIN_RESEAL.get(key, ()),
     )
     return proposed is not None and (base, proposed) in pins
 

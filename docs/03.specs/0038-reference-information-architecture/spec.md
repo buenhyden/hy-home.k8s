@@ -21,7 +21,7 @@ plan, runbook, or runtime owner.
 
 The reciprocal implementation
 [Plan](plan.md)
-and [Task](README.md#task-records)
+and [Task](plan.md)
 record the reviewed RIA-000 through RIA-006 packages and the observed RIA-007
 C1 closure and clean-tree postflight. RIA-002 completed through design commits `08cf17d` and
 `f0c019a` plus implementation commits `13835e9`, `e29c6fb`, `27a63b3`, and
@@ -332,7 +332,7 @@ hook, validator, scanner behavior, or CI topology is changed here.
 - **PRD**: [PRD-0006](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - **AD**: [AD-0009](../../02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md)
 - **Plan**: [Reference Information Architecture Implementation Plan](plan.md)
-- **Task**: [Reference Information Architecture Task](README.md#task-records)
+- **Task**: [Reference Information Architecture Task](plan.md)
 
 ### Lifecycle Traceability
 

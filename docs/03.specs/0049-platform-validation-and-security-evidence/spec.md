@@ -255,7 +255,7 @@ commands and tool identities selected by the approved Plan.
 - **Plan**:
   [Platform Validation and Security Evidence Implementation Plan](plan.md)
 - **Task**:
-  [Platform Validation and Security Evidence Task](README.md#task-records)
+  [Platform Validation and Security Evidence Task](plan.md)
 - **Predecessor**:
   [Spec 048](../0048-github-routing-and-ci-evidence/spec.md)
 - **Successor**:

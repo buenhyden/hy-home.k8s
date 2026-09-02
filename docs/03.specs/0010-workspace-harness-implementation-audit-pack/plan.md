@@ -703,7 +703,7 @@ git commit -m "docs(audit): Finalize workspace harness implementation audit pack
   `[../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md]`
 - **Spec**:
   `[../../03.specs/0010-workspace-harness-implementation-audit-pack/spec.md]`
-- **Task**: [../tasks/2026-07-02-workspace-harness-implementation-audit-pack.md](README.md#task-records)
+- **Task**: [../tasks/2026-07-02-workspace-harness-implementation-audit-pack.md](plan.md)
 - **Research README**:
   `[../../90.references/research/README.md]`
 - **Audits README**:

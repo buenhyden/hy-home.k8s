@@ -38,7 +38,7 @@ No separate PRD or Architecture Description is required or part of this standalo
 The same approval authorizes this design and its reciprocal
 [Plan](plan.md)
 and
-[Task](README.md#task-records).
+[Task](plan.md).
 The active direct-approval standalone execution relation is governed by
 [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md);
 no separate PRD or AD program authority is asserted.

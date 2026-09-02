@@ -251,7 +251,7 @@ now part of the repository-static aggregate lane.
 - **Current-program prerequisite**: [Spec 040](../0040-contract-cutover-and-program-closure/spec.md)
 - **Retired agent-design recovery**: [MIG-0004](../../98.archive/migrations/0004-document-authority-convergence.md)
 - **Execution Plan**: [Stage 00 Agent Governance Contract Implementation Plan](plan.md)
-- **Task evidence**: [Stage 00 Agent Governance Contract Task](README.md#task-records)
+- **Task evidence**: [Stage 00 Agent Governance Contract Task](plan.md)
 - **Successor**: [Spec 042](../0042-provider-native-runtime-and-model-evidence/spec.md)
 
 ### Lifecycle Traceability

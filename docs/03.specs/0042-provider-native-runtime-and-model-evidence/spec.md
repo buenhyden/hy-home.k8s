@@ -255,7 +255,7 @@ their recorded `DEFER` or `ABSENT` verdicts.
 - **Predecessor**: [Spec 041](../0041-stage-00-agent-governance-contract/spec.md)
 - **Successor**: [Spec 043](../0043-agent-harness-loop-lifecycle/spec.md)
 - **Execution Plan**: [Provider-Native Runtime and Model Evidence Implementation Plan](plan.md)
-- **Task evidence**: [Provider-Native Runtime and Model Evidence Task](README.md#task-records)
+- **Task evidence**: [Provider-Native Runtime and Model Evidence Task](plan.md)
 
 ### Lifecycle Traceability
 

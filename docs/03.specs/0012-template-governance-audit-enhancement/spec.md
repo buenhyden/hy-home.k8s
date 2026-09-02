@@ -116,7 +116,7 @@ existing canonical stage, selected by its role:
 | Output | Canonical Location | Purpose |
 | --- | --- | --- |
 | Execution plan | [`docs/03.specs/0012-template-governance-audit-enhancement/plan.md`](plan.md) | Work order, risks, and verification gates. |
-| Task evidence | [`docs/03.specs/0012-template-governance-audit-enhancement/README.md#task-records`](README.md#task-records) | Audit findings, changes, validation evidence, and handoff. |
+| Task evidence | [`docs/03.specs/0012-template-governance-audit-enhancement/README.md#task-records`](plan.md) | Audit findings, changes, validation evidence, and handoff. |
 | Durable reference finding set | `docs/90.references/audits/<date>-template-governance-audit-enhancement.md` | Optional dated snapshot if findings should persist as reference material. |
 
 The default output should be Stage 04 plan/task. A Stage 90 audit should be
@@ -313,7 +313,7 @@ find docs/99.templates -maxdepth 5 -type f -print | sort
 - **Plan**:
   [../../04.execution/plans/2026-07-03-template-governance-audit-enhancement.md](plan.md)
 - **Task**:
-  [../../04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md](README.md#task-records)
+  [../../04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md](plan.md)
 - **Templates README**:
   [../../99.templates/README.md](../../99.templates/README.md)
 - **Template Routing Contract**:

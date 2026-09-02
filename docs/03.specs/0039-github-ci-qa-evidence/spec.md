@@ -220,7 +220,7 @@ GitHub's workflow, security, and artifact-retention guidance:
 - **PRD**: [PRD-0006](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - **AD**: [AD-0009](../../02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md)
 - **Plan**: [GitHub CI and QA Evidence Plan](plan.md)
-- **Task**: [GitHub CI and QA Evidence Task](README.md#task-records)
+- **Task**: [GitHub CI and QA Evidence Task](plan.md)
 
 ### Lifecycle Traceability
 

@@ -176,6 +176,6 @@ git diff --check
 ### Delivery and References
 
 - **Plan**: [Document Contract Registry Implementation Plan](plan.md)
-- **Task**: [Document Contract Registry Task](README.md#task-records)
+- **Task**: [Document Contract Registry Task](plan.md)
 - **Next Spec**: [Template Contract Consolidation](../0027-template-contract-consolidation/spec.md)
 - **External Basis**: [JSON Schema object validation](https://json-schema.org/understanding-json-schema/reference/object), [YAML 1.2.2](https://yaml.org/spec/1.2.2/), and [GitHub Docs frontmatter convention](https://docs.github.com/en/contributing/writing-for-github-docs/using-yaml-frontmatter)

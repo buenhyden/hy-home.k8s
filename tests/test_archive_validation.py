@@ -1986,7 +1986,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         "2026-07-05-workspace-engineering-implementation-audit-pack.md"
     )
     moved_target = PurePosixPath(
-        "docs/03.specs/0018-workspace-engineering-implementation-audit-pack/README.md"
+        "docs/03.specs/0018-workspace-engineering-implementation-audit-pack/plan.md"
     )
     archived_source = PurePosixPath(
         "docs/04.execution/plans/2026-05-24-p3-gitops-secret-runtime-remediation.md"
@@ -2033,7 +2033,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             self.context.texts[path].encode("utf-8"),
         )
         legacy = "docs/03.specs/9999-semantic-growth/tasks.md"
-        target = "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/README.md"
+        target = "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/plan.md"
         added = {
             "legacy_path": legacy,
             "stable_path": None,
@@ -2353,7 +2353,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             "2026-07-02-workspace-harness-implementation-audit-pack.md"
         )
         expected = PurePosixPath(
-            "docs/03.specs/0010-workspace-harness-implementation-audit-pack/README.md"
+            "docs/03.specs/0010-workspace-harness-implementation-audit-pack/plan.md"
         )
         _move_blobs, move_targets, _archive_sources = (
             self.validator._document_taxonomy_transition_manifest(self.context)

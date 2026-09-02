@@ -18,7 +18,7 @@ and evidence without reopening the work package.
 
 ## Inputs
 
-- [Common execution contract](../README.md#common-execution-contract)
+- [Common execution contract](../plan.md#common-execution-contract)
 - [Spec 0054](../spec.md)
 - [Plan 0054](../plan.md)
 - [WP-001 execution boundary](../plan.md#wp-001--approved-design-authority)
@@ -37,7 +37,7 @@ and evidence without reopening the work package.
 
 ## Approval and Safety Boundaries
 
-The [common execution contract](../README.md#common-execution-contract) applies
+The [common execution contract](../plan.md#common-execution-contract) applies
 without exception. WP-001's exact files, review history, and logical commit
 boundary remain owned by its linked Plan section.
 

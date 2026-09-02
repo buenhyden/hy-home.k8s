@@ -206,7 +206,7 @@ curl -ksS -o /dev/null -w '%{http_code}' https://rollouts.127.0.0.1.nip.io/
 - **AD**: [`../../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md`](../../02.architecture/descriptions/0004-argo-rollouts-progressive-delivery.md)
 - **Related ADRs**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md), [`../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`](../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md)
 - **Plan**: [`../../04.execution/plans/2026-05-18-argo-rollouts-progressive-delivery.md`](plan.md)
-- **Tasks**: [`../../04.execution/tasks/2026-05-18-argo-rollouts-progressive-delivery.md`](README.md#task-records)
+- **Tasks**: [`../../04.execution/tasks/2026-05-18-argo-rollouts-progressive-delivery.md`](plan.md)
 - **Runbook**: [`../../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md)
 - **Operations Policy**: [`../../05.operations/policies/0004-rollouts-notifications-headlamp-policy.md`](../../05.operations/policies/0004-rollouts-notifications-headlamp-policy.md)
 ### Related inputs

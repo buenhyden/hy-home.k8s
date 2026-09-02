@@ -29,7 +29,7 @@ The user approved this design direction and the written specification on
 2026-08-09, selected subagent-driven execution, and directed the result to be
 integrated into the existing `0001-workspace-engineering` pack. WERG-000 activates the
 reciprocal [Plan](plan.md)
-and [Task](README.md#task-records)
+and [Task](plan.md)
 through a standalone execution relation governed by
 [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md).
 Direct human approval on 2026-08-09 authorizes this standalone execution relation.
@@ -387,4 +387,4 @@ credential-bearing, or live success.
 - **Document taxonomy decisions**: [Spec 052](../0052-document-taxonomy-consolidation/spec.md)
 - **Current research pack**: [2026-08-08 WER](../../90.references/research/0001-workspace-engineering/README.md)
 - **Plan**: [active gap-only refresh Plan](plan.md)
-- **Task**: [active gap-only refresh Task](README.md#task-records)
+- **Task**: [active gap-only refresh Task](plan.md)

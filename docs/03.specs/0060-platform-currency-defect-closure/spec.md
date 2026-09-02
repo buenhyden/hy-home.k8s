@@ -240,7 +240,7 @@ approved the scope and then confirmed the concrete change set before any manifes
 was edited. It creates no PRD or AD. It is the seventh typed
 standalone-execution relation under ADR 0022, with a reciprocal
 [Plan](plan.md)
-and [Task](README.md#task-records).
+and [Task](plan.md).
 Its evaluation input is the 2026-08-17 cycle recorded by
 [Spec 0059](../0059-workspace-research-full-corpus-refresh/spec.md).
 

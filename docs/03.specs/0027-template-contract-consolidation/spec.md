@@ -162,7 +162,7 @@ git diff --check
 ### Delivery and References
 
 - **Plan**: [Template Contract Consolidation Implementation Plan](plan.md)
-- **Task**: [Template Contract Consolidation Task](README.md#task-records)
+- **Task**: [Template Contract Consolidation Task](plan.md)
 - **Next Spec**: [README and Workspace Profiles](../0028-readme-workspace-profiles/spec.md)
 - **Template Support**: [Template Support Index](../../99.templates/README.md)
 - **Documentation Method**: [Diátaxis](https://diataxis.fr/start-here/)
