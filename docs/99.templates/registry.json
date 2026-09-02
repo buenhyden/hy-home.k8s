@@ -5372,16 +5372,24 @@
         ]
       },
       {
-        "family": "migration-tombstone",
+        "family": "migration",
         "profileIds": [
-          "archive/tombstone",
           "archive/migration"
         ],
         "states": {
           "draft": "mutable",
+          "accepted": "current",
           "sealed": "terminal"
         },
         "transitions": [
+          [
+            "draft",
+            "accepted"
+          ],
+          [
+            "accepted",
+            "sealed"
+          ],
           [
             "draft",
             "sealed"
@@ -5389,52 +5397,14 @@
         ]
       },
       {
-        "family": "template-profile",
+        "family": "tombstone",
         "profileIds": [
-          "template/archive/tombstone",
-          "template/archive/migration",
-          "template/reference/audit",
-          "template/reference/research",
-          "template/reference/data",
-          "template/sdlc/architecture-decision",
-          "template/sdlc/architecture-description",
-          "template/sdlc/plan",
-          "template/sdlc/task",
-          "template/operation/guide",
-          "template/operation/incident",
-          "template/operation/policy",
-          "template/operation/postmortem",
-          "template/operation/runbook",
-          "template/sdlc/requirement",
-          "template/sdlc/data-model",
-          "template/sdlc/spec",
-          "template/governance/contract",
-          "template/governance/control",
-          "template/governance/provider",
-          "template/governance/role",
-          "template/governance/rule",
-          "template/governance/skill"
+          "archive/tombstone"
         ],
         "states": {
-          "draft": "mutable",
-          "active": "current",
-          "superseded": "terminal",
-          "retired": "terminal"
+          "archived": "terminal"
         },
-        "transitions": [
-          [
-            "draft",
-            "active"
-          ],
-          [
-            "active",
-            "superseded"
-          ],
-          [
-            "active",
-            "retired"
-          ]
-        ]
+        "transitions": []
       }
     ],
     "programs": [

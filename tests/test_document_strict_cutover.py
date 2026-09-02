@@ -163,11 +163,16 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             for domain in self.registry["programLineage"]["lifecycleDomains"]
         ]
         self.assertEqual(len(lifecycle_families), len(set(lifecycle_families)))
+        # Forms do not transition: the lifecycle state machine skips
+        # `mode: template`, so a transition graph for them asserted movement
+        # that cannot happen.  Migration and tombstone are separate families
+        # because a migration progresses and a tombstone is created finished.
         self.assertTrue(
-            {"incident", "postmortem", "task", "template-profile"}.issubset(
+            {"incident", "postmortem", "task", "migration", "tombstone"}.issubset(
                 lifecycle_families
             )
         )
+        self.assertNotIn("template-profile", lifecycle_families)
 
     def test_profile_schema_accepts_terminal_registry(self) -> None:
         schema = json.loads(PROFILE_SCHEMA_PATH.read_text(encoding="utf-8"))

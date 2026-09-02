@@ -11,6 +11,7 @@ import stat
 import subprocess
 import sys
 import time
+from collections import Counter
 from pathlib import Path, PurePosixPath
 from typing import Any, Mapping, Sequence
 
@@ -171,6 +172,17 @@ def validate_registry_authority(registry: Mapping[str, Any]) -> None:
         if not isinstance(domains, list):
             raise AuthorityError("LIFECYCLE_DOMAIN: expected a list")
         actual: dict[str, set[tuple[str, str]]] = {}
+        governed: set[str] = set()
+        membership: Counter[str] = Counter(
+            profile_id
+            for domain in domains
+            if isinstance(domain, Mapping)
+            for profile_id in (domain.get("profileIds") or [])
+            if isinstance(profile_id, str)
+        )
+        profiles_by_id = {
+            profile.get("id"): profile for profile in registry.get("profiles", [])
+        }
         for domain in domains:
             if not isinstance(domain, Mapping) or not isinstance(
                 domain.get("family"), str
@@ -193,9 +205,38 @@ def validate_registry_authority(registry: Mapping[str, Any]) -> None:
                 raise AuthorityError("LIFECYCLE_TRANSITION: invalid edge")
             if not [state for state, kind in states.items() if kind == "terminal"]:
                 raise AuthorityError(f"LIFECYCLE_TERMINAL: {domain['family']}")
+            # A family may have no edges only when it has exactly one state and
+            # that state is terminal: a document created immutable and finished.
+            # Any other edgeless family would leave states unreachable.
+            if not edges and (
+                len(states) != 1 or "terminal" not in states.values()
+            ):
+                raise AuthorityError(f"LIFECYCLE_EDGELESS: {domain['family']}")
+            for profile_id in domain.get("profileIds", []):
+                declared = profiles_by_id.get(profile_id)
+                governed.add(profile_id)
+                if declared is None or membership[profile_id] > 1:
+                    # An unknown or duplicated member is already owned by
+                    # REGISTRY_LIFECYCLE_DOMAIN; do not preempt its diagnostic.
+                    continue
+                # A member's admitted states and the graph's nodes are the same
+                # fact. Letting them differ lets a document hold a state no edge
+                # can reach or leave, which is how the archive families drifted.
+                if set(declared.get("lifecycle", {}).get("statusDomain", [])) != set(
+                    states
+                ):
+                    raise AuthorityError(f"LIFECYCLE_NODE_SET: {profile_id}")
             actual[domain["family"]] = edges
-        if len(actual) != len(domains):
-            raise AuthorityError("LIFECYCLE_DOMAIN: family is not unique")
+        # A profile the lifecycle state machine evaluates needs a graph. The
+        # skipped modes are the only ones allowed to declare states without one.
+        for profile in registry.get("profiles", []):
+            profile_id = profile.get("id")
+            if profile_id in governed or not profile.get("lifecycle", {}).get(
+                "statusDomain"
+            ):
+                continue
+            if profile.get("mode") not in {"template", "classification-only"}:
+                raise AuthorityError(f"LIFECYCLE_UNGOVERNED: {profile_id}")
 
 
 def validate_template_profile_reference(
