@@ -49,7 +49,10 @@ specification's WORK-054-002 package.
 Direct human approval on 2026-08-13 authorizes this Spec-owned execution
 relation. No separate PRD or Architecture Description is required for this
 package-local lifecycle. ADR-0025 owns the topology decision; accepted
-ADR-0031 owns the current-corpus and validation-routing model.
+ADR-0031 owns the current-corpus and validation-routing model; and
+[ADR-0032](../../02.architecture/decisions/0032-completed-and-terminal-document-retention.md)
+owns the retention model that replaces deletion as the disposition for
+completed, stale, and deprecated documents in WP-013 and WP-009.
 
 Until WP-013 removes the parent-only compatibility roster, the current registry
 still requires these two historical compatibility statements:
