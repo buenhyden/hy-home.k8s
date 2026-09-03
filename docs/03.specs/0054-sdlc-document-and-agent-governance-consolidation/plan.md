@@ -1287,6 +1287,27 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
   0054 pointer rotations above are a bounded compatibility bridge, not a new
   authority; remove that row and its consumers rather than adding a Spec 0066
   row.
+- Eleven of the forty-three authored profiles governed no tracked document on
+  2026-09-03, and the reason differs by profile. `operation/incident` and
+  `operation/postmortem` must exist before the event they record.
+  `reference/audit`, `reference/data`, `readme/audit-pack`, and
+  `readme/data-pack` are empty by contract: the Stage 90 `audits/` and `data/`
+  collections carry routers and are structural whether or not they hold a pack.
+  Those six are deliberately empty, and the reduction records that so a later
+  sweep does not read emptiness as disuse.
+- The remaining five are capacity for work this repository has never done.
+  `exception/native-contract-openapi`, `-graphql`, and `-protobuf` govern API
+  contract forms, and the only OpenAPI, GraphQL, or Protobuf artifacts tracked
+  anywhere are those three template files themselves; this repository declares
+  a Kubernetes GitOps platform and no service API. `sdlc/data-model` is the
+  same case and is already named for removal above. `governance/control`
+  declares a section contract byte-identical to `governance/rule`, differing
+  only in author prompts, and governs
+  `docs/00.agent-governance/controls/`, a directory that does not exist --
+  enforcement in this repository is owned by `scripts/validation/registry.json`
+  and the hook surface, not by a second governance document family. Retire the
+  five profiles with their forms and their `template/*` self-profiles, and
+  update the Stage 03 index, which lists the three contract forms.
 - Re-evaluate the taxonomy transition manifest, migration tool, and
   transition-only tests against the accepted Spec 0066 routing and consumer
   graph. Migrate remaining consumers to their current semantic owners and
@@ -1316,6 +1337,9 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
 - [ ] Move the three fixture references to packages in the removal set before
   the packages leave, and update the Stage 03 declared index in the same change
   as the removal it describes.
+- [ ] Record, for every authored profile that governs no tracked document,
+  whether it is deliberately empty or unused capacity, and retire only the
+  second kind together with its form and its `template/*` self-profile.
 - [ ] Prove current consumers zero and recovery from reachable Git history.
   Do not create an Archive record or redirect as part of the current-corpus
   cutover.
