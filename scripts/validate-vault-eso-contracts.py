@@ -6,7 +6,6 @@ import argparse
 import json
 import os
 import stat
-import sys
 from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import Any

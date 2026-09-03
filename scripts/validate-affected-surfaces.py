@@ -12,7 +12,7 @@ import stat
 import subprocess
 import sys
 from pathlib import Path, PurePosixPath
-from typing import Any, NoReturn, Sequence
+from typing import Any, Mapping, NoReturn, Sequence
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from validation.repository.bounded_io import (  # noqa: E402

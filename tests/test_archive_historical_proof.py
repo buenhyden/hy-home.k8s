@@ -4,11 +4,10 @@ from __future__ import annotations
 
 import types
 import hashlib
-import json
 import subprocess
 import sys
 import unittest
-from pathlib import Path, PurePosixPath
+from pathlib import PurePosixPath
 from unittest import mock
 
 from tests.test_validate_agent_legacy_cutover import load_validator

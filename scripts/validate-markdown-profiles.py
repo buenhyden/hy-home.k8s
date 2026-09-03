@@ -19,22 +19,25 @@ from zoneinfo import ZoneInfo
 import yaml
 
 from json_schema_validation import SchemaEvaluationError, schema_errors
+# This module is the markdown-profile facade over the document contract.
+# The names this file does not call itself are re-exported for the archive,
+# harness and cutover validators that reach the contract through it.
 from document_contracts import (
-    ConditionalConstraint,
-    ConstantConstraint,
+    ConditionalConstraint,  # noqa: F401 - re-exported
+    ConstantConstraint,  # noqa: F401 - re-exported
     Diagnostic,
     DocumentContractError,
     DocumentProfile,
-    EnumConstraint,
+    EnumConstraint,  # noqa: F401 - re-exported
     classify_path,
     diagnostic_sort_key,
     enumerate_tracked_regular_paths,
     enumerate_target_markdown,
     is_ignored_repository_path,
-    load_internal_payload,
+    load_internal_payload,  # noqa: F401 - re-exported
     load_registry,
     read_repository_text,
-    validate_registry,
+    validate_registry,  # noqa: F401 - re-exported
 )
 
 

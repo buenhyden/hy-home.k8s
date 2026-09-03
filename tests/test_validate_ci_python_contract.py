@@ -74,6 +74,9 @@ PRE_COMMIT_REVISIONS = {
     "https://github.com/scop/pre-commit-shfmt": (
         "05c1426671b9237fb5e1444dd63aa5731bec0dfb"  # pragma: allowlist secret
     ),
+    "https://github.com/astral-sh/ruff-pre-commit": (
+        "1f1e8bf348ff38fc88619a38d3ca4d9c56abea49"  # pragma: allowlist secret
+    ),
     "https://github.com/zizmorcore/zizmor-pre-commit": (
         "a4727cbbcd26d7098e96b9cb738169b59711ae51"  # pragma: allowlist secret
     ),
@@ -97,6 +100,7 @@ PRE_COMMIT_SOURCE_TAGS = {
     "https://github.com/python-jsonschema/check-jsonschema": "0.37.2",
     "https://github.com/shellcheck-py/shellcheck-py": "v0.11.0.1",
     "https://github.com/scop/pre-commit-shfmt": "v3.13.1-1",
+    "https://github.com/astral-sh/ruff-pre-commit": "v0.16.5",
     "https://github.com/zizmorcore/zizmor-pre-commit": "v1.24.1",
     "https://github.com/hadolint/hadolint": "v2.14.0",
     "https://github.com/rhysd/actionlint": "v1.7.12",

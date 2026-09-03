@@ -43,11 +43,6 @@ import document_contracts  # noqa: E402
 import document_lifecycle as lifecycle  # noqa: E402
 from archive_recovery import (  # noqa: E402
     WP004C_SEALED_TARGET_COMMIT,
-    WORK107_LEGACY_ARCHIVE_COMMIT,
-    WORK107_MIGRATION_PATH,
-    build_work107_migration_rows,
-    render_work107_migration_document,
-    render_work107_stable_envelope,
 )
 from document_contracts import DocumentContractError, load_registry  # noqa: E402
 from document_lifecycle import (  # noqa: E402

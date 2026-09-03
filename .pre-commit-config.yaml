@@ -94,6 +94,15 @@ repos:
         args: [-i, '2'] # Indent 2 spaces
         files: '^((scripts|infrastructure)/.*\.sh|docs/00\.agent-governance/hooks/.*\.sh)$'
 
+  # Python lane, mirroring the shell lane: the linter reports, the formatter
+  # rewrites. `ruff-check` runs without `--fix` so a validation run never
+  # edits outside the change under review.
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: 1f1e8bf348ff38fc88619a38d3ca4d9c56abea49 # frozen: v0.16.5
+    hooks:
+      - id: ruff-check
+      - id: ruff-format
+
   # --- 5. 인프라 및 도커 검사 (Infrastructure) ---
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
     rev: a4727cbbcd26d7098e96b9cb738169b59711ae51 # frozen: v1.24.1

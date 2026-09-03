@@ -561,6 +561,10 @@
         },
         {
           "kind": "exact",
+          "value": ".ruff.toml"
+        },
+        {
+          "kind": "exact",
           "value": ".secrets.baseline"
         },
         {

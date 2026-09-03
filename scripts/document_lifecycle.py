@@ -5,7 +5,6 @@ from __future__ import annotations
 import copy
 from dataclasses import dataclass
 from pathlib import PurePosixPath
-from types import MappingProxyType
 from typing import Literal, Mapping, Sequence
 
 import yaml
