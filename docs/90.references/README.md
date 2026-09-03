@@ -69,9 +69,9 @@ pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<s
    [Data](../99.templates/templates/references/data-pack.template.md), 또는
    [Research](../99.templates/templates/references/research-pack.template.md)
    template을 사용한다. 내부 report는 같은 family의
-   [Audit Reference](../99.templates/templates/references/audit-reference.template.md),
-   [Data Reference](../99.templates/templates/references/data-reference.template.md),
-   [Research Reference](../99.templates/templates/references/research-reference.template.md)
+   [Audit Reference](../99.templates/templates/references/audit.template.md),
+   [Data Reference](../99.templates/templates/references/data.template.md),
+   [Research Reference](../99.templates/templates/references/research.template.md)
    template을 사용한다. 관찰일은 frontmatter 또는 source metadata에만 둔다.
 5. 이 router와 category router를 같은 변경에서 갱신한다.
 6. 참조 자료를 실행 입력이나 중복 control plane으로 사용하지 않는다.
@@ -93,5 +93,5 @@ pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<s
 - [Specs](../03.specs/README.md)
 - [Operations](../05.operations/README.md)
 - [Research Collection](./research/README.md)
-- [Research Reference Template](../99.templates/templates/references/research-reference.template.md)
+- [Research Reference Template](../99.templates/templates/references/research.template.md)
 - [Reference Maintenance Runbook](../05.operations/runbooks/0011-reference-maintenance-runbook.md)

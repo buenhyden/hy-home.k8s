@@ -1809,7 +1809,16 @@ class ArchiveValidationTest(unittest.TestCase):
         # path that now holds a different tracked document costs one batched
         # read to prove its bytes are not the retired ones, so it moves the cap
         # by a fixed one rather than by the size of the document.
-        budget = 177
+        #
+        # Measured against a clean clone of the parent commit, the corpus moved
+        # 177 -> 186 when MIG-0012 sealed the reference form renames. Two of
+        # those are reoccupation proofs: the predicate ran 160 -> 162 times and
+        # both new calls read, because `audit.template.md` and
+        # `data.template.md` are retired paths that now hold a different
+        # tracked document. The rest is the record itself -- its own staged
+        # bytes, the moved targets it names, and one declared source commit,
+        # which costs the fixed batched read plus reachability check above.
+        budget = 186
 
         def bounded_popen(*args, **kwargs):
             nonlocal git_calls

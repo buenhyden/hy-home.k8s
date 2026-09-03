@@ -36,7 +36,7 @@ with their canonical owners in `docs/00.agent-governance/`,
 - Observation-dated implementation and conformance checks
 - Repo-backed finding evidence and its disposition
 - Pack READMEs created from `docs/99.templates/templates/references/audit-pack.template.md`
-- Reports created from `docs/99.templates/templates/references/audit-reference.template.md`
+- Reports created from `docs/99.templates/templates/references/audit.template.md`
 
 ### Out of Scope
 
@@ -62,7 +62,7 @@ audits/
 2. Create `audits/####-<slug>/README.md` with
    [audit-pack.template.md](../../99.templates/templates/references/audit-pack.template.md)
    and authored reports as `audits/####-<slug>/m####-<slug>.md` with
-   [audit-reference.template.md](../../99.templates/templates/references/audit-reference.template.md).
+   [audit.template.md](../../99.templates/templates/references/audit.template.md).
 3. Number pack members with the pack-internal `m####` sequence, and give each
    report the `AUD-####-m####` artifact identity of its pack.
 4. Keep findings factual, dated, and explicitly bounded by their observation basis.
@@ -83,7 +83,7 @@ audits/
 
 - [90.references README](../README.md)
 - [Audit Pack Template](../../99.templates/templates/references/audit-pack.template.md)
-- [Audit Reference Template](../../99.templates/templates/references/audit-reference.template.md)
+- [Audit Reference Template](../../99.templates/templates/references/audit.template.md)
 - [Templates README](../../99.templates/README.md)
 - [Agent Governance Hub](../../00.agent-governance/README.md)
 - [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

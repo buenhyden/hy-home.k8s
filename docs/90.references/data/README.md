@@ -36,7 +36,7 @@ with their canonical owners in `docs/00.agent-governance/`,
 - Dataset shape, provenance, and collection-method records
 - Observation-dated snapshots with an explicit refresh and retention boundary
 - Pack READMEs created from `docs/99.templates/templates/references/data-pack.template.md`
-- Datasets created from `docs/99.templates/templates/references/data-reference.template.md`
+- Datasets created from `docs/99.templates/templates/references/data.template.md`
 
 ### Out of Scope
 
@@ -62,7 +62,7 @@ data/
 2. Create `data/####-<slug>/README.md` with
    [data-pack.template.md](../../99.templates/templates/references/data-pack.template.md)
    and authored datasets as `data/####-<slug>/m####-<slug>.md` with
-   [data-reference.template.md](../../99.templates/templates/references/data-reference.template.md).
+   [data.template.md](../../99.templates/templates/references/data.template.md).
 3. Number pack members with the pack-internal `m####` sequence, and give each
    dataset the `DATA-####-m####` artifact identity of its pack.
 4. Record collection date, method, and retention boundary for every snapshot, and never store secret values.
@@ -83,7 +83,7 @@ data/
 
 - [90.references README](../README.md)
 - [Data Pack Template](../../99.templates/templates/references/data-pack.template.md)
-- [Data Reference Template](../../99.templates/templates/references/data-reference.template.md)
+- [Data Reference Template](../../99.templates/templates/references/data.template.md)
 - [Templates README](../../99.templates/README.md)
 - [Agent Governance Hub](../../00.agent-governance/README.md)
 - [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

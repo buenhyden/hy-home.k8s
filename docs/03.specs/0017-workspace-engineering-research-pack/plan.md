@@ -1412,7 +1412,7 @@ Boundary statement:
 - **Prior Research Spec**: [Workspace Harness Research Pack](../0009-workspace-harness-research-pack/spec.md)
 - **Task**: [../tasks/2026-07-04-workspace-engineering-research-pack.md](plan.md)
 - **Research README**: [../../90.references/research/README.md](../../90.references/research/README.md)
-- **Reference Template**: [../../99.templates/templates/references/research-reference.template.md](../../99.templates/templates/references/research-reference.template.md)
+- **Reference Template**: [../../99.templates/templates/references/research.template.md](../../99.templates/templates/references/research.template.md)
 - **Task Template**: [../../99.templates/templates/specs/task.template.md](../../99.templates/templates/specs/task.template.md)
 - **Reference Maintenance Runbook**: [../../05.operations/runbooks/0011-reference-maintenance-runbook.md](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)
 
@@ -1421,5 +1421,5 @@ Boundary statement:
 - **Spec**: [../../03.specs/0017-workspace-engineering-research-pack/spec.md](spec.md)
 - **Plan**: [../plans/2026-07-04-workspace-engineering-research-pack.md](plan.md)
 - **Research README**: [../../90.references/research/README.md](../../90.references/research/README.md)
-- **Reference Template**: [../../99.templates/templates/references/research-reference.template.md](../../99.templates/templates/references/research-reference.template.md)
+- **Reference Template**: [../../99.templates/templates/references/research.template.md](../../99.templates/templates/references/research.template.md)
 - **Task Template**: [../../99.templates/templates/specs/task.template.md](../../99.templates/templates/specs/task.template.md)

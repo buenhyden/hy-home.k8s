@@ -1600,7 +1600,7 @@ for raw_relative_path in tracked_active_paths:
     for line_number in generic_template_residue_lines(read_text(path)):
         fail(f"active non-structural template residue in {rel(path)}:{line_number}")
 
-reference_template_path = template_path("research-reference.template.md")
+reference_template_path = template_path("research.template.md")
 reference_template_text = read_text(reference_template_path)
 if re.search(r"archive", reference_template_text, re.IGNORECASE):
     fail(f"{rel(reference_template_path)} must not contain archive wording")

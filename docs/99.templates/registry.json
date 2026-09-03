@@ -1265,7 +1265,7 @@
       "mode": "classification-only",
       "pathPattern": "^docs/90\\.references/audits/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifactIdPattern": "^AUD-[0-9]{4}-m[0-9]{4}$",
-      "template": "docs/99.templates/templates/references/audit-reference.template.md",
+      "template": "docs/99.templates/templates/references/audit.template.md",
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
@@ -1346,7 +1346,7 @@
       "mode": "classification-only",
       "pathPattern": "^docs/90\\.references/research/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifactIdPattern": "^RES-[0-9]{4}-m[0-9]{4}$",
-      "template": "docs/99.templates/templates/references/research-reference.template.md",
+      "template": "docs/99.templates/templates/references/research.template.md",
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
@@ -1427,7 +1427,7 @@
       "mode": "classification-only",
       "pathPattern": "^docs/90\\.references/data/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/m[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifactIdPattern": "^DATA-[0-9]{4}-m[0-9]{4}$",
-      "template": "docs/99.templates/templates/references/data-reference.template.md",
+      "template": "docs/99.templates/templates/references/data.template.md",
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
@@ -3207,9 +3207,9 @@
       "id": "template/reference/audit",
       "class": "reference",
       "mode": "template",
-      "pathPattern": "^docs/99\\.templates/templates/references/audit\\-reference\\.template\\.md$",
+      "pathPattern": "^docs/99\\.templates/templates/references/audit\\.template\\.md$",
       "artifactIdPattern": null,
-      "template": "docs/99.templates/templates/references/audit-reference.template.md",
+      "template": "docs/99.templates/templates/references/audit.template.md",
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
@@ -3287,9 +3287,9 @@
       "id": "template/reference/research",
       "class": "reference",
       "mode": "template",
-      "pathPattern": "^docs/99\\.templates/templates/references/research\\-reference\\.template\\.md$",
+      "pathPattern": "^docs/99\\.templates/templates/references/research\\.template\\.md$",
       "artifactIdPattern": null,
-      "template": "docs/99.templates/templates/references/research-reference.template.md",
+      "template": "docs/99.templates/templates/references/research.template.md",
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
@@ -3367,9 +3367,9 @@
       "id": "template/reference/data",
       "class": "reference",
       "mode": "template",
-      "pathPattern": "^docs/99\\.templates/templates/references/data\\-reference\\.template\\.md$",
+      "pathPattern": "^docs/99\\.templates/templates/references/data\\.template\\.md$",
       "artifactIdPattern": null,
-      "template": "docs/99.templates/templates/references/data-reference.template.md",
+      "template": "docs/99.templates/templates/references/data.template.md",
       "requiredFrontmatter": {
         "mode": "required",
         "required": [
