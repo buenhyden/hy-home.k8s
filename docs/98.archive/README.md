@@ -7,7 +7,16 @@
 
 ## Overview
 
-`98.archive/`는 typed `tombstones/<stage>/` 아래 17개의 `archive/tombstone` record를 보관한다. ADR-0030에 따라 Git history가 기본 full-content archive이며, Stage 98은 README, Migration, 필요한 Tombstone만 두는 minimal lookup layer다. [`migrations/0001-sdlc-taxonomy-convergence.md`](./migrations/0001-sdlc-taxonomy-convergence.md)는 legacy path와 stable path를 잇는 exact 14-field, 93-to-93 `moved` ledger로 남으며, 그 stable path 76개의 body는 각 row의 `source_commit`과 `source_blob`으로 Git에서 복원한다. 각 record의 ArchiveEnvelope payload와 source provenance는 보존되며, 현재 문서는 개별 record가 아니라 이 index만 참조한다.
+`98.archive/`는 활성 스테이지를 떠난 문서를 보관하는 비현재 stage다. 네 개의 하위 디렉터리는 이름이 아니라 [ADR-0032](../02.architecture/decisions/0032-completed-and-terminal-document-retention.md)가 registry의 종단 상태 분류에서 파생한 역할로 구분된다.
+
+- `migrations/`는 경로 전이 자체를 봉인한 원장이다. `archive/migration` profile의 `sealed` 문서이며, 어떤 문서가 어디로 갔는지에 대한 유일한 기계 증거다.
+- `completed/`는 성공적으로 끝난 작업을 보관한다. 판정 근거는 종단 성공 상태이며 현재는 `done`이다.
+- `superseded/`는 후속 문서가 대체한 문서의 record를 보관한다. 판정 근거는 종단 `superseded` 상태와 존재하는 replacement다.
+- `tombstones/`는 후속자 없이 끝난 문서의 record를 보관한다. 판정 근거는 `withdrawn`·`rejected`·`cancelled`·`retired`·`invalidated` 종단 상태와 replacement의 부재다.
+
+`completed/`만 record가 아니라 문서 자체를 보관한다. ArchiveEnvelope가 없고, 자신의 profile과 종단 상태를 유지하며, 상대 링크 접두어만 보존 트리 기준으로 재기준된다. 바이트 동일성이 아니라 링크 대상 동일성이 보존 불변식이고, 원본 바이트는 각 행이 고정한 `source_commit`과 `source_blob`으로 Git에서 복원한다. 그 링크는 현재 결합이 아니라 역사 증거로 읽는다.
+
+`superseded/`와 `tombstones/`는 봉인 record를 보관한다. 각 record의 ArchiveEnvelope payload와 source provenance는 보존되며, 현재 문서는 개별 record가 아니라 아래 index를 참조한다. 이 stage가 현재 보관한 17개 record는 모두 후속 문서를 명명하는 supersession 기록이다.
 
 <!-- archive-manifest:v1 records=17 historical-links=133 -->
 
@@ -21,14 +30,16 @@
 ### In Scope
 
 - `docs/01.requirements`부터 `docs/05.operations`까지에서 제거된 원문의 mirrored full-body record
+- 활성 스테이지를 떠난 종단 문서의 보존본과 그 경로를 은퇴시킨 봉인 원장 행
 - `original_path`, `original_type`, archive decision, source commit/blob, SHA-256 provenance
 - source commit과 original path를 기준으로 해석하는 historical rendered links
 - index-only current navigation과 immutable payload 검증
 
 ### Out of Scope
 
-- 현재 SDLC 또는 operations authority
+- 현재 SDLC 또는 operations authority. 보존본을 인용해도 그것이 현재가 되지는 않는다
 - historical link를 현재 경로로 다시 쓰는 작업
+- `mutable` 또는 `current` 상태 문서의 보관. 진행 중인 문서는 아무리 오래되어도 제자리에 남는다
 - secret-bearing history의 일반 보존
 - metadata 또는 payload를 조용히 수정하는 provenance repair
 
@@ -36,7 +47,7 @@ ArchiveEnvelope.v1 marker 다음 byte부터 EOF까지가 payload다. Closing del
 
 ## Document Index
 
-아래 manifest는 17개 record의 source ownership과 digest를 모두 열거한다. `Historical Links`는 payload를 current tree가 아니라 각 `source_commit`과 `original_path` 문맥에서 해석한 local rendered link 수다. `` `null` `` replacement는 `completed-lineage` 또는 별도 current successor가 없는 `retired` record에 허용되며, 현재 closure owner와 archive navigation boundary는 migration-result ledger와 namespace registry가 별도로 기록한다.
+아래 manifest는 17개 record의 source ownership과 digest를 모두 열거한다. `Historical Links`는 payload를 current tree가 아니라 각 `source_commit`과 `original_path` 문맥에서 해석한 local rendered link 수다. 모든 record는 후속 소유자를 명명하며, 현재 closure owner와 archive navigation boundary는 migration-result ledger와 namespace registry가 별도로 기록한다.
 
 | Archive Record | Original Path | Original Type | Source Commit | Source Blob | Payload SHA-256 | Historical Links | Current Replacement | Reason |
 | --- | --- | --- | --- | --- | --- | ---: | --- | --- |

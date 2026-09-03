@@ -42,6 +42,11 @@ their owning migration work package moves them.
 - Templates identify their registry profile and do not own a destination path.
 - Material Stage 99 index/worktree drift fails staged validation; the staged
   registry is the commit claim.
+- A terminal document is retained rather than deleted. It leaves the active
+  stage for the Stage 98 directory whose role matches why it ended, and the
+  move is proved by a sealed migration row that pins the origin path, commit,
+  and blob. Which states are terminal stays with the registry; this policy adds
+  only the obligation that reaching one moves the document.
 
 ## Validation and Refresh
 
@@ -57,3 +62,4 @@ changes.
 - [Governance Hub](../README.md)
 - [Document Profile Registry](../../99.templates/registry.json)
 - [Document Authoring Policy](document-authoring.md)
+- [Archive Stage](../../98.archive/README.md)
