@@ -158,10 +158,14 @@ class DelegatedExecutionOwnershipTests(unittest.TestCase):
         second = PurePosixPath("docs/02.architecture/decisions/0030-context.md")
         context = dataclasses.replace(
             context,
-            paths=tuple(sorted((*context.paths, second), key=lambda path: path.as_posix())),
+            paths=tuple(
+                sorted((*context.paths, second), key=lambda path: path.as_posix())
+            ),
             profiles={
                 **context.profiles,
-                second: validator.ProfileView("sdlc/architecture-decision", "sdlc", "authored"),
+                second: validator.ProfileView(
+                    "sdlc/architecture-decision", "sdlc", "authored"
+                ),
             },
             texts={
                 **context.texts,
@@ -197,7 +201,9 @@ class DelegatedExecutionOwnershipTests(unittest.TestCase):
         second = PurePosixPath("docs/03.specs/0065-second-parent/spec.md")
         context = dataclasses.replace(
             context,
-            paths=tuple(sorted((*context.paths, second), key=lambda path: path.as_posix())),
+            paths=tuple(
+                sorted((*context.paths, second), key=lambda path: path.as_posix())
+            ),
             profiles={
                 **context.profiles,
                 second: validator.ProfileView("sdlc/spec", "sdlc", "authored"),
@@ -243,7 +249,9 @@ class DelegatedExecutionOwnershipTests(unittest.TestCase):
         foreign = PurePosixPath("docs/03.specs/0054-parent/plan.md")
         context = dataclasses.replace(
             context,
-            paths=tuple(sorted((*context.paths, foreign), key=lambda path: path.as_posix())),
+            paths=tuple(
+                sorted((*context.paths, foreign), key=lambda path: path.as_posix())
+            ),
             profiles={
                 **context.profiles,
                 foreign: validator.ProfileView("sdlc/plan", "sdlc", "authored"),

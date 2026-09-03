@@ -15,6 +15,8 @@ from document_contracts import DocumentProfile, Registry, classify_path
 
 LifecycleSeverity = Literal["FAIL", "DEFER"]
 LifecycleBaseMode = Literal["staged", "ci", "explicit-ref", "snapshot", "unknown"]
+
+
 @dataclass(frozen=True)
 class LifecycleDiagnostic:
     """Stable lifecycle failure/defer envelope shared by every base mode."""
@@ -282,21 +284,17 @@ def _create_diagnostics(
             diagnostics.append(state_failure)
             continue
         if (
-            (
-                document.path in migration_events.publications
-                and document.profile_id == "archive/migration"
-                and document.status == "sealed"
+            document.path in migration_events.publications
+            and document.profile_id == "archive/migration"
+            and document.status == "sealed"
+        ) or (
+            any(
+                target == document.path
+                for _, target in migration_events.current_rehomes
             )
-            or (
-                any(
-                    target == document.path
-                    for _, target in migration_events.current_rehomes
-                )
-                and document.status == "active"
-                and profile.lifecycle_domain is not None
-                and profile.lifecycle_domain.validation_class(document.status)
-                == "current"
-            )
+            and document.status == "active"
+            and profile.lifecycle_domain is not None
+            and profile.lifecycle_domain.validation_class(document.status) == "current"
         ):
             continue
         domain = profile.lifecycle_domain
@@ -849,7 +847,8 @@ def validate_transition_evidence(
         evidence_paths = tuple(
             path
             for path in raw_links
-            if path in views and views[path].document.profile_id == "sdlc/architecture-decision"
+            if path in views
+            and views[path].document.profile_id == "sdlc/architecture-decision"
         )
         if any(
             target.path not in views[path].relationship_links for path in evidence_paths
@@ -1332,10 +1331,7 @@ def document_from_text(
             status=None,
             state_issue="frontmatter status is missing or not a string",
         )
-    if (
-        selected_profile.profile_id == "archive/migration"
-        and status == "accepted"
-    ):
+    if selected_profile.profile_id == "archive/migration" and status == "accepted":
         # Only byte-verified historical controls use the predecessor spelling.
         # The registry domain continues to reject accepted for future records.
         from archive_validation import (

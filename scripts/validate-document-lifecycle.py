@@ -301,8 +301,7 @@ WORK054_WP002_SPEC_PATTERN = re.compile(
 
 WORK054_WP003_BASE_COMMIT = "128beada377f18bc9f942c8ebb3e27e1f2fdcfae"
 WORK054_WP003_MIGRATION_PATH = PurePosixPath(
-    "docs/98.archive/migrations/"
-    "0003-agent-governance-control-plane-consolidation.md"
+    "docs/98.archive/migrations/0003-agent-governance-control-plane-consolidation.md"
 )
 WORK054_WP003_MIGRATION_SHA256 = "7baa2a9b2682313d9e8cfc4d3504db14b4985f780f85ff673a4bf535ce4c755e"  # pragma: allowlist secret
 WORK054_WP003_LEDGER_KEYS = WORK054_WP002_LEDGER_KEYS
@@ -2633,7 +2632,9 @@ def _work105_form_cutover_fixture_inputs(
         old_path = PurePosixPath(f"docs/02.architecture/requirements/{token}.md")
         new_path = PurePosixPath(f"docs/02.architecture/descriptions/ad-{token}.md")
         base_documents[old_path] = LifecycleDocument(old_path, "sdlc/ard", status)
-        proposed_documents[new_path] = LifecycleDocument(new_path, "sdlc/architecture-description", status)
+        proposed_documents[new_path] = LifecycleDocument(
+            new_path, "sdlc/architecture-description", status
+        )
 
     exact_forms = (
         (
@@ -2719,13 +2720,17 @@ def _work105_form_cutover_fixture_inputs(
         )
     elif mutation == "extra-ad":
         path = PurePosixPath("docs/02.architecture/descriptions/ad-9999-extra.md")
-        proposed_documents[path] = LifecycleDocument(path, "sdlc/architecture-description", "active")
+        proposed_documents[path] = LifecycleDocument(
+            path, "sdlc/architecture-description", "active"
+        )
     elif mutation == "wrong-status":
         path = PurePosixPath(
             "docs/02.architecture/descriptions/"
             "ad-0004-argo-rollouts-progressive-delivery.md"
         )
-        proposed_documents[path] = LifecycleDocument(path, "sdlc/architecture-description", "accepted")
+        proposed_documents[path] = LifecycleDocument(
+            path, "sdlc/architecture-description", "accepted"
+        )
     elif mutation == "missing-form":
         proposed_documents.pop(
             PurePosixPath(
@@ -2764,7 +2769,9 @@ def _work105_decision_evidence_fixture_inputs(
         root, WORK105_ADR0023_PROPOSED_BLOB_OID, WORK105_ADR0023_PATH
     )
     assert base_text is not None and proposed_text is not None
-    exact_document = LifecycleDocument(WORK105_ADR0023_PATH, "sdlc/architecture-decision", "accepted")
+    exact_document = LifecycleDocument(
+        WORK105_ADR0023_PATH, "sdlc/architecture-decision", "accepted"
+    )
     path = WORK105_ADR0023_PATH
     base_document: LifecycleDocument | None = exact_document
     proposed_document = exact_document
@@ -2775,7 +2782,9 @@ def _work105_decision_evidence_fixture_inputs(
     if mutation == "wrong-owner":
         path = WORK105_ADR0024_PATH
     elif mutation == "wrong-base-profile":
-        base_document = replace(exact_document, profile_id="sdlc/architecture-description")
+        base_document = replace(
+            exact_document, profile_id="sdlc/architecture-description"
+        )
     elif mutation == "wrong-proposed-status":
         proposed_document = replace(exact_document, status="active")
     elif mutation == "base-blob-drift":
@@ -3309,7 +3318,11 @@ def _migration_immutability_diagnostics(
         document = document_from_text(registry, path, text)
         if document.status != "sealed" or proposed_blobs.get(path) == oid:
             continue
-        proposed_text = _blob_text(root, proposed_blobs[path], path) if path in proposed_blobs else None
+        proposed_text = (
+            _blob_text(root, proposed_blobs[path], path)
+            if path in proposed_blobs
+            else None
+        )
         if _is_declared_reseal(
             path,
             hashlib.sha256(text.encode("utf-8")).hexdigest(),
@@ -3897,7 +3910,9 @@ def _work105_predecessor_unresolved_links(
 ) -> tuple[PurePosixPath, ...]:
     """Admit only WORK-105's blob-pinned reciprocal predecessor evidence."""
 
-    exact_document = LifecycleDocument(WORK105_ADR0023_PATH, "sdlc/architecture-decision", "accepted")
+    exact_document = LifecycleDocument(
+        WORK105_ADR0023_PATH, "sdlc/architecture-decision", "accepted"
+    )
     exact = (
         path == WORK105_ADR0023_PATH
         and base_document == exact_document
@@ -4139,7 +4154,9 @@ def _first_parent_history(
         or any(OBJECT_ID.fullmatch(commit) is None for commit in commits)
         or commits[-1] != proposed_commit
     ):
-        raise InvocationError("cumulative lifecycle history is malformed or exceeds its cap")
+        raise InvocationError(
+            "cumulative lifecycle history is malformed or exceeds its cap"
+        )
     parent = base_commit
     for commit in commits:
         raw = _run_git(
@@ -4151,14 +4168,18 @@ def _first_parent_history(
             lines = raw.decode("ascii", errors="strict").splitlines()
             fields = lines[0].split() if len(lines) == 1 else []
         except UnicodeDecodeError as exc:
-            raise InvocationError("cumulative lifecycle parent evidence is not ASCII") from exc
+            raise InvocationError(
+                "cumulative lifecycle parent evidence is not ASCII"
+            ) from exc
         if (
             len(fields) < 2
             or fields[0] != commit
             or any(OBJECT_ID.fullmatch(value) is None for value in fields)
             or fields[1] != parent
         ):
-            raise InvocationError("cumulative lifecycle first-parent evidence is malformed")
+            raise InvocationError(
+                "cumulative lifecycle first-parent evidence is malformed"
+            )
         parent = commit
     return commits
 
@@ -4197,11 +4218,15 @@ def _history_rename_or_copy_into_path(
         try:
             status = records[cursor].decode("ascii", errors="strict")
         except UnicodeDecodeError as exc:
-            raise InvocationError("cumulative lifecycle provenance status is malformed") from exc
+            raise InvocationError(
+                "cumulative lifecycle provenance status is malformed"
+            ) from exc
         cursor += 1
         if status.startswith("R") or status.startswith("C"):
             if cursor + 1 >= len(records):
-                raise InvocationError("cumulative lifecycle provenance evidence is truncated")
+                raise InvocationError(
+                    "cumulative lifecycle provenance evidence is truncated"
+                )
             _decode_path(records[cursor])
             destination = _decode_path(records[cursor + 1])
             cursor += 2
@@ -4209,11 +4234,15 @@ def _history_rename_or_copy_into_path(
                 return True
         elif status[:1] in {"A", "D", "M", "T"}:
             if cursor >= len(records):
-                raise InvocationError("cumulative lifecycle provenance change is truncated")
+                raise InvocationError(
+                    "cumulative lifecycle provenance change is truncated"
+                )
             _decode_path(records[cursor])
             cursor += 1
         else:
-            raise InvocationError("cumulative lifecycle provenance status is unsupported")
+            raise InvocationError(
+                "cumulative lifecycle provenance status is unsupported"
+            )
     return False
 
 
@@ -4231,17 +4260,14 @@ class _CumulativeHistoryBudgetExceeded(RuntimeError):
     """A bounded cumulative-history cache cannot safely serve this invocation."""
 
 
-def _snapshot_blob_size(
-    root: Path, blobs: Mapping[PurePosixPath, str]
-) -> int:
+def _snapshot_blob_size(root: Path, blobs: Mapping[PurePosixPath, str]) -> int:
     """Preflight exact per-path blob bytes without reading snapshot content."""
 
     if len(blobs) > CUMULATIVE_HISTORY_MAX_SNAPSHOT_PATHS:
         raise _CumulativeHistoryBudgetExceeded
     object_ids = tuple(dict.fromkeys(blobs.values()))
-    if (
-        len(object_ids) > CUMULATIVE_HISTORY_MAX_SNAPSHOT_OBJECTS
-        or any(OBJECT_ID.fullmatch(oid) is None for oid in object_ids)
+    if len(object_ids) > CUMULATIVE_HISTORY_MAX_SNAPSHOT_OBJECTS or any(
+        OBJECT_ID.fullmatch(oid) is None for oid in object_ids
     ):
         raise _CumulativeHistoryBudgetExceeded
     if not object_ids:
@@ -4299,7 +4325,8 @@ class _CumulativeHistoryCache:
     root: Path
     registry: Registry
     snapshots: OrderedDict[
-        str, tuple[Mapping[PurePosixPath, LifecycleDocument], Mapping[PurePosixPath, str]]
+        str,
+        tuple[Mapping[PurePosixPath, LifecycleDocument], Mapping[PurePosixPath, str]],
     ] = field(default_factory=OrderedDict)
     snapshot_sizes: dict[str, int] = field(default_factory=dict)
     cached_snapshot_bytes: int = 0
@@ -4318,14 +4345,12 @@ class _CumulativeHistoryCache:
         blobs = _tree_blob_map(self.root, commit)
         size = _snapshot_blob_size(self.root, blobs)
         if size > CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES or (
-            self.snapshot_work_bytes + size
-            > CUMULATIVE_HISTORY_MAX_SNAPSHOT_WORK_BYTES
+            self.snapshot_work_bytes + size > CUMULATIVE_HISTORY_MAX_SNAPSHOT_WORK_BYTES
         ):
             raise _CumulativeHistoryBudgetExceeded
         while self.snapshots and (
             len(self.snapshots) >= CUMULATIVE_HISTORY_CACHE_MAX_SNAPSHOTS
-            or self.cached_snapshot_bytes + size
-            > CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES
+            or self.cached_snapshot_bytes + size > CUMULATIVE_HISTORY_MAX_SNAPSHOT_BYTES
         ):
             evicted, _ = self.snapshots.popitem(last=False)
             self.cached_snapshot_bytes -= self.snapshot_sizes.pop(evicted)
@@ -4446,9 +4471,7 @@ def _history_proves_cumulative_create(
                     return False
                 parent = commit
                 continue
-            if _history_rename_or_copy_into_path(
-                root, parent, commit, path
-            ) or (
+            if _history_rename_or_copy_into_path(root, parent, commit, path) or (
                 not appeared
                 and _history_first_appearance_has_deletion(root, parent, commit)
             ):
@@ -4471,7 +4494,8 @@ def _history_proves_cumulative_create(
                 inbound = {target for _, target in domain.transitions}
                 if (
                     current.status is None
-                    or current.status not in {state for state, _ in domain.states if state not in inbound}
+                    or current.status
+                    not in {state for state, _ in domain.states if state not in inbound}
                     or _history_event_diagnostics(
                         root,
                         registry,
@@ -4537,16 +4561,16 @@ def _admit_cumulative_create_diagnostics(
     ]
     if not candidates:
         return tuple(diagnostics)
-    candidate_paths = tuple(dict.fromkeys(diagnostic.path for _, diagnostic in candidates))
+    candidate_paths = tuple(
+        dict.fromkeys(diagnostic.path for _, diagnostic in candidates)
+    )
     if len(candidate_paths) > CUMULATIVE_HISTORY_MAX_CANDIDATES:
         return tuple(diagnostics)
     try:
         history = _first_parent_history(root, base_commit, proposed_commit)
     except (InvocationError, UnicodeDecodeError, ValueError):
         return tuple(diagnostics)
-    if (
-        len(candidate_paths) * len(history) > CUMULATIVE_HISTORY_MAX_CANDIDATE_EVENTS
-    ):
+    if len(candidate_paths) * len(history) > CUMULATIVE_HISTORY_MAX_CANDIDATE_EVENTS:
         return tuple(diagnostics)
     cache = _CumulativeHistoryCache(root, registry)
     admitted_indices: set[int] = set()

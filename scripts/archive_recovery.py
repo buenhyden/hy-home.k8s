@@ -102,9 +102,7 @@ WORK107_LEGACY_ARCHIVE_COMMIT = (
     "eaf4f21ca84b68d98e20cd0b41db8b8d08ba6d0c"  # pragma: allowlist secret
 )
 WORK107_REGISTRY_PATH = "docs/99.templates/support/document-profiles.json"
-WORK107_MIGRATION_PATH = (
-    "docs/98.archive/migrations/0001-sdlc-taxonomy-convergence.md"
-)
+WORK107_MIGRATION_PATH = "docs/98.archive/migrations/0001-sdlc-taxonomy-convergence.md"
 WP004B_PINNED_MIGRATION_PATH = (
     "docs/98.archive/migrations/0004-document-authority-convergence.md"
 )
@@ -933,9 +931,10 @@ def validate_archive_metadata(
         raise _error("ARCHIVE-METADATA-TYPE", f"type must be {expected_type}")
     if not prior_generation:
         version = metadata["version"]
-        if not isinstance(version, str) or re.fullmatch(
-            _SEMANTIC_VERSION, version
-        ) is None:
+        if (
+            not isinstance(version, str)
+            or re.fullmatch(_SEMANTIC_VERSION, version) is None
+        ):
             raise _error("ARCHIVE-METADATA-VERSION", "version must be semantic")
         if metadata["layer"] != ARCHIVE_LAYER:
             raise _error("ARCHIVE-METADATA-LAYER", f"layer must be {ARCHIVE_LAYER}")

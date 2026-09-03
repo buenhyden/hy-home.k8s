@@ -165,9 +165,7 @@ LEGACY_DEPENDENCY_INSTALL_COMMAND = (
     "--requirement .github/requirements/ci-validation.txt"
 )
 PRODUCTION_COMMAND = "python3 scripts/validate-agent-governance-ci.py --root ."
-OWNERSHIP_TEST_COMMAND = (
-    "python3 -m unittest tests.test_validation_tooling_ownership"
-)
+OWNERSHIP_TEST_COMMAND = "python3 -m unittest tests.test_validation_tooling_ownership"
 AGGREGATE_COMMAND = "bash scripts/validate-repo-quality-gates.sh ."
 CHECKOUT_ACTION = "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
 PROVIDER_EVIDENCE_FOCUSED_VALIDATORS = (

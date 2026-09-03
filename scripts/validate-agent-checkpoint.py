@@ -23,9 +23,7 @@ REGISTRY_PATH = PurePosixPath(".agents/registry.json")
 LOOP_CONTRACT_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/agent-loop-lifecycle.json"
 )
-SPEC_PATH = PurePosixPath(
-    "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
-)
+SPEC_PATH = PurePosixPath("docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md")
 CHECKPOINT_PATH = ".agent-work/checkpoint.json"
 CONTRACT_VERSION = "1.0.0"
 SCHEMA_VERSION = 2
@@ -53,9 +51,7 @@ AUTHORITY_MODES = {
 }
 CANONICAL_OWNERS = {
     "working-short-term": "active-task-executor",
-    "durable-long-term": (
-        "canonical-sdlc-owner-or-shared-progress-ledger"
-    ),
+    "durable-long-term": ("canonical-sdlc-owner-or-shared-progress-ledger"),
     "domain-scoped": "canonical-domain-document-owner",
     "provider-local-auxiliary": "provider-runtime-or-user-local-store",
 }
@@ -66,9 +62,7 @@ PROMOTION_TARGETS = {
     "provider-local-auxiliary": "working-short-term",
 }
 PROMOTION_OWNERS = {
-    "working-short-term": (
-        "canonical-sdlc-owner-or-shared-progress-ledger"
-    ),
+    "working-short-term": ("canonical-sdlc-owner-or-shared-progress-ledger"),
     "durable-long-term": None,
     "domain-scoped": "canonical-sdlc-owner-or-shared-progress-ledger",
     "provider-local-auxiliary": "active-task-executor",
@@ -433,9 +427,7 @@ def _read_regular_bytes(root: Path, relative: PurePosixPath) -> bytes:
             "repository root is unavailable",
             exit_code=2,
         )
-    if stat.S_ISLNK(root_metadata.st_mode) or not stat.S_ISDIR(
-        root_metadata.st_mode
-    ):
+    if stat.S_ISLNK(root_metadata.st_mode) or not stat.S_ISDIR(root_metadata.st_mode):
         fail(
             "AHLL-CP-ROOT",
             "repository root is unavailable",
@@ -481,9 +473,7 @@ def _read_regular_bytes(root: Path, relative: PurePosixPath) -> bytes:
             parent_descriptor = child_descriptor
 
         file_flags = (
-            os.O_RDONLY
-            | getattr(os, "O_CLOEXEC", 0)
-            | getattr(os, "O_NOFOLLOW", 0)
+            os.O_RDONLY | getattr(os, "O_CLOEXEC", 0) | getattr(os, "O_NOFOLLOW", 0)
         )
         if hasattr(os, "O_NONBLOCK"):
             file_flags |= os.O_NONBLOCK
@@ -563,15 +553,9 @@ def scan_sensitive_payload(value: Any, path: str = "<root>") -> None:
     if isinstance(value, dict):
         for key, nested in value.items():
             normalized = _normalized_key(key)
-            if (
-                normalized not in REDACTION_DECLARATION_KEYS
-                and (
-                    normalized in FORBIDDEN_KEY_EXACT
-                    or any(
-                        part in normalized
-                        for part in FORBIDDEN_KEY_PARTS
-                    )
-                )
+            if normalized not in REDACTION_DECLARATION_KEYS and (
+                normalized in FORBIDDEN_KEY_EXACT
+                or any(part in normalized for part in FORBIDDEN_KEY_PARTS)
             ):
                 fail(
                     "AHLL-CP-SENSITIVE",
@@ -586,9 +570,8 @@ def scan_sensitive_payload(value: Any, path: str = "<root>") -> None:
     if not isinstance(value, str) or value == "[REDACTED-SYNTHETIC]":
         return
     lowered = value.lower().replace("\\", "/")
-    if (
-        any(fragment in lowered for fragment in FORBIDDEN_VALUE_FRAGMENTS)
-        or any(pattern.search(value) for pattern in FORBIDDEN_VALUE_PATTERNS)
+    if any(fragment in lowered for fragment in FORBIDDEN_VALUE_FRAGMENTS) or any(
+        pattern.search(value) for pattern in FORBIDDEN_VALUE_PATTERNS
     ):
         fail(
             "AHLL-CP-SENSITIVE",
@@ -789,10 +772,7 @@ def validate_resume(
 
     checkpoint_state = checkpoint["repository"]["loopState"]
     repository_loop_state = repository_state["loopState"]
-    if (
-        checkpoint_state in TERMINAL_STATES
-        or repository_loop_state in TERMINAL_STATES
-    ):
+    if checkpoint_state in TERMINAL_STATES or repository_loop_state in TERMINAL_STATES:
         fail(
             "AHLL-CP-TERMINAL-REPLAY",
             "terminal checkpoint state cannot be replayed",
@@ -835,18 +815,14 @@ def _validate_redaction(checkpoint: dict[str, Any]) -> None:
     if redaction["status"] != "PASS":
         fail("AHLL-CP-REDACTION", "redaction did not pass")
     stored_flags = {
-        key: value
-        for key, value in redaction.items()
-        if key.endswith("Stored")
+        key: value for key, value in redaction.items() if key.endswith("Stored")
     }
     if not stored_flags or any(value is not False for value in stored_flags.values()):
         fail(
             "AHLL-CP-REDACTION",
             "checkpoint permits prohibited stored payloads",
         )
-    expected_marker = (
-        "[REDACTED-SYNTHETIC]" if checkpoint["synthetic"] else None
-    )
+    expected_marker = "[REDACTED-SYNTHETIC]" if checkpoint["synthetic"] else None
     if redaction["syntheticMarker"] != expected_marker:
         fail(
             "AHLL-CP-REDACTION",
@@ -862,14 +838,12 @@ def _validate_compaction(checkpoint: dict[str, Any]) -> None:
         or compaction["fullTranscriptRetained"] is not False
         or compaction["providerBodyRetained"] is not False
         or not compaction["validationEvidenceRefs"]
-        or compaction["remainingWorkCount"]
-        != len(checkpoint["remainingWork"])
+        or compaction["remainingWorkCount"] != len(checkpoint["remainingWork"])
         or not compaction["source"]["owner"]
         or not compaction["source"]["evidenceRefs"]
         or not compaction["replacement"]["owner"]
         or not compaction["replacement"]["evidenceRefs"]
-        or compaction["source"]["digest"]
-        == compaction["replacement"]["digest"]
+        or compaction["source"]["digest"] == compaction["replacement"]["digest"]
         or compaction["reviewStatus"] != "approved"
     ):
         fail(
@@ -922,10 +896,7 @@ def _validate_promotion(
         )
 
     if memory_id == "durable-long-term":
-        if (
-            promotion["evidenceRefs"]
-            or promotion["directCanonicalWrite"] is not False
-        ):
+        if promotion["evidenceRefs"] or promotion["directCanonicalWrite"] is not False:
             fail(
                 "AHLL-CP-MEMORY-PROMOTION",
                 "durable memory cannot promote implicitly",
@@ -977,10 +948,7 @@ def validate_memory_lifecycle(checkpoint: dict[str, Any]) -> None:
                 "AHLL-CP-MEMORY-AUTHORITY",
                 f"{memory_id} authority or canonical owner differs",
             )
-        if (
-            record["redactionStatus"] != "PASS"
-            or not record["sourceEvidenceRefs"]
-        ):
+        if record["redactionStatus"] != "PASS" or not record["sourceEvidenceRefs"]:
             fail(
                 "AHLL-CP-MEMORY-REDACTION",
                 f"{memory_id} lacks redacted source evidence",
@@ -1030,10 +998,7 @@ def validate_memory_lifecycle(checkpoint: dict[str, Any]) -> None:
             or expiry["disposition"] != expected_disposition
             or expiry["decisionOwner"] != CANONICAL_OWNERS[memory_id]
             or not expiry["evidenceRefs"]
-            or (
-                expiry["state"] == "expired"
-                and expiry["disposition"] == "retain"
-            )
+            or (expiry["state"] == "expired" and expiry["disposition"] == "retain")
         ):
             fail(
                 "AHLL-CP-MEMORY-EXPIRY",
@@ -1042,8 +1007,7 @@ def validate_memory_lifecycle(checkpoint: dict[str, Any]) -> None:
         retention = record["retention"]
         if (
             retention["policy"] != RETENTION_POLICIES[memory_id]
-            or retention["canonicalDecisionOwner"]
-            != CANONICAL_OWNERS[memory_id]
+            or retention["canonicalDecisionOwner"] != CANONICAL_OWNERS[memory_id]
             or retention["reviewStatus"] != "approved"
             or not retention["evidenceRefs"]
         ):
@@ -1066,23 +1030,17 @@ def validate_memory_lifecycle(checkpoint: dict[str, Any]) -> None:
             "garbage-collect",
         }
         expected_current_owner = (
-            None
-            if expected_disposition == "discard"
-            else CANONICAL_OWNERS[memory_id]
+            None if expected_disposition == "discard" else CANONICAL_OWNERS[memory_id]
         )
         if (
             not archive_gc["reason"]
             or archive_gc["disposition"] != expected_disposition
             or archive_gc["originalOwner"] != CANONICAL_OWNERS[memory_id]
-            or archive_gc["currentOrReplacementOwner"]
-            != expected_current_owner
+            or archive_gc["currentOrReplacementOwner"] != expected_current_owner
             or archive_gc["reviewStatus"] != "approved"
             or not archive_gc["provenanceRefs"]
             or requires_archive_time != (archive_time is not None)
-            or (
-                archive_time is not None
-                and archive_time > checkpoint_updated
-            )
+            or (archive_time is not None and archive_time > checkpoint_updated)
         ):
             fail(
                 "AHLL-CP-MEMORY-ARCHIVE-GC",
@@ -1146,10 +1104,9 @@ def _validate_contract_refs(root: Path, checkpoint: dict[str, Any]) -> None:
             exit_code=2,
         )
     executor = checkpoint["executor"]
-    if (
-        executor["providerId"] not in providers
-        or executor["providerId"] not in roles.get(executor["roleId"], ())
-    ):
+    if executor["providerId"] not in providers or executor[
+        "providerId"
+    ] not in roles.get(executor["roleId"], ()):
         fail(
             "AHLL-CP-REGISTRY",
             "checkpoint executor is not supported by the agent registry",

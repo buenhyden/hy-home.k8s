@@ -218,7 +218,9 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
             self.add_text(root, path, '"scripts/validate-agent-role-semantics.py"\n')
         self.assertEqual(self.validator.validate_repository(root)["activeConsumers"], 0)
 
-    def test_test_artifacts_are_never_opened_by_the_production_consumer_scan(self) -> None:
+    def test_test_artifacts_are_never_opened_by_the_production_consumer_scan(
+        self,
+    ) -> None:
         root = self.make_valid_root()
         self.add_text(
             root,

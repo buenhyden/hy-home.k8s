@@ -95,6 +95,7 @@ from document_contracts import (
     load_registry,
     read_repository_text,
 )
+
 _UNSET = object()
 DEBT_PATH = Path("tests/fixtures/document-contracts/semantic-compatibility-debt.json")
 ROUTE_CONTRACT_PATH = PurePosixPath("docs/99.templates/contracts/route-contract.json")
@@ -105,8 +106,7 @@ WORK109_MIGRATION_PATH = PurePosixPath(
     "docs/98.archive/migrations/0002-sdlc-document-and-governance-consolidation.md"
 )
 WORK054_MIGRATION_PATH = PurePosixPath(
-    "docs/98.archive/migrations/"
-    "0003-agent-governance-control-plane-consolidation.md"
+    "docs/98.archive/migrations/0003-agent-governance-control-plane-consolidation.md"
 )
 WORK054_WP004B_MIGRATION_PATH = PurePosixPath(
     "docs/98.archive/migrations/0004-document-authority-convergence.md"
@@ -399,7 +399,9 @@ COLLECTION_INDEXES = (
         True,
     ),
     CollectionIndex(
-        PurePosixPath("docs/90.references/research/0001-workspace-engineering/README.md"),
+        PurePosixPath(
+            "docs/90.references/research/0001-workspace-engineering/README.md"
+        ),
         PurePosixPath("docs/90.references/research/0001-workspace-engineering"),
         re.compile(
             r"^docs/90\.references/research/"
@@ -775,9 +777,7 @@ def _terminal_governance_current_owners(
         if profile.profile_class == "governance" and profile.mode == "authored"
     )
     owner_ids = {profile.profile_id for profile in owner_profiles}
-    lifecycle_domains = {
-        profile.lifecycle_domain for profile in owner_profiles
-    }
+    lifecycle_domains = {profile.lifecycle_domain for profile in owner_profiles}
     lifecycle_domain = (
         next(iter(lifecycle_domains)) if len(lifecycle_domains) == 1 else None
     )
@@ -3055,16 +3055,6 @@ def _git_sha1_blob(text: str) -> str:
     return _git_sha1_blob_bytes(text.encode("utf-8"))
 
 
-
-
-
-
-
-
-
-
-
-
 @dataclass(frozen=True)
 class ArchivePayloadProof:
     """One Archive-owned payload removed from instruction scanning only."""
@@ -4806,7 +4796,9 @@ def _program_reciprocal_diagnostics(
     spec = _program_owner_path(context, "sdlc/spec", relation.spec_id)
     prd = _program_owner_path(context, "sdlc/prd", program.prd_id)
     ard = _program_owner_path(context, "sdlc/architecture-description", program.ad_id)
-    decision = _program_owner_path(context, "sdlc/architecture-decision", relation.decision_id)
+    decision = _program_owner_path(
+        context, "sdlc/architecture-decision", relation.decision_id
+    )
     if spec is None or prd is None or ard is None or (follow_up and decision is None):
         return []
     required_from_spec = {prd, ard}
@@ -4843,8 +4835,6 @@ def _program_reciprocal_diagnostics(
             ", ".join(sorted(missing)),
         )
     ]
-
-
 
 
 def _current_execution_link_graph(
@@ -5309,7 +5299,9 @@ def _standalone_execution_diagnostics(
     owned_paths: set[PurePosixPath] = set()
     for relation in standalone_executions:
         spec = _program_owner_path(context, "sdlc/spec", relation.spec_id)
-        decision = _program_owner_path(context, "sdlc/architecture-decision", relation.decision_id)
+        decision = _program_owner_path(
+            context, "sdlc/architecture-decision", relation.decision_id
+        )
         plan = relation.plan_path
         task = relation.task_path
         owners = (
@@ -5579,8 +5571,8 @@ def _delegated_execution_diagnostics(
             for path in component
             if context.profiles[path].profile_id == "sdlc/task"
         )
-        package_tasks, current_tasks, inventory_complete = _program_package_task_projection(
-            context, child
+        package_tasks, current_tasks, inventory_complete = (
+            _program_package_task_projection(context, child)
         )
         plan = plans[0] if len(plans) == 1 else None
         plan_targets = graph.get(plan, frozenset()) if plan is not None else frozenset()
@@ -5632,7 +5624,9 @@ def _delegated_execution_diagnostics(
                 )
             )
 
-        package_statuses = tuple(_program_status(context, task) for task in package_tasks)
+        package_statuses = tuple(
+            _program_status(context, task) for task in package_tasks
+        )
         state_matches = (
             plan is not None
             and _program_status(context, plan) == "active"

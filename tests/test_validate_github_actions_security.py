@@ -60,11 +60,7 @@ INTERNAL_ARTIFACT_RETENTION_SHAPE_CASES = (
     ),
     (
         "step-scalar",
-        "jobs:\n"
-        "  build:\n"
-        "    runs-on: ubuntu-latest\n"
-        "    steps:\n"
-        "      - not-a-step\n",
+        "jobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - not-a-step\n",
         ["job step must be a mapping"],
     ),
 )
@@ -133,9 +129,7 @@ def _write_artifact_retention_case(
         "          path: artifact.txt",
     ]
     if retention is not None:
-        rendered_retention = yaml.safe_dump(
-            retention, default_flow_style=True
-        ).strip()
+        rendered_retention = yaml.safe_dump(retention, default_flow_style=True).strip()
         lines.append(f"          retention-days: {rendered_retention}")
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
@@ -147,8 +141,7 @@ def _write_artifact_retention_shape_case(root: Path, body: str) -> None:
         "name: Artifact retention shape fixture\n"
         "'on': workflow_dispatch\n"
         "permissions:\n"
-        "  contents: read\n"
-        + body,
+        "  contents: read\n" + body,
         encoding="utf-8",
     )
 
@@ -295,18 +288,22 @@ class GitHubActionsSecurityFixtureTests(unittest.TestCase):
 
     def test_primary_cases(self) -> None:
         for case in self.fixture["cases"]:
-            with self.subTest(case=case["name"]), tempfile.TemporaryDirectory(
-                prefix="actions-security-"
-            ) as directory:
+            with (
+                self.subTest(case=case["name"]),
+                tempfile.TemporaryDirectory(prefix="actions-security-") as directory,
+            ):
                 root = Path(directory)
                 _write_self_test_case(root, case)
                 self.assertEqual(self.observed(root), case["expected"])
 
     def test_repository_boundaries(self) -> None:
         for case in self.fixture["repositoryBoundaryCases"]:
-            with self.subTest(case=case["name"]), tempfile.TemporaryDirectory(
-                prefix="actions-security-boundary-"
-            ) as directory:
+            with (
+                self.subTest(case=case["name"]),
+                tempfile.TemporaryDirectory(
+                    prefix="actions-security-boundary-"
+                ) as directory,
+            ):
                 actual = [
                     item.rsplit(": ", 1)[-1]
                     for item in _run_repository_boundary_case(
@@ -317,18 +314,24 @@ class GitHubActionsSecurityFixtureTests(unittest.TestCase):
 
     def test_required_write_cases(self) -> None:
         for case in self.fixture["requiredWriteCases"]:
-            with self.subTest(case=case["name"]), tempfile.TemporaryDirectory(
-                prefix="actions-security-permissions-"
-            ) as directory:
+            with (
+                self.subTest(case=case["name"]),
+                tempfile.TemporaryDirectory(
+                    prefix="actions-security-permissions-"
+                ) as directory,
+            ):
                 root = Path(directory)
                 _write_required_write_case(self.validator, root, case)
                 self.assertEqual(self.observed(root), case["expected"])
 
     def test_artifact_retention_cases(self) -> None:
         for case in self.fixture["artifactRetentionCases"]:
-            with self.subTest(case=case["name"]), tempfile.TemporaryDirectory(
-                prefix="actions-security-retention-"
-            ) as directory:
+            with (
+                self.subTest(case=case["name"]),
+                tempfile.TemporaryDirectory(
+                    prefix="actions-security-retention-"
+                ) as directory,
+            ):
                 root = Path(directory)
                 _write_artifact_retention_case(root, case["retention"])
                 self.assertEqual(self.observed(root), case["expected"])
@@ -350,9 +353,12 @@ class GitHubActionsSecurityFixtureTests(unittest.TestCase):
         )
         for cases, writer in groups:
             for name, value, expected in cases:
-                with self.subTest(case=name), tempfile.TemporaryDirectory(
-                    prefix="actions-security-shape-"
-                ) as directory:
+                with (
+                    self.subTest(case=name),
+                    tempfile.TemporaryDirectory(
+                        prefix="actions-security-shape-"
+                    ) as directory,
+                ):
                     root = Path(directory)
                     writer(root, value)
                     self.assertEqual(self.observed(root), expected)

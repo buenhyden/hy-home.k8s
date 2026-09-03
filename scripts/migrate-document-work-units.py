@@ -58,10 +58,14 @@ except ModuleNotFoundError:  # Imported as a repository-root test module.
 
 
 OID = re.compile(r"[0-9a-f]{40}\Z")
-DATE_SLUG = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}-(?P<slug>[A-Za-z0-9][A-Za-z0-9._-]*)\.md\Z")
+DATE_SLUG = re.compile(
+    r"[0-9]{4}-[0-9]{2}-[0-9]{2}-(?P<slug>[A-Za-z0-9][A-Za-z0-9._-]*)\.md\Z"
+)
 ENTRY_KEYS = {"source", "target", "workUnit", "disposition", "sourceBlob", "reviewed"}
 TOP_KEYS = {"state", "sourceCommit", "entries"}
-EXPECTED_SOURCE_COMMIT = "713dff1fc3de58a2d1682970a7f24faa39c14263"  # pragma: allowlist secret
+EXPECTED_SOURCE_COMMIT = (
+    "713dff1fc3de58a2d1682970a7f24faa39c14263"  # pragma: allowlist secret
+)
 PHASE_DISPOSITION = {"archive": "archive-unique", "move": "move-current"}
 GIT_TIMEOUT_SECONDS = 20
 SECRET_TIMEOUT_SECONDS = 10
@@ -69,8 +73,7 @@ SECRET_DETECTED_EXIT = 17
 CONTROL_SURFACE_LIMIT = 8 * 1024 * 1024
 GITLEAKS_HINT = "HY_HOME_K8S_GITLEAKS_EXECUTABLE"
 GITLEAKS_CANDIDATES = tuple(
-    Path(directory) / "gitleaks"
-    for directory in ("/usr/local/bin", "/usr/bin", "/bin")
+    Path(directory) / "gitleaks" for directory in ("/usr/local/bin", "/usr/bin", "/bin")
 )
 ARCHIVED_ON = "2026-08-09"
 ARCHIVE_INDEX_HANDOFF = "docs/98.archive/README.md#document-index"
@@ -324,7 +327,12 @@ def _git(root: Path, *args: str) -> str:
 
 
 def _safe_path(value: Any) -> PurePosixPath:
-    if not isinstance(value, str) or not value or value.startswith(("/", "./")) or "\\" in value:
+    if (
+        not isinstance(value, str)
+        or not value
+        or value.startswith(("/", "./"))
+        or "\\" in value
+    ):
         raise MigrationAbort("MIGRATION-PATH")
     path = PurePosixPath(value)
     if ".." in path.parts:
@@ -345,7 +353,11 @@ def _parse_manifest_bytes(contents: bytes) -> ManifestDocument:
         data = json.loads(contents.decode("utf-8"), object_pairs_hook=unique)
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise MigrationAbort("MIGRATION-JSON") from exc
-    if not isinstance(data, Mapping) or set(data) != TOP_KEYS or data.get("state") != "transition":
+    if (
+        not isinstance(data, Mapping)
+        or set(data) != TOP_KEYS
+        or data.get("state") != "transition"
+    ):
         raise MigrationAbort("MIGRATION-SCHEMA")
     commit = data.get("sourceCommit")
     if not isinstance(commit, str) or OID.fullmatch(commit) is None:
@@ -410,7 +422,9 @@ def validate_work_unit_paths(work_units: Mapping[str, set[str]]) -> tuple[str, .
 def validate_route_paths(paths: Sequence[str], route_state: str) -> tuple[str, ...]:
     if route_state not in {"legacy", "transition", "terminal"}:
         return ("ROUTE-STATE-UNKNOWN",)
-    if route_state == "terminal" and any(path.startswith("docs/04.execution/") for path in paths):
+    if route_state == "terminal" and any(
+        path.startswith("docs/04.execution/") for path in paths
+    ):
         return ("ROUTE-TERMINAL-STAGE04",)
     return ()
 
@@ -470,24 +484,36 @@ def _work107_stable_archive_aliases(root: Path) -> dict[str, PurePosixPath]:
         rows = parse_work107_migration_document(migration_path.read_bytes())
         reviewed = validate_work107_migration_rows(root, rows)
         aliases = {
-            str(row["legacy_path"]): _safe_path(row["stable_path"])
-            for row in reviewed
+            str(row["legacy_path"]): _safe_path(row["stable_path"]) for row in reviewed
         }
-    except (ArchiveContractError, MigrationAbort, OSError, KeyError, TypeError, ValueError):
+    except (
+        ArchiveContractError,
+        MigrationAbort,
+        OSError,
+        KeyError,
+        TypeError,
+        ValueError,
+    ):
         return {}
     if len(aliases) != 93:
         return {}
     return aliases
 
 
-def _entry_diagnostics(root: Path, entries: Sequence[Mapping[str, Any]], commit: str | None) -> tuple[str, ...]:
+def _entry_diagnostics(
+    root: Path, entries: Sequence[Mapping[str, Any]], commit: str | None
+) -> tuple[str, ...]:
     diagnostics: list[str] = []
     stable_archive_aliases = _work107_stable_archive_aliases(root)
     sources: set[str] = set()
     targets: set[str] = set()
     work_units: dict[str, set[str]] = {}
     for index, row in enumerate(entries):
-        if not isinstance(row, Mapping) or set(row) != ENTRY_KEYS or row.get("reviewed") is not True:
+        if (
+            not isinstance(row, Mapping)
+            or set(row) != ENTRY_KEYS
+            or row.get("reviewed") is not True
+        ):
             diagnostics.append(f"MIGRATION-ENTRY-SCHEMA:{index}")
             continue
         try:
@@ -585,9 +611,7 @@ def _entry_diagnostics(root: Path, entries: Sequence[Mapping[str, Any]], commit:
         for row in entries
     )
     if move_count == 82 and len(work_units) != 41:
-        diagnostics.append(
-            f"WORK-UNIT-COUNT:expected=41:actual={len(work_units)}"
-        )
+        diagnostics.append(f"WORK-UNIT-COUNT:expected=41:actual={len(work_units)}")
     return tuple(sorted(set(diagnostics)))
 
 
@@ -599,7 +623,10 @@ def validate_manifest(
     """Return all deterministic manifest diagnostics without mutating the tree."""
     root = root.resolve()
     diagnostics: list[str] = []
-    if not isinstance(expected_source_commit, str) or OID.fullmatch(expected_source_commit) is None:
+    if (
+        not isinstance(expected_source_commit, str)
+        or OID.fullmatch(expected_source_commit) is None
+    ):
         diagnostics.append("MIGRATION-SOURCE-COMMIT")
         commit = None
     else:
@@ -618,9 +645,15 @@ def validate_manifest(
     return tuple(sorted(set(diagnostics)))
 
 
-def validate_manifest_data(root: Path, data: Any, require_closed_counts: bool = True) -> MigrationPlan:
+def validate_manifest_data(
+    root: Path, data: Any, require_closed_counts: bool = True
+) -> MigrationPlan:
     root = root.resolve()
-    if not isinstance(data, Mapping) or set(data) != TOP_KEYS or data.get("state") != "transition":
+    if (
+        not isinstance(data, Mapping)
+        or set(data) != TOP_KEYS
+        or data.get("state") != "transition"
+    ):
         raise MigrationAbort("MIGRATION-SCHEMA")
     commit = data.get("sourceCommit")
     if not isinstance(commit, str) or OID.fullmatch(commit) is None:
@@ -633,18 +666,24 @@ def validate_manifest_data(root: Path, data: Any, require_closed_counts: bool = 
             raise MigrationAbort("MIGRATION-ENTRY-SCHEMA")
         _safe_path(row.get("source"))
         _safe_path(row.get("target"))
-    diagnostics = validate_manifest(root, tuple(MappingProxyType(dict(row)) for row in entries), commit)
+    diagnostics = validate_manifest(
+        root, tuple(MappingProxyType(dict(row)) for row in entries), commit
+    )
     if diagnostics:
         raise MigrationAbort(diagnostics[0])
     moves = sum(row["disposition"] == "move-current" for row in entries)
     archives = sum(row["disposition"] == "archive-unique" for row in entries)
     plan = MigrationPlan(len(entries), moves, archives)
     if require_closed_counts:
-        validate_counts(move_count=moves, archive_count=archives, source_count=len(entries))
+        validate_counts(
+            move_count=moves, archive_count=archives, source_count=len(entries)
+        )
     return plan
 
 
-def _controlled_dirty(root: Path, entries: Sequence[Mapping[str, Any]]) -> tuple[str, ...]:
+def _controlled_dirty(
+    root: Path, entries: Sequence[Mapping[str, Any]]
+) -> tuple[str, ...]:
     paths = sorted({str(row[key]) for row in entries for key in ("source", "target")})
     if not paths:
         return ()
@@ -700,7 +739,9 @@ def plan_phase(
         if _git(root, "hash-object", "--", source.as_posix()) != expected_blob:
             raise MigrationAbort(f"MIGRATION-CHANGED-SOURCE:{source.as_posix()}")
         pairs.append((source, target))
-    return tuple(sorted(pairs, key=lambda pair: (pair[0].as_posix(), pair[1].as_posix())))
+    return tuple(
+        sorted(pairs, key=lambda pair: (pair[0].as_posix(), pair[1].as_posix()))
+    )
 
 
 def _gitleaks_candidate_is_safe(candidate: Path, root: Path) -> bool:
@@ -803,9 +844,7 @@ def _classify_secret_payload(
 ) -> None:
     executable = _gitleaks_executable(root)
     if executable is None:
-        raise MigrationAbort(
-            f"MIGRATION-SECRET-CLASSIFIER-UNAVAILABLE:{archive_path}"
-        )
+        raise MigrationAbort(f"MIGRATION-SECRET-CLASSIFIER-UNAVAILABLE:{archive_path}")
     _config_fstat(config)
     return_code = _run_gitleaks(executable, config.descriptor, payload)
     if return_code == SECRET_DETECTED_EXIT:
@@ -831,9 +870,7 @@ def _source_frontmatter(payload: bytes) -> Mapping[str, Any]:
     return MappingProxyType({**loaded, "text": body})
 
 
-def _archive_metadata(
-    row: Mapping[str, Any], recovered: Any
-) -> dict[str, object]:
+def _archive_metadata(row: Mapping[str, Any], recovered: Any) -> dict[str, object]:
     frontmatter = _source_frontmatter(recovered.source_bytes)
     body = str(frontmatter.get("text", ""))
     heading = next(
@@ -901,9 +938,7 @@ def _phase_manifest_rows(
     diagnostics = validate_manifest(root, document.entries, document.source_commit)
     if diagnostics:
         raise MigrationAbort(diagnostics[0])
-    move_count = sum(
-        row["disposition"] == "move-current" for row in document.entries
-    )
+    move_count = sum(row["disposition"] == "move-current" for row in document.entries)
     archive_count = sum(
         row["disposition"] == "archive-unique" for row in document.entries
     )
@@ -924,10 +959,7 @@ def _phase_manifest_rows(
     )
     expected = tuple(
         sorted(
-            (
-                (_safe_path(row["source"]), _safe_path(row["target"]))
-                for row in rows
-            ),
+            ((_safe_path(row["source"]), _safe_path(row["target"])) for row in rows),
             key=lambda pair: (pair[0].as_posix(), pair[1].as_posix()),
         )
     )
@@ -1075,9 +1107,7 @@ def _capture_control_surface(root: Path, path: PurePosixPath) -> _ControlSurface
         ):
             raise MigrationAbort(f"MIGRATION-CONTROL-SURFACE:{path.as_posix()}")
     except (OSError, RuntimeError) as exc:
-        raise MigrationAbort(
-            f"MIGRATION-CONTROL-SURFACE:{path.as_posix()}"
-        ) from exc
+        raise MigrationAbort(f"MIGRATION-CONTROL-SURFACE:{path.as_posix()}") from exc
     finally:
         if descriptor is not None:
             try:
@@ -1111,9 +1141,7 @@ def load_reviewed_manifest_snapshot(
     document = _parse_manifest_bytes(control.contents)
     if document.source_commit != EXPECTED_SOURCE_COMMIT:
         raise MigrationAbort("MIGRATION-SOURCE-COMMIT:unexpected")
-    move_count = sum(
-        row["disposition"] == "move-current" for row in document.entries
-    )
+    move_count = sum(row["disposition"] == "move-current" for row in document.entries)
     archive_count = sum(
         row["disposition"] == "archive-unique" for row in document.entries
     )
@@ -1213,9 +1241,7 @@ def _prepare_operations(
                 output = recovered.source_bytes
                 target_mode = stat.S_IMODE(source_metadata.st_mode)
         except ArchiveContractError as exc:
-            raise MigrationAbort(
-                f"MIGRATION-ARCHIVE-METADATA:{target_name}"
-            ) from exc
+            raise MigrationAbort(f"MIGRATION-ARCHIVE-METADATA:{target_name}") from exc
         source_mode = stat.S_IMODE(source_metadata.st_mode)
         prepared.append(
             _PreparedOperation(
@@ -1454,10 +1480,7 @@ def _open_relative_directory(
                 provisional.identity = created_identity
                 descriptor = os.open(
                     component,
-                    os.O_RDONLY
-                    | os.O_DIRECTORY
-                    | os.O_NOFOLLOW
-                    | os.O_CLOEXEC,
+                    os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
                     dir_fd=parent_fd,
                 )
                 provisional.descriptor = descriptor
@@ -1648,24 +1671,18 @@ def _rollback_created_directories(transaction: _Transaction) -> bool:
             if descriptor is None:
                 temporary_fd = os.open(
                     created.name,
-                    os.O_RDONLY
-                    | os.O_DIRECTORY
-                    | os.O_NOFOLLOW
-                    | os.O_CLOEXEC,
+                    os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
                     dir_fd=created.parent_fd,
                 )
                 descriptor = temporary_fd
-            opened = _fd_identity(
-                descriptor, transaction.root / created.relative
-            )
+            opened = _fd_identity(descriptor, transaction.root / created.relative)
             linked = _stat_at(
                 created.parent_fd,
                 created.name,
                 transaction.root / created.relative,
             )
-            if (
-                not _same_object(opened, created.identity)
-                or not _same_object(linked, created.identity)
+            if not _same_object(opened, created.identity) or not _same_object(
+                linked, created.identity
             ):
                 transaction.recovery_required = True
                 clean = False
@@ -1725,9 +1742,8 @@ def _dispose_transaction(transaction: _Transaction) -> bool:
         transaction.quarantine_name = disposal
         moved = _stat_at(transaction.root_fd, disposal, transaction.root / disposal)
         opened = _fd_identity(transaction.quarantine_fd, transaction.root / disposal)
-        if (
-            not _same_object(moved, transaction.quarantine_identity)
-            or not _same_object(opened, transaction.quarantine_identity)
+        if not _same_object(moved, transaction.quarantine_identity) or not _same_object(
+            opened, transaction.quarantine_identity
         ):
             raise OSError("transaction disposal identity changed")
         os.rmdir(disposal, dir_fd=transaction.root_fd)
@@ -1922,9 +1938,7 @@ def _verify_all_targets(transaction: _Transaction) -> None:
 
 def _install_targets(transaction: _Transaction) -> None:
     for operation in transaction.operations:
-        stage_identity = _fd_identity(
-            operation.stage_fd, Path(operation.stage_name)
-        )
+        stage_identity = _fd_identity(operation.stage_fd, Path(operation.stage_name))
         try:
             _verify_directory_anchors(transaction)
             os.link(
@@ -2041,9 +2055,7 @@ def _rollback_source(
         moved = _stat_at(
             transaction.quarantine_fd,
             operation.removed_name,
-            transaction.root
-            / transaction.quarantine_name
-            / operation.removed_name,
+            transaction.root / transaction.quarantine_name / operation.removed_name,
         )
     except MigrationAbort:
         moved = None
@@ -2141,15 +2153,18 @@ def _rollback_transaction(transaction: _Transaction) -> bool:
         clean = _rollback_target(transaction, operation, index) and clean
     for operation in transaction.operations:
         if not transaction.recovery_required:
-            clean = _private_unlink(
-                transaction,
-                operation.source_anchor,
-                operation.source_identity,
-            ) and clean
+            clean = (
+                _private_unlink(
+                    transaction,
+                    operation.source_anchor,
+                    operation.source_identity,
+                )
+                and clean
+            )
         stage_identity = _fd_identity(operation.stage_fd, Path(operation.stage_name))
-        clean = _private_unlink(
-            transaction, operation.stage_name, stage_identity
-        ) and clean
+        clean = (
+            _private_unlink(transaction, operation.stage_name, stage_identity) and clean
+        )
     clean = _rollback_created_directories(transaction) and clean
     if not clean:
         transaction.recovery_required = True
@@ -2167,16 +2182,22 @@ def _commit_transaction(transaction: _Transaction) -> None:
     for operation in transaction.operations:
         if operation.removed_name is None:
             raise MigrationAbort("MIGRATION-ROLLBACK")
-        clean = _private_unlink(
-            transaction, operation.removed_name, operation.source_identity
-        ) and clean
-        clean = _private_unlink(
-            transaction, operation.source_anchor, operation.source_identity
-        ) and clean
+        clean = (
+            _private_unlink(
+                transaction, operation.removed_name, operation.source_identity
+            )
+            and clean
+        )
+        clean = (
+            _private_unlink(
+                transaction, operation.source_anchor, operation.source_identity
+            )
+            and clean
+        )
         stage_identity = _fd_identity(operation.stage_fd, Path(operation.stage_name))
-        clean = _private_unlink(
-            transaction, operation.stage_name, stage_identity
-        ) and clean
+        clean = (
+            _private_unlink(transaction, operation.stage_name, stage_identity) and clean
+        )
     if not clean or not _dispose_transaction(transaction):
         raise MigrationAbort("MIGRATION-ROLLBACK")
 
@@ -2299,9 +2320,7 @@ def _transaction_platform_diagnostics(phase: str) -> tuple[str, ...]:
 def _require_transaction_platform(phase: str) -> None:
     diagnostics = _transaction_platform_diagnostics(phase)
     if diagnostics:
-        raise MigrationAbort(
-            f"MIGRATION-PLATFORM-UNSUPPORTED:{diagnostics[0]}"
-        )
+        raise MigrationAbort(f"MIGRATION-PLATFORM-UNSUPPORTED:{diagnostics[0]}")
 
 
 def apply_phase(
@@ -2329,8 +2348,16 @@ def _apply_phase_locked(
     for raw_pair in planned_pairs:
         if not isinstance(raw_pair, tuple) or len(raw_pair) != 2:
             raise MigrationAbort("MIGRATION-PLANNED-PAIR")
-        source = _safe_path(raw_pair[0].as_posix() if isinstance(raw_pair[0], PurePosixPath) else raw_pair[0])
-        target = _safe_path(raw_pair[1].as_posix() if isinstance(raw_pair[1], PurePosixPath) else raw_pair[1])
+        source = _safe_path(
+            raw_pair[0].as_posix()
+            if isinstance(raw_pair[0], PurePosixPath)
+            else raw_pair[0]
+        )
+        target = _safe_path(
+            raw_pair[1].as_posix()
+            if isinstance(raw_pair[1], PurePosixPath)
+            else raw_pair[1]
+        )
         source_name, target_name = source.as_posix(), target.as_posix()
         if source_name in sources or target_name in targets:
             raise MigrationAbort("MIGRATION-PLANNED-DUPLICATE")
@@ -2405,7 +2432,11 @@ def build_manifest(root: Path) -> dict[str, Any]:
         "docs/04.execution/tasks",
         "docs/03.specs",
     ).splitlines()
-    sources = [p for p in paths if p.startswith("docs/04.execution/") and not p.endswith("/README.md")]
+    sources = [
+        p
+        for p in paths
+        if p.startswith("docs/04.execution/") and not p.endswith("/README.md")
+    ]
     pinned_paths = _git(
         root,
         "ls-tree",
@@ -2419,8 +2450,7 @@ def build_manifest(root: Path) -> dict[str, Any]:
     pinned_sources = sorted(
         path
         for path in pinned_paths
-        if path.startswith("docs/04.execution/")
-        and not path.endswith("/README.md")
+        if path.startswith("docs/04.execution/") and not path.endswith("/README.md")
     )
     if sorted(sources) != pinned_sources:
         raise MigrationAbort("MIGRATION-CENSUS")
@@ -2450,14 +2480,34 @@ def build_manifest(root: Path) -> dict[str, Any]:
         number = spec_dir.split("-", 1)[0]
         for kind, target_name in (("plans", "plan.md"), ("tasks", "tasks.md")):
             source = by_kind[kind][slug]
-            rows.append({"source": source, "target": f"docs/03.specs/{spec_dir}/{target_name}", "workUnit": f"Spec-{number}", "disposition": "move-current", "sourceBlob": _git(root, "rev-parse", f"{commit}:{source}"), "reviewed": True})
+            rows.append(
+                {
+                    "source": source,
+                    "target": f"docs/03.specs/{spec_dir}/{target_name}",
+                    "workUnit": f"Spec-{number}",
+                    "disposition": "move-current",
+                    "sourceBlob": _git(root, "rev-parse", f"{commit}:{source}"),
+                    "reviewed": True,
+                }
+            )
     used = {row["source"] for row in rows}
     for source in sorted(set(sources) - used):
         suffix = source.removeprefix("docs/04.execution/")
         slug = DATE_SLUG.fullmatch(PurePosixPath(source).name).group("slug")
         kind = source.split("/")[2][:-1]
-        rows.append({"source": source, "target": f"docs/98.archive/04.execution/{suffix}", "workUnit": f"Archive-unique-{kind}-{slug}", "disposition": "archive-unique", "sourceBlob": _git(root, "rev-parse", f"{commit}:{source}"), "reviewed": True})
-    first_source = "docs/04.execution/plans/2026-08-07-document-taxonomy-consolidation.md"
+        rows.append(
+            {
+                "source": source,
+                "target": f"docs/98.archive/04.execution/{suffix}",
+                "workUnit": f"Archive-unique-{kind}-{slug}",
+                "disposition": "archive-unique",
+                "sourceBlob": _git(root, "rev-parse", f"{commit}:{source}"),
+                "reviewed": True,
+            }
+        )
+    first_source = (
+        "docs/04.execution/plans/2026-08-07-document-taxonomy-consolidation.md"
+    )
     rows.sort(key=lambda row: (row["source"] != first_source, row["source"]))
     manifest = {"state": "transition", "sourceCommit": commit, "entries": rows}
     validate_manifest_data(root, manifest, True)
@@ -2467,7 +2517,11 @@ def build_manifest(root: Path) -> dict[str, Any]:
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path.cwd())
-    parser.add_argument("--manifest", type=Path, default=Path("scripts/document-taxonomy-migration.json"))
+    parser.add_argument(
+        "--manifest",
+        type=Path,
+        default=Path("scripts/document-taxonomy-migration.json"),
+    )
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--phase", choices=tuple(PHASE_DISPOSITION))
     parser.add_argument("--apply", action="store_true")
@@ -2498,7 +2552,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             raise MigrationAbort(diagnostics[0])
         moves = sum(row["disposition"] == "move-current" for row in entries)
         archives = sum(row["disposition"] == "archive-unique" for row in entries)
-        validate_counts(move_count=moves, archive_count=archives, source_count=len(entries))
+        validate_counts(
+            move_count=moves, archive_count=archives, source_count=len(entries)
+        )
         plan = MigrationPlan(len(entries), moves, archives)
         if args.apply:
             planned_pairs = plan_phase(args.root, entries, args.phase)

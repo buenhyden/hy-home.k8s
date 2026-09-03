@@ -1,6 +1,6 @@
 ---
 title: 'Formatting and Linting Policy'
-version: "1.0.0"
+version: "1.1.0"
 type: governance/rule
 status: active
 owner: platform
@@ -42,6 +42,11 @@ reaches editors only and proves nothing about committed bytes.
   configuration in the same change rather than leaving an unread file.
 - Do not add a second tool that enforces a rule an existing tool already
   enforces. Extend the owner instead.
+- Declare which file types a tool covers and which rules it applies. Do not
+  inherit either from the tool's own defaults. A pinned revision still moves
+  when it is raised, and one release can both widen a default rule set and
+  hand a formatter a file type another tool already owns, changing what the
+  hosted lane enforces with no change in this repository.
 - Scope a rule by capability, not by exclusion. Prefer configuring a checker
   to understand a file shape over excluding the tree that has that shape.
 - State a cause for every suppression and classify it as a deliberate

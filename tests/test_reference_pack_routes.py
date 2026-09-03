@@ -86,9 +86,10 @@ class ReferencePackRouteTest(unittest.TestCase):
                 f"docs/90.references/{category}/2026-08-31-example/README.md",
                 f"docs/90.references/{category}/example.md",
             ):
-                with self.subTest(path=path), self.assertRaises(
-                    DocumentContractError
-                ) as raised:
+                with (
+                    self.subTest(path=path),
+                    self.assertRaises(DocumentContractError) as raised,
+                ):
                     classify_path(self.registry, PurePosixPath(path))
                 self.assertEqual(
                     {item.rule_id for item in raised.exception.diagnostics},
@@ -117,7 +118,9 @@ class ReferencePackRouteTest(unittest.TestCase):
     def test_existing_reference_pack_topology_is_canonical(self) -> None:
         self.validator._assert_reference_pack_topology(ROOT, self.registry)
 
-    def test_pack_topology_rejects_duplicate_missing_and_non_regular_entries(self) -> None:
+    def test_pack_topology_rejects_duplicate_missing_and_non_regular_entries(
+        self,
+    ) -> None:
         with tempfile.TemporaryDirectory(prefix="reference-topology-") as raw:
             root = Path(raw)
             stage = root / "docs/90.references"
@@ -181,9 +184,7 @@ class ReferencePackRouteTest(unittest.TestCase):
                 f"100644 {'0' * 40} 0\t{relative}\0".encode("utf-8")
                 for relative in staged_paths
             )
-            completed = subprocess.CompletedProcess(
-                ["git", "ls-files"], 0, stdout, b""
-            )
+            completed = subprocess.CompletedProcess(["git", "ls-files"], 0, stdout, b"")
 
             with (
                 mock.patch.object(
@@ -210,14 +211,10 @@ class ReferencePackRouteTest(unittest.TestCase):
                 "docs/90.references/research/0001-alpha/README.md": b"invalid\n",
             }
             stdout = b"".join(
-                (
-                    f"100644 {git_blob_id(content)} 0\t{relative}\0"
-                ).encode("utf-8")
+                (f"100644 {git_blob_id(content)} 0\t{relative}\0").encode("utf-8")
                 for relative, content in staged_contents.items()
             )
-            completed = subprocess.CompletedProcess(
-                ["git", "ls-files"], 0, stdout, b""
-            )
+            completed = subprocess.CompletedProcess(["git", "ls-files"], 0, stdout, b"")
 
             with (
                 mock.patch.object(
@@ -227,7 +224,9 @@ class ReferencePackRouteTest(unittest.TestCase):
             ):
                 self.validator._assert_reference_pack_topology(root, self.registry)
 
-    def test_preserved_research_does_not_claim_retired_llm_wiki_as_current(self) -> None:
+    def test_preserved_research_does_not_claim_retired_llm_wiki_as_current(
+        self,
+    ) -> None:
         pack = ROOT / "docs/90.references/research/0001-workspace-engineering"
         offenders: list[str] = []
         for path in sorted(pack.glob("*.md")):

@@ -59,7 +59,7 @@ def valid_contracts(module: Any) -> dict[str, Any]:
         f'path "{path}" {{\n  capabilities = ["read", "list"]\n}}'
         for path in module.EXPECTED_POLICY_PATHS
     )
-    bootstrap = r'''#!/usr/bin/env bash
+    bootstrap = r"""#!/usr/bin/env bash
 set -euo pipefail
 set +x
 
@@ -112,7 +112,7 @@ printf '%s' "$VALKEY_PASSWORD" |
     --dry-run=client -o yaml |
   kubectl apply -f -
 unset VALKEY_PASSWORD
-'''
+"""
     return {
         "vault_store": vault_store,
         "token_reviewer": token_reviewer,
@@ -127,9 +127,9 @@ def apply_fixture_mutation(contracts: dict[str, Any], mutation: str) -> None:
     if mutation == "remove-local-only-annotations":
         contracts["vault_store"]["metadata"].pop("annotations")
         return
-    service_account_ref = contracts["vault_store"]["spec"]["provider"]["vault"][
-        "auth"
-    ]["kubernetes"]["serviceAccountRef"]
+    service_account_ref = contracts["vault_store"]["spec"]["provider"]["vault"]["auth"][
+        "kubernetes"
+    ]["serviceAccountRef"]
     if mutation == "remove-vault-audience":
         service_account_ref.pop("audiences")
         return
@@ -162,7 +162,7 @@ def apply_fixture_mutation(contracts: dict[str, Any], mutation: str) -> None:
     if mutation == "add-token-header-argument":
         contracts["bootstrap"] += (
             '\ncurl --header "X-Vault-Token: $vault_token" '
-            'https://vault.example.invalid/v1/sys/health\n'
+            "https://vault.example.invalid/v1/sys/health\n"
         )
         return
     if mutation == "add-exported-token":
@@ -223,10 +223,10 @@ def run_internal_boundaries(module: Any) -> None:
         raise AssertionError("duplicate YAML key was accepted")
 
     secure_bootstrap = valid_contracts(module)["bootstrap"]
-    require_file_block = '''require_file() {
+    require_file_block = """require_file() {
   local path="$1"
   [[ -f "$path" && -r "$path" ]] || fail "required file is missing"
-}'''
+}"""
     require_file_after_use = secure_bootstrap.replace(
         require_file_block + "\n\n", "", 1
     ).replace(
@@ -234,14 +234,14 @@ def run_internal_boundaries(module: Any) -> None:
         'require_file "$VAULT_CA_FILE"\n\n' + require_file_block,
         1,
     )
-    indirect_dependency_loop = '''for cmd in k3d kubectl helm docker curl jq openssl rg; do
+    indirect_dependency_loop = """for cmd in k3d kubectl helm docker curl jq openssl rg; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
     fail "required command not found: $cmd"
   fi
   case "$cmd" in
     c*) "$cmd" --disable --cacert "$VAULT_CA_FILE" "$VAULT_ADDR/v1/sys/health" ;;
   esac
-done'''
+done"""
     focused_bootstrap_checks = (
         (
             "curl default configuration",
@@ -296,10 +296,10 @@ done'''
             "raw Vault curl",
             secure_bootstrap.replace(
                 'case "$VAULT_ADDR" in',
-                '''curl --disable --fail-with-body --cacert "$VAULT_CA_FILE" \\
+                """curl --disable --fail-with-body --cacert "$VAULT_CA_FILE" \\
   "$VAULT_ADDR/v1/sys/health"
 
-case "$VAULT_ADDR" in''',
+case "$VAULT_ADDR" in""",
                 1,
             ),
             ["bootstrap must contain only the guarded vault_curl command"],
@@ -318,10 +318,10 @@ case "$VAULT_ADDR" in''',
             "aliased raw curl",
             secure_bootstrap.replace(
                 'case "$VAULT_ADDR" in',
-                '''endpoint="$VAULT_ADDR/v1/sys/health"
+                """endpoint="$VAULT_ADDR/v1/sys/health"
 curl --disable --fail-with-body --cacert "$VAULT_CA_FILE" "$endpoint"
 
-case "$VAULT_ADDR" in''',
+case "$VAULT_ADDR" in""",
                 1,
             ),
             ["bootstrap must contain only the guarded vault_curl command"],
@@ -346,7 +346,7 @@ case "$VAULT_ADDR" in''',
         ),
         (
             "sensitive printf",
-            secure_bootstrap + '\nprintf \'%s\\n\' "$vault_token"\n',
+            secure_bootstrap + "\nprintf '%s\\n' \"$vault_token\"\n",
             ["bootstrap sensitive identifiers must use only approved operations"],
         ),
         (
@@ -431,13 +431,13 @@ case "$VAULT_ADDR" in''',
         (
             "unrelated HTTPS marker",
             secure_bootstrap.replace(
-                '''case "$VAULT_ADDR" in
+                """case "$VAULT_ADDR" in
   https://*) ;;
   *) fail "VAULT_ADDR must use https:// for secret-bearing bootstrap" ;;
-esac''',
-                '''if [[ -n "$ROOT_CA_FILE" ]]; then
+esac""",
+                """if [[ -n "$ROOT_CA_FILE" ]]; then
   : "unrelated https:// marker"
-fi''',
+fi""",
                 1,
             ),
             ["bootstrap must require an HTTPS Vault address"],

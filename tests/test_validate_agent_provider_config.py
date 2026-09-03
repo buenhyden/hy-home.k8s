@@ -671,23 +671,27 @@ class ProviderConfigContractTests(unittest.TestCase):
             )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn(
-            "[PASS] agent provider evidence aggregate passed: "
-            "validators=2",
+            "[PASS] agent provider evidence aggregate passed: validators=2",
             result.stdout,
         )
 
-    def test_provider_evidence_timeout_has_a_stable_fail_closed_diagnostic(self) -> None:
+    def test_provider_evidence_timeout_has_a_stable_fail_closed_diagnostic(
+        self,
+    ) -> None:
         spec = importlib.util.spec_from_file_location(
             "validate_agent_provider_evidence_timeout", AGGREGATE_PATH
         )
         assert spec is not None and spec.loader is not None
         aggregate = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(aggregate)
-        with mock.patch.object(
-            aggregate.subprocess,
-            "run",
-            side_effect=subprocess.TimeoutExpired(["validator"], 120),
-        ), mock.patch("sys.stderr.write") as stderr_write:
+        with (
+            mock.patch.object(
+                aggregate.subprocess,
+                "run",
+                side_effect=subprocess.TimeoutExpired(["validator"], 120),
+            ),
+            mock.patch("sys.stderr.write") as stderr_write,
+        ):
             self.assertEqual(aggregate.run(["--root", "."]), 124)
         diagnostic = "".join(call.args[0] for call in stderr_write.call_args_list)
         self.assertIn("provider evidence validator timed out", diagnostic)

@@ -19,6 +19,7 @@ from zoneinfo import ZoneInfo
 import yaml
 
 from json_schema_validation import SchemaEvaluationError, schema_errors
+
 # This module is the markdown-profile facade over the document contract.
 # The names this file does not call itself are re-exported for the archive,
 # harness and cutover validators that reach the contract through it.

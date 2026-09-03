@@ -969,9 +969,7 @@ class TerminalStrictValidatorTests(unittest.TestCase):
         validator = self.validators["registry"]
         registry = validator.load_registry(REPOSITORY_ROOT)
         profile = next(
-            item
-            for item in registry.profiles
-            if item.profile_id == "sdlc/requirement"
+            item for item in registry.profiles if item.profile_id == "sdlc/requirement"
         )
         ambiguous = replace(registry, profiles=(*registry.profiles, profile))
         with self.assertRaisesRegex(

@@ -136,8 +136,12 @@ class AgentGovernanceCiArtifactTests(unittest.TestCase):
         self.assertIn(PRODUCTION_COMMAND, lines)
         self.assertIn(AGENT_TEST_COMMAND, lines)
         self.assertIn(OWNERSHIP_TEST_COMMAND, lines)
-        self.assertLess(lines.index(PRODUCTION_COMMAND), lines.index(AGENT_TEST_COMMAND))
-        self.assertLess(lines.index(AGENT_TEST_COMMAND), lines.index(OWNERSHIP_TEST_COMMAND))
+        self.assertLess(
+            lines.index(PRODUCTION_COMMAND), lines.index(AGENT_TEST_COMMAND)
+        )
+        self.assertLess(
+            lines.index(AGENT_TEST_COMMAND), lines.index(OWNERSHIP_TEST_COMMAND)
+        )
         self.assertNotIn("--self-test", text)
         self.assertNotIn("validate-agent-governance-closure.py", text)
 
@@ -154,10 +158,14 @@ class AgentGovernanceCiArtifactTests(unittest.TestCase):
             for line in text.splitlines()
             if line.strip().startswith("entry: ")
         ]
-        self.assertIn("python3 -m unittest tests.test_validation_tooling_ownership", entries)
+        self.assertIn(
+            "python3 -m unittest tests.test_validation_tooling_ownership", entries
+        )
         self.assertIn("bash scripts/validate-repo-quality-gates.sh .", entries)
         self.assertLess(
-            entries.index("python3 -m unittest tests.test_validation_tooling_ownership"),
+            entries.index(
+                "python3 -m unittest tests.test_validation_tooling_ownership"
+            ),
             entries.index("bash scripts/validate-repo-quality-gates.sh ."),
         )
         self.assertNotIn(PRODUCTION_COMMAND, entries)
@@ -891,18 +899,17 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
             ),
             (
                 "summary-mid-run-reset",
-                "          case \"$AGENT_GOVERNANCE_STATIC_SELECTED:"
-                "$AGENT_GOVERNANCE_STATIC_RESULT\" in\n",
+                '          case "$AGENT_GOVERNANCE_STATIC_SELECTED:'
+                '$AGENT_GOVERNANCE_STATIC_RESULT" in\n',
                 "          failed=0\n\n"
-                "          case \"$AGENT_GOVERNANCE_STATIC_SELECTED:"
-                "$AGENT_GOVERNANCE_STATIC_RESULT\" in\n",
+                '          case "$AGENT_GOVERNANCE_STATIC_SELECTED:'
+                '$AGENT_GOVERNANCE_STATIC_RESULT" in\n',
                 "AGQC-CI-TRUTH",
             ),
             (
                 "summary-early-success-exit",
-                "          if [ \"$failed\" -ne 0 ]; then\n",
-                "          exit 0\n\n"
-                "          if [ \"$failed\" -ne 0 ]; then\n",
+                '          if [ "$failed" -ne 0 ]; then\n',
+                '          exit 0\n\n          if [ "$failed" -ne 0 ]; then\n',
                 "AGQC-CI-TRUTH",
             ),
         )
@@ -925,7 +932,10 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
         commands = [row["command"] for row in contract["delegatedChecks"]]
         self.assertTrue(all("--self-test" not in command for command in commands))
         self.assertFalse(
-            any("validate-agent-governance-closure.py" in command for command in commands)
+            any(
+                "validate-agent-governance-closure.py" in command
+                for command in commands
+            )
         )
         self.assertEqual(
             [row["owner"] for row in contract["deferredEvidence"]],

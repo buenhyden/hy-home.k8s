@@ -32,9 +32,7 @@ def apply_mutation(contract: dict[str, Any], name: str) -> None:
     elif name == "transition-drift":
         contract["stateMachine"]["transitions"][4]["to"] = "validating"
     elif name == "signature-field-drift":
-        contract["failureNormalization"]["signatureFields"][0] = (
-            "provider-result-prose"
-        )
+        contract["failureNormalization"]["signatureFields"][0] = "provider-result-prose"
     elif name == "initial-failure-counted-as-retry":
         contract["retryPolicy"]["initialFailureCountsAsRetry"] = True
     elif name == "same-signature-retry-ceiling":
@@ -56,19 +54,13 @@ def apply_mutation(contract: dict[str, Any], name: str) -> None:
     elif name == "no-progress-budget-consumption":
         contract["noProgressPolicy"]["consumesRetryBudgetBeforeStop"] = True
     elif name == "missing-nonretryable-class":
-        contract["nonRetryableFailureClasses"][-1]["id"] = (
-            "recoverable-contract-error"
-        )
+        contract["nonRetryableFailureClasses"][-1]["id"] = "recoverable-contract-error"
     elif name == "nonretryable-marked-retryable":
         contract["nonRetryableFailureClasses"][0]["retryable"] = True
     elif name == "progress-delta-drift":
-        contract["progressPolicy"]["allowedDeltaClasses"][0] = (
-            "more-provider-prose"
-        )
+        contract["progressPolicy"]["allowedDeltaClasses"][0] = "more-provider-prose"
     elif name == "rejected-signal-drift":
-        contract["progressPolicy"]["rejectedSignals"][0] = (
-            "changed-intended-file-state"
-        )
+        contract["progressPolicy"]["rejectedSignals"][0] = "changed-intended-file-state"
     elif name == "checkpoint-owner-drift":
         contract["checkpointBoundary"]["implementationOwner"] = "AHLL-001"
     elif name == "checkpoint-execution-demoted":

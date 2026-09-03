@@ -77,10 +77,7 @@ class CurrentExecutableReferenceTests(unittest.TestCase):
     def test_terminal_reference_uses_git_first_recovery(self) -> None:
         target = PurePosixPath("scripts/retired/deep/check-contract.py")
         recovered: list[PurePosixPath] = []
-        text = (
-            "---\nstatus: done\n---\n\n"
-            f"Historical command: `python3 {target}`.\n"
-        )
+        text = f"---\nstatus: done\n---\n\nHistorical command: `python3 {target}`.\n"
 
         diagnostics = self.validate(
             "docs/03.specs/0001-example/spec.md",
@@ -137,13 +134,15 @@ class CurrentExecutableReferenceTests(unittest.TestCase):
             frozenset({".mjs", ".py", ".sh"}),
         )
 
-    def test_repository_aggregate_delegates_instead_of_reimplementing_rule(self) -> None:
+    def test_repository_aggregate_delegates_instead_of_reimplementing_rule(
+        self,
+    ) -> None:
         aggregate = (ROOT / "scripts/validate-repo-quality-gates.sh").read_text(
             encoding="utf-8"
         )
-        owner = (
-            ROOT / "scripts/validation/repository/quality.py"
-        ).read_text(encoding="utf-8")
+        owner = (ROOT / "scripts/validation/repository/quality.py").read_text(
+            encoding="utf-8"
+        )
         registry = json.loads(
             (ROOT / "scripts/validation/registry.json").read_text(encoding="utf-8")
         )

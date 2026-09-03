@@ -20,7 +20,9 @@ from tests.gitops_change_set_cases import (
 )
 
 
-SCRIPT_PATH = Path(__file__).resolve().parents[1] / "scripts/validate-gitops-change-set.py"
+SCRIPT_PATH = (
+    Path(__file__).resolve().parents[1] / "scripts/validate-gitops-change-set.py"
+)
 FIXTURE_PATH = Path(__file__).resolve().parent / "fixtures/gitops-change-set"
 SPEC = importlib.util.spec_from_file_location("validate_gitops_change_set", SCRIPT_PATH)
 assert SPEC is not None
@@ -100,13 +102,19 @@ class CreateNonRegularFixtureTests(unittest.TestCase):
     def test_self_test_boundaries_complete(self) -> None:
         run_boundaries(MODULE)
 
-    def test_git_runner_maps_output_limit_and_timeout_to_domain_diagnostics(self) -> None:
+    def test_git_runner_maps_output_limit_and_timeout_to_domain_diagnostics(
+        self,
+    ) -> None:
         for failure, expected in (
-            (MODULE.BoundedOutputError("stdout exceeds its byte budget"), "GIT_OUTPUT_LIMIT"),
+            (
+                MODULE.BoundedOutputError("stdout exceeds its byte budget"),
+                "GIT_OUTPUT_LIMIT",
+            ),
             (subprocess.TimeoutExpired(["git"], 1), "GIT_TIMEOUT"),
         ):
-            with self.subTest(expected=expected), mock.patch.object(
-                MODULE, "run_bounded_process", side_effect=failure
+            with (
+                self.subTest(expected=expected),
+                mock.patch.object(MODULE, "run_bounded_process", side_effect=failure),
             ):
                 with self.assertRaises(MODULE.GitOpsValidationError) as raised:
                     MODULE._run_git(Path.cwd(), ["status"])

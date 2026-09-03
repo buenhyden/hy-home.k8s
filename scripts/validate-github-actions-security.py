@@ -205,9 +205,7 @@ def _validate_permissions(path: Path, data: dict) -> list[str]:
         job_path = Path(f"{path.as_posix()}[job={job_id}]")
         job = jobs.get(job_id)
         if not isinstance(job, dict):
-            errors.append(
-                _diagnostic(job_path, "required allowlisted job is missing")
-            )
+            errors.append(_diagnostic(job_path, "required allowlisted job is missing"))
         elif not isinstance(job.get("permissions"), dict):
             errors.append(
                 _diagnostic(job_path, "required job permissions must be a mapping")
@@ -236,9 +234,7 @@ def _validate_permissions(path: Path, data: dict) -> list[str]:
                     )
                 )
         elif writes:
-            errors.append(
-                _diagnostic(job_path, "write permission is not allowlisted")
-            )
+            errors.append(_diagnostic(job_path, "write permission is not allowlisted"))
     return errors
 
 

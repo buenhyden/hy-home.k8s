@@ -16,7 +16,9 @@ from unittest import mock
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 VALIDATOR_PATH = REPO_ROOT / "scripts/validate-ci-python-contract.py"
-SPEC = importlib.util.spec_from_file_location("validate_ci_python_contract", VALIDATOR_PATH)
+SPEC = importlib.util.spec_from_file_location(
+    "validate_ci_python_contract", VALIDATOR_PATH
+)
 if SPEC is None or SPEC.loader is None:
     raise RuntimeError(f"cannot load validator: {VALIDATOR_PATH}")
 VALIDATOR = importlib.util.module_from_spec(SPEC)
@@ -153,9 +155,7 @@ def make_pre_commit_config() -> str:
     return "\n".join(lines) + "\n"
 
 
-GITLEAKS_SHA256 = (
-    "79a3ab579b53f71efd634f3aaf7e04a0fa0cf206b7ed434638d1547a2470a66e"  # pragma: allowlist secret
-)
+GITLEAKS_SHA256 = "79a3ab579b53f71efd634f3aaf7e04a0fa0cf206b7ed434638d1547a2470a66e"  # pragma: allowlist secret
 
 
 GITLEAKS_INSTALL = f"""\
@@ -302,21 +302,21 @@ PIP_INSTALL_BYPASS_COMMANDS = (
     "bash -c '$PIP install rogue==1'",
     "eval '$INSTALLER install rogue==1'",
     "bash -c 'python -m pip install rogue==1",
-    "verb=install; pip \"$verb\" rogue==1",
-    "verb=install; python -m pip \"$verb\" rogue==1",
+    'verb=install; pip "$verb" rogue==1',
+    'verb=install; python -m pip "$verb" rogue==1',
     "cmd='pip install rogue==1'; eval \"$cmd\"",
     "cmd='pip install rogue==1'; bash -c \"$cmd\"",
     "timeout 30 pip install rogue==1",
     "nice pip install rogue==1",
-    "set -- pip install rogue==1; \"$@\"",
+    'set -- pip install rogue==1; "$@"',
     "eval \"$(printf 'pip install %s' rogue==1)\"",
     "printf 'pip install rogue==1\\n' | sh",
     "python -m pip.__main__ install rogue==1",
-    "python -c 'from pip._internal.cli.main import main; main([\"install\",\"rogue==1\"])'",
+    'python -c \'from pip._internal.cli.main import main; main(["install","rogue==1"])\'',
     "pip --disable-pip-version-check install rogue==1",
     "python -m pip --disable-pip-version-check install rogue==1",
-    "verb=install; pip --disable-pip-version-check \"$verb\" rogue==1",
-    "verb=install; python -m pip --disable-pip-version-check \"$verb\" rogue==1",
+    'verb=install; pip --disable-pip-version-check "$verb" rogue==1',
+    'verb=install; python -m pip --disable-pip-version-check "$verb" rogue==1',
     "stdbuf -oL pip install rogue==1",
     "xargs pip install rogue==1",
     "xargs sh -c 'pip install rogue==1'",
@@ -407,18 +407,18 @@ UNSUPPORTED_EXECUTION_COMMANDS = (
 )
 
 NORMALIZED_EXECUTION_DELEGATORS = (
-    '"eval" \'pip install rogue==1\'',
+    "\"eval\" 'pip install rogue==1'",
     "command eval 'pip install rogue==1'",
     '"source" ./script.sh',
     "command source ./script.sh",
     '"." ./script.sh',
     "command . ./script.sh",
     "builtin eval 'pip install rogue==1'",
-    '"builtin" eval \'pip install rogue==1\'',
+    "\"builtin\" eval 'pip install rogue==1'",
     "command builtin eval 'pip install rogue==1'",
     '"alias" runner=echo',
     '"coproc" echo safe',
-    "case \"$MODE\" in\nsafe)\n  ( \"eval\" 'pip install rogue==1' )\n  ;;\nesac",
+    'case "$MODE" in\nsafe)\n  ( "eval" \'pip install rogue==1\' )\n  ;;\nesac',
 )
 
 XARGS_DELEGATION_COMMANDS = (
@@ -636,9 +636,7 @@ class CiPythonContractTests(unittest.TestCase):
                 parent.symlink_to(outside, target_is_directory=True)
                 expected_rule = (
                     "CI-PYTHON-PIN"
-                    if relative == Path(
-                        ".github/requirements/ci-validation.txt"
-                    )
+                    if relative == Path(".github/requirements/ci-validation.txt")
                     else rule_id
                 )
                 self.assert_value_free_rule(root, expected_rule, str(outside))
@@ -903,8 +901,7 @@ class CiPythonContractTests(unittest.TestCase):
         workflow.write_text(
             text.replace(
                 marker,
-                "      - run: /usr/bin/python3 -m pip install rogue==1\n"
-                + marker,
+                "      - run: /usr/bin/python3 -m pip install rogue==1\n" + marker,
                 1,
             ),
             encoding="utf-8",
@@ -949,8 +946,7 @@ class CiPythonContractTests(unittest.TestCase):
         workflow.write_text(
             text.replace(
                 marker,
-                "      - run: env /usr/bin/python3 -m pip install rogue==1\n"
-                + marker,
+                "      - run: env /usr/bin/python3 -m pip install rogue==1\n" + marker,
                 1,
             ),
             encoding="utf-8",
@@ -998,12 +994,16 @@ class CiPythonContractTests(unittest.TestCase):
         )
         self.assert_rule(root, "CI-PYTHON-WORKFLOW")
 
-    def test_agent_governance_checkout_must_be_credential_free_with_history(self) -> None:
+    def test_agent_governance_checkout_must_be_credential_free_with_history(
+        self,
+    ) -> None:
         root = self.make_valid_root()
         workflow = root / ".github/workflows/ci.yml"
         text = workflow.read_text(encoding="utf-8")
         start = text.index("  agent-governance-static:")
-        persist_credentials = text.index("          persist-credentials: false\n", start)
+        persist_credentials = text.index(
+            "          persist-credentials: false\n", start
+        )
         workflow.write_text(
             text[:persist_credentials]
             + text[
@@ -1022,10 +1022,8 @@ class CiPythonContractTests(unittest.TestCase):
             "      - run: python3 scripts/validate-agent-harness-contract.py --root .\n",
             start,
         )
-        injected = (
-            "      - name: Install Gitleaks\n"
-            "        run: |\n"
-            + "".join(f"          {line}\n" for line in GITLEAKS_INSTALL.splitlines())
+        injected = "      - name: Install Gitleaks\n        run: |\n" + "".join(
+            f"          {line}\n" for line in GITLEAKS_INSTALL.splitlines()
         )
         workflow.write_text(
             text[:harness_step] + injected + text[harness_step:],
@@ -1385,7 +1383,10 @@ class CiPythonContractTests(unittest.TestCase):
 
     def test_rejects_step_job_and_workflow_shell_overrides(self) -> None:
         mutations = (
-            ("step", "      - run: |\n          python -m pip install rogue==1\n        shell: python\n"),
+            (
+                "step",
+                "      - run: |\n          python -m pip install rogue==1\n        shell: python\n",
+            ),
             ("job", "    defaults:\n      run:\n        shell: python\n"),
             ("workflow", "defaults:\n  run:\n    shell: python\n"),
         )
@@ -1395,9 +1396,15 @@ class CiPythonContractTests(unittest.TestCase):
                 workflow = root / ".github/workflows/ci.yml"
                 text = workflow.read_text(encoding="utf-8")
                 if label == "step":
-                    text = text.replace("      - name: Install Gitleaks\n", mutation + "      - name: Install Gitleaks\n", 1)
+                    text = text.replace(
+                        "      - name: Install Gitleaks\n",
+                        mutation + "      - name: Install Gitleaks\n",
+                        1,
+                    )
                 elif label == "job":
-                    text = text.replace("  pre-commit:\n", "  pre-commit:\n" + mutation, 1)
+                    text = text.replace(
+                        "  pre-commit:\n", "  pre-commit:\n" + mutation, 1
+                    )
                 else:
                     text = mutation + text
                 workflow.write_text(text, encoding="utf-8")
@@ -1489,9 +1496,7 @@ class CiPythonContractTests(unittest.TestCase):
         root = self.make_valid_root()
         config = root / ".pre-commit-config.yaml"
         repo, revision = next(iter(PRE_COMMIT_REVISIONS.items()))
-        expected_line = (
-            f"    rev: {revision} # frozen: {PRE_COMMIT_SOURCE_TAGS[repo]}"
-        )
+        expected_line = f"    rev: {revision} # frozen: {PRE_COMMIT_SOURCE_TAGS[repo]}"
         mutated = config.read_text(encoding="utf-8").replace(
             expected_line,
             f"    rev: {revision} # frozen: wrong-source-tag",
@@ -1529,8 +1534,7 @@ class CiPythonContractTests(unittest.TestCase):
         config.write_text(
             config.read_text(encoding="utf-8").replace(
                 "  - repo: local\n",
-                "  - repo: local\n"
-                "    rev: 0000000000000000000000000000000000000000\n",
+                "  - repo: local\n    rev: 0000000000000000000000000000000000000000\n",
                 1,
             ),
             encoding="utf-8",
@@ -1600,7 +1604,9 @@ class CiPythonContractTests(unittest.TestCase):
             text.replace(
                 "      - name: Install Gitleaks\n"
                 "        run: |\n"
-                + "".join(f"          {line}\n" for line in GITLEAKS_INSTALL.splitlines()),
+                + "".join(
+                    f"          {line}\n" for line in GITLEAKS_INSTALL.splitlines()
+                ),
                 "",
                 1,
             ),
@@ -1612,10 +1618,13 @@ class CiPythonContractTests(unittest.TestCase):
         root = self.make_valid_root()
         workflow = root / ".github/workflows/ci.yml"
         text = workflow.read_text(encoding="utf-8")
-        second_history = text.find("          fetch-depth: 0\n", text.find("repo-quality-static:"))
+        second_history = text.find(
+            "          fetch-depth: 0\n", text.find("repo-quality-static:")
+        )
         self.assertNotEqual(second_history, -1)
         workflow.write_text(
-            text[:second_history] + text[second_history + len("          fetch-depth: 0\n"):],
+            text[:second_history]
+            + text[second_history + len("          fetch-depth: 0\n") :],
             encoding="utf-8",
         )
         self.assert_rule(root, "CI-REPOSITORY-HISTORY")

@@ -21,10 +21,7 @@ CONTRACT_PATH = (
     REPOSITORY_ROOT
     / "docs/00.agent-governance/contracts/provider-runtime-evidence.json"
 )
-FIXTURE_PATH = (
-    REPOSITORY_ROOT
-    / "tests/fixtures/agent-provider-runtime-evidence.json"
-)
+FIXTURE_PATH = REPOSITORY_ROOT / "tests/fixtures/agent-provider-runtime-evidence.json"
 
 
 def load_module():
@@ -149,9 +146,7 @@ class ProviderCanaryContractTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn(
-            "[PASS] agent provider canary validation passed", result.stdout
-        )
+        self.assertIn("[PASS] agent provider canary validation passed", result.stdout)
 
     def test_standalone_canary_preserves_a_symlink_root(self) -> None:
         with tempfile.TemporaryDirectory(

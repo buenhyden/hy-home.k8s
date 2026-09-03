@@ -58,7 +58,9 @@ def executable_suffixes_from_registry(registry: object) -> frozenset[str]:
         if not isinstance(validator, Mapping):
             raise ValueError("validation registry validator must be an object")
         argv = validator.get("argv")
-        if not isinstance(argv, list) or not all(isinstance(item, str) for item in argv):
+        if not isinstance(argv, list) or not all(
+            isinstance(item, str) for item in argv
+        ):
             raise ValueError("validation registry argv must be a string list")
         for token in argv:
             if not token.startswith("scripts/"):
@@ -78,27 +80,28 @@ def _frontmatter_status(text: str) -> str:
     if closing < 0:
         return ""
     for line in text[4:closing].splitlines():
-        match = re.fullmatch(
-            r"status:\s*['\"]?([a-z][a-z0-9-]*)['\"]?\s*", line
-        )
+        match = re.fullmatch(r"status:\s*['\"]?([a-z][a-z0-9-]*)['\"]?\s*", line)
         if match is not None:
             return match.group(1)
     return ""
 
 
 def _source_kind(path: PurePosixPath, text: str) -> str:
-    if path == PurePosixPath("docs/98.archive") or PurePosixPath(
-        "docs/98.archive"
-    ) in path.parents:
+    if (
+        path == PurePosixPath("docs/98.archive")
+        or PurePosixPath("docs/98.archive") in path.parents
+    ):
         return "sealed"
-    if path == PurePosixPath("docs/90.references") or PurePosixPath(
-        "docs/90.references"
-    ) in path.parents:
+    if (
+        path == PurePosixPath("docs/90.references")
+        or PurePosixPath("docs/90.references") in path.parents
+    ):
         return "historical"
     status = _frontmatter_status(text)
-    if path == PurePosixPath("docs/03.specs") or PurePosixPath(
-        "docs/03.specs"
-    ) in path.parents:
+    if (
+        path == PurePosixPath("docs/03.specs")
+        or PurePosixPath("docs/03.specs") in path.parents
+    ):
         return "historical" if status in _TERMINAL_STATUSES else "proposal"
     return "historical" if status in _TERMINAL_STATUSES else "current"
 
@@ -141,7 +144,9 @@ def validate_current_executable_references(
 ) -> tuple[ExecutableReferenceDiagnostic, ...]:
     """Validate current refs and require Git-first recovery for historical refs."""
 
-    if not executable_suffixes or any(not suffix.startswith(".") for suffix in executable_suffixes):
+    if not executable_suffixes or any(
+        not suffix.startswith(".") for suffix in executable_suffixes
+    ):
         raise ValueError("executable suffixes must be non-empty dotted values")
 
     diagnostics: list[ExecutableReferenceDiagnostic] = []
@@ -168,7 +173,9 @@ def validate_current_executable_references(
     return tuple(sorted(diagnostics))
 
 
-def _run_git(root: Path, arguments: Iterable[str]) -> subprocess.CompletedProcess[bytes]:
+def _run_git(
+    root: Path, arguments: Iterable[str]
+) -> subprocess.CompletedProcess[bytes]:
     environment = dict(_CLOSED_GIT_ENVIRONMENT)
     for key, value in os.environ.items():
         if key.startswith("GIT_TRACE"):
@@ -205,7 +212,10 @@ def reachable_git_path_exists(root: Path, target: PurePosixPath) -> bool:
             ),
         )
         commit = history.stdout.decode("ascii", errors="strict").strip()
-        if history.returncode != 0 or re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", commit) is None:
+        if (
+            history.returncode != 0
+            or re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", commit) is None
+        ):
             return False
         recovered = _run_git(
             root,

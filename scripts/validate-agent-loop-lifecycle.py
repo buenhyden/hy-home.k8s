@@ -195,8 +195,7 @@ FEEDBACK_DESTINATIONS = (
 )
 INTERFACE_SIGNATURES = {
     "normalizeFailure": (
-        "normalizeFailure(result) -> "
-        "{failureClass, signatureDigest, retryable}",
+        "normalizeFailure(result) -> {failureClass, signatureDigest, retryable}",
         "AHLL-001",
         "executable",
     ),
@@ -206,8 +205,7 @@ INTERFACE_SIGNATURES = {
         "executable",
     ),
     "decideNext": (
-        "decideNext(loopState, budgets, failure, progress) -> "
-        "retry | stop | escalate",
+        "decideNext(loopState, budgets, failure, progress) -> retry | stop | escalate",
         "AHLL-001",
         "executable",
     ),
@@ -290,14 +288,10 @@ SENSITIVE_KEY_EDGE_TERMS = (
     "transcript",
     "body",
 )
-FAILURE_CLASS_PATTERN = re.compile(
-    r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
-)
+FAILURE_CLASS_PATTERN = re.compile(r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$")
 SIGNATURE_DIGEST_PATTERN = re.compile(r"^sha256:[0-9a-f]{64}$")
 SENSITIVE_VALUE_PATTERNS = (
-    re.compile(
-        r"(?i)\b(?:sk|gh[pousr]|xox[baprs])[-_][a-z0-9_-]{8,}"
-    ),
+    re.compile(r"(?i)\b(?:sk|gh[pousr]|xox[baprs])[-_][a-z0-9_-]{8,}"),
     re.compile(r"\bAKIA[A-Z0-9]{12,}\b"),
     re.compile(r"\bAIza[A-Za-z0-9_-]{12,}\b"),
     re.compile(r"(?i)\bbearer\s+\S{8,}"),
@@ -328,9 +322,7 @@ class LoopLifecycleError(ValueError):
         super().__init__(f"{code}: {detail}")
 
 
-def fail(
-    code: str, detail: str, *, exit_code: int = 1
-) -> NoReturn:
+def fail(code: str, detail: str, *, exit_code: int = 1) -> NoReturn:
     raise LoopLifecycleError(code, detail, exit_code=exit_code)
 
 
@@ -373,9 +365,7 @@ def _read_regular_bytes(root: Path, relative: PurePosixPath) -> bytes:
             "repository root is unavailable",
             exit_code=2,
         )
-    if stat.S_ISLNK(root_metadata.st_mode) or not stat.S_ISDIR(
-        root_metadata.st_mode
-    ):
+    if stat.S_ISLNK(root_metadata.st_mode) or not stat.S_ISDIR(root_metadata.st_mode):
         fail(
             "AHLL-ROOT",
             "repository root is unavailable",
@@ -421,9 +411,7 @@ def _read_regular_bytes(root: Path, relative: PurePosixPath) -> bytes:
             parent_descriptor = child_descriptor
 
         file_flags = (
-            os.O_RDONLY
-            | getattr(os, "O_CLOEXEC", 0)
-            | getattr(os, "O_NOFOLLOW", 0)
+            os.O_RDONLY | getattr(os, "O_CLOEXEC", 0) | getattr(os, "O_NOFOLLOW", 0)
         )
         if hasattr(os, "O_NONBLOCK"):
             file_flags |= os.O_NONBLOCK
@@ -516,9 +504,7 @@ def _is_sensitive_key(normalized: str, nested: Any) -> bool:
     )
 
 
-def scan_sensitive_payload(
-    value: Any, path: tuple[Any, ...] = ()
-) -> None:
+def scan_sensitive_payload(value: Any, path: tuple[Any, ...] = ()) -> None:
     """Reject sensitive key names and secret-shaped or conversational values."""
 
     if isinstance(value, dict):
@@ -601,8 +587,7 @@ def _validate_state_machine(contract: dict[str, Any]) -> None:
         (state["id"], state["terminal"]) for state in machine["states"]
     )
     observed_transitions = tuple(
-        (item["from"], item["event"], item["to"])
-        for item in machine["transitions"]
+        (item["from"], item["event"], item["to"]) for item in machine["transitions"]
     )
     if (
         machine["initialState"] != "ready"
@@ -723,9 +708,7 @@ def _validate_event_record(contract: dict[str, Any]) -> None:
         )
 
 
-def _validate_checkpoint_boundary(
-    root: Path, contract: dict[str, Any]
-) -> None:
+def _validate_checkpoint_boundary(root: Path, contract: dict[str, Any]) -> None:
     boundary = contract["checkpointBoundary"]
     if (
         boundary["schemaRef"] != CHECKPOINT_SCHEMA_PATH
@@ -755,13 +738,9 @@ def _validate_checkpoint_boundary(
             "checkpoint reference, repository authority, or delegation differs",
         )
 
-    checkpoint_schema = load_json(
-        root, PurePosixPath(CHECKPOINT_SCHEMA_PATH)
-    )
+    checkpoint_schema = load_json(root, PurePosixPath(CHECKPOINT_SCHEMA_PATH))
     if (
-        checkpoint_schema.get("properties", {})
-        .get("schemaVersion", {})
-        .get("const")
+        checkpoint_schema.get("properties", {}).get("schemaVersion", {}).get("const")
         != boundary["checkpointSchemaVersion"]
     ):
         fail(
@@ -778,8 +757,7 @@ def _validate_feedback_routing(contract: dict[str, Any]) -> None:
     )
     if (
         routing["trigger"] != "repeated-stable-failure"
-        or routing["selection"]
-        != "exactly-one-reviewed-destination"
+        or routing["selection"] != "exactly-one-reviewed-destination"
         or routing["reviewRequired"] is not True
         or routing["rawTracePromptTranscriptPromotionAllowed"] is not False
         or destinations != FEEDBACK_DESTINATIONS
@@ -835,15 +813,9 @@ def validate_contract(
     return {
         "states": len(contract["stateMachine"]["states"]),
         "transitions": len(contract["stateMachine"]["transitions"]),
-        "nonRetryableFailureClasses": len(
-            contract["nonRetryableFailureClasses"]
-        ),
-        "progressDeltaClasses": len(
-            contract["progressPolicy"]["allowedDeltaClasses"]
-        ),
-        "feedbackDestinations": len(
-            contract["feedbackRouting"]["destinations"]
-        ),
+        "nonRetryableFailureClasses": len(contract["nonRetryableFailureClasses"]),
+        "progressDeltaClasses": len(contract["progressPolicy"]["allowedDeltaClasses"]),
+        "feedbackDestinations": len(contract["feedbackRouting"]["destinations"]),
         "interfaces": len(contract["interfaces"]),
     }
 
@@ -886,10 +858,7 @@ def _canonical_failure_class(value: Any) -> str:
     separated = re.sub(r"([a-z0-9])([A-Z])", r"\1-\2", value.strip())
     normalized = _stable_text(separated, "failureClass")
     slug = re.sub(r"[^a-z0-9]+", "-", normalized).strip("-")
-    if (
-        not 3 <= len(slug) <= 80
-        or FAILURE_CLASS_PATTERN.fullmatch(slug) is None
-    ):
+    if not 3 <= len(slug) <= 80 or FAILURE_CLASS_PATTERN.fullmatch(slug) is None:
         fail(
             "AHLL-INPUT",
             "failureClass must normalize to a 3-80 character kebab-case slug",
@@ -922,12 +891,7 @@ def normalize_failure(
     if isinstance(affected_scope, str):
         scope = [_stable_text(affected_scope, "affectedScope")]
     elif isinstance(affected_scope, list) and affected_scope:
-        scope = sorted(
-            {
-                _stable_text(item, "affectedScope")
-                for item in affected_scope
-            }
-        )
+        scope = sorted({_stable_text(item, "affectedScope") for item in affected_scope})
     else:
         fail(
             "AHLL-INPUT",
@@ -947,9 +911,7 @@ def normalize_failure(
         "validator-result-class": _stable_text(
             result["validatorResultClass"], "validatorResultClass"
         ),
-        "stable-command-id": _stable_text(
-            result["stableCommandId"], "stableCommandId"
-        ),
+        "stable-command-id": _stable_text(result["stableCommandId"], "stableCommandId"),
         "exit-class": _stable_text(result["exitClass"], "exitClass"),
         "sanitized-diagnostic-code": _stable_text(
             result["sanitizedDiagnosticCode"],
@@ -966,16 +928,13 @@ def normalize_failure(
     ).encode("utf-8")
     signature_digest = "sha256:" + hashlib.sha256(encoded).hexdigest()
 
-    failure_class = result.get(
-        "failureClass", signature["validator-result-class"]
-    )
+    failure_class = result.get("failureClass", signature["validator-result-class"])
     failure_class = _canonical_failure_class(failure_class)
     explicitly_retryable = result.get("retryable", True)
     if not isinstance(explicitly_retryable, bool):
         fail("AHLL-INPUT", "retryable must be boolean when present")
     retryable = (
-        explicitly_retryable
-        and failure_class not in NONRETRYABLE_FAILURE_CLASSES
+        explicitly_retryable and failure_class not in NONRETRYABLE_FAILURE_CLASSES
     )
     return {
         "failureClass": failure_class,
@@ -1020,10 +979,7 @@ def measure_progress(
     ):
         deltas.add("changed-intended-file-state")
 
-    if (
-        "failingAssertionCount" in before
-        and "failingAssertionCount" in after
-    ):
+    if "failingAssertionCount" in before and "failingAssertionCount" in after:
         previous_failures = _bounded_nonnegative_int(
             before["failingAssertionCount"], "before.failingAssertionCount"
         )
@@ -1042,10 +998,7 @@ def measure_progress(
     if after_criteria.difference(before_criteria):
         deltas.add("newly-satisfied-criterion")
 
-    if (
-        "reproductionScopeSize" in before
-        and "reproductionScopeSize" in after
-    ):
+    if "reproductionScopeSize" in before and "reproductionScopeSize" in after:
         previous_scope = _bounded_nonnegative_int(
             before["reproductionScopeSize"],
             "before.reproductionScopeSize",
@@ -1100,8 +1053,7 @@ def decide_next(
     """Apply stop rules and both budgets without fallback counter resets."""
 
     if not all(
-        isinstance(item, dict)
-        for item in (loop_state, budgets, failure, progress)
+        isinstance(item, dict) for item in (loop_state, budgets, failure, progress)
     ):
         fail("AHLL-INPUT", "decision inputs must be objects")
     scan_sensitive_payload((loop_state, budgets, failure, progress))
@@ -1164,9 +1116,7 @@ def decide_next(
     if progressed != bool(delta_classes):
         fail("AHLL-INPUT", "progressed must match deltaClasses")
 
-    disposition = {
-        item[0]: (item[2], item[3]) for item in NONRETRYABLE_DISPOSITIONS
-    }
+    disposition = {item[0]: (item[2], item[3]) for item in NONRETRYABLE_DISPOSITIONS}
     if failure_class in disposition:
         decision, next_state = disposition[failure_class]
         return _decision(
@@ -1189,9 +1139,7 @@ def decide_next(
     if (
         not progressed
         and identical_no_progress
-        >= no_progress_policy[
-            "maxConsecutiveIdenticalResultsWithoutProgress"
-        ]
+        >= no_progress_policy["maxConsecutiveIdenticalResultsWithoutProgress"]
     ):
         return _decision(
             "escalate",
@@ -1201,10 +1149,7 @@ def decide_next(
             signature_retries=signature_retries,
             recovery_actions=recovery_actions,
         )
-    if (
-        signature_retries
-        >= retry_policy["maxAutomaticRetriesPerSignature"]
-    ):
+    if signature_retries >= retry_policy["maxAutomaticRetriesPerSignature"]:
         return _decision(
             "escalate",
             "escalated",

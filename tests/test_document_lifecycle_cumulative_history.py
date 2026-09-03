@@ -39,7 +39,9 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.seed_temporary = tempfile.TemporaryDirectory(prefix="lifecycle-history-seed-")
+        cls.seed_temporary = tempfile.TemporaryDirectory(
+            prefix="lifecycle-history-seed-"
+        )
         cls.addClassCleanup(cls.seed_temporary.cleanup)
         cls.seed_root = Path(cls.seed_temporary.name) / "repository"
         cls.seed_root.mkdir()
@@ -59,7 +61,9 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                 else domain["profileIds"][0]
             )
             domain["profileIds"] = [
-                profile_id for profile_id in domain["profileIds"] if profile_id in selected
+                profile_id
+                for profile_id in domain["profileIds"]
+                if profile_id in selected
             ]
         raw_registry["profiles"] = [
             profile for profile in raw_registry["profiles"] if profile["id"] in selected
@@ -99,9 +103,9 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         )
         self.git = GitFixture(self.root)
         self.base = self.oid("HEAD")
-        self.primary_branch = self.git.run(
-            "symbolic-ref", "--short", "HEAD"
-        ).decode("ascii").strip()
+        self.primary_branch = (
+            self.git.run("symbolic-ref", "--short", "HEAD").decode("ascii").strip()
+        )
         self._registry = None
 
     @property
@@ -213,13 +217,34 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         active = self.commit("active")
         path = PurePosixPath(self.path)
         create = LifecycleDiagnostic(
-            "FAIL", "LIFECYCLE-CREATE", path, "governance/contract", "draft", "active", "explicit-ref", ""
+            "FAIL",
+            "LIFECYCLE-CREATE",
+            path,
+            "governance/contract",
+            "draft",
+            "active",
+            "explicit-ref",
+            "",
         )
         duplicate = LifecycleDiagnostic(
-            "FAIL", "LIFECYCLE-CREATE", path, "governance/contract", "draft", "active", "explicit-ref", "duplicate"
+            "FAIL",
+            "LIFECYCLE-CREATE",
+            path,
+            "governance/contract",
+            "draft",
+            "active",
+            "explicit-ref",
+            "duplicate",
         )
         other = LifecycleDiagnostic(
-            "FAIL", "LIFECYCLE-EVIDENCE", path, "governance/contract", "evidence", "missing", "explicit-ref", "missing"
+            "FAIL",
+            "LIFECYCLE-EVIDENCE",
+            path,
+            "governance/contract",
+            "evidence",
+            "missing",
+            "explicit-ref",
+            "missing",
         )
 
         actual = VALIDATOR._admit_cumulative_create_diagnostics(
@@ -294,7 +319,9 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
     def test_malformed_missing_and_bounded_history_evidence_fails_closed(self) -> None:
         self.commit("draft")
         active = self.commit("active")
-        with mock.patch.object(VALIDATOR, "_first_parent_history", return_value=("bad",)):
+        with mock.patch.object(
+            VALIDATOR, "_first_parent_history", return_value=("bad",)
+        ):
             self.assertFalse(self.proved(self.base, active))
         with mock.patch.object(VALIDATOR, "CUMULATIVE_HISTORY_MAX_COMMITS", 1):
             self.assertFalse(self.proved(self.base, active))
@@ -362,11 +389,20 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         result, output = self.explicit(self.base, independent)
         self.assertEqual(result, 0, output)
 
-    def test_missing_evidence_type_change_and_profile_change_retain_create(self) -> None:
+    def test_missing_evidence_type_change_and_profile_change_retain_create(
+        self,
+    ) -> None:
         self.commit("draft")
         active = self.commit("active")
         missing = LifecycleDiagnostic(
-            "FAIL", "LIFECYCLE-EVIDENCE", PurePosixPath(self.path), "governance/contract", "evidence", "missing", "explicit-ref", "missing"
+            "FAIL",
+            "LIFECYCLE-EVIDENCE",
+            PurePosixPath(self.path),
+            "governance/contract",
+            "evidence",
+            "missing",
+            "explicit-ref",
+            "missing",
         )
         with mock.patch.object(
             VALIDATOR, "_history_event_diagnostics", return_value=(missing,)
@@ -407,10 +443,24 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         active = self.commit_path(second, "active")
         candidates = (
             LifecycleDiagnostic(
-                "FAIL", "LIFECYCLE-CREATE", PurePosixPath(self.path), "governance/contract", "draft", "active", "explicit-ref", ""
+                "FAIL",
+                "LIFECYCLE-CREATE",
+                PurePosixPath(self.path),
+                "governance/contract",
+                "draft",
+                "active",
+                "explicit-ref",
+                "",
             ),
             LifecycleDiagnostic(
-                "FAIL", "LIFECYCLE-CREATE", PurePosixPath(second), "governance/contract", "draft", "active", "explicit-ref", ""
+                "FAIL",
+                "LIFECYCLE-CREATE",
+                PurePosixPath(second),
+                "governance/contract",
+                "draft",
+                "active",
+                "explicit-ref",
+                "",
             ),
         )
         blobs = {
@@ -427,7 +477,9 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                 VALIDATOR, "_first_parent_history", side_effect=AssertionError
             ) as history,
             mock.patch.object(
-                VALIDATOR, "_history_proves_cumulative_create", side_effect=AssertionError
+                VALIDATOR,
+                "_history_proves_cumulative_create",
+                side_effect=AssertionError,
             ) as proof,
         ):
             actual = VALIDATOR._admit_cumulative_create_diagnostics(
@@ -452,9 +504,13 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
                 "_first_parent_history",
                 wraps=VALIDATOR._first_parent_history,
             ) as history,
-            mock.patch.object(VALIDATOR, "_tree_blob_map", wraps=VALIDATOR._tree_blob_map) as snapshots,
             mock.patch.object(
-                VALIDATOR, "_history_proves_cumulative_create", side_effect=AssertionError
+                VALIDATOR, "_tree_blob_map", wraps=VALIDATOR._tree_blob_map
+            ) as snapshots,
+            mock.patch.object(
+                VALIDATOR,
+                "_history_proves_cumulative_create",
+                side_effect=AssertionError,
             ) as proof,
         ):
             actual = VALIDATOR._admit_cumulative_create_diagnostics(
@@ -479,7 +535,9 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self.assertEqual(len(cache.snapshots), 1)
 
         with (
-            mock.patch.object(VALIDATOR, "CUMULATIVE_HISTORY_MAX_SNAPSHOT_WORK_BYTES", 1),
+            mock.patch.object(
+                VALIDATOR, "CUMULATIVE_HISTORY_MAX_SNAPSHOT_WORK_BYTES", 1
+            ),
             mock.patch.object(
                 VALIDATOR, "_snapshot_projection", side_effect=AssertionError
             ) as projection,
@@ -507,7 +565,9 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         with (
             mock.patch.object(VALIDATOR, "CUMULATIVE_HISTORY_MAX_SNAPSHOT_PATHS", 1),
             mock.patch.object(VALIDATOR, "_tree_blob_map", return_value=repeated),
-            mock.patch.object(VALIDATOR, "_run_git", side_effect=AssertionError) as batch,
+            mock.patch.object(
+                VALIDATOR, "_run_git", side_effect=AssertionError
+            ) as batch,
             mock.patch.object(
                 VALIDATOR, "_snapshot_projection", side_effect=AssertionError
             ) as projection,

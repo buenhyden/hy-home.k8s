@@ -24,8 +24,7 @@ from tests.agent_checkpoint_mutations import (
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = REPOSITORY_ROOT / "scripts/validate-agent-checkpoint.py"
 SCHEMA_PATH = (
-    REPOSITORY_ROOT
-    / "docs/00.agent-governance/contracts/agent-checkpoint.schema.json"
+    REPOSITORY_ROOT / "docs/00.agent-governance/contracts/agent-checkpoint.schema.json"
 )
 FIXTURE_PATH = REPOSITORY_ROOT / "tests/fixtures/agent-checkpoint.json"
 
@@ -106,9 +105,7 @@ class AgentCheckpointContractTests(unittest.TestCase):
 
     def test_valid_synthetic_checkpoint_and_resume_pass(self) -> None:
         self.assertEqual(self.fixture["fixtureVersion"], 2)
-        self.assertEqual(
-            self.fixture["syntheticCheckpoint"]["schemaVersion"], 2
-        )
+        self.assertEqual(self.fixture["syntheticCheckpoint"]["schemaVersion"], 2)
         self.assertEqual(
             self.fixture["syntheticCheckpoint"]["contractVersion"], "1.0.0"
         )
@@ -200,9 +197,7 @@ class AgentCheckpointContractTests(unittest.TestCase):
                 encoding="utf-8",
             )
 
-            with self.assertRaises(
-                self.validator.CheckpointError
-            ) as raised:
+            with self.assertRaises(self.validator.CheckpointError) as raised:
                 self.validator.validate_checkpoint(
                     root,
                     self.checkpoint_copy(),
@@ -316,12 +311,8 @@ class AgentCheckpointContractTests(unittest.TestCase):
             "compare-generation-and-previous-checkpoint-digest",
         )
         self.assertEqual(resume["acceptedIdentity"], "exact-match-only")
-        self.assertEqual(
-            self.fixture["repositoryState"]["activeWriterCount"], 1
-        )
-        self.assertEqual(
-            self.fixture["repositoryState"]["activeResumeCount"], 1
-        )
+        self.assertEqual(self.fixture["repositoryState"]["activeWriterCount"], 1)
+        self.assertEqual(self.fixture["repositoryState"]["activeResumeCount"], 1)
 
     def test_namespace_and_writer_claim_digests_are_recomputed(self) -> None:
         identity = self.fixture["syntheticCheckpoint"]["identity"]
@@ -376,9 +367,7 @@ class AgentCheckpointContractTests(unittest.TestCase):
                 checkpoint = self.checkpoint_copy()
                 repository_state = self.repository_state_copy()
                 if case["name"] == "duplicate-json-key":
-                    with self.assertRaises(
-                        self.validator.CheckpointError
-                    ) as raised:
+                    with self.assertRaises(self.validator.CheckpointError) as raised:
                         apply_duplicate_key_mutation(self.validator)
                     self.assertEqual(
                         raised.exception.code,
@@ -397,9 +386,7 @@ class AgentCheckpointContractTests(unittest.TestCase):
                 )
 
     def test_mutation_matrix_covers_required_acceptance_boundaries(self) -> None:
-        names = {
-            case["name"] for case in self.fixture["negativeMutations"]
-        }
+        names = {case["name"] for case in self.fixture["negativeMutations"]}
         required = {
             "duplicate-json-key",
             "unknown-checkpoint-field",
@@ -507,9 +494,7 @@ class AgentCheckpointContractTests(unittest.TestCase):
     def test_provider_local_promotion_requires_repository_reobservation(self) -> None:
         provider_local = next(
             item
-            for item in self.fixture["syntheticCheckpoint"][
-                "memoryLifecycle"
-            ]
+            for item in self.fixture["syntheticCheckpoint"]["memoryLifecycle"]
             if item["classId"] == "provider-local-auxiliary"
         )
         promotion = provider_local["promotion"]
@@ -523,9 +508,9 @@ class AgentCheckpointContractTests(unittest.TestCase):
 
     def test_lifecycle_records_are_reviewed_redacted_and_provenanced(self) -> None:
         updated = datetime.fromisoformat(
-            self.fixture["syntheticCheckpoint"]["identity"][
-                "updatedAtUtc"
-            ].replace("Z", "+00:00")
+            self.fixture["syntheticCheckpoint"]["identity"]["updatedAtUtc"].replace(
+                "Z", "+00:00"
+            )
         )
         for record in self.fixture["syntheticCheckpoint"]["memoryLifecycle"]:
             with self.subTest(memory_class=record["classId"]):
@@ -534,23 +519,15 @@ class AgentCheckpointContractTests(unittest.TestCase):
                     record["sensitivity"]["classification"],
                     "non-sensitive-redacted",
                 )
-                self.assertFalse(
-                    record["sensitivity"]["restrictedContextAllowed"]
-                )
+                self.assertFalse(record["sensitivity"]["restrictedContextAllowed"])
                 self.assertFalse(record["sensitivity"]["rawContextAllowed"])
-                self.assertFalse(
-                    record["sensitivity"]["providerPayloadAllowed"]
-                )
-                self.assertEqual(
-                    record["sensitivity"]["reviewStatus"], "approved"
-                )
+                self.assertFalse(record["sensitivity"]["providerPayloadAllowed"])
+                self.assertEqual(record["sensitivity"]["reviewStatus"], "approved")
                 self.assertTrue(record["canonicalOwner"])
                 self.assertTrue(record["refresh"]["basis"])
                 self.assertTrue(record["refresh"]["evidenceRefs"])
                 due = datetime.fromisoformat(
-                    record["refresh"]["refreshDueAtUtc"].replace(
-                        "Z", "+00:00"
-                    )
+                    record["refresh"]["refreshDueAtUtc"].replace("Z", "+00:00")
                 )
                 self.assertGreaterEqual(due, updated)
                 self.assertTrue(record["expiry"]["disposition"])
@@ -573,13 +550,9 @@ class AgentCheckpointContractTests(unittest.TestCase):
                 self.assertTrue(record["archiveGc"]["originalOwner"])
                 self.assertTrue(record["archiveGc"]["provenanceRefs"])
                 if record["archiveGc"]["disposition"] == "discard":
-                    self.assertIsNone(
-                        record["archiveGc"]["currentOrReplacementOwner"]
-                    )
+                    self.assertIsNone(record["archiveGc"]["currentOrReplacementOwner"])
                 else:
-                    self.assertTrue(
-                        record["archiveGc"]["currentOrReplacementOwner"]
-                    )
+                    self.assertTrue(record["archiveGc"]["currentOrReplacementOwner"])
                 if record["archiveGc"]["disposition"] in {
                     "archive",
                     "garbage-collect",
@@ -638,9 +611,7 @@ class AgentCheckpointContractTests(unittest.TestCase):
         self,
     ) -> None:
         synthetic_values = {
-            "openai-project": (
-                "sk" + "-proj-" + "synthetic_marker_only"
-            ),
+            "openai-project": ("sk" + "-proj-" + "synthetic_marker_only"),
             "github-personal": "gh" + "p_" + "syntheticmarkeronly",
             "github-oauth": "gh" + "o_" + "syntheticmarkeronly",
             "github-user": "gh" + "u_" + "syntheticmarkeronly",
@@ -657,12 +628,8 @@ class AgentCheckpointContractTests(unittest.TestCase):
         }
         for token_class, value in synthetic_values.items():
             with self.subTest(token_class=token_class):
-                with self.assertRaises(
-                    self.validator.CheckpointError
-                ) as raised:
-                    self.validator.scan_sensitive_payload(
-                        {"nextAction": value}
-                    )
+                with self.assertRaises(self.validator.CheckpointError) as raised:
+                    self.validator.scan_sensitive_payload({"nextAction": value})
                 self.assertEqual(
                     raised.exception.code,
                     "AHLL-CP-SENSITIVE",

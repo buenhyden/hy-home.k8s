@@ -268,7 +268,9 @@ def parse_env_keys(path: pathlib.Path) -> list[str]:
 
 
 def extract_ci_branch_policy_prefixes(branch_policy_text: str) -> list[str]:
-    match = re.search(r"allowed_branch_regex=['\"]\^\(([^)]+)\)/['\"]", branch_policy_text)
+    match = re.search(
+        r"allowed_branch_regex=['\"]\^\(([^)]+)\)/['\"]", branch_policy_text
+    )
     if not match:
         return []
     return match.group(1).split("|")
@@ -524,8 +526,7 @@ def assert_profiled_readme_table_heading_probe() -> None:
             profiled_readme_table_headings(title),
         )
         expected_duplicate = (
-            "ambiguous visible markdown table headings: "
-            f"['## {title}', '### {title}']"
+            f"ambiguous visible markdown table headings: ['## {title}', '### {title}']"
         )
         if duplicate_rows or duplicate_diagnostic != expected_duplicate:
             fail(
@@ -553,14 +554,23 @@ except Exception as exc:
 
 for tracked_path in sorted(tracked):
     if re.fullmatch(r"\.claude/[^/]+\.local\.md", tracked_path):
-        fail(f"ignored local Claude/Hookify runtime rule must not be tracked: {tracked_path}")
+        fail(
+            f"ignored local Claude/Hookify runtime rule must not be tracked: {tracked_path}"
+        )
     if tracked_path == ".env":
         fail(".env must remain untracked; commit .env.example only")
     tracked_name = pathlib.Path(tracked_path).name
-    if tracked_name == "progress.md" and tracked_path != "docs/00.agent-governance/memory/progress.md":
-        fail(f"tracked progress.md must live only at docs/00.agent-governance/memory/progress.md: {tracked_path}")
+    if (
+        tracked_name == "progress.md"
+        and tracked_path != "docs/00.agent-governance/memory/progress.md"
+    ):
+        fail(
+            f"tracked progress.md must live only at docs/00.agent-governance/memory/progress.md: {tracked_path}"
+        )
     if re.search(r"(^temp_|_(new|old|backup)(\.|$))", tracked_name):
-        fail(f"tracked temporary or backup-style file name is not allowed: {tracked_path}")
+        fail(
+            f"tracked temporary or backup-style file name is not allowed: {tracked_path}"
+        )
 
 requirements_stage = root / "docs/01.requirements"
 if requirements_stage.exists():
@@ -591,7 +601,9 @@ if specs_stage.exists():
                 )
             continue
         if spec_entry.is_file():
-            fail(f"docs/03.specs may contain only README.md and numbered Spec folders: {rel(spec_entry)}")
+            fail(
+                f"docs/03.specs may contain only README.md and numbered Spec folders: {rel(spec_entry)}"
+            )
 
 env_ignore_check = subprocess.run(
     ["git", "check-ignore", "-q", ".env"], cwd=root, timeout=120
@@ -607,21 +619,32 @@ if not env_example_path.exists():
     fail(".env.example is required as the tracked environment key contract")
 else:
     env_example_keys = parse_env_keys(env_example_path)
-    duplicated_example_keys = sorted(key for key, count in collections.Counter(env_example_keys).items() if count > 1)
+    duplicated_example_keys = sorted(
+        key for key, count in collections.Counter(env_example_keys).items() if count > 1
+    )
     if duplicated_example_keys:
-        fail(".env.example contains duplicate keys: " + ", ".join(duplicated_example_keys))
+        fail(
+            ".env.example contains duplicate keys: "
+            + ", ".join(duplicated_example_keys)
+        )
     if env_path.exists():
         env_keys = parse_env_keys(env_path)
-        duplicated_env_keys = sorted(key for key, count in collections.Counter(env_keys).items() if count > 1)
+        duplicated_env_keys = sorted(
+            key for key, count in collections.Counter(env_keys).items() if count > 1
+        )
         if duplicated_env_keys:
             fail(".env contains duplicate keys: " + ", ".join(duplicated_env_keys))
         missing_env_keys = sorted(set(env_example_keys) - set(env_keys))
         extra_env_keys = sorted(set(env_keys) - set(env_example_keys))
         if missing_env_keys:
-            fail(".env is missing keys from .env.example: " + ", ".join(missing_env_keys))
+            fail(
+                ".env is missing keys from .env.example: " + ", ".join(missing_env_keys)
+            )
         if extra_env_keys:
-            fail(".env has keys not present in .env.example: " + ", ".join(extra_env_keys))
-
+            fail(
+                ".env has keys not present in .env.example: "
+                + ", ".join(extra_env_keys)
+            )
 
 
 claude_local_rule_paths = sorted((root / ".claude").glob("*.local.md"))
@@ -633,7 +656,9 @@ for local_rule_path in claude_local_rule_paths:
     if local_rule_ignore_check.returncode == 1:
         fail(f"{local_rule_rel} must remain ignored by Git")
     elif local_rule_ignore_check.returncode not in {0, 1}:
-        fail(f"git check-ignore failed while validating local rule ignore contract: {local_rule_rel}")
+        fail(
+            f"git check-ignore failed while validating local rule ignore contract: {local_rule_rel}"
+        )
 
     if local_rule_path.name.startswith("hookify."):
         text = read_text(local_rule_path)
@@ -650,9 +675,13 @@ for local_rule_path in claude_local_rule_paths:
             if field not in metadata:
                 fail(f"{local_rule_rel} missing Hookify frontmatter field: {field}")
         if metadata.get("event") not in {"bash", "file", "stop", "prompt", "all"}:
-            fail(f"{local_rule_rel} has unsupported Hookify event: {metadata.get('event')}")
+            fail(
+                f"{local_rule_rel} has unsupported Hookify event: {metadata.get('event')}"
+            )
         if "action" in metadata and metadata.get("action") not in {"warn", "block"}:
-            fail(f"{local_rule_rel} has unsupported Hookify action: {metadata.get('action')}")
+            fail(
+                f"{local_rule_rel} has unsupported Hookify action: {metadata.get('action')}"
+            )
         if "pattern" not in metadata and "conditions" not in metadata:
             fail(f"{local_rule_rel} must define Hookify pattern or conditions")
 
@@ -669,7 +698,9 @@ if local_agents_skills_dir.is_dir():
         if re.fullmatch(r"\.claude/skills/[^/]+/skill\.md", tracked_path)
     ]
     for canonical_skill_path in canonical_skill_paths:
-        local_skill_path = local_agents_skills_dir / canonical_skill_path.parent.name / "skill.md"
+        local_skill_path = (
+            local_agents_skills_dir / canonical_skill_path.parent.name / "skill.md"
+        )
         if not local_skill_path.exists():
             continue
         if read_bytes(local_skill_path) != read_bytes(canonical_skill_path):
@@ -723,9 +754,7 @@ stage04_retirement_authority = (
     root
     / "docs/98.archive/migrations/0002-sdlc-document-and-governance-consolidation.md"
 )
-stage04_retirement_authority_sha256 = (
-    "2cac1634348c9efa985099bb3a2d736609e79849e3aa3d978a8f2a6858a2a45a"  # pragma: allowlist secret
-)
+stage04_retirement_authority_sha256 = "2cac1634348c9efa985099bb3a2d736609e79849e3aa3d978a8f2a6858a2a45a"  # pragma: allowlist secret
 if "04.execution" in actual_docs:
     fail("retired docs/04.execution must remain absent after MIG-0002")
 else:
@@ -771,7 +800,9 @@ expected_provider_asset_counts = {"aws": 8, "azure": 14}
 for provider in ["aws", "azure"]:
     example_docs = root / "examples" / provider / "docs"
     if example_docs.exists():
-        fail(f"retired example docs root must be absent after ADM-006: {rel(example_docs)}")
+        fail(
+            f"retired example docs root must be absent after ADM-006: {rel(example_docs)}"
+        )
     provider_root = root / "examples" / provider
     executable_assets = [
         path
@@ -798,7 +829,9 @@ expected_example_role_header = [
 ]
 expected_example_paths = ["sample-app/", "aws/", "azure/"]
 if len(example_role_rows) < 2:
-    fail("examples/README.md Example Role Matrix must contain a header and example rows")
+    fail(
+        "examples/README.md Example Role Matrix must contain a header and example rows"
+    )
 elif example_role_rows[0] != expected_example_role_header:
     fail(
         "examples/README.md Example Role Matrix header must be: "
@@ -824,26 +857,36 @@ else:
         example_path = match.group(1)
         indexed_example_paths.append(example_path)
         if not (root / "examples" / example_path.rstrip("/")).is_dir():
-            fail(f"examples/README.md Example Role Matrix references missing directory: examples/{example_path}")
+            fail(
+                f"examples/README.md Example Role Matrix references missing directory: examples/{example_path}"
+            )
         for label, value in [
             ("Role", role),
             ("Active source of truth", source_of_truth),
             ("Validation", validation),
         ]:
             if not value:
-                fail(f"examples/README.md Example Role Matrix row {row_number} has empty {label}")
+                fail(
+                    f"examples/README.md Example Role Matrix row {row_number} has empty {label}"
+                )
         for command in [
             "scripts/validate-repo-quality-gates.sh",
             "scripts/validate-k8s-manifests.sh",
             "scripts/check-secret-handling.sh",
         ]:
             if command not in validation:
-                fail(f"examples/README.md Example Role Matrix row {row_number} must cite {command}")
+                fail(
+                    f"examples/README.md Example Role Matrix row {row_number} must cite {command}"
+                )
         if example_path == "sample-app/":
             if "Minimal local k3d GitOps onboarding template" not in role:
-                fail("examples/README.md sample-app role must identify the minimal local k3d onboarding template")
+                fail(
+                    "examples/README.md sample-app role must identify the minimal local k3d onboarding template"
+                )
             if "../gitops/workloads/adminer/" not in source_of_truth:
-                fail("examples/README.md sample-app source of truth must point to ../gitops/workloads/adminer/")
+                fail(
+                    "examples/README.md sample-app source of truth must point to ../gitops/workloads/adminer/"
+                )
             for phrase in [
                 "../gitops/workloads/<appname>/",
                 "placeholder replacement",
@@ -851,7 +894,9 @@ else:
                 "active desired state",
             ]:
                 if phrase not in source_of_truth:
-                    fail(f"examples/README.md sample-app source of truth missing activation phrase: {phrase}")
+                    fail(
+                        f"examples/README.md sample-app source of truth missing activation phrase: {phrase}"
+                    )
         else:
             provider = example_path.rstrip("/")
             for phrase in [
@@ -881,7 +926,9 @@ expected_sample_app_files = [
     "service.yaml",
     "traefik-k3d.yaml.example",
 ]
-actual_sample_app_files = sorted(path.name for path in sample_app_dir.iterdir() if path.is_file())
+actual_sample_app_files = sorted(
+    path.name for path in sample_app_dir.iterdir() if path.is_file()
+)
 if actual_sample_app_files != expected_sample_app_files:
     fail(
         "examples/sample-app file set must stay minimal onboarding template: "
@@ -899,7 +946,9 @@ for phrase in [
     "secret values",
 ]:
     if phrase not in sample_app_readme:
-        fail(f"examples/sample-app/README.md missing onboarding boundary phrase: {phrase}")
+        fail(
+            f"examples/sample-app/README.md missing onboarding boundary phrase: {phrase}"
+        )
 for active_reference_file in [
     "service-stable.yaml",
     "service-canary.yaml",
@@ -908,7 +957,9 @@ for active_reference_file in [
     "peer-authentication.yaml",
 ]:
     if not (root / "gitops/workloads/adminer" / active_reference_file).is_file():
-        fail(f"gitops/workloads/adminer missing fuller active reference file: {active_reference_file}")
+        fail(
+            f"gitops/workloads/adminer missing fuller active reference file: {active_reference_file}"
+        )
 
 sample_app_external_secret = read_text(sample_app_dir / "external-secret.yaml")
 for phrase in [
@@ -918,9 +969,13 @@ for phrase in [
     "ClusterSecretStore path",
 ]:
     if phrase not in sample_app_external_secret:
-        fail(f"examples/sample-app/external-secret.yaml missing app secret path contract phrase: {phrase}")
+        fail(
+            f"examples/sample-app/external-secret.yaml missing app secret path contract phrase: {phrase}"
+        )
 if "key: secret/apps/<appname>/config" in sample_app_external_secret:
-    fail("examples/sample-app/external-secret.yaml remoteRef.key must exclude the Vault mount prefix")
+    fail(
+        "examples/sample-app/external-secret.yaml remoteRef.key must exclude the Vault mount prefix"
+    )
 
 active_app_secret_contracts = [
     (
@@ -934,7 +989,8 @@ active_app_secret_contracts = [
         ],
     ),
     (
-        root / "docs/05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md",
+        root
+        / "docs/05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md",
         [
             "secret/apps/${APP}/config",
             "ExternalSecret remoteRef.key",
@@ -957,7 +1013,9 @@ for contract_path, phrases in active_app_secret_contracts:
     contract_text = read_text(contract_path)
     for phrase in phrases:
         if phrase not in contract_text:
-            fail(f"{rel(contract_path)} missing app onboarding secret path contract phrase: {phrase}")
+            fail(
+                f"{rel(contract_path)} missing app onboarding secret path contract phrase: {phrase}"
+            )
 
 github_native_markdown = [
     root / ".github/README.md",
@@ -967,6 +1025,7 @@ github_native_markdown = [
 for github_doc in github_native_markdown:
     if github_doc.exists() and has_markdown_frontmatter(github_doc):
         fail(f"{rel(github_doc)} must remain frontmatter-free GitHub-native Markdown")
+
 
 def iter_markdown_link_targets(text: str):
     in_fence = False
@@ -1009,6 +1068,7 @@ for profile in document_registry.profiles:
         )
     template_locations[profile.template.name] = location.as_posix()
 
+
 def template_path(template_name: str) -> pathlib.Path:
     location = template_locations.get(template_name)
     if not location:
@@ -1017,6 +1077,8 @@ def template_path(template_name: str) -> pathlib.Path:
 
 
 template_root = root / "docs/99.templates/templates"
+
+
 def collect_physical_form_paths(
     repository_root: pathlib.Path,
     forms_root: pathlib.Path,
@@ -1047,8 +1109,7 @@ def is_derived_template_profile(profile) -> bool:
         for source_id in profile.source_profile_ids
     ]
     return any(
-        source_profile is not None
-        and source_profile.template == profile.template
+        source_profile is not None and source_profile.template == profile.template
         for source_profile in source_profiles
     )
 
@@ -1065,7 +1126,9 @@ def canonical_form_contract_errors(
     profile_form_references: list[tuple[str, pathlib.PurePosixPath]],
     profile_form_owners: list[tuple[str, pathlib.PurePosixPath]],
 ) -> list[str]:
-    owners_by_form: dict[pathlib.PurePosixPath, list[str]] = collections.defaultdict(list)
+    owners_by_form: dict[pathlib.PurePosixPath, list[str]] = collections.defaultdict(
+        list
+    )
     for profile_id, form_path in profile_form_owners:
         owners_by_form[form_path].append(profile_id)
     registry_forms = {form_path for _, form_path in profile_form_references}
@@ -1096,7 +1159,9 @@ def canonical_form_contract_errors(
         if len(owners) != 1
     }
     if duplicate_owners:
-        errors.append(f"physical forms must have exactly one profile owner: {duplicate_owners}")
+        errors.append(
+            f"physical forms must have exactly one profile owner: {duplicate_owners}"
+        )
     return errors
 
 
@@ -1160,6 +1225,8 @@ if expected_noncanonical_diagnostic not in noncanonical_errors:
         "canonical form mutation proof did not reject a noncanonical native filename "
         "with the stable diagnostic"
     )
+
+
 def canonical_form_content_errors(
     form_sources: dict[pathlib.PurePosixPath, str],
 ) -> list[str]:
@@ -1262,14 +1329,12 @@ def canonical_form_content_errors(
     archive_envelope_marker = (
         "<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->"
     )
-    archive_migration_marker = (
-        "<!-- archive-migration-ledger:v1 format=json -->"
-    )
+    archive_migration_marker = "<!-- archive-migration-ledger:v1 format=json -->"
     # The migration form also opens the consumer block the Archive parser owns.
-    archive_consumers_marker = (
-        "<!-- archive-historical-consumers:v1 format=json -->"
-    )
-    for form_path, source in sorted(form_sources.items(), key=lambda item: str(item[0])):
+    archive_consumers_marker = "<!-- archive-historical-consumers:v1 format=json -->"
+    for form_path, source in sorted(
+        form_sources.items(), key=lambda item: str(item[0])
+    ):
         for marker in retired_markers:
             if marker in source:
                 errors.append(f"{form_path} contains retired form residue: {marker}")
@@ -1303,9 +1368,10 @@ def canonical_form_content_errors(
             sections = markdown_sections(source, heading_level)
             for heading in required_headings:
                 section_body = sections.get(heading, "")
-                if allow_structured_starter and re.sub(
-                    r"<!--.*?-->", "", section_body, flags=re.DOTALL
-                ).strip():
+                if (
+                    allow_structured_starter
+                    and re.sub(r"<!--.*?-->", "", section_body, flags=re.DOTALL).strip()
+                ):
                     continue
                 prompts = [
                     match.group("prompt").strip()
@@ -1336,9 +1402,7 @@ for error in canonical_form_content_errors(form_sources):
 # Form-focused mutations keep retired route prose, generic comments, and
 # registry-table drift inside the aggregate repository gate without extending
 # authored-document semantic enforcement ahead of the lifecycle-table tranche.
-spec_form = pathlib.PurePosixPath(
-    "docs/99.templates/templates/specs/spec.template.md"
-)
+spec_form = pathlib.PurePosixPath("docs/99.templates/templates/specs/spec.template.md")
 native_form = pathlib.PurePosixPath(
     "docs/99.templates/templates/specs/contracts/openapi.template.yaml"
 )
@@ -1357,7 +1421,9 @@ table_mutation[spec_form] = table_mutation[spec_form].replace(
 )
 form_content_mutations.append(("lifecycle table drift", table_mutation))
 native_mutation = dict(form_sources)
-native_mutation[native_form] = "# Owner docs from target directory\n" + native_mutation[native_form]
+native_mutation[native_form] = (
+    "# Owner docs from target directory\n" + native_mutation[native_form]
+)
 form_content_mutations.append(("native owner comment", native_mutation))
 for label, mutation in form_content_mutations:
     if not canonical_form_content_errors(mutation):
@@ -1412,9 +1478,7 @@ prompt_profile_id, prompt_form = sorted(
     key=lambda item: str(item[1]),
 )[0]
 prompt_heading = registry_profiles_by_id[prompt_profile_id].headings.required[0]
-prompt_match = re.search(
-    r"<!-- Author prompt: [^\n]+ -->", form_sources[prompt_form]
-)
+prompt_match = re.search(r"<!-- Author prompt: [^\n]+ -->", form_sources[prompt_form])
 if prompt_match is None:
     fail(f"canonical prompt mutation setup found no Author prompt in {prompt_form}")
 else:
@@ -1502,16 +1566,21 @@ for provider in ["aws", "azure"]:
             "not live provider-latest guidance",
         ]:
             if required_phrase not in text:
-                fail(f"{rel(example_doc)} missing provider boundary phrase: {required_phrase}")
+                fail(
+                    f"{rel(example_doc)} missing provider boundary phrase: {required_phrase}"
+                )
         for stale_heading in [
             "## Azure Migration Product Requirements",
             "## Azure Migration Specification",
             "## Azure Kubernetes Service Architecture Description",
         ]:
             if stale_heading in text:
-                fail(f"{rel(example_doc)} contains duplicate stale heading: {stale_heading}")
+                fail(
+                    f"{rel(example_doc)} contains duplicate stale heading: {stale_heading}"
+                )
         if re.search(r"^##\s+[0-9]+\.\s+.*관련 문서", text, re.MULTILINE):
             fail(f"{rel(example_doc)} must use canonical ## Related Documents heading")
+
 
 def canonical_markdown_owns_generic_residue(path: pathlib.Path) -> bool:
     try:
@@ -1550,7 +1619,9 @@ def assert_generic_residue_delegation_probe() -> None:
         fail("generic residue mutation probe failed for non-structural Markdown")
     structural = root / "docs/01.requirements/9999-projection.md"
     if not canonical_markdown_owns_generic_residue(structural):
-        fail("generic residue delegation probe must delegate authored structural Markdown")
+        fail(
+            "generic residue delegation probe must delegate authored structural Markdown"
+        )
     provider_shim = root / "AGENTS.md"
     if canonical_markdown_owns_generic_residue(provider_shim):
         fail("generic residue delegation probe must retain headingless provider shims")
@@ -1587,7 +1658,11 @@ for raw_relative_path in tracked_active_paths:
     ):
         continue
     path = root / relative_path
-    if path.suffix not in active_residue_suffixes or not path.is_file() or path.is_symlink():
+    if (
+        path.suffix not in active_residue_suffixes
+        or not path.is_file()
+        or path.is_symlink()
+    ):
         continue
     if path.is_relative_to(root / "docs/99.templates/templates"):
         continue
@@ -1625,19 +1700,21 @@ for glob_pattern in english_first_stage_globs:
             continue
         for line_number, line in enumerate(read_text(path).splitlines(), start=1):
             if hangul_pattern.search(line):
-                fail(f"{rel(path)}:{line_number} contains Korean text in an English-first Stage 03/04 artifact")
+                fail(
+                    f"{rel(path)}:{line_number} contains Korean text in an English-first Stage 03/04 artifact"
+                )
 
 operations_stage_path = root / "docs/05.operations"
 allowed_operations_buckets = {"guides", "policies", "runbooks", "incidents"}
 actual_operations_buckets = {
-    path.name
-    for path in operations_stage_path.iterdir()
-    if path.is_dir()
+    path.name for path in operations_stage_path.iterdir() if path.is_dir()
 }
 for name in sorted(allowed_operations_buckets - actual_operations_buckets):
     fail(f"required operations bucket is missing: {rel(operations_stage_path / name)}")
 for name in sorted(actual_operations_buckets - allowed_operations_buckets):
-    fail(f"docs/05.operations contains unsupported bucket: {rel(operations_stage_path / name)}")
+    fail(
+        f"docs/05.operations contains unsupported bucket: {rel(operations_stage_path / name)}"
+    )
 
 operations_readme_path = operations_stage_path / "README.md"
 operations_readme_text = read_text(operations_readme_path)
@@ -1649,12 +1726,23 @@ expected_operations_routing_header = ["필요 상황", "사용할 위치", "시�
 expected_operations_routing_targets = [
     ("./guides/README.md", "../99.templates/templates/operations/guide.template.md"),
     ("./policies/README.md", "../99.templates/templates/operations/policy.template.md"),
-    ("./runbooks/README.md", "../99.templates/templates/operations/runbook.template.md"),
-    ("./incidents/README.md", "../99.templates/templates/operations/incident.template.md"),
-    ("./incidents/README.md", "../99.templates/templates/operations/postmortem.template.md"),
+    (
+        "./runbooks/README.md",
+        "../99.templates/templates/operations/runbook.template.md",
+    ),
+    (
+        "./incidents/README.md",
+        "../99.templates/templates/operations/incident.template.md",
+    ),
+    (
+        "./incidents/README.md",
+        "../99.templates/templates/operations/postmortem.template.md",
+    ),
 ]
 if len(operations_routing_rows) < 2:
-    fail("docs/05.operations/README.md Operations Routing Matrix must contain a header and routing rows")
+    fail(
+        "docs/05.operations/README.md Operations Routing Matrix must contain a header and routing rows"
+    )
 elif operations_routing_rows[0] != expected_operations_routing_header:
     fail(
         "docs/05.operations/README.md Operations Routing Matrix header must be: "
@@ -1671,7 +1759,9 @@ else:
             continue
         situation, location_cell, template_cell = row
         if not situation:
-            fail(f"docs/05.operations/README.md Operations Routing Matrix row {row_number} has empty 필요 상황")
+            fail(
+                f"docs/05.operations/README.md Operations Routing Matrix row {row_number} has empty 필요 상황"
+            )
         location_targets = list(iter_markdown_link_targets(location_cell))
         template_targets = list(iter_markdown_link_targets(template_cell))
         if len(location_targets) != 1:
@@ -1738,7 +1828,9 @@ expected_incident_boundary = [
     },
 ]
 if len(incident_boundary_rows) < 2:
-    fail("docs/05.operations/incidents/README.md Incident Boundary Matrix must contain a header and boundary rows")
+    fail(
+        "docs/05.operations/incidents/README.md Incident Boundary Matrix must contain a header and boundary rows"
+    )
 elif incident_boundary_rows[0] != expected_incident_boundary_header:
     fail(
         "docs/05.operations/incidents/README.md Incident Boundary Matrix header must be: "
@@ -1797,7 +1889,9 @@ else:
                     "docs/05.operations/incidents/README.md Incident Boundary Matrix "
                     f"row {row_number} Template must be {expected['template']!r}"
                 )
-            if not (incidents_readme_path.parent / pathlib.Path(template_target)).exists():
+            if not (
+                incidents_readme_path.parent / pathlib.Path(template_target)
+            ).exists():
                 fail(
                     "docs/05.operations/incidents/README.md Incident Boundary Matrix "
                     f"row {row_number} Template target is missing: {template_target}"
@@ -1812,8 +1906,12 @@ else:
                 "docs/05.operations/incidents/README.md Incident Boundary Matrix "
                 f"row {row_number} Current state must be {expected['current_state']!r}"
             )
-    if actual_incident_artifacts != [item["artifact"] for item in expected_incident_boundary]:
-        fail("docs/05.operations/incidents/README.md Incident Boundary Matrix row order is invalid")
+    if actual_incident_artifacts != [
+        item["artifact"] for item in expected_incident_boundary
+    ]:
+        fail(
+            "docs/05.operations/incidents/README.md Incident Boundary Matrix row order is invalid"
+        )
 
 tracked_incident_docs = [
     path
@@ -1832,9 +1930,13 @@ for path in tracked_incident_docs:
         continue
     year, incident_folder, filename = parts
     if not re.fullmatch(r"[0-9]{4}", year):
-        fail(f"docs/05.operations/incidents document year folder must be YYYY: {rel(path)}")
+        fail(
+            f"docs/05.operations/incidents document year folder must be YYYY: {rel(path)}"
+        )
     if not re.fullmatch(r"inc-[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*", incident_folder):
-        fail(f"docs/05.operations/incidents document folder must be inc-####-<slug>: {rel(path)}")
+        fail(
+            f"docs/05.operations/incidents document folder must be inc-####-<slug>: {rel(path)}"
+        )
     if filename not in {"incident.md", "postmortem.md"}:
         fail(
             "docs/05.operations/incidents document filename must be "
@@ -1847,7 +1949,9 @@ if not tracked_incident_docs:
         "No tracked postmortems.",
     ]:
         if phrase not in incidents_readme_text:
-            fail(f"docs/05.operations/incidents/README.md missing no-incident state phrase: {phrase}")
+            fail(
+                f"docs/05.operations/incidents/README.md missing no-incident state phrase: {phrase}"
+            )
     unexpected_incident_dirs = [
         path
         for path in sorted((operations_stage_path / "incidents").iterdir())
@@ -1880,23 +1984,31 @@ for operations_root in operations_index_roots:
         fail(f"{rel(readme_path)} 문서 인덱스 must contain a header and document rows")
         continue
     if rows[0] != expected_header:
-        fail(f"{rel(readme_path)} 문서 인덱스 header must be: {' | '.join(expected_header)}")
+        fail(
+            f"{rel(readme_path)} 문서 인덱스 header must be: {' | '.join(expected_header)}"
+        )
 
     indexed_rows: dict[str, list[str]] = {}
     for row_number, row in enumerate(rows[1:], start=1):
         if len(row) != len(expected_header):
-            fail(f"{rel(readme_path)} 문서 인덱스 row {row_number} must have {len(expected_header)} columns")
+            fail(
+                f"{rel(readme_path)} 문서 인덱스 row {row_number} must have {len(expected_header)} columns"
+            )
             continue
         match = re.search(r"\]\(\./([^)]+\.md)\)", row[0])
         if not match:
-            fail(f"{rel(readme_path)} 문서 인덱스 row {row_number} must link to ./<document>.md")
+            fail(
+                f"{rel(readme_path)} 문서 인덱스 row {row_number} must link to ./<document>.md"
+            )
             continue
         target_name = match.group(1)
         if target_name in indexed_rows:
             fail(f"{rel(readme_path)} 문서 인덱스 duplicates document: {target_name}")
         indexed_rows[target_name] = row
 
-    operation_docs = sorted(path for path in operations_root.glob("*.md") if path.name != "README.md")
+    operation_docs = sorted(
+        path for path in operations_root.glob("*.md") if path.name != "README.md"
+    )
     operation_doc_names = {path.name for path in operation_docs}
     for doc_name in sorted(operation_doc_names - set(indexed_rows)):
         fail(f"{rel(readme_path)} 문서 인덱스 missing document: {doc_name}")
@@ -1910,12 +2022,16 @@ for operations_root in operations_index_roots:
         doc_text = read_text(doc_path)
         frontmatter = re.match(r"^---\n(.*?)\n---\n", doc_text, re.DOTALL)
         if not frontmatter:
-            fail(f"{rel(doc_path)} missing YAML frontmatter for operations index validation")
+            fail(
+                f"{rel(doc_path)} missing YAML frontmatter for operations index validation"
+            )
             continue
         try:
             metadata = yaml.load(frontmatter.group(1), Loader=DuplicateKeyLoader) or {}
         except Exception as exc:
-            fail(f"{rel(doc_path)} frontmatter parse failed for operations index validation: {exc}")
+            fail(
+                f"{rel(doc_path)} frontmatter parse failed for operations index validation: {exc}"
+            )
             continue
         status = str(metadata.get("status", "")).strip()
         updated = str(metadata.get("updated", "")).strip()
@@ -1924,11 +2040,15 @@ for operations_root in operations_index_roots:
         if not status:
             fail(f"{rel(doc_path)} missing status for operations index validation")
         elif row_status.lower() != status.lower():
-            fail(f"{rel(readme_path)} status mismatch for {doc_path.name}: index={row_status}, frontmatter={status}")
+            fail(
+                f"{rel(readme_path)} status mismatch for {doc_path.name}: index={row_status}, frontmatter={status}"
+            )
         if not updated:
             fail(f"{rel(doc_path)} missing updated for operations index validation")
         elif row_updated != updated:
-            fail(f"{rel(readme_path)} updated mismatch for {doc_path.name}: index={row_updated}, frontmatter={updated}")
+            fail(
+                f"{rel(readme_path)} updated mismatch for {doc_path.name}: index={row_updated}, frontmatter={updated}"
+            )
 
 
 template_enforcement_phrase_checks = {
@@ -1953,7 +2073,9 @@ active_template_routing_reference_files = [
 for path in active_template_routing_reference_files:
     text = read_text(path)
     if "99.templates/registry.json" not in text:
-        fail(f"{rel(path)} must route exact template selection through docs/99.templates/registry.json")
+        fail(
+            f"{rel(path)} must route exact template selection through docs/99.templates/registry.json"
+        )
 
 for path in [root / "README.md", root / "docs/README.md"]:
     if "99.templates/README.md" not in read_text(path):
@@ -1979,7 +2101,10 @@ for scan_root in legacy_scan_roots:
     for candidate in candidates:
         if not candidate.is_file():
             continue
-        if candidate.suffix not in legacy_scan_suffixes and candidate.name not in {"AGENTS.md", "RTK.md"}:
+        if candidate.suffix not in legacy_scan_suffixes and candidate.name not in {
+            "AGENTS.md",
+            "RTK.md",
+        }:
             continue
         text = read_text(candidate)
         for literal, replacement in legacy_denylist_literals.items():
@@ -1993,9 +2118,7 @@ legacy_docs_range = "01" + "~" + "99"
 legacy_stage_label = "Stage " + "11"
 legacy_harness = "H" + "100"
 legacy_harness_examples = "examples/" + "harness-100"
-old_docs_path_refs = [
-    "docs/" + name for name in sorted(old_top_level_docs)
-] + [
+old_docs_path_refs = ["docs/" + name for name in sorted(old_top_level_docs)] + [
     "../" + name for name in sorted(old_top_level_docs)
 ]
 legacy_dashboard_app = "platform" + "-dashboard"
@@ -2056,8 +2179,12 @@ for scan_root in scan_roots:
             if pattern in text:
                 fail(f"stale docs path reference found in {rel(path)}: {pattern}")
         for pattern in legacy_contract_patterns:
-            if pattern in text and not any(marker in text for marker in legacy_contract_markers):
-                fail(f"legacy runtime contract reference lacks historical/superseded note in {rel(path)}: {pattern}")
+            if pattern in text and not any(
+                marker in text for marker in legacy_contract_markers
+            ):
+                fail(
+                    f"legacy runtime contract reference lacks historical/superseded note in {rel(path)}: {pattern}"
+                )
 
 active_stale_contract_roots = [
     root / "docs/01.requirements",
@@ -2102,6 +2229,8 @@ migration_evidence_ledger_path = (
     root
     / "docs/90.references/research/0001-workspace-engineering/m0012-source-coverage.md"
 )
+
+
 def is_currentness_evidence_only(path: pathlib.Path) -> bool:
     return path == migration_evidence_ledger_path
 
@@ -2149,10 +2278,7 @@ for scan_root in active_currentness_roots:
                 f"in {rel(path)}"
             )
         if stale_shell_job_name in text:
-            fail(
-                f"active authored docs must not list stale CI job name "
-                f"in {rel(path)}"
-            )
+            fail(f"active authored docs must not list stale CI job name in {rel(path)}")
         for pattern in stale_headlamp_oidc_patterns:
             if pattern in text:
                 fail(
@@ -2212,12 +2338,26 @@ command_boundary_rules = [
     (
         "kubectl apply/patch",
         re.compile(r"\bkubectl\b.*\b(?:apply|patch)\b"),
-        ["human-approved", "break-glass", "bootstrap-only", "bootstrap only", "operator-approved", "dry-run"],
+        [
+            "human-approved",
+            "break-glass",
+            "bootstrap-only",
+            "bootstrap only",
+            "operator-approved",
+            "dry-run",
+        ],
     ),
     (
         "kubectl create clusterrolebinding",
         re.compile(r"\bkubectl\b.*\bcreate\s+clusterrolebinding\b"),
-        ["human-approved", "break-glass", "bootstrap-only", "bootstrap only", "operator-approved", "dry-run"],
+        [
+            "human-approved",
+            "break-glass",
+            "bootstrap-only",
+            "bootstrap only",
+            "operator-approved",
+            "dry-run",
+        ],
     ),
     (
         "kubectl get secret yaml/json",
@@ -2237,7 +2377,12 @@ command_boundary_rules = [
     (
         "vault policy write",
         re.compile(r"\bvault\s+policy\s+write\b"),
-        ["external secret operation", "operator-approved", "human-approved", "break-glass"],
+        [
+            "external secret operation",
+            "operator-approved",
+            "human-approved",
+            "break-glass",
+        ],
     ),
     (
         "terraform apply/destroy",
@@ -2257,34 +2402,63 @@ command_boundary_rules = [
     (
         "docker network mutation",
         re.compile(r"\bdocker\s+network\s+(?:connect|disconnect|create|rm)\b"),
-        ["human-approved", "break-glass", "bootstrap-only", "bootstrap only", "operator-approved"],
+        [
+            "human-approved",
+            "break-glass",
+            "bootstrap-only",
+            "bootstrap only",
+            "operator-approved",
+        ],
     ),
     (
         "kubeconfig mutation",
-        re.compile(r"\b(?:aws\s+eks\s+update-kubeconfig|az\s+aks\s+get-credentials|kubectl\s+config)\b"),
+        re.compile(
+            r"\b(?:aws\s+eks\s+update-kubeconfig|az\s+aks\s+get-credentials|kubectl\s+config)\b"
+        ),
         ["--kubeconfig", "--file", "temporary kubeconfig", "임시 kubeconfig"],
     ),
 ]
 
 command_boundary_roots = authored_command_roots + [root / "examples"]
 for command_root in command_boundary_roots:
-    candidates = command_root.rglob("*") if command_root == root / "examples" else command_root.rglob("*.md")
+    candidates = (
+        command_root.rglob("*")
+        if command_root == root / "examples"
+        else command_root.rglob("*.md")
+    )
     for path in sorted(candidates):
         if not path.is_file():
             continue
-        if command_root == root / "examples" and path.suffix not in {".md", ".yaml", ".yml", ".sh", ".tf", ".bicep"}:
+        if command_root == root / "examples" and path.suffix not in {
+            ".md",
+            ".yaml",
+            ".yml",
+            ".sh",
+            ".tf",
+            ".bicep",
+        }:
             continue
         lines = read_text(path).splitlines()
         for index, line in enumerate(lines):
             stripped = line.strip()
             if stripped == "git push" or "git push origin main" in stripped:
-                fail(f"{rel(path)} contains bare/main direct push example; use feature branch + PR flow: line {index + 1}")
+                fail(
+                    f"{rel(path)} contains bare/main direct push example; use feature branch + PR flow: line {index + 1}"
+                )
             elif re.search(r"\bgit\s+push\b", line):
-                if not allowed_push_branch.search(line) or not is_pr_flow_push(lines, index):
-                    fail(f"{rel(path)} contains push example without nearby PR-flow context: line {index + 1}")
+                if not allowed_push_branch.search(line) or not is_pr_flow_push(
+                    lines, index
+                ):
+                    fail(
+                        f"{rel(path)} contains push example without nearby PR-flow context: line {index + 1}"
+                    )
             for label, pattern, markers in command_boundary_rules:
-                if pattern.search(line) and not has_nearby_marker(lines, index, markers):
-                    fail(f"{rel(path)} has unmarked {label} example near line {index + 1}")
+                if pattern.search(line) and not has_nearby_marker(
+                    lines, index, markers
+                ):
+                    fail(
+                        f"{rel(path)} has unmarked {label} example near line {index + 1}"
+                    )
 
 markdown_direct_push_roots = [
     root / "README.md",
@@ -2307,7 +2481,9 @@ for scan_root in markdown_direct_push_roots:
         for index, line in enumerate(lines):
             stripped = line.strip()
             if stripped == "git push" or "git push origin main" in stripped:
-                fail(f"{rel(path)} contains bare/main direct push example; use feature branch + PR flow: line {index + 1}")
+                fail(
+                    f"{rel(path)} contains bare/main direct push example; use feature branch + PR flow: line {index + 1}"
+                )
 
 tracked_language_roots = (
     "docs/00.agent-governance/",
@@ -2323,7 +2499,9 @@ for tracked_path in sorted(tracked):
     if not path.is_file() or path.suffix not in {".md", ".toml", ".json", ".sh"}:
         continue
     if re.search(r"[가-힣]", read_text(path)):
-        fail(f"tracked governance/runtime file must remain English-only: {tracked_path}")
+        fail(
+            f"tracked governance/runtime file must remain English-only: {tracked_path}"
+        )
 
 agent_section_headings = [
     "AI Agent Requirements",
@@ -2339,8 +2517,7 @@ def current_agent_language_scan_text(tracked_path: str, source: str) -> str:
         and tracked_path != "docs/98.archive/README.md"
     ):
         archive_marker = (
-            "<!-- archive-envelope:v1 payload=rest-of-file "
-            "encoding=git-blob-bytes -->"
+            "<!-- archive-envelope:v1 payload=rest-of-file encoding=git-blob-bytes -->"
         )
         marker_offset = source.find(archive_marker)
         if marker_offset != -1:
@@ -2386,14 +2563,22 @@ for tracked_path in sorted(tracked):
         continue
     text = current_agent_language_scan_text(tracked_path, read_text(path))
     for heading in agent_section_headings:
-        match = re.search(rf"^## {re.escape(heading)}(?:\s|\(|$).*?$", text, re.MULTILINE)
+        match = re.search(
+            rf"^## {re.escape(heading)}(?:\s|\(|$).*?$", text, re.MULTILINE
+        )
         if not match:
             continue
         section_start = match.end()
         next_heading = re.search(r"^##\s+", text[section_start:], re.MULTILINE)
-        section = text[section_start : section_start + next_heading.start()] if next_heading else text[section_start:]
+        section = (
+            text[section_start : section_start + next_heading.start()]
+            if next_heading
+            else text[section_start:]
+        )
         if re.search(r"[가-힣]", section):
-            fail(f"{tracked_path} {heading} section must remain English for AI-agent execution requirements")
+            fail(
+                f"{tracked_path} {heading} section must remain English for AI-agent execution requirements"
+            )
 
 docs_readme_path = root / "docs/README.md"
 docs_readme_text = read_text(docs_readme_path)
@@ -2403,9 +2588,13 @@ for phrase in [
     "사람이 읽는 안내와 요약은 한국어를 우선",
 ]:
     if phrase not in docs_readme_text:
-        fail(f"{rel(docs_readme_path)} missing docs language/template contract phrase: {phrase}")
+        fail(
+            f"{rel(docs_readme_path)} missing docs language/template contract phrase: {phrase}"
+        )
 
-workflow_paths = sorted((root / ".github").glob("**/*.yml")) + sorted((root / ".github").glob("**/*.yaml"))
+workflow_paths = sorted((root / ".github").glob("**/*.yml")) + sorted(
+    (root / ".github").glob("**/*.yaml")
+)
 for workflow in workflow_paths:
     try:
         load_yaml(workflow)
@@ -2420,13 +2609,19 @@ for workflow in sorted((root / ".github/workflows").glob("*.yml")):
     for job_id, job in (data.get("jobs") or {}).items():
         seen = collections.Counter()
         for step in job.get("steps") or []:
-            label = step.get("name") or step.get("uses") or (step.get("run") or "").strip().splitlines()[0:1]
+            label = (
+                step.get("name")
+                or step.get("uses")
+                or (step.get("run") or "").strip().splitlines()[0:1]
+            )
             if isinstance(label, list):
                 label = label[0] if label else "<unnamed>"
             seen[str(label)] += 1
         for label, count in seen.items():
             if label and label != "<unnamed>" and count > 1:
-                fail(f"duplicate workflow step in {rel(workflow)} job {job_id}: {label}")
+                fail(
+                    f"duplicate workflow step in {rel(workflow)} job {job_id}: {label}"
+                )
 
 codeowners_path = root / ".github/CODEOWNERS"
 codeowners_text = read_text(codeowners_path)
@@ -2461,9 +2656,13 @@ else:
         branches = []
         if isinstance(event_config, dict):
             branch_value = event_config.get("branches") or []
-            branches = branch_value if isinstance(branch_value, list) else [branch_value]
+            branches = (
+                branch_value if isinstance(branch_value, list) else [branch_value]
+            )
         if branches != ["main"]:
-            fail(f"{rel(ci_path)} {event_name} trigger must target only main: {branches}")
+            fail(
+                f"{rel(ci_path)} {event_name} trigger must target only main: {branches}"
+            )
     if "workflow_dispatch" not in ci_on:
         fail(f"{rel(ci_path)} must include workflow_dispatch for manual QA reruns")
     if set(ci_on) != {"push", "pull_request", "workflow_dispatch"}:
@@ -2482,7 +2681,9 @@ required_ci_jobs = {
 for job_id in sorted(required_ci_jobs - set(ci_jobs)):
     fail(f"{rel(ci_path)} missing required CI job: {job_id}")
 if set(ci_jobs) != required_ci_jobs:
-    fail(f"{rel(ci_path)} job IDs must remain exact Spec 031 jobs: {sorted(required_ci_jobs)}")
+    fail(
+        f"{rel(ci_path)} job IDs must remain exact Spec 031 jobs: {sorted(required_ci_jobs)}"
+    )
 
 expected_job_needs = {
     "branch-policy": [],
@@ -2525,8 +2726,7 @@ branch_policy_if = str(branch_policy_job.get("if") or "")
 if "github.event_name == 'pull_request'" not in branch_policy_if:
     fail(f"{rel(ci_path)} branch-policy must run only for pull_request")
 branch_policy_text = "\n".join(
-    str(step.get("run") or "")
-    for step in branch_policy_job.get("steps") or []
+    str(step.get("run") or "") for step in branch_policy_job.get("steps") or []
 )
 for phrase in [
     "BASE_REF",
@@ -2546,9 +2746,7 @@ expected_branch_message = (
     + format_branch_prefixes(branch_prefixes)
 )
 if expected_branch_message not in branch_policy_text:
-    fail(
-        f"{rel(ci_path)} branch-policy message must match its allowed_branch_regex"
-    )
+    fail(f"{rel(ci_path)} branch-policy message must match its allowed_branch_regex")
 
 changes_job = ci_jobs.get("changes") or {}
 expected_changes_outputs = {
@@ -2576,7 +2774,9 @@ elif (changes_checkout_steps[0].get("with") or {}).get("fetch-depth") != 0:
 
 selector_steps = [step for step in changes_steps if step.get("id") == "filter"]
 if len(selector_steps) != 1:
-    fail(f"{rel(ci_path)} changes job must have exactly one selector step with id=filter")
+    fail(
+        f"{rel(ci_path)} changes job must have exactly one selector step with id=filter"
+    )
     selector_step = {}
 else:
     selector_step = selector_steps[0]
@@ -2597,7 +2797,9 @@ for marker in [
         fail(f"{rel(ci_path)} canonical selector step missing marker: {marker}")
 for forbidden_marker in ["$(", "`", "dorny/paths-filter", "filters: |"]:
     if forbidden_marker in selector_run or forbidden_marker in ci_text:
-        fail(f"{rel(ci_path)} canonical selector contains forbidden marker: {forbidden_marker}")
+        fail(
+            f"{rel(ci_path)} canonical selector contains forbidden marker: {forbidden_marker}"
+        )
 
 manifest_static_steps = (ci_jobs.get("manifest-static") or {}).get("steps") or []
 manifest_checkout_steps = [
@@ -2610,7 +2812,9 @@ if len(manifest_checkout_steps) != 1:
 else:
     manifest_checkout_with = manifest_checkout_steps[0].get("with") or {}
     if manifest_checkout_with.get("persist-credentials") is not False:
-        fail(f"{rel(ci_path)} manifest-static checkout must disable persisted credentials")
+        fail(
+            f"{rel(ci_path)} manifest-static checkout must disable persisted credentials"
+        )
     if manifest_checkout_with.get("fetch-depth") != 0:
         fail(f"{rel(ci_path)} manifest-static checkout must use fetch-depth: 0")
 
@@ -2620,7 +2824,9 @@ gitops_change_set_steps = [
     if step.get("name") == "Review GitOps object identity and deletion set"
 ]
 if len(gitops_change_set_steps) != 1:
-    fail(f"{rel(ci_path)} manifest-static must contain exactly one GitOps change-set step")
+    fail(
+        f"{rel(ci_path)} manifest-static must contain exactly one GitOps change-set step"
+    )
 else:
     gitops_change_set_step = gitops_change_set_steps[0]
     expected_gitops_change_set_env = {
@@ -2634,15 +2840,17 @@ else:
     expected_gitops_change_set_run = (
         'python3 scripts/validate-gitops-change-set.py --root . --base-ref "$BASE_REF"'
     )
-    if str(gitops_change_set_step.get("run") or "").strip() != expected_gitops_change_set_run:
+    if (
+        str(gitops_change_set_step.get("run") or "").strip()
+        != expected_gitops_change_set_run
+    ):
         fail(
             f"{rel(ci_path)} GitOps change-set command must equal: "
             f"{expected_gitops_change_set_run}"
         )
 
 manifest_static_runs = "\n".join(
-    str(step.get("run") or "")
-    for step in manifest_static_steps
+    str(step.get("run") or "") for step in manifest_static_steps
 )
 for command in [
     'python3 scripts/validate-gitops-change-set.py --root . --base-ref "$BASE_REF"',
@@ -2657,7 +2865,9 @@ for command in [
         fail(f"{rel(ci_path)} manifest-static missing command: {command}")
 
 static_contract_steps = [
-    step for step in manifest_static_steps if step.get("name") == "Run static contract checks"
+    step
+    for step in manifest_static_steps
+    if step.get("name") == "Run static contract checks"
 ]
 expected_static_contract_commands = [
     "bash infrastructure/tests/verify-contracts-static.sh",
@@ -2668,7 +2878,9 @@ expected_static_contract_commands = [
     "bash scripts/validate-policy-gates.sh .",
 ]
 if len(static_contract_steps) != 1:
-    fail(f"{rel(ci_path)} manifest-static must contain exactly one static contract step")
+    fail(
+        f"{rel(ci_path)} manifest-static must contain exactly one static contract step"
+    )
 else:
     actual_static_contract_commands = [
         line.strip()
@@ -2680,7 +2892,6 @@ else:
             f"{rel(ci_path)} manifest-static static commands must remain exact and ordered: "
             f"{expected_static_contract_commands}"
         )
-
 
 
 pr_template_path = root / ".github/PULL_REQUEST_TEMPLATE.md"
@@ -2716,11 +2927,15 @@ if not has_provider_example_boundary_prompt(pr_template_text):
 # Harness implementation surfaces: existence and cross-reference contracts only.
 # Wrapper script existence is already enforced by the scripts inventory, so it
 # is not re-validated here.
-approval_boundaries_path = root / "docs/00.agent-governance/policies/approval-and-safety.md"
+approval_boundaries_path = (
+    root / "docs/00.agent-governance/policies/approval-and-safety.md"
+)
 if not approval_boundaries_path.exists():
     fail(f"required harness surface is missing: {rel(approval_boundaries_path)}")
 if "## 8. Harness Impact" not in pr_template_text:
-    fail(f"{rel(pr_template_path)} missing Harness Impact section heading: ## 8. Harness Impact")
+    fail(
+        f"{rel(pr_template_path)} missing Harness Impact section heading: ## 8. Harness Impact"
+    )
 canonical_task_form_text = read_text(
     root / "docs/99.templates/templates/specs/task.template.md"
 )
@@ -2769,13 +2984,20 @@ for phrase in [
     "GitHub Actions documentation",
 ]:
     if phrase not in github_about_text:
-        fail(f"{rel(github_about_path)} must route to the policy/enforcement SSoT instead of duplicating policy: {phrase}")
-if "PR source branches must start" in github_about_text or "Default PR target is `main`" in github_about_text:
+        fail(
+            f"{rel(github_about_path)} must route to the policy/enforcement SSoT instead of duplicating policy: {phrase}"
+        )
+if (
+    "PR source branches must start" in github_about_text
+    or "Default PR target is `main`" in github_about_text
+):
     fail(
         f"{rel(github_about_path)} must not duplicate branch-policy prose; "
         f"keep human Git guidance in {rel(git_policy_path)} and enforcement in {rel(ci_path)}"
     )
-about_prefix_count = sum(1 for prefix in branch_prefixes if f"{prefix}/" in github_about_text)
+about_prefix_count = sum(
+    1 for prefix in branch_prefixes if f"{prefix}/" in github_about_text
+)
 if about_prefix_count >= len(branch_prefixes):
     fail(
         f"{rel(github_about_path)} must not mirror the full branch prefix list; "
@@ -2793,9 +3015,13 @@ expected_workflow_responsibility_header = [
     "Required evidence",
     "Boundary",
 ]
-expected_workflows = [path.name for path in sorted((root / ".github/workflows").glob("*.yml"))]
+expected_workflows = [
+    path.name for path in sorted((root / ".github/workflows").glob("*.yml"))
+]
 if len(workflow_responsibility_rows) < 2:
-    fail(".github/README.md Workflow Responsibility Matrix must contain a header and workflow rows")
+    fail(
+        ".github/README.md Workflow Responsibility Matrix must contain a header and workflow rows"
+    )
 elif workflow_responsibility_rows[0] != expected_workflow_responsibility_header:
     fail(
         ".github/README.md Workflow Responsibility Matrix header must be: "
@@ -2821,7 +3047,9 @@ else:
         workflow_name = match.group(1)
         indexed_workflows.append(workflow_name)
         if not (root / ".github/workflows" / workflow_name).is_file():
-            fail(f".github/README.md Workflow Responsibility Matrix references missing workflow: {workflow_name}")
+            fail(
+                f".github/README.md Workflow Responsibility Matrix references missing workflow: {workflow_name}"
+            )
         for label, value in [
             ("Role", role),
             ("Trigger / scope", trigger_scope),
@@ -2829,7 +3057,9 @@ else:
             ("Boundary", boundary),
         ]:
             if not value:
-                fail(f".github/README.md Workflow Responsibility Matrix row {row_number} has empty {label}")
+                fail(
+                    f".github/README.md Workflow Responsibility Matrix row {row_number} has empty {label}"
+                )
         if workflow_name == "ci.yml":
             for phrase, value in [
                 ("Required QA gate", role),
@@ -2848,7 +3078,9 @@ else:
                 ("external Vault mutation", boundary),
             ]:
                 if phrase not in value:
-                    fail(f".github/README.md ci.yml responsibility row missing phrase: {phrase}")
+                    fail(
+                        f".github/README.md ci.yml responsibility row missing phrase: {phrase}"
+                    )
         elif workflow_name == "generate-changelog.yml":
             for phrase, value in [
                 ("Release-evidence", role),
@@ -2859,7 +3091,9 @@ else:
                 ("publish", boundary),
             ]:
                 if phrase not in value:
-                    fail(f".github/README.md generate-changelog.yml responsibility row missing phrase: {phrase}")
+                    fail(
+                        f".github/README.md generate-changelog.yml responsibility row missing phrase: {phrase}"
+                    )
         elif workflow_name == "greetings.yml":
             for phrase, value in [
                 ("maintenance greeting", role),
@@ -2869,7 +3103,9 @@ else:
                 ("deployment automation", boundary),
             ]:
                 if phrase not in value:
-                    fail(f".github/README.md greetings.yml responsibility row missing phrase: {phrase}")
+                    fail(
+                        f".github/README.md greetings.yml responsibility row missing phrase: {phrase}"
+                    )
         elif workflow_name == "labeler.yml":
             for phrase, value in [
                 ("maintenance labeling", role),
@@ -2880,7 +3116,9 @@ else:
                 ("human review", boundary),
             ]:
                 if phrase not in value:
-                    fail(f".github/README.md labeler.yml responsibility row missing phrase: {phrase}")
+                    fail(
+                        f".github/README.md labeler.yml responsibility row missing phrase: {phrase}"
+                    )
         elif workflow_name == "stale.yml":
             for phrase, value in [
                 ("maintenance stale-item", role),
@@ -2891,7 +3129,9 @@ else:
                 ("deployment automation", boundary),
             ]:
                 if phrase not in value:
-                    fail(f".github/README.md stale.yml responsibility row missing phrase: {phrase}")
+                    fail(
+                        f".github/README.md stale.yml responsibility row missing phrase: {phrase}"
+                    )
     if indexed_workflows != expected_workflows:
         fail(
             ".github/README.md Workflow Responsibility Matrix row order must match actual workflows: "
@@ -2917,13 +3157,18 @@ for workflow in sorted((root / ".github/workflows").glob("*.yml")):
         "git push",
     ]:
         if command in workflow_text:
-            fail(f"{rel(workflow)} contains forbidden live mutation or publish command: {command}")
+            fail(
+                f"{rel(workflow)} contains forbidden live mutation or publish command: {command}"
+            )
 
     try:
         workflow_data = load_yaml(workflow)
     except Exception:
         continue
-    if workflow.name in {"generate-changelog.yml", "labeler.yml", "stale.yml"} and "concurrency" not in workflow_data:
+    if (
+        workflow.name in {"generate-changelog.yml", "labeler.yml", "stale.yml"}
+        and "concurrency" not in workflow_data
+    ):
         fail(f"{rel(workflow)} must declare workflow-level concurrency")
     for job_id, job in (workflow_data.get("jobs") or {}).items():
         if "timeout-minutes" not in job:
@@ -2931,7 +3176,9 @@ for workflow in sorted((root / ".github/workflows").glob("*.yml")):
         for step in job.get("steps") or []:
             run_block = str(step.get("run") or "")
             if re.search(r"\$\{\{\s*needs(?:\.|\[)[^}]*\.result\s*\}\}", run_block):
-                fail(f"{rel(workflow)} job {job_id} run block expands needs.*.result directly")
+                fail(
+                    f"{rel(workflow)} job {job_id} run block expands needs.*.result directly"
+                )
 
 # Unique Claude pre-edit, session-start, and lifecycle registration checks
 # remain here until their provider-owner consolidation. The dedicated
@@ -2948,7 +3195,9 @@ for phrase in [
     '"timeout": 60',
     '"timeout": 20',
 ]:
-    if phrase not in claude_hook_configuration and phrase not in read_text(root / ".claude/settings.json"):
+    if phrase not in claude_hook_configuration and phrase not in read_text(
+        root / ".claude/settings.json"
+    ):
         fail(f".claude/settings.json missing hook contract phrase: {phrase}")
 
 
@@ -2964,11 +3213,7 @@ if True:
         {"tool_input": {"file_path": "gitops/platform/headlamp/headlamp-ingress.yaml"}}
     )
     docs_hook_payload = json.dumps(
-        {
-            "tool_input": {
-                "file_path": "docs/01.requirements/9999-example-feature.md"
-            }
-        }
+        {"tool_input": {"file_path": "docs/01.requirements/9999-example-feature.md"}}
     )
     pre_hook_path = root / "docs/00.agent-governance/hooks/k8s-pre-edit.sh"
     pre_hook_result = bounded_process(
@@ -2981,10 +3226,14 @@ if True:
         timeout=60,
     )
     if pre_hook_result.returncode != 0:
-        fail(f"{rel(pre_hook_path)} payload simulation failed: {pre_hook_result.stderr.strip()}")
+        fail(
+            f"{rel(pre_hook_path)} payload simulation failed: {pre_hook_result.stderr.strip()}"
+        )
     for phrase in ["systemMessage", "GitOps-first", "PostToolUse hook"]:
         if phrase not in pre_hook_result.stdout:
-            fail(f"{rel(pre_hook_path)} payload simulation missing output phrase: {phrase}")
+            fail(
+                f"{rel(pre_hook_path)} payload simulation missing output phrase: {phrase}"
+            )
 
     docs_pre_hook_result = bounded_process(
         ["bash", str(pre_hook_path)],
@@ -2996,7 +3245,9 @@ if True:
         timeout=60,
     )
     if docs_pre_hook_result.returncode != 0:
-        fail(f"{rel(pre_hook_path)} docs payload simulation failed: {docs_pre_hook_result.stderr.strip()}")
+        fail(
+            f"{rel(pre_hook_path)} docs payload simulation failed: {docs_pre_hook_result.stderr.strip()}"
+        )
     for phrase in [
         "Template-First",
         "sdlc/requirement",
@@ -3005,7 +3256,9 @@ if True:
         "documentation template enforcement",
     ]:
         if phrase not in docs_pre_hook_result.stdout:
-            fail(f"{rel(pre_hook_path)} docs payload simulation missing output phrase: {phrase}")
+            fail(
+                f"{rel(pre_hook_path)} docs payload simulation missing output phrase: {phrase}"
+            )
 
     lifecycle_hook_path = root / "docs/00.agent-governance/hooks/lifecycle-guard.sh"
     lifecycle_selftest_env = {
@@ -3023,9 +3276,13 @@ if True:
         timeout=60,
     )
     if clean_stop_result.returncode != 0:
-        fail(f"{rel(lifecycle_hook_path)} clean Stop payload simulation failed: {clean_stop_result.stderr.strip()}")
+        fail(
+            f"{rel(lifecycle_hook_path)} clean Stop payload simulation failed: {clean_stop_result.stderr.strip()}"
+        )
     if "block" in clean_stop_result.stdout:
-        fail(f"{rel(lifecycle_hook_path)} clean Stop payload simulation unexpectedly blocked")
+        fail(
+            f"{rel(lifecycle_hook_path)} clean Stop payload simulation unexpectedly blocked"
+        )
     for phrase in [
         "systemMessage",
         "Task-unit commit discipline",
@@ -3034,7 +3291,9 @@ if True:
         "forward-only exception",
     ]:
         if phrase not in clean_stop_result.stdout:
-            fail(f"{rel(lifecycle_hook_path)} clean Stop payload simulation missing task-unit commit phrase: {phrase}")
+            fail(
+                f"{rel(lifecycle_hook_path)} clean Stop payload simulation missing task-unit commit phrase: {phrase}"
+            )
 
     failing_stop_result = bounded_process(
         ["bash", str(lifecycle_hook_path)],
@@ -3046,10 +3305,14 @@ if True:
         timeout=60,
     )
     if failing_stop_result.returncode != 0:
-        fail(f"{rel(lifecycle_hook_path)} failing Stop payload simulation exited non-zero")
+        fail(
+            f"{rel(lifecycle_hook_path)} failing Stop payload simulation exited non-zero"
+        )
     for phrase in ["decision", "block", "validation failed"]:
         if phrase not in failing_stop_result.stdout:
-            fail(f"{rel(lifecycle_hook_path)} failing Stop payload simulation missing output phrase: {phrase}")
+            fail(
+                f"{rel(lifecycle_hook_path)} failing Stop payload simulation missing output phrase: {phrase}"
+            )
 
     failing_subagent_result = bounded_process(
         ["bash", str(lifecycle_hook_path)],
@@ -3061,10 +3324,14 @@ if True:
         timeout=60,
     )
     if failing_subagent_result.returncode != 0:
-        fail(f"{rel(lifecycle_hook_path)} failing SubagentStop payload simulation exited non-zero")
+        fail(
+            f"{rel(lifecycle_hook_path)} failing SubagentStop payload simulation exited non-zero"
+        )
     for phrase in ["decision", "block", "SubagentStop"]:
         if phrase not in failing_subagent_result.stdout:
-            fail(f"{rel(lifecycle_hook_path)} failing SubagentStop payload simulation missing output phrase: {phrase}")
+            fail(
+                f"{rel(lifecycle_hook_path)} failing SubagentStop payload simulation missing output phrase: {phrase}"
+            )
 
     precompact_result = bounded_process(
         ["bash", str(lifecycle_hook_path)],
@@ -3080,7 +3347,9 @@ if True:
         timeout=60,
     )
     if precompact_result.returncode != 0:
-        fail(f"{rel(lifecycle_hook_path)} PreCompact payload simulation failed: {precompact_result.stderr.strip()}")
+        fail(
+            f"{rel(lifecycle_hook_path)} PreCompact payload simulation failed: {precompact_result.stderr.strip()}"
+        )
     for phrase in [
         "systemMessage",
         "Lifecycle guard",
@@ -3090,7 +3359,9 @@ if True:
         "forward-only exception",
     ]:
         if phrase not in precompact_result.stdout:
-            fail(f"{rel(lifecycle_hook_path)} PreCompact payload simulation missing output phrase: {phrase}")
+            fail(
+                f"{rel(lifecycle_hook_path)} PreCompact payload simulation missing output phrase: {phrase}"
+            )
     if '"decision": "block"' in precompact_result.stdout:
         fail(f"{rel(lifecycle_hook_path)} PreCompact payload simulation must not block")
 
@@ -3098,8 +3369,7 @@ scripts_dir = root / "scripts"
 tracked_script_paths = sorted(
     root / tracked_path
     for tracked_path in tracked
-    if pathlib.PurePosixPath(tracked_path).parent
-    == pathlib.PurePosixPath("scripts")
+    if pathlib.PurePosixPath(tracked_path).parent == pathlib.PurePosixPath("scripts")
     and pathlib.PurePosixPath(tracked_path).suffix in {".py", ".sh"}
 )
 for script_path in tracked_script_paths:
@@ -3139,9 +3409,7 @@ expected_kube_linter_exclusions = [
     "latest-tag",
     "dangling-service",
 ]
-kube_linter_exclusions = (
-    (kube_linter_config.get("checks") or {}).get("exclude") or []
-)
+kube_linter_exclusions = (kube_linter_config.get("checks") or {}).get("exclude") or []
 if kube_linter_exclusions != expected_kube_linter_exclusions:
     fail(
         ".kube-linter.yaml checks.exclude must match the documented exclusion order: "
@@ -3150,9 +3418,13 @@ if kube_linter_exclusions != expected_kube_linter_exclusions:
 
 kube_linter_text = read_text(kube_linter_config_path)
 for exclusion in expected_kube_linter_exclusions:
-    match = re.search(rf'^\s*-\s+"{re.escape(exclusion)}"\s+#\s*(.+)$', kube_linter_text, re.MULTILINE)
+    match = re.search(
+        rf'^\s*-\s+"{re.escape(exclusion)}"\s+#\s*(.+)$', kube_linter_text, re.MULTILINE
+    )
     if not match:
-        fail(f".kube-linter.yaml exclusion must have an inline rationale comment: {exclusion}")
+        fail(
+            f".kube-linter.yaml exclusion must have an inline rationale comment: {exclusion}"
+        )
         continue
     rationale = match.group(1).strip()
     if len(rationale) < 12 or "TODO" in rationale or "TBD" in rationale:
@@ -3170,15 +3442,25 @@ expected_gitops_service_header = [
 ]
 expected_gitops_service_areas = (
     ["clusters/local", "apps/root"]
-    + [f"platform/{path.name}" for path in sorted((gitops_dir / "platform").iterdir()) if path.is_dir()]
-    + [f"workloads/{path.name}" for path in sorted((gitops_dir / "workloads").iterdir()) if path.is_dir()]
+    + [
+        f"platform/{path.name}"
+        for path in sorted((gitops_dir / "platform").iterdir())
+        if path.is_dir()
+    ]
+    + [
+        f"workloads/{path.name}"
+        for path in sorted((gitops_dir / "workloads").iterdir())
+        if path.is_dir()
+    ]
 )
 gitops_service_rows = markdown_table_after_heading(
     gitops_readme,
     profiled_readme_table_headings("Service Coverage Matrix"),
 )
 if len(gitops_service_rows) < 2:
-    fail("gitops/README.md Service Coverage Matrix must contain a header and service rows")
+    fail(
+        "gitops/README.md Service Coverage Matrix must contain a header and service rows"
+    )
 elif gitops_service_rows[0] != expected_gitops_service_header:
     fail(
         "gitops/README.md Service Coverage Matrix header must be: "
@@ -3209,7 +3491,9 @@ else:
         indexed_gitops_areas.append(area)
         area_path = gitops_dir / area
         if not area_path.is_dir():
-            fail(f"gitops/README.md Service Coverage Matrix references missing directory: gitops/{area}")
+            fail(
+                f"gitops/README.md Service Coverage Matrix references missing directory: gitops/{area}"
+            )
         for label, value in [
             ("Purpose and owner", purpose),
             ("Lifecycle and config", lifecycle),
@@ -3217,11 +3501,20 @@ else:
             ("Validation and operations", validation),
         ]:
             if not value:
-                fail(f"gitops/README.md Service Coverage Matrix row {row_number} has empty {label}")
+                fail(
+                    f"gitops/README.md Service Coverage Matrix row {row_number} has empty {label}"
+                )
         if "owned by" not in purpose:
-            fail(f"gitops/README.md Service Coverage Matrix row {row_number} must name ownership")
-        if not any(marker in validation for marker in ["`bash ", "Validate", "validate-", "verify-"]):
-            fail(f"gitops/README.md Service Coverage Matrix row {row_number} must cite a validation command")
+            fail(
+                f"gitops/README.md Service Coverage Matrix row {row_number} must name ownership"
+            )
+        if not any(
+            marker in validation
+            for marker in ["`bash ", "Validate", "validate-", "verify-"]
+        ):
+            fail(
+                f"gitops/README.md Service Coverage Matrix row {row_number} must cite a validation command"
+            )
     if indexed_gitops_areas != expected_gitops_service_areas:
         fail(
             "gitops/README.md Service Coverage Matrix area order must match actual GitOps directories: "
@@ -3250,7 +3543,9 @@ external_contract_rows = markdown_table_after_heading(
     profiled_readme_table_headings("External Service Contract Matrix"),
 )
 if len(external_contract_rows) < 2:
-    fail("gitops/README.md External Service Contract Matrix must contain a header and contract rows")
+    fail(
+        "gitops/README.md External Service Contract Matrix must contain a header and contract rows"
+    )
 elif external_contract_rows[0] != expected_external_contract_header:
     fail(
         "gitops/README.md External Service Contract Matrix header must be: "
@@ -3265,7 +3560,17 @@ else:
                 f"row {row_number} must have {len(expected_external_contract_header)} columns"
             )
             continue
-        contract_cell, host, port, database_or_path, secret_keys, tls_ca, rotation, namespace, validation = row
+        (
+            contract_cell,
+            host,
+            port,
+            database_or_path,
+            secret_keys,
+            tls_ca,
+            rotation,
+            namespace,
+            validation,
+        ) = row
         match = re.fullmatch(r"`([^`]+)`", contract_cell)
         if not match:
             fail(
@@ -3286,7 +3591,9 @@ else:
             ("Validation", validation),
         ]:
             if not value:
-                fail(f"gitops/README.md External Service Contract Matrix row {row_number} has empty {label}")
+                fail(
+                    f"gitops/README.md External Service Contract Matrix row {row_number} has empty {label}"
+                )
         if "verify-contracts-static.sh" not in validation:
             fail(
                 "gitops/README.md External Service Contract Matrix "
@@ -3321,7 +3628,9 @@ else:
                 ("external-secrets", namespace),
             ]:
                 if phrase not in value:
-                    fail(f"gitops/README.md Vault API contract row missing phrase: {phrase}")
+                    fail(
+                        f"gitops/README.md Vault API contract row missing phrase: {phrase}"
+                    )
         elif contract == "PostgreSQL write":
             for phrase, value in [
                 ("postgres-write-external.platform.svc.cluster.local", host),
@@ -3336,7 +3645,9 @@ else:
                 ("ESO refreshes", rotation),
             ]:
                 if phrase not in value:
-                    fail(f"gitops/README.md PostgreSQL write contract row missing phrase: {phrase}")
+                    fail(
+                        f"gitops/README.md PostgreSQL write contract row missing phrase: {phrase}"
+                    )
         elif contract == "PostgreSQL read":
             for phrase, value in [
                 ("postgres-read-external.platform.svc.cluster.local", host),
@@ -3347,7 +3658,9 @@ else:
                 ("read/write split", namespace),
             ]:
                 if phrase not in value:
-                    fail(f"gitops/README.md PostgreSQL read contract row missing phrase: {phrase}")
+                    fail(
+                        f"gitops/README.md PostgreSQL read contract row missing phrase: {phrase}"
+                    )
         elif contract == "Valkey auth":
             for phrase, value in [
                 ("valkey-external.platform.svc.cluster.local", host),
@@ -3362,7 +3675,9 @@ else:
                 ("verify-secrets.sh", validation),
             ]:
                 if phrase not in value:
-                    fail(f"gitops/README.md Valkey contract row missing phrase: {phrase}")
+                    fail(
+                        f"gitops/README.md Valkey contract row missing phrase: {phrase}"
+                    )
     if indexed_external_contracts != expected_external_contracts:
         fail(
             "gitops/README.md External Service Contract Matrix row order must be: "
@@ -3389,7 +3704,9 @@ secret_responsibility_rows = markdown_table_after_heading(
     profiled_readme_table_headings("Secret Management Responsibility Matrix"),
 )
 if len(secret_responsibility_rows) < 2:
-    fail("gitops/README.md Secret Management Responsibility Matrix must contain a header and responsibility rows")
+    fail(
+        "gitops/README.md Secret Management Responsibility Matrix must contain a header and responsibility rows"
+    )
 elif secret_responsibility_rows[0] != expected_secret_responsibility_header:
     fail(
         "gitops/README.md Secret Management Responsibility Matrix header must be: "
@@ -3404,7 +3721,9 @@ else:
                 f"row {row_number} must have {len(expected_secret_responsibility_header)} columns"
             )
             continue
-        responsibility_cell, source, destination, owner, value_handling, validation = row
+        responsibility_cell, source, destination, owner, value_handling, validation = (
+            row
+        )
         match = re.fullmatch(r"`([^`]+)`", responsibility_cell)
         if not match:
             fail(
@@ -3422,7 +3741,9 @@ else:
             ("Validation", validation),
         ]:
             if not value:
-                fail(f"gitops/README.md Secret Management Responsibility Matrix row {row_number} has empty {label}")
+                fail(
+                    f"gitops/README.md Secret Management Responsibility Matrix row {row_number} has empty {label}"
+                )
         if "Vault" not in source or "vault-backend" not in source:
             fail(
                 "gitops/README.md Secret Management Responsibility Matrix "
@@ -3461,7 +3782,9 @@ else:
                 ("verify-secrets.sh", validation),
             ]:
                 if phrase not in value:
-                    fail(f"gitops/README.md ClusterSecretStore responsibility row missing phrase: {phrase}")
+                    fail(
+                        f"gitops/README.md ClusterSecretStore responsibility row missing phrase: {phrase}"
+                    )
         elif responsibility == "Platform postgres-app-secret":
             for phrase, value in [
                 ("ExternalSecret", source),
@@ -3478,7 +3801,9 @@ else:
                 ("verify-secrets.sh", validation),
             ]:
                 if phrase not in value:
-                    fail(f"gitops/README.md postgres secret responsibility row missing phrase: {phrase}")
+                    fail(
+                        f"gitops/README.md postgres secret responsibility row missing phrase: {phrase}"
+                    )
         elif responsibility == "ArgoCD argocd-external-valkey":
             for phrase, value in [
                 ("ExternalSecret", source),
@@ -3492,7 +3817,9 @@ else:
                 ("verify-secrets.sh", validation),
             ]:
                 if phrase not in value:
-                    fail(f"gitops/README.md Valkey secret responsibility row missing phrase: {phrase}")
+                    fail(
+                        f"gitops/README.md Valkey secret responsibility row missing phrase: {phrase}"
+                    )
         elif responsibility == "ArgoCD argocd-notifications-secret":
             for phrase, value in [
                 ("ExternalSecret", source),
@@ -3506,7 +3833,9 @@ else:
                 ("verify-secrets.sh", validation),
             ]:
                 if phrase not in value:
-                    fail(f"gitops/README.md notifications secret responsibility row missing phrase: {phrase}")
+                    fail(
+                        f"gitops/README.md notifications secret responsibility row missing phrase: {phrase}"
+                    )
         elif responsibility == "Sample app ExternalSecret":
             for phrase, value in [
                 ("apps/<appname>/config", source),
@@ -3521,7 +3850,9 @@ else:
                 ("validate-k8s-manifests.sh", validation),
             ]:
                 if phrase not in value:
-                    fail(f"gitops/README.md sample app secret responsibility row missing phrase: {phrase}")
+                    fail(
+                        f"gitops/README.md sample app secret responsibility row missing phrase: {phrase}"
+                    )
     if indexed_secret_responsibilities != expected_secret_responsibilities:
         fail(
             "gitops/README.md Secret Management Responsibility Matrix row order must be: "
@@ -3537,7 +3868,9 @@ for phrase in [
     "check-secret-handling.sh",
 ]:
     if phrase not in workloads_readme:
-        fail(f"gitops/workloads/README.md missing onboarding activation phrase: {phrase}")
+        fail(
+            f"gitops/workloads/README.md missing onboarding activation phrase: {phrase}"
+        )
 expected_workload_header = [
     "Workload",
     "Purpose and owner",
@@ -3553,7 +3886,9 @@ workload_rows = markdown_table_after_heading(
     profiled_readme_table_headings("Workload Coverage Matrix"),
 )
 if len(workload_rows) < 2:
-    fail("gitops/workloads/README.md Workload Coverage Matrix must contain a header and workload rows")
+    fail(
+        "gitops/workloads/README.md Workload Coverage Matrix must contain a header and workload rows"
+    )
 elif workload_rows[0] != expected_workload_header:
     fail(
         "gitops/workloads/README.md Workload Coverage Matrix header must be: "
@@ -3579,11 +3914,15 @@ else:
             continue
         workload = match.group(1)
         if workload in seen_workloads:
-            fail(f"gitops/workloads/README.md Workload Coverage Matrix duplicates workload: {workload}")
+            fail(
+                f"gitops/workloads/README.md Workload Coverage Matrix duplicates workload: {workload}"
+            )
         seen_workloads.add(workload)
         indexed_workloads.append(workload)
         if not (gitops_dir / "workloads" / workload).is_dir():
-            fail(f"gitops/workloads/README.md Workload Coverage Matrix references missing workload: {workload}")
+            fail(
+                f"gitops/workloads/README.md Workload Coverage Matrix references missing workload: {workload}"
+            )
         for label, value in [
             ("Purpose and owner", purpose),
             ("Lifecycle and config", lifecycle),
@@ -3591,7 +3930,9 @@ else:
             ("Validation and operations", validation),
         ]:
             if not value:
-                fail(f"gitops/workloads/README.md Workload Coverage Matrix row {row_number} has empty {label}")
+                fail(
+                    f"gitops/workloads/README.md Workload Coverage Matrix row {row_number} has empty {label}"
+                )
         for command in [
             "scripts/validate-gitops-structure.sh",
             "scripts/validate-k8s-manifests.sh",
@@ -3623,7 +3964,11 @@ def collect_container_images(value) -> list[str]:
     images: list[str] = []
     if isinstance(value, dict):
         for key, item in value.items():
-            if key in {"containers", "initContainers", "ephemeralContainers"} and isinstance(item, list):
+            if key in {
+                "containers",
+                "initContainers",
+                "ephemeralContainers",
+            } and isinstance(item, list):
                 for container in item:
                     if isinstance(container, dict) and "image" in container:
                         image = container.get("image")
@@ -3648,7 +3993,9 @@ def image_uses_latest(image: str) -> bool:
     return tag_segment.endswith(":latest")
 
 
-def collect_container_image_entries(scope: pathlib.Path) -> list[tuple[pathlib.Path, str]]:
+def collect_container_image_entries(
+    scope: pathlib.Path,
+) -> list[tuple[pathlib.Path, str]]:
     entries: list[tuple[pathlib.Path, str]] = []
     for path, document in gitops_yaml_documents_under(scope):
         if path.name == "kustomization.yaml":
@@ -3668,12 +4015,16 @@ for scope_name, entries in [
         fail("active gitops/workloads container image scan found no images")
     for path, image in entries:
         if not image:
-            fail(f"{rel(path)} contains a container image field that is not a nonempty string")
+            fail(
+                f"{rel(path)} contains a container image field that is not a nonempty string"
+            )
             continue
         if image_uses_latest(image):
             fail(f"{rel(path)} must not use latest container image tag: {image}")
         if not image_has_explicit_version(image):
-            fail(f"{rel(path)} container image must use an explicit tag or sha256 digest: {image}")
+            fail(
+                f"{rel(path)} container image must use an explicit tag or sha256 digest: {image}"
+            )
 
 workload_manifest_kinds: set[str] = set()
 for path, document in gitops_yaml_documents_under(gitops_dir / "workloads"):
@@ -3696,14 +4047,22 @@ apps_namespace_kind_whitelist = {
     if isinstance(item, dict) and isinstance(item.get("kind"), str)
 }
 if apps_cluster_kind_whitelist:
-    fail("gitops/clusters/local/appproject-apps.yaml clusterResourceWhitelist must be empty")
+    fail(
+        "gitops/clusters/local/appproject-apps.yaml clusterResourceWhitelist must be empty"
+    )
 if not apps_namespace_kind_whitelist:
-    fail("gitops/clusters/local/appproject-apps.yaml namespaceResourceWhitelist must not be empty")
+    fail(
+        "gitops/clusters/local/appproject-apps.yaml namespaceResourceWhitelist must not be empty"
+    )
 for kind in sorted(workload_manifest_kinds - apps_namespace_kind_whitelist):
-    fail(f"gitops/workloads manifest kind is not allowed by apps AppProject namespaceResourceWhitelist: {kind}")
+    fail(
+        f"gitops/workloads manifest kind is not allowed by apps AppProject namespaceResourceWhitelist: {kind}"
+    )
 
 policy_apps_namespace_kinds = {"ExternalSecret"}
-expected_apps_namespace_kind_whitelist = workload_manifest_kinds | policy_apps_namespace_kinds
+expected_apps_namespace_kind_whitelist = (
+    workload_manifest_kinds | policy_apps_namespace_kinds
+)
 if apps_namespace_kind_whitelist != expected_apps_namespace_kind_whitelist:
     fail(
         "gitops/clusters/local/appproject-apps.yaml namespaceResourceWhitelist must equal "
@@ -3729,7 +4088,9 @@ allowlist_rows = markdown_table_after_heading(
     profiled_readme_table_headings("AppProject Allow-list Rationale Matrix"),
 )
 if len(allowlist_rows) < 2:
-    fail("gitops/README.md AppProject Allow-list Rationale Matrix must contain a header and allow-list rows")
+    fail(
+        "gitops/README.md AppProject Allow-list Rationale Matrix must contain a header and allow-list rows"
+    )
 elif allowlist_rows[0] != expected_allowlist_header:
     fail(
         "gitops/README.md AppProject Allow-list Rationale Matrix header must be: "
@@ -3763,7 +4124,9 @@ else:
             ("Validation", validation),
         ]:
             if not value:
-                fail(f"gitops/README.md AppProject Allow-list Rationale Matrix row {row_number} has empty {label}")
+                fail(
+                    f"gitops/README.md AppProject Allow-list Rationale Matrix row {row_number} has empty {label}"
+                )
         if "scripts/validate-repo-quality-gates.sh" not in validation:
             fail(
                 "gitops/README.md AppProject Allow-list Rationale Matrix "
@@ -3772,14 +4135,18 @@ else:
         documented_kinds = set(re.findall(r"`([^`]+)`", kinds_cell))
         if surface_key == "apps|clusterResourceWhitelist":
             if documented_kinds:
-                fail("gitops/README.md apps clusterResourceWhitelist rationale row must document no kinds")
+                fail(
+                    "gitops/README.md apps clusterResourceWhitelist rationale row must document no kinds"
+                )
             for phrase in [
                 "Workloads own no cluster-scoped resources",
                 "app-owned cluster resource design",
                 "live reconciliation impact review",
             ]:
                 if phrase not in evidence + " " + boundary:
-                    fail(f"gitops/README.md apps cluster allow-list row missing phrase: {phrase}")
+                    fail(
+                        f"gitops/README.md apps cluster allow-list row missing phrase: {phrase}"
+                    )
         elif surface_key == "apps|active namespaceResourceWhitelist":
             if documented_kinds != workload_manifest_kinds:
                 fail(
@@ -3787,22 +4154,39 @@ else:
                     + ", ".join(sorted(workload_manifest_kinds))
                 )
             if "gitops/workloads/adminer" not in evidence:
-                fail("gitops/README.md active apps allow-list row must cite gitops/workloads/adminer")
+                fail(
+                    "gitops/README.md active apps allow-list row must cite gitops/workloads/adminer"
+                )
         elif surface_key == "apps|policy namespaceResourceWhitelist":
             if documented_kinds != policy_apps_namespace_kinds:
                 fail(
                     "gitops/README.md policy apps namespaceResourceWhitelist rationale row must match policy kinds: "
                     + ", ".join(sorted(policy_apps_namespace_kinds))
                 )
-            for phrase in ["0007-app-gitops-onboarding-policy.md", "ESO", "app onboarding policy"]:
+            for phrase in [
+                "0007-app-gitops-onboarding-policy.md",
+                "ESO",
+                "app onboarding policy",
+            ]:
                 if phrase not in evidence + " " + boundary:
-                    fail(f"gitops/README.md policy apps allow-list row missing phrase: {phrase}")
+                    fail(
+                        f"gitops/README.md policy apps allow-list row missing phrase: {phrase}"
+                    )
         elif surface_key == "platform|platform AppProject allow-lists":
-            for phrase in ["Helm charts", "raw manifest scan", "chart render review", "ArgoCD sync impact review"]:
+            for phrase in [
+                "Helm charts",
+                "raw manifest scan",
+                "chart render review",
+                "ArgoCD sync impact review",
+            ]:
                 if phrase not in evidence + " " + boundary:
-                    fail(f"gitops/README.md platform allow-list row missing phrase: {phrase}")
+                    fail(
+                        f"gitops/README.md platform allow-list row missing phrase: {phrase}"
+                    )
         else:
-            fail(f"gitops/README.md AppProject Allow-list Rationale Matrix unexpected row: {surface_key}")
+            fail(
+                f"gitops/README.md AppProject Allow-list Rationale Matrix unexpected row: {surface_key}"
+            )
     if indexed_allowlist_surfaces != expected_allowlist_surfaces:
         fail(
             "gitops/README.md AppProject Allow-list Rationale Matrix row order must be: "
@@ -3827,7 +4211,9 @@ workload_policy_rows = markdown_table_after_heading(
     profiled_readme_table_headings("Workload Image and Kind Policy Matrix"),
 )
 if len(workload_policy_rows) < 2:
-    fail("gitops/README.md Workload Image and Kind Policy Matrix must contain a header and policy rows")
+    fail(
+        "gitops/README.md Workload Image and Kind Policy Matrix must contain a header and policy rows"
+    )
 elif workload_policy_rows[0] != expected_workload_policy_header:
     fail(
         "gitops/README.md Workload Image and Kind Policy Matrix header must be: "
@@ -3842,7 +4228,14 @@ else:
                 f"row {row_number} must have {len(expected_workload_policy_header)} columns"
             )
             continue
-        surface_cell, image_policy, kind_policy, evidence, deferred_boundary, validation = row
+        (
+            surface_cell,
+            image_policy,
+            kind_policy,
+            evidence,
+            deferred_boundary,
+            validation,
+        ) = row
         match = re.fullmatch(r"`([^`]+)`", surface_cell)
         if not match:
             fail(
@@ -3860,7 +4253,9 @@ else:
             ("Validation", validation),
         ]:
             if not value:
-                fail(f"gitops/README.md Workload Image and Kind Policy Matrix row {row_number} has empty {label}")
+                fail(
+                    f"gitops/README.md Workload Image and Kind Policy Matrix row {row_number} has empty {label}"
+                )
         if "validate-repo-quality-gates.sh" not in validation:
             fail(
                 "gitops/README.md Workload Image and Kind Policy Matrix "
@@ -3868,37 +4263,69 @@ else:
             )
         if surface == "gitops/workloads/*":
             if "non-latest" not in image_policy or "tag or digest" not in image_policy:
-                fail("gitops/README.md workload policy row must require explicit non-latest tag or digest")
-            if "AppProject" not in kind_policy or "namespaceResourceWhitelist" not in kind_policy:
-                fail("gitops/README.md workload policy row must cite apps AppProject namespaceResourceWhitelist")
+                fail(
+                    "gitops/README.md workload policy row must require explicit non-latest tag or digest"
+                )
+            if (
+                "AppProject" not in kind_policy
+                or "namespaceResourceWhitelist" not in kind_policy
+            ):
+                fail(
+                    "gitops/README.md workload policy row must cite apps AppProject namespaceResourceWhitelist"
+                )
             for image in sorted({image for _, image in workload_image_entries}):
                 if image not in evidence:
-                    fail(f"gitops/README.md workload policy row missing active image evidence: {image}")
+                    fail(
+                        f"gitops/README.md workload policy row missing active image evidence: {image}"
+                    )
             for kind in sorted(workload_manifest_kinds):
                 if kind not in evidence:
-                    fail(f"gitops/README.md workload policy row missing active kind evidence: {kind}")
+                    fail(
+                        f"gitops/README.md workload policy row missing active kind evidence: {kind}"
+                    )
             for phrase in ["app onboarding policy decision", "AppProject"]:
                 if phrase not in deferred_boundary:
-                    fail(f"gitops/README.md workload policy row deferred boundary missing phrase: {phrase}")
+                    fail(
+                        f"gitops/README.md workload policy row deferred boundary missing phrase: {phrase}"
+                    )
         elif surface == "gitops/platform/*":
             if "non-latest" not in image_policy or "tag or digest" not in image_policy:
-                fail("gitops/README.md platform policy row must require explicit non-latest tag or digest")
+                fail(
+                    "gitops/README.md platform policy row must require explicit non-latest tag or digest"
+                )
             if "platform AppProject" not in kind_policy:
-                fail("gitops/README.md platform policy row must cite platform AppProject")
+                fail(
+                    "gitops/README.md platform policy row must cite platform AppProject"
+                )
             for image in sorted({image for _, image in platform_image_entries}):
                 if image not in evidence:
-                    fail(f"gitops/README.md platform policy row missing platform image evidence: {image}")
+                    fail(
+                        f"gitops/README.md platform policy row missing platform image evidence: {image}"
+                    )
             if "AppProject permissions" not in deferred_boundary:
-                fail("gitops/README.md platform policy row must defer AppProject permission changes")
+                fail(
+                    "gitops/README.md platform policy row must defer AppProject permission changes"
+                )
         elif surface == "examples/sample-app/*":
-            if "placeholder" not in image_policy or "ghcr.io/<owner>/<appname>:<tag>" not in evidence:
-                fail("gitops/README.md sample policy row must document the placeholder image boundary")
+            if (
+                "placeholder" not in image_policy
+                or "ghcr.io/<owner>/<appname>:<tag>" not in evidence
+            ):
+                fail(
+                    "gitops/README.md sample policy row must document the placeholder image boundary"
+                )
             if "not active desired state" not in kind_policy:
-                fail("gitops/README.md sample policy row must say examples are not active desired state")
+                fail(
+                    "gitops/README.md sample policy row must say examples are not active desired state"
+                )
             if "gitops/workloads/<appname>" not in deferred_boundary:
-                fail("gitops/README.md sample policy row must require replacement before workload copy")
+                fail(
+                    "gitops/README.md sample policy row must require replacement before workload copy"
+                )
         else:
-            fail(f"gitops/README.md Workload Image and Kind Policy Matrix unexpected surface: {surface}")
+            fail(
+                f"gitops/README.md Workload Image and Kind Policy Matrix unexpected surface: {surface}"
+            )
     if indexed_policy_surfaces != expected_workload_policy_surfaces:
         fail(
             "gitops/README.md Workload Image and Kind Policy Matrix row order must be: "
@@ -3924,13 +4351,19 @@ for path, document in gitops_yaml_documents_under(gitops_dir):
         destination = spec.get("destination") or {}
         namespace = destination.get("namespace")
         if has_sync_option(spec, "CreateNamespace=true"):
-            create_namespace_applications.append((path, name, namespace if isinstance(namespace, str) else ""))
+            create_namespace_applications.append(
+                (path, name, namespace if isinstance(namespace, str) else "")
+            )
     elif kind == "ApplicationSet":
-        template_spec = (((document.get("spec") or {}).get("template") or {}).get("spec")) or {}
+        template_spec = (
+            ((document.get("spec") or {}).get("template") or {}).get("spec")
+        ) or {}
         destination = template_spec.get("destination") or {}
         namespace = destination.get("namespace")
         if has_sync_option(template_spec, "CreateNamespace=true"):
-            create_namespace_application_sets.append((path, name, namespace if isinstance(namespace, str) else ""))
+            create_namespace_application_sets.append(
+                (path, name, namespace if isinstance(namespace, str) else "")
+            )
 
 namespace_manifest_files: dict[str, str] = {}
 for path, document in gitops_yaml_documents_under(gitops_dir / "platform/namespaces"):
@@ -3940,8 +4373,12 @@ for path, document in gitops_yaml_documents_under(gitops_dir / "platform/namespa
             namespace_manifest_files[namespace_name] = rel(path)
 
 if create_namespace_applications or create_namespace_application_sets:
-    for _, name, namespace in create_namespace_applications + create_namespace_application_sets:
-        fail(f"GitOps Application/ApplicationSet must not use CreateNamespace=true: {name} -> {namespace}")
+    for _, name, namespace in (
+        create_namespace_applications + create_namespace_application_sets
+    ):
+        fail(
+            f"GitOps Application/ApplicationSet must not use CreateNamespace=true: {name} -> {namespace}"
+        )
 
 root_namespace_entries: list[tuple[str, str]] = []
 apps_namespace_entries: list[tuple[str, str]] = []
@@ -3963,10 +4400,16 @@ for path, document in gitops_yaml_documents_under(gitops_dir):
         elif rel(path).startswith("gitops/apps/root/") and namespace != "argocd":
             platform_namespace_entries.append((name, namespace))
     elif kind == "ApplicationSet":
-        template_spec = (((document.get("spec") or {}).get("template") or {}).get("spec")) or {}
+        template_spec = (
+            ((document.get("spec") or {}).get("template") or {}).get("spec")
+        ) or {}
         destination = template_spec.get("destination") or {}
         namespace = destination.get("namespace")
-        if rel(path) == "gitops/clusters/local/applicationset-apps.yaml" and isinstance(namespace, str) and namespace:
+        if (
+            rel(path) == "gitops/clusters/local/applicationset-apps.yaml"
+            and isinstance(namespace, str)
+            and namespace
+        ):
             apps_namespace_entries.append((name, namespace))
 
 root_namespace_entries = sorted(root_namespace_entries)
@@ -4005,7 +4448,9 @@ namespace_ownership_rows = markdown_table_after_heading(
     profiled_readme_table_headings("Namespace Ownership Matrix"),
 )
 if len(namespace_ownership_rows) < 2:
-    fail("gitops/README.md Namespace Ownership Matrix must contain a header and ownership rows")
+    fail(
+        "gitops/README.md Namespace Ownership Matrix must contain a header and ownership rows"
+    )
 elif namespace_ownership_rows[0] != expected_namespace_ownership_header:
     fail(
         "gitops/README.md Namespace Ownership Matrix header must be: "
@@ -4025,7 +4470,14 @@ else:
                 f"row {row_number} must have {len(expected_namespace_ownership_header)} columns"
             )
             continue
-        surface_cell, namespace_surface, owner, behavior, deferred_boundary, validation = row
+        (
+            surface_cell,
+            namespace_surface,
+            owner,
+            behavior,
+            deferred_boundary,
+            validation,
+        ) = row
         match = re.fullmatch(r"`([^`]+)`", surface_cell)
         if not match:
             fail(
@@ -4043,7 +4495,9 @@ else:
             ("Validation", validation),
         ]:
             if not value:
-                fail(f"gitops/README.md Namespace Ownership Matrix row {row_number} has empty {label}")
+                fail(
+                    f"gitops/README.md Namespace Ownership Matrix row {row_number} has empty {label}"
+                )
         for command in [
             "scripts/validate-repo-quality-gates.sh",
             "scripts/validate-gitops-structure.sh",
@@ -4056,37 +4510,71 @@ else:
         for name, namespace in expected_pairs.get(surface, []):
             pair = f"{name} -> {namespace}"
             if pair not in namespace_surface:
-                fail(f"gitops/README.md Namespace Ownership Matrix {surface} row missing pair: {pair}")
+                fail(
+                    f"gitops/README.md Namespace Ownership Matrix {surface} row missing pair: {pair}"
+                )
         if surface == "root Application":
-            for phrase in ["bootstrap/ArgoCD installation boundary", "not by `gitops/platform/namespaces`"]:
+            for phrase in [
+                "bootstrap/ArgoCD installation boundary",
+                "not by `gitops/platform/namespaces`",
+            ]:
                 if phrase not in owner:
-                    fail(f"gitops/README.md root namespace ownership row missing phrase: {phrase}")
-            for phrase in ["no longer uses `CreateNamespace=true`", "bootstrap must create `argocd`"]:
+                    fail(
+                        f"gitops/README.md root namespace ownership row missing phrase: {phrase}"
+                    )
+            for phrase in [
+                "no longer uses `CreateNamespace=true`",
+                "bootstrap must create `argocd`",
+            ]:
                 if phrase not in behavior:
-                    fail(f"gitops/README.md root namespace ownership row missing behavior phrase: {phrase}")
+                    fail(
+                        f"gitops/README.md root namespace ownership row missing behavior phrase: {phrase}"
+                    )
             if "bootstrap/ArgoCD install ownership pass" not in deferred_boundary:
-                fail("gitops/README.md root namespace ownership row must retain bootstrap/ArgoCD install ownership boundary")
+                fail(
+                    "gitops/README.md root namespace ownership row must retain bootstrap/ArgoCD install ownership boundary"
+                )
         elif surface == "apps ApplicationSet":
             namespace_file = namespace_manifest_files.get("apps", "")
             if namespace_file not in owner:
-                fail(f"gitops/README.md apps namespace ownership row missing owner file: {namespace_file}")
-            for phrase in ["no longer uses `CreateNamespace=true`", "`platform/namespaces` is the Git SSoT"]:
+                fail(
+                    f"gitops/README.md apps namespace ownership row missing owner file: {namespace_file}"
+                )
+            for phrase in [
+                "no longer uses `CreateNamespace=true`",
+                "`platform/namespaces` is the Git SSoT",
+            ]:
                 if phrase not in behavior:
-                    fail(f"gitops/README.md apps namespace ownership row missing behavior phrase: {phrase}")
+                    fail(
+                        f"gitops/README.md apps namespace ownership row missing behavior phrase: {phrase}"
+                    )
             if "namespace owner manifests before onboarding" not in deferred_boundary:
-                fail("gitops/README.md apps namespace ownership row must require namespace owner manifests before onboarding")
+                fail(
+                    "gitops/README.md apps namespace ownership row must require namespace owner manifests before onboarding"
+                )
         elif surface == "platform root Applications":
             for _, namespace in platform_namespace_entries:
                 namespace_file = namespace_manifest_files.get(namespace, "")
                 if namespace_file not in owner:
-                    fail(f"gitops/README.md platform namespace ownership row missing owner file: {namespace_file}")
-            for phrase in ["no longer use `CreateNamespace=true`", "namespace manifests remain the Git SSoT"]:
+                    fail(
+                        f"gitops/README.md platform namespace ownership row missing owner file: {namespace_file}"
+                    )
+            for phrase in [
+                "no longer use `CreateNamespace=true`",
+                "namespace manifests remain the Git SSoT",
+            ]:
                 if phrase not in behavior:
-                    fail(f"gitops/README.md platform namespace ownership row missing behavior phrase: {phrase}")
+                    fail(
+                        f"gitops/README.md platform namespace ownership row missing behavior phrase: {phrase}"
+                    )
             if "platform AppProject destinations first" not in deferred_boundary:
-                fail("gitops/README.md platform namespace ownership row must require platform AppProject destinations first")
+                fail(
+                    "gitops/README.md platform namespace ownership row must require platform AppProject destinations first"
+                )
         else:
-            fail(f"gitops/README.md Namespace Ownership Matrix unexpected surface: {surface}")
+            fail(
+                f"gitops/README.md Namespace Ownership Matrix unexpected surface: {surface}"
+            )
     if indexed_namespace_surfaces != expected_namespace_ownership_surfaces:
         fail(
             "gitops/README.md Namespace Ownership Matrix row order must be: "
@@ -4117,7 +4605,9 @@ infrastructure_coverage_rows = markdown_table_after_heading(
     profiled_readme_table_headings("Infrastructure Coverage Matrix"),
 )
 if len(infrastructure_coverage_rows) < 2:
-    fail("infrastructure/README.md Infrastructure Coverage Matrix must contain a header and coverage rows")
+    fail(
+        "infrastructure/README.md Infrastructure Coverage Matrix must contain a header and coverage rows"
+    )
 elif infrastructure_coverage_rows[0] != expected_infrastructure_coverage_header:
     fail(
         "infrastructure/README.md Infrastructure Coverage Matrix header must be: "
@@ -4143,7 +4633,9 @@ else:
             continue
         for area in area_names:
             if area in seen_infrastructure_areas:
-                fail(f"infrastructure/README.md Infrastructure Coverage Matrix duplicates area: {area}")
+                fail(
+                    f"infrastructure/README.md Infrastructure Coverage Matrix duplicates area: {area}"
+                )
             seen_infrastructure_areas.add(area)
             indexed_infrastructure_areas.append(area)
             area_path = infrastructure_dir / area.rstrip("/")
@@ -4165,11 +4657,19 @@ else:
             ("Validation and operations", validation),
         ]:
             if not value:
-                fail(f"infrastructure/README.md Infrastructure Coverage Matrix row {row_number} has empty {label}")
+                fail(
+                    f"infrastructure/README.md Infrastructure Coverage Matrix row {row_number} has empty {label}"
+                )
         if "owned by" not in purpose:
-            fail(f"infrastructure/README.md Infrastructure Coverage Matrix row {row_number} must name ownership")
-        if not any(marker in validation for marker in ["`bash ", "Validate", "Run ", "verify-"]):
-            fail(f"infrastructure/README.md Infrastructure Coverage Matrix row {row_number} must cite validation or operation evidence")
+            fail(
+                f"infrastructure/README.md Infrastructure Coverage Matrix row {row_number} must name ownership"
+            )
+        if not any(
+            marker in validation for marker in ["`bash ", "Validate", "Run ", "verify-"]
+        ):
+            fail(
+                f"infrastructure/README.md Infrastructure Coverage Matrix row {row_number} must cite validation or operation evidence"
+            )
     if indexed_infrastructure_areas != expected_infrastructure_coverage_areas:
         fail(
             "infrastructure/README.md Infrastructure Coverage Matrix area order must match actual infrastructure entrypoints: "
@@ -4195,7 +4695,9 @@ expected_wsl2_prerequisites = [
     "WSL networking constraints",
 ]
 if len(wsl2_prerequisite_rows) < 2:
-    fail("infrastructure/README.md WSL2 Runtime Prerequisite Matrix must contain a header and prerequisite rows")
+    fail(
+        "infrastructure/README.md WSL2 Runtime Prerequisite Matrix must contain a header and prerequisite rows"
+    )
 elif wsl2_prerequisite_rows[0] != expected_wsl2_prerequisite_header:
     fail(
         "infrastructure/README.md WSL2 Runtime Prerequisite Matrix header must be: "
@@ -4227,38 +4729,69 @@ else:
             ("Failure boundary", failure_boundary),
         ]:
             if not value:
-                fail(f"infrastructure/README.md WSL2 Runtime Prerequisite Matrix row {row_number} has empty {label}")
+                fail(
+                    f"infrastructure/README.md WSL2 Runtime Prerequisite Matrix row {row_number} has empty {label}"
+                )
         if prerequisite == "WSL2 shell and Docker context":
-            if "WSL-native Docker" not in ssot or "docker context show" not in validation:
-                fail("infrastructure/README.md Docker prerequisite row must cite WSL-native Docker and docker context show")
+            if (
+                "WSL-native Docker" not in ssot
+                or "docker context show" not in validation
+            ):
+                fail(
+                    "infrastructure/README.md Docker prerequisite row must cite WSL-native Docker and docker context show"
+                )
             if "does not switch contexts automatically" not in failure_boundary:
-                fail("infrastructure/README.md Docker prerequisite row must keep context switching operator-owned")
+                fail(
+                    "infrastructure/README.md Docker prerequisite row must keep context switching operator-owned"
+                )
         elif prerequisite == "kubectl and k3d context":
             for phrase in ["k3d-hyhome", "k3d/k3d-cluster.yaml"]:
                 if phrase not in ssot:
-                    fail(f"infrastructure/README.md kubectl/k3d prerequisite row missing SSoT phrase: {phrase}")
+                    fail(
+                        f"infrastructure/README.md kubectl/k3d prerequisite row missing SSoT phrase: {phrase}"
+                    )
             for command in ["k3d cluster list", "kubectl config current-context"]:
                 if command not in validation:
-                    fail(f"infrastructure/README.md kubectl/k3d prerequisite row missing validation command: {command}")
+                    fail(
+                        f"infrastructure/README.md kubectl/k3d prerequisite row missing validation command: {command}"
+                    )
         elif prerequisite == "kubeconfig and TLS trust":
             if "~/.kube/config" not in ssot or "KUBECONFIG" not in ssot:
-                fail("infrastructure/README.md kubeconfig prerequisite row must cite ~/.kube/config and KUBECONFIG")
+                fail(
+                    "infrastructure/README.md kubeconfig prerequisite row must cite ~/.kube/config and KUBECONFIG"
+                )
             if "x509: certificate signed by unknown authority" not in validation:
-                fail("infrastructure/README.md kubeconfig prerequisite row must cite the x509 TLS blocker")
+                fail(
+                    "infrastructure/README.md kubeconfig prerequisite row must cite the x509 TLS blocker"
+                )
             if "not an automatic" not in failure_boundary:
-                fail("infrastructure/README.md kubeconfig prerequisite row must keep TLS repair operator-owned")
+                fail(
+                    "infrastructure/README.md kubeconfig prerequisite row must keep TLS repair operator-owned"
+                )
         elif prerequisite == "Port and network contracts":
-            for phrase in ["172.18.0.240:443", "172.18.0.9:6379", "172.18.0.15:15432/15433"]:
+            for phrase in [
+                "172.18.0.240:443",
+                "172.18.0.9:6379",
+                "172.18.0.15:15432/15433",
+            ]:
                 if phrase not in ssot:
-                    fail(f"infrastructure/README.md port/network prerequisite row missing contract: {phrase}")
+                    fail(
+                        f"infrastructure/README.md port/network prerequisite row missing contract: {phrase}"
+                    )
             for command in ["verify-contracts-static.sh", "run-all.sh"]:
                 if command not in validation:
-                    fail(f"infrastructure/README.md port/network prerequisite row missing validation command: {command}")
+                    fail(
+                        f"infrastructure/README.md port/network prerequisite row missing validation command: {command}"
+                    )
         elif prerequisite == "WSL networking constraints":
             if "127.0.0.1.nip.io" not in ssot or "Traefik dynamic configs" not in ssot:
-                fail("infrastructure/README.md WSL networking row must cite nip.io and Traefik dynamic configs")
+                fail(
+                    "infrastructure/README.md WSL networking row must cite nip.io and Traefik dynamic configs"
+                )
             if "outside repo-static ownership" not in failure_boundary:
-                fail("infrastructure/README.md WSL networking row must keep Windows/WSL gateway state outside repo-static ownership")
+                fail(
+                    "infrastructure/README.md WSL networking row must keep Windows/WSL gateway state outside repo-static ownership"
+                )
     if indexed_wsl2_prerequisites != expected_wsl2_prerequisites:
         fail(
             "infrastructure/README.md WSL2 Runtime Prerequisite Matrix row order must be: "
@@ -4285,7 +4818,9 @@ expected_bootstrap_boundaries = [
     "PostgreSQL and Valkey connection contract",
 ]
 if len(bootstrap_boundary_rows) < 2:
-    fail("infrastructure/README.md Bootstrap Boundary Matrix must contain a header and boundary rows")
+    fail(
+        "infrastructure/README.md Bootstrap Boundary Matrix must contain a header and boundary rows"
+    )
 elif bootstrap_boundary_rows[0] != expected_bootstrap_boundary_header:
     fail(
         "infrastructure/README.md Bootstrap Boundary Matrix header must be: "
@@ -4300,7 +4835,14 @@ else:
                 f"row {row_number} must have {len(expected_bootstrap_boundary_header)} columns"
             )
             continue
-        boundary_cell, repo_resp, operator_resp, command_surface, verification, failure_boundary = row
+        (
+            boundary_cell,
+            repo_resp,
+            operator_resp,
+            command_surface,
+            verification,
+            failure_boundary,
+        ) = row
         match = re.fullmatch(r"`([^`]+)`", boundary_cell)
         if not match:
             fail(
@@ -4318,17 +4860,45 @@ else:
             ("Failure boundary", failure_boundary),
         ]:
             if not value:
-                fail(f"infrastructure/README.md Bootstrap Boundary Matrix row {row_number} has empty {label}")
+                fail(
+                    f"infrastructure/README.md Bootstrap Boundary Matrix row {row_number} has empty {label}"
+                )
         if "Owns" not in repo_resp:
-            fail(f"infrastructure/README.md Bootstrap Boundary Matrix row {row_number} must name repository ownership")
-        if not any(marker in operator_resp for marker in ["Operator owns", "External", "external"]):
-            fail(f"infrastructure/README.md Bootstrap Boundary Matrix row {row_number} must name operator or external ownership")
+            fail(
+                f"infrastructure/README.md Bootstrap Boundary Matrix row {row_number} must name repository ownership"
+            )
+        if not any(
+            marker in operator_resp
+            for marker in ["Operator owns", "External", "external"]
+        ):
+            fail(
+                f"infrastructure/README.md Bootstrap Boundary Matrix row {row_number} must name operator or external ownership"
+            )
         if "bootstrap" not in command_surface and "Bootstrap" not in command_surface:
-            fail(f"infrastructure/README.md Bootstrap Boundary Matrix row {row_number} must describe bootstrap command boundary")
-        if not any(command in verification for command in ["verify-", "validate-", "check-secret-handling.sh", "k3d cluster list", "kubectl config current-context"]):
-            fail(f"infrastructure/README.md Bootstrap Boundary Matrix row {row_number} must cite verification evidence")
-        if "Repo-static checks do not" not in failure_boundary and "Steady-state" not in failure_boundary and "Agents do not" not in failure_boundary:
-            fail(f"infrastructure/README.md Bootstrap Boundary Matrix row {row_number} must state a fail-closed boundary")
+            fail(
+                f"infrastructure/README.md Bootstrap Boundary Matrix row {row_number} must describe bootstrap command boundary"
+            )
+        if not any(
+            command in verification
+            for command in [
+                "verify-",
+                "validate-",
+                "check-secret-handling.sh",
+                "k3d cluster list",
+                "kubectl config current-context",
+            ]
+        ):
+            fail(
+                f"infrastructure/README.md Bootstrap Boundary Matrix row {row_number} must cite verification evidence"
+            )
+        if (
+            "Repo-static checks do not" not in failure_boundary
+            and "Steady-state" not in failure_boundary
+            and "Agents do not" not in failure_boundary
+        ):
+            fail(
+                f"infrastructure/README.md Bootstrap Boundary Matrix row {row_number} must state a fail-closed boundary"
+            )
         if boundary == "k3d cluster creation":
             for phrase, value in [
                 ("k3d/k3d-cluster.yaml", repo_resp),
@@ -4340,7 +4910,9 @@ else:
                 ("do not create", failure_boundary),
             ]:
                 if phrase not in value:
-                    fail(f"infrastructure/README.md k3d bootstrap boundary row missing phrase: {phrase}")
+                    fail(
+                        f"infrastructure/README.md k3d bootstrap boundary row missing phrase: {phrase}"
+                    )
         elif boundary == "ArgoCD installation":
             for phrase, value in [
                 ("argocd/values-local.yaml", repo_resp),
@@ -4352,7 +4924,9 @@ else:
                 ("outside approved bootstrap/break-glass", failure_boundary),
             ]:
                 if phrase not in value:
-                    fail(f"infrastructure/README.md ArgoCD bootstrap boundary row missing phrase: {phrase}")
+                    fail(
+                        f"infrastructure/README.md ArgoCD bootstrap boundary row missing phrase: {phrase}"
+                    )
         elif boundary == "root app application":
             for phrase, value in [
                 ("gitops/clusters/local/root-application.yaml", repo_resp),
@@ -4364,7 +4938,9 @@ else:
                 ("direct apply is not normal operation", failure_boundary),
             ]:
                 if phrase not in value:
-                    fail(f"infrastructure/README.md root app bootstrap boundary row missing phrase: {phrase}")
+                    fail(
+                        f"infrastructure/README.md root app bootstrap boundary row missing phrase: {phrase}"
+                    )
         elif boundary == "Vault connection contract":
             for phrase, value in [
                 ("vault-external.yaml", repo_resp),
@@ -4378,7 +4954,9 @@ else:
                 ("refresh Vault auth", failure_boundary),
             ]:
                 if phrase not in value:
-                    fail(f"infrastructure/README.md Vault bootstrap boundary row missing phrase: {phrase}")
+                    fail(
+                        f"infrastructure/README.md Vault bootstrap boundary row missing phrase: {phrase}"
+                    )
         elif boundary == "PostgreSQL and Valkey connection contract":
             for phrase, value in [
                 ("Service/EndpointSlice", repo_resp),
@@ -4393,7 +4971,9 @@ else:
                 ("change `.env` values", failure_boundary),
             ]:
                 if phrase not in value:
-                    fail(f"infrastructure/README.md PostgreSQL/Valkey bootstrap boundary row missing phrase: {phrase}")
+                    fail(
+                        f"infrastructure/README.md PostgreSQL/Valkey bootstrap boundary row missing phrase: {phrase}"
+                    )
     if indexed_bootstrap_boundaries != expected_bootstrap_boundaries:
         fail(
             "infrastructure/README.md Bootstrap Boundary Matrix row order must be: "
@@ -4411,7 +4991,9 @@ for script in infrastructure_shell_paths:
     if not os.access(script, os.X_OK):
         fail(f"infrastructure shell entrypoint must be executable: {rel(script)}")
     if not read_text(script).startswith("#!/usr/bin/env bash\n"):
-        fail(f"infrastructure shell entrypoint must start with bash shebang: {rel(script)}")
+        fail(
+            f"infrastructure shell entrypoint must start with bash shebang: {rel(script)}"
+        )
 
 infrastructure_test_rows = markdown_table_after_heading(
     infrastructure_readme,
@@ -4428,7 +5010,9 @@ allowed_infra_test_types = {"Static", "Live", "Live aggregate"}
 test_script_paths = sorted((infrastructure_dir / "tests").glob("*.sh"))
 test_script_names = {path.name for path in test_script_paths}
 if len(infrastructure_test_rows) < 2:
-    fail("infrastructure/README.md Infrastructure Test Inventory must contain a header and test rows")
+    fail(
+        "infrastructure/README.md Infrastructure Test Inventory must contain a header and test rows"
+    )
 elif infrastructure_test_rows[0] != expected_infra_test_header:
     fail(
         "infrastructure/README.md Infrastructure Test Inventory header must be: "
@@ -4453,7 +5037,9 @@ else:
             continue
         script_name = match.group(1)
         if script_name in indexed_test_scripts:
-            fail(f"infrastructure/README.md Infrastructure Test Inventory duplicates test script: {script_name}")
+            fail(
+                f"infrastructure/README.md Infrastructure Test Inventory duplicates test script: {script_name}"
+            )
         indexed_test_scripts[script_name] = row
 
         test_type = row[1]
@@ -4484,9 +5070,13 @@ else:
             live_test_scripts.add(script_name)
 
     for script_name in sorted(test_script_names - set(indexed_test_scripts)):
-        fail(f"infrastructure/README.md Infrastructure Test Inventory missing test script row: {script_name}")
+        fail(
+            f"infrastructure/README.md Infrastructure Test Inventory missing test script row: {script_name}"
+        )
     for script_name in sorted(set(indexed_test_scripts) - test_script_names):
-        fail(f"infrastructure/README.md Infrastructure Test Inventory references missing test script: {script_name}")
+        fail(
+            f"infrastructure/README.md Infrastructure Test Inventory references missing test script: {script_name}"
+        )
 
     run_all_path = infrastructure_dir / "tests/run-all.sh"
     if run_all_path.exists():
@@ -4520,16 +5110,26 @@ for phrase in [
     "operator-owned runtime evidence",
 ]:
     if phrase not in normalized_traefik_readme:
-        fail(f"traefik/README.md missing external gateway/serverlb boundary phrase: {phrase}")
+        fail(
+            f"traefik/README.md missing external gateway/serverlb boundary phrase: {phrase}"
+        )
 traefik_rows = markdown_table_after_heading(
     traefik_readme,
     profiled_readme_table_headings("Traefik Route Inventory"),
 )
-expected_traefik_header = ["Config", "Router host", "Backend URL", "Boundary", "Validation"]
+expected_traefik_header = [
+    "Config",
+    "Router host",
+    "Backend URL",
+    "Boundary",
+    "Validation",
+]
 traefik_configs = sorted(traefik_dir.glob("*.yaml"))
 traefik_config_names = {path.name for path in traefik_configs}
 if len(traefik_rows) < 2:
-    fail("traefik/README.md Traefik Route Inventory must contain a header and route rows")
+    fail(
+        "traefik/README.md Traefik Route Inventory must contain a header and route rows"
+    )
 elif traefik_rows[0] != expected_traefik_header:
     fail(
         "traefik/README.md Traefik Route Inventory header must be: "
@@ -4539,19 +5139,27 @@ else:
     indexed_traefik_configs: dict[str, list[str]] = {}
     for row_number, row in enumerate(traefik_rows[1:], start=1):
         if len(row) != len(expected_traefik_header):
-            fail(f"traefik/README.md Traefik Route Inventory row {row_number} must have {len(expected_traefik_header)} columns")
+            fail(
+                f"traefik/README.md Traefik Route Inventory row {row_number} must have {len(expected_traefik_header)} columns"
+            )
             continue
         config_match = re.fullmatch(r"`([^`]+\.yaml)`", row[0])
         host_match = re.fullmatch(r"`([^`]+)`", row[1])
         backend_match = re.fullmatch(r"`([^`]+)`", row[2])
         if not config_match:
-            fail(f"traefik/README.md Traefik Route Inventory row {row_number} must start with a backticked config filename")
+            fail(
+                f"traefik/README.md Traefik Route Inventory row {row_number} must start with a backticked config filename"
+            )
             continue
         if not host_match:
-            fail(f"traefik/README.md Traefik Route Inventory row {row_number} must use a backticked Router host")
+            fail(
+                f"traefik/README.md Traefik Route Inventory row {row_number} must use a backticked Router host"
+            )
             continue
         if not backend_match:
-            fail(f"traefik/README.md Traefik Route Inventory row {row_number} must use a backticked Backend URL")
+            fail(
+                f"traefik/README.md Traefik Route Inventory row {row_number} must use a backticked Backend URL"
+            )
             continue
         config_name = config_match.group(1)
         host = host_match.group(1)
@@ -4559,16 +5167,24 @@ else:
         boundary = row[3]
         validation = row[4]
         if config_name in indexed_traefik_configs:
-            fail(f"traefik/README.md Traefik Route Inventory duplicates config: {config_name}")
+            fail(
+                f"traefik/README.md Traefik Route Inventory duplicates config: {config_name}"
+            )
         indexed_traefik_configs[config_name] = row
         if not boundary or "Reference-only" not in boundary:
-            fail(f"traefik/README.md Traefik Route Inventory row {row_number} must keep reference-only boundary")
+            fail(
+                f"traefik/README.md Traefik Route Inventory row {row_number} must keep reference-only boundary"
+            )
         if not validation or "validate-repo-quality-gates.sh" not in validation:
-            fail(f"traefik/README.md Traefik Route Inventory row {row_number} must cite repo quality validation")
+            fail(
+                f"traefik/README.md Traefik Route Inventory row {row_number} must cite repo quality validation"
+            )
 
         config_path = traefik_dir / config_name
         if not config_path.exists():
-            fail(f"traefik/README.md Traefik Route Inventory references missing config: {config_name}")
+            fail(
+                f"traefik/README.md Traefik Route Inventory references missing config: {config_name}"
+            )
             continue
         try:
             config = load_yaml(config_path)
@@ -4588,44 +5204,66 @@ else:
         service_name, service = next(iter(services.items()))
         router_name, router = next(iter(routers.items()))
         load_balancer = service.get("loadBalancer") if isinstance(service, dict) else {}
-        servers = load_balancer.get("servers") if isinstance(load_balancer, dict) else []
+        servers = (
+            load_balancer.get("servers") if isinstance(load_balancer, dict) else []
+        )
         urls = [
             server.get("url")
             for server in servers
             if isinstance(server, dict) and server.get("url")
         ]
         if urls != [backend_url]:
-            fail(f"{rel(config_path)} backend URL must match README inventory: {backend_url}")
+            fail(
+                f"{rel(config_path)} backend URL must match README inventory: {backend_url}"
+            )
         if load_balancer.get("passHostHeader") is not True:
             fail(f"{rel(config_path)} loadBalancer.passHostHeader must be true")
         transport_name = load_balancer.get("serversTransport")
         if not transport_name or transport_name not in transports:
-            fail(f"{rel(config_path)} service must reference a defined serversTransport")
+            fail(
+                f"{rel(config_path)} service must reference a defined serversTransport"
+            )
         elif transports.get(transport_name, {}).get("insecureSkipVerify") is not True:
-            fail(f"{rel(config_path)} serversTransport must set insecureSkipVerify: true")
+            fail(
+                f"{rel(config_path)} serversTransport must set insecureSkipVerify: true"
+            )
         expected_rule = f"Host(`{host}`)"
         if not isinstance(router, dict) or router.get("rule") != expected_rule:
-            fail(f"{rel(config_path)} router rule must match README inventory host: {expected_rule}")
+            fail(
+                f"{rel(config_path)} router rule must match README inventory host: {expected_rule}"
+            )
         entrypoints = router.get("entryPoints") if isinstance(router, dict) else []
         if entrypoints != ["websecure"]:
             fail(f"{rel(config_path)} router entryPoints must be exactly ['websecure']")
         if router.get("service") != service_name:
-            fail(f"{rel(config_path)} router service must reference the defined service")
+            fail(
+                f"{rel(config_path)} router service must reference the defined service"
+            )
         if "tls" not in router:
             fail(f"{rel(config_path)} router must define tls")
 
     for config_name in sorted(traefik_config_names - set(indexed_traefik_configs)):
-        fail(f"traefik/README.md Traefik Route Inventory missing config row: {config_name}")
+        fail(
+            f"traefik/README.md Traefik Route Inventory missing config row: {config_name}"
+        )
     for config_name in sorted(set(indexed_traefik_configs) - traefik_config_names):
-        fail(f"traefik/README.md Traefik Route Inventory references missing config: {config_name}")
+        fail(
+            f"traefik/README.md Traefik Route Inventory references missing config: {config_name}"
+        )
 
 stale_traefik_backend_pattern = "k3d-hyhome-serverlb:443"
-for path in sorted([*traefik_configs, root / "examples/sample-app/traefik-k3d.yaml.example"]):
+for path in sorted(
+    [*traefik_configs, root / "examples/sample-app/traefik-k3d.yaml.example"]
+):
     text = read_text(path)
     if stale_traefik_backend_pattern in text:
-        fail(f"{rel(path)} contains stale Traefik backend: {stale_traefik_backend_pattern}")
+        fail(
+            f"{rel(path)} contains stale Traefik backend: {stale_traefik_backend_pattern}"
+        )
     if "https://172.18.0.240:443" not in text:
-        fail(f"{rel(path)} must reference ingress-nginx LoadBalancer backend https://172.18.0.240:443")
+        fail(
+            f"{rel(path)} must reference ingress-nginx LoadBalancer backend https://172.18.0.240:443"
+        )
 
 executable_reference_source_suffixes = {
     ".md",
@@ -4651,13 +5289,9 @@ for tracked_path in sorted(tracked):
         continue
     executable_reference_sources[pathlib.PurePosixPath(tracked_path)] = read_text(path)
 
-validation_surface_contract = load_json(
-    root / "scripts/validation/registry.json"
-)
+validation_surface_contract = load_json(root / "scripts/validation/registry.json")
 try:
-    executable_suffixes = executable_suffixes_from_registry(
-        validation_surface_contract
-    )
+    executable_suffixes = executable_suffixes_from_registry(validation_surface_contract)
 except ValueError as exc:
     fail(f"validation executable suffix ownership differs: {exc}")
     executable_suffixes = frozenset()
@@ -4684,22 +5318,30 @@ for phrase in [
     "value=<redacted>",
 ]:
     if phrase not in secret_scanner_text:
-        fail(f"{rel(scripts_dir / 'check-secret-handling.sh')} missing examples secret-scan contract phrase: {phrase}")
+        fail(
+            f"{rel(scripts_dir / 'check-secret-handling.sh')} missing examples secret-scan contract phrase: {phrase}"
+        )
 
 for obsolete in ["k3d_kubeconfig.yaml"]:
     if obsolete in tracked:
         fail(f"obsolete tracked file remains: {obsolete}")
 for tracked_path in tracked:
-    if tracked_path.startswith("docs/" + legacy_postmortems + "/") or tracked_path.startswith("docs/" + legacy_learning + "/"):
+    if tracked_path.startswith(
+        "docs/" + legacy_postmortems + "/"
+    ) or tracked_path.startswith("docs/" + legacy_learning + "/"):
         fail(f"obsolete tracked docs path remains: {tracked_path}")
 
 pre_commit_text = read_text(root / ".pre-commit-config.yaml")
 stale_pre_commit_hook_regex = "\\." + "claude/hooks/.*\\.sh"
 for hook_id in ["shellcheck", "shfmt"]:
     if "docs/00\\.agent-governance/hooks/.*\\.sh" not in pre_commit_text:
-        fail(f".pre-commit-config.yaml {hook_id} must include docs/00.agent-governance/hooks/*.sh coverage")
+        fail(
+            f".pre-commit-config.yaml {hook_id} must include docs/00.agent-governance/hooks/*.sh coverage"
+        )
     if stale_pre_commit_hook_regex in pre_commit_text:
-        fail(f".pre-commit-config.yaml {hook_id} must not use stale provider-local hook coverage")
+        fail(
+            f".pre-commit-config.yaml {hook_id} must not use stale provider-local hook coverage"
+        )
 
 active_hook_reference_files = [
     root / "scripts/README.md",
@@ -4709,7 +5351,9 @@ active_hook_reference_files = [
 for path in active_hook_reference_files:
     text = read_text(path)
     if stale_provider_hook_path in text:
-        fail(f"{rel(path)} contains stale active hook path; use docs/00.agent-governance/hooks")
+        fail(
+            f"{rel(path)} contains stale active hook path; use docs/00.agent-governance/hooks"
+        )
     if "docs/00.agent-governance/hooks" not in text:
         fail(f"{rel(path)} missing shared hook path docs/00.agent-governance/hooks")
 
@@ -4719,7 +5363,9 @@ for hook_path in [
 ]:
     hook_text = read_text(hook_path)
     if ".agents/*" not in hook_text:
-        fail(f"{rel(hook_path)} must trigger repository quality gates for .agents/** shared asset changes")
+        fail(
+            f"{rel(hook_path)} must trigger repository quality gates for .agents/** shared asset changes"
+        )
 
 if failures:
     print("=== validate-repo-quality-gates ===")

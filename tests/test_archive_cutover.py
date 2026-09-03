@@ -974,7 +974,9 @@ class ArchiveCutoverTest(unittest.TestCase):
         )
         self.assertFalse((ROOT / "docs/99.templates/support").exists())
 
-    def test_future_archive_creation_uses_archive_evidence_not_entry_state(self) -> None:
+    def test_future_archive_creation_uses_archive_evidence_not_entry_state(
+        self,
+    ) -> None:
         registry = load_registry(ROOT)
         source_path = PurePosixPath("docs/03.specs/900-example/spec.md")
         archive_path = PurePosixPath("docs/98.archive/03.specs/900-example/spec.md")

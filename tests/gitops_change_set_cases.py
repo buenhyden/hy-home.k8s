@@ -84,9 +84,7 @@ def run_boundaries(module: Any) -> None:
         traversal = write_case(
             module, temp, "traversal", supported + "resources: [../outside.yaml]\n"
         )
-        expect_error(
-            module, "RESOURCE_ESCAPE", lambda: render_case(module, traversal)
-        )
+        expect_error(module, "RESOURCE_ESCAPE", lambda: render_case(module, traversal))
 
         remote = write_case(
             module,
@@ -94,9 +92,7 @@ def run_boundaries(module: Any) -> None:
             "remote",
             supported + "resources: [https://example.invalid/object.yaml]\n",
         )
-        expect_error(
-            module, "RESOURCE_REFERENCE", lambda: render_case(module, remote)
-        )
+        expect_error(module, "RESOURCE_REFERENCE", lambda: render_case(module, remote))
 
         symlink = write_case(
             module,
@@ -106,9 +102,7 @@ def run_boundaries(module: Any) -> None:
             (("target.yaml", manifest),),
         )
         (symlink / "linked.yaml").symlink_to("target.yaml")
-        expect_error(
-            module, "RESOURCE_SYMLINK", lambda: render_case(module, symlink)
-        )
+        expect_error(module, "RESOURCE_SYMLINK", lambda: render_case(module, symlink))
 
         non_regular = write_case(
             module, temp, "non-regular", supported + "resources: [pipe.yaml]\n"
@@ -128,9 +122,7 @@ def run_boundaries(module: Any) -> None:
             "cycle",
             supported + "resources: [kustomization.yaml]\n",
         )
-        expect_error(
-            module, "KUSTOMIZATION_CYCLE", lambda: render_case(module, cycle)
-        )
+        expect_error(module, "KUSTOMIZATION_CYCLE", lambda: render_case(module, cycle))
 
         duplicate_identity = write_case(
             module,
@@ -313,9 +305,9 @@ def run_boundaries(module: Any) -> None:
             ),
         )
         multi_graph = render_case(module, multi_document)
-        if len(multi_graph) != 2 or {
-            item.path for item in multi_graph.values()
-        } != {"objects.yaml"}:
+        if len(multi_graph) != 2 or {item.path for item in multi_graph.values()} != {
+            "objects.yaml"
+        }:
             raise AssertionError("multi-document fixture did not render two objects")
 
         history = temp / "history"
@@ -331,7 +323,10 @@ def run_boundaries(module: Any) -> None:
         run_git(module, history, ["add", "state.txt"])
         run_git(module, history, ["commit", "--quiet", "-m", "root"])
         root_commit = run_git(module, history, ["rev-parse", "HEAD"])
-        if module._resolve_base_revision(history, module.ZERO_REVISION) != module.EMPTY_REVISION:
+        if (
+            module._resolve_base_revision(history, module.ZERO_REVISION)
+            != module.EMPTY_REVISION
+        ):
             raise AssertionError("root push must compare against the empty revision")
 
         for unsafe_ref in (
@@ -374,9 +369,7 @@ def run_boundaries(module: Any) -> None:
                 str(shallow),
             ],
         )
-        if run_git(
-            module, shallow, ["rev-parse", "--is-shallow-repository"]
-        ) != "true":
+        if run_git(module, shallow, ["rev-parse", "--is-shallow-repository"]) != "true":
             raise AssertionError("shallow fixture is not shallow")
         expect_error(
             module,

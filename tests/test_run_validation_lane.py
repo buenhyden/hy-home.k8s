@@ -644,9 +644,9 @@ class BoundedValidationCommandTest(unittest.TestCase):
         self.assertRegex(rendered, r"stderr_sha256=[0-9a-f]{64}")
 
     def test_reviewed_limits_match_the_sole_quality_owner(self):
-        owner = (
-            ROOT / "docs/00.agent-governance/policies/quality.md"
-        ).read_text(encoding="utf-8")
+        owner = (ROOT / "docs/00.agent-governance/policies/quality.md").read_text(
+            encoding="utf-8"
+        )
 
         self.assertEqual(RUNNER.VALIDATOR_TIMEOUT_SECONDS, 1_200.0)
         self.assertEqual(RUNNER.VALIDATOR_STDOUT_LIMIT_BYTES, 4 * 1024 * 1024)
@@ -1531,11 +1531,7 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
         contract_module = RUNNER.load_contract_module()
         contract = contract_module.validate_contract(ROOT)
         expected = sorted(
-            (
-                row
-                for row in contract["validators"]
-                if "all-files" in row["lanes"]
-            ),
+            (row for row in contract["validators"] if "all-files" in row["lanes"]),
             key=lambda row: row["id"],
         )
         completed = bounded_result(QUALITY_MARKER + "\n")

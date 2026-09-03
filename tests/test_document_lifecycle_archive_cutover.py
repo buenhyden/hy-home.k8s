@@ -849,9 +849,7 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
             original + b"\nunauthorized body drift\n",
             original.replace(b"status: done\n", b"status: queued\n", 1),
             original.replace(b"type: sdlc/task\n", b"type: sdlc/spec\n", 1),
-            original.replace(
-                b'artifact_id: "SPEC-', b'artifact_id: "SPEC-9999-', 1
-            ),
+            original.replace(b'artifact_id: "SPEC-', b'artifact_id: "SPEC-9999-', 1),
         )
         for mutation in mutations:
             with self.subTest(mutation=mutation[-48:]):
@@ -1066,7 +1064,10 @@ artifact_id: "AUD-0001-m0001"
             ),
             (),
         )
-        for status, rule in (("active", "LIFECYCLE-STATE"), ("completed", "LIFECYCLE-CREATE")):
+        for status, rule in (
+            ("active", "LIFECYCLE-STATE"),
+            ("completed", "LIFECYCLE-CREATE"),
+        ):
             with self.subTest(status=status):
                 self.assertEqual(
                     [
@@ -1814,7 +1815,9 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
                 )
 
     @staticmethod
-    def _mig0004_baseline() -> tuple[str, dict[PurePosixPath, str], dict[PurePosixPath, str]]:
+    def _mig0004_baseline() -> tuple[
+        str, dict[PurePosixPath, str], dict[PurePosixPath, str]
+    ]:
         # The gate admits one cutover: the sealed target tree is its proposed
         # side. Reading the live index instead would pair a historical base with
         # a tree that has advanced past the cutover, which never occurs in a run.
@@ -1832,7 +1835,9 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
             or row["legacy_path"]
             == "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks.md"
         }
-        source_commit = "7a770c3c0eabaeda554c4030fc08fb17de164fe5"  # pragma: allowlist secret
+        source_commit = (
+            "7a770c3c0eabaeda554c4030fc08fb17de164fe5"  # pragma: allowlist secret
+        )
         assert terminal == {source_commit}
         base_commit = terminal.pop()
         return base_commit, VALIDATOR._tree_blob_map(ROOT, base_commit), proposed
@@ -2194,7 +2199,9 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
 
         self.assertEqual(created.status, "draft")
         self.assertEqual(
-            VALIDATOR.compare_lifecycle(registry, {}, {path: created}, base_mode="staged"),
+            VALIDATOR.compare_lifecycle(
+                registry, {}, {path: created}, base_mode="staged"
+            ),
             (),
         )
 

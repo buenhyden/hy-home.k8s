@@ -102,9 +102,7 @@ EXPECTED_PRE_COMMIT_SOURCE_TAGS = {
     "https://github.com/rhysd/actionlint": "v1.7.12",
     "https://github.com/stackrox/kube-linter": "v0.8.3",
 }
-GITLEAKS_SHA256 = (
-    "79a3ab579b53f71efd634f3aaf7e04a0fa0cf206b7ed434638d1547a2470a66e"  # pragma: allowlist secret
-)
+GITLEAKS_SHA256 = "79a3ab579b53f71efd634f3aaf7e04a0fa0cf206b7ed434638d1547a2470a66e"  # pragma: allowlist secret
 EXPECTED_GITLEAKS_TOOL = {
     "version": "8.30.0",
     "asset": "gitleaks_8.30.0_linux_x64.tar.gz",
@@ -302,6 +300,8 @@ WRAPPER_OPTIONS_WITH_VALUE = {
     "nice": frozenset({"-n", "--adjustment"}),
     "timeout": frozenset({"-k", "--kill-after"}),
 }
+
+
 class ContractError(ValueError):
     """A stable CI Python contract finding."""
 
@@ -349,9 +349,13 @@ def _find_command_substitution_end(text: str, start: int) -> int:
         if character == "\\":
             index += 2
             continue
-        if quote is None and character == "#" and _is_shell_comment_start(
-            text,
-            index,
+        if (
+            quote is None
+            and character == "#"
+            and _is_shell_comment_start(
+                text,
+                index,
+            )
         ):
             newline = text.find("\n", index)
             if newline < 0:
@@ -403,9 +407,13 @@ def _mask_and_check_command_substitutions(
             output.append(character)
             index += 1
             continue
-        if quote is None and character == "#" and _is_shell_comment_start(
-            text,
-            index,
+        if (
+            quote is None
+            and character == "#"
+            and _is_shell_comment_start(
+                text,
+                index,
+            )
         ):
             newline = text.find("\n", index)
             if newline < 0:
@@ -460,9 +468,13 @@ def _mask_shell_quoted_text(text: str) -> str:
                 output.append(" ")
             index += 2
             continue
-        if quote is None and character == "#" and _is_shell_comment_start(
-            text,
-            index,
+        if (
+            quote is None
+            and character == "#"
+            and _is_shell_comment_start(
+                text,
+                index,
+            )
         ):
             newline = text.find("\n", index)
             if newline < 0:
@@ -550,12 +562,17 @@ def _shell_simple_commands(text: str) -> list[list[str]]:
                     case_header = False
                 continue
             if _is_shell_control_token(token):
-                if token == "&" and current and current[-1] in {
-                    "<",
-                    "<<",
-                    ">",
-                    ">>",
-                }:
+                if (
+                    token == "&"
+                    and current
+                    and current[-1]
+                    in {
+                        "<",
+                        "<<",
+                        ">",
+                        ">>",
+                    }
+                ):
                     current.append(token)
                     redirection_target = True
                     continue
@@ -637,8 +654,7 @@ def _pip_subcommand(arguments: list[str]) -> str:
 
         short_flags = token[1:]
         if not short_flags or any(
-            flag not in PIP_GLOBAL_SHORT_FLAG_CHARACTERS
-            for flag in short_flags
+            flag not in PIP_GLOBAL_SHORT_FLAG_CHARACTERS for flag in short_flags
         ):
             _shell_guard_error()
         index += 1
@@ -686,7 +702,8 @@ def _wrapper_target_index(
             continue
         if token.startswith("-") and token != "-":
             if (
-                option_name in WRAPPER_OPTIONS_WITH_VALUE.get(
+                option_name
+                in WRAPPER_OPTIONS_WITH_VALUE.get(
                     wrapper,
                     frozenset(),
                 )
@@ -781,9 +798,7 @@ def _simple_command_is_allowed(executable: str, arguments: list[str]) -> bool:
         "--show-diff-on-failure",
     ]:
         _shell_guard_error()
-    if executable == "exit" and (
-        len(arguments) != 1 or not arguments[0].isdecimal()
-    ):
+    if executable == "exit" and (len(arguments) != 1 or not arguments[0].isdecimal()):
         _shell_guard_error()
     return True
 
@@ -824,13 +839,10 @@ def _simple_command_contains_pip_install(
         _shell_guard_error()
     if executable in SHELL_INTERPRETERS:
         for option_index, option in enumerate(arguments):
-            has_command_payload = (
-                option in {"-c", "--command"}
-                or (
-                    option.startswith("-")
-                    and not option.startswith("--")
-                    and "c" in option[1:]
-                )
+            has_command_payload = option in {"-c", "--command"} or (
+                option.startswith("-")
+                and not option.startswith("--")
+                and "c" in option[1:]
             )
             if not has_command_payload:
                 continue
@@ -866,18 +878,27 @@ def _simple_command_contains_pip_install(
     if not _is_versioned_launcher(executable, "python"):
         if _simple_command_is_allowed(executable, arguments):
             return False
-        if executable == "git" and arguments and arguments[0] in {
-            "cat-file",
-            "diff",
-            "ls-tree",
-        }:
+        if (
+            executable == "git"
+            and arguments
+            and arguments[0]
+            in {
+                "cat-file",
+                "diff",
+                "ls-tree",
+            }
+        ):
             if _git_has_execution_option(arguments[0], arguments[1:]):
                 _shell_guard_error()
             return False
         _shell_guard_error()
     if any(
         argument in {"-c", "--command"}
-        or (argument.startswith("-") and not argument.startswith("--") and "c" in argument[1:])
+        or (
+            argument.startswith("-")
+            and not argument.startswith("--")
+            and "c" in argument[1:]
+        )
         for argument in arguments
     ):
         _shell_guard_error()
@@ -1115,9 +1136,7 @@ def _open_regular_file(root: Path, relative: Path, rule_id: str) -> int:
             except OSError:
                 fail(rule_id, "governed input is unavailable")
             if not final_component:
-                if stat.S_ISLNK(checked.st_mode) or not stat.S_ISDIR(
-                    checked.st_mode
-                ):
+                if stat.S_ISLNK(checked.st_mode) or not stat.S_ISDIR(checked.st_mode):
                     fail(
                         rule_id,
                         "governed input parent is not a real directory",
@@ -1140,9 +1159,7 @@ def _open_regular_file(root: Path, relative: Path, rule_id: str) -> int:
                 parent_descriptor = next_descriptor
                 next_descriptor = -1
                 continue
-            if stat.S_ISLNK(checked.st_mode) or not stat.S_ISREG(
-                checked.st_mode
-            ):
+            if stat.S_ISLNK(checked.st_mode) or not stat.S_ISREG(checked.st_mode):
                 fail(
                     rule_id,
                     "governed input must be a regular non-symlink file",
@@ -1318,14 +1335,17 @@ def _validate_pre_commit_revisions(
         if repo == "local":
             local_count += 1
             if "rev" in repository:
-                fail("CI-PRECOMMIT-REV", "local pre-commit repository must not have rev")
+                fail(
+                    "CI-PRECOMMIT-REV", "local pre-commit repository must not have rev"
+                )
             continue
         if repo in observed:
             fail("CI-PRECOMMIT-REV", f"duplicate pre-commit repository: {repo}")
         revision = repository.get("rev")
-        if not isinstance(revision, str) or FULL_COMMIT_PATTERN.fullmatch(
-            revision
-        ) is None:
+        if (
+            not isinstance(revision, str)
+            or FULL_COMMIT_PATTERN.fullmatch(revision) is None
+        ):
             fail(
                 "CI-PRECOMMIT-REV",
                 "every non-local pre-commit rev must be a full lowercase commit",
@@ -1333,7 +1353,9 @@ def _validate_pre_commit_revisions(
         observed[repo] = revision
 
     if local_count != 1:
-        fail("CI-PRECOMMIT-REV", "pre-commit config must contain exactly one local repo")
+        fail(
+            "CI-PRECOMMIT-REV", "pre-commit config must contain exactly one local repo"
+        )
     if observed != EXPECTED_PRE_COMMIT_REVISIONS:
         fail(
             "CI-PRECOMMIT-REV",
@@ -1360,7 +1382,9 @@ def _validate_pre_commit_revisions(
                 if isinstance(pair_key, yaml.ScalarNode)
             }
             repo_node, rev_node = fields.get("repo"), fields.get("rev")
-            if isinstance(repo_node, yaml.ScalarNode) and isinstance(rev_node, yaml.ScalarNode):
+            if isinstance(repo_node, yaml.ScalarNode) and isinstance(
+                rev_node, yaml.ScalarNode
+            ):
                 repo_nodes[repo_node.value] = rev_node
     lines = text.splitlines()
     for repo, revision in EXPECTED_PRE_COMMIT_REVISIONS.items():
@@ -1413,9 +1437,10 @@ def _validate_python_versions(
                 f"{job_id} must contain exactly one actions/setup-python step",
             )
         setup_with = setup_steps[0].get("with")
-        if not isinstance(setup_with, dict) or setup_with.get(
-            "python-version"
-        ) != EXPECTED_PYTHON:
+        if (
+            not isinstance(setup_with, dict)
+            or setup_with.get("python-version") != EXPECTED_PYTHON
+        ):
             fail("CI-PYTHON-VERSION", f"{job_id} must select Python 3.12")
 
 
@@ -1470,7 +1495,10 @@ def _validate_shell_boundaries(workflow: dict[str, Any]) -> None:
 
     defaults = workflow.get("defaults")
     if isinstance(defaults, dict) and "run" in defaults:
-        fail("CI-PYTHON-WORKFLOW", "workflow defaults.run shell overrides are unsupported")
+        fail(
+            "CI-PYTHON-WORKFLOW",
+            "workflow defaults.run shell overrides are unsupported",
+        )
     jobs = workflow.get("jobs")
     if not isinstance(jobs, dict):
         fail("CI-PYTHON-WORKFLOW", "workflow jobs must be a mapping")
@@ -1479,7 +1507,10 @@ def _validate_shell_boundaries(workflow: dict[str, Any]) -> None:
             continue
         job_defaults = job.get("defaults")
         if isinstance(job_defaults, dict) and "run" in job_defaults:
-            fail("CI-PYTHON-WORKFLOW", f"job defaults.run shell overrides are unsupported: {job_id}")
+            fail(
+                "CI-PYTHON-WORKFLOW",
+                f"job defaults.run shell overrides are unsupported: {job_id}",
+            )
         steps = job.get("steps")
         if not isinstance(steps, list):
             continue
@@ -1662,9 +1693,7 @@ def validate_repository(root: Path) -> int:
             "pre-commit/action must be absent from the workflow",
         )
 
-    job_steps = {
-        job_id: _steps_for_job(workflow, job_id) for job_id in VALIDATION_JOBS
-    }
+    job_steps = {job_id: _steps_for_job(workflow, job_id) for job_id in VALIDATION_JOBS}
     _validate_shell_boundaries(workflow)
     _validate_pre_commit_execution(workflow, job_steps)
     _validate_gitleaks_tool(workflow, job_steps)

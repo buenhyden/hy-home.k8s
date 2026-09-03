@@ -97,11 +97,22 @@ repos:
   # Python lane, mirroring the shell lane: the linter reports, the formatter
   # rewrites. `ruff-check` runs without `--fix` so a validation run never
   # edits outside the change under review.
+  #
+  # `types` is stated rather than inherited. The v0.16.5 hook definition
+  # declares `types_or: [python, pyi, jupyter, markdown]` for `ruff-format`,
+  # which would hand all 704 tracked Markdown files to a Python formatter and
+  # rewrite the fenced snippets inside them -- a fenced list fragment such as
+  # `("a", "b"),` comes back as `(("a", "b"),)`, still valid Python but no
+  # longer the code the document is instructing a reader to write. Markdown
+  # already has an owner in markdownlint, and no `.pyi` or `.ipynb` file is
+  # tracked here, so this lane covers Python and nothing else.
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: 1f1e8bf348ff38fc88619a38d3ca4d9c56abea49 # frozen: v0.16.5
     hooks:
       - id: ruff-check
+        types: [python]
       - id: ruff-format
+        types: [python]
 
   # --- 5. 인프라 및 도커 검사 (Infrastructure) ---
   - repo: https://github.com/zizmorcore/zizmor-pre-commit

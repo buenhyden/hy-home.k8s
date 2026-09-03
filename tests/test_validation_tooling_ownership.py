@@ -110,7 +110,10 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
             imported_tests = any(
                 (
                     isinstance(node, ast.Import)
-                    and any(alias.name == "tests" or alias.name.startswith("tests.") for alias in node.names)
+                    and any(
+                        alias.name == "tests" or alias.name.startswith("tests.")
+                        for alias in node.names
+                    )
                 )
                 or (
                     isinstance(node, ast.ImportFrom)
@@ -131,7 +134,9 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
                     for child in ast.walk(value)
                 ):
                     continue
-                targets = node.targets if isinstance(node, ast.Assign) else [node.target]
+                targets = (
+                    node.targets if isinstance(node, ast.Assign) else [node.target]
+                )
                 tainted_names.update(
                     target.id for target in targets if isinstance(target, ast.Name)
                 )
@@ -143,10 +148,7 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
                         and isinstance(child.value, str)
                         and child.value.startswith("tests/")
                     )
-                    or (
-                        isinstance(child, ast.Name)
-                        and child.id in tainted_names
-                    )
+                    or (isinstance(child, ast.Name) and child.id in tainted_names)
                     for child in ast.walk(node)
                 )
 
@@ -157,7 +159,11 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
                 function = node.func
                 name = function.id if isinstance(function, ast.Name) else ""
                 attribute = function.attr if isinstance(function, ast.Attribute) else ""
-                if name not in {"open", "load_json", "load_json_document"} and attribute not in {
+                if name not in {
+                    "open",
+                    "load_json",
+                    "load_json_document",
+                } and attribute not in {
                     "open",
                     "read_bytes",
                     "read_text",
@@ -177,7 +183,9 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
         self.assertEqual(wrappers, [])
         self.assertEqual(sorted(validators & TRANSITION_VALIDATORS), [])
 
-    def test_current_state_sha_and_generated_digest_identifiers_are_absent(self) -> None:
+    def test_current_state_sha_and_generated_digest_identifiers_are_absent(
+        self,
+    ) -> None:
         offenders: dict[str, list[str]] = {}
         for path in production_sources():
             text = path.read_text(encoding="utf-8")
@@ -250,7 +258,9 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
                 offenders[filename] = present
         self.assertEqual(offenders, {})
 
-    def test_test_called_mutation_helpers_are_not_production_only_dead_code(self) -> None:
+    def test_test_called_mutation_helpers_are_not_production_only_dead_code(
+        self,
+    ) -> None:
         test_text = "\n".join(
             path.read_text(encoding="utf-8")
             for path in sorted((ROOT / "tests").glob("test_*.py"))
@@ -310,7 +320,9 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
             ],
         )
 
-    def test_pre_commit_has_one_aggregate_owner_without_duplicate_domain_hooks(self) -> None:
+    def test_pre_commit_has_one_aggregate_owner_without_duplicate_domain_hooks(
+        self,
+    ) -> None:
         pre_commit = (ROOT / ".pre-commit-config.yaml").read_text(encoding="utf-8")
         self.assertEqual(pre_commit.count("id: strict-repository-quality"), 1)
         for duplicate in (
@@ -321,9 +333,9 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
             self.assertNotIn(duplicate, pre_commit)
 
     def test_repository_quality_does_not_require_readme_inventory_ledgers(self) -> None:
-        owner = (
-            SCRIPTS / "validation" / "repository" / "quality.py"
-        ).read_text(encoding="utf-8")
+        owner = (SCRIPTS / "validation" / "repository" / "quality.py").read_text(
+            encoding="utf-8"
+        )
         legacy_ledgers = (
             "Script Inventory",
             "Script Classification Matrix",
@@ -335,9 +347,9 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
         )
 
     def test_repository_quality_delegates_agent_summary_semantics(self) -> None:
-        owner = (
-            SCRIPTS / "validation" / "repository" / "quality.py"
-        ).read_text(encoding="utf-8")
+        owner = (SCRIPTS / "validation" / "repository" / "quality.py").read_text(
+            encoding="utf-8"
+        )
         delegated_markers = (
             "AGENT_GOVERNANCE_STATIC_SELECTED",
             'case "$branch_policy_selected:$BRANCH_POLICY_RESULT" in',

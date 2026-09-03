@@ -31,7 +31,12 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
         registry = json.loads((ROOT / registry_path).read_text())
         # Authority requires all lifecycle families. Keep representative real
         # profiles and their body-link dependencies, not the document corpus.
-        selected = {"sdlc/architecture-description", "sdlc/data-model", "sdlc/plan", "archive/tombstone"}
+        selected = {
+            "sdlc/architecture-description",
+            "sdlc/data-model",
+            "sdlc/plan",
+            "archive/tombstone",
+        }
         for domain in registry["programLineage"]["lifecycleDomains"]:
             profile_id = (
                 "archive/migration"

@@ -61,9 +61,7 @@ def read_text(path: Path, *, max_bytes: int) -> str:
     """Read one bounded regular file as strict UTF-8."""
 
     try:
-        return read_bytes(path, max_bytes=max_bytes).decode(
-            "utf-8", errors="strict"
-        )
+        return read_bytes(path, max_bytes=max_bytes).decode("utf-8", errors="strict")
     except UnicodeError as exc:
         raise BoundedInputError("input is not strict UTF-8") from exc
 

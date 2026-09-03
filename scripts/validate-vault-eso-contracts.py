@@ -23,12 +23,8 @@ EXPECTED_SERVICE_ACCOUNT = "external-secrets"
 EXPECTED_AUDIENCES = ["vault"]
 
 VAULT_STORE_PATH = Path("gitops/platform/eso/vault-secret-store.yaml")
-TOKEN_REVIEWER_PATH = Path(
-    "gitops/platform/eso/vault-token-reviewer-binding.yaml"
-)
-VAULT_EXTERNAL_PATH = Path(
-    "gitops/platform/external-services/vault-external.yaml"
-)
+TOKEN_REVIEWER_PATH = Path("gitops/platform/eso/vault-token-reviewer-binding.yaml")
+VAULT_EXTERNAL_PATH = Path("gitops/platform/external-services/vault-external.yaml")
 VAULT_POLICY_PATH = Path("infrastructure/vault/policies/eso-read.hcl")
 BOOTSTRAP_PATH = Path("infrastructure/bootstrap-local.sh")
 
@@ -351,7 +347,9 @@ def validate_vault_policy(text: str) -> list[str]:
         if expected_paths - parsed_path_set:
             diagnostics.append("Vault policy is missing required platform paths")
         if parsed_path_set - expected_paths:
-            diagnostics.append("Vault policy must not contain additional platform paths")
+            diagnostics.append(
+                "Vault policy must not contain additional platform paths"
+            )
 
     if any(
         len(capabilities) != 2 or set(capabilities) != {"read", "list"}
@@ -369,17 +367,15 @@ def validate_bootstrap(text: str) -> list[str]:
     if not isinstance(text, str):
         return ["bootstrap document must be text"]
 
-    active_lines = [
-        line for line in text.splitlines() if not re.match(r"^\s*#", line)
-    ]
+    active_lines = [line for line in text.splitlines() if not re.match(r"^\s*#", line)]
     active_text = "\n".join(active_lines)
     command_text = re.sub(r"\\\s*\n", " ", active_text)
     pipeline_text = re.sub(r"\|\s*\n\s*", "| ", command_text)
     diagnostics: list[str] = []
 
     vault_curl_function = re.search(
-        r'''(?ms)^\s*vault_curl\(\)\s*\{\s*$\n'''
-        r'''(?P<body>.*?)^\s*\}\s*$''',
+        r"""(?ms)^\s*vault_curl\(\)\s*\{\s*$\n"""
+        r"""(?P<body>.*?)^\s*\}\s*$""",
         active_text,
     )
     vault_curl_body_raw = (
@@ -387,23 +383,19 @@ def validate_bootstrap(text: str) -> list[str]:
     )
     vault_curl_body = re.sub(r"\\\s*\n", " ", vault_curl_body_raw)
 
-    dependency_discovery_block = '''for cmd in k3d kubectl helm docker curl jq openssl rg; do
+    dependency_discovery_block = """for cmd in k3d kubectl helm docker curl jq openssl rg; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
     fail "required command not found: $cmd"
   fi
-done'''
+done"""
     dependency_loop_neutral_text = active_text
     if active_text.count(dependency_discovery_block) == 1:
         dependency_loop_neutral_text = active_text.replace(
             dependency_discovery_block, "", 1
         )
-    curl_token_count = len(
-        re.findall(r"\bcurl\b", dependency_loop_neutral_text)
-    )
+    curl_token_count = len(re.findall(r"\bcurl\b", dependency_loop_neutral_text))
     wrapper_curl_token_count = len(re.findall(r"\bcurl\b", vault_curl_body_raw))
-    curl_structure_valid = (
-        curl_token_count == 1 and wrapper_curl_token_count == 1
-    )
+    curl_structure_valid = curl_token_count == 1 and wrapper_curl_token_count == 1
 
     vault_call_positions = [
         match.start()
@@ -447,15 +439,13 @@ done'''
         diagnostics.append("bootstrap must not disable Vault TLS verification")
 
     token_in_argv = re.search(
-        r'''(?m)\b(?:curl|vault_curl)\b[^\n]*(?:-H|--header)(?:=|\s+)'''
-        r'''["']?X-Vault-Token\s*:[^\n"']*'''
-        r'''(?:\$(?:vault_token|VAULT_TOKEN)|\$\{(?:vault_token|VAULT_TOKEN)\})''',
+        r"""(?m)\b(?:curl|vault_curl)\b[^\n]*(?:-H|--header)(?:=|\s+)"""
+        r"""["']?X-Vault-Token\s*:[^\n"']*"""
+        r"""(?:\$(?:vault_token|VAULT_TOKEN)|\$\{(?:vault_token|VAULT_TOKEN)\})""",
         command_text,
     )
     if not curl_structure_valid and not token_in_argv:
-        diagnostics.append(
-            "bootstrap must contain only the guarded vault_curl command"
-        )
+        diagnostics.append("bootstrap must contain only the guarded vault_curl command")
 
     if token_in_argv:
         diagnostics.append("bootstrap must not place Vault token in argv")
@@ -476,7 +466,7 @@ done'''
 
     secret_in_kubectl_argv = re.search(
         r"(?m)\bkubectl\b[^\n]*--from-literal=redis-password="
-        r'''[^\n]*(?:\$VALKEY_PASSWORD|\$\{VALKEY_PASSWORD\})''',
+        r"""[^\n]*(?:\$VALKEY_PASSWORD|\$\{VALKEY_PASSWORD\})""",
         command_text,
     )
     if secret_in_kubectl_argv:
@@ -485,25 +475,25 @@ done'''
         )
 
     https_guard = re.search(
-        r'''(?m)^\s*case\s+"\$VAULT_ADDR"\s+in\s*$\n'''
-        r'''^\s*https://\*\)\s*;;\s*$\n'''
-        r'''^\s*\*\)\s*fail\b[^\n]*;;\s*$\n'''
-        r'''^\s*esac\s*$''',
+        r"""(?m)^\s*case\s+"\$VAULT_ADDR"\s+in\s*$\n"""
+        r"""^\s*https://\*\)\s*;;\s*$\n"""
+        r"""^\s*\*\)\s*fail\b[^\n]*;;\s*$\n"""
+        r"""^\s*esac\s*$""",
         active_text,
     )
     if https_guard is None or https_guard.start() > first_vault_call:
         diagnostics.append("bootstrap must require an HTTPS Vault address")
 
     ca_assignment = re.search(
-        r'''(?m)^\s*VAULT_CA_FILE="\$\{VAULT_CA_FILE:-\$ROOT_CA_FILE\}"\s*$''',
+        r"""(?m)^\s*VAULT_CA_FILE="\$\{VAULT_CA_FILE:-\$ROOT_CA_FILE\}"\s*$""",
         active_text,
     )
     ca_requirement = re.search(
-        r'''(?m)^\s*require_file\s+"\$VAULT_CA_FILE"\s*$''', active_text
+        r"""(?m)^\s*require_file\s+"\$VAULT_CA_FILE"\s*$""", active_text
     )
     require_file_function = re.search(
-        r'''(?ms)^\s*require_file\(\)\s*\{\s*$\n'''
-        r'''(?P<body>.*?)^\s*\}\s*$''',
+        r"""(?ms)^\s*require_file\(\)\s*\{\s*$\n"""
+        r"""(?P<body>.*?)^\s*\}\s*$""",
         active_text,
     )
     require_file_body = (
@@ -521,16 +511,16 @@ done'''
         diagnostics.append("bootstrap must require VAULT_CA_FILE")
 
     tty_read = re.search(
-        r'''(?m)^\s*IFS=\s+read\s+-r\s+-s\s+-p\s+'''
-        r'''["'][^"']*["']\s+vault_token\s*</dev/tty\s*$''',
+        r"""(?m)^\s*IFS=\s+read\s+-r\s+-s\s+-p\s+"""
+        r"""["'][^"']*["']\s+vault_token\s*</dev/tty\s*$""",
         active_text,
     )
     nonempty_token_guard = re.search(
-        r'''(?m)^\s*\[\[\s+-n\s+"\$vault_token"\s+\]\]\s+\|\|\s+fail\b''',
+        r"""(?m)^\s*\[\[\s+-n\s+"\$vault_token"\s+\]\]\s+\|\|\s+fail\b""",
         active_text,
     )
     tty_readability_guard = re.search(
-        r'''(?m)^\s*if\s+\[\[\s+!\s+-r\s+/dev/tty\s+\]\];\s+then\s*$''',
+        r"""(?m)^\s*if\s+\[\[\s+!\s+-r\s+/dev/tty\s+\]\];\s+then\s*$""",
         active_text,
     )
     has_silent_tty_read = bool(
@@ -548,8 +538,8 @@ done'''
         diagnostics.append("bootstrap must read the Vault token silently from /dev/tty")
 
     cleanup_function = re.search(
-        r'''(?ms)^\s*cleanup_sensitive\(\)\s*\{\s*$\n'''
-        r'''(?P<body>.*?)^\s*\}\s*$''',
+        r"""(?ms)^\s*cleanup_sensitive\(\)\s*\{\s*$\n"""
+        r"""(?P<body>.*?)^\s*\}\s*$""",
         active_text,
     )
     cleanup_body = cleanup_function.group("body") if cleanup_function else ""
@@ -580,7 +570,7 @@ done'''
         diagnostics.append("bootstrap must install a cleanup trap")
 
     if not insecure_curl and not re.search(
-        r'''\bcurl\s+--disable(?:\s|$)''', vault_curl_body
+        r"""\bcurl\s+--disable(?:\s|$)""", vault_curl_body
     ):
         diagnostics.append("bootstrap curl must disable default configuration")
     if not re.search(
@@ -591,14 +581,14 @@ done'''
 
     has_header_pipe = bool(
         re.search(
-            r'''printf\s+['"]X-Vault-Token:\s*%s\\n['"]\s+'''
-            r'''"\$vault_token"\s*\|\s*curl\b''',
+            r"""printf\s+['"]X-Vault-Token:\s*%s\\n['"]\s+"""
+            r""""\$vault_token"\s*\|\s*curl\b""",
             vault_curl_body,
         )
-        and re.search(r'''\bcurl\b[^\n]*--header\s+@-''', vault_curl_body)
+        and re.search(r"""\bcurl\b[^\n]*--header\s+@-""", vault_curl_body)
         and '"$@"' in vault_curl_body
         and not re.search(
-            r'''\bvault_curl\b(?!\s*\(\))[^\n]*(?:-H|--header)''',
+            r"""\bvault_curl\b(?!\s*\(\))[^\n]*(?:-H|--header)""",
             command_text,
         )
     )
@@ -608,16 +598,16 @@ done'''
     has_direct_secret_extraction = bool(
         "vault_secret_json" not in active_text
         and re.search(
-            r'''VALKEY_PASSWORD="\$\(\s*vault_curl\s+'''
-            r'''"\$VAULT_ADDR/v1/secret/data/platform/argocd"\s*\|\s*'''
+            r"""VALKEY_PASSWORD="\$\(\s*vault_curl\s+"""
+            r""""\$VAULT_ADDR/v1/secret/data/platform/argocd"\s*\|\s*"""
             r'''jq\s+-er\s+['"]\.data\.data\.valkey_password['"]\s*\)"''',
             command_text,
         )
     )
     has_kubectl_stdin_pipe = bool(
         re.search(
-            r'''printf\s+['"]%s['"]\s+"\$VALKEY_PASSWORD"\s*\|\s*'''
-            r'''kubectl\b[\s\S]*?--from-file=redis-password=/dev/stdin''',
+            r"""printf\s+['"]%s['"]\s+"\$VALKEY_PASSWORD"\s*\|\s*"""
+            r"""kubectl\b[\s\S]*?--from-file=redis-password=/dev/stdin""",
             command_text,
         )
     )
@@ -625,21 +615,21 @@ done'''
         diagnostics.append("bootstrap must provide redis-password to kubectl via stdin")
 
     sensitive_allowlist_patterns = (
-        r'''(?m)^\s*IFS=\s+read\s+-r\s+-s\s+-p\s+'''
-        r'''["'][^"']*["']\s+vault_token\s*</dev/tty\s*$''',
-        r'''(?m)^\s*\[\[\s+-n\s+"\$vault_token"\s+\]\]\s+'''
-        r'''\|\|\s+fail\b[^\n]*$''',
-        r'''(?m)^\s*unset\s+vault_token\s+VALKEY_PASSWORD\s*$''',
-        r'''(?m)^\s*printf\s+['"]X-Vault-Token:\s*%s\\n['"]\s+'''
-        r'''"\$vault_token"\s*\|\s*curl\b[^\n]*'''
-        r'''--header\s+@-\s+"\$@"\s*$''',
-        r'''(?m)^\s*VALKEY_PASSWORD="\$\(\s*vault_curl\s+'''
-        r'''"\$VAULT_ADDR/v1/secret/data/platform/argocd"\s*\|\s*'''
-        r'''jq\s+-er\s+['"]\.data\.data\.valkey_password['"]\s*\)"\s*$''',
-        r'''(?m)^\s*printf\s+['"]%s['"]\s+"\$VALKEY_PASSWORD"\s*\|\s*'''
-        r'''kubectl\b[^\n]*--from-file=redis-password=/dev/stdin[^\n]*'''
-        r'''\|\s*kubectl\s+apply\s+-f\s+-\s*$''',
-        r'''(?m)^\s*unset\s+VALKEY_PASSWORD\s*$''',
+        r"""(?m)^\s*IFS=\s+read\s+-r\s+-s\s+-p\s+"""
+        r"""["'][^"']*["']\s+vault_token\s*</dev/tty\s*$""",
+        r"""(?m)^\s*\[\[\s+-n\s+"\$vault_token"\s+\]\]\s+"""
+        r"""\|\|\s+fail\b[^\n]*$""",
+        r"""(?m)^\s*unset\s+vault_token\s+VALKEY_PASSWORD\s*$""",
+        r"""(?m)^\s*printf\s+['"]X-Vault-Token:\s*%s\\n['"]\s+"""
+        r""""\$vault_token"\s*\|\s*curl\b[^\n]*"""
+        r"""--header\s+@-\s+"\$@"\s*$""",
+        r"""(?m)^\s*VALKEY_PASSWORD="\$\(\s*vault_curl\s+"""
+        r""""\$VAULT_ADDR/v1/secret/data/platform/argocd"\s*\|\s*"""
+        r"""jq\s+-er\s+['"]\.data\.data\.valkey_password['"]\s*\)"\s*$""",
+        r"""(?m)^\s*printf\s+['"]%s['"]\s+"\$VALKEY_PASSWORD"\s*\|\s*"""
+        r"""kubectl\b[^\n]*--from-file=redis-password=/dev/stdin[^\n]*"""
+        r"""\|\s*kubectl\s+apply\s+-f\s+-\s*$""",
+        r"""(?m)^\s*unset\s+VALKEY_PASSWORD\s*$""",
     )
     sensitive_remainder = pipeline_text
     for allowed_pattern in sensitive_allowlist_patterns:
@@ -687,18 +677,15 @@ def _open_repository_root(root: Path) -> tuple[int | None, list[str]]:
         return None, ["repository root must be a directory"]
 
     try:
-        root_fd = os.open(
-            root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
-        )
+        root_fd = os.open(root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
         opened_stat = os.fstat(root_fd)
     except OSError:
         return None, ["repository root could not be opened safely"]
 
-    if (
-        not stat.S_ISDIR(opened_stat.st_mode)
-        or (opened_stat.st_dev, opened_stat.st_ino)
-        != (root_stat.st_dev, root_stat.st_ino)
-    ):
+    if not stat.S_ISDIR(opened_stat.st_mode) or (
+        opened_stat.st_dev,
+        opened_stat.st_ino,
+    ) != (root_stat.st_dev, root_stat.st_ino):
         os.close(root_fd)
         return None, ["repository root changed during validation"]
     return root_fd, []
@@ -754,11 +741,10 @@ def _read_exact_text(root_fd: int, relative_path: Path) -> tuple[str | None, lis
             opened_stat = os.fstat(input_fd)
         except OSError:
             return None, ["input could not be opened safely"]
-        if (
-            not stat.S_ISREG(opened_stat.st_mode)
-            or (opened_stat.st_dev, opened_stat.st_ino)
-            != (input_stat.st_dev, input_stat.st_ino)
-        ):
+        if not stat.S_ISREG(opened_stat.st_mode) or (
+            opened_stat.st_dev,
+            opened_stat.st_ino,
+        ) != (input_stat.st_dev, input_stat.st_ino):
             os.close(input_fd)
             return None, ["input changed during validation"]
 
@@ -800,9 +786,7 @@ def _run_repository(root: Path) -> int:
 
     findings: list[tuple[str, str]] = []
 
-    def inspect(
-        relative_path: Path, validate: Callable[[str], list[str]]
-    ) -> None:
+    def inspect(relative_path: Path, validate: Callable[[str], list[str]]) -> None:
         text, diagnostics = _read_exact_text(root_fd, relative_path)
         if text is not None:
             diagnostics.extend(validate(text))

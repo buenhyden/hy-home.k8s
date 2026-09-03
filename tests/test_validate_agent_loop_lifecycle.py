@@ -20,19 +20,13 @@ from jsonschema import Draft202012Validator
 from tests.agent_loop_lifecycle_mutations import apply_mutation
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
-SCRIPT_PATH = (
-    REPOSITORY_ROOT / "scripts/validate-agent-loop-lifecycle.py"
-)
+SCRIPT_PATH = REPOSITORY_ROOT / "scripts/validate-agent-loop-lifecycle.py"
 CONTRACT_PATH = (
-    REPOSITORY_ROOT
-    / "docs/00.agent-governance/contracts/agent-loop-lifecycle.json"
+    REPOSITORY_ROOT / "docs/00.agent-governance/contracts/agent-loop-lifecycle.json"
 )
-FIXTURE_PATH = (
-    REPOSITORY_ROOT / "tests/fixtures/agent-loop-lifecycle.json"
-)
+FIXTURE_PATH = REPOSITORY_ROOT / "tests/fixtures/agent-loop-lifecycle.json"
 CHECKPOINT_SCHEMA_PATH = (
-    REPOSITORY_ROOT
-    / "docs/00.agent-governance/contracts/agent-checkpoint.schema.json"
+    REPOSITORY_ROOT / "docs/00.agent-governance/contracts/agent-checkpoint.schema.json"
 )
 
 
@@ -62,9 +56,7 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
         return copy.deepcopy(self.contract)
 
     def assert_rule(self, contract, expected_rule: str) -> None:
-        with self.assertRaises(
-            self.validator.LoopLifecycleError
-        ) as raised:
+        with self.assertRaises(self.validator.LoopLifecycleError) as raised:
             self.validator.validate_contract(REPOSITORY_ROOT, contract)
         self.assertEqual(raised.exception.code, expected_rule)
 
@@ -98,8 +90,7 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
             self.contract["currentOwner"],
             {
                 "path": (
-                    "docs/00.agent-governance/contracts/"
-                    "agent-loop-lifecycle.json"
+                    "docs/00.agent-governance/contracts/agent-loop-lifecycle.json"
                 ),
                 "contractVersion": "1.0.0",
                 "status": "current",
@@ -113,11 +104,7 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
             self.validator.STATE_IDS,
         )
         self.assertEqual(
-            tuple(
-                state["id"]
-                for state in machine["states"]
-                if state["terminal"]
-            ),
+            tuple(state["id"] for state in machine["states"] if state["terminal"]),
             self.validator.TERMINAL_STATE_IDS,
         )
         self.assertEqual(
@@ -134,16 +121,12 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
         policy = self.contract["retryPolicy"]
         self.assertFalse(policy["initialFailureCountsAsRetry"])
         self.assertEqual(policy["maxAutomaticRetriesPerSignature"], 2)
-        self.assertEqual(
-            policy["defaultMaxAutomaticRecoveryActionsPerTask"], 3
-        )
+        self.assertEqual(policy["defaultMaxAutomaticRecoveryActionsPerTask"], 3)
         self.assertFalse(policy["providerFallbackResetsCounters"])
         self.assertFalse(policy["modelFallbackResetsCounters"])
         self.assertFalse(policy["handoffResetsCounters"])
         self.assertFalse(policy["signatureChangeResetsTaskRecoveryCounter"])
-        self.assertEqual(
-            self.validator.effective_recovery_limit(3, 2, 1), 1
-        )
+        self.assertEqual(self.validator.effective_recovery_limit(3, 2, 1), 1)
 
     def test_retry_sequence_allows_zero_to_one_to_two_then_stops(
         self,
@@ -212,12 +195,8 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
     def test_task_recovery_budget_and_lower_limits_do_not_reset(
         self,
     ) -> None:
-        cases = {
-            case["name"]: case for case in self.fixture["decisionCases"]
-        }
-        third = cases[
-            "third-task-recovery-survives-provider-model-fallback"
-        ]
+        cases = {case["name"]: case for case in self.fixture["decisionCases"]}
+        third = cases["third-task-recovery-survives-provider-model-fallback"]
         third_result = self.validator.decide_next(
             third["loopState"],
             third["budgets"],
@@ -226,9 +205,7 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
             self.contract,
         )
         self.assertEqual(third_result["decision"], "retry")
-        self.assertEqual(
-            third_result["nextAutomaticRecoveryActionsUsed"], 3
-        )
+        self.assertEqual(third_result["nextAutomaticRecoveryActionsUsed"], 3)
 
         for name, expected_limit in (
             ("fourth-task-recovery-is-denied", 3),
@@ -249,9 +226,7 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
                     result["reason"],
                     "task-recovery-budget-exhausted",
                 )
-                self.assertEqual(
-                    result["effectiveRecoveryLimit"], expected_limit
-                )
+                self.assertEqual(result["effectiveRecoveryLimit"], expected_limit)
 
     def test_second_identical_no_progress_result_escalates_with_budget(
         self,
@@ -259,8 +234,7 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
         case = next(
             item
             for item in self.fixture["decisionCases"]
-            if item["name"]
-            == "second-identical-no-progress-result-escalates-first"
+            if item["name"] == "second-identical-no-progress-result-escalates-first"
         )
         result = self.validator.decide_next(
             case["loopState"],
@@ -270,9 +244,7 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
             self.contract,
         )
         self.assertEqual(result["decision"], "escalate")
-        self.assertEqual(
-            result["reason"], "second-identical-no-progress-result"
-        )
+        self.assertEqual(result["reason"], "second-identical-no-progress-result")
         self.assertEqual(result["nextAutomaticRetriesForSignature"], 0)
         self.assertEqual(result["nextAutomaticRecoveryActionsUsed"], 0)
 
@@ -280,12 +252,9 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
         self,
     ) -> None:
         observed = tuple(
-            item["id"]
-            for item in self.contract["nonRetryableFailureClasses"]
+            item["id"] for item in self.contract["nonRetryableFailureClasses"]
         )
-        self.assertEqual(
-            observed, self.validator.NONRETRYABLE_FAILURE_CLASSES
-        )
+        self.assertEqual(observed, self.validator.NONRETRYABLE_FAILURE_CLASSES)
         for failure_class in observed:
             with self.subTest(failure_class=failure_class):
                 result = self.validator.decide_next(
@@ -305,17 +274,11 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
                     self.contract,
                 )
                 expected = (
-                    "stop"
-                    if failure_class == "explicit-user-stop"
-                    else "escalate"
+                    "stop" if failure_class == "explicit-user-stop" else "escalate"
                 )
                 self.assertEqual(result["decision"], expected)
-                self.assertEqual(
-                    result["nextAutomaticRetriesForSignature"], 0
-                )
-                self.assertEqual(
-                    result["nextAutomaticRecoveryActionsUsed"], 0
-                )
+                self.assertEqual(result["nextAutomaticRetriesForSignature"], 0)
+                self.assertEqual(result["nextAutomaticRecoveryActionsUsed"], 0)
 
     def test_failure_normalization_ignores_provider_and_volatile_prose(
         self,
@@ -342,15 +305,9 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
                 "providerProse": "wording two",
             }
         )
-        first = self.validator.normalize_failure(
-            baseline, self.contract
-        )
-        second = self.validator.normalize_failure(
-            alternate, self.contract
-        )
-        self.assertEqual(
-            first["signatureDigest"], second["signatureDigest"]
-        )
+        first = self.validator.normalize_failure(baseline, self.contract)
+        second = self.validator.normalize_failure(alternate, self.contract)
+        self.assertEqual(first["signatureDigest"], second["signatureDigest"])
         self.assertEqual(
             set(first),
             {"failureClass", "signatureDigest", "retryable"},
@@ -365,11 +322,7 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
             **self.checkpoint_schema["$defs"]["failure"],
         }
         self.assertEqual(
-            list(
-                Draft202012Validator(
-                    checkpoint_failure_schema
-                ).iter_errors(first)
-            ),
+            list(Draft202012Validator(checkpoint_failure_schema).iter_errors(first)),
             [],
         )
         self.assertTrue(first["retryable"])
@@ -391,9 +344,7 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
         nonretryable["failureClass"] = "permission-denial"
         nonretryable["retryable"] = True
         self.assertFalse(
-            self.validator.normalize_failure(
-                nonretryable, self.contract
-            )["retryable"]
+            self.validator.normalize_failure(nonretryable, self.contract)["retryable"]
         )
 
     def test_decision_rejects_legacy_failure_keys_and_bare_digests(
@@ -420,9 +371,7 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
         )
         for failure in failures:
             with self.subTest(failure=failure):
-                with self.assertRaises(
-                    self.validator.LoopLifecycleError
-                ) as raised:
+                with self.assertRaises(self.validator.LoopLifecycleError) as raised:
                     self.validator.decide_next(
                         loop_state,
                         {},
@@ -457,9 +406,7 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
             "commandCount": 5,
             "providerProse": "different wording",
         }
-        result = self.validator.measure_progress(
-            before, after, self.contract
-        )
+        result = self.validator.measure_progress(before, after, self.contract)
         self.assertTrue(result["progressed"])
         self.assertEqual(
             tuple(result["deltaClasses"]),
@@ -475,16 +422,12 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
             }
         )
         self.assertEqual(
-            self.validator.measure_progress(
-                before, rejected_only, self.contract
-            ),
+            self.validator.measure_progress(before, rejected_only, self.contract),
             {"progressed": False, "deltaClasses": []},
         )
 
     def test_decision_inputs_reject_nested_sensitive_payloads(self) -> None:
-        with self.assertRaises(
-            self.validator.LoopLifecycleError
-        ) as raised:
+        with self.assertRaises(self.validator.LoopLifecycleError) as raised:
             self.validator.decide_next(
                 {
                     "automaticRetriesForSignature": 0,
@@ -510,10 +453,7 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
         boundary = self.contract["checkpointBoundary"]
         self.assertEqual(
             boundary["schemaRef"],
-            (
-                "docs/00.agent-governance/contracts/"
-                "agent-checkpoint.schema.json"
-            ),
+            ("docs/00.agent-governance/contracts/agent-checkpoint.schema.json"),
         )
         self.assertEqual(boundary["implementationOwner"], "AHLL-002")
         self.assertEqual(boundary["implementationState"], "executable")
@@ -568,9 +508,7 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
             "exactly-one-reviewed-destination",
         )
         self.assertTrue(routing["reviewRequired"])
-        self.assertFalse(
-            routing["rawTracePromptTranscriptPromotionAllowed"]
-        )
+        self.assertFalse(routing["rawTracePromptTranscriptPromotionAllowed"])
         self.assertEqual(
             tuple(
                 (destination["id"], destination["ownerRef"])
@@ -585,9 +523,7 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
         self.assert_rule(mutated, "AHLL-FEEDBACK-ROUTING")
 
     def test_duplicate_json_keys_fail_at_the_input_boundary(self) -> None:
-        with self.assertRaises(
-            self.validator.LoopLifecycleError
-        ) as raised:
+        with self.assertRaises(self.validator.LoopLifecycleError) as raised:
             self.validator.decode_json_text(
                 '{"loop":{"state":"running","state":"completed"}}',
                 "<unit-fixture>",
@@ -603,9 +539,7 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
             regular = root / "regular.json"
             regular.write_text('{"bounded":true}', encoding="utf-8")
             self.assertEqual(
-                self.validator.load_json(
-                    root, PurePosixPath("regular.json")
-                ),
+                self.validator.load_json(root, PurePosixPath("regular.json")),
                 {"bounded": True},
             )
 
@@ -619,9 +553,7 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
                 PurePosixPath("../escaped.json"),
             ):
                 with self.subTest(relative=relative):
-                    with self.assertRaises(
-                        self.validator.LoopLifecycleError
-                    ) as raised:
+                    with self.assertRaises(self.validator.LoopLifecycleError) as raised:
                         self.validator.load_json(root, relative)
                     self.assertEqual(raised.exception.code, "AHLL-PATH")
                     self.assertEqual(raised.exception.exit_code, 2)
@@ -688,29 +620,19 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
                 ),
             }
         )
-        with self.assertRaises(
-            self.validator.LoopLifecycleError
-        ) as raised:
+        with self.assertRaises(self.validator.LoopLifecycleError) as raised:
             self.validator.scan_sensitive_payload(
-                {
-                    "meaning": (
-                        "Bearer " + "syntheticfixturevalue"
-                    )
-                }
+                {"meaning": ("Bearer " + "syntheticfixturevalue")}
             )
         self.assertEqual(raised.exception.code, "AHLL-SENSITIVE")
 
         for key in ("providerResponseBody", "userConfiguration"):
             with self.subTest(key=key):
-                with self.assertRaises(
-                    self.validator.LoopLifecycleError
-                ) as key_raised:
+                with self.assertRaises(self.validator.LoopLifecycleError) as key_raised:
                     self.validator.scan_sensitive_payload(
                         {key: "syntheticfixturevalue"}
                     )
-                self.assertEqual(
-                    key_raised.exception.code, "AHLL-SENSITIVE"
-                )
+                self.assertEqual(key_raised.exception.code, "AHLL-SENSITIVE")
 
         for key in (
             "rawStdout",
@@ -722,19 +644,13 @@ class AgentLoopLifecycleContractTests(unittest.TestCase):
             "responseBody",
         ):
             with self.subTest(semantic_key=key):
-                with self.assertRaises(
-                    self.validator.LoopLifecycleError
-                ) as key_raised:
+                with self.assertRaises(self.validator.LoopLifecycleError) as key_raised:
                     self.validator.scan_sensitive_payload(
                         {key: "syntheticfixturevalue"}
                     )
-                self.assertEqual(
-                    key_raised.exception.code, "AHLL-SENSITIVE"
-                )
+                self.assertEqual(key_raised.exception.code, "AHLL-SENSITIVE")
 
-        with self.assertRaises(
-            self.validator.LoopLifecycleError
-        ) as declaration_raised:
+        with self.assertRaises(self.validator.LoopLifecycleError) as declaration_raised:
             self.validator.scan_sensitive_payload(
                 {"rawOutputAllowed": "syntheticfixturevalue"}
             )

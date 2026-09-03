@@ -280,8 +280,7 @@ _WORK109_MIGRATION_PATH = (
     "docs/98.archive/migrations/0002-sdlc-document-and-governance-consolidation.md"
 )
 _WORK054_WP003_MIGRATION_PATH = (
-    "docs/98.archive/migrations/"
-    "0003-agent-governance-control-plane-consolidation.md"
+    "docs/98.archive/migrations/0003-agent-governance-control-plane-consolidation.md"
 )
 _WORK054_WP004B_MIGRATION_PATH = (
     "docs/98.archive/migrations/0004-document-authority-convergence.md"
@@ -1532,9 +1531,7 @@ def validate_migration_records(
     )
     for path in ordered:
         object_id = (
-            inventory[path]
-            if path in inventory
-            else historical_targets[path].object_id
+            inventory[path] if path in inventory else historical_targets[path].object_id
         )
         expected = expected_blobs[object_id]
         if path in inventory:
@@ -2525,10 +2522,15 @@ def _reachable_historical_regular_target(
         historical_paths=(),
         object_id_length=object_id_length,
     ).get(relative)
-    if member is None or member.kind != "blob" or member.mode not in {
-        "100644",
-        "100755",
-    }:
+    if (
+        member is None
+        or member.kind != "blob"
+        or member.mode
+        not in {
+            "100644",
+            "100755",
+        }
+    ):
         raise ArchiveContractError(
             "RECOVERY-MIGRATION-TARGET",
             "migration target has no reachable regular-file history",
@@ -2604,9 +2606,10 @@ def _validate_mig0004_rows_and_targets(
     # This holds for every MIG-0004 endpoint, not only the Stage 99 ones: a
     # later sealed row is the reviewed record that released the path.
     sealed_retired = _sealed_row_retired_paths(root)
-    stage99_targets = frozenset(
-        target for _action, target in MIG0004_STAGE99_ACTION_TARGETS.values()
-    ) - sealed_retired
+    stage99_targets = (
+        frozenset(target for _action, target in MIG0004_STAGE99_ACTION_TARGETS.values())
+        - sealed_retired
+    )
     consumer_paths = tuple(
         path
         for path in inventory

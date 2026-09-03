@@ -180,10 +180,7 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
             )
             self.assertTrue(completed.stdout.endswith(b"\0"))
             self.assertEqual(
-                {
-                    value.decode("utf-8")
-                    for value in completed.stdout[:-1].split(b"\0")
-                },
+                {value.decode("utf-8") for value in completed.stdout[:-1].split(b"\0")},
                 {old_path.as_posix(), new_path.as_posix()},
             )
 
@@ -227,8 +224,11 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
             self.validator.BoundedOutputError("stdout exceeds its byte budget"),
             subprocess.TimeoutExpired(["git", "ls-files"], 1),
         ):
-            with self.subTest(failure=type(failure).__name__), mock.patch.object(
-                self.validator, "run_bounded_process", side_effect=failure
+            with (
+                self.subTest(failure=type(failure).__name__),
+                mock.patch.object(
+                    self.validator, "run_bounded_process", side_effect=failure
+                ),
             ):
                 with self.assertRaises(self.validator.ContractError) as raised:
                     self.validator.tracked_paths(ROOT)

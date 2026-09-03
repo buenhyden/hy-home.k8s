@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+
 def _memory_record(
     checkpoint: dict[str, Any],
     memory_id: str,
@@ -33,9 +34,7 @@ def apply_mutation(
     identity = repository_state["identity"]
     working = _memory_record(checkpoint, "working-short-term")
     domain = _memory_record(checkpoint, "domain-scoped")
-    provider_local = _memory_record(
-        checkpoint, "provider-local-auxiliary"
-    )
+    provider_local = _memory_record(checkpoint, "provider-local-auxiliary")
 
     if name == "unknown-checkpoint-field":
         checkpoint["unexpectedField"] = True
@@ -52,19 +51,13 @@ def apply_mutation(
     elif name == "stale-provider-surface":
         identity["providerSurfaceId"] = "claude"
     elif name == "stale-provider-session":
-        identity["providerSessionInstanceDigest"] = (
-            "sha256:" + ("4" * 64)
-        )
+        identity["providerSessionInstanceDigest"] = "sha256:" + ("4" * 64)
     elif name == "namespace-digest-drift":
-        checkpoint["identity"]["namespaceDigest"] = (
-            "sha256:" + ("4" * 64)
-        )
+        checkpoint["identity"]["namespaceDigest"] = "sha256:" + ("4" * 64)
     elif name == "writer-id-collision":
         identity["writerId"] = "sha256:" + ("4" * 64)
     elif name == "writer-claim-drift":
-        checkpoint["identity"]["writerClaimDigest"] = (
-            "sha256:" + ("4" * 64)
-        )
+        checkpoint["identity"]["writerClaimDigest"] = "sha256:" + ("4" * 64)
     elif name == "write-generation-stale":
         identity["writeGeneration"] += 1
     elif name == "previous-checkpoint-overwrite":
@@ -94,13 +87,10 @@ def apply_mutation(
     elif name == "checkpoint-timestamp-stale":
         repository_state["observedAtUtc"] = "2026-07-31T00:10:00Z"
     elif name.startswith("terminal-replay-"):
-        checkpoint["repository"]["loopState"] = name.removeprefix(
-            "terminal-replay-"
-        )
+        checkpoint["repository"]["loopState"] = name.removeprefix("terminal-replay-")
     elif name == "completed-work-overflow":
         checkpoint["completedWork"] = [
-            f"Bounded synthetic completed item {index}."
-            for index in range(13)
+            f"Bounded synthetic completed item {index}." for index in range(13)
         ]
     elif name == "validation-summary-overflow":
         base = checkpoint["validationSummary"][0]
@@ -202,9 +192,9 @@ def apply_mutation(
     elif name == "compaction-replacement-evidence-missing":
         checkpoint["compaction"]["replacement"]["evidenceRefs"] = []
     elif name == "compaction-identical-digests":
-        checkpoint["compaction"]["replacement"]["digest"] = (
-            checkpoint["compaction"]["source"]["digest"]
-        )
+        checkpoint["compaction"]["replacement"]["digest"] = checkpoint["compaction"][
+            "source"
+        ]["digest"]
     elif name == "compaction-source-owner-missing":
         checkpoint["compaction"]["source"].pop("owner")
     elif name == "compaction-replacement-owner-missing":
@@ -218,9 +208,7 @@ def apply_mutation(
     elif name == "sensitive-credential-key":
         checkpoint["credentialValue"] = "[REDACTED-SYNTHETIC]"
     elif name == "sensitive-credential-value":
-        checkpoint["nextAction"] = (
-            "Credential " + "value: [REDACTED-SYNTHETIC]"
-        )
+        checkpoint["nextAction"] = "Credential " + "value: [REDACTED-SYNTHETIC]"
     elif name == "sensitive-secret-key":
         checkpoint["secret"] = "[REDACTED-SYNTHETIC]"
     elif name == "sensitive-token-key":
@@ -228,51 +216,33 @@ def apply_mutation(
     elif name == "sensitive-token-value":
         checkpoint["nextAction"] = "Bearer " + "[REDACTED-SYNTHETIC]"
     elif name == "sensitive-sk-proj-value":
-        checkpoint["nextAction"] = (
-            "sk" + "-proj-" + "synthetic_marker_only"
-        )
+        checkpoint["nextAction"] = "sk" + "-proj-" + "synthetic_marker_only"
     elif name == "sensitive-gho-value":
-        checkpoint["nextAction"] = (
-            "gh" + "o_" + "syntheticmarkeronly"
-        )
+        checkpoint["nextAction"] = "gh" + "o_" + "syntheticmarkeronly"
     elif name == "sensitive-xoxp-value":
-        checkpoint["nextAction"] = (
-            "xox" + "p-" + "synthetic-marker-only"
-        )
+        checkpoint["nextAction"] = "xox" + "p-" + "synthetic-marker-only"
     elif name == "sensitive-aiza-value":
-        checkpoint["nextAction"] = (
-            "AI" + "za" + "SyntheticMarkerOnly"
-        )
+        checkpoint["nextAction"] = "AI" + "za" + "SyntheticMarkerOnly"
     elif name == "sensitive-auth-path-key":
         checkpoint["authFilePath"] = "[REDACTED-SYNTHETIC]"
     elif name == "sensitive-auth-path-value":
-        checkpoint["nextAction"] = (
-            "/synthetic/" + "." + "ssh/id_" + "rsa"
-        )
+        checkpoint["nextAction"] = "/synthetic/" + "." + "ssh/id_" + "rsa"
     elif name == "sensitive-account-id-key":
         checkpoint["accountIdentifier"] = "[REDACTED-SYNTHETIC]"
     elif name == "sensitive-account-id-value":
-        checkpoint["nextAction"] = (
-            "Account " + "identifier: [REDACTED-SYNTHETIC]"
-        )
+        checkpoint["nextAction"] = "Account " + "identifier: [REDACTED-SYNTHETIC]"
     elif name == "sensitive-raw-prompt-key":
         checkpoint["rawPrompt"] = "[REDACTED-SYNTHETIC]"
     elif name == "sensitive-raw-prompt-value":
-        checkpoint["nextAction"] = (
-            "Raw " + "prompt: [REDACTED-SYNTHETIC]"
-        )
+        checkpoint["nextAction"] = "Raw " + "prompt: [REDACTED-SYNTHETIC]"
     elif name == "sensitive-transcript-key":
         checkpoint["providerTranscript"] = "[REDACTED-SYNTHETIC]"
     elif name == "sensitive-transcript-value":
-        checkpoint["nextAction"] = (
-            "Full " + "transcript: [REDACTED-SYNTHETIC]"
-        )
+        checkpoint["nextAction"] = "Full " + "transcript: [REDACTED-SYNTHETIC]"
     elif name == "sensitive-provider-body-key":
         checkpoint["providerResponseBody"] = "[REDACTED-SYNTHETIC]"
     elif name == "sensitive-provider-body-value":
-        checkpoint["nextAction"] = (
-            "Provider response " + "body: [REDACTED-SYNTHETIC]"
-        )
+        checkpoint["nextAction"] = "Provider response " + "body: [REDACTED-SYNTHETIC]"
     elif name == "sensitive-stdout-key":
         checkpoint["stdout"] = "[REDACTED-SYNTHETIC]"
     elif name == "sensitive-stdout-value":
@@ -284,26 +254,18 @@ def apply_mutation(
     elif name == "sensitive-shell-history-key":
         checkpoint["shellHistory"] = "[REDACTED-SYNTHETIC]"
     elif name == "sensitive-shell-history-value":
-        checkpoint["nextAction"] = (
-            "Shell " + "history: [REDACTED-SYNTHETIC]"
-        )
+        checkpoint["nextAction"] = "Shell " + "history: [REDACTED-SYNTHETIC]"
     elif name == "sensitive-environment-dump-key":
         checkpoint["environmentDump"] = "[REDACTED-SYNTHETIC]"
     elif name == "sensitive-environment-dump-value":
-        checkpoint["nextAction"] = (
-            "Environment " + "dump: [REDACTED-SYNTHETIC]"
-        )
+        checkpoint["nextAction"] = "Environment " + "dump: [REDACTED-SYNTHETIC]"
     elif name == "sensitive-private-diagnostics-key":
         checkpoint["privateDiagnostics"] = "[REDACTED-SYNTHETIC]"
     elif name == "sensitive-private-diagnostics-value":
-        checkpoint["nextAction"] = (
-            "Private " + "diagnostics: [REDACTED-SYNTHETIC]"
-        )
+        checkpoint["nextAction"] = "Private " + "diagnostics: [REDACTED-SYNTHETIC]"
     elif name == "sensitive-user-config-key":
         checkpoint["userConfiguration"] = "[REDACTED-SYNTHETIC]"
     elif name == "sensitive-user-config-value":
-        checkpoint["nextAction"] = (
-            "User " + "configuration: [REDACTED-SYNTHETIC]"
-        )
+        checkpoint["nextAction"] = "User " + "configuration: [REDACTED-SYNTHETIC]"
     else:
         raise AssertionError(f"unknown checkpoint mutation: {name!r}")

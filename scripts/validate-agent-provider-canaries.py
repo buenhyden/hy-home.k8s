@@ -10,9 +10,7 @@ from pathlib import Path
 from typing import Any, NoReturn, Sequence
 
 
-CONFIG_VALIDATOR_PATH = Path(__file__).with_name(
-    "validate-agent-provider-config.py"
-)
+CONFIG_VALIDATOR_PATH = Path(__file__).with_name("validate-agent-provider-config.py")
 SPEC = importlib.util.spec_from_file_location(
     "agent_provider_config_validator", CONFIG_VALIDATOR_PATH
 )
@@ -77,10 +75,7 @@ def validate_canaries(
         for provider_id in PROVIDER_IDS
         for evidence_class in EVIDENCE_CLASSES
     }
-    observed = {
-        (record["providerId"], record["evidenceClass"])
-        for record in records
-    }
+    observed = {(record["providerId"], record["evidenceClass"]) for record in records}
     if observed != expected or len(records) != len(expected):
         fail(
             "PNME-CANARY-COVERAGE",
@@ -147,9 +142,7 @@ def validate_canaries(
 
     for provider_id in PROVIDER_IDS:
         native = record_verdicts[(provider_id, "native-discovery")]
-        authenticated = record_verdicts[
-            (provider_id, "authenticated-run")
-        ]
+        authenticated = record_verdicts[(provider_id, "authenticated-run")]
         repo_static = record_verdicts[(provider_id, "repo-static")]
         if authenticated == "PASS" and native != "PASS":
             fail(
@@ -168,10 +161,7 @@ def validate_canaries(
         fail(exc.code, exc.detail, exit_code=exc.exit_code)
 
     verdict_counts = {
-        verdict: sum(
-            record["verdict"] == verdict
-            for record in records
-        )
+        verdict: sum(record["verdict"] == verdict for record in records)
         for verdict in VERDICTS
     }
     return {

@@ -11,7 +11,9 @@ from pathlib import Path
 
 def load_contract_module():
     module_path = Path(__file__).with_name("validate-affected-surfaces.py")
-    spec = importlib.util.spec_from_file_location("affected_surface_contract", module_path)
+    spec = importlib.util.spec_from_file_location(
+        "affected_surface_contract", module_path
+    )
     if spec is None or spec.loader is None:
         raise RuntimeError(f"cannot load affected-surface contract from {module_path}")
     module = importlib.util.module_from_spec(spec)
@@ -23,7 +25,9 @@ def load_contract_module():
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path.cwd())
-    parser.add_argument("--lane", choices=("affected", "staged", "all-files", "ci"), required=True)
+    parser.add_argument(
+        "--lane", choices=("affected", "staged", "all-files", "ci"), required=True
+    )
     parser.add_argument("--paths-file", type=Path, required=True)
     parser.add_argument("--delimiter", choices=("nul",), required=True)
     parser.add_argument("--format", choices=("json", "github-output"), required=True)
@@ -42,8 +46,7 @@ def main() -> int:
             print(contract_module.github_output(contract, result))
         if result["unmatchedPaths"]:
             print(
-                "[FAIL] SURFACE-PATH-UNMATCHED: "
-                + ", ".join(result["unmatchedPaths"]),
+                "[FAIL] SURFACE-PATH-UNMATCHED: " + ", ".join(result["unmatchedPaths"]),
                 file=sys.stderr,
             )
             return 1

@@ -39,6 +39,8 @@ KUSTOMIZATION_NAME = "kustomization.yaml"
 KUSTOMIZATION_API_VERSION = "kustomize.config.k8s.io/v1beta1"
 KUSTOMIZATION_KIND = "Kustomization"
 ALLOWED_KUSTOMIZATION_KEYS = frozenset(("apiVersion", "kind", "resources"))
+
+
 def _is_safe_repository_path(value: str) -> bool:
     if not value or not PATH_TOKEN_RE.fullmatch(value):
         return False
@@ -78,9 +80,13 @@ def _construct_unique_mapping(
         try:
             duplicate = key in mapping
         except TypeError as exc:
-            raise yaml.constructor.ConstructorError(None, None, "invalid key", key_node.start_mark) from exc
+            raise yaml.constructor.ConstructorError(
+                None, None, "invalid key", key_node.start_mark
+            ) from exc
         if duplicate:
-            raise yaml.constructor.ConstructorError(None, None, "duplicate key", key_node.start_mark)
+            raise yaml.constructor.ConstructorError(
+                None, None, "duplicate key", key_node.start_mark
+            )
         mapping[key] = loader.construct_object(value_node, deep=deep)
     return mapping
 
@@ -151,7 +157,13 @@ def _resolve_commit(repo: Path, revision: str) -> str:
         raise GitOpsValidationError("BASE_REF", ".")
     result = _run_git(
         repo,
-        ["rev-parse", "--verify", "--quiet", "--end-of-options", f"{revision}^{{commit}}"],
+        [
+            "rev-parse",
+            "--verify",
+            "--quiet",
+            "--end-of-options",
+            f"{revision}^{{commit}}",
+        ],
     )
     if result.returncode != 0:
         raise GitOpsValidationError("BASE_REF", ".")
@@ -172,7 +184,9 @@ def _resolve_base_revision(root: Path, base_ref: str) -> str:
         if commit.returncode != 0:
             raise GitOpsValidationError("BASE_REF", ".")
         header = commit.stdout.split(b"\n\n", 1)[0]
-        parents = [line[7:] for line in header.splitlines() if line.startswith(b"parent ")]
+        parents = [
+            line[7:] for line in header.splitlines() if line.startswith(b"parent ")
+        ]
         if not parents:
             return EMPTY_REVISION
         try:
@@ -226,7 +240,9 @@ class _ManifestSource:
             try:
                 info = current.lstat()
             except FileNotFoundError as exc:
-                raise GitOpsValidationError("RESOURCE_MISSING", _stable_path(path)) from exc
+                raise GitOpsValidationError(
+                    "RESOURCE_MISSING", _stable_path(path)
+                ) from exc
             if stat.S_ISLNK(info.st_mode):
                 raise GitOpsValidationError("RESOURCE_SYMLINK", _stable_path(path))
             if part != path.parts[-1] and not stat.S_ISDIR(info.st_mode):
@@ -261,7 +277,9 @@ class _ManifestSource:
                 raise GitOpsValidationError("RESOURCE_SYMLINK", _stable_path(path))
             if index < len(repo_path.parts):
                 if object_type != b"tree":
-                    raise GitOpsValidationError("RESOURCE_NOT_REGULAR", _stable_path(path))
+                    raise GitOpsValidationError(
+                        "RESOURCE_NOT_REGULAR", _stable_path(path)
+                    )
                 continue
             if object_type == b"tree" and mode == b"040000":
                 return "directory"
@@ -286,12 +304,19 @@ class _ManifestSource:
             try:
                 return (self.root / Path(path.as_posix())).read_text(encoding="utf-8")
             except (OSError, UnicodeError) as exc:
-                raise GitOpsValidationError("RESOURCE_READ", _stable_path(path)) from exc
+                raise GitOpsValidationError(
+                    "RESOURCE_READ", _stable_path(path)
+                ) from exc
         assert self.repo is not None
         repo_path = self._repo_path(path)
         result = _run_git(
             self.repo,
-            ["show", "--no-ext-diff", "--no-textconv", f"{self.revision}:{repo_path.as_posix()}"],
+            [
+                "show",
+                "--no-ext-diff",
+                "--no-textconv",
+                f"{self.revision}:{repo_path.as_posix()}",
+            ],
         )
         if result.returncode != 0:
             raise GitOpsValidationError("RESOURCE_READ", _stable_path(path))
@@ -313,16 +338,24 @@ class _ManifestSource:
         roots: list[PurePosixPath] = []
         if self.revision == WORKTREE_REVISION:
             start = self.root / "gitops"
-            for directory, directory_names, file_names in os.walk(start, followlinks=False):
+            for directory, directory_names, file_names in os.walk(
+                start, followlinks=False
+            ):
                 relative_directory = Path(directory).relative_to(self.root)
                 for name in list(directory_names):
                     candidate = Path(directory) / name
                     if candidate.is_symlink():
-                        relative = PurePosixPath(candidate.relative_to(self.root).as_posix())
-                        raise GitOpsValidationError("RESOURCE_SYMLINK", _stable_path(relative))
+                        relative = PurePosixPath(
+                            candidate.relative_to(self.root).as_posix()
+                        )
+                        raise GitOpsValidationError(
+                            "RESOURCE_SYMLINK", _stable_path(relative)
+                        )
                 if KUSTOMIZATION_NAME in file_names:
                     roots.append(
-                        PurePosixPath((relative_directory / KUSTOMIZATION_NAME).as_posix())
+                        PurePosixPath(
+                            (relative_directory / KUSTOMIZATION_NAME).as_posix()
+                        )
                     )
         else:
             assert self.repo is not None
@@ -399,7 +432,9 @@ def _validate_identity_tokens(
     name: Any,
     path: PurePosixPath,
 ) -> ObjectIdentity:
-    if not all(isinstance(value, str) for value in (api_version, kind, namespace, name)):
+    if not all(
+        isinstance(value, str) for value in (api_version, kind, namespace, name)
+    ):
         raise GitOpsValidationError("IDENTITY_MISSING", _stable_path(path))
     if (
         not API_VERSION_RE.fullmatch(api_version)
@@ -480,7 +515,9 @@ def _render_roots(
                         ) from exc
                     raise
                 if nested_kind != "file":
-                    raise GitOpsValidationError("RESOURCE_NOT_REGULAR", _stable_path(target))
+                    raise GitOpsValidationError(
+                        "RESOURCE_NOT_REGULAR", _stable_path(target)
+                    )
                 visit_kustomization(nested_kustomization)
             elif target.name == KUSTOMIZATION_NAME:
                 visit_kustomization(target)
@@ -533,7 +570,9 @@ def format_identity(change: str, rendered: RenderedObject) -> str:
     identity = rendered.identity
     if change not in ("ADD", "DELETE", "RETAIN"):
         raise GitOpsValidationError("OUTPUT_CHANGE", ".")
-    if not isinstance(rendered.path, str) or not _is_safe_repository_path(rendered.path):
+    if not isinstance(rendered.path, str) or not _is_safe_repository_path(
+        rendered.path
+    ):
         raise GitOpsValidationError("OUTPUT_PATH", ".")
     _validate_identity_tokens(
         identity.api_version,

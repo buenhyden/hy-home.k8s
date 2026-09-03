@@ -806,5 +806,6 @@ class HistoricalMigrationProofTest(unittest.TestCase):
             any(owner == str(source) for owner, _ in proof.rendered_dispositions)
         )
 
+
 if __name__ == "__main__":
     unittest.main()

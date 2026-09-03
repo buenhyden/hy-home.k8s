@@ -192,7 +192,10 @@ def validate_registry_authority(registry: Mapping[str, Any]) -> None:
             transitions = domain.get("transitions")
             if not isinstance(states, Mapping) or not isinstance(transitions, list):
                 raise AuthorityError("LIFECYCLE_DOMAIN: invalid states or transitions")
-            if any(value not in {"mutable", "current", "terminal"} for value in states.values()):
+            if any(
+                value not in {"mutable", "current", "terminal"}
+                for value in states.values()
+            ):
                 raise AuthorityError("LIFECYCLE_CLASS: invalid validation class")
             edges = {
                 tuple(edge)
@@ -208,9 +211,7 @@ def validate_registry_authority(registry: Mapping[str, Any]) -> None:
             # A family may have no edges only when it has exactly one state and
             # that state is terminal: a document created immutable and finished.
             # Any other edgeless family would leave states unreachable.
-            if not edges and (
-                len(states) != 1 or "terminal" not in states.values()
-            ):
+            if not edges and (len(states) != 1 or "terminal" not in states.values()):
                 raise AuthorityError(f"LIFECYCLE_EDGELESS: {domain['family']}")
             for profile_id in domain.get("profileIds", []):
                 declared = profiles_by_id.get(profile_id)
@@ -321,13 +322,17 @@ def run_bounded_process(
                 raise AuthorityError("AUTHORITY_TIMEOUT: subprocess exceeded deadline")
             for key, _ in events:
                 name, limit = key.data
-                chunk = os.read(key.fileobj.fileno(), min(64 * 1024, limit - sizes[name] + 1))
+                chunk = os.read(
+                    key.fileobj.fileno(), min(64 * 1024, limit - sizes[name] + 1)
+                )
                 if not chunk:
                     streams.unregister(key.fileobj)
                     continue
                 sizes[name] += len(chunk)
                 if sizes[name] > limit:
-                    raise AuthorityError(f"AUTHORITY_SIZE: subprocess {name} exceeded limit")
+                    raise AuthorityError(
+                        f"AUTHORITY_SIZE: subprocess {name} exceeded limit"
+                    )
                 chunks[name].append(chunk)
         remaining = deadline - time.monotonic()
         if remaining <= 0:
@@ -408,9 +413,9 @@ def assert_staged_authority_matches_worktree(
     staged = staged_authority_bytes(
         root, path, timeout_seconds=timeout_seconds, max_bytes=REGISTRY_MAX_BYTES
     )
-    worktree = read_bounded_utf8(
-        root / path, max_bytes=REGISTRY_MAX_BYTES
-    ).encode("utf-8")
+    worktree = read_bounded_utf8(root / path, max_bytes=REGISTRY_MAX_BYTES).encode(
+        "utf-8"
+    )
     if staged != worktree:
         raise AuthorityError(f"AUTHORITY_DRIFT: {path}")
 

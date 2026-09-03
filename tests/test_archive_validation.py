@@ -1035,8 +1035,7 @@ class ArchiveValidationTest(unittest.TestCase):
             retired = next(
                 row
                 for row in rows
-                if row["action"] != "moved"
-                and row["replacement"] != row["legacy_path"]
+                if row["action"] != "moved" and row["replacement"] != row["legacy_path"]
             )
             legacy = str(retired["legacy_path"])
 
@@ -1058,8 +1057,7 @@ class ArchiveValidationTest(unittest.TestCase):
             index = next(
                 position
                 for position, row in enumerate(rows)
-                if row["action"] != "moved"
-                and row["replacement"] != row["legacy_path"]
+                if row["action"] != "moved" and row["replacement"] != row["legacy_path"]
             )
             legacy = str(rows[index]["legacy_path"])
 
@@ -1200,7 +1198,9 @@ class ArchiveValidationTest(unittest.TestCase):
         ).encode("utf-8")
 
     def test_a_stage99_target_retired_by_a_sealed_row_may_be_absent(self) -> None:
-        with tempfile.TemporaryDirectory(prefix="mig0004-stage99-retired-") as temporary:
+        with tempfile.TemporaryDirectory(
+            prefix="mig0004-stage99-retired-"
+        ) as temporary:
             root = Path(temporary)
             fixture, rows = self._mig0004_current_fixture(root)
             retired = "docs/99.templates/templates/specs/spec.template.md"
@@ -1228,7 +1228,9 @@ class ArchiveValidationTest(unittest.TestCase):
             )
 
     def test_a_stage99_target_without_a_retiring_row_stays_required(self) -> None:
-        with tempfile.TemporaryDirectory(prefix="mig0004-stage99-required-") as temporary:
+        with tempfile.TemporaryDirectory(
+            prefix="mig0004-stage99-required-"
+        ) as temporary:
             root = Path(temporary)
             fixture, rows = self._mig0004_current_fixture(root)
             retired = "docs/99.templates/templates/specs/spec.template.md"
@@ -2020,7 +2022,9 @@ class ArchiveBlobBatchTest(unittest.TestCase):
         # entire recovery proof the moment one migration row or consumer is
         # added, which is a cliff rather than a guard.
         count = archive_validation.MAX_GIT_BATCH_OBJECTS + 4
-        payloads = {f"docs/f{index:04d}.md": f"# {index}\n".encode() for index in range(count)}
+        payloads = {
+            f"docs/f{index:04d}.md": f"# {index}\n".encode() for index in range(count)
+        }
         _, blobs = self.git.commit_many(payloads)
         object_ids = tuple(sorted(set(blobs.values())))
         self.assertEqual(len(object_ids), count)
@@ -2028,24 +2032,20 @@ class ArchiveBlobBatchTest(unittest.TestCase):
         read = archive_validation._batch_blob_bytes(self.root, object_ids)
 
         self.assertEqual(set(read), set(object_ids))
-        self.assertEqual(
-            sorted(read.values()), sorted(payloads.values())
-        )
+        self.assertEqual(sorted(read.values()), sorted(payloads.values()))
 
     def test_blob_batch_keeps_one_aggregate_budget_across_batches(self) -> None:
         # Chunking must not multiply the byte budget by the number of chunks.
         count = archive_validation.MAX_GIT_BATCH_OBJECTS + 4
-        payloads = {f"docs/f{index:04d}.md": f"# {index}\n".encode() for index in range(count)}
+        payloads = {
+            f"docs/f{index:04d}.md": f"# {index}\n".encode() for index in range(count)
+        }
         _, blobs = self.git.commit_many(payloads)
         object_ids = tuple(sorted(set(blobs.values())))
         total = sum(len(payload) for payload in payloads.values())
 
-        with mock.patch.object(
-            archive_validation, "MAX_GIT_BATCH_BYTES", total - 1
-        ):
-            with self.assertRaises(
-                archive_validation.ArchiveContractError
-            ) as raised:
+        with mock.patch.object(archive_validation, "MAX_GIT_BATCH_BYTES", total - 1):
+            with self.assertRaises(archive_validation.ArchiveContractError) as raised:
                 archive_validation._batch_blob_bytes(self.root, object_ids)
 
         # The byte budget must be what refuses it, not the object count: the
@@ -2086,7 +2086,6 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         cls.validator = validator
         cls.context = validator._build_context(ROOT)
 
-
     def test_terminal_governance_owners_are_derived_from_stage_owners(self) -> None:
         governance = self.context.governance_current_paths
 
@@ -2100,6 +2099,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
                 for path in governance
             )
         )
+
     def test_mig0004_link_projection_accepts_semantically_valid_row_growth(
         self,
     ) -> None:
@@ -2388,7 +2388,9 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             paths=(*self.context.paths, source),
             profiles={
                 **self.context.profiles,
-                source: self.validator.ProfileView("sdlc/architecture-decision", "sdlc", "authored"),
+                source: self.validator.ProfileView(
+                    "sdlc/architecture-decision", "sdlc", "authored"
+                ),
             },
             texts={**self.context.texts, source: f"[retired]({raw})\n"},
             metadata={**self.context.metadata, source: {"status": "accepted"}},
@@ -2506,9 +2508,9 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             types.SimpleNamespace(spec_id=entry["spec"])
             for entry in registry["standaloneExecutions"]
         ]
-        decision = (
-            ROOT / validator.STANDALONE_DECISION_PATH.as_posix()
-        ).read_text(encoding="utf-8")
+        decision = (ROOT / validator.STANDALONE_DECISION_PATH.as_posix()).read_text(
+            encoding="utf-8"
+        )
 
         # The repository agrees today: every Spec ADR-0022 links is declared.
         context = types.SimpleNamespace(
@@ -2565,7 +2567,6 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
                 with self.assertRaises(self.validator.ConfigurationError):
                     self.validator._work109_four_digit_aliases(context)
 
-
     def test_work107_stable_archive_aliases_are_exact_and_tracked(self) -> None:
         """Aliases stay unique, and each target is tracked or gone to Git history.
 
@@ -2620,13 +2621,9 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             }.issubset(local_targets)
         )
 
-
     def test_moved_manifest_source_is_absent_and_target_is_current(self) -> None:
         self.assertNotIn(self.moved_source, self.context.texts)
         self.assertIn(self.moved_target, self.context.texts)
-
-
-
 
 
 if __name__ == "__main__":

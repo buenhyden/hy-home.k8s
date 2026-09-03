@@ -208,8 +208,7 @@ def _staged_reference_files(root: Path) -> dict[PurePosixPath, str]:
             path = PurePosixPath(decoded)
             if (
                 mode not in {b"100644", b"100755"}
-                or re.fullmatch(r"(?:[0-9a-f]{40}|[0-9a-f]{64})", object_id)
-                is None
+                or re.fullmatch(r"(?:[0-9a-f]{40}|[0-9a-f]{64})", object_id) is None
                 or stage != b"0"
                 or path.as_posix() != decoded
                 or path.is_absolute()
@@ -239,7 +238,10 @@ def _assert_reference_pack_topology(root: Path, registry: Registry) -> None:
     worktree_files: set[PurePosixPath] = set()
     errors: list[str] = []
     root_entries = _bounded_directory_entries(stage_root)
-    allowed_root_entries = {"README.md", *(item[0] for item in REFERENCE_PACK_CATEGORIES)}
+    allowed_root_entries = {
+        "README.md",
+        *(item[0] for item in REFERENCE_PACK_CATEGORIES),
+    }
     for entry in root_entries:
         try:
             mode = entry.lstat().st_mode
@@ -250,9 +252,7 @@ def _assert_reference_pack_topology(root: Path, registry: Registry) -> None:
             if not stat.S_ISREG(mode):
                 errors.append("REFERENCE_PACK_ROOT_ENTRY: README.md must be regular")
             else:
-                worktree_files.add(
-                    PurePosixPath(entry.relative_to(root).as_posix())
-                )
+                worktree_files.add(PurePosixPath(entry.relative_to(root).as_posix()))
             continue
         if stat.S_ISREG(mode):
             worktree_files.add(PurePosixPath(entry.relative_to(root).as_posix()))
@@ -270,16 +270,16 @@ def _assert_reference_pack_topology(root: Path, registry: Registry) -> None:
         try:
             router_mode = router.lstat().st_mode
         except OSError:
-            errors.append(f"REFERENCE_PACK_CATEGORY_README: {category}/README.md is missing")
+            errors.append(
+                f"REFERENCE_PACK_CATEGORY_README: {category}/README.md is missing"
+            )
         else:
             if not stat.S_ISREG(router_mode):
                 errors.append(
                     f"REFERENCE_PACK_CATEGORY_README: {category}/README.md must be regular"
                 )
             else:
-                worktree_files.add(
-                    PurePosixPath(router.relative_to(root).as_posix())
-                )
+                worktree_files.add(PurePosixPath(router.relative_to(root).as_posix()))
 
         numbers: dict[str, str] = {}
         for entry in entries:
