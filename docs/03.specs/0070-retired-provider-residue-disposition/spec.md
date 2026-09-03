@@ -5,7 +5,7 @@ type: sdlc/spec
 layer: "specs"
 status: draft
 owner: platform
-updated: 2026-09-02
+updated: 2026-09-03
 artifact_id: "SPEC-0070"
 ---
 
@@ -24,12 +24,12 @@ its migration, a dated Stage 90 observation, and a test that proves the surface
 no longer exists are all accurate records. Editing them would falsify the
 repository's account of its own past.
 
-Six surfaces are different. Four are live executable or configuration surfaces
-that still admit a removed provider's path, so a file the decision deleted would
-still be routed, matched, or labeled if it reappeared. Two are authored
-documents with a current lifecycle status that still present the removed
-providers as candidate surfaces, adapters, and canary subjects — an active
-document asserting a provider set the accepted decision replaced.
+Seven surfaces are different. Five are live executable or configuration
+surfaces that still admit a removed provider's path, so a file the decision
+deleted would still be routed, matched, or labeled if it reappeared. Two are
+authored documents with a current lifecycle status that still present the
+removed providers as candidate surfaces, adapters, and canary subjects — an
+active document asserting a provider set the accepted decision replaced.
 
 This Spec disposes of those six and states the rule that separates them from the
 627 mentions it preserves.
@@ -112,6 +112,16 @@ nothing and would silently label a reintroduced gateway.
 test environment. The hook reads only `CLAUDE_PROJECT_DIR`, so the variable is
 inert; it is removed as dead setup rather than as an absence proof, which C4
 distinguishes.
+
+`.gitignore` carries `.opencode/skills/` with a `.gitkeep` negation under an
+`# opencode Skills` heading. This is a wider case than the rest: OpenCode was
+never one of the providers ADR-0030 removed, because it was never a declared
+provider at all. `.agents/registry.json` names `claude` and `codex`, the
+directory does not exist, and those three lines are the only trace of the name
+anywhere in the repository. An ignore rule for a provider the governance never
+admitted reserves a path the control plane does not recognize, so it is removed
+with the rest rather than left as the one unexplained provider name in the
+tracked corpus.
 
 ### Active documents
 

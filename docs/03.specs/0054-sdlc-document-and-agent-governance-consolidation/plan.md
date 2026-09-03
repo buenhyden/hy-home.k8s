@@ -1340,6 +1340,12 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
 - [ ] Record, for every authored profile that governs no tracked document,
   whether it is deliberately empty or unused capacity, and retire only the
   second kind together with its form and its `template/*` self-profile.
+- [ ] Sequence the REQ-0003 and AD-0006 rewrites against Spec 0070, which
+  revises the same two documents for the retired-provider claims ADR-0030
+  replaced. WP-013 rewrites them to release the thirteen packages they hold;
+  Spec 0070 rewrites their provider rows, model candidates, canary requirement,
+  and external links. Whichever lands second builds on the first rather than
+  reverting it, and neither advances a `version` for a governance correction.
 - [ ] Prove current consumers zero and recovery from reachable Git history.
   Do not create an Archive record or redirect as part of the current-corpus
   cutover.
