@@ -344,7 +344,12 @@ RETIRED_REFERENCE_ALIASES = {
     PurePosixPath("tests/fixtures/agent-role-semantics.json"): PurePosixPath(
         ".agents/registry.json"
     ),
-    PurePosixPath(".github/ABOUT.md"): PurePosixPath(".github/README.md"),
+    PurePosixPath(".github/ABOUT.md"): PurePosixPath(
+        ".github/repository-surface.md"
+    ),
+    PurePosixPath(".github/README.md"): PurePosixPath(
+        ".github/repository-surface.md"
+    ),
 }
 
 
@@ -3349,6 +3354,8 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
                     continue
                 if _migrated_directory_link(context, source, target):
                     continue
+                if _retired_reference_link(context, target):
+                    continue
                 diagnostics.append(
                     _diag(
                         "LINK-BROKEN",
@@ -6333,6 +6340,26 @@ def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
             )
         )
     return diagnostics
+
+
+def _retired_reference_link(context: Context, target: PurePosixPath) -> bool:
+    """Admit a link to a retired path that declares an existing successor.
+
+    `RETIRED_REFERENCE_ALIASES` records the cutovers that never became
+    migration rows. A document sealed before such a cutover still names the
+    path it observed, and rewriting that document to follow the rename is what
+    the lifecycle policy forbids for terminal Stage 90 and Stage 98 evidence.
+    The link is proved rather than waived: the declared successor must itself
+    be a tracked regular path, so a retired alias cannot admit a link whose
+    destination has since disappeared.
+    """
+
+    successor = RETIRED_REFERENCE_ALIASES.get(target)
+    if successor is None:
+        return False
+    return _path_exists_without_dereference(
+        context.root, successor, context.adapter_targets
+    )
 
 
 def _migrated_directory_link(

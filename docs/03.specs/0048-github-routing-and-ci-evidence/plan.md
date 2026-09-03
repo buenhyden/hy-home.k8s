@@ -77,7 +77,7 @@ evidence.
   and [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - Spec 047 target disposition and successor matrix
 - Current `scripts/validation/registry.json`, `.github/labeler.yml`,
-  `.github/CODEOWNERS`, `.github/README.md`, workflow YAML, repository
+  `.github/CODEOWNERS`, `.github/repository-surface.md`, workflow YAML, repository
   aggregate, GitHub security validator, and read-only remote metadata
 ## Goals & In-Scope
 
@@ -86,7 +86,7 @@ evidence.
 - Implement source-version, unknown/duplicate surface, copied-route,
   exception-owner, labeler, CODEOWNERS last-match, README/workflow claim, and
   remote-observation validation.
-- Align `.github/labeler.yml`, `.github/CODEOWNERS`, and `.github/README.md`
+- Align `.github/labeler.yml`, `.github/CODEOWNERS`, and `.github/repository-surface.md`
   only where current evidence proves drift.
 - Register the validator in affected-surface routing and the existing
   repository aggregate without creating another CI job.
@@ -133,7 +133,7 @@ evidence.
 
 - `.github/labeler.yml`
 - `.github/CODEOWNERS`
-- `.github/README.md`
+- `.github/repository-surface.md`
 - `scripts/validation/registry.json`
 - `tests/fixtures/validation-surfaces.json`
 - `scripts/validate-repo-quality-gates.sh`
@@ -258,7 +258,7 @@ import CLI side effects or duplicate route data.
   gateway files when required by the contract. Test global fallback and
   last-match effective ownership separately from explicit owner class.
 
-- [ ] Correct `.github/README.md` so `generate-changelog.yml` is tag-only and
+- [ ] Correct `.github/repository-surface.md` so `generate-changelog.yml` is tag-only and
   CI lanes remain intentionally distinct; do not copy machine inventories.
 
 - [ ] Register `github-surface-routing` with direct argv
@@ -283,7 +283,7 @@ import CLI side effects or duplicate route data.
   point at stale native state.
 
   ```bash
-  rtk git add .github/CODEOWNERS .github/README.md .github/labeler.yml docs/00.agent-governance/contracts/github-surface-routing.json scripts/validation/registry.json tests/fixtures/validation-surfaces.json scripts/validate-repo-quality-gates.sh scripts/README.md tests/README.md
+  rtk git add .github/CODEOWNERS .github/repository-surface.md .github/labeler.yml docs/00.agent-governance/contracts/github-surface-routing.json scripts/validation/registry.json tests/fixtures/validation-surfaces.json scripts/validate-repo-quality-gates.sh scripts/README.md tests/README.md
   rtk git commit -m "ci: align github projection evidence"
   ```
 
@@ -366,7 +366,7 @@ commands and dated historical metadata are not current PASS evidence.
 ### Legacy Task approval and rollback boundaries
 
 - **Allowed Paths**: new GitHub routing contract/schema/fixture/validator/test;
-  `.github/labeler.yml`, `.github/CODEOWNERS`, `.github/README.md`; current
+  `.github/labeler.yml`, `.github/CODEOWNERS`, `.github/repository-surface.md`; current
   validation routing/fixtures, repository aggregate, inventories, reciprocal
   SDLC documents/indexes, and progress.
 - **Forbidden Paths**: ignored/private state, secrets, auth caches, provider

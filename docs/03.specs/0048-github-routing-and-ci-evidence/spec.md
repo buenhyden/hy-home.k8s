@@ -97,7 +97,7 @@ Implementation proceeds in five steps:
    diagnostics.
 3. Add `.agents/**` and `.gemini/**` to the `area/agent` label projection and
    explicit agent ownership class without changing the global fallback owner.
-4. Correct `.github/README.md` so the changelog row describes tag-only
+4. Correct `.github/repository-surface.md` so the changelog row describes tag-only
    execution and documents intentional CI lane ownership without copying the
    contract inventory.
 5. Wire the focused validator once into repository quality and the appropriate
@@ -211,7 +211,7 @@ observed repository and SHA.
 - **VAL-GRCE-004**: Current workflow triggers, job ownership, full-SHA actions,
   permissions, concurrency, timeouts, retention, and `ci-summary` pass native
   and repository checks with no duplicated primary validator execution.
-- **VAL-GRCE-005**: `.github/README.md` describes tag-only changelog execution
+- **VAL-GRCE-005**: `.github/repository-surface.md` describes tag-only changelog execution
   and does not duplicate policy or machine inventories.
 - **VAL-GRCE-006**: Remote run and branch metadata remains timestamped,
   SHA-bound, read-only evidence; current unpushed hosted evidence stays DEFER.

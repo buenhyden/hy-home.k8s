@@ -2365,7 +2365,7 @@
       "id": "readme/runtime-governance",
       "class": "readme",
       "mode": "frontmatter-free",
-      "pathPattern": "^\\.github/README\\.md$",
+      "pathPattern": "^\\.github/repository-surface\\.md$",
       "template": "docs/99.templates/templates/common/readme-runtime-governance.template.md",
       "requiredFrontmatter": {
         "mode": "forbidden",

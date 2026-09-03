@@ -1820,7 +1820,15 @@ class ArchiveValidationTest(unittest.TestCase):
         # tracked document. The rest is the record itself -- its own staged
         # bytes, the moved targets it names, and one declared source commit,
         # which costs the fixed batched read plus reachability check above.
-        budget = 186
+        #
+        # Measured the same way, the corpus moved 186 -> 190 when the GitHub
+        # hub file became `.github/repository-surface.md`. The retired path
+        # leaves no tracked file behind, so proving its archived bytes runs the
+        # Git-first recovery once: branch resolution, the last add-or-modify
+        # commit for the path, that commit's exact tree entry, and one batched
+        # object read. A rename that vacates a path therefore moves the cap by
+        # a fixed four, independent of the size of the document that moved.
+        budget = 190
 
         def bounded_popen(*args, **kwargs):
             nonlocal git_calls

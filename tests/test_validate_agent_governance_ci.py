@@ -31,7 +31,7 @@ PRE_COMMIT_PATH = REPO_ROOT / ".pre-commit-config.yaml"
 QUALITY_POLICY_PATH = REPO_ROOT / "docs/00.agent-governance/policies/quality.md"
 WORK_LIFECYCLE_PATH = REPO_ROOT / "docs/00.agent-governance/skills/work-lifecycle.md"
 PULL_REQUEST_TEMPLATE_PATH = REPO_ROOT / ".github/PULL_REQUEST_TEMPLATE.md"
-GITHUB_README_PATH = REPO_ROOT / ".github/README.md"
+GITHUB_README_PATH = REPO_ROOT / ".github/repository-surface.md"
 SCRIPTS_README_PATH = REPO_ROOT / "scripts/README.md"
 PRODUCTION_COMMAND = "python3 scripts/validate-agent-governance-ci.py --root ."
 AGENT_TEST_COMMAND = (
@@ -78,7 +78,7 @@ REQUIRED_INPUTS = (
     Path("docs/00.agent-governance/policies/quality.md"),
     Path("docs/00.agent-governance/skills/work-lifecycle.md"),
     Path(".github/PULL_REQUEST_TEMPLATE.md"),
-    Path(".github/README.md"),
+    Path(".github/repository-surface.md"),
     Path("scripts/README.md"),
 )
 
@@ -445,7 +445,7 @@ class AgentGovernanceCiValidatorTests(unittest.TestCase):
                 "scripts/validate-repo-quality-gates.sh",
                 "docs/00.agent-governance/skills/work-lifecycle.md",
                 ".github/PULL_REQUEST_TEMPLATE.md",
-                ".github/README.md",
+                ".github/repository-surface.md",
                 "scripts/README.md",
             ],
         )

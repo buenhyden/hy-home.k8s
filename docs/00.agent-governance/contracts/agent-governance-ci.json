@@ -241,7 +241,7 @@
       "scripts/validate-repo-quality-gates.sh",
       "docs/00.agent-governance/skills/work-lifecycle.md",
       ".github/PULL_REQUEST_TEMPLATE.md",
-      ".github/README.md",
+      ".github/repository-surface.md",
       "scripts/README.md"
     ],
     "formatterCompletion": {

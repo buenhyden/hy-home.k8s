@@ -1018,7 +1018,7 @@ for contract_path, phrases in active_app_secret_contracts:
             )
 
 github_native_markdown = [
-    root / ".github/README.md",
+    root / ".github/repository-surface.md",
     root / ".github/PULL_REQUEST_TEMPLATE.md",
     root / ".github/SECURITY.md",
 ]
@@ -2967,7 +2967,7 @@ for prefix in branch_prefixes:
             f"{rel(ci_path)} branch-policy: {prefix_label}"
         )
 
-github_about_path = root / ".github/README.md"
+github_about_path = root / ".github/repository-surface.md"
 git_policy_path = root / "docs/00.agent-governance/policies/git.md"
 github_about_text = read_text(github_about_path)
 for phrase in [
@@ -3020,11 +3020,11 @@ expected_workflows = [
 ]
 if len(workflow_responsibility_rows) < 2:
     fail(
-        ".github/README.md Workflow Responsibility Matrix must contain a header and workflow rows"
+        ".github/repository-surface.md Workflow Responsibility Matrix must contain a header and workflow rows"
     )
 elif workflow_responsibility_rows[0] != expected_workflow_responsibility_header:
     fail(
-        ".github/README.md Workflow Responsibility Matrix header must be: "
+        ".github/repository-surface.md Workflow Responsibility Matrix header must be: "
         + " | ".join(expected_workflow_responsibility_header)
     )
 else:
@@ -3032,7 +3032,7 @@ else:
     for row_number, row in enumerate(workflow_responsibility_rows[1:], start=1):
         if len(row) != len(expected_workflow_responsibility_header):
             fail(
-                ".github/README.md Workflow Responsibility Matrix "
+                ".github/repository-surface.md Workflow Responsibility Matrix "
                 f"row {row_number} must have {len(expected_workflow_responsibility_header)} columns"
             )
             continue
@@ -3040,7 +3040,7 @@ else:
         match = re.fullmatch(r"`([^`]+\.yml)`", workflow_cell)
         if not match:
             fail(
-                ".github/README.md Workflow Responsibility Matrix "
+                ".github/repository-surface.md Workflow Responsibility Matrix "
                 f"row {row_number} must start with a backticked workflow filename"
             )
             continue
@@ -3048,7 +3048,7 @@ else:
         indexed_workflows.append(workflow_name)
         if not (root / ".github/workflows" / workflow_name).is_file():
             fail(
-                f".github/README.md Workflow Responsibility Matrix references missing workflow: {workflow_name}"
+                f".github/repository-surface.md Workflow Responsibility Matrix references missing workflow: {workflow_name}"
             )
         for label, value in [
             ("Role", role),
@@ -3058,7 +3058,7 @@ else:
         ]:
             if not value:
                 fail(
-                    f".github/README.md Workflow Responsibility Matrix row {row_number} has empty {label}"
+                    f".github/repository-surface.md Workflow Responsibility Matrix row {row_number} has empty {label}"
                 )
         if workflow_name == "ci.yml":
             for phrase, value in [
@@ -3079,7 +3079,7 @@ else:
             ]:
                 if phrase not in value:
                     fail(
-                        f".github/README.md ci.yml responsibility row missing phrase: {phrase}"
+                        f".github/repository-surface.md ci.yml responsibility row missing phrase: {phrase}"
                     )
         elif workflow_name == "generate-changelog.yml":
             for phrase, value in [
@@ -3092,7 +3092,7 @@ else:
             ]:
                 if phrase not in value:
                     fail(
-                        f".github/README.md generate-changelog.yml responsibility row missing phrase: {phrase}"
+                        f".github/repository-surface.md generate-changelog.yml responsibility row missing phrase: {phrase}"
                     )
         elif workflow_name == "greetings.yml":
             for phrase, value in [
@@ -3104,7 +3104,7 @@ else:
             ]:
                 if phrase not in value:
                     fail(
-                        f".github/README.md greetings.yml responsibility row missing phrase: {phrase}"
+                        f".github/repository-surface.md greetings.yml responsibility row missing phrase: {phrase}"
                     )
         elif workflow_name == "labeler.yml":
             for phrase, value in [
@@ -3117,7 +3117,7 @@ else:
             ]:
                 if phrase not in value:
                     fail(
-                        f".github/README.md labeler.yml responsibility row missing phrase: {phrase}"
+                        f".github/repository-surface.md labeler.yml responsibility row missing phrase: {phrase}"
                     )
         elif workflow_name == "stale.yml":
             for phrase, value in [
@@ -3130,11 +3130,11 @@ else:
             ]:
                 if phrase not in value:
                     fail(
-                        f".github/README.md stale.yml responsibility row missing phrase: {phrase}"
+                        f".github/repository-surface.md stale.yml responsibility row missing phrase: {phrase}"
                     )
     if indexed_workflows != expected_workflows:
         fail(
-            ".github/README.md Workflow Responsibility Matrix row order must match actual workflows: "
+            ".github/repository-surface.md Workflow Responsibility Matrix row order must match actual workflows: "
             + ", ".join(expected_workflows)
         )
 

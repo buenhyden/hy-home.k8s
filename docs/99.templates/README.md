@@ -40,7 +40,7 @@ Profile ID는 같은 사실을 `<family>/<kind>`로 표현한다.
   entrypoint, `readme-implementation`과 `readme-workspace-staging`은
   runtime-governance entrypoint 중 구현 표면과 workspace staging,
   `readme-runtime-governance`는 provider 런타임이 직접 읽는 제어 표면
-  (`.github/README.md`)을 담당한다. 모두 frontmatter가 없고 heading contract만
+  (`.github/repository-surface.md`)을 담당한다. 모두 frontmatter가 없고 heading contract만
   가진다.
 - **Governance forms** (`governance/`): Stage 00의 여섯 owner kind에 각각
   `contract`, `control`, `provider`, `role`, `rule`, `skill` form이 대응한다.

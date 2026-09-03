@@ -37,7 +37,7 @@ RUNNER_PATH = PurePosixPath("scripts/run-validation-lane.py")
 QUALITY_POLICY_PATH = PurePosixPath("docs/00.agent-governance/policies/quality.md")
 WORK_LIFECYCLE_PATH = PurePosixPath("docs/00.agent-governance/skills/work-lifecycle.md")
 PULL_REQUEST_TEMPLATE_PATH = PurePosixPath(".github/PULL_REQUEST_TEMPLATE.md")
-GITHUB_README_PATH = PurePosixPath(".github/README.md")
+GITHUB_README_PATH = PurePosixPath(".github/repository-surface.md")
 SCRIPTS_README_PATH = PurePosixPath("scripts/README.md")
 
 SCHEMA_VERSION = 1

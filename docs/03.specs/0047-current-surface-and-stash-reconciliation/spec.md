@@ -82,7 +82,7 @@ GitHub-native form.
 - Compare base-to-index and index-to-worktree deltas without applying them.
 - Classify every hunk as `already-present`, `port`, `regenerate-current`,
   `superseded`, or `preserve-history`.
-- Treat the retired GitHub hub filename to `.github/README.md` cutover as
+- Treat the retired GitHub hub filename to `.github/repository-surface.md` cutover as
   current only where active readers still need it. Historical plans, tasks,
   audits, and
   completed Specs retain provenance wording unless it is an active broken link.

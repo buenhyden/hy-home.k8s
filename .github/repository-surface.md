@@ -1,8 +1,11 @@
 # GitHub Configuration Hub
 
-This canonical directory README maps repository-specific GitHub automation for
-the `hy-home.k8s` main-branch PR flow. It is a routing surface, not the policy
-source of truth.
+This document maps the repository-specific GitHub automation surface for the
+`hy-home.k8s` main-branch PR flow. It is a routing surface, not the policy
+source of truth. It is named `repository-surface.md` rather than `README.md`
+because it describes the repository's automation surface rather than the
+`.github` directory's own contents, and because GitHub resolves a
+`.github/README.md` as a repository profile page.
 
 ## Content Mapping
 
