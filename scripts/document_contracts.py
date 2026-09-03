@@ -964,6 +964,15 @@ def _terminal_semantic_diagnostics(
                 )
 
         lifecycle = raw_profile.get("lifecycle")
+        if raw_profile["mode"] == "template" and (lifecycle or {}).get("statusDomain"):
+            diagnostics.append(
+                _diagnostic(
+                    "REGISTRY_FORM_STATUS_DOMAIN",
+                    profile=profile_id,
+                    expected="a form declares no status domain of its own",
+                    actual=repr(lifecycle["statusDomain"]),
+                )
+            )
         body_contract = relationships["bodyContract"]
         if body_contract is not None:
             required_headings = raw_profile["requiredSections"]["required"]
@@ -976,11 +985,19 @@ def _terminal_semantic_diagnostics(
                         actual=body_contract["section"],
                     )
                 )
-            status_domain = (
-                lifecycle["statusDomain"]
-                if lifecycle and raw_profile["mode"] != "template"
-                else body_contract["enforcedStatuses"]
-            )
+            # A form inherits its source profile's domain, so comparing its
+            # enforced statuses against its own declaration compared them
+            # against themselves and could not fail. The source owns the
+            # vocabulary, and that is what the form may enforce a subset of.
+            if raw_profile["mode"] == "template":
+                source_ids = relationships["sourceProfileIds"]
+                source = profiles_by_id.get(source_ids[0]) if source_ids else None
+                source_lifecycle = source.get("lifecycle") if source else None
+                status_domain = (
+                    source_lifecycle["statusDomain"] if source_lifecycle else []
+                )
+            else:
+                status_domain = lifecycle["statusDomain"] if lifecycle else []
             invalid_statuses = sorted(
                 set(body_contract["enforcedStatuses"]) - set(status_domain)
             )

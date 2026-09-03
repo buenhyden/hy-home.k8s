@@ -503,10 +503,18 @@ The registry owns these profile-specific lifecycle domains and transitions:
 | Governance / Guide / Policy / Runbook | `draft → active → superseded \| retired` |
 | Incident | `open → mitigated → resolved → closed` |
 | Postmortem | `draft → published → superseded` |
-| Research | `draft → published → superseded \| retired` |
-| Audit | `draft → completed → invalidated` |
-| Data | `draft → active → stale → superseded \| retired` |
-| Template / Profile | `draft → active → superseded \| retired` |
+| Migration | `draft → accepted → sealed`; `draft → sealed` |
+| Tombstone | `archived` only; created finished and byte-immutable |
+| Audit / Research / Data | `draft`, `active`; no transition graph |
+| Template / Profile | none of its own; a form inherits its source profile's domain |
+
+The last two rows record what the registry owns rather than a richer model
+this Spec once projected for them. A reference role ends by deletion when a
+successor pack replaces it, not by reaching a terminal status, so it has no
+terminal state for a graph to lead to and stays outside the state machine. A
+form does not transition at all: `mode: template` is skipped by the state
+machine, and the `status` a form carries is the entry value of the document it
+produces. Giving either a graph would assert movement that cannot happen.
 
 No new Task transition is required for delegated ownership transfer. The
 activation transaction uses existing edges: SPEC-0054-TSK-0010 moves from

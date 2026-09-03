@@ -115,8 +115,8 @@ The design baseline is commit `14a0a75c`. At that commit the live corpus has:
 The existing registry routes Plans and Tasks only through date-prefixed Stage
 04 patterns. PRD-0008/AD-0011/Spec-052 currently names accepted ADR-0021 even
 though ADR-0021 owns a different program. ADR-0023 is the human-approved
-decision and is promoted through `draft -> active -> accepted`, never directly
-from draft to accepted.
+decision and is promoted through the declared ADR edge `proposed → accepted`,
+never entering `accepted` without the reviewed proposal it names.
 
 The raw pre-change all-files hook recorded three baseline issues: the registry
 self-test could not allocate its configured temporary location, detect-secrets

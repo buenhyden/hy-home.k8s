@@ -1327,12 +1327,9 @@
       },
       "lifecycle": {
         "statusDomain": [
-          "draft",
-          "active",
-          "accepted",
-          "done",
-          "archived"
-        ]
+        "draft",
+        "active"
+      ]
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -1408,12 +1405,9 @@
       },
       "lifecycle": {
         "statusDomain": [
-          "draft",
-          "active",
-          "accepted",
-          "done",
-          "archived"
-        ]
+        "draft",
+        "active"
+      ]
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -1489,12 +1483,9 @@
       },
       "lifecycle": {
         "statusDomain": [
-          "draft",
-          "active",
-          "accepted",
-          "done",
-          "archived"
-        ]
+        "draft",
+        "active"
+      ]
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -2780,9 +2771,7 @@
         "allowed": []
       },
       "lifecycle": {
-        "statusDomain": [
-          "archived"
-        ]
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [
@@ -2842,10 +2831,7 @@
         ]
       },
       "lifecycle": {
-        "statusDomain": [
-          "draft",
-          "sealed"
-        ]
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [
@@ -3267,13 +3253,7 @@
         ]
       },
       "lifecycle": {
-        "statusDomain": [
-          "draft",
-          "active",
-          "accepted",
-          "done",
-          "archived"
-        ]
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [
@@ -3347,13 +3327,7 @@
         ]
       },
       "lifecycle": {
-        "statusDomain": [
-          "draft",
-          "active",
-          "accepted",
-          "done",
-          "archived"
-        ]
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [
@@ -3427,13 +3401,7 @@
         ]
       },
       "lifecycle": {
-        "statusDomain": [
-          "draft",
-          "active",
-          "accepted",
-          "done",
-          "archived"
-        ]
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [
@@ -3505,12 +3473,7 @@
         ]
       },
       "lifecycle": {
-        "statusDomain": [
-          "proposed",
-          "accepted",
-          "rejected",
-          "superseded"
-        ]
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [
@@ -3602,12 +3565,7 @@
         ]
       },
       "lifecycle": {
-        "statusDomain": [
-          "open",
-          "mitigated",
-          "resolved",
-          "closed"
-        ]
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [
@@ -3709,12 +3667,7 @@
         ]
       },
       "lifecycle": {
-        "statusDomain": [
-          "draft",
-          "active",
-          "done",
-          "archived"
-        ]
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [
@@ -3809,13 +3762,7 @@
         ]
       },
       "lifecycle": {
-        "statusDomain": [
-          "queued",
-          "in-progress",
-          "blocked",
-          "done",
-          "cancelled"
-        ]
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [
@@ -3912,12 +3859,7 @@
         ]
       },
       "lifecycle": {
-        "statusDomain": [
-          "draft",
-          "active",
-          "superseded",
-          "retired"
-        ]
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [
@@ -4014,12 +3956,7 @@
         ]
       },
       "lifecycle": {
-        "statusDomain": [
-          "open",
-          "mitigated",
-          "resolved",
-          "closed"
-        ]
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [
@@ -4111,12 +4048,7 @@
         ]
       },
       "lifecycle": {
-        "statusDomain": [
-          "draft",
-          "active",
-          "superseded",
-          "retired"
-        ]
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [
@@ -4217,11 +4149,7 @@
         ]
       },
       "lifecycle": {
-        "statusDomain": [
-          "draft",
-          "published",
-          "superseded"
-        ]
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [
@@ -4313,12 +4241,7 @@
         ]
       },
       "lifecycle": {
-        "statusDomain": [
-          "draft",
-          "active",
-          "superseded",
-          "retired"
-        ]
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [
@@ -4420,12 +4343,7 @@
         ]
       },
       "lifecycle": {
-        "statusDomain": [
-          "draft",
-          "active",
-          "done",
-          "archived"
-        ]
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [
@@ -4526,12 +4444,7 @@
         ]
       },
       "lifecycle": {
-        "statusDomain": [
-          "draft",
-          "active",
-          "done",
-          "archived"
-        ]
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [
@@ -4637,12 +4550,7 @@
         ]
       },
       "lifecycle": {
-        "statusDomain": [
-          "draft",
-          "active",
-          "done",
-          "archived"
-        ]
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [
@@ -4780,13 +4688,7 @@
         ]
       },
       "lifecycle": {
-        "statusDomain": [
-          "draft",
-          "active",
-          "accepted",
-          "done",
-          "archived"
-        ]
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [
@@ -4853,13 +4755,7 @@
         ]
       },
       "lifecycle": {
-        "statusDomain": [
-          "draft",
-          "active",
-          "accepted",
-          "done",
-          "archived"
-        ]
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [
@@ -4926,13 +4822,7 @@
         ]
       },
       "lifecycle": {
-        "statusDomain": [
-          "draft",
-          "active",
-          "accepted",
-          "done",
-          "archived"
-        ]
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [
@@ -4999,13 +4889,7 @@
         ]
       },
       "lifecycle": {
-        "statusDomain": [
-          "draft",
-          "active",
-          "accepted",
-          "done",
-          "archived"
-        ]
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [
@@ -5072,13 +4956,7 @@
         ]
       },
       "lifecycle": {
-        "statusDomain": [
-          "draft",
-          "active",
-          "accepted",
-          "done",
-          "archived"
-        ]
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [
@@ -5145,13 +5023,7 @@
         ]
       },
       "lifecycle": {
-        "statusDomain": [
-          "draft",
-          "active",
-          "accepted",
-          "done",
-          "archived"
-        ]
+        "statusDomain": []
       },
       "relationships": {
         "sourceProfileIds": [

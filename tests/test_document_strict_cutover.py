@@ -348,6 +348,42 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 with self.assertRaisesRegex(contracts.DocumentContractError, rule_id):
                     contracts.validate_registry(REPOSITORY_ROOT, registry)
 
+    def test_a_form_declares_no_status_domain_of_its_own(self) -> None:
+        # The loader replaces a form's status domain with its source profile's,
+        # so a domain written on the form governs nothing. Sixteen of them had
+        # drifted unnoticed, one carrying the incident vocabulary on an
+        # architecture description. A form declares none and inherits one.
+        contracts = load_document_contracts()
+        registry = clone_registry(self.registry)
+        form = next(
+            profile
+            for profile in registry["profiles"]
+            if profile["mode"] == "template" and profile.get("lifecycle") is not None
+        )
+        self.assertEqual(form["lifecycle"]["statusDomain"], [])
+        form["lifecycle"]["statusDomain"] = ["draft"]
+        with self.assertRaisesRegex(
+            contracts.DocumentContractError, "REGISTRY_FORM_STATUS_DOMAIN"
+        ):
+            contracts.validate_registry(REPOSITORY_ROOT, registry)
+
+    def test_a_form_enforces_only_statuses_its_source_admits(self) -> None:
+        # The check compared a form's enforced statuses against themselves, so
+        # it could not fail. It now compares them against the domain the form
+        # actually inherits.
+        contracts = load_document_contracts()
+        registry = clone_registry(self.registry)
+        form = next(
+            profile
+            for profile in registry["profiles"]
+            if profile["id"] == "template/operation/incident"
+        )
+        form["relationships"]["bodyContract"]["enforcedStatuses"] = ["retired"]
+        with self.assertRaisesRegex(
+            contracts.DocumentContractError, "REGISTRY_BODY_STATUS"
+        ):
+            contracts.validate_registry(REPOSITORY_ROOT, registry)
+
     def test_terminal_body_relationship_invariants_fail_closed(self) -> None:
         contracts = load_document_contracts()
 
@@ -854,9 +890,22 @@ class Stage05TerminalOwnershipTests(unittest.TestCase):
             authored = profiles[authored_id]
             template = profiles[template_id]
             with self.subTest(profile=authored_id):
+                # The form used to restate the authored domain and this test
+                # pinned the two together -- for Stage 05 only, which is why
+                # these five stayed right while sixteen elsewhere drifted. The
+                # form now declares none and the loader hands it the authored
+                # one, so sharing is inherited rather than copied and checked.
+                self.assertEqual(template["lifecycle"]["statusDomain"], [])
+                loaded = next(
+                    item
+                    for item in load_document_contracts()
+                    .load_registry(REPOSITORY_ROOT)
+                    .profiles
+                    if item.profile_id == template_id
+                )
                 self.assertEqual(
-                    authored["lifecycle"]["statusDomain"],
-                    template["lifecycle"]["statusDomain"],
+                    loaded.status_domain,
+                    tuple(authored["lifecycle"]["statusDomain"]),
                 )
                 self.assertTrue(
                     set(sections).issubset(authored["requiredSections"]["required"])
