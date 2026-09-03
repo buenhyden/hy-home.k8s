@@ -55,7 +55,7 @@ consumer-first deletion, bounded validation, and Git-backed recovery. This
 decision applies those principles to the current corpus and validation
 routing. [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)
 owns the integrated governance convergence, while
-[Spec 0066](../../03.specs/0066-validation-tooling-ownership/spec.md) owns the
+[Spec 0066](../../98.archive/completed/03.specs/0066-validation-tooling-ownership/spec.md) owns the
 delegated validation-tooling transition.
 
 ## Decision
@@ -319,4 +319,4 @@ narrower validation-routing and execution-instance boundaries needed by Specs
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
 | [ADR-0016](./0016-program-to-tranche-document-lineage.md), [ADR-0017](./0017-program-follow-up-lineage-semantics.md), [ADR-0020](./0020-document-lifecycle-program-closure-evidence.md), [ADR-0021](./0021-canonical-surface-routing-and-evidence-depth.md), and [ADR-0022](./0022-direct-approval-standalone-execution-lineage.md) | Supersedes their current instance-roster and validation-routing authority; scoped amendment, not lifecycle supersession, of the two identified ADR-0030 validation-layout clauses | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
-| [ADR-0030](./0030-authority-first-sdlc-and-agent-governance-convergence.md) | Preserves ADR-0030 as accepted while applying the reciprocal two-clause scoped amendment | [Spec 0066](../../03.specs/0066-validation-tooling-ownership/spec.md) |
+| [ADR-0030](./0030-authority-first-sdlc-and-agent-governance-convergence.md) | Preserves ADR-0030 as accepted while applying the reciprocal two-clause scoped amendment | [Spec 0066](../../98.archive/completed/03.specs/0066-validation-tooling-ownership/spec.md) |

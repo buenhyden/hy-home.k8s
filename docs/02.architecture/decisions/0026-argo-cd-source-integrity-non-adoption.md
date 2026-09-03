@@ -151,7 +151,7 @@ orthogonal.
 
 | Decision lineage                                | Replacement relation                                                                             | Affected Spec                                                           |
 | ----------------------------------------------- | ------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
-| Direct human approval recorded in the Spec body | N/A — first non-adoption decision over a fired research refresh trigger; supersedes no prior ADR | [Spec 0060](../../03.specs/0060-platform-currency-defect-closure/spec.md) |
+| Direct human approval recorded in the Spec body | N/A — first non-adoption decision over a fired research refresh trigger; supersedes no prior ADR | [Spec 0060](../../98.archive/completed/03.specs/0060-platform-currency-defect-closure/spec.md) |
 
 ### Related Documents
 

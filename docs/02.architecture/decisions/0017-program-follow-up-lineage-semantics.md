@@ -72,12 +72,12 @@ leaving the registry unchanged makes machine lineage contradict it.
 - **Original decision**: [ADR-0016](./0016-program-to-tranche-document-lineage.md)
 - **Original program**: [PRD-005](../../01.requirements/0005-workspace-document-assurance-modernization.md)
 - **Original architecture**: [ARD-0008](../descriptions/0008-workspace-document-assurance-operating-model.md)
-- **Follow-up**: [Spec 033](../../03.specs/0033-template-lifecycle-contract-normalization/spec.md)
+- **Follow-up**: [Spec 033](../../98.archive/completed/03.specs/0033-template-lifecycle-contract-normalization/spec.md)
 - **New program**: [PRD-006](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
 
 ### Lifecycle Traceability
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| ADR-0016 original program lineage | Complementary successor; original decision remains accepted | [Spec 034](../../03.specs/0034-authority-and-lineage-foundation/spec.md) |
+| ADR-0016 original program lineage | Complementary successor; original decision remains accepted | [Spec 034](../../98.archive/completed/03.specs/0034-authority-and-lineage-foundation/spec.md) |
 | [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Supersedes the permanent follow-up instance roster and validation-routing ownership; preserves this record's historical lineage context. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |

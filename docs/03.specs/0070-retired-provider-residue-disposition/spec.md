@@ -249,5 +249,5 @@ bash scripts/validate-repo-quality-gates.sh .
 - [ADR-0030 — authority-first SDLC and agent governance convergence](../../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)
 - [AD-0006 — workspace agent governance platform](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md)
 - [REQ-0003 — workspace agent governance platform](../../01.requirements/0003-workspace-agent-governance-platform.md)
-- [SPEC-0065 — transition residue retirement](../0065-transition-residue-retirement/spec.md)
+- [SPEC-0065 — transition residue retirement](../../98.archive/completed/03.specs/0065-transition-residue-retirement/spec.md)
 - [Quality Policy](../../00.agent-governance/policies/quality.md)

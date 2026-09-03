@@ -91,6 +91,6 @@ historical evidence and provider-native schemas.
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/0005-workspace-document-assurance-modernization.md)
 - **ARD**: [Workspace Document Assurance Operating Model](../descriptions/0008-workspace-document-assurance-operating-model.md)
 - **Related ADR**: [Program-to-Tranche Lineage](./0016-program-to-tranche-document-lineage.md)
-- **First Spec**: [Document Contract Registry](../../03.specs/0026-document-contract-registry/spec.md)
+- **First Spec**: [Document Contract Registry](../../98.archive/completed/03.specs/0026-document-contract-registry/spec.md)
 - **JSON Schema Object Validation**: [JSON Schema 2020-12](https://json-schema.org/draft/2020-12/json-schema-validation)
 - **YAML Mapping Order**: [YAML 1.2.2](https://yaml.org/spec/1.2.2/)

@@ -54,7 +54,7 @@ The pack's own
 records that all twelve `Partial` rows are blocked by evidence classes that
 repository-static work cannot obtain: live cluster and effective RBAC, hosted
 CI run outcomes, provider runtime behavior, and human usability or stakeholder
-judgement. [Spec 0057](../0057-workspace-engineering-partial-defer-incremental-refresh/spec.md)
+judgement. [Spec 0057](../../98.archive/completed/03.specs/0057-workspace-engineering-partial-defer-incremental-refresh/spec.md)
 re-tested the same twelve rows on 2026-08-12 and promoted none.
 
 This cycle therefore defines its expected outcome as a dated delta — external
@@ -371,9 +371,9 @@ standalone execution rules.
 - [Research pack README](../../90.references/research/0001-workspace-engineering/README.md)
 - [Scope application index](../../90.references/research/0001-workspace-engineering/m0013-scope-application-index.md)
 - [Source coverage and migration ledger](../../90.references/research/0001-workspace-engineering/m0012-source-coverage.md)
-- [Spec 053 — research pack consolidation](../0053-workspace-engineering-research-pack-consolidation/spec.md)
-- [Spec 055 — gap-only refresh](../0056-workspace-engineering-gap-only-refresh/spec.md)
-- [Spec 056 — Partial/DEFER incremental refresh](../0057-workspace-engineering-partial-defer-incremental-refresh/spec.md)
+- [Spec 053 — research pack consolidation](../../98.archive/completed/03.specs/0053-workspace-engineering-research-pack-consolidation/spec.md)
+- [Spec 055 — gap-only refresh](../../98.archive/completed/03.specs/0056-workspace-engineering-gap-only-refresh/spec.md)
+- [Spec 056 — Partial/DEFER incremental refresh](../../98.archive/completed/03.specs/0057-workspace-engineering-partial-defer-incremental-refresh/spec.md)
 - [Quality standards](../../00.agent-governance/rules/quality-standards.md)
 - [ADR-0022 — direct-approval standalone execution lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
 - [Implementation Plan](plan.md)

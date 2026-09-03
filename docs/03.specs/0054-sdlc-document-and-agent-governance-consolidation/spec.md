@@ -85,7 +85,7 @@ decisions while preserving their transition-safety and recoverability goals.
 The reciprocal execution artifacts are [Plan 0054](plan.md) and
 [Tasks 0054](plan.md).
 Spec 0054 remains the integrated acceptance owner. Active
-[Spec 0066](../0066-validation-tooling-ownership/spec.md) is the delegated
+[Spec 0066](../../98.archive/completed/03.specs/0066-validation-tooling-ownership/spec.md) is the delegated
 execution package for WP-010 and WP-011; it is not a standalone program.
 SPEC-0054-TSK-0011 is the current parent acceptance record.
 

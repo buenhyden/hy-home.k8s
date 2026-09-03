@@ -166,16 +166,16 @@ unidentified and unclaimed.
 
 | Requirement ID | Acceptance criterion | Downstream owner |
 | --- | --- | --- |
-| REQ-0006-FR-0001 | ACC-WDLEC-001 | [AD-0009](../02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md) and [Spec 034](../03.specs/0034-authority-and-lineage-foundation/spec.md) |
+| REQ-0006-FR-0001 | ACC-WDLEC-001 | [AD-0009](../02.architecture/descriptions/0009-document-lifecycle-evidence-operating-model.md) and [Spec 034](../98.archive/completed/03.specs/0034-authority-and-lineage-foundation/spec.md) |
 | REQ-0006-FR-0002 | ACC-WDLEC-002 | N/A — Spec 034 shares the downstream owner linked in REQ-0006-FR-0001 and is governed by unchanged accepted ADR-0017. |
-| REQ-0006-FR-0003 | ACC-WDLEC-003 | [Spec 035](../03.specs/0035-document-schema-and-lifecycle-contract/spec.md) |
-| REQ-0006-FR-0004 | ACC-WDLEC-004 | [Spec 036](../03.specs/0036-archive-record-and-workspace-boundary/spec.md), governed by ADR-0018 |
+| REQ-0006-FR-0003 | ACC-WDLEC-003 | [Spec 035](../98.archive/completed/03.specs/0035-document-schema-and-lifecycle-contract/spec.md) |
+| REQ-0006-FR-0004 | ACC-WDLEC-004 | [Spec 036](../98.archive/completed/03.specs/0036-archive-record-and-workspace-boundary/spec.md), governed by ADR-0018 |
 | REQ-0006-FR-0005 | ACC-WDLEC-005 | N/A — Spec 036 shares the downstream owner linked in REQ-0006-FR-0004. |
-| REQ-0006-FR-0006 | ACC-WDLEC-006 | [Spec 037](../03.specs/0037-active-corpus-and-execution-retention/spec.md) |
+| REQ-0006-FR-0006 | ACC-WDLEC-006 | [Spec 037](../98.archive/completed/03.specs/0037-active-corpus-and-execution-retention/spec.md) |
 | REQ-0006-FR-0007 | ACC-WDLEC-006 | N/A — Spec 037 shares the downstream owner linked in REQ-0006-FR-0006. |
-| REQ-0006-FR-0008 | ACC-WDLEC-007 | [Spec 038](../03.specs/0038-reference-information-architecture/spec.md) |
+| REQ-0006-FR-0008 | ACC-WDLEC-007 | [Spec 038](../98.archive/completed/03.specs/0038-reference-information-architecture/spec.md) |
 | REQ-0006-FR-0009 | ACC-WDLEC-001 | N/A — Spec 036 shares the downstream owner linked in REQ-0006-FR-0004. |
-| REQ-0006-FR-0010 | ACC-WDLEC-008 | [Spec 039](../03.specs/0039-github-ci-qa-evidence/spec.md) |
-| REQ-0006-FR-0011 | ACC-WDLEC-008 | [Spec 040](../03.specs/0040-contract-cutover-and-program-closure/spec.md) |
+| REQ-0006-FR-0010 | ACC-WDLEC-008 | [Spec 039](../98.archive/completed/03.specs/0039-github-ci-qa-evidence/spec.md) |
+| REQ-0006-FR-0011 | ACC-WDLEC-008 | [Spec 040](../98.archive/completed/03.specs/0040-contract-cutover-and-program-closure/spec.md) |
 | REQ-0006-NFR-0001 | ACC-WDLEC-009 | N/A — Spec 040 shares the downstream owner linked in REQ-0006-FR-0011 and retains external `DEFER`. |
 | REQ-0006-NFR-0002 | ACC-WDLEC-010 | N/A — Specs 035 and 037 share the downstream owners linked in REQ-0006-FR-0003 and REQ-0006-FR-0006. |

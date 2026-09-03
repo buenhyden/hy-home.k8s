@@ -80,12 +80,12 @@ false upstream authority.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| Direct human approval recorded in the Spec body | N/A — first typed standalone-execution relation; preserves ADR-0016/0017 program lineage semantics | [Spec 053](../../03.specs/0053-workspace-engineering-research-pack-consolidation/spec.md) |
+| Direct human approval recorded in the Spec body | N/A — first typed standalone-execution relation; preserves ADR-0016/0017 program lineage semantics | [Spec 053](../../98.archive/completed/03.specs/0053-workspace-engineering-research-pack-consolidation/spec.md) |
 | Direct human approval recorded in the Spec body | B-scope SDLC and AI-agent governance consolidation including Stage 90 | [Spec 054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 | Direct human approval recorded in the Spec body | N/A — tenth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0062](../../03.specs/0062-workspace-research-full-corpus-reverification/spec.md) |
-| Direct human approval recorded in the Spec body | N/A — eleventh typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0063](../../03.specs/0063-governance-invariant-consolidation/spec.md) |
-| Direct human approval recorded in the Spec body | N/A — twelfth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0064](../../03.specs/0064-agent-governance-surface-consolidation/spec.md) |
-| Direct human approval recorded in the Spec body | N/A — thirteenth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0065](../../03.specs/0065-transition-residue-retirement/spec.md) |
+| Direct human approval recorded in the Spec body | N/A — eleventh typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0063](../../98.archive/completed/03.specs/0063-governance-invariant-consolidation/spec.md) |
+| Direct human approval recorded in the Spec body | N/A — twelfth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0064](../../98.archive/completed/03.specs/0064-agent-governance-surface-consolidation/spec.md) |
+| Direct human approval recorded in the Spec body | N/A — thirteenth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0065](../../98.archive/completed/03.specs/0065-transition-residue-retirement/spec.md) |
 | [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Supersedes permanent standalone instance-roster authority with package-local execution ownership; preserves direct human approval as historical context. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |
 
 Specs 0055 through 0061 were executed under this same direct-approval semantics,

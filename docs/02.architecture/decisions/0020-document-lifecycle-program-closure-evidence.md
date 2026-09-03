@@ -99,7 +99,7 @@ bounded, current role-decision evidence path.
 - **Program PRD**:
   [PRD-006](../../01.requirements/0006-workspace-document-lifecycle-and-evidence-consolidation.md)
 - **Final tranche**:
-  [Spec 040](../../03.specs/0040-contract-cutover-and-program-closure/spec.md)
+  [Spec 040](../../98.archive/completed/03.specs/0040-contract-cutover-and-program-closure/spec.md)
 - **Historical decisions**:
   [ADR-0017](./0017-program-follow-up-lineage-semantics.md) and
   [ADR-0018](./0018-full-body-archive-record-and-retention.md)
@@ -108,5 +108,5 @@ bounded, current role-decision evidence path.
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| [ARD-0009](../descriptions/0009-document-lifecycle-evidence-operating-model.md) | Supplies the reciprocal same-diff accepted role-decision evidence for final PRD-006 / ARD-0009 closure; existing ADR-0017 and ADR-0018 remain unchanged accepted history. | [Spec 040](../../03.specs/0040-contract-cutover-and-program-closure/spec.md) owns exact terminal closure commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9` and preserves external `DEFER`. |
+| [ARD-0009](../descriptions/0009-document-lifecycle-evidence-operating-model.md) | Supplies the reciprocal same-diff accepted role-decision evidence for final PRD-006 / ARD-0009 closure; existing ADR-0017 and ADR-0018 remain unchanged accepted history. | [Spec 040](../../98.archive/completed/03.specs/0040-contract-cutover-and-program-closure/spec.md) owns exact terminal closure commit `c5adc27b13893d7cbd1266c9225372cfb7df79e9` and preserves external `DEFER`. |
 | [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md) | Supersedes the permanent closure-instance roster and current-state SHA ownership; preserves this record's historical closure evidence. | [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) |

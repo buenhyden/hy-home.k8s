@@ -119,5 +119,5 @@ Their count and exact method inventory are observations, not governance.
 - [Quality policy](../docs/00.agent-governance/policies/quality.md)
 - [Work lifecycle](../docs/00.agent-governance/skills/work-lifecycle.md)
 - [Validation ownership ADR](../docs/02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)
-- [Validation tooling Spec](../docs/03.specs/0066-validation-tooling-ownership/spec.md)
-- [Validation tooling Task](../docs/03.specs/0066-validation-tooling-ownership/tasks/tsk-0001-vto-000.md)
+- [Validation tooling Spec](../docs/98.archive/completed/03.specs/0066-validation-tooling-ownership/spec.md)
+- [Validation tooling Task](../docs/98.archive/completed/03.specs/0066-validation-tooling-ownership/tasks/tsk-0001-vto-000.md)

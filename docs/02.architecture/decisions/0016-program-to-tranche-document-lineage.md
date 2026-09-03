@@ -84,7 +84,7 @@ program PRDs would weaken either family uniqueness or product ownership.
 - **Successor decision**: [ADR-0031](./0031-current-corpus-retention-and-validation-ownership.md)
   supersedes the program-instance roster and validation-routing ownership in
   this decision while preserving this record's historical program context.
-- **Specs**: [Document Contract Registry](../../03.specs/0026-document-contract-registry/spec.md) through [Protected Surface and Supply Chain Hardening](../../03.specs/0032-protected-surface-supply-chain-hardening/spec.md)
+- **Specs**: [Document Contract Registry](../../98.archive/completed/03.specs/0026-document-contract-registry/spec.md) through [Protected Surface and Supply Chain Hardening](../../98.archive/completed/03.specs/0032-protected-surface-supply-chain-hardening/spec.md)
 
 ### Lifecycle Traceability
 

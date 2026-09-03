@@ -155,9 +155,9 @@ contract와 각 provider의 실제 schema·runtime evidence로 변환할 요구�
 
 ## Risks, Dependencies, and Assumptions
 
-- **Prerequisite**: 활성 [Spec 038](../03.specs/0038-reference-information-architecture/spec.md),
-  [Spec 039](../03.specs/0039-github-ci-qa-evidence/spec.md),
-  [Spec 040](../03.specs/0040-contract-cutover-and-program-closure/spec.md)이 먼저 완료되어야 한다.
+- **Prerequisite**: 활성 [Spec 038](../98.archive/completed/03.specs/0038-reference-information-architecture/spec.md),
+  [Spec 039](../98.archive/completed/03.specs/0039-github-ci-qa-evidence/spec.md),
+  [Spec 040](../98.archive/completed/03.specs/0040-contract-cutover-and-program-closure/spec.md)이 먼저 완료되어야 한다.
 - **Downstream sequence**: Specs 041 → 042 → 043 → 044 → 045 → 046은 foundation-first
   순서를 지키며, 후속 Spec은 선행 acceptance evidence를 소비한다.
 - Model availability, effort enum, CLI schema와 authentication은 변한다. Concrete value는 기준 시점
@@ -233,13 +233,13 @@ contract와 각 provider의 실제 schema·runtime evidence로 변환할 요구�
 - **Current terminal decision**: [ADR 0030](../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)
 - **Current implementation authority**: [Spec 0054](../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)
 - **Historical predecessor**: [ADR 0019](../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
-- **Prerequisite Specs**: [Spec 038](../03.specs/0038-reference-information-architecture/spec.md),
-  [Spec 039](../03.specs/0039-github-ci-qa-evidence/spec.md),
-  [Spec 040](../03.specs/0040-contract-cutover-and-program-closure/spec.md)
-- **Delivery Specs**: [Spec 041](../03.specs/0041-stage-00-agent-governance-contract/spec.md),
-  [Spec 042](../03.specs/0042-provider-native-runtime-and-model-evidence/spec.md),
-  [Spec 043](../03.specs/0043-agent-harness-loop-lifecycle/spec.md),
-  [Spec 044](../03.specs/0044-agent-roster-evaluation-and-admission/spec.md),
-  [Spec 045](../03.specs/0045-agent-governance-ci-qa-cutover/spec.md),
-  [Spec 046](../03.specs/0046-agent-governance-program-closure/spec.md)
-- **Agent design**: [Workspace Agent Governance Program Design](../03.specs/0041-stage-00-agent-governance-contract/spec.md)
+- **Prerequisite Specs**: [Spec 038](../98.archive/completed/03.specs/0038-reference-information-architecture/spec.md),
+  [Spec 039](../98.archive/completed/03.specs/0039-github-ci-qa-evidence/spec.md),
+  [Spec 040](../98.archive/completed/03.specs/0040-contract-cutover-and-program-closure/spec.md)
+- **Delivery Specs**: [Spec 041](../98.archive/completed/03.specs/0041-stage-00-agent-governance-contract/spec.md),
+  [Spec 042](../98.archive/completed/03.specs/0042-provider-native-runtime-and-model-evidence/spec.md),
+  [Spec 043](../98.archive/completed/03.specs/0043-agent-harness-loop-lifecycle/spec.md),
+  [Spec 044](../98.archive/completed/03.specs/0044-agent-roster-evaluation-and-admission/spec.md),
+  [Spec 045](../98.archive/completed/03.specs/0045-agent-governance-ci-qa-cutover/spec.md),
+  [Spec 046](../98.archive/completed/03.specs/0046-agent-governance-program-closure/spec.md)
+- **Agent design**: [Workspace Agent Governance Program Design](../98.archive/completed/03.specs/0041-stage-00-agent-governance-contract/spec.md)

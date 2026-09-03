@@ -179,5 +179,5 @@ or external environment verification.
 
 - **AD**: [Workspace Document Assurance Operating Model](../02.architecture/descriptions/0008-workspace-document-assurance-operating-model.md)
 - **ADRs**: [Declarative Document Contract Registry](../02.architecture/decisions/0015-declarative-document-contract-registry.md) and [Program-to-Tranche Lineage](../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
-- **Specs**: [Document Contract Registry](../03.specs/0026-document-contract-registry/spec.md) through [Protected Surface and Supply Chain Hardening](../03.specs/0032-protected-surface-supply-chain-hardening/spec.md)
+- **Specs**: [Document Contract Registry](../98.archive/completed/03.specs/0026-document-contract-registry/spec.md) through [Protected Surface and Supply Chain Hardening](../98.archive/completed/03.specs/0032-protected-surface-supply-chain-hardening/spec.md)
 - **Current External Research**: [Workspace Engineering Research Pack](../90.references/research/0001-workspace-engineering/README.md)

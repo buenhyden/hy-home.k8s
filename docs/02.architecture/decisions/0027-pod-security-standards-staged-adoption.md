@@ -216,5 +216,5 @@ constraint is the mesh's networking mechanism rather than any workload's spec.
 ### Related Documents
 
 - [ADR-0026 — Argo CD source integrity non-adoption](0026-argo-cd-source-integrity-non-adoption.md)
-- [Spec 060 — workload security context baseline](../../03.specs/0061-workload-security-context-baseline/spec.md)
+- [Spec 060 — workload security context baseline](../../98.archive/completed/03.specs/0061-workload-security-context-baseline/spec.md)
 - [Kubernetes, infrastructure, and security research](../../90.references/research/0001-workspace-engineering/m0007-kubernetes-infrastructure-and-security.md)

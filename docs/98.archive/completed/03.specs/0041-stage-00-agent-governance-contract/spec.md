@@ -1,0 +1,269 @@
+---
+title: 'Stage 00 Agent Governance Contract Specification'
+version: "1.0.0"
+type: sdlc/spec
+layer: "specs"
+status: done
+owner: platform
+updated: 2026-08-01
+artifact_id: "SPEC-0041"
+---
+
+# Stage 00 Agent Governance Contract Specification
+
+## Overview
+
+This specification defines the foundation for the next workspace agent-governance
+program: one provider-neutral machine contract, four provider/local projections,
+an explicit four-class project-memory contract, and deterministic consumer
+validation. Specs 038–040 are closed. Spec 040 terminal closure
+`c5adc27b13893d7cbd1266c9225372cfb7df79e9` and postflight evidence update
+`4335ea6076a68fe0bbed3526a21b92a39180faa7` satisfy this tranche's activation
+prerequisite.
+
+This tranche is repository-static. Spec 042 owns provider/model evidence with
+the user-approved observation cutoff **2026-07-10 10:00 Asia/Seoul**.
+Repository state, not provider prose, remains runtime authority until each
+later evidence class is implemented and observed. The reciprocal Plan/Task
+record the activation, implementation, QA, and closure evidence for this
+tranche. Provider-runtime, hosted CI, remote, credential-bearing, and live
+evidence remains `DEFER`.
+Terminal closure was observed at
+`1a3232ce73a653371634e99d773d71ab03f87967`; parent-to-closure explicit-ref
+lifecycle and clean-tree aggregate passed after that commit.
+
+## Strategic Boundaries & Non-goals
+
+- **Owns**: the machine-contract shape, schema boundary, consumer migration
+  order, provider projection invariants, evidence classes, and the activation
+  gate for the PRD-0003 / AD-0006 / ADR-0019 program.
+- **Consumes**: the Stage 00 owner graph, the then-current role-semantics
+  compatibility input, `validation-surfaces.json`, roster validators,
+  provider adapters, and Specs 038–040 closure evidence.
+- **Does not own**: concrete provider installation/authentication, loop runtime,
+  role admission, CI cutover, or terminal program closure; Specs 042–046 own
+  those responsibilities in sequence.
+- **Non-goals**: modifying active adapters during design, merging validation
+  routing into the role contract, adding credentials, or deleting the old
+  semantics contract before every consumer has migrated.
+
+## Contracts
+
+### Activation and lineage contract
+
+1. Specs 038, 039, and 040 must be `done` with their closure evidence committed.
+2. At Spec 041 activation ADR-0019 was `draft` and ADR-0013 was the accepted
+   current baseline. Later ADR-0019 lifecycle states are owned by Spec 046 and
+   do not retroactively change this activation evidence.
+3. At Spec 041 activation, the registry adds one PRD `003` / AD `0006`
+   program with Specs 041–046 as ordered tranches and accepted ADR `0013` as
+   its governing decision. ADR `0019` is the conditional successor linked by
+   PRD/AD/Spec traceability and may replace that registry relation only with
+   its Spec 046 acceptance evidence.
+4. Only Spec 041 may own the first execution Plan/Task pair; later tranches
+   remain blocked until their predecessor's tranche-owned criteria are `done`.
+   Provider-runtime results recorded by Spec 042 may remain explicit
+   `ABSENT`, `BLOCKED`, or `DEFER` readiness results without preventing
+   repository-local Specs 043–046 from executing or closing. Such results
+   cannot support a provider-runtime readiness claim.
+
+### Machine-owner contract
+
+- `docs/00.agent-governance/contracts/harness-contract.json` is the current
+  repository-static data owner for canonical roles, surface projections, permissions,
+  stop conditions, handoff, evidence requirements, and model/eval references.
+  It separates `currentInventory` from `targetInventory`: Spec 041 encodes the
+  implemented 10-role/three-surface baseline exactly, while the 12-role/four-
+  surface target remains pending until Specs 042 and 044 admit it.
+- A colocated JSON Schema closes keys, enums, identifier formats, cardinality,
+  version compatibility, and provider projection requirements.
+- `docs/00.agent-governance/contracts/validation-surfaces.json` remains the
+  independent path-to-validation routing owner. Role semantics must reference,
+  not absorb, that contract.
+- The former role-semantics contract and schema remained readable
+  compatibility inputs until all named consumers selected the harness owner.
+  Spec 045 removes them only after a zero-consumer proof.
+- The contract references
+  `docs/00.agent-governance/memory/progress.md` as the only tracked shared
+  project-memory ledger. Provider auto-memory and transient checkpoints cannot
+  become current owners for repository facts or execution status.
+- The contract declares exactly four memory classes:
+  `working-short-term`, `durable-long-term`, `domain-scoped`, and
+  `provider-local-auxiliary`. Each class identifies scope, authority role,
+  owner, provenance, sensitivity, promotion target, and lifecycle-policy
+  references. Provider-local memory is advisory; it cannot own repository
+  facts, decisions, task status, or durable handoff evidence.
+- Spec 043 owns executable checkpoint promotion, refresh, expiry, archive/GC,
+  conflict resolution, redaction, resume, and negative-fixture behavior. No
+  provider transcript, full prompt, credential, token, or secret becomes a
+  durable memory store.
+
+### Evidence classes
+
+Every result is classified as one of `repo-static`, `provider-runtime`,
+`ci`, or `remote-live`. A PASS in one class never implies another class.
+
+## Core Design
+
+### Legacy agent-design disposition
+
+The former sibling design's valid change-local material is retained in this
+Spec's foundation-first migration, projection invariant, interfaces,
+guardrails, and verification sections. Canonical roles expose bounded inputs,
+structured outputs, explicit prohibited actions, stop conditions, and named
+handoffs; provider projections remain repository-static until separately
+admitted. Historical four-provider and fixed-cardinality assertions are not
+promoted here: ADR-0030 and WP-003 own their terminal reconciliation.
+
+### Foundation-first migration
+
+1. Inventory every current semantics consumer, producer, generated summary,
+   validator, fixture, provider adapter, and governance reference.
+2. Add failing fixtures for contract structure, unknown keys, duplicate roles,
+   missing projections, invalid permissions, unbounded stop rules, and version
+   incompatibility.
+3. Introduce the new contract/schema without changing current runtime claims.
+4. Migrate consumers one at a time and record selected contract version plus
+   evidence class.
+5. Require exact equality for the implemented 10-role/30-adapter baseline and
+   reject orphan current members. Record the 12-role/48-adapter target as a
+   non-current migration assertion rather than manufacturing missing adapters.
+6. Hand the compatibility-removal ledger to Spec 045.
+
+### Projection invariant
+
+Each current canonical role has exactly one projection for each current
+surface. A planned role or surface remains an explicit non-current target until
+its owning tranche promotes it:
+
+| Surface | Path family | Semantic boundary |
+| --- | --- | --- |
+| Local / Antigravity | `.agents/agents/*.md` | Local adapter and shared assets; never Gemini-native evidence |
+| Claude | `.claude/agents/*.md` | Claude-native metadata and least-privilege tools |
+| Codex | `.codex/agents/*.toml` | Codex-native instructions, model, and `model_reasoning_effort` |
+| Gemini | `.gemini/agents/*.md` | Planned Gemini-native metadata and project settings consumption; Spec 042 owns admission |
+
+The contract compares shared semantics while provider-specific schemas remain
+provider-owned. Unsupported fields are rejected instead of emulated.
+
+## Data Modeling & Storage Strategy
+
+The proposed `harness-contract.json` contains:
+
+- `schemaVersion`, `contractId`, source cutoff, and current owner;
+- an ordered canonical role set;
+- for each role: purpose, category, responsibilities, inputs, outputs,
+  prohibited actions, permission class, stop conditions, handoff targets,
+  required evidence, eval suite, and model-routing policy reference;
+- an ordered surface set with native path, provider schema, evidence class,
+  and per-role projection path, each marked `current` or `target`;
+- consumer/version records and compatibility state;
+- the canonical shared-memory path and transient checkpoint boundary;
+- four explicit memory-class declarations with authority, owner, provenance,
+  sensitivity, promotion target, and lifecycle-policy references;
+- bounded cardinality assertions and redaction rules.
+
+No credential, token, provider transcript, user configuration, or ignored
+diagnostic payload belongs in the tracked contract.
+
+## Interfaces & Data Structures
+
+| Consumer | Required interface | Failure behavior |
+| --- | --- | --- |
+| Roster validator | Exact role and projection sets | Fail on missing, extra, duplicate, or orphan adapter |
+| Semantic validator | Shared role fields and provider projection map | Fail on drift or unsupported provider claim |
+| Harness catalog | Derived human-readable roster summary | Fail if prose disagrees with machine owner |
+| Provider notes | Native path/schema and evidence boundary | Fail on relabeled local or unverified runtime evidence |
+| Model/eval validator | Role policy and referenced eval decision | Fail on unknown model policy or missing fitness evidence |
+| CI selector | Agent-governance affected paths | Route to Spec 045 static lane without credentials |
+
+## Edge Cases & Error Handling
+
+- A provider may support a field that another provider lacks; retain the shared
+  semantic in the contract and project only schema-supported metadata.
+- A new role must not be added to only one surface. Partial projection is a
+  failing migration state, not temporary parity.
+- A provider runtime can be absent while its tracked projection parses. Record
+  repo-static PASS and provider-runtime ABSENT separately.
+- A consumer that cannot select the new contract version blocks deletion of
+  the compatibility contract but does not justify two current owners.
+- A registry update attempted before Spec 040 closure fails the activation gate.
+
+## Failure Modes & Fallback / Human Escalation
+
+- **Current-program collision**: stop; complete Specs 038–040 before modifying
+  program lineage or active adapter contracts.
+- **Ambiguous owner**: keep the old contract readable, designate the new file
+  as non-current, and escalate the ownership decision rather than dual-write.
+- **Consumer regression**: revert the smallest consumer migration and retain
+  its ledger row; do not weaken schema validation globally.
+- **Protected-surface expansion**: require explicit human approval before
+  changing permissions, credentials, remote state, or live provider resources.
+
+## Verification Commands
+
+The implementation tranche must introduce and run the focused contract command
+before the existing aggregate gates:
+
+```bash
+python3 scripts/validate-agent-harness-contract.py --root .
+python3 scripts/validate-agent-harness-semantics.py --root .
+python3 scripts/validate-agent-roster-currentness.py .
+python3 scripts/validate-document-contract-registry.py --root . --mode strict
+python3 scripts/validate-markdown-profiles.py --root . --mode strict
+python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts registry
+bash scripts/validate-repo-quality-gates.sh .
+git diff --check
+```
+
+`validate-agent-harness-contract.py` is the focused Spec 041 deliverable and is
+now part of the repository-static aggregate lane.
+
+## Success Criteria & Verification Plan
+
+- **VAL-SAGC-001**: Specs 038–040 are done before the PRD-0003 program is
+  enrolled or Spec 041 is activated.
+- **VAL-SAGC-002**: The new contract and schema reject unknown keys, invalid
+  enums, duplicate roles, missing projections, and unsupported versions.
+- **VAL-SAGC-003**: `validation-surfaces.json` remains an independent current
+  owner with no duplicated path-routing rules in the harness contract.
+- **VAL-SAGC-004**: Every current consumer selects exactly one contract version
+  and records deterministic migration evidence.
+- **VAL-SAGC-005**: The activation inventory was exactly the implemented 10
+  roles and 30 adapters, with no missing, extra, duplicate, or orphan member;
+  the proposed 12/48 inventory is present only as a non-current target.
+- **VAL-SAGC-006**: Repo-static, provider-runtime, CI, and remote-live results
+  remain separate evidence classes.
+- **VAL-SAGC-007**: No credential, token, user config, or raw transcript enters
+  the tracked contract or fixtures.
+- **VAL-SAGC-008**: Focused validation, strict document checks, repository
+  quality gate, and diff checks PASS before tranche handoff.
+- **VAL-SAGC-009**: The machine contract declares the four memory classes and
+  their authority/provenance/sensitivity/promotion boundaries, while executable
+  checkpoint lifecycle behavior remains owned by Spec 043 and sensitive or raw
+  transcript content is rejected.
+
+## Traceability
+
+- **Program requirement**: [PRD 003](../../../../01.requirements/0003-workspace-agent-governance-platform.md)
+- **Architecture**: [AD 0006](../../../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md)
+- **Current accepted decision**: [ADR 0019](../../../../02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md)
+- **Current-program prerequisite**: [Spec 040](../0040-contract-cutover-and-program-closure/spec.md)
+- **Retired agent-design recovery**: [MIG-0004](../../../migrations/0004-document-authority-convergence.md)
+- **Execution Plan**: [Stage 00 Agent Governance Contract Implementation Plan](./plan.md)
+- **Task evidence**: [Stage 00 Agent Governance Contract Task](./plan.md)
+- **Successor**: [Spec 042](../0042-provider-native-runtime-and-model-evidence/spec.md)
+
+### Lifecycle Traceability
+
+| Requirement ID | Spec criterion | Verification method |
+| --- | --- | --- |
+| [REQ-0003-FR-0010](../../../../01.requirements/0003-workspace-agent-governance-platform.md#functional-requirements) | VAL-SAGC-002 | Contract/schema negative fixtures prove the closed machine contract. |
+| N/A — VAL-SAGC-003 shares the PRD-0003 source linked in VAL-SAGC-002 | VAL-SAGC-003 | Routing-owner comparison proves validation routing remains separate. |
+| N/A — VAL-SAGC-004 shares the PRD-0003 source linked in VAL-SAGC-002 | VAL-SAGC-004 | Consumer migration ledger proves one selected machine owner. |
+| N/A — VAL-SAGC-005 shares the PRD-0003 source linked in VAL-SAGC-002 | VAL-SAGC-005 | Exact-set validation proves canonical role/projection parity. |
+| N/A — VAL-SAGC-006 shares the PRD-0003 source linked in VAL-SAGC-002 | VAL-SAGC-006 | Evidence fixtures prove result-class separation. |
+| N/A — VAL-SAGC-001 shares the PRD-0003 source linked in VAL-SAGC-002 | VAL-SAGC-001 | Dependency validation proves safe program activation. |
+| N/A — VAL-SAGC-007 shares the PRD-0003 source linked in VAL-SAGC-002 | VAL-SAGC-007 | Redaction fixtures prove sensitive data exclusion. |
+| N/A — VAL-SAGC-008 shares the PRD-0003 source linked in VAL-SAGC-002 | VAL-SAGC-008 | Focused and aggregate QA prove reviewable handoff. |
+| N/A — VAL-SAGC-009 shares the PRD-0003 source linked in VAL-SAGC-002 | VAL-SAGC-009 | Contract/schema fixtures prove explicit memory classes, authority boundaries, and the Spec 041/043 ownership split. |

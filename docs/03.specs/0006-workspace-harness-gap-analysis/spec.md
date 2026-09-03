@@ -521,7 +521,7 @@ clusterrolebinding` examples carry human-approved, bootstrap, break-glass,
 - **Docs Stage Conformance Skill**: [../../../.claude/skills/docs-stage-conformance/skill.md](../../../.claude/skills/docs-stage-conformance/skill.md)
 - **Workspace Harness Audit Skill**: [../../../.claude/skills/workspace-harness-audit/skill.md](../../../.claude/skills/workspace-harness-audit/skill.md)
 - **Scripts README**: [../../../scripts/README.md](../../../scripts/README.md)
-- **RMD-004 implementation contract**: [Spec 025](../0025-governance-owner-and-roster-currentness/spec.md)
+- **RMD-004 implementation contract**: [Spec 025](../../98.archive/completed/03.specs/0025-governance-owner-and-roster-currentness/spec.md)
 ### Related inputs
 
 - **PRD**: N/A. This is a workspace governance and validation improvement.

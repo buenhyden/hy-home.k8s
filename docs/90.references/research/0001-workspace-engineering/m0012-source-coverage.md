@@ -427,7 +427,7 @@ source register and claim registers in this report remain the research record.
 The approved gap-only refresh compared all 13 current pack files, the 32
 unique README request rows, all 52 existing source rows, and all 51 existing
 claim rows before any new web research. The complete review-input matrix is
-owned by the active [WERG Plan](../../../03.specs/0056-workspace-engineering-gap-only-refresh/plan.md).
+owned by the active [WERG Plan](../../../98.archive/completed/03.specs/0056-workspace-engineering-gap-only-refresh/plan.md).
 
 The four-state result is 18 `complete-existing`, seven
 `admit-under-sourced-partial`, one `admit-unresearched`, and seven
@@ -594,5 +594,5 @@ rewriting sourceCommit facts.
 ## Related Documents
 
 - [Pack README](README.md)
-- [WERPC Plan](../../../03.specs/0053-workspace-engineering-research-pack-consolidation/plan.md)
-- [WERPC Plan](../../../03.specs/0053-workspace-engineering-research-pack-consolidation/plan.md)
+- [WERPC Plan](../../../98.archive/completed/03.specs/0053-workspace-engineering-research-pack-consolidation/plan.md)
+- [WERPC Plan](../../../98.archive/completed/03.specs/0053-workspace-engineering-research-pack-consolidation/plan.md)

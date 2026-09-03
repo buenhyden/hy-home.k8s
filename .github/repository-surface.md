@@ -56,7 +56,7 @@ because it describes the repository's automation surface rather than the
 
 ## Source Basis
 
-- Parent Spec: [Workspace Document Governance Hardening Spec](../docs/03.specs/0013-workspace-document-governance-hardening/spec.md) records the official-source basis for GitHub Actions documentation, release evidence, supply-chain concepts, and Markdown/YAML formatting claims.
+- Parent Spec: [Workspace Document Governance Hardening Spec](../docs/98.archive/completed/03.specs/0013-workspace-document-governance-hardening/spec.md) records the official-source basis for GitHub Actions documentation, release evidence, supply-chain concepts, and Markdown/YAML formatting claims.
 - Workflow role claims in this hub are reconciled against the tracked `.github/workflows/*.yml` files; external-tool currentness changes must update the Spec or a Stage 90 reference before this hub changes behavior.
 
 ## Workflow Responsibility Matrix

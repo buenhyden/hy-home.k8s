@@ -461,7 +461,7 @@ registration. It is administrative closeout, not reconstructed lifecycle work.
 
 This Spec has no PRD or Architecture Description. Its authority is the direct
 human approval recorded in `## Overview`. The predecessor full-corpus research
-cycle is [Spec 0059](../0059-workspace-research-full-corpus-refresh/spec.md),
+cycle is [Spec 0059](../../98.archive/completed/03.specs/0059-workspace-research-full-corpus-refresh/spec.md),
 whose append-in-place, dual-evidence, blocking-class, and cleanup boundaries are
 retained and strengthened here.
 
@@ -490,7 +490,7 @@ retained and strengthened here.
 - [Plan](plan.md)
 - [Task records](plan.md)
 - [ADR 0022 — direct-approval standalone execution lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
-- [Spec 0059 — Workspace Research Full-Corpus Refresh](../0059-workspace-research-full-corpus-refresh/spec.md)
+- [Spec 0059 — Workspace Research Full-Corpus Refresh](../../98.archive/completed/03.specs/0059-workspace-research-full-corpus-refresh/spec.md)
 - [Current WER research pack](../../90.references/research/0001-workspace-engineering/README.md)
 - [Research collection contract](../../90.references/research/README.md)
 - [Quality standards](../../00.agent-governance/policies/quality.md)

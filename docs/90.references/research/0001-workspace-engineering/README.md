@@ -385,6 +385,6 @@ remote, credential-bearing, secret-value, or live-cluster evidence.
 
 ## Related Documents
 
-- [WERPC Plan](../../../03.specs/0053-workspace-engineering-research-pack-consolidation/plan.md)
-- [WERPC Plan](../../../03.specs/0053-workspace-engineering-research-pack-consolidation/plan.md)
+- [WERPC Plan](../../../98.archive/completed/03.specs/0053-workspace-engineering-research-pack-consolidation/plan.md)
+- [WERPC Plan](../../../98.archive/completed/03.specs/0053-workspace-engineering-research-pack-consolidation/plan.md)
 - [Source coverage](m0012-source-coverage.md)

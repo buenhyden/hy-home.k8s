@@ -258,13 +258,13 @@ current authority.
 - **Current implementation authority**: [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)
 - **Historical accepted predecessor**: [ADR 0019](../decisions/0019-provider-native-agent-harness-and-loop-model.md)
 - **Historical accepted predecessor**: [ADR 0013](../decisions/0013-stage-00-canonical-adapter-model.md)
-- **Prerequisites**: [Spec 038](../../03.specs/0038-reference-information-architecture/spec.md),
-  [Spec 039](../../03.specs/0039-github-ci-qa-evidence/spec.md),
-  [Spec 040](../../03.specs/0040-contract-cutover-and-program-closure/spec.md)
-- **Delivery sequence**: [Spec 041](../../03.specs/0041-stage-00-agent-governance-contract/spec.md),
-  [Spec 042](../../03.specs/0042-provider-native-runtime-and-model-evidence/spec.md),
-  [Spec 043](../../03.specs/0043-agent-harness-loop-lifecycle/spec.md),
-  [Spec 044](../../03.specs/0044-agent-roster-evaluation-and-admission/spec.md),
-  [Spec 045](../../03.specs/0045-agent-governance-ci-qa-cutover/spec.md),
-  [Spec 046](../../03.specs/0046-agent-governance-program-closure/spec.md)
-- **Agent design**: [Workspace Agent Governance Program Design](../../03.specs/0041-stage-00-agent-governance-contract/spec.md)
+- **Prerequisites**: [Spec 038](../../98.archive/completed/03.specs/0038-reference-information-architecture/spec.md),
+  [Spec 039](../../98.archive/completed/03.specs/0039-github-ci-qa-evidence/spec.md),
+  [Spec 040](../../98.archive/completed/03.specs/0040-contract-cutover-and-program-closure/spec.md)
+- **Delivery sequence**: [Spec 041](../../98.archive/completed/03.specs/0041-stage-00-agent-governance-contract/spec.md),
+  [Spec 042](../../98.archive/completed/03.specs/0042-provider-native-runtime-and-model-evidence/spec.md),
+  [Spec 043](../../98.archive/completed/03.specs/0043-agent-harness-loop-lifecycle/spec.md),
+  [Spec 044](../../98.archive/completed/03.specs/0044-agent-roster-evaluation-and-admission/spec.md),
+  [Spec 045](../../98.archive/completed/03.specs/0045-agent-governance-ci-qa-cutover/spec.md),
+  [Spec 046](../../98.archive/completed/03.specs/0046-agent-governance-program-closure/spec.md)
+- **Agent design**: [Workspace Agent Governance Program Design](../../98.archive/completed/03.specs/0041-stage-00-agent-governance-contract/spec.md)
