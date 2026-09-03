@@ -2730,7 +2730,13 @@ def _work109_migration_projection(
             if not _sealed_endpoint_resolves(context, current_target):
                 vacated_moves.add(legacy)
                 continue
-            declared_identity = context.metadata.get(expected, {}).get("artifact_id")
+            # The identity belongs to whichever document now owns the edge.
+            # `expected` is the path the sealed row named; a later retention or
+            # migration row may have moved that document, and `current_target`
+            # is where it resolved.
+            declared_identity = context.metadata.get(current_target, {}).get(
+                "artifact_id"
+            )
             if not has_wp004b_cutover and (
                 declared_identity != _current_stage03_identity(artifact_id)
             ):
@@ -3354,6 +3360,13 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
             # authority is resolved against source_commit/original_path by the
             # archive validator, never against the current worktree.
             continue
+        if source.as_posix().startswith("docs/98.archive/completed/"):
+            # A retained document is terminal work, and its links are the
+            # historical evidence of what it cited when it was finished. The
+            # retiring migration row pins the origin path, commit and blob that
+            # resolve them, so they are read the same way a record's links are
+            # rather than as current coupling.
+            continue
         for raw in _extract_links(context.texts[source]):
             kind, target = _local_destination(source, raw)
             if kind in {"external", "anchor"}:
@@ -3402,6 +3415,11 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
                 _is_current_authority(context, source)
                 and target.as_posix().startswith("docs/98.archive/")
                 and target != PurePosixPath("docs/98.archive/README.md")
+                # A retention class holds the document itself rather than a
+                # record of it, so citing one is an ordinary link to that
+                # document at the path it now occupies. The index boundary
+                # exists to keep current authority away from sealed evidence.
+                and not target.as_posix().startswith("docs/98.archive/completed/")
             ):
                 diagnostics.append(
                     _diag(
@@ -5252,8 +5270,12 @@ STANDALONE_DECISION_PATH = PurePosixPath(
     "docs/02.architecture/decisions/"
     "0022-direct-approval-standalone-execution-lineage.md"
 )
+# A declared Spec may have been retained under ADR-0032, so the decision can
+# name it either at its Stage 03 path or at its retention path. The identity
+# the roster compares is the four-digit Spec number, which the move preserves.
 _STANDALONE_DECISION_SPEC_LINK = re.compile(
-    r"\]\(\.\./\.\./03\.specs/(?P<spec>[0-9]{4})-[a-z0-9-]+/spec\.md\)"
+    r"\]\(\.\./\.\./(?:03\.specs|98\.archive/completed/03\.specs)/"
+    r"(?P<spec>[0-9]{4})-[a-z0-9-]+/spec\.md\)"
 )
 
 

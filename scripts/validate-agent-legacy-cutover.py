@@ -988,6 +988,11 @@ def _scan_consumers_with_reader(
     for path in candidates:
         if path.startswith("tests/"):
             continue
+        if path.startswith("docs/98.archive/completed/"):
+            # A retained document is terminal work, not a current instruction.
+            # It names the paths it named when it was finished, and the
+            # retiring migration row is what pins that evidence.
+            continue
         raw = reader.candidate_payload(path, read=True)
         if raw is None:
             continue
