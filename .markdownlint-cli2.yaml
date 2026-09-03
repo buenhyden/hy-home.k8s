@@ -1,44 +1,49 @@
+# Markdown lint contract for this repository.
+#
+# Every suppression below states why it exists and what would retire it.
+# See docs/00.agent-governance/policies/formatting-and-linting.md for the
+# suppression discipline and the re-measurement procedure.
+
 config:
-  # Repository docs include templates, generated gateway docs, and long reference links.
+  # --- Deliberate authoring conventions (no retirement expected) ---
+  # Governed documents wrap prose by hand and carry long reference links,
+  # so a fixed print width would fight the authoring templates.
   MD013: false
+  # Stage 99 forms and archive records legitimately repeat a top-level
+  # heading, and the governed section vocabulary repeats headings across
+  # profiles by design.
   MD025: false
-  MD028: false
-  MD036: false
-  MD040: false
-  MD051: false
-  MD060: false
-  MD033:
-    allowed_elements:
-      - div
-      - br
-      - p
-      - feature-or-system
-      - system-or-domain
-      - feature-id
-      - short-title
-      - feature
-      - topic
-      - policy
-      - domain
-      - related-decision
-      - policy-or-standard
-      - system-or-domain-name
-      - feature-or-stream
-      - incident-title
-      - subdomain
-      - date
   MD024: false
-  MD056: false
-  MD022: false
-  MD032: false
-  MD034: false
-  MD031: false
-  MD010: false
+  # Provider gateways (AGENTS.md, CLAUDE.md) open with runtime import
+  # directives rather than a heading. Suppressing the rule here keeps both
+  # gateways under every other rule; a whole-file ignore would not.
+  MD041: false
+  # Table pipe style is owned by the Stage 99 templates.
+  MD060: false
+
+  # --- Blocked by documents the lifecycle policy forbids editing ---
+  # Each rule below is violated only, or almost only, inside terminal
+  # documents. Re-measure before retiring one; see the policy for how.
+  MD010: false # hard tabs
+  MD022: false # blanks around headings
+  MD031: false # blanks around fences
+  MD032: false # blanks around lists
+  MD051: false # link fragments
+  MD056: false # table column count
+  MD033:
+    # Reduced to the elements the corpus actually needs. Both appear on a
+    # single line of a terminal Stage 03 plan that cannot be re-fenced.
+    allowed_elements:
+      - feature-or-system
+      - feature-id
+
+  # --- Living authoring debt (retire by fixing the documents) ---
+  MD028: false # blank line inside blockquote
+  MD034: false # bare URLs
+  MD036: false # emphasis used as heading
+  MD040: false # fenced code without a language
+
 ignores:
-  - ".agent/"
-  - ".git/"
-  - "AGENTS.md"
-  - "CLAUDE.md"
   # ArchiveEnvelope payloads are immutable recovered source bytes. Lint the
   # current archive index, but leave record bodies to the archive validators.
   # A sealed Migration record is the same kind of byte: its `content_sha256`

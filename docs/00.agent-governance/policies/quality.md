@@ -45,8 +45,11 @@ metadata; static parity never proves discovery, model resolution, or execution.
   checks. Commit-message and manual hooks are separate.
 - **message/manual**: record applicable commit-message or explicit manual-stage
   checks individually.
-- **ci**: a hosted check needs its own run identity or URL. Local selection,
-  workflow syntax, and Action checks are repository-static evidence only.
+- **ci**: one hosted job owns each check. When two selected jobs would run the
+  same check, the job owning that lane keeps it and the other skips it;
+  repeating a check adds cost, not evidence. A hosted check needs its own run
+  identity or URL. Local selection, workflow syntax, and Action checks are
+  repository-static evidence only.
 - **remote/live**: provider discovery or authenticated operation, remote
   execution, and operator-approved runtime checks need direct authorized
   evidence. Static presence and hosted CI do not imply this lane.
@@ -132,3 +135,4 @@ cannot silently advance a task to completion.
 - [Approval and Safety](approval-and-safety.md)
 - [Work Lifecycle](../skills/work-lifecycle.md)
 - [Git Policy](git.md)
+- [Formatting and Linting Policy](formatting-and-linting.md)

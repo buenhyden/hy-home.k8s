@@ -35,8 +35,11 @@ repos:
       - id: check-case-conflict
       - id: check-merge-conflict
       - id: check-symlinks
+      # Kubernetes manifests are multi-document by nature. Parsing them with
+      # `--allow-multiple-documents` keeps every tracked YAML file under the
+      # syntax gate instead of excluding the manifest tree from it.
       - id: check-yaml
-        exclude: '^(gitops/.*\.ya?ml|infrastructure/.*\.ya?ml|examples/sample-app/.*\.ya?ml|examples/.*/gitops/.*\.ya?ml|examples/.*/kubernetes/.*\.ya?ml|traefik/.*\.ya?ml)$'
+        args: [--allow-multiple-documents]
       - id: check-toml
       - id: check-json
       - id: end-of-file-fixer

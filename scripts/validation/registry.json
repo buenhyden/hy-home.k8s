@@ -525,10 +525,6 @@
         },
         {
           "kind": "exact",
-          "value": ".eslintignore"
-        },
-        {
-          "kind": "exact",
           "value": ".gitattributes"
         },
         {
@@ -562,14 +558,6 @@
         {
           "kind": "exact",
           "value": ".pre-commit-config.yaml"
-        },
-        {
-          "kind": "exact",
-          "value": ".prettierignore"
-        },
-        {
-          "kind": "exact",
-          "value": ".prettierrc.json"
         },
         {
           "kind": "exact",
