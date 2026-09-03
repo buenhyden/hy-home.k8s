@@ -1407,7 +1407,6 @@
       "lifecycle": {
         "statusDomain": [
           "draft",
-          "active",
           "published",
           "superseded",
           "retired"
@@ -5313,7 +5312,6 @@
         ],
         "states": {
           "draft": "mutable",
-          "active": "current",
           "published": "current",
           "superseded": "terminal",
           "retired": "terminal"
@@ -5321,10 +5319,6 @@
         "transitions": [
           [
             "draft",
-            "published"
-          ],
-          [
-            "active",
             "published"
           ],
           [
