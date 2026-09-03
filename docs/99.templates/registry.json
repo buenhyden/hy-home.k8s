@@ -5605,7 +5605,7 @@
     {
       "spec": "0054",
       "plan": "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/plan.md",
-      "task": "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks/tsk-0011-responsibility-topology-and-compatibility-cutover.md",
+      "task": "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md",
       "state": "active",
       "reason": "Direct human-approved B-scope SDLC and AI-agent governance consolidation including Stage 90",
       "decision": "0022",

@@ -1137,7 +1137,7 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
   strict cross-document validation, staged lifecycle validation,
   Archive/Recovery regression, and aggregate repository quality gates pass for
   the intended pair of one parent Task and one delegated child Task.
-- [ ] WP-011 completes only when Spec 0066 reports consumer-zero wrapper
+- [x] WP-011 completes only when Spec 0066 reports consumer-zero wrapper
   retirement, current registry/path parity, focused and broad validation,
   independent review, rollback evidence, and logical commits to
   SPEC-0054-TSK-0011. All implementation, independent review, and
