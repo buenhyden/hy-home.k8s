@@ -228,7 +228,6 @@ Every Task record below inherits this contract without exception and links its
 own Plan section for the exact file boundary, validation commands, reviews,
 rollback implications, and ordered logical commit boundary.
 
-
 ## Overview
 
 This plan executes [Spec 0054](spec.md), tracks its transitional

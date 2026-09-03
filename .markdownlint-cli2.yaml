@@ -39,18 +39,15 @@ ignores:
   - ".git/"
   - "AGENTS.md"
   - "CLAUDE.md"
-  - "GEMINI.md"
-  - "docs/00.agent-governance/memory/template.md"
   # ArchiveEnvelope payloads are immutable recovered source bytes. Lint the
   # current archive index, but leave record bodies to the archive validators.
-  - "docs/98.archive/01.requirements/"
-  - "docs/98.archive/02.architecture/"
-  - "docs/98.archive/03.specs/"
-  - "docs/98.archive/04.execution/"
-  - "docs/98.archive/05.operations/"
-  - "docs/98.archive/changes/"
+  # A sealed Migration record is the same kind of byte: its `content_sha256`
+  # rows stop verifying the moment a formatter or a style fix edits it, so a
+  # finding here would have no legal remedy.
+  - "docs/98.archive/migrations/"
   - "docs/98.archive/tombstones/"
 
-
-# Safe auto-fixes such as whitespace cleanup are allowed during markdown linting.
+# Reporting only. The pre-commit whitespace hooks own the safe fixes, and a
+# linter that rewrites files during a validation run would edit outside the
+# change under review.
 fix: false
