@@ -106,21 +106,21 @@ move to their terminal states.
 
 | Spec criterion | Work package | Expected Task |
 | --- | --- | --- |
-| [VAL-AIF-001](spec.md#success-criteria--verification-plan) | WP-001 | [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md) |
-| [VAL-AIF-002](spec.md#success-criteria--verification-plan) | WP-002 | [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md) |
-| [VAL-AIF-003](spec.md#success-criteria--verification-plan) | WP-003 | [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md) |
-| [VAL-AIF-004](spec.md#success-criteria--verification-plan) | WP-004 | [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md) |
-| [VAL-AIF-005](spec.md#success-criteria--verification-plan) | WP-005 | [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md) |
-| [VAL-AIF-006](spec.md#success-criteria--verification-plan) | WP-006 | [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md) |
-| [VAL-AIF-007](spec.md#success-criteria--verification-plan) | WP-001, WP-006 | [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md) |
-| [VAL-AIF-008](spec.md#success-criteria--verification-plan) | WP-007 | [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md) |
-| [VAL-AIF-009](spec.md#success-criteria--verification-plan) | WP-008 | [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md) |
-| [VAL-AIF-010](spec.md#success-criteria--verification-plan) | WP-009 | [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md) |
-| [VAL-AIF-011](spec.md#success-criteria--verification-plan) | WP-003, WP-004, WP-007, WP-008 | [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md) |
-| [VAL-AIF-012](spec.md#success-criteria--verification-plan) | WP-007, WP-008 | [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md) |
+| [VAL-AIF-001](./spec.md#success-criteria--verification-plan) | WP-001 | [SPEC-0067-TSK-0001](./tasks/tsk-0001-aif-000.md) |
+| [VAL-AIF-002](./spec.md#success-criteria--verification-plan) | WP-002 | [SPEC-0067-TSK-0001](./tasks/tsk-0001-aif-000.md) |
+| [VAL-AIF-003](./spec.md#success-criteria--verification-plan) | WP-003 | [SPEC-0067-TSK-0001](./tasks/tsk-0001-aif-000.md) |
+| [VAL-AIF-004](./spec.md#success-criteria--verification-plan) | WP-004 | [SPEC-0067-TSK-0001](./tasks/tsk-0001-aif-000.md) |
+| [VAL-AIF-005](./spec.md#success-criteria--verification-plan) | WP-005 | [SPEC-0067-TSK-0001](./tasks/tsk-0001-aif-000.md) |
+| [VAL-AIF-006](./spec.md#success-criteria--verification-plan) | WP-006 | [SPEC-0067-TSK-0001](./tasks/tsk-0001-aif-000.md) |
+| [VAL-AIF-007](./spec.md#success-criteria--verification-plan) | WP-001, WP-006 | [SPEC-0067-TSK-0001](./tasks/tsk-0001-aif-000.md) |
+| [VAL-AIF-008](./spec.md#success-criteria--verification-plan) | WP-007 | [SPEC-0067-TSK-0001](./tasks/tsk-0001-aif-000.md) |
+| [VAL-AIF-009](./spec.md#success-criteria--verification-plan) | WP-008 | [SPEC-0067-TSK-0001](./tasks/tsk-0001-aif-000.md) |
+| [VAL-AIF-010](./spec.md#success-criteria--verification-plan) | WP-009 | [SPEC-0067-TSK-0001](./tasks/tsk-0001-aif-000.md) |
+| [VAL-AIF-011](./spec.md#success-criteria--verification-plan) | WP-003, WP-004, WP-007, WP-008 | [SPEC-0067-TSK-0001](./tasks/tsk-0001-aif-000.md) |
+| [VAL-AIF-012](./spec.md#success-criteria--verification-plan) | WP-007, WP-008 | [SPEC-0067-TSK-0001](./tasks/tsk-0001-aif-000.md) |
 
 ### Related Documents
 
-- [Spec](spec.md)
-- [Quality Policy](../../00.agent-governance/policies/quality.md)
-- [Git Policy](../../00.agent-governance/policies/git.md)
+- [Spec](./spec.md)
+- [Quality Policy](../../../../00.agent-governance/policies/quality.md)
+- [Git Policy](../../../../00.agent-governance/policies/git.md)

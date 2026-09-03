@@ -216,9 +216,9 @@ bash scripts/validate-repo-quality-gates.sh .
 
 ### Related Documents
 
-- [Plan](plan.md)
-- [SPEC-0067-TSK-0001](tasks/tsk-0001-aif-000.md)
-- [Current Spec Index](../README.md#current-spec-index)
-- [ADR-0024 — terminal artifact identity and archive layout](../../02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md)
-- [Document Authoring Policy](../../00.agent-governance/policies/document-authoring.md)
-- [Quality Policy](../../00.agent-governance/policies/quality.md)
+- [Plan](./plan.md)
+- [SPEC-0067-TSK-0001](./tasks/tsk-0001-aif-000.md)
+- [Current Spec Index](../../../../03.specs/README.md#current-spec-index)
+- [ADR-0024 — terminal artifact identity and archive layout](../../../../02.architecture/decisions/0024-terminal-artifact-identity-and-archive-layout.md)
+- [Document Authoring Policy](../../../../00.agent-governance/policies/document-authoring.md)
+- [Quality Policy](../../../../00.agent-governance/policies/quality.md)
