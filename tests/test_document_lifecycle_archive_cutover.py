@@ -653,8 +653,10 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
     ):
         registry = load_registry(ROOT)
         # 12 before the content/audit, content/research and content/data
-        # families retired with their unroutable profiles.
-        self.assertEqual(len(registry.lifecycle_domains), 9)
+        # families retired with their unroutable profiles, 9 while the three
+        # reference roles carried a domain no graph governed, and 12 again now
+        # that each role declares the lifecycle Spec 0054 names for it.
+        self.assertEqual(len(registry.lifecycle_domains), 12)
         requirement = next(
             domain
             for domain in registry.lifecycle_domains
@@ -1033,20 +1035,26 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
 
         self.assertEqual(actual, ())
 
-    def test_classification_only_reference_creation_is_not_a_lifecycle_event(self):
+    def test_reference_creation_answers_to_its_own_role_vocabulary(self):
+        # This fixture used to create an audit at `active` and assert silence,
+        # which is what the old five-value domain and absent graph allowed.
+        # Audit findings are completed or invalidated; `active` was borrowed
+        # vocabulary that meant nothing for the role.
         registry = load_registry(ROOT)
         path = PurePosixPath(
             "docs/90.references/audits/0001-example-audit/m0001-findings.md"
         )
-        created = lifecycle.document_from_text(
-            registry,
-            path,
-            """---
+
+        def created(status: str):
+            return lifecycle.document_from_text(
+                registry,
+                path,
+                f"""---
 title: 'Reference: Example Audit Findings'
 version: "1.0.0"
 type: reference/audit
 layer: "references"
-status: active
+status: {status}
 owner: platform
 updated: 2026-09-01
 artifact_id: "AUD-0001-m0001"
@@ -1054,13 +1062,26 @@ artifact_id: "AUD-0001-m0001"
 
 # Reference: Example Audit Findings
 """,
-        )
+            )
 
-        self.assertEqual(created.profile_id, "reference/audit")
+        self.assertEqual(created("draft").profile_id, "reference/audit")
         self.assertEqual(
-            compare_lifecycle(registry, {}, {path: created}, base_mode="staged"),
+            compare_lifecycle(
+                registry, {}, {path: created("draft")}, base_mode="staged"
+            ),
             (),
         )
+        for status, rule in (("active", "LIFECYCLE-STATE"), ("completed", "LIFECYCLE-CREATE")):
+            with self.subTest(status=status):
+                self.assertEqual(
+                    [
+                        item.rule_id
+                        for item in compare_lifecycle(
+                            registry, {}, {path: created(status)}, base_mode="staged"
+                        )
+                    ],
+                    [rule],
+                )
 
     def test_deletion_is_owned_by_consumer_and_git_recovery_gates(self):
         registry = load_registry(ROOT)
@@ -1713,6 +1734,46 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
             migration_events=lifecycle.MigrationLifecycleEvents(**events),
         )
         return [diagnostic.rule_id for diagnostic in diagnostics]
+
+    def test_a_reference_role_is_governed_by_the_graph_it_declares(self):
+        # The three reference profiles carry a declared lifecycle. While they
+        # were skipped for being classification-only the graph decided nothing:
+        # a report could appear already published, or move to a state no edge
+        # reaches, and the validator stayed silent.
+        registry = load_registry(ROOT)
+        path = PurePosixPath(
+            "docs/90.references/research/0001-workspace-engineering/m0099-probe.md"
+        )
+        published = lifecycle.LifecycleDocument(path, "reference/research", "published")
+        draft = lifecycle.LifecycleDocument(path, "reference/research", "draft")
+        superseded = lifecycle.LifecycleDocument(
+            path, "reference/research", "superseded"
+        )
+
+        self.assertEqual(
+            [
+                item.rule_id
+                for item in compare_lifecycle(
+                    registry, {}, {path: published}, base_mode="staged"
+                )
+            ],
+            ["LIFECYCLE-CREATE"],
+        )
+        self.assertEqual(
+            compare_lifecycle(registry, {}, {path: draft}, base_mode="staged"), ()
+        )
+        self.assertEqual(
+            [
+                item.rule_id
+                for item in compare_lifecycle(
+                    registry,
+                    {path: draft},
+                    {path: superseded},
+                    base_mode="staged",
+                )
+            ],
+            ["LIFECYCLE-EDGE"],
+        )
 
     def test_creation_evaluates_the_migration_profile_it_declares_stateful(self):
         # `_stateful` calls `archive/migration` stateful, and the transition and

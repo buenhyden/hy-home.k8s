@@ -1327,9 +1327,10 @@
       },
       "lifecycle": {
         "statusDomain": [
-        "draft",
-        "active"
-      ]
+          "draft",
+          "completed",
+          "invalidated"
+        ]
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -1405,9 +1406,12 @@
       },
       "lifecycle": {
         "statusDomain": [
-        "draft",
-        "active"
-      ]
+          "draft",
+          "active",
+          "published",
+          "superseded",
+          "retired"
+        ]
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -1483,9 +1487,12 @@
       },
       "lifecycle": {
         "statusDomain": [
-        "draft",
-        "active"
-      ]
+          "draft",
+          "active",
+          "stale",
+          "superseded",
+          "retired"
+        ]
       },
       "relationships": {
         "sourceProfileIds": [],
@@ -5277,6 +5284,89 @@
           "archived": "terminal"
         },
         "transitions": []
+      },
+      {
+        "family": "audit",
+        "profileIds": [
+          "reference/audit"
+        ],
+        "states": {
+          "draft": "mutable",
+          "completed": "current",
+          "invalidated": "terminal"
+        },
+        "transitions": [
+          [
+            "draft",
+            "completed"
+          ],
+          [
+            "completed",
+            "invalidated"
+          ]
+        ]
+      },
+      {
+        "family": "research",
+        "profileIds": [
+          "reference/research"
+        ],
+        "states": {
+          "draft": "mutable",
+          "active": "current",
+          "published": "current",
+          "superseded": "terminal",
+          "retired": "terminal"
+        },
+        "transitions": [
+          [
+            "draft",
+            "published"
+          ],
+          [
+            "active",
+            "published"
+          ],
+          [
+            "published",
+            "superseded"
+          ],
+          [
+            "published",
+            "retired"
+          ]
+        ]
+      },
+      {
+        "family": "data",
+        "profileIds": [
+          "reference/data"
+        ],
+        "states": {
+          "draft": "mutable",
+          "active": "current",
+          "stale": "current",
+          "superseded": "terminal",
+          "retired": "terminal"
+        },
+        "transitions": [
+          [
+            "draft",
+            "active"
+          ],
+          [
+            "active",
+            "stale"
+          ],
+          [
+            "stale",
+            "superseded"
+          ],
+          [
+            "stale",
+            "retired"
+          ]
+        ]
       }
     ],
     "programs": [

@@ -3,7 +3,7 @@ title: 'Reference: CI/CD, GitHub Actions, and QA'
 version: "1.0.0"
 type: reference/research
 layer: "references"
-status: active
+status: published
 owner: platform
 updated: 2026-08-31
 artifact_id: "RES-0001-m0008"

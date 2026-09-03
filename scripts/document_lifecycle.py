@@ -189,10 +189,22 @@ def _optional_profile_by_id(
 
 
 def _stateful(profile: DocumentProfile) -> bool:
-    """A profile participates in lifecycle validation only through its domain."""
+    """A profile participates in lifecycle validation only through its domain.
 
-    return profile.lifecycle_domain is not None and (
-        profile.mode == "authored" or profile.profile_id == "archive/migration"
+    A declared domain is the claim that the profile has states, so an authored
+    mode is not required: naming one profile here exempted every other one that
+    declares a graph and is not authored. Two exclusions remain, each an
+    ownership boundary rather than a name. A form carries an example value, not
+    a document's state, so `mode: template` never transitions. A tombstone's
+    creation is evidenced by the archive owner and its bytes are immutable
+    afterwards, so admitting it as an ordinary creation here would answer ahead
+    of the gate that owns it.
+    """
+
+    return (
+        profile.lifecycle_domain is not None
+        and profile.mode != "template"
+        and profile.profile_id != "archive/tombstone"
     )
 
 
