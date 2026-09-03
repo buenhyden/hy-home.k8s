@@ -7,7 +7,8 @@ Codex and Claude are the supported providers; `.agents/` is provider-neutral.
 
 ## Stage Contract
 
-- `policies/`: approval, safety, quality, data, Git, and SDLC norms.
+- `policies/`: approval, safety, quality, data, formatting, Git, and SDLC
+  norms.
 - `roles/`: responsibility boundaries and handoff meaning.
 - `providers/`: native loading and capability differences only.
 - `skills/`: reusable governance procedures and their approval boundary.
@@ -35,6 +36,7 @@ progress and memory boundary; the `memory/` directory retired under
 | [`context-and-memory.md`](policies/context-and-memory.md) | `active` |
 | [`document-authoring.md`](policies/document-authoring.md) | `active` |
 | [`document-lifecycle.md`](policies/document-lifecycle.md) | `active` |
+| [`formatting-and-linting.md`](policies/formatting-and-linting.md) | `active` |
 | [`git.md`](policies/git.md) | `active` |
 | [`model-selection.md`](policies/model-selection.md) | `active` |
 | [`quality.md`](policies/quality.md) | `active` |

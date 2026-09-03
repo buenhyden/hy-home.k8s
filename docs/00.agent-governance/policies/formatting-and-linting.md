@@ -2,7 +2,7 @@
 title: 'Formatting and Linting Policy'
 version: "1.0.0"
 type: governance/rule
-status: draft
+status: active
 owner: platform
 updated: 2026-09-03
 ---
