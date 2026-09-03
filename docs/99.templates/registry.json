@@ -2180,7 +2180,7 @@
       "id": "readme/implementation",
       "class": "readme",
       "mode": "frontmatter-free",
-      "pathPattern": "^(?:examples/README\\.md|examples/sample\\-app/README\\.md|gitops/README\\.md|gitops/workloads/README\\.md|infrastructure/README\\.md|scripts/README\\.md|tests/README\\.md|traefik/README\\.md|examples/azure/gitops/README\\.md|examples/azure/infrastructure/README\\.md|examples/azure/kubernetes/README\\.md|examples/(?:aws|azure)/README\\.md)$",
+      "pathPattern": "^(?:\\.agents/README\\.md|\\.claude/README\\.md|\\.codex/README\\.md|evals/README\\.md|examples/README\\.md|examples/sample\\-app/README\\.md|gitops/README\\.md|gitops/workloads/README\\.md|infrastructure/README\\.md|policy/README\\.md|scripts/README\\.md|secrets/README\\.md|tests/README\\.md|traefik/README\\.md|examples/azure/gitops/README\\.md|examples/azure/infrastructure/README\\.md|examples/azure/kubernetes/README\\.md|examples/(?:aws|azure)/README\\.md)$",
       "template": "docs/99.templates/templates/common/readme-implementation.template.md",
       "requiredFrontmatter": {
         "mode": "forbidden",
@@ -2427,7 +2427,7 @@
       "id": "exception/local-agent-asset",
       "class": "exception",
       "mode": "classification-only",
-      "pathPattern": "^\\.agents/.+\\.md$",
+      "pathPattern": "^\\.agents/(?!README\\.md$).+\\.md$",
       "artifactIdPattern": null,
       "template": null,
       "requiredFrontmatter": {

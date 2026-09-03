@@ -870,6 +870,28 @@
       "evidenceLane": "repo-static"
     },
     {
+      "id": "evals",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^evals/.*$"
+        }
+      ],
+      "validators": [
+        "repository-quality"
+      ],
+      "ciJobs": [
+        "pre-commit",
+        "repo-quality-static"
+      ],
+      "protectedLevel": "review",
+      "fallback": {
+        "status": "FAIL",
+        "reason": "Evaluation harness assets require repository-quality validation."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
       "id": "examples",
       "routes": [
         {

@@ -49,8 +49,13 @@ hy-home.k8s/
 ├── tests/                 # 저장소 전역 테스트 기준 문서 및 교차 테스트 영역
 ├── _workspace/            # Temporary non-secret analysis scratch boundary; README tracked only
 ├── traefik/               # k3d 로컬 노출 보조용 Traefik dynamic config
+├── policy/                # Kubernetes 매니페스트에 적용하는 Conftest/Rego 정책 규칙
 ├── secrets/               # 로컬 인증서 등 민감 파일 저장 경로
+├── evals/                 # Agent 평가 하니스 자리. 현재 경계 문서만 추적
 ├── .github/               # GitHub Actions, PR template, CODEOWNERS, labeler, zizmor
+├── .agents/               # 공급자 중립 역할·스킬 registry와 공유 자산
+├── .claude/               # Claude native 투영과 권한·훅 선언
+├── .codex/                # Codex native 투영과 로컬 베이스라인
 ├── AGENTS.md              # Codex/GPT 전용 얇은 게이트웨이
 ├── CLAUDE.md              # Claude 전용 얇은 오버레이
 └── README.md              # This file
@@ -142,6 +147,11 @@ hy-home.k8s/
 - `traefik/` - k3d 로컬 ingress-nginx 뒤에서 ArgoCD/Headlamp/Kiali/Rollouts를 노출하는 보조 dynamic config
 - `examples/` - 앱 GitOps 온보딩용 참조 구현과 AWS/Azure cloud target 예시
 - `scripts/` - 저장소 유지보수와 자동화 보조 스크립트
+- `tests/` - 저장소 validator의 독립 behavior coverage와 synthetic fixtures
+- `policy/` - 추적된 Kubernetes 매니페스트에 적용하는 Conftest/Rego deny 규칙
+- `secrets/` - 로컬 인증서 배치 경로. 키 자료는 추적하지 않는다
+- `evals/` - Agent 평가 하니스 자리. 하니스 도입 전까지 경계 문서만 둔다
+- `_workspace/` - 비밀값을 담지 않는 임시 분석 경계. README만 추적한다
 - `.github/` - `main` PR flow용 CI, release evidence, PR/issue intake, CODEOWNERS, labeler, zizmor 설정
 - `.agents/` - 공급자 중립 역할·스킬과 registry. Codex/Claude projection의 공통 의미를 소유하며 native 실행을 증명하지 않는다.
 - `.claude/` - 추적되는 Claude project adapter. 실제 native discovery와 적용은 별도 runtime 증거가 필요하다.
