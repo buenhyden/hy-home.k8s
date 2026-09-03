@@ -301,6 +301,10 @@ and Task, and WP-013 owns the current-corpus cutover that resolves the rest.
 │   ├── spec.md
 │   ├── plan.md
 │   └── tasks/
+├── 0067-artifact-identity-and-filename-normalization/
+│   ├── spec.md
+│   ├── plan.md
+│   └── tasks/
 ├── 0068-agent-projection-rendering-and-gate-reduction/
 │   ├── spec.md
 │   └── tasks/
@@ -407,6 +411,7 @@ and Task, and WP-013 owns the current-corpus cutover that resolves the rest.
 | [`./0064-agent-governance-surface-consolidation/spec.md`](./0064-agent-governance-surface-consolidation/spec.md) | Correction of the agent-governance surfaces so each states only what is currently true, with one owner per fact | Done | 2026-08-30 직접 승인된 standalone 실행 관계로, `docs/00.agent-governance/`·`.agents/`·`.claude/`·`.codex/` 98개 파일을 6개 축으로 감사해 자기모순 상태의 progress 원장을 Stage 98 최소 Tombstone으로 은퇴시키고, 소유되지 않은 경로를 지시하는 skill과 참조 없는 스캐폴드를 제거한다. 기각된 후보 8건도 근거와 함께 기록한다. | 2026-08-30 |
 | [`./0065-transition-residue-retirement/spec.md`](./0065-transition-residue-retirement/spec.md) | Retirement of the three transition residues Spec 0054 WP-012 recorded | Done | 2026-08-30 직접 승인된 standalone 실행 관계로, 실행될 수 없는 route-state 분기와 그 별칭 기계를 은퇴시키고, 봉인된 MIG-0004의 Stage 99 대상에 덧붙은 현재 트리 존재 요구를 후속 봉인 행이 은퇴시킨 대상에 한해 해제하며, 이를 통해 두 governance form과 그것을 라우팅하는 세 profile 및 Stage 00 memory 디렉터리를 정리한다. | 2026-08-31 |
 | [`./0066-validation-tooling-ownership/spec.md`](./0066-validation-tooling-ownership/spec.md) | Restructure of validation tooling onto one routing owner per responsibility | Done | Spec 0054 WP-010/WP-011의 활성 위임 실행 패키지다. 기존 validation-surface 계약을 `scripts/validation/registry.json`으로 원자 이동하고, 테스트는 top-level에서 독립 유지하며, 중복 gate·self-test·fixture·mutable SHA·wrapper를 consumer-zero와 동작 증거에 따라 정리한다. 고정 entrypoint·파일·case·line·pin 수는 불변식이 아니다. | 2026-09-01 |
+| [`./0067-artifact-identity-and-filename-normalization/spec.md`](./0067-artifact-identity-and-filename-normalization/spec.md) | Normalization of governed artifact identity and numbered leaf filenames | Done | Stage 03 Plan/Task, Stage 05 incident/postmortem, Stage 90 pack member, Stage 98 tombstone 식별자를 타입과 부모를 드러내는 형식으로 통일하고, 번호를 가진 leaf 문서의 파일명이 그 번호로 시작하도록 정규화한다. Stage 00 거버넌스 문서와 Stage 99 템플릿 파일 경로는 기계가 로드하므로 범위 밖이다. | 2026-09-01 |
 | [`./0068-agent-projection-rendering-and-gate-reduction/spec.md`](./0068-agent-projection-rendering-and-gate-reduction/spec.md) | Registry-rendered agent projections and agent-surface gate reduction | Draft | Claude/Codex 역할 투영을 `.agents/registry.json`에서 렌더하는 산출물로 바꾸고, 티어→모델 바인딩을 티어를 이미 소유한 레지스트리로 옮긴다. 손으로 유지되던 중복이 사라지면서 질문 자체가 없어지는 validator와 fixture를 폐기한다. ADR-0030의 thin-projection·Stage 90 evidence·three-responsibility 조항에 대한 적합성 수복이다. | 2026-09-02 |
 | [`./0070-retired-provider-residue-disposition/spec.md`](./0070-retired-provider-residue-disposition/spec.md) | Disposition of Gemini/Antigravity residue left by ADR-0030 | Draft | ADR-0030이 제거한 프로바이더의 잔재 667건 중, 살아있는 경로 패턴·훅 분기·라벨 glob·테스트 환경변수 4곳과 현행 상태로 제거된 프로바이더를 후보로 제시하는 AD-0006·REQ-0003 2건만 정리한다. 닫힌 기록, superseded ADR, Stage 98 봉인 원장, Stage 90 관측, 부재 증명 테스트, 자격증명 denylist는 보존한다. | 2026-09-02 |
 | [`./0071-document-taxonomy-and-form-identity-normalization/spec.md`](./0071-document-taxonomy-and-form-identity-normalization/spec.md) | Family/kind profile identity, stage-free layer, semantic version, and Stage 99 form naming | Draft | 문서 profile 식별자를 `<family>/<kind>`로 통일하고, `layer`에서 stage 정렬 접두어를 제거하며, `version`을 기계 계약이 이미 쓰는 3요소 semver로 맞춘다. Stage 99 form 12개는 자신이 만드는 문서 이름으로 옮기고 governance form 하나를 여섯 kind로 나눈다. 소비자가 없던 `frontmatter.schema.json`을 strict 실행마다 평가되는 계약으로 만든다. Stage 98 봉인 계약은 세대별로 분기하고 form 이동은 MIG-0010으로 봉인한다. | 2026-09-02 |
