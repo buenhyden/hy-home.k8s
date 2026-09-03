@@ -3566,6 +3566,36 @@ def _is_declared_reseal(path: PurePosixPath, base: str, proposed: str | None) ->
     return proposed is not None and (base, proposed) in pins
 
 
+# Only `completed/` retains the document itself. `superseded/` and
+# `tombstones/` hold records, and `migrations/` holds the ledgers, so none of
+# them is reachable by a retention rehome.
+RETENTION_CLASS_SOURCE_STATES: dict[str, frozenset[str]] = {
+    "completed": frozenset({"done"}),
+}
+
+
+def _retention_rehome_target(
+    source: PurePosixPath, target: PurePosixPath
+) -> str | None:
+    """Return the retention class when `target` mirrors `source` exactly.
+
+    A retention move relocates a governed document into
+    `docs/98.archive/<class>/<its own stage path>` and nowhere else. Proving
+    the mirror rather than accepting any Stage 98 destination keeps a ledger
+    row from admitting an arbitrary relocation under a retention label.
+    """
+
+    parts = target.parts
+    if len(parts) < 4 or parts[:2] != ("docs", "98.archive"):
+        return None
+    retention_class = parts[2]
+    if retention_class not in RETENTION_CLASS_SOURCE_STATES:
+        return None
+    if parts[3:] != source.parts[1:]:
+        return None
+    return retention_class
+
+
 def _migration_lifecycle_events(
     root: Path,
     registry: Registry,
@@ -3623,6 +3653,7 @@ def _migration_lifecycle_events(
     removals: set[PurePosixPath] = set()
     rehomes: set[tuple[PurePosixPath, PurePosixPath]] = set()
     form_rehomes: set[tuple[PurePosixPath, PurePosixPath]] = set()
+    retention_rehomes: set[tuple[PurePosixPath, PurePosixPath]] = set()
     diagnostics: list[LifecycleDiagnostic] = []
     owner = _load_canonical_markdown_module()
     for source, disposition in proof.dispositions.items():
@@ -3658,6 +3689,42 @@ def _migration_lifecycle_events(
             ):
                 form_rehomes.add((source_path, target))
                 continue
+        retention_class = _retention_rehome_target(source_path, target)
+        if retention_class is not None:
+            # A reviewed retention move. The row retires a terminal governed
+            # document at its stage path and names the retained copy under the
+            # mirrored retention tree. That copy is the same document with its
+            # relative link prefixes re-based, so the row is `replaced` rather
+            # than `moved` and byte identity is not the retention invariant.
+            # Git still recovers the exact source bytes through this row's own
+            # `source_commit` and `source_blob`.
+            source_document = base_documents.get(source_path)
+            retained = proposed_documents.get(target)
+            if (
+                source_document is None
+                or retained is None
+                or source_document.state_issue
+                or source_document.status
+                not in RETENTION_CLASS_SOURCE_STATES[retention_class]
+            ):
+                diagnostics.append(failure(target, "retention source state"))
+                continue
+            try:
+                source_route = classify_path(registry, source_path)
+                retained_route = classify_path(registry, target)
+            except DocumentContractError:
+                diagnostics.append(failure(target, "proposed target registry route"))
+                continue
+            if source_route.profile_id != retained_route.profile_id:
+                diagnostics.append(failure(target, "retained document form differs"))
+                continue
+            if owner.validate_document_text(
+                proposed_texts[target], target, retained_route, "strict"
+            ):
+                diagnostics.append(failure(target, "canonical retained document form"))
+                continue
+            retention_rehomes.add((source_path, target))
+            continue
         if target.parts[:2] != ("docs", "00.agent-governance"):
             continue
         before, after = base_documents.get(source_path), proposed_documents.get(target)
@@ -3715,7 +3782,7 @@ def _migration_lifecycle_events(
         source_removals=frozenset(removals),
         current_rehomes=frozenset(rehomes),
         form_rehomes=frozenset(form_rehomes),
-        archive_rehomes=archive_rehomes,
+        archive_rehomes=archive_rehomes | frozenset(retention_rehomes),
     )
     return events, tuple(diagnostics)
 

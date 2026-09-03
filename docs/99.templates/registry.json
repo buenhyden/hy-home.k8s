@@ -325,7 +325,7 @@
       "id": "sdlc/spec",
       "class": "sdlc",
       "mode": "authored",
-      "pathPattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/spec\\.md$",
+      "pathPattern": "^(?:docs/03\\.specs|docs/98\\.archive/completed/03\\.specs)/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/spec\\.md$",
       "artifactIdPattern": "^SPEC-[0-9]{4}$",
       "template": "docs/99.templates/templates/specs/spec.template.md",
       "requiredFrontmatter": {
@@ -549,7 +549,7 @@
       "id": "sdlc/plan",
       "class": "sdlc",
       "mode": "authored",
-      "pathPattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/plan\\.md$",
+      "pathPattern": "^(?:docs/03\\.specs|docs/98\\.archive/completed/03\\.specs)/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/plan\\.md$",
       "artifactIdPattern": "^SPEC-[0-9]{4}-PLAN-[0-9]{4}$",
       "template": "docs/99.templates/templates/specs/plan.template.md",
       "requiredFrontmatter": {
@@ -658,7 +658,7 @@
       "id": "sdlc/task",
       "class": "sdlc",
       "mode": "authored",
-      "pathPattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/tasks/tsk-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md$",
+      "pathPattern": "^(?:docs/03\\.specs|docs/98\\.archive/completed/03\\.specs)/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/tasks/tsk-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md$",
       "artifactIdPattern": "^SPEC-[0-9]{4}-TSK-[0-9]{4}$",
       "template": "docs/99.templates/templates/specs/task.template.md",
       "requiredFrontmatter": {
@@ -1503,7 +1503,7 @@
       "id": "archive/tombstone",
       "class": "archive",
       "mode": "classification-only",
-      "pathPattern": "^docs/98\\.archive/(?!migrations/)(?!.*(?:/)?README\\.md$).+\\.md$",
+      "pathPattern": "^docs/98\\.archive/(?!migrations/)(?!completed/)(?!.*(?:/)?README\\.md$).+\\.md$",
       "artifactIdPattern": "^tomb-(?:PRD|AD|ADR|SPEC|GDE|RUN)-[0-9]{4}$",
       "template": "docs/99.templates/templates/archive/tombstone.template.md",
       "requiredFrontmatter": {

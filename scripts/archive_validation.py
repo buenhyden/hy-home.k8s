@@ -73,6 +73,24 @@ else:  # Direct import-only execution from scripts/.
 
 
 ARCHIVE_ROOT = PurePosixPath("docs/98.archive")
+# Retention classes hold governed documents that left an active stage intact.
+# They are not sealed archive records: they carry no ArchiveEnvelope, their
+# provenance lives in the migration row that retired the origin path, and the
+# document keeps its own profile and terminal state.
+RETENTION_CLASSES = ("completed",)
+
+
+def is_retention_path(path: PurePosixPath) -> bool:
+    """Report whether `path` sits in a retention class rather than a record."""
+
+    parts = path.parts
+    return (
+        len(parts) > 3
+        and parts[:2] == ARCHIVE_ROOT.parts
+        and parts[2] in RETENTION_CLASSES
+    )
+
+
 _UNSET = object()
 ARCHIVE_INDEX = ARCHIVE_ROOT / "README.md"
 CURRENT_MARKDOWN_MAX_BYTES = 1_000_000
@@ -2956,7 +2974,11 @@ def _repository_archive_records(
                 finally:
                     os.close(child_fd)
             elif stat.S_ISREG(metadata.st_mode):
-                if relative == ARCHIVE_INDEX.as_posix() or not relative.endswith(".md"):
+                if (
+                    relative == ARCHIVE_INDEX.as_posix()
+                    or not relative.endswith(".md")
+                    or is_retention_path(relative_path)
+                ):
                     continue
                 content = read_record(directory_fd, name, relative)
                 if (
@@ -4294,6 +4316,7 @@ def validate_current_archive_authority(
             pure_path.is_relative_to(ARCHIVE_ROOT)
             and pure_path != ARCHIVE_INDEX
             and not migration_control
+            and not is_retention_path(pure_path)
         )
         if current and (
             archive_record_path
@@ -4305,7 +4328,9 @@ def validate_current_archive_authority(
             continue
         if not status_valid or not profile_valid or not markdown_valid or not current:
             continue
-        if archive_record_path:
+        if archive_record_path or is_retention_path(pure_path):
+            # A retained document is not part of the current corpus, so its
+            # own links are not current-to-archive coupling.
             continue
         try:
             rendered_links = _validated_rendered_links(document.markdown, path)
@@ -4325,6 +4350,10 @@ def validate_current_archive_authority(
                 and target != ARCHIVE_INDEX
                 and target_path != _WORK054_WP004B_MIGRATION_PATH
                 and generic_migration_id(target_path) is None
+                # A retention class holds the document itself, not a sealed
+                # record, so citing one is an ordinary link to that document
+                # at the path it now occupies.
+                and not is_retention_path(target)
             ):
                 diagnostics.append(_diagnostic("ARCHIVE-DIRECT-CURRENT-LINK", path))
     return _report(diagnostics)
