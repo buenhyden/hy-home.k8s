@@ -3,7 +3,7 @@ title: 'Task: Current corpus and transition-control cutover'
 version: "1.0.0"
 type: sdlc/task
 layer: "specs"
-status: queued
+status: in-progress
 owner: platform
 updated: 2026-09-03
 artifact_id: "SPEC-0054-TSK-0013"
@@ -42,14 +42,15 @@ fixed list, two of them conditionally: `0062` holds three `blocked` Tasks, and
 
 **Depends on:** WP-006; WP-008; WP-012; accepted ADR-0031; accepted and completed Spec 0066
 result with SPEC-0066-TSK-0001, Plan 0066, and Spec 0066 all `done`; completed
-SPEC-0054-TSK-0011 parent handoff; and the existing Spec 0054 compatibility pointer
-naming this queued Task
+SPEC-0054-TSK-0011 parent handoff; and the existing Spec 0054 compatibility pointer,
+which named this Task while it was still `queued`
 
-**Current state:** `queued`
+**Current state:** `in-progress`; the entry blocker in the link validator is
+released and no corpus removal has been made
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-054-013 | VAL-SDLC-001..VAL-SDLC-004, VAL-SDLC-006, VAL-SDLC-009..VAL-SDLC-012 | After the completed child and parent handoffs, reconcile retained Stage 01 Requirements and Stage 02 Architecture bidirectionally with the current implementation, converge the reviewed Stage 01/02/03/99 current-owner set, remove active Archive citations and cross-links, transfer unfinished work and unique authority, then retire residual transition assets against the accepted and completed Spec 0066 routing result without a fixed corpus census. | platform | Queued | Not executed. | Terminal Spec 0066 states, completed SPEC-0054-TSK-0011, compatibility pointer to this queued Task, manifest/configuration/code/validator/operational-interface evidence mapped to retained Requirement Packages and Architecture Descriptions, zero inbound Archive links, consumer/trace/lifecycle parity, Git-first recovery, registry/template parity, delegated routing evidence, and ordered logical commits |
+| WORK-054-013 | VAL-SDLC-001..VAL-SDLC-004, VAL-SDLC-006, VAL-SDLC-009..VAL-SDLC-012 | After the completed child and parent handoffs, reconcile retained Stage 01 Requirements and Stage 02 Architecture bidirectionally with the current implementation, converge the reviewed Stage 01/02/03/99 current-owner set, remove active Archive citations and cross-links, transfer unfinished work and unique authority, then retire residual transition assets against the accepted and completed Spec 0066 routing result without a fixed corpus census. | platform | In progress | Entry blocker released; no corpus removal made. | Terminal Spec 0066 states, completed SPEC-0054-TSK-0011, compatibility pointer to this queued Task, manifest/configuration/code/validator/operational-interface evidence mapped to retained Requirement Packages and Architecture Descriptions, zero inbound Archive links, consumer/trace/lifecycle parity, Git-first recovery, registry/template parity, delegated routing evidence, and ordered logical commits |
 
 ## Approval and Safety Boundaries
 
@@ -61,9 +62,8 @@ owns the exact candidate dispositions, reviews, rollback, and four ordered
 logical commits: Stage 01/02, Stage 03, Stage 99, then transition controls. The
 accepted and completed Spec 0066 result plus the completed SPEC-0054-TSK-0011
 parent handoff are fixed dependencies; their execution does not overlap the
-final WP-013 validation-side transition-control unit. This Task cannot activate
-until the existing Spec 0054 compatibility pointer already names it while it is
-still `queued`.
+final WP-013 validation-side transition-control unit. The existing Spec 0054 compatibility pointer named this
+Task while it was still `queued`, which satisfied the activation condition.
 Each unit is independently validated and can stop before the next unit without
 rolling back an already accepted predecessor unit.
 
@@ -79,7 +79,32 @@ authority.
 
 ## Verification Summary
 
-WP-013 is queued and has no accepted execution evidence.
+No Stage 01, 02, 03, or 99 document has been removed. One entry blocker is
+released.
+
+Removing a package that a sealed migration row names as its endpoint raised
+`configuration error: WORK-054 WP-004B migration target differs` and exited 2,
+naming no holder. Three owners in `scripts/validate-links-and-owners.py`
+required a sealed endpoint to be tracked today, and they chained: releasing
+`_work054_wp004b_targets` surfaced `_work109_migration_projection`, and
+releasing that surfaced `_document_taxonomy_transition_manifest`. With all
+three released, the same removal reports eleven findings that each name their
+holder -- seven `LINK-BROKEN` from Specs `0011` through `0023`, and
+`INDEX-STALE`, `INDEX-TREE`, and `LINK-BROKEN` on `docs/03.specs/README.md`.
+The intact tree still returns `PASS CROSS-DOCUMENT`.
+
+The release is a proof rather than a waiver. Ledger coverage is now counted
+from the sealed rows, so MIG-0002 still asserts its 141 rows and the transition
+manifest still asserts its 82 move-current entries; a manifest target the
+ledger never sealed is still rejected. Four regression cases in
+`tests/test_archive_validation.py` hold each half.
+
+Two measurements in the Plan were corrected by executing them: consumer-zero
+must count terminal documents, and the first removal tier splits into twenty
+MIG-0004 row targets, three named only by other ledgers, and two in no ledger.
+
+This work creates no Archive record, redirect, or Migration row, so the WP-013
+and WP-009 clauses forbidding them are unaffected.
 
 ## Traceability
 
@@ -87,4 +112,4 @@ WP-013 is queued and has no accepted execution evidence.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-054-013](../plan.md#wp-013--current-corpus-and-transition-control-cutover) | Queued. | No accepted execution evidence yet. |
+| [WORK-054-013](../plan.md#wp-013--current-corpus-and-transition-control-cutover) | In progress. | Sealed-endpoint pin released across three owners with four regression cases; intact tree `PASS CROSS-DOCUMENT`; no corpus removal made. |

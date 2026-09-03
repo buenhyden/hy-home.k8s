@@ -358,7 +358,7 @@ references, archive evidence, and scripts. Deletions are deliberately late.
 | WP-010 | Close the script, gate, fixture, and SHA ownership graph through delegated Spec 0066 | WP-006, WP-008, and approved written design | Stage 05 and Stage 90 cutovers complete; existing validation-surface contract and consumers mapped | Delegated Task evidence proves one routing owner, removes safe duplicates, and reports acceptance to Spec 0054 |
 | WP-011 | Cut over compatibility wrappers and scripts topology through delegated Spec 0066 | WP-010 within Spec 0066 | Wrapper and path consumers mapped | Responsibility directories active; wrappers deleted only at consumer-zero; SPEC-0054-TSK-0011 records parent acceptance; no fixed census policy |
 | WP-012 | Rotate progress and remove stale generated-current residue | WP-011 | Earlier program evidence stable | Spec Task/Git evidence and generated-current ownership GREEN |
-| WP-013 | Cut over the remaining current corpus and close transition references | WP-012; WP-006; WP-008; accepted and completed Spec 0066 result; completed SPEC-0054-TSK-0011 parent handoff | ADR-0031 accepted; SPEC-0066-TSK-0001, Plan 0066, and Spec 0066 are `done`; SPEC-0054-TSK-0011 is `done`; the existing Spec 0054 compatibility pointer names queued SPEC-0054-TSK-0013 | Stage 01/02/03/99 disposition, zero active Archive citations/cross-links, residual transition consumer-zero, and Git-first recovery GREEN |
+| WP-013 | Cut over the remaining current corpus and close transition references | WP-012; WP-006; WP-008; accepted and completed Spec 0066 result; completed SPEC-0054-TSK-0011 parent handoff | ADR-0031 accepted; SPEC-0066-TSK-0001, Plan 0066, and Spec 0066 are `done`; SPEC-0054-TSK-0011 is `done`; the existing Spec 0054 compatibility pointer named SPEC-0054-TSK-0013 while it was `queued` | Stage 01/02/03/99 disposition, zero active Archive citations/cross-links, residual transition consumer-zero, and Git-first recovery GREEN |
 | WP-014 | Final convergence and branch completion | WP-009, WP-013, and accepted Spec 0066 result | All logical commits present | Ownership/fixed-point/focused/affected/staged/aggregate/all-files/review GREEN |
 
 WP-012 is a closed historical scheduling exception, not a reusable dependency
@@ -403,7 +403,7 @@ work packages. The lossless identity map is:
 | WP-010 | SPEC-0054-TSK-0010 | done; completed the Spec 0066 activation transaction |
 | WP-011 | SPEC-0054-TSK-0011 | in-progress; current parent acceptance owner for delegated Spec 0066 execution |
 | WP-012 | SPEC-0054-TSK-0012 | done |
-| WP-013 | SPEC-0054-TSK-0013 | queued |
+| WP-013 | SPEC-0054-TSK-0013 | in-progress |
 | WP-014 | SPEC-0054-TSK-0014 | queued |
 
 SPEC-0054-TSK-0011 has an earlier lifecycle activation dependency than the
@@ -1274,6 +1274,29 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
   `tests/fixtures/agent-checkpoint.json` names `0043`, and
   `tests/fixtures/validation-surfaces.json` names `0031` and `0045`. No corpus
   count remains pinned in a validator or test; Spec 0063 removed those.
+- Two measurements above were corrected by executing them. Consumer-zero was
+  counted over non-terminal documents, but the link validator reads a terminal
+  document's links too: removing the archive-free `0063` raised `LINK-BROKEN`
+  from `superseded` ADR-0022. A holder counts whatever its own lifecycle state,
+  so the twenty-five-package tier is a lower bound until it is re-measured
+  across every tracked document.
+- Removing a package that a sealed migration row names as its endpoint aborted
+  the run instead of reporting a holder. Three owners in
+  `scripts/validate-links-and-owners.py` required a sealed endpoint to be a
+  tracked path today: `_work054_wp004b_targets` for MIG-0004,
+  `_work109_migration_projection` for MIG-0002, and
+  `_document_taxonomy_transition_manifest` for the move-current entries that
+  compose through MIG-0002. Twenty of the first tier's twenty-five packages are
+  MIG-0004 row targets, three are named only by other ledgers, and two are in
+  no ledger. Spec 0065 already classified this defect shape in its
+  `VAL-TRR-001` classification and released two sibling owners on the evidence
+  that a sealed row states one historical transition rather than a standing
+  claim on the current tree. These three are released the same way: the edge
+  drops when its endpoint is vacated, ledger coverage is counted from the
+  sealed rows rather than from what still resolves, and a manifest target the
+  ledger never sealed is still rejected. Removing a ledger-named package
+  therefore needs no Archive record, redirect, or new Migration row, so the
+  WP-013 and WP-009 clauses that forbid creating them stand unchanged.
 - `docs/03.specs/README.md` is a declared index whose contract enumerates every
   `docs/03.specs/####-<slug>/spec.md`, so its tree, table, and retained-set
   statement are updated in the same change that removes a package. Its current
