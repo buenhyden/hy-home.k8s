@@ -23,7 +23,7 @@ from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path, PurePosixPath
 from types import MappingProxyType, ModuleType
-from typing import TYPE_CHECKING, Callable, Mapping, Protocol, Sequence
+from typing import TYPE_CHECKING, Callable, Collection, Mapping, Protocol, Sequence
 
 if TYPE_CHECKING:
     from document_contracts import Registry
@@ -821,8 +821,18 @@ def retired_source_is_distinct(
 
 def compose_migration_targets(
     projections: Sequence[Mapping[str, str]],
+    *,
+    reoccupied: Collection[str] = (),
 ) -> dict[str, str]:
-    """Compose reviewed edges without allowing a competing successor or cycle."""
+    """Compose reviewed edges without allowing a competing successor or cycle.
+
+    A row retires the document that held a path, not the path. `reoccupied`
+    names the paths a later ledger moved a different document onto: the
+    earlier occupant's departure belongs to the previous generation, so the
+    walk ends on arrival instead of following it out again. Naming no path
+    keeps the strict walk, and a caller that cannot establish generations
+    should name none.
+    """
 
     edges: dict[str, str] = {}
     for projection in projections:
@@ -840,6 +850,8 @@ def compose_migration_targets(
     for source, target in edges.items():
         seen = {source}
         while target in edges and edges[target] != target:
+            if target in reoccupied:
+                break
             if target in seen:
                 raise ArchiveContractError(
                     "RECOVERY-MIGRATION-CYCLE", "migration graph cycles"
@@ -1359,7 +1371,24 @@ def validate_migration_records(
             raise ArchiveContractError(
                 "RECOVERY-MIGRATION-CONTENT", "source identity differs"
             )
-    targets = compose_migration_targets((edges,))
+    # A path a later record moved a document onto starts a new generation
+    # there. The earlier occupant's own departure is still a reviewed row, but
+    # it belongs to the document that left, so composing through it would make
+    # the new arrival its own successor. Records sort by their zero-padded
+    # ledger number, which is the order the seals were reviewed in.
+    arrivals: dict[str, str] = {}
+    for edge_source, edge_target in edges.items():
+        record = row_records.get(edge_source)
+        if record is None:
+            continue
+        previous = arrivals.get(edge_target)
+        arrivals[edge_target] = record if previous is None else max(previous, record)
+    reoccupied = frozenset(
+        path
+        for path, arrival in arrivals.items()
+        if path in row_records and arrival > row_records[path]
+    )
+    targets = compose_migration_targets((edges,), reoccupied=reoccupied)
     pinned_targets: dict[str, str] | None = None
     references: dict[tuple[str, str], HistoricalReferenceDisposition] = {}
     view_sources: set[str] = set()
@@ -1395,9 +1424,9 @@ def validate_migration_records(
                         proposed_commit=proposed_commit,
                         read_current_bytes=read_current_bytes,
                     )
-                terminal = compose_migration_targets((pinned_targets, edges)).get(
-                    legacy
-                )
+                terminal = compose_migration_targets(
+                    (pinned_targets, edges), reoccupied=reoccupied
+                ).get(legacy)
             if terminal is None or terminal == legacy:
                 raise ArchiveContractError(
                     "RECOVERY-MIGRATION-REFERENCE", "literal disposition differs"
@@ -1570,6 +1599,11 @@ def validate_migration_records(
         if row["action"] == "moved":
             immediate = edges[source]
             successor_row = rows_by_source.get(immediate)
+            if immediate in reoccupied:
+                # That row retired the occupant this path held before the
+                # move, so its pinned bytes are a previous generation and not
+                # this move's target. The arriving document is the target.
+                successor_row = None
             immediate_bytes = (
                 sources[str(successor_row["source_commit"]), immediate][1]
                 if successor_row is not None and immediate != source

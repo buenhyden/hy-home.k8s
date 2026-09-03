@@ -3609,6 +3609,7 @@ def _migration_lifecycle_events(
 
     removals: set[PurePosixPath] = set()
     rehomes: set[tuple[PurePosixPath, PurePosixPath]] = set()
+    form_rehomes: set[tuple[PurePosixPath, PurePosixPath]] = set()
     diagnostics: list[LifecycleDiagnostic] = []
     owner = _load_canonical_markdown_module()
     for source, disposition in proof.dispositions.items():
@@ -3624,7 +3625,27 @@ def _migration_lifecycle_events(
         if disposition.action not in {"moved", "merged", "replaced"}:
             continue
         target = PurePosixPath(proof.targets[source])
-        if target in base_blobs or target.parts[:2] != ("docs", "00.agent-governance"):
+        if target in base_blobs:
+            continue
+        # A form carries no lifecycle state, so the current-document rule below
+        # can never reach it and its tree is not the governance tree. A `moved`
+        # row is byte-identical, so a reviewed move that lands on the template
+        # route the registry declares is the whole of the event.
+        if disposition.action == "moved":
+            try:
+                assert proof.proposed_registry is not None
+                moved_profile = classify_path(registry, target)
+                moved_snapshot = classify_path(proof.proposed_registry, target)
+            except DocumentContractError:
+                diagnostics.append(failure(target, "proposed target registry route"))
+                continue
+            if (
+                moved_profile.mode == "template"
+                and moved_snapshot.profile_id == moved_profile.profile_id
+            ):
+                form_rehomes.add((source_path, target))
+                continue
+        if target.parts[:2] != ("docs", "00.agent-governance"):
             continue
         before, after = base_documents.get(source_path), proposed_documents.get(target)
         if before is None or after is None or before.state_issue or after.state_issue:
@@ -3680,6 +3701,7 @@ def _migration_lifecycle_events(
         ),
         source_removals=frozenset(removals),
         current_rehomes=frozenset(rehomes),
+        form_rehomes=frozenset(form_rehomes),
         archive_rehomes=archive_rehomes,
     )
     return events, tuple(diagnostics)

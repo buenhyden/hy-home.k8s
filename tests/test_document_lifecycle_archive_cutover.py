@@ -1072,6 +1072,37 @@ artifact_id: "AUD-0001-m0001"
             (),
         )
 
+    def test_a_proved_form_move_admits_its_rename(self):
+        # A form carries no lifecycle state, so it can rehome through neither
+        # the current-document rule (governance paths only) nor the archive
+        # rule. Without a third admission a reviewed, byte-identical form move
+        # is reported as a bare rename and cannot be made at all.
+        registry = load_registry(ROOT)
+        old = PurePosixPath("docs/99.templates/templates/references/x-old.template.md")
+        new = PurePosixPath("docs/99.templates/templates/references/audit.template.md")
+        base = {old: lifecycle.LifecycleDocument(old, "template/reference/audit", None)}
+        proposed = {
+            new: lifecycle.LifecycleDocument(new, "template/reference/audit", None)
+        }
+        rename = (lifecycle.LifecycleRename(old_path=old, new_path=new),)
+
+        bare = compare_lifecycle(
+            registry, base, proposed, renames=rename, base_mode="staged"
+        )
+        self.assertEqual([item.rule_id for item in bare], ["LIFECYCLE-RENAME"])
+
+        admitted = compare_lifecycle(
+            registry,
+            base,
+            proposed,
+            renames=rename,
+            base_mode="staged",
+            migration_events=lifecycle.MigrationLifecycleEvents(
+                form_rehomes=frozenset({(old, new)})
+            ),
+        )
+        self.assertEqual(admitted, ())
+
     def test_stage_index_creation_is_bounded_by_the_registry_route(self):
         # The lifecycle validator once reported creating a stage index as a
         # failure for having no lifecycle, and each README that had to be

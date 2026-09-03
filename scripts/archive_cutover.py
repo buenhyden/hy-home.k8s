@@ -60,6 +60,7 @@ if __package__:
         parse_pinned_migration_control,
         read_staged_blob_bounded,
         read_worktree_regular_bounded,
+        compose_migration_targets,
         retired_source_is_distinct,
         validate_current_archive_authority,
         validate_repository_archive,
@@ -100,6 +101,7 @@ else:
         parse_pinned_migration_control,
         read_staged_blob_bounded,
         read_worktree_regular_bounded,
+        compose_migration_targets,
         retired_source_is_distinct,
         validate_current_archive_authority,
         validate_repository_archive,
@@ -438,7 +440,9 @@ def _later_ledger_edges(
 
     edges: dict[str, str] = {}
     retired: set[str] = set()
-    for path in sorted(tracked_regular_blobs):
+    departure: dict[str, int] = {}
+    arrival: dict[str, int] = {}
+    for index, path in enumerate(sorted(tracked_regular_blobs)):
         if generic_migration_id(path) is None:
             continue
         try:
@@ -466,7 +470,22 @@ def _later_ledger_edges(
             if not isinstance(target, str) or legacy == target:
                 continue
             edges[legacy] = target
-    return edges, retired
+            departure[legacy] = index
+            arrival[target] = max(arrival.get(target, index), index)
+    # More than one later ledger can retire the same endpoint in turn, so the
+    # successor is the end of the chain rather than its first hop. A path a
+    # later record moved a document onto starts a new generation there, and the
+    # previous occupant's departure is not part of the arriving chain.
+    reoccupied = frozenset(
+        source
+        for source, index in departure.items()
+        if arrival.get(source, index) > index
+    )
+    try:
+        composed = compose_migration_targets((edges,), reoccupied=reoccupied)
+    except ArchiveContractError:
+        raise RuntimeError(failure) from None
+    return composed, retired
 
 
 def _work054_migration_projection(

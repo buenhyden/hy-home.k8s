@@ -61,6 +61,11 @@ class MigrationLifecycleEvents:
     # record's bytes and provenance are checked by the archive owner, and the
     # move itself is admitted only from a reviewed declaration.
     archive_rehomes: frozenset[tuple[PurePosixPath, PurePosixPath]] = frozenset()
+    # A form holds no lifecycle state and lives outside the governance tree, so
+    # it reaches neither rehome above. Its identity is the registry route it
+    # answers to, and a `moved` row is byte-identical, so a reviewed move onto
+    # the same template route is the entire event.
+    form_rehomes: frozenset[tuple[PurePosixPath, PurePosixPath]] = frozenset()
 
 
 @dataclass(frozen=True)
@@ -1050,6 +1055,10 @@ def compare_lifecycle(
         if (rename.old_path, rename.new_path) in migration_events.current_rehomes:
             # A proven move remains a create/delete pair so state validation is
             # still performed; only its exact rename event is admitted.
+            continue
+        if (rename.old_path, rename.new_path) in migration_events.form_rehomes:
+            # Same admission for a form: the create/delete pair still runs, and
+            # a form has no state for it to evaluate.
             continue
         consumed_base.add(rename.old_path)
         consumed_proposed.add(rename.new_path)

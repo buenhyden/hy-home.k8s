@@ -1199,6 +1199,28 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
             with self.assertRaises(recovery.ArchiveContractError):
                 archive.compose_migration_targets(maps)
 
+    def test_composition_stops_where_a_later_ledger_reoccupied_the_path(self):
+        # A row retires the document that held a path, not the path. When a
+        # later ledger moves a different document onto that path, the earlier
+        # occupant's departure belongs to the previous generation and is not
+        # part of the new arrival's chain. Following it closes a false cycle:
+        # a -> b, b -> c, and c -> a where c was reoccupied by the b -> c move.
+        loop = ({"a": "b"}, {"b": "c"}, {"c": "a"})
+        with self.assertRaises(recovery.ArchiveContractError):
+            archive.compose_migration_targets(loop)
+        self.assertEqual(
+            archive.compose_migration_targets(loop, reoccupied={"c"}),
+            {"a": "c", "b": "c", "c": "c"},
+        )
+
+    def test_composition_reoccupation_names_no_path_by_default(self):
+        # The admission is opt-in: a caller that cannot say which paths were
+        # reoccupied still gets the strict walk.
+        self.assertEqual(
+            archive.compose_migration_targets(({"a": "b"}, {"b": "c"}), reoccupied=()),
+            {"a": "c", "b": "c"},
+        )
+
     def test_mig4_sealed_target_is_independent_of_current_template_bytes(self):
         rows = archive.parse_pinned_migration_control(
             recovery.WP004B_PINNED_MIGRATION_PATH,
