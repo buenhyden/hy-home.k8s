@@ -2187,6 +2187,104 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         ):
             self.validator._work054_wp004b_targets(self.context)
 
+    def test_mig0004_link_projection_drops_a_vacated_endpoint(self) -> None:
+        """A sealed row whose endpoint is gone composes no owner, and no error.
+
+        MIG-0004 sealed a move.  A later cycle removed the document it moved to
+        without sealing a successor row, which the pinned rows could not have
+        named.  The edge drops so a document that still cites the legacy path
+        fails as `LINK-BROKEN` at its own line, rather than the whole run
+        aborting on a configuration error that names no holder.
+        """
+
+        path = self.validator.WORK054_WP004B_MIGRATION_PATH
+        rows = self.validator.validate_pinned_migration_recovery(
+            self.context.root,
+            path.as_posix(),
+            self.context.texts[path].encode("utf-8"),
+        )
+        legacy = "docs/03.specs/9999-vacated-endpoint/tasks.md"
+        added = {
+            "legacy_path": legacy,
+            "stable_path": None,
+            "artifact_id": None,
+            "action": "replaced",
+            "replacement": "docs/03.specs/9998-removed-package/spec.md",
+            "source_commit": "a" * 40,
+            "source_blob": "b" * 40,
+            "content_sha256": "c" * 64,
+            "reason": "Endpoint removed by a later cycle with no successor row.",
+        }
+
+        with mock.patch.object(
+            self.validator,
+            "validate_pinned_migration_recovery",
+            return_value=(*rows, added),
+        ):
+            targets = self.validator._work054_wp004b_targets(self.context)
+
+        self.assertNotIn(PurePosixPath(legacy), targets)
+
+    def test_work109_projection_drops_a_vacated_move_and_keeps_coverage(
+        self,
+    ) -> None:
+        """Ledger coverage is counted from the rows, not from what resolves."""
+
+        aliases, vacated = self.validator._work109_four_digit_aliases(self.context)
+        self.assertEqual(vacated, frozenset())
+        legacy, target = sorted(aliases.items())[0]
+
+        context = dataclasses.replace(
+            self.context,
+            tracked_regular_paths=self.context.tracked_regular_paths - {target},
+        )
+        # The 141-row coverage assertion still has to pass inside this call.
+        reduced, vacated = self.validator._work109_four_digit_aliases(context)
+
+        self.assertNotIn(legacy, reduced)
+        self.assertEqual(vacated, frozenset({legacy}))
+        self.assertEqual(len(reduced), len(aliases) - 1)
+
+    def test_transition_manifest_admits_a_vacated_mig0002_endpoint(self) -> None:
+        _, move_targets, _ = self.validator._document_taxonomy_transition_manifest(
+            self.context
+        )
+        _, target = sorted(move_targets.items())[0]
+        # Several sealed moves can converge on one current path: a package that
+        # merged its plan and tasks leaves two MIG-0002 legacies pointing at the
+        # same file. Vacating that file vacates every move that reaches it.
+        expected_dropped = {
+            source for source, value in move_targets.items() if value == target
+        }
+        self.assertGreater(len(expected_dropped), 0)
+
+        context = dataclasses.replace(
+            self.context,
+            tracked_regular_paths=self.context.tracked_regular_paths - {target},
+        )
+        # The 82 move-current entries still have to be counted inside this call.
+        _, reduced, _ = self.validator._document_taxonomy_transition_manifest(context)
+
+        self.assertEqual(set(move_targets) - set(reduced), expected_dropped)
+
+    def test_transition_manifest_rejects_a_target_the_ledger_never_sealed(
+        self,
+    ) -> None:
+        """The vacated-endpoint admission is a proof, not a blanket waiver."""
+
+        with (
+            mock.patch.object(
+                self.validator,
+                "_work109_four_digit_aliases",
+                return_value=({}, frozenset()),
+            ),
+            self.assertRaisesRegex(
+                self.validator.ConfigurationError,
+                "lacks exact MIG-0002 evidence",
+            ),
+        ):
+            self.validator._document_taxonomy_transition_manifest(self.context)
+
     def _mutated_work109_context(self, mutate) -> object:
         path = self.validator.WORK109_MIGRATION_PATH
         text = self.context.texts[path]
@@ -2208,7 +2306,9 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         )
 
     def test_work109_manifest_targets_compose_through_exact_mig0002(self) -> None:
-        aliases = self.validator._work109_four_digit_aliases(self.context)
+        aliases, vacated = self.validator._work109_four_digit_aliases(self.context)
+
+        self.assertEqual(vacated, frozenset())
 
         self.assertEqual(len(aliases), 141)
         self.assertEqual(

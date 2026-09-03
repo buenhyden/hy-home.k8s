@@ -766,7 +766,9 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
                 return_value=({}, {}, {}),
             ),
             mock.patch.object(
-                links, "_work109_migration_projection", return_value=({}, {}, {})
+                links,
+                "_work109_migration_projection",
+                return_value=({}, {}, {}, frozenset()),
             ),
             mock.patch.object(links, "_work054_wp003_owner_merges", return_value={}),
             mock.patch.object(links, "_work054_wp004b_targets", return_value={}),

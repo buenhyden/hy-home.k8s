@@ -344,12 +344,8 @@ RETIRED_REFERENCE_ALIASES = {
     PurePosixPath("tests/fixtures/agent-role-semantics.json"): PurePosixPath(
         ".agents/registry.json"
     ),
-    PurePosixPath(".github/ABOUT.md"): PurePosixPath(
-        ".github/repository-surface.md"
-    ),
-    PurePosixPath(".github/README.md"): PurePosixPath(
-        ".github/repository-surface.md"
-    ),
+    PurePosixPath(".github/ABOUT.md"): PurePosixPath(".github/repository-surface.md"),
+    PurePosixPath(".github/README.md"): PurePosixPath(".github/repository-surface.md"),
 }
 
 
@@ -2592,6 +2588,27 @@ def _commit_path_evidence(
     return tuple(evidence)
 
 
+def _sealed_endpoint_resolves(context: Context, terminal: PurePosixPath) -> bool:
+    """Report whether a sealed migration row still names a current owner.
+
+    A sealed row records one historical transition.  It is not a standing claim
+    that its endpoint must stay in the tree: a later cycle may remove the
+    document the row moved, with or without a successor row for it to name.
+    When that happens the row composes no current owner, so the edge drops and
+    a document that still names the legacy path fails as `LINK-BROKEN` at its
+    own line instead of aborting the whole run as a configuration error.
+
+    Ledger coverage is proved separately from this resolution, so a dropped
+    edge never weakens the row-count and row-identity proofs a ledger owns.
+    """
+
+    return terminal in context.tracked_regular_paths and (
+        _path_exists_without_dereference(
+            context.root, terminal, context.adapter_targets
+        )
+    )
+
+
 def _work109_migration_projection(
     context: Context,
 ) -> tuple[
@@ -2653,6 +2670,8 @@ def _work109_migration_projection(
     merges: dict[PurePosixPath, PurePosixPath] = {}
     stable_paths: set[PurePosixPath] = set()
     pre_cutover_stable_paths: set[PurePosixPath] = set()
+    sealed_rows: dict[str, set[PurePosixPath]] = {}
+    vacated_moves: set[PurePosixPath] = set()
     for row, (source_blob, content_sha256) in zip(
         rows,
         source_evidence,
@@ -2701,22 +2720,25 @@ def _work109_migration_projection(
                 or row.get("replacement") is not None
                 or not isinstance(artifact_id, str)
                 or expected in pre_cutover_stable_paths
-                or current_target not in context.tracked_regular_paths
-                or not _path_exists_without_dereference(
-                    context.root, current_target, context.adapter_targets
+            ):
+                raise ConfigurationError(
+                    f"WORK-109 migration ledger target differs: {legacy.as_posix()}"
                 )
-                or (
-                    not has_wp004b_cutover
-                    and context.metadata.get(expected, {}).get("artifact_id")
-                    != _current_stage03_identity(artifact_id)
-                )
+            # The row is proved before it is resolved.  This set counts the
+            # sealed rows, so a vacated endpoint costs the ledger no coverage.
+            pre_cutover_stable_paths.add(expected)
+            if not _sealed_endpoint_resolves(context, current_target):
+                vacated_moves.add(legacy)
+                continue
+            declared_identity = context.metadata.get(expected, {}).get("artifact_id")
+            if not has_wp004b_cutover and (
+                declared_identity != _current_stage03_identity(artifact_id)
             ):
                 raise ConfigurationError(
                     f"WORK-109 migration ledger target differs: {legacy.as_posix()}"
                 )
             aliases[legacy] = current_target
             stable_paths.add(current_target)
-            pre_cutover_stable_paths.add(expected)
             continue
 
         action = row.get("action")
@@ -2738,25 +2760,23 @@ def _work109_migration_projection(
             or not isinstance(replacement_value, str)
             or expected_replacement is None
             or replacement_value != expected_replacement.as_posix()
-            or current_replacement not in context.tracked_regular_paths
-            or not _path_exists_without_dereference(
-                context.root, current_replacement, context.adapter_targets
-            )
         ):
             raise ConfigurationError("WORK-109 migration ledger replacement differs")
+        sealed_rows.setdefault(action, set()).add(legacy)
+        if not _sealed_endpoint_resolves(context, current_replacement):
+            continue
         if action == "replaced":
             replacements[legacy] = current_replacement
         else:
             merges[legacy] = current_replacement
 
     if (
-        len(aliases) != 141
-        or len(pre_cutover_stable_paths) != 141
-        or set(replacements) != set(WORK109_REPLACEMENTS)
-        or set(merges) != set(WORK109_MERGES)
+        len(pre_cutover_stable_paths) != 141
+        or sealed_rows.get("replaced", set()) != set(WORK109_REPLACEMENTS)
+        or sealed_rows.get("merged", set()) != set(WORK109_MERGES)
     ):
         raise ConfigurationError("WORK-109 migration ledger coverage differs")
-    return aliases, replacements, merges
+    return aliases, replacements, merges, frozenset(vacated_moves)
 
 
 def _work054_wp004b_targets(
@@ -2784,6 +2804,7 @@ def _work054_wp004b_targets(
         ) from exc
     successors = _generic_migration_targets(context)
     targets: dict[PurePosixPath, PurePosixPath] = {}
+    dropped: set[PurePosixPath] = set()
     for row in rows:
         action = row.get("action")
         legacy_value = row.get("legacy_path")
@@ -2802,29 +2823,32 @@ def _work054_wp004b_targets(
             or ".." in legacy.parts
             or ".." in target.parts
             or legacy in targets
+            or legacy in dropped
         ):
             raise ConfigurationError("WORK-054 WP-004B migration target differs")
         # A later sealed row may retire this edge's endpoint in turn, and the
         # pinned MIG-0004 rows cannot name a successor that did not exist when
         # they were sealed.  A deleted endpoint composes to the Archive index.
         terminal = successors.get(target, target)
-        if terminal not in context.tracked_regular_paths or (
-            not _path_exists_without_dereference(
-                context.root, terminal, context.adapter_targets
-            )
-        ):
-            raise ConfigurationError("WORK-054 WP-004B migration target differs")
+        if not _sealed_endpoint_resolves(context, terminal):
+            dropped.add(legacy)
+            continue
         targets[legacy] = terminal
     return targets
 
 
 def _work109_four_digit_aliases(
     context: Context,
-) -> dict[PurePosixPath, PurePosixPath]:
-    """Return only the exact active-route moves from validated MIG-0002."""
+) -> tuple[dict[PurePosixPath, PurePosixPath], frozenset[PurePosixPath]]:
+    """Return the exact active-route moves and the rows whose endpoint is gone.
 
-    aliases, _, _ = _work109_migration_projection(context)
-    return aliases
+    The second element names the sealed moves that resolve to no current owner,
+    so a consumer can tell a vacated endpoint from a ledger that never sealed
+    the row at all.
+    """
+
+    aliases, _, _, vacated = _work109_migration_projection(context)
+    return aliases, vacated
 
 
 def _context_migration_proof(context: Context) -> MigrationProof:
@@ -2950,7 +2974,7 @@ def _document_taxonomy_transition_manifest(
         or len(document.entries) != 132
     ):
         raise ConfigurationError("archive transition manifest contract differs")
-    four_digit_aliases = _work109_four_digit_aliases(context)
+    four_digit_aliases, vacated_moves = _work109_four_digit_aliases(context)
 
     expected_keys = [
         "source",
@@ -2985,6 +3009,7 @@ def _document_taxonomy_transition_manifest(
         raise ConfigurationError("archive transition manifest source differs") from None
     move_blobs: dict[PurePosixPath, str] = {}
     move_targets: dict[PurePosixPath, PurePosixPath] = {}
+    move_sources: set[PurePosixPath] = set()
     archive_sources: set[PurePosixPath] = set()
     targets: set[PurePosixPath] = set()
     for entry, (source_blob, _) in zip(
@@ -3018,7 +3043,7 @@ def _document_taxonomy_transition_manifest(
             or source.parts[:2] != ("docs", "04.execution")
             or source.parts[2] not in {"plans", "tasks"}
             or source.suffix != ".md"
-            or source in move_blobs
+            or source in move_sources
             or source in archive_sources
             or target in targets
         ):
@@ -3032,11 +3057,18 @@ def _document_taxonomy_transition_manifest(
                 or target.name not in {"plan.md", "tasks.md"}
             ):
                 raise ConfigurationError("archive transition move target differs")
+            move_sources.add(source)
             stable_target = four_digit_aliases.get(target)
             if stable_target is None:
-                raise ConfigurationError(
-                    "archive transition move target lacks exact MIG-0002 evidence"
-                )
+                # A missing alias is admitted only when MIG-0002 sealed the row
+                # and its endpoint has since been vacated.  A target the ledger
+                # never sealed is still a manifest that differs from its proof.
+                if target not in vacated_moves:
+                    raise ConfigurationError(
+                        "archive transition move target lacks exact MIG-0002 evidence"
+                    )
+                targets.add(target)
+                continue
             move_blobs[source] = entry["sourceBlob"]
             move_targets[source] = stable_target
             target = stable_target
@@ -3046,7 +3078,7 @@ def _document_taxonomy_transition_manifest(
                 raise ConfigurationError("archive transition archive target differs")
             archive_sources.add(source)
         targets.add(target)
-    if len(move_blobs) != 82 or len(archive_sources) != 50:
+    if len(move_sources) != 82 or len(archive_sources) != 50:
         raise ConfigurationError("archive transition manifest counts differ")
     return move_blobs, move_targets, frozenset(archive_sources)
 
@@ -3125,7 +3157,7 @@ def _historical_migration_proof(
         PurePosixPath(source): PurePosixPath(target)
         for source, target in proof.targets.items()
     }
-    aliases, replacements, work109_merges = _work109_migration_projection(context)
+    aliases, replacements, work109_merges, _ = _work109_migration_projection(context)
     archive_aliases = _work107_stable_archive_aliases(context)
     if PurePosixPath(WORK107_MIGRATION_PATH) in context.paths and not archive_aliases:
         raise ConfigurationError("historical archive migration proof differs")

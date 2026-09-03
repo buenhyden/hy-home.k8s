@@ -102,7 +102,7 @@ class HistoricalMigrationProofTest(unittest.TestCase):
         for name, value in (
             ("_build_context", self.context),
             ("_document_taxonomy_transition_manifest", ({}, {}, set())),
-            ("_work109_migration_projection", ({}, {}, {})),
+            ("_work109_migration_projection", ({}, {}, {}, frozenset())),
             ("_work054_wp003_owner_merges", {}),
             ("_work054_wp004b_targets", {}),
             ("_work107_stable_archive_aliases", {}),
