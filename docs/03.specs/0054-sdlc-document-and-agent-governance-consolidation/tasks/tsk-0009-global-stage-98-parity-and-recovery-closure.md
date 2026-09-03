@@ -5,7 +5,7 @@ type: sdlc/task
 layer: "specs"
 status: queued
 owner: platform
-updated: 2026-08-31
+updated: 2026-09-03
 artifact_id: "SPEC-0054-TSK-0009"
 ---
 
@@ -14,6 +14,15 @@ artifact_id: "SPEC-0054-TSK-0009"
 ## Overview
 
 This is the terminal queued Task record for WP-009.
+
+Archive retention and archive removal answer different questions, and the
+2026-09-03 measurement separates them. Whether a Migration stays is an
+archive-internal value judgement; when it can leave is decided by the executable
+references that still name it. `scripts/` and `tests/` name MIG-0010 and
+MIG-0011 zero times and MIG-0012 once, so those are judged on value alone, while
+MIG-0004 at thirty-five references, MIG-0002 at eighteen, and MIG-0005 at
+sixteen cannot leave until their pins do. 172 distinct forty-hex pins remain in
+`scripts/`.
 
 ## Inputs
 

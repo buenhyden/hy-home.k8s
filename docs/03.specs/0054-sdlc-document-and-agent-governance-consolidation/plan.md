@@ -5,7 +5,7 @@ type: sdlc/plan
 layer: "specs"
 status: active
 owner: platform
-updated: 2026-09-01
+updated: 2026-09-03
 artifact_id: "SPEC-0054-PLAN-0001"
 ---
 
@@ -1012,6 +1012,14 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
   historical context. Remove obsolete Migration records and empty families
   without creating a meta-Migration; do not require a mutable branch-head or
   remote-ancestry pin as current policy.
+- [ ] Keep the retention question separate from the removal blocker. Archive
+  value decides whether a Migration should stay; executable references decide
+  when it can leave. Measured on 2026-09-03, `scripts/` and `tests/` name
+  MIG-0010 and MIG-0011 zero times, MIG-0012 once, MIG-0007 twice, MIG-0006 and
+  MIG-0008 three times each, then MIG-0009 six, MIG-0001 ten, MIG-0003
+  fourteen, MIG-0005 sixteen, MIG-0002 eighteen, and MIG-0004 thirty-five.
+  Work the unblocked records first; 172 distinct forty-hex pins remain in
+  `scripts/`, and each retirement should reduce that number rather than move it.
 - [ ] Require the minimal Migration/Tombstone fields from C-SDLC-009 and reject
   line-number hashes, full-corpus digests, current-document pins, and copied
   completed Spec/Plan/Task bodies without an approved exception.
@@ -1199,17 +1207,78 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
   retained requirements with current manifests, configuration, code,
   validators, and supported operational interfaces so durable implemented
   behavior has a solution-independent Requirement owner.
+- `0005` and `0006` are `superseded` and carry no unfinished program. `0007`
+  and `0008` are `active` programs: `0008` governs the taxonomy consolidation
+  this Plan depends on, and `0007` governs the suspended delivery program in
+  Spec Packages `0047` through `0051`. Neither may be removed while it governs
+  unfinished work, so their disposition follows the two steps below rather than
+  preceding them.
+- Close Spec 0052 first. All seventeen of its Tasks are `done` and only its
+  `spec.md` and `plan.md` remain `active`, so the suspension recorded against
+  REQ-0007 and REQ-0008 is held open by a lifecycle transition rather than by
+  remaining work. Its Completion Criteria still assert exact counts -- ninety-three
+  Stage 98 records against the seventeen the Archive now holds, and a
+  `50 -> 49 -> 47` script ledger. Accepted ADR-0031 postdates those criteria and
+  rules that document, script, fixture, role, adapter, and entrypoint counts are
+  observations rather than policy, so the count-bearing criteria are discharged
+  as superseded and the semantic criteria are verified against current evidence
+  before `spec.md` and `plan.md` move `active` to `done`.
+- Then disposition Spec Packages `0047` through `0051`. Re-observation on
+  2026-09-03 found their scope unfinished rather than obsolete: the reconciled
+  stash object is still reachable and two stash entries remain, the GitHub
+  surface-routing contract `0048` introduces does not exist, `0049` still names
+  exactly the thirteen Kustomize roots the repository holds, and no Terraform or
+  Bicep validator exists among the twenty-two the validation registry declares.
+  The Spec lifecycle family admits `draft` to `active` but no direct
+  `draft` to `withdrawn` edge, so each package either resumes through that legal
+  transition or leaves by consumer-zero removal with its unfinished scope
+  transferred to a retained owner. Close the one `in-progress` Task under `0047`
+  before either route.
 - Retain and update Architecture Descriptions `0004` through `0007`. Transfer
   current traceability from Descriptions `0008` through `0011`, then retire
   those four descriptions. Reconcile every retained description with the
   actual current structure, boundaries, components, data/control/deployment
   flows, and implementation evidence. Keep every ADR body in the Stage 02
   decision log with accurate lifecycle and reciprocal supersession relations.
-- Retain Spec Packages `0004`, `0005`, `0008`, `0054`, and delegated `0066` as
-  the reviewed current-owner set. For every other Stage 03 package, first
-  transfer unfinished work and unique current authority or prove it obsolete,
-  completed, duplicated, or conflicting; then remove it from the current tree
-  with Git-first recovery.
+- Removal requires one of four proofs -- obsolete, completed, duplicated, or
+  conflicting -- so the retained set is whatever fails all four, not a fixed
+  list. `0004`, `0005`, `0008`, `0054`, and delegated `0066` were the reviewed
+  candidates when this Plan was written; the list omitted every package holding
+  unfinished scope and named `0066` after it reached `done`. Re-derive the set
+  from lifecycle state and unfinished scope at execution time.
+- On 2026-09-03 that derivation yields fifty-one `done` packages as the removal
+  set, fifty-two once Spec 0052 closes, and fourteen retained: `0004`, `0005`,
+  `0006`, `0008`, `0054`, and `0062`; the suspended `0047` through `0051`; and
+  the current drafts `0068`, `0070`, and `0071`. Two of the retained need a
+  disposition of their own. `0062` holds three `blocked` Tasks against seven
+  `done`, so its unfinished scope is real but stalled, and the blocking cause
+  is resolved or recorded before the package is called retained. `0006` is an
+  `active` `spec.md` with no `plan.md` and no `tasks/`, last authored
+  2026-07-13; a Spec with no execution artifact states no change contract, so
+  it is either given one or removed under the completed proof.
+- Remove the fifty-one in three tiers, which partition it exactly. Twenty-five
+  are consumer-zero once the Stage 03 declared index is excluded and need no
+  document cutover first. Thirteen are held only by REQ-0003, AD-0006, AD-0008,
+  and AD-0009, so rewriting those four releases them as a group: REQ-0003 and
+  AD-0006 are retained and rewritten, and AD-0008 and AD-0009 are retired,
+  which discharges their citations with them. The last thirteen are held by
+  owners that are neither retired nor rewritten here and each needs its own
+  citation disposition -- accepted ADR-0026, ADR-0027, ADR-0030, and ADR-0031
+  cite the packages that implemented them, the Stage 90 research router and
+  `.github/repository-surface.md` cite completed work, and three retained Specs
+  cite predecessors. An accepted ADR is a permanent decision record, so its
+  citation converts to the ADR-0031 form -- a current semantic owner where one
+  exists, otherwise a path-free Git-history statement -- rather than being
+  deleted with the package.
+- Three fixtures name packages in the removal set and block it until they move:
+  `tests/fixtures/agent-checkpoint.json` names `0043`, and
+  `tests/fixtures/validation-surfaces.json` names `0031` and `0045`. No corpus
+  count remains pinned in a validator or test; Spec 0063 removed those.
+- `docs/03.specs/README.md` is a declared index whose contract enumerates every
+  `docs/03.specs/####-<slug>/spec.md`, so its tree, table, and retained-set
+  statement are updated in the same change that removes a package. Its current
+  retained-set sentence names `0066`, which is `done`, and omits every package
+  with unfinished scope; correct it to follow lifecycle state.
 - Reduce Stage 99 to the human router, authored profiles, normalized top-level
   `lifecycleDomains`, required schemas, and templates used by retained
   profiles. Remove `programLineage.programs`, `referenceCurrentPacks`,
@@ -1238,6 +1307,15 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
 - [ ] Move terminal invariants and unfinished work to the current semantic
   document, registry, production module, Spec Task, or focused behavioral test
   before removing a source.
+- [ ] Discharge Spec 0052's count-bearing Completion Criteria against accepted
+  ADR-0031, verify its semantic criteria, and move its `spec.md` and `plan.md`
+  to `done` before touching any REQ-0007 or REQ-0008 disposition.
+- [ ] Record a resume-or-remove disposition for each of Spec Packages `0047`
+  through `0051` with the re-observed evidence behind it, and close the
+  `in-progress` Task under `0047` first.
+- [ ] Move the three fixture references to packages in the removal set before
+  the packages leave, and update the Stage 03 declared index in the same change
+  as the removal it describes.
 - [ ] Prove current consumers zero and recovery from reachable Git history.
   Do not create an Archive record or redirect as part of the current-corpus
   cutover.

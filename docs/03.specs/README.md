@@ -53,13 +53,20 @@ inventory. The compact tree below lists the governed body families; `tasks/`
 denotes package-local `TSK-*` records rather than one package-wide ledger. Spec 0054's transitional execution ledger is a
 finite WP-004C input and is intentionally not presented as a current family.
 
-The convergence target retains current packages `0004`, `0005`, `0008`,
-`0054`, and `0066`. The larger tree and table below are a point-in-time
-migration inventory, not a permanent roster or count invariant. A predecessor
-package leaves the current tree only after lifecycle normalization, mutable
-consumer cutover, and Git recovery are proven. Spec 0054 owns integrated
-acceptance; completed Spec 0066 owned delegated execution of WP-010 and WP-011
-through its package-local Plan and Task.
+A package leaves the current tree only when it is proven obsolete, completed,
+duplicated, or conflicting, and then only after lifecycle normalization,
+mutable consumer cutover, and Git recovery. The retained set is therefore
+whatever fails all four proofs; it is derived from lifecycle state and
+unfinished scope, not declared as a fixed list. The tree and table below are a
+point-in-time inventory, not a permanent roster or count invariant.
+
+An earlier revision of this paragraph named `0004`, `0005`, `0008`, `0054`, and
+`0066` as the retained set. That list has since drifted from the derivation: it
+names `0066` after it reached `done`, and it omits every package still holding
+unfinished scope. Read it as the reviewed removal candidate of its date rather
+than as the rule. Spec 0054 owns integrated acceptance; completed Spec 0066
+owned delegated execution of WP-010 and WP-011 through its package-local Plan
+and Task, and WP-013 owns the current-corpus cutover that resolves the rest.
 
 ```text
 03.specs/

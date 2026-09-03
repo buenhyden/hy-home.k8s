@@ -5,7 +5,7 @@ type: sdlc/task
 layer: "specs"
 status: queued
 owner: platform
-updated: 2026-08-31
+updated: 2026-09-03
 artifact_id: "SPEC-0054-TSK-0013"
 ---
 
@@ -16,6 +16,18 @@ artifact_id: "SPEC-0054-TSK-0013"
 This is the queued Task record for the remaining Stage 01, 02, 03, and 99
 current-corpus convergence and transition-control retirement in WP-013. Named
 dispositions are execution candidates, not permanent corpus-count policy.
+
+Re-observation on 2026-09-03 refreshed those candidates. Two entry steps now
+precede the cutover: Spec 0052 closes, which releases the suspension recorded
+against REQ-0007 and REQ-0008, and Spec Packages `0047` through `0051` each
+receive a resume-or-remove disposition. The Stage 03 removal set is the fifty-two
+packages that will be `done`. The fifty-one measured today partition into
+twenty-five already consumer-zero, thirteen released by rewriting REQ-0003,
+AD-0006, AD-0008, and AD-0009, and thirteen held by owners disposed of
+individually, including four accepted ADRs whose citations convert rather than
+disappear. Fourteen packages are retained on unfinished scope rather than on a
+fixed list, two of them conditionally: `0062` holds three `blocked` Tasks, and
+`0006` is an `active` Spec with no Plan and no Tasks.
 
 ## Inputs
 
