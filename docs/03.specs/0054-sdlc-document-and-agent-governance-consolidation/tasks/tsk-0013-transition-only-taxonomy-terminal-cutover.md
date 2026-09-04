@@ -1,6 +1,6 @@
 ---
 title: "Task: Current corpus and transition-control cutover"
-version: "1.4.0"
+version: "1.5.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -61,12 +61,18 @@ recorded below. WP-013 may disposition a current document or template only
 after its unique authority and unfinished work are transferred or proven
 absent, current consumers are zero, and Git exact-byte recovery succeeds.
 Terminal governed documents follow ADR-0032 retention rather than deletion. The linked Plan
-owns the exact candidate dispositions, reviews, rollback, and four ordered
-logical commits: Stage 01/02, Stage 03, Stage 99, then transition controls. The
-accepted and completed Spec 0066 result plus the completed SPEC-0054-TSK-0011
-parent handoff are fixed dependencies; their execution does not overlap the
-final WP-013 validation-side transition-control unit. The existing Spec 0054 compatibility pointer named this
-Task while it was still `queued`, which satisfied the activation condition.
+owns the exact candidate dispositions, reviews, rollback, and five ordered
+logical commits: Stage 03 prerequisites/current execution packages; Stage
+01/02 Requirement and Architecture convergence; Stage 99
+profile/lifecycle/template reduction; taxonomy transition-control retirement;
+then Archive authority-link reconciliation. The 2026-09-05 human ruling is the
+current execution context: this Plan/Task amendment precedes those
+implementation commits and does not claim that any implementation commit
+exists. The accepted and completed Spec 0066 result plus the completed
+SPEC-0054-TSK-0011 parent handoff are fixed dependencies; their execution does
+not overlap the final WP-013 validation-side transition-control unit. The
+existing Spec 0054 compatibility pointer named this Task while it was still
+`queued`, which satisfied the activation condition.
 Each unit is independently validated and can stop before the next unit without
 rolling back an already accepted predecessor unit.
 

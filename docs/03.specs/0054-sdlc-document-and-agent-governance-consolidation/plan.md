@@ -1,10 +1,10 @@
 ---
 title: "SDLC Document and AI Agent Governance Consolidation Implementation Plan"
-version: "1.1.0"
+version: "1.2.0"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-05"
 layer: "specs"
 artifact_id: "SPEC-0054-PLAN-0001"
 ---
@@ -1219,6 +1219,18 @@ apply to use of sealed records as current authority. Human acceptance of
 ADR-0033 likewise makes the v9 Registry, router envelope, and generation-aware
 Archive rules the current document contract.
 
+**2026-09-05 execution-order amendment:** This Plan/Task amendment is a
+separate governance commit that precedes five WP-013 implementation commits.
+Stage 03 lifecycle prerequisites come first: close Spec 0052, then record the
+resume-or-remove disposition of Spec Packages `0047` through `0051`, before
+any REQ-0007 or REQ-0008 disposition. Those Requirements govern the suspended
+and unfinished Stage 03 scope, so reversing that dependency could retire a
+current owner before its governed work is transferred or closed. The ordered
+implementation commits are Stage 03 prerequisites/current execution packages,
+Stage 01/02 Requirement and Architecture convergence, Stage 99
+profile/lifecycle/template reduction, taxonomy transition-control retirement,
+then Archive authority-link reconciliation.
+
 **Files:**
 
 - Enter only after ADR-0031 is accepted with its reciprocal evidence and Spec
@@ -1439,10 +1451,10 @@ Archive rules the current document contract.
   ```
 - [ ] Obtain architecture, documentation, Python, archive, and code-quality
   review.
-- [ ] Commit the Stage 01/02 owner and traceability cutover as
-  `refactor(docs): converge requirements and architecture corpus`.
 - [ ] Commit the Stage 03 unfinished-work transfer and current-owner cutover as
   `refactor(specs): converge current execution packages`.
+- [ ] Commit the Stage 01/02 owner and traceability cutover as
+  `refactor(docs): converge requirements and architecture corpus`.
 - [ ] Commit the Stage 99 profile/lifecycle/template reduction as
   `refactor(templates): reduce document control plane`.
 - [ ] Commit taxonomy transition consumer-zero retirement as
