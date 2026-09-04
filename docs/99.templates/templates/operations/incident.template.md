@@ -1,11 +1,12 @@
 ---
-title: 'Incident: {Incident Title}'
-version: "#.#.#"
-type: operation/incident
-status: open
-owner: '{owner}'
-updated: YYYY-MM-DD
-artifact_id: "inc-YYYY-####"
+title: "{{TITLE}}"
+version: "0.1.0"
+type: "operation/incident"
+status: "open"
+owner: "{{OWNER}}"
+updated: "{{YYYY_MM_DD}}"
+layer: "operations"
+artifact_id: "{{ARTIFACT_ID}}"
 ---
 
 # Incident: [Incident Title]
@@ -21,9 +22,9 @@ artifact_id: "inc-YYYY-####"
 | Field | Value |
 | --- | --- |
 | Severity | SEV-1 / SEV-2 / SEV-3 / SEV-4 |
-| Started / detected | YYYY-MM-DDTHH:MM:SSZ / YYYY-MM-DDTHH:MM:SSZ |
+| Started / detected | {{TIMESTAMP}} / {{TIMESTAMP}} |
 | Current state | open / mitigated / resolved / closed |
-| Next checkpoint | YYYY-MM-DDTHH:MM:SSZ or N/A — closed |
+| Next checkpoint | {{TIMESTAMP}} or N/A — closed |
 
 ## Roles and Coordination
 

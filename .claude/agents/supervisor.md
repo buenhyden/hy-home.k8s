@@ -1,8 +1,8 @@
 ---
-name: supervisor
-description: Route bounded work, preserve approval and ownership boundaries, and reconcile final evidence.
-model: opus 4.8
-tools: Read, Grep, Glob, Task
+name: "supervisor"
+description: "Route bounded work, preserve approval and ownership boundaries, and reconcile final evidence."
+model: "opus 4.8"
+tools: "Read, Grep, Glob, Task"
 ---
 
 # supervisor

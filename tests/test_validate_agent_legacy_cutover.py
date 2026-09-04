@@ -469,9 +469,9 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
             self.validator.documents.REGISTRY_PATH.as_posix(),
             self.validator.documents.SCHEMA_PATH.as_posix(),
             *(
-                profile["template"]
+                profile["template_source"]
                 for profile in registry["profiles"]
-                if profile["template"] is not None
+                if profile["template_source"] is not None
             ),
         )
 

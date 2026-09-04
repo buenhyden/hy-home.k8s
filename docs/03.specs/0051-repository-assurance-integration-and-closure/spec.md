@@ -1,11 +1,11 @@
 ---
-title: 'Repository Assurance Integration and Closure Technical Specification'
+title: "Repository Assurance Integration and Closure Technical Specification"
 version: "1.0.0"
-type: sdlc/spec
+type: "sdlc/spec"
+status: "draft"
+owner: "platform"
+updated: "2026-08-02"
 layer: "specs"
-status: draft
-owner: platform
-updated: 2026-08-02
 artifact_id: "SPEC-0051"
 ---
 

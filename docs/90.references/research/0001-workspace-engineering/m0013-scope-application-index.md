@@ -1,11 +1,11 @@
 ---
-title: 'Reference: Scope Application Index'
+title: "Reference: Scope Application Index"
 version: "1.0.0"
-type: reference/research
+type: "reference/research"
+status: "draft"
+owner: "platform"
+updated: "2026-08-31"
 layer: "references"
-status: draft
-owner: platform
-updated: 2026-08-31
 artifact_id: "RES-0001-m0013"
 ---
 

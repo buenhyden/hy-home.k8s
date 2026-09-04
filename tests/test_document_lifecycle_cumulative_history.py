@@ -54,31 +54,27 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
             "sdlc/plan",
             "archive/tombstone",
         }
-        for domain in raw_registry["programLineage"]["lifecycleDomains"]:
+        for domain in raw_registry["lifecycle_domains"]:
             selected.add(
                 "archive/migration"
-                if "archive/migration" in domain["profileIds"]
-                else domain["profileIds"][0]
+                if "archive/migration" in domain["profile_ids"]
+                else domain["profile_ids"][0]
             )
-            domain["profileIds"] = [
+            domain["profile_ids"] = [
                 profile_id
-                for profile_id in domain["profileIds"]
+                for profile_id in domain["profile_ids"]
                 if profile_id in selected
             ]
         raw_registry["profiles"] = [
             profile for profile in raw_registry["profiles"] if profile["id"] in selected
         ]
-        raw_registry["programLineage"]["programs"] = raw_registry["programLineage"][
-            "programs"
-        ][:1]
-        raw_registry["standaloneExecutions"] = []
         target_registry = cls.seed_root / registry_path
         target_registry.parent.mkdir(parents=True)
         target_registry.write_text(json.dumps(raw_registry))
         templates = {
-            profile["template"]
+            profile["template_source"]
             for profile in raw_registry["profiles"]
-            if profile["template"] is not None
+            if profile["template_source"] is not None
         }
         for relative in {
             "docs/99.templates/contracts/document-profile.schema.json",

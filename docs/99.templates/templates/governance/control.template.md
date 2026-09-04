@@ -1,10 +1,10 @@
 ---
-title: '{Control Name}'
-version: "#.#.#"
-type: governance/control
-status: draft
-owner: '{owner}'
-updated: YYYY-MM-DD
+title: "{{TITLE}}"
+version: "0.1.0"
+type: "governance/control"
+status: "draft"
+owner: "{{OWNER}}"
+updated: "{{YYYY_MM_DD}}"
 ---
 
 # [Control Name]

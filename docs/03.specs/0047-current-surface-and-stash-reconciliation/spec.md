@@ -1,11 +1,11 @@
 ---
-title: 'Current Surface and Stash Reconciliation Technical Specification'
+title: "Current Surface and Stash Reconciliation Technical Specification"
 version: "1.0.0"
-type: sdlc/spec
+type: "sdlc/spec"
+status: "draft"
+owner: "platform"
+updated: "2026-08-07"
 layer: "specs"
-status: draft
-owner: platform
-updated: 2026-08-07
 artifact_id: "SPEC-0047"
 ---
 

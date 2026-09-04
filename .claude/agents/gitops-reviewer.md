@@ -1,8 +1,8 @@
 ---
-name: gitops-reviewer
-description: Review GitOps manifests and reconciliation behavior without assuming mutation authority.
-model: sonnet 4.6
-tools: Read, Grep, Glob, Bash
+name: "gitops-reviewer"
+description: "Review GitOps manifests and reconciliation behavior without assuming mutation authority."
+model: "sonnet 4.6"
+tools: "Read, Grep, Glob, Bash"
 ---
 
 # gitops-reviewer

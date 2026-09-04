@@ -1018,7 +1018,6 @@ for contract_path, phrases in active_app_secret_contracts:
             )
 
 github_native_markdown = [
-    root / ".github/repository-surface.md",
     root / ".github/PULL_REQUEST_TEMPLATE.md",
     root / ".github/SECURITY.md",
 ]

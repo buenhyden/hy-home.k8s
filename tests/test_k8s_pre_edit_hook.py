@@ -259,18 +259,19 @@ class PreEditRejectionTest(unittest.TestCase):
             (registry_dir / "registry.json").write_text(
                 json.dumps(
                     {
+                        "schema_version": 9,
                         "profiles": [
                             {
                                 "id": "sdlc/requirement",
-                                "pathPattern": (
+                                "path_pattern": (
                                     r"^docs/01\.requirements/[0-9]{4}-[a-z-]+\.md$"
                                 ),
-                                "template": (
+                                "template_source": (
                                     "docs/99.templates/templates/"
                                     "requirement-package.template.md"
                                 ),
                             }
-                        ]
+                        ],
                     }
                 ),
                 encoding="utf-8",

@@ -1,11 +1,11 @@
 ---
-title: 'Program-to-Tranche Document Lineage'
+title: "Program-to-Tranche Document Lineage"
 version: "1.0.0"
-type: sdlc/architecture-decision
+type: "sdlc/architecture-decision"
+status: "superseded"
+owner: "platform"
+updated: "2026-09-01"
 layer: "architecture"
-status: superseded
-owner: platform
-updated: 2026-09-01
 artifact_id: "ADR-0016"
 superseded_by: "ADR-0031"
 ---

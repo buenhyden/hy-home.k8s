@@ -1,11 +1,11 @@
 ---
-title: 'Four-Digit Document Path Identity'
+title: "Four-Digit Document Path Identity"
 version: "1.0.0"
-type: sdlc/architecture-decision
+type: "sdlc/architecture-decision"
+status: "superseded"
+owner: "platform"
+updated: "2026-08-13"
 layer: "architecture"
-status: superseded
-owner: platform
-updated: 2026-08-13
 artifact_id: "ADR-0025"
 superseded_by: "ADR-0030"
 ---

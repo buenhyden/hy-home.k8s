@@ -1,6 +1,6 @@
 ---
-name: docs-stage-conformance
-description: Use when repairing scoped document-profile, README, heading, or cross-link drift without changing historical meaning.
+name: "docs-stage-conformance"
+description: "Use when repairing scoped document-profile, README, heading, or cross-link drift without changing historical meaning."
 ---
 
 # docs-stage-conformance

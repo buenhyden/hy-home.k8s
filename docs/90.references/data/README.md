@@ -1,3 +1,12 @@
+---
+title: "90.references/data"
+version: "0.1.0"
+type: "common/readme-collection-index"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+layer: "references"
+---
 # 90.references/data
 
 > Durable data packs, their datasets, and dataset provenance live here.

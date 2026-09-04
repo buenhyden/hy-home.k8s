@@ -1,6 +1,6 @@
 ---
-name: task-breakdown
-description: Use when decomposing an approved implementation Plan into bounded executable Task records.
+name: "task-breakdown"
+description: "Use when decomposing an approved implementation Plan into bounded executable Task records."
 ---
 
 # task-breakdown

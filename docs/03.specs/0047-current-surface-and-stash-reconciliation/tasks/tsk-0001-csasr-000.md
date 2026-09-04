@@ -1,11 +1,11 @@
 ---
 title: "VAL-CSASR-001, VAL-CSASR-009"
 version: "1.0.0"
-type: sdlc/task
+type: "sdlc/task"
+status: "in-progress"
+owner: "platform"
+updated: "2026-08-07"
 layer: "specs"
-status: in-progress
-owner: platform
-updated: 2026-08-07
 artifact_id: "SPEC-0047-TSK-0001"
 ---
 

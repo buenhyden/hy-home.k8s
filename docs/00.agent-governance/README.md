@@ -1,3 +1,11 @@
+---
+title: "AI Agent Governance Hub"
+version: "0.1.0"
+type: "common/readme-stage-index"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+---
 # AI Agent Governance Hub
 
 ## Overview

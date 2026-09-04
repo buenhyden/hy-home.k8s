@@ -1,11 +1,11 @@
 ---
-title: 'Workspace Research Full-Corpus Reverification Technical Specification'
+title: "Workspace Research Full-Corpus Reverification Technical Specification"
 version: "1.0.0"
-type: sdlc/spec
+type: "sdlc/spec"
+status: "active"
+owner: "platform"
+updated: "2026-08-29"
 layer: "specs"
-status: active
-owner: platform
-updated: 2026-08-29
 artifact_id: "SPEC-0062"
 ---
 

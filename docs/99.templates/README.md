@@ -1,3 +1,12 @@
+---
+title: "99.templates"
+version: "0.1.0"
+type: "common/readme-stage-index"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+layer: "templates"
+---
 # 99.templates
 
 > repo-authored 문서와 README가 시작해야 하는 canonical template stage다.
@@ -33,15 +42,14 @@ README는 해당 machine contract를 복제하지 않고 사람이 올바른 소
 Form directory 이름은 stage를, 파일 이름은 그 form이 만드는 문서 kind를 말한다.
 Profile ID는 같은 사실을 `<family>/<kind>`로 표현한다.
 
-- **Common forms** (`common/`): 저장소의 다섯 entrypoint 종류가 공유하는 README
-  form. `readme-repository`는 repository entrypoint(`README.md`),
-  `readme-stage-index`는 documentation entrypoint(`docs/README.md`)와 각 stage
-  entrypoint, `readme-collection-index`는 stage 안의 package·collection
-  entrypoint, `readme-implementation`과 `readme-workspace-staging`은
-  runtime-governance entrypoint 중 구현 표면과 workspace staging,
-  `readme-runtime-governance`는 provider 런타임이 직접 읽는 제어 표면
-  (`.github/repository-surface.md`)을 담당한다. 모두 frontmatter가 없고 heading contract만
-  가진다.
+- **Common forms** ("common/"): governed README entrypoints share the ordered
+  six-key envelope but receive no fake identity. "readme-repository" covers
+  the repository entrypoint, "readme-stage-index" covers documentation and
+  stage entrypoints, "readme-collection-index" covers package and collection
+  entrypoints, and the implementation, workspace-staging, and
+  runtime-governance forms cover their named runtime surfaces. Registry
+  profiles own each router's exact path, fixed "type"/"status", optional
+  "layer", and heading contract.
 - **Governance forms** (`governance/`): Stage 00의 여섯 owner kind에 각각
   `contract`, `control`, `provider`, `role`, `rule`, `skill` form이 대응한다.
   `governance/*` profile은 `artifact_id`를 선언하지 않는다.
@@ -107,35 +115,42 @@ form catalog가 소유한다.
 4. **Validate**: registry, Markdown profile, link/owner 검증과 repository quality
    gate를 실행하고 repo-static 결과와 remote/live 결과를 구분해 기록한다.
 
-Template 선택은 registry profile ID를 따른다. lifecycle·supersession·retention·archive는
-profile schema와 Stage 00 authoring policy를 따른다.
-README는 frontmatter-free이며 선택된 README profile의 heading contract만 따른다.
-Template은 frontmatter의 `type` 값으로 registry profile ID를 소비하며 실제
-작성 destination path를 hardcode하지 않는다.
+Template 선택은 Registry profile ID를 따른다. lifecycle, supersession,
+retention, Archive 의무는 Stage 00 policy가 설명하고 정확한 machine 값은
+Registry가 소유한다. Governed README도 공통 envelope를 사용하지만
+"artifact_id"와 lifecycle binding은 없으며, "status: active"는 router
+constant다. Template은 실제 destination path를 hardcode하지 않는다.
 
 ### Shared Frontmatter Grammar
 
-`type`과 `status`는 profile이 고정한 값이고, 나머지 공통 key는 form에서
-placeholder로 제공된다.
+모든 governed Markdown은 "title", "version", "type", "status", "owner",
+"updated" 순서로 시작한다. 이후 "layer", "artifact_id", relationship,
+supersession, provenance key는 선택된 profile의 order에만 따라 나타난다.
+모든 string, date, version, ID scalar는 큰따옴표를 사용한다.
 
-| Key | 필수 | Grammar | Template placeholder |
+| Key | Presence | Grammar | Template value |
 | --- | --- | --- | --- |
-| `title` | 항상 | 문서 이름. `artifact_id`를 반복하지 않는다. | `'{...}'` |
-| `version` | 항상 | `<major>.<minor>.<patch>` | `"#.#.#"` |
-| `type` | 항상 | `<family>/<kind>` = registry profile ID | 고정값 |
-| `status` | 항상 | profile의 `statusDomain` 중 initial state | 고정값 |
-| `owner` | 항상 | 책임 소유자 | `'{owner}'` |
-| `updated` | 항상 | ISO date | `YYYY-MM-DD` |
-| `layer` | 번호가 붙은 stage 문서만 | 숫자 접두어가 없는 stage slug (`specs`, `operations`, …) | 없음 |
-| `artifact_id` | 식별자를 가진 profile만 | profile의 `artifactIdPattern` | `"AD-####"` 형태 |
+| "title" | 항상 | identity를 반복하지 않는 사람용 이름 | "&#123;&#123;TITLE&#125;&#125;" |
+| "version" | 항상 | SemVer; 새 문서는 "0.1.0" | "0.1.0" |
+| "type" | 항상 | Registry profile ID인 "family/kind" | profile literal |
+| "status" | 항상 | profile lifecycle subset 또는 router constant | profile literal |
+| "owner" | 항상 | 책임 소유자 | "&#123;&#123;OWNER&#125;&#125;" |
+| "updated" | 항상 | ISO date | "&#123;&#123;YYYY_MM_DD&#125;&#125;" |
+| "layer" | profile이 stage/router layer를 소유할 때 | 숫자 접두어 없는 stage slug | profile literal |
+| "artifact_id" | stable identity profile만 | "artifact_id_pattern" | "&#123;&#123;ARTIFACT_ID&#125;&#125;" |
 
-값 문법은 [`contracts/frontmatter.schema.json`](./contracts/frontmatter.schema.json)이,
-profile별 required·allowed·order는 [`registry.json`](./registry.json)이 소유한다.
+값의 scalar/array 문법은
+[frontmatter schema](./contracts/frontmatter.schema.json)가, profile별
+required, optional, forbidden, order, constant, lifecycle, identity pattern은
+[Registry](./registry.json)가 소유한다. Markdown placeholder는
+"&#123;&#123;UPPER_SNAKE_CASE&#125;&#125;", native placeholder는 `__UPPER_SNAKE_CASE__`,
+author guidance는 "<!-- Author prompt: ... -->"만 사용한다.
 
-Form은 자신이 만드는 문서가 아니므로 그 문서의 식별자도, 그 문서가 살게 될
-layer도 갖지 않는다. Stage 00 governance 문서 역시 번호가 붙은 stage에 속하지
-않으므로 `layer`를 선언하지 않으며, `governance/*`는 `artifact_id`도 갖지 않는다.
-`archive/tombstone`은 sealed envelope 전용 key를 추가로 갖는다.
+Template은 만드는 문서의 envelope를 투영하므로 profile이 요구하는 "layer"와
+"artifact_id" placeholder를 포함한다. Template 파일 자체의 revision과 destination
+identity는 Registry contract version과 Git history가 소유한다. Stage 00
+"governance/*"와 README router는 stable "artifact_id"를 갖지 않는다.
+"archive/tombstone"은 sealed envelope provenance key를 추가로 가진다.
 
 ## Related Documents
 

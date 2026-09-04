@@ -1,11 +1,11 @@
 ---
-title: 'Document Taxonomy and Form Identity Normalization Implementation Plan'
+title: "Document Taxonomy and Form Identity Normalization Implementation Plan"
 version: "1.0.0"
-type: sdlc/plan
+type: "sdlc/plan"
+status: "draft"
+owner: "platform"
+updated: "2026-09-02"
 layer: "specs"
-status: draft
-owner: platform
-updated: 2026-09-02
 artifact_id: "SPEC-0071-PLAN-0001"
 ---
 

@@ -2,567 +2,381 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://hy-home.k8s/docs/99.templates/contracts/document-profile.schema.json",
   "title": "Document profile registry",
-  "description": "Validates docs/99.templates/registry.json. The registry owns path, profile, required sections, lifecycle, and identity rules and nothing else. Archive inventories, transition baselines, governance owners, and Stage 90 pack inventories are owned elsewhere and are rejected here.",
+  "description": "Validates the single Stage 99 path, profile, frontmatter, section, lifecycle, relationship, and template-binding authority.",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "$schema",
     "$id",
-    "schemaVersion",
+    "schema_version",
     "profiles",
-    "programLineage"
+    "lifecycle_domains"
   ],
   "properties": {
+    "$schema": {
+      "const": "./contracts/document-profile.schema.json"
+    },
     "$id": {
       "const": "https://hy-home.k8s/docs/99.templates/registry.json"
     },
-    "$schema": {
-      "description": "Relative pointer to this schema, which validates the registry.",
-      "const": "./contracts/document-profile.schema.json"
+    "schema_version": {
+      "const": 9
     },
     "profiles": {
       "type": "array",
       "minItems": 1,
       "items": {
-        "$ref": "#/$defs/profile"
-      }
-    },
-    "programLineage": {
-      "$ref": "#/$defs/programLineage"
-    },
-    "schemaVersion": {
-      "const": 8
-    },
-    "standaloneExecutions": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/standaloneExecution"
-      }
-    }
-  },
-  "$defs": {
-    "bodyContract": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "section",
-        "tableHeading",
-        "enforcedStatuses",
-        "requiredColumns",
-        "identifierColumns",
-        "sourceLinkColumn",
-        "targetLinkColumn",
-        "allowedSourceProfileIds",
-        "allowedTargetProfileIds",
-        "reciprocalEvidence",
-        "allowExplicitExclusion"
-      ],
-      "properties": {
-        "section": {
-          "type": "string",
-          "minLength": 1
-        },
-        "tableHeading": {
-          "type": "string",
-          "minLength": 1
-        },
-        "enforcedStatuses": {
-          "$ref": "#/$defs/stringArray"
-        },
-        "requiredColumns": {
-          "$ref": "#/$defs/nonEmptyStringArray"
-        },
-        "identifierColumns": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": {
-            "$ref": "#/$defs/identifierColumn"
-          }
-        },
-        "sourceLinkColumn": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "minLength": 1
-        },
-        "targetLinkColumn": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "minLength": 1
-        },
-        "allowedSourceProfileIds": {
-          "$ref": "#/$defs/stringArray"
-        },
-        "allowedTargetProfileIds": {
-          "$ref": "#/$defs/stringArray"
-        },
-        "reciprocalEvidence": {
-          "type": "boolean"
-        },
-        "allowExplicitExclusion": {
-          "type": "boolean"
-        }
-      }
-    },
-    "frontmatter": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "mode",
-        "required",
-        "allowed",
-        "order"
-      ],
-      "properties": {
-        "mode": {
-          "enum": [
-            "required",
-            "forbidden",
-            "not-applicable"
-          ]
-        },
-        "required": {
-          "$ref": "#/$defs/stringArray"
-        },
-        "allowed": {
-          "$ref": "#/$defs/stringArray"
-        },
-        "order": {
-          "$ref": "#/$defs/stringArray"
-        }
-      }
-    },
-    "headings": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "required",
-        "allowed"
-      ],
-      "properties": {
-        "required": {
-          "$ref": "#/$defs/stringArray"
-        },
-        "allowed": {
-          "$ref": "#/$defs/stringArray"
-        }
-      }
-    },
-    "identifierColumn": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "column",
-        "kind"
-      ],
-      "properties": {
-        "column": {
-          "type": "string",
-          "minLength": 1
-        },
-        "kind": {
-          "enum": [
-            "requirement",
-            "criterion",
-            "work-item"
-          ]
-        }
-      }
-    },
-    "lifecycle": {
-      "description": "Status domain for this profile.",
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "statusDomain"
-      ],
-      "properties": {
-        "statusDomain": {
-          "$ref": "#/$defs/stringArray"
-        }
-      }
-    },
-    "lifecycleDomain": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "family",
-        "profileIds",
-        "states",
-        "transitions"
-      ],
-      "properties": {
-        "family": {
-          "type": "string",
-          "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
-        },
-        "profileIds": {
-          "$ref": "#/$defs/stringArray"
-        },
-        "states": {
-          "type": "object",
-          "minProperties": 1,
-          "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "family",
+          "mode",
+          "path_pattern",
+          "artifact_id_pattern",
+          "template_source",
+          "frontmatter",
+          "sections",
+          "lifecycle",
+          "relationships",
+          "placeholder_policy"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^(?:common|governance|sdlc|operation|reference|archive)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+          },
+          "family": {
             "enum": [
-              "mutable",
-              "current",
-              "terminal"
+              "common",
+              "governance",
+              "sdlc",
+              "operation",
+              "reference",
+              "archive"
             ]
-          }
-        },
-        "transitions": {
-          "type": "array",
-          "minItems": 0,
-          "uniqueItems": true,
-          "items": {
-            "type": "array",
-            "prefixItems": [
-              {
-                "type": "string",
-                "minLength": 1
-              },
-              {
-                "type": "string",
-                "minLength": 1
-              }
+          },
+          "mode": {
+            "enum": [
+              "authored",
+              "router",
+              "template",
+              "evidence",
+              "native",
+              "generated",
+              "non-target"
+            ]
+          },
+          "path_pattern": {
+            "type": "string",
+            "pattern": "^\\^.*\\$$"
+          },
+          "artifact_id_pattern": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "template_source": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "frontmatter": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "mode",
+              "required",
+              "optional",
+              "forbidden",
+              "order",
+              "constants"
             ],
-            "items": false,
-            "minItems": 2,
-            "maxItems": 2
-          }
-        }
-      }
-    },
-    "nonEmptyStringArray": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/stringArray"
-        },
-        {
-          "minItems": 1
-        }
-      ]
-    },
-    "profile": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "id",
-        "class",
-        "mode",
-        "pathPattern",
-        "template",
-        "requiredFrontmatter",
-        "requiredSections",
-        "relationships",
-        "placeholderPolicy"
-      ],
-      "properties": {
-        "id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "class": {
-          "enum": [
-            "sdlc",
-            "operation",
-            "reference",
-            "archive",
-            "governance",
-            "readme",
-            "exception"
-          ]
-        },
-        "mode": {
-          "enum": [
-            "authored",
-            "template",
-            "frontmatter-free",
-            "classification-only",
-            "generated",
-            "non-target"
-          ]
-        },
-        "pathPattern": {
-          "description": "One anchored regular expression owning every path this profile classifies. Profiles that previously listed several exact routes carry them as a single alternation.",
-          "type": "string",
-          "pattern": "^\\^.*\\$$"
-        },
-        "artifactIdPattern": {
-          "description": "Anchored pattern the document's artifact_id must match, or null when the profile has no outer identity.",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "template": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "requiredFrontmatter": {
-          "$ref": "#/$defs/frontmatter"
-        },
-        "requiredSections": {
-          "$ref": "#/$defs/headings"
-        },
-        "lifecycle": {
-          "$ref": "#/$defs/lifecycle"
-        },
-        "relationships": {
-          "$ref": "#/$defs/relationships"
-        },
-        "placeholderPolicy": {
-          "enum": [
-            "forbidden",
-            "template-only"
-          ]
-        }
-      },
-      "allOf": [
-        {
-          "if": {
             "properties": {
-              "class": {
-                "const": "readme"
+              "mode": {
+                "enum": [
+                  "required",
+                  "absent"
+                ]
+              },
+              "required": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "optional": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "forbidden": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "order": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "constants": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "integer",
+                    "boolean",
+                    "null"
+                  ]
+                }
               }
-            },
-            "required": [
-              "class"
-            ]
+            }
           },
-          "then": {
+          "sections": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "required",
+              "optional",
+              "forbidden"
+            ],
             "properties": {
-              "artifactIdPattern": false,
-              "lifecycle": false
+              "required": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "optional": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "forbidden": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string"
+                }
+              }
             }
           },
-          "else": {
+          "lifecycle": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
             "required": [
-              "artifactIdPattern",
-              "lifecycle"
+              "status_domain"
+            ],
+            "properties": {
+              "status_domain": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "source_profile_ids",
+              "body_contract"
+            ],
+            "properties": {
+              "source_profile_ids": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "body_contract": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": false,
+                "required": [
+                  "section",
+                  "table_heading",
+                  "enforced_statuses",
+                  "required_columns",
+                  "identifier_columns",
+                  "source_link_column",
+                  "target_link_column",
+                  "allowed_source_profile_ids",
+                  "allowed_target_profile_ids",
+                  "reciprocal_evidence",
+                  "allow_explicit_exclusion"
+                ],
+                "properties": {
+                  "section": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "table_heading": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "enforced_statuses": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "required_columns": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "identifier_columns": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "column",
+                        "kind"
+                      ],
+                      "properties": {
+                        "column": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "kind": {
+                          "enum": [
+                            "requirement",
+                            "criterion",
+                            "work-item"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "source_link_column": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "target_link_column": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "allowed_source_profile_ids": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "allowed_target_profile_ids": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "reciprocal_evidence": {
+                    "type": "boolean"
+                  },
+                  "allow_explicit_exclusion": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          },
+          "placeholder_policy": {
+            "enum": [
+              "forbidden",
+              "template-only"
             ]
           }
         }
-      ]
-    },
-    "program": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "prd",
-        "ad",
-        "tranches",
-        "followUps"
-      ],
-      "properties": {
-        "prd": {
-          "type": "string",
-          "pattern": "^[0-9]{4}$"
-        },
-        "ad": {
-          "type": "string",
-          "pattern": "^[0-9]{4}$"
-        },
-        "tranches": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "$ref": "#/$defs/programRelation"
-          }
-        },
-        "followUps": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/programFollowUp"
-          }
-        }
       }
     },
-    "programFollowUp": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "spec",
-        "order",
-        "state",
-        "reason",
-        "decision",
-        "evidenceMode"
-      ],
-      "properties": {
-        "spec": {
-          "type": "string",
-          "pattern": "^[0-9]{4}$"
-        },
-        "order": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "state": {
-          "enum": [
-            "draft",
-            "active",
-            "done",
-            "archived"
-          ]
-        },
-        "reason": {
-          "type": "string",
-          "minLength": 1
-        },
-        "decision": {
-          "type": "string",
-          "pattern": "^[0-9]{4}$"
-        },
-        "evidenceMode": {
-          "enum": [
-            "reciprocal-body",
-            "successor-record"
-          ]
-        }
-      }
-    },
-    "programLineage": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "lifecycleDomains",
-        "programs"
-      ],
-      "properties": {
-        "lifecycleDomains": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {
-            "$ref": "#/$defs/lifecycleDomain"
-          }
-        },
-        "programs": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "$ref": "#/$defs/program"
-          }
-        }
-      }
-    },
-    "programRelation": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "spec",
-        "order",
-        "state",
-        "reason",
-        "decision"
-      ],
-      "properties": {
-        "spec": {
-          "type": "string",
-          "pattern": "^[0-9]{4}$"
-        },
-        "order": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "state": {
-          "enum": [
-            "draft",
-            "active",
-            "done",
-            "archived"
-          ]
-        },
-        "reason": {
-          "type": "string",
-          "minLength": 1
-        },
-        "decision": {
-          "type": "string",
-          "pattern": "^[0-9]{4}$"
-        }
-      }
-    },
-    "relationships": {
-      "description": "Upstream profile sources and the traceability body contract.",
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "sourceProfileIds",
-        "bodyContract"
-      ],
-      "properties": {
-        "sourceProfileIds": {
-          "$ref": "#/$defs/stringArray"
-        },
-        "bodyContract": {
-          "oneOf": [
-            {
-              "type": "null"
-            },
-            {
-              "$ref": "#/$defs/bodyContract"
-            }
-          ]
-        }
-      }
-    },
-    "standaloneExecution": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "spec",
-        "plan",
-        "task",
-        "state",
-        "reason",
-        "decision",
-        "approvalMode"
-      ],
-      "properties": {
-        "spec": {
-          "type": "string",
-          "pattern": "^[0-9]{4}$"
-        },
-        "plan": {
-          "type": "string",
-          "pattern": "^(?:docs/03\\.specs|docs/98\\.archive/completed/03\\.specs)/[0-9]{4}-[A-Za-z0-9][A-Za-z0-9._-]*/plan\\.md$"
-        },
-        "task": {
-          "type": "string",
-          "pattern": "^(?:docs/03\\.specs|docs/98\\.archive/completed/03\\.specs)/[0-9]{4}-[A-Za-z0-9][A-Za-z0-9._-]*/(?:tasks\\.md|tasks/tsk-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md)$"
-        },
-        "state": {
-          "enum": [
-            "active",
-            "done",
-            "archived"
-          ]
-        },
-        "reason": {
-          "type": "string",
-          "minLength": 1
-        },
-        "decision": {
-          "type": "string",
-          "pattern": "^[0-9]{4}$"
-        },
-        "approvalMode": {
-          "const": "spec-body-record"
-        }
-      }
-    },
-    "stringArray": {
+    "lifecycle_domains": {
       "type": "array",
-      "uniqueItems": true,
+      "minItems": 1,
       "items": {
-        "type": "string"
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "family",
+          "profile_ids",
+          "states",
+          "transitions"
+        ],
+        "properties": {
+          "family": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+          },
+          "profile_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "states": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": {
+              "enum": [
+                "mutable",
+                "current",
+                "terminal"
+              ]
+            }
+          },
+          "transitions": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "string",
+                  "minLength": 1
+                }
+              ],
+              "items": false,
+              "minItems": 2,
+              "maxItems": 2
+            }
+          }
+        }
       }
     }
   }

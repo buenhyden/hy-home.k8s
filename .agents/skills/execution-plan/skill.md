@@ -1,6 +1,6 @@
 ---
-name: execution-plan
-description: Use when turning an approved Spec and architecture constraints into ordered, testable implementation work.
+name: "execution-plan"
+description: "Use when turning an approved Spec and architecture constraints into ordered, testable implementation work."
 ---
 
 # execution-plan

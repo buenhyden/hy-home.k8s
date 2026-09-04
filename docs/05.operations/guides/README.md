@@ -1,3 +1,12 @@
+---
+title: "05.operations/guides"
+version: "0.1.0"
+type: "common/readme-collection-index"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+layer: "operations"
+---
 # 05.operations/guides
 
 > 운영자와 개발자가 k3d/GitOps 작업을 이해하고 재현할 수 있도록 how-to 중심 가이드를 관리한다.

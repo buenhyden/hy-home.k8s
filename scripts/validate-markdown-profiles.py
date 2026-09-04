@@ -76,6 +76,7 @@ GENERIC_RESIDUE = (
     "Replace every placeholder with researched, topic-specific content.",
 )
 STARTER_PLACEHOLDER = re.compile(r"\[[^\]\n]+\]|\{[^}\n]+\}|<[^>\n]+>|#{3,}")
+MARKDOWN_TEMPLATE_PLACEHOLDER = re.compile(r"\{\{[A-Z][A-Z0-9_]*\}\}")
 TOKEN_BEARING_DEBT_RULES = frozenset(
     {
         "BODY-H2-DUPLICATE",
@@ -110,6 +111,7 @@ IMPLEMENTED_RULE_IDS = frozenset(
         "FM-KEY-ORDER",
         "FM-KEYSET",
         "FM-OWNER",
+        "FM-QUOTE",
         "FM-STATUS",
         "FM-TITLE",
         "FM-TITLE-PLACEHOLDER",
@@ -859,6 +861,47 @@ def _diagnostic(
     return Diagnostic(rule_id, path, profile.profile_id, expected, actual, OWNER)
 
 
+def _frontmatter_value_style_diagnostics(
+    text: str,
+    path: PurePosixPath,
+    profile: DocumentProfile,
+) -> list[Diagnostic]:
+    """Require canonical JSON-style quoting in current-generation metadata."""
+
+    if profile.mode == "evidence":
+        return []
+    lines = text.splitlines()
+    try:
+        closing_delimiter = lines.index("---", 1)
+    except ValueError:
+        return []
+
+    diagnostics: list[Diagnostic] = []
+    for line in lines[1:closing_delimiter]:
+        match = re.fullmatch(r"([A-Za-z_][A-Za-z0-9_-]*):[ \t]+(.+)", line)
+        if match is None:
+            continue
+        key, raw_value = match.groups()
+        try:
+            value = json.loads(raw_value)
+        except json.JSONDecodeError:
+            value = None
+        if isinstance(value, str) or (
+            isinstance(value, list) and all(isinstance(item, str) for item in value)
+        ):
+            continue
+        diagnostics.append(
+            _diagnostic(
+                "FM-QUOTE",
+                path,
+                profile,
+                "a double-quoted scalar or JSON string array",
+                key,
+            )
+        )
+    return diagnostics
+
+
 def _expected_type(profile: DocumentProfile) -> str:
     if profile.mode == "template" and profile.source_profile_ids:
         return profile.source_profile_ids[0]
@@ -884,7 +927,9 @@ def _validate_date(
     today: dt.date,
 ) -> None:
     text = _date_text(value)
-    if profile.mode == "template" and text == "YYYY-MM-DD":
+    if profile.mode == "template" and MARKDOWN_TEMPLATE_PLACEHOLDER.fullmatch(
+        text or ""
+    ):
         return
     try:
         parsed = dt.date.fromisoformat(text or "")
@@ -1023,13 +1068,15 @@ def _value_contract_diagnostics(
             )
             continue
 
-        date_placeholder = (
-            profile.mode == "template" and kind == "date" and value == "YYYY-MM-DD"
+        template_placeholder = (
+            profile.mode == "template"
+            and isinstance(value, str)
+            and MARKDOWN_TEMPLATE_PLACEHOLDER.fullmatch(value) is not None
         )
+        if template_placeholder:
+            continue
         if kind == "date":
             _validate_date(diagnostics, path, profile, key, value, today)
-        if date_placeholder:
-            continue
 
         if key == "type":
             expected = _expected_type(profile)
@@ -1207,6 +1254,8 @@ def _frontmatter_body(
         )
         return text
 
+    diagnostics.extend(_frontmatter_value_style_diagnostics(text, path, profile))
+
     required = tuple(contract.required)
     allowed = tuple(contract.allowed)
     missing = [key for key in required if key not in data]
@@ -1223,7 +1272,7 @@ def _frontmatter_body(
         )
     else:
         present_order = tuple(key for key in contract.order if key in data)
-        if tuple(keys) != present_order:
+        if profile.mode != "evidence" and tuple(keys) != present_order:
             diagnostics.append(
                 _diagnostic(
                     "FM-KEY-ORDER",
@@ -1397,6 +1446,8 @@ def validate_document_text(
 
     if mode not in {"compatibility", "strict"}:
         raise ValueError("mode must be compatibility or strict")
+    if path.parts[:2] == ("docs", "98.archive") and profile.profile_class != "archive":
+        return []
     effective_today = today or dt.datetime.now(ZoneInfo("Asia/Seoul")).date()
     diagnostics: list[Diagnostic] = []
     body = _frontmatter_body(

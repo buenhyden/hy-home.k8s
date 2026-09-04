@@ -1,6 +1,6 @@
 ---
-name: knowledge-map
-description: Use when auditing governance navigation, role/skill references, stage indexes, or current cross-links.
+name: "knowledge-map"
+description: "Use when auditing governance navigation, role/skill references, stage indexes, or current cross-links."
 ---
 
 # knowledge-map

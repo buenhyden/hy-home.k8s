@@ -1,11 +1,11 @@
 ---
-title: 'SDLC Document and AI Agent Governance Consolidation Technical Specification'
-version: "1.0.0"
-type: sdlc/spec
+title: "SDLC Document and AI Agent Governance Consolidation Technical Specification"
+version: "1.1.0"
+type: "sdlc/spec"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
 layer: "specs"
-status: active
-owner: platform
-updated: 2026-09-01
 artifact_id: "SPEC-0054"
 ---
 
@@ -53,6 +53,10 @@ ADR-0031 owns the current-corpus and validation-routing model; and
 [ADR-0032](../../02.architecture/decisions/0032-completed-and-terminal-document-retention.md)
 owns the retention model that replaces deletion as the disposition for
 completed, stale, and deprecated documents in WP-013 and WP-009.
+[proposed ADR-0033](../../02.architecture/decisions/0033-common-document-contract-v9.md)
+owns the scoped common-envelope, public Registry v9, template grammar, and
+generation-aware Archive validation amendment implemented by the current
+WP-013 change slice.
 
 Until WP-013 removes the parent-only compatibility roster, the current registry
 still requires these two historical compatibility statements:

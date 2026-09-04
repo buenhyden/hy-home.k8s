@@ -1,3 +1,12 @@
+---
+title: "01.requirements"
+version: "0.1.0"
+type: "common/readme-stage-index"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+layer: "requirements"
+---
 # 01.requirements
 
 > hy-home.k8s 플랫폼의 장기간 유지되는 solution-independent Requirement Package를 보관하는 canonical stage다.

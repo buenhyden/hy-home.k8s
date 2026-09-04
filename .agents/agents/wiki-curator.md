@@ -1,6 +1,6 @@
 ---
-name: wiki-curator
-description: Maintain knowledge navigation and canonical links without creating duplicate policy authority.
+name: "wiki-curator"
+description: "Maintain knowledge navigation and canonical links without creating duplicate policy authority."
 ---
 
 # wiki-curator

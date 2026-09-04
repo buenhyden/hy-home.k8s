@@ -1,11 +1,11 @@
 ---
-title: 'Task: Stage 90 disposition ledger'
+title: "Task: Stage 90 disposition ledger"
 version: "1.0.0"
-type: sdlc/task
+type: "sdlc/task"
+status: "done"
+owner: "platform"
+updated: "2026-08-31"
 layer: "specs"
-status: done
-owner: platform
-updated: 2026-08-31
 artifact_id: "SPEC-0054-TSK-0007"
 ---
 

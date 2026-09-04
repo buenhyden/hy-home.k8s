@@ -1,11 +1,11 @@
 ---
-title: 'SDLC Document and AI Agent Governance Consolidation Implementation Plan'
+title: "SDLC Document and AI Agent Governance Consolidation Implementation Plan"
 version: "1.0.0"
-type: sdlc/plan
+type: "sdlc/plan"
+status: "active"
+owner: "platform"
+updated: "2026-09-03"
 layer: "specs"
-status: active
-owner: platform
-updated: 2026-09-03
 artifact_id: "SPEC-0054-PLAN-0001"
 ---
 
@@ -1313,13 +1313,13 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
 - Eleven of the forty-three authored profiles governed no tracked document on
   2026-09-03, and the reason differs by profile. `operation/incident` and
   `operation/postmortem` must exist before the event they record.
-  `reference/audit`, `reference/data`, `readme/audit-pack`, and
-  `readme/data-pack` are empty by contract: the Stage 90 `audits/` and `data/`
+  `reference/audit`, `reference/data`, `common/readme-audit-pack`, and
+  `common/readme-data-pack` are empty by contract: the Stage 90 `audits/` and `data/`
   collections carry routers and are structural whether or not they hold a pack.
   Those six are deliberately empty, and the reduction records that so a later
   sweep does not read emptiness as disuse.
 - The remaining five are capacity for work this repository has never done.
-  `exception/native-contract-openapi`, `-graphql`, and `-protobuf` govern API
+  `common/native-contract-openapi`, `-graphql`, and `-protobuf` govern API
   contract forms, and the only OpenAPI, GraphQL, or Protobuf artifacts tracked
   anywhere are those three template files themselves; this repository declares
   a Kubernetes GitOps platform and no service API. `sdlc/data-model` is the

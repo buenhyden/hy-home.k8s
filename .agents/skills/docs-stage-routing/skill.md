@@ -1,6 +1,6 @@
 ---
-name: docs-stage-routing
-description: Use when selecting the canonical owner and template for an authored document or rejecting parallel document trees.
+name: "docs-stage-routing"
+description: "Use when selecting the canonical owner and template for an authored document or rejecting parallel document trees."
 ---
 
 # docs-stage-routing

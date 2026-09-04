@@ -1,14 +1,15 @@
 ---
-title: "{Migration Title}"
-version: "#.#.#"
-type: archive/migration
-status: draft
-owner: '{owner}'
-updated: YYYY-MM-DD
-artifact_id: "MIG-####"
+title: "{{TITLE}}"
+version: "0.1.0"
+type: "archive/migration"
+status: "draft"
+owner: "{{OWNER}}"
+updated: "{{YYYY_MM_DD}}"
+layer: "archive"
+artifact_id: "{{ARTIFACT_ID}}"
 ---
 
-# MIG-####: {Migration Title}
+# {{ARTIFACT_ID}}: {{MIGRATION_TITLE}}
 
 ## Overview
 
@@ -28,7 +29,7 @@ artifact_id: "MIG-####"
     "artifact_id": null,
     "action": "merged",
     "replacement": "docs/00.agent-governance/policies/<current-owner>.md",
-    "source_commit": "0000000000000000000000000000000000000000",
+    "source_commit": "{{GIT_OID}}",
     "source_blob": "3333333333333333333333333333333333333333",
     "content_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
     "reason": "Reviewed authority consolidation"

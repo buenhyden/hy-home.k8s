@@ -1,11 +1,11 @@
 ---
-title: 'Workspace Document Assurance Operating Model Architecture Description'
+title: "Workspace Document Assurance Operating Model Architecture Description"
 version: "1.0.0"
-type: sdlc/architecture-description
+type: "sdlc/architecture-description"
+status: "active"
+owner: "platform"
+updated: "2026-08-29"
 layer: "architecture"
-status: active
-owner: platform
-updated: 2026-08-29
 artifact_id: "AD-0008"
 ---
 

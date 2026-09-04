@@ -1,6 +1,6 @@
 ---
-name: incident-responder
-description: Triage incidents, bound impact, and produce evidence-based response and corrective-action guidance.
+name: "incident-responder"
+description: "Triage incidents, bound impact, and produce evidence-based response and corrective-action guidance."
 ---
 
 # incident-responder

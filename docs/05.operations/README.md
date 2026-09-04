@@ -1,3 +1,12 @@
+---
+title: "05.operations"
+version: "0.1.0"
+type: "common/readme-stage-index"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+layer: "operations"
+---
 # 05.operations
 
 > 안정 상태 운영 지식, 정책, 런북, 사고 기록을 분류하는 operations stage다.
@@ -75,6 +84,16 @@ high-risk command 예시를 스캔해 boundary marker가 없는 경우 실패한
 - 아키텍처 결정 기록
 - 기능 구현 상세 명세
 - 임시 scratch 로그
+- 저장소-local Release Record; 현재 release 사실은 Task/Git과 외부 tag·CI·provider
+  evidence가 소유한다.
+
+### Release Evidence Boundary
+
+반복 가능한 배포 절차가 필요하면 Runbook이 소유한다. 특정 release의 로컬 변경과
+검증은 owning Task와 Git이 소유하고, tag, hosted CI, GitHub Release,
+provider/runtime, live verification은 외부 evidence로 링크한다. 별도
+"operation/release" 문서는 현재 채택하지 않으며, audit consumer가 입증될 때 새
+ADR, profile, lifecycle, template을 함께 검토한다.
 
 ## Document Index
 

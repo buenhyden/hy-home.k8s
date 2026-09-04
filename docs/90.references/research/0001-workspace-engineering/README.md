@@ -1,3 +1,12 @@
+---
+title: "Workspace Engineering Research Pack"
+version: "0.1.0"
+type: "common/readme-research-pack"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+layer: "references"
+---
 # Workspace Engineering Research Pack
 
 ## Overview

@@ -879,9 +879,10 @@ def _load_owners(
             reader.root_path, contract, raw_schema=schema
         )
         templates = frozenset(
-            PurePosixPath(profile["template"])
+            PurePosixPath(profile["template_source"])
             for profile in document_registry.get("profiles", [])
-            if isinstance(profile, dict) and isinstance(profile.get("template"), str)
+            if isinstance(profile, dict)
+            and isinstance(profile.get("template_source"), str)
         )
         for template in templates:
             _require_candidate(reader, candidate_set, template.as_posix())

@@ -29,23 +29,31 @@ class MigrationLifecycleTest(unittest.TestCase):
         )
         registry["profiles"].append(profile)
         navigation = next(
-            p for p in canonical["profiles"] if p["id"] == "readme/collection-index"
+            p
+            for p in canonical["profiles"]
+            if p["id"] == "common/readme-collection-index"
         )
         registry["profiles"].append(navigation)
         domain = next(
             d
-            for d in registry["programLineage"]["lifecycleDomains"]
+            for d in registry["lifecycle_domains"]
             if d["family"] == "governance-guide-policy-runbook"
         )
-        domain["profileIds"].append(profile["id"])
+        domain["profile_ids"].append(profile["id"])
         self.stage(registry_path, json.dumps(registry).encode())
-        self.stage(profile["template"], (ROOT / profile["template"]).read_bytes())
-        self.stage(navigation["template"], (ROOT / navigation["template"]).read_bytes())
+        self.stage(
+            profile["template_source"],
+            (ROOT / profile["template_source"]).read_bytes(),
+        )
+        self.stage(
+            navigation["template_source"],
+            (ROOT / navigation["template_source"]).read_bytes(),
+        )
         self.git.run("rm", "--quiet", "-f", "--", self.target, self.path)
         self.payload = (
-            "---\ntitle: 'Policy'\nversion: \"1.0.0\"\n"
-            "type: governance/contract\n"
-            "status: active\nowner: platform\nupdated: 2026-08-28\n---\n\n"
+            '---\ntitle: "Policy"\nversion: "1.0.0"\n'
+            'type: "governance/contract"\n'
+            'status: "active"\nowner: "platform"\nupdated: "2026-08-28"\n---\n\n'
             "# Policy\n\n"
             + "".join(
                 f"## {heading}\n\nReviewed policy responsibility.\n\n"
@@ -131,10 +139,10 @@ class MigrationLifecycleTest(unittest.TestCase):
     def test_proposed_executable_patterns_are_rejected_before_evaluation(self):
         original = (self.root / "docs/99.templates/registry.json").read_bytes()
         for profile_id, field in (
-            ("governance/contract", "pathPattern"),
-            ("sdlc/data-model", "pathPattern"),
-            ("archive/migration", "artifactIdPattern"),
-            ("sdlc/data-model", "artifactIdPattern"),
+            ("governance/contract", "path_pattern"),
+            ("sdlc/data-model", "path_pattern"),
+            ("archive/migration", "artifact_id_pattern"),
+            ("sdlc/data-model", "artifact_id_pattern"),
         ):
             with self.subTest(profile=profile_id, field=field):
                 raw = json.loads(original)
@@ -166,8 +174,8 @@ class MigrationLifecycleTest(unittest.TestCase):
         trusted = contracts.load_registry(self.root)
         original = (self.root / contracts.REGISTRY_PATH).read_bytes()
         for change in (
-            "pathPattern",
-            "artifactIdPattern",
+            "path_pattern",
+            "artifact_id_pattern",
             "alias",
             "duplicate",
             "missing",
@@ -178,7 +186,7 @@ class MigrationLifecycleTest(unittest.TestCase):
                 profile = next(
                     p for p in raw["profiles"] if p["id"] == "sdlc/data-model"
                 )
-                if change in {"pathPattern", "artifactIdPattern"}:
+                if change in {"path_pattern", "artifact_id_pattern"}:
                     profile[change] = "^(.+)+UNREACHABLE$"
                 elif change == "alias":
                     profile["id"] = "common/proposal-only"
@@ -210,38 +218,35 @@ class MigrationLifecycleTest(unittest.TestCase):
         original = (self.root / contracts.REGISTRY_PATH).read_bytes()
         raw = json.loads(original)
         profile = next(p for p in raw["profiles"] if p["id"] == "sdlc/data-model")
-        profile["pathPattern"] = "^docs/no-policy-owner\\.md$"
+        profile["path_pattern"] = "^docs/no-policy-owner\\.md$"
         changed = contracts.validate_registry(self.root, raw)
         self.assertEqual(
             next(
                 p for p in changed.profiles if p.profile_id == profile["id"]
             ).path_pattern,
-            profile["pathPattern"],
+            profile["path_pattern"],
         )
         contracts.validate_registry(
             self.root, json.loads(original), trusted_registry=trusted
         )
-        for profile_id, add_null in (
-            ("readme/collection-index", True),
-            ("governance/contract", False),
-        ):
-            with self.subTest(profile=profile_id):
-                raw = json.loads(original)
-                profile = next(p for p in raw["profiles"] if p["id"] == profile_id)
-                if add_null:
-                    profile["artifactIdPattern"] = None
-                else:
-                    del profile["artifactIdPattern"]
-                with self.assertRaises(contracts.DocumentContractError) as caught:
-                    contracts.validate_registry(
-                        self.root, raw, trusted_registry=trusted
-                    )
-                self.assertTrue(
-                    all(
-                        d.rule_id == "REGISTRY_SCHEMA"
-                        for d in caught.exception.diagnostics
-                    )
-                )
+        raw = json.loads(original)
+        router = next(
+            p for p in raw["profiles"] if p["id"] == "common/readme-collection-index"
+        )
+        self.assertIsNone(router["artifact_id_pattern"])
+        contracts.validate_registry(self.root, raw, trusted_registry=trusted)
+
+        raw = json.loads(original)
+        profile = next(p for p in raw["profiles"] if p["id"] == "governance/contract")
+        del profile["artifact_id_pattern"]
+        with self.assertRaises(contracts.DocumentContractError) as caught:
+            contracts.validate_registry(self.root, raw, trusted_registry=trusted)
+        self.assertTrue(
+            all(
+                diagnostic.rule_id == "REGISTRY_SCHEMA"
+                for diagnostic in caught.exception.diagnostics
+            )
+        )
 
     def test_staged_proven_sealed_publication_and_current_owner_rehome(self):
         self.assert_pass()
@@ -322,8 +327,8 @@ class MigrationLifecycleTest(unittest.TestCase):
         path = "docs/99.templates/registry.json"
         original = (self.root / path).read_bytes()
         for profile_id, field, value in (
-            ("archive/migration", "pathPattern", "^docs/never-matches\\.md$"),
-            ("governance/contract", "pathPattern", "^docs/never-matches\\.md$"),
+            ("archive/migration", "path_pattern", "^docs/never-matches\\.md$"),
+            ("governance/contract", "path_pattern", "^docs/never-matches\\.md$"),
             ("governance/contract", "mode", "classification-only"),
         ):
             with self.subTest(profile=profile_id, field=field):
@@ -347,7 +352,7 @@ class MigrationLifecycleTest(unittest.TestCase):
         original = (self.root / registry_path).read_bytes()
         raw = json.loads(original)
         next(p for p in raw["profiles"] if p["id"] == "governance/contract")[
-            "template"
+            "template_source"
         ] = path
         self.stage(registry_path, json.dumps(raw).encode())
         (self.root / path).parent.mkdir(parents=True, exist_ok=True)
@@ -408,11 +413,11 @@ class MigrationLifecycleTest(unittest.TestCase):
     def test_target_form_state_and_profile_fail_without_path_waivers(self):
         for content, rule in (
             (
-                self.payload.replace(b"status: active", b"status: retired"),
+                self.payload.replace(b'status: "active"', b'status: "retired"'),
                 "LIFECYCLE-CREATE",
             ),
             (
-                self.payload.replace(b"governance/contract", b"sdlc/spec"),
+                self.payload.replace(b'"governance/contract"', b'"sdlc/spec"'),
                 "LIFECYCLE-STATE",
             ),
             (

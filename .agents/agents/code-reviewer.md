@@ -1,6 +1,6 @@
 ---
-name: code-reviewer
-description: Review repository changes for correctness, maintainability, regression risk, and policy alignment.
+name: "code-reviewer"
+description: "Review repository changes for correctness, maintainability, regression risk, and policy alignment."
 ---
 
 # code-reviewer

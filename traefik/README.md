@@ -1,3 +1,11 @@
+---
+title: "traefik"
+version: "0.1.0"
+type: "common/readme-implementation"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+---
 # traefik
 
 > k3d 로컬 환경에서 ingress-nginx 뒤의 플랫폼 UI를 보조 노출하기 위한 Traefik dynamic config 예시를 관리한다.

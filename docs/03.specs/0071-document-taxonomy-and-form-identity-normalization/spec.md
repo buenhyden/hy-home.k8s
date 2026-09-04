@@ -1,11 +1,11 @@
 ---
-title: 'Document Taxonomy and Form Identity Normalization Technical Specification'
+title: "Document Taxonomy and Form Identity Normalization Technical Specification"
 version: "1.0.0"
-type: sdlc/spec
+type: "sdlc/spec"
+status: "draft"
+owner: "platform"
+updated: "2026-09-02"
 layer: "specs"
-status: draft
-owner: platform
-updated: 2026-09-02
 artifact_id: "SPEC-0071"
 ---
 
@@ -164,8 +164,8 @@ name — and three are `moved` with identical bytes into
 The Codex form is the one substantive change. Its predecessor was Markdown while
 `.codex/agents/*.toml` is TOML, so no author could copy the form into the
 destination without rewriting it. The replacement is TOML, and a new
-`exception/codex-agent-binding` profile binds it to the path the Codex runtime
-actually reads. `exception/local-agent-asset` — provider-neutral `.agents/**`
+`common/codex-agent-binding` profile binds it to the path the Codex runtime
+actually reads. `common/local-agent-asset` — provider-neutral `.agents/**`
 — keeps no form, because a neutral asset is not a provider binding.
 
 ### Enforcement

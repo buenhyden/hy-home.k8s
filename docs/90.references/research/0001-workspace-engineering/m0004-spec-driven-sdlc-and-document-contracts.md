@@ -1,11 +1,11 @@
 ---
-title: 'Reference: Spec-Driven SDLC and Document Contracts'
+title: "Reference: Spec-Driven SDLC and Document Contracts"
 version: "1.0.0"
-type: reference/research
+type: "reference/research"
+status: "published"
+owner: "platform"
+updated: "2026-08-31"
 layer: "references"
-status: published
-owner: platform
-updated: 2026-08-31
 artifact_id: "RES-0001-m0004"
 ---
 

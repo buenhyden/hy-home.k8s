@@ -1,11 +1,11 @@
 ---
-title: 'Document Taxonomy Consolidation Architecture Description'
+title: "Document Taxonomy Consolidation Architecture Description"
 version: "1.0.0"
-type: sdlc/architecture-description
+type: "sdlc/architecture-description"
+status: "active"
+owner: "platform"
+updated: "2026-09-01"
 layer: "architecture"
-status: active
-owner: platform
-updated: 2026-09-01
 artifact_id: "AD-0011"
 ---
 

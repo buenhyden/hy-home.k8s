@@ -1,10 +1,10 @@
 ---
-title: 'Context and Memory Policy'
+title: "Context and Memory Policy"
 version: "1.0.0"
-type: governance/rule
-status: active
-owner: platform
-updated: 2026-08-31
+type: "governance/rule"
+status: "active"
+owner: "platform"
+updated: "2026-08-31"
 ---
 
 # Context and Memory Policy

@@ -1,11 +1,11 @@
 ---
-title: 'Program Follow-up Lineage Semantics'
+title: "Program Follow-up Lineage Semantics"
 version: "1.0.0"
-type: sdlc/architecture-decision
+type: "sdlc/architecture-decision"
+status: "superseded"
+owner: "platform"
+updated: "2026-09-01"
 layer: "architecture"
-status: superseded
-owner: platform
-updated: 2026-09-01
 artifact_id: "ADR-0017"
 superseded_by: "ADR-0031"
 ---

@@ -1,11 +1,11 @@
 ---
-title: 'Current Local GitOps Platform Contract'
+title: "Current Local GitOps Platform Contract"
 version: "1.0.0"
-type: sdlc/architecture-decision
+type: "sdlc/architecture-decision"
+status: "accepted"
+owner: "platform"
+updated: "2026-07-13"
 layer: "architecture"
-status: accepted
-owner: platform
-updated: 2026-07-13
 artifact_id: "ADR-0014"
 ---
 

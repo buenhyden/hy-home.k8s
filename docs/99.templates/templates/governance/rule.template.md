@@ -1,10 +1,10 @@
 ---
-title: '{Rule Topic} Policy'
-version: "#.#.#"
-type: governance/rule
-status: draft
-owner: '{owner}'
-updated: YYYY-MM-DD
+title: "{{TITLE}}"
+version: "0.1.0"
+type: "governance/rule"
+status: "draft"
+owner: "{{OWNER}}"
+updated: "{{YYYY_MM_DD}}"
 ---
 
 # [Rule Topic] Policy

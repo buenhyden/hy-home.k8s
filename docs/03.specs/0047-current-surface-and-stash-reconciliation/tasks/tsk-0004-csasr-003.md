@@ -1,11 +1,11 @@
 ---
 title: "VAL-CSASR-004, VAL-CSASR-006, VAL-CSASR-007"
 version: "1.0.0"
-type: sdlc/task
+type: "sdlc/task"
+status: "queued"
+owner: "platform"
+updated: "2026-08-07"
 layer: "specs"
-status: queued
-owner: platform
-updated: 2026-08-07
 artifact_id: "SPEC-0047-TSK-0004"
 ---
 

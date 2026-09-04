@@ -1,6 +1,6 @@
 ---
-name: network-reviewer
-description: Review cluster networking, ingress, DNS, policy, and isolation behavior from repository evidence.
+name: "network-reviewer"
+description: "Review cluster networking, ingress, DNS, policy, and isolation behavior from repository evidence."
 ---
 
 # network-reviewer

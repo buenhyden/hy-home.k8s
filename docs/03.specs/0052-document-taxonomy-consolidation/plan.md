@@ -1,11 +1,11 @@
 ---
-title: 'Document Taxonomy Consolidation Implementation Plan'
+title: "Document Taxonomy Consolidation Implementation Plan"
 version: "1.0.0"
-type: sdlc/plan
+type: "sdlc/plan"
+status: "active"
+owner: "platform"
+updated: "2026-08-12"
 layer: "specs"
-status: active
-owner: platform
-updated: 2026-08-12
 artifact_id: "SPEC-0052-PLAN-0001"
 ---
 
@@ -219,7 +219,7 @@ is performed or claimed.
 - `scripts/document-taxonomy-migration.json` — temporary reviewed manifest;
   exactly 132 source documents, 82 `move-current` entries and 50
   `archive-unique` entries. While tracked it selects the temporary closed
-  `native/document-migration-manifest` profile and `transition` lifecycle;
+  `common/document-migration-manifest` profile and `transition` lifecycle;
   terminal route state requires its absence. WORK-114 deletes it and removes
   that temporary profile atomically.
 - `scripts/migrate-document-work-units.py` — temporary fail-closed manifest

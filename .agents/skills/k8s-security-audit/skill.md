@@ -1,5 +1,5 @@
 ---
-name: k8s-security-audit
+name: "k8s-security-audit"
 description: "Use when auditing Kubernetes RBAC, NetworkPolicy gaps, Secret handling, container security context, image supply chain, CIS benchmark posture, or related cluster security hardening. Real-time intrusion detection and WAF configuration are outside this skill's scope."
 ---
 

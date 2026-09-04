@@ -1,6 +1,6 @@
 ---
-name: k8s-implementer
-description: Implement explicitly scoped Kubernetes and GitOps changes and validate the affected reconciliation surface.
+name: "k8s-implementer"
+description: "Implement explicitly scoped Kubernetes and GitOps changes and validate the affected reconciliation surface."
 ---
 
 # k8s-implementer

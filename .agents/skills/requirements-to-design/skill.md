@@ -1,6 +1,6 @@
 ---
-name: requirements-to-design
-description: Use when tracing Requirement Package members to relevant Architecture Descriptions, ADRs, and Spec contracts.
+name: "requirements-to-design"
+description: "Use when tracing Requirement Package members to relevant Architecture Descriptions, ADRs, and Spec contracts."
 ---
 
 # requirements-to-design

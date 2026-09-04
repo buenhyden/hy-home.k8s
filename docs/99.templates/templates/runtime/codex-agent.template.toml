@@ -2,10 +2,10 @@
 # carries only provider-owned keys: the file name is the role name, and the
 # shared responsibility stays in `.agents/`.
 description = "One sentence naming the bounded responsibility this role executes."
-model = "{codex-model-id}"
-model_reasoning_effort = "{low|medium|high|xhigh}"
+model = "__CODEX_MODEL_ID__"
+model_reasoning_effort = "__LOW_MEDIUM_HIGH_XHIGH__"
 developer_instructions = """
-# {role-name}
+# __ROLE_NAME__
 
 ## Runtime Bootstrap
 

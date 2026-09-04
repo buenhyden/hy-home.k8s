@@ -1,4 +1,13 @@
-# {Audit Pack Name}
+---
+title: "{{TITLE}}"
+version: "0.1.0"
+type: "common/readme-audit-pack"
+status: "active"
+owner: "{{OWNER}}"
+updated: "{{YYYY_MM_DD}}"
+layer: "{{LAYER}}"
+---
+# {{AUDIT_PACK_NAME}}
 
 ## Overview
 

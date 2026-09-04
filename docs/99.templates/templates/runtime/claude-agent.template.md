@@ -1,11 +1,11 @@
 ---
-name: "{role-name}"
+name: "__ROLE_NAME__"
 description: "One sentence naming the bounded responsibility this role executes."
-model: "{claude-model-id}"
-tools: "{Read, Grep, Glob}"
+model: "__CLAUDE_MODEL_ID__"
+tools: "__READ_GREP_GLOB__"
 ---
 
-# {role-name}
+# __ROLE_NAME__
 
 ## Runtime Bootstrap
 

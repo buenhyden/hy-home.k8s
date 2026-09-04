@@ -1,10 +1,10 @@
 ---
-title: 'Software Development Lifecycle'
-version: "1.0.0"
-type: governance/contract
-status: active
-owner: platform
-updated: 2026-08-20
+title: "Software Development Lifecycle"
+version: "1.1.0"
+type: "governance/contract"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
 ---
 
 # Software Development Lifecycle
@@ -25,12 +25,19 @@ agent-roster authority is outside Stage 99 and is not defined here.
 
 ## Governance Context
 
-Work begins with repository evidence and a testable Requirement Package or an
-approved standalone lineage. Architecture Descriptions record current
-structure; ADRs record durable choices. A Stage 03 work unit owns its Spec,
-Plan, and independently reviewable Tasks. Stable operating knowledge moves to
-Stage 05, reusable evidence to Stage 90, and only bounded recovery indexes to
-Stage 98.
+Work begins with repository evidence and a testable Requirement Package or a
+directly approved package-local work unit. Architecture Descriptions record
+current structure; ADRs record durable choices. A Stage 03 work unit owns its
+Spec, Plan, and independently reviewable Tasks. Stable operating knowledge
+moves to Stage 05, reusable evidence to Stage 90, and historical recovery
+evidence to Stage 98.
+
+The common flow is Clarify → Spec → Plan → Tasks → cross-artifact analysis →
+Implement → Verify → promote durable meaning → Complete or Archive. GitHub
+Spec Kit informs that flow without replacing this repository's per-Task
+records. Diátaxis informs Operations reader intent, C4 and arc42 inform
+proportional Architecture Description views, ADR practice preserves decision
+lineage, and Google SRE informs factual incidents and blameless postmortems.
 
 ## Current Contract
 
@@ -43,6 +50,10 @@ Stage 98.
    preserve incident learning in Incident and Postmortem records.
 5. Supersede, retire, withdraw, or seal documents only through registry-owned
    lifecycle edges and the applicable reciprocal or recovery evidence.
+6. Keep release procedure in a Runbook when one is needed, local execution
+   evidence in Tasks and Git, and tag, hosted CI, provider, or live release
+   evidence external. Do not create a Release Record without a successor ADR,
+   profile, lifecycle, template, and demonstrated audit consumer.
 
 The terminal Stage 04 slot remains unused. Root `DESIGN.md` remains the UI and
 design-system authority, not a Stage 03 technical-design artifact.

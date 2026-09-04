@@ -1,11 +1,11 @@
 ---
-title: 'Workspace Agent Governance Platform Requirement Package'
+title: "Workspace Agent Governance Platform Requirement Package"
 version: "1.0.0"
-type: sdlc/requirement
+type: "sdlc/requirement"
+status: "active"
+owner: "platform"
+updated: "2026-08-22"
 layer: "requirements"
-status: active
-owner: platform
-updated: 2026-08-22
 artifact_id: "REQ-0003"
 ---
 

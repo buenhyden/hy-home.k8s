@@ -1,10 +1,10 @@
 ---
-title: 'Quality and Evidence Policy'
+title: "Quality and Evidence Policy"
 version: "1.0.0"
-type: governance/rule
-status: active
-owner: platform
-updated: 2026-08-28
+type: "governance/rule"
+status: "active"
+owner: "platform"
+updated: "2026-08-28"
 ---
 
 # Quality and Evidence Policy

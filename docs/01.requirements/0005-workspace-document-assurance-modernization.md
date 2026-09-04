@@ -1,11 +1,11 @@
 ---
-title: 'Workspace Document Assurance Modernization Requirement Package'
+title: "Workspace Document Assurance Modernization Requirement Package"
 version: "1.0.0"
-type: sdlc/requirement
+type: "sdlc/requirement"
+status: "superseded"
+owner: "platform"
+updated: "2026-07-14"
 layer: "requirements"
-status: superseded
-owner: platform
-updated: 2026-07-14
 artifact_id: "REQ-0005"
 superseded_by: "REQ-0008"
 ---

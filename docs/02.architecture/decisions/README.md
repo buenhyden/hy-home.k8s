@@ -1,3 +1,12 @@
+---
+title: "02.architecture/decisions (ADR)"
+version: "0.1.0"
+type: "common/readme-collection-index"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+layer: "architecture"
+---
 # 02.architecture/decisions (ADR)
 
 > 아키텍처 선택의 맥락, 대안, 결과를 보존하는 ADR stage다.
@@ -63,6 +72,8 @@
 ├── 0029-mutable-target-revision-retention.md
 ├── 0030-authority-first-sdlc-and-agent-governance-convergence.md
 ├── 0031-current-corpus-retention-and-validation-ownership.md
+├── 0032-completed-and-terminal-document-retention.md
+├── 0033-common-document-contract-v9.md
 └── README.md
 ```
 
@@ -113,6 +124,8 @@
 | [`./0029-mutable-target-revision-retention.md`](./0029-mutable-target-revision-retention.md) | 가변 targetRevision 유지 결정 | Accepted | ADR-0026이 선호 통제로 남긴 commit-SHA 핀을 기각한다. 12개 선언은 모두 이 저장소 자신을 가리키며 외부 차트는 이미 버전 핀이다. 핀은 하드닝이 아니라 자동 reconcile을 수동 promotion으로 바꾸는 배포 모델 변경이고, 핀 커밋은 자기 자신을 참조할 수 없어 구조적으로 한 커밋 뒤처진다. 운영자 추가·환경 추가·force-push 워크플로 도입 시 재검토한다. |
 | [`./0030-authority-first-sdlc-and-agent-governance-convergence.md`](./0030-authority-first-sdlc-and-agent-governance-convergence.md) | Authority-first SDLC document, agent governance, Archive, template, and script convergence decision | Accepted | Spec 0054의 terminal authority다. ADR-0031이 validator test 위치와 mandatory 800-line exception 조항만 범위 한정 개정하며, 나머지 topology와 lifecycle 상태는 유지한다. |
 | [`./0031-current-corpus-retention-and-validation-ownership.md`](./0031-current-corpus-retention-and-validation-ownership.md) | Current corpus retention, package-local execution lineage, and validation routing ownership decision | Accepted | ADR-0016/0017/0020/0021/0022의 current instance-roster 및 validation-routing 권위를 대체하고 ADR-0030의 두 validation-layout 조항만 lifecycle supersession 없이 범위 한정 개정한다. Spec 0054가 통합 수용을, Spec 0066이 위임된 validation-tooling 실행을 소유한다. |
+| [`./0032-completed-and-terminal-document-retention.md`](./0032-completed-and-terminal-document-retention.md) | Terminal document retention and Archive taxonomy decision | Proposed | Terminal governed documents의 retention과 Stage 98 completed/superseded/tombstone 분류를 검토 중이다. |
+| [`./0033-common-document-contract-v9.md`](./0033-common-document-contract-v9.md) | Common document contract v9 and governed router envelope decision | Proposed | v9 public model, README envelope, placeholder grammar, external release evidence, frozen Archive generation을 검토 중이다. |
 
 ## Related Documents
 

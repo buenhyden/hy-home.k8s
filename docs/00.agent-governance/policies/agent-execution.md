@@ -1,10 +1,10 @@
 ---
-title: 'Agent Execution Policy'
+title: "Agent Execution Policy"
 version: "1.0.0"
-type: governance/rule
-status: active
-owner: platform
-updated: 2026-08-28
+type: "governance/rule"
+status: "active"
+owner: "platform"
+updated: "2026-08-28"
 ---
 
 # Agent Execution Policy

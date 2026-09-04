@@ -56,7 +56,7 @@ from document_lifecycle import (  # noqa: E402
 
 LEGACY_PROFILE = "content/archive-tombstone"
 LEGACY_TEMPLATE_PROFILE = "template/content/archive-tombstone"
-NEW_TEMPLATE_PROFILE = "template/archive/tombstone"
+NEW_TEMPLATE_PROFILE = "common/template-archive-tombstone"
 LEGACY_TEMPLATE = PurePosixPath(
     "docs/99.templates/templates/common/archive-tombstone.template.md"
 )
@@ -630,7 +630,7 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
         )
         lifecycle = next(
             domain
-            for domain in registry["programLineage"]["lifecycleDomains"]
+            for domain in registry["lifecycle_domains"]
             if domain["family"] == "requirement-architecture"
         )
         self.assertTrue(
@@ -663,8 +663,8 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
         raw = json.loads(
             (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
         )
-        self.assertIn("lifecycleDomains", raw["programLineage"])
-        self.assertNotIn("transitionLifecycleContracts", raw["programLineage"])
+        self.assertIn("lifecycle_domains", raw)
+        self.assertNotIn("transition_lifecycle_contracts", raw)
 
     def _retired_wp004b_committed_document_authority_cutover_is_finitely_admitted(self):
         base_commit, target_commit, base, proposed = self._wp004b_committed_transition()
@@ -1017,7 +1017,7 @@ class DocumentAuthorityLifecycleTests(unittest.TestCase):
         )
         created = lifecycle.document_from_text(registry, path, "# Fixture\n")
 
-        self.assertEqual(created.profile_id, "readme/research-pack")
+        self.assertEqual(created.profile_id, "common/readme-research-pack")
 
         actual = compare_lifecycle(
             registry,
@@ -1097,9 +1097,15 @@ artifact_id: "AUD-0001-m0001"
         registry = load_registry(ROOT)
         old = PurePosixPath("docs/99.templates/templates/references/x-old.template.md")
         new = PurePosixPath("docs/99.templates/templates/references/audit.template.md")
-        base = {old: lifecycle.LifecycleDocument(old, "template/reference/audit", None)}
+        base = {
+            old: lifecycle.LifecycleDocument(
+                old, "common/template-reference-audit", None
+            )
+        }
         proposed = {
-            new: lifecycle.LifecycleDocument(new, "template/reference/audit", None)
+            new: lifecycle.LifecycleDocument(
+                new, "common/template-reference-audit", None
+            )
         }
         rename = (lifecycle.LifecycleRename(old_path=old, new_path=new),)
 
@@ -1131,7 +1137,7 @@ artifact_id: "AUD-0001-m0001"
         path = PurePosixPath("docs/03.specs/README.md")
         created = lifecycle.document_from_text(registry, path, "# Fixture\n")
 
-        self.assertEqual(created.profile_id, "readme/stage-index")
+        self.assertEqual(created.profile_id, "common/readme-stage-index")
         self.assertEqual(
             compare_lifecycle(registry, {}, {path: created}, base_mode="staged"),
             (),
@@ -1674,9 +1680,9 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
                 {
                     "sdlc/spec",
                     "sdlc/data-model",
-                    "exception/native-contract-openapi",
-                    "exception/native-contract-graphql",
-                    "exception/native-contract-protobuf",
+                    "common/native-contract-openapi",
+                    "common/native-contract-graphql",
+                    "common/native-contract-protobuf",
                 }
             ),
         )
@@ -1713,7 +1719,7 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
         readme = next(
             profile
             for profile in registry.profiles
-            if profile.profile_id == "readme/repository"
+            if profile.profile_id == "common/readme-repository"
         )
         self.assertTrue(lifecycle._stateful(requirement))
         self.assertFalse(lifecycle._stateful(readme))
@@ -1806,7 +1812,7 @@ class TerminalLifecycleDomainTests(unittest.TestCase):
             for profile in registry.profiles
             if profile.lifecycle_domain is None
         ]
-        self.assertIn("readme/stage-index", stateless)
+        self.assertIn("common/readme-stage-index", stateless)
         for profile_id in stateless:
             with self.subTest(profile=profile_id):
                 self.assertEqual(

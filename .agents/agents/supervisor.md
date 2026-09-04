@@ -1,6 +1,6 @@
 ---
-name: supervisor
-description: Route bounded work, preserve approval and ownership boundaries, and reconcile final evidence.
+name: "supervisor"
+description: "Route bounded work, preserve approval and ownership boundaries, and reconcile final evidence."
 ---
 
 # supervisor

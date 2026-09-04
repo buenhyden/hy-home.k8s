@@ -1,11 +1,11 @@
 ---
-title: 'Full-body Archive Record and Retention'
+title: "Full-body Archive Record and Retention"
 version: "1.0.0"
-type: sdlc/architecture-decision
+type: "sdlc/architecture-decision"
+status: "superseded"
+owner: "platform"
+updated: "2026-08-11"
 layer: "architecture"
-status: superseded
-owner: platform
-updated: 2026-08-11
 artifact_id: "ADR-0018"
 superseded_by: "ADR-0030"
 ---

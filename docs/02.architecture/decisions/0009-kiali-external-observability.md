@@ -1,11 +1,11 @@
 ---
-title: 'Kiali with External Observability Stack'
+title: "Kiali with External Observability Stack"
 version: "1.0.0"
-type: sdlc/architecture-decision
+type: "sdlc/architecture-decision"
+status: "accepted"
+owner: "platform"
+updated: "2026-05-18"
 layer: "architecture"
-status: accepted
-owner: platform
-updated: 2026-05-18
 artifact_id: "ADR-0009"
 ---
 

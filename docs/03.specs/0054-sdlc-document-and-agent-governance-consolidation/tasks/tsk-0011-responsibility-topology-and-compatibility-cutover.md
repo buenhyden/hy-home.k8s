@@ -1,11 +1,11 @@
 ---
-title: 'Task: Responsibility topology and compatibility cutover'
+title: "Task: Responsibility topology and compatibility cutover"
 version: "1.0.0"
-type: sdlc/task
+type: "sdlc/task"
+status: "done"
+owner: "platform"
+updated: "2026-09-03"
 layer: "specs"
-status: done
-owner: platform
-updated: 2026-09-03
 artifact_id: "SPEC-0054-TSK-0011"
 ---
 

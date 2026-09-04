@@ -1,6 +1,6 @@
 ---
-name: docs-researcher
-description: Collect and classify source evidence for documentation without claiming policy authority.
+name: "docs-researcher"
+description: "Collect and classify source evidence for documentation without claiming policy authority."
 ---
 
 # docs-researcher

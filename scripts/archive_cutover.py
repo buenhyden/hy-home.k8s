@@ -9,7 +9,6 @@ printed or retained in the report.
 from __future__ import annotations
 
 import argparse
-import json
 import os
 import posixpath
 import re
@@ -55,12 +54,12 @@ if __package__:
         CurrentMarkdownDocument,
         MIGRATION_DOCUMENT_MAX_BYTES,
         apply_stable_archive_relocations,
-    generic_migration_id,
+        generic_migration_id,
         is_sealed_migration,
         parse_migration_control,
         parse_pinned_migration_control,
         read_staged_blob_bounded,
-    relocated_stable_archive_paths,
+        relocated_stable_archive_paths,
         read_worktree_regular_bounded,
         compose_migration_targets,
         retired_source_is_distinct,
@@ -98,12 +97,12 @@ else:
         CurrentMarkdownDocument,
         MIGRATION_DOCUMENT_MAX_BYTES,
         apply_stable_archive_relocations,
-    generic_migration_id,
+        generic_migration_id,
         is_sealed_migration,
         parse_migration_control,
         parse_pinned_migration_control,
         read_staged_blob_bounded,
-    relocated_stable_archive_paths,
+        relocated_stable_archive_paths,
         read_worktree_regular_bounded,
         compose_migration_targets,
         retired_source_is_distinct,
@@ -138,7 +137,7 @@ FIRST_SOURCE_COMMIT = (
 SECOND_SOURCE_COMMIT = (
     "82f0e1922d9748a88b1487a32a59629ba523f408"  # pragma: allowlist secret
 )
-ARCHIVE_TEMPLATE_PROFILE = "template/archive/tombstone"
+ARCHIVE_TEMPLATE_PROFILE = "common/template-archive-tombstone"
 ARCHIVE_INDEX = "docs/98.archive/README.md"
 CURRENT_REPLACEMENT_STATUSES = frozenset({"active", "accepted", "done"})
 SECRET_DETECTED_EXIT = 17
@@ -614,7 +613,7 @@ def _work054_migration_projection(
                 raise RuntimeError(f"{failure}: target {target}")
             if target.endswith(".md"):
                 profile = classify_path(registry, PurePosixPath(target))
-                if profile.mode not in {"authored", "frontmatter-free", "template"}:
+                if profile.mode not in {"authored", "router", "template"}:
                     raise RuntimeError(f"{failure}: profile {target}")
                 current_profiles[target] = profile.profile_id
             else:
@@ -686,7 +685,7 @@ def _regular_file(root: Path, raw_path: str) -> bool:
 
 def _frontmatter_identity(text: str, path: str) -> tuple[str, str]:
     if path.endswith("/README.md") or path == "docs/README.md":
-        return "readme/repository", "active"
+        return "common/readme-repository", "active"
     if not text.startswith("---\n") or "\n---\n" not in text[4:]:
         return "content/reference", "active"
     raw = text.split("\n---\n", 1)[0][4:]
@@ -1210,10 +1209,17 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         profile.get("id") for profile in profiles if isinstance(profile, dict)
     ]
     if (
-        registry.get("schemaVersion") != 8
+        registry.get("schema_version") != 9
         or profile_ids.count(ARCHIVE_PROFILE) != 1
         or profile_ids.count(ARCHIVE_TEMPLATE_PROFILE) != 1
-        or _RETIRED_PROFILE_TOKEN in json.dumps(registry, ensure_ascii=False).lower()
+        or any(
+            profile_id
+            in {
+                f"content/{_RETIRED_PROFILE_TOKEN}",
+                f"template/content/{_RETIRED_PROFILE_TOKEN}",
+            }
+            for profile_id in profile_ids
+        )
         or not _regular_file(root, ARCHIVE_TEMPLATE)
         or (
             root

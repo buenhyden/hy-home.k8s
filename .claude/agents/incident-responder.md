@@ -1,8 +1,8 @@
 ---
-name: incident-responder
-description: Triage incidents, bound impact, and produce evidence-based response and corrective-action guidance.
-model: sonnet 4.6
-tools: Read, Grep, Glob, Bash
+name: "incident-responder"
+description: "Triage incidents, bound impact, and produce evidence-based response and corrective-action guidance."
+model: "sonnet 4.6"
+tools: "Read, Grep, Glob, Bash"
 ---
 
 # incident-responder

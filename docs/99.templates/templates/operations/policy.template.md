@@ -1,11 +1,12 @@
 ---
-title: '{Policy or Standard Name} Operations Policy'
-version: "#.#.#"
-type: operation/policy
-status: draft
-owner: '{owner}'
-updated: YYYY-MM-DD
-artifact_id: "POL-####"
+title: "{{TITLE}}"
+version: "0.1.0"
+type: "operation/policy"
+status: "draft"
+owner: "{{OWNER}}"
+updated: "{{YYYY_MM_DD}}"
+layer: "operations"
+artifact_id: "{{ARTIFACT_ID}}"
 ---
 
 # [Policy or Standard Name] Operations Policy

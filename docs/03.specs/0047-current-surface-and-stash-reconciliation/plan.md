@@ -1,11 +1,11 @@
 ---
-title: 'Current Surface and Stash Reconciliation Implementation Plan'
+title: "Current Surface and Stash Reconciliation Implementation Plan"
 version: "1.0.0"
-type: sdlc/plan
+type: "sdlc/plan"
+status: "draft"
+owner: "platform"
+updated: "2026-08-07"
 layer: "specs"
-status: draft
-owner: platform
-updated: 2026-08-07
 artifact_id: "SPEC-0047-PLAN-0001"
 ---
 

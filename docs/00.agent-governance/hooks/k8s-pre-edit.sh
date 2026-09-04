@@ -256,6 +256,8 @@ def load_document_routes(root: str) -> tuple[dict[str, object], ...]:
         registry = json.loads(registry_path.read_text(encoding="utf-8"))
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
         reject_with_detail("HOOK-DOC-REGISTRY", str(exc))
+    if not isinstance(registry, dict) or registry.get("schema_version") != 9:
+        reject_with_detail("HOOK-DOC-REGISTRY", "schema_version must be 9")
     profiles = registry.get("profiles") if isinstance(registry, dict) else None
     if not isinstance(profiles, list) or not profiles:
         reject_with_detail("HOOK-DOC-REGISTRY", "profiles must be a non-empty list")
@@ -264,14 +266,14 @@ def load_document_routes(root: str) -> tuple[dict[str, object], ...]:
         if not isinstance(profile, dict):
             reject_with_detail("HOOK-DOC-REGISTRY", "profile must be an object")
         profile_id = profile.get("id")
-        pattern = profile.get("pathPattern")
-        template = profile.get("template")
+        pattern = profile.get("path_pattern")
+        template = profile.get("template_source")
         if not isinstance(profile_id, str) or not isinstance(pattern, str):
             reject_with_detail(
-                "HOOK-DOC-REGISTRY", "profile id and pathPattern must be strings"
+                "HOOK-DOC-REGISTRY", "profile id and path_pattern must be strings"
             )
         if template is not None and not isinstance(template, str):
-            reject_with_detail("HOOK-DOC-REGISTRY", "template must be a string")
+            reject_with_detail("HOOK-DOC-REGISTRY", "template_source must be a string")
         try:
             compiled = re.compile(pattern)
         except re.error as exc:

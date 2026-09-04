@@ -1,11 +1,12 @@
 ---
-title: 'Postmortem: {Incident Title}'
-version: "#.#.#"
-type: operation/postmortem
-status: draft
-owner: '{owner}'
-updated: YYYY-MM-DD
-artifact_id: "inc-YYYY-####-PM"
+title: "{{TITLE}}"
+version: "0.1.0"
+type: "operation/postmortem"
+status: "draft"
+owner: "{{OWNER}}"
+updated: "{{YYYY_MM_DD}}"
+layer: "operations"
+artifact_id: "{{ARTIFACT_ID}}"
 ---
 
 # Postmortem: [Incident Title]

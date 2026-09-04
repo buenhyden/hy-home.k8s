@@ -1,3 +1,11 @@
+---
+title: "workloads"
+version: "0.1.0"
+type: "common/readme-implementation"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+---
 # workloads
 
 > ArgoCD ApplicationSet이 스캔하는 애플리케이션 워크로드 매니페스트를 관리한다.

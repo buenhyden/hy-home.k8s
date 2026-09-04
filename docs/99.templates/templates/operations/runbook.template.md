@@ -1,11 +1,12 @@
 ---
-title: '{Topic Name} Runbook'
-version: "#.#.#"
-type: operation/runbook
-status: draft
-owner: '{owner}'
-updated: YYYY-MM-DD
-artifact_id: "RUN-####"
+title: "{{TITLE}}"
+version: "0.1.0"
+type: "operation/runbook"
+status: "draft"
+owner: "{{OWNER}}"
+updated: "{{YYYY_MM_DD}}"
+layer: "operations"
+artifact_id: "{{ARTIFACT_ID}}"
 ---
 
 # [Topic Name] Runbook

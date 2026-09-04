@@ -22,7 +22,7 @@ PROPOSED_REGISTRY_ID = "https://hy-home.k8s/schemas/document-profiles-8.schema.j
 LEGACY_ARCHIVE_PROFILE = "content/archive-tombstone"
 ARCHIVE_PROFILE = "archive/tombstone"
 LEGACY_ARCHIVE_TEMPLATE_PROFILE = "template/content/archive-tombstone"
-ARCHIVE_TEMPLATE_PROFILE = "template/archive/tombstone"
+ARCHIVE_TEMPLATE_PROFILE = "common/template-archive-tombstone"
 LEGACY_ARCHIVE_TEMPLATE = (
     "docs/99.templates/templates/common/archive-tombstone.template.md"
 )

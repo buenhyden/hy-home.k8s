@@ -29,40 +29,34 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
         self.git = GitFixture(self.root)
         registry_path = Path("docs/99.templates/registry.json")
         registry = json.loads((ROOT / registry_path).read_text())
-        # Authority requires all lifecycle families. Keep representative real
-        # profiles and their body-link dependencies, not the document corpus.
         selected = {
             "sdlc/architecture-description",
             "sdlc/data-model",
             "sdlc/plan",
             "archive/tombstone",
         }
-        for domain in registry["programLineage"]["lifecycleDomains"]:
+        for domain in registry["lifecycle_domains"]:
             profile_id = (
                 "archive/migration"
-                if "archive/migration" in domain["profileIds"]
-                else domain["profileIds"][0]
+                if "archive/migration" in domain["profile_ids"]
+                else domain["profile_ids"][0]
             )
             selected.add(profile_id)
-        for domain in registry["programLineage"]["lifecycleDomains"]:
-            domain["profileIds"] = [
+        for domain in registry["lifecycle_domains"]:
+            domain["profile_ids"] = [
                 profile_id
-                for profile_id in domain["profileIds"]
+                for profile_id in domain["profile_ids"]
                 if profile_id in selected
             ]
         registry["profiles"] = [
             profile for profile in registry["profiles"] if profile["id"] in selected
         ]
-        registry["programLineage"]["programs"] = registry["programLineage"]["programs"][
-            :1
-        ]
-        registry["standaloneExecutions"] = []
         (self.root / registry_path).parent.mkdir(parents=True)
         (self.root / registry_path).write_text(json.dumps(registry))
         templates = {
-            profile["template"]
+            profile["template_source"]
             for profile in registry["profiles"]
-            if profile["template"] is not None
+            if profile["template_source"] is not None
         }
         for relative in {
             "docs/99.templates/contracts/document-profile.schema.json",
@@ -114,8 +108,8 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
             "---\n"
             'title: "MIG-0005: Policy convergence"\n'
             'version: "1.0.0"\n'
-            'type: "archive/migration"\nlayer: "archive"\nstatus: "sealed"\n'
-            'owner: "platform"\nupdated: "2026-08-28"\n'
+            'type: "archive/migration"\nstatus: "sealed"\n'
+            'owner: "platform"\nupdated: "2026-08-28"\nlayer: "archive"\n'
             'artifact_id: "MIG-0005"\n---\n\n'
             "# MIG-0005: Policy convergence\n\n## Overview\n\nReviewed policy cutover.\n\n"
             "## Migration Ledger\n\n<!-- archive-migration-ledger:v1 format=json -->\n\n```json\n"
@@ -149,9 +143,9 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
         raw_registry = json.loads((self.root / documents.REGISTRY_PATH).read_bytes())
         schema = json.loads((self.root / documents.SCHEMA_PATH).read_bytes())
         templates = frozenset(
-            PurePosixPath(profile["template"])
+            PurePosixPath(profile["template_source"])
             for profile in raw_registry["profiles"]
-            if profile["template"] is not None
+            if profile["template_source"] is not None
         )
         return documents, registry, raw_registry, schema, templates
 
@@ -175,7 +169,7 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
             )
             self.assertEqual(actual, expected)
             changed = json.loads(json.dumps(raw))
-            changed["profiles"][0]["pathPattern"] = "^(?:a+)+$"
+            changed["profiles"][0]["path_pattern"] = "^(?:a+)+$"
             with (
                 mock.patch.object(
                     documents,
@@ -195,7 +189,7 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
                 {item.rule_id for item in raised.exception.diagnostics},
                 {"REGISTRY_EXECUTABLE_POLICY"},
             )
-            for change in ({"schemaVersion": 7}, {"$id": "https://invalid/registry"}):
+            for change in ({"schema_version": 7}, {"$id": "https://invalid/registry"}):
                 with (
                     self.subTest(change=change),
                     self.assertRaises(documents.DocumentContractError),
@@ -477,6 +471,40 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
         rows = self.chain(self.payload)
         self.write(list(rows))
         self.assertEqual(self.verify(), "MIG-0005")
+
+    def test_sealed_move_target_can_evolve_after_historical_proof(self):
+        moved = dict(
+            self.row,
+            action="moved",
+            stable_path=self.target,
+            replacement=None,
+        )
+        (self.root / self.target).write_bytes(self.payload)
+        self.git.run("add", "--", self.target)
+        self.write([moved])
+        self.git.run("commit", "--quiet", "-m", "seal byte-identical move")
+
+        (self.root / self.target).write_bytes(self.payload + b"Later metadata.\n")
+        self.git.run("add", "--", self.target)
+
+        proof = archive.repository_migration_proof(self.root)
+        self.assertEqual(proof.targets[self.source], self.target)
+
+    def test_sealed_move_cannot_be_repaired_only_in_the_current_target(self):
+        moved = dict(
+            self.row,
+            action="moved",
+            stable_path=self.target,
+            replacement=None,
+        )
+        self.write([moved])
+        self.git.run("commit", "--quiet", "-m", "seal non-identical move")
+
+        (self.root / self.target).write_bytes(self.payload)
+        self.git.run("add", "--", self.target)
+
+        with self.assertRaisesRegex(recovery.ArchiveContractError, "TARGET"):
+            archive.repository_migration_proof(self.root)
 
     def test_draft_migration_is_inert_until_it_is_sealed(self):
         # document_lifecycle admits a migration only in draft, so every
@@ -1034,7 +1062,10 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
             ],
             references=references,
         )
-        with self.assertRaisesRegex(recovery.ArchiveContractError, "view remains"):
+        with self.assertRaisesRegex(
+            recovery.ArchiveContractError,
+            "view remains|stage-zero inventory is malformed",
+        ):
             archive.repository_migration_proof(self.root)
         self.git.run("rm", "--cached", "--quiet", "--", view)
         proof = archive.repository_migration_proof(self.root)

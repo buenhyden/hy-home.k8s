@@ -1,8 +1,8 @@
 ---
-name: wiki-curator
-description: Maintain knowledge navigation and canonical links without creating duplicate policy authority.
-model: sonnet 4.6
-tools: Read, Write, Edit, Grep, Glob, Bash
+name: "wiki-curator"
+description: "Maintain knowledge navigation and canonical links without creating duplicate policy authority."
+model: "sonnet 4.6"
+tools: "Read, Write, Edit, Grep, Glob, Bash"
 ---
 
 # wiki-curator
