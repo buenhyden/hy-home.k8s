@@ -15,7 +15,7 @@
     "identity": {
       "repositoryId": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
       "taskId": "AHLL-002-SYNTHETIC",
-      "specRef": "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md",
+      "specRef": "docs/98.archive/completed/03.specs/0043-agent-harness-loop-lifecycle/spec.md",
       "worktreeId": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
       "providerSurfaceId": "codex",
       "providerSessionInstanceDigest": "sha256:8888888888888888888888888888888888888888888888888888888888888888",
@@ -155,7 +155,7 @@
         "authorityMode": "temporary-context-only",
         "canonicalOwner": "active-task-executor",
         "sourceEvidenceRefs": [
-          "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md",
+          "docs/98.archive/completed/03.specs/0043-agent-harness-loop-lifecycle/spec.md",
           "tests/fixtures/agent-checkpoint.json"
         ],
         "redactionStatus": "PASS",
@@ -187,7 +187,7 @@
           "targetClass": "durable-long-term",
           "canonicalOwner": "canonical-sdlc-owner-or-shared-progress-ledger",
           "evidenceRefs": [
-            "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md",
+            "docs/98.archive/completed/03.specs/0043-agent-harness-loop-lifecycle/spec.md",
             "tests/test_validate_agent_checkpoint.py"
           ],
           "review": {
@@ -208,7 +208,7 @@
           "observedRevision": "git-sha1:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
           "canonicalOwner": "active-task-executor",
           "evidenceRefs": [
-            "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
+            "docs/98.archive/completed/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
           ]
         },
         "expiry": {
@@ -228,7 +228,7 @@
           "currentOrReplacementOwner": null,
           "reviewStatus": "approved",
           "provenanceRefs": [
-            "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
+            "docs/98.archive/completed/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
           ]
         },
         "conflict": {
@@ -332,7 +332,7 @@
         "authorityMode": "canonical-domain-record",
         "canonicalOwner": "canonical-domain-document-owner",
         "sourceEvidenceRefs": [
-          "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md",
+          "docs/98.archive/completed/03.specs/0043-agent-harness-loop-lifecycle/spec.md",
           "docs/00.agent-governance/memory/README.md"
         ],
         "redactionStatus": "PASS",
@@ -348,7 +348,7 @@
           "canonicalDecisionOwner": "canonical-domain-document-owner",
           "reviewStatus": "approved",
           "evidenceRefs": [
-            "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
+            "docs/98.archive/completed/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
           ]
         },
         "handoff": {
@@ -364,7 +364,7 @@
           "targetClass": "durable-long-term",
           "canonicalOwner": "canonical-sdlc-owner-or-shared-progress-ledger",
           "evidenceRefs": [
-            "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md",
+            "docs/98.archive/completed/03.specs/0043-agent-harness-loop-lifecycle/spec.md",
             "tests/test_validate_agent_checkpoint.py"
           ],
           "review": {
@@ -385,7 +385,7 @@
           "observedRevision": "git-sha1:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
           "canonicalOwner": "canonical-domain-document-owner",
           "evidenceRefs": [
-            "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
+            "docs/98.archive/completed/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
           ]
         },
         "expiry": {
@@ -405,7 +405,7 @@
           "currentOrReplacementOwner": "canonical-domain-document-owner",
           "reviewStatus": "approved",
           "provenanceRefs": [
-            "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
+            "docs/98.archive/completed/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
           ]
         },
         "conflict": {
@@ -516,7 +516,7 @@
     "identity": {
       "repositoryId": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
       "taskId": "AHLL-002-SYNTHETIC",
-      "specRef": "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md",
+      "specRef": "docs/98.archive/completed/03.specs/0043-agent-harness-loop-lifecycle/spec.md",
       "worktreeId": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
       "providerSurfaceId": "codex",
       "providerSessionInstanceDigest": "sha256:8888888888888888888888888888888888888888888888888888888888888888",

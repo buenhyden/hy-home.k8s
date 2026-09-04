@@ -28,7 +28,7 @@ SCHEMA_PATH = PurePosixPath(
 CHECKPOINT_SCHEMA_PATH = (
     "docs/00.agent-governance/contracts/agent-checkpoint.schema.json"
 )
-SPEC_PATH = "docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
+SPEC_PATH = "docs/98.archive/completed/03.specs/0043-agent-harness-loop-lifecycle/spec.md"
 
 SCHEMA_VERSION = 1
 CONTRACT_ID = "agent-loop-lifecycle"
@@ -186,11 +186,11 @@ FEEDBACK_DESTINATIONS = (
     ),
     (
         "role-evaluation-case",
-        "docs/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
+        "docs/98.archive/completed/03.specs/0044-agent-roster-evaluation-and-admission/spec.md",
     ),
     (
         "owned-external-limitation",
-        "docs/03.specs/0043-agent-harness-loop-lifecycle/plan.md",
+        "docs/98.archive/completed/03.specs/0043-agent-harness-loop-lifecycle/plan.md",
     ),
 )
 INTERFACE_SIGNATURES = {

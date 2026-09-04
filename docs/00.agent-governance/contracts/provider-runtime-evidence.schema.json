@@ -33,7 +33,7 @@
       "const": "1.0.0"
     },
     "owner": {
-      "const": "docs/03.specs/0042-provider-native-runtime-and-model-evidence/spec.md"
+      "const": "docs/98.archive/completed/03.specs/0042-provider-native-runtime-and-model-evidence/spec.md"
     },
     "capabilityEvidenceOwner": {
       "const": "docs/00.agent-governance/contracts/provider-runtime-evidence.json"

@@ -44,7 +44,7 @@ def apply_mutation(
         identity["taskId"] = "AHLL-999-SYNTHETIC"
     elif name == "stale-spec":
         identity["specRef"] = (
-            "docs/03.specs/0042-provider-native-runtime-and-model-evidence/spec.md"
+            "docs/98.archive/completed/03.specs/0042-provider-native-runtime-and-model-evidence/spec.md"
         )
     elif name == "stale-worktree":
         identity["worktreeId"] = "sha256:" + ("5" * 64)

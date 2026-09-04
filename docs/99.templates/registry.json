@@ -5595,8 +5595,8 @@
   "standaloneExecutions": [
     {
       "spec": "0053",
-      "plan": "docs/03.specs/0053-workspace-engineering-research-pack-consolidation/plan.md",
-      "task": "docs/03.specs/0053-workspace-engineering-research-pack-consolidation/tasks/tsk-0001-werpc-000.md",
+      "plan": "docs/98.archive/completed/03.specs/0053-workspace-engineering-research-pack-consolidation/plan.md",
+      "task": "docs/98.archive/completed/03.specs/0053-workspace-engineering-research-pack-consolidation/tasks/tsk-0001-werpc-000.md",
       "state": "done",
       "reason": "Direct human-approved research-pack consolidation without separate PRD/AD authority",
       "decision": "0022",
@@ -5622,8 +5622,8 @@
     },
     {
       "spec": "0063",
-      "plan": "docs/03.specs/0063-governance-invariant-consolidation/plan.md",
-      "task": "docs/03.specs/0063-governance-invariant-consolidation/tasks/tsk-0001-gic-000.md",
+      "plan": "docs/98.archive/completed/03.specs/0063-governance-invariant-consolidation/plan.md",
+      "task": "docs/98.archive/completed/03.specs/0063-governance-invariant-consolidation/tasks/tsk-0001-gic-000.md",
       "state": "done",
       "reason": "Direct human-approved consolidation of governance invariants: retirement of completed-migration validation machinery, Stage 98 reduction to its ADR-0030 shape, and removal of duplicated document purpose",
       "decision": "0022",
@@ -5631,8 +5631,8 @@
     },
     {
       "spec": "0064",
-      "plan": "docs/03.specs/0064-agent-governance-surface-consolidation/plan.md",
-      "task": "docs/03.specs/0064-agent-governance-surface-consolidation/tasks/tsk-0001-ags-000.md",
+      "plan": "docs/98.archive/completed/03.specs/0064-agent-governance-surface-consolidation/plan.md",
+      "task": "docs/98.archive/completed/03.specs/0064-agent-governance-surface-consolidation/tasks/tsk-0001-ags-000.md",
       "state": "done",
       "reason": "Direct human-approved correction of the agent-governance surfaces: retirement of the self-contradicting progress ledger to a Stage 98 tombstone, removal of unowned path instructions, and removal of unreferenced scaffolding",
       "decision": "0022",
@@ -5640,8 +5640,8 @@
     },
     {
       "spec": "0065",
-      "plan": "docs/03.specs/0065-transition-residue-retirement/plan.md",
-      "task": "docs/03.specs/0065-transition-residue-retirement/tasks/tsk-0001-trr-000.md",
+      "plan": "docs/98.archive/completed/03.specs/0065-transition-residue-retirement/plan.md",
+      "task": "docs/98.archive/completed/03.specs/0065-transition-residue-retirement/tasks/tsk-0001-trr-000.md",
       "state": "done",
       "reason": "Direct human-approved retirement of the three transition residues Spec 0054 WP-012 recorded",
       "decision": "0022",

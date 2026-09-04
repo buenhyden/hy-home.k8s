@@ -1698,7 +1698,7 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
         self.assertGreaterEqual(output.count(path), 3)
 
     def test_staged_selector_executes_every_selected_validator(self):
-        path = "docs/03.specs/0045-agent-governance-ci-qa-cutover/spec.md"
+        path = "docs/03.specs/0008-current-local-gitops-platform/spec.md"
         result, statuses, output, invoked = self._run([path], lane="staged")
 
         self.assertEqual(result, 0)

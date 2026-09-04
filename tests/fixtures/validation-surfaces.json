@@ -93,7 +93,7 @@
     },
     {
       "name": "authored-doc",
-      "path": "docs/03.specs/0031-affected-surface-agent-qa/spec.md",
+      "path": "docs/98.archive/completed/03.specs/0031-affected-surface-agent-qa/spec.md",
       "expectedSurface": "authored-documents"
     },
     {
@@ -310,9 +310,8 @@
         "docs/01.requirements/0003-workspace-agent-governance-platform.md",
         "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md",
         "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md",
-        "docs/03.specs/0045-agent-governance-ci-qa-cutover/spec.md",
-        "docs/03.specs/0045-agent-governance-ci-qa-cutover/plan.md",
-        "docs/03.specs/0045-agent-governance-ci-qa-cutover/README.md"
+        "docs/98.archive/completed/03.specs/0045-agent-governance-ci-qa-cutover/spec.md",
+        "docs/98.archive/completed/03.specs/0045-agent-governance-ci-qa-cutover/plan.md"
       ],
       "expected": {
         "validators": [
@@ -635,7 +634,7 @@
       "event": "push",
       "rangeKind": "before-head",
       "paths": [
-        "docs/03.specs/0031-affected-surface-agent-qa/spec.md",
+        "docs/98.archive/completed/03.specs/0031-affected-surface-agent-qa/spec.md",
         "_workspace/README.md",
         ".agents/agents/supervisor.md",
         "docs/99.templates/registry.json",
@@ -653,7 +652,7 @@
       "event": "pull_request",
       "rangeKind": "base-head",
       "paths": [
-        "docs/03.specs/0031-affected-surface-agent-qa/spec.md",
+        "docs/98.archive/completed/03.specs/0031-affected-surface-agent-qa/spec.md",
         "_workspace/README.md",
         ".agents/agents/supervisor.md",
         "docs/99.templates/registry.json",
@@ -671,7 +670,7 @@
       "event": "push",
       "rangeKind": "initial-head-tree",
       "paths": [
-        "docs/03.specs/0031-affected-surface-agent-qa/spec.md",
+        "docs/98.archive/completed/03.specs/0031-affected-surface-agent-qa/spec.md",
         "_workspace/README.md",
         "policy/conftest/kubernetes.rego",
         "gitops/clusters/local/root-application.yaml",
@@ -734,9 +733,8 @@
         "docs/01.requirements/0003-workspace-agent-governance-platform.md",
         "docs/02.architecture/descriptions/0006-workspace-agent-governance-platform.md",
         "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md",
-        "docs/03.specs/0045-agent-governance-ci-qa-cutover/spec.md",
-        "docs/03.specs/0045-agent-governance-ci-qa-cutover/plan.md",
-        "docs/03.specs/0045-agent-governance-ci-qa-cutover/README.md",
+        "docs/98.archive/completed/03.specs/0045-agent-governance-ci-qa-cutover/spec.md",
+        "docs/98.archive/completed/03.specs/0045-agent-governance-ci-qa-cutover/plan.md",
         "scripts/validate-agent-governance-ci.py",
         "tests/test_validate_agent_governance_ci.py"
       ],
@@ -1317,7 +1315,7 @@
         "ciJobId": "agent-governance-static"
       },
       "paths": [
-        "docs/03.specs/0045-agent-governance-ci-qa-cutover/spec.md"
+        "docs/98.archive/completed/03.specs/0045-agent-governance-ci-qa-cutover/spec.md"
       ],
       "expectedError": "SURFACE-AGENT-GOVERNANCE-CI"
     },

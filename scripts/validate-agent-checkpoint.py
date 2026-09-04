@@ -23,7 +23,7 @@ REGISTRY_PATH = PurePosixPath(".agents/registry.json")
 LOOP_CONTRACT_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/agent-loop-lifecycle.json"
 )
-SPEC_PATH = PurePosixPath("docs/03.specs/0043-agent-harness-loop-lifecycle/spec.md")
+SPEC_PATH = PurePosixPath("docs/98.archive/completed/03.specs/0043-agent-harness-loop-lifecycle/spec.md")
 CHECKPOINT_PATH = ".agent-work/checkpoint.json"
 CONTRACT_VERSION = "1.0.0"
 SCHEMA_VERSION = 2

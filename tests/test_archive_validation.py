@@ -1828,7 +1828,20 @@ class ArchiveValidationTest(unittest.TestCase):
         # commit for the path, that commit's exact tree entry, and one batched
         # object read. A rename that vacates a path therefore moves the cap by
         # a fixed four, independent of the size of the document that moved.
-        budget = 190
+        #
+        # Measured the same way, the corpus moved 190 -> 215 when Stage 98
+        # gained the four completed-package retention ledgers, MIG-0013 through
+        # MIG-0016. Those ledgers retire 347 origin paths across two distinct
+        # declared source commits, and because every read is batched the cost
+        # tracks the number of ledgers and declared commits rather than the
+        # number of rows.
+        #
+        # It moved 215 -> 222 when MIG-0017 relocated the seventeen supersession
+        # records. One new declared source commit costs the fixed batched read
+        # plus its reachability check, and the rest is the ledger's own staged
+        # bytes and the batched reads proving each relocated record at the path
+        # its row names.
+        budget = 222
 
         def bounded_popen(*args, **kwargs):
             nonlocal git_calls
@@ -2070,8 +2083,12 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         "docs/04.execution/tasks/"
         "2026-07-05-workspace-engineering-implementation-audit-pack.md"
     )
+    # The package was retained after it completed, so the edge that MIG-0002
+    # opened now composes through the retiring retention row to the retained
+    # copy. That is the document the edge names today.
     moved_target = PurePosixPath(
-        "docs/03.specs/0018-workspace-engineering-implementation-audit-pack/plan.md"
+        "docs/98.archive/completed/03.specs/"
+        "0018-workspace-engineering-implementation-audit-pack/plan.md"
     )
     archived_source = PurePosixPath(
         "docs/04.execution/plans/2026-05-24-p3-gitops-secret-runtime-remediation.md"
@@ -2539,8 +2556,11 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             "docs/04.execution/tasks/"
             "2026-07-02-workspace-harness-implementation-audit-pack.md"
         )
+        # The package was retained after it completed, so the composed edge ends
+        # at the retained copy rather than at the Stage 03 path it vacated.
         expected = PurePosixPath(
-            "docs/03.specs/0010-workspace-harness-implementation-audit-pack/plan.md"
+            "docs/98.archive/completed/03.specs/"
+            "0010-workspace-harness-implementation-audit-pack/plan.md"
         )
         _move_blobs, move_targets, _archive_sources = (
             self.validator._document_taxonomy_transition_manifest(self.context)
