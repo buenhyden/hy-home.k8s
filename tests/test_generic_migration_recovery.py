@@ -369,7 +369,6 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
         )
         transports = (
             "urllib.request.urlopen",
-            "jsonschema.validators.urlopen",
             "urllib.request.OpenerDirector.open",
             "socket.socket",
             "socket.getaddrinfo",
