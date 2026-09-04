@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "sdlc/spec"
 status: "draft"
 owner: "platform"
-updated: "2026-08-02"
+updated: "2026-09-05"
 layer: "specs"
 artifact_id: "SPEC-0051"
 ---
@@ -12,6 +12,23 @@ artifact_id: "SPEC-0051"
 # Repository Assurance Integration and Closure Technical Specification (Spec)
 
 ## Overview
+
+### Current Execution Disposition (2026-09-05)
+
+Keep Spec 0051 and its Plan `draft`, with every Task `queued`. Resume only
+after Spec 0050 and its package-local Plan/Tasks close with their required
+evidence, through the legal Spec/Plan `draft → active` and activation Task
+`queued → in-progress` transitions. Accepted
+[ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)
+and [ADR-0033](../../02.architecture/decisions/0033-common-document-contract-v9.md)
+own this package-local route. ADR-0021 is superseded historical context;
+activation and closure create no public program-instance roster.
+
+Specs 0047–0050 remain unfinished, so integrated acceptance and closure have
+no completed predecessor evidence.
+Before activation, reconcile the older planned paths, provider examples,
+commands, and scope with the current canonical owners. This disposition
+preserves unfinished work and authorizes no implementation or protected action.
 
 This specification is the terminal tranche of the PRD-0007 repository delivery
 and platform assurance program. It integrates Specs 047-050, proves that every
@@ -56,9 +73,9 @@ ledger.
    limitation, owner, retry trigger, and evidence lane.
 4. Required repository-static and CI-equivalent gates are PASS. A required
    tool or validator cannot close as SKIP/DEFER.
-5. AD-0010 and ADR-0021 transition together under the registry lifecycle
-   predicate; PRD-0007, Spec 051, Plan, Task, indexes, program lineage, and
-   progress evidence change atomically as required.
+5. This package's Spec, Plan, Task, and Stage 03 index follow their legal
+   lifecycle transitions together. Requirement/Architecture disposition needs
+   its own current-consumer evidence; superseded ADR-0021 stays superseded.
 6. Current hosted, provider-runtime, credential-bearing, and live evidence
    remains separate even when repository-static closure is PASS.
 
@@ -101,8 +118,8 @@ Closure runs in six gates:
 4. **Quality gate**: run targeted, affected, staged, test, aggregate, all-files,
    formatter review/rerun, diff checks, and whole-branch requirements plus
    quality/security review.
-5. **Lifecycle gate**: transition the final documents, indexes, registry
-   program lineage, Task evidence, and progress in one reviewable commit.
+5. **Lifecycle gate**: transition the package-local Spec, Plan, Task, and
+   Stage 03 index in one reviewable commit.
 6. **Finishing gate**: fast-forward local main, rerun postflight, retire the
    exact stash, record observed finishing evidence, then remove the worktree and
    local branch.
@@ -218,8 +235,9 @@ read-only remote metadata commands in addition to this terminal sequence.
   accurately classified.
 - **VAL-RAIC-005**: Independent whole-branch requirements and quality/security
   reviews approve the exact terminal diff with no open finding.
-- **VAL-RAIC-006**: PRD-0007, AD-0010, ADR-0021, Specs, Plan, Task, indexes,
-  lineage, and progress complete valid reciprocal lifecycle transitions.
+- **VAL-RAIC-006**: Package-local Spec, Plan, Task, and index evidence proves
+  legal reciprocal lifecycle closure without restoring superseded decision or
+  public program-instance authority.
 - **VAL-RAIC-007**: Local main fast-forwards to the reviewed branch and passes
   postflight without push, PR, remote merge, or remote setting change.
 - **VAL-RAIC-008**: The matching saved stash is retired only after integrated
@@ -235,7 +253,7 @@ read-only remote metadata commands in addition to this terminal sequence.
 - **Architecture**:
   [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
 - **Decision**:
-  [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+  [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Predecessor**:
   [Spec 050](../0050-example-iac-and-validator-qa/spec.md)
 - **Implementation Plan**:

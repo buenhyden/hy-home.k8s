@@ -2,9 +2,9 @@
 title: "Document Taxonomy Consolidation Technical Specification"
 version: "1.0.0"
 type: "sdlc/spec"
-status: "active"
+status: "done"
 owner: "platform"
-updated: "2026-08-11"
+updated: "2026-09-05"
 layer: "specs"
 artifact_id: "SPEC-0052"
 ---
@@ -12,6 +12,31 @@ artifact_id: "SPEC-0052"
 # Document Taxonomy Consolidation Technical Specification (Spec)
 
 ## Overview
+
+### Package Closure Disposition (2026-09-05)
+
+All seventeen package Tasks are done: WORK-100 through WORK-108 and the design
+amendment preserve completed evidence; WORK-109 through WORK-115 record their
+transfer to Spec 0054. Those transferred responsibilities are not completed
+again here, and WP-013 transition-control retirement and WP-014 integrated
+acceptance remain with Spec 0054.
+
+Accepted [ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)
+supersedes count predicates in VAL-WDTC-015/016. The 93-record bijection and
+`50 → 49 → 47` script census below describe the reviewed historical migration,
+not present-corpus requirements. Current semantic verification checks sealed
+payload/provenance integrity, Git recovery, unique owners, and validation
+consumer/diagnostic preservation under the current Registry. Accepted
+ADR-0030/0031/0033 and Spec 0054 govern current topology and execution; the
+earlier form, roster, route-state, and script-count instructions below remain
+historical design context only.
+
+The stable 187-test Archive/recovery/routing/strict-cutover batch passed on
+2026-09-05, and the Spec and Plan now follow `active → done`.
+The whole package satisfies the terminal-state prerequisite for ADR-0032
+retention, but stays in Stage 03 until WP-013 transfers current REQ/AD consumers
+and proves consumer-zero, historical-link safety, and migration provenance.
+Closure evidence belongs to SPEC-0054-TSK-0013, not a rewritten completed Task.
 
 This specification implements
 [PRD-0008](../../01.requirements/0008-workspace-document-taxonomy-consolidation.md),
@@ -726,8 +751,8 @@ hosted CI, remote settings, secret safety, deployment, or live operation.
 | VAL-WDTC-012 | No provider, hosted, remote, credential-bearing, or live result is claimed or performed. | Handoff evidence-class report and change inventory. |
 | VAL-WDTC-013 | Terminal active forms are PRD, optional SRS, optional Stage 01 Interface Requirement, AD (`sdlc/ad`), and ADR. The exact eight legacy-form records convert to AD-0004 through AD-0011 with preserved slugs/states, zero unconverted current records, and zero live/unclassified legacy-form consumers; the AD-0011 authority gate remains separately atomic. The former architecture-requirement/RFC and authored API Spec forms have no terminal surface, and native API contracts remain separate Interface evidence. | Exact eight-row source/target/status census; terminal registry/profile/template/route/relationship/navigation inventory; complete legacy-form classifier across all declared consumer classes with `migrate-current`/`retain-history` evidence; independent API Spec zero-instance and consumer proof; retired-route negative fixtures; and native/history retention classifications. |
 | VAL-WDTC-014 | After VAL-WDTC-013 and WORK-105 acceptance, WORK-108 gives every mandatory terminal outer profile exactly one globally unique, type-valid `artifact_id` equal to its deterministic path-derived value, including `AD-0004` through `AD-0011`; every excluded profile, including the retired authored API Spec profile, prohibits the field; API Spec retirement independently proves zero instances and zero live/unclassified consumers after complete classification; native API contract identity stays separate; and virtual `CHG-####` remains `change_id` only. | WORK-105-before-WORK-108 ordering; mandatory/prohibited namespace selection; full API Spec consumer-class coverage across profile/template/relationships, positive fixture, lifecycle, registry, authoring hook/routing, Stage 00/03 prose, validators/tests/docs/fixtures; migration/negative/retention dispositions; native-contract non-promotion; and global identity/path fixtures. |
-| VAL-WDTC-015 | The current 93 records map 93-to-93 with action `moved`, unique stable paths, exact `35/2/4` execution grouping and `3/8/4/2` tombstones; future actions retain unique terminal evidence. | Schema-versioned 14-field ledger, action/replacement/stable-path negatives, payload/provenance digests, old-envelope proof, and dual recovery. |
-| VAL-WDTC-016 | The exact tracked script closure is `50 -> 49 -> 47`, deleting only `validate-harness.sh` in WORK-112 and the transition JSON/tool in WORK-114. | Full 50-row disposition ledger, consumer/argument/diagnostic/fixture/evidence/recovery comparison, scripts README parity, and exact language-count census. |
+| VAL-WDTC-015 | Sealed historical payload/provenance remains valid and recoverable, with unique identity and declared migration relationships. ADR-0031 discharges the former 93-record and grouping counts as historical observations. | Current Archive validation and Git recovery tests; historical WORK-106/107 evidence remains unchanged. |
+| VAL-WDTC-016 | Validation routing preserves canonical responsibility, executable consumers, diagnostics, and independent tests; remaining transition retirement belongs to Spec 0054 WP-013. ADR-0031 discharges the former `50 → 49 → 47` census as historical observation. | Current affected-surface contract and repository aggregate; WORK-111/112/114 transfer evidence and accepted Spec 0066 result. |
 | VAL-WDTC-017 | Every current numeric document identity uses four digits; PRD and Stage 03 paths/IDs are migrated atomically, Incident records use `docs/05.operations/incidents/<year>/inc-####-<slug>/{incident.md,postmortem.md}`, and no live three-digit route remains. | Exact pre/post path map, global path-ID equality, malformed width/case/nesting negatives, current-consumer closure, and Stage 05/90/98 preservation proof. |
 
 ## Traceability
@@ -769,5 +794,5 @@ hosted CI, remote settings, secret safety, deployment, or live operation.
 | N/A — REQ-0008-NFR-0002 shares the PRD source above. | VAL-WDTC-012 | Evidence-class handoff proves local-only scope. |
 | N/A — REQ-0008-NFR-0003 shares the PRD source above. | VAL-WDTC-013 | Exact eight-row ARD-to-AD mapping, zero unconverted/current-consumer results, atomic AD-0011 authority evidence, independent authored API Spec gates, retired-route negatives, and native/history retention prove the approved document taxonomy. |
 | N/A — REQ-0008-NFR-0004 shares the PRD source above. | VAL-WDTC-014 | WORK-105-before-WORK-108 ordering, mandatory/prohibited selection, complete API Spec consumer disposition, native-contract non-promotion, global uniqueness, canonical typed-ID including AD-0004 through AD-0011, virtual change-ID, tombstone digest, and path/frontmatter fixtures prove artifact identity. |
-| N/A — REQ-0008-NFR-0005 shares the PRD source above. | VAL-WDTC-015 | Exact ledger census, immutable payload/provenance, old-object evidence, and recovery prove the 93-row Stage 98 bijection. |
-| N/A — REQ-0008-NFR-0006 shares the PRD source above. | VAL-WDTC-016 | Exact staged inventories and the 50-row semantic disposition ledger prove `50 -> 49 -> 47` closure. |
+| N/A — REQ-0008-NFR-0005 shares the PRD source above. | VAL-WDTC-015 | Current Archive/Git recovery validation preserves historical identity and payload/provenance without requiring a current corpus census. |
+| N/A — REQ-0008-NFR-0006 shares the PRD source above. | VAL-WDTC-016 | Current routing/aggregate validation and explicit successor transfer preserve semantic ownership without a script-count predicate. |

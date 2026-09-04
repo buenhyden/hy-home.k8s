@@ -13,7 +13,7 @@ artifact_id: "SPEC-0054-TSK-0013"
 
 ## Overview
 
-This is the queued Task record for the remaining Stage 01, 02, 03, and 99
+This is the in-progress Task record for the remaining Stage 01, 02, 03, and 99
 current-corpus convergence and transition-control retirement in WP-013. Named
 dispositions are execution candidates, not permanent corpus-count policy.
 
@@ -21,7 +21,7 @@ Re-observation on 2026-09-03 refreshed those candidates. Two entry steps now
 precede the cutover: Spec 0052 closes, which releases the suspension recorded
 against REQ-0007 and REQ-0008, and Spec Packages `0047` through `0051` each
 receive a resume-or-remove disposition. The Stage 03 removal set is the fifty-two
-packages that will be `done`. The fifty-one measured today partition into
+packages that will be `done`. The fifty-one measured on that date partition into
 twenty-five already consumer-zero, thirteen released by rewriting REQ-0003,
 AD-0006, AD-0008, and AD-0009, and thirteen held by owners disposed of
 individually, including four accepted ADRs whose citations convert rather than
@@ -277,6 +277,55 @@ records.
 - Hosted CI success is scoped to run 33885291302. It is not Argo CD
   reconciliation, cluster readiness, healthy Vault/ESO behavior, authenticated
   provider runtime, release, or WP-013 corpus-removal completion.
+
+### Stage 03 Current-Package Convergence (2026-09-05)
+
+This is WP-013's first implementation unit, not integrated WP-013 completion.
+The scoped paths are Specs/Plans 0047–0052, SPEC-0047-TSK-0001, the Stage 03
+index, and this evidence record. No validator or test behavior changes.
+
+| Package | Observed evidence and disposition | Next owner / trigger |
+| --- | --- | --- |
+| 0047 | Spec 0052 semantic closure releases suspension. Spec/Plan use `draft → active`; CSASR-000 uses `in-progress → done`; CSASR-001..005 remain queued. Stash object `6370311e020620cc2743005896cc88db97d15465` remains a reachable commit and was found at `stash@{1}` by metadata only. No tracked-hunk or target disposition work is claimed. | Platform / CSASR-001: re-observe current owners and refresh historical planned commands before implementation. |
+| 0048 | Spec/Plan remain draft and all Tasks queued; proposed GitHub surface-routing contract and validator remain absent. | Platform / GRCE-000: activate only after 0047's evidenced package closure. |
+| 0049 | Spec/Plan remain draft and all Tasks queued; thirteen Kustomize roots remain tracked, but proposed platform-evidence and Traefik validators remain absent. | Platform / PVSE-000: activate only after 0048's evidenced package closure. |
+| 0050 | Spec/Plan remain draft and all Tasks queued; the current validation registry declares no Terraform/Bicep validator. | Platform / EIVQ-000: activate only after 0049's evidenced package closure. |
+| 0051 | Spec/Plan remain draft and all Tasks queued; predecessors are unfinished. No integration, merge, stash retirement, or cleanup occurs. | Platform / RAIC-000: activate only after 0050's evidenced package closure and revalidate protected-action authority. |
+| 0052 | Seventeen done Tasks preserve completed WORK-100..108/amendment evidence and explicit WORK-109..115 transfers to 0054. ADR-0031 discharges VAL-WDTC-015/016 census predicates; focused Archive/recovery/routing tests verify the semantic contracts. Spec/Plan use `active → done`. | WP-013 units 2 and 5: transfer current REQ/AD consumers, prove consumer-zero and historical-link safety, then retain with migration provenance. Keep the entire package at its current Stage 03 path meanwhile. |
+| 0006 | Active Spec, no Plan or Tasks. Its Current Ownership Boundary retains the historical harness-gap baseline and unresolved runtime/operator boundaries; roster/provider normalization has successor ownership. Existing static evidence does not establish completion of the remaining boundary. No execution records are invented and no unfinished work is removed. | Platform: establish bounded execution or completed-scope evidence before another disposition. |
+| 0062 | Active Spec/Plan, seven done and three blocked Tasks. The approved 2026-08-29 administrative-closeout addendum supersedes future old WRFR-007 Path B replay and WRFR-008/009 guarded completion. Historical missing/non-PASS evidence and all Task states remain unchanged. This slice does not execute administrative closeout. | Platform: narrowly reconcile current indexes/links/census under that addendum, then obtain fresh canonical local validation and independent review before the approved terminal route. No destructive replay or historical evidence reconstruction. |
+
+Accepted ADR-0031/0033 and package-local v9 records replace superseded
+ADR-0021/public execution-roster authority. Successor preplanning is retained;
+only 0047 resumes, and each successor needs its predecessor's evidenced
+closure before the legal Spec/Plan `draft → active` and activation Task
+`queued → in-progress` transitions. Older provider/path/command examples are
+historical proposal inputs requiring refresh, not authority to restore retired
+controls. No public Registry instance row or decision lifecycle changes.
+
+The first focused run was an invalid interleaved snapshot: document edits
+occurred while repository-backed tests were running, before the index was
+synchronized. It exited 1 with six failures and fourteen errors reporting
+migration-target/index-worktree drift. This is not a product RED/GREEN cycle.
+The same 187-test batch was rerun only after exact staging and with no
+concurrent edits; no validator was weakened.
+
+The stable rerun passed 187 tests in 743.530 seconds (exit 0). Its exact
+command was `rtk python3 -m unittest tests.test_archive_validation tests.test_archive_recovery tests.test_validate_affected_surfaces tests.test_document_strict_cutover`.
+The unchanged test/validator behavior makes a new product RED/GREEN cycle
+inapplicable. Final strict, affected, staged, plain pre-commit, full-suite,
+aggregate, all-files, formatter, and diff-check command results are recorded
+in the controller-approved `.superpowers/sdd/plan/task-1-report.md`; this unit
+cannot commit if a required gate fails.
+
+Review ownership: implementer self-review is scoped to this unit; independent
+requirements and quality/security review remains with the controller after
+the implementation handoff, not claimed here. Rollback is a reviewed revert
+of this one logical commit before dependent units, restoring only these
+Stage 03 lifecycle/projection changes while preserving the stash and all
+historical payloads. Do not roll back an accepted dependent unit implicitly.
+No push, merge, release/tag, secret-value read, live mutation, forced
+reconciliation, sealed Stage 98 edit, or later WP-013 unit occurs in this slice.
 
 ## Traceability
 

@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "sdlc/spec"
 status: "draft"
 owner: "platform"
-updated: "2026-08-02"
+updated: "2026-09-05"
 layer: "specs"
 artifact_id: "SPEC-0048"
 ---
@@ -12,6 +12,23 @@ artifact_id: "SPEC-0048"
 # GitHub Routing and CI Evidence Technical Specification (Spec)
 
 ## Overview
+
+### Current Execution Disposition (2026-09-05)
+
+Keep Spec 0048 and its Plan `draft`, with every Task `queued`. Resume only
+after Spec 0047 and its package-local Plan/Tasks close with their required
+evidence, through the legal Spec/Plan `draft → active` and activation Task
+`queued → in-progress` transitions. Accepted
+[ADR-0031](../../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)
+and [ADR-0033](../../02.architecture/decisions/0033-common-document-contract-v9.md)
+own this package-local route. ADR-0021 is superseded historical context;
+activation and closure create no public program-instance roster.
+
+The proposed GitHub surface-routing contract and validator are absent from the
+current tracked tree, so native projection work remains unfinished.
+Before activation, reconcile the older planned paths, provider examples,
+commands, and scope with the current canonical owners. This disposition
+preserves unfinished work and authorizes no implementation or protected action.
 
 This specification closes the repository-static GitHub projection and CI
 evidence gaps handed off by Spec 047. It introduces one surface-ID-based
@@ -227,7 +244,7 @@ observed repository and SHA.
 - **Architecture**:
   [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
 - **Decision**:
-  [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+  [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Plan**:
   [GitHub Routing and CI Evidence Implementation Plan](plan.md)
 - **Task**:

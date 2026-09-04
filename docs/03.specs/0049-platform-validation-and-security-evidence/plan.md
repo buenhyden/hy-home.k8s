@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "sdlc/plan"
 status: "draft"
 owner: "platform"
-updated: "2026-08-02"
+updated: "2026-09-05"
 layer: "specs"
 artifact_id: "SPEC-0049-PLAN-0001"
 ---
@@ -17,6 +17,18 @@ artifact_id: "SPEC-0049-PLAN-0001"
 > preserve value-free diagnostics and the repository-static/live boundary.
 
 ## Overview
+
+### Current Execution Disposition (2026-09-05)
+
+This Plan remains `draft`; all package Tasks remain `queued`. Resume only
+after Spec 0048's evidenced package closure through the legal package-local
+`draft → active` route described in the
+[Spec disposition](spec.md#current-execution-disposition-2026-09-05).
+Accepted ADR-0031/0033 replace ADR-0021 and the public program-instance roster
+as current execution authority. The older work breakdown is proposal input;
+re-observe its paths, commands, providers, and current owners before activating
+implementation. Do not restore retired progress, package routers, instance
+rows, or old decision states. New execution evidence belongs in package Tasks.
 
 **Goal:** Add one closed platform-evidence contract, render all thirteen
 current Kustomize roots with an exact checksum-verified tool, validate
@@ -90,7 +102,7 @@ download, hosted-current result, remote Helm result, or live evidence.
 - Parent [Implementation Plan](plan.md)
 - [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md),
   [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md),
-  and [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+  and [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - Spec 048 target/routing handoff and current `scripts/validation/registry.json`
 - Current Kustomize roots, GitOps/infrastructure desired state, policy Rego,
   tracked secret contract, Vault/ESO contract, Traefik dynamic files, CI,
@@ -129,7 +141,7 @@ download, hosted-current result, remote Helm result, or live evidence.
 
 | ID | Work package | Depends on | Entry gate | Exit evidence |
 | --- | --- | --- | --- | --- |
-| PVSE-000 | Activate reciprocal Spec 049 execution path | Spec 048 closure | Spec 049 is first unfinished relation | Spec/Plan/Task/index/progress/program row activate atomically |
+| PVSE-000 | Activate reciprocal Spec 049 execution path | Spec 048 closure | Spec 049 is first unfinished relation | Spec/Plan activate, activation Task starts, and Stage 03 index agrees under ADR-0031/0033 |
 | PVSE-001 | Define contract and orchestrator RED behavior | PVSE-000 | Current roots and exact tools observed | Focused tests reject named schema, path, depth, tool, GVK, promotion, and execution defects |
 | PVSE-002 | Implement contract, exact-tool, render, schema, and evidence lanes | PVSE-001 | Expected RED failures observed | Contract/schema/fixture and platform orchestrator self-test, production, and unittest pass |
 | PVSE-003 | Implement Traefik product-semantic validation | PVSE-002 | Current dynamic file set declared | Positive and mutation fixtures prove cross-file references and supported field shapes |
@@ -163,7 +175,7 @@ download, hosted-current result, remote Helm result, or live evidence.
 - `.pre-commit-config.yaml`
 - `scripts/README.md`, `tests/README.md`, `traefik/README.md`
 - `docs/90.references/data/tech-stack-version-inventory.md`
-- reciprocal Spec/Plan/Task/index/progress/program-lineage surfaces
+- reciprocal package-local Spec/Plan/Task and current index surfaces
 
 **Implement these exact public interfaces:**
 
@@ -189,28 +201,18 @@ from `validate-gitops-change-set.py` may be refactored into import-safe public
 helpers only when a regression test proves parity; route or policy data is not
 copied.
 
-### Task 1: PVSE-000 — activate the reciprocal execution path
+### Task 1: PVSE-000 — activate the package-local execution path
 
-- [ ] Confirm Spec 048 closure, clean worktree, and first-unfinished relation.
-
-  ```bash
-  rtk git status --short --branch
-  rtk python3 scripts/validate-document-contract-registry.py --root . --mode strict
-  rtk python3 scripts/validate-document-lifecycle.py --root . --mode staged
-  ```
-
-- [ ] Set Spec 049, this Plan, its Task, and the Spec 049 program row to active;
-  update Stage 03/04 indexes and progress in the same diff.
-
-- [ ] Validate and commit only the activation unit.
-
-  ```bash
-  rtk python3 scripts/validate-markdown-profiles.py --root . --mode strict
-  rtk python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts registry
-  rtk git diff --check
-  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0049-platform-validation-and-security-evidence/spec.md docs/03.specs/README.md docs/03.specs/0049-platform-validation-and-security-evidence/plan.md docs/03.specs/0049-platform-validation-and-security-evidence/plan.md docs/03.specs/0049-platform-validation-and-security-evidence/README.md#task-records docs/03.specs/0049-platform-validation-and-security-evidence/README.md#task-records docs/99.templates/registry.json
-  rtk git commit -m "docs: activate platform validation evidence plan"
-  ```
+- [ ] Verify Spec 0048 and its package-local Plan/Tasks are terminal with
+  required validation, review, and handoff evidence; re-observe the clean
+  approved checkout and current canonical owners.
+- [ ] Move only this Spec and Plan `draft → active`, and its activation Task
+  `queued → in-progress`, atomically with the Stage 03 index.
+- [ ] Run strict Registry, Markdown, links/owners, staged lifecycle, affected
+  and staged lanes, plain pre-commit, and diff checks over the exact activation.
+- [ ] Record evidence in the activation Task and commit the bounded change.
+  No ADR transition, public execution roster, or implementation is part of
+  activation. This Task remains queued until its predecessor condition holds.
 
 ### Task 2: PVSE-001 — define focused RED behavior
 
@@ -427,7 +429,7 @@ copied.
 
 - [ ] Record exact tool/results, thirteen-root evidence, GVK dispositions,
   local exceptions, tests, reviews, commits, and residual remote/live DEFER in
-  the Task. Transition Spec/Plan/Task/program relation atomically and activate
+  the Task. Transition Spec/Plan/Task/index state atomically and activate
   no successor implementation prematurely.
 
 - [ ] Validate terminal lifecycle and commit closure.
@@ -480,7 +482,7 @@ release metadata are not current PASS evidence.
 - **Allowed Paths**: new platform contract/schema/fixtures/validators/tests;
   current validation routing and fixture; manifest CI job and CI contract;
   repository aggregate/pre-commit/inventories; Traefik README; exact tool
-  inventory; reciprocal SDLC documents/indexes/progress/program relation.
+  inventory; reciprocal package-local SDLC documents and current indexes.
 - **Forbidden Paths**: ignored/private files, secret values, credentials,
   kubeconfig, auth caches, shell history, RTK logs, provider responses,
   rendered Secret bodies, tracked tool/schema caches, and live-system state.
@@ -513,7 +515,7 @@ release metadata are not current PASS evidence.
   inventories, and pre-commit ownership contain no duplicate primary command.
 - Required local lanes PASS, independent reviews have zero open finding, and
   remote Helm/live/provider evidence remains bounded `DEFER`.
-- Spec 049, Plan, Task, indexes, progress, and program relation close
+- Spec 049, Plan, Tasks, and current indexes close
   reciprocally and hand off only the approved IaC work to Spec 050.
 
 ## Traceability
@@ -522,7 +524,7 @@ release metadata are not current PASS evidence.
 - **Task**: [Platform Validation and Security Evidence Task](plan.md)
 - **Program**: [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
 - **Architecture**: [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
-- **Decision**: [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+- **Decision**: [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Predecessor**: Spec 048 GitHub Routing and CI Evidence in the PRD-0007
   program lineage
 - **Successor**: Spec 050 Example IaC and Validator QA in the PRD-0007 program

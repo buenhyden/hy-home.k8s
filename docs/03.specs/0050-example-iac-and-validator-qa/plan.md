@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "sdlc/plan"
 status: "draft"
 owner: "platform"
-updated: "2026-08-02"
+updated: "2026-09-05"
 layer: "specs"
 artifact_id: "SPEC-0050-PLAN-0001"
 ---
@@ -17,6 +17,18 @@ artifact_id: "SPEC-0050-PLAN-0001"
 > boundaries independently, and keep cloud/provider actions unexecuted.
 
 ## Overview
+
+### Current Execution Disposition (2026-09-05)
+
+This Plan remains `draft`; all package Tasks remain `queued`. Resume only
+after Spec 0049's evidenced package closure through the legal package-local
+`draft → active` route described in the
+[Spec disposition](spec.md#current-execution-disposition-2026-09-05).
+Accepted ADR-0031/0033 replace ADR-0021 and the public program-instance roster
+as current execution authority. The older work breakdown is proposal input;
+re-observe its paths, commands, providers, and current owners before activating
+implementation. Do not restore retired progress, package routers, instance
+rows, or old decision states. New execution evidence belongs in package Tasks.
 
 **Goal:** Extend the Spec 049 platform evidence contract with deterministic,
 provider-native, non-deploy validation for the AWS Terraform and Azure Bicep
@@ -90,7 +102,7 @@ or live result.
 - Parent [Implementation Plan](plan.md)
 - [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md),
   [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md),
-  and [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+  and [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - Spec 049 platform contract, exact-tool helper behavior, validation routing,
   CI owner, aggregate, and residual DEFER records
 - Current AWS Terraform source/constraints/modules, Azure Bicep module graph,
@@ -132,7 +144,7 @@ or live result.
 
 | ID | Work package | Depends on | Entry gate | Exit evidence |
 | --- | --- | --- | --- | --- |
-| EIVQ-000 | Activate reciprocal Spec 050 execution path | Spec 049 closure | Spec 050 is first unfinished relation | Spec/Plan/Task/index/progress/program row activate atomically |
+| EIVQ-000 | Activate reciprocal Spec 050 execution path | Spec 049 closure | Spec 050 is first unfinished relation | Spec/Plan activate, activation Task starts, and Stage 03 index agrees under ADR-0031/0033 |
 | EIVQ-001 | Define closed-argv and artifact-boundary RED behavior | EIVQ-000 | Current example/tool/lock state captured | Focused tests reject every named tool, path, argv, environment, lock, syntax, and artifact defect |
 | EIVQ-002 | Extend the contract and implement the shared/helper validator | EIVQ-001 | Expected RED failures observed | Contract extension, shared helper, orchestrator self-test, and focused unittest pass |
 | EIVQ-003 | Generate and validate Terraform provider lock | EIVQ-002 | Exact Terraform tool prepared | Reviewed lock, fmt/init/validate PASS, isolated caches, and zero tracked runtime artifact |
@@ -167,7 +179,7 @@ or live result.
 - `.gitignore`, `scripts/README.md`, `tests/README.md`
 - `examples/README.md`, `examples/aws/README.md`, `examples/azure/README.md`,
   `examples/azure/infrastructure/README.md`
-- reciprocal Spec/Plan/Task/index/progress/program-lineage surfaces
+- reciprocal package-local Spec/Plan/Task and current index surfaces
 
 **Delete:** `examples/.gitkeep` after the tracked non-empty proof.
 
@@ -194,28 +206,18 @@ codes fail; an explicitly allowlisted warning requires rationale, owner, retry
 trigger, and expiry/refresh condition in the platform contract. Full command
 stdout/stderr is not durable evidence.
 
-### Task 1: EIVQ-000 — activate the reciprocal execution path
+### Task 1: EIVQ-000 — activate the package-local execution path
 
-- [ ] Confirm Spec 049 closure, clean worktree, and first-unfinished relation.
-
-  ```bash
-  rtk git status --short --branch
-  rtk python3 scripts/validate-document-contract-registry.py --root . --mode strict
-  rtk python3 scripts/validate-document-lifecycle.py --root . --mode staged
-  ```
-
-- [ ] Set Spec 050, this Plan, its Task, and the Spec 050 program row to active;
-  update Stage 03/04 indexes and progress in the same diff.
-
-- [ ] Validate strict documents and commit only activation.
-
-  ```bash
-  rtk python3 scripts/validate-markdown-profiles.py --root . --mode strict
-  rtk python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts registry
-  rtk git diff --check
-  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0050-example-iac-and-validator-qa/spec.md docs/03.specs/README.md docs/03.specs/0050-example-iac-and-validator-qa/plan.md docs/03.specs/0050-example-iac-and-validator-qa/plan.md docs/03.specs/0050-example-iac-and-validator-qa/README.md#task-records docs/03.specs/0050-example-iac-and-validator-qa/README.md#task-records docs/99.templates/registry.json
-  rtk git commit -m "docs: activate example iac validation plan"
-  ```
+- [ ] Verify Spec 0049 and its package-local Plan/Tasks are terminal with
+  required validation, review, and handoff evidence; re-observe the clean
+  approved checkout and current canonical owners.
+- [ ] Move only this Spec and Plan `draft → active`, and its activation Task
+  `queued → in-progress`, atomically with the Stage 03 index.
+- [ ] Run strict Registry, Markdown, links/owners, staged lifecycle, affected
+  and staged lanes, plain pre-commit, and diff checks over the exact activation.
+- [ ] Record evidence in the activation Task and commit the bounded change.
+  No ADR transition, public execution roster, or implementation is part of
+  activation. This Task remains queued until its predecessor condition holds.
 
 ### Task 2: EIVQ-001 — define focused RED behavior
 
@@ -445,7 +447,7 @@ stdout/stderr is not durable evidence.
 
 - [ ] Record tool, provider lock, native command, warning, artifact, routing,
   CI, QA, review, commit, and cloud/live DEFER evidence in the Task. Close the
-  Spec/Plan/Task/program relation atomically and hand off only to Spec 051.
+  Spec/Plan/Task/index state atomically and hand off only to Spec 051.
 
 - [ ] Validate terminal lifecycle and commit closure.
 
@@ -497,7 +499,7 @@ current PASS evidence.
   new shared tool helper/example validator/test/fixtures; Terraform lock;
   `.gitignore`; validation routing/fixture; manifest CI and CI contract;
   aggregate/inventories; example READMEs and tracked placeholder; reciprocal
-  SDLC documents/indexes/progress/program relation.
+  package-local SDLC documents and current indexes.
 - **Forbidden Paths**: ignored/private files, credentials, auth files, shell
   history, RTK logs, secret values, Terraform state/plan/cache/crash/variable
   secret files, provider response bodies, compiled deployment artifacts, and
@@ -532,7 +534,7 @@ current PASS evidence.
   inventories, ignore rules, and placeholder deletion agree with one owner.
 - Full local QA and independent reviews pass with zero open finding; cloud,
   provider, hosted-current, deployment, and live evidence remains `DEFER`.
-- Spec 050, Plan, Task, indexes, progress, and program relation close
+- Spec 050, Plan, Tasks, and current indexes close
   reciprocally and hand off to Spec 051.
 
 ## Traceability
@@ -541,7 +543,7 @@ current PASS evidence.
 - **Task**: [Example IaC and Validator QA Task](plan.md)
 - **Program**: [PRD-0007](../../01.requirements/0007-repository-delivery-and-platform-assurance.md)
 - **Architecture**: [AD-0010](../../02.architecture/descriptions/0010-repository-delivery-evidence-architecture.md)
-- **Decision**: [ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
+- **Decision**: [superseded ADR-0021](../../02.architecture/decisions/0021-canonical-surface-routing-and-evidence-depth.md)
 - **Predecessor**: Spec 049 Platform Validation and Security Evidence in the
   PRD-0007 program lineage
 - **Successor**: Spec 051 Repository Assurance Integration and Closure in the
