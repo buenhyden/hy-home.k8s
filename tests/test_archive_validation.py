@@ -736,7 +736,7 @@ class ArchiveValidationTest(unittest.TestCase):
         self.assertTrue(
             all(
                 path.startswith(
-                    ("docs/98.archive/changes/", "docs/98.archive/tombstones/")
+                    ("docs/98.archive/changes/", "docs/98.archive/superseded/")
                 )
                 for path in records
             )
@@ -2732,6 +2732,140 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
     def test_moved_manifest_source_is_absent_and_target_is_current(self) -> None:
         self.assertNotIn(self.moved_source, self.context.texts)
         self.assertIn(self.moved_target, self.context.texts)
+
+class SealedRecordRelocationTest(unittest.TestCase):
+    """Prove a later sealed ledger may move a record and may not invent one."""
+
+    @staticmethod
+    def _ledger(rows: list[dict[str, object]], *, sealed: bool = True) -> bytes:
+        status = "sealed" if sealed else "draft"
+        return (
+            "---\n"
+            'title: "MIG-0020: Record Relocation"\n'
+            'type: "archive/migration"\n'
+            f'status: "{status}"\n'
+            'owner: "platform"\n'
+            'updated: "2026-09-04"\n'
+            'artifact_id: "MIG-0020"\n'
+            "---\n\n"
+            "# MIG-0020: Record Relocation\n\n"
+            "## Migration Ledger\n\n"
+            "<!-- archive-migration-ledger:v1 format=json -->\n\n"
+            "```json\n"
+            f"{json.dumps(rows, indent=2)}\n"
+            "```\n\n"
+            "### Historical consumers\n\n"
+            "<!-- archive-historical-consumers:v1 format=json -->\n\n"
+            "```json\n"
+            "[]\n"
+            "```\n"
+        ).encode("utf-8")
+
+    @staticmethod
+    def _row(legacy: str, target: str) -> dict[str, object]:
+        return {
+            "legacy_path": legacy,
+            "stable_path": target,
+            "artifact_id": None,
+            "action": "moved",
+            "replacement": None,
+            "source_commit": "a" * 40,
+            "source_blob": "b" * 40,
+            "content_sha256": "c" * 64,
+            "reason": "The record documents a supersession, so it moves.",
+        }
+
+    LEDGER_PATH = "docs/98.archive/migrations/0020-record-relocation.md"
+    SEALED = "docs/98.archive/tombstones/01.requirements/0001-a.md"
+    TARGET = "docs/98.archive/superseded/01.requirements/0001-a.md"
+
+    def test_a_sealed_row_relocates_a_sealed_stable_path(self) -> None:
+        content = self._ledger([self._row(self.SEALED, self.TARGET)])
+        self.assertEqual(
+            archive_validation.relocated_stable_archive_paths(
+                ((self.LEDGER_PATH, content),), (self.SEALED,)
+            ),
+            {self.SEALED: self.TARGET},
+        )
+
+    def test_a_row_cannot_invent_a_stable_path_no_ledger_sealed(self) -> None:
+        # The origin is a well-formed record path, but no earlier ledger ever
+        # sealed it, so the row composes no stable path here.
+        content = self._ledger(
+            [self._row("docs/98.archive/tombstones/01.requirements/9999-x.md", self.TARGET)]
+        )
+        self.assertEqual(
+            archive_validation.relocated_stable_archive_paths(
+                ((self.LEDGER_PATH, content),), (self.SEALED,)
+            ),
+            {},
+        )
+
+    def test_a_draft_ledger_composes_nothing(self) -> None:
+        content = self._ledger([self._row(self.SEALED, self.TARGET)], sealed=False)
+        self.assertEqual(
+            archive_validation.relocated_stable_archive_paths(
+                ((self.LEDGER_PATH, content),), (self.SEALED,)
+            ),
+            {},
+        )
+
+    def test_a_move_out_of_the_record_namespace_fails_closed(self) -> None:
+        for escape in (
+            "docs/03.specs/0001-a/spec.md",
+            "docs/98.archive/completed/01.requirements/0001-a.md",
+            "docs/98.archive/migrations/0021-a.md",
+        ):
+            with self.subTest(escape=escape):
+                content = self._ledger([self._row(self.SEALED, escape)])
+                with self.assertRaises(archive_validation.ArchiveContractError):
+                    archive_validation.relocated_stable_archive_paths(
+                        ((self.LEDGER_PATH, content),), (self.SEALED,)
+                    )
+
+    def test_two_sealed_records_may_not_land_on_one_path(self) -> None:
+        other = "docs/98.archive/tombstones/01.requirements/0002-b.md"
+        content = self._ledger(
+            [self._row(self.SEALED, self.TARGET), self._row(other, self.TARGET)]
+        )
+        with self.assertRaises(archive_validation.ArchiveContractError):
+            archive_validation.relocated_stable_archive_paths(
+                ((self.LEDGER_PATH, content),), (self.SEALED, other)
+            )
+
+    def test_a_chain_of_later_ledgers_resolves_to_its_end(self) -> None:
+        middle = "docs/98.archive/superseded/01.requirements/0001-a.md"
+        final = "docs/98.archive/tombstones/01.requirements/0003-c.md"
+        first = self._ledger([self._row(self.SEALED, middle)])
+        second = (
+            self._ledger([self._row(middle, final)])
+            .replace(b"MIG-0020", b"MIG-0021")
+            .replace(b"Record Relocation", b"Record Relocation Again")
+        )
+        self.assertEqual(
+            archive_validation.relocated_stable_archive_paths(
+                (
+                    (self.LEDGER_PATH, first),
+                    ("docs/98.archive/migrations/0021-record-relocation-again.md", second),
+                ),
+                (self.SEALED,),
+            ),
+            {self.SEALED: final},
+        )
+
+    def test_relocations_rewrite_only_the_rows_they_name(self) -> None:
+        rows = (
+            {"stable_path": self.SEALED, "artifact_id": "tomb-PRD-0001"},
+            {"stable_path": "docs/98.archive/tombstones/03.specs/0001-c.md"},
+        )
+        rewritten = archive_validation.apply_stable_archive_relocations(
+            rows, {self.SEALED: self.TARGET}
+        )
+        self.assertEqual(rewritten[0]["stable_path"], self.TARGET)
+        self.assertEqual(rewritten[0]["artifact_id"], "tomb-PRD-0001")
+        self.assertEqual(rewritten[1], dict(rows[1]))
+        # The inputs are untouched: the rewrite returns new rows.
+        self.assertEqual(rows[0]["stable_path"], self.SEALED)
 
 
 if __name__ == "__main__":

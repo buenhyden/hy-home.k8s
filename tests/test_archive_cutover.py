@@ -34,6 +34,25 @@ from scripts.document_lifecycle import (  # noqa: E402
 )
 
 
+def current_stable_rows() -> tuple[dict[str, object], ...]:
+    """Return MIG-0001's rows with every later sealed relocation applied.
+
+    MIG-0001 derives each record's stable path structurally, so its rows name
+    the home a record had when that ledger was sealed. Production reads them
+    through the relocation composition, and a fixture that reads them raw would
+    name a record's first home rather than the one it has now.
+    """
+
+    rows = archive_recovery.build_work107_migration_rows(ROOT)
+    return archive_validation.apply_stable_archive_relocations(
+        rows,
+        archive_validation.relocated_stable_archive_paths(
+            archive_validation.sealed_generic_ledgers(ROOT),
+            tuple(str(row["stable_path"]) for row in rows),
+        ),
+    )
+
+
 class ArchiveCutoverTest(unittest.TestCase):
     def _validate_without_repeating_secret_classification(
         self,
@@ -114,6 +133,17 @@ class ArchiveCutoverTest(unittest.TestCase):
             migration_path.read_bytes()
         )
         rows = archive_recovery.validate_work107_migration_rows(ROOT, rows)
+        # The sealed rows name each record's first home. MIG-0017 later moved
+        # the seventeen supersession records to the directory that describes
+        # them, so the row's stable path is composed the way production reads
+        # it before the tree is compared against it.
+        rows = archive_validation.apply_stable_archive_relocations(
+            rows,
+            archive_validation.relocated_stable_archive_paths(
+                archive_validation.sealed_generic_ledgers(ROOT),
+                tuple(str(row["stable_path"]) for row in rows),
+            ),
+        )
         report = archive_validation.validate_repository_archive(ROOT, {})
         self.assertTrue(report.valid, report.diagnostics)
         namespace_paths = {path for path, _links in report.record_link_counts}
@@ -151,7 +181,7 @@ class ArchiveCutoverTest(unittest.TestCase):
         index.  What must never appear is a legacy path.
         """
 
-        rows = archive_recovery.build_work107_migration_rows(ROOT)
+        rows = current_stable_rows()
         index = (ROOT / archive_cutover.ARCHIVE_INDEX).read_text(encoding="utf-8")
         linked = 0
         for row in rows:
@@ -567,7 +597,7 @@ class ArchiveCutoverTest(unittest.TestCase):
         )
         stable_by_legacy = {
             str(row["legacy_path"]): str(row["stable_path"])
-            for row in archive_recovery.build_work107_migration_rows(ROOT)
+            for row in current_stable_rows()
         }
 
         for archive_path in legacy_paths:
@@ -1050,7 +1080,7 @@ class ArchiveCutoverTest(unittest.TestCase):
     def test_partial_duplicate_original_owner_is_rejected(self) -> None:
         stable_by_legacy = {
             str(row["legacy_path"]): str(row["stable_path"])
-            for row in archive_recovery.build_work107_migration_rows(ROOT)
+            for row in current_stable_rows()
         }
         first_legacy, second_legacy = archive_cutover.EXPECTED_ARCHIVE_PATHS[:2]
         first_path = stable_by_legacy[first_legacy]
@@ -1080,7 +1110,7 @@ class ArchiveCutoverTest(unittest.TestCase):
     def test_partial_missing_replacement_is_rejected(self) -> None:
         stable_by_legacy = {
             str(row["legacy_path"]): str(row["stable_path"])
-            for row in archive_recovery.build_work107_migration_rows(ROOT)
+            for row in current_stable_rows()
         }
         first_path = stable_by_legacy[archive_cutover.EXPECTED_ARCHIVE_PATHS[0]]
         first_bytes = (ROOT / first_path).read_bytes()

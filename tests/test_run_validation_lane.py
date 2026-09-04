@@ -1676,7 +1676,7 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
 
     def test_docs_selector_executes_every_validator_and_propagates_path(self):
         path = (
-            "docs/98.archive/tombstones/02.architecture/"
+            "docs/98.archive/superseded/02.architecture/"
             "0003-platform-expansion-mesh-dashboard.md"
         )
         result, statuses, output, invoked = self._run([path])
