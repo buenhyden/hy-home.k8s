@@ -66,9 +66,9 @@ sit inside that class, and each gets one directory:
 | Directory | Role | Derivation | Retained form |
 | --- | --- | --- | --- |
 | `migrations/` | The sealed record of a path transition itself | `archive/migration` in state `sealed` | The ledger document |
-| `completed/` | Work that finished successfully | A terminal success state, currently `done` | The document itself |
+| `completed/` | Work that ran to an end | A terminal state naming no replacement: `done`, and `cancelled` inside a package that finished | The document itself |
 | `superseded/` | A document a named successor replaced | A terminal `superseded` state with a replacement | A record |
-| `tombstones/` | A document that ended with no successor | `withdrawn`, `rejected`, `cancelled`, `retired`, or `invalidated`, with no replacement | A record |
+| `tombstones/` | A document that ended alone with no successor | `withdrawn`, `rejected`, `cancelled`, `retired`, or `invalidated`, with no replacement and no finished package around it | A record |
 
 A directory keeps its role when it has no members. `tombstones/` holds nothing
 once the seventeen supersession records move to the directory that describes
@@ -82,12 +82,44 @@ reader looking for why a decision changed looks at the log, not the archive.
 `superseded/` therefore holds records for superseded documents of other
 families.
 
+### Retention still waits for consumer zero
+
+A terminal document is retained only once no current document names it. This is
+ADR-0030's consumer-first rule unchanged: retention replaces what happens when a
+document reaches consumer zero, not the condition for reaching it.
+
+Two superseded requirement packages are the standing case. Six current Stage 02
+documents name REQ-0005 or REQ-0006 as the requirement the decision serves.
+Sealing either as a record would take that link away, because a current document
+may not link a record directly, and repointing the citation at their successor
+REQ-0008 would claim those decisions were made under a requirement that did not
+yet exist. Both stay in Stage 01 until the documents tracing to them are
+themselves terminal.
+
+This is the same shape as the decision-log exception above, stated on the
+consumer axis rather than the family axis: a document that current work still
+reaches through its own traceability has not finished being current.
+
 ### Retention mirrors the origin path
 
 A retained document occupies `docs/98.archive/completed/<its own stage path>`
 and nowhere else. The mirror is what makes a retention move provable: a
 relocation that does not mirror its source is not a retention move, whatever it
 is labelled.
+
+### The retention unit is the package
+
+A Stage 03 package is one unit of work, so it is retained whole or not at all.
+Its spec, plan, and tasks link to each other, and splitting the package across
+two Stage 98 directories would break exactly the coupling retention exists to
+keep readable.
+
+This is why `completed/` admits `cancelled` beside `done`. A task abandoned
+while its package ran to completion is part of that package's history, and a
+tombstone record for it would assert an ending the package did not have. A
+document that ends alone, with no finished package around it, still gets a
+record. `superseded` stays out of `completed/` either way: it names a
+replacement, which is what `superseded/` describes.
 
 ### A retained copy preserves target identity, not bytes
 
@@ -140,6 +172,10 @@ migration row is what reconciles them.
 
 Citations of a retained package are repointed to its retention path instead of
 being rewritten or deleted, so the citing document keeps its meaning.
+
+A package is retained only when every document in it is terminal, so one
+unfinished task holds the whole package in the active stage. That is the
+intended cost of keeping the package readable as a unit.
 
 The seventeen existing supersession records move directory, which changes the
 paths the stage index and the declared rehome table name.

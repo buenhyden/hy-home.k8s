@@ -10,9 +10,9 @@
 `98.archive/`는 활성 스테이지를 떠난 문서를 보관하는 비현재 stage다. 네 개의 하위 디렉터리는 이름이 아니라 [ADR-0032](../02.architecture/decisions/0032-completed-and-terminal-document-retention.md)가 registry의 종단 상태 분류에서 파생한 역할로 구분된다.
 
 - `migrations/`는 경로 전이 자체를 봉인한 원장이다. `archive/migration` profile의 `sealed` 문서이며, 어떤 문서가 어디로 갔는지에 대한 유일한 기계 증거다.
-- `completed/`는 성공적으로 끝난 작업을 보관한다. 판정 근거는 종단 성공 상태이며 현재는 `done`이다.
+- `completed/`는 끝까지 진행된 작업을 보관한다. 판정 근거는 replacement를 명명하지 않는 종단 상태이며, `done`과 끝난 패키지 안의 `cancelled`가 여기 해당한다. 보존 단위는 문서가 아니라 패키지이므로, 미종단 문서가 하나라도 있으면 패키지 전체가 활성 스테이지에 남는다.
 - `superseded/`는 후속 문서가 대체한 문서의 record를 보관한다. 판정 근거는 종단 `superseded` 상태와 존재하는 replacement다.
-- `tombstones/`는 후속자 없이 끝난 문서의 record를 보관한다. 판정 근거는 `withdrawn`·`rejected`·`cancelled`·`retired`·`invalidated` 종단 상태와 replacement의 부재다.
+- `tombstones/`는 끝난 패키지 없이 단독으로 끝난 문서의 record를 보관한다. 판정 근거는 `withdrawn`·`rejected`·`cancelled`·`retired`·`invalidated` 종단 상태와 replacement의 부재다.
 
 `completed/`만 record가 아니라 문서 자체를 보관한다. ArchiveEnvelope가 없고, 자신의 profile과 종단 상태를 유지하며, 상대 링크 접두어만 보존 트리 기준으로 재기준된다. 바이트 동일성이 아니라 링크 대상 동일성이 보존 불변식이고, 원본 바이트는 각 행이 고정한 `source_commit`과 `source_blob`으로 Git에서 복원한다. 그 링크는 현재 결합이 아니라 역사 증거로 읽는다.
 
