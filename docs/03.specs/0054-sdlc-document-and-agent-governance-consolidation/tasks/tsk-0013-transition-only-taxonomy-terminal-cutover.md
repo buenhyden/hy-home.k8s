@@ -1,10 +1,10 @@
 ---
 title: "Task: Current corpus and transition-control cutover"
-version: "1.3.0"
+version: "1.4.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-05"
 layer: "specs"
 artifact_id: "SPEC-0054-TSK-0013"
 ---
@@ -46,12 +46,12 @@ SPEC-0054-TSK-0011 parent handoff; and the existing Spec 0054 compatibility poin
 which named this Task while it was still `queued`
 
 **Current state:** `in-progress`; the entry blocker in the link validator is
-released, document-contract v9 has a proposal commit, ADR-0032 and ADR-0033
-have human acceptance, and the remaining WP-013 dispositions are not complete
+released, document-contract v9 and the ADR-0032/ADR-0033 acceptance transitions
+are committed, and the remaining WP-013 dispositions are not complete
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-054-013 | VAL-SDLC-001..VAL-SDLC-004, VAL-SDLC-006, VAL-SDLC-009..VAL-SDLC-012 | After the completed child and parent handoffs, reconcile retained Stage 01 Requirements and Stage 02 Architecture bidirectionally with the current implementation, converge the reviewed Stage 01/02/03/99 current-owner set, retain terminal governed documents under ADR-0032, remove current-authority dependencies on sealed Archive records, transfer unfinished work and unique authority, then retire residual transition assets against the accepted and completed Spec 0066 routing result without a fixed corpus census. | platform | In progress | Document-contract v9 proposed in commit `41f8144e`; ADR-0032/0033 acceptance and Plan amendment prepared; remaining WP-013 disposition is open. | Terminal Spec 0066 states, completed SPEC-0054-TSK-0011, compatibility pointer to this Task, manifest/configuration/code/validator/operational-interface evidence mapped to retained Requirement Packages and Architecture Descriptions, completed-retention provenance, zero current-authority dependencies on sealed Archive records, consumer/trace/lifecycle parity, Git exact-byte recovery, registry/template parity, delegated routing evidence, and ordered logical commits |
+| WORK-054-013 | VAL-SDLC-001..VAL-SDLC-004, VAL-SDLC-006, VAL-SDLC-009..VAL-SDLC-012 | After the completed child and parent handoffs, reconcile retained Stage 01 Requirements and Stage 02 Architecture bidirectionally with the current implementation, converge the reviewed Stage 01/02/03/99 current-owner set, retain terminal governed documents under ADR-0032, remove current-authority dependencies on sealed Archive records, transfer unfinished work and unique authority, then retire residual transition assets against the accepted and completed Spec 0066 routing result without a fixed corpus census. | platform | In progress | Document-contract v9 proposed in `41f8144e`; ADR-0032/0033 acceptance and the Spec/Plan amendment committed in `5b7ff61f`; CI contract and regression fixes committed through `ad907cb1`; remaining WP-013 dispositions are open. | Terminal Spec 0066 states, completed SPEC-0054-TSK-0011, compatibility pointer to this Task, manifest/configuration/code/validator/operational-interface evidence mapped to retained Requirement Packages and Architecture Descriptions, completed-retention provenance, zero current-authority dependencies on sealed Archive records, consumer/trace/lifecycle parity, Git exact-byte recovery, Registry/template parity, delegated routing evidence, ordered logical commits, PRs 54 and 55, Hosted CI run 33885291302, and secret-safe read-only runtime observations |
 
 ## Approval and Safety Boundaries
 
@@ -83,8 +83,9 @@ authority.
 ## Verification Summary
 
 No additional Stage 01, 02, 03, or 99 document has been removed in this
-follow-up. One entry blocker is released, the document-contract v9 proposal is
-committed, and the human acceptance/Plan-amendment boundary is now explicit.
+follow-up. One entry blocker is released, the document-contract v9 proposal and
+separate acceptance commits are durable, and the accepted ADR-0032 retention
+authority and ADR-0033 v9 decision are reflected in the Spec and Plan.
 
 Removing a package that a sealed migration row names as its endpoint raised
 `configuration error: WORK-054 WP-004B migration target differs` and exited 2,
@@ -147,8 +148,9 @@ records.
 
 - The staged lifecycle gate rejected the attempted direct ADR-0033
   "absent -> accepted" creation. Commit `41f8144e` now establishes the required
-  `proposed` state, and the user's 2026-09-04 acceptance authorizes the later
-  `proposed -> accepted` transition without weakening the lifecycle contract.
+  `proposed` state. Commit `5b7ff61f` applies the user's 2026-09-04 acceptance
+  as the later `proposed -> accepted` transition without weakening the
+  lifecycle contract.
 - Current-main re-observation found fifteen Stage 03 packages in the active
   tree and completed packages already retained under Stage 98 by recent
   migration commits. The user's 2026-09-04 acceptance resolves ADR-0032's
@@ -166,6 +168,14 @@ records.
   secret-safe read-only checks of the configured Kubernetes, Argo CD, Vault,
   ESO, and provider runtime targets. It does not authorize secret-value reads,
   live mutation, forced reconciliation, merge, or destructive Git operations.
+- Logical commits are `41f8144e` for the v9 proposal, `5b7ff61f` for ADR-0032
+  and ADR-0033 acceptance plus Spec/Plan amendment, `aa501cf5` and `8d436c17`
+  for PR candidate-ref preservation, and `7bc38f46` plus `ad907cb1` for the
+  v9 regression contracts. The branch was pushed without force.
+- PR 54 carried the v9 and decision commits and was observed as externally
+  merged at head `8d436c17`; this work did not request or perform that merge.
+  The later regression commits are isolated in open PR 55. No merge action was
+  performed on PR 55.
 - During continuation, the shared checkout reflog recorded an external
   "pull --tags origin main" fast-forward at "2026-09-04 16:42:16 +0900",
   moving "main" from "24fe45af" to "1632ce28". The initial commit remains
@@ -218,9 +228,49 @@ records.
   over 1,015 paths, and `pre-commit run --all-files` passed every applicable
   hook; Dockerfile lint alone skipped because the repository has no selected
   Dockerfile. Neither invocation produced a formatter mutation.
+- The regression-fix affected lane first failed closed with
+  `SURFACE-PATH-TRANSPORT` because filtered `rtk git diff -z` output was not a
+  raw NUL stream. `rtk proxy git diff -z` preserved the required machine path
+  transport; the affected and staged lanes then passed over the exact three
+  paths. Ruff reformatted one assertion, after which affected, staged, plain
+  pre-commit, and all-files pre-commit were rerun and passed on the final bytes.
+- Local regression evidence at `7bc38f46` is 143 focused tests passed and 887
+  discovered tests passed with four skips. After Hosted CI exposed the
+  version-dependent `jsonschema.validators.urlopen` test alias, the stable
+  urllib/socket boundary replaced it in `ad907cb1`; the failing subcase and all
+  41 generic migration recovery tests then passed locally.
+- Hosted CI failures were preserved rather than promoted: run 33863703704
+  exposed governance/test contract gaps, run 33866665565 exposed detached-HEAD
+  history validation, run 33870903959 exposed six failures and four errors in
+  the full regression suite, and run 33881795992 reduced the result to four
+  version-dependent jsonschema setup errors. Final run 33885291302 on head
+  `ad907cb1` passed branch policy, changes, pre-commit, agent governance,
+  repository quality and all 887 regression tests, and CI summary. The
+  test-only manifest job correctly skipped. Direct evidence is the run URL
+  `https://github.com/buenhyden/hy-home.k8s/actions/runs/33885291302` and jobs
+  `101063501929`, `101063501975`, `101063502057`, and `101073181642`.
+- Secret-safe read-only runtime evidence used kubectl v1.30.14 against context
+  `k3d-hyhome`, Argo CD CLI v3.3.6, Codex CLI 0.140.0, and Claude CLI 2.1.260;
+  a Vault CLI was unavailable. Kubernetes `/readyz` returned `ok`, but only
+  `k3d-hyhome-server-0` was Ready while three agent nodes were NotReady.
+- Argo CD Applications included `Unknown` and `Degraded` health states, and
+  `platform-ingress-nginx` reported an operation error despite Synced/Healthy
+  resource state. ESO reported `vault-backend` as
+  `InvalidProviderConfig`, and the observed ExternalSecrets reported
+  `SecretSyncedError`. The `vault` namespace exposed no pods or services.
+  These are direct FAIL/DEFER runtime observations, not reconciliation success.
+- No Secret objects or values, logs, Vault KV/API data, provider credentials,
+  or authenticated provider APIs were read. No apply, patch, sync, rollout,
+  forced reconciliation, or other live mutation was performed. Provider CLI
+  presence is not promoted to authenticated provider-runtime evidence.
+- Release evidence is DEFER: the repository had only local tag
+  `pre-consolidation-merge`, the GitHub release list was empty, no exact release
+  version was supplied, and PR 55 remains unmerged. No tag or release was
+  created.
 - "git diff --check" passed and "git diff -- docs/98.archive" remained empty.
-- Local static success is not hosted CI, Argo CD reconciliation, cluster
-  readiness, Vault/ESO behavior, provider runtime, or release evidence.
+- Hosted CI success is scoped to run 33885291302. It is not Argo CD
+  reconciliation, cluster readiness, healthy Vault/ESO behavior, authenticated
+  provider runtime, release, or WP-013 corpus-removal completion.
 
 ## Traceability
 
@@ -228,4 +278,4 @@ records.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| [WORK-054-013](../plan.md#wp-013--current-corpus-and-transition-control-cutover) | In progress. | Sealed-endpoint pin released across three owners with four regression cases; intact tree `PASS CROSS-DOCUMENT`; no corpus removal made. |
+| [WORK-054-013](../plan.md#wp-013--current-corpus-and-transition-control-cutover) | In progress. ADR-0032/0033 acceptance, document-contract v9, local/Hosted validation, and approved read-only runtime observation are complete; the WP-013 corpus dispositions are not. | Sealed-endpoint pin released across three owners with four regression cases; intact tree `PASS CROSS-DOCUMENT`; commits `41f8144e` through `ad907cb1`; PRs 54/55; Hosted CI run 33885291302; no corpus removal or live mutation made. |
