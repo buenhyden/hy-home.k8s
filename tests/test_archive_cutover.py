@@ -316,13 +316,16 @@ class ArchiveCutoverTest(unittest.TestCase):
     def test_index_only_replacement_evolution_preserves_immutable_envelope(
         self,
     ) -> None:
-        replacement = "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md"
+        # Spec 0036 was retained under ADR-0032, so this case names an active
+        # package: the point is that an index-only replacement change to a
+        # present current document is accepted.
+        replacement = "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md"
 
         def evolve_replacement(text: str) -> str:
             lines, rows = self._manifest_rows(text)
             cells = self._cells(lines[rows[0]])
             cells[7] = (
-                f"[`{replacement}`](../03.specs/0036-archive-record-and-workspace-boundary/spec.md)"
+                f"[`{replacement}`](../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)"
             )
             lines[rows[0]] = self._row(cells)
             return "".join(lines)
@@ -349,7 +352,10 @@ class ArchiveCutoverTest(unittest.TestCase):
     def test_replacement_target_authority_fails_closed(self) -> None:
         registry = load_registry(ROOT)
         tracked = archive_cutover._tracked_regular_blobs(ROOT)
-        current = "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md"
+        # This case needs a present current document so classification, not
+        # absence or the archive route, decides the diagnostic. Spec 0036 was
+        # retained under ADR-0032, so an active package stands in for it.
+        current = "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md"
         template = "docs/99.templates/templates/archive/tombstone.template.md"
 
         self.assertEqual(
@@ -440,8 +446,12 @@ class ArchiveCutoverTest(unittest.TestCase):
         )
 
         mandatory = {
+            # The package was retained under ADR-0032, so the sealed row's
+            # three-digit legacy path composes through the four-digit Stage 03
+            # path to the retention path that now owns the document.
             "docs/03.specs/036-archive-record-and-workspace-boundary/spec.md": (
-                "docs/03.specs/0036-archive-record-and-workspace-boundary/spec.md"
+                "docs/98.archive/completed/03.specs/"
+                "0036-archive-record-and-workspace-boundary/spec.md"
             ),
             "docs/00.agent-governance/rules/document-stage-routing.md": (
                 "docs/00.agent-governance/policies/document-authoring.md"
