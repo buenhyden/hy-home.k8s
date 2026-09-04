@@ -413,12 +413,12 @@ also its `sourceLinkColumn`, and Task's `Criterion / work item` (kind
 non-`N/A` value, and `_identifier_text` unwraps a full `[label](url)` link
 to its label before pattern-matching. Verified directly against this
 cycle's own authored documents rather than assumed: the reciprocal
-[Plan](../../../03.specs/0058-workspace-research-consistency-and-partial-refresh/plan.md#traceability)'s
+[Plan](../../../98.archive/completed/03.specs/0058-workspace-research-consistency-and-partial-refresh/plan.md#traceability)'s
 `Spec criterion` column (lines 843–855) renders every non-excluded row as
-`[VAL-WRCP-0NN](../../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md)` —
+`[VAL-WRCP-0NN](../../../98.archive/completed/03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md)` —
 a plain markdown link whose visible label is the bare `VAL-` identifier, no
 backticks — and this
-[package Task records](../../../03.specs/0058-workspace-research-consistency-and-partial-refresh/plan.md), whose
+[package Task records](../../../98.archive/completed/03.specs/0058-workspace-research-consistency-and-partial-refresh/plan.md), whose
 `Criterion / work item` column (lines 210–219) follows the identical
 pattern with `[WRCP-0NN](...#anchor)`. **This corrects, rather than
 confirms, the brief's illustrative example**: `sdlc/spec` itself does not

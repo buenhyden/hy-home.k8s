@@ -24,7 +24,7 @@ an existing owner, so this cycle creates no new research pack, no new topic
 report, and no new requirement owner.
 
 The request scope is byte-equivalent to
-[Spec 0058](../../../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md).
+[Spec 0058](../0058-workspace-research-consistency-and-partial-refresh/spec.md).
 That equivalence is the central design problem, not an incidental observation.
 Specs 055, 056, and 057 each re-tested the same twelve `Partial` rows and
 promoted none, because the blocking evidence classes — live cluster, hosted CI
@@ -393,7 +393,7 @@ and [Task](./plan.md)
 authored under the repository's standalone execution rules. Its refresh target is
 the [2026-08-08 WER pack](../../../../90.references/research/0001-workspace-engineering/README.md),
 and its predecessor cycle is
-[Spec 0058](../../../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md).
+[Spec 0058](../0058-workspace-research-consistency-and-partial-refresh/spec.md).
 
 ### Lifecycle Traceability
 

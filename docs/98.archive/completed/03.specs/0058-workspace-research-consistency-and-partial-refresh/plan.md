@@ -15,7 +15,7 @@ artifact_id: "SPEC-0058-PLAN-0001"
 
 This Plan executes the combined constraint-consistency and `Partial`
 re-observation cycle designed by
-[Spec 0058](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md)
+[Spec 0058](./spec.md)
 over the existing `0001-workspace-engineering` research pack.
 
 **Goal.** Reconcile the pack against its current repository shape and record a
@@ -74,13 +74,13 @@ Copied verbatim from the owning Spec. Every work package inherits these.
 ### Legacy Task ledger inputs
 
 This Task is the durable execution and evidence ledger for the direct
-human-approved [Spec 0058](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md)
+human-approved [Spec 0058](./spec.md)
 and its reciprocal
-[Implementation Plan](plan.md).
+[Implementation Plan](./plan.md).
 Direct human approval on 2026-08-14 authorizes this standalone execution relation.
 No separate PRD or Architecture Description is required or part of this standalone lifecycle.
 The typed relation is governed by
-[ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md).
+[ADR-0022](../../../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md).
 
 This Task tracks the eight-work-package cycle over the existing
 `0001-workspace-engineering` research pack: a constraint-consistency pass over scope
@@ -89,10 +89,10 @@ the twelve `Partial` requirement rows. WRCP-000 activates the standalone
 execution relation itself; WRCP-001 through WRCP-007 execute and close the
 remaining work packages defined by the Plan.
 
-- [Spec 0058](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md)
-- [Implementation Plan](plan.md)
-- [ADR-0022](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
-- [Document profile registry](../../99.templates/registry.json)
+- [Spec 0058](./spec.md)
+- [Implementation Plan](./plan.md)
+- [ADR-0022](../../../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
+- [Document profile registry](../../../../99.templates/registry.json)
 - Direct human approval of the written Spec and Plan on 2026-08-14
 
 ### Topic ledger
@@ -260,7 +260,7 @@ Boundaries`, `Verification Summary`, `Traceability`. Set `WRCP-000` to
       row:
 
   ```markdown
-  | Direct human approval recorded in the Spec body | N/A — fifth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0058](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) |
+  | Direct human approval recorded in the Spec body | N/A — fifth typed standalone-execution relation; reuses the same closed approval and ownership semantics | [Spec 0058](./spec.md) |
   ```
 
   Also update the ADR prose that enumerates the covered Specs so it names
@@ -270,7 +270,7 @@ Boundaries`, `Verification Summary`, `Traceability`. Set `WRCP-000` to
       `### Related Documents` list, add:
 
   ```markdown
-  - [ADR-0022 — direct-approval standalone execution lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
+  - [ADR-0022 — direct-approval standalone execution lineage](../../../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
   ```
 
   This satisfies the reciprocity the `STANDALONE-EXECUTION-ADR` check requires.
@@ -1022,17 +1022,17 @@ performs repository-static edits only.
 
 | Spec criterion                                                                                | Work package  | Expected Task                                                                                                                                                     |
 | --------------------------------------------------------------------------------------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [VAL-WRCP-001](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-001      | [WRCP-001](tasks/tsk-0002-wrcp-001.md) will record the thirty-six-row topic ledger with unique owners              |
-| [VAL-WRCP-002](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-002..005 | [WRCP-002..005](plan.md) will record separated workspace and external results per requirement   |
-| [VAL-WRCP-003](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-002..005 | [WRCP-002..005](plan.md) will record four retention fields per retained Partial or DEFER        |
-| [VAL-WRCP-004](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-002..005 | [WRCP-002..005](plan.md) will record ledger before/after comparison and ID uniqueness           |
-| [VAL-WRCP-005](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-001      | [WRCP-001](tasks/tsk-0002-wrcp-001.md) will record consumer check result and the unchanged worktree                |
-| [VAL-WRCP-006](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-002..005 | [WRCP-002..005](plan.md) will record unchanged pack file inventory with dated sections only     |
-| [VAL-WRCP-007](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-006      | [WRCP-006](tasks/tsk-0007-wrcp-006.md) will record scope re-derivation and the unowned-path re-test                |
-| [VAL-WRCP-008](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-006      | [WRCP-006](tasks/tsk-0007-wrcp-006.md) will record cross-document agreement on counts and statuses                 |
-| [VAL-WRCP-009](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-006      | [WRCP-006](tasks/tsk-0007-wrcp-006.md) will record reconciliation as the last content commit                       |
-| [VAL-WRCP-010](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-007      | [WRCP-007](tasks/tsk-0008-wrcp-007.md) will record full lane results compared against the baseline                 |
-| [VAL-WRCP-011](../../03.specs/0058-workspace-research-consistency-and-partial-refresh/spec.md) | WRCP-000..007 | [WRCP-000..007](plan.md) will record one commit per package and terminal temporary-file absence |
+| [VAL-WRCP-001](./spec.md) | WRCP-001      | [WRCP-001](./tasks/tsk-0002-wrcp-001.md) will record the thirty-six-row topic ledger with unique owners              |
+| [VAL-WRCP-002](./spec.md) | WRCP-002..005 | [WRCP-002..005](./plan.md) will record separated workspace and external results per requirement   |
+| [VAL-WRCP-003](./spec.md) | WRCP-002..005 | [WRCP-002..005](./plan.md) will record four retention fields per retained Partial or DEFER        |
+| [VAL-WRCP-004](./spec.md) | WRCP-002..005 | [WRCP-002..005](./plan.md) will record ledger before/after comparison and ID uniqueness           |
+| [VAL-WRCP-005](./spec.md) | WRCP-001      | [WRCP-001](./tasks/tsk-0002-wrcp-001.md) will record consumer check result and the unchanged worktree                |
+| [VAL-WRCP-006](./spec.md) | WRCP-002..005 | [WRCP-002..005](./plan.md) will record unchanged pack file inventory with dated sections only     |
+| [VAL-WRCP-007](./spec.md) | WRCP-006      | [WRCP-006](./tasks/tsk-0007-wrcp-006.md) will record scope re-derivation and the unowned-path re-test                |
+| [VAL-WRCP-008](./spec.md) | WRCP-006      | [WRCP-006](./tasks/tsk-0007-wrcp-006.md) will record cross-document agreement on counts and statuses                 |
+| [VAL-WRCP-009](./spec.md) | WRCP-006      | [WRCP-006](./tasks/tsk-0007-wrcp-006.md) will record reconciliation as the last content commit                       |
+| [VAL-WRCP-010](./spec.md) | WRCP-007      | [WRCP-007](./tasks/tsk-0008-wrcp-007.md) will record full lane results compared against the baseline                 |
+| [VAL-WRCP-011](./spec.md) | WRCP-000..007 | [WRCP-000..007](./plan.md) will record one commit per package and terminal temporary-file absence |
 
 ### Related documents
 
@@ -1049,9 +1049,9 @@ relation are recorded the same way.
 - Decision source:
   `docs/02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md`
 - Immediate predecessor cycle: spec `056`
-- [Research pack README](../../90.references/research/0001-workspace-engineering/README.md)
-- [Scope application index](../../90.references/research/0001-workspace-engineering/m0013-scope-application-index.md)
-- [Quality standards](../../00.agent-governance/rules/quality-standards.md)
+- [Research pack README](../../../../90.references/research/0001-workspace-engineering/README.md)
+- [Scope application index](../../../../90.references/research/0001-workspace-engineering/m0013-scope-application-index.md)
+- [Quality standards](../../../../00.agent-governance/rules/quality-standards.md)
 
 ### Legacy Task traceability
 
@@ -1059,11 +1059,11 @@ relation are recorded the same way.
 
 | Criterion / work item                                                                                                                                  | Result                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Evidence                                                                                                                                                                      |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [WRCP-000](plan.md#task-1-wrcp-000--activate-the-standalone-execution)               | In progress. The direct-approval standalone execution relation is being activated in this commit: registry entry, ADR reciprocity, three `active` statuses, stage indexes, and converted Lifecycle Traceability links.                                                                                                                                                                                                                                                                                     | This Task, Spec 057, reciprocal Plan, ADR-0022, `standaloneExecutions` entry, activation commit                                                                               |
-| [WRCP-001](plan.md#task-2-wrcp-001--topic-ledger-and-approved-cleanup)               | Not yet executed.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Not applicable                                                                                                                                                                |
-| [WRCP-002](plan.md#task-3-wrcp-002--governance-agents-model-memory-refresh)          | Done. `REQ-WERPC-006`/`026`/`028`/`032` re-observed on 2026-08-14; workspace canonical owners are `no-change` against the 2026-08-12 baseline; all nine registered external URLs were reachable and unchanged; all four dispositions remain `Partial`.                                                                                                                                                                                                                                                     | Dated 2026-08-14 sections in the four owner reports; `SRC-WERPC-074`; `CLM-WERPC-010-01` through `-04`                                                                        |
-| [WRCP-003](plan.md#task-4-wrcp-003--kubernetes-infrastructure-security-refresh)      | Done. `REQ-WERPC-008`/`009`/`025` re-observed on 2026-08-14; workspace selectors under `gitops/`, `policy/`, `infrastructure/`, and `traefik/` are `no-change` against the 2026-08-12 baseline (`a5d2dfbb`); the eighteen registered external sources were re-fetched with no material change except one inconclusive sub-claim; all three dispositions remain `Partial`.                                                                                                                                  | Dated 2026-08-14 section in `m0007-kubernetes-infrastructure-and-security.md`; `SRC-WERPC-075`; `CLM-WERPC-010-05` through `-07`                                                    |
-| [WRCP-004](plan.md#task-5-wrcp-004--guide-diátaxis-sdlc-and-document-family-refresh) | Done. `REQ-WERPC-014`/`020` re-observed on 2026-08-14; the workspace Guide/Diátaxis selectors and Spec 052 decisions are `no-change`; `SRC-WERPC-067` is unchanged and the published Diátaxis page was reachable on this attempt; both dispositions remain `Partial`. `REQ-WERPC-034`/`035`/`036` re-observed for the first time under Spec 057 `C-WRCP-010`; each is `Verified` on structural contract and `DEFER` on effectiveness.                                                                      | Dated 2026-08-14 sections in `m0005-documentation-architecture-and-diataxis.md` and `m0004-spec-driven-sdlc-and-document-contracts.md`; `SRC-WERPC-076`; `CLM-WERPC-010-08` through `-12` |
-| [WRCP-005](plan.md#task-6-wrcp-005--cicd-actions-qa-vv-refresh)                      | Done. `REQ-WERPC-022`/`023`/`033` re-observed on 2026-08-14; the workspace CI/CD/Actions/QA selectors (`.github/`, `.pre-commit-config.yaml`, `validation-surfaces.json`, `quality-standards.md`) are `no-change`; the twelve registered sources were re-fetched with eleven unchanged and one relocated (GitHub Actions environments page, equivalent content); all three dispositions remain `Partial`.                                                                                                  | Dated 2026-08-14 section in `m0008-ci-cd-github-actions-and-qa.md`; `SRC-WERPC-077`; `CLM-WERPC-010-13` through `-15`                                                               |
-| [WRCP-006](plan.md#task-7-wrcp-006--scope-re-projection-and-reconciliation)          | Done. Ten scope rows re-derived, none changed (registry unchanged since 2026-07-29); five unowned paths re-tested, unchanged; observation dates and frontmatter refreshed to 2026-08-14; `REQ-WERPC-034`/`035`/`036` registered as three new coverage-matrix owner rows (`Verified` contract / `DEFER` effect); reconciliation subsection added (14 files, 36 owners, 77 source IDs, 92 claim IDs, zero `Partial` cells changed); collection README confirmed accurate; scope index and pack README agree. | `m0013-scope-application-index.md`; pack `README.md`'s coverage matrix and `### 2026-08-14 consistency and Partial re-observation reconciliation` subsection                        |
-| [WRCP-007](plan.md#task-8-wrcp-007--validation-closure-and-lifecycle-done)           | Not yet executed.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Not applicable                                                                                                                                                                |
+| [WRCP-000](./plan.md#task-1-wrcp-000--activate-the-standalone-execution)               | In progress. The direct-approval standalone execution relation is being activated in this commit: registry entry, ADR reciprocity, three `active` statuses, stage indexes, and converted Lifecycle Traceability links.                                                                                                                                                                                                                                                                                     | This Task, Spec 057, reciprocal Plan, ADR-0022, `standaloneExecutions` entry, activation commit                                                                               |
+| [WRCP-001](./plan.md#task-2-wrcp-001--topic-ledger-and-approved-cleanup)               | Not yet executed.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Not applicable                                                                                                                                                                |
+| [WRCP-002](./plan.md#task-3-wrcp-002--governance-agents-model-memory-refresh)          | Done. `REQ-WERPC-006`/`026`/`028`/`032` re-observed on 2026-08-14; workspace canonical owners are `no-change` against the 2026-08-12 baseline; all nine registered external URLs were reachable and unchanged; all four dispositions remain `Partial`.                                                                                                                                                                                                                                                     | Dated 2026-08-14 sections in the four owner reports; `SRC-WERPC-074`; `CLM-WERPC-010-01` through `-04`                                                                        |
+| [WRCP-003](./plan.md#task-4-wrcp-003--kubernetes-infrastructure-security-refresh)      | Done. `REQ-WERPC-008`/`009`/`025` re-observed on 2026-08-14; workspace selectors under `gitops/`, `policy/`, `infrastructure/`, and `traefik/` are `no-change` against the 2026-08-12 baseline (`a5d2dfbb`); the eighteen registered external sources were re-fetched with no material change except one inconclusive sub-claim; all three dispositions remain `Partial`.                                                                                                                                  | Dated 2026-08-14 section in `m0007-kubernetes-infrastructure-and-security.md`; `SRC-WERPC-075`; `CLM-WERPC-010-05` through `-07`                                                    |
+| [WRCP-004](./plan.md#task-5-wrcp-004--guide-diátaxis-sdlc-and-document-family-refresh) | Done. `REQ-WERPC-014`/`020` re-observed on 2026-08-14; the workspace Guide/Diátaxis selectors and Spec 052 decisions are `no-change`; `SRC-WERPC-067` is unchanged and the published Diátaxis page was reachable on this attempt; both dispositions remain `Partial`. `REQ-WERPC-034`/`035`/`036` re-observed for the first time under Spec 057 `C-WRCP-010`; each is `Verified` on structural contract and `DEFER` on effectiveness.                                                                      | Dated 2026-08-14 sections in `m0005-documentation-architecture-and-diataxis.md` and `m0004-spec-driven-sdlc-and-document-contracts.md`; `SRC-WERPC-076`; `CLM-WERPC-010-08` through `-12` |
+| [WRCP-005](./plan.md#task-6-wrcp-005--cicd-actions-qa-vv-refresh)                      | Done. `REQ-WERPC-022`/`023`/`033` re-observed on 2026-08-14; the workspace CI/CD/Actions/QA selectors (`.github/`, `.pre-commit-config.yaml`, `validation-surfaces.json`, `quality-standards.md`) are `no-change`; the twelve registered sources were re-fetched with eleven unchanged and one relocated (GitHub Actions environments page, equivalent content); all three dispositions remain `Partial`.                                                                                                  | Dated 2026-08-14 section in `m0008-ci-cd-github-actions-and-qa.md`; `SRC-WERPC-077`; `CLM-WERPC-010-13` through `-15`                                                               |
+| [WRCP-006](./plan.md#task-7-wrcp-006--scope-re-projection-and-reconciliation)          | Done. Ten scope rows re-derived, none changed (registry unchanged since 2026-07-29); five unowned paths re-tested, unchanged; observation dates and frontmatter refreshed to 2026-08-14; `REQ-WERPC-034`/`035`/`036` registered as three new coverage-matrix owner rows (`Verified` contract / `DEFER` effect); reconciliation subsection added (14 files, 36 owners, 77 source IDs, 92 claim IDs, zero `Partial` cells changed); collection README confirmed accurate; scope index and pack README agree. | `m0013-scope-application-index.md`; pack `README.md`'s coverage matrix and `### 2026-08-14 consistency and Partial re-observation reconciliation` subsection                        |
+| [WRCP-007](./plan.md#task-8-wrcp-007--validation-closure-and-lifecycle-done)           | Not yet executed.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Not applicable                                                                                                                                                                |

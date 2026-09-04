@@ -14,7 +14,7 @@ artifact_id: "SPEC-0058"
 ## Overview
 
 This specification designs a single combined cycle over the existing
-[`0001-workspace-engineering`](../../90.references/research/0001-workspace-engineering/README.md)
+[`0001-workspace-engineering`](../../../../90.references/research/0001-workspace-engineering/README.md)
 research pack. It joins two requested workstreams that share one integration
 surface: a constraint-consistency pass over scope projection, one-off artifact
 cleanup, and cross-link integrity; and an incremental re-observation of the
@@ -30,7 +30,7 @@ thirty-six owner rows in the topic ledger. It refreshes and reconciles what
 the pack already owns.
 
 The three exceptions are the Spec, Task, and Plan document families. The pack's
-[document-family contract matrix](../../90.references/research/0001-workspace-engineering/m0004-spec-driven-sdlc-and-document-contracts.md)
+[document-family contract matrix](../../../../90.references/research/0001-workspace-engineering/m0004-spec-driven-sdlc-and-document-contracts.md)
 already describes all twelve families, but the coverage matrix registers owners
 for only nine — `REQ-WERPC-011` through `REQ-WERPC-019`. Spec, Task, and Plan
 therefore carry researched content with no traceable requirement owner. Three
@@ -50,11 +50,11 @@ No separate PRD or Architecture Description is required or part of this standalo
 ### Prior-cycle constraint
 
 The pack's own
-[scope application index](../../90.references/research/0001-workspace-engineering/m0013-scope-application-index.md)
+[scope application index](../../../../90.references/research/0001-workspace-engineering/m0013-scope-application-index.md)
 records that all twelve `Partial` rows are blocked by evidence classes that
 repository-static work cannot obtain: live cluster and effective RBAC, hosted
 CI run outcomes, provider runtime behavior, and human usability or stakeholder
-judgement. [Spec 0057](../../98.archive/completed/03.specs/0057-workspace-engineering-partial-defer-incremental-refresh/spec.md)
+judgement. [Spec 0057](../0057-workspace-engineering-partial-defer-incremental-refresh/spec.md)
 re-tested the same twelve rows on 2026-08-12 and promoted none.
 
 This cycle therefore defines its expected outcome as a dated delta — external
@@ -368,13 +368,13 @@ standalone execution rules.
 
 ### Related Documents
 
-- [Research pack README](../../90.references/research/0001-workspace-engineering/README.md)
-- [Scope application index](../../90.references/research/0001-workspace-engineering/m0013-scope-application-index.md)
-- [Source coverage and migration ledger](../../90.references/research/0001-workspace-engineering/m0012-source-coverage.md)
-- [Spec 053 — research pack consolidation](../../98.archive/completed/03.specs/0053-workspace-engineering-research-pack-consolidation/spec.md)
-- [Spec 055 — gap-only refresh](../../98.archive/completed/03.specs/0056-workspace-engineering-gap-only-refresh/spec.md)
-- [Spec 056 — Partial/DEFER incremental refresh](../../98.archive/completed/03.specs/0057-workspace-engineering-partial-defer-incremental-refresh/spec.md)
-- [Quality standards](../../00.agent-governance/rules/quality-standards.md)
-- [ADR-0022 — direct-approval standalone execution lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
-- [Implementation Plan](plan.md)
-- [Task](plan.md)
+- [Research pack README](../../../../90.references/research/0001-workspace-engineering/README.md)
+- [Scope application index](../../../../90.references/research/0001-workspace-engineering/m0013-scope-application-index.md)
+- [Source coverage and migration ledger](../../../../90.references/research/0001-workspace-engineering/m0012-source-coverage.md)
+- [Spec 053 — research pack consolidation](../0053-workspace-engineering-research-pack-consolidation/spec.md)
+- [Spec 055 — gap-only refresh](../0056-workspace-engineering-gap-only-refresh/spec.md)
+- [Spec 056 — Partial/DEFER incremental refresh](../0057-workspace-engineering-partial-defer-incremental-refresh/spec.md)
+- [Quality standards](../../../../00.agent-governance/rules/quality-standards.md)
+- [ADR-0022 — direct-approval standalone execution lineage](../../../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
+- [Implementation Plan](./plan.md)
+- [Task](./plan.md)

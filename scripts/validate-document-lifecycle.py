@@ -3632,8 +3632,14 @@ def _is_declared_reseal(path: PurePosixPath, base: str, proposed: str | None) ->
 # Only `completed/` retains the document itself. `superseded/` and
 # `tombstones/` hold records, and `migrations/` holds the ledgers, so none of
 # them is reachable by a retention rehome.
+#
+# `cancelled` is admitted beside `done` because the retention unit is the
+# package, not the document. A task abandoned while its package ran to
+# completion travels with the package it belongs to; a document that ends
+# alone still gets a record. `superseded` stays out either way: it names a
+# replacement, which is what `superseded/` describes.
 RETENTION_CLASS_SOURCE_STATES: dict[str, frozenset[str]] = {
-    "completed": frozenset({"done"}),
+    "completed": frozenset({"done", "cancelled"}),
 }
 
 
