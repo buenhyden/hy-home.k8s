@@ -1841,7 +1841,12 @@ class ArchiveValidationTest(unittest.TestCase):
         # plus its reachability check, and the rest is the ledger's own staged
         # bytes and the batched reads proving each relocated record at the path
         # its row names.
-        budget = 222
+        #
+        # It moved 222 -> 229 when MIG-0018 retained Spec 0058. That is the same
+        # fixed seven: one sealed ledger carrying one new declared source
+        # commit. The cost of a ledger does not track its row count, so a
+        # ten-row retention and a seventeen-row relocation cost the same.
+        budget = 229
 
         def bounded_popen(*args, **kwargs):
             nonlocal git_calls
