@@ -205,7 +205,8 @@ EXPECTED_STABLE_RULE_IDS = (
     "CI-REPOSITORY-HISTORY",
     "CI-AGENT-GOVERNANCE-CHECKOUT",
 )
-CANDIDATE_REF = "${{ github.event.pull_request.head.sha || github.sha }}"
+CANDIDATE_BRANCH_REF = "${{ github.head_ref || github.ref }}"
+CANDIDATE_SHA_REF = "${{ github.event.pull_request.head.sha || github.sha }}"
 
 WORKFLOW = f"""\
 name: CI
@@ -238,7 +239,7 @@ jobs:
     steps:
       - uses: actions/checkout@0000000000000000000000000000000000000000
         with:
-          ref: {CANDIDATE_REF}
+          ref: {CANDIDATE_BRANCH_REF}
           fetch-depth: 0
       - uses: actions/setup-python@0000000000000000000000000000000000000000
         with:
@@ -261,7 +262,7 @@ jobs:
     steps:
       - uses: actions/checkout@0000000000000000000000000000000000000000
         with:
-          ref: {CANDIDATE_REF}
+          ref: {CANDIDATE_BRANCH_REF}
           persist-credentials: false
           fetch-depth: 0
       - uses: actions/setup-python@0000000000000000000000000000000000000000
@@ -1016,15 +1017,16 @@ class CiPythonContractTests(unittest.TestCase):
         )
         self.assert_rule(root, "CI-AGENT-GOVERNANCE-CHECKOUT")
 
-    def test_agent_governance_checkout_must_select_candidate_head(self) -> None:
+    def test_agent_governance_checkout_must_select_candidate_branch(self) -> None:
         root = self.make_valid_root()
         workflow = root / ".github/workflows/ci.yml"
         text = workflow.read_text(encoding="utf-8")
         start = text.index("  agent-governance-static:")
-        candidate_ref = text.index(f"          ref: {CANDIDATE_REF}\n", start)
+        candidate_ref = text.index(f"          ref: {CANDIDATE_BRANCH_REF}\n", start)
         workflow.write_text(
             text[:candidate_ref]
-            + text[candidate_ref + len(f"          ref: {CANDIDATE_REF}\n") :],
+            + f"          ref: {CANDIDATE_SHA_REF}\n"
+            + text[candidate_ref + len(f"          ref: {CANDIDATE_BRANCH_REF}\n") :],
             encoding="utf-8",
         )
         self.assert_rule(root, "CI-AGENT-GOVERNANCE-CHECKOUT")
@@ -1645,15 +1647,16 @@ class CiPythonContractTests(unittest.TestCase):
         )
         self.assert_rule(root, "CI-REPOSITORY-HISTORY")
 
-    def test_repo_quality_checkout_must_select_candidate_head(self) -> None:
+    def test_repo_quality_checkout_must_select_candidate_branch(self) -> None:
         root = self.make_valid_root()
         workflow = root / ".github/workflows/ci.yml"
         text = workflow.read_text(encoding="utf-8")
         start = text.index("  repo-quality-static:")
-        candidate_ref = text.index(f"          ref: {CANDIDATE_REF}\n", start)
+        candidate_ref = text.index(f"          ref: {CANDIDATE_BRANCH_REF}\n", start)
         workflow.write_text(
             text[:candidate_ref]
-            + text[candidate_ref + len(f"          ref: {CANDIDATE_REF}\n") :],
+            + f"          ref: {CANDIDATE_SHA_REF}\n"
+            + text[candidate_ref + len(f"          ref: {CANDIDATE_BRANCH_REF}\n") :],
             encoding="utf-8",
         )
         self.assert_rule(root, "CI-REPOSITORY-HISTORY")
