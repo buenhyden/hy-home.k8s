@@ -23,7 +23,15 @@ from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path, PurePosixPath
 from types import MappingProxyType, ModuleType
-from typing import TYPE_CHECKING, Callable, Collection, Mapping, Protocol, Sequence
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Collection,
+    Iterable,
+    Mapping,
+    Protocol,
+    Sequence,
+)
 
 if TYPE_CHECKING:
     from document_contracts import Registry
@@ -877,6 +885,93 @@ def compose_migration_targets(
             target = edges[target]
         result[source] = target
     return result
+
+
+def relocated_stable_archive_paths(
+    sealed_ledgers: Iterable[tuple[str, bytes]],
+    sealed_stable_paths: Collection[str],
+) -> dict[str, str]:
+    """Compose later sealed relocations of already-sealed stable archive paths.
+
+    MIG-0001 derives each record's stable path structurally, so the directory a
+    record sits in is decided at the moment that ledger is sealed. A later cycle
+    can find that the directory names the wrong thing: every record under
+    `tombstones/` carried `archive_reason: superseded` and a named replacement,
+    which is what `superseded/` describes. The record then has to move without a
+    sealed byte changing.
+
+    A relocation is admitted only where a sealed generic ledger `moved` row
+    names an origin inside Stage 98 and a target inside Stage 98, and only the
+    composed chains that start at a path an earlier ledger actually sealed are
+    returned. A row cannot invent a stable path: an origin no sealed ledger ever
+    named is an ordinary document row, and it composes nothing here.
+
+    This decides where a sealed record is allowed to live, and nothing else.
+    Byte identity stays with the immutability gate and provenance stays with the
+    envelope, so a relocation weakens neither.
+    """
+
+    origins = frozenset(sealed_stable_paths)
+    edges: dict[str, str] = {}
+    for path, content in sealed_ledgers:
+        if generic_migration_id(path) is None or not is_sealed_migration(content):
+            continue
+        parsed = parse_migration_control(path, content)
+        for row in parsed[0] if isinstance(parsed, tuple) and parsed else ():
+            if not isinstance(row, RuntimeMapping) or row.get("action") != "moved":
+                continue
+            legacy = row.get("legacy_path")
+            target = row.get("stable_path")
+            if not isinstance(legacy, str) or not isinstance(target, str):
+                continue
+            if not _is_relocatable_record_path(legacy):
+                continue
+            if not _is_relocatable_record_path(target) or legacy == target:
+                raise ArchiveContractError(
+                    "RECOVERY-MIGRATION-TARGET",
+                    "sealed archive relocation leaves the record namespace",
+                )
+            edges[legacy] = target
+    composed = {
+        source: target
+        for source, target in compose_migration_targets((edges,)).items()
+        if source in origins
+    }
+    if len(set(composed.values())) != len(composed):
+        raise ArchiveContractError(
+            "RECOVERY-MIGRATION-CONFLICT", "sealed archive relocations collide"
+        )
+    return composed
+
+
+def _is_relocatable_record_path(path: str) -> bool:
+    """Report whether a path names a sealed record rather than another artifact.
+
+    `migrations/` holds the ledgers that prove the moves, and `completed/` holds
+    retained documents that are not records at all. Neither is a record whose
+    home this composition may decide.
+    """
+
+    parts = PurePosixPath(path).parts
+    return (
+        len(parts) > 3
+        and parts[:2] == ARCHIVE_ROOT.parts
+        and parts[2] not in {"migrations", *RETENTION_CLASSES}
+    )
+
+
+def apply_stable_archive_relocations(
+    rows: Sequence[Mapping[str, object]],
+    relocations: Mapping[str, str],
+) -> tuple[dict[str, object], ...]:
+    """Return the sealed rows with every relocated stable path rewritten."""
+
+    return tuple(
+        {**row, "stable_path": relocations[stable]}
+        if (stable := str(row.get("stable_path"))) in relocations
+        else dict(row)
+        for row in rows
+    )
 
 
 def _regular_source_bytes(
@@ -3142,9 +3237,40 @@ def _work107_stable_rows(root: Path) -> dict[str, Mapping[str, object]]:
         if hashlib.sha256(content).hexdigest() != WORK107_MIGRATION_DOCUMENT_SHA256:
             raise RuntimeError("WORK-107 stable ledger digest differs")
         validated = parse_work107_migration_document(content)
+        validated = apply_stable_archive_relocations(
+            validated,
+            relocated_stable_archive_paths(
+                sealed_generic_ledgers(root),
+                tuple(str(row["stable_path"]) for row in validated),
+            ),
+        )
     except (ArchiveContractError, OSError, RuntimeError, TypeError, ValueError) as exc:
         raise RuntimeError("WORK-107 stable ledger is unavailable") from exc
     return {str(row["stable_path"]): row for row in validated}
+
+
+def sealed_generic_ledgers(root: Path) -> tuple[tuple[str, bytes], ...]:
+    """Read every generic migration ledger the worktree tracks, bounded."""
+
+    directory = root / ARCHIVE_ROOT.as_posix() / "migrations"
+    ledgers: list[tuple[str, bytes]] = []
+    try:
+        names = sorted(entry.name for entry in directory.iterdir())
+    except OSError:
+        return ()
+    for name in names:
+        path = f"{ARCHIVE_ROOT.as_posix()}/migrations/{name}"
+        if generic_migration_id(path) is None:
+            continue
+        ledgers.append(
+            (
+                path,
+                read_worktree_regular_bounded(
+                    root, path, max_bytes=MIGRATION_DOCUMENT_MAX_BYTES
+                ),
+            )
+        )
+    return tuple(ledgers)
 
 
 def _read_repository_index(root: Path) -> str:

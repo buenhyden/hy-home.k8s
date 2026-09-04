@@ -64,6 +64,9 @@ try:
         ArchiveRecord,
         project_migration_declaration_fields,
         validate_archive_records,
+        generic_migration_id,
+        relocated_stable_archive_paths,
+        apply_stable_archive_relocations,
     )
 except ModuleNotFoundError:  # Imported as a repository-root test module.
     from scripts.archive_validation import (
@@ -75,6 +78,9 @@ except ModuleNotFoundError:  # Imported as a repository-root test module.
         ArchiveRecord,
         project_migration_declaration_fields,
         validate_archive_records,
+        generic_migration_id,
+        relocated_stable_archive_paths,
+        apply_stable_archive_relocations,
     )
 
 from document_contracts import (
@@ -261,10 +267,32 @@ def _work107_stable_archive_rows(context: "Context") -> tuple[dict[str, object],
     if text is None:
         return ()
     content = text.encode("utf-8")
-    return _validated_work107_stable_archive_rows(
+    rows = _validated_work107_stable_archive_rows(
         str(context.root.absolute()),
         content,
     )
+    if not rows:
+        return ()
+    try:
+        relocations = relocated_stable_archive_paths(
+            _sealed_generic_ledger_texts(context),
+            tuple(str(row["stable_path"]) for row in rows),
+        )
+    except ArchiveContractError:
+        return ()
+    return apply_stable_archive_relocations(rows, relocations)
+
+
+def _sealed_generic_ledger_texts(context: "Context") -> tuple[tuple[str, bytes], ...]:
+    """Read every generic migration ledger the candidate already carries."""
+
+    ledgers: list[tuple[str, bytes]] = []
+    for path in sorted(context.texts):
+        posix = path.as_posix()
+        if generic_migration_id(posix) is None:
+            continue
+        ledgers.append((posix, context.texts[path].encode("utf-8")))
+    return tuple(ledgers)
 
 
 def _work107_stable_archive_aliases(

@@ -54,11 +54,13 @@ if __package__:
     from scripts.archive_validation import (
         CurrentMarkdownDocument,
         MIGRATION_DOCUMENT_MAX_BYTES,
-        generic_migration_id,
+        apply_stable_archive_relocations,
+    generic_migration_id,
         is_sealed_migration,
         parse_migration_control,
         parse_pinned_migration_control,
         read_staged_blob_bounded,
+    relocated_stable_archive_paths,
         read_worktree_regular_bounded,
         compose_migration_targets,
         retired_source_is_distinct,
@@ -95,11 +97,13 @@ else:
     from archive_validation import (  # type: ignore[no-redef]
         CurrentMarkdownDocument,
         MIGRATION_DOCUMENT_MAX_BYTES,
-        generic_migration_id,
+        apply_stable_archive_relocations,
+    generic_migration_id,
         is_sealed_migration,
         parse_migration_control,
         parse_pinned_migration_control,
         read_staged_blob_bounded,
+    relocated_stable_archive_paths,
         read_worktree_regular_bounded,
         compose_migration_targets,
         retired_source_is_distinct,
@@ -485,6 +489,26 @@ def _later_ledger_edges(
     except ArchiveContractError:
         raise RuntimeError(failure) from None
     return composed, retired
+
+
+def _sealed_staged_ledgers(
+    root: Path, tracked_regular_blobs: Mapping[str, str]
+) -> tuple[tuple[str, bytes], ...]:
+    """Read every tracked generic migration ledger from the index, bounded."""
+
+    ledgers: list[tuple[str, bytes]] = []
+    for path in sorted(tracked_regular_blobs):
+        if generic_migration_id(path) is None:
+            continue
+        ledgers.append(
+            (
+                path,
+                read_staged_blob_bounded(
+                    root, path, max_bytes=MIGRATION_DOCUMENT_MAX_BYTES
+                ),
+            )
+        )
+    return tuple(ledgers)
 
 
 def _work054_migration_projection(
@@ -1033,6 +1057,13 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
         )
     try:
         work107_rows = build_work107_migration_rows(root)
+        work107_rows = apply_stable_archive_relocations(
+            work107_rows,
+            relocated_stable_archive_paths(
+                _sealed_staged_ledgers(root, tracked_regular_blobs),
+                tuple(str(row["stable_path"]) for row in work107_rows),
+            ),
+        )
         work107_by_stable = {str(row["stable_path"]): row for row in work107_rows}
         work107_legacy_to_stable = {
             str(row["legacy_path"]): str(row["stable_path"]) for row in work107_rows

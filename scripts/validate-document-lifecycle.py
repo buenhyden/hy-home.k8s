@@ -67,6 +67,8 @@ from archive_validation import (
     MIGRATION_DOCUMENT_MAX_BYTES,
     _load_canonical_markdown_module,
     generic_migration_id,
+    is_sealed_migration,
+    parse_migration_control,
     parse_pinned_migration_control,
     read_staged_blob_bounded,
     validate_archive_immutability,
@@ -1491,6 +1493,67 @@ def declared_archive_rehome_pairs(
             return frozenset()
         pairs.add((source_path, target_path))
     return frozenset(pairs)
+
+
+def sealed_record_relocation_paths(
+    *,
+    root: Path,
+    base_blobs: Mapping[PurePosixPath, str],
+    proposed_blobs: Mapping[PurePosixPath, str],
+) -> frozenset[PurePosixPath]:
+    """Admit each record vacancy a sealed ledger declares as a byte-identical move.
+
+    A sealed record is immutable, and the directory holding it is a claim about
+    why its origin ended. A later cycle can find that claim wrong, and correcting
+    it deletes the record at one path and recreates it at another. The
+    immutability rule reads that departure as a record being lost unless a sealed
+    `moved` row accounts for it.
+
+    A row is admitted only when the bytes leaving the origin and the bytes
+    arriving at the target are identical and both equal the digest the row pins.
+    A move that changed a byte is not a move, and this admits nothing then: like
+    the declared tables beside it, one bad pair withdraws the whole admission.
+
+    Unlike those tables the pairs are read from the sealed ledger rather than
+    restated here, because the ledger is already the reviewed evidence for the
+    move and a second copy could only disagree with it.
+    """
+
+    admitted: set[PurePosixPath] = set()
+    for path, oid in sorted(proposed_blobs.items()):
+        if generic_migration_id(path.as_posix()) is None:
+            continue
+        try:
+            content = _blob_bytes(root, oid, max_bytes=MIGRATION_DOCUMENT_MAX_BYTES)
+            if not is_sealed_migration(content):
+                continue
+            rows, _consumers = parse_migration_control(path.as_posix(), content)
+        except (ArchiveContractError, InvocationError, OSError, ValueError):
+            return frozenset()
+        for row in rows:
+            if row.get("action") != "moved":
+                continue
+            legacy = PurePosixPath(str(row.get("legacy_path")))
+            target = PurePosixPath(str(row.get("stable_path")))
+            base_oid = base_blobs.get(legacy)
+            proposed_oid = proposed_blobs.get(target)
+            if base_oid is None or proposed_oid is None:
+                # Either the move already landed in an earlier commit or this row
+                # moves something that is not a record. Neither is a vacancy for
+                # this admission to fill.
+                continue
+            digest = row.get("content_sha256")
+            try:
+                base_digest = hashlib.sha256(_blob_bytes(root, base_oid)).hexdigest()
+                target_digest = hashlib.sha256(
+                    _blob_bytes(root, proposed_oid)
+                ).hexdigest()
+            except (InvocationError, OSError):
+                return frozenset()
+            if base_digest != digest or target_digest != digest:
+                return frozenset()
+            admitted.add(legacy)
+    return frozenset(admitted)
 
 
 def declared_archive_rehome_paths(
@@ -3574,6 +3637,22 @@ RETENTION_CLASS_SOURCE_STATES: dict[str, frozenset[str]] = {
 }
 
 
+def _is_sealed_record_path(path: PurePosixPath) -> bool:
+    """Report whether a path names a sealed record rather than another artifact.
+
+    `migrations/` holds the ledgers that prove the moves and `completed/` holds
+    retained documents, which are not records at all. Neither is a record whose
+    directory a relocation may decide.
+    """
+
+    parts = path.parts
+    return (
+        len(parts) > 3
+        and parts[:2] == ("docs", "98.archive")
+        and parts[2] not in {"migrations", *RETENTION_CLASS_SOURCE_STATES}
+    )
+
+
 def _retention_rehome_target(
     source: PurePosixPath, target: PurePosixPath
 ) -> str | None:
@@ -3688,6 +3767,25 @@ def _migration_lifecycle_events(
                 and moved_snapshot.profile_id == moved_profile.profile_id
             ):
                 form_rehomes.add((source_path, target))
+                continue
+            if _is_sealed_record_path(source_path) and _is_sealed_record_path(target):
+                # A reviewed record relocation. The directory holding a sealed
+                # record is a claim about why its origin ended, and correcting
+                # that claim moves the record without changing a byte. The
+                # envelope never names the record's own path, so the row is a
+                # true `moved` and byte identity is proved by the immutability
+                # gate. What is left to check here is that both ends are still
+                # record routes: a move that lands a record outside the record
+                # namespace is not a relocation.
+                if (
+                    moved_profile.profile_id != ARCHIVE_PROFILE
+                    or moved_snapshot.profile_id != ARCHIVE_PROFILE
+                    or classify_path(registry, source_path).profile_id
+                    != ARCHIVE_PROFILE
+                ):
+                    diagnostics.append(failure(target, "relocated record route"))
+                    continue
+                archive_rehomes = archive_rehomes | {(source_path, target)}
                 continue
         retention_class = _retention_rehome_target(source_path, target)
         if retention_class is not None:
@@ -4733,10 +4831,16 @@ def _evaluate_comparison(
         base_blobs=base_blobs,
         proposed_blobs=proposed_blobs,
     )
-    archive_rehome_consumed_paths = declared_archive_rehome_paths(
-        root=root, base_blobs=base_blobs, proposed_blobs=proposed_blobs
-    ) | declared_archive_normalization_paths(
-        root=root, base_blobs=base_blobs, proposed_blobs=proposed_blobs
+    archive_rehome_consumed_paths = (
+        declared_archive_rehome_paths(
+            root=root, base_blobs=base_blobs, proposed_blobs=proposed_blobs
+        )
+        | declared_archive_normalization_paths(
+            root=root, base_blobs=base_blobs, proposed_blobs=proposed_blobs
+        )
+        | sealed_record_relocation_paths(
+            root=root, base_blobs=base_blobs, proposed_blobs=proposed_blobs
+        )
     )
 
     immutability_diagnostics = _archive_immutability_diagnostics(
