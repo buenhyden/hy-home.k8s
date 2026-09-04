@@ -18,6 +18,7 @@ DIRECT_REQUIREMENTS_PATH = Path(".github/requirements/ci-validation.in")
 LOCK_PATH = Path(".github/requirements/ci-validation.txt")
 WORKFLOW_PATH = Path(".github/workflows/ci.yml")
 PRE_COMMIT_CONFIG_PATH = Path(".pre-commit-config.yaml")
+CANDIDATE_REF = "${{ github.event.pull_request.head.sha || github.sha }}"
 EXPECTED_REQUIREMENT_LINES = (
     "jsonschema==4.26.0",
     "pre-commit==4.6.1",
@@ -1621,10 +1622,14 @@ def _validate_repository_history(
             "repo-quality-static must contain exactly one checkout step",
         )
     checkout_with = checkout_steps[0].get("with")
-    if not isinstance(checkout_with, dict) or checkout_with.get("fetch-depth") != 0:
+    if (
+        not isinstance(checkout_with, dict)
+        or checkout_with.get("fetch-depth") != 0
+        or checkout_with.get("ref") != CANDIDATE_REF
+    ):
         fail(
             "CI-REPOSITORY-HISTORY",
-            "repo-quality-static checkout must use fetch-depth: 0",
+            "repo-quality-static checkout must select the candidate head and use fetch-depth: 0",
         )
 
 
@@ -1645,12 +1650,13 @@ def _validate_agent_governance_checkout(
         )
     checkout_with = checkout_steps[0].get("with")
     if checkout_with != {
+        "ref": CANDIDATE_REF,
         "persist-credentials": False,
         "fetch-depth": 0,
     }:
         fail(
             "CI-AGENT-GOVERNANCE-CHECKOUT",
-            "agent-governance-static checkout must disable credentials and fetch full history",
+            "agent-governance-static checkout must select the candidate head, disable credentials, and fetch full history",
         )
 
 

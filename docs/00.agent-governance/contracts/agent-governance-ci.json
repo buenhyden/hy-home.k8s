@@ -1,7 +1,7 @@
 {
   "$schema": "./agent-governance-ci.schema.json",
   "schemaVersion": 1,
-  "contractVersion": "1.4.0",
+  "contractVersion": "1.5.0",
   "resultVocabulary": ["PASS", "FAIL", "SKIP", "DEFER"],
   "evidenceVocabulary": [
     "repo-static",
@@ -173,6 +173,7 @@
     "workflowPermissions": {"contents": "read"},
     "checkoutAction": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
     "checkout": {
+      "ref": "${{ github.event.pull_request.head.sha || github.sha }}",
       "persistCredentials": false,
       "fetchDepth": 0
     },

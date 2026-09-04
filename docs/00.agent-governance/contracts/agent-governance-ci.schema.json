@@ -301,8 +301,9 @@
         "checkout": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["persistCredentials", "fetchDepth"],
+          "required": ["ref", "persistCredentials", "fetchDepth"],
           "properties": {
+            "ref": {"type": "string", "minLength": 1},
             "persistCredentials": {"type": "boolean"},
             "fetchDepth": {"type": "integer", "minimum": 0}
           }

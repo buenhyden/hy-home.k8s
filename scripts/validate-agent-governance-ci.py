@@ -41,7 +41,8 @@ GITHUB_README_PATH = PurePosixPath(".github/repository-surface.md")
 SCRIPTS_README_PATH = PurePosixPath("scripts/README.md")
 
 SCHEMA_VERSION = 1
-CONTRACT_VERSION = "1.4.0"
+CONTRACT_VERSION = "1.5.0"
+CANDIDATE_REF = "${{ github.event.pull_request.head.sha || github.sha }}"
 RESULT_VOCABULARY = ("PASS", "FAIL", "SKIP", "DEFER")
 EVIDENCE_VOCABULARY = (
     "repo-static",
@@ -669,7 +670,11 @@ def validate_contract_data(
     expected_security = {
         "workflowPermissions": {"contents": "read"},
         "checkoutAction": CHECKOUT_ACTION,
-        "checkout": {"persistCredentials": False, "fetchDepth": 0},
+        "checkout": {
+            "ref": CANDIDATE_REF,
+            "persistCredentials": False,
+            "fetchDepth": 0,
+        },
         "remoteUsesPin": "full-commit-sha",
         "providerEvidenceAggregate": {
             "path": PROVIDER_EVIDENCE_AGGREGATE_PATH.as_posix(),
@@ -934,12 +939,13 @@ def _validate_security(
         if step.get("uses") == contract["securityBoundary"]["checkoutAction"]
     ]
     if len(checkout_steps) != 1 or checkout_steps[0].get("with") != {
+        "ref": CANDIDATE_REF,
         "persist-credentials": False,
         "fetch-depth": 0,
     }:
         fail(
             "AGQC-CI-SECURITY",
-            "checkout must disable persisted credentials and fetch full history",
+            "checkout must select the candidate head, disable persisted credentials, and fetch full history",
         )
 
     flattened = "\n".join(_all_strings(agent_job)).casefold()

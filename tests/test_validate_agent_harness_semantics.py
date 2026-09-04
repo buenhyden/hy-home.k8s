@@ -265,8 +265,8 @@ class ThinAdapterBoundaryTest(unittest.TestCase):
             "code-reviewer",
         )
         mutated = source.replace(
-            "tools: Read, Grep, Glob, Bash",
-            "tools: Read, Write, Edit, Grep, Glob, Bash",
+            'tools: "Read, Grep, Glob, Bash"',
+            'tools: "Read, Write, Edit, Grep, Glob, Bash"',
             1,
         )
         actual = VALIDATOR.validate_mutated_source(
