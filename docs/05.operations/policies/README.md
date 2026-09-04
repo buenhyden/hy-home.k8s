@@ -1,3 +1,12 @@
+---
+title: "05.operations/policies"
+version: "0.1.0"
+type: "common/readme-collection-index"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+layer: "operations"
+---
 # 05.operations/policies
 
 > GitOps 플랫폼 운영 정책과 통제 기준(허용/금지/예외/검증)을 관리한다.

@@ -1,11 +1,11 @@
 ---
-title: 'Repository Assurance Integration and Closure Implementation Plan'
+title: "Repository Assurance Integration and Closure Implementation Plan"
 version: "1.0.0"
-type: sdlc/plan
+type: "sdlc/plan"
+status: "draft"
+owner: "platform"
+updated: "2026-08-02"
 layer: "specs"
-status: draft
-owner: platform
-updated: 2026-08-02
 artifact_id: "SPEC-0051-PLAN-0001"
 ---
 

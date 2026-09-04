@@ -1,8 +1,8 @@
 ---
-name: security-auditor
-description: Audit repository changes for secret exposure, privilege escalation, isolation failure, and policy violations.
-model: sonnet 4.6
-tools: Read, Grep, Glob, Bash
+name: "security-auditor"
+description: "Audit repository changes for secret exposure, privilege escalation, isolation failure, and policy violations."
+model: "sonnet 4.6"
+tools: "Read, Grep, Glob, Bash"
 ---
 
 # security-auditor

@@ -1,11 +1,11 @@
 ---
-title: 'Task: Terminal topology and four-digit identity'
+title: "Task: Terminal topology and four-digit identity"
 version: "1.0.0"
-type: sdlc/task
+type: "sdlc/task"
+status: "done"
+owner: "platform"
+updated: "2026-08-22"
 layer: "specs"
-status: done
-owner: platform
-updated: 2026-08-22
 artifact_id: "SPEC-0054-TSK-0002"
 ---
 

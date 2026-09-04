@@ -1,11 +1,11 @@
 ---
-title: 'Stage 00 Canonical Adapter Model'
+title: "Stage 00 Canonical Adapter Model"
 version: "1.0.0"
-type: sdlc/architecture-decision
+type: "sdlc/architecture-decision"
+status: "superseded"
+owner: "platform"
+updated: "2026-08-28"
 layer: "architecture"
-status: superseded
-owner: platform
-updated: 2026-08-28
 artifact_id: "ADR-0013"
 superseded_by: "ADR-0030"
 ---

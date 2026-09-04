@@ -1,10 +1,10 @@
 ---
-title: 'Approval and Safety Policy'
+title: "Approval and Safety Policy"
 version: "1.0.0"
-type: governance/rule
-status: active
-owner: platform
-updated: 2026-08-28
+type: "governance/rule"
+status: "active"
+owner: "platform"
+updated: "2026-08-28"
 ---
 
 # Approval and Safety Policy

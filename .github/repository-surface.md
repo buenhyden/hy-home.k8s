@@ -1,3 +1,11 @@
+---
+title: "GitHub Configuration Hub"
+version: "0.1.0"
+type: "common/readme-runtime-governance"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+---
 # GitHub Configuration Hub
 
 This document maps the repository-specific GitHub automation surface for the

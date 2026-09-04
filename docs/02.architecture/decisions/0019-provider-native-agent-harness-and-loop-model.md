@@ -1,11 +1,11 @@
 ---
-title: 'Provider-Native Agent Harness and Loop Model'
+title: "Provider-Native Agent Harness and Loop Model"
 version: "1.0.0"
-type: sdlc/architecture-decision
+type: "sdlc/architecture-decision"
+status: "superseded"
+owner: "platform"
+updated: "2026-08-01"
 layer: "architecture"
-status: superseded
-owner: platform
-updated: 2026-08-01
 artifact_id: "ADR-0019"
 superseded_by: "ADR-0030"
 ---

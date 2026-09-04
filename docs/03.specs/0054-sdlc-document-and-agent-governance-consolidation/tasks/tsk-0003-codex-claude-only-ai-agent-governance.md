@@ -1,11 +1,11 @@
 ---
-title: 'Task: Codex Claude-only AI agent governance'
+title: "Task: Codex Claude-only AI agent governance"
 version: "1.0.0"
-type: sdlc/task
+type: "sdlc/task"
+status: "done"
+owner: "platform"
+updated: "2026-08-31"
 layer: "specs"
-status: done
-owner: platform
-updated: 2026-08-31
 artifact_id: "SPEC-0054-TSK-0003"
 ---
 

@@ -1,11 +1,11 @@
 ---
-title: 'Argo Notifications Slack Backfill Plan'
+title: "Argo Notifications Slack Backfill Plan"
 version: "1.0.0"
-type: sdlc/plan
+type: "sdlc/plan"
+status: "done"
+owner: "platform"
+updated: "2026-07-13"
 layer: "specs"
-status: done
-owner: platform
-updated: 2026-07-13
 artifact_id: "SPEC-0005-PLAN-0001"
 ---
 

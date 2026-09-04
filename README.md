@@ -1,3 +1,11 @@
+---
+title: "hy-home.k8s"
+version: "0.1.0"
+type: "common/readme-repository"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+---
 # hy-home.k8s
 
 > WSL2 + k3d + ArgoCD GitOps 기반 로컬 플랫폼과 문서 협업 체계를 함께 관리하는 저장소다.

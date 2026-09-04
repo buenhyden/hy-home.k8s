@@ -1,14 +1,15 @@
 ---
-title: '{Short Title}'
-version: "#.#.#"
-type: sdlc/architecture-decision
-status: proposed
-owner: '{owner}'
-updated: YYYY-MM-DD
-artifact_id: "ADR-####"
+title: "{{TITLE}}"
+version: "0.1.0"
+type: "sdlc/architecture-decision"
+status: "proposed"
+owner: "{{OWNER}}"
+updated: "{{YYYY_MM_DD}}"
+layer: "architecture"
+artifact_id: "{{ARTIFACT_ID}}"
 ---
 
-# ADR-####: [Short Title]
+# {{ARTIFACT_ID}}: [Short Title]
 
 ## Overview
 
@@ -42,4 +43,4 @@ artifact_id: "ADR-####"
 
 | Decision lineage | Replacement relation | Affected Spec |
 | --- | --- | --- |
-| Architecture owner | Supersedes ADR-#### or N/A — first decision | Specification owner |
+| Architecture owner | Supersedes {{ARTIFACT_ID}} or N/A — first decision | Specification owner |

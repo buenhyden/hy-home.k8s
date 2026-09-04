@@ -1,3 +1,11 @@
+---
+title: "gitops"
+version: "0.1.0"
+type: "common/readme-implementation"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+---
 # gitops
 
 > ArgoCD App-of-Apps 기반으로 로컬 클러스터 desired state를 선언형 관리한다.

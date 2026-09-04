@@ -149,7 +149,7 @@ WORK105_RETIRED_PROFILE_IDS = frozenset(
 WORK105_TERMINAL_PROFILE_IDS = frozenset(
     {
         "sdlc/architecture-description",
-        "template/sdlc/architecture-description",
+        "common/template-sdlc-architecture-description",
         "sdlc/interface",
         "template/sdlc/interface",
         "sdlc/srs",
@@ -530,12 +530,12 @@ def finite_work105_form_cutover_paths(
     exact_forms = (
         (
             "docs/02.architecture/requirements/README.md",  # Retired base route.
-            "readme/collection-index",
+            "common/readme-collection-index",
             "base",
         ),
         (
             "docs/02.architecture/descriptions/README.md",
-            "readme/collection-index",
+            "common/readme-collection-index",
             "proposed",
         ),
         (
@@ -545,7 +545,7 @@ def finite_work105_form_cutover_paths(
         ),
         (
             "docs/99.templates/templates/sdlc/architecture/ad.template.md",
-            "template/sdlc/architecture-description",
+            "common/template-sdlc-architecture-description",
             "proposed",
         ),
         (
@@ -1276,7 +1276,7 @@ def _work054_wp004b_admission(
                 proposed_registry,
                 router,
                 router_oid,
-                profile_id="readme/collection-index",
+                profile_id="common/readme-collection-index",
                 status=None,
                 artifact_id=None,
                 blob_reader=read_blob,
@@ -1313,7 +1313,7 @@ def _work054_wp004b_admission(
             (
                 router,
                 "LIFECYCLE-CREATE",
-                "readme/collection-index",
+                "common/readme-collection-index",
                 "absent -> not-applicable",
             )
         )
@@ -2702,12 +2702,12 @@ def _work105_form_cutover_fixture_inputs(
     exact_forms = (
         (
             PurePosixPath("docs/02.architecture/requirements/README.md"),
-            "readme/collection-index",
+            "common/readme-collection-index",
             base_documents,
         ),
         (
             PurePosixPath("docs/02.architecture/descriptions/README.md"),
-            "readme/collection-index",
+            "common/readme-collection-index",
             proposed_documents,
         ),
         (
@@ -2721,7 +2721,7 @@ def _work105_form_cutover_fixture_inputs(
             PurePosixPath(
                 "docs/99.templates/templates/sdlc/architecture/ad.template.md"
             ),
-            "template/sdlc/architecture-description",
+            "common/template-sdlc-architecture-description",
             proposed_documents,
         ),
         (
@@ -3923,7 +3923,9 @@ def _classification_registry(
     """Project snapshot-owned routes and IDs onto immutable lifecycle profiles."""
 
     raw_profiles = raw_registry.get("profiles")
-    schema_version = raw_registry.get("schemaVersion")
+    schema_version = raw_registry.get("schema_version")
+    if schema_version is None:
+        schema_version = raw_registry.get("schemaVersion")
     if not isinstance(raw_profiles, list) or type(schema_version) is not int:
         raise InvocationError("comparison registry profile projection is malformed")
     current_profiles = {
@@ -3949,22 +3951,22 @@ def _classification_registry(
         "content/archive": ARCHIVE_PROFILE,
         "content/archive-migration": "archive/migration",
         "governance/reference": "governance/rule",
-        "template/sdlc/ad": "template/sdlc/architecture-description",
-        "template/sdlc/adr": "template/sdlc/architecture-decision",
-        "template/sdlc/requirement-package": "template/sdlc/requirement",
-        "template/sdlc/guide": "template/operation/guide",
-        "template/sdlc/policy": "template/operation/policy",
-        "template/sdlc/runbook": "template/operation/runbook",
-        "template/sdlc/incident": "template/operation/incident",
-        "template/sdlc/postmortem": "template/operation/postmortem",
-        "template/content/audit-reference": "template/reference/audit",
-        "template/content/research-reference": "template/reference/research",
-        "template/content/data-reference": "template/reference/data",
+        "template/sdlc/ad": "common/template-sdlc-architecture-description",
+        "template/sdlc/adr": "common/template-sdlc-architecture-decision",
+        "common/template-sdlc-requirement-package": "common/template-sdlc-requirement",
+        "template/sdlc/guide": "common/template-operation-guide",
+        "template/sdlc/policy": "common/template-operation-policy",
+        "template/sdlc/runbook": "common/template-operation-runbook",
+        "template/sdlc/incident": "common/template-operation-incident",
+        "template/sdlc/postmortem": "common/template-operation-postmortem",
+        "template/content/audit-reference": "common/template-reference-audit",
+        "template/content/research-reference": "common/template-reference-research",
+        "template/content/data-reference": "common/template-reference-data",
         "template/content/archive": ARCHIVE_TEMPLATE_PROFILE,
-        "template/content/archive-migration": "template/archive/migration",
-        "template/governance/reference": "template/governance/rule",
-        "template/exception/local-agent-asset": "exception/local-agent-asset",
-        "template/sdlc/ard": "template/sdlc/architecture-description",  # Retired comparison alias.
+        "template/content/archive-migration": "common/template-archive-migration",
+        "template/governance/reference": "common/template-governance-rule",
+        "template/common/local-agent-asset": "common/local-agent-asset",
+        "template/sdlc/ard": "common/template-sdlc-architecture-description",  # Retired comparison alias.
         "sdlc/prd": "sdlc/requirement",  # Retired WP-004B alias.
         "sdlc/srs": "sdlc/requirement",  # Retired WP-004B alias.
         "sdlc/interface": "sdlc/requirement",  # Retired WP-004B alias.
@@ -3972,40 +3974,56 @@ def _classification_registry(
         "sdlc/agent-design": "sdlc/spec",  # Retired WP-004C alias.
         "sdlc/tests": "sdlc/spec",  # Retired WP-004C alias.
         "governance/template-support": "governance/rule",  # Retired WP-004C alias.
-        "template/sdlc/api-spec": "template/sdlc/requirement",  # Retired alias.
-        "template/sdlc/prd": "template/sdlc/requirement",  # Retired WP-004C alias.
-        "template/sdlc/srs": "template/sdlc/requirement",  # Retired WP-004C alias.
-        "template/sdlc/interface": "template/sdlc/requirement",  # Retired WP-004C alias.
-        "template/sdlc/agent-design": "template/sdlc/spec",  # Retired WP-004C alias.
-        "template/sdlc/tests": "template/sdlc/spec",  # Retired WP-004C alias.
-        "template/governance/template-support": "template/governance/rule",  # Retired WP-004C alias.
+        "template/sdlc/api-spec": "common/template-sdlc-requirement",  # Retired alias.
+        "template/sdlc/prd": "common/template-sdlc-requirement",  # Retired WP-004C alias.
+        "template/sdlc/srs": "common/template-sdlc-requirement",  # Retired WP-004C alias.
+        "template/sdlc/interface": "common/template-sdlc-requirement",  # Retired WP-004C alias.
+        "template/sdlc/agent-design": "common/template-sdlc-spec",  # Retired WP-004C alias.
+        "template/sdlc/tests": "common/template-sdlc-spec",  # Retired WP-004C alias.
+        "template/governance/template-support": "common/template-governance-rule",  # Retired WP-004C alias.
     }
     projected: list[DocumentProfile] = []
     for raw_profile in raw_profiles:
         if not isinstance(raw_profile, dict):
             raise InvocationError("comparison registry contains a non-object profile")
         profile_id = raw_profile.get("id")
-        raw_routes = raw_profile.get("routes")
-        if raw_routes is None and isinstance(raw_profile.get("pathPattern"), str):
-            raw_routes = [{"kind": "regex", "value": raw_profile["pathPattern"]}]
-        raw_lifecycle = raw_profile.get("lifecycle")
-        raw_status_domain = raw_profile.get("statusDomain")
-        if raw_status_domain is None and isinstance(raw_lifecycle, dict):
-            raw_status_domain = raw_lifecycle.get("statusDomain")
-        raw_mode = raw_profile.get("mode")
-        if (
-            not isinstance(profile_id, str)
-            or not isinstance(raw_routes, list)
-            or not isinstance(raw_status_domain, list)
-            or not all(isinstance(state, str) for state in raw_status_domain)
-            or not isinstance(raw_mode, str)
-        ):
+        if not isinstance(profile_id, str):
             raise InvocationError("comparison registry profile shape is malformed")
         source = current_profiles.get(aliases.get(profile_id, profile_id))
         if source is None:
             raise InvocationError(
                 "comparison registry profile has no current lifecycle projection"
             )
+
+        raw_lifecycle = raw_profile.get("lifecycle")
+        raw_mode = raw_profile.get("mode")
+        if schema_version == 9:
+            path_pattern = raw_profile.get("path_pattern")
+            raw_routes = (
+                [{"kind": "regex", "value": path_pattern}]
+                if isinstance(path_pattern, str)
+                else None
+            )
+            raw_status_domain = (
+                raw_lifecycle.get("status_domain")
+                if isinstance(raw_lifecycle, dict)
+                else list(source.status_domain)
+            )
+        else:
+            raw_routes = raw_profile.get("routes")
+            if raw_routes is None and isinstance(raw_profile.get("pathPattern"), str):
+                raw_routes = [{"kind": "regex", "value": raw_profile["pathPattern"]}]
+            raw_status_domain = raw_profile.get("statusDomain")
+            if raw_status_domain is None and isinstance(raw_lifecycle, dict):
+                raw_status_domain = raw_lifecycle.get("statusDomain")
+
+        if (
+            not isinstance(raw_routes, list)
+            or not isinstance(raw_status_domain, list)
+            or not all(isinstance(state, str) for state in raw_status_domain)
+            or not isinstance(raw_mode, str)
+        ):
+            raise InvocationError("comparison registry profile shape is malformed")
         routes: list[Route] = []
         for raw_route in raw_routes:
             if not isinstance(raw_route, dict):

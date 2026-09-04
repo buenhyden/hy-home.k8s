@@ -1,4 +1,13 @@
-# {Stage Name}
+---
+title: "{{TITLE}}"
+version: "0.1.0"
+type: "common/readme-stage-index"
+status: "active"
+owner: "{{OWNER}}"
+updated: "{{YYYY_MM_DD}}"
+layer: "{{LAYER}}"
+---
+# {{STAGE_NAME}}
 
 ## Overview
 

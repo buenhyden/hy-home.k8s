@@ -1,11 +1,11 @@
 ---
-title: 'Document Taxonomy Consolidation Technical Specification'
+title: "Document Taxonomy Consolidation Technical Specification"
 version: "1.0.0"
-type: sdlc/spec
+type: "sdlc/spec"
+status: "active"
+owner: "platform"
+updated: "2026-08-11"
 layer: "specs"
-status: active
-owner: platform
-updated: 2026-08-11
 artifact_id: "SPEC-0052"
 ---
 

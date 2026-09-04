@@ -1,6 +1,6 @@
 ---
-name: risk-report
-description: Use when identifying, scoring, and reporting cluster-specific operational or security risks in a risk register.
+name: "risk-report"
+description: "Use when identifying, scoring, and reporting cluster-specific operational or security risks in a risk register."
 ---
 
 # risk-report

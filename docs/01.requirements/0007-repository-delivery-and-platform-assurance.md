@@ -1,11 +1,11 @@
 ---
-title: 'Repository Delivery and Platform Assurance Requirement Package'
+title: "Repository Delivery and Platform Assurance Requirement Package"
 version: "1.0.0"
-type: sdlc/requirement
+type: "sdlc/requirement"
+status: "active"
+owner: "platform"
+updated: "2026-09-01"
 layer: "requirements"
-status: active
-owner: platform
-updated: 2026-09-01
 artifact_id: "REQ-0007"
 ---
 

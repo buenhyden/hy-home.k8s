@@ -1,6 +1,6 @@
 ---
-name: observability-reviewer
-description: Review metrics, logs, alerts, dashboards, and operational observability coverage.
+name: "observability-reviewer"
+description: "Review metrics, logs, alerts, dashboards, and operational observability coverage."
 ---
 
 # observability-reviewer

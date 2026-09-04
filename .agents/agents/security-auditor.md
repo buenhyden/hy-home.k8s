@@ -1,6 +1,6 @@
 ---
-name: security-auditor
-description: Audit repository changes for secret exposure, privilege escalation, isolation failure, and policy violations.
+name: "security-auditor"
+description: "Audit repository changes for secret exposure, privilege escalation, isolation failure, and policy violations."
 ---
 
 # security-auditor

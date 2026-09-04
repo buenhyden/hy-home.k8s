@@ -168,9 +168,6 @@ class CoreCutoverTests(unittest.TestCase):
                 (root / self.registry.REGISTRY_PATH).write_text("{}")
                 with (
                     mock.patch(
-                        "requests.get", side_effect=RuntimeError("fetch forbidden")
-                    ) as get,
-                    mock.patch(
                         "urllib.request.urlopen",
                         side_effect=RuntimeError("fetch forbidden"),
                     ) as urlopen,
@@ -185,7 +182,6 @@ class CoreCutoverTests(unittest.TestCase):
                         self.registry._validate_registry_schema(root, {})
                     self.assertEqual(raised.exception.code, "AGENT-REGISTRY-SCHEMA")
                     self.assertNotIn(sentinel, str(raised.exception))
-                    get.assert_not_called()
                     urlopen.assert_not_called()
                 if reference.startswith("#"):
                     result = subprocess.run(

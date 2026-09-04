@@ -1,8 +1,8 @@
 ---
-name: observability-reviewer
-description: Review metrics, logs, alerts, dashboards, and operational observability coverage.
-model: sonnet 4.6
-tools: Read, Grep, Glob, Bash
+name: "observability-reviewer"
+description: "Review metrics, logs, alerts, dashboards, and operational observability coverage."
+model: "sonnet 4.6"
+tools: "Read, Grep, Glob, Bash"
 ---
 
 # observability-reviewer

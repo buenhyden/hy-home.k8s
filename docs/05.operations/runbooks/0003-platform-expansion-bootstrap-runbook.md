@@ -1,11 +1,11 @@
 ---
-title: 'Platform Expansion Bootstrap Runbook'
+title: "Platform Expansion Bootstrap Runbook"
 version: "1.0.0"
-type: operation/runbook
+type: "operation/runbook"
+status: "active"
+owner: "platform"
+updated: "2026-09-01"
 layer: "operations"
-status: active
-owner: platform
-updated: 2026-09-01
 artifact_id: "RUN-0003"
 ---
 

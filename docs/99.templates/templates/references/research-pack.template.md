@@ -1,4 +1,13 @@
-# {Research Pack Name}
+---
+title: "{{TITLE}}"
+version: "0.1.0"
+type: "common/readme-research-pack"
+status: "active"
+owner: "{{OWNER}}"
+updated: "{{YYYY_MM_DD}}"
+layer: "{{LAYER}}"
+---
+# {{RESEARCH_PACK_NAME}}
 
 ## Overview
 

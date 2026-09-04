@@ -1,11 +1,11 @@
 ---
-title: 'Workspace Research Full-Corpus Reverification Implementation Plan'
+title: "Workspace Research Full-Corpus Reverification Implementation Plan"
 version: "1.0.0"
-type: sdlc/plan
+type: "sdlc/plan"
+status: "active"
+owner: "platform"
+updated: "2026-08-29"
 layer: "specs"
-status: active
-owner: platform
-updated: 2026-08-29
 artifact_id: "SPEC-0062-PLAN-0001"
 ---
 

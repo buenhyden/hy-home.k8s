@@ -43,7 +43,7 @@ def _context():
         PLAN: validator.ProfileView("sdlc/plan", "sdlc", "authored"),
         TASK: validator.ProfileView("sdlc/task", "sdlc", "authored"),
         ROUTER: validator.ProfileView(
-            "readme/collection-index", "navigation", "projection"
+            "common/readme-collection-index", "navigation", "projection"
         ),
         ADR: validator.ProfileView("sdlc/architecture-decision", "sdlc", "authored"),
     }

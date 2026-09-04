@@ -1,11 +1,11 @@
 ---
-title: 'Workspace Document Lifecycle and Evidence Consolidation Requirement Package'
+title: "Workspace Document Lifecycle and Evidence Consolidation Requirement Package"
 version: "1.0.0"
-type: sdlc/requirement
+type: "sdlc/requirement"
+status: "superseded"
+owner: "platform"
+updated: "2026-07-28"
 layer: "requirements"
-status: superseded
-owner: platform
-updated: 2026-07-28
 artifact_id: "REQ-0006"
 superseded_by: "REQ-0008"
 ---

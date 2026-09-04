@@ -1,11 +1,11 @@
 ---
-title: 'Terminal Document Retention and Archive Stage Taxonomy'
+title: "Terminal Document Retention and Archive Stage Taxonomy"
 version: "1.0.0"
-type: sdlc/architecture-decision
+type: "sdlc/architecture-decision"
+status: "accepted"
+owner: "platform"
+updated: "2026-09-04"
 layer: "architecture"
-status: proposed
-owner: platform
-updated: 2026-09-04
 artifact_id: "ADR-0032"
 ---
 

@@ -1,3 +1,12 @@
+---
+title: "03.specs"
+version: "0.1.0"
+type: "common/readme-stage-index"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+layer: "specs"
+---
 # 03.specs
 
 > Requirement Package와 Architecture를 구현 가능한 기술 계약과 검증 기준으로 구체화하는 Spec stage다.

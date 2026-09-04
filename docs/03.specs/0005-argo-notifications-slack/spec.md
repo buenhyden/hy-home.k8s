@@ -1,11 +1,11 @@
 ---
-title: 'Argo Notifications Slack Technical Specification'
+title: "Argo Notifications Slack Technical Specification"
 version: "1.0.0"
-type: sdlc/spec
+type: "sdlc/spec"
+status: "active"
+owner: "platform"
+updated: "2026-07-13"
 layer: "specs"
-status: active
-owner: platform
-updated: 2026-07-13
 artifact_id: "SPEC-0005"
 ---
 

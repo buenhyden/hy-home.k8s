@@ -1,10 +1,10 @@
 ---
-title: '{Role Name} Responsibility'
-version: "#.#.#"
-type: governance/role
-status: draft
-owner: '{owner}'
-updated: YYYY-MM-DD
+title: "{{TITLE}}"
+version: "0.1.0"
+type: "governance/role"
+status: "draft"
+owner: "{{OWNER}}"
+updated: "{{YYYY_MM_DD}}"
 ---
 
 # [Role Name] Responsibility

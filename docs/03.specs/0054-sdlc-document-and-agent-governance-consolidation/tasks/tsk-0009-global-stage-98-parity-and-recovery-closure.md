@@ -1,11 +1,11 @@
 ---
-title: 'Task: Isolated Stage 98 archive minimization'
+title: "Task: Isolated Stage 98 archive minimization"
 version: "1.0.0"
-type: sdlc/task
+type: "sdlc/task"
+status: "queued"
+owner: "platform"
+updated: "2026-09-03"
 layer: "specs"
-status: queued
-owner: platform
-updated: 2026-09-03
 artifact_id: "SPEC-0054-TSK-0009"
 ---
 

@@ -392,9 +392,9 @@ SPECIFICATION_PROFILES = frozenset(
     {
         "sdlc/spec",
         "sdlc/data-model",
-        "exception/native-contract-openapi",
-        "exception/native-contract-graphql",
-        "exception/native-contract-protobuf",
+        "common/native-contract-openapi",
+        "common/native-contract-graphql",
+        "common/native-contract-protobuf",
     }
 )
 _RETIRED_SPECIFICATION_PROFILES = frozenset(

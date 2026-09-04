@@ -1,8 +1,8 @@
 ---
-name: doc-writer
-description: Author governed documentation at the canonical SDLC or common-document owner.
-model: sonnet 4.6
-tools: Read, Write, Edit, Grep, Glob, Bash
+name: "doc-writer"
+description: "Author governed documentation at the canonical SDLC or common-document owner."
+model: "sonnet 4.6"
+tools: "Read, Write, Edit, Grep, Glob, Bash"
 ---
 
 # doc-writer

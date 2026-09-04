@@ -1,3 +1,11 @@
+---
+title: "tests"
+version: "0.1.0"
+type: "common/readme-implementation"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+---
 # tests
 
 ## Overview

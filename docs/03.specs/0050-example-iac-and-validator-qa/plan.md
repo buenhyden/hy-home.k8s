@@ -1,11 +1,11 @@
 ---
-title: 'Example IaC and Validator QA Implementation Plan'
+title: "Example IaC and Validator QA Implementation Plan"
 version: "1.0.0"
-type: sdlc/plan
+type: "sdlc/plan"
+status: "draft"
+owner: "platform"
+updated: "2026-08-02"
 layer: "specs"
-status: draft
-owner: platform
-updated: 2026-08-02
 artifact_id: "SPEC-0050-PLAN-0001"
 ---
 

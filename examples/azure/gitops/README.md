@@ -1,3 +1,11 @@
+---
+title: "Azure GitOps (Platform Manifests)"
+version: "0.1.0"
+type: "common/readme-implementation"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+---
 # Azure GitOps (Platform Manifests)
 
 > 이 경로는 Azure 환경에서 클러스터 전반의 공통 플랫폼 리소스를 GitOps 방식으로 관리하는 매니페스트를 포함한다.

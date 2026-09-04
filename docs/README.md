@@ -1,3 +1,11 @@
+---
+title: "docs: 프로젝트 문서 허브"
+version: "0.1.0"
+type: "common/readme-stage-index"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+---
 # docs: 프로젝트 문서 허브
 
 ## Overview

@@ -1,11 +1,11 @@
 ---
-title: 'Agent Projection Rendering and Gate Reduction Technical Specification'
+title: "Agent Projection Rendering and Gate Reduction Technical Specification"
 version: "1.0.0"
-type: sdlc/spec
+type: "sdlc/spec"
+status: "draft"
+owner: "platform"
+updated: "2026-09-02"
 layer: "specs"
-status: draft
-owner: platform
-updated: 2026-09-02
 artifact_id: "SPEC-0068"
 ---
 
@@ -189,7 +189,7 @@ proof, and the loop contract, which are not agent-surface static validation.
 ### Stage 99 profile rewiring
 
 Four runtime asset families exist and three profiles cover them, incorrectly.
-`exception/local-agent-asset` covers both `.agents/agents/` and
+`common/local-agent-asset` covers both `.agents/agents/` and
 `.agents/skills/` and points at a Codex-named template; `.codex/agents/*.toml`
 is covered by nothing because every profile pattern is Markdown-only. The
 profiles split one per family, each with a template in the family's own format.

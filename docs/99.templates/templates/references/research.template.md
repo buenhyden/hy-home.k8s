@@ -1,11 +1,12 @@
 ---
-title: 'Reference: {Item Name}'
-version: "#.#.#"
-type: reference/research
-status: draft
-owner: '{owner}'
-updated: YYYY-MM-DD
-artifact_id: "RES-####-m####"
+title: "{{TITLE}}"
+version: "0.1.0"
+type: "reference/research"
+status: "draft"
+owner: "{{OWNER}}"
+updated: "{{YYYY_MM_DD}}"
+layer: "references"
+artifact_id: "{{ARTIFACT_ID}}"
 ---
 
 # Reference: [Item Name]

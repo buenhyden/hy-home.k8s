@@ -1,3 +1,12 @@
+---
+title: "99.templates/templates"
+version: "0.1.0"
+type: "common/readme-collection-index"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+layer: "templates"
+---
 # 99.templates/templates
 
 ## Overview
@@ -42,8 +51,9 @@ templates/
    해석하고, 그 profile이 지정한 form을 읽는다.
 2. 새 form은 그 form이 만드는 문서 이름으로 짓고, 소유 stage 디렉터리에 두며,
    디렉터리 이름을 파일 이름에 반복하지 않는다.
-3. 새 form은 반드시 소유 profile과 그 profile의 `template/<id>` 짝을 함께
-   등록한다. 소유자가 없는 form과 form이 없는 profile은 모두 계약 위반이다.
+3. 새 form은 Registry의 "template_source"와
+   "relationships.source_profile_ids"에 명시적으로 연결한다. source가 없는
+   required form, 소유 profile이 없는 form, 암묵적 공유 form은 계약 위반이다.
 4. 확장자는 그 form을 읽는 런타임이 읽는 확장자를 쓴다.
 
 ## Related Documents

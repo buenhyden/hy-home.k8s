@@ -1,11 +1,12 @@
 ---
-title: '{Feature Name} Implementation Plan'
-version: "#.#.#"
-type: sdlc/plan
-status: draft
-owner: '{owner}'
-updated: YYYY-MM-DD
-artifact_id: "SPEC-####-PLAN-####"
+title: "{{TITLE}}"
+version: "0.1.0"
+type: "sdlc/plan"
+status: "draft"
+owner: "{{OWNER}}"
+updated: "{{YYYY_MM_DD}}"
+layer: "specs"
+artifact_id: "{{ARTIFACT_ID}}"
 ---
 
 # [Feature Name] Implementation Plan

@@ -1,3 +1,12 @@
+---
+title: "02.architecture"
+version: "0.1.0"
+type: "common/readme-stage-index"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+layer: "architecture"
+---
 # 02.architecture
 
 > 요구사항을 아키텍처 요구와 결정 기록으로 연결하는 canonical architecture stage다.
@@ -63,6 +72,10 @@ Architecture Description은 `descriptions/`에, 결정 기록은 `decisions/`에
 4. Superseded ADR은 decision log에 상호 연결해 유지한다. 삭제된 안정 경로의 복구는 Git과 필요한 최소 Stage 98 Migration/Tombstone이 소유한다.
 5. 구현자가 따라야 할 상세 계약은 `../03.specs/`로 넘긴다.
 6. 운영 정책이나 복구 절차는 `../05.operations/`로 넘긴다.
+7. Architecture Description에는 arc42의 목적별 구조를 비례적으로 적용하고,
+   C4 System Context/Container를 우선 검토한다. Component·Dynamic·Deployment
+   view는 실제 이해 가치가 있을 때만 사용하며, Kubernetes manifest와 GitOps
+   desired state를 문서 본문에 복제하지 않는다.
 
 ### Relative Link Rules
 

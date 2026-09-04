@@ -1,11 +1,11 @@
 ---
 title: "Run static validation gates"
 version: "1.0.0"
-type: sdlc/task
+type: "sdlc/task"
+status: "done"
+owner: "platform"
+updated: "2026-07-13"
 layer: "specs"
-status: done
-owner: platform
-updated: 2026-07-13
 artifact_id: "SPEC-0005-TSK-0005"
 ---
 

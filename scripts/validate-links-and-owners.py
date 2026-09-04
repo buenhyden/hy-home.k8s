@@ -6345,7 +6345,9 @@ def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
                 GOVERNANCE_CURRENT_README,
                 context.profiles.get(
                     GOVERNANCE_CURRENT_README,
-                    ProfileView("readme/stage-index", "readme", "frontmatter-free"),
+                    ProfileView(
+                        "common/readme-stage-index", "readme", "frontmatter-free"
+                    ),
                 ).profile_id,
                 "one exact Current Governance Authority Index table",
                 "heading or table is missing or malformed",
@@ -6363,7 +6365,7 @@ def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
                 _diag(
                     "GOVERNANCE-INDEX-MISSING",
                     GOVERNANCE_CURRENT_README,
-                    "readme/stage-index",
+                    "common/readme-stage-index",
                     f"one row for {path.as_posix()}",
                     "declared owner row is missing",
                 )
@@ -6373,7 +6375,7 @@ def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
             _diag(
                 "GOVERNANCE-INDEX-STALE",
                 GOVERNANCE_CURRENT_README,
-                "readme/stage-index",
+                "common/readme-stage-index",
                 "registry-declared current authority row",
                 f"stale row for {path.as_posix()}",
             )
@@ -6384,7 +6386,7 @@ def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
                 _diag(
                     "GOVERNANCE-INDEX-DUPLICATE",
                     GOVERNANCE_CURRENT_README,
-                    "readme/stage-index",
+                    "common/readme-stage-index",
                     f"one row for {path.as_posix()}",
                     f"{count} rows",
                 )
@@ -6402,7 +6404,7 @@ def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
                 _diag(
                     "GOVERNANCE-INDEX-STATUS",
                     GOVERNANCE_CURRENT_README,
-                    "readme/stage-index",
+                    "common/readme-stage-index",
                     f"{path.as_posix()} lifecycle matches active/accepted frontmatter",
                     status or "missing",
                 )
@@ -6416,7 +6418,7 @@ def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
             _diag(
                 "GOVERNANCE-INDEX-ORDER",
                 GOVERNANCE_CURRENT_README,
-                "readme/stage-index",
+                "common/readme-stage-index",
                 "rows in registry declaration order",
                 "row order differs",
             )
@@ -6703,13 +6705,6 @@ def _raw_diagnostics(
     diagnostics.extend(_collection_index_diagnostics(context))
     diagnostics.extend(_governance_current_owner_diagnostics(context))
     diagnostics.extend(_owner_diagnostics(context))
-    diagnostics.extend(
-        _program_lineage_diagnostics(
-            context,
-            registry.program_lineage,
-            registry.standalone_executions,
-        )
-    )
     return sorted(diagnostics, key=diagnostic_sort_key)
 
 

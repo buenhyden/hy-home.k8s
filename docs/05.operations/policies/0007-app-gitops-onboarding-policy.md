@@ -1,11 +1,11 @@
 ---
-title: '앱 GitOps 온보딩 정책'
+title: "앱 GitOps 온보딩 정책"
 version: "1.0.0"
-type: operation/policy
+type: "operation/policy"
+status: "active"
+owner: "platform"
+updated: "2026-09-01"
 layer: "operations"
-status: active
-owner: platform
-updated: 2026-09-01
 artifact_id: "POL-0007"
 ---
 

@@ -1,6 +1,6 @@
 ---
-name: workspace-harness-audit
-description: Use when auditing workspace-wide SDLC, agent governance, GitOps, scripts, and QA ownership against an approved request.
+name: "workspace-harness-audit"
+description: "Use when auditing workspace-wide SDLC, agent governance, GitOps, scripts, and QA ownership against an approved request."
 ---
 
 # workspace-harness-audit

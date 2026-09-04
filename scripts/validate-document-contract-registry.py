@@ -338,7 +338,7 @@ def _assert_reference_pack_topology(root: Path, registry: Registry) -> None:
                         f"{singular}-pack.template.md"
                     )
                     if (
-                        profile.profile_id != f"readme/{singular}-pack"
+                        profile.profile_id != f"common/readme-{singular}-pack"
                         or profile.template != expected_template
                     ):
                         errors.append(
@@ -550,7 +550,6 @@ def main() -> int:
     print(
         f"baseline={len(inventory.baseline_paths)} "
         f"new={len(inventory.new_paths)} "
-        f"programs={len(registry.program_lineage)} "
         f"uncovered={uncovered_count} ambiguous={ambiguous_count}"
     )
     if diagnostics:

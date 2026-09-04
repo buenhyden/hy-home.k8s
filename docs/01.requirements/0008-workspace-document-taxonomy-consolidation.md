@@ -1,11 +1,11 @@
 ---
-title: 'Workspace Document Taxonomy Consolidation Requirement Package'
+title: "Workspace Document Taxonomy Consolidation Requirement Package"
 version: "1.0.0"
-type: sdlc/requirement
+type: "sdlc/requirement"
+status: "active"
+owner: "platform"
+updated: "2026-09-01"
 layer: "requirements"
-status: active
-owner: platform
-updated: 2026-09-01
 artifact_id: "REQ-0008"
 supersedes: ["REQ-0005", "REQ-0006"]
 ---

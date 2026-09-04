@@ -1,11 +1,11 @@
 ---
-title: 'Terminal Artifact Identity and Archive Layout'
+title: "Terminal Artifact Identity and Archive Layout"
 version: "1.0.0"
-type: sdlc/architecture-decision
+type: "sdlc/architecture-decision"
+status: "superseded"
+owner: "platform"
+updated: "2026-08-11"
 layer: "architecture"
-status: superseded
-owner: platform
-updated: 2026-08-11
 artifact_id: "ADR-0024"
 superseded_by: "ADR-0030"
 ---

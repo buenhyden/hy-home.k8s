@@ -63,6 +63,17 @@ RETIRED_PROFILE_IDS = frozenset(
         "template/governance/memory",
     }
 )
+DOCUMENT_FAMILIES = frozenset(
+    {"common", "governance", "sdlc", "operation", "reference", "archive"}
+)
+COMMON_FRONTMATTER_PREFIX = [
+    "title",
+    "version",
+    "type",
+    "status",
+    "owner",
+    "updated",
+]
 
 
 def load_validator(name: str, path: Path):
@@ -101,6 +112,89 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
 
+    def test_v9_registry_uses_the_common_public_model(self) -> None:
+        self.assertEqual(
+            set(self.registry),
+            {"$id", "$schema", "schema_version", "profiles", "lifecycle_domains"},
+        )
+        self.assertEqual(self.registry["schema_version"], 9)
+        self.assertNotIn("programLineage", self.registry)
+        self.assertNotIn("standaloneExecutions", self.registry)
+        for profile in self.registry["profiles"]:
+            with self.subTest(profile=profile["id"]):
+                self.assertIn(profile["family"], DOCUMENT_FAMILIES)
+                self.assertEqual(profile["id"].split("/", 1)[0], profile["family"])
+                self.assertIn("path_pattern", profile)
+                self.assertIn("template_source", profile)
+                self.assertIn("frontmatter", profile)
+                self.assertIn("sections", profile)
+                self.assertIn("placeholder_policy", profile)
+                self.assertNotIn("pathPattern", profile)
+                self.assertNotIn("requiredFrontmatter", profile)
+                self.assertNotIn("requiredSections", profile)
+
+    def test_governed_readmes_use_identity_free_envelopes(self) -> None:
+        readmes = [
+            profile
+            for profile in self.registry["profiles"]
+            if profile["id"].startswith("common/readme-")
+            and profile["mode"] == "router"
+        ]
+        self.assertTrue(readmes)
+        for profile in readmes:
+            with self.subTest(profile=profile["id"]):
+                frontmatter = profile["frontmatter"]
+                self.assertEqual(frontmatter["mode"], "required")
+                self.assertEqual(
+                    frontmatter["order"][: len(COMMON_FRONTMATTER_PREFIX)],
+                    COMMON_FRONTMATTER_PREFIX,
+                )
+                self.assertNotIn("artifact_id", frontmatter["required"])
+                self.assertIn("artifact_id", frontmatter["forbidden"])
+                self.assertIsNone(profile["artifact_id_pattern"])
+                self.assertIsNone(profile["lifecycle"])
+
+    def test_authored_frontmatter_uses_one_common_prefix(self) -> None:
+        for profile in self.registry["profiles"]:
+            if profile["mode"] not in {"authored", "router"}:
+                continue
+            with self.subTest(profile=profile["id"]):
+                frontmatter = profile["frontmatter"]
+                self.assertEqual(
+                    frontmatter["order"][: len(COMMON_FRONTMATTER_PREFIX)],
+                    COMMON_FRONTMATTER_PREFIX,
+                )
+                self.assertEqual(frontmatter["constants"].get("type"), profile["id"])
+
+    def test_templates_use_only_current_placeholder_grammars(self) -> None:
+        legacy_markdown = re.compile(
+            r"(?:(?<!\{)\{[A-Za-z][^{}]*\}(?!\})|#\.#[.#]*|\b(?:[A-Z]+-)?#{4}\b|YYYY-MM-DD)"
+        )
+        current_markdown = re.compile(r"\{\{[A-Z][A-Z0-9_]*\}\}")
+        current_native = re.compile(r"__[A-Z][A-Z0-9_]*__")
+        for path in STAGE99_TEMPLATES_ROOT.rglob("*"):
+            if not path.is_file() or path.name == "README.md":
+                continue
+            text = path.read_text(encoding="utf-8")
+            with self.subTest(template=path.relative_to(REPOSITORY_ROOT).as_posix()):
+                self.assertIsNone(legacy_markdown.search(text))
+                placeholders = re.findall(r"\{\{[^{}]+\}\}", text)
+                self.assertTrue(
+                    all(current_markdown.fullmatch(item) for item in placeholders)
+                )
+                native = re.findall(r"__[A-Za-z0-9_]+__", text)
+                self.assertTrue(all(current_native.fullmatch(item) for item in native))
+
+    def test_release_evidence_remains_external(self) -> None:
+        profile_ids = {profile["id"] for profile in self.registry["profiles"]}
+        self.assertNotIn("operation/release", profile_ids)
+        self.assertFalse(
+            any(
+                "release.template" in (profile["template_source"] or "")
+                for profile in self.registry["profiles"]
+            )
+        )
+
     def test_terminal_stage99_topology_is_exact(self) -> None:
         stage99 = REPOSITORY_ROOT / "docs/99.templates"
         self.assertEqual(
@@ -133,15 +227,10 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             {
                 "$id",
                 "$schema",
+                "lifecycle_domains",
                 "profiles",
-                "programLineage",
-                "schemaVersion",
-                "standaloneExecutions",
+                "schema_version",
             },
-        )
-        self.assertEqual(
-            set(self.registry["programLineage"]),
-            {"lifecycleDomains", "programs"},
         )
         profile_ids = [profile["id"] for profile in self.registry["profiles"]]
         self.assertEqual(len(profile_ids), len(set(profile_ids)))
@@ -150,17 +239,16 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 "reference/audit",
                 "reference/data",
                 "reference/research",
-                "readme/audit-pack",
-                "readme/data-pack",
-                "readme/research-pack",
+                "common/readme-audit-pack",
+                "common/readme-data-pack",
+                "common/readme-research-pack",
                 "operation/incident",
                 "operation/postmortem",
             }.issubset(profile_ids)
         )
 
         lifecycle_families = [
-            domain["family"]
-            for domain in self.registry["programLineage"]["lifecycleDomains"]
+            domain["family"] for domain in self.registry["lifecycle_domains"]
         ]
         self.assertEqual(len(lifecycle_families), len(set(lifecycle_families)))
         # Forms do not transition: the lifecycle state machine skips
@@ -196,7 +284,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         profiles = {profile["id"]: profile for profile in self.registry["profiles"]}
         self.assertTrue(RETIRED_PROFILE_IDS.isdisjoint(profiles))
         for profile in profiles.values():
-            template = profile.get("template")
+            template = profile.get("template_source")
             if not template:
                 continue
             template_path = REPOSITORY_ROOT / template
@@ -219,28 +307,28 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         collection_profile = next(
             profile
             for profile in self.registry["profiles"]
-            if profile["id"] == "readme/collection-index"
+            if profile["id"] == "common/readme-collection-index"
         )
         self.assertNotIn(
-            "docs/99\\.templates/support", collection_profile["pathPattern"]
+            "docs/99\\.templates/support", collection_profile["path_pattern"]
         )
         # The form catalog is a route again.  MIG-0004 retired a support-era
         # document, not the location: the row pins the bytes it retired, and the
         # archive control refuses those bytes returning rather than the path.
         self.assertIn(
             "docs/99\\.templates/templates/README",
-            collection_profile["pathPattern"],
+            collection_profile["path_pattern"],
         )
         catalog = REPOSITORY_ROOT / "docs/99.templates/templates/README.md"
         self.assertNotEqual(
             hashlib.sha256(catalog.read_bytes()).hexdigest(),
-            "568c84c88ab19c876aa4416660853005130631b088061b81b713cc71a6e5d097",
+            "568c84c88ab19c876aa4416660853005130631b088061b81b713cc71a6e5d097",  # pragma: allowlist secret
         )
 
     def test_stage99_support_prose_cannot_be_a_machine_owner(self) -> None:
         authority = load_document_authority()
         registry = json.loads(json.dumps(self.registry))
-        registry["profiles"][0]["pathPattern"] = (
+        registry["profiles"][0]["path_pattern"] = (
             "^docs/99\\.templates/support/document-contract\\.md$"
         )
         with self.assertRaisesRegex(authority.AuthorityError, "STAGE99_SUPPORT_OWNER"):
@@ -295,17 +383,18 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             with self.assertRaisesRegex(authority.AuthorityError, "AUTHORITY_SIZE"):
                 authority.read_bounded_utf8(candidate, max_bytes=16)
 
-    def test_router_profiles_omit_artifact_and_lifecycle_fields(self) -> None:
+    def test_router_profiles_have_identity_free_null_fields(self) -> None:
         routers = [
             profile
             for profile in self.registry["profiles"]
-            if profile["class"] == "readme"
+            if profile["mode"] == "router"
         ]
         self.assertTrue(routers)
         for profile in routers:
             with self.subTest(profile=profile["id"]):
-                self.assertNotIn("artifactIdPattern", profile)
-                self.assertNotIn("lifecycle", profile)
+                self.assertIsNone(profile["artifact_id_pattern"])
+                self.assertIsNone(profile["lifecycle"])
+                self.assertIn("artifact_id", profile["frontmatter"]["forbidden"])
 
     def test_root_registry_loader_exposes_terminal_profile_contract(self) -> None:
         contracts = load_document_contracts()
@@ -323,7 +412,9 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
     def test_terminal_profile_relationships_reject_unknown_sources(self) -> None:
         contracts = load_document_contracts()
         registry = clone_registry(self.registry)
-        registry["profiles"][0]["relationships"]["sourceProfileIds"] = ["sdlc/unknown"]
+        registry["profiles"][0]["relationships"]["source_profile_ids"] = [
+            "sdlc/unknown"
+        ]
         with self.assertRaisesRegex(
             contracts.DocumentContractError, "REGISTRY_SOURCE_PROFILE"
         ):
@@ -334,11 +425,11 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         mutations = {
             "path-pattern": (
                 "REGISTRY_ROUTE_REGEX",
-                lambda profile: profile.update(pathPattern="^[$"),
+                lambda profile: profile.update(path_pattern="^[$"),
             ),
             "artifact-id-pattern": (
                 "REGISTRY_ARTIFACT_ID_PATTERN",
-                lambda profile: profile.update(artifactIdPattern="^[$"),
+                lambda profile: profile.update(artifact_id_pattern="^[$"),
             ),
         }
         for name, (rule_id, mutate) in mutations.items():
@@ -356,12 +447,10 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         contracts = load_document_contracts()
         registry = clone_registry(self.registry)
         form = next(
-            profile
-            for profile in registry["profiles"]
-            if profile["mode"] == "template" and profile.get("lifecycle") is not None
+            profile for profile in registry["profiles"] if profile["mode"] == "template"
         )
-        self.assertEqual(form["lifecycle"]["statusDomain"], [])
-        form["lifecycle"]["statusDomain"] = ["draft"]
+        self.assertIsNone(form["lifecycle"])
+        form["lifecycle"] = {"status_domain": ["draft"]}
         with self.assertRaisesRegex(
             contracts.DocumentContractError, "REGISTRY_FORM_STATUS_DOMAIN"
         ):
@@ -376,9 +465,9 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         form = next(
             profile
             for profile in registry["profiles"]
-            if profile["id"] == "template/operation/incident"
+            if profile["id"] == "common/template-operation-incident"
         )
-        form["relationships"]["bodyContract"]["enforcedStatuses"] = ["retired"]
+        form["relationships"]["body_contract"]["enforced_statuses"] = ["retired"]
         with self.assertRaisesRegex(
             contracts.DocumentContractError, "REGISTRY_BODY_STATUS"
         ):
@@ -388,7 +477,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         contracts = load_document_contracts()
 
         def mutate_body(registry: dict[str, Any]) -> dict[str, Any]:
-            return registry["profiles"][1]["relationships"]["bodyContract"]
+            return registry["profiles"][1]["relationships"]["body_contract"]
 
         mutations = {
             "section": (
@@ -397,31 +486,31 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             ),
             "status": (
                 "REGISTRY_BODY_STATUS",
-                lambda body: body.update(enforcedStatuses=["unknown"]),
+                lambda body: body.update(enforced_statuses=["unknown"]),
             ),
             "identifier-column": (
                 "REGISTRY_BODY_IDENTIFIER_COLUMN",
                 lambda body: body.update(
-                    identifierColumns=[
+                    identifier_columns=[
                         {"column": "Missing column", "kind": "requirement"}
                     ]
                 ),
             ),
             "source-link-column": (
                 "REGISTRY_BODY_SOURCE_PROFILE",
-                lambda body: body.update(sourceLinkColumn="Missing column"),
+                lambda body: body.update(source_link_column="Missing column"),
             ),
             "unknown-target-profile": (
                 "REGISTRY_BODY_TARGET_PROFILE",
-                lambda body: body.update(allowedTargetProfileIds=["sdlc/unknown"]),
+                lambda body: body.update(allowed_target_profile_ids=["sdlc/unknown"]),
             ),
             "reciprocal-without-link": (
                 "REGISTRY_BODY_RECIPROCAL",
                 lambda body: body.update(
-                    sourceLinkColumn=None,
-                    targetLinkColumn=None,
-                    allowedSourceProfileIds=[],
-                    allowedTargetProfileIds=[],
+                    source_link_column=None,
+                    target_link_column=None,
+                    allowed_source_profile_ids=[],
+                    allowed_target_profile_ids=[],
                 ),
             ),
         }
@@ -437,14 +526,14 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
     ) -> None:
         contracts = load_document_contracts()
         mutations = {
-            "unknown": lambda domains: domains[0]["profileIds"].append("sdlc/unknown"),
-            "duplicate": lambda domains: domains[1]["profileIds"].append(
+            "unknown": lambda domains: domains[0]["profile_ids"].append("sdlc/unknown"),
+            "duplicate": lambda domains: domains[1]["profile_ids"].append(
                 "sdlc/requirement"
             ),
         }
         for name, mutate in mutations.items():
             registry = clone_registry(self.registry)
-            mutate(registry["programLineage"]["lifecycleDomains"])
+            mutate(registry["lifecycle_domains"])
             with self.subTest(name=name):
                 with self.assertRaisesRegex(
                     contracts.DocumentContractError, "REGISTRY_LIFECYCLE_DOMAIN"
@@ -459,67 +548,33 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             for profile in self.registry["profiles"]
             if profile["mode"] == "authored" and profile["lifecycle"] is not None
         }
-        domains = self.registry["programLineage"]["lifecycleDomains"]
+        domains = self.registry["lifecycle_domains"]
         assignments = {
             profile_id: domain
             for domain in domains
-            for profile_id in domain["profileIds"]
+            for profile_id in domain["profile_ids"]
         }
-        self.assertTrue(all(domain["profileIds"] for domain in domains))
+        self.assertTrue(all(domain["profile_ids"] for domain in domains))
         self.assertTrue(set(profiles).issubset(assignments))
         for profile_id, profile in profiles.items():
             with self.subTest(profile=profile_id):
                 self.assertEqual(
-                    set(profile["lifecycle"]["statusDomain"]),
+                    set(profile["lifecycle"]["status_domain"]),
                     set(assignments[profile_id]["states"]),
                 )
 
-    def test_terminal_program_and_standalone_structure_fail_closed(self) -> None:
+    def test_retired_program_and_standalone_planes_are_absent(self) -> None:
         contracts = load_document_contracts()
-
-        def duplicate_program(registry: dict[str, Any]) -> None:
-            programs = registry["programLineage"]["programs"]
-            programs.append(clone_registry(programs[0]))
-
-        def relation_order(registry: dict[str, Any]) -> None:
-            registry["programLineage"]["programs"][0]["tranches"][0]["order"] = 2
-
-        def duplicate_standalone(registry: dict[str, Any]) -> None:
-            registry["standaloneExecutions"].append(
-                clone_registry(registry["standaloneExecutions"][0])
-            )
-
-        def overlapping_standalone(registry: dict[str, Any]) -> None:
-            registry["standaloneExecutions"][0]["spec"] = registry["programLineage"][
-                "programs"
-            ][0]["tranches"][0]["spec"]
-
-        mutations = {
-            "duplicate-program": ("REGISTRY_PROGRAM_DUPLICATE", duplicate_program),
-            "relation-order": (
-                "REGISTRY_PROGRAM_RELATION_ORDER",
-                relation_order,
-            ),
-            "duplicate-standalone": (
-                "REGISTRY_STANDALONE_DUPLICATE",
-                duplicate_standalone,
-            ),
-            "program-standalone-overlap": (
-                "REGISTRY_STANDALONE_OVERLAP",
-                overlapping_standalone,
-            ),
-        }
-        for name, (rule_id, mutate) in mutations.items():
-            registry = clone_registry(self.registry)
-            mutate(registry)
-            with self.subTest(name=name):
-                with self.assertRaisesRegex(contracts.DocumentContractError, rule_id):
-                    contracts.validate_registry(REPOSITORY_ROOT, registry)
+        self.assertNotIn("programLineage", self.registry)
+        self.assertNotIn("standaloneExecutions", self.registry)
+        typed = contracts.load_registry(REPOSITORY_ROOT)
+        self.assertEqual(typed.program_lineage, ())
+        self.assertEqual(typed.standalone_executions, ())
 
     def test_terminal_templates_must_be_regular_non_symlink_files(self) -> None:
         contracts = load_document_contracts()
         missing = clone_registry(self.registry)
-        missing["profiles"][0]["template"] = (
+        missing["profiles"][0]["template_source"] = (
             "docs/99.templates/templates/requirements/missing.template.md"
         )
         with self.assertRaisesRegex(
@@ -539,7 +594,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 templates / "requirements/requirement-package.template.md"
             )
             linked = clone_registry(self.registry)
-            linked["profiles"][0]["template"] = linked_template.relative_to(
+            linked["profiles"][0]["template_source"] = linked_template.relative_to(
                 root
             ).as_posix()
             with self.assertRaisesRegex(
@@ -552,7 +607,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             registry = clone_registry(self.registry)
-            registry["profiles"][0]["relationships"]["sourceProfileIds"] = [
+            registry["profiles"][0]["relationships"]["source_profile_ids"] = [
                 "sdlc/unknown"
             ]
             registry_path = root / contracts.REGISTRY_PATH
@@ -599,6 +654,23 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             markdown.validate_document(REPOSITORY_ROOT, path, profile, "strict"),
             [],
         )
+
+    def test_current_frontmatter_requires_double_quoted_values(self) -> None:
+        markdown = load_validator("frontmatter_quote", VALIDATOR_PATHS["markdown"])
+        registry = markdown.load_registry(REPOSITORY_ROOT)
+        path = PurePosixPath(
+            "docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation"
+            "/plan.md"
+        )
+        profile = markdown.classify_path(registry, path)
+        source = (REPOSITORY_ROOT / path).read_text(encoding="utf-8")
+        diagnostics = markdown.validate_document_text(
+            source.replace('owner: "platform"', "owner: platform", 1),
+            path,
+            profile,
+            "strict",
+        )
+        self.assertIn("FM-QUOTE", {item.rule_id for item in diagnostics})
 
     def test_artifact_id_validation_uses_profile_pattern(self) -> None:
         markdown = load_validator("artifact_id_contract", VALIDATOR_PATHS["markdown"])
@@ -721,17 +793,17 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         for profile_id in (
             "sdlc/spec",
             "sdlc/data-model",
-            "template/sdlc/spec",
-            "template/sdlc/data-model",
+            "common/template-sdlc-spec",
+            "common/template-sdlc-data-model",
         ):
             with self.subTest(profile=profile_id):
-                body_contract = profiles[profile_id]["relationships"]["bodyContract"]
-                self.assertEqual(body_contract["requiredColumns"][0], "Requirement ID")
+                body_contract = profiles[profile_id]["relationships"]["body_contract"]
+                self.assertEqual(body_contract["required_columns"][0], "Requirement ID")
                 self.assertEqual(
-                    body_contract["identifierColumns"][0]["column"],
+                    body_contract["identifier_columns"][0]["column"],
                     "Requirement ID",
                 )
-                self.assertEqual(body_contract["sourceLinkColumn"], "Requirement ID")
+                self.assertEqual(body_contract["source_link_column"], "Requirement ID")
 
         for relative_path in (
             "requirements/requirement-package.template.md",
@@ -746,7 +818,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
                 self.assertNotIn("REQ-FEATURE-001", contents)
                 self.assertRegex(contents, r"REQ-0001-(?:FR|NFR|IF)-0001")
         self.assertIn(
-            'artifact_id: "REQ-####"',
+            'artifact_id: "{{ARTIFACT_ID}}"',
             (
                 STAGE99_TEMPLATES_ROOT / "requirements/requirement-package.template.md"
             ).read_text(encoding="utf-8"),
@@ -871,19 +943,19 @@ class Stage05TerminalOwnershipTests(unittest.TestCase):
     def test_operation_templates_share_authored_lifecycle_and_fields(self) -> None:
         profiles = {profile["id"]: profile for profile in self.registry["profiles"]}
         expectations = {
-            "operation/guide": ("template/operation/guide",),
+            "operation/guide": ("common/template-operation-guide",),
             "operation/incident": (
-                "template/operation/incident",
+                "common/template-operation-incident",
                 "Roles and Coordination",
                 "Closure",
             ),
             "operation/postmortem": (
-                "template/operation/postmortem",
+                "common/template-operation-postmortem",
                 "Detection and Response Review",
                 "Action Closure",
             ),
-            "operation/policy": ("template/operation/policy",),
-            "operation/runbook": ("template/operation/runbook",),
+            "operation/policy": ("common/template-operation-policy",),
+            "operation/runbook": ("common/template-operation-runbook",),
         }
         for authored_id, expected in expectations.items():
             template_id, *sections = expected
@@ -895,7 +967,7 @@ class Stage05TerminalOwnershipTests(unittest.TestCase):
                 # these five stayed right while sixteen elsewhere drifted. The
                 # form now declares none and the loader hands it the authored
                 # one, so sharing is inherited rather than copied and checked.
-                self.assertEqual(template["lifecycle"]["statusDomain"], [])
+                self.assertIsNone(template["lifecycle"])
                 loaded = next(
                     item
                     for item in load_document_contracts()
@@ -905,17 +977,17 @@ class Stage05TerminalOwnershipTests(unittest.TestCase):
                 )
                 self.assertEqual(
                     loaded.status_domain,
-                    tuple(authored["lifecycle"]["statusDomain"]),
+                    tuple(authored["lifecycle"]["status_domain"]),
                 )
                 self.assertTrue(
-                    set(sections).issubset(authored["requiredSections"]["required"])
+                    set(sections).issubset(authored["sections"]["required"])
                 )
                 self.assertTrue(
-                    set(sections).issubset(template["requiredSections"]["required"])
+                    set(sections).issubset(template["sections"]["required"])
                 )
                 self.assertIn(
                     "artifact_id",
-                    template["requiredFrontmatter"]["required"],
+                    template["frontmatter"]["required"],
                 )
 
 
@@ -1005,7 +1077,7 @@ class TerminalStrictValidatorTests(unittest.TestCase):
                 registry,
                 PurePosixPath(".claude/agents/doc-writer.md"),
             ).profile_id,
-            "exception/provider-native-metadata",
+            "common/provider-native-metadata",
         )
         with self.assertRaisesRegex(
             validator.DocumentContractError, "REGISTRY_ROUTE_UNCOVERED"

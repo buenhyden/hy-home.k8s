@@ -1,11 +1,12 @@
 ---
-title: 'Task: {Task Name}'
-version: "#.#.#"
-type: sdlc/task
-status: queued
-owner: '{owner}'
-updated: YYYY-MM-DD
-artifact_id: "SPEC-####-TSK-####"
+title: "{{TITLE}}"
+version: "0.1.0"
+type: "sdlc/task"
+status: "queued"
+owner: "{{OWNER}}"
+updated: "{{YYYY_MM_DD}}"
+layer: "specs"
+artifact_id: "{{ARTIFACT_ID}}"
 ---
 
 # Task: [Task Name]

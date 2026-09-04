@@ -1,6 +1,6 @@
 ---
-name: doc-writer
-description: Author governed documentation at the canonical SDLC or common-document owner.
+name: "doc-writer"
+description: "Author governed documentation at the canonical SDLC or common-document owner."
 ---
 
 # doc-writer

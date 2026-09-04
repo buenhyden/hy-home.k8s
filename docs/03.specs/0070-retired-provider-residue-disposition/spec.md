@@ -1,11 +1,11 @@
 ---
-title: 'Retired Provider Residue Disposition Technical Specification'
+title: "Retired Provider Residue Disposition Technical Specification"
 version: "1.0.0"
-type: sdlc/spec
+type: "sdlc/spec"
+status: "draft"
+owner: "platform"
+updated: "2026-09-03"
 layer: "specs"
-status: draft
-owner: platform
-updated: 2026-09-03
 artifact_id: "SPEC-0070"
 ---
 
@@ -39,7 +39,7 @@ They are not permanent governance invariants.
 
 ## Strategic Boundaries & Non-goals
 
-In scope: the `exception/root-provider-shim` path pattern in
+In scope: the `common/root-provider-shim` path pattern in
 `docs/99.templates/registry.json`; the provider case branch in
 `docs/00.agent-governance/hooks/post-validate.sh`; the gateway glob in
 `.github/labeler.yml`; the retired-provider environment variable in
@@ -95,7 +95,7 @@ happened, including the tests that prove it.
 
 ### Live surfaces
 
-`exception/root-provider-shim` matches `^(?:AGENTS\.md|CLAUDE\.md|GEMINI\.md)$`.
+`common/root-provider-shim` matches `^(?:AGENTS\.md|CLAUDE\.md|GEMINI\.md)$`.
 The third alternative names a gateway ADR-0030 deleted, so the profile would
 admit and govern a file that must not exist. The alternation drops to the two
 current gateways.
@@ -169,7 +169,7 @@ The changed interfaces are four literal patterns:
 
 ## Edge Cases & Error Handling
 
-Narrowing the `exception/root-provider-shim` pattern must not orphan a tracked
+Narrowing the `common/root-provider-shim` pattern must not orphan a tracked
 path. The audit confirms no tracked file matches the removed alternative, so the
 strict contract registry run must still report zero uncovered paths after the
 change; if it does not, a file exists that the audit missed and the change is

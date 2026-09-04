@@ -260,7 +260,7 @@ class ArchiveValidationTest(unittest.TestCase):
         index_document = CurrentMarkdownDocument(
             path="docs/98.archive/README.md",
             markdown="# Current archive index\n",
-            profile="readme/stage-index",
+            profile="common/readme-stage-index",
             status="accepted",
         )
 
@@ -566,7 +566,7 @@ class ArchiveValidationTest(unittest.TestCase):
                 "[recovery](../../98.archive/migrations/"
                 "0004-document-authority-convergence.md)\n"
             ),
-            profile="readme/collection-index",
+            profile="common/readme-collection-index",
             status="active",
         )
         wrong_control = dataclasses.replace(
@@ -602,7 +602,7 @@ class ArchiveValidationTest(unittest.TestCase):
         document = CurrentMarkdownDocument(
             path="docs/98.archive/README.md",
             markdown=f"[record]({self.archive_path.removeprefix('docs/98.archive/')})\n",
-            profile="readme/stage-index",
+            profile="common/readme-stage-index",
             status="archived",
         )
 
@@ -2611,76 +2611,12 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
             )
         )
 
-    def test_standalone_approval_statements_are_relation_specific(self) -> None:
-        statements = self.validator.STANDALONE_APPROVAL_STATEMENTS
-
+    def test_public_registry_has_no_retired_execution_rosters(self) -> None:
         registry = json.loads(
             (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
         )
-
-        # The registry owns which relations are standalone executions.  A
-        # statement for a relation the registry does not declare is a
-        # pre-minted approval: the moment anyone declares that relation,
-        # STANDALONE-EXECUTION-APPROVAL is satisfied without a human having
-        # approved it.  Holding the two rosters equal removes the second
-        # owner instead of restating it here.
-        self.assertEqual(
-            set(statements),
-            {entry["spec"] for entry in registry["standaloneExecutions"]},
-        )
-        self.assertIn("2026-08-08", statements["0053"][0])
-        self.assertIn("2026-08-13", statements["0054"][0])
-        self.assertNotEqual(statements["0053"], statements["0054"])
-
-    def test_standalone_decision_roster_must_equal_the_registry(self) -> None:
-        validator = self.validator
-        registry = json.loads(
-            (ROOT / "docs/99.templates/registry.json").read_text(encoding="utf-8")
-        )
-        declared = [
-            types.SimpleNamespace(spec_id=entry["spec"])
-            for entry in registry["standaloneExecutions"]
-        ]
-        decision = (ROOT / validator.STANDALONE_DECISION_PATH.as_posix()).read_text(
-            encoding="utf-8"
-        )
-
-        # The repository agrees today: every Spec ADR-0022 links is declared.
-        context = types.SimpleNamespace(
-            texts={validator.STANDALONE_DECISION_PATH: decision}
-        )
-        self.assertEqual(
-            validator._standalone_decision_roster_diagnostics(context, declared), []
-        )
-
-        # A Spec linked by the decision but absent from the registry is what
-        # let seven relations accumulate unnoticed, so it must fail closed.
-        drifted = types.SimpleNamespace(
-            texts={
-                validator.STANDALONE_DECISION_PATH: decision
-                + "| x | y | [Spec 0055](../../03.specs/0055-a/spec.md) |\n"
-            }
-        )
-        self.assertEqual(
-            [
-                item.rule_id
-                for item in validator._standalone_decision_roster_diagnostics(
-                    drifted, declared
-                )
-            ],
-            ["STANDALONE-DECISION-ROSTER"],
-        )
-
-        # So must a registry relation the decision does not link.
-        self.assertEqual(
-            [
-                item.rule_id
-                for item in validator._standalone_decision_roster_diagnostics(
-                    context, [*declared, types.SimpleNamespace(spec_id="9999")]
-                )
-            ],
-            ["STANDALONE-DECISION-ROSTER"],
-        )
+        self.assertNotIn("programLineage", registry)
+        self.assertNotIn("standaloneExecutions", registry)
 
     def test_work109_mig0002_source_commit_blob_and_target_drift_fail_closed(
         self,
@@ -2758,6 +2694,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         self.assertNotIn(self.moved_source, self.context.texts)
         self.assertIn(self.moved_target, self.context.texts)
 
+
 class SealedRecordRelocationTest(unittest.TestCase):
     """Prove a later sealed ledger may move a record and may not invent one."""
 
@@ -2817,7 +2754,11 @@ class SealedRecordRelocationTest(unittest.TestCase):
         # The origin is a well-formed record path, but no earlier ledger ever
         # sealed it, so the row composes no stable path here.
         content = self._ledger(
-            [self._row("docs/98.archive/tombstones/01.requirements/9999-x.md", self.TARGET)]
+            [
+                self._row(
+                    "docs/98.archive/tombstones/01.requirements/9999-x.md", self.TARGET
+                )
+            ]
         )
         self.assertEqual(
             archive_validation.relocated_stable_archive_paths(
@@ -2871,7 +2812,10 @@ class SealedRecordRelocationTest(unittest.TestCase):
             archive_validation.relocated_stable_archive_paths(
                 (
                     (self.LEDGER_PATH, first),
-                    ("docs/98.archive/migrations/0021-record-relocation-again.md", second),
+                    (
+                        "docs/98.archive/migrations/0021-record-relocation-again.md",
+                        second,
+                    ),
                 ),
                 (self.SEALED,),
             ),

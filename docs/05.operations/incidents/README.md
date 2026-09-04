@@ -1,3 +1,12 @@
+---
+title: "05.operations/incidents"
+version: "0.1.0"
+type: "common/readme-collection-index"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+layer: "operations"
+---
 # 05.operations/incidents
 
 > 사고 사실 기록과 postmortem을 보관하는 incident stage다.

@@ -1,8 +1,8 @@
 ---
-name: quality-engineer
-description: Design and run bounded repository validation and report reproducible quality evidence.
-model: Sonnet 5
-tools: Read, Write, Edit, Grep, Glob, Bash
+name: "quality-engineer"
+description: "Design and run bounded repository validation and report reproducible quality evidence."
+model: "Sonnet 5"
+tools: "Read, Write, Edit, Grep, Glob, Bash"
 ---
 
 # quality-engineer

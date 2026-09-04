@@ -1,11 +1,11 @@
 ---
-title: 'Argo Rollouts Progressive Delivery Requirement Package'
+title: "Argo Rollouts Progressive Delivery Requirement Package"
 version: "1.0.0"
-type: sdlc/requirement
+type: "sdlc/requirement"
+status: "active"
+owner: "platform"
+updated: "2026-07-13"
 layer: "requirements"
-status: active
-owner: platform
-updated: 2026-07-13
 artifact_id: "REQ-0001"
 ---
 

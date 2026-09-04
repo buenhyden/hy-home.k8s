@@ -1,10 +1,10 @@
 ---
-title: '{Provider Name} Provider Notes'
-version: "#.#.#"
-type: governance/provider
-status: draft
-owner: '{owner}'
-updated: YYYY-MM-DD
+title: "{{TITLE}}"
+version: "0.1.0"
+type: "governance/provider"
+status: "draft"
+owner: "{{OWNER}}"
+updated: "{{YYYY_MM_DD}}"
 ---
 
 # [Provider Name] Provider Notes

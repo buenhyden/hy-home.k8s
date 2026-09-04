@@ -1,10 +1,10 @@
 ---
-title: 'Document Lifecycle Policy'
-version: "1.0.0"
-type: governance/rule
-status: active
-owner: platform
-updated: 2026-08-20
+title: "Document Lifecycle Policy"
+version: "1.1.0"
+type: "governance/rule"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
 ---
 
 # Document Lifecycle Policy
@@ -38,8 +38,10 @@ their owning migration work package moves them.
   successor and the successor to link `supersedes` back in the same change.
 - A mutable or current owner cannot disappear without replacement coverage,
   consumer disposition, and applicable Git-backed recovery evidence.
-- Router READMEs have neither an artifact ID nor a lifecycle state.
-- Templates identify their registry profile and do not own a destination path.
+- Router READMEs carry an "active" routing constant but have neither an
+  artifact ID nor a lifecycle binding.
+- Templates project their source profile, start no lifecycle of their own, and
+  do not own a destination path.
 - Material Stage 99 index/worktree drift fails staged validation; the staged
   registry is the commit claim.
 - A terminal document is retained rather than deleted. It leaves the active
@@ -47,6 +49,9 @@ their owning migration work package moves them.
   move is proved by a sealed migration row that pins the origin path, commit,
   and blob. Which states are terminal stays with the registry; this policy adds
   only the obligation that reaching one moves the document.
+- Frozen legacy Archive payloads retain their original generation, bytes, and
+  historical links. Current validators classify them as historical evidence
+  and do not rewrite them to the current envelope.
 
 ## Validation and Refresh
 

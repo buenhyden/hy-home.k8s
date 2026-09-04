@@ -1,3 +1,12 @@
+---
+title: "90.references/research"
+version: "0.1.0"
+type: "common/readme-collection-index"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+layer: "references"
+---
 # 90.references/research
 
 > Workspace harness research pack references, source ledgers, and durable research synthesis live here.

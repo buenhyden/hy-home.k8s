@@ -1,10 +1,10 @@
 ---
-title: 'Codex Provider Notes'
+title: "Codex Provider Notes"
 version: "1.0.0"
-type: governance/provider
-status: active
-owner: platform
-updated: 2026-08-28
+type: "governance/provider"
+status: "active"
+owner: "platform"
+updated: "2026-08-28"
 ---
 
 # Codex Provider Notes

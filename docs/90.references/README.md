@@ -1,3 +1,12 @@
+---
+title: "90.references"
+version: "0.1.0"
+type: "common/readme-stage-index"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+layer: "references"
+---
 # 90.references
 
 > 감사, 외부 조사, 데이터 등 비권위 참고 자료를 관리한다.

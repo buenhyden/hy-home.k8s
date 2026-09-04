@@ -173,11 +173,14 @@ class DocumentProfile:
     template: PurePosixPath | None
     mode: Literal[
         "authored",
+        "router",
         "template",
+        "evidence",
+        "native",
+        "non-target",
         "frontmatter-free",
         "classification-only",
         "generated",
-        "non-target",
     ]
     source_profile_ids: tuple[str, ...]
     placeholder_policy: Literal["forbidden", "template-only"]
@@ -629,45 +632,23 @@ def _compile_route(value: str) -> re.Pattern[str]:
 
 
 def _schema_rule_id(error: Any) -> str:
-    path = tuple(error.absolute_path)
     nested_errors = [error]
     for nested_error in nested_errors:
         nested_errors.extend(nested_error.context)
     nested_paths = [tuple(item.absolute_path) for item in nested_errors]
-    if any("bodyContract" in nested_path for nested_path in nested_paths) or (
-        error.validator == "required" and "bodyContract" in error.message
-    ):
-        if error.validator == "required" and "bodyContract" in error.message:
+    body_contract_error = any(
+        "body_contract" in nested_path for nested_path in nested_paths
+    ) or (error.validator == "required" and "body_contract" in error.message)
+    if body_contract_error:
+        if error.validator == "required" and "body_contract" in error.message:
             return "REGISTRY_BODY_REQUIRED"
         if any(item.validator == "additionalProperties" for item in nested_errors):
             return "REGISTRY_BODY_FIELD"
-        if any("requiredColumns" in nested_path for nested_path in nested_paths):
+        if any("required_columns" in nested_path for nested_path in nested_paths):
             return "REGISTRY_BODY_COLUMNS"
-        if any("identifierColumns" in nested_path for nested_path in nested_paths):
+        if any("identifier_columns" in nested_path for nested_path in nested_paths):
             return "REGISTRY_BODY_IDENTIFIER_COLUMN"
         return "REGISTRY_BODY_SCHEMA"
-    if path and path[0] == "programLineage":
-        messages = " ".join(item.message for item in nested_errors)
-        if "evidenceMode" in path or "evidenceMode" in messages:
-            return "REGISTRY_PROGRAM_EVIDENCE_MODE"
-        if "decision" in path or "decision" in messages:
-            return "REGISTRY_PROGRAM_DECISION"
-        if "state" in path or "state" in messages:
-            return "REGISTRY_PROGRAM_STATE"
-        return "REGISTRY_SCHEMA"
-    if path and path[0] == "standaloneExecutions":
-        messages = " ".join(item.message for item in nested_errors)
-        if "approvalMode" in path or "approvalMode" in messages:
-            return "REGISTRY_STANDALONE_APPROVAL_MODE"
-        if "decision" in path or "decision" in messages:
-            return "REGISTRY_STANDALONE_DECISION"
-        if "state" in path or "state" in messages:
-            return "REGISTRY_STANDALONE_STATE"
-        if "plan" in path or "task" in path or "plan" in messages or "task" in messages:
-            return "REGISTRY_STANDALONE_PATH"
-        return "REGISTRY_SCHEMA"
-    if len(path) >= 4 and path[-1] == "kind" and "routes" in path:
-        return "REGISTRY_ROUTE_KIND"
     return "REGISTRY_SCHEMA"
 
 
@@ -676,29 +657,31 @@ def _body_contract(raw: Mapping[str, Any] | None) -> BodyContract | None:
         return None
     return BodyContract(
         section=raw["section"],
-        table_heading=raw["tableHeading"],
-        enforced_statuses=tuple(raw["enforcedStatuses"]),
-        required_columns=tuple(raw["requiredColumns"]),
+        table_heading=raw["table_heading"],
+        enforced_statuses=tuple(raw["enforced_statuses"]),
+        required_columns=tuple(raw["required_columns"]),
         identifier_columns=tuple(
             IdentifierColumn(column=item["column"], kind=item["kind"])
-            for item in raw["identifierColumns"]
+            for item in raw["identifier_columns"]
         ),
-        source_link_column=raw["sourceLinkColumn"],
-        target_link_column=raw["targetLinkColumn"],
-        allowed_source_profile_ids=tuple(raw["allowedSourceProfileIds"]),
-        allowed_target_profile_ids=tuple(raw["allowedTargetProfileIds"]),
-        reciprocal_evidence=raw["reciprocalEvidence"],
-        allow_explicit_exclusion=raw["allowExplicitExclusion"],
+        source_link_column=raw["source_link_column"],
+        target_link_column=raw["target_link_column"],
+        allowed_source_profile_ids=tuple(raw["allowed_source_profile_ids"]),
+        allowed_target_profile_ids=tuple(raw["allowed_target_profile_ids"]),
+        reciprocal_evidence=raw["reciprocal_evidence"],
+        allow_explicit_exclusion=raw["allow_explicit_exclusion"],
     )
 
 
 def _profile_from_mapping(
     raw: Mapping[str, Any],
     *,
-    path_pattern: str,
     lifecycle_domain: LifecycleDomain | None,
 ) -> DocumentProfile:
-    template = raw["template"]
+    frontmatter = raw["frontmatter"]
+    lifecycle = raw["lifecycle"]
+    constants = frontmatter["constants"]
+    template = raw["template_source"]
     routes = tuple(
         Route(
             kind=route["kind"],
@@ -708,214 +691,37 @@ def _profile_from_mapping(
                 else route["value"]
             ),
         )
-        for route in raw["routes"]
+        for route in _internal_routes(raw["path_pattern"])
+    )
+    status_domain = (
+        tuple(lifecycle["status_domain"])
+        if lifecycle is not None
+        else ((constants["status"],) if "status" in constants else ())
     )
     return DocumentProfile(
         profile_id=raw["id"],
-        profile_class=raw["class"],
-        path_pattern=path_pattern,
+        profile_class=_typed_profile_class(raw),
+        path_pattern=raw["path_pattern"],
         routes=routes,
-        artifact_id_pattern=raw["artifactIdPattern"],
+        artifact_id_pattern=raw["artifact_id_pattern"],
         frontmatter=FrontmatterContract(
-            mode=raw["frontmatter"]["mode"],
-            required=tuple(raw["frontmatter"]["required"]),
-            allowed=tuple(raw["frontmatter"]["allowed"]),
-            order=tuple(raw["frontmatter"]["order"]),
+            mode=("required" if frontmatter["mode"] == "required" else "forbidden"),
+            required=tuple(frontmatter["required"]),
+            allowed=tuple(frontmatter["required"] + frontmatter["optional"]),
+            order=tuple(frontmatter["order"]),
         ),
-        status_domain=tuple(raw["statusDomain"]),
+        status_domain=status_domain,
         headings=HeadingContract(
-            required=tuple(raw["headings"]["required"]),
-            allowed=tuple(raw["headings"]["allowed"]),
+            required=tuple(raw["sections"]["required"]),
+            allowed=tuple(raw["sections"]["required"] + raw["sections"]["optional"]),
         ),
         template=_normalize_relative_path(template) if template is not None else None,
         mode=raw["mode"],
-        source_profile_ids=tuple(raw["sourceProfileIds"]),
-        placeholder_policy=raw["placeholderPolicy"],
-        body_contract=_body_contract(raw["bodyContract"]),
+        source_profile_ids=tuple(raw["relationships"]["source_profile_ids"]),
+        placeholder_policy=raw["placeholder_policy"],
+        body_contract=_body_contract(raw["relationships"]["body_contract"]),
         lifecycle_domain=lifecycle_domain,
     )
-
-
-def _program_relation_from_mapping(raw: Mapping[str, Any]) -> ProgramRelation:
-    return ProgramRelation(
-        spec_id=raw["spec"],
-        order=raw["order"],
-        state=raw["state"],
-        reason=raw["reason"],
-        decision_id=raw["decision"],
-    )
-
-
-def _program_follow_up_from_mapping(raw: Mapping[str, Any]) -> ProgramFollowUp:
-    return ProgramFollowUp(
-        spec_id=raw["spec"],
-        order=raw["order"],
-        state=raw["state"],
-        reason=raw["reason"],
-        decision_id=raw["decision"],
-        evidence_mode=raw["evidenceMode"],
-    )
-
-
-def _program_lineage_from_mapping(raw: Mapping[str, Any]) -> ProgramLineage:
-    return ProgramLineage(
-        prd_id=raw["prd"],
-        ad_id=raw["ad"],
-        tranches=tuple(
-            _program_relation_from_mapping(item) for item in raw["tranches"]
-        ),
-        follow_ups=tuple(
-            _program_follow_up_from_mapping(item) for item in raw["followUps"]
-        ),
-    )
-
-
-def _standalone_execution_from_mapping(
-    raw: Mapping[str, Any],
-) -> StandaloneExecution:
-    return StandaloneExecution(
-        spec_id=raw["spec"],
-        plan_path=_normalize_relative_path(raw["plan"]),
-        task_path=_normalize_relative_path(raw["task"]),
-        state=raw["state"],
-        reason=raw["reason"],
-        decision_id=raw["decision"],
-        approval_mode=raw["approvalMode"],
-    )
-
-
-def _program_structure_diagnostics(
-    raw_programs: Sequence[Mapping[str, Any]],
-) -> tuple[Diagnostic, ...]:
-    diagnostics: list[Diagnostic] = []
-    prd_ids = [program["prd"] for program in raw_programs]
-    ad_ids = [program["ad"] for program in raw_programs]
-    if len(prd_ids) != len(set(prd_ids)) or len(ad_ids) != len(set(ad_ids)):
-        diagnostics.append(
-            _diagnostic(
-                "REGISTRY_PROGRAM_DUPLICATE",
-                expected="unique PRD and AD program owners",
-                actual="a PRD or AD is declared by multiple programs",
-            )
-        )
-    if prd_ids != sorted(prd_ids, key=int):
-        diagnostics.append(
-            _diagnostic(
-                "REGISTRY_PROGRAM_RELATION_ORDER",
-                expected="programs sorted by numeric PRD identifier",
-                actual=repr(prd_ids),
-            )
-        )
-
-    global_members: set[str] = set()
-    for program in raw_programs:
-        tranches = program["tranches"]
-        follow_ups = program["followUps"]
-        tranche_ids = [item["spec"] for item in tranches]
-        follow_up_ids = [item["spec"] for item in follow_ups]
-        if len(tranche_ids) != len(set(tranche_ids)) or len(follow_up_ids) != len(
-            set(follow_up_ids)
-        ):
-            diagnostics.append(
-                _diagnostic(
-                    "REGISTRY_PROGRAM_MEMBER_DUPLICATE",
-                    expected="unique Spec members within each relation collection",
-                    actual=f"PRD-{program['prd']} contains a duplicate member",
-                )
-            )
-        overlap = set(tranche_ids) & set(follow_up_ids)
-        if overlap:
-            diagnostics.append(
-                _diagnostic(
-                    "REGISTRY_PROGRAM_MEMBER_OVERLAP",
-                    expected="disjoint original tranche and follow-up sets",
-                    actual=f"PRD-{program['prd']} overlap {sorted(overlap)!r}",
-                )
-            )
-        program_members = set(tranche_ids) | set(follow_up_ids)
-        repeated_members = global_members & program_members
-        if repeated_members:
-            diagnostics.append(
-                _diagnostic(
-                    "REGISTRY_PROGRAM_MEMBER_DUPLICATE",
-                    expected="each Spec belongs to at most one program",
-                    actual=f"cross-program members {sorted(repeated_members)!r}",
-                )
-            )
-        global_members.update(program_members)
-
-        for relation_name, relations in (
-            ("tranches", tranches),
-            ("followUps", follow_ups),
-        ):
-            orders = [item["order"] for item in relations]
-            if orders != list(range(1, len(relations) + 1)):
-                diagnostics.append(
-                    _diagnostic(
-                        "REGISTRY_PROGRAM_RELATION_ORDER",
-                        expected=f"contiguous one-based {relation_name} order",
-                        actual=f"PRD-{program['prd']} {orders!r}",
-                    )
-                )
-    return tuple(diagnostics)
-
-
-def _standalone_structure_diagnostics(
-    raw_standalones: Sequence[Mapping[str, Any]],
-    raw_programs: Sequence[Mapping[str, Any]],
-) -> tuple[Diagnostic, ...]:
-    diagnostics: list[Diagnostic] = []
-    spec_ids = [item["spec"] for item in raw_standalones]
-    plan_paths = [item["plan"] for item in raw_standalones]
-    task_paths = [item["task"] for item in raw_standalones]
-    if spec_ids != sorted(spec_ids, key=int):
-        diagnostics.append(
-            _diagnostic(
-                "REGISTRY_STANDALONE_ORDER",
-                expected="standalone relations sorted by numeric Spec identifier",
-                actual=repr(spec_ids),
-            )
-        )
-    if any(
-        len(values) != len(set(values)) for values in (spec_ids, plan_paths, task_paths)
-    ):
-        diagnostics.append(
-            _diagnostic(
-                "REGISTRY_STANDALONE_DUPLICATE",
-                expected="unique standalone Spec, Plan, and Task identities",
-                actual="a standalone identity is declared more than once",
-            )
-        )
-    for item in raw_standalones:
-        for key in ("plan", "task"):
-            try:
-                normalized = _normalize_relative_path(item[key]).as_posix()
-                if normalized != item[key]:
-                    raise ValueError("path is not canonical")
-            except ValueError as exc:
-                diagnostics.append(
-                    _diagnostic(
-                        "REGISTRY_STANDALONE_PATH",
-                        expected="a normalized POSIX repository-relative path",
-                        actual=f"{key}={item[key]!r}: {exc}",
-                    )
-                )
-    program_specs = {
-        relation["spec"]
-        for program in raw_programs
-        for section in ("tranches", "followUps")
-        for relation in program[section]
-    }
-    overlap = program_specs & set(spec_ids)
-    if overlap:
-        diagnostics.append(
-            _diagnostic(
-                "REGISTRY_STANDALONE_OVERLAP",
-                expected="standalone Specs disjoint from program relations",
-                actual=repr(sorted(overlap)),
-            )
-        )
-    return tuple(diagnostics)
 
 
 def _terminal_semantic_diagnostics(
@@ -932,8 +738,8 @@ def _terminal_semantic_diagnostics(
     for raw_profile in raw_profiles:
         profile_id = raw_profile["id"]
         for field, rule_id in (
-            ("pathPattern", "REGISTRY_ROUTE_REGEX"),
-            ("artifactIdPattern", "REGISTRY_ARTIFACT_ID_PATTERN"),
+            ("path_pattern", "REGISTRY_ROUTE_REGEX"),
+            ("artifact_id_pattern", "REGISTRY_ARTIFACT_ID_PATTERN"),
         ):
             pattern = raw_profile.get(field)
             if pattern is None:
@@ -952,7 +758,7 @@ def _terminal_semantic_diagnostics(
                     )
                 )
         relationships = raw_profile["relationships"]
-        for source_profile_id in relationships["sourceProfileIds"]:
+        for source_profile_id in relationships["source_profile_ids"]:
             if source_profile_id not in profiles_by_id:
                 diagnostics.append(
                     _diagnostic(
@@ -964,18 +770,18 @@ def _terminal_semantic_diagnostics(
                 )
 
         lifecycle = raw_profile.get("lifecycle")
-        if raw_profile["mode"] == "template" and (lifecycle or {}).get("statusDomain"):
+        if raw_profile["mode"] == "template" and (lifecycle or {}).get("status_domain"):
             diagnostics.append(
                 _diagnostic(
                     "REGISTRY_FORM_STATUS_DOMAIN",
                     profile=profile_id,
                     expected="a form declares no status domain of its own",
-                    actual=repr(lifecycle["statusDomain"]),
+                    actual=repr(lifecycle["status_domain"]),
                 )
             )
-        body_contract = relationships["bodyContract"]
+        body_contract = relationships["body_contract"]
         if body_contract is not None:
-            required_headings = raw_profile["requiredSections"]["required"]
+            required_headings = raw_profile["sections"]["required"]
             if body_contract["section"] not in required_headings:
                 diagnostics.append(
                     _diagnostic(
@@ -990,16 +796,16 @@ def _terminal_semantic_diagnostics(
             # against themselves and could not fail. The source owns the
             # vocabulary, and that is what the form may enforce a subset of.
             if raw_profile["mode"] == "template":
-                source_ids = relationships["sourceProfileIds"]
+                source_ids = relationships["source_profile_ids"]
                 source = profiles_by_id.get(source_ids[0]) if source_ids else None
                 source_lifecycle = source.get("lifecycle") if source else None
                 status_domain = (
-                    source_lifecycle["statusDomain"] if source_lifecycle else []
+                    source_lifecycle["status_domain"] if source_lifecycle else []
                 )
             else:
-                status_domain = lifecycle["statusDomain"] if lifecycle else []
+                status_domain = lifecycle["status_domain"] if lifecycle else []
             invalid_statuses = sorted(
-                set(body_contract["enforcedStatuses"]) - set(status_domain)
+                set(body_contract["enforced_statuses"]) - set(status_domain)
             )
             if invalid_statuses:
                 diagnostics.append(
@@ -1010,9 +816,9 @@ def _terminal_semantic_diagnostics(
                         actual=repr(invalid_statuses),
                     )
                 )
-            required_columns = body_contract["requiredColumns"]
+            required_columns = body_contract["required_columns"]
             identifier_names = [
-                item["column"] for item in body_contract["identifierColumns"]
+                item["column"] for item in body_contract["identifier_columns"]
             ]
             if len(identifier_names) != len(set(identifier_names)) or any(
                 column not in required_columns for column in identifier_names
@@ -1028,8 +834,8 @@ def _terminal_semantic_diagnostics(
                     )
                 )
             for direction in ("source", "target"):
-                link_key = f"{direction}LinkColumn"
-                allowed_key = f"allowed{direction.title()}ProfileIds"
+                link_key = f"{direction}_link_column"
+                allowed_key = f"allowed_{direction}_profile_ids"
                 link_column = body_contract[link_key]
                 allowed_ids = body_contract[allowed_key]
                 unknown = sorted(
@@ -1053,8 +859,9 @@ def _terminal_semantic_diagnostics(
                             ),
                         )
                     )
-            if body_contract["reciprocalEvidence"] and not (
-                body_contract["sourceLinkColumn"] or body_contract["targetLinkColumn"]
+            if body_contract["reciprocal_evidence"] and not (
+                body_contract["source_link_column"]
+                or body_contract["target_link_column"]
             ):
                 diagnostics.append(
                     _diagnostic(
@@ -1065,7 +872,7 @@ def _terminal_semantic_diagnostics(
                     )
                 )
 
-        template = raw_profile["template"]
+        template = raw_profile["template_source"]
         if template is not None:
             try:
                 template_path = _normalize_relative_path(template)
@@ -1094,7 +901,7 @@ def _terminal_semantic_diagnostics(
     assigned_profiles: set[str] = set()
     domains_by_profile: dict[str, Mapping[str, Any]] = {}
     families: set[str] = set()
-    for domain in raw_registry["programLineage"]["lifecycleDomains"]:
+    for domain in raw_registry["lifecycle_domains"]:
         family = domain["family"]
         if family in families:
             diagnostics.append(
@@ -1105,7 +912,7 @@ def _terminal_semantic_diagnostics(
                 )
             )
         families.add(family)
-        if not domain["profileIds"]:
+        if not domain["profile_ids"]:
             diagnostics.append(
                 _diagnostic(
                     "REGISTRY_LIFECYCLE_DOMAIN",
@@ -1113,7 +920,7 @@ def _terminal_semantic_diagnostics(
                     actual=f"empty lifecycle domain {family}",
                 )
             )
-        for profile_id in domain["profileIds"]:
+        for profile_id in domain["profile_ids"]:
             if profile_id not in profiles_by_id:
                 diagnostics.append(
                     _diagnostic(
@@ -1150,7 +957,7 @@ def _terminal_semantic_diagnostics(
                 )
             )
             continue
-        status_domain = set(lifecycle["statusDomain"])
+        status_domain = set(lifecycle["status_domain"])
         classified_states = set(domain["states"])
         if status_domain != classified_states:
             diagnostics.append(
@@ -1165,10 +972,6 @@ def _terminal_semantic_diagnostics(
                 )
             )
 
-    raw_programs = raw_registry["programLineage"]["programs"]
-    raw_standalones = raw_registry.get("standaloneExecutions", [])
-    diagnostics.extend(_program_structure_diagnostics(raw_programs))
-    diagnostics.extend(_standalone_structure_diagnostics(raw_standalones, raw_programs))
     return tuple(diagnostics)
 
 
@@ -1176,21 +979,19 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
     domains = tuple(
         LifecycleDomain(
             family=item["family"],
-            profile_ids=tuple(item["profileIds"]),
+            profile_ids=tuple(item["profile_ids"]),
             states=tuple(item["states"].items()),
             transitions=frozenset(tuple(edge) for edge in item["transitions"]),
         )
-        for item in raw["programLineage"]["lifecycleDomains"]
+        for item in raw["lifecycle_domains"]
     )
     domains_by_profile = {
         profile_id: domain for domain in domains for profile_id in domain.profile_ids
     }
 
     def typed_profile(profile: Mapping[str, Any]) -> DocumentProfile:
-        internal = _internal_profile_form(profile)
         return _profile_from_mapping(
-            internal,
-            path_pattern=profile["pathPattern"],
+            profile,
             lifecycle_domain=domains_by_profile.get(profile["id"]),
         )
 
@@ -1206,16 +1007,10 @@ def _typed_registry_from_mapping(raw: Mapping[str, Any]) -> Registry:
         for profile in profiles
     )
     return Registry(
-        schema_version=raw["schemaVersion"],
+        schema_version=raw["schema_version"],
         profiles=profiles,
-        program_lineage=tuple(
-            _program_lineage_from_mapping(item)
-            for item in raw["programLineage"]["programs"]
-        ),
-        standalone_executions=tuple(
-            _standalone_execution_from_mapping(item)
-            for item in raw.get("standaloneExecutions", [])
-        ),
+        program_lineage=(),
+        standalone_executions=(),
         lifecycle_domains=domains,
     )
 
@@ -1288,8 +1083,8 @@ def validate_registry(
                 profile.profile_id: profile for profile in trusted_registry.profiles
             }
             matches = all(
-                profile["pathPattern"] == trusted_profiles[profile["id"]].path_pattern
-                and profile.get("artifactIdPattern")
+                profile["path_pattern"] == trusted_profiles[profile["id"]].path_pattern
+                and profile.get("artifact_id_pattern")
                 == trusted_profiles[profile["id"]].artifact_id_pattern
                 for profile in proposed_profiles
             )
@@ -1348,12 +1143,12 @@ def _load_published_contract(
             actual=type(payload).__name__,
         )
     expected_id = f"https://hy-home.k8s/{path.as_posix()}"
-    if payload.get("schemaVersion") != 8 or payload.get("$id") != expected_id:
+    if payload.get("schema_version") != 9 or payload.get("$id") != expected_id:
         _fail(
             "REGISTRY_SCHEMA",
-            expected=f"schemaVersion=8 $id={expected_id!r}",
+            expected=f"schema_version=9 $id={expected_id!r}",
             actual=(
-                f"schemaVersion={payload.get('schemaVersion')!r} "
+                f"schema_version={payload.get('schema_version')!r} "
                 f"$id={payload.get('$id')!r}"
             ),
         )
@@ -1426,7 +1221,7 @@ def _split_top_level_alternation(body: str) -> list[str]:
 
 
 def _internal_routes(pattern: str) -> list[dict[str, str]]:
-    """Recover the internal route list a published ``pathPattern`` encodes.
+    """Recover the internal route list a published ``path_pattern`` encodes.
 
     The published form states one anchored expression per profile, with an
     alternation when the profile owns several routes. Recovering the branches
@@ -1439,7 +1234,7 @@ def _internal_routes(pattern: str) -> list[dict[str, str]]:
     if not (pattern.startswith("^") and pattern.endswith("$")):
         _fail(
             "REGISTRY_SCHEMA",
-            expected="an anchored pathPattern",
+            expected="an anchored path_pattern",
             actual=pattern,
         )
     inner = pattern[1:-1]
@@ -1458,23 +1253,22 @@ def _internal_routes(pattern: str) -> list[dict[str, str]]:
     return routes
 
 
-def _internal_profile_form(profile: Mapping[str, Any]) -> dict[str, Any]:
-    """Project one published profile into the typed consumer input shape."""
+def _typed_profile_class(profile: Mapping[str, Any]) -> str:
+    """Return the stable typed category for one public v9 profile."""
 
-    return {
-        "id": profile["id"],
-        "class": profile["class"],
-        "mode": profile["mode"],
-        "routes": _internal_routes(profile["pathPattern"]),
-        "artifactIdPattern": profile.get("artifactIdPattern"),
-        "frontmatter": profile["requiredFrontmatter"],
-        "statusDomain": profile.get("lifecycle", {}).get("statusDomain", []),
-        "headings": profile["requiredSections"],
-        "template": profile["template"],
-        "sourceProfileIds": profile["relationships"]["sourceProfileIds"],
-        "placeholderPolicy": profile["placeholderPolicy"],
-        "bodyContract": profile["relationships"]["bodyContract"],
-    }
+    family = profile["family"]
+    if family != "common":
+        return family
+    if profile["mode"] == "router":
+        return "readme"
+    source_ids = profile["relationships"]["source_profile_ids"]
+    if profile["mode"] == "template" and source_ids:
+        source_family = source_ids[0].split("/", 1)[0]
+        if source_family in {"governance", "sdlc", "operation", "reference", "archive"}:
+            return source_family
+        if source_ids[0].startswith("common/readme-"):
+            return "readme"
+    return "exception"
 
 
 def load_internal_payload(

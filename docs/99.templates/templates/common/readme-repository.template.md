@@ -1,4 +1,12 @@
-# {Repository Name}
+---
+title: "{{TITLE}}"
+version: "0.1.0"
+type: "common/readme-repository"
+status: "active"
+owner: "{{OWNER}}"
+updated: "{{YYYY_MM_DD}}"
+---
+# {{REPOSITORY_NAME}}
 
 ## Overview
 

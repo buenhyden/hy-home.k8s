@@ -1,11 +1,11 @@
 ---
-title: 'Task: Document lifecycle, Task, and registry authority activation'
+title: "Task: Document lifecycle, Task, and registry authority activation"
 version: "1.0.0"
-type: sdlc/task
+type: "sdlc/task"
+status: "done"
+owner: "platform"
+updated: "2026-08-28"
 layer: "specs"
-status: done
-owner: platform
-updated: 2026-08-28
 artifact_id: "SPEC-0054-TSK-0004"
 ---
 

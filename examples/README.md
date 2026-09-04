@@ -1,3 +1,11 @@
+---
+title: "examples"
+version: "0.1.0"
+type: "common/readme-implementation"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+---
 # examples
 
 > `hy-home.k8s` 플랫폼의 앱 온보딩 예시와 cloud target 참조 구현을 관리한다.

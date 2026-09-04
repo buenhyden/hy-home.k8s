@@ -1,6 +1,6 @@
 ---
-name: gitops-workflow
-description: Use when onboarding, updating, or diagnosing workloads through the repository-backed GitOps and ArgoCD path.
+name: "gitops-workflow"
+description: "Use when onboarding, updating, or diagnosing workloads through the repository-backed GitOps and ArgoCD path."
 ---
 
 # gitops-workflow

@@ -1,11 +1,12 @@
 ---
-title: '{Feature or System Name} Requirement Package'
-version: "#.#.#"
-type: sdlc/requirement
-status: draft
-owner: '{owner}'
-updated: YYYY-MM-DD
-artifact_id: "REQ-####"
+title: "{{TITLE}}"
+version: "0.1.0"
+type: "sdlc/requirement"
+status: "draft"
+owner: "{{OWNER}}"
+updated: "{{YYYY_MM_DD}}"
+layer: "requirements"
+artifact_id: "{{ARTIFACT_ID}}"
 ---
 
 # [Feature or System Name] Requirement Package

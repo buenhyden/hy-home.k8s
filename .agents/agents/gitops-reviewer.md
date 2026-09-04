@@ -1,6 +1,6 @@
 ---
-name: gitops-reviewer
-description: Review GitOps manifests and reconciliation behavior without assuming mutation authority.
+name: "gitops-reviewer"
+description: "Review GitOps manifests and reconciliation behavior without assuming mutation authority."
 ---
 
 # gitops-reviewer

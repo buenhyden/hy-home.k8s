@@ -50,14 +50,14 @@ class TerminalAgentRegistryLifecycleTest(unittest.TestCase):
                 self.document_registry,
                 PurePosixPath(".agents/agents/docs-researcher.md"),
             ).profile_id,
-            "exception/local-agent-asset",
+            "common/local-agent-asset",
         )
         self.assertEqual(
             classify_path(
                 self.document_registry,
                 PurePosixPath(".claude/agents/docs-researcher.md"),
             ).profile_id,
-            "exception/provider-native-metadata",
+            "common/provider-native-metadata",
         )
 
     def test_retired_finite_roster_gate_is_not_a_lifecycle_authority(self) -> None:

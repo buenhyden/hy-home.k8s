@@ -142,14 +142,14 @@ CURRENT_MARKDOWN_PROFILES = frozenset(
         "governance/memory",
         "governance/template-support",
         "governance/progress-ledger",
-        "readme/repository",
-        "readme/stage-index",
-        "readme/collection-index",
-        "readme/implementation",
-        "readme/audit-pack",
-        "readme/data-pack",
-        "readme/research-pack",
-        "readme/workspace-staging",
+        "common/readme-repository",
+        "common/readme-stage-index",
+        "common/readme-collection-index",
+        "common/readme-implementation",
+        "common/readme-audit-pack",
+        "common/readme-data-pack",
+        "common/readme-research-pack",
+        "common/readme-workspace-staging",
     }
 )
 _MISSING_INVENTORY = object()
@@ -1691,6 +1691,27 @@ def validate_migration_records(
                 "RECOVERY-MIGRATION-REFERENCE", "reference occurrence differs"
             )
     rows_by_source = {str(row["legacy_path"]): row for row in rows}
+    move_requests: dict[str, dict[str, tuple[str, bytes]]] = {}
+    for row in rows:
+        if row["action"] != "moved":
+            continue
+        source = str(row["legacy_path"])
+        immediate = edges[source]
+        successor_row = rows_by_source.get(immediate)
+        if immediate in reoccupied:
+            successor_row = None
+        if successor_row is None:
+            record_path = row_records[source]
+            move_requests.setdefault(record_path, {})[source] = (
+                immediate,
+                sources[str(row["source_commit"]), source][1],
+            )
+    historically_proven_moves = _historically_proven_move_sources(
+        root,
+        records,
+        move_requests,
+        proposed_commit=proposed_commit,
+    )
     for row in rows:
         source = str(row["legacy_path"])
         if (
@@ -1714,11 +1735,16 @@ def validate_migration_records(
                 # move, so its pinned bytes are a previous generation and not
                 # this move's target. The arriving document is the target.
                 successor_row = None
-            immediate_bytes = (
-                sources[str(successor_row["source_commit"]), immediate][1]
-                if successor_row is not None and immediate != source
-                else target_contents.get(immediate)
-            )
+            if successor_row is not None and immediate != source:
+                immediate_bytes = sources[
+                    str(successor_row["source_commit"]), immediate
+                ][1]
+            elif source in historically_proven_moves:
+                immediate_bytes = sources[str(row["source_commit"]), source][1]
+            else:
+                # A newly staged Migration has no reachable seal commit yet.
+                # Its exact proposed target remains the only available proof.
+                immediate_bytes = target_contents.get(immediate)
             if (
                 immediate_bytes is None
                 or immediate_bytes != sources[str(row["source_commit"]), source][1]
@@ -1826,13 +1852,16 @@ def _proposed_migration_registry(
         )
         if not isinstance(raw, dict) or not isinstance(raw.get("profiles"), list):
             raise ValueError
+        template_key = (
+            "template_source" if raw.get("schema_version") == 9 else "template"
+        )
         templates = tuple(
             sorted(
                 {
-                    profile["template"]
+                    profile[template_key]
                     for profile in raw["profiles"]
                     if isinstance(profile, dict)
-                    and isinstance(profile.get("template"), str)
+                    and isinstance(profile.get(template_key), str)
                 }
             )
         )
@@ -2649,6 +2678,113 @@ def _reachable_historical_regular_target(
             "migration target has no reachable regular-file history",
         )
     return member
+
+
+def _historically_proven_move_sources(
+    root: Path,
+    records: Mapping[str, bytes],
+    requests: Mapping[str, Mapping[str, tuple[str, bytes]]],
+    *,
+    proposed_commit: str | None,
+) -> frozenset[str]:
+    """Prove terminal moves at the commit that sealed their Migration record.
+
+    Current targets belong to active document governance and may evolve after
+    a move. Existing sealed ledgers therefore prove byte identity at their own
+    reachable seal commit. A newly staged ledger has no such commit and is
+    intentionally left for the caller's exact staged-target comparison.
+    """
+
+    proven: set[str] = set()
+    object_id_length = _repository_identity(root)
+    anchor = proposed_commit or current_named_durable_ref(root)
+    for record_path, moves in sorted(requests.items()):
+        if record_path not in records or not moves:
+            raise ArchiveContractError(
+                "RECOVERY-MIGRATION-TARGET", "move record ownership differs"
+            )
+        result = _git_capture_bounded(
+            root,
+            "log",
+            f"--max-count={MAX_GIT_BATCH_OBJECTS}",
+            "--format=%H",
+            "--diff-filter=AM",
+            "--no-renames",
+            anchor,
+            "--",
+            record_path,
+            stdout_limit=_INDEX_CAPTURE_MAX_BYTES,
+        )
+        try:
+            commits = tuple(
+                line.decode("ascii", errors="strict")
+                for line in result.stdout.splitlines()
+                if line
+            )
+        except UnicodeDecodeError as exc:
+            raise ArchiveContractError(
+                "RECOVERY-MIGRATION-TARGET",
+                "migration seal history is malformed",
+            ) from exc
+        if result.returncode or any(
+            len(commit) != object_id_length or _FULL_OBJECT_ID.fullmatch(commit) is None
+            for commit in commits
+        ):
+            raise ArchiveContractError(
+                "RECOVERY-MIGRATION-TARGET",
+                "migration seal history is malformed",
+            )
+        if not commits:
+            continue
+
+        record_matched = False
+        target_paths = tuple(sorted({target for target, _content in moves.values()}))
+        requested_paths = (record_path, *target_paths)
+        for commit in commits:
+            members = _commit_tree_members(
+                root,
+                commit,
+                original_paths=requested_paths,
+                historical_paths=(),
+                object_id_length=object_id_length,
+            )
+            record_member = members.get(record_path)
+            if (
+                record_member is None
+                or record_member.kind != "blob"
+                or record_member.mode not in {"100644", "100755"}
+            ):
+                continue
+            regular_targets = {
+                path: member
+                for path in target_paths
+                if (member := members.get(path)) is not None
+                and member.kind == "blob"
+                and member.mode in {"100644", "100755"}
+            }
+            object_ids = {
+                record_member.object_id,
+                *(member.object_id for member in regular_targets.values()),
+            }
+            contents = _batch_blob_bytes(root, tuple(sorted(object_ids)))
+            if contents[record_member.object_id] != records[record_path]:
+                continue
+            record_matched = True
+            if len(regular_targets) != len(target_paths):
+                continue
+            if all(
+                contents[regular_targets[target].object_id] == expected
+                for target, expected in moves.values()
+            ):
+                proven.update(moves)
+                break
+        else:
+            if record_matched:
+                raise ArchiveContractError(
+                    "RECOVERY-MIGRATION-TARGET",
+                    "move was not byte-identical when its Migration was sealed",
+                )
+    return frozenset(proven)
 
 
 def _sealed_row_retired_paths(root: Path) -> frozenset[str]:

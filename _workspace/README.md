@@ -1,3 +1,11 @@
+---
+title: "workspace"
+version: "0.1.0"
+type: "common/readme-workspace-staging"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+---
 # _workspace
 
 > Repository-local support staging for temporary, non-secret analysis artifacts.

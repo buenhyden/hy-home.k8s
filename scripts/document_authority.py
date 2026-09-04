@@ -23,25 +23,32 @@ TOP_LEVEL_KEYS = frozenset(
     {
         "$schema",
         "$id",
-        "schemaVersion",
+        "schema_version",
         "profiles",
-        "programLineage",
-        "standaloneExecutions",
+        "lifecycle_domains",
     }
 )
 PROFILE_KEYS = frozenset(
     {
         "id",
-        "pathPattern",
-        "artifactIdPattern",
-        "template",
-        "requiredFrontmatter",
-        "requiredSections",
+        "family",
+        "mode",
+        "path_pattern",
+        "artifact_id_pattern",
+        "template_source",
+        "frontmatter",
+        "sections",
         "lifecycle",
         "relationships",
+        "placeholder_policy",
     }
 )
-ROUTER_PROFILE_KEYS = PROFILE_KEYS - {"artifactIdPattern", "lifecycle"}
+DOCUMENT_FAMILIES = frozenset(
+    {"common", "governance", "sdlc", "operation", "reference", "archive"}
+)
+PROFILE_MODES = frozenset(
+    {"authored", "router", "template", "evidence", "native", "non-target"}
+)
 AGENT_MACHINE_FIELDS = frozenset(
     {
         "agentRoster",
@@ -58,7 +65,10 @@ AGENT_MACHINE_FIELDS = frozenset(
     }
 )
 TRANSITION_SUPPORT_PROFILE_IDS = frozenset(
-    {"governance/template-support", "template/governance/template-support"}
+    {
+        "governance/template-support",
+        "common/template-governance-template-support",
+    }
 )
 
 
@@ -148,17 +158,21 @@ def validate_registry_authority(registry: Mapping[str, Any]) -> None:
         if not isinstance(profile_id, str) or not profile_id or profile_id in seen:
             raise AuthorityError("REGISTRY_PROFILE_ID: IDs must be unique strings")
         seen.add(profile_id)
-        required_keys = (
-            ROUTER_PROFILE_KEYS if profile.get("class") == "readme" else PROFILE_KEYS
-        )
-        if not required_keys.issubset(profile):
-            missing = sorted(required_keys - set(profile))
-            raise AuthorityError(f"REGISTRY_PROFILE_FIELDS: {profile_id}: {missing}")
-        if profile.get("class") == "readme" and (
-            "artifactIdPattern" in profile or "lifecycle" in profile
+        if set(profile) != PROFILE_KEYS:
+            raise AuthorityError(
+                f"REGISTRY_PROFILE_FIELDS: {profile_id}: "
+                f"expected {sorted(PROFILE_KEYS)}, actual {sorted(profile)}"
+            )
+        if profile.get("family") not in DOCUMENT_FAMILIES:
+            raise AuthorityError(f"REGISTRY_PROFILE_FAMILY: {profile_id}")
+        if profile.get("mode") not in PROFILE_MODES:
+            raise AuthorityError(f"REGISTRY_PROFILE_MODE: {profile_id}")
+        if profile.get("mode") == "router" and (
+            profile.get("artifact_id_pattern") is not None
+            or profile.get("lifecycle") is not None
         ):
             raise AuthorityError(f"REGISTRY_ROUTER_FIELDS: {profile_id}")
-        path_pattern = profile.get("pathPattern")
+        path_pattern = profile.get("path_pattern")
         if not isinstance(path_pattern, str):
             raise AuthorityError(f"REGISTRY_PATH_PATTERN: {profile_id}")
         if (
@@ -166,7 +180,7 @@ def validate_registry_authority(registry: Mapping[str, Any]) -> None:
             and profile_id not in TRANSITION_SUPPORT_PROFILE_IDS
         ):
             raise AuthorityError(f"STAGE99_SUPPORT_OWNER: {profile_id}")
-    lineage = registry.get("programLineage")
+    lineage = {"lifecycleDomains": registry.get("lifecycle_domains")}
     if isinstance(lineage, Mapping):
         domains = lineage.get("lifecycleDomains")
         if not isinstance(domains, list):
@@ -177,7 +191,7 @@ def validate_registry_authority(registry: Mapping[str, Any]) -> None:
             profile_id
             for domain in domains
             if isinstance(domain, Mapping)
-            for profile_id in (domain.get("profileIds") or [])
+            for profile_id in (domain.get("profile_ids") or [])
             if isinstance(profile_id, str)
         )
         profiles_by_id = {
@@ -213,7 +227,7 @@ def validate_registry_authority(registry: Mapping[str, Any]) -> None:
             # Any other edgeless family would leave states unreachable.
             if not edges and (len(states) != 1 or "terminal" not in states.values()):
                 raise AuthorityError(f"LIFECYCLE_EDGELESS: {domain['family']}")
-            for profile_id in domain.get("profileIds", []):
+            for profile_id in domain.get("profile_ids", []):
                 declared = profiles_by_id.get(profile_id)
                 governed.add(profile_id)
                 if declared is None or membership[profile_id] > 1:
@@ -223,20 +237,20 @@ def validate_registry_authority(registry: Mapping[str, Any]) -> None:
                 # A member's admitted states and the graph's nodes are the same
                 # fact. Letting them differ lets a document hold a state no edge
                 # can reach or leave, which is how the archive families drifted.
-                if set(declared.get("lifecycle", {}).get("statusDomain", [])) != set(
-                    states
-                ):
+                if set(
+                    (declared.get("lifecycle") or {}).get("status_domain", [])
+                ) != set(states):
                     raise AuthorityError(f"LIFECYCLE_NODE_SET: {profile_id}")
             actual[domain["family"]] = edges
         # A profile the lifecycle state machine evaluates needs a graph. The
         # skipped modes are the only ones allowed to declare states without one.
         for profile in registry.get("profiles", []):
             profile_id = profile.get("id")
-            if profile_id in governed or not profile.get("lifecycle", {}).get(
-                "statusDomain"
+            if profile_id in governed or not (profile.get("lifecycle") or {}).get(
+                "status_domain"
             ):
                 continue
-            if profile.get("mode") not in {"template", "classification-only"}:
+            if profile.get("mode") != "template":
                 raise AuthorityError(f"LIFECYCLE_UNGOVERNED: {profile_id}")
 
 
@@ -434,7 +448,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         validate_registry_authority(registry)
         seen_templates: set[str] = set()
         for profile in registry["profiles"]:
-            template = profile.get("template")
+            template = profile.get("template_source")
             if not isinstance(template, str) or template in seen_templates:
                 continue
             seen_templates.add(template)
@@ -445,8 +459,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 template_text,
                 registry,
                 allow_router_without_profile=(
-                    profile.get("class") == "readme"
-                    or profile.get("mode") != "authored"
+                    profile.get("mode") == "router" or profile.get("mode") != "authored"
                 ),
             )
     except AuthorityError as exc:

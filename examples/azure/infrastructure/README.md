@@ -1,3 +1,11 @@
+---
+title: "Azure Infrastructure (Bicep)"
+version: "0.1.0"
+type: "common/readme-implementation"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+---
 # Azure Infrastructure (Bicep)
 
 > 이 경로는 Bicep을 이용한 Azure 리소스 프로비저닝 코드를 관리한다.

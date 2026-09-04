@@ -1,11 +1,11 @@
 ---
-title: 'Document Lifecycle and Evidence Operating Model Architecture Description'
+title: "Document Lifecycle and Evidence Operating Model Architecture Description"
 version: "1.0.0"
-type: sdlc/architecture-description
+type: "sdlc/architecture-description"
+status: "active"
+owner: "platform"
+updated: "2026-07-28"
 layer: "architecture"
-status: active
-owner: platform
-updated: 2026-07-28
 artifact_id: "AD-0009"
 ---
 

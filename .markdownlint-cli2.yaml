@@ -49,7 +49,9 @@ ignores:
   # A sealed Migration record is the same kind of byte: its `content_sha256`
   # rows stop verifying the moment a formatter or a style fix edits it, so a
   # finding here would have no legal remedy.
+  - "docs/98.archive/completed/"
   - "docs/98.archive/migrations/"
+  - "docs/98.archive/superseded/"
   - "docs/98.archive/tombstones/"
 
 # Reporting only. The pre-commit whitespace hooks own the safe fixes, and a

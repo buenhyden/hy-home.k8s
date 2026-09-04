@@ -1,11 +1,11 @@
 ---
-title: 'Platform Validation and Security Evidence Technical Specification'
+title: "Platform Validation and Security Evidence Technical Specification"
 version: "1.0.0"
-type: sdlc/spec
+type: "sdlc/spec"
+status: "draft"
+owner: "platform"
+updated: "2026-08-02"
 layer: "specs"
-status: draft
-owner: platform
-updated: 2026-08-02
 artifact_id: "SPEC-0049"
 ---
 

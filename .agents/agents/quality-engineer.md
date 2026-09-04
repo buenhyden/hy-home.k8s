@@ -1,6 +1,6 @@
 ---
-name: quality-engineer
-description: Design and run bounded repository validation and report reproducible quality evidence.
+name: "quality-engineer"
+description: "Design and run bounded repository validation and report reproducible quality evidence."
 ---
 
 # quality-engineer

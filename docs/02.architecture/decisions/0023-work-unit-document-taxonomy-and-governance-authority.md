@@ -1,11 +1,11 @@
 ---
-title: 'Work-Unit Document Taxonomy and Governance Authority'
+title: "Work-Unit Document Taxonomy and Governance Authority"
 version: "1.0.0"
-type: sdlc/architecture-decision
+type: "sdlc/architecture-decision"
+status: "superseded"
+owner: "platform"
+updated: "2026-08-11"
 layer: "architecture"
-status: superseded
-owner: platform
-updated: 2026-08-11
 artifact_id: "ADR-0023"
 superseded_by: "ADR-0030"
 ---

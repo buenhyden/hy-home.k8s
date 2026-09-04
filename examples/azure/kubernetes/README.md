@@ -1,3 +1,11 @@
+---
+title: "Azure Kubernetes (App Manifests)"
+version: "0.1.0"
+type: "common/readme-implementation"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+---
 # Azure Kubernetes (App Manifests)
 
 > 이 경로는 AKS 클러스터에서 구동되는 개별 애플리케이션의 Kubernetes 매니페스트를 관리한다.

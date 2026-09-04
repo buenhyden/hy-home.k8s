@@ -1,8 +1,8 @@
 ---
-name: k8s-implementer
-description: Implement explicitly scoped Kubernetes and GitOps changes and validate the affected reconciliation surface.
-model: sonnet 4.6
-tools: Read, Write, Edit, Grep, Glob, Bash
+name: "k8s-implementer"
+description: "Implement explicitly scoped Kubernetes and GitOps changes and validate the affected reconciliation surface."
+model: "sonnet 4.6"
+tools: "Read, Write, Edit, Grep, Glob, Bash"
 ---
 
 # k8s-implementer

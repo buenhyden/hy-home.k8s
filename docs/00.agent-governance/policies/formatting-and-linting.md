@@ -1,10 +1,10 @@
 ---
-title: 'Formatting and Linting Policy'
-version: "1.1.0"
-type: governance/rule
-status: active
-owner: platform
-updated: 2026-09-03
+title: "Formatting and Linting Policy"
+version: "1.2.0"
+type: "governance/rule"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
 ---
 
 # Formatting and Linting Policy
@@ -58,6 +58,10 @@ reaches editors only and proves nothing about committed bytes.
   automatic fixing stays with the whitespace hooks that own it.
 - Never suppress a rule for a whole file when the conflict is one rule.
   A whole-file exemption silently drops every other rule on that file.
+- Exclude frozen Archive payloads from every auto-fixing formatter. Validate
+  their envelope, manifest, source commit/blob, digest, and historical links
+  without changing their body bytes. Apply current formatting only to active
+  documents and newly authored current-generation Archive records.
 
 ## Validation and Refresh
 

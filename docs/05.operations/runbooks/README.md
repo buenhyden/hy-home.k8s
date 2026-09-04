@@ -1,3 +1,12 @@
+---
+title: "05.operations/runbooks"
+version: "0.1.0"
+type: "common/readme-collection-index"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+layer: "operations"
+---
 # 05.operations/runbooks
 
 > 반복 가능한 운영 작업을 즉시 실행할 수 있는 체크리스트/절차 문서를 관리한다.

@@ -1,11 +1,12 @@
 ---
-title: '{Feature Name} Technical Specification'
-version: "#.#.#"
-type: sdlc/spec
-status: draft
-owner: '{owner}'
-updated: YYYY-MM-DD
-artifact_id: "SPEC-####"
+title: "{{TITLE}}"
+version: "0.1.0"
+type: "sdlc/spec"
+status: "draft"
+owner: "{{OWNER}}"
+updated: "{{YYYY_MM_DD}}"
+layer: "specs"
+artifact_id: "{{ARTIFACT_ID}}"
 ---
 
 # [Feature Name] Technical Specification (Spec)

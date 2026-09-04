@@ -1,6 +1,6 @@
 ---
-name: ops-runbook
-description: Use when authoring or reviewing operations runbooks for bootstrap, recovery, deployment, backup, and incident procedures in hy-home.k8s.
+name: "ops-runbook"
+description: "Use when authoring or reviewing operations runbooks for bootstrap, recovery, deployment, backup, and incident procedures in hy-home.k8s."
 ---
 
 # ops-runbook

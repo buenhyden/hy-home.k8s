@@ -1,11 +1,11 @@
 ---
-title: 'Mutable Target Revision Retention'
+title: "Mutable Target Revision Retention"
 version: "1.0.0"
-type: sdlc/architecture-decision
+type: "sdlc/architecture-decision"
+status: "accepted"
+owner: "platform"
+updated: "2026-08-18"
 layer: "architecture"
-status: accepted
-owner: platform
-updated: 2026-08-18
 artifact_id: "ADR-0029"
 ---
 

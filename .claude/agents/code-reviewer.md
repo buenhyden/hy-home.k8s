@@ -1,8 +1,8 @@
 ---
-name: code-reviewer
-description: Review repository changes for correctness, maintainability, regression risk, and policy alignment.
-model: sonnet 4.6
-tools: Read, Grep, Glob, Bash
+name: "code-reviewer"
+description: "Review repository changes for correctness, maintainability, regression risk, and policy alignment."
+model: "sonnet 4.6"
+tools: "Read, Grep, Glob, Bash"
 ---
 
 # code-reviewer

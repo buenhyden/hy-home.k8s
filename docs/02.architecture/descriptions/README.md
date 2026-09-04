@@ -1,3 +1,12 @@
+---
+title: "02.architecture/descriptions (AD)"
+version: "0.1.0"
+type: "common/readme-collection-index"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+layer: "architecture"
+---
 # 02.architecture/descriptions (AD)
 
 > Requirement Package를 시스템 경계, 품질 속성, 참조 아키텍처로 해석하는 AD stage다.

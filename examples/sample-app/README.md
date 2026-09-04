@@ -1,3 +1,11 @@
+---
+title: "sample-app"
+version: "0.1.0"
+type: "common/readme-implementation"
+status: "active"
+owner: "platform"
+updated: "2026-09-04"
+---
 # sample-app
 
 > 새 애플리케이션을 `hy-home.k8s` GitOps 경로에 온보딩할 때 사용하는 최소 템플릿 예시다.

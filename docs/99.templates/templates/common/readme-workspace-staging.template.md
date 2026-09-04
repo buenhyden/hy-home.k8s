@@ -1,4 +1,12 @@
-# {Workspace Staging Area}
+---
+title: "{{TITLE}}"
+version: "0.1.0"
+type: "common/readme-workspace-staging"
+status: "active"
+owner: "{{OWNER}}"
+updated: "{{YYYY_MM_DD}}"
+---
+# {{WORKSPACE_STAGING_AREA}}
 
 ## Overview
 

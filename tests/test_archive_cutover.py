@@ -1007,9 +1007,9 @@ class ArchiveCutoverTest(unittest.TestCase):
         profile = next(
             item for item in registry["profiles"] if item["id"] == "archive/tombstone"
         )
-        self.assertEqual(profile["lifecycle"]["statusDomain"], ["archived"])
+        self.assertEqual(profile["lifecycle"]["status_domain"], ["archived"])
         self.assertEqual(
-            profile["template"],
+            profile["template_source"],
             "docs/99.templates/templates/archive/tombstone.template.md",
         )
         self.assertFalse((ROOT / "docs/99.templates/support").exists())
