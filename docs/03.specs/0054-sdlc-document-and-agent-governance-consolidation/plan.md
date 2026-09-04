@@ -1,10 +1,10 @@
 ---
 title: "SDLC Document and AI Agent Governance Consolidation Implementation Plan"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
-updated: "2026-09-03"
+updated: "2026-09-04"
 layer: "specs"
 artifact_id: "SPEC-0054-PLAN-0001"
 ---
@@ -22,7 +22,7 @@ artifact_id: "SPEC-0054-PLAN-0001"
 **Goal:** Converge the repository on flat four-digit Requirement Packages,
 prefix-free Architecture and Operations paths, work-unit-local Spec-driven
 execution, Codex/Claude-only AI-agent governance, a bounded Stage 90 reference
-library, an isolated historical Stage 98 archive, a minimal Stage 99 document
+library, a classified Stage 98 retention/history surface, a minimal Stage 99 document
 control surface, and responsibility-oriented validation modules.
 
 **Architecture:** Stage 00 owns human agent policy, while `.agents/registry.json`
@@ -32,8 +32,8 @@ Spec Packages form the active delivery chain; Stage 05 owns Guides, Policies,
 Runbooks, and Incident packages but no Release family. Stage 90 retains the
 latest externally researched pack as its durable evidence collection and
 removes obsolete Audit/Data control-plane copies without banning those
-reference roles; Stage 98 is an isolated historical archive with no inbound
-current-document links. Focused validators consume these owners, aggregates
+reference roles; Stage 98 retains terminal governed documents for historical
+trace and isolates sealed records from current semantic authority. Focused validators consume these owners, aggregates
 only orchestrate, and every cutover is staged-index-aware, fail-closed, and
 committed as an independently testable logical unit.
 
@@ -47,9 +47,10 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
 
 - Preserve Git history and unrelated user changes.
 - Do not edit existing immutable Stage 98 envelopes or source blobs to satisfy
-  current validators. Remove redundant records only in WP-009 after WP-013
-  removes active citations and Git recovery is confirmed. Do not require
-  remote or mutable-branch ancestry as current policy.
+  current validators. Remove redundant sealed records only in WP-009 after
+  WP-013 removes their current-authority consumers and Git recovery is
+  confirmed. Preserve completed-document retention under accepted ADR-0032.
+  Do not require remote or mutable-branch ancestry as current policy.
 - Preserve source provenance while Stage 90 content moves to its semantic
   owner. Point-in-time dispositions belong to the Task/diff, not a permanent
   corpus ledger or digest.
@@ -76,12 +77,14 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
   bodies after consumer cutover; do not misclassify the learning roadmap as an
   operational Guide or create a replacement package without a distinct
   current owner.
-- Treat Stage 98 as an isolated historical archive. Stages 00, 01, 02, 03, 05,
-  and 90 must neither cite nor cross-link a Stage 98 document or file. Keep
-  validation minimal, treat `migrations/` as temporary historical material,
-  and use Git history as the default full-body recovery source.
+- Treat Stage 98 as a non-current retention and history stage. A current
+  document may cite a retained `completed/` document for historical trace, but
+  the citation never confers current authority. Stages 00, 01, 02, 03, 05, and
+  90 must not use sealed `migrations/`, `superseded/`, or `tombstones/` records
+  as current semantic authority or recovery gates. Keep validation
+  role-specific and use Git history as the default exact-byte recovery source.
 - Make `docs/99.templates/registry.json` the only document-profile machine
-  authority, with normalized top-level `lifecycleDomains` and one human router
+  authority, with normalized top-level `lifecycle_domains` and one human router
   in Stage 99 README. Do not gate schema, profile, or template counts.
 - Make `.agents/registry.json` plus its schema the only provider-neutral agent
   roster, role, permission, and skill machine authority. Keep `.agents/agents/`
@@ -109,9 +112,11 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
   snapshot-count SHA policies. Retain a digest only for external supply-chain
   identity, explicitly sealed evidence bytes, or a Git-reachable Archive
   recovery object, and record that purpose explicitly.
-- Delete a legacy, deprecated, duplicate, or one-time asset only after every
-  current consumer is migrated and Git recovery is proven. Do not create a
-  Stage 98 record as a routine deletion dependency.
+- Retain a terminal governed document or whole completed Stage 03 package only
+  after every current consumer is migrated, using the accepted ADR-0032 route
+  and sealed migration provenance. Delete other legacy, duplicate, generated,
+  or one-time assets only after consumer-zero and Git recovery; do not create a
+  sealed Stage 98 record as a routine deletion dependency.
 - Treat repository-static, provider-runtime, hosted-CI, remote-live, and
   actual-evaluation evidence as distinct classes.
 - Apply simplification in every WP: when a touched rule, gate, fixture, SHA
@@ -152,6 +157,12 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
   which defines the current package-local delegated-execution model.
   Superseded ADR-0022 remains bounded predecessor context for the parent-only
   compatibility row until WP-013 removes that roster.
+- [Accepted ADR-0032 terminal document retention](../../02.architecture/decisions/0032-completed-and-terminal-document-retention.md),
+  which retains terminal governed documents after consumer-zero and separates
+  completed documents from sealed historical records.
+- [Accepted ADR-0033 common document contract v9](../../02.architecture/decisions/0033-common-document-contract-v9.md),
+  which owns the public Registry shape, governed router envelope, template
+  grammar, external release boundary, and generation-aware Archive validation.
 - The Git parent of the WP-001 design-authority commit and the exact inherited
   WORK-109 staged/unstaged inventory recorded by WP-002
 - External primary-source basis embedded in [Spec 0054](spec.md#external-basis)
@@ -354,11 +365,11 @@ references, archive evidence, and scripts. Deletions are deliberately late.
 | WP-006 | Reconcile Stage 05 ownership and remove Release family | WP-005 | Operations owner review complete | Canonical operations owners, strengthened incident contracts, Release consumer-zero, and Git recovery GREEN |
 | WP-007 | Review Stage 90 semantic destinations | WP-003 | Agent governance closure complete and direct user preservation boundary recorded | Latest external-research owner and Audit/Data removals reviewed in the Task/diff; permanent RIA census contract rejected |
 | WP-008 | Reconcile Stage 90 semantic owners | WP-007 | Stage 90 destination review complete | Latest external-research content preserved; obsolete audit, data, RIA, and dependent gate overlap removed |
-| WP-009 | Isolate and minimize Stage 98 | WP-013 | Active Archive citations and cross-links are zero; Git recovery is confirmed | Historical records receive only minimal validation; redundant full-body/redirect records and empty historical families are removed |
+| WP-009 | Reconcile and minimize sealed Stage 98 records | WP-013 | Current-authority dependencies on sealed records are zero; completed retention and Git recovery are confirmed | Completed retention remains readable and non-authoritative; sealed records receive bounded validation and redundant sealed records are removed only when recovery permits |
 | WP-010 | Close the script, gate, fixture, and SHA ownership graph through delegated Spec 0066 | WP-006, WP-008, and approved written design | Stage 05 and Stage 90 cutovers complete; existing validation-surface contract and consumers mapped | Delegated Task evidence proves one routing owner, removes safe duplicates, and reports acceptance to Spec 0054 |
 | WP-011 | Cut over compatibility wrappers and scripts topology through delegated Spec 0066 | WP-010 within Spec 0066 | Wrapper and path consumers mapped | Responsibility directories active; wrappers deleted only at consumer-zero; SPEC-0054-TSK-0011 records parent acceptance; no fixed census policy |
 | WP-012 | Rotate progress and remove stale generated-current residue | WP-011 | Earlier program evidence stable | Spec Task/Git evidence and generated-current ownership GREEN |
-| WP-013 | Cut over the remaining current corpus and close transition references | WP-012; WP-006; WP-008; accepted and completed Spec 0066 result; completed SPEC-0054-TSK-0011 parent handoff | ADR-0031 accepted; SPEC-0066-TSK-0001, Plan 0066, and Spec 0066 are `done`; SPEC-0054-TSK-0011 is `done`; the existing Spec 0054 compatibility pointer named SPEC-0054-TSK-0013 while it was `queued` | Stage 01/02/03/99 disposition, zero active Archive citations/cross-links, residual transition consumer-zero, and Git-first recovery GREEN |
+| WP-013 | Cut over the remaining current corpus and close transition references | WP-012; WP-006; WP-008; accepted ADR-0032 and ADR-0033; accepted and completed Spec 0066 result; completed SPEC-0054-TSK-0011 parent handoff | ADR-0031, ADR-0032, and ADR-0033 accepted; SPEC-0066-TSK-0001, Plan 0066, and Spec 0066 are `done`; SPEC-0054-TSK-0011 is `done`; the existing Spec 0054 compatibility pointer named SPEC-0054-TSK-0013 while it was `queued` | Stage 01/02/03/99 disposition, completed-retention and migration provenance GREEN, no current-authority dependency on sealed Stage 98 records, residual transition consumer-zero, and Git exact-byte recovery GREEN |
 | WP-014 | Final convergence and branch completion | WP-009, WP-013, and accepted Spec 0066 result | All logical commits present | Ownership/fixed-point/focused/affected/staged/aggregate/all-files/review GREEN |
 
 WP-012 is a closed historical scheduling exception, not a reusable dependency
@@ -372,11 +383,12 @@ On 2026-08-31 the user directly prioritized Stage 90 cleanup after WP-003 and
 required preservation of the latest externally researched material under
 `docs/90.references/research/0001-workspace-engineering/`. WP-007 and WP-008 therefore run
 before queued WP-005 and WP-006. After WP-008, the active pointer returns to
-WP-005. After WP-006, WP-010 activates delegated Spec 0066. WP-013 removes the
-remaining current-corpus conflicts and every active citation or cross-link to
-Stage 98 before WP-009 minimizes that isolated historical archive. This order
-prevents Archive cleanup from preserving the very inbound dependencies that
-the approved terminal contract rejects.
+WP-005. After WP-006, WP-010 activates delegated Spec 0066. WP-013 resolves the
+remaining current-corpus conflicts, retains terminal governed documents under
+ADR-0032, and removes current-authority dependencies on sealed Stage 98 records
+before WP-009 reviews those records. This order preserves readable completed
+history without allowing Archive records to become a parallel semantic control
+plane.
 
 Work follows the dependency table, not one global closed order. Each Spec
 Package may have at most one `in-progress` Task. After the reviewed activation
@@ -985,26 +997,29 @@ it does not recreate the retired RIA or a permanent disposition ledger.
 
 ### WP-009 — global Stage 98 parity and recovery closure
 
-Stage 98 is an isolated historical archive, not a current governance or
-recovery control plane. Its `migrations/` directory is temporary historical
-material. WP-009 starts only after WP-013 has removed every citation and
-cross-link from Stages 00, 01, 02, 03, 05, and 90. Validation is limited to
-retained-record safety, readability, and declared sealed-byte integrity; it
-does not require a current consumer, permanent census, or remote-ancestry gate.
+Stage 98 is a non-current retention and history stage, not a current governance
+or recovery control plane. WP-009 starts only after WP-013 has removed every
+current-authority dependency on sealed `migrations/`, `superseded/`, and
+`tombstones/` records and proved completed-document retention. A citation to a
+retained `completed/` document may remain as historical trace. Validation is
+role-specific and does not require a permanent census, current SHA parity, or
+remote-ancestry gate.
 
 **Files:**
 
-- Reduce Stage 98 to a small historical index and only the records with unique
-  historical value. Git is the default full-body recovery source. Never
+- Preserve the `completed/` retention tree and minimize only sealed records
+  whose historical value and recovery obligations allow removal. Git is the
+  default exact-byte recovery source. Never
   preserve secret-bearing history through ordinary Stage 98; route it to
   incident, rotation, and explicitly approved history-removal handling.
 - Modify archive validation/recovery and focused tests only to close global
   parity across evidence committed in WP-002, WP-004, WP-003, WP-006, and
   WP-008.
 
-- [ ] Add semantic RED cases for an in-place sealed-record edit, an inbound
-  active-stage Archive link, unsafe or unbounded reads, and a malformed
-  retained record.
+- [ ] Add semantic RED cases for an in-place sealed-record edit, use of a
+  sealed record as current authority, unsafe or unbounded reads, and a
+  malformed retained document or record. Add a positive case for a historical
+  citation to `completed/` that does not confer current authority.
 - [ ] Never compact or rewrite a sealed record in place. Delete full-body
   Tombstones and redirect chains after Git recovery is confirmed; keep
   point-in-time decisions in the Task/diff rather than an Archive census.
@@ -1020,21 +1035,23 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
   fourteen, MIG-0005 sixteen, MIG-0002 eighteen, and MIG-0004 thirty-five.
   Work the unblocked records first; 172 distinct forty-hex pins remain in
   `scripts/`, and each retirement should reduce that number rather than move it.
-- [ ] Require the minimal Migration/Tombstone fields from C-SDLC-009 and reject
-  line-number hashes, full-corpus digests, current-document pins, and copied
-  completed Spec/Plan/Task bodies without an approved exception.
-- [ ] Do not create a new Migration, Tombstone, redirect, or body copy during
-  this cleanup. Retain or remove existing records only by archive-internal
-  historical value and reachable Git recovery; never to satisfy a current
-  consumer.
+- [ ] Require the registered retained-document and sealed-record contracts
+  from C-SDLC-009. Reject line-number hashes, full-corpus digests, and
+  current-document pins; preserve whole completed Spec/Plan/Task packages only
+  through the ADR-0032 retention route and its migration provenance.
+- [ ] Do not create a new Tombstone, redirect, or retained body during sealed
+  record cleanup. A Migration is created only by an independently reviewed
+  ADR-0032 retention move, not to satisfy a current consumer. Retain or remove
+  existing sealed records only by historical value and reachable Git recovery.
 - [ ] Apply bounded path/decoding and sealed-byte checks only where each
   retained record declares that contract. Do not run a full Archive census,
   compare unrelated current files with historical SHAs, require an inbound
   consumer, or validate branch ancestry. Route secret-bearing history through
   incident/rotation/removal rules.
-- [ ] Verify that Stages 00, 01, 02, 03, 05, and 90 contain no Archive citation
-  or cross-link. Do not replace removed direct links with an Archive README or
-  Migration link.
+- [ ] Verify that Stages 00, 01, 02, 03, 05, and 90 contain no
+  current-authority link to a sealed record. Verify that any `completed/`
+  citation resolves, preserves historical identity, and is not used as the
+  current semantic owner.
 - [ ] Run:
 
   ```bash
@@ -1191,6 +1208,17 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
 
 ### WP-013 — current corpus and transition-control cutover
 
+**2026-09-04 retention amendment:** Human acceptance of ADR-0032 replaces the
+older terminal-document deletion and zero-all-Archive-link clauses in this work
+package. Current `main` already retains completed packages under
+`docs/98.archive/completed/` with sealed migration provenance. The candidate
+counts and deletion tiers below remain historical execution inputs: consumer
+zero still gates disposition, but a completed package is retained whole and a
+current document may cite it for historical trace. Zero-link requirements now
+apply to use of sealed records as current authority. Human acceptance of
+ADR-0033 likewise makes the v9 Registry, router envelope, and generation-aware
+Archive rules the current document contract.
+
 **Files:**
 
 - Enter only after ADR-0031 is accepted with its reciprocal evidence and Spec
@@ -1203,8 +1231,9 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
   candidate, not a permanent corpus-count invariant.
 - Retain and rewrite Requirement Packages `0001` through `0004`. Transfer any
   unique current requirement or trace link from `0005` through `0008` to those
-  owners, then remove `0005` through `0008` only at consumer-zero. Compare the
-  retained requirements with current manifests, configuration, code,
+  owners, then disposition `0005` through `0008` only at consumer-zero through
+  the ADR-0032 terminal route appropriate to each lifecycle state. Compare the
+  retained current requirements with current manifests, configuration, code,
   validators, and supported operational interfaces so durable implemented
   behavior has a solution-independent Requirement owner.
 - `0005` and `0006` are `superseded` and carry no unfinished program. `0007`
@@ -1222,7 +1251,9 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
   rules that document, script, fixture, role, adapter, and entrypoint counts are
   observations rather than policy, so the count-bearing criteria are discharged
   as superseded and the semantic criteria are verified against current evidence
-  before `spec.md` and `plan.md` move `active` to `done`.
+  before `spec.md` and `plan.md` move `active` to `done`. After every package
+  member is terminal and current consumers are zero, retain the package whole
+  under `completed/` with a sealed migration row; do not delete it.
 - Then disposition Spec Packages `0047` through `0051`. Re-observation on
   2026-09-03 found their scope unfinished rather than obsolete: the reconciled
   stash object is still reachable and two stash entries remain, the GitHub
@@ -1240,14 +1271,16 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
   actual current structure, boundaries, components, data/control/deployment
   flows, and implementation evidence. Keep every ADR body in the Stage 02
   decision log with accurate lifecycle and reciprocal supersession relations.
-- Removal requires one of four proofs -- obsolete, completed, duplicated, or
-  conflicting -- so the retained set is whatever fails all four, not a fixed
+- Disposition requires one of four proofs -- obsolete, completed, duplicated,
+  or conflicting -- so the current set is whatever fails all four, not a fixed
   list. `0004`, `0005`, `0008`, `0054`, and delegated `0066` were the reviewed
-  candidates when this Plan was written; the list omitted every package holding
-  unfinished scope and named `0066` after it reached `done`. Re-derive the set
-  from lifecycle state and unfinished scope at execution time.
-- On 2026-09-03 that derivation yields fifty-one `done` packages as the removal
-  set, fifty-two once Spec 0052 closes, and fourteen retained: `0004`, `0005`,
+  current candidates when this Plan was written; the list omitted every package
+  holding unfinished scope and named `0066` after it reached `done`. Re-derive
+  the current-versus-retained set from lifecycle state and unfinished scope at
+  execution time.
+- On 2026-09-03 that derivation yielded fifty-one `done` packages as the
+  historical removal candidate, fifty-two once Spec 0052 closes, and fourteen
+  current packages: `0004`, `0005`,
   `0006`, `0008`, `0054`, and `0062`; the suspended `0047` through `0051`; and
   the current drafts `0068`, `0070`, and `0071`. Two of the retained need a
   disposition of their own. `0062` holds three `blocked` Tasks against seven
@@ -1256,9 +1289,11 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
   `active` `spec.md` with no `plan.md` and no `tasks/`, last authored
   2026-07-13; a Spec with no execution artifact states no change contract, so
   it is either given one or removed under the completed proof.
-- Remove the fifty-one in three tiers, which partition it exactly. Twenty-five
-  are consumer-zero once the Stage 03 declared index is excluded and need no
-  document cutover first. Thirteen are held only by REQ-0003, AD-0006, AD-0008,
+- The historical fifty-one-package candidate was partitioned into three
+  consumer-disposition tiers. Under ADR-0032 these tiers establish when a
+  package may enter retention, not when its history is deleted. Twenty-five
+  were consumer-zero once the Stage 03 declared index was excluded and needed
+  no document cutover first. Thirteen were held only by REQ-0003, AD-0006, AD-0008,
   and AD-0009, so rewriting those four releases them as a group: REQ-0003 and
   AD-0006 are retained and rewritten, and AD-0008 and AD-0009 are retired,
   which discharges their citations with them. The last thirteen are held by
@@ -1267,9 +1302,9 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
   cite the packages that implemented them, the Stage 90 research router and
   `.github/repository-surface.md` cite completed work, and three retained Specs
   cite predecessors. An accepted ADR is a permanent decision record, so its
-  citation converts to the ADR-0031 form -- a current semantic owner where one
-  exists, otherwise a path-free Git-history statement -- rather than being
-  deleted with the package.
+  citation converts either to the current semantic owner or to the retained
+  `completed/` identity as explicitly historical trace, rather than disappearing
+  with the active path.
 - Three fixtures name packages in the removal set and block it until they move:
   `tests/fixtures/agent-checkpoint.json` names `0043`, and
   `tests/fixtures/validation-surfaces.json` names `0031` and `0045`. No corpus
@@ -1294,19 +1329,21 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
   claim on the current tree. These three are released the same way: the edge
   drops when its endpoint is vacated, ledger coverage is counted from the
   sealed rows rather than from what still resolves, and a manifest target the
-  ledger never sealed is still rejected. Removing a ledger-named package
-  therefore needs no Archive record, redirect, or new Migration row, so the
-  WP-013 and WP-009 clauses that forbid creating them stand unchanged.
+  ledger never sealed is still rejected. An existing sealed row is historical
+  evidence rather than a standing current-path pin. A new ADR-0032 package
+  retention does require its own sealed migration row, but no redirect,
+  tombstone, or body-copy record.
 - `docs/03.specs/README.md` is a declared index whose contract enumerates every
   `docs/03.specs/####-<slug>/spec.md`, so its tree, table, and retained-set
   statement are updated in the same change that removes a package. Its current
   retained-set sentence names `0066`, which is `done`, and omits every package
   with unfinished scope; correct it to follow lifecycle state.
-- Reduce Stage 99 to the human router, authored profiles, normalized top-level
-  `lifecycleDomains`, required schemas, and templates used by retained
-  profiles. Remove `programLineage.programs`, `referenceCurrentPacks`,
-  `standaloneExecutions`, the data-model and full-body archive templates, and
-  stale progress/memory forms after their current consumers move. The Spec
+- Keep Stage 99 at the accepted v9 surface: the human router, authored profiles,
+  normalized top-level `lifecycle_domains`, required schemas, and templates
+  used by retained profiles. Verify that the retired v8
+  `programLineage.programs`, `referenceCurrentPacks`, and
+  `standaloneExecutions` fields, the data-model and full-body archive templates,
+  and stale progress/memory forms remain absent. The Spec
   0054 pointer rotations above are a bounded compatibility bridge, not a new
   authority; remove that row and its consumers rather than adding a Spec 0066
   row.
@@ -1336,10 +1373,10 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
   graph. Migrate remaining consumers to their current semantic owners and
   delete those assets only after consumer-zero; do not preserve the retired
   RIA as an intermediary.
-- Remove every citation and cross-link from Stages 00, 01, 02, 03, 05, and 90
-  to a Stage 98 document or file. Replace current navigation with the current
-  semantic owner; retain only a path-free Git-history recovery statement where
-  historical recovery is relevant.
+- Remove every use of a sealed Stage 98 record as current authority from Stages
+  00, 01, 02, 03, 05, and 90. Replace current navigation with the current
+  semantic owner. A direct `completed/` citation may remain only where it
+  preserves historical trace and does not substitute for current authority.
 
 - [ ] Add RED cases that reject a removed current owner,
   unresolved trace or template consumer, duplicate-purpose retained document,
@@ -1370,8 +1407,8 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
   and external links. Whichever lands second builds on the first rather than
   reverting it, and neither advances a `version` for a governance correction.
 - [ ] Prove current consumers zero and recovery from reachable Git history.
-  Do not create an Archive record or redirect as part of the current-corpus
-  cutover.
+  Retain terminal governed documents through an ADR-0032 migration row; do not
+  create a redirect, tombstone, or sealed body-copy record for that retention.
 - [ ] Record the implementation evidence used for each retained Requirement
   Package and Architecture Description, transfer unique current facts from
   removal candidates, and correct or retire claims that conflict with the
@@ -1381,9 +1418,10 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
   consumer-zero against the accepted Spec 0066 result. Assert current
   document/registry parity and absence of transition authority without a fixed
   script or document count.
-- [ ] Assert zero active Archive citations and cross-links without enumerating
-  a permanent allowed-path list. Complete the state-only handoff from
-  SPEC-0054-TSK-0013 to SPEC-0054-TSK-0009 only after this invariant is green.
+- [ ] Assert zero current-authority links to sealed Archive records without
+  enumerating a permanent allowed-path list. Verify historical `completed/`
+  citations separately. Complete the state-only handoff from
+  SPEC-0054-TSK-0013 to SPEC-0054-TSK-0009 only after both invariants are green.
 - [ ] Reject retired Stage 01/02/03/99 owners, the transition profile,
   manifest, tool, and every live three-digit/Stage 04 residue without
   recreating a `route_state` field or a permanent corpus census.
@@ -1409,8 +1447,8 @@ does not require a current consumer, permanent census, or remote-ancestry gate.
   `refactor(templates): reduce document control plane`.
 - [ ] Commit taxonomy transition consumer-zero retirement as
   `refactor(validation): retire taxonomy transition controls`.
-- [ ] Commit active Archive-link isolation as
-  `refactor(docs): isolate historical archive`.
+- [ ] Commit Archive authority-link reconciliation as
+  `refactor(docs): reconcile archive authority links`.
 
 ### WP-014 — convergence and branch completion
 
@@ -1505,8 +1543,9 @@ documents, registries, templates, or scripts.
 - Stage 05 Guide/Policy/Runbook/Incident responsibilities are disjoint,
   reviewed duplicates have one owner, and the Release family is absent.
 - Every Stage 90 file has one valid disposition and every authorized removal
-  has reachable Git recovery; Stage 98 is isolated historical material with
-  no inbound current-document dependency and only minimal validation.
+  has reachable Git recovery; Stage 98 completed retention is readable and
+  non-authoritative, sealed records have no inbound current-authority
+  dependency, and each role receives only its registered validation.
 - Every retained Stage 01 Requirement Package and Stage 02 Architecture
   Description reflects the current implementation at the appropriate
   abstraction level, with no durable implemented behavior lacking an owner and

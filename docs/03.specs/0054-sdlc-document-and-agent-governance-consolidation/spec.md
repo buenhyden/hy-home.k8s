@@ -1,6 +1,6 @@
 ---
 title: "SDLC Document and AI Agent Governance Consolidation Technical Specification"
-version: "1.1.0"
+version: "1.2.0"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
@@ -16,7 +16,7 @@ artifact_id: "SPEC-0054"
 This specification defines the approved B-scope consolidation of the
 repository's SDLC documents, Spec-driven development workflow, AI-agent
 governance, templates, validators, scripts, operations material, Stage 90
-references, and the isolated Stage 98 historical archive.
+references, and the Stage 98 retention and history surface.
 
 The target is a small set of canonical document owners with deterministic
 four-digit identities, work-unit-local Spec/Plan/Task artifacts, one shared
@@ -29,8 +29,9 @@ This specification succeeds, reconciles, or retires conflicting current
 instructions. It does not silently rewrite completed evidence. Current rules
 that conflict with this specification receive a package-local disposition and
 consumer/recovery proof before their active owners are removed. Reachable Git
-history is the default full-content recovery source; Stage 98 is not a current
-document dependency or a routine deletion prerequisite.
+history is the default exact-byte recovery source. Retained documents under
+Stage 98 may be cited as historical trace, but neither they nor sealed Archive
+records become current semantic authority or a routine deletion prerequisite.
 
 Direct human approval on 2026-08-13 authorizes B-scope consolidation including
 Stage 90. This integrated program inherits the incomplete WORK-109 candidate
@@ -50,10 +51,10 @@ Direct human approval on 2026-08-13 authorizes this Spec-owned execution
 relation. No separate PRD or Architecture Description is required for this
 package-local lifecycle. ADR-0025 owns the topology decision; accepted
 ADR-0031 owns the current-corpus and validation-routing model; and
-[ADR-0032](../../02.architecture/decisions/0032-completed-and-terminal-document-retention.md)
+[accepted ADR-0032](../../02.architecture/decisions/0032-completed-and-terminal-document-retention.md)
 owns the retention model that replaces deletion as the disposition for
 completed, stale, and deprecated documents in WP-013 and WP-009.
-[proposed ADR-0033](../../02.architecture/decisions/0033-common-document-contract-v9.md)
+[accepted ADR-0033](../../02.architecture/decisions/0033-common-document-contract-v9.md)
 owns the scoped common-envelope, public Registry v9, template grammar, and
 generation-aware Archive validation amendment implemented by the current
 WP-013 change slice.
@@ -69,7 +70,7 @@ owner or override the package-local delegation designed by ADR-0031.
 
 Direct human approval on 2026-08-14 refines that topology into package-oriented
 requirements, prefix-free architecture paths, a bounded Stage 90 library,
-an isolated minimally managed Stage 98 archive, and a single Stage 99 registry. This
+an explicitly classified Stage 98 retention/history surface, and a single Stage 99 registry. This
 revision supersedes the earlier PRD/SRS/Interface Requirement form split,
 `ad-`/`adr-` route prefixes, support-prose control plane, and snapshot-count or
 line-digest Archive design. It retains the approved four-digit identity,
@@ -116,9 +117,10 @@ SPEC-0054-TSK-0011 is the current parent acceptance record.
 - Review Stage 90 current references, generated indexes, research packs,
   snapshots, and audits by semantic owner. Keep the point-in-time disposition
   in the executing Task and reviewed diff rather than a permanent census.
-- Use reachable Git history as the default recovery owner. Do not create an
-  Archive record, redirect, or body copy as a current-document dependency or
-  routine condition for deleting a superseded current owner.
+- Use reachable Git history as the exact-byte recovery owner. Do not create a
+  sealed Archive record or redirect as a current-document dependency or
+  routine condition for retiring an owner. Retain terminal governed documents
+  only through the accepted ADR-0032 package-retention route.
 - Commit each independently testable logical unit separately.
 
 ### Protected boundaries
@@ -490,10 +492,10 @@ Requirement templates converge into the Spec/Plan/Tasks and Requirement
 Package templates. Templates reference a registry profile ID rather than
 hardcoding their destination paths or restating validator behavior.
 
-The registry retains profile definitions and one normalized top-level
-`lifecycleDomains` owner. It does not retain current-instance rosters or
-parallel program/reference control planes: `programLineage.programs`,
-`referenceCurrentPacks`, and `standaloneExecutions` are removed. The
+The v9 registry exposes only `$schema`, `$id`, `schema_version`, `profiles`, and
+`lifecycle_domains`. It does not retain current-instance rosters or parallel
+program/reference control planes: the former v8 `programLineage.programs`,
+`referenceCurrentPacks`, and `standaloneExecutions` fields are removed. The
 `data-model` profile/template, full-body Archive profile/template, and stale
 progress or memory forms are removed with their consumers. Retained historical
 records receive only the bounded safety and readability checks defined by
@@ -611,39 +613,38 @@ freshness, consumers, bounded reads, and deterministic generation only where a
 maintained generated projection remains. Observation dates stay in frontmatter
 or source metadata, not filenames.
 
-### C-SDLC-009 — isolated Stage 98 historical archive
+### C-SDLC-009 — Stage 98 retention and historical records
 
-Git history is the default full-content recovery source. Stage 98 is an
-isolated historical archive for retired SDLC, operations, and reference
-material; it is not current governance, a current-document dependency, or a
-recovery gate for active work:
+Git history is the default exact-byte recovery source. Stage 98 is a
+non-current retention and history stage with four distinct roles:
 
 ```text
 docs/98.archive/
 ├── README.md
+├── completed/<original-stage>/<original-path>
 ├── migrations/####-<slug>.md
+├── superseded/<original-stage>/####-<slug>.md
 └── tombstones/<original-stage>/####-<slug>.md
 ```
 
-Documents under Stages 00, 01, 02, 03, 05, and 90 neither cite nor cross-link
-any Stage 98 document or file. Current documents link to current semantic
-owners; when recovery matters, they state the Git-history principle without an
-Archive record path. The Archive README and retained records may link within
-Stage 98 for historical navigation, but they do not create inbound current
-dependencies.
+The accepted ADR-0032 contract governs the distinction. `completed/` retains a
+terminal governed document or whole Stage 03 package after current consumers
+reach zero. The retained document keeps its original profile and identity, may
+be cited directly for historical trace, and never becomes current requirement,
+architecture, decision, or execution authority. Its sealed migration row owns
+origin-path and Git provenance.
 
-Existing sealed records are never edited or compacted in place. Redundant
-full-body copies and redirect chains may be removed after Git recovery is
-confirmed. The `migrations/` family is temporary historical material, not a
-permanent current mapping system; obsolete records and empty historical
-families are removed without creating a meta-Migration. Superseded ADRs remain
-in Stage 02, and completed Spec/Plan/Task bodies are not copied into Stage 98.
+`migrations/`, `superseded/`, and `tombstones/` hold sealed records. A current
+document may not use those records as semantic authority or recovery gates for
+active work. Existing sealed records are never edited or compacted in place;
+their internal historical links do not create current authority. Superseded
+ADRs remain in the Stage 02 decision log.
 
-Validation is intentionally minimal: repository containment, safe bounded
-reads, strict decoding where text is required, the small metadata shape needed
-by a retained record, and sealed-byte identity only when immutability is the
-record's declared contract. It does not enforce a full Archive census, an
-inbound consumer roster, current-document or branch SHAs, remote ancestry,
+Validation is role-specific. Retained documents keep their registered profile,
+terminal lifecycle, mirrored origin path, link-target identity, and migration
+provenance. Sealed records receive repository-containment, safe bounded-read,
+strict-decoding, metadata, and declared immutable-byte checks. No role enforces
+a full Archive census, current-document or branch SHA parity, remote ancestry,
 unrelated current-file parity, or exact record counts. Secret-bearing history
 follows incident, rotation, and approved history-removal procedure rather than
 ordinary Stage 98 retention.
@@ -762,11 +763,12 @@ integration dependencies, not a global scheduling lock:
     current-state owners.
 9. **WP-013** starts only after Spec 0054 accepts the completed Spec 0066
     result, performs the remaining Stage 01/02/03/99 current-corpus cutover,
-    removes every current citation and cross-link to Stage 98, then retires
-    residual taxonomy transition assets without concurrent delegated mutation.
-10. **WP-009** runs after WP-013 has made active Archive consumers zero. It
-    minimizes the isolated Stage 98 corpus and its validation without editing
-    sealed records in place.
+    removes current-authority dependencies on sealed Stage 98 records, and
+    validates completed-document retention before retiring residual taxonomy
+    transition assets without concurrent delegated mutation.
+10. **WP-009** runs after WP-013 has made sealed-record authority consumers
+    zero. It minimizes obsolete sealed records without removing accepted
+    completed-document retention or editing sealed records in place.
 11. **WP-014** joins the delegated result with the parent integration path,
     proves the all-files ownership, lifecycle, recovery, security, test, and
     branch fixed point, and performs final independent reviews.
@@ -818,8 +820,8 @@ The canonical interfaces are:
 - package-local Task/diff evidence for current path and Stage 90 cutovers;
 - `scripts/validation/registry.json` and its schema for validation routing,
   lane selection, executable entrypoints, and supported consumers;
-- the Stage 98 internal router and retained records as isolated historical
-  material, outside the current document dependency graph;
+- the Stage 98 router, retained completed documents, and sealed records as
+  non-current historical material, outside the current authority graph;
 - aggregate validation as the terminal repository-static decision surface.
 
 Every remaining work package must report any canonical-owner consolidation,
@@ -864,9 +866,9 @@ duplicate machine inventories or independently redefine lifecycle states.
   purpose fails the evidence-boundary audit.
 - A retired transition fixture or helper with no current consumer and no
   terminal semantic responsibility fails the residue audit.
-- Any Stage 00/01/02/03/05/90 citation or cross-link to a Stage 98 document or
-  file fails. The link is removed or replaced with the current semantic owner,
-  never with another Archive route.
+- Any Stage 00/01/02/03/05/90 use of a sealed Stage 98 record as current
+  semantic authority fails. A citation to a retained `completed/` document is
+  valid only as historical trace and never substitutes for a current owner.
 
 ## Failure Modes & Fallback / Human Escalation
 
@@ -922,7 +924,7 @@ hosted CI, deployment, incident response, or live platform correctness.
 | VAL-SDLC-006 | Stage 99 has one registry containing profile definitions and normalized top-level lifecycle domains, one human router, and only the schemas/templates required by active authored profiles; no current-instance program, reference-pack, or standalone-execution roster remains. |
 | VAL-SDLC-007 | Guide, Policy, Runbook, Incident, and Postmortem roles are disjoint; reviewed duplicate procedures have one owner. |
 | VAL-SDLC-008 | Stage 90 preserves the latest externally researched pack and its routers; Audit/Data bodies and their RIA current-pack/SHA/FSM machine are absent after consumer cutover, with no permanent disposition census or exact corpus gate. Ongoing pack maintenance follows the [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md). |
-| VAL-SDLC-009 | Stages 00/01/02/03/05/90 contain no citation or cross-link to a Stage 98 document or file; Stage 98 is an isolated historical archive with minimal safety/readability validation, no current-consumer or full-corpus census gate, no current SHA parity, no redundant full-body redirect copies, and no empty historical family. |
+| VAL-SDLC-009 | Stages 00/01/02/03/05/90 have no current-authority dependency on sealed `migrations/`, `superseded/`, or `tombstones/` records; `completed/` retains terminal documents and whole Stage 03 packages with mirrored paths, terminal profiles, migration provenance, and historical-only citation semantics; Stage 98 has no full-corpus census, current-SHA parity, remote-ancestry, or exact-count gate. |
 | VAL-SDLC-010 | After ADR-0031 acceptance, the validation routing and consumer graph has one owner; production modules obey responsibility boundaries, independent tests/fixtures remain under top-level `tests/`, aggregate duplication and embedded self-tests are absent, and no terminal entrypoint, file, case, or line-count invariant remains. |
 | VAL-SDLC-011 | Focused, affected, staged, aggregate, secret, all-files, and independent review gates pass at each required boundary; permanent rules have one machine owner and validator, with zero aggregate duplication, unjustified current-state SHA pins, or consumer-free transition fixtures at the terminal fixed point. |
 | VAL-SDLC-012 | Each independently testable logical unit is committed separately with no unrelated user changes included. |

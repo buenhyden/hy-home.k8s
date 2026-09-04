@@ -1,6 +1,6 @@
 ---
 title: "Task: Current corpus and transition-control cutover"
-version: "1.2.0"
+version: "1.3.0"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -46,18 +46,21 @@ SPEC-0054-TSK-0011 parent handoff; and the existing Spec 0054 compatibility poin
 which named this Task while it was still `queued`
 
 **Current state:** `in-progress`; the entry blocker in the link validator is
-released and no corpus removal has been made
+released, document-contract v9 has a proposal commit, ADR-0032 and ADR-0033
+have human acceptance, and the remaining WP-013 dispositions are not complete
 
 | ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| WORK-054-013 | VAL-SDLC-001..VAL-SDLC-004, VAL-SDLC-006, VAL-SDLC-009..VAL-SDLC-012 | After the completed child and parent handoffs, reconcile retained Stage 01 Requirements and Stage 02 Architecture bidirectionally with the current implementation, converge the reviewed Stage 01/02/03/99 current-owner set, remove active Archive citations and cross-links, transfer unfinished work and unique authority, then retire residual transition assets against the accepted and completed Spec 0066 routing result without a fixed corpus census. | platform | In progress | Entry blocker released; no corpus removal made. | Terminal Spec 0066 states, completed SPEC-0054-TSK-0011, compatibility pointer to this queued Task, manifest/configuration/code/validator/operational-interface evidence mapped to retained Requirement Packages and Architecture Descriptions, zero inbound Archive links, consumer/trace/lifecycle parity, Git-first recovery, registry/template parity, delegated routing evidence, and ordered logical commits |
+| WORK-054-013 | VAL-SDLC-001..VAL-SDLC-004, VAL-SDLC-006, VAL-SDLC-009..VAL-SDLC-012 | After the completed child and parent handoffs, reconcile retained Stage 01 Requirements and Stage 02 Architecture bidirectionally with the current implementation, converge the reviewed Stage 01/02/03/99 current-owner set, retain terminal governed documents under ADR-0032, remove current-authority dependencies on sealed Archive records, transfer unfinished work and unique authority, then retire residual transition assets against the accepted and completed Spec 0066 routing result without a fixed corpus census. | platform | In progress | Document-contract v9 proposed in commit `41f8144e`; ADR-0032/0033 acceptance and Plan amendment prepared; remaining WP-013 disposition is open. | Terminal Spec 0066 states, completed SPEC-0054-TSK-0011, compatibility pointer to this Task, manifest/configuration/code/validator/operational-interface evidence mapped to retained Requirement Packages and Architecture Descriptions, completed-retention provenance, zero current-authority dependencies on sealed Archive records, consumer/trace/lifecycle parity, Git exact-byte recovery, registry/template parity, delegated routing evidence, and ordered logical commits |
 
 ## Approval and Safety Boundaries
 
 The [common execution contract](../plan.md#common-execution-contract) applies
-without exception. WP-013 may remove a current document or template only after
-its unique authority and unfinished work are transferred or proven absent,
-current consumers are zero, and Git-first recovery succeeds. The linked Plan
+with the explicit human-approved Git/CI/read-only runtime evidence exception
+recorded below. WP-013 may disposition a current document or template only
+after its unique authority and unfinished work are transferred or proven
+absent, current consumers are zero, and Git exact-byte recovery succeeds.
+Terminal governed documents follow ADR-0032 retention rather than deletion. The linked Plan
 owns the exact candidate dispositions, reviews, rollback, and four ordered
 logical commits: Stage 01/02, Stage 03, Stage 99, then transition controls. The
 accepted and completed Spec 0066 result plus the completed SPEC-0054-TSK-0011
@@ -79,8 +82,9 @@ authority.
 
 ## Verification Summary
 
-No Stage 01, 02, 03, or 99 document has been removed. One entry blocker is
-released.
+No additional Stage 01, 02, 03, or 99 document has been removed in this
+follow-up. One entry blocker is released, the document-contract v9 proposal is
+committed, and the human acceptance/Plan-amendment boundary is now explicit.
 
 Removing a package that a sealed migration row names as its endpoint raised
 `configuration error: WORK-054 WP-004B migration target differs` and exited 2,
@@ -103,8 +107,10 @@ Two measurements in the Plan were corrected by executing them: consumer-zero
 must count terminal documents, and the first removal tier splits into twenty
 MIG-0004 row targets, three named only by other ledgers, and two in no ledger.
 
-This work creates no Archive record, redirect, or Migration row, so the WP-013
-and WP-009 clauses forbidding them are unaffected.
+The validator-release proof created no Archive record, redirect, or Migration
+row. Future completed-package retention follows ADR-0032 and therefore requires
+a reviewed sealed migration row while still forbidding redirect and body-copy
+records.
 
 ### Document Contract v9 Gap Matrix
 
@@ -139,24 +145,27 @@ and WP-009 clauses forbidding them are unaffected.
 
 ### Baseline and Execution Evidence
 
-- Follow-up acceptance review found that ADR-0033 is still an untracked new
-  document. The staged lifecycle gate correctly rejected a direct
-  "absent -> accepted" creation, so its "proposed" state is retained until a
-  proposed commit and a later human-accepted commit can prove the required
-  transition without weakening the lifecycle contract.
+- The staged lifecycle gate rejected the attempted direct ADR-0033
+  "absent -> accepted" creation. Commit `41f8144e` now establishes the required
+  `proposed` state, and the user's 2026-09-04 acceptance authorizes the later
+  `proposed -> accepted` transition without weakening the lifecycle contract.
 - Current-main re-observation found fifteen Stage 03 packages in the active
-  tree and the completed packages already retained under Stage 98 by recent
-  migration commits. ADR-0032, which defines that retention model, remains
-  "proposed" even though its implementation is present. No additional WP-013
-  deletion or retention mutation is made until human acceptance resolves that
-  authority mismatch and the Plan's earlier deletion/zero-link clauses are
-  amended to the chosen terminal model.
-- Safety identity: repository root ".",
+  tree and completed packages already retained under Stage 98 by recent
+  migration commits. The user's 2026-09-04 acceptance resolves ADR-0032's
+  authority mismatch; Spec 0054 and Plan 0054 now distinguish retained
+  `completed/` documents from sealed records and replace their older
+  deletion/zero-all-links clauses.
+- Initial-slice safety identity: repository root ".",
   "https://github.com/buenhyden/hy-home.k8s.git", branch "main", initial HEAD
-  "24fe45af". The initial worktree was clean; this work performed no fetch,
+  "24fe45af". The initial worktree was clean; that initial slice performed no fetch,
   pull, checkout, reset,
   clean, stash, commit, push, PR, tag, release, deployment, or live mutation
   was performed.
+- Follow-up authority on 2026-09-04 explicitly approves local logical commits,
+  branch `codex/document-contract-v9`, push and PR creation with Hosted CI, and
+  secret-safe read-only checks of the configured Kubernetes, Argo CD, Vault,
+  ESO, and provider runtime targets. It does not authorize secret-value reads,
+  live mutation, forced reconciliation, merge, or destructive Git operations.
 - During continuation, the shared checkout reflog recorded an external
   "pull --tags origin main" fast-forward at "2026-09-04 16:42:16 +0900",
   moving "main" from "24fe45af" to "1632ce28". The initial commit remains
@@ -194,6 +203,21 @@ and WP-009 clauses forbidding them are unaffected.
   "pre-commit run --all-files" then passed every applicable repository,
   parser, formatting, secret, shell, security, and infrastructure hook; the
   Dockerfile hook correctly skipped because no Dockerfile was selected.
+- ADR acceptance validation used the exact six-file staged set. Direct strict
+  Registry, Markdown, links/owners, and staged lifecycle checks passed; the
+  affected and staged routing lanes each selected and passed seven validators.
+  The lifecycle result proves ADR-0033's committed `proposed` predecessor and
+  this change's legal `proposed -> accepted` transition.
+- The first affected-lane attempt used shell process substitution and failed
+  closed with `SURFACE-PATH-TRANSPORT`; the validator requires a regular bounded
+  NUL file. Repeating both lanes with `/tmp/spec-0054-acceptance.nul` produced
+  the passing six-path results above. The temporary file contains paths only.
+- Plain staged pre-commit first failed before hook execution because the
+  sandbox could not create `.git/index.lock`. The approved elevated rerun
+  passed every applicable hook. The 22-gate repository aggregate then passed
+  over 1,015 paths, and `pre-commit run --all-files` passed every applicable
+  hook; Dockerfile lint alone skipped because the repository has no selected
+  Dockerfile. Neither invocation produced a formatter mutation.
 - "git diff --check" passed and "git diff -- docs/98.archive" remained empty.
 - Local static success is not hosted CI, Argo CD reconciliation, cluster
   readiness, Vault/ESO behavior, provider runtime, or release evidence.

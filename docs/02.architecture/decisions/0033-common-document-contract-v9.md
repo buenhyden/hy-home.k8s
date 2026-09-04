@@ -1,8 +1,8 @@
 ---
 title: "Common Document Contract v9 and Governed Router Envelopes"
-version: "0.1.0"
+version: "1.0.0"
 type: "sdlc/architecture-decision"
-status: "proposed"
+status: "accepted"
 owner: "platform"
 updated: "2026-09-04"
 layer: "architecture"

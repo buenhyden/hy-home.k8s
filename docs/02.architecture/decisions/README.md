@@ -1,6 +1,6 @@
 ---
 title: "02.architecture/decisions (ADR)"
-version: "0.1.0"
+version: "0.1.1"
 type: "common/readme-collection-index"
 status: "active"
 owner: "platform"
@@ -124,8 +124,8 @@ layer: "architecture"
 | [`./0029-mutable-target-revision-retention.md`](./0029-mutable-target-revision-retention.md) | 가변 targetRevision 유지 결정 | Accepted | ADR-0026이 선호 통제로 남긴 commit-SHA 핀을 기각한다. 12개 선언은 모두 이 저장소 자신을 가리키며 외부 차트는 이미 버전 핀이다. 핀은 하드닝이 아니라 자동 reconcile을 수동 promotion으로 바꾸는 배포 모델 변경이고, 핀 커밋은 자기 자신을 참조할 수 없어 구조적으로 한 커밋 뒤처진다. 운영자 추가·환경 추가·force-push 워크플로 도입 시 재검토한다. |
 | [`./0030-authority-first-sdlc-and-agent-governance-convergence.md`](./0030-authority-first-sdlc-and-agent-governance-convergence.md) | Authority-first SDLC document, agent governance, Archive, template, and script convergence decision | Accepted | Spec 0054의 terminal authority다. ADR-0031이 validator test 위치와 mandatory 800-line exception 조항만 범위 한정 개정하며, 나머지 topology와 lifecycle 상태는 유지한다. |
 | [`./0031-current-corpus-retention-and-validation-ownership.md`](./0031-current-corpus-retention-and-validation-ownership.md) | Current corpus retention, package-local execution lineage, and validation routing ownership decision | Accepted | ADR-0016/0017/0020/0021/0022의 current instance-roster 및 validation-routing 권위를 대체하고 ADR-0030의 두 validation-layout 조항만 lifecycle supersession 없이 범위 한정 개정한다. Spec 0054가 통합 수용을, Spec 0066이 위임된 validation-tooling 실행을 소유한다. |
-| [`./0032-completed-and-terminal-document-retention.md`](./0032-completed-and-terminal-document-retention.md) | Terminal document retention and Archive taxonomy decision | Proposed | Terminal governed documents의 retention과 Stage 98 completed/superseded/tombstone 분류를 검토 중이다. |
-| [`./0033-common-document-contract-v9.md`](./0033-common-document-contract-v9.md) | Common document contract v9 and governed router envelope decision | Proposed | v9 public model, README envelope, placeholder grammar, external release evidence, frozen Archive generation을 검토 중이다. |
+| [`./0032-completed-and-terminal-document-retention.md`](./0032-completed-and-terminal-document-retention.md) | Terminal document retention and Archive taxonomy decision | Accepted | Terminal governed documents를 consumer-zero 뒤 `completed/`에 package 단위로 보존하고, sealed record는 `migrations/`, `superseded/`, `tombstones/`로 분리한다. 완료 문서 인용은 역사적 trace이며 current authority를 부여하지 않는다. |
+| [`./0033-common-document-contract-v9.md`](./0033-common-document-contract-v9.md) | Common document contract v9 and governed router envelope decision | Accepted | snake_case v9 public model, identity-free README envelope, 단일 placeholder grammar, external release evidence, generation-aware frozen Archive validation을 현재 문서 계약으로 채택한다. |
 
 ## Related Documents
 
