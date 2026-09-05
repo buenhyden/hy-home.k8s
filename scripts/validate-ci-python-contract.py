@@ -18,7 +18,7 @@ DIRECT_REQUIREMENTS_PATH = Path(".github/requirements/ci-validation.in")
 LOCK_PATH = Path(".github/requirements/ci-validation.txt")
 WORKFLOW_PATH = Path(".github/workflows/ci.yml")
 PRE_COMMIT_CONFIG_PATH = Path(".pre-commit-config.yaml")
-CANDIDATE_BRANCH_REF = "${{ github.head_ref || github.ref }}"
+CANDIDATE_SHA_REF = "${{ github.sha }}"
 EXPECTED_REQUIREMENT_LINES = (
     "jsonschema==4.26.0",
     "pre-commit==4.6.1",
@@ -111,34 +111,14 @@ EXPECTED_GITLEAKS_TOOL = {
     "install_path": "/usr/local/bin/gitleaks",
 }
 EXPECTED_PYTHON = "3.12"
-VALIDATION_JOBS = (
-    "pre-commit",
-    "repo-quality-static",
-    "agent-governance-static",
-    "manifest-static",
-)
-STABLE_RULE_IDS = (
-    "CI-PYTHON-INPUT",
-    "CI-PYTHON-PIN",
-    "CI-PYTHON-LOCK",
-    "CI-PYTHON-WORKFLOW",
-    "CI-PYTHON-VERSION",
-    "CI-PRECOMMIT-ACTION",
-    "CI-PRECOMMIT-REV",
-    "CI-PRECOMMIT-ALL-FILES",
-    "CI-PRECOMMIT-HISTORY",
-    "CI-GITLEAKS-TOOL",
-    "CI-REPOSITORY-HISTORY",
-    "CI-AGENT-GOVERNANCE-CHECKOUT",
-)
-AGENT_GOVERNANCE_JOB = "agent-governance-static"
+VALIDATION_JOBS = ("qa",)
 INSTALL_COMMAND = (
     "python -m pip install --disable-pip-version-check "
     "--only-binary :all: --require-hashes "
     "--requirement .github/requirements/ci-validation.txt"
 )
-PRE_COMMIT_COMMAND = "pre-commit run --all-files --show-diff-on-failure"
-GITLEAKS_JOBS = ("pre-commit", "repo-quality-static")
+QA_COMMAND = 'python3 scripts/qa.py ci --base-ref "$BASE_SHA"'
+GITLEAKS_JOBS = ("qa",)
 GITLEAKS_INSTALL_COMMAND = f"""\
 set -euo pipefail
 curl --fail --location --silent --show-error \\
@@ -1353,9 +1333,9 @@ def _validate_pre_commit_revisions(
             )
         observed[repo] = revision
 
-    if local_count != 1:
+    if local_count > 1:
         fail(
-            "CI-PRECOMMIT-REV", "pre-commit config must contain exactly one local repo"
+            "CI-PRECOMMIT-REV", "pre-commit config must not duplicate the local repository"
         )
     if observed != EXPECTED_PRE_COMMIT_REVISIONS:
         fail(
@@ -1520,57 +1500,26 @@ def _validate_shell_boundaries(workflow: dict[str, Any]) -> None:
                 fail("CI-PYTHON-WORKFLOW", "step shell overrides are unsupported")
 
 
-def _validate_pre_commit_execution(
+def _validate_qa_execution(
     workflow: dict[str, Any],
     job_steps: dict[str, list[dict[str, Any]]],
 ) -> None:
-    jobs = workflow.get("jobs")
-    if not isinstance(jobs, dict):
-        fail("CI-PRECOMMIT-ALL-FILES", "workflow jobs must be a mapping")
-    all_run_commands: list[str] = []
-    for job in jobs.values():
-        if not isinstance(job, dict):
-            continue
-        steps = job.get("steps")
-        if not isinstance(steps, list):
-            continue
-        all_run_commands.extend(
-            _run_text(step)
-            for step in steps
-            if isinstance(step, dict) and _run_text(step)
-        )
-    pre_commit_commands = [
-        command for command in all_run_commands if "pre-commit run" in command
+    commands = [
+        _run_text(step)
+        for job in workflow["jobs"].values()
+        if isinstance(job, dict)
+        for step in job.get("steps", [])
+        if isinstance(step, dict)
     ]
-    if pre_commit_commands != [PRE_COMMIT_COMMAND]:
-        fail(
-            "CI-PRECOMMIT-ALL-FILES",
-            "workflow must contain exactly one explicit all-files/show-diff command",
-        )
-
-    pre_commit_steps = job_steps["pre-commit"]
-    if [_run_text(step) for step in pre_commit_steps].count(PRE_COMMIT_COMMAND) != 1:
-        fail(
-            "CI-PRECOMMIT-ALL-FILES",
-            "the explicit all-files/show-diff command must run in pre-commit",
-        )
-    checkout_steps = [
-        step
-        for step in pre_commit_steps
-        if isinstance(step.get("uses"), str)
-        and step["uses"].startswith("actions/checkout@")
-    ]
-    if len(checkout_steps) != 1:
-        fail(
-            "CI-PRECOMMIT-HISTORY",
-            "pre-commit must contain exactly one checkout step",
-        )
-    checkout_with = checkout_steps[0].get("with")
-    if not isinstance(checkout_with, dict) or checkout_with.get("fetch-depth") != 0:
-        fail(
-            "CI-PRECOMMIT-HISTORY",
-            "pre-commit checkout must use fetch-depth: 0",
-        )
+    qa_commands = [command for command in commands if "scripts/qa.py" in command]
+    if qa_commands != [QA_COMMAND] or any(
+        "pre-commit run" in command or "unittest discover" in command
+        or "validate-repo-quality-gates.sh" in command
+        for command in commands
+    ):
+        fail("CI-QA-EXECUTION", "CI must execute the shared QA profile exactly once")
+    if [_run_text(step) for step in job_steps["qa"]].count(QA_COMMAND) != 1:
+        fail("CI-QA-EXECUTION", "the shared QA profile must run in qa")
 
 
 def _validate_gitleaks_tool(
@@ -1609,58 +1558,20 @@ def _validate_gitleaks_tool(
 def _validate_repository_history(
     job_steps: dict[str, list[dict[str, Any]]],
 ) -> None:
-    steps = job_steps["repo-quality-static"]
     checkout_steps = [
-        step
-        for step in steps
+        step for step in job_steps["qa"]
         if isinstance(step.get("uses"), str)
         and step["uses"].startswith("actions/checkout@")
     ]
-    if len(checkout_steps) != 1:
-        fail(
-            "CI-REPOSITORY-HISTORY",
-            "repo-quality-static must contain exactly one checkout step",
-        )
-    checkout_with = checkout_steps[0].get("with")
-    if (
-        not isinstance(checkout_with, dict)
-        or checkout_with.get("fetch-depth") != 0
-        or checkout_with.get("ref") != CANDIDATE_BRANCH_REF
-    ):
-        fail(
-            "CI-REPOSITORY-HISTORY",
-            "repo-quality-static checkout must select the candidate branch and use fetch-depth: 0",
-        )
-
-
-def _validate_agent_governance_checkout(
-    job_steps: dict[str, list[dict[str, Any]]],
-) -> None:
-    steps = job_steps[AGENT_GOVERNANCE_JOB]
-    checkout_steps = [
-        step
-        for step in steps
-        if isinstance(step.get("uses"), str)
-        and step["uses"].startswith("actions/checkout@")
-    ]
-    if len(checkout_steps) != 1:
-        fail(
-            "CI-AGENT-GOVERNANCE-CHECKOUT",
-            "agent-governance-static must contain exactly one checkout step",
-        )
-    checkout_with = checkout_steps[0].get("with")
-    if checkout_with != {
-        "ref": CANDIDATE_BRANCH_REF,
+    if len(checkout_steps) != 1 or checkout_steps[0].get("with") != {
+        "ref": CANDIDATE_SHA_REF,
         "persist-credentials": False,
         "fetch-depth": 0,
     }:
-        fail(
-            "CI-AGENT-GOVERNANCE-CHECKOUT",
-            "agent-governance-static checkout must select the candidate branch, disable credentials, and fetch full history",
-        )
+        fail("CI-REPOSITORY-HISTORY", "qa checkout requires immutable event SHA, full history, and disabled credentials")
 
 
-def validate_repository(root: Path) -> int:
+def validate_dependencies(root: Path) -> int:
     root = _resolve_repository_root(root)
     direct_requirements_text = _read_regular_text(
         root,
@@ -1701,14 +1612,77 @@ def validate_repository(root: Path) -> int:
 
     job_steps = {job_id: _steps_for_job(workflow, job_id) for job_id in VALIDATION_JOBS}
     _validate_shell_boundaries(workflow)
-    _validate_pre_commit_execution(workflow, job_steps)
+    _validate_qa_execution(workflow, job_steps)
     _validate_gitleaks_tool(workflow, job_steps)
     _validate_no_outside_python_validation(workflow)
     _validate_python_versions(job_steps)
     _validate_shared_installs(job_steps)
     _validate_repository_history(job_steps)
-    _validate_agent_governance_checkout(job_steps)
     return len(job_steps)
+
+
+def validate_workflow(workflow: dict[str, Any]) -> None:
+    """Own CI topology; dependency grammar and QA gate selection have other owners."""
+    events = workflow.get("on", workflow.get(True))
+    if not isinstance(events, dict) or set(events) != {"push", "pull_request", "workflow_dispatch"}:
+        fail("CI-TOPOLOGY", "CI requires push, pull_request, and manual entrypoints")
+    for event in ("push", "pull_request"):
+        if events[event] != {"branches": ["main"]}:
+            fail("CI-TOPOLOGY", "required CI must target main without path filters")
+    if workflow.get("permissions") != {"contents": "read"}:
+        fail("CI-TOPOLOGY", "CI permissions must remain contents: read")
+    jobs = workflow.get("jobs", {})
+    if set(jobs) != {"branch-policy", "qa", "ci-summary"}:
+        fail("CI-TOPOLOGY", "CI has one QA job, branch policy, and required summary")
+    qa, branch, summary = (jobs[key] for key in ("qa", "branch-policy", "ci-summary"))
+    if "if" in qa or qa.get("needs"):
+        fail("CI-TOPOLOGY", "QA cannot be conditionally skipped")
+    if branch.get("if") != "github.event_name == 'pull_request'":
+        fail("CI-TOPOLOGY", "branch policy applies only to pull requests")
+    if summary.get("if") != "always()" or summary.get("needs") != ["branch-policy", "qa"]:
+        fail("CI-TOPOLOGY", "ci-summary must always inspect both predecessor results")
+    for job in jobs.values():
+        if job.get("permissions") or job.get("continue-on-error"):
+            fail("CI-TOPOLOGY", "jobs cannot widen permissions or suppress failures")
+        for step in job.get("steps", []):
+            if step.get("continue-on-error"):
+                fail("CI-TOPOLOGY", "steps cannot suppress required failures")
+            if "SKIP" in step.get("env", {}):
+                fail("CI-TOPOLOGY", "CI cannot bypass registered QA checks")
+    qa_steps = [step for step in qa["steps"] if _run_text(step) == QA_COMMAND]
+    if len(qa_steps) != 1 or qa_steps[0].get("env") != {
+        "BASE_SHA": "${{ github.event.pull_request.base.sha || github.event.before || '' }}"
+    }:
+        fail("CI-TOPOLOGY", "QA must receive the event comparison base")
+    steps = summary.get("steps", [])
+    if len(steps) != 1 or steps[0].get("env") != {
+        "EVENT_NAME": "${{ github.event_name }}",
+        "BRANCH_POLICY_RESULT": "${{ needs.branch-policy.result }}",
+        "QA_RESULT": "${{ needs.qa.result }}",
+    }:
+        fail("CI-TOPOLOGY", "summary must consume actual event and predecessor results")
+    summary_text = _run_text(steps[0])
+    for fragment in (
+        'case "$EVENT_NAME:$BRANCH_POLICY_RESULT" in',
+        'pull_request:success)',
+        'push:skipped|workflow_dispatch:skipped)',
+        'branch_verdict=FAIL',
+        'case "$QA_RESULT" in',
+        'qa_verdict=PASS',
+        'qa_verdict=FAIL',
+        'if [ "$failed" -ne 0 ]; then',
+        'exit 1',
+        'exit 0',
+    ):
+        if fragment not in summary_text:
+            fail("CI-TOPOLOGY", "summary must fail closed for missing, skipped, failed or cancelled QA")
+
+
+def validate_repository(root: Path) -> int:
+    count = validate_dependencies(root)
+    text = _read_regular_text(root, WORKFLOW_PATH, "CI-PYTHON-WORKFLOW")
+    validate_workflow(_load_yaml(text, "CI-PYTHON-WORKFLOW", WORKFLOW_PATH))
+    return count
 
 
 def main() -> int:

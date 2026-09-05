@@ -207,11 +207,11 @@ docs/
         ├── references/
         └── common/
 
-.agents/
-├── registry.json
-├── contracts/agent-registry.schema.json
-├── agents/
-└── skills/
+docs/00.agent-governance/
+├── roles/registry.json
+├── roles/registry.schema.json
+├── roles/<role-id>.md
+└── skills/<skill-id>/SKILL.md
 
 .claude/
 ├── CLAUDE.md
@@ -247,9 +247,9 @@ document-template and contract plane. They are not sequential SDLC approval
 stages.
 
 The terminal tree contains no `.gemini/` directory and no root `GEMINI.md`.
-`.agents/` is provider-neutral executable governance, not an Antigravity or
-Gemini compatibility surface. Codex and Claude are the only supported provider
-projections.
+The repository-owned `.agents/` tree is removed under
+[SPEC-0072](../0072-agent-governance-and-quality-gate-consolidation/spec.md).
+Codex and Claude are the only supported provider adapters.
 
 ### C-SDLC-002 — requirements and architecture ownership
 
@@ -445,19 +445,18 @@ role, timeline, evidence, cause, action-owner, due-state, and closure semantics.
 The former `rules/`, `scopes/`, `contracts/`, `hooks/`, and `memory/` trees are
 not terminal owners. Their unique durable content moves to the owners above,
 to the responsible Spec Task or Stage 90 Data record, or to executable
-`.agents/` surfaces before duplicate and transition content is removed.
+`scripts/` owners before duplicate and transition content is removed.
 
-`.agents/registry.json`, validated by
-`.agents/contracts/agent-registry.schema.json`, is the sole machine owner for
-role IDs, permission classes, handoff edges, and skill references.
-`.agents/agents/` and `.agents/skills/` are provider-neutral executable
-projections. `.claude/` and `.codex/` contain only provider-native thin
+`docs/00.agent-governance/roles/registry.json`, validated by its adjacent
+`registry.schema.json`, is the sole machine owner for role IDs, permission
+classes, handoff edges, and skill references. Canonical role bodies and skill
+procedures live in Stage 00 `roles/` and `skills/`. `.claude/` and `.codex/` contain only provider-native thin
 adapters and configuration. Stage 99 does not own agent contracts.
 
 Gemini and Antigravity are removed from current governance: `.gemini/`, root
 `GEMINI.md`, Gemini provider notes, contracts, validators, canaries, hooks,
-fixtures, adapter projections, and Gemini/Antigravity-specific meaning in
-`.agents/` must reach zero current consumers before deletion. Historical
+fixtures, adapter projections, and Gemini/Antigravity-specific executable meaning must reach zero current
+consumers before deletion. Historical
 claims are recovered through reachable Git history; current governance does
 not depend on an Archive record.
 
@@ -750,9 +749,9 @@ integration dependencies, not a global scheduling lock:
    prefix-free Architecture, Stage 03 package, and lifecycle activation. Its
    accepted Task and reachable Git evidence are historical inputs, not work
    to regenerate.
-2. **WP-003** entered `in-progress` after WP-004 completed. It converges Stage
-   00 and `.agents/`, retains only Codex/Claude projections, and removes
-   Gemini/Antigravity current surfaces.
+2. **WP-003** originally converged the provider surface after WP-004.
+   SPEC-0072 now owns the remaining Stage 00 source migration, `.agents/`
+   removal, and shared QA transition; prior Task evidence remains historical.
 3. **WP-007** reviews Stage 90 semantic destinations and retires the permanent
    RIA/census control plane under the user-approved research preservation
    boundary.
@@ -802,7 +801,7 @@ rule owners.
 
 `docs/99.templates/registry.json` remains the machine authority for active
 document profiles and normalized top-level lifecycle domains.
-`.agents/registry.json` is the separate machine authority for agent roles,
+`docs/00.agent-governance/roles/registry.json` is the separate machine authority for agent roles,
 permissions, handoffs, and skill references. Current-path, Stage 90, and script
 dispositions live in the executing Task and reviewed diff; they do not form a
 third permanent registry. Sealed Archive evidence remains immutable and is
@@ -819,7 +818,7 @@ The canonical interfaces are:
 
 - `docs/99.templates/registry.json` plus the two Stage 99 contract schemas for
   active document contracts;
-- `.agents/registry.json` plus its schema for the provider-neutral agent
+- `docs/00.agent-governance/roles/registry.json` plus its schema for the provider-neutral agent
   registry;
 - Stage 00 policy and role documents as human governance, with point-in-time
   provider/model evidence owned by Stage 90 Data and execution evidence owned

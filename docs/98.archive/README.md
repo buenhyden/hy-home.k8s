@@ -82,6 +82,9 @@ ArchiveEnvelope.v1 marker 다음 byte부터 EOF까지가 payload다. Closing del
 [MIG-0019](./migrations/0019-requirement-and-architecture-authority-transfer.md)는 이 추가 8개 source의
 현재 의미 승계와 독립 봉인 provenance를 기록한다. 기존 WORK-107 payload와 목록은 수정하지 않는다.
 
+[MIG-0020](./migrations/0020-stage00-agent-registry-authority-transfer.md)는
+retired `.agents/` registry와 schema의 Stage 00 successor 및 Git recovery provenance를 기록한다.
+
 ## Authoring Workflow
 
 1. 현재 authority와 replacement를 먼저 확정하고 원본 경로 제거와 mirrored archive record 생성을 하나의 proposed snapshot으로 준비한다.

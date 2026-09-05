@@ -15,7 +15,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-HOOK_PATH = ROOT / "docs/00.agent-governance/hooks/k8s-pre-edit.sh"
+HOOK_PATH = ROOT / ".claude/hooks/k8s-pre-edit.sh"
 SELECTOR_RELATIVE_PATH = "scripts/select-affected-surfaces.py"
 SAMPLE_DOCUMENT = "docs/01.requirements/README.md"
 

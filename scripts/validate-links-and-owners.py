@@ -355,15 +355,15 @@ OWNER_EXCLUSIONS = (
 RETIRED_REFERENCE_ALIASES = {
     PurePosixPath(
         "docs/00.agent-governance/contracts/agent-role-semantics.json"
-    ): PurePosixPath(".agents/registry.json"),
+    ): PurePosixPath("docs/00.agent-governance/roles/registry.json"),
     PurePosixPath(
         "docs/00.agent-governance/contracts/agent-role-semantics.schema.json"
-    ): PurePosixPath(".agents/contracts/agent-registry.schema.json"),
+    ): PurePosixPath("docs/00.agent-governance/roles/registry.schema.json"),
     PurePosixPath("scripts/validate-agent-role-semantics.py"): PurePosixPath(
-        "scripts/validate-agent-harness-semantics.py"
+        "scripts/validate-agent-governance.py"
     ),
     PurePosixPath("tests/fixtures/agent-role-semantics.json"): PurePosixPath(
-        ".agents/registry.json"
+        "docs/00.agent-governance/roles/registry.json"
     ),
     PurePosixPath(".github/ABOUT.md"): PurePosixPath(".github/repository-surface.md"),
     PurePosixPath(".github/README.md"): PurePosixPath(".github/repository-surface.md"),

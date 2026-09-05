@@ -1,0 +1,393 @@
+{
+  "$schema": "./registry.schema.json",
+  "schema_version": 1,
+  "registry_id": "hy-home.k8s/agents",
+  "providers": [
+    {
+      "id": "claude",
+      "gateway": "CLAUDE.md",
+      "projection_root": ".claude/agents"
+    },
+    {
+      "id": "codex",
+      "gateway": "AGENTS.md",
+      "projection_root": ".codex/agents"
+    }
+  ],
+  "permission_classes": [
+    {
+      "id": "read-only-evidence",
+      "allows_mutation": false,
+      "allows_delegation": false,
+      "external_writes_require_approval": true
+    },
+    {
+      "id": "scoped-authoring",
+      "allows_mutation": true,
+      "allows_delegation": false,
+      "external_writes_require_approval": true
+    },
+    {
+      "id": "orchestration",
+      "allows_mutation": false,
+      "allows_delegation": true,
+      "external_writes_require_approval": true
+    }
+  ],
+  "skills": [
+    {
+      "id": "deployment-strategies",
+      "path": "docs/00.agent-governance/skills/deployment-strategies/SKILL.md"
+    },
+    {
+      "id": "docs-stage-conformance",
+      "path": "docs/00.agent-governance/skills/docs-stage-conformance/SKILL.md"
+    },
+    {
+      "id": "docs-stage-routing",
+      "path": "docs/00.agent-governance/skills/docs-stage-routing/SKILL.md"
+    },
+    {
+      "id": "execution-plan",
+      "path": "docs/00.agent-governance/skills/execution-plan/SKILL.md"
+    },
+    {
+      "id": "gitops-workflow",
+      "path": "docs/00.agent-governance/skills/gitops-workflow/SKILL.md"
+    },
+    {
+      "id": "incident-postmortem",
+      "path": "docs/00.agent-governance/skills/incident-postmortem/SKILL.md"
+    },
+    {
+      "id": "k8s-security-audit",
+      "path": "docs/00.agent-governance/skills/k8s-security-audit/SKILL.md"
+    },
+    {
+      "id": "k8s-validate",
+      "path": "docs/00.agent-governance/skills/k8s-validate/SKILL.md"
+    },
+    {
+      "id": "knowledge-map",
+      "path": "docs/00.agent-governance/skills/knowledge-map/SKILL.md"
+    },
+    {
+      "id": "ops-runbook",
+      "path": "docs/00.agent-governance/skills/ops-runbook/SKILL.md"
+    },
+    {
+      "id": "rca-methodology",
+      "path": "docs/00.agent-governance/skills/rca-methodology/SKILL.md"
+    },
+    {
+      "id": "requirements-to-design",
+      "path": "docs/00.agent-governance/skills/requirements-to-design/SKILL.md"
+    },
+    {
+      "id": "risk-report",
+      "path": "docs/00.agent-governance/skills/risk-report/SKILL.md"
+    },
+    {
+      "id": "task-breakdown",
+      "path": "docs/00.agent-governance/skills/task-breakdown/SKILL.md"
+    },
+    {
+      "id": "vulnerability-patterns",
+      "path": "docs/00.agent-governance/skills/vulnerability-patterns/SKILL.md"
+    },
+    {
+      "id": "workspace-harness-audit",
+      "path": "docs/00.agent-governance/skills/workspace-harness-audit/SKILL.md"
+    }
+  ],
+  "roles": [
+    {
+      "id": "supervisor",
+      "responsibility": "Route bounded work, preserve approval and ownership boundaries, and reconcile final evidence.",
+      "permission_class": "orchestration",
+      "capability_tier_ref": "docs/00.agent-governance/policies/model-selection.md#top",
+      "supported_providers": [
+        "claude",
+        "codex"
+      ],
+      "skill_refs": [
+        "execution-plan",
+        "risk-report",
+        "task-breakdown"
+      ],
+      "handoff_to": [
+        "code-reviewer",
+        "doc-writer",
+        "k8s-implementer",
+        "quality-engineer",
+        "security-auditor"
+      ],
+      "projections": {
+        "neutral": "docs/00.agent-governance/roles/supervisor.md",
+        "claude": ".claude/agents/supervisor.md",
+        "codex": ".codex/agents/supervisor.toml"
+      }
+    },
+    {
+      "id": "code-reviewer",
+      "responsibility": "Review repository changes for correctness, maintainability, regression risk, and policy alignment.",
+      "permission_class": "read-only-evidence",
+      "capability_tier_ref": "docs/00.agent-governance/policies/model-selection.md#worker",
+      "supported_providers": [
+        "claude",
+        "codex"
+      ],
+      "skill_refs": [
+        "risk-report"
+      ],
+      "handoff_to": [
+        "security-auditor",
+        "supervisor"
+      ],
+      "projections": {
+        "neutral": "docs/00.agent-governance/roles/code-reviewer.md",
+        "claude": ".claude/agents/code-reviewer.md",
+        "codex": ".codex/agents/code-reviewer.toml"
+      }
+    },
+    {
+      "id": "doc-writer",
+      "responsibility": "Author governed documentation at the canonical SDLC or common-document owner.",
+      "permission_class": "scoped-authoring",
+      "capability_tier_ref": "docs/00.agent-governance/policies/model-selection.md#worker",
+      "supported_providers": [
+        "claude",
+        "codex"
+      ],
+      "skill_refs": [
+        "docs-stage-conformance",
+        "docs-stage-routing",
+        "requirements-to-design"
+      ],
+      "handoff_to": [
+        "docs-researcher",
+        "supervisor",
+        "wiki-curator"
+      ],
+      "projections": {
+        "neutral": "docs/00.agent-governance/roles/doc-writer.md",
+        "claude": ".claude/agents/doc-writer.md",
+        "codex": ".codex/agents/doc-writer.toml"
+      }
+    },
+    {
+      "id": "gitops-reviewer",
+      "responsibility": "Review GitOps manifests and reconciliation behavior without assuming mutation authority.",
+      "permission_class": "read-only-evidence",
+      "capability_tier_ref": "docs/00.agent-governance/policies/model-selection.md#worker",
+      "supported_providers": [
+        "claude",
+        "codex"
+      ],
+      "skill_refs": [
+        "gitops-workflow",
+        "k8s-validate"
+      ],
+      "handoff_to": [
+        "k8s-implementer",
+        "security-auditor",
+        "supervisor"
+      ],
+      "projections": {
+        "neutral": "docs/00.agent-governance/roles/gitops-reviewer.md",
+        "claude": ".claude/agents/gitops-reviewer.md",
+        "codex": ".codex/agents/gitops-reviewer.toml"
+      }
+    },
+    {
+      "id": "incident-responder",
+      "responsibility": "Triage incidents, bound impact, and produce evidence-based response and corrective-action guidance.",
+      "permission_class": "read-only-evidence",
+      "capability_tier_ref": "docs/00.agent-governance/policies/model-selection.md#top",
+      "supported_providers": [
+        "claude",
+        "codex"
+      ],
+      "skill_refs": [
+        "incident-postmortem",
+        "rca-methodology"
+      ],
+      "handoff_to": [
+        "security-auditor",
+        "k8s-implementer",
+        "supervisor"
+      ],
+      "projections": {
+        "neutral": "docs/00.agent-governance/roles/incident-responder.md",
+        "claude": ".claude/agents/incident-responder.md",
+        "codex": ".codex/agents/incident-responder.toml"
+      }
+    },
+    {
+      "id": "k8s-implementer",
+      "responsibility": "Implement explicitly scoped Kubernetes and GitOps changes and validate the affected reconciliation surface.",
+      "permission_class": "scoped-authoring",
+      "capability_tier_ref": "docs/00.agent-governance/policies/model-selection.md#worker",
+      "supported_providers": [
+        "claude",
+        "codex"
+      ],
+      "skill_refs": [
+        "deployment-strategies",
+        "gitops-workflow",
+        "k8s-validate"
+      ],
+      "handoff_to": [
+        "gitops-reviewer",
+        "security-auditor",
+        "supervisor"
+      ],
+      "projections": {
+        "neutral": "docs/00.agent-governance/roles/k8s-implementer.md",
+        "claude": ".claude/agents/k8s-implementer.md",
+        "codex": ".codex/agents/k8s-implementer.toml"
+      }
+    },
+    {
+      "id": "network-reviewer",
+      "responsibility": "Review cluster networking, ingress, DNS, policy, and isolation behavior from repository evidence.",
+      "permission_class": "read-only-evidence",
+      "capability_tier_ref": "docs/00.agent-governance/policies/model-selection.md#worker",
+      "supported_providers": [
+        "claude",
+        "codex"
+      ],
+      "skill_refs": [
+        "k8s-security-audit",
+        "risk-report"
+      ],
+      "handoff_to": [
+        "security-auditor",
+        "gitops-reviewer",
+        "supervisor"
+      ],
+      "projections": {
+        "neutral": "docs/00.agent-governance/roles/network-reviewer.md",
+        "claude": ".claude/agents/network-reviewer.md",
+        "codex": ".codex/agents/network-reviewer.toml"
+      }
+    },
+    {
+      "id": "observability-reviewer",
+      "responsibility": "Review metrics, logs, alerts, dashboards, and operational observability coverage.",
+      "permission_class": "read-only-evidence",
+      "capability_tier_ref": "docs/00.agent-governance/policies/model-selection.md#worker",
+      "supported_providers": [
+        "claude",
+        "codex"
+      ],
+      "skill_refs": [
+        "ops-runbook",
+        "risk-report"
+      ],
+      "handoff_to": [
+        "gitops-reviewer",
+        "security-auditor",
+        "supervisor"
+      ],
+      "projections": {
+        "neutral": "docs/00.agent-governance/roles/observability-reviewer.md",
+        "claude": ".claude/agents/observability-reviewer.md",
+        "codex": ".codex/agents/observability-reviewer.toml"
+      }
+    },
+    {
+      "id": "security-auditor",
+      "responsibility": "Audit repository changes for secret exposure, privilege escalation, isolation failure, and policy violations.",
+      "permission_class": "read-only-evidence",
+      "capability_tier_ref": "docs/00.agent-governance/policies/model-selection.md#top",
+      "supported_providers": [
+        "claude",
+        "codex"
+      ],
+      "skill_refs": [
+        "k8s-security-audit",
+        "vulnerability-patterns"
+      ],
+      "handoff_to": [
+        "k8s-implementer",
+        "supervisor"
+      ],
+      "projections": {
+        "neutral": "docs/00.agent-governance/roles/security-auditor.md",
+        "claude": ".claude/agents/security-auditor.md",
+        "codex": ".codex/agents/security-auditor.toml"
+      }
+    },
+    {
+      "id": "wiki-curator",
+      "responsibility": "Maintain knowledge navigation and canonical links without creating duplicate policy authority.",
+      "permission_class": "scoped-authoring",
+      "capability_tier_ref": "docs/00.agent-governance/policies/model-selection.md#worker",
+      "supported_providers": [
+        "claude",
+        "codex"
+      ],
+      "skill_refs": [
+        "docs-stage-conformance",
+        "knowledge-map"
+      ],
+      "handoff_to": [
+        "doc-writer",
+        "supervisor"
+      ],
+      "projections": {
+        "neutral": "docs/00.agent-governance/roles/wiki-curator.md",
+        "claude": ".claude/agents/wiki-curator.md",
+        "codex": ".codex/agents/wiki-curator.toml"
+      }
+    },
+    {
+      "id": "docs-researcher",
+      "responsibility": "Collect and classify source evidence for documentation without claiming policy authority.",
+      "permission_class": "read-only-evidence",
+      "capability_tier_ref": "docs/00.agent-governance/policies/model-selection.md#worker",
+      "supported_providers": [
+        "claude",
+        "codex"
+      ],
+      "skill_refs": [
+        "docs-stage-routing",
+        "knowledge-map"
+      ],
+      "handoff_to": [
+        "doc-writer",
+        "supervisor"
+      ],
+      "projections": {
+        "neutral": "docs/00.agent-governance/roles/docs-researcher.md",
+        "claude": ".claude/agents/docs-researcher.md",
+        "codex": ".codex/agents/docs-researcher.toml"
+      }
+    },
+    {
+      "id": "quality-engineer",
+      "responsibility": "Design and run bounded repository validation and report reproducible quality evidence.",
+      "permission_class": "scoped-authoring",
+      "capability_tier_ref": "docs/00.agent-governance/policies/model-selection.md#worker",
+      "supported_providers": [
+        "claude",
+        "codex"
+      ],
+      "skill_refs": [
+        "k8s-validate",
+        "workspace-harness-audit"
+      ],
+      "handoff_to": [
+        "code-reviewer",
+        "security-auditor",
+        "supervisor"
+      ],
+      "projections": {
+        "neutral": "docs/00.agent-governance/roles/quality-engineer.md",
+        "claude": ".claude/agents/quality-engineer.md",
+        "codex": ".codex/agents/quality-engineer.toml"
+      }
+    }
+  ]
+}

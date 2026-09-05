@@ -34,15 +34,24 @@ their shared responsibility and permission meaning.
   authorized delegation through the available runtime mechanism.
 - Read shared skills through `.claude/skills`, a view of the neutral owner.
   File presence alone does not prove native discovery or use.
-- Tracked settings reference shared lifecycle hooks. A hook can enforce a
-  boundary only when the intended runtime actually loads and dispatches it;
-  advisory compaction output is not completion evidence.
+- Tracked settings register only `.claude/hooks/k8s-pre-edit.sh` for pre-action
+  safety. It enforces a boundary only when the intended runtime loads it.
+  Run QA explicitly; edit, Stop, and compaction events do not run whole QA.
 - Keep managed, project, and user instruction precedence intact. Use imports
   for shared context rather than copying policy into provider files.
 - Treat auto-memory and ignored local warning files as auxiliary context, not
   shared policy or a substitute for repository validators.
 - Do not add native metadata fields from assumptions about another client
   version. Verify the intended runtime contract when configuration changes.
+
+Model labels use exact provider IDs to preserve the existing selection:
+Sonnet 4.6 is `claude-sonnet-4-6`, Opus 4.8 is `claude-opus-4-8`,
+and Sonnet 5 is `claude-sonnet-5`. These are configuration intent; actual
+availability and resolution remain separate runtime evidence. The native
+`Task` tool remains a documented alias for `Agent`.
+See [subagent fields](https://code.claude.com/docs/en/sub-agents),
+[model IDs](https://support.claude.com/en/articles/11940350-claude-code-model-configuration),
+and [settings](https://code.claude.com/docs/en/settings).
 
 ## Validation and Refresh
 
@@ -54,6 +63,6 @@ Repository-static or hosted CI results cannot establish runtime success.
 ## Related Documents
 
 - [Claude Baseline](../../../.claude/CLAUDE.md)
-- [Agent Registry](../../../.agents/registry.json)
+- [Agent Registry](../roles/registry.json)
 - [Model Selection](../policies/model-selection.md)
 - [Quality Policy](../policies/quality.md)

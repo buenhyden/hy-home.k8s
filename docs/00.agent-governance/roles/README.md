@@ -11,7 +11,7 @@ updated: "2026-09-04"
 ## Overview
 
 Select the responsibility needed for the task, then resolve the concrete role
-and provider projection from the [agent registry](../../../.agents/registry.json).
+and provider projection from the [agent registry](../roles/registry.json).
 This router is not a duplicate roster or permission inventory.
 
 ## Scope
@@ -28,6 +28,21 @@ task ownership determine permitted actions. A review lens is not write access.
 - [Operations](operations.md): operating knowledge, recovery, and incidents.
 - [Quality](quality.md): reproducible validation and result evidence.
 - [Security](security.md): exposure, privilege, isolation, and unsafe execution.
+
+Canonical role bodies:
+
+- [supervisor](supervisor.md)
+- [code-reviewer](code-reviewer.md)
+- [doc-writer](doc-writer.md)
+- [gitops-reviewer](gitops-reviewer.md)
+- [incident-responder](incident-responder.md)
+- [k8s-implementer](k8s-implementer.md)
+- [network-reviewer](network-reviewer.md)
+- [observability-reviewer](observability-reviewer.md)
+- [security-auditor](security-auditor.md)
+- [wiki-curator](wiki-curator.md)
+- [docs-researcher](docs-researcher.md)
+- [quality-engineer](quality-engineer.md)
 
 ## Add and Find
 

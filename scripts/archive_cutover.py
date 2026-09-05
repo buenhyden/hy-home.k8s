@@ -329,7 +329,7 @@ def _git_paths(root: Path) -> tuple[str, ...]:
 def _tracked_regular_blobs(root: Path) -> Mapping[str, str]:
     """Return stage-zero regular authority paths and index blob identities.
 
-    The corpus is `docs/`, plus the shared `.agents` control plane: a migration
+    The corpus is `docs/`, including the shared Stage 00 control plane: a migration
     may retire a document into that authority, and a terminal target has to be
     verifiable wherever it now lives.
     """
@@ -347,7 +347,6 @@ def _tracked_regular_blobs(root: Path) -> Mapping[str, str]:
                 "-z",
                 "--",
                 "docs",
-                ".agents",
             ],
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
@@ -371,7 +370,7 @@ def _tracked_regular_blobs(root: Path) -> Mapping[str, str]:
             path = raw_path.decode("utf-8")
             pure_path = PurePosixPath(path)
             if (
-                not path.startswith(("docs/", ".agents/"))
+                not path.startswith("docs/")
                 or "\\" in path
                 or any(
                     ord(character) < 32 or ord(character) == 127 for character in path
@@ -468,7 +467,9 @@ def _later_ledger_edges(
             target = (
                 row.get("stable_path") if action == "moved" else row.get("replacement")
             )
-            if not isinstance(legacy, str) or not legacy.startswith("docs/"):
+            if not isinstance(legacy, str) or not legacy.startswith(
+                ("docs/", ".agents/")
+            ):
                 continue
             if action == "deleted" and target is None:
                 retired.add(legacy)

@@ -96,7 +96,7 @@ hy-home.k8s/
 3. 새 README나 authored stage 문서는 [Template Routing Contract](docs/99.templates/README.md)에서 target pattern을 확인한 뒤 matching template에서 시작한다.
 4. 문서 링크는 상대 경로를 사용하고, 사람 대상 README는 한국어를 유지한다.
 5. `docs/00.agent-governance/*`는 영어로 유지하며, 게이트웨이 파일에는 규칙을 중복 복사하지 않는다.
-6. README 파일은 기본적으로 frontmatter를 요구하지 않는다. PRD/AD/ADR/Spec/Plan/Task/Guide/Operations Policy/Runbook/Incident/Postmortem/Reference 같은 authored stage 문서는 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
+6. README와 authored 문서는 Stage 99 registry의 해당 profile에 정의된 frontmatter를 따른다. Governed README는 routing envelope를 사용하며 artifact ID나 문서 생명주기를 별도로 갖지 않는다. Claude Markdown·Codex TOML 같은 네이티브 설정에는 각 실행 환경의 형식을 적용한다.
 7. 문서 체계나 템플릿을 바꾸면 [`docs/README.md`](docs/README.md), 해당 stage README, [Template Routing Contract](docs/99.templates/README.md), [`docs/99.templates/README.md`](docs/99.templates/README.md), 생성 문서 적용 범위를 같은 변경에서 점검한다.
 8. 브랜치 전략은 `main` 중심 PR flow를 기본으로 하며, 상세 규칙은 [`docs/00.agent-governance/policies/git.md`](docs/00.agent-governance/policies/git.md)를 따른다.
 9. 인프라 변경은 GitOps-first로 다룬다. 일반 변경에서 live cluster mutation, `kubectl apply`, 외부 Vault 조작을 도입하지 않는다.

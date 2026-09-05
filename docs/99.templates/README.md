@@ -50,7 +50,7 @@ Profile ID는 같은 사실을 `<family>/<kind>`로 표현한다.
   runtime-governance forms cover their named runtime surfaces. Registry
   profiles own each router's exact path, fixed "type"/"status", optional
   "layer", and heading contract.
-- **Governance forms** (`governance/`): Stage 00의 여섯 owner kind에 각각
+- **Governance forms** (`governance/`): Stage 00의 다섯 owner kind에 각각
   `contract`, `provider`, `role`, `rule`, `skill` form이 대응한다.
   `governance/*` profile은 `artifact_id`를 선언하지 않는다.
 - **Core SDLC forms**: `requirements/requirement-package`,
@@ -72,7 +72,8 @@ Profile ID는 같은 사실을 `<family>/<kind>`로 표현한다.
   Claude는 `claude-agent.template.md`, Codex는 `codex-agent.template.toml`이며
   두 form은 provider 소유 key(`name`/`description`/`model`/
   `model_reasoning_effort`/`tools`)만 가지고 guided 문서 key는 갖지 않는다.
-  provider-neutral `.agents/`는 binding이 아니므로 form을 갖지 않는다.
+  Stage 00 `skills/<id>/SKILL.md`는 `common/native-skill-package` native
+  profile로 분류하며 `name`/`description` metadata를 유지한다.
 
 현재 physical form의 전체 목록과 각각의 소유 profile은 README나 support prose가
 아니라 registry와 repository quality gate에서 계산한다.

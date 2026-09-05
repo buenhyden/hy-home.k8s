@@ -41,7 +41,7 @@ from document_lifecycle import (  # noqa: E402
     _archive_creation_evidence,
     document_from_text,
 )
-from test_archive_recovery import GitFixture  # noqa: E402
+from tests.test_archive_recovery import GitFixture  # noqa: E402
 
 
 class ArchiveDispositionRoutesTest(unittest.TestCase):

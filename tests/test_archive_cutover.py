@@ -562,6 +562,25 @@ class ArchiveCutoverTest(unittest.TestCase):
         # ArchiveValidationTest.test_mig0004_accepts_canonical_non_terminal_row_growth,
         # which exercises the production semantic validator before projection.
 
+    def test_later_ledger_composes_sealed_stage00_agent_successors(self) -> None:
+        """A sealed retired-root transfer composes to its tracked Stage 00 owner."""
+
+        later_edges, later_retired = archive_cutover._later_ledger_edges(
+            ROOT,
+            archive_cutover._tracked_regular_blobs(ROOT),
+            "fixture",
+        )
+
+        self.assertEqual(
+            later_edges[".agents/registry.json"],
+            "docs/00.agent-governance/roles/registry.json",
+        )
+        self.assertEqual(
+            later_edges[".agents/contracts/agent-registry.schema.json"],
+            "docs/00.agent-governance/roles/registry.schema.json",
+        )
+        self.assertNotIn(".agents/registry.json", later_retired)
+
     def test_work054_pinned_mig0002_and_mig0003_reject_any_byte_drift(self) -> None:
         original_reader = archive_cutover.read_worktree_regular_bounded
 

@@ -31,8 +31,9 @@ resolution or tool enforcement.
 
 - Use `.codex/agents/*.toml` projections selected by the neutral registry when
   authorized delegation and the current runtime mechanism are available.
-- Read shared skills through `.codex/skills`, a view of the neutral owner.
-  File presence is not evidence of native skill discovery.
+- Explicitly read required `docs/00.agent-governance/skills/<id>/SKILL.md`
+  procedures selected by the role. Root AGENTS and native role instructions
+  require these reads; they do not register native skills.
 - Use native sandbox and approval controls; do not treat a custom hook file as
   a permission or completion gate.
 - Unsupported custom hook graphs are not a Codex execution surface. Run
@@ -53,6 +54,6 @@ repository-static PASS establishes none of them.
 ## Related Documents
 
 - [Codex Baseline](../../../.codex/CODEX.md)
-- [Agent Registry](../../../.agents/registry.json)
+- [Agent Registry](../roles/registry.json)
 - [Model Selection](../policies/model-selection.md)
 - [Quality Policy](../policies/quality.md)

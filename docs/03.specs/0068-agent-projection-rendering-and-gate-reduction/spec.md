@@ -2,9 +2,9 @@
 title: "Agent Projection Rendering and Gate Reduction Technical Specification"
 version: "1.0.0"
 type: "sdlc/spec"
-status: "draft"
+status: "superseded"
 owner: "platform"
-updated: "2026-09-02"
+updated: "2026-09-05"
 layer: "specs"
 artifact_id: "SPEC-0068"
 ---
@@ -12,6 +12,12 @@ artifact_id: "SPEC-0068"
 # Agent Projection Rendering and Gate Reduction Technical Specification (Spec)
 
 ## Overview
+
+**Superseded proposal (2026-09-05).** [SPEC-0072](../0072-agent-governance-and-quality-gate-consolidation/spec.md)
+owns the current implementation and acceptance criteria. The proposal to retain `.agents/` and add a projection renderer is replaced by Stage 00 authority and explicit native references.
+The remaining text records the earlier proposal, not current instructions or
+proof that it was implemented. Original bytes are recoverable from commit
+`bb73116b7b09c4f257fc81baa12cfa8359495fc0` at this same path.
 
 Twelve agent roles are declared once in `.agents/registry.json` and then written
 out three times by hand: a provider-neutral body under `.agents/agents/`, a

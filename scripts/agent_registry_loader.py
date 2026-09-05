@@ -9,7 +9,7 @@ from pathlib import Path
 from types import ModuleType
 
 
-TERMINAL_VALIDATOR = Path(__file__).with_name("validate-agent-harness-contract.py")
+TERMINAL_VALIDATOR = Path(__file__).with_name("validate-agent-governance.py")
 
 
 def load_terminal_validator() -> ModuleType:

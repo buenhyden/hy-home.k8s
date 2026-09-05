@@ -11,6 +11,7 @@ import json
 import math
 import os
 import pwd
+import re
 import select
 import selectors
 import signal
@@ -300,6 +301,43 @@ def closed_subprocess_environment() -> dict[str, str]:
         "PYTHONNOUSERSITE": "1",
         "TZ": "UTC",
     }
+
+
+def resolve_tool(token: str, root: Path) -> str | None:
+    """Preserve the invoking Python and ignore ambient PATH for other tools."""
+    if token == "python3":
+        return os.path.abspath(sys.executable)
+    found = shutil.which(token, path=trusted_search_path())
+    if found is not None:
+        return os.path.abspath(found)
+    if token != "pre-commit":
+        return None
+    account = pwd.getpwuid(os.geteuid())
+    home = Path(account.pw_dir)
+    candidates = (Path(sys.executable).parent / token, home / ".local/bin" / token)
+    for candidate in candidates:
+        if not candidate.is_absolute() or candidate.is_relative_to(root):
+            continue
+        # An exact account-owned executable is permitted; no caller PATH search.
+        try:
+            chain = (candidate.parent, *candidate.parent.parents)
+            if any((d.stat().st_mode & 0o022) or d.stat().st_uid not in (0, account.pw_uid) for d in chain):
+                continue
+            metadata = candidate.lstat()
+            if stat.S_ISREG(metadata.st_mode) and metadata.st_uid in (0, account.pw_uid) and not metadata.st_mode & 0o022 and os.access(candidate, os.X_OK):
+                return str(candidate)
+        except OSError:
+            continue
+    return None
+
+
+def failure_snippet(completed: BoundedCommandResult) -> str:
+    """Escape bounded diagnostics and redact common secret-bearing fields."""
+    payload = (completed.stderr.retained or completed.stdout.retained).decode("utf-8", errors="replace")
+    payload = re.sub(r"(?is)-----BEGIN [^-]*PRIVATE KEY-----.*?(?:-----END [^-]*PRIVATE KEY-----|$)", "[REDACTED KEY]", payload)
+    payload = re.sub(r"(?i)(authorization|password|passwd|token|secret|api[_-]?key)([\s\"']*[:=][\s\"']*|\s+)([^\s,;]+)", r"\1=[REDACTED]", payload)
+    payload = re.sub(r"\b(?:gh[pousr]_[A-Za-z0-9_]+|github_pat_[A-Za-z0-9_]+|sk-[A-Za-z0-9_-]+)\b", "[REDACTED]", payload)
+    return encoded(payload[:1024])
 
 
 def exact_success_marker_count(stdout: str | bytes, marker: str) -> int:
@@ -1207,9 +1245,12 @@ def run_selected(
     paths: Sequence[str],
     contract: dict[str, Any],
     contract_module: Any,
+    *,
+    validator_ids: Sequence[str] | None = None,
+    base_ref: str | None = None,
 ) -> int:
     scope = f"{lane}:paths={len(paths)}"
-    if not paths:
+    if not paths and validator_ids is None:
         print(
             result_line(
                 "SKIP",
@@ -1223,8 +1264,8 @@ def run_selected(
         )
         return 0
 
-    selected = contract_module.select_paths(contract, paths, lane, root)
-    if lane == "all-files":
+    selected = ({"validators": list(validator_ids)} if validator_ids is not None else contract_module.select_paths(contract, paths, lane, root))
+    if lane == "all-files" and validator_ids is None:
         selected["validators"] = sorted(
             row["id"] for row in contract["validators"] if lane in row["lanes"]
         )
@@ -1251,6 +1292,8 @@ def run_selected(
     for identifier in selected["validators"]:
         validator = validators[identifier]
         argv = validator_argv(root, lane, paths, validator, contract, contract_module)
+        if identifier == "gitops-change-set" and base_ref is not None:
+            argv[argv.index("--base-ref") + 1] = base_ref
         tool_token = argv[0]
         evidence = validator["evidenceLane"]
         if evidence == "remote/live":
@@ -1267,7 +1310,7 @@ def run_selected(
             )
             continue
 
-        resolved_tool = shutil.which(tool_token, path=subprocess_environment["PATH"])
+        resolved_tool = resolve_tool(tool_token, root)
         if resolved_tool is None:
             fallback = validator["fallback"]
             if validator["optional"]:
@@ -1308,13 +1351,18 @@ def run_selected(
             failed = True
             continue
 
-        tool = Path(resolved_tool).resolve(strict=True).as_posix()
+        tool = os.path.abspath(resolved_tool)
         argv[0] = tool
 
+        child_environment = dict(subprocess_environment)
+        if identifier == "pre-commit":
+            # Use the account cache location, never ambient HOME or startup state.
+            account_home = Path(pwd.getpwuid(os.geteuid()).pw_dir)
+            child_environment["PRE_COMMIT_HOME"] = str(account_home / ".cache/pre-commit")
         completed = run_bounded_command(
             argv,
             cwd=root,
-            env=subprocess_environment,
+            env=child_environment,
         )
         marker = QUALITY_SUCCESS_MARKER if identifier == "repository-quality" else None
         marker_count = (
@@ -1330,6 +1378,8 @@ def run_selected(
         )
         status = "PASS" if passed else "FAIL"
         limitation = observation(completed)
+        if not passed:
+            limitation += ";diagnostic=" + failure_snippet(completed)
         if marker is not None:
             rendered_marker_count = (
                 "unavailable" if marker_count is None else str(marker_count)

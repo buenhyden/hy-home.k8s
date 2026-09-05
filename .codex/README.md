@@ -11,7 +11,7 @@ updated: "2026-09-04"
 ## Overview
 
 `.codex/` is the projection surface the Codex runtime reads. The shared
-meaning of roles and skills belongs to [`.agents/`](../.agents/README.md);
+meaning of roles and skills belongs to [Stage 00](../docs/00.agent-governance/README.md);
 this directory expresses that meaning in the Codex TOML agent format and in a
 thin local baseline.
 
@@ -31,11 +31,11 @@ effort ran. Each of those needs separate runtime evidence.
 
 - The Codex local baseline (`CODEX.md`)
 - Per-role native projections (`agents/*.toml`)
-- The shared skill view (`skills` symlink)
+- Explicit Stage 00 procedure reads from root AGENTS and role instructions
 
 #### Out of Scope
 
-- Shared role and skill definitions, owned by `.agents/registry.json`
+- Shared role and skill definitions, owned by `docs/00.agent-governance/roles/registry.json`
 - Execution policy, approval boundaries, and quality lanes, owned by `docs/00.agent-governance/policies/`
 - Evidence of native discovery, permission enforcement, authentication, model resolution, or execution
 
@@ -45,12 +45,10 @@ effort ran. Each of those needs separate runtime evidence.
 | --- | --- |
 | `CODEX.md` | Thin local baseline stating loading order and provider metadata |
 | `agents/*.toml` | Native projections of the 12 roles, carrying `name`, `description`, `model`, `model_reasoning_effort`, and `developer_instructions` |
-| `skills` | Symlink to `../.agents/skills`. Skill bodies are not edited here |
 
-Each `developer_instructions` block covers runtime bootstrap, role, when to
-use, inputs, outputs, guardrails, capability and evidence, handoff, and
-postflight in that order. Wording may differ from the Claude projection, but
-the meaning is the one the registry owns.
+Each `developer_instructions` block directly references the canonical role,
+registry, lifecycle, and required skill procedures. These are explicit reads;
+no repository Codex skill registration or projection generator is provided.
 
 ## Configuration Boundary
 
@@ -64,25 +62,20 @@ the meaning is the one the registry owns.
 
 ## Validation
 
-| Validator | Checks |
-| --- | --- |
-| `agent-harness-contract` | Registry and this projection carry the same meaning |
-| `agent-provider-evidence` | What a provider surface is allowed to claim |
-| `agent-governance-ci` | Governance surfaces agree with the CI contract |
-| `agent-legacy-cutover` | No retired role or path reference remains |
-
-Run: `bash scripts/validate-repo-quality-gates.sh .`
+Run `python3 scripts/validate-agent-governance.py --root .` for the registry,
+native metadata, direct role/procedure reads, permissions, and retired consumers.
+Run `python3 scripts/qa.py full` for complete repository-static validation.
 
 Tracked files under this directory stay English-only; `repository-quality`
 enforces that.
 
 ## Operations
 
-- Changing a role means updating `.agents/registry.json`,
-  `.agents/agents/<role>.md`, `.claude/agents/<role>.md`, and
+- Changing a role means updating `docs/00.agent-governance/roles/registry.json`,
+  `docs/00.agent-governance/roles/<role>.md`, `.claude/agents/<role>.md`, and
   `.codex/agents/<role>.toml` in one change. Updating one side alone fails
   provider parity validation.
-- Edit skill bodies under `.agents/skills/`.
+- Edit skill bodies under `docs/00.agent-governance/skills/`.
 - Do not write new policy sentences into `developer_instructions`; reference
   the canonical document instead.
 
@@ -90,6 +83,6 @@ enforces that.
 
 - [Codex Provider Notes](../docs/00.agent-governance/providers/codex.md)
 - [Codex Local Baseline](CODEX.md)
-- [Agent Registry](../.agents/README.md)
+- [Agent Registry](../docs/00.agent-governance/roles/registry.json)
 - [Model Selection Policy](../docs/00.agent-governance/policies/model-selection.md)
 - [Work Lifecycle](../docs/00.agent-governance/skills/work-lifecycle.md)

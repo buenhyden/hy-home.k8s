@@ -27,18 +27,13 @@ because it describes the repository's automation surface rather than the
 ## Policy Routing
 
 - Branch strategy policy lives in `docs/00.agent-governance/policies/git.md`.
-- CI enforcement lives in `workflows/ci.yml`, `scripts/validate-repo-quality-gates.sh`, and the `manifest-static` script bundle.
-- The four validation jobs select Python 3.12, resolve the three direct pins
-  owned by `requirements/ci-validation.in` through the fully hashed
-  `requirements/ci-validation.txt` lock, and install it with hash checking and
-  binary-only enforcement; `pre-commit` and
-  `repo-quality-static` separately install the official Gitleaks `8.30.0`
-  Linux x64 asset after verifying its recorded SHA-256. `pre-commit`,
-  `repo-quality-static`, and `agent-governance-static` use full checkout
-  history, and `pre-commit` runs the explicit all-files/show-diff command. The
-  network-free contract validator reconciles those workflow settings with the
-  executable input/lock owners, frozen pre-commit revisions, and technology
-  inventory.
+- CI enforcement lives in `workflows/ci.yml` and `scripts/qa.py`; the validation
+  registry owns logical gates shared with local QA.
+- One QA job selects Python 3.12, installs the fully hashed binary-only lock
+  from `requirements/ci-validation.txt`, verifies the recorded Gitleaks asset,
+  and validates the immutable event checkout with full history. Pre-commit and
+  unit discovery execute once inside the full/ci profile. Their settings remain
+  owned by the lock, pre-commit configuration, and execution registry.
 - The sole canonical local completion-order, lane, result, formatter, and
   handoff owner is
   [`quality-standards.md`](../docs/00.agent-governance/policies/quality.md);
@@ -47,7 +42,7 @@ because it describes the repository's automation surface rather than the
   [`scripts/README.md`](../scripts/README.md) and
   [`tests/README.md`](../tests/README.md); this hub does not duplicate their
   counts.
-- ARWB-003 records its 31-record/202-link full cutover proof as explicit local/manual evidence, so `repo-quality-static` does not invoke that separate proof. The blocking ACER migration validator does classify its additive archive payloads with the exact security-validated Gitleaks executable supplied to the closed lane.
+- ARWB-003 records its 31-record/202-link full cutover proof as explicit local/manual evidence, so the common QA profile does not invoke that separate proof. The blocking ACER migration validator does classify its additive archive payloads with the exact security-validated Gitleaks executable supplied to the closed lane.
 - `ci.yml` validates pull request shape; GitHub branch protection/rulesets enforce direct-push restrictions outside repo-local files.
 - PR author and reviewer prompts live in `PULL_REQUEST_TEMPLATE.md`.
 - CI Python dependency identity lives in `.github/requirements/ci-validation.txt`;
@@ -71,7 +66,7 @@ because it describes the repository's automation surface rather than the
 
 | Workflow | Role | Trigger / scope | Required evidence | Boundary |
 | --- | --- | --- | --- | --- |
-| `ci.yml` | Required QA gate for branch policy, repo-quality, agent-governance, manifest, secret, and policy checks. | Runs on `push`, `pull_request`, and `workflow_dispatch` for `main`-centered integration. | `ci-summary` aggregates `branch-policy`, `changes`, `pre-commit`, `repo-quality-static`, `agent-governance-static`, and `manifest-static`; all validation jobs use the shared fully hashed Linux/CPython 3.12 lock with binary-only/hash-required installation, the two repository-quality consumers verify and install Gitleaks `8.30.0`, the three history-dependent jobs use full history, pre-commit performs explicit all-files/show-diff execution from frozen hook commits, the agent lane validates harness semantics and legacy cutover, and manifest-static runs GitOps, manifest, secret, and policy scripts. | No deploy CD, direct Kubernetes mutation, external Vault mutation, container publish, or commit push. |
+| `ci.yml` | Required QA gate for branch policy, repo-quality, agent-governance, manifest, secret, and policy checks. | Runs on `push`, `pull_request`, and `workflow_dispatch` for `main`-centered integration. | `ci-summary` aggregates `branch-policy` and the single `qa` job; QA prepares its locked dependencies once and executes the shared ci profile on an immutable checkout with full history. | No deploy CD, direct Kubernetes mutation, external Vault mutation, container publish, or commit push. |
 | `generate-changelog.yml` | Release-evidence artifact generator. | Runs for release tag evidence and manual release support. | Produces a `CHANGELOG.md` artifact retained for exactly seven days for review. | Does not commit, push, publish, or mutate repository history. |
 | `greetings.yml` | Repository maintenance greeting automation. | Runs on issue or PR intake events. | Posts onboarding guidance only. | Not a QA gate, not a reviewer approval, and not deployment automation. |
 | `labeler.yml` | Repository maintenance labeling automation. | Runs on pull request path changes. | Applies labels from `.github/labeler.yml`. | Not a QA gate and must not replace CODEOWNERS or human review. |

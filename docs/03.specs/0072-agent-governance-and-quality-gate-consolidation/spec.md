@@ -22,8 +22,9 @@ Actions environments.
 
 Authorized scope includes `.github/`, `docs/00.agent-governance/`, `.claude/`,
 `.codex/`, root gateways, current SDLC owners, QA scripts, tests, fixtures,
-templates, and current operations guidance. Closed or archived records are
-changed only when they are incorrectly consumed as current authority.
+templates, and current operations guidance. Historical and in-progress records are reviewed for conflicting current
+authority. Preserve historical facts and valid archive isolation; replace or
+retire obsolete instructions with their consumers and recovery evidence.
 
 No live infrastructure, provider, credential, release, deployment, or Argo CD
 reconciliation operation is authorized. Historical evidence is not rewritten
@@ -55,16 +56,21 @@ to simulate a timeless repository state.
 
 ## Core Design
 
-Stage 00 gains `registry.json`, an adjacent schema, concrete role documents,
-and the shared skill directories formerly stored under `.agents/`. Provider
-skill symlinks target Stage 00. Root and provider gateways load the Stage 00
-registry and relevant responsibility directly.
+Stage 00 roles owns the shared `roles/registry.json`, its schema and concrete
+role bodies. Stage 00 skills owns shared native skill packages with `SKILL.md`
+metadata and assets. Claude may expose these through its supported skill
+adapter. Codex uses explicit reads from root AGENTS and role instructions;
+this is not automatic native skill registration. Native role bodies reference
+canonical responsibilities directly, so no projection framework is introduced.
 
-`scripts/qa.py` reads `scripts/qa/registry.json`. Profiles are ordered lists of
-gate IDs; gates own an argv, timeout, execution environments, and optional
-working directory. The runner validates the registry, rejects duplicate gate
-execution in one profile, executes without a shell, streams child output, and
-returns non-zero on the first blocking failure while still printing a summary.
+`scripts/qa.py` selects gate IDs from the existing validation registry. The
+existing registry remains the sole argv and execution-configuration owner;
+profiles introduce no second gate definitions. The bounded runner retains its
+time, stdout/stderr and descendant/pipe cleanup guarantees. QA validates
+selection before running children, rejects duplicate IDs and nested aggregate
+recursion, and emits bounded redacted error summaries plus non-zero status.
+The invoking Python environment is preserved without inheriting arbitrary
+startup variables or caller-controlled search paths.
 
 The supported profiles are:
 
@@ -87,9 +93,9 @@ projection paths. Paths are repository-relative POSIX strings. Provider model
 and tool metadata stay in native projection files because they are provider
 configuration, not shared policy.
 
-The QA registry is versioned JSON. It contains `schemaVersion`, `profiles`, and
-`gates`. No corpus counts, mutable commit SHAs, runtime observations, or copied
-policy prose are stored in either registry.
+The existing validation registry remains versioned JSON. QA profile records
+contain ordered gate IDs only. They never duplicate command arguments,
+timeouts, mutable commit SHAs, runtime observations or copied policy prose.
 
 ## Interfaces & Data Structures
 
@@ -100,18 +106,20 @@ python3 scripts/qa.py ci
 python3 scripts/qa.py --list
 ```
 
-A gate object has `id`, `argv`, `timeoutSeconds`, and `environments`. A profile
-contains an ordered `gates` array. The runner accepts only known profiles and
-rejects duplicate IDs, empty argv arrays, non-positive timeouts, unknown gate
-references, and a gate not admitted to the selected environment.
+Gate definitions retain the existing validation schema and one owner for
+commands and execution limits. QA rejects unknown profiles/gates, duplicate
+IDs, empty command arrays, invalid limits and inadmissible evidence lanes.
+`quick` selects changed working-tree paths; staged validation reads the actual
+index in a separate snapshot without hiding staged errors behind unstaged
+repairs. NUL-delimited paths preserve deletions, renames and whitespace.
 
 ## Edge Cases & Error Handling
 
-Paths with spaces remain individual argv elements. Commands are resolved from
-the current environment without shell interpolation. Interruptions terminate
-the active child and return failure. An unavailable optional external tool is
-handled inside its owning pre-commit hook or focused validator; the QA runner
-does not convert a required command into a pass.
+Paths with spaces remain individual argv elements. Commands use validated absolute executable paths and the selected Python
+interpreter without shell interpolation or unfiltered environment inheritance. Interruptions terminate
+the active child and return failure. A missing required tool or module fails closed. SKIP is reserved for an
+inapplicable or explicitly optional check; missing authorization/environment
+for required external evidence is DEFER and cannot satisfy overall completion.
 
 A provider projection may remain tracked when the provider supports that native
 format, but its common responsibility and skill meaning must resolve to Stage
@@ -136,8 +144,8 @@ python3 -m unittest tests.test_qa_runner tests.test_agent_governance
 python3 scripts/qa.py --list
 python3 scripts/qa.py quick
 python3 scripts/qa.py full
-python3 scripts/qa.py ci
-pre-commit run --all-files --show-diff-on-failure
+# ci is membership-equivalent to full; do not repeat the same suite locally.
+# pre-commit is owned by full and is not invoked a second time on unchanged bytes.
 ```
 
 GitHub Actions provides hosted evidence for the same `ci` profile. No command in

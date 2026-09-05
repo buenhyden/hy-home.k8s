@@ -10,8 +10,9 @@ updated: "2026-09-04"
 
 ## Overview
 
-Stage 00 owns human governance for agent work in this GitOps workspace.
-Codex and Claude are the supported providers; `.agents/` is provider-neutral.
+Stage 00 owns common governance, role metadata, and reusable procedures for
+agent work in this GitOps workspace. Codex and Claude are the supported
+providers; their repository directories contain native adapters.
 
 ## Stage Contract
 
@@ -22,14 +23,14 @@ Codex and Claude are the supported providers; `.agents/` is provider-neutral.
 - `skills/`: reusable governance procedures and their approval boundary.
 - `sdlc.md`: Requirements → Architecture → Spec → Implementation → Operations.
 
-The [agent registry](../../.agents/registry.json) owns exact role IDs,
+The [agent registry](roles/registry.json) owns exact role IDs,
 permissions, handoffs, skill references, and projection paths. The
 [Stage 99 registry](../99.templates/registry.json) owns document contracts.
 Scripts own executable checks; neither registry is duplicated in this router.
 
-Shared hooks and the remaining contracts still have explicit migration owners
-in Spec 0054. They are transitional executable consumers, not additional human
-policy owners. [Context and memory](policies/context-and-memory.md) owns the
+The Claude write-boundary hook is a native adapter under `.claude/hooks/`.
+Quality checks run through the validation registry; routine tool calls do not
+replay whole-repository QA. [Context and memory](policies/context-and-memory.md) owns the
 progress and memory boundary; the `memory/` directory retired under
 [MIG-0009](../98.archive/migrations/0009-governance-memory-retirement.md).
 
@@ -76,7 +77,7 @@ progress and memory boundary; the `memory/` directory retired under
 ## Related Documents
 
 - [SDLC Flow](sdlc.md)
-- [Agent Registry](../../.agents/registry.json)
+- [Agent Registry](roles/registry.json)
 - [Roles router](roles/README.md) selects responsibilities without copying the
   machine roster.
 - [Templates](../99.templates/README.md)

@@ -33,7 +33,7 @@
     },
     {
       "name": "shared-agent",
-      "path": ".agents/agents/supervisor.md",
+      "path": "docs/00.agent-governance/roles/supervisor.md",
       "expectedSurface": "agent-shared"
     },
     {
@@ -128,8 +128,7 @@
       ],
       "expected": {
         "validators": [
-          "agent-governance-ci",
-          "agent-legacy-cutover",
+          "agent-governance",
           "document-contract-registry",
           "document-lifecycle",
           "links-and-owners",
@@ -150,15 +149,11 @@
       "lane": "affected",
       "paths": [
         "AGENTS.md",
-        ".agents/agents/supervisor.md"
+        "docs/00.agent-governance/roles/supervisor.md"
       ],
       "expected": {
         "validators": [
-          "agent-governance-ci",
-          "agent-harness-contract",
-          "agent-legacy-cutover",
-          "agent-loop-lifecycle",
-          "agent-provider-evidence",
+          "agent-governance",
           "document-contract-registry",
           "document-lifecycle",
           "links-and-owners",
@@ -178,14 +173,11 @@
       "name": "agent-registry",
       "lane": "affected",
       "paths": [
-        ".agents/registry.json"
+        "docs/00.agent-governance/roles/registry.json"
       ],
       "expected": {
         "validators": [
-          "agent-governance-ci",
-          "agent-harness-contract",
-          "agent-legacy-cutover",
-          "agent-loop-lifecycle",
+          "agent-governance",
           "document-contract-registry",
           "document-lifecycle",
           "links-and-owners",
@@ -205,16 +197,12 @@
       "name": "agent-loop-checkpoint-contracts",
       "lane": "affected",
       "paths": [
-        "docs/00.agent-governance/contracts/agent-loop-lifecycle.json",
-        "scripts/validate-agent-checkpoint.py"
+        "docs/00.agent-governance/roles/registry.json",
+        "scripts/validate-agent-governance.py"
       ],
       "expected": {
         "validators": [
-          "agent-governance-ci",
-          "agent-harness-contract",
-          "agent-legacy-cutover",
-          "agent-loop-lifecycle",
-          "agent-provider-evidence",
+          "agent-governance",
           "document-contract-registry",
           "document-lifecycle",
           "gitops-structure",
@@ -244,8 +232,7 @@
       ],
       "expected": {
         "validators": [
-          "agent-governance-ci",
-          "agent-legacy-cutover",
+          "agent-governance",
           "repository-quality"
         ],
         "ciJobs": [
@@ -265,8 +252,7 @@
       ],
       "expected": {
         "validators": [
-          "agent-governance-ci",
-          "agent-legacy-cutover",
+          "agent-governance",
           "repository-quality"
         ],
         "ciJobs": [
@@ -286,8 +272,7 @@
       ],
       "expected": {
         "validators": [
-          "agent-governance-ci",
-          "agent-legacy-cutover",
+          "agent-governance",
           "document-contract-registry",
           "document-lifecycle",
           "links-and-owners",
@@ -315,8 +300,7 @@
       ],
       "expected": {
         "validators": [
-          "agent-governance-ci",
-          "agent-legacy-cutover",
+          "agent-governance",
           "document-contract-registry",
           "document-lifecycle",
           "links-and-owners",
@@ -336,15 +320,11 @@
       "name": "agent-governance-scripts",
       "lane": "ci",
       "paths": [
-        "scripts/validate-agent-governance-ci.py"
+        "scripts/validate-agent-governance.py"
       ],
       "expected": {
         "validators": [
-          "agent-governance-ci",
-          "agent-harness-contract",
-          "agent-legacy-cutover",
-          "agent-loop-lifecycle",
-          "agent-provider-evidence",
+          "agent-governance",
           "gitops-structure",
           "infrastructure-contracts",
           "k8s-manifests",
@@ -370,11 +350,7 @@
       ],
       "expected": {
         "validators": [
-          "agent-governance-ci",
-          "agent-harness-contract",
-          "agent-legacy-cutover",
-          "agent-loop-lifecycle",
-          "agent-provider-evidence",
+          "agent-governance",
           "repository-quality"
         ],
         "ciJobs": [
@@ -420,7 +396,7 @@
         "AGENTS.md",
         "docs/00.agent-governance/rules/bootstrap.md",
         "docs/99.templates/registry.json",
-        ".agents/agents/supervisor.md",
+        "docs/00.agent-governance/roles/supervisor.md",
         ".claude/agents/supervisor.md",
         ".codex/agents/supervisor.toml",
         ".github/workflows/ci.yml",
@@ -434,11 +410,7 @@
       ],
       "expected": {
         "validators": [
-          "agent-governance-ci",
-          "agent-harness-contract",
-          "agent-legacy-cutover",
-          "agent-loop-lifecycle",
-          "agent-provider-evidence",
+          "agent-governance",
           "document-contract-registry",
           "document-lifecycle",
           "gitops-change-set",
@@ -473,11 +445,7 @@
       ],
       "expected": {
         "validators": [
-          "agent-governance-ci",
-          "agent-harness-contract",
-          "agent-legacy-cutover",
-          "agent-loop-lifecycle",
-          "agent-provider-evidence",
+          "agent-governance",
           "document-contract-registry",
           "document-lifecycle",
           "gitops-structure",
@@ -529,8 +497,7 @@
       ],
       "expected": {
         "validators": [
-          "agent-governance-ci",
-          "agent-legacy-cutover",
+          "agent-governance",
           "repository-quality"
         ],
         "ciJobs": [
@@ -566,14 +533,11 @@
       "name": "hook-agent",
       "lane": "affected",
       "paths": [
-        ".agents/agents/network-reviewer.md"
+        "docs/00.agent-governance/roles/network-reviewer.md"
       ],
       "expected": {
         "validators": [
-          "agent-governance-ci",
-          "agent-harness-contract",
-          "agent-legacy-cutover",
-          "agent-loop-lifecycle",
+          "agent-governance",
           "document-contract-registry",
           "document-lifecycle",
           "links-and-owners",
@@ -610,8 +574,7 @@
       ],
       "expected": {
         "validators": [
-          "agent-governance-ci",
-          "agent-legacy-cutover",
+          "agent-governance",
           "document-contract-registry",
           "document-lifecycle",
           "links-and-owners",
@@ -636,7 +599,7 @@
       "paths": [
         "docs/98.archive/completed/03.specs/0031-affected-surface-agent-qa/spec.md",
         "_workspace/README.md",
-        ".agents/agents/supervisor.md",
+        "docs/00.agent-governance/roles/supervisor.md",
         "docs/99.templates/registry.json",
         ".github/workflows/ci.yml"
       ],
@@ -654,7 +617,7 @@
       "paths": [
         "docs/98.archive/completed/03.specs/0031-affected-surface-agent-qa/spec.md",
         "_workspace/README.md",
-        ".agents/agents/supervisor.md",
+        "docs/00.agent-governance/roles/supervisor.md",
         "docs/99.templates/registry.json",
         ".github/workflows/ci.yml"
       ],
@@ -677,7 +640,7 @@
         "infrastructure/tests/verify-contracts-static.sh",
         "secrets/README.md",
         "traefik/traefik.yaml",
-        ".agents/agents/supervisor.md",
+        "docs/00.agent-governance/roles/supervisor.md",
         "docs/99.templates/registry.json",
         ".github/workflows/ci.yml"
       ],
@@ -735,7 +698,7 @@
         "docs/02.architecture/decisions/0019-provider-native-agent-harness-and-loop-model.md",
         "docs/98.archive/completed/03.specs/0045-agent-governance-ci-qa-cutover/spec.md",
         "docs/98.archive/completed/03.specs/0045-agent-governance-ci-qa-cutover/plan.md",
-        "scripts/validate-agent-governance-ci.py",
+        "scripts/validate-agent-governance.py",
         "tests/test_validate_agent_governance_ci.py"
       ],
       "expectedJobs": [

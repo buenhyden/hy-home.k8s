@@ -2,9 +2,9 @@
 title: "Retired Provider Residue Disposition Technical Specification"
 version: "1.0.0"
 type: "sdlc/spec"
-status: "draft"
+status: "superseded"
 owner: "platform"
-updated: "2026-09-03"
+updated: "2026-09-05"
 layer: "specs"
 artifact_id: "SPEC-0070"
 ---
@@ -12,6 +12,12 @@ artifact_id: "SPEC-0070"
 # Retired Provider Residue Disposition Technical Specification (Spec)
 
 ## Overview
+
+**Superseded proposal (2026-09-05).** [SPEC-0072](../0072-agent-governance-and-quality-gate-consolidation/spec.md)
+owns the current implementation and acceptance criteria. The blanket exemption for closed documents is replaced by per-item disposition while preserving historical execution facts and sealed recovery contracts.
+The remaining text records the earlier proposal, not current instructions or
+proof that it was implemented. Original bytes are recoverable from commit
+`bb73116b7b09c4f257fc81baa12cfa8359495fc0` at this same path.
 
 [ADR-0030](../../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)
 removed Gemini and Antigravity as supported providers and explicitly rejected

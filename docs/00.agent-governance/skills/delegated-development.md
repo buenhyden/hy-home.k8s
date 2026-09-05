@@ -16,14 +16,14 @@ responsibility, least privilege, and independent evidence.
 
 ## Authority Boundary
 
-The [agent registry](../../../.agents/registry.json) owns exact role IDs,
+The [agent registry](../roles/registry.json) owns exact role IDs,
 permission classes, handoff edges, capability-tier references, skill references,
 and projection paths. This procedure explains their use without duplicating the
 roster or tool inventory.
 
 ## Governance Context
 
-Neutral role and skill content lives in `.agents/`; Claude and Codex
+Neutral role and skill content lives in Stage 00; Claude and Codex
 projections add native metadata only. Tracked files do not prove that a runtime
 discovers, loads, or enforces them. Delegation requires explicit user or
 applicable instruction authorization and an available runtime mechanism.

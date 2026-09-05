@@ -19,7 +19,7 @@ live infrastructure mutation.
 
 This policy owns common execution norms. The active Spec and Task own change
 scope; [approval and safety](approval-and-safety.md) owns protected actions;
-[the agent registry](../../../.agents/registry.json) owns roles, permissions,
+[the agent registry](../roles/registry.json) owns roles, permissions,
 handoffs, and skill references. Provider adapters may restrict these
 boundaries, never expand them.
 

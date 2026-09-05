@@ -13,6 +13,14 @@ artifact_id: "SPEC-0071"
 
 ## Overview
 
+**Continuation boundary (2026-09-05).** Registry v9 and its existing schema
+implementation are the current baseline. This package retains ownership of
+its unfinished document-form work; draft status does not certify completion.
+[SPEC-0072](../0072-agent-governance-and-quality-gate-consolidation/spec.md)
+owns the governance migration, provider references, QA execution, and related
+form changes. The earlier SPEC-0068 renderer and SPEC-0070 blanket historical
+exemption are superseded and must not be implemented from this package.
+
 A document's `type` was supposed to name what the document is. In practice it
 named where the repository happened to put the profile: an operations runbook
 declared `sdlc/runbook`, a Stage 90 research note declared

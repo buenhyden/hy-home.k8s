@@ -13,10 +13,13 @@ artifact_id: "REQ-0003"
 
 ## Overview
 
-이 문서는 Agent 실행과 문서 거버넌스의 현재 사용자 요구를 소유한다. 역할·skill의 machine truth는
-[Agent Registry](../../.agents/registry.json), 사람용 실행 규칙은 [Stage 00](../00.agent-governance/README.md),
-문서 형식은 [Stage 99](../99.templates/README.md), 구현과 미완료 수렴은
-[Spec 0054](../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)가 소유한다.
+이 문서는 Agent 실행과 문서 거버넌스의 현재 사용자 요구를 소유한다. 역할·skill의
+machine truth는 [Stage 00 역할 registry](../00.agent-governance/roles/registry.json),
+사람용 실행 규칙은 [Stage 00](../00.agent-governance/README.md), 문서 형식은
+[Stage 99](../99.templates/README.md)가 소유한다. 현재 거버넌스·공통 QA 구현은
+[ADR-0034](../02.architecture/decisions/0034-stage-00-governance-and-unified-quality-gates.md)와
+[SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md)가,
+더 넓은 문서 수렴과 미완료 처분은 [Spec 0054](../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)가 소유한다.
 이 Requirement는 구현 inventory, provider roster 또는 일회성 migration 계획의 복제본이 아니다.
 
 ## Vision
@@ -43,7 +46,6 @@ artifact_id: "REQ-0003"
 - 검토자가 로컬 정적 결과와 외부 관측을 구분하고 미완료 작업을 다음 Task에 연결한다.
 
 ## Functional Requirements
-
 - **REQ-0003-FR-0001**: 공통 Agent, Skill, Rule, Hook, Workflow, checkpoint, QA와 문서 정책은 책임별로 하나의 current owner를 가져야 한다.
 - **REQ-0003-FR-0002**: Provider gateway와 adapter는 공통 정책을 복제하지 않고 native syntax와 capability 차이만 표현해야 한다.
 - **REQ-0003-FR-0003**: Skill provenance는 repo-local, shared, provider-native 및 명시적 외부 요청을 구분하고 누락을 실행 가능한 것으로 추정하지 않아야 한다.
@@ -107,12 +109,20 @@ Current role/skill projection, 문서 route·identity·lifecycle, consumer owner
 현재 구현으로 주장하거나 새 병렬 registry로 복원하지 않는다. FR-0025의 지속 의무는 현재 owner에서 검증한다.
 
 ## Risks, Dependencies, and Assumptions
-
 구체 provider/model 가용성과 인증 증거는 해당 owner가 갱신한다. 정적 파일은 runtime discovery가 아니다.
 역할 수, provider 수, retry 상수와 validator argv는 이 문서에 별도 고정하지 않는다.
 [ADR-0030](../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md),
 [ADR-0031](../02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md),
 [ADR-0032](../02.architecture/decisions/0032-completed-and-terminal-document-retention.md)의 현재 경계를 따른다.
+- Model availability, effort enum, CLI schema와 authentication은 변한다. Concrete value는 기준 시점
+  official source와 authenticated canary가 함께 증명해야 하며 이름 추론은 금지한다.
+- Claude/Codex native 형식 지원과 계정의 실제 실행 권한을 동일시하지 않는다.
+- GitHub-hosted CI에는 provider credential을 넣지 않는다. Authenticated canary는 local/manual
+  evidence lane에서 실행하고 secret-free 결과만 기록한다.
+- Task와 Git이 작업·검증·인계를 소유한다. 별도 자동 checkpoint 파일을 필수로 만들거나
+  credential 또는 full transcript를 저장하지 않는다.
+- ADR-0019와 ADR-0013은 predecessor 실행과 external-lane limitation을
+  보존하는 superseded historical decisions다. ADR-0034와 SPEC-0072가 현재 거버넌스·QA 전환을 소유한다.
 
 ### Agent execution and approval requirements
 
@@ -138,23 +148,15 @@ Spec 033의 follow-up 구분, ARD→AD identity 변환은 역사이며 현재 ro
 REQ-0006의 Plan/Task-only retention과 REQ-0008의 모든 Stage 98 링크 금지는 ADR-0032의
 package retention 및 명시적 역사 인용 경계로 대체된다. 봉인 record는 계속 current authority가 아니다.
 
+Current governance and QA implementation is owned by
+[SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md).
+
 ## Traceability
 
 ### Lifecycle Traceability
 
 | Requirement ID | Acceptance criterion | Downstream owner |
 | --- | --- | --- |
-| REQ-0003-FR-0001 | 공통 Agent, Skill, Rule, Hook, Workflow, checkpoint, QA와 문서 정책은 책임별로 하나의 current owner를 가져야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0002 | Provider gateway와 adapter는 공통 정책을 복제하지 않고 native syntax와 capability 차이만 표현해야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0003 | Skill provenance는 repo-local, shared, provider-native 및 명시적 외부 요청을 구분하고 누락을 실행 가능한 것으로 추정하지 않아야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0004 | 작업은 process, branch, 문서, QA, DevOps, CI/CD, security와 Kubernetes의 관련 scope 및 승인 owner에 연결되어야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0005 | 저장소 변경의 Plan/Task handoff는 실행 명령, 결과, 한계, 남은 작업과 승인 경계를 기록해야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0006 | 문서의 목적과 형식은 해당 repository form owner를 따라야 하며 외부 형식을 별도 승인 없이 대체 권위로 사용하지 않아야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0007 | 최소 권한, 비밀정보 비노출, GitOps-first 및 외부·live·파괴적 작업의 명시적 승인 경계를 보존해야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0008 | 현재 허용된 provider surface만 투영하고 planned 또는 absent surface를 현재 지원으로 계산하지 않아야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0009 | Provider-native metadata와 repository 문서 형식을 구분하고 정적 형식 적합성을 discovery, 인증 또는 runtime enforcement 증거로 승격하지 않아야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0010 | 역할과 skill의 machine registry는 semantic, projection, permission, stop, handoff와 검증 책임을 하나의 소유 경계에서 정의해야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0011 | Agent 반복 실행은 bounded retry, no-progress stop, 안전한 checkpoint·compaction·resume와 escalation을 제공해야 하며 한도는 loop contract가 소유해야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0012 | 문서 route, profile, metadata, 형식 및 lifecycle edge는 단일 문서 machine owner가 정의하고 prose policy는 책임별 owner에만 있어야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0013 | 물리적 문서 form은 정확히 하나의 profile에 대응하며 template와 validator가 일치해야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0014 | Requirement, Architecture, Spec/Plan/Task, 운영 문서, Reference 및 README는 각 목적을 지키고 실행 세부나 관측하지 않은 운영 증거를 상위 문서에 복제하지 않아야 한다. Stage 05의 위치를 유지하고 이 수렴에서 Release family를 만들지 않는다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
@@ -172,12 +174,33 @@ package retention 및 명시적 역사 인용 경계로 대체된다. 봉인 rec
 | REQ-0003-FR-0026 | Repository-declared, provider-runtime, hosted-CI 및 승인된 remote/live 증거를 분리하고 관측 없이 서로 승격하지 않아야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0027 | Lifecycle 검증은 profile, state 및 허용 edge를 판정하고 일반 본문 정정·소비자 승계는 semantic/link 검증과 검토된 Git 복구로 판정해야 한다. 봉인 Archive의 무결성 검사는 별도로 유지한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0028 | Malformed input, 도구 부재, fallback, 위험 경로와 금지 동작에는 결정적인 직접 negative test가 있어야 하며 required-tool 실패를 diagnostic SKIP으로 숨기지 않아야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-NFR-0001 | Roster와 adapter 수는 현재 Registry에서 도출하고 역할·surface admission과 model fitness는 local need, 최소 권한 및 평가 근거로 정당화해야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-NFR-0002 | Targeted, affected, staged, 전체 unit, all-files 및 formatter/diff 재검증은 같은 필수 계약을 검사하면서 각각의 결과와 변경 스냅샷을 기록해야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-NFR-0003 | 문서 형식과 변경 판단은 해당 일차 근거, 적용 범위 및 검증 증거로 추적 가능해야 하며 외부 표준과 repository convention을 혼동하지 않아야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-NFR-0004 | 발견된 baseline 결함은 계약을 약화하지 않고 처리하며 false positive 판정·환경 제한·미해결 실패를 성공으로 숨기지 않아야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-IF-0001 | Migration은 current owner 전환, 상호 링크, stale claim과 orphan consumer 정리를 같은 검토 단위에서 제공해야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-IF-0002 | 외부 역할 catalog는 아이디어의 provenance일 뿐 admission 또는 정책 권위가 아니어야 한다. 충족 여부를 해당 owner의 정적 검증과 별도 관측 증거로 판정한다. | [AD-0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0001 | 공통 governance와 owner graph가 단일 current source로 검증된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0002 | Provider gateway가 thin adapter 경계를 지킨다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0003 | Skill provenance와 missing gap이 기계 검증된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0004 | 모든 strategy axis와 scope owner를 찾을 수 있다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0005 | Repo-changing handoff에 evidence와 limitation이 남는다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0006 | Template/profile/cross-link 검사가 통과한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0007 | GitOps, secret, privilege와 external-action guardrail 위반이 없다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0008 | Registry-admitted surface가 공통 semantic과 분리된 native claim을 가진다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0009 | Schema/model/effort/MCP 및 admitted provider의 독립 canary record가 검증된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0010 | Machine harness contract/schema가 모든 역할과 adapter를 검증한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0011 | Bounded runner의 timeout·출력·자식 정리와 no-progress handoff는 Task 증거로 검증한다. | [ADR-0034](../02.architecture/decisions/0034-stage-00-governance-and-unified-quality-gates.md), [SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
+| REQ-0003-NFR-0001 | Registry-derived role/adapter parity 및 eval/model fitness가 검증된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-NFR-0002 | Quick, staged index, final-tree 및 CI 공통 QA는 입력 경계와 실패 전파를 구분한다. | [ADR-0034](../02.architecture/decisions/0034-stage-00-governance-and-unified-quality-gates.md), [SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
+| REQ-0003-IF-0001 | Legacy와 orphan current-owner가 active surface에 남지 않는다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-IF-0002 | 외부 role idea가 local gap과 eval을 통과해야 admission된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| N/A — Acceptance criterion 01 remains acceptance-only | Stage 00 owner graph가 모순 없이 연결된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| N/A — Acceptance criterion 02 remains acceptance-only | Requirement Package→AD→ADR→Spec→Plan/Task reciprocal chain이 존재한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| N/A — Acceptance criterion 03 remains acceptance-only | Gateway가 policy를 복제하지 않고 evidence class를 구분한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| N/A — Acceptance criterion 04 remains acceptance-only | Repository static quality gate가 PASS한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| N/A — Acceptance criterion 05 remains acceptance-only | Repository template contract가 유일한 form authority로 유지된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| N/A — Acceptance criterion 06 remains acceptance-only | Registry-derived roles와 admitted adapters가 parity를 이룬다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| N/A — Acceptance criterion 07 remains acceptance-only | 각 admitted provider의 canary record와 runtime-readiness 경계가 검증된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| N/A — Acceptance criterion 08 remains acceptance-only | Contract/schema/provider metadata parity가 PASS한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| N/A — Acceptance criterion 09 remains acceptance-only | Bounded failure handling and safe handoff | [SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
+| N/A — Acceptance criterion 10 remains acceptance-only | 역할별 eval/model fitness evidence가 존재한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| N/A — Acceptance criterion 11 remains acceptance-only | Shared QA and distinct index evidence | [SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
+| N/A — Acceptance criterion 12 remains acceptance-only | Stale legacy와 orphan reference가 0건이다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 
 ### Reviewed member-ID transfer
 

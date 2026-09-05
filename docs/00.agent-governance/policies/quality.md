@@ -35,24 +35,30 @@ metadata; static parity never proves discovery, model resolution, or execution.
 
 ### Validation lane contract
 
-- **affected**: selected validators run for the normalized changed paths,
-  including applicable untracked Markdown. Record input scope and selection.
-- **staged**: the staged runner validates the exact logical index, followed
-  separately by plain `pre-commit run` against that index. Working-tree or
-  all-files results do not replace either result.
-- **all-files**: `pre-commit run --all-files` supplies local completion
-  evidence; a supplemental all-files runner does not replace it or staged
-  checks. Commit-message and manual hooks are separate.
+- **quick / affected**: selected checks cover normalized working-tree changes,
+  including applicable new files and deletion/rename paths. Record selection
+  and the snapshot actually checked.
+- **staged**: validate the exact logical Git index in an isolated snapshot.
+  Unstaged repairs cannot hide invalid staged content. Working-tree full QA
+  does not replace this byte-specific evidence; commit-message hooks remain
+  separate.
+- **full / all-files**: the full QA profile validates the final working tree,
+  including one unit discovery and one all-files pre-commit invocation. Do not
+  repeat either command on unchanged bytes outside that profile.
 - **message/manual**: record applicable commit-message or explicit manual-stage
   checks individually.
-- **ci**: one hosted job owns each check. When two selected jobs would run the
-  same check, the job owning that lane keeps it and the other skips it;
-  repeating a check adds cost, not evidence. A hosted check needs its own run
-  identity or URL. Local selection, workflow syntax, and Action checks are
-  repository-static evidence only.
+- **ci**: the hosted QA job executes the same static gates and configuration as
+  full on its immutable checkout. Branch/event policy and required summary
+  are CI-specific. A hosted result needs its exact SHA and run identity;
+  locally executing the ci profile is still local evidence.
 - **remote/live**: provider discovery or authenticated operation, remote
   execution, and operator-approved runtime checks need direct authorized
   evidence. Static presence and hosted CI do not imply this lane.
+
+A QA profile selects gate IDs; a lane describes routing or an evidence boundary.
+The execution registry owns commands and profile membership. A logical gate
+runs once per identical input snapshot, configuration, and validation mode.
+Different index and working-tree bytes require separate evidence.
 
 ### Validation runner envelope
 
@@ -73,25 +79,27 @@ leader exits is `FAIL`.
 - `SKIP`: no applicable files or an explicitly optional tool was unavailable.
   State the reason and report any fallback separately.
 - `FAIL`: execution or input validation did not meet the acceptance condition.
+  Missing required tools/modules, invalid registry, cancellation, timeout,
+  output overflow, and cleanup failure cannot become SKIP or PASS.
 - `DEFER`: required authority, environment, provider, or external evidence is
   unavailable. This is a visible limitation, never a pass.
 
 ### Canonical completion sequence
 
-1. **targeted**: run the smallest focused checks while implementing.
-2. **affected**: run selected validators for every normalized changed path.
-3. **staged**: stage the exact logical set, run the staged runner, then plain
-   pre-commit against that index.
-4. **tests**: run relevant direct suites and the applicable repository aggregate;
-   preserve separate command results.
-5. **all-files**: run `pre-commit run --all-files`.
-6. **formatter-review**: inspect status, unstaged diff, and cached diff for every
-   formatter mutation, including changes outside the original target set.
-7. **rerun**: after formatter mutation, review and restage the logical set, then
-   rerun affected, staged, and all-files checks. A mutating invocation is not
-   completion evidence; record a reasoned `SKIP` when no rerun is needed.
-8. **diff-checks**: run `git diff --check` and `git diff --cached --check`
-   and confirm final scope.
+1. **targeted**: reproduce the failure and run focused checks during implementation.
+2. **quick**: validate the complete working-tree change selection.
+3. **staged**: review and stage the logical set, then validate its actual index
+   snapshot using the supported QA staged entrypoint.
+4. **full**: run the common full profile on the final working tree before handoff.
+   Unit discovery and pre-commit belong to this invocation and are not repeated
+   merely to collect the same evidence under another command name.
+5. **formatter-review**: inspect formatter findings and apply intended fixes
+   explicitly. QA/CI validation does not silently modify or commit user files.
+6. **rerun**: after changed bytes, review and restage as needed, then rerun the
+   affected evidence scopes. Record why a repeat was necessary; unchanged
+   full/ci profile parity is proved by contract tests rather than two full runs.
+7. **diff-checks**: run `git diff --check` and `git diff --cached --check`, review
+   final scope, then create the scoped local commit through normal hooks.
 
 Use raw NUL-delimited machine paths for changed/staged path transport. Do not
 reconstruct them with newline iteration or filtered display output. Preserve

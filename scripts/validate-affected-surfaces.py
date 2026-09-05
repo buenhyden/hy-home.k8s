@@ -52,35 +52,9 @@ EVIDENCE_LANES = ("repo-static", "ci", "remote/live")
 MAX_PATH_INPUT_BYTES = 4 * 1024 * 1024
 MAX_GIT_STDOUT_BYTES = 16 * 1024 * 1024
 MAX_GIT_STDERR_BYTES = 256 * 1024
-EXPECTED_CI_JOBS = {
-    "agent-governance-static": "agent_governance",
-    "manifest-static": "manifests",
-    "pre-commit": "precommit",
-    "repo-quality-static": "repo_quality",
-}
-EXPECTED_AGENT_GOVERNANCE_SURFACES = frozenset(
-    (
-        "root-config",
-        "provider-gateways",
-        "agent-shared",
-        "agent-claude",
-        "agent-codex",
-        "github-automation",
-        "governance-documents",
-        "template-documents",
-        "authored-documents",
-        "scripts",
-        "tests",
-    )
-)
-CANONICAL_SHARED_SYMLINKS = {
-    ".claude/skills": "../.agents/skills",
-    ".claude/workflows": "../.agents/workflows",
-    ".claude/output-styles": "../.agents/output-styles",
-    ".codex/skills": "../.agents/skills",
-    ".codex/workflows": "../.agents/workflows",
-    ".codex/output-styles": "../.agents/output-styles",
-}
+EXPECTED_CI_JOBS = {"qa": "qa"}
+CANONICAL_SHARED_SYMLINKS = {".claude/skills": "../docs/00.agent-governance/skills"}
+
 PATH_INPUT_VALIDATORS = frozenset(
     ("document-contract-registry", "links-and-owners", "markdown-profiles")
 )
@@ -181,7 +155,13 @@ def _unique_ids(rows: Sequence[dict[str, Any]], kind: str) -> dict[str, dict[str
     return indexed
 
 
-def _validate_direct_script_argv(identifier: str, argv: Sequence[str]) -> str:
+def _validate_direct_script_argv(identifier: str, argv: Sequence[str]) -> str | None:
+    approved_commands = {
+        "unit-tests": ["python3", "-m", "unittest", "discover", "-s", "tests", "-t", "."],
+        "pre-commit": ["pre-commit", "run", "--all-files"],
+    }
+    if identifier in approved_commands and list(argv) == approved_commands[identifier]:
+        return None
     if any(SAFE_ARG.fullmatch(argument) is None for argument in argv):
         fail(
             "SURFACE-VALIDATOR-ARGV",
@@ -261,8 +241,9 @@ def validator_script_paths(
 
     contract = validate_contract(root, raw_contract, raw_schema=raw_schema)
     return frozenset(
-        _validate_direct_script_argv(row["id"], row["argv"])
+        script
         for row in contract["validators"]
+        if (script := _validate_direct_script_argv(row["id"], row["argv"])) is not None
     )
 
 
@@ -370,16 +351,12 @@ def validate_contract(
             if key in route_keys:
                 fail("SURFACE-ROUTE-DUPLICATE", f"{surface['id']}: {route}")
             route_keys.add(key)
-    agent_governance_surfaces = {
-        identifier
-        for identifier, surface in surfaces.items()
-        if "agent-governance-static" in surface["ciJobs"]
-    }
-    if agent_governance_surfaces != EXPECTED_AGENT_GOVERNANCE_SURFACES:
-        fail(
-            "SURFACE-AGENT-GOVERNANCE-CI",
-            "agent-governance-static surface ownership differs from the exact contract",
-        )
+    profiles = contract["profiles"]
+    for profile, identifiers in profiles.items():
+        if any(identifier not in validators for identifier in identifiers):
+            fail("SURFACE-PROFILE-REFERENCE", profile)
+    if profiles["full"] != profiles["ci"] or set(profiles["full"]) != set(validators):
+        fail("SURFACE-PROFILE-COVERAGE", "full and ci must cover every gate in the same order")
     return contract
 
 
@@ -628,160 +605,13 @@ def github_output(contract: dict[str, Any], result: dict[str, Any]) -> str:
 def validate_required_validators_have_a_runner(
     contract: Mapping[str, Any], root: Path
 ) -> None:
-    """Refuse drift between the registry and its all-files aggregate runner."""
-
-    try:
-        aggregate = (root / QUALITY_GATE_PATH).read_text(encoding="utf-8")
-    except (OSError, UnicodeError) as exc:
-        fail("SURFACE-VALIDATOR-RUNNER", f"cannot read the aggregate: {exc}")
-
-    required_fragments = (
-        "scripts/run-validation-lane.py",
-        "--lane all-files",
-    )
-    if any(fragment not in aggregate for fragment in required_fragments):
-        fail(
-            "SURFACE-VALIDATOR-RUNNER",
-            "aggregate must invoke the registry all-files runner",
-        )
-
+    """Required static checks belong to the shared full/ci profiles."""
     for validator in contract["validators"]:
-        if validator.get("optional") or validator["evidenceLane"] != "repo-static":
-            continue
-        if "all-files" not in validator["lanes"]:
-            fail(
-                "SURFACE-VALIDATOR-RUNNER",
-                f"{validator['id']} is required but absent from all-files",
-            )
-
-
-def validate_ci_workflow_selector(root: Path) -> None:
-    try:
-        workflow = (root / CI_WORKFLOW_PATH).read_text(encoding="utf-8")
-        changes = workflow.split("\n  changes:\n", 1)[1].split("\n  pre-commit:\n", 1)[
-            0
-        ]
-    except (OSError, UnicodeError, IndexError) as exc:
-        fail("SURFACE-LOCAL-CI-MISMATCH", f"cannot read changes job: {exc}")
-
-    required_fragments = (
-        "agent_governance: ${{ steps.filter.outputs.agent_governance }}",
-        "precommit: ${{ steps.filter.outputs.precommit }}",
-        "repo_quality: ${{ steps.filter.outputs.repo_quality }}",
-        "manifests: ${{ steps.filter.outputs.manifests }}",
-        "fetch-depth: 0",
-        "id: filter",
-        "EVENT_NAME: ${{ github.event_name }}",
-        "BEFORE_SHA: ${{ github.event.before }}",
-        "BASE_SHA: ${{ github.event.pull_request.base.sha }}",
-        "HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}",
-        'ZERO_SHA: "0000000000000000000000000000000000000000"',
-        'case "$EVENT_NAME" in',
-        "push)",
-        "pull_request)",
-        "workflow_dispatch)",
-        '[ "$BEFORE_SHA" != "$ZERO_SHA" ]',
-        'git cat-file -e "$BEFORE_SHA^{commit}" 2>/dev/null',
-        '[ -z "$BASE_SHA" ]',
-        'git diff --no-renames --name-only -z "$BEFORE_SHA" "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"',
-        'git diff --no-renames --name-only -z "$BASE_SHA" "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"',
-        'git ls-tree -r --name-only -z "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"',
-        "python3 scripts/select-affected-surfaces.py \\",
-        "--root . \\",
-        "--lane ci \\",
-        '--paths-file "$RUNNER_TEMP/changed-paths.nul" \\',
-        "--delimiter nul \\",
-        '--format github-output >> "$GITHUB_OUTPUT"',
-    )
-    missing = [fragment for fragment in required_fragments if fragment not in changes]
-    forbidden_fragments = (
-        "dorny/paths-filter",
-        "filters: |",
-        "$(",
-        "`",
-    )
-    present = [fragment for fragment in forbidden_fragments if fragment in changes]
-    if missing or present:
-        detail = []
-        if missing:
-            detail.append(f"missing={missing!r}")
-        if present:
-            detail.append(f"forbidden={present!r}")
-        fail("SURFACE-LOCAL-CI-MISMATCH", "; ".join(detail))
-
-    try:
-        agent_job = workflow.split("\n  agent-governance-static:\n", 1)[1].split(
-            "\n  manifest-static:\n", 1
-        )[0]
-        summary_job = workflow.split("\n  ci-summary:\n", 1)[1]
-    except IndexError as exc:
-        fail(
-            "SURFACE-LOCAL-CI-MISMATCH",
-            f"cannot read agent-governance-static or ci-summary job: {exc}",
-        )
-
-    required_agent_fragments = (
-        "needs: changes",
-        "if: needs.changes.outputs.agent_governance == 'true'",
-        "python3 scripts/validate-affected-surfaces.py --root .",
-    )
-    missing_agent = [
-        fragment for fragment in required_agent_fragments if fragment not in agent_job
-    ]
-    if missing_agent:
-        detail = []
-        detail.append(f"agent_missing={missing_agent!r}")
-        fail("SURFACE-LOCAL-CI-MISMATCH", "; ".join(detail))
-
-    required_summary_fragments = (
-        "- agent-governance-static",
-        "if: always()",
-        "EVENT_NAME: ${{ github.event_name }}",
-        "AGENT_GOVERNANCE_STATIC_SELECTED: ${{ needs.changes.outputs.agent_governance }}",
-        "AGENT_GOVERNANCE_STATIC_RESULT: ${{ needs['agent-governance-static'].result }}",
-        'case "$branch_policy_selected:$BRANCH_POLICY_RESULT" in',
-        'if [ "$CHANGES_RESULT" = "success" ]; then',
-        'case "$PRE_COMMIT_SELECTED:$PRE_COMMIT_RESULT" in',
-        'case "$REPO_QUALITY_STATIC_SELECTED:$REPO_QUALITY_STATIC_RESULT" in',
-        'case "$AGENT_GOVERNANCE_STATIC_SELECTED:$AGENT_GOVERNANCE_STATIC_RESULT" in',
-        'case "$MANIFEST_STATIC_SELECTED:$MANIFEST_STATIC_RESULT" in',
-        "branch-policy selected=%s result=%s verdict=%s",
-        "changes selected=true result=%s verdict=%s",
-        "pre-commit selected=%s result=%s verdict=%s",
-        "repo-quality-static selected=%s result=%s verdict=%s",
-        "agent-governance-static selected=%s result=%s verdict=%s",
-        "manifest-static selected=%s result=%s verdict=%s",
-        "true:success)",
-        "false:skipped)",
-        "*)",
-        'verdict="PASS"',
-        'verdict="SKIP"',
-        'verdict="FAIL"',
-        "failed=1",
-        'if [ "$failed" -ne 0 ]; then',
-        "one or more required CI gates failed closed",
-    )
-    missing_summary = [
-        fragment
-        for fragment in required_summary_fragments
-        if fragment not in summary_job
-    ]
-    forbidden_summary_fragments = (
-        "contains(needs.*.result",
-        "continue-on-error",
-        "report_required",
-        "report_conditional",
-    )
-    present_summary = [
-        fragment for fragment in forbidden_summary_fragments if fragment in summary_job
-    ]
-    if missing_summary or present_summary:
-        detail = []
-        if missing_summary:
-            detail.append(f"summary_missing={missing_summary!r}")
-        if present_summary:
-            detail.append(f"summary_forbidden={present_summary!r}")
-        fail("SURFACE-LOCAL-CI-MISMATCH", "; ".join(detail))
+        if not validator["optional"] and validator["evidenceLane"] == "repo-static":
+            if validator["id"] not in contract["profiles"]["full"]:
+                fail("SURFACE-VALIDATOR-RUNNER", validator["id"])
+    if not (root / "scripts/qa.py").is_file():
+        fail("SURFACE-VALIDATOR-RUNNER", "shared QA entrypoint is missing")
 
 
 def read_nul_paths(path: Path) -> list[str]:

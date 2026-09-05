@@ -681,11 +681,18 @@ passed 35 tests (2 archive/link, 2 affected-surface, 29 disposition-route, and
 check passed. Documentation now removes the retired scripts row and treats the
 former manifest only as historical sealed/Git recovery evidence.
 
-Task 4's exact-index integration, final affected/staged/all-files lanes,
-aggregate/full-suite evidence, independent review, and commit remain pending.
-No Task 5 or WP-009 expansion was performed. This Task remains `in-progress`;
-rollback remains a reviewed revert of the applicable logical commit, and the
-parent owner retains ordered integration and merge handoff responsibility.
+Task 4 transition retirement is committed as `2b9bf9e`; the document branch
+merged to main as `0540a433`, and governance snapshot `f4275f5e` is in merge
+finalization. A focused integrated run has 56 passes from 57 tests; its one
+failure is a sandbox-created empty `.agents` directory; the isolated Stage 00
+owner check passes, distinguishing that environment condition. Archive snapshot
+integration currently fails on `ARCHIVE-MIGRATION-LEDGER` for MIG-0002 after the
+source move, and its bounded fix verification remains pending.
+Final affected/staged/all-files lanes, aggregate/full-suite evidence,
+independent review, hosted/runtime/release evidence, and final governance merge
+remain pending. No Task 5 or WP-009 expansion was performed. This Task remains
+`in-progress`; rollback remains a reviewed revert of the applicable logical
+commit, and the parent owner retains ordered integration handoff responsibility.
 
 ## Traceability
 

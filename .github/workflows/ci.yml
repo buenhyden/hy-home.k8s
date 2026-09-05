@@ -38,82 +38,25 @@ jobs:
           fi
           printf 'branch-policy=ok base=%s head=%s\n' "$BASE_REF" "$HEAD_REF"
 
-  changes:
+  qa:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-    outputs:
-      agent_governance: ${{ steps.filter.outputs.agent_governance }}
-      precommit: ${{ steps.filter.outputs.precommit }}
-      repo_quality: ${{ steps.filter.outputs.repo_quality }}
-      manifests: ${{ steps.filter.outputs.manifests }}
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ github.sha }}
           persist-credentials: false
           fetch-depth: 0
-      - name: Select affected CI jobs
-        id: filter
-        env:
-          EVENT_NAME: ${{ github.event_name }}
-          BEFORE_SHA: ${{ github.event.before }}
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-          ZERO_SHA: "0000000000000000000000000000000000000000"
-        run: |
-          set -euo pipefail
-          if [ -z "$HEAD_SHA" ]; then
-            echo "head SHA is required for affected-surface selection" >&2
-            exit 1
-          fi
-          case "$EVENT_NAME" in
-            push)
-              if [ -n "$BEFORE_SHA" ] && [ "$BEFORE_SHA" != "$ZERO_SHA" ] && \
-                git cat-file -e "$BEFORE_SHA^{commit}" 2>/dev/null; then
-                git diff --no-renames --name-only -z "$BEFORE_SHA" "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"
-              else
-                git ls-tree -r --name-only -z "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"
-              fi
-              ;;
-            pull_request)
-              if [ -z "$BASE_SHA" ]; then
-                echo "base SHA is required for pull-request affected-surface selection" >&2
-                exit 1
-              fi
-              git diff --no-renames --name-only -z "$BASE_SHA" "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"
-              ;;
-            workflow_dispatch)
-              git ls-tree -r --name-only -z "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"
-              ;;
-            *)
-              echo "unsupported event for affected-surface selection: $EVENT_NAME" >&2
-              exit 1
-              ;;
-          esac
-          python3 scripts/select-affected-surfaces.py \
-            --root . \
-            --lane ci \
-            --paths-file "$RUNNER_TEMP/changed-paths.nul" \
-            --delimiter nul \
-            --format github-output >> "$GITHUB_OUTPUT"
-
-  pre-commit:
-    needs: changes
-    if: needs.changes.outputs.precommit == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-          persist-credentials: false
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.12'
+          cache: pip
+          cache-dependency-path: .github/requirements/ci-validation.txt
       - name: Install repository validation dependencies
         run: |
           python -m pip install --disable-pip-version-check --only-binary :all: --require-hashes --requirement .github/requirements/ci-validation.txt
       - name: Install Gitleaks
-        run: | # pragma: allowlist secret
+        run: |
           set -euo pipefail
           curl --fail --location --silent --show-error \
             https://github.com/gitleaks/gitleaks/releases/download/v8.30.0/gitleaks_8.30.0_linux_x64.tar.gz \
@@ -122,233 +65,50 @@ jobs:
           printf '%s  %s\n' "$gitleaks_sha256" "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz" | sha256sum --check --strict
           tar -xzf "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz" -C "$RUNNER_TEMP" gitleaks
           sudo install -o root -g root -m 0755 "$RUNNER_TEMP/gitleaks" /usr/local/bin/gitleaks
-      # The two local hooks are the repository-quality lane, and every surface
-      # that selects this job also selects repo-quality-static, which owns
-      # that lane. Skipping them here keeps one CI owner per check instead of
-      # running the whole validator aggregate twice per run.
-      - name: Run all pre-commit hooks
+      - name: Validate repository checkout
         env:
-          SKIP: strict-repository-quality,validate-validation-tooling-ownership
-        run: |
-          pre-commit run --all-files --show-diff-on-failure
-
-  repo-quality-static:
-    needs: changes
-    if: needs.changes.outputs.repo_quality == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 35
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          ref: ${{ github.head_ref || github.ref }}
-          fetch-depth: 0
-          persist-credentials: false
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-        with:
-          python-version: '3.12'
-      - name: Install repository validation dependencies
-        run: |
-          python -m pip install --disable-pip-version-check --only-binary :all: --require-hashes --requirement .github/requirements/ci-validation.txt
-      - name: Install Gitleaks
-        run: | # pragma: allowlist secret
-          set -euo pipefail
-          curl --fail --location --silent --show-error \
-            https://github.com/gitleaks/gitleaks/releases/download/v8.30.0/gitleaks_8.30.0_linux_x64.tar.gz \
-            --output "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz"
-          gitleaks_sha256='79a3ab579b53f71efd634f3aaf7e04a0fa0cf206b7ed434638d1547a2470a66e' # pragma: allowlist secret
-          printf '%s  %s\n' "$gitleaks_sha256" "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz" | sha256sum --check --strict
-          tar -xzf "$RUNNER_TEMP/gitleaks_8.30.0_linux_x64.tar.gz" -C "$RUNNER_TEMP" gitleaks
-          sudo install -o root -g root -m 0755 "$RUNNER_TEMP/gitleaks" /usr/local/bin/gitleaks
-      - name: Run repository quality gates
-        run: |
-          bash scripts/validate-repo-quality-gates.sh .
-      - name: Run the regression test suite
-        run: |
-          python3 -m unittest discover --start-directory tests --top-level-directory tests --pattern 'test_*.py'
-
-  agent-governance-static:
-    needs: changes
-    if: needs.changes.outputs.agent_governance == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          ref: ${{ github.head_ref || github.ref }}
-          persist-credentials: false
-          fetch-depth: 0
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-        with:
-          python-version: '3.12'
-      - name: Install repository validation dependencies
-        run: |
-          python -m pip install --disable-pip-version-check --only-binary :all: --require-hashes --requirement .github/requirements/ci-validation.txt
-      - name: Run agent governance static checks
-        run: |
-          python3 scripts/validate-agent-governance-ci.py --root .
-          python3 -m unittest discover --start-directory tests --top-level-directory tests --pattern 'test_validate_agent_*.py'
-          python3 -m unittest tests.test_validation_tooling_ownership tests.test_affected_surface_migration tests.test_current_executable_references
-          python3 scripts/validate-agent-harness-contract.py --root .
-          python3 scripts/validate-agent-harness-semantics.py --root .
-          python3 scripts/validate-agent-legacy-cutover.py --root .
-          python3 scripts/validate-agent-provider-evidence.py --root .
-          python3 scripts/validate-agent-loop-lifecycle.py --root .
-          python3 scripts/validate-affected-surfaces.py --root .
-          python3 scripts/validate-ci-python-contract.py --root .
-          python3 scripts/validate-github-actions-security.py --root .
-
-  manifest-static:
-    needs: changes
-    if: needs.changes.outputs.manifests == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-          fetch-depth: 0
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-        with:
-          python-version: '3.12'
-      - name: Install repository validation dependencies
-        run: |
-          python -m pip install --disable-pip-version-check --only-binary :all: --require-hashes --requirement .github/requirements/ci-validation.txt
-      - name: Review GitOps object identity and deletion set
-        env:
-          BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before || github.sha }}
-        run: |
-          python3 scripts/validate-gitops-change-set.py --root . --base-ref "$BASE_REF"
-      - name: Run static contract checks
-        run: |
-          bash infrastructure/tests/verify-contracts-static.sh
-          bash scripts/validate-gitops-structure.sh
-          bash scripts/validate-k8s-manifests.sh .
-          bash scripts/check-secret-handling.sh .
-          python3 scripts/validate-vault-eso-contracts.py --root .
-          bash scripts/validate-policy-gates.sh .
-
-
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before || '' }}
+        run: python3 scripts/qa.py ci --base-ref "$BASE_SHA"
 
   ci-summary:
-    needs:
-      - branch-policy
-      - changes
-      - pre-commit
-      - repo-quality-static
-      - agent-governance-static
-      - manifest-static
     if: always()
+    needs: [branch-policy, qa]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Summarize CI result
+      - name: Require successful applicable checks
         env:
           EVENT_NAME: ${{ github.event_name }}
-          BRANCH_POLICY_RESULT: ${{ needs['branch-policy'].result }}
-          CHANGES_RESULT: ${{ needs.changes.result }}
-          PRE_COMMIT_SELECTED: ${{ needs.changes.outputs.precommit }}
-          PRE_COMMIT_RESULT: ${{ needs['pre-commit'].result }}
-          REPO_QUALITY_STATIC_SELECTED: ${{ needs.changes.outputs.repo_quality }}
-          REPO_QUALITY_STATIC_RESULT: ${{ needs['repo-quality-static'].result }}
-          AGENT_GOVERNANCE_STATIC_SELECTED: ${{ needs.changes.outputs.agent_governance }}
-          AGENT_GOVERNANCE_STATIC_RESULT: ${{ needs['agent-governance-static'].result }}
-          MANIFEST_STATIC_SELECTED: ${{ needs.changes.outputs.manifests }}
-          MANIFEST_STATIC_RESULT: ${{ needs['manifest-static'].result }}
+          BRANCH_POLICY_RESULT: ${{ needs.branch-policy.result }}
+          QA_RESULT: ${{ needs.qa.result }}
         run: |
           set -euo pipefail
           failed=0
-
-          case "$EVENT_NAME" in
-            pull_request)
-              branch_policy_selected="true"
+          case "$EVENT_NAME:$BRANCH_POLICY_RESULT" in
+            pull_request:success)
+              branch_verdict=PASS
               ;;
-            push|workflow_dispatch)
-              branch_policy_selected="false"
-              ;;
-            *)
-              branch_policy_selected="invalid"
-              ;;
-          esac
-
-          case "$branch_policy_selected:$BRANCH_POLICY_RESULT" in
-            true:success)
-              verdict="PASS"
-              ;;
-            false:skipped)
-              verdict="SKIP"
+            push:skipped|workflow_dispatch:skipped)
+              branch_verdict=SKIP
               ;;
             *)
-              verdict="FAIL"
+              branch_verdict=FAIL
               failed=1
               ;;
           esac
-          printf 'branch-policy selected=%s result=%s verdict=%s\n' "$branch_policy_selected" "$BRANCH_POLICY_RESULT" "$verdict"
-
-          if [ "$CHANGES_RESULT" = "success" ]; then
-            verdict="PASS"
-          else
-            verdict="FAIL"
-            failed=1
-          fi
-          printf 'changes selected=true result=%s verdict=%s\n' "$CHANGES_RESULT" "$verdict"
-
-          case "$PRE_COMMIT_SELECTED:$PRE_COMMIT_RESULT" in
-            true:success)
-              verdict="PASS"
-              ;;
-            false:skipped)
-              verdict="SKIP"
+          case "$QA_RESULT" in
+            success)
+              qa_verdict=PASS
               ;;
             *)
-              verdict="FAIL"
+              qa_verdict=FAIL
               failed=1
               ;;
           esac
-          printf 'pre-commit selected=%s result=%s verdict=%s\n' "$PRE_COMMIT_SELECTED" "$PRE_COMMIT_RESULT" "$verdict"
-
-          case "$REPO_QUALITY_STATIC_SELECTED:$REPO_QUALITY_STATIC_RESULT" in
-            true:success)
-              verdict="PASS"
-              ;;
-            false:skipped)
-              verdict="SKIP"
-              ;;
-            *)
-              verdict="FAIL"
-              failed=1
-              ;;
-          esac
-          printf 'repo-quality-static selected=%s result=%s verdict=%s\n' "$REPO_QUALITY_STATIC_SELECTED" "$REPO_QUALITY_STATIC_RESULT" "$verdict"
-
-          case "$AGENT_GOVERNANCE_STATIC_SELECTED:$AGENT_GOVERNANCE_STATIC_RESULT" in
-            true:success)
-              verdict="PASS"
-              ;;
-            false:skipped)
-              verdict="SKIP"
-              ;;
-            *)
-              verdict="FAIL"
-              failed=1
-              ;;
-          esac
-          printf 'agent-governance-static selected=%s result=%s verdict=%s\n' "$AGENT_GOVERNANCE_STATIC_SELECTED" "$AGENT_GOVERNANCE_STATIC_RESULT" "$verdict"
-
-          case "$MANIFEST_STATIC_SELECTED:$MANIFEST_STATIC_RESULT" in
-            true:success)
-              verdict="PASS"
-              ;;
-            false:skipped)
-              verdict="SKIP"
-              ;;
-            *)
-              verdict="FAIL"
-              failed=1
-              ;;
-          esac
-          printf 'manifest-static selected=%s result=%s verdict=%s\n' "$MANIFEST_STATIC_SELECTED" "$MANIFEST_STATIC_RESULT" "$verdict"
-
+          printf 'branch-policy result=%s verdict=%s\n' "$BRANCH_POLICY_RESULT" "$branch_verdict"
+          printf 'qa result=%s verdict=%s\n' "$QA_RESULT" "$qa_verdict"
           if [ "$failed" -ne 0 ]; then
-            echo "one or more required CI gates failed closed"
+            echo 'one or more required CI gates failed closed'
             exit 1
           fi
+          exit 0
