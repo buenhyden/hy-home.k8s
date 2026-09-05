@@ -1,6 +1,6 @@
 ---
 title: "Task: Current corpus and transition-control cutover"
-version: "1.5.0"
+version: "1.5.2"
 type: "sdlc/task"
 status: "in-progress"
 owner: "platform"
@@ -366,6 +366,304 @@ Spec 0052 stays in Stage 03; no package retention, Stage 99 reduction,
 transition-control retirement, final archive reconciliation, push, merge,
 release/tag, secret-value read or live mutation occurs in this unit. This Task
 remains in-progress. Independent review remains the controller's next step.
+
+### Governance Source Cutover (2026-09-05)
+
+This section initially recorded investigation and a proposed amendment. The
+human subsequently replied "승인", approving the Stage 00 cutover and explicit
+Codex procedure-read design. That approval is now applied by the
+[execution amendment](../plan.md#approved-governance-source-cutover-amendment-2026-09-05);
+implementation completion remains separate. The current request requires removal
+of the repository-owned `.agents/` after source and consumer migration. The
+existing Spec 0054 target tree retains that directory; WP-003's completed
+approval therefore does not approve this new design. Spec 0068 is a related
+`draft` with no Plan or Tasks and an unimplemented renderer proposal. Reuse
+Spec 0054 for integration and reconcile that draft rather than create another
+program or reopen a completed Task. This intake preserves WP-013's unfinished
+work and all earlier evidence.
+
+#### Starting State and Protected Work
+
+| Observation | Evidence / disposition |
+| --- | --- |
+| Repository | `/home/hy/projects/hy-home.k8s`; sanitized origin `https://github.com/buenhyden/hy-home.k8s.git` |
+| Starting HEAD / branch | `6c5ad33444fdbdbe4fb10e9d652287d89a56fe99`; `codex/document-contract-v9` |
+| Local integration baseline | `main` and cached `origin/main` at `1632ce28443b5b5bebf9abdba13543d5731f43bc`; merge-base equals that commit; `main...HEAD` is 0 left / 11 right |
+| Upstream | `origin/codex/document-contract-v9`; local branch is four commits ahead of the cached upstream |
+| Worktree | One primary worktree at the repository root, attached to the current branch; Git common directory is `.git`; no linked worktree was created |
+| Research snapshot | `69ae876221410370f13b190c463d88f02f02932a` is unavailable locally; ancestry command exits 128. No fetch or forced checkout was performed |
+| Index / untracked | Initial `git status --porcelain=v1 -z` shows no staged entries and no untracked files; twenty pre-existing unstaged paths are listed below |
+| Provider links | `.claude/skills` and `.codex/skills` are tracked symlinks to `../.agents/skills`; `.agents` is a real tracked directory |
+| Ignored local work | `.claude/RESUME.md`, `.claude/settings.local.json`, seven `.claude/hookify.*.local.md` files, and Stage 00 hook bytecode were found by filename only and preserved. Local settings contents and hook trust were not inspected |
+| Session permission boundary | The active managed profile marks `.agents/`, `.codex/`, and `.git/` read-only. Removal, Codex adapter edits, staging, branching, and commits are deferred; no escalation or write probe was attempted |
+| Effective Git hook owner | `git config --show-origin --get core.hooksPath` resolves to `/home/hy/.codex/git-hooks` from the user Git configuration. Its content was not read or modified; tracked pre-commit configuration does not prove Git hook delivery |
+
+Machine path collection used `git status --porcelain=v1 -z`,
+`git ls-files --stage -z`, and `git ls-files --others` with `-z` and separate
+ignored/exclude-standard selection. Display tables are not runner path input.
+The current branch already descends from the local integration baseline and
+contains the required ongoing document work; proposed implementation keeps
+this branch/worktree rather than dropping those changes into a clean base.
+
+Pre-existing unstaged work, preserved without staging or implicit ownership:
+
+- `docs/03.specs/README.md`.
+- `docs/99.templates/README.md`, `registry.json`,
+  `contracts/frontmatter.schema.json`, and `templates/README.md`.
+- Deleted `docs/99.templates/templates/governance/control.template.md` and
+  `templates/specs/contracts/{data-model.template.md,openapi.template.yaml,schema.template.graphql,service.template.proto}`
+  under the same Stage 99 root.
+- `scripts/archive_recovery.py`, `scripts/document_authority.py`,
+  `scripts/document_lifecycle.py`, and `scripts/validation/repository/quality.py`.
+- `tests/test_archive_recovery.py`,
+  `tests/test_document_lifecycle_archive_cutover.py`,
+  `tests/test_document_lifecycle_cumulative_history.py`,
+  `tests/test_document_lifecycle_migration.py`,
+  `tests/test_document_strict_cutover.py`, and
+  `tests/test_generic_migration_recovery.py`.
+
+The initial diff contains 276 additions and 640 deletions. It removes unused
+Stage 99 capacity and changes lifecycle/recovery behavior; it is relevant
+input, not an approved commit belonging to this intake. Preserve its exact
+scope and review its failed consumers before any later integration commit.
+
+#### Initial Inventory and Proposed Disposition
+
+These are reviewed design candidates, not a completed exhaustive disposition.
+Implementation must extend this same Task with per-path consumer/recovery and
+verification evidence before deletion.
+
+| Current path / role | Conflict or consumer | Proposed disposition and final owner | Required proof |
+| --- | --- | --- | --- |
+| `.agents/registry.json` and `.agents/contracts/agent-registry.schema.json` | Exact roles, permission classes, skill refs and projections remain outside the requested common owner; harness, lifecycle, provider and routing validators consume them | Move the cohesive machine contract to `docs/00.agent-governance/roles/registry.json` and its schema below `roles/`; role records reference skill owners and provider bindings without duplicating their content | Schema, valid references, permission narrowing, migrated routing and negative legacy-path tests |
+| `.agents/agents/*.md` | Twelve neutral bodies and two native copies; `@import` is embedded in ordinary instruction bodies | Move each role body to `docs/00.agent-governance/roles/<role-id>.md`; preserve the existing domain responsibility guides; derive native instructions from the role owner and provider binding | Preserve use conditions, inputs, outputs, permissions and handoffs; renderer drift and fixed point |
+| `.agents/skills/*/skill.md` | Sixteen registered procedures; lowercase filenames differ from documented native `SKILL.md` entrypoints | Move to `docs/00.agent-governance/skills/<skill-id>/SKILL.md`, preserving native skill metadata and assets; adapt the Stage 99 profile rather than force a prose envelope onto native skill metadata | Registry completeness, link resolution, correct native shape and directly observed reads/discovery |
+| `.agents/README.md` | Routes readers to the old authority | Merge useful routing into the Stage 00 hub, remove after consumer transfer; Git recovery uses the starting HEAD | No active old owner or recreated directory |
+| `.claude/agents/`, `.codex/agents/` | Manually repeated bodies, inert import markers and unverified model metadata | Keep native generated bindings with explicit read instructions and original role IDs; provider binding facts belong under `providers/` | Claude metadata and Codex TOML parsing plus separately scoped discovery/execution evidence |
+| `.claude/skills`, `.codex/skills` | Both links target the retiring directory; a Codex link does not prove discovery | Reconnect Claude to Stage 00 procedures; preferred Codex fallback is explicit root `AGENTS.md` reads, removing the misleading skill view | Approved support contract; do not report explicit reading as native automatic discovery |
+| `.claude/settings.json` | `customInstructions` includes retired `memory/`; registered hooks execute code under Stage 00 | Remove unsupported/inert instruction placement after schema confirmation; keep effective policy in the gateway; move native event adapters to `.claude/hooks/` and reusable validation logic to `scripts/` | Valid settings/event schema, root boundary, allow/deny/error cases and hook trust distinction |
+| `.claude/hooks/`, `.codex/hooks/`, `.codex/hooks.json`, `.codex/config.toml` | All absent at intake | Create only necessary Claude adapters when moving its existing registered handlers; Codex hooks remain unadopted unless a concrete missing guarantee needs an approved native binding | No empty symmetry directories, no Claude event replay in Codex |
+| `docs/00.agent-governance/hooks/` and `contracts/` | Transitional runtime code and contracts still occupy the human governance root | Move executable core and check configuration to their existing script/validation owners; lifecycle semantics to policies/skills, provider observation contracts to providers | All registrations and consumers follow the move; preserve finite limits and failure propagation |
+| `policies/quality.md` | Repeats timeout/output/cleanup constants while prohibiting duplicate numeric owners | Retain guarantee and lane meaning here; `scripts/run-validation-lane.py` owns executable bounds | Timeout, stdout/stderr overflow, invalid paths and descendant/pipe cleanup regressions |
+| README, SDLC, terminology, Stage 99 and current/retained Spec consumers | Root README guidance and old authority/topology claims require reconciliation with the current registry | Update their existing semantic owners and governed profiles; preserve native formats, accepted history and sealed records | Profile, link, lifecycle and recovery checks; no blanket translation or new glossary |
+| `scripts/`, `tests/`, fixtures, pre-commit and CI | Direct legacy consumers extend beyond the four governance/provider folders | Change ownership paths and independent expectations in the same vertical unit; remove only proven duplicate or consumer-zero surfaces | Invoked guarantees remain covered; old-path regeneration and permission widening fail |
+
+The twelve role mappings observed from the neutral bodies are:
+
+| Role ID | Existing responsibility guide(s) under Stage 00 roles |
+| --- | --- |
+| `code-reviewer` | `architecture.md` |
+| `doc-writer` | `documentation.md` |
+| `docs-researcher` | `documentation.md` |
+| `gitops-reviewer` | `infrastructure.md` |
+| `incident-responder` | `operations.md`, `infrastructure.md` |
+| `k8s-implementer` | `infrastructure.md` |
+| `network-reviewer` | `infrastructure.md` |
+| `observability-reviewer` | `infrastructure.md` |
+| `quality-engineer` | `quality.md` |
+| `security-auditor` | `security.md` |
+| `supervisor` | `supervision.md` |
+| `wiki-curator` | `documentation.md` |
+
+Registered skill IDs are `deployment-strategies`, `docs-stage-conformance`,
+`docs-stage-routing`, `execution-plan`, `gitops-workflow`,
+`incident-postmortem`, `k8s-security-audit`, `k8s-validate`, `knowledge-map`,
+`ops-runbook`, `rca-methodology`, `requirements-to-design`, `risk-report`,
+`task-breakdown`, `vulnerability-patterns`, and `workspace-harness-audit`.
+All sixteen metadata blocks parse with `name` and `description`. All twelve
+Claude frontmatter blocks and twelve Codex TOML files parse syntactically;
+this is not native schema acceptance, account model availability or execution.
+
+#### Design Alternatives and Proposed Execution Order
+
+1. **Recommended within current configuration scope:** move common sources
+   and every consumer together; use a verified Claude skill view and explicit
+   Codex `AGENTS.md` read instructions. Codex automatic skill discovery is
+   explicitly unadopted for these repository procedures, subject to human
+   design approval. A required native-discovery outcome remains DEFER rather
+   than being silently replaced by this fallback.
+2. **Native skill plugin:** a skills-only package owned below `.codex/` may
+   supply native discovery, but requires proof of package/link containment,
+   installation, activation/trust and real invocation. Merely creating a
+   plugin manifest is insufficient; global installation is outside this
+   request. Do not adopt this option without a supported local-only route and
+   the necessary activation authority.
+3. **Temporary `.agents/` compatibility:** rejected as a terminal design
+   because copies, symlinks or regeneration conflict with the direct request.
+
+After one explicit approval of the selected design, amend the existing
+Spec/Plan with four dependency-ordered vertical units: (1) shared authority,
+SDLC/document contract and relevant unfinished-input reconciliation;
+(2) source/registry/native binding/generator/validator cutover and removal;
+(3) measured duplicate invocation/fixture reduction with regression checks;
+(4) historical/current navigation closure and final evidence. Exact executable
+steps belong in the Plan after approval, not a parallel Superpowers tree.
+Keep Codex model selections unless a supported correction is demonstrated;
+do not inherit Spec 0068's proposed blanket model promotions as new authority.
+Invalid Claude model labels need a documented compatible binding decision,
+not an assumed latest-generation replacement.
+
+Maintain desired-state ownership in `gitops/`; keep `infrastructure/`,
+`traefik/`, `examples/`, and Kubernetes Rego `policy/` in their distinct roles.
+External Vault/PostgreSQL/Valkey remain interface dependencies. No live
+mutation, remote integration, global configuration edit or secret access is
+authorized by this design.
+
+#### Tool, Baseline and Cost Evidence
+
+Installed local tools: Codex CLI `0.140.0`, Claude Code `2.1.260`, RTK
+`0.45.0`, pre-commit `4.5.1`, Python `3.12.3`, PyYAML `6.0.1`, and jsonschema
+`4.10.3`. Codex `features list` reports hooks, plugins and multi-agent support
+enabled. It does not establish project/hook trust. CLI observation emitted a
+read-only PATH-alias warning; no permission or global PATH change was made.
+Superpowers `6.3.0` using-superpowers, its Codex tool reference, and
+brainstorming were read from the installed openai-curated-remote cache.
+There is no dedicated Skill invocation tool in this session; filesystem
+reading is the actual invocation mechanism. Implementation/finishing skills
+remain pending the design checkpoint.
+
+| Command / scope | Exit | Result / observation |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .`, invoked through `rtk proxy` before this Task edit | 1 | FAIL; all-files input reports 1,017 paths. Known failures below reproduce independently; this run is not completion evidence |
+| `python3 scripts/validate-affected-surfaces.py --root .` | 1 | FAIL, 0.199 s; `SURFACE-PATH-MISSING` for the pre-existing deletion of `docs/99.templates/templates/governance/control.template.md` |
+| `python3 scripts/validate-agent-legacy-cutover.py --root .` | 1 | FAIL, 0.923 s; `AGQC-LEGACY-OWNER`, canonical owner validation failed |
+| `python3 scripts/validate-links-and-owners.py --root . --mode strict --include-path docs/99.templates/templates/archive/tombstone.template.md` | 2 | FAIL, 1.200 s; `WORK-054 WP-004B migration recovery proof differs` |
+| `python3 scripts/archive_cutover.py --root .` | 1 | FAIL, 5.956 s; incomplete cutover, migration parity/recovery and eight superseded-source ownership diagnostics |
+| `git diff --check`, initial unstaged snapshot | 0 | PASS; whitespace only |
+| `python3 scripts/validate-document-contract-registry.py --root . --mode strict --include-path` followed by this Task path | 0 | PASS after intake authoring; command reports 715 paths, zero uncovered and zero ambiguous paths; this is its actual broader scan scope |
+| `python3 scripts/validate-markdown-profiles.py --root . --mode strict --include-path` followed by this Task path | 0 | PASS after intake authoring; zero profile violations reported |
+| `git diff --check` and `git diff --cached --check`, after intake authoring | 0 / 0 | PASS; index remains empty, so cached whitespace success is vacuous and is not staged validation |
+| affected/staged runner, plain and all-files pre-commit, message/manual and post-formatter final bytes | Not run | DEFER for implementation completion; no new logical index exists and staged/Git writes are read-only. Do not execute formatters over preserved user work merely to claim a baseline |
+| Native skill discovery, model resolution and hook delivery/trust | Not run | DEFER; syntax and feature availability are not runtime evidence |
+| Hosted CI and live services | Not run | Outside authorized scope; no dispatch, deployment or cluster creation |
+
+Focused timings above use one `time.monotonic()` observation per subprocess;
+they are not benchmarks or aggregate duration. The registry lists 22 all-files
+validators. Eight explicit commands in `agent-governance-static` also appear
+in the all-files aggregate: affected-surface, CI topology, harness contract,
+harness semantics, legacy cutover, loop lifecycle, provider evidence, and CI
+Python contract. This is a static overlap candidate when both jobs are
+selected, not a measured hosted run or a completed reduction. CI already skips
+two local aggregate hooks in its pre-commit job; preserve that existing owner
+split. Working-tree, index and post-formatter checks remain distinct.
+
+#### Official Feature Evidence and Remaining Decisions
+
+- [Codex skills](https://learn.chatgpt.com/docs/build-skills) documents
+  `.agents/skills` repository discovery and `SKILL.md`; `.codex/skills`
+  presence alone does not establish native discovery.
+- [Codex plugins](https://learn.chatgpt.com/docs/build-plugins) distinguishes
+  package creation, installation and testing in a new conversation.
+- [Codex hooks](https://learn.chatgpt.com/docs/hooks) describes project-local
+  hooks, additive source loading and trust of the exact hook definition.
+  The current provider note's blanket unsupported-hook wording needs correction.
+- [Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents),
+  [Claude subagents](https://code.claude.com/docs/en/sub-agents),
+  [Claude hooks](https://code.claude.com/docs/en/hooks), and
+  [Claude settings](https://code.claude.com/docs/en/settings) are reference
+  contracts, not proof of native execution in this workspace.
+
+#### Approved Execution, Concurrent Work and GC-001 Evidence
+
+The human confirmed that the twenty staged paths belong to another Codex task
+in the same workspace. Read-only task inspection identifies that active task
+as `hy-home.k8s 문서 거버넌스 체계 통합`; it owns Stage 99, document lifecycle and
+Archive consumer changes. This controller neither staged those files nor
+modified their index entries. At resume, that index already includes further
+changes to `tests/test_document_strict_cutover.py`; the intake's earlier
+unstaged counts remain historical observations, not a frozen shared index.
+
+`/proc/self/mountinfo` confirms read-only mounts at this checkout's `.agents`,
+`.codex` and `.git`, and `os.access(..., os.W_OK)` returns false for each.
+The repository root, Stage 00 and scripts remain writable. No failed write,
+escalation, alternate-index workaround or shadow checkout was used. The
+approved source cutover, Codex adapter changes and local commits are DEFER
+until the host supplies the needed scoped write capability. Design approval
+is satisfied and must not be requested again for the same boundary.
+
+GC-001 changed only `policies/quality.md` and
+`tests/test_run_validation_lane.py`, alongside this Plan/Task evidence. The
+policy links to the runner's numeric owner and retains finite time/output,
+monotonic cleanup, concurrent draining and failure semantics. The old test's
+requirement to repeat numeric prose was removed; all four reviewed numeric
+assertions and all runner behavior regressions remain. The production runner
+was not modified. No fixture, lane or CI invocation was removed in this unit.
+
+| Command / scope | Exit | Result |
+| --- | --- | --- |
+| `python3 -m unittest tests.test_run_validation_lane.BoundedValidationCommandTest.test_reviewed_limits_match_the_sole_quality_owner`, after the policy edit and before test migration | 1 | Expected contract mismatch: the old test requires the removed numeric sentence. This demonstrates obsolete prose coupling, not a newly discovered runner defect |
+| `python3 -m unittest tests.test_run_validation_lane`, after test migration | 0 | PASS; 52 tests in 2.326 s, including timeout, both pipe limits, process/pipe cleanup and selection behavior |
+| `python3 scripts/run-validation-lane.py --root . --lane affected --paths-file <temporary NUL file> --delimiter nul`, containing exactly the four GC-001 paths | 1 | FAIL; 138.360 s elapsed for this invocation, six selected validators PASS and four FAIL: legacy cutover, document lifecycle, links/owners and repository quality |
+| `python3 scripts/validate-document-lifecycle.py --root . --mode strict`, diagnostic rerun | 1 | FAIL; MIG-0005 evidence is not proved against the other task's staged snapshot, `ARCHIVE-MIGRATION-STAGED-DRIFT` |
+| `python3 scripts/validation/repository/quality.py --root .`, diagnostic rerun | 1 | FAIL; the Task's actual root path and the approved Plan/Task's proposed Claude hook path are rejected by old blanket path rules |
+| Strict document registry and Markdown profiles, with explicit includes for the three owned documents | 0 / 0 | PASS; registry reports 715 paths, no uncovered/ambiguous paths; Markdown reports no violations |
+| `git diff --check` and `git diff --cached --check` | 0 / 0 | PASS for whitespace only; none of the four task-owned paths occurs in the other task's index |
+| Exact logical staged lane, pre-commit and local commit | Not run | DEFER: current index belongs to the concurrent task and Git is read-only |
+| Independent reviewer | Not run | DEFER: inline execution has not obtained independent review; no reviewer identity is invented |
+
+The repository-quality failures are newly exposed by this design/evidence
+text, not pre-existing baseline failures. That validator includes `str(root)`
+in its stale-path set and categorically rejects the proposed Claude hook
+directory. Its staged owner is the concurrent task, so this controller did
+not modify it, mask the failures, or conceal required paths to pass it. GC-002
+must replace those obsolete owner assumptions with current path/evidence
+semantics and independent negative cases when consumer ownership transfers.
+The legacy and links/owners errors retain the intake's recorded recovery
+failure signatures. The direct lifecycle result identifies the additional
+shared-index evidence boundary; it is not repaired by including another
+task's staged work in this unit.
+
+The next owner is this controller after the host write boundary and concurrent
+consumer handoff are resolved. Preserve all other work, this unit's unstaged
+diff and the existing branch. GC-001 has focused evidence but is not a completed
+commit; GC-002 through GC-004 and final branch completion remain outstanding.
+
+#### GC-002 Independent Input-Boundary Preparation
+
+The subsequent continuation preserved the concurrent task's twenty staged
+paths and added two owned unstaged paths: `scripts/validate-agent-harness-contract.py`
+and `tests/test_validate_agent_harness_contract.py`. The existing reader checked
+`PurePosixPath.parts` after that constructor had collapsed empty and dot
+components. Consequently three non-normalized aliases loaded the same JSON;
+dot-only and NUL inputs instead escaped as `IndexError` and `ValueError`.
+The new test reproduced all five behaviors before the production edit.
+
+The reader now checks raw slash-separated components and rejects NUL before
+opening an input file. It retains the existing `AGENT-REGISTRY-INPUT` error
+and value-free detail, bounded reads and no-follow descriptor traversal.
+Two focused tests use a disposable directory containing one synthetic JSON
+file: normal string/path inputs remain readable, while eight invalid input
+forms are rejected. No source corpus was copied or moved. The renderer remains
+unimplemented pending the atomic source/consumer transition; a second source
+authority or an unused generator scaffold was not introduced.
+
+| Command / scope | Exit | Result |
+| --- | --- | --- |
+| `python3 -m unittest tests.test_validate_agent_harness_contract.AgentHarnessRegistryContractTests.test_non_normalized_json_paths_fail_with_a_registry_error`, before the reader fix | 1 | Expected RED: three accepted aliases and two uncaught exceptions reproduced in 0.055 s; the other invalid forms already failed closed |
+| `python3 -m unittest tests.test_validate_agent_harness_contract tests.test_validate_agent_registry`, after the fix | 0 | PASS; 22 tests in 0.357 s |
+| `python3 scripts/validate-agent-harness-contract.py --root .` | 0 | PASS; current registry has two providers, twelve roles, three permission classes, sixteen skills, thirty-four handoffs and thirty-six projections; this is static evidence only |
+| `ruff check --no-cache scripts/validate-agent-harness-contract.py tests/test_validate_agent_harness_contract.py` | 0 | PASS with installed Ruff 0.15.12; system Python has no Ruff module, so the existing CLI was used without installing anything |
+| `ruff format --no-cache --check scripts/validate-agent-harness-contract.py tests/test_validate_agent_harness_contract.py`, before formatting | 1 | One newly added test line required wrapping; formatter subsequently changed only the owned test file, exit 0 |
+| `python3 -m unittest tests.test_validate_agent_harness_contract tests.test_validate_agent_registry tests.test_run_validation_lane`, after formatting | 0 | PASS; 74 tests in 2.400 s |
+| Ruff check and format-check on the two Python paths, after formatting | 0 / 0 | PASS; no remaining lint or formatting changes |
+| `python3 scripts/run-validation-lane.py --root . --lane affected --paths-file <temporary NUL file> --delimiter nul`, exactly the six owned paths | 1 | FAIL; 137.128 s, fifteen selected validators: eleven PASS, legacy cutover / document lifecycle / links and owners / repository quality FAIL with exit codes 1 / 1 / 2 / 1 |
+
+This focused fix is reviewable but uncommitted. The six owned paths remain
+separate from the concurrent task's index. During the affected run, additional
+unowned unstaged changes appeared in `scripts/archive_cutover.py`,
+`scripts/document_authority.py` and `tests/test_archive_cutover.py`; they were
+preserved. This execution observed a changing shared working tree, not a frozen
+index or commit. Adding the validator script to the affected scope selected
+five more static checks than GC-001's four-path run: GitOps structure,
+infrastructure contracts, Kubernetes manifests, policy gates and secret
+handling. Each passed; the different scope and shared edits prevent a cost
+reduction claim from the two timings. No gate or fixture was removed.
+At the final status observation, the concurrent index contained twenty-two
+paths and only this controller's six paths remained unstaged. HEAD stayed
+`6c5ad33444fdbdbe4fb10e9d652287d89a56fe99`; this controller made no commit.
+Previously recorded integration
+failures and required staged/pre-commit/native evidence remain unresolved;
+these focused passes do not close GC-002 or the overall Task.
 
 ## Traceability
 
