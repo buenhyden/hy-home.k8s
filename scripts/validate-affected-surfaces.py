@@ -480,7 +480,7 @@ def _repository_migration_proof(root: Path) -> Any:
         "archive_validation",
     )
     missing = object()
-    aliases = ("json_schema_validation", *owners, "_links_document_taxonomy_migration")
+    aliases = ("json_schema_validation", *owners)
     previous = {name: sys.modules.get(name, missing) for name in aliases}
     private_names: list[str] = []
     try:

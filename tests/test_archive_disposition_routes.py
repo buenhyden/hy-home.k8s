@@ -296,9 +296,6 @@ class ArchiveDispositionRecoveryTest(unittest.TestCase):
                 },
             ),
             mock.patch.object(
-                archive_validation, "_reviewed_manifest_records", return_value={}
-            ),
-            mock.patch.object(
                 archive_validation, "_read_repository_index", return_value=""
             ),
             mock.patch.object(
@@ -373,7 +370,6 @@ class ArchiveDispositionRecoveryTest(unittest.TestCase):
             record_link_counts=((path, 0),),
             record_count=1,
             historical_link_count=0,
-            reviewed_manifest_records=(),
             additive_record_sources=(row,) if identity else (),
         )
         text = f"---\ntype: {profile}\nstatus: {status}\n---\n" + (

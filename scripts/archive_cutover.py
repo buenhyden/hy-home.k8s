@@ -1095,9 +1095,6 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
     if present_paths != expected_paths:
         diagnostics.append(_diagnostic("ARCHIVE-CORPUS-INCOMPLETE", ARCHIVE_INDEX))
 
-    reviewed_manifest_rows = {
-        row.target: row for row in generic_report.reviewed_manifest_records
-    }
     additive_sources = (
         {row.target: row for row in generic_report.additive_record_sources}
         if generic_report.valid
@@ -1125,11 +1122,7 @@ def validate_repository_cutover(repository_root: str | Path) -> CutoverReport:
             else (
                 _source_commit(str(original_path))
                 if archive_path in base_paths
-                else (
-                    reviewed_manifest_rows[archive_path].source_commit
-                    if archive_path in reviewed_manifest_rows
-                    else None
-                )
+                else None
             )
         )
         additive = additive_sources.get(archive_path)

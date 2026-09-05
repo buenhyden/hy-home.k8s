@@ -2404,46 +2404,6 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         self.assertEqual(vacated, frozenset({legacy}))
         self.assertEqual(len(reduced), len(aliases) - 1)
 
-    def test_transition_manifest_admits_a_vacated_mig0002_endpoint(self) -> None:
-        _, move_targets, _ = self.validator._document_taxonomy_transition_manifest(
-            self.context
-        )
-        _, target = sorted(move_targets.items())[0]
-        # Several sealed moves can converge on one current path: a package that
-        # merged its plan and tasks leaves two MIG-0002 legacies pointing at the
-        # same file. Vacating that file vacates every move that reaches it.
-        expected_dropped = {
-            source for source, value in move_targets.items() if value == target
-        }
-        self.assertGreater(len(expected_dropped), 0)
-
-        context = dataclasses.replace(
-            self.context,
-            tracked_regular_paths=self.context.tracked_regular_paths - {target},
-        )
-        # The 82 move-current entries still have to be counted inside this call.
-        _, reduced, _ = self.validator._document_taxonomy_transition_manifest(context)
-
-        self.assertEqual(set(move_targets) - set(reduced), expected_dropped)
-
-    def test_transition_manifest_rejects_a_target_the_ledger_never_sealed(
-        self,
-    ) -> None:
-        """The vacated-endpoint admission is a proof, not a blanket waiver."""
-
-        with (
-            mock.patch.object(
-                self.validator,
-                "_work109_four_digit_aliases",
-                return_value=({}, frozenset()),
-            ),
-            self.assertRaisesRegex(
-                self.validator.ConfigurationError,
-                "lacks exact MIG-0002 evidence",
-            ),
-        ):
-            self.validator._document_taxonomy_transition_manifest(self.context)
-
     def _mutated_work109_context(self, mutate) -> object:
         path = self.validator.WORK109_MIGRATION_PATH
         text = self.context.texts[path]
@@ -2519,13 +2479,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
                     self.validator._work054_wp003_owner_merges(context)
 
     def _work054_edges(self, context: object) -> dict[object, PurePosixPath]:
-        _aliases, move_targets, _replacements = (
-            self.validator._document_taxonomy_transition_manifest(context)
-        )
-        return self.validator._reviewed_work054_historical_owner_edges(
-            context,
-            move_targets,
-        )
+        return self.validator._reviewed_work054_historical_owner_edges(context)
 
     def test_terminal_route_does_not_project_an_active_stale_owner_edge(self) -> None:
         source = PurePosixPath(
@@ -2687,35 +2641,38 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
 
         self.assertNotIn(edge, projected)
 
-    def test_terminal_history_composes_taxonomy_mig0002_and_mig0004_edges(
-        self,
-    ) -> None:
-        source = PurePosixPath(
-            "docs/90.references/audits/2026-07-02-whia/"
-            "harness-loop-implementation-audit.md"
-        )
-        target = PurePosixPath(
-            "docs/04.execution/tasks/"
-            "2026-07-02-workspace-harness-implementation-audit-pack.md"
-        )
-        # The package was retained after it completed, so the composed edge ends
-        # at the retained copy rather than at the Stage 03 path it vacated.
-        expected = PurePosixPath(
-            "docs/98.archive/completed/03.specs/"
-            "0010-workspace-harness-implementation-audit-pack/plan.md"
-        )
-        _move_blobs, move_targets, _archive_sources = (
-            self.validator._document_taxonomy_transition_manifest(self.context)
-        )
+    def test_current_stage04_reference_is_not_a_historical_alias(self) -> None:
+        """A current holder cannot resolve through the retired Stage04 bridge."""
 
-        projected = self.validator._reviewed_work054_historical_owner_edges(
+        source = PurePosixPath("docs/03.specs/9999-fixture/spec.md")
+        raw = self.validator.posixpath.relpath(self.moved_source, source.parent)
+        fixture_profile = next(iter(self.context.profiles.values()))
+        context = dataclasses.replace(
             self.context,
-            move_targets,
+            paths=(*self.context.paths, source),
+            profiles={**self.context.profiles, source: fixture_profile},
+            texts={**self.context.texts, source: f"[retired]({raw})\n"},
+            metadata={**self.context.metadata, source: {"status": "active"}},
+            tracked_regular_paths=self.context.tracked_regular_paths | {source},
         )
 
-        self.assertEqual(
-            projected[self.validator.ArchiveTransitionEdge(source, target)],
-            expected,
+        with (
+            mock.patch.object(
+                self.validator,
+                "_reviewed_work054_historical_owner_edges",
+                return_value={},
+            ),
+            mock.patch.object(
+                self.validator, "_migrated_directory_link", return_value=False
+            ),
+        ):
+            diagnostics = self.validator._link_diagnostics(context)
+
+        self.assertTrue(
+            any(
+                item.rule_id == "LINK-BROKEN" and item.path == source
+                for item in diagnostics
+            )
         )
 
     def test_work054_historical_projection_rejects_undeclared_retired_edge(

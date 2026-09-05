@@ -101,7 +101,6 @@ class HistoricalMigrationProofTest(unittest.TestCase):
         # Generic records, source objects, staged parity and renderer are real.
         for name, value in (
             ("_build_context", self.context),
-            ("_document_taxonomy_transition_manifest", ({}, {}, set())),
             ("_work109_migration_projection", ({}, {}, {}, frozenset())),
             ("_work054_wp003_owner_merges", {}),
             ("_work054_wp004b_targets", {}),

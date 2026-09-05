@@ -788,11 +788,6 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
         with (
             mock.patch.object(
                 links,
-                "_document_taxonomy_transition_manifest",
-                return_value=({}, {}, {}),
-            ),
-            mock.patch.object(
-                links,
                 "_work109_migration_projection",
                 return_value=({}, {}, {}, frozenset()),
             ),

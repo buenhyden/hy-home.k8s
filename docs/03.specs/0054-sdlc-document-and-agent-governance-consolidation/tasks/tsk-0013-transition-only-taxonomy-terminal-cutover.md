@@ -665,6 +665,28 @@ Previously recorded integration
 failures and required staged/pre-commit/native evidence remain unresolved;
 these focused passes do not close GC-002 or the overall Task.
 
+### Task 3/4 Current-State Handoff (2026-09-05)
+
+Task 3 completed as commit `7e13e2b9d838563343c5182cd8127c3a18944268`
+(`refactor(templates): reduce document control plane`). Its final affected and
+staged lanes each passed 15 validators; plain pre-commit and all-files
+pre-commit passed without formatter mutation. The isolated-clone full suite
+passed 929 tests with four expected hook-worktree skips; its 22-validator
+aggregate and working-tree/index diff checks also passed.
+
+Task 4 retires the transition manifest, mover, and dedicated test while
+preserving sealed-ledger and Git recovery evidence. Its focused GREEN checks
+passed 35 tests (2 archive/link, 2 affected-surface, 29 disposition-route, and
+2 historical-proof); changed Python and focused tests compiled, and its diff
+check passed. Documentation now removes the retired scripts row and treats the
+former manifest only as historical sealed/Git recovery evidence.
+
+Task 4's exact-index integration, final affected/staged/all-files lanes,
+aggregate/full-suite evidence, independent review, and commit remain pending.
+No Task 5 or WP-009 expansion was performed. This Task remains `in-progress`;
+rollback remains a reviewed revert of the applicable logical commit, and the
+parent owner retains ordered integration and merge handoff responsibility.
+
 ## Traceability
 
 ### Lifecycle Traceability

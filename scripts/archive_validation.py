@@ -209,7 +209,6 @@ class ArchiveValidationReport:
     index_record_count: int = 0
     namespace_counts: tuple[tuple[str, int], ...] = ()
     record_link_counts: tuple[tuple[str, int], ...] = ()
-    reviewed_manifest_records: tuple[ReviewedManifestRecord, ...] = ()
     additive_record_sources: tuple[ReviewedManifestRecord, ...] = ()
 
     @property
@@ -263,7 +262,6 @@ def _report(
     index_record_count: int = 0,
     namespace_counts: Sequence[tuple[str, int]] = (),
     record_link_counts: Sequence[tuple[str, int]] = (),
-    reviewed_manifest_records: Sequence[ReviewedManifestRecord] = (),
     additive_record_sources: Sequence[ReviewedManifestRecord] = (),
 ) -> ArchiveValidationReport:
     return ArchiveValidationReport(
@@ -273,7 +271,6 @@ def _report(
         index_record_count=index_record_count,
         namespace_counts=tuple(namespace_counts),
         record_link_counts=tuple(record_link_counts),
-        reviewed_manifest_records=tuple(reviewed_manifest_records),
         additive_record_sources=tuple(additive_record_sources),
     )
 
@@ -281,7 +278,6 @@ def _report(
 _NAMESPACE_IDS = (
     "arwb-base",
     "acer-additive",
-    "wdtc-execution",
     "progress-snapshot",
 )
 _INDEX_HEADER = (
@@ -303,10 +299,6 @@ _ARCHIVE_RECORD_LIMIT = 8 * 1024 * 1024
 _ARCHIVE_INDEX_LIMIT = 2 * 1024 * 1024
 _GIT_TREE_OUTPUT_LIMIT = 2 * 1024 * 1024
 _GIT_TREE_ENTRY_LIMIT = 4096
-_MANIFEST_SOURCE_COMMIT = (
-    "713dff1fc3de58a2d1682970a7f24faa39c14263"  # pragma: allowlist secret
-)
-_MIGRATION_MODULE_TOKEN = object()
 _WORK109_MIGRATION_PATH = (
     "docs/98.archive/migrations/0002-sdlc-document-and-governance-consolidation.md"
 )
@@ -3162,7 +3154,6 @@ def validate_mig0004_historical_targets(
 def _stage98_namespace_records(
     actual: frozenset[str],
     stable_rows: Mapping[str, Mapping[str, object]],
-    reviewed_manifest: Mapping[str, ReviewedManifestRecord],
 ) -> tuple[dict[str, tuple[str, ...]], list[ArchiveDiagnostic]]:
     """Derive reporting partitions from Stage 98's durable recovery owners."""
 
@@ -3173,24 +3164,16 @@ def _stage98_namespace_records(
     base = frozenset(
         legacy_to_stable.get(path, path) for path in EXPECTED_ARCHIVE_PATHS
     )
-    reviewed = frozenset(reviewed_manifest)
     # ADR-0030 makes Git history the full-content archive, so a base record is
     # proved by presence or by a sealed row in the digest-pinned WORK-107
     # ledger, which carries its source blob and content digest.
     sealed = frozenset(stable_rows)
-    if not base.issubset(actual | sealed) or not reviewed.issubset(actual | sealed):
-        diagnostics.append(
-            _diagnostic("ARCHIVE-NAMESPACE-REVIEWED", ARCHIVE_ROOT.as_posix())
-        )
-    if base & reviewed:
-        diagnostics.append(
-            _diagnostic("ARCHIVE-NAMESPACE-OVERLAP", ARCHIVE_ROOT.as_posix())
-        )
-    additive = actual - base - reviewed
+    if not base.issubset(actual | sealed):
+        diagnostics.append(_diagnostic("ARCHIVE-NAMESPACE-BASE", ARCHIVE_ROOT.as_posix()))
+    additive = actual - base
     namespaces = {
         "arwb-base": tuple(sorted(base & actual)),
         "acer-additive": tuple(sorted(additive)),
-        "wdtc-execution": tuple(sorted(reviewed & actual)),
         "progress-snapshot": (),
     }
     return namespaces, diagnostics
@@ -3348,89 +3331,6 @@ def _repository_archive_records(
                 _diagnostic(exc.code, (ARCHIVE_ROOT / "migrations").as_posix())
             )
     return records, diagnostics, migration_proof
-
-
-@lru_cache(maxsize=1)
-def _load_migration_module() -> ModuleType:
-    module_path = Path(__file__).resolve(strict=True)
-    script_path = module_path.with_name("migrate-document-work-units.py").resolve(
-        strict=True
-    )
-    if script_path.parent != module_path.parent:
-        raise RuntimeError("reviewed migration module is unavailable")
-    module_name = f"_archive_reviewed_migration_{id(_MIGRATION_MODULE_TOKEN):x}"
-    spec = importlib.util.spec_from_file_location(module_name, script_path)
-    if spec is None or spec.loader is None:
-        raise RuntimeError("reviewed migration module is unavailable")
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[module_name] = module
-    scripts_path = str(script_path.parent)
-    inserted = scripts_path not in sys.path
-    if inserted:
-        sys.path.insert(0, scripts_path)
-    try:
-        spec.loader.exec_module(module)
-        if (
-            Path(str(getattr(module, "__file__", ""))).resolve(strict=True)
-            != script_path
-        ):
-            raise RuntimeError("reviewed migration module is unavailable")
-    finally:
-        sys.modules.pop(module_name, None)
-        if inserted:
-            sys.path.remove(scripts_path)
-    return module
-
-
-def _reviewed_manifest_records(root: Path) -> dict[str, ReviewedManifestRecord]:
-    """Return the exact 50 archive rows from the clean stage-zero manifest."""
-
-    module = _load_migration_module()
-    try:
-        snapshot = module.load_reviewed_manifest_snapshot(
-            root, validate_repository=False
-        )
-    except Exception as exc:
-        if isinstance(exc, getattr(module, "MigrationAbort", ())):
-            raise RuntimeError("reviewed migration manifest is unavailable") from exc
-        raise
-    document = snapshot.document
-    if (
-        document.source_commit != _MANIFEST_SOURCE_COMMIT
-        or len(document.entries) != 132
-    ):
-        raise RuntimeError("reviewed migration manifest identity differs")
-    move_count = 0
-    reviewed: dict[str, ReviewedManifestRecord] = {}
-    for entry in document.entries:
-        disposition = entry.get("disposition")
-        if disposition == "move-current":
-            move_count += 1
-            continue
-        if disposition != "archive-unique":
-            raise RuntimeError("reviewed migration manifest disposition differs")
-        source = _canonical_path(entry.get("source"))
-        target = _canonical_path(entry.get("target"), archive_only=True)
-        source_blob = entry.get("sourceBlob")
-        if (
-            source is None
-            or target is None
-            or target != f"docs/98.archive/{source.removeprefix('docs/')}"
-            or not isinstance(source_blob, str)
-            or _FULL_OBJECT_ID.fullmatch(source_blob) is None
-            or len(source_blob) != len(document.source_commit)
-            or target in reviewed
-        ):
-            raise RuntimeError("reviewed migration manifest archive row differs")
-        reviewed[target] = ReviewedManifestRecord(
-            target=target,
-            original_path=source,
-            source_commit=document.source_commit,
-            source_blob=source_blob,
-        )
-    if move_count != 82 or len(reviewed) != 50:
-        raise RuntimeError("reviewed migration manifest counts differ")
-    return reviewed
 
 
 def _work107_stable_rows(root: Path) -> dict[str, Mapping[str, object]]:
@@ -3667,31 +3567,7 @@ def validate_repository_archive(
         diagnostics.append(
             _diagnostic("ARCHIVE-MIGRATION-LEDGER", WORK107_MIGRATION_PATH)
         )
-    legacy_to_stable = {
-        str(row["legacy_path"]): stable for stable, row in stable_rows.items()
-    }
-    try:
-        reviewed_manifest = _reviewed_manifest_records(root)
-    except (OSError, RuntimeError, TypeError, ValueError):
-        reviewed_manifest = {}
-        diagnostics.append(
-            _diagnostic("ARCHIVE-NAMESPACE-REVIEWED", ARCHIVE_ROOT.as_posix())
-        )
-    if stable_rows:
-        reviewed_manifest = {
-            legacy_to_stable.get(path, path): ReviewedManifestRecord(
-                target=legacy_to_stable.get(path, path),
-                original_path=row.original_path,
-                source_commit=row.source_commit,
-                source_blob=row.source_blob,
-            )
-            for path, row in reviewed_manifest.items()
-        }
-    namespaces, namespace_diagnostics = _stage98_namespace_records(
-        actual,
-        stable_rows,
-        reviewed_manifest,
-    )
+    namespaces, namespace_diagnostics = _stage98_namespace_records(actual, stable_rows)
     diagnostics.extend(namespace_diagnostics)
     additive_sources: list[ReviewedManifestRecord] = []
     unproved_additions = actual - frozenset(stable_rows) if stable_rows else frozenset()
@@ -3806,13 +3682,6 @@ def validate_repository_archive(
         except ArchiveContractError:
             continue
         metadata_by_path[record.path] = parsed.metadata
-        reviewed = reviewed_manifest.get(record.path)
-        if reviewed is not None and (
-            parsed.metadata.get("original_path") != reviewed.original_path
-            or parsed.metadata.get("source_commit") != reviewed.source_commit
-            or parsed.metadata.get("source_blob") != reviewed.source_blob
-        ):
-            diagnostics.append(_diagnostic("ARCHIVE-NAMESPACE-METADATA", record.path))
         stable_row = stable_rows.get(record.path)
         if stable_row is not None and any(
             parsed.metadata.get(key) != stable_row[key]
@@ -3871,9 +3740,6 @@ def validate_repository_archive(
         index_record_count=len(index_rows),
         namespace_counts=namespace_counts,
         record_link_counts=record_report.record_link_counts,
-        reviewed_manifest_records=tuple(
-            reviewed_manifest[path] for path in sorted(reviewed_manifest)
-        ),
         additive_record_sources=tuple(sorted(additive_sources))
         if not diagnostics
         else (),
