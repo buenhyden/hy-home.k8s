@@ -58,6 +58,34 @@ lineage, and Google SRE informs factual incidents and blameless postmortems.
 The terminal Stage 04 slot remains unused. Root `DESIGN.md` remains the UI and
 design-system authority, not a Stage 03 technical-design artifact.
 
+### Shared terminology and ownership
+
+| Term | Meaning and owner |
+| --- | --- |
+| Requirement | Durable need and acceptance boundary; Stage 01. |
+| Architecture Description / Architecture Decision Record | Current structural view / durable choice and rationale; Stage 02. |
+| Spec / Plan / Task | Change contract / execution order and risk / work, verification, and handoff evidence; one Stage 03 package. |
+| Policy / rule / contract / control | A policy owns normative meaning; a rule is one obligation; a contract specifies an interface or invariant; a control enforces it. Common behavior belongs to Stage 00 policies, executable enforcement to scripts, document shape to Stage 99. These terms do not create parallel policy directories. |
+| Provider / Role / Agent | Runtime-specific adapter contract / neutral responsibility and allowed scope / an executing instance of a role. Native configuration is not evidence of runtime enforcement. |
+| Skill | Reusable procedure under Stage 00 skills; native discovery depends on the provider contract. A plain procedure reference is not a native registration. |
+| Hook / Gate / validator / Fixture | Native event callback / blocking quality decision / executable check implementing that decision / independent bounded test input. A hook need not run QA, and a test fixture is never production policy input. |
+| QA / CI / CD | Quality checks / hosted validation of a checkout / delivery and reconciliation. Local and CI static QA share one execution contract; Argo CD reconciles the declared GitOps state under the operating boundary. |
+| Deployment / release | Applying a declared version to an environment / identifying and publishing a deliverable. Neither follows automatically from local validation or a commit. |
+| Guide / Runbook | Explanatory operating knowledge / triggered operational steps with rollback and verification; Stage 05. |
+| Evidence / archive | Observed result with input, environment, and limits / non-authoritative historical retention. Task and Git own change evidence; Stage 98 owns retained recovery records. |
+
+### Proportional transitions
+
+| Transition | Entry and output | Approval and evidence | Failure or rollback |
+| --- | --- | --- | --- |
+| Need to design | Requirement or direct scoped request; structural views or decision only when boundaries change | Request owner approves scope; design approval when required | Clarify an unresolved boundary before dependent implementation |
+| Design to execution | Accepted change contract and ordered Plan; Task records work and checks | Reuse valid approval for the same scope; never infer approval from a checkbox | Revise the Plan when evidence contradicts it; preserve unrelated work |
+| Execution to handoff | Reviewed final bytes and required checks; scoped Git commit and Task result | Local, index, hosted, provider, and live evidence remain distinct | Failed required checks block completion; missing external permission is DEFER |
+| Handoff to operations or retention | Stable operating knowledge or terminal work record | Promote only durable meaning; apply Stage 99 lifecycle and recovery contracts | Keep failures factual; use Git recovery rather than a second active owner |
+
+A small correction reuses its current work owner and proportional checks. It
+need not create a Requirement, ADR, or a new Spec package merely to edit a file.
+
 ## Validation and Refresh
 
 Run the registry, Markdown profile, link/owner, lifecycle, affected-surface,

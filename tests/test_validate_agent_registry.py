@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
-VALIDATOR_PATH = REPOSITORY_ROOT / "scripts" / "validate-agent-harness-contract.py"
+VALIDATOR_PATH = REPOSITORY_ROOT / "scripts" / "validate-agent-governance.py"
 
 
 def load_validator():

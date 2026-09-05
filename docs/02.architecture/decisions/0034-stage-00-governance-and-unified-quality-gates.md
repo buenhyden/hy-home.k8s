@@ -34,16 +34,19 @@ still delegate exact authority to `.agents/registry.json`.
 ## Decision
 
 1. `docs/00.agent-governance/` owns shared human and machine governance.
-   `registry.json`, its schema, canonical role bodies, and shared skills live
-   below Stage 00.
+   The shared registry/schema and canonical role bodies live below Stage 00
+   roles; shared native procedures and assets live below Stage 00 skills.
 2. `.claude/` and `.codex/` contain only provider-native gateways,
-   configuration, projections, and symlinks to Stage 00 skills. Provider files
-   may narrow common policy but never redefine or expand it.
+   configuration and explicit references to shared responsibilities. Claude
+   skill exposure follows its supported native directory/metadata contract;
+   Codex uses explicit procedure reads when automatic registration is absent.
+   Provider files may narrow common policy but never redefine or expand it.
 3. `.agents/` is removed. Reachable Git history is the recovery source; no
    compatibility redirect or dormant directory is retained.
 4. `scripts/qa.py` is the only supported QA orchestration entrypoint. It reads a
-   compact gate registry, runs every selected gate once, fails closed, and emits
-   a stable summary. Local and hosted execution use the same profiles.
+   profile membership from the existing validation registry, runs every selected
+   gate once, fails closed, and emits a bounded diagnostic summary. Commands
+   and limits have one owner; local full and hosted ci share blocking gates.
 5. Gate policy distinguishes four concerns: governance, repository documents,
    manifests/security, and workflow/tooling. Fixtures exist only under
    `tests/fixtures/` and only when a focused test needs input variation.

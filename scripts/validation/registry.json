@@ -66,10 +66,10 @@
       "evidenceLane": "repo-static"
     },
     {
-      "id": "agent-governance-ci",
+      "id": "agent-governance",
       "argv": [
         "python3",
-        "scripts/validate-agent-governance-ci.py",
+        "scripts/validate-agent-governance.py",
         "--root",
         "."
       ],
@@ -82,110 +82,7 @@
       "optional": false,
       "fallback": {
         "status": "FAIL",
-        "reason": "Agent-governance CI topology validation is required."
-      },
-      "evidenceLane": "repo-static"
-    },
-    {
-      "id": "agent-harness-contract",
-      "argv": [
-        "python3",
-        "scripts/validate-agent-harness-contract.py",
-        "--root",
-        "."
-      ],
-      "lanes": [
-        "affected",
-        "staged",
-        "all-files",
-        "ci"
-      ],
-      "optional": false,
-      "fallback": {
-        "status": "FAIL",
-        "reason": "Provider-neutral harness contract validation is required."
-      },
-      "evidenceLane": "repo-static"
-    },
-    {
-      "id": "agent-harness-semantics",
-      "argv": [
-        "python3",
-        "scripts/validate-agent-harness-semantics.py",
-        "--root",
-        "."
-      ],
-      "lanes": [
-        "all-files",
-        "ci"
-      ],
-      "optional": false,
-      "fallback": {
-        "status": "FAIL",
-        "reason": "Agent harness semantic validation is required."
-      },
-      "evidenceLane": "repo-static"
-    },
-    {
-      "id": "agent-legacy-cutover",
-      "argv": [
-        "python3",
-        "scripts/validate-agent-legacy-cutover.py",
-        "--root",
-        "."
-      ],
-      "lanes": [
-        "affected",
-        "staged",
-        "all-files",
-        "ci"
-      ],
-      "optional": false,
-      "fallback": {
-        "status": "FAIL",
-        "reason": "Agent legacy cutover validation is required."
-      },
-      "evidenceLane": "repo-static"
-    },
-    {
-      "id": "agent-loop-lifecycle",
-      "argv": [
-        "python3",
-        "scripts/validate-agent-loop-lifecycle.py",
-        "--root",
-        "."
-      ],
-      "lanes": [
-        "affected",
-        "staged",
-        "all-files",
-        "ci"
-      ],
-      "optional": false,
-      "fallback": {
-        "status": "FAIL",
-        "reason": "Agent loop lifecycle validation is required."
-      },
-      "evidenceLane": "repo-static"
-    },
-    {
-      "id": "agent-provider-evidence",
-      "argv": [
-        "python3",
-        "scripts/validate-agent-provider-evidence.py",
-        "--root",
-        "."
-      ],
-      "lanes": [
-        "affected",
-        "staged",
-        "all-files",
-        "ci"
-      ],
-      "optional": false,
-      "fallback": {
-        "status": "FAIL",
-        "reason": "Provider-native evidence boundary validation is required."
+        "reason": "Canonical Stage 00 registry, native adapter, and consumer validation is required."
       },
       "evidenceLane": "repo-static"
     },
@@ -483,27 +380,53 @@
         "reason": "Vault and ESO safety contracts are required."
       },
       "evidenceLane": "repo-static"
+    },
+    {
+      "id": "unit-tests",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-t",
+        "."
+      ],
+      "lanes": [
+        "all-files",
+        "ci"
+      ],
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "unit-tests is required."
+      },
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "pre-commit",
+      "argv": [
+        "pre-commit",
+        "run",
+        "--all-files"
+      ],
+      "lanes": [
+        "all-files",
+        "ci"
+      ],
+      "optional": false,
+      "fallback": {
+        "status": "FAIL",
+        "reason": "pre-commit is required."
+      },
+      "evidenceLane": "repo-static"
     }
   ],
   "ciJobs": [
     {
-      "id": "agent-governance-static",
-      "output": "agent_governance",
-      "evidenceLane": "ci"
-    },
-    {
-      "id": "manifest-static",
-      "output": "manifests",
-      "evidenceLane": "ci"
-    },
-    {
-      "id": "pre-commit",
-      "output": "precommit",
-      "evidenceLane": "ci"
-    },
-    {
-      "id": "repo-quality-static",
-      "output": "repo_quality",
+      "id": "qa",
+      "output": "qa",
       "evidenceLane": "ci"
     }
   ],
@@ -581,14 +504,11 @@
         }
       ],
       "validators": [
-        "agent-governance-ci",
-        "agent-legacy-cutover",
+        "agent-governance",
         "repository-quality"
       ],
       "ciJobs": [
-        "agent-governance-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
       "protectedLevel": "review",
       "fallback": {
@@ -610,11 +530,7 @@
         }
       ],
       "validators": [
-        "agent-governance-ci",
-        "agent-harness-contract",
-        "agent-legacy-cutover",
-        "agent-loop-lifecycle",
-        "agent-provider-evidence",
+        "agent-governance",
         "document-contract-registry",
         "document-lifecycle",
         "links-and-owners",
@@ -622,9 +538,7 @@
         "repository-quality"
       ],
       "ciJobs": [
-        "agent-governance-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -649,8 +563,7 @@
         "repository-quality"
       ],
       "ciJobs": [
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
       "protectedLevel": "review",
       "fallback": {
@@ -664,14 +577,11 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^\\.agents/.*$"
+          "value": "^docs/00\\.agent-governance/(roles|skills)/.*$"
         }
       ],
       "validators": [
-        "agent-governance-ci",
-        "agent-harness-contract",
-        "agent-legacy-cutover",
-        "agent-loop-lifecycle",
+        "agent-governance",
         "document-contract-registry",
         "document-lifecycle",
         "links-and-owners",
@@ -679,9 +589,7 @@
         "repository-quality"
       ],
       "ciJobs": [
-        "agent-governance-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -699,11 +607,7 @@
         }
       ],
       "validators": [
-        "agent-governance-ci",
-        "agent-harness-contract",
-        "agent-legacy-cutover",
-        "agent-loop-lifecycle",
-        "agent-provider-evidence",
+        "agent-governance",
         "document-contract-registry",
         "document-lifecycle",
         "links-and-owners",
@@ -711,9 +615,7 @@
         "repository-quality"
       ],
       "ciJobs": [
-        "agent-governance-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -731,11 +633,7 @@
         }
       ],
       "validators": [
-        "agent-governance-ci",
-        "agent-harness-contract",
-        "agent-legacy-cutover",
-        "agent-loop-lifecycle",
-        "agent-provider-evidence",
+        "agent-governance",
         "document-contract-registry",
         "document-lifecycle",
         "links-and-owners",
@@ -743,9 +641,7 @@
         "repository-quality"
       ],
       "ciJobs": [
-        "agent-governance-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -763,14 +659,11 @@
         }
       ],
       "validators": [
-        "agent-governance-ci",
-        "agent-legacy-cutover",
+        "agent-governance",
         "repository-quality"
       ],
       "ciJobs": [
-        "agent-governance-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -784,15 +677,11 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/00\\.agent-governance/.*$"
+          "value": "^docs/00\\.agent-governance/(?!roles/|skills/).*$"
         }
       ],
       "validators": [
-        "agent-governance-ci",
-        "agent-harness-contract",
-        "agent-legacy-cutover",
-        "agent-loop-lifecycle",
-        "agent-provider-evidence",
+        "agent-governance",
         "document-contract-registry",
         "document-lifecycle",
         "links-and-owners",
@@ -800,9 +689,7 @@
         "repository-quality"
       ],
       "ciJobs": [
-        "agent-governance-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -820,8 +707,7 @@
         }
       ],
       "validators": [
-        "agent-governance-ci",
-        "agent-legacy-cutover",
+        "agent-governance",
         "document-contract-registry",
         "document-lifecycle",
         "links-and-owners",
@@ -829,9 +715,7 @@
         "repository-quality"
       ],
       "ciJobs": [
-        "agent-governance-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -849,8 +733,7 @@
         }
       ],
       "validators": [
-        "agent-governance-ci",
-        "agent-legacy-cutover",
+        "agent-governance",
         "document-contract-registry",
         "document-lifecycle",
         "links-and-owners",
@@ -858,9 +741,7 @@
         "repository-quality"
       ],
       "ciJobs": [
-        "agent-governance-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
       "protectedLevel": "review",
       "fallback": {
@@ -881,8 +762,7 @@
         "repository-quality"
       ],
       "ciJobs": [
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
       "protectedLevel": "review",
       "fallback": {
@@ -907,9 +787,7 @@
         "secret-handling"
       ],
       "ciJobs": [
-        "manifest-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
       "protectedLevel": "review",
       "fallback": {
@@ -936,9 +814,7 @@
         "secret-handling"
       ],
       "ciJobs": [
-        "manifest-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -964,9 +840,7 @@
         "secret-handling"
       ],
       "ciJobs": [
-        "manifest-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -1002,9 +876,7 @@
         "vault-eso-contracts"
       ],
       "ciJobs": [
-        "manifest-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -1035,9 +907,7 @@
         "vault-eso-contracts"
       ],
       "ciJobs": [
-        "manifest-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -1059,9 +929,7 @@
         "repository-quality"
       ],
       "ciJobs": [
-        "manifest-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -1079,11 +947,7 @@
         }
       ],
       "validators": [
-        "agent-governance-ci",
-        "agent-harness-contract",
-        "agent-legacy-cutover",
-        "agent-loop-lifecycle",
-        "agent-provider-evidence",
+        "agent-governance",
         "gitops-structure",
         "infrastructure-contracts",
         "k8s-manifests",
@@ -1092,10 +956,7 @@
         "secret-handling"
       ],
       "ciJobs": [
-        "agent-governance-static",
-        "manifest-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -1117,9 +978,7 @@
         "secret-handling"
       ],
       "ciJobs": [
-        "manifest-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -1137,17 +996,11 @@
         }
       ],
       "validators": [
-        "agent-governance-ci",
-        "agent-harness-contract",
-        "agent-legacy-cutover",
-        "agent-loop-lifecycle",
-        "agent-provider-evidence",
+        "agent-governance",
         "repository-quality"
       ],
       "ciJobs": [
-        "agent-governance-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
       "protectedLevel": "review",
       "fallback": {
@@ -1171,9 +1024,7 @@
         "secret-handling"
       ],
       "ciJobs": [
-        "manifest-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
       "protectedLevel": "protected",
       "fallback": {
@@ -1194,8 +1045,7 @@
         "repository-quality"
       ],
       "ciJobs": [
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
       "protectedLevel": "none",
       "fallback": {
@@ -1204,5 +1054,79 @@
       },
       "evidenceLane": "repo-static"
     }
-  ]
+  ],
+  "profiles": {
+    "quick": [
+      "agent-governance",
+      "document-contract-registry",
+      "document-lifecycle",
+      "gitops-change-set",
+      "gitops-structure",
+      "infrastructure-contracts",
+      "k8s-manifests",
+      "links-and-owners",
+      "markdown-profiles",
+      "policy-gates",
+      "repository-quality",
+      "secret-handling",
+      "vault-eso-contracts"
+    ],
+    "staged": [
+      "agent-governance",
+      "document-contract-registry",
+      "document-lifecycle",
+      "gitops-change-set",
+      "gitops-structure",
+      "infrastructure-contracts",
+      "k8s-manifests",
+      "links-and-owners",
+      "markdown-profiles",
+      "policy-gates",
+      "repository-quality",
+      "secret-handling",
+      "vault-eso-contracts"
+    ],
+    "full": [
+      "affected-surface-contract",
+      "archive-cutover",
+      "agent-governance",
+      "ci-python-contract",
+      "document-contract-registry",
+      "document-lifecycle",
+      "gitops-change-set",
+      "gitops-structure",
+      "infrastructure-contracts",
+      "k8s-manifests",
+      "links-and-owners",
+      "markdown-profiles",
+      "policy-gates",
+      "repository-quality",
+      "workspace-boundary",
+      "secret-handling",
+      "vault-eso-contracts",
+      "unit-tests",
+      "pre-commit"
+    ],
+    "ci": [
+      "affected-surface-contract",
+      "archive-cutover",
+      "agent-governance",
+      "ci-python-contract",
+      "document-contract-registry",
+      "document-lifecycle",
+      "gitops-change-set",
+      "gitops-structure",
+      "infrastructure-contracts",
+      "k8s-manifests",
+      "links-and-owners",
+      "markdown-profiles",
+      "policy-gates",
+      "repository-quality",
+      "workspace-boundary",
+      "secret-handling",
+      "vault-eso-contracts",
+      "unit-tests",
+      "pre-commit"
+    ]
+  }
 }

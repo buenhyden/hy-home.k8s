@@ -1511,71 +1511,6 @@
       "placeholder_policy": "forbidden"
     },
     {
-      "id": "governance/control",
-      "family": "governance",
-      "mode": "authored",
-      "path_pattern": "^docs/00\\.agent-governance/controls/[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
-      "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/governance/control.template.md",
-      "frontmatter": {
-        "mode": "required",
-        "required": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated"
-        ],
-        "optional": [
-          "supersedes",
-          "superseded_by"
-        ],
-        "forbidden": [
-          "artifact_id",
-          "layer"
-        ],
-        "order": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "supersedes",
-          "superseded_by"
-        ],
-        "constants": {
-          "type": "governance/control"
-        }
-      },
-      "sections": {
-        "required": [
-          "Overview",
-          "Authority Boundary",
-          "Governance Context",
-          "Current Contract",
-          "Validation and Refresh",
-          "Related Documents"
-        ],
-        "optional": [],
-        "forbidden": []
-      },
-      "lifecycle": {
-        "status_domain": [
-          "draft",
-          "active",
-          "superseded",
-          "retired"
-        ]
-      },
-      "relationships": {
-        "source_profile_ids": [],
-        "body_contract": null
-      },
-      "placeholder_policy": "forbidden"
-    },
-    {
       "id": "governance/provider",
       "family": "governance",
       "mode": "authored",
@@ -2011,7 +1946,7 @@
       "id": "common/readme-implementation",
       "family": "common",
       "mode": "router",
-      "path_pattern": "^(?:\\.agents/README\\.md|\\.claude/README\\.md|\\.codex/README\\.md|evals/README\\.md|examples/README\\.md|examples/sample\\-app/README\\.md|gitops/README\\.md|gitops/workloads/README\\.md|infrastructure/README\\.md|policy/README\\.md|scripts/README\\.md|secrets/README\\.md|tests/README\\.md|traefik/README\\.md|examples/azure/gitops/README\\.md|examples/azure/infrastructure/README\\.md|examples/azure/kubernetes/README\\.md|examples/(?:aws|azure)/README\\.md)$",
+      "path_pattern": "^(?:\\.claude/README\\.md|\\.codex/README\\.md|evals/README\\.md|examples/README\\.md|examples/sample\\-app/README\\.md|gitops/README\\.md|gitops/workloads/README\\.md|infrastructure/README\\.md|policy/README\\.md|scripts/README\\.md|secrets/README\\.md|tests/README\\.md|traefik/README\\.md|examples/azure/gitops/README\\.md|examples/azure/infrastructure/README\\.md|examples/azure/kubernetes/README\\.md|examples/(?:aws|azure)/README\\.md)$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/common/readme-implementation.template.md",
       "frontmatter": {
@@ -2371,10 +2306,10 @@
       "placeholder_policy": "forbidden"
     },
     {
-      "id": "common/local-agent-asset",
+      "id": "common/native-skill-package",
       "family": "common",
       "mode": "native",
-      "path_pattern": "^\\.agents/(?!README\\.md$).+\\.md$",
+      "path_pattern": "^docs/00\\.agent-governance/skills/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/SKILL\\.md$",
       "artifact_id_pattern": null,
       "template_source": null,
       "frontmatter": {
@@ -4633,66 +4568,6 @@
       "placeholder_policy": "template-only"
     },
     {
-      "id": "common/template-governance-control",
-      "family": "common",
-      "mode": "template",
-      "path_pattern": "^docs/99\\.templates/templates/governance/control\\.template\\.md$",
-      "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/governance/control.template.md",
-      "frontmatter": {
-        "mode": "required",
-        "required": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated"
-        ],
-        "optional": [
-          "supersedes",
-          "superseded_by"
-        ],
-        "forbidden": [
-          "artifact_id",
-          "layer"
-        ],
-        "order": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "supersedes",
-          "superseded_by"
-        ],
-        "constants": {
-          "type": "governance/control"
-        }
-      },
-      "sections": {
-        "required": [
-          "Overview",
-          "Authority Boundary",
-          "Governance Context",
-          "Current Contract",
-          "Validation and Refresh",
-          "Related Documents"
-        ],
-        "optional": [],
-        "forbidden": []
-      },
-      "lifecycle": null,
-      "relationships": {
-        "source_profile_ids": [
-          "governance/control"
-        ],
-        "body_contract": null
-      },
-      "placeholder_policy": "template-only"
-    },
-    {
       "id": "common/template-governance-provider",
       "family": "common",
       "mode": "template",
@@ -5067,7 +4942,6 @@
         "operation/policy",
         "operation/runbook",
         "governance/contract",
-        "governance/control",
         "governance/provider",
         "governance/role",
         "governance/rule",

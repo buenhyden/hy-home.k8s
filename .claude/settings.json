@@ -1,5 +1,4 @@
 {
-  "customInstructions": "Enforce Template-First document routing through docs/99.templates/registry.json and use docs/99.templates/README.md for author guidance, then read the registry-selected terminal template under docs/99.templates/templates/. Implement explicit QA and CI/static validation phases before considering any implementation complete. MUST utilize workspace structured directories. Consult docs/00.agent-governance/memory/.",
   "permissions": {
     "allow": [
       "Bash(git status --short)",
@@ -76,74 +75,14 @@
     ]
   },
   "hooks": {
-    "SessionStart": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "HY_HOME_K8S_HOOK_PROVIDER=claude bash $CLAUDE_PROJECT_DIR/docs/00.agent-governance/hooks/session-start.sh",
-            "timeout": 20
-          }
-        ]
-      }
-    ],
     "PreToolUse": [
       {
         "matcher": "Write|Edit|MultiEdit",
         "hooks": [
           {
             "type": "command",
-            "command": "HY_HOME_K8S_HOOK_PROVIDER=claude bash $CLAUDE_PROJECT_DIR/docs/00.agent-governance/hooks/k8s-pre-edit.sh",
+            "command": "HY_HOME_K8S_HOOK_PROVIDER=claude bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/k8s-pre-edit.sh\"",
             "timeout": 10
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/usr/bin/env -i HOME=\"$HOME\" LANG=C.UTF-8 LC_ALL=C.UTF-8 PATH=/usr/bin:/bin CLAUDE_PROJECT_DIR=\"$CLAUDE_PROJECT_DIR\" HY_HOME_K8S_HOOK_PROVIDER=claude /usr/bin/bash --noprofile --norc \"$CLAUDE_PROJECT_DIR/docs/00.agent-governance/hooks/post-validate.sh\"",
-            "timeout": 60
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "HY_HOME_K8S_HOOK_PROVIDER=claude bash $CLAUDE_PROJECT_DIR/docs/00.agent-governance/hooks/lifecycle-guard.sh",
-            "timeout": 60
-          }
-        ]
-      }
-    ],
-    "SubagentStop": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "HY_HOME_K8S_HOOK_PROVIDER=claude bash $CLAUDE_PROJECT_DIR/docs/00.agent-governance/hooks/lifecycle-guard.sh",
-            "timeout": 60
-          }
-        ]
-      }
-    ],
-    "PreCompact": [
-      {
-        "matcher": "manual|auto",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "HY_HOME_K8S_HOOK_PROVIDER=claude bash $CLAUDE_PROJECT_DIR/docs/00.agent-governance/hooks/lifecycle-guard.sh",
-            "timeout": 20
           }
         ]
       }

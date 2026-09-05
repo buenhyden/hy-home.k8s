@@ -74,6 +74,7 @@ layer: "architecture"
 ├── 0031-current-corpus-retention-and-validation-ownership.md
 ├── 0032-completed-and-terminal-document-retention.md
 ├── 0033-common-document-contract-v9.md
+├── 0034-stage-00-governance-and-unified-quality-gates.md
 └── README.md
 ```
 
@@ -126,6 +127,7 @@ layer: "architecture"
 | [`./0031-current-corpus-retention-and-validation-ownership.md`](./0031-current-corpus-retention-and-validation-ownership.md) | Current corpus retention, package-local execution lineage, and validation routing ownership decision | Accepted | ADR-0016/0017/0020/0021/0022의 current instance-roster 및 validation-routing 권위를 대체하고 ADR-0030의 두 validation-layout 조항만 lifecycle supersession 없이 범위 한정 개정한다. Spec 0054가 통합 수용을, Spec 0066이 위임된 validation-tooling 실행을 소유한다. |
 | [`./0032-completed-and-terminal-document-retention.md`](./0032-completed-and-terminal-document-retention.md) | Terminal document retention and Archive taxonomy decision | Accepted | Terminal governed documents를 consumer-zero 뒤 `completed/`에 package 단위로 보존하고, sealed record는 `migrations/`, `superseded/`, `tombstones/`로 분리한다. 완료 문서 인용은 역사적 trace이며 current authority를 부여하지 않는다. |
 | [`./0033-common-document-contract-v9.md`](./0033-common-document-contract-v9.md) | Common document contract v9 and governed router envelope decision | Accepted | snake_case v9 public model, identity-free README envelope, 단일 placeholder grammar, external release evidence, generation-aware frozen Archive validation을 현재 문서 계약으로 채택한다. |
+| [`./0034-stage-00-governance-and-unified-quality-gates.md`](./0034-stage-00-governance-and-unified-quality-gates.md) | Stage 00 governance and unified QA | Accepted | 공통 정본 이관, 단일 QA 실행과 GitHub 검증·Argo CD 배포 경계를 결정한다. |
 
 ## Related Documents
 

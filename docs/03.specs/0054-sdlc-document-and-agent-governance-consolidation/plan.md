@@ -25,7 +25,7 @@ execution, Codex/Claude-only AI-agent governance, a bounded Stage 90 reference
 library, a classified Stage 98 retention/history surface, a minimal Stage 99 document
 control surface, and responsibility-oriented validation modules.
 
-**Architecture:** Stage 00 owns human agent policy, while `.agents/registry.json`
+**Architecture:** Stage 00 owns common agent policy and `roles/registry.json`
 owns the provider-neutral agent roster and Stage 99 owns only document
 profiles. Stage 01 Requirement Packages, Stage 02 Architecture, and Stage 03
 Spec Packages form the active delivery chain; Stage 05 owns Guides, Policies,
@@ -86,13 +86,13 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
 - Make `docs/99.templates/registry.json` the only document-profile machine
   authority, with normalized top-level `lifecycle_domains` and one human router
   in Stage 99 README. Do not gate schema, profile, or template counts.
-- Make `.agents/registry.json` plus its schema the only provider-neutral agent
-  roster, role, permission, and skill machine authority. Keep `.agents/agents/`
-  and `.agents/skills/` provider-neutral; retain only Claude and Codex provider
-  projections under `.claude/` and `.codex/`.
+- Follow SPEC-0072 for the remaining governance cutover: Stage 00
+  `roles/registry.json` and its schema own machine role metadata; `roles/` and
+  `skills/` own common bodies. Remove repository `.agents/` and retain only
+  thin Claude and Codex adapters.
 - Remove `.gemini/`, root `GEMINI.md`, Gemini/Antigravity provider prose,
   contracts, fixtures, canaries, validators, hooks, and adapter projections;
-  do not translate provider-specific semantics into `.agents/`.
+  do not translate retired provider-specific semantics into common policy.
 - Use `docs/03.specs/####-<slug>/{README.md,spec.md,plan.md,tasks/}` with
   `tasks/tsk-####-<slug>.md`; remove `design.md`, `tests.md`, `tasks.md`, and
   other parallel design/test artifacts only after their unique content is
@@ -1523,7 +1523,7 @@ documents, registries, templates, or scripts.
 | Mixed inherited index/worktree makes a false-green candidate | Candidate disposition plus staged-index readers and exact restaging before every broad gate |
 | Broad replacements alter historical or native terms | Exact path maps, profile-aware classification, protected blob checks, and focused negative fixtures |
 | Stage 90 cleanup destroys provenance | Task-local semantic disposition, current-consumer cutover, and Git recovery precede removal; do not create an active Archive dependency or rewrite sealed bytes |
-| Governance adapters drift from canonical semantics | `.agents` owns neutral semantics; adapters carry provider-native metadata only; parity tests cover Codex and Claude |
+| Governance adapters drift from canonical semantics | Stage 00 owns neutral semantics; adapters carry provider-native metadata only; parity tests cover Codex and Claude |
 | Script deletion breaks hidden consumers | Tracked consumer sweep plus consumer-zero and unique-diagnostic checks precede each deletion |
 | Guide/Runbook consolidation removes necessary audiences | Purpose and trigger matrix reviewed by operations and documentation reviewers |
 | Large validator files become harder to maintain | Split touched modules when responsibility, duplication, or change risk warrants it, and centralize bounded I/O in `scripts/lib/`; line counts remain review signals rather than policy gates |
@@ -1536,7 +1536,8 @@ documents, registries, templates, or scripts.
   artifact ID.
 - Stage 04 and Stage 02 requirements have zero active owners or consumers.
 - Incident/Postmortem routes, templates, identities, and fixtures agree.
-- Stage 00 and `.agents` have one canonical owner per concern; Codex/Claude
+- Stage 00 has one canonical owner per concern and repository `.agents/` is
+  removed under SPEC-0072; Codex/Claude
   projections have no unsupported runtime promotion, and Gemini/Antigravity
   have zero current surfaces or consumers.
 - Stage 99 profiles, templates, prose, hooks, validators, and fixtures agree.

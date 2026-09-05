@@ -48,12 +48,12 @@ Record the canonical order from [Agent Quality Standards](../docs/00.agent-gover
 - [ ] `affected` result:
 - [ ] `staged` runner and exact-index `pre-commit run` results:
 - [ ] `tests` result:
-- [ ] `all-files` result (`pre-commit run --all-files`):
+- [ ] `full` result (`python3 scripts/qa.py full`):
 - [ ] `formatter-review` result:
 - [ ] `rerun` result (or `SKIP` reason when no formatter changed a file):
 - [ ] `diff-checks` result:
 - [ ] Every validation lane is explicitly classified as `PASS`, `SKIP`, `FAIL`, or `DEFER`.
-- [ ] GitHub CI `ci-summary` passed for every selected job, including `pre-commit`, `repo-quality-static`, `agent-governance-static`, and `manifest-static`; run identity:
+- [ ] GitHub CI `ci-summary` passed for the `qa` job and applicable branch policy, or hosted verification is explicitly `DEFER`; exact SHA and run identity:
 - [ ] ArgoCD/GitOps impact reviewed (if applicable)
 - [ ] Workflow path filters and job ownership reviewed (if `.github` automation changed)
 - [ ] Documentation changes preserve current implementation contracts; obsolete or conflicting 01-04 docs are routed through `docs/98.archive/README.md` only.

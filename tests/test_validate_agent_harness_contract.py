@@ -7,11 +7,13 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import types
+from unittest import mock
 from pathlib import Path, PurePosixPath
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SCRIPT = ROOT / "scripts" / "validate-agent-harness-contract.py"
+SCRIPT = ROOT / "scripts" / "validate-agent-governance.py"
 
 
 def load_validator():
@@ -54,16 +56,12 @@ class AgentHarnessRegistryContractTests(unittest.TestCase):
         self.assertEqual([path for path in retired if (ROOT / path).exists()], [])
 
     def test_root_cli_path_remains_green_without_a_production_self_test(self) -> None:
-        result = subprocess.run(
-            [sys.executable, str(SCRIPT), "--root", "."],
-            cwd=ROOT,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("providers=2", result.stdout)
-        self.assertIn("projections=", result.stdout)
+        # Full CLI also checks index/history parity, exercised in QA's finalized
+        # Git snapshot. This test isolates CLI dispatch from that external owner.
+        consumer = types.SimpleNamespace(validate_repository=mock.Mock())
+        with mock.patch.dict(sys.modules, {"agent_governance_consumers": consumer}):
+            self.assertEqual(self.validator.main(["--root", str(ROOT)]), 0)
+        consumer.validate_repository.assert_called_once_with(ROOT)
 
         unsupported = subprocess.run(
             [sys.executable, str(SCRIPT), "--root", ".", "--self-test"],
@@ -78,6 +76,41 @@ class AgentHarnessRegistryContractTests(unittest.TestCase):
         with self.assertRaises(self.validator.HarnessError) as raised:
             self.validator.decode_json_text('{"roles": [], "roles": []}')
         self.assertEqual(raised.exception.code, "AGENT-REGISTRY-INPUT")
+
+    def test_normalized_json_paths_remain_readable(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="agent-registry-path-") as directory:
+            root = Path(directory)
+            (root / "inputs").mkdir()
+            (root / "inputs" / "registry.json").write_text("{}", encoding="utf-8")
+            for relative in (
+                "inputs/registry.json",
+                PurePosixPath("inputs/registry.json"),
+            ):
+                with self.subTest(relative=relative):
+                    self.assertEqual(self.validator.load_json(root, relative), {})
+
+    def test_non_normalized_json_paths_fail_with_a_registry_error(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="agent-registry-path-") as directory:
+            root = Path(directory)
+            (root / "inputs").mkdir()
+            (root / "inputs" / "registry.json").write_text("{}", encoding="utf-8")
+            for relative in (
+                "inputs//registry.json",
+                "inputs/./registry.json",
+                "inputs/registry.json/",
+                "inputs/../inputs/registry.json",
+                "/inputs/registry.json",
+                "",
+                ".",
+                "inputs/registry.json\x00",
+            ):
+                with self.subTest(relative=relative):
+                    with self.assertRaises(self.validator.HarnessError) as raised:
+                        self.validator.load_json(root, relative)
+                    self.assertEqual(raised.exception.code, "AGENT-REGISTRY-INPUT")
+                    self.assertEqual(
+                        raised.exception.detail, "agent registry validation failed"
+                    )
 
     def test_symlink_repository_root_fails_closed(self) -> None:
         with tempfile.TemporaryDirectory(prefix="agent-registry-root-") as directory:

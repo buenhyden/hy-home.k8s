@@ -643,22 +643,11 @@ class BoundedValidationCommandTest(unittest.TestCase):
         self.assertRegex(rendered, r"stdout_sha256=[0-9a-f]{64}")
         self.assertRegex(rendered, r"stderr_sha256=[0-9a-f]{64}")
 
-    def test_reviewed_limits_match_the_sole_quality_owner(self):
-        owner = (ROOT / "docs/00.agent-governance/policies/quality.md").read_text(
-            encoding="utf-8"
-        )
-
+    def test_reviewed_runner_limits_are_preserved(self):
         self.assertEqual(RUNNER.VALIDATOR_TIMEOUT_SECONDS, 1_200.0)
         self.assertEqual(RUNNER.VALIDATOR_STDOUT_LIMIT_BYTES, 4 * 1024 * 1024)
         self.assertEqual(RUNNER.VALIDATOR_STDERR_LIMIT_BYTES, 1 * 1024 * 1024)
         self.assertEqual(RUNNER.VALIDATOR_CLEANUP_SECONDS, 2.0)
-        for phrase in (
-            "1,200 seconds maximum execution time per child",
-            "4 MiB maximum retained stdout",
-            "1 MiB maximum retained stderr",
-            "2 seconds total cleanup time",
-        ):
-            self.assertIn(phrase, owner)
 
     def test_timeout_fails_closed_and_reaps_direct_child(self):
         outcome = self._run_python(

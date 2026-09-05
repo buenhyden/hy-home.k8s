@@ -74,14 +74,9 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 
 | Path | Responsibility |
 | --- | --- |
-| `agent_registry_loader.py` | bounded `.agents/registry.json` loading shared by Agent validators |
-| `validate-agent-harness-contract.py` | provider-neutral registry contract |
-| `validate-agent-harness-semantics.py` | neutral and provider projection semantics |
-| `validate-agent-provider-config.py`, `validate-agent-provider-canaries.py` | focused provider configuration and canary evidence |
-| `validate-agent-provider-evidence.py` | ordered provider-evidence dispatcher |
-| `validate-agent-loop-lifecycle.py`, `validate-agent-checkpoint.py` | loop and checkpoint semantic libraries/checks |
-| `validate-agent-governance-ci.py` | stable `agent-governance-static` CI contract and projection |
-| `validate-agent-legacy-cutover.py` | absence and Git-backed recovery checks for retired Agent surfaces |
+| `agent_registry_loader.py` | bounded Stage 00 role-registry loading shared by governance validation |
+| `validate-agent-governance.py` | role/schema, native metadata, permission, skill, and consumer integrity |
+| `agent_governance_consumers.py` | bounded current-consumer and Git-backed historical recovery checks |
 
 ### Platform and supply-chain owners
 
@@ -99,13 +94,13 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 
 - Document route/profile values come only from `docs/99.templates/registry.json`.
 - Agent roles, permissions, skills, handoffs, and projections come only from
-  `.agents/registry.json`.
+  `docs/00.agent-governance/roles/registry.json`.
 - Validation selection and command arguments come only from
   `scripts/validation/registry.json`.
 - `.github/workflows/ci.yml` and `.pre-commit-config.yaml` are projections and
   must not introduce an undeclared validator or duplicate rule owner.
-- Shared hooks remain under `docs/00.agent-governance/hooks/`; provider settings
-  may invoke them but do not copy their implementation.
+- Claude write-boundary enforcement lives in `.claude/hooks/`; provider settings
+  register the native event. Quality validation is an explicit QA operation.
 - Tests and bounded synthetic data remain under `tests/` and `tests/fixtures/`.
 - Git history is the default recovery source. Only externally immutable
   dependency identity or sealed historical recovery coordinates justify a digest.
@@ -125,8 +120,7 @@ python3 scripts/validate-affected-surfaces.py --root .
 python3 scripts/validate-document-contract-registry.py --root . --mode strict
 python3 scripts/validate-markdown-profiles.py --root . --mode strict
 python3 scripts/validate-links-and-owners.py --root . --mode strict
-python3 scripts/validate-agent-governance-ci.py --root .
-python3 scripts/validate-agent-provider-evidence.py --root .
+python3 scripts/validate-agent-governance.py --root .
 bash scripts/validate-repo-quality-gates.sh .
 git diff --check
 ```
@@ -165,8 +159,8 @@ deployment, or live-cluster behavior.
 
 Do not create a compatibility CLI, duplicate registry, fixed script inventory,
 or embedded mutation suite merely to preserve a retired implementation shape.
-The required external CI check name `agent-governance-static` remains stable
-until a separately authorized remote branch-protection change is approved.
+The observed required external CI check name is `ci-summary`; local workflow
+changes preserve that name. No remote branch-protection setting is changed.
 
 ## Related Documents
 

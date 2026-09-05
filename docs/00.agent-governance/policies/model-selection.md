@@ -16,7 +16,7 @@ or static configuration into claims of observed fitness.
 
 ## Authority Boundary
 
-The [agent registry](../../../.agents/registry.json) owns each role's
+The [agent registry](../roles/registry.json) owns each role's
 capability-tier reference. This policy defines the tier meanings and escalation
 boundary. Claude and Codex native configuration owns configured model and
 reasoning values; it does not prove availability, entitlement, resolution, or
@@ -64,7 +64,7 @@ claiming improved fitness or successful provider resolution.
 
 ## Related Documents
 
-- [Agent Registry](../../../.agents/registry.json)
+- [Agent Registry](../roles/registry.json)
 - [Codex Provider](../providers/codex.md)
 - [Claude Provider](../providers/claude.md)
 - [Quality Policy](quality.md)

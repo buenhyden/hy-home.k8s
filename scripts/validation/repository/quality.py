@@ -685,29 +685,8 @@ for local_rule_path in claude_local_rule_paths:
         if "pattern" not in metadata and "conditions" not in metadata:
             fail(f"{local_rule_rel} must define Hookify pattern or conditions")
 
-local_agents_dir = root / ".agents"
-local_agents_skills_dir = root / ".agents" / "skills"
-if local_agents_dir.exists() and not local_agents_dir.is_dir():
-    fail(".agents must be a directory when present")
-if local_agents_skills_dir.exists() and not local_agents_skills_dir.is_dir():
-    fail(".agents/skills must be a directory when present")
-if local_agents_skills_dir.is_dir():
-    canonical_skill_paths = [
-        root / tracked_path
-        for tracked_path in sorted(tracked)
-        if re.fullmatch(r"\.claude/skills/[^/]+/skill\.md", tracked_path)
-    ]
-    for canonical_skill_path in canonical_skill_paths:
-        local_skill_path = (
-            local_agents_skills_dir / canonical_skill_path.parent.name / "skill.md"
-        )
-        if not local_skill_path.exists():
-            continue
-        if read_bytes(local_skill_path) != read_bytes(canonical_skill_path):
-            fail(
-                "shared skill mirror drift: "
-                f"{rel(local_skill_path)} differs from {rel(canonical_skill_path)}"
-            )
+if os.path.lexists(root / ".agents"):
+    fail("retired shared agent root must remain absent")
 
 allowed_top_level_docs = {
     "00.agent-governance",
@@ -2065,9 +2044,8 @@ for path, phrases in template_enforcement_phrase_checks.items():
             fail(f"{rel(path)} missing template enforcement phrase: {phrase}")
 
 active_template_routing_reference_files = [
-    root / ".claude/settings.json",
-    root / ".agents/skills/docs-stage-routing/skill.md",
-    root / "docs/00.agent-governance/hooks/k8s-pre-edit.sh",
+    root / "docs/00.agent-governance/skills/docs-stage-routing/SKILL.md",
+    root / ".claude/hooks/k8s-pre-edit.sh",
 ]
 for path in active_template_routing_reference_files:
     text = read_text(path)
@@ -2239,7 +2217,6 @@ if not is_currentness_evidence_only(migration_evidence_ledger_path):
 if is_currentness_evidence_only(root / "docs/90.references/README.md"):
     fail("migration evidence ledger currentness exception must not widen to Stage 90")
 
-stale_provider_hook_path = "." + "claude/hooks"
 stale_shell_job_name = "shell" + "-static"
 stale_headlamp_oidc_patterns = [
     "0004-" + "headlamp-auth-oidc-guide.md",
@@ -2271,11 +2248,6 @@ for scan_root in active_currentness_roots:
         if is_currentness_evidence_only(path):
             continue
         text = read_text(path)
-        if stale_provider_hook_path in text:
-            fail(
-                f"active authored docs must not retain stale provider-local hook path "
-                f"in {rel(path)}"
-            )
         if stale_shell_job_name in text:
             fail(f"active authored docs must not list stale CI job name in {rel(path)}")
         for pattern in stale_headlamp_oidc_patterns:
@@ -2630,7 +2602,7 @@ if not re.search(r"^/\.github/\s+@buenhyden(?:\s|$)", codeowners_text, re.MULTIL
 pull_request_template_path = root / ".github/PULL_REQUEST_TEMPLATE.md"
 pull_request_template_text = read_text(pull_request_template_path)
 for phrase in [
-    "- [ ] `all-files` result (`pre-commit run --all-files`):",
+    "- [ ] `full` result (`python3 scripts/qa.py full`):",
     "- [ ] Every validation lane is explicitly classified as `PASS`, `SKIP`, `FAIL`, or `DEFER`.",
 ]:
     if phrase not in pull_request_template_text:
@@ -2644,82 +2616,9 @@ except Exception as exc:
     fail(f"CI workflow parse failed for {rel(ci_path)}: {exc}")
     ci_data = {}
 
-ci_on = workflow_on(ci_data)
-if ci_data.get("name") != "CI":
-    fail(f"{rel(ci_path)} workflow name must remain CI")
-if not isinstance(ci_on, dict):
-    fail(f"{rel(ci_path)} must declare structured push and pull_request triggers")
-else:
-    for event_name in ["push", "pull_request"]:
-        event_config = ci_on.get(event_name)
-        branches = []
-        if isinstance(event_config, dict):
-            branch_value = event_config.get("branches") or []
-            branches = (
-                branch_value if isinstance(branch_value, list) else [branch_value]
-            )
-        if branches != ["main"]:
-            fail(
-                f"{rel(ci_path)} {event_name} trigger must target only main: {branches}"
-            )
-    if "workflow_dispatch" not in ci_on:
-        fail(f"{rel(ci_path)} must include workflow_dispatch for manual QA reruns")
-    if set(ci_on) != {"push", "pull_request", "workflow_dispatch"}:
-        fail(f"{rel(ci_path)} workflow triggers must remain exact Spec 031 triggers")
-
+# The focused CI contract owns triggers, checkout, topology and failure propagation.
+# This owner checks consistency between the executable branch vocabulary and docs.
 ci_jobs = ci_data.get("jobs") or {}
-required_ci_jobs = {
-    "branch-policy",
-    "changes",
-    "pre-commit",
-    "repo-quality-static",
-    "agent-governance-static",
-    "manifest-static",
-    "ci-summary",
-}
-for job_id in sorted(required_ci_jobs - set(ci_jobs)):
-    fail(f"{rel(ci_path)} missing required CI job: {job_id}")
-if set(ci_jobs) != required_ci_jobs:
-    fail(
-        f"{rel(ci_path)} job IDs must remain exact Spec 031 jobs: {sorted(required_ci_jobs)}"
-    )
-
-expected_job_needs = {
-    "branch-policy": [],
-    "changes": [],
-    "pre-commit": ["changes"],
-    "repo-quality-static": ["changes"],
-    "agent-governance-static": ["changes"],
-    "manifest-static": ["changes"],
-    "ci-summary": [
-        "branch-policy",
-        "changes",
-        "pre-commit",
-        "repo-quality-static",
-        "agent-governance-static",
-        "manifest-static",
-    ],
-}
-expected_job_if = {
-    "branch-policy": "github.event_name == 'pull_request'",
-    "changes": "",
-    "pre-commit": "needs.changes.outputs.precommit == 'true'",
-    "repo-quality-static": "needs.changes.outputs.repo_quality == 'true'",
-    "agent-governance-static": "needs.changes.outputs.agent_governance == 'true'",
-    "manifest-static": "needs.changes.outputs.manifests == 'true'",
-    "ci-summary": "always()",
-}
-delegated_ci_contract_jobs = {"agent-governance-static", "ci-summary"}
-for job_id in sorted(required_ci_jobs - delegated_ci_contract_jobs):
-    job = ci_jobs.get(job_id) or {}
-    needs = job.get("needs") or []
-    if isinstance(needs, str):
-        needs = [needs]
-    if needs != expected_job_needs[job_id]:
-        fail(f"{rel(ci_path)} {job_id} needs must remain {expected_job_needs[job_id]}")
-    if str(job.get("if") or "") != expected_job_if[job_id]:
-        fail(f"{rel(ci_path)} {job_id} if must remain {expected_job_if[job_id]!r}")
-
 branch_policy_job = ci_jobs.get("branch-policy") or {}
 branch_policy_if = str(branch_policy_job.get("if") or "")
 if "github.event_name == 'pull_request'" not in branch_policy_if:
@@ -2746,152 +2645,6 @@ expected_branch_message = (
 )
 if expected_branch_message not in branch_policy_text:
     fail(f"{rel(ci_path)} branch-policy message must match its allowed_branch_regex")
-
-changes_job = ci_jobs.get("changes") or {}
-expected_changes_outputs = {
-    "agent_governance": "${{ steps.filter.outputs.agent_governance }}",
-    "precommit": "${{ steps.filter.outputs.precommit }}",
-    "repo_quality": "${{ steps.filter.outputs.repo_quality }}",
-    "manifests": "${{ steps.filter.outputs.manifests }}",
-}
-if changes_job.get("outputs") != expected_changes_outputs:
-    fail(
-        f"{rel(ci_path)} changes outputs must be canonical selector outputs: "
-        f"{expected_changes_outputs}"
-    )
-
-changes_steps = changes_job.get("steps") or []
-changes_checkout_steps = [
-    step
-    for step in changes_steps
-    if step.get("uses") == "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
-]
-if len(changes_checkout_steps) != 1:
-    fail(f"{rel(ci_path)} changes job must have exactly one pinned checkout step")
-elif (changes_checkout_steps[0].get("with") or {}).get("fetch-depth") != 0:
-    fail(f"{rel(ci_path)} changes checkout must use fetch-depth: 0")
-
-selector_steps = [step for step in changes_steps if step.get("id") == "filter"]
-if len(selector_steps) != 1:
-    fail(
-        f"{rel(ci_path)} changes job must have exactly one selector step with id=filter"
-    )
-    selector_step = {}
-else:
-    selector_step = selector_steps[0]
-if selector_step.get("uses"):
-    fail(f"{rel(ci_path)} canonical selector step must not delegate to an Action")
-selector_run = str(selector_step.get("run") or "")
-for marker in [
-    "git diff --no-renames --name-only -z",
-    "git ls-tree -r --name-only -z",
-    '"$RUNNER_TEMP/changed-paths.nul"',
-    "python3 scripts/select-affected-surfaces.py",
-    "--lane ci",
-    "--delimiter nul",
-    "--format github-output",
-    '>> "$GITHUB_OUTPUT"',
-]:
-    if marker not in selector_run:
-        fail(f"{rel(ci_path)} canonical selector step missing marker: {marker}")
-for forbidden_marker in ["$(", "`", "dorny/paths-filter", "filters: |"]:
-    if forbidden_marker in selector_run or forbidden_marker in ci_text:
-        fail(
-            f"{rel(ci_path)} canonical selector contains forbidden marker: {forbidden_marker}"
-        )
-
-manifest_static_steps = (ci_jobs.get("manifest-static") or {}).get("steps") or []
-manifest_checkout_steps = [
-    step
-    for step in manifest_static_steps
-    if step.get("uses") == "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
-]
-if len(manifest_checkout_steps) != 1:
-    fail(f"{rel(ci_path)} manifest-static must have exactly one pinned checkout step")
-else:
-    manifest_checkout_with = manifest_checkout_steps[0].get("with") or {}
-    if manifest_checkout_with.get("persist-credentials") is not False:
-        fail(
-            f"{rel(ci_path)} manifest-static checkout must disable persisted credentials"
-        )
-    if manifest_checkout_with.get("fetch-depth") != 0:
-        fail(f"{rel(ci_path)} manifest-static checkout must use fetch-depth: 0")
-
-gitops_change_set_steps = [
-    step
-    for step in manifest_static_steps
-    if step.get("name") == "Review GitOps object identity and deletion set"
-]
-if len(gitops_change_set_steps) != 1:
-    fail(
-        f"{rel(ci_path)} manifest-static must contain exactly one GitOps change-set step"
-    )
-else:
-    gitops_change_set_step = gitops_change_set_steps[0]
-    expected_gitops_change_set_env = {
-        "BASE_REF": "${{ github.event.pull_request.base.sha || github.event.before || github.sha }}"
-    }
-    if gitops_change_set_step.get("env") != expected_gitops_change_set_env:
-        fail(
-            f"{rel(ci_path)} GitOps change-set env must equal: "
-            f"{expected_gitops_change_set_env}"
-        )
-    expected_gitops_change_set_run = (
-        'python3 scripts/validate-gitops-change-set.py --root . --base-ref "$BASE_REF"'
-    )
-    if (
-        str(gitops_change_set_step.get("run") or "").strip()
-        != expected_gitops_change_set_run
-    ):
-        fail(
-            f"{rel(ci_path)} GitOps change-set command must equal: "
-            f"{expected_gitops_change_set_run}"
-        )
-
-manifest_static_runs = "\n".join(
-    str(step.get("run") or "") for step in manifest_static_steps
-)
-for command in [
-    'python3 scripts/validate-gitops-change-set.py --root . --base-ref "$BASE_REF"',
-    "bash infrastructure/tests/verify-contracts-static.sh",
-    "bash scripts/validate-gitops-structure.sh",
-    "bash scripts/validate-k8s-manifests.sh .",
-    "bash scripts/check-secret-handling.sh .",
-    "python3 scripts/validate-vault-eso-contracts.py --root .",
-    "bash scripts/validate-policy-gates.sh .",
-]:
-    if command not in manifest_static_runs:
-        fail(f"{rel(ci_path)} manifest-static missing command: {command}")
-
-static_contract_steps = [
-    step
-    for step in manifest_static_steps
-    if step.get("name") == "Run static contract checks"
-]
-expected_static_contract_commands = [
-    "bash infrastructure/tests/verify-contracts-static.sh",
-    "bash scripts/validate-gitops-structure.sh",
-    "bash scripts/validate-k8s-manifests.sh .",
-    "bash scripts/check-secret-handling.sh .",
-    "python3 scripts/validate-vault-eso-contracts.py --root .",
-    "bash scripts/validate-policy-gates.sh .",
-]
-if len(static_contract_steps) != 1:
-    fail(
-        f"{rel(ci_path)} manifest-static must contain exactly one static contract step"
-    )
-else:
-    actual_static_contract_commands = [
-        line.strip()
-        for line in str(static_contract_steps[0].get("run") or "").splitlines()
-        if line.strip()
-    ]
-    if actual_static_contract_commands != expected_static_contract_commands:
-        fail(
-            f"{rel(ci_path)} manifest-static static commands must remain exact and ordered: "
-            f"{expected_static_contract_commands}"
-        )
-
 
 pr_template_path = root / ".github/PULL_REQUEST_TEMPLATE.md"
 pr_template_text = read_text(pr_template_path)
@@ -2972,7 +2725,7 @@ github_about_text = read_text(github_about_path)
 for phrase in [
     "docs/00.agent-governance/policies/git.md",
     "workflows/ci.yml",
-    "scripts/validate-repo-quality-gates.sh",
+    "scripts/qa.py",
     "PULL_REQUEST_TEMPLATE.md",
     ".github/requirements/ci-validation.txt",
     ".pre-commit-config.yaml",
@@ -3069,9 +2822,7 @@ else:
                 ("pull_request", trigger_scope),
                 ("workflow_dispatch", trigger_scope),
                 ("ci-summary", required_evidence),
-                ("agent-governance-static", required_evidence),
-                ("repo-quality-static", required_evidence),
-                ("manifest-static", required_evidence),
+                ("qa", required_evidence),
                 ("No deploy CD", boundary),
                 ("direct Kubernetes mutation", boundary),
                 ("external Vault mutation", boundary),
@@ -3179,190 +2930,8 @@ for workflow in sorted((root / ".github/workflows").glob("*.yml")):
                     f"{rel(workflow)} job {job_id} run block expands needs.*.result directly"
                 )
 
-# Unique Claude pre-edit, session-start, and lifecycle registration checks
-# remain here until their provider-owner consolidation. The dedicated
-# PostToolUse regression above owns its closed command and isolation boundary.
-claude_settings = load_json(root / ".claude/settings.json")
-claude_hook_configuration = json.dumps(claude_settings.get("hooks", {}))
-for phrase in [
-    "docs/00.agent-governance/hooks/k8s-pre-edit.sh",
-    "docs/00.agent-governance/hooks/session-start.sh",
-    "docs/00.agent-governance/hooks/lifecycle-guard.sh",
-    '"Stop"',
-    '"SubagentStop"',
-    '"PreCompact"',
-    '"timeout": 60',
-    '"timeout": 20',
-]:
-    if phrase not in claude_hook_configuration and phrase not in read_text(
-        root / ".claude/settings.json"
-    ):
-        fail(f".claude/settings.json missing hook contract phrase: {phrase}")
-
-
-# Pre-edit and lifecycle hook simulations are unconditional. Post-validate
-# selector and runner behavior is exercised through the dedicated pure test
-# entrypoint above so the production hook always executes its real affected lane.
-if True:
-    hook_env = {
-        **os.environ,
-        "CLAUDE_PROJECT_DIR": str(root),
-    }
-    manifest_hook_payload = json.dumps(
-        {"tool_input": {"file_path": "gitops/platform/headlamp/headlamp-ingress.yaml"}}
-    )
-    docs_hook_payload = json.dumps(
-        {"tool_input": {"file_path": "docs/01.requirements/9999-example-feature.md"}}
-    )
-    pre_hook_path = root / "docs/00.agent-governance/hooks/k8s-pre-edit.sh"
-    pre_hook_result = bounded_process(
-        ["bash", str(pre_hook_path)],
-        cwd=root,
-        input=manifest_hook_payload,
-        text=True,
-        capture_output=True,
-        env=hook_env,
-        timeout=60,
-    )
-    if pre_hook_result.returncode != 0:
-        fail(
-            f"{rel(pre_hook_path)} payload simulation failed: {pre_hook_result.stderr.strip()}"
-        )
-    for phrase in ["systemMessage", "GitOps-first", "PostToolUse hook"]:
-        if phrase not in pre_hook_result.stdout:
-            fail(
-                f"{rel(pre_hook_path)} payload simulation missing output phrase: {phrase}"
-            )
-
-    docs_pre_hook_result = bounded_process(
-        ["bash", str(pre_hook_path)],
-        cwd=root,
-        input=docs_hook_payload,
-        text=True,
-        capture_output=True,
-        env=hook_env,
-        timeout=60,
-    )
-    if docs_pre_hook_result.returncode != 0:
-        fail(
-            f"{rel(pre_hook_path)} docs payload simulation failed: {docs_pre_hook_result.stderr.strip()}"
-        )
-    for phrase in [
-        "Template-First",
-        "sdlc/requirement",
-        "docs/99.templates/README.md",
-        "docs/99.templates/templates/requirements/requirement-package.template.md",
-        "documentation template enforcement",
-    ]:
-        if phrase not in docs_pre_hook_result.stdout:
-            fail(
-                f"{rel(pre_hook_path)} docs payload simulation missing output phrase: {phrase}"
-            )
-
-    lifecycle_hook_path = root / "docs/00.agent-governance/hooks/lifecycle-guard.sh"
-    lifecycle_selftest_env = {
-        **hook_env,
-        "HY_HOME_K8S_LIFECYCLE_GUARD_SELFTEST": "1",
-        "HY_HOME_K8S_CHANGED_PATHS": "docs/01.requirements/example.md",
-    }
-    clean_stop_result = bounded_process(
-        ["bash", str(lifecycle_hook_path)],
-        cwd=root,
-        input=json.dumps({"hook_event_name": "Stop"}),
-        text=True,
-        capture_output=True,
-        env=lifecycle_selftest_env,
-        timeout=60,
-    )
-    if clean_stop_result.returncode != 0:
-        fail(
-            f"{rel(lifecycle_hook_path)} clean Stop payload simulation failed: {clean_stop_result.stderr.strip()}"
-        )
-    if "block" in clean_stop_result.stdout:
-        fail(
-            f"{rel(lifecycle_hook_path)} clean Stop payload simulation unexpectedly blocked"
-        )
-    for phrase in [
-        "systemMessage",
-        "Task-unit commit discipline",
-        "git diff --cached",
-        "dirty state spans multiple SDD overlays",
-        "forward-only exception",
-    ]:
-        if phrase not in clean_stop_result.stdout:
-            fail(
-                f"{rel(lifecycle_hook_path)} clean Stop payload simulation missing task-unit commit phrase: {phrase}"
-            )
-
-    failing_stop_result = bounded_process(
-        ["bash", str(lifecycle_hook_path)],
-        cwd=root,
-        input=json.dumps({"hook_event_name": "Stop"}),
-        text=True,
-        capture_output=True,
-        env={**lifecycle_selftest_env, "HY_HOME_K8S_FORCE_FAIL": "1"},
-        timeout=60,
-    )
-    if failing_stop_result.returncode != 0:
-        fail(
-            f"{rel(lifecycle_hook_path)} failing Stop payload simulation exited non-zero"
-        )
-    for phrase in ["decision", "block", "validation failed"]:
-        if phrase not in failing_stop_result.stdout:
-            fail(
-                f"{rel(lifecycle_hook_path)} failing Stop payload simulation missing output phrase: {phrase}"
-            )
-
-    failing_subagent_result = bounded_process(
-        ["bash", str(lifecycle_hook_path)],
-        cwd=root,
-        input=json.dumps({"hook_event_name": "SubagentStop"}),
-        text=True,
-        capture_output=True,
-        env={**lifecycle_selftest_env, "HY_HOME_K8S_FORCE_FAIL": "1"},
-        timeout=60,
-    )
-    if failing_subagent_result.returncode != 0:
-        fail(
-            f"{rel(lifecycle_hook_path)} failing SubagentStop payload simulation exited non-zero"
-        )
-    for phrase in ["decision", "block", "SubagentStop"]:
-        if phrase not in failing_subagent_result.stdout:
-            fail(
-                f"{rel(lifecycle_hook_path)} failing SubagentStop payload simulation missing output phrase: {phrase}"
-            )
-
-    precompact_result = bounded_process(
-        ["bash", str(lifecycle_hook_path)],
-        cwd=root,
-        input=json.dumps({"hook_event_name": "PreCompact", "trigger": "manual"}),
-        text=True,
-        capture_output=True,
-        env={
-            **hook_env,
-            "HY_HOME_K8S_LIFECYCLE_GUARD_SELFTEST": "1",
-            "HY_HOME_K8S_CHANGED_PATHS": ".claude/settings.json",
-        },
-        timeout=60,
-    )
-    if precompact_result.returncode != 0:
-        fail(
-            f"{rel(lifecycle_hook_path)} PreCompact payload simulation failed: {precompact_result.stderr.strip()}"
-        )
-    for phrase in [
-        "systemMessage",
-        "Lifecycle guard",
-        "Suggested validation",
-        "Task-unit commit discipline",
-        "dirty state spans multiple SDD overlays",
-        "forward-only exception",
-    ]:
-        if phrase not in precompact_result.stdout:
-            fail(
-                f"{rel(lifecycle_hook_path)} PreCompact payload simulation missing output phrase: {phrase}"
-            )
-    if '"decision": "block"' in precompact_result.stdout:
-        fail(f"{rel(lifecycle_hook_path)} PreCompact payload simulation must not block")
+# Native metadata/permission/hook registration belongs to agent-governance.
+# tests.test_k8s_pre_edit_hook owns path/root/denial behavior independently.
 
 scripts_dir = root / "scripts"
 tracked_script_paths = sorted(
@@ -5330,41 +4899,6 @@ for tracked_path in tracked:
     ) or tracked_path.startswith("docs/" + legacy_learning + "/"):
         fail(f"obsolete tracked docs path remains: {tracked_path}")
 
-pre_commit_text = read_text(root / ".pre-commit-config.yaml")
-stale_pre_commit_hook_regex = "\\." + "claude/hooks/.*\\.sh"
-for hook_id in ["shellcheck", "shfmt"]:
-    if "docs/00\\.agent-governance/hooks/.*\\.sh" not in pre_commit_text:
-        fail(
-            f".pre-commit-config.yaml {hook_id} must include docs/00.agent-governance/hooks/*.sh coverage"
-        )
-    if stale_pre_commit_hook_regex in pre_commit_text:
-        fail(
-            f".pre-commit-config.yaml {hook_id} must not use stale provider-local hook coverage"
-        )
-
-active_hook_reference_files = [
-    root / "scripts/README.md",
-    root / "docs/00.agent-governance/hooks/post-validate.sh",
-    root / "docs/00.agent-governance/hooks/lifecycle-guard.sh",
-]
-for path in active_hook_reference_files:
-    text = read_text(path)
-    if stale_provider_hook_path in text:
-        fail(
-            f"{rel(path)} contains stale active hook path; use docs/00.agent-governance/hooks"
-        )
-    if "docs/00.agent-governance/hooks" not in text:
-        fail(f"{rel(path)} missing shared hook path docs/00.agent-governance/hooks")
-
-for hook_path in [
-    root / "docs/00.agent-governance/hooks/post-validate.sh",
-    root / "docs/00.agent-governance/hooks/lifecycle-guard.sh",
-]:
-    hook_text = read_text(hook_path)
-    if ".agents/*" not in hook_text:
-        fail(
-            f"{rel(hook_path)} must trigger repository quality gates for .agents/** shared asset changes"
-        )
 
 if failures:
     print("=== validate-repo-quality-gates ===")

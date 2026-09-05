@@ -8,24 +8,6 @@ repos:
       - id: commitizen
         stages: [commit-msg]
 
-  # --- 0a. 로컬 검증 계약 (pre-commit/manual 전용) ---
-  - repo: local
-    hooks:
-      - id: validate-validation-tooling-ownership
-        name: validate validation-tooling ownership
-        entry: python3 -m unittest tests.test_validation_tooling_ownership
-        language: system
-        pass_filenames: false
-        always_run: true
-        stages: [pre-commit, manual]
-      - id: strict-repository-quality
-        name: validate strict repository quality
-        entry: bash scripts/validate-repo-quality-gates.sh .
-        language: system
-        pass_filenames: false
-        always_run: true
-        stages: [pre-commit, manual]
-
   # --- 1. 파일 시스템 및 기본 형식 검사 ---
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # frozen: v6.0.0

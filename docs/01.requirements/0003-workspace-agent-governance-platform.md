@@ -13,6 +13,11 @@ artifact_id: "REQ-0003"
 
 ## Overview
 
+2026-09-05 현재 거버넌스·QA 변경은 ADR-0034와 SPEC-0072가 소유한다.
+이 문서의 기존 요구사항 ID는 유지하며, 이전 loop/checkpoint 자동화와 별도
+agent CI topology 요구는 아래의 현재 요구로 대체한다. 과거 실행 증거를
+현재 성공으로 소급하지 않는다.
+
 이 문서는 `hy-home.k8s`의 AI Agent 거버넌스 플랫폼에 대한 제품 요구를 정의한다. 플랫폼은
 `docs/00.agent-governance/**`를 durable policy의 system of record로 삼고, 짧은 root/provider
 gateway, 기계 검증 가능한 harness contract, provider-native adapter, 반복 가능한 QA와 평가
@@ -111,9 +116,9 @@ contract와 각 provider의 실제 schema·runtime evidence로 변환할 요구�
 | REQ-0003-FR-0008 | Provider surface는 registry-admitted current owner만 투영하며 planned/absent surface를 current로 세지 않아야 한다. | Must | ADR-0030과 WP-003가 소유한 roster에서 repository-static claim과 provider-runtime claim이 분리된다. |
 | REQ-0003-FR-0009 | 각 admitted provider는 native schema와 독립 evidence class를 사용해야 하며 특정 provider나 surface를 미리 의무화하지 않는다. | Must | WP-003 admission 결과와 provider별 PASS/FAIL/BLOCKED/ABSENT/DEFER 기록이 일치하고 PASS만 runtime readiness를 증명한다. |
 | REQ-0003-FR-0010 | 단일 versioned machine harness contract는 역할 semantic, surface projection, evidence requirement, permission, stop condition과 handoff를 정의하고 schema로 검증되어야 한다. | Must | Contract/schema가 current roster와 모든 adapter를 단일 소유자로 검증한다. |
-| REQ-0003-FR-0011 | Agent loop는 동일 failure signature 자동 재시도 최대 2회, task 자동 recovery 기본 최대 3회, 동일 결과 2회 무진행 시 stop/escalate를 적용하고 secret/transcript 없는 checkpoint·compaction·resume 계약을 제공해야 한다. | Must | Recovery fixture가 retry ceiling, no-progress stop, safe checkpoint와 resume를 재현한다. |
+| REQ-0003-FR-0011 | Agent는 무진행 실패를 반복하지 않고 원인·검증·소유권·다음 동작을 Task에 기록해야 한다. 실행기는 유한 timeout·출력 한도·자식 프로세스 정리를 보장하며 임의 전역 상태나 별도 checkpoint 원장을 요구하지 않는다. | Must | 독립적인 timeout, overflow, cleanup, 오류 전파 테스트와 Task 인계 증거를 확인한다. |
 | REQ-0003-NFR-0001 | Canonical roster와 adapter cardinality는 current registry inventory에서 도출되고, 새 역할/surface는 역할별 eval/admission과 model fitness를 통과해야 한다. | Must | WP-003의 derived parity, eval fixture와 fitness decision이 검증되며 fixed count를 authority로 사용하지 않는다. |
-| REQ-0003-NFR-0002 | CI/QA는 targeted → affected → staged → tests → `pre-commit run --all-files` → formatter review → rerun → diff check 순서를 제공하고 agent-governance static lane을 최소 권한·고정 action SHA로 실행해야 한다. | Must | 로컬과 GitHub evidence가 같은 필수 lane과 실패 의미를 보고한다. |
+| REQ-0003-NFR-0002 | 로컬 full과 CI는 공통 정적 QA 계약을 한 번 실행하고, quick working tree와 staged index의 입력 차이를 구분해야 한다. CI는 최소 권한·고정 Action SHA와 실패 닫힘 ci-summary를 유지해야 한다. | Must | 프로필 동등성, 중복 실행 부재, staged 격리, 실패·취소·skip 전파를 검증한다. |
 | REQ-0003-IF-0001 | Migration은 consumer를 새 current owner로 전환한 뒤 legacy contract/schema, duplicate roster·matrix, stale provider/runtime/model claim과 일회성 산출물을 제거하고 cross-link를 갱신해야 한다. | Must | 금지 패턴 및 orphan-reference 검사가 stale legacy 0건을 보고한다. |
 | REQ-0003-IF-0002 | `agency-agents`는 비권위적 아이디어 catalog로만 사용하며, 실제 역할 추가는 repository gap, 최소 semantic contract와 eval evidence를 만족할 때만 허용해야 한다. | Must | 각 admitted role이 provenance가 아닌 local need와 fixture로 정당화된다. |
 
@@ -129,9 +134,9 @@ contract와 각 provider의 실제 schema·runtime evidence로 변환할 요구�
 | N/A — Acceptance criterion 06 remains acceptance-only | Current registry-derived role와 admitted surface adapter가 누락·추가·semantic drift 없이 일치한다. |
 | N/A — Acceptance criterion 07 remains acceptance-only | 각 admitted provider의 secret-free canary record가 존재한다. Provider-runtime readiness는 해당 record의 PASS가 필요하며, repository-local closure의 `ABSENT`/`DEFER`는 limitation, owner와 retry trigger를 포함한다. |
 | N/A — Acceptance criterion 08 remains acceptance-only | Machine harness contract/schema, provider metadata schema, adapter projection과 current-owner 검사가 모두 PASS한다. |
-| N/A — Acceptance criterion 09 remains acceptance-only | Loop fixture가 retry ceiling, no-progress escalation, checkpoint/compaction/resume 및 민감정보 배제를 검증한다. |
+| N/A — Acceptance criterion 09 remains acceptance-only | Bounded runner의 timeout·출력 제한·자식 정리와 실패 전파가 독립 회귀 테스트로 입증되고, Task에 안전한 인계 증거를 남긴다. |
 | N/A — Acceptance criterion 10 remains acceptance-only | 모든 역할에 input/output/permission/stop/handoff/eval과 provider별 model/effort fitness 근거가 존재한다. |
-| N/A — Acceptance criterion 11 remains acceptance-only | Targeted·affected·staged·tests·`pre-commit run --all-files`·formatter/diff rerun과 agent-governance CI lane이 PASS한다. |
+| N/A — Acceptance criterion 11 remains acceptance-only | Quick, 실제 index의 staged 검사, 최종 트리 full 및 CI 공통 계약을 검증한다. 같은 입력에 대한 전체 테스트와 pre-commit을 중복 실행하지 않는다. |
 | N/A — Acceptance criterion 12 remains acceptance-only | Legacy contract, duplicate current-owner, stale 10/30/3 및 `.gemini`-surface-absent claim, orphan link가 active surface에서 0건이며 실제 runtime limitation은 별도 evidence class로 남는다. |
 
 ## Scope and Non-goals
@@ -162,13 +167,13 @@ contract와 각 provider의 실제 schema·runtime evidence로 변환할 요구�
   순서를 지키며, 후속 Spec은 선행 acceptance evidence를 소비한다.
 - Model availability, effort enum, CLI schema와 authentication은 변한다. Concrete value는 기준 시점
   official source와 authenticated canary가 함께 증명해야 하며 이름 추론은 금지한다.
-- `.gemini/**` 형식 채택과 특정 Gemini 로그인 경로의 가용성을 동일시하지 않는다.
+- Claude/Codex native 형식 지원과 계정의 실제 실행 권한을 동일시하지 않는다.
 - GitHub-hosted CI에는 provider credential을 넣지 않는다. Authenticated canary는 local/manual
   evidence lane에서 실행하고 secret-free 결과만 기록한다.
-- `.agent-work/checkpoint.json`은 ignore된 transient recovery state이며 durable SDLC, credential
-  store 또는 full transcript가 아니다.
+- Task와 Git이 작업·검증·인계를 소유한다. 별도 자동 checkpoint 파일을 필수로 만들거나
+  credential 또는 full transcript를 저장하지 않는다.
 - ADR-0019와 ADR-0013은 predecessor 실행과 external-lane limitation을
-  보존하는 superseded historical decisions다. ADR-0030이 current terminal decision이다.
+  보존하는 superseded historical decisions다. ADR-0034와 SPEC-0072가 현재 거버넌스·QA 전환을 소유한다.
 
 ### Research and provider evidence baseline
 
@@ -195,6 +200,9 @@ contract와 각 provider의 실제 schema·runtime evidence로 변환할 요구�
   [pre-commit](https://pre-commit.com/).
 - Role inspiration only: [agency-agents](https://github.com/msitarzewski/agency-agents).
 
+Current governance and QA implementation is owned by
+[SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md).
+
 ## Traceability
 
 ### Lifecycle Traceability
@@ -211,9 +219,9 @@ contract와 각 provider의 실제 schema·runtime evidence로 변환할 요구�
 | REQ-0003-FR-0008 | Registry-admitted surface가 공통 semantic과 분리된 native claim을 가진다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0009 | Schema/model/effort/MCP 및 admitted provider의 독립 canary record가 검증된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0010 | Machine harness contract/schema가 모든 역할과 adapter를 검증한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0011 | Bounded loop/checkpoint/compaction fixture가 recovery 경계를 증명한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-FR-0011 | Agent는 무진행 실패를 반복하지 않고 원인·검증·소유권·다음 동작을 Task에 기록해야 한다. 실행기는 유한 timeout·출력 한도·자식 프로세스 정리를 보장하며 임의 전역 상태나 별도 checkpoint 원장을 요구하지 않는다. | Must | 독립적인 timeout, overflow, cleanup, 오류 전파 테스트와 Task 인계 증거를 확인한다. |
 | REQ-0003-NFR-0001 | Registry-derived role/adapter parity 및 eval/model fitness가 검증된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-NFR-0002 | CI/QA/all-files evidence가 필수 lane 전체를 통과한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| REQ-0003-NFR-0002 | 로컬 full과 CI는 공통 정적 QA 계약을 한 번 실행하고, quick working tree와 staged index의 입력 차이를 구분해야 한다. CI는 최소 권한·고정 Action SHA와 실패 닫힘 ci-summary를 유지해야 한다. | Must | 프로필 동등성, 중복 실행 부재, staged 격리, 실패·취소·skip 전파를 검증한다. |
 | REQ-0003-IF-0001 | Legacy와 orphan current-owner가 active surface에 남지 않는다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-IF-0002 | 외부 role idea가 local gap과 eval을 통과해야 admission된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | N/A — Acceptance criterion 01 remains acceptance-only | Stage 00 owner graph가 모순 없이 연결된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
@@ -224,9 +232,9 @@ contract와 각 provider의 실제 schema·runtime evidence로 변환할 요구�
 | N/A — Acceptance criterion 06 remains acceptance-only | Registry-derived roles와 admitted adapters가 parity를 이룬다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | N/A — Acceptance criterion 07 remains acceptance-only | 각 admitted provider의 canary record와 runtime-readiness 경계가 검증된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | N/A — Acceptance criterion 08 remains acceptance-only | Contract/schema/provider metadata parity가 PASS한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| N/A — Acceptance criterion 09 remains acceptance-only | Bounded loop recovery와 safe resume가 fixture로 검증된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| N/A — Acceptance criterion 09 remains acceptance-only | Bounded failure handling and safe handoff | [SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
 | N/A — Acceptance criterion 10 remains acceptance-only | 역할별 eval/model fitness evidence가 존재한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| N/A — Acceptance criterion 11 remains acceptance-only | CI와 all-files QA가 PASS한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
+| N/A — Acceptance criterion 11 remains acceptance-only | Shared QA and distinct index evidence | [SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
 | N/A — Acceptance criterion 12 remains acceptance-only | Stale legacy와 orphan reference가 0건이다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 
 - **AD**: [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md)

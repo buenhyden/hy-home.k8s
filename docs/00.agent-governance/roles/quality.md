@@ -38,4 +38,4 @@ permission, skill, and handoff membership stays in the agent registry.
 
 - [Roles Router](README.md)
 - [Quality Policy](../policies/quality.md)
-- [Agent Registry](../../../.agents/registry.json)
+- [Agent Registry](registry.json)

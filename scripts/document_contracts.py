@@ -37,7 +37,6 @@ _LS_FILES_MODES = {b"100644", b"100755", b"120000", b"160000"}
 ROOT_FILES = ("AGENTS.md", "CLAUDE.md", "README.md")
 TARGET_ROOTS = (
     "_workspace",
-    ".agents",
     ".claude",
     ".codex",
     ".github",
