@@ -1,0 +1,37 @@
+name: Governance audit source snapshot
+
+on:
+  push:
+    branches: [refactor/governance-qa-consolidation-20260905]
+    paths: [.github/workflows/governance-audit-snapshot.yml]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: governance-audit-snapshot-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: 69ae876221410370f13b190c463d88f02f02932a
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bundle tracked Git objects without runtime configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = 69ae876221410370f13b190c463d88f02f02932a
+          git bundle create "$RUNNER_TEMP/governance-audit-base.bundle" HEAD
+          git bundle verify "$RUNNER_TEMP/governance-audit-base.bundle"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: governance-audit-base
+          path: ${{ runner.temp }}/governance-audit-base.bundle
+          retention-days: 1
+          if-no-files-found: error
