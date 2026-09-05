@@ -212,7 +212,7 @@ jobs:
           python -m pip install --disable-pip-version-check --only-binary :all: --require-hashes --requirement .github/requirements/ci-validation.txt
       - name: Install Gitleaks
         run: |
-{chr(10).join('          ' + line for line in GITLEAKS_INSTALL.splitlines())}
+{chr(10).join("          " + line for line in GITLEAKS_INSTALL.splitlines())}
       - run: python3 scripts/qa.py ci --base-ref "$BASE_SHA"
 """
 
@@ -519,7 +519,9 @@ class CiPythonContractTests(unittest.TestCase):
 
     def test_cli_accepts_valid_temporary_repository(self) -> None:
         root = self.make_valid_root()
-        (root / ".github/workflows/ci.yml").write_text((REPO_ROOT / ".github/workflows/ci.yml").read_text())
+        (root / ".github/workflows/ci.yml").write_text(
+            (REPO_ROOT / ".github/workflows/ci.yml").read_text()
+        )
         result = subprocess.run(
             [sys.executable, str(VALIDATOR_PATH), "--root", str(root)],
             cwd=REPO_ROOT,
@@ -529,7 +531,6 @@ class CiPythonContractTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("[PASS] CI Python contract validation passed", result.stdout)
-
 
     def test_symlink_repository_root_fails_closed_without_target_disclosure(
         self,
@@ -879,8 +880,6 @@ class CiPythonContractTests(unittest.TestCase):
         )
         self.assert_rule(root, "CI-PYTHON-WORKFLOW")
 
-
-
     def test_qa_checkout_must_be_credential_free(
         self,
     ) -> None:
@@ -899,7 +898,6 @@ class CiPythonContractTests(unittest.TestCase):
             encoding="utf-8",
         )
         self.assert_rule(root, "CI-REPOSITORY-HISTORY")
-
 
     def test_qa_job_must_not_install_gitleaks_twice(self) -> None:
         root = self.make_valid_root()
@@ -1177,7 +1175,6 @@ class CiPythonContractTests(unittest.TestCase):
                 self.inject_non_validation_job(root, command)
                 self.assertEqual(VALIDATOR.validate_dependencies(root), 1)
 
-
     def test_rejects_step_job_and_workflow_shell_overrides(self) -> None:
         mutations = (
             (
@@ -1199,9 +1196,7 @@ class CiPythonContractTests(unittest.TestCase):
                         1,
                     )
                 elif label == "job":
-                    text = text.replace(
-                        "  qa:\n", "  qa:\n" + mutation, 1
-                    )
+                    text = text.replace("  qa:\n", "  qa:\n" + mutation, 1)
                 else:
                     text = mutation + text
                 workflow.write_text(text, encoding="utf-8")
@@ -1350,7 +1345,6 @@ class CiPythonContractTests(unittest.TestCase):
         )
         self.assert_rule(root, "CI-QA-EXECUTION")
 
-
     def test_qa_checkout_must_have_full_history(self) -> None:
         root = self.make_valid_root()
         workflow = root / ".github/workflows/ci.yml"
@@ -1391,8 +1385,6 @@ class CiPythonContractTests(unittest.TestCase):
             encoding="utf-8",
         )
         self.assert_rule(root, "CI-GITLEAKS-TOOL")
-
-
 
     def test_python_direct_input_remains_exactly_three_lines(self) -> None:
         root = self.make_valid_root()

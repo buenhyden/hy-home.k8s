@@ -91,4 +91,4 @@ PASS는 저장소 정적 증적이다. 클러스터에 실제로 admission 정�
 - [GitOps](../gitops/README.md)
 - [Infrastructure](../infrastructure/README.md)
 - [Scripts](../scripts/README.md)
-- [Quality Policy](../docs/00.agent-governance/policies/quality.md)
+- [Quality Policy](../.agents/governance/quality.md)

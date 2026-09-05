@@ -357,7 +357,7 @@ curl -s -G "http://172.18.0.13:3100/loki/api/v1/query" \
 ### Agent Operations
 
 이 런북은 인프라 절차를 다루며 AI Agent 모델/프롬프트 롤백이 직접 적용되지 않는다.
-단, Agent가 이 런북을 자동화하는 경우 [운영 거버넌스](../../00.agent-governance/README.md)에 따른다.
+단, Agent가 이 런북을 자동화하는 경우 [운영 거버넌스](../../../.agents/README.md)에 따른다.
 
 ## Traceability
 

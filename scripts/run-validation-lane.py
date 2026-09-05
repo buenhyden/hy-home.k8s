@@ -303,6 +303,56 @@ def closed_subprocess_environment() -> dict[str, str]:
     }
 
 
+def account_pre_commit_executable(root: Path, account) -> str | None:
+    """Validate the exact passwd-home entrypoint and its supported uv leaf link."""
+    home = Path(account.pw_dir)
+    if (
+        not home.is_absolute()
+        or ".." in home.parts
+        or home.is_relative_to(root)
+        or home.is_relative_to(Path("/tmp"))
+    ):
+        return None
+    candidate = home / ".local/bin/pre-commit"
+    uv_target = home / ".local/share/uv/tools/pre-commit/bin/pre-commit"
+
+    def trusted_directories(path: Path) -> bool:
+        # The passwd home is the account-owned trust anchor, as for Gitleaks.
+        # Platform ancestors can be namespace-mapped; never trust that UID for
+        # an executable or any directory within the account installation.
+        for directory in path.parents:
+            metadata = directory.lstat()
+            if not stat.S_ISDIR(metadata.st_mode) or metadata.st_mode & 0o022:
+                return False
+            if directory.is_relative_to(home) and metadata.st_uid != account.pw_uid:
+                return False
+        return True
+
+    try:
+        if not trusted_directories(candidate):
+            return None
+        metadata = candidate.lstat()
+        if metadata.st_uid != account.pw_uid:
+            return None
+        if stat.S_ISLNK(metadata.st_mode):
+            if os.readlink(candidate) != str(uv_target) or not trusted_directories(
+                uv_target
+            ):
+                return None
+            candidate = uv_target
+            metadata = candidate.lstat()
+        if (
+            stat.S_ISREG(metadata.st_mode)
+            and metadata.st_uid == account.pw_uid
+            and not metadata.st_mode & 0o022
+            and os.access(candidate, os.X_OK)
+        ):
+            return str(candidate)
+    except OSError:
+        pass
+    return None
+
+
 def resolve_tool(token: str, root: Path) -> str | None:
     """Preserve the invoking Python and ignore ambient PATH for other tools."""
     if token == "python3":
@@ -312,32 +362,75 @@ def resolve_tool(token: str, root: Path) -> str | None:
         return os.path.abspath(found)
     if token != "pre-commit":
         return None
-    account = pwd.getpwuid(os.geteuid())
-    home = Path(account.pw_dir)
-    candidates = (Path(sys.executable).parent / token, home / ".local/bin" / token)
+    try:
+        account = pwd.getpwuid(os.geteuid())
+    except (KeyError, OSError):
+        return None
+    candidates = (Path(sys.executable).parent / token,)
     for candidate in candidates:
         if not candidate.is_absolute() or candidate.is_relative_to(root):
             continue
         # An exact account-owned executable is permitted; no caller PATH search.
         try:
             chain = (candidate.parent, *candidate.parent.parents)
-            if any((d.stat().st_mode & 0o022) or d.stat().st_uid not in (0, account.pw_uid) for d in chain):
+            if any(
+                not stat.S_ISDIR(d.lstat().st_mode)
+                or (d.lstat().st_mode & 0o022)
+                or d.lstat().st_uid not in (0, account.pw_uid)
+                for d in chain
+            ):
                 continue
             metadata = candidate.lstat()
-            if stat.S_ISREG(metadata.st_mode) and metadata.st_uid in (0, account.pw_uid) and not metadata.st_mode & 0o022 and os.access(candidate, os.X_OK):
+            if (
+                stat.S_ISREG(metadata.st_mode)
+                and metadata.st_uid in (0, account.pw_uid)
+                and not metadata.st_mode & 0o022
+                and os.access(candidate, os.X_OK)
+            ):
                 return str(candidate)
         except OSError:
             continue
-    return None
+    return account_pre_commit_executable(root, account)
 
 
 def failure_snippet(completed: BoundedCommandResult) -> str:
     """Escape bounded diagnostics and redact common secret-bearing fields."""
-    payload = (completed.stderr.retained or completed.stdout.retained).decode("utf-8", errors="replace")
-    payload = re.sub(r"(?is)-----BEGIN [^-]*PRIVATE KEY-----.*?(?:-----END [^-]*PRIVATE KEY-----|$)", "[REDACTED KEY]", payload)
-    payload = re.sub(r"(?i)(authorization|password|passwd|token|secret|api[_-]?key)([\s\"']*[:=][\s\"']*|\s+)([^\s,;]+)", r"\1=[REDACTED]", payload)
-    payload = re.sub(r"\b(?:gh[pousr]_[A-Za-z0-9_]+|github_pat_[A-Za-z0-9_]+|sk-[A-Za-z0-9_-]+)\b", "[REDACTED]", payload)
-    return encoded(payload[:1024])
+    payload = "\n".join(
+        stream.retained.decode("utf-8", errors="replace")
+        for stream in (completed.stderr, completed.stdout)
+        if stream.retained
+    )
+    payload = re.sub(
+        r"(?is)-----BEGIN [^-]*PRIVATE KEY-----.*?(?:-----END [^-]*PRIVATE KEY-----|$)",
+        "[REDACTED KEY]",
+        payload,
+    )
+    payload = re.sub(
+        r"(?i)(authorization|password|passwd|token|secret|api[_-]?key)([\s\"']*[:=][\s\"']*|\s+)([^\s,;]+)",
+        r"\1=[REDACTED]",
+        payload,
+    )
+    payload = re.sub(
+        r"\b(?:gh[pousr]_[A-Za-z0-9_]+|github_pat_[A-Za-z0-9_]+|sk-[A-Za-z0-9_-]+)\b",
+        "[REDACTED]",
+        payload,
+    )
+    prioritized = ""
+    for line in payload.splitlines():
+        if line.startswith(
+            (
+                "ERROR: ",
+                "FAIL: ",
+                "FAILED (",
+                "- hook id: ",
+                "- exit code: ",
+                "- files were modified by this hook",
+            )
+        ) or (line.endswith("Failed") and "...Failed" in line):
+            prioritized += ("\n" if prioritized else "") + line[:256]
+            if len(prioritized) >= 1024:
+                break
+    return encoded((prioritized or payload)[:1024])
 
 
 def exact_success_marker_count(stdout: str | bytes, marker: str) -> int:
@@ -1264,7 +1357,11 @@ def run_selected(
         )
         return 0
 
-    selected = ({"validators": list(validator_ids)} if validator_ids is not None else contract_module.select_paths(contract, paths, lane, root))
+    selected = (
+        {"validators": list(validator_ids)}
+        if validator_ids is not None
+        else contract_module.select_paths(contract, paths, lane, root)
+    )
     if lane == "all-files" and validator_ids is None:
         selected["validators"] = sorted(
             row["id"] for row in contract["validators"] if lane in row["lanes"]
@@ -1358,7 +1455,9 @@ def run_selected(
         if identifier == "pre-commit":
             # Use the account cache location, never ambient HOME or startup state.
             account_home = Path(pwd.getpwuid(os.geteuid()).pw_dir)
-            child_environment["PRE_COMMIT_HOME"] = str(account_home / ".cache/pre-commit")
+            child_environment["PRE_COMMIT_HOME"] = str(
+                account_home / ".cache/pre-commit"
+            )
         completed = run_bounded_command(
             argv,
             cwd=root,

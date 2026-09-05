@@ -143,8 +143,8 @@ evidence.
 
 **Create:**
 
-- `docs/00.agent-governance/contracts/github-surface-routing.json`
-- `docs/00.agent-governance/contracts/github-surface-routing.schema.json`
+- `.agents/contracts/github-surface-routing.json`
+- `.agents/contracts/github-surface-routing.schema.json`
 - `tests/fixtures/github-surface-routing.json`
 - `scripts/validate-github-surface-routing.py`
 - `tests/test_validate_github_surface_routing.py`
@@ -255,7 +255,7 @@ import CLI side effects or duplicate route data.
 - [ ] Commit the contract package.
 
   ```bash
-  rtk git add docs/00.agent-governance/contracts/github-surface-routing.json docs/00.agent-governance/contracts/github-surface-routing.schema.json scripts/validate-github-surface-routing.py tests/fixtures/github-surface-routing.json tests/test_validate_github_surface_routing.py
+  rtk git add .agents/contracts/github-surface-routing.json .agents/contracts/github-surface-routing.schema.json scripts/validate-github-surface-routing.py tests/fixtures/github-surface-routing.json tests/test_validate_github_surface_routing.py
   rtk git commit -m "feat: add github surface routing validator"
   ```
 
@@ -293,7 +293,7 @@ import CLI side effects or duplicate route data.
   point at stale native state.
 
   ```bash
-  rtk git add .github/CODEOWNERS .github/repository-surface.md .github/labeler.yml docs/00.agent-governance/contracts/github-surface-routing.json scripts/validation/registry.json tests/fixtures/validation-surfaces.json scripts/validate-repo-quality-gates.sh scripts/README.md tests/README.md
+  rtk git add .github/CODEOWNERS .github/repository-surface.md .github/labeler.yml .agents/contracts/github-surface-routing.json scripts/validation/registry.json tests/fixtures/validation-surfaces.json scripts/validate-repo-quality-gates.sh scripts/README.md tests/README.md
   rtk git commit -m "ci: align github projection evidence"
   ```
 
@@ -331,7 +331,7 @@ import CLI side effects or duplicate route data.
   progress so Spec 049 becomes first unfinished, then commit closure.
 
   ```bash
-  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0048-github-routing-and-ci-evidence/spec.md docs/03.specs/README.md docs/03.specs/0048-github-routing-and-ci-evidence/plan.md docs/03.specs/0048-github-routing-and-ci-evidence/plan.md docs/03.specs/0048-github-routing-and-ci-evidence/README.md#task-records docs/03.specs/0048-github-routing-and-ci-evidence/README.md#task-records docs/99.templates/registry.json
+  rtk git add .agents/memory/progress.md docs/03.specs/0048-github-routing-and-ci-evidence/spec.md docs/03.specs/README.md docs/03.specs/0048-github-routing-and-ci-evidence/plan.md docs/03.specs/0048-github-routing-and-ci-evidence/plan.md docs/03.specs/0048-github-routing-and-ci-evidence/README.md#task-records docs/03.specs/0048-github-routing-and-ci-evidence/README.md#task-records docs/99.templates/registry.json
   rtk git commit -m "docs: record github routing closure"
   ```
 
@@ -395,8 +395,8 @@ commands and dated historical metadata are not current PASS evidence.
 - **Rollback Plan**: revert GRCE commits in reverse order; native projection
   and its matching contract expectation revert together, and validator
   registration plus aggregate invocation revert together.
-- **Evidence Location**: this Task and
-  `../../00.agent-governance/memory/progress.md`.
+- **Evidence Location**: the owning package Task and Git evidence; do not
+  recreate the retired shared progress ledger.
 ## Completion Criteria
 
 - The new contract/schema references surface IDs only and rejects unknown,

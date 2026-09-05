@@ -27,7 +27,17 @@ class MigrationLifecycleTest(unittest.TestCase):
         profile = next(
             p for p in canonical["profiles"] if p["id"] == "governance/contract"
         )
+        # These finite synthetic owners exercise historical migration events;
+        # production governance routing remains limited to its current SDLC owner.
+        profile["path_pattern"] = (
+            r"^(?:docs/00\.agent-governance/old|"
+            r"\.agents/governance/(?:sdlc|unmapped))\.md$"
+        )
         registry["profiles"].append(profile)
+        provider = next(
+            p for p in canonical["profiles"] if p["id"] == "governance/provider"
+        )
+        registry["profiles"].append(provider)
         navigation = next(
             p
             for p in canonical["profiles"]
@@ -39,17 +49,23 @@ class MigrationLifecycleTest(unittest.TestCase):
             for d in registry["lifecycle_domains"]
             if d["family"] == "governance-guide-policy-runbook"
         )
-        domain["profile_ids"].append(profile["id"])
+        domain["profile_ids"].extend((profile["id"], provider["id"]))
         self.stage(registry_path, json.dumps(registry).encode())
         self.stage(
             profile["template_source"],
             (ROOT / profile["template_source"]).read_bytes(),
         )
         self.stage(
+            provider["template_source"],
+            (ROOT / provider["template_source"]).read_bytes(),
+        )
+        self.stage(
             navigation["template_source"],
             (ROOT / navigation["template_source"]).read_bytes(),
         )
         self.git.run("rm", "--quiet", "-f", "--", self.target, self.path)
+        self.target = ".agents/governance/sdlc.md"
+        self.row["replacement"] = self.target
         self.payload = (
             '---\ntitle: "Policy"\nversion: "1.0.0"\n'
             'type: "governance/contract"\n'
@@ -247,6 +263,45 @@ class MigrationLifecycleTest(unittest.TestCase):
     def test_staged_proven_sealed_publication_and_current_owner_rehome(self):
         self.assert_pass()
 
+    def test_current_rehome_recovers_the_retired_source_route_from_proven_bytes(self):
+        registry_path = "docs/99.templates/registry.json"
+        registry = json.loads((self.root / registry_path).read_text())
+        next(p for p in registry["profiles"] if p["id"] == "governance/contract")[
+            "path_pattern"
+        ] = r"^\.agents/governance/sdlc\.md$"
+        self.stage(registry_path, json.dumps(registry).encode())
+        self.assert_pass()
+
+    def test_retired_source_route_does_not_admit_invalid_or_changed_semantics(self):
+        registry_path = "docs/99.templates/registry.json"
+        registry = json.loads((self.root / registry_path).read_text())
+        next(p for p in registry["profiles"] if p["id"] == "governance/contract")[
+            "path_pattern"
+        ] = r"^\.agents/governance/sdlc\.md$"
+        self.stage(registry_path, json.dumps(registry).encode())
+        for original, invalid, expected in (
+            (b'owner: "platform"', b"owner: 1", "LIFECYCLE-EVIDENCE"),
+            (
+                b'"governance/contract"',
+                b'"governance/provider"',
+                "LIFECYCLE-EVIDENCE",
+            ),
+            (b'status: "active"', b'status: "draft"', "LIFECYCLE-CREATE"),
+        ):
+            with self.subTest(invalid=invalid):
+                self.git.run("rm", "--quiet", "-f", "--", self.target, self.path)
+                source = self.payload.replace(original, invalid)
+                self.commit, blobs = self.git.commit_many({self.source: source})
+                self.row.update(
+                    source_commit=self.commit,
+                    source_blob=blobs[self.source],
+                    content_sha256=hashlib.sha256(source).hexdigest(),
+                )
+                self.git.run("rm", "--quiet", "--", self.source)
+                self.stage(self.target, self.payload)
+                self.write(consumers=[])
+                self.assert_fail(expected)
+
     def test_exact_moved_owner_is_admitted_without_rename_waiver(self):
         self.stage(self.target, self.payload)
         self.write(
@@ -257,7 +312,7 @@ class MigrationLifecycleTest(unittest.TestCase):
 
     def test_mapped_navigation_creation_is_not_an_active_owner_or_general_waiver(self):
         self.git.run("rm", "--quiet", "-f", "--", self.target)
-        self.target = "docs/00.agent-governance/roles/README.md"
+        self.target = ".agents/roles/README.md"
         content = (ROOT / self.target).read_bytes()
         self.stage(self.target, content)
         self.write([dict(self.row, replacement=self.target)], consumers=[])
@@ -265,8 +320,21 @@ class MigrationLifecycleTest(unittest.TestCase):
         self.stage(self.target, b"---\nstatus: active\n---\n" + content)
         self.assert_fail("LIFECYCLE-EVIDENCE")
         self.stage(self.target, content)
-        self.stage("docs/00.agent-governance/memory/README.md", content)
+        self.stage(".agents/memory/README.md", content)
         self.assert_fail("LIFECYCLE-CREATE")
+
+    def test_provider_note_rehomes_require_canonical_metadata(self):
+        for target in (".claude/provider.md", ".codex/provider.md"):
+            with self.subTest(target=target):
+                self.git.run("rm", "--quiet", "-f", "--", self.target)
+                self.target = target
+                content = (ROOT / target).read_bytes()
+                self.stage(target, content)
+                self.write([dict(self.row, replacement=target)], consumers=[])
+                self.assert_pass()
+                self.assertIn(b'owner: "platform"', content)
+                self.stage(target, content.replace(b'owner: "platform"', b"owner: 1"))
+                self.assert_fail("LIFECYCLE-EVIDENCE")
 
     def test_draft_creation_and_later_sealing_still_require_recovery_proof(self):
         sealed = (self.root / self.path).read_bytes()
@@ -434,7 +502,7 @@ class MigrationLifecycleTest(unittest.TestCase):
         self.assert_fail("LIFECYCLE-")
 
     def test_unmapped_active_and_terminal_creation_remain_denied(self):
-        extra = "docs/00.agent-governance/unmapped.md"
+        extra = ".agents/governance/unmapped.md"
         for state in (b"active", b"retired"):
             with self.subTest(state=state):
                 self.stage(
@@ -484,6 +552,7 @@ class MigrationLifecycleTest(unittest.TestCase):
                     if (self.root / path).exists()
                     else None
                 )
+                (self.root / path).parent.mkdir(parents=True, exist_ok=True)
                 (self.root / path).write_bytes(content)
                 self.assert_fail("LIFECYCLE-EVIDENCE")
                 if original is None:

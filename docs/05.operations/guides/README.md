@@ -12,7 +12,7 @@ layer: "operations"
 > 운영자와 개발자가 k3d/GitOps 작업을 이해하고 재현할 수 있도록 how-to 중심 가이드를 관리한다.
 
 > [!NOTE]
-> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../00.agent-governance/README.md).
+> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../../.agents/README.md).
 
 ## Overview
 
@@ -93,7 +93,7 @@ Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 
 ## Related Documents
 
-- [Agent Governance Hub](../../00.agent-governance/README.md)
+- [Agent Governance Hub](../../../.agents/README.md)
 - [03.specs](../../03.specs/README.md)
 - [05.operations/policies](../policies/README.md)
 - [05.operations/runbooks](../runbooks/README.md)

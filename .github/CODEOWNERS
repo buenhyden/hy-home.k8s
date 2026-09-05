@@ -9,7 +9,7 @@
 # Agent Rules
 /.claude/ @buenhyden
 /.codex/ @buenhyden
-/docs/00.agent-governance/ @buenhyden
+/.agents/ @buenhyden
 
 # GitHub configuration
 /.github/ @buenhyden

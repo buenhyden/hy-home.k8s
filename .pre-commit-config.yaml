@@ -67,14 +67,14 @@ repos:
     rev: 745eface02aef23e168a8afb6b5737818efbea95 # frozen: v0.11.0.1
     hooks:
       - id: shellcheck
-        files: '^((scripts|infrastructure)/.*\.sh|docs/00\.agent-governance/hooks/.*\.sh)$'
+        files: '^((scripts|infrastructure)/.*\.sh|\.claude/hooks/.*\.sh)$'
 
   - repo: https://github.com/scop/pre-commit-shfmt
     rev: 05c1426671b9237fb5e1444dd63aa5731bec0dfb # frozen: v3.13.1-1
     hooks:
       - id: shfmt
         args: [-i, '2'] # Indent 2 spaces
-        files: '^((scripts|infrastructure)/.*\.sh|docs/00\.agent-governance/hooks/.*\.sh)$'
+        files: '^((scripts|infrastructure)/.*\.sh|\.claude/hooks/.*\.sh)$'
 
   # Python lane, mirroring the shell lane: the linter reports, the formatter
   # rewrites. `ruff-check` runs without `--fix` so a validation run never

@@ -12,7 +12,7 @@ layer: "operations"
 > 반복 가능한 운영 작업을 즉시 실행할 수 있는 체크리스트/절차 문서를 관리한다.
 
 > [!NOTE]
-> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../00.agent-governance/README.md).
+> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../../.agents/README.md).
 
 ## Overview
 

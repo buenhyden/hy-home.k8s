@@ -93,7 +93,7 @@ repository-static 방식으로 검증하는 실행 코드의 소유 경로다. �
 
 - Document route/profile values come only from `docs/99.templates/registry.json`.
 - Agent roles, permissions, skills, handoffs, and projections come only from
-  `docs/00.agent-governance/roles/registry.json`.
+  `.agents/roles/registry.json`.
 - Validation selection and command arguments come only from
   `scripts/validation/registry.json`.
 - `.github/workflows/ci.yml` and `.pre-commit-config.yaml` are projections and
@@ -163,9 +163,9 @@ changes preserve that name. No remote branch-protection setting is changed.
 
 ## Related Documents
 
-- [Agent execution policy](../docs/00.agent-governance/policies/agent-execution.md)
-- [Quality policy](../docs/00.agent-governance/policies/quality.md)
-- [Document authoring policy](../docs/00.agent-governance/policies/document-authoring.md)
+- [Agent execution policy](../.agents/governance/agent-execution.md)
+- [Quality policy](../.agents/governance/quality.md)
+- [Document authoring policy](../.agents/governance/document-authoring.md)
 - [Validation ownership ADR](../docs/02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)
 - [Validation tooling Spec](../docs/98.archive/completed/03.specs/0066-validation-tooling-ownership/spec.md)
 - [Validation tooling Task](../docs/98.archive/completed/03.specs/0066-validation-tooling-ownership/tasks/tsk-0001-vto-000.md)

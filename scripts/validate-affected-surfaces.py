@@ -52,8 +52,8 @@ EVIDENCE_LANES = ("repo-static", "ci", "remote/live")
 MAX_PATH_INPUT_BYTES = 4 * 1024 * 1024
 MAX_GIT_STDOUT_BYTES = 16 * 1024 * 1024
 MAX_GIT_STDERR_BYTES = 256 * 1024
+MAX_JSON_INPUT_BYTES = 8 * 1024 * 1024
 EXPECTED_CI_JOBS = {"qa": "qa"}
-CANONICAL_SHARED_SYMLINKS = {".claude/skills": "../docs/00.agent-governance/skills"}
 
 PATH_INPUT_VALIDATORS = frozenset(
     ("document-contract-registry", "links-and-owners", "markdown-profiles")
@@ -107,9 +107,11 @@ def _reject_duplicate_pairs(
 
 def load_json(path: Path) -> Any:
     try:
-        with path.open("r", encoding="utf-8") as handle:
-            return json.load(handle, object_pairs_hook=_reject_duplicate_pairs)
-    except (OSError, json.JSONDecodeError) as exc:
+        return json.loads(
+            read_bounded_bytes(path, max_bytes=MAX_JSON_INPUT_BYTES).decode("utf-8"),
+            object_pairs_hook=_reject_duplicate_pairs,
+        )
+    except (BoundedInputError, UnicodeError, json.JSONDecodeError) as exc:
         fail("SURFACE-JSON", f"{path}: {exc}")
 
 
@@ -157,7 +159,16 @@ def _unique_ids(rows: Sequence[dict[str, Any]], kind: str) -> dict[str, dict[str
 
 def _validate_direct_script_argv(identifier: str, argv: Sequence[str]) -> str | None:
     approved_commands = {
-        "unit-tests": ["python3", "-m", "unittest", "discover", "-s", "tests", "-t", "."],
+        "unit-tests": [
+            "python3",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-t",
+            ".",
+        ],
         "pre-commit": ["pre-commit", "run", "--all-files"],
     }
     if identifier in approved_commands and list(argv) == approved_commands[identifier]:
@@ -356,7 +367,10 @@ def validate_contract(
         if any(identifier not in validators for identifier in identifiers):
             fail("SURFACE-PROFILE-REFERENCE", profile)
     if profiles["full"] != profiles["ci"] or set(profiles["full"]) != set(validators):
-        fail("SURFACE-PROFILE-COVERAGE", "full and ci must cover every gate in the same order")
+        fail(
+            "SURFACE-PROFILE-COVERAGE",
+            "full and ci must cover every gate in the same order",
+        )
     return contract
 
 
@@ -397,6 +411,27 @@ def classify_path(contract: dict[str, Any], raw_path: str) -> dict[str, Any]:
     return matches[0]
 
 
+def shared_skill_link_target(root: Path, path: PurePosixPath) -> str | None:
+    """Allow only individual adapters registered against canonical skill files."""
+    if len(path.parts) != 3 or path.parts[:2] != (".claude", "skills"):
+        return None
+    registry_path = ".agents/roles/registry.json"
+    reject_symlink_traversal(root, registry_path, require_present=True)
+    registry = load_json(root / registry_path)
+    skill_path = f".agents/skills/{path.name}/SKILL.md"
+    if not isinstance(registry, dict) or not isinstance(registry.get("skills"), list):
+        fail("SURFACE-PATH-SYMLINK", path.as_posix())
+    if not any(
+        isinstance(row, dict)
+        and row.get("id") == path.name
+        and row.get("path") == skill_path
+        for row in registry["skills"]
+    ):
+        return None
+    reject_symlink_traversal(root, skill_path, require_present=True)
+    return f"../../.agents/skills/{path.name}"
+
+
 def reject_symlink_traversal(
     root: Path,
     raw_path: str,
@@ -432,7 +467,7 @@ def reject_symlink_traversal(
         fail("SURFACE-PATH-NODE", f"{raw_path}: {exc}")
 
     if stat.S_ISLNK(mode):
-        expected_target = CANONICAL_SHARED_SYMLINKS.get(normalized)
+        expected_target = shared_skill_link_target(root, path)
         if expected_target is None:
             fail("SURFACE-PATH-SYMLINK", raw_path)
         try:

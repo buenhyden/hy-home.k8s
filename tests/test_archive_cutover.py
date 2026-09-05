@@ -125,6 +125,14 @@ class ArchiveCutoverTest(unittest.TestCase):
     def test_repository_snapshot_is_complete_and_atomic(self) -> None:
         generic = archive_validation.validate_repository_archive(ROOT, {})
         self.assertTrue(generic.valid, generic.diagnostics)
+        from scripts import qa
+
+        environment = qa.runner.closed_subprocess_environment()
+        executable = qa.runner.secure_gitleaks_executable(ROOT)
+        self.assertIsNotNone(
+            executable, "required secure Gitleaks executable unavailable"
+        )
+        environment[qa.runner.GITLEAKS_EXECUTABLE_ENV] = executable
         completed = subprocess.run(
             [
                 sys.executable,
@@ -133,6 +141,7 @@ class ArchiveCutoverTest(unittest.TestCase):
                 ".",
             ],
             cwd=ROOT,
+            env=environment,
             check=False,
             capture_output=True,
             text=True,
@@ -494,6 +503,42 @@ class ArchiveCutoverTest(unittest.TestCase):
                 ROOT, tracked, registry
             )
 
+    def test_current_authority_inventory_includes_common_and_exact_provider_owners(
+        self,
+    ) -> None:
+        owners = {
+            "docs/README.md",
+            ".agents/governance/document-authoring.md",
+            ".agents/roles/registry.json",
+            ".claude/provider.md",
+            ".codex/provider.md",
+        }
+        excluded = {".claude/settings.local.json", ".codex/config.toml"}
+        with TemporaryDirectory(prefix="archive-current-authority-") as directory:
+            repository = Path(directory)
+            for name in owners | excluded:
+                path = repository / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("fixture\n")
+            (repository / ".agents/alias.md").symlink_to(
+                "governance/document-authoring.md"
+            )
+            for arguments in (("init", "--quiet"), ("add", "--all")):
+                subprocess.run(
+                    ["git", *arguments],
+                    cwd=repository,
+                    check=True,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    timeout=10,
+                )
+            paths = set(archive_cutover._git_paths(repository))
+            regular = archive_cutover._tracked_regular_blobs(repository)
+            self.assertTrue(owners <= paths)
+            self.assertEqual(set(regular), owners)
+            self.assertFalse(excluded & paths)
+            self.assertNotIn(".agents/alias.md", regular)
+
     def test_work054_migration_projection_keeps_mandatory_terminal_mappings(
         self,
     ) -> None:
@@ -512,7 +557,7 @@ class ArchiveCutoverTest(unittest.TestCase):
                 "0036-archive-record-and-workspace-boundary/spec.md"
             ),
             "docs/00.agent-governance/rules/document-stage-routing.md": (
-                "docs/00.agent-governance/policies/document-authoring.md"
+                ".agents/governance/document-authoring.md"
             ),
             "docs/04.execution/plans/README.md": (
                 "docs/99.templates/templates/specs/plan.template.md"
@@ -562,8 +607,8 @@ class ArchiveCutoverTest(unittest.TestCase):
         # ArchiveValidationTest.test_mig0004_accepts_canonical_non_terminal_row_growth,
         # which exercises the production semantic validator before projection.
 
-    def test_later_ledger_composes_sealed_stage00_agent_successors(self) -> None:
-        """A sealed retired-root transfer composes to its tracked Stage 00 owner."""
+    def test_later_ledger_composes_sealed_common_agent_successors(self) -> None:
+        """A sealed transfer composes through Stage 00 to its current common owner."""
 
         later_edges, later_retired = archive_cutover._later_ledger_edges(
             ROOT,
@@ -573,11 +618,11 @@ class ArchiveCutoverTest(unittest.TestCase):
 
         self.assertEqual(
             later_edges[".agents/registry.json"],
-            "docs/00.agent-governance/roles/registry.json",
+            ".agents/roles/registry.json",
         )
         self.assertEqual(
             later_edges[".agents/contracts/agent-registry.schema.json"],
-            "docs/00.agent-governance/roles/registry.schema.json",
+            ".agents/roles/registry.schema.json",
         )
         self.assertNotIn(".agents/registry.json", later_retired)
 

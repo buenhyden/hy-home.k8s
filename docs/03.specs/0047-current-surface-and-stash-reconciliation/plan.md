@@ -173,7 +173,7 @@ adoption, stash apply/pop/drop, remote, or live result.
     and `docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records`
   - `docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md`
     and `docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records`
-- `docs/00.agent-governance/memory/progress.md`
+- `.agents/memory/progress.md`
 - `docs/90.references/data/active-corpus-residue-closure.json` only after a
   current validator-proven regeneration need
 
@@ -223,7 +223,7 @@ commit owns this bounded resumption; the later CSASR work remains unexecuted.
   rtk python3 scripts/validate-markdown-profiles.py --root . --mode strict
   rtk python3 scripts/validate-links-and-owners.py --root . --mode strict --body-contracts registry
   rtk git diff --check
-  rtk git add docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/00.agent-governance/memory/progress.md
+  rtk git add docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records .agents/memory/progress.md
   rtk git commit -m "docs: record current surface disposition matrix"
   ```
 
@@ -262,7 +262,7 @@ commit owns this bounded resumption; the later CSASR work remains unexecuted.
   evidence unit; never copy the stash's generated object.
 
   ```bash
-  rtk git add docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/00.agent-governance/memory/progress.md docs/90.references/data/active-corpus-residue-closure.json
+  rtk git add docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records .agents/memory/progress.md docs/90.references/data/active-corpus-residue-closure.json
   rtk git commit -m "docs: record stash reconciliation ledger"
   ```
 
@@ -294,7 +294,7 @@ commit owns this bounded resumption; the later CSASR work remains unexecuted.
 - [ ] Commit closure without preclaiming its own SHA.
 
   ```bash
-  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/99.templates/registry.json
+  rtk git add .agents/memory/progress.md docs/03.specs/0047-current-surface-and-stash-reconciliation/spec.md docs/03.specs/README.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/plan.md docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/03.specs/0047-current-surface-and-stash-reconciliation/README.md#task-records docs/99.templates/registry.json
   rtk git commit -m "docs: close current surface reconciliation tranche"
   ```
 
@@ -363,9 +363,8 @@ outcomes, formatter effects, limitations, and successor handoff.
   tracked path metadata and redacted contract results.
 - **Rollback Plan**: revert the smallest CSASR logical commit in reverse order;
   revert program activation last and preserve the stash throughout.
-- **Evidence Location**: this Task and
-  `../../00.agent-governance/memory/progress.md`; temporary inventories are not
-  durable evidence.
+- **Evidence Location**: the owning package Task and Git evidence; do not
+  recreate the retired shared progress ledger.
 ## Completion Criteria
 
 - Package-local Spec/Plan/Task links and lifecycle agree, with Spec 0048

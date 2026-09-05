@@ -84,6 +84,22 @@ def main_checkout() -> Path:
 class PreEditAcceptanceTest(unittest.TestCase):
     """Paths inside this repository are accepted and resolved to their own root."""
 
+    def test_retired_governance_root_is_rejected(self):
+        for path in (
+            "docs/00.agent-governance/README.md",
+            "docs/00.agent-governance/roles/registry.json",
+        ):
+            with self.subTest(path=path):
+                result = run_hook(scalar_payload(path), ROOT)
+                self.assertEqual(result.returncode, 2, result.stderr)
+                self.assertIn("HOOK-PATH-RETIRED", result.stderr)
+                self.assertIn(".agents/", result.stderr)
+
+    def test_common_governance_path_is_accepted_without_qa(self):
+        result = run_hook(scalar_payload(".agents/governance/quality.md"), ROOT)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertNotIn("qa profile=", result.stdout + result.stderr)
+
     def test_repository_relative_path_is_accepted(self):
         result = run_hook(scalar_payload(SAMPLE_DOCUMENT), ROOT)
 
@@ -200,9 +216,8 @@ class PreEditRejectionTest(unittest.TestCase):
         )
 
     def test_symlinked_component_is_rejected(self):
-        symlinked = ROOT / ".claude/skills"
-        if not symlinked.is_symlink():
-            self.skipTest("no symlinked component available to exercise")
+        symlinked = ROOT / ".claude/skills/risk-report"
+        self.assertTrue(symlinked.is_symlink())
 
         self.assert_rejected(
             scalar_payload(str(symlinked / "probe.md")), "HOOK-PATH-SYMLINK"

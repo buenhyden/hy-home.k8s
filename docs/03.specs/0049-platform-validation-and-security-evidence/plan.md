@@ -161,8 +161,8 @@ download, hosted-current result, remote Helm result, or live evidence.
 
 **Create:**
 
-- `docs/00.agent-governance/contracts/platform-validation-evidence.json`
-- `docs/00.agent-governance/contracts/platform-validation-evidence.schema.json`
+- `.agents/contracts/platform-validation-evidence.json`
+- `.agents/contracts/platform-validation-evidence.schema.json`
 - `tests/fixtures/platform-validation-evidence.json`
 - `scripts/validate-platform-evidence.py`
 - `tests/test_validate_platform_evidence.py`
@@ -298,7 +298,7 @@ copied.
   triggers; commit contract, fixture, test, validator, and inventory together.
 
   ```bash
-  rtk git add docs/00.agent-governance/contracts/platform-validation-evidence.json docs/00.agent-governance/contracts/platform-validation-evidence.schema.json docs/90.references/data/tech-stack-version-inventory.md scripts/validate-platform-evidence.py tests/fixtures/platform-validation-evidence.json tests/fixtures/platform-validation tests/test_validate_platform_evidence.py
+  rtk git add .agents/contracts/platform-validation-evidence.json .agents/contracts/platform-validation-evidence.schema.json docs/90.references/data/tech-stack-version-inventory.md scripts/validate-platform-evidence.py tests/fixtures/platform-validation-evidence.json tests/fixtures/platform-validation tests/test_validate_platform_evidence.py
   rtk git commit -m "feat: add layered platform validation evidence"
   ```
 
@@ -445,7 +445,7 @@ copied.
   ```bash
   rtk python3 scripts/validate-document-lifecycle.py --root . --mode staged
   rtk git diff --check
-  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0049-platform-validation-and-security-evidence/spec.md docs/03.specs/README.md docs/03.specs/0049-platform-validation-and-security-evidence/plan.md docs/03.specs/0049-platform-validation-and-security-evidence/plan.md docs/03.specs/0049-platform-validation-and-security-evidence/README.md#task-records docs/03.specs/0049-platform-validation-and-security-evidence/README.md#task-records docs/99.templates/registry.json
+  rtk git add .agents/memory/progress.md docs/03.specs/0049-platform-validation-and-security-evidence/spec.md docs/03.specs/README.md docs/03.specs/0049-platform-validation-and-security-evidence/plan.md docs/03.specs/0049-platform-validation-and-security-evidence/plan.md docs/03.specs/0049-platform-validation-and-security-evidence/README.md#task-records docs/03.specs/0049-platform-validation-and-security-evidence/README.md#task-records docs/99.templates/registry.json
   rtk git commit -m "docs: close platform validation evidence tranche"
   ```
 
@@ -509,8 +509,8 @@ release metadata are not current PASS evidence.
   Traefik validator, and evidence package in reverse order. Contract/tool
   identity and its validator/tests revert together; focused-owner registration
   and duplicate inline removal revert together.
-- **Evidence Location**: this Task and
-  `../../00.agent-governance/memory/progress.md`.
+- **Evidence Location**: the owning package Task and Git evidence; do not
+  recreate the retired shared progress ledger.
 ## Completion Criteria
 
 - The closed contract/schema/fixture and both focused validators pass their

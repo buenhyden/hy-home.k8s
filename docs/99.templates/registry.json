@@ -1346,7 +1346,7 @@
       "id": "governance/contract",
       "family": "governance",
       "mode": "authored",
-      "path_pattern": "^docs/00\\.agent-governance/(?!README\\.md$)(?:[a-z][a-z0-9]*(?:-[a-z0-9]+)*|contracts/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)\\.md$",
+      "path_pattern": "^\\.agents/governance/sdlc\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/governance/contract.template.md",
       "frontmatter": {
@@ -1411,7 +1411,7 @@
       "id": "governance/provider",
       "family": "governance",
       "mode": "authored",
-      "path_pattern": "^docs/00\\.agent-governance/providers/[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^\\.(?:claude|codex)/provider\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/governance/provider.template.md",
       "frontmatter": {
@@ -1476,7 +1476,7 @@
       "id": "governance/role",
       "family": "governance",
       "mode": "authored",
-      "path_pattern": "^docs/00\\.agent-governance/roles/(?!README\\.md$)[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^\\.agents/roles/(?!README\\.md$)[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/governance/role.template.md",
       "frontmatter": {
@@ -1541,7 +1541,7 @@
       "id": "governance/rule",
       "family": "governance",
       "mode": "authored",
-      "path_pattern": "^docs/00\\.agent-governance/policies/[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^\\.agents/governance/(?:agent-execution|approval-and-safety|context-and-memory|document-authoring|document-lifecycle|formatting-and-linting|git|model-selection|quality)\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/governance/rule.template.md",
       "frontmatter": {
@@ -1606,7 +1606,7 @@
       "id": "governance/skill",
       "family": "governance",
       "mode": "authored",
-      "path_pattern": "^docs/00\\.agent-governance/skills/[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
+      "path_pattern": "^\\.agents/workflows/(?:work-lifecycle|delegated-development)\\.md$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/governance/skill.template.md",
       "frontmatter": {
@@ -1727,7 +1727,7 @@
       "id": "common/readme-stage-index",
       "family": "common",
       "mode": "router",
-      "path_pattern": "^(?:docs/README\\.md|docs/00\\.agent\\-governance/README\\.md|docs/01\\.requirements/README\\.md|docs/02\\.architecture/README\\.md|docs/03\\.specs/README\\.md|docs/05\\.operations/README\\.md|docs/90\\.references/README\\.md|docs/98\\.archive/README\\.md|docs/99\\.templates/README\\.md)$",
+      "path_pattern": "^(?:docs/README\\.md|docs/01\\.requirements/README\\.md|docs/02\\.architecture/README\\.md|docs/03\\.specs/README\\.md|docs/05\\.operations/README\\.md|docs/90\\.references/README\\.md|docs/98\\.archive/README\\.md|docs/99\\.templates/README\\.md)$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/common/readme-stage-index.template.md",
       "frontmatter": {
@@ -1784,7 +1784,7 @@
       "id": "common/readme-collection-index",
       "family": "common",
       "mode": "router",
-      "path_pattern": "^(?:docs/00\\.agent\\-governance/roles/README\\.md|docs/02\\.architecture/decisions/README\\.md|docs/02\\.architecture/descriptions/README\\.md|docs/05\\.operations/guides/README\\.md|docs/05\\.operations/incidents/README\\.md|docs/05\\.operations/policies/README\\.md|docs/05\\.operations/runbooks/README\\.md|docs/90\\.references/(?:audits|data|research)/README\\.md|docs/99\\.templates/templates/README\\.md)$",
+      "path_pattern": "^(?:\\.agents/roles/README\\.md|docs/02\\.architecture/decisions/README\\.md|docs/02\\.architecture/descriptions/README\\.md|docs/05\\.operations/guides/README\\.md|docs/05\\.operations/incidents/README\\.md|docs/05\\.operations/policies/README\\.md|docs/05\\.operations/runbooks/README\\.md|docs/90\\.references/(?:audits|data|research)/README\\.md|docs/99\\.templates/templates/README\\.md)$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/common/readme-collection-index.template.md",
       "frontmatter": {
@@ -1843,7 +1843,7 @@
       "id": "common/readme-implementation",
       "family": "common",
       "mode": "router",
-      "path_pattern": "^(?:\\.claude/README\\.md|\\.codex/README\\.md|evals/README\\.md|examples/README\\.md|examples/sample\\-app/README\\.md|gitops/README\\.md|gitops/workloads/README\\.md|infrastructure/README\\.md|policy/README\\.md|scripts/README\\.md|secrets/README\\.md|tests/README\\.md|traefik/README\\.md|examples/azure/gitops/README\\.md|examples/azure/infrastructure/README\\.md|examples/azure/kubernetes/README\\.md|examples/(?:aws|azure)/README\\.md)$",
+      "path_pattern": "^(?:\\.agents/README\\.md|\\.claude/README\\.md|\\.codex/README\\.md|evals/README\\.md|examples/README\\.md|examples/sample\\-app/README\\.md|gitops/README\\.md|gitops/workloads/README\\.md|infrastructure/README\\.md|policy/README\\.md|scripts/README\\.md|secrets/README\\.md|tests/README\\.md|traefik/README\\.md|examples/azure/gitops/README\\.md|examples/azure/infrastructure/README\\.md|examples/azure/kubernetes/README\\.md|examples/(?:aws|azure)/README\\.md)$",
       "artifact_id_pattern": null,
       "template_source": "docs/99.templates/templates/common/readme-implementation.template.md",
       "frontmatter": {
@@ -2206,22 +2206,26 @@
       "id": "common/native-skill-package",
       "family": "common",
       "mode": "native",
-      "path_pattern": "^docs/00\\.agent-governance/skills/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/SKILL\\.md$",
+      "path_pattern": "^\\.agents/skills/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/SKILL\\.md$",
       "artifact_id_pattern": null,
       "template_source": null,
       "frontmatter": {
         "mode": "required",
         "required": [
           "name",
-          "description"
+          "description",
+          "disable-model-invocation"
         ],
         "optional": [],
         "forbidden": [],
         "order": [
           "name",
-          "description"
+          "description",
+          "disable-model-invocation"
         ],
-        "constants": {}
+        "constants": {
+          "disable-model-invocation": true
+        }
       },
       "sections": {
         "required": [],

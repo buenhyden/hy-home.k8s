@@ -4,7 +4,7 @@ version: "0.1.0"
 type: "common/readme-stage-index"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-06"
 layer: "templates"
 ---
 # 99.templates
@@ -12,7 +12,7 @@ layer: "templates"
 > repo-authored 문서와 README가 시작해야 하는 canonical template stage다.
 
 > [!NOTE]
-> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
+> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../.agents/README.md).
 
 ## Overview
 
@@ -35,11 +35,11 @@ README는 해당 machine contract를 복제하지 않고 사람이 올바른 소
 
 이 stage는 실제 PRD, AD, ADR, Spec, Plan, Task, 운영 기록이나 기능별 구현
 계약을 소유하지 않는다. Form에는 재사용 가능한 구조만 두고, 공통 규칙은 이 README
-또는 Stage 00 governance로 돌려보낸다.
+또는 `.agents/governance`의 공통 정책으로 돌려보낸다.
 
 ### Form Family Inventory
 
-Form directory 이름은 stage를, 파일 이름은 그 form이 만드는 문서 kind를 말한다.
+Form directory 이름은 책임 family를, 파일 이름은 그 form이 만드는 문서 kind를 말한다.
 Profile ID는 같은 사실을 `<family>/<kind>`로 표현한다.
 
 - **Common forms** ("common/"): governed README entrypoints share the ordered
@@ -47,11 +47,15 @@ Profile ID는 같은 사실을 `<family>/<kind>`로 표현한다.
   the repository entrypoint, "readme-stage-index" covers documentation and
   stage entrypoints, "readme-collection-index" covers package and collection
   entrypoints, and the implementation, workspace-staging, and
-  runtime-governance forms cover their named runtime surfaces. Registry
+  runtime-governance forms cover their named surfaces. The implementation form
+  also covers the common `.agents/README.md` hub. Registry
   profiles own each router's exact path, fixed "type"/"status", optional
   "layer", and heading contract.
-- **Governance forms** (`governance/`): Stage 00의 다섯 owner kind에 각각
-  `contract`, `provider`, `role`, `rule`, `skill` form이 대응한다.
+- **Governance forms** (`governance/`): 공통 SDLC 계약, provider note, 역할,
+  정책, 워크플로에 `contract`, `provider`, `role`, `rule`, `skill` form이
+  대응한다. 공통 소유자는 `.agents`에, provider note는 `.claude/provider.md`와
+  `.codex/provider.md`에 둔다. `governance/skill`은 두 flat workflow의
+  생명주기 있는 문서 타입이며 native skill package와 구별한다.
   `governance/*` profile은 `artifact_id`를 선언하지 않는다.
 - **Core SDLC forms**: `requirements/requirement-package`,
   `architecture/description`, `architecture/decision`, `specs/spec`,
@@ -72,8 +76,12 @@ Profile ID는 같은 사실을 `<family>/<kind>`로 표현한다.
   Claude는 `claude-agent.template.md`, Codex는 `codex-agent.template.toml`이며
   두 form은 provider 소유 key(`name`/`description`/`model`/
   `model_reasoning_effort`/`tools`)만 가지고 guided 문서 key는 갖지 않는다.
-  Stage 00 `skills/<id>/SKILL.md`는 `common/native-skill-package` native
-  profile로 분류하며 `name`/`description` metadata를 유지한다.
+  `.agents/skills/<id>/SKILL.md`는 `common/native-skill-package` native
+  profile로 분류하며 `name`/`description`과 boolean
+  `disable-model-invocation: true` metadata만 허용한다. 각 package의
+  `agents/openai.yaml`은 Codex의 `policy.allow_implicit_invocation: false`를
+  소유한다. 이 native sidecar와 Claude skill adapter의 정확한 집합은
+  [agent validator](../../scripts/validate-agent-governance.py)가 검증한다.
 
 현재 physical form의 전체 목록과 각각의 소유 profile은 README나 support prose가
 아니라 registry와 repository quality gate에서 계산한다.
@@ -97,7 +105,7 @@ Stage 90 collection contract가 요구하는 audit/data collection·pack 경로�
 ├── templates/          # copyable forms only
 │   ├── README.md       # form catalog
 │   ├── common/ governance/ requirements/ architecture/
-│   ├── specs/ (+ specs/contracts/)
+│   ├── specs/
 │   └── operations/ references/ archive/ runtime/
 ├── registry.json
 └── README.md
@@ -124,7 +132,7 @@ form catalog가 소유한다.
    gate를 실행하고 repo-static 결과와 remote/live 결과를 구분해 기록한다.
 
 Template 선택은 Registry profile ID를 따른다. lifecycle, supersession,
-retention, Archive 의무는 Stage 00 policy가 설명하고 정확한 machine 값은
+retention, Archive 의무는 `.agents/governance`가 설명하고 정확한 machine 값은
 Registry가 소유한다. Governed README도 공통 envelope를 사용하지만
 "artifact_id"와 lifecycle binding은 없으며, "status: active"는 router
 constant다. Template은 실제 destination path를 hardcode하지 않는다.
@@ -156,12 +164,12 @@ author guidance는 "<!-- Author prompt: ... -->"만 사용한다.
 
 Template은 만드는 문서의 envelope를 투영하므로 profile이 요구하는 "layer"와
 "artifact_id" placeholder를 포함한다. Template 파일 자체의 revision과 destination
-identity는 Registry contract version과 Git history가 소유한다. Stage 00
+identity는 Registry contract version과 Git history가 소유한다.
 "governance/*"와 README router는 stable "artifact_id"를 갖지 않는다.
 "archive/tombstone"은 sealed envelope provenance key를 추가로 가진다.
 
 ## Related Documents
 
 - [Docs README](../README.md)
-- [Agent Governance Hub](../00.agent-governance/README.md)
-- [Document Authoring Policy](../00.agent-governance/policies/document-authoring.md)
+- [Agent Governance Hub](../../.agents/README.md)
+- [Document Authoring Policy](../../.agents/governance/document-authoring.md)

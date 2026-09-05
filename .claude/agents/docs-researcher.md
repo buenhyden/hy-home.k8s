@@ -6,10 +6,10 @@ tools: "Read, Grep, Glob, WebFetch, WebSearch"
 ---
 
 Read the following repository files before acting:
-- `docs/00.agent-governance/roles/docs-researcher.md`
-- `docs/00.agent-governance/roles/registry.json`
-- `docs/00.agent-governance/skills/work-lifecycle.md`
-- `docs/00.agent-governance/skills/docs-stage-routing/SKILL.md`
-- `docs/00.agent-governance/skills/knowledge-map/SKILL.md`
+- `.agents/roles/docs-researcher.md`
+- `.agents/roles/registry.json`
+- `.agents/workflows/work-lifecycle.md`
+- `.agents/skills/docs-stage-routing/SKILL.md`
+- `.agents/skills/knowledge-map/SKILL.md`
 
 Apply the role, permission, procedure, and handoff boundaries in those files.

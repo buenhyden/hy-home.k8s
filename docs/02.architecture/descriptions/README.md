@@ -12,7 +12,7 @@ layer: "architecture"
 > Requirement Package를 시스템 경계, 품질 속성, 참조 아키텍처로 해석하는 AD stage다.
 
 > [!NOTE]
-> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../00.agent-governance/README.md).
+> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../../.agents/README.md).
 
 ## Overview
 

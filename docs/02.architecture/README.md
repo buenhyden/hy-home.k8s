@@ -12,7 +12,7 @@ layer: "architecture"
 > 요구사항을 아키텍처 요구와 결정 기록으로 연결하는 canonical architecture stage다.
 
 > [!NOTE]
-> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
+> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../.agents/README.md).
 
 ## Overview
 
@@ -96,6 +96,6 @@ ADR-0032의 `superseded/<stage>/` record로, 후계자 없이 끝난 문서는 `
 - [Architecture Decisions](./decisions/README.md)
 - [Specs README](../03.specs/README.md)
 - [Operations README](../05.operations/README.md)
-- [Document Stage Routing](../00.agent-governance/policies/document-authoring.md)
+- [Document Stage Routing](../../.agents/governance/document-authoring.md)
 - [Templates README](../99.templates/README.md)
 - [Archive Index](../98.archive/README.md)

@@ -69,7 +69,7 @@ source of these bounded claims.
 
 The repository's root `CLAUDE.md` imports the bootstrap, the Claude provider
 note, `.claude/CLAUDE.md`, and `RTK.md`. It deliberately does **not** import
-`AGENTS.md`: [Claude provider notes](../../../00.agent-governance/providers/claude.md)
+`AGENTS.md`: [Claude provider notes](../../../../.claude/provider.md)
 forbid that import because `AGENTS.md` is the GPT/Codex provider shim, so shared
 governance reaches Claude through the bootstrap import rather than through an
 `AGENTS.md` bridge. This is a **static configuration fact** and is the local
@@ -468,5 +468,5 @@ above, and none may be cited as evidence until it is read.
 - [Harness and loop engineering](m0002-harness-and-loop-engineering.md)
 - [Workspace governance and common environment](m0001-workspace-governance-and-common-agent-environment.md)
 - [Source ledger](m0012-source-coverage.md)
-- [Claude provider notes](../../../00.agent-governance/providers/claude.md)
-- [Codex provider notes](../../../00.agent-governance/providers/codex.md)
+- [Claude provider notes](../../../../.claude/provider.md)
+- [Codex provider notes](../../../../.codex/provider.md)

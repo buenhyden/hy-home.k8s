@@ -1,7 +1,7 @@
 # Markdown lint contract for this repository.
 #
 # Every suppression below states why it exists and what would retire it.
-# See docs/00.agent-governance/policies/formatting-and-linting.md for the
+# See .agents/governance/formatting-and-linting.md for the
 # suppression discipline and the re-measurement procedure.
 
 config:

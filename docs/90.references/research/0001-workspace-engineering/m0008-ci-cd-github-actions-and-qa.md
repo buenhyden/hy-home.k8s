@@ -29,7 +29,7 @@ records are in [the pack ledger](m0012-source-coverage.md).
 
 `.github/workflows/` owns tracked workflow declarations; `.github/README.md`
 routes their repository purpose; and
-[Quality and Evidence Policy](../../../00.agent-governance/policies/quality.md)
+[Quality and Evidence Policy](../../../../.agents/governance/quality.md)
 owns local completion order, lane names, result vocabulary, formatter handling,
 and handoff fields. GitHub repository settings own branch protection, rulesets,
 Actions policy, secret availability, environment protection, and retained-run
@@ -747,6 +747,6 @@ the cycle claims are `CLM-WERPC-016-15`, `CLM-WERPC-016-16`, and
 - [Platform security](m0007-kubernetes-infrastructure-and-security.md)
 - [Source coverage and migration ledger](m0012-source-coverage.md)
 - [GitHub configuration hub](../../../../.github/README.md)
-- [Quality and Evidence Policy](../../../00.agent-governance/policies/quality.md)
+- [Quality and Evidence Policy](../../../../.agents/governance/quality.md)
 - [Validation routing registry](../../../../scripts/validation/registry.json)
 - [Scripts inventory](../../../../scripts/README.md)

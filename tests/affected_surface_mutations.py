@@ -8,6 +8,9 @@ from typing import Any
 
 def apply_mutation(contract: dict[str, Any], mutation: dict[str, Any]) -> None:
     kind = mutation["kind"]
+    if kind == "append-ci-job":
+        contract["ciJobs"].append(copy.deepcopy(mutation["job"]))
+        return
     if kind == "append-route":
         surface = next(
             row for row in contract["surfaces"] if row["id"] == mutation["surfaceId"]

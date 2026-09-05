@@ -3,7 +3,7 @@
 > 현재 구현 권한에서 제거된 `docs/01-05` 문서의 전체 원문과 provenance를 보존하는 비현재 archive stage다.
 
 > [!NOTE]
-> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
+> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../.agents/README.md).
 
 ## Overview
 
@@ -83,7 +83,11 @@ ArchiveEnvelope.v1 marker 다음 byte부터 EOF까지가 payload다. Closing del
 현재 의미 승계와 독립 봉인 provenance를 기록한다. 기존 WORK-107 payload와 목록은 수정하지 않는다.
 
 [MIG-0020](./migrations/0020-stage00-agent-registry-authority-transfer.md)는
-retired `.agents/` registry와 schema의 Stage 00 successor 및 Git recovery provenance를 기록한다.
+당시 retired `.agents/` registry와 schema의 Stage 00 successor 및 Git recovery provenance를 기록한다.
+
+[MIG-0021](./migrations/0021-common-agent-authority-routing.md)는 공통 authority의 현재 소유자와
+기존 전이의 퇴역한 중간 목적지를 연결한다. MIG-0009와 MIG-0020을 포함한 이전 봉인 원문과
+archive-time replacement는 유지하고, 현재 목적지만 이 후속 전이로 합성한다.
 
 ## Authoring Workflow
 
@@ -104,7 +108,7 @@ retired `.agents/` registry와 schema의 Stage 00 successor 및 Git recovery pro
 ## Related Documents
 
 - [Docs README](../README.md)
-- [Document Stage Routing](../00.agent-governance/policies/document-authoring.md)
+- [Document Stage Routing](../../.agents/governance/document-authoring.md)
 - [Archive Record Decision](../02.architecture/decisions/0018-full-body-archive-record-and-retention.md)
 - [Tombstone Template](../99.templates/templates/archive/tombstone.template.md)
 - [Template Routing Contract](../99.templates/README.md)

@@ -24,7 +24,7 @@ Repository-static and pinned-upstream comparison research.
 
 ## Authority Boundary
 
-The [Agent Registry](../../../../.agents/registry.json) owns current local role
+The [Agent Registry](../../../../.agents/roles/registry.json) owns current local role
 and permission membership; provider notes own native behavior. External catalogs are
 comparison evidence, not automatic admission authority. Tracked adapters prove
 declared configuration only; discovery, authentication, tool enforcement,
@@ -43,7 +43,7 @@ are primary-owned by the sibling references.
 The 2026-08-08 observation described a repository-static 12-role,
 four-provider-surface roster in `harness-catalog.md` and
 `contracts/harness-contract.json`. Current membership is routed through the
-[Agent Registry](../../../../.agents/registry.json), not that dated roster.
+[Agent Registry](../../../../.agents/roles/registry.json), not that dated roster.
 Roles define bounded ownership; their
 providers declare task instructions and configuration. The system requires a
 work-item owner, scoped inputs, least-privilege tool/sandbox selection,
@@ -387,4 +387,4 @@ and `CLM-WERPC-016-04`.
 - [Model routing](m0010-agent-model-routing-and-configuration.md)
 - [Memory tiers](m0011-agent-memory-tiers-and-management.md)
 - [Source ledger](m0012-source-coverage.md)
-- [Agent Registry](../../../../.agents/registry.json)
+- [Agent Registry](../../../../.agents/roles/registry.json)

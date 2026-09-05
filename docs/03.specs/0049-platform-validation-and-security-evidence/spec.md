@@ -81,7 +81,7 @@ it, TLS verified it, or a live cluster admitted it.
 
 ### Evidence-depth contract
 
-`docs/00.agent-governance/contracts/platform-validation-evidence.json` is the
+`.agents/contracts/platform-validation-evidence.json` is the
 sole machine owner for platform target, required depth, exact tool identity,
 execution mode, fallback, evidence lane, limitation, owner, and retry trigger.
 Its closed schema defines these depths:

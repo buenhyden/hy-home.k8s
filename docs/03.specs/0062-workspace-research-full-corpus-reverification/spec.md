@@ -1,10 +1,10 @@
 ---
 title: "Workspace Research Full-Corpus Reverification Technical Specification"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-06"
 layer: "specs"
 artifact_id: "SPEC-0062"
 ---
@@ -12,6 +12,15 @@ artifact_id: "SPEC-0062"
 # Workspace Research Full-Corpus Reverification Technical Specification (Spec)
 
 ## Overview
+
+The historical 2026-08-20 work packages, source paths and command examples
+remain evidence of their original cycle; they are not current governance
+implementation instructions. Their pre-migration text is recoverable from
+[the baseline source](https://github.com/buenhyden/hy-home.k8s/blob/eb4fcfe3283115388d6eb1f31d56780b3e578f77/docs/03.specs/0062-workspace-research-full-corpus-reverification/spec.md). Current governance authority and QA
+routing are owned by [SPEC-0072](../0072-agent-governance-and-quality-gate-consolidation/spec.md).
+The retired progress-memory path is not recreated. Task/Git evidence replaces
+that former progress destination; the 2026-09-05 external-observation addendum
+and its explicit workspace-observation gap remain unchanged in scope.
 
 > **Current state (2026-08-29):** This active Spec retains its historical
 > observations and original `VAL-WRFR-*` results. The approved
@@ -366,29 +375,22 @@ artifact outside this cycle's inventory, leave it untouched and report it.
 
 ## Verification Commands
 
-The Plan must instantiate exact path lists and task-local closed-corpus checks.
-The terminal repository-static lane includes at least:
+Current repository-static verification uses the supported QA entrypoint plus
+focused closed-corpus and source/claim checks selected for the research change.
+Historical domain commands do not authorize recreating retired governance,
+checkpoint, loop or progress tooling.
 
 ```bash
-python3 scripts/validate-document-contract-registry.py --root . --mode strict
-python3 scripts/validate-markdown-profiles.py --root . --mode strict
-python3 scripts/validate-links-and-owners.py --root . --mode strict
-bash scripts/validate-repo-quality-gates.sh .
-pre-commit run
-pre-commit run --all-files
+python3 scripts/qa.py quick
+python3 scripts/qa.py full
 git diff --check
 git diff --cached --check
 ```
 
-The Plan additionally names exact domain validators for agent governance,
-provider configuration, loop lifecycle, checkpoint semantics, GitHub Actions,
-CI Python locks, affected surfaces, Kubernetes manifests, GitOps structure,
-Vault and ESO contracts, security scanning, active-corpus boundaries, and the
-research pack's 36-row/source/claim/cross-link invariants.
-
-No command result is treated as provider-runtime, hosted-CI, live-cluster,
-deployment, user, or stakeholder evidence unless a separate authorization
-explicitly admits that evidence class.
+The full profile owns unit discovery and all-files pre-commit. Record the actual
+snapshot and baseline failures in the cycle's Task; obtain staged evidence only
+when staging is authorized. These commands do not supply the missing workspace
+observation or any provider-runtime, hosted-CI, live or human evidence.
 
 ## Success Criteria & Verification Plan
 
@@ -541,4 +543,4 @@ retained and strengthened here.
 - [Spec 0059 — Workspace Research Full-Corpus Refresh](../../98.archive/completed/03.specs/0059-workspace-research-full-corpus-refresh/spec.md)
 - [Current WER research pack](../../90.references/research/0001-workspace-engineering/README.md)
 - [Research collection contract](../../90.references/research/README.md)
-- [Quality standards](../../00.agent-governance/policies/quality.md)
+- [Quality standards](../../../.agents/governance/quality.md)

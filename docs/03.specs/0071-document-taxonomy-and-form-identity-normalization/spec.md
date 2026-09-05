@@ -1,10 +1,10 @@
 ---
 title: "Document Taxonomy and Form Identity Normalization Technical Specification"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/spec"
 status: "draft"
 owner: "platform"
-updated: "2026-09-02"
+updated: "2026-09-06"
 layer: "specs"
 artifact_id: "SPEC-0071"
 ---
@@ -13,7 +13,7 @@ artifact_id: "SPEC-0071"
 
 ## Overview
 
-**Continuation boundary (2026-09-05).** Registry v9 and its existing schema
+**Continuation boundary (2026-09-06).** Registry v9 and its existing schema
 implementation are the current baseline. This package retains ownership of
 its unfinished document-form work; draft status does not certify completion.
 [SPEC-0072](../0072-agent-governance-and-quality-gate-consolidation/spec.md)
@@ -55,9 +55,9 @@ Counts in this document are point-in-time audit evidence recorded on
 
 ## Strategic Boundaries & Non-goals
 
-In scope: the `id` and `class` of every profile in
+In scope: the `id` and `family` of every profile in
 `docs/99.templates/registry.json`; the `version`, `layer`, `supersedes`, and
-`superseded_by` grammars in `frontmatter.schema.json` and the `class` domain in
+`superseded_by` grammars in `frontmatter.schema.json` and the `family` domain in
 `document-profile.schema.json`; the `type`, `layer`, `version`, and supersession
 values of every tracked authored document; the file name, location, and
 frontmatter of every Stage 99 form; the executable owners that name a profile
@@ -66,9 +66,8 @@ identity; and the Stage 98 generation contracts that pin sealed bytes.
 Out of scope: the path or file name of any authored document outside Stage 99;
 any document's stage, owner, lifecycle status, or meaning; artifact identity
 patterns, which SPEC-0067
-already normalized and this Spec only verifies; rendering agent projections from
-the registry, which SPEC-0068 owns; and retired-provider residue, which
-SPEC-0070 owns.
+already normalized and this Spec only verifies; the superseded SPEC-0068 renderer and SPEC-0070 implementation proposal.
+SPEC-0072 owns current governance routing, native adapters and related forms.
 
 Renaming a profile is not a lifecycle event. A document whose `type` changes
 from `sdlc/runbook` to `operation/runbook` is the same document under the same
@@ -78,13 +77,13 @@ authority; it is not superseded, revised, or re-approved.
 
 - **C1 — Family and kind.** A profile identity is `<family>/<kind>`. The family
   names the document class the repository recognizes — `sdlc`, `operation`,
-  `reference`, `archive`, `governance`, `readme`, `exception` — and the kind
-  names the document. A profile's `class` equals its family.
+  `reference`, `archive`, `governance`, `common` — and the kind
+  names the document. The Registry v9 `family` field owns that classification; the retired `class` key is not restored.
 - **C2 — Stage-free layer, where a layer exists.** `layer` is the owning
   stage's slug without its numeric sort prefix; the prefix orders directories
   and is not part of a layer's name. Only a document that lives in a numbered
-  stage declares one. Stage 00 governance documents and Stage 99 forms do not:
-  Stage 00 is the authority above the numbered stages, and a form is not the
+  stage declares one. Common agent governance documents and Stage 99 forms do not:
+  common governance sits outside the numbered stages, and a form is not the
   document it produces.
 - **C3 — Semantic version.** `version` matches
   `^[0-9]+\.[0-9]+\.[0-9]+$`, the grammar every machine contract in this
@@ -92,12 +91,12 @@ authority; it is not superseded, revised, or re-approved.
   existing value. It does not renumber, reset, or increment any document.
 - **C4 — Shared key set.** Every profile that admits frontmatter declares
   `title`, `version`, `type`, `status`, `owner`, and `updated`, in that order,
-  before any other key. `layer` follows `type` and `artifact_id` follows
-  `updated` wherever the profile declares them. The exclusions are contractual,
-  not accidental: `governance/*` declares no `artifact_id` because Stage 00
+  before any other key. `layer` and then `artifact_id` follow `updated`
+  wherever the profile declares them. The exclusions are contractual,
+  not accidental: `governance/*` declares no `artifact_id` because common governance
   carries no artifact identity, neither `governance/*` nor any form declares a
-  `layer` under C2, and an `exception/*` provider binding declares only the
-  keys its runtime reads.
+  `layer` under C2, and a `native`-mode binding or skill package declares only its runtime
+  keys. Native skill packages have no governed lifecycle envelope.
 - **C5 — Form names its output.** A Stage 99 form is named for the document it
   produces, in the directory of the stage that owns it, and never repeats that
   directory in its own file name. A form's extension is the extension the
@@ -141,49 +140,44 @@ authority; it is not superseded, revised, or re-approved.
 
 ### Profile identity
 
-Thirteen profiles are renamed and one is split. `sdlc` keeps the artifacts the
-delivery lifecycle produces — requirement, architecture description,
-architecture decision, spec, data model, plan, task — and loses the five
-operations documents and the requirement package's `-package` suffix. Guide,
-policy, runbook, incident, and postmortem move to `operation`. The three Stage
-90 members move from `content` to `reference`. Tombstone and migration move from
-`content` to `archive`. `content` disappears, because it never described
-anything.
+The original 2026-09-02 profile split is historical design context, recoverable
+from [the baseline proposal](https://github.com/buenhyden/hy-home.k8s/blob/eb4fcfe3283115388d6eb1f31d56780b3e578f77/docs/03.specs/0071-document-taxonomy-and-form-identity-normalization/spec.md#profile-identity).
+Continuation uses Registry v9's `family`, `mode`, exact path and template
+contracts; it does not restore a `class` field or a six-directory Stage 00 tree.
 
-`governance/reference` becomes six profiles. One form served
-`docs/00.agent-governance/policies/`, `providers/`, `roles/`, `skills/`, and
-`sdlc.md` at once, so `type` could not tell a reader which of five different
-things they were holding. The six kinds — `contract`, `control`, `provider`,
-`role`, `rule`, `skill` — each bind one Stage 00 directory. `control` and
-`contract` also reserve the Markdown owners for `hooks/` and `contracts/`, which
-today hold only executable and JSON files.
+| Profile | Current owner |
+| --- | --- |
+| `governance/contract` | `.agents/governance/sdlc.md` |
+| `governance/rule` | Registered flat policies in `.agents/governance/` |
+| `governance/role` | Neutral responsibilities in `.agents/roles/` |
+| `governance/provider` | `.claude/provider.md` and `.codex/provider.md` |
+| `governance/skill` | The two ordinary documents in `.agents/workflows/` |
+| `common/native-skill-package` | `.agents/skills/<id>/SKILL.md` with runtime metadata |
 
-Every profile's `class` is set to its family, which required widening the class
-domain in the profile schema from five values to seven. `class` had been a
-second, coarser taxonomy that disagreed with the identity beside it.
+The registry owns the exact file set and form bindings. No governance control,
+hook, memory or contract directory is reserved as unused implementation capacity.
+Native skill packages use `name`, `description`, and
+`disable-model-invocation: true`; their Codex sidecars use
+`policy.allow_implicit_invocation: false`. Invocation grants no authority.
 
 ### Form layout
 
-Twelve forms change path. Nine are `replaced` — their bytes changed with their
-name — and three are `moved` with identical bytes into
-`templates/specs/contracts/`, which now mirrors the authored destination
-`docs/03.specs/####-<slug>/contracts/`.
-
-The Codex form is the one substantive change. Its predecessor was Markdown while
-`.codex/agents/*.toml` is TOML, so no author could copy the form into the
-destination without rewriting it. The replacement is TOML, and a new
-`common/codex-agent-binding` profile binds it to the path the Codex runtime
-actually reads. `common/local-agent-asset` — provider-neutral `.agents/**`
-— keeps no form, because a neutral asset is not a provider binding.
+The original twelve form moves and their MIG-0010 provenance remain historical
+inputs, not instructions to recreate retired native-contract capacity. Current
+physical forms and their single owning profiles are selected by the registry.
+The Codex agent form produces TOML and the Claude agent form produces the
+runtime's Markdown binding. Callable common skill packages are `native` mode,
+have no governed form, and are distinct from the `governance/skill` workflow
+form. SPEC-0072 owns their path and invocation-metadata migration.
 
 ### Enforcement
 
 `scripts/validate-markdown-profiles.py` loads `frontmatter.schema.json` and
 evaluates it against each classified document's frontmatter mapping, emitting
 `FM-SCHEMA`. Two exemptions are deliberate: a `template`-mode profile, whose
-placeholders spell grammars the authored contract must reject, and an
-`exception`-class profile, whose keys are the runtime's rather than the
-document contract's.
+placeholders spell grammars the authored contract must reject, and a
+`native`-mode profile, whose runtime metadata is validated by its registered
+owner rather than the governed-document envelope.
 
 Without this the rest of the Spec would be declaration only. The two grammars
 this change corrects had already drifted precisely because the schema declaring
@@ -209,10 +203,10 @@ naming a target as its own `legacy_path` releases it.
 `status`, `owner`, and `updated`; `layer` and `artifact_id` stay optional there
 because the registry decides per profile which of the two a document carries.
 
-No new contract file is introduced. `registry.json` gains six governance
-profiles and one Codex binding profile and loses two — the single governance
-reference and its template mirror, plus the template mirror of the neutral
-agent asset, which no longer has a Markdown form. `frontmatter.schema.json`
+No new contract file is introduced. The current registry already owns the
+governance and native profiles listed above. Continuation edits only an
+observed unsatisfied form or identity contract; it does not repeat the historical
+profile split or restore a retired neutral-asset template. `frontmatter.schema.json`
 gains `supersedes` and `superseded_by`, whose values were previously
 undeclared and inconsistently spelled: a single successor was sometimes quoted
 and sometimes bare, and a multiple-successor value was a quoted string that
@@ -220,41 +214,31 @@ merely looked like a list. Both are now one identity or an ordered set of them.
 
 ## Interfaces & Data Structures
 
-The authored interface is the shared frontmatter block:
+The authored envelope follows the selected registry profile. A runbook copy
+uses its numbered-stage layer after the common six-key prefix:
 
 ```yaml
 ---
-title: 'Reference Maintenance Runbook'
+title: "Reference Maintenance Runbook"
 version: "1.0.0"
-type: operation/runbook
+type: "operation/runbook"
+status: "active"
+owner: "platform"
+updated: "2026-09-01"
 layer: "operations"
-status: active
-owner: platform
-updated: 2026-09-01
 artifact_id: "RUN-0011"
 ---
 ```
 
-The form interface spells the same keys as placeholders:
+The [runbook form](../../99.templates/templates/operations/runbook.template.md)
+projects that same envelope with the registered author placeholders. A form's
+own classification has no stage layer; the copyable envelope includes the layer
+of the document it creates. Native skill and provider-binding profiles use
+their own runtime metadata instead of this governed envelope.
 
-```yaml
----
-title: '{Topic Name} Runbook'
-version: "#.#.#"
-type: operation/runbook
-status: draft
-owner: '{owner}'
-updated: YYYY-MM-DD
-artifact_id: "RUN-####"
----
-```
-
-The form omits `layer`: the form is not the document, and the author writes the
-owning stage's slug when the copy lands in that stage.
-
-`scripts/validate-markdown-profiles.py --root . --mode strict` is the enforcing
-interface. A value that violates the schema reports `FM-SCHEMA` naming the
-JSON path and the offending value, and the run exits non-zero.
+`scripts/validate-markdown-profiles.py --root . --mode strict` evaluates the
+registered authored value grammar and reports `FM-SCHEMA` on invalid values.
+Native metadata is checked by the owner registered for that runtime surface.
 
 ## Edge Cases & Error Handling
 
@@ -294,19 +278,23 @@ forbids inventing a generation for bytes no review recorded.
 python3 scripts/validate-document-contract-registry.py --root . --mode strict
 python3 scripts/validate-markdown-profiles.py --root . --mode strict
 python3 scripts/validate-links-and-owners.py --root . --mode strict
-python3 scripts/validate-document-lifecycle.py --root . --mode strict
-python3 -m unittest discover --start-directory tests --top-level-directory tests
-bash scripts/validate-repo-quality-gates.sh .
+python3 scripts/qa.py quick
+python3 scripts/qa.py full
 ```
+
+Run focused document checks during repair. The common QA profile owns the final
+unit, lifecycle and pre-commit composition; retired aggregates and agent-legacy
+cutover commands are not restored. Draft status and historical form provenance
+are not evidence that current unfinished work has passed.
 
 ## Success Criteria & Verification Plan
 
 | ID | Criterion | Evidence |
 | --- | --- | --- |
-| VAL-DTF-001 | Every profile identity is `family/kind` and every profile `class` equals its family | Registry projection over all profiles |
+| VAL-DTF-001 | Every profile identity is `family/kind` and every profile declares the matching `family` | Registry projection over all profiles |
 | VAL-DTF-002 | Every classified document's `type` equals its profile identity | Strict Markdown profile run over the full corpus |
 | VAL-DTF-003 | Every `layer` is a stage slug with no numeric prefix and every `version` is three components | Frontmatter schema evaluation over the full corpus |
-| VAL-DTF-004 | Every frontmatter-bearing profile declares the shared key set in one order, with only the two contractual exclusions | Registry key-order projection |
+| VAL-DTF-004 | Every frontmatter-bearing profile declares the shared key set in one order, with the registered governed/native exclusions | Registry key-order projection |
 | VAL-DTF-005 | Every Stage 99 form is named for its output, owned by exactly one profile, and spells placeholders where the contract admits one | Registry template parity plus form inspection |
 | VAL-DTF-006 | The frontmatter schema is evaluated on every strict run and rejects each retired grammar | Rejected-sample assertions for version, layer, and date |
 | VAL-DTF-007 | Every sealed Stage 98 record parses against its own generation and no payload byte changes | Strict lifecycle run plus archive payload diff |
@@ -349,5 +337,5 @@ authority is the direct human approval recorded above under
 - [SPEC-0071-TSK-0001](tasks/tsk-0001-dtf-000.md)
 - [Archive Index](../../98.archive/README.md) routes MIG-0010, which seals the form moves
 - [Template Registry](../../99.templates/README.md)
-- [Document Authoring Policy](../../00.agent-governance/policies/document-authoring.md)
-- [Quality Policy](../../00.agent-governance/policies/quality.md)
+- [Document Authoring Policy](../../../.agents/governance/document-authoring.md)
+- [Quality Policy](../../../.agents/governance/quality.md)

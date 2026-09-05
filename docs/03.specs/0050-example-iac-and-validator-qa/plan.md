@@ -172,8 +172,8 @@ or live result.
 
 **Modify:**
 
-- `docs/00.agent-governance/contracts/platform-validation-evidence.json`
-- `docs/00.agent-governance/contracts/platform-validation-evidence.schema.json`
+- `.agents/contracts/platform-validation-evidence.json`
+- `.agents/contracts/platform-validation-evidence.schema.json`
 - `tests/fixtures/platform-validation-evidence.json`
 - `scripts/validate-platform-evidence.py`
 - `tests/test_validate_platform_evidence.py`
@@ -294,7 +294,7 @@ stdout/stderr is not durable evidence.
   commit the contract/helper/validator/test package.
 
   ```bash
-  rtk git add docs/00.agent-governance/contracts/platform-validation-evidence.json docs/00.agent-governance/contracts/platform-validation-evidence.schema.json docs/90.references/data/tech-stack-version-inventory.md scripts/platform_validation_tools.py scripts/validate-example-iac.py scripts/validate-platform-evidence.py tests/fixtures/example-iac tests/fixtures/platform-validation-evidence.json tests/test_validate_example_iac.py tests/test_validate_platform_evidence.py
+  rtk git add .agents/contracts/platform-validation-evidence.json .agents/contracts/platform-validation-evidence.schema.json docs/90.references/data/tech-stack-version-inventory.md scripts/platform_validation_tools.py scripts/validate-example-iac.py scripts/validate-platform-evidence.py tests/fixtures/example-iac tests/fixtures/platform-validation-evidence.json tests/test_validate_example_iac.py tests/test_validate_platform_evidence.py
   rtk git commit -m "feat: add example iac validation contract"
   ```
 
@@ -462,7 +462,7 @@ stdout/stderr is not durable evidence.
   ```bash
   rtk python3 scripts/validate-document-lifecycle.py --root . --mode staged
   rtk git diff --check
-  rtk git add docs/00.agent-governance/memory/progress.md docs/03.specs/0050-example-iac-and-validator-qa/spec.md docs/03.specs/README.md docs/03.specs/0050-example-iac-and-validator-qa/plan.md docs/03.specs/0050-example-iac-and-validator-qa/plan.md docs/03.specs/0050-example-iac-and-validator-qa/README.md#task-records docs/03.specs/0050-example-iac-and-validator-qa/README.md#task-records docs/99.templates/registry.json
+  rtk git add .agents/memory/progress.md docs/03.specs/0050-example-iac-and-validator-qa/spec.md docs/03.specs/README.md docs/03.specs/0050-example-iac-and-validator-qa/plan.md docs/03.specs/0050-example-iac-and-validator-qa/plan.md docs/03.specs/0050-example-iac-and-validator-qa/README.md#task-records docs/03.specs/0050-example-iac-and-validator-qa/README.md#task-records docs/99.templates/registry.json
   rtk git commit -m "docs: close example iac validation tranche"
   ```
 
@@ -527,8 +527,8 @@ current PASS evidence.
   Terraform lock, and contract/helper/validator packages in reverse order.
   CI workflow/contract/test and contract/helper/consumers always revert as
   matched units.
-- **Evidence Location**: this Task and
-  `../../00.agent-governance/memory/progress.md`.
+- **Evidence Location**: the owning package Task and Git evidence; do not
+  recreate the retired shared progress ledger.
 ## Completion Criteria
 
 - The contract extension, shared tool helper, example validator, fake-tool

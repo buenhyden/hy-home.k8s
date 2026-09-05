@@ -1,10 +1,10 @@
 ---
 title: "Workspace Research Full-Corpus Reverification Implementation Plan"
-version: "1.0.0"
+version: "1.1.0"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-06"
 layer: "specs"
 artifact_id: "SPEC-0062-PLAN-0001"
 ---
@@ -221,6 +221,15 @@ research agents own disjoint report paths.
 ---
 
 ## Overview
+
+The historical 2026-08-20 work packages, source paths and command examples
+remain evidence of their original cycle; they are not current governance
+implementation instructions. Their pre-migration text is recoverable from
+[the baseline source](https://github.com/buenhyden/hy-home.k8s/blob/eb4fcfe3283115388d6eb1f31d56780b3e578f77/docs/03.specs/0062-workspace-research-full-corpus-reverification/plan.md). Current governance authority and QA
+routing are owned by [SPEC-0072](../0072-agent-governance-and-quality-gate-consolidation/spec.md).
+The retired progress-memory path is not recreated. Task/Git evidence replaces
+that former progress destination; the 2026-09-05 external-observation addendum
+and its explicit workspace-observation gap remain unchanged in scope.
 
 > **Current state (2026-08-29):** Unit 1 records the approved disposition while
 > retaining `active` status. Unit 2 performs only the replacement
@@ -2965,10 +2974,11 @@ claim to. It satisfies `FOLLOWON-0062-001` through `FOLLOWON-0062-005` only.
 | VAL-WRFR-014 | WRFR-009 | Whole-branch review with no open Critical/Important finding |
 | VAL-WRFR-015 | WRFR-009 | Terminal affected/staged/pre-commit/all-files/aggregate/diff sequence |
 
-Every work package runs its focused checks before commit and committed-diff
-review. WRFR-009
-runs the entire canonical lane twice: once before closure mutation and once after
-the lifecycle evidence is final. The second complete run is authoritative.
+The table retains the original cycle's expected evidence, not a restart
+checklist. Current validation follows the Spec's Verification Commands and
+quality policy; the former repeated aggregate/pre-commit sequence is retired.
+The later addenda own their narrower acceptance without completing missing
+original evidence or recreating progress memory.
 
 ## Risks & Mitigations
 
@@ -3043,4 +3053,4 @@ the lifecycle evidence is final. The second complete run is authoritative.
 - [Source coverage and migration ledger](../../90.references/research/0001-workspace-engineering/m0012-source-coverage.md)
 - [Scope application index](../../90.references/research/0001-workspace-engineering/m0013-scope-application-index.md)
 - [ADR 0022 — direct-approval standalone execution lineage](../../02.architecture/decisions/0022-direct-approval-standalone-execution-lineage.md)
-- [Quality standards](../../00.agent-governance/policies/quality.md)
+- [Quality standards](../../../.agents/governance/quality.md)

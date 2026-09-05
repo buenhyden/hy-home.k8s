@@ -24,11 +24,11 @@ artifact_id: "{{ARTIFACT_ID}}"
 ```json
 [
   {
-    "legacy_path": "docs/00.agent-governance/<retired-owner>.md",
+    "legacy_path": ".agents/governance/<retired-owner>.md",
     "stable_path": null,
     "artifact_id": null,
     "action": "merged",
-    "replacement": "docs/00.agent-governance/policies/<current-owner>.md",
+    "replacement": ".agents/governance/<current-owner>.md",
     "source_commit": "{{GIT_OID}}",
     "source_blob": "3333333333333333333333333333333333333333",
     "content_sha256": "4444444444444444444444444444444444444444444444444444444444444444",

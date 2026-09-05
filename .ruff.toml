@@ -5,7 +5,7 @@
 # changed what CI enforces without any change to this repository. Every other
 # linter here names its rules, and this one does too.
 #
-# See docs/00.agent-governance/policies/formatting-and-linting.md before
+# See .agents/governance/formatting-and-linting.md before
 # widening the selection: each added family needs its findings measured and
 # resolved, not suppressed.
 

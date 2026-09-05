@@ -13,6 +13,8 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
+import yaml
+
 from tests.affected_surface_mutations import apply_mutation
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -77,15 +79,19 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
             with self.subTest(case=case["name"]):
                 root = ROOT
                 temporary = None
-                if case["name"] == "unmatched-tracked-path":
+                if case["name"] in {"unmatched-tracked-path", "symlink-traversal"}:
                     temporary = tempfile.TemporaryDirectory(
                         prefix="affected-unmatched-"
                     )
                     self.addCleanup(temporary.cleanup)
                     root = Path(temporary.name)
                     target = root / case["paths"][0]
-                    target.parent.mkdir(parents=True)
-                    target.write_text("unmatched\n", encoding="utf-8")
+                    if case["name"] == "symlink-traversal":
+                        target.parent.parent.mkdir(parents=True)
+                        target.parent.symlink_to("../outside")
+                    else:
+                        target.parent.mkdir(parents=True)
+                        target.write_text("unmatched\n", encoding="utf-8")
                 with self.assertRaises(self.validator.ContractError) as raised:
                     self.validator.select_paths(
                         self.contract, case["paths"], "affected", root
@@ -119,7 +125,11 @@ class AffectedSurfaceFixtureTests(unittest.TestCase):
                 self.assertEqual(raised.exception.code, case["expectedError"])
 
     def test_ci_workflow_and_rename_range(self) -> None:
-        self.validator.validate_ci_workflow_selector(ROOT)
+        workflow = yaml.safe_load((ROOT / ".github/workflows/ci.yml").read_text())
+        qa_commands = [step.get("run", "") for step in workflow["jobs"]["qa"]["steps"]]
+        self.assertEqual(
+            sum("scripts/qa.py ci" in command for command in qa_commands), 1
+        )
         with tempfile.TemporaryDirectory(
             prefix="affected-surface-ci-rename-"
         ) as directory:

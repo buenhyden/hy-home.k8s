@@ -12,7 +12,7 @@ layer: "references"
 > 감사, 외부 조사, 데이터 등 비권위 참고 자료를 관리한다.
 
 > [!NOTE]
-> AI Agent가 이 Stage를 사용할 때는 [Agent Governance Hub](../00.agent-governance/README.md)를 따른다.
+> AI Agent가 이 Stage를 사용할 때는 [Agent Governance Hub](../../.agents/README.md)를 따른다.
 
 ## Overview
 
@@ -96,7 +96,7 @@ pack router `####-<slug>/README.md`, 그리고 pack member `####-<slug>/m####-<s
 ## Related Documents
 
 - [Docs Hub](../README.md)
-- [Agent Governance Hub](../00.agent-governance/README.md)
+- [Agent Governance Hub](../../.agents/README.md)
 - [Requirements](../01.requirements/README.md)
 - [Architecture](../02.architecture/README.md)
 - [Specs](../03.specs/README.md)

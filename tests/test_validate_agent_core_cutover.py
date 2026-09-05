@@ -77,7 +77,7 @@ class CoreCutoverTests(unittest.TestCase):
     def test_nonexistent_tier_fragment_is_rejected(self):
         data = self.registry.load_json(ROOT, self.registry.REGISTRY_PATH)
         data["roles"][0]["capability_tier_ref"] = (
-            "docs/00.agent-governance/policies/model-selection.md#missing"
+            ".agents/governance/model-selection.md#missing"
         )
         with self.assertRaises(self.registry.HarnessError):
             self.registry.validate_registry(ROOT, data)

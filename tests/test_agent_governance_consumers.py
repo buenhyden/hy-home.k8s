@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import ctypes
 import importlib.util
 import json
 import os
@@ -101,14 +102,14 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
         self.addCleanup(directory.cleanup)
         root = Path(directory.name)
         self.targets = {
-            "docs/00.agent-governance/contracts/agent-role-semantics.json": "docs/00.agent-governance/roles/registry.json",
-            "docs/00.agent-governance/contracts/agent-role-semantics.schema.json": "docs/00.agent-governance/roles/registry.schema.json",
+            "docs/00.agent-governance/contracts/agent-role-semantics.json": ".agents/roles/registry.json",
+            "docs/00.agent-governance/contracts/agent-role-semantics.schema.json": ".agents/roles/registry.schema.json",
             "scripts/validate-agent-role-semantics.py": "scripts/validate-agent-governance.py",
-            "tests/fixtures/agent-role-semantics.json": "docs/00.agent-governance/roles/registry.json",
+            "tests/fixtures/agent-role-semantics.json": ".agents/roles/registry.json",
             ".github/ABOUT.md": ".github/README.md",
-            "docs/00.agent-governance/common-governance.md": "docs/00.agent-governance/roles/registry.json",
-            "docs/00.agent-governance/harness-implementation-map.md": "docs/00.agent-governance/roles/registry.json",
-            "docs/00.agent-governance/providers/agents-md.md": "docs/00.agent-governance/providers/codex.md",
+            "docs/00.agent-governance/common-governance.md": ".agents/roles/registry.json",
+            "docs/00.agent-governance/harness-implementation-map.md": ".agents/roles/registry.json",
+            "docs/00.agent-governance/providers/agents-md.md": ".codex/provider.md",
         }
         for relative in set(self.targets.values()):
             target = root / relative
@@ -264,7 +265,7 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
         retired_path = "docs/00.agent-governance/harness-implementation-map.md"
         self.owners.proof.consumers[path] = raw
         self.owners.proof.rendered_dispositions[(path, retired_path)] = (
-            "docs/00.agent-governance/roles/registry.json"
+            ".agents/roles/registry.json"
         )
         self.assertEqual(self.validator.validate_repository(root)["activeConsumers"], 0)
         self.add_text(root, path, raw.decode() + "new instruction\n")
@@ -307,7 +308,7 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
         self.add_text(root, path, raw.decode())
         self.owners.proof.consumers[path] = raw
         self.owners.proof.literal_dispositions = {
-            (path, retired_path): "docs/00.agent-governance/roles/registry.json"
+            (path, retired_path): ".agents/roles/registry.json"
         }
         self.assertEqual(self.validator.validate_repository(root)["activeConsumers"], 0)
         self.add_text(root, path, raw.decode() + "use .github/ABOUT.md\n")
@@ -320,12 +321,10 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
         raw = (literal + "\n" + extra + "\n").encode()
         proof = types.SimpleNamespace(
             consumers={path: raw},
-            literal_dispositions={
-                (path, literal): "docs/00.agent-governance/roles/registry.json"
-            },
+            literal_dispositions={(path, literal): ".agents/roles/registry.json"},
             rendered_dispositions={},
             terminal_targets={
-                literal: "docs/00.agent-governance/roles/registry.json",
+                literal: ".agents/roles/registry.json",
                 extra: ".github/README.md",
             },
         )
@@ -344,14 +343,12 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
         raw = (literal + "\n" + rendered + "\n").encode()
         proof = types.SimpleNamespace(
             consumers={path: raw},
-            literal_dispositions={
-                (path, literal): "docs/00.agent-governance/roles/registry.json"
-            },
+            literal_dispositions={(path, literal): ".agents/roles/registry.json"},
             rendered_dispositions={
                 (path, rendered): "scripts/validate-agent-governance.py"
             },
             terminal_targets={
-                literal: "docs/00.agent-governance/roles/registry.json",
+                literal: ".agents/roles/registry.json",
                 rendered: "scripts/validate-agent-governance.py",
             },
         )
@@ -390,7 +387,7 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
         root = self.make_valid_root()
         target = root / ".github/README.md"
         target.unlink()
-        target.symlink_to("../docs/00.agent-governance/roles/registry.json")
+        target.symlink_to("../.agents/roles/registry.json")
         self.assert_rule(root, "AGQC-LEGACY-INPUT")
 
     def test_invalid_utf8_retired_consumer_fails_closed(self) -> None:
@@ -418,11 +415,11 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
         root = self.make_valid_root()
         for raw in ('{"duplicate": 1, "duplicate": 2}', "[]", "null", "{"):
             with self.subTest(raw=raw):
-                (root / "docs/00.agent-governance/roles/registry.json").write_text(raw)
+                (root / ".agents/roles/registry.json").write_text(raw)
                 with self.validator._RepositoryReader(root) as reader:
                     with self.assertRaises(self.validator.ContractError):
                         self.validator._owner_object(
-                            reader, "docs/00.agent-governance/roles/registry.json"
+                            reader, ".agents/roles/registry.json"
                         )
 
     def test_held_reader_owner_limit_cannot_enlarge_legacy_limit(self) -> None:
@@ -449,7 +446,7 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
             self.validator.validate_repository(alias)
         (root / "directory").mkdir()
         os.mkfifo(root / "fifo")
-        (root / "link").symlink_to("docs/00.agent-governance/roles/registry.json")
+        (root / "link").symlink_to(".agents/roles/registry.json")
         for path in ("directory", "fifo", "link"):
             with (
                 self.subTest(path=path),
@@ -457,6 +454,37 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
             ):
                 with self.assertRaises(self.validator.ContractError):
                     reader.candidate_payload(path, read=True)
+
+    def test_only_registered_individual_skill_links_are_admitted(self) -> None:
+        root = self.make_valid_root()
+        directory = root / ".claude/skills"
+        directory.mkdir(parents=True)
+        link = directory / "registered"
+        expected = "../../.agents/skills/registered"
+        link.symlink_to(expected)
+        with self.validator._RepositoryReader(root) as reader:
+            with self.assertRaises(self.validator.ContractError):
+                reader.candidate_payload(".claude/skills/registered", read=False)
+            reader.allowed_internal_symlinks = {".claude/skills/registered": expected}
+            self.assertIsNone(
+                reader.candidate_payload(".claude/skills/registered", read=False)
+            )
+            for target in (
+                "../docs/00.agent-governance/skills",
+                "../../.agents/skills/unregistered",
+                "/outside",
+            ):
+                with self.subTest(target=target):
+                    link.unlink()
+                    link.symlink_to(target)
+                    with self.assertRaises(self.validator.ContractError):
+                        reader.candidate_payload(
+                            ".claude/skills/registered", read=False
+                        )
+            alias = directory / "unregistered"
+            alias.symlink_to(expected)
+            with self.assertRaises(self.validator.ContractError):
+                reader.candidate_payload(".claude/skills/unregistered", read=False)
 
     def test_candidate_encoding_and_paths_fail_closed(self) -> None:
         for raw in (b"unterminated", b"/absolute\0", b"../escape\0", b"bad\xff\0"):
@@ -468,8 +496,8 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
             (REPO_ROOT / self.validator.documents.REGISTRY_PATH).read_bytes()
         )
         return (
-            "docs/00.agent-governance/roles/registry.json",
-            "docs/00.agent-governance/roles/registry.schema.json",
+            ".agents/roles/registry.json",
+            ".agents/roles/registry.schema.json",
             "scripts/validation/registry.json",
             "scripts/validation/registry.schema.json",
             self.validator.documents.REGISTRY_PATH.as_posix(),
@@ -513,7 +541,8 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
             with self.assertRaises(self.validator.ContractError):
                 read_current_bytes("README.md", len(expected) - 1)
             self.assertEqual(
-                read_symlink(".claude/skills"), "../docs/00.agent-governance/skills"
+                read_symlink(".claude/skills/risk-report"),
+                "../../.agents/skills/risk-report",
             )
             with self.assertRaises(self.validator.ContractError):
                 read_symlink("README.md")
@@ -615,6 +644,7 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
             self.assertEqual(len(options["pass_fds"]), 1)
 
     def test_git_pipe_timeout_and_overflow_reap_process_groups(self) -> None:
+        self.own_synthetic_descendants()
         cases = (
             (
                 "timeout",
@@ -687,6 +717,7 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
                 self.assert_process_gone(child_pid)
 
     def test_git_cleanup_kills_descendant_after_leader_exits(self) -> None:
+        self.own_synthetic_descendants()
         pid_fd, pid_path = tempfile.mkstemp(prefix="agent-legacy-child-")
         os.close(pid_fd)
         pid_file = Path(pid_path)
@@ -759,9 +790,24 @@ class AgentLegacyCutoverValidatorTests(unittest.TestCase):
             self.validator.GIT_CLEANUP_TIMEOUT_SECONDS,
         )
 
+    def own_synthetic_descendants(self) -> None:
+        # Keep fixture orphans under this test process, even when an outer QA
+        # runner is a subreaper. Only this owner can waitpid the synthetic child.
+        libc = ctypes.CDLL(None, use_errno=True)
+        previous = ctypes.c_int()
+        self.assertEqual(libc.prctl(37, ctypes.byref(previous), 0, 0, 0), 0)
+        self.assertEqual(libc.prctl(36, 1, 0, 0, 0), 0)
+        self.addCleanup(
+            lambda: self.assertEqual(libc.prctl(36, previous.value, 0, 0, 0), 0)
+        )
+
     def assert_process_gone(self, process_id: int) -> None:
         deadline = time.monotonic() + self.validator.GIT_CLEANUP_TIMEOUT_SECONDS
         while time.monotonic() < deadline:
+            try:
+                os.waitpid(process_id, os.WNOHANG)
+            except ChildProcessError:
+                pass
             try:
                 os.kill(process_id, 0)
             except ProcessLookupError:

@@ -98,7 +98,7 @@ git diff --check
 ```
 
 The completion order and PASS/FAIL/SKIP/DEFER meanings are owned by the
-[Quality policy](../docs/00.agent-governance/policies/quality.md). This README
+[Quality policy](../.agents/governance/quality.md). This README
 lists current test entrypoints but does not redefine that policy.
 
 ## Operations
@@ -120,8 +120,8 @@ Their count and exact method inventory are observations, not governance.
 ## Related Documents
 
 - [Scripts](../scripts/README.md)
-- [Quality policy](../docs/00.agent-governance/policies/quality.md)
-- [Work lifecycle](../docs/00.agent-governance/skills/work-lifecycle.md)
+- [Quality policy](../.agents/governance/quality.md)
+- [Work lifecycle](../.agents/workflows/work-lifecycle.md)
 - [Validation ownership ADR](../docs/02.architecture/decisions/0031-current-corpus-retention-and-validation-ownership.md)
 - [Validation tooling Spec](../docs/98.archive/completed/03.specs/0066-validation-tooling-ownership/spec.md)
 - [Validation tooling Task](../docs/98.archive/completed/03.specs/0066-validation-tooling-ownership/tasks/tsk-0001-vto-000.md)

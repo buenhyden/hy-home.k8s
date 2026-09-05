@@ -1948,10 +1948,13 @@ class ArchiveValidationTest(unittest.TestCase):
         batched_fallbacks = [
             command
             for command in git_commands
-            if "log" in command and retired_form_fallbacks.issubset(command)
+            if "log" in command and retired_form_fallbacks.intersection(command)
         ]
-        self.assertEqual(len(batched_fallbacks), 1)
-        # The power-of-two process budget covers staged authority inventory,
+        # Complete current successors need no historical fallback. If needed,
+        # these retired form lookups must still share at most one Git batch.
+        # ArchiveHistoricalTargetBatchTest exercises the required fallback itself.
+        self.assertLessEqual(len(batched_fallbacks), 1)
+        # The process budget covers staged authority inventory,
         # named-ref reachability, exact commit:path, and batched content reads
         # without introducing per-row subprocesses or a current count pin.
         self.assertLessEqual(git_calls, budget, f"Git subprocesses: {git_calls}")
@@ -2189,8 +2192,15 @@ class ArchiveHistoricalTargetBatchTest(unittest.TestCase):
         log = header(newer, noisy_path) * 4096 + header(older, older_path)
         member = archive_validation._GitTreeMember("100644", "blob", "c" * 40)  # noqa: SLF001
 
+        captures = []
+
         def capture(_root, *args, stdout_limit):
+            captures.append(args)
             self.assertEqual(args[0], "log")
+            self.assertEqual(
+                set(args[args.index("--") + 1 :]), {noisy_path, older_path}
+            )
+            self.assertEqual(stdout_limit, archive_validation._INDEX_CAPTURE_MAX_BYTES)
             self.assertFalse(any(arg.startswith("--max-count=") for arg in args))
             self.assertGreaterEqual(stdout_limit, len(log))
             return subprocess.CompletedProcess(("git", *args), 0, log, b"")
@@ -2214,6 +2224,7 @@ class ArchiveHistoricalTargetBatchTest(unittest.TestCase):
                 proposed_commit="d" * 40,
             )
 
+        self.assertEqual(len(captures), 1)
         self.assertEqual(tuple(found), (older_path, noisy_path))
         self.assertEqual(found, {older_path: member, noisy_path: member})
 
@@ -2635,8 +2646,7 @@ class ArchiveTransitionLinkTest(unittest.TestCase):
         edge = self.validator.ArchiveTransitionEdge(source, target)
 
         projected = self.validator._reviewed_work054_historical_owner_edges(
-            self.context,
-            {},
+            self.context
         )
 
         self.assertNotIn(edge, projected)

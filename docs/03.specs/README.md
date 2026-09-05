@@ -12,7 +12,7 @@ layer: "specs"
 > Requirement Package와 Architecture를 구현 가능한 기술 계약과 검증 기준으로 구체화하는 Spec stage다.
 
 > [!NOTE]
-> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
+> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../.agents/README.md).
 
 ## Overview
 
@@ -191,7 +191,7 @@ the later current-consumer and Archive-link units.
 | [`./0068-agent-projection-rendering-and-gate-reduction/spec.md`](./0068-agent-projection-rendering-and-gate-reduction/spec.md) | Prior renderer proposal | Superseded | SPEC-0072가 Stage 00 원본과 명시적 네이티브 참조로 대체한다. 이전 제안은 구현 증거가 아니다. | 2026-09-05 |
 | [`./0070-retired-provider-residue-disposition/spec.md`](./0070-retired-provider-residue-disposition/spec.md) | Prior residue disposition proposal | Superseded | SPEC-0072가 항목별 현행·역사 구분과 처분을 소유한다. Task 4의 sealed-ledger와 Git recovery 증거는 역사 기록으로 보존하며, 과거 문서의 일괄 불변 예외는 현재 권위가 아니다. | 2026-09-05 |
 | [`./0071-document-taxonomy-and-form-identity-normalization/spec.md`](./0071-document-taxonomy-and-form-identity-normalization/spec.md) | Family/kind profile identity, stage-free layer, semantic version, and Stage 99 form naming | Draft | 문서 profile 식별자를 `<family>/<kind>`로 통일하고, `layer`에서 stage 정렬 접두어를 제거하며, `version`을 기계 계약이 이미 쓰는 3요소 semver로 맞춘다. Stage 99 form 12개는 자신이 만드는 문서 이름으로 옮기고 governance form 하나를 여섯 kind로 나눈다. 소비자가 없던 `frontmatter.schema.json`을 strict 실행마다 평가되는 계약으로 만든다. Stage 98 봉인 계약은 세대별로 분기하고 form 이동은 MIG-0010으로 봉인한다. | 2026-09-02 |
-| [`./0072-agent-governance-and-quality-gate-consolidation/spec.md`](./0072-agent-governance-and-quality-gate-consolidation/spec.md) | Stage 00 governance and shared local/CI QA | Active | 공통 역할·스킬 이관, provider 연결, QA 실행 및 CI 정합성을 구현한다. 현재 실행 증거는 패키지 Task가 소유한다. | 2026-09-05 |
+| [`./0072-agent-governance-and-quality-gate-consolidation/spec.md`](./0072-agent-governance-and-quality-gate-consolidation/spec.md) | Common agent governance and shared local/CI QA | Active | 공통 역할·스킬 이관, provider 연결, QA 실행 및 CI 정합성을 구현한다. 현재 실행 증거는 패키지 Task가 소유한다. | 2026-09-05 |
 
 ### Helper Templates
 

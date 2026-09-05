@@ -4,7 +4,7 @@ version: "1.0.0"
 type: "sdlc/spec"
 status: "superseded"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-06"
 layer: "specs"
 artifact_id: "SPEC-0070"
 ---
@@ -122,12 +122,16 @@ distinguishes.
 `.gitignore` carries `.opencode/skills/` with a `.gitkeep` negation under an
 `# opencode Skills` heading. This is a wider case than the rest: OpenCode was
 never one of the providers ADR-0030 removed, because it was never a declared
-provider at all. `.agents/registry.json` names `claude` and `codex`, the
+provider at all. The historical `.agents/registry.json` named `claude` and `codex`, the
 directory does not exist, and those three lines are the only trace of the name
 anywhere in the repository. An ignore rule for a provider the governance never
 admitted reserves a path the control plane does not recognize, so it is removed
 with the rest rather than left as the one unexplained provider name in the
 tracked corpus.
+
+The current registry owner is [`.agents/roles/registry.json`](../../../.agents/roles/registry.json).
+The preceding paths describe the dated proposal, recoverable from
+[the pre-migration baseline](https://github.com/buenhyden/hy-home.k8s/blob/eb4fcfe3283115388d6eb1f31d56780b3e578f77/docs/03.specs/0070-retired-provider-residue-disposition/spec.md); they are not current destinations.
 
 ### Active documents
 
@@ -211,15 +215,12 @@ audit classified as historical turns out to be consulted by a live surface.
 
 ## Verification Commands
 
-```bash
-python3 scripts/validate-document-contract-registry.py --root . --mode strict
-python3 scripts/validate-markdown-profiles.py --root . --mode strict
-python3 scripts/validate-links-and-owners.py --root . --mode strict
-python3 scripts/validate-document-lifecycle.py --root . --mode strict
-python3 scripts/validate-agent-governance-ci.py --root .
-python3 -m unittest discover --start-directory tests --top-level-directory tests
-bash scripts/validate-repo-quality-gates.sh .
-```
+The retired proposal's command list is preserved in
+[the baseline source](https://github.com/buenhyden/hy-home.k8s/blob/eb4fcfe3283115388d6eb1f31d56780b3e578f77/docs/03.specs/0070-retired-provider-residue-disposition/spec.md#verification-commands).
+It is not a current execution interface. Current governance and QA verification
+is owned by SPEC-0072 through `python3 scripts/qa.py quick` and
+`python3 scripts/qa.py full`; the superseded acceptance IDs below retain their
+historical meaning and do not independently authorize implementation.
 
 ## Success Criteria & Verification Plan
 
@@ -256,4 +257,4 @@ bash scripts/validate-repo-quality-gates.sh .
 - [AD-0006 — workspace agent governance platform](../../02.architecture/descriptions/0006-workspace-agent-governance-platform.md)
 - [REQ-0003 — workspace agent governance platform](../../01.requirements/0003-workspace-agent-governance-platform.md)
 - [SPEC-0065 — transition residue retirement](../../98.archive/completed/03.specs/0065-transition-residue-retirement/spec.md)
-- [Quality Policy](../../00.agent-governance/policies/quality.md)
+- [Quality Policy](../../../.agents/governance/quality.md)

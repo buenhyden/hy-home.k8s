@@ -116,6 +116,8 @@ else:
 
 
 _ARCHIVE_PREFIX = "docs/98.archive/"
+_AUTHORITY_ROOTS = ("docs", ".agents")
+_PROVIDER_NOTES = (".claude/provider.md", ".codex/provider.md")
 WORK054_MIGRATION_PATH = (
     "docs/98.archive/migrations/0002-sdlc-document-and-governance-consolidation.md"
 )
@@ -302,7 +304,8 @@ def _git_paths(root: Path) -> tuple[str, ...]:
                 "--others",
                 "--exclude-standard",
                 "--",
-                "docs",
+                *_AUTHORITY_ROOTS,
+                *_PROVIDER_NOTES,
             ],
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
@@ -329,9 +332,9 @@ def _git_paths(root: Path) -> tuple[str, ...]:
 def _tracked_regular_blobs(root: Path) -> Mapping[str, str]:
     """Return stage-zero regular authority paths and index blob identities.
 
-    The corpus is `docs/`, including the shared Stage 00 control plane: a migration
-    may retire a document into that authority, and a terminal target has to be
-    verifiable wherever it now lives.
+    Include documentation, common authority, and exact provider notes. A sealed
+    migration's current successor may live outside the numbered document tree;
+    native configuration and other provider-local files remain outside this scope.
     """
 
     try:
@@ -346,7 +349,8 @@ def _tracked_regular_blobs(root: Path) -> Mapping[str, str]:
                 "--stage",
                 "-z",
                 "--",
-                "docs",
+                *_AUTHORITY_ROOTS,
+                *_PROVIDER_NOTES,
             ],
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
@@ -370,7 +374,10 @@ def _tracked_regular_blobs(root: Path) -> Mapping[str, str]:
             path = raw_path.decode("utf-8")
             pure_path = PurePosixPath(path)
             if (
-                not path.startswith("docs/")
+                not (
+                    path.startswith(tuple(f"{root}/" for root in _AUTHORITY_ROOTS))
+                    or path in _PROVIDER_NOTES
+                )
                 or "\\" in path
                 or any(
                     ord(character) < 32 or ord(character) == 127 for character in path

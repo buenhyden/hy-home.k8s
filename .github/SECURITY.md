@@ -20,6 +20,6 @@ If you discover a security vulnerability within this project, please follow thes
 Do not include secret values, Vault tokens, private keys, or credential
 material in reports. Secret-handling and protected-surface boundaries are
 routed through
-[`docs/00.agent-governance/policies/approval-and-safety.md`](../docs/00.agent-governance/policies/approval-and-safety.md).
+[`.agents/governance/approval-and-safety.md`](../.agents/governance/approval-and-safety.md).
 
 We will acknowledge receipt of your report within 48 hours and provide a timeline for resolution if the vulnerability is confirmed.

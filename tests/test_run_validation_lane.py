@@ -467,14 +467,20 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
             self.assertFalse(fake_marker.exists())
             self.assertFalse(startup_marker.exists())
 
-    def test_post_validate_uses_isolated_runner_and_exact_log_gate(self):
-        hook_text = (
-            ROOT / "docs/00.agent-governance/hooks/post-validate.sh"
-        ).read_text(encoding="utf-8")
-
-        self.assertIn("/usr/bin/env -i", hook_text)
-        self.assertIn("/usr/bin/python3 -I scripts/run-validation-lane.py", hook_text)
-        self.assertIn("post-validate-runner-result.py", hook_text)
+    def test_explicit_qa_profile_owns_quality_without_automatic_post_validate(self):
+        self.assertFalse(
+            (ROOT / "docs/00.agent-governance/hooks/post-validate.sh").exists()
+        )
+        self.assertFalse((ROOT / ".agents/hooks").exists())
+        registry = json.loads((ROOT / "scripts/validation/registry.json").read_text())
+        self.assertEqual(registry["profiles"]["full"].count("repository-quality"), 1)
+        settings = (ROOT / ".claude/settings.json").read_text()
+        for automatic_qa in (
+            "post-validate",
+            "scripts/qa.py",
+            "run-validation-lane.py",
+        ):
+            self.assertNotIn(automatic_qa, settings)
 
     def test_all_files_executes_repository_quality_with_same_bounded_environment(self):
         result, output, invoked = self._run(
@@ -521,11 +527,9 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
         self.assertIn("[PASS] repository-quality ", output)
         self.assertNotIn("[SKIP] repository-quality ", output)
 
-    def test_production_hook_and_runner_have_no_selftest_bypass(self):
+    def test_production_qa_and_runner_have_no_selftest_bypass(self):
         runner_text = MODULE_PATH.read_text(encoding="utf-8")
-        hook_text = (
-            ROOT / "docs/00.agent-governance/hooks/post-validate.sh"
-        ).read_text(encoding="utf-8")
+        qa_text = (ROOT / "scripts/qa.py").read_text(encoding="utf-8")
 
         for variable in (
             SELFTEST_ENV,
@@ -533,7 +537,7 @@ class ProductionRunnerIsolationTest(unittest.TestCase):
             "HY_HOME_K8S_POST_VALIDATE_SELFTEST",
         ):
             self.assertNotIn(variable, runner_text)
-            self.assertNotIn(variable, hook_text)
+            self.assertNotIn(variable, qa_text)
 
     def test_registry_dispatches_exact_archive_cutover(self):
         aggregate = (ROOT / "scripts/validate-repo-quality-gates.sh").read_text(
@@ -1674,8 +1678,7 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
         self.assertEqual(
             statuses,
             {
-                "agent-governance-ci": "PASS",
-                "agent-legacy-cutover": "PASS",
+                "agent-governance": "PASS",
                 "document-contract-registry": "PASS",
                 "document-lifecycle": "PASS",
                 "links-and-owners": "PASS",
@@ -1683,7 +1686,7 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
                 "repository-quality": "PASS",
             },
         )
-        self.assertEqual(invoked.call_count, 7)
+        self.assertEqual(invoked.call_count, 6)
         self.assertGreaterEqual(output.count(path), 3)
 
     def test_staged_selector_executes_every_selected_validator(self):
@@ -1694,8 +1697,7 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
         self.assertEqual(
             statuses,
             {
-                "agent-governance-ci": "PASS",
-                "agent-legacy-cutover": "PASS",
+                "agent-governance": "PASS",
                 "document-contract-registry": "PASS",
                 "document-lifecycle": "PASS",
                 "links-and-owners": "PASS",
@@ -1703,7 +1705,7 @@ class PureAffectedSelectorRunnerTest(unittest.TestCase):
                 "repository-quality": "PASS",
             },
         )
-        self.assertEqual(invoked.call_count, 7)
+        self.assertEqual(invoked.call_count, 6)
         self.assertIn('scope="staged:paths=1"', output)
         propagated = [
             call.args[0] for call in invoked.call_args_list if path in call.args[0]

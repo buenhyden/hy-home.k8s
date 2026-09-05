@@ -1,4 +1,4 @@
-"""Stage 00 cutover and native adapter negative contracts."""
+"""Common authority cutover and native adapter negative contracts."""
 
 from __future__ import annotations
 
@@ -9,20 +9,22 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class GovernanceCutoverTests(unittest.TestCase):
-    def test_stage00_is_the_only_common_owner(self):
-        self.assertFalse((ROOT / ".agents").exists())
-        self.assertTrue(
-            (ROOT / "docs/00.agent-governance/roles/registry.json").is_file()
-        )
-        self.assertFalse((ROOT / ".codex/skills").is_symlink())
+    def test_agents_is_the_only_common_owner(self):
+        import os
+        import json
+
+        self.assertFalse(os.path.lexists(ROOT / "docs/00.agent-governance"))
+        path = ROOT / ".agents/roles/registry.json"
+        self.assertTrue(path.is_file())
+        registry = json.loads(path.read_text())
+        expected = {skill["id"] for skill in registry["skills"]}
         self.assertEqual(
-            (ROOT / ".claude/skills").readlink().as_posix(),
-            "../docs/00.agent-governance/skills",
+            {p.name for p in (ROOT / ".agents/skills").iterdir()}, expected
         )
-
-
-if __name__ == "__main__":
-    unittest.main()
+        self.assertEqual(
+            {p.name for p in (ROOT / ".claude/skills").iterdir()}, expected
+        )
+        self.assertFalse(os.path.lexists(ROOT / ".codex/skills"))
 
 
 class NativeBoundaryTests(unittest.TestCase):
@@ -56,20 +58,22 @@ class NativeBoundaryTests(unittest.TestCase):
         ]
         paths = [
             self.validator.REGISTRY_SCHEMA_PATH.as_posix(),
+            ".agents/README.md",
+            ".agents/workflows/delegated-development.md",
             "AGENTS.md",
             ".claude/CLAUDE.md",
             ".codex/CODEX.md",
-            "docs/00.agent-governance/providers/claude.md",
-            "docs/00.agent-governance/providers/codex.md",
-            "docs/00.agent-governance/policies/agent-execution.md",
-            "docs/00.agent-governance/policies/approval-and-safety.md",
-            "docs/00.agent-governance/policies/quality.md",
+            ".claude/provider.md",
+            ".codex/provider.md",
+            ".agents/governance/agent-execution.md",
+            ".agents/governance/approval-and-safety.md",
+            ".agents/governance/quality.md",
             "RTK.md",
             "CLAUDE.md",
             ".claude/settings.json",
             ".claude/hooks/k8s-pre-edit.sh",
-            "docs/00.agent-governance/policies/model-selection.md",
-            "docs/00.agent-governance/skills/work-lifecycle.md",
+            ".agents/governance/model-selection.md",
+            ".agents/workflows/work-lifecycle.md",
             *role["projections"].values(),
             *(skill["path"] for skill in self.registry["skills"]),
         ]
@@ -78,7 +82,15 @@ class NativeBoundaryTests(unittest.TestCase):
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / path, destination)
         (self.root / self.validator.REGISTRY_PATH).write_text(json.dumps(self.registry))
-        (self.root / ".claude/skills").symlink_to("../docs/00.agent-governance/skills")
+        (self.root / ".claude/skills").mkdir(parents=True)
+        for skill in self.registry["skills"]:
+            sidecar = Path(skill["path"]).parent / "agents/openai.yaml"
+            destination = self.root / sidecar
+            destination.parent.mkdir(parents=True)
+            shutil.copyfile(ROOT / sidecar, destination)
+            (self.root / ".claude/skills" / skill["id"]).symlink_to(
+                f"../../.agents/skills/{skill['id']}"
+            )
 
     def assert_rejected(self, code=None):
         with self.assertRaises(self.validator.HarnessError) as raised:
@@ -90,10 +102,134 @@ class NativeBoundaryTests(unittest.TestCase):
     def test_minimal_valid_fixture(self):
         self.assertEqual(self.validator.validate_registry(self.root)["roles"], 1)
 
+    def test_cli_snapshots_unstaged_owners_without_changing_original_index(self):
+        import io
+        import os
+        import subprocess
+        import sys
+        from contextlib import redirect_stdout
+        from unittest import mock
+
+        sys.path.insert(0, str(ROOT / "scripts"))
+        self.addCleanup(sys.path.remove, str(ROOT / "scripts"))
+        import agent_governance_consumers
+
+        def git(*arguments):
+            return subprocess.run(
+                ["/usr/bin/git", "-c", "core.hooksPath=/dev/null", *arguments],
+                cwd=self.root,
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                env={
+                    "HOME": "/dev/null",
+                    "GIT_CONFIG_NOSYSTEM": "1",
+                    "GIT_CONFIG_GLOBAL": "/dev/null",
+                    "LC_ALL": "C",
+                },
+            ).stdout
+
+        git("init", "--quiet")
+        git("add", "RTK.md")
+        git(
+            "-c",
+            "user.name=Fixture",
+            "-c",
+            "user.email=fixture@example.invalid",
+            "commit",
+            "--quiet",
+            "-m",
+            "fixture",
+        )
+        before = (self.root / ".git/index").read_bytes()
+        head = git("rev-parse", "HEAD")
+        observed = []
+
+        def consumer(snapshot):
+            self.assertNotEqual(snapshot, self.root)
+            files = subprocess.run(
+                ["/usr/bin/git", "ls-files", "-z"],
+                cwd=snapshot,
+                check=True,
+                stdout=subprocess.PIPE,
+            ).stdout.split(b"\0")
+            self.assertIn(b".agents/roles/registry.json", files)
+            observed.append(snapshot)
+            return {}
+
+        output = io.StringIO()
+        with (
+            mock.patch.object(
+                agent_governance_consumers, "validate_repository", side_effect=consumer
+            ),
+            redirect_stdout(output),
+        ):
+            self.assertEqual(self.validator.main(["--root", os.fspath(self.root)]), 0)
+        self.assertEqual(len(observed), 1)
+        self.assertIn("working-tree snapshot", output.getvalue())
+        self.assertEqual((self.root / ".git/index").read_bytes(), before)
+        self.assertEqual(git("rev-parse", "HEAD"), head)
+
+    def test_cli_uses_clean_index_without_a_nested_snapshot(self):
+        import io
+        import os
+        import sys
+        from contextlib import redirect_stdout
+        from unittest import mock
+
+        sys.path.insert(0, str(ROOT / "scripts"))
+        self.addCleanup(sys.path.remove, str(ROOT / "scripts"))
+        import agent_governance_consumers
+        import qa
+
+        with (
+            mock.patch.object(qa, "git", return_value=b""),
+            mock.patch.object(
+                qa, "repository_snapshot", side_effect=AssertionError("nested snapshot")
+            ),
+            mock.patch.object(
+                agent_governance_consumers, "validate_repository", return_value={}
+            ) as consumer,
+            redirect_stdout(io.StringIO()) as output,
+        ):
+            self.assertEqual(self.validator.main(["--root", os.fspath(self.root)]), 0)
+        consumer.assert_called_once_with(self.root)
+        self.assertIn("current indexed tree", output.getvalue())
+
+    def test_cli_snapshot_failure_has_no_direct_fallback(self):
+        import io
+        import os
+        import sys
+        from contextlib import redirect_stderr
+        from unittest import mock
+
+        sys.path.insert(0, str(ROOT / "scripts"))
+        self.addCleanup(sys.path.remove, str(ROOT / "scripts"))
+        import qa
+
+        with (
+            mock.patch.object(qa, "git", return_value=b"changed\0"),
+            mock.patch.object(
+                qa,
+                "repository_snapshot",
+                side_effect=ValueError("synthetic-private-payload"),
+            ),
+            mock.patch.object(
+                self.validator,
+                "validate_registry",
+                side_effect=AssertionError("fallback"),
+            ),
+            redirect_stderr(io.StringIO()) as errors,
+        ):
+            self.assertEqual(self.validator.main(["--root", os.fspath(self.root)]), 2)
+        self.assertNotIn("synthetic-private-payload", errors.getvalue())
+        self.assertIn("AGENT-REGISTRY-INPUT", errors.getvalue())
+
     def test_old_root_recreation_rejects_any_node_without_read(self):
         import os
 
-        path = self.root / ".agents"
+        path = self.root / "docs/00.agent-governance"
+        path.parent.mkdir(exist_ok=True)
         for kind in ("directory", "symlink", "file", "fifo"):
             with self.subTest(kind=kind):
                 if kind == "directory":
@@ -146,6 +282,154 @@ class NativeBoundaryTests(unittest.TestCase):
         (self.root / self.validator.REGISTRY_PATH).write_text(json.dumps(self.registry))
         self.assert_rejected("AGENT-REGISTRY-SCHEMA")
 
+    def test_skill_invocation_control_is_required_and_typed(self):
+        path = self.root / self.registry["skills"][0]["path"]
+        original = path.read_text()
+        for changed in (
+            original.replace("disable-model-invocation: true\n", ""),
+            original.replace(
+                "disable-model-invocation: true", "disable-model-invocation: false"
+            ),
+            original.replace(
+                "disable-model-invocation: true", 'disable-model-invocation: "true"'
+            ),
+            original.replace(
+                "disable-model-invocation: true", "disable-model-invocation: 1"
+            ),
+            original.replace(
+                "disable-model-invocation: true",
+                "disable-model-invocation: true\ndisable-model-invocation: true",
+            ),
+            original.replace(
+                "disable-model-invocation: true",
+                'disable-model-invocation: true\nallowed-tools: "Bash"',
+            ),
+        ):
+            with self.subTest(changed=changed):
+                path.write_text(changed)
+                self.assert_rejected()
+        path.write_text(original)
+
+    def test_codex_sidecar_is_exact_and_explicit_only(self):
+        path = (
+            self.root
+            / Path(self.registry["skills"][0]["path"]).parent
+            / "agents/openai.yaml"
+        )
+        original = path.read_text()
+        path.unlink()
+        self.assert_rejected("AGENT-REGISTRY-SKILL")
+        for changed in (
+            "policy: {}\n",
+            "policy:\n  allow_implicit_invocation: true\n",
+            'policy:\n  allow_implicit_invocation: "false"\n',
+            "policy:\n  allow_implicit_invocation: 0\n",
+            "policy:\n  allow_implicit_invocation: false\n  allow_implicit_invocation: false\n",
+            "policy:\n  allow_implicit_invocation: false\ntools: [Bash]\n",
+            "policy:\n  allow_implicit_invocation: false\n# hidden\n",
+        ):
+            with self.subTest(changed=changed):
+                path.write_text(changed)
+                self.assert_rejected("AGENT-REGISTRY-SKILL")
+        path.write_text(original)
+
+    def test_common_root_and_flat_workflows_have_no_extra_discovery_surface(self):
+        for relative in (
+            ".agents/hooks.json",
+            ".agents/extra",
+            ".agents/workflows/SKILL.md",
+        ):
+            with self.subTest(path=relative):
+                path = self.root / relative
+                path.write_text("synthetic-private-payload")
+                self.assert_rejected("AGENT-GOVERNANCE-OWNER")
+                path.unlink()
+
+    def test_skill_package_set_is_closed(self):
+        root = self.root / ".agents/skills"
+        package = root / self.registry["skills"][0]["id"]
+        for path in (
+            root / "unregistered/SKILL.md",
+            package / "nested/SKILL.md",
+            package / "README.md",
+            package / "agents/extra.yaml",
+        ):
+            with self.subTest(path=path):
+                existed = path.parent.exists()
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("synthetic-private-payload")
+                self.assert_rejected("AGENT-REGISTRY-SKILL")
+                path.unlink()
+                if not existed:
+                    path.parent.rmdir()
+
+    def test_skill_source_parents_and_sidecars_cannot_be_links(self):
+        import tempfile
+
+        skill = self.registry["skills"][0]
+        package = self.root / Path(skill["path"]).parent
+        for path in (package, package / "agents", package / "agents/openai.yaml"):
+            with self.subTest(path=path), tempfile.TemporaryDirectory() as directory:
+                saved = path.with_name(path.name + ".saved")
+                path.rename(saved)
+                path.symlink_to(directory)
+                self.assert_rejected("AGENT-REGISTRY-SKILL")
+                path.unlink()
+                saved.rename(path)
+
+    def test_claude_links_are_individual_exact_and_registered(self):
+        import shutil
+
+        directory = self.root / ".claude/skills"
+        skill_id = self.registry["skills"][0]["id"]
+        link = directory / skill_id
+        for target in (
+            "/synthetic-private-payload",
+            "../../.agents/skills/missing",
+            f"../../.agents/skills/{skill_id}/..",
+        ):
+            with self.subTest(target=target):
+                link.unlink()
+                link.symlink_to(target)
+                self.assert_rejected("AGENT-NATIVE-REFERENCE")
+        link.unlink()
+        link.mkdir()
+        self.assert_rejected("AGENT-NATIVE-REFERENCE")
+        link.rmdir()
+        link.symlink_to(f"../../.agents/skills/{skill_id}")
+        extra = directory / "alias"
+        extra.symlink_to(f"../../.agents/skills/{skill_id}")
+        self.assert_rejected("AGENT-NATIVE-REFERENCE")
+        extra.unlink()
+        shutil.rmtree(directory)
+        directory.symlink_to("../.agents/skills")
+        self.assert_rejected("AGENT-NATIVE-REFERENCE")
+
+    def test_codex_gateway_requires_explicit_reads(self):
+        path = self.root / "AGENTS.md"
+        path.write_text(path.read_text() + "\n@.agents/governance/quality.md\n")
+        self.assert_rejected("AGENT-NATIVE-REFERENCE")
+
+    def test_gateways_keep_each_native_loader_reference_once(self):
+        for provider, path, reference in (
+            ("claude", self.root / "CLAUDE.md", "@.claude/provider.md\n"),
+            (
+                "codex",
+                self.root / "AGENTS.md",
+                "Read `.codex/provider.md` before acting.\n",
+            ),
+        ):
+            original = path.read_text()
+            for changed in (
+                original.replace(reference, reference * 2),
+                original.replace(reference, reference.rstrip() + " extra\n"),
+                original + "\n@.codex/CODEX.md\n",
+            ):
+                with self.subTest(provider=provider, changed=changed):
+                    path.write_text(changed)
+                    self.assert_rejected("AGENT-NATIVE-REFERENCE")
+            path.write_text(original)
+
     def test_duplicate_or_hidden_native_metadata_rejects(self):
         path = self.root / ".claude/agents/code-reviewer.md"
         original = path.read_text()
@@ -167,7 +451,7 @@ class NativeBoundaryTests(unittest.TestCase):
     def test_native_body_rejects_missing_duplicate_hidden_and_new_policy(self):
         path = self.root / ".claude/agents/code-reviewer.md"
         original = path.read_text()
-        reference = "- `docs/00.agent-governance/roles/code-reviewer.md`\n"
+        reference = "- `.agents/roles/code-reviewer.md`\n"
         for body in (
             original.replace(reference, ""),
             original.replace(reference, reference * 2),
@@ -264,7 +548,54 @@ class NativeBoundaryTests(unittest.TestCase):
             self.assert_rejected("AGENT-NATIVE-REFERENCE")
 
     def test_current_common_source_cannot_reintroduce_old_dependency(self):
-        path = self.root / "docs/00.agent-governance/providers/codex.md"
+        path = self.root / ".codex/provider.md"
         path.write_text(path.read_text() + "Read `.agents/registry.json`.\n")
         with self.assertRaises(self.validator.HarnessError):
             self.validator.validate_current_sources(self.root)
+
+
+class RetiredSurfaceTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from tests.test_validate_agent_registry import load_validator
+
+        cls.validator = load_validator()
+
+    def test_old_root_and_duplicate_owners_reject_without_reading(self):
+        import os
+        import tempfile
+
+        for relative in (
+            "docs/00.agent-governance",
+            ".agents/memory",
+            ".agents/rules",
+            ".agents/agents",
+            ".agents/registry.json",
+            ".agents/registry.schema.json",
+            ".agents/hooks",
+            ".agents/providers",
+        ):
+            for kind in ("directory", "symlink", "file", "fifo"):
+                with (
+                    self.subTest(path=relative, kind=kind),
+                    tempfile.TemporaryDirectory() as directory,
+                ):
+                    root = Path(directory)
+                    path = root / relative
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    if kind == "directory":
+                        path.mkdir()
+                    elif kind == "symlink":
+                        path.symlink_to("synthetic-private-payload")
+                    elif kind == "file":
+                        path.write_text("synthetic-private-payload")
+                    else:
+                        os.mkfifo(path)
+                    with self.assertRaises(self.validator.HarnessError) as raised:
+                        self.validator.validate_absent_surfaces(root)
+                    self.assertEqual(raised.exception.code, "AGENT-GOVERNANCE-RETIRED")
+                    self.assertNotIn("synthetic-private-payload", str(raised.exception))
+
+
+if __name__ == "__main__":
+    unittest.main()

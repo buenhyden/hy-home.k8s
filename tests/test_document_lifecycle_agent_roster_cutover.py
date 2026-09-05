@@ -32,9 +32,7 @@ class TerminalAgentRegistryLifecycleTest(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.document_registry = load_registry(ROOT)
         cls.agent_registry = json.loads(
-            (ROOT / "docs/00.agent-governance/roles/registry.json").read_text(
-                encoding="utf-8"
-            )
+            (ROOT / ".agents/roles/registry.json").read_text(encoding="utf-8")
         )
 
     def test_terminal_registry_has_only_codex_and_claude_providers(self) -> None:
@@ -50,7 +48,7 @@ class TerminalAgentRegistryLifecycleTest(unittest.TestCase):
         self.assertEqual(
             classify_path(
                 self.document_registry,
-                PurePosixPath("docs/00.agent-governance/roles/docs-researcher.md"),
+                PurePosixPath(".agents/roles/docs-researcher.md"),
             ).profile_id,
             "governance/role",
         )

@@ -77,7 +77,7 @@ reason to rewrite local job topology or weaken the aggregate verdict.
 
 ### Canonical projection contract
 
-`docs/00.agent-governance/contracts/github-surface-routing.json` is the sole
+`.agents/contracts/github-surface-routing.json` is the sole
 mapping from existing validation surface IDs to expected GitHub label and
 CODEOWNERS projection classes. It must:
 
@@ -237,7 +237,7 @@ observed repository and SHA.
 - **VAL-GRCE-001**: The routing contract/schema rejects copied routes, unknown
   surfaces, duplicate mappings, unowned exceptions, and unsupported versions.
 - **VAL-GRCE-002**: `.agents/**`, `.claude/**`, `.codex/**`, `.gemini/**`, root
-  provider gateways, and Stage 00 governance resolve the expected agent label
+  provider gateways, and Common agent governance resolve the expected agent label
   and explicit CODEOWNERS class.
 - **VAL-GRCE-003**: Native labeler and CODEOWNERS effective behavior matches
   every mapped tracked path and all negative ordering fixtures.

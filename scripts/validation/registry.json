@@ -577,7 +577,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/00\\.agent-governance/(roles|skills)/.*$"
+          "value": "^\\.agents/(roles|skills)/.*$"
         }
       ],
       "validators": [
@@ -677,7 +677,7 @@
       "routes": [
         {
           "kind": "regex",
-          "value": "^docs/00\\.agent-governance/(?!roles/|skills/).*$"
+          "value": "^\\.agents/(?:README\\.md|governance/.*|workflows/.*)$"
         }
       ],
       "validators": [
@@ -694,7 +694,7 @@
       "protectedLevel": "protected",
       "fallback": {
         "status": "FAIL",
-        "reason": "Stage 00 changes require governance validation."
+        "reason": "Common governance changes require governance validation."
       },
       "evidenceLane": "repo-static"
     },

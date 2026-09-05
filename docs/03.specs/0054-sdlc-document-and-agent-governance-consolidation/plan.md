@@ -1,10 +1,10 @@
 ---
 title: "SDLC Document and AI Agent Governance Consolidation Implementation Plan"
-version: "1.3.0"
+version: "1.4.0"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
-updated: "2026-09-05"
+updated: "2026-09-06"
 layer: "specs"
 artifact_id: "SPEC-0054-PLAN-0001"
 ---
@@ -25,10 +25,10 @@ execution, Codex/Claude-only AI-agent governance, a bounded Stage 90 reference
 library, a classified Stage 98 retention/history surface, a minimal Stage 99 document
 control surface, and responsibility-oriented validation modules.
 
-**Architecture:** Stage 00 owns common agent policy, roles, skills, and the
-provider-neutral `roles/registry.json`; provider directories hold native
-bindings. The approved source cutover replaces the former `.agents/` target,
-with implementation status and current host constraints recorded in WP-013.
+**Architecture:** `.agents/governance/`, `.agents/roles/`, `.agents/skills/`
+and `.agents/workflows/` own shared policy, responsibilities, native procedures
+and workflows under ADR-0035. SPEC-0072 owns this migration and its validation;
+provider directories retain native bindings and provider notes.
 Stage 99 owns document profiles. Stage 01 Requirement Packages, Stage 02
 Architecture, and Stage 03
 Spec Packages form the active delivery chain; Stage 05 owns Guides, Policies,
@@ -89,14 +89,14 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
 - Make `docs/99.templates/registry.json` the only document-profile machine
   authority, with normalized top-level `lifecycle_domains` and one human router
   in Stage 99 README. Do not gate schema, profile, or template counts.
-- Follow SPEC-0072 for the remaining governance cutover: Stage 00
-  `roles/registry.json` and its schema own machine role metadata; `roles/` and
-  `skills/` own common bodies. Remove repository `.agents/` and retain only
-  thin Claude and Codex adapters.
+- Follow SPEC-0072 for the governance cutover into `.agents/`; its role
+  registry and schema are the sole machine metadata owner. Keep provider notes
+  and native bindings in `.claude/` and `.codex/`. The 2026-09-06 migration
+  authorizes no staging, commits or remote actions from this predecessor Plan.
 - Remove `.gemini/`, root `GEMINI.md`, Gemini/Antigravity provider prose,
   contracts, fixtures, canaries, validators, hooks, and adapter projections;
   do not translate retired provider-specific semantics into common policy.
-- Use `docs/03.specs/####-<slug>/{README.md,spec.md,plan.md,tasks/}` with
+- Use `docs/03.specs/####-<slug>/{spec.md,plan.md,tasks/}` with
   `tasks/tsk-####-<slug>.md`; remove `design.md`, `tests.md`, `tasks.md`, and
   other parallel design/test artifacts only after their unique content is
   assigned to Spec, Plan, Task, AD, or ADR owners.
@@ -277,17 +277,17 @@ Spec 0066 row was created.
 
 The predecessor worktree contained a reviewed but uncommitted WP-003 candidate.
 WP-004 has since completed the document, lifecycle, and recovery authority
-activation, and WP-003 is now `in-progress` on those owners. The candidate's
+activation; WP-003 subsequently used those owners. Its remaining governance
+continuation is now assigned to SPEC-0072. The candidate's
 valid AI-agent governance, provider evidence, and thin-adapter semantics remain
 recoverable input. Its Gemini/Antigravity surfaces, Stage 98 full-document
 pinning, Stage 99 support-registry coupling, or other conflicts with ADR-0030
 are discarded rather than ported. No edit is accepted solely because it was
 staged in a predecessor worktree.
 
-Execution continues in the linked worktree created from the approved design
-authority. Completed WP-004 established the document registry, generic
-recovery contract, lifecycle vocabulary, and Spec Task layout; WP-003 now uses
-those owners. Old transition exceptions, branch/current-document SHA pins,
+The predecessor execution used the linked worktree created from the approved
+design authority. Completed WP-004 established the document registry, generic
+recovery contract, lifecycle vocabulary and Spec Task layout for WP-003. Old transition exceptions, branch/current-document SHA pins,
 fixture matrices, and census controls are not copied as a unit.
 
 The execution sequence first records a lossless candidate disposition, then
@@ -295,6 +295,10 @@ closes the active taxonomy before simplifying governance, operations,
 references, archive evidence, and scripts. Deletions are deliberately late.
 
 ## Context
+
+The following is the original intake diagnosis, preserved for its observation
+boundary. It is not a claim about the 2026-09-06 working tree. Current
+governance implementation is owned by SPEC-0072.
 
 - Eight flat PRD paths remain where unified Requirement Packages are terminal; the
   document-governance packages `0005`, `0006`, and `0008` overlap.
@@ -327,7 +331,7 @@ references, archive evidence, and scripts. Deletions are deliberately late.
   preserve requirement-to-Architecture-to-Spec traceability.
 - Remove route prefixes whose parent folder already owns the type without
   changing stable frontmatter identities.
-- Make Stage 00, Stage 99, validators, and provider adapters agree.
+- Make common governance, Stage 99, validators, and provider adapters agree.
 - Make Stage 05 families purpose-disjoint and Incident-ready.
 - Classify and reconcile every Stage 90 file.
 - Isolate and minimize Stage 98 as historical material with only bounded
@@ -530,190 +534,24 @@ cannot satisfy the terminal completion criteria.
 
 ### WP-003 — Codex/Claude-only AI-agent governance
 
-WP-003 remains `in-progress`. WP-004 supplied the document registry,
-lifecycle, Task, and generic recovery prerequisites at
-`bb55a1ae93c9fc3017f64b5f2246af11442265d3`. This section is the current
-execution contract; the long candidate/index checkpoint narrative in the Task
-is historical Git evidence, not pending work.
+This work package is retained as a historical dependency and acceptance anchor.
+Its original implementation and checks belong to
+[SPEC-0054-TSK-0003](tasks/tsk-0003-codex-claude-only-ai-agent-governance.md).
+The former activation, registry cutover, retired runtime gates and commit
+checklist are no longer executable continuation steps. The complete original
+plan is recoverable at [the baseline WP-003 source](https://github.com/buenhyden/hy-home.k8s/blob/eb4fcfe3283115388d6eb1f31d56780b3e578f77/docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/plan.md#wp-003--codexclaude-only-ai-agent-governance).
 
-**Landed baseline:**
-
-- Commit `74817983629850a6e5a22a78285083342c01e37d` established the initial
-  agent-governance control-plane cutover. Commit
-  `e8bb831926b28c90639aed267d0c538857cffafc` completed the current
-  `.agents/registry.json` and schema authority, thin Codex/Claude projections,
-  Stage 00 policy/role/provider routing, Gemini/Antigravity consumer removal,
-  and its then-required recovery evidence. Later current-tree commits closed
-  the memory/progress and document-contract residue without reopening a third
-  provider.
-- The current tracked tree has no root `GEMINI.md`, `.gemini/**`,
-  `.agents/GEMINI.md`, or Gemini provider document. The registry names only
-  Codex and Claude, and the focused registry, provider-evidence, semantic, and
-  governance-CI production gates pass. These are repository-static facts, not
-  provider-runtime or hosted-CI claims.
-- The authority/projection cutover is therefore not re-executed and no
-  predecessor candidate is restaged. Historical path and byte recovery remains
-  in reachable Git history.
-
-**Deferred to ADR-0031-activated Spec 0066:**
-
-- moving the validation-surface registry and schema to their responsibility
-  path;
-- separating production `--self-test` branches and production fixture reads
-  into independent top-level tests and fixtures;
-- reducing aggregates to thin routing, including the former three-terminal-
-  agent-gate target; and
-- retiring current-state SHA/digest pins and compatibility wrappers.
-
-WP-003 must not duplicate those WP-010/WP-011 responsibilities before
-ADR-0031 and Spec 0066 activate. Generic cumulative lifecycle behavior is
-implemented and reviewed; the remaining WP-003 work is the context/memory
-policy activation, closure validation, and state-only handoff.
-
-**Completed cumulative implementation:**
-
-- The reviewed implementation spans
-  `332f0ad10cd8e8fe3f5df2f4b42dd954d2c27396` through
-  `ab524c37613423555e881a0f3195ca71a89d8304`. These object IDs are execution
-  evidence, not a validator allowlist or current-state pin.
-- Disposable real Git fixtures prove generic cumulative creation and legal
-  transition behavior in both `ci` and `explicit-ref` modes. Focused tests
-  passed 14 cases; the final Archive/Migration regression run passed 74 cases
-  in 167.533 seconds.
-- Focused specification, Python, and static security reviews are clean after
-  four fix rounds. Static security review makes no provider-runtime claim.
-- Git records snapshots, not rename identity. A first-appearance commit that
-  also contains a deletion is ambiguous and cannot receive cumulative
-  admission. No path/SHA exception, real-path override, or new provenance
-  ledger is permitted.
-
-**Remaining files:**
-
-- Activate
-  `docs/00.agent-governance/policies/context-and-memory.md`, update its
-  activation boundary, add it to the current Stage 00 policy index in
-  `docs/00.agent-governance/README.md`, and replace the draft statement in
-  `scripts/README.md` with the active owner relation.
-- Update this Plan and SPEC-0054-TSK-0003 only with observed evidence. The final
-  state-only handoff also updates SPEC-0054-TSK-0007 and the existing Spec 0054
-  `standaloneExecutions` pointer in `docs/99.templates/registry.json`.
-
-**TDD and diagnostic contract:**
-
-- [x] **RED — actual intermediate history:** create a temporary repository in
-  which the target is absent at the supplied base, created in the profile's
-  zero-indegree state, and promoted through every declared edge in later
-  commits. The current net comparison must expose `LIFECYCLE-CREATE`; GREEN
-  must accept both `ci` and `explicit-ref` only after validating each actual
-  intermediate transition.
-- [x] **RED — provenance boundary:** prove in disposable real Git repositories
-  that both comparison modes use committed blobs rather than checkout bytes
-  and reject an ambiguous first appearance whose commit also deletes a path.
-  Preserve `--include-path` as the additive selector documented by
-  `scripts/README.md`; it is not a focus filter and this WP does not change its
-  meaning.
-- [x] **RED — fail closed:** direct active creation, an illegal intermediate
-  transition, missing history, a non-ancestral range, ambiguous history, and
-  malformed or bounds-exceeding Git output must remain unadmitted. Retain the
-  exact existing `LIFECYCLE-CREATE` for an unproved net creation, or the
-  validator's existing invocation diagnostic where resolution cannot proceed;
-  do not require a new diagnostic ID or exit code. No checkout bytes,
-  branch-name rule, fixed commit list, or target-path exception may substitute
-  for commit evidence.
-- [x] **GREEN — bounded proof:** resolve commit objects with the existing
-  strict ref/object checks; require an ancestral supplied range; enumerate a
-  bounded, uniquely ordered chain of target-affecting commits; load the target
-  blob from each commit; prove `absent → initial` and then every consecutive
-  declared transition; and consume only the exact `LIFECYCLE-CREATE`
-  diagnostic proved by that chain. Preserve every other diagnostic and the
-  existing additive include-path behavior. Ambiguous first appearances remain
-  unadmitted without a waiver or separate gate.
-- [x] Run focused GREEN and Archive/Migration lifecycle regressions:
-
-  ```bash
-  python3 -m unittest tests.test_document_lifecycle_cumulative_history
-  python3 -m unittest tests.test_document_lifecycle_archive_cutover tests.test_document_lifecycle_migration
-  ```
-
-  The focused run passed 14 tests. The final Archive/Migration run passed 74
-  tests in 167.533 seconds.
-- [x] Complete focused specification, Python, and static security review over
-  commits `332f0ad10cd8e8fe3f5df2f4b42dd954d2c27396` through
-  `ab524c37613423555e881a0f3195ca71a89d8304`; all four fix rounds are clean.
-
-**Activation and cumulative proof:**
-
-- [x] Commit the generic lifecycle behavior and four reviewed correction rounds
-  from `332f0ad10cd8e8fe3f5df2f4b42dd954d2c27396` through
-  `ab524c37613423555e881a0f3195ca71a89d8304`.
-- [x] In a second logical unit, change the context/memory policy from `draft`
-  to `active`, remove its waiting language, and update the Stage 00 and scripts
-  routers. Pass staged lifecycle and strict document checks, then commit this
-  activation without changing either Task state.
-- [x] Resolve the activation and its clean committed draft parent to full
-  object IDs, record them in SPEC-0054-TSK-0003 as execution evidence rather than a
-  code/config allowlist, and run both modes over the actual adjacent ranges:
-
-  ```bash
-  ACTIVATION_COMMIT="$(git rev-parse HEAD)"
-  DRAFT_BASE_COMMIT="$(git rev-parse "${ACTIVATION_COMMIT}^")"
-  git cat-file -e "${ACTIVATION_COMMIT}^{commit}"
-  git cat-file -e "${DRAFT_BASE_COMMIT}^{commit}"
-  git merge-base --is-ancestor "${DRAFT_BASE_COMMIT}" "${ACTIVATION_COMMIT}"
-  python3 scripts/validate-document-lifecycle.py --root . --mode ci --base-ref "${DRAFT_BASE_COMMIT}" --to-ref "${ACTIVATION_COMMIT}" --include-path docs/00.agent-governance/policies/context-and-memory.md
-  python3 scripts/validate-document-lifecycle.py --root . --mode explicit-ref --from-ref "${DRAFT_BASE_COMMIT}" --to-ref "${ACTIVATION_COMMIT}" --include-path docs/00.agent-governance/policies/context-and-memory.md
-  ```
-
-  The CLI pair proves only the clean committed `draft → active` edge.
-  Disposable real-Git fixtures already prove generic cumulative behavior in
-  both modes. The whole approved-base-to-activation comparison, including any
-  real-path `absent → draft → active` claim, remains unclaimed and deferred
-  until WP-009 removes archive/legacy cutover overreach. It is neither waived
-  nor a PASS.
-
-**Closure checks, reviews, and handoff:**
-
-- [x] Re-run the current agent authority gates and document checks:
-
-  ```bash
-  python3 -m unittest discover -s tests -p 'test_validate_agent_*.py'
-  python3 scripts/validate-agent-harness-contract.py --root .
-  python3 scripts/validate-agent-provider-evidence.py --root .
-  python3 scripts/validate-agent-harness-semantics.py --root .
-  python3 scripts/validate-agent-governance-ci.py --root .
-  python3 scripts/validate-document-contract-registry.py --root . --mode strict
-  python3 scripts/validate-markdown-profiles.py --root . --mode strict
-  python3 scripts/validate-links-and-owners.py --root . --mode strict
-  python3 scripts/validate-document-lifecycle.py --root . --mode staged
-  python3 scripts/validate-affected-surfaces.py --root .
-  bash scripts/check-secret-handling.sh
-  TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
-  git diff --cached --name-only -z > /tmp/spec-0054-wp003-staged.nul
-  python3 scripts/run-validation-lane.py --root . --lane staged --paths-file /tmp/spec-0054-wp003-staged.nul --delimiter nul
-  TMPDIR=/tmp pre-commit run
-  TMPDIR=/tmp pre-commit run --all-files
-  git diff --check
-  git diff --cached --check
-  ```
-
-- [x] Obtain independent specification, code-quality, Python, and static
-  security review for the policy activation, closure evidence, and state-only
-  handoff. Resolve every Critical or Important finding and rerun the checks
-  affected by corrections. Record that static security review makes no
-  provider-runtime claim.
-- [x] After every acceptance-bearing check and review passes, make one final
-  state-only logical commit: set SPEC-0054-TSK-0003 to `done`, set SPEC-0054-TSK-0007 to
-  `in-progress`, and move the existing Spec 0054 `standaloneExecutions` task
-  pointer from SPEC-0054-TSK-0003 to SPEC-0054-TSK-0007. Do not activate Spec 0066 or
-  modify another Spec 0054 Task in this handoff.
-
-**Rollback:** stop before the state-only handoff on any failed proof. With
-authorization, revert only the failing logical unit: router/policy activation
-first, then cumulative-history behavior if necessary. After handoff, revert
-the state-only commit before reverting activation. Do not reset shared history,
-edit retained historical records, or restore Gemini/Antigravity surfaces.
+Remaining common-authority and QA work is assigned solely to
+[SPEC-0072](../0072-agent-governance-and-quality-gate-consolidation/spec.md).
+Its acceptance covers governance ownership, native skill routing, permission
+preservation, consumer disposition and current QA. No historical result or
+unchecked step is converted into completion evidence by this transfer.
 
 ### WP-004 — document, lifecycle, Task, and registry authority activation
+
+Historical source paths in this work package name the original implementation;
+they are not destinations to create under `.agents/`. Original path and command
+provenance is retained in [the baseline Plan](https://github.com/buenhyden/hy-home.k8s/blob/eb4fcfe3283115388d6eb1f31d56780b3e578f77/docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/plan.md).
 
 WP-004 is completed historical execution. It established the owners required
 by later work and superseded the conflicting terminal assumptions of completed
@@ -971,7 +809,7 @@ it does not recreate the retired RIA or a permanent disposition ledger.
   and current local-implementation corrections required by the approved
   governance model. Remove Audit and Data bodies
   from the reviewed existing corpus only after their live consumers route to
-  canonical Stage 00-05 owners or direct repository sources; Git remains their
+  common governance or Stage 01–05 owners and direct repository sources; Git remains their
   full-body recovery owner. Do not encode a ban on future valid Audit or Data
   references.
 - [x] Remove `cloud-examples`, `learning`, and `llm-wiki` after routing every
@@ -1171,6 +1009,10 @@ remote-ancestry gate.
   lifecycle-valid change.
 
 ### WP-012 — progress and generated-current cleanup
+
+Historical source paths in this work package name the original implementation;
+they are not destinations to create under `.agents/`. Original path and command
+provenance is retained in [the baseline Plan](https://github.com/buenhyden/hy-home.k8s/blob/eb4fcfe3283115388d6eb1f31d56780b3e578f77/docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/plan.md).
 
 **Files:**
 
@@ -1467,120 +1309,32 @@ then Archive authority-link reconciliation.
 
 ### Approved Governance Source Cutover Amendment (2026-09-05)
 
-The human approved the design recorded in
-[WP-013 intake](tasks/tsk-0013-transition-only-taxonomy-terminal-cutover.md#governance-source-cutover-2026-09-05).
-This amendment replaces the earlier target that retains `.agents/`; it does
-not rewrite completed WP-003 evidence. Stage 00 becomes the common source
-owner, and Codex uses explicit procedure reads from root `AGENTS.md`. That
-approved fallback is not automatic native skill discovery. Preserve model
-selection, permission classes, role IDs and handoffs unless a supported,
-reviewed correction is necessary. Do not activate plugins or change trust.
-
-The concurrent task `hy-home.k8s 문서 거버넌스 체계 통합` owns the staged Stage 99,
-lifecycle and Archive changes. Its staged paths and additional ongoing edits
-are not this amendment's commit inputs. Integration with those consumers must
-wait for their owner to finish the relevant unit. The current session also
-mounts `.agents/`, `.codex/` and `.git/` read-only: no worktree creation,
-staging, local commit, adapter write or source removal may bypass that boundary.
-Only disjoint, writable work proceeds until the required paths are available.
+The 2026-09-05 proposal is superseded by the 2026-09-06 common `.agents/`
+authority decision in [ADR-0035](../../02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md).
+Its old-root migration and `.agents/` removal checklist have been retired.
+[The baseline amendment](https://github.com/buenhyden/hy-home.k8s/blob/eb4fcfe3283115388d6eb1f31d56780b3e578f77/docs/03.specs/0054-sdlc-document-and-agent-governance-consolidation/plan.md#approved-governance-source-cutover-amendment-2026-09-05)
+preserves the original proposal and host observations. Prior Task evidence
+remains historical; this section does not authorize replay or new commits.
 
 #### GC-001 — single owner for validation limits
 
-**Files:** `docs/00.agent-governance/policies/quality.md` and
-`tests/test_run_validation_lane.py`; this Plan and its intake Task carry
-evidence. The existing runner remains the implementation owner.
-
-- [x] Replace numeric prose in the policy envelope with a link to
-  `scripts/run-validation-lane.py`; retain finite runtime, separate bounded
-  stdout/stderr, one cleanup deadline, concurrent draining and failure meaning.
-- [x] Run the existing reviewed-limits test and record its rejection of the
-  missing duplicate prose. Remove only that obsolete prose-equality obligation
-  from the test; retain the independently reviewed numeric expectations:
-
-  ```python
-  self.assertEqual(RUNNER.VALIDATOR_TIMEOUT_SECONDS, 1_200.0)
-  self.assertEqual(RUNNER.VALIDATOR_STDOUT_LIMIT_BYTES, 4 * 1024 * 1024)
-  self.assertEqual(RUNNER.VALIDATOR_STDERR_LIMIT_BYTES, 1 * 1024 * 1024)
-  self.assertEqual(RUNNER.VALIDATOR_CLEANUP_SECONDS, 2.0)
-  ```
-
-- [x] Run `python3 -m unittest tests.test_run_validation_lane`; preserve its
-  timeout, overflow, invalid-path/selection, child and pipe cleanup regressions.
-- [ ] Run document contract/profile checks and review this unit's exact diff.
-  Commit only after the complete required lane sequence can validate an index
-  belonging to this unit: `docs(quality): centralize validation limit ownership`.
+Execution limits and QA lane semantics are owned by the current quality
+policy and SPEC-0072; this predecessor adds no parallel limit or gate plan.
 
 #### GC-002 — atomic common-source and native-consumer cutover
 
-**Entry for source cutover:** writable source/adapters/Git and a coordinated handoff of the
-concurrent Stage 99/lifecycle consumer changes. Keep this step deferred if
-either prerequisite is missing; do not create a second authoritative copy.
-
-- [x] Independently harden the existing registry reader's raw path check:
-  reproduce non-normalized aliases and uncaught dot/NUL input errors, reject
-  them through the existing value-free error contract, and preserve normal
-  reads and symlink/size controls. This preparation does not move authority,
-  implement a renderer or satisfy the source-cutover entry conditions.
-- [ ] Move `.agents/registry.json` and its schema below
-  `docs/00.agent-governance/roles/`; move neutral role bodies into that same
-  owner and skill procedures/assets into `skills/<skill-id>/SKILL.md`.
-  Keep provider binding data below `providers/` and one owner per field.
-- [ ] Add `scripts/render-agent-projections.py` with `--root`, `--write` and
-  `--check`, consuming the moved role registry/bodies and provider bindings.
-  Derive native metadata/read instructions; reject unknown roles, escaping
-  output paths and missing sources rather than creating partial projections.
-- [ ] Adapt the existing registry/projection, provider-evidence, legacy-cutover
-  and CI validators plus their directly consuming tests. Add independent
-  negative cases for a missing source, widened permission, dangling skill,
-  orphan projection and attempted `.agents/` regeneration before the cutover.
-- [ ] Reconnect Claude skills; make root `AGENTS.md` explicitly instruct reads
-  of the registered Stage 00 procedures; remove `.codex/skills` and distinguish
-  automatic discovery from explicit reads in the provider contract.
-- [ ] Move registered Claude event adapters to `.claude/hooks/` and reusable
-  validation code to `scripts/`; update settings, static routing and tests in
-  the same unit. Preserve pre-action rejection, root validation, non-secret
-  errors and native trust; do not replay Claude events through Codex.
-- [ ] Remove the old source only after all active consumers switch. Run the
-  renderer twice, then `--check`; compare diffs and assert no directory,
-  symlink, tracked path or generated output recreates `.agents/`.
-- [ ] Validate native formats and directly exercise the approved read path
-  without activating a new global/plugin surface. Record unavailable runtime
-  model resolution and event delivery separately from static checks.
-- [ ] Run focused tests and the complete lane sequence before the logical
-  commit `refactor(governance): move common sources to Stage 00`.
+Common files move into `.agents/` under SPEC-0072. Its role registry, native
+skill routing and provider consumers replace the former inverse migration.
 
 #### GC-003 — invocation and fixture ownership
 
-- [ ] For each selected validator, map its guarantee, caller, exact input bytes,
-  direct negative test and measured duration in the Task. Compare the eight
-  observed CI command overlaps only where both jobs are selected.
-- [ ] Change `scripts/validation/registry.json`, CI selection and direct tests
-  together so each hosted check has one owner. Preserve index, working-tree,
-  post-formatter and whole-repository evidence as distinct scopes.
-- [ ] Remove a fixture or validator only after its actual consumer and retained
-  guarantee are accounted for. Do not remove the checkpoint/provider surface
-  solely because draft Spec 0068 proposed deletion.
-- [ ] Re-run affected regression tests and compare measured invocations on the
-  same selected inputs before committing
-  `refactor(validation): remove duplicate governance invocations`.
+SPEC-0072 owns current invocation and fixture acceptance; no renderer,
+retired hook, legacy canary or discovery fallback is revived here.
 
 #### GC-004 — current and historical owner closure
 
-- [ ] Reconcile Spec 0054, draft Spec 0068, existing terminology, SDLC, README
-  and Stage 99 references with the implemented owners after concurrent work
-  lands. Preserve sealed records and distinguish historical old-path mentions
-  from active dependencies. Update current consumers and recovery disposition
-  together; never rewrite a historical approval into a new approval.
-- [ ] Use NUL-delimited inputs for the affected runner; validate the exact
-  logical index with the staged runner, then plain `pre-commit run`.
-  Run `bash scripts/validate-repo-quality-gates.sh .`, relevant direct suites,
-  `pre-commit run --all-files`, and both diff checks. Review and restage only
-  this unit's formatter changes before repeating required final-byte checks.
-- [ ] Record PASS/FAIL/SKIP/DEFER, versions, scope, review and commit identities
-  in the owning Task. Unavailable required checks prevent completion.
-- [ ] Use `superpowers:finishing-a-development-branch` only after verification;
-  the human has already selected keep-as-is. Preserve the local branch and
-  worktree, with no push, PR, merge, deployment or destructive cleanup.
+SPEC-0072 owns current/historical consumer disposition with actual Git
+provenance. This anchor preserves traceability without a second cleanup plan.
 
 ### WP-014 — convergence and branch completion
 
@@ -1596,9 +1350,9 @@ either prerequisite is missing; do not create a second authoritative copy.
   duplicate-owner, orphan-fixture, and validation-registry parity audits.
 - [ ] Run the terminal independent test modules that cover the behaviors of
   WP-002 through WP-013; do not rerun retired production `--self-test` paths.
-- [ ] Run affected and staged validation with identical path input.
-- [ ] Run aggregate quality, exact-index pre-commit, and all-files pre-commit to
-  a byte-stable fixed point.
+- [ ] Run current QA profiles and the authorized index lane as defined by the
+  Verification Plan. Record index and working-tree evidence separately; run
+  each logical gate once per unchanged snapshot.
 - [ ] Run secret-handling checks without printing candidate values.
 - [ ] Obtain final architecture, operations, security, documentation, Python,
   and whole-branch code review; resolve all findings before proceeding.
@@ -1609,44 +1363,23 @@ either prerequisite is missing; do not create a second authoritative copy.
 
 ## Verification Plan
 
-Each work package runs its focused tests first, then the smallest relevant
-production validator. WP-004, WP-003, and WP-005 through WP-014 run affected
-and staged lanes when
-they change a validator-selected surface. Aggregate and pre-commit run at every
-route, evidence, generated-output, or deletion boundary and at final
-convergence. The retired `route_state` interface is never reintroduced; the
-current registry and executable paths define the validated state.
-
-The owner creates NUL-delimited, normalized path files for the exact affected
-and staged scopes and invokes the lanes without shell reconstruction. These
-temporary path files are execution inputs, not durable SHA-pinned evidence:
+Run focused checks for the changed work package, then use the supported QA
+entrypoint and [quality policy](../../../.agents/governance/quality.md) for
+current lane selection and ordering. A historical command in a completed work
+package is evidence of that execution, not an instruction to restore its tool.
 
 ```bash
-python3 scripts/run-validation-lane.py --root . --lane affected --paths-file /tmp/spec-0054-affected.nul --delimiter nul
-python3 scripts/run-validation-lane.py --root . --lane staged --paths-file /tmp/spec-0054-staged.nul --delimiter nul
-TMPDIR=/tmp pre-commit run
-```
-
-The terminal minimum is:
-
-```bash
-python3 -m unittest discover -s tests -p 'test_*.py'
-python3 scripts/validate-document-contract-registry.py --mode strict
-python3 scripts/validate-markdown-profiles.py --root . --mode strict
-python3 scripts/validate-links-and-owners.py --root . --mode strict
-python3 scripts/validate-document-lifecycle.py --root . --mode staged
-python3 scripts/validate-affected-surfaces.py --root .
-TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
-TMPDIR=/tmp pre-commit run
-TMPDIR=/tmp pre-commit run --all-files
+python3 scripts/qa.py quick
+python3 scripts/qa.py full
 git diff --check
 git diff --cached --check
 ```
 
-Every PASS report records the Task ID, command, exit code, finding count,
-mutation status, reviewer disposition, logical commit, and evidence limitation.
-The Git commit is execution traceability, not a validator pin for current
-documents, registries, templates, or scripts.
+The full profile owns unit discovery and all-files pre-commit; do not rerun them
+on unchanged bytes under a second aggregate. Staged evidence requires the
+actual authorized index and is deferred during SPEC-0072's no-staging migration.
+Record exact scope, results, reviewer disposition and limitations in the owning
+Task. Static validation establishes no provider-runtime or live result.
 
 ## Risks & Mitigations
 
@@ -1655,7 +1388,7 @@ documents, registries, templates, or scripts.
 | Mixed inherited index/worktree makes a false-green candidate | Candidate disposition plus staged-index readers and exact restaging before every broad gate |
 | Broad replacements alter historical or native terms | Exact path maps, profile-aware classification, protected blob checks, and focused negative fixtures |
 | Stage 90 cleanup destroys provenance | Task-local semantic disposition, current-consumer cutover, and Git recovery precede removal; do not create an active Archive dependency or rewrite sealed bytes |
-| Governance adapters drift from canonical semantics | Stage 00 owns neutral semantics; adapters carry provider-native metadata only; parity tests cover Codex and Claude |
+| Governance adapters drift from canonical semantics | Common `.agents/` governance owns neutral semantics; adapters carry provider-native metadata only; parity tests cover Codex and Claude |
 | Script deletion breaks hidden consumers | Tracked consumer sweep plus consumer-zero and unique-diagnostic checks precede each deletion |
 | Guide/Runbook consolidation removes necessary audiences | Purpose and trigger matrix reviewed by operations and documentation reviewers |
 | Large validator files become harder to maintain | Split touched modules when responsibility, duplication, or change risk warrants it, and centralize bounded I/O in `scripts/lib/`; line counts remain review signals rather than policy gates |
@@ -1668,8 +1401,7 @@ documents, registries, templates, or scripts.
   artifact ID.
 - Stage 04 and Stage 02 requirements have zero active owners or consumers.
 - Incident/Postmortem routes, templates, identities, and fixtures agree.
-- Stage 00 has one canonical owner per concern and repository `.agents/` is
-  removed under SPEC-0072; Codex/Claude
+- Common `.agents/` governance has one owner per concern under SPEC-0072; Codex/Claude
   projections have no unsupported runtime promotion, and Gemini/Antigravity
   have zero current surfaces or consumers.
 - Stage 99 profiles, templates, prose, hooks, validators, and fixtures agree.

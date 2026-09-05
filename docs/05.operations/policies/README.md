@@ -12,7 +12,7 @@ layer: "operations"
 > GitOps 플랫폼 운영 정책과 통제 기준(허용/금지/예외/검증)을 관리한다.
 
 > [!NOTE]
-> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../00.agent-governance/README.md).
+> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../../.agents/README.md).
 
 ## Overview
 

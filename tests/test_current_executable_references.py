@@ -54,7 +54,7 @@ class CurrentExecutableReferenceTests(unittest.TestCase):
         self.write(target, "#!/usr/bin/env node\n")
 
         diagnostics = self.validate(
-            "docs/00.agent-governance/README.md",
+            ".agents/README.md",
             f"Run `node {target}`.\n",
             tracked=(target,),
         )
@@ -66,7 +66,7 @@ class CurrentExecutableReferenceTests(unittest.TestCase):
         recovered: list[PurePosixPath] = []
 
         diagnostics = self.validate(
-            "docs/00.agent-governance/README.md",
+            ".agents/README.md",
             f"Run `python3 {target}`.\n",
             historical_path_exists=lambda path: recovered.append(path) or True,
         )

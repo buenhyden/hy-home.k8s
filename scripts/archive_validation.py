@@ -3169,7 +3169,9 @@ def _stage98_namespace_records(
     # ledger, which carries its source blob and content digest.
     sealed = frozenset(stable_rows)
     if not base.issubset(actual | sealed):
-        diagnostics.append(_diagnostic("ARCHIVE-NAMESPACE-BASE", ARCHIVE_ROOT.as_posix()))
+        diagnostics.append(
+            _diagnostic("ARCHIVE-NAMESPACE-BASE", ARCHIVE_ROOT.as_posix())
+        )
     additive = actual - base
     namespaces = {
         "arwb-base": tuple(sorted(base & actual)),

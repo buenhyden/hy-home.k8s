@@ -37,6 +37,7 @@ _LS_FILES_MODES = {b"100644", b"100755", b"120000", b"160000"}
 ROOT_FILES = ("AGENTS.md", "CLAUDE.md", "README.md")
 TARGET_ROOTS = (
     "_workspace",
+    ".agents",
     ".claude",
     ".codex",
     ".github",
@@ -167,6 +168,7 @@ class DocumentProfile:
     routes: tuple[Route, ...]
     artifact_id_pattern: str | None
     frontmatter: FrontmatterContract
+    constants: tuple[tuple[str, str | int | float | bool | None], ...]
     status_domain: tuple[str, ...]
     headings: HeadingContract
     template: PurePosixPath | None
@@ -709,6 +711,7 @@ def _profile_from_mapping(
             allowed=tuple(frontmatter["required"] + frontmatter["optional"]),
             order=tuple(frontmatter["order"]),
         ),
+        constants=tuple(constants.items()),
         status_domain=status_domain,
         headings=HeadingContract(
             required=tuple(raw["sections"]["required"]),

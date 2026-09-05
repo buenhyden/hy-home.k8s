@@ -3686,6 +3686,7 @@ def _migration_lifecycle_events(
     registry: Registry,
     base_blobs: Mapping[PurePosixPath, str],
     base_documents: Mapping[PurePosixPath, LifecycleDocument],
+    base_texts: Mapping[PurePosixPath, str],
     proposed_documents: Mapping[PurePosixPath, LifecycleDocument],
     proposed_texts: Mapping[PurePosixPath, str],
     *,
@@ -3829,18 +3830,46 @@ def _migration_lifecycle_events(
                 continue
             retention_rehomes.add((source_path, target))
             continue
-        if target.parts[:2] != ("docs", "00.agent-governance"):
+        if target.parts[0] != ".agents" and target not in {
+            PurePosixPath(".claude/provider.md"),
+            PurePosixPath(".codex/provider.md"),
+        }:
             continue
         before, after = base_documents.get(source_path), proposed_documents.get(target)
-        if before is None or after is None or before.state_issue or after.state_issue:
+        if before is None or after is None or after.state_issue:
             continue
         try:
-            before_profile = classify_path(registry, source_path)
             after_profile = classify_path(registry, target)
             assert proof.proposed_registry is not None
             snapshot_profile = classify_path(proof.proposed_registry, target)
+            if (
+                before.profile_id == "unclassified"
+                and source_path.parts[:2] == ("docs", "00.agent-governance")
+                and after_profile.lifecycle_domain is not None
+            ):
+                # The proof above binds this deleted source to its exact base
+                # blob. Recover only unchanged semantic metadata through the
+                # current target profile; never restore a retired path route.
+                source_text = base_texts[source_path]
+                before = replace(
+                    document_from_text(registry, target, source_text), path=source_path
+                )
+                before_profile = after_profile
+                if owner.validate_document_text(
+                    source_text, target, before_profile, "strict"
+                ):
+                    diagnostics.append(
+                        failure(target, "canonical retired source document form")
+                    )
+                    continue
+            else:
+                if before.state_issue:
+                    continue
+                before_profile = classify_path(registry, source_path)
         except DocumentContractError:
             diagnostics.append(failure(target, "proposed target registry route"))
+            continue
+        if before.state_issue:
             continue
         if (
             snapshot_profile.profile_id != after_profile.profile_id
@@ -4910,6 +4939,7 @@ def _evaluate_comparison(
         registry,
         base_blobs,
         base_snapshot,
+        base_texts,
         proposed_snapshot,
         proposed_texts,
         proposed_commit=proposed_commit,

@@ -12,7 +12,7 @@ layer: "references"
 > Workspace harness research pack references, source ledgers, and durable research synthesis live here.
 
 > [!NOTE]
-> All AI agent interactions with this directory must comply with the [Agent Governance Hub](../../00.agent-governance/README.md).
+> All AI agent interactions with this directory must comply with the [Agent Governance Hub](../../../.agents/README.md).
 
 ## Overview
 
@@ -24,7 +24,7 @@ policy owner.
 
 This folder does not define active governance policy, runtime permissions,
 deployment procedure, live cluster readiness, or provider contracts. Those stay
-with their canonical owners in `docs/00.agent-governance/`,
+with their canonical owners in `.agents/`,
 `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`, and
 `docs/05.operations/`.
 
@@ -130,7 +130,7 @@ date. Reference files inside a pack use semantic topic names only; do not use
 - Numbered semantic pack references use `./0001-workspace-engineering/<filename>.md` after the target
   file exists.
 - Parent reference routing uses `../README.md`.
-- Canonical owner stages use `../../00.agent-governance/`, `../../01.requirements/`, `../../02.architecture/`, `../../03.specs/`, and `../../05.operations/`.
+- Canonical owner stages use `../../../.agents/`, `../../01.requirements/`, `../../02.architecture/`, `../../03.specs/`, and `../../05.operations/`.
 - Root-level repository sources use `../../../<path>` from authored research reference files.
 - Optional or planned target paths remain code literals until the target exists.
 
@@ -159,5 +159,5 @@ owners.
 - [Workspace Harness Research Pack Plan](../../98.archive/completed/03.specs/0009-workspace-harness-research-pack/plan.md)
 - [Research Reference Template](../../99.templates/templates/references/research.template.md)
 - [Templates README](../../99.templates/README.md)
-- [Agent Governance Hub](../../00.agent-governance/README.md)
+- [Agent Governance Hub](../../../.agents/README.md)
 - [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

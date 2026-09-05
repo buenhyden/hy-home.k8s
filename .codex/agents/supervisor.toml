@@ -1,5 +1,5 @@
 description = "Route bounded work, preserve approval and ownership boundaries, and reconcile final evidence."
-developer_instructions = "Read the following repository files before acting:\n- `docs/00.agent-governance/roles/supervisor.md`\n- `docs/00.agent-governance/roles/registry.json`\n- `docs/00.agent-governance/skills/work-lifecycle.md`\n- `docs/00.agent-governance/skills/execution-plan/SKILL.md`\n- `docs/00.agent-governance/skills/risk-report/SKILL.md`\n- `docs/00.agent-governance/skills/task-breakdown/SKILL.md`\n\nApply the role, permission, procedure, and handoff boundaries in those files.\n"
+developer_instructions = "Read the following repository files before acting:\n- `.agents/roles/supervisor.md`\n- `.agents/roles/registry.json`\n- `.agents/workflows/work-lifecycle.md`\n- `.agents/skills/execution-plan/SKILL.md`\n- `.agents/skills/risk-report/SKILL.md`\n- `.agents/skills/task-breakdown/SKILL.md`\n\nApply the role, permission, procedure, and handoff boundaries in those files.\n"
 name = "supervisor"
 model = "gpt-5.5"
 model_reasoning_effort = "xhigh"

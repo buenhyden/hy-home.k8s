@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import importlib.util
+import os
 import sys
 import unittest
 from pathlib import Path
@@ -43,7 +44,7 @@ class ForbiddenAgentProviderSurfaceTests(unittest.TestCase):
             [
                 path.relative_to(REPOSITORY_ROOT).as_posix()
                 for path in forbidden
-                if path.exists()
+                if os.path.lexists(path)
             ],
             [],
             "AGENT-PROVIDER-FORBIDDEN: retired provider surface remains",
@@ -119,6 +120,25 @@ class AgentRegistryTests(unittest.TestCase):
         mutated = self.registry_copy()
         mutated["roles"][0]["handoff_to"].append("unknown-role")
         self.assert_rule(mutated, "AGENT-REGISTRY-HANDOFF")
+
+    def test_duplicate_skill_identity_is_rejected(self) -> None:
+        mutated = self.registry_copy()
+        mutated["skills"].append(copy.deepcopy(mutated["skills"][0]))
+        self.assert_rule(mutated, "AGENT-REGISTRY-SKILL")
+
+    def test_retired_skill_and_neutral_role_paths_are_rejected(self) -> None:
+        for collection, key, value in (
+            ("skills", "path", "docs/00.agent-governance/skills/risk-report/SKILL.md"),
+            (
+                "roles",
+                "capability_tier_ref",
+                "docs/00.agent-governance/policies/model-selection.md#top",
+            ),
+        ):
+            with self.subTest(collection=collection):
+                mutated = self.registry_copy()
+                mutated[collection][0][key] = value
+                self.assert_rule(mutated, "AGENT-REGISTRY-SCHEMA")
 
     def test_unknown_skill_reference_is_rejected(self) -> None:
         mutated = self.registry_copy()

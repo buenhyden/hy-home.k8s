@@ -43,7 +43,7 @@ class RetiredSurfaceSelectionTest(unittest.TestCase):
         self.fixture.setUp()
         self.root = self.fixture.root
         self.source = "retired-policy.md"
-        self.target = ".agents/agents/quality-engineer.md"
+        self.target = ".agents/roles/quality-engineer.md"
         self.payload = b"# Previous policy\n"
         commit, blobs = self.fixture.git.commit_many({self.source: self.payload})
         self.row = dict(

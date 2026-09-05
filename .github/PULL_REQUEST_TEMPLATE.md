@@ -40,7 +40,7 @@ If yes, please describe the impact and migration path.
 
 Describe the manual verification or automated tests conducted.
 
-Record the canonical order from [Agent Quality Standards](../docs/00.agent-governance/policies/quality.md):
+Record the canonical order from [Agent Quality Standards](../.agents/governance/quality.md):
 
 `targeted -> affected -> staged -> tests -> all-files -> formatter-review -> rerun -> diff-checks`
 
@@ -64,7 +64,7 @@ Record the canonical order from [Agent Quality Standards](../docs/00.agent-gover
 
 ## 7. Checklist
 
-- [ ] My change follows the governance and workflow rules in `AGENTS.md` and `docs/00.agent-governance/`.
+- [ ] My change follows the governance and workflow rules in `AGENTS.md` and `.agents/`.
 - [ ] I have updated the documentation accordingly.
 - [ ] My commit messages follow Conventional Commits.
 - [ ] I did not introduce plaintext secrets. Secret-related changes use GitOps-approved patterns only.
@@ -76,7 +76,7 @@ Record the canonical order from [Agent Quality Standards](../docs/00.agent-gover
 - [ ] `infrastructure/**` changed
 - [ ] `scripts/**` validation, hook, or policy gate changed
 - [ ] `.github/workflows/**` changed
-- [ ] `docs/00.agent-governance/**` changed
+- [ ] `.agents/**` changed
 - [ ] `docs/05.operations/**` changed
 - [ ] Secret, Vault, ExternalSecret, SecretStore, or ClusterSecretStore contract changed
 - [ ] Bootstrap-only behavior changed
@@ -100,4 +100,4 @@ Secret handling:
 - [ ] No secret values, Vault tokens, private keys, or credential material are included
 - [ ] Secret-related changes record only path, key, property, mount, and redacted evidence
 
-See [Approval Boundaries](../docs/00.agent-governance/policies/approval-and-safety.md) and the [Local Harness Catalog](../docs/00.agent-governance/roles/README.md).
+See [Approval Boundaries](../.agents/governance/approval-and-safety.md) and the [Local Harness Catalog](../.agents/roles/README.md).

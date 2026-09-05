@@ -337,14 +337,6 @@ def _work107_stable_archive_index_source(
 
 
 OWNER = "cross-document-validator"
-GOVERNANCE_CURRENT_README = PurePosixPath("docs/00.agent-governance/README.md")
-GOVERNANCE_CURRENT_HEADING = "### Current Governance Authority Index"
-STATUS_MAP = {
-    "draft": "draft",
-    "active": "active",
-    "done": "done",
-    "archived": "archived",
-}
 OWNER_EXCLUSIONS = (
     re.compile(
         r"^docs/90\.references/(?:audits|data|research)/"
@@ -355,15 +347,15 @@ OWNER_EXCLUSIONS = (
 RETIRED_REFERENCE_ALIASES = {
     PurePosixPath(
         "docs/00.agent-governance/contracts/agent-role-semantics.json"
-    ): PurePosixPath("docs/00.agent-governance/roles/registry.json"),
+    ): PurePosixPath(".agents/roles/registry.json"),
     PurePosixPath(
         "docs/00.agent-governance/contracts/agent-role-semantics.schema.json"
-    ): PurePosixPath("docs/00.agent-governance/roles/registry.schema.json"),
+    ): PurePosixPath(".agents/roles/registry.schema.json"),
     PurePosixPath("scripts/validate-agent-role-semantics.py"): PurePosixPath(
         "scripts/validate-agent-governance.py"
     ),
     PurePosixPath("tests/fixtures/agent-role-semantics.json"): PurePosixPath(
-        "docs/00.agent-governance/roles/registry.json"
+        ".agents/roles/registry.json"
     ),
     PurePosixPath(".github/ABOUT.md"): PurePosixPath(".github/repository-surface.md"),
     PurePosixPath(".github/README.md"): PurePosixPath(".github/repository-surface.md"),
@@ -791,7 +783,7 @@ def _terminal_governance_current_owners(
     profiles: Mapping[PurePosixPath, ProfileView],
     metadata: Mapping[PurePosixPath, Mapping[str, Any]],
 ) -> tuple[tuple[PurePosixPath, ...], tuple[str, ...]]:
-    """Derive Stage 00 current owners from the terminal profile lifecycle."""
+    """Derive common current owners from the terminal profile lifecycle."""
 
     owner_profiles = tuple(
         profile
@@ -3553,7 +3545,8 @@ def _index_diagnostics(context: Context) -> list[Diagnostic]:
                 expected_status = str(
                     context.metadata[target].get("status", "")
                 ).casefold()
-                actual_status = STATUS_MAP.get(row_status.casefold(), "")
+                # The document profile owns valid statuses; the index owns parity.
+                actual_status = row_status.casefold()
                 if actual_status != expected_status:
                     diagnostics.append(
                         _diag(
@@ -5642,7 +5635,7 @@ def _program_lineage_diagnostics(
     )
     for path in context.paths:
         if path.as_posix().startswith(
-            "docs/00.agent-governance/"
+            ".agents/"
         ) and _has_duplicate_lifecycle_authority(context.texts[path]):
             diagnostics.append(
                 _diag(
@@ -6030,57 +6023,6 @@ def _owner_diagnostics(context: Context) -> list[Diagnostic]:
     return _owner_state(context)[1]
 
 
-def _governance_mirror_rows(
-    context: Context,
-) -> list[tuple[PurePosixPath, str]] | None:
-    readme = context.texts.get(GOVERNANCE_CURRENT_README)
-    if readme is None:
-        return None
-    visible = _visible_markdown(readme).splitlines()
-    headings = [
-        index
-        for index, line in enumerate(visible)
-        if line == GOVERNANCE_CURRENT_HEADING
-    ]
-    if len(headings) != 1:
-        return None
-    parent_h2 = next(
-        (line for line in reversed(visible[: headings[0]]) if re.match(r"^##\s", line)),
-        "",
-    )
-    if parent_h2 != "## Document Index":
-        return None
-    cursor = headings[0] + 1
-    while cursor < len(visible) and not visible[cursor].strip():
-        cursor += 1
-    if cursor >= len(visible) or visible[cursor] != "| Document | Lifecycle |":
-        return None
-    cursor += 1
-    if cursor >= len(visible) or visible[cursor] != "| --- | --- |":
-        return None
-    cursor += 1
-    rows: list[tuple[PurePosixPath, str]] = []
-    while cursor < len(visible):
-        line = visible[cursor]
-        if re.match(r"^#{1,3}\s", line):
-            break
-        if not line.strip():
-            cursor += 1
-            continue
-        match = re.fullmatch(
-            r"\| \[`([^`]+)`\]\(([^\s?#)]+)\) \| `([^`]+)` \|",
-            line,
-        )
-        if match is None:
-            return None
-        kind, target = _local_destination(GOVERNANCE_CURRENT_README, match.group(2))
-        if kind != "local" or target is None or match.group(1) != target.name:
-            return None
-        rows.append((target, match.group(3).casefold()))
-        cursor += 1
-    return rows
-
-
 def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
     diagnostics: list[Diagnostic] = []
     if not context.governance_current_paths:
@@ -6094,7 +6036,7 @@ def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
                     "REGISTRY_GOVERNANCE_CURRENT_OWNER_MISSING",
                     path,
                     "governance",
-                    "declared tracked Stage 00 governance document",
+                    "declared tracked common governance document",
                     "declared path is missing",
                 )
             )
@@ -6106,7 +6048,7 @@ def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
                     "REGISTRY_GOVERNANCE_CURRENT_OWNER_PROFILE",
                     path,
                     profile.profile_id,
-                    "authored Stage 00 governance profile",
+                    "authored common governance profile",
                     f"{profile.mode} {profile.profile_id}",
                 )
             )
@@ -6134,7 +6076,7 @@ def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
                     "GOVERNANCE-OWNER-UNDECLARED",
                     path,
                     profile.profile_id,
-                    "active or accepted Stage 00 authority declared in the registry",
+                    "active or accepted common authority declared in the registry",
                     "current authority is undeclared",
                 )
             )
@@ -6145,96 +6087,10 @@ def _governance_current_owner_diagnostics(context: Context) -> list[Diagnostic]:
                     path,
                     profile.profile_id,
                     "draft candidate or declared active/accepted current authority",
-                    f"undeclared {status} document in the current Stage 00 route",
+                    f"undeclared {status} document in the current common authority route",
                 )
             )
 
-    mirror_rows = _governance_mirror_rows(context)
-    if mirror_rows is None:
-        diagnostics.append(
-            _diag(
-                "GOVERNANCE-INDEX-MISSING",
-                GOVERNANCE_CURRENT_README,
-                context.profiles.get(
-                    GOVERNANCE_CURRENT_README,
-                    ProfileView(
-                        "common/readme-stage-index", "readme", "frontmatter-free"
-                    ),
-                ).profile_id,
-                "one exact Current Governance Authority Index table",
-                "heading or table is missing or malformed",
-            )
-        )
-        return diagnostics
-
-    declared_order = list(context.governance_current_paths)
-    declared_set = set(declared_order)
-    row_paths = [path for path, _ in mirror_rows]
-    row_counter = collections.Counter(row_paths)
-    for path in declared_order:
-        if row_counter[path] == 0:
-            diagnostics.append(
-                _diag(
-                    "GOVERNANCE-INDEX-MISSING",
-                    GOVERNANCE_CURRENT_README,
-                    "common/readme-stage-index",
-                    f"one row for {path.as_posix()}",
-                    "declared owner row is missing",
-                )
-            )
-    for path in sorted(set(row_paths) - declared_set, key=lambda item: item.as_posix()):
-        diagnostics.append(
-            _diag(
-                "GOVERNANCE-INDEX-STALE",
-                GOVERNANCE_CURRENT_README,
-                "common/readme-stage-index",
-                "registry-declared current authority row",
-                f"stale row for {path.as_posix()}",
-            )
-        )
-    for path, count in sorted(row_counter.items(), key=lambda item: item[0].as_posix()):
-        if count > 1:
-            diagnostics.append(
-                _diag(
-                    "GOVERNANCE-INDEX-DUPLICATE",
-                    GOVERNANCE_CURRENT_README,
-                    "common/readme-stage-index",
-                    f"one row for {path.as_posix()}",
-                    f"{count} rows",
-                )
-            )
-    for path, status in mirror_rows:
-        expected_status = str(
-            context.metadata.get(path, {}).get("status", "")
-        ).casefold()
-        if (
-            path in declared_set
-            and expected_status in allowed
-            and (status not in allowed or status != expected_status)
-        ):
-            diagnostics.append(
-                _diag(
-                    "GOVERNANCE-INDEX-STATUS",
-                    GOVERNANCE_CURRENT_README,
-                    "common/readme-stage-index",
-                    f"{path.as_posix()} lifecycle matches active/accepted frontmatter",
-                    status or "missing",
-                )
-            )
-    if (
-        len(row_paths) == len(declared_order)
-        and collections.Counter(row_paths) == collections.Counter(declared_order)
-        and row_paths != declared_order
-    ):
-        diagnostics.append(
-            _diag(
-                "GOVERNANCE-INDEX-ORDER",
-                GOVERNANCE_CURRENT_README,
-                "common/readme-stage-index",
-                "rows in registry declaration order",
-                "row order differs",
-            )
-        )
     return diagnostics
 
 

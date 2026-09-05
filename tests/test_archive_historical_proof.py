@@ -7,14 +7,16 @@ import hashlib
 import subprocess
 import sys
 import unittest
-from pathlib import PurePosixPath
+from pathlib import Path, PurePosixPath
 from unittest import mock
-
-from tests.test_validate_agent_legacy_cutover import load_validator
 
 _original_sys_path = sys.path
 try:
-    sys.path = list(_original_sys_path)
+    sys.path = [
+        str(Path(__file__).resolve().parents[1] / "scripts"),
+        *_original_sys_path,
+    ]
+    import agent_governance_consumers
     from tests import test_generic_migration_recovery as fixtures
 finally:
     sys.path = _original_sys_path
@@ -112,7 +114,7 @@ class HistoricalMigrationProofTest(unittest.TestCase):
         return self.links.repository_historical_migration_proof(self.root)
 
     def legacy_declaration_fixture(self):
-        legacy = load_validator()
+        legacy = agent_governance_consumers
         sources = {path: b"Retired source\n" for path in legacy.RETIRED_TOKENS}
         commit, blobs = self.fixture.git.commit_many(sources)
         rows = [self.fixture.row]
@@ -530,7 +532,7 @@ class HistoricalMigrationProofTest(unittest.TestCase):
     def test_reference_projection_masks_only_verified_paths_and_scanner_keeps_prose(
         self,
     ):
-        legacy = load_validator()
+        legacy = agent_governance_consumers
         view_path = ".claude/workflows"
         link_target = "../.agents/workflows"
         raw = self.fixture.write(
@@ -627,19 +629,24 @@ class HistoricalMigrationProofTest(unittest.TestCase):
         inventory = types.SimpleNamespace(
             current_paths=(self.consumer,),
             baseline_paths=(),
-            current_symlink_paths=(PurePosixPath(".codex/skills"),),
+            current_symlink_paths=(PurePosixPath(".claude/skills/fixture"),),
         )
-        legacy = load_validator()
-        (self.root / ".codex").mkdir()
-        (self.root / ".codex/skills").symlink_to("../.agents/skills")
+        legacy = agent_governance_consumers
+        (self.root / ".claude/skills").mkdir(parents=True)
+        (self.root / ".claude/skills/fixture").symlink_to(
+            "../../.agents/skills/fixture"
+        )
         with legacy._RepositoryReader(self.root) as reader:
+            reader.allowed_internal_symlinks = {
+                ".claude/skills/fixture": "../../.agents/skills/fixture"
+            }
 
             def read_current_bytes(path, max_bytes):
                 return reader.read_bytes(path, max_bytes=max_bytes)
 
             def read_symlink(path):
                 self.assertIsNone(reader.candidate_payload(path, read=False))
-                return dict(legacy.ALLOWED_INTERNAL_SYMLINKS)[path]
+                return reader.allowed_internal_symlinks[path]
 
             with (
                 mock.patch.object(
@@ -674,8 +681,8 @@ class HistoricalMigrationProofTest(unittest.TestCase):
                 context.texts[self.consumer].encode(), self.fixture.consumer_bytes
             )
             self.assertEqual(
-                context.adapter_targets[PurePosixPath(".codex/skills")],
-                PurePosixPath(".agents/skills"),
+                context.adapter_targets[PurePosixPath(".claude/skills/fixture")],
+                PurePosixPath(".agents/skills/fixture"),
             )
             with mock.patch.object(
                 self.links,

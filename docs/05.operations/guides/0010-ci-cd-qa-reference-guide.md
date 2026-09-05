@@ -31,7 +31,7 @@ Concept guide. 검증 명령의 구현은 `scripts/README.md`, CI job 구성은
 ## Prerequisites
 
 - 저장소 checkout과 변경 범위에 대한 읽기 권한
-- [Quality Policy](../../00.agent-governance/policies/quality.md)의 증적 경계 이해
+- [Quality Policy](../../../.agents/governance/quality.md)의 증적 경계 이해
 - 변경한 표면의 소유 Spec, Policy, Runbook 확인
 - live cluster나 외부 서비스 검증이 필요하면 별도의 명시적 승인
 
@@ -83,8 +83,8 @@ handoff에는 실행한 진입점, 결과, 실행하지 못한 검증과 그 이
 
 ## Traceability
 
-- [Quality Policy](../../00.agent-governance/policies/quality.md)
-- [Agent Execution Policy](../../00.agent-governance/policies/agent-execution.md)
+- [Quality Policy](../../../.agents/governance/quality.md)
+- [Agent Execution Policy](../../../.agents/governance/agent-execution.md)
 - [Scripts Router](../../../scripts/README.md)
 - [Reference Maintenance Runbook](../runbooks/0011-reference-maintenance-runbook.md)
 - [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md)

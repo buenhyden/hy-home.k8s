@@ -112,10 +112,10 @@ rtk git diff --check
 - [Audit Reference Template](../../99.templates/templates/references/audit.template.md)
 - [Data Reference Template](../../99.templates/templates/references/data.template.md)
 - [Research Reference Template](../../99.templates/templates/references/research.template.md)
-- Document authoring policy: `docs/00.agent-governance/policies/document-authoring.md`
+- Document authoring policy: `.agents/governance/document-authoring.md`
 
 ### Lifecycle Traceability
 
 | Promoted owner | Trigger or control | Evidence or recovery owner |
 | --- | --- | --- |
-| [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) applies `docs/00.agent-governance/policies/document-authoring.md` and selects a bounded Stage 90 reference or the canonical Stage 00/01/02/03/05 owner. | A reference is added, refreshed, rerouted, or retired. | Reviewed diff and validator output; Git history owns removed full bodies. |
+| [Spec 0054](../../03.specs/0054-sdlc-document-and-agent-governance-consolidation/spec.md) applies `.agents/governance/document-authoring.md` and selects a bounded Stage 90 reference or the canonical Stage 00/01/02/03/05 owner. | A reference is added, refreshed, rerouted, or retired. | Reviewed diff and validator output; Git history owns removed full bodies. |

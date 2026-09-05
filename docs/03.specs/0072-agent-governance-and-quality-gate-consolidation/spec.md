@@ -1,10 +1,10 @@
 ---
 title: "Agent Governance and Quality Gate Consolidation Technical Specification"
-version: "1.0.0"
+version: "2.0.1"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-06"
 layer: "specs"
 artifact_id: "SPEC-0072"
 ---
@@ -13,14 +13,18 @@ artifact_id: "SPEC-0072"
 
 ## Overview
 
-This specification implements ADR-0034. It consolidates shared agent assets in
-Stage 00, removes `.agents/`, retires duplicate and stale agent validation
-surfaces, and makes one QA command the executable contract for local and GitHub
-Actions environments.
+This specification implements the design proposed in
+[ADR-0035](../../02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md)
+for common authority in `.agents/` under the explicit local migration request,
+and preserves ADR-0034 for the consolidated local/CI QA and GitOps CD boundary.
+The 2026-09-06 execution scope replaces the previous Stage 00 location decision;
+prior execution evidence remains in the owning Task. The subsequent user request
+authorizes local commits and review of the remaining work. Remote operations,
+authenticated provider calls and live changes remain outside this scope.
 
 ## Strategic Boundaries & Non-goals
 
-Authorized scope includes `.github/`, `docs/00.agent-governance/`, `.claude/`,
+Authorized scope includes `.github/`, `.agents/`, `.claude/`,
 `.codex/`, root gateways, current SDLC owners, QA scripts, tests, fixtures,
 templates, and current operations guidance. Historical and in-progress records are reviewed for conflicting current
 authority. Preserve historical facts and valid archive isolation; replace or
@@ -34,9 +38,9 @@ to simulate a timeless repository state.
 
 - **C-AGQ-001 — one governance root.** Shared policy, provider definitions,
   roles, skills, permissions, handoffs, and projection paths are owned below
-  `docs/00.agent-governance/`; `.agents/` does not exist.
+  `.agents/`; the former documentation governance root must not exist.
 - **C-AGQ-002 — thin provider adapters.** `.claude/` and `.codex/` contain only
-  native configuration and projections and link to Stage 00 for shared meaning.
+  native configuration and projections and link to `.agents/` for shared meaning.
 - **C-AGQ-003 — one QA entrypoint.** `python3 scripts/qa.py <profile>` is the
   supported local and hosted orchestration interface. A gate is current only
   when declared in the QA registry and reachable from a supported profile.
@@ -56,12 +60,20 @@ to simulate a timeless repository state.
 
 ## Core Design
 
-Stage 00 roles owns the shared `roles/registry.json`, its schema and concrete
-role bodies. Stage 00 skills owns shared native skill packages with `SKILL.md`
-metadata and assets. Claude may expose these through its supported skill
-adapter. Codex uses explicit reads from root AGENTS and role instructions;
-this is not automatic native skill registration. Native role bodies reference
-canonical responsibilities directly, so no projection framework is introduced.
+The common registry/schema and neutral role bodies live in `.agents/roles/`.
+Normative policy and SDLC live in `.agents/governance/`. Sixteen existing
+callable packages move to `.agents/skills/<id>/SKILL.md`; the registry, not a
+fixed count, determines the required set. Plain lifecycle and delegation
+procedures live in `.agents/workflows/`. Provider-only support notes move to
+`.claude/provider.md` and `.codex/provider.md`.
+
+Codex discovers repository skills at `.agents/skills/`; Claude exposes one
+relative link per skill below `.claude/skills/`. Set explicit-only invocation
+metadata for these packages and retain role/user approval preconditions. No
+skill grants tools or credentials. Root AGENTS uses explicit read instructions;
+Claude imports only common and Claude instructions. Native role bodies remain
+thin references with unchanged model, tools and responsibility metadata.
+The whole `.agents/` directory is not an automatic instruction loader.
 
 `scripts/qa.py` selects gate IDs from the existing validation registry. The
 existing registry remains the sole argv and execution-configuration owner;
@@ -77,6 +89,7 @@ The supported profiles are:
 | Profile | Purpose |
 | --- | --- |
 | `quick` | Fast governance, document, workflow, and focused QA tests during implementation |
+| `staged` | Changed-path validation of the exact Git index before a local commit |
 | `full` | Complete local repository-static evidence before handoff |
 | `ci` | The same blocking set as `full`, executed by GitHub Actions |
 
@@ -87,7 +100,7 @@ unless branch policy and QA have valid results.
 
 ## Data Modeling & Storage Strategy
 
-The Stage 00 registry keeps stable role IDs, permission classes, supported
+The common role registry keeps stable role IDs, permission classes, supported
 providers, capability references, skill references, handoffs, and provider
 projection paths. Paths are repository-relative POSIX strings. Provider model
 and tool metadata stay in native projection files because they are provider
@@ -101,6 +114,7 @@ timeouts, mutable commit SHAs, runtime observations or copied policy prose.
 
 ```text
 python3 scripts/qa.py quick
+python3 scripts/qa.py staged
 python3 scripts/qa.py full
 python3 scripts/qa.py ci
 python3 scripts/qa.py --list
@@ -122,16 +136,16 @@ inapplicable or explicitly optional check; missing authorization/environment
 for required external evidence is DEFER and cannot satisfy overall completion.
 
 A provider projection may remain tracked when the provider supports that native
-format, but its common responsibility and skill meaning must resolve to Stage
-00. A historical `.agents/` mention is allowed only outside current executable
-or active guidance surfaces.
+format, but its common responsibility and skill meaning must resolve to `.agents/`. Historical source paths are retained as evidence
+only; they never provide an executable fallback to the removed owner.
 
 ## Failure Modes & Fallback / Human Escalation
 
 Invalid registries and missing commands fail before implementation or merge.
 A failing gate is fixed at its smallest current owner; it is not bypassed by
-running a narrower profile. Rollback is a Git revert of the logical commit that
-owns the failed migration or orchestration change.
+running a narrower profile. Rollback reverses only the reviewed migration as a
+new change after checking for later user edits and dependent commits against
+the recorded baseline; no blanket restore or history rewrite is authorized.
 
 Provider-runtime and live-environment checks may be recorded as `DEFER` only in
 the owning Task with a reason and next owner. They never satisfy repository
@@ -155,8 +169,8 @@ this section proves provider runtime or live cluster behavior.
 
 | ID | Criterion | Evidence |
 | --- | --- | --- |
-| VAL-AGQ-001 | `.agents/` is absent and no current gateway, provider adapter, policy, role, skill, QA registry, workflow, or active guidance depends on it | Governance validator and current-reference sweep |
-| VAL-AGQ-002 | Every registered role, skill, handoff, permission class, and provider projection resolves from Stage 00 | Focused governance tests and validator |
+| VAL-AGQ-001 | The old governance root is absent and every source has a disposition; current consumers resolve solely to `.agents/` or native provider owners | Governance validator and current-reference sweep |
+| VAL-AGQ-002 | Every registered role, skill, handoff, permission class, and provider projection resolves from `.agents/` without expanded permissions | Focused governance tests and validator |
 | VAL-AGQ-003 | `quick`, `full`, and `ci` are valid profiles with no duplicate gate execution | QA runner unit tests and `--list` output |
 | VAL-AGQ-004 | Local `full` and hosted `ci` execute the same blocking gate IDs | Registry assertion and workflow contract test |
 | VAL-AGQ-005 | Obsolete agent contracts, validators, hooks, tests, and fixtures have no current consumers | Current executable-reference check and reviewed deletion set |
@@ -165,6 +179,10 @@ this section proves provider runtime or live cluster behavior.
 | VAL-AGQ-008 | Remaining fixtures are test-only and production scripts do not import `tests` | Fixture-boundary test |
 
 ## Traceability
+
+[Implementation Plan](plan.md) owns ordered work and
+[Task evidence](tasks/tsk-0001-consolidate-governance-and-quality-gates.md) owns
+execution outcomes and remaining verification limits.
 
 ### Lifecycle Traceability
 

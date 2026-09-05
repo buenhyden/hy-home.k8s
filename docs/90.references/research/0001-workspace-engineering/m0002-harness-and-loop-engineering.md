@@ -66,9 +66,10 @@ through [SRC-WERPC-013](m0012-source-coverage.md#source-register).
 
 ### Loop baseline
 
-The workspace machine owner is
-[`agent-loop-lifecycle.json`](../../../00.agent-governance/contracts/agent-loop-lifecycle.json).
-It is more precise than a generic “observe-plan-act” slogan: it defines terminal
+At this observation, the workspace machine owner was
+[`agent-loop-lifecycle.json` at its retained Git revision](https://github.com/buenhyden/hy-home.k8s/blob/193e5b8859db5731128a2236545f2f75bee37be4/docs/00.agent-governance/contracts/agent-loop-lifecycle.json).
+Current procedure is owned by [work lifecycle](../../../../.agents/workflows/work-lifecycle.md).
+The historical contract was more precise than a generic “observe-plan-act” slogan: it defined terminal
 states, admissible transitions, failure normalization, retry budgets, and
 redaction. The intended human-readable loop is:
 
@@ -432,4 +433,4 @@ status is promoted or demoted. New sources are `SRC-WERPC-123` and
 - [Workspace governance and common environment](m0001-workspace-governance-and-common-agent-environment.md)
 - [Provider implementation status](m0003-provider-implementation-status.md)
 - [Source ledger](m0012-source-coverage.md)
-- [Agent Execution Policy](../../../00.agent-governance/policies/agent-execution.md)
+- [Agent Execution Policy](../../../../.agents/governance/agent-execution.md)

@@ -198,6 +198,14 @@ if len(absolute_roots) > 1:
 resolved_root = next(iter(absolute_roots), project_dir)
 
 for candidate in paths:
+    # QA may resolve a deleted historical source to its current owner. An edit
+    # must not use that deletion proof to recreate the retired authority root.
+    if candidate == "docs/00.agent-governance" or candidate.startswith(
+        "docs/00.agent-governance/"
+    ):
+        reject_with_detail(
+            "HOOK-PATH-RETIRED", "common authority is owned by .agents/"
+        )
     cursor = Path(resolved_root)
     for part in PurePosixPath(candidate).parts:
         cursor /= part
@@ -304,7 +312,7 @@ def retired_document_owner(path: str) -> str:
 def authored_doc_route(path: str) -> tuple[str, str] | None:
     if not path.endswith(".md"):
         return None
-    if path.startswith("docs/00.agent-governance/") or path.startswith("docs/99.templates/"):
+    if path.startswith(".agents/") or path.startswith("docs/99.templates/"):
         return None
     if not re.match(
         r"^docs/(01\.requirements|02\.architecture|03\.specs|04\.execution|"

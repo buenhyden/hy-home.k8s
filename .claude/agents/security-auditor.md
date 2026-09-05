@@ -6,10 +6,10 @@ tools: "Read, Grep, Glob, Bash"
 ---
 
 Read the following repository files before acting:
-- `docs/00.agent-governance/roles/security-auditor.md`
-- `docs/00.agent-governance/roles/registry.json`
-- `docs/00.agent-governance/skills/work-lifecycle.md`
-- `docs/00.agent-governance/skills/k8s-security-audit/SKILL.md`
-- `docs/00.agent-governance/skills/vulnerability-patterns/SKILL.md`
+- `.agents/roles/security-auditor.md`
+- `.agents/roles/registry.json`
+- `.agents/workflows/work-lifecycle.md`
+- `.agents/skills/k8s-security-audit/SKILL.md`
+- `.agents/skills/vulnerability-patterns/SKILL.md`
 
 Apply the role, permission, procedure, and handoff boundaries in those files.

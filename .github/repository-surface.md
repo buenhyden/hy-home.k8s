@@ -26,7 +26,7 @@ because it describes the repository's automation surface rather than the
 
 ## Policy Routing
 
-- Branch strategy policy lives in `docs/00.agent-governance/policies/git.md`.
+- Branch strategy policy lives in `.agents/governance/git.md`.
 - CI enforcement lives in `workflows/ci.yml` and `scripts/qa.py`; the validation
   registry owns logical gates shared with local QA.
 - One QA job selects Python 3.12, installs the fully hashed binary-only lock
@@ -36,7 +36,7 @@ because it describes the repository's automation surface rather than the
   owned by the lock, pre-commit configuration, and execution registry.
 - The sole canonical local completion-order, lane, result, formatter, and
   handoff owner is
-  [`quality-standards.md`](../docs/00.agent-governance/policies/quality.md);
+  [`quality-standards.md`](../.agents/governance/quality.md);
   this hub and the PR template only route GitHub-specific consumers there.
 - Current validator command and fixture inventories live in
   [`scripts/README.md`](../scripts/README.md) and
@@ -52,7 +52,7 @@ because it describes the repository's automation surface rather than the
 
 ## Workflow Roles
 
-- `ci.yml` is the required QA gate for pushes and pull requests targeting the repository's canonical integration branch, with manual reruns through `workflow_dispatch`; its single dedicated agent-governance lane enforces the closed CI, harness-semantics, legacy-cutover, and Spec 046 program-closure contracts without treating a tracked workflow as hosted-run evidence.
+- `ci.yml` is the required QA gate for pushes and pull requests targeting the repository's canonical integration branch, with manual reruns through `workflow_dispatch`; its single QA job enforces the selected current static contracts without treating a tracked workflow as hosted-run evidence.
 - `generate-changelog.yml` creates transient seven-day release-evidence artifacts for version tags. It does not commit, push, or publish.
 - `labeler.yml`, `greetings.yml`, and `stale.yml` are repository maintenance automations, not QA gates.
 - Clear separation of concerns is maintained: local pre-commit handles fast linting and formatting, local repo-static scripts reproduce CI/debug evidence when needed, and GitHub CI performs the required remote gate verdict. Helm chart rendering remains a manual review helper for platform AppProject allow-list changes.
@@ -68,6 +68,7 @@ because it describes the repository's automation surface rather than the
 | --- | --- | --- | --- | --- |
 | `ci.yml` | Required QA gate for branch policy, repo-quality, agent-governance, manifest, secret, and policy checks. | Runs on `push`, `pull_request`, and `workflow_dispatch` for `main`-centered integration. | `ci-summary` aggregates `branch-policy` and the single `qa` job; QA prepares its locked dependencies once and executes the shared ci profile on an immutable checkout with full history. | No deploy CD, direct Kubernetes mutation, external Vault mutation, container publish, or commit push. |
 | `generate-changelog.yml` | Release-evidence artifact generator. | Runs for release tag evidence and manual release support. | Produces a `CHANGELOG.md` artifact retained for exactly seven days for review. | Does not commit, push, publish, or mutate repository history. |
+| `governance-audit-snapshot.yml` | Historical source evidence capture only. | Push to the named audit branch when this workflow changes. | Bundles pinned Git history as a short-lived artifact; read-only contents and no persisted checkout credentials. | Not QA, native runtime, deployment or release evidence. |
 | `greetings.yml` | Repository maintenance greeting automation. | Runs on issue or PR intake events. | Posts onboarding guidance only. | Not a QA gate, not a reviewer approval, and not deployment automation. |
 | `labeler.yml` | Repository maintenance labeling automation. | Runs on pull request path changes. | Applies labels from `.github/labeler.yml`. | Not a QA gate and must not replace CODEOWNERS or human review. |
 | `stale.yml` | Repository maintenance stale-item automation. | Runs on scheduled issue or PR maintenance. | Marks or closes stale work according to workflow configuration. | Not a QA gate, not release evidence, and not deployment automation. |

@@ -79,8 +79,8 @@ this rule.
 
 ## Related Documents
 
-- [Documentation Protocol](../docs/00.agent-governance/policies/document-authoring.md)
-- [Approval Boundaries](../docs/00.agent-governance/policies/approval-and-safety.md)
-- [Subagent Protocol](../docs/00.agent-governance/skills/delegated-development.md)
+- [Documentation Protocol](../.agents/governance/document-authoring.md)
+- [Approval Boundaries](../.agents/governance/approval-and-safety.md)
+- [Subagent Protocol](../.agents/workflows/delegated-development.md)
 - [Documentation Contract](../docs/99.templates/README.md)
 - [Workspace-staging README form](../docs/99.templates/templates/common/readme-workspace-staging.template.md)

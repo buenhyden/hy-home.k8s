@@ -890,6 +890,12 @@ def _frontmatter_value_style_diagnostics(
             isinstance(value, list) and all(isinstance(item, str) for item in value)
         ):
             continue
+        if (
+            profile.mode == "native"
+            and isinstance(dict(profile.constants).get(key), bool)
+            and isinstance(value, bool)
+        ):
+            continue
         diagnostics.append(
             _diagnostic(
                 "FM-QUOTE",
@@ -1025,6 +1031,15 @@ def _value_contract_diagnostics(
     """Validate frontmatter scalars from the terminal profile contract."""
 
     diagnostics: list[Diagnostic] = []
+    for key, expected in profile.constants:
+        if key in {"type", "status"} or key not in data:
+            continue
+        if not _same_scalar(data[key], expected):
+            diagnostics.append(
+                _diagnostic(
+                    "FM-VALUE-CONSTANT", path, profile, repr(expected), repr(data[key])
+                )
+            )
     expected_kinds = {
         "title": "string",
         "type": "string",

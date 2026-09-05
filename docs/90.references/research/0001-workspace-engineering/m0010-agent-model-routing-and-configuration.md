@@ -168,7 +168,7 @@ owner is outside this cycle's scope.
 - [OpenAI Codex configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-049`).
 - [OpenAI Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents) and [OpenAI Agents SDK sessions](https://openai.github.io/openai-agents-python/sessions/), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-045`, `SRC-WERPC-050`).
 - [Anthropic Claude Code subagents](https://code.claude.com/docs/en/sub-agents), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-046`).
-- [Model Selection Policy](../../../00.agent-governance/policies/model-selection.md) is the current model-policy owner; `contracts/agent-model-fitness.json` remains part of the dated local observation.
+- [Model Selection Policy](../../../../.agents/governance/model-selection.md) is the current model-policy owner; `contracts/agent-model-fitness.json` remains part of the dated local observation.
 
 ## Review and Freshness
 
@@ -392,4 +392,4 @@ decision. New sources are `SRC-WERPC-128`, `SRC-WERPC-129`, `SRC-WERPC-130`, and
 
 - [Provider implementation status](m0003-provider-implementation-status.md)
 - [AI agents](m0009-ai-agents-and-agency-agents.md)
-- [Model Selection Policy](../../../00.agent-governance/policies/model-selection.md)
+- [Model Selection Policy](../../../../.agents/governance/model-selection.md)

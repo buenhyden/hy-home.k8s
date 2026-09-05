@@ -138,7 +138,7 @@ The public contract is Kubernetes CRDs and dashboard/metrics endpoints.
 
 ### Memory & Context Strategy
 
-- Backfill lessons are recorded in `docs/00.agent-governance/memory/progress.md`.
+- Backfill lessons are recorded in `.agents/memory/progress.md`.
 - No standalone memory file is required for this feature.
 
 ### Guardrails

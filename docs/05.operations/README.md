@@ -12,7 +12,7 @@ layer: "operations"
 > 안정 상태 운영 지식, 정책, 런북, 사고 기록을 분류하는 operations stage다.
 
 > [!NOTE]
-> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
+> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../.agents/README.md).
 
 ## Overview
 
@@ -129,7 +129,7 @@ ADR, profile, lifecycle, template을 함께 검토한다.
 - [Runbooks README](./runbooks/README.md)
 - [Incidents README](./incidents/README.md)
 - [Reference Maintenance Runbook](./runbooks/0011-reference-maintenance-runbook.md)
-- [Document Stage Routing](../00.agent-governance/policies/document-authoring.md)
+- [Document Stage Routing](../../.agents/governance/document-authoring.md)
 - [Templates README](../99.templates/README.md)
-- [Local Agent Registry](../../.agents/registry.json)
-- [Approval Boundaries](../00.agent-governance/policies/approval-and-safety.md)
+- [Local Agent Registry](../../.agents/roles/registry.json)
+- [Approval Boundaries](../../.agents/governance/approval-and-safety.md)

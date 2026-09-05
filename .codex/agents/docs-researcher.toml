@@ -1,5 +1,5 @@
 description = "Collect and classify source evidence for documentation without claiming policy authority."
-developer_instructions = "Read the following repository files before acting:\n- `docs/00.agent-governance/roles/docs-researcher.md`\n- `docs/00.agent-governance/roles/registry.json`\n- `docs/00.agent-governance/skills/work-lifecycle.md`\n- `docs/00.agent-governance/skills/docs-stage-routing/SKILL.md`\n- `docs/00.agent-governance/skills/knowledge-map/SKILL.md`\n\nApply the role, permission, procedure, and handoff boundaries in those files.\n"
+developer_instructions = "Read the following repository files before acting:\n- `.agents/roles/docs-researcher.md`\n- `.agents/roles/registry.json`\n- `.agents/workflows/work-lifecycle.md`\n- `.agents/skills/docs-stage-routing/SKILL.md`\n- `.agents/skills/knowledge-map/SKILL.md`\n\nApply the role, permission, procedure, and handoff boundaries in those files.\n"
 name = "docs-researcher"
 model = "gpt-5.6-terra"
 model_reasoning_effort = "high"

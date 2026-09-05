@@ -3,7 +3,8 @@ description = "One sentence naming the bounded responsibility this role executes
 model = "__CODEX_MODEL_ID__"
 model_reasoning_effort = "__LOW_MEDIUM_HIGH_XHIGH__"
 developer_instructions = """
-Read the canonical role at `__CANONICAL_ROLE_PATH__`, the Stage 00 registry,
-work lifecycle, and each registered skill procedure explicitly before acting.
+Read the canonical role at `__CANONICAL_ROLE_PATH__`, `.agents/roles/registry.json`,
+`.agents/workflows/work-lifecycle.md`, and each registered skill procedure
+explicitly before acting.
 Apply their permission and handoff boundaries.
 """

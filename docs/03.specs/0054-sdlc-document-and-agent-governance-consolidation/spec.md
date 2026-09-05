@@ -1,10 +1,10 @@
 ---
 title: "SDLC Document and AI Agent Governance Consolidation Technical Specification"
-version: "1.2.0"
+version: "1.3.0"
 type: "sdlc/spec"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-06"
 layer: "specs"
 artifact_id: "SPEC-0054"
 ---
@@ -12,6 +12,12 @@ artifact_id: "SPEC-0054"
 # SDLC Document and AI Agent Governance Consolidation Technical Specification (Spec)
 
 ## Overview
+
+The 2026-09-06 governance continuation is owned by
+[SPEC-0072](../0072-agent-governance-and-quality-gate-consolidation/spec.md) and
+[ADR-0035](../../02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md).
+They replace this program's earlier governance location and execution design;
+its unrelated SDLC acceptance and historical Task evidence remain in scope.
 
 This specification defines the approved B-scope consolidation of the
 repository's SDLC documents, Spec-driven development workflow, AI-agent
@@ -153,15 +159,6 @@ The terminal active topology is:
 
 ```text
 docs/
-├── 00.agent-governance/
-│   ├── README.md
-│   ├── sdlc.md
-│   ├── policies/
-│   ├── roles/
-│   ├── providers/
-│   │   ├── claude.md
-│   │   └── codex.md
-│   └── skills/
 ├── 01.requirements/
 │   ├── README.md
 │   └── ####-<slug>.md
@@ -171,7 +168,6 @@ docs/
 │   └── decisions/####-<slug>.md
 ├── 03.specs/
 │   └── ####-<slug>/
-│       ├── README.md
 │       ├── spec.md
 │       ├── plan.md
 │       └── tasks/tsk-####-<slug>.md
@@ -207,7 +203,10 @@ docs/
         ├── references/
         └── common/
 
-docs/00.agent-governance/
+.agents/
+├── README.md
+├── governance/             # shared policies and sdlc.md
+├── workflows/              # lifecycle and delegation documents
 ├── roles/registry.json
 ├── roles/registry.schema.json
 ├── roles/<role-id>.md
@@ -215,11 +214,14 @@ docs/00.agent-governance/
 
 .claude/
 ├── CLAUDE.md
+├── provider.md
+├── skills/<skill-id>       # relative links to common packages
 ├── agents/
 └── <native-config>
 
 .codex/
 ├── CODEX.md
+├── provider.md
 ├── agents/
 └── <native-config>
 
@@ -241,13 +243,13 @@ tests/
     └── <test-only case data>
 ```
 
-`00` is the human AI-agent governance plane, `90` is the non-authoritative
+Common governance lives outside numbered documentation stages. `90` is the non-authoritative
 reference library, `98` is the isolated historical archive, and `99` is the
 document-template and contract plane. They are not sequential SDLC approval
 stages.
 
 The terminal tree contains no `.gemini/` directory and no root `GEMINI.md`.
-The repository-owned `.agents/` tree is removed under
+The former documentation governance root is removed; `.agents/` is the common owner under
 [SPEC-0072](../0072-agent-governance-and-quality-gate-consolidation/spec.md).
 Codex and Claude are the only supported provider adapters.
 
@@ -433,48 +435,30 @@ role, timeline, evidence, cause, action-owner, due-state, and closure semantics.
 
 ### C-SDLC-006 — integrated AI-agent governance
 
-`docs/00.agent-governance/` is the human governance control plane:
+[ADR-0035](../../02.architecture/decisions/0035-common-agents-authority-and-native-skill-routing.md)
+and [SPEC-0072](../0072-agent-governance-and-quality-gate-consolidation/spec.md)
+own the current governance implementation. This criterion accepts that result
+without maintaining a second migration or QA plan.
 
-- `sdlc.md` owns the Requirements → Architecture → Spec → Implementation →
-  Operations flow;
-- `policies/` owns approval, security, quality, data, Git, and SDLC norms;
-- `roles/` owns responsibilities, boundaries, and handoff semantics;
-- `providers/` owns only Codex and Claude capability differences;
-- `skills/` owns skill approval, authoring, and lifecycle policy.
+- `.agents/governance/` owns common policies and `sdlc.md`.
+- `.agents/roles/registry.json` and its adjacent schema own role IDs,
+  permission classes, handoffs, skill references and projection paths; neutral
+  role responsibilities live beside them.
+- `.agents/skills/<id>/SKILL.md` owns callable native procedures, with explicit
+  invocation metadata and no additional authority.
+- `.agents/workflows/` owns the ordinary lifecycle and delegation procedures.
+- `.claude/provider.md` and `.codex/provider.md` own provider-only notes;
+  native adapters preserve model/tool metadata and reference shared meaning.
 
-The former `rules/`, `scopes/`, `contracts/`, `hooks/`, and `memory/` trees are
-not terminal owners. Their unique durable content moves to the owners above,
-to the responsible Spec Task or Stage 90 Data record, or to executable
-`scripts/` owners before duplicate and transition content is removed.
+The retired memory, hooks, controls and provider trees are not recreated under
+common governance. Current Task records and Git own execution history. The
+registered QA profile selects governance validation responsibilities; no fixed
+count of validators, roles or skills is a policy invariant. Repository-static,
+provider-runtime, hosted-CI and live evidence remain separate.
 
-`docs/00.agent-governance/roles/registry.json`, validated by its adjacent
-`registry.schema.json`, is the sole machine owner for role IDs, permission
-classes, handoff edges, and skill references. Canonical role bodies and skill
-procedures live in Stage 00 `roles/` and `skills/`. `.claude/` and `.codex/` contain only provider-native thin
-adapters and configuration. Stage 99 does not own agent contracts.
-
-Gemini and Antigravity are removed from current governance: `.gemini/`, root
-`GEMINI.md`, Gemini provider notes, contracts, validators, canaries, hooks,
-fixtures, adapter projections, and Gemini/Antigravity-specific executable meaning must reach zero current
-consumers before deletion. Historical
-claims are recovered through reachable Git history; current governance does
-not depend on an Archive record.
-
-The permanent agent validation surface contains three responsibilities:
-agent-registry/schema integrity, provider projection/config integrity, and
-semantic/permission integrity. The aggregate gate invokes these validators but
-does not reproduce their rules. Repository-static presence, provider
-discovery, authenticated execution, hosted CI, and live evidence remain
-separate evidence classes.
-
-Tracked provider configuration and evidence are secret-free. Validators and
-agents do not collect or mutate user/private authentication configuration,
-credential paths, tokens, or raw transcripts. Hosted CI contains no provider
-credential; an authenticated canary is explicit local/manual work and records
-only redacted, secret-free results. Checkpoint or handoff state contains only
-bounded task and validation summaries. CI permissions follow least privilege
-and third-party actions retain supply-chain identity pins where byte or commit
-identity is the security contract.
+Preserve permission boundaries, secret-free evidence and removal of unsupported
+provider surfaces. Historical diagnosis is evidence rather than an executable
+fallback or a blanket exemption from current-authority review.
 
 ### C-SDLC-007 — template and validator single contract
 
@@ -603,7 +587,7 @@ future observation dates belong in source metadata rather than a parallel pack.
 The cutover classifies current material by semantic destination in the
 executing Task and reviewed diff. Existing Audit snapshots and Data
 control-plane copies are removed after live consumers route to canonical
-Stage 00-05 owners or direct repository sources. A future Audit or Data
+common governance or Stage 01–05 owners and direct repository sources. A future Audit or Data
 document may be admitted only when it has distinct reference purpose,
 provenance, freshness, and a non-authoritative boundary. The existing
 `cloud-examples`, `learning`, and `llm-wiki` bodies are removed after their
@@ -750,8 +734,8 @@ integration dependencies, not a global scheduling lock:
    accepted Task and reachable Git evidence are historical inputs, not work
    to regenerate.
 2. **WP-003** originally converged the provider surface after WP-004.
-   SPEC-0072 now owns the remaining Stage 00 source migration, `.agents/`
-   removal, and shared QA transition; prior Task evidence remains historical.
+   SPEC-0072 now owns the common-source migration into `.agents/`, native
+   skill routing, and shared QA transition; prior Task evidence remains historical.
 3. **WP-007** reviews Stage 90 semantic destinations and retires the permanent
    RIA/census control plane under the user-approved research preservation
    boundary.
@@ -801,7 +785,7 @@ rule owners.
 
 `docs/99.templates/registry.json` remains the machine authority for active
 document profiles and normalized top-level lifecycle domains.
-`docs/00.agent-governance/roles/registry.json` is the separate machine authority for agent roles,
+`.agents/roles/registry.json` is the separate machine authority for agent roles,
 permissions, handoffs, and skill references. Current-path, Stage 90, and script
 dispositions live in the executing Task and reviewed diff; they do not form a
 third permanent registry. Sealed Archive evidence remains immutable and is
@@ -818,9 +802,9 @@ The canonical interfaces are:
 
 - `docs/99.templates/registry.json` plus the two Stage 99 contract schemas for
   active document contracts;
-- `docs/00.agent-governance/roles/registry.json` plus its schema for the provider-neutral agent
+- `.agents/roles/registry.json` plus its schema for the provider-neutral agent
   registry;
-- Stage 00 policy and role documents as human governance, with point-in-time
+- `.agents/governance/` policies and `.agents/roles/` responsibilities as human governance, with point-in-time
   provider/model evidence owned by Stage 90 Data and execution evidence owned
   by Spec Tasks or Git;
 - package-local Task/diff evidence for current path and Stage 90 cutovers;
@@ -872,7 +856,7 @@ duplicate machine inventories or independently redefine lifecycle states.
   purpose fails the evidence-boundary audit.
 - A retired transition fixture or helper with no current consumer and no
   terminal semantic responsibility fails the residue audit.
-- Any Stage 00/01/02/03/05/90 use of a sealed Stage 98 record as current
+- Any common-governance or Stage 01/02/03/05/90 use of a sealed Stage 98 record as current
   semantic authority fails. A citation to a retained `completed/` document is
   valid only as historical trace and never substitutes for a current owner.
 
@@ -889,32 +873,22 @@ or expansion beyond the approved B scope stops for human approval.
 
 ## Verification Commands
 
-The detailed implementation plan binds exact, currently resolvable commands to
-each logical task and updates them atomically when an executable moves. The
-terminal gate set includes independent test discovery, focused validators, the
-thin aggregate, security checks, and both staged and all-files fixed points.
-Production validators must not execute embedded self-tests. The current command
-shape is:
+Use the current QA entrypoint and quality policy for the final repository-static
+sequence. Focused document or domain checks precede these profiles when their
+owned behavior changes.
 
 ```bash
-python3 -m unittest discover -s tests -p 'test_*.py'
-python3 scripts/validate-document-contract-registry.py --mode strict
-python3 scripts/validate-markdown-profiles.py --root . --mode strict
-python3 scripts/validate-links-and-owners.py --root . --mode strict
-python3 scripts/validate-document-lifecycle.py --root . --mode staged
-python3 scripts/validate-affected-surfaces.py --root .
-TMPDIR=/tmp bash scripts/validate-repo-quality-gates.sh .
-TMPDIR=/tmp pre-commit run
-TMPDIR=/tmp pre-commit run --all-files
+python3 scripts/qa.py quick
+python3 scripts/qa.py full
 git diff --check
 git diff --cached --check
 ```
 
-Compatibility wrappers may temporarily forward to these owners during a
-consumer migration, but WP-014 evidence uses the terminal entrypoints.
-
-Passing repository-static checks does not prove provider-runtime discovery,
-hosted CI, deployment, incident response, or live platform correctness.
+The full profile owns unit discovery and all-files pre-commit; no old aggregate
+or provider-runtime gate is recreated to satisfy predecessor commands. Actual
+index evidence remains distinct and is obtained only when staging is authorized.
+Passing static checks does not prove provider discovery, hosted CI, deployment,
+incident response or live platform correctness.
 
 ## Success Criteria & Verification Plan
 
@@ -925,12 +899,12 @@ hosted CI, deployment, incident response, or live platform correctness.
 | VAL-SDLC-001 | Exact terminal active topology; Requirement Packages replace repeated PRD/SRS/Interface forms; every retained Requirement Package and Architecture Description is bidirectionally reconciled with current implementation evidence; no implemented durable behavior lacks an appropriate Stage 01/02 owner, no current architecture claim describes absent implementation, and no Stage 02 requirements, Stage 04 owner, local Release family, `.gemini/`, root `GEMINI.md`, or Gemini/Antigravity current governance remains. |
 | VAL-SDLC-002 | Every current numeric SDLC route uses four digits; parent folders determine prefix-free document types while typed frontmatter IDs match their paths, and every Requirement member uses a unique package-scoped `REQ-####-(FR|NFR|IF)-####` identity. |
 | VAL-SDLC-003 | Incident and Postmortem paths, templates, metadata, links, and negative fixtures use the exact lowercase co-located route. |
-| VAL-SDLC-004 | Every work unit has a thin README router, Spec, Plan, and append-only `TSK-<SPEC>-####` records with reciprocal criteria and profile-valid state consistency; no separate design/tests artifact remains. |
-| VAL-SDLC-005 | Stage 00 human governance, `.agents` machine registry, and Codex/Claude thin projections have disjoint owners; the three permanent agent gates pass with no hard-coded roster/adaptor cardinality, tracked secret, private-auth mutation, hosted provider credential, unredacted canary result, or over-privileged CI claim. |
+| VAL-SDLC-004 | Every work unit has Spec, Plan, and append-only `SPEC-####-TSK-####` records, with Task inventory derived from `tasks/` with reciprocal criteria and profile-valid state consistency; no separate design/tests artifact remains. |
+| VAL-SDLC-005 | Common `.agents/` governance, its role registry, and Codex/Claude native projections have disjoint owners; registered governance checks pass with no hard-coded roster/adaptor cardinality, tracked secret, private-auth mutation, hosted provider credential, unredacted canary result, or over-privileged CI claim. |
 | VAL-SDLC-006 | Stage 99 has one registry containing profile definitions and normalized top-level lifecycle domains, one human router, and only the schemas/templates required by active authored profiles; no current-instance program, reference-pack, or standalone-execution roster remains. |
 | VAL-SDLC-007 | Guide, Policy, Runbook, Incident, and Postmortem roles are disjoint; reviewed duplicate procedures have one owner. |
 | VAL-SDLC-008 | Stage 90 preserves the latest externally researched pack and its routers; Audit/Data bodies and their RIA current-pack/SHA/FSM machine are absent after consumer cutover, with no permanent disposition census or exact corpus gate. Ongoing pack maintenance follows the [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md). |
-| VAL-SDLC-009 | Stages 00/01/02/03/05/90 have no current-authority dependency on sealed `migrations/`, `superseded/`, or `tombstones/` records; `completed/` retains terminal documents and whole Stage 03 packages with mirrored paths, terminal profiles, migration provenance, and historical-only citation semantics; Stage 98 has no full-corpus census, current-SHA parity, remote-ancestry, or exact-count gate. |
+| VAL-SDLC-009 | Common governance and Stages 01/02/03/05/90 have no current-authority dependency on sealed `migrations/`, `superseded/`, or `tombstones/` records; `completed/` retains terminal documents and whole Stage 03 packages with mirrored paths, terminal profiles, migration provenance, and historical-only citation semantics; Stage 98 has no full-corpus census, current-SHA parity, remote-ancestry, or exact-count gate. |
 | VAL-SDLC-010 | After ADR-0031 acceptance, the validation routing and consumer graph has one owner; production modules obey responsibility boundaries, independent tests/fixtures remain under top-level `tests/`, aggregate duplication and embedded self-tests are absent, and no terminal entrypoint, file, case, or line-count invariant remains. |
 | VAL-SDLC-011 | Focused, affected, staged, aggregate, secret, all-files, and independent review gates pass at each required boundary; permanent rules have one machine owner and validator, with zero aggregate duplication, unjustified current-state SHA pins, or consumer-free transition fixtures at the terminal fixed point. |
 | VAL-SDLC-012 | Each independently testable logical unit is committed separately with no unrelated user changes included. |

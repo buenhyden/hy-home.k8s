@@ -229,10 +229,7 @@ def rel(path: pathlib.Path) -> str:
 
 
 def is_historical_evidence_path(path: pathlib.Path) -> bool:
-    return (
-        path == root / "docs/00.agent-governance/memory/progress.md"
-        or path.is_relative_to(root / "docs/98.archive")
-    )
+    return path.is_relative_to(root / "docs/98.archive")
 
 
 def collect_strings(value) -> list[str]:
@@ -560,13 +557,8 @@ for tracked_path in sorted(tracked):
     if tracked_path == ".env":
         fail(".env must remain untracked; commit .env.example only")
     tracked_name = pathlib.Path(tracked_path).name
-    if (
-        tracked_name == "progress.md"
-        and tracked_path != "docs/00.agent-governance/memory/progress.md"
-    ):
-        fail(
-            f"tracked progress.md must live only at docs/00.agent-governance/memory/progress.md: {tracked_path}"
-        )
+    if tracked_name == "progress.md":
+        fail(f"retired progress ledger must remain untracked: {tracked_path}")
     if re.search(r"(^temp_|_(new|old|backup)(\.|$))", tracked_name):
         fail(
             f"tracked temporary or backup-style file name is not allowed: {tracked_path}"
@@ -685,11 +677,12 @@ for local_rule_path in claude_local_rule_paths:
         if "pattern" not in metadata and "conditions" not in metadata:
             fail(f"{local_rule_rel} must define Hookify pattern or conditions")
 
-if os.path.lexists(root / ".agents"):
-    fail("retired shared agent root must remain absent")
+if os.path.lexists(root / "docs/00.agent-governance"):
+    fail("retired Stage 00 governance root must remain absent")
+if os.path.lexists(root / ".agents/memory"):
+    fail("retired shared agent memory root must remain absent")
 
 allowed_top_level_docs = {
-    "00.agent-governance",
     "01.requirements",
     "02.architecture",
     "03.specs",
@@ -699,7 +692,6 @@ allowed_top_level_docs = {
     "99.templates",
 }
 required_doc_dirs = {
-    "00.agent-governance",
     "01.requirements",
     "02.architecture",
     "02.architecture/descriptions",
@@ -2044,7 +2036,7 @@ for path, phrases in template_enforcement_phrase_checks.items():
             fail(f"{rel(path)} missing template enforcement phrase: {phrase}")
 
 active_template_routing_reference_files = [
-    root / "docs/00.agent-governance/skills/docs-stage-routing/SKILL.md",
+    root / ".agents/skills/docs-stage-routing/SKILL.md",
     root / ".claude/hooks/k8s-pre-edit.sh",
 ]
 for path in active_template_routing_reference_files:
@@ -2065,6 +2057,7 @@ legacy_denylist_literals = {
 }
 legacy_scan_roots = [
     root / "docs",
+    root / ".agents",
     root / "scripts",
     root / ".codex",
     root / "AGENTS.md",
@@ -2457,7 +2450,7 @@ for scan_root in markdown_direct_push_roots:
                 )
 
 tracked_language_roots = (
-    "docs/00.agent-governance/",
+    ".agents/",
     ".claude/",
     ".codex/",
 )
@@ -2467,7 +2460,14 @@ for tracked_path in sorted(tracked):
     if not tracked_path.startswith(tracked_language_roots):
         continue
     path = root / tracked_path
-    if not path.is_file() or path.suffix not in {".md", ".toml", ".json", ".sh"}:
+    if not path.is_file() or path.suffix not in {
+        ".md",
+        ".toml",
+        ".json",
+        ".sh",
+        ".yaml",
+        ".yml",
+    }:
         continue
     if re.search(r"[가-힣]", read_text(path)):
         fail(
@@ -2526,8 +2526,6 @@ if not re.search(
 
 for tracked_path in sorted(tracked):
     if not tracked_path.startswith("docs/") or not tracked_path.endswith(".md"):
-        continue
-    if tracked_path.startswith("docs/00.agent-governance/"):
         continue
     path = root / tracked_path
     if not path.is_file():
@@ -2679,9 +2677,7 @@ if not has_provider_example_boundary_prompt(pr_template_text):
 # Harness implementation surfaces: existence and cross-reference contracts only.
 # Wrapper script existence is already enforced by the scripts inventory, so it
 # is not re-validated here.
-approval_boundaries_path = (
-    root / "docs/00.agent-governance/policies/approval-and-safety.md"
-)
+approval_boundaries_path = root / ".agents/governance/approval-and-safety.md"
 if not approval_boundaries_path.exists():
     fail(f"required harness surface is missing: {rel(approval_boundaries_path)}")
 if "## 8. Harness Impact" not in pr_template_text:
@@ -2720,10 +2716,10 @@ for prefix in branch_prefixes:
         )
 
 github_about_path = root / ".github/repository-surface.md"
-git_policy_path = root / "docs/00.agent-governance/policies/git.md"
+git_policy_path = root / ".agents/governance/git.md"
 github_about_text = read_text(github_about_path)
 for phrase in [
-    "docs/00.agent-governance/policies/git.md",
+    ".agents/governance/git.md",
     "workflows/ci.yml",
     "scripts/qa.py",
     "PULL_REQUEST_TEMPLATE.md",

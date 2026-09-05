@@ -23,7 +23,7 @@
     },
     {
       "name": "governance",
-      "path": "docs/00.agent-governance/rules/bootstrap.md",
+      "path": ".agents/governance/agent-execution.md",
       "expectedSurface": "governance-documents"
     },
     {
@@ -33,7 +33,7 @@
     },
     {
       "name": "shared-agent",
-      "path": "docs/00.agent-governance/roles/supervisor.md",
+      "path": ".agents/roles/supervisor.md",
       "expectedSurface": "agent-shared"
     },
     {
@@ -136,9 +136,7 @@
           "repository-quality"
         ],
         "ciJobs": [
-          "agent-governance-static",
-          "pre-commit",
-          "repo-quality-static"
+          "qa"
         ],
         "protectedLevel": "review",
         "unmatchedPaths": []
@@ -149,7 +147,7 @@
       "lane": "affected",
       "paths": [
         "AGENTS.md",
-        "docs/00.agent-governance/roles/supervisor.md"
+        ".agents/roles/supervisor.md"
       ],
       "expected": {
         "validators": [
@@ -161,9 +159,7 @@
           "repository-quality"
         ],
         "ciJobs": [
-          "agent-governance-static",
-          "pre-commit",
-          "repo-quality-static"
+          "qa"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -173,7 +169,7 @@
       "name": "agent-registry",
       "lane": "affected",
       "paths": [
-        "docs/00.agent-governance/roles/registry.json"
+        ".agents/roles/registry.json"
       ],
       "expected": {
         "validators": [
@@ -185,9 +181,7 @@
           "repository-quality"
         ],
         "ciJobs": [
-          "agent-governance-static",
-          "pre-commit",
-          "repo-quality-static"
+          "qa"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -197,7 +191,7 @@
       "name": "agent-loop-checkpoint-contracts",
       "lane": "affected",
       "paths": [
-        "docs/00.agent-governance/roles/registry.json",
+        ".agents/roles/registry.json",
         "scripts/validate-agent-governance.py"
       ],
       "expected": {
@@ -215,10 +209,7 @@
           "secret-handling"
         ],
         "ciJobs": [
-          "agent-governance-static",
-          "manifest-static",
-          "pre-commit",
-          "repo-quality-static"
+          "qa"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -236,9 +227,7 @@
           "repository-quality"
         ],
         "ciJobs": [
-          "agent-governance-static",
-          "pre-commit",
-          "repo-quality-static"
+          "qa"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -256,9 +245,7 @@
           "repository-quality"
         ],
         "ciJobs": [
-          "agent-governance-static",
-          "pre-commit",
-          "repo-quality-static"
+          "qa"
         ],
         "protectedLevel": "review",
         "unmatchedPaths": []
@@ -280,9 +267,7 @@
           "repository-quality"
         ],
         "ciJobs": [
-          "agent-governance-static",
-          "pre-commit",
-          "repo-quality-static"
+          "qa"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -308,9 +293,7 @@
           "repository-quality"
         ],
         "ciJobs": [
-          "agent-governance-static",
-          "pre-commit",
-          "repo-quality-static"
+          "qa"
         ],
         "protectedLevel": "review",
         "unmatchedPaths": []
@@ -333,10 +316,7 @@
           "secret-handling"
         ],
         "ciJobs": [
-          "agent-governance-static",
-          "manifest-static",
-          "pre-commit",
-          "repo-quality-static"
+          "qa"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -354,9 +334,7 @@
           "repository-quality"
         ],
         "ciJobs": [
-          "agent-governance-static",
-          "pre-commit",
-          "repo-quality-static"
+          "qa"
         ],
         "protectedLevel": "review",
         "unmatchedPaths": []
@@ -378,9 +356,7 @@
           "secret-handling"
         ],
         "ciJobs": [
-          "manifest-static",
-          "pre-commit",
-          "repo-quality-static"
+          "qa"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -394,9 +370,9 @@
         ".gitignore",
         ".env.example",
         "AGENTS.md",
-        "docs/00.agent-governance/rules/bootstrap.md",
+        ".agents/governance/agent-execution.md",
         "docs/99.templates/registry.json",
-        "docs/00.agent-governance/roles/supervisor.md",
+        ".agents/roles/supervisor.md",
         ".claude/agents/supervisor.md",
         ".codex/agents/supervisor.toml",
         ".github/workflows/ci.yml",
@@ -424,10 +400,7 @@
           "secret-handling"
         ],
         "ciJobs": [
-          "agent-governance-static",
-          "manifest-static",
-          "pre-commit",
-          "repo-quality-static"
+          "qa"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -458,10 +431,7 @@
           "secret-handling"
         ],
         "ciJobs": [
-          "agent-governance-static",
-          "manifest-static",
-          "pre-commit",
-          "repo-quality-static"
+          "qa"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -482,8 +452,7 @@
           "repository-quality"
         ],
         "ciJobs": [
-          "pre-commit",
-          "repo-quality-static"
+          "qa"
         ],
         "protectedLevel": "review",
         "unmatchedPaths": []
@@ -501,9 +470,7 @@
           "repository-quality"
         ],
         "ciJobs": [
-          "agent-governance-static",
-          "pre-commit",
-          "repo-quality-static"
+          "qa"
         ],
         "protectedLevel": "review",
         "unmatchedPaths": []
@@ -521,9 +488,7 @@
           "repository-quality"
         ],
         "ciJobs": [
-          "manifest-static",
-          "pre-commit",
-          "repo-quality-static"
+          "qa"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -533,7 +498,7 @@
       "name": "hook-agent",
       "lane": "affected",
       "paths": [
-        "docs/00.agent-governance/roles/network-reviewer.md"
+        ".agents/roles/network-reviewer.md"
       ],
       "expected": {
         "validators": [
@@ -545,9 +510,7 @@
           "repository-quality"
         ],
         "ciJobs": [
-          "agent-governance-static",
-          "pre-commit",
-          "repo-quality-static"
+          "qa"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -582,9 +545,7 @@
           "repository-quality"
         ],
         "ciJobs": [
-          "agent-governance-static",
-          "pre-commit",
-          "repo-quality-static"
+          "qa"
         ],
         "protectedLevel": "protected",
         "unmatchedPaths": []
@@ -599,16 +560,14 @@
       "paths": [
         "docs/98.archive/completed/03.specs/0031-affected-surface-agent-qa/spec.md",
         "_workspace/README.md",
-        "docs/00.agent-governance/roles/supervisor.md",
+        ".agents/roles/supervisor.md",
         "docs/99.templates/registry.json",
         ".github/workflows/ci.yml"
       ],
       "expectedJobs": [
-        "agent-governance-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
-      "expectedGithubOutput": "agent_governance=true\nmanifests=false\nprecommit=true\nrepo_quality=true"
+      "expectedGithubOutput": "qa=true"
     },
     {
       "name": "pull-request-base-head-document-surfaces",
@@ -617,16 +576,14 @@
       "paths": [
         "docs/98.archive/completed/03.specs/0031-affected-surface-agent-qa/spec.md",
         "_workspace/README.md",
-        "docs/00.agent-governance/roles/supervisor.md",
+        ".agents/roles/supervisor.md",
         "docs/99.templates/registry.json",
         ".github/workflows/ci.yml"
       ],
       "expectedJobs": [
-        "agent-governance-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
-      "expectedGithubOutput": "agent_governance=true\nmanifests=false\nprecommit=true\nrepo_quality=true"
+      "expectedGithubOutput": "qa=true"
     },
     {
       "name": "push-initial-head-tree-all-surfaces",
@@ -640,17 +597,14 @@
         "infrastructure/tests/verify-contracts-static.sh",
         "secrets/README.md",
         "traefik/traefik.yaml",
-        "docs/00.agent-governance/roles/supervisor.md",
+        ".agents/roles/supervisor.md",
         "docs/99.templates/registry.json",
         ".github/workflows/ci.yml"
       ],
       "expectedJobs": [
-        "agent-governance-static",
-        "manifest-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
-      "expectedGithubOutput": "agent_governance=true\nmanifests=true\nprecommit=true\nrepo_quality=true"
+      "expectedGithubOutput": "qa=true"
     },
     {
       "name": "pull-request-base-head-protected-surfaces",
@@ -664,11 +618,9 @@
         "traefik/traefik.yaml"
       ],
       "expectedJobs": [
-        "manifest-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
-      "expectedGithubOutput": "agent_governance=false\nmanifests=true\nprecommit=true\nrepo_quality=true"
+      "expectedGithubOutput": "qa=true"
     },
     {
       "name": "pull-request-rename-protected-to-document",
@@ -679,12 +631,9 @@
         "docs/03.specs/999-rename-probe/spec.md"
       ],
       "expectedJobs": [
-        "agent-governance-static",
-        "manifest-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
-      "expectedGithubOutput": "agent_governance=true\nmanifests=true\nprecommit=true\nrepo_quality=true"
+      "expectedGithubOutput": "qa=true"
     },
     {
       "name": "pull-request-agent-governance-broad-surfaces",
@@ -702,12 +651,9 @@
         "tests/test_validate_agent_governance_ci.py"
       ],
       "expectedJobs": [
-        "agent-governance-static",
-        "manifest-static",
-        "pre-commit",
-        "repo-quality-static"
+        "qa"
       ],
-      "expectedGithubOutput": "agent_governance=true\nmanifests=true\nprecommit=true\nrepo_quality=true"
+      "expectedGithubOutput": "qa=true"
     }
   ],
   "rejectionCases": [
@@ -1225,9 +1171,12 @@
     {
       "name": "duplicate-ci-output",
       "mutation": {
-        "kind": "replace-ci-output",
-        "ciJobId": "manifest-static",
-        "output": "precommit"
+        "kind": "append-ci-job",
+        "job": {
+          "id": "duplicate-output",
+          "output": "qa",
+          "evidenceLane": "ci"
+        }
       },
       "paths": [
         "README.md"
@@ -1235,11 +1184,11 @@
       "expectedError": "SURFACE-CI-OUTPUT"
     },
     {
-      "name": "agent-governance-output-drift",
+      "name": "qa-output-drift",
       "mutation": {
         "kind": "replace-ci-output",
-        "ciJobId": "agent-governance-static",
-        "output": "agent_static"
+        "ciJobId": "qa",
+        "output": "qa_drift"
       },
       "paths": [
         "README.md"
@@ -1247,64 +1196,64 @@
       "expectedError": "SURFACE-CI-JOB"
     },
     {
-      "name": "remove-agent-governance-root-config",
+      "name": "remove-qa-root-config",
       "mutation": {
         "kind": "remove-ci-job-reference",
         "surfaceId": "root-config",
-        "ciJobId": "agent-governance-static"
+        "ciJobId": "qa"
       },
       "paths": [
         ".pre-commit-config.yaml"
       ],
-      "expectedError": "SURFACE-AGENT-GOVERNANCE-CI"
+      "expectedError": "SURFACE-SCHEMA"
     },
     {
-      "name": "remove-agent-governance-template-documents",
+      "name": "remove-qa-template-documents",
       "mutation": {
         "kind": "remove-ci-job-reference",
         "surfaceId": "template-documents",
-        "ciJobId": "agent-governance-static"
+        "ciJobId": "qa"
       },
       "paths": [
         "docs/99.templates/registry.json"
       ],
-      "expectedError": "SURFACE-AGENT-GOVERNANCE-CI"
+      "expectedError": "SURFACE-SCHEMA"
     },
     {
-      "name": "remove-agent-governance-authored-documents",
+      "name": "remove-qa-authored-documents",
       "mutation": {
         "kind": "remove-ci-job-reference",
         "surfaceId": "authored-documents",
-        "ciJobId": "agent-governance-static"
+        "ciJobId": "qa"
       },
       "paths": [
         "docs/98.archive/completed/03.specs/0045-agent-governance-ci-qa-cutover/spec.md"
       ],
-      "expectedError": "SURFACE-AGENT-GOVERNANCE-CI"
+      "expectedError": "SURFACE-SCHEMA"
     },
     {
-      "name": "remove-agent-governance-scripts",
+      "name": "remove-qa-scripts",
       "mutation": {
         "kind": "remove-ci-job-reference",
         "surfaceId": "scripts",
-        "ciJobId": "agent-governance-static"
+        "ciJobId": "qa"
       },
       "paths": [
         "scripts/validate-affected-surfaces.py"
       ],
-      "expectedError": "SURFACE-AGENT-GOVERNANCE-CI"
+      "expectedError": "SURFACE-SCHEMA"
     },
     {
-      "name": "remove-agent-governance-tests",
+      "name": "remove-qa-tests",
       "mutation": {
         "kind": "remove-ci-job-reference",
         "surfaceId": "tests",
-        "ciJobId": "agent-governance-static"
+        "ciJobId": "qa"
       },
       "paths": [
         "tests/test_validate_ci_python_contract.py"
       ],
-      "expectedError": "SURFACE-AGENT-GOVERNANCE-CI"
+      "expectedError": "SURFACE-SCHEMA"
     }
   ]
 }

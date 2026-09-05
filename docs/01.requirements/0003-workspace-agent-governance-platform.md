@@ -14,8 +14,8 @@ artifact_id: "REQ-0003"
 ## Overview
 
 이 문서는 Agent 실행과 문서 거버넌스의 현재 사용자 요구를 소유한다. 역할·skill의
-machine truth는 [Stage 00 역할 registry](../00.agent-governance/roles/registry.json),
-사람용 실행 규칙은 [Stage 00](../00.agent-governance/README.md), 문서 형식은
+machine truth는 [공통 역할 registry](../../.agents/roles/registry.json),
+사람용 실행 규칙은 [Common governance](../../.agents/README.md), 문서 형식은
 [Stage 99](../99.templates/README.md)가 소유한다. 현재 거버넌스·공통 QA 구현은
 [ADR-0034](../02.architecture/decisions/0034-stage-00-governance-and-unified-quality-gates.md)와
 [SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md)가,
@@ -122,7 +122,7 @@ Current role/skill projection, 문서 route·identity·lifecycle, consumer owner
 - Task와 Git이 작업·검증·인계를 소유한다. 별도 자동 checkpoint 파일을 필수로 만들거나
   credential 또는 full transcript를 저장하지 않는다.
 - ADR-0019와 ADR-0013은 predecessor 실행과 external-lane limitation을
-  보존하는 superseded historical decisions다. ADR-0034와 SPEC-0072가 현재 거버넌스·QA 전환을 소유한다.
+  보존하는 superseded historical decisions다. ADR-0035와 SPEC-0072가 현재 거버넌스 위치를, ADR-0034가 QA·CD 경계를 소유한다.
 
 ### Agent execution and approval requirements
 
@@ -184,9 +184,9 @@ Current governance and QA implementation is owned by
 | REQ-0003-FR-0008 | Registry-admitted surface가 공통 semantic과 분리된 native claim을 가진다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0009 | Schema/model/effort/MCP 및 admitted provider의 독립 canary record가 검증된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-FR-0010 | Machine harness contract/schema가 모든 역할과 adapter를 검증한다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-FR-0011 | Bounded runner의 timeout·출력·자식 정리와 no-progress handoff는 Task 증거로 검증한다. | [ADR-0034](../02.architecture/decisions/0034-stage-00-governance-and-unified-quality-gates.md), [SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
+| REQ-0003-FR-0011 | Bounded runner의 timeout·출력·자식 정리와 no-progress handoff는 Task 증거로 검증한다. | [SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
 | REQ-0003-NFR-0001 | Registry-derived role/adapter parity 및 eval/model fitness가 검증된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
-| REQ-0003-NFR-0002 | Quick, staged index, final-tree 및 CI 공통 QA는 입력 경계와 실패 전파를 구분한다. | [ADR-0034](../02.architecture/decisions/0034-stage-00-governance-and-unified-quality-gates.md), [SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
+| REQ-0003-NFR-0002 | Quick, staged index, final-tree 및 CI 공통 QA는 입력 경계와 실패 전파를 구분한다. | [SPEC-0072](../03.specs/0072-agent-governance-and-quality-gate-consolidation/spec.md) |
 | REQ-0003-IF-0001 | Legacy와 orphan current-owner가 active surface에 남지 않는다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | REQ-0003-IF-0002 | 외부 role idea가 local gap과 eval을 통과해야 admission된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |
 | N/A — Acceptance criterion 01 remains acceptance-only | Stage 00 owner graph가 모순 없이 연결된다. | [AD 0006](../02.architecture/descriptions/0006-workspace-agent-governance-platform.md) |

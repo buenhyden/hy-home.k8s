@@ -7,11 +7,11 @@ owner: "{{OWNER}}"
 updated: "{{YYYY_MM_DD}}"
 ---
 
-# [Skill Name]
+# [Workflow Name]
 
 ## Overview
 
-<!-- Author prompt: name the repeatable procedure, when it applies, and the outcome it produces. -->
+<!-- Author prompt: name the flat governance workflow, when it applies, and the outcome it produces; native SKILL.md packages use their separate metadata profile. -->
 
 ## Authority Boundary
 

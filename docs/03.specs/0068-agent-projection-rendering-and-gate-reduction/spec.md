@@ -14,7 +14,7 @@ artifact_id: "SPEC-0068"
 ## Overview
 
 **Superseded proposal (2026-09-05).** [SPEC-0072](../0072-agent-governance-and-quality-gate-consolidation/spec.md)
-owns the current implementation and acceptance criteria. The proposal to retain `.agents/` and add a projection renderer is replaced by Stage 00 authority and explicit native references.
+owns the current implementation and acceptance criteria. The proposed projection renderer is superseded by the common `.agents/` authority and explicit native references defined by SPEC-0072 and ADR-0035.
 The remaining text records the earlier proposal, not current instructions or
 proof that it was implemented. Original bytes are recoverable from commit
 `bb73116b7b09c4f257fc81baa12cfa8359495fc0` at this same path.
@@ -147,7 +147,7 @@ about tracked configuration bytes and nothing more.
 
 ### Renderer
 
-`scripts/render-agent-projections.py` reads the registry and the Stage 00
+`render-agent-projections.py` (unimplemented proposal) reads the registry and the Stage 00
 responsibility bodies and emits both provider projections. It runs in two modes:
 `--write` updates the tree, and `--check` compares the render against the tree
 and exits non-zero on any difference. The check mode is what the gate invokes,
@@ -182,7 +182,7 @@ point-in-time provider evidence in Stage 90 Data, so a Stage 00 contract is the
 wrong owner regardless of staleness. Git history is the recovery path.
 
 `validate-agent-harness-contract.py` and `validate-agent-harness-semantics.py`
-merge into `scripts/validate-agent-registry-projection.py`, which covers the
+were proposed to merge into the unimplemented `validate-agent-registry-projection.py`, covering the
 three permanent responsibilities ADR-0030 names: registry and schema validity,
 provider projection conformance, and semantic and permission integrity. Render
 parity is one of its assertions rather than a separate comparison of three
@@ -225,7 +225,7 @@ under ADR-0030's consumer-zero-plus-recovery rule.
 
 ## Interfaces & Data Structures
 
-`scripts/render-agent-projections.py`:
+`render-agent-projections.py` (unimplemented proposal):
 
 | Invocation | Behavior | Exit |
 | --- | --- | --- |
@@ -236,7 +236,7 @@ The renderer emits a stable byte sequence: keys in the registry-declared order,
 LF line endings, one trailing newline, and TOML string values escaped for the
 Codex `developer_instructions` and `description` fields.
 
-`scripts/validate-agent-registry-projection.py --root . [--mode strict]` reports
+The unimplemented `validate-agent-registry-projection.py` proposal reports
 one line per assertion in the repository's existing PASS/FAIL vocabulary and
 exits non-zero on any FAIL. Its diagnostic codes are `REGISTRY-SCHEMA-INVALID`,
 `REGISTRY-TIER-UNKNOWN`, `REGISTRY-PROVIDER-UNKNOWN`, `PROJECTION-MISSING`,
@@ -291,9 +291,11 @@ retiring a gate would leave an assertion in this Spec's contracts unproven.
 
 ## Verification Commands
 
+The proposed renderer and projection validator were never implemented; their
+filenames above describe the superseded design. The remaining command list is
+historical. Current commands belong to SPEC-0072 and the validation registry.
+
 ```bash
-python3 scripts/render-agent-projections.py --root . --check
-python3 scripts/validate-agent-registry-projection.py --root . --mode strict
 python3 scripts/validate-agent-governance-ci.py --root .
 python3 scripts/validate-agent-legacy-cutover.py --root .
 python3 scripts/validate-agent-loop-lifecycle.py --root .
@@ -348,8 +350,8 @@ model resolution, authentication, or execution by a provider runtime.
 
 - [Current Spec Index](../README.md#current-spec-index)
 - [ADR-0030 — authority-first SDLC and agent governance convergence](../../02.architecture/decisions/0030-authority-first-sdlc-and-agent-governance-convergence.md)
-- [Agent Registry](../../../.agents/registry.json)
-- [Model Selection Policy](../../00.agent-governance/policies/model-selection.md)
-- [Claude Provider](../../00.agent-governance/providers/claude.md)
-- [Codex Provider](../../00.agent-governance/providers/codex.md)
-- [Quality Policy](../../00.agent-governance/policies/quality.md)
+- [Agent Registry](../../../.agents/roles/registry.json)
+- [Model Selection Policy](../../../.agents/governance/model-selection.md)
+- [Claude Provider](../../../.claude/provider.md)
+- [Codex Provider](../../../.codex/provider.md)
+- [Quality Policy](../../../.agents/governance/quality.md)

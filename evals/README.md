@@ -79,7 +79,7 @@ Agent 품질도 주장하지 않는다.
 ## Related Documents
 
 - [Agent Registry](../.agents/README.md)
-- [Roles](../docs/00.agent-governance/roles/README.md)
-- [Quality Policy](../docs/00.agent-governance/policies/quality.md)
-- [Model Selection Policy](../docs/00.agent-governance/policies/model-selection.md)
+- [Roles](../.agents/roles/README.md)
+- [Quality Policy](../.agents/governance/quality.md)
+- [Model Selection Policy](../.agents/governance/model-selection.md)
 - [Tests](../tests/README.md)

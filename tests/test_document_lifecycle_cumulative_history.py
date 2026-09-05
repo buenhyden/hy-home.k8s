@@ -35,7 +35,7 @@ from document_lifecycle import LifecycleDiagnostic  # noqa: E402
 
 
 class CumulativeLifecycleHistoryTest(unittest.TestCase):
-    path = "docs/00.agent-governance/cumulative-history.md"
+    path = ".agents/governance/cumulative-history.md"
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -68,6 +68,14 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         raw_registry["profiles"] = [
             profile for profile in raw_registry["profiles"] if profile["id"] in selected
         ]
+        # These synthetic lifecycle documents exercise transitions, not the
+        # production contract owner's closed path inventory.
+        for profile in raw_registry["profiles"]:
+            if profile["id"] == "governance/contract":
+                profile["path_pattern"] = (
+                    r"^\.agents/governance/(?:cumulative-history|"
+                    r"cumulative-history-second|source|other|repeated)\.md$"
+                )
         target_registry = cls.seed_root / registry_path
         target_registry.parent.mkdir(parents=True)
         target_registry.write_text(json.dumps(raw_registry))
@@ -288,7 +296,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self.assertIn("LIFECYCLE-CREATE", output)
 
         self.git.run("reset", "--hard", self.base)
-        source = "docs/00.agent-governance/source.md"
+        source = ".agents/governance/source.md"
         self.git.commit(source, self.document("draft"))
         self.git.run("mv", source, self.path)
         self.git.run("commit", "--quiet", "-m", "rename")
@@ -303,7 +311,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self.commit("draft")
         side = self.oid("HEAD")
         self.git.run("checkout", "--quiet", self.primary_branch)
-        self.git.commit("docs/00.agent-governance/other.md", self.document("draft"))
+        self.git.commit(".agents/governance/other.md", self.document("draft"))
         self.git.run("merge", "--no-ff", "--no-edit", "side")
         merged = self.commit("active")
         self.assertFalse(self.proved(self.base, merged))
@@ -343,7 +351,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self.assertIn("LIFECYCLE-CREATE", output)
 
         self.git.run("reset", "--hard", self.base)
-        source = "docs/00.agent-governance/source.md"
+        source = ".agents/governance/source.md"
         source_body = "\n".join(f"source-{index}" for index in range(100))
         target_body = "\n".join(
             f"source-{index}" if index < 40 else f"target-{index}"
@@ -432,7 +440,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         self.assertIn("LIFECYCLE-CREATE", output)
 
     def test_aggregate_candidate_budget_fails_closed_before_proof_work(self) -> None:
-        second = "docs/00.agent-governance/cumulative-history-second.md"
+        second = ".agents/governance/cumulative-history-second.md"
         self.commit_path(self.path, "draft")
         self.commit_path(second, "draft")
         self.commit_path(self.path, "active")
@@ -553,7 +561,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
 
         repeated = {
             PurePosixPath(self.path): blobs[PurePosixPath(self.path)],
-            PurePosixPath("docs/00.agent-governance/repeated.md"): blobs[
+            PurePosixPath(".agents/governance/repeated.md"): blobs[
                 PurePosixPath(self.path)
             ],
         }

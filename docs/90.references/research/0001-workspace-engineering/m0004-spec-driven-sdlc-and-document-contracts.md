@@ -816,4 +816,4 @@ lifecycle claim is refreshed here. New sources are `SRC-WERPC-139` and
 - [LLM-WIKI routing](m0006-llm-wiki-and-knowledge-routing.md)
 - [Source coverage and migration ledger](m0012-source-coverage.md)
 - [Document profiles](../../../99.templates/registry.json)
-- [Document Authoring Policy](../../../00.agent-governance/policies/document-authoring.md)
+- [Document Authoring Policy](../../../../.agents/governance/document-authoring.md)

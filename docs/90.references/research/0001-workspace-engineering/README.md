@@ -30,8 +30,10 @@ not a policy, runtime, provider, or deployment control surface.
   base value first and then its bounded qualifier.
 - **Path shorthand**: bare `rules/`, `scopes/`, `providers/`, `contracts/`,
   `memory/`, `model-policy.md`, and `harness-catalog.md` references in these
-  reports resolve under `docs/00.agent-governance/`; they are prose shorthand,
-  not relative links from this pack directory.
+  reports refer to the historical `docs/00.agent-governance/` tree at each
+  observation date. They are historical prose, never current load instructions.
+  Current shared authority is [the common hub](../../../../.agents/README.md);
+  [Archive](../../../98.archive/README.md) owns the Git-backed successor graph.
 - **Correction record**: a 2026-08-10 coverage re-verification corrected the
   Claude gateway-import, common-instruction-topology, and LLM-WIKI freshness
   statements, and resolved a source-date self-contradiction in the CI/CD and QA

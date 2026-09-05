@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Validate the terminal provider-neutral agent registry.
 
-Machine authority lives only in ``docs/00.agent-governance/roles/registry.json`` and its schema.
+Machine authority lives only in ``.agents/roles/registry.json`` and its schema.
 """
 
 from __future__ import annotations
@@ -13,6 +13,7 @@ import re
 import stat
 import sys
 import tomllib
+from contextlib import nullcontext
 
 import yaml
 from pathlib import Path, PurePosixPath
@@ -21,13 +22,11 @@ from typing import Any, NoReturn, Sequence
 from json_schema_validation import SchemaEvaluationError, schema_errors
 
 
-REGISTRY_PATH = PurePosixPath("docs/00.agent-governance/roles/registry.json")
-REGISTRY_SCHEMA_PATH = PurePosixPath(
-    "docs/00.agent-governance/roles/registry.schema.json"
-)
+REGISTRY_PATH = PurePosixPath(".agents/roles/registry.json")
+REGISTRY_SCHEMA_PATH = PurePosixPath(".agents/roles/registry.schema.json")
 REGISTRY_PROVIDER_IDS = ("claude", "codex")
 REGISTRY_PROJECTION_ROOTS = {
-    "neutral": PurePosixPath("docs/00.agent-governance/roles"),
+    "neutral": PurePosixPath(".agents/roles"),
     "claude": PurePosixPath(".claude/agents"),
     "codex": PurePosixPath(".codex/agents"),
 }
@@ -603,27 +602,60 @@ def _frontmatter(text: str) -> tuple[dict[str, Any], str]:
     return metadata, body
 
 
+def _node_exists(root: Path, relative: str) -> bool:
+    """Inspect a retired node without following any parent or leaf link."""
+    descriptors: list[int] = []
+    try:
+        flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
+        descriptor = os.open(root, flags)
+        descriptors.append(descriptor)
+        parts = PurePosixPath(relative).parts
+        for part in parts[:-1]:
+            descriptor = os.open(part, flags, dir_fd=descriptor)
+            descriptors.append(descriptor)
+        os.stat(parts[-1], dir_fd=descriptor, follow_symlinks=False)
+        return True
+    except FileNotFoundError:
+        return False
+    except OSError:
+        fail(
+            "AGENT-GOVERNANCE-RETIRED",
+            "retired owner parent cannot be inspected safely",
+        )
+    finally:
+        for descriptor in reversed(descriptors):
+            os.close(descriptor)
+
+
 def validate_absent_surfaces(root: Path) -> None:
     root = _strict_root(root)
     for path in (
-        ".agents",
+        "docs/00.agent-governance",
+        ".agents/memory",
+        ".agents/rules",
+        ".agents/agents",
+        ".agents/registry.json",
+        ".agents/registry.schema.json",
+        ".agents/hooks",
+        ".agents/providers",
         ".codex/skills",
         ".codex/hooks",
         ".codex/hooks.json",
         ".gemini",
         "GEMINI.md",
     ):
-        if os.path.lexists(root / path):
+        if _node_exists(root, path):
             fail("AGENT-GOVERNANCE-RETIRED", "retired surface was recreated")
 
 
 def validate_current_sources(root: Path) -> None:
-    """Current common guidance cannot import the retired control-plane root.
+    """Current guidance cannot import retired common owners.
 
     Historical Spec/Task/archive records and negative tests are deliberately
     outside this scan; their evidence belongs to the historical consumer owner.
     """
-    governance = root / "docs/00.agent-governance"
+    paths = [f".{provider}/provider.md" for provider in REGISTRY_PROVIDER_IDS]
+    governance = root / ".agents"
     if governance.is_dir():
         for parent, directories, files in os.walk(governance, followlinks=False):
             for name in directories:
@@ -632,27 +664,138 @@ def validate_current_sources(root: Path) -> None:
                         "AGENT-GOVERNANCE-CONSUMER",
                         "shared owner has a symlink directory",
                     )
-            for name in files:
-                if not name.endswith((".md", ".json", ".sh")):
-                    continue
-                path = (Path(parent) / name).relative_to(root).as_posix()
-                text = _read_text(root, path, "AGENT-GOVERNANCE-CONSUMER")
-                if ".agents/" in text:
-                    fail(
-                        "AGENT-GOVERNANCE-CONSUMER",
-                        "current common guidance references retired root",
-                    )
+            paths.extend(
+                (Path(parent) / name).relative_to(root).as_posix()
+                for name in files
+                if name.endswith((".md", ".json", ".sh", ".yaml"))
+            )
+    for path in paths:
+        text = _read_text(root, path, "AGENT-GOVERNANCE-CONSUMER")
+        if any(
+            token in text
+            for token in (
+                "docs/00.agent-governance/",
+                ".agents/registry.json",
+                ".agents/registry.schema.json",
+                ".agents/agents/",
+                ".agents/rules/",
+                ".agents/memory/",
+            )
+        ):
+            fail(
+                "AGENT-GOVERNANCE-CONSUMER",
+                "current guidance references a retired owner",
+            )
+
+
+def _validate_directory_entries(
+    root: Path,
+    relative: str,
+    expected: dict[str, int],
+    *,
+    code: str,
+    symlinks: dict[str, str] | None = None,
+) -> None:
+    """Check one closed directory without following a parent or child link."""
+    strict_root = _strict_root(root, code=code)
+    normalized = _normalized_relative(relative, code=code)
+    descriptors: list[int] = []
+    try:
+        flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
+        descriptor = os.open(strict_root, flags)
+        descriptors.append(descriptor)
+        for part in normalized.parts:
+            descriptor = os.open(part, flags, dir_fd=descriptor)
+            descriptors.append(descriptor)
+        observed: set[str] = set()
+        with os.scandir(descriptor) as entries:
+            for entry in entries:
+                if entry.name not in expected:
+                    fail(code, "unregistered native package entry")
+                mode = entry.stat(follow_symlinks=False).st_mode
+                if stat.S_IFMT(mode) != expected[entry.name]:
+                    fail(code, "native package entry has an invalid type")
+                if stat.S_ISLNK(mode) and (
+                    symlinks is None
+                    or os.readlink(entry.name, dir_fd=descriptor)
+                    != symlinks.get(entry.name)
+                ):
+                    fail(code, "native package link differs")
+                observed.add(entry.name)
+        if observed != set(expected):
+            fail(code, "native package entry set differs")
+    except OSError:
+        fail(code, "native package directory is unavailable")
+    finally:
+        for descriptor in reversed(descriptors):
+            os.close(descriptor)
+
+
+def _validate_skill_packages(root: Path, skills: dict[str, str]) -> None:
+    code = "AGENT-REGISTRY-SKILL"
+    _validate_directory_entries(
+        root, ".agents/skills", {name: stat.S_IFDIR for name in skills}, code=code
+    )
+    for skill_id in skills:
+        package = f".agents/skills/{skill_id}"
+        _validate_directory_entries(
+            root, package, {"SKILL.md": stat.S_IFREG, "agents": stat.S_IFDIR}, code=code
+        )
+        _validate_directory_entries(
+            root, f"{package}/agents", {"openai.yaml": stat.S_IFREG}, code=code
+        )
+        text = _read_text(root, f"{package}/agents/openai.yaml", code)
+        try:
+            metadata = yaml.load(text, Loader=UniqueMetadataLoader)
+        except (ValueError, yaml.YAMLError):
+            fail(code, "invalid Codex skill policy")
+        if (
+            not isinstance(metadata, dict)
+            or set(metadata) != {"policy"}
+            or not isinstance(metadata["policy"], dict)
+            or set(metadata["policy"]) != {"allow_implicit_invocation"}
+            or metadata["policy"]["allow_implicit_invocation"] is not False
+            or text != "policy:\n  allow_implicit_invocation: false\n"
+        ):
+            fail(code, "Codex skill policy must permit explicit invocation only")
+    _validate_directory_entries(
+        root,
+        ".claude/skills",
+        {name: stat.S_IFLNK for name in skills},
+        code="AGENT-NATIVE-REFERENCE",
+        symlinks={name: f"../../.agents/skills/{name}" for name in skills},
+    )
 
 
 def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
     """Validate direct canonical reads and native configuration, never discovery."""
     skills = {skill["id"]: skill["path"] for skill in registry["skills"]}
+    _validate_directory_entries(
+        root,
+        ".agents",
+        {
+            "README.md": stat.S_IFREG,
+            "governance": stat.S_IFDIR,
+            "roles": stat.S_IFDIR,
+            "skills": stat.S_IFDIR,
+            "workflows": stat.S_IFDIR,
+        },
+        code="AGENT-GOVERNANCE-OWNER",
+    )
+    _validate_directory_entries(
+        root,
+        ".agents/workflows",
+        {"work-lifecycle.md": stat.S_IFREG, "delegated-development.md": stat.S_IFREG},
+        code="AGENT-GOVERNANCE-OWNER",
+    )
+    _validate_skill_packages(root, skills)
     for skill_id, path in skills.items():
-        if path != f"docs/00.agent-governance/skills/{skill_id}/SKILL.md":
+        if path != f".agents/skills/{skill_id}/SKILL.md":
             fail("AGENT-REGISTRY-SKILL", "skill identity differs from package path")
         metadata, body = _frontmatter(_read_text(root, path, "AGENT-REGISTRY-SKILL"))
         if (
-            set(metadata) != {"name", "description"}
+            set(metadata) != {"name", "description", "disable-model-invocation"}
+            or metadata.get("disable-model-invocation") is not True
             or metadata["name"] != skill_id
             or not isinstance(metadata["description"], str)
             or not metadata["description"].strip()
@@ -665,7 +808,7 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
         expected_refs = {
             canonical,
             REGISTRY_PATH.as_posix(),
-            "docs/00.agent-governance/skills/work-lifecycle.md",
+            ".agents/workflows/work-lifecycle.md",
             *(skills[skill] for skill in role["skill_refs"]),
         }
         for provider in REGISTRY_PROVIDER_IDS:
@@ -757,22 +900,16 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
                 fail("AGENT-NATIVE-REFERENCE", "canonical reads differ")
             for ref in refs:
                 _read_regular_file(root, ref, code="AGENT-NATIVE-REFERENCE")
-    link = root / ".claude/skills"
-    if (
-        not link.is_symlink()
-        or os.readlink(link) != "../docs/00.agent-governance/skills"
-    ):
-        fail("AGENT-NATIVE-REFERENCE", "Claude skill adapter differs")
     for provider in REGISTRY_PROVIDER_IDS:
         path = f".{provider}/{provider.upper()}.md"
         baseline = _read_text(root, path, "AGENT-NATIVE-REFERENCE")
         expected = {
-            f"docs/00.agent-governance/providers/{provider}.md",
+            f".{provider}/provider.md",
             REGISTRY_PATH.as_posix(),
-            "docs/00.agent-governance/policies/agent-execution.md",
-            "docs/00.agent-governance/policies/approval-and-safety.md",
-            "docs/00.agent-governance/skills/work-lifecycle.md",
-            "docs/00.agent-governance/policies/quality.md",
+            ".agents/governance/agent-execution.md",
+            ".agents/governance/approval-and-safety.md",
+            ".agents/workflows/work-lifecycle.md",
+            ".agents/governance/quality.md",
             "RTK.md",
         }
         lines = baseline.strip().splitlines()
@@ -828,8 +965,8 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
         gateway = _read_text(root, provider["gateway"], "AGENT-NATIVE-REFERENCE")
         required = [
             REGISTRY_PATH.as_posix(),
-            "docs/00.agent-governance/skills/work-lifecycle.md",
-            f"docs/00.agent-governance/providers/{provider['id']}.md",
+            ".agents/workflows/work-lifecycle.md",
+            f".{provider['id']}/provider.md",
             f".{provider['id']}/{provider['id'].upper()}.md",
             "RTK.md",
         ]
@@ -845,8 +982,25 @@ def validate_native_assets(root: Path, registry: dict[str, Any]) -> None:
                 "AGENT-NATIVE-REFERENCE",
                 "root gateway must remain a thin current router",
             )
-        if ".agents/" in gateway:
+        if "docs/00.agent-governance/" in gateway:
             fail("AGENT-GOVERNANCE-CONSUMER", "gateway depends on retired root")
+        loader_refs = {
+            ".agents/workflows/work-lifecycle.md",
+            f".{provider['id']}/provider.md",
+            f".{provider['id']}/{provider['id'].upper()}.md",
+            "RTK.md",
+        }
+        if provider["id"] == "codex":
+            loads = re.findall(r"(?m)^Read `([^`]+)` before acting\.$", gateway)
+            if re.search(r"(?m)^@", gateway):
+                fail(
+                    "AGENT-NATIVE-REFERENCE",
+                    "Codex gateway must require explicit reads",
+                )
+        else:
+            loads = re.findall(r"(?m)^@([^\n]+)$", gateway)
+        if set(loads) != loader_refs or len(loads) != len(loader_refs):
+            fail("AGENT-NATIVE-REFERENCE", "gateway loader references differ")
 
 
 def _resolve_root(value: Path) -> Path:
@@ -861,18 +1015,33 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         root = _resolve_root(args.root)
-        counts = validate_registry(root)
-        validate_current_sources(root)
+        validate_absent_surfaces(root)
         import agent_governance_consumers
+        import qa
 
-        try:
-            agent_governance_consumers.validate_repository(root)
-        except agent_governance_consumers.ContractError:
-            fail(
-                "AGENT-GOVERNANCE-CONSUMER", "historical/current consumer proof failed"
-            )
+        # The consumer proof uses index membership and working-tree bytes.
+        # Reuse QA's isolated index for unstaged/new files; a clean QA checkout
+        # already has the exact inventory and needs no nested snapshot.
+        snapshot_required = bool(
+            qa.git(root, "diff", "--name-only", "-z")
+            or qa.git(root, "ls-files", "--others", "--exclude-standard", "-z")
+        )
+        context = (
+            qa.repository_snapshot(root) if snapshot_required else nullcontext(root)
+        )
+        with context as validation_root:
+            counts = validate_registry(validation_root)
+            validate_current_sources(validation_root)
+            try:
+                agent_governance_consumers.validate_repository(validation_root)
+            except agent_governance_consumers.ContractError:
+                fail(
+                    "AGENT-GOVERNANCE-CONSUMER",
+                    "historical/current consumer proof failed",
+                )
+        scope = "working-tree snapshot" if snapshot_required else "current indexed tree"
         print(
-            "[PASS] agent registry validation passed: "
+            f"[PASS] agent registry validation passed ({scope}): "
             + " ".join(
                 f"{key}={counts[key]}"
                 for key in (
@@ -889,7 +1058,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     except HarnessError as exc:
         print(f"ERR {exc.code} {exc.detail}", file=sys.stderr)
         return exc.exit_code
-    except (KeyError, TypeError, ValueError):
+    except (KeyError, TypeError, ValueError, OSError):
         print("ERR AGENT-REGISTRY-INPUT invalid input", file=sys.stderr)
         return 2
 

@@ -8,6 +8,8 @@ import re
 import unittest
 from pathlib import Path
 
+import yaml
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
@@ -87,6 +89,16 @@ def production_sources() -> tuple[Path, ...]:
 
 
 class ValidationToolingOwnershipTests(unittest.TestCase):
+    def test_native_shell_hooks_share_existing_shell_validation(self) -> None:
+        config = yaml.safe_load((ROOT / ".pre-commit-config.yaml").read_text())
+        hooks = {hook["id"]: hook for repo in config["repos"] for hook in repo["hooks"]}
+        for identifier in ("shellcheck", "shfmt"):
+            pattern = re.compile(hooks[identifier]["files"])
+            with self.subTest(hook=identifier):
+                self.assertIsNotNone(pattern.search(".claude/hooks/k8s-pre-edit.sh"))
+                self.assertIsNotNone(pattern.search("scripts/check-secret-handling.sh"))
+                self.assertIsNone(pattern.search(".claude/settings.local.json"))
+
     def test_production_clis_do_not_embed_self_test_modes(self) -> None:
         offenders = [
             path.relative_to(ROOT).as_posix()
@@ -320,12 +332,15 @@ class ValidationToolingOwnershipTests(unittest.TestCase):
             ],
         )
 
-    def test_pre_commit_has_one_aggregate_owner_without_duplicate_domain_hooks(
+    def test_full_qa_has_one_quality_gate_without_duplicate_pre_commit_hooks(
         self,
     ) -> None:
         pre_commit = (ROOT / ".pre-commit-config.yaml").read_text(encoding="utf-8")
-        self.assertEqual(pre_commit.count("id: strict-repository-quality"), 1)
+        registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
+        self.assertEqual(registry["profiles"]["full"].count("repository-quality"), 1)
+        self.assertEqual(registry["profiles"]["full"].count("pre-commit"), 1)
         for duplicate in (
+            "id: strict-repository-quality",
             "id: validate-agent-governance-ci",
             "id: validate-agent-legacy-cutover",
             "id: validate-affected-surfaces",

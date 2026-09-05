@@ -41,7 +41,7 @@ area/agent:
           - "AGENTS.md"
           - "CLAUDE.md"
           - "GEMINI.md"
-          - "docs/00.agent-governance/**"
+          - ".agents/**"
 
 area/github:
   - changed-files:

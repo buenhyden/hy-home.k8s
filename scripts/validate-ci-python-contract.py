@@ -1335,7 +1335,8 @@ def _validate_pre_commit_revisions(
 
     if local_count > 1:
         fail(
-            "CI-PRECOMMIT-REV", "pre-commit config must not duplicate the local repository"
+            "CI-PRECOMMIT-REV",
+            "pre-commit config must not duplicate the local repository",
         )
     if observed != EXPECTED_PRE_COMMIT_REVISIONS:
         fail(
@@ -1513,7 +1514,8 @@ def _validate_qa_execution(
     ]
     qa_commands = [command for command in commands if "scripts/qa.py" in command]
     if qa_commands != [QA_COMMAND] or any(
-        "pre-commit run" in command or "unittest discover" in command
+        "pre-commit run" in command
+        or "unittest discover" in command
         or "validate-repo-quality-gates.sh" in command
         for command in commands
     ):
@@ -1559,7 +1561,8 @@ def _validate_repository_history(
     job_steps: dict[str, list[dict[str, Any]]],
 ) -> None:
     checkout_steps = [
-        step for step in job_steps["qa"]
+        step
+        for step in job_steps["qa"]
         if isinstance(step.get("uses"), str)
         and step["uses"].startswith("actions/checkout@")
     ]
@@ -1568,7 +1571,10 @@ def _validate_repository_history(
         "persist-credentials": False,
         "fetch-depth": 0,
     }:
-        fail("CI-REPOSITORY-HISTORY", "qa checkout requires immutable event SHA, full history, and disabled credentials")
+        fail(
+            "CI-REPOSITORY-HISTORY",
+            "qa checkout requires immutable event SHA, full history, and disabled credentials",
+        )
 
 
 def validate_dependencies(root: Path) -> int:
@@ -1624,7 +1630,11 @@ def validate_dependencies(root: Path) -> int:
 def validate_workflow(workflow: dict[str, Any]) -> None:
     """Own CI topology; dependency grammar and QA gate selection have other owners."""
     events = workflow.get("on", workflow.get(True))
-    if not isinstance(events, dict) or set(events) != {"push", "pull_request", "workflow_dispatch"}:
+    if not isinstance(events, dict) or set(events) != {
+        "push",
+        "pull_request",
+        "workflow_dispatch",
+    }:
         fail("CI-TOPOLOGY", "CI requires push, pull_request, and manual entrypoints")
     for event in ("push", "pull_request"):
         if events[event] != {"branches": ["main"]}:
@@ -1639,7 +1649,10 @@ def validate_workflow(workflow: dict[str, Any]) -> None:
         fail("CI-TOPOLOGY", "QA cannot be conditionally skipped")
     if branch.get("if") != "github.event_name == 'pull_request'":
         fail("CI-TOPOLOGY", "branch policy applies only to pull requests")
-    if summary.get("if") != "always()" or summary.get("needs") != ["branch-policy", "qa"]:
+    if summary.get("if") != "always()" or summary.get("needs") != [
+        "branch-policy",
+        "qa",
+    ]:
         fail("CI-TOPOLOGY", "ci-summary must always inspect both predecessor results")
     for job in jobs.values():
         if job.get("permissions") or job.get("continue-on-error"):
@@ -1664,18 +1677,21 @@ def validate_workflow(workflow: dict[str, Any]) -> None:
     summary_text = _run_text(steps[0])
     for fragment in (
         'case "$EVENT_NAME:$BRANCH_POLICY_RESULT" in',
-        'pull_request:success)',
-        'push:skipped|workflow_dispatch:skipped)',
-        'branch_verdict=FAIL',
+        "pull_request:success)",
+        "push:skipped|workflow_dispatch:skipped)",
+        "branch_verdict=FAIL",
         'case "$QA_RESULT" in',
-        'qa_verdict=PASS',
-        'qa_verdict=FAIL',
+        "qa_verdict=PASS",
+        "qa_verdict=FAIL",
         'if [ "$failed" -ne 0 ]; then',
-        'exit 1',
-        'exit 0',
+        "exit 1",
+        "exit 0",
     ):
         if fragment not in summary_text:
-            fail("CI-TOPOLOGY", "summary must fail closed for missing, skipped, failed or cancelled QA")
+            fail(
+                "CI-TOPOLOGY",
+                "summary must fail closed for missing, skipped, failed or cancelled QA",
+            )
 
 
 def validate_repository(root: Path) -> int:

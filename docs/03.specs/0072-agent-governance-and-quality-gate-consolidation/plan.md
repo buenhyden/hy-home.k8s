@@ -1,130 +1,169 @@
 ---
 title: "Agent Governance and Quality Gate Consolidation Implementation Plan"
-version: "1.0.0"
+version: "2.0.1"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
-updated: "2026-09-04"
+updated: "2026-09-06"
 layer: "specs"
 artifact_id: "SPEC-0072-PLAN-0001"
 ---
 
 # Agent Governance and Quality Gate Consolidation Implementation Plan
 
-## Global Constraints
-
-- Work from `main` through an isolated `codex/` branch; never commit directly to `main`.
-- Keep common agent governance under `docs/00.agent-governance/`.
-- Remove `.agents/` without a compatibility directory or redirect.
-- Use one QA orchestration entrypoint locally and in GitHub Actions.
-- Reuse the existing validation registry as the sole command/limit owner; QA
-  profiles select existing gate IDs rather than copying argv or timeout fields.
-- Preserve bounded output, cancellation and descendant/pipe cleanup.
-- Keep this branch and worktree; push, PR creation and hosted dispatch remain unauthorized.
-- Review historical and in-progress content for current authority conflicts; preserve
-  historical facts and valid archive isolation, not obsolete current instructions.
-- Do not perform live provider, credential, cluster, deployment, release, or reconciliation actions.
-- Commit every independently reviewable logical unit separately.
-
 ## Overview
 
-This plan executes [SPEC-0072](spec.md) in four reviewable work packages: define
-terminal authority, migrate agent assets, replace QA/gate orchestration, and
-simplify GitHub Actions plus current guidance.
+Revise SPEC-0072 around the latest user-authorized common `.agents/` authority.
+Use Superpowers executing-plans and its review checkpoints. The original
+Stage 00 consolidation is baseline history, not the implementation target.
+The owning Task records execution evidence; this plan owns ordered work only.
 
 ## Context
 
-The current branch starts from main commit
-`bb73116b7b09c4f257fc81baa12cfa8359495fc0`. Existing governance is split
-between Stage 00 and `.agents/`; validation is routed through a large lane
-runner and several agent-specific contracts; GitHub Actions repeats dependency
-setup, validation, and unit discovery across jobs.
+The verified local and remote main baseline is
+`eb4fcfe3283115388d6eb1f31d56780b3e578f77`. The clean checkout was branched as
+`codex/common-agents-authority`; no user changes were staged or moved. Two
+existing stashes remain untouched. Main already contains QA consolidation.
+The old hub has 53 tracked files; an ignored Python cache is a separate local
+artifact. Provider local settings and notes are private excluded content.
+
+The authority-location request supersedes earlier instructions to remove
+`.agents/`. The subsequent user request authorizes local staging, commits and
+review of remaining work. Merge, push, PR, deployment, credentials, global
+configuration, paid provider calls and new trust grants remain unauthorized.
+Protected-path writes must use the normal scoped sandbox approval mechanism.
 
 ## Goals & In-Scope
 
-- Establish ADR-0034 and this Spec as the current change authority.
-- Move the shared registry, role bodies, and skill bodies to Stage 00.
-- Remove `.agents/`, stale provider evidence, unused checkpoint contracts,
-  edit-time QA hooks, and self-only validators/fixtures.
-- Add a tested QA runner and compact gate registry.
-- Make local `full` and GitHub Actions `ci` execute the same blocking gates.
-- Update current SDLC, provider, QA, CI/CD, and template guidance.
+- Dispose of every old-hub source with purpose, incoming/outgoing references,
+  destination, retained meaning, provenance and verification in the Task.
+- Migrate policies and normative SDLC to `.agents/governance/`, neutral roles
+  and registry/schema to `.agents/roles/`, callable packages to
+  `.agents/skills/`, and two ordinary procedures to `.agents/workflows/`.
+- Rehome provider differences to `.claude/provider.md` and `.codex/provider.md`.
+  Preserve native role paths and update explicit reads and Claude skill links.
+- Include the hidden authority in document, language, formatting, ownership,
+  secret and QA scope. Reject the old root and invalid new role/skill graphs.
+- Preserve GitOps boundaries, bounded QA, immutable historical source evidence,
+  memory retirement and all current permission restrictions.
 
 ## Non-Goals & Out-of-Scope
 
-- Rewriting closed Specs, archived migration evidence, or dated research merely
-  because they mention retired paths.
-- Changing Kubernetes manifests or infrastructure behavior.
-- Proving provider-runtime loading or live Argo CD reconciliation.
-- Deleting unrelated historical branches or altering repository protection.
+No cluster/manifests/Helm/Argo CD/Vault changes, global installation, model
+upgrades, native hooks activation, general generator, duplicate registry,
+new memory directory or remote integration. Native/provider and
+hosted checks requiring absent authority remain NOT_RUN with reasons.
 
 ## Work Breakdown
 
-| ID | Work package | Depends on | Entry gate | Exit evidence |
-| --- | --- | --- | --- | --- |
-| WP-001 | Record ADR, Spec, Plan, and Task authority | None | Main baseline identified | Logical documentation commit |
-| WP-002 | Migrate shared roles/skills/registry to Stage 00 and remove `.agents/` | WP-001 | ADR-0034 accepted | Governance validator tests and reference sweep |
-| WP-003 | Replace legacy gate, hook, fixture, and lane orchestration with `scripts/qa.py` | WP-002 | Stage 00 registry resolves | QA runner red/green tests and local profile execution |
-| WP-004 | Simplify GitHub Actions, pre-commit, current docs, SDLC indexes, and CI/CD guidance | WP-003 | QA profiles stable | actionlint/zizmor, full QA, hosted `ci-summary` |
+### WP-001: Reconcile design and protect source evidence
 
-### Approved Execution Refinements (2026-09-05)
+- [ ] Read every source; attach the complete per-file disposition and folder
+  decision tables to the existing Task, including ignored cache disposition.
+- [ ] Update Spec criteria and add a narrowly superseding ADR for the authority
+  location and skill discovery decision. Preserve ADR-0034 QA/CD decisions.
+- [ ] Obtain a separate read-only review of this plan and source disposition;
+  resolve missing consumers, history handling and unsafe skill instructions.
 
-- [ ] WP-001: repair Plan/Task criterion links, Stage 03/Decision navigation
-  and Requirement reciprocity; record the PR 56 implementation gap and current
-  baseline in the existing Task.
-- [ ] WP-002: move registry/schema and canonical role bodies into Stage 00
-  roles, native skill packages into Stage 00 skills, then switch adapters,
-  profiles, validators and fixtures before removing the old tree. Use explicit
-  Codex reads; do not claim automatic discovery from a provider skill link.
-- [ ] WP-002: use direct canonical read instructions in native role files.
-  Keep provider model/effort/tool metadata native. No projection framework
-  is needed when native bodies only point to shared owners.
-- [ ] WP-003: make QA select existing validator IDs, preserve bounded execution,
-  provide useful redacted failure summaries, preserve the invoking Python
-  environment and validate a separate staged index snapshot.
-- [ ] WP-003: prove distinct negative cases for invalid profiles/registries,
-  duplicate gates, missing tools, timeout/output/cancellation/child cleanup,
-  input path changes and full/ci membership parity. Retire only proven
-  duplicate or consumer-zero gates and fixtures.
-- [ ] WP-004: reduce CI to branch policy, one QA job and fail-closed ci-summary;
-  use immutable event commits, check-only formatting and pinned dependencies.
-  Remove QA/pre-commit recursion and repeated unit discovery.
-- [ ] WP-004: audit templates, current/historical ownership and in-progress
-  packages; validate the final tree, record costs and local commits, retain
-  the worktree and leave unauthorized hosted execution DEFER.
+Read-only reviewer `migration_plan_review` confirmed all 53 source hashes and
+unique destinations. Its required corrections are part of WP-002/003: closed
+package/link/sidecar sets, explicit memory retirement, corrected unsafe skill
+steps, destination-first writes and sealed-record preservation. No external
+review approval or runtime success is inferred.
+
+### WP-002: Transition the authority and native consumers together
+
+- [ ] Add failing tests in `tests/test_agent_governance.py` for the new root,
+  old-root rejection including dangling links, role/skill references, duplicate
+  skill names, metadata, external symlinks and unchanged permission denial.
+- [ ] Move only mapped files after checking their baseline bytes. Update
+  `REGISTRY_PATH`, `REGISTRY_SCHEMA_PATH`, `REGISTRY_PROJECTION_ROOTS`, schema,
+  role references and provider adapters as one atomic transition.
+- [ ] Replace Codex `@` pseudo-imports with explicit reads. Claude imports
+  only shared instructions and Claude guidance, never the Codex entrypoint.
+  Expose Claude skills through individually validated relative links.
+- [ ] Preserve any existing SKILL IDs/status in string-valued `metadata` (none existed in the baseline packages); require native
+  name and description. Use explicit-only invocation metadata for skills
+  newly exposed by Codex and correct instructions that request secrets,
+  unapproved communications, persistent scratch state or unauthorized writes.
+- [ ] Preserve `.claude/settings.json` permissions and write-hook behavior;
+  update path roots only. No Codex hook/config directory is created.
+
+### WP-003: Transition document, QA and historical consumers
+
+- [ ] Change Stage 99 path profiles and `scripts/document_contracts.py` scope
+  together; keep English-only and native-format exceptions precise.
+- [ ] Update `scripts/validation/registry.json`, repository-quality path rules,
+  narrow pre-commit selectors, README/ownership/navigation and tests so hidden
+  governance participates in all corresponding existing gates.
+- [ ] Preserve historical source commit/blob/hash fields. Update current
+  replacement endpoints through the existing archive contract, not a second
+  ledger or fallback to the retired tree. Repair active historical executable
+  instructions with an explicit supersession note; do not alter past results.
+- [ ] Diagnose baseline full-QA failures at their owners: unavailable historical
+  replacement, workflow responsibility inventory, unittest package discovery
+  and required pre-commit executable resolution. Keep execution limits and
+  trusted executable resolution; missing prerequisites remain failures.
+
+### WP-004: Verify final bytes and record limits
+
+- [ ] Run focused tests after each changed contract; use temporary repositories
+  for denial/error/path tests without reverting user files.
+- [ ] Run `python3 scripts/validate-agent-governance.py --root .`, document and
+  link validators, then `python3 scripts/qa.py full` over final bytes.
+  Do not separately repeat the full suite or its pre-commit gate unchanged.
+- [ ] Verify old-root lstat absence, zero functional old consumers, all residual
+  historical/negative-test strings classified, exact permission parity, no
+  manifest changes, and preservation of unrelated index content. Re-run deterministic
+  synchronization only if an actual generator is introduced; none is planned.
+- [ ] Record syntax/contracts separately from native discovery/invocation,
+  permissions/hooks, hosted CI and live infrastructure. Keep branch/worktree.
+- [ ] Stage only the reviewed transition paths using a NUL-delimited manifest;
+  run `python3 scripts/qa.py staged`, repository pre-commit and commit-message
+  validation, inspect the cached diff, and commit with active hooks enabled.
+- [ ] Review WORK-004 next: inspect installed native discovery interfaces
+  without paid calls, authentication access or trust changes. Record actual
+  native evidence separately and retain hosted/runtime blockers that remain.
 
 ## Verification Plan
 
-WP-002 uses focused registry/path tests before moving production assets. WP-003
-adds failing tests for registry validation, profile parity, duplicate gates,
-timeouts, and child failure propagation before implementing the runner. WP-004
-validates YAML, workflow security, branch policy, local/CI profile parity, and
-then relies on the pull-request workflow for hosted evidence.
+The baseline direct governance command exits 1 at the retired-path rule because
+of the sandbox's empty `.agents/` directory. Baseline full QA exits 1 after
+219.932 seconds with six failing gates; full details belong to the Task.
 
-After implementation, run `quick` for changed working-tree paths and verify
-`--list`; run `full` once over the final tree. Tests assert that `ci` has the
-same blocking gate set. Do not repeat the identical full suite through `ci`
-or a second pre-commit invocation on unchanged bytes. Required index checks
-use an actual staged snapshot; hosted/provider/live evidence remains separate.
+Focused tests must first reject the unmodified old topology for the expected
+reason, then pass the migrated tree and continue rejecting permissions widened
+to broad shell access, external links, malformed metadata and old-root revival.
+
+`full` remains the final repository-static entrypoint; `ci` gate membership
+stays equal without a redundant local execution. Staged validation is now
+required for the user-authorized local commits; it reads the index snapshot.
+The current session loaded old gateways; re-reading cannot prove new-session
+native loading. No authenticated provider call is authorized.
 
 ## Risks & Mitigations
 
 | Risk | Mitigation |
 | --- | --- |
-| Current consumers still point to `.agents/` | Search current executable and active guidance surfaces; fail the governance test on any match |
-| Deleting validators removes a unique rule | Inventory each deleted gate, retain durable rules in Stage 00 or a focused replacement test |
-| Full QA becomes slower after consolidation | Run each gate once, keep `quick` focused, cache pre-commit in Actions |
-| Workflow change passes locally but fails hosted | Run workflow static checks locally; inspect existing logs; leave a new hosted run DEFER without separate authorization |
-| Historical records become invalid | Review current authority claims and archive isolation; preserve historical facts and recoverable Git provenance |
+| Protected `.agents/` write is denied | Request only mapped paths through normal approval; keep source until the transition can be completed |
+| Auto-discovery exposes dangerous steps | Explicit-only metadata plus role/user approval preconditions; never grant tools through skill metadata |
+| Historic evidence loses provenance | Keep source commits and hashes; distinguish current link endpoints from past observations |
+| QA omits hidden paths | Negative scope tests and shared registry/profile updates |
+| Migration interrupted | Byte-checked per-file mapping and no overwriting unknown files; no compatibility authority |
+| Rollback requested | Reverse only the reviewed mapped transition as a new change after checking later user edits and dependent commits; no blanket restore/reset or history rewrite |
 
 ## Completion Criteria
 
-- The branch has no `.agents/` tree and all current consumers resolve to Stage 00.
-- QA profiles validate and `full` equals `ci` in blocking gate membership.
-- Obsolete contracts, hooks, validators, tests, and fixtures have zero current consumers.
-- GitHub Actions invokes one QA path and `ci-summary` remains fail-closed.
-- Focused tests, full local QA, workflow static checks, and hosted PR checks have recorded outcomes.
-- Commits remain split by the four work packages.
+- `.agents/` is the single common authority and every one of the 53 source files
+  has an explicit disposition; the old root has no file, directory or link.
+- All active functional references resolve to current owners; residual source
+  evidence and denial-test mentions are classified instead of concealed.
+- Role IDs, permissions, models and handoffs retain their original meanings.
+- Native skill metadata and loader paths are valid; actual runtime levels are
+  reported only when observed, otherwise NOT_RUN with a reason.
+- Required focused and full static checks pass. A failure remains incomplete.
+- Only reviewed transition paths enter local commits; private local state and
+  existing stashes remain unchanged. No remote integration is performed.
 
 ## Traceability
 

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from contextlib import contextmanager
 import os
 import selectors
 import stat
@@ -19,8 +20,60 @@ class BoundedOutputError(ValueError):
     """A child process exceeded its declared output budget."""
 
 
-def read_bytes(path: Path, *, max_bytes: int) -> bytes:
-    """Read one non-symlink regular file without exceeding ``max_bytes``."""
+def stable_file_state(metadata: os.stat_result) -> tuple[int, ...]:
+    return (
+        metadata.st_dev,
+        metadata.st_ino,
+        metadata.st_mode,
+        metadata.st_size,
+        metadata.st_mtime_ns,
+        metadata.st_ctime_ns,
+    )
+
+
+@contextmanager
+def open_parent(path: Path, *, create: bool = False):
+    """Pin every absolute parent without following links; verify bindings on exit."""
+    path = Path(os.path.abspath(path))
+    flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
+    descriptors: list[int] = []
+    edges: list[tuple[int, str, int]] = []
+
+    def verify_edges() -> None:
+        for parent, name, child in edges:
+            entry = os.stat(name, dir_fd=parent, follow_symlinks=False)
+            opened = os.fstat(child)
+            if not stat.S_ISDIR(entry.st_mode) or (
+                entry.st_dev,
+                entry.st_ino,
+                entry.st_mode,
+            ) != (opened.st_dev, opened.st_ino, opened.st_mode):
+                raise BoundedInputError("input parent changed during access")
+
+    try:
+        descriptors.append(os.open(path.anchor, flags))
+        for name in path.parts[1:-1]:
+            parent = descriptors[-1]
+            if create:
+                try:
+                    os.mkdir(name, dir_fd=parent)
+                except FileExistsError:
+                    pass
+            child = os.open(name, flags, dir_fd=parent)
+            descriptors.append(child)
+            edges.append((parent, name, child))
+        verify_edges()
+        yield descriptors[-1], path.name
+        verify_edges()
+    finally:
+        for descriptor in reversed(descriptors):
+            os.close(descriptor)
+
+
+def read_regular_file(
+    parent: int, name: str, *, max_bytes: int
+) -> tuple[os.stat_result, bytes]:
+    """Read a bounded regular leaf from its pinned parent and verify stable bytes."""
 
     if max_bytes < 0:
         raise ValueError("max_bytes must be non-negative")
@@ -31,13 +84,18 @@ def read_bytes(path: Path, *, max_bytes: int) -> bytes:
         | getattr(os, "O_NONBLOCK", 0)
     )
     try:
-        descriptor = os.open(path, flags)
+        before = os.stat(name, dir_fd=parent, follow_symlinks=False)
+        if not stat.S_ISREG(before.st_mode):
+            raise BoundedInputError("input is not a regular file")
+        descriptor = os.open(name, flags, dir_fd=parent)
     except OSError as exc:
         raise BoundedInputError("input is unavailable or unsafe") from exc
     try:
         metadata = os.fstat(descriptor)
-        if not stat.S_ISREG(metadata.st_mode):
-            raise BoundedInputError("input is not a regular file")
+        if not stat.S_ISREG(metadata.st_mode) or stable_file_state(
+            metadata
+        ) != stable_file_state(before):
+            raise BoundedInputError("input changed before read")
         if metadata.st_size > max_bytes:
             raise BoundedInputError("input exceeds its byte budget")
         chunks: list[bytes] = []
@@ -50,11 +108,26 @@ def read_bytes(path: Path, *, max_bytes: int) -> bytes:
             total += len(chunk)
             if total > max_bytes:
                 raise BoundedInputError("input exceeds its byte budget")
-        return b"".join(chunks)
+        final = os.fstat(descriptor)
+        entry = os.stat(name, dir_fd=parent, follow_symlinks=False)
+        if stable_file_state(metadata) != stable_file_state(final) or stable_file_state(
+            final
+        ) != stable_file_state(entry):
+            raise BoundedInputError("input changed during read")
+        return metadata, b"".join(chunks)
     except OSError as exc:
         raise BoundedInputError("input could not be read safely") from exc
     finally:
         os.close(descriptor)
+
+
+def read_bytes(path: Path, *, max_bytes: int) -> bytes:
+    """Read one regular file through pinned non-symlink parents within a byte cap."""
+    try:
+        with open_parent(path) as (parent, name):
+            return read_regular_file(parent, name, max_bytes=max_bytes)[1]
+    except OSError as exc:
+        raise BoundedInputError("input is unavailable or unsafe") from exc
 
 
 def read_text(path: Path, *, max_bytes: int) -> str:

@@ -123,7 +123,7 @@ surface/hunk별 채택·제외 증거를 남길 구현 Tasks는 아직 미완료
 
 ### Agent architecture requirements
 
-- **Model/Provider Strategy**: Provider adapters must route to Stage 00 governance and current active docs.
+- **Model/Provider Strategy**: Provider adapters must route to Common agent governance and current active docs.
 - **Tooling Boundary**: Agents may inspect and edit repo files inside the workspace; live mutation requires approval.
 - **Memory & Context Strategy**: Durable 실행 증거는 package-local Task에, 공통 규칙은 Stage 00에, 임시 checkpoint는 ignored recovery state에 둔다.
 - **Guardrail Boundary**: Superseded/ended records are non-authoritative history; completed packages retain their own types under ADR-0032.

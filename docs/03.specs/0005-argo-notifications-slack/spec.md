@@ -137,7 +137,7 @@ The interface contract is ArgoCD Notifications ConfigMap syntax, ESO remote refe
 
 ### Memory & Context Strategy
 
-- Record reusable doc-chain and secret-handling lessons in `docs/00.agent-governance/memory/progress.md`.
+- Record reusable doc-chain and secret-handling lessons in `.agents/memory/progress.md`.
 - Do not create standalone memory docs for this backfill.
 
 ### Guardrails

@@ -1,5 +1,5 @@
 description = "Design and run bounded repository validation and report reproducible quality evidence."
-developer_instructions = "Read the following repository files before acting:\n- `docs/00.agent-governance/roles/quality-engineer.md`\n- `docs/00.agent-governance/roles/registry.json`\n- `docs/00.agent-governance/skills/work-lifecycle.md`\n- `docs/00.agent-governance/skills/k8s-validate/SKILL.md`\n- `docs/00.agent-governance/skills/workspace-harness-audit/SKILL.md`\n\nApply the role, permission, procedure, and handoff boundaries in those files.\n"
+developer_instructions = "Read the following repository files before acting:\n- `.agents/roles/quality-engineer.md`\n- `.agents/roles/registry.json`\n- `.agents/workflows/work-lifecycle.md`\n- `.agents/skills/k8s-validate/SKILL.md`\n- `.agents/skills/workspace-harness-audit/SKILL.md`\n\nApply the role, permission, procedure, and handoff boundaries in those files.\n"
 name = "quality-engineer"
 model = "gpt-5.6-terra"
 model_reasoning_effort = "high"

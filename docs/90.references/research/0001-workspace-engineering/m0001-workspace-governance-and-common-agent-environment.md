@@ -46,8 +46,8 @@ and CI scope; harness and provider details are linked rather than duplicated.
 
 The 2026-08-08 baseline used `harness-catalog.md` as the repository's
 common-harness inventory. Current navigation starts at the
-[Agent Governance Hub](../../../00.agent-governance/README.md), with machine
-membership owned by the [Agent Registry](../../../../.agents/registry.json).
+[Agent Governance Hub](../../../../.agents/README.md), with machine
+membership owned by the [Agent Registry](../../../../.agents/roles/registry.json).
 The dated inventory identified thin gateways,
 runtime baselines, roles/adapters, shared assets, hooks, validation, memory,
 and escalation. `AGENTS.md` and `CLAUDE.md` are thin gateways, while
@@ -474,5 +474,5 @@ claim is `CLM-WERPC-016-08`.
 - [Harness and loop engineering](m0002-harness-and-loop-engineering.md)
 - [Provider implementation status](m0003-provider-implementation-status.md)
 - [Source ledger](m0012-source-coverage.md)
-- [Agent Governance Hub](../../../00.agent-governance/README.md)
-- [Work Lifecycle](../../../00.agent-governance/skills/work-lifecycle.md)
+- [Agent Governance Hub](../../../../.agents/README.md)
+- [Work Lifecycle](../../../../.agents/workflows/work-lifecycle.md)

@@ -6,11 +6,11 @@ tools: "Read, Grep, Glob, Task"
 ---
 
 Read the following repository files before acting:
-- `docs/00.agent-governance/roles/supervisor.md`
-- `docs/00.agent-governance/roles/registry.json`
-- `docs/00.agent-governance/skills/work-lifecycle.md`
-- `docs/00.agent-governance/skills/execution-plan/SKILL.md`
-- `docs/00.agent-governance/skills/risk-report/SKILL.md`
-- `docs/00.agent-governance/skills/task-breakdown/SKILL.md`
+- `.agents/roles/supervisor.md`
+- `.agents/roles/registry.json`
+- `.agents/workflows/work-lifecycle.md`
+- `.agents/skills/execution-plan/SKILL.md`
+- `.agents/skills/risk-report/SKILL.md`
+- `.agents/skills/task-breakdown/SKILL.md`
 
 Apply the role, permission, procedure, and handoff boundaries in those files.

@@ -14,6 +14,10 @@ superseded_by: "ADR-0030"
 
 ## Overview
 
+Superseded by [ADR-0030](0030-authority-first-sdlc-and-agent-governance-convergence.md).
+The decision and acceptance statements below describe the earlier program;
+they do not activate its retired providers, memory, or governance paths.
+
 이 ADR은 Stage 00 canonical governance를 local/Antigravity, Claude, Codex, Gemini의 네
 surface에 투영하고, 단일 machine harness contract, 역할별 model/effort, bounded execution
 loop, eval과 strict runtime evidence로 운영한다는 결정을 기록한다. Spec 046의

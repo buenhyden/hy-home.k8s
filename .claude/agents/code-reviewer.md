@@ -6,9 +6,9 @@ tools: "Read, Grep, Glob, Bash"
 ---
 
 Read the following repository files before acting:
-- `docs/00.agent-governance/roles/code-reviewer.md`
-- `docs/00.agent-governance/roles/registry.json`
-- `docs/00.agent-governance/skills/work-lifecycle.md`
-- `docs/00.agent-governance/skills/risk-report/SKILL.md`
+- `.agents/roles/code-reviewer.md`
+- `.agents/roles/registry.json`
+- `.agents/workflows/work-lifecycle.md`
+- `.agents/skills/risk-report/SKILL.md`
 
 Apply the role, permission, procedure, and handoff boundaries in those files.

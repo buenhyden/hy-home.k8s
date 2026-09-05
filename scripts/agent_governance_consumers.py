@@ -71,9 +71,6 @@ RETIRED_OWNER_PATHS = (
 RETIRED_TOKENS = RETIRED_SURFACES + RETIRED_OWNER_PATHS
 
 
-ALLOWED_INTERNAL_SYMLINKS = ((".claude/skills", "../docs/00.agent-governance/skills"),)
-
-
 def _bounded_diagnostic(detail: str) -> str:
     escaped: list[str] = []
     for character in str(detail):
@@ -205,6 +202,7 @@ class _RepositoryReader:
             )
         self.root_fd = root_fd
         self._closed = False
+        self.allowed_internal_symlinks: dict[str, str] = {}
         if not stat.S_ISDIR(root_state.st_mode):
             os.close(self.root_fd)
             self._closed = True
@@ -385,7 +383,7 @@ class _RepositoryReader:
                         "AGQC-LEGACY-INPUT",
                         f"cannot inspect repository symlink {value}: {exc}",
                     )
-                _validate_allowed_symlink(value, target)
+                _validate_allowed_symlink(value, target, self.allowed_internal_symlinks)
                 after = os.stat(
                     safe.name,
                     dir_fd=parent_fd,
@@ -539,8 +537,10 @@ def _load_json_regular(
     )
 
 
-def _validate_allowed_symlink(relative: str, target: str) -> None:
-    expected = dict(ALLOWED_INTERNAL_SYMLINKS).get(relative)
+def _validate_allowed_symlink(
+    relative: str, target: str, allowed_internal_symlinks: dict[str, str]
+) -> None:
+    expected = allowed_internal_symlinks.get(relative)
     if expected is None or target != expected:
         fail(
             "AGQC-LEGACY-INPUT",
@@ -863,10 +863,14 @@ def _load_owners(
     def read_symlink(path: str) -> str:
         if reader.candidate_payload(path, read=False) is not None:
             fail("AGQC-LEGACY-INPUT", "declared adapter must be a checked symlink")
-        return dict(ALLOWED_INTERNAL_SYMLINKS)[path]
+        return reader.allowed_internal_symlinks[path]
 
     try:
         terminal.validate_registry(reader.root_path, registry, check_files=True)
+        reader.allowed_internal_symlinks = {
+            f".claude/skills/{skill['id']}": f"../../.agents/skills/{skill['id']}"
+            for skill in registry["skills"]
+        }
         entrypoints = affected.validator_script_paths(
             reader.root_path, contract, raw_schema=schema
         )

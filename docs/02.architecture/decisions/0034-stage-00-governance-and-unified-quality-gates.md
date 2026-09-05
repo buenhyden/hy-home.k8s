@@ -13,6 +13,10 @@ artifact_id: "ADR-0034"
 
 ## Overview
 
+Authority-location and skill-routing clauses below record the previous decision.
+[ADR-0035](0035-common-agents-authority-and-native-skill-routing.md) proposes replacing those
+clauses under the latest user request. The QA/CD decisions remain current.
+
 This decision makes `docs/00.agent-governance/` the single shared control plane
 for agent policy, providers, roles, skills, and machine-readable role metadata.
 It removes `.agents/` as a second provider-neutral authority and establishes one

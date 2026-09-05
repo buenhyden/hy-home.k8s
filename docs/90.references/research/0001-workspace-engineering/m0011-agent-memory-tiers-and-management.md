@@ -138,7 +138,7 @@ with no newer revision published.
 
 **Workspace result:** the checkpoint contract remains, while the tracked memory
 ledger was retired after the original observation. The current
-[`context-and-memory` policy](../../../00.agent-governance/policies/context-and-memory.md)
+[`context-and-memory` policy](../../../../.agents/governance/context-and-memory.md)
 owns the repository-versus-provider-memory boundary.
 `contracts/agent-checkpoint.schema.json` still requires `synthetic`,
 `atomicWrite` with the `same-directory-temp-fsync-replace` strategy, `redaction`
@@ -167,7 +167,7 @@ MCP memory contract changes retention, compaction, or subscription semantics.
 - [Anthropic Claude Code memory](https://code.claude.com/docs/en/memory), checked 2026-08-08, re-checked 2026-08-10 (`SRC-WERPC-051`).
 - [Model Context Protocol Resources specification](https://modelcontextprotocol.io/specification/2025-11-25/server/resources), checked 2026-08-08, re-checked 2026-08-10 and confirmed superseded (`SRC-WERPC-052`).
 - [Model Context Protocol versioning](https://modelcontextprotocol.io/specification/versioning) and the [2026-07-28 Resources specification](https://modelcontextprotocol.io/specification/2026-07-28/server/resources), checked 2026-08-10 (`SRC-WERPC-066`).
-- [Context and memory policy](../../../00.agent-governance/policies/context-and-memory.md) and `contracts/agent-checkpoint.schema.json` are local static owners.
+- [Context and memory policy](../../../../.agents/governance/context-and-memory.md) and `contracts/agent-checkpoint.schema.json` are local static owners.
 
 ## Review and Freshness
 
@@ -201,7 +201,7 @@ run, or retrieval was accessed.
 | [MCP versioning](https://modelcontextprotocol.io/specification/versioning) and [MCP 2026-07-28 Resources](https://modelcontextprotocol.io/specification/2026-07-28/server/resources) | Current revision `2026-07-28`, checked 2026-08-12. Each request declares a protocol version; resources are application-driven, authorization-sensitive, list/read/cache capable, and optionally updated through `subscriptions/listen`.                                                                     | The protocol does not make retrieved data authoritative or prove a connected server, negotiated version, access control, cache behavior, notification, or retrieval. Recheck when the current revision or Resources/caching/subscription contract changes. |
 
 **Current implementation:** the
-[`context-and-memory` policy](../../../00.agent-governance/policies/context-and-memory.md)
+[`context-and-memory` policy](../../../../.agents/governance/context-and-memory.md)
 defines repository state and the owning Spec Task as current authority, while
 provider-local memory and ignored checkpoints remain advisory.
 `contracts/agent-checkpoint.schema.json` is the repository-static schema for an
@@ -451,4 +451,4 @@ New sources are `SRC-WERPC-125` and `SRC-WERPC-138`; the cycle claim is
 
 - [Pack coverage matrix](README.md#requirement-coverage-matrix)
 - [Source ledger](m0012-source-coverage.md)
-- [Context and memory policy](../../../00.agent-governance/policies/context-and-memory.md)
+- [Context and memory policy](../../../../.agents/governance/context-and-memory.md)
