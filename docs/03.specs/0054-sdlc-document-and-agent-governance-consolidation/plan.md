@@ -1,6 +1,6 @@
 ---
 title: "SDLC Document and AI Agent Governance Consolidation Implementation Plan"
-version: "1.4.0"
+version: "1.4.1"
 type: "sdlc/plan"
 status: "active"
 owner: "platform"
@@ -91,8 +91,9 @@ Git index/object APIs, unittest, pre-commit, and repository quality gates.
   in Stage 99 README. Do not gate schema, profile, or template counts.
 - Follow SPEC-0072 for the governance cutover into `.agents/`; its role
   registry and schema are the sole machine metadata owner. Keep provider notes
-  and native bindings in `.claude/` and `.codex/`. The 2026-09-06 migration
-  authorizes no staging, commits or remote actions from this predecessor Plan.
+  and native bindings in `.claude/` and `.codex/`. Current local staging and
+  commit authority follow SPEC-0072's latest Task and the subsequent user
+  request; this predecessor Plan grants no remote authority.
 - Remove `.gemini/`, root `GEMINI.md`, Gemini/Antigravity provider prose,
   contracts, fixtures, canaries, validators, hooks, and adapter projections;
   do not translate retired provider-specific semantics into common policy.
@@ -1377,7 +1378,8 @@ git diff --cached --check
 
 The full profile owns unit discovery and all-files pre-commit; do not rerun them
 on unchanged bytes under a second aggregate. Staged evidence requires the
-actual authorized index and is deferred during SPEC-0072's no-staging migration.
+actual authorized index. The subsequent user request authorizes local commits;
+use SPEC-0072's latest Task for current scope and recorded index validation.
 Record exact scope, results, reviewer disposition and limitations in the owning
 Task. Static validation establishes no provider-runtime or live result.
 

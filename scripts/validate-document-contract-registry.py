@@ -263,8 +263,6 @@ def _assert_reference_pack_topology(root: Path, registry: Registry) -> None:
 
     for category, singular in REFERENCE_PACK_CATEGORIES:
         category_root = stage_root / category
-        if not category_root.exists() and not category_root.is_symlink():
-            continue
         entries = _bounded_directory_entries(category_root)
         router = category_root / "README.md"
         try:

@@ -100,8 +100,8 @@ class ReferencePackRouteTest(unittest.TestCase):
         stage_root = ROOT / "docs/90.references"
         for category in ("audits", "data", "research"):
             category_root = stage_root / category
-            if not category_root.exists():
-                continue
+            self.assertFalse(category_root.is_symlink())
+            self.assertTrue(category_root.is_dir())
             for path in category_root.rglob("*"):
                 if not path.is_file() or path == category_root / "README.md":
                     continue
@@ -118,6 +118,43 @@ class ReferencePackRouteTest(unittest.TestCase):
     def test_existing_reference_pack_topology_is_canonical(self) -> None:
         self.validator._assert_reference_pack_topology(ROOT, self.registry)
 
+    def test_empty_collections_require_all_three_directories(self) -> None:
+        for missing in (None, "audits", "data", "research"):
+            with (
+                self.subTest(missing=missing),
+                tempfile.TemporaryDirectory(prefix="reference-collections-") as raw,
+            ):
+                root = Path(raw)
+                stage = root / "docs/90.references"
+                stage.mkdir(parents=True)
+                (stage / "README.md").write_text("stage\n", encoding="utf-8")
+                for category in ("audits", "data", "research"):
+                    if category == missing:
+                        continue
+                    directory = stage / category
+                    directory.mkdir()
+                    (directory / "README.md").write_text("router\n", encoding="utf-8")
+                inventory = {
+                    PurePosixPath(path.relative_to(root).as_posix()): git_blob_id(
+                        path.read_bytes()
+                    )
+                    for path in stage.rglob("*.md")
+                }
+                with mock.patch.object(
+                    self.validator, "_staged_reference_files", return_value=inventory
+                ):
+                    if missing is None:
+                        self.validator._assert_reference_pack_topology(
+                            root, self.registry
+                        )
+                    else:
+                        with self.assertRaisesRegex(
+                            AssertionError, "REFERENCE_PACK_DIRECTORY"
+                        ):
+                            self.validator._assert_reference_pack_topology(
+                                root, self.registry
+                            )
+
     def test_pack_topology_rejects_duplicate_missing_and_non_regular_entries(
         self,
     ) -> None:
@@ -128,6 +165,11 @@ class ReferencePackRouteTest(unittest.TestCase):
             research.mkdir(parents=True)
             (stage / "README.md").write_text("stage\n", encoding="utf-8")
             (research / "README.md").write_text("category\n", encoding="utf-8")
+            for category in ("audits", "data"):
+                (stage / category).mkdir()
+                (stage / category / "README.md").write_text(
+                    "category\n", encoding="utf-8"
+                )
             (research / "loose.md").write_text("loose\n", encoding="utf-8")
             first = research / "0001-alpha"
             first.mkdir()
@@ -169,6 +211,8 @@ class ReferencePackRouteTest(unittest.TestCase):
             pack.mkdir(parents=True)
             worktree_paths = (
                 "docs/90.references/README.md",
+                "docs/90.references/audits/README.md",
+                "docs/90.references/data/README.md",
                 "docs/90.references/research/README.md",
                 "docs/90.references/research/0001-alpha/README.md",
             )
@@ -199,6 +243,8 @@ class ReferencePackRouteTest(unittest.TestCase):
             root = Path(raw)
             worktree_contents = {
                 "docs/90.references/README.md": b"stage\n",
+                "docs/90.references/audits/README.md": b"category\n",
+                "docs/90.references/data/README.md": b"category\n",
                 "docs/90.references/research/README.md": b"category\n",
                 "docs/90.references/research/0001-alpha/README.md": b"valid\n",
             }

@@ -1,6 +1,6 @@
 ---
 title: "Document Taxonomy and Form Identity Normalization Implementation Plan"
-version: "1.1.0"
+version: "1.1.1"
 type: "sdlc/plan"
 status: "draft"
 owner: "platform"
@@ -81,6 +81,11 @@ hold.
 
 ## Work Breakdown
 
+These work packages identify contract ownership. Reverify existing implementation
+before scheduling changes; do not replay completed form moves or re-seal MIG-0010
+and MIG-0011. The current observations and remaining validation are recorded in
+the owning Task, separately from its 2026-09-02 execution evidence.
+
 | ID | Work package | Depends on | Entry gate | Exit evidence |
 | --- | --- | --- | --- | --- |
 | WP-001 | Audit the current corpus against every target contract and record what already holds | None | Approved Spec contracts C1–C10 | Measured identity, key, and grammar census |
@@ -125,7 +130,7 @@ is established by these repository-static checks.
 
 ## Completion Criteria
 
-- Every criterion VAL-DTF-001 through VAL-DTF-009 has recorded evidence.
+- Every criterion VAL-DTF-001 through VAL-DTF-013 has recorded evidence.
 - Every verification command above has been run against the final change and
   its exact result recorded in the owning Task.
 - No current document, executable owner, or test names a retired profile

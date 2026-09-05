@@ -462,6 +462,49 @@ was established; this does not prove paid inference is inherently required.
 WORK-004 native and hosted results therefore remain DEFER with their existing
 owners, rather than claiming completion from CLI help.
 
+The reviewed migration was committed locally as `add86fbd`:
+`refactor(governance): migrate shared authority to .agents`. It contains 248
+Git diff entries after rename detection (300 source/destination status paths).
+The working tree and index were clean afterward; both stashes remained intact.
+
+| Commit validation | Exit / result | Exact scope |
+| --- | --- | --- |
+| `python3 scripts/qa.py staged` after correction | 0 / PASS | Actual index snapshot, 299 selected paths, eleven gates; no unstaged differences |
+| `python3 scripts/qa.py full` | 0 / PASS | Same code and document bytes, nineteen gates, 935.675 s; whole unit discovery and all-files pre-commit included once |
+| `pre-commit run --all-files --hook-stage commit-msg --commit-msg-filename /tmp/hy-governance-commit-message.txt` | 0 / PASS | Exact commit message; commitizen passed without changing the active global hooks |
+| `git diff --check`, `git diff --cached --check` and index identity comparison | 0 / PASS | Verified index unchanged through validation; zero unstaged paths |
+| `git commit -F /tmp/hy-governance-commit-message.txt` | 0 / PASS | Active user pre-commit secret hook enabled; no bypass, remote action or signing override |
+
+The first commit-message check without `--all-files` exited 3 because its
+internal `git write-tree` needed protected index writes. The successful
+commit-message-only invocation avoided that unnecessary index operation;
+commit-message validation and the active commit hook were both retained.
+Independent Python review also approved the staged path correction after its
+mode, literal-path, deletion and unselected-child boundaries were checked.
+
+#### Next local work: required reference collections
+
+The post-commit review of SPEC-0071 C12 / VAL-DTF-012 found that the existing
+topology validator skipped an entirely missing Stage 90 collection. Its three
+routers and form bindings already exist. Removing only the skip delegates to
+the existing bounded `lstat` directory reader, preserving no-follow behavior,
+entry/byte limits and the unchanged timeout. No archive payload or new form is
+needed. This narrow document-gate continuation is recorded here; the predecessor
+Task retains its original lifecycle and historical outcomes.
+
+`python3 -m unittest tests.test_reference_pack_routes.ReferencePackRouteTest.test_empty_collections_require_all_three_directories -v`
+first exited 1 with three expected failures: each missing collection incorrectly
+passed. After the correction, `python3 -m unittest tests.test_reference_pack_routes -v`
+exited 0 with ten tests in 0.090 s. All-empty collections with their routers
+remain valid; the three existing duplicate/index-drift fixtures now include the
+mandatory routers so their original failure assertions remain meaningful.
+Independent Python review found no issues and confirmed ordinary and dangling
+directory links remain rejected. `python3 scripts/qa.py full` exited 0 with
+nineteen gates in 1,020.017 s, including unit discovery and all-files pre-commit
+once. This result covers the continuation's six changed files before this
+evidence-only update; the first commit's full result was not reused for them.
+The final index and commit-message checks remain required before commit.
+
 ### Historical Execution Record (before the authority-location revision)
 
 The following dated observations describe previous commits and working trees;
