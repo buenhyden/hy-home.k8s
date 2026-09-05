@@ -939,6 +939,69 @@ def _require_date(metadata: Mapping[str, object], key: str) -> str:
     return value
 
 
+def archive_metadata_is_prior_generation(metadata: Mapping[str, object]) -> bool:
+    """Classify only an exact archive type/field generation shape."""
+
+    if "replacement" not in metadata:
+        raise _error("ARCHIVE-METADATA-REPLACEMENT", "replacement must be explicit")
+    declared_type = metadata.get("type")
+    if not isinstance(declared_type, str) or declared_type not in {
+        _PRIOR_ARCHIVE_TOMBSTONE_TYPE,
+        ARCHIVE_TOMBSTONE_TYPE,
+    }:
+        raise _error("ARCHIVE-METADATA-TYPE", "type must name an archive tombstone")
+    has_version = "version" in metadata
+    has_layer = "layer" in metadata
+    if (
+        declared_type == _PRIOR_ARCHIVE_TOMBSTONE_TYPE
+        and not has_version
+        and not has_layer
+    ):
+        return True
+    if declared_type == ARCHIVE_TOMBSTONE_TYPE and has_version and has_layer:
+        return False
+    raise _error(
+        "ARCHIVE-METADATA-GENERATION",
+        "archive type and generation fields do not form one canonical generation",
+    )
+
+
+def validate_archive_replacement(
+    reason: str,
+    replacement: object,
+    *,
+    prior_generation: bool,
+) -> ArchiveReplacementReference | None:
+    """Return one successor path, preserving the prior null representation."""
+
+    if reason in REPLACEMENT_REQUIRED_REASONS:
+        canonical_replacement = _require_repository_path(
+            replacement, field="replacement"
+        )
+        if canonical_replacement == "none":
+            raise _error(
+                "ARCHIVE-METADATA-REPLACEMENT",
+                "replacement must name a current document for this archive_reason",
+            )
+        if PurePosixPath(canonical_replacement).is_relative_to(
+            PurePosixPath("docs/98.archive")
+        ):
+            raise _error(
+                "ARCHIVE-METADATA-REPLACEMENT",
+                "replacement must not name an archive record",
+            )
+        return ArchiveReplacementReference(canonical_replacement)
+
+    expected = None if prior_generation else "none"
+    if replacement != expected:
+        representation = "null" if prior_generation else "literal none"
+        raise _error(
+            "ARCHIVE-METADATA-REPLACEMENT",
+            f"replacement must be {representation} for this archive generation",
+        )
+    return None
+
+
 def validate_archive_metadata(
     metadata: Mapping[str, object],
 ) -> ArchiveReplacementReference | None:
@@ -947,7 +1010,7 @@ def validate_archive_metadata(
     if not isinstance(metadata, Mapping):
         raise _error("ARCHIVE-METADATA-TYPE", "metadata must be a mapping")
     keys = tuple(metadata)
-    prior_generation = "version" not in metadata and "layer" not in metadata
+    prior_generation = archive_metadata_is_prior_generation(metadata)
     key_source = (
         _PRIOR_ARCHIVE_STABLE_METADATA_KEYS
         if prior_generation
@@ -1019,25 +1082,11 @@ def validate_archive_metadata(
     reason = _require_string(metadata, "archive_reason")
     if reason not in ARCHIVE_REASONS:
         raise _error("ARCHIVE-METADATA-REASON", "archive_reason is unsupported")
-    replacement = metadata["replacement"]
-    replacement_reference: ArchiveReplacementReference | None = None
-    if reason in REPLACEMENT_REQUIRED_REASONS:
-        canonical_replacement = _require_repository_path(
-            replacement, field="replacement"
-        )
-        if PurePosixPath(canonical_replacement).is_relative_to(
-            PurePosixPath("docs/98.archive")
-        ):
-            raise _error(
-                "ARCHIVE-METADATA-REPLACEMENT",
-                "replacement must not name an archive record",
-            )
-        replacement_reference = ArchiveReplacementReference(canonical_replacement)
-    elif replacement is not None:
-        raise _error(
-            "ARCHIVE-METADATA-REPLACEMENT",
-            "replacement must be null for this archive_reason",
-        )
+    replacement_reference = validate_archive_replacement(
+        reason,
+        metadata["replacement"],
+        prior_generation=prior_generation,
+    )
 
     commit = _require_string(metadata, "source_commit")
     blob = _require_string(metadata, "source_blob")

@@ -49,6 +49,7 @@ if __package__:
         load_internal_payload,
         load_registry,
     )
+    from scripts.document_authority import RETIRED_UNUSED_CAPACITY_FORM_PATHS
     from scripts.document_lifecycle import document_from_text
     from scripts.archive_validation import (
         CurrentMarkdownDocument,
@@ -91,6 +92,9 @@ else:
         classify_path,
         load_internal_payload,
         load_registry,
+    )
+    from document_authority import (  # type: ignore[no-redef]
+        RETIRED_UNUSED_CAPACITY_FORM_PATHS,
     )
     from document_lifecycle import document_from_text  # type: ignore[no-redef]
     from archive_validation import (  # type: ignore[no-redef]
@@ -593,10 +597,14 @@ def _work054_migration_projection(
             # A later ledger may retire this target in turn, and the pinned rows
             # cannot name a successor that did not exist when they were sealed.
             terminal = later_edges.get(target, target)
-            if terminal in later_retired:
+            if (
+                terminal in later_retired
+                or terminal in RETIRED_UNUSED_CAPACITY_FORM_PATHS
+            ):
                 # The later ledger deleted the endpoint rather than moving it,
-                # so this row composes no current owner and resolves through
-                # the Archive index instead.
+                # or current authority retired its unused authoring capacity.
+                # Either way this sealed row composes no current owner and
+                # resolves through the Archive index instead.
                 dropped.add(legacy)
                 continue
             edges[legacy] = terminal

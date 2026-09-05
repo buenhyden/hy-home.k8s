@@ -163,7 +163,7 @@ the later current-consumer and Archive-link units.
 1. 모든 활성 Spec은 관련 Requirement Package와 Architecture 입력을 링크하거나 부재를 명시한다.
 2. Verification은 필수다.
 3. Acceptance Contract와 테스트 의도는 Requirement Package에서 이어지고, 구현 검증은 Task record와 연결된다.
-4. API가 있다면 실행 가능한 OpenAPI/GraphQL/Proto 계약을 해당 Spec Package에 함께 둔다.
+4. 실행 가능한 인터페이스 계약은 실제 구현 소유 경로에 두고 Spec에서 그 owner와 검증을 추적한다.
 5. Agent 변경은 목표·동작·경계·실패 조건을 Spec에, 구현 순서와 rollback을 Plan에 기록한다.
 6. Feature-local Task records가 해당 work-unit의 실행과 evidence를 소유한다. Validator의 독립 실행 테스트와 fixture는 top-level `tests/`와 `tests/fixtures/` 아래에 두고, production module은 이를 import하거나 runtime data로 읽지 않는다. `validation/tests/` 또는 Spec-package-local test control plane은 만들지 않는다.
 7. `Related Inputs`는 upstream 요약이고, `Related Documents`는 Requirement Package/AD/ADR와 Plan/Task/Operations 링크를 함께 담는다.
@@ -195,9 +195,6 @@ the later current-consumer and Archive-link units.
 - `../99.templates/templates/specs/spec.template.md`
 - `../99.templates/templates/specs/plan.template.md`
 - `../99.templates/templates/specs/task.template.md`
-- `../99.templates/templates/specs/contracts/openapi.template.yaml`
-- `../99.templates/templates/specs/contracts/service.template.proto`
-- `../99.templates/templates/specs/contracts/schema.template.graphql`
 
 ## Related Documents
 

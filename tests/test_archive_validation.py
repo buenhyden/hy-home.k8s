@@ -1921,12 +1921,14 @@ class ArchiveValidationTest(unittest.TestCase):
         # durable-ref checks; proposal paths remain exact batched operands, so
         # this cost does not grow once per current document.
         budget = 242
+        git_commands: list[tuple[str, ...]] = []
 
         def bounded_popen(*args, **kwargs):
             nonlocal git_calls
             command = args[0] if args else kwargs.get("args", ())
             if command and command[0] == "git":
                 git_calls += 1
+                git_commands.append(tuple(command))
             return real_popen(*args, **kwargs)
 
         started = time.monotonic()
@@ -1937,6 +1939,18 @@ class ArchiveValidationTest(unittest.TestCase):
         elapsed = time.monotonic() - started
 
         self.assertTrue(report.valid, report.diagnostics)
+        retired_form_fallbacks = {
+            "docs/99.templates/templates/specs/contracts/data-model.template.md",
+            "docs/99.templates/templates/specs/contracts/openapi.template.yaml",
+            "docs/99.templates/templates/specs/contracts/schema.template.graphql",
+            "docs/99.templates/templates/specs/contracts/service.template.proto",
+        }
+        batched_fallbacks = [
+            command
+            for command in git_commands
+            if "log" in command and retired_form_fallbacks.issubset(command)
+        ]
+        self.assertEqual(len(batched_fallbacks), 1)
         # The power-of-two process budget covers staged authority inventory,
         # named-ref reachability, exact commit:path, and batched content reads
         # without introducing per-row subprocesses or a current count pin.
@@ -2156,6 +2170,52 @@ class ArchiveBlobBatchTest(unittest.TestCase):
         self.assertEqual(raised.exception.code, "RECOVERY-RESOURCE-LIMIT")
         self.assertIn("bytes", str(raised.exception))
         self.assertNotIn("object count", str(raised.exception))
+
+
+class ArchiveHistoricalTargetBatchTest(unittest.TestCase):
+    """Historical target lookup must exhaust bounded output without log truncation."""
+
+    def test_lookup_reaches_an_older_requested_target_and_orders_paths(self) -> None:
+        newer = "a" * 40
+        older = "b" * 40
+        noisy_path = "docs/z-noisy.md"
+        older_path = "docs/a-older.md"
+
+        def header(commit, path):
+            return b"\0" + commit.encode() + b"\0\0\n" + path.encode() + b"\0"
+
+        # A bounded fake history keeps the regression fast while placing the
+        # second requested target beyond the former 4096-commit cutoff.
+        log = header(newer, noisy_path) * 4096 + header(older, older_path)
+        member = archive_validation._GitTreeMember("100644", "blob", "c" * 40)  # noqa: SLF001
+
+        def capture(_root, *args, stdout_limit):
+            self.assertEqual(args[0], "log")
+            self.assertFalse(any(arg.startswith("--max-count=") for arg in args))
+            self.assertGreaterEqual(stdout_limit, len(log))
+            return subprocess.CompletedProcess(("git", *args), 0, log, b"")
+
+        def tree_members(_root, _commit, *, original_paths, **_kwargs):
+            return {path: member for path in original_paths}
+
+        with (
+            mock.patch.object(archive_validation, "_git_capture_bounded", capture),
+            mock.patch.object(
+                archive_validation, "_repository_identity", return_value=40
+            ),
+            mock.patch.object(
+                archive_validation, "_batch_commit_path_members", return_value={}
+            ),
+            mock.patch.object(archive_validation, "_commit_tree_members", tree_members),
+        ):
+            found = archive_validation._reachable_historical_regular_targets(  # noqa: SLF001
+                Path("/bounded-fixture"),
+                (noisy_path, older_path),
+                proposed_commit="d" * 40,
+            )
+
+        self.assertEqual(tuple(found), (older_path, noisy_path))
+        self.assertEqual(found, {older_path: member, noisy_path: member})
 
 
 class ArchiveTransitionLinkTest(unittest.TestCase):

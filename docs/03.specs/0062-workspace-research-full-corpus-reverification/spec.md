@@ -467,6 +467,9 @@ replay, or retroactively alter the 2026-08-20 cycle, the original
 statement in those records remains true for its own date, and nothing here
 converts an earlier non-`PASS` into a `PASS`.
 
+The recorded implementation for this bounded cycle is
+[TSK-0011 external observation cycle](tasks/tsk-0011-external-observation-cycle.md).
+
 The addendum narrows three contracts for this cycle only, and leaves every
 other contract in force verbatim:
 

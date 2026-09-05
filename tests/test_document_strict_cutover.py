@@ -25,6 +25,9 @@ REGISTRY_PATH = REPOSITORY_ROOT / "docs/99.templates/registry.json"
 PROFILE_SCHEMA_PATH = (
     REPOSITORY_ROOT / "docs/99.templates/contracts/document-profile.schema.json"
 )
+FRONTMATTER_SCHEMA_PATH = (
+    REPOSITORY_ROOT / "docs/99.templates/contracts/frontmatter.schema.json"
+)
 VALIDATOR_PATHS = {
     "registry": SCRIPTS_ROOT / "validate-document-contract-registry.py",
     "lifecycle": SCRIPTS_ROOT / "validate-document-lifecycle.py",
@@ -61,6 +64,39 @@ RETIRED_PROFILE_IDS = frozenset(
         "governance/progress-entry",
         "governance/memory",
         "template/governance/memory",
+        "sdlc/data-model",
+        "governance/control",
+        "common/native-contract-openapi",
+        "common/native-contract-graphql",
+        "common/native-contract-protobuf",
+    }
+)
+DELIBERATELY_EMPTY_PROFILE_IDS = frozenset(
+    {
+        "operation/incident",
+        "operation/postmortem",
+        "reference/audit",
+        "reference/data",
+        "common/readme-audit-pack",
+        "common/readme-data-pack",
+    }
+)
+RETIRED_UNUSED_CAPACITY_PROFILE_IDS = frozenset(
+    {
+        "sdlc/data-model",
+        "governance/control",
+        "common/native-contract-openapi",
+        "common/native-contract-graphql",
+        "common/native-contract-protobuf",
+    }
+)
+RETIRED_UNUSED_CAPACITY_FORM_PATHS = frozenset(
+    {
+        "docs/99.templates/templates/specs/contracts/data-model.template.md",
+        "docs/99.templates/templates/governance/control.template.md",
+        "docs/99.templates/templates/specs/contracts/openapi.template.yaml",
+        "docs/99.templates/templates/specs/contracts/schema.template.graphql",
+        "docs/99.templates/templates/specs/contracts/service.template.proto",
     }
 )
 DOCUMENT_FAMILIES = frozenset(
@@ -262,6 +298,59 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         )
         self.assertNotIn("template-profile", lifecycle_families)
 
+    def test_only_unused_capacity_profiles_and_forms_are_retired(self) -> None:
+        profile_ids = {profile["id"] for profile in self.registry["profiles"]}
+        self.assertTrue(DELIBERATELY_EMPTY_PROFILE_IDS.issubset(profile_ids))
+        self.assertTrue(RETIRED_UNUSED_CAPACITY_PROFILE_IDS.isdisjoint(profile_ids))
+        frontmatter_schema = FRONTMATTER_SCHEMA_PATH.read_text(encoding="utf-8")
+        self.assertNotIn("DATA-MODEL-[0-9]", frontmatter_schema)
+        for relative_path in RETIRED_UNUSED_CAPACITY_FORM_PATHS:
+            with self.subTest(form=relative_path):
+                self.assertFalse((REPOSITORY_ROOT / relative_path).exists())
+
+    def test_retired_capacity_documents_and_executables_have_no_current_owner(
+        self,
+    ) -> None:
+        contracts = load_document_contracts()
+        registry = contracts.load_registry(REPOSITORY_ROOT)
+        retired_surfaces = (
+            "docs/00.agent-governance/controls/duplicate-rule.md",
+            "docs/03.specs/9999-example/data-model.md",
+            "docs/03.specs/9999-example/contracts/openapi.yaml",
+            "docs/03.specs/9999-example/contracts/schema.graphql",
+            "docs/03.specs/9999-example/contracts/service.proto",
+        )
+        for relative_path in retired_surfaces:
+            with (
+                self.subTest(path=relative_path),
+                self.assertRaises(contracts.DocumentContractError),
+            ):
+                contracts.classify_path(registry, PurePosixPath(relative_path))
+
+    def test_stage99_authority_rejects_restored_unused_capacity_profiles(
+        self,
+    ) -> None:
+        authority = load_document_authority()
+        profiles_by_family = {
+            profile["family"]: profile for profile in self.registry["profiles"]
+        }
+        for profile_id in sorted(RETIRED_UNUSED_CAPACITY_PROFILE_IDS):
+            with self.subTest(profile=profile_id):
+                registry = clone_registry(self.registry)
+                if profile_id not in {
+                    profile["id"] for profile in registry["profiles"]
+                }:
+                    family = profile_id.split("/", 1)[0]
+                    restored = clone_registry(profiles_by_family[family])
+                    restored["id"] = profile_id
+                    restored["lifecycle"] = None
+                    registry["profiles"].append(restored)
+                with self.assertRaisesRegex(
+                    authority.AuthorityError,
+                    "RETIRED_UNUSED_CAPACITY_PROFILE",
+                ):
+                    authority.validate_registry_authority(registry)
+
     def test_profile_schema_accepts_terminal_registry(self) -> None:
         schema = json.loads(PROFILE_SCHEMA_PATH.read_text(encoding="utf-8"))
         errors = sorted(
@@ -269,6 +358,20 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             key=lambda error: list(error.absolute_path),
         )
         self.assertEqual(errors, [])
+
+    def test_v9_archive_no_successor_uses_one_unambiguous_literal(self) -> None:
+        schema = json.loads(FRONTMATTER_SCHEMA_PATH.read_text(encoding="utf-8"))
+        replacement_schema = {
+            "$defs": schema["$defs"],
+            **schema["properties"]["replacement"],
+        }
+        validator = Draft202012Validator(replacement_schema)
+        self.assertEqual(list(validator.iter_errors("none")), [])
+        self.assertEqual(
+            list(validator.iter_errors("docs/03.specs/0054-example/spec.md")),
+            [],
+        )
+        self.assertTrue(list(validator.iter_errors(None)))
 
     def test_profile_schema_rejects_a_retired_contract_plane(self) -> None:
         schema = json.loads(PROFILE_SCHEMA_PATH.read_text(encoding="utf-8"))
@@ -792,9 +895,7 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
         profiles = {profile["id"]: profile for profile in self.registry["profiles"]}
         for profile_id in (
             "sdlc/spec",
-            "sdlc/data-model",
             "common/template-sdlc-spec",
-            "common/template-sdlc-data-model",
         ):
             with self.subTest(profile=profile_id):
                 body_contract = profiles[profile_id]["relationships"]["body_contract"]
@@ -809,7 +910,6 @@ class Stage99TerminalAuthorityTests(unittest.TestCase):
             "requirements/requirement-package.template.md",
             "architecture/description.template.md",
             "specs/spec.template.md",
-            "specs/contracts/data-model.template.md",
         ):
             contents = (STAGE99_TEMPLATES_ROOT / relative_path).read_text(
                 encoding="utf-8"

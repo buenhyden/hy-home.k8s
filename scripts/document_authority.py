@@ -70,6 +70,24 @@ TRANSITION_SUPPORT_PROFILE_IDS = frozenset(
         "common/template-governance-template-support",
     }
 )
+RETIRED_UNUSED_CAPACITY_PROFILE_IDS = frozenset(
+    {
+        "sdlc/data-model",
+        "governance/control",
+        "common/native-contract-openapi",
+        "common/native-contract-graphql",
+        "common/native-contract-protobuf",
+    }
+)
+RETIRED_UNUSED_CAPACITY_FORM_PATHS = frozenset(
+    {
+        "docs/99.templates/templates/governance/control.template.md",
+        "docs/99.templates/templates/specs/contracts/data-model.template.md",
+        "docs/99.templates/templates/specs/contracts/openapi.template.yaml",
+        "docs/99.templates/templates/specs/contracts/schema.template.graphql",
+        "docs/99.templates/templates/specs/contracts/service.template.proto",
+    }
+)
 
 
 class AuthorityError(ValueError):
@@ -157,6 +175,8 @@ def validate_registry_authority(registry: Mapping[str, Any]) -> None:
         profile_id = profile.get("id")
         if not isinstance(profile_id, str) or not profile_id or profile_id in seen:
             raise AuthorityError("REGISTRY_PROFILE_ID: IDs must be unique strings")
+        if profile_id in RETIRED_UNUSED_CAPACITY_PROFILE_IDS:
+            raise AuthorityError(f"RETIRED_UNUSED_CAPACITY_PROFILE: {profile_id}")
         seen.add(profile_id)
         if set(profile) != PROFILE_KEYS:
             raise AuthorityError(

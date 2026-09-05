@@ -1619,6 +1619,7 @@ def validate_migration_records(
     # document validators and may evolve or disappear independently of Archive.
     target_contents: dict[str, bytes] = {}
     historical_targets: dict[str, _GitTreeMember] = {}
+    historical_paths: list[str] = []
     ordered = sorted(selected)
     for path in ordered:
         if path in present:
@@ -1626,11 +1627,14 @@ def validate_migration_records(
         elif proposed_commit is None and os.path.lexists(root / path):
             _require_regular_current_target(path, inventory)
         else:
-            historical_targets[path] = _reachable_historical_regular_target(
-                root,
-                path,
-                proposed_commit=proposed_commit,
-            )
+            historical_paths.append(path)
+    historical_targets.update(
+        _reachable_historical_regular_targets(
+            root,
+            tuple(historical_paths),
+            proposed_commit=proposed_commit,
+        )
+    )
     # One batch for the whole selection: a ledger names as many targets as it
     # has rows, and a subprocess per row spends the run's budget on process
     # startup rather than on reading.
@@ -2622,67 +2626,110 @@ def _reachable_historical_regular_target(
     *,
     proposed_commit: str | None,
 ) -> _GitTreeMember:
-    """Prove an absent Migration target existed on the reachable branch history."""
+    """Prove one absent Migration target through the shared batch boundary."""
 
-    if _canonical_path(relative) != relative:
+    return _reachable_historical_regular_targets(
+        root,
+        (relative,),
+        proposed_commit=proposed_commit,
+    )[relative]
+
+
+def _reachable_historical_regular_targets(
+    root: Path,
+    relatives: tuple[str, ...],
+    *,
+    proposed_commit: str | None,
+) -> dict[str, _GitTreeMember]:
+    """Prove absent Migration targets with one history and object batch."""
+
+    paths = tuple(sorted(set(relatives)))
+    path_set = frozenset(paths)
+    _validate_commit_path_requests(paths)
+    if any(_canonical_path(path) != path for path in paths):
         raise ArchiveContractError(
             "RECOVERY-MIGRATION-TARGET", "migration target path differs"
         )
+    if not paths:
+        return {}
+
     anchor = proposed_commit or current_named_durable_ref(root)
     result = _git_capture_bounded(
         root,
         "log",
-        "-1",
-        "--format=%H",
+        "--format=%x00%H%x00",
+        "--name-only",
+        "-z",
         "--diff-filter=AM",
         "--no-renames",
         anchor,
         "--",
-        relative,
+        *paths,
         stdout_limit=_INDEX_CAPTURE_MAX_BYTES,
     )
     try:
-        commits = tuple(
-            line.decode("ascii", errors="strict")
-            for line in result.stdout.splitlines()
-            if line
-        )
-    except UnicodeDecodeError as exc:
+        headers = tuple(re.finditer(rb"\x00([0-9a-f]+)\x00\x00\n", result.stdout))
+        if result.returncode or not headers or headers[0].start() != 0:
+            raise ValueError
+        object_id_length = _repository_identity(root)
+        commits_by_path: dict[str, str] = {}
+        for index, header in enumerate(headers):
+            commit = header.group(1).decode("ascii", errors="strict")
+            if (
+                len(commit) != object_id_length
+                or _FULL_OBJECT_ID.fullmatch(commit) is None
+            ):
+                raise ValueError
+            end = headers[index + 1].start() if index + 1 < len(headers) else None
+            for raw_path in result.stdout[header.end() : end].split(b"\0"):
+                if not raw_path:
+                    continue
+                path = raw_path.decode("utf-8", errors="strict")
+                if path not in path_set:
+                    raise ValueError
+                commits_by_path.setdefault(path, commit)
+        if set(commits_by_path) != path_set:
+            raise ValueError
+    except (UnicodeDecodeError, ValueError) as exc:
         raise ArchiveContractError(
             "RECOVERY-MIGRATION-TARGET", "historical target lookup is malformed"
         ) from exc
-    object_id_length = _repository_identity(root)
-    if (
-        result.returncode
-        or len(commits) != 1
-        or len(commits[0]) != object_id_length
-        or _FULL_OBJECT_ID.fullmatch(commits[0]) is None
-    ):
-        raise ArchiveContractError(
-            "RECOVERY-MIGRATION-TARGET",
-            "migration target has no reachable regular-file history",
-        )
-    member = _commit_tree_members(
+
+    paths_by_commit: dict[str, list[str]] = {}
+    for path, commit in commits_by_path.items():
+        paths_by_commit.setdefault(commit, []).append(path)
+    grouped_paths = {
+        commit: tuple(sorted(commit_paths))
+        for commit, commit_paths in paths_by_commit.items()
+    }
+    exact_by_commit = _batch_commit_path_members(
         root,
-        commits[0],
-        original_paths=(relative,),
-        historical_paths=(),
-        object_id_length=object_id_length,
-    ).get(relative)
-    if (
-        member is None
-        or member.kind != "blob"
-        or member.mode
-        not in {
-            "100644",
-            "100755",
-        }
-    ):
-        raise ArchiveContractError(
-            "RECOVERY-MIGRATION-TARGET",
-            "migration target has no reachable regular-file history",
+        grouped_paths,
+        object_id_length,
+    )
+    members: dict[str, _GitTreeMember] = {}
+    for commit, commit_paths in grouped_paths.items():
+        commit_members = _commit_tree_members(
+            root,
+            commit,
+            original_paths=commit_paths,
+            historical_paths=(),
+            object_id_length=object_id_length,
+            exact_members=exact_by_commit.get(commit, {}),
         )
-    return member
+        for path in commit_paths:
+            member = commit_members.get(path)
+            if (
+                member is None
+                or member.kind != "blob"
+                or member.mode not in {"100644", "100755"}
+            ):
+                raise ArchiveContractError(
+                    "RECOVERY-MIGRATION-TARGET",
+                    "migration target has no reachable regular-file history",
+                )
+            members[path] = member
+    return {path: members[path] for path in paths}
 
 
 def _historically_proven_move_sources(

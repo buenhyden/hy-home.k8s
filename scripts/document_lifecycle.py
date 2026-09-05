@@ -476,10 +476,6 @@ def _archive_creation_evidence(
 SPECIFICATION_PROFILES = frozenset(
     {
         "sdlc/spec",
-        "sdlc/data-model",
-        "common/native-contract-openapi",
-        "common/native-contract-graphql",
-        "common/native-contract-protobuf",
     }
 )
 _RETIRED_SPECIFICATION_PROFILES = frozenset(
@@ -1435,7 +1431,23 @@ def document_from_text(
             status = "sealed"
     original_path: PurePosixPath | None = None
     archive_reason: str | None = None
+    replacement_path: PurePosixPath | None = None
     if profile_id == "archive/tombstone":
+        prior_generation: bool | None = None
+        from archive_recovery import (
+            ArchiveContractError,
+            archive_metadata_is_prior_generation,
+            validate_archive_replacement,
+        )
+
+        try:
+            prior_generation = archive_metadata_is_prior_generation(metadata)
+        except ArchiveContractError as error:
+            profile_issue = (
+                "archive replacement is missing"
+                if error.code == "ARCHIVE-METADATA-REPLACEMENT"
+                else "archive generation is noncanonical"
+            )
         raw_original_path = metadata.get("original_path")
         if isinstance(raw_original_path, str):
             candidate = PurePosixPath(raw_original_path)
@@ -1449,6 +1461,20 @@ def document_from_text(
         raw_reason = metadata.get("archive_reason")
         if isinstance(raw_reason, str):
             archive_reason = raw_reason
+            if prior_generation is not None:
+                try:
+                    replacement = validate_archive_replacement(
+                        raw_reason,
+                        metadata["replacement"],
+                        prior_generation=prior_generation,
+                    )
+                except ArchiveContractError:
+                    profile_issue = (
+                        "archive replacement is noncanonical for document generation"
+                    )
+                else:
+                    if replacement is not None:
+                        replacement_path = PurePosixPath(replacement.path)
         elif raw_reason is not None:
             profile_issue = "archive_reason is not a string"
     return LifecycleDocument(
@@ -1458,10 +1484,5 @@ def document_from_text(
         state_issue=profile_issue,
         original_path=original_path,
         archive_reason=archive_reason,
-        replacement=(
-            PurePosixPath(metadata["replacement"])
-            if profile_id == "archive/tombstone"
-            and isinstance(metadata.get("replacement"), str)
-            else None
-        ),
+        replacement=replacement_path,
     )

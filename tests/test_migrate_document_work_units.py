@@ -464,7 +464,7 @@ class MigrationTests(unittest.TestCase):
                 "original_path": row["source"],
                 "archived_on": "2026-08-09",
                 "archive_reason": "retired",
-                "replacement": None,
+                "replacement": "none",
                 "source_commit": commit,
                 "source_blob": row["sourceBlob"],
                 "content_sha256": recovered.content_sha256,
@@ -650,6 +650,20 @@ class MigrationTests(unittest.TestCase):
             for source, target in pairs:
                 self.assertEqual((root / source).read_bytes(), original[source])
                 self.assertFalse((root / target).exists())
+
+    def test_current_archive_metadata_emits_literal_none_for_no_successor(self):
+        recovered = mock.Mock(
+            source_bytes=b"---\ntype: sdlc/plan\n---\n# Fixture\n",
+            original_path="docs/04.execution/plans/2026-01-01-zeta.md",
+            source_commit="1" * 40,
+            source_blob="2" * 40,
+            content_sha256="3" * 64,
+        )
+        metadata = self.tool._archive_metadata(
+            {"source": recovered.original_path}, recovered
+        )
+
+        self.assertEqual(metadata["replacement"], "none")
 
     def test_apply_rejects_dirty_or_alternate_control_surfaces(self):
         with tempfile.TemporaryDirectory() as tmp:

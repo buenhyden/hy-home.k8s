@@ -97,9 +97,9 @@ were left unmodified and are reported to the next owner rather than fixed here.
 
 | Criterion / work item | Result | Evidence |
 | --- | --- | --- |
-| FOLLOWON-0062-001 | PASS — each of the 36 owners carries exactly one external result. | Dated subsections in the eleven topical owners and the scope projection table |
-| FOLLOWON-0062-002 | PASS — every owner row states `not observed in this cycle` and no workspace observation date is refreshed. | Dated subsections and the asymmetry note in the scope projection |
-| FOLLOWON-0062-003 | PASS — identifiers are contiguous from `SRC-WERPC-123` and `CLM-WERPC-016-01` with no duplicate or gap. | Ledger increment and the duplicate check recorded in the Verification Summary |
-| FOLLOWON-0062-004 | PASS — three superseded statements are recorded additively with original dates preserved. | `CLM-WERPC-016-03`, `CLM-WERPC-016-04`, `CLM-WERPC-016-15` |
-| FOLLOWON-0062-005 | PASS — validation results recorded exactly, including three pre-existing failures. | Verification Summary above |
-| VAL-WRFR-002 | Not claimed — workspace re-observation excluded by requester direction. | Cycle addendum and this record's Approval and Safety Boundaries |
+| [FOLLOWON-0062-001](../spec.md#approved-2026-09-05-follow-on-external-observation-cycle-addendum) | PASS — each of the 36 owners carries exactly one external result. | Dated subsections in the eleven topical owners and the scope projection table |
+| [FOLLOWON-0062-002](../spec.md#approved-2026-09-05-follow-on-external-observation-cycle-addendum) | PASS — every owner row states `not observed in this cycle` and no workspace observation date is refreshed. | Dated subsections and the asymmetry note in the scope projection |
+| [FOLLOWON-0062-003](../spec.md#approved-2026-09-05-follow-on-external-observation-cycle-addendum) | PASS — identifiers are contiguous from `SRC-WERPC-123` and `CLM-WERPC-016-01` with no duplicate or gap. | Ledger increment and the duplicate check recorded in the Verification Summary |
+| [FOLLOWON-0062-004](../spec.md#approved-2026-09-05-follow-on-external-observation-cycle-addendum) | PASS — three superseded statements are recorded additively with original dates preserved. | `CLM-WERPC-016-03`, `CLM-WERPC-016-04`, `CLM-WERPC-016-15` |
+| [FOLLOWON-0062-005](../spec.md#approved-2026-09-05-follow-on-external-observation-cycle-addendum) | PASS — validation results recorded exactly, including three pre-existing failures. | Verification Summary above |
+| [VAL-WRFR-002](../spec.md#success-criteria--verification-plan) | Not claimed — workspace re-observation excluded by requester direction. | Cycle addendum and this record's Approval and Safety Boundaries |

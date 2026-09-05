@@ -528,20 +528,24 @@ class ArchiveCutoverTest(unittest.TestCase):
             _action,
             current,
         ) in archive_validation.MIG0004_STAGE99_ACTION_TARGETS.items():
-            if current in later_retired:
-                # A later sealed record deleted the endpoint.  Archive terminals
-                # are not current owners, so the row composes nothing rather
-                # than naming a path the tree no longer holds.
-                self.assertNotIn(legacy, projection.current_by_legacy)
-                continue
-            # A later sealed record may have renamed or relocated the endpoint.
-            # Composition follows that chain, so the current owner is the end of
-            # the chain rather than the endpoint MIG-0004 itself named.
             expected = current
             seen = {expected}
             while expected in later_edges and later_edges[expected] not in seen:
                 expected = later_edges[expected]
                 seen.add(expected)
+            if (
+                expected in later_retired
+                or expected in archive_cutover.RETIRED_UNUSED_CAPACITY_FORM_PATHS
+            ):
+                # A later sealed record deleted the endpoint.  Archive terminals
+                # and explicitly retired unused forms are not current owners,
+                # so the row composes nothing rather than naming a path the tree
+                # no longer holds.
+                self.assertNotIn(legacy, projection.current_by_legacy)
+                continue
+            # A later sealed record may have renamed or relocated the endpoint.
+            # Composition follows that chain, so the current owner is the end of
+            # the chain rather than the endpoint MIG-0004 itself named.
             self.assertEqual(projection.current_by_legacy[legacy], expected)
             composed += 1
         self.assertTrue(composed, "Stage 99 rows must still compose current owners")

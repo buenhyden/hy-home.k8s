@@ -54,22 +54,26 @@ class ArchiveDispositionRoutesTest(unittest.TestCase):
         self, category: str, status: str, reason: str, *, record_status="archived"
     ):
         target = PurePosixPath("docs/98.archive", category, *self.source.parts[1:])
-        replacement = self.successor.as_posix() if reason == "superseded" else None
+        replacement = self.successor.as_posix() if reason == "superseded" else "none"
         text = (
             "---\n"
+            "version: 1.0.0\n"
             "type: archive/tombstone\n"
+            "layer: archive\n"
             f"status: {record_status}\n"
             f"original_path: {self.source}\n"
             f"archive_reason: {reason}\n"
-            f"replacement: {replacement if replacement else 'null'}\n"
+            f"replacement: {replacement}\n"
             "---\n"
         )
         record = document_from_text(self.registry, target, text)
         base = {self.source: LifecycleDocument(self.source, "sdlc/requirement", status)}
         proposed = {
             target: record,
-            self.successor: LifecycleDocument(
-                self.successor, "sdlc/requirement", "active"
+            self.successor: document_from_text(
+                self.registry,
+                self.successor,
+                "---\ntype: sdlc/requirement\nstatus: active\n---\n",
             ),
         }
         evidence = LifecycleEvidenceContext(
@@ -175,7 +179,7 @@ class ArchiveDispositionRecoveryTest(unittest.TestCase):
         self.assertEqual(report.diagnostics, ())
 
     def test_tombstone_recovery_accepts_exact_classified_mirror(self) -> None:
-        self.metadata.update(archive_reason="retired", replacement=None)
+        self.metadata.update(archive_reason="retired", replacement="none")
         report = self.check_record("tombstones")
         self.assertEqual(report.diagnostics, ())
 

@@ -1403,7 +1403,7 @@ for error in canonical_form_content_errors(form_sources):
 # authored-document semantic enforcement ahead of the lifecycle-table tranche.
 spec_form = pathlib.PurePosixPath("docs/99.templates/templates/specs/spec.template.md")
 native_form = pathlib.PurePosixPath(
-    "docs/99.templates/templates/specs/contracts/openapi.template.yaml"
+    "docs/99.templates/templates/runtime/codex-agent.template.toml"
 )
 form_content_mutations = []
 retired_mutation = dict(form_sources)

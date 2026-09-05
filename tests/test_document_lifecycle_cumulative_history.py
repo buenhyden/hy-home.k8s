@@ -50,7 +50,7 @@ class CumulativeLifecycleHistoryTest(unittest.TestCase):
         selected = {
             "governance/contract",
             "sdlc/architecture-description",
-            "sdlc/data-model",
+            "sdlc/spec",
             "sdlc/plan",
             "archive/tombstone",
         }

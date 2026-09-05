@@ -140,9 +140,9 @@ class MigrationLifecycleTest(unittest.TestCase):
         original = (self.root / "docs/99.templates/registry.json").read_bytes()
         for profile_id, field in (
             ("governance/contract", "path_pattern"),
-            ("sdlc/data-model", "path_pattern"),
+            ("sdlc/spec", "path_pattern"),
             ("archive/migration", "artifact_id_pattern"),
-            ("sdlc/data-model", "artifact_id_pattern"),
+            ("sdlc/spec", "artifact_id_pattern"),
         ):
             with self.subTest(profile=profile_id, field=field):
                 raw = json.loads(original)
@@ -156,9 +156,7 @@ class MigrationLifecycleTest(unittest.TestCase):
         for change in ("alias", "duplicate", "missing", "extra"):
             with self.subTest(change=change):
                 raw = json.loads(original)
-                profile = next(
-                    p for p in raw["profiles"] if p["id"] == "sdlc/data-model"
-                )
+                profile = next(p for p in raw["profiles"] if p["id"] == "sdlc/spec")
                 if change == "alias":
                     profile["id"] = "common/proposal-only"
                 elif change == "duplicate":
@@ -183,9 +181,7 @@ class MigrationLifecycleTest(unittest.TestCase):
         ):
             with self.subTest(change=change):
                 raw = json.loads(original)
-                profile = next(
-                    p for p in raw["profiles"] if p["id"] == "sdlc/data-model"
-                )
+                profile = next(p for p in raw["profiles"] if p["id"] == "sdlc/spec")
                 if change in {"path_pattern", "artifact_id_pattern"}:
                     profile[change] = "^(.+)+UNREACHABLE$"
                 elif change == "alias":
@@ -217,7 +213,7 @@ class MigrationLifecycleTest(unittest.TestCase):
         trusted = contracts.load_registry(self.root)
         original = (self.root / contracts.REGISTRY_PATH).read_bytes()
         raw = json.loads(original)
-        profile = next(p for p in raw["profiles"] if p["id"] == "sdlc/data-model")
+        profile = next(p for p in raw["profiles"] if p["id"] == "sdlc/spec")
         profile["path_pattern"] = "^docs/no-policy-owner\\.md$"
         changed = contracts.validate_registry(self.root, raw)
         self.assertEqual(

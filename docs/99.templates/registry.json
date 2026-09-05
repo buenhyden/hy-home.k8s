@@ -278,8 +278,7 @@
             "sdlc/architecture-decision"
           ],
           "allowed_target_profile_ids": [
-            "sdlc/spec",
-            "sdlc/data-model"
+            "sdlc/spec"
           ],
           "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
@@ -335,103 +334,6 @@
           "Failure Modes & Fallback / Human Escalation",
           "Verification Commands",
           "Success Criteria & Verification Plan",
-          "Traceability"
-        ],
-        "optional": [],
-        "forbidden": []
-      },
-      "lifecycle": {
-        "status_domain": [
-          "draft",
-          "active",
-          "done",
-          "superseded",
-          "withdrawn"
-        ]
-      },
-      "relationships": {
-        "source_profile_ids": [],
-        "body_contract": {
-          "section": "Traceability",
-          "table_heading": "Lifecycle Traceability",
-          "enforced_statuses": [
-            "draft",
-            "active"
-          ],
-          "required_columns": [
-            "Requirement ID",
-            "Spec criterion",
-            "Verification method"
-          ],
-          "identifier_columns": [
-            {
-              "column": "Requirement ID",
-              "kind": "requirement"
-            },
-            {
-              "column": "Spec criterion",
-              "kind": "criterion"
-            }
-          ],
-          "source_link_column": "Requirement ID",
-          "target_link_column": null,
-          "allowed_source_profile_ids": [
-            "sdlc/requirement"
-          ],
-          "allowed_target_profile_ids": [],
-          "reciprocal_evidence": true,
-          "allow_explicit_exclusion": true
-        }
-      },
-      "placeholder_policy": "forbidden"
-    },
-    {
-      "id": "sdlc/data-model",
-      "family": "sdlc",
-      "mode": "authored",
-      "path_pattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/data-model\\.md$",
-      "artifact_id_pattern": "^DATA-MODEL-[0-9]{4}$",
-      "template_source": "docs/99.templates/templates/specs/contracts/data-model.template.md",
-      "frontmatter": {
-        "mode": "required",
-        "required": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "layer",
-          "artifact_id"
-        ],
-        "optional": [],
-        "forbidden": [],
-        "order": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "layer",
-          "artifact_id"
-        ],
-        "constants": {
-          "type": "sdlc/data-model",
-          "layer": "specs"
-        }
-      },
-      "sections": {
-        "required": [
-          "Overview",
-          "Scope & Non-goals",
-          "Entities / Aggregates",
-          "Relationships",
-          "Schema / Structures",
-          "Validation & Integrity Rules",
-          "Storage Strategy",
-          "Privacy / Security",
-          "Migration & Compatibility",
           "Traceability"
         ],
         "optional": [],
@@ -567,8 +469,7 @@
           "source_link_column": "Spec criterion",
           "target_link_column": "Expected Task",
           "allowed_source_profile_ids": [
-            "sdlc/spec",
-            "sdlc/data-model"
+            "sdlc/spec"
           ],
           "allowed_target_profile_ids": [
             "sdlc/task"
@@ -661,8 +562,7 @@
           "target_link_column": null,
           "allowed_source_profile_ids": [
             "sdlc/plan",
-            "sdlc/spec",
-            "sdlc/data-model"
+            "sdlc/spec"
           ],
           "allowed_target_profile_ids": [],
           "reciprocal_evidence": true,
@@ -747,7 +647,6 @@
           "target_link_column": null,
           "allowed_source_profile_ids": [
             "sdlc/spec",
-            "sdlc/data-model",
             "sdlc/task"
           ],
           "allowed_target_profile_ids": [],
@@ -834,7 +733,6 @@
           "target_link_column": null,
           "allowed_source_profile_ids": [
             "sdlc/spec",
-            "sdlc/data-model",
             "sdlc/task"
           ],
           "allowed_target_profile_ids": [],
@@ -921,7 +819,6 @@
           "target_link_column": null,
           "allowed_source_profile_ids": [
             "sdlc/spec",
-            "sdlc/data-model",
             "sdlc/task",
             "operation/policy"
           ],
@@ -1482,71 +1379,6 @@
         ],
         "constants": {
           "type": "governance/contract"
-        }
-      },
-      "sections": {
-        "required": [
-          "Overview",
-          "Authority Boundary",
-          "Governance Context",
-          "Current Contract",
-          "Validation and Refresh",
-          "Related Documents"
-        ],
-        "optional": [],
-        "forbidden": []
-      },
-      "lifecycle": {
-        "status_domain": [
-          "draft",
-          "active",
-          "superseded",
-          "retired"
-        ]
-      },
-      "relationships": {
-        "source_profile_ids": [],
-        "body_contract": null
-      },
-      "placeholder_policy": "forbidden"
-    },
-    {
-      "id": "governance/control",
-      "family": "governance",
-      "mode": "authored",
-      "path_pattern": "^docs/00\\.agent-governance/controls/[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.md$",
-      "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/governance/control.template.md",
-      "frontmatter": {
-        "mode": "required",
-        "required": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated"
-        ],
-        "optional": [
-          "supersedes",
-          "superseded_by"
-        ],
-        "forbidden": [
-          "artifact_id",
-          "layer"
-        ],
-        "order": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "supersedes",
-          "superseded_by"
-        ],
-        "constants": {
-          "type": "governance/control"
         }
       },
       "sections": {
@@ -2550,87 +2382,6 @@
       "placeholder_policy": "forbidden"
     },
     {
-      "id": "common/native-contract-openapi",
-      "family": "common",
-      "mode": "native",
-      "path_pattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/contracts/openapi\\.yaml$",
-      "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/specs/contracts/openapi.template.yaml",
-      "frontmatter": {
-        "mode": "absent",
-        "required": [],
-        "optional": [],
-        "forbidden": [],
-        "order": [],
-        "constants": {}
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
-      "lifecycle": null,
-      "relationships": {
-        "source_profile_ids": [],
-        "body_contract": null
-      },
-      "placeholder_policy": "forbidden"
-    },
-    {
-      "id": "common/native-contract-graphql",
-      "family": "common",
-      "mode": "native",
-      "path_pattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/contracts/schema\\.graphql$",
-      "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/specs/contracts/schema.template.graphql",
-      "frontmatter": {
-        "mode": "absent",
-        "required": [],
-        "optional": [],
-        "forbidden": [],
-        "order": [],
-        "constants": {}
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
-      "lifecycle": null,
-      "relationships": {
-        "source_profile_ids": [],
-        "body_contract": null
-      },
-      "placeholder_policy": "forbidden"
-    },
-    {
-      "id": "common/native-contract-protobuf",
-      "family": "common",
-      "mode": "native",
-      "path_pattern": "^docs/03\\.specs/[0-9]{4}-[a-z][a-z0-9]*(?:-[a-z0-9]+)*/contracts/service\\.proto$",
-      "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/specs/contracts/service.template.proto",
-      "frontmatter": {
-        "mode": "absent",
-        "required": [],
-        "optional": [],
-        "forbidden": [],
-        "order": [],
-        "constants": {}
-      },
-      "sections": {
-        "required": [],
-        "optional": [],
-        "forbidden": []
-      },
-      "lifecycle": null,
-      "relationships": {
-        "source_profile_ids": [],
-        "body_contract": null
-      },
-      "placeholder_policy": "forbidden"
-    },
-    {
       "id": "common/program-non-target",
       "family": "common",
       "mode": "non-target",
@@ -3569,8 +3320,7 @@
             "sdlc/architecture-decision"
           ],
           "allowed_target_profile_ids": [
-            "sdlc/spec",
-            "sdlc/data-model"
+            "sdlc/spec"
           ],
           "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
@@ -3744,8 +3494,7 @@
           "source_link_column": "Spec criterion",
           "target_link_column": "Expected Task",
           "allowed_source_profile_ids": [
-            "sdlc/spec",
-            "sdlc/data-model"
+            "sdlc/spec"
           ],
           "allowed_target_profile_ids": [
             "sdlc/task"
@@ -3832,8 +3581,7 @@
           "target_link_column": null,
           "allowed_source_profile_ids": [
             "sdlc/plan",
-            "sdlc/spec",
-            "sdlc/data-model"
+            "sdlc/spec"
           ],
           "allowed_target_profile_ids": [],
           "reciprocal_evidence": true,
@@ -3913,7 +3661,6 @@
           "target_link_column": null,
           "allowed_source_profile_ids": [
             "sdlc/spec",
-            "sdlc/data-model",
             "sdlc/task"
           ],
           "allowed_target_profile_ids": [],
@@ -4078,7 +3825,6 @@
           "target_link_column": null,
           "allowed_source_profile_ids": [
             "sdlc/spec",
-            "sdlc/data-model",
             "sdlc/task"
           ],
           "allowed_target_profile_ids": [],
@@ -4245,7 +3991,6 @@
           "target_link_column": null,
           "allowed_source_profile_ids": [
             "sdlc/spec",
-            "sdlc/data-model",
             "sdlc/task",
             "operation/policy"
           ],
@@ -4343,97 +4088,6 @@
             "sdlc/architecture-description",
             "sdlc/spec"
           ],
-          "reciprocal_evidence": true,
-          "allow_explicit_exclusion": true
-        }
-      },
-      "placeholder_policy": "template-only"
-    },
-    {
-      "id": "common/template-sdlc-data-model",
-      "family": "common",
-      "mode": "template",
-      "path_pattern": "^docs/99\\.templates/templates/specs/contracts/data\\-model\\.template\\.md$",
-      "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/specs/contracts/data-model.template.md",
-      "frontmatter": {
-        "mode": "required",
-        "required": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "layer",
-          "artifact_id"
-        ],
-        "optional": [],
-        "forbidden": [],
-        "order": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "layer",
-          "artifact_id"
-        ],
-        "constants": {
-          "type": "sdlc/data-model",
-          "layer": "specs"
-        }
-      },
-      "sections": {
-        "required": [
-          "Overview",
-          "Scope & Non-goals",
-          "Entities / Aggregates",
-          "Relationships",
-          "Schema / Structures",
-          "Validation & Integrity Rules",
-          "Storage Strategy",
-          "Privacy / Security",
-          "Migration & Compatibility",
-          "Traceability"
-        ],
-        "optional": [],
-        "forbidden": []
-      },
-      "lifecycle": null,
-      "relationships": {
-        "source_profile_ids": [
-          "sdlc/data-model"
-        ],
-        "body_contract": {
-          "section": "Traceability",
-          "table_heading": "Lifecycle Traceability",
-          "enforced_statuses": [
-            "draft",
-            "active"
-          ],
-          "required_columns": [
-            "Requirement ID",
-            "Spec criterion",
-            "Verification method"
-          ],
-          "identifier_columns": [
-            {
-              "column": "Requirement ID",
-              "kind": "requirement"
-            },
-            {
-              "column": "Spec criterion",
-              "kind": "criterion"
-            }
-          ],
-          "source_link_column": "Requirement ID",
-          "target_link_column": null,
-          "allowed_source_profile_ids": [
-            "sdlc/requirement"
-          ],
-          "allowed_target_profile_ids": [],
           "reciprocal_evidence": true,
           "allow_explicit_exclusion": true
         }
@@ -4627,66 +4281,6 @@
       "relationships": {
         "source_profile_ids": [
           "governance/contract"
-        ],
-        "body_contract": null
-      },
-      "placeholder_policy": "template-only"
-    },
-    {
-      "id": "common/template-governance-control",
-      "family": "common",
-      "mode": "template",
-      "path_pattern": "^docs/99\\.templates/templates/governance/control\\.template\\.md$",
-      "artifact_id_pattern": null,
-      "template_source": "docs/99.templates/templates/governance/control.template.md",
-      "frontmatter": {
-        "mode": "required",
-        "required": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated"
-        ],
-        "optional": [
-          "supersedes",
-          "superseded_by"
-        ],
-        "forbidden": [
-          "artifact_id",
-          "layer"
-        ],
-        "order": [
-          "title",
-          "version",
-          "type",
-          "status",
-          "owner",
-          "updated",
-          "supersedes",
-          "superseded_by"
-        ],
-        "constants": {
-          "type": "governance/control"
-        }
-      },
-      "sections": {
-        "required": [
-          "Overview",
-          "Authority Boundary",
-          "Governance Context",
-          "Current Contract",
-          "Validation and Refresh",
-          "Related Documents"
-        ],
-        "optional": [],
-        "forbidden": []
-      },
-      "lifecycle": null,
-      "relationships": {
-        "source_profile_ids": [
-          "governance/control"
         ],
         "body_contract": null
       },
@@ -4996,7 +4590,6 @@
       "family": "spec-plan",
       "profile_ids": [
         "sdlc/spec",
-        "sdlc/data-model",
         "sdlc/plan"
       ],
       "states": {
@@ -5067,7 +4660,6 @@
         "operation/policy",
         "operation/runbook",
         "governance/contract",
-        "governance/control",
         "governance/provider",
         "governance/role",
         "governance/rule",

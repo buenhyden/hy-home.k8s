@@ -31,7 +31,7 @@ class GenericMigrationRecoveryTest(unittest.TestCase):
         registry = json.loads((ROOT / registry_path).read_text())
         selected = {
             "sdlc/architecture-description",
-            "sdlc/data-model",
+            "sdlc/spec",
             "sdlc/plan",
             "archive/tombstone",
         }

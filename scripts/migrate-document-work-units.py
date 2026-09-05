@@ -903,7 +903,7 @@ def _archive_metadata(row: Mapping[str, Any], recovered: Any) -> dict[str, objec
         "original_path": recovered.original_path,
         "archived_on": ARCHIVED_ON,
         "archive_reason": "retired",
-        "replacement": None,
+        "replacement": "none",
         "source_commit": recovered.source_commit,
         "source_blob": recovered.source_blob,
         "content_sha256": recovered.content_sha256,

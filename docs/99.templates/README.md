@@ -51,16 +51,14 @@ Profile ID는 같은 사실을 `<family>/<kind>`로 표현한다.
   profiles own each router's exact path, fixed "type"/"status", optional
   "layer", and heading contract.
 - **Governance forms** (`governance/`): Stage 00의 여섯 owner kind에 각각
-  `contract`, `control`, `provider`, `role`, `rule`, `skill` form이 대응한다.
+  `contract`, `provider`, `role`, `rule`, `skill` form이 대응한다.
   `governance/*` profile은 `artifact_id`를 선언하지 않는다.
 - **Core SDLC forms**: `requirements/requirement-package`,
   `architecture/description`, `architecture/decision`, `specs/spec`,
   `specs/plan`, `specs/task`가 단계별 책임과 handoff를 기록한다.
-- **Spec contract forms** (`specs/contracts/`): `data-model` Markdown form과
-  OpenAPI, GraphQL, protobuf native form. Native form 3종의 authored
-  destination은 `docs/03.specs/####-<slug>/contracts/`이고, data model은
-  package 루트의 `data-model.md`다. Form 쪽에서는 Spec이 소유하는 계약을 한
-  디렉터리로 모은다.
+- **Spec forms** (`specs/`): `spec`, `plan`, `task` form이 요구 추적,
+  실행 계획, 작업 증거를 소유한다. 별도 data-model 및 native contract
+  capacity는 현재 consumer가 없어 Spec 본문과 실제 구현 소유자에게 수렴했다.
 - **Operations forms** (`operations/`): `guide`, `policy`, `runbook`,
   `incident`, `postmortem`의 서로 다른 운영 증거 책임을 유지한다.
 - **Reference forms** (`references/`): Stage 90 collection 세 곳은 모두 같은 3단
@@ -78,6 +76,15 @@ Profile ID는 같은 사실을 `<family>/<kind>`로 표현한다.
 
 현재 physical form의 전체 목록과 각각의 소유 profile은 README나 support prose가
 아니라 registry와 repository quality gate에서 계산한다.
+
+### Deliberately Empty Profiles
+
+현재 record가 없는 것은 곧 사용하지 않는 capacity를 뜻하지 않는다.
+`operation/incident`와 `operation/postmortem`은 사건 발생 전에도 운영 증거를
+기록할 수 있도록 유지한다. `reference/audit`, `reference/data`,
+`common/readme-audit-pack`, `common/readme-data-pack`은 현재 record가 0건이어도
+Stage 90 collection contract가 요구하는 audit/data collection·pack 경로를
+구조적으로 보장하므로 유지한다. 이는 이미 retired한 미사용 capacity와 구별한다.
 
 ## Document Index
 
