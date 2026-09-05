@@ -134,7 +134,6 @@ class QaTests(unittest.TestCase):
         adapter.symlink_to("../file.txt")
         self.git("add", ".claude/skills")
         self.git("commit", "-qm", "old adapter")
-        before = (self.root / ".git/index").read_bytes()
         adapter.unlink()
         adapter.mkdir()
         skill = self.root / ".agents/skills/example/SKILL.md"
@@ -152,24 +151,34 @@ class QaTests(unittest.TestCase):
             )
         )
         (adapter / "example").symlink_to("../../.agents/skills/example")
-        paths = self.qa.changed_paths(self.root, staged=False)
-        self.assertNotIn(".claude/skills", paths)
-        self.assertIn(".claude/skills/example", paths)
         contract = self.qa.contract_module.validate_contract(ROOT)
-        with (
-            mock.patch.object(
-                sys, "argv", ["qa.py", "quick", "--root", str(self.root)]
-            ),
-            mock.patch.object(
-                self.qa.contract_module, "validate_contract", return_value=contract
-            ),
-            mock.patch.object(self.qa.runner, "run_selected", return_value=0) as run,
-        ):
-            self.assertEqual(self.qa.main(), 0)
-        run.assert_called_once()
-        self.assertEqual(run.call_args.args[2], paths)
-        self.assertEqual((self.root / ".git/index").read_bytes(), before)
-        self.assertEqual(self.qa.changed_paths(self.root, staged=True), [])
+        for staged in (False, True):
+            with self.subTest(staged=staged):
+                if staged:
+                    self.git("add", ".claude/skills", ".agents")
+                before = (self.root / ".git/index").read_bytes()
+                paths = self.qa.changed_paths(self.root, staged=False)
+                self.assertNotIn(".claude/skills", paths)
+                self.assertIn(".claude/skills/example", paths)
+                with (
+                    mock.patch.object(
+                        sys, "argv", ["qa.py", "quick", "--root", str(self.root)]
+                    ),
+                    mock.patch.object(
+                        self.qa.contract_module,
+                        "validate_contract",
+                        return_value=contract,
+                    ),
+                    mock.patch.object(
+                        self.qa.runner, "run_selected", return_value=0
+                    ) as run,
+                ):
+                    self.assertEqual(self.qa.main(), 0)
+                run.assert_called_once()
+                self.assertEqual(run.call_args.args[2], paths)
+                self.assertEqual((self.root / ".git/index").read_bytes(), before)
+                if not staged:
+                    self.assertEqual(self.qa.changed_paths(self.root, staged=True), [])
 
     def test_quick_keeps_deletions_rename_inputs_and_directory_without_selected_children(
         self,

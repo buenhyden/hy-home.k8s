@@ -94,6 +94,18 @@ def indexed_snapshot_leaf(root: Path, path: str) -> bool:
     return False
 
 
+def head_snapshot_leaf(root: Path, path: str) -> bool:
+    entry = git(root, "--literal-pathspecs", "ls-tree", "-z", "HEAD", "--", path)
+    metadata, _, name = entry.rstrip(b"\0").partition(b"\t")
+    fields = metadata.split()
+    return (
+        name == os.fsencode(path)
+        and len(fields) == 3
+        and fields[0] in (b"100644", b"100755", b"120000")
+        and fields[1] == b"blob"
+    )
+
+
 def file_identity(root: Path, path: str):
     paths_from(os.fsencode(path) + b"\0")
     target = root / path
@@ -279,17 +291,7 @@ def changed_paths(root: Path, *, staged: bool) -> list[str]:
             }
             if not children or not children <= selected:
                 continue
-            entry = git(
-                root, "--literal-pathspecs", "ls-tree", "-z", "HEAD", "--", path
-            )
-            metadata, _, name = entry.rstrip(b"\0").partition(b"\t")
-            fields = metadata.split()
-            if (
-                name == os.fsencode(path)
-                and len(fields) == 3
-                and fields[0] in (b"100644", b"100755", b"120000")
-                and fields[1] == b"blob"
-            ):
+            if head_snapshot_leaf(root, path):
                 # Use only HEAD/index metadata, never the unstaged filesystem.
                 replaced.add(path)
         return [path for path in paths if path not in replaced]
@@ -304,7 +306,9 @@ def changed_paths(root: Path, *, staged: bool) -> list[str]:
                 )
         except FileNotFoundError:
             directory = False
-        if directory and indexed_snapshot_leaf(root, path):
+        if directory and (
+            indexed_snapshot_leaf(root, path) or head_snapshot_leaf(root, path)
+        ):
             children = {
                 candidate for candidate in inventory if candidate.startswith(path + "/")
             }

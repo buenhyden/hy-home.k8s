@@ -503,7 +503,39 @@ directory links remain rejected. `python3 scripts/qa.py full` exited 0 with
 nineteen gates in 1,020.017 s, including unit discovery and all-files pre-commit
 once. This result covers the continuation's six changed files before this
 evidence-only update; the first commit's full result was not reused for them.
-The final index and commit-message checks remain required before commit.
+The final `python3 scripts/qa.py staged` exited 0 with eleven gates in
+221.998 s. Commit-message checks, focused Markdown lint and both diff checks
+passed. The six reviewed files were committed as `2b884cfa`,
+`fix(docs): reject missing reference collections`, with the active secret hook
+enabled. No archive payload or remote state changed.
+
+#### Next local work: quick selection after staging
+
+Independent review found that `quick` still retained the deleted parent of a
+file-to-directory replacement after the children were staged. At that point
+the index contains only children; the previous leaf exists in HEAD. The
+expanded before/after-staging regression first exited 1 with the expected
+parent-path assertion failure only in the staged subcase.
+
+The existing literal HEAD blob/mode check is now a shared helper. `quick`
+accepts the previous leaf from index or HEAD only when the working path is a
+directory and all children are selected. The staged selector still uses only
+HEAD/index metadata. Unknown children, plain deletions, gitlinks, escaping
+links and source-index identity checks retain their independent tests.
+`python3 -m unittest tests.test_qa_runner -v` exited 0 with 29 tests in
+17.091 s; pinned Ruff lint and formatting passed. Independent Python review
+approved the two-file correction, including literal paths, allowed modes,
+gitlink rejection and unchanged process/environment boundaries.
+
+`python3 scripts/qa.py full` exited 0 with nineteen gates in 927.707 s,
+including whole unit discovery and all-files pre-commit once. That snapshot
+precedes only this evidence update. Focused Markdown validation checks the
+updated record, and the required final `python3 scripts/qa.py staged` checks
+the actual index before commit. Its exact exit, scope and duration belong to
+the commit message for `fix(qa): handle staged directory transitions in quick`,
+so recording the final index result does not alter the checked index.
+Both native provider execution and hosted CI remain DEFER; this local result
+does not advance WORK-004 or authorize external changes.
 
 ### Historical Execution Record (before the authority-location revision)
 
