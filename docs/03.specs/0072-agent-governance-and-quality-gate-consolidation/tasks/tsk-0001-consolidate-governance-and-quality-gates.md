@@ -104,14 +104,17 @@ No ruling authorizes remote mutation or weakens a pre-action safety boundary.
 
 ### Current-State Integration Handoff (2026-09-05)
 
-Governance snapshot `f4275f5e` is in local-main merge finalization. The related
-Task 4 retirement is committed as `2b9bf9e`; its document branch merged to main
-as `0540a433`. The focused integrated suite ran 57 tests: 56 passed, and the
+The related Task 4 retirement is committed as `2b9bf9e`; the document and
+governance branches merged to main as `0540a433` and `acbdca17`, respectively;
+the remote audit snapshot is `76ef4953`. The focused integrated suite ran 57
+tests: 56 passed, and the
 sole failure is an empty `.agents` directory created by the sandbox rather than
 a repository-owned source surface; the isolated Stage 00 owner check passes.
-Archive snapshot integration now fails on `ARCHIVE-MIGRATION-LEDGER` for
-MIG-0002 after the source move, with bounded fix verification pending. A bounded
-Python review found no blockers, and the `-t .` import path is corrected.
+MIG-0020's two registry/schema successor rows and narrow `.agents` sealed-edge
+composition resolve the archive proof without a validator waiver. Focused
+regression passed (1 test, 0.141 s) and the exact staged-snapshot archive target
+passed (1 test, 17.747 s). Independent evidence and code review found no
+blockers, and the `-t .` import path is corrected.
 Full-suite, hosted CI, provider/runtime, and release evidence are not claimed;
 this Task remains `in-progress`.
 
