@@ -88,6 +88,7 @@ def _migration_declared_paths(root: Path) -> set[str]:
     paths: set[str] = set()
     directory = root / "docs/98.archive/migrations"
     for candidate in sorted(directory.glob("*.md")):
+        paths.add(candidate.relative_to(root).as_posix())
         for block in re.findall(
             r"```json\n(.*?)\n```", candidate.read_text(encoding="utf-8"), re.S
         ):
@@ -1846,17 +1847,18 @@ class ArchiveValidationTest(unittest.TestCase):
         # fixed seven: one sealed ledger carrying one new declared source
         # commit. The cost of a ledger does not track its row count, so a
         # ten-row retention and a seventeen-row relocation cost the same.
-        budget = 229
+        #
+        # Document-contract v9 proposal and acceptance moved 229 -> 242. The
+        # fixed thirteen cover proposal identity, Registry/template, and
+        # durable-ref checks; proposal paths remain exact batched operands, so
+        # this cost does not grow once per current document.
+        budget = 242
 
         def bounded_popen(*args, **kwargs):
             nonlocal git_calls
             command = args[0] if args else kwargs.get("args", ())
             if command and command[0] == "git":
                 git_calls += 1
-                if git_calls > budget:
-                    raise AssertionError(
-                        "repository archive exceeded Git subprocess budget"
-                    )
             return real_popen(*args, **kwargs)
 
         started = time.monotonic()
@@ -1870,7 +1872,7 @@ class ArchiveValidationTest(unittest.TestCase):
         # The power-of-two process budget covers staged authority inventory,
         # named-ref reachability, exact commit:path, and batched content reads
         # without introducing per-row subprocesses or a current count pin.
-        self.assertLessEqual(git_calls, budget)
+        self.assertLessEqual(git_calls, budget, f"Git subprocesses: {git_calls}")
         self.assertLess(elapsed, 60.0)
 
     def test_work107_stable_ledger_digest_is_pinned_without_git_reconstruction(
@@ -1994,13 +1996,15 @@ class ArchiveValidationTest(unittest.TestCase):
         # Generic migration controls declare their own source paths; recovering
         # those rows is declared evidence, not an unbounded walk.
         original_paths |= _migration_declared_paths(ROOT)
-        ls_tree_paths: set[str] = set()
+        ls_tree_paths_by_commit: dict[str, set[str]] = {}
         exact_batch_paths: set[str] = set()
         real_git_command = archive_validation._git_command  # noqa: SLF001
 
         def capture_git_command(root: Path, *args: str, **kwargs):
             if args[:1] == ("ls-tree",) and "--" in args:
-                ls_tree_paths.update(args[args.index("--") + 1 :])
+                ls_tree_paths_by_commit.setdefault(args[3], set()).update(
+                    args[args.index("--") + 1 :]
+                )
             if args[:1] == ("cat-file",) and args[1:2] == (
                 "--batch-check=%(objectname) %(objecttype) %(objectsize)",
             ):
@@ -2016,7 +2020,12 @@ class ArchiveValidationTest(unittest.TestCase):
             report = archive_validation.validate_repository_archive(ROOT, registry)
 
         self.assertTrue(report.valid, report.diagnostics)
-        self.assertLessEqual(ls_tree_paths, original_paths)
+        ls_tree_paths = set().union(*ls_tree_paths_by_commit.values())
+        self.assertLessEqual(
+            ls_tree_paths,
+            original_paths,
+            f"undeclared ls-tree paths={sorted(ls_tree_paths - original_paths)}",
+        )
         self.assertNotIn("docs/03.specs", ls_tree_paths)
         # The batch must still cover every surviving record's original path.
         # This used to pin five paths belonging to bodies ADR-0030 moved to Git

@@ -60,7 +60,7 @@ class ReferencePackRouteTest(unittest.TestCase):
                         f"docs/90.references/{category}/0001-example/README.md"
                     ),
                 )
-                self.assertEqual(profile.profile_id, f"readme/{singular}-pack")
+                self.assertEqual(profile.profile_id, f"common/readme-{singular}-pack")
                 self.assertEqual(
                     profile.template,
                     PurePosixPath(
@@ -111,7 +111,7 @@ class ReferencePackRouteTest(unittest.TestCase):
                     profile.profile_id,
                     {
                         f"reference/{category.removesuffix('s')}",
-                        f"readme/{category.removesuffix('s')}-pack",
+                        f"common/readme-{category.removesuffix('s')}-pack",
                     },
                 )
 
